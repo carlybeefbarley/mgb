@@ -11,7 +11,9 @@ AuthenticatedNavigation = React.createClass({
         </ul>
         <ul className="nav navbar-nav navbar-right">
           <li className="dropdown">
-            <a href="#" className="dropdown-toggle" data-toggle="dropdown">{this.currentUserEmail()} <span className="caret"></span></a>
+            <a href="#" className="dropdown-toggle" data-toggle="dropdown">{this.currentUserEmail()}
+              <span className="caret"></span>
+            </a>
             <ul className="dropdown-menu" role="menu">
               <li onClick={Meteor.logout}><a href="#">Logout</a></li>
             </ul>

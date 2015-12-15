@@ -9,12 +9,31 @@ This project started from the following baseline:
 This React-Base was in turn based upon https://github.com/themeteorchef/base
 
 * The Meteor Chef - Base Version v3.3.0 (November 1st 2015). 
-* [Read the Documentation- Meteor Base](http://themeteorchef.com/base)
-* [Read the Documentation- Meteor+React Base](https://themeteorchef.com/recipes/getting-started-with-react/)
+* [Read the Docs - Meteor Base](http://themeteorchef.com/base)
+* [Read the Docs - Meteor+React Base](https://themeteorchef.com/recipes/getting-started-with-react/)
+* [Read the Docs - Module convention used in this code](https://themeteorchef.com/snippets/using-the-module-pattern-with-meteor/)
 
 Thus this 'javascript' source code is a mix of ES2015 and JSX. Read the above docs if those aren't familiar to you.
 
+## Meteor build process and magic folder names
+
+[Meteor’s build process](http://docs.meteor.com/#/full/structuringyourapp) loads the appropriate files subject to several load ordering rules. They are applied sequentially to all applicable files in the application, in the priority given below:
+
+1. HTML template files are always loaded before everything else
+1. Files beginning with main. are loaded last
+1. Files inside any lib/ directory are loaded next
+1. Files with deeper paths are loaded next
+1. Files are then loaded in alphabetical order of the entire path
+
 Any magic server-side env variables are exported into Modules.server.setEnvironmentVariables by server/modules/set-environment-variables.js
+
+Summarized from [this article](https://themeteorchef.com/snippets/organizing-your-meteor-project/#tmc-special-directories): 
+* client/	- used to store all code that’s meant to run on the client-side of our application. Any files located in a directory called client will be loaded on the client-side (browser) only. This is used as an alternative to writing our code in if ( Meteor.isClient ) {} blocks.
+* server/	- used to store all code that’s meant to run on the server-side of our application. Any files located in a directory called server be loaded on the server-side only. This is used as an alternative to writing our code in if ( Meteor.isServer ) {} blocks.
+* /public	- used to store all files that are meant to be served publicly. Images, graphics, and other static assets can live here. Note: these will live directly off the root URL of your application like http://localhost:3000/file.jpg.
+* /private - used to store private data files and can only be accessed on the server. Files in this directory can be loaded on the server using the Assets API. For example, things like email templates or seed data can be stored here.
+* /client/compatibility	- used for “JavaScript libraries that rely on variables declared with var at the top level being exported as globals. Files in this directory are executed without being wrapped in a new variable scope. These files are executed before other client-side JavaScript files.”
+* /tests - is not loaded anywhere and is intended for storing test code (e.g. see the Velocity framework).
 
 ## Running it
 
@@ -123,10 +142,11 @@ Similar to client/modules, and server/modules.. this is a place to define module
 
 ### /node_modules/ - tools stuff
 
-This folder is for the node modules installed by npm. This is actually just for tool support, and contains just the following for now:
+For compatibility with node.js **tools** used alongside Meteor, any directory named node_modules is not loaded anywhere. node.js packages installed into node_modules directories will not be available to your Meteor code. Use Npm.depends in your package package.js file for that.
 
 * eslint - installed as part of the developer toolchain for use with WebStotm to help find errors in the soure code.
 
+For compatibility with node.js tools used alongside Meteor, any directory named node_modules is not loaded anywhere. node.js packages installed into node_modules directories will not be available to your Meteor code. Use Npm.depends in your package package.js file for that.
 ### /packages/ - non-Meteor-managed dependencies
 
 This folder contains some more tool stuff. 
@@ -135,7 +155,7 @@ This folder contains some more tool stuff.
 
 ### /private/ - ??? idk what
 
-[TODO:dgolds] Look into this some more. May be unnecessary? It's something to do with emails?
+All files inside a top-level directory called private are only accessible from server code and can be loaded via the [Assets API](http://docs.meteor.com/#/full/assets). This can be used for private data files and any files that are in your project directory that you don't want to be accessible from the outside.
 
 ### /public/ - just the favicon for now
 

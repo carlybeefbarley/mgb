@@ -24,6 +24,7 @@ At the simplest, [install Meteor](https://meteor.com) and then type 'meteor' in 
 
 * Client startup code is in /client/modules/startup.js
 * Server startup code is in /server/modules/startup.js
+* The outer html for the site is defined in /application.html
 
 ## /collections/ - Client and Server definitions of Meteor Collections used in this system
 
@@ -35,10 +36,15 @@ Notes:
 * Publication (allowing data to be synced from server to client) isn't defined here. Instead that is defined in /server/publications/\*.js
 
 
-## Routing
+## Routing and consequent ReactLayout.render() calls
 
-Note that this codebase uses [Flow-Router](https://github.com/kadirahq/flow-router) for routing (converting between url and what to do). 
-There are also some router helper functions in client/helpers/flow-router.js - notably pathFor(), urlFor() and currentRoute()
+Note that this codebase uses [Flow-Router](https://github.com/kadirahq/flow-router) for routing urls to the correct actions and renders.
+
+* The main routes are defined in /both/routes/*.js and these then usually call ReactLayout.render(). There are some extra event handlers to make sure login and logout events get handled ok.  
+* There are also some router helper functions in client/helpers/flow-router.js - notably pathFor(), urlFor() and currentRoute()
+  * See also the full [Flow-Router API](https://github.com/kadirahq/flow-router#api)
+
+Extra code can be added for [Triggers](https://github.com/kadirahq/flow-router#triggers) to perform tasks before enter into a route and after exit from a route.
 
 ## Client-only: Top level page layout
 
@@ -94,16 +100,23 @@ Here is where the server startup code defined in server/modules/startup.js is bo
 
 ### /both/methods
 
-...describe  [TODO:dgolds]
+This is where [Meteor Methods](http://docs.meteor.com/#/full/meteor_methods) are defined. 
+
+Initially, these include some CRUD functions on the sample collection but (TODO:dgolds) these need to be cleaned up
 
 ### /both/modules
 
-...describe  [TODO:dgolds]
+Similar to client/modules, and server/modules.. this is a place to define modules of code that cab be used in either context.
 
 ### /both/routes
 
-...describe  [TODO:dgolds]
-
+* /both/routes/authenticated.jsx defines the routes (and a flow-router group) for authenticated controls/pages
+  * It includes a redirect to the login page if the user is not logged in
+  * Routes for unauthenticated pages like signup, login etc are in /both/routes/public.jsx
+* 404 handling is done by the FlowRouter.notFound() handler in /both/routes/configure.jsx
+* There's also some magic for login support in /both/routes/configure.jsx
+  * An Accounts.onLogin() handler to jump to the landing page (index currently) when a Login succeeds
+  * A Tracker.autorun to handle any case where the user becomes logged out, and dump them at the login page    
 
 ## Miscellaneous strange stuff
 

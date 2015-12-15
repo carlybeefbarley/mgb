@@ -1,10 +1,10 @@
 {
-  "name": "application-name",
-  "version": "1.0.0",
-  "description": "Application description.",
+  "name": "mgb",
+  "version": "0.0.1",
+  "description": "My Game Builder.",
   "scripts": {
     "start": "meteor --settings settings-development.json",
-    "staging": "meteor deploy staging.meteor.com --settings settings-development.json",
-    "production": "meteor deploy production.meteor.com --settings settings-production.json"
+    "staging": "meteor deploy mgb-staging.meteor.com --settings settings-development.json",
+    "production": "meteor deploy mgb.meteor.com --settings settings-production.json"
   }
 }

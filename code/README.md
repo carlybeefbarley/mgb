@@ -67,26 +67,6 @@ The intent is for client startup code to be defined in client/modules/startup.js
 The file client/startup.js wires this to Meteor.startup
 
 
-## /node_modules/ - tools stuff
-
-This folder is for the node modules installed by npm. This is actually just for tool support, and contains just the following for now:
-
-* eslint - installed as part of the developer toolchain for use with WebStotm to help find errors in the soure code.
-
-## /packages/ - non-Meteor-managed dependencies
-
-This folder contains some more tool stuff. 
-
-[TODO:dgolds] Look into this some more. May be unnecessary?
-
-## /private/ - ??? idk what
-
-[TODO:dgolds] Look into this some more. May be unnecessary? It's something to do with emails?
-
-## /public/ - just the favicon for now
-
-[TODO:dgolds] Look into this some more. May be unnecessary? It's something to do with emails?
-
 ## /server/ - the meat of the Server code for this Meteor app
 
 'server' is a magic folder name for Meteor and indicates that the code in here is for the server only, not for the client (browser).
@@ -108,3 +88,42 @@ Here are where the publications of collections from Server to clients are define
 ### /server/startup.js
 
 Here is where the server startup code defined in server/modules/startup.js is bound to Meteor.startup() on the Server.
+
+
+## /both/ - BOTH Client and server...
+
+### /both/methods
+
+...describe  [TODO:dgolds]
+
+### /both/modules
+
+...describe  [TODO:dgolds]
+
+### /both/routes
+
+...describe  [TODO:dgolds]
+
+
+## Miscellaneous strange stuff
+
+
+### /node_modules/ - tools stuff
+
+This folder is for the node modules installed by npm. This is actually just for tool support, and contains just the following for now:
+
+* eslint - installed as part of the developer toolchain for use with WebStotm to help find errors in the soure code.
+
+### /packages/ - non-Meteor-managed dependencies
+
+This folder contains some more tool stuff. 
+
+[TODO:dgolds] Look into this some more. May be unnecessary?
+
+### /private/ - ??? idk what
+
+[TODO:dgolds] Look into this some more. May be unnecessary? It's something to do with emails?
+
+### /public/ - just the favicon for now
+
+[TODO:dgolds] Look into this some more. May be unnecessary? It's something to do with emails?

@@ -1,3 +1,5 @@
-let startup = () => {};
+let startup = () => {
+
+};
 
 Modules.client.startup = startup;

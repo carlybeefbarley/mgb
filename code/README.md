@@ -34,6 +34,7 @@ Summarized from [this article](https://themeteorchef.com/snippets/organizing-you
 * /private - used to store private data files and can only be accessed on the server. Files in this directory can be loaded on the server using the Assets API. For example, things like email templates or seed data can be stored here.
 * /client/compatibility	- used for “JavaScript libraries that rely on variables declared with var at the top level being exported as globals. Files in this directory are executed without being wrapped in a new variable scope. These files are executed before other client-side JavaScript files.”
 * /tests - is not loaded anywhere and is intended for storing test code (e.g. see the Velocity framework).
+* /i18n - is the i18n and localization support, which provide the global i18n object and the global T React component for translation.
 
 ## Running it
 

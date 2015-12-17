@@ -35,3 +35,4 @@ universe:react-grid-layout
 universe:ecmascript
 react-runtime
 react-meteor-data
+universe:react-table

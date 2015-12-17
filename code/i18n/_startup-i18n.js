@@ -1,4 +1,7 @@
 
+//System.import('{universe:i18n}').then( (mod) => i18n = mod.i18n);  // This is the pre-ecmascript2015 syntax
+import i18n from '{universe:i18n}';
+
 
 if (Meteor.isClient)
 {
@@ -11,13 +14,13 @@ if (Meteor.isClient)
       return navigator.language || navigator.browserLanguage;
     }
 
-    let thisLocale = getLang();   // TODO:allow the user to override
+    let thisLocale = "es";//getLang();   // TODO:allow the user to override
     console.log("Setting locale automatically to " + thisLocale);
-    _i18n.setLocale(thisLocale);
+    i18n.setLocale(thisLocale);
 
-    T = _i18n.createComponent();      // Expprting as global intentionally.. T is for Translate
+    T = i18n.createComponent();         // Expprting as global intentionally.. T is for Translate
 
-    i18n = _i18n;                     // Exporting as global intentionally..
+   // i18n = _i18n;                     // Exporting as global intentionally..
   })
 }
 else

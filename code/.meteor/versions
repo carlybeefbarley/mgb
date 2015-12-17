@@ -110,8 +110,13 @@ tracker@1.0.9
 twbs:bootstrap@3.3.6
 ui@1.0.8
 underscore@1.0.4
+universe:ecmascript@0.6.7_1
 universe:i18n@1.3.0
+universe:modules@0.6.7
+universe:modules-compiler@1.0.5
+universe:react-grid-layout@0.10.0
 universe:utilities@2.1.0
+universe:utilities-react@0.1.3
 url@1.0.5
 webapp@1.2.3
 webapp-hashing@1.0.5

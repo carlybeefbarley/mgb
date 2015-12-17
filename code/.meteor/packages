@@ -16,7 +16,6 @@ themeteorchef:bert
 meteorhacks:ssr
 standard-minifiers
 npm-container
-ecmascript
 digilord:faker
 kadira:flow-router
 meteorhacks:fast-render
@@ -28,7 +27,11 @@ reactive-var
 reactive-dict
 aldeed:collection2
 tracker
-react
 kadira:react-layout
 sach:flow-db-admin
 universe:i18n
+universe:modules
+universe:react-grid-layout
+universe:ecmascript
+react-runtime
+react-meteor-data

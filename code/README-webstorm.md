@@ -9,6 +9,8 @@ Recommended:
 * [WebStorm 11 EAP (WS-143.1183.13)](https://confluence.jetbrains.com/display/WI/WebStorm+11+EAP)
 *  (dgolds has a copy in his Google Drive if needed)
 
+**NOTE that source maps aren't correctly being handled if I am using the universe:ecmascript package. C'est la via**
+
 Not recommended:
 
 * WebStorm versions before 11 (does not have full Meteor support)

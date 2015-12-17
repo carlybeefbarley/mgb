@@ -35,19 +35,19 @@ Note: 'TAGS' may be a bad phrase since it conflicts with GIT version control ter
 * ?? We may allow users to add EXTERNAL-TAGS on Assets they do not own
 
 
-## Cross-user Asset references
+### Cross-user Asset references
 
 * Users can reference (and use) ANY assets in other users' projects
 * There should be warnings/reports for any *mutable* assets they depend upon
 
 
-## Import from MGBv1
+### Import from MGBv1
 
 * If we do game import from MGBv1, we can have an automatic TAG project-ZZZZZ assigned to that imported item so we
   start with a pseudo-hierarchy.
 
 
-## Definition and Publication of Games
+### Definition and Publication of Games
 
 * There will be a special Asset type called Game (possible 'App' for future-proofing?)
 * Games reference a number of top-level assets like Maps, Players, Servers, etc
@@ -60,7 +60,7 @@ Note: 'TAGS' may be a bad phrase since it conflicts with GIT version control ter
 * Published games can be deleted. This will cause any cloned+locked assets to be deleted
 
 
-## Teams and collaboration
+### Teams and collaboration
 
 * The data model described above supports loose collaboration across users where they just use each other's stuff. It is
   simple but a little fragile, however with some reference-warnings it may be usable.
@@ -95,6 +95,7 @@ This means that the user experience is basically a search with tags for various 
 be INDEPENDENTLY selected are
 * No asset type filter, or select one-or-more asset types (including 'all')
 * No asset owner filter, or select one-or-more owners types (including just-me, just-friends, named-users, or 'all')
+  * There is some [nice UI](https://learningcircle.io/blog) for this by the [universe](https://atmospherejs.com/universe) folks
 * Zero-or-more tags
   * See https://atmospherejs.com/telescope/tags and https://atmospherejs.com/yogiben/autoform-tags 
 * Search into Some full text description fields
@@ -102,3 +103,11 @@ be INDEPENDENTLY selected are
     [this article](https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor) which mentions the caveats
 * We may also have a set of quick-find searches. For fun, let's have searches themselves be a first-class Asset so they 
   can be shared and referenced!
+  
+* We might use a grid arrangement for viewing items. See 
+ [Reactive Grid Layout](https://github.com/vazco/meteor-universe-react-grid-layout) for a very flexible option here.
+
+## Implementation
+
+
+

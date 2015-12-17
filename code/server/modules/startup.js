@@ -2,6 +2,7 @@ let startup = () => {
   _setBrowserPolicies();
   _generateAccounts();
   _generatePeople();
+  _generateAssets();
   _setEnvironmentVariables();
 };
 
@@ -10,6 +11,8 @@ let _setBrowserPolicies = () => {
 };
 
 let _generateAccounts = () => Modules.server.generateAccounts();
+
+let _generateAssets = () => Modules.server.generateAssets();
 
 let _generatePeople = () => Modules.server.generatePeople();
 

@@ -1,5 +1,7 @@
 Dashboard = React.createClass({
+
   mixins: [ ReactMeteorData ],
+
   getMeteorData() {
     let subscription = Meteor.subscribe( 'dashboard' );
 
@@ -8,6 +10,7 @@ Dashboard = React.createClass({
       people: People.find().fetch()
     };
   },
+
   render() {
     if ( this.data.isLoading ) {
       return <Loading />;

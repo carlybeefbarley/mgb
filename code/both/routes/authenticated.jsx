@@ -16,6 +16,13 @@ authenticatedRoutes.route( '/', {
   }
 });
 
+authenticatedRoutes.route( '/assets', {
+  name: 'assets',
+  action() {
+    ReactLayout.render( Default, { yield: <AssetsView /> } );
+  }
+});
+
 authenticatedRoutes.route( '/dashboard', {
   name: 'dashboard',
   action() {

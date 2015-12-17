@@ -40,6 +40,15 @@ Summarized from [this article](https://themeteorchef.com/snippets/organizing-you
 
 At the simplest, [install Meteor](https://meteor.com) and then type 'meteor' in this /code/ folder
 
+## React magic
+
+The .JSX files are typically defining React Components which can then be used in html like elements. The choice of 
+upper/lower case for the name is VERY IMPORTANT: React's JSX uses the upper vs. lower case convention to distinguish 
+between local component classes and HTML tags ([docs](https://facebook.github.io/react/docs/jsx-in-depth.html)). Upper case is for React Components (classes), lower case is for html 
+elements
+                                           
+
+
 ## Startup code
 
 * Client startup code is in /client/modules/startup.js

@@ -31,4 +31,10 @@
   * CSS framework: 
     * Now: Bootstrap3
     * Next? semantic-ui looks good but is another learning curve
- 
+  * Table control:
+    * Now: [universe:reactable](https://atmospherejs.com/universe/react-table)
+    * Next? Fork universe:reactable and create my own?
+    * Next? wrapper for Datatable?
+  * Handling image editing
+    * To investigate: ([Reasonable list of options](http://stackoverflow.com/questions/10099202/how-would-one-handle-a-file-upload-with-meteor))
+    * Candidate: [CollectionFS](https://github.com/CollectionFS/Meteor-CollectionFS)

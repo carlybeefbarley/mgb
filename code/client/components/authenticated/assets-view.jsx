@@ -1,5 +1,5 @@
 
-// We are using https://atmospherejs.com/universe/react-table 
+// We are using https://atmospherejs.com/universe/react-table
 import {Table, Thead, Th} from '{universe:react-table}';
 
 
@@ -17,10 +17,13 @@ AssetsView = React.createClass({
   },
 
   render() {
+
+
     return (
 
       <div className="jumbotron text-center" style={{padding: '20px'}}>
         <h2>Assets</h2>
+        <AssetKindSelector/>
         <Table
           className="table"
           onClickRow={(item, i, e) => alert('clicked on row:' +  item + i + e)}
@@ -30,14 +33,16 @@ AssetsView = React.createClass({
           data={this.data.assets}>
           <Thead>
             <Th column="name">
-              <strong className="name-header">Asset Name</strong>
+              <strong className="asset-name-header">Asset Name</strong>
+            </Th>
+            <Th column="kind">
+              <em className="asset-kind-header">Asset Kind</em>
             </Th>
             <Th column="content">
-              <em className="age-header">Asset Content</em>
+              <em className="asset-content-header">Asset Content</em>
             </Th>
           </Thead>
         </Table>
-        <AssetsTable assets={this.data.assets} />
       </div>
     );
   }

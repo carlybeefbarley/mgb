@@ -1,5 +1,5 @@
 let generate = () => {
-  let assetCount = 5,
+  let assetCount = 15,
     assetExist = _checkIfAssetExist( assetCount );
 
   if ( !assetExist ) {
@@ -25,11 +25,13 @@ let _createAsset = ( asset ) => {
 
 let _generateAsset = ( count ) => {
   let assetArray = [];
+  let assetKindKeys = Object.keys(AssetKinds);
 
   for ( let i = 0; i < count; i++ ) {
     assetArray.push({
       name: "Asset #" + i.toString(),
-      content: "Content #" + i.toString(),
+      kind: assetKindKeys[i % assetKindKeys.length],
+      content: "Content #" + i.toString()
     });
   }
 

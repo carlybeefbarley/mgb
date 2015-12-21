@@ -15,15 +15,15 @@ People.deny({
 let PeopleSchema = new SimpleSchema({
   "name": {
     type: String,
-    label: "The name of the person."
+    label: "The name of the person"
   },
   "email": {
     type: String,
-    label: "The email address of the person."
+    label: "The email address of the person"
   },
   "avatar": {
     type: String,
-    label: "The URL for the avatar of the person."
+    label: "The URL for the avatar of the person"
   }
 });
 

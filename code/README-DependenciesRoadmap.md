@@ -12,7 +12,8 @@
   
 ## Main perf strategies given Meteor base
 
-1. See how to manage the Assets subscription to be narrowed down (project tag?)
+1. See how to limit scope of the 'Assets' Meteor subscription
+  1. Default scope limit by owner makes sense
 1. Stable assets should get compiled and pushed to a CDN; only unstable assets 
   1. AssetContent could have stuff like a  URL for built-assets and a last-built-date and a last-edited date. 
     1. The idea would be that we get built-assets directly from the CDN. 

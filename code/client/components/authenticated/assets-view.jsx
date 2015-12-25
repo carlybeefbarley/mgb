@@ -1,6 +1,6 @@
 
 // We are using https://atmospherejs.com/universe/react-table
-import {Table, Thead, Th} from '{universe:react-table}';
+import {Table, Thead, Th, Tfoot } from '{universe:react-table}';
 
 AssetsView = React.createClass({
 
@@ -32,6 +32,7 @@ AssetsView = React.createClass({
 
   render() {
 
+    let rowsMatchingTags = this._filterAssetsBySelectedTags(this.data.assets);
     return (
 
       <div className="jumbotron text-center" style={{padding: '20px'}}>
@@ -43,7 +44,7 @@ AssetsView = React.createClass({
           itemsPerPage={10} pageButtonLimit={6}
           sortable={true}
           filterable={['name']}
-          data={this._filterAssetsBySelectedTags(this.data.assets)}>
+          data={rowsMatchingTags}>
           <Thead>
             <Th column="name">
               <strong className="asset-name-header">Asset Name</strong>
@@ -54,7 +55,11 @@ AssetsView = React.createClass({
             <Th column="content">
               <em className="asset-content-header">Asset Content</em>
             </Th>
+            <Th column="ownerId">
+              <em className="asset-content-header">Owner</em>
+            </Th>
           </Thead>
+          <Tfoot><tr><td>{rowsMatchingTags.length} assets match</td><td></td><td></td><td></td></tr></Tfoot>
         </Table>
       </div>
     );

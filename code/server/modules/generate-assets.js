@@ -31,7 +31,8 @@ let _generateAsset = ( count ) => {
     assetArray.push({
       name: "Asset #" + i.toString(),
       kind: assetKindKeys[i % assetKindKeys.length],
-      content: "Content #" + i.toString()
+      content: "Content #" + i.toString(),
+      ownerId: i%17        // Why 17? Why not. This is just random data
     });
   }
 

@@ -13,14 +13,15 @@ resources across multiple projects, and led to clunky solutions like send-image-
 keep data access simple within a single project (no accidental changes to items shared between projects) and was easy 
 to implement given the very simple S3 hierarchical namespace that MGBv1 was based upon.
 
-The proposal for MGBv2 is to instead have TAGS so that any asset can be in one or more 'projects'.
+The proposal for MGBv2 is to instead have TAGS so that any Asset can be in one or more 'projects'.
 
 Note: 'TAGS' may be a bad phrase since it conflicts with GIT version control terminology.. need to consider that
 
 
 ### Asset Identity and Mutability
 
-* All assets are primarily identified by a UUID that is a strong reference
+* All Assets are primarily identified by a UUID that is a strong reference
+* All Assets have a owner-id which is a numeric user id (numeric so we can support user rename easily)
 * There is a NAME attribute on any asset, but this is not a strong reference
 * Assets may be set to be immutable which means they can no longer be deleted or changed. This is useful for some 
   reference assets. We may limit who can have immutable assets since it is an non-reversible decision.

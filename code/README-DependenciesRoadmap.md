@@ -8,6 +8,20 @@
   * PhoenixFramework: Many new learning curves (Elixir language etc)
   * GraphQL: A bit early for this? How are subscriptions handled?
   * Ruby/Rails: Not good for scaling or synced updates
+  
+  
+## Main perf strategies given Meteor base
+
+1. See how to manage the Assets subscription to be narrowed down (project tag?)
+1. Stable assets should get compiled and pushed to a CDN; only unstable assets 
+  1. AssetContent could have stuff like a  URL for built-assets and a last-built-date and a last-edited date. 
+    1. The idea would be that we get built-assets directly from the CDN. 
+    1. Stuff that has been superseded can exist and be accessed in it's unstable form in a AssetSource table
+    1. Edit happens on the versions in the AssetSource Table
+    1. We get versioning by having the 'built' version generate the filename_url and filename_url.src
+    1. This implies need for shared client-side and server-side asset 'compilers'
+    1. Spritesheets may need a specialized store - depends how MongoDB does with EJSON binaries. 
+       Could use Amazon S3 maybe?
  
 ## Meteor packages - electives
 

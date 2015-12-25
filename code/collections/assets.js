@@ -31,11 +31,11 @@ let AssetsSchema = new SimpleSchema({
 // Each KIND will have it's own schema for the content.
 // Each KIND has various usages: for use in editor, game, etc
 AssetKinds = {
-  "asset-query": { label: "Asset Query", usage: ["editor"]},    // Lets us save asset queries
-  "sprite-sheet": { label: "Sprite Sheet", usage: ["game"]},
-  "game-object": {label: "Game Object", usage: ["game"]},
-  "level-map": { label: "Level Map", usage: ["game"]},
-  "game-definition": {label: "Game Definition", usage: ["game"]}
+  "asset-query": { index: 0, label: "Asset Query", icon: "glyphicon glyphicon-search", usage: ["editor"]},    // Lets us save asset queries
+  "sprite-sheet": { index: 1, label: "Sprite Sheet", icon: "glyphicon glyphicon-file", usage: ["game"]},
+  "game-object": { index: 2, label: "Game Object", icon: "glyphicon glyphicon-knight", usage: ["game"]},
+  "level-map": { index: 3, label: "Level Map", icon: "glyphicon glyphicon-picture", usage: ["game"]},
+  "game-definition": { index: 4, label: "Game Definition", icon: "glyphicon glyphicon-play", usage: ["game"]}
 };
 
 AssetsCollection.attachSchema( AssetsSchema );

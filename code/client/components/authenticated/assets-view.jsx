@@ -2,7 +2,6 @@
 // We are using https://atmospherejs.com/universe/react-table
 import {Table, Thead, Th} from '{universe:react-table}';
 
-
 AssetsView = React.createClass({
 
   mixins: [ ReactMeteorData ],
@@ -16,21 +15,35 @@ AssetsView = React.createClass({
     };
   },
 
-  render() {
+  getInitialState() {
+    var _tagsToShow = {};
+    _.each(Object.keys(AssetKinds), (k) => { _tagsToShow[k] = true; });
+    return { tagsToShow : _tagsToShow }
+  },
 
+  _tagsChangedHandler : function(assetKey) {
+    this.state.tagsToShow[assetKey] = !this.state.tagsToShow[assetKey];   // TODO: find a safer way to do this React-ily - see See http://facebook.github.io/react/docs/update.html
+    this.setState( { tagsToShow : this.state.tagsToShow } );              // TODO: ^^^
+  },
+
+  _filterAssetsBySelectedTags(assetsList) {
+    return _.filter(assetsList, (a) => {return this.state.tagsToShow[a.kind] === true })
+  },
+
+  render() {
 
     return (
 
       <div className="jumbotron text-center" style={{padding: '20px'}}>
         <h2>Assets</h2>
-        <AssetKindSelector/>
+        <AssetKindSelector tagsToShow={this.state.tagsToShow} tagsChangedCallback={this._tagsChangedHandler}/>
         <Table
           className="table"
           onClickRow={(item, i, e) => alert('clicked on row:' +  item + i + e)}
-          itemsPerPage={3} pageButtonLimit={6}
+          itemsPerPage={10} pageButtonLimit={6}
           sortable={true}
           filterable={['name']}
-          data={this.data.assets}>
+          data={this._filterAssetsBySelectedTags(this.data.assets)}>
           <Thead>
             <Th column="name">
               <strong className="asset-name-header">Asset Name</strong>

@@ -1,5 +1,5 @@
 let generate = () => {
-  let assetCount = 15,
+  let assetCount = 1500,
     assetExist = _checkIfAssetExist( assetCount );
 
   if ( !assetExist ) {

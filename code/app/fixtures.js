@@ -2,7 +2,7 @@
 import {Users} from './schemas';
 
 export function createUsers() {
-  console.log('Creating global admin user');
+  console.log('Creating global admin user from fixtures.js');
   const users = [{
         name: 'Super Admin User',
         email: 'super@admin.com',
@@ -16,7 +16,7 @@ export function createUsers() {
 
     id = Accounts.createUser({
       email: user.email,
-      password: "apple1",
+      password: "apple1",     // TODO: make this something a bit safer
       profile: {
         name: user.name
       }

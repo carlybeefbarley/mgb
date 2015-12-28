@@ -71,36 +71,7 @@ export default class Home extends Component {
               </ul>
             </div>
           </div>
-        </div>
-
-        <div className={styles.section2}>
-          <h2 className={styles.title}>More...</h2>
-          <div className={styles.listGrid}>
-            <div className={styles.listColumn}>
-              <span className={styles.iconBlue}><i className="fa fa-clone"></i></span>
-              <h4>Very open to feedback</h4>
-              <p>Please shoot me an email or submit a pull request. Would love anything to make this project better.</p>
-            </div>
-            <div className={styles.listColumn}>
-              <span className={styles.iconBlue}><i className="fa fa-user"></i></span>
-              <h4>Specific areas to improve</h4>
-              <p>I'd like SSR to work. I messed with it a bit, but haven't got it working. Also, google's oauth is causing
-              some trouble. FB and twitter work fine but I've had no luck with google. I also think a component that allows
-              users to invite people from their gmail contact list would be great.</p>
-            </div>
-            <div className={styles.listColumn}>
-              <span className={styles.iconBlue}><i className="fa fa-lock"></i></span>
-              <h4>Current status</h4>
-              <p>This is a learning project for me in both react and meteor. I've just started freelancing a few months back and I'm currently looking for more work. =) Please shoot
-              me an email below if you'd like to get in touch. I can prototype your next SaaS app quickly.</p>
-            </div>
-            <div className={styles.listColumn}>
-              <span className={styles.iconBlue}><i className="fa fa-share-square-o"></i></span>
-              <h4>General idea</h4>
-              <p>The todo portion of the app will be replaced by your actual app. However, instead of writing the team/users/payments/dashboards from scratch, you have a base to start from. </p>
-            </div>
-          </div>
-          <p><em>Last thing - reset password option fake generates an email in your console that you can only see when you run locally at the moment. No real email is sent. While the token pass reset works, you'll have to finish setting up email with Meteor and Mailgun/Mandrill or something of the like.</em></p>
+          <p><em>NOTE - reset password option fake-generates an email in the console that you can only be seen when the server is run locally at the moment. No real email is sent. While the token pass reset works, [TODO] we have to finish setting up email with Meteor and Mailgun/Mandrill or something of the like.</em></p>
           <br/>
           <div className={styles.center}>
             <h3>Take it for a spin!</h3>

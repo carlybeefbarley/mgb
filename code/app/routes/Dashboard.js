@@ -86,7 +86,7 @@ export default class Dashboard extends Component {
 
     return (
       <div className={styles.wrapper}>
-        <h1 className={styles.title}>Dashboard</h1>
+        <h1 className={styles.title}>Dashboard [TODO - currently fake]</h1>
         <h3 className={styles.subtitle}>User Stats</h3>
         <div className={styles.grid} >
           <div className={styles.halfColumn} >
@@ -102,7 +102,7 @@ export default class Dashboard extends Component {
 
           <div className={styles.halfColumn} ref="halfcol" >
             <Sparkline
-              chartName="Daily Acive Users"
+              chartName="Daily Active Users"
               data={sampleData}
               width={this.state.halfColWidth}
               lineStyle={{ stroke: "none", fill: "none" }}

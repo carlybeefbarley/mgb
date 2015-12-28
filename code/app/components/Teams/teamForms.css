@@ -1,0 +1,55 @@
+.btn {
+  composes: buttonPrimary from '../../styles/buttons.css';
+  margin-top: .8em;
+  width: 100%;
+}
+
+.btnShake {
+  composes: buttonShakePrimary from '../../styles/buttons.css';
+  margin-top: .8em;
+  width: 100%;
+}
+
+.subtitle {
+  composes: subtitle from '../../styles/utilities.css';
+  margin-top: 1em;
+  margin-bottom: 0;
+}
+
+.grid {
+  lost-utility: clearfix;
+}
+
+.grid input, .grid label{
+  display: block;
+  margin: 0.25em 0;
+  margin-bottom: 0em;
+  z-index: 3;
+}
+
+.inputCol {
+  max-width: 23em;
+}
+
+.column {
+  lost-waffle: 2/7;
+}
+
+@media all and (max-width: 40em) {
+  .column, .inputCol {
+    max-width: 100%;
+    lost-waffle: 1;
+  }
+}
+
+.selected {
+  border: .3em solid green;
+  margin-bottom: 3em;
+  cursor: pointer;
+}
+
+.unselected {
+  composes: selected;
+  border-color: rgba(255, 0, 0, 0);
+  cursor: pointer;
+}

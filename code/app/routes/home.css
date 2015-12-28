@@ -1,0 +1,103 @@
+.section1 {
+  background-color: #333333;
+  background-image: url("https://unsplash.it/1600/550?image=826&blur");
+  padding-top: 2em;
+}
+
+@media all and (max-width: 40em) {
+  .section1 {
+    background-image: url("https://unsplash.it/600/550?image=826&blur");
+  }
+}
+
+.heroGrid {
+  lost-align: center;
+  height: 500px;
+}
+
+.heroColumn {
+  width: 100%;
+  text-align: center;
+}
+
+.primary {
+  composes: buttonPrimary from '../styles/buttons.css';
+  margin-top: .2em;
+  margin-right: .2em;
+}
+
+.white {
+  color: #fff;
+}
+
+.section2 {
+  max-width: 960px;
+  margin: 6em auto;
+}
+
+@media all and (max-width: 65em) {
+  .section2 {
+    margin: 2em 2em;
+  }
+}
+
+.listGrid {
+  lost-utility: clearfix;
+}
+
+.listColumn {
+  lost-waffle: 1/2;
+}
+
+@media all and (max-width: 40em) {
+  .listColumn {
+    lost-waffle: 1;
+  }
+}
+
+.listUl {
+  margin-left:0;
+}
+
+.list {
+  list-style: none;
+}
+
+.iconList {
+  float: left;
+  color: green;
+  margin-right: .3em;
+  margin-left: -1.3em;
+}
+
+.icon {
+  float: left;
+  color: green;
+  font-size:1.2em;
+  margin-right: .3em;
+  margin-left: -1.3em;
+  margin-top: -.1em;
+}
+
+.iconBlue {
+  composes: icon;
+  color: #03A9F4;
+}
+
+.section3 {
+  background-color: #f7f7f7;
+}
+
+.secondary {
+  composes: primary;
+  background-color: #777;
+  color: #fff;
+}
+
+.title {
+  composes: title from '../styles/utilities.css';
+}
+
+.center {
+  text-align: center;
+}

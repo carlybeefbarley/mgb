@@ -1,0 +1,15 @@
+.wrapper {
+  lost-center: 400px;
+  composes: wrapper from '../../styles/utilities.css';
+}
+
+.title {
+  text-align: center;
+}
+
+.subtitle {
+  composes: subtitle from '../../styles/utilities.css';
+  margin-bottom:.2em;
+  margin-top:.6em;
+  text-align: center;
+}

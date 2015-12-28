@@ -1,0 +1,64 @@
+.grid {
+  lost-utility: clearfix;
+  max-width: 960px;
+  margin-bottom: 1em;
+}
+
+.column {
+  lost-waffle: 1/2;
+}
+
+@media all and (max-width: 40em) {
+  .column {
+    lost-waffle: 1;
+  }
+}
+
+.btn {
+  composes: button from '../../styles/buttons.css';
+  margin-top: .6em;
+  margin-bottom: 3em;
+}
+
+.btnAccept {
+  composes: buttonPrimary from '../../styles/buttons.css';
+  margin-top: .6em;
+  padding: 0.5em 1em;
+}
+
+.btnDecline {
+  composes: button from '../../styles/buttons.css';
+  margin: .6em 0 0em .5em;
+}
+
+.btnTodos {
+  composes: button from '../../styles/buttons.css';
+  margin-top: 1em;
+}
+
+.title {
+  composes: title from '../../styles/utilities.css';
+}
+
+.subtitle {
+  composes: subtitle from '../../styles/utilities.css';
+}
+
+.marginTopSubtitle {
+  composes: subtitle from '../../styles/utilities.css';
+  margin-top: 1.6em;
+}
+
+.wrapper {
+  composes: wrapper from '../../styles/utilities.css';
+}
+
+.link {
+  text-decoration: none;
+}
+
+.invite {
+  background-color: #f7f7f7;
+  padding: .5em;
+  margin: 1em 0;
+}

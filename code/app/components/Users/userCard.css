@@ -1,0 +1,70 @@
+.imgWrapper {
+  height: 179px;
+  width: 100.2%;
+  z-index: -1;
+  lost-align: bottom;
+}
+
+.bannerImg {
+  height: 150px;
+  max-width: 100%;
+}
+
+.avatar {
+  border-radius: 50%;
+  margin-bottom: -5px;
+  height: 4.6em;
+  width: 4.6em;
+  padding: .3em;
+  background-color: #fff;
+}
+
+.info {
+  padding: 1em;
+}
+
+.name {
+  text-align: center;
+  margin: 0em;
+  line-height: 90%;
+}
+
+.role {
+  text-align: center;
+  color: #aaa;
+}
+
+.middle {
+  margin-bottom: .6em;
+}
+
+.quote {
+  color: #333;
+  font-size:1.1em;
+  margin-bottom: .8em;
+}
+
+.items {
+  color: #4C4C4C;
+  font-size: 90%;
+  margin-bottom: 0em;
+}
+
+.items a {
+  color: #4C4C4C;
+  text-decoration: none;
+}
+
+.items a:hover {
+  text-decoration: underline;
+}
+
+.icon {
+  display: inline-block;
+  width: 1.2em;
+  text-align: center;
+}
+
+.cardShadow {
+  composes: cardShadow from '../../styles/utilities.css';
+}

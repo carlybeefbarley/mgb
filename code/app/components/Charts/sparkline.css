@@ -1,0 +1,4 @@
+.wrapper {
+  padding: .5em;
+  composes: cardShadow from '../../styles/utilities.css';
+}

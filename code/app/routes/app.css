@@ -1,0 +1,29 @@
+.darken {
+  animation: an-open .5s 1;
+  animation-fill-mode: forwards;
+}
+
+.lighten {
+  animation: an-close .5s 1;
+  animation-fill-mode: forwards;
+}
+
+.app {
+  min-height: calc(100vh - 6em);
+}
+
+@keyframes an-open {
+  0% {
+    opacity: 1;
+  } 100% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes an-close {
+  0% {
+    opacity: 0.5;
+  } 100% {
+    opacity: 1;
+  }
+}

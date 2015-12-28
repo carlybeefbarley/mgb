@@ -1,0 +1,26 @@
+.btn {
+  composes: buttonPrimary from '../../styles/buttons.css';
+  margin-top: .8em;
+  width: 100%;
+}
+
+.btnShake {
+  composes: buttonShakePrimary from '../../styles/buttons.css';
+  margin-top: .8em;
+  width: 100%;
+}
+
+.form input, .form label{
+  display: block;
+  margin: 0.25em 0;
+  margin-bottom: 0em;
+  z-index: 3;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}

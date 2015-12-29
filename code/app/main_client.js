@@ -5,6 +5,7 @@ import './schemas/teams.js';
 import './schemas/users.js';
 import './schemas/plans.js';
 import './schemas/todos.js';
+import './schemas/assets.js';
 
 import './lib/ImageUploadPermissions.js';
 

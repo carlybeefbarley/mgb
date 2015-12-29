@@ -1,4 +1,4 @@
-import {Plans, Users, Teams, Todos} from '../schemas';
+import {Plans, Users, Teams, Todos, Azzets} from '../schemas';
 
 //only super-admins can see all plans. Everyone else gets the public plans only
 Meteor.publish('plans', function(isSuperAdmin) {
@@ -51,6 +51,23 @@ Meteor.publish('todos.auth', function(userId, teamId) {
     });
   }
 });
+
+//Can see all assets belonging to user/team
+Meteor.publish('assets.auth', function(userId) {
+    return Azzets.find({
+      isDeleted: false,
+      ownerId: userId,
+    });
+  }
+);
+
+//Can see all assets
+Meteor.publish('assets.public', function() {
+    return Azzets.find({
+      isDeleted: false
+    });
+  }
+);
 
 //Can only see todos not marked as private
 Meteor.publish('todos.public', function(userId, teamId) {

@@ -84,10 +84,10 @@ export default class App extends Component {
     return (
       <div>
         <Helmet
-          title="My SaaS App"
-          titleTemplate="%s - TaskandTool.com"
+          title="MyGameBuilder v2"
+          titleTemplate="%s - devlapse.com"
           meta={[
-              {"name": "description", "content": "SaaS App Starter Kit"}
+              {"name": "description", "content": "MyGameBuilder v2"}
           ]}
         />
 

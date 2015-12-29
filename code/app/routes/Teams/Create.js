@@ -141,7 +141,7 @@ export default class TeamCreateRoute extends React.Component {
 
     //Open pop-up to ask for CC details
     handler.open({
-      name: 'SaaS Starter',
+      name: 'MyGameBuilder Billing',
       amount: amount
     })
 

@@ -12,6 +12,7 @@ import * as Plans from './Plans';
 import * as Users from './Users';
 import * as Teams from './Teams';
 import * as Todos from './Todos';
+import * as Azzets from './Assets';
 
 import NotFoundPage from './NotFoundPage';
 
@@ -41,6 +42,7 @@ Meteor.startup(function () {
         <Route path="users" component={Users.List} name="Users" />
         <Route path="user/:id" component={Users.Profile} name="User Profile" back="/users" />
         <Route path="user/:id/todos" component={Todos.UserTodoList} name="Todos" />
+        <Route path="user/:id/assets" component={Azzets.UserAssetList} name="Assets" />
         <Route path="super-global-dashboard" component={Dashboard} name="Dashboard" />
         <Route path="super-global-dashboard/plan/add" component={Plans.Create} name="Create New Plan" back="/plans" />
         <Route path="*" component={NotFoundPage} />

@@ -72,7 +72,7 @@ export default class UserTodoListRoute extends Component {
           ]}
         />
 
-        <h1 className={styles.title}>{name}'s Todos</h1>
+        <h1 className={styles.title}>{name}&rsquo;s Todos</h1>
         <h3 className={styles.subtitle}>{todos.length} Todos</h3>
 
         <div className={styles.grid}>

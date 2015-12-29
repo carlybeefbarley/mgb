@@ -29,6 +29,9 @@ export default class Sidebar extends Component {
             <li className={styles.item}>
               <Link to={`/user/${currUser._id}/todos`} className={styles.link} activeClassName={styles.active} >My Todos</Link>
             </li>
+            <li className={styles.item}>
+              <Link to={`/user/${currUser._id}/assets`} className={styles.link} activeClassName={styles.active} >My Assets</Link>
+            </li>
           </ul>
       );
     } else {

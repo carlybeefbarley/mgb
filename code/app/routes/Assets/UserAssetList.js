@@ -1,21 +1,23 @@
 import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
-import {Todos} from '../../schemas';
-import TodoList from '../../components/Todos/TodoList';
+import {Azzets} from '../../schemas';
+import AssetList from '../../components/Assets/AssetList';
 import Spinner from '../../components/Spinner/Spinner';
 import styles from './list.css';
 import {handleForms} from '../../components/Forms/FormDecorator';
 import Helmet from 'react-helmet';
-import TodoForms from '../../components/Todos/TodoForms';
-import TeamCard from '../../components/Teams/TeamCard.js';
+import AssetForms from '../../components/Assets/AssetForms';
+import UserItem from '../../components/Users/UserItem.js';
 
 @handleForms
 @reactMixin.decorate(ReactMeteorData)
-export default class TeamTodoListRoute extends Component {
+export default class UserAssetListRoute extends Component {
 
   static propTypes = {
     params: PropTypes.object,
-    showToast: PropTypes.func
+    user: PropTypes.object,
+    currUser: PropTypes.object,
+    ownsProfile: PropTypes.bool
   }
 
   constructor(props) {
@@ -32,50 +34,55 @@ export default class TeamTodoListRoute extends Component {
   getMeteorData() {
     let handle
 
-    //Subscribe to private and public or just private todos?
-    if (this.props.teamRoles.length > 0) {
-      handle = Meteor.subscribe("todos.auth", null, this.props.params.teamId);
+    //Subscribe to assets labeled isPrivate?
+    if (this.props.ownsProfile) {
+      handle = Meteor.subscribe("assets.auth", this.props.params.id);
     } else {
-      handle = Meteor.subscribe("todos.public", null, this.props.params.teamId);
+      handle = Meteor.subscribe("assets.public");
     }
 
     return {
-      todos: Todos.find({}, {sort: {createdAt: -1}}).fetch(),
+      assets: Azzets.find({}, {sort: {createdAt: -1}}).fetch(),
       loading: !handle.ready()
     };
   }
 
   render() {
-    //list of todos
-    let todos = this.data.todos;
+    //list of assets provided via getMeteorData()
+    let assets = this.data.assets;
 
-    //todo form setup
+    //asset form setup
     let values = this.props.inputState.values;
     let errors = this.props.inputState.errors;
     let inputsToUse = [
-      "text"
+      "name",
+      "kind",
+      "text"      // [TODO:DGOLDS] change to content
     ];
 
-    //grabbing this from subscription in app.js
-    const {name, _id} = this.props.team
+    const {user, ownsProfile} = this.props;
+    const {_id, createdAt} = user;
+    const {name, avatar} = user.profile;
 
     return (
       <div className={styles.wrapper}>
 
         <Helmet
-          title="Todos"
+          title="Assets"
           meta={[
-              {"name": "description", "content": "Todos"}
+              {"name": "description", "content": "Assets"}
           ]}
         />
 
-        <h1 className={styles.title}>{name}&rsquo;s Todos</h1>
-        <h3 className={styles.subtitle}>{todos.length} Todos. </h3>
+        <h1 className={styles.title}>{name}&rsquo;s Assets</h1>
+        <h3 className={styles.subtitle}>{assets.length} Assets</h3>
+
         <div className={styles.grid}>
           <div className={styles.column}>
-            {this.props.teamRoles.length > 0 ?
-              <TodoForms
-                buttonText="Add Todo"
+
+            {this.props.ownsProfile ?
+              <AssetForms
+                buttonText="Create new Asset"
                 inputsToUse={inputsToUse}
                 inputState={this.props.inputState}
                 formError={this.state.formError}
@@ -85,17 +92,16 @@ export default class TeamTodoListRoute extends Component {
                 handleSubmit={this.handleSubmit} />
             : null }
 
-            {todos ?
-              <TodoList
-                todos={todos}
-                canEdit={this.props.teamRoles.length > 0 ? true : false}
-                showToast={this.props.showToast}  />
+            {assets ?
+              <AssetList assets={assets} canEdit={ownsProfile} />
             : null }
           </div>
           <div className={styles.cardColumn}>
-            <TeamCard
-              team={this.props.team}
-              linkTo={`/team/${_id}`} />
+            <UserItem
+              name={name}
+              avatar={avatar}
+              createdAt={createdAt}
+              _id={_id} />
           </div>
         </div>
       </div>
@@ -117,6 +123,7 @@ export default class TeamTodoListRoute extends Component {
     event.preventDefault();
 
     //don't submit if there's errors showing
+    //underscore method to ensure all errors are empty strings
     let errorValues = _.values(errors);
     if (! _.every(errorValues, function(str){ return str === ''; })) {
       this.setState({
@@ -126,16 +133,15 @@ export default class TeamTodoListRoute extends Component {
         this.setState({
           shakeBtn: false
         });
-      }, 1000);
+      }, 3000);
       return false;
     }
 
-    const {text} = values;
-    const teamId = this.props.params.teamId || 'belongstouser';
+    const {text, name, kind} = values;
 
     //Don't submit if required fields aren't filled out
-    let requiredValues = [text];
-    if (_.some(requiredValues, function(str){ return str == undefined; })) {
+    let requiredValues = [text, name, kind];
+    if (_.some(requiredValues, function(str){ return str == undefined || str == ''; })) {
       this.setState({
         shakeBtn: true
       });
@@ -143,18 +149,23 @@ export default class TeamTodoListRoute extends Component {
         this.setState({
           shakeBtn: false
         });
-      }, 1000);
+      }, 3000);
       return false;
     }
 
-    Meteor.call('Todo.create', {
+    Meteor.call('Azzets.create', {
+      name: name,
+      kind: kind,
       text: text,
+
       isCompleted: false,
       isDeleted: false,
       isPrivate: true,
-      teamId: teamId
+      teamId: ''
     }, (error) => {
       if (error) {
+        console.log("fooooool");
+
         this.setState({
           formError: error.reason,
           shakeBtn: true
@@ -166,8 +177,7 @@ export default class TeamTodoListRoute extends Component {
         }, 1000);
         return;
       } else {
-        Meteor.call('Team.increment', this.props.params.teamId, 'todoCount')
-        //resets form in FormDecorator (components/forms)
+        //resets form
         this.props.setDefaultValues({
           text: '',
           isCompleted: false,

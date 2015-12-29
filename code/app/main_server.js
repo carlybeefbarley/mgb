@@ -1,9 +1,10 @@
-import {Teams, Plans, Users, Todos} from './schemas';
+import {Teams, Plans, Users, Todos, Azzets} from './schemas';
 
 import './schemas/teams.js';
 import './schemas/users.js';
 import './schemas/plans.js';
 import './schemas/todos.js';
+import './schemas/assets.js';
 
 import './publications/publications.js';
 

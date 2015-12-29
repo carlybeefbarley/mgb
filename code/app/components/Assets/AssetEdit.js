@@ -1,11 +1,13 @@
 import React, { PropTypes } from 'react';
+import moment from 'moment';
 import reactMixin from 'react-mixin';
 import {History} from 'react-router';
 import Icon from '../Icons/Icon.js';
 import styles from './assetCard.css';
+import EditImage from './EditImage/EditImage.js';
 
 @reactMixin.decorate(History)
-export default class AssetCard extends React.Component {
+export default class AssetEdit extends React.Component {
   static PropTypes = {
     asset: PropTypes.object
   }
@@ -24,7 +26,7 @@ export default class AssetCard extends React.Component {
 
     return (
       <div key={asset._id} className={styles.border} >
-        <div className={styles.text}>{asset._id}: {asset.name} / {asset.kind} / {asset.text}</div>
+        <div className={styles.text}>ASSET-EDIT {asset.name} / {asset.kind} / {asset.text}</div>
         <div className={styles.right}>
           <div className={styles.item}>
             {asset.isCompleted ?
@@ -44,6 +46,9 @@ export default class AssetCard extends React.Component {
               <Icon size="1.2em" icon="delete" color='#ddd' onClick={this.handleDeleteClick} />
             }
           </div>
+        </div>
+        <div >
+        <EditImage/>
         </div>
       </div>
     );

@@ -18,6 +18,16 @@ var schema = {
   isPrivate: Boolean
 };
 
+
+export const AssetKinds = {
+  "query": "Asset Query",
+  "spriteSet": "Sprite Set",
+  "map": "Game Map",
+  "game": "Game Definition"
+};
+
+export const AssetKindKeys = Object.keys(AssetKinds);  // For convenience.
+
 Meteor.methods({
 
   "Azzets.create": function(data) {

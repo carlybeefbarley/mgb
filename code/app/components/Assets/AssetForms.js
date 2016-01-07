@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import InputStacked from '../../components/Forms/InputStacked';
 import styles from './assetForms.css';
+import AssetKindChooser from './AssetKindChooser';
 
 
 export default class AssetForms extends Component {
@@ -64,13 +65,9 @@ export default class AssetForms extends Component {
           case 'kind':    // [TODO:DGOLDS] change to be a picker
             return (
               <div key={i} className={styles.inputCol}>
-                <InputStacked
-                  type="text"
-                  name="kind"
+                <AssetKindChooser
                   value={values.kind}
                   errorMsg={errors.kind}
-                  label="Asset Kind"
-                  validateBy="required"
                   handleChange={this.props.handleChange}
                   />
               </div>

@@ -49,7 +49,9 @@ export default class UserAssetListRoute extends Component {
     const {name, avatar} = user.profile;
 
     return (
-      <div className={styles.wrapper}>
+      <div className="ui grid container">
+        <div className="ui grid">
+
         <Helmet
           title="Assets"
           meta={[
@@ -57,8 +59,18 @@ export default class UserAssetListRoute extends Component {
           ]}
         />
 
-        <h1 className={styles.title}>{name}&rsquo;s Assets</h1>
-        <h3 className={styles.subtitle}>{assets.length} Assets</h3>
+        <div class="sixteen wide column">
+          <div className="ui large header">{name}&rsquo;s Assets
+            <div className="ui sub header">{assets.length} Assets</div>
+          </div>
+        </div>
+        <div class="four wide column">
+          <UserItem
+              name={name}
+              avatar={avatar}
+              createdAt={createdAt}
+              _id={_id} />
+        </div>
 
         <div className={styles.grid}>
           <div className={styles.column}>
@@ -81,6 +93,7 @@ export default class UserAssetListRoute extends Component {
           </div>
         </div>
       </div>
+        </div>
     );
   }
 
@@ -88,7 +101,7 @@ export default class UserAssetListRoute extends Component {
     Meteor.call('Azzets.create', {
       name: assetName,
       kind: assetKindKey,
-      text: "TODO:ASSET_CONTENT",
+      text: "TODO:ASSET_CONTENT", // TODO:DGOLDS
 
       isCompleted: false,
       isDeleted: false,

@@ -5,6 +5,8 @@ import {History} from 'react-router';
 import Icon from '../Icons/Icon.js';
 import styles from './assetCard.css';
 import EditImage from './EditImage/EditImage.js';
+import EditUnknown from './EditImage/EditUnknown.js';
+
 
 @reactMixin.decorate(History)
 export default class AssetEdit extends React.Component {
@@ -12,11 +14,21 @@ export default class AssetEdit extends React.Component {
     asset: PropTypes.object
   }
 
-  constructor() {
-    super();
-    this.handleClick = this.handleClick.bind(this);
+  constructor(props) {
+    super(props);
+    this.handleEditAssetClick = this.handleEditAssetClick.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
     this.handlePrivateClick = this.handlePrivateClick.bind(this);
+  }
+
+  getEditorForAsset(asset)
+  {
+    switch (asset.kind) {
+      case 'image':
+        return (<EditImage asset={asset}/>);
+      default:
+        return (<EditUnknown asset={asset}/>);
+    }
   }
 
   render() {
@@ -25,13 +37,13 @@ export default class AssetEdit extends React.Component {
     let asset = this.props.asset;
 
     return (
-      <div key={asset._id} className={styles.border} >
-        <div className={styles.text}>ASSET-EDIT {asset.name} / {asset.kind} / {asset.text}</div>
+      <div key={asset._id} className="ui segment">
+        <div className={styles.text}>{asset.text}</div>
         <div className={styles.right}>
           <div className={styles.item}>
             {asset.isCompleted ?
-              <Icon size="1.2em" icon="check" color='green' onClick={this.handleClick} /> :
-              <Icon size="1.2em" icon="check" color='#ddd' onClick={this.handleClick} />
+              <Icon size="1.2em" icon="check" color='green' onClick={this.handleEditAssetClick} /> :
+              <Icon size="1.2em" icon="check" color='#ddd' onClick={this.handleEditAssetClick} />
             }
           </div>
           <div className={styles.item}>
@@ -48,7 +60,7 @@ export default class AssetEdit extends React.Component {
           </div>
         </div>
         <div >
-        <EditImage/>
+          {this.getEditorForAsset(asset)}
         </div>
       </div>
     );
@@ -70,7 +82,7 @@ export default class AssetEdit extends React.Component {
     });
   }
 
-  handleClick() {
+  handleEditAssetClick() {
     Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: !this.props.asset.isCompleted}, (err, res) => {
       if (err) {
         this.props.showToast(err.reason, 'error')

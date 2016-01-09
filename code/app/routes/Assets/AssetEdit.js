@@ -9,7 +9,6 @@ import AssetEdit from '../../components/Assets/AssetEdit';
 import UserItem from '../../components/Users/UserItem.js';
 import {AssetKinds} from '../../schemas/assets';
 
-@handleForms
 @reactMixin.decorate(ReactMeteorData)
 export default class AssetEditRoute extends Component {
 
@@ -22,12 +21,7 @@ export default class AssetEditRoute extends Component {
 
   constructor(props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.listenForEnter = this.listenForEnter.bind(this);
     this.state = {
-      shakeBtn: false,
-      formError: '',
-      formSuccess: ''
     }
   }
 
@@ -48,18 +42,9 @@ export default class AssetEditRoute extends Component {
   }
 
   render() {
-    //list of assets provided via getMeteorData()
+    // One Asset provided via getMeteorData()
     let asset = this.data.asset;
     if (!asset) return null;
-
-    //asset form setup
-    let values = this.props.inputState.values;
-    let errors = this.props.inputState.errors;
-    let inputsToUse = [
-      "name",
-      "kind",
-      "text"      // [TODO:DGOLDS] change to content
-    ];
 
     const {currUser, ownsProfile} = this.props;
     const {_id, createdAt} = currUser;
@@ -77,12 +62,12 @@ export default class AssetEditRoute extends Component {
 
         <h1 className={styles.title}>
           <i className={AssetKinds[asset.kind].icon + " icon"}></i>
-          {asset.name}
+          <input ref="assetNameInput" value={asset.name} onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
         </h1>
 
         <div className={styles.grid}>
           <div className={styles.column}>
-            {asset ? <AssetEdit asset={asset}/> : null }
+            <AssetEdit asset={asset}/>
           </div>
           <div className={styles.cardColumn}>
             <UserItem
@@ -96,83 +81,15 @@ export default class AssetEditRoute extends Component {
     );
   }
 
-  componentDidMount() {
-    window.onkeydown = this.listenForEnter;
-  }
-
-  listenForEnter(e) {
-    e = e || window.event;
-    if (e.keyCode === 13) {
-      this.handleSubmit(e, this.props.inputState.errors, this.props.inputState.values);
-    }
-  }
-
-  handleSubmit(event, errors, values) {
-    event.preventDefault();
-
-    //don't submit if there's errors showing
-    //underscore method to ensure all errors are empty strings
-    let errorValues = _.values(errors);
-    if (! _.every(errorValues, function(str){ return str === ''; })) {
-      this.setState({
-        shakeBtn: true
-      });
-      window.setTimeout(() => {
-        this.setState({
-          shakeBtn: false
-        });
-      }, 3000);
-      return false;
-    }
-
-    const {text, name, kind} = values;
-
-    //Don't submit if required fields aren't filled out
-    let requiredValues = [text, name, kind];
-    if (_.some(requiredValues, function(str){ return str == undefined || str == ''; })) {
-      this.setState({
-        shakeBtn: true
-      });
-      window.setTimeout(() => {
-        this.setState({
-          shakeBtn: false
-        });
-      }, 3000);
-      return false;
-    }
-
-    Meteor.call('Azzets.create', {
-      name: name,
-      kind: kind,
-      text: text,
-
-      isCompleted: false,
-      isDeleted: false,
-      isPrivate: true,
-      teamId: ''
-    }, (error) => {
-      if (error) {
-        console.log("fooooool");
-
-        this.setState({
-          formError: error.reason,
-          shakeBtn: true
-        });
-        window.setTimeout(() => {
-          this.setState({
-            shakeBtn: false
-          });
-        }, 1000);
-        return;
-      } else {
-        //resets form
-        this.props.setDefaultValues({
-          text: '',
-          isCompleted: false,
-          isDeleted: false
-        });
+  handleAssetNameChangeInteractive() {
+    let canEdit = true; // TODO: Something based on this.props.ownsProfile ??
+    Meteor.call('Azzets.update', this.data.asset._id, canEdit, {name: this.refs.assetNameInput.value}, (err, res) => {
+      if (err) {
+        this.props.showToast(err.reason, 'error')
       }
     });
   }
+
+
 
 }

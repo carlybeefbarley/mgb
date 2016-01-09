@@ -13,30 +13,26 @@ export default class AssetCreateNew extends React.Component {
     defaultName: 'New Asset Name...',
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
 
-
-
   render() {
-
-
     // Build the list of 'Create New Asset' Menu choices
     let choices = AssetKindKeys.map((k) => {
       return (
-        <div className="item" data-value={k} key={k} onClick={this.handleCreateAssetClick.bind(this,k)}>
+        <a className="item" data-value={k} key={k} onClick={this.handleCreateAssetClick.bind(this,k)}>
         <i className={AssetKinds[k].icon + " icon"}></i>
         {AssetKinds[k].name}
-      </div>
+      </a>
       );
     });
 
     // Create the       | Create Asset v | ---- |    UI
     return (
       <div className="ui menu">
-        <div className="ui simple dropdown item">
-          Create Asset
+        <div className="ui simple dropdown red item">
+          New Asset
           <i className="dropdown icon"></i>
           <div className="menu">
             {choices}

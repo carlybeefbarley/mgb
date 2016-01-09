@@ -26,11 +26,11 @@ export default class AssetCard extends React.Component {
 
     return (
       <div key={asset._id} className={styles.border} >
-        <i className={AssetKinds[asset.kind].icon + " icon"}></i>
-        <div className={styles.text}>{asset._id}: {asset.name} / {asset.kind} / {asset.text}</div>
+        <h4><i className={AssetKinds[asset.kind].icon + " icon"}></i></h4>
+        <div className={styles.text}><b>{asset.name}</b> - {asset.text}</div>
         <div className={styles.right}>
           <div className={styles.item}>
-              <Icon size="1.2em" icon="lock" color='green' onClick={this.handleClick} />
+            <i className="edit icon" onClick={this.handleClick}></i>
           </div>
           <div className={styles.item}>
             {asset.isPrivate ?

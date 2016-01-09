@@ -76,7 +76,7 @@ export default class AssetEditRoute extends Component {
         />
 
         <h1 className={styles.title}>
-          <i className={AssetKinds[asset.kind].icon + " icon"}></i>
+          <i className={AssetKinds.getIconClass(asset.kind)}></i>
           {asset.name}
         </h1>
 

@@ -22,11 +22,12 @@ export default class AssetCard extends React.Component {
   render() {
     if (!this.props.asset) return null;
 
-    let asset = this.props.asset;
+    const asset = this.props.asset;
+    const assetKindIcon = AssetKinds.getIconClass(asset.kind);
 
     return (
       <div key={asset._id} className={styles.border} >
-        <i className={AssetKinds[asset.kind].icon + " icon"}></i>
+        <i className={assetKindIcon}></i>
         <div className={styles.text}>{asset._id}: {asset.name} / {asset.kind} / {asset.text}</div>
         <div className={styles.right}>
           <div className={styles.item}>

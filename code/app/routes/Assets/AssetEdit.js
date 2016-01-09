@@ -7,6 +7,7 @@ import {handleForms} from '../../components/Forms/FormDecorator';
 import Helmet from 'react-helmet';
 import AssetEdit from '../../components/Assets/AssetEdit';
 import UserItem from '../../components/Users/UserItem.js';
+import {AssetKinds} from '../../schemas/assets';
 
 @handleForms
 @reactMixin.decorate(ReactMeteorData)
@@ -74,7 +75,10 @@ export default class AssetEditRoute extends Component {
           ]}
         />
 
-        <h1 className={styles.title}>{asset.name}</h1>
+        <h1 className={styles.title}>
+          <i className={AssetKinds[asset.kind].icon + " icon"}></i>
+          {asset.name}
+        </h1>
 
         <div className={styles.grid}>
           <div className={styles.column}>

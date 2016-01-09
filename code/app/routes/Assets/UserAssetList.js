@@ -5,11 +5,12 @@ import AssetList from '../../components/Assets/AssetList';
 import Spinner from '../../components/Spinner/Spinner';
 import styles from './list.css';
 import {handleForms} from '../../components/Forms/FormDecorator';
+import {History} from 'react-router';
 import Helmet from 'react-helmet';
-import AssetForms from '../../components/Assets/AssetForms';
 import UserItem from '../../components/Users/UserItem.js';
+import AssetCreateNew from '../../components/Assets/AssetCreateNew.js';
 
-@handleForms
+@reactMixin.decorate(History)
 @reactMixin.decorate(ReactMeteorData)
 export default class UserAssetListRoute extends Component {
 
@@ -22,13 +23,6 @@ export default class UserAssetListRoute extends Component {
 
   constructor(props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.listenForEnter = this.listenForEnter.bind(this);
-    this.state = {
-      shakeBtn: false,
-      formError: '',
-      formSuccess: ''
-    }
   }
 
   getMeteorData() {
@@ -48,17 +42,7 @@ export default class UserAssetListRoute extends Component {
   }
 
   render() {
-    //list of assets provided via getMeteorData()
-    let assets = this.data.assets;
-
-    //asset form setup
-    let values = this.props.inputState.values;
-    let errors = this.props.inputState.errors;
-    let inputsToUse = [
-      "name",
-      "kind",
-      "text"      // [TODO:DGOLDS] change to content
-    ];
+    let assets = this.data.assets;    //list of assets provided via getMeteorData()
 
     const {user, ownsProfile} = this.props;
     const {_id, createdAt} = user;
@@ -66,7 +50,6 @@ export default class UserAssetListRoute extends Component {
 
     return (
       <div className={styles.wrapper}>
-
         <Helmet
           title="Assets"
           meta={[
@@ -81,15 +64,8 @@ export default class UserAssetListRoute extends Component {
           <div className={styles.column}>
 
             {this.props.ownsProfile ?
-              <AssetForms
-                buttonText="Create new Asset"
-                inputsToUse={inputsToUse}
-                inputState={this.props.inputState}
-                formError={this.state.formError}
-                formSuccess={this.state.formSuccess}
-                shakeBtn={this.state.shakeBtn}
-                handleChange={this.props.handleChange}
-                handleSubmit={this.handleSubmit} />
+              <AssetCreateNew
+                handleCreateAssetClick={this.handleCreateAssetClickFromComponent.bind(this)}/>
             : null }
 
             {assets ?
@@ -108,83 +84,24 @@ export default class UserAssetListRoute extends Component {
     );
   }
 
-  componentDidMount() {
-    window.onkeydown = this.listenForEnter;
-  }
-
-  listenForEnter(e) {
-    e = e || window.event;
-    if (e.keyCode === 13) {
-      this.handleSubmit(e, this.props.inputState.errors, this.props.inputState.values);
-    }
-  }
-
-  handleSubmit(event, errors, values) {
-    event.preventDefault();
-
-    //don't submit if there's errors showing
-    //underscore method to ensure all errors are empty strings
-    let errorValues = _.values(errors);
-    if (! _.every(errorValues, function(str){ return str === ''; })) {
-      this.setState({
-        shakeBtn: true
-      });
-      window.setTimeout(() => {
-        this.setState({
-          shakeBtn: false
-        });
-      }, 3000);
-      return false;
-    }
-
-    const {text, name, kind} = values;
-
-    //Don't submit if required fields aren't filled out
-    let requiredValues = [text, name, kind];
-    if (_.some(requiredValues, function(str){ return str == undefined || str == ''; })) {
-      this.setState({
-        shakeBtn: true
-      });
-      window.setTimeout(() => {
-        this.setState({
-          shakeBtn: false
-        });
-      }, 3000);
-      return false;
-    }
-
+  handleCreateAssetClickFromComponent(assetKindKey, assetName) {
     Meteor.call('Azzets.create', {
-      name: name,
-      kind: kind,
-      text: text,
+      name: assetName,
+      kind: assetKindKey,
+      text: "TODO:ASSET_CONTENT",
 
       isCompleted: false,
       isDeleted: false,
       isPrivate: true,
       teamId: ''
-    }, (error) => {
+    }, (error, result) => {
       if (error) {
-        console.log("fooooool");
-
-        this.setState({
-          formError: error.reason,
-          shakeBtn: true
-        });
-        window.setTimeout(() => {
-          this.setState({
-            shakeBtn: false
-          });
-        }, 1000);
-        return;
+          alert.show("cannot create asset because: " + error.reason);
       } else {
-        //resets form
-        this.props.setDefaultValues({
-          text: '',
-          isCompleted: false,
-          isDeleted: false
-        });
+        this.history.pushState(null, `/assetEdit/${result}`)
       }
     });
   }
+
 
 }

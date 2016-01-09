@@ -1,8 +1,10 @@
 import React, { PropTypes } from 'react';
 import reactMixin from 'react-mixin';
-import {History} from 'react-router';
+import Router, {History} from 'react-router';
 import Icon from '../Icons/Icon.js';
 import styles from './assetCard.css';
+import {AssetKinds} from '../../schemas/assets';
+
 
 @reactMixin.decorate(History)
 export default class AssetCard extends React.Component {
@@ -10,8 +12,8 @@ export default class AssetCard extends React.Component {
     asset: PropTypes.object
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleClick = this.handleClick.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
     this.handlePrivateClick = this.handlePrivateClick.bind(this);
@@ -24,13 +26,11 @@ export default class AssetCard extends React.Component {
 
     return (
       <div key={asset._id} className={styles.border} >
+        <i className={AssetKinds[asset.kind].icon + " icon"}></i>
         <div className={styles.text}>{asset._id}: {asset.name} / {asset.kind} / {asset.text}</div>
         <div className={styles.right}>
           <div className={styles.item}>
-            {asset.isCompleted ?
-              <Icon size="1.2em" icon="check" color='green' onClick={this.handleClick} /> :
-              <Icon size="1.2em" icon="check" color='#ddd' onClick={this.handleClick} />
-            }
+              <Icon size="1.2em" icon="lock" color='green' onClick={this.handleClick} />
           </div>
           <div className={styles.item}>
             {asset.isPrivate ?
@@ -66,10 +66,6 @@ export default class AssetCard extends React.Component {
   }
 
   handleClick() {
-    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: !this.props.asset.isCompleted}, (err, res) => {
-      if (err) {
-        this.props.showToast(err.reason, 'error')
-      }
-    });
+    this.history.pushState(null, `/assetEdit/${this.props.asset._id}`)
   }
 }

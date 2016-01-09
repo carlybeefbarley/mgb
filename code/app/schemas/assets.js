@@ -20,10 +20,10 @@ var schema = {
 
 
 export const AssetKinds = {
-  "query": "Asset Query",
-  "spriteSet": "Sprite Set",
-  "map": "Game Map",
-  "game": "Game Definition"
+  "search": { name: "Search", icon: "find", description: "Saved search query" },
+  "image":  { name: "Image",  icon: "file image outline", description: "Sprites, tiles, animations, backgrounds etc" },
+  "map":    { name: "Map",    icon: "marker", description: "Map used in a game" },
+  "game":   { name: "Game",   icon: "gamepad", description: "Game rules and definition"}
 };
 
 export const AssetKindKeys = Object.keys(AssetKinds);  // For convenience.

@@ -16,7 +16,7 @@ export default class AssetKindChooser extends React.Component {
 
   render() {
     let options = AssetKindKeys.map((k) => {
-      return <div className="item" data-value={k}>{AssetKinds[k]}</div>
+      return <div className="item" data-value={k} key={k}>{AssetKinds[k].name}</div>
     });
     return (
       <div>

@@ -60,22 +60,28 @@ export default class AssetEditRoute extends Component {
           ]}
         />
 
-        <h1 className={styles.title}>
-          <i className={AssetKinds.getIconClass(asset.kind)}></i>
-          <input ref="assetNameInput" value={asset.name} onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
-        </h1>
 
-        <div className={styles.grid}>
-          <div className={styles.column}>
-            <AssetEdit asset={asset}/>
-          </div>
-          <div className={styles.cardColumn}>
-            <UserItem
-              name={name}
-              avatar={avatar}
-              createdAt={createdAt}
-              _id={_id} />
-          </div>
+        <div className="ui segment">
+          <div className="ui two column divided grid">
+            <div className="row">
+              <div className="column">
+                <h1>
+                  <i className={AssetKinds.getIconClass(asset.kind)}></i>
+                  <input ref="assetNameInput" value={asset.name} onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
+                </h1>
+              </div>
+              <div className="column">
+                <UserItem
+                  name={name}
+                  avatar={avatar}
+                  createdAt={createdAt}
+                  _id={_id} />
+              </div>
+            </div>
+        </div>
+
+          <div className="ui horizontal divided"></div>
+          <AssetEdit asset={asset}/>
         </div>
       </div>
     );

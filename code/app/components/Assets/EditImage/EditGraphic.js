@@ -5,7 +5,7 @@ import Icon from '../../Icons/Icon.js';
 import styles from '../assetCard.css';
 
 @reactMixin.decorate(History)
-export default class EditImage extends React.Component {
+export default class EditGraphic extends React.Component {
   static PropTypes = {
     asset: PropTypes.object
   }

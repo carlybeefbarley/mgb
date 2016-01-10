@@ -4,7 +4,7 @@ import reactMixin from 'react-mixin';
 import {History} from 'react-router';
 import Icon from '../Icons/Icon.js';
 import styles from './assetCard.css';
-import EditImage from './EditImage/EditImage.js';
+import EditGraphic from './EditImage/EditGraphic.js';
 import EditUnknown from './EditImage/EditUnknown.js';
 
 
@@ -24,8 +24,8 @@ export default class AssetEdit extends React.Component {
   getEditorForAsset(asset)
   {
     switch (asset.kind) {
-      case 'image':
-        return (<EditImage asset={asset}/>);
+      case 'graphic':
+        return (<EditGraphic asset={asset}/>);
       default:
         return (<EditUnknown asset={asset}/>);
     }

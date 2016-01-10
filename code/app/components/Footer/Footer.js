@@ -11,39 +11,33 @@ export default class Footer extends React.Component {
         <div className="ui center aligned container">
           <div className="ui stackable inverted divided grid">
             <div className="three wide column">
-              <h4 className="ui inverted header">Group 1</h4>
+              <h4 className="ui inverted header">Make Games</h4>
               <div className="ui inverted link list">
-                <a href="#" className="item">Link One</a>
-                <a href="#" className="item">Link Two</a>
-                <a href="#" className="item">Link Three</a>
-                <a href="#" className="item">Link Four</a>
+                <a href="#" className="item">Make Art</a>
+                <a href="#" className="item">Make Maps</a>
               </div>
             </div>
             <div className="three wide column">
-              <h4 className="ui inverted header">Group 2</h4>
+              <h4 className="ui inverted header">Make Friends</h4>
               <div className="ui inverted link list">
-                <a href="#" className="item">Link One</a>
-                <a href="#" className="item">Link Two</a>
-                <a href="#" className="item">Link Three</a>
-                <a href="#" className="item">Link Four</a>
+                <a href="#" className="item">Help each other out</a>
+                <a href="#" className="item">Work in teams</a>
               </div>
             </div>
             <div className="three wide column">
-              <h4 className="ui inverted header">Group 3</h4>
+              <h4 className="ui inverted header">Have Fun</h4>
               <div className="ui inverted link list">
-                <a href="#" className="item">Link One</a>
-                <a href="#" className="item">Link Two</a>
-                <a href="#" className="item">Link Three</a>
-                <a href="#" className="item">Link Four</a>
+                <a href="#" className="item">Play Games</a>
+                <a href="#" className="item">Learn the fun way</a>
               </div>
             </div>
             <div className="seven wide column">
-              <h4 className="ui inverted header">Footer Header</h4>
-              <p>Extra space for a call to action inside the footer that could help re-engage users.</p>
+              <h4 className="ui inverted header">Gain Skills</h4>
+              <p>Learn real world skills like Javscript and CSS, but without boring 'do this, do that' lessons. Learn by making, learn from friends, pay it forward.</p>
             </div>
           </div>
           <div className="ui inverted section divider"></div>
-          <img src="assets/images/logo.png" className="ui centered mini image"></img>
+          {/*<img src="assets/images/logo.png" className="ui centered mini image"></img>*/}
             <div className="ui horizontal inverted small divided link list">
               <a className="item" href="#">Site Map</a>
               <a className="item" href="#">Contact Us</a>

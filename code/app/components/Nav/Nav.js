@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {Link, History} from 'react-router';
 import reactMixin from 'react-mixin';
-import styles from './nav.css';
 import Icon from '../Icons/Icon.js';
 
 @reactMixin.decorate(History)
@@ -40,7 +39,7 @@ export default class Nav extends Component {
           { user ?
             // If signed in, show Profile, Logout choices as  | username |   dropdown
             [
-              <div className="ui simple dropdown item">
+              <div className="ui simple dropdown item" key="dropdown">
                 {user.profile.name} <i className="dropdown icon"></i>
                 <div className="menu simple">
                   <Link to={`/user/${this.props.user._id}`} className="item">
@@ -51,7 +50,7 @@ export default class Nav extends Component {
                   </a>
                 </div>
               </div>,
-              <img src={user.profile.avatar} className="ui circular image floated"></img>
+              <img src={user.profile.avatar} className="ui circular image floated" key="avatar"></img>
             ]
             :
             // If signed out, show   | Sign-in, Join |  options inline

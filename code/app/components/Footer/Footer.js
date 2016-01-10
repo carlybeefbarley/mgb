@@ -1,6 +1,5 @@
 import React from 'react';
 import {Link, History} from 'react-router';
-import styles from './footer.css';
 import reactMixin from 'react-mixin';
 
 @reactMixin.decorate(History)

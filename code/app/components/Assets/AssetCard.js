@@ -27,13 +27,8 @@ export default class AssetCard extends React.Component {
 
     return (
       <div key={asset._id} className={styles.border} >
-<<<<<<< HEAD
-        <h4><i className={AssetKinds[asset.kind].icon + " icon"}></i></h4>
-        <div className={styles.text}><b>{asset.name}</b> - {asset.text}</div>
-=======
         <i className={assetKindIcon}></i>
-        <div className={styles.text}>{asset._id}: {asset.name} / {asset.kind} / {asset.text}</div>
->>>>>>> 8fdc442b8b9b8138150c5902b9737cc8bae7a5f1
+        <div className={styles.text}><b>{asset.name}</b> - {asset.text}</div>
         <div className={styles.right}>
           <div className={styles.item}>
             <i className="edit icon" onClick={this.handleClick}></i>

@@ -59,12 +59,12 @@ export default class UserAssetListRoute extends Component {
           ]}
         />
 
-        <div class="sixteen wide column">
+        <div className="sixteen wide column">
           <div className="ui large header">{name}&rsquo;s Assets
             <div className="ui sub header">{assets.length} Assets</div>
           </div>
         </div>
-        <div class="four wide column">
+        <div className="four wide column">
           <UserItem
               name={name}
               avatar={avatar}

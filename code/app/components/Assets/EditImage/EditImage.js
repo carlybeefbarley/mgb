@@ -17,20 +17,20 @@ export default class EditImage extends React.Component {
 
     return <div>
       <p>Edit {asset.kind} '{asset.name}' BABY</p>
-      <div class="ui segments">
-        <div class="ui segment">
+      <div className="ui segments">
+        <div className="ui segment">
           <p>Top</p>
         </div>
-        <div class="ui red segment">
+        <div className="ui red segment">
           <p>Middle</p>
         </div>
-        <div class="ui blue segment">
+        <div className="ui blue segment">
           <p>Middle</p>
         </div>
-        <div class="ui green segment">
+        <div className="ui green segment">
           <p>Middle</p>
         </div>
-        <div class="ui yellow segment">
+        <div className="ui yellow segment">
           <p>Bottom</p>
         </div>
       </div>

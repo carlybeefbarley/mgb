@@ -98,15 +98,8 @@ export default class App extends Component {
           showSidebar={this.state.showSidebar}
           initialLoad={this.state.initialLoad} />
 
-        <div
-            className={
-              this.state.initialLoad ? null :
-              this.state.showSidebar ? styles.darken : styles.lighten
-            }
-            onClick={this.state.showSidebar ? () => this.handleToggleSidebar() : null} >
-
+        <div className="pusher" >
           <div>
-
             <Nav
               user={currUser}
               showSidebar={this.state.showSidebar}
@@ -166,9 +159,6 @@ export default class App extends Component {
 
 
   handleToggleSidebar() {
-    this.setState({
-      showSidebar: !this.state.showSidebar,
-      initialLoad: false
-    });
+    $('.ui.sidebar').sidebar('toggle');
   }
 }

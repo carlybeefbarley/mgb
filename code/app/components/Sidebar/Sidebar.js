@@ -1,16 +1,15 @@
 import React, {PropTypes, Component} from 'react';
+import ReactDOM from 'react-dom';
 import {Link, History} from 'react-router';
 import reactMixin from 'react-mixin';
-import styles from './sidebar.css';
-import Icon from '../Icons/Icon';
-
 
 @reactMixin.decorate(History)
 export default class Sidebar extends Component {
 
   static PropTypes = {
     user: PropTypes.object,
-    team: PropTypes.object
+    team: PropTypes.object,
+    showSidebar: PropTypes.boolean
   }
 
   constructor() {
@@ -21,63 +20,55 @@ export default class Sidebar extends Component {
 
   render() {
     const {currUser, isSuperAdmin} = this.props;
-    let content;
 
-    if (currUser) {
-      content = (
-          <ul className={styles.sidebarList} onClick={this.props.handleToggleSidebar}>
-            <li className={styles.item}>
-              <Link to={`/user/${currUser._id}/todos`} className={styles.link} activeClassName={styles.active} >My Todos</Link>
-            </li>
-            <li className={styles.item}>
-              <Link to={`/user/${currUser._id}/assets`} className={styles.link} activeClassName={styles.active} >My Assets</Link>
-            </li>
-          </ul>
+    let userContent = !!currUser ?
+      (
+        <div className="item">
+          <div className="header">My stuff</div>
+          <div className="menu">
+            <Link to={`/user/${currUser._id}/todos`} className="item">My Todos</Link>
+            <Link to={`/user/${currUser._id}/assets`} className="item">My Assets</Link>
+         </div>
+        </div>
+      )
+      :
+      (
+        <div className="item">
+          <Link to="/join">Get Started</Link>
+        </div>
       );
-    } else {
-      content = (
-          <ul className={styles.sidebarList} onClick={this.props.handleToggleSidebar}>
-            <li className={styles.item}>
-              <Link to="/join" className={styles.link} activeClassName={styles.active}>Get Started</Link>
-            </li>
-          </ul>
-      );
-    }
 
-    let superAdminContent = (
-          <ul className={styles.sidebarList} onClick={this.props.handleToggleSidebar}>
-            <hr className={styles.globalDashItem}/>
-            <li className={styles.item}>
-              <Link to="/super-global-dashboard" className={styles.link} activeClassName={styles.active}>Global Dashboard</Link>
-            </li>
-            <li className={styles.item}>
-              <Link to="/plans" className={styles.link} activeClassName={styles.active}>Plans</Link>
-            </li>
-          </ul>
+
+    let superAdminContent = !!isSuperAdmin ?
+    (
+      <div className="item">
+        <div className="header">Super-Admin</div>
+        <div className="menu">
+          <Link to="/super-global-dashboard" className="item">Global Dashboard</Link>
+          <Link to="/plans" className="item">Plans</Link>
+        </div>
+      </div>
     )
-
+    :
+    null;
 
     return (
-        <div className={this.props.showSidebar ? styles.sidebar : styles.sidebarClose} style={this.props.initialLoad ? {display: 'none'} : null}>
-          <span className={styles.heading} onClick={this.props.handleToggleSidebar}>
-            <span className={styles.menu} onClick={this.handleBrandClick}>MyGameBuilder</span>
-          </span>
-          <span className={styles.close}>
-            <Icon size="2em" icon="close" color="#fff" onClick={this.props.handleToggleSidebar} />
-          </span>
-          { content }
-          <ul className={styles.sidebarList} onClick={this.props.handleToggleSidebar}>
-            <li className={styles.item}>
-              <Link to="/teams" className={styles.link} activeClassName={styles.active}>Teams</Link>
-            </li>
-            <li className={styles.item}>
-              <Link to="/users" className={styles.link} activeClassName={styles.active}>Users</Link>
-            </li>
-          </ul>
-          { isSuperAdmin ? superAdminContent : null }
+      <div className="ui vertical inverted sidebar menu left overlay" onClick={this.props.handleToggleSidebar}>
+        <Link to="/" className="item"><b>My Game Builder</b></Link>
+        {userContent}
+        <div className="item">
+          <div className="header">People</div>
+          <div className="menu">
+            <Link to="/teams" className="item">Teams</Link>
+            <Link to="/users" className="item">Users</Link>
+          </div>
         </div>
+        {superAdminContent}
+      </div>
+        );/*(
+          </span>
 
-    );
+    );*/
   }
 
   handleBrandClick() {
@@ -93,5 +84,14 @@ export default class Sidebar extends Component {
 
   componentDidMount() {
     window.onkeydown = this.listenForClose;
+
+    // TODO: Use context as a way to get rid of the DOM warning from sidebar.
+    //       See http://stackoverflow.com/a/31533170 for explanation of this initialization
+    var rootNode = ReactDOM.findDOMNode(this);
+    $('.ui.sidebar').sidebar({
+        transition: 'push',
+      context: $(rootNode).parent()
+    });
+
   }
 }

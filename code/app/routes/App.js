@@ -20,12 +20,10 @@ export default class App extends Component {
 
   constructor() {
     super();
-    this.handleToggleDropDown = this.handleToggleDropDown.bind(this);
     this.handleToggleSidebar = this.handleToggleSidebar.bind(this);
     this.showToast = this.showToast.bind(this);
     this.closeToast = this.closeToast.bind(this);
     this.state = {
-      showDropDown: false,
       showSidebar: false,
       initialLoad: true,
       showToast: false,
@@ -107,14 +105,12 @@ export default class App extends Component {
             }
             onClick={this.state.showSidebar ? () => this.handleToggleSidebar() : null} >
 
-          <div onClick={this.state.showDropDown ? () => this.handleToggleDropDown() : null}>
+          <div>
 
             <Nav
               user={currUser}
-              showDropDown={this.state.showDropDown}
               showSidebar={this.state.showSidebar}
               handleToggleSidebar={this.handleToggleSidebar}
-              handleToggleDropDown={this.handleToggleDropDown}
               name={this.props.routes[1].name}
               back={backLink} />
 
@@ -168,9 +164,6 @@ export default class App extends Component {
     });
   }
 
-  handleToggleDropDown() {
-    this.setState({showDropDown: !this.state.showDropDown})
-  }
 
   handleToggleSidebar() {
     this.setState({

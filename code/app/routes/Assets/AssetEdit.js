@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import {Azzets} from '../../schemas';
 import Spinner from '../../components/Spinner/Spinner';
-import styles from './list.css';
 import {handleForms} from '../../components/Forms/FormDecorator';
 import Helmet from 'react-helmet';
 import AssetEdit from '../../components/Assets/AssetEdit';
@@ -51,7 +50,7 @@ export default class AssetEditRoute extends Component {
     const {name, avatar} = currUser.profile;
 
     return (
-      <div className={styles.wrapper}>
+      <div>
 
         <Helmet
           title="Asset Editor"

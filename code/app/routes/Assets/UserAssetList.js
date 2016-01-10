@@ -72,8 +72,8 @@ export default class UserAssetListRoute extends Component {
               _id={_id} />
         </div>
 
-        <div className={styles.grid}>
-          <div className={styles.column}>
+        <div className="">
+          <div className="">
 
             {this.props.ownsProfile ?
               <AssetCreateNew
@@ -83,13 +83,6 @@ export default class UserAssetListRoute extends Component {
             {assets ?
               <AssetList assets={assets} canEdit={ownsProfile} />
             : null }
-          </div>
-          <div className={styles.cardColumn}>
-            <UserItem
-              name={name}
-              avatar={avatar}
-              createdAt={createdAt}
-              _id={_id} />
           </div>
         </div>
       </div>

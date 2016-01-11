@@ -2,11 +2,3 @@
 @import './buttons.css';
 @import './forms.css';
 @import './utilities.css';
-
-html {
-  height:100%;
-}
-
-body {
-  min-height:100%;
-}

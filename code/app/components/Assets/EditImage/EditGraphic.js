@@ -14,25 +14,27 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
 
-    return <div>
-      <p>Edit {asset.kind} '{asset.name}' BABY</p>
-      <div className="ui segments">
-        <div className="ui segment">
-          <p>Top</p>
-        </div>
-        <div className="ui red segment">
-          <p>Middle</p>
-        </div>
-        <div className="ui blue segment">
-          <p>Middle</p>
-        </div>
-        <div className="ui green segment">
-          <p>Middle</p>
-        </div>
-        <div className="ui yellow segment">
-          <p>Bottom</p>
+    return (
+      <div className="ui segment inverted">
+        <p>Edit {asset.kind} '{asset.name}' BABY</p>
+        <div className="ui segments">
+          <div className="ui segment">
+            <p>Top</p>
+          </div>
+          <div className="ui red segment">
+            <p>Middle</p>
+          </div>
+          <div className="ui blue segment">
+            <p>Middle</p>
+          </div>
+          <div className="ui green segment">
+            <p>Middle</p>
+          </div>
+          <div className="ui yellow segment">
+            <p>Bottom</p>
+          </div>
         </div>
       </div>
-      </div>
+    )
   }
 }

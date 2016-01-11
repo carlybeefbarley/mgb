@@ -11,6 +11,14 @@ export default class EditUnknown extends React.Component {
   }
 
   render() {
-    return <a className="ui red label">Unrecognised Asset type '{this.props.asset.kind}' - unable to edit</a>
+
+    let asset = this.props.asset;
+
+    return (
+      <div className="ui segment inverted">
+        <p>Edit {asset.kind} '{asset.name}' BABY</p>
+        <a className="ui red label">Unrecognised Asset type '{this.props.asset.kind}' - unable to edit</a>
+      </div>
+  );
   }
 }

@@ -9,17 +9,16 @@ export default class AssetList extends React.Component {
   render() {
     let assets = this.props.assets.map((asset) => {
       return (
-        <div key={asset._id} className={this.props.cardStyle} >
           <AssetCard
             asset={asset}
+            key={asset._id}
             canEdit={this.props.canEdit}
             showToast={this.props.showToast} />
-        </div>
       );
     })
 
     return (
-      <div>
+      <div className="cards">
         {assets}
       </div>
     );

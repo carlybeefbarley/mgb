@@ -19,19 +19,22 @@ export default class EditGraphic extends React.Component {
         <p>Edit {asset.kind} '{asset.name}' BABY</p>
         <div className="ui segments">
           <div className="ui segment">
-            <p>Top</p>
+            <p>The</p>
           </div>
           <div className="ui red segment">
-            <p>Middle</p>
+            <p>Fancy</p>
           </div>
           <div className="ui blue segment">
-            <p>Middle</p>
+            <p>Editor</p>
           </div>
           <div className="ui green segment">
-            <p>Middle</p>
+            <p>Will</p>
           </div>
           <div className="ui yellow segment">
-            <p>Bottom</p>
+            <p>Go</p>
+          </div>
+          <div className="ui orange segment">
+            <p>Here</p>
           </div>
         </div>
       </div>

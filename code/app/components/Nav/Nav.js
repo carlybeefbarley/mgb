@@ -25,16 +25,16 @@ export default class Nav extends Component {
               <i className="arrow left icon"  ></i>
             </Link>
               :
-            <a href="#" className="header item">
-              <i className="sidebar icon" onClick={this.props.handleToggleSidebar}></i>
+            <a href="#" className="header item" onClick={this.props.handleToggleSidebar}>
+              <i className="sidebar icon" ></i>
             </a>
           }
           <div className="item">
             {this.props.name}
           </div>
-          <a href="#" className="item right">
+          <Link to="/search" className="item right">
             <i className="search icon"></i>
-          </a>
+          </Link>
 
           { user ?
             // If signed in, show Profile, Logout choices as  | username |   dropdown

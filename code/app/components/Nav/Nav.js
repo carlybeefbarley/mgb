@@ -16,12 +16,15 @@ export default class Nav extends Component {
 
   render() {
     const user = this.props.user;
-
+    let back = this.props.back;
+    if (back === "!user-assets") {
+      back = "/user/" + user._id + "/assets";
+    }
     return (
       <div className="ui fixed inverted menu">
         <div className="ui container">
-          {this.props.back ?
-            <Link to={this.props.back} className="header item">
+          {back ?
+            <Link to={back} className="header item">
               <i className="arrow left icon"  ></i>
             </Link>
               :

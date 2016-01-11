@@ -3,7 +3,6 @@ import reactMixin from 'react-mixin';
 import {Azzets} from '../../schemas';
 import AssetList from '../../components/Assets/AssetList';
 import Spinner from '../../components/Spinner/Spinner';
-import styles from './list.css';
 import {handleForms} from '../../components/Forms/FormDecorator';
 import {History} from 'react-router';
 import Helmet from 'react-helmet';
@@ -49,8 +48,7 @@ export default class UserAssetListRoute extends Component {
     const {name, avatar} = user.profile;
 
     return (
-      <div className="ui grid container">
-        <div className="ui grid">
+      <div className="ui grid">
 
         <Helmet
           title="Assets"
@@ -59,12 +57,13 @@ export default class UserAssetListRoute extends Component {
           ]}
         />
 
-        <div className="sixteen wide column">
+        <div className="ten wide column">
           <div className="ui large header">{name}&rsquo;s Assets
             <div className="ui sub header">{assets.length} Assets</div>
           </div>
         </div>
-        <div className="four wide column">
+
+        <div className="six wide column">
           <UserItem
               name={name}
               avatar={avatar}
@@ -72,21 +71,21 @@ export default class UserAssetListRoute extends Component {
               _id={_id} />
         </div>
 
-        <div className="">
-          <div className="">
+        <div className="ten wide column">
 
-            {this.props.ownsProfile ?
-              <AssetCreateNew
-                handleCreateAssetClick={this.handleCreateAssetClickFromComponent.bind(this)}/>
-            : null }
+          {this.props.ownsProfile ?
+            <AssetCreateNew
+              handleCreateAssetClick={this.handleCreateAssetClickFromComponent.bind(this)}/>
+          : null }
+        </div>
 
-            {assets ?
-              <AssetList assets={assets} canEdit={ownsProfile} />
-            : null }
-          </div>
+        <div className="sixteen wide column">
+          {assets ?
+            <AssetList assets={assets} canEdit={ownsProfile} />
+          : null }
         </div>
       </div>
-        </div>
+
     );
   }
 

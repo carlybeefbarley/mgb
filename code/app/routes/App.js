@@ -24,7 +24,6 @@ export default class App extends Component {
     this.showToast = this.showToast.bind(this);
     this.closeToast = this.closeToast.bind(this);
     this.state = {
-      showSidebar: false,
       initialLoad: true,
       showToast: false,
       toastMsg: '',
@@ -95,14 +94,12 @@ export default class App extends Component {
           user={user}
           currUser={currUser}
           handleToggleSidebar={this.handleToggleSidebar}
-          showSidebar={this.state.showSidebar}
           initialLoad={this.state.initialLoad} />
 
         <div className="pusher" >
-          <div>
+          <div className="ui container">
             <Nav
               user={currUser}
-              showSidebar={this.state.showSidebar}
               handleToggleSidebar={this.handleToggleSidebar}
               name={this.props.routes[1].name}
               back={backLink} />
@@ -129,9 +126,8 @@ export default class App extends Component {
                 })
               }
             </div>
-          <Footer />
           </div>
-
+          <Footer />
         </div>
       </div>
     );

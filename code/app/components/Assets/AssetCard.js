@@ -44,7 +44,7 @@ export default class AssetCard extends React.Component {
             {asset.text}
           </div>
           <div className="description">
-            Elliot requested permission to view your contact details
+            Lorem ipsum foo bar lah-di-dah
           </div>
         </div>
         <div className="extra content">

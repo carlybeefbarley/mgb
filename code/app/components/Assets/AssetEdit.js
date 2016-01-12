@@ -22,10 +22,26 @@ export default class AssetEdit extends React.Component {
   {
     switch (asset.kind) {
       case 'graphic':
-        return (<EditGraphic asset={asset}/>);
+        return (<EditGraphic asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
       default:
         return (<EditUnknown asset={asset}/>);
     }
+  }
+
+  handleContentChange(contentString)
+  {
+    alert("yay");
+    let asset = this.props.asset;
+
+    let canEdit = true; // TODO: Something based on this.props.ownsProfile ??
+
+    debugger
+
+    Meteor.call('Azzets.update', asset._id, canEdit, {text: contentString}, (err, res) => {
+      if (err) {
+        alert('error: ' + err.reason)
+      }
+    });
   }
 
   render() {
@@ -35,7 +51,7 @@ export default class AssetEdit extends React.Component {
 
     return (
       <div key={asset._id} className="ui segment">
-        <AssetCard asset={asset} showEditButton={false}/>
+        <AssetCard asset={asset} showEditButton={false} />
         {this.getEditorForAsset(asset)}
       </div>
     );

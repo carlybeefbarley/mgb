@@ -46,6 +46,8 @@ Meteor.methods({
     data.ownerId = this.userId;
     data.createdAt = new Date();
     data.updatedAt = new Date();
+    data.content = "";
+    data.thumbnail = "";
 
     check(data, _.omit(schema, '_id'));
 
@@ -72,6 +74,8 @@ Meteor.methods({
       name: optional(schema.text),
       kind: optional(schema.text),
       text: optional(schema.text),
+      content: optional(schema.text),
+      thumbnail: optional(schema.text),
 
       isCompleted: optional(schema.isCompleted),
       isDeleted: optional(schema.isDeleted),

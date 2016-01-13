@@ -2,15 +2,20 @@ import {Azzets} from '../schemas';
 
 var schema = {
   _id: String,
+
   createdAt: Date,
   updatedAt: Date,
-  teamId: String, //team owner user id
-  ownerId: String, // owner user id
+
+  teamId: String,     // team owner user id
+  ownerId: String,    // owner user id
 
   //the actual asset information
-  name: String,   // Asset's name
-  kind: String,   // Asset's kind (image, map, etc)
-  text: String,   // [TODO:DGOLDS].. Will rename as CONTENT
+  name: String,       // Asset's name
+  kind: String,       // Asset's kind (image, map, etc)
+  text: String,       // A description field
+  content: String,    // depends on asset type
+                      //   data-uri base 64 - for graphic
+  thumbnail: String,  // data-uri base 64 of thumbnail image
 
   //various flags
   isCompleted: Boolean,

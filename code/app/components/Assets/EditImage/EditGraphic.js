@@ -19,16 +19,15 @@ export default class EditGraphic extends React.Component {
     this.ctx.fillStyle = '#a0c0c0';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    debugger
     let asset = this.props.asset;
 
-    if (asset.hasOwnProperty('text') && asset.text !== "" && asset.text.startsWith("data:image/png;base64,"))
+    if (asset.hasOwnProperty('content') && asset.content.startsWith("data:image/png;base64,"))
     {
       var _img = new Image;
       var _ctx= this.ctx;
-      _img.src = asset.text;  // data uri
-      _img.onload = function(){
-        _ctx.drawImage(_img,0,0);
+      _img.src = asset.content;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
+      _img.onload = function() {
+        _ctx.drawImage(_img,0,0); // needs to be done in onload...
       }
     }
 

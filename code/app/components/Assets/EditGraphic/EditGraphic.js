@@ -15,8 +15,8 @@ export default class EditGraphic extends React.Component {
   componentDidMount() {
     this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas);
     this.editCtx = this.editCanvas.getContext('2d');
-    this.editCtx.fillStyle = '#a0c0c0';
-    this.editCtx.fillRect(0, 0, this.editCanvas.width, this.editCanvas.height);
+    //this.editCtx.fillStyle = '#a0c0c0';
+    //this.editCtx.fillRect(0, 0, this.editCanvas.width, this.editCanvas.height);
 
     this.previewCanvas =  ReactDOM.findDOMNode(this.refs.previewCanvas);
     this.previewCtx = this.previewCanvas.getContext('2d');
@@ -25,15 +25,8 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
 
-    if (asset.hasOwnProperty('content') && asset.content.startsWith("data:image/png;base64,"))
-    {
-      var _img = new Image;
-      var _ctx= this.editCtx;
-      _img.src = asset.content;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-      _img.onload = function() {
-        _ctx.drawImage(_img,0,0); // needs to be done in onload...
-      }
-    }
+    if (asset.hasOwnProperty('content'))
+      this.loadPreviewFromDataURI(asset.content)
 
     this.editCanvas.addEventListener('wheel',      this.handleMouseWheel.bind(this));
     this.editCanvas.addEventListener('mousemove',  this.handleMouseMove.bind(this));
@@ -42,7 +35,7 @@ export default class EditGraphic extends React.Component {
     this.editCanvas.addEventListener('mouseleave', this.handleMouseUp.bind(this));
 
     this.mgb_toolActive = false;
-    this.HandleToolPaint();
+    this.handleToolPaint();
 }
 
 
@@ -50,22 +43,52 @@ export default class EditGraphic extends React.Component {
   {
     let asset = this.props.asset;
 
-    if (asset.hasOwnProperty('content') && asset.content.startsWith("data:image/png;base64,"))
+    if (asset.hasOwnProperty('content'))
+      this.loadPreviewFromDataURI(asset.content)
+  }
+
+
+  loadPreviewFromDataURI(dataURI)
+  {
+    if (dataURI.startsWith("data:image/png;base64,"))
     {
       var _img = new Image;
-      var _ctx= this.editCtx;
-      _img.src = asset.content;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
+      var _ctx = this.previewCtx;
+      var self = this;
+      _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
       _img.onload = function() {
         _ctx.drawImage(_img,0,0); // needs to be done in onload...
+        self.updateEditCanvasFromPreviewCanvas();
       }
+    }
+    else {
+      console.log("Unrecognized graphic data URI")
     }
   }
 
+  updateEditCanvasFromPreviewCanvas()
+  {
+    // TODO: Add dirty region to bound work
+    let w = this.previewCanvas.width;
+    let h = this.previewCanvas.height;
+    let s = 8;
+    this.editCtx.imageSmoothingEnabled = this.checked;
+    this.editCtx.mozImageSmoothingEnabled = this.checked;
+    this.editCtx.webkitImageSmoothingEnabled = this.checked;
+    this.editCtx.msImageSmoothingEnabled = this.checked;
+    this.editCtx.drawImage(this.previewCanvas, 0, 0, w, h, 0, 0, w*s, h*s)
+  }
+
+  handleSave()
+  {
+    let x = this.previewCanvas.toDataURL('image/png');
+    this.props.handleContentChange(x);
+  }
+
+
   handleMouseWheel(event)
   {
-    event.preventDefault();
-   // debugger;
-   //console.log(event)
+    event.preventDefault();   // TODO: Zoom
   }
 
   handleMouseDown(event)
@@ -89,7 +112,7 @@ export default class EditGraphic extends React.Component {
     let chosenColor = this.mgb_toolChosen === "paint" ? color : '#a0c0c0';
 
     this.editCtx.fillStyle = chosenColor;
-    this.editCtx.fillRect(x, y, 6, 6);
+    this.editCtx.fillRect(x, y, 8, 8);
 
     this.previewCtx.fillStyle = chosenColor;
     this.previewCtx.fillRect(x/8, y/8, 1, 1)
@@ -103,20 +126,14 @@ export default class EditGraphic extends React.Component {
     $(event.target).css('cursor','crosshair');
   }
 
-  handleSave()
-  {
-    let x = this.editCanvas.toDataURL('image/png');
-    this.props.handleContentChange(x);
-  }
-
-  HandleToolPaint()
+  handleToolPaint()
   {
     $(this.refs.toolPaint).addClass("active");
     $(this.refs.toolEraser).removeClass("active");
     this.mgb_toolChosen = "paint";
   }
 
-  HandleToolEraser()
+  handleToolEraser()
   {
     $(this.refs.toolEraser).addClass("active");
     $(this.refs.toolPaint).removeClass("active");
@@ -134,11 +151,11 @@ export default class EditGraphic extends React.Component {
 
         <div className="ui two wide column">
           <div className="ui vertical fluid  icon menu">
-            <a className="item" onClick={this.HandleToolPaint.bind(this)} ref="toolPaint">
+            <a className="item" onClick={this.handleToolPaint.bind(this)} ref="toolPaint">
               <i className="paint brush icon"></i>
               Paint
             </a>
-            <a className="item" onClick={this.HandleToolEraser.bind(this)} ref="toolEraser">
+            <a className="item" onClick={this.handleToolEraser.bind(this)} ref="toolEraser">
               <i className="eraser icon"></i>
               Erase
             </a>

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import reactMixin from 'react-mixin';
 import Router, {History} from 'react-router';
 import Icon from '../Icons/Icon.js';
@@ -23,6 +24,46 @@ export default class AssetCard extends React.Component {
     this.handlePrivateClick = this.handlePrivateClick.bind(this);
   }
 
+  componentDidMount()
+  {
+    let asset = this.props.asset;
+
+    this.previewCanvas =  ReactDOM.findDOMNode(this.refs.thumbnailCanvas);
+    this.previewCtx = this.previewCanvas.getContext('2d');
+    this.previewCtx.fillStyle = '#a0c0c0';
+    this.previewCtx.fillRect(0, 0, this.previewCanvas.width, this.previewCanvas.height);
+
+    if (asset.kind === "graphic" && asset.hasOwnProperty("content"))
+      this.loadPreviewFromDataURI(asset.content)
+  }
+
+
+  componentDidUpdate(prevProps,  prevState)
+  {
+    let asset = this.props.asset;
+
+    if (asset.kind === "graphic" && asset.hasOwnProperty('content'))
+      this.loadPreviewFromDataURI(asset.content)
+  }
+
+  loadPreviewFromDataURI(dataURI)
+  {
+    if (dataURI.startsWith("data:image/png;base64,"))
+    {
+      var _img = new Image;
+      var _ctx = this.previewCtx;
+      var self = this;
+      _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
+      _img.onload = function() {
+        _ctx.drawImage(_img,0,0); // needs to be done in onload...
+        self.updateEditCanvasFromPreviewCanvas();
+      }
+    }
+    else {
+      console.log("Unrecognized graphic data URI")
+    }
+  }
+
   render() {
     if (!this.props.asset)
       return null;
@@ -33,9 +74,9 @@ export default class AssetCard extends React.Component {
     return (
       <div key={asset._id} className="ui card">
         <div className="content">
-          <img className="right floated mini ui image"
-               src="/images/avatar/large/elliot.jpg">
-          </img>
+          <canvas ref="thumbnailCanvas" className="right floated mini ui image"
+               src="/images/avatar/large/elliot.jpg" width="64" height="32" >
+          </canvas>
           <div className="header">
             <i className={assetKindIcon}></i>
             {asset.name}

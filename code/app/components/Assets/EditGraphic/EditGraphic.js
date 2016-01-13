@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import reactMixin from 'react-mixin';
 import {History} from 'react-router';
 import Icon from '../../Icons/Icon.js';
+import sty from  './editGraphic.css';
 
 @reactMixin.decorate(History)
 export default class EditGraphic extends React.Component {
@@ -17,6 +18,12 @@ export default class EditGraphic extends React.Component {
     this.editCtx = this.editCanvas.getContext('2d');
     //this.editCtx.fillStyle = '#a0c0c0';
     //this.editCtx.fillRect(0, 0, this.editCanvas.width, this.editCanvas.height);
+
+    //this.editCanvasOverlay =  ReactDOM.findDOMNode(this.refs.editCanvasOverlay);
+    //this.editCtxOverlay = this.editCanvasOverlay.getContext('2d');
+    //this.editCtxOverlay.fillStyle = '#a0c0c0';
+    //this.editCtxOverlay.fillRect(0, 0, this.editCanvasOverlay.width, this.editCanvasOverlay.height);
+
 
     this.previewCanvas =  ReactDOM.findDOMNode(this.refs.previewCanvas);
     this.previewCtx = this.previewCanvas.getContext('2d');
@@ -174,8 +181,10 @@ export default class EditGraphic extends React.Component {
           </div>
         </div>
 
-        <div className="ui twelve wide column">
-          <canvas ref="editCanvas" width="512" height="256"></canvas>
+        <div className={sty.tagPosition + " ui twelve wide column"}>
+          <canvas ref="editCanvas" width="512" height="256" className={sty.thinBorder}></canvas>
+          {/*<canvas ref="editCanvasOverlay" width="512" height="256" className={sty.forceTopLeft}></canvas>*/}
+
         </div>
 
         <div className="ui two wide column ">

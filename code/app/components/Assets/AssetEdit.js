@@ -7,7 +7,6 @@ import EditGraphic from './EditGraphic/EditGraphic.js';
 import EditUnknown from './EditUnknown.js';
 import AssetCard from './AssetCard.js';
 
-
 @reactMixin.decorate(History)
 export default class AssetEdit extends React.Component {
   static PropTypes = {
@@ -50,6 +49,5 @@ export default class AssetEdit extends React.Component {
       this.getEditorForAsset(asset)
     );
   }
-
 
 }

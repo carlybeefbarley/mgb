@@ -56,7 +56,6 @@ export default class AssetCard extends React.Component {
       _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
       _img.onload = function() {
         _ctx.drawImage(_img,0,0); // needs to be done in onload...
-        self.updateEditCanvasFromPreviewCanvas();
       }
     }
     else {

@@ -69,6 +69,7 @@ export default class AssetCard extends React.Component {
 
     const {asset, showEditButton  } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
+    const assetKindLongName = AssetKinds.getLongName(asset.kind)
 
     return (
       <div key={asset._id} className="ui card">
@@ -81,7 +82,7 @@ export default class AssetCard extends React.Component {
             {asset.name}
           </div>
           <div className="meta">
-            {asset.text}
+            {assetKindLongName}
           </div>
           <div className="description">
             Lorem ipsum foo bar lah-di-dah

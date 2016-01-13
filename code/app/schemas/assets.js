@@ -27,13 +27,15 @@ var schema = {
 // Info on each kind of asset, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const AssetKinds = {
-  "search":  { name: "Search",  icon: "find", description: "Saved search query" },
-  "graphic": { name: "Graphic", icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
-  "palette": { name: "Palette", icon: "block layout", description: "Color palette" },
-  "map":     { name: "Map",     icon: "marker", description: "Map used in a game" },
-  "game":    { name: "Game",    icon: "gamepad", description: "Game rules and definition"},
+  "search":  { name: "Search",  longName: "Search query", icon: "find", description: "Saved search query" },
+  "graphic": { name: "Graphic", longName: "Graphic", icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
+  "palette": { name: "Palette", longName: "Color Palette", icon: "block layout", description: "Color palette" },
+  "map":     { name: "Map",     longName: "Game Level Map", icon: "marker", description: "Map used in a game" },
+  "game":    { name: "Game",    longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
-  getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"}
+  getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},
+  getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")}
+
 };
 
 export const AssetKindKeys = Object.keys(AssetKinds);  // For convenience.

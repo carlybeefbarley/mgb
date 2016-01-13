@@ -33,21 +33,18 @@ export default class AssetCreateNew extends React.Component {
 
     // Create the       | Create Asset v | ---- |    UI
     return (
-      <div className="ui menu">
-        <div className="ui simple dropdown red item">
+      <div className="ui compact menu">
+        <div className="ui simple dropdown item">
           New Asset
           <i className="dropdown icon"></i>
           <div className="menu">
             {choices}
           </div>
         </div>
-        <div className="right menu">
           <div className="item">
-            <div className="ui transparent icon input">
-              <input ref="chosenNewAssetName" type="text" placeholder={this.props.defaultName}></input>
-                <i className="cube icon"></i>
+            <div className="ui transparent  input">
+              <input className="fluid" ref="chosenNewAssetName" type="text" placeholder={this.props.defaultName}></input>
             </div>
-          </div>
         </div>
       </div>
     );

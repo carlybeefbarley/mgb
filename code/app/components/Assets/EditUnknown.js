@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import {History} from 'react-router';
-import Icon from '../../Icons/Icon.js';
 
 @reactMixin.decorate(History)
 export default class EditUnknown extends React.Component {

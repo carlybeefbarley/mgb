@@ -3,8 +3,8 @@ import moment from 'moment';
 import reactMixin from 'react-mixin';
 import {History} from 'react-router';
 import Icon from '../Icons/Icon.js';
-import EditGraphic from './EditImage/EditGraphic.js';
-import EditUnknown from './EditImage/EditUnknown.js';
+import EditGraphic from './EditGraphic/EditGraphic.js';
+import EditUnknown from './EditUnknown.js';
 import AssetCard from './AssetCard.js';
 
 
@@ -30,11 +30,10 @@ export default class AssetEdit extends React.Component {
 
   handleContentChange(contentString)
   {
-    alert("yay");
     let asset = this.props.asset;
 
     let canEdit = true; // TODO: Something based on this.props.ownsProfile ??
-    
+
     Meteor.call('Azzets.update', asset._id, canEdit, {content: contentString}, (err, res) => {
       if (err) {
         alert('error: ' + err.reason)
@@ -48,10 +47,7 @@ export default class AssetEdit extends React.Component {
     let asset = this.props.asset;
 
     return (
-      <div key={asset._id} className="ui segment">
-        <AssetCard asset={asset} showEditButton={false} />
-        {this.getEditorForAsset(asset)}
-      </div>
+      this.getEditorForAsset(asset)
     );
   }
 

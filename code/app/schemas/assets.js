@@ -29,6 +29,7 @@ var schema = {
 export const AssetKinds = {
   "search":  { name: "Search",  icon: "find", description: "Saved search query" },
   "graphic": { name: "Graphic", icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
+  "palette": { name: "Palette", icon: "block layout", description: "Color palette" },
   "map":     { name: "Map",     icon: "marker", description: "Map used in a game" },
   "game":    { name: "Game",    icon: "gamepad", description: "Game rules and definition"},
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience

@@ -161,6 +161,10 @@ export default class EditGraphic extends React.Component {
             </a>
             <a className="item">
               <i className="block layout icon"></i>
+              Color
+            </a>
+            <a className="item">
+              <i className="circle thin icon"></i>
               Shape
             </a>
             <a className="item" onClick={this.handleSave.bind(this)}>
@@ -170,11 +174,11 @@ export default class EditGraphic extends React.Component {
           </div>
         </div>
 
-        <div className="ui eight wide column  ">
-          <canvas ref="editCanvas" width="400" height="200"></canvas>
+        <div className="ui twelve wide column">
+          <canvas ref="editCanvas" width="512" height="256"></canvas>
         </div>
 
-        <div className="ui two wide column inverted ">
+        <div className="ui two wide column ">
           <canvas ref="previewCanvas" width="64" height="32"></canvas>
         </div>
 

@@ -33,8 +33,8 @@ export default class AssetCard extends React.Component {
     this.previewCtx.fillStyle = '#a0c0c0';
     this.previewCtx.fillRect(0, 0, this.previewCanvas.width, this.previewCanvas.height);
 
-    if (asset.kind === "graphic" && asset.hasOwnProperty("content2"))
-      this.loadPreviewFromDataURI(asset.content2.imageData)
+    if (asset.kind === "graphic" && asset.content2.hasOwnProperty("width"))
+      this.loadPreviewFromDataURI(asset.content2.frameData[0][0]);
   }
 
 

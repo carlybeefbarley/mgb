@@ -12,6 +12,16 @@ export default class EditGraphic extends React.Component {
     handleContentChange: PropTypes.function
   }
 
+  // Data format
+  //
+  // content2.width
+  // content2.height
+  // content2.layerNames[layerIndex]     // array of layer names (content is string)
+  // content2.frameNames[frameIndex]
+  // content2.frameData[frameIndex][layerIndex]   /// each is an a
+
+
+
 
   componentDidMount() {
     this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas);
@@ -24,7 +34,6 @@ export default class EditGraphic extends React.Component {
     //this.editCtxOverlay.fillStyle = '#a0c0c0';
     //this.editCtxOverlay.fillRect(0, 0, this.editCanvasOverlay.width, this.editCanvasOverlay.height);
 
-
     this.previewCanvas =  ReactDOM.findDOMNode(this.refs.previewCanvas);
     this.previewCtx = this.previewCanvas.getContext('2d');
     this.previewCtx.fillStyle = '#a0c0c0';
@@ -32,8 +41,17 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
 
-    if (asset.hasOwnProperty('content2'))
-      this.loadPreviewFromDataURI(asset.content2.imageData)
+    if (!asset.hasOwnProperty('content2.width')) {
+      asset.content2 = {
+        width: 64,
+        height: 32,
+        layerNames: ["Layer 01"],
+        frameNames: ["Frame 01"],
+        frameData: [ [] ]}
+
+    }
+    // TO change:
+    this.loadPreviewFromDataURI(asset.content2.frameData[0][0])
 
     this.editCanvas.addEventListener('wheel',      this.handleMouseWheel.bind(this));
     this.editCanvas.addEventListener('mousemove',  this.handleMouseMove.bind(this));
@@ -51,7 +69,7 @@ export default class EditGraphic extends React.Component {
     let asset = this.props.asset;
 
     if (asset.hasOwnProperty('content2'))
-      this.loadPreviewFromDataURI(asset.content2.imageData)
+      this.loadPreviewFromDataURI(asset.content2.frameData[0][0])
   }
 
 
@@ -88,8 +106,10 @@ export default class EditGraphic extends React.Component {
 
   handleSave()
   {
-    let x = { imageData: this.previewCanvas.toDataURL('image/png') };
-    this.props.handleContentChange(x);
+    let asset = this.props.asset;
+
+    asset.content2.frameData[0][0] = this.previewCanvas.toDataURL('image/png')
+    this.props.handleContentChange(asset.content2);
   }
 
 

@@ -32,8 +32,8 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
 
-    if (asset.hasOwnProperty('content'))
-      this.loadPreviewFromDataURI(asset.content)
+    if (asset.hasOwnProperty('content2'))
+      this.loadPreviewFromDataURI(asset.content2.imageData)
 
     this.editCanvas.addEventListener('wheel',      this.handleMouseWheel.bind(this));
     this.editCanvas.addEventListener('mousemove',  this.handleMouseMove.bind(this));
@@ -50,14 +50,14 @@ export default class EditGraphic extends React.Component {
   {
     let asset = this.props.asset;
 
-    if (asset.hasOwnProperty('content'))
-      this.loadPreviewFromDataURI(asset.content)
+    if (asset.hasOwnProperty('content2'))
+      this.loadPreviewFromDataURI(asset.content2.imageData)
   }
 
 
   loadPreviewFromDataURI(dataURI)
   {
-    if (dataURI.startsWith("data:image/png;base64,"))
+    if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,"))
     {
       var _img = new Image;
       var _ctx = this.previewCtx;
@@ -88,7 +88,7 @@ export default class EditGraphic extends React.Component {
 
   handleSave()
   {
-    let x = this.previewCanvas.toDataURL('image/png');
+    let x = { imageData: this.previewCanvas.toDataURL('image/png') };
     this.props.handleContentChange(x);
   }
 

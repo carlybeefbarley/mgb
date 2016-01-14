@@ -27,13 +27,13 @@ export default class AssetEdit extends React.Component {
     }
   }
 
-  handleContentChange(contentString)
+  handleContentChange(content2Object)
   {
     let asset = this.props.asset;
 
     let canEdit = true; // TODO: Something based on this.props.ownsProfile ??
 
-    Meteor.call('Azzets.update', asset._id, canEdit, {content: contentString}, (err, res) => {
+    Meteor.call('Azzets.update', asset._id, canEdit, {content2: content2Object}, (err, res) => {
       if (err) {
         alert('error: ' + err.reason)
       }

@@ -93,7 +93,8 @@ export default class UserAssetListRoute extends Component {
     Meteor.call('Azzets.create', {
       name: assetName,
       kind: assetKindKey,
-      text: "TODO:ASSET_CONTENT", // TODO:DGOLDS
+      text: "",
+      content2: {},
 
       isCompleted: false,
       isDeleted: false,
@@ -101,7 +102,7 @@ export default class UserAssetListRoute extends Component {
       teamId: ''
     }, (error, result) => {
       if (error) {
-          alert.show("cannot create asset because: " + error.reason);
+          alert("cannot create asset because: " + error.reason);
       } else {
         this.history.pushState(null, `/assetEdit/${result}`)
       }

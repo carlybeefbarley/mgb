@@ -33,8 +33,8 @@ export default class AssetCard extends React.Component {
     this.previewCtx.fillStyle = '#a0c0c0';
     this.previewCtx.fillRect(0, 0, this.previewCanvas.width, this.previewCanvas.height);
 
-    if (asset.kind === "graphic" && asset.hasOwnProperty("content"))
-      this.loadPreviewFromDataURI(asset.content)
+    if (asset.kind === "graphic" && asset.hasOwnProperty("content2"))
+      this.loadPreviewFromDataURI(asset.content2.imageData)
   }
 
 
@@ -42,8 +42,8 @@ export default class AssetCard extends React.Component {
   {
     let asset = this.props.asset;
 
-    if (asset.kind === "graphic" && asset.hasOwnProperty('content'))
-      this.loadPreviewFromDataURI(asset.content)
+    if (asset.kind === "graphic" && asset.hasOwnProperty('content2'))
+      this.loadPreviewFromDataURI(asset.content2.imageData)
   }
 
   loadPreviewFromDataURI(dataURI)

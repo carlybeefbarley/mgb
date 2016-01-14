@@ -15,6 +15,7 @@ var schema = {
   text: String,       // A description field
   content: String,    // depends on asset type
                       //   data-uri base 64 - for graphic
+  content2: Object,
   thumbnail: String,  // data-uri base 64 of thumbnail image
 
   //various flags
@@ -74,11 +75,12 @@ Meteor.methods({
     check(data, {
       updatedAt: schema.updatedAt,
 
-      name: optional(schema.text),
-      kind: optional(schema.text),
+      name: optional(schema.name),
+      kind: optional(schema.kind),
       text: optional(schema.text),
-      content: optional(schema.text),
-      thumbnail: optional(schema.text),
+      content: optional(schema.content),
+      content2: optional(schema.content2),
+      thumbnail: optional(schema.thumbnail),
 
       isCompleted: optional(schema.isCompleted),
       isDeleted: optional(schema.isDeleted),

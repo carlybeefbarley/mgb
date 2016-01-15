@@ -21,13 +21,13 @@ export default class EditGraphic extends React.Component {
 
 
 
-  // Grahic asset - Data format:
+  // Graphic asset - Data format:
   //
   // content2.width
   // content2.height
   // content2.layerNames[layerIndex]     // array of layer names (content is string)
   // content2.frameNames[frameIndex]
-  // content2.frameData[frameIndex][layerIndex]   /// each is an a dataURL
+  // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
 
 
 
@@ -43,10 +43,8 @@ export default class EditGraphic extends React.Component {
     //this.editCtxOverlay.fillStyle = '#a0c0c0';
     //this.editCtxOverlay.fillRect(0, 0, this.editCanvasOverlay.width, this.editCanvasOverlay.height);
 
-    this.createDefaultContent2()
-    let asset = this.props.asset;
-
-    this.getPreviewCanvasReferences(asset)
+    this.createDefaultContent2()              // Probably superfluous since done in render() but here to be sure.
+    this.getPreviewCanvasReferences()
     this.loadPreviewsFromAsset()
 
     this.editCanvas.addEventListener('wheel',      this.handleMouseWheel.bind(this));
@@ -76,40 +74,33 @@ export default class EditGraphic extends React.Component {
 
   componentDidUpdate(prevProps,  prevState)
   {
-    let asset = this.props.asset;
-
-    // CLEAR and RECREATE THE Previews - could have been added/removed/reordered
-    this.getPreviewCanvasReferences(asset)
-
-    if (asset.hasOwnProperty('content2'))
-      this.loadPreviewsFromAsset()
+    this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
+    this.loadPreviewsFromAsset()
   }
 
-  getPreviewCanvasReferences(asset)
+  getPreviewCanvasReferences()
   {
     this.previewCanvasArray = [];
     this.previewCtxArray = []
 
-    let c2  = asset.content2;
+    let asset = this.props.asset;
+    let c2 = asset.content2;
     let frameCount = c2.frameNames.length;
 
     for (let i = 0; i < frameCount; i++) {
       this.previewCanvasArray[i] =  ReactDOM.findDOMNode(this.refs["previewCanvas" + i.toString()]);
-      if (this.previewCanvasArray[i] === null) {
-        console.log("Could not find previewCanvas" + i.toString())
-      }
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
       this.previewCtxArray[i].fillStyle = '#a0c0c0';
       this.previewCtxArray[i].fillRect(0, 0, c2.width, c2.height);
     }
-
   }
 
 
   loadPreviewsFromAsset()
   {
     let c2 = this.props.asset.content2;
-    var frameCount = c2.frameNames.length;
+    let frameCount = c2.frameNames.length;
+
     for (let i = 0; i < frameCount; i++) {
       let dataURI = c2.frameData[i][0];
 
@@ -117,22 +108,22 @@ export default class EditGraphic extends React.Component {
         var _img = new Image
         var self = this
         _img.src = dataURI    // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-        _img.mgb_hack = i     // so in onload we know which previewCtx to apply the data to
+        _img.mgb_hack = i     // so in onload() callback we know which previewCtx to apply the data to
         _img.onload = function (e) {
           self.previewCtxArray[e.target.mgb_hack].drawImage(e.target, 0, 0);
           if (e.target.mgb_hack === self.state.selectedFrameIdx)
-            self.updateEditCanvasFromPreviewCanvas();
+            self.updateEditCanvasFromSelectedPreviewCanvas();
         }
       }
       else {
-        this.updateEditCanvasFromPreviewCanvas();
+        this.updateEditCanvasFromSelectedPreviewCanvas();
       }
     }
   }
 
-  updateEditCanvasFromPreviewCanvas()
+
+  updateEditCanvasFromSelectedPreviewCanvas()
   {
-    // TODO: Add dirty region to bound work
     let w = this.previewCanvasArray[this.state.selectedFrameIdx].width;
     let h = this.previewCanvasArray[this.state.selectedFrameIdx].height;
     let s = 8;
@@ -142,6 +133,7 @@ export default class EditGraphic extends React.Component {
     this.editCtx.msImageSmoothingEnabled = this.checked;
     this.editCtx.drawImage(this.previewCanvasArray[this.state.selectedFrameIdx], 0, 0, w, h, 0, 0, w*s, h*s)
   }
+
 
   handleSave()
   {
@@ -166,7 +158,6 @@ export default class EditGraphic extends React.Component {
   {
     this.mgb_toolActive = true;
     this._pixelDrawAt(event, 'red')
-    this.handleSave()
   }
 
   handleMouseUp(event)

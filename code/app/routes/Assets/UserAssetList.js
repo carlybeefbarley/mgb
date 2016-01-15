@@ -94,6 +94,7 @@ export default class UserAssetListRoute extends Component {
       name: assetName,
       kind: assetKindKey,
       text: "",
+      thumbnail: "",
       content2: {},
 
       isCompleted: false,

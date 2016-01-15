@@ -125,9 +125,7 @@ export default class EditGraphic extends React.Component {
         }
       }
       else {
-        console.log("Unrecognized graphic data URI: " + dataURI)
         this.updateEditCanvasFromPreviewCanvas();
-
       }
     }
   }
@@ -154,7 +152,8 @@ export default class EditGraphic extends React.Component {
     for (let i = 0; i < frameCount; i++) {
       asset.content2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
     }
-    this.props.handleContentChange(asset.content2);
+    asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')
+    this.props.handleContentChange(asset.content2, asset.thumbnail);
   }
 
 
@@ -247,7 +246,6 @@ export default class EditGraphic extends React.Component {
 
     var selectedFrameIdx =  this.state.selectedFrameIdx;
     let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
-      console.log(" pc" + idx.toString())
       return (
         <canvas ref={"previewCanvas"+idx.toString()}
                 key={"previewCanvas"+idx.toString()}

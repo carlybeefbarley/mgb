@@ -52,6 +52,7 @@ Meteor.methods({
     data.updatedAt = new Date();
     data.content = "";
     data.thumbnail = "";
+    data.content2 = {};
 
     check(data, _.omit(schema, '_id'));
 

@@ -33,8 +33,8 @@ export default class AssetCard extends React.Component {
     this.previewCtx.fillStyle = '#a0c0c0';
     this.previewCtx.fillRect(0, 0, this.previewCanvas.width, this.previewCanvas.height);
 
-    if (asset.kind === "graphic" && asset.content2.hasOwnProperty("width"))
-      this.loadPreviewFromDataURI(asset.content2.frameData[0][0]);
+    if (asset.hasOwnProperty("thumbnail"))
+      this.loadPreviewFromDataURI(asset.thumbnail)
   }
 
 
@@ -42,17 +42,21 @@ export default class AssetCard extends React.Component {
   {
     let asset = this.props.asset;
 
-    if (asset.kind === "graphic" && asset.hasOwnProperty('content2'))
-      this.loadPreviewFromDataURI(asset.content2.imageData)
+    if (asset.hasOwnProperty("thumbnail"))
+      this.loadPreviewFromDataURI(asset.thumbnail)
   }
+
+
+
 
   loadPreviewFromDataURI(dataURI)
   {
+    if (dataURI === undefined || dataURI.length == 0)
+      return;
     if (dataURI.startsWith("data:image/png;base64,"))
     {
       var _img = new Image;
       var _ctx = this.previewCtx;
-      var self = this;
       _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
       _img.onload = function() {
         _ctx.drawImage(_img,0,0); // needs to be done in onload...
@@ -75,7 +79,7 @@ export default class AssetCard extends React.Component {
       <div key={asset._id} className="ui card">
         <div className="content">
           <canvas ref="thumbnailCanvas" className="right floated mini ui image"
-               src="/images/avatar/large/elliot.jpg" width="64" height="32" >
+                width="64" height="32" >
           </canvas>
           <div className="header">
             <i className={assetKindIcon}></i>

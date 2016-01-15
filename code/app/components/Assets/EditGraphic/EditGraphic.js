@@ -12,7 +12,6 @@ export default class EditGraphic extends React.Component {
     handleContentChange: PropTypes.function
   }
 
-
   constructor(props) {
     super(props);
     this.state = {
@@ -22,13 +21,13 @@ export default class EditGraphic extends React.Component {
 
 
 
-  // Data format
+  // Grahic asset - Data format:
   //
   // content2.width
   // content2.height
   // content2.layerNames[layerIndex]     // array of layer names (content is string)
   // content2.frameNames[frameIndex]
-  // content2.frameData[frameIndex][layerIndex]   /// each is an a
+  // content2.frameData[frameIndex][layerIndex]   /// each is an a dataURL
 
 
 
@@ -44,32 +43,10 @@ export default class EditGraphic extends React.Component {
     //this.editCtxOverlay.fillStyle = '#a0c0c0';
     //this.editCtxOverlay.fillRect(0, 0, this.editCanvasOverlay.width, this.editCanvasOverlay.height);
 
+    this.createDefaultContent2()
     let asset = this.props.asset;
 
-    if (!asset.content2.hasOwnProperty('width')) {
-      asset.content2 = {
-        width: 64,
-        height: 32,
-        layerNames: ["Layer 01"],
-        frameNames: ["Frame 01", "Frame 02"],
-        frameData: [ [], [] ]}
-    }
-
-    this.previewCanvasArray = [];
-    this.previewCtxArray = []
-
-    let c2  = asset.content2;
-    let frameCount = c2.frameNames.length;
-
-    for (let i = 0; i < frameCount; i++) {
-      this.previewCanvasArray[i] =  ReactDOM.findDOMNode(this.refs["previewCanvas" + i.toString()]);
-      this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
-      this.previewCtxArray[i].fillStyle = '#a0c0c0';
-      this.previewCtxArray[i].fillRect(0, 0, c2.width, c2.height);
-
-    }
-
-    // TO change:
+    this.getPreviewCanvasReferences(asset)
     this.loadPreviewsFromAsset()
 
     this.editCanvas.addEventListener('wheel',      this.handleMouseWheel.bind(this));
@@ -83,28 +60,64 @@ export default class EditGraphic extends React.Component {
 }
 
 
+  createDefaultContent2()       // TODO - this isn't ideal React since it is messing with props. TODO: clean this up
+  {
+    let asset = this.props.asset;
+
+    if (!asset.content2.hasOwnProperty('width')) {
+      asset.content2 = {
+        width: 64,
+        height: 32,
+        layerNames: ["Layer 01"],
+        frameNames: ["Frame 01", "Frame 02"],
+        frameData: [ [], [] ]}
+    }
+  }
+
   componentDidUpdate(prevProps,  prevState)
   {
     let asset = this.props.asset;
+
+    // CLEAR and RECREATE THE Previews - could have been added/removed/reordered
+    this.getPreviewCanvasReferences(asset)
 
     if (asset.hasOwnProperty('content2'))
       this.loadPreviewsFromAsset()
   }
 
+  getPreviewCanvasReferences(asset)
+  {
+    this.previewCanvasArray = [];
+    this.previewCtxArray = []
+
+    let c2  = asset.content2;
+    let frameCount = c2.frameNames.length;
+
+    for (let i = 0; i < frameCount; i++) {
+      this.previewCanvasArray[i] =  ReactDOM.findDOMNode(this.refs["previewCanvas" + i.toString()]);
+      if (this.previewCanvasArray[i] === null) {
+        console.log("Could not find previewCanvas" + i.toString())
+      }
+      this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
+      this.previewCtxArray[i].fillStyle = '#a0c0c0';
+      this.previewCtxArray[i].fillRect(0, 0, c2.width, c2.height);
+    }
+
+  }
+
 
   loadPreviewsFromAsset()
   {
-    let c2  = this.props.asset.content2;
+    let c2 = this.props.asset.content2;
     var frameCount = c2.frameNames.length;
     for (let i = 0; i < frameCount; i++) {
       let dataURI = c2.frameData[i][0];
 
       if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-        var _img = new Image;
-        var _ctx = this.previewCtxArray[i];
-        var self = this;
-        _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-        _img.mgb_hack = i
+        var _img = new Image
+        var self = this
+        _img.src = dataURI    // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
+        _img.mgb_hack = i     // so in onload we know which previewCtx to apply the data to
         _img.onload = function (e) {
           self.previewCtxArray[e.target.mgb_hack].drawImage(e.target, 0, 0);
           if (e.target.mgb_hack === self.state.selectedFrameIdx)
@@ -112,7 +125,9 @@ export default class EditGraphic extends React.Component {
         }
       }
       else {
-        console.log("Unrecognized graphic data URI")
+        console.log("Unrecognized graphic data URI: " + dataURI)
+        this.updateEditCanvasFromPreviewCanvas();
+
       }
     }
   }
@@ -134,7 +149,7 @@ export default class EditGraphic extends React.Component {
   {
     let asset = this.props.asset;
     let c2  = asset.content2;
-    let frameCount = c2.frameNames.length;
+    let frameCount = this.previewCanvasArray.length;  // We don't use c2.frameNames.length  coz of the Add Frame button
 
     for (let i = 0; i < frameCount; i++) {
       asset.content2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
@@ -208,6 +223,15 @@ export default class EditGraphic extends React.Component {
 
   }
 
+  handleAddFrame()
+  {
+    let fN = this.props.asset.content2.frameNames;
+    let newFrameName = "Frame " + fN.length.toString();
+    fN.push(newFrameName);
+    this.props.asset.content2.frameData.push([]);
+    this.handleSave();
+    this.forceUpdate();
+  }
 
   handleSelectFrame(frameIndex)
   {
@@ -215,11 +239,15 @@ export default class EditGraphic extends React.Component {
   }
 
   render() {
+    this.createDefaultContent2()          // The outer create function is very lazy, so we fix up missing content here
+
     let asset = this.props.asset;
+
     let c2 = asset.content2;
 
     var selectedFrameIdx =  this.state.selectedFrameIdx;
     let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
+      console.log(" pc" + idx.toString())
       return (
         <canvas ref={"previewCanvas"+idx.toString()}
                 key={"previewCanvas"+idx.toString()}
@@ -264,6 +292,7 @@ export default class EditGraphic extends React.Component {
 
         <div className="ui two wide column ">
           {previewCanvasses}
+          <a className="mini ui compact button" onClick={this.handleAddFrame.bind(this)}>Add Frame</a>
         </div>
 
       </div>

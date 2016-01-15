@@ -12,6 +12,16 @@ export default class EditGraphic extends React.Component {
     handleContentChange: PropTypes.function
   }
 
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedFrameIdx: 0
+    }
+  }
+
+
+
   // Data format
   //
   // content2.width
@@ -34,30 +44,39 @@ export default class EditGraphic extends React.Component {
     //this.editCtxOverlay.fillStyle = '#a0c0c0';
     //this.editCtxOverlay.fillRect(0, 0, this.editCanvasOverlay.width, this.editCanvasOverlay.height);
 
-    this.previewCanvas =  ReactDOM.findDOMNode(this.refs.previewCanvas);
-    this.previewCtx = this.previewCanvas.getContext('2d');
-    this.previewCtx.fillStyle = '#a0c0c0';
-    this.previewCtx.fillRect(0, 0, this.previewCanvas.width, this.previewCanvas.height);
-
     let asset = this.props.asset;
 
-    if (!asset.hasOwnProperty('content2.width')) {
+    if (!asset.content2.hasOwnProperty('width')) {
       asset.content2 = {
         width: 64,
         height: 32,
         layerNames: ["Layer 01"],
-        frameNames: ["Frame 01"],
-        frameData: [ [] ]}
+        frameNames: ["Frame 01", "Frame 02"],
+        frameData: [ [], [] ]}
+    }
+
+    this.previewCanvasArray = [];
+    this.previewCtxArray = []
+
+    let c2  = asset.content2;
+    let frameCount = c2.frameNames.length;
+
+    for (let i = 0; i < frameCount; i++) {
+      this.previewCanvasArray[i] =  ReactDOM.findDOMNode(this.refs["previewCanvas" + i.toString()]);
+      this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
+      this.previewCtxArray[i].fillStyle = '#a0c0c0';
+      this.previewCtxArray[i].fillRect(0, 0, c2.width, c2.height);
 
     }
+
     // TO change:
-    this.loadPreviewFromDataURI(asset.content2.frameData[0][0])
+    this.loadPreviewsFromAsset()
 
     this.editCanvas.addEventListener('wheel',      this.handleMouseWheel.bind(this));
     this.editCanvas.addEventListener('mousemove',  this.handleMouseMove.bind(this));
     this.editCanvas.addEventListener('mousedown',  this.handleMouseDown.bind(this));
     this.editCanvas.addEventListener('mouseup',    this.handleMouseUp.bind(this));
-    this.editCanvas.addEventListener('mouseleave', this.handleMouseUp.bind(this));
+    this.editCanvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
 
     this.mgb_toolActive = false;
     this.handleToolPaint();
@@ -69,46 +88,57 @@ export default class EditGraphic extends React.Component {
     let asset = this.props.asset;
 
     if (asset.hasOwnProperty('content2'))
-      this.loadPreviewFromDataURI(asset.content2.frameData[0][0])
+      this.loadPreviewsFromAsset()
   }
 
 
-  loadPreviewFromDataURI(dataURI)
+  loadPreviewsFromAsset()
   {
-    if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,"))
-    {
-      var _img = new Image;
-      var _ctx = this.previewCtx;
-      var self = this;
-      _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-      _img.onload = function() {
-        _ctx.drawImage(_img,0,0); // needs to be done in onload...
-        self.updateEditCanvasFromPreviewCanvas();
+    let c2  = this.props.asset.content2;
+    var frameCount = c2.frameNames.length;
+    for (let i = 0; i < frameCount; i++) {
+      let dataURI = c2.frameData[i][0];
+
+      if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+        var _img = new Image;
+        var _ctx = this.previewCtxArray[i];
+        var self = this;
+        _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
+        _img.mgb_hack = i
+        _img.onload = function (e) {
+          self.previewCtxArray[e.target.mgb_hack].drawImage(e.target, 0, 0);
+          if (e.target.mgb_hack === self.state.selectedFrameIdx)
+            self.updateEditCanvasFromPreviewCanvas();
+        }
       }
-    }
-    else {
-      console.log("Unrecognized graphic data URI")
+      else {
+        console.log("Unrecognized graphic data URI")
+      }
     }
   }
 
   updateEditCanvasFromPreviewCanvas()
   {
     // TODO: Add dirty region to bound work
-    let w = this.previewCanvas.width;
-    let h = this.previewCanvas.height;
+    let w = this.previewCanvasArray[this.state.selectedFrameIdx].width;
+    let h = this.previewCanvasArray[this.state.selectedFrameIdx].height;
     let s = 8;
     this.editCtx.imageSmoothingEnabled = this.checked;
     this.editCtx.mozImageSmoothingEnabled = this.checked;
     this.editCtx.webkitImageSmoothingEnabled = this.checked;
     this.editCtx.msImageSmoothingEnabled = this.checked;
-    this.editCtx.drawImage(this.previewCanvas, 0, 0, w, h, 0, 0, w*s, h*s)
+    this.editCtx.drawImage(this.previewCanvasArray[this.state.selectedFrameIdx], 0, 0, w, h, 0, 0, w*s, h*s)
   }
 
   handleSave()
   {
     let asset = this.props.asset;
+    let c2  = asset.content2;
+    let frameCount = c2.frameNames.length;
 
-    asset.content2.frameData[0][0] = this.previewCanvas.toDataURL('image/png')
+    for (let i = 0; i < frameCount; i++) {
+      asset.content2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
+    }
     this.props.handleContentChange(asset.content2);
   }
 
@@ -125,10 +155,20 @@ export default class EditGraphic extends React.Component {
     this.handleSave()
   }
 
-  handleMouseUp(event)      // Also used for MouseLeave event
+  handleMouseUp(event)
   {
-    this.mgb_toolActive = false;
-    this.handleSave()
+    if (this.mgb_toolActive) {
+      this.mgb_toolActive = false;
+      this.handleSave()
+    }
+  }
+
+  handleMouseLeave(event)
+  {
+    if (this.mgb_toolActive) {
+      this.mgb_toolActive = false;
+      this.handleSave()
+    }
   }
 
   _pixelDrawAt(event, color)
@@ -141,8 +181,8 @@ export default class EditGraphic extends React.Component {
     this.editCtx.fillStyle = chosenColor;
     this.editCtx.fillRect(x, y, 8, 8);
 
-    this.previewCtx.fillStyle = chosenColor;
-    this.previewCtx.fillRect(x/8, y/8, 1, 1)
+    this.previewCtxArray[this.state.selectedFrameIdx].fillStyle = chosenColor;
+    this.previewCtxArray[this.state.selectedFrameIdx].fillRect(x/8, y/8, 1, 1)
   }
 
   handleMouseMove(event)
@@ -169,9 +209,24 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  render() {
+  handleSelectFrame(frameIndex)
+  {
+    this.setState( { selectedFrameIdx: frameIndex})
+  }
 
+  render() {
     let asset = this.props.asset;
+    let c2 = asset.content2;
+
+    var selectedFrameIdx =  this.state.selectedFrameIdx;
+    let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
+      return (
+        <canvas ref={"previewCanvas"+idx.toString()}
+                key={"previewCanvas"+idx.toString()}
+                width={c2.width} height={c2.height}
+                onClick={this.handleSelectFrame.bind(this, idx)}
+                className={ selectedFrameIdx == idx ? sty.thinBorder : ""}></canvas>
+    )})
 
     return (
       <div className="ui grid">
@@ -208,7 +263,7 @@ export default class EditGraphic extends React.Component {
         </div>
 
         <div className="ui two wide column ">
-          <canvas ref="previewCanvas" width="64" height="32"></canvas>
+          {previewCanvasses}
         </div>
 
       </div>

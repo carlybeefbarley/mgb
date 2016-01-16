@@ -303,8 +303,13 @@ export default class EditGraphic extends React.Component {
 
         <div className="ui one wide column">
           <div className="ui vertical icon buttons">
-              {toolComponents}
-              <button className="ui button" onClick={this.handleSave.bind(this)}><i className="save icon" ></i></button>
+            {toolComponents}
+            <div className="ui button" onClick={this.handleSave.bind(this)}
+                 data-content="Save"
+                 data-variation="tiny"
+                 data-position="right center">
+              <i className="save icon"></i>
+            </div>
           </div>
         </div>
 

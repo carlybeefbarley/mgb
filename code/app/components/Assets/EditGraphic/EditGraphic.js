@@ -68,9 +68,11 @@ export default class EditGraphic extends React.Component {
     let $a = $(ReactDOM.findDOMNode(this))
 
     $a.find('.button').popup()
-    $a.find('.mgbColorPickerHost').popup({
+    let $cp =  $a.find('.mgbColorPickerHost')
+
+    $cp.popup({
       popup: '.mgbColorPickerWidget.popup',
-      title   : 'Popup Title'
+      hoverable: true
     })
   }
 

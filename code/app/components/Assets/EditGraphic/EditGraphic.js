@@ -4,6 +4,8 @@ import reactMixin from 'react-mixin';
 import {History} from 'react-router';
 import Icon from '../../Icons/Icon.js';
 import sty from  './editGraphic.css';
+import tools from './Tools.js';
+
 
 @reactMixin.decorate(History)
 export default class EditGraphic extends React.Component {
@@ -54,15 +56,14 @@ export default class EditGraphic extends React.Component {
     this.editCanvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
 
     this.mgb_toolActive = false;
-    this.handleToolPaint();
+    this.mgb_toolChosen = null;
 }
 
 
   createDefaultContent2()       // TODO - this isn't ideal React since it is messing with props. TODO: clean this up
   {
-    let asset = this.props.asset;
-
-    if (!asset.content2.hasOwnProperty('width')) {
+    let asset = this.props.asset
+    if (!asset.hasOwnProperty("content2") || !asset.content2.hasOwnProperty('width')) {
       asset.content2 = {
         width: 64,
         height: 32,
@@ -138,104 +139,133 @@ export default class EditGraphic extends React.Component {
   handleSave()
   {
     let asset = this.props.asset;
-    let c2  = asset.content2;
+    let c2    = asset.content2;
     let frameCount = this.previewCanvasArray.length;  // We don't use c2.frameNames.length  coz of the Add Frame button
 
     for (let i = 0; i < frameCount; i++) {
-      asset.content2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
+      c2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
     }
     asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')
-    this.props.handleContentChange(asset.content2, asset.thumbnail);
+    this.props.handleContentChange(c2, asset.thumbnail);
+  }
+
+
+  // A plugin-api for the graphic editing tools in Tools.js
+
+  collateDrawingToolEnv(event)  // used to gather current useful state for the Tools and passed to them in most callbacks
+  {
+    let asset = this.props.asset;
+    let c2    = asset.content2;
+    let SCALE = 8;
+
+    return {
+      x: Math.floor(event.offsetX / SCALE),
+      y: Math.floor(event.offsetY / SCALE),
+      width:  c2.width,
+      height: c2.height,
+      scale:  SCALE,                  // TODO (edit Zoom)
+      chosenColor: 'red',             // TODO
+      eraserColor: 'black',           // TODO
+      previewCtx: this.previewCtxArray[this.state.selectedFrameIdx],
+      //previewCanvas: this.previewCanvasArray[this.state.selectedFrameIdx],
+      editCtx: this.editCtx,
+      //editCanvas: this.editCanvas
+    }
   }
 
 
   handleMouseWheel(event)
   {
-    event.preventDefault();   // TODO: Zoom
+    event.preventDefault();             // TODO: Zoom
   }
 
-  handleMouseDown(event)
-  {
-    this.mgb_toolActive = true;
-    this._pixelDrawAt(event, 'red')
-  }
 
-  handleMouseUp(event)
-  {
-    if (this.mgb_toolActive) {
-      this.mgb_toolActive = false;
-      this.handleSave()
+  handleMouseDown(event) {
+    if (this.mgb_toolChosen !== null) {
+      if (this.mgb_toolChosen.supportsDrag === true)
+        this.mgb_toolActive = true
+      this.mgb_toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
     }
+    if (this.mgb_toolChosen.supportsDrag === false)
+      this.handleSave()   // This is a one-shot tool, so save it's results now
   }
 
-  handleMouseLeave(event)
-  {
-    if (this.mgb_toolActive) {
-      this.mgb_toolActive = false;
-      this.handleSave()
-    }
-  }
-
-  _pixelDrawAt(event, color)
-  {
-    let x = event.offsetX & 0xfff8;
-    let y = event.offsetY & 0xfff8;
-
-    let chosenColor = this.mgb_toolChosen === "paint" ? color : '#a0c0c0';
-
-    this.editCtx.fillStyle = chosenColor;
-    this.editCtx.fillRect(x, y, 8, 8);
-
-    this.previewCtxArray[this.state.selectedFrameIdx].fillStyle = chosenColor;
-    this.previewCtxArray[this.state.selectedFrameIdx].fillRect(x/8, y/8, 1, 1)
-  }
 
   handleMouseMove(event)
   {
-    if (this.mgb_toolActive) {
-      this._pixelDrawAt(event, 'red')
+    if (this.mgb_toolChosen !== null && this.mgb_toolActive === true ) {
+      this.mgb_toolChosen.handleMouseMove(this.collateDrawingToolEnv(event))
     }
-    $(event.target).css('cursor','crosshair');
   }
 
-  handleToolPaint()
+
+  handleMouseUp(event)
   {
-    $(this.refs.toolPaint).addClass("active");
-    $(this.refs.toolEraser).removeClass("active");
-    this.mgb_toolChosen = "paint";
+    if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
+      this.mgb_toolChosen.handleMouseUp(this.collateDrawingToolEnv(event))
+      this.handleSave()
+      this.mgb_toolActive = false
+    }
   }
 
-  handleToolEraser()
+
+  handleMouseLeave(event)
   {
-    $(this.refs.toolEraser).addClass("active");
-    $(this.refs.toolPaint).removeClass("active");
-    this.mgb_toolChosen = "eraser";
+    if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
 
+      this.mgb_toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
+      this.handleSave()
+      this.mgb_toolActive = false
+    }
   }
+
+
+// Tool selection action
+
+  handleToolSelected(tool, e,x,y,z)
+  {
+    let $toolbarItem = $(e.target)
+
+    $toolbarItem.
+      .closest('.ui.menu')
+      .find('.item')
+      .removeClass('active');
+
+    $toolbarItem.addClass('active')
+
+    this.mgb_toolChosen = tool;
+    $(this.editCanvas).css('cursor', tool.editCursor);
+  }
+
+
+  // Add/Select/Remove etc animation frames
+
 
   handleAddFrame()
   {
-    let fN = this.props.asset.content2.frameNames;
-    let newFrameName = "Frame " + fN.length.toString();
-    fN.push(newFrameName);
-    this.props.asset.content2.frameData.push([]);
-    this.handleSave();
-    this.forceUpdate();
+    let fN = this.props.asset.content2.frameNames
+    let newFrameName = "Frame " + fN.length.toString()
+    fN.push(newFrameName)
+    this.props.asset.content2.frameData.push([])
+    this.handleSave()
+    this.forceUpdate()
   }
+
 
   handleSelectFrame(frameIndex)
   {
     this.setState( { selectedFrameIdx: frameIndex})
   }
 
+
   render() {
-    this.createDefaultContent2()          // The outer create function is very lazy, so we fix up missing content here
+    this.createDefaultContent2()      // The NewAsset code is lazy, add base content here
 
-    let asset = this.props.asset;
+    let asset = this.props.asset
+    let c2 = asset.content2
+    var selectedFrameIdx =  this.state.selectedFrameIdx
 
-    let c2 = asset.content2;
-
-    var selectedFrameIdx =  this.state.selectedFrameIdx;
+    // Generate preview Canvasses
     let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
       return (
         <canvas ref={"previewCanvas"+idx.toString()}
@@ -245,27 +275,21 @@ export default class EditGraphic extends React.Component {
                 className={ selectedFrameIdx == idx ? sty.thinBorder : ""}></canvas>
     )})
 
+    // Generate tools
+    let toolComponents = _.map(tools, (tool) => { return (
+      <a className="item" onClick={this.handleToolSelected.bind(this, tool)} key={tool.name}>
+        <i className={tool.icon}></i>
+        {tool.name}
+      </a>);
+    });
+
+    // Make element
     return (
       <div className="ui grid">
 
         <div className="ui two wide column">
-          <div className="ui vertical fluid  icon menu">
-            <a className="item" onClick={this.handleToolPaint.bind(this)} ref="toolPaint">
-              <i className="paint brush icon"></i>
-              Paint
-            </a>
-            <a className="item" onClick={this.handleToolEraser.bind(this)} ref="toolEraser">
-              <i className="eraser icon"></i>
-              Erase
-            </a>
-            <a className="item">
-              <i className="block layout icon"></i>
-              Color
-            </a>
-            <a className="item">
-              <i className="circle thin icon"></i>
-              Shape
-            </a>
+          <div className="ui vertical fluid icon menu">
+            {toolComponents}
             <a className="item" onClick={this.handleSave.bind(this)}>
               <i className="save icon" ></i>
               Save
@@ -276,7 +300,11 @@ export default class EditGraphic extends React.Component {
         <div className={sty.tagPosition + " ui twelve wide column"}>
           <canvas ref="editCanvas" width="512" height="256" className={sty.thinBorder}></canvas>
           {/*<canvas ref="editCanvasOverlay" width="512" height="256" className={sty.forceTopLeft}></canvas>*/}
-
+          <div className="ui three item menu">
+            <a className="item">Grid</a>
+            <a className="item">Zoom</a>
+            <a className="item active">Animate</a>
+          </div>
         </div>
 
         <div className="ui two wide column ">

@@ -58,15 +58,20 @@ export default class EditGraphic extends React.Component {
     this.activateMenuPopups();
     this.mgb_toolActive = false;
     this.mgb_toolChosen = null;
-}
+  }
 
 
   activateMenuPopups()
   {
-    var $a = $(ReactDOM.findDOMNode(this))
-    var $b = $a.find('.button')
+    // See http://semantic-ui.com/modules/popup.html#/usage
 
-    $b.popup()
+    let $a = $(ReactDOM.findDOMNode(this))
+
+    $a.find('.button').popup()
+    $a.find('.mgbColorPickerHost').popup({
+      popup: '.mgbColorPickerWidget.popup',
+      title   : 'Popup Title'
+    })
   }
 
 
@@ -310,11 +315,15 @@ export default class EditGraphic extends React.Component {
                  data-position="right center">
               <i className="save icon"></i>
             </div>
+            <div className="ui button mgbColorPickerHost" onClick={this.handleSave.bind(this)}
+                 data-position="right center">
+              <i className="block layout icon"></i>
+            </div>
           </div>
         </div>
 
         <div className={sty.tagPosition + " ui twelve wide column"}>
-          <canvas ref="editCanvas" width="512" height="256" className={sty.thinBorder}></canvas>
+          <canvas ref="editCanvas" width="512" height="256" className={sty.thinBorder + " " + sty.atZeroZero}></canvas>
           {/*<canvas ref="editCanvasOverlay" width="512" height="256" className={sty.forceTopLeft}></canvas>*/}
 
           <div className="ui three item menu">
@@ -323,7 +332,9 @@ export default class EditGraphic extends React.Component {
             <a className="item active">Animate</a>
           </div>
 
-          <ColorPicker type="sketch" />
+          <div className="ui popup mgbColorPickerWidget">
+            <ColorPicker type="sketch" />
+          </div>
 
 
         </div>

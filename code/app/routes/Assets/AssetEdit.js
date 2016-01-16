@@ -50,7 +50,7 @@ export default class AssetEditRoute extends Component {
     const {name, avatar} = currUser.profile;
 
     return (
-      <div>
+      <div className="ui grid">
 
         <Helmet
           title="Asset Editor"
@@ -60,23 +60,30 @@ export default class AssetEditRoute extends Component {
         />
 
 
-        <div className="ui two column grid">
-          <div className="row">
-            <div className="column">
-              <h1>
-                <i className={AssetKinds.getIconClass(asset.kind)}></i>
-                <input className="fluid" ref="assetNameInput" value={asset.name} onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
-              </h1>
+        <div className="nine wide column">
+
+          <div className="ui large left action input fluid">
+            <div className="ui teal icon button">
+              <i className={AssetKinds.getIconClass(asset.kind)}></i>
+
             </div>
-            <div className="column">
-              <UserItem
-                name={name}
-                avatar={avatar}
-                createdAt={createdAt}
-                _id={_id} />
-            </div>
+            <input ref="assetNameInput" value={asset.name} onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
+          </div>
+          <div class="ui segment">
+            <p>I'm here to tell you something...</p>
           </div>
 
+        </div>
+
+        <div className="seven wide column">
+          <UserItem
+            name={name}
+            avatar={avatar}
+            createdAt={createdAt}
+            _id={_id} />
+        </div>
+
+        <div className="sixteen wide column">
           <AssetEdit asset={asset}/>
         </div>
       </div>

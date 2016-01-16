@@ -226,7 +226,7 @@ export default class EditGraphic extends React.Component {
   {
     let $toolbarItem = $(e.target)
 
-    $toolbarItem.
+    $toolbarItem
       .closest('.ui.menu')
       .find('.item')
       .removeClass('active');

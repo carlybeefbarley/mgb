@@ -59,8 +59,7 @@ export default class AssetEditRoute extends Component {
           ]}
         />
 
-
-        <div className="nine wide column">
+        <div className="ui nine wide column">
 
           <div className="ui large left action input fluid">
             <div className="ui teal icon button">
@@ -69,7 +68,8 @@ export default class AssetEditRoute extends Component {
             </div>
             <input ref="assetNameInput" value={asset.name} onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
           </div>
-          <div class="ui segment">
+
+          <div class="ui segment ">
             <p>I'm here to tell you something...</p>
           </div>
 

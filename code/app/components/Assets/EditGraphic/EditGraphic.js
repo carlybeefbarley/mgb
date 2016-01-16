@@ -33,7 +33,6 @@ export default class EditGraphic extends React.Component {
 
 
 
-
   componentDidMount() {
     this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas);
     this.editCtx = this.editCanvas.getContext('2d');
@@ -55,9 +54,20 @@ export default class EditGraphic extends React.Component {
     this.editCanvas.addEventListener('mouseup',    this.handleMouseUp.bind(this));
     this.editCanvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
 
+    // Tool button initializations
+    this.activateMenuPopups();
     this.mgb_toolActive = false;
     this.mgb_toolChosen = null;
 }
+
+
+  activateMenuPopups()
+  {
+    var $a = $(ReactDOM.findDOMNode(this))
+    var $b = $a.find('.button')
+
+    $b.popup()
+  }
 
 
   createDefaultContent2()       // TODO - this isn't ideal React since it is messing with props. TODO: clean this up
@@ -227,8 +237,8 @@ export default class EditGraphic extends React.Component {
     let $toolbarItem = $(e.target)
 
     $toolbarItem
-      .closest('.ui.menu')
-      .find('.item')
+      .closest('.ui.buttons')
+      .find('.button')
       .removeClass('active');
 
     $toolbarItem.addClass('active')
@@ -277,23 +287,24 @@ export default class EditGraphic extends React.Component {
 
     // Generate tools
     let toolComponents = _.map(tools, (tool) => { return (
-      <a className="item" onClick={this.handleToolSelected.bind(this, tool)} key={tool.name}>
+      <div  className={"ui button" + (this.mgb_toolChosen === tool ? " active" : "" )}
+            onClick={this.handleToolSelected.bind(this, tool)}
+            key={tool.name}
+            data-content={tool.name}
+            data-variation="tiny"
+            data-position="right center">
         <i className={tool.icon}></i>
-        {tool.name}
-      </a>);
+      </div>);
     });
 
     // Make element
     return (
       <div className="ui grid">
 
-        <div className="ui two wide column">
-          <div className="ui vertical fluid icon menu">
-            {toolComponents}
-            <a className="item" onClick={this.handleSave.bind(this)}>
-              <i className="save icon" ></i>
-              Save
-            </a>
+        <div className="ui one wide column">
+          <div className="ui vertical icon buttons">
+              {toolComponents}
+              <button className="ui button" onClick={this.handleSave.bind(this)}><i className="save icon" ></i></button>
           </div>
         </div>
 

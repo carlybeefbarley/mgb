@@ -5,7 +5,7 @@ import {History} from 'react-router';
 import Icon from '../../Icons/Icon.js';
 import sty from  './editGraphic.css';
 import tools from './Tools.js';
-
+import ColorPicker from 'react-color';        // http://casesandberg.github.io/react-color/
 
 @reactMixin.decorate(History)
 export default class EditGraphic extends React.Component {
@@ -316,11 +316,16 @@ export default class EditGraphic extends React.Component {
         <div className={sty.tagPosition + " ui twelve wide column"}>
           <canvas ref="editCanvas" width="512" height="256" className={sty.thinBorder}></canvas>
           {/*<canvas ref="editCanvasOverlay" width="512" height="256" className={sty.forceTopLeft}></canvas>*/}
+
           <div className="ui three item menu">
             <a className="item">Grid</a>
             <a className="item">Zoom</a>
             <a className="item active">Animate</a>
           </div>
+
+          <ColorPicker type="sketch" />
+
+
         </div>
 
         <div className="ui two wide column ">

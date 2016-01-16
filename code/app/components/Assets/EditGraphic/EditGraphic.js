@@ -17,10 +17,13 @@ export default class EditGraphic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedFrameIdx: 0
+      selectedFrameIdx: 0,
+      selectedColors: {         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
+        fg: { hex: "#00ff00", rgb: {r: 0, g: 255, b:0, a: 1} },
+        bg: { hex: "#000000", rgb: {r: 0, g:   0, b:0, a: 1} }
+      }
     }
   }
-
 
 
   // Graphic asset - Data format:
@@ -30,7 +33,6 @@ export default class EditGraphic extends React.Component {
   // content2.layerNames[layerIndex]     // array of layer names (content is string)
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
-
 
 
   componentDidMount() {
@@ -90,11 +92,13 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+
   componentDidUpdate(prevProps,  prevState)
   {
     this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
     this.loadPreviewsFromAsset()
   }
+
 
   getPreviewCanvasReferences()
   {
@@ -180,9 +184,9 @@ export default class EditGraphic extends React.Component {
       y: Math.floor(event.offsetY / SCALE),
       width:  c2.width,
       height: c2.height,
-      scale:  SCALE,                  // TODO (edit Zoom)
-      chosenColor: 'red',             // TODO
-      eraserColor: 'black',           // TODO
+      scale:  SCALE,                                  // TODO (edit Zoom)
+      chosenColor: this.state.selectedColors['fg'],   // TODO - maybe pass array immutably?
+      eraserColor: '#00000000',                       // TODO
       previewCtx: this.previewCtxArray[this.state.selectedFrameIdx],
       //previewCanvas: this.previewCanvasArray[this.state.selectedFrameIdx],
       editCtx: this.editCtx,
@@ -255,7 +259,16 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  // Add/Select/Remove etc animation frames
+// Color picker handling. This doesn't go through the normal tool api for now
+
+  handleColorChangeComplete(colortype, chosenColor)
+  {
+    // See http://casesandberg.github.io/react-color/#api-onChangeComplete
+    this.state.selectedColors[colortype] = chosenColor;
+    this.setState( { selectedColors: this.state.selectedColors } )      // TODO: Handle this immutably
+  }
+
+// Add/Select/Remove etc animation frames
 
 
   handleAddFrame()
@@ -335,7 +348,8 @@ export default class EditGraphic extends React.Component {
           </div>
 
           <div className="ui popup mgbColorPickerWidget">
-            <ColorPicker type="sketch" />
+            <div className="ui header">Color Picker</div>
+            <ColorPicker type="sketch" onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')} />
           </div>
 
 

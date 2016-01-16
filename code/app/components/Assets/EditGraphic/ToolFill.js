@@ -97,7 +97,7 @@ console.log("starting fill...")
     // Change Preview canvas (which is the real data)
     let crgba = drawEnv.chosenColor.rgb;
     let c = { r: crgba.r, g: crgba.g, b: crgba.b, a: Math.floor((crgba.a)*255) }
-    floodfill(drawEnv.x, drawEnv.y, c, drawEnv.previewCtx, drawEnv.width, drawEnv.height, 128)
+    floodfill(drawEnv.x, drawEnv.y, c, drawEnv.previewCtx, drawEnv.width, drawEnv.height, 16)
 console.log("ended fill")
 
     // We don't need to edit the Edit canvas since we declared 'supportsDrag: false' so EditGraphic will handle redraw

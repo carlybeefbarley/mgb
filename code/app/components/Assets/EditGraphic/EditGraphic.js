@@ -18,9 +18,11 @@ export default class EditGraphic extends React.Component {
     super(props);
     this.state = {
       selectedFrameIdx: 0,
-      selectedColors: {         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
-        fg: { hex: "#00ff00", rgb: {r: 0, g: 255, b:0, a: 1} },
-        bg: { hex: "#000000", rgb: {r: 0, g:   0, b:0, a: 1} }
+      selectedColors: {
+        // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
+        // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
+        fg: { hex: "00ff00", rgb: {r: 0, g: 255, b:0, a: 1} },
+        bg: { hex: "000000", rgb: {r: 0, g:   0, b:0, a: 1} }
       }
     }
   }
@@ -74,6 +76,7 @@ export default class EditGraphic extends React.Component {
 
     $cp.popup({
       popup: '.mgbColorPickerWidget.popup',
+      lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
       hoverable: true
     })
   }
@@ -186,7 +189,7 @@ export default class EditGraphic extends React.Component {
       height: c2.height,
       scale:  SCALE,                                  // TODO (edit Zoom)
       chosenColor: this.state.selectedColors['fg'],   // TODO - maybe pass array immutably?
-      eraserColor: '#00000000',                       // TODO
+      eraserColor: '00000000',                        // TODO  - no leading hash.. so white = FFFFFFFF
       previewCtx: this.previewCtxArray[this.state.selectedFrameIdx],
       //previewCanvas: this.previewCanvasArray[this.state.selectedFrameIdx],
       editCtx: this.editCtx,
@@ -205,10 +208,12 @@ export default class EditGraphic extends React.Component {
     if (this.mgb_toolChosen !== null) {
       if (this.mgb_toolChosen.supportsDrag === true)
         this.mgb_toolActive = true
+
       this.mgb_toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
+
+      if (this.mgb_toolChosen.supportsDrag === false)
+        this.handleSave()   // This is a one-shot tool, so save it's results now
     }
-    if (this.mgb_toolChosen.supportsDrag === false)
-      this.handleSave()   // This is a one-shot tool, so save it's results now
   }
 
 
@@ -349,7 +354,7 @@ export default class EditGraphic extends React.Component {
 
           <div className="ui popup mgbColorPickerWidget">
             <div className="ui header">Color Picker</div>
-            <ColorPicker type="sketch" onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')} />
+            <ColorPicker type="sketch" onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')} color={this.state.selectedColors['fg'].rgb}/>
           </div>
 
 

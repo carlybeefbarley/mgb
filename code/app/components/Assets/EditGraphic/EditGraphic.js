@@ -235,7 +235,9 @@ export default class EditGraphic extends React.Component {
         let s = retval.scale;
         retval.previewCtx.clearRect(x, y, w, h)
         retval.editCtx.clearRect(x*s, y*s, w*s, h*s)
-      }
+      },
+
+      updateEditCanvasFromSelectedPreviewCanvas: self.updateEditCanvasFromSelectedPreviewCanvas.bind(self)
 
 
 

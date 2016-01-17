@@ -17,12 +17,12 @@ export default class EditGraphic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      editScale:        8,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
-      selectedColors: {
+      selectedColors:   {
         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
         // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
-        fg: { hex: "00ff00", rgb: {r: 0, g: 255, b:0, a: 1} },
-        bg: { hex: "000000", rgb: {r: 0, g:   0, b:0, a: 1} }
+        fg:    { hex: "00ff00", rgb: {r: 0, g: 255, b:0, a: 1} }    // Alpha = 0...1
       }
     }
   }
@@ -36,19 +36,16 @@ export default class EditGraphic extends React.Component {
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
 
-
+  // React Callback: componentDidMount()
   componentDidMount() {
     this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas);
     this.editCtx = this.editCanvas.getContext('2d');
-    //this.editCtx.fillStyle = '#a0c0c0';
-    //this.editCtx.fillRect(0, 0, this.editCanvas.width, this.editCanvas.height);
+    this.editCtxImageData1x1 = this.editCtx.createImageData(1,1);
 
     //this.editCanvasOverlay =  ReactDOM.findDOMNode(this.refs.editCanvasOverlay);
     //this.editCtxOverlay = this.editCanvasOverlay.getContext('2d');
-    //this.editCtxOverlay.fillStyle = '#a0c0c0';
-    //this.editCtxOverlay.fillRect(0, 0, this.editCanvasOverlay.width, this.editCanvasOverlay.height);
 
-    this.createDefaultContent2()              // Probably superfluous since done in render() but here to be sure.
+    //this.initDefaultContent2()              // Probably superfluous since done in render() but here to be sure.
     this.getPreviewCanvasReferences()
     this.loadPreviewsFromAsset()
 
@@ -59,13 +56,13 @@ export default class EditGraphic extends React.Component {
     this.editCanvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
 
     // Tool button initializations
-    this.activateMenuPopups();
+    this.activateToolPopups();
     this.mgb_toolActive = false;
     this.mgb_toolChosen = null;
   }
 
 
-  activateMenuPopups()
+  activateToolPopups()
   {
     // See http://semantic-ui.com/modules/popup.html#/usage
 
@@ -82,7 +79,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  createDefaultContent2()       // TODO - this isn't ideal React since it is messing with props. TODO: clean this up
+  initDefaultContent2()       // TODO - this isn't ideal React since it is messing with props. TODO: clean this up
   {
     let asset = this.props.asset
     if (!asset.hasOwnProperty("content2") || !asset.content2.hasOwnProperty('width')) {
@@ -96,6 +93,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
+  // React Callback: componentDidUpdate()
   componentDidUpdate(prevProps,  prevState)
   {
     this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
@@ -105,8 +103,9 @@ export default class EditGraphic extends React.Component {
 
   getPreviewCanvasReferences()
   {
-    this.previewCanvasArray = [];
-    this.previewCtxArray = []
+    this.previewCanvasArray = []                // Preview canvas for this animation frame
+    this.previewCtxArray = []                   // 2d drawing context for the animation frame
+    this.previewCtxImageData1x1Array = []       // Used for painting quickly to each preview frame
 
     let asset = this.props.asset;
     let c2 = asset.content2;
@@ -115,8 +114,7 @@ export default class EditGraphic extends React.Component {
     for (let i = 0; i < frameCount; i++) {
       this.previewCanvasArray[i] =  ReactDOM.findDOMNode(this.refs["previewCanvas" + i.toString()]);
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
-      this.previewCtxArray[i].fillStyle = '#a0c0c0';
-      this.previewCtxArray[i].fillRect(0, 0, c2.width, c2.height);
+      this.previewCtxImageData1x1Array[i] = this.previewCtxArray[i].createImageData(1,1);
     }
   }
 
@@ -149,13 +147,14 @@ export default class EditGraphic extends React.Component {
 
   updateEditCanvasFromSelectedPreviewCanvas()
   {
-    let w = this.previewCanvasArray[this.state.selectedFrameIdx].width;
-    let h = this.previewCanvasArray[this.state.selectedFrameIdx].height;
-    let s = 8;
-    this.editCtx.imageSmoothingEnabled = this.checked;
-    this.editCtx.mozImageSmoothingEnabled = this.checked;
-    this.editCtx.webkitImageSmoothingEnabled = this.checked;
-    this.editCtx.msImageSmoothingEnabled = this.checked;
+    let w = this.previewCanvasArray[this.state.selectedFrameIdx].width
+    let h = this.previewCanvasArray[this.state.selectedFrameIdx].height
+    let s = this.state.editScale
+    this.editCtx.imageSmoothingEnabled = this.checked
+    this.editCtx.mozImageSmoothingEnabled = this.checked
+    this.editCtx.webkitImageSmoothingEnabled = this.checked
+    this.editCtx.msImageSmoothingEnabled = this.checked
+    this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
     this.editCtx.drawImage(this.previewCanvasArray[this.state.selectedFrameIdx], 0, 0, w, h, 0, 0, w*s, h*s)
   }
 
@@ -176,25 +175,73 @@ export default class EditGraphic extends React.Component {
 
   // A plugin-api for the graphic editing tools in Tools.js
 
+  _setImageData4BytesFromRGBA(d, c)
+  {
+    d[0] = c.r ; d[1] = c.g ; d[2] = c.b ; d[3] = c.a * 255
+  }
+
   collateDrawingToolEnv(event)  // used to gather current useful state for the Tools and passed to them in most callbacks
   {
     let asset = this.props.asset;
     let c2    = asset.content2;
-    let SCALE = 8;
+    let pCtx  = this.previewCtxArray[this.state.selectedFrameIdx]
 
-    return {
-      x: Math.floor(event.offsetX / SCALE),
-      y: Math.floor(event.offsetY / SCALE),
+    let pCtxImageData1x1 = this.previewCtxImageData1x1Array[this.state.selectedFrameIdx]
+    var self = this;
+
+    let retval =  {
+      x: Math.floor(event.offsetX / this.state.editScale),
+      y: Math.floor(event.offsetY / this.state.editScale),
+
       width:  c2.width,
       height: c2.height,
-      scale:  SCALE,                                  // TODO (edit Zoom)
-      chosenColor: this.state.selectedColors['fg'],   // TODO - maybe pass array immutably?
-      eraserColor: '00000000',                        // TODO  - no leading hash.. so white = FFFFFFFF
-      previewCtx: this.previewCtxArray[this.state.selectedFrameIdx],
-      //previewCanvas: this.previewCanvasArray[this.state.selectedFrameIdx],
-      editCtx: this.editCtx,
-      //editCanvas: this.editCanvas
+      scale:  this.state.editScale,
+
+      chosenColor: this.state.selectedColors['fg'],
+
+      previewCtx:             pCtx,
+      previewCtxImageData1x1: pCtxImageData1x1,
+      editCtx:                this.editCtx,
+      editCtxImageData1x1:    this.editCtxImageData1x1,
+
+      // setPixelsAt() Like CanvasRenderingContext2D.fillRect, but
+      //   (a) It SETS rather than draws-with-alpha-blending
+      //   (b) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
+      //   So this is faster than a ClearRect+FillRect in many cases.
+      setPixelsAt: function (x, y, w=1, h=1) {
+
+
+        // First set Pixels on the Preview context
+        self._setImageData4BytesFromRGBA(retval.previewCtxImageData1x1.data, retval.chosenColor.rgb)
+        for (let i = 0; i < w; i++) {
+          for (let j = 0; j < h; j++) {
+            retval.previewCtx.putImageData(retval.previewCtxImageData1x1, x+i, y+j)
+          }
+        }
+
+        // Now set Pixels (zoomed) to the Edit context
+        self._setImageData4BytesFromRGBA(retval.editCtxImageData1x1.data,    retval.chosenColor.rgb)
+        for (let i = 0; i < (w * retval.scale); i++) {
+          for (let j = 0; j < (h * retval.scale); j++) {
+            retval.editCtx.putImageData(retval.editCtxImageData1x1, (x * retval.scale) + i, (y * retval.scale) + j)
+          }
+        }
+      },
+
+      // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
+      //   (a) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
+      //   So this is more convenient than a ClearRect+FillRect in many cases.
+      clearPixelsAt: function (x, y, w=1, h=1) {
+        let s = retval.scale;
+        retval.previewCtx.clearRect(x, y, w, h)
+        retval.editCtx.clearRect(x*s, y*s, w*s, h*s)
+      }
+
+
+
     }
+
+    return retval
   }
 
 
@@ -248,7 +295,7 @@ export default class EditGraphic extends React.Component {
 
 // Tool selection action
 
-  handleToolSelected(tool, e,x,y,z)
+  handleToolSelected(tool, e)
   {
     let $toolbarItem = $(e.target)
 
@@ -264,7 +311,8 @@ export default class EditGraphic extends React.Component {
   }
 
 
-// Color picker handling. This doesn't go through the normal tool api for now
+// Color picker handling. This doesn't go through the normal tool api for now since
+// it isn't a drawing tool and that's what t he plugin api is focussed on
 
   handleColorChangeComplete(colortype, chosenColor)
   {
@@ -292,9 +340,9 @@ export default class EditGraphic extends React.Component {
     this.setState( { selectedFrameIdx: frameIndex})
   }
 
-
+  // React Callback: render()
   render() {
-    this.createDefaultContent2()      // The NewAsset code is lazy, add base content here
+    this.initDefaultContent2()      // The NewAsset code is lazy, add base content here
 
     let asset = this.props.asset
     let c2 = asset.content2
@@ -307,7 +355,7 @@ export default class EditGraphic extends React.Component {
                 key={"previewCanvas"+idx.toString()}
                 width={c2.width} height={c2.height}
                 onClick={this.handleSelectFrame.bind(this, idx)}
-                className={ selectedFrameIdx == idx ? sty.thinBorder : ""}></canvas>
+                className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
     )})
 
     // Generate tools
@@ -342,8 +390,8 @@ export default class EditGraphic extends React.Component {
           </div>
         </div>
 
-        <div className={sty.tagPosition + " ui twelve wide column"}>
-          <canvas ref="editCanvas" width="512" height="256" className={sty.thinBorder + " " + sty.atZeroZero}></canvas>
+        <div className={sty.tagPosition + " ui twelve wide column"} >
+          <canvas ref="editCanvas" width="512" height="256" className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
           {/*<canvas ref="editCanvasOverlay" width="512" height="256" className={sty.forceTopLeft}></canvas>*/}
 
           <div className="ui three item menu">
@@ -354,7 +402,9 @@ export default class EditGraphic extends React.Component {
 
           <div className="ui popup mgbColorPickerWidget">
             <div className="ui header">Color Picker</div>
-            <ColorPicker type="sketch" onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')} color={this.state.selectedColors['fg'].rgb}/>
+            <ColorPicker type="sketch"
+                         onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
+                         color={this.state.selectedColors['fg'].rgb}/>
           </div>
 
 

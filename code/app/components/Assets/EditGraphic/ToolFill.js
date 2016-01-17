@@ -10,10 +10,11 @@ function floodfill(x,y,fillcolor,ctx,width,height,tolerance) {
   var e = i, w = i, me, mw, w2 = width*4;
   var targetcolor = [data[i],data[i+1],data[i+2],data[i+3]];
   let startTimeMS = Date.now();
+  let abort = false;
 
   if (!pixelCompare(i,targetcolor,fillcolor,data,length,tolerance)) { return false; }
   Q.push(i);
-  while(Q.length) {
+  while(Q.length > 0 && abort === false) {
     i = Q.pop();
     if(pixelCompareAndSet(i,targetcolor,fillcolor,data,length,tolerance)) {
       e = i;
@@ -29,7 +30,7 @@ function floodfill(x,y,fillcolor,ctx,width,height,tolerance) {
     }
     if (Date.now() - startTimeMS > 100) {
       console.log("aborting flood fill:  took > 100ms")
-      debugger;
+      abort = true;
       return
     }
   }
@@ -85,10 +86,6 @@ const toolFill = {
   icon: "maximize icon",        // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: false,
-
-
-  handleToolSelected: ( drawEnv ) => {},
-  handleToolDeselected: ( drawEnv ) => {},
 
   handleMouseDown: ( drawEnv ) => {
     // x,y are the unscaled pixel coordinates of the mousedown

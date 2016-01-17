@@ -70,7 +70,7 @@ export default class AssetEditRoute extends Component {
           </div>
 
           <div class="ui segment ">
-            <p>I'm here to tell you something...</p>
+            <p>{asset.name.length > 0 ? "Edit " : "Enter "}the {asset.kind}'s name above.</p>
           </div>
 
         </div>

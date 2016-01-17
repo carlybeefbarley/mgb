@@ -21,7 +21,7 @@ function floodfill(x,y,fillcolor,ctx,width,height,tolerance) {
       w = i;
       mw = parseInt(i/w2)*w2; //left bound
       me = mw+w2;	//right bound
-      while(mw<(w-=4) && pixelCompareAndSet(w,targetcolor,fillcolor,data,length,tolerance)); //go left until edge hit
+      while(pixelCompareAndSet(w-4,targetcolor,fillcolor,data,length,tolerance) && mw<(w-=4)); //go left until edge hit
       while(me>(e+=4) && pixelCompareAndSet(e,targetcolor,fillcolor,data,length,tolerance)); //go right until edge hit
       for(var j=w;j<e;j+=4) {
         if(j-w2>=0 		&& pixelCompare(j-w2,targetcolor,fillcolor,data,length,tolerance)) Q.push(j-w2); //queue y-1
@@ -40,7 +40,7 @@ function floodfill(x,y,fillcolor,ctx,width,height,tolerance) {
 
 function pixelCompare(i, targetcolor, fillcolor, data, length, tolerance) {
   if (i<0||i>=length) return false; //out of bounds
-  if (data[i+3]===0)  return true;  //surface is invisible
+ // if (data[i+3]===0)  return true;  //surface is invisible
 
   if (
     (targetcolor[3] === fillcolor.a) &&
@@ -94,7 +94,7 @@ console.log("starting fill...")
     // Change Preview canvas (which is the real data)
     let crgba = drawEnv.chosenColor.rgb;
     let c = { r: crgba.r, g: crgba.g, b: crgba.b, a: Math.floor((crgba.a)*255) }
-    floodfill(drawEnv.x, drawEnv.y, c, drawEnv.previewCtx, drawEnv.width, drawEnv.height, 16)
+    floodfill(drawEnv.x, drawEnv.y, c, drawEnv.previewCtx, drawEnv.width, drawEnv.height, 128)
 console.log("ended fill")
 
     // We don't need to edit the Edit canvas since we declared 'supportsDrag: false' so EditGraphic will handle redraw

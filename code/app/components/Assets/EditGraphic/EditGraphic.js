@@ -49,11 +49,16 @@ export default class EditGraphic extends React.Component {
     this.getPreviewCanvasReferences()
     this.loadPreviewsFromAsset()
 
-    this.editCanvas.addEventListener('wheel',      this.handleMouseWheel.bind(this));
-    this.editCanvas.addEventListener('mousemove',  this.handleMouseMove.bind(this));
-    this.editCanvas.addEventListener('mousedown',  this.handleMouseDown.bind(this));
-    this.editCanvas.addEventListener('mouseup',    this.handleMouseUp.bind(this));
-    this.editCanvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+    //Keypress not working
+    //let $grid = $(ReactDOM.findDOMNode(this.refs.outerGrid))
+    //$grid.keydown(function (e) { console.log(e)})
+
+
+    this.editCanvas.addEventListener('wheel',         this.handleMouseWheel.bind(this));
+    this.editCanvas.addEventListener('mousemove',     this.handleMouseMove.bind(this));
+    this.editCanvas.addEventListener('mousedown',     this.handleMouseDown.bind(this));
+    this.editCanvas.addEventListener('mouseup',       this.handleMouseUp.bind(this));
+    this.editCanvas.addEventListener('mouseleave',    this.handleMouseLeave.bind(this));
 
     // Tool button initializations
     this.activateToolPopups();
@@ -67,15 +72,24 @@ export default class EditGraphic extends React.Component {
     // See http://semantic-ui.com/modules/popup.html#/usage
 
     let $a = $(ReactDOM.findDOMNode(this))
-
     $a.find('.button').popup()
-    let $cp =  $a.find('.mgbColorPickerHost')
+    $a.find('.hazpopup').popup()
 
+    let $cp =  $a.find('.mgbColorPickerHost')
     $cp.popup({
       popup: '.mgbColorPickerWidget.popup',
       lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
       hoverable: true
     })
+
+    let $resizer =  $a.find('.mgbResizerHost')
+    $resizer.popup({
+      popup: '.mgbResizer.popup',
+      lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
+      hoverable: true
+    })
+
+
   }
 
 
@@ -238,9 +252,6 @@ export default class EditGraphic extends React.Component {
       },
 
       updateEditCanvasFromSelectedPreviewCanvas: self.updateEditCanvasFromSelectedPreviewCanvas.bind(self)
-
-
-
     }
 
     return retval
@@ -272,9 +283,19 @@ export default class EditGraphic extends React.Component {
     else if (event.wheelDelta > 0 && f+1 < this.previewCanvasArray.length)
       this.setState( {selectedFrameIdx : f+1})
 
-
   }
 
+
+  handleResize(dw, dh)
+  {
+    if (dw !== 0 || dh !== 0)
+    {
+      let c2 = this.props.asset.content2
+      c2.width = Math.min(c2.width+dw, 64)
+      c2.height = Math.min(c2.height+dh, 64)
+      this.handleSave()
+    }
+  }
 
 
 
@@ -319,11 +340,21 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  //handleKeyDown(event)
+  //{
+  //  for (let t of tools)
+  //  {
+  //    console.log(t)
+  //  }
+  //
+  //}
+
 
 // Tool selection action
 
   handleToolSelected(tool, e)
   {
+    let $toolbar = $(this.refs.toolbar)
     let $toolbarItem = $(e.target)
 
     $toolbarItem
@@ -369,7 +400,7 @@ export default class EditGraphic extends React.Component {
 
   // React Callback: render()
   render() {
-    this.initDefaultContent2()      // The NewAsset code is lazy, add base content here
+    this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
 
     let asset = this.props.asset
     let c2 = asset.content2
@@ -391,7 +422,7 @@ export default class EditGraphic extends React.Component {
       <div  className={"ui button" + (this.mgb_toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}
             key={tool.name}
-            data-content={tool.name}
+            data-content={tool.name + " (" + tool.shortcutKey + ")"}
             data-variation="tiny"
             data-position="right center">
         <i className={tool.icon}></i>
@@ -400,24 +431,14 @@ export default class EditGraphic extends React.Component {
 
     // Make element
     return (
-      <div className="ui grid">
+      <div className="ui grid" ref="outerGrid">
 
         <div className="ui one wide column">
-          <div className="ui vertical icon buttons">
+          <div className="ui vertical icon buttons" ref="toolbar">
             {toolComponents}
-            <div className="ui button" onClick={this.handleSave.bind(this)}
-                 data-content="Save"
-                 data-variation="tiny"
-                 data-position="right center">
-              <i className="save icon"></i>
-            </div>
-            <div className="ui button" onClick={this.handleZoom.bind(this)}
-                 data-content="Zoom"
-                 data-variation="tiny"
-                 data-position="right center">
-              <i className="zoom icon"></i>
-            </div>
-            <div className="ui button mgbColorPickerHost" onClick={this.handleSave.bind(this)}
+
+
+            <div className="ui button mgbColorPickerHost"
                  data-position="right center">
               <i className="block layout icon"></i>
             </div>
@@ -425,15 +446,81 @@ export default class EditGraphic extends React.Component {
         </div>
 
         <div className={sty.tagPosition + " ui twelve wide column"} >
-          <canvas ref="editCanvas" width={zoom*c2.width} height={zoom*c2.height} className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
+          <div className="row">
+            <a className="ui label mgbResizerHost" data-position="right center">
+              <i className="icon expand"></i> {"Size: " + c2.width + " x " + c2.height}
+            </a>
+            <span>&nbsp;&nbsp;&nbsp;</span>
+            <a className="ui label hazpopup" onClick={this.handleZoom.bind(this)}
+               data-content="Click to change zoom level"
+               data-variation="tiny"
+               data-position="bottom center">
+              <i className="icon zoom"></i> Zoom {zoom}x
+            </a>
+            <span>&nbsp;&nbsp;&nbsp;</span>
+            <a className="ui label hazpopup" onClick={this.handleSave.bind(this)}
+               data-content="Changes are continuously saved and updated to other viewers "
+               data-variation="tiny"
+               data-position="bottom center">
+              <i className="save icon"></i> Autosave ON
+            </a>
+            <span>&nbsp;&nbsp;&nbsp;</span>
+            <a className="ui label hazpopup" onClick={this.handleSave.bind(this)}
+               data-content="Use mouse wheel over edit area to change current edited frame"
+               data-variation="tiny"
+               data-position="bottom center">
+              <i className="tasks icon"></i> Frame #{this.state.selectedFrameIdx} of {c2.frameNames.length}
+            </a>
+
+          </div>
+          <div className="row">
+            <br></br>
+          </div>
+          <div className="row">
+            <canvas ref="editCanvas" width={zoom*c2.width} height={zoom*c2.height} className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
+          </div>
 
 
           <div className="ui popup mgbColorPickerWidget">
-            <div className="ui header">Color Picker</div>
+            <div className="ui header">Color Picker (1..9)</div>
             <ColorPicker type="sketch"
                          onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                          color={this.state.selectedColors['fg'].rgb}/>
           </div>
+
+
+          <div className="ui popup mgbResizer">
+            <div className="ui ">Grow or shrink Graphic</div>
+            <div className="ui horizontal icon buttons">
+              <div className="ui button" onClick={this.handleResize.bind(this, 1, 0)}
+                   data-content="Increase Width"
+                   data-variation="tiny"
+                   data-position="bottom center">
+                <i className="toggle right icon"></i>
+              </div>
+              <div className="ui button" onClick={this.handleResize.bind(this, -1, 0)}
+                   data-content="Decrease Width"
+                   data-variation="tiny"
+                   data-position="bottom center">
+                <i className="toggle left icon"></i>
+              </div>
+              <div className="ui button" onClick={this.handleResize.bind(this, 0, 1)}
+                   data-content="Increase height)"
+                   data-variation="tiny"
+                   data-position="bottom center">
+                <i className="toggle down icon"></i>
+              </div>
+              <div className="ui button" onClick={this.handleResize.bind(this, 0, -1)}
+                   data-content="Decrease height)"
+                   data-variation="tiny"
+                   data-position="bottom center">
+                <i className="toggle up icon"></i>
+              </div>
+
+            </div>
+          </div>
+
+
 
         </div>
 

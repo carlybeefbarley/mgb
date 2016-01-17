@@ -247,10 +247,35 @@ export default class EditGraphic extends React.Component {
   }
 
 
+  handleZoom()
+  {
+    this.setState( {editScale : (this.state.editScale == 8 ? 1 : (this.state.editScale << 1))})
+  }
+
+  // handleMouseWheel is an alias for zoom
   handleMouseWheel(event)
   {
-    event.preventDefault();             // TODO: Zoom
+
+    event.preventDefault();
+
+    // if wheel is for scale:
+      //let s = this.state.editScale;
+      //if (event.wheelDelta < 0 && s >1)
+      //  this.setState( {editScale : s >> 1})
+      //else if (event.wheelDelta > 0 && s < 8)
+      //  this.setState( {editScale : s << 1})
+
+    // if wheel is for frame
+    let f = this.state.selectedFrameIdx
+    if (event.wheelDelta < 0 && f >0)
+      this.setState( {selectedFrameIdx : f-1})
+    else if (event.wheelDelta > 0 && f+1 < this.previewCanvasArray.length)
+      this.setState( {selectedFrameIdx : f+1})
+
+
   }
+
+
 
 
   handleMouseDown(event) {
@@ -348,6 +373,7 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset
     let c2 = asset.content2
+    let zoom = this.state.editScale
     var selectedFrameIdx =  this.state.selectedFrameIdx
 
     // Generate preview Canvasses
@@ -385,6 +411,12 @@ export default class EditGraphic extends React.Component {
                  data-position="right center">
               <i className="save icon"></i>
             </div>
+            <div className="ui button" onClick={this.handleZoom.bind(this)}
+                 data-content="Zoom"
+                 data-variation="tiny"
+                 data-position="right center">
+              <i className="zoom icon"></i>
+            </div>
             <div className="ui button mgbColorPickerHost" onClick={this.handleSave.bind(this)}
                  data-position="right center">
               <i className="block layout icon"></i>
@@ -393,14 +425,8 @@ export default class EditGraphic extends React.Component {
         </div>
 
         <div className={sty.tagPosition + " ui twelve wide column"} >
-          <canvas ref="editCanvas" width="512" height="256" className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
-          {/*<canvas ref="editCanvasOverlay" width="512" height="256" className={sty.forceTopLeft}></canvas>*/}
+          <canvas ref="editCanvas" width={zoom*c2.width} height={zoom*c2.height} className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
 
-          <div className="ui three item menu">
-            <a className="item">Grid</a>
-            <a className="item">Zoom</a>
-            <a className="item active">Animate</a>
-          </div>
 
           <div className="ui popup mgbColorPickerWidget">
             <div className="ui header">Color Picker</div>
@@ -408,7 +434,6 @@ export default class EditGraphic extends React.Component {
                          onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                          color={this.state.selectedColors['fg'].rgb}/>
           </div>
-
 
         </div>
 

@@ -74,22 +74,27 @@ export default class AssetCard extends React.Component {
     const {asset, showEditButton  } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
+    const c2 = asset.content2
+    const iw = c2.hasOwnProperty("width") ? c2.width : 64
+    const ih = c2.hasOwnProperty("height") ? c2.height : 64
+    const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
+
 
     return (
       <div key={asset._id} className="ui card">
         <div className="content">
           <canvas ref="thumbnailCanvas" className="right floated mini ui image"
-                width="64" height="32" >
+                width={iw} height={ih} >
           </canvas>
           <div className="header">
             <i className={assetKindIcon}></i>
             {asset.name}
           </div>
           <div className="meta">
-            {assetKindLongName}
+            {iw}x{ih}{assetKindLongName}
           </div>
           <div className="description">
-            Lorem ipsum foo bar lah-di-dah
+            {nframes} animation frames
           </div>
         </div>
         <div className="extra content">

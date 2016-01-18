@@ -7,6 +7,12 @@ import sty from  './editGraphic.css';
 import tools from './Tools.js';
 import ColorPicker from 'react-color';        // http://casesandberg.github.io/react-color/
 
+// This is React, but some fast-changing items use Jquery or direct DOM manipulation,
+// typically those that can change per mouse-move:
+//   1. Drawing on preview+Editor canvas
+//   2. Some popup handling (uses Semanticui .popup() jquery extension
+//   3. Mouse position status bar
+
 @reactMixin.decorate(History)
 export default class EditGraphic extends React.Component {
   static PropTypes = {
@@ -241,7 +247,7 @@ export default class EditGraphic extends React.Component {
       setPixelsAt: function (x, y, w=1, h=1) {
 
         // First set Pixels on the Preview context
-        self.setPreviewPixelsAt(x, y, w, h)
+        retval.setPreviewPixelsAt(x, y, w, h)
 
         // Now set Pixels (zoomed) to the Edit context
         self._setImageData4BytesFromRGBA(retval.editCtxImageData1x1.data,    retval.chosenColor.rgb)
@@ -322,8 +328,23 @@ export default class EditGraphic extends React.Component {
   }
 
 
+  setStatusBar(text)
+  {
+    let $sb = $(ReactDOM.findDOMNode(this.refs.statusBarDiv))
+    if ($sb)
+      $sb.text(text)
+  }
+
   handleMouseMove(event)
   {
+    // Update statusBar
+    let x = Math.floor(event.offsetX / this.state.editScale)
+    let y = Math.floor(event.offsetY / this.state.editScale)
+
+    this.setStatusBar(`Mouse at ${x},${y}`)
+
+
+    // Tool api handoff
     if (this.mgb_toolChosen !== null && this.mgb_toolActive === true ) {
       this.mgb_toolChosen.handleMouseMove(this.collateDrawingToolEnv(event))
     }
@@ -342,6 +363,8 @@ export default class EditGraphic extends React.Component {
 
   handleMouseLeave(event)
   {
+    this.setStatusBar(`Mouse outside Edit area`)
+
     if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
 
       this.mgb_toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
@@ -421,10 +444,9 @@ export default class EditGraphic extends React.Component {
     let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
       return (
 
-      <div className="item">
+      <div className="item" key={"previewCanvasItem"+idx.toString()}>
         <div className="ui image">
           <canvas ref={"previewCanvas"+idx.toString()}
-                  key={"previewCanvas"+idx.toString()}
                   width={c2.width} height={c2.height}
                   onClick={this.handleSelectFrame.bind(this, idx)}
                   className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
@@ -501,6 +523,12 @@ export default class EditGraphic extends React.Component {
           <div className="row">
             <canvas ref="editCanvas" width={zoom*c2.width} height={zoom*c2.height} className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
           </div>
+
+            <div className="ui label" ref="statusBarDiv">
+              <i className="info icon"></i>
+              status bar
+            </div>
+
 
           {/***  Popups are defined in this column for no good reason ***/}
 

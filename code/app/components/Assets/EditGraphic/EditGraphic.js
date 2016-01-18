@@ -210,6 +210,7 @@ export default class EditGraphic extends React.Component {
       width:  c2.width,
       height: c2.height,
       scale:  this.state.editScale,
+      event: event,
 
       chosenColor: this.state.selectedColors['fg'],
 
@@ -222,16 +223,25 @@ export default class EditGraphic extends React.Component {
       //   (a) It SETS rather than draws-with-alpha-blending
       //   (b) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is faster than a ClearRect+FillRect in many cases.
-      setPixelsAt: function (x, y, w=1, h=1) {
-
+      setPreviewPixelsAt: function (x, y, w=1, h=1) {
 
         // First set Pixels on the Preview context
         self._setImageData4BytesFromRGBA(retval.previewCtxImageData1x1.data, retval.chosenColor.rgb)
         for (let i = 0; i < w; i++) {
           for (let j = 0; j < h; j++) {
-            retval.previewCtx.putImageData(retval.previewCtxImageData1x1, x+i, y+j)
+            retval.previewCtx.putImageData(retval.previewCtxImageData1x1, Math.round(x + i), Math.round(y + j))
           }
         }
+      },
+
+      // setPixelsAt() Like CanvasRenderingContext2D.fillRect, but
+      //   (a) It SETS rather than draws-with-alpha-blending
+      //   (b) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
+      //   So this is faster than a ClearRect+FillRect in many cases.
+      setPixelsAt: function (x, y, w=1, h=1) {
+
+        // First set Pixels on the Preview context
+        self.setPreviewPixelsAt(x, y, w, h)
 
         // Now set Pixels (zoomed) to the Edit context
         self._setImageData4BytesFromRGBA(retval.editCtxImageData1x1.data,    retval.chosenColor.rgb)
@@ -425,7 +435,7 @@ export default class EditGraphic extends React.Component {
       </div>
     )})
 
-    // Generate tools 
+    // Generate tools
     let toolComponents = _.map(tools, (tool) => { return (
       <div  className={"ui button" + (this.mgb_toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}

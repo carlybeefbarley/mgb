@@ -303,17 +303,17 @@ export default class EditGraphic extends React.Component {
     if (event.shiftKey === true) {
       // if wheel is for scale:
       let s = this.state.editScale;
-      if (event.wheelDelta < 0 && s > 1)
+      if (event.wheelDelta > 0 && s > 1)
         this.setState({editScale: s >> 1})
-      else if (event.wheelDelta > 0 && s < 8)
+      else if (event.wheelDelta < 0 && s < 8)
         this.setState({editScale: s << 1})
     }
     else {
       // if wheel is for frame
       let f = this.state.selectedFrameIdx
-      if (event.wheelDelta > 0 && f > 0)
+      if (event.wheelDelta < 0 && f > 0)
         this.setState({selectedFrameIdx: f - 1})
-      else if (event.wheelDelta < 0 && f + 1 < this.previewCanvasArray.length)
+      else if (event.wheelDelta > 0 && f + 1 < this.previewCanvasArray.length)
         this.setState({selectedFrameIdx: f + 1})
     }
     event.preventDefault();

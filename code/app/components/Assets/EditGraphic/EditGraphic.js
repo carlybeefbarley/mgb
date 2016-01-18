@@ -267,6 +267,10 @@ export default class EditGraphic extends React.Component {
         retval.editCtx.clearRect(x*s, y*s, w*s, h*s)
       },
 
+      setColorRGBA(r, g, b, aByte) {
+        self.handleColorChangeComplete('fg', { rgb: { r:r, g:g, b:b, a:(aByte/256)}})
+      },
+
       updateEditCanvasFromSelectedPreviewCanvas: self.updateEditCanvasFromSelectedPreviewCanvas.bind(self)
     }
 
@@ -403,7 +407,7 @@ export default class EditGraphic extends React.Component {
 
 
 // Color picker handling. This doesn't go through the normal tool api for now since
-// it isn't a drawing tool and that's what t he plugin api is focussed on
+// it isn't a drawing tool (and that's what the plugin api is focused on)
 
   handleColorChangeComplete(colortype, chosenColor)
   {

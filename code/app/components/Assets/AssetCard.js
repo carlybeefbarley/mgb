@@ -98,21 +98,22 @@ export default class AssetCard extends React.Component {
           </div>
         </div>
         <div className="extra content">
-          <div className="ui three buttons">
+          <div className="ui three small buttons">
             <div className={ (showEditButton ? "" : " disabled") + "ui basic green compact button"} onClick={this.handleEditClick}>
                 <i className=" edit icon"></i>
+              Edit
             </div>
             <div className="ui basic blue compact button" onClick={this.handlePrivateClick} >
               {asset.isPrivate ?
                 <Icon size="1.2em" icon="lock" color='#000' /> :
                 <Icon size="1.2em" icon="lock" color='#ddd' />
-              }
+              }Lock
             </div>
             <div className="ui basic red compact button" onClick={this.handleDeleteClick}>
               {asset.isDeleted ?
                 <Icon size="1.2em" icon="delete" color='red'  /> :
                 <Icon size="1.2em" icon="delete" color='#ddd' />
-              }
+              }Delete
             </div>
           </div>
         </div>

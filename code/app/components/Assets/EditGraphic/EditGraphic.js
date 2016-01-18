@@ -410,19 +410,28 @@ export default class EditGraphic extends React.Component {
     // Generate preview Canvasses
     let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
       return (
-        <canvas ref={"previewCanvas"+idx.toString()}
-                key={"previewCanvas"+idx.toString()}
-                width={c2.width} height={c2.height}
-                onClick={this.handleSelectFrame.bind(this, idx)}
-                className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
+
+      <div className="item">
+        <div className="ui image">
+          <canvas ref={"previewCanvas"+idx.toString()}
+                  key={"previewCanvas"+idx.toString()}
+                  width={c2.width} height={c2.height}
+                  onClick={this.handleSelectFrame.bind(this, idx)}
+                  className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
+        </div>
+        <div className="middle aligned content">
+          Frame '{c2.frameNames[idx]}'
+        </div>
+      </div>
     )})
 
-    // Generate tools
+    // Generate tools 
     let toolComponents = _.map(tools, (tool) => { return (
       <div  className={"ui button" + (this.mgb_toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}
             key={tool.name}
-            data-content={tool.name + " (" + tool.shortcutKey + ")"}
+            data-title={tool.name + " (" + tool.shortcutKey + ")"}
+            data-content={tool.description}
             data-variation="tiny"
             data-position="right center">
         <i className={tool.icon}></i>
@@ -433,10 +442,11 @@ export default class EditGraphic extends React.Component {
     return (
       <div className="ui grid" ref="outerGrid">
 
+        {/***  Left Column for tools  ***/}
+
         <div className="ui one wide column">
           <div className="ui vertical icon buttons" ref="toolbar">
             {toolComponents}
-
 
             <div className="ui button mgbColorPickerHost"
                  data-position="right center">
@@ -445,7 +455,9 @@ export default class EditGraphic extends React.Component {
           </div>
         </div>
 
-        <div className={sty.tagPosition + " ui twelve wide column"} >
+        {/***  Center Column for Edit and other wide stuff  ***/}
+
+        <div className={sty.tagPosition + " ui nine wide column"} >
           <div className="row">
             <a className="ui label mgbResizerHost" data-position="right center">
               <i className="icon expand"></i> {"Size: " + c2.width + " x " + c2.height}
@@ -469,7 +481,7 @@ export default class EditGraphic extends React.Component {
                data-content="Use mouse wheel over edit area to change current edited frame"
                data-variation="tiny"
                data-position="bottom center">
-              <i className="tasks icon"></i> Frame #{this.state.selectedFrameIdx} of {c2.frameNames.length}
+              <i className="tasks icon"></i> Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
             </a>
 
           </div>
@@ -480,6 +492,7 @@ export default class EditGraphic extends React.Component {
             <canvas ref="editCanvas" width={zoom*c2.width} height={zoom*c2.height} className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
           </div>
 
+          {/***  Popups are defined in this column for no good reason ***/}
 
           <div className="ui popup mgbColorPickerWidget">
             <div className="ui header">Color Picker (1..9)</div>
@@ -487,7 +500,6 @@ export default class EditGraphic extends React.Component {
                          onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                          color={this.state.selectedColors['fg'].rgb}/>
           </div>
-
 
           <div className="ui popup mgbResizer">
             <div className="ui ">Grow or shrink Graphic</div>
@@ -519,14 +531,16 @@ export default class EditGraphic extends React.Component {
 
             </div>
           </div>
-
-
-
         </div>
 
-        <div className="ui two wide column ">
-          {previewCanvasses}
-          <a className="mini ui compact button" onClick={this.handleAddFrame.bind(this)}>Add Frame</a>
+        {/***  Right Column for animations and frames  ***/}
+
+
+        <div className="ui four wide column ">
+          <div className="ui  items">
+            {previewCanvasses}
+          </div>
+          <a className="ui compact button" onClick={this.handleAddFrame.bind(this)}>Add Frame</a>
         </div>
 
       </div>

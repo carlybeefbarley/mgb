@@ -1,6 +1,7 @@
 
 const toolPen = {
   name: "Pen",
+  description: "Click and drag to draw individual pixels on the frame",
   icon: "pencil icon",        // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: true,

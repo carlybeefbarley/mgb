@@ -83,6 +83,7 @@ function pixelCompareAndSet(i, targetcolor, fillcolor, data, length, tolerance) 
 
 const toolFill = {
   name: "Fill",
+  description: "Click to fill an area with the chosen color. Color 00000000 is transparent/erase",
   icon: "maximize icon",        // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: false,

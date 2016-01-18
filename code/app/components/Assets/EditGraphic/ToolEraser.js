@@ -1,6 +1,7 @@
 
 const toolEraser = {
   name: "Eraser",
+  description: "Click and drag to erase individual pixels on the frame",
   icon: "eraser icon",        // Semantic-UI icon CSS class
   editCursor: "not-allowed",
   supportsDrag: true,

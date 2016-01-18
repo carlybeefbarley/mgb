@@ -1,6 +1,7 @@
 
 const toolMove = {
   name: "Move",
+  description: "Grab and drag to move the the frame's contents up, down, left or right",
   icon: "move icon",        // Semantic-UI icon CSS class
   editCursor: "move",
   supportsDrag: true,
@@ -12,7 +13,6 @@ const toolMove = {
     toolMove._storedPreviewImageData = drawEnv.previewCtx.getImageData(0,0, drawEnv.width, drawEnv.height)
     toolMove._startx = drawEnv.x
     toolMove._starty = drawEnv.y
-    drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
   },
 
   handleMouseMove: ( drawEnv ) => {

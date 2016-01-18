@@ -63,10 +63,13 @@ const toolCircle = {
     let h = drawEnv.y - toolCircle._starty
     let fillFlag = drawEnv.event.shiftKey === true
 
-    // reset the canvasses
+    // reset the preview canvas to how it was at MouseDown
     drawEnv.previewCtx.putImageData(toolCircle._storedPreviewImageData, 0, 0)
+
+    // Draw a circle here
     drawCircle(drawEnv, toolCircle._startx, toolCircle._starty, Math.sqrt(w*w+h*h), fillFlag)
 
+    // Clone and scale to edit Canvas
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
   },
 

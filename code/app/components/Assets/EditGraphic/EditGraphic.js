@@ -159,7 +159,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  updateEditCanvasFromSelectedPreviewCanvas()
+  updateEditCanvasFromSelectedPreviewCanvas()   // TODO: This still has some smoothing issues
   {
     let w = this.previewCanvasArray[this.state.selectedFrameIdx].width
     let h = this.previewCanvasArray[this.state.selectedFrameIdx].height

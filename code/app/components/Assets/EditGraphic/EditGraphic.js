@@ -10,8 +10,8 @@ import ColorPicker from 'react-color';        // http://casesandberg.github.io/r
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
 //   1. Drawing on preview+Editor canvas
-//   2. Some popup handling (uses Semanticui .popup() jquery extension
-//   3. Mouse position status bar
+//   2. Some popup handling (uses Semanticui .popup() jquery extension. Typically these have the 'hazpopup' class
+//   3. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
 
 @reactMixin.decorate(History)
 export default class EditGraphic extends React.Component {
@@ -58,6 +58,19 @@ export default class EditGraphic extends React.Component {
     //Keypress not working
     //let $grid = $(ReactDOM.findDOMNode(this.refs.outerGrid))
     //$grid.keydown(function (e) { console.log(e)})
+
+    // Initialize Status bar
+    this._statusBar = {
+      outer: $(ReactDOM.findDOMNode(this.refs.statusBarDiv)),
+      mouseAtText: $(ReactDOM.findDOMNode(this.refs.statusBarMouseAtText)),
+      colorAtText: $(ReactDOM.findDOMNode(this.refs.statusBarColorAtText)),
+      colorAtIcon: $(ReactDOM.findDOMNode(this.refs.statusBarColorAtIcon))
+
+    }
+    this.setStatusBarInfo()
+
+    this.handleColorChangeComplete('fg', { hex: "00ff00", rgb: {r: 0, g: 255, b:0, a: 1} } )
+
 
 
     this.editCanvas.addEventListener('wheel',         this.handleMouseWheel.bind(this));
@@ -287,21 +300,23 @@ export default class EditGraphic extends React.Component {
   handleMouseWheel(event)
   {
 
+    if (event.shiftKey === true) {
+      // if wheel is for scale:
+      let s = this.state.editScale;
+      if (event.wheelDelta < 0 && s > 1)
+        this.setState({editScale: s >> 1})
+      else if (event.wheelDelta > 0 && s < 8)
+        this.setState({editScale: s << 1})
+    }
+    else {
+      // if wheel is for frame
+      let f = this.state.selectedFrameIdx
+      if (event.wheelDelta > 0 && f > 0)
+        this.setState({selectedFrameIdx: f - 1})
+      else if (event.wheelDelta < 0 && f + 1 < this.previewCanvasArray.length)
+        this.setState({selectedFrameIdx: f + 1})
+    }
     event.preventDefault();
-
-    // if wheel is for scale:
-      //let s = this.state.editScale;
-      //if (event.wheelDelta < 0 && s >1)
-      //  this.setState( {editScale : s >> 1})
-      //else if (event.wheelDelta > 0 && s < 8)
-      //  this.setState( {editScale : s << 1})
-
-    // if wheel is for frame
-    let f = this.state.selectedFrameIdx
-    if (event.wheelDelta < 0 && f >0)
-      this.setState( {selectedFrameIdx : f-1})
-    else if (event.wheelDelta > 0 && f+1 < this.previewCanvasArray.length)
-      this.setState( {selectedFrameIdx : f+1})
 
   }
 
@@ -332,11 +347,24 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  setStatusBar(text)
+  setStatusBarInfo(mouseAtText = null, colorAtText = null, colorCSSstring = null)
   {
-    let $sb = $(ReactDOM.findDOMNode(this.refs.statusBarDiv))
-    if ($sb)
-      $sb.text(text)
+    if (mouseAtText === null)
+      this._statusBar.outer.hide()
+    else {
+      this._statusBar.outer.show()
+      this._statusBar.mouseAtText.text(mouseAtText)
+      this._statusBar.colorAtText.html(colorAtText)
+      if (colorCSSstring !== null)
+        this._statusBar.colorAtIcon.css( { color: colorCSSstring } )
+    }
+  }
+
+  RGBToHex(r,g,b) {
+    var bin = r << 16 | g << 8 | b;
+    return (function(h){
+      return new Array(7-h.length).join("0")+h
+    })(bin.toString(16).toLowerCase())
   }
 
   handleMouseMove(event)
@@ -344,9 +372,12 @@ export default class EditGraphic extends React.Component {
     // Update statusBar
     let x = Math.floor(event.offsetX / this.state.editScale)
     let y = Math.floor(event.offsetY / this.state.editScale)
+    let pCtx  = this.previewCtxArray[this.state.selectedFrameIdx]
+    let imageDataAtMouse = pCtx.getImageData(x, y, 1, 1)
+    let d = imageDataAtMouse.data
 
-    this.setStatusBar(`Mouse at ${x},${y}`)
-
+    let colorCSSstring = `#${this.RGBToHex(...d)}`
+    this.setStatusBarInfo(`Mouse at ${x},${y}`, `${colorCSSstring}&nbsp;&nbsp;Alpha=${d[3]}`, colorCSSstring)
 
     // Tool api handoff
     if (this.mgb_toolChosen !== null && this.mgb_toolActive === true ) {
@@ -367,7 +398,8 @@ export default class EditGraphic extends React.Component {
 
   handleMouseLeave(event)
   {
-    this.setStatusBar(`Mouse outside Edit area`)
+    this.setStatusBarInfo()
+
 
     if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
 
@@ -409,11 +441,19 @@ export default class EditGraphic extends React.Component {
 // Color picker handling. This doesn't go through the normal tool api for now since
 // it isn't a drawing tool (and that's what the plugin api is focused on)
 
+
+
   handleColorChangeComplete(colortype, chosenColor)
   {
     // See http://casesandberg.github.io/react-color/#api-onChangeComplete
     this.state.selectedColors[colortype] = chosenColor;
-    this.setState( { selectedColors: this.state.selectedColors } )      // TODO: Handle this immutably
+    this.setState( { selectedColors: this.state.selectedColors } )      // Won't trigger redraw because React does shallow compare? Fast but not the 'react-way'
+
+    // So we have to fix up UI stuff
+    let colorCSSstring = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
+
+    $(ReactDOM.findDOMNode(this.refs.colorPickerIcon)).css( { color: colorCSSstring});
+
   }
 
 // Add/Select/Remove etc animation frames
@@ -470,7 +510,7 @@ export default class EditGraphic extends React.Component {
             data-content={tool.description}
             data-variation="tiny"
             data-position="right center">
-        <i className={tool.icon}></i>
+        <i className={"large " + tool.icon}></i>
       </div>);
     });
 
@@ -482,11 +522,12 @@ export default class EditGraphic extends React.Component {
 
         <div className="ui one wide column">
           <div className="ui vertical icon buttons" ref="toolbar">
-            {toolComponents}
 
+            {toolComponents}
+            <br></br>
             <div className="ui button mgbColorPickerHost"
                  data-position="right center">
-              <i className="block layout icon"></i>
+              <i className="block layout large icon" ref="colorPickerIcon"></i>
             </div>
           </div>
         </div>
@@ -500,7 +541,7 @@ export default class EditGraphic extends React.Component {
             </a>
             <span>&nbsp;&nbsp;&nbsp;</span>
             <a className="ui label hazpopup" onClick={this.handleZoom.bind(this)}
-               data-content="Click to change zoom level"
+               data-content="Click here or SHIFT+mousewheel over edit area to change zoom level"
                data-variation="tiny"
                data-position="bottom center">
               <i className="icon zoom"></i> Zoom {zoom}x
@@ -528,10 +569,25 @@ export default class EditGraphic extends React.Component {
             <canvas ref="editCanvas" width={zoom*c2.width} height={zoom*c2.height} className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
           </div>
 
-            <div className="ui label" ref="statusBarDiv">
-              <i className="info icon"></i>
-              status bar
+          {/*** Status Bar ***/}
+
+          <div className="ui horizontal very relaxed list" ref="statusBarDiv">
+            <div className="item">
+              <i className="pointing up icon"></i>
+              <div className="content" ref="statusBarMouseAtText">
+                Mouse at xy
+              </div>
             </div>
+
+            <div className="item">
+              <i className="square icon" ref="statusBarColorAtIcon"></i>
+              <div className="content" ref="statusBarColorAtText">
+                Color at xy
+              </div>
+            </div>
+
+
+          </div>
 
 
           {/***  Popups are defined in this column for no good reason ***/}

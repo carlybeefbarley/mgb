@@ -496,7 +496,7 @@ export default class EditGraphic extends React.Component {
                   className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
         </div>
         <div className="middle aligned content">
-          Frame '{c2.frameNames[idx]}'
+          {c2.frameNames[idx]}
         </div>
       </div>
     )})

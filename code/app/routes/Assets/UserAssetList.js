@@ -35,7 +35,7 @@ export default class UserAssetListRoute extends Component {
     }
 
     return {
-      assets: Azzets.find({}, {sort: {createdAt: -1}}).fetch(),
+      assets: Azzets.find({}, {sort: {createdAt: -1}}).fetch(), // TODO: don't bring down content2 field
       loading: !handle.ready()
     };
   }

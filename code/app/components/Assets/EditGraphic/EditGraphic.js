@@ -312,9 +312,9 @@ export default class EditGraphic extends React.Component {
       // if wheel is for frame
       let f = this.state.selectedFrameIdx
       if (event.wheelDelta < 0 && f > 0)
-        this.setState({selectedFrameIdx: f - 1})
+        this.handleSelectFramesetState( f - 1)
       else if (event.wheelDelta > 0 && f + 1 < this.previewCanvasArray.length)
-        this.setState({selectedFrameIdx: f + 1})
+        this.handleSelectFrame(f + 1)
     }
     event.preventDefault();
 
@@ -462,7 +462,7 @@ export default class EditGraphic extends React.Component {
   handleAddFrame()
   {
     let fN = this.props.asset.content2.frameNames
-    let newFrameName = "Frame " + fN.length.toString()
+    let newFrameName = "Frame " + (fN.length+2).toString()
     fN.push(newFrameName)
     this.props.asset.content2.frameData.push([])
     this.handleSave()
@@ -470,10 +470,18 @@ export default class EditGraphic extends React.Component {
   }
 
 
+  handleFrameNameChangeInteractive(idx, event) {
+    this.props.asset.content2.frameNames[idx] = event.target.value
+    this.handleSave() // TODO: Do this OnBlur()
+  }
+
+
   handleSelectFrame(frameIndex)
   {
-    this.setState( { selectedFrameIdx: frameIndex})
+    this.setState( { selectedFrameIdx: frameIndex} )
   }
+
+
 
   // React Callback: render()
   render() {
@@ -487,7 +495,6 @@ export default class EditGraphic extends React.Component {
     // Generate preview Canvasses
     let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
       return (
-
       <div className="item" key={"previewCanvasItem"+idx.toString()}>
         <div className="ui image">
           <canvas ref={"previewCanvas"+idx.toString()}
@@ -496,7 +503,8 @@ export default class EditGraphic extends React.Component {
                   className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
         </div>
         <div className="middle aligned content">
-          {c2.frameNames[idx]}
+          <input ref={"assetNameInput"+idx.toString()} placeholder={"Frame name"} value={c2.frameNames[idx]}
+                 onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
         </div>
       </div>
     )})

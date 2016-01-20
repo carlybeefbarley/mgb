@@ -66,7 +66,10 @@ export default class AssetEditRoute extends Component {
               <i className={AssetKinds.getIconClass(asset.kind)}></i>
 
             </div>
-            <input ref="assetNameInput" placeholder={"Enter a name for this " + asset.kind + " asset"} value={asset.name} onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
+            <input ref="assetNameInput"
+                   placeholder={"Enter a name for this " + asset.kind + " asset"}
+                   value={asset.name}
+                   onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
           </div>
 
           <div class="ui segment ">

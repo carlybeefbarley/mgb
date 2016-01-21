@@ -144,8 +144,9 @@ export default class EditGraphic extends React.Component {
     let c2 = asset.content2;
     let frameCount = c2.frameNames.length;
 
+    this.previewCanvasArray = $(".mgbPreviewCanvasContainer").find("canvas").get()
+
     for (let i = 0; i < frameCount; i++) {
-      this.previewCanvasArray[i] =  ReactDOM.findDOMNode(this.refs["previewCanvas" + i.toString()]);
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
       this.previewCtxImageData1x1Array[i] = this.previewCtxArray[i].createImageData(1,1);
     }
@@ -192,18 +193,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  handleSave()
-  {
-    let asset = this.props.asset;
-    let c2    = asset.content2;
-    let frameCount = this.previewCanvasArray.length;  // We don't use c2.frameNames.length  coz of the Add Frame button
 
-    for (let i = 0; i < frameCount; i++) {
-      c2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
-    }
-    asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')
-    this.props.handleContentChange(c2, asset.thumbnail);
-  }
 
 
   // A plugin-api for the graphic editing tools in Tools.js
@@ -312,7 +302,7 @@ export default class EditGraphic extends React.Component {
       // if wheel is for frame
       let f = this.state.selectedFrameIdx
       if (event.wheelDelta < 0 && f > 0)
-        this.handleSelectFramesetState( f - 1)
+        this.handleSelectFrame( f - 1)
       else if (event.wheelDelta > 0 && f + 1 < this.previewCanvasArray.length)
         this.handleSelectFrame(f + 1)
     }
@@ -469,10 +459,86 @@ export default class EditGraphic extends React.Component {
     this.forceUpdate()
   }
 
+  handleDuplicateFrame(idx)
+  {
+    alert("Not yet implemented")
+    return
+    let c2 = this.props.asset.content2
+    c2.frameNames.splice(idx,0,c2.frameNames[idx]+" copy")
+
+
+
+    this.previewCanvasArray.splice(idx,0,this.previewCanvasArray[idx])  /// NOOOOOOOO
+
+
+    this.handleSave()
+    this.forceUpdate()
+
+  }
+
+  doSwapCanvases(i,j)
+  {
+    let c2 = this.props.asset.content2
+    var tmp0 = this.previewCtxArray[i].getImageData(0,0, c2.width, c2.height)
+    var tmp1 = this.previewCtxArray[j].getImageData(0,0, c2.width, c2.height)
+    this.previewCtxArray[j].putImageData(tmp0, 0, 0)
+    this.previewCtxArray[i].putImageData(tmp1, 0, 0)
+  }
+
+  handleMoveFrameUp(currentIdx)
+  {
+    let c2 = this.props.asset.content2
+    let fN = c2.frameNames
+
+    if (currentIdx > 0)
+    {
+      // Do swapsies
+      [ fN[currentIdx],  fN[currentIdx-1] ] =  [  fN[currentIdx-1],  fN[currentIdx] ]
+      this.doSwapCanvases(currentIdx, currentIdx-1)
+    }
+    this.handleSave()
+    this.handleSelectFrame(currentIdx-1)
+    this.forceUpdate()
+  }
+
+  handleMoveFrameDown(currentIdx)
+  {
+    let c2 = this.props.asset.content2
+    let fN = c2.frameNames
+
+    if (currentIdx < this.previewCanvasArray.length-1)
+    {
+      // Do swapsies
+      [ fN[currentIdx],  fN[currentIdx+1] ] =  [  fN[currentIdx+1],  fN[currentIdx] ]
+      this.doSwapCanvases(currentIdx, currentIdx+1)
+    }
+    this.handleSave()
+    this.handleSelectFrame(currentIdx+1)
+    this.forceUpdate()
+  }
+
+
+  handleDeleteFrame(idx)
+  {
+    let c2 = this.props.asset.content2
+    c2.frameNames.splice(idx,1)
+    let i = idx
+    while (i < this.previewCanvasArray.length-1)
+    {
+      let tmp = this.previewCtxArray[i+1].getImageData(0,0, c2.width, c2.height)
+      this.previewCtxArray[i].putImageData(tmp, 0, 0)
+      i++
+    }
+
+    this.handleSave()
+    this.forceUpdate()
+
+  }
+
 
   handleFrameNameChangeInteractive(idx, event) {
     this.props.asset.content2.frameNames[idx] = event.target.value
-    this.handleSave() // TODO: Do this OnBlur()
+    this.handleSave() // TODO: Do this OnBlur() so we don't spam the DB so much
   }
 
 
@@ -481,6 +547,18 @@ export default class EditGraphic extends React.Component {
     this.setState( { selectedFrameIdx: frameIndex} )
   }
 
+  handleSave()
+  {
+    let asset = this.props.asset;
+    let c2    = asset.content2;
+    let frameCount = this.previewCanvasArray.length;  // We don't use c2.frameNames.length  coz of the Add Frame button
+
+    for (let i = 0; i < frameCount; i++) {
+      c2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
+    }
+    asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')
+    this.props.handleContentChange(c2, asset.thumbnail);
+  }
 
 
   // React Callback: render()
@@ -497,14 +575,44 @@ export default class EditGraphic extends React.Component {
       return (
       <div className="item" key={"previewCanvasItem"+idx.toString()}>
         <div className="ui image">
-          <canvas ref={"previewCanvas"+idx.toString()}
-                  width={c2.width} height={c2.height}
+          <canvas width={c2.width} height={c2.height}
                   onClick={this.handleSelectFrame.bind(this, idx)}
                   className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
         </div>
         <div className="middle aligned content">
-          <input ref={"assetNameInput"+idx.toString()} placeholder={"Frame name"} value={c2.frameNames[idx]}
+          <input placeholder={"Frame name"} value={c2.frameNames[idx]}
                  onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
+
+          <div className="ui tiny icon buttons" ref="toolbar">
+            <div className="ui button hazPopup"
+                 onClick={this.handleMoveFrameUp.bind(this, idx)}
+                 data-position="bottom center"
+                 data-title="Move Up"
+                 data-content="Move animation frame upwards">
+              <i className="up arrow icon" ></i>
+            </div>
+            <div className="ui button hazPopup"
+                 onClick={this.handleMoveFrameDown.bind(this, idx)}
+                 data-title="Move Down"
+                 data-content="Move animation frame downwards"
+                 data-position="bottom center">
+              <i className="down arrow icon" ></i>
+            </div>
+            <div className="ui button hazPopup"
+                 onClick={this.handleDeleteFrame.bind(this, idx)}
+                 data-title="Delete Frame"
+                 data-content="Delete Animation Frame"
+                 data-position="bottom center">
+              <i className="delete icon" ></i>
+            </div>
+            <div className="ui button hazPopup"
+                 onClick={this.handleDuplicateFrame.bind(this, idx)}
+                 data-title="Duplicate Frame"
+                 data-content="make a copy of this animation frame"
+                 data-position="bottom center">
+              <i className="recycle icon" ></i>
+            </div>
+          </div>
         </div>
       </div>
     )})
@@ -643,7 +751,7 @@ export default class EditGraphic extends React.Component {
 
 
         <div className="ui four wide column ">
-          <div className="ui  items">
+          <div className="ui items mgbPreviewCanvasContainer">
             {previewCanvasses}
           </div>
           <a className="ui compact button" onClick={this.handleAddFrame.bind(this)}>Add Frame</a>

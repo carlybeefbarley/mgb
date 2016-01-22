@@ -459,22 +459,6 @@ export default class EditGraphic extends React.Component {
     this.forceUpdate()
   }
 
-  handleDuplicateFrame(idx)
-  {
-    alert("Not yet implemented")
-    return
-    let c2 = this.props.asset.content2
-    c2.frameNames.splice(idx,0,c2.frameNames[idx]+" copy")
-
-
-
-    this.previewCanvasArray.splice(idx,0,this.previewCanvasArray[idx])  /// NOOOOOOOO
-
-
-    this.handleSave()
-    this.forceUpdate()
-
-  }
 
   doSwapCanvases(i,j)
   {
@@ -604,13 +588,6 @@ export default class EditGraphic extends React.Component {
                  data-content="Delete Animation Frame"
                  data-position="bottom center">
               <i className="delete icon" ></i>
-            </div>
-            <div className="ui button hazPopup"
-                 onClick={this.handleDuplicateFrame.bind(this, idx)}
-                 data-title="Duplicate Frame"
-                 data-content="make a copy of this animation frame"
-                 data-position="bottom center">
-              <i className="recycle icon" ></i>
             </div>
           </div>
         </div>

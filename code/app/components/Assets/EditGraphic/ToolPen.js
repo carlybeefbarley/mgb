@@ -1,7 +1,7 @@
 
 const toolPen = {
   name: "Pen",
-  description: "Click and drag to draw individual pixels on the frame. Alt-click to use like the eyedropper",
+  description: "Click and drag to draw individual pixels on the frame. Alt-click to use like the eyedropper tool",
   icon: "pencil icon",        // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: true,

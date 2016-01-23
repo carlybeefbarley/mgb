@@ -53,7 +53,7 @@ export default class EditGraphic extends React.Component {
 
     //this.initDefaultContent2()              // Probably superfluous since done in render() but here to be sure.
     this.getPreviewCanvasReferences()
-    this.loadPreviewsFromAsset()
+    this.loadPreviewsFromAssetAsync()
 
     //Keypress not working
     //let $grid = $(ReactDOM.findDOMNode(this.refs.outerGrid))
@@ -130,7 +130,7 @@ export default class EditGraphic extends React.Component {
   componentDidUpdate(prevProps,  prevState)
   {
     this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
-    this.loadPreviewsFromAsset()
+    this.loadPreviewsFromAssetAsync()
   }
 
 
@@ -153,7 +153,9 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  loadPreviewsFromAsset()
+  /// Note that this has to use Image.onload so it will complete asynchronously.
+  /// TODO: Add an on-complete callback including a timeout handler to support better error handling and avoid races
+  loadPreviewsFromAssetAsync()
   {
     let c2 = this.props.asset.content2;
     let frameCount = c2.frameNames.length;
@@ -164,13 +166,16 @@ export default class EditGraphic extends React.Component {
       if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
         var _img = new Image
         var self = this
-        _img.src = dataURI    // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-        _img.mgb_hack = i     // so in onload() callback we know which previewCtx to apply the data to
+        _img.mgb_hack_idx = i     // so in onload() callback we know which previewCtx to apply the data to
         _img.onload = function (e) {
-          self.previewCtxArray[e.target.mgb_hack].drawImage(e.target, 0, 0);
-          if (e.target.mgb_hack === self.state.selectedFrameIdx)
-            self.updateEditCanvasFromSelectedPreviewCanvas();
+          let loadedImage = e.target
+          // XXX: This may need a clearRect in here for Alpha to work
+          self.previewCtxArray[loadedImage.mgb_hack_idx].clearRect(0,0, _img.width, _img.height)
+          self.previewCtxArray[loadedImage.mgb_hack_idx].drawImage(loadedImage, 0, 0)
+          if (loadedImage.mgb_hack_idx === self.state.selectedFrameIdx)
+            self.updateEditCanvasFromSelectedPreviewCanvas()
         }
+        _img.src = dataURI    // Trigger load & onload -> data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
       }
       else {
         this.updateEditCanvasFromSelectedPreviewCanvas();
@@ -191,8 +196,6 @@ export default class EditGraphic extends React.Component {
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
     this.editCtx.drawImage(this.previewCanvasArray[this.state.selectedFrameIdx], 0, 0, w, h, 0, 0, w*s, h*s)
   }
-
-
 
 
 
@@ -315,17 +318,22 @@ export default class EditGraphic extends React.Component {
   {
     if (dw !== 0 || dh !== 0)
     {
+      this.doSaveStateForUndo(`Resize by (${dw}, ${dh}) `)    // TODO: Only stack and save if different
       let c2 = this.props.asset.content2
       c2.width = Math.min(c2.width+dw, 64)
       c2.height = Math.min(c2.height+dh, 64)
       this.handleSave()
     }
+    // TODO: Toast on error
+    // TODO: Put max sizes somewhere
+    // TODO: Reduce zoom if very large
   }
 
 
 
   handleMouseDown(event) {
     if (this.mgb_toolChosen !== null) {
+      this.doSaveStateForUndo(this.mgb_toolChosen.name)   // TODO: Add a flag for CHANGES_IMAGE so stuff like eyedropper doesn't save an undo
       if (this.mgb_toolChosen.supportsDrag === true)
         this.mgb_toolActive = true
 
@@ -451,6 +459,7 @@ export default class EditGraphic extends React.Component {
 
   handleAddFrame()
   {
+    this.doSaveStateForUndo("Add Frame")
     let fN = this.props.asset.content2.frameNames
     let newFrameName = "Frame " + (fN.length+2).toString()
     fN.push(newFrameName)
@@ -476,13 +485,14 @@ export default class EditGraphic extends React.Component {
 
     if (currentIdx > 0)
     {
-      // Do swapsies
+      this.doSaveStateForUndo("Move Frame Up");
+
       [ fN[currentIdx],  fN[currentIdx-1] ] =  [  fN[currentIdx-1],  fN[currentIdx] ]
       this.doSwapCanvases(currentIdx, currentIdx-1)
+      this.handleSave()
+      this.handleSelectFrame(currentIdx-1)
+      this.forceUpdate()
     }
-    this.handleSave()
-    this.handleSelectFrame(currentIdx-1)
-    this.forceUpdate()
   }
 
   handleMoveFrameDown(currentIdx)
@@ -492,19 +502,22 @@ export default class EditGraphic extends React.Component {
 
     if (currentIdx < this.previewCanvasArray.length-1)
     {
-      // Do swapsies
+      this.doSaveStateForUndo("Move Frame Down");
       [ fN[currentIdx],  fN[currentIdx+1] ] =  [  fN[currentIdx+1],  fN[currentIdx] ]
       this.doSwapCanvases(currentIdx, currentIdx+1)
+      this.handleSave()
+      this.handleSelectFrame(currentIdx+1)
+      this.forceUpdate()     // Needed since the Reactivity doesn't look down this far (true?)
     }
-    this.handleSave()
-    this.handleSelectFrame(currentIdx+1)
-    this.forceUpdate()
   }
 
 
   handleDeleteFrame(idx)
   {
     let c2 = this.props.asset.content2
+
+    this.doSaveStateForUndo("Delete Frame")
+
     c2.frameNames.splice(idx,1)
     let i = idx
     while (i < this.previewCanvasArray.length-1)
@@ -515,12 +528,12 @@ export default class EditGraphic extends React.Component {
     }
 
     this.handleSave()
-    this.forceUpdate()
-
+    this.forceUpdate()      // Needed since the Reactivity doesn't look down this far (true?)
   }
 
 
   handleFrameNameChangeInteractive(idx, event) {
+    this.doSaveStateForUndo("Rename Frame")
     this.props.asset.content2.frameNames[idx] = event.target.value
     this.handleSave() // TODO: Do this OnBlur() so we don't spam the DB so much
   }
@@ -531,6 +544,70 @@ export default class EditGraphic extends React.Component {
     this.setState( { selectedFrameIdx: frameIndex} )
   }
 
+  // SAVE and UNDO
+
+
+  initDefaultUndoStack()
+  {
+    // mgb_undoStack will be an array of
+    //   {
+    //      when:           Date.now() of when it was added to the stack
+    //      byUserName      username who made the change
+    //      byUserContext   Where the user made the change (IP address etc)
+    //      changeInfo      The change - for example 'Deleted frame'
+    //      savedContent2   The saved data
+    //    }
+    //
+    // Oldest items will be at index=0 in array
+
+    if (this.hasOwnProperty("mgb_undoStack") === false) {
+      this.mgb_undoStack = []
+    }
+  }
+
+  doMakeUndoStackEntry(changeInfoString)
+  {
+    return {
+      when: Date.now(),
+      byUserName: "usernameTODO",
+      byUserContext: "someMachineTODO",
+      changeInfo: changeInfoString,
+      savedContent2: $.extend(true, {}, this.props.asset.content2)
+    }
+  }
+
+
+  // TODO: 1: Solve issue that this always has the latest saved version on the stack, so first undo is a NO-OP
+  // TODO: 2: Solve issue of Drawing not undoing. CONSOLE.LOG THE ONLOAD
+  doTrimUndoStack()
+  {
+    let u = this.mgb_undoStack
+    if (u.length > 20)
+      u.shift()         // Remove 0th element (which is the oldest)
+  }
+
+  doSaveStateForUndo(changeInfoString)
+  {
+    let u = this.mgb_undoStack
+    this.doTrimUndoStack()
+console.log(`doSaveStateForUndo(${changeInfoString})`)
+    u.push(this.doMakeUndoStackEntry(changeInfoString))
+  }
+
+  handleUndo()
+  {
+    let u = this.mgb_undoStack
+    if (u.length > 0)
+    {
+      let zombie = u.pop()
+      this.props.handleContentChange(
+        zombie.savedContent2,
+        zombie.savedContent2.frameData[0][0]         // MAINTAIN: Match semantics of handleSave()
+      )
+    }
+  }
+
+
   handleSave()
   {
     let asset = this.props.asset;
@@ -540,7 +617,7 @@ export default class EditGraphic extends React.Component {
     for (let i = 0; i < frameCount; i++) {
       c2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
     }
-    asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')
+    asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
     this.props.handleContentChange(c2, asset.thumbnail);
   }
 
@@ -548,6 +625,7 @@ export default class EditGraphic extends React.Component {
   // React Callback: render()
   render() {
     this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
+    this.initDefaultUndoStack()
 
     let asset = this.props.asset
     let c2 = asset.content2
@@ -629,6 +707,10 @@ export default class EditGraphic extends React.Component {
 
         <div className={sty.tagPosition + " ui nine wide column"} >
           <div className="row">
+            <a className="ui label" onClick={this.handleUndo.bind(this)}>
+              <i className="icon undo"></i> Undo {this.mgb_undoStack.length}
+            </a>
+            <span>&nbsp;&nbsp;&nbsp;</span>
             <a className="ui label mgbResizerHost" data-position="right center">
               <i className="icon expand"></i> {"Size: " + c2.width + " x " + c2.height}
             </a>
@@ -647,7 +729,7 @@ export default class EditGraphic extends React.Component {
               <i className="save icon"></i> Autosave ON
             </a>
             <span>&nbsp;&nbsp;&nbsp;</span>
-            <a className="ui label hazpopup" onClick={this.handleSave.bind(this)}
+            <a className="ui label hazpopup"
                data-content="Use mouse wheel over edit area to change current edited frame"
                data-variation="tiny"
                data-position="bottom center">

@@ -169,7 +169,6 @@ export default class EditGraphic extends React.Component {
         _img.mgb_hack_idx = i     // so in onload() callback we know which previewCtx to apply the data to
         _img.onload = function (e) {
           let loadedImage = e.target
-          // XXX: This may need a clearRect in here for Alpha to work
           self.previewCtxArray[loadedImage.mgb_hack_idx].clearRect(0,0, _img.width, _img.height)
           self.previewCtxArray[loadedImage.mgb_hack_idx].drawImage(loadedImage, 0, 0)
           if (loadedImage.mgb_hack_idx === self.state.selectedFrameIdx)
@@ -623,6 +622,21 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
 
   /// Drag & Drop of image files over preview and editor
 
+  /// Allow Previews to put info in DataTransfer object so we can drag them around
+  handlePreviewDragStart(idx, e) {
+    // Target (this) element is the source node.
+    let dragSrcEl = e.target;
+
+    if (idx === -1)                         // The Edit Window does this
+      idx = this.state.selectedFrameIdx;
+
+
+    e.dataTransfer.effectAllowed = 'copy';  // This must match what is in handleDragOverPreview()
+    e.dataTransfer.setData('mgb/image', this.previewCanvasArray[idx].toDataURL('image/png')
+    );
+  }
+
+
   handleDragOverPreview(event)
   {
     event.stopPropagation();
@@ -630,18 +644,40 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
     event.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
   }
 
+
   handleDropPreview(idx, event)
   {
     event.stopPropagation();
     event.preventDefault();
+    var self = this;
 
     if (idx === -1)                         // The Edit Window does this
       idx = this.state.selectedFrameIdx;
 
+
+    let mgbImageDataUri =  event.dataTransfer.getData('mgb/image');
+    if (mgbImageDataUri !== undefined && mgbImageDataUri !== null && mgbImageDataUri.length > 0)
+    {
+      // It's us!
+      var img = new Image;
+      img.onload = function(e) {
+        // Seems to have loaded ok..
+        self.doSaveStateForUndo(`Drag+Drop Frame to Frame #`+idx.toString())
+        let w = self.props.asset.content2.width
+        let h = self.props.asset.content2.height
+        self.previewCtxArray[idx].clearRect(0,0,w,h)
+        self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
+        if (idx === self.state.selectedFrameIdx)
+          self.updateEditCanvasFromSelectedPreviewCanvas();
+        self.handleSave();
+      };
+      img.src = mgbImageDataUri; // is the data URL because called
+      return
+    }
+
     let files = event.dataTransfer.files; // FileList object.
     if (files.length > 0)
     {
-      var self = this;
       var reader = new FileReader();
       reader.onload = function(event) {
         let theUrl = event.target.result
@@ -683,7 +719,7 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
             onDragOver={this.handleDragOverPreview.bind(this)}
             onDrop={this.handleDropPreview.bind(this,idx)}
       >
-        <div className="ui image">
+        <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)}>
           <canvas width={c2.width} height={c2.height}
                   onClick={this.handleSelectFrame.bind(this, idx)}
                   className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>

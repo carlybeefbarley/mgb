@@ -621,6 +621,50 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
     this.props.handleContentChange(c2, asset.thumbnail);
   }
 
+  /// Drag & Drop of image files over preview and editor
+
+  handleDragOverPreview(event)
+  {
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  }
+
+  handleDropPreview(idx, event)
+  {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (idx === -1)                         // The Edit Window does this
+      idx = this.state.selectedFrameIdx;
+
+    let files = event.dataTransfer.files; // FileList object.
+    if (files.length > 0)
+    {
+      var self = this;
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        let theUrl = event.target.result
+        var img = new Image;
+        img.onload = function(e) {
+          // Seems to have loaded ok..
+          self.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
+
+          let w = self.props.asset.content2.width
+          let h = self.props.asset.content2.height
+          self.previewCtxArray[idx].clearRect(0,0,w,h)
+          self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
+          if (idx === self.state.selectedFrameIdx)
+            self.updateEditCanvasFromSelectedPreviewCanvas();
+          self.handleSave();
+          //console.log(img.height + "x" + img.width); // image is loaded; sizes are available
+        };
+        img.src = theUrl; // is the data URL because called
+      }
+      reader.readAsDataURL(files[0]);
+    }
+  }
+
 
   // React Callback: render()
   render() {
@@ -635,7 +679,10 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
     // Generate preview Canvasses
     let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
       return (
-      <div className="item" key={"previewCanvasItem"+idx.toString()}>
+      <div className="item" key={"previewCanvasItem"+idx.toString()}
+            onDragOver={this.handleDragOverPreview.bind(this)}
+            onDrop={this.handleDropPreview.bind(this,idx)}
+      >
         <div className="ui image">
           <canvas width={c2.width} height={c2.height}
                   onClick={this.handleSelectFrame.bind(this, idx)}
@@ -730,7 +777,7 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
             </a>
             <span>&nbsp;&nbsp;&nbsp;</span>
             <a className="ui label hazpopup"
-               data-content="Use mouse wheel over edit area to change current edited frame"
+               data-content="Use mouse wheel over edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                data-variation="tiny"
                data-position="bottom center">
               <i className="tasks icon"></i> Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
@@ -741,7 +788,13 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
             <br></br>
           </div>
           <div className="row">
-            <canvas ref="editCanvas" width={zoom*c2.width} height={zoom*c2.height} className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}></canvas>
+            <canvas ref="editCanvas"
+                    width={zoom*c2.width}
+                    height={zoom*c2.height}
+                    className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}
+                    onDragOver={this.handleDragOverPreview.bind(this)}
+                    onDrop={this.handleDropPreview.bind(this,-1)}>
+            </canvas>
           </div>
 
           {/*** Status Bar ***/}

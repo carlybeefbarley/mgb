@@ -15,8 +15,8 @@ export default class EditUnknown extends React.Component {
 
     return (
       <div className="ui segment inverted">
-        <p>Edit {asset.kind} '{asset.name}' BABY</p>
-        <a className="ui red label">Unrecognised Asset type '{this.props.asset.kind}' - unable to edit</a>
+        <p>Edit {asset.kind} '{asset.name}'</p>
+        <a className="ui red label">Editor for Asset type '{this.props.asset.kind}' is not yet implemented</a>
       </div>
   );
   }

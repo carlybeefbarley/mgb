@@ -38,7 +38,6 @@ export const AssetKinds = {
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},
   getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")}
-
 };
 
 export const AssetKindKeys = Object.keys(AssetKinds);  // For convenience.

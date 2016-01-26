@@ -97,5 +97,5 @@ export default class AssetEditRoute extends Component {
       }
     });
   }
-  
+
 }

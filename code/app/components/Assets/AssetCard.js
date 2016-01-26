@@ -24,29 +24,24 @@ export default class AssetCard extends React.Component {
     this.handlePrivateClick = this.handlePrivateClick.bind(this);
   }
 
-  componentDidMount()
+  loadThumbnail(asset)
   {
-    let asset = this.props.asset;
-
-    this.previewCanvas =  ReactDOM.findDOMNode(this.refs.thumbnailCanvas);
-    this.previewCtx = this.previewCanvas.getContext('2d');
-    this.previewCtx.fillStyle = '#a0c0c0';
-    this.previewCtx.fillRect(0, 0, this.previewCanvas.width, this.previewCanvas.height);
-
     if (asset.hasOwnProperty("thumbnail"))
       this.loadPreviewFromDataURI(asset.thumbnail)
+  }
+
+  componentDidMount()
+  {
+    this.previewCanvas =  ReactDOM.findDOMNode(this.refs.thumbnailCanvas);
+    this.previewCtx = this.previewCanvas.getContext('2d');
+    this.loadThumbnail(this.props.asset)
   }
 
 
   componentDidUpdate(prevProps,  prevState)
   {
-    let asset = this.props.asset;
-
-    if (asset.hasOwnProperty("thumbnail"))
-      this.loadPreviewFromDataURI(asset.thumbnail)
+    this.loadThumbnail(this.props.asset)
   }
-
-
 
 
   loadPreviewFromDataURI(dataURI)
@@ -59,6 +54,7 @@ export default class AssetCard extends React.Component {
       var _ctx = this.previewCtx;
       _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
       _img.onload = function() {
+        _ctx.clearRect(0 , 0, _img.width, _img.height)
         _ctx.drawImage(_img,0,0); // needs to be done in onload...
       }
     }

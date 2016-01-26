@@ -33,7 +33,7 @@ export default class AssetCreateNew extends React.Component {
 
     // Create the       | Create Asset v | ---- |    UI
     return (
-      <div className="ui compact menu">
+      <div className="ui compact inverted menu">
         <div className="ui simple dropdown item">
           New Asset
           <i className="dropdown icon"></i>
@@ -42,7 +42,7 @@ export default class AssetCreateNew extends React.Component {
           </div>
         </div>
           <div className="item">
-            <div className="ui transparent  input">
+            <div className="ui transparent inverted input">
               <input className="fluid" ref="chosenNewAssetName" type="text" placeholder={this.props.defaultName}></input>
             </div>
         </div>

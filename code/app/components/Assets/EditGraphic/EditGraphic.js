@@ -797,32 +797,32 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
         <div className={sty.tagPosition + " ui nine wide column"} >
           <div className="row">
             <a className="ui label" onClick={this.handleUndo.bind(this)}>
-              <i className="icon undo"></i> Undo {this.mgb_undoStack.length}
+              <i className="icon undo"></i>Undo {this.mgb_undoStack.length}
             </a>
-            <span>&nbsp;&nbsp;&nbsp;</span>
+            <span>&nbsp;&nbsp;</span>
             <a className="ui label mgbResizerHost" data-position="right center">
-              <i className="icon expand"></i> {"Size: " + c2.width + " x " + c2.height}
+              <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
             </a>
-            <span>&nbsp;&nbsp;&nbsp;</span>
+            <span>&nbsp;&nbsp;</span>
             <a className="ui label hazpopup" onClick={this.handleZoom.bind(this)}
                data-content="Click here or SHIFT+mousewheel over edit area to change zoom level"
                data-variation="tiny"
                data-position="bottom center">
-              <i className="icon zoom"></i> Zoom {zoom}x
+              <i className="icon zoom"></i>Zoom {zoom}x
             </a>
-            <span>&nbsp;&nbsp;&nbsp;</span>
+            <span>&nbsp;&nbsp;</span>
             <a className="ui label hazpopup" onClick={this.handleSave.bind(this)}
                data-content="Changes are continuously saved and updated to other viewers "
                data-variation="tiny"
                data-position="bottom center">
-              <i className="save icon"></i> Autosave ON
+              <i className="save icon"></i>Saved
             </a>
-            <span>&nbsp;&nbsp;&nbsp;</span>
+            <span>&nbsp;&nbsp;</span>
             <a className="ui label hazpopup"
                data-content="Use mouse wheel over edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                data-variation="tiny"
                data-position="bottom center">
-              <i className="tasks icon"></i> Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
+              <i className="tasks icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
             </a>
 
           </div>

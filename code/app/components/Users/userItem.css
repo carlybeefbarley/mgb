@@ -1,6 +1,6 @@
 .wrapper {
   max-width: 100%;
-  height: 5em;
+  height: 4em;
   cursor: pointer;
   margin: 0;
 }
@@ -16,7 +16,7 @@
 
 .avatar {
   border-radius: 50%;
-  margin: 1em;
+  margin: 0.5em;
   height: 3em;
   width: 3em;
   display: inline-block;

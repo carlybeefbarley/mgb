@@ -72,7 +72,6 @@ export default class EditGraphic extends React.Component {
     this.handleColorChangeComplete('fg', { hex: "00ff00", rgb: {r: 0, g: 255, b:0, a: 1} } )
 
 
-
     this.editCanvas.addEventListener('wheel',         this.handleMouseWheel.bind(this));
     this.editCanvas.addEventListener('mousemove',     this.handleMouseMove.bind(this));
     this.editCanvas.addEventListener('mousedown',     this.handleMouseDown.bind(this));
@@ -291,25 +290,32 @@ export default class EditGraphic extends React.Component {
   // handleMouseWheel is an alias for zoom
   handleMouseWheel(event)
   {
-
-    if (event.shiftKey === true) {
-      // if wheel is for scale:
-      let s = this.state.editScale;
-      if (event.wheelDelta > 0 && s > 1)
-        this.setState({editScale: s >> 1})
-      else if (event.wheelDelta < 0 && s < 8)
-        this.setState({editScale: s << 1})
-    }
-    else {
-      // if wheel is for frame
-      let f = this.state.selectedFrameIdx
-      if (event.wheelDelta < 0 && f > 0)
-        this.handleSelectFrame( f - 1)
-      else if (event.wheelDelta > 0 && f + 1 < this.previewCanvasArray.length)
-        this.handleSelectFrame(f + 1)
-    }
     event.preventDefault();
 
+    // WheelDelta system is to handle MacOS that has frequent small deltas,
+    // rather than windows wheels which typically have +/- 120
+    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta;
+    let wd =  this.mgb_wheelDeltaAccumulator;    // shorthand
+
+    if (Math.abs(wd) > 60) {
+      if (event.shiftKey === true) {
+        // if wheel is for scale:
+        let s = this.state.editScale;
+        if (wd > 0 && s > 1)
+          this.setState({editScale: s >> 1})
+        else if (wd < 0 && s < 8)
+          this.setState({editScale: s << 1})
+      }
+      else {
+        // if wheel is for frame
+        let f = this.state.selectedFrameIdx
+        if (wd < 0 && f > 0)
+          this.handleSelectFrame(f - 1)
+        else if (wd > 0 && f + 1 < this.previewCanvasArray.length)
+          this.handleSelectFrame(f + 1)
+      }
+      this.mgb_wheelDeltaAccumulator = 0
+    }
   }
 
 

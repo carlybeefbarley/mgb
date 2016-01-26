@@ -71,7 +71,7 @@ export default class AssetEditRoute extends Component {
                    value={asset.name}
                    onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
           </div>
-          
+
         </div>
 
         <div className="seven wide column">

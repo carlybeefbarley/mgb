@@ -74,11 +74,10 @@ export default class AssetCard extends React.Component {
     const {asset, showEditButton  } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
-    const c2 = asset.content2
+    const c2 = asset.content2 || { width:64, height:64, nframes:0 }
     const iw = c2.hasOwnProperty("width") ? c2.width : 64
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
     const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
-
 
     return (
       <div key={asset._id} className="ui card">

@@ -864,7 +864,7 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
           </div>
 
           <div className="ui popup mgbResizer">
-            <div className="ui ">Grow or shrink Graphic</div>
+            <div className="ui">Grow or shrink Graphic</div>
             <div className="ui horizontal icon buttons">
               <div className="ui button" onClick={this.handleResize.bind(this, 1, 0)}
                    data-content="Increase Width"

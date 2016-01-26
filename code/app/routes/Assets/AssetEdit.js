@@ -71,11 +71,7 @@ export default class AssetEditRoute extends Component {
                    value={asset.name}
                    onChange={this.handleAssetNameChangeInteractive.bind(this)}></input>
           </div>
-
-          <div class="ui segment ">
-            <p>{asset.name.length > 0 ? "Edit " : "Enter "}the {asset.kind}'s name above.</p>
-          </div>
-
+          
         </div>
 
         <div className="seven wide column">

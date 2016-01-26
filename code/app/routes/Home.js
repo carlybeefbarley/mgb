@@ -6,7 +6,10 @@ import {Link} from 'react-router';
 
 export default class Home extends Component {
 
+
   render() {
+    const currUser = this.props.currUser;
+
     return (
       <div>
         <div className={styles.section1}>
@@ -14,8 +17,10 @@ export default class Home extends Component {
             <div className={styles.heroColumn}>
               <h1 className={styles.s1text}>MyGameBuilder</h1>
               <h3 className={styles.s1text}>Make Games.<br></br>Make Friends.<br></br>Have Fun.</h3>
+
               <Link to="/docs"><button className={styles.primary}>Docs</button></Link>
-              <a href="http://mygamebuilder.com"><button className={styles.primary}>MGB</button></a>
+              <Link to={`/user/${currUser._id}/assets`}><button className={styles.primary}>My Assets</button></Link>
+
             </div>
           </div>
         </div>

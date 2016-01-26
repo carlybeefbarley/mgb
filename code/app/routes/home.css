@@ -10,6 +10,7 @@
     background-image: url("/images/frontpage_mgb1.png");
     background-repeat: no-repeat;
     background-position: right;
+    padding: 1em;
   }
 }
 
@@ -19,8 +20,8 @@
 }
 
 .heroColumn {
-  width: 50%;
-  text-align: center;
+  width: 40%;
+  text-align: left;
 }
 
 .primary {

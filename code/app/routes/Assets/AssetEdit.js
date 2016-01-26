@@ -63,7 +63,7 @@ export default class AssetEditRoute extends Component {
 
           <div className="ui large left action input fluid">
             <div className="ui teal icon button">
-              <div className="ui label teal">Edit {asset.kind}</div>
+              <div className="ui large label teal">Edit {asset.kind}</div>
               <i className={AssetKinds.getIconClass(asset.kind)}></i>
             </div>
             <input ref="assetNameInput"
@@ -97,7 +97,5 @@ export default class AssetEditRoute extends Component {
       }
     });
   }
-
-
-
+  
 }

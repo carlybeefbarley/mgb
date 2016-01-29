@@ -32,6 +32,8 @@ export const AssetKinds = {
   "graphic": { name: "Graphic", longName: "Graphic",         icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
   "palette": { name: "Palette", longName: "Color Palette",   icon: "block layout", description: "Color palette" },
   "map":     { name: "Map",     longName: "Game Level Map",  icon: "marker", description: "Map used in a game" },
+  "code":    { name: "Code",    longName: "Code Script",     icon: "puzzle", description: "Source code script" },
+  "bug":     { name: "Bug",     longName: "Bug Report",      icon: "bug",    description: "Report and status of a problem (aka bug)" },
   "cutscene":{ name: "Cutscene",longName: "Cut Scene",       icon: "spinner",description: "Cut scene used in a game" },
   "audio":   { name: "Audio",   longName: "Audio sound",     icon: "announcement", description: "Sound Effect, song, voice etc"},
   "game":    { name: "Game",    longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},

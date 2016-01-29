@@ -815,7 +815,7 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
                data-content="Changes are continuously saved and updated to other viewers "
                data-variation="tiny"
                data-position="bottom center">
-              <i className="save icon"></i>Saved
+              <i className="save icon"></i>
             </a>
             <span>&nbsp;&nbsp;</span>
             <a className="ui label hazpopup"

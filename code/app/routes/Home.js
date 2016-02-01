@@ -19,7 +19,12 @@ export default class Home extends Component {
               <h3 className={styles.s1text}>Make Games.<br></br>Make Friends.<br></br>Have Fun.</h3>
 
               <Link to="/docs"><button className={styles.primary}>Docs</button></Link>
-              <Link to={`/user/${currUser._id}/assets`}><button className={styles.primary}>My Assets</button></Link>
+              { currUser ?
+                <Link to={`/user/${currUser._id}/assets`}>
+                  <button className={styles.primary}>My Assets</button>
+                </Link>
+                : null
+              }
 
             </div>
           </div>

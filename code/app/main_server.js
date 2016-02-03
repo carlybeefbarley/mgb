@@ -60,4 +60,4 @@ Npm.require;
 Assets;
 require('fs').readFile.call;
 
-console.log('\n\nRunning on server only');
+console.log('\n\nRunning on server only (main_server.js)');

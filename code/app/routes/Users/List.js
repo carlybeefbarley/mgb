@@ -16,7 +16,7 @@ export default class UserListRoute extends Component {
   constructor() {
     super();
     this.state = {
-      userLimit: 1
+      userLimit: 3
     }
     this.handleLoadMore = this.handleLoadMore.bind(this);
   }
@@ -50,6 +50,6 @@ export default class UserListRoute extends Component {
   }
 
   handleLoadMore() {
-    this.setState({userLimit: this.state.userLimit + 2})
+    this.setState({userLimit: this.state.userLimit + 3})
   }
 }

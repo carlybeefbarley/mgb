@@ -1,3 +1,5 @@
+// This file should be imported by the main_server.js file
+
 import {Plans, Users, Teams, Todos, Azzets} from '../schemas';
 
 //only super-admins can see all plans. Everyone else gets the public plans only
@@ -15,7 +17,7 @@ Meteor.publish('teams', function(limit) {
 
 //Publish roles fields (normally its hidden. Meteor publishes only email and profile
 //fields on the user by default)
-Meteor.publish(null, function() {
+Meteor.publish(null, function() {   // null here is a special case for Meteor's universal publications.
   return Meteor.users.find({_id: this.userId}, {fields: {permissions: 1}});
 });
 

@@ -14,8 +14,8 @@ import AssetCreateNew from '../../components/Assets/AssetCreateNew.js';
 export default class UserAssetListRoute extends Component {
 
   static propTypes = {
-    params: PropTypes.object,
-    user: PropTypes.object,
+    params: PropTypes.object,       // .id Maybe absent if route is /assets
+    user: PropTypes.object,         // Maybe absent if route is /assets
     currUser: PropTypes.object,
     ownsProfile: PropTypes.bool
   }
@@ -27,10 +27,18 @@ export default class UserAssetListRoute extends Component {
   getMeteorData() {
     let handle
 
-    //Subscribe to assets labeled isPrivate?
-    if (this.props.ownsProfile) {
-      handle = Meteor.subscribe("assets.auth", this.props.params.id);
-    } else {
+    if (this.props.params.id) {
+      // Route included a user-id for scope
+      //Subscribe to assets labeled isPrivate?
+      if (this.props.ownsProfile) {
+        handle = Meteor.subscribe("assets.auth", this.props.params.id);
+      } else {
+        handle = Meteor.subscribe("assets.public");
+      }
+    }
+    else
+    {
+      // route did not include a user-id for scope
       handle = Meteor.subscribe("assets.public");
     }
 
@@ -44,9 +52,13 @@ export default class UserAssetListRoute extends Component {
     let assets = this.data.assets;    //list of assets provided via getMeteorData()
 
     const {user, ownsProfile} = this.props;
-    const {_id, createdAt} = user;
-    const {name, avatar} = user.profile;
-
+    if (user) {
+      const {_id, createdAt} = user;
+      const {name, avatar} = user.profile;
+    }
+    else {
+      // XXX ???
+    }
     return (
       <div className="ui grid">
 
@@ -58,22 +70,25 @@ export default class UserAssetListRoute extends Component {
         />
 
         <div className="ten wide column">
-          <div className="ui large header">{name}&rsquo;s Assets
+          <div className="ui large header">{ user ? (name + "&rsquo;s Assets") : ("Public assets") }
             <div className="ui sub header">{assets.length} Assets</div>
           </div>
         </div>
 
         <div className="six wide column">
-          <UserItem
+          {user ? <UserItem
               name={name}
               avatar={avatar}
               createdAt={createdAt}
               _id={_id} />
+            :
+            null
+          }
         </div>
 
         <div className="ten wide column">
 
-          {this.props.ownsProfile ?
+          {user && this.props.ownsProfile ?
             <AssetCreateNew
               handleCreateAssetClick={this.handleCreateAssetClickFromComponent.bind(this)}/>
           : null }

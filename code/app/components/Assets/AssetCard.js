@@ -75,6 +75,8 @@ export default class AssetCard extends React.Component {
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
     const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
 
+    const ownerName = asset.ownerName
+
     return (
       <div key={asset._id} className="ui card">
         <div className="content">
@@ -89,7 +91,7 @@ export default class AssetCard extends React.Component {
             {iw}x{ih}{assetKindLongName}
           </div>
           <div className="description">
-            {nframes} animation frames
+            Owner: {ownerName}<br></br>{nframes}  frames
           </div>
         </div>
         <div className="extra content">

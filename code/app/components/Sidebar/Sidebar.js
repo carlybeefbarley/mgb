@@ -61,6 +61,7 @@ export default class Sidebar extends Component {
           <div className="menu">
             <Link to="/teams" className="item">Teams</Link>
             <Link to="/users" className="item">Users</Link>
+            <Link to={`/assets`} className="item">Public Assets</Link>
           </div>
         </div>
         {superAdminContent}

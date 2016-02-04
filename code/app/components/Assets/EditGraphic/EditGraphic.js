@@ -91,7 +91,7 @@ export default class EditGraphic extends React.Component {
 
     let $a = $(ReactDOM.findDOMNode(this))
     $a.find('.button').popup()
-    $a.find('.hazpopup').popup()
+    $a.find('.hazpopup').popup()   //  TODO: fix inconsistency of hazPopup and hazpopup
 
     let $cp =  $a.find('.mgbColorPickerHost')
     $cp.popup({
@@ -734,7 +734,7 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
           <input placeholder={"Frame name"} value={c2.frameNames[idx]}
                  onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
 
-          <div className="ui tiny icon buttons" ref="toolbar">
+          <div className="ui tiny icon buttons">
             <div className="ui button hazPopup"
                  onClick={this.handleMoveFrameUp.bind(this, idx)}
                  data-position="bottom center"

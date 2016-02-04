@@ -8,6 +8,9 @@ import {History} from 'react-router';
 import Helmet from 'react-helmet';
 import UserItem from '../../components/Users/UserItem.js';
 import AssetCreateNew from '../../components/Assets/AssetCreateNew.js';
+import AssetKindsSelector from '../../components/Assets/AssetKindsSelector.js';
+import {AssetKinds, AssetKindKeys} from '../../schemas/assets';
+
 
 @reactMixin.decorate(History)
 @reactMixin.decorate(ReactMeteorData)
@@ -22,6 +25,9 @@ export default class UserAssetListRoute extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      selectedAssetKinds:   _.map(AssetKindKeys, (k) => { return k})
+    }
   }
 
   getMeteorData() {
@@ -31,21 +37,27 @@ export default class UserAssetListRoute extends Component {
       // Route included a user-id for scope
       //Subscribe to assets labeled isPrivate?
       if (this.props.ownsProfile) {
-        handle = Meteor.subscribe("assets.auth", this.props.params.id);
+        handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds);
       } else {
-        handle = Meteor.subscribe("assets.public");
+        handle = Meteor.subscribe("assets.public", this.state.selectedAssetKinds);
       }
     }
     else
     {
       // route did not include a user-id for scope
-      handle = Meteor.subscribe("assets.public");
+      handle = Meteor.subscribe("assets.public", this.state.selectedAssetKinds);
     }
 
     return {
       assets: Azzets.find({}, {sort: {createdAt: -1}}).fetch(), // TODO: don't bring down content2 field
       loading: !handle.ready()
     };
+  }
+
+  handleToggleKind(k) // k is the string for the AssetKindsKey to toggle existence of in the array
+  {
+    let s = this.state.selectedAssetKinds
+    this.setState({ selectedAssetKinds: _.indexOf(s,k)==-1?_.union(s,[k]):_.without(s,k) })
   }
 
   render() {
@@ -88,11 +100,11 @@ export default class UserAssetListRoute extends Component {
         </div>
 
         <div className="ten wide column">
-
-          {user && this.props.ownsProfile ?
+          <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind.bind(this)} />
+        </div>
+        <div className="six wide column">
             <AssetCreateNew
               handleCreateAssetClick={this.handleCreateAssetClickFromComponent.bind(this)}/>
-          : null }
         </div>
 
         <div className="sixteen wide column">

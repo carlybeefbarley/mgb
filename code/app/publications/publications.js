@@ -55,19 +55,27 @@ Meteor.publish('todos.auth', function(userId, teamId) {
 });
 
 //Can see all assets belonging to user/team
-Meteor.publish('assets.auth', function(userId) {
-    return Azzets.find({
-      isDeleted: false,
-      ownerId: userId,
-    });
+// selectedAssetKinds is an array of AssetKindsKeys strings
+Meteor.publish('assets.auth', function(userId, selectedAssetKinds) {
+  let selector = {
+    isDeleted: false,
+    ownerId: userId
+  }
+  if (selectedAssetKinds && selectedAssetKinds.length > 0)
+    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )
+  return Azzets.find(selector);
   }
 );
 
 //Can see all assets
-Meteor.publish('assets.public', function() {
-    return Azzets.find({
-      isDeleted: false
-    });
+// selectedAssetKinds is an array of AssetKindsKeys strings
+Meteor.publish('assets.public', function(selectedAssetKinds) {
+  let selector = {
+    isDeleted: false
+  }
+  if (selectedAssetKinds && selectedAssetKinds.length > 0)
+    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )
+  return Azzets.find(selector);
   }
 );
 

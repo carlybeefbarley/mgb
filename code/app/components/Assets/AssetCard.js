@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import reactMixin from 'react-mixin';
-import Router, {History} from 'react-router';
+import Router, {Link, History} from 'react-router';
 import Icon from '../Icons/Icon.js';
 import {AssetKinds} from '../../schemas/assets';
 
@@ -75,7 +75,7 @@ export default class AssetCard extends React.Component {
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
     const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
 
-    const ownerName = asset.ownerName
+    const ownerName = asset.dn_ownerName
 
     return (
       <div key={asset._id} className="ui card">
@@ -91,7 +91,11 @@ export default class AssetCard extends React.Component {
             {iw}x{ih}{assetKindLongName}
           </div>
           <div className="description">
-            Owner: {ownerName}<br></br>{nframes}  frames
+            Owner: <Link to={`/user/${asset.ownerId}`}>
+            {ownerName ? ownerName : `User#${asset.ownerId}`}
+            </Link>
+            <br></br>
+            {nframes}  frames
           </div>
         </div>
         <div className="extra content">

@@ -52,9 +52,10 @@ export default class UserAssetListRoute extends Component {
     let assets = this.data.assets;    //list of assets provided via getMeteorData()
 
     const {user, ownsProfile} = this.props;
+
     if (user) {
-      const {_id, createdAt} = user;
-      const {name, avatar} = user.profile;
+      var {_id, createdAt} = user;
+      var {name, avatar} = user.profile;
     }
     else {
       // XXX ???
@@ -70,7 +71,7 @@ export default class UserAssetListRoute extends Component {
         />
 
         <div className="ten wide column">
-          <div className="ui large header">{ user ? (name + "&rsquo;s Assets") : ("Public assets") }
+          <div className="ui large header">{ user ? (name + "'s Assets") : ("Public assets") }
             <div className="ui sub header">{assets.length} Assets</div>
           </div>
         </div>
@@ -78,7 +79,7 @@ export default class UserAssetListRoute extends Component {
         <div className="six wide column">
           {user ? <UserItem
               name={name}
-              avatar={avatar}
+              avatar={avatar ? avatar : null}
               createdAt={createdAt}
               _id={_id} />
             :

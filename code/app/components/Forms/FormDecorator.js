@@ -112,6 +112,7 @@ export const handleForms = ComposedComponent => class extends Component {
   email(value) {
     if (value.search(/[^\s@]+@[^\s@]+\.[^\s@]+/) < 0) {
       return ('Doesn\'t look like a valid email');
+      console.log(`FormDecorator rejected email "${value}"`)    // TRACE This has been firing for some reason when not expected, so let's see what's up
     }
     return '';
   }

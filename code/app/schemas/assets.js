@@ -9,6 +9,13 @@ var schema = {
   teamId: String,     // team owner user id
   ownerId: String,    // owner user id
 
+  // Some denormalized information that saves us from joins with big tables
+  // for commonly used but very stable data - best example is user name
+  dn_ownerName: String, // User.profile.name from userId at last asset create/update
+                        // ::MAINTAIN:: any user-profile-name rename function will need to update these
+                        // ::MIGRATE::  assets created prior to 222016 do not have this so any render code
+                        //              must fallback to user#userid
+
   //the actual asset information
   name: String,       // Asset's name
   kind: String,       // Asset's kind (image, map, etc)
@@ -51,6 +58,13 @@ Meteor.methods({
     if (!this.userId) throw new Meteor.Error(401, "Login required");
 
     data.ownerId = this.userId;
+    if (Meteor.isServer)
+    {
+      // TODO: Do we have the current User/profile to hand instead of looking it up?
+      let ownerUser = Meteor.users.findOne(data.ownerId);
+      data.dn_ownerName = ownerUser ? ownerUser.profile.name : "(Unknown)";
+      console.log(`TRACE: denormalized asset.OwnerName on create as ${data.dn_ownerName}`)
+    }
     data.createdAt = new Date();
     data.updatedAt = new Date();
     data.content = "";
@@ -58,6 +72,7 @@ Meteor.methods({
     data.content2 = {};
 
     check(data, _.omit(schema, '_id'));
+
 
     docId = Azzets.insert(data);
 
@@ -70,14 +85,21 @@ Meteor.methods({
     var optional = Match.Optional;
 
     check(docId, String);
-    if (!this.userId) throw new Meteor.Error(401, "Login required");
-    if (!canEdit) throw new Meteor.Error(401, "You don't have permission to edit this.");
+    if (!this.userId)
+      throw new Meteor.Error(401, "Login required");
+
+    // TODO: Move this access check to be server side..
+    //   Or check publications have correct deny rules.
+    //   See comment below for selector = ...
+    if (!canEdit)
+      throw new Meteor.Error(401, "You don't have permission to edit this.");
 
     data.updatedAt = new Date();
 
     // whitelist what can be updated
     check(data, {
       updatedAt: schema.updatedAt,
+//    dn_ownerName: optional(schema.dn_ownerName),    // may do this lazily in future?
 
       name: optional(schema.name),
       kind: optional(schema.kind),
@@ -91,7 +113,7 @@ Meteor.methods({
       isPrivate: optional(schema.isPrivate)
     });
 
-    // if caller doesn't own doc, update will fail because fields won't match
+    // if caller doesn't own doc, update will fail because fields like ownerId won't match
     selector = {_id: docId};
 
     count = Azzets.update(selector, {$set: data});

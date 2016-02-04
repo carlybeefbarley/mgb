@@ -108,9 +108,10 @@ export default class UserAssetListRoute extends Component {
         </div>
 
         <div className="sixteen wide column">
-          {assets ?
-            <AssetList assets={assets} canEdit={ownsProfile} />
-          : null }
+          {this.data.loading ?
+            <div><Spinner /></div>
+          :
+            <AssetList assets={assets} canEdit={ownsProfile} />}
         </div>
       </div>
 

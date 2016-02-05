@@ -55,10 +55,13 @@ export default class UserAssetListRoute extends Component {
     };
   }
 
-  handleToggleKind(k) // k is the string for the AssetKindsKey to toggle existence of in the array
+  handleToggleKind(k, altKey) // k is the string for the AssetKindsKey to toggle existence of in the array
   {
     let s = this.state.selectedAssetKinds
-    this.setState({ selectedAssetKinds: _.indexOf(s,k)==-1?_.union(s,[k]):_.without(s,k) })
+    if (altKey)
+      this.setState({ selectedAssetKinds: [k] } )
+    else
+      this.setState({ selectedAssetKinds: _.indexOf(s,k)==-1?_.union(s,[k]):_.without(s,k) })
   }
 
   handleSearchGo(event)

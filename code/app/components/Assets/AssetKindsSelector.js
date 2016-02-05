@@ -39,7 +39,7 @@ export default class AssetKindsSelector extends React.Component {
         <a className={"ui hazPopup " + (active ? "green button" : "button")} data-value={k} key={k} onClick={this.handleToggleKindClick.bind(this,k)}
            data-position="bottom center"
            data-title={AssetKinds[k].name}
-           data-content={`Click to ${active ? "hide" : "show"} ${AssetKinds[k].name} assets`}>
+           data-content={`Click to ${active ? "hide" : "show"} ${AssetKinds[k].name} assets. Alt-click to only show ${AssetKinds[k].name} assets`}>
             <i className={AssetKinds[k].icon + " icon"}></i>
           </a>
       )
@@ -55,9 +55,9 @@ export default class AssetKindsSelector extends React.Component {
     );
   }
 
-  handleToggleKindClick(assetKindKey)
+  handleToggleKindClick(assetKindKey, event)
   {
     if (this.props.handleToggleKindCallback)
-      this.props.handleToggleKindCallback(assetKindKey);
+      this.props.handleToggleKindCallback(assetKindKey, event.altKey);
   }
 }

@@ -128,7 +128,7 @@ export default class UserAssetListRoute extends Component {
           {this.data.loading ?
             <div><Spinner /></div>
           :
-            <AssetList assets={assets} canEdit={ownsProfile} />}
+            <AssetList assets={assets} currUser={this.props.currUser} />}
         </div>
       </div>
 

@@ -3,7 +3,8 @@ import AssetCard from './AssetCard.js';
 
 export default class AssetList extends React.Component {
   static propTypes = {
-    assets: PropTypes.array.isRequired
+    assets: PropTypes.array.isRequired,
+    currUser: PropTypes.object
   }
 
   render() {
@@ -12,7 +13,7 @@ export default class AssetList extends React.Component {
           <AssetCard
             asset={asset}
             key={asset._id}
-            canEdit={this.props.canEdit}
+            showEditButton={this.props.currUser._id === asset.ownerId}
             showToast={this.props.showToast} />
       );
     })

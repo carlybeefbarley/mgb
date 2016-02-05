@@ -29,6 +29,8 @@ export default class UserListRoute extends Component {
     };
   }
 
+  // TODO: Pagination example. Needs work to append users instead of refreshing whole list
+
   render() {
     if (this.data.loading) {
       return (<div className={styles.wrapper}><Spinner /></div>);
@@ -37,8 +39,7 @@ export default class UserListRoute extends Component {
     return (
       <div className={styles.wrapper}>
         <h1 className={styles.title}>{this.data.users.length} Users</h1>
-        <h3 className={styles.subtitle}>Pagination example. Needs work to append
-        users instead of refreshing whole list</h3>
+
         <div className={styles.grid}>
           <div className={styles.list} >
             <UserList users={this.data.users} />

@@ -113,6 +113,9 @@ export default class UserProfileRoute extends Component {
               <Link to={`/user/${user._id}/todos`}  >
                 <button className={styles.btnTodos}>See Todos</button>
               </Link>
+              <Link to={`/user/${user._id}/assets`}  >
+                <button className={styles.btnTodos}>See Assets</button>
+              </Link>
            </div>
            <div className={styles.column}>
             {!_.isEmpty(invites) ?

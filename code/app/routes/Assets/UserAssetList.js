@@ -40,17 +40,17 @@ export default class UserAssetListRoute extends Component {
       if (this.props.ownsProfile) {
         handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName);
       } else {
-        handle = Meteor.subscribe("assets.public", this.state.selectedAssetKinds, this.state.searchName);
+        handle = Meteor.subscribe("assets.public", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName);
       }
     }
     else
     {
       // route did not include a user-id for scope
-      handle = Meteor.subscribe("assets.public", this.state.selectedAssetKinds, this.state.searchName);
+      handle = Meteor.subscribe("assets.public", -1, this.state.selectedAssetKinds, this.state.searchName);
     }
 
     return {
-      assets: Azzets.find({}, {sort: {createdAt: -1}}).fetch(), // TODO: don't bring down content2 field
+      assets: Azzets.find({}, {sort: {updatedAt: -1}}).fetch(), // TODO: don't bring down content2 field
       loading: !handle.ready()
     };
   }

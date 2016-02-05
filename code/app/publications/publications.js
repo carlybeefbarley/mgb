@@ -80,12 +80,14 @@ Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch) {
 
 //Can see all assets
 // selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.public', function(selectedAssetKinds, nameSearch) {
+Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch) {
   let selector = {
     isDeleted: false,
   }
+  if (userId && userId !== -1)
+    selector["ownerId"] = userId
   if (selectedAssetKinds && selectedAssetKinds.length > 0)
-    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )
+    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )  // TODO: Could use $in ?
 
   if (nameSearch && nameSearch.length > 0)
     selector["$text"]= {$search: nameSearch}

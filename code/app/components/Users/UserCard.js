@@ -35,7 +35,7 @@ export default class UserProfile extends Component {
             : null
           }
           <p className={styles.items}><span className={styles.icon}><Icon size="1.1em" icon="person" /></span>
-            Joined {moment({createdAt}).format('MMMM DD, YYYY')}
+            Joined {moment(createdAt).format('MMMM DD, YYYY')}
           </p>
           {this.props.email !== "None@none.com" ?
             <p className={styles.items}><span className={styles.icon}><Icon size="1.1em" icon="email" /></span>

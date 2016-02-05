@@ -14,6 +14,7 @@ export default class UserList extends React.Component {
           key={user._id}
           _id={user._id}
           name={user.profile.name}
+          createdAt={user.createdAt}
           avatar={user.profile.avatar} />
       );
     })

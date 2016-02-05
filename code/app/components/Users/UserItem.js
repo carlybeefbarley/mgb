@@ -32,7 +32,7 @@ export default class UserItem extends Component {
 
           <div className={styles.info}>
             <p className={styles.name}>{this.props.name}</p>
-            <p className={styles.items}>Joined {moment({createdAt}).format('MMMM DD, YYYY')}</p>
+            <p className={styles.items}>Joined {moment(createdAt).format('MMMM DD, YYYY')}</p>
           </div>
           <div className={styles.icon}>
             <Icon size="1.9em" icon="arrow-forward" />

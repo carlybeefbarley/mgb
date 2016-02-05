@@ -4,7 +4,7 @@ import reactMixin from 'react-mixin';
 import Router, {Link, History} from 'react-router';
 import Icon from '../Icons/Icon.js';
 import {AssetKinds} from '../../schemas/assets';
-
+import moment from 'moment';
 
 @reactMixin.decorate(History)
 export default class AssetCard extends React.Component {
@@ -74,6 +74,9 @@ export default class AssetCard extends React.Component {
     const iw = c2.hasOwnProperty("width") ? c2.width : 64
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
     const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
+    const dimension = asset.kind === "graphic" ? `${iw}x${ih} ` : ''
+    const ago = moment(asset.updatedAt).fromNow()
+    const info2 = asset.kind === "graphic" ? `, ${nframes} frames.` : ''
 
     const ownerName = asset.dn_ownerName
 
@@ -88,14 +91,14 @@ export default class AssetCard extends React.Component {
             {asset.name}
           </div>
           <div className="meta">
-            {iw}x{ih}{assetKindLongName}
+            {`${dimension}${assetKindLongName}${info2}`}
           </div>
           <div className="description">
             Owner: <Link to={`/user/${asset.ownerId}`}>
             {ownerName ? ownerName : `User#${asset.ownerId}`}
             </Link>
             <br></br>
-            {nframes}  frames
+            <div className="ui left aligned">Updated {ago}</div>
           </div>
         </div>
         <div className="extra content">

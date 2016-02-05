@@ -26,7 +26,8 @@ export default class UserAssetListRoute extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedAssetKinds:   _.map(AssetKindKeys, (k) => { return k})
+      selectedAssetKinds: _.map(AssetKindKeys, (k) => { return k } ),
+      searchName:         ""
     }
   }
 
@@ -37,15 +38,15 @@ export default class UserAssetListRoute extends Component {
       // Route included a user-id for scope
       //Subscribe to assets labeled isPrivate?
       if (this.props.ownsProfile) {
-        handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds);
+        handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName);
       } else {
-        handle = Meteor.subscribe("assets.public", this.state.selectedAssetKinds);
+        handle = Meteor.subscribe("assets.public", this.state.selectedAssetKinds, this.state.searchName);
       }
     }
     else
     {
       // route did not include a user-id for scope
-      handle = Meteor.subscribe("assets.public", this.state.selectedAssetKinds);
+      handle = Meteor.subscribe("assets.public", this.state.selectedAssetKinds, this.state.searchName);
     }
 
     return {
@@ -60,6 +61,11 @@ export default class UserAssetListRoute extends Component {
     this.setState({ selectedAssetKinds: _.indexOf(s,k)==-1?_.union(s,[k]):_.without(s,k) })
   }
 
+  handleSearchGo(event)
+  {
+    this.setState( {searchName: this.refs.searchNameInput.value } )
+  }
+
   render() {
     let assets = this.data.assets;    //list of assets provided via getMeteorData()
 
@@ -69,9 +75,7 @@ export default class UserAssetListRoute extends Component {
       var {_id, createdAt} = user;
       var {name, avatar} = user.profile;
     }
-    else {
-      // XXX ???
-    }
+
     return (
       <div className="ui grid">
 
@@ -99,10 +103,20 @@ export default class UserAssetListRoute extends Component {
           }
         </div>
 
-        <div className="ten wide column">
-          <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind.bind(this)} />
+        <div className="eleven wide column">
+          <div className="ui compact menu">
+            <div className="ui item grey label">Search:</div>
+            <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind.bind(this)} />
+            <div className="right item">
+              <div className="ui action input">
+                <input type="text" placeholder="Search name..." ref="searchNameInput"></input>
+                <div className="ui button" onClick={this.handleSearchGo.bind(this)}>Go</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="six wide column">
+
+        <div className="five wide column">
             <AssetCreateNew
               handleCreateAssetClick={this.handleCreateAssetClickFromComponent.bind(this)}/>
         </div>

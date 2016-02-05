@@ -54,27 +54,42 @@ Meteor.publish('todos.auth', function(userId, teamId) {
   }
 });
 
+
+if (Meteor.isServer) {
+  Azzets._ensureIndex({
+    "name": "text"        // Index the name field. See https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor
+  });
+}
+
 //Can see all assets belonging to user/team
 // selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.auth', function(userId, selectedAssetKinds) {
+Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch) {
   let selector = {
     isDeleted: false,
     ownerId: userId
   }
   if (selectedAssetKinds && selectedAssetKinds.length > 0)
     selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )
+
+  if (nameSearch && nameSearch.length > 0)
+    selector["$text"]= {$search: nameSearch}
+
   return Azzets.find(selector);
   }
 );
 
 //Can see all assets
 // selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.public', function(selectedAssetKinds) {
+Meteor.publish('assets.public', function(selectedAssetKinds, nameSearch) {
   let selector = {
-    isDeleted: false
+    isDeleted: false,
   }
   if (selectedAssetKinds && selectedAssetKinds.length > 0)
     selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )
+
+  if (nameSearch && nameSearch.length > 0)
+    selector["$text"]= {$search: nameSearch}
+
   return Azzets.find(selector);
   }
 );

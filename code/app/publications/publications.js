@@ -63,9 +63,9 @@ if (Meteor.isServer) {
 
 //Can see all assets belonging to user/team
 // selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch) {
+Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch,  showDeleted=false) {
   let selector = {
-    isDeleted: false,
+    isDeleted: showDeleted,
     ownerId: userId
   }
   if (selectedAssetKinds && selectedAssetKinds.length > 0)
@@ -80,9 +80,9 @@ Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch) {
 
 //Can see all assets
 // selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch) {
+Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch, showDeleted=false) {
   let selector = {
-    isDeleted: false,
+    isDeleted: showDeleted,
   }
   if (userId && userId !== -1)
     selector["ownerId"] = userId

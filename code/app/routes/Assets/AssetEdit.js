@@ -43,7 +43,8 @@ export default class AssetEditRoute extends Component {
   render() {
     // One Asset provided via getMeteorData()
     let asset = this.data.asset;
-    if (!asset) return null;
+    if (!asset)
+      return null;
 
     const {currUser, ownsProfile} = this.props;
     const {_id, createdAt} = currUser;

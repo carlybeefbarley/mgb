@@ -9,6 +9,7 @@ import Helmet from 'react-helmet';
 import UserItem from '../../components/Users/UserItem.js';
 import AssetCreateNew from '../../components/Assets/AssetCreateNew.js';
 import AssetKindsSelector from '../../components/Assets/AssetKindsSelector.js';
+import AssetShowDeletedSelector from '../../components/Assets/AssetShowDeletedSelector.js';
 import {AssetKinds, AssetKindKeys} from '../../schemas/assets';
 
 
@@ -26,6 +27,7 @@ export default class UserAssetListRoute extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showDeletedFlag: false,
       selectedAssetKinds: _.map(AssetKindKeys, (k) => { return k } ),
       searchName:         ""
     }
@@ -38,15 +40,15 @@ export default class UserAssetListRoute extends Component {
       // Route included a user-id for scope
       //Subscribe to assets labeled isPrivate?
       if (this.props.ownsProfile) {
-        handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName);
+        handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.showDeletedFlag);
       } else {
-        handle = Meteor.subscribe("assets.public", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName);
+        handle = Meteor.subscribe("assets.public", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.showDeletedFlag);
       }
     }
     else
     {
       // route did not include a user-id for scope
-      handle = Meteor.subscribe("assets.public", -1, this.state.selectedAssetKinds, this.state.searchName);
+      handle = Meteor.subscribe("assets.public", -1, this.state.selectedAssetKinds, this.state.searchName, this.state.showDeletedFlag);
     }
 
     return {
@@ -62,6 +64,11 @@ export default class UserAssetListRoute extends Component {
       this.setState({ selectedAssetKinds: [k] } )
     else
       this.setState({ selectedAssetKinds: _.indexOf(s,k)==-1?_.union(s,[k]):_.without(s,k) })
+  }
+
+  handleChangeShowDeletedFlag(newValue)
+  {
+    this.setState( {showDeletedFlag: newValue})
   }
 
   handleSearchGo(event)
@@ -106,10 +113,13 @@ export default class UserAssetListRoute extends Component {
           }
         </div>
 
-        <div className="eleven wide column">
+        <div className="twelve wide column">
           <div className="ui compact menu">
             <div className="ui item grey label">Search:</div>
             <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind.bind(this)} />
+            <div className="ui icon item">
+              <AssetShowDeletedSelector showDeletedFlag={this.state.showDeletedFlag} handleChangeFlag={this.handleChangeShowDeletedFlag.bind(this)} />
+            </div>
             <div className="right item">
               <div className="ui action input">
                 <input type="text" placeholder="Search name..." ref="searchNameInput"></input>
@@ -119,7 +129,7 @@ export default class UserAssetListRoute extends Component {
           </div>
         </div>
 
-        <div className="five wide column">
+        <div className="four wide column">
             <AssetCreateNew
               handleCreateAssetClick={this.handleCreateAssetClickFromComponent.bind(this)}/>
         </div>

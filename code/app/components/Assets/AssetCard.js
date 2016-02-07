@@ -91,6 +91,7 @@ export default class AssetCard extends React.Component {
             {asset.name}
           </div>
           <div className="meta">
+            {asset.isDeleted ? <p>[DELETED]</p> : null }
             {`${dimension}${assetKindLongName}${info2}`}
           </div>
           <div className="description">

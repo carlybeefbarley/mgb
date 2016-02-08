@@ -104,6 +104,7 @@ export default class AssetCard extends React.Component {
             </small>
           </div>
         </div>
+        { /* TODO: Add content section maybe editable. Also improve how meta looks above - less space between lines*/}
         <div className="extra content">
           <div className="ui three small buttons">
             <div className="ui basic green compact button" onClick={this.handleEditClick}>

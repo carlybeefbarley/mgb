@@ -92,16 +92,16 @@ export default class AssetCard extends React.Component {
           </div>
           <div className="meta">
             <small>
-              {asset.isDeleted ? <p>[DELETED]</p> : null }
+              {asset.isDeleted ? <p style={{color: "red"}}>[DELETED]</p> : null }
               {`${dimension}${assetKindLongName}${info2}`}
+              <br></br>
+              Owner: 
+              <Link to={`/user/${asset.ownerId}`}>
+                {ownerName ? ownerName : `#${asset.ownerId}`}
+              </Link>
+              <br></br>
+              Updated {ago}
             </small>
-          </div>
-          <div className="description">
-            Owner: <Link to={`/user/${asset.ownerId}`}>
-            {ownerName ? ownerName : <small>#{asset.ownerId}</small>}
-            </Link>
-            <br></br>
-            <div className="ui left aligned">Updated {ago}</div>
           </div>
         </div>
         <div className="extra content">

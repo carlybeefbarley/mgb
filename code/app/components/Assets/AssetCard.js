@@ -88,15 +88,17 @@ export default class AssetCard extends React.Component {
           </canvas>
           <div className="header">
             <i className={assetKindIcon}></i>
-            {asset.name}
+            <small>{asset.name}</small>
           </div>
           <div className="meta">
-            {asset.isDeleted ? <p>[DELETED]</p> : null }
-            {`${dimension}${assetKindLongName}${info2}`}
+            <small>
+              {asset.isDeleted ? <p>[DELETED]</p> : null }
+              {`${dimension}${assetKindLongName}${info2}`}
+            </small>
           </div>
           <div className="description">
             Owner: <Link to={`/user/${asset.ownerId}`}>
-            {ownerName ? ownerName : `User#${asset.ownerId}`}
+            {ownerName ? ownerName : <small>#{asset.ownerId}</small>}
             </Link>
             <br></br>
             <div className="ui left aligned">Updated {ago}</div>
@@ -105,14 +107,14 @@ export default class AssetCard extends React.Component {
         <div className="extra content">
           <div className="ui three small buttons">
             <div className="ui basic green compact button" onClick={this.handleEditClick}>
-                <i className=" edit icon"></i>
-              Edit
+                <Icon size="1.2em" icon="menu" color='#000' />
+              <small>Edit</small>
             </div>
             <div className="ui basic blue compact button" onClick={this.handlePrivateClick} >
               {asset.isPrivate ?
-                <Icon size="1.2em" icon="lock" color='#000' /> :
-                <Icon size="1.2em" icon="lock" color='#ddd' />
-              }Lock
+                <Icon size="1.2em" icon="check" color='#080' /> :
+                <Icon size="1.2em" icon="check" color='#ddd' />
+              }<small>Stable</small>
             </div>
             { !showEditButton ? null :
               <div className="ui basic red compact button" onClick={this.handleDeleteClick}>
@@ -120,7 +122,7 @@ export default class AssetCard extends React.Component {
                   <Icon size="1.2em" icon="delete" color='red'/> :
                   <Icon size="1.2em" icon="delete" color='#ddd'/>
                 }
-                {asset.isDeleted ? "Undelete" : "Delete" }
+                <small>{asset.isDeleted ? "Undelete" : "Delete" }</small>
               </div>
             }
           </div>

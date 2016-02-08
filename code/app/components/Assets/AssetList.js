@@ -20,7 +20,7 @@ export default class AssetList extends React.Component {
     })
 
     return (
-      <div className="ui grid cards">
+      <div className="ui four column doubling grid cards">
         {assets}
       </div>
     );

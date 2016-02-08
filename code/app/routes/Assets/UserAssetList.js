@@ -20,7 +20,7 @@ export default class UserAssetListRoute extends Component {
   static propTypes = {
     params: PropTypes.object,       // .id Maybe absent if route is /assets
     user: PropTypes.object,         // Maybe absent if route is /assets
-    currUser: PropTypes.object,
+    currUser: PropTypes.object,     // Currently Logged in user
     ownsProfile: PropTypes.bool
   }
 
@@ -132,7 +132,7 @@ export default class UserAssetListRoute extends Component {
           </div>
         </div>
 
-        <div className="four wide column">
+        <div className="three wide right floated column">
             <AssetCreateNew
               handleCreateAssetClick={this.handleCreateAssetClickFromComponent.bind(this)}/>
         </div>

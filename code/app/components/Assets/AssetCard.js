@@ -81,7 +81,7 @@ export default class AssetCard extends React.Component {
     const ownerName = asset.dn_ownerName
 
     return (
-      <div key={asset._id} className="ui card">
+      <div key={asset._id} className="ui fluid card">
         <div className="content">
           <canvas ref="thumbnailCanvas" className="right floated mini ui image"
                 width={iw} height={ih} >

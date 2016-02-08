@@ -119,7 +119,8 @@ export default class AssetCard extends React.Component {
                 {asset.isDeleted ?
                   <Icon size="1.2em" icon="delete" color='red'/> :
                   <Icon size="1.2em" icon="delete" color='#ddd'/>
-                }Delete
+                }
+                {asset.isDeleted ? "Undelete" : "Delete" }
               </div>
             }
           </div>

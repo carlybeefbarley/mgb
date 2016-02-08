@@ -47,11 +47,9 @@ export default class AssetKindsSelector extends React.Component {
 
       return (
 
-         <div className="ui item">
-           <div className="ui icon buttons">
-             {choices}
-           </div>
-         </div>
+          <div className="ui icon buttons">
+            {choices}
+          </div>
     );
   }
 

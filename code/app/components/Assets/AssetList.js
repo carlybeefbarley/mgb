@@ -11,6 +11,7 @@ export default class AssetList extends React.Component {
     let assets = this.props.assets.map((asset) => {
       return (
           <AssetCard
+            canEdit={asset.ownerId === this.props.currUser._id}
             asset={asset}
             key={asset._id}
             showEditButton={this.props.currUser._id === asset.ownerId}

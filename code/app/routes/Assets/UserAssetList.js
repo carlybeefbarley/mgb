@@ -116,9 +116,12 @@ export default class UserAssetListRoute extends Component {
         <div className="twelve wide column">
           <div className="ui compact menu">
             <div className="ui item grey label">Search:</div>
-            <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind.bind(this)} />
-            <div className="ui icon item">
-              <AssetShowDeletedSelector showDeletedFlag={this.state.showDeletedFlag} handleChangeFlag={this.handleChangeShowDeletedFlag.bind(this)} />
+            <div className="ui item">
+              <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind.bind(this)} />
+              &nbsp;
+              <div className="ui icon buttons">
+                <AssetShowDeletedSelector showDeletedFlag={this.state.showDeletedFlag} handleChangeFlag={this.handleChangeShowDeletedFlag.bind(this)} />
+              </div>
             </div>
             <div className="right item">
               <div className="ui action input">

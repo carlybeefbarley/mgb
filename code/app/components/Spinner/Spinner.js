@@ -7,7 +7,7 @@ export default class Spinner extends Component {
 
       <div className="ui padded segment">
         <div className="horizontal divider"></div>
-        <div className="ui active dimmer">
+        <div className="ui active" style={{minHeight: "300px"}}>
           <div className="ui indeterminate text loader"></div>
         </div>
         <p></p>

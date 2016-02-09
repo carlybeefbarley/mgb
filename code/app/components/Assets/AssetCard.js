@@ -100,7 +100,7 @@ export default class AssetCard extends React.Component {
                 {ownerName ? ownerName : `#${asset.ownerId}`}
               </Link>
               <br></br>
-              Updated {ago}
+              Updated{ago}
             </small>
           </div>
         </div>

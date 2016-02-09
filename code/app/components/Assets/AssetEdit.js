@@ -1,19 +1,10 @@
 import React, { PropTypes } from 'react';
-import AceEditor from 'react-ace';
-import brace from 'brace';
 
-import 'brace/mode/javascript';
-import 'brace/theme/github';
-
-import moment from 'moment';
-import reactMixin from 'react-mixin';
-import {History} from 'react-router';
-import Icon from '../Icons/Icon.js';
 import EditGraphic from './EditGraphic/EditGraphic.js';
+import EditCode from './EditCode/EditCode.js';
 import EditUnknown from './EditUnknown.js';
-import AssetCard from './AssetCard.js';
 
-@reactMixin.decorate(History)
+
 export default class AssetEdit extends React.Component {
   static PropTypes = {
     asset: PropTypes.object
@@ -23,7 +14,6 @@ export default class AssetEdit extends React.Component {
     super(props);
   }
   
-  handleOnChange() {}
 
   getEditorForAsset(asset)
   {
@@ -31,13 +21,7 @@ export default class AssetEdit extends React.Component {
       case 'graphic':
         return (<EditGraphic asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
       case 'code':
-        return (<AceEditor
-          mode="javascript"
-          theme="github"
-          onChange={this. handleOnChange}
-          name="UNIQUE_ID_OF_DIV"
-          editorProps={{$blockScrolling: true}}
-        />);
+        return (<EditCode asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
       default:
         return (<EditUnknown asset={asset}/>);
     }
@@ -56,7 +40,8 @@ export default class AssetEdit extends React.Component {
   }
 
   render() {
-    if (!this.props.asset) return null;
+    if (!this.props.asset) 
+    return null;
 
     let asset = this.props.asset;
 

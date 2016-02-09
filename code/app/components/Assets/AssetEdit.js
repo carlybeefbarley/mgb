@@ -1,4 +1,10 @@
 import React, { PropTypes } from 'react';
+import AceEditor from 'react-ace';
+import brace from 'brace';
+
+import 'brace/mode/javascript';
+import 'brace/theme/github';
+
 import moment from 'moment';
 import reactMixin from 'react-mixin';
 import {History} from 'react-router';
@@ -16,12 +22,22 @@ export default class AssetEdit extends React.Component {
   constructor(props) {
     super(props);
   }
+  
+  handleOnChange() {}
 
   getEditorForAsset(asset)
   {
     switch (asset.kind) {
       case 'graphic':
         return (<EditGraphic asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
+      case 'code':
+        return (<AceEditor
+    mode="javascript"
+    theme="github"
+    onChange={this. handleOnChange}
+    name="UNIQUE_ID_OF_DIV"
+    editorProps={{$blockScrolling: true}}
+  />);
       default:
         return (<EditUnknown asset={asset}/>);
     }

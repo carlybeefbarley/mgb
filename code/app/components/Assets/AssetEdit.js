@@ -32,12 +32,12 @@ export default class AssetEdit extends React.Component {
         return (<EditGraphic asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
       case 'code':
         return (<AceEditor
-    mode="javascript"
-    theme="github"
-    onChange={this. handleOnChange}
-    name="UNIQUE_ID_OF_DIV"
-    editorProps={{$blockScrolling: true}}
-  />);
+          mode="javascript"
+          theme="github"
+          onChange={this. handleOnChange}
+          name="UNIQUE_ID_OF_DIV"
+          editorProps={{$blockScrolling: true}}
+        />);
       default:
         return (<EditUnknown asset={asset}/>);
     }

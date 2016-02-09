@@ -114,8 +114,8 @@ export default class UserAssetListRoute extends Component {
         </div>
 
         <div className="twelve wide column">
-          <div className="ui compact menu">
-            <div className="ui item grey label">Search:</div>
+          <div className="ui secondary compact borderless fitted menu">
+            <div className="ui item grey">Search:</div>
             <div className="ui item">
               <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind.bind(this)} />
               &nbsp;
@@ -125,7 +125,7 @@ export default class UserAssetListRoute extends Component {
             </div>
             <div className="right item">
               <div className="ui action input">
-                <input type="text" placeholder="Search name..." ref="searchNameInput"></input>
+                <input type="text" placeholder="Search asset name" ref="searchNameInput"></input>
                 <button className="ui icon button" onClick={this.handleSearchGo.bind(this)}>
                   <i className="search icon"></i>
                 </button>

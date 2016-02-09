@@ -12,7 +12,13 @@ export default class Spinner extends Component {
   componentDidMount()
   {
     // Spinner will show after half a second, so it flickers less in most cases
-    setTimeout( () => { this.setState( {hiddenInitially: false})}, 500)
+    this.spinnerTimeoutId = setTimeout( () => { this.setState( {hiddenInitially: false})}, 500)
+  }
+
+  componentWillUnmount()
+  {
+    if (this.spinnerTimeoutId)
+      clearTimeout(this.spinnerTimeoutId)
   }
 
   render() {

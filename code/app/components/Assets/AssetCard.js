@@ -21,7 +21,7 @@ export default class AssetCard extends React.Component {
     super(props);
     this.handleEditClick = this.handleEditClick.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
-    this.handlePrivateClick = this.handlePrivateClick.bind(this);
+    this.handleCompletedClick = this.handleCompletedClick.bind(this);
   }
 
   loadThumbnail(asset)
@@ -111,8 +111,8 @@ export default class AssetCard extends React.Component {
                 <Icon size="1.2em" icon="menu" color='#000' />
               <small>Edit</small>
             </div>
-            <div className="ui basic blue compact button" onClick={this.handlePrivateClick} >
-              {asset.isPrivate ?
+            <div className="ui basic blue compact button" onClick={this.handleCompletedClick} >
+              {asset.isCompleted ?
                 <Icon size="1.2em" icon="check" color='#080' /> :
                 <Icon size="1.2em" icon="check" color='#ddd' />
               }<small>Stable</small>
@@ -140,8 +140,8 @@ export default class AssetCard extends React.Component {
     });
   }
 
-  handlePrivateClick() {
-    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isPrivate: !this.props.asset.isPrivate}, (err, res) => {
+  handleCompletedClick() {
+    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: !this.props.asset.isCompleted}, (err, res) => {
       if (err) {
         this.props.showToast(err.reason, 'error')
       }

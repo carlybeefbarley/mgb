@@ -134,7 +134,7 @@ export default class UserAssetListRoute extends Component {
             </div>
             <div className="right item">
               <div className="ui action input">
-                <input type="text" placeholder="Search asset name" ref="searchNameInput"></input>
+                <input type="text" placeholder="Search asset name" ref="searchNameInput" size="16"></input>
                 <button className="ui icon button" onClick={this.handleSearchGo.bind(this)}>
                   <i className="search icon"></i>
                 </button>

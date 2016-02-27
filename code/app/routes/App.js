@@ -97,7 +97,6 @@ export default class App extends Component {
           initialLoad={this.state.initialLoad} />
 
         <div className="pusher" >
-          <div className="ui container">
             <Nav
               user={currUser}
               handleToggleSidebar={this.handleToggleSidebar}
@@ -128,7 +127,6 @@ export default class App extends Component {
             </div>
           </div>
           <Footer />
-        </div>
       </div>
     );
   }

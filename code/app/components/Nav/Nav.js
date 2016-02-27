@@ -22,7 +22,6 @@ export default class Nav extends Component {
     }
     return (
       <div className="ui fixed inverted menu">
-        <div className="ui container">
           {back ?
             <Link to={back} className="header item">
               <i className="arrow left icon"  ></i>
@@ -62,7 +61,6 @@ export default class Nav extends Component {
               <Link to="/join" className="item"  key="join">Join</Link>
             ]
           }
-          </div>
         </div>
     );
   }

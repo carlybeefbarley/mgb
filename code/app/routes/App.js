@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 import Nav from '../components/Nav/Nav';
-import Footer from '../components/Footer/Footer';
 import Sidebar from '../components/Sidebar/Sidebar';
 import reactMixin from 'react-mixin';
 import Helmet from "react-helmet";
@@ -9,7 +8,6 @@ import Spinner from '../components/Spinner/Spinner';
 import Toast from '../components/Toast/Toast';
 
 import global from '../styles/global.css';
-import styles from './app.css';
 
 @reactMixin.decorate(ReactMeteorData)
 export default class App extends Component {
@@ -111,7 +109,7 @@ export default class App extends Component {
             : null}
 
 
-            <div className={styles.app}>
+            <div>
 
               {React.cloneElement(this.props.children, {
                   //Make below props available to all routes.
@@ -126,7 +124,6 @@ export default class App extends Component {
               }
             </div>
           </div>
-          <Footer />
       </div>
     );
   }

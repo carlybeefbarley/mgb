@@ -1,3 +1,8 @@
+.app {
+  min-height: 800px;    /* calc(100vh - 6em); */
+  padding: 4em 1em;
+
+}
 .section1 {
   background-image: url("/images/frontpage_mgb1.png");
   background-repeat: no-repeat;

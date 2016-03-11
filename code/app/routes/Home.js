@@ -3,6 +3,8 @@ import Mailto from 'react-mailto';
 import styles from './home.css';
 import Icon from '../components/Icons/Icon';
 import {Link} from 'react-router';
+import Footer from '../components/Footer/Footer';
+
 
 export default class Home extends Component {
 
@@ -11,7 +13,8 @@ export default class Home extends Component {
     const currUser = this.props.currUser;
 
     return (
-      <div>
+    <div>
+      <div className={styles.app}>
         <div className={styles.section1}>
           <div className={styles.heroGrid}>
             <div className={styles.heroColumn}>
@@ -57,6 +60,8 @@ export default class Home extends Component {
            ***/}
         </div>
       </div>
+    <Footer />
+    </div>
     );
   }
 }

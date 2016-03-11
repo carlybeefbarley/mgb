@@ -21,7 +21,7 @@ export default class Nav extends Component {
       back = "/user/" + user._id + "/assets";
     }
     return (
-      <div className="ui fixed inverted menu">
+      <div className="ui inverted menu">
           {back ?
             <Link to={back} className="header item">
               <i className="arrow left icon"  ></i>

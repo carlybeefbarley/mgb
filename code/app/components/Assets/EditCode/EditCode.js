@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import AceEditor from 'react-ace';
 import brace from 'brace';
+import SplitPane from 'react-split-pane';
 
 import 'brace/mode/javascript';
 import 'brace/theme/github';
@@ -119,36 +120,37 @@ export default class EditCode extends React.Component {
 
     let asset = this.props.asset;
 
-        return (
-          <div className="ui grid">
-            <div className="ui eight wide column">
-              <AceEditor
-              mode="javascript"
-              theme="github"
-              onChange={this.handleOnChange.bind(this)}
-              name="aceEditControl"
-              editorProps={{$blockScrolling: true}}
-              value={asset.content2.src}
-            />
+        return (       
+            <div style={ {"height": "500px"} }>               
+                <SplitPane split="vertical" minSize="50">
+                    <AceEditor
+                        mode="javascript"
+                        height="500px"
+                        width="100%"
+                        theme="github"
+                        onChange={this.handleOnChange.bind(this)}
+                        name="aceEditControl"
+                        editorProps={{$blockScrolling: true}}
+                        value={asset.content2.src} />
+                    <div>
+                        <div>
+                            <div className="ui icon buttons">
+                                { !this.state.isPlaying ? 
+                                <a className={"ui icon button"} onClick={this.handleRun.bind(this)}>
+                                    <i className={"play icon"}></i>
+                                </a>
+                                :
+                                <a className={"ui icon button"} onClick={this.handleStop.bind(this)}>
+                                    <i className={"stop icon"}></i>
+                                </a>
+                                }
+                            </div>
+                        </div>
+                        <iframe key={ this.state.gameRenderIterationKey } id="iFrame1" width="610" height="460" sandbox='allow-modals allow-scripts' srcDoc={this.iframeScript}>
+                        </iframe>
+                    </div>
+                </SplitPane>
             </div>
-            <div className="ui seven wide column">
-              <div className="ui row">
-                <div className="ui icon buttons">
-                { !this.state.isPlaying ? 
-                  <a className={"ui icon button"} onClick={this.handleRun.bind(this)}>
-                    <i className={"play icon"}></i>
-                  </a>
-                  :
-                  <a className={"ui icon button"} onClick={this.handleStop.bind(this)}>
-                    <i className={"stop icon"}></i>
-                  </a>
-                }
-                </div>
-              </div>
-              <iframe key={ this.state.gameRenderIterationKey } id="iFrame1" width="610" height="460" sandbox='allow-modals allow-scripts' srcDoc={this.iframeScript}>
-              </iframe>
-            </div>
-          </div>
         );
   }
 }

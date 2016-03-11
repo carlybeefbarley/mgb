@@ -51,7 +51,7 @@ export default class AssetEditRoute extends Component {
     const {name, avatar} = currUser.profile;
 
     return (
-      <div className="ui grid">
+      <div className="ui padded grid">
 
         <Helmet
           title="Asset Editor"

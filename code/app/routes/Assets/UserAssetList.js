@@ -95,7 +95,7 @@ export default class UserAssetListRoute extends Component {
     }
 
     return (
-      <div className="ui grid">
+      <div className="ui padded grid">
 
         <Helmet
           title="Assets"

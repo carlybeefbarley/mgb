@@ -10,7 +10,7 @@ export default class AssetCreateNew extends React.Component {
     }
 
   static defaultProps = {
-    defaultName: 'New Asset Name...',
+    defaultName: 'Name...',
   };
 
   constructor(props) {

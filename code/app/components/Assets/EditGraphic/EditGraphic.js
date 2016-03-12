@@ -783,12 +783,12 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
         <div className="ui one wide column">
           <div className="ui vertical icon buttons" ref="toolbar">
 
-            {toolComponents}
-            <br></br>
             <div className="ui button mgbColorPickerHost"
                  data-position="right center">
               <i className="block layout large icon" ref="colorPickerIcon"></i>
             </div>
+            <br></br>
+            {toolComponents}
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import {Teams, Plans, Users, Todos, Azzets} from './schemas';
+import dataUriToBuffer from 'data-uri-to-buffer';
 
 import './schemas/teams.js';
 import './schemas/users.js';
@@ -59,5 +60,42 @@ Meteor.startup(function () {
 Npm.require;
 Assets;
 require('fs').readFile.call;
+
+
+// REST API
+var RestApi = new Restivus({
+    useDefaultAuth: true,
+    prettyJson: true
+  });
+
+RestApi.addRoute('asset/:id', {authRequired: false}, {
+    get: function () {
+        var asset = Azzets.findOne(this.urlParams.id);
+        return asset ? asset : {};
+    }
+  });
+
+RestApi.addRoute('asset/png/:id', {authRequired: false}, {
+    get: function () {
+        var asset = Azzets.findOne(this.urlParams.id);
+        if (asset)
+        {
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'image/png'
+                },
+                body: dataUriToBuffer(asset.content2.frameData[0][0])
+            };
+        }
+        else {
+            return {
+                statusCode: 404                
+            };
+        }
+    }
+  });
+
+
 
 console.log('\n\nRunning on server only (main_server.js)');

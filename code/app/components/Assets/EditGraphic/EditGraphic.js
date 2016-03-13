@@ -10,7 +10,7 @@ import ColorPicker from 'react-color';        // http://casesandberg.github.io/r
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
 //   1. Drawing on preview+Editor canvas
-//   2. Some popup handling (uses Semanticui .popup() jquery extension. Typically these have the 'hazpopup' class
+//   2. Some popup handling (uses Semanticui .popup() jquery extension. Typically these have the 'hazPopup' class
 //   3. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
 
 @reactMixin.decorate(History)
@@ -94,8 +94,7 @@ export default class EditGraphic extends React.Component {
     // See http://semantic-ui.com/modules/popup.html#/usage
 
     let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.button').popup()
-    $a.find('.hazpopup').popup()   //  TODO: fix inconsistency of hazPopup and hazpopup
+    $a.find('.hazPopup').popup()   //  TODO: fix inconsistency of hazPopup and hazpopup
 
     let $cp =  $a.find('.mgbColorPickerHost')
     $cp.popup({
@@ -469,7 +468,7 @@ export default class EditGraphic extends React.Component {
   {
     this.doSaveStateForUndo("Add Frame")
     let fN = this.props.asset.content2.frameNames
-    let newFrameName = "Frame " + (fN.length+2).toString()
+    let newFrameName = "Frame " + (fN.length+1).toString()
     fN.push(newFrameName)
     this.props.asset.content2.frameData.push([])
     this.handleSave()
@@ -534,9 +533,15 @@ export default class EditGraphic extends React.Component {
       this.previewCtxArray[i].putImageData(tmp, 0, 0)
       i++
     }
+    
+    // Delete Frame seems to provoke a timing issuee where the popup exists while React is destroying it's parents. 
+    // For now, it seems simplest to hide the popups directly when we delete a frame
+    let $a = $(ReactDOM.findDOMNode(this))
+    $a.find('.hazPopup').popup('hide')  
+
 
     this.handleSave()
-    this.forceUpdate()      // Needed since the Reactivity doesn't look down this far (true?)
+//    this.forceUpdate()      // Needed since the Reactivity doesn't look down this far (true?)
   }
 
 
@@ -831,21 +836,21 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
               <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
             </a>
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label hazpopup" onClick={this.handleZoom.bind(this)}
+            <a className="ui label hazPopup" onClick={this.handleZoom.bind(this)}
                data-content="Click here or ALT+SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
                data-variation="tiny"
                data-position="bottom center">
               <i className="icon zoom"></i>Zoom {zoom}x
             </a>
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label hazpopup" onClick={this.handleSave.bind(this)}
+            <a className="ui label hazPopup" onClick={this.handleSave.bind(this)}
                data-content="Changes are continuously saved and updated to other viewers "
                data-variation="tiny"
                data-position="bottom center">
               <i className="save icon"></i>
             </a>
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label hazpopup"
+            <a className="ui label hazPopup"
                data-content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                data-variation="tiny"
                data-position="bottom center">

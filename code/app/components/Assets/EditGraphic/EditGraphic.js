@@ -6,6 +6,8 @@ import Icon from '../../Icons/Icon.js';
 import sty from  './editGraphic.css';
 import tools from './Tools.js';
 import ColorPicker from 'react-color';        // http://casesandberg.github.io/react-color/
+import AssetUrlGenerator from '../AssetUrlGenerator.js';
+
 
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
@@ -94,7 +96,7 @@ export default class EditGraphic extends React.Component {
     // See http://semantic-ui.com/modules/popup.html#/usage
 
     let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup()   //  TODO: fix inconsistency of hazPopup and hazpopup
+    $a.find('.hazPopup').popup()
 
     let $cp =  $a.find('.mgbColorPickerHost')
     $cp.popup({
@@ -856,13 +858,16 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
                data-position="bottom center">
               <i className="tasks icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
             </a>
+            <span>&nbsp;&nbsp;</span>
+            <AssetUrlGenerator urlOptions={ [ { "msg":"PNG", "url":"/api/asset/png/"+this.props.asset._id } ] } />
+
 
           </div>
           <div className="row">
             <br></br>
           </div>
           <div className="row">
-            <div   style={{ "overflow": "scroll", "width": "600px", "height": "600px"}}>
+            <div   style={{ "overflow": "scroll", "maxWidth": "600px", "maxHeight": "600px"}}>
               <canvas ref="editCanvas"
                         width={zoom*c2.width}
                         height={zoom*c2.height}
@@ -889,7 +894,6 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
                 Color at xy
               </div>
             </div>
-
 
           </div>
 

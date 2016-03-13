@@ -72,7 +72,7 @@ export default class EditCode extends React.Component {
   }
 
 
-  // Graphic asset - Data format:
+  // Code asset - Data format:
   //
   // content2.src                     // String with source code
   //

@@ -23,7 +23,7 @@ export default class EditGraphic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      editScale:        8,        // Zoom scale of the Edit Canvas
+      editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
       selectedColors:   {
         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
@@ -82,6 +82,10 @@ export default class EditGraphic extends React.Component {
     this.activateToolPopups();
     this.mgb_toolActive = false;
     this.mgb_toolChosen = null;
+    
+    // Some constants we will use
+    this.mgb_MAX_BITMAP_WIDTH = 1024
+    this.mgb_MAX_BITMAP_HEIGHT = 1024
   }
 
 
@@ -290,7 +294,11 @@ export default class EditGraphic extends React.Component {
   // handleMouseWheel is an alias for zoom
   handleMouseWheel(event)
   {
-    event.preventDefault();
+    // We only handle alt-key. Anything else is system behavior (scrolling etc)
+    if (event.altKey === false)
+      return
+
+    event.preventDefault();     // No default scroll behavior in these cases
 
     // WheelDelta system is to handle MacOS that has frequent small deltas,
     // rather than windows wheels which typically have +/- 120
@@ -319,21 +327,19 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  handleResize(dw, dh)
+  handleResize(dw, dh, force = false)
   {
-    if (dw !== 0 || dh !== 0)
+    if (dw !== 0 || dh !== 0 || force === true)
     {
       this.doSaveStateForUndo(`Resize by (${dw}, ${dh}) `)    // TODO: Only stack and save if different
       let c2 = this.props.asset.content2
-      c2.width = Math.min(c2.width+dw, 64)
-      c2.height = Math.min(c2.height+dh, 64)
+      c2.width = Math.min(c2.width+dw, this.mgb_MAX_BITMAP_WIDTH)
+      c2.height = Math.min(c2.height+dh, this.mgb_MAX_BITMAP_HEIGHT)
       this.handleSave()
     }
     // TODO: Toast on error
-    // TODO: Put max sizes somewhere
     // TODO: Reduce zoom if very large
   }
-
 
 
   handleMouseDown(event) {
@@ -402,10 +408,7 @@ export default class EditGraphic extends React.Component {
   handleMouseLeave(event)
   {
     this.setStatusBarInfo()
-
-
     if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
-
       this.mgb_toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
       this.handleSave()
       this.mgb_toolActive = false
@@ -659,23 +662,35 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
 
     if (idx === -1)                         // The Edit Window does this
       idx = this.state.selectedFrameIdx;
-
+      
+    // Note that idx === -2 means the MgbResizerHost control. 
+    // In thise case we must ONLY resize the graphics, not actually import the graphic. 
 
     let mgbImageDataUri =  event.dataTransfer.getData('mgb/image');
     if (mgbImageDataUri !== undefined && mgbImageDataUri !== null && mgbImageDataUri.length > 0)
     {
-      // It's us!
+      // SPECIAL CASE - DRAG FROM us to us   i.e. Frame-to-frame image drag within MGB (or across MGB windows)
       var img = new Image;
       img.onload = function(e) {
         // Seems to have loaded ok..
         self.doSaveStateForUndo(`Drag+Drop Frame to Frame #`+idx.toString())
-        let w = self.props.asset.content2.width
-        let h = self.props.asset.content2.height
-        self.previewCtxArray[idx].clearRect(0,0,w,h)
-        self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
-        if (idx === self.state.selectedFrameIdx)
-          self.updateEditCanvasFromSelectedPreviewCanvas();
-        self.handleSave();
+        if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
+        {
+          let c2 = self.props.asset.content2
+          c2.width = Math.min(img.width, self.mgb_MAX_BITMAP_WIDTH)
+          c2.height = Math.min(img.height, self.mgb_MAX_BITMAP_HEIGHT)
+          self.handleResize(0,0, true)
+        }
+        else
+        {
+          let w = self.props.asset.content2.width
+          let h = self.props.asset.content2.height
+          self.previewCtxArray[idx].clearRect(0,0,w,h)
+          self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
+          if (idx === self.state.selectedFrameIdx)
+            self.updateEditCanvasFromSelectedPreviewCanvas();
+          self.handleSave();
+        }
       };
       img.src = mgbImageDataUri; // is the data URL because called
       return
@@ -689,17 +704,28 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
         let theUrl = event.target.result
         var img = new Image;
         img.onload = function(e) {
-          // Seems to have loaded ok..
+          // The DataURI seems to have loaded ok now as an Image, so process what to do with it
           self.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
+          console.log(img.width + "x" + img.height); // image is loaded; sizes are available
 
-          let w = self.props.asset.content2.width
-          let h = self.props.asset.content2.height
-          self.previewCtxArray[idx].clearRect(0,0,w,h)
-          self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
-          if (idx === self.state.selectedFrameIdx)
-            self.updateEditCanvasFromSelectedPreviewCanvas();
-          self.handleSave();
-          //console.log(img.height + "x" + img.width); // image is loaded; sizes are available
+          if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
+          {
+            let c2 = self.props.asset.content2
+            c2.width = Math.min(img.width, self.mgb_MAX_BITMAP_WIDTH)
+            c2.height = Math.min(img.height, self.mgb_MAX_BITMAP_HEIGHT)
+            self.handleResize(0,0, true)
+          }
+          else
+          {
+            let w = self.props.asset.content2.width  
+            let h = self.props.asset.content2.height  
+            
+            self.previewCtxArray[idx].clearRect(0,0,w,h)
+            self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
+            if (idx === self.state.selectedFrameIdx)
+                self.updateEditCanvasFromSelectedPreviewCanvas();
+            self.handleSave();
+          }
         };
         img.src = theUrl; // is the data URL because called
       }
@@ -725,7 +751,7 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
             onDragOver={this.handleDragOverPreview.bind(this)}
             onDrop={this.handleDropPreview.bind(this,idx)}
       >
-        <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)}>
+        <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)} style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
           <canvas width={c2.width} height={c2.height}
                   onClick={this.handleSelectFrame.bind(this, idx)}
                   className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
@@ -800,12 +826,13 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
               <i className="icon undo"></i>Undo {this.mgb_undoStack.length}
             </a>
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label mgbResizerHost" data-position="right center">
+            <a className="ui label mgbResizerHost" data-position="right center"  onDragOver={this.handleDragOverPreview.bind(this)}
+                        onDrop={this.handleDropPreview.bind(this,-2)}>
               <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
             </a>
             <span>&nbsp;&nbsp;</span>
             <a className="ui label hazpopup" onClick={this.handleZoom.bind(this)}
-               data-content="Click here or SHIFT+mousewheel over edit area to change zoom level"
+               data-content="Click here or ALT+SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
                data-variation="tiny"
                data-position="bottom center">
               <i className="icon zoom"></i>Zoom {zoom}x
@@ -819,7 +846,7 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
             </a>
             <span>&nbsp;&nbsp;</span>
             <a className="ui label hazpopup"
-               data-content="Use mouse wheel over edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
+               data-content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                data-variation="tiny"
                data-position="bottom center">
               <i className="tasks icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
@@ -830,13 +857,15 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
             <br></br>
           </div>
           <div className="row">
-            <canvas ref="editCanvas"
-                    width={zoom*c2.width}
-                    height={zoom*c2.height}
-                    className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}
-                    onDragOver={this.handleDragOverPreview.bind(this)}
-                    onDrop={this.handleDropPreview.bind(this,-1)}>
-            </canvas>
+            <div   style={{ "overflow": "scroll", "width": "600px", "height": "600px"}}>
+              <canvas ref="editCanvas"
+                        width={zoom*c2.width}
+                        height={zoom*c2.height}
+                        className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}
+                        onDragOver={this.handleDragOverPreview.bind(this)}
+                        onDrop={this.handleDropPreview.bind(this,-1)}>
+              </canvas>
+            </div>
           </div>
 
           {/*** Status Bar ***/}
@@ -870,7 +899,7 @@ console.log(`doSaveStateForUndo(${changeInfoString})`)
           </div>
 
           <div className="ui popup mgbResizer">
-            <div className="ui">Grow or shrink Graphic</div>
+            <div className="ui">You can resize the Graphic using these buttons, or by dragging an image to this control</div>
             <div className="ui horizontal icon buttons">
               <div className="ui button" onClick={this.handleResize.bind(this, 1, 0)}
                    data-content="Increase Width"

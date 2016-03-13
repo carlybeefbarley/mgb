@@ -25,14 +25,7 @@ export default class AssetEditRoute extends Component {
   }
 
   getMeteorData() {
-    let handle
-
-    //Subscribe to assets labeled isPrivate?
-    if (this.props.ownsProfile) {
-      handle = Meteor.subscribe("assets.auth", this.props.user._id);
-    } else {
-      handle = Meteor.subscribe("assets.public");
-    }
+    let handle = Meteor.subscribe("assets.public.withContent2");
 
     return {
       asset: Azzets.findOne(this.props.params.id),
@@ -43,7 +36,7 @@ export default class AssetEditRoute extends Component {
   render() {
     // One Asset provided via getMeteorData()
     let asset = this.data.asset;
-    if (!asset)
+    if (!asset || this.data.loading)
       return null;
 
     const {currUser, ownsProfile} = this.props;

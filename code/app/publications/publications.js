@@ -61,7 +61,7 @@ if (Meteor.isServer) {
   });
 }
 
-//Can see all assets belonging to user/team
+// Can see all assets belonging to user/team
 // selectedAssetKinds is an array of AssetKindsKeys strings
 Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch,  showDeleted=false, showStable=false) {
   let selector = {
@@ -78,13 +78,35 @@ Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch,  
   if (nameSearch && nameSearch.length > 0)
     selector["$text"]= {$search: nameSearch}
 
-  return Azzets.find(selector);
+  return Azzets.find(selector, {fields: {content2: 0}});
   }
 );
 
 //Can see all assets
 // selectedAssetKinds is an array of AssetKindsKeys strings
 Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch, showDeleted=false, showStable=false) {
+  let selector = {
+    isDeleted: showDeleted,
+  }
+  
+  if (showStable === true)  // This means ONLY show stable assets
+    selector["isCompleted"] = showStable
+
+  if (userId && userId !== -1)
+    selector["ownerId"] = userId
+  if (selectedAssetKinds && selectedAssetKinds.length > 0)
+    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )  // TODO: Could use $in ?
+
+  if (nameSearch && nameSearch.length > 0)
+    selector["$text"]= {$search: nameSearch}
+
+  return Azzets.find(selector, {fields: {content2: 0}} );
+  }
+);
+
+//Can see all assets
+// selectedAssetKinds is an array of AssetKindsKeys strings
+Meteor.publish('assets.public.withContent2', function(userId, selectedAssetKinds, nameSearch, showDeleted=false, showStable=false) {
   let selector = {
     isDeleted: showDeleted,
   }

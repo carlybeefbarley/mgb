@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 
 import EditGraphic from './EditGraphic/EditGraphic.js';
 import EditCode from './EditCode/EditCode.js';
+import EditMap from './EditMap/EditMap.js';
 import EditUnknown from './EditUnknown.js';
 
 
@@ -22,6 +23,8 @@ export default class AssetEdit extends React.Component {
         return (<EditGraphic asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
       case 'code':
         return (<EditCode asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
+      case 'map':
+        return (<EditMap asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
       default:
         return (<EditUnknown asset={asset}/>);
     }

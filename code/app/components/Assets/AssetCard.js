@@ -76,24 +76,40 @@ export default class AssetCard extends React.Component {
     const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
     const dimension = asset.kind === "graphic" ? `${iw}x${ih} ` : ''
     const ago = moment(asset.updatedAt).fromNow()
-    const info2 = asset.kind === "graphic" ? `, ${nframes} frames.` : ''
+    const info2 = asset.kind === "graphic" ? `${nframes} frames` : ''
 
     const ownerName = asset.dn_ownerName
 
     return (
       <div key={asset._id} className="ui fluid card">
         <div className="content">
-          <canvas ref="thumbnailCanvas" className="right floated mini ui image"
-                width={iw} height={ih} >
-          </canvas>
+          
+          { /* CONTENT */ }
+          <div className="ui right floated image">
+            <div className="ui move left reveal">
+              <div className="visible content">
+                    <canvas ref="thumbnailCanvas" className="ui image" width={iw} height={ih} style={{backgroundColor: '#ffffff'}} >
+                    </canvas> 
+              </div>
+              <div className="hidden content meta">
+                <small>
+                  <p>{`${dimension}${assetKindLongName}`}</p>
+                  <p>{info2}</p>
+                </small>
+              </div>
+            </div>
+          </div>
+          
+          
           <div className="header">
             <i className={assetKindIcon}></i>
             <small>{asset.name}</small>
           </div>
+          
+        
           <div className="meta">
             <small>
               {asset.isDeleted ? <p style={{color: "red"}}>[DELETED]</p> : null }
-              {`${dimension}${assetKindLongName}${info2}`}
               <br></br>
               Owner: 
               <Link to={`/user/${asset.ownerId}`}>
@@ -103,7 +119,7 @@ export default class AssetCard extends React.Component {
               Updated{ago}
             </small>
           </div>
-        </div>
+        </div>     { /* End Content */}
         { /* TODO: Add content section maybe editable. Also improve how meta looks above - less space between lines*/}
         <div className="extra content">
           <div className="ui three small buttons">
@@ -128,7 +144,8 @@ export default class AssetCard extends React.Component {
             }
           </div>
         </div>
-      </div>);
+      </div>
+      );
 
   }
 

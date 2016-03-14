@@ -63,6 +63,7 @@ require('fs').readFile.call;
 
 
 // REST API
+// TODO - move to separate file/folder and then IMPORT
 var RestApi = new Restivus({
     useDefaultAuth: true,
     prettyJson: true
@@ -96,6 +97,26 @@ RestApi.addRoute('asset/png/:id', {authRequired: false}, {
     }
   });
 
+RestApi.addRoute('asset/text/:id', {authRequired: false}, {
+    get: function () {
+        var asset = Azzets.findOne(this.urlParams.id);
+        if (asset)
+        {
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'text/plain'
+                },
+                body: asset.content2.src
+            };
+        }
+        else {
+            return {
+                statusCode: 404                
+            };
+        }
+    }
+  });
 
 
 console.log('\n\nRunning on server only (main_server.js)');

@@ -102,13 +102,7 @@ RestApi.addRoute('asset/text/:id', {authRequired: false}, {
         var asset = Azzets.findOne(this.urlParams.id);
         if (asset)
         {
-            return {
-                statusCode: 200,
-                headers: {
-                    'Content-Type': 'text/plain'
-                },
-                body: asset.content2.src
-            };
+          return JSON.parse(asset.content2.src);    // MAKE SURE THIS MATCHES WHAT WE ACTUALLY STORE (ie. object vs string)            
         }
         else {
             return {

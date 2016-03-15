@@ -31,7 +31,7 @@ export default class EditMap extends React.Component {
   
   handleOnChange(updatedSourceCodeAsString) {
     let newC2 = { src: updatedSourceCodeAsString }
-    this.props.handleContentChange( newC2, "" )
+    this.props.handleContentChange( newC2, "" ) // TODO: Thumbnail is second param
   }
 
   componentDidUpdate() {

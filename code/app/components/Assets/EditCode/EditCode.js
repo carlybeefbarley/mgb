@@ -82,6 +82,11 @@ export default class EditCode extends React.Component {
   componentDidMount() {
     this.aceEditorDiv = $("#aceEditControl")  // CSS selector for Edit Control
     this.getElementReferences()
+    $('.ui.accordion').accordion({
+    selector: {
+      trigger: '.title .explicittrigger'
+    }
+  });
   }
   
   handleOnChange(updatedSourceCodeAsString) {
@@ -104,7 +109,7 @@ export default class EditCode extends React.Component {
     this.iFrameWindow.contentWindow.postMessage(this.props.asset.content2.src, "*")    
   }
 
-  handleStop()
+  handleStop(e)
   {
     this.setState( { gameRenderIterationKey: this.state.gameRenderIterationKey+1,
                      isPlaying: false
@@ -123,6 +128,7 @@ export default class EditCode extends React.Component {
         return (       
             <div style={ {"height": "500px"} }>               
                 <SplitPane split="vertical" minSize="50">
+                
                     <AceEditor
                         mode="javascript"
                         height="500px"
@@ -132,23 +138,39 @@ export default class EditCode extends React.Component {
                         name="aceEditControl"
                         editorProps={{$blockScrolling: true}}
                         value={asset.content2.src} />
-                    <div>
-                        <div>
-                            <div className="ui icon buttons">
-                                { !this.state.isPlaying ? 
-                                <a className={"ui icon button"} onClick={this.handleRun.bind(this)}>
-                                    <i className={"play icon"}></i>
-                                </a>
-                                :
-                                <a className={"ui icon button"} onClick={this.handleStop.bind(this)}>
-                                    <i className={"stop icon"}></i>
-                                </a>
-                                }
-                            </div>
+                        
+                    <div className="ui styled accordion">
+                      <div className="title">
+                        <span className="explicittrigger">
+                          <i className="dropdown icon"></i>
+                          Code Advisor
+                          </span>
+                      </div>
+                      <div className="content">
+                        <p>TODO: Awesome Dynamic code help stuff to go here</p>
+                      </div>
+                      <div className="active title">
+                        <span className="explicittrigger">
+                          <i className="dropdown icon"></i>
+                          Run Code&nbsp;
+                          </span>
+                        <div className="ui mini icon buttons">
+                            { !this.state.isPlaying ? 
+                            <a className={"ui mini icon button"} onClick={this.handleRun.bind(this)}>
+                                <i className={"play icon"}></i>
+                            </a>
+                            :
+                            <a className={"ui mini icon button"} onClick={this.handleStop.bind(this)}>
+                                <i className={"stop icon"}></i>
+                            </a>
+                            }
                         </div>
+                      </div>
+                      <div className="active content">
                         <iframe key={ this.state.gameRenderIterationKey } id="iFrame1" width="610" height="460" sandbox='allow-modals allow-scripts' srcDoc={this.iframeScript}>
                         </iframe>
-                    </div>
+                      </div>
+                  </div>
                 </SplitPane>
             </div>
         );

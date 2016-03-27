@@ -26,3 +26,4 @@ react-meteor-data@0.2.6-beta.16
 semantic:ui
 flemay:less-autoprefixer
 babel-runtime
+houston:admin

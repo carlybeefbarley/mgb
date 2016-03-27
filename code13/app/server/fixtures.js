@@ -4,7 +4,7 @@ import {Users} from '../imports/schemas';
 export function createUsers() {
   console.log('Creating global admin user from fixtures.js');
   const users = [{
-        name: 'Super Admin User',
+        name: 'SuperAdmin',
         email: 'super@admin.com',
         roles: 'super-admin',
         teamId: '!system',

@@ -1,0 +1,22 @@
+.tagPosition {
+  position:relative;
+}
+
+.checkeredBackground {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2N89uzZfwY8QFJSEp80A+OoAcMiDP7//483HTx//hx/Ohg1gIFx6IcBALl+VXknOCvFAAAAAElFTkSuQmCC);
+}
+
+.thinBorder {
+  border: 1px solid lightslategrey;
+}
+
+.thickBorder {
+  border: 1px solid black;
+}
+
+
+.overlapUpLeft {
+  position: relative;
+  left: 16px;
+  top: -16px;
+}

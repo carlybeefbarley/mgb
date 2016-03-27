@@ -1,0 +1,56 @@
+{
+  "name": "mgb",
+  "version": "0.1.0",
+  "description": "My Game Builder",
+  "main": "app.js",
+  "dependencies": {
+    "babel-plugin-transform-class-properties": "^6.6.0",
+    "blueimp-md5": "^2.3.0",
+    "brace": "^0.7.0",
+    "codemirror": "^5.12.0",
+    "codemirror-extension": "^0.2.0",
+    "data-uri-to-buffer": "0.0.4",
+    "history": "^1.12.0",
+    "moment": "^2.12.0",
+    "react": "^0.14.7",
+    "react-ace": "^3.1.0",
+    "react-addons-create-fragment": "^0.14.7",
+    "react-addons-css-transition-group": "^0.14.7",
+    "react-addons-linked-state-mixin": "^0.14.7",
+    "react-addons-perf": "^0.14.7",
+    "react-addons-pure-render-mixin": "^0.14.7",
+    "react-addons-test-utils": "^0.14.7",
+    "react-addons-transition-group": "^0.14.7",
+    "react-addons-update": "^0.14.7",
+    "react-color": "^2.0.0",
+    "react-dom": "^0.14.7",
+    "react-helmet": "^2.3.1",
+    "react-mailto": "^0.3.0",
+    "react-mixin": "^3.0.4",
+    "react-router": "^1.0.0-rc3",
+    "react-sparklines": "^1.5.0",
+    "react-split-pane": "^0.1.25",
+    "react-svg-piechart": "^1.1.0",
+    "react-typeahead": "^1.1.6",
+    "tern": "^0.18.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/devlapse/mgb.git"
+  },
+  "keywords": [
+    "game",
+    "ide",
+    "web"
+  ],
+  "author": "David Golds",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/devlapse/mgb/issues"
+  },
+  "homepage": "https://github.com/devlapse/mgb#readme"
+}

@@ -1,8 +1,10 @@
 import {Users, Azzets} from '../imports/schemas';
 import dataUriToBuffer from 'data-uri-to-buffer';
 
+// Import server-side stubs for Meteor.call()
 import '../imports/schemas/users.js';
 import '../imports/schemas/assets.js';
+import '../imports/schemas/activity.js';
 
 import '../imports/publications/publications.js';
 
@@ -18,6 +20,9 @@ if (!Users.find().fetch().length) {
 }
 
 Meteor.startup(function () {
+  
+  Houston.add_collection(Meteor.users);
+  Houston.add_collection(Houston._admins);
   //sets up keys for social logins
   ServiceConfiguration.configurations.upsert(
     { service: "google" },

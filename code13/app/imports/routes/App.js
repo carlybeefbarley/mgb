@@ -28,7 +28,7 @@ export default App = React.createClass({
   },
 
   getMeteorData() {
-    let handle = Meteor.subscribe("user", this.props.params.id)
+    let handle = Meteor.subscribe("user", this.props.params.id) // BUGBUG - no such param in some cases (like AssetEdit)
     let handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
     return {
       currUser: Meteor.user(), //putting it here makes it reactive

@@ -39,7 +39,7 @@ export const ActivityTypes = {
   "asset.undelete": { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
   
   "user.join":    { icon: "green user",       pri:  5,  description: "User joined" },
-  "user.logon":   { icon: "user",             pri:  9,  description: "User Logged In" },
+  "user.login":   { icon: "user",             pri:  9,  description: "User Logged In" },
   "user.logout":  { icon: "grey user",        pri:  9,  description: "User Logged Out" },
   
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items

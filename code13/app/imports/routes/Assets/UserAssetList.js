@@ -192,7 +192,7 @@ export default  UserAssetListRoute = React.createClass({
       if (error) {
           alert("cannot create asset because: " + error.reason);
       } else {
-        logActivity("asset.create",  `Create ${assetKindKey} asset`, null, newAsset);
+        logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset);
         this.history.pushState(null, `/assetEdit/${result}`)
       }
     });

@@ -175,7 +175,7 @@ export default JoinRoute = React.createClass({
         this.props.showToast(error.reason, 'error')
         return;
       } else {
-        logActivity("user.join",  `NEW USER "${newUserName}"`, null, null); 
+        logActivity("user.join",  `New user "${newUserName}"`, null, null); 
         this.props.showToast('Welcome!  Taking you to your assets', 'success')
         window.setTimeout(() => {
           this.history.pushState(null, `/user/${Meteor.user()._id}/assets`);

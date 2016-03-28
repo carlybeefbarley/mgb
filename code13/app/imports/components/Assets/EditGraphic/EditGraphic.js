@@ -777,7 +777,7 @@ export default class EditGraphic extends React.Component {
         <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)} style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
           <canvas width={c2.width} height={c2.height}
                   onClick={this.handleSelectFrame.bind(this, idx)}
-                  className={ selectedFrameIdx == idx ? sty.thickBorder : sty.thinBorder}></canvas>
+                  className={ selectedFrameIdx == idx ? "mgbEditGraphicSty_thickBorder" : "mgbEditGraphicSty_thinBorder"}></canvas>
         </div>
         <div className="middle aligned content">
           <input placeholder={"Frame name"} value={c2.frameNames[idx]}
@@ -843,7 +843,7 @@ export default class EditGraphic extends React.Component {
 
         {/***  Center Column for Edit and other wide stuff  ***/}
 
-        <div className={sty.tagPosition + " ui nine wide column"} >
+        <div className={"mgbEditGraphicSty_tagPosition ui nine wide column"} >
           <div className="row">
             <a className="ui label" onClick={this.handleUndo.bind(this)}>
               <i className="icon undo"></i>Undo {this.mgb_undoStack.length}
@@ -887,7 +887,7 @@ export default class EditGraphic extends React.Component {
               <canvas ref="editCanvas"
                         width={zoom*c2.width}
                         height={zoom*c2.height}
-                        className={sty.checkeredBackground + " " + sty.thinBorder + " " + sty.atZeroZero}
+                        className={"mgbEditGraphicSty_checkeredBackground mgbEditGraphicSty_thinBorder mgbEditGraphicSty_atZeroZero"}
                         onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-1)}>
               </canvas>

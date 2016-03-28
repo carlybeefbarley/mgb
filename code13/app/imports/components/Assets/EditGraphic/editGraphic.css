@@ -1,21 +1,21 @@
-.tagPosition {
+.mgbEditGraphicSty_tagPosition {
   position:relative;
 }
 
-.checkeredBackground {
+.mgbEditGraphicSty_checkeredBackground {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2N89uzZfwY8QFJSEp80A+OoAcMiDP7//483HTx//hx/Ohg1gIFx6IcBALl+VXknOCvFAAAAAElFTkSuQmCC);
 }
 
-.thinBorder {
+.mgbEditGraphicSty_thinBorder {
   border: 1px solid lightslategrey;
 }
 
-.thickBorder {
+.mgbEditGraphicSty_thickBorder {
   border: 1px solid black;
 }
 
 
-.overlapUpLeft {
+.mgbEditGraphicSty_overlapUpLeft {
   position: relative;
   left: 16px;
   top: -16px;

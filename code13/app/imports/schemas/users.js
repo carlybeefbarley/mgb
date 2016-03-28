@@ -1,5 +1,5 @@
 import {Users} from '../schemas';
-import {Match} from 'meteor/check'; 
+import {Match,check} from 'meteor/check'; 
 
 const optional = Match.Optional;
 let count;
@@ -18,7 +18,8 @@ const schema = {
     bio: optional(String),
     images: optional([String]),
     isDeleted: optional(Boolean), //soft delete
-    invites: optional([])
+    invites: optional([]),
+    projectNames: optional([String])   // An array of strings  
   },
   permissions: {
     teamId: optional(String),
@@ -68,10 +69,12 @@ Meteor.methods({
   "User.updateProfile": function(docId, data) {
 
     check(docId, String);
-    if (!this.userId) throw new Meteor.Error(401, "Login required");
-    if (this.userId !== docId) throw new Meteor.Error(401, "You don't have permission to edit this Profile");
-
+    if (!this.userId) 
+      throw new Meteor.Error(401, "Login required");
+    if (this.userId !== docId)
+      throw new Meteor.Error(401, "You don't have permission to edit this Profile");
     // whitelist what can be updated
+    
     check(data, {
       "profile.name": optional(schema.profile.name),
       "profile.avatar": optional(schema.profile.avatar),
@@ -79,6 +82,7 @@ Meteor.methods({
       "profile.bio": optional(schema.profile.bio),
       "profile.images": optional(schema.profile.images),
       "profile.isDeleted": optional(schema.profile.isDeleted),
+      "profile.projectNames": optional(schema.profile.projectNames)
     });
 
     count = Meteor.users.update(docId, {$set: data});

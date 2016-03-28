@@ -11,6 +11,7 @@ import AssetKindsSelector from '../../components/Assets/AssetKindsSelector.js';
 import AssetShowDeletedSelector from '../../components/Assets/AssetShowDeletedSelector.js';
 import AssetShowStableSelector from '../../components/Assets/AssetShowStableSelector.js';
 import AssetListSortBy from '../../components/Assets/AssetListSortBy';
+import ProjectSelector from '../../components/Assets/ProjectSelector';
 
 import Spinner from '../../components/Spinner/Spinner';
 import {History} from 'react-router';
@@ -33,6 +34,7 @@ export default  UserAssetListRoute = React.createClass({
       showDeletedFlag: false,
       showStableFlag: false,
       selectedAssetKinds: _.map(AssetKindKeys, (k) => { return k } ),
+      projectSelected: null,    // Null means any/all. It's the only valid value if the user is not specified
       searchName: "",
       chosenSortBy: "edited"
     }
@@ -96,9 +98,11 @@ export default  UserAssetListRoute = React.createClass({
 
     if (user) {
       var {_id, createdAt} = user;
-      var {name, avatar} = user.profile;
+      var {name, avatar, projectNames} = user.profile;
+      if (!projectNames)
+        projectNames = [];
     }
-
+    
     return (
       <div className="ui padded grid">
 
@@ -108,22 +112,33 @@ export default  UserAssetListRoute = React.createClass({
               {"name": "description", "content": "Assets"}
           ]}
         />
-
-        <div className="ten wide column">
-          <div className="ui large header">{ user ? (name + "'s Assets") : ("Public assets") }
-            <div className="ui sub header">{assets.length} Assets</div>
+        
+        <div className="ui row">
+          <div className="five wide column">
+            <div className="ui large header">{ user ? (name + "'s Assets") : ("Public assets") }
+              <div className="ui sub header">{assets.length} Assets</div>
+            </div>
           </div>
-        </div>
+          
+          <div className="four wide column">
+          { user ? <ProjectSelector 
+                      availableProjectNamesArray={projectNames}
+                      handleCreateNewProject={this.handleCreateNewProject}
+                      chosenProjectName={this.state.projectSelected}
+                      handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+                      />
+            : null }
+          </div>
 
-        <div className="six wide column">
-          {user ? <UserItem
-              name={name}
-              avatar={avatar ? avatar : null}
-              createdAt={createdAt}
-              _id={_id} />
-            :
-            null
-          }
+          <div className="right floated compact four wide column">
+            {user ? <UserItem
+                name={name}
+                avatar={avatar ? avatar : null}
+                createdAt={createdAt}
+                _id={_id} />
+              : null
+            }
+          </div>
         </div>
 
         <div className="twelve wide column">
@@ -151,7 +166,7 @@ export default  UserAssetListRoute = React.createClass({
           </div>
         </div>
                 
-        <div className="three wide right floated column">
+        <div className="four wide right floated column">
           <div className="ui row">
             <AssetListSortBy chosenSortBy={this.state.chosenSortBy} handleChangeSortByClick={this.handleChangeSortByClick}/>
             <AssetCreateNew  handleCreateAssetClick={this.handleCreateAssetClickFromComponent}/>
@@ -167,6 +182,39 @@ export default  UserAssetListRoute = React.createClass({
       </div>
 
     );
+  },
+  
+  handleChangeSelectedProjectName(chosenProjectName)
+  {
+    this.setState( {projectSelected: chosenProjectName})
+  },
+  
+  handleCreateNewProject(newProjectName)
+  {
+    var self=this
+    let user = this.props.user
+    if (!user)
+    {
+      console.log("internal error - No clear user to add project name to")
+      return
+    }
+    
+    let projectNames = user.profile.projectNames || []    
+    projectNames.push(newProjectName)
+    
+    var savedNewProjectName = newProjectName
+        
+    Meteor.call('User.updateProfile', user._id, {
+      "profile.projectNames": projectNames
+    }, (error,result) => {
+      if (error) {
+         console.log("Could not update project names list")
+      } else {
+        logActivity("project.create",  `Create project ${savedNewProjectName}`);
+        self.setState( {projectSelected: savedNewProjectName})
+      }
+    });
+    
   },
 
   handleChangeSortByClick(newSort)

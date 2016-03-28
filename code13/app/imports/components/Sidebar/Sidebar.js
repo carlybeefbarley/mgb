@@ -26,9 +26,9 @@ export default class Sidebar extends Component {
       (
         <div className="item">
           <div className="header">My stuff</div>
-          <div className="menu">
-            <Link to={`/user/${currUser._id}/assets`} className="item">My Assets</Link>
-         </div>
+            <div className="menu">
+              <Link to={`/user/${currUser._id}/assets`} className="item">My Assets</Link>
+          </div>
         </div>
       )
       :
@@ -64,13 +64,18 @@ export default class Sidebar extends Component {
         return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i}>
                 <i className={iconClass}></i>{act.byUserName}: '{act.toAssetName}' {act.description} 
               </Link>
+      } 
+      else if (act.activityType.startsWith("project.")) {
+        return <Link to={"/user/" + act.byUserId}  className="item" key={i}>
+                <i className={iconClass}></i>{act.byUserName}: {act.description}
+              </Link>
       }
       //else...
-      return <div className="item" key={i}>act.activityType</div>              
+      return <div className="item" key={i}>{act.activityType} not in Sidebar code</div>              
     })
 
     return (
-      <div className="ui vertical inverted sidebar menu left overlay" onClick={this.props.handleToggleSidebar}>
+      <div className="ui vertical inverted wide sidebar menu left overlay" onClick={this.props.handleToggleSidebar}>
         <Link to="/" className="item"><b>My Game Builder</b></Link>
         {userContent}
         <div className="item">

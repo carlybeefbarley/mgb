@@ -21,8 +21,13 @@ if (!Users.find().fetch().length) {
 
 Meteor.startup(function () {
   
-  Houston.add_collection(Meteor.users);
-  Houston.add_collection(Houston._admins);
+  // if (Houston)
+  // {
+  //   console.log("RUNNING WITH meteor add houston:admin PACKAGE. BE AWARE!")
+  //   Houston.add_collection(Meteor.users);
+  //   Houston.add_collection(Houston._admins);
+  // }
+  
   //sets up keys for social logins
   ServiceConfiguration.configurations.upsert(
     { service: "google" },

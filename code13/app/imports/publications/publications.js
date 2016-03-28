@@ -1,6 +1,6 @@
 // This file should be imported by the main_server.js file
 
-import {Users, Azzets} from '../schemas';
+import {Users, Azzets, Activity} from '../schemas';
 
 Meteor.publish('users', function(limit) {
   //Paginated users.
@@ -85,3 +85,12 @@ Meteor.publish('assets.public.withContent2', function(userId, selectedAssetKinds
   return Azzets.find(selector);
   }
 );
+
+Meteor.publish('activity.public.recent', function(limitCount) {
+  let selector = { }
+  let options = {limit: limitCount, sort: {timestamp: -1}}
+
+  return Activity.find(selector, options);
+  }
+);
+

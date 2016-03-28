@@ -6,6 +6,7 @@ import {handleForms} from '../../components/Forms/FormDecorator';
 import UserForms from '../../components/Users/UserForms.js';
 import AuthLinks from '../../components/Users/AuthLinks.js';
 import SocialAuth from '../../components/Users/SocialAuth';
+import {logActivity} from '../../schemas/activity';
 
 export default  SignInRoute = React.createClass({
   mixins: [History],
@@ -118,6 +119,8 @@ export default  SignInRoute = React.createClass({
         this.props.showToast(error.reason, 'error')
         return;
       } else {
+        let userName = Meteor.user().profile.name
+        logActivity("user.login",  `Logging in "${userName}"`, null, null);         
         this.props.showToast('Welcome Back!   Taking you to your Assets', 'success')
         window.setTimeout(() => {
           this.history.pushState(null, `/user/${Meteor.user()._id}/assets`);

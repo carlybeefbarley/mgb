@@ -5,6 +5,8 @@ import EditCode from './EditCode/EditCode.js';
 import EditMap from './EditMap/EditMap.js';
 import EditUnknown from './EditUnknown.js';
 
+import {logActivity} from '../../schemas/activity';
+
 
 export default class AssetEdit extends React.Component {
   // static PropTypes = {
@@ -40,6 +42,8 @@ export default class AssetEdit extends React.Component {
         alert('error: ' + err.reason)
       }
     });
+    
+    logActivity("asset.edit",  "content change", null, this.props.asset);
   }
 
   render() {

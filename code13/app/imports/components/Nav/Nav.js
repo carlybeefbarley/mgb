@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {Link, History} from 'react-router';
 import reactMixin from 'react-mixin';
+import {logActivity} from '../../schemas/activity';
 
 export default Nav = React.createClass({
   mixins: [History],
@@ -10,15 +11,19 @@ export default Nav = React.createClass({
   },
 
   logout: function() {
+    let userName = Meteor.user().profile.name
+    logActivity("user.login",  `Logging out "${userName}"`, null, null);         
+
     Meteor.logout();
     this.history.pushState(null, `/`);
   },
 
   render: function() {
     const user = this.props.user;
-    let back = this.props.back;
-    if (back === "!user-assets") 
-      back = user ? ("/user/" + user._id + "/assets") : ("/assets");
+    let back = null
+    // this.props.back;
+    // if (back === "!user-assets") 
+    //   back = user ? ("/user/" + user._id + "/assets") : ("/assets");
     
     return (
       <div className="ui attached inverted menu">

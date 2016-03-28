@@ -5,7 +5,8 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 import Nav from '../components/Nav/Nav';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Helmet from "react-helmet";
-import {Users} from '../schemas';
+import {Users, Activity} from '../schemas';
+
 import Spinner from '../components/Spinner/Spinner';
 import Toast from '../components/Toast/Toast';
 
@@ -21,15 +22,18 @@ export default App = React.createClass({
       initialLoad: true,
       showToast: false,
       toastMsg: '',
-      toastType: 'success'
+      toastType: 'success',
+      activityHistoryLimit: 10
     };
   },
 
   getMeteorData() {
     let handle = Meteor.subscribe("user", this.props.params.id)
+    let handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
     return {
       currUser: Meteor.user(), //putting it here makes it reactive
       user: Meteor.users.findOne(this.props.params.id),
+      activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),
       loading: !handle.ready(),
     };
   },
@@ -81,7 +85,8 @@ export default App = React.createClass({
           user={user}
           currUser={currUser}
           handleToggleSidebar={this.handleToggleSidebar}
-          initialLoad={this.state.initialLoad} />
+          initialLoad={this.state.initialLoad}
+          activity={this.data.activity} />
 
         <div className="pusher" >
             <Nav
@@ -95,7 +100,6 @@ export default App = React.createClass({
                 content={this.state.toastMsg}
                 type={this.state.toastType} />
             : null}
-
 
             <div>
 

@@ -1,6 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
 import {Link, History} from 'react-router';
+import {ActivityTypes} from '../../schemas/activity.js';
 import reactMixin from 'react-mixin';
 
 @reactMixin.decorate(History)
@@ -8,7 +9,8 @@ export default class Sidebar extends Component {
 
   // static PropTypes = {
   //   user: PropTypes.object,
-  //   showSidebar: PropTypes.boolean
+  //   showSidebar: PropTypes.boolean,
+  //   activity: PropTypes.array
   // }
 
   constructor() {
@@ -48,6 +50,24 @@ export default class Sidebar extends Component {
     )
     :
     null;
+    
+    
+    let activityContent = this.props.activity.map((act, i) => { 
+      let iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
+      
+      if (act.activityType.startsWith("user.")) {
+        return <Link to={"/user/" + act.byUserId}  className="item" key={i}>
+                <i className={iconClass}></i>{act.description}
+              </Link>
+      }
+      else if (act.activityType.startsWith("asset.")) {
+        return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i}>
+                <i className={iconClass}></i>{act.byUserName}: '{act.toAssetName}' {act.description} 
+              </Link>
+      }
+      //else...
+      return <div className="item" key={i}>act.activityType</div>              
+    })
 
     return (
       <div className="ui vertical inverted sidebar menu left overlay" onClick={this.props.handleToggleSidebar}>
@@ -61,11 +81,14 @@ export default class Sidebar extends Component {
           </div>
         </div>
         {superAdminContent}
+        <div className="item">
+          <div className="header">Activity</div>
+          <div className="menu">
+            {activityContent}
+          </div>
+        </div>
       </div>
-        );/*(
-          </span>
-
-    );*/
+        );
   }
 
   handleBrandClick() {

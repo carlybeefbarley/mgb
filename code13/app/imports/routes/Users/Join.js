@@ -4,6 +4,8 @@ import UserForms from '../../components/Users/UserForms.js';
 import AuthLinks from '../../components/Users/AuthLinks.js';
 import md5 from 'blueimp-md5';
 import SocialAuth from '../../components/Users/SocialAuth';
+import {logActivity} from '../../schemas/activity';
+
 
 export default JoinRoute = React.createClass({
   mixins: [History],
@@ -158,11 +160,13 @@ export default JoinRoute = React.createClass({
       return false;
     }
 
+    let newUserName = email.substring(0, email.indexOf('@'))
+
     Accounts.createUser({
       email: email,
       password: password,
       profile: {
-        name: email.substring(0, email.indexOf('@')),
+        name: newUserName,
         avatar: "http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=50&d=mm", //actual image picked by user to display
         images: ["http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=50&d=mm"] //collection of images in users account
       }
@@ -171,14 +175,7 @@ export default JoinRoute = React.createClass({
         this.props.showToast(error.reason, 'error')
         return;
       } else {
-        //create initial data?
-        // Meteor.call('Azzet.create', {
-        //   name: 'CFoobar',
-        //   isCompleted: false,
-        //   isDeleted: false,
-        //   isPrivate: false,
-        //   teamId: ''
-        // })
+        logActivity("user.join",  `NEW USER "${newUserName}"`, null, null); 
         this.props.showToast('Welcome!  Taking you to your assets', 'success')
         window.setTimeout(() => {
           this.history.pushState(null, `/user/${Meteor.user()._id}/assets`);

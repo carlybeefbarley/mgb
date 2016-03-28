@@ -1,5 +1,5 @@
 import UserAssetList from './UserAssetList';
-import AssetEdit from './AssetEdit';
+import AssetEdit from './AssetEditRoute';
 
 export default {
   UserAssetList,

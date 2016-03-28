@@ -54,28 +54,23 @@ export const AssetKindKeys = Object.keys(AssetKinds);  // For convenience.
 Meteor.methods({
 
   "Azzets.create": function(data) {
-    var docId;
-    if (!this.userId) throw new Meteor.Error(401, "Login required");
-
-    data.ownerId = this.userId;
-    if (Meteor.isServer)
-    {
-      // TODO: Do we have the current User/profile to hand instead of looking it up?
-      let ownerUser = Meteor.users.findOne(data.ownerId);
-      data.dn_ownerName = ownerUser ? ownerUser.profile.name : "(Unknown)";
-      console.log(`TRACE: denormalized asset.OwnerName on create as ${data.dn_ownerName}`)
-    }
-    data.createdAt = new Date();
-    data.updatedAt = new Date();
+    if (!this.userId) 
+      throw new Meteor.Error(401, "Login required");      // TODO: Better access check
+      
+    now = new Date();
+    data.createdAt = now
+    data.updatedAt = now
+    data.ownerId = this.userId
+    data.dn_ownerName = Meteor.user().profile.name;
     data.content = "";
     data.thumbnail = "";
     data.content2 = {};
 
     check(data, _.omit(schema, '_id'));
 
-    docId = Azzets.insert(data);
+    let docId = Azzets.insert(data);
 
-    console.log(`  [Azzets.create]  #${docId}  kind=${data.kind}  owner:`, data.dn_ownerName || "(no_ownerName)");
+    console.log(`  [Azzets.create]  "${data.name}"  #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`);
     return docId;
   },
 
@@ -117,7 +112,7 @@ Meteor.methods({
 
     count = Azzets.update(selector, {$set: data});
 
-    console.log(`  [Azzets.update] (${count}) #${docId}  kind=${data.kind}  owner:`, data.dn_ownerName ); // These fields might not be provided for updates
+    console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`); // These fields might not be provided for updates
 
     return count;
   },

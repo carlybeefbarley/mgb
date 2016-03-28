@@ -4,6 +4,8 @@ import reactMixin from 'react-mixin';
 import {Link, History} from 'react-router';
 import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
+import {logActivity} from '../../schemas/activity';
+
 
 export default AssetCard = React.createClass({
   mixins: [History],
@@ -136,20 +138,36 @@ export default AssetCard = React.createClass({
       );
   },
 
+
   handleDeleteClick() {
-    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isDeleted: !this.props.asset.isDeleted}, (err, res) => {
+    let newIsDeletedState = !this.props.asset.isDeleted;
+    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isDeleted: newIsDeletedState}, (err, res) => {
       if (err) {
         this.props.showToast(err.reason, 'error')
-      }
+      }        
     });
+    
+    if (newIsDeletedState)
+      logActivity("asset.delete",  "Delete asset", null, this.props.asset);
+    else
+      logActivity("asset.undelete",  "Undelete asset", null, this.props.asset); 
+    
   },
 
+
   handleCompletedClick() {
-    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: !this.props.asset.isCompleted}, (err, res) => {
+    let newIsCompletedStatus = !this.props.asset.isCompleted
+    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: newIsCompletedStatus}, (err, res) => {
       if (err) {
         this.props.showToast(err.reason, 'error')
       }
     });
+    
+    if (newIsCompletedStatus)
+      logActivity("asset.stable",  "Mark asset as stable", null, this.props.asset);
+    else
+      logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset); 
+    
   },
 
   handleEditClick() {

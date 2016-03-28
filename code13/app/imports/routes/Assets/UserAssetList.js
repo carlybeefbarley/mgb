@@ -1,16 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
+
 import {Azzets} from '../../schemas';
+import {AssetKinds, AssetKindKeys} from '../../schemas/assets';
+import {logActivity} from '../../schemas/activity';
+
 import AssetList from '../../components/Assets/AssetList';
 import AssetCreateNew from '../../components/Assets/AssetCreateNew.js';
 import AssetKindsSelector from '../../components/Assets/AssetKindsSelector.js';
 import AssetShowDeletedSelector from '../../components/Assets/AssetShowDeletedSelector.js';
 import AssetShowStableSelector from '../../components/Assets/AssetShowStableSelector.js';
-import {AssetKinds, AssetKindKeys} from '../../schemas/assets';
 import AssetListSortBy from '../../components/Assets/AssetListSortBy';
 
 import Spinner from '../../components/Spinner/Spinner';
-import {handleForms} from '../../components/Forms/FormDecorator';
 import {History} from 'react-router';
 import Helmet from 'react-helmet';
 import UserItem from '../../components/Users/UserItem.js';
@@ -173,7 +175,7 @@ export default  UserAssetListRoute = React.createClass({
   },
 
   handleCreateAssetClickFromComponent(assetKindKey, assetName) {
-    Meteor.call('Azzets.create', {
+    let newAsset = {
       name: assetName,
       kind: assetKindKey,
       text: "",
@@ -185,10 +187,12 @@ export default  UserAssetListRoute = React.createClass({
       isDeleted: false,
       isPrivate: true,
       teamId: ''
-    }, (error, result) => {
+    }
+    Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
           alert("cannot create asset because: " + error.reason);
       } else {
+        logActivity("asset.create",  `Create ${assetKindKey} asset`, null, newAsset);
         this.history.pushState(null, `/assetEdit/${result}`)
       }
     });

@@ -128,7 +128,7 @@ export default App = React.createClass({
     });
     window.setTimeout(() => {
       this.closeToast()
-    }, 2000);
+    }, 2500);
   },
 
   closeToast() {

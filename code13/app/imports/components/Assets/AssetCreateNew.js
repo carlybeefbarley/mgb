@@ -32,7 +32,7 @@ export default class AssetCreateNew extends React.Component {
 
     // Create the       | Create Asset v | ---- |    UI
     return (
-      <div className="ui compact right floated inverted menu">
+      <div className="ui compact tiny right floated  inverted menu">
         <div className="ui simple dropdown item">
           New Asset
           <i className="dropdown icon"></i>

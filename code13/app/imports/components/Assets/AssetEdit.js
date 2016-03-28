@@ -48,13 +48,11 @@ export default class AssetEdit extends React.Component {
 
   render() {
     if (!this.props.asset) 
-    return null;
+      return <div>loading...</div>;
 
     let asset = this.props.asset;
 
-    return (
-      this.getEditorForAsset(asset)
-    );
+    return this.getEditorForAsset(asset)
   }
 
 }

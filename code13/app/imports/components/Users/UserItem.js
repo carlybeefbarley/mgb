@@ -18,21 +18,18 @@ export default UserItem = React.createClass({
   render: function() {
     const createdAt = this.props.createdAt;
     return (
-      <div
-        className="ui item"
-        onClick={this.props.clickPreview ?
+      <div  className="ui raised segment"
+            onClick={this.props.clickPreview ?
                     () => this.history.pushState(null, `/users?id=${this.props._id}`) :
                     () => this.history.pushState(null, `/user/${this.props._id}`)}>
 
-          <img src={this.props.avatar} className="ui avatar image" />
-
-          <div className="ui content">
-            <div className="header">{this.props.name}</div>
-            <div className="description">
-              Joined {moment(createdAt).format('MMMM DD, YYYY')}
-              <i className="right arrow icon"></i>
-            </div>
-          </div>
+        <a className="ui blue ribbon label">{this.props.name}</a>
+        <img src={this.props.avatar} className="ui right floated avatar image" />
+        <p>
+          <small>
+            Joined {moment(createdAt).format('MMMM DD, YYYY')}
+          </small>
+        </p>
       </div>
     );
   }

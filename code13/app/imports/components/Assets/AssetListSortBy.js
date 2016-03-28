@@ -25,13 +25,16 @@ export default class AssetListSortBy extends React.Component {
 
     // Create the       | Sort By Asset v |      UI
     return (
+      <div className="ui compact tiny borderless  menu">
+
         <div className="ui simple dropdown item">
-          Sort
+          Sort By
           <i className="dropdown icon"></i>
           <div className="ui menu">
             {choices}
           </div>
         </div>
+      </div>
     );
   }
 

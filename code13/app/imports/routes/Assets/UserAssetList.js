@@ -122,6 +122,7 @@ export default  UserAssetListRoute = React.createClass({
           
           <div className="four wide column">
           { user ? <ProjectSelector 
+                      canEdit={this.props.ownsProfile}
                       availableProjectNamesArray={projectNames}
                       handleCreateNewProject={this.handleCreateNewProject}
                       chosenProjectName={this.state.projectSelected}

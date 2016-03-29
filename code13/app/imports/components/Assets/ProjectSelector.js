@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 
 export default ProjectSelector = React.createClass({
   propTypes: {
+    canEdit: React.PropTypes.bool,
     availableProjectNamesArray: React.PropTypes.array,
     chosenProjectName: React.PropTypes.string,
     handleChangeSelectedProjectName: React.PropTypes.func,
@@ -30,14 +31,16 @@ export default ProjectSelector = React.createClass({
           <i className="dropdown icon"></i>
           <div className="ui menu">
             <div className="ui item">
-              {choices}
+              {choices.length > 0 ? choices : "No projects defined for this user"}
             </div>
+            { !this.props.canEdit ? null : 
             <div className="ui item">
               <div className="ui action input">
                 <input type="text" ref="newProjectName" placeholder="New Project Name" />
                 <div className="ui button" onClick={this.handleNewProject}>Create</div>
               </div>   
             </div>
+            }
           </div>
         </div>
       </div>

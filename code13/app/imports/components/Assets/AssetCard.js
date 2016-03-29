@@ -5,13 +5,17 @@ import {Link, History} from 'react-router';
 import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 import {logActivity} from '../../schemas/activity';
+import ProjectMembershipEditor from './ProjectMembershipEditor';
 
+//TODO: Toast/error
 
 export default AssetCard = React.createClass({
   mixins: [History],
   
   propTypes: {
-    asset: PropTypes.object
+    asset: PropTypes.object,
+    currUser: PropTypes.object,                             // currently Logged In user (not always provided)
+    canEdit: PropTypes.bool                                 // Can be false
   },
 
   getDefaultProps: function()  {
@@ -61,8 +65,9 @@ export default AssetCard = React.createClass({
   render() {
     if (!this.props.asset)
       return null;
+      
 
-    const {asset, showEditButton  } = this.props;
+    const {asset, showEditButton, currUser } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
     const c2 = asset.content2 || { width:64, height:64, nframes:0 }
@@ -70,10 +75,21 @@ export default AssetCard = React.createClass({
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
     const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
     const dimension = asset.kind === "graphic" ? `${iw}x${ih} ` : ''
-    const ago = moment(asset.updatedAt).fromNow()
     const info2 = asset.kind === "graphic" ? `${nframes} frames` : ''
-
+    const ago = moment(asset.updatedAt).fromNow()                                 // TODO: Make reactive
     const ownerName = asset.dn_ownerName
+    
+    
+    // Project Membership editor
+    const chosenProjectNamesArray = asset.projectNames || [];
+    const availableProjectNamesArray = currUser ? currUser.profile.projectNames : []
+    const editProjects = <ProjectMembershipEditor 
+                            canEdit={this.props.canEdit}
+                            availableProjectNamesArray={availableProjectNamesArray}
+                            chosenProjectNames={chosenProjectNamesArray}
+                            handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
+                            />
+                          
 
     return (
       <div key={asset._id} className="ui fluid card">
@@ -88,7 +104,8 @@ export default AssetCard = React.createClass({
               </div>
               <div className="hidden content meta">
                 <small>
-                  <p>{`${dimension}${assetKindLongName}`}</p>
+                  <p>{assetKindLongName}</p>
+                  <p>{dimension}</p>
                   <p>{info2}</p>
                 </small>
               </div>
@@ -111,10 +128,14 @@ export default AssetCard = React.createClass({
                 {ownerName ? ownerName : `#${asset.ownerId}`}
               </Link>
               <br></br>
+              {editProjects}
+              <br></br>
               Updated{ago}
             </small>
           </div>
-        </div>     { /* End Content */}
+        </div>     
+        { /* End Content */}
+        
         { /* TODO: Add content section maybe editable. Also improve how meta looks above - less space between lines*/}
         <div className="extra content">
           <div className="ui three small buttons">
@@ -136,6 +157,20 @@ export default AssetCard = React.createClass({
         </div>
       </div>
       );
+  },
+
+
+  handleChangeChosenProjectNames(newChosenProjectNamesArray)
+  {
+    newChosenProjectNamesArray.sort()
+    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {projectNames: newChosenProjectNamesArray}, (err, res) => {
+        if (err) {
+          this.props.showToast(err.reason, 'error')
+        }        
+      });
+      
+    let projectsString = newChosenProjectNamesArray.join(", ")
+    logActivity("asset.edit",  `In projects ${projectsString}`, null, this.props.asset);
   },
 
 

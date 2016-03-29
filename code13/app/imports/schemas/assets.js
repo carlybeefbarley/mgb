@@ -6,8 +6,9 @@ var schema = {
   createdAt: Date,
   updatedAt: Date,
 
-  teamId: String,     // team owner user id (FOR FUTURE USE)
-  ownerId: String,    // owner user id
+  teamId: String,       // team owner user id (FOR FUTURE USE)
+  ownerId: String,      // owner user id
+  projectNames: [String],   // Project Name (scoped to owner). Case sensitive
 
   // Some denormalized information that saves us from joins with big tables
   // for commonly used but very stable data - best example is user name
@@ -63,6 +64,7 @@ Meteor.methods({
     data.ownerId = this.userId
     data.dn_ownerName = Meteor.user().profile.name;
     data.content = "";
+    data.projectNames = [];
     data.thumbnail = "";
     data.content2 = {};
 
@@ -74,7 +76,7 @@ Meteor.methods({
     return docId;
   },
 
-  "Azzets.update": function(docId, canEdit, data) {   // TODO:DGOLDS Asset.___
+  "Azzets.update": function(docId, canEdit, data) {
     var count, selector;
     var optional = Match.Optional;
 
@@ -86,15 +88,15 @@ Meteor.methods({
     //   Or check publications have correct deny rules.
     //   See comment below for selector = ...
     if (!canEdit)
-      throw new Meteor.Error(401, "You don't have permission to edit this.");
+      throw new Meteor.Error(401, "You don't have permission to edit this.");   //TODO - make this secure,
 
     data.updatedAt = new Date();
-
+    
     // whitelist what can be updated
     check(data, {
       updatedAt: schema.updatedAt,
 //    dn_ownerName: optional(schema.dn_ownerName),    // may do this lazily in future?
-
+      projectNames: optional(schema.projectNames),   // This was introduced later so we don't force it yet
       name: optional(schema.name),
       kind: optional(schema.kind),
       text: optional(schema.text),

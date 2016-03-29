@@ -1,17 +1,19 @@
 import React, { PropTypes } from 'react';
 import AssetCard from './AssetCard.js';
 
-export default class AssetList extends React.Component {
-  // static propTypes = {
-  //   assets: PropTypes.array.isRequired,
-  //   currUser: PropTypes.object
-  // }
+export default  AssetList = React.createClass({
+  propTypes: {
+    assets: PropTypes.array.isRequired,
+    currUser: PropTypes.object,                             // currently Logged In user (not always provided)
+    canEdit: PropTypes.bool                                 // Can be false
+  },
 
-  render() {
+  render: function() {
     let assetCards = this.props.assets.map((asset) => {
       return (
           <AssetCard
             canEdit={this.props.currUser && asset.ownerId === this.props.currUser._id}
+            currUser={this.props.currUser}
             asset={asset}
             key={asset._id}
             showEditButton={this.props.currUser && this.props.currUser._id === asset.ownerId}
@@ -25,4 +27,4 @@ export default class AssetList extends React.Component {
       </div>
     );
   }
-}
+})

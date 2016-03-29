@@ -11,18 +11,28 @@ export default ProjectSelector = React.createClass({
   },
   
   render: function() {
+        let pName = this.props.chosenProjectName
+
+    
     // Build the list of 'View Project' Menu choices
     let choices = this.props.availableProjectNamesArray.map((k) => { 
-      return    <a  className={"ui item"+ (k===this.props.chosenProjectName ? " active" : "")} 
+      return    <a  className={"ui item"+ (k===pName ? " active" : "")} 
                     data-value={k} key={k} 
                     onClick={this.handleChangeSelectedProjectName.bind(this, k)}>
                     View assets in project "{k}"
                 </a>        
     })
+    if (choices.length > 0)
+    {
+      choices.push(<a className={"ui item"+ (null===pName ? " active" : "")} 
+                    data-value="__all" key="__all" 
+                    onClick={this.handleChangeSelectedProjectName.bind(this, null)}>
+                    all projects
+                </a>)
+    }
 
     // Create the       | ProjectSelect v |      UI
         
-    let pName = this.props.chosenProjectName
         
     return (
       <div>

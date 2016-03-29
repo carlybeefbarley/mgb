@@ -34,7 +34,7 @@ export default  UserAssetListRoute = React.createClass({
       showDeletedFlag: false,
       showStableFlag: false,
       selectedAssetKinds: _.map(AssetKindKeys, (k) => { return k } ),
-      projectSelected: null,    // Null means any/all. It's the only valid value if the user is not specified
+      projectSelected: null,    // A string.  Null means any/all. It's the only valid value if the user is not specified
       searchName: "",
       chosenSortBy: "edited"
     }
@@ -47,15 +47,15 @@ export default  UserAssetListRoute = React.createClass({
       // Route included a user-id for scope
       //Subscribe to assets labeled isPrivate?
       if (this.props.ownsProfile) {
-        handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.showDeletedFlag, this.state.showStableFlag);
+        handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.projectSelected, this.state.showDeletedFlag, this.state.showStableFlag);
       } else {
-        handle = Meteor.subscribe("assets.public", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.showDeletedFlag, this.state.showStableFlag);
+        handle = Meteor.subscribe("assets.public", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.projectSelected, this.state.showDeletedFlag, this.state.showStableFlag);
       }
     }
     else
     {
       // route did not include a user-id for scope
-      handle = Meteor.subscribe("assets.public", -1, this.state.selectedAssetKinds, this.state.searchName, this.state.showDeletedFlag, this.state.showStableFlag);
+      handle = Meteor.subscribe("assets.public", -1, this.state.selectedAssetKinds, this.state.searchName, this.state.projectSelected, this.state.showDeletedFlag, this.state.showStableFlag);
     }
     let sorts = { "edited": { updatedAt: -1}, "name": {name: 1}, "kind": {kind: 1} }
     let sorter = sorts[this.state.chosenSortBy]

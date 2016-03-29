@@ -23,11 +23,14 @@ if (Meteor.isServer) {
 
 // Can see all assets belonging to user
 // selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch,  showDeleted=false, showStable=false) {
+Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch, projectName=null,  showDeleted=false, showStable=false) {
   let selector = {
     isDeleted: showDeleted,
     ownerId: userId
   }
+  
+  if (projectName && projectName.length > 0)
+    selector["projectNames"] = projectName
   
   if (showStable === true)  // This means ONLY show stable assets
     selector["isCompleted"] = showStable;
@@ -44,13 +47,16 @@ Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch,  
 
 //Can see all assets
 // selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch, showDeleted=false, showStable=false) {
+Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch, projectName=null, showDeleted=false, showStable=false) {
   let selector = {
     isDeleted: showDeleted,
   }
   
   if (showStable === true)  // This means ONLY show stable assets
     selector["isCompleted"] = showStable
+
+  if (projectName && projectName.length > 0)
+    selector["projectNames"] = projectName
 
   if (userId && userId !== -1)
     selector["ownerId"] = userId
@@ -66,7 +72,7 @@ Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch,
 
 //Can see all assets
 // selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.public.withContent2', function(userId, selectedAssetKinds, nameSearch, showDeleted=false, showStable=false) {
+Meteor.publish('assets.public.withContent2', function(userId, selectedAssetKinds, nameSearch, projectName=null, showDeleted=false, showStable=false) {
   let selector = {
     isDeleted: showDeleted,
   }

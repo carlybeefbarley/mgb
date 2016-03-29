@@ -5,7 +5,6 @@ import {AssetKinds, AssetKindKeys} from '../../schemas/assets';
 
 export default class AssetCreateNew extends React.Component {
   // propTypes:{
-  //   defaultName: React.PropTypes.string,
   //   handleCreateAssetClick: React.PropTypes.func
   //   }
 
@@ -39,7 +38,7 @@ export default class AssetCreateNew extends React.Component {
           <div className="menu">
             <div className="item">
               <div className="ui transparent input">
-                <input className="fluid" ref="chosenNewAssetName" type="text" placeholder={this.props.defaultName}></input>
+                <input className="fluid" ref="chosenNewAssetName" type="text" placeholder="Name..."></input>
               </div>
             </div>
             {choices}

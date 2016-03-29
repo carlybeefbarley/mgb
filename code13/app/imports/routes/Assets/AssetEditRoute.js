@@ -6,7 +6,7 @@ import Spinner from '../../components/Spinner/Spinner';
 import {handleForms} from '../../components/Forms/FormDecorator';
 import Helmet from 'react-helmet';
 import AssetEdit from '../../components/Assets/AssetEdit';
-import UserItem from '../../components/Users/UserItem.js';
+import AssetCard from '../../components/Assets/AssetCard.js';
 
 import {AssetKinds} from '../../schemas/assets';
 import {logActivity} from '../../schemas/activity';
@@ -66,7 +66,7 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui nine wide column">
+        <div className="ui eight wide column">
 
           <div className="ui large left action input fluid">
             <div className="ui teal icon button">
@@ -78,17 +78,21 @@ export default AssetEditRoute = React.createClass({
                    defaultValue={asset.name}
                    onBlur={this.handleAssetNameChangeInteractive}></input>
           </div>
-
+        </div>
+        
+        <div className="ui two wide column">
+        &nbsp;
         </div>
 
-        <div className="seven wide column">
-          { !currUser ? null : 
-             <UserItem
-              name={currUser.name}
-              avatar={currUser.avatar}
-              createdAt={currUser.createdAt}
-              _id={currUser._id} />
-          }
+
+        <div className="six wide column">
+            <AssetCard
+            showHeader={false}
+            canEdit={this.props.currUser && asset.ownerId === this.props.currUser._id}
+            currUser={this.props.currUser}
+            asset={asset}
+            showEditButton={false}
+            showToast={this.props.showToast} />
         </div>
 
         <div className="sixteen wide column">

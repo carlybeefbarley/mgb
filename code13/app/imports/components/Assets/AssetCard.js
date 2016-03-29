@@ -13,6 +13,7 @@ export default AssetCard = React.createClass({
   mixins: [History],
   
   propTypes: {
+    showHeader: PropTypes.bool,
     asset: PropTypes.object,
     currUser: PropTypes.object,                             // currently Logged In user (not always provided)
     canEdit: PropTypes.bool                                 // Can be false
@@ -20,21 +21,25 @@ export default AssetCard = React.createClass({
 
   getDefaultProps: function()  {
     return {
-      showEditButton: true
+      showEditButton: true,
+      showHeader: true
     };  
   },
 
   loadThumbnail(asset)
   {
-    if (asset.hasOwnProperty("thumbnail"))
+    if (this.props.showHeader && asset.hasOwnProperty("thumbnail"))
       this.loadPreviewFromDataURI(asset.thumbnail)
   },
 
   componentDidMount()
   {
-    this.previewCanvas =  ReactDOM.findDOMNode(this.refs.thumbnailCanvas);
-    this.previewCtx = this.previewCanvas.getContext('2d');
-    this.loadThumbnail(this.props.asset)
+    if (this.props.showHeader)
+    {
+      this.previewCanvas =  ReactDOM.findDOMNode(this.refs.thumbnailCanvas);
+      this.previewCtx = this.previewCanvas.getContext('2d');
+      this.loadThumbnail(this.props.asset)
+    }
   },
 
   componentDidUpdate(prevProps,  prevState)
@@ -96,6 +101,7 @@ export default AssetCard = React.createClass({
         <div className="content">
           
           { /* CONTENT */ }
+          { !this.props.showHeader ? null : 
           <div className="ui right floated image">
             <div className="ui move left reveal">
               <div className="visible content">
@@ -111,32 +117,35 @@ export default AssetCard = React.createClass({
               </div>
             </div>
           </div>
+          }
           
-          
+          { !this.props.showHeader ? null : 
           <div className="header">
             <i className={assetKindIcon}></i>
             <small>{asset.name}</small>
           </div>
-          
+          }
         
           <div className="meta">
             <small>
-              {asset.isDeleted ? <p style={{color: "red"}}>[DELETED]</p> : null }
-              <br></br>
+              {asset.isDeleted ? <p style={{color: "red"}}>[DELETED]<br></br></p> : null }              
               Owner: 
               <Link to={`/user/${asset.ownerId}`}>
                 {ownerName ? ownerName : `#${asset.ownerId}`}
               </Link>
-              <br></br>
+            </small>
+          </div>
+          <div className="meta">
+            <small>          
               {editProjects}
-              <br></br>
-              Updated{ago}
+              { !this.props.showHeader ? null : "Updated " + ago }
             </small>
           </div>
         </div>     
         { /* End Content */}
         
-        { /* TODO: Add content section maybe editable. Also improve how meta looks above - less space between lines*/}
+
+        { !this.props.showHeader ? null : 
         <div className="extra content">
           <div className="ui three small buttons">
             <div className="ui basic green compact button" onClick={this.handleEditClick}>
@@ -147,14 +156,13 @@ export default AssetCard = React.createClass({
               <i className={ asset.isCompleted ? "ui toggle on icon" : "ui toggle off icon"}></i>
               <small>Stable</small>
             </div>
-            { !showEditButton ? null :
-              <div className="ui basic red compact button" onClick={this.handleDeleteClick}>
-                <i className={asset.isDeleted ? "ui red trash icon" : "ui grey trash outline icon"}></i>
-                <small>{asset.isDeleted ? "Undelete" : "Delete" }</small>
-              </div>
-            }
+            <div className="ui basic red compact button" onClick={this.handleDeleteClick}>
+              <i className={asset.isDeleted ? "ui red trash icon" : "ui grey trash outline icon"}></i>
+              <small>{asset.isDeleted ? "Undelete" : "Delete" }</small>
+            </div>
           </div>
         </div>
+        }
       </div>
       );
   },

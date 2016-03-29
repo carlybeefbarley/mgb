@@ -120,9 +120,9 @@ export default AssetCard = React.createClass({
           }
           
           { !this.props.showHeader ? null : 
-          <div className="header">
-            <i className={assetKindIcon}></i>
-            <small>{asset.name}</small>
+          <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}>
+            <i style={{"color": "black"}} className={assetKindIcon}></i>
+            <small>{asset.name || "(untitled)"}</small>
           </div>
           }
         

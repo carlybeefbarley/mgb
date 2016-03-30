@@ -875,7 +875,7 @@ export default class EditGraphic extends React.Component {
               <i className="tasks icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
             </a>
             <span>&nbsp;&nbsp;</span>
-            <AssetUrlGenerator urlOptions={ [ { "msg":"PNG", "url":"/api/asset/png/"+this.props.asset._id } ] } />
+            <AssetUrlGenerator asset={this.props.asset} />
 
 
           </div>

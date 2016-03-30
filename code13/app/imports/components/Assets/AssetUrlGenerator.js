@@ -1,21 +1,38 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import {Link} from 'react-router';
 
-export default class AssetUrlGenerator extends React.Component {
-  // propTypes:{
-  //   urlOptions: React.PropTypes.array     // array of { msg: ___, url: ___}
-  //   }
+export default AssetUrlGenerator = React.createClass({
+  propTypes: {
+    asset: PropTypes.object
+  },
+    
+  //             <AssetUrlGenerator urlOptions={ [ { "msg":"PNG", "url":"/api/asset/png/"+this.props.asset._id } ] } />
 
-  constructor(props) {
-    super(props);
-    this.defaultProps = {
-      defaultName: 'Name...',
-    };
-  }
+  generateUrlOptions: function(asset)
+  {
+    let retval = []
+    switch (asset.kind) {
+      case 'graphic':
+        retval.push( { "msg":"PNG by ID", "url":"/api/asset/png/"+asset._id } )
+        break;
+      case 'code':
+        retval.push( { "msg":"code by ID", "url":"/api/asset/code/"+asset._id } )
+        break;
+      case 'map':
+        retval.push( { "msg":"map by ID", "url":"/api/asset/map/"+asset._id })
+        break;
+      default:
+        break;
+    }
+    return retval
+  },
 
-  render() {
+
+  render: function() {
     // Build the list of 'Create New Asset' Menu choices
-    let choices = this.props.urlOptions.map((opt) => {
+    let urlOptions = this.generateUrlOptions(this.props.asset)
+    
+    let choices = urlOptions.map((opt) => {
       return   <a className="item" href={opt.url} target="_blank" data-value={opt.url} key={opt.msg} onClick={this.handleAssetUrlClick.bind(this,opt)}>
                  {opt.msg} link: {opt.url}
                </a>
@@ -30,9 +47,9 @@ export default class AssetUrlGenerator extends React.Component {
           </div>
         </div>
     );
-  }
+  },
 
   handleAssetUrlClick(opt)
   {
   }
-}
+})

@@ -6,6 +6,8 @@ import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 import {logActivity} from '../../schemas/activity';
 import ProjectMembershipEditor from './ProjectMembershipEditor';
+import AssetUrlGenerator from './AssetUrlGenerator.js';
+
 
 //TODO: Toast/error
 
@@ -147,7 +149,7 @@ export default AssetCard = React.createClass({
 
         { !this.props.showHeader ? null : 
         <div className="extra content">
-          <div className="ui three small buttons">
+          <div className="ui four small buttons">
             <div className="ui basic green compact button" onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
               <small>Edit</small>
@@ -157,8 +159,11 @@ export default AssetCard = React.createClass({
               <small>Stable</small>
             </div>
             <div className="ui basic red compact button" onClick={this.handleDeleteClick}>
-              <i className={asset.isDeleted ? "ui red trash icon" : "ui grey trash outline icon"}></i>
+              <i className={!asset.isDeleted ? "ui red trash icon" : "ui grey trash outline icon"}></i>
               <small>{asset.isDeleted ? "Undelete" : "Delete" }</small>
+            </div>
+            <div className="ui basic black compact button" >
+            <AssetUrlGenerator asset={asset} /><small>URL</small>
             </div>
           </div>
         </div>

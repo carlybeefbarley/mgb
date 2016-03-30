@@ -16,7 +16,7 @@ export default  AssetList = React.createClass({
             currUser={this.props.currUser}
             asset={asset}
             key={asset._id}
-            showEditButton={this.props.currUser && this.props.currUser._id === asset.ownerId}
+            showEditButton={true}
             showToast={this.props.showToast} />
       );
     })

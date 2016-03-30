@@ -67,7 +67,7 @@ Assets;
 require('fs').readFile.call;
 
 
-// REST API
+// REST API.  These should match what is in AssetUrlGenerator.js
 // TODO - move to separate file/folder and then IMPORT
 var RestApi = new Restivus({
     useDefaultAuth: true,
@@ -102,7 +102,7 @@ RestApi.addRoute('asset/png/:id', {authRequired: false}, {
     }
   });
 
-RestApi.addRoute('asset/text/:id', {authRequired: false}, {
+RestApi.addRoute('asset/json/:id', {authRequired: false}, {
     get: function () {
         var asset = Azzets.findOne(this.urlParams.id);
         if (asset)

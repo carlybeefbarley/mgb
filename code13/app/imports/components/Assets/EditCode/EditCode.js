@@ -246,7 +246,7 @@ export default class EditCode extends React.Component {
        
     return (
       <div>       
-        <div style={ {"minHeight": "600px", "height": "auto"} }>               
+        <div style={ {"minHeight": "700px", "height": "auto"} }>               
           <SplitPane split="vertical" minSize="50">
             
             <div className="CodeMirror" style={{  "height": "100%"}}> 

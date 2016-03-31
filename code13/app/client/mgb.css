@@ -2,3 +2,7 @@
   overflow: visible !important;
   z-index: 1000 !important
 }
+
+#root { 
+  height: 100%;
+}

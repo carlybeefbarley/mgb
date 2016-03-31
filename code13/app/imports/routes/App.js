@@ -23,7 +23,7 @@ export default App = React.createClass({
       showToast: false,
       toastMsg: '',
       toastType: 'success',
-      activityHistoryLimit: 10
+      activityHistoryLimit: 20
     };
   },
 

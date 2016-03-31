@@ -30,14 +30,14 @@ var schema = {
 // Info on each type of activty, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const ActivityTypes = {
-  "asset.create": { icon: "plus",             pri: 10,  description: "Create new asset" },
+  "asset.create": { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.edit":   { icon: "edit",             pri: 15,  description: "Edit asset" },
   "asset.stable": { icon: "green checkmark",  pri: 6,   description: "Asset marked stable" },
   "asset.unstable": { icon: "red checkmark",  pri: 6,   description: "Asset marked stable" },
   "asset.rename": { icon: "write",            pri: 11,  description: "Rename asset" },  
   "asset.delete": { icon: "red trash",        pri: 12,  description: "Delete asset" },
   "asset.undelete": { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
-  "asset.project": { icon: "folder outline", pri: 12,  description: "Change Asset's project" },
+  "asset.project": { icon: "folder outline",  pri: 12,  description: "Change Asset's project" },
   
   "project.create": { icon: "green folder",   pri: 3,  description: "Create project" },
    

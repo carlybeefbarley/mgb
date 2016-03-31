@@ -8,6 +8,8 @@ export default AssetUrlGenerator = React.createClass({
     
   //             <AssetUrlGenerator urlOptions={ [ { "msg":"PNG", "url":"/api/asset/png/"+this.props.asset._id } ] } />
 
+
+  // These should match what is in RestApi.addRoute() calls
   generateUrlOptions: function(asset)
   {
     let retval = []
@@ -19,7 +21,7 @@ export default AssetUrlGenerator = React.createClass({
         retval.push( { "msg":"code by ID", "url":"/api/asset/code/"+asset._id } )
         break;
       case 'map':
-        retval.push( { "msg":"map by ID", "url":"/api/asset/map/"+asset._id })
+        retval.push( { "msg":"map by ID", "url":"/api/asset/json/"+asset._id })
         break;
       default:
         break;

@@ -15,7 +15,7 @@ export default ProjectMembershipEditor = React.createClass({
 
     const projectNames = "In projects: " + (this.props.chosenProjectNames.length === 0 ? "none" :  this.props.chosenProjectNames.join(", ") )
 
-    if (!this.props.canEdit || this.props.availableProjectNamesArray.length === 0)
+    if (!this.props.canEdit || !this.props.availableProjectNamesArray || this.props.availableProjectNamesArray.length === 0)
       return <div>{projectNames}</div>
 
     // OK, so we can edit! Let's do this!

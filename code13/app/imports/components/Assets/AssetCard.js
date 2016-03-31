@@ -17,12 +17,14 @@ export default AssetCard = React.createClass({
   propTypes: {
     showHeader: PropTypes.bool,
     asset: PropTypes.object,
-    currUser: PropTypes.object,                             // currently Logged In user (not always provided)
-    canEdit: PropTypes.bool                                 // Can be false
+    currUser: PropTypes.object,                 // currently Logged In user (not always provided)
+    canEdit: PropTypes.bool,                    // Whether changes (like stable, delete etc) are allowed. Can be false
+    showEditButton: PropTypes.bool              // Shall we *show* the Edit button
   },
 
   getDefaultProps: function()  {
     return {
+      canEdit: false,
       showEditButton: true,
       showHeader: true
     };  
@@ -150,15 +152,18 @@ export default AssetCard = React.createClass({
         { !this.props.showHeader ? null : 
         <div className="extra content">
           <div className="ui four small buttons">
-            <div className="ui basic green compact button" onClick={this.handleEditClick}>
+            <div className={(this.props.showEditButton ? "" : "disabled ") + "ui basic green compact button"} 
+                 onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
               <small>Edit</small>
             </div>
-            <div className="ui basic blue compact button" onClick={this.handleCompletedClick} >
+            <div className={(this.props.canEdit ? "" : "disabled ") + "ui basic blue compact button"} 
+                 onClick={this.handleCompletedClick} >
               <i className={ asset.isCompleted ? "ui toggle on icon" : "ui toggle off icon"}></i>
               <small>Stable</small>
             </div>
-            <div className="ui basic red compact button" onClick={this.handleDeleteClick}>
+            <div className={(this.props.showEditButton ? "" : "disabled ") + "ui basic red compact button"}
+                 onClick={this.handleDeleteClick}>
               <i className={!asset.isDeleted ? "ui red trash icon" : "ui grey trash outline icon"}></i>
               <small>{asset.isDeleted ? "Undelete" : "Delete" }</small>
             </div>

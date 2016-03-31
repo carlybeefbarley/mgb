@@ -256,13 +256,43 @@ export default class EditCode extends React.Component {
             </div>            
             
             <div className="ui styled accordion">
+              
+              { /* Code run/stop */}                   
               <div className="active title">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
-                  Code Advisor
+                  Run Code&nbsp;
                   </span>
+                <div className="ui mini icon buttons">
+                    { !this.state.isPlaying ? 
+                    <a className={"ui mini icon button"} onClick={this.handleRun.bind(this)}>
+                        <i className={"play icon"}></i>
+                    </a>
+                    :
+                    <a className={"ui mini icon button"} onClick={this.handleStop.bind(this)}>
+                        <i className={"stop icon"}></i>
+                    </a>
+                    }
+                </div>
               </div>
               <div className="active content">
+                <iframe 
+                  key={ this.state.gameRenderIterationKey } 
+                  id="iFrame1" 
+                  width="610" height="460" 
+                  sandbox='allow-modals allow-scripts' 
+                  srcDoc={iframeScripts.phaser244}>
+                </iframe>
+              </div>
+              
+              { /* Keyboard shortcuts */}
+              <div className="title">
+                <span className="explicittrigger">
+                  <i className="dropdown icon"></i>
+                  Code Editor Keyboard shortcuts
+                  </span>
+              </div>
+              <div className="content">
                 <div className="ui divided selection list">
                 {/* TODO: use full list from view-source:https://codemirror.net/demo/search.html */}
                   <a className="item">
@@ -302,33 +332,8 @@ export default class EditCode extends React.Component {
                     Open/Close fold at current line
                   </a>
                 </div>
-              </div>                
-              <div className="active title">
-                <span className="explicittrigger">
-                  <i className="dropdown icon"></i>
-                  Run Code&nbsp;
-                  </span>
-                <div className="ui mini icon buttons">
-                    { !this.state.isPlaying ? 
-                    <a className={"ui mini icon button"} onClick={this.handleRun.bind(this)}>
-                        <i className={"play icon"}></i>
-                    </a>
-                    :
-                    <a className={"ui mini icon button"} onClick={this.handleStop.bind(this)}>
-                        <i className={"stop icon"}></i>
-                    </a>
-                    }
-                </div>
-              </div>
-              <div className="active content">
-                <iframe 
-                  key={ this.state.gameRenderIterationKey } 
-                  id="iFrame1" 
-                  width="610" height="460" 
-                  sandbox='allow-modals allow-scripts' 
-                  srcDoc={iframeScripts.phaser244}>
-                </iframe>
-              </div>
+              </div>           
+
             </div>
           </SplitPane>
         </div>

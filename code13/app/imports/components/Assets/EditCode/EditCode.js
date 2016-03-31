@@ -67,6 +67,7 @@ import cm_addon_tern from "codemirror/addon/tern/tern";
 
 
 import { iframeScripts } from './sandbox/SandboxScripts.js';
+import { templateCode } from './templates/TemplateCode.js'
 
 // Code asset - Data format:
 //
@@ -237,10 +238,26 @@ export default class EditCode extends React.Component {
                      isPlaying: false
                    } )
   }
+  
+  
+  pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
+    let newValue = item.code
+    this.codeMirror.setValue(newValue)
+    this._currentCodemirrorValue = newValue;
+    let newC2 = { src: newValue }
+    this.props.handleContentChange( newC2, "", `Template code: ${item.label}`)
+  }
 
   render() {
     if (!this.props.asset) 
       return null;
+      
+    const templateCodeChoices = templateCode.map(item => {
+      return  <a className="item" key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
+                <div className="ui horizontal label">{item.label}</div>
+                {item.description}
+              </a>
+    })
 
     let asset = this.props.asset; 
        
@@ -256,6 +273,20 @@ export default class EditCode extends React.Component {
             </div>            
             
             <div className="ui styled accordion">
+              
+              
+              { /* Clean sheet helper! */}                   
+              <div className="title">
+                <span className="explicittrigger">
+                  <i className="dropdown icon"></i>
+                  Clean Sheet helper
+                  </span>                
+              </div>
+              <div className="content">
+                <div className="ui divided selection list">
+                  {templateCodeChoices}
+                </div>
+              </div>
               
               { /* Code run/stop */}                   
               <div className="active title">

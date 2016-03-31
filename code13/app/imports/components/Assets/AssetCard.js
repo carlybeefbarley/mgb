@@ -183,7 +183,7 @@ export default AssetCard = React.createClass({
       });
       
     let projectsString = newChosenProjectNamesArray.join(", ")
-    logActivity("asset.edit",  `In projects ${projectsString}`, null, this.props.asset);
+    logActivity("asset.project",  `now in projects ${projectsString}`, null, this.props.asset);
   },
 
 

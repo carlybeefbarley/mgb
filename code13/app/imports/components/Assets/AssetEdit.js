@@ -32,7 +32,7 @@ export default class AssetEdit extends React.Component {
     }
   }
 
-  handleContentChange(content2Object, thumbnail)
+  handleContentChange(content2Object, thumbnail, changeText="content change")
   {
     let asset = this.props.asset;
     let canEdit = true; // TODO: Something based on this.props.ownsProfile ??
@@ -43,7 +43,7 @@ export default class AssetEdit extends React.Component {
       }
     });
     
-    logActivity("asset.edit",  "content change", null, this.props.asset);
+    logActivity("asset.edit", changeText, null, this.props.asset);
   }
 
   render() {

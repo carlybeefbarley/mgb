@@ -211,7 +211,7 @@ export default class EditCode extends React.Component {
       const newValue = doc.getValue();
       this._currentCodemirrorValue = newValue;
       let newC2 = { src: newValue }
-      this.props.handleContentChange( newC2, "" )
+      this.props.handleContentChange( newC2, "", "Edit code" )
       this.codeMirrorUpdateHints(true)
     }
   }

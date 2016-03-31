@@ -352,7 +352,7 @@ export default class EditGraphic extends React.Component {
       let c2 = this.props.asset.content2
       c2.width = Math.min(c2.width+dw, this.mgb_MAX_BITMAP_WIDTH)
       c2.height = Math.min(c2.height+dh, this.mgb_MAX_BITMAP_HEIGHT)
-      this.handleSave()
+      this.handleSave(`Resize image`);      // Less spammy in activity log      
     }
     // TODO: Toast on error
     // TODO: Reduce zoom if very large
@@ -369,7 +369,7 @@ export default class EditGraphic extends React.Component {
       this.mgb_toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
 
       if (this.mgb_toolChosen.supportsDrag === false && this.mgb_toolChosen.changesImage === true)
-        this.handleSave()   // This is a one-shot tool, so save it's results now
+        this.handleSave(`Drawing`)   // This is a one-shot tool, so save it's results now
     }
   }
 
@@ -418,7 +418,7 @@ export default class EditGraphic extends React.Component {
     if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
       this.mgb_toolChosen.handleMouseUp(this.collateDrawingToolEnv(event))
       if (this.mgb_toolChosen.changesImage === true)
-        this.handleSave()
+        this.handleSave(`Drawing`)
       this.mgb_toolActive = false
     }
   }
@@ -429,7 +429,7 @@ export default class EditGraphic extends React.Component {
     this.setStatusBarInfo()
     if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
       this.mgb_toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
-      this.handleSave()
+      this.handleSave(`Drawing`)
       this.mgb_toolActive = false
     }
   }
@@ -491,7 +491,7 @@ export default class EditGraphic extends React.Component {
     let newFrameName = "Frame " + (fN.length+1).toString()
     fN.push(newFrameName)
     this.props.asset.content2.frameData.push([])
-    this.handleSave()
+    this.handleSave('Add frame to graphic')
     this.forceUpdate()
   }
 
@@ -516,7 +516,7 @@ export default class EditGraphic extends React.Component {
 
       [ fN[currentIdx],  fN[currentIdx-1] ] =  [  fN[currentIdx-1],  fN[currentIdx] ]
       this.doSwapCanvases(currentIdx, currentIdx-1)
-      this.handleSave()
+      this.handleSave(`Change frame order`)
       this.handleSelectFrame(currentIdx-1)
       this.forceUpdate()
     }
@@ -532,7 +532,7 @@ export default class EditGraphic extends React.Component {
       this.doSaveStateForUndo("Move Frame Down");
       [ fN[currentIdx],  fN[currentIdx+1] ] =  [  fN[currentIdx+1],  fN[currentIdx] ]
       this.doSwapCanvases(currentIdx, currentIdx+1)
-      this.handleSave()
+      this.handleSave(`Change frame order`)
       this.handleSelectFrame(currentIdx+1)
       this.forceUpdate()     // Needed since the Reactivity doesn't look down this far (true?)
     }
@@ -559,16 +559,14 @@ export default class EditGraphic extends React.Component {
     let $a = $(ReactDOM.findDOMNode(this))
     $a.find('.hazPopup').popup('hide')  
 
-
-    this.handleSave()
-//    this.forceUpdate()      // Needed since the Reactivity doesn't look down this far (true?)
+    this.handleSave(`Delete frame`)
   }
 
 
   handleFrameNameChangeInteractive(idx, event) {
     this.doSaveStateForUndo("Rename Frame")
     this.props.asset.content2.frameNames[idx] = event.target.value
-    this.handleSave() // TODO: Do this OnBlur() so we don't spam the DB so much
+    this.handleSave(`Rename frame #${idx+1}`) // TODO: Do this OnBlur() so we don't spam the DB so much
   }
 
 
@@ -635,13 +633,14 @@ export default class EditGraphic extends React.Component {
       let zombie = u.pop()
       this.props.handleContentChange(
         zombie.savedContent2,
-        zombie.savedContent2.frameData[0][0]         // MAINTAIN: Match semantics of handleSave()
+        zombie.savedContent2.frameData[0][0],         // MAINTAIN: Match semantics of handleSave()
+        "Undo changes"
       )
     }
   }
 
 
-  handleSave()    // TODO: Maybe _.debounce() this?
+  handleSave(changeText="change graphic")    // TODO: Maybe _.debounce() this?
   {
     let asset = this.props.asset;
     let c2    = asset.content2;
@@ -651,7 +650,7 @@ export default class EditGraphic extends React.Component {
       c2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
     }
     asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
-    this.props.handleContentChange(c2, asset.thumbnail);
+    this.props.handleContentChange(c2, asset.thumbnail, changeText);
   }
 
   /// Drag & Drop of image files over preview and editor
@@ -714,7 +713,7 @@ export default class EditGraphic extends React.Component {
           self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
           if (idx === self.state.selectedFrameIdx)
             self.updateEditCanvasFromSelectedPreviewCanvas();
-          self.handleSave();
+          self.handleSave(`Copy frame to frame #${idx+1}`);
         }
       };
       img.src = mgbImageDataUri; // is the data URL because called
@@ -749,7 +748,7 @@ export default class EditGraphic extends React.Component {
             self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
             if (idx === self.state.selectedFrameIdx)
                 self.updateEditCanvasFromSelectedPreviewCanvas();
-            self.handleSave();
+            self.handleSave(`Drag external file to frame #${idx+1}`);
           }
         };
         img.src = theUrl; // is the data URL because called
@@ -863,7 +862,7 @@ export default class EditGraphic extends React.Component {
               <i className="icon zoom"></i>Zoom {zoom}x
             </a>
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label hazPopup" onClick={this.handleSave.bind(this)}
+            <a className="ui label hazPopup" onClick={this.handleSave.bind(this, "Manual save")}
                data-content="Changes are continuously saved and updated to other viewers "
                data-variation="tiny"
                data-position="bottom center">

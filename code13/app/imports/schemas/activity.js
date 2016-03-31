@@ -94,6 +94,7 @@ export function logActivity(activityType, description, thumbnail, asset) {
  
  let username = Meteor.user().profile.name;
  
+ 
   var logData = {
     "activityType":         activityType, // One of the keys of the ActivityTypes object defined above
     "priority":             ActivityTypes.getPri(activityType),
@@ -114,10 +115,12 @@ export function logActivity(activityType, description, thumbnail, asset) {
   };
 
   let fSkipLog = false;
+//console.log("ACTIVITY: " + description + "     PRIORDESC: " + (priorLog ? priorLog.description : "none"))
 
   if (priorLog && 
       priorLog.activityType === logData.activityType &&
       logData.activityType !== "asset.rename" &&              // This is coallesced already in AssetEditRoute
+      priorLog.description === logData.description &&         // This can be a bit noisy for edit.
       priorLog.toAssetId === logData.toAssetId)
     fSkipLog = true;
   
@@ -130,7 +133,7 @@ export function logActivity(activityType, description, thumbnail, asset) {
     Meteor.call('Activity.log', logData, (err, res) => {
       if (err) {
         console.log("Could not log Activity: ", err.reason)
-      }
+      }       
     })    
   }
 

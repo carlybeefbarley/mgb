@@ -241,6 +241,7 @@ export default  UserAssetListRoute = React.createClass({
       if (error) {
           alert("cannot create asset because: " + error.reason);
       } else {
+        newAsset._id = result; // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset);
         this.history.pushState(null, `/assetEdit/${result}`)
       }

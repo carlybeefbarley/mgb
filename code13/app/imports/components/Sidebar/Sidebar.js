@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {Link, History} from 'react-router';
 import {ActivityTypes} from '../../schemas/activity.js';
 import reactMixin from 'react-mixin';
+import {AssetKinds} from '../../schemas/assets';
 
 @reactMixin.decorate(History)
 export default class Sidebar extends Component {
@@ -61,8 +62,10 @@ export default class Sidebar extends Component {
               </Link>
       }
       else if (act.activityType.startsWith("asset.")) {
+        const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind);
+
         return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i}>
-                <i className={iconClass}></i>{act.byUserName}: '{act.toAssetName}' {act.description} 
+                <i className={iconClass}></i>{act.byUserName}: <i className={assetKindIconClassName}></i>'{act.toAssetName}' {act.description} 
               </Link>
       } 
       else if (act.activityType.startsWith("project.")) {

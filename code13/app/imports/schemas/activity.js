@@ -115,7 +115,6 @@ export function logActivity(activityType, description, thumbnail, asset) {
   };
 
   let fSkipLog = false;
-//console.log("ACTIVITY: " + description + "     PRIORDESC: " + (priorLog ? priorLog.description : "none"))
 
   if (priorLog && 
       priorLog.activityType === logData.activityType &&

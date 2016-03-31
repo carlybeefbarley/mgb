@@ -361,13 +361,14 @@ export default class EditGraphic extends React.Component {
 
   handleMouseDown(event) {
     if (this.mgb_toolChosen !== null) {
-      this.doSaveStateForUndo(this.mgb_toolChosen.name)   // TODO: Add a flag for CHANGES_IMAGE so stuff like eyedropper doesn't save an undo
+      if (this.mgb_toolChosen.changesImage === true)
+        this.doSaveStateForUndo(this.mgb_toolChosen.name)   // So that tools like eyedropper don't save and need undo
       if (this.mgb_toolChosen.supportsDrag === true)
         this.mgb_toolActive = true
 
       this.mgb_toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
 
-      if (this.mgb_toolChosen.supportsDrag === false)
+      if (this.mgb_toolChosen.supportsDrag === false && this.mgb_toolChosen.changesImage === true)
         this.handleSave()   // This is a one-shot tool, so save it's results now
     }
   }
@@ -416,7 +417,8 @@ export default class EditGraphic extends React.Component {
   {
     if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
       this.mgb_toolChosen.handleMouseUp(this.collateDrawingToolEnv(event))
-      this.handleSave()
+      if (this.mgb_toolChosen.changesImage === true)
+        this.handleSave()
       this.mgb_toolActive = false
     }
   }

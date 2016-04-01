@@ -67,7 +67,8 @@ import cm_addon_tern from "codemirror/addon/tern/tern";
 
 
 import { iframeScripts } from './sandbox/SandboxScripts.js';
-import { templateCode } from './templates/TemplateCode.js'
+import { templateCode } from './templates/TemplateCode.js';
+import FunctionDescription from './tern/FunctionDescription.js';
 
 // Code asset - Data format:
 //
@@ -83,7 +84,10 @@ export default class EditCode extends React.Component {
     this.state = {
       gameRenderIterationKey: 0,
       isPlaying: false,
-      previewAssetIdsArray: []        // Array of strings with asset ids.
+      previewAssetIdsArray: [],        // Array of strings with asset ids.
+      
+      functionHelp: undefined,
+      functionArgPos: -1
     }
     this.hintWidgets = [];
   }
@@ -187,6 +191,9 @@ export default class EditCode extends React.Component {
     // TODO: Can we look at the JSHINT results that Codemirror has instead of re-running it?
     var editor = this.codeMirror
     var widgets = this.hintWidgets
+    var self = this;
+    var ts=CodeMirror.tern;       // TernServer
+
     this.codeMirror.operation(function() {
 
       let cpos = editor.getCursor()
@@ -194,6 +201,25 @@ export default class EditCode extends React.Component {
         editor.removeLineWidget(widgets[i]);
         
       widgets.length = 0;
+      
+      
+      ////
+      let cm=editor;
+      let ts=CodeMirror.tern;
+      
+      let argPos = -1
+      if (!cm.somethingSelected()) {
+         var state = cm.getTokenAt(cm.getCursor()).state;
+        var inner = CodeMirror.innerMode(cm.getMode(), state);
+        if (inner.mode.name === "javascript") {
+          var lex = inner.state.lexical;
+          if (lex.info === "call") argPos = lex.pos || 0
+        }            
+      }
+      self.setState( { functionHelp: ts.cachedArgHints, functionArgPos: argPos})      
+      
+      
+      ///
 
       if (fSourceMayHaveChanged === true)
         JSHINT(editor.getValue());
@@ -279,10 +305,10 @@ export default class EditCode extends React.Component {
     const previewIdThings = this.state.previewAssetIdsArray.map( id => {
       return <a className="ui label" key={id}>
                 <img className="ui right spaced avatar image" src={`/api/asset/png/${id}`}></img>
-                {id}
+                URL references asset ID#{id}
               </a>
     })
-
+    
     let asset = this.props.asset
     let styleH100 = {"height": "100%"}
        
@@ -302,10 +328,11 @@ export default class EditCode extends React.Component {
               <div className="active title">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
-                  Current line help
+                  Current line/selection code help
                   </span>                
               </div>
               <div className="active content">
+                <FunctionDescription functionHelp={this.state.functionHelp} functionArgPos={this.state.functionArgPos} />
                 <div className="ui divided selection list">
                   {previewIdThings}
                 </div>

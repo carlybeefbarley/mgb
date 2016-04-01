@@ -28,6 +28,7 @@ import cm_fold_code from 'codemirror/addon/fold/foldcode';
 import cm_fold_gutter from 'codemirror/addon/fold/foldgutter';
 import cm_fold_brace from 'codemirror/addon/fold/brace-fold';
 import cm_fold_comment from 'codemirror/addon/fold/comment-fold';
+
 // import cm_fold_ from 'codemirror/addon/fold/xml-fold';
 // import cm_fold_ from 'codemirror/addon/fold/markdown-fold';
 
@@ -35,6 +36,9 @@ import cm_dialog from 'codemirror/addon/dialog/dialog';
 
 import cm_annotatescrollbar from 'codemirror/addon/scroll/annotatescrollbar';
 import cm_matchesonscrollbar from 'codemirror/addon/search/matchesonscrollbar';
+
+import cm_display_placeholder from 'codemirror/addon/display/placeholder';
+
 
 import cm_jumptoline from 'codemirror/addon/search/jump-to-line';
 
@@ -132,6 +136,7 @@ export default class EditCode extends React.Component {
         "'.'": this.codeEditPassAndHint,
         "Ctrl-Space": function(cm) { CodeMirror.tern.complete(cm); },
         "Ctrl-I": function(cm) { CodeMirror.tern.showType(cm); },
+        "Ctrl-D": function(cm) { CodeMirror.tern.showDocs(cm); },
         "Ctrl-B": function(cm) { CodeMirror.tern.jumpToDef(cm); },
         "Alt-,": function(cm) { CodeMirror.tern.jumpBack(cm); },
         "Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); },
@@ -194,6 +199,7 @@ export default class EditCode extends React.Component {
     var self = this;
     var ts=CodeMirror.tern;       // TernServer
 
+    // operation() is a way to prevent CodeMirror updates until the function completes
     this.codeMirror.operation(function() {
 
       let cpos = editor.getCursor()
@@ -203,7 +209,7 @@ export default class EditCode extends React.Component {
       widgets.length = 0;
       
       
-      ////
+      //// TODO: This doesn't need to be here. It's not a tern callback like I thought!
       let cm=editor;
       let ts=CodeMirror.tern;
       
@@ -318,7 +324,8 @@ export default class EditCode extends React.Component {
             <div className="CodeMirror" style={styleH100}> 
               <textarea ref="textarea"
                         defaultValue={asset.content2.src} 
-                        autoComplete="off"/>
+                        autoComplete="off"
+                        placeholder="Start typing code here..."/>
             </div>            
             
             <div className="ui styled accordion">
@@ -346,6 +353,7 @@ export default class EditCode extends React.Component {
                   </span>                
               </div>
               <div className="content">
+              foobar
                 <div className="ui divided selection list">
                   {templateCodeChoices}
                 </div>
@@ -400,6 +408,10 @@ export default class EditCode extends React.Component {
                   <a className="item">
                     <div className="ui horizontal label">Ctrl-I</div>
                     Show 'type' of thing at cursor
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-D</div>
+                    Show 'Docs' of thing at cursor
                   </a>
                   <a className="item">
                     <div className="ui horizontal label">Ctrl-B</div>

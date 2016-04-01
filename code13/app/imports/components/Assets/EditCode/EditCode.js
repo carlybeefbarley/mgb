@@ -184,6 +184,16 @@ export default class EditCode extends React.Component {
   // This gets _.debounced in componentDidMount()
   codeMirrorUpdateHints(fSourceMayHaveChanged) {
     
+    if (this._currentCodemirrorValue.length === 0)
+    {
+      $(".hideIfCleanSheet").hide()
+      $(".showIffCleanSheet").show()
+    }
+    else
+    {
+      $(".hideIfCleanSheet").show()
+      $(".showIffCleanSheet").hide()
+    }   
     // Extract Asset IDs in current line for 'Current line help' view
     let thisLine = this.codeMirror.getSelection(';');
     if (!thisLine || thisLine.length === 0)
@@ -303,7 +313,7 @@ export default class EditCode extends React.Component {
       
     const templateCodeChoices = templateCode.map(item => {
       return  <a className="item" key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
-                <div className="ui horizontal label">{item.label}</div>
+                <div className="ui green horizontal label">{item.label}</div>
                 {item.description}
               </a>
     })
@@ -332,13 +342,13 @@ export default class EditCode extends React.Component {
               
               
                 { /* Current Line/Selection  helper! */}                   
-              <div className="active title">
+              <div className="active title hideIfCleanSheet">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
                   Current line/selection code help
                   </span>                
               </div>
-              <div className="active content">
+              <div className="active content hideIfCleanSheet">
                 <FunctionDescription functionHelp={this.state.functionHelp} functionArgPos={this.state.functionArgPos} />
                 <div className="ui divided selection list">
                   {previewIdThings}
@@ -346,21 +356,21 @@ export default class EditCode extends React.Component {
               </div>
               
               { /* Clean sheet helper! */}                   
-              <div className="title">
+              <div className="active title showIffCleanSheet">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
                   Clean Sheet helper
                   </span>                
               </div>
-              <div className="content">
-              foobar
+              <div className="active content showIffCleanSheet">
+              If you like, you can click one of the following buttons to past some useful template code into your empty file
                 <div className="ui divided selection list">
                   {templateCodeChoices}
                 </div>
               </div>
               
               { /* Code run/stop */}                   
-              <div className="active title">
+              <div className="active title hideIfCleanSheet">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
                   Run Code&nbsp;
@@ -377,7 +387,7 @@ export default class EditCode extends React.Component {
                     }
                 </div>
               </div>
-              <div className="active content">
+              <div className="active content hideIfCleanSheet">
                 <iframe 
                   key={ this.state.gameRenderIterationKey } 
                   id="iFrame1" 
@@ -397,6 +407,14 @@ export default class EditCode extends React.Component {
               <div className="content">
                 <div className="ui divided selection list">
                 {/* TODO: use full list from view-source:https://codemirror.net/demo/search.html */}
+                  <a className="item">
+                    <div className="ui horizontal label">Cmd-Z / Ctrl-Z</div>
+                    UNDO
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Cmd-Shift-Z / Ctrl-Y</div>
+                    REDO
+                  </a>
                   <a className="item">
                     <div className="ui horizontal label">.</div>
                     Triggers AutoComplete whilst typing (after 1 second delay)

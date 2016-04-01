@@ -198,12 +198,12 @@ export default class EditCode extends React.Component {
         );
       }
     });
-  
-  var info = editor.getScrollInfo();
-  var after = editor.charCoords({line: editor.getCursor().line + 1, ch: 0}, "local").top;
-  if (info.top + info.clientHeight < after)
-    editor.scrollTo(null, after - info.clientHeight + 3);
-}
+    
+    var info = editor.getScrollInfo();
+    var after = editor.charCoords({line: editor.getCursor().line + 1, ch: 0}, "local").top;
+    if (info.top + info.clientHeight < after)
+      editor.scrollTo(null, after - info.clientHeight + 3);
+  }
   
 	codemirrorValueChanged (doc, change) {
     // Ignore SetValue so we don't bounce changes from server back up to server

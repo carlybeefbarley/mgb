@@ -15,13 +15,14 @@ export default SocialAuth = React.createClass({
   },
 
   render: function() {
-    return (
-        <div>
-          <button className="ui button" type="button" onClick={this.handleFacebook} >{this.props.type} with Facebook <i className="fa fa-facebook fa-lg"></i></button><br />
-          <button className="ui button" type="button" onClick={this.handleGoogle} >{this.props.type} with Google <i className="fa fa-google fa-lg"></i></button><br />
-          <button className="ui button" type="button" onClick={this.handleTwitter} >{this.props.type} with Twitter <i className="fa fa-twitter fa-lg"></i></button>
-        </div>
-    );
+    return null;  // disabled for now
+    // return (
+    //     <div>
+    //       <button className="ui button" type="button" onClick={this.handleFacebook} >{this.props.type} with Facebook <i className="fa fa-facebook fa-lg"></i></button><br />
+    //       <button className="ui button" type="button" onClick={this.handleGoogle} >{this.props.type} with Google <i className="fa fa-google fa-lg"></i></button><br />
+    //       <button className="ui button" type="button" onClick={this.handleTwitter} >{this.props.type} with Twitter <i className="fa fa-twitter fa-lg"></i></button>
+    //     </div>
+    // );
   },
 
   handleFacebook: function() {

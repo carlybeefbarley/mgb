@@ -82,7 +82,8 @@ export default class EditCode extends React.Component {
     super(props);
     this.state = {
       gameRenderIterationKey: 0,
-      isPlaying: false
+      isPlaying: false,
+      previewAssetIdsArray: []        // Array of strings with asset ids.
     }
     this.hintWidgets = [];
   }
@@ -162,8 +163,25 @@ export default class EditCode extends React.Component {
 		}
   }
   
+  
+  _getPNGsInLine(lineText)
+  {
+    let re=/api\/asset\/png\/([A-Za-z0-9]+)/g
+    let matches=[]
+    while ( ( match = re.exec( lineText ) ) && matches.push( match[1] ) ) {};
+    return _.uniq(matches)
+  }
+  
   // This gets _.debounced in componentDidMount()
   codeMirrorUpdateHints(fSourceMayHaveChanged) {
+    
+    // Extract Asset IDs in current line for 'Current line help' view
+    let thisLine = this.codeMirror.getSelection(';');
+    if (!thisLine || thisLine.length === 0)
+      thisLine = this.codeMirror.getLine(this.codeMirror.getCursor().line);
+    let PNGids = this._getPNGsInLine(thisLine);
+    this.setState( { previewAssetIdsArray: PNGids } );
+
     
     CodeMirror.tern.updateArgHints(this.codeMirror);
     // adapted from https://codemirror.net/demo/widget.html
@@ -181,6 +199,8 @@ export default class EditCode extends React.Component {
       if (fSourceMayHaveChanged === true)
         JSHINT(editor.getValue());
         
+      
+          
       for (var i = 0; i < JSHINT.errors.length; ++i) {
         var err = JSHINT.errors[i];
         if (!err || err.line !== cpos.line+1)   // We only show widget for our current line
@@ -258,6 +278,13 @@ export default class EditCode extends React.Component {
                 {item.description}
               </a>
     })
+    
+    const previewIdThings = this.state.previewAssetIdsArray.map( id => {
+      return <a className="ui label" key={id}>
+                <img className="ui right spaced avatar image" src={`/api/asset/png/${id}`}></img>
+                {id}
+              </a>
+    })
 
     let asset = this.props.asset
     let styleH100 = {"height": "100%"}
@@ -272,6 +299,20 @@ export default class EditCode extends React.Component {
             </div>            
             
             <div className="ui styled accordion">
+              
+              
+                { /* Current Line/Selection  helper! */}                   
+              <div className="active title">
+                <span className="explicittrigger">
+                  <i className="dropdown icon"></i>
+                  Current line help
+                  </span>                
+              </div>
+              <div className="active content">
+                <div className="ui divided selection list">
+                  {previewIdThings}
+                </div>
+              </div>
               
               { /* Clean sheet helper! */}                   
               <div className="title">

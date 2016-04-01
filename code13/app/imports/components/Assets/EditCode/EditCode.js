@@ -181,7 +181,6 @@ export default class EditCode extends React.Component {
       thisLine = this.codeMirror.getLine(this.codeMirror.getCursor().line);
     let PNGids = this._getPNGsInLine(thisLine);
     this.setState( { previewAssetIdsArray: PNGids } );
-
     
     CodeMirror.tern.updateArgHints(this.codeMirror);
     // adapted from https://codemirror.net/demo/widget.html
@@ -198,8 +197,6 @@ export default class EditCode extends React.Component {
 
       if (fSourceMayHaveChanged === true)
         JSHINT(editor.getValue());
-        
-      
           
       for (var i = 0; i < JSHINT.errors.length; ++i) {
         var err = JSHINT.errors[i];

@@ -308,7 +308,7 @@ export default class EditCode extends React.Component {
                 <iframe 
                   key={ this.state.gameRenderIterationKey } 
                   id="iFrame1" 
-                  width="610" height="460" 
+                  width="580" height="460" 
                   sandbox='allow-modals allow-scripts' 
                   srcDoc={iframeScripts.phaser244}>
                 </iframe>

@@ -259,21 +259,19 @@ export default class EditCode extends React.Component {
               </a>
     })
 
-    let asset = this.props.asset; 
+    let asset = this.props.asset
+    let styleH100 = {"height": "100%"}
        
-    return (
-      <div>       
-        <div style={ {"minHeight": "700px", "height": "auto"} }>               
-          <SplitPane split="vertical" minSize="50">
-            
-            <div className="CodeMirror" style={{  "height": "100%"}}> 
+    return ( 
+        <div style={styleH100}>
+          <SplitPane split="vertical" minSize="50">            
+            <div className="CodeMirror" style={styleH100}> 
               <textarea ref="textarea"
                         defaultValue={asset.content2.src} 
                         autoComplete="off"/>
             </div>            
             
             <div className="ui styled accordion">
-              
               
               { /* Clean sheet helper! */}                   
               <div className="title">
@@ -368,7 +366,6 @@ export default class EditCode extends React.Component {
             </div>
           </SplitPane>
         </div>
-      </div>
     );
   }
 }

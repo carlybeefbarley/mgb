@@ -57,7 +57,7 @@ export default AssetEditRoute = React.createClass({
     const {currUser, ownsProfile} = this.props;
 
     return (
-      <div className="ui padded grid">
+      <div className="ui padded grid" style={{"height" : "100%"}}>
 
         <Helmet
           title="Asset Editor"
@@ -95,7 +95,7 @@ export default AssetEditRoute = React.createClass({
             showToast={this.props.showToast} />
         </div>
 
-        <div className="sixteen wide column">
+        <div className="sixteen wide column" style={{"height" : "100%"}}>
           <AssetEdit asset={asset}/>
         </div>
       </div>

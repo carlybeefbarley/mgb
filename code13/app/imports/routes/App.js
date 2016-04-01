@@ -71,7 +71,7 @@ export default App = React.createClass({
     }
 
     return (
-      <div>
+      <div style={{"height" : "100%"}}>
         <Helmet
           title="MyGameBuilder v2"
           titleTemplate="%s - devlapse.com"
@@ -88,7 +88,7 @@ export default App = React.createClass({
           initialLoad={this.state.initialLoad}
           activity={this.data.activity} />
 
-        <div className="pusher" >
+        <div className="pusher" style={{"height" : "100%"}}>
             <Nav
               user={currUser}
               handleToggleSidebar={this.handleToggleSidebar}
@@ -101,7 +101,7 @@ export default App = React.createClass({
                 type={this.state.toastType} />
             : null}
 
-            <div>
+            <div style={{"height" : "100%"}}>
 
               {this.props.children && React.cloneElement(this.props.children, {
                   //Make below props available to all routes.

@@ -22,8 +22,7 @@ var schema = {
   kind: String,       // Asset's kind (image, map, etc)
   text: String,       // A description field
   content: String,    // depends on asset type
-                      //   data-uri base 64 - for graphic
-  content2: Object,
+  content2: Object,   // THIS IS NOT IN PREVIW DOWNLOADS..TODO: Move some small but widely needed stuff like size, num frames to another field like content
   thumbnail: String,  // data-uri base 64 of thumbnail image
 
   //various flags

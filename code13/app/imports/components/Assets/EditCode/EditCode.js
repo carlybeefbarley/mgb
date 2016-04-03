@@ -74,7 +74,7 @@ import { iframeScripts } from './sandbox/SandboxScripts.js';
 import { templateCode } from './templates/TemplateCode.js';
 import FunctionDescription from './tern/FunctionDescription.js';
 import ExpressionDescription from './tern/ExpressionDescription.js';
-import RefsDescription from './tern/RefsDescription.js';
+import RefsAndDefDescription from './tern/RefsAndDefDescription.js';
 
 // Code asset - Data format:
 //
@@ -96,7 +96,8 @@ export default class EditCode extends React.Component {
       functionHelp: undefined,
       functionArgPos: -1,
       atCursorTypeRequestResponse: {},
-      atCursorRefRequestResponse: {}
+      atCursorRefRequestResponse: {},
+      atCursorDefRequestResponse: {}
     }
     this.hintWidgets = [];
   }
@@ -330,7 +331,25 @@ export default class EditCode extends React.Component {
     }, position)
    }
 
- 
+   srcUpdate_GetDef()
+   {
+    let ternServer=CodeMirror.tern
+    let editor = this.codeMirror      
+    let position = editor.getCursor()
+    var self = this
+
+    ternServer.request(editor, "definition", function(error, data) {
+      if (error)
+        self.setState( { atCursorDefRequestResponse: { "error": error } } ) 
+      else
+      {
+        data.definitionText = (data.origin === "[doc]") ? editor.getLine(data.start.line).trim() : null
+        self.setState( { atCursorDefRequestResponse: { data } } )
+      }
+    }, position)
+   }
+   
+   
   // This gets _.debounced in componentDidMount()
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {    
     this.srcUpdate_CleanSheetCase()
@@ -339,7 +358,7 @@ export default class EditCode extends React.Component {
     this.srcUpdate_GetInfoForCurrentFunction()
     this.srcUpdate_GetRelevantTypeInfo()
     this.srcUpdate_GetRefs()
-
+    this.srcUpdate_GetDef()
       // TODO:  See atInterestingExpression() and findContext() which are 
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
 
@@ -409,7 +428,7 @@ export default class EditCode extends React.Component {
     let asset = this.props.asset
     let styleH100 = {"height": "100%"}
     
-       
+    
     return ( 
         <div style={styleH100}>
           <SplitPane split="vertical" minSize="50">            
@@ -421,9 +440,8 @@ export default class EditCode extends React.Component {
             </div>            
             
             <div className="ui styled accordion">
-              
-              
-                { /* Current Line/Selection  helper! */}                   
+                            
+              { /* Current Line/Selection  helper! */}                   
               <div className="active title hideIfCleanSheet">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
@@ -436,8 +454,10 @@ export default class EditCode extends React.Component {
                   <ExpressionDescription 
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
                  
-                  <RefsDescription 
-                    RefsInfo={this.state.atCursorRefRequestResponse.data} />
+                  <RefsAndDefDescription 
+                    refsInfo={this.state.atCursorRefRequestResponse.data} 
+                    defInfo={this.state.atCursorDefRequestResponse.data} 
+                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
                     
                   <FunctionDescription 
                     functionHelp={this.state.functionHelp} 

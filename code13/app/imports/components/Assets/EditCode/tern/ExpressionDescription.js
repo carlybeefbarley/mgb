@@ -14,6 +14,8 @@ export default ExpressionDescription = React.createClass({
     let {name, type, exprName, doc, url, origin} = this.props.expressionTypeInfo
     let colorGrey = {color: "#777"}          
     let isFn = type.startsWith("fn(") ? "()" : "";
+    if (type === '?')
+      return null
             
     return (
       <div className="ui segment">

@@ -48,7 +48,7 @@ render: function() {
   let fh = this.props.functionHelp;
   let argPos = this.props.functionArgPos;     // 0 for first argument, -1 for Not in a function at all
   
-  if (!fh || argPos === -1)
+  if (!fh || _.isEmpty(fh) ||  argPos === -1)
     return null;
 
   let {name, origin} = this.props.functionTypeInfo;     // eg Phaser.Game, phaser    

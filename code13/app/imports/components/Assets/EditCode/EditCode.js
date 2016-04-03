@@ -343,7 +343,7 @@ export default class EditCode extends React.Component {
         self.setState( { atCursorDefRequestResponse: { "error": error } } ) 
       else
       {
-        data.definitionText = (data.origin === "[doc]") ? editor.getLine(data.start.line).trim() : null
+        data.definitionText = (data.origin === "[doc]" && data.start) ? editor.getLine(data.start.line).trim() : null
         self.setState( { atCursorDefRequestResponse: { data } } )
       }
     }, position)

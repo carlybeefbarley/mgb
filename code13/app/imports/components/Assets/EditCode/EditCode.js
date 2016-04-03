@@ -538,6 +538,10 @@ export default class EditCode extends React.Component {
                     Rename (smart refactor)
                   </a>
                   <a className="item">
+                    <div className="ui horizontal label">Ctrl-S</div>
+                    Show other references to current variable/property in same file
+                  </a>
+                  <a className="item">
                     <div className="ui horizontal label">Alt-F </div>
                     Find text
                   </a>

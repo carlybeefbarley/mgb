@@ -3,36 +3,77 @@ import React, { PropTypes } from 'react';
 
 export default FunctionDescription = React.createClass({
   propTypes: {
-    functionHelp: PropTypes.object,
-    functionArgPos: PropTypes.number
+    functionHelp: PropTypes.object,       // This is the data from ternServer.cachedArgHints
+    functionArgPos: PropTypes.number,     // -1 means not valid since not in a call
+    functionTypeInfo: PropTypes.object    // This is the return value from a Tern TYPE request. So we get doc, url etc
+},
+
+/** Make A Table
+ * @param {array} hdrs - Array of Column Header strings to be displayed (or null)
+ * @param {array} fields - Array of field names to match headers. "#" means 'display row number (1=first)'
+ * @param {array} data - Array of objects (maybe) containing specified fields
+ * @param {number} highlightRow - 0-based row index to highlight
+ */
+makeTable(hdrs, fields, data, highlightRow = undefined) {
+  return ( 
+    <table className="ui celled table">
+      { !hdrs ? null : 
+        <thead><tr>
+        { hdrs.map( (h, colIdx) => { return <th key={colIdx}>{h}</th>})}
+        </tr></thead>
+      }
+      <tbody>
+        { data.map( (rowData, rowIdx) => { 
+          return (
+            <tr key={rowIdx} className={highlightRow === rowIdx ? "active": ""}>
+            { fields.map( (fieldName, colIdx) => {
+                return (
+                  <td key={colIdx}>
+                    {fieldName === "#" ? rowIdx+1 : <code>{rowData[fieldName]}</code>}
+                  </td>
+                )
+              })
+            }
+            </tr>
+            ) 
+          })
+        }
+      </tbody>
+    </table>
+    
+  )
 },
 
 render: function() {
   let fh = this.props.functionHelp;
-  if (!fh || this.props.functionArgPos === -1)
+  let argPos = this.props.functionArgPos;     // 0 for first argument, -1 for Not in a function at all
+  
+  if (!fh || argPos === -1)
     return null;
-    
-    
-  let paramInfo = fh.type.args.map((x,idx) => { 
-            let paramColor = (idx == this.props.functionArgPos) ? "green" : "";
-            return (
-              <a className="item" key={x.name}>
-                #{idx}&nbsp;<div className={`ui ${paramColor} horizontal label`}>{x.name}</div>
-                {x.type}
-              </a> 
-            ) 
-          })
+
+  let {name, origin} = this.props.functionTypeInfo;     // eg Phaser.Game, phaser    
+  let { doc, url} = this.props.functionTypeInfo
+  let colorGrey = {color: "#777"}        
+  
+  let knownTernBug = (typeof fh.start === 'number') ? <a href="https://github.com/codemirror/CodeMirror/issues/3934" className="ui compact negative message">MGB ISSUE: Non-patched codemirror/tern giving wrong start data</a> : null
+          
   return (
     <div className="ui compact segment">
       <div className="ui header">
-        Function: { `${fh.name}()` }
+        <span style={colorGrey}>Invoking <i>Function</i>:</span> <code>{fh.name}()</code>
       </div>    
-        {fh.type.rettype ? `return type: ${fh.type.retval}` : "(no return value from function)"}
-      <div className="ui divided selection list">
-        { (paramInfo && paramInfo.length > 0) ? paramInfo : <a className="item">(function takes no parameters</a> }   
-      </div>
+      {knownTernBug}
+      { name && <p><code>{name}()</code><small><br></br>Part of '{origin}'</small></p>}
+      { doc && <p>{doc}</p> }
+      { url && <p><a href={url}><small>{url}</small></a></p> }
+        <span style={colorGrey}>This <i>function</i> will return data of type: </span> {fh.type.rettype ? <code>{fh.type.rettype}</code> : <span><code>null</code> <small style={colorGrey}>(the function does not return a value)</small></span>}
+        { fh.type.args.length === 0 ? 
+            <div className="ui content">(function takes no parameters)</div>
+            :
+            this.makeTable( ["Parameter position", "Parameter name", "Parameter type"],["#","name","type"], fh.type.args, argPos)
+        }   
     </div>)
-}
+  }
   
   
   

@@ -73,6 +73,7 @@ import cm_addon_tern from "codemirror/addon/tern/tern";
 import { iframeScripts } from './sandbox/SandboxScripts.js';
 import { templateCode } from './templates/TemplateCode.js';
 import FunctionDescription from './tern/FunctionDescription.js';
+import ExpressionDescription from './tern/ExpressionDescription.js';
 
 // Code asset - Data format:
 //
@@ -91,7 +92,8 @@ export default class EditCode extends React.Component {
       previewAssetIdsArray: [],        // Array of strings with asset ids.
       
       functionHelp: undefined,
-      functionArgPos: -1
+      functionArgPos: -1,
+      atCursorTypeRequestResponse: {}
     }
     this.hintWidgets = [];
   }
@@ -142,7 +144,7 @@ export default class EditCode extends React.Component {
         "Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); },
         "Ctrl-O": function(cm) { cm.foldCode(cm.getCursor()); }
       },
-      lint: true,
+      lint: true,   // TODO - use eslint instead? Something like jssc?
       autofocus: true,
       highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true},
     }
@@ -181,9 +183,9 @@ export default class EditCode extends React.Component {
     return _.uniq(matches)
   }
   
-  // This gets _.debounced in componentDidMount()
-  codeMirrorUpdateHints(fSourceMayHaveChanged) {
-    
+  /** Just show the Clean Sheet helpers if there is no code */
+  srcUpdate_CleanSheetCase()
+  {
     if (this._currentCodemirrorValue.length === 0)
     {
       $(".hideIfCleanSheet").hide()
@@ -194,56 +196,47 @@ export default class EditCode extends React.Component {
       $(".hideIfCleanSheet").show()
       $(".showIffCleanSheet").hide()
     }   
+  }
+  
+  /** Look for any MGB asset strings in current line or selection */
+  srcUpdate_LookForMgbAssets()
+  {
     // Extract Asset IDs in current line for 'Current line help' view
     let thisLine = this.codeMirror.getSelection(';');
     if (!thisLine || thisLine.length === 0)
       thisLine = this.codeMirror.getLine(this.codeMirror.getCursor().line);
     let PNGids = this._getPNGsInLine(thisLine);
-    this.setState( { previewAssetIdsArray: PNGids } );
-    
-    CodeMirror.tern.updateArgHints(this.codeMirror);
-    // adapted from https://codemirror.net/demo/widget.html
-    // TODO: Can we look at the JSHINT results that Codemirror has instead of re-running it?
+    this.setState( { previewAssetIdsArray: PNGids } );    
+  }
+  
+  /** Runs JSHINT on the user's code and show any relevant issues as widgets 
+    * directly below that code in CodeMirror. This was adapted from the demo code
+    * at https://codemirror.net/demo/widget.html
+   */
+  srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged = false)
+  {
     var editor = this.codeMirror
     var widgets = this.hintWidgets
-    var self = this;
-    var ts=CodeMirror.tern;       // TernServer
+    var currentLineNumber = editor.getCursor().line + 1     // +1 since user code is 1...
 
     // operation() is a way to prevent CodeMirror updates until the function completes
+    // However, it is still synchronous - this isn't an async callback
     this.codeMirror.operation(function() {
 
-      let cpos = editor.getCursor()
       for (var i = 0; i < widgets.length; ++i)
         editor.removeLineWidget(widgets[i]);
         
       widgets.length = 0;
       
-      
-      //// TODO: This doesn't need to be here. It's not a tern callback like I thought!
-      let cm=editor;
-      let ts=CodeMirror.tern;
-      
-      let argPos = -1
-      if (!cm.somethingSelected()) {
-         var state = cm.getTokenAt(cm.getCursor()).state;
-        var inner = CodeMirror.innerMode(cm.getMode(), state);
-        if (inner.mode.name === "javascript") {
-          var lex = inner.state.lexical;
-          if (lex.info === "call") argPos = lex.pos || 0
-        }            
-      }
-      self.setState( { functionHelp: ts.cachedArgHints, functionArgPos: argPos})      
-      
-      
-      ///
-
       if (fSourceMayHaveChanged === true)
-        JSHINT(editor.getValue());
+        JSHINT(editor.getValue());      // TODO: Can we look at the JSHINT results that Codemirror has instead of re-running it?
           
       for (var i = 0; i < JSHINT.errors.length; ++i) {
         var err = JSHINT.errors[i];
-        if (!err || err.line !== cpos.line+1)   // We only show widget for our current line
+        if (!err || err.line !== currentLineNumber)   // We only show widget for our current line
           continue;
+        
+        // Could use React here, but it would add more lifecycle complexity than it is worth
         var msg = document.createElement("div");
         var icon = msg.appendChild(document.createElement("span"));
         icon.innerHTML = "!!";
@@ -259,9 +252,75 @@ export default class EditCode extends React.Component {
     });
     
     var info = editor.getScrollInfo();
-    var after = editor.charCoords({line: editor.getCursor().line + 1, ch: 0}, "local").top;
+    var after = editor.charCoords({line: currentLineNumber, ch: 0}, "local").top;
     if (info.top + info.clientHeight < after)
-      editor.scrollTo(null, after - info.clientHeight + 3);
+      editor.scrollTo(null, after - info.clientHeight + 3);    
+  }
+
+  srcUpdate_GetInfoForCurrentFunction()
+  {
+    let ternServer=CodeMirror.tern;
+    let editor = this.codeMirror
+    ternServer.updateArgHints(this.codeMirror);   
+    
+    // I stole the following approach from 
+    // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
+    // which is otherwise not stored/exposed
+    let argPos = -1
+    if (!editor.somethingSelected()) {
+      var state = editor.getTokenAt(editor.getCursor()).state;
+      var inner = CodeMirror.innerMode(editor.getMode(), state);
+      if (inner.mode.name === "javascript") {
+        var lex = inner.state.lexical;
+        if (lex.info === "call") 
+          argPos = lex.pos || 0
+      }
+    }
+
+    let functionTypeInfo = {};
+    if (argPos !== -1)
+    {
+      ternServer.request(editor, "type", function(error, data) {
+      if (error)
+        functionTypeInfo = { "error": error } 
+      else
+        functionTypeInfo = data
+    }, ternServer.cachedArgHints.start)
+    }
+    
+    this.setState( {  "functionHelp": argPos !== -1 ? ternServer.cachedArgHints : {}, 
+                      "functionArgPos": argPos,
+                      "functionTypeInfo": functionTypeInfo
+                  })      
+  }
+  
+  srcUpdate_GetRelevantTypeInfo()
+  {
+    let ternServer=CodeMirror.tern
+    let editor = this.codeMirror      
+    let position = editor.getCursor()
+    var self = this
+
+    ternServer.request(editor, "type", function(error, data) {
+      if (error)
+        self.setState( { atCursorTypeRequestResponse: { "error": error } } ) 
+      else
+        self.setState( { atCursorTypeRequestResponse: { data } } )
+    }, position)
+  
+  }
+ 
+  // This gets _.debounced in componentDidMount()
+  codeMirrorUpdateHints(fSourceMayHaveChanged = false) {    
+    this.srcUpdate_CleanSheetCase()
+    this.srcUpdate_LookForMgbAssets()
+    this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
+    this.srcUpdate_GetInfoForCurrentFunction()
+    this.srcUpdate_GetRelevantTypeInfo()
+
+      // TODO:  See atInterestingExpression() and findContext() which are 
+      // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
+
   }
   
 	codemirrorValueChanged (doc, change) {
@@ -327,6 +386,7 @@ export default class EditCode extends React.Component {
     
     let asset = this.props.asset
     let styleH100 = {"height": "100%"}
+    
        
     return ( 
         <div style={styleH100}>
@@ -348,8 +408,16 @@ export default class EditCode extends React.Component {
                   Current line/selection code help
                   </span>                
               </div>
+              
               <div className="active content hideIfCleanSheet">
-                <FunctionDescription functionHelp={this.state.functionHelp} functionArgPos={this.state.functionArgPos} />
+                  <ExpressionDescription 
+                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
+                    
+                  <FunctionDescription 
+                    functionHelp={this.state.functionHelp} 
+                    functionArgPos={this.state.functionArgPos} 
+                    functionTypeInfo={this.state.functionTypeInfo}/>
+
                 <div className="ui divided selection list">
                   {previewIdThings}
                 </div>

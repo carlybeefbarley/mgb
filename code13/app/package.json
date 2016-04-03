@@ -25,6 +25,7 @@
     "react-color": "^2.0.0",
     "react-dom": "^0.14.7",
     "react-helmet": "^2.3.1",
+    "react-inspector": "^1.0.0-alpha.3",
     "react-mailto": "^0.3.0",
     "react-mixin": "^3.0.4",
     "react-router": "^1.0.0-rc3",

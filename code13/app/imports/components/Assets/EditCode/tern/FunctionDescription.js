@@ -58,7 +58,7 @@ render: function() {
   let knownTernBug = (typeof fh.start === 'number') ? <a href="https://github.com/codemirror/CodeMirror/issues/3934" className="ui compact negative message">MGB ISSUE: Non-patched codemirror/tern giving wrong start data</a> : null
           
   return (
-    <div className="ui compact segment">
+    <div className="ui segment">
       <div className="ui header">
         <span style={colorGrey}>Invoking <i>Function</i>:</span> <code>{fh.name}()</code>
       </div>    

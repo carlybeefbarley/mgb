@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import SplitPane from 'react-split-pane';
 
+import Inspector from 'react-inspector';
+
 // Import CodeMirror and its various dependencies.
 //   This is not as simple as it might sound...
 
@@ -18,8 +20,7 @@ import cm_modejs from 'codemirror/mode/javascript/javascript';
 
 // CodeMirror addons for cool IDE-like functions
 import cm_showhint from 'codemirror/addon/hint/show-hint';
-
-//import cm_closebrackets from 'codemirror/addon/edit/closetag';
+//import cm_closetag from 'codemirror/addon/edit/closetag';
 import cm_closebrackets from 'codemirror/addon/edit/closebrackets';
 import cm_matchbrackets from 'codemirror/addon/edit/matchbrackets';
 import cm_activeline from 'codemirror/addon/selection/active-line';
@@ -28,7 +29,6 @@ import cm_fold_code from 'codemirror/addon/fold/foldcode';
 import cm_fold_gutter from 'codemirror/addon/fold/foldgutter';
 import cm_fold_brace from 'codemirror/addon/fold/brace-fold';
 import cm_fold_comment from 'codemirror/addon/fold/comment-fold';
-
 // import cm_fold_ from 'codemirror/addon/fold/xml-fold';
 // import cm_fold_ from 'codemirror/addon/fold/markdown-fold';
 
@@ -74,6 +74,7 @@ import { iframeScripts } from './sandbox/SandboxScripts.js';
 import { templateCode } from './templates/TemplateCode.js';
 import FunctionDescription from './tern/FunctionDescription.js';
 import ExpressionDescription from './tern/ExpressionDescription.js';
+import RefsDescription from './tern/RefsDescription.js';
 
 // Code asset - Data format:
 //
@@ -91,9 +92,11 @@ export default class EditCode extends React.Component {
       isPlaying: false,
       previewAssetIdsArray: [],        // Array of strings with asset ids.
       
+      // tern-related stuff:
       functionHelp: undefined,
       functionArgPos: -1,
-      atCursorTypeRequestResponse: {}
+      atCursorTypeRequestResponse: {},
+      atCursorRefRequestResponse: {}
     }
     this.hintWidgets = [];
   }
@@ -142,6 +145,7 @@ export default class EditCode extends React.Component {
         "Ctrl-B": function(cm) { CodeMirror.tern.jumpToDef(cm); },
         "Alt-,": function(cm) { CodeMirror.tern.jumpBack(cm); },
         "Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); },
+        "Ctrl-S": function(cm) { CodeMirror.tern.selectName(cm); },
         "Ctrl-O": function(cm) { cm.foldCode(cm.getCursor()); }
       },
       lint: true,   // TODO - use eslint instead? Something like jssc?
@@ -310,6 +314,23 @@ export default class EditCode extends React.Component {
   
   }
  
+ 
+   srcUpdate_GetRefs()
+   {     
+    let ternServer=CodeMirror.tern
+    let editor = this.codeMirror      
+    let position = editor.getCursor()
+    var self = this
+
+    ternServer.request(editor, "refs", function(error, data) {
+      if (error)
+        self.setState( { atCursorRefRequestResponse: { "error": error } } ) 
+      else
+        self.setState( { atCursorRefRequestResponse: { data } } )
+    }, position)
+   }
+
+ 
   // This gets _.debounced in componentDidMount()
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {    
     this.srcUpdate_CleanSheetCase()
@@ -317,6 +338,7 @@ export default class EditCode extends React.Component {
     this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
     this.srcUpdate_GetInfoForCurrentFunction()
     this.srcUpdate_GetRelevantTypeInfo()
+    this.srcUpdate_GetRefs()
 
       // TODO:  See atInterestingExpression() and findContext() which are 
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
@@ -410,8 +432,12 @@ export default class EditCode extends React.Component {
               </div>
               
               <div className="active content hideIfCleanSheet">
+
                   <ExpressionDescription 
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
+                 
+                  <RefsDescription 
+                    RefsInfo={this.state.atCursorRefRequestResponse.data} />
                     
                   <FunctionDescription 
                     functionHelp={this.state.functionHelp} 

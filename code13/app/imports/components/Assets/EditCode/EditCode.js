@@ -282,8 +282,8 @@ export default class EditCode extends React.Component {
       }
     }
 
-    let functionTypeInfo = {};
-    if (argPos !== -1)
+    let functionTypeInfo = null;
+    if (argPos !== -1 && ternServer.cachedArgHints && ternServer.cachedArgHints.start)
     {
       ternServer.request(editor, "type", function(error, data) {
       if (error)
@@ -293,9 +293,9 @@ export default class EditCode extends React.Component {
     }, ternServer.cachedArgHints.start)
     }
     
-    this.setState( {  "functionHelp": argPos !== -1 ? ternServer.cachedArgHints : {}, 
+    this.setState( {  "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
                       "functionArgPos": argPos,
-                      "functionTypeInfo": functionTypeInfo
+                      "functionTypeInfo": functionTypeInfo || {}
                   })      
   }
   

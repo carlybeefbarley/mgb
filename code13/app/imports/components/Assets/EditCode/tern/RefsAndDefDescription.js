@@ -42,7 +42,7 @@ render: function() {
       }
       { def && def.start &&
         <p>
-          The variable <code>{exprName}<span style={colorGrey}>{isFn}</span></code> is defined on line {def.start.line}.<br></br>
+          The variable <code>{exprName}<span style={colorGrey}>{isFn}</span></code> is defined on line {def.start.line+1}.<br></br>
           { def.definitionText && 
             <span style={{color: "blue"}}><code><small>{def.definitionText}</small></code><br></br></span>
           }

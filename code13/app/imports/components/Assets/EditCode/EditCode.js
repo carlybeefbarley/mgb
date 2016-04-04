@@ -104,7 +104,9 @@ export default class EditCode extends React.Component {
       functionArgPos: -1,
       atCursorTypeRequestResponse: {},
       atCursorRefRequestResponse: {},
-      atCursorDefRequestResponse: {}
+      atCursorDefRequestResponse: {},
+      
+      mgbopt_game_engine: null
     }
     this.hintWidgets = [];
   }
@@ -357,6 +359,15 @@ export default class EditCode extends React.Component {
    }
    
    
+  srcUpdate_getMgbOpts()
+  {
+    let src = this.props.asset.content2.src
+    let gameEngineJsToLoad = this.detectGameEngine(src)
+    this.setState( { mgbopt_game_engine: gameEngineJsToLoad})
+  }
+
+   
+   
   // This gets _.debounced in componentDidMount()
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {    
     this.srcUpdate_CleanSheetCase()
@@ -366,6 +377,8 @@ export default class EditCode extends React.Component {
     this.srcUpdate_GetRelevantTypeInfo()
     this.srcUpdate_GetRefs()
     this.srcUpdate_GetDef()
+    this.srcUpdate_getMgbOpts()
+
       // TODO:  See atInterestingExpression() and findContext() which are 
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
 
@@ -392,15 +405,32 @@ export default class EditCode extends React.Component {
     this.iFrameWindow = document.getElementById("iFrame1")    
   }
 
+
+detectGameEngine(src) {
+  let phaserVerNNN = "2.4.6"  // default
+  let versionArray = src.match(/^\/\/\MGBOPT_phaser_version\s*=\s*([\.\d]+)/)
+  if (versionArray && versionArray.length > 1)
+  {
+    phaserVerNNN = versionArray[1]
+    console.log(`Determined requested phaser version of ${phaserVerNNN} from ${versionArray[0]}`)    
+  }
+  else
+    console.log(`using default Phaser version ${phaserVerNNN} since no //MGBOPT_phaser_version=n.n.n was detected `)
+  return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
+}
+
+  /** Start the code running! */
   handleRun()
   {
+    let src = this.props.asset.content2.src
+    let gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState( {isPlaying: true } )
-    this.iFrameWindow.contentWindow.postMessage(this.props.asset.content2.src, "*")    
+    this.iFrameWindow.contentWindow.postMessage( {codeToRun: src, gameEngineScriptToPreload: gameEngineJsToLoad}, "*")    
   }
 
   handleStop(e)
   {
-    this.setState( { gameRenderIterationKey: this.state.gameRenderIterationKey+1,
+    this.setState( { gameRenderIterationKey: this.state.gameRenderIterationKey+1, // or this.iFrameWindow.contentWindow.location.reload(); ? 
                      isPlaying: false
                    } )
   }
@@ -508,7 +538,7 @@ export default class EditCode extends React.Component {
                     }
                 </div>
               </div>
-              <div className="active content hideIfCleanSheet">
+              <div className="active content hideIfCleanSheet">                
                 <iframe 
                   key={ this.state.gameRenderIterationKey } 
                   id="iFrame1" 
@@ -516,6 +546,9 @@ export default class EditCode extends React.Component {
                   sandbox='allow-modals allow-scripts' 
                   srcDoc={iframeScripts.phaser244}>
                 </iframe>
+                { this.state.mgbopt_game_engine &&  
+                    <a className="ui item"><small>Using engine {this.state.mgbopt_game_engine}</small></a>
+                }
               </div>
               
               { /* Keyboard shortcuts */}

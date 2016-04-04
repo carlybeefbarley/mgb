@@ -13,7 +13,6 @@ export const iframeScripts = {
       margin: 0;
     }
   </style>
-  <script src="//cdn.jsdelivr.net/phaser/2.4.4/phaser.min.js"></script>
 </head>
 
 <body>
@@ -27,6 +26,23 @@ export const iframeScripts = {
       _isAlive = true;
     }
 
+    function loadScript(url, callback)
+    {
+        // Adding the script tag to the head to load it
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+
+        // Then bind the event to the callback function.
+        // There are several events for cross browser compatibility, so do both
+        script.onreadystatechange = callback;
+        script.onload = callback;
+
+        // Fire the loading
+        head.appendChild(script);
+    }
+
     window.addEventListener('message', function (e) {
       var mainWindow = e.source;
       if (e.data === 'ping')
@@ -36,7 +52,9 @@ export const iframeScripts = {
       else
       {
         try {
-            eval(e.data);
+          loadScript(e.data.gameEngineScriptToPreload, function() {
+            eval(e.data.codeToRun);
+          })
         } catch (err) {
           console.log(err);
           //  This could probably be displayed in a modal of some kind in the main page

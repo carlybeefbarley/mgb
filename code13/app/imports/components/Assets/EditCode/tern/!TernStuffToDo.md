@@ -1,7 +1,7 @@
 So much goodness
 -- Here's the bar regarding Microsoft Visual Studio - https://blogs.msdn.microsoft.com/jasonz/2012/05/10/my-favorite-features-improved-tooling-in-visual-studio-11-for-javascript-developers/
 -- Here's a backgrounder on tern: http://marijnhaverbeke.nl/blog/tern.html
---  --- REgarding codemirror - http://marijnhaverbeke.nl/blog/#cm-internals
+--  --- Regarding codemirror - http://marijnhaverbeke.nl/blog/#cm-internals
 
 
 
@@ -17,7 +17,7 @@ Some things to build on tern
 ============================
 
 https://github.com/angelozerr/tern-comments-generator
- - Generate jsdocs from function header
+ - Generate jsdocs from function header.. but this did a crappy job on the phaser.js defs
 
 https://github.com/angelozerr/tern-guess-types
  - Guest parameters to suggest based on context and types
@@ -34,7 +34,7 @@ https://github.com/angelozerr/CodeMirror-JavaScript
   
   
   
-NOTE THAT THE http://demo-angelozerr.rhcloud.com/CodeMirror-Java/phaser.html demo has one meat trick.. it shows when functions have the wrong params..
+NOTE THAT THE http://demo-angelozerr.rhcloud.com/CodeMirror-Java/phaser.html demo has one neat trick.. it shows when functions have the wrong params..
     
     back = game.add.image(0, -400, 'lazur');
     back.scale.set(2);

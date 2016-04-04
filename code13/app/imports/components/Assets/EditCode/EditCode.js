@@ -56,8 +56,15 @@ tern = scoped_tern;   // 'tern' symbol needs to be GLOBAL due to some legacy non
 // Tern 'definition files'
 import cm_tern_lib_def from "tern/lib/def";     // Do I need? since I'm doing it differently in next 2 lines...
 
-import Defs_phaser from "./tern/DefsPhaser";
-import Defs_ecma5 from "./tern/DefsEcma5";
+// import Defs_phaser from "./tern/DefsPhaser";
+// import Defs_ecma5 from "./tern/DefsEcma5";
+// import Defs_browser from 'tern/defs/browser.json';
+
+//import Defs_phaser from "./tern/Defs/phaser.json";
+import Defs_ecma5 from "./tern/Defs/ecma5.json";
+import Defs_browser from './tern/Defs/browser.json';
+import Defs_phaser from "./tern/Defs/DefsPhaser";
+
 
 import cm_tern_lib_comment from "tern/lib/comment";
 
@@ -114,7 +121,7 @@ export default class EditCode extends React.Component {
 
     // Tern setup
     var myTernConfig = {
-      defs: [Defs_phaser, Defs_ecma5],
+      defs: [Defs_ecma5, Defs_browser, Defs_phaser],
       useWorker: false
     }
     CodeMirror.tern = new CodeMirror.TernServer(myTernConfig)     // This is actually our instance which we have foolishly just attached to the global for now :( hack)

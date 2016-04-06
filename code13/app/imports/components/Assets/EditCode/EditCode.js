@@ -496,7 +496,7 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
     
     return ( 
         <div style={styleH100}>
-          <SplitPane split="vertical" minSize="50">            
+          <SplitPane split="vertical" minSize={50}>            
             <div className="CodeMirror" style={styleH100}> 
               <textarea ref="textarea"
                         defaultValue={asset.content2.src} 

@@ -99,6 +99,8 @@ export default class EditCode extends React.Component {
       isPlaying: false,
       previewAssetIdsArray: [],        // Array of strings with asset ids.
       
+      documentIsEmpty: true,          // until loaded
+      
       // tern-related stuff:
       functionHelp: undefined,
       functionArgPos: -1,
@@ -119,7 +121,7 @@ export default class EditCode extends React.Component {
     this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
     
     // Semantic-UI item setup (Accordion etc)
-    $('.ui.accordion').accordion({ selector: { trigger: '.title .explicittrigger'} })
+    $('.ui.accordion').accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
 
     // Tern setup
     var myTernConfig = {
@@ -175,9 +177,10 @@ export default class EditCode extends React.Component {
     //       NOTE that the parent elements have the wrong heights because of a bunch of cascading h=100% styles. D'oh.
     var ed = this.codeMirror;
     this.edResizeHandler = e => {       
-      let h = window.innerHeight - ( 8 + $(".CodeMirror").parent().offset().top )
+      let $sPane = $(".SplitPane.vertical")
+      let h = window.innerHeight - ( 8 + $sPane.offset().top )
       let hpx = h.toString() + "px"
-      ed.setSize("100%", hpx)
+      $sPane.height(hpx);
     }
     $(window).on("resize",  this.edResizeHandler)
     this.edResizeHandler();
@@ -216,16 +219,7 @@ export default class EditCode extends React.Component {
   /** Just show the Clean Sheet helpers if there is no code */
   srcUpdate_CleanSheetCase()
   {
-    if (this._currentCodemirrorValue.length === 0)
-    {
-      $(".hideIfCleanSheet").hide()
-      $(".showIffCleanSheet").show()
-    }
-    else
-    {
-      $(".hideIfCleanSheet").show()
-      $(".showIffCleanSheet").hide()
-    }   
+    this.setState( {documentIsEmpty: this._currentCodemirrorValue.length === 0} )
   }
   
   /** Look for any MGB asset strings in current line or selection */
@@ -442,6 +436,10 @@ detectGameEngine(src) {
     let gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState( {isPlaying: true } )
     this.iFrameWindow.contentWindow.postMessage( {codeToRun: src, gameEngineScriptToPreload: gameEngineJsToLoad}, "*")    
+    
+    // Make sure that it's really visible.. and also auto-close accordion above so there's space.
+    $('.ui.accordion').accordion('close', 0);
+    $('.ui.accordion').accordion('open', 1);
   }
 
   handleStop(e)
@@ -480,7 +478,8 @@ detectGameEngine(src) {
     
     let asset = this.props.asset
     let styleH100 = {"height": "100%"}
-    
+    let docEmpty = this.state.documentIsEmpty
+    let isPlaying = this.state.isPlaying
     
     return ( 
         <div style={styleH100}>
@@ -494,19 +493,22 @@ detectGameEngine(src) {
             
             <div className="ui styled accordion">
                             
-              { /* Current Line/Selection  helper! */}                   
-              <div className="active title hideIfCleanSheet">
+              { !docEmpty &&
+                // Current Line/Selection helper (header)
+              <div className="active title">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
                   Current line/selection code help
                   </span>                
               </div>
-              
-              <div className="active content hideIfCleanSheet">
+              }              
+              { !docEmpty &&
+                // Current Line/Selection helper (body)
+                <div className="active content">
 
                   <ExpressionDescription 
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
-                 
+                
                   <RefsAndDefDescription 
                     refsInfo={this.state.atCursorRefRequestResponse.data} 
                     defInfo={this.state.atCursorDefRequestResponse.data} 
@@ -517,55 +519,68 @@ detectGameEngine(src) {
                     functionArgPos={this.state.functionArgPos} 
                     functionTypeInfo={this.state.functionTypeInfo}/>
 
-                <div className="ui divided selection list">
-                  {previewIdThings}
+                  { previewIdThings && previewIdThings.length > 0 &&
+                    <div className="ui divided selection list">
+                      {previewIdThings}
+                    </div>
+                  }
                 </div>
-              </div>
+              }
               
-              { /* Clean sheet helper! */}                   
-              <div className="active title showIffCleanSheet">
-                <span className="explicittrigger">
-                  <i className="dropdown icon"></i>
-                  Clean Sheet helper
-                  </span>                
-              </div>
-              <div className="active content showIffCleanSheet">
-              If you like, you can click one of the following buttons to past some useful template code into your empty file
-                <div className="ui divided selection list">
-                  {templateCodeChoices}
+              { docEmpty && 
+                // Clean sheet helper!          
+                <div className="active title">
+                  <span className="explicittrigger">
+                    <i className="dropdown icon"></i>
+                    Clean Sheet helper
+                    </span>                
                 </div>
-              </div>
-              
-              { /* Code run/stop */}                   
-              <div className="active title hideIfCleanSheet">
-                <span className="explicittrigger">
-                  <i className="dropdown icon"></i>
-                  Run Code&nbsp;
-                  </span>
-                <div className="ui mini icon buttons">
-                    { !this.state.isPlaying ? 
-                    <a className={"ui mini icon button"} onClick={this.handleRun.bind(this)}>
-                        <i className={"play icon"}></i>
-                    </a>
-                    :
-                    <a className={"ui mini icon button"} onClick={this.handleStop.bind(this)}>
-                        <i className={"stop icon"}></i>
-                    </a>
-                    }
+              }
+              { docEmpty && 
+                <div className="active content">
+                  If you like, you can click one of the following buttons to past some useful template code into your empty file
+                  <div className="ui divided selection list">
+                    {templateCodeChoices}
+                  </div>
+                  ...or, if you think you know what you are doing, just start hacking away!
                 </div>
-              </div>
-              <div className="active content hideIfCleanSheet">                
-                <iframe 
-                  key={ this.state.gameRenderIterationKey } 
-                  id="iFrame1" 
-                  width="580" height="460" 
-                  sandbox='allow-modals allow-scripts' 
-                  srcDoc={iframeScripts.phaser244}>
-                </iframe>
-                { this.state.mgbopt_game_engine &&  
-                    <a className="ui item"><small>Using engine {this.state.mgbopt_game_engine}</small></a>
-                }
-              </div>
+              }
+                
+              { !docEmpty &&
+                // Code run/stop (header)                  
+                <div className="title">
+                  <span className="explicittrigger">
+                    <i className="dropdown icon"></i>
+                    Run Code&nbsp;
+                    </span>
+                  <div className="ui mini icon buttons">
+                      { !isPlaying ? 
+                      <a className={"ui mini icon button"} onClick={this.handleRun.bind(this)}>
+                          <i className={"play icon"}></i>
+                      </a>
+                      :
+                      <a className={"ui mini icon button"} onClick={this.handleStop.bind(this)}>
+                          <i className={"stop icon"}></i>
+                      </a>
+                      }
+                  </div>
+                </div>
+              }
+              { !docEmpty &&
+                // Code run/stop (body)                  
+                <div className="content">
+                  <iframe 
+                    key={ this.state.gameRenderIterationKey } 
+                    id="iFrame1" 
+                    width="580" height="460" 
+                    sandbox='allow-modals allow-scripts' 
+                    srcDoc={iframeScripts.phaser244}>
+                  </iframe>
+                  { this.state.mgbopt_game_engine &&  
+                      <a className="ui item"><small>Using engine {this.state.mgbopt_game_engine}</small></a>
+                  }
+                </div>
+              }
               
               { /* Keyboard shortcuts */}
               <div className="title">

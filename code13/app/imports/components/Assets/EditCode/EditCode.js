@@ -108,7 +108,8 @@ export default class EditCode extends React.Component {
       atCursorRefRequestResponse: {},
       atCursorDefRequestResponse: {},
       
-      mgbopt_game_engine: null
+      mgbopt_game_engine: null,                       // Determined anywhere in the file
+      currentLineDeterminesGameEngine: null   // Determined by current line/selection
     }
     this.hintWidgets = [];
   }
@@ -371,9 +372,14 @@ export default class EditCode extends React.Component {
    
   srcUpdate_getMgbOpts()
   {
+    // We must check the entire source code file because it is used in the indicator in the Run Code accordion
     let src = this.props.asset.content2.src
     let gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState( { mgbopt_game_engine: gameEngineJsToLoad})
+    
+    // We also check just the current line so we can make it clear that the current line is setting an MGBopt
+    thisLine = this.codeMirror.getLine(this.codeMirror.getCursor().line);
+    this.setState( { currentLineDeterminesGameEngine: this.detectGameEngine(thisLine, true)})    
   }
 
    
@@ -416,16 +422,22 @@ export default class EditCode extends React.Component {
   }
 
 
-detectGameEngine(src) {
+detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
   let phaserVerNNN = "2.4.6"  // default
   let versionArray = src.match(/^\/\/\MGBOPT_phaser_version\s*=\s*([\.\d]+)/)
   if (versionArray && versionArray.length > 1)
   {
     phaserVerNNN = versionArray[1]
-    console.log(`Determined requested phaser version of ${phaserVerNNN} from ${versionArray[0]}`)    
+    console.log(`Determined requested phaser version of ${phaserVerNNN} from ${versionArray[0]}`)  
+    if (returnRawVersionNNNwithoutDefault)
+      return phaserVerNNN;
   }
   else
+  {
     console.log(`using default Phaser version ${phaserVerNNN} since no //MGBOPT_phaser_version=n.n.n was detected `)
+    if (returnRawVersionNNNwithoutDefault)
+      return null
+  }
   return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
 }
 
@@ -506,6 +518,29 @@ detectGameEngine(src) {
                 // Current Line/Selection helper (body)
                 <div className="active content">
 
+                  { this.state.currentLineDeterminesGameEngine && 
+                    <div className="ui segment">
+                      <p>
+                        The comment
+                        <code style={{color: "green"}}><small>
+                          <br></br>
+                          &nbsp;&nbsp;//MGBOPT_phaser_version={this.state.currentLineDeterminesGameEngine}
+                          <br></br>
+                        </small></code> 
+                        is a special comment that MGB looks for. 
+                        These comments are used just by MGB to force the usage of a specific version of the <a href="//phaser.io">Phaser</a> game engine when running your code.
+                      </p>
+                      <p>
+                        In this file, the 
+                        &nbsp;<code><small>//MGBOPT_phaser_version=...</small></code>&nbsp;
+                        special comment(s) are causing the following version of phaser to be pre-loaded:&nbsp;
+                        <code><small><a href={this.state.mgbopt_game_engine}>{this.state.mgbopt_game_engine}</a></small></code>
+                      </p>
+                      <p>
+                        NOTE: If there are multiple lines with this selection, ONLY the first one will be used.
+                      </p>
+                    </div>
+                  }
                   <ExpressionDescription 
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
                 

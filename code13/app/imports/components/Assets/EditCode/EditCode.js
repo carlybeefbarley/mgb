@@ -140,7 +140,7 @@ export default class EditCode extends React.Component {
       foldGutter: true,
       autoCloseBrackets: true,
       matchBrackets: true,
-      viewportMargin: Infinity,
+      viewportMargin: 10,
       gutters: [
         "CodeMirror-lint-markers", 
         "CodeMirror-linenumbers", 
@@ -169,13 +169,29 @@ export default class EditCode extends React.Component {
     
     this.codeMirror.on("cursorActivity", this.codeMirrorUpdateHints.bind(this, false))
     this.codeMirrorUpdateHints(true)
+    
+    // Resize Handler - a bit complicated since we want to use to end of page
+    // TODO: Fix this properly using flexbox/stretched so the content elements stretch to take remaining space.
+    //       NOTE that the parent elements have the wrong heights because of a bunch of cascading h=100% styles. D'oh.
+    var ed = this.codeMirror;
+    this.edResizeHandler = e => {       
+      let h = window.innerHeight - ( 8 + $(".CodeMirror").parent().offset().top )
+      let hpx = h.toString() + "px"
+      ed.setSize("100%", hpx)
     }
+    $(window).on("resize",  this.edResizeHandler)
+    this.edResizeHandler();
+  }
 
+  componentWillUnmount()
+  {
+    $(window).off("resize", this.edResizeHandler)
+  }
 
-    codeEditPassAndHint(cm) {
-      setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000);      // Pop up a helper after a second
-      return CodeMirror.Pass;       // Allow the typed character to be part of the document
-    }
+  codeEditPassAndHint(cm) {
+    setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000);      // Pop up a helper after a second
+    return CodeMirror.Pass;       // Allow the typed character to be part of the document
+  }
 
   
   componentWillReceiveProps (nextProps) {

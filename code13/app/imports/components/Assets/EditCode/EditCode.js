@@ -108,7 +108,8 @@ export default class EditCode extends React.Component {
       atCursorRefRequestResponse: {},
       atCursorDefRequestResponse: {},
       
-      mgbopt_game_engine: null,                       // Determined anywhere in the file
+      defaultPhaserVersionNNN: "2.4.6",       // TODO make this a prop or system constant
+      mgbopt_game_engine: null,               // Determined anywhere in the file
       currentLineDeterminesGameEngine: null   // Determined by current line/selection
     }
     this.hintWidgets = [];
@@ -423,7 +424,7 @@ export default class EditCode extends React.Component {
 
 
 detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
-  let phaserVerNNN = "2.4.6"  // default
+  let phaserVerNNN = this.state.defaultPhaserVersionNNN
   let versionArray = src.match(/^\/\/\MGBOPT_phaser_version\s*=\s*([\.\d]+)/)
   if (versionArray && versionArray.length > 1)
   {
@@ -535,6 +536,12 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
                         &nbsp;<code><small>//MGBOPT_phaser_version=...</small></code>&nbsp;
                         special comment(s) are causing the following version of phaser to be pre-loaded:&nbsp;
                         <code><small><a href={this.state.mgbopt_game_engine}>{this.state.mgbopt_game_engine}</a></small></code>
+                      </p>
+                      
+                      <p>
+                        This override is useful when working with a tutorial from an older version of Phaser, in order to avoid incompatibilities. 
+                        If no version is specifically selected, the default version is {this.state.defaultPhaserVersionNNN}. 
+                        The full list of <a href="//phaser.io">Phaser</a> versions is at <a href="http://phaser.io/download/archive">http://phaser.io/download/archive</a>.                  
                       </p>
                       <p>
                         NOTE: If there are multiple lines with this selection, ONLY the first one will be used.

@@ -1,7 +1,4 @@
 import React, { PropTypes } from 'react';
-import SplitPane from 'react-split-pane';
-
-import Inspector from 'react-inspector';
 
 // Import CodeMirror and its various dependencies.
 //   This is not as simple as it might sound...

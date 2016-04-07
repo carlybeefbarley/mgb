@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import AceEditor from 'react-ace';
 import brace from 'brace';
-import SplitPane from 'react-split-pane';
 
 import 'brace/mode/javascript';
 import 'brace/theme/github';
@@ -52,8 +51,7 @@ export default class EditMap extends React.Component {
     let asset = this.props.asset;
 
         return (       
-            <div style={ {"height": "500px"} }>               
-                <SplitPane split="vertical" minSize="50">
+            <div style={ {"minHeight": "500px"} }>               
                     <AceEditor
                         mode="javascript"
                         height="500px"
@@ -64,10 +62,6 @@ export default class EditMap extends React.Component {
                         editorProps={{$blockScrolling: true}}
                         value={asset.content2.src} 
                       />
-                    <div>
-                      PREVIEW WILL GO HERE
-                    </div>
-                </SplitPane>
             </div>
         );
   }

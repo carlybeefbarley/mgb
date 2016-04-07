@@ -39,7 +39,7 @@ export default Nav = React.createClass({
           <div className="item">
             {this.props.name}
           </div>
-          <Link to="/search" className="item right">
+          <Link to={`/user/${this.props.user._id}/assets`} className="item right">
             <i className="search icon"></i>
           </Link>
 
@@ -52,8 +52,13 @@ export default Nav = React.createClass({
                   <Link to={`/user/${this.props.user._id}`} className="item">
                     <i className="user icon" /> Profile
                   </Link>
-                  <a href="#" onClick={this.logout} className="item">
-                    <i className="sign out icon" /> Logout
+                  <Link to={`/user/${this.props.user._id}/assets`} className="item">
+                    <i className="pencil icon" /> My Assets
+                  </Link>
+                  <a className="ui menu">
+                    <a href="#" onClick={this.logout} className="item">
+                      <i className="sign out icon" /> Logout
+                    </a>
                   </a>
                 </div>
               </div>,

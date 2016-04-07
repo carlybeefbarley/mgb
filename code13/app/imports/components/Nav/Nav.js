@@ -39,9 +39,12 @@ export default Nav = React.createClass({
           <div className="item">
             {this.props.name}
           </div>
-          <Link to={`/user/${this.props.user._id}/assets`} className="item right">
-            <i className="search icon"></i>
-          </Link>
+          { user ?
+            <Link to={`/user/${this.props.user._id}/assets`} className="item right"><i className="search icon"></i></Link>
+            :
+            <Link to={`/assets`} className="item right"><i className="search icon"></i></Link>
+          }
+          
 
           { user ?
             // If signed in, show Profile, Logout choices as  | username |   dropdown

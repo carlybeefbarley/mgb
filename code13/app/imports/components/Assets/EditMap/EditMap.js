@@ -10,11 +10,6 @@ export default class EditMap extends React.Component {
   //   asset: PropTypes.object
   // }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
-  }
 
   // Map asset - Data format:
   //
@@ -25,20 +20,11 @@ export default class EditMap extends React.Component {
   // React Callback: componentDidMount()
   componentDidMount() {
     this.aceEditorDiv = $("#aceEditControl")  // CSS selector for Edit Control
-    this.getElementReferences()
   }
   
   handleOnChange(updatedSourceCodeAsString) {
     let newC2 = { src: updatedSourceCodeAsString }
     this.props.handleContentChange( newC2, "" ) // TODO: Thumbnail is second param
-  }
-
-  componentDidUpdate() {
-    this.getElementReferences()
-  }
-  
-  getElementReferences()
-  {
   }
 
 

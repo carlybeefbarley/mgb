@@ -519,202 +519,203 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
     let isPlaying = this.state.isPlaying
     
     return ( 
-<div className="ui grid">
-<div className="eight wide column">
-          <textarea ref="textarea"
-                    defaultValue={asset.content2.src} 
-                    autoComplete="off"
-                    placeholder="Start typing code here..."/>
-</div>
-<div className="eight wide column">
+        <div className="ui grid">
+          <div className="ten wide column">
+            <textarea ref="textarea"
+                      defaultValue={asset.content2.src} 
+                      autoComplete="off"
+                      placeholder="Start typing code here..."/>
+          </div>
         
-        <div className="mgbAccordionScroller">
-        <div className="ui styled accordion">
-                        
-          { !docEmpty &&
-            // Current Line/Selection helper (header)
-          <div className="active title">
-            <span className="explicittrigger">
-              <i className="dropdown icon"></i>
-              Current line/selection code help
-              </span>                
-          </div>
-          }              
-          { !docEmpty &&
-            // Current Line/Selection helper (body)
-            <div className="active content">
-
-              { this.state.currentLineDeterminesGameEngine && 
-                <div className="ui segment">
-                  <p>
-                    The comment
-                    <code style={{color: "green"}}><small>
-                      <br></br>
-                      &nbsp;&nbsp;//MGBOPT_phaser_version={this.state.currentLineDeterminesGameEngine}
-                      <br></br>
-                    </small></code> 
-                    is a special comment that MGB looks for. 
-                    These comments are used just by MGB to force the usage of a specific version of the <a href="//phaser.io">Phaser</a> game engine when running your code.
-                  </p>
-                  <p>
-                    In this file, the 
-                    &nbsp;<code><small>//MGBOPT_phaser_version=...</small></code>&nbsp;
-                    special comment(s) are causing the following version of phaser to be pre-loaded:&nbsp;
-                    <code><small><a href={this.state.mgbopt_game_engine}>{this.state.mgbopt_game_engine}</a></small></code>
-                  </p>
-                  
-                  <p>
-                    This override is useful when working with a tutorial from an older version of Phaser, in order to avoid incompatibilities. 
-                    If no version is specifically selected, the default version is {this.state.defaultPhaserVersionNNN}. 
-                    The full list of <a href="//phaser.io">Phaser</a> versions is at <a href="http://phaser.io/download/archive">http://phaser.io/download/archive</a>.                  
-                  </p>
-                  <p>
-                    NOTE: If there are multiple lines with this selection, ONLY the first one will be used.
-                  </p>
-                </div>
-              }
-              <ExpressionDescription 
-                expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
-            
-              <RefsAndDefDescription 
-                refsInfo={this.state.atCursorRefRequestResponse.data} 
-                defInfo={this.state.atCursorDefRequestResponse.data} 
-                expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
-                
-              <FunctionDescription 
-                functionHelp={this.state.functionHelp} 
-                functionArgPos={this.state.functionArgPos} 
-                functionTypeInfo={this.state.functionTypeInfo}/>
-
-              { previewIdThings && previewIdThings.length > 0 &&
-                <div className="ui divided selection list">
-                  {previewIdThings}
-                </div>
-              }
-            </div>
-          }
-          
-          { docEmpty && 
-            // Clean sheet helper!          
-            <div className="active title">
-              <span className="explicittrigger">
-                <i className="dropdown icon"></i>
-                Clean Sheet helper
-                </span>                
-            </div>
-          }
-          { docEmpty && 
-            <div className="active content">
-              If you like, you can click one of the following buttons to past some useful template code into your empty file
-              <div className="ui divided selection list">
-                {templateCodeChoices}
+        <div className="six wide column">
+        
+          <div className="mgbAccordionScroller">
+            <div className="ui fluid styled accordion">
+                            
+              { !docEmpty &&
+                // Current Line/Selection helper (header)
+              <div className="active title">
+                <span className="explicittrigger">
+                  <i className="dropdown icon"></i>
+                  Current line/selection code help
+                  </span>                
               </div>
-              ...or, if you think you know what you are doing, just start hacking away!
-            </div>
-          }
-            
-          { !docEmpty &&
-            // Code run/stop (header)                  
-            <div className="title">
-              <span className="explicittrigger">
-                <i className="dropdown icon"></i>
-                Run Code&nbsp;
-                </span>
-              <div className="ui mini icon buttons">
-                  { !isPlaying ? 
-                  <a className={"ui mini icon button"} onClick={this.handleRun.bind(this)}>
-                      <i className={"play icon"}></i>
-                  </a>
-                  :
-                  <a className={"ui mini icon button"} onClick={this.handleStop.bind(this)}>
-                      <i className={"stop icon"}></i>
-                  </a>
+              }              
+              { !docEmpty &&
+                // Current Line/Selection helper (body)
+                <div className="active content">
+
+                  { this.state.currentLineDeterminesGameEngine && 
+                    <div className="ui segment">
+                      <p>
+                        The comment
+                        <code style={{color: "green"}}><small>
+                          <br></br>
+                          &nbsp;&nbsp;//MGBOPT_phaser_version={this.state.currentLineDeterminesGameEngine}
+                          <br></br>
+                        </small></code> 
+                        is a special comment that MGB looks for. 
+                        These comments are used just by MGB to force the usage of a specific version of the <a href="//phaser.io">Phaser</a> game engine when running your code.
+                      </p>
+                      <p>
+                        In this file, the 
+                        &nbsp;<code><small>//MGBOPT_phaser_version=...</small></code>&nbsp;
+                        special comment(s) are causing the following version of phaser to be pre-loaded:&nbsp;
+                        <code><small><a href={this.state.mgbopt_game_engine}>{this.state.mgbopt_game_engine}</a></small></code>
+                      </p>
+                      
+                      <p>
+                        This override is useful when working with a tutorial from an older version of Phaser, in order to avoid incompatibilities. 
+                        If no version is specifically selected, the default version is {this.state.defaultPhaserVersionNNN}. 
+                        The full list of <a href="//phaser.io">Phaser</a> versions is at <a href="http://phaser.io/download/archive">http://phaser.io/download/archive</a>.                  
+                      </p>
+                      <p>
+                        NOTE: If there are multiple lines with this selection, ONLY the first one will be used.
+                      </p>
+                    </div>
                   }
-              </div>
-            </div>
-          }
-          { !docEmpty &&
-            // Code run/stop (body)                  
-            <div className="content">
-              <iframe 
-                key={ this.state.gameRenderIterationKey } 
-                id="iFrame1" 
-                width="100%" height="400" 
-                sandbox='allow-modals allow-same-origin allow-scripts allow-popups' 
-                srcDoc={iframeScripts.phaser244}>
-              </iframe>
-              { this.state.mgbopt_game_engine &&  
-                  <a className="ui item"><small>Using engine {this.state.mgbopt_game_engine}</small></a>
+                  <ExpressionDescription 
+                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
+                
+                  <RefsAndDefDescription 
+                    refsInfo={this.state.atCursorRefRequestResponse.data} 
+                    defInfo={this.state.atCursorDefRequestResponse.data} 
+                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
+                    
+                  <FunctionDescription 
+                    functionHelp={this.state.functionHelp} 
+                    functionArgPos={this.state.functionArgPos} 
+                    functionTypeInfo={this.state.functionTypeInfo}/>
+
+                  { previewIdThings && previewIdThings.length > 0 &&
+                    <div className="ui divided selection list">
+                      {previewIdThings}
+                    </div>
+                  }
+                </div>
               }
+              
+              { docEmpty && 
+                // Clean sheet helper!          
+                <div className="active title">
+                  <span className="explicittrigger">
+                    <i className="dropdown icon"></i>
+                    Clean Sheet helper
+                    </span>                
+                </div>
+              }
+              { docEmpty && 
+                <div className="active content">
+                  If you like, you can click one of the following buttons to past some useful template code into your empty file
+                  <div className="ui divided selection list">
+                    {templateCodeChoices}
+                  </div>
+                  ...or, if you think you know what you are doing, just start hacking away!
+                </div>
+              }
+                
+              { !docEmpty &&
+                // Code run/stop (header)                  
+                <div className="title">
+                  <span className="explicittrigger">
+                    <i className="dropdown icon"></i>
+                    Run Code&nbsp;
+                    </span>
+                  <div className="ui mini icon buttons">
+                      { !isPlaying ? 
+                      <a className={"ui mini icon button"} onClick={this.handleRun.bind(this)}>
+                          <i className={"play icon"}></i>
+                      </a>
+                      :
+                      <a className={"ui mini icon button"} onClick={this.handleStop.bind(this)}>
+                          <i className={"stop icon"}></i>
+                      </a>
+                      }
+                  </div>
+                </div>
+              }
+              { !docEmpty &&
+                // Code run/stop (body)                  
+                <div className="content">
+                  <iframe 
+                    key={ this.state.gameRenderIterationKey } 
+                    id="iFrame1" 
+                    width="100%" height="400" 
+                    sandbox='allow-modals allow-same-origin allow-scripts allow-popups' 
+                    srcDoc={iframeScripts.phaser244}>
+                  </iframe>
+                  { this.state.mgbopt_game_engine &&  
+                      <a className="ui item"><small>Using engine {this.state.mgbopt_game_engine}</small></a>
+                  }
+                </div>
+              }
+              
+              { /* Keyboard shortcuts */}
+              <div className="title">
+                <span className="explicittrigger">
+                  <i className="dropdown icon"></i>
+                  Code Editor Keyboard shortcuts
+                  </span>
+              </div>
+              <div className="content">
+                <div className="ui divided selection list">
+                {/* TODO: use full list from view-source:https://codemirror.net/demo/search.html */}
+                  <a className="item">
+                    <div className="ui horizontal label">Cmd-Z / Ctrl-Z</div>
+                    UNDO
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Cmd-Shift-Z / Ctrl-Y</div>
+                    REDO
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">.</div>
+                    Triggers AutoComplete whilst typing (after 1 second delay)
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-Space</div>
+                    Instant AutoComplete at cursor
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-I</div>
+                    Show 'type' of thing at cursor
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-D</div>
+                    Show 'Docs' of thing at cursor
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-B</div>
+                    Jump to definition of thing at cursor
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Alt-,</div>
+                    Jump back
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-Q</div>
+                    Rename (smart refactor)
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-S</div>
+                    Show other references to current variable/property in same file
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Alt-F </div>
+                    Find text
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Alt-G </div>
+                    Goto Line
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-O </div>
+                    Open/Close fold at current line
+                  </a>
+                </div>
+              </div>           
             </div>
-          }
-          
-          { /* Keyboard shortcuts */}
-          <div className="title">
-            <span className="explicittrigger">
-              <i className="dropdown icon"></i>
-              Code Editor Keyboard shortcuts
-              </span>
           </div>
-          <div className="content">
-            <div className="ui divided selection list">
-            {/* TODO: use full list from view-source:https://codemirror.net/demo/search.html */}
-              <a className="item">
-                <div className="ui horizontal label">Cmd-Z / Ctrl-Z</div>
-                UNDO
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Cmd-Shift-Z / Ctrl-Y</div>
-                REDO
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">.</div>
-                Triggers AutoComplete whilst typing (after 1 second delay)
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Ctrl-Space</div>
-                Instant AutoComplete at cursor
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Ctrl-I</div>
-                Show 'type' of thing at cursor
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Ctrl-D</div>
-                Show 'Docs' of thing at cursor
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Ctrl-B</div>
-                Jump to definition of thing at cursor
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Alt-,</div>
-                Jump back
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Ctrl-Q</div>
-                Rename (smart refactor)
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Ctrl-S</div>
-                Show other references to current variable/property in same file
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Alt-F </div>
-                Find text
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Alt-G </div>
-                Goto Line
-              </a>
-              <a className="item">
-                <div className="ui horizontal label">Ctrl-O </div>
-                Open/Close fold at current line
-              </a>
-            </div>
-          </div>           
-        </div>
-        </div>
 
         </div>
       </div>

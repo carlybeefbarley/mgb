@@ -211,7 +211,7 @@ export default class EditCode extends React.Component {
 		}
   }
   
-  
+
   _getPNGsInLine(lineText)
   {
     let re=/api\/asset\/png\/([A-Za-z0-9]+)/g
@@ -431,26 +431,47 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
   if (versionArray && versionArray.length > 1)
   {
     phaserVerNNN = versionArray[1]
-    console.log(`Determined requested phaser version of ${phaserVerNNN} from ${versionArray[0]}`)  
     if (returnRawVersionNNNwithoutDefault)
       return phaserVerNNN;
   }
   else
   {
-    console.log(`using default Phaser version ${phaserVerNNN} since no //MGBOPT_phaser_version=n.n.n was detected `)
     if (returnRawVersionNNNwithoutDefault)
       return null
   }
   return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
 }
 
+
+
+  _handle_iFrameMessageReceiver(msg)
+  {
+    // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
+    // see http://assets.codepen.io/assets/editor/live/console_runner.js for an example of a sandbox-side code for this.. and http://assets.codepen.io/assets/editor/live/events_runner.js for an events one
+    // See a simpler embeddable one here: http://markknol.github.io/console-log-viewer/console-log-viewer.js
+      console.log(msg.data[0])
+
+// OR Just start with Firebug Lite
+//   <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+// But, this has some xdomian issues it seems? even when i load the js locally http://localhost:3010/firebug-lite-compressed.js basic
+
+
+
+  }
+  
+  
+
   /** Start the code running! */
   handleRun()
   {
+    window.addEventListener('message', this._handle_iFrameMessageReceiver)
+    
     let src = this.props.asset.content2.src
     let gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState( {isPlaying: true } )
-    this.iFrameWindow.contentWindow.postMessage( {codeToRun: src, gameEngineScriptToPreload: gameEngineJsToLoad}, "*")    
+    this.iFrameWindow.contentWindow.postMessage( 
+        {codeToRun: src, gameEngineScriptToPreload: gameEngineJsToLoad},
+        "*")    
     
     // Make sure that it's really visible.. and also auto-close accordion above so there's space.
     $('.ui.accordion').accordion('close', 0);
@@ -462,6 +483,8 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
     this.setState( { gameRenderIterationKey: this.state.gameRenderIterationKey+1, // or this.iFrameWindow.contentWindow.location.reload(); ? 
                      isPlaying: false
                    } )
+    window.removeEventListener('message', this._handle_iFrameMessageReceiver)
+
   }
   
   
@@ -497,13 +520,13 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
     
     return ( 
 <div className="ui grid">
-<div className="ten wide column">
+<div className="eight wide column">
           <textarea ref="textarea"
                     defaultValue={asset.content2.src} 
                     autoComplete="off"
                     placeholder="Start typing code here..."/>
 </div>
-<div className="six wide column">
+<div className="eight wide column">
         
         <div className="mgbAccordionScroller">
         <div className="ui styled accordion">
@@ -616,8 +639,8 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
               <iframe 
                 key={ this.state.gameRenderIterationKey } 
                 id="iFrame1" 
-                width="470" height="400" 
-                sandbox='allow-modals allow-scripts' 
+                width="100%" height="400" 
+                sandbox='allow-modals allow-same-origin allow-scripts allow-popups' 
                 srcDoc={iframeScripts.phaser244}>
               </iframe>
               { this.state.mgbopt_game_engine &&  

@@ -58,10 +58,8 @@ export default Nav = React.createClass({
                   <Link to={`/user/${this.props.user._id}/assets`} className="item">
                     <i className="pencil icon" /> My Assets
                   </Link>
-                  <a className="ui menu">
-                    <a href="#" onClick={this.logout} className="item">
-                      <i className="sign out icon" /> Logout
-                    </a>
+                  <a href="#" onClick={this.logout} className="ui item">
+                    <i className="sign out icon" /> Logout
                   </a>
                 </div>
               </div>,

@@ -13,18 +13,35 @@ export const iframeScripts = {
       margin: 0;
     }
   </style>
+
+
+<script type='text/javascript' src='/console-log-viewer.js#console_at_bottom=true'></script>
+
 </head>
 
 <body>
   <div id="game"></div>
-
   <script type="text/javascript">
 
     var _isAlive = false;
 
+
+var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
+
+
     window.onload = function() {
       _isAlive = true;
-    }
+      
+      // (function() {
+      //   var exLog = console.log;
+      //   console.log = function(msg) {
+      //     exLog.apply(this, arguments);
+      //     if (!!mgbHostMessageContext.msgSource)
+      //       mgbHostMessageContext.msgSource.postMessage(arguments, mgbHostMessageContext.msgOrigin);
+      //   }
+      // })()
+
+    
 
     function loadScript(url, callback)
     {
@@ -38,6 +55,9 @@ export const iframeScripts = {
         // There are several events for cross browser compatibility, so do both
         script.onreadystatechange = callback;
         script.onload = callback;
+        script.onerror = function(err) {
+         console.warn("Could not load script: " + url);
+        }
 
         // Fire the loading
         head.appendChild(script);
@@ -51,18 +71,20 @@ export const iframeScripts = {
       }
       else
       {
+        mgbHostMessageContext.msgSource = e.source;
+        mgbHostMessageContext.msgOrigin = e.origin;
         try {
           loadScript(e.data.gameEngineScriptToPreload, function() {
             eval(e.data.codeToRun);
           })
         } catch (err) {
-          console.log(err);
-          //  This could probably be displayed in a modal of some kind in the main page
-          mainWindow.postMessage(err.message, e.origin);
+         console.error("Could not load and execute script: " + err);
         }
       }
 
     });
+    
+    }
 
   </script>
 

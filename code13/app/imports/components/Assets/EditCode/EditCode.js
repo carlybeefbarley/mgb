@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
 
+import { js_beautify } from 'js-beautify';
+
 // Import CodeMirror and its various dependencies.
 //   This is not as simple as it might sound...
 
@@ -113,6 +115,17 @@ export default class EditCode extends React.Component {
   }
 
 
+  
+  handleBeautify()
+  {
+    let newValue = js_beautify(this._currentCodemirrorValue, {indent_size: 2})
+    this.codeMirror.setValue(newValue)
+    this._currentCodemirrorValue = newValue;
+    let newC2 = { src: newValue }
+    this.props.handleContentChange( newC2, "", `Beautify code`)
+
+  }
+
   componentDidMount() {
     this.getElementReferences()
     
@@ -154,6 +167,7 @@ export default class EditCode extends React.Component {
         "Ctrl-I": function(cm) { CodeMirror.tern.showType(cm); },
         "Ctrl-D": function(cm) { CodeMirror.tern.showDocs(cm); },
         "Ctrl-B": function(cm) { CodeMirror.tern.jumpToDef(cm); },
+        "Ctrl-T": this.handleBeautify.bind(this),
         "Alt-,": function(cm) { CodeMirror.tern.jumpBack(cm); },
         "Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); },
         "Ctrl-S": function(cm) { CodeMirror.tern.selectName(cm); },
@@ -463,7 +477,7 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
 
   /** Start the code running! */
   handleRun()
-  {
+  {    
     window.addEventListener('message', this._handle_iFrameMessageReceiver)
     
     let src = this.props.asset.content2.src
@@ -687,6 +701,10 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
                   <a className="item">
                     <div className="ui horizontal label">Ctrl-B</div>
                     Jump to definition of thing at cursor
+                  </a>
+                  <a className="item">
+                    <div className="ui horizontal label">Ctrl-T</div>
+                    Beautify source code
                   </a>
                   <a className="item">
                     <div className="ui horizontal label">Alt-,</div>

@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 
 import { js_beautify } from 'js-beautify';
 
+import KeyBindingAssist from '../../Skills/Keybindings.js';
+
 // Import CodeMirror and its various dependencies.
 //   This is not as simple as it might sound...
 
@@ -672,65 +674,7 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
                   </span>
               </div>
               <div className="content">
-                <div className="ui divided selection list">
-                {/* TODO: use full list from view-source:https://codemirror.net/demo/search.html */}
-                  <a className="item">
-                    <div className="ui horizontal label">Cmd-Z / Ctrl-Z</div>
-                    UNDO
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Cmd-Shift-Z / Ctrl-Y</div>
-                    REDO
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">.</div>
-                    Triggers AutoComplete whilst typing (after 1 second delay)
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Ctrl-Space</div>
-                    Instant AutoComplete at cursor
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Ctrl-I</div>
-                    Show 'type' of thing at cursor
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Ctrl-D</div>
-                    Show 'Docs' of thing at cursor
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Ctrl-B</div>
-                    Jump to definition of thing at cursor
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Ctrl-T</div>
-                    Beautify source code
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Alt-,</div>
-                    Jump back
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Ctrl-Q</div>
-                    Rename (smart refactor)
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Ctrl-S</div>
-                    Show other references to current variable/property in same file
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Alt-F </div>
-                    Find text
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Alt-G </div>
-                    Goto Line
-                  </a>
-                  <a className="item">
-                    <div className="ui horizontal label">Ctrl-O </div>
-                    Open/Close fold at current line
-                  </a>
-                </div>
+                <KeyBindingAssist commandContext="editor.text." />
               </div>           
             </div>
           </div>

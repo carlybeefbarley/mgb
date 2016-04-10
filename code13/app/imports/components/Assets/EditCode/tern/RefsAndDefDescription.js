@@ -30,7 +30,7 @@ render: function() {
     return null
     
   return (
-    <div className="ui segment">
+    <div className="ui orange segment" style={{backgroundColor: "rgba(255, 165, 0, 0.06)"}}>
       { exprName && 
         <div className="ui header">
           <span style={colorGrey}>References and Definition of  <i>Expression</i></span> <code>{exprName}<span style={colorGrey}>{isFn}</span></code>

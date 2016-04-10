@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 
 export default ExpressionDescription = React.createClass({
   propTypes: {
-    typeInfo: PropTypes.object    // Has the data from a TernJS typeInfo request on an expression
+    expressionTypeInfo: PropTypes.object    // Has the data from a TernJS typeInfo request on an expression
     },
 
 
@@ -18,7 +18,7 @@ export default ExpressionDescription = React.createClass({
       return null
             
     return (
-      <div className="ui segment">
+      <div className="ui yellow segment" style={{backgroundColor: "rgba(255,255,0,0.03)"}}>
         <div className="ui header">
           <span style={colorGrey}>Reference <i>Expression</i>:</span> <code>{exprName}<span style={colorGrey}>{isFn}</span></code>
         </div>    

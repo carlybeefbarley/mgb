@@ -83,7 +83,7 @@ import { templateCode } from './templates/TemplateCode.js';
 import FunctionDescription from './tern/FunctionDescription.js';
 import ExpressionDescription from './tern/ExpressionDescription.js';
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js';
-
+import MgbMagicCommentDescription from './tern/MgbMagicCommentDescription.js';
 // Code asset - Data format:
 //
 // content2.src                     // String with source code
@@ -560,35 +560,17 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
                 // Current Line/Selection helper (body)
                 <div className="active content">
 
-                  { this.state.currentLineDeterminesGameEngine && 
-                    <div className="ui segment">
-                      <p>
-                        The comment
-                        <code style={{color: "green"}}><small>
-                          <br></br>
-                          &nbsp;&nbsp;//MGBOPT_phaser_version={this.state.currentLineDeterminesGameEngine}
-                          <br></br>
-                        </small></code> 
-                        is a special comment that MGB looks for. 
-                        These comments are used just by MGB to force the usage of a specific version of the <a href="//phaser.io">Phaser</a> game engine when running your code.
-                      </p>
-                      <p>
-                        In this file, the 
-                        &nbsp;<code><small>//MGBOPT_phaser_version=...</small></code>&nbsp;
-                        special comment(s) are causing the following version of phaser to be pre-loaded:&nbsp;
-                        <code><small><a href={this.state.mgbopt_game_engine}>{this.state.mgbopt_game_engine}</a></small></code>
-                      </p>
-                      
-                      <p>
-                        This override is useful when working with a tutorial from an older version of Phaser, in order to avoid incompatibilities. 
-                        If no version is specifically selected, the default version is {this.state.defaultPhaserVersionNNN}. 
-                        The full list of <a href="//phaser.io">Phaser</a> versions is at <a href="http://phaser.io/download/archive">http://phaser.io/download/archive</a>.                  
-                      </p>
-                      <p>
-                        NOTE: If there are multiple lines with this selection, ONLY the first one will be used.
-                      </p>
-                    </div>
-                  }
+                  <MgbMagicCommentDescription
+                    currentLineDeterminesGameEngine={this.state.currentLineDeterminesGameEngine} 
+                    mgbopt_game_engine={this.state.mgbopt_game_engine}
+                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
+
+                    
+                  <FunctionDescription 
+                    functionHelp={this.state.functionHelp} 
+                    functionArgPos={this.state.functionArgPos} 
+                    functionTypeInfo={this.state.functionTypeInfo}/>
+
                   <ExpressionDescription 
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
                 
@@ -597,10 +579,6 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
                     defInfo={this.state.atCursorDefRequestResponse.data} 
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
                     
-                  <FunctionDescription 
-                    functionHelp={this.state.functionHelp} 
-                    functionArgPos={this.state.functionArgPos} 
-                    functionTypeInfo={this.state.functionTypeInfo}/>
 
                   { previewIdThings && previewIdThings.length > 0 &&
                     <div className="ui divided selection list">

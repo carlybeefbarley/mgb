@@ -68,8 +68,8 @@ export const keysDB = [
   },
 
   { 
-    macKey: "Ctrl-J",
-    pcKey: "Ctrl-J",
+    macKey: "Alt-J",
+    pcKey: "Alt-J",
     command: "editor.text.jumpToDef",
     description: "Jump to definition of thing at cursor"
   },

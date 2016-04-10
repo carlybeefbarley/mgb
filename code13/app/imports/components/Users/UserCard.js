@@ -1,11 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import moment from 'moment';
-import reactMixin from 'react-mixin';
-import {History} from 'react-router';
-
+import {browserHistory} from 'react-router';
 
 export default UserProfile = React.createClass({
-  mixins: [History],
   propTypes : {
     makeClickable: PropTypes.bool,
     name: PropTypes.string,
@@ -20,7 +17,7 @@ export default UserProfile = React.createClass({
 
     return (
       <div className="ui card" 
-           onClick={this.props.makeClickable ? this.history.pushState(null, `/user/${this.props.user._id}`) : ''}>
+           onClick={this.props.makeClickable ? browserHistory.push(`/user/${this.props.user._id}`) : ''}>
         <div className="ui image">
           <img src={this.props.avatar} />
         </div>

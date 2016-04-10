@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import reactMixin from 'react-mixin';
 import {handleForms} from '../../components/Forms/FormDecorator';
 import UserForms from '../../components/Users/UserForms.js';
 

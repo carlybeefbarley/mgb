@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import {History} from 'react-router';
-import reactMixin from 'react-mixin';
+import {browserHistory} from 'react-router';
 
 import {handleForms} from '../../components/Forms/FormDecorator';
 import UserForms from '../../components/Users/UserForms.js';
@@ -9,7 +8,6 @@ import SocialAuth from '../../components/Users/SocialAuth';
 import {logActivity} from '../../schemas/activity';
 
 export default  SignInRoute = React.createClass({
-  mixins: [History],
   
   getInitialState: function()
   {
@@ -29,10 +27,14 @@ export default  SignInRoute = React.createClass({
         <div className="ui padded segment">
           <h2>Get Started!</h2>
 
-          <SocialAuth type="Login" />
+          {
+            /* 
+              <SocialAuth type="Login" />
 
-          <div className="ui horizontal divider">OR</div>
-
+              <div className="ui horizontal divider">OR</div>
+             */
+          }
+          
           <UserForms
             buttonText="Login"
             inputsToUse={inputsToUse}
@@ -123,7 +125,7 @@ export default  SignInRoute = React.createClass({
         logActivity("user.login",  `Logging in "${userName}"`, null, null);         
         this.props.showToast('Welcome Back!   Taking you to your Assets', 'success')
         window.setTimeout(() => {
-          this.history.pushState(null, `/user/${Meteor.user()._id}/assets`);
+          browserHistory.push(`/user/${Meteor.user()._id}/assets`);
         }, 1000);
       }
     });

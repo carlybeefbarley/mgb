@@ -1,9 +1,4 @@
 import React, { PropTypes } from 'react';
-import AceEditor from 'react-ace';
-import brace from 'brace';
-
-import 'brace/mode/javascript';
-import 'brace/theme/github';
 
 export default class EditMap extends React.Component {
   // static PropTypes = {
@@ -19,7 +14,6 @@ export default class EditMap extends React.Component {
   //
   // React Callback: componentDidMount()
   componentDidMount() {
-    this.aceEditorDiv = $("#aceEditControl")  // CSS selector for Edit Control
   }
   
   handleOnChange(updatedSourceCodeAsString) {
@@ -32,22 +26,12 @@ export default class EditMap extends React.Component {
     if (!this.props.asset) 
       return null;
 
-    this.gameRenderIterationKey
-
     let asset = this.props.asset;
 
         return (       
-            <div style={ {"minHeight": "500px"} }>               
-                    <AceEditor
-                        mode="javascript"
-                        height="500px"
-                        width="100%"
-                        theme="github"
-                        onChange={this.handleOnChange.bind(this)}
-                        name="aceEditControl"
-                        editorProps={{$blockScrolling: true}}
-                        value={asset.content2.src} 
-                      />
+            <div style={ {"minHeight": "500px"} }>  
+            disabled             
+                    
             </div>
         );
   }

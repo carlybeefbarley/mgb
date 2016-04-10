@@ -1,7 +1,5 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import reactMixin from 'react-mixin';
-import {History} from 'react-router';
 import sty from  './editGraphic.css';
 import ColorPicker from 'react-color';        // http://casesandberg.github.io/react-color/
 import AssetUrlGenerator from '../AssetUrlGenerator.js';
@@ -31,7 +29,7 @@ const tools = {
 //   2. Some popup handling (uses Semanticui .popup() jquery extension. Typically these have the 'hazPopup' class
 //   3. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
 
-@reactMixin.decorate(History)
+
 export default class EditGraphic extends React.Component {
   // static PropTypes = {
   //   asset: PropTypes.object,

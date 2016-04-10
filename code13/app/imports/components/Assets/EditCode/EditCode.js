@@ -197,7 +197,6 @@ export default class EditCode extends React.Component {
       let $sPane = $(".CodeMirror")
       let h = window.innerHeight - ( 16 + $sPane.offset().top )
       let hpx = h.toString() + "px"
-      console.log(hpx)
       ed.setSize("100%", hpx)
       $(".mgbAccordionScroller").css("max-height", hpx);
       $(".mgbAccordionScroller").css("overflow-y", "scroll");
@@ -329,7 +328,7 @@ export default class EditCode extends React.Component {
         functionTypeInfo = { "error": error } 
       else
         functionTypeInfo = data
-    }, ternServer.cachedArgHints.start)
+    }, ternServer.cachedArgHints.start)     // TODO - We need CodeMirror 5.13.5 so this will work
     }
     
     this.setState( {  "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 

@@ -51,7 +51,7 @@ export default class UserForms extends Component {
               value={values.email}
               errorMsg={errors.email}
               validateBy="email"
-              label="Email Address"  />
+              label="Email Address (used for login)"  />
           );
         case 'password':
           return (
@@ -112,8 +112,10 @@ export default class UserForms extends Component {
               name="name"
               handleChange={this.props.handleChange}
               value={values.name}
+              errors={errors.name}
+              validateBy="validateName"
               errorMsg={errors.name}
-              label="Name"
+              label="User Name (short, no spaces - for example 'dgolds')"
               />
           );
         case 'bio':

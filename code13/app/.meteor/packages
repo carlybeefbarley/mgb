@@ -22,7 +22,7 @@ accounts-password
 
 nimble:restivus         # REST API package
 service-configuration
-react-meteor-data@0.2.6-beta.16
-semantic:ui
+react-meteor-data
 flemay:less-autoprefixer
 babel-runtime
+semantic:ui

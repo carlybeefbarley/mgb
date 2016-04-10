@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import {History} from 'react-router';
 import reactMixin from 'react-mixin';
 import UserCard from './UserCard';
 import UserForms from './UserForms.js';
@@ -7,7 +6,6 @@ import UserForms from './UserForms.js';
 // TODO: This needs COMPLETE REDO. DOES NOT WORK, WILL NOT WORK.
 
 export default  EditProfileRoute = React.createClass({
-  mixins: [History],
   propTypes: {
     user: React.PropTypes.object,
     email: React.PropTypes.string

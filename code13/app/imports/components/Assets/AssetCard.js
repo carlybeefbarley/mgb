@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import reactMixin from 'react-mixin';
-import {Link, History} from 'react-router';
+import {Link, browserHistory} from 'react-router';
 import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 import {logActivity} from '../../schemas/activity';
@@ -12,7 +11,6 @@ import AssetUrlGenerator from './AssetUrlGenerator.js';
 //TODO: Toast/error
 
 export default AssetCard = React.createClass({
-  mixins: [History],
   
   propTypes: {
     showHeader: PropTypes.bool,
@@ -224,7 +222,7 @@ export default AssetCard = React.createClass({
   },
 
   handleEditClick() {
-    this.history.pushState(null, `/assetEdit/${this.props.asset._id}`)
+    browserHistory.push(`/assetEdit/${this.props.asset._id}`)
   }
   
 })

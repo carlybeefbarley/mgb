@@ -1,10 +1,8 @@
 import React, {Component, PropTypes} from 'react';
-import {Link, History} from 'react-router';
-import reactMixin from 'react-mixin';
+import {Link, browserHistory} from 'react-router';
 import {logActivity} from '../../schemas/activity';
 
 export default Nav = React.createClass({
-  mixins: [History],
   
   propTypes: {
     user: PropTypes.object
@@ -15,7 +13,7 @@ export default Nav = React.createClass({
     logActivity("user.login",  `Logging out "${userName}"`, null, null);         
 
     Meteor.logout();
-    this.history.pushState(null, `/`);
+    browserHistory.push(`/`);
   },
 
   render: function() {

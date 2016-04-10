@@ -1,8 +1,5 @@
 import React from 'react';
-import {Link, History} from 'react-router';
-import reactMixin from 'react-mixin';
 
-@reactMixin.decorate(History)
 export default class Footer extends React.Component {
 
   render() {

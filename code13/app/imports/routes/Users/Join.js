@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {History} from 'react-router';
+import {browserHistory} from 'react-router';
 import UserForms from '../../components/Users/UserForms.js';
 import AuthLinks from '../../components/Users/AuthLinks.js';
 import md5 from 'blueimp-md5';
@@ -8,7 +8,6 @@ import {logActivity} from '../../schemas/activity';
 
 
 export default JoinRoute = React.createClass({
-  mixins: [History],
 
   getInitialState: function() {    
     return {
@@ -51,7 +50,6 @@ export default JoinRoute = React.createClass({
 
     //this returns something like 'password' or 'email' or whatever you passed
     let validateType = event.target.getAttribute('data-validateby');
-
     if (validateType) {
       //Calls appropriate validator and passes the form input value
       let error = this[validateType](value);
@@ -66,7 +64,7 @@ export default JoinRoute = React.createClass({
 
   render: function() {
 
-    const inputsToUse = ["email", "password", "confirm"];
+    const inputsToUse = ["email", "name", "password", "confirm"];
     const linksToUse = ["signin", "forgot"];
 
     return (
@@ -74,10 +72,12 @@ export default JoinRoute = React.createClass({
         <div className="ui padded segment">
           <h2 className="ui title">Get Started!</h2>
 
-          <SocialAuth />
-
-          <div className="ui horizontal divider">OR</div>
-
+          { 
+            /* 
+              <SocialAuth />
+              <div className="ui horizontal divider">OR</div>
+             */
+          }
           <UserForms
             buttonText="Join with Email"
             inputsToUse={inputsToUse}
@@ -135,6 +135,17 @@ export default JoinRoute = React.createClass({
     }
     return '';
   },
+  
+  validateName: function (value) {
+    if (value.search(/[A-Za-z0-9_]+/) < 0) 
+      return ('Only letters, digits and underscores are allowed');
+    if (value.length > 12) 
+      return ('Max length is 12 characters');
+    if (value.length < 3 ) 
+      return ('Name must be at least 3 characters');
+      
+    return '';
+  },
 
 
   listenForEnter: function(e) {
@@ -146,7 +157,7 @@ export default JoinRoute = React.createClass({
 
   handleSubmit: function() {
     const values = this.state.values
-    const {email, password, confirm} = values
+    const {email, name, password, confirm} = values
     const errors = this.state.errors
 
     //if errors showing don't submit
@@ -160,7 +171,7 @@ export default JoinRoute = React.createClass({
       return false;
     }
 
-    let newUserName = email.substring(0, email.indexOf('@'))
+    let newUserName = name;
 
     Accounts.createUser({
       email: email,
@@ -178,7 +189,7 @@ export default JoinRoute = React.createClass({
         logActivity("user.join",  `New user "${newUserName}"`, null, null); 
         this.props.showToast('Welcome!  Taking you to your assets', 'success')
         window.setTimeout(() => {
-          this.history.pushState(null, `/user/${Meteor.user()._id}/assets`);
+          browserHistory.push(`/user/${Meteor.user()._id}/assets`);
         }, 1500);
       }
     });

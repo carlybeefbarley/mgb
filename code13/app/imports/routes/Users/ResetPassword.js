@@ -1,11 +1,10 @@
 import React, { Component, PropTypes } from 'react';
-import {History} from 'react-router';
-import reactMixin from 'react-mixin';
+import {browserHistory} from 'react-router';
 import {handleForms} from '../../components/Forms/FormDecorator';
 import UserForms from '../../components/Users/UserForms.js';
 
 export default ResetPasswordRoute = React.createClass({
-  mixins: [History],
+
   propTypes: {
      params: PropTypes.object
   },
@@ -73,7 +72,7 @@ export default ResetPasswordRoute = React.createClass({
       } else {
         this.props.showToast('Success! Your password has been reset.     Redirecting...', 'success')
         window.setTimeout(() => {
-          this.history.pushState(null, `/`);
+          browserHistory.push(`/`);
         }, 1000);
       }
     });

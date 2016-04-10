@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, Link, NotFoundRoute } from 'react-router';
+import { Router, Route, Link, NotFoundRoute, browserHistory } from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory'
 
 import App from './App';
@@ -14,7 +14,7 @@ const history = createBrowserHistory()
 
 Meteor.startup(function () {
     ReactDOM.render(
-    <Router history={history}>
+    <Router history={browserHistory}>
       <Route component={App}>
         <Route path="/" component={Home} name="MyGameBuilder v2" />
 

@@ -20,16 +20,17 @@ export default InputStacked = React.createClass({
   },
 
   render: function() {
-    let message;
-    if (this.props.errorMsg) {
-      message = {__html: '- ' + this.props.errorMsg};
-    }
+    let errorMsg = this.props.errorMsg;
 
     return (
-      <div className="inline six wide field">
+      <div className="inline twelve wide field">
         <label htmlFor={ this.props.name } title={ this.props.label }>
-          {this.props.label} <span dangerouslySetInnerHTML={message} />
-          {this.props.errorMsg === '' ? <i className="ui check icon"></i> : null}
+          {this.props.label} 
+          { errorMsg ? 
+            <div className="ui pointing below red basic label">{errorMsg}</div>
+              :
+           <span>&nbsp;<i className="ui small green check icon"></i></span>
+          }
         </label>
         <input
           className={this.props.styles || "ui input"}

@@ -14,13 +14,13 @@ import AssetListSortBy from '../../components/Assets/AssetListSortBy';
 import ProjectSelector from '../../components/Assets/ProjectSelector';
 
 import Spinner from '../../components/Spinner/Spinner';
-import {History} from 'react-router';
+import {browserHistory} from 'react-router';
 import Helmet from 'react-helmet';
 import UserItem from '../../components/Users/UserItem.js';
 
 
 export default  UserAssetListRoute = React.createClass({
-  mixins: [ReactMeteorData, History],
+  mixins: [ReactMeteorData],
 
   // static propTypes = {
   //   params: PropTypes.object,       // .id Maybe absent if route is /assets
@@ -243,7 +243,7 @@ export default  UserAssetListRoute = React.createClass({
       } else {
         newAsset._id = result; // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset);
-        this.history.pushState(null, `/assetEdit/${result}`)
+        browserHistory.push(`/assetEdit/${result}`)
       }
     });
   }

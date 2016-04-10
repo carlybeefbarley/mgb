@@ -1,8 +1,5 @@
 import React, { PropTypes } from 'react';
-import reactMixin from 'react-mixin';
-import {History} from 'react-router';
 
-@reactMixin.decorate(History)
 export default class EditUnknown extends React.Component {
 
   // static PropTypes = {

@@ -1,9 +1,8 @@
 import React, {PropTypes} from 'react';
-import {History} from 'react-router';
-import reactMixin from 'react-mixin';
+import {browserHistory} from 'react-router';
 
 export default SocialAuth = React.createClass({
-  mixins: [History],
+
   propTypes: {
     type: React.PropTypes.string
   },
@@ -34,7 +33,7 @@ export default SocialAuth = React.createClass({
             errors: { 'facebook': error.reason }
           });
         } else {
-           this.history.pushState(null, `/user/${Meteor.user()._id}`);
+           browserHistory.push(`/user/${Meteor.user()._id}`);
         }
     });
   },
@@ -48,7 +47,7 @@ export default SocialAuth = React.createClass({
           errors: { 'google': error.reason }
         });
       } else {
-         this.history.pushState(null, `/user/${Meteor.user()._id}`);
+         browserHistory.push(`/user/${Meteor.user()._id}`);
       }
     });
   },
@@ -60,7 +59,7 @@ export default SocialAuth = React.createClass({
           errors: { 'twitter': error.reason }
         });
       } else {
-        this.history.pushState(null, `/user/${Meteor.user()._id}`);
+        browserHistory.push(`/user/${Meteor.user()._id}`);
       }
     });
 

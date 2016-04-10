@@ -1,11 +1,9 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
-import {Link, History} from 'react-router';
+import {Link, browserHistory} from 'react-router';
 import {ActivityTypes} from '../../schemas/activity.js';
-import reactMixin from 'react-mixin';
 import {AssetKinds} from '../../schemas/assets';
 
-@reactMixin.decorate(History)
 export default class Sidebar extends Component {
 
   // static PropTypes = {
@@ -100,7 +98,7 @@ export default class Sidebar extends Component {
   }
 
   handleBrandClick() {
-    this.history.pushState(null, `/`);
+    browserHistory.push(`/`);
   }
 
   listenForClose(e) {

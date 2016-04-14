@@ -1,23 +1,25 @@
 
 
-// DocsPhaser["Phaser.Loader"] -> class, consts, methods, properties
 
-// getMethodInfo(Classname, methodName)
-
-// get
-
-export default DocsPhaser = {
+export default JsonDocsFinder = {
   // Note 'this' will be 'DocsPhaser'
   
   _jsonDocCache: {},
   
   _makeDocUrl: function(req)
   {
+    console.log(req.frameworkName)
+
     if (req.frameworkName === "phaser")
     {
       let ver = req.frameworkVersion || "2.4.6"
       let file = this._getClassNameFromOneName(req.symbol)
       return `/${req.frameworkName}/${ver}/docgen/output/${file}.json`
+    }
+    
+    if (req.frameworkName === "lodash")
+    {
+      return '/lodash.jsdoc.json'
     }
     return null;
   },
@@ -69,6 +71,7 @@ export default DocsPhaser = {
         })
     
     jqXHR.fail((error) => {
+      debugger
       this._processApiDocRequest(request, null, callbackFn)   // Callback is async in this case. Null data parameter means pass on fail
     })
     
@@ -82,7 +85,7 @@ export default DocsPhaser = {
   _getDesiredDocInfo: function(originalRequest, docInfoFromJsonFile)
   {
     if (!docInfoFromJsonFile)
-      return null               // We're not psychics
+      return null               // We're not psychics!
       
     // so now we care about the following parts of originalRequest:
     //    symbolType: "method|variable|class", 
@@ -113,11 +116,23 @@ export default DocsPhaser = {
         }
       }
       else
-      {
-        if (docInfoFromJsonFile.methods && docInfoFromJsonFile.methods.public) 
+      {        
+        if (originalRequest.frameworkName === "lodash")
         {
-          retval =  _.find(docInfoFromJsonFile.methods.public, {'name' : originalRequest._leafOfSymbol})
-          retval.__typeIs = "functionOrMethod"
+          let c_ = docInfoFromJsonFile.classes[0]
+          retval =  _.find(c_.functions, {'name' : originalRequest._leafOfSymbol})
+          if (retval)
+            retval.__typeIs = "functionOrMethod"        
+        }
+        
+        if (originalRequest.frameworkName === "phaser")
+        {
+          if (docInfoFromJsonFile.methods && docInfoFromJsonFile.methods.public) 
+          {
+            retval =  _.find(docInfoFromJsonFile.methods.public, {'name' : originalRequest._leafOfSymbol})
+            if (retval)
+              retval.__typeIs = "functionOrMethod"
+          }
         }
       }
     }

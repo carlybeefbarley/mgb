@@ -17,6 +17,16 @@
 	ls | awk ' BEGIN { ORS = ""; print "["; } { print "\/\@"$0"\/\@"; } END { print "]"; }' | sed "s^\"^\\\\\"^g;s^\/\@\/\@^\", \"^g;s^\/\@^\"^g" > _manifest.json
 )
 
+
 (
-#	rm -fr ./tmp/phaser
+	cd tmp
+	git clone lodash
+	cd lodash
+	npm install jsdoc
+	node ./node_modules/jsdoc/jsdoc.js -t ./node_modules/jsdoc/templates/haruki/ -d console lodash.js  > ../../app/public/lodash.jsdoc.json
+)
+
+
+(
+#	rm -fr ./tmp
 )

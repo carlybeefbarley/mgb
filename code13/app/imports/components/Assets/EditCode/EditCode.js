@@ -65,9 +65,10 @@ import cm_tern_lib_def from "tern/lib/def";     // Do I need? since I'm doing it
 import Defs_ecma5 from "./tern/Defs/ecma5.json";
 import Defs_browser from './tern/Defs/browser.json';
 import Defs_phaser from "./tern/Defs/DefsPhaser";
+import Defs_lodash from "./tern/Defs/DefsLodash";
 
 
-import DocsPhaser from './tern/Defs/DocsPhaser.js';
+import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js';
 
 
 
@@ -143,7 +144,7 @@ export default class EditCode extends React.Component {
 
     // Tern setup
     var myTernConfig = {
-      defs: [Defs_ecma5, Defs_browser, Defs_phaser],
+      defs: [Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser],
       useWorker: false
     }
     CodeMirror.tern = new CodeMirror.TernServer(myTernConfig)     // This is actually our instance which we have foolishly just attached to the global for now :( hack)
@@ -337,8 +338,8 @@ export default class EditCode extends React.Component {
         
     if (functionTypeInfo)
     {
-      DocsPhaser.getApiDocsAsync({ 
-        frameworkName: "phaser", 
+      JsonDocsFinder.getApiDocsAsync({ 
+        frameworkName: functionTypeInfo.origin, 
         //frameworkVersion: "x.x.x",
         symbolType: "method",
         symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing

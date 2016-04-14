@@ -26,7 +26,7 @@ makeTable(hdrs, fields, data, highlightRow = undefined) {
       }
       <tbody>
         { data.map( (rowData, rowIdx) => { 
-          var paramHelp = (m && m.parameters && m.parameters.length > rowIdx) ? m.parameters[rowIdx].help: null
+          var paramHelp = (m && m.parameters && m.parameters.length > rowIdx) ? (m.parameters[rowIdx].help || m.parameters[rowIdx].description): null
           return (
             [<tr key={rowIdx} className={highlightRow === rowIdx ? "active": ""}>
             { fields.map( (fieldName, colIdx) => {
@@ -60,13 +60,19 @@ render: function() {
   let { doc, url} = this.props.functionTypeInfo
   let colorGrey = {color: "#777"}            
   let colorBlue = {color: "navy"}            
-  let retInfoHelpText = null
 
-  if (hDoc.__typeIs === "classConstructor") 
+  // Return info
+  let retInfoHelpText = null
+  if (hDoc && hDoc.__typeIs === "classConstructor") 
     retInfoHelpText = <span style={colorBlue}>This 'function' is actually a <i>class constructor</i> and should be called with <b><code><span style={{color: "purple"}}>new</span> {name}(...)</code></b> so that it returns an <i>Object</i> that is a new <i>instance</i> of the <i>class</i> <code>{name}</code></span>
   else
     retInfoHelpText = <span><span style={colorGrey}>This <i>function</i> will return data of type: </span> {fh.type.rettype ? <code>{fh.type.rettype}</code> : <span><code>null</code> <small style={colorGrey}>(the function does not return a value)</small></span>}</span>    
   
+  
+  // Inheritance info
+  let inheritanceInfoHelpText = null
+  if (hDoc && hDoc.inherited === true && hDoc.inheritedFrom)
+    inheritanceInfoHelpText = <p>Inherited from <code>{hDoc.inheritedFrom}</code></p>
 
   let knownTernBug = (typeof fh.start === 'number') ? <a href="https://github.com/codemirror/CodeMirror/issues/3934" className="ui compact negative message">MGB ISSUE: Non-patched codemirror/tern giving wrong start data</a> : null
           
@@ -80,11 +86,13 @@ render: function() {
       { doc && <p>{doc}</p> }
       { url && <p><a href={url}><small>{url}</small></a></p> }
       { retInfoHelpText }
-        { fh.type.args.length === 0 ? 
-            <div className="ui content">(function takes no parameters)</div>
-            :
-            this.makeTable( ["Parameter position", "Parameter name", "Parameter type"],["#","name","type"], fh.type.args, argPos)
-        }   
+      { inheritanceInfoHelpText }
+      { fh.type.args.length === 0 ? 
+          <div className="ui content">(function takes no parameters)</div>
+          :
+          this.makeTable( ["Parameter position", "Parameter name", "Parameter type"],["#","name","type"], fh.type.args, argPos)
+      }
+         
     </div>)
   }
   

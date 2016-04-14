@@ -3,9 +3,10 @@ import React, { PropTypes } from 'react';
 
 export default FunctionDescription = React.createClass({
   propTypes: {
-    functionHelp: PropTypes.object,       // This is the data from ternServer.cachedArgHints
-    functionArgPos: PropTypes.number,     // -1 means not valid since not in a call
-    functionTypeInfo: PropTypes.object    // This is the return value from a Tern TYPE request. So we get doc, url etc
+    functionHelp: PropTypes.object,           // This is the data from ternServer.cachedArgHints
+    functionArgPos: PropTypes.number,         // -1 means not valid since not in a call
+    functionTypeInfo: PropTypes.object,       // This is the return value from a Tern TYPE request. So we get doc, url etc
+    helpDocJsonMethodInfo: PropTypes.object   // See DocsPhaser.js for example and schema and help functions
 },
 
 /** Make A Table
@@ -15,8 +16,9 @@ export default FunctionDescription = React.createClass({
  * @param {number} highlightRow - 0-based row index to highlight
  */
 makeTable(hdrs, fields, data, highlightRow = undefined) {
+  let m = this.props.helpDocJsonMethodInfo;
   return ( 
-    <table className="ui celled table">
+    <table className="ui very compact small celled table">
       { !hdrs ? null : 
         <thead><tr>
         { hdrs.map( (h, colIdx) => { return <th key={colIdx}>{h}</th>})}
@@ -24,8 +26,9 @@ makeTable(hdrs, fields, data, highlightRow = undefined) {
       }
       <tbody>
         { data.map( (rowData, rowIdx) => { 
+          var paramHelp = (m && m.parameters && m.parameters.length > rowIdx) ? m.parameters[rowIdx].help: null
           return (
-            <tr key={rowIdx} className={highlightRow === rowIdx ? "active": ""}>
+            [<tr key={rowIdx} className={highlightRow === rowIdx ? "active": ""}>
             { fields.map( (fieldName, colIdx) => {
                 return (
                   <td key={colIdx}>
@@ -34,7 +37,7 @@ makeTable(hdrs, fields, data, highlightRow = undefined) {
                 )
               })
             }
-            </tr>
+            </tr>,(highlightRow === rowIdx && !!paramHelp) ? <tr><td className="active" colSpan={3}>{paramHelp}<br></br></td></tr> : null]
             ) 
           })
         }
@@ -45,16 +48,26 @@ makeTable(hdrs, fields, data, highlightRow = undefined) {
 },
 
 render: function() {
-  let fh = this.props.functionHelp;
-  let argPos = this.props.functionArgPos;     // 0 for first argument, -1 for Not in a function at all
+  let fh = this.props.functionHelp
+  let hDoc = this.props.helpDocJsonMethodInfo
+  let argPos = this.props.functionArgPos     // 0 for first argument, -1 for Not in a function at all
   
   if (!fh || _.isEmpty(fh) ||  argPos === -1)
-    return null;
-
-  let {name, origin} = this.props.functionTypeInfo;     // eg Phaser.Game, phaser    
+    return null
+    
+    
+  let {name, origin} = this.props.functionTypeInfo     // eg Phaser.Game, phaser    
   let { doc, url} = this.props.functionTypeInfo
-  let colorGrey = {color: "#777"}        
+  let colorGrey = {color: "#777"}            
+  let colorBlue = {color: "navy"}            
+  let retInfoHelpText = null
+
+  if (hDoc.__typeIs === "classConstructor") 
+    retInfoHelpText = <span style={colorBlue}>This 'function' is actually a <i>class constructor</i> and should be called with <b><code><span style={{color: "purple"}}>new</span> {name}(...)</code></b> so that it returns an <i>Object</i> that is a new <i>instance</i> of the <i>class</i> <code>{name}</code></span>
+  else
+    retInfoHelpText = <span><span style={colorGrey}>This <i>function</i> will return data of type: </span> {fh.type.rettype ? <code>{fh.type.rettype}</code> : <span><code>null</code> <small style={colorGrey}>(the function does not return a value)</small></span>}</span>    
   
+
   let knownTernBug = (typeof fh.start === 'number') ? <a href="https://github.com/codemirror/CodeMirror/issues/3934" className="ui compact negative message">MGB ISSUE: Non-patched codemirror/tern giving wrong start data</a> : null
           
   return (
@@ -66,7 +79,7 @@ render: function() {
       { name && <p><code>{name}()</code><small><br></br>Part of '{origin}'</small></p>}
       { doc && <p>{doc}</p> }
       { url && <p><a href={url}><small>{url}</small></a></p> }
-        <span style={colorGrey}>This <i>function</i> will return data of type: </span> {fh.type.rettype ? <code>{fh.type.rettype}</code> : <span><code>null</code> <small style={colorGrey}>(the function does not return a value)</small></span>}
+      { retInfoHelpText }
         { fh.type.args.length === 0 ? 
             <div className="ui content">(function takes no parameters)</div>
             :

@@ -67,6 +67,10 @@ import Defs_browser from './tern/Defs/browser.json';
 import Defs_phaser from "./tern/Defs/DefsPhaser";
 
 
+import DocsPhaser from './tern/Defs/DocsPhaser.js';
+
+
+
 import cm_tern_lib_comment from "tern/lib/comment";
 
 // ?  <script src="/tern/lib/infer.js"></script>  
@@ -309,7 +313,7 @@ export default class EditCode extends React.Component {
     // I stole the following approach from 
     // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
     // which is otherwise not stored/exposed
-    let argPos = -1
+    var argPos = -1
     if (!editor.somethingSelected()) {
       var state = editor.getTokenAt(editor.getCursor()).state;
       var inner = CodeMirror.innerMode(editor.getMode(), state);
@@ -320,7 +324,7 @@ export default class EditCode extends React.Component {
       }
     }
 
-    let functionTypeInfo = null;
+    var functionTypeInfo = null;
     if (argPos !== -1 && ternServer.cachedArgHints && ternServer.cachedArgHints.start)
     {
       ternServer.request(editor, "type", function(error, data) {
@@ -330,12 +334,31 @@ export default class EditCode extends React.Component {
         functionTypeInfo = data
     }, ternServer.cachedArgHints.start)     // TODO - We need CodeMirror 5.13.5 so this will work
     }
-    
-    this.setState( {  "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
+        
+    if (functionTypeInfo)
+    {
+      DocsPhaser.getApiDocsAsync({ 
+        frameworkName: "phaser", 
+        //frameworkVersion: "x.x.x",
+        symbolType: "method",
+        symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
+      },
+      (originalRequest, result) => {
+        // This callback will always be called, but could be sync or async
+        this.setState( {  "helpDocJsonMethodInfo": result.data,
+                          "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
+                          "functionArgPos": argPos,
+                          "functionTypeInfo": functionTypeInfo || {} })   // MIGHT BE SUNC OR ASYNC. THIS MATTERS. POOP
+      })
+    }
+    else
+      this.setState( {  "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
                       "functionArgPos": argPos,
+                      "helpDocJsonMethodInfo": null,
                       "functionTypeInfo": functionTypeInfo || {}
-                  })      
+                  })
   }
+  
   
   srcUpdate_GetRelevantTypeInfo()
   {
@@ -404,6 +427,8 @@ export default class EditCode extends React.Component {
    
   // This gets _.debounced in componentDidMount()
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {    
+    
+    // TODO: Batch the multiple setState() calls. This is complicated since some are async, or come via a ternServer callback. 
     this.srcUpdate_CleanSheetCase()
     this.srcUpdate_LookForMgbAssets()
     this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
@@ -569,7 +594,8 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
                   <FunctionDescription 
                     functionHelp={this.state.functionHelp} 
                     functionArgPos={this.state.functionArgPos} 
-                    functionTypeInfo={this.state.functionTypeInfo}/>
+                    functionTypeInfo={this.state.functionTypeInfo}
+                    helpDocJsonMethodInfo={this.state.helpDocJsonMethodInfo}/>
 
                   <ExpressionDescription 
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />

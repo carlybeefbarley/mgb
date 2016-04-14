@@ -13,12 +13,16 @@ export default ExpressionDescription = React.createClass({
     
     let {name, type, exprName, doc, url, origin} = this.props.expressionTypeInfo
     let colorGrey = {color: "#777"}          
-    let isFn = type.startsWith("fn(") ? "()" : "";
+    let isFn = type.startsWith("fn(") ? "(...)" : "";
     if (type === '?')
       return null
             
     return (
       <div className="ui yellow segment" style={{backgroundColor: "rgba(255,255,0,0.03)"}}>
+        <a className="ui orange left ribbon label"><code>{name}{isFn}</code></a>
+        <a className="ui orange right corner label">
+          <i className="help icon"></i>
+        </a>
         <div className="ui header">
           <span style={colorGrey}>Reference <i>Expression</i>:</span> <code>{exprName}<span style={colorGrey}>{isFn}</span></code>
         </div>    

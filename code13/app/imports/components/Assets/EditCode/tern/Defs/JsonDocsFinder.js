@@ -71,7 +71,6 @@ export default JsonDocsFinder = {
         })
     
     jqXHR.fail((error) => {
-      debugger
       this._processApiDocRequest(request, null, callbackFn)   // Callback is async in this case. Null data parameter means pass on fail
     })
     

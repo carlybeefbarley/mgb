@@ -166,7 +166,7 @@ export default class EditCode extends React.Component {
         "CodeMirror-lint-markers", 
         "CodeMirror-linenumbers", 
         "CodeMirror-foldgutter"
-        ],
+      ],
       extraKeys: {
         "Alt-F": "findPersistent",        
         "'.'": this.codeEditPassAndHint,
@@ -182,8 +182,9 @@ export default class EditCode extends React.Component {
       },
       lint: true,   // TODO - use eslint instead? Something like jssc?
       autofocus: true,
-      highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true},
+      highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
     }
+    
 		this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
     
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
@@ -216,9 +217,15 @@ export default class EditCode extends React.Component {
   }
 
   codeEditPassAndHint(cm) {
-    setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000);      // Pop up a helper after a second
+    //setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000);      // Pop up a helper after a second
+debugger
+CodeMirror.tern.getHint(this.codeMirror, function (x,y,z) 
+{
+  debugger
+})    
     return CodeMirror.Pass;       // Allow the typed character to be part of the document
   }
+
 
   
   componentWillReceiveProps (nextProps) {
@@ -236,7 +243,9 @@ export default class EditCode extends React.Component {
   {
     let re=/api\/asset\/png\/([A-Za-z0-9]+)/g
     let matches=[]
-    while ( ( match = re.exec( lineText ) ) && matches.push( match[1] ) ) {};
+    let match
+    while ( ( match = re.exec( lineText ) ) && matches.push( match[1] ) ) 
+      ;
     return _.uniq(matches)
   }
   
@@ -263,6 +272,7 @@ export default class EditCode extends React.Component {
    */
   srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged = false)
   {
+    return // TODO make this user-selectable
     var editor = this.codeMirror
     var widgets = this.hintWidgets
     var currentLineNumber = editor.getCursor().line + 1     // +1 since user code is 1...
@@ -376,10 +386,10 @@ export default class EditCode extends React.Component {
     }, position)
   
   }
- 
- 
-   srcUpdate_GetRefs()
-   {     
+
+
+  srcUpdate_GetRefs()
+  {     
     let ternServer=CodeMirror.tern
     let editor = this.codeMirror      
     let position = editor.getCursor()
@@ -391,10 +401,10 @@ export default class EditCode extends React.Component {
       else
         self.setState( { atCursorRefRequestResponse: { data } } )
     }, position)
-   }
+  }
 
-   srcUpdate_GetDef()
-   {
+  srcUpdate_GetDef()
+  {
     let ternServer=CodeMirror.tern
     let editor = this.codeMirror      
     let position = editor.getCursor()
@@ -409,9 +419,9 @@ export default class EditCode extends React.Component {
         self.setState( { atCursorDefRequestResponse: { data } } )
       }
     }, position)
-   }
-   
-   
+  }
+  
+  
   srcUpdate_getMgbOpts()
   {
     // We must check the entire source code file because it is used in the indicator in the Run Code accordion
@@ -420,7 +430,7 @@ export default class EditCode extends React.Component {
     this.setState( { mgbopt_game_engine: gameEngineJsToLoad})
     
     // We also check just the current line so we can make it clear that the current line is setting an MGBopt
-    thisLine = this.codeMirror.getLine(this.codeMirror.getCursor().line);
+    let thisLine = this.codeMirror.getLine(this.codeMirror.getCursor().line);
     this.setState( { currentLineDeterminesGameEngine: this.detectGameEngine(thisLine, true)})    
   }
 
@@ -444,7 +454,7 @@ export default class EditCode extends React.Component {
 
   }
   
-	codemirrorValueChanged (doc, change) {
+  codemirrorValueChanged (doc, change) {
     // Ignore SetValue so we don't bounce changes from server back up to server
     if (change.origin !== "setValue")
     {
@@ -466,22 +476,22 @@ export default class EditCode extends React.Component {
   }
 
 
-detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
-  let phaserVerNNN = this.state.defaultPhaserVersionNNN
-  let versionArray = src.match(/^\/\/\MGBOPT_phaser_version\s*=\s*([\.\d]+)/)
-  if (versionArray && versionArray.length > 1)
-  {
-    phaserVerNNN = versionArray[1]
-    if (returnRawVersionNNNwithoutDefault)
-      return phaserVerNNN;
+  detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
+    let phaserVerNNN = this.state.defaultPhaserVersionNNN
+    let versionArray = src.match(/^\/\/\MGBOPT_phaser_version\s*=\s*([\.\d]+)/)
+    if (versionArray && versionArray.length > 1)
+    {
+      phaserVerNNN = versionArray[1]
+      if (returnRawVersionNNNwithoutDefault)
+        return phaserVerNNN;
+    }
+    else
+    {
+      if (returnRawVersionNNNwithoutDefault)
+        return null
+    }
+    return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
   }
-  else
-  {
-    if (returnRawVersionNNNwithoutDefault)
-      return null
-  }
-  return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
-}
 
 
 
@@ -490,18 +500,14 @@ detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
     // see http://assets.codepen.io/assets/editor/live/console_runner.js for an example of a sandbox-side code for this.. and http://assets.codepen.io/assets/editor/live/events_runner.js for an events one
     // See a simpler embeddable one here: http://markknol.github.io/console-log-viewer/console-log-viewer.js
-      console.log(msg.data[0])
+    console.log(msg.data[0])
 
-// OR Just start with Firebug Lite
-//   <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
-// But, this has some xdomian issues it seems? even when i load the js locally http://localhost:3010/firebug-lite-compressed.js basic
-
-
-
+    // OR Just start with Firebug Lite
+    //   <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+    // But, this has some xdomian issues it seems? even when i load the js locally http://localhost:3010/firebug-lite-compressed.js basic
   }
   
-  
-
+ 
   /** Start the code running! */
   handleRun()
   {    

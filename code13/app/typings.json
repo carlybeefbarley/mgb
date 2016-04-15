@@ -1,0 +1,6 @@
+{
+  "ambientDependencies": {
+    "react-global": "registry:dt/react-global#0.14.0+20160316155526",
+    "underscore": "registry:dt/underscore#1.7.0+20160412141459"
+  }
+}

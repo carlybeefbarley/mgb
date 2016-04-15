@@ -134,8 +134,8 @@ export default class EditCode extends React.Component {
   }
 
   componentDidMount() {
-    this.getElementReferences()
-    
+    this.getElementReferences()    
+        
     // Debounce the codeMirrorUpdateHints() function
     this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
     
@@ -472,7 +472,8 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
   
   getElementReferences()
   {
-    this.iFrameWindow = document.getElementById("iFrame1")    
+    this.iFrameWindow = document.getElementById("iFrame1")
+
   }
 
 

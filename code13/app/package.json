@@ -27,7 +27,10 @@
     "react-router": "^2.2.2",
     "tern": "^0.18.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^2.7.0",
+    "eslint-plugin-react": "^4.3.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "withDB": "MONGO_URL=mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730 meteor"

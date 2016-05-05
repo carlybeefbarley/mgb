@@ -1,7 +1,9 @@
 So much goodness
--- Here's the bar regarding Microsoft Visual Studio - https://blogs.msdn.microsoft.com/jasonz/2012/05/10/my-favorite-features-improved-tooling-in-visual-studio-11-for-javascript-developers/
--- Here's a backgrounder on tern: http://marijnhaverbeke.nl/blog/tern.html
---  --- Regarding codemirror - http://marijnhaverbeke.nl/blog/#cm-internals
+- Here's the bar regarding Microsoft Visual Studio -
+   https://blogs.msdn.microsoft.com/jasonz/2012/05/10/my-favorite-features-improved-tooling-in-visual-studio-11-for-javascript-developers/
+- Here's a backgrounder on tern: http://marijnhaverbeke.nl/blog/tern.html
+- Regarding codemirror - http://marijnhaverbeke.nl/blog/#cm-internals
+- Example of a tern extension: https://github.com/angelozerr/tern-outline/blob/master/outline.js
 
 
 

@@ -1,0 +1,33 @@
+# This file advises IDEs and Text Editors of preferences such as tab indentation, brace style etc
+# The format and properties are documented at http://editorconfig.org/
+#
+# This file has no effect on how the code is executed
+#
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+tab_width = 4
+indent_style = tab
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.json]
+indent_size = 2
+indent_style = space
+
+[*.js]
+indent_size = 2
+indent_style = space
+
+[{.travis.yml,package.json}]
+# The indent size used in the `package.json` file cannot be changed
+# https://github.com/npm/npm/pull/3180#issuecomment-16336516
+indent_size = 2
+indent_style = tab

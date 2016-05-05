@@ -1,10 +1,18 @@
 import React, { PropTypes } from 'react';
 
 
+function makeFriendlyName(name, eName)
+{
+  if (name === '<top>')
+    return `[GLOBAL] ${eName}`
+  else
+    return name
+}
+
 export default ExpressionDescription = React.createClass({
   propTypes: {
     expressionTypeInfo: PropTypes.object    // Has the data from a TernJS typeInfo request on an expression
-    },
+  },
 
 
   render: function() {
@@ -17,9 +25,12 @@ export default ExpressionDescription = React.createClass({
     if (type === '?')
       return null
             
+    
+    let nameFriendly = makeFriendlyName(name, exprName);        
+    
     return (
       <div className="ui yellow segment" style={{backgroundColor: "rgba(255,255,0,0.03)"}}>
-        <a className="ui orange left ribbon label"><code>{name}{isFn}</code></a>
+        <a className="ui orange left ribbon label"><code>{nameFriendly}{isFn}</code></a>
         <a className="ui orange right corner label">
           <i className="help icon"></i>
         </a>

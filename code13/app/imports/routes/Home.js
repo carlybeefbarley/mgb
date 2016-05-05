@@ -40,7 +40,7 @@ export default class Home extends Component {
                   <h3 className="ui header">Level Up from Noob to Guru</h3>
                   <p>Grow your REAL skill tree: javascript programming, pixel art animation, game design, story writing and more.</p>
                   <h3 className="ui header">Multimaker collaboration</h3>
-                  <p>Making a game is now an MMO in itself: Make, watch, chat and play games with friends so you learn together.</p>
+                  <p>Making a game is now an MMO in of itself: Make, watch, chat and play games with friends so you learn together.</p>
                 </div>
                 <div className="five wide right floated column">
                   <img src="/images/frontpage_mgb1.png" className="ui huge bordered rounded image"></img>

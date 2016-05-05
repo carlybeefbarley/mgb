@@ -5,90 +5,71 @@ import { js_beautify } from 'js-beautify';
 import KeyBindingAssist from '../../Skills/Keybindings.js';
 
 // Import CodeMirror and its various dependencies.
-//   This is not as simple as it might sound...
-
-// 1) Due to Meteor 1.3 import limitations, there are also symlinks in the 
-//    /package-assets-symlink-hack/ directory for the CSS etc files that 
-//    CodeMirror needs.
+// 1) Due to Meteor 1.3 import limitations, there are also symlinks in /package-assets-symlink-hack/ directory
+//    for the CSS etc files that CodeMirror needs.
 // 2) We load JSHINT from /app.htm in browser because JSHINT redefines some fundamental
 //    globals like 'utils' and 'event', and that confuses node/meteor greatly.
-//
-// Things get even more complicated once TERN (the code analysis system use for autocomplete smarts)
 import CodeMirror from 'codemirror';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/hint/show-hint';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/selection/active-line';
+import 'codemirror/addon/edit/matchbrackets';
 
-// CodeMirror Modes we will support
-import cm_modejs from 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/addon/fold/comment-fold';
+import 'codemirror/addon/lint/lint';
+import 'codemirror/addon/lint/javascript-lint';
+import 'codemirror/addon/lint/json-lint';
+import 'codemirror/addon/display/placeholder';
+import 'codemirror/addon/search/jump-to-line';
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/addon/scroll/annotatescrollbar';
+import 'codemirror/addon/search/matchesonscrollbar';
+import 'codemirror/addon/search/searchcursor';
+import 'codemirror/addon/search/search';
 
-// CodeMirror addons for cool IDE-like functions
-import cm_showhint from 'codemirror/addon/hint/show-hint';
-//import cm_closetag from 'codemirror/addon/edit/closetag';
-import cm_closebrackets from 'codemirror/addon/edit/closebrackets';
-import cm_matchbrackets from 'codemirror/addon/edit/matchbrackets';
-import cm_activeline from 'codemirror/addon/selection/active-line';
-
-import cm_fold_code from 'codemirror/addon/fold/foldcode';
-import cm_fold_gutter from 'codemirror/addon/fold/foldgutter';
-import cm_fold_brace from 'codemirror/addon/fold/brace-fold';
-import cm_fold_comment from 'codemirror/addon/fold/comment-fold';
-// import cm_fold_ from 'codemirror/addon/fold/xml-fold';
-// import cm_fold_ from 'codemirror/addon/fold/markdown-fold';
-
-import cm_dialog from 'codemirror/addon/dialog/dialog';
-
-import cm_annotatescrollbar from 'codemirror/addon/scroll/annotatescrollbar';
-import cm_matchesonscrollbar from 'codemirror/addon/search/matchesonscrollbar';
-
-import cm_display_placeholder from 'codemirror/addon/display/placeholder';
-
-
-import cm_jumptoline from 'codemirror/addon/search/jump-to-line';
-
-import cm_lint from 'codemirror/addon/lint/lint';
-import cm_jslint from 'codemirror/addon/lint/javascript-lint';
-import cm_jsonlint from 'codemirror/addon/lint/json-lint';
-
-import cm_searchcursor from 'codemirror/addon/search/searchcursor';
-import cm_search from 'codemirror/addon/search/search';
+// Not used yet
+// import 'codemirror/addon/edit/closetag';
+// import 'codemirror/addon/fold/xml-fold';
+// import 'codemirror/addon/fold/markdown-fold';
 
 // **GLOBAL*** Tern JS - See comment below...  
 import scoped_tern from "tern";
 tern = scoped_tern;   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
 
 // Tern 'definition files'
-import cm_tern_lib_def from "tern/lib/def";     // Do I need? since I'm doing it differently in next 2 lines...
-
-// import Defs_phaser from "./tern/DefsPhaser";
-// import Defs_ecma5 from "./tern/DefsEcma5";
-// import Defs_browser from 'tern/defs/browser.json';
-
-//import Defs_phaser from "./tern/Defs/phaser.json";
+import "tern/lib/def";     // Do I need? since I'm doing it differently in next 2 lines...
 import Defs_ecma5 from "./tern/Defs/ecma5.json";
 import Defs_browser from './tern/Defs/browser.json';
 import Defs_phaser from "./tern/Defs/DefsPhaser";
 import Defs_lodash from "./tern/Defs/DefsLodash";
 
-
 import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js';
 
-
-
 import cm_tern_lib_comment from "tern/lib/comment";
-
-// ?  <script src="/tern/lib/infer.js"></script>  
 // ?  <script src="/tern/plugin/doc_comment.js"></script>
   
-// Official CodeMirror Tern addon (so Tern smartness can show in CodeMirror)
-import cm_addon_tern from "codemirror/addon/tern/tern";
+  
+import InstallMgbTernExtensions from './tern/MgbTernExtensions.js';
 
-// (END OF CODEMIRROR/TERN imports)
-
+  
+import "codemirror/addon/tern/tern";
 
 import { iframeScripts } from './sandbox/SandboxScripts.js';
 import { templateCode } from './templates/TemplateCode.js';
 import FunctionDescription from './tern/FunctionDescription.js';
 import ExpressionDescription from './tern/ExpressionDescription.js';
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js';
+import TokenDescription from './tern/TokenDescription.js';
+
 import MgbMagicCommentDescription from './tern/MgbMagicCommentDescription.js';
+import DebugASTview from './tern/DebugASTview.js';
+
+let showDebugAST = false
+
 // Code asset - Data format:
 //
 // content2.src                     // String with source code
@@ -144,10 +125,28 @@ export default class EditCode extends React.Component {
 
     // Tern setup
     var myTernConfig = {
+      useWorker: false,
       defs: [Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser],
-      useWorker: false
+      completionTip: function (curData) { 
+        // we get called for the CURRENTLY highlighted entry in the autocomplete list. 
+        // We are provided fields like
+        //   name, type     ... pretty reliably
+        //   doc, url       ... sometimes (depending on dataset) 
+        return curData.doc  + (curData.type ? "\n\n"+curData.type : "") 
+      }
+      // ,
+      // responseFilter: function (doc, query, request, error, data)
+      // {
+      //   // Woah - capture all the responses from the TernServer
+      //   console.log("REQ",request, "  DATA",data)
+      //   return data
+      // }
+
+      // typeTip: function(..) this would be a function that creates a DOM element to render the typeTip
     }
     CodeMirror.tern = new CodeMirror.TernServer(myTernConfig)     // This is actually our instance which we have foolishly just attached to the global for now :( hack)
+
+    InstallMgbTernExtensions(tern);
 
     // CodeMirror setup
     const textareaNode = this.refs.textarea
@@ -217,12 +216,11 @@ export default class EditCode extends React.Component {
   }
 
   codeEditPassAndHint(cm) {
-    //setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000);      // Pop up a helper after a second
-debugger
-CodeMirror.tern.getHint(this.codeMirror, function (x,y,z) 
-{
-  debugger
-})    
+    setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000);      // Pop up a helper after a second
+// CodeMirror.tern.getHint(cm, function (hint) 
+// {
+// console.log("HINT",hint)
+// })    
     return CodeMirror.Pass;       // Allow the typed character to be part of the document
   }
 
@@ -265,7 +263,13 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
     let PNGids = this._getPNGsInLine(thisLine);
     this.setState( { previewAssetIdsArray: PNGids } );    
   }
-  
+
+  _util_getMemberExpressionFragments()
+  {
+
+  }
+
+
   /** Runs JSHINT on the user's code and show any relevant issues as widgets 
     * directly below that code in CodeMirror. This was adapted from the demo code
     * at https://codemirror.net/demo/widget.html
@@ -315,18 +319,22 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
       editor.scrollTo(null, after - info.clientHeight + 3);    
   }
 
+
   srcUpdate_GetInfoForCurrentFunction()
   {
     let ternServer=CodeMirror.tern;
     let editor = this.codeMirror
-    ternServer.updateArgHints(this.codeMirror);   
-    
+    ternServer.updateArgHints(this.codeMirror);
+    let currentCursorPos = editor.getCursor()
+
+    let currentToken = editor.getTokenAt(currentCursorPos, true)
+
     // I stole the following approach from 
     // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
     // which is otherwise not stored/exposed
     var argPos = -1
     if (!editor.somethingSelected()) {
-      var state = editor.getTokenAt(editor.getCursor()).state;
+      var state = currentToken.state;
       var inner = CodeMirror.innerMode(editor.getMode(), state);
       if (inner.mode.name === "javascript") {
         var lex = inner.state.lexical;
@@ -339,11 +347,11 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
     if (argPos !== -1 && ternServer.cachedArgHints && ternServer.cachedArgHints.start)
     {
       ternServer.request(editor, "type", function(error, data) {
-      if (error)
-        functionTypeInfo = { "error": error } 
-      else
-        functionTypeInfo = data
-    }, ternServer.cachedArgHints.start)     // TODO - We need CodeMirror 5.13.5 so this will work
+        if (error)
+          functionTypeInfo = { "error": error } 
+        else
+          functionTypeInfo = data
+      }, ternServer.cachedArgHints.start)     // TODO - We need CodeMirror 5.13.5 so this will work
     }
         
     if (functionTypeInfo)
@@ -359,14 +367,17 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
         this.setState( {  "helpDocJsonMethodInfo": result.data,
                           "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
                           "functionArgPos": argPos,
-                          "functionTypeInfo": functionTypeInfo || {} })   // MIGHT BE SUNC OR ASYNC. THIS MATTERS. POOP
+                          "functionTypeInfo": functionTypeInfo || {},
+                          currentToken: currentToken
+        })   // MIGHT BE SYNC OR ASYNC. THIS MATTERS. Maybe find a better way to handle this down in a component?
       })
     }
     else
       this.setState( {  "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
                       "functionArgPos": argPos,
                       "helpDocJsonMethodInfo": null,
-                      "functionTypeInfo": functionTypeInfo || {}
+                      "functionTypeInfo": functionTypeInfo || {},
+                      currentToken: currentToken
                   })
   }
   
@@ -377,8 +388,12 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
     let editor = this.codeMirror      
     let position = editor.getCursor()
     var self = this
+    let query = {
+      type: "type",
+      depth: 0
+    }
 
-    ternServer.request(editor, "type", function(error, data) {
+    ternServer.request(editor, query, function(error, data) {
       if (error)
         self.setState( { atCursorTypeRequestResponse: { "error": error } } ) 
       else
@@ -434,6 +449,48 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
     this.setState( { currentLineDeterminesGameEngine: this.detectGameEngine(thisLine, true)})    
   }
 
+  // srcUpdate_getProperties()
+  // {
+    /// This doesn't seem super useful. It's just an array of completion strings, no extra data
+  //   let ternServer=CodeMirror.tern
+  //   let editor = this.codeMirror      
+  //   let position = editor.getCursor()
+  //   var self = this
+
+  //   ternServer.request(editor, "properties", function(error, data) {
+  //     if (error)
+  //       self.setState( { atCursorPropertiesRequestResponse: { "error": error } } ) 
+  //     else
+  //     {
+        
+  //       //data.definitionText = (data.origin === "[doc]" && data.start) ? editor.getLine(data.start.line).trim() : null
+  //       self.setState( { atCursorPropertiesRequestResponse: { data } } )
+  //     }
+  //   }, position)
+  // }
+
+
+
+  srcUpdate_getMemberParent()
+  {
+    if (showDebugAST) {
+      let ternServer = CodeMirror.tern
+      let editor = this.codeMirror
+      let position = editor.getCursor()
+      var self = this
+
+      var query = { type: "mgbGetMemberParent" }
+
+      ternServer.request(editor, query, function (error, data) {
+        if (error)
+          self.setState({atCursorMemberParentRequestResponse: {"error": error}})
+        else {
+          self.setState({atCursorMemberParentRequestResponse: {data}})
+        }
+      }, position)
+    }
+  }
+
    
    
   // This gets _.debounced in componentDidMount()
@@ -447,7 +504,9 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
     this.srcUpdate_GetRelevantTypeInfo()
     this.srcUpdate_GetRefs()
     this.srcUpdate_GetDef()
-    this.srcUpdate_getMgbOpts()
+    this.srcUpdate_getMgbOpts()    
+    
+    this.srcUpdate_getMemberParent()
 
       // TODO:  See atInterestingExpression() and findContext() which are 
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
@@ -526,7 +585,7 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
     $('.ui.accordion').accordion('open', 1);
   }
 
-  handleStop(e)
+  handleStop()
   {
     this.setState( { gameRenderIterationKey: this.state.gameRenderIterationKey+1, // or this.iFrameWindow.contentWindow.location.reload(); ? 
                      isPlaying: false
@@ -542,6 +601,13 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
     this._currentCodemirrorValue = newValue;
     let newC2 = { src: newValue }
     this.props.handleContentChange( newC2, "", `Template code: ${item.label}`)
+  }
+
+
+  renderDebugAST()
+  {
+    if (showDebugAST && this.state.atCursorMemberParentRequestResponse)
+      return <DebugASTview atCursorMemberParentRequestResponse={this.state.atCursorMemberParentRequestResponse} />
   }
 
   render() {
@@ -598,7 +664,11 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
                     mgbopt_game_engine={this.state.mgbopt_game_engine}
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
 
-                    
+
+                  <TokenDescription
+                      currentToken={this.state.currentToken} />
+
+
                   <FunctionDescription 
                     functionHelp={this.state.functionHelp} 
                     functionArgPos={this.state.functionArgPos} 
@@ -612,7 +682,8 @@ CodeMirror.tern.getHint(this.codeMirror, function (x,y,z)
                     refsInfo={this.state.atCursorRefRequestResponse.data} 
                     defInfo={this.state.atCursorDefRequestResponse.data} 
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
-                    
+
+                  { this.renderDebugAST() }
 
                   { previewIdThings && previewIdThings.length > 0 &&
                     <div className="ui divided selection list">

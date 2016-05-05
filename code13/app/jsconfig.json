@@ -1,10 +1,14 @@
 {
     "compilerOptions": {
-        "target": "ES6"
+        "target": "ES6",
+        "allowSyntheticDefaultImports": true
+
     },
     "exclude": [
-        "typings/main.d.ts",
-        "typings/main",
-        "node_modules"
+        "./meteor",
+        "./typings/main.d.ts",
+        "./typings/main",
+        "./node_modules",
+        "./public"            // Lots of doc files in here. Need to subdivide more
     ]
 }

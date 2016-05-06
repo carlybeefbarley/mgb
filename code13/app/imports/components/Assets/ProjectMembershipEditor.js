@@ -26,7 +26,7 @@ export default ProjectMembershipEditor = React.createClass({
       return    <a  className={"ui item"+ (inList ? " active" : "")} 
                     data-value={k} key={k} 
                     onClick={this.handleToggleProjectName.bind(this, k)}>
-                    {k}<i className={inList ? "ui toggle on icon" : "ui toggle off icon"}></i>
+                    <i className={inList ? "ui toggle on icon" : "ui toggle off icon"}></i>&nbsp;{k}
                 </a>        
     })
     

@@ -12,6 +12,9 @@ import ToolCircle from './ToolCircle.js';
 import ToolRect from './ToolRect.js';
 import ToolEyedropper from './ToolEyedropper.js';
 
+import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
+
+
 
 const tools = {
   ToolPen,
@@ -125,8 +128,6 @@ export default class EditGraphic extends React.Component {
       lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
       hoverable: true
     })
-
-
   }
 
 
@@ -570,6 +571,7 @@ export default class EditGraphic extends React.Component {
 
   handleSelectFrame(frameIndex)
   {
+    this.doSnapshotActivity(frameIndex)
     this.setState( { selectedFrameIdx: frameIndex} )
   }
 
@@ -623,6 +625,14 @@ export default class EditGraphic extends React.Component {
     u.push(this.doMakeUndoStackEntry(changeInfoString))
   }
 
+  doSnapshotActivity(frameIdxOverride)
+  {
+    let passiveAction = {
+      selectedFrameIdx: frameIdxOverride ? frameIdxOverride : this.state.selectedFrameIdx
+    }
+    snapshotActivity(this.props.asset, passiveAction)
+  }
+
   handleUndo()
   {
     let u = this.mgb_undoStack
@@ -634,6 +644,7 @@ export default class EditGraphic extends React.Component {
         zombie.savedContent2.frameData[0][0],         // MAINTAIN: Match semantics of handleSave()
         "Undo changes"
       )
+      this.doSnapshotActivity()
     }
   }
 
@@ -649,6 +660,7 @@ export default class EditGraphic extends React.Component {
     }
     asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
     this.props.handleContentChange(c2, asset.thumbnail, changeText);
+    doSnapshotActivity()
   }
 
   /// Drag & Drop of image files over preview and editor

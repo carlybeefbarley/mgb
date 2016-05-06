@@ -43,6 +43,8 @@ export default AssetActivityDetail = React.createClass({
       let detail2 = ""
       if (a.toAssetKind === "code")
         detail2 = ` at line ${a.passiveAction.position.line}`
+      else if (a.toAssetKind === "graphic")
+        detail2 = ` at frame #${a.passiveAction.selectedFrameIdx+1}`
       
       return <a className="item" key={a._id}>
               {a.byUserName}{detail2}

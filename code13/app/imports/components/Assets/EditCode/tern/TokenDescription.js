@@ -919,38 +919,36 @@ function specialHandlerString2(rString) {
 
 // Explain multi-line and single-line comments. Note that there is special code elsewhere for //MGBOPT_ stuff
 function specialHandlerComment(str) {
+  let grn = {color: "green"}
   // explain single line
   if (str.startsWith("//"))
-    return <div>
-      <p>Javascript single line comments start at <code>//</code> and go to the end of the current line</p>
+    return <div><small>
+      <p>Javascript single line comments start at <code style={grn}>//</code> and go to the end of the current line</p>
       <p>
-        <small>
           There are some 'special' kinds of single line comments that help the editor/compiler
           to know how to run the code. For example in MyGameBuilder, we have a special comment format
-                    <code><br></br>
+                    <code style={grn}><br></br>
                         //MGBOPT_phaser_version = 2.4.6
                     <br></br></code>
           that tells MyGameBuilder which version of the <a href="phaser.io" target="_blank">Phaser</a> game framework to use
           with your code
-        </small>
       </p>
-    </div>
+      </small></div>
 
   // else explain multiline
   return <div>
-    <p>Javascript multi line comments start with /* and end with */</p>
-    <p>There can be line breaks and any other characters in between the /* and */</p>
-    <pre><small>/* This is an<br></br> example multiline comment */</small></pre>
-
-
-    <p>
-      <small>
-        You may also see/use a special variant of javascript comments that look like
-        <pre>/**   blah blah @param blah blah */</pre>
-        These are used to document your code so automatic help and docs can be extracted from it - see <a
+    <small>
+      <p>Javascript multi line comments start with <code style={grn}>/*</code> and end with <code style={grn}>*/</code></p>
+      <p>There may be line breaks and any other characters between the <code style={grn}>/*</code> and <code style={grn}>*/</code></p>
+      <pre style={grn}>/* This is an<br></br> example multiline comment */</pre>
+      <p>
+        You may also see/use a special variant of multiline javascript comments 
+        with <code style={grn}>@something</code> strings like <code style={grn}>@param</code>.
+        Developers use these to document their code so that automatic help text 
+        and api documentation can be extracted from the source code. See <a
         href={xlinks.jsDoc} target="_blank">jsdoc.org</a> for details
-      </small>
-    </p>
+      </p>
+    </small>
   </div>
 }
 

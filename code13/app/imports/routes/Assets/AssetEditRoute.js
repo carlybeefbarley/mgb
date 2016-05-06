@@ -7,10 +7,11 @@ import {handleForms} from '../../components/Forms/FormDecorator';
 import Helmet from 'react-helmet';
 import AssetEdit from '../../components/Assets/AssetEdit';
 import AssetCard from '../../components/Assets/AssetCard.js';
+import AssetActivityDetail from '../../components/Assets/AssetActivityDetail.js';
 
 import {AssetKinds} from '../../schemas/assets';
 import {logActivity} from '../../schemas/activity';
-
+import {snapshotActivity} from '../../schemas/activitySnapshots.js';
 
 export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -80,12 +81,15 @@ export default AssetEditRoute = React.createClass({
           </div>
         </div>
         
-        <div className="ui two wide column">
-        &nbsp;
+        <div className="ui four wide column">
+          { /* We use this.props.params.id since it is available sooner than the asset */ }
+          <AssetActivityDetail 
+                        assetId={this.props.params.id} 
+                        currUser={this.props.currUser} />
         </div>
 
 
-        <div className="six wide column">
+        <div className="four wide column">
             <AssetCard
             showHeader={false}
             canEdit={this.props.currUser && asset.ownerId === this.props.currUser._id}

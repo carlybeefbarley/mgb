@@ -1,25 +1,31 @@
 // This file should be imported by the main_server.js file
 
-import {Users, Azzets, Activity} from '../schemas';
+import {Users, Azzets, Activity, ActivitySnapshots } from '../schemas';
+
+//
+//    USERS
+//
 
 Meteor.publish('users', function(limit) {
   //Paginated users.
- if (limit) {
-   return Meteor.users.find({}, {limit: limit, sort: {date: -1}});
- }
- return Meteor.users.find({}, {sort: {date: -1}});
+  if (limit) {
+    return Meteor.users.find({}, {limit: limit, sort: {date: -1}});
+  }
+  return Meteor.users.find({}, {sort: {date: -1}});
 });
 
 Meteor.publish('user', function(id) {
- return Meteor.users.find(id);
+  return Meteor.users.find(id);
 });
 
+//
+//   ASSETS  
+//
 
-if (Meteor.isServer) {
-  Azzets._ensureIndex({
-    "name": "text"        // Index the name field. See https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor
-  });
-}
+Azzets._ensureIndex({
+  "name": "text"        // Index the name field. See https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor
+});
+
 
 // Can see all assets belonging to user
 // selectedAssetKinds is an array of AssetKindsKeys strings
@@ -42,8 +48,8 @@ Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch, p
     selector["$text"]= {$search: nameSearch}
 
   return Azzets.find(selector, {fields: {content2: 0}});
-  }
-);
+});
+
 
 //Can see all assets
 // selectedAssetKinds is an array of AssetKindsKeys strings
@@ -67,8 +73,8 @@ Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch,
     selector["$text"]= {$search: nameSearch}
 
   return Azzets.find(selector, {fields: {content2: 0}} );
-  }
-);
+});
+
 
 //Can see all assets
 // selectedAssetKinds is an array of AssetKindsKeys strings
@@ -89,14 +95,39 @@ Meteor.publish('assets.public.withContent2', function(userId, selectedAssetKinds
     selector["$text"]= {$search: nameSearch}
 
   return Azzets.find(selector);
-  }
-);
+});
+
+
+//
+//    ACTIVITY LOG
+//
 
 Meteor.publish('activity.public.recent', function(limitCount) {
   let selector = { }
   let options = {limit: limitCount, sort: {timestamp: -1}}
 
   return Activity.find(selector, options);
-  }
-);
+});
 
+
+//
+//    ACTIVITY SNAPSHOTS (and purge)
+//
+
+Meteor.publish('activitysnapshots.assetid', function(assetId) {
+  // Note that we don't put a date range selector in here since it doesn't automatically
+  // change reactively. It's simpler just to use Mongo's expireAfterSeconds feature
+  // to purge the records.
+  let selector = { toAssetId: assetId }
+  let options = {limit: 100, sort: {timestamp: -1} }
+  return ActivitySnapshots.find(selector, options);
+});
+
+// NOTE THAT THE expireAfterSeconds value cannot be changed! 
+// You have to drop the index to change it (or use the complicated collMod approach)
+// Here's how to drop it using the CLI: 
+//     $ meteor mongo
+//     > use meteor
+//     > db.activity_snapshots.dropIndexes()
+//     > db.activity_snapshots.getIndexes()   // check it is dropped ok
+ActivitySnapshots._ensureIndex( { "timestamp": 1 }, { expireAfterSeconds: 60*5 } )

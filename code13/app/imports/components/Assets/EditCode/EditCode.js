@@ -60,15 +60,22 @@ import "codemirror/addon/tern/tern";
 
 import { iframeScripts } from './sandbox/SandboxScripts.js';
 import { templateCode } from './templates/TemplateCode.js';
+
+
 import FunctionDescription from './tern/FunctionDescription.js';
 import ExpressionDescription from './tern/ExpressionDescription.js';
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js';
 import TokenDescription from './tern/TokenDescription.js';
 
 import MgbMagicCommentDescription from './tern/MgbMagicCommentDescription.js';
-import DebugASTview from './tern/DebugASTview.js';
 
+
+import DebugASTview from './tern/DebugASTview.js';
 let showDebugAST = false
+
+
+import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
+
 
 // Code asset - Data format:
 //
@@ -210,10 +217,12 @@ export default class EditCode extends React.Component {
     this.edResizeHandler();
   }
 
+
   componentWillUnmount()
   {
     $(window).off("resize", this.edResizeHandler)
   }
+  
 
   codeEditPassAndHint(cm) {
     setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000);      // Pop up a helper after a second
@@ -223,7 +232,6 @@ export default class EditCode extends React.Component {
 // })    
     return CodeMirror.Pass;       // Allow the typed character to be part of the document
   }
-
 
   
   componentWillReceiveProps (nextProps) {
@@ -253,6 +261,7 @@ export default class EditCode extends React.Component {
     this.setState( {documentIsEmpty: this._currentCodemirrorValue.length === 0} )
   }
   
+  
   /** Look for any MGB asset strings in current line or selection */
   srcUpdate_LookForMgbAssets()
   {
@@ -263,6 +272,7 @@ export default class EditCode extends React.Component {
     let PNGids = this._getPNGsInLine(thisLine);
     this.setState( { previewAssetIdsArray: PNGids } );    
   }
+
 
   _util_getMemberExpressionFragments()
   {
@@ -493,8 +503,19 @@ export default class EditCode extends React.Component {
 
    
    
+  // This gets called by CodeMirror when there is CursorActivity
   // This gets _.debounced in componentDidMount()
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {    
+    
+    // Update the activity snapshot if the code line has changed
+    // TODO: Batch this so it doesn't do it for row changes
+    let editor = this.codeMirror      
+    let position = editor.getCursor()
+    let passiveAction = {
+      position: position
+    }
+    snapshotActivity(this.props.asset, passiveAction)
+
     
     // TODO: Batch the multiple setState() calls. This is complicated since some are async, or come via a ternServer callback. 
     this.srcUpdate_CleanSheetCase()
@@ -658,16 +679,15 @@ export default class EditCode extends React.Component {
               { !docEmpty &&
                 // Current Line/Selection helper (body)
                 <div className="active content">
+                  <TokenDescription
+                      currentToken={this.state.currentToken} />
 
                   <MgbMagicCommentDescription
                     currentLineDeterminesGameEngine={this.state.currentLineDeterminesGameEngine} 
                     mgbopt_game_engine={this.state.mgbopt_game_engine}
-                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
-
-
-                  <TokenDescription
-                      currentToken={this.state.currentToken} />
-
+                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} 
+                    defaultPhaserVersionNNN={this.state.defaultPhaserVersionNNN}
+                    />
 
                   <FunctionDescription 
                     functionHelp={this.state.functionHelp} 

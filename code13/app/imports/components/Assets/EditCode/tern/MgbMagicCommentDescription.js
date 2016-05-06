@@ -5,33 +5,34 @@ export default MgbMagicCommentDescription = React.createClass({
   propTypes: {
     currentLineDeterminesGameEngine: PropTypes.string,
     mgbopt_game_engine: PropTypes.string,
-    defaultPhaserVersionNNN: PropTypes.string
-
-    },
+    defaultPhaserVersionNNN: PropTypes.string.isRequired
+  },
 
 
   render: function() {
 
     if (!this.props.currentLineDeterminesGameEngine)
       return null
- 
-     return (
+      
+    let grn = {color: "green"}
+
+    return (
       <div className="ui green segment" style={{backgroundColor: "rgba(0,255,0,0.03)"}}>
-        <p>
+        <small><p>
           The comment
-          <code style={{color: "green"}}><small>
+          <code style={grn}>
             <br></br>
             &nbsp;&nbsp;//MGBOPT_phaser_version={this.props.currentLineDeterminesGameEngine}
             <br></br>
-          </small></code> 
+          </code> 
           is a special comment that MGB looks for. 
           These comments are used just by MGB to force the usage of a specific version of the <a href="//phaser.io">Phaser</a> game engine when running your code.
         </p>
         <p>
           In this file, the 
-          &nbsp;<code><small>//MGBOPT_phaser_version=...</small></code>&nbsp;
+          &nbsp;<code style={grn}>//MGBOPT_phaser_version=...</code>&nbsp;
           special comment(s) are causing the following version of phaser to be pre-loaded:&nbsp;
-          <code><small><a href={this.props.mgbopt_game_engine}>{this.props.mgbopt_game_engine}</a></small></code>
+          <code><a href={this.props.mgbopt_game_engine}>{this.props.mgbopt_game_engine}</a></code>
         </p>
         
         <p>
@@ -42,6 +43,7 @@ export default MgbMagicCommentDescription = React.createClass({
         <p>
           NOTE: If there are multiple lines with this selection, ONLY the first one will be used.
         </p>
+        </small>
       </div>
     )
   }

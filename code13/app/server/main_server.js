@@ -5,6 +5,7 @@ import dataUriToBuffer from 'data-uri-to-buffer';
 import '../imports/schemas/users.js';
 import '../imports/schemas/assets.js';
 import '../imports/schemas/activity.js';
+import '../imports/schemas/activitySnapshots.js';
 
 import '../imports/publications/publications.js';
 
@@ -20,13 +21,6 @@ if (!Users.find().fetch().length) {
 }
 
 Meteor.startup(function () {
-  
-  // if (Houston)
-  // {
-  //   console.log("RUNNING WITH meteor add houston:admin PACKAGE. BE AWARE!")
-  //   Houston.add_collection(Meteor.users);
-  //   Houston.add_collection(Houston._admins);
-  // }
   
   //sets up keys for social logins
   ServiceConfiguration.configurations.upsert(

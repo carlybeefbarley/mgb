@@ -1,3 +1,6 @@
+
+// This file must be imported by main_server.js so that the Meteor method can be registered
+
 import {Users} from '../schemas';
 import {Match,check} from 'meteor/check'; 
 

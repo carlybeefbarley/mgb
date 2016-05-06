@@ -1,3 +1,7 @@
+
+// This file must be imported by main_server.js so that the Meteor method can be registered
+
+
 import {Activity} from '../schemas';
 import { check, Match } from 'meteor/check';
 
@@ -10,24 +14,24 @@ var schema = {
   priority: Number,       // 1 = highest.  Used for filtering signal:noise
  
   description: String,    // A description field
-  thumbnail: String,      // A few activities will have a graphic - ths is it
+  thumbnail: String,      // A few activities will have a graphic - this is it
   
   // Identifiers for who did the activity
-  byUserName: String,     // UserName not ID )
-  byUserId: String,       // OK, this one is the ID
-  byTeamName: String,     // team owner user NAME (FOR FUTURE USE)
-  byIpAddress: String,    // Cool!
-  byGeo: String,          // TODO - sone kind of lat/long
+  byUserName: String,     // UserName (not ID)
+  byUserId: String,       // OK, _this_ one is the ID
+  byTeamName: String,     // Team Owner's user NAME (FOR FUTURE USE)
+  byIpAddress: String,    // Cool! (FOR FUTURE USE)
+  byGeo: String,          // TODO - sone kind of lat/long (FOR FUTURE USE)
 
   // Identifers for scope of the action
   toProjectName: String,  // null if not a project-scoped action
-  toOwnerName: String,    // owner user NAME
+  toOwnerName: String,    // Owner's user NAME
   toAssetId: String,      // The asset that was changed - or null if not an asset
   toAssetName: String,    // Asset's name (duplicated here for speed)
   toAssetKind: String     // Asset's kind (image, map, etc)
 };
 
-// Info on each type of activty, as the UI cares about it
+// Info on each type of activity, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const ActivityTypes = {
   "asset.create": { icon: "green plus",       pri: 10,  description: "Create new asset" },

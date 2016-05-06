@@ -1,5 +1,11 @@
+
+// This file must be imported by main_server.js so that the Meteor method can be registered
+
+
 import {Azzets} from '../schemas';
 import { check, Match } from 'meteor/check';
+
+
 var schema = {
   _id: String,
 

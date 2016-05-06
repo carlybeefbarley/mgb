@@ -12,9 +12,6 @@
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 
-// TODO: How to handle unauthenticated watchers
-
-
 import {ActivitySnapshots} from '../schemas';
 import { check, Match } from 'meteor/check';
 
@@ -79,7 +76,7 @@ Meteor.methods({
       byUserId: data.byUserId 
     }
     var upsertResult = ActivitySnapshots.upsert(selector, data);
-    console.log(`  [ActivitySnapshot.setSnapshot]  by: ${data.byUserName}/${data.byUserId}  from: ${data.byIpAddress}`);
+    //console.log(`  [ActivitySnapshot.setSnapshot]  by: ${data.byUserName}/${data.byUserId}  from: ${data.byIpAddress}`);
     return upsertResult;
   }
   

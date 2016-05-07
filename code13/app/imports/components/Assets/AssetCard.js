@@ -131,7 +131,7 @@ export default AssetCard = React.createClass({
           <div className="meta">
             <small>
               {asset.isDeleted ? <p style={{color: "red"}}>[DELETED]<br></br></p> : null }              
-              Owner: 
+              Owner:&nbsp; 
               <Link to={`/user/${asset.ownerId}`}>
                 {ownerName ? ownerName : `#${asset.ownerId}`}
               </Link>

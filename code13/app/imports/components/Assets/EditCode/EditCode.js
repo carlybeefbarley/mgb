@@ -84,6 +84,7 @@ import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
 export default class EditCode extends React.Component {
   // static PropTypes = {
   //   asset: PropTypes.object
+  //   canEdit: PropTypes.bool
   // }
 
   constructor(props) {
@@ -108,8 +109,6 @@ export default class EditCode extends React.Component {
     }
     this.hintWidgets = [];
   }
-
-
   
   handleBeautify()
   {
@@ -164,6 +163,7 @@ export default class EditCode extends React.Component {
       lineNumbers: true,
       lineWrapping: true,
       tabSize: 2,
+      readOnly: !this.props.canEdit,    // Note, not reactive, so be aware of that if we do dynamic permissions in future.
       foldGutter: true,
       autoCloseBrackets: true,
       matchBrackets: true,

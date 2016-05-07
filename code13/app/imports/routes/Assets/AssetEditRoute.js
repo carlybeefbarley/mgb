@@ -20,7 +20,7 @@ export default AssetEditRoute = React.createClass({
     params: PropTypes.object,
     user: PropTypes.object,
     currUser: PropTypes.object,
-    ownsProfile: PropTypes.bool
+    ownsProfile: PropTypes.bool     // true IFF user is valid and asset owner is currently logged in user
   },
   
   
@@ -49,6 +49,14 @@ export default AssetEditRoute = React.createClass({
     };
   },
 
+
+  canEdit: function() {
+    return this.data.asset &&
+           !this.data.loading &&
+           this.props.currUser && 
+           this.data.asset.ownerId === this.props.currUser._id
+  },
+
   render: function() {
     // One Asset provided via getMeteorData()
     let asset = this.data.asset;
@@ -56,6 +64,7 @@ export default AssetEditRoute = React.createClass({
       return null;
 
     const {currUser, ownsProfile} = this.props;
+    const canEd = this.canEdit();
 
     return (
       <div className="ui padded grid">
@@ -67,40 +76,45 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui eight wide column">
+        <div className="ui seven wide column">
 
-          <div className="ui large left action input fluid">
+          <div className="ui left action input fluid">
             <div className="ui teal icon button">
-              <div className="ui large label teal">Edit {asset.kind}</div>
+              <div className="ui label teal">Edit {asset.kind}</div>
               <i className={AssetKinds.getIconClass(asset.kind)}></i>
             </div>
             <input ref="assetNameInput"
+                   disabled={!canEd}
                    placeholder={"Enter a name for this " + asset.kind + " asset"}
                    defaultValue={asset.name}
                    onBlur={this.handleAssetNameChangeInteractive}></input>
           </div>
         </div>
         
-        <div className="ui four wide column">
+        <div className="ui three wide column">
           { /* We use this.props.params.id since it is available sooner than the asset */ }
           <AssetActivityDetail 
                         assetId={this.props.params.id} 
                         currUser={this.props.currUser} />
         </div>
-
+        
+        <div className="ui two wide column">        
+          { canEd ? <a className="ui tiny green label">editable</a> : <a className="ui tiny red label">read-only</a> }
+        </div>
 
         <div className="four wide column">
             <AssetCard
-            showHeader={false}
-            canEdit={this.props.currUser && asset.ownerId === this.props.currUser._id}
-            currUser={this.props.currUser}
-            asset={asset}
-            showEditButton={false}
-            showToast={this.props.showToast} />
+              showHeader={false}
+              canEdit={this.canEd}
+              currUser={this.props.currUser}
+              asset={asset}
+              showEditButton={false}
+              showToast={this.props.showToast} />
         </div>
 
         <div className="sixteen wide column">
-          <AssetEdit asset={asset}/>
+          <AssetEdit asset={asset} canEdit={this.canEd}
+/>
         </div>
       </div>
     );

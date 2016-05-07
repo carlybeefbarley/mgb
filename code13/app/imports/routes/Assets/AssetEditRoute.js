@@ -99,7 +99,7 @@ export default AssetEditRoute = React.createClass({
         </div>
         
         <div className="ui two wide column">        
-          { canEd ? <a className="ui tiny green label">editable</a> : <a className="ui tiny red label">read-only</a> }
+          { canEd ? <a className="ui tiny green label">editable</a> : <a className="ui mgbReadOnlyReminder tiny red label">read-only</a> }
         </div>
 
         <div className="four wide column">
@@ -113,11 +113,19 @@ export default AssetEditRoute = React.createClass({
         </div>
 
         <div className="sixteen wide column">
-          <AssetEdit asset={asset} canEdit={this.canEd}
-/>
+          <AssetEdit 
+            asset={asset} 
+            canEdit={this.canEd} 
+            editDeniedReminder={this.handleEditDeniedReminder}
+          />
         </div>
       </div>
     );
+  },
+
+  handleEditDeniedReminder: function()
+  {
+    $('.mgbReadOnlyReminder').transition({ animation: 'tada', duration: '500ms' })
   },
 
   handleAssetNameChangeInteractive: function() {

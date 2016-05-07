@@ -18,26 +18,39 @@ export default class AssetEdit extends React.Component {
   }
   
 
-  getEditorForAsset(asset)
-  {
+  getEditorForAsset(asset) {
     switch (asset.kind) {
-      case 'graphic':
-        return (<EditGraphic asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
-      case 'code':
-        return (<EditCode asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
-      case 'map':
-        return (<EditMap asset={asset} handleContentChange={this.handleContentChange.bind(this)}/>);
-      default:
-        return (<EditUnknown asset={asset}/>);
+    case 'graphic':
+      return <EditGraphic
+                asset={asset}
+                canEdit={this.props.canEdit}
+                editDeniedReminder={this.props.editDeniedReminder}
+                handleContentChange={this.handleContentChange.bind(this) }
+                />
+    case 'code':
+      return <EditCode 
+                asset={asset} 
+                canEdit={this.props.canEdit}
+                editDeniedReminder={this.props.editDeniedReminder}
+                handleContentChange={this.handleContentChange.bind(this)}
+                />
+    case 'map':
+      return <EditMap 
+                asset={asset} 
+                canEdit={this.props.canEdit}
+                editDeniedReminder={this.props.editDeniedReminder}
+                handleContentChange={this.handleContentChange.bind(this)}
+                />
+    default:
+      return (<EditUnknown asset={asset}/>);
     }
   }
 
   handleContentChange(content2Object, thumbnail, changeText="content change")
   {
     let asset = this.props.asset;
-    let canEdit = true; // TODO: Something based on this.props.ownsProfile ??
 
-    Meteor.call('Azzets.update', asset._id, canEdit, {content2: content2Object, thumbnail: thumbnail}, (err, res) => {
+    Meteor.call('Azzets.update', asset._id, this.props.canEdit, {content2: content2Object, thumbnail: thumbnail}, (err, res) => {
       if (err) {
         alert('error: ' + err.reason)
       }

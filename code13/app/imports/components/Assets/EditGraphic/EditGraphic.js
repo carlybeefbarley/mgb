@@ -36,7 +36,8 @@ const tools = {
 export default class EditGraphic extends React.Component {
   // static PropTypes = {
   //   asset: PropTypes.object,
-  //   handleContentChange: PropTypes.function
+  //   handleContentChange: PropTypes.function,
+  //   canEdit: PropTypes.bool
   // }
 
   constructor(props) {
@@ -345,6 +346,12 @@ export default class EditGraphic extends React.Component {
 
   handleResize(dw, dh, force = false)
   {
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+    
     if (dw !== 0 || dh !== 0 || force === true)
     {
       this.doSaveStateForUndo(`Resize by (${dw}, ${dh}) `)    // TODO: Only stack and save if different
@@ -359,9 +366,18 @@ export default class EditGraphic extends React.Component {
 
 
   handleMouseDown(event) {
+    
     if (this.mgb_toolChosen !== null) {
       if (this.mgb_toolChosen.changesImage === true)
+      {
+        if (!this.props.canEdit)
+        { 
+          this.props.editDeniedReminder()
+          return
+        }
+
         this.doSaveStateForUndo(this.mgb_toolChosen.name)   // So that tools like eyedropper don't save and need undo
+      }
       if (this.mgb_toolChosen.supportsDrag === true)
         this.mgb_toolActive = true
 
@@ -485,6 +501,12 @@ export default class EditGraphic extends React.Component {
 
   handleAddFrame()
   {
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+
     this.doSaveStateForUndo("Add Frame")
     let fN = this.props.asset.content2.frameNames
     let newFrameName = "Frame " + (fN.length+1).toString()
@@ -497,6 +519,12 @@ export default class EditGraphic extends React.Component {
 
   doSwapCanvases(i,j)
   {
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+        
     let c2 = this.props.asset.content2
     var tmp0 = this.previewCtxArray[i].getImageData(0,0, c2.width, c2.height)
     var tmp1 = this.previewCtxArray[j].getImageData(0,0, c2.width, c2.height)
@@ -504,8 +532,15 @@ export default class EditGraphic extends React.Component {
     this.previewCtxArray[i].putImageData(tmp1, 0, 0)
   }
 
+
   handleMoveFrameUp(currentIdx)
   {
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+
     let c2 = this.props.asset.content2
     let fN = c2.frameNames
 
@@ -540,6 +575,12 @@ export default class EditGraphic extends React.Component {
 
   handleDeleteFrame(idx)
   {
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+    
     let c2 = this.props.asset.content2
 
     this.doSaveStateForUndo("Delete Frame")
@@ -563,6 +604,11 @@ export default class EditGraphic extends React.Component {
 
 
   handleFrameNameChangeInteractive(idx, event) {
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
     this.doSaveStateForUndo("Rename Frame")
     this.props.asset.content2.frameNames[idx] = event.target.value
     this.handleSave(`Rename frame #${idx+1}`) // TODO: Do this OnBlur() so we don't spam the DB so much
@@ -651,6 +697,12 @@ export default class EditGraphic extends React.Component {
 
   handleSave(changeText="change graphic")    // TODO: Maybe _.debounce() this?
   {
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+
     let asset = this.props.asset;
     let c2    = asset.content2;
     let frameCount = this.previewCanvasArray.length;  // We don't use c2.frameNames.length  coz of the Add Frame button
@@ -673,7 +725,6 @@ export default class EditGraphic extends React.Component {
     if (idx === -1)                         // The Edit Window does this
       idx = this.state.selectedFrameIdx;
 
-
     e.dataTransfer.effectAllowed = 'copy';  // This must match what is in handleDragOverPreview()
     e.dataTransfer.setData('mgb/image', this.previewCanvasArray[idx].toDataURL('image/png')
     );
@@ -692,6 +743,13 @@ export default class EditGraphic extends React.Component {
   {
     event.stopPropagation();
     event.preventDefault();
+    
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+    
     var self = this;
 
     if (idx === -1)                         // The Edit Window does this

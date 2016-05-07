@@ -7,7 +7,6 @@ export default AssetActivityDetail = React.createClass({
 
   propTypes: {
     assetId: PropTypes.string.isRequired,                  
-    asset: PropTypes.object,                    // The asset that is being edited/observed. May be null/undefined or missing content2
     currUser: PropTypes.object                  // currently Logged In user (not always provided)
   },
   
@@ -20,15 +19,6 @@ export default AssetActivityDetail = React.createClass({
       loading: !handle.ready()
     };
   },
-
-  componentDidMount()
-  {
-  },
-
-  componentDidUpdate(prevProps, prevState)
-  {
-  },
-  
   
 
   render() {
@@ -56,7 +46,7 @@ export default AssetActivityDetail = React.createClass({
     return (
           <div className="ui compact menu">
             <div className="ui simple dropdown item">
-              <i className="icon users"></i> Viewing<i className="dropdown icon"></i>
+              <i className="icon users"></i> Viewers<i className="dropdown icon"></i>
               <div className={"floating ui " + (viewersCount ? "orange" : "grey") +  " label"}>
                 { viewersCount }
               </div>

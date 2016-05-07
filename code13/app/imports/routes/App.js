@@ -59,7 +59,8 @@ export default App = React.createClass({
     let isSuperAdmin = false;
     let ownsProfile = false;
     if (currUser) {
-      if (user) ownsProfile = currUser._id === user._id
+      if (user) 
+        ownsProfile = (currUser._id === user._id) // This isn't very useful and needs to be cleaned up.. TODO: cleanup the permissions model and get rid of this strange userprofile==currentuser concept
       let permissions = currUser.permissions;
       if (permissions) {
         permissions.map((permission) => {

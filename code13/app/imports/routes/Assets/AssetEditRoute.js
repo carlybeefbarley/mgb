@@ -105,7 +105,7 @@ export default AssetEditRoute = React.createClass({
         <div className="four wide column">
             <AssetCard
               showHeader={false}
-              canEdit={this.canEd}
+              canEdit={canEd}
               currUser={this.props.currUser}
               asset={asset}
               showEditButton={false}
@@ -115,7 +115,7 @@ export default AssetEditRoute = React.createClass({
         <div className="sixteen wide column">
           <AssetEdit 
             asset={asset} 
-            canEdit={this.canEd} 
+            canEdit={canEd} 
             editDeniedReminder={this.handleEditDeniedReminder}
           />
         </div>
@@ -129,11 +129,10 @@ export default AssetEditRoute = React.createClass({
   },
 
   handleAssetNameChangeInteractive: function() {
-    let canEdit = true; // TODO: Something based on this.props.ownsProfile ??
     let newName = this.refs.assetNameInput.value;
 
     if (newName !== this.data.asset.name) {
-      Meteor.call('Azzets.update', this.data.asset._id, canEdit, {name: newName}, (err, res) => {
+      Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {name: newName}, (err, res) => {
         if (err) {
           this.props.showToast(err.reason, 'error')
         }

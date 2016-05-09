@@ -129,7 +129,8 @@ var ConsoleLogViewer = (function() {
 			original.console.error.apply(this, arguments);
 		}
 		window.onerror = function(message, url, lineNumber) {
-			self.log([message, "<a target='_blank' onclick='javascript:DebugSource.show(this.href, this.parentNode.innerText);return false' href='"+url+"#"+lineNumber+"'>"+url+"</a>", "line: " + lineNumber], "log-error"); 
+//			self.log([message, "<a target='_blank' onclick='javascript:DebugSource.show(this.href, this.parentNode.innerText);return false' href='"+url+"#"+lineNumber+"'>"+url+"</a>", "line: " + lineNumber], "log-error"); 
+			self.log([message, "Line: " + lineNumber], "log-error"); 
 			if (original.window.onerror) 
         return original.window.onerror(message, url, lineNumber);
 			else 

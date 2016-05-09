@@ -571,7 +571,13 @@ export default class EditCode extends React.Component {
       if (returnRawVersionNNNwithoutDefault)
         return null
     }
-    return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
+    
+    // NOTE, if we deliver phaser.min.js from another domain, then it will 
+    // limit the error handler's knowledge of that code - see 'Notes' on
+    // https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror
+    
+//    return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
+    return "/phaser/" + phaserVerNNN + "/phaser.min.js"
   }
 
 
@@ -581,7 +587,8 @@ export default class EditCode extends React.Component {
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
     // see http://assets.codepen.io/assets/editor/live/console_runner.js for an example of a sandbox-side code for this.. and http://assets.codepen.io/assets/editor/live/events_runner.js for an events one
     // See a simpler embeddable one here: http://markknol.github.io/console-log-viewer/console-log-viewer.js
-    console.log(msg.data[0])
+    // yikes.. note that Meteor uses messages like data="Meteor._setImmediate..." for Tracker updates
+//    console.log(msg) // .data[0])
 
     // OR Just start with Firebug Lite
     //   <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>

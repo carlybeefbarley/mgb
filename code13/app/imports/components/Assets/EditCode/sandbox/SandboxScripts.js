@@ -43,46 +43,72 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
 
     
 
-    function loadScript(url, callback)
-    {
-        // Adding the script tag to the head to load it
-        var head = document.getElementsByTagName('head')[0];
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = url;
-
-        // Then bind the event to the callback function.
-        // There are several events for cross browser compatibility, so do both
-        script.onreadystatechange = callback;
-        script.onload = callback;
-        script.onerror = function(err) {
-         console.warn("Could not load script: " + url);
-        }
-
-        // Fire the loading
-        head.appendChild(script);
-    }
-
-    window.addEventListener('message', function (e) {
-      var mainWindow = e.source;
-      if (e.data === 'ping')
+      function loadScript(url, callback)
       {
-        mainWindow.postMessage(_isAlive, e.origin);
-      }
-      else
-      {
-        mgbHostMessageContext.msgSource = e.source;
-        mgbHostMessageContext.msgOrigin = e.origin;
-        try {
-          loadScript(e.data.gameEngineScriptToPreload, function() {
-            eval(e.data.codeToRun);
-          })
-        } catch (err) {
-         console.error("Could not load and execute script: " + err);
-        }
+          // Adding the script tag to the head to load it
+          var head = document.getElementsByTagName('head')[0];
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = url;
+
+          // Then bind the event to the callback function.
+          // There are several events for cross browser compatibility, so do both
+          script.onreadystatechange = callback;
+          script.onload = callback;
+          script.onerror = function(err) {
+          console.warn("Could not load script: " + url);
+          }
+
+          // Fire the loading
+          head.appendChild(script);
       }
 
-    });
+
+      function loadScriptFromText(srcText, callback)
+      {
+          // Adding the script tag to the head to load it
+          var head = document.getElementsByTagName('head')[0];
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.text = srcText;
+
+          if (callback)
+          {
+            // Then bind the event to the callback function.
+            // There are several events for cross browser compatibility, so do both
+            script.onreadystatechange = callback;
+            script.onload = callback;
+          }
+          script.onerror = function(err) {
+          console.warn("Could not load script from provided SourceText");
+          }
+
+          // Fire the loading
+          head.appendChild(script);
+      }
+
+
+
+      window.addEventListener('message', function (e) {
+        var mainWindow = e.source;
+        if (e.data === 'ping')
+        {
+          mainWindow.postMessage(_isAlive, e.origin);
+        }
+        else
+        {
+          mgbHostMessageContext.msgSource = e.source;
+          mgbHostMessageContext.msgOrigin = e.origin;
+          try {
+            loadScript(e.data.gameEngineScriptToPreload, function() {         
+              //  eval(e.data.codeToRun);  // NOT using eval since we can't get good window.onError information from it           
+              loadScriptFromText(e.data.codeToRun);
+            })
+          } catch (err) {
+          console.error("Could not load and execute script: " + err);
+          }
+        }
+      });
     
     }
 

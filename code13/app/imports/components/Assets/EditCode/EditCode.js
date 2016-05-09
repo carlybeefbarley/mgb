@@ -581,7 +581,6 @@ export default class EditCode extends React.Component {
   }
 
 
-
   _handle_iFrameMessageReceiver(msg)
   {
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
@@ -592,7 +591,7 @@ export default class EditCode extends React.Component {
 
     // OR Just start with Firebug Lite
     //   <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
-    // But, this has some xdomian issues it seems? even when i load the js locally http://localhost:3010/firebug-lite-compressed.js basic
+    // But, this has some cross-domain issues it seems? even when I load the js locally http://localhost:3010/firebug-lite-compressed.js basic
   }
   
  

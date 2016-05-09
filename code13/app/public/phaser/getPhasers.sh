@@ -5,6 +5,8 @@
 # List of releases is at http://phaser.io/download/archive
 # I started at 2.07 which seemed more than enough
 
+# We get them from http://www.jsdelivr.com/projects/phaser 
+
 cdn="http://cdn.jsdelivr.net/phaser"
 for v in 2.0.7 \
          2.1.0 2.1.1 2.1.2 2.1.3 \

@@ -89,6 +89,7 @@ export default class EditCode extends React.Component {
 
   constructor(props) {
     super(props);
+    this.fontSizeSettingIndex = undefined;
     this.state = {
       gameRenderIterationKey: 0,
       isPlaying: false,
@@ -191,14 +192,16 @@ export default class EditCode extends React.Component {
       highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
     }
     
-		this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
+    this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
     
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
-		this._currentCodemirrorValue = this.props.asset.content2.src || '';
+    this._currentCodemirrorValue = this.props.asset.content2.src || '';
     
     this.codeMirror.on("cursorActivity", this.codeMirrorUpdateHints.bind(this, false))
     this.codeMirrorUpdateHints(true)
     
+    this.codeMirror.getWrapperElement().addEventListener('wheel', this.handleMouseWheel.bind(this));
+
     this.codeMirror.setSize("100%", "500px")
     
     // Resize Handler - a bit complicated since we want to use to end of page
@@ -244,6 +247,63 @@ export default class EditCode extends React.Component {
 		}
   }
   
+  
+  
+  handleMouseWheel(event)
+  {
+    // We only handle alt-shift + wheel. Anything else is system behavior (scrolling etc)
+    if (event.altKey === false || event.shiftKey === false)
+      return
+    
+    event.preventDefault();     // No default scroll behavior in these cases
+
+    const fontSizes = [
+      { fontSize: '8.5px',  lineHeight: '10px'},
+      { fontSize: '9px',  lineHeight: '11px'},
+      { fontSize: '9px',  lineHeight: '12px'},
+      { fontSize: '10px', lineHeight: '12px'},
+      { fontSize: '10px', lineHeight: '13px'},
+      { fontSize: '10px', lineHeight: '14px'},
+      { fontSize: '11px', lineHeight: '15px'},
+      { fontSize: '12px', lineHeight: '16px'},
+      { fontSize: '13px', lineHeight: '17px'},
+      { fontSize: '14px', lineHeight: '19px'},
+      { fontSize: '15px', lineHeight: '19px'},
+      { fontSize: '16px', lineHeight: '20px'}      
+    ];
+    if (this.fontSizeSettingIndex === undefined)
+      this.fontSizeSettingIndex = 9
+
+
+    // WheelDelta system is to handle MacOS that has frequent small deltas,
+    // rather than windows wheels which typically have +/- 120
+    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta;
+    let wd =  this.mgb_wheelDeltaAccumulator;    // shorthand
+
+    if (Math.abs(wd) > 60) {
+
+      // Changing font size - http://codemirror.977696.n3.nabble.com/Changing-font-quot-on-the-go-quot-td4026016.html 
+      let editor = this.codeMirror
+      let delta = 0
+      
+      if (wd > 0 && this.fontSizeSettingIndex > 0 )
+        delta = -1
+      else if (wd < 0 && this.fontSizeSettingIndex < fontSizes.length-1 )
+        delta = 1
+        
+      if (delta !== 0)
+      {
+        this.fontSizeSettingIndex += delta
+        var nfs=fontSizes[this.fontSizeSettingIndex]    // nfs:new font size
+        editor.getWrapperElement().style["font-size"] = nfs.fontSize 
+        editor.getWrapperElement().style["line-height"] = nfs.lineHeight
+        editor.refresh(); 
+      }
+      
+      this.mgb_wheelDeltaAccumulator = 0
+    }
+  }
+
 
   _getPNGsInLine(lineText)
   {
@@ -774,15 +834,16 @@ export default class EditCode extends React.Component {
                 </div>
               }
               
-              { /* Keyboard shortcuts */}
+              { /* Keyboard/Mouse shortcuts */}
               <div className="title">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
-                  Code Editor Keyboard shortcuts
+                  Code Editor Keyboard/Mouse shortcuts
                   </span>
               </div>
               <div className="content">
                 <KeyBindingAssist commandContext="editor.text." />
+                <p>Also, using <code>ctrl-alt</code> + Mouse Wheel in the code edit window will change the editor font size</p>
               </div>           
             </div>
           </div>

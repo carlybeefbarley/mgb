@@ -42,7 +42,7 @@ function render()
 // 
 var game = new Phaser.Game(
    "100", // Phaser.Game uses this number in quotes to mean % of screen width
-   "100", // Phaser.Game uses this number in quotes to mean % of screen height
+   window.innerHeight - 40, // another way to automatically calculate size (height) 
    Phaser.AUTO, // Automatically choose the fastest renderer type for this browser
    'mygame', // The name of this game
    { 

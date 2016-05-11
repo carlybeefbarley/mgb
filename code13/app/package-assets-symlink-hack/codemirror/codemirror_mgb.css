@@ -2,3 +2,9 @@
 {
   color: #999;  /* MGB non standard */
 }
+
+/* Used in EditCode.js for CodeMirror markers for other user's edit activity */
+.mgb-cm-user-markers
+{
+  width: .8em;
+}

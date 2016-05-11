@@ -83,8 +83,11 @@ import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
 
 export default class EditCode extends React.Component {
   // static PropTypes = {
-  //   asset: PropTypes.object
-  //   canEdit: PropTypes.bool
+  //   asset: PropTypes.object.isRequired
+  //   canEdit" PropTypes.bool.isRequired
+  //   editDeniedReminder: PropTypes.function
+  //   handleContentChange: PropTypes.function.isRequired
+  //   activities: PropTypes.array               // can be null whilst loading
   // }
 
   constructor(props) {
@@ -111,15 +114,16 @@ export default class EditCode extends React.Component {
     this.hintWidgets = [];
   }
   
-  handleBeautify()
+  
+  handleJsBeautify()
   {
     let newValue = js_beautify(this._currentCodemirrorValue, {indent_size: 2})
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue;
     let newC2 = { src: newValue }
     this.props.handleContentChange( newC2, "", `Beautify code`)
-
   }
+
 
   componentDidMount() {
     this.getElementReferences()    
@@ -172,7 +176,8 @@ export default class EditCode extends React.Component {
       gutters: [
         "CodeMirror-lint-markers", 
         "CodeMirror-linenumbers", 
-        "CodeMirror-foldgutter"
+        "CodeMirror-foldgutter",
+        "mgb-cm-user-markers"
       ],
       extraKeys: {
         "Alt-F": "findPersistent",        
@@ -181,7 +186,7 @@ export default class EditCode extends React.Component {
         "Ctrl-I": function(cm) { CodeMirror.tern.showType(cm); },
         "Ctrl-D": function(cm) { CodeMirror.tern.showDocs(cm); },
         "Alt-J": function(cm) { CodeMirror.tern.jumpToDef(cm); },
-        "Ctrl-B": this.handleBeautify.bind(this),
+        "Ctrl-B": this.handleJsBeautify.bind(this),
         "Alt-,": function(cm) { CodeMirror.tern.jumpBack(cm); },
         "Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); },
         "Ctrl-S": function(cm) { CodeMirror.tern.selectName(cm); },
@@ -195,9 +200,11 @@ export default class EditCode extends React.Component {
     this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
     
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
+    this.codeMirror.on("cursorActivity", this.codeMirrorUpdateHints.bind(this, false))
+
+
     this._currentCodemirrorValue = this.props.asset.content2.src || '';
     
-    this.codeMirror.on("cursorActivity", this.codeMirrorUpdateHints.bind(this, false))
     this.codeMirrorUpdateHints(true)
     
     this.codeMirror.getWrapperElement().addEventListener('wheel', this.handleMouseWheel.bind(this));
@@ -220,7 +227,6 @@ export default class EditCode extends React.Component {
     this.edResizeHandler();
   }
 
-
   componentWillUnmount()
   {
     $(window).off("resize", this.edResizeHandler)
@@ -241,14 +247,14 @@ export default class EditCode extends React.Component {
     let currentCursor = this.codeMirror.getCursor()
     let newVal = nextProps.asset.content2.src
     
-		if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
-			this.codeMirror.setValue(newVal);
+    if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
+      this.codeMirror.setValue(newVal);
       this.codeMirror.setCursor(currentCursor);
-		}
+    }  
   }
   
   
-  
+  // Alt-Shift Mousewheel will change the editor font Size
   handleMouseWheel(event)
   {
     // We only handle alt-shift + wheel. Anything else is system behavior (scrolling etc)
@@ -540,7 +546,6 @@ export default class EditCode extends React.Component {
   // }
 
 
-
   srcUpdate_getMemberParent()
   {
     if (showDebugAST) {
@@ -562,19 +567,38 @@ export default class EditCode extends React.Component {
   }
 
    
+  cm_updateActivityMarkers() {
+    var ed = this.codeMirror
+    ed.clearGutter("mgb-cm-user-markers");
+        
+    let acts = this.props.activities
+    _.each(acts, act => { 
+      var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
+      if (currUserId !== act.byUserId)
+      {
+        let marker = document.createElement("div")
+        marker.style.color = "#822"
+        marker.title = "Being viewed by " + act.byUserName
+        let c = act.byUserName[0]
+        marker.innerHTML = (c === "<" || !c) ? "?" : c
+        ed.setGutterMarker(act.passiveAction.position.line, "mgb-cm-user-markers", marker) 
+      }
+    }) 
+  }
    
   // This gets called by CodeMirror when there is CursorActivity
   // This gets _.debounced in componentDidMount()
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {    
     
     // Update the activity snapshot if the code line has changed
-    // TODO: Batch this so it doesn't do it for row changes
+    // TODO: Batch this so it only fires when line# is changed
     let editor = this.codeMirror      
     let position = editor.getCursor()
     let passiveAction = {
       position: position
     }
     snapshotActivity(this.props.asset, passiveAction)
+    
 
     
     // TODO: Batch the multiple setState() calls. This is complicated since some are async, or come via a ternServer callback. 
@@ -608,6 +632,7 @@ export default class EditCode extends React.Component {
 
   componentDidUpdate() {
     this.getElementReferences()
+    this.cm_updateActivityMarkers()
   }
   
   getElementReferences()

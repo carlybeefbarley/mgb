@@ -1,30 +1,17 @@
 import React, { PropTypes } from 'react';
-import {ActivitySnapshots} from '../../schemas';
-import reactMixin from 'react-mixin';
 
 export default AssetActivityDetail = React.createClass({
-  mixins: [ReactMeteorData],
 
   propTypes: {
-    assetId: PropTypes.string.isRequired,                  
+    assetId: PropTypes.string.isRequired,        
+    activities: PropTypes.array,                // Can be empty while being loaded          
     currUser: PropTypes.object                  // currently Logged In user (not always provided)
   },
   
-  getMeteorData: function() {
-    let handle = Meteor.subscribe("activitysnapshots.assetid", this.props.assetId);
-
-    return {
-      // activities: ActivitySnapshots.find({ toAssetId: this.props.assetId} ).fetch(),
-      activities: ActivitySnapshots.find().fetch(),
-      loading: !handle.ready()
-    };
-  },
-  
-
   render() {
     // A list of ActivitySnapshots provided via getMeteorData(), including one by ourself probably
-    let activities = this.data.activities;
-    if (this.data.loading)
+    let { activities } = this.props;
+    if (!activities)
       return null;
       
     var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
@@ -32,7 +19,7 @@ export default AssetActivityDetail = React.createClass({
     let viewers = _.map(othersActivities, a => { 
       let detail2 = ""
       if (a.toAssetKind === "code")
-        detail2 = ` at line ${a.passiveAction.position.line}`
+        detail2 = ` at line ${a.passiveAction.position.line+1}`
       else if (a.toAssetKind === "graphic")
         detail2 = ` at frame #${a.passiveAction.selectedFrameIdx+1}`
       

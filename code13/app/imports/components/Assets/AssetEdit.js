@@ -10,7 +10,11 @@ import {logActivity} from '../../schemas/activity';
 
 export default class AssetEdit extends React.Component {
   // static PropTypes = {
-  //   asset: PropTypes.object
+  //   asset: PropTypes.object.isRequired
+  //   canEdit" PropTypes.bool.isRequired
+  //   currUser: PropTypes.object,
+  //   editDeniedReminder: PropTypes.function
+  //   activities: PropTypes.array               // can be null whilst loading
   // }
 
   constructor(props) {
@@ -24,22 +28,29 @@ export default class AssetEdit extends React.Component {
       return <EditGraphic
                 asset={asset}
                 canEdit={this.props.canEdit}
+                currUser={this.props.currUser}
                 editDeniedReminder={this.props.editDeniedReminder}
                 handleContentChange={this.handleContentChange.bind(this) }
+                activities={this.props.activities}
                 />
     case 'code':
       return <EditCode 
                 asset={asset} 
                 canEdit={this.props.canEdit}
+                currUser={this.props.currUser}
                 editDeniedReminder={this.props.editDeniedReminder}
                 handleContentChange={this.handleContentChange.bind(this)}
+                activities={this.props.activities}
+
                 />
     case 'map':
       return <EditMap 
                 asset={asset} 
                 canEdit={this.props.canEdit}
+                currUser={this.props.currUser}
                 editDeniedReminder={this.props.editDeniedReminder}
                 handleContentChange={this.handleContentChange.bind(this)}
+                activities={this.props.activities}
                 />
     default:
       return (<EditUnknown asset={asset}/>);

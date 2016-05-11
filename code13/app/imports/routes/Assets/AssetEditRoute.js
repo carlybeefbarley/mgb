@@ -12,6 +12,8 @@ import AssetActivityDetail from '../../components/Assets/AssetActivityDetail.js'
 import {AssetKinds} from '../../schemas/assets';
 import {logActivity} from '../../schemas/activity';
 import {snapshotActivity} from '../../schemas/activitySnapshots.js';
+import {ActivitySnapshots} from '../../schemas';
+
 
 export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -41,11 +43,14 @@ export default AssetEditRoute = React.createClass({
   },
 
   getMeteorData: function() {
-    let handle = Meteor.subscribe("assets.public.withContent2");
+    let handleForAsset = Meteor.subscribe("assets.public.withContent2");
+    let handleForActivity = Meteor.subscribe("activitysnapshots.assetid", this.props.params.id);
+
 
     return {
       asset: Azzets.findOne(this.props.params.id),
-      loading: !handle.ready()
+      activities: ActivitySnapshots.find().fetch(),
+      loading: !handleForAsset.ready()    // Be aware that 'activities' may still be loading
     };
   },
 
@@ -63,7 +68,6 @@ export default AssetEditRoute = React.createClass({
     if (!asset || this.data.loading)
       return null;
 
-    const {currUser, ownsProfile} = this.props;
     const canEd = this.canEdit();
 
     return (
@@ -95,7 +99,8 @@ export default AssetEditRoute = React.createClass({
           { /* We use this.props.params.id since it is available sooner than the asset */ }
           <AssetActivityDetail 
                         assetId={this.props.params.id} 
-                        currUser={this.props.currUser} />
+                        currUser={this.props.currUser}
+                        activities={this.data.activities} />
         </div>
         
         <div className="ui two wide column">        
@@ -116,7 +121,9 @@ export default AssetEditRoute = React.createClass({
           <AssetEdit 
             asset={asset} 
             canEdit={canEd} 
+            currUser={this.props.currUser}
             editDeniedReminder={this.handleEditDeniedReminder}
+            activities={this.data.activities} 
           />
         </div>
       </div>

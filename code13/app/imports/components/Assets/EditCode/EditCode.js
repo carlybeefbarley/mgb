@@ -254,15 +254,8 @@ export default class EditCode extends React.Component {
   }
   
   
-  // Alt-Shift Mousewheel will change the editor font Size
-  handleMouseWheel(event)
-  {
-    // We only handle alt-shift + wheel. Anything else is system behavior (scrolling etc)
-    if (event.altKey === false || event.shiftKey === false)
-      return
-    
-    event.preventDefault();     // No default scroll behavior in these cases
-
+  
+  doHandleFontSizeDelta(delta) {   // delta should be -1 or +1
     const fontSizes = [
       { fontSize: '8.5px',  lineHeight: '10px'},
       { fontSize: '9px',  lineHeight: '11px'},
@@ -280,37 +273,72 @@ export default class EditCode extends React.Component {
     if (this.fontSizeSettingIndex === undefined)
       this.fontSizeSettingIndex = 9
 
-
-    // WheelDelta system is to handle MacOS that has frequent small deltas,
-    // rather than windows wheels which typically have +/- 120
-    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta;
-    let wd =  this.mgb_wheelDeltaAccumulator;    // shorthand
-
-    if (Math.abs(wd) > 60) {
-
-      // Changing font size - http://codemirror.977696.n3.nabble.com/Changing-font-quot-on-the-go-quot-td4026016.html 
-      let editor = this.codeMirror
-      let delta = 0
+    // Changing font size - http://codemirror.977696.n3.nabble.com/Changing-font-quot-on-the-go-quot-td4026016.html 
+    let editor = this.codeMirror
+    let validDelta = 0
+    
+    if (delta > 0 && this.fontSizeSettingIndex > 0 )
+      validDelta = -1
+    else if (delta < 0 && this.fontSizeSettingIndex < fontSizes.length-1 )
+      validDelta = 1
       
-      if (wd > 0 && this.fontSizeSettingIndex > 0 )
-        delta = -1
-      else if (wd < 0 && this.fontSizeSettingIndex < fontSizes.length-1 )
-        delta = 1
-        
-      if (delta !== 0)
-      {
-        this.fontSizeSettingIndex += delta
-        var nfs=fontSizes[this.fontSizeSettingIndex]    // nfs:new font size
-        editor.getWrapperElement().style["font-size"] = nfs.fontSize 
-        editor.getWrapperElement().style["line-height"] = nfs.lineHeight
-        editor.refresh(); 
-      }
-      
-      this.mgb_wheelDeltaAccumulator = 0
+    if (Math.abs(validDelta) !== 0)   // Watch out for stupid -0 and NaN
+    {
+      this.fontSizeSettingIndex += validDelta
+      var nfs=fontSizes[this.fontSizeSettingIndex]    // nfs:new font size
+      editor.getWrapperElement().style["font-size"] = nfs.fontSize 
+      editor.getWrapperElement().style["line-height"] = nfs.lineHeight
+      editor.refresh(); 
     }
   }
 
 
+  doHandleCommentFadeDelta(delta) {    // delta should be -1 or +1
+    // 0. Set default Alpha now if it hasn't been set already
+    if (this.CommentAlphaSetting === undefined)
+      this.CommentAlphaSetting = 100   // Default is 100% Opacity
+    
+    // 1. Calculate new Alpha
+    let alpha = this.CommentAlphaSetting
+    alpha -= (delta * 10)              // 10% increments/decrements
+    alpha = Math.min(alpha, 100)       // Keep between 100
+    alpha = Math.max(alpha, 10)        // and 10
+    this.CommentAlphaSetting = alpha 
+    
+    // 2. Apply new Alpha using CSS magic
+    let customCSSid = "idOfCustomMgbCSSforComments"    
+    let $sty = $(`#${customCSSid}`)
+    $sty && $sty.remove()
+    $('head').append(`<style id="${customCSSid}">.cm-comment { opacity: ${alpha/100} }</style>`);
+  }
+  
+  
+  // Alt-Shift Mousewheel will change the editor font Size
+  handleMouseWheel(event)
+  {
+    // We only handle alt-shift + wheel or alt-wheel. Anything else is system behavior (scrolling etc)
+    if (event.altKey === false)
+      return
+    
+    event.preventDefault();     // No default scroll behavior in the cases we handle (alt-)
+    
+    // WheelDelta system is to handle MacOS that has frequent small deltas,
+    // rather than windows wheels which typically have +/- 120
+    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta;
+    let wd = this.mgb_wheelDeltaAccumulator;    // shorthand
+
+    if (Math.abs(wd) > 60)
+    {
+      let delta = Math.sign(wd)
+      if (event.shiftKey)
+        this.doHandleFontSizeDelta(delta)
+      else 
+        this.doHandleCommentFadeDelta(delta)
+      this.mgb_wheelDeltaAccumulator = 0
+    }     
+  }
+  
+  
   _getPNGsInLine(lineText)
   {
     let re=/api\/asset\/png\/([A-Za-z0-9]+)/g
@@ -868,7 +896,8 @@ export default class EditCode extends React.Component {
               </div>
               <div className="content">
                 <KeyBindingAssist commandContext="editor.text." />
-                <p>Also, using <code>ctrl-alt</code> + Mouse Wheel in the code edit window will change the editor font size</p>
+                <p>Mouse: <code>alt-shift</code> + Mouse Wheel in the code edit window will change the editor font size</p>
+                <p>Mouse: <code>alt</code> + Mouse Wheel in the code edit window will fade comments in/out for readability</p>
               </div>           
             </div>
           </div>

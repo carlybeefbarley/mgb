@@ -22,80 +22,56 @@ Meteor.publish('user', function(id) {
 //   ASSETS  
 //
 
+// I originally created this so we can support $text queries on name, but now we are using regex, it's not clear it is of value
+// TODO: Consider cost/benefit of this index
 Azzets._ensureIndex({
   "name": "text"        // Index the name field. See https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor
 });
 
 
-// Can see all assets belonging to user
-// selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.auth', function(userId, selectedAssetKinds, nameSearch, projectName=null,  showDeleted=false, showStable=false) {
-  let selector = {
-    isDeleted: showDeleted,
-    ownerId: userId
-  }
-  
-  if (projectName && projectName.length > 0)
-    selector["projectNames"] = projectName
-  
-  if (showStable === true)  // This means ONLY show stable assets
-    selector["isCompleted"] = showStable;
-    
-  if (selectedAssetKinds && selectedAssetKinds.length > 0)
-    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )
 
-  if (nameSearch && nameSearch.length > 0)
-    selector["$text"]= {$search: nameSearch}
-
-  return Azzets.find(selector, {fields: {content2: 0}});
-});
-
-
-//Can see all assets
-// selectedAssetKinds is an array of AssetKindsKeys strings
+/** 
+ * Can see all assets, but does NOYT include the big 'content2' field 
+ * @param userId can be undefined or -1 .. indicating don't dilter by user if
+ * @param selectedAssetKinds is an array of AssetKindsKeys strings
+ * @param nameSearch is going to be stuffed inside a RegEx, so needs to be clean
+ *    TODO: cleanse the nameSearch RegExp
+ */
 Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch, projectName=null, showDeleted=false, showStable=false) {
   let selector = {
     isDeleted: showDeleted,
-  }
-  
-  if (showStable === true)  // This means ONLY show stable assets
-    selector["isCompleted"] = showStable
+  }  
 
   if (projectName && projectName.length > 0)
     selector["projectNames"] = projectName
 
+  if (showStable === true)  // This means ONLY show stable assets
+    selector["isCompleted"] = showStable
+
   if (userId && userId !== -1)
     selector["ownerId"] = userId
+    
   if (selectedAssetKinds && selectedAssetKinds.length > 0)
     selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )  // TODO: Could use $in ?
 
   if (nameSearch && nameSearch.length > 0)
-    selector["$text"]= {$search: nameSearch}
+  {
+    // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
+    selector["name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
+  }
 
   return Azzets.find(selector, {fields: {content2: 0}} );
 });
 
 
-//Can see all assets
-// selectedAssetKinds is an array of AssetKindsKeys strings
-Meteor.publish('assets.public.withContent2', function(userId, selectedAssetKinds, nameSearch, projectName=null, showDeleted=false, showStable=false) {
-  let selector = {
-    isDeleted: showDeleted,
-  }
-  
-  if (showStable === true)  // This means ONLY show stable assets
-    selector["isCompleted"] = showStable
 
-  if (userId && userId !== -1)
-    selector["ownerId"] = userId
-  if (selectedAssetKinds && selectedAssetKinds.length > 0)
-    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )  // TODO: Could use $in ?
-
-  if (nameSearch && nameSearch.length > 0)
-    selector["$text"]= {$search: nameSearch}
-
-  return Azzets.find(selector);
+// Return one asset. This is a good subscription for AssetEditRoute
+Meteor.publish('assets.public.byId.withContent2', function(assetId) {
+  return Azzets.find(assetId);
 });
+
+
+
 
 
 //

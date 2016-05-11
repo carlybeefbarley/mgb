@@ -43,7 +43,7 @@ export default AssetEditRoute = React.createClass({
   },
 
   getMeteorData: function() {
-    let handleForAsset = Meteor.subscribe("assets.public.withContent2");
+    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", this.props.params.id);
     let handleForActivity = Meteor.subscribe("activitysnapshots.assetid", this.props.params.id);
 
 

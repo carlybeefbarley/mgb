@@ -41,22 +41,7 @@ export default  UserAssetListRoute = React.createClass({
   },
 
   getMeteorData() {
-    let handle
-
-    if (this.props.params.id) {
-      // Route included a user-id for scope
-      //Subscribe to assets labeled isPrivate?
-      if (this.props.ownsProfile) {
-        handle = Meteor.subscribe("assets.auth", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.projectSelected, this.state.showDeletedFlag, this.state.showStableFlag);
-      } else {
-        handle = Meteor.subscribe("assets.public", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.projectSelected, this.state.showDeletedFlag, this.state.showStableFlag);
-      }
-    }
-    else
-    {
-      // route did not include a user-id for scope
-      handle = Meteor.subscribe("assets.public", -1, this.state.selectedAssetKinds, this.state.searchName, this.state.projectSelected, this.state.showDeletedFlag, this.state.showStableFlag);
-    }
+    let handle = Meteor.subscribe("assets.public", this.props.params.id, this.state.selectedAssetKinds, this.state.searchName, this.state.projectSelected, this.state.showDeletedFlag, this.state.showStableFlag);
     let sorts = { "edited": { updatedAt: -1}, "name": {name: 1}, "kind": {kind: 1} }
     let sorter = sorts[this.state.chosenSortBy]
 
@@ -86,7 +71,22 @@ export default  UserAssetListRoute = React.createClass({
   },
 
 
-  handleSearchGo(event)
+  componentDidMount() {
+    window.addEventListener('keydown', this.listenForEnter)
+  },
+  
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.listenForEnter)
+  },
+  
+  listenForEnter: function(e) {
+    e = e || window.event;
+    if (e.keyCode === 13) {
+      this.handleSearchGo();
+    }
+  },
+
+  handleSearchGo()
   {
     this.setState( {searchName: this.refs.searchNameInput.value } )
   },

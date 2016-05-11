@@ -16,18 +16,28 @@ export default ProjectSelector = React.createClass({
     
     // Build the list of 'View Project' Menu choices
     let choices = this.props.availableProjectNamesArray.map((k) => { 
-      return    <a  className={"ui item"+ (k===pName ? " active" : "")} 
+      let isActive = k===pName
+      return    <a  className={"ui item"+ (isActive ? " active" : "")} 
                     data-value={k} key={k} 
                     onClick={this.handleChangeSelectedProjectName.bind(this, k)}>
+                    { isActive ? 
+                        <i className="ui checkmark icon"></i>
+                      : <i className="ui square outline disabled icon"></i>
+                    }
                     View assets in project "{k}"
                 </a>        
     })
     if (choices.length > 0)
     {
-      choices.push(<a className={"ui item"+ (null===pName ? " active" : "")} 
+      let isActive = (pName === null)
+      choices.push(<a className={"ui item"+ (isActive ? " active" : "")} 
                     data-value="__all" key="__all" 
                     onClick={this.handleChangeSelectedProjectName.bind(this, null)}>
-                    all projects
+                    { isActive ? 
+                        <i className="ui checkmark icon"></i>
+                      : <i className="ui square outline disabled icon"></i>
+                    }
+                    View assets in all projects
                 </a>)
     }
 
@@ -35,25 +45,21 @@ export default ProjectSelector = React.createClass({
         
         
     return (
-      <div>
-        Viewing assets in {pName ? `project "${pName}"` : "all projects"}
         <div className="ui simple dropdown item">        
+          Viewing assets in {pName ? `project "${pName}"` : "all projects"}
           <i className="dropdown icon"></i>
-          <div className="ui menu">
-            <div className="ui item">
-              {choices.length > 0 ? choices : "No projects defined for this user"}
-            </div>
+          <div className="ui menu simple">
+            {choices.length > 0 ? choices : <div className="ui item">"No projects defined for this user"</div>}
             { !this.props.canEdit ? null : 
             <div className="ui item">
               <div className="ui action input">
+                <div className="ui small secondary button" onClick={this.handleNewProject}>Create</div>
                 <input type="text" ref="newProjectName" placeholder="New Project Name" />
-                <div className="ui button" onClick={this.handleNewProject}>Create</div>
               </div>   
             </div>
             }
           </div>
         </div>
-      </div>
     );
   },
 

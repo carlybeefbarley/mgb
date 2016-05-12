@@ -4,6 +4,7 @@
   "description": "My Game Builder",
   "main": "app.js",
   "dependencies": {
+    "acorn": "^3.1.0",
     "babel-plugin-transform-class-properties": "^6.6.0",
     "blueimp-md5": "^2.3.0",
     "codemirror": "^5.14.2",

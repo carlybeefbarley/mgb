@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+var update = require('react-addons-update');
+
 
 import { js_beautify } from 'js-beautify';
 
@@ -70,6 +72,8 @@ import TokenDescription from './tern/TokenDescription.js';
 import MgbMagicCommentDescription from './tern/MgbMagicCommentDescription.js';
 
 
+import ConsoleMessageViewer from './ConsoleMessageViewer.js'
+
 import DebugASTview from './tern/DebugASTview.js';
 let showDebugAST = false
 
@@ -94,6 +98,7 @@ export default class EditCode extends React.Component {
     super(props);
     this.fontSizeSettingIndex = undefined;
     this.state = {
+      consoleMessages: [],
       gameRenderIterationKey: 0,
       isPlaying: false,
       previewAssetIdsArray: [],        // Array of strings with asset ids.
@@ -694,24 +699,43 @@ export default class EditCode extends React.Component {
   }
 
 
-  _handle_iFrameMessageReceiver(msg)
+  _consoleClearAllMessages()
   {
-    // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
-    // see http://assets.codepen.io/assets/editor/live/console_runner.js for an example of a sandbox-side code for this.. and http://assets.codepen.io/assets/editor/live/events_runner.js for an events one
-    // See a simpler embeddable one here: http://markknol.github.io/console-log-viewer/console-log-viewer.js
-    // yikes.. note that Meteor uses messages like data="Meteor._setImmediate..." for Tracker updates
-//    console.log(msg) // .data[0])
+    this.setState( { consoleMessages: [] } )
+  }
 
-    // OR Just start with Firebug Lite
-    //   <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
-    // But, this has some cross-domain issues it seems? even when I load the js locally http://localhost:3010/firebug-lite-compressed.js basic
+
+  _consoleAdd(data)
+  {
+    // Using immutability helpers as described on https://facebook.github.io/react/docs/update.html
+    let newMessages = update(this.state.consoleMessages, {$push: [data]} ).slice(-10)
+    this.setState(  { consoleMessages: newMessages } )
+    // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
   }
   
- 
+
+  _handle_iFrameMessageReceiver(event)
+  {
+    // Message receivers like this can receive a lot of crap from malicious windows
+    // debug tools etc, so we have to be careful to filter out what we actually care 
+    // about
+    var source = event.source
+    var data = event.data
+    if (source === this.iFrameWindow.contentWindow && data.hasOwnProperty("mgbCmd"))
+    {
+      if (data.mgbCmd === "mgbConsoleMsg")
+        this._consoleAdd(data)
+    }
+  }
+  
+  
   /** Start the code running! */
   handleRun()
   {    
-    window.addEventListener('message', this._handle_iFrameMessageReceiver)
+    this._consoleClearAllMessages()
+    if (!this.bound_handle_iFrameMessageReceiver)
+      this.bound_handle_iFrameMessageReceiver = this._handle_iFrameMessageReceiver.bind(this)
+    window.addEventListener('message', this.bound_handle_iFrameMessageReceiver)
     
     let src = this.props.asset.content2.src
     let gameEngineJsToLoad = this.detectGameEngine(src)
@@ -730,7 +754,7 @@ export default class EditCode extends React.Component {
     this.setState( { gameRenderIterationKey: this.state.gameRenderIterationKey+1, // or this.iFrameWindow.contentWindow.location.reload(); ? 
                      isPlaying: false
                    } )
-    window.removeEventListener('message', this._handle_iFrameMessageReceiver)
+    window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
 
   }
   
@@ -743,6 +767,13 @@ export default class EditCode extends React.Component {
     this.props.handleContentChange( newC2, "", `Template code: ${item.label}`)
   }
 
+
+  gotoLineHandler(line)
+  {
+    let pos = {line: line-1, ch:0}
+    this.codeMirror.scrollIntoView(pos, 100)  //100 pixels margin
+    this.codeMirror.setCursor(pos)
+  }
 
   renderDebugAST()
   {
@@ -884,8 +915,12 @@ export default class EditCode extends React.Component {
                   { this.state.mgbopt_game_engine &&  
                       <a className="ui item"><small>Using engine {this.state.mgbopt_game_engine}</small></a>
                   }
+                  <ConsoleMessageViewer
+                    messages={this.state.consoleMessages}
+                    gotoLinehandler={this.gotoLineHandler.bind(this)} />
                 </div>
               }
+              
               
               { /* Keyboard/Mouse shortcuts */}
               <div className="title">

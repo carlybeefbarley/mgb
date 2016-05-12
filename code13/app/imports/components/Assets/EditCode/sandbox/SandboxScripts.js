@@ -1,6 +1,9 @@
 // This is used by EditCode.js to host and support sandboxed 
 // evaluation/run of scripts in an iFrame
 
+// for the embdedded console renderer, use
+//    <script type='text/javascript' src='/console-log-viewer.js#console_at_bottom=true'></script>
+
 export const iframeScripts = {
   phaser244: 
 `<!DOCTYPE html>
@@ -13,10 +16,6 @@ export const iframeScripts = {
       margin: 0;
     }
   </style>
-
-
-<script type='text/javascript' src='/console-log-viewer.js#console_at_bottom=true'></script>
-
 </head>
 
 <body>
@@ -32,15 +31,49 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
     window.onload = function() {
       _isAlive = true;
       
-      // (function() {
-      //   var exLog = console.log;
-      //   console.log = function(msg) {
-      //     exLog.apply(this, arguments);
-      //     if (!!mgbHostMessageContext.msgSource)
-      //       mgbHostMessageContext.msgSource.postMessage(arguments, mgbHostMessageContext.msgOrigin);
-      //   }
-      // })()
-
+      
+      // Wrap the console functions so we can pass the info to parent window
+      var consoleMethodNames = ["log", "debug", "info", "warn", "error"]  // trace? dir? 
+      var consoleOrigFns = {}
+      for (var i = 0; i < consoleMethodNames.length; i++)
+      {
+        var name = consoleMethodNames[i]
+        if (console[name])
+        {
+          consoleOrigFns[name] = {
+            "name": name,
+            "origFn": console[name]
+          }
+          !function() {
+            var stableName = name;
+            console[stableName] = function(msg) {
+              consoleOrigFns[stableName].origFn.apply(this, arguments);            
+              window.parent.postMessage( { 
+                args: Array.prototype.slice.call(arguments), 
+                mgbCmd: "mgbConsoleMsg", 
+                consoleFn: stableName,
+                timestamp: new Date(),
+                line: undefined
+              }, "*");
+            }
+          }()
+        }
+      }
+    
+      originalWindowOnerror = window.onerror
+      window.onerror = function(message, url, lineNumber) {
+      window.parent.postMessage( { 
+        args: [message], 
+        mgbCmd: "mgbConsoleMsg", 
+        consoleFn: 'windowOnerror',
+        timestamp: new Date(),
+        line: lineNumber
+      }, "*");
+        if (originalWindowOnerror) 
+          return originalWindowOnerror(message, url, lineNumber);
+        else 
+          return false;
+      }
     
 
       function loadScript(url, callback)

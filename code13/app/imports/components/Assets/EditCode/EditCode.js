@@ -177,6 +177,11 @@ export default class EditCode extends React.Component {
       autoCloseBrackets: true,
       matchBrackets: true,
       viewportMargin: Infinity,
+      
+      hintOptions: {
+        completeSingle: false    //    See https://codemirror.net/doc/manual.html -> completeSingle
+      },
+          
       gutters: [
         "CodeMirror-lint-markers", 
         "CodeMirror-linenumbers", 

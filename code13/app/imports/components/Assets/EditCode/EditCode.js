@@ -910,7 +910,7 @@ export default class EditCode extends React.Component {
                     id="iFrame1" 
                     width="100%" height="400" 
                     sandbox='allow-modals allow-same-origin allow-scripts allow-popups' 
-                    srcDoc={iframeScripts.phaser244}>
+                    src="/codeEditSandbox.html">
                   </iframe>
                   { this.state.mgbopt_game_engine &&  
                       <a className="ui item"><small>Using engine {this.state.mgbopt_game_engine}</small></a>

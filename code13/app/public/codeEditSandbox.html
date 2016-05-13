@@ -1,13 +1,6 @@
-// This is used by EditCode.js to host and support sandboxed 
-// evaluation/run of scripts in an iFrame
-
-// for the embdedded console renderer, use
-//    <script type='text/javascript' src='/console-log-viewer.js#console_at_bottom=true'></script>
-
-export const iframeScripts = {
-  phaser244: 
-`<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>MyGameBuilder Sandbox Frame</title>
@@ -21,11 +14,41 @@ export const iframeScripts = {
 <body>
   <div id="game"></div>
   <script type="text/javascript">
-
     var _isAlive = false;
 
 
 var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
+
+var STACK_FRAME_RE = /at ((\S+)\s)?\(?([^:]+):(\d+):(\d+)\)?/;
+var THIS_FILE = "codeEditSandbox.html"
+
+
+function _getCaller() {
+  // TODO: Support more browsers.. See https://github.com/stacktracejs/error-stack-parser/blob/master/error-stack-parser.js
+        var err = new Error();
+        Error.captureStackTrace(err);
+
+        // Throw away the first line of the trace
+        var frames = err.stack.split('\n').slice(1);
+        // Find the first line in the stack that doesn't name this module.
+        var callerInfo = null;
+        for (var i = 0; i < frames.length; i++) {
+            if (frames[i].indexOf(THIS_FILE) === -1) {
+                callerInfo = STACK_FRAME_RE.exec(frames[i]);
+                break;
+            }
+        }
+
+        if (callerInfo) { 
+            return {
+                function: callerInfo[2] || null,
+                module:   callerInfo[3] || null,
+                line:     callerInfo[4] || null,
+                column:   callerInfo[5] || null
+            };
+        }
+        return null;
+    }
 
 
     window.onload = function() {
@@ -47,13 +70,16 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
           !function() {
             var stableName = name;
             console[stableName] = function(msg) {
-              consoleOrigFns[stableName].origFn.apply(this, arguments);            
+              consoleOrigFns[stableName].origFn.apply(this, arguments);       
+              
+              var fromWhence = _getCaller()
               window.parent.postMessage( { 
                 args: Array.prototype.slice.call(arguments), 
                 mgbCmd: "mgbConsoleMsg", 
                 consoleFn: stableName,
                 timestamp: new Date(),
-                line: undefined
+                line: fromWhence && fromWhence.line ? fromWhence.line : undefined,
+                file: fromWhence && fromWhence.module ? fromWhence.module : undefined,
               }, "*");
             }
           }()
@@ -103,7 +129,7 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
           var head = document.getElementsByTagName('head')[0];
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          script.text = srcText;
+          script.text = srcText+"//# sourceURL=_doc_.js" ;
 
           if (callback)
           {
@@ -144,9 +170,8 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
       });
     
     }
-
   </script>
 
 </body>
-</html>`
-}
+
+</html>

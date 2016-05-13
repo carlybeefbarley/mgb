@@ -60,7 +60,6 @@ import InstallMgbTernExtensions from './tern/MgbTernExtensions.js';
   
 import "codemirror/addon/tern/tern";
 
-import { iframeScripts } from './sandbox/SandboxScripts.js';
 import { templateCode } from './templates/TemplateCode.js';
 
 

@@ -89,7 +89,7 @@ function _getCaller() {
       originalWindowOnerror = window.onerror
       window.onerror = function(message, url, lineNumber) {
       window.parent.postMessage( { 
-        args: [message], 
+        args: [message],      // TODO: A stringify to handle the stuff that can't be xferred. See https://github.com/jsbin/jsbin/blob/master/public/js/vendor/stringify.js 
         mgbCmd: "mgbConsoleMsg", 
         consoleFn: 'windowOnerror',
         timestamp: new Date(),

@@ -97,6 +97,7 @@ export default class EditCode extends React.Component {
     super(props);
     this.fontSizeSettingIndex = undefined;
     this.state = {
+      _preventRenders: false,        // We use this as a way to batch updates. 
       consoleMessages: [],
       gameRenderIterationKey: 0,
       isPlaying: false,
@@ -637,22 +638,36 @@ export default class EditCode extends React.Component {
     snapshotActivity(this.props.asset, passiveAction)
     
 
+    this.setState( {_preventRenders: true})
     
-    // TODO: Batch the multiple setState() calls. This is complicated since some are async, or come via a ternServer callback. 
-    this.srcUpdate_CleanSheetCase()
-    this.srcUpdate_LookForMgbAssets()
-    this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
-    this.srcUpdate_GetInfoForCurrentFunction()
-    this.srcUpdate_GetRelevantTypeInfo()
-    this.srcUpdate_GetRefs()
-    this.srcUpdate_GetDef()
-    this.srcUpdate_getMgbOpts()    
-    
-    this.srcUpdate_getMemberParent()
+    try
+    {  
+      // TODO: Batch the async setState() calls also. T
+      this.srcUpdate_CleanSheetCase()
+      this.srcUpdate_LookForMgbAssets()
+      this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
+      this.srcUpdate_GetInfoForCurrentFunction()
+      this.srcUpdate_GetRelevantTypeInfo()
+      this.srcUpdate_GetRefs()
+      this.srcUpdate_GetDef()
+      this.srcUpdate_getMgbOpts()    
+      
+      this.srcUpdate_getMemberParent()
 
       // TODO:  See atInterestingExpression() and findContext() which are 
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
+    }
+    finally 
+    {
+      this.setState( {_preventRenders: false})
+    }
+  }
 
+  shouldComponentUpdate(nextProps, nextState)
+  {
+    if (nextState._preventRenders === true)
+      return false
+    return true    
   }
   
   codemirrorValueChanged (doc, change) {

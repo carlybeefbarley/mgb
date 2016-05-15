@@ -1,5 +1,8 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
+
+import moment from 'moment';
+
 import {Link, browserHistory} from 'react-router';
 import {ActivityTypes} from '../../schemas/activity.js';
 import {AssetKinds} from '../../schemas/assets';
@@ -53,21 +56,22 @@ export default class Sidebar extends Component {
     
     let activityContent = this.props.activity.map((act, i) => { 
       let iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
-      
+      const ago = moment(act.timestamp).fromNow()                   // TODO: Make reactive
+
       if (act.activityType.startsWith("user.")) {
-        return <Link to={"/user/" + act.byUserId}  className="item" key={i}>
+        return <Link to={"/user/" + act.byUserId}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i>{act.description}
               </Link>
       }
       else if (act.activityType.startsWith("asset.")) {
         const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind);
 
-        return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i}>
+        return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i>{act.byUserName}: <i className={assetKindIconClassName}></i>'{act.toAssetName}' {act.description} 
               </Link>
       } 
       else if (act.activityType.startsWith("project.")) {
-        return <Link to={"/user/" + act.byUserId}  className="item" key={i}>
+        return <Link to={"/user/" + act.byUserId}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i>{act.byUserName}: {act.description}
               </Link>
       }

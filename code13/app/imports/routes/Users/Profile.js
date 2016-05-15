@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import Helmet from 'react-helmet';
+import moment from 'moment';
 
 import UserCard from '../../components/Users/UserCard';
 import {Link} from 'react-router';
@@ -43,27 +44,30 @@ export default UserProfileRoute = React.createClass({
       return null
     
     let activityContent = this.data.activity.map((act, i) => { 
+      
+      const ago = moment(act.timestamp).fromNow()                   // TODO: Make reactive
+    
       let iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
       
       if (act.activityType.startsWith("user.")) {
-        return <Link to={"/user/" + act.byUserId}  className="item" key={i}>
+        return <Link to={"/user/" + act.byUserId}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i>{act.description}
               </Link>
       }
       else if (act.activityType.startsWith("asset.")) {
         const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind);
 
-        return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i}>
-                <i className={iconClass}></i><i className={assetKindIconClassName}></i>{act.description}: '{act.toAssetName}'  
+        return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i} title={ago}>
+                <i className={iconClass}></i><i className={assetKindIconClassName}></i>{act.description} '{act.toAssetName}'  
               </Link>
       } 
       else if (act.activityType.startsWith("project.")) {
-        return <Link to={"/user/" + act.byUserId}  className="item" key={i}>
+        return <Link to={"/user/" + act.byUserId}  className="item" key={i}> title={ago}
                 <i className={iconClass}></i> {act.description}
               </Link>
       }
       //else...
-      return <div className="item" key={i}>{act.activityType} not in Profile code</div>              
+      return <div className="item" key={i}>!error! {act.activityType} activityType not in Profile code</div>              
     })
         
     return  <div className="ui fluid vertical menu">{activityContent}</div>
@@ -78,6 +82,7 @@ export default UserProfileRoute = React.createClass({
       return null;
       
     let viewed = _.map(activitySnapshots, a => { 
+      const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
       let detail2 = ""
       const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind);
 
@@ -86,8 +91,8 @@ export default UserProfileRoute = React.createClass({
       else if (a.toAssetKind === "graphic")
         detail2 = ` at frame #${a.passiveAction.selectedFrameIdx+1}`
       
-      return <Link to={"/assetEdit/" + a.toAssetId} className="item" key={a._id}>
-              <i className="ui eye grey icon"></i><i className={assetKindIconClassName}></i>View {a.toAssetKind} "{a.toAssetName || '<unnamed>'}"{detail2}
+      return <Link to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
+              <i className="ui eye grey icon"></i><i className={assetKindIconClassName}></i>View {a.toAssetKind} '{a.toAssetName || "<unnamed>"}'{detail2}
               </Link>
     })
     

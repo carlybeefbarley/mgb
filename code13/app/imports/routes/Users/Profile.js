@@ -81,7 +81,7 @@ export default UserProfileRoute = React.createClass({
     if (!activitySnapshots)
       return null;
       
-    let viewed = _.map(activitySnapshots, a => { 
+    let viewed = _.map(_.sortBy(activitySnapshots, 'timestamp'), a => { 
       const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
       let detail2 = ""
       const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind);
@@ -97,7 +97,7 @@ export default UserProfileRoute = React.createClass({
     })
     
     return  <div className="ui fluid vertical menu">
-              {viewed}
+              {viewed.length > 0 ? viewed : <a className="ui disabled item">No activity within last 5 minutes...</a> }
             </div>    
   },
 
@@ -167,7 +167,7 @@ export default UserProfileRoute = React.createClass({
         </div>
         
         <div className="six wide column">
-          <h2>Recent edits</h2>
+          <h2>Recent actions</h2>
           { this.renderActivities() }
         </div>
         

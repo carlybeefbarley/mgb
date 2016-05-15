@@ -85,6 +85,13 @@ Meteor.publish('activity.public.recent', function(limitCount) {
   return Activity.find(selector, options);
 });
 
+Meteor.publish('activity.public.recent.userId', function(userId, limitCount) {
+  let selector = { byUserId: userId }
+  let options = {limit: limitCount, sort: {timestamp: -1}}
+
+  return Activity.find(selector, options);
+});
+
 
 //
 //    ACTIVITY SNAPSHOTS (and purge)
@@ -99,6 +106,15 @@ Meteor.publish('activitysnapshots.assetid', function(assetId) {
   return ActivitySnapshots.find(selector, options);
 });
 
+
+Meteor.publish('activitysnapshots.userId', function(userId) {
+  // Note that we don't put a date range selector in here since it doesn't automatically
+  // change reactively. It's simpler just to use Mongo's expireAfterSeconds feature
+  // to purge the records.
+  let selector = { byUserId: userId }
+  let options = {limit: 100, sort: {timestamp: -1} }
+  return ActivitySnapshots.find(selector, options);
+});
 // NOTE THAT THE expireAfterSeconds value cannot be changed! 
 // You have to drop the index to change it (or use the complicated collMod approach)
 // Here's how to drop it using the CLI: 

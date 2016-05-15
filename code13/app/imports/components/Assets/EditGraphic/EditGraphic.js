@@ -14,8 +14,6 @@ import ToolEyedropper from './ToolEyedropper.js';
 
 import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
 
-
-
 const tools = {
   ToolPen,
   ToolEraser,
@@ -106,6 +104,8 @@ export default class EditGraphic extends React.Component {
     // Some constants we will use
     this.mgb_MAX_BITMAP_WIDTH = 1024
     this.mgb_MAX_BITMAP_HEIGHT = 1024
+    
+    this.doSnapshotActivity()
   }
 
 
@@ -712,7 +712,7 @@ export default class EditGraphic extends React.Component {
     }
     asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
     this.props.handleContentChange(c2, asset.thumbnail, changeText);
-    doSnapshotActivity()
+    this.doSnapshotActivity()
   }
 
   /// Drag & Drop of image files over preview and editor

@@ -167,7 +167,7 @@ export default UserProfileRoute = React.createClass({
         </div>
         
         <div className="six wide column">
-          <h2>Recent actions</h2>
+          <h2 title="List of recent actions by this user. This list typically has several weeks of history">Recent actions</h2>
           { this.renderActivities() }
         </div>
         

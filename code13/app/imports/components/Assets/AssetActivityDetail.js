@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+import moment from 'moment';
+
 
 export default AssetActivityDetail = React.createClass({
 
@@ -17,13 +19,14 @@ export default AssetActivityDetail = React.createClass({
     var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
     let othersActivities =  _.filter(activities, a => currUserId !== a.byUserId)                            
     let viewers = _.map(othersActivities, a => { 
+      const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
       let detail2 = ""
       if (a.toAssetKind === "code")
         detail2 = ` at line ${a.passiveAction.position.line+1}`
       else if (a.toAssetKind === "graphic")
         detail2 = ` at frame #${a.passiveAction.selectedFrameIdx+1}`
       
-      return <a className="item" key={a._id}>
+      return <a className="item" key={a._id} title={ago}>
               {a.byUserName}{detail2}
               </a>
     })

@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
-var update = require('react-addons-update');
+import {update} from 'react-addons-update';
+import moment from 'moment';
 
 
 import { js_beautify } from 'js-beautify';
@@ -616,7 +617,8 @@ export default class EditCode extends React.Component {
       {
         let marker = document.createElement("div")
         marker.style.color = "#822"
-        marker.title = "Being viewed by " + act.byUserName
+        const ago = moment(act.timestamp).fromNow()                   // TODO: Make reactive
+        marker.title = "Being viewed by " + act.byUserName + ", " + ago
         let c = act.byUserName[0]
         marker.innerHTML = (c === "<" || !c) ? "?" : c
         ed.setGutterMarker(act.passiveAction.position.line, "mgb-cm-user-markers", marker) 

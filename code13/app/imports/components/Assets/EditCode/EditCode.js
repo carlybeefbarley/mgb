@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import {update} from 'react-addons-update';
+var update = require('react-addons-update');
 import moment from 'moment';
 
 

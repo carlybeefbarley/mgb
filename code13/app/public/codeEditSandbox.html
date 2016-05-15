@@ -26,7 +26,8 @@ var THIS_FILE = "codeEditSandbox.html"
 function _getCaller() {
   // TODO: Support more browsers.. See https://github.com/stacktracejs/error-stack-parser/blob/master/error-stack-parser.js
         var err = new Error();
-        Error.captureStackTrace(err);
+        if (Error.captureStackTrace)
+          Error.captureStackTrace(err);
 
         // Throw away the first line of the trace
         var frames = err.stack.split('\n').slice(1);

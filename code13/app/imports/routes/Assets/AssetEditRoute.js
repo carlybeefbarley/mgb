@@ -27,30 +27,31 @@ export default AssetEditRoute = React.createClass({
   
   
   componentDidMount() {
-    window.addEventListener('keydown', this.listenForEnter)
+    window.addEventListener('keydown', this.listenForEnterOrEsx)
   },
   
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.listenForEnter)
+    window.removeEventListener('keydown', this.listenForEnterOrEsx)
     this.handleAssetNameChangeInteractive()     // In case we have any pending saves    
   },
   
-  listenForEnter: function(e) {
+  listenForEnterOrEsc: function(e) {
     e = e || window.event;
-    if (e.keyCode === 13) {
+    if (e.keyCode === 13) 
       this.handleAssetNameChangeInteractive();
-    }
+    else if (e.keyCode === 27 && !this.data.loading)
+      this.refs.assetNameInput.value = this.data.asset.name
   },
 
   getMeteorData: function() {
     let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", this.props.params.id);
-    let handleForActivity = Meteor.subscribe("activitysnapshots.assetid", this.props.params.id);
+    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", this.props.params.id);
 
 
     return {
       asset: Azzets.findOne(this.props.params.id),
-      activities: ActivitySnapshots.find().fetch(),
-      loading: !handleForAsset.ready()    // Be aware that 'activities' may still be loading
+      activitySnapshots: ActivitySnapshots.find().fetch(),
+      loading: !handleForAsset.ready()    // Be aware that 'activitySnapshots' may still be loading
     };
   },
 
@@ -100,7 +101,7 @@ export default AssetEditRoute = React.createClass({
           <AssetActivityDetail 
                         assetId={this.props.params.id} 
                         currUser={this.props.currUser}
-                        activities={this.data.activities} />
+                        activitySnapshots={this.data.activitySnapshots} />
         </div>
         
         <div className="ui two wide column">        
@@ -123,7 +124,7 @@ export default AssetEditRoute = React.createClass({
             canEdit={canEd} 
             currUser={this.props.currUser}
             editDeniedReminder={this.handleEditDeniedReminder}
-            activities={this.data.activities} 
+            activitySnapshots={this.data.activitySnapshots} 
           />
         </div>
       </div>
@@ -145,7 +146,7 @@ export default AssetEditRoute = React.createClass({
         }
       });
       
-      logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset); 
+      logActivity("asset.rename",  `Rename to "${newName}" from `, null, this.data.asset); 
     }
   }
 })

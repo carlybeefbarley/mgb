@@ -14,7 +14,7 @@ export default class AssetEdit extends React.Component {
   //   canEdit" PropTypes.bool.isRequired
   //   currUser: PropTypes.object,
   //   editDeniedReminder: PropTypes.function
-  //   activities: PropTypes.array               // can be null whilst loading
+  //   activitySnapshots: PropTypes.array               // can be null whilst loading
   // }
 
   constructor(props) {
@@ -31,7 +31,7 @@ export default class AssetEdit extends React.Component {
                 currUser={this.props.currUser}
                 editDeniedReminder={this.props.editDeniedReminder}
                 handleContentChange={this.handleContentChange.bind(this) }
-                activities={this.props.activities}
+                activitySnapshots={this.props.activitySnapshots}
                 />
     case 'code':
       return <EditCode 
@@ -40,7 +40,7 @@ export default class AssetEdit extends React.Component {
                 currUser={this.props.currUser}
                 editDeniedReminder={this.props.editDeniedReminder}
                 handleContentChange={this.handleContentChange.bind(this)}
-                activities={this.props.activities}
+                activitySnapshots={this.props.activitySnapshots}
 
                 />
     case 'map':
@@ -50,7 +50,7 @@ export default class AssetEdit extends React.Component {
                 currUser={this.props.currUser}
                 editDeniedReminder={this.props.editDeniedReminder}
                 handleContentChange={this.handleContentChange.bind(this)}
-                activities={this.props.activities}
+                activitySnapshots={this.props.activitySnapshots}
                 />
     default:
       return (<EditUnknown asset={asset}/>);

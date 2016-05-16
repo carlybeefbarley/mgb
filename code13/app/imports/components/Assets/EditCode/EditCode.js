@@ -91,7 +91,7 @@ export default class EditCode extends React.Component {
   //   canEdit" PropTypes.bool.isRequired
   //   editDeniedReminder: PropTypes.function
   //   handleContentChange: PropTypes.function.isRequired
-  //   activities: PropTypes.array               // can be null whilst loading
+  //   activitySnapshots: PropTypes.array               // can be null whilst loading
   // }
 
   constructor(props) {
@@ -610,7 +610,7 @@ export default class EditCode extends React.Component {
     var ed = this.codeMirror
     ed.clearGutter("mgb-cm-user-markers");
         
-    let acts = this.props.activities
+    let acts = this.props.activitySnapshots
     _.each(acts, act => { 
       var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
       if (currUserId !== act.byUserId)

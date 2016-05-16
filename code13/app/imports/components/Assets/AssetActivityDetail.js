@@ -6,18 +6,18 @@ export default AssetActivityDetail = React.createClass({
 
   propTypes: {
     assetId: PropTypes.string.isRequired,        
-    activities: PropTypes.array,                // Can be empty while being loaded          
+    activitySnapshots: PropTypes.array,                // Can be empty while being loaded          
     currUser: PropTypes.object                  // currently Logged In user (not always provided)
   },
   
   render() {
     // A list of ActivitySnapshots provided via getMeteorData(), including one by ourself probably
-    let { activities } = this.props;
-    if (!activities)
+    let { activitySnapshots } = this.props;
+    if (!activitySnapshots)
       return null;
       
     var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
-    let othersActivities =  _.filter(activities, a => currUserId !== a.byUserId)                            
+    let othersActivities =  _.filter(activitySnapshots, a => currUserId !== a.byUserId)                            
     let viewers = _.map(othersActivities, a => { 
       const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
       const href = (a.byUserId.indexOf("BY_SESSION") !== 0) ? {href:`/user/${a.byUserId}`} : {}  // See http://stackoverflow.com/questions/29483741/rendering-a-with-optional-href-in-react-js

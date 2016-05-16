@@ -29,14 +29,15 @@ export default NavRecent = React.createClass({
   renderMergedActivities()   // merge and sort by timestamp.. assets only? idk
   {
     let mergedArray = this.data.activity.concat(this.data.activitySnapshots)
-    mergedArray = _.sortBy(mergedArray, 'timestamp')
-//    mergedArray = _.uniq(mergedArray, a => { return a.toAssetId || null})
+    mergedArray = _.sortBy(mergedArray, x => { return -x.timestamp.getTime()})  // Sort by most recent
+    mergedArray = _.uniqBy(mergedArray, 'toAssetId')    // Remove later duplicate assetIds
     let retval = []
 
     _.each(mergedArray, a => {
       const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
       if (a.toAssetId)
       {
+        // We only add Asset activities so far - not profile views etc
         const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind);
         retval.push( <Link to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
                       <i className={assetKindIconClassName}></i>{a.toAssetKind} '{a.toAssetName || "<unnamed>"}'

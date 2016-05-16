@@ -20,13 +20,14 @@ export default AssetActivityDetail = React.createClass({
     let othersActivities =  _.filter(activities, a => currUserId !== a.byUserId)                            
     let viewers = _.map(othersActivities, a => { 
       const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
-      let detail2 = ""
+      const href = (a.byUserId.indexOf("BY_SESSION") !== 0) ? {href:`/user/${a.byUserId}`} : {}  // See http://stackoverflow.com/questions/29483741/rendering-a-with-optional-href-in-react-js
+      let detail2 = null
       if (a.toAssetKind === "code")
         detail2 = ` at line ${a.passiveAction.position.line+1}`
       else if (a.toAssetKind === "graphic")
         detail2 = ` at frame #${a.passiveAction.selectedFrameIdx+1}`
       
-      return <a className="item" key={a._id} title={ago}>
+      return <a className="item" key={a._id} title={ago} {...href}>
               {a.byUserName}{detail2}
               </a>
     })

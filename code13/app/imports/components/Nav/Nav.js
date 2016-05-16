@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {logActivity} from '../../schemas/activity';
+import NavRecent from './NavRecent.js';
 
 export default Nav = React.createClass({
   
@@ -47,6 +48,7 @@ export default Nav = React.createClass({
           { user ?
             // If signed in, show Profile, Logout choices as  | username |   dropdown
             [
+              <NavRecent user={this.props.user} key="navr"/>,
               <div className="ui simple dropdown item" key="dropdown">
                 {user.profile.name} <i className="dropdown icon"></i>
                 <div className="menu simple">

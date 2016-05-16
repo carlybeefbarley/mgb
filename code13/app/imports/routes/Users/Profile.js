@@ -37,7 +37,7 @@ export default UserProfileRoute = React.createClass({
   },
   
   
-  // TODO find a way to share code with the Sidebar activity renderer
+  // TODO find a way to share code with the Sidebar activity renderer and NavRecent.js
   renderActivities()
   {
     if (!this.data.activity || this.data.activity.length === 0)

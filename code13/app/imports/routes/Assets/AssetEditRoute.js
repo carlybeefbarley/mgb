@@ -8,18 +8,19 @@ import Helmet from 'react-helmet';
 import AssetEdit from '../../components/Assets/AssetEdit';
 import AssetCard from '../../components/Assets/AssetCard.js';
 import AssetActivityDetail from '../../components/Assets/AssetActivityDetail.js';
+import AssetHistoryDetail from '../../components/Assets/AssetHistoryDetail.js';
 
 import {AssetKinds} from '../../schemas/assets';
 import {logActivity} from '../../schemas/activity';
 import {snapshotActivity} from '../../schemas/activitySnapshots.js';
-import {ActivitySnapshots} from '../../schemas';
+import {ActivitySnapshots, Activity} from '../../schemas';
 
 
 export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,
+    params: PropTypes.object,       // params.id is the ASSET id
     user: PropTypes.object,
     currUser: PropTypes.object,
     ownsProfile: PropTypes.bool     // true IFF user is valid and asset owner is currently logged in user
@@ -27,11 +28,11 @@ export default AssetEditRoute = React.createClass({
   
   
   componentDidMount() {
-    window.addEventListener('keydown', this.listenForEnterOrEsx)
+    window.addEventListener('keydown', this.listenForEnterOrEsc)
   },
   
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.listenForEnterOrEsx)
+    window.removeEventListener('keydown', this.listenForEnterOrEsc)
     this.handleAssetNameChangeInteractive()     // In case we have any pending saves    
   },
   
@@ -44,14 +45,19 @@ export default AssetEditRoute = React.createClass({
   },
 
   getMeteorData: function() {
-    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", this.props.params.id);
-    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", this.props.params.id);
+    let assetId = this.props.params.id
+    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", assetId);
+    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId);
+    let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId, 20) 
 
+    let selector = { toAssetId: assetId }
+    let options = {sort: {timestamp: -1}}
 
     return {
-      asset: Azzets.findOne(this.props.params.id),
-      activitySnapshots: ActivitySnapshots.find().fetch(),
-      loading: !handleForAsset.ready()    // Be aware that 'activitySnapshots' may still be loading
+      asset: Azzets.findOne(assetId),
+      activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
+      assetActivity: Activity.find(selector, options).fetch(),
+      loading: !handleForAsset.ready()    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
     };
   },
 
@@ -70,6 +76,8 @@ export default AssetEditRoute = React.createClass({
       return null;
 
     const canEd = this.canEdit();
+    
+    var nameFieldHighlight = (canEd && (!asset.name || asset.name === "")) ? " error" : "";
 
     return (
       <div className="ui padded grid">
@@ -81,11 +89,10 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui seven wide column">
-
-          <div className="ui left action input fluid">
-            <div className="ui teal icon button">
-              <div className="ui label teal">Edit {asset.kind}</div>
+        <div className="ui six wide column">
+          <div className={"ui small left action input fluid" + nameFieldHighlight}>
+            <div className="ui small teal icon button">
+              <div className="ui small label teal">Edit {asset.kind}</div>
               <i className={AssetKinds.getIconClass(asset.kind)}></i>
             </div>
             <input ref="assetNameInput"
@@ -104,8 +111,12 @@ export default AssetEditRoute = React.createClass({
                         activitySnapshots={this.data.activitySnapshots} />
         </div>
         
-        <div className="ui two wide column">        
-          { canEd ? <a className="ui tiny green label">editable</a> : <a className="ui mgbReadOnlyReminder tiny red label">read-only</a> }
+        <div className="ui three wide column">        
+          <AssetHistoryDetail 
+                        assetId={this.props.params.id} 
+                        currUser={this.props.currUser}
+                        assetActivity={this.data.assetActivity} />
+
         </div>
 
         <div className="four wide column">
@@ -133,6 +144,7 @@ export default AssetEditRoute = React.createClass({
 
   handleEditDeniedReminder: function()
   {
+    // This is a style in the AssetCard. TODO: Pass the name in as a prop
     $('.mgbReadOnlyReminder').transition({ animation: 'tada', duration: '500ms' })
   },
 

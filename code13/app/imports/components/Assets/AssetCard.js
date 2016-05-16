@@ -13,7 +13,7 @@ import AssetUrlGenerator from './AssetUrlGenerator.js';
 export default AssetCard = React.createClass({
   
   propTypes: {
-    showHeader: PropTypes.bool,
+    showHeader: PropTypes.bool,                 // If false, just have a very MINi asset card
     asset: PropTypes.object,
     currUser: PropTypes.object,                 // currently Logged In user (not always provided)
     canEdit: PropTypes.bool,                    // Whether changes (like stable, delete etc) are allowed. Can be false
@@ -74,7 +74,7 @@ export default AssetCard = React.createClass({
       return null;
       
 
-    const {asset, showEditButton, currUser } = this.props;
+    const {asset, showEditButton, currUser, canEdit } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
     const c2 = asset.content2 || { width:64, height:64, nframes:0 }
@@ -103,22 +103,24 @@ export default AssetCard = React.createClass({
         <div className="content">
           
           { /* CONTENT */ }
-          { !this.props.showHeader ? null : 
-          <div className="ui right floated image">
-            <div className="ui move left reveal">
-              <div className="visible content">
-                    <canvas ref="thumbnailCanvas" className="ui image" width={iw} height={ih} style={{backgroundColor: '#ffffff'}} >
-                    </canvas> 
-              </div>
-              <div className="hidden content meta">
-                <small>
-                  <p>{assetKindLongName}</p>
-                  <p>{dimension}</p>
-                  <p>{info2}</p>
-                </small>
+          { !this.props.showHeader ?
+            ( canEdit ? <a className="ui right floated tiny green label">editable</a> : <a className="ui mgbReadOnlyReminder right floated tiny red label">read-only</a> )
+            : 
+            <div className="ui right floated image">
+              <div className="ui move left reveal">
+                <div className="visible content">
+                      <canvas ref="thumbnailCanvas" className="ui image" width={iw} height={ih} style={{backgroundColor: '#ffffff'}} >
+                      </canvas> 
+                </div>
+                <div className="hidden content meta">
+                  <small>
+                    <p>{assetKindLongName}</p>
+                    <p>{dimension}</p>
+                    <p>{info2}</p>
+                  </small>
+                </div>
               </div>
             </div>
-          </div>
           }
           
           { !this.props.showHeader ? null : 
@@ -155,7 +157,7 @@ export default AssetCard = React.createClass({
               <i className="ui edit icon"></i>
               <small>Edit</small>
             </div>
-            <div className={(this.props.canEdit ? "" : "disabled ") + "ui basic blue compact button"} 
+            <div className={(canEdit ? "" : "disabled ") + "ui basic blue compact button"} 
                  onClick={this.handleCompletedClick} >
               <i className={ asset.isCompleted ? "ui toggle on icon" : "ui toggle off icon"}></i>
               <small>Stable</small>

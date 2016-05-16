@@ -11,8 +11,6 @@ import {ActivityTypes} from '../../schemas/activity.js';
 import {AssetKinds} from '../../schemas/assets';
 
 
-
-
 export default UserProfileRoute = React.createClass({
   mixins: [ReactMeteorData],
 
@@ -24,7 +22,6 @@ export default UserProfileRoute = React.createClass({
   },
   
   
-
   getMeteorData: function() {
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", this.props.params.id);
     let handleActivity = Meteor.subscribe("activity.public.recent.userId", this.props.params.id, 10) 

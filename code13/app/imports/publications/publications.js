@@ -82,14 +82,21 @@ Meteor.publish('activity.public.recent', function(limitCount) {
   let selector = { }
   let options = {limit: limitCount, sort: {timestamp: -1}}
 
-  return Activity.find(selector, options);
+  return Activity.find(selector, options)
 });
 
 Meteor.publish('activity.public.recent.userId', function(userId, limitCount) {
   let selector = { byUserId: userId }
   let options = {limit: limitCount, sort: {timestamp: -1}}
 
-  return Activity.find(selector, options);
+  return Activity.find(selector, options)
+});
+
+Meteor.publish('activity.public.recent.assetid', function(assetId, limitCount) {
+  let selector = { toAssetId: assetId }
+  let options = { limit: limitCount, sort: {timestamp: -1}}
+
+  return Activity.find(selector, options)
 });
 
 

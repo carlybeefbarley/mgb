@@ -8,7 +8,7 @@ import Helmet from "react-helmet";
 import {Users, Activity} from '../schemas';
 
 import Spinner from '../components/Spinner/Spinner';
-import Toast from '../components/Toast/Toast';
+import Toast from '../components/Nav/Toast';
 
 export default App = React.createClass({
   mixins: [ReactMeteorData],

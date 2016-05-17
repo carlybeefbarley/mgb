@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import {Azzets} from '../../schemas';
 
-import Spinner from '../../components/Spinner/Spinner';
+import Spinner from '../../components/Nav/Spinner';
 import {handleForms} from '../../components/Forms/FormDecorator';
 import Helmet from 'react-helmet';
 import AssetEdit from '../../components/Assets/AssetEdit';

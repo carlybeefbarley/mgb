@@ -7,7 +7,7 @@ import Sidebar from '../components/Nav/Sidebar';
 import Helmet from "react-helmet";
 import {Users, Activity} from '../schemas';
 
-import Spinner from '../components/Spinner/Spinner';
+import Spinner from '../components/Nav/Spinner';
 import Toast from '../components/Nav/Toast';
 
 export default App = React.createClass({

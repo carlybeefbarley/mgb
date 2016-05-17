@@ -4,7 +4,7 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import {Users} from '../../schemas';
 import UserCard from '../../components/Users/UserCard';
-import Spinner from '../../components/Spinner/Spinner';
+import Spinner from '../../components/Nav/Spinner';
 import UserList from '../../components/Users/UserList';
 
 export default UserListRoute = React.createClass({

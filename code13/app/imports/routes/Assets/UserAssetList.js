@@ -13,7 +13,7 @@ import AssetShowStableSelector from '../../components/Assets/AssetShowStableSele
 import AssetListSortBy from '../../components/Assets/AssetListSortBy';
 import ProjectSelector from '../../components/Assets/ProjectSelector';
 
-import Spinner from '../../components/Spinner/Spinner';
+import Spinner from '../../components/Nav/Spinner';
 import {browserHistory} from 'react-router';
 import Helmet from 'react-helmet';
 import UserItem from '../../components/Users/UserItem.js';

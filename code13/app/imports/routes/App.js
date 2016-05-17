@@ -3,7 +3,7 @@ import reactMixin from 'react-mixin';
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import Nav from '../components/Nav/Nav';
-import Sidebar from '../components/Sidebar/Sidebar';
+import Sidebar from '../components/Nav/Sidebar';
 import Helmet from "react-helmet";
 import {Users, Activity} from '../schemas';
 

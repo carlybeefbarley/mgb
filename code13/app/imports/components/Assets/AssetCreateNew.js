@@ -11,7 +11,7 @@ export default class AssetCreateNew extends React.Component {
   constructor(props) {
     super(props);
     this.defaultProps = {
-      defaultName: 'Name...',
+      defaultName: 'Name...'
     };
   }
 
@@ -22,7 +22,12 @@ export default class AssetCreateNew extends React.Component {
          null
         :
         (
-          <a className="item" data-value={k} key={k} onClick={this.handleCreateAssetClick.bind(this,k)}>
+          <a className={(AssetKinds[k].disable ? "disabled ": "") + "item"} 
+              data-value={k} 
+              title={AssetKinds[k].description}
+              key={k} 
+              onClick={this.handleCreateAssetClick.bind(this,k)}
+              >
             <i className={AssetKinds[k].icon + " icon"}></i>
             {AssetKinds[k].name}
           </a>

@@ -41,15 +41,15 @@ var schema = {
 // Info on each kind of asset, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const AssetKinds = {
-  "search":  { name: "Search",  longName: "Search query",    icon: "find", description: "Saved search query" },
-  "graphic": { name: "Graphic", longName: "Graphic",         icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
-  "palette": { name: "Palette", longName: "Color Palette",   icon: "block layout", description: "Color palette" },
-  "map":     { name: "Map",     longName: "Game Level Map",  icon: "marker", description: "Map used in a game" },
-  "code":    { name: "Code",    longName: "Code Script",     icon: "puzzle", description: "Source code script" },
-  "bug":     { name: "Bug",     longName: "Bug Report",      icon: "bug",    description: "Report and status of a problem (aka bug)" },
-  "cutscene":{ name: "Cutscene",longName: "Cut Scene",       icon: "spinner",description: "Cut scene used in a game" },
-  "audio":   { name: "Audio",   longName: "Audio sound",     icon: "announcement", description: "Sound Effect, song, voice etc"},
-  "game":    { name: "Game",    longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
+  "search":  { name: "Search",  disable: true,  longName: "Search query",    icon: "find", description: "Saved search query" },
+  "palette": { name: "Palette", disable: true,  longName: "Color Palette",   icon: "block layout", description: "Color palette" },
+  "graphic": { name: "Graphic", disable: false, longName: "Graphic",         icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
+  "map":     { name: "Map",     disable: false, longName: "Game Level Map",  icon: "marker", description: "Map/Level used in a game" },
+  "physics": { name: "Physics", disable: true,  longName: "Physics Config",  icon: "rocket", description: "Physics configuration" },
+  "code":    { name: "Code",    disable: false, longName: "Code Script",     icon: "puzzle", description: "Source code script" },
+  "cutscene":{ name: "Cutscene",disable: true,  longName: "Cut Scene",       icon: "film",description: "Cut scene used in a game" },
+  "audio":   { name: "Audio",   disable: true,  longName: "Audio sound",     icon: "announcement", description: "Sound Effect, song, voice etc"},
+  "game":    { name: "Game",    disable: true, longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},
   getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")}

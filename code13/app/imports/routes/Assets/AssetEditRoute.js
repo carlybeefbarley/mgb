@@ -97,7 +97,7 @@ export default AssetEditRoute = React.createClass({
             </div>
             <input ref="assetNameInput"
                    disabled={!canEd}
-                   placeholder={"Enter a name for this " + asset.kind + " asset"}
+                   placeholder={"Unnamed " + asset.kind}
                    defaultValue={asset.name}
                    onBlur={this.handleAssetNameChangeInteractive}></input>
           </div>

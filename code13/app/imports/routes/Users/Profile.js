@@ -67,7 +67,7 @@ export default UserProfileRoute = React.createClass({
       return <div className="item" key={i}>!error! {act.activityType} activityType not in Profile code</div>              
     })
         
-    return  <div className="ui fluid vertical menu">{activityContent}</div>
+    return  <div className="ui small fluid vertical menu">{activityContent}</div>
   },
   
   
@@ -93,7 +93,7 @@ export default UserProfileRoute = React.createClass({
               </Link>
     })
     
-    return  <div className="ui fluid vertical menu">
+    return  <div className="ui small fluid vertical menu">
               {viewed.length > 0 ? viewed : <a className="ui disabled item">No activity within last 5 minutes...</a> }
             </div>    
   },
@@ -102,35 +102,19 @@ export default UserProfileRoute = React.createClass({
   render: function() {
     const {user, ownsProfile, currUser} = this.props;
 
-    //Checks for edit query on route
-    const { query } = this.props.location
-    const edit = query && query.edit == "true"
 
     //if id params don't link to a user...
     if (!user) {
       return (
-        <div>No user found at this address</div>
+        <div className="ui segment">
+          <div className="ui error message">
+            <div className="header">
+              User not found
+            </div>
+            <p>This user does not exist. Weird.</p>
+          </div>
+        </div>
       );
-    }
-
-    const email = user.emails && user.emails[user.emails.length - 1].address ?
-                    user.emails[user.emails.length - 1].address
-                  : 'None@none.com';
-
-
-
-    //if user is looking at their own profile and edit query is on on route
-    if (edit && ownsProfile) {
-      return (
-        <EditProfile user={currUser} email={email} />
-      )
-    }
-
-    //if user doesn't own profile but is trying to edit it...
-    if (edit) {
-      return (
-        <div>You don't have permission to edit {user.profile.name}'s profile.</div>
-      )
     }
 
     return (
@@ -141,14 +125,12 @@ export default UserProfileRoute = React.createClass({
               {"name": "description", "content": user.profile.name + "\'s profile"}
           ]}
         />
-
-        <div className="ui row">
-          <div className="ui column">
-            <h1>User: {user.profile.name}</h1>
-          </div>
+        
+        <div className="one wide column">
         </div>
-        <div className="four wide column">
-          <h2>Profile</h2>
+
+        <div className="six wide column">
+          <h2>User: {user.profile.name}</h2>
           <UserCard
             user={user}
             name={user.profile.name}
@@ -156,21 +138,21 @@ export default UserProfileRoute = React.createClass({
             title={user.profile.title}
             bio={user.profile.bio}
             createdAt={user.createdAt}
-            email={email} />
+            />
 
           <Link to={`/user/${user._id}/assets`}  >
             <button>See Assets</button>
           </Link>
         </div>
         
-        <div className="six wide column">
-          <h2 title="List of recent actions by this user. This list typically has several weeks of history">Recent actions</h2>
+        <div className="eight wide column">
+          <h2 title="(Activity within last five minutes)">Recent views</h2>
+          { this.renderActivitySnapshots() }
+          <h2 title="List of recent actions by this user. This list typically has several weeks of history">Recent edits</h2>
           { this.renderActivities() }
         </div>
         
-        <div className="six wide column">
-          <h2 title="(Activity within last five minutes)">Recently viewed</h2>
-          { this.renderActivitySnapshots() }
+        <div className="one wide column">
         </div>
         
       </div>

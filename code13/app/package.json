@@ -21,8 +21,9 @@
     "react-addons-test-utils": "^15.0.2",
     "react-addons-transition-group": "^15.0.2",
     "react-addons-update": "^15.0.2",
-    "react-color": "^2.0.0",
+    "react-color": "^2.1.0",
     "react-dom": "^15.0.2",
+    "react-edit-inline": "^1.0.7",
     "react-helmet": "^3.0.1",
     "react-inspector": "^1.0.0-alpha.5",
     "react-mixin": "^3.0.4",
@@ -30,8 +31,8 @@
     "tern": "^0.18.0"
   },
   "devDependencies": {
-    "eslint": "^2.7.0",
-    "eslint-plugin-react": "^5.0.1"
+    "eslint": "^2.10.2",
+    "eslint-plugin-react": "^5.1.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

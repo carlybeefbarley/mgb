@@ -89,7 +89,7 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui six wide column">
+        <div className="ui five wide column">
           <div className={"ui small left action input fluid" + nameFieldHighlight}>
             <div className="ui small teal icon button">
               <div className="ui small label teal">Edit {asset.kind}</div>
@@ -103,15 +103,13 @@ export default AssetEditRoute = React.createClass({
           </div>
         </div>
         
-        <div className="ui three wide column">
+        <div className="ui five wide column">
           { /* We use this.props.params.id since it is available sooner than the asset */ }
           <AssetActivityDetail 
                         assetId={this.props.params.id} 
                         currUser={this.props.currUser}
                         activitySnapshots={this.data.activitySnapshots} />
-        </div>
-        
-        <div className="ui three wide column">        
+                        &nbsp;
           <AssetHistoryDetail 
                         assetId={this.props.params.id} 
                         currUser={this.props.currUser}
@@ -119,7 +117,7 @@ export default AssetEditRoute = React.createClass({
 
         </div>
 
-        <div className="four wide column">
+        <div className="six wide column">
             <AssetCard
               showHeader={false}
               canEdit={canEd}

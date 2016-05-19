@@ -47,8 +47,8 @@ export const AssetKinds = {
   "map":     { name: "Map",     disable: false, longName: "Game Level Map",  icon: "marker", description: "Map/Level used in a game" },
   "physics": { name: "Physics", disable: true,  longName: "Physics Config",  icon: "rocket", description: "Physics configuration" },
   "code":    { name: "Code",    disable: false, longName: "Code Script",     icon: "puzzle", description: "Source code script" },
-  "cutscene":{ name: "Cutscene",disable: true,  longName: "Cut Scene",       icon: "film",description: "Cut scene used in a game" },
-  "audio":   { name: "Audio",   disable: true,  longName: "Audio sound",     icon: "announcement", description: "Sound Effect, song, voice etc"},
+  "cutscene":{ name: "Cutscene",disable: true,  longName: "Cut Scene",       icon: "file video outline", description: "Cut scene used in a game" },
+  "audio":   { name: "Audio",   disable: true,  longName: "Audio sound",     icon: "file audio outline", description: "Sound Effect, song, voice etc"},
   "game":    { name: "Game",    disable: true, longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},

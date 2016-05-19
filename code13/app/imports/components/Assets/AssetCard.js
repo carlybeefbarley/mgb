@@ -104,7 +104,7 @@ export default AssetCard = React.createClass({
           
           { /* CONTENT */ }
           { !this.props.showHeader ?
-            ( canEdit ? <a className="ui right floated tiny green label">editable</a> : <a className="ui mgbReadOnlyReminder right floated tiny red label">read-only</a> )
+            ( canEdit ? <a className="ui right floated mini green label">editable</a> : <a className="ui mgbReadOnlyReminder right floated mini red label">read-only</a> )
             : 
             <div className="ui right floated image">
               <div className="ui move left reveal">

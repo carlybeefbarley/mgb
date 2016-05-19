@@ -38,7 +38,7 @@ export default AssetActivityDetail = React.createClass({
           <div className="ui small compact menu">
             <div className="ui simple dropdown item">
               <i className="icon users"></i> Viewers<i className="dropdown icon"></i>
-              <div className={"floating ui " + (viewersCount ? "orange" : "grey") +  " label"}>
+              <div className={"floating ui tiny " + (viewersCount ? "orange" : "grey") +  " label"}>
                 { viewersCount }
               </div>
               <div className="menu">

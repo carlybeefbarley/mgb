@@ -14,6 +14,38 @@ export default mgbReleaseInfo = {
   "releases":
   [
     { 
+      "timestamp":     "Wed May 18 2016 21:30:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "312"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.edit.history",
+          "type":           "improvement",
+          "changeName":     "Asset History renamed",
+          "changeSummary":  "Asset History is now 'Changes' and has a lightning icon. Layout was also slightly changed",
+          "otherUrls":      []
+        },        
+        {
+          "featureTag":     "nav.assets.create",
+          "type":           "improvement",
+          "changeName":     "Audio & Cutscene icons",
+          "changeSummary":  "Audio & Cutscene asset types now have more relevant icons",
+          "otherUrls":      []
+        }        
+
+      ]             
+    },
+    
+    { 
       "timestamp":     "Wed May 18 2016 16:30:00 GMT-0700 (PDT)",
       
       "id": {

@@ -62,7 +62,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "asset.edit.history",
           "type":           "feature",
           "changeName":     "View Asset history",
-          "changeSummary":  "In Asset Editior, show history of changes to this asset",
+          "changeSummary":  "In Asset Editor, show history of changes to this asset",
           "otherUrls":      []
         },
         {

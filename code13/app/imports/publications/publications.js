@@ -31,7 +31,7 @@ Azzets._ensureIndex({
 
 
 /** 
- * Can see all assets, but does NOYT include the big 'content2' field 
+ * Can see all assets, but does NOT include the big 'content2' field 
  * @param userId can be undefined or -1 .. indicating don't dilter by user if
  * @param selectedAssetKinds is an array of AssetKindsKeys strings
  * @param nameSearch is going to be stuffed inside a RegEx, so needs to be clean

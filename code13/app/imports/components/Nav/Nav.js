@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {logActivity} from '../../schemas/activity';
 import NavRecent from './NavRecent.js';
+import WhatsNew from './WhatsNew.js';
 
 export default Nav = React.createClass({
   
@@ -16,35 +17,48 @@ export default Nav = React.createClass({
     Meteor.logout();
     browserHistory.push(`/`);
   },
+  
+  /** This is called when the WhatsNew popup has been clicked and shown. 
+   *  We are to note the current timestamp of the latest release in the user profile 
+   */
+  handleUserSawNews: function(latestNewsTimestampSeen)
+  {
+    let user = this.props.user
+    
+    if (user && user.profile.latestNewsTimestampSeen !== latestNewsTimestampSeen)
+    {      
+      Meteor.call('User.updateProfile', user._id, {
+        "profile.latestNewsTimestampSeen": latestNewsTimestampSeen
+      }, (error) => {
+        if (error)
+          console.log("Could not update profile with news timestamp")      
+      });      
+      
+    }
+  },
 
   render: function() {
     const user = this.props.user;
-    let back = null
-    // this.props.back;
-    // if (back === "!user-assets") 
-    //   back = user ? ("/user/" + user._id + "/assets") : ("/assets");
     
     return (
       <div className="ui attached inverted menu">
-          {back ?
-            <Link to={back} className="header item">
-              <i className="arrow left icon"  ></i>
-            </Link>
-              :
-            <a href="#" className="header item" onClick={this.props.handleToggleSidebar}>
-              <i className="sidebar icon" ></i>
-            </a>
-          }
+          <a href="#" className="header item" onClick={this.props.handleToggleSidebar}>
+            <i className="sidebar icon" ></i>
+          </a>
+
+          <WhatsNew user={this.props.user} userSawNewsHandler={this.handleUserSawNews}/>
+          
           <div className="item">
             {this.props.name}
           </div>
-          { user ?
-            <Link to={`/user/${this.props.user._id}/assets`} className="item right"><i className="search icon"></i></Link>
-            :
-            <Link to={`/assets`} className="item right"><i className="search icon"></i></Link>
-          }
           
-
+          
+          { /* Right Hand Side */ }
+          <Link to={user ? `/user/${user._id}/assets`: '/assets'} className="item right">
+            <i className="search icon"></i>
+          </Link>
+          
+          
           { user ?
             // If signed in, show Profile, Logout choices as  | username |   dropdown
             [

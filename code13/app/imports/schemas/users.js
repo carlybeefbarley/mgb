@@ -16,6 +16,7 @@ const schema = {
   },
   profile: {
     name: optional(String),
+    latestNewsTimestampSeen: optional(String),    
     avatar: optional(String),
     title: optional(String),
     bio: optional(String),
@@ -85,7 +86,8 @@ Meteor.methods({
       "profile.bio": optional(schema.profile.bio),
       "profile.images": optional(schema.profile.images),
       "profile.isDeleted": optional(schema.profile.isDeleted),
-      "profile.projectNames": optional(schema.profile.projectNames)
+      "profile.projectNames": optional(schema.profile.projectNames),
+      "profile.latestNewsTimestampSeen": optional(schema.profile.latestNewsTimestampSeen)
     });
 
     count = Meteor.users.update(docId, {$set: data});

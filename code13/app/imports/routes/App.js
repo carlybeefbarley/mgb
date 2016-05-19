@@ -34,7 +34,7 @@ export default App = React.createClass({
       currUser: Meteor.user(), //putting it here makes it reactive
       user: Meteor.users.findOne(this.props.params.id),
       activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),
-      loading: !handle.ready(),
+      loading: !handle.ready()
     };
   },
 
@@ -105,13 +105,13 @@ export default App = React.createClass({
             <div>
 
               {this.props.children && React.cloneElement(this.props.children, {
-                  //Make below props available to all routes.
-                  user: user,
-                  currUser: currUser,
-                  ownsProfile: ownsProfile,
-                  isSuperAdmin: isSuperAdmin,
-                  showToast: this.showToast,
-                })
+                // Make below props available to all routes.
+                user: user,
+                currUser: currUser,
+                ownsProfile: ownsProfile,
+                isSuperAdmin: isSuperAdmin,
+                showToast: this.showToast
+              })
               }
             </div>
           </div>

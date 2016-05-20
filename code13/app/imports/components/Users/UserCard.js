@@ -6,29 +6,42 @@ import InlineEdit from 'react-edit-inline';
 
 export default UserProfile = React.createClass({
   propTypes : {
+    user: PropTypes.object,
     makeClickable: PropTypes.bool,
     name: PropTypes.string,
     bio: PropTypes.string,
     title: PropTypes.string,
+    canEditProfile: PropTypes.bool,
+    handleProfileFieldChanged: PropTypes.func
 //    createdAt: PropTypes.date
   },  
+  
+  getDefaultProps: function() {
+    return {
+      canEditProfile: false
+    }
+  },
 
-  dataChanged: function(data) {
-      // data = { description: "New validated text comes here" }
-      // Update your model from here
-      console.log(data)
-      this.setState({...data})
+  profileFieldChanged: function(data) {
+    // data = { description: "New validated text comes here" }
+    // Update your model from here
+    console.log(data)
+    
+    if (this.props.handleProfileFieldChanged)
+      this.props.handleProfileFieldChanged({...data})
   },
 
 
   customValidateText: function(text) {
-    return (text.length > 0 && text.length < 64);
+    // TODO more safety content checks here
+    return (text.length >= 0 && text.length < 64);
   },
 
 
   render: function() {
-    const createdAt = this.props.createdAt;
-
+    const createdAt = this.props.createdAt
+    const editsDisabled = !this.props.canEditProfile
+    
     return (
       <div className="ui card" 
            onClick={this.props.makeClickable ? browserHistory.push(`/user/${this.props.user._id}`) : ''}>
@@ -39,28 +52,25 @@ export default UserProfile = React.createClass({
           <div className="ui header">{this.props.name}</div>
           <div className="ui meta">
             
-            <InlineEdit
+            <b>Title:</b> <InlineEdit
               validate={this.customValidateText}
               activeClassName="editing"
               text={this.props.title ? this.props.title: "(no title)"}
-              paramName="message"
-              change={this.dataChanged}
-              isDisabled={true}
-              style={{
-                //backgroundColor: 'yellow',
-                minWidth: 150,
-                display: 'inline-block',
-                margin: 0,
-                padding: 0,
-                fontSize: 15,
-                outline: 0,
-                border: 0
-              }}
+              paramName="profile.title"
+              change={this.profileFieldChanged}
+              isDisabled={editsDisabled}
               />
             
           </div>
           <div className="ui description">
-            {this.props.bio ?  this.props.bio : "(no description)" }
+            <b>Description:</b> <InlineEdit
+              validate={this.customValidateText}
+              activeClassName="editing"
+              text={this.props.bio ? this.props.bio: "(no description)"}
+              paramName="profile.bio"
+              change={this.profileFieldChanged}
+              isDisabled={editsDisabled}
+              />
           </div>
         </div>
         <div className="ui extra content">

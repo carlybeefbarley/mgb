@@ -34,6 +34,18 @@ export default UserProfileRoute = React.createClass({
   },
   
   
+  /**
+   *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
+   */
+  handleProfileFieldChanged: function(changeObj)
+  {
+    Meteor.call('User.updateProfile', this.props.user._id, changeObj, (error) => {
+      if (error) 
+        console.log("Could not update profile: ", error.reason)      
+    });
+  },
+  
+  
   // TODO find a way to share code with the Sidebar activity renderer and NavRecent.js
   renderActivities()
   {
@@ -138,6 +150,8 @@ export default UserProfileRoute = React.createClass({
             title={user.profile.title}
             bio={user.profile.bio}
             createdAt={user.createdAt}
+            canEditProfile={this.props.ownsProfile}
+            handleProfileFieldChanged={this.handleProfileFieldChanged}
             />
 
           <Link to={`/user/${user._id}/assets`}  >

@@ -41,7 +41,7 @@ var schema = {
 // Info on each kind of asset, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const AssetKinds = {
-  "search":  { name: "Search",  disable: true,  longName: "Search query",    icon: "find", description: "Saved search query" },
+//  "search":  { name: "Search",  disable: true,  longName: "Search query",    icon: "find", description: "Saved search query" },
   "palette": { name: "Palette", disable: true,  longName: "Color Palette",   icon: "block layout", description: "Color palette" },
   "graphic": { name: "Graphic", disable: false, longName: "Graphic",         icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
   "map":     { name: "Map",     disable: false, longName: "Game Level Map",  icon: "marker", description: "Map/Level used in a game" },

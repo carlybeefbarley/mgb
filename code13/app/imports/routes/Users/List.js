@@ -3,7 +3,6 @@ import reactMixin from 'react-mixin';
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import {Users} from '../../schemas';
-import UserCard from '../../components/Users/UserCard';
 import Spinner from '../../components/Nav/Spinner';
 import UserList from '../../components/Users/UserList';
 

@@ -145,11 +145,6 @@ export default UserProfileRoute = React.createClass({
           <h2>User: {user.profile.name}</h2>
           <UserCard
             user={user}
-            name={user.profile.name}
-            avatar={user.profile.avatar}
-            title={user.profile.title}
-            bio={user.profile.bio}
-            createdAt={user.createdAt}
             canEditProfile={this.props.ownsProfile}
             handleProfileFieldChanged={this.handleProfileFieldChanged}
             />

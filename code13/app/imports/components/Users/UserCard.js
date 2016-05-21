@@ -4,21 +4,23 @@ import {browserHistory} from 'react-router';
 import InlineEdit from 'react-edit-inline';
 
 
+// This is a User Card which is a card-format version of the User information.
+// Originally it was passed specific fields from caller as props, but this becomes
+// hard to maintain as we ruse it more, so it waschanged to have a user_ field
+// passed in, and to locally decide what fields to use/render within that structure.
+
 export default UserProfile = React.createClass({
   propTypes : {
-    user: PropTypes.object,
-    makeClickable: PropTypes.bool,
-    name: PropTypes.string,
-    bio: PropTypes.string,
-    title: PropTypes.string,
-    canEditProfile: PropTypes.bool,
-    handleProfileFieldChanged: PropTypes.func
-//    createdAt: PropTypes.date
+    user: PropTypes.object.isRequired,
+    makeClickable: PropTypes.bool,            // True if we want a simple click-to-jump for the overall card
+    canEditProfile: PropTypes.bool,           // True if we want the profile to be editable (i.e the profile owner is the logged in user)
+    handleProfileFieldChanged: PropTypes.func // Function callback if fields are changed. e.g. profile.bio: "new text"
   },  
   
   getDefaultProps: function() {
     return {
-      canEditProfile: false
+      canEditProfile: false,
+      makeClickable: false
     }
   },
 
@@ -39,23 +41,23 @@ export default UserProfile = React.createClass({
 
 
   render: function() {
-    const createdAt = this.props.createdAt
+    const createdAt = this.props.user.createdAt
     const editsDisabled = !this.props.canEditProfile
     
     return (
       <div className="ui card" 
            onClick={this.props.makeClickable ? browserHistory.push(`/user/${this.props.user._id}`) : ''}>
         <div className="ui image">
-          <img src={this.props.avatar} />
+          <img src={this.props.user.profile.avatar} />
         </div>
         <div className="ui content">
-          <div className="ui header">{this.props.name}</div>
+          <div className="ui header">{this.props.user.profile.name}</div>
           <div className="ui meta">
             
             <b>Title:</b> <InlineEdit
               validate={this.customValidateText}
               activeClassName="editing"
-              text={this.props.title ? this.props.title: "(no title)"}
+              text={this.props.user.profile.title || "(no title)"}
               paramName="profile.title"
               change={this.profileFieldChanged}
               isDisabled={editsDisabled}
@@ -66,7 +68,7 @@ export default UserProfile = React.createClass({
             <b>Description:</b> <InlineEdit
               validate={this.customValidateText}
               activeClassName="editing"
-              text={this.props.bio ? this.props.bio: "(no description)"}
+              text={this.props.user.profile.bio || "(no description)"}
               paramName="profile.bio"
               change={this.profileFieldChanged}
               isDisabled={editsDisabled}

@@ -27,27 +27,30 @@ export default class AssetKindsSelector extends React.Component {
 
   render() {
     // Build the list of 'Create New Asset' Menu choices
-    let choices = AssetKindKeys.map((k) => {
+    const choices = AssetKindKeys.map((k) => {
       // if k is in this.props.kindsActive
 
       if (typeof(AssetKinds[k]) === 'function')
         return null; // ignore the helper functions
 
-      let active=_.includes(this.props.kindsActive, k)
-
+      const active=_.includes(this.props.kindsActive, k)
+      const sty = !active ? { color: "grey"} : {}
       return (      // TODO - add   {AssetKinds[k].name in popup
-        <a className={"ui hazPopup " + (active ? "blue button" : "button")} data-value={k} key={k} onClick={this.handleToggleKindClick.bind(this,k)}
-           data-position="bottom center"
+        <a  className={"ui hazPopup " + (active ? "active item" : "item")} 
+            data-value={k} 
+            key={k} 
+            style={sty}
+            onClick={this.handleToggleKindClick.bind(this,k)}
+           data-position="right center"
            data-title={AssetKinds[k].name}
            data-content={`Click to ${active ? "hide" : "show"} ${AssetKinds[k].name} assets. Alt-click to only show ${AssetKinds[k].name} assets`}>
-            <i className={AssetKinds[k].icon + " icon"}></i>
+            <i className={AssetKinds[k].icon + " icon"}></i> {AssetKinds[k].name}
           </a>
       )
     });
 
-      return (
-
-          <div className="ui icon buttons">
+    return (
+          <div className="ui small vertical menu">            
             {choices}
           </div>
     );

@@ -13,6 +13,39 @@
 export default mgbReleaseInfo = {
   "releases":
   [
+    
+    { 
+      "timestamp":     "Fri May 20 2016 23:45:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "313"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "user.profile.text",
+          "type":           "improvement",
+          "changeName":     "User Profile text",
+          "changeSummary":  "User Profile text can now be edited and saved",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.assets",
+          "type":           "improvement",
+          "changeName":     "Filtering column",
+          "changeSummary":  "Moved the search selectors to a left column.",
+          "otherUrls":      []
+        }        
+
+      ]             
+    },
+    
     { 
       "timestamp":     "Wed May 18 2016 21:30:00 GMT-0700 (PDT)",
       

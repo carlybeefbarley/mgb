@@ -46,9 +46,9 @@ export default ProjectSelector = React.createClass({
         
     return (
         <div className="ui simple dropdown item">        
-          Viewing assets in {pName ? `project "${pName}"` : "all projects"}
+          Project: {pName || "(all projects)"}
           <i className="dropdown icon"></i>
-          <div className="ui menu simple">
+          <div className="ui right menu simple">
             {choices.length > 0 ? choices : <div className="ui item">"No projects defined for this user"</div>}
             { !this.props.canEdit ? null : 
             <div className="ui item">

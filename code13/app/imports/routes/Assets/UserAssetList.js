@@ -113,15 +113,26 @@ export default  UserAssetListRoute = React.createClass({
           ]}
         />
         
-        <div className="ui row">
-          <div className="five wide column">
+        <div className="four wide grey column" style={{ minHeight: "600px" }}>
+
+          <div className="ui row">
             <div className="ui large header">{ user ? (name + "'s Assets") : ("Public assets") }
-              <div className="ui sub header">{assets.length} Assets</div>
-            </div>
+          </div>       
+
+          <div className="ui row">
+            <div className="ui action input">
+              <input type="text" placeholder="Search..." ref="searchNameInput" size="16"></input>
+              <button className="ui icon button" onClick={this.handleSearchGo}>
+                <i className="search icon"></i>
+              </button>
+              </div>
+            </div>            
           </div>
-          
-          <div className="four wide column">
-          { user ? <ProjectSelector 
+
+          <div className="ui hidden divider"></div>
+
+          <div className="ui row">
+            { user ? <ProjectSelector 
                       canEdit={this.props.ownsProfile}
                       availableProjectNamesArray={projectNames}
                       handleCreateNewProject={this.handleCreateNewProject}
@@ -129,56 +140,56 @@ export default  UserAssetListRoute = React.createClass({
                       handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
                       />
             : null }
-          </div>
-
-          <div className="right floated compact four wide column">
-            {user ? <UserItem
-                name={name}
-                avatar={avatar ? avatar : null}
-                createdAt={createdAt}
-                _id={_id} />
-              : null
+            <div className="ui popup">
+              {user ? <UserItem
+                      name={name}
+                      avatar={avatar ? avatar : null}
+                      createdAt={createdAt}
+                      _id={_id} />
+                    : null
             }
+            </div>
           </div>
-        </div>
 
-        <div className="twelve wide column">
-          <div className="ui secondary compact borderless fitted menu">
-            <div className="ui item grey">Search:</div>
-            
-            <div className="ui item">
-              <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind} />
-              &nbsp;
-              <div className="ui icon buttons">
-                <AssetShowStableSelector showStableFlag={this.state.showStableFlag} handleChangeFlag={this.handleChangeShowStableFlag} />
-                <AssetShowDeletedSelector showDeletedFlag={this.state.showDeletedFlag} handleChangeFlag={this.handleChangeShowDeletedFlag} />
-              </div>
-            </div>
-                        
-            <div className="right item">
-              <div className="ui action input">
-                <input type="text" placeholder="Search asset name" ref="searchNameInput" size="16"></input>
-                <button className="ui icon button" onClick={this.handleSearchGo}>
-                  <i className="search icon"></i>
-                </button>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-                
-        <div className="four wide right floated column">
+          <div className="ui hidden divider"></div>
+
           <div className="ui row">
-            <AssetListSortBy chosenSortBy={this.state.chosenSortBy} handleChangeSortByClick={this.handleChangeSortByClick}/>
-            <AssetCreateNew  handleCreateAssetClick={this.handleCreateAssetClickFromComponent}/>
+            Show asset kinds:
+            <AssetKindsSelector kindsActive={this.state.selectedAssetKinds} handleToggleKindCallback={this.handleToggleKind} />
+          </div>
+          
+          <div className="ui hidden divider"></div>
+
+          <div className="ui row">
+            <div className="ui secondary compact borderless fitted menu">            
+              <AssetShowStableSelector showStableFlag={this.state.showStableFlag} handleChangeFlag={this.handleChangeShowStableFlag} />
+              <AssetShowDeletedSelector showDeletedFlag={this.state.showDeletedFlag} handleChangeFlag={this.handleChangeShowDeletedFlag} />
+            </div>
           </div>
         </div>
 
-        <div className="sixteen wide column" style={{ minHeight: "600px" }}>
-          {this.data.loading ?
-            <div><Spinner /></div>
-          :
-            <AssetList assets={assets} currUser={this.props.currUser} />}
+            
+        
+
+        <div className="twelve wide column" style={{ minHeight: "600px" }}>
+        
+          <div className="ui row">
+            <div className="four wide right floated column">
+              <div className="ui row">
+                <AssetCreateNew  handleCreateAssetClick={this.handleCreateAssetClickFromComponent}/>
+                <AssetListSortBy chosenSortBy={this.state.chosenSortBy} handleChangeSortByClick={this.handleChangeSortByClick}/>
+              </div>
+            </div>
+          </div>
+          
+          <div className="ui hidden divider"></div>
+
+          <div className="ui row">          
+            {this.data.loading ?
+              <div><Spinner /></div>
+            :
+              <AssetList assets={assets} currUser={this.props.currUser} />}
+          </div>
         </div>
       </div>
 

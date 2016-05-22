@@ -104,7 +104,7 @@ export default  UserAssetListRoute = React.createClass({
     }
     
     return (
-      <div className="ui padded grid">
+      <div className="ui horizontal segments" style={{border: 0}}>
 
         <Helmet
           title="Assets"
@@ -113,7 +113,7 @@ export default  UserAssetListRoute = React.createClass({
           ]}
         />
         
-        <div className="four wide grey column" style={{ minHeight: "600px" }}>
+        <div className="ui segment" style={{ minHeight: "600px", minWidth:"220px", maxWidth:"220px" }}>
 
           <div className="ui row">
             <div className="ui large header">{ user ? (name + "'s Assets") : ("Public assets") }
@@ -171,8 +171,7 @@ export default  UserAssetListRoute = React.createClass({
             
         
 
-        <div className="twelve wide column" style={{ minHeight: "600px" }}>
-        
+        <div className="ui segment" style={{ minHeight: "600px"}}>        
           <div className="ui row">
             <div className="four wide right floated column">
               <div className="ui row">

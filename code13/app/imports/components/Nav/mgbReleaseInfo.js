@@ -15,6 +15,31 @@ export default mgbReleaseInfo = {
   [
     
     { 
+      "timestamp":     "Sat May 21 2016 19:45:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "314"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.assets",
+          "type":           "improvement",
+          "changeName":     "Asset Filters column",
+          "changeSummary":  "Filters column is fixed size and white now",
+          "otherUrls":      []
+        }        
+
+      ]             
+    },
+    
+    { 
       "timestamp":     "Fri May 20 2016 23:45:00 GMT-0700 (PDT)",
       
       "id": {
@@ -38,7 +63,7 @@ export default mgbReleaseInfo = {
         {
           "featureTag":     "nav.assets",
           "type":           "improvement",
-          "changeName":     "Filtering column",
+          "changeName":     "Asset Filters column",
           "changeSummary":  "Moved the search selectors to a left column.",
           "otherUrls":      []
         }        

@@ -1,43 +1,13 @@
 import React, { PropTypes } from 'react';
 var update = require('react-addons-update');
 import moment from 'moment';
-
-
+import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
+import { templateCode } from './templates/TemplateCode.js';
 import { js_beautify } from 'js-beautify';
-
+import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
 import KeyBindingAssist from '../../Skills/Keybindings.js';
+import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 
-// Import CodeMirror and its various dependencies.
-// 1) Due to Meteor 1.3 import limitations, there are also symlinks in /package-assets-symlink-hack/ directory
-//    for the CSS etc files that CodeMirror needs.
-// 2) We load JSHINT from /app.htm in browser because JSHINT redefines some fundamental
-//    globals like 'utils' and 'event', and that confuses node/meteor greatly.
-import CodeMirror from 'codemirror';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/addon/hint/show-hint';
-import 'codemirror/addon/edit/closebrackets';
-import 'codemirror/addon/selection/active-line';
-import 'codemirror/addon/edit/matchbrackets';
-
-import 'codemirror/addon/fold/foldcode';
-import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/addon/fold/brace-fold';
-import 'codemirror/addon/fold/comment-fold';
-import 'codemirror/addon/lint/lint';
-import 'codemirror/addon/lint/javascript-lint';
-import 'codemirror/addon/lint/json-lint';
-import 'codemirror/addon/display/placeholder';
-import 'codemirror/addon/search/jump-to-line';
-import 'codemirror/addon/dialog/dialog';
-import 'codemirror/addon/scroll/annotatescrollbar';
-import 'codemirror/addon/search/matchesonscrollbar';
-import 'codemirror/addon/search/searchcursor';
-import 'codemirror/addon/search/search';
-
-// Not used yet
-// import 'codemirror/addon/edit/closetag';
-// import 'codemirror/addon/fold/xml-fold';
-// import 'codemirror/addon/fold/markdown-fold';
 
 // **GLOBAL*** Tern JS - See comment below...  
 import scoped_tern from "tern";
@@ -57,12 +27,7 @@ import cm_tern_lib_comment from "tern/lib/comment";
   
   
 import InstallMgbTernExtensions from './tern/MgbTernExtensions.js';
-
-  
 import "codemirror/addon/tern/tern";
-
-import { templateCode } from './templates/TemplateCode.js';
-
 
 import FunctionDescription from './tern/FunctionDescription.js';
 import ExpressionDescription from './tern/ExpressionDescription.js';
@@ -71,14 +36,8 @@ import TokenDescription from './tern/TokenDescription.js';
 
 import MgbMagicCommentDescription from './tern/MgbMagicCommentDescription.js';
 
-
-import ConsoleMessageViewer from './ConsoleMessageViewer.js'
-
 import DebugASTview from './tern/DebugASTview.js';
-let showDebugAST = false
-
-
-import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
+let showDebugAST = false    // Handy thing while doing TERN dev work
 
 
 // Code asset - Data format:
@@ -238,9 +197,11 @@ export default class EditCode extends React.Component {
     this.edResizeHandler();
   }
 
+
   componentWillUnmount()
   {
     $(window).off("resize", this.edResizeHandler)
+    // TODO: Destroy CodeMirror editor instance?
   }
   
 
@@ -377,13 +338,6 @@ export default class EditCode extends React.Component {
     let PNGids = this._getPNGsInLine(thisLine);
     this.setState( { previewAssetIdsArray: PNGids } );    
   }
-
-
-  _util_getMemberExpressionFragments()
-  {
-
-  }
-
 
   /** Runs JSHINT on the user's code and show any relevant issues as widgets 
     * directly below that code in CodeMirror. This was adapted from the demo code
@@ -644,7 +598,7 @@ export default class EditCode extends React.Component {
     
     try
     {  
-      // TODO: Batch the async setState() calls also. T
+      // TODO: Batch the async setState() calls also. 
       this.srcUpdate_CleanSheetCase()
       this.srcUpdate_LookForMgbAssets()
       this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
@@ -684,15 +638,16 @@ export default class EditCode extends React.Component {
     }
   }
 
+
   componentDidUpdate() {
     this.getElementReferences()
     this.cm_updateActivityMarkers()
   }
   
+  
   getElementReferences()
   {
     this.iFrameWindow = document.getElementById("iFrame1")
-
   }
 
 
@@ -713,9 +668,8 @@ export default class EditCode extends React.Component {
     
     // NOTE, if we deliver phaser.min.js from another domain, then it will 
     // limit the error handler's knowledge of that code - see 'Notes' on
-    // https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror
-    
-//    return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
+    // https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror    
+    //   BAD:  return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
     return "/phaser/" + phaserVerNNN + "/phaser.min.js"
   }
 
@@ -769,6 +723,7 @@ export default class EditCode extends React.Component {
     $('.ui.accordion').accordion('close', 0);
     $('.ui.accordion').accordion('open', 1);
   }
+  
 
   handleStop()
   {
@@ -776,7 +731,6 @@ export default class EditCode extends React.Component {
                      isPlaying: false
                    } )
     window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
-
   }
   
   
@@ -796,11 +750,15 @@ export default class EditCode extends React.Component {
     this.codeMirror.setCursor(pos)
   }
 
+  /** This is useful when working with Tern stuff.. 
+   * It is Enabled by setting showDebugAST at top of this file 
+   */
   renderDebugAST()
   {
     if (showDebugAST && this.state.atCursorMemberParentRequestResponse)
       return <DebugASTview atCursorMemberParentRequestResponse={this.state.atCursorMemberParentRequestResponse} />
   }
+
 
   render() {
     if (!this.props.asset) 

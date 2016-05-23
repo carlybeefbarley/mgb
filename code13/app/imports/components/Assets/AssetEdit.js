@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import EditGraphic from './EditGraphic/EditGraphic.js';
 import EditCode from './EditCode/EditCode.js';
 import EditMap from './EditMap/EditMap.js';
+import EditMGBUI from './EditMGBUI/EditMGBUI.js';
 import EditUnknown from './EditUnknown.js';
 
 import {logActivity} from '../../schemas/activity';
@@ -10,7 +11,8 @@ import {logActivity} from '../../schemas/activity';
 const editElementsForKind = {
   'graphic': EditGraphic,
   'code':    EditCode,
-  'map':     EditMap
+  'map':     EditMap,
+  '_mgbui':  EditMGBUI
 }
 
 export default class AssetEdit extends React.Component {

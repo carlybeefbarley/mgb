@@ -49,7 +49,8 @@ export const AssetKinds = {
   "code":    { name: "Code",    disable: false, longName: "Code Script",     icon: "puzzle", description: "Source code script" },
   "cutscene":{ name: "Cutscene",disable: true,  longName: "Cut Scene",       icon: "file video outline", description: "Cut scene used in a game" },
   "audio":   { name: "Audio",   disable: true,  longName: "Audio sound",     icon: "file audio outline", description: "Sound Effect, song, voice etc"},
-  "game":    { name: "Game",    disable: true, longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
+  "game":    { name: "Game",    disable: true,  longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
+  "_mgbui":  { name: "MGB UI",  disable: false, longName: "MGB UI Mockup",   icon: "code", description: "HTML using Semantic UI for mocking up MGB UI" },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},
   getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")}

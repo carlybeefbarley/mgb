@@ -14,6 +14,32 @@ export default mgbReleaseInfo = {
   "releases":
   [
     
+    
+    { 
+      "timestamp":     "Sun May 22 2016 23:55:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "315"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "assets.kind._mgbui",
+          "type":           "feature",
+          "changeName":     "MGB UI Mockup asset",
+          "changeSummary":  "New MGBUI asset (for MGB devs only)",
+          "otherUrls":      []
+        }        
+
+      ]             
+    },
+    
     { 
       "timestamp":     "Sat May 21 2016 19:45:00 GMT-0700 (PDT)",
       

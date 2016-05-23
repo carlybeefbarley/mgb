@@ -7,6 +7,11 @@ import EditUnknown from './EditUnknown.js';
 
 import {logActivity} from '../../schemas/activity';
 
+const editElementsForKind = {
+  'graphic': EditGraphic,
+  'code':    EditCode,
+  'map':     EditMap
+}
 
 export default class AssetEdit extends React.Component {
   // static PropTypes = {
@@ -23,60 +28,34 @@ export default class AssetEdit extends React.Component {
   
 
   getEditorForAsset(asset) {
-    switch (asset.kind) {
-    case 'graphic':
-      return <EditGraphic
-                asset={asset}
-                canEdit={this.props.canEdit}
-                currUser={this.props.currUser}
-                editDeniedReminder={this.props.editDeniedReminder}
-                handleContentChange={this.handleContentChange.bind(this) }
-                activitySnapshots={this.props.activitySnapshots}
-                />
-    case 'code':
-      return <EditCode 
-                asset={asset} 
-                canEdit={this.props.canEdit}
-                currUser={this.props.currUser}
-                editDeniedReminder={this.props.editDeniedReminder}
-                handleContentChange={this.handleContentChange.bind(this)}
-                activitySnapshots={this.props.activitySnapshots}
-
-                />
-    case 'map':
-      return <EditMap 
-                asset={asset} 
-                canEdit={this.props.canEdit}
-                currUser={this.props.currUser}
-                editDeniedReminder={this.props.editDeniedReminder}
-                handleContentChange={this.handleContentChange.bind(this)}
-                activitySnapshots={this.props.activitySnapshots}
-                />
-    default:
-      return (<EditUnknown asset={asset}/>);
-    }
+    const Element = editElementsForKind[asset.kind] || EditUnknown    
+    return <Element
+              asset={asset}
+              canEdit={this.props.canEdit}
+              currUser={this.props.currUser}
+              editDeniedReminder={this.props.editDeniedReminder}
+              handleContentChange={this.handleContentChange.bind(this) }
+              activitySnapshots={this.props.activitySnapshots}
+              />   
   }
+
 
   handleContentChange(content2Object, thumbnail, changeText="content change")
   {
-    let asset = this.props.asset;
-
+    const asset = this.props.asset;
     Meteor.call('Azzets.update', asset._id, this.props.canEdit, {content2: content2Object, thumbnail: thumbnail}, (err, res) => {
       if (err) {
+        // TODO: NOT alert() ! !
         alert('error: ' + err.reason)
       }
     });
     
-    logActivity("asset.edit", changeText, null, this.props.asset);
+    logActivity("asset.edit", changeText, null, asset);
   }
 
   render() {
-    if (!this.props.asset) 
-      return <div>loading...</div>;
-
-    let asset = this.props.asset;
-
-    return this.getEditorForAsset(asset)
+    const asset = this.props.asset;
+    return asset ? this.getEditorForAsset(asset) : <div>loading...</div>
   }
 
 }

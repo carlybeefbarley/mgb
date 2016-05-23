@@ -798,7 +798,7 @@ export default class EditGraphic extends React.Component {
         img.onload = function(e) {
           // The DataURI seems to have loaded ok now as an Image, so process what to do with it
           self.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
-          console.log(img.width + "x" + img.height); // image is loaded; sizes are available
+          //console.log(img.width + "x" + img.height); // image is loaded; sizes are available
 
           if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
           {

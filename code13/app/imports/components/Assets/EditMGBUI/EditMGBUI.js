@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 var update = require('react-addons-update');
 import moment from 'moment';
+import { html_beautify } from 'js-beautify';
+
 import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
 import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
@@ -33,13 +35,13 @@ export default class EditMGBUI extends React.Component {
   // React Callback: componentDidMount()
   componentDidMount() {
   
-      $('.ui.accordion').accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
+    $('.ui.accordion').accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
 
   
     // CodeMirror setup
     const textareaNode = this.refs.textarea
     let cmOpts = {  
-      mode: "html",
+      mode: "htmlmixed",
       theme: "eclipse",
       styleActiveLine: true,
       lineNumbers: true,
@@ -59,7 +61,7 @@ export default class EditMGBUI extends React.Component {
       ],
       extraKeys: {
         "Alt-F": "findPersistent",        
-//      "Ctrl-B": this.handleJsBeautify.bind(this),
+        "Ctrl-B": this.handleJsBeautify.bind(this),
         "Ctrl-O": function(cm) { cm.foldCode(cm.getCursor()); }
       },
       lint: false,
@@ -90,6 +92,15 @@ export default class EditMGBUI extends React.Component {
   }
   
   
+  handleJsBeautify()
+  {    
+    let newValue = html_beautify(this._currentCodemirrorValue, {indent_size: 2})
+    this.codeMirror.setValue(newValue)
+    this._currentCodemirrorValue = newValue;
+    let newC2 = { src: newValue }
+    this.props.handleContentChange( newC2, "", `Beautify code`)
+  }
+
    
   cm_updateActivityMarkers() {
     var ed = this.codeMirror
@@ -155,14 +166,14 @@ export default class EditMGBUI extends React.Component {
 
     return (
         <div className="ui grid">
-          <div className="ten wide column">
+          <div className="eight wide column">
             <textarea ref="textarea"
                       defaultValue={asset.content2.src} 
                       autoComplete="off"
                       placeholder="Start typing code here..."/>
           </div>
         
-        <div className="six wide column">
+        <div className="eight wide column">
         
           <div className="mgbAccordionScroller">
             <div className="ui fluid styled accordion">
@@ -174,7 +185,8 @@ export default class EditMGBUI extends React.Component {
                   </span>                
               </div>
               <div className="active content">
-						    <div dangerouslySetInnerHTML={this.createMarkup()}/>
+                
+						    <div className="ui raised segment" dangerouslySetInnerHTML={this.createMarkup()}/>
               </div>
             
               <div className="active title">

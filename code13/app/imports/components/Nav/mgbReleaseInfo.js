@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
     
     
     { 
-      "timestamp":     "Sun May 22 2016 23:55:00 GMT-0700 (PDT)",
+      "timestamp":     "Mon May 23 2016 14:40:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "315"
+        "iteration":   "315a"
       },
 
       "releaseManagement": {
@@ -33,9 +33,9 @@ export default mgbReleaseInfo = {
           "featureTag":     "assets.kind._mgbui",
           "type":           "feature",
           "changeName":     "MGB UI Mockup asset",
-          "changeSummary":  "New MGBUI asset (for MGB devs only)",
+          "changeSummary":  "New MGBUI asset (for MGB devs only) to edit/preview our SemanticUi markup. 315a addds html edit mode for CodeMirror",
           "otherUrls":      []
-        }        
+        }
 
       ]             
     },

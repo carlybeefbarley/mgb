@@ -23,6 +23,7 @@ import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/fold/comment-fold';
+import 'codemirror/addon/fold/xml-fold';
 import 'codemirror/addon/lint/lint';
 import 'codemirror/addon/lint/javascript-lint';
 import 'codemirror/addon/lint/json-lint';

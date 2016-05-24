@@ -73,10 +73,6 @@ export default class EditGraphic extends React.Component {
     this.getPreviewCanvasReferences()
     this.loadPreviewsFromAssetAsync()
 
-    //Keypress not working
-    //let $grid = $(ReactDOM.findDOMNode(this.refs.outerGrid))
-    //$grid.keydown(function (e) { console.log(e)})
-
     // Initialize Status bar
     this._statusBar = {
       outer: $(ReactDOM.findDOMNode(this.refs.statusBarDiv)),
@@ -894,7 +890,7 @@ export default class EditGraphic extends React.Component {
 
     // Make element
     return (
-      <div className="ui grid" ref="outerGrid">
+      <div className="ui grid">
 
         {/***  Left Column for tools  ***/}
 

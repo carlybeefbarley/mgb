@@ -7,12 +7,11 @@ export default SemanticUiIconFinder = React.createClass({
   /** React callback - before render() is called */
   getInitialState: function() {
     return {
-      filterString: ""       // Index into mgbReleaseInfo[] for currently viewed release
+      filterString: ""       // substring to look for in list of icon names
     }
   },
   
   handleFilter: function(event) {
-    console.log(event.target.value)
     this.setState({ filterString: event.target.value})
   },
   
@@ -20,14 +19,14 @@ export default SemanticUiIconFinder = React.createClass({
     return (
       <div>
         <div className="ui input">
-          <input type="text" ref="iconFilter" placeholder="Filter icons..."   onChange={this.handleFilter}></input>
+          <input type="text" placeholder="Filter icons..."   onChange={this.handleFilter}></input>
         </div>
-        <div className="ui horizontal list">
+        <div className="ui horizontal icon list">
           { icons.map( (ic,idx) => { 
             return ic.className.indexOf(this.state.filterString) === -1 ? null :
-                    <div className="item" key={idx} style={{width: "180px"}}>
+                    <div className="item" key={idx} style={{width: "200px", margin: "0em", padding: "2px"}}>
                       <i className={"ui large " + ic.className +" icon"}></i>
-                      <div className="content">{ic.className}</div>
+                      <div className="content" style={{color: "grey"}}>{ic.className}</div>
                     </div>
           })}
         </div>
@@ -38,6 +37,10 @@ export default SemanticUiIconFinder = React.createClass({
 
 
 // I grabbed this array from http://codepen.io/IronGeek/pen/mezyey
+
+// Note that I commented out a few with classNames that confused Semantic ui
+//     card, sidebar, ...
+
 var icons = [ // version 2.1.6
 	{ className:  'search', content: '\\f002' },
 	{ className:  'mail outline', content: '\\f003' },
@@ -627,7 +630,7 @@ var icons = [ // version 2.1.6
 	{ className:  'briefcase', content: '\\f0b1' },
 	{ className:  'group', content: '\\f0c0' },
 	{ className:  'flask', content: '\\f0c3' },
-	{ className:  'sidebar', content: '\\f0c9' },
+//	{ className:  'sidebar', content: '\\f0c9' },
 	{ className:  'bars', content: '\\f0c9' },
 	{ className:  'list ul', content: '\\f0ca' },
 	{ className:  'list ol', content: '\\f0cb' },

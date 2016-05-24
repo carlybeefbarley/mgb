@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-var update = require('react-addons-update');
 import moment from 'moment';
 import { html_beautify } from 'js-beautify';
 
@@ -7,6 +6,7 @@ import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
 import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
 import SemanticUiIconFinder from './SemanticUiIconFinder.js';
+import SemanticUiDocLinks from './SemanticUiDocLinks.js';
 
 export default class EditMGBUI extends React.Component {
   // static PropTypes = {
@@ -35,9 +35,13 @@ export default class EditMGBUI extends React.Component {
   // React Callback: componentDidMount()
   componentDidMount() {
   
+    
+    // Debounce the codeMirrorUpdateHints() function
+    this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
+
+    // Semantic-UI item setup (Accordion etc)
     $('.ui.accordion').accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
 
-  
     // CodeMirror setup
     const textareaNode = this.refs.textarea
     let cmOpts = {  
@@ -72,7 +76,11 @@ export default class EditMGBUI extends React.Component {
     this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
     
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
-    this._currentCodemirrorValue = this.props.asset.content2.src || '';    
+    this.codeMirror.on("cursorActivity", this.codeMirrorUpdateHints.bind(this, false))
+
+    this._currentCodemirrorValue = this.props.asset.content2.src || '';
+    this.codeMirrorUpdateHints(true)
+
     this.codeMirror.setSize("100%", "500px")
     
     // Resize Handler - a bit complicated since we want to use to end of page
@@ -92,13 +100,33 @@ export default class EditMGBUI extends React.Component {
   }
   
   
-  handleJsBeautify()
-  {    
-    let newValue = html_beautify(this._currentCodemirrorValue, {indent_size: 2})
+  
+  // This gets called by CodeMirror when there is CursorActivity
+  // This gets _.debounced in componentDidMount()
+  codeMirrorUpdateHints(fSourceMayHaveChanged = false) {    
+    
+    // Update the activity snapshot if the code line has changed
+    // TODO: Batch this so it only fires when line# is changed
+    let editor = this.codeMirror      
+    let position = editor.getCursor()
+    let passiveAction = {
+      position: position
+    }
+    snapshotActivity(this.props.asset, passiveAction)
+  }
+  
+  applyChangeToSrc(newValue, changeActivityDescription)
+  {
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue;
     let newC2 = { src: newValue }
-    this.props.handleContentChange( newC2, "", `Beautify code`)
+    this.props.handleContentChange( newC2, "", changeActivityDescription)
+  }
+  
+  handleJsBeautify()
+  {    
+    let newValue = html_beautify(this._currentCodemirrorValue, {indent_size: 2})
+    this.applyChangeToSrc(newValue, "Beautify code")
   }
 
    
@@ -152,11 +180,41 @@ export default class EditMGBUI extends React.Component {
     this.props.handleContentChange( newC2, "" ) // TODO: Thumbnail is second param
   }
 
-
-  createMarkup (){
-    return {__html: this._currentCodemirrorValue};
+  /** 
+   * @param markupString - the HTML text
+   * @param flavor - either 'html' or 'jsx'
+   */
+  ensureHtmlIsOfFlavor(markupString, flavor)
+  {
+    let newMarkup
+    if (flavor === 'jsx')
+      newMarkup = markupString.replace(/class=/g, 'className=')
+    else if (flavor === 'html')
+      newMarkup = markupString.replace(/className=/g, 'class=')
+    else
+      newMarkup = `ERROR. Unknown Markup flavor "${flavor}"`
+    return newMarkup
+  }
+  
+  handleStripReactComments()
+  {
+    let oldMarkup = this._currentCodemirrorValue
+    let newMarkup = oldMarkup.replace(/<!-- \/?react-[\s\S]*?-->/g, '')
+    this.applyChangeToSrc(newMarkup, "Remove React Comments")
   }
 
+  createMarkup (){
+    return {__html: this.ensureHtmlIsOfFlavor(this._currentCodemirrorValue, "html")};
+  }
+
+  ToggleJsxHtml () {
+    var wantJsx = !this.state.showingInJsxFormat    // ! because we will toggle here
+
+    let newMarkup = this.ensureHtmlIsOfFlavor(this._currentCodemirrorValue, wantJsx ? "jsx" : "html")
+    let changeActivityDescription = "Convert to " + (wantJsx ? "JSX": "HTML")
+    this.applyChangeToSrc(newMarkup, changeActivityDescription)
+    this.setState( {showingInJsxFormat : wantJsx})    
+  }
 
   render() {
     let asset = this.props.asset;
@@ -167,6 +225,28 @@ export default class EditMGBUI extends React.Component {
     return (
         <div className="ui grid">
           <div className="eight wide column">
+            <div className="ui row">
+            
+              <button className="ui right floated mini labeled icon button" 
+                      onClick={this.handleJsBeautify.bind(this)}
+                      title="convert between HTML's class= and React/JSX's className= formats">
+                <i className="indent icon"></i>
+                Beautify
+              </button>
+              
+              <button className="ui right floated mini labeled icon button" onClick={this.ToggleJsxHtml.bind(this)}>
+                <i className="exchange icon"></i>
+                {this.state.showingInJsxFormat ? "JSX ClassNames" : "HTML classes"}
+              </button>
+
+              <button className="ui right floated mini labeled icon button" onClick={this.handleStripReactComments.bind(this)}>
+                <i className="cut icon"></i>
+                Strip React Comments
+              </button>
+
+
+
+            </div>
             <textarea ref="textarea"
                       defaultValue={asset.content2.src} 
                       autoComplete="off"
@@ -181,7 +261,7 @@ export default class EditMGBUI extends React.Component {
               <div className="active title">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
-                  Preview
+                  Semantic UI - Rendered Preview
                   </span>                
               </div>
               <div className="active content">
@@ -189,15 +269,27 @@ export default class EditMGBUI extends React.Component {
 						    <div className="ui raised segment" dangerouslySetInnerHTML={this.createMarkup()}/>
               </div>
             
-              <div className="active title">
+              <div className="title">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
-                  Icon Finder
+                  Semantic UI - Documentation Links
                   </span>                
               </div>
-              <div className="active content">
+              <div className="content">
+                <SemanticUiDocLinks />
+              </div>                
+
+              <div className="title">
+                <span className="explicittrigger">
+                  <i className="dropdown icon"></i>
+                  Semantic UI - Icon Finder tool
+                  </span>                
+              </div>
+              <div className="content">
                 <SemanticUiIconFinder />
               </div>                
+
+
             </div>
           </div>
         </div>

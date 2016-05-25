@@ -16,6 +16,38 @@ export default mgbReleaseInfo = {
     
     
     { 
+      "timestamp":     "Tue May 24 2016 20:50:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "317"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "assets.kind._mgbui",
+          "type":           "improvement",
+          "changeName":     "MGB UI Mockup asset",
+          "changeSummary":  "Multi-user editing now works with this asset type. Also tweaked 'Strip react comments' icon",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.whatsnew",
+          "type":           "improvement",
+          "changeName":     "Yellow for What's New",
+          "changeSummary":  "Trying a yellow background to make this stand out from the rest of the site.. since it is meta ",
+          "otherUrls":      []
+        }
+
+      ]             
+    },
+    
+    { 
       "timestamp":     "Mon May 23 2016 18:20:00 GMT-0700 (PDT)",
       
       "id": {

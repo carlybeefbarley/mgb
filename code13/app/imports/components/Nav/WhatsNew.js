@@ -47,7 +47,15 @@ export default WhatsNew = React.createClass({
   
   render: function() 
   {
-    const popupStyle={top: "50px", left: "1px", bottom: "auto", right: "auto", minWidth: "734px", minHeight: "200px"}
+    const popupStyle={
+      top: "50px", 
+      left: "1px", 
+      bottom: "auto", 
+      right: "auto", 
+      minWidth: "734px", 
+      minHeight: "200px",
+      backgroundColor: "#ffffe0" 
+    }
     const u = this.props.user  
     const hilite = ( u && u.profile && u.profile.latestNewsTimestampSeen !== this.latestRelTimestamp() )
                    ? "yellow" : ""

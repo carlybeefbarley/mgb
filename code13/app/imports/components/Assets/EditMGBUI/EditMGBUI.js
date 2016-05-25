@@ -216,6 +216,19 @@ export default class EditMGBUI extends React.Component {
     this.setState( {showingInJsxFormat : wantJsx})    
   }
 
+  /** React callback when props are going to change.
+   *  We do some dirty tricks here because we are trying to reduce codeMirror updates causing redraws
+   */
+  componentWillReceiveProps (nextProps) {
+    let currentCursor = this.codeMirror.getCursor()
+    let newVal = nextProps.asset.content2.src
+    
+    if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
+      this.codeMirror.setValue(newVal);
+      this.codeMirror.setCursor(currentCursor);
+    }  
+  }
+
   render() {
     let asset = this.props.asset;
 
@@ -240,14 +253,14 @@ export default class EditMGBUI extends React.Component {
                       onClick={this.ToggleJsxHtml.bind(this)}
                       title="Convert code between HTML and JSX styles of expressing class attributes for HTML elements">
                 <i className="exchange icon"></i>
-                {this.state.showingInJsxFormat ? "JSX className=" : "HTML class="}
+                {this.state.showingInJsxFormat ? "JSX ClassNames" : "HTML classes"}
               </button>
 
               <button className="ui right floated mini labeled icon button" 
                       onClick={this.handleStripReactComments.bind(this)}
                       title="Remove the <-- react- ... --> comments that can appear when pasting React-generated code from Chrome Dev Tools">
                 <i className="compress icon"></i>
-                Remove React tags
+                Strip React comments
               </button>
 
 

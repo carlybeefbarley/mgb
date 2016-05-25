@@ -48,14 +48,13 @@ export default ProjectOverview = React.createClass({
       return null;
 
     if (!project)
-      return <p>No such project</p>
+//      return <p>No such project</p>
+      project = { name: "mockProject", memberIds: [1, 2, 4] }
 
-    const canEd = this.canEdit();
+    const canEd = true; //this.canEdit();
     
-    var nameFieldHighlight = (canEd && (!project.name || project.name === "")) ? " error" : "";
-
     return (
-      <div className="ui padded grid">
+      <div className="ui basic segment">
 
         <Helmet
           title="Project Overview"
@@ -64,9 +63,92 @@ export default ProjectOverview = React.createClass({
           ]}
         />
         
-        Project {project.name}
+        { this.renderHeading(project, canEd) }
+        { this.renderStats(project, canEd) }
+
+        <h4>Project Members</h4>          
+        { this.renderMembers(project, canEd) }
+        
+        { canEd && <div><h4>Add people</h4>{this.renderAddPeople(project)}</div> } 
+
       </div>
     );
+  },
+  
+  renderHeading(project, canEd)
+  {
+    return  <div className="ui statistic">
+              <div className="label">
+                Project
+              </div>
+              <div className="value">
+                {project.name}
+              </div>
+            </div>
+  },
+  
+  
+  renderStats(project, canEd)
+  {
+    return  <div className="ui basic segment">
+              <i className="privacy icon"></i>Private
+              <br></br>
+              <br></br>
+              <b>Size:</b> ??
+              <br></br>
+              <b>Assets:</b> ??
+              <br></br>
+              <b>Updated:</b> ?? minutes ago
+              <br></br>
+              <br></br>
+              <div className="ui labeled button">
+                <div className="ui purple button">
+                  <i className="heart icon"></i> Like
+                </div>
+                <a className="ui basic purple label">2,048</a>
+              </div>
+              <div className="ui labeled button">
+                <div className="ui green button">
+                  <i className="fork icon"></i> Forks
+                </div>
+                <a className="ui basic green label">1,048</a>
+              </div>
+            </div>      
+  },
+  
+  renderMembers(project, canEd)
+  {
+    return  <div className="ui padded grid">
+
+              { project.memberIds.map( (uid, idx) => {
+                return  <div className="ui row" key={idx}> 
+                          <div className="ui column">
+                            <a className="ui blue label">
+                              <img src="http://www.gravatar.com/avatar/1b3e88d9f94a9708c628494773003ac3?s=50&amp;d=mm"></img> stanchion &nbsp;
+                              <select className={"ui compact selection dropdown" + (canEd ? "" : " disabled")} defaultValue="editor">
+                                <option value="editor" key="1">Editor</option>
+                                <option value="viewer" key="2">Viewer</option> 
+                              </select>
+                              <i className={"ui delete icon"+ (canEd ? "" : " disabled")}></i>
+                            </a>
+                          </div>
+                        </div>
+              } ) }
+            </div>
+  },
+  
+  renderAddPeople(project)
+  {
+    return  <div className="ui basic segment">
+              <div className="ui left icon input"><i className="users icon"></i>
+                <input type="text" placeholder="Search..."></input>
+                <select className="ui compact selection dropdown" defaultValue="editor">
+                  <option value="editor" key="1">Editor</option>
+                  <option value="viewer" key="2">Viewer</option> 
+                </select>
+                <div type="submit" className="ui button">Add</div>
+              </div>
+            </div>
   },
   
   handleProjectNameChangeInteractive: function() {

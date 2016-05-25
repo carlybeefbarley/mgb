@@ -228,6 +228,7 @@ export default class EditMGBUI extends React.Component {
             <div className="ui row">
             
               <span title='"Semantic UI" prototyper only for MGB dev team'><b>MGB UI scratchpad</b></span>
+              
               <button className="ui right floated mini labeled icon button" 
                       onClick={this.handleJsBeautify.bind(this)}
                       title="convert between HTML's class= and React/JSX's className= formats">
@@ -235,14 +236,18 @@ export default class EditMGBUI extends React.Component {
                 Beautify
               </button>
               
-              <button className="ui right floated mini labeled icon button" onClick={this.ToggleJsxHtml.bind(this)}>
+              <button className="ui right floated mini labeled icon button" 
+                      onClick={this.ToggleJsxHtml.bind(this)}
+                      title="Convert code between HTML and JSX styles of expressing class attributes for HTML elements">
                 <i className="exchange icon"></i>
-                {this.state.showingInJsxFormat ? "JSX ClassNames" : "HTML classes"}
+                {this.state.showingInJsxFormat ? "JSX className=" : "HTML class="}
               </button>
 
-              <button className="ui right floated mini labeled icon button" onClick={this.handleStripReactComments.bind(this)}>
-                <i className="cut icon"></i>
-                Strip React Comments
+              <button className="ui right floated mini labeled icon button" 
+                      onClick={this.handleStripReactComments.bind(this)}
+                      title="Remove the <-- react- ... --> comments that can appear when pasting React-generated code from Chrome Dev Tools">
+                <i className="compress icon"></i>
+                Remove React tags
               </button>
 
 

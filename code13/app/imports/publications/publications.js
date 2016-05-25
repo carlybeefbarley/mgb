@@ -71,6 +71,16 @@ Meteor.publish('assets.public.byId.withContent2', function(assetId) {
 });
 
 
+//
+//    PROJECTS
+//
+
+
+// Return one project. This is a good subscription for ProjectOverviewRoute
+Meteor.publish('projects.forProjectId', function(projectId) {
+  return Azzets.find(projectId);
+});
+
 
 
 

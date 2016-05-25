@@ -7,6 +7,7 @@ import App from './App';
 import Home from './Home';
 import Users from './Users';
 import Azzets from './Assets';
+import Projects from './Projects';
 
 import NotFoundPage from './NotFoundPage';
 
@@ -25,11 +26,13 @@ Meteor.startup(function () {
 
 
         <Route path="users" component={Users.List} name="Users" />
-        <Route path="user/:id" component={Users.Profile} name="User Profile" back="/users" />
+        <Route path="user/:id" component={Users.Profile} name="User Profile"/>
         <Route path="user/:id/assets" component={Azzets.UserAssetList} name="Assets" />
         <Route path="assets" component={Azzets.UserAssetList} name="Assets" />
 
-        <Route path="assetEdit/:id" component={Azzets.AssetEdit} name="Edit Asset" back="!user-assets" />
+        <Route path="assetEdit/:id" component={Azzets.AssetEdit} name="Edit Asset" />
+        
+        <Route path="project/:id" component={Projects.ProjectOverview} name="Project Overview" />
 
         <Route path="*" component={NotFoundPage} />
       </Route>

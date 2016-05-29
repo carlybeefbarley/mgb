@@ -6,8 +6,9 @@ import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 
 
+// GET - becuase this is a component that GETs it's own data via getMeteorData() callback
 
-export default NavRecent = React.createClass({
+export default NavRecentGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {

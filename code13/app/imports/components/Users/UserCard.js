@@ -6,7 +6,7 @@ import InlineEdit from 'react-edit-inline';
 
 // This is a User Card which is a card-format version of the User information.
 // Originally it was passed specific fields from caller as props, but this becomes
-// hard to maintain as we ruse it more, so it waschanged to have a user_ field
+// hard to maintain as we ruse it more, so it was changed to have a user_ field
 // passed in, and to locally decide what fields to use/render within that structure.
 
 export default UserProfile = React.createClass({
@@ -80,7 +80,7 @@ export default UserProfile = React.createClass({
               Joined {moment(createdAt).format('MMMM DD, YYYY')}
             </span>
             <span>
-              <i className="ui user icon"></i>
+              <i className="ui user icon"></i>User
             </span>            
           </div>    
       </div>

@@ -16,6 +16,9 @@ import {snapshotActivity} from '../../schemas/activitySnapshots.js';
 import {ActivitySnapshots, Activity} from '../../schemas';
 
 
+// TODO: Add a Leave hook for unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
+
+
 export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 

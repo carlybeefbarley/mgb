@@ -11,6 +11,11 @@ import Projects from './Projects';
 
 import NotFoundPage from './NotFoundPage';
 
+
+// To understand this file...
+// Overview article: https://css-tricks.com/learning-react-router/
+// Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md 
+
 const history = createBrowserHistory()
 
 Meteor.startup(function () {
@@ -28,11 +33,12 @@ Meteor.startup(function () {
         <Route path="users" component={Users.List} name="Users" />
         <Route path="user/:id" component={Users.Profile} name="User Profile"/>
         <Route path="user/:id/assets" component={Azzets.UserAssetList} name="Assets" />
+        <Route path="user/:id/projects" component={Projects.UserProjectList} name="User's Projects" />
+        <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Overview" />
         <Route path="assets" component={Azzets.UserAssetList} name="Assets" />
 
         <Route path="assetEdit/:id" component={Azzets.AssetEdit} name="Edit Asset" />
         
-        <Route path="project/:id" component={Projects.ProjectOverview} name="Project Overview" />
 
         <Route path="*" component={NotFoundPage} />
       </Route>
@@ -40,3 +46,6 @@ Meteor.startup(function () {
     document.getElementById('root')
   );
 });
+
+
+// TODO: Fix assetEdit/:id route.. it's being picked up in App.js as id=userId. doh

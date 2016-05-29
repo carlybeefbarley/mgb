@@ -18,25 +18,20 @@ export default class AssetCreateNew extends React.Component {
   render() {
     // Build the list of 'Create New Asset' Menu choices
     let choices = AssetKindKeys.map((k) => {
-      return  (typeof(AssetKinds[k]) === 'function') ?
-         null
-        :
-        (
-          <a className={(AssetKinds[k].disable ? "disabled ": "") + "item"} 
-              data-value={k} 
-              title={AssetKinds[k].description}
-              key={k} 
-              onClick={this.handleCreateAssetClick.bind(this,k)}
-              >
-            <i className={AssetKinds[k].icon + " icon"}></i>
-            {AssetKinds[k].name}
-          </a>
-        );
+      return  <a className={(AssetKinds[k].disable ? "disabled ": "") + "item"} 
+                data-value={k} 
+                title={AssetKinds[k].description}
+                key={k} 
+                onClick={this.handleCreateAssetClick.bind(this,k)}
+                >
+              <i className={AssetKinds[k].icon + " icon"}></i>
+              {AssetKinds[k].name}
+            </a>
     });
 
     // Create the       | Create Asset v | ---- |    UI
     return (
-      <div className="ui red compact tiny inverted menu">
+      <div className="ui green compact tiny inverted menu">
         <div className="ui simple dropdown item">
           Create New Asset
           <i className="dropdown icon"></i>

@@ -4,86 +4,81 @@ import {Link} from 'react-router';
 export default ProjectSelector = React.createClass({
   propTypes: {
     canEdit: React.PropTypes.bool,
-    availableProjectNamesArray: React.PropTypes.array,
-    chosenProjectName: React.PropTypes.string,
-    handleChangeSelectedProjectName: React.PropTypes.func,
-    handleCreateNewProject: React.PropTypes.func
+    user: React.PropTypes.object.isRequired,
+    availableProjects: React.PropTypes.array,   // See projects.js for schema. Can include owned or memberOf
+    chosenProjectName: React.PropTypes.string,  // null means 'all'
+    handleChangeSelectedProjectName: React.PropTypes.func
+  },
+  
+  renderSelectionIcon: function(isActive)
+  {
+    return isActive ? 
+              <i className="ui green sitemap icon"></i> : 
+              <i className="ui grey sitemap disabled icon"></i>
   },
   
   render: function() {
-        let pName = this.props.chosenProjectName
-
-    
-    // Build the list of 'View Project' Menu choices
-    let choices = this.props.availableProjectNamesArray.map((k) => { 
-      let isActive = k===pName
-      return    <a  className={"ui item"+ (isActive ? " active" : "")} 
-                    data-value={k} key={k} 
-                    onClick={this.handleChangeSelectedProjectName.bind(this, k)}>
-                    { isActive ? 
-                        <i className="ui checkmark icon"></i>
-                      : <i className="ui square outline disabled icon"></i>
-                    }
-                    View assets in project "{k}"
-                </a>        
+    const pName = this.props.chosenProjectName
+    let choices = []
+    // Build the list of 'View Project' Menu choices of OWNED projects
+    _.each(this.props.availableProjects, (project) => { 
+      let isActive = (project.name === pName)
+      if (project.ownerId === this.props.user._id)
+        choices.push( <a className={"ui item"+ (isActive ? " active" : "")} 
+                        data-value={project} 
+                        key={project._id} 
+                        onClick={this.handleChangeSelectedProjectName.bind(this, project)}>
+                        { this.renderSelectionIcon(isActive ) }
+                        { project.name }
+                      </a>)    
     })
+    
+    // TODO: Show projects that user is Member of.. Can provide the navigator for those projects at least
+    
+    // Add '(Any Project) if there are 1 or more projects owned by this user
     if (choices.length > 0)
     {
       let isActive = (pName === null)
-      choices.push(<a className={"ui item"+ (isActive ? " active" : "")} 
-                    data-value="__all" key="__all" 
-                    onClick={this.handleChangeSelectedProjectName.bind(this, null)}>
-                    { isActive ? 
-                        <i className="ui checkmark icon"></i>
-                      : <i className="ui square outline disabled icon"></i>
-                    }
-                    View assets in all projects
-                </a>)
+      choices.unshift(
+        <a  className="ui header" 
+            data-value="__ownedHdr" 
+            key="__ownedHdr">
+            Owned projects
+        </a>)
+      choices.push(
+        <a  className={"ui item"+ (isActive ? " active" : "")} 
+            data-value="__all" 
+            key="__all" 
+            onClick={this.handleChangeSelectedProjectName.bind(this, null)}>
+            { this.renderSelectionIcon(isActive ) }
+            (Any Project)
+        </a>)                
     }
-
-    // Create the       | ProjectSelect v |      UI
-        
+    else
+      choices = <div className="ui disabled item">(No projects for this user)</div>
+      
+    // Create the       | ProjectSelect v |      UI        
         
     return (
         <div className="ui simple dropdown item">        
-          Project: {pName || "(all projects)"}
+          Project: {pName || "(Any Project)"}
           <i className="dropdown icon"></i>
           <div className="ui right menu simple">
-            {choices.length > 0 ? choices : <div className="ui item">"No projects defined for this user"</div>}
-            { !this.props.canEdit ? null : 
-            <div className="ui item">
-              <div className="ui action input">
-                <div className="ui small secondary button" onClick={this.handleNewProject}>Create</div>
-                <input type="text" ref="newProjectName" placeholder="New Project Name" />
-              </div>   
-            </div>
-            }
+            { choices }           
+            <div className="divider"></div>
+            <Link className="ui item" to={this.props.ProjectListLinkUrl}>
+              { this.props.canEdit ? "Manage Projects" : "View Projects" }
+            </Link>
           </div>
         </div>
     );
   },
 
-  handleChangeSelectedProjectName: function(chosenProjectName)
+  handleChangeSelectedProjectName: function(chosenProject)
   {
     if (this.props.handleChangeSelectedProjectName)
-      this.props.handleChangeSelectedProjectName(chosenProjectName);
-  },
-  
-  handleNewProject: function()
-  {
-    let pname = this.refs.newProjectName.value
-    if (!pname || pname.length < 1)
-    {
-      console.log("TODO: Project name too short")
-      return
-    }
-    
-    if (this.props.handleCreateNewProject)
-    {
-      this.props.handleCreateNewProject(pname);   
-      this.refs.newProjectName.value = "";
-    }
+      this.props.handleChangeSelectedProjectName(chosenProject ? chosenProject.name : null);
   }
- 
+  
   
 })

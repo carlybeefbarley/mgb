@@ -34,21 +34,23 @@ var schema = {
 // Info on each type of activity, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const ActivityTypes = {
+  "user.join":    { icon: "green user",       pri:  5,  description: "User joined" },
+  "user.login":   { icon: "user",             pri:  9,  description: "User Logged In" },
+  "user.logout":  { icon: "grey user",        pri:  9,  description: "User Logged Out" },
+
   "asset.create": { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.edit":   { icon: "edit",             pri: 15,  description: "Edit asset" },
   "asset.stable": { icon: "green checkmark",  pri: 6,   description: "Asset marked stable" },
   "asset.unstable": { icon: "red checkmark",  pri: 6,   description: "Asset marked stable" },
   "asset.rename": { icon: "write",            pri: 11,  description: "Rename asset" },  
   "asset.delete": { icon: "red trash",        pri: 12,  description: "Delete asset" },
+  "asset.project": { icon: "folder sitemap",  pri: 12,  description: "Change Asset's project" },
   "asset.undelete": { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
-  "asset.project": { icon: "folder outline",  pri: 12,  description: "Change Asset's project" },
   
-  "project.create": { icon: "green folder",   pri: 3,  description: "Create project" },
-   
-  "user.join":    { icon: "green user",       pri:  5,  description: "User joined" },
-  "user.login":   { icon: "user",             pri:  9,  description: "User Logged In" },
-  "user.logout":  { icon: "grey user",        pri:  9,  description: "User Logged Out" },
-  
+  "project.create": { icon: "green sitemap",       pri: 3,  description: "Create project" },
+  "project.addMember": { icon: "sitemap",    pri: 4,  description: "Add Member to project" },
+  "project.removeMember": { icon: "sitemap", pri: 4,  description: "Remove Member from project" },
+     
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
   getIconClass: function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : "warning sign") + " icon"},
   getPri: function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].pri : 0)},

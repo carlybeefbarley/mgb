@@ -13,8 +13,9 @@ import AssetUrlGenerator from './AssetUrlGenerator.js';
 export default AssetCard = React.createClass({
   
   propTypes: {
-    showHeader: PropTypes.bool,                 // If false, just have a very MINi asset card
+    showHeader: PropTypes.bool,                 // If false, just have a very MINI asset card
     asset: PropTypes.object,
+    ownersProjects: PropTypes.array,            // Project array for Asset Owner. Can include ones they are a member of, so watch out!
     currUser: PropTypes.object,                 // currently Logged In user (not always provided)
     canEdit: PropTypes.bool,                    // Whether changes (like stable, delete etc) are allowed. Can be false
     showEditButton: PropTypes.bool              // Shall we *show* the Edit button
@@ -73,7 +74,6 @@ export default AssetCard = React.createClass({
     if (!this.props.asset)
       return null;
       
-
     const {asset, showEditButton, currUser, canEdit } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
@@ -88,8 +88,13 @@ export default AssetCard = React.createClass({
     
     
     // Project Membership editor
+    
     const chosenProjectNamesArray = asset.projectNames || [];
-    const availableProjectNamesArray = currUser ? currUser.profile.projectNames : []
+
+    const availableProjectNamesArray = 
+        this.props.ownersProjects ? 
+          _.map(_.filter(this.props.ownersProjects, {"ownerId": asset.ownerId}), 'name')
+        : []
     const editProjects = <ProjectMembershipEditor 
                             canEdit={this.props.canEdit}
                             availableProjectNamesArray={availableProjectNamesArray}

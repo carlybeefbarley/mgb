@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {logActivity} from '../../schemas/activity';
-import NavRecent from './NavRecent.js';
+import NavRecentGET from './NavRecentGET.js';
 import WhatsNew from './WhatsNew.js';
 
 export default Nav = React.createClass({
@@ -62,7 +62,7 @@ export default Nav = React.createClass({
           { user ?
             // If signed in, show Profile, Logout choices as  | username |   dropdown
             [
-              <NavRecent user={this.props.user} key="navr"/>,
+              <NavRecentGET user={this.props.user} key="navr"/>,
               <div className="ui simple dropdown item" key="dropdown">
                 {user.profile.name} <i className="dropdown icon"></i>
                 <div className="menu simple">
@@ -72,6 +72,10 @@ export default Nav = React.createClass({
                   <Link to={`/user/${this.props.user._id}/assets`} className="item">
                     <i className="home icon" /> My Assets
                   </Link>
+                  <Link to={`/user/${this.props.user._id}/projects`} className="item">
+                    <i className="sitemap icon" /> My Projects
+                  </Link>
+                  <div className="divider"></div>
                   <a href="#" onClick={this.logout} className="ui item">
                     <i className="sign out icon" /> Logout
                   </a>

@@ -114,7 +114,6 @@ export default UserProfileRoute = React.createClass({
   render: function() {
     const {user, ownsProfile, currUser} = this.props;
 
-
     //if id params don't link to a user...
     if (!user) {
       return (
@@ -141,7 +140,7 @@ export default UserProfileRoute = React.createClass({
         <div className="one wide column">
         </div>
 
-        <div className="six wide column">
+        <div className="six wide column" style={{minWidth: "250px"}}>
           <h2>User: {user.profile.name}</h2>
           <UserCard
             user={user}
@@ -149,8 +148,12 @@ export default UserProfileRoute = React.createClass({
             handleProfileFieldChanged={this.handleProfileFieldChanged}
             />
 
-          <Link to={`/user/${user._id}/assets`}  >
-            <button>See Assets</button>
+
+          <Link to={`/user/${user._id}/assets`} className="ui button" >
+            Assets
+          </Link>
+          <Link to={`/user/${user._id}/projects`}  className="ui button" >
+            Projects
           </Link>
         </div>
         

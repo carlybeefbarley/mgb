@@ -9,11 +9,50 @@
 //            improvement:  Enhanced existing feature
 //            bugfix:       Fix a bug
 
+// For iteration, I just simply use the number of commits (including this) at https://github.com/devlapse/mgb
 
 export default mgbReleaseInfo = {
   "releases":
   [
     
+    
+    { 
+      "timestamp":     "Sun May 29 2016 14:00:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "337"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "projects",
+          "type":           "improvement",
+          "changeName":     "Project Cards, Membership",
+          "changeSummary":  "Fuller implementation of projects with membership, project cards etc",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.assets",
+          "type":           "improvement",
+          "changeName":     "Asset queries bookmarkable",
+          "changeSummary":  "Asset queries now put the query state on the URL so it can support bookmarking and deep linking",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "ui",
+          "type":           "improvement",
+          "changeName":     "Lots of UI tweaks everywhere",
+          "changeSummary":  "Spacing, alignment and control changes in many places ",
+          "otherUrls":      []
+        }
+      ]             
+    },
     
     { 
       "timestamp":     "Tue May 24 2016 20:50:00 GMT-0700 (PDT)",

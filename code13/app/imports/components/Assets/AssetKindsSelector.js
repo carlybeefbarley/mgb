@@ -2,12 +2,15 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {AssetKinds, AssetKindKeys} from '../../schemas/assets';
+import {AssetKinds, AssetKindKeys, safeAssetKindStringSepChar} from '../../schemas/assets';
+
+
+
 
 export default class AssetKindsSelector extends React.Component {
   // propTypes:{
-  //   kindsActive: React.PropTypes.array,                  // array of AssetKindKeys strings which are active
-  //   handleToggleKindCallback: React.PropTypes.func       // We will call this back with a string indicating which Kind to toggle
+  //   kindsActive: React.PropTypes.string,              // String with safeAssetKindStringSepChar- separated list of AssetKindKeys strings which are active. 
+  //   handleToggleKindCallback: React.PropTypes.func    // We will call this back with a string indicating which Kind to toggle
   //   }
 
   constructor(props) {
@@ -26,16 +29,16 @@ export default class AssetKindsSelector extends React.Component {
   }
 
   render() {
+    // Split kinds string into array for convenience
+    const kindsArray = this.props.kindsActive.split(safeAssetKindStringSepChar)
+    
     // Build the list of 'Create New Asset' Menu choices
     const choices = AssetKindKeys.map((k) => {
-      // if k is in this.props.kindsActive
-
-      if (typeof(AssetKinds[k]) === 'function')
-        return null; // ignore the helper functions
-
-      const active=_.includes(this.props.kindsActive, k)
-      const sty = !active ? { color: "grey"} : {}
-      return (      // TODO - add   {AssetKinds[k].name in popup
+      // if k is in this.props.kindsActive then it is shown as active
+      const active = _.includes(kindsArray, k)
+      const sty = active ? {} : { color: "#ccc"}
+      const icon = active ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>
+      return (
         <a  className={"ui hazPopup " + (active ? "active item" : "item")} 
             data-value={k} 
             key={k} 
@@ -44,13 +47,13 @@ export default class AssetKindsSelector extends React.Component {
            data-position="right center"
            data-title={AssetKinds[k].name}
            data-content={`Click to ${active ? "hide" : "show"} ${AssetKinds[k].name} assets. Alt-click to only show ${AssetKinds[k].name} assets`}>
-            <i className={AssetKinds[k].icon + " icon"}></i> {AssetKinds[k].name}
+            <i className={AssetKinds[k].icon + " icon"}></i><span>{icon} {AssetKinds[k].name}</span>
           </a>
-      )
+      ) 
     });
 
     return (
-          <div className="ui small vertical menu">            
+          <div className="ui small secondary vertical menu">            
             {choices}
           </div>
     );

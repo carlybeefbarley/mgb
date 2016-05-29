@@ -1,12 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Link} from 'react-router';
-import {AssetKinds, AssetKindKeys} from '../../schemas/assets';
 
 
 export default class AssetShowDeletedSelector extends React.Component {
 //   propTypes:{
-//     showDeletedFlag: React.PropTypes.bool,            // If set, show only deleted assets
+//     showDeletedFlag: React.PropTypes.string,          // "1"" or "0". If "1", show only deleted assets
 // //    showPurgedFlag: React.PropTypes.bool,           // TODO: Probably only for super-admin. 
 //     handleChangeFlag: React.PropTypes.func            // params = newShowDeletedFlag
 //     }
@@ -27,14 +25,18 @@ export default class AssetShowDeletedSelector extends React.Component {
   }
 
   
-  handleChangeFlagClick(event, clue)
+  handleChangeFlagClick()
   {
-    return this.props.handleChangeFlag( !this.props.showDeletedFlag )
+    // Flip between "0" and "1"
+    return this.props.handleChangeFlag( this.props.showDeletedFlag === "1" ? "0" : "1" )
   }
 
+
   render() {
+    let active = this.props.showDeletedFlag === "1"
+
     return (
-            <a className={"ui " + (this.props.showDeletedFlag ? "red button" : "button")} 
+            <a className={"ui " + (active ? "red button" : "button")} 
                 data-value="showDeleted"
                 onClick={this.handleChangeFlagClick.bind(this)}
                 data-position="bottom center"

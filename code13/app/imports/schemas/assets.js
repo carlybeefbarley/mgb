@@ -47,6 +47,7 @@ export const AssetKinds = {
   "map":     { name: "Map",     disable: false, longName: "Game Level Map",  icon: "marker", description: "Map/Level used in a game" },
   "physics": { name: "Physics", disable: true,  longName: "Physics Config",  icon: "rocket", description: "Physics configuration" },
   "code":    { name: "Code",    disable: false, longName: "Code Script",     icon: "puzzle", description: "Source code script" },
+  "cheatsheet": { name: "Cheatsheet", disable: true, longName: "Cheat Sheet",icon: "student", description: "Cheat Sheet to help reember useful stuff" },
   "cutscene":{ name: "Cutscene",disable: true,  longName: "Cut Scene",       icon: "file video outline", description: "Cut scene used in a game" },
   "audio":   { name: "Audio",   disable: true,  longName: "Audio sound",     icon: "file audio outline", description: "Sound Effect, song, voice etc"},
   "game":    { name: "Game",    disable: true,  longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
@@ -56,7 +57,23 @@ export const AssetKinds = {
   getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")}
 };
 
-export const AssetKindKeys = Object.keys(AssetKinds);  // For convenience.
+// Suggested separator to be used for query.kinds. Note that "," and "+" and others can get messy
+// due to url encoding schemes. The safest ones are - _ . and ~
+//  TODO: Add an assert to ensure that this character is NOT one of the AssetKinds keys!
+//  NOTE - this is used in our URLs, so changing this character would break existing query strings with a set of kinds (e.g as used in the assetList ui) 
+export const safeAssetKindStringSepChar = "-"   
+export const AssetKindKeysALL = Object.keys(AssetKinds);  // For convenience. This gets ALL keys (including functions and disabled)
+
+// All valid Asset kinds that are enabled for all users
+export const AssetKindKeys = _.filter(AssetKindKeysALL, (k) => {
+  return (typeof(AssetKinds[k]) !== 'function' && AssetKinds[k].disable !== true) 
+});
+
+// All valid Asset kinds including disabled ones
+export const AssetKindKeysIncludingDisabled = _.filter(AssetKindKeysALL, (k) => {
+  return (typeof(AssetKinds[k]) !== 'function') 
+});
+
 
 Meteor.methods({
 
@@ -64,7 +81,7 @@ Meteor.methods({
     if (!this.userId) 
       throw new Meteor.Error(401, "Login required");      // TODO: Better access check
       
-    now = new Date();
+    const now = new Date();
     data.createdAt = now
     data.updatedAt = now
     data.ownerId = this.userId

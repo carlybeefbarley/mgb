@@ -1,10 +1,11 @@
 // This file should be imported by the main_server.js file
 
-import {Users, Azzets, Activity, ActivitySnapshots } from '../schemas';
+import {Users, Azzets, Projects, Activity, ActivitySnapshots } from '../schemas';
 
 //
 //    USERS
 //
+//  TODO: Exclude stuff like profile.email doh
 
 Meteor.publish('users', function(limit) {
   //Paginated users.
@@ -12,6 +13,29 @@ Meteor.publish('users', function(limit) {
     return Meteor.users.find({}, {limit: limit, sort: {date: -1}});
   }
   return Meteor.users.find({}, {sort: {date: -1}});
+});
+
+
+Meteor.publish('users.byName', function(nameSearch, limit) {
+  let selector = {}
+  if (nameSearch && nameSearch.length > 0)
+  {
+    // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
+    selector["profile.name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
+  }
+  
+  let options = {sort: {date: -1}}
+  if (limit) 
+    options["limit"] = limit    //Paginated users.
+
+  return Meteor.users.find(selector, options)
+});
+
+
+// This is used for example by the project membership list
+Meteor.publish('users.getByIdList', function(idArray) {
+  const selector = {_id: {"$in": idArray}}
+  return Meteor.users.find(selector);
 });
 
 Meteor.publish('user', function(id) {
@@ -23,7 +47,7 @@ Meteor.publish('user', function(id) {
 //
 
 // I originally created this so we can support $text queries on name, but now we are using regex, it's not clear it is of value
-// TODO: Consider cost/benefit of this index
+// TODO: Consider cost/benefit of this index.. VERY PROBABLY DELETE THIS INDEX
 Azzets._ensureIndex({
   "name": "text"        // Index the name field. See https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor
 });
@@ -78,10 +102,21 @@ Meteor.publish('assets.public.byId.withContent2', function(assetId) {
 
 // Return one project. This is a good subscription for ProjectOverviewRoute
 Meteor.publish('projects.forProjectId', function(projectId) {
-  return Azzets.find(projectId);
+  return Projects.find(projectId);
 });
 
 
+
+// Return projects relevant to this userId.. This includes owner, member, etc
+Meteor.publish('projects.byUserId', function(userId) {
+  let selector = {
+    "$or": [
+      { ownerId: userId },
+      { memberIds: { $in: [userId]} }
+    ]
+  }  
+  return Projects.find(selector);
+});
 
 
 //

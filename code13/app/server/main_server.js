@@ -79,6 +79,7 @@ RestApi.addRoute('asset/:id', {authRequired: false}, {
 RestApi.addRoute('asset/png/:id', {authRequired: false}, {
     get: function () {
         var asset = Azzets.findOne(this.urlParams.id);
+// TODO: Handle case where the frameData has not yet been created
         if (asset)
         {
             return {

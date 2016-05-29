@@ -1,34 +1,41 @@
 import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
-import {Azzets} from '../../schemas';
+import {Link, browserHistory} from 'react-router';
 import {Projects} from '../../schemas';
-
+import ProjectCard from '../../components/Projects/ProjectCard';
+import ProjectMembersGET from '../../components/Projects/ProjectMembersGET';
 import Spinner from '../../components/Nav/Spinner';
 import Helmet from 'react-helmet';
+import UserListRoute from '../Users/List'
 
 import {logActivity} from '../../schemas/activity';
 import {snapshotActivity} from '../../schemas/activitySnapshots.js';
 
+// NOTE: UI mockups for this page are at https://v2.mygamebuilder.com/assetEdit/HGhkyyHtrwPxLTyfZ 
 
-// TODO: publication
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,       // params.id is the ASSET id
-    user: PropTypes.object,
+    params: PropTypes.object,       // Contains params.projectId and params.id
+    user:   PropTypes.object,       // App.js gave us this from params.id
     currUser: PropTypes.object
   },
   
+  getInitialState: function() {
+    return {
+      showAddUserSearch: false      // True if user search box is to be shown
+    }
+  },
   
   getMeteorData: function() {
-    let projectId = this.props.params.id
+    let projectId = this.props.params.projectId
     let handleForProject = Meteor.subscribe("projects.forProjectId", projectId);
 
     return {
-      project: Azzets.findOne(projectId),
-      loading: !handleForProject.ready()    // Be aware that 'activitySnapshots' and 'projectActivity' may still be loading
+      project: Projects.findOne(projectId),
+      loading: !handleForProject.ready()
     };
   },
 
@@ -42,20 +49,28 @@ export default ProjectOverview = React.createClass({
   
 
   render: function() {
-    // One Project provided via getMeteorData()
-    let project = this.data.project;
     if (this.data.loading)
-      return null;
+      return <Spinner />
+          
+    const project = this.data.project     // One Project provided via getMeteorData()
+    const canEdit = this.canEdit()
 
     if (!project)
-//      return <p>No such project</p>
-      project = { name: "mockProject", memberIds: [1, 2, 4] }
+      return  <div className="ui container">
+                <br></br>
+                <div className="ui negative message">
+                  <div clasNames="header">
+                    No such project
+                  </div>
+                  <p>There is no project with this Id ({this.props.params.projectId})
+                  </p>
+                </div>
+              </div>
 
-    const canEd = true; //this.canEdit();
+    const canEd = this.canEdit();
     
     return (
-      <div className="ui basic segment">
-
+      <div className="ui padded grid">
         <Helmet
           title="Project Overview"
           meta={[
@@ -63,94 +78,120 @@ export default ProjectOverview = React.createClass({
           ]}
         />
         
-        { this.renderHeading(project, canEd) }
-        { this.renderStats(project, canEd) }
+        <div className="one wide column"></div>
 
-        <h4>Project Members</h4>          
-        { this.renderMembers(project, canEd) }
+        <div className="six wide column" style={{minWidth: "250px"}}>
+          <ProjectCard project={project} owner={this.props.user}/>
+            <Link to={"/user/" + project.ownerId + "/assets?project="+project.name} className="ui fluid button" >
+              View Project Assets
+            </Link>
+            <br></br>
+            <Link to={"/user/" + project.ownerId} className="ui fluid button" >
+              View Project Owner
+            </Link>
+            { this.renderRenameDeleteProject() } 
+        </div>
         
-        { canEd && <div><h4>Add people</h4>{this.renderAddPeople(project)}</div> } 
-
+        <div className="eight wide column">
+          <h3 className="ui header">Project Members</h3>
+          <div className="ui basic segment">
+            Project Members may create, edit or delete assets in this project        
+            <p className="ui tiny orange label">! Access Control Not Yet Implemented !</p>  
+            <ProjectMembersGET 
+                project={this.data.project} 
+                enableRemoveButton={canEdit} 
+                handleRemove={this.handleRemoveMemberFromProject}
+            />
+          </div>
+          { this.renderAddPeople() } 
+        </div>
+        
+        <div className="one wide column"></div>        
+        
       </div>
     );
+  },  
+  
+  
+  // TODO - override 'Search Users" header level in UserListRoute
+  // TODO - some better UI for Add People.
+  handleClickUser: function(userId, userName)
+  {
+    var project = this.data.project
+    var newData = { memberIds: _.union(project.memberIds, [userId])}   
+    Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
+      if (error) {
+         console.log(`Could not add member ${userName} to project ${project.name}`)
+      } else {
+        logActivity("project.addMember",  `Add Member ${userName} to project ${project.name}`);
+      }
+    })
   },
   
-  renderHeading(project, canEd)
-  {
-    return  <div className="ui statistic">
-              <div className="label">
-                Project
-              </div>
-              <div className="value">
-                {project.name}
-              </div>
-            </div>
-  },
-  
-  
-  renderStats(project, canEd)
-  {
-    return  <div className="ui basic segment">
-              <i className="privacy icon"></i>Private
-              <br></br>
-              <br></br>
-              <b>Size:</b> ??
-              <br></br>
-              <b>Assets:</b> ??
-              <br></br>
-              <b>Updated:</b> ?? minutes ago
-              <br></br>
-              <br></br>
-              <div className="ui labeled button">
-                <div className="ui purple button">
-                  <i className="heart icon"></i> Like
-                </div>
-                <a className="ui basic purple label">2,048</a>
-              </div>
-              <div className="ui labeled button">
-                <div className="ui green button">
-                  <i className="fork icon"></i> Forks
-                </div>
-                <a className="ui basic green label">1,048</a>
-              </div>
-            </div>      
-  },
-  
-  renderMembers(project, canEd)
-  {
-    return  <div className="ui padded grid">
+  handleRemoveMemberFromProject: function (userId, userName) {
+    var project = this.data.project
+    var newData = { memberIds: _.without(project.memberIds, userId)}   
 
-              { project.memberIds.map( (uid, idx) => {
-                return  <div className="ui row" key={idx}> 
-                          <div className="ui column">
-                            <a className="ui blue label">
-                              <img src="http://www.gravatar.com/avatar/1b3e88d9f94a9708c628494773003ac3?s=50&amp;d=mm"></img> stanchion &nbsp;
-                              <select className={"ui compact selection dropdown" + (canEd ? "" : " disabled")} defaultValue="editor">
-                                <option value="editor" key="1">Editor</option>
-                                <option value="viewer" key="2">Viewer</option> 
-                              </select>
-                              <i className={"ui delete icon"+ (canEd ? "" : " disabled")}></i>
-                            </a>
-                          </div>
-                        </div>
-              } ) }
-            </div>
+    Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
+      if (error) {
+         console.log(`Could not remove member ${userName} from project ${project.name}`)
+      } else {
+        logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
+      }
+    })
   },
   
-  renderAddPeople(project)
+  // TODO - Activity - filter for project / user.  Maybe Have an Activity Page
+  
+  renderRenameDeleteProject: function()
   {
-    return  <div className="ui basic segment">
-              <div className="ui left icon input"><i className="users icon"></i>
-                <input type="text" placeholder="Search..."></input>
-                <select className="ui compact selection dropdown" defaultValue="editor">
-                  <option value="editor" key="1">Editor</option>
-                  <option value="viewer" key="2">Viewer</option> 
-                </select>
-                <div type="submit" className="ui button">Add</div>
+    const canEdit = this.canEdit()
+    if (!canEdit)
+      return null
+    
+    return  <div className="ui secondary segment">
+              <div  className="ui fluid labeled icon button"
+                    onClick={ () => { alert("Not Yet Implemented")}} >
+                <i className="trash icon"></i>
+                <span className="text">Rename</span>        
+              </div>
+              <br></br>
+              <div  className="ui fluid red labeled icon button"
+                    onClick={ () => { alert("Not Yet Implemented")}} >
+                <i className="trash icon"></i>
+                <span className="text">Destroy</span>        
               </div>
             </div>
   },
+    
+  renderAddPeople: function()
+  {
+    const canEdit = this.canEdit()
+    if (!canEdit)
+      return null
+      
+    const project = this.data.project;
+    const relevantUserIds = [ project.ownerId, ...project.memberIds]   
+    const active = this.state.showAddUserSearch 
+    const showSearch = !active ? null : 
+      <UserListRoute  
+                  handleClickUser={this.handleClickUser}
+                  initialLimit={20}
+                  excludeUserIdsArray={relevantUserIds}
+                  renderVertical={true} 
+                  hideTitle={true}/>
+    
+    return  <div className="ui secondary segment">
+              <div  className={"ui fluid green labeled icon button" + (active ? " active" : "")}
+                    onClick={ () => { this.setState({showAddUserSearch: !active})}} >
+                <i className="add user icon"></i>
+                <span className="text">Add Members</span>        
+              </div>
+              { showSearch }              
+            </div>
+  },  
   
+  // TODO: Use this!
   handleProjectNameChangeInteractive: function() {
     let newName = this.refs.projectNameInput.value;
 

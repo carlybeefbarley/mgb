@@ -11,8 +11,8 @@ export default class Spinner extends Component {
 
   componentDidMount()
   {
-    // Spinner will show after half a second, so it flickers less in most cases
-    this.spinnerTimeoutId = setTimeout( () => { this.setState( {hiddenInitially: false})}, 500)
+    // Spinner will show after 400ms, so it flickers less in most cases
+    this.spinnerTimeoutId = setTimeout( () => { this.setState( {hiddenInitially: false})}, 400)
   }
 
   componentWillUnmount()
@@ -22,9 +22,10 @@ export default class Spinner extends Component {
   }
 
   render() {
-    return (
-      <div className="ui segment" style={{minHeight: "15em"}}>
-        <div className={`ui ${this.state.hiddenInitially ? "" : "active"} inverted dimmer`} >
+    const hide = this.state.hiddenInitially
+    return ( hide ? null :  
+      <div className="ui basic segment" style={{minHeight: "15em"}}>
+        <div className={`ui ${hide ? "" : "active"} inverted dimmer`} >
           <div className="ui text indeterminate loader">Loading</div>
         </div>
         <p></p>

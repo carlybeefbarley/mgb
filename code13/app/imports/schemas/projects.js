@@ -15,7 +15,7 @@ var schema = {
 
   // the actual project information
   name: String,             // Project Name (scoped to owner). Case sensitive
-  text: String,             // A description field
+  description: String,      // A description field
   memberIds: [String],      // Array of memberIds ()
   avatarAssetId: String     // Asset that will be used as the avatar for this project (should be a graphic)
 };
@@ -23,14 +23,20 @@ var schema = {
 
 Meteor.methods({
 
+  /** Projects.create
+   *  @param data.name           Name of Project
+   *  @param data.description    Description field
+   */
   "Projects.create": function(data) {
     if (!this.userId) 
       throw new Meteor.Error(401, "Login required");      // TODO: Better access check
       
-    now = new Date();
+    const now = new Date();
     data.createdAt = now
     data.updatedAt = now
     data.ownerId = this.userId
+    data.memberIds = []
+    data.avatarAssetId = ""
 
     check(data, _.omit(schema, '_id'));
 
@@ -61,7 +67,7 @@ Meteor.methods({
     check(data, {
       updatedAt: schema.updatedAt,
       name: optional(schema.name),
-      text: optional(schema.text),
+      description: optional(schema.description),
       memberIds: optional(schema.memberIds),   
       avatarAssetId: optional(schema.avatarAssetId)
     });

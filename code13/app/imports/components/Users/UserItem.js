@@ -3,31 +3,37 @@ import moment from 'moment';
 import {browserHistory} from 'react-router';
 
 
+// These can be rendered as attached segments so the caller can easily place/attach buttons around it
+// See http://v2.mygamebuilder.com/assetEdit/2Bot4CwduQRfRWBi6 for an example
 export default UserItem = React.createClass({
 
   propTypes: {
-    clickPreview: PropTypes.bool,
-    name: PropTypes.string,
-    email: PropTypes.string,
+    _id: PropTypes.string,            // The user id
+    name: PropTypes.string,           // The user name
+    avatar: PropTypes.string,         // User's avatar image src   
+    handleClickUser: PropTypes.func,  // Optional. If provided, call this with the userId instead of going to the user Profile Page
+    renderAttached: PropTypes.bool    // if true, then render attached
+  },
+    
+  handleClickUser: function() {
+    let uid = this.props._id
+    if (this.props.handleClickUser)
+      this.props.handleClickUser(uid, this.props.name)
+    else
+      browserHistory.push(`/user/${uid}`)
   },
   
-  defaultProps: {
-    clickPreview: false
-  },
-
   render: function() {
-    const createdAt = this.props.createdAt;
+    const createdAt = moment(this.props.createdAt).format('MMMM DD, YYYY')
+    const segClass = this.props.renderAttached ? "ui attached segment" : "ui raised segment"
     return (
-      <div  className="ui raised segment"
-            onClick={this.props.clickPreview ?
-                    () => browserHistory.push(`/users?id=${this.props._id}`) :
-                    () => browserHistory.push(`/user/${this.props._id}`)}>
-
+      <div  className={segClass}
+            onClick={this.handleClickUser}>
         <a className="ui blue ribbon label">{this.props.name}</a>
         <img src={this.props.avatar} className="ui right floated avatar image" />
         <p>
           <small>
-            Joined {moment(createdAt).format('MMMM DD, YYYY')}
+            Joined {createdAt}
           </small>
         </p>
       </div>

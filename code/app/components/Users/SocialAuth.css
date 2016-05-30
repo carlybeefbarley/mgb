@@ -1,5 +1,0 @@
-.btn {
-  composes: buttonPrimary from '../../styles/buttons.css';
-  margin-top: .2em;
-  width: 100%;
-}

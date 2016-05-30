@@ -26,9 +26,7 @@ export default UserProfile = React.createClass({
 
   profileFieldChanged: function(data) {
     // data = { description: "New validated text comes here" }
-    // Update your model from here
-    console.log(data)
-    
+    // Update your model from here    
     if (this.props.handleProfileFieldChanged)
       this.props.handleProfileFieldChanged({...data})
   },

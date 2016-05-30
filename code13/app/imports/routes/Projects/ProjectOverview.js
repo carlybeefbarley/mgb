@@ -81,7 +81,12 @@ export default ProjectOverview = React.createClass({
         <div className="one wide column"></div>
 
         <div className="six wide column" style={{minWidth: "250px"}}>
-          <ProjectCard project={project} owner={this.props.user}/>
+          <ProjectCard 
+            project={project} 
+            owner={this.props.user}
+            canEdit={canEd}
+            handleFieldChanged={this.handleFieldChanged}
+            />
             <Link to={"/user/" + project.ownerId + "/assets?project="+project.name} className="ui fluid button" >
               View Project Assets
             </Link>
@@ -140,6 +145,20 @@ export default ProjectOverview = React.createClass({
       }
     })
   },
+    
+  /**
+   *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
+   */
+  handleFieldChanged: function(changeObj)
+  {
+    var project = this.data.project
+
+    Meteor.call('Projects.update', project._id, this.canEdit(), changeObj, (error) => {
+      if (error) 
+        console.log("Could not update project: ", error.reason)      
+    });
+  },
+  
   
   // TODO - Activity - filter for project / user.  Maybe Have an Activity Page
   
@@ -190,6 +209,7 @@ export default ProjectOverview = React.createClass({
               { showSearch }              
             </div>
   },  
+  
   
   // TODO: Use this!
   handleProjectNameChangeInteractive: function() {

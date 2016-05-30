@@ -15,6 +15,31 @@ export default mgbReleaseInfo = {
   "releases":
   [
     
+    { 
+      "timestamp":     "Monday May 30 2016 02:00:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "338"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "projects",
+          "type":           "improvement",
+          "changeName":     "Project Cards Descriptions",
+          "changeSummary":  "Project Card Over page allows Project description to be edited",
+          "otherUrls":      []
+        }
+        
+      ]             
+    },
+    
     
     { 
       "timestamp":     "Sun May 29 2016 14:00:00 GMT-0700 (PDT)",

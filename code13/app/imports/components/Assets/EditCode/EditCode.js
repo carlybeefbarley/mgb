@@ -86,7 +86,7 @@ export default class EditCode extends React.Component {
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue;
     let newC2 = { src: newValue }
-    this.props.handleContentChange( newC2, "", `Beautify code`)
+    this.props.handleContentChange( newC2, null, `Beautify code`)
   }
 
 
@@ -633,7 +633,7 @@ export default class EditCode extends React.Component {
       const newValue = doc.getValue();
       this._currentCodemirrorValue = newValue;
       let newC2 = { src: newValue }
-      this.props.handleContentChange( newC2, "", "Edit code" )
+      this.props.handleContentChange( newC2, null, "Edit code" )
       this.codeMirrorUpdateHints(true)
     }
   }
@@ -700,7 +700,33 @@ export default class EditCode extends React.Component {
     {
       if (data.mgbCmd === "mgbConsoleMsg")
         this._consoleAdd(data)
+      else if (data.mgbCmd === "mgbScreenshotCanvasResponse")
+      {
+        // In a Phaser game, this is needed to enable screenshots if using WebGL renderer
+        //game.preserveDrawingBuffer = true;
+        // OR use Phaser.CANVAS as the renderer
+
+        let asset = this.props.asset
+        asset.thumbnail = data.pngDataUrl
+        this.props.handleContentChange(null, asset.thumbnail, "update thumbnail")
+      }
     }
+  }
+  
+  
+  handleScreenshotIFrame()
+  {
+    if (this.state.isPlaying)
+      this._postMessageToIFrame( { 
+        mgbCommand: 'screenshotCanvas',
+        recommendedHeight: 150            // See AssetCard for this size        
+      })            
+  }
+  
+  
+  _postMessageToIFrame(messageObject)
+  {
+    this.iFrameWindow.contentWindow.postMessage(messageObject, "*")  
   }
   
   
@@ -715,9 +741,12 @@ export default class EditCode extends React.Component {
     let src = this.props.asset.content2.src
     let gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState( {isPlaying: true } )
-    this.iFrameWindow.contentWindow.postMessage( 
-        {codeToRun: src, gameEngineScriptToPreload: gameEngineJsToLoad},
-        "*")    
+    this._postMessageToIFrame(
+      {
+        mgbCommand: 'startRun',
+        codeToRun: src, 
+        gameEngineScriptToPreload: gameEngineJsToLoad
+      })    
     
     // Make sure that it's really visible.. and also auto-close accordion above so there's space.
     $('.ui.accordion').accordion('close', 0);
@@ -739,7 +768,7 @@ export default class EditCode extends React.Component {
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue;
     let newC2 = { src: newValue }
-    this.props.handleContentChange( newC2, "", `Template code: ${item.label}`)
+    this.props.handleContentChange( newC2, null, `Template code: ${item.label}`)
   }
 
 
@@ -866,19 +895,23 @@ export default class EditCode extends React.Component {
                 <div className="title">
                   <span className="explicittrigger">
                     <i className="dropdown icon"></i>
-                    Run Code&nbsp;
+                    Run Code&nbsp;&nbsp;
                     </span>
-                  <div className="ui mini icon buttons">
-                      { !isPlaying ? 
-                      <a className={"ui mini icon button"} onClick={this.handleRun.bind(this)}>
-                          <i className={"play icon"}></i>
-                      </a>
-                      :
-                      <a className={"ui mini icon button"} onClick={this.handleStop.bind(this)}>
-                          <i className={"stop icon"}></i>
-                      </a>
+                      { !isPlaying && 
+                        <a className={"ui mini labeled icon button"} onClick={this.handleRun.bind(this)}>
+                            <i className={"play icon"}></i>Run
+                        </a>
                       }
-                  </div>
+                      { isPlaying && 
+                        <a className={"ui mini labeled icon button"} onClick={this.handleStop.bind(this)}>
+                            <i className={"stop icon"}></i>Stop
+                        </a>
+                      }
+                      { isPlaying && 
+                        <a className={"ui right floated mini icon button"} onClick={this.handleScreenshotIFrame.bind(this)}>
+                            <i className={"write square icon"}></i>Set thumbnail
+                        </a>
+                      }
                 </div>
               }
               { !docEmpty &&

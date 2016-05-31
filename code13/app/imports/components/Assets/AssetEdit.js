@@ -45,7 +45,12 @@ export default class AssetEdit extends React.Component {
   handleContentChange(content2Object, thumbnail, changeText="content change")
   {
     const asset = this.props.asset;
-    Meteor.call('Azzets.update', asset._id, this.props.canEdit, {content2: content2Object, thumbnail: thumbnail}, (err, res) => {
+    let updateObj = {}
+    if (content2Object)
+      updateObj.content2 = content2Object
+    if (thumbnail)
+      updateObj.thumbnail = thumbnail
+    Meteor.call('Azzets.update', asset._id, this.props.canEdit, updateObj, (err, res) => {
       if (err) {
         // TODO: NOT alert() ! !
         alert('error: ' + err.reason)

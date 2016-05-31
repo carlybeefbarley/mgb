@@ -9,6 +9,10 @@ export const templateCode = [
 
 var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
 
+// In a Phaser game, this is needed to enable screenshots if using WebGL renderer (because of Phaser.AUTO)
+game.preserveDrawingBuffer = true;
+
+
 function preload() {
 
     game.load.crossOrigin = 'anonymous';
@@ -20,6 +24,8 @@ function preload() {
 var player;
 
 function create() {
+    game.stage.backgroundColor = 'rgba(68, 136, 170, 0.5)';
+
     player = game.add.sprite(100, 200, 'playerThing');
 }
 
@@ -57,6 +63,9 @@ var game = new Phaser.Game(
 
 var player; // Declare this variable for the player so we can reference it in our functions
 
+// In a Phaser game, this is needed to enable screenshots if using WebGL renderer (because of Phaser.AUTO)
+game.preserveDrawingBuffer = true;
+
 
 // Next, we should actually define the functions we just told Phaser about...
 
@@ -70,6 +79,8 @@ function preload() {
 
 // This function is called after the preload() work has downloaded stuff we need
 function create() {
+    game.stage.backgroundColor = 'rgba(68, 136, 170, 0.5)';
+
     player = game.add.sprite(100, 200, 'playerThing');
     game.physics.arcade.enable(player);
 

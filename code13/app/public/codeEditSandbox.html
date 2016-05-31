@@ -155,7 +155,32 @@ function _getCaller() {
         {
           mainWindow.postMessage(_isAlive, e.origin);
         }
-        else
+        else if (e.data.mgbCommand === 'screenshotCanvas')
+        {
+          var desiredHeight = e.data.recommendedHeight || 150;
+          var gameCanvas = document.getElementsByTagName ('canvas').item(0);
+          if (gameCanvas)
+          {
+            // use the height the caller suggested
+            var scaleMult = desiredHeight/gameCanvas.height;
+            // Take a 50% size screenshot
+            var thumbCanvas = document.createElement('canvas');
+            var w = gameCanvas.width  * scaleMult;
+            var h = gameCanvas.height * scaleMult;
+            thumbCanvas.width = w;
+            thumbCanvas.height = h;
+            var thumbCtx = thumbCanvas.getContext('2d');
+
+            thumbCtx.drawImage(gameCanvas, 0, 0, w, h)
+            
+            var asDataUrl = thumbCanvas.toDataURL('image/png')
+            window.parent.postMessage( { 
+              mgbCmd: "mgbScreenshotCanvasResponse",
+              pngDataUrl: asDataUrl
+            }, "*");
+          }          
+        }
+        else if (e.data.mgbCommand === 'startRun')
         {
           mgbHostMessageContext.msgSource = e.source;
           mgbHostMessageContext.msgOrigin = e.origin;

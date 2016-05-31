@@ -92,18 +92,17 @@ export default AssetCard = React.createClass({
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
-    const c2 = asset.content2 || { width:64, height:64, nframes:0 }
+    const c2 = asset.content2 || { width:64, height:64 }
 
     const iw = c2.hasOwnProperty("width") ? c2.width : 64
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
     const pw = this.state.discoveredImageWidth || iw 
     const ph = this.state.discoveredImageHeight || ih
-    const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
     let info2 = " "
     switch (asset.kind)
     {
     case "graphic":
-      info2 = `Size: ${pw} x ${ph} pixels.   Contains ${nframes} frame${nframes ===1 ? '':'s'}`
+      info2 = `Size: ${pw} x ${ph} pixels`
     }
     const ago = moment(asset.updatedAt).fromNow()                      // TODO: Make reactive
     const ownerName = asset.dn_ownerName
@@ -133,7 +132,7 @@ export default AssetCard = React.createClass({
                 ref="thumbnailCanvas" 
                 width={iw} 
                 height={ih} 
-                style={{backgroundColor: '#ffffff', minHeight:"140px", maxHeight:"140px", width:"auto"}} >
+                style={{backgroundColor: '#ffffff', minHeight:"150px", maxHeight:"150px", maxWidth:"290px", width:"auto"}} >
               </canvas> 
               </div>
           }

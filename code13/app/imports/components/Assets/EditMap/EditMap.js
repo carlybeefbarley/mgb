@@ -1,4 +1,7 @@
 import React, { PropTypes } from 'react';
+import MapEditor from "./MapEditor.js";
+import TestTool from "./Tools/TestTool.js";
+
 
 export default class EditMap extends React.Component {
   // static PropTypes = {
@@ -14,6 +17,7 @@ export default class EditMap extends React.Component {
   //
   // React Callback: componentDidMount()
   componentDidMount() {
+
   }
   
   handleOnChange(updatedSourceCodeAsString) {
@@ -21,18 +25,22 @@ export default class EditMap extends React.Component {
     this.props.handleContentChange( newC2, "" ) // TODO: Thumbnail is second param
   }
 
-
   render() {
     if (!this.props.asset) 
       return null;
 
     let asset = this.props.asset;
+    console.log("ASSET:", asset);
 
-        return (       
-            <div style={ {"minHeight": "500px"} }>  
-            disabled             
-                    
-            </div>
-        );
+    return (
+      <div className="ui grid">
+        <div className="ten wide column">
+          <MapEditor asset={asset} />
+        </div>
+        <div className="six wide column">
+            <TestTool asset={asset} />
+        </div>
+      </div>
+     );
   }
 }

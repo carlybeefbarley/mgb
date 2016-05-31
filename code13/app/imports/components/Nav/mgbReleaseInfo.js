@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   [
         
     { 
-      "timestamp":     "Mon May 30 2016 19:30:00 GMT-0700 (PDT)",
+      "timestamp":     "Mon May 30 2016 23:25:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "343"
+        "iteration":   "345"
       },
 
       "releaseManagement": {
@@ -35,8 +35,15 @@ export default mgbReleaseInfo = {
           "changeName":     "Asset card cleanup",
           "changeSummary":  "Asset cards are now fixed width and have more space for the thumbnails. Some other visual cleanup also. Asset kind selector has an explicit All selector, and alt-click behavior has been reversed",
           "otherUrls":      []
+        },
+        {
+          "featureTag":     "assets.code",
+          "type":           "improvement",
+          "changeName":     "Code Thumbnails",
+          "changeSummary":  "Code can now have thumbnails. Use the Set Thumbnail button while the script is running",
+          "otherUrls":      []
         }
-        
+              
       ]             
     },
     

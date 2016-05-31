@@ -153,18 +153,29 @@ export default UserAssetListRoute = React.createClass({
     };
   },
 
+
+  /** This is the callback from AssetsKindSelector
+   * 
+   */
   handleToggleKind(k, altKey) // k is the string for the AssetKindsKey to toggle existence of in the array
   {    
+    
     // get current qN.kinds
     const qN = this.queryNormalized(this.props.location.query)
     let newKindsString
-    if (altKey)
+    if (k === "__all")
+    {
+      // special case.. show all kinds
+      newKindsString = ""
+    }
+    else if (!altKey)
     { 
       // Alt key means ONLY this kind - pretty simple - the string is the given kind
       newKindsString = k
     }
     else
     {
+      // Alt key, so this is a toggle
       // Just toggle this key, keep the rest.. Also, handle the special case string for none and all
 
       // get current qN.kinds string as array

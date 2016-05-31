@@ -14,15 +14,14 @@
 export default mgbReleaseInfo = {
   "releases":
   [
-    
-    
+        
     { 
-      "timestamp":     "Mon May 30 2016 18:10:00 GMT-0700 (PDT)",
+      "timestamp":     "Mon May 30 2016 19:30:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "341"
+        "iteration":   "343"
       },
 
       "releaseManagement": {
@@ -34,7 +33,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "nav.assets",
           "type":           "improvement",
           "changeName":     "Asset card cleanup",
-          "changeSummary":  "Asset cards are now fixed width and have more space for the thumbnails. Some other visual cleanup also.",
+          "changeSummary":  "Asset cards are now fixed width and have more space for the thumbnails. Some other visual cleanup also. Asset kind selector has an explicit All selector, and alt-click behavior has been reversed",
           "otherUrls":      []
         }
         

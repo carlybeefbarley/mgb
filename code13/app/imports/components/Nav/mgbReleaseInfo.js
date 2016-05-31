@@ -15,8 +15,35 @@ export default mgbReleaseInfo = {
   "releases":
   [
     
+    
     { 
-      "timestamp":     "Monday May 30 2016 02:00:00 GMT-0700 (PDT)",
+      "timestamp":     "Mon May 30 2016 18:10:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "341"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.assets",
+          "type":           "improvement",
+          "changeName":     "Asset card cleanup",
+          "changeSummary":  "Asset cards are now fixed width and have more space for the thumbnails. Some other visual cleanup also.",
+          "otherUrls":      []
+        }
+        
+      ]             
+    },
+    
+    
+    { 
+      "timestamp":     "Mon May 30 2016 02:00:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
@@ -33,7 +60,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "projects",
           "type":           "improvement",
           "changeName":     "Project Cards Descriptions",
-          "changeSummary":  "Project Card Over page allows Project description to be edited",
+          "changeSummary":  "Project Card Overview page allows Project description to be edited",
           "otherUrls":      []
         }
         

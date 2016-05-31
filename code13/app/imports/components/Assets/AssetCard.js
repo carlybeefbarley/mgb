@@ -28,12 +28,14 @@ export default AssetCard = React.createClass({
       showHeader: true
     };  
   },
-
-  loadThumbnail(asset)
-  {
-    if (this.props.showHeader && asset.hasOwnProperty("thumbnail"))
-      this.loadPreviewFromDataURI(asset.thumbnail)
+  
+  getInitialState: function () {
+    return {
+      discoveredImageWidth: undefined,     // If we don't have the full asset with .content2 then we only know the width after we've loaded the thumbnail
+      discoveredImageHeight: undefined    // If we don't have the full asset with .content2 then we only know the width after we've loaded the thumbnail      
+    }
   },
+
 
   componentDidMount()
   {
@@ -45,12 +47,17 @@ export default AssetCard = React.createClass({
     }
   },
 
-  componentDidUpdate(prevProps,  prevState)
+  componentDidUpdate(prevProps, prevState)
   {
     this.loadThumbnail(this.props.asset)
   },
-
-
+  
+  loadThumbnail(asset)
+  {
+    if (this.props.showHeader && asset.hasOwnProperty("thumbnail"))
+      this.loadPreviewFromDataURI(asset.thumbnail)
+  },
+  
   loadPreviewFromDataURI(dataURI)
   {
     if (dataURI === undefined || dataURI.length == 0)
@@ -60,9 +67,16 @@ export default AssetCard = React.createClass({
       var _img = new Image;
       var _ctx = this.previewCtx;
       _img.src = dataURI;   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-      _img.onload = function() {
+      _img.onload = () => {
+        if (this.previewCanvas.width !== _img.width || this.previewCanvas.height !== _img.height)
+        {          
+          this.previewCanvas.width = _img.width
+          this.previewCanvas.height = _img.height
+          this.setState( { discoveredImageWidth: _img.width, discoveredImageHeight: _img.height} )
+        }
         _ctx.clearRect(0 , 0, _img.width, _img.height)
         _ctx.drawImage(_img,0,0); // needs to be done in onload...
+        // TODO - there may be an event leak of _img. to see this, comment out the width check guards on setState()
       }
     }
     else {
@@ -77,15 +91,22 @@ export default AssetCard = React.createClass({
     const {asset, showEditButton, currUser, canEdit } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
+    const assetKindName = AssetKinds.getName(asset.kind)
     const c2 = asset.content2 || { width:64, height:64, nframes:0 }
+
     const iw = c2.hasOwnProperty("width") ? c2.width : 64
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
+    const pw = this.state.discoveredImageWidth || iw 
+    const ph = this.state.discoveredImageHeight || ih
     const nframes = c2.hasOwnProperty("frameNames") ? c2.frameNames.length : 2
-    const dimension = asset.kind === "graphic" ? `${iw}x${ih} ` : ''
-    const info2 = asset.kind === "graphic" ? `${nframes} frames` : ''
-    const ago = moment(asset.updatedAt).fromNow()                                 // TODO: Make reactive
+    let info2 = " "
+    switch (asset.kind)
+    {
+    case "graphic":
+      info2 = `Size: ${pw} x ${ph} pixels.   Contains ${nframes} frame${nframes ===1 ? '':'s'}`
+    }
+    const ago = moment(asset.updatedAt).fromNow()                      // TODO: Make reactive
     const ownerName = asset.dn_ownerName
-    
     
     // Project Membership editor
     
@@ -104,79 +125,98 @@ export default AssetCard = React.createClass({
                           
 
     return (
-      <div key={asset._id} className="ui fluid card">
+      <div key={asset._id} className="ui card">
+      
+          { this.props.showHeader &&
+            <div className="ui centered image">
+              <canvas 
+                ref="thumbnailCanvas" 
+                width={iw} 
+                height={ih} 
+                style={{backgroundColor: '#ffffff', minHeight:"140px", maxHeight:"140px", width:"auto"}} >
+              </canvas> 
+              </div>
+          }
         <div className="content">
           
           { /* CONTENT */ }
-          { !this.props.showHeader ?
-            ( canEdit ? <a className="ui right floated mini green label">editable</a> : <a className="ui mgbReadOnlyReminder right floated mini red label">read-only</a> )
-            : 
-            <div className="ui right floated image">
-              <div className="ui move left reveal">
-                <div className="visible content">
-                      <canvas ref="thumbnailCanvas" className="ui image" width={iw} height={ih} style={{backgroundColor: '#ffffff'}} >
-                      </canvas> 
-                </div>
-                <div className="hidden content meta">
-                  <small>
-                    <p>{assetKindLongName}</p>
-                    <p>{dimension}</p>
-                    <p>{info2}</p>
-                  </small>
-                </div>
-              </div>
-            </div>
+          {
+             ( !this.props.showHeader && 
+              (canEdit ? 
+                <a className="ui right floated mini green label">editable</a> : 
+                <a className="ui mgbReadOnlyReminder right floated mini red label">read-only</a> 
+              )
+            )
+          }
+
+          { this.props.showHeader && 
+              <i className="right floated star icon"></i>
           }
           
-          { !this.props.showHeader ? null : 
+          { this.props.showHeader && 
           <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}>
-            <i style={{"color": "black"}} className={assetKindIcon}></i>
             <small>{asset.name || "(untitled)"}</small>
           </div>
           }
         
-          <div className="meta">
-            <small>
-              {asset.isDeleted ? <p style={{color: "red"}}>[DELETED]<br></br></p> : null }              
-              Owner:&nbsp; 
-              <Link to={`/user/${asset.ownerId}`}>
-                {ownerName ? ownerName : `#${asset.ownerId}`}
-              </Link>
-            </small>
-          </div>
+          { asset.isDeleted &&            
+            <div className="meta">
+              <p className="ui small red label">DELETED</p>           
+            </div>
+          }
+
+          { this.props.showHeader && info2 && 
+            <div className="meta">
+              <small>{info2}</small>
+            </div>
+          }
+
           <div className="meta">
             <small>          
               {editProjects}
               { !this.props.showHeader ? null : "Updated " + ago }
             </small>
           </div>
+          
         </div>     
         { /* End Content */}
         
-
-        { !this.props.showHeader ? null : 
-        <div className="extra content">
-          <div className="ui four small buttons">
-            <div className={(this.props.showEditButton ? "" : "disabled ") + "ui basic green compact button"} 
-                 onClick={this.handleEditClick}>
+        { this.props.showHeader && 
+          <div className="extra content">
+            <span className="left floated icon label">
+              <i className={"large " + assetKindIcon}></i>
+              { assetKindName }
+            </span>                           
+            <span className="right floated author">
+                <i className="large user icon"></i>
+                <Link to={`/user/${asset.ownerId}`}>
+                  {ownerName ? ownerName : `#${asset.ownerId}`}
+                </Link>
+            </span>
+          </div>
+        }
+        
+        { this.props.showHeader &&         
+          <div className="ui four small bottom attached icon buttons">
+            <div className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
+                  onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
-              <small>Edit</small>
+              <small>&nbsp;Edit</small>
             </div>
-            <div className={(canEdit ? "" : "disabled ") + "ui basic blue compact button"} 
-                 onClick={this.handleCompletedClick} >
-              <i className={ asset.isCompleted ? "ui toggle on icon" : "ui toggle off icon"}></i>
-              <small>Stable</small>
+            <div className={(canEdit ? "" : "disabled ") + "ui blue compact button"} 
+                  onClick={this.handleCompletedClick} >
+              <i className={ asset.isCompleted ? "ui checkmark icon" : "ui remove icon"}></i>
+              <small>&nbsp;Done</small>
             </div>
-            <div className={(this.props.showEditButton ? "" : "disabled ") + "ui basic red compact button"}
-                 onClick={this.handleDeleteClick}>
-              <i className={!asset.isDeleted ? "ui red trash icon" : "ui grey trash outline icon"}></i>
-              <small>{asset.isDeleted ? "Undelete" : "Delete" }</small>
-            </div>
-            <div className="ui basic black compact button" >
-            <AssetUrlGenerator asset={asset} /><small>URL</small>
+            <div className={(canEdit? "" : "disabled ") + "ui red compact button"}
+                  onClick={this.handleDeleteClick}>
+              {asset.isDeleted ? null : <i className="ui trash icon"></i>}
+              <small>&nbsp;{asset.isDeleted ? "Undelete" : "Delete" }</small>
+            </div>            
+            <div className="ui black compact button" >
+              <AssetUrlGenerator asset={asset} /><small>&nbsp;URL</small>
             </div>
           </div>
-        </div>
         }
       </div>
       );

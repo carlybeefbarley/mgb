@@ -54,7 +54,8 @@ export const AssetKinds = {
   "_mgbui":  { name: "MGB UI",  disable: false, longName: "MGB UI Mockup",   icon: "code", description: "HTML using Semantic UI for mocking up MGB UI" },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},
-  getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")}
+  getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")},
+  getName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : "Unknown Asset Kind")}
 };
 
 // Suggested separator to be used for query.kinds. Note that "," and "+" and others can get messy

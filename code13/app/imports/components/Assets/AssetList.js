@@ -24,7 +24,7 @@ export default  AssetList = React.createClass({
     })
 
     return (
-      <div className="ui four doubling cards">
+      <div className="ui cards">
         {assetCards}
       </div>
     );

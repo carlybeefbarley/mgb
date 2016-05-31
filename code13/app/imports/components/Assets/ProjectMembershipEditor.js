@@ -34,7 +34,7 @@ export default ProjectMembershipEditor = React.createClass({
     // Create the       | (edit) > |      UI
     return (
       <div>
-        {projectNames} (edit)
+        <i className="sitemap icon"></i> {projectNames} 
         <div className="ui simple dropdown item">        
           <i className="dropdown icon"></i>
           <div className="ui menu">

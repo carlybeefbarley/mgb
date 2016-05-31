@@ -1,4 +1,3 @@
-
 // This is the data structure that drives the WhatsNew.js control for MGB2
 
 // TODO - support a way to have this on a static site. Concept: http://blog.trello.com/category/new-stuff/ 
@@ -10,6 +9,7 @@
 //            bugfix:       Fix a bug
 
 // For iteration, I just simply use the number of commits (including this) at https://github.com/devlapse/mgb
+
 
 export default mgbReleaseInfo = {
   "releases":

@@ -6,3 +6,13 @@
 #root { 
   height: auto;
 }
+
+.no-events{
+  pointer-events: none;
+}
+
+.tilemap-tile{
+  margin: -1px;
+  border: solid 1px;
+  position: absolute;
+}

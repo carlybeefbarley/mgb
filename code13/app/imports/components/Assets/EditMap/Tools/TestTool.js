@@ -7,17 +7,21 @@ export default class TestTool extends React.Component {
   }
 
   render() {
+    let txt = [];
+    for(let i=0; i<this.props.info.text.length; i++){
+      txt.push(<div key={i}><i className="info icon"></i>{this.props.info.text[i]}</div>);
+    }
     return (
       <div className="mgbAccordionScroller">
         <div className="ui fluid styled accordion">
           <div className="active title">
-              <span className="explicittrigger">
-                <i className="dropdown icon"></i>
-                Test Tool
-                </span>
+            <span className="explicittrigger">
+              <i className="dropdown icon"></i>
+              {this.props.info.title}
+            </span>
           </div>
           <div className="active content">
-            Here be inputs
+            {txt}
           </div>
         </div>
       </div>

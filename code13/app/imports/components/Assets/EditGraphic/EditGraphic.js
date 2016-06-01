@@ -32,7 +32,7 @@ const tools = {
 
 
 export default class EditGraphic extends React.Component {
-  // static PropTypes = {
+  // static PropTypes = {   // Note - static requires Ecmascript 7
   //   asset: PropTypes.object,
   //   handleContentChange: PropTypes.function,
   //   canEdit: PropTypes.bool
@@ -94,8 +94,8 @@ export default class EditGraphic extends React.Component {
 
     // Tool button initializations
     this.activateToolPopups();
-    this.mgb_toolActive = false;
-    this.mgb_toolChosen = null;
+    this.mgb_toolActive = false;  // probably should be React state.__
+    this.mgb_toolChosen = null;   // probably should be React state.__
     
     // Some constants we will use
     this.mgb_MAX_BITMAP_WIDTH = 1024
@@ -127,8 +127,8 @@ export default class EditGraphic extends React.Component {
     })
   }
 
-
-  initDefaultContent2()       // TODO - this isn't ideal React since it is messing with props. TODO: clean this up
+// TODO: DGOLDS to clean this up
+  initDefaultContent2()       // TODO - this isn't ideal React since it is messing with props.
   {
     let asset = this.props.asset
     if (!asset.hasOwnProperty("content2") || !asset.content2.hasOwnProperty('width')) {
@@ -149,7 +149,9 @@ export default class EditGraphic extends React.Component {
     this.loadPreviewsFromAssetAsync()
   }
 
-
+  /** Stash references to the preview canvases after initial render and subsequent renders
+   * 
+   */
   getPreviewCanvasReferences()
   {
     this.previewCanvasArray = []                // Preview canvas for this animation frame
@@ -169,8 +171,8 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  /// Note that this has to use Image.onload so it will complete asynchronously.
-  /// TODO: Add an on-complete callback including a timeout handler to support better error handling and avoid races
+  // Note that this has to use Image.onload so it will complete asynchronously.
+  // TODO(DGOLDS): Add an on-complete callback including a timeout handler to support better error handling and avoid races
   loadPreviewsFromAssetAsync()
   {
     let c2 = this.props.asset.content2;
@@ -193,13 +195,14 @@ export default class EditGraphic extends React.Component {
         _img.src = dataURI    // Trigger load & onload -> data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
       }
       else {
+        // TODO: May need some error indication here
         this.updateEditCanvasFromSelectedPreviewCanvas();
       }
     }
   }
 
 
-  updateEditCanvasFromSelectedPreviewCanvas()   // TODO: This still has some smoothing issues
+  updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): This still has some smoothing issues. Do i still need the per-browser flags?
   {
     let w = this.previewCanvasArray[this.state.selectedFrameIdx].width
     let h = this.previewCanvasArray[this.state.selectedFrameIdx].height
@@ -211,8 +214,6 @@ export default class EditGraphic extends React.Component {
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
     this.editCtx.drawImage(this.previewCanvasArray[this.state.selectedFrameIdx], 0, 0, w, h, 0, 0, w*s, h*s)
   }
-
-
 
   // A plugin-api for the graphic editing tools in Tools.js
 
@@ -340,6 +341,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
+// TODO(Guntis): Replace Terrible UI with the four buttons! 
   handleResize(dw, dh, force = false)
   {
     if (!this.props.canEdit)
@@ -405,6 +407,8 @@ export default class EditGraphic extends React.Component {
     })(bin.toString(16).toLowerCase())
   }
 
+  // Might be better to have two event handlers, each with a clearer role? 
+  // This does two things: Update SB, and call on to Tool 
   handleMouseMove(event)
   {
     // Update statusBar
@@ -445,6 +449,8 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+
+  // TODO: DGolds to provide shortcut key subsystem
   //handleKeyDown(event)
   //{
   //  for (let t of tools)
@@ -455,7 +461,8 @@ export default class EditGraphic extends React.Component {
   //}
 
 
-// Tool selection action
+// Tool selection action. 
+// TODO: This sometimes doesn't work. Look again at moving this state to React state for simplicity
 
   handleToolSelected(tool, e)
   {
@@ -509,7 +516,7 @@ export default class EditGraphic extends React.Component {
     fN.push(newFrameName)
     this.props.asset.content2.frameData.push([])
     this.handleSave('Add frame to graphic')
-    this.forceUpdate()
+    this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
   }
 
 
@@ -618,6 +625,8 @@ export default class EditGraphic extends React.Component {
   }
 
   // SAVE and UNDO
+  
+  // TODO: REDO function!
 
 
   initDefaultUndoStack()
@@ -649,9 +658,6 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-
-  // TODO: 1: Solve issue that this always has the latest saved version on the stack, so first undo is a NO-OP
-  // TODO: 2: Solve issue of Drawing not undoing. CONSOLE.LOG THE ONLOAD
   doTrimUndoStack()
   {
     let u = this.mgb_undoStack
@@ -691,7 +697,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  handleSave(changeText="change graphic")    // TODO: Maybe _.debounce() this?
+  handleSave(changeText="change graphic")    // TODO(DGOLDS): Maybe _.debounce() this?
   {
     if (!this.props.canEdit)
     { 
@@ -711,7 +717,10 @@ export default class EditGraphic extends React.Component {
     this.doSnapshotActivity()
   }
 
+
+
   /// Drag & Drop of image files over preview and editor
+  // TODO: See how to factor this into another function? Depends how much of our internal state it needs
 
   /// Allow Previews to put info in DataTransfer object so we can drag them around
   handlePreviewDragStart(idx, e) {
@@ -820,9 +829,12 @@ export default class EditGraphic extends React.Component {
       reader.readAsDataURL(files[0]);
     }
   }
+  
+  // <- End of drag-and-drop stuff
 
 
   // React Callback: render()
+  // See http://semantic-ui.com to understand the classNames we are using.
   render() {
     this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
@@ -875,7 +887,7 @@ export default class EditGraphic extends React.Component {
       </div>
     )})
 
-    // Generate tools
+    // Generate tools. TODO(Guntis - clean up wther tool active is jquery-manual state or React.state)
     let toolComponents = _.map(tools, (tool) => { return (
       <div  className={"ui button" + (this.mgb_toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}

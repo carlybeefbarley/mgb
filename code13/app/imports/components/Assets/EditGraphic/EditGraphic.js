@@ -462,24 +462,9 @@ export default class EditGraphic extends React.Component {
 
 
 // Tool selection action. 
-// TODO: This sometimes doesn't work. Look again at moving this state to React state for simplicity
-
-  handleToolSelected(tool, e)
+  handleToolSelected(tool)
   {
-    // let $toolbar = $(this.refs.toolbar)
-    // let $toolbarItem = $(e.target)
-
-    // $toolbarItem
-    //   .closest('.ui.buttons')
-    //   .find('.button')
-    //   .removeClass('active');
-
-    // $toolbarItem.addClass('active')
-
-    // this.mgb_toolChosen = tool;
-
     this.setState({ toolChosen: tool });
-    $(this.editCanvas).css('cursor', tool.editCursor);
   }
 
 
@@ -963,6 +948,7 @@ export default class EditGraphic extends React.Component {
           <div className="row" style={{"minHeight": "276px"}}>
             <div   style={{ "overflow": "scroll", "maxWidth": "600px", "maxHeight": "600px"}}>
               <canvas ref="editCanvas"
+                        style={ this.state.toolChosen ? {"cursor": this.state.toolChosen.editCursor} : {} }
                         width={zoom*c2.width}
                         height={zoom*c2.height}
                         className={"mgbEditGraphicSty_checkeredBackground mgbEditGraphicSty_thinBorder mgbEditGraphicSty_atZeroZero"}

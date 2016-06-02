@@ -12,8 +12,8 @@ export default class Tile extends React.Component {
     const style = {
       top: p.y + "px",
       left: p.x + "px",
-      width: p.width + "px",
-      height: p.height + "px",
+      //width: p.width + "px",
+      //height: p.height + "px",
     };
 
     //if(p.gidCache[p.gid]){

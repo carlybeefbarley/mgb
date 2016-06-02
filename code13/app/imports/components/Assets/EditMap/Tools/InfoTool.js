@@ -1,5 +1,5 @@
 import React from 'react';
-export default class TestTool extends React.Component {
+export default class InfoTool extends React.Component {
 
   componentDidMount() {
     $('.ui.accordion')

@@ -2,6 +2,7 @@
 import React, { PropTypes } from 'react';
 import TileMapLayer from "./TileMapLayer.js";
 import TileSet from "./Tools/TileSet.js";
+import Layers from "./Tools/Layers.js";
 import TileHelper from "./TileHelper.js";
 
 export default class MapArea extends React.Component {
@@ -35,6 +36,13 @@ export default class MapArea extends React.Component {
 
     this.activeLayer = 0;
     this.activeTileset = 0;
+    this.state = {
+      preview: false
+    };
+    this.preview = {
+      x: 5,
+      y: 45
+    };
     this.generateImages();
   }
 
@@ -147,7 +155,8 @@ export default class MapArea extends React.Component {
 
   updateImages(){
     const map = this.map;
-    if(!map){
+    // map has not loaded
+    if(!map || !map.tilesets){
       return;
     }
 
@@ -178,11 +187,15 @@ export default class MapArea extends React.Component {
           ts.tilewidth, ts.tileheight
         );
 
-        this.gidCache[fgid + i] = canvas.toDataURL();
+        this.gidCache[fgid + i] = {
+          url: canvas.toDataURL(),
+          ts: ts
+        };
       }
       index++;
     }
 
+    this.addLayerTool();
     this.addTilesetTool();
     if(this.errors.length) {
       this.addTool("error", "Errors", this.errors);
@@ -194,9 +207,12 @@ export default class MapArea extends React.Component {
     this.forceUpdate();
   }
 
+  addLayerTool(){
+    this.addTool("Layers", "Layers", {map: this}, Layers)
+  }
   addTilesetTool(){
     let ts = this.map.tilesets[this.activeTileset]
-    this.addTool("Tileset",  ts.name, {map:this}, TileSet);
+    this.addTool("Tileset", "Tilesets", {map:this}, TileSet);
   }
   /*
   * TODO: move tools to the EditMap.js
@@ -222,39 +238,11 @@ export default class MapArea extends React.Component {
 
   /* TODO: fill from selection */
   handleMapClicked(e, key){
-    console.log($(e.target).data("key"), e.target.key);
+
     const sel = this.selection[0];
     const layer = this.map.layers[this.activeLayer];
-
     layer.data[key] = sel;
 
-    this.forceUpdate();
-  }
-
-  renderMap(){
-    const map = this.map;
-
-    if(!map || !map.layers) {
-      return (<div className="map-empty" />);
-    }
-    else{
-      let layers = [];
-      for (var i = 0; i < map.layers.length; i++) {
-        layers.push(<TileMapLayer
-          data={map.layers[i]}
-          key={i}
-          map={this.map}
-          gidCache={this.gidCache}
-          onClick={this.handleMapClicked.bind(this)}
-          />);
-      }
-      return (<div className="map-filled" style={{
-        width: (map.width * map.tilewidth)+"px",
-        height: (map.height * map.tileheight)+"px",
-        position: "relative",
-        margin: "10px 0"
-      }}>{layers}</div>);
-    }
   }
 
   // tileset calls this method..
@@ -275,11 +263,85 @@ export default class MapArea extends React.Component {
     this.selection.length = 0;
   }
 
+  togglePreviewState(){
+    this.refs.mapElement.style.transform = "";
+    this.lastEvent = null;
+    this.setState({
+      preview: !this.state.preview
+    });
+  }
+
+  movePreview(e){
+    if(this.state.preview && e.button == 1) {
+      if(!this.lastEvent){
+        this.lastEvent = {
+          pageX: e.pageX,
+          pageY: e.pageY
+        };
+        this.refs.mapElement.style.transition = "0s";
+        return;
+      }
+
+      this.preview.y += this.lastEvent.pageX - e.pageX;
+      this.preview.x -= this.lastEvent.pageY - e.pageY;
+
+      this.lastEvent.pageX = e.pageX;
+      this.lastEvent.pageY = e.pageY;
+      this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
+
+    }
+  }
+
+  handleMouseUp(e){
+    this.lastEvent = null;
+    this.refs.mapElement.style.transition = "0.3s";
+  }
+
+  componentDidMount(){
+
+  }
+
+  renderMap(){
+    const map = this.map;
+
+    if(!map || !map.layers) {
+      return (<div className="map-empty" />);
+    }
+    else{
+      let layers = [];
+      for (var i = 0; i < map.layers.length; i++) {
+        if(!map.layers[i].visible){
+          continue;
+        }
+        layers.push(<TileMapLayer
+          data={map.layers[i]}
+          key={i}
+          map={this}
+          active={this.activeLayer == i}
+          onClick={this.handleMapClicked.bind(this)}
+          />);
+      }
+      return (
+        <div className={this.state.preview ? "map-filled preview" : "map-filled"}
+             ref="mapElement"
+             style={{
+              width: (map.width * map.tilewidth)+"px",
+              height: (map.height * map.tileheight)+"px",
+              position: "relative",
+              margin: "10px 0"
+          }}>{layers}</div>
+      );
+    }
+  }
+
   render (){
     let styles = [];
     const keys = Object.keys(this.gidCache);
+
+    styles.push(".tilemap-tile { width: " + this.map.tilewidth + "px; height: " + this.map.tileheight + "px;}");
     keys.forEach((k) => {
-      styles.push(".tilemap-tile.gid-" + k + "{ background-image: url('"+ this.gidCache[k]+ "');}");
+      let c = this.gidCache[k];
+      styles.push(".tilemap-tile.gid-" + k + "{ background-image: url('"+ c.url +"'); width: " +c.ts.tilewidth+ "px; height: " +c.ts.tileheight+ "px;}");
     });
 
     return (
@@ -287,10 +349,16 @@ export default class MapArea extends React.Component {
         className="tilemap-wrapper"
         onDrop={this.importFromDrop.bind(this)}
         onDragOver={this.prepareForDrag.bind(this)}
+        onMouseMove={this.movePreview.bind(this)}
+        onMouseUp={this.handleMouseUp.bind(this)}
         >
         <style>{styles}</style>
         <button className="ui primary button"
           >Drop here to import</button>
+        <button className="ui button"
+          onClick={this.togglePreviewState.bind(this)}
+          >Preview</button>
+
         {this.renderMap()}
       </div>
     )

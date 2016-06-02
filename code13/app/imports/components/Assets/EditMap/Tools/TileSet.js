@@ -16,13 +16,19 @@ export default class TileSet extends React.Component {
     const map = this.props.info.content.map;
     const ts = map.map.tilesets[map.activeTileset];
 
+    // some kind of jquery bug...
+    // const gid = $el.data("gid");
+    const gid = e.target.getAttribute("data-gid");
+
     let wasActive = $el.hasClass("active");
     map.clearActiveSelection();
     $el.parent().find(".active").removeClass("active");
+
     if(!wasActive){
       $el.addClass("active");
-      map.addToActiveSelection($el.data("gid"));
+      map.addToActiveSelection(gid);
     }
+    console.log("Selected tile:", gid);
   }
 
   selectTileset(tilesetNum){
@@ -57,10 +63,11 @@ export default class TileSet extends React.Component {
 
     for(let i=0; i<tss.length; i++){
       tilesets.push(
-        <span className="item"
-              onClick={this.selectTileset.bind(this, i)}
-              key={i}
-          >{tss[i].name} {tss[i].imagewidth}x{tss[i].imageheight}</span>
+        <a className={tss[i] === ts ? "item active" : "item" }
+           href="javascript:;"
+           onClick={this.selectTileset.bind(this, i)}
+           key={i}
+          >{tss[i].name} {tss[i].imagewidth}x{tss[i].imageheight}</a>
       );
     }
     /* TODO: save active tileset and use only that as active */
@@ -70,12 +77,13 @@ export default class TileSet extends React.Component {
           <div className="active title">
             <span className="explicittrigger">
               <i className="dropdown icon"></i>
-              Tilesets
+              {this.props.info.title}
             </span>
             <div className="ui simple dropdown item"
-                 style={{float:"right"}}
+                 style={{float:"right", paddingRight: "20px"}}
               >
-              {ts.name} {ts.imagewidth}x{ts.imageheight}<i className="dropdown icon"></i>
+              <i className="dropdown icon"></i>{ts.name} {ts.imagewidth}x{ts.imageheight}
+              <div className="floating ui tiny green label">{tss.length}</div>
               <div className="menu">
                 {tilesets}
               </div>

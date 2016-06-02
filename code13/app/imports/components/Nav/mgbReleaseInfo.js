@@ -15,6 +15,39 @@ export default mgbReleaseInfo = {
   "releases":
   [
         
+    
+    { 
+      "timestamp":     "Thu Jun 02 2016 10:35:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "354"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "assets.map",
+          "type":           "feature",
+          "changeName":     "Map editor",
+          "changeSummary":  "First parts of Map editor in place - import, render and show tileMaps",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "assets.graphics",
+          "type":           "bugfix",
+          "changeName":     "Tool selection fixed",
+          "changeSummary":  "Fixed problems where tool selection was inconsistent",
+          "otherUrls":      []
+        }
+              
+      ]             
+    },    
+        
     { 
       "timestamp":     "Mon May 30 2016 23:25:00 GMT-0700 (PDT)",
       

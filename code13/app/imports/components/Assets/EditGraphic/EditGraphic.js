@@ -47,7 +47,9 @@ export default class EditGraphic extends React.Component {
         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
         // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
         fg:    { hex: "00ff00", rgb: {r: 0, g: 255, b:0, a: 1} }    // Alpha = 0...1
-      }
+      },
+      toolActive: false,
+      toolChosen: null
     }
   }
 
@@ -94,8 +96,6 @@ export default class EditGraphic extends React.Component {
 
     // Tool button initializations
     this.activateToolPopups();
-    this.mgb_toolActive = false;  // probably should be React state.__
-    this.mgb_toolChosen = null;   // probably should be React state.__
     
     // Some constants we will use
     this.mgb_MAX_BITMAP_WIDTH = 1024
@@ -365,8 +365,8 @@ export default class EditGraphic extends React.Component {
 
   handleMouseDown(event) {
     
-    if (this.mgb_toolChosen !== null) {
-      if (this.mgb_toolChosen.changesImage === true)
+    if (this.state.toolChosen !== null) {
+      if (this.state.toolChosen.changesImage === true)
       {
         if (!this.props.canEdit)
         { 
@@ -374,14 +374,14 @@ export default class EditGraphic extends React.Component {
           return
         }
 
-        this.doSaveStateForUndo(this.mgb_toolChosen.name)   // So that tools like eyedropper don't save and need undo
+        this.doSaveStateForUndo(this.state.toolChosen.name)   // So that tools like eyedropper don't save and need undo
       }
-      if (this.mgb_toolChosen.supportsDrag === true)
-        this.mgb_toolActive = true
+      if (this.state.toolChosen.supportsDrag === true)
+        this.setState({ toolActive: true });
 
-      this.mgb_toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
+      this.state.toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
 
-      if (this.mgb_toolChosen.supportsDrag === false && this.mgb_toolChosen.changesImage === true)
+      if (this.state.toolChosen.supportsDrag === false && this.state.toolChosen.changesImage === true)
         this.handleSave(`Drawing`)   // This is a one-shot tool, so save it's results now
     }
   }
@@ -422,19 +422,19 @@ export default class EditGraphic extends React.Component {
     this.setStatusBarInfo(`Mouse at ${x},${y}`, `${colorCSSstring}&nbsp;&nbsp;Alpha=${d[3]}`, colorCSSstring)
 
     // Tool api handoff
-    if (this.mgb_toolChosen !== null && this.mgb_toolActive === true ) {
-      this.mgb_toolChosen.handleMouseMove(this.collateDrawingToolEnv(event))
+    if (this.state.toolChosen !== null && this.state.toolActive === true ) {
+      this.state.toolChosen.handleMouseMove(this.collateDrawingToolEnv(event))
     }
   }
 
 
   handleMouseUp(event)
   {
-    if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
-      this.mgb_toolChosen.handleMouseUp(this.collateDrawingToolEnv(event))
-      if (this.mgb_toolChosen.changesImage === true)
+    if (this.state.toolChosen !== null && this.state.toolActive === true) {
+      this.state.toolChosen.handleMouseUp(this.collateDrawingToolEnv(event))
+      if (this.state.toolChosen.changesImage === true)
         this.handleSave(`Drawing`)
-      this.mgb_toolActive = false
+      this.setState({ toolActive: false });
     }
   }
 
@@ -442,10 +442,10 @@ export default class EditGraphic extends React.Component {
   handleMouseLeave(event)
   {
     this.setStatusBarInfo()
-    if (this.mgb_toolChosen !== null && this.mgb_toolActive === true) {
-      this.mgb_toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
+    if (this.state.toolChosen !== null && this.state.toolActive === true) {
+      this.state.toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
       this.handleSave(`Drawing`)
-      this.mgb_toolActive = false
+      this.setState({ toolActive: false });
     }
   }
 
@@ -466,17 +466,19 @@ export default class EditGraphic extends React.Component {
 
   handleToolSelected(tool, e)
   {
-    let $toolbar = $(this.refs.toolbar)
-    let $toolbarItem = $(e.target)
+    // let $toolbar = $(this.refs.toolbar)
+    // let $toolbarItem = $(e.target)
 
-    $toolbarItem
-      .closest('.ui.buttons')
-      .find('.button')
-      .removeClass('active');
+    // $toolbarItem
+    //   .closest('.ui.buttons')
+    //   .find('.button')
+    //   .removeClass('active');
 
-    $toolbarItem.addClass('active')
+    // $toolbarItem.addClass('active')
 
-    this.mgb_toolChosen = tool;
+    // this.mgb_toolChosen = tool;
+
+    this.setState({ toolChosen: tool });
     $(this.editCanvas).css('cursor', tool.editCursor);
   }
 
@@ -887,9 +889,8 @@ export default class EditGraphic extends React.Component {
       </div>
     )})
 
-    // Generate tools. TODO(Guntis - clean up wther tool active is jquery-manual state or React.state)
     let toolComponents = _.map(tools, (tool) => { return (
-      <div  className={"ui button" + (this.mgb_toolChosen === tool ? " active" : "" )}
+      <div  className={"ui button" + (this.state.toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}
             key={tool.name}
             data-title={tool.name + " (" + tool.shortcutKey + ")"}

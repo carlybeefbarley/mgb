@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import MapEditor from "./MapEditor.js";
-import TestTool from "./Tools/TestTool.js";
+import MapArea from "./MapArea.js";
+import InfoTool from "./Tools/InfoTool.js";
 
 
 export default class EditMap extends React.Component {
@@ -28,8 +28,8 @@ export default class EditMap extends React.Component {
   }
   
   handleOnChange(updatedSourceCodeAsString) {
-    let newC2 = { src: updatedSourceCodeAsString }
-    this.props.handleContentChange( newC2, "" ) // TODO: Thumbnail is second param
+    let newC2 = { src: updatedSourceCodeAsString };
+    this.props.handleContentChange( newC2, "" ); // TODO: Thumbnail is second param
   }
 
   handleSave(e){
@@ -45,15 +45,17 @@ export default class EditMap extends React.Component {
 
     const asset = this.props.asset;
     let tools = [];
-    // TODO: separate tools by type - and fallback to TestTool (and rename to InfoTool)
+    // TODO: separate tools by type - and fallback to InfoTool
     Object.keys(this.state.tools).forEach((tool) => {
-      tools.push(<TestTool asset={asset} info={this.state.tools[tool]} key={tool} />)
+      const Element = this.state.tools[tool].type || InfoTool;
+
+      tools.push(<Element asset={asset} info={this.state.tools[tool]} key={tool} />)
     });
 
     return (
       <div className="ui grid">
         <div className="ten wide column">
-          <MapEditor asset={asset} parent={this}>{asset}</MapEditor>
+          <MapArea asset={asset} parent={this}>{asset}</MapArea>
           <button className="ui primary button"
                   onClick={(e)=>{this.handleSave(e)}}
             >Save</button>

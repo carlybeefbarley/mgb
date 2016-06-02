@@ -3,6 +3,12 @@ import Tile from './Tile.js';
 import TileHelper from "./TileHelper.js";
 
 export default class TileMapLayer extends React.Component {
+
+
+  handleClick (e){
+    const index = $(e.target).data("index");
+    this.props.onClick(e, index);
+  }
   /*
     drawing on canvas should be faster,
     but requires extra work.. picking, zooming etc
@@ -22,6 +28,7 @@ export default class TileMapLayer extends React.Component {
         tiles.push(<Tile
             gid       = {d[i]}
             key       = {i}
+            index     = {i}
             width     = {map.tilewidth}
             height    = {map.tileheight}
             x         = {pos.x}
@@ -31,6 +38,9 @@ export default class TileMapLayer extends React.Component {
       }
     }
 
-    return (<div data-name={this.props.data.name}>{tiles}</div>);
+    return (<div
+      data-name={this.props.data.name}
+      onClick={this.handleClick.bind(this)}
+      >{tiles}</div>);
   }
 }

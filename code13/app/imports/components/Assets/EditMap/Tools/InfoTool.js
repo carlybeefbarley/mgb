@@ -7,9 +7,9 @@ export default class TestTool extends React.Component {
   }
 
   render() {
-    let txt = [];
-    for(let i=0; i<this.props.info.text.length; i++){
-      txt.push(<div key={i}><i className="info icon"></i>{this.props.info.text[i]}</div>);
+    let content = [];
+    for(let i=0; i<this.props.info.content.length; i++){
+      content.push(<div key={i}><i className="info icon"></i>{this.props.info.content[i]}</div>);
     }
     return (
       <div className="mgbAccordionScroller">
@@ -21,7 +21,7 @@ export default class TestTool extends React.Component {
             </span>
           </div>
           <div className="active content">
-            {txt}
+            {content}
           </div>
         </div>
       </div>

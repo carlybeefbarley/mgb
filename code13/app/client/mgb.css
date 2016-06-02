@@ -12,7 +12,20 @@
 }
 
 .tilemap-tile{
-  margin: -1px;
-  border: solid 1px;
+  border: solid 1px rgba(0,0,0,0.1);
   position: absolute;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+
+}
+.map-filled{
+  transition: .3s;
+  /*transform: rotatey(30deg) scale(0.8);*/
+  transform-style: preserve-3d;
+}
+.tilemap-wrapper{
+  perspective: 2000px;
+}
+.tileset{
+  position: relative;
 }

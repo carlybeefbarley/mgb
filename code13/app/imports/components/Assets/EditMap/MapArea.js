@@ -1,9 +1,10 @@
 "use strict";
 import React, { PropTypes } from 'react';
 import TileMapLayer from "./TileMapLayer.js";
+import TileSet from "./Tools/TileSet.js";
 import TileHelper from "./TileHelper.js";
 
-export default class MapEditor extends React.Component {
+export default class MapArea extends React.Component {
 
   constructor(props){
     super(props);
@@ -27,8 +28,13 @@ export default class MapEditor extends React.Component {
         return true;
       }
     });
+    // TODO: this should be some kind of matrix
+    this.selection = [];
     this.errors = [];
     this.gidCache = {};
+
+    this.activeLayer = 0;
+    this.activeTileset = 0;
     this.generateImages();
   }
 
@@ -114,9 +120,6 @@ export default class MapEditor extends React.Component {
   handleFileByExt_json(name, buffer){
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer));
     this.map = JSON.parse(jsonString);
-    this.setState({
-      asset: this.props.asset
-    });
     this.updateImages();
   }
 
@@ -153,6 +156,7 @@ export default class MapEditor extends React.Component {
     this.errors.length = 0;
 
     // generate small image for every available gid
+    let index = 0;
     for(let ts of map.tilesets){
       let fgid = ts.firstgid;
       if(!this.images[ts.image]){
@@ -176,25 +180,54 @@ export default class MapEditor extends React.Component {
 
         this.gidCache[fgid + i] = canvas.toDataURL();
       }
+      index++;
     }
 
+    this.addTilesetTool();
+    if(this.errors.length) {
+      this.addTool("error", "Errors", this.errors);
+    }
+    else {
+      this.removeTool("error");
+    }
+
+    this.forceUpdate();
+  }
+
+  addTilesetTool(){
+    let ts = this.map.tilesets[this.activeTileset]
+    this.addTool("Tileset",  ts.name, {map:this}, TileSet);
+  }
+  /*
+  * TODO: move tools to the EditMap.js
+  * MapArea should not handle tools
+  * */
+  addTool(id, title, content, type){
     let ptools = this.props.parent.state.tools;
-    if(this.errors.length){
-      ptools['errors'] = {
-        title: "Errors",
-        text: this.errors
-      };
+    ptools[id] = {
+      title, content, type
+    };
+    this.props.parent.setState({
+      tools: ptools
+    });
+  }
 
-      this.props.parent.setState({
-        tools: ptools
-      });
-    }
-    else{
-      delete ptools['errors'];
-      this.props.parent.setState({
-        tools: ptools
-      });
-    }
+  removeTool(id){
+    let ptools = this.props.parent.state.tools;
+    delete ptools[id];
+    this.props.parent.setState({
+      tools: ptools
+    });
+  }
+
+  /* TODO: fill from selection */
+  handleMapClicked(e, key){
+    console.log($(e.target).data("key"), e.target.key);
+    const sel = this.selection[0];
+    const layer = this.map.layers[this.activeLayer];
+
+    layer.data[key] = sel;
+
     this.forceUpdate();
   }
 
@@ -212,6 +245,7 @@ export default class MapEditor extends React.Component {
           key={i}
           map={this.map}
           gidCache={this.gidCache}
+          onClick={this.handleMapClicked.bind(this)}
           />);
       }
       return (<div className="map-filled" style={{
@@ -222,22 +256,42 @@ export default class MapEditor extends React.Component {
       }}>{layers}</div>);
     }
   }
-  /* TODO: create tileset views */
-  renderTilesets(){
-    let tilesets = [];
-    return <div className="tilesets"></div>
+
+  // tileset calls this method..
+  /* TODO: selection should be matrix - new class?*/
+  addToActiveSelection (gid){
+    const index = this.selection.indexOf(gid);
+    if(index == -1){
+      this.selection.push(gid);
+    }
+  }
+  removeFromActiveSelection(gid){
+    const index = this.selection.indexOf(gid);
+    if(index > -1){
+      this.selection.splice(index, 1);
+    }
+  }
+  clearActiveSelection(){
+    this.selection.length = 0;
   }
 
   render (){
+    let styles = [];
+    const keys = Object.keys(this.gidCache);
+    keys.forEach((k) => {
+      styles.push(".tilemap-tile.gid-" + k + "{ background-image: url('"+ this.gidCache[k]+ "');}");
+    });
+
     return (
       <div
+        className="tilemap-wrapper"
         onDrop={this.importFromDrop.bind(this)}
         onDragOver={this.prepareForDrag.bind(this)}
         >
+        <style>{styles}</style>
         <button className="ui primary button"
           >Drop here to import</button>
         {this.renderMap()}
-        {this.renderTilesets()}
       </div>
     )
   }

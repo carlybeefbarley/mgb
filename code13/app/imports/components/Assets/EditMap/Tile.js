@@ -16,14 +16,14 @@ export default class Tile extends React.Component {
       height: p.height + "px",
     };
 
-    if(p.gidCache[p.gid]){
-      style.backgroundImage = 'url(' + p.gidCache[p.gid] + ')';
-    }
-
+    //if(p.gidCache[p.gid]){
+      //style.backgroundImage = 'url(' + p.gidCache[p.gid] + ')';
+    //}
+    let className = "tilemap-tile gid-" + p.gid;
     return (<div
-      className="tilemap-tile"
-      onClick={this.click.bind(this)}
+      className={className}
       data-gid={p.gid}
+      data-index={p.index}
       style={style}></div>);
   }
 }

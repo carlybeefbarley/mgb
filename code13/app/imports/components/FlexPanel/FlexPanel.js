@@ -66,9 +66,15 @@ export default FlexPanel = React.createClass({
       width: flexPanelWidth, 
       marginBottom: 0
     }
+
+    const panelScrollContainerStyle = {
+      height: "100%", 
+      overflow: "scroll"
+    }
     
     const panelInnerStyle = {
-      padding: "4px"
+      padding: "4px",
+      height: "auto" //
     }
     
     // The the flex Panel choice isn't recognized, just default to using our first one
@@ -78,6 +84,7 @@ export default FlexPanel = React.createClass({
     const ElementFP = flexPanelChoice.el    // Can be null
       
     return  <div className="basic segment" style={panelStyle}>
+    
               <div className="ui attached inverted menu" style={miniNavStyle}>
                 <div className="ui simple dropdown item" key="dropdown">
                   <i className="chevron down icon" ></i>
@@ -100,14 +107,16 @@ export default FlexPanel = React.createClass({
                   <i  className={"chevron " + (this.props.flexPanelIsVisible ? "right" : "left") +" icon"}></i>
                 </a>               
               </div>
-              <div style={panelInnerStyle}>
-                
-                { !ElementFP ? <div className="ui label">TODO: {flexPanelHdr} FlexPanel</div> : 
-                  <ElementFP  currUser={this.props.currUser} 
-                            user={this.props.user} 
-                            activity={this.props.activity}
-                            flexPanelWidth={this.props.flexPanelWidth} /> 
-                }
+
+              <div style={panelScrollContainerStyle}>
+                <div style={panelInnerStyle}>           
+                  { !ElementFP ? <div className="ui label">TODO: {flexPanelHdr} FlexPanel</div> : 
+                    <ElementFP  currUser={this.props.currUser} 
+                              user={this.props.user} 
+                              activity={this.props.activity}
+                              flexPanelWidth={this.props.flexPanelWidth} /> 
+                  }
+                </div>
               </div>
             </div>  
   }

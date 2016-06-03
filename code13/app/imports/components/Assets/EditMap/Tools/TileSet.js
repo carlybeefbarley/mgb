@@ -2,7 +2,7 @@
 import React from 'react';
 import Tile from '../Tile.js';
 import TileHelper from '../TileHelper.js';
-
+import TilesetControls from "./TilesetControls.js";
 
 export default class TileSet extends React.Component {
 
@@ -28,7 +28,6 @@ export default class TileSet extends React.Component {
       $el.addClass("active");
       map.addToActiveSelection(gid);
     }
-    console.log("Selected tile:", gid);
   }
 
   selectTileset(tilesetNum){
@@ -36,9 +35,32 @@ export default class TileSet extends React.Component {
     this.forceUpdate();
   }
 
+  renderEmpty(){
+    return (
+      <div className="mgbAccordionScroller">
+        <div className="ui fluid styled accordion">
+          <div className="active title">
+            <span className="explicittrigger">
+              <i className="dropdown icon"></i>
+              {this.props.info.title}
+            </span>
+          </div>
+          <div className="active content">
+            <TilesetControls tileset={this} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const map = this.props.info.content.map;
     const tss = map.map.tilesets;
+
+    if(!tss.length){
+      return this.renderEmpty();
+    }
+
     const ts = tss[map.activeTileset];
 
     let tiles = [];
@@ -49,7 +71,7 @@ export default class TileSet extends React.Component {
     let fgid = ts.firstgid;
 
     for(let i=0; i<tot; i++){
-      TileHelper.getTilePos(i, Math.floor(ts.imagewidth / ts.tilewidth), ts.tilewidth, ts.tileheight, pos);
+      TileHelper.getTilePosWithOffsets(i, Math.floor(ts.imagewidth / ts.tilewidth), ts.tilewidth, ts.tileheight, 0, 0, pos);
 
       tiles.push(<Tile
         gid       = {fgid + i}
@@ -82,7 +104,7 @@ export default class TileSet extends React.Component {
             <div className="ui simple dropdown item"
                  style={{float:"right", paddingRight: "20px"}}
               >
-              <i className="dropdown icon"></i>{ts.name} {ts.imagewidth}x{ts.imageheight}
+              <i className="dropdown icon"></i>{ts.name.substr(-20)} {ts.imagewidth}x{ts.imageheight}
               <div className="floating ui tiny green label">{tss.length}</div>
               <div className="menu">
                 {tilesets}
@@ -91,10 +113,13 @@ export default class TileSet extends React.Component {
 
           </div>
           <div className="active content">
+            <TilesetControls tileset={this} />
             <div
               className="tileset"
               style={{
-                height: ts.imageheight+"px"
+                height: ts.imageheight+"px",
+                overflow: "auto",
+                clear: "both"
               }}
               onClick={this.selectTile.bind(this)}>
             {tiles}

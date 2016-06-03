@@ -64,9 +64,18 @@ export default class MapArea extends React.Component {
   generateImages(cb){
     const imgs = this.props.asset.content2.images;
     if(!imgs){
+      if(typeof cb == "function"){
+        cb();
+      }
       return false;
     }
     const keys = Object.keys(imgs);
+    if(!keys.length){
+      if(typeof cb == "function"){
+        cb();
+      }
+      return false;
+    }
     console.log("going to load:", ...keys);
     let loaded = 0;
     keys.forEach((i, index) => {

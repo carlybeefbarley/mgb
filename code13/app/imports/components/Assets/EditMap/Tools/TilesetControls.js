@@ -29,7 +29,11 @@ export default class TilesetControls extends React.Component {
     document.body.onpaste = this.oldpaste;
   }
 
-  addImageFromInput() {
+  addImageFromInput(e) {
+    // enter key
+    if(e.which != 13){
+      return;
+    }
     console.log("adding image:", this.refs.input.value);
     let img = new Image();
     img.onload = (e) => {
@@ -71,7 +75,7 @@ export default class TilesetControls extends React.Component {
               top: "-10px"
             }}
           >
-          <input type="text" onChange={this.addImageFromInput.bind(this)} ref="input" style={{
+          <input type="text" onKeyUp={this.addImageFromInput.bind(this)} ref="input" style={{
             fontSize: "15px"
           }} />
           {/*<button className="ui floated icon button">

@@ -40,6 +40,7 @@ export default class EditGraphic extends React.Component {
 
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
@@ -886,6 +887,19 @@ export default class EditGraphic extends React.Component {
       </div>);
     });
 
+    let spriteLayers = _.map(this.props.asset.content2.frameNames, (layer) => { return (
+      <tr>
+        <td><i className="unhide icon"></i></td>
+        <td><i className="lock icon"></i></td>
+        <td>{layer}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><i className="remove icon"></i></td>
+      </tr>
+    )});
+
     // Make element
     return (
       <div className="ui grid">
@@ -1028,6 +1042,65 @@ export default class EditGraphic extends React.Component {
           </div>
           <a className="ui compact button" onClick={this.handleAddFrame.bind(this)}>Add Frame</a>
         </div>
+
+
+        {/*** Layers and frames ***/}
+        <div className="ui sixteen wide column">
+
+          <table className="ui celled padded table">
+            <thead>
+              <tr>
+                <th width="32px"><i className="unhide icon"></i></th>
+                <th width="32px"><i className="lock icon"></i></th>
+                <th width="150px"></th>
+                <th width="10px"></th>
+                <th width="10px"></th>
+                <th width="10px"></th>
+                <th></th>
+                <th width="32px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><i className="unhide icon"></i></td>
+                <td><i className="lock icon"></i></td>
+                <td>New Layer 1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><i className="remove icon"></i></td>
+              </tr>
+              {spriteLayers}
+            </tbody>
+          </table>
+                
+
+        {/***
+            <div className="ui celled list">
+
+              <div className="item">
+                <div className="ui horizontal list">
+                  <div className="item"><i className="unhide icon"></i></div>
+                  <div className="item"><i className="lock icon"></i></div>
+                  <div className="item"><div className="header">New Layer 1</div></div>
+                  <div className="item"><i className="circle icon"></i></div>    
+                  <div className="item">
+                    <div className="ui celled horizontal list">
+                      <div className="item">t</div>
+                      <div className="item">f</div>
+                      <div className="item">f</div>
+                    </div>
+                  </div>
+                  <div className="item right floated"><i className="remove icon"></i></div> 
+                </div>
+              </div>
+
+            </div>
+
+        ***/}
+        </div>
+
 
       </div>
     )

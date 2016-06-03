@@ -40,10 +40,11 @@ export default class EditGraphic extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log(props);
+    console.log(props.asset.content2);
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
+      selectedLayerIdx: 0,
       selectedColors:   {
         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
         // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
@@ -62,6 +63,8 @@ export default class EditGraphic extends React.Component {
   // content2.layerNames[layerIndex]     // array of layer names (content is string)
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
+  // content2.frameData[layerIndex][frameIndex]   /// this should be correct (first layerIndex, then frameIndex)
+
 
   // React Callback: componentDidMount()
   componentDidMount() {
@@ -507,6 +510,24 @@ export default class EditGraphic extends React.Component {
     this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
   }
 
+  handleAddLayer(){
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder();
+      return;
+    }
+    this.doSaveStateForUndo("Add Layer");
+    let lN = this.props.asset.content2.layerNames;
+    let newLayerName = "Layer " + (lN.length+1).toString();
+    lN.push(newLayerName);
+    let fD = this.props.asset.content2.frameData;
+    for(let i; i<fD.length; i++){
+      fD[i][lN.length-1] = null;
+    }
+    this.handleSave('Add layer to graphic');
+    this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+  }
+
 
   doSwapCanvases(i,j)
   {
@@ -609,7 +630,12 @@ export default class EditGraphic extends React.Component {
   handleSelectFrame(frameIndex)
   {
     this.doSnapshotActivity(frameIndex)
-    this.setState( { selectedFrameIdx: frameIndex} )
+    this.setState( { selectedFrameIdx: frameIndex}  )
+  }
+
+  handleSelectLayer(layerIndex){
+    // this.doSnapshotActivity(layerIndex);         // TODO guntis need to understand what is snapshotActivity
+    this.setState( { selectedLayerIdx: layerIndex } );
   }
 
   // SAVE and UNDO
@@ -887,16 +913,26 @@ export default class EditGraphic extends React.Component {
       </div>);
     });
 
-    let spriteLayers = _.map(this.props.asset.content2.frameNames, (layer) => { return (
-      <tr>
-        <td><i className="unhide icon"></i></td>
-        <td><i className="lock icon"></i></td>
-        <td>{layer}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td><i className="remove icon"></i></td>
+    let framesTH = _.map(c2.frameNames, (frameName) => { return (
+      <th width="10px"></th>);
+    });
+
+    let framesTD = _.map(c2.frameNames, (frameName, idx) => { return (
+      <td onClick={this.handleSelectFrame.bind(this, idx)}>
+          {/* selectedFrameIdx === idx ? <i className="circle icon"></i> : "" */}
+      </td>);
+    });
+
+    let spriteLayers = _.map(c2.layerNames, (layerName, idx) => { return (
+      <tr 
+        className={this.state.selectedLayerIdx === idx ? "active" : ""}
+        onClick={this.handleSelectLayer.bind(this, idx)} >
+          <td><i className="unhide icon"></i></td>
+          <td><i className="lock icon"></i></td>
+          <td>{layerName}</td>
+          {framesTD}
+          <td></td>
+          <td><i className="remove icon"></i></td>
       </tr>
     )});
 
@@ -1052,25 +1088,15 @@ export default class EditGraphic extends React.Component {
               <tr>
                 <th width="32px"><i className="unhide icon"></i></th>
                 <th width="32px"><i className="lock icon"></i></th>
-                <th width="150px"></th>
-                <th width="10px"></th>
-                <th width="10px"></th>
-                <th width="10px"></th>
+                <th width="200px">
+                  <i className="add circle icon" onClick={this.handleAddLayer.bind(this)}></i>
+                </th>
+                {framesTH}
                 <th></th>
                 <th width="32px"></th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><i className="unhide icon"></i></td>
-                <td><i className="lock icon"></i></td>
-                <td>New Layer 1</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><i className="remove icon"></i></td>
-              </tr>
               {spriteLayers}
             </tbody>
           </table>

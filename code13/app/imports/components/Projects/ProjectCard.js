@@ -10,7 +10,7 @@ import InlineEdit from 'react-edit-inline';
 // TODO: Make this use <Link> instead of <a> so we don't force extra loading
 
 export default ProjectCard = React.createClass({
-  propTypes : {
+  PropTypes : {
     project: PropTypes.object.isRequired,
     owner: PropTypes.object,                 // Optional user object for owner. It's best to have it, but sometimes it may be expensive to go get the user record so let's not force it
     canEdit: PropTypes.bool,

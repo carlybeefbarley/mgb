@@ -10,16 +10,19 @@ import Azzets from './Assets';
 import Projects from './Projects';
 
 import NotFoundPage from './NotFoundPage';
-
+import urlMaker from './urlMaker';
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
 // Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md 
 
+// Conventions for this MGB site are encoded in /imports/routes/urlMaker.js
+// MAINTAIN: Keep paths here in sync with imports/routes/urlMaker.js
+
 const history = createBrowserHistory()
 
 Meteor.startup(function () {
-    ReactDOM.render(
+  const router = 
     <Router history={browserHistory}>
       <Route component={App}>
         <Route path="/" component={Home} name="MyGameBuilder v2" />
@@ -37,14 +40,14 @@ Meteor.startup(function () {
         <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Overview" />
         <Route path="assets" component={Azzets.UserAssetList} name="Assets" />
 
-        <Route path="assetEdit/:id" component={Azzets.AssetEdit} name="Edit Asset" />
-        
+        <Route path="assetEdit/:id" component={Azzets.AssetEdit} name="Edit Asset" />        
 
         <Route path="*" component={NotFoundPage} />
       </Route>
-    </Router>,
-    document.getElementById('root')
-  );
+    </Router>
+    
+  urlMaker.setKnownRoutes(router)
+  ReactDOM.render(router, document.getElementById('root'))    
 });
 
 

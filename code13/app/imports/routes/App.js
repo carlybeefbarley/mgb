@@ -1,4 +1,6 @@
 import React, {Component, PropTypes} from 'react';
+import {Link, browserHistory} from 'react-router';
+
 import reactMixin from 'react-mixin';
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
@@ -9,6 +11,10 @@ import {Users, Activity} from '../schemas';
 
 import Spinner from '../components/Nav/Spinner';
 import Toast from '../components/Nav/Toast';
+import FlexPanel from '../components/FlexPanel/FlexPanel';
+
+import urlMaker from './urlMaker';
+
 
 export default App = React.createClass({
   mixins: [ReactMeteorData],
@@ -45,6 +51,7 @@ export default App = React.createClass({
 
     const {currUser, user} = this.data
 
+    // TODO(dgolds): clean up this back nav - proposal is to have a breadcrumb bar instead
     //Back arrow button in nav menu works by either grabbing "back" props in Route (see index.js in /routes)
     //Or by clearing all params/queries
     const { query, pathname } = this.props.location
@@ -52,6 +59,12 @@ export default App = React.createClass({
         !_.isEmpty(query) ? pathname :
         this.props.routes[1].back ? this.props.routes[1].back :
         null
+
+    // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
+    const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
+    const showFlexPanel = !!flexPanelQueryValue
+    const flexPanelWidth = showFlexPanel ? "220px" : "0px"
+    const mainPanelDivSty = showFlexPanel ? { marginRight: flexPanelWidth} : {}
 
     //Check permissions of current user for super-admin,
     //if user is on their own profile route,
@@ -94,6 +107,9 @@ export default App = React.createClass({
               user={currUser}
               handleToggleSidebar={this.handleToggleSidebar}
               name={this.props.routes[1].name}
+              handleFlexPanelToggle={this.handleFlexPanelToggle}
+              flexPanelWidth={flexPanelWidth}
+              flexPanelIsVisible={showFlexPanel}
               back={backLink} />
 
             {this.state.showToast ?
@@ -102,22 +118,61 @@ export default App = React.createClass({
                 type={this.state.toastType} />
             : null}
 
-            <div>
-
-              {this.props.children && React.cloneElement(this.props.children, {
-                // Make below props available to all routes.
-                user: user,
-                currUser: currUser,
-                ownsProfile: ownsProfile,
-                isSuperAdmin: isSuperAdmin,
-                showToast: this.showToast
-              })
+            { showFlexPanel && 
+              <FlexPanel 
+                currUser={currUser}
+                user={user}
+                handleFlexPanelToggle={this.handleFlexPanelToggle}  
+                flexPanelIsVisible={showFlexPanel}
+                flexPanelWidth={flexPanelWidth} 
+                selectedViewTag={flexPanelQueryValue}
+                handleFlexPanelChange={this.handleFlexPanelChange}
+                /> 
+            }
+            <div style={mainPanelDivSty}>
+              {
+                this.props.children && React.cloneElement(this.props.children, {
+                  // Make below props available to all routes.
+                  user: user,
+                  currUser: currUser,
+                  ownsProfile: ownsProfile,
+                  isSuperAdmin: isSuperAdmin,
+                  showToast: this.showToast
+                })
               }
             </div>
           </div>
       </div>
     );
   },
+
+
+  /** 
+   * This will show/hide the Flex Panel
+   */
+  handleFlexPanelToggle: function()
+  {
+    const loc = this.props.location
+    const qp = urlMaker.queryParams("app_flexPanel")
+    let newQ
+    if (loc.query[qp])
+      newQ = _.omit(loc.query, qp)
+    else
+      newQ = {...loc.query, [qp]:"1"}
+    browserHistory.push( {  ...loc,  query: newQ })
+  },
+
+
+  handleFlexPanelChange: function(newFpView)
+  {
+    const qp = urlMaker.queryParams("app_flexPanel")
+
+    const queryModifier = {[qp]: newFpView}
+    const loc = this.props.location
+    const newQ = {...loc.query, ...queryModifier }
+    browserHistory.push( {  ...loc,  query: newQ })
+  },
+
 
   showToast(content, type) {
     this.setState({

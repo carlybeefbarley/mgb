@@ -31,7 +31,7 @@ export default WhatsNew = React.createClass({
   /** React callback - after render() first called */
   componentDidMount: function ()
   {
-    $('.idea.icon')
+    $('.announcement.icon')
       .popup({
         inline   : true,
         position : 'bottom left',
@@ -62,7 +62,7 @@ export default WhatsNew = React.createClass({
 
     return (
       <div className="ui item" key="dropdown">
-        <i className={hilite + " idea icon"}></i>
+        <i className={hilite + " announcement icon"}></i>
         <div className="ui fluid popup transition hidden" style={popupStyle}>
           { this.renderNewsPopupStructure() }
         </div>

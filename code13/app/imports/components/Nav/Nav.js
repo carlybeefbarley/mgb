@@ -7,7 +7,12 @@ import WhatsNew from './WhatsNew.js';
 export default Nav = React.createClass({
   
   propTypes: {
-    user: PropTypes.object
+    user: PropTypes.object,                             // TODO: Rename this currUser since that would be consistent with usage elsewhere
+    handleFlexPanelToggle: PropTypes.func.isRequired,   // Callback for changing view. Causes URL to update
+    flexPanelIsVisible: PropTypes.bool.isRequired,
+    flexPanelWidth: PropTypes.string.isRequired,        // Typically something like "200px".
+    handleToggleSidebar: PropTypes.func.isRequired,     // Callback to allow Sidebar to show/hide
+    name: PropTypes.string                              // Page title to show in Nav bar // TODO: Replace this with something more useful
   },
 
   logout: function() {
@@ -41,7 +46,7 @@ export default Nav = React.createClass({
     const user = this.props.user;
     
     return (
-      <div className="ui attached inverted menu">
+      <div className="ui inverted menu" style={{borderRadius: "0px", marginRight: this.props.flexPanelWidth, marginBottom: "0px"}}>
           <a href="#" className="header item" onClick={this.props.handleToggleSidebar}>
             <i className="sidebar icon" ></i>
           </a>
@@ -63,8 +68,12 @@ export default Nav = React.createClass({
             // If signed in, show Profile, Logout choices as  | username |   dropdown
             [
               <NavRecentGET user={this.props.user} key="navr"/>,
-              <div className="ui simple dropdown item" key="dropdown">
-                {user.profile.name} <i className="dropdown icon"></i>
+              <div className="ui simple dropdown author item" key="dropdown" style={{paddingTop: "0px", paddingBottom: "0px"}}>
+                <img  className="ui avatar image" 
+                      src={user.profile.avatar}>
+                </img> 
+                &nbsp;{user.profile.name} 
+                <i className="dropdown icon"></i>
                 <div className="menu simple">
                   <Link to={`/user/${this.props.user._id}`} className="item">
                     <i className="user icon" /> Profile
@@ -80,8 +89,7 @@ export default Nav = React.createClass({
                     <i className="sign out icon" /> Logout
                   </a>
                 </div>
-              </div>,
-              <img src={user.profile.avatar} className="ui circular image floated" key="avatar"></img>
+              </div>
             ]
             :
             // If signed out, show   | Sign-in, Join |  options inline
@@ -90,6 +98,12 @@ export default Nav = React.createClass({
               <Link to="/join" className="item"  key="join">Join</Link>
             ]
           }
+          { !this.props.flexPanelIsVisible && 
+            <a className="header item" onClick={this.props.handleFlexPanelToggle}>
+              <i  className={"chevron " + (this.props.flexPanelIsVisible ? "right" : "left") +" icon"}></i>
+            </a>
+          }
+
         </div>
     );
   }

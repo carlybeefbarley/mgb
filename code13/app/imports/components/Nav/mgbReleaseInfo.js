@@ -15,6 +15,31 @@ export default mgbReleaseInfo = {
   "releases":
   [
         
+
+    { 
+      "timestamp":     "Thu Jun 02 2016 23:45:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "355"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.flexpanel",
+          "type":           "feature",
+          "changeName":     "FlexPanels",
+          "changeSummary":  "Added the UI framework for Flex Panels - space for extra context on the RHS of the screen, similar to slack",
+          "otherUrls":      []
+        }
+              
+      ]             
+    },            
     
     { 
       "timestamp":     "Thu Jun 02 2016 10:35:00 GMT-0700 (PDT)",

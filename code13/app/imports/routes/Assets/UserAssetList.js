@@ -45,14 +45,13 @@ export default UserAssetListRoute = React.createClass({
     ownsProfile: PropTypes.bool,
     location: PropTypes.object      // We get this from react-router
   },
- 
-
+  
   
   /** 
    * queryNormalized() takes a location query that comes in via the browser url.
-   *   Any missing or invalid paarams are replaced by defaults 
+   *   Any missing or invalid params are replaced by defaults 
    *   The result is a data structure that can be used without need for range/validity checking
-   * @param q   typically this.props.location.query  -  from react-router
+   * @param q typically this.props.location.query  -  from react-router
   */
   queryNormalized: function(q) {
     // Start with defaults

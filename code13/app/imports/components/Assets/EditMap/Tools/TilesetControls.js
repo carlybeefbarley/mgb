@@ -29,6 +29,15 @@ export default class TilesetControls extends React.Component {
     document.body.onpaste = this.oldpaste;
   }
 
+  addImageFromInput() {
+    console.log("adding image:", this.refs.input.value);
+    let img = new Image();
+    img.onload = (e) => {
+      this.addTileset(img);
+    };
+    img.src = this.refs.input.value;
+  }
+
   addTileset(img) {
     const parent = this.props.tileset;
     const map = parent.props.info.content.map;
@@ -56,7 +65,15 @@ export default class TilesetControls extends React.Component {
     return (
       <div className="ui mini">
 
-        <div className="ui icon buttons mini">
+        <div className="ui icon buttons mini"
+             style={{
+              position: "relative",
+              top: "-10px"
+            }}
+          >
+          <input type="text" onChange={this.addImageFromInput.bind(this)} ref="input" style={{
+            fontSize: "15px"
+          }} />
           {/*<button className="ui floated icon button">
            <i className="add icon"></i>
            </button>
@@ -78,6 +95,7 @@ export default class TilesetControls extends React.Component {
             >
             <i className="remove icon"></i>
           </button>
+
         </div>
       </div>
     )

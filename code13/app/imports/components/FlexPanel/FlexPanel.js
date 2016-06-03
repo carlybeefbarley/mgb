@@ -4,17 +4,16 @@ import fpActivity from './fpActivity';
 
 
 const flexPanelViews = [
-  { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: fpNavigate },
   { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
-  { tag: "focuser",   icon: "university", hdr: "Focuser"    },
+  { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: fpNavigate },
+  { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
+  { tag: "assets",    icon: "pencil",     hdr: "Assets"   },
+  { tag: "focuser",   icon: "university", hdr: "Focuser"  },
   { tag: "users",     icon: "users",      hdr: "Users"    },
   { tag: "pins",      icon: "pin",        hdr: "Pins"     },
-  { tag: "chat",      icon: "chat",       hdr: "Chat"     },
-  { tag: "assets",    icon: "pencil",     hdr: "Assets"   },
-  { tag: "projects",  icon: "sitemap",    hdr: "Projects" }
+  { tag: "chat",      icon: "chat",       hdr: "Chat"     }
 ]
 
-// TODO 0   Implement Activity FlexPanel (simply for now)
 // TODO 1   Implement Nav FlexPanel (simply for now)
 // TODO 2   Implement Assets FlexPanel (simply for now)
 // TODO 3   IMPLEMENT DragAndDrop interface for fpNavigate

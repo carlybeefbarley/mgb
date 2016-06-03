@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react';
-
 import fpNavigate from './fpNavigate';
+import fpActivity from './fpActivity';
+
 
 const flexPanelViews = [
   { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: fpNavigate },
-  { tag: "activity",  icon: "lightning",  hdr: "Activity" },
+  { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
+  { tag: "focuser",   icon: "university", hdr: "Focuser"    },
   { tag: "users",     icon: "users",      hdr: "Users"    },
   { tag: "pins",      icon: "pin",        hdr: "Pins"     },
   { tag: "chat",      icon: "chat",       hdr: "Chat"     },
@@ -12,17 +14,19 @@ const flexPanelViews = [
   { tag: "projects",  icon: "sitemap",    hdr: "Projects" }
 ]
 
-
-// TODO 0   IMPLEMENT SOME PANELS and pass props
-// TODO 1   IMPLEMENT DragAndDrop interface
-// TODO 2   Update all links to preserve app-level query params!
+// TODO 0   Implement Activity FlexPanel (simply for now)
+// TODO 1   Implement Nav FlexPanel (simply for now)
+// TODO 2   Implement Assets FlexPanel (simply for now)
+// TODO 3   IMPLEMENT DragAndDrop interface for fpNavigate
+// TODO 4   Update all links to preserve app-level query params!
 
 export default FlexPanel = React.createClass({
   
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
+    selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values
+    activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible:     PropTypes.bool.isRequired,
     handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for changing view. Causes URL to update
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
@@ -71,7 +75,7 @@ export default FlexPanel = React.createClass({
     const flexPanelChoice = _.find(flexPanelViews, ['tag', this.props.selectedViewTag]) || flexPanelViews[0]
     const flexPanelHdr = flexPanelChoice.hdr      
     const flexPanelIcon = flexPanelChoice.icon 
-    const Element = flexPanelChoice.el    // Can be null
+    const ElementFP = flexPanelChoice.el    // Can be null
       
     return  <div className="basic segment" style={panelStyle}>
               <div className="ui attached inverted menu" style={miniNavStyle}>
@@ -97,10 +101,11 @@ export default FlexPanel = React.createClass({
                 </a>               
               </div>
               <div style={panelInnerStyle}>
-                FlexPanel {flexPanelHdr}
-                { Element && 
-                  <Element  currUser={this.props.currUser} 
+                
+                { !ElementFP ? <div className="ui label">TODO: {flexPanelHdr} FlexPanel</div> : 
+                  <ElementFP  currUser={this.props.currUser} 
                             user={this.props.user} 
+                            activity={this.props.activity}
                             flexPanelWidth={this.props.flexPanelWidth} /> 
                 }
               </div>

@@ -1,11 +1,8 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
 
-import moment from 'moment';
 
 import {Link, browserHistory} from 'react-router';
-import {ActivityTypes} from '../../schemas/activity.js';
-import {AssetKinds} from '../../schemas/assets';
 
 export default class Sidebar extends Component {
 
@@ -22,7 +19,7 @@ export default class Sidebar extends Component {
   }
 
   render() {
-    const {currUser, isSuperAdmin} = this.props;
+    const {currUser} = this.props;
 
     let userContent = !!currUser ?
       (
@@ -40,44 +37,8 @@ export default class Sidebar extends Component {
         </div>
       );
 
-
-    let superAdminContent = !!isSuperAdmin ?
-    (
-      <div className="item">
-        <div className="header">Super-Admin</div>
-        <div className="menu">
-          <Link to="/super-global-dashboard" className="item">Global Dashboard</Link>
-        </div>
-      </div>
-    )
-    :
-    null;
     
     
-    let activityContent = this.props.activity.map((act, i) => { 
-      let iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
-      const ago = moment(act.timestamp).fromNow()                   // TODO: Make reactive
-
-      if (act.activityType.startsWith("user.")) {
-        return <Link to={"/user/" + act.byUserId}  className="item" key={i} title={ago}>
-                <i className={iconClass}></i>{act.description}
-              </Link>
-      }
-      else if (act.activityType.startsWith("asset.")) {
-        const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind);
-
-        return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i} title={ago}>
-                <i className={iconClass}></i>{act.byUserName}: <i className={assetKindIconClassName}></i>'{act.toAssetName}' {act.description} 
-              </Link>
-      } 
-      else if (act.activityType.startsWith("project.")) {
-        return <Link to={"/user/" + act.byUserId}  className="item" key={i} title={ago}>
-                <i className={iconClass}></i>{act.byUserName}: {act.description}
-              </Link>
-      }
-      //else...
-      return <div className="item" key={i}>{act.activityType} not in Sidebar code</div>              
-    })
 
     return (
       <div className="ui vertical inverted wide sidebar menu left overlay" onClick={this.props.handleToggleSidebar}>
@@ -90,12 +51,7 @@ export default class Sidebar extends Component {
             <Link to={`/assets`} className="item">Public Assets</Link>
           </div>
         </div>
-        {superAdminContent}
         <div className="item">
-          <div className="header">Activity</div>
-          <div className="menu">
-            {activityContent}
-          </div>
         </div>
       </div>
         );

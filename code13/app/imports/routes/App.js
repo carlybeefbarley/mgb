@@ -100,7 +100,7 @@ export default App = React.createClass({
           currUser={currUser}
           handleToggleSidebar={this.handleToggleSidebar}
           initialLoad={this.state.initialLoad}
-          activity={this.data.activity} />
+          />
 
         <div className="pusher">
             <Nav
@@ -127,6 +127,7 @@ export default App = React.createClass({
                 flexPanelWidth={flexPanelWidth} 
                 selectedViewTag={flexPanelQueryValue}
                 handleFlexPanelChange={this.handleFlexPanelChange}
+                activity={this.data.activity} 
                 /> 
             }
             <div style={mainPanelDivSty}>

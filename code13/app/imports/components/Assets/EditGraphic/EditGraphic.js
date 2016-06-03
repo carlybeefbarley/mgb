@@ -63,7 +63,6 @@ export default class EditGraphic extends React.Component {
   // content2.layerNames[layerIndex]     // array of layer names (content is string)
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
-  // content2.frameData[layerIndex][frameIndex]   /// this should be correct (first layerIndex, then frameIndex)
 
 
   // React Callback: componentDidMount()
@@ -913,8 +912,8 @@ export default class EditGraphic extends React.Component {
       </div>);
     });
 
-    let framesTH = _.map(c2.frameNames, (frameName) => { return (
-      <th width="10px"></th>);
+    let framesTH = _.map(c2.frameNames, (frameName, idx) => { return (
+      <th width="10px">{idx+1}</th>);
     });
 
     let framesTD = _.map(c2.frameNames, (frameName, idx) => { return (

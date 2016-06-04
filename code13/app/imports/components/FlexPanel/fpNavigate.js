@@ -11,25 +11,45 @@ export default fpNavigate = React.createClass({
   },
 
 
-  render: function () {
-    
-    return  <div class="ui row">
-              <div className="ui list">
-                <div className="item">
-                  <i className="home icon"></i>
-                  <Link to="/" className="content">Home</Link>
-                </div>
-                <div className="item">
-                  <i className="users icon"></i>
-                  <Link to="/users" className="content">Users</Link>
-                </div>
-                <div className="item">
-                  <i className="pencil icon"></i>
-                  <Link to="/assets" className="content">All Assets</Link>
-                </div>
-              </div>
-            </div>
-    
+  render: function () {    
+    const {currUser} = this.props;
+    const userContent = !!currUser ?
+      (
+        <div className="item">
+          <div className="header">My stuff</div>
+            <div className="menu">
+              <Link to={`/user/${currUser._id}/assets`} className="item">My Assets</Link>
+              <Link to={`/user/${currUser._id}/projects`} className="item">My Projects</Link>
+          </div>
+        </div>
+      )
+      :
+      (
+        <div className="item">
+          <Link to="/join">Get Started</Link>
+        </div>
+      );
+
+
+    return (
+      <div className="ui vertical inverted menu">
+        <div className="item"><b>My Game Builder</b></div>
+        <div className="item">
+          <div className="header">Home</div>
+          <div className="menu">
+            <Link to="/" className="item">Home Page</Link>
+          </div>
+        </div>
+        {userContent}
+        <div className="item">
+          <div className="header">People</div>
+          <div className="menu">
+            <Link to="/users" className="item">Users</Link>
+            <Link to={`/assets`} className="item">Public Assets</Link>
+          </div>
+        </div>
+      </div>
+        );
   }
 
   

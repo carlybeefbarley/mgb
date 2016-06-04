@@ -19,7 +19,6 @@ export default fpActivity = React.createClass({
     return  <div className="event" key={key}>
               <div className="label">
                 <i className={labelIconClass}></i>
-                { labelExtraIconClass && <i className={labelExtraIconClass}></i> }
               </div>
               <div className="content">
                 <div className="summary">
@@ -31,7 +30,8 @@ export default fpActivity = React.createClass({
                   </div>
                 </div>
                 <div className="extra text">
-                  {actJSX}
+                  { labelExtraIconClass && <i className={labelExtraIconClass}></i> }
+                  { actJSX }
                 </div>                
               </div>             
             </div>

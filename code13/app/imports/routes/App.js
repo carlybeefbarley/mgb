@@ -63,7 +63,7 @@ export default App = React.createClass({
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue
-    const flexPanelWidth = showFlexPanel ? "220px" : "0px"
+    const flexPanelWidth = showFlexPanel ? "225px" : "0px"    // The 226px width works well with default vertical menu size and padding=8px 
     const mainPanelDivSty = showFlexPanel ? { marginRight: flexPanelWidth} : {}
 
     //Check permissions of current user for super-admin,

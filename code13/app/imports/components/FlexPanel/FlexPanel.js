@@ -72,8 +72,8 @@ export default FlexPanel = React.createClass({
     }
     
     const panelInnerStyle = {
-      padding: "4px",
-      height: "auto" //
+      padding: "8px",
+      height: "auto" 
     }
     
     // The the flex Panel choice isn't recognized, just default to using our first one

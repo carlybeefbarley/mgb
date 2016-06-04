@@ -13,17 +13,15 @@
 
 export default mgbReleaseInfo = {
   "releases":
-  [
-        
-        
-
+  [        
+       
     { 
-      "timestamp":     "Fri Jun 03 2016 15:55:00 GMT-0700 (PDT)",
+      "timestamp":     "Fri Jun 03 2016 20:10:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "368"
+        "iteration":   "373"
       },
 
       "releaseManagement": {
@@ -31,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.flexpanel.assets",
+          "type":           "feature",
+          "changeName":     "Assets Flex Panel",
+          "changeSummary":  "Added the 'assets' Flex panel. use the > button at the top left to show this",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "nav.flexpanel.activity",
           "type":           "feature",

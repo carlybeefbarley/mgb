@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 
-import {Azzets, Projects} from '../../schemas';
-import {AssetKinds, AssetKindKeys, safeAssetKindStringSepChar} from '../../schemas/assets';
-import {logActivity} from '../../schemas/activity';
+import { Azzets, Projects } from '../../schemas';
+import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, AssetMakeSelector } from '../../schemas/assets';
+import { logActivity } from '../../schemas/activity';
 
 import AssetList from '../../components/Assets/AssetList';
 import AssetCreateNew from '../../components/Assets/AssetCreateNew.js';
@@ -14,7 +14,7 @@ import AssetListSortBy from '../../components/Assets/AssetListSortBy';
 import ProjectSelector from '../../components/Assets/ProjectSelector';
 
 import Spinner from '../../components/Nav/Spinner';
-import {browserHistory} from 'react-router';
+import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
 import UserItem from '../../components/Users/UserItem.js';
 
@@ -133,9 +133,16 @@ export default UserAssetListRoute = React.createClass({
                                   qN.searchName, 
                                   qN.project, 
                                   qN.showDeleted === "1", 
-                                  qN.showStable === "1");
+                                  qN.showStable === "1")
     let assetSorter = sorters[qN.sort]
-                              
+    let assetSelector = AssetMakeSelector(
+                                  this.props.params.id, 
+                                  qN.kinds.split(safeAssetKindStringSepChar), 
+                                  qN.searchName, 
+                                  qN.project, 
+                                  qN.showDeleted === "1", 
+                                  qN.showStable === "1")
+                          
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     
     let handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null 
@@ -146,7 +153,7 @@ export default UserAssetListRoute = React.createClass({
       ]
     }  
     return {
-      assets: Azzets.find({}, {sort: assetSorter}).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
+      assets: Azzets.find(assetSelector, {sort: assetSorter}).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
       projects: userId ? Projects.find(selectorForProjects).fetch() : null,   // Can be null
       loading: !handleForAssets.ready()
     };

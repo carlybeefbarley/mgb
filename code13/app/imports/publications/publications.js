@@ -61,7 +61,7 @@ Azzets._ensureIndex({
  * @param nameSearch is going to be stuffed inside a RegEx, so needs to be clean
  *    TODO: cleanse the nameSearch RegExp
  */
-Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch, projectName=null, showDeleted=false, showStable=false) {
+Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch, projectName=null, showDeleted=false, showStable=false, limitCount=50) {
   let selector = {
     isDeleted: showDeleted,
   }  
@@ -84,7 +84,7 @@ Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch,
     selector["name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
   }
 
-  return Azzets.find(selector, {fields: {content2: 0}} );
+  return Azzets.find(selector, {fields: {content2: 0}, limit: limitCount} );
 });
 
 

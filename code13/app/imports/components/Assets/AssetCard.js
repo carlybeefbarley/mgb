@@ -15,10 +15,11 @@ export default AssetCard = React.createClass({
   propTypes: {
     showHeader: PropTypes.bool,                 // If false, just have a very MINI asset card
     asset: PropTypes.object,
-    ownersProjects: PropTypes.array,            // Project array for Asset Owner. Can include ones they are a member of, so watch out!
+    ownersProjects: PropTypes.array,            // Project array for Asset Owner. Can be null. Can include ones they are a member of, so watch out!
     currUser: PropTypes.object,                 // currently Logged In user (not always provided)
     canEdit: PropTypes.bool,                    // Whether changes (like stable, delete etc) are allowed. Can be false
-    showEditButton: PropTypes.bool              // Shall we *show* the Edit button
+    showEditButton: PropTypes.bool,             // Shall we *show* the Edit button
+    renderType: PropTypes.string                // One of null/undefined  OR  "short"
   },
 
   getDefaultProps: function()  {
@@ -88,11 +89,12 @@ export default AssetCard = React.createClass({
     if (!this.props.asset)
       return null;
       
-    const {asset, showEditButton, currUser, canEdit } = this.props;
+    const {renderType, asset, showEditButton, currUser, canEdit } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
     const c2 = asset.content2 || { width:64, height:64 }
+    const renderShort = renderType === "short"
 
     const iw = c2.hasOwnProperty("width") ? c2.width : 64
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
@@ -164,19 +166,20 @@ export default AssetCard = React.createClass({
             </div>
           }
 
-          { this.props.showHeader && info2 && 
+          { this.props.showHeader && info2 && !renderShort &&
             <div className="meta">
               <small>{info2}</small>
             </div>
           }
 
-          <div className="meta">
-            <small>          
-              {editProjects}
-              { !this.props.showHeader ? null : "Updated " + ago }
-            </small>
-          </div>
-          
+          { !renderShort && 
+            <div className="meta">
+              <small>          
+                {editProjects}
+                { !this.props.showHeader ? null : "Updated " + ago }
+              </small>
+            </div>
+          }
         </div>     
         { /* End Content */}
         
@@ -195,7 +198,7 @@ export default AssetCard = React.createClass({
           </div>
         }
         
-        { this.props.showHeader &&         
+        { this.props.showHeader && !renderShort &&         
           <div className="ui four small bottom attached icon buttons">
             <div className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
                   onClick={this.handleEditClick}>

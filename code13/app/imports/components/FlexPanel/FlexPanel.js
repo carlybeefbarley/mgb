@@ -1,23 +1,23 @@
 import React, { PropTypes } from 'react';
+
 import fpNavigate from './fpNavigate';
 import fpActivity from './fpActivity';
-
+import fpAssets from './fpAssets';
 
 const flexPanelViews = [
   { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
   { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: fpNavigate },
+  { tag: "assets",    icon: "pencil",     hdr: "Assets",    el: fpAssets   },
   { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
-  { tag: "assets",    icon: "pencil",     hdr: "Assets"   },
-  { tag: "focuser",   icon: "university", hdr: "Focuser"  },
+//{ tag: "focuser",   icon: "university", hdr: "Focuser"  },
   { tag: "users",     icon: "users",      hdr: "Users"    },
   { tag: "pins",      icon: "pin",        hdr: "Pins"     },
   { tag: "chat",      icon: "chat",       hdr: "Chat"     }
 ]
 
-// TODO 1   Implement Nav FlexPanel (simply for now)
-// TODO 2   Implement Assets FlexPanel (simply for now)
-// TODO 3   IMPLEMENT DragAndDrop interface for fpNavigate
-// TODO 4   Update all links to preserve app-level query params!
+// TODO 1   Implement Assets FlexPanel (simply for now)
+// TODO 2   Implement DragAndDrop interface for fpAssets
+// TODO 3   Update all <Link>s across project to preserve app-level query params!
 
 export default FlexPanel = React.createClass({
   
@@ -109,7 +109,7 @@ export default FlexPanel = React.createClass({
 
               <div style={panelScrollContainerStyle}>
                 <div style={panelInnerStyle}>           
-                  { !ElementFP ? <div className="ui label">TODO: {flexPanelHdr} FlexPanel</div> : 
+                  { !ElementFP ? <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div> : 
                     <ElementFP  currUser={this.props.currUser} 
                               user={this.props.user} 
                               activity={this.props.activity}

@@ -2,6 +2,7 @@
 
 import {Users, Azzets, Projects, Activity, ActivitySnapshots } from '../schemas';
 
+import { AssetMakeSelector } from '../schemas/assets';
 //
 //    USERS
 //
@@ -61,30 +62,22 @@ Azzets._ensureIndex({
  * @param nameSearch is going to be stuffed inside a RegEx, so needs to be clean
  *    TODO: cleanse the nameSearch RegExp
  */
-Meteor.publish('assets.public', function(userId, selectedAssetKinds, nameSearch, projectName=null, showDeleted=false, showStable=false) {
-  let selector = {
-    isDeleted: showDeleted,
-  }  
-
-  if (projectName && projectName.length > 0)
-    selector["projectNames"] = projectName
-
-  if (showStable === true)  // This means ONLY show stable assets
-    selector["isCompleted"] = showStable
-
-  if (userId && userId !== -1)
-    selector["ownerId"] = userId
-    
-  if (selectedAssetKinds && selectedAssetKinds.length > 0)
-    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )  // TODO: Could use $in ?
-
-  if (nameSearch && nameSearch.length > 0)
-  {
-    // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
-    selector["name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
-  }
-
-  return Azzets.find(selector, {fields: {content2: 0}} );
+Meteor.publish('assets.public', function(
+                                    userId, 
+                                    selectedAssetKinds, 
+                                    nameSearch, 
+                                    projectName=null, 
+                                    showDeleted=false, 
+                                    showStable=false, 
+                                    limitCount=50) 
+{
+  let selector = AssetMakeSelector(userId, 
+                      selectedAssetKinds, 
+                      nameSearch, 
+                      projectName, 
+                      showDeleted, 
+                      showStable)
+  return Azzets.find(selector, {fields: {content2: 0}, limit: limitCount} );
 });
 
 

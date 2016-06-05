@@ -1,4 +1,6 @@
 import React from 'react';
+import LayerControls from "./LayerControls.js";
+
 export default class Layers extends React.Component {
 
   componentDidMount() {
@@ -52,6 +54,7 @@ export default class Layers extends React.Component {
             </span>
           </div>
           <div className="active content menu">
+            <LayerControls layer={this} />
             {layers}
           </div>
         </div>

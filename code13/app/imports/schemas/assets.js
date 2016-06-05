@@ -76,6 +76,43 @@ export const AssetKindKeysIncludingDisabled = _.filter(AssetKindKeysALL, (k) => 
 });
 
 
+/** This is intneded for use by publications.js and any Meteor.subscribe calls
+ * 
+ */
+export function AssetMakeSelector(
+                      userId, 
+                      selectedAssetKinds, 
+                      nameSearch, 
+                      projectName=null, 
+                      showDeleted=false, 
+                      showStable=false) 
+{
+  let selector = {
+    isDeleted: showDeleted,
+  }  
+
+  if (projectName && projectName.length > 0)
+    selector["projectNames"] = projectName
+
+  if (showStable === true)  // This means ONLY show stable assets
+    selector["isCompleted"] = showStable
+
+  if (userId && userId !== -1)
+    selector["ownerId"] = userId
+    
+  if (selectedAssetKinds && selectedAssetKinds.length > 0)
+    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )  // TODO: Could use $in ?
+
+  if (nameSearch && nameSearch.length > 0)
+  {
+    // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
+    selector["name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
+  }
+
+  return selector
+}
+
+
 Meteor.methods({
 
   "Azzets.create": function(data) {
@@ -142,5 +179,7 @@ Meteor.methods({
 
     return count;
   },
+  
+  
 
 });

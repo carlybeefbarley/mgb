@@ -82,12 +82,14 @@ RestApi.addRoute('asset/png/:id', {authRequired: false}, {
 // TODO: Handle case where the frameData has not yet been created
         if (asset)
         {
+            // is there more elegent way? e.g. asset/png/:id/:frame?
+            const frame = this.queryParams.frame || 0;
             return {
                 statusCode: 200,
                 headers: {
                     'Content-Type': 'image/png'
                 },
-                body: dataUriToBuffer(asset.content2.frameData[0][0])
+                body: dataUriToBuffer(asset.content2.frameData[frame][0])
             };
         }
         else {
@@ -97,7 +99,6 @@ RestApi.addRoute('asset/png/:id', {authRequired: false}, {
         }
     }
   });
-
 RestApi.addRoute('asset/json/:id', {authRequired: false}, {
     get: function () {
         var asset = Azzets.findOne(this.urlParams.id);

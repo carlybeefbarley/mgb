@@ -13,8 +13,47 @@
 
 export default mgbReleaseInfo = {
   "releases":
-  [
+  [        
+    
+    { 
+      "timestamp":     "Sat Jun 04 2016 13:50:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "376"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.flexpanel.assets",
+          "type":           "feature",
+          "changeName":     "Assets Flex Panel",
+          "changeSummary":  "Added the 'Assets' Flex Panel including name search. Use the > button in the top-right NavBar to show this",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel.activity",
+          "type":           "feature",
+          "changeName":     "Activity Flex Panel",
+          "changeSummary":  "Added the 'Activity' Flex panel. Use the > button in the top-right NavBar to show this",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "assets.map",
+          "type":           "improvement",
+          "changeName":     "Map editor",
+          "changeSummary":  "Temporary way to add tilemaps by pasting in an MGB Asset URL",
+          "otherUrls":      []
+        }
         
+              
+      ]             
+    },                    
 
     { 
       "timestamp":     "Thu Jun 02 2016 23:45:00 GMT-0700 (PDT)",

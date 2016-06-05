@@ -1,28 +1,31 @@
 import React, { PropTypes } from 'react';
 
 import fpNavigate from './fpNavigate';
+import fpActivity from './fpActivity';
+import fpAssets from './fpAssets';
 
 const flexPanelViews = [
+  { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
   { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: fpNavigate },
-  { tag: "activity",  icon: "lightning",  hdr: "Activity" },
+  { tag: "assets",    icon: "pencil",     hdr: "Assets",    el: fpAssets   },
+  { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
+//{ tag: "focuser",   icon: "university", hdr: "Focuser"  },
   { tag: "users",     icon: "users",      hdr: "Users"    },
   { tag: "pins",      icon: "pin",        hdr: "Pins"     },
-  { tag: "chat",      icon: "chat",       hdr: "Chat"     },
-  { tag: "assets",    icon: "pencil",     hdr: "Assets"   },
-  { tag: "projects",  icon: "sitemap",    hdr: "Projects" }
+  { tag: "chat",      icon: "chat",       hdr: "Chat"     }
 ]
 
-
-// TODO 0   IMPLEMENT SOME PANELS and pass props
-// TODO 1   IMPLEMENT DragAndDrop interface
-// TODO 2   Update all links to preserve app-level query params!
+// TODO 1   Implement Assets FlexPanel (simply for now)
+// TODO 2   Implement DragAndDrop interface for fpAssets
+// TODO 3   Update all <Link>s across project to preserve app-level query params!
 
 export default FlexPanel = React.createClass({
   
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
+    selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values
+    activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible:     PropTypes.bool.isRequired,
     handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for changing view. Causes URL to update
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
@@ -62,18 +65,25 @@ export default FlexPanel = React.createClass({
       width: flexPanelWidth, 
       marginBottom: 0
     }
+
+    const panelScrollContainerStyle = {
+      height: "100%", 
+      overflow: "scroll"
+    }
     
     const panelInnerStyle = {
-      padding: "4px"
+      padding: "8px",
+      height: "auto" 
     }
     
     // The the flex Panel choice isn't recognized, just default to using our first one
     const flexPanelChoice = _.find(flexPanelViews, ['tag', this.props.selectedViewTag]) || flexPanelViews[0]
     const flexPanelHdr = flexPanelChoice.hdr      
     const flexPanelIcon = flexPanelChoice.icon 
-    const Element = flexPanelChoice.el    // Can be null
+    const ElementFP = flexPanelChoice.el    // Can be null
       
     return  <div className="basic segment" style={panelStyle}>
+    
               <div className="ui attached inverted menu" style={miniNavStyle}>
                 <div className="ui simple dropdown item" key="dropdown">
                   <i className="chevron down icon" ></i>
@@ -96,13 +106,16 @@ export default FlexPanel = React.createClass({
                   <i  className={"chevron " + (this.props.flexPanelIsVisible ? "right" : "left") +" icon"}></i>
                 </a>               
               </div>
-              <div style={panelInnerStyle}>
-                FlexPanel {flexPanelHdr}
-                { Element && 
-                  <Element  currUser={this.props.currUser} 
-                            user={this.props.user} 
-                            flexPanelWidth={this.props.flexPanelWidth} /> 
-                }
+
+              <div style={panelScrollContainerStyle}>
+                <div style={panelInnerStyle}>           
+                  { !ElementFP ? <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div> : 
+                    <ElementFP  currUser={this.props.currUser} 
+                              user={this.props.user} 
+                              activity={this.props.activity}
+                              flexPanelWidth={this.props.flexPanelWidth} /> 
+                  }
+                </div>
               </div>
             </div>  
   }

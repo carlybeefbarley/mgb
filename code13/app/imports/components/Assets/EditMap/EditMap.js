@@ -56,9 +56,6 @@ export default class EditMap extends React.Component {
       <div className="ui grid">
         <div className="ten wide column">
           <MapArea asset={asset} parent={this}>{asset}</MapArea>
-          <button className="ui primary button"
-                  onClick={(e)=>{this.handleSave(e)}}
-            >Save</button>
         </div>
         <div className="six wide column">
           {tools}

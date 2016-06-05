@@ -10,6 +10,8 @@ export default class MapArea extends React.Component {
   constructor(props){
     super(props);
     let images = {};
+    // expose map for debugging purposes - access in console
+    window.map = this;
 
     // temporary workaround for saved images until we connect asset editor and map editor
     this.images = new Proxy(images, {
@@ -43,7 +45,7 @@ export default class MapArea extends React.Component {
       x: 5,
       y: 45
     };
-    this.generateImages();
+
   }
 
   removeDots(sin){
@@ -53,25 +55,41 @@ export default class MapArea extends React.Component {
     this.props.asset.content2 = val;
   }
   get map(){
+    if(this.props.asset && !this.props.asset.content2.width){
+      this.props.asset.content2 = TileHelper.genNewMap();
+    }
     return this.props.asset.content2;
   }
 
-  generateImages(){
+  generateImages(cb){
     const imgs = this.props.asset.content2.images;
     if(!imgs){
-      return;
+      if(typeof cb == "function"){
+        cb();
+      }
+      return false;
     }
     const keys = Object.keys(imgs);
+    if(!keys.length){
+      if(typeof cb == "function"){
+        cb();
+      }
+      return false;
+    }
+    console.log("going to load:", ...keys);
+    let loaded = 0;
     keys.forEach((i, index) => {
       const img = new Image;
       img.onload = () => {
+        loaded++;
         this.images[i] = img;
-        if(index == keys.length-1){
-          this.updateImages();
+        if(loaded == keys.length){
+            this.updateImages(cb);
         }
       };
       img.src = imgs[i];
     });
+    return true;
   }
 /*
   componentWillReceiveProps (props){
@@ -153,7 +171,11 @@ export default class MapArea extends React.Component {
     img.src = URL.createObjectURL(blob);
   }
 
-  updateImages(){
+
+  // TODO: optimize this.. seems pretty slow on maps with many/big tilesets..
+  updateImages(cb){
+    console.log("generating palette.. ");
+    const start = Date.now();
     const map = this.map;
     // map has not loaded
     if(!map || !map.tilesets){
@@ -178,7 +200,7 @@ export default class MapArea extends React.Component {
       let tot = ts.tilecount;
       let pos = {x: 0, y: 0};
       for(let i=0; i<tot; i++){
-        TileHelper.getTilePos(i, Math.floor(ts.imagewidth / ts.tilewidth), ts.tilewidth, ts.tileheight, pos);
+        TileHelper.getTilePosWithOffsets(i, Math.floor(ts.imagewidth / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing,  pos);
         canvas.ctx.clearRect(0, 0, canvas.width, canvas.height);
         canvas.ctx.drawImage(this.images[ts.image],
           pos.x, pos.y,
@@ -194,16 +216,16 @@ export default class MapArea extends React.Component {
       }
       index++;
     }
-
-    this.addLayerTool();
-    this.addTilesetTool();
     if(this.errors.length) {
       this.addTool("error", "Errors", this.errors);
     }
     else {
       this.removeTool("error");
     }
-
+    console.log("Generated palette in:", (Date.now() - start).toFixed(2) + "ms");
+    if(typeof cb === "function"){
+      cb();
+    }
     this.forceUpdate();
   }
 
@@ -298,14 +320,21 @@ export default class MapArea extends React.Component {
   }
 
   componentDidMount(){
-
+    this.fullUpdate();
+  }
+  // TODO: optimize - this one is really slow
+  fullUpdate(){
+    this.generateImages(() => {
+      this.addLayerTool();
+      this.addTilesetTool();
+    });
   }
 
   renderMap(){
     const map = this.map;
 
     if(!map || !map.layers) {
-      return (<div className="map-empty" />);
+      return (<div className="map-empty" ref="mapElement" />);
     }
     else{
       let layers = [];
@@ -358,6 +387,9 @@ export default class MapArea extends React.Component {
         <button className="ui button"
           onClick={this.togglePreviewState.bind(this)}
           >Preview</button>
+        <button className="ui primary button"
+                onClick={(e)=>{this.props.parent.handleSave(e)}}
+          >Save</button>
 
         {this.renderMap()}
       </div>

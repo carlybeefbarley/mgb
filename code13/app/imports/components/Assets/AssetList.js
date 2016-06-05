@@ -6,7 +6,8 @@ export default  AssetList = React.createClass({
     assets: PropTypes.array.isRequired,
     ownersProjects: PropTypes.array,        // Project array for Asset Owner - only makes sense if the assets all belong to same user (and should only be set by caller in this case). If provided, pass to AssetCard
     currUser: PropTypes.object,             // currently Logged In user (not always provided)
-    canEdit: PropTypes.bool                 // Can be false
+    canEdit: PropTypes.bool,                // Can be false
+    renderType: PropTypes.string            // One of null/undefined  OR  "short"
   },
 
   render: function() {
@@ -19,7 +20,8 @@ export default  AssetList = React.createClass({
             ownersProjects={this.props.ownersProjects}
             key={asset._id}
             showEditButton={true}
-            showToast={this.props.showToast} />
+            showToast={this.props.showToast} 
+            renderType={this.props.renderType}/>
       );
     })
 

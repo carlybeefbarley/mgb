@@ -16,7 +16,7 @@ export default mgbReleaseInfo = {
   [        
     
     { 
-      "timestamp":     "Sat Jun 04 2016 13:50:00 GMT-0700 (PDT)",
+      "timestamp":     "Sun Jun 05 2016 13:45:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
@@ -34,6 +34,13 @@ export default mgbReleaseInfo = {
           "type":           "feature",
           "changeName":     "Assets Flex Panel",
           "changeSummary":  "Added the 'Assets' Flex Panel including name search. Use the > button in the top-right NavBar to show this",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel.USERS",
+          "type":           "feature",
+          "changeName":     "USER Flex Panel",
+          "changeSummary":  "Added a simplistic (for now) 'Users' Flex panel. Use the > button in the top-right NavBar to show this",
           "otherUrls":      []
         },
         {

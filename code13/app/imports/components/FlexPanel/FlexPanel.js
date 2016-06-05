@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import fpNavigate from './fpNavigate';
 import fpActivity from './fpActivity';
 import fpAssets from './fpAssets';
+import fpUsers from './fpUsers';
 
 const flexPanelViews = [
   { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
@@ -10,7 +11,7 @@ const flexPanelViews = [
   { tag: "assets",    icon: "pencil",     hdr: "Assets",    el: fpAssets   },
   { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
 //{ tag: "focuser",   icon: "university", hdr: "Focuser"  },
-  { tag: "users",     icon: "users",      hdr: "Users"    },
+  { tag: "users",     icon: "users",      hdr: "Users",     el: fpUsers    },
   { tag: "pins",      icon: "pin",        hdr: "Pins"     },
   { tag: "chat",      icon: "chat",       hdr: "Chat"     }
 ]

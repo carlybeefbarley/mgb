@@ -138,10 +138,20 @@ export default class EditGraphic extends React.Component {
       asset.content2 = {
         width: 64,
         height: 32,
-        layerNames: ["Layer 01"],
-        frameNames: ["Frame 01", "Frame 02"],
-        frameData: [ [], [] ]}
+        layerNames: ["Layer 1"],
+        frameNames: ["Frame 1"],
+        frameData: [ [ getTransparentFrameData() ] ]}
     }
+  }
+
+  // fill frameData with transparent pixels when creating new frame or layer
+  getTransparentFrameData()
+  {
+    // for (let i = 0; i < w; i++) {
+    //   for (let j = 0; j < h; j++) {
+    //     retval.previewCtx.putImageData(retval.previewCtxImageData1x1, Math.round(x + i), Math.round(y + j))
+    //   }
+    // }
   }
 
 
@@ -163,11 +173,12 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
     let c2 = asset.content2;
-    let frameCount = c2.frameNames.length;
+    // let frameCount = c2.frameNames.length;
+    let layerCount = c2.layerNames.length;
 
     this.previewCanvasArray = $(".mgbPreviewCanvasContainer").find("canvas").get()
 
-    for (let i = 0; i < frameCount; i++) {
+    for (let i = 0; i < layerCount; i++) {
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
       this.previewCtxImageData1x1Array[i] = this.previewCtxArray[i].createImageData(1,1);
     }
@@ -179,10 +190,11 @@ export default class EditGraphic extends React.Component {
   loadPreviewsFromAssetAsync()
   {
     let c2 = this.props.asset.content2;
-    let frameCount = c2.frameNames.length;
+    // let frameCount = c2.frameNames.length;
+    let layerCount = c2.layerNames.length;
 
-    for (let i = 0; i < frameCount; i++) {
-      let dataURI = c2.frameData[i][0];
+    for (let i = 0; i < layerCount; i++) {
+      let dataURI = c2.frameData[this.state.selectedFrameIdx][i];
 
       if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
         var _img = new Image
@@ -192,7 +204,8 @@ export default class EditGraphic extends React.Component {
           let loadedImage = e.target
           self.previewCtxArray[loadedImage.mgb_hack_idx].clearRect(0,0, _img.width, _img.height)
           self.previewCtxArray[loadedImage.mgb_hack_idx].drawImage(loadedImage, 0, 0)
-          if (loadedImage.mgb_hack_idx === self.state.selectedFrameIdx)
+          // if (loadedImage.mgb_hack_idx === self.state.selectedFrameIdx)
+          if (loadedImage.mgb_hack_idx === self.state.selectedLayerIdx)
             self.updateEditCanvasFromSelectedPreviewCanvas()
         }
         _img.src = dataURI    // Trigger load & onload -> data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
@@ -207,15 +220,22 @@ export default class EditGraphic extends React.Component {
 
   updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): This still has some smoothing issues. Do i still need the per-browser flags?
   {
-    let w = this.previewCanvasArray[this.state.selectedFrameIdx].width
-    let h = this.previewCanvasArray[this.state.selectedFrameIdx].height
+    // let w = this.previewCanvasArray[this.state.selectedFrameIdx].width
+    // let h = this.previewCanvasArray[this.state.selectedFrameIdx].height
+    let w = this.previewCanvasArray[this.state.selectedLayerIdx].width
+    let h = this.previewCanvasArray[this.state.selectedLayerIdx].height
     let s = this.state.editScale
     this.editCtx.imageSmoothingEnabled = this.checked
     this.editCtx.mozImageSmoothingEnabled = this.checked
     this.editCtx.webkitImageSmoothingEnabled = this.checked
     this.editCtx.msImageSmoothingEnabled = this.checked
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
-    this.editCtx.drawImage(this.previewCanvasArray[this.state.selectedFrameIdx], 0, 0, w, h, 0, 0, w*s, h*s)
+    // this.editCtx.drawImage(this.previewCanvasArray[this.state.selectedFrameIdx], 0, 0, w, h, 0, 0, w*s, h*s)
+    // this.editCtx.drawImage(this.previewCanvasArray[this.state.selectedLayerIdx], 0, 0, w, h, 0, 0, w*s, h*s)
+
+    for(let i=this.previewCanvasArray.length-1; i>=0; i--){
+      this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s);
+    }
   }
 
   // A plugin-api for the graphic editing tools in Tools.js
@@ -229,9 +249,11 @@ export default class EditGraphic extends React.Component {
   {
     let asset = this.props.asset;
     let c2    = asset.content2;
-    let pCtx  = this.previewCtxArray[this.state.selectedFrameIdx]
+    // let pCtx  = this.previewCtxArray[this.state.selectedFrameIdx]
+    let pCtx  = this.previewCtxArray[this.state.selectedLayerIdx]
 
-    let pCtxImageData1x1 = this.previewCtxImageData1x1Array[this.state.selectedFrameIdx]
+    // let pCtxImageData1x1 = this.previewCtxImageData1x1Array[this.state.selectedFrameIdx]
+    let pCtxImageData1x1 = this.previewCtxImageData1x1Array[this.state.selectedLayerIdx]
     var self = this;
 
     let retval =  {
@@ -333,7 +355,8 @@ export default class EditGraphic extends React.Component {
       }
       else {
         // if wheel is for frame
-        let f = this.state.selectedFrameIdx
+        // let f = this.state.selectedFrameIdx
+        let f = this.state.selectedLayerIdx;
         if (wd < 0 && f > 0)
           this.handleSelectFrame(f - 1)
         else if (wd > 0 && f + 1 < this.previewCanvasArray.length)
@@ -417,7 +440,8 @@ export default class EditGraphic extends React.Component {
     // Update statusBar
     let x = Math.floor(event.offsetX / this.state.editScale)
     let y = Math.floor(event.offsetY / this.state.editScale)
-    let pCtx  = this.previewCtxArray[this.state.selectedFrameIdx]
+    let pCtx  = this.previewCtxArray[this.state.selectedLayerIdx]
+    // let pCtx  = this.previewCtxArray[this.state.selectedFrameIdx]
     let imageDataAtMouse = pCtx.getImageData(x, y, 1, 1)
     let d = imageDataAtMouse.data
 
@@ -630,6 +654,16 @@ export default class EditGraphic extends React.Component {
   {
     this.doSnapshotActivity(frameIndex)
     this.setState( { selectedFrameIdx: frameIndex}  )
+
+    // for new frame clears preview canvases and update edit canvas
+    let c2 = this.props.asset.content2;
+    if(c2.frameData[frameIndex].length === 0){
+      console.log("switched to new frame");
+      for(let i=0; i<this.previewCtxArray.length; i++){
+        this.previewCtxArray[i].clearRect(0, 0, c2.width, c2.height);
+      }
+      this.updateEditCanvasFromSelectedPreviewCanvas();
+    }
   }
 
   handleSelectLayer(layerIndex){
@@ -720,11 +754,19 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
     let c2    = asset.content2;
-    let frameCount = this.previewCanvasArray.length;  // We don't use c2.frameNames.length  coz of the Add Frame button
+    // let frameCount = this.previewCanvasArray.length;  // We don't use c2.frameNames.length  coz of the Add Frame button
+    let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerNames.length
 
-    for (let i = 0; i < frameCount; i++) {
-      c2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
+    // for (let i = 0; i < frameCount; i++) {
+    //   c2.frameData[i][0] = this.previewCanvasArray[i].toDataURL('image/png')
+    // }
+
+
+    for (let i = 0; i < layerCount; i++) {
+      c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
     }
+
+
     asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
     this.props.handleContentChange(c2, asset.thumbnail, changeText);
     this.doSnapshotActivity()
@@ -741,7 +783,8 @@ export default class EditGraphic extends React.Component {
     let dragSrcEl = e.target;
 
     if (idx === -1)                         // The Edit Window does this
-      idx = this.state.selectedFrameIdx;
+      // idx = this.state.selectedFrameIdx;
+      idx = this.state.selectedLayerIdx;
 
     e.dataTransfer.effectAllowed = 'copy';  // This must match what is in handleDragOverPreview()
     e.dataTransfer.setData('mgb/image', this.previewCanvasArray[idx].toDataURL('image/png')
@@ -771,7 +814,8 @@ export default class EditGraphic extends React.Component {
     var self = this;
 
     if (idx === -1)                         // The Edit Window does this
-      idx = this.state.selectedFrameIdx;
+      // idx = this.state.selectedFrameIdx;
+      idx = this.state.selectedLayerIdx;
       
     // Note that idx === -2 means the MgbResizerHost control. 
     // In thise case we must ONLY resize the graphics, not actually import the graphic. 
@@ -797,7 +841,8 @@ export default class EditGraphic extends React.Component {
           let h = self.props.asset.content2.height
           self.previewCtxArray[idx].clearRect(0,0,w,h)
           self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
-          if (idx === self.state.selectedFrameIdx)
+          // if (idx === self.state.selectedFrameIdx)
+          if (idx === self.state.selectedLayerIdx)
             self.updateEditCanvasFromSelectedPreviewCanvas();
           self.handleSave(`Copy frame to frame #${idx+1}`);
         }
@@ -832,7 +877,8 @@ export default class EditGraphic extends React.Component {
             
             self.previewCtxArray[idx].clearRect(0,0,w,h)
             self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
-            if (idx === self.state.selectedFrameIdx)
+            // if (idx === self.state.selectedFrameIdx)
+            if (idx === self.state.selectedLayerIdx)
                 self.updateEditCanvasFromSelectedPreviewCanvas();
             self.handleSave(`Drag external file to frame #${idx+1}`);
           }
@@ -856,9 +902,10 @@ export default class EditGraphic extends React.Component {
     let c2 = asset.content2
     let zoom = this.state.editScale
     var selectedFrameIdx =  this.state.selectedFrameIdx
+    var selectedLayerIdx = this.state.selectedLayerIdx;
 
     // Generate preview Canvasses
-    let previewCanvasses = _.map(c2.frameNames, (name, idx) => {
+    let previewCanvasses = _.map(c2.layerNames, (name, idx) => {
       return (
       <div className="item" key={"previewCanvasItem"+idx.toString()}
             onDragOver={this.handleDragOverPreview.bind(this)}
@@ -867,10 +914,10 @@ export default class EditGraphic extends React.Component {
         <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)} style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
           <canvas width={c2.width} height={c2.height}
                   onClick={this.handleSelectFrame.bind(this, idx)}
-                  className={ selectedFrameIdx == idx ? "mgbEditGraphicSty_thickBorder" : "mgbEditGraphicSty_thinBorder"}></canvas>
+                  className={ selectedLayerIdx == idx ? "mgbEditGraphicSty_thickBorder" : "mgbEditGraphicSty_thinBorder"}></canvas>
         </div>
         <div className="middle aligned content">
-          <input placeholder={"Frame name"} value={c2.frameNames[idx]}
+          <input placeholder={"Layer name"} value={c2.layerNames[idx]}
                  onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
 
           <div className="ui tiny icon buttons">

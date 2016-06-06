@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
+import QLink from '../../routes/QLink';
 
 export default fpNavigate = React.createClass({
   
@@ -18,15 +18,15 @@ export default fpNavigate = React.createClass({
         <div className="item">
           <div className="header">My stuff</div>
             <div className="menu">
-              <Link to={`/user/${currUser._id}/assets`} className="item">My Assets</Link>
-              <Link to={`/user/${currUser._id}/projects`} className="item">My Projects</Link>
+              <QLink to={`/user/${currUser._id}/assets`} className="item">My Assets</QLink>
+              <QLink to={`/user/${currUser._id}/projects`} className="item">My Projects</QLink>
           </div>
         </div>
       )
       :
       (
         <div className="item">
-          <Link to="/join">Get Started</Link>
+          <QLink to="/join">Get Started</QLink>
         </div>
       );
 
@@ -37,15 +37,15 @@ export default fpNavigate = React.createClass({
         <div className="item">
           <div className="header">Home</div>
           <div className="menu">
-            <Link to="/" className="item">Home Page</Link>
+            <QLink to="/" className="item">Home Page</QLink>
           </div>
         </div>
         {userContent}
         <div className="item">
           <div className="header">People</div>
           <div className="menu">
-            <Link to="/users" className="item">Users</Link>
-            <Link to={`/assets`} className="item">Public Assets</Link>
+            <QLink to="/users" className="item">Users</QLink>
+            <QLink to="/assets" className="item">Public Assets</QLink>
           </div>
         </div>
       </div>

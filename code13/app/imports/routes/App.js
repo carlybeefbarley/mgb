@@ -23,6 +23,13 @@ export default App = React.createClass({
   //   query: PropTypes.object
   // }
     
+  childContextTypes: {
+    urlLocation: React.PropTypes.object
+  },
+
+  getChildContext() {
+    return { urlLocation: this.props.location }
+  },
 
   toggleFlexPanelKeyHandler: function(e) {
     e = e || window.event;

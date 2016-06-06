@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import fpNavigate from './fpNavigate';
 import fpActivity from './fpActivity';
 import fpAssets from './fpAssets';
+import fpUsers from './fpUsers';
 
 const flexPanelViews = [
   { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
@@ -10,14 +11,13 @@ const flexPanelViews = [
   { tag: "assets",    icon: "pencil",     hdr: "Assets",    el: fpAssets   },
   { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
 //{ tag: "focuser",   icon: "university", hdr: "Focuser"  },
-  { tag: "users",     icon: "users",      hdr: "Users"    },
+  { tag: "users",     icon: "users",      hdr: "Users",     el: fpUsers    },
   { tag: "pins",      icon: "pin",        hdr: "Pins"     },
   { tag: "chat",      icon: "chat",       hdr: "Chat"     }
 ]
 
-// TODO 1   Implement Assets FlexPanel (simply for now)
-// TODO 2   Implement DragAndDrop interface for fpAssets
-// TODO 3   Update all <Link>s across project to preserve app-level query params!
+// TODO 1   Implement DragAndDrop interface for fpAssets
+// TODO 2   Update all <Link>s across project to preserve app-level query params!
 
 export default FlexPanel = React.createClass({
   
@@ -27,7 +27,7 @@ export default FlexPanel = React.createClass({
     selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values
     activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible:     PropTypes.bool.isRequired,
-    handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for changing view. Causes URL to update
+    handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for enabling/disabling FlexPanel view
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
     flexPanelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
   },
@@ -36,7 +36,7 @@ export default FlexPanel = React.createClass({
   getDefaultState: function()
   {
     return {
-      selectedViewTag: "chat"
+      selectedViewTag: "activity"
     }
   },
 
@@ -89,13 +89,13 @@ export default FlexPanel = React.createClass({
                   <i className="chevron down icon" ></i>
                   <div className="menu simple">
                     { flexPanelViews.map(v => { 
-                        return  <div 
-                                  key={v.tag}
-                                  className="item" 
-                                  onClick={this.fpViewSelect.bind(this, v.tag)}>
-                                  <i className={v.icon + " icon"} /> {v.hdr}
-                                </div>
-                        })
+                      return  <div 
+                                key={v.tag}
+                                className="item" 
+                                onClick={this.fpViewSelect.bind(this, v.tag)}>
+                                <i className={v.icon + " icon"} /> {v.hdr}
+                              </div>
+                      })
                     }
                   </div>
                 </div>

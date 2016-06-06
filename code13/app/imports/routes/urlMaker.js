@@ -18,7 +18,7 @@
 
 let _appRouter = undefined
 var _queryParamMap = {
-  "app_flexPanel": { queryParam: "_fp", type: "APP" } // APP type are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
+  "_fp": { qGroup: "APP", symbolName: "app_flexPanel" } // APP queryGroup queries are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
 }
 
 export default urlMaker = {
@@ -27,16 +27,30 @@ export default urlMaker = {
   {
     _appRouter = router
   },
+  
+  /** Returns only the query objects with keys that match this queryGroup
+   * @param query   An Object of querykey: queryvalue pairs
+   * @param qGroup  A string with the queryGroup name, for example "APP". See _queryParamMap for definitions
+   */
+  getQueryParamsMatchingQueryGroup: function(query, qGroup)
+  {
+    return _.pickBy(query, (val, key) => (_queryParamMap[key] && _queryParamMap[key].qGroup === qGroup))
+  },
+  
+  /** This is used to preserve any cross-app query parans */
+  getCrossAppQueryParams: function(query) {
+    return this.getQueryParamsMatchingQueryGroup(query, "APP")
+  },
 
-  /** This function checks that the query parameter is known */  
+  /** This function checks that the query parameter is known (by symbolName) and returns the short form */  
   queryParams: function(symbolName) {
-    const queryParamObj = _queryParamMap[symbolName]
-    if (!queryParamObj)
+    const queryParamKey = _.findKey(_queryParamMap, ['symbolName', symbolName])
+    if (!queryParamKey)
     {
       console.trace(`Unknown queryParam "${symbolName}" passed to urlMaker`)
       return symbolName
     }
-    return queryParamObj.queryParam
+    return queryParamKey
   },
   
   pathTo: function(stableName)  // and other arguments for params

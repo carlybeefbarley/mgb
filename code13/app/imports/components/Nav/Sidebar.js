@@ -15,7 +15,6 @@ export default class Sidebar extends Component {
   constructor() {
     super();
     this.handleBrandClick = this.handleBrandClick.bind(this);
-    this.listenForClose = this.listenForClose.bind(this);
   }
 
   render() {
@@ -64,16 +63,8 @@ export default class Sidebar extends Component {
     browserHistory.push(`/`);
   }
 
-  listenForClose(e) {
-    e = e || window.event;
-    if (!this.props.showSidebar && (e.key === 'Escape' || e.keyCode === 27)) {
-      this.props.handleToggleSidebar();
-    }
-  }
 
   componentDidMount() {
-    window.onkeydown = this.listenForClose;
-
     // TODO: Use context as a way to get rid of the DOM warning from sidebar.
     //       See http://stackoverflow.com/a/31533170 for explanation of this initialization
     var rootNode = ReactDOM.findDOMNode(this);

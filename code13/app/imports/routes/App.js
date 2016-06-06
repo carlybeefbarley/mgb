@@ -23,6 +23,25 @@ export default App = React.createClass({
   //   query: PropTypes.object
   // }
     
+  childContextTypes: {
+    urlLocation: React.PropTypes.object
+  },
+
+  getChildContext() {
+    return { urlLocation: this.props.location }
+  },
+
+  toggleFlexPanelKeyHandler: function(e) {
+    e = e || window.event;
+    if (e.key === 'Escape' || e.keyCode === 27) {
+      this.handleFlexPanelToggle();
+    }
+  },
+
+  componentDidMount: function() {
+    window.onkeydown = this.toggleFlexPanelKeyHandler;
+  },
+
   getInitialState: function() {
     return {
       initialLoad: true,

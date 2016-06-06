@@ -32,8 +32,9 @@ export default class Layer extends React.Component {
 	}
 
 	editName(){
-		ReactDOM.findDOMNode(this.refs.nameInput).value = ReactDOM.findDOMNode(this.refs.nameText).textContent;
-		ReactDOM.findDOMNode(this.refs.nameInput).select();
+		ReactDOM.findDOMNode(this.refs.nameInput).value = ReactDOM.findDOMNode(this.refs.nameText).textContent;	
+		ReactDOM.findDOMNode(this.refs.nameInput).focus();
+		// ReactDOM.findDOMNode(this.refs.nameInput).select();
 		this.setState({ editName: true });
 	}
 
@@ -70,7 +71,7 @@ export default class Layer extends React.Component {
           </td>
           <td onDoubleClick={this.editName.bind(this)} onSubmit={this.changeName.bind(this)}>
           	<div ref="nameText" className={this.state.editName ? "hidden" : "visible"}>{this.props.layer.name}</div>
-          	<form><input ref="nameInput" type="text" className={this.state.editName ? "visible" : "hidden"} /></form>
+          	<form className={"ui input " + (this.state.editName ? "visible" : "hidden")} ><input ref="nameInput" type="text" /></form>
           </td>
           {framesTD}
           <td></td>

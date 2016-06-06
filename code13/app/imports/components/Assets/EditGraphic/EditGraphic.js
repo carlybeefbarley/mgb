@@ -12,6 +12,8 @@ import ToolCircle from './ToolCircle.js';
 import ToolRect from './ToolRect.js';
 import ToolEyedropper from './ToolEyedropper.js';
 
+import SpriteLayers from './EditGraphic/SpriteLayers.js';
+
 import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
 
 const tools = {
@@ -63,6 +65,8 @@ export default class EditGraphic extends React.Component {
   // content2.layerNames[layerIndex]     // array of layer names (content is string)
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
+  // content2.hiddenLayers[layerIndex]    // array of true/false if layer is visible
+  // content2.lockedLayers[layerIndex]    // array of true/false if layer is locked
 
 
   // React Callback: componentDidMount()
@@ -140,7 +144,10 @@ export default class EditGraphic extends React.Component {
         height: 32,
         layerNames: ["Layer 1"],
         frameNames: ["Frame 1"],
-        frameData: [ [ ] ]}
+        frameData: [ [ ] ],
+        hiddenLayers: [false],
+        lockedLayers: [false],
+      };
     }
   }
 
@@ -518,13 +525,15 @@ export default class EditGraphic extends React.Component {
       return;
     }
     this.doSaveStateForUndo("Add Layer");
-    let lN = this.props.asset.content2.layerNames;
-    let newLayerName = "Layer " + (lN.length+1).toString();
-    lN.push(newLayerName);
-    let fD = this.props.asset.content2.frameData;
+    let c2 = this.props.asset.content2;
+    let newLayerName = "Layer " + (c2.layerNames.length+1).toString();
+    c2.layerNames.push(newLayerName);
+    let fD = c2.frameData;
     for(let i; i<fD.length; i++){
       fD[i][lN.length-1] = null;
     }
+    c2.hiddenLayers.push(false);
+    c2.lockedLayers.push(false);
     this.handleSave('Add layer to graphic');
     this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
   }
@@ -1140,6 +1149,11 @@ export default class EditGraphic extends React.Component {
 
         ***/}
         </div>
+
+        <SpriteLayers 
+          content2={c2}
+          handleSave={this.handleSave.bind(this)}           
+        />
 
 
       </div>

@@ -23,6 +23,18 @@ export default App = React.createClass({
   //   query: PropTypes.object
   // }
     
+
+  toggleFlexPanelKeyHandler: function(e) {
+    e = e || window.event;
+    if (e.key === 'Escape' || e.keyCode === 27) {
+      this.handleFlexPanelToggle();
+    }
+  },
+
+  componentDidMount: function() {
+    window.onkeydown = this.toggleFlexPanelKeyHandler;
+  },
+
   getInitialState: function() {
     return {
       initialLoad: true,

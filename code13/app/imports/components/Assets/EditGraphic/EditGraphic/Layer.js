@@ -11,9 +11,13 @@ export default class Layer extends React.Component {
 	}
 
 	toggleVisibility(){
-		// this.props.toggleLayerVisibility(this.props.idx);
-		this.props.isHidden = !this.props.isHidden;
+		this.props.layer.isHidden = !this.props.layer.isHidden;
 		this.props.handleSave('Layer visibility');
+	}
+
+	toggleLocking(){
+		this.props.layer.isLocked = !this.props.layer.isLocked;
+		this.props.handleSave('Layer locking');
 	}
 
 	handleSelectLayer(){
@@ -38,17 +42,17 @@ export default class Layer extends React.Component {
         onClick={this.handleSelectLayer.bind(this)} >
           <td>
           	<i 
-          		className={"icon " + (this.props.isHidden ? "hide" : "unhide" )}
+          		className={"icon " + (this.props.layer.isHidden ? "hide" : "unhide" )}
           		onClick={this.toggleVisibility.bind(this)}
           	></i>
           </td>
           <td>
           	<i 
-          		className={"icon " + (this.state.isLocked ? "lock" : "unlock" )}
-          		onClick={this.toggleVisibility.bind(this)}
+          		className={"icon " + (this.props.layer.isLocked ? "lock" : "unlock" )}
+          		onClick={this.toggleLocking.bind(this)}
           	></i>
           </td>
-          <td>{this.props.name}</td>
+          <td>{this.props.layer.name}</td>
           {framesTD}
           <td></td>
           <td><i className="remove icon"></i></td>
@@ -59,10 +63,11 @@ export default class Layer extends React.Component {
  
 Layer.propTypes = {
   idx: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  isHidden: PropTypes.bool.isRequired,
-  isLocked: PropTypes.bool.isRequired,
+  layer: PropTypes.object.isRequired,
   frameNames: PropTypes.array.isRequired,
   selectedFrame: PropTypes.number.isRequired,
   isSelected: PropTypes.bool.isRequired,
+
+  selectLayer: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
 };

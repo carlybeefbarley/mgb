@@ -10,7 +10,7 @@ export default class SpriteLayers extends React.Component {
 	    this.state = {
 	    	selectedFrameIdx: 0,
           	selectedLayerIdx: 0,
-	    	allLayerHidden: false,
+	    	allLayersHidden: false,
 	    	allLayersLocked: false,
 	    };
 	}
@@ -20,16 +20,22 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	toggleAllVisibility(){
-		this.setState({ allLayerHidden: !this.state.allLayerHidden });
+		this.setState({ allLayersHidden: !this.state.allLayersHidden });
+		let layerParams = this.props.content2.layerParams;
+		for(let i=0; i<layerParams.length; i++){
+			layerParams[i].isHidden = this.state.allLayersHidden;
+		}
+		console.log(this.state.allLayersHidden, layerParams[0].isHidden);
+		this.handleSave("All layers visibility");
 	}
 
 	toggleAllLocking(){
 		this.setState({ allLayersLocked: !this.state.allLayersLocked });
-	}
-
-	toggleLayerVisibility(idx){
-		this.props.content2.hiddenLayers[idx] = !this.props.content2.hiddenLayers[idx];
-		this.handleSave('Layer visibility');
+		let layerParams = this.props.content2.layerParams;
+		for(let i=0; i<layerParams.length; i++){
+			layerParams[i].isLocked = this.state.allLayersLocked;
+		}
+		this.handleSave("All layers locking");
 	}
 
 	selectLayer(idx){
@@ -47,29 +53,27 @@ export default class SpriteLayers extends React.Component {
 
 	renderLayers(){
 		let c2 = this.props.content2;
-		let tmp = [];
-		for(let i=0; i<c2.layerNames.length; i++){
-			tmp[i] = {
-				name: c2.layerNames[i], 
-				isHidden: c2.hiddenLayers[i],
-				isLocked: c2.lockedLayers[i],
-				frameNames: c2.frameNames, 
-				selectedFrame: this.state.selectedFrameIdx,
-				isSelected: this.state.selectedLayerIdx === i,
-			};
-		}
+		// let tmp = [];
+		// for(let i=0; i<c2.layerNames.length; i++){
+		// 	tmp[i] = {
+		// 		name: c2.layerNames[i], 
+		// 		isHidden: c2.hiddenLayers[i],
+		// 		isLocked: c2.lockedLayers[i],
+		// 		frameNames: c2.frameNames, 
+		// 		selectedFrame: this.state.selectedFrameIdx,
+		// 		isSelected: this.state.selectedLayerIdx === i,
+		// 	};
+		// }
 
-		return tmp.map((layer, idx) => (
+		return c2.layerParams.map((layer, idx) => (
 			<Layer 
 				idx={idx} 
-				name={layer.name} 
-				isHidden={layer.isHidden}
-				isLocked={layer.isLocked}
+				layer={layer}
 				frameNames={c2.frameNames} 
 				selectedFrame={this.state.selectedFrameIdx}
 				isSelected={this.state.selectedLayerIdx === idx}
+
 				selectLayer={this.selectLayer.bind(this)}
-				toggleLayerVisibility={this.toggleLayerVisibility.bind(this)}
 				handleSave={this.handleSave.bind(this)}
 			/>
 		));		
@@ -89,7 +93,7 @@ export default class SpriteLayers extends React.Component {
               <tr>
                 <th width="32px">
                 	<i 
-                	className={"icon " + (this.state.allLayerHidden ? "hide" : "unhide" )} 
+                	className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )} 
                 	onClick={this.toggleAllVisibility.bind(this)}
                 	></i>
                 </th>

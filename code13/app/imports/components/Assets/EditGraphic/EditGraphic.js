@@ -62,11 +62,9 @@ export default class EditGraphic extends React.Component {
   //
   // content2.width
   // content2.height
-  // content2.layerNames[layerIndex]     // array of layer names (content is string)
+  // content2.layerParams[layerIndex]     // array of layer params {name, isHiddden, isLocked}
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
-  // content2.hiddenLayers[layerIndex]    // array of true/false if layer is visible
-  // content2.lockedLayers[layerIndex]    // array of true/false if layer is locked
 
 
   // React Callback: componentDidMount()
@@ -142,11 +140,9 @@ export default class EditGraphic extends React.Component {
       asset.content2 = {
         width: 64,
         height: 32,
-        layerNames: ["Layer 1"],
+        layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
         frameNames: ["Frame 1"],
         frameData: [ [ ] ],
-        hiddenLayers: [false],
-        lockedLayers: [false],
       };
     }
   }
@@ -169,7 +165,7 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
     let c2 = asset.content2;
-    let layerCount = c2.layerNames.length;
+    let layerCount = c2.layerParams.length;
 
     this.previewCanvasArray = $(".mgbPreviewCanvasContainer").find("canvas").get()
 
@@ -185,7 +181,7 @@ export default class EditGraphic extends React.Component {
   loadPreviewsFromAssetAsync()
   {
     let c2 = this.props.asset.content2;
-    let layerCount = c2.layerNames.length;
+    let layerCount = c2.layerParams.length;
 
     for (let i = 0; i < layerCount; i++) {
       let dataURI = c2.frameData[this.state.selectedFrameIdx][i];
@@ -526,14 +522,12 @@ export default class EditGraphic extends React.Component {
     }
     this.doSaveStateForUndo("Add Layer");
     let c2 = this.props.asset.content2;
-    let newLayerName = "Layer " + (c2.layerNames.length+1).toString();
-    c2.layerNames.push(newLayerName);
+    let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
+    c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
     let fD = c2.frameData;
     for(let i; i<fD.length; i++){
       fD[i][lN.length-1] = null;
     }
-    c2.hiddenLayers.push(false);
-    c2.lockedLayers.push(false);
     this.handleSave('Add layer to graphic');
     this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
   }
@@ -741,7 +735,7 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
     let c2    = asset.content2;
-    let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerNames.length
+    let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerParams.length
 
     for (let i = 0; i < layerCount; i++) {
       c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
@@ -882,7 +876,7 @@ export default class EditGraphic extends React.Component {
     var selectedLayerIdx = this.state.selectedLayerIdx;
 
     // Generate preview Canvasses
-    let previewCanvasses = _.map(c2.layerNames, (name, idx) => {
+    let previewCanvasses = _.map(c2.layerParams, (layer, idx) => {
       return (
       <div className="item" key={"previewCanvasItem"+idx.toString()}
             onDragOver={this.handleDragOverPreview.bind(this)}
@@ -894,7 +888,7 @@ export default class EditGraphic extends React.Component {
                   className={ selectedLayerIdx == idx ? "mgbEditGraphicSty_thickBorder" : "mgbEditGraphicSty_thinBorder"}></canvas>
         </div>
         <div className="middle aligned content">
-          <input placeholder={"Layer name"} value={c2.layerNames[idx]}
+          <input placeholder={"Layer name"} value={layer.name}
                  onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
 
           <div className="ui tiny icon buttons">
@@ -946,13 +940,13 @@ export default class EditGraphic extends React.Component {
       </td>);
     });
 
-    let spriteLayers = _.map(c2.layerNames, (layerName, idx) => { return (
+    let spriteLayers = _.map(c2.layerParams, (layer, idx) => { return (
       <tr 
         className={this.state.selectedLayerIdx === idx ? "active" : ""}
         onClick={this.handleSelectLayer.bind(this, idx)} >
           <td><i className="unhide icon"></i></td>
           <td><i className="lock icon"></i></td>
-          <td>{layerName}</td>
+          <td>{layer.name}</td>
           {framesTD}
           <td></td>
           <td><i className="remove icon"></i></td>

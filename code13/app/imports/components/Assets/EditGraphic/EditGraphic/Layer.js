@@ -1,4 +1,7 @@
 import React, { PropTypes } from 'react';
+import ReactDOM from 'react-dom';
+
+import sty from  '../editGraphic.css';
 
 export default class Layer extends React.Component {
 
@@ -6,7 +9,7 @@ export default class Layer extends React.Component {
 	    super(props);
 	 
 	    this.state = {
-
+	    	editName: false,
 	    };
 	}
 
@@ -26,6 +29,19 @@ export default class Layer extends React.Component {
 
 	handleSelectFrame(){
 
+	}
+
+	editName(){
+		ReactDOM.findDOMNode(this.refs.nameInput).value = ReactDOM.findDOMNode(this.refs.nameText).textContent;
+		ReactDOM.findDOMNode(this.refs.nameInput).select();
+		this.setState({ editName: true });
+	}
+
+	changeName(event){
+		event.preventDefault();
+		this.setState({ editName: false });
+		this.props.layer.name = ReactDOM.findDOMNode(this.refs.nameInput).value;
+		this.props.handleSave('Changed layer name');
 	}
 
 
@@ -52,7 +68,10 @@ export default class Layer extends React.Component {
           		onClick={this.toggleLocking.bind(this)}
           	></i>
           </td>
-          <td>{this.props.layer.name}</td>
+          <td onDoubleClick={this.editName.bind(this)} onSubmit={this.changeName.bind(this)}>
+          	<div ref="nameText" className={this.state.editName ? "hidden" : "visible"}>{this.props.layer.name}</div>
+          	<form><input ref="nameInput" type="text" className={this.state.editName ? "visible" : "hidden"} /></form>
+          </td>
           {framesTD}
           <td></td>
           <td><i className="remove icon"></i></td>

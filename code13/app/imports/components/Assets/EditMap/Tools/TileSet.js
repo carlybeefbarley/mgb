@@ -66,10 +66,6 @@ export default class TileSet extends React.Component {
 
   }
 
-  componentUpdate(){
-    console.log("update!");
-  }
-
   componentDidMount() {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })

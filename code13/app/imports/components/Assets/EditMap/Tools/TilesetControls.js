@@ -25,7 +25,7 @@ export default class TilesetControls extends React.Component {
       this.addTileset(img);
     };
     img.onerror = (e)=> {
-      console.log("failed to load image:", val);
+      console.error("failed to load image:", val);
     };
     img.src = val;
   }

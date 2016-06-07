@@ -87,7 +87,6 @@ export default class MapArea extends React.Component {
       }
       return false;
     }
-    console.log("going to load:", ...keys);
     let loaded = 0;
     keys.forEach((i, index) => {
       const img = new Image;
@@ -118,7 +117,6 @@ export default class MapArea extends React.Component {
     // file has been dropped
     if(files.length){
       Array.prototype.forEach.call(files, (file, i) => {
-        console.log("reading", file);
         const reader = new FileReader();
         reader.onload = (e) => {
           const ext = file.name.split(".").pop().toLowerCase();

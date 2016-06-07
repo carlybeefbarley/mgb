@@ -34,7 +34,6 @@ export default class TileMapLayer extends React.Component {
   }
   // this should be triggered on window instead of main element
   handleMouseUp (e){
-    console.log("mouse up!");
     if(e.button == 0) {
       this.mouseDown = false;
       if(e.target == this.refs.canvas){

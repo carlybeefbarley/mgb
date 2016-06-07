@@ -12,7 +12,6 @@ export default Nav = React.createClass({
     handleFlexPanelToggle: PropTypes.func.isRequired,   // Callback for changing view. Causes URL to update
     flexPanelIsVisible: PropTypes.bool.isRequired,
     flexPanelWidth: PropTypes.string.isRequired,        // Typically something like "200px".
-    handleToggleSidebar: PropTypes.func.isRequired,     // Callback to allow Sidebar to show/hide
     name: PropTypes.string                              // Page title to show in Nav bar // TODO: Replace this with something more useful
   },
 
@@ -55,9 +54,6 @@ export default Nav = React.createClass({
     
     return (
       <div className="ui attached inverted menu" style={sty}>
-          <a href="#" className="header item" onClick={this.props.handleToggleSidebar}>
-            <i className="sidebar icon" ></i>
-          </a>
 
           <WhatsNew user={this.props.user} userSawNewsHandler={this.handleUserSawNews}/>
           

@@ -5,7 +5,6 @@ import reactMixin from 'react-mixin';
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import Nav from '../components/Nav/Nav';
-import Sidebar from '../components/Nav/Sidebar';
 import Helmet from "react-helmet";
 import {Users, Activity} from '../schemas';
 
@@ -113,15 +112,8 @@ export default App = React.createClass({
           ]}
         />
 
-        <Sidebar
-          isSuperAdmin={isSuperAdmin}
-          user={user}
-          currUser={currUser}
-          handleToggleSidebar={this.handleToggleSidebar}
-          initialLoad={this.state.initialLoad}
-          />
 
-        <div className="pusher">
+        <div>
         
             <NavPanel 
               currUser={currUser}
@@ -135,7 +127,6 @@ export default App = React.createClass({
             
             <Nav
               user={currUser}
-              handleToggleSidebar={this.handleToggleSidebar}
               name={this.props.routes[1].name}
               handleFlexPanelToggle={this.handleFlexPanelToggle}
               flexPanelWidth={flexPanelWidth}
@@ -253,11 +244,6 @@ export default App = React.createClass({
       showToast: false,
       toastMsg: ''
     });
-  },
-
-
-  handleToggleSidebar() {
-    $('.ui.sidebar').sidebar('toggle');
   }
-}
-)
+
+})

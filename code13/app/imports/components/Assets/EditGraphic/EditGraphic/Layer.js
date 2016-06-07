@@ -10,7 +10,6 @@ export default class Layer extends React.Component {
 	 
 	    this.state = {
 	    	editName: false,
-	    	isCanvasVisible: true,
 	    };
 	}
 
@@ -78,7 +77,7 @@ export default class Layer extends React.Component {
           {framesTD}
           <td>
           	<div 
-          		className={"ui image " + (this.state.isCanvasVisible ? "" : "hidden") }
+          		className={"ui image " + (this.props.isCanvasVisible ? "" : "hidden") }
           		draggable="true" 
           		/* onDragStart={this.handlePreviewDragStart.bind(this, this.props.idx)} */ 
           		style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
@@ -99,6 +98,7 @@ Layer.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  isCanvasVisible: PropTypes.bool.isRequired,
 
   selectLayer: PropTypes.func.isRequired,
   selectFrame: PropTypes.func.isRequired,

@@ -10,6 +10,7 @@ export default class SpriteLayers extends React.Component {
 	    this.state = {
 	    	allLayersHidden: false,
 	    	allLayersLocked: false,
+	    	isCanvasVisible: false,
 	    };
 	}
 
@@ -76,6 +77,10 @@ export default class SpriteLayers extends React.Component {
 	    this.props.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
 	}
 
+	toggleCanvasVisibility(){
+		this.setState({ isCanvasVisible: !this.state.isCanvasVisible });
+	}
+
 	handleSave(changeText="change graphic"){
 		this.props.handleSave(changeText);
 	}
@@ -83,18 +88,6 @@ export default class SpriteLayers extends React.Component {
 
 	renderLayers(){
 		let c2 = this.props.content2;
-		// let tmp = [];
-		// for(let i=0; i<c2.layerNames.length; i++){
-		// 	tmp[i] = {
-		// 		name: c2.layerNames[i], 
-		// 		isHidden: c2.hiddenLayers[i],
-		// 		isLocked: c2.lockedLayers[i],
-		// 		frameNames: c2.frameNames, 
-		// 		selectedFrame: this.state.selectedFrameIdx,
-		// 		isSelected: this.state.selectedLayerIdx === i,
-		// 	};
-		// }
-
 		return c2.layerParams.map((layer, idx) => (
 			<Layer 
 				idx={idx} 
@@ -104,6 +97,7 @@ export default class SpriteLayers extends React.Component {
 				isSelected={this.props.EditGraphic.state.selectedLayerIdx === idx}
 				width={c2.width}
 				height={c2.height}
+				isCanvasVisible={this.state.isCanvasVisible}
 
 				selectLayer={this.selectLayer.bind(this)}
 				selectFrame={this.selectFrame.bind(this)}
@@ -119,37 +113,47 @@ export default class SpriteLayers extends React.Component {
     });
 
     return (
-      	<div className="ui sixteen wide column">
+      	
+      <table className="ui celled padded table spriteLayersTable">
+        <thead>
+          <tr>
+            <th width="32px">
+            	<i 
+            	className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )} 
+            	onClick={this.toggleAllVisibility.bind(this)}
+            	></i>
+            </th>
+            <th width="32px">
+            	<i 
+            	className={"icon " + (this.state.allLayersLocked ? "lock" : "unlock" )} 
+            	onClick={this.toggleAllLocking.bind(this)}
+            	></i>
+            </th>
+            <th width="200px">
+	            <a class="ui label" onClick={this.addLayer.bind(this)}>
+				    <i className="add circle icon"></i> Add Layer
+				</a>
+            </th>
+            {framesTH}
+            <th>
+            <div className="row">
+            	<a class="ui label" onClick={this.addFrame.bind(this)}>
+				    <i className="add circle icon"></i> Add Frame
+				</a>
+				<span>&nbsp;&nbsp;</span>
+				<a class="ui label" onClick={this.toggleCanvasVisibility.bind(this)}>
+				    <i className={"icon " + ((this.state.isCanvasVisible ? "unhide" : "hide" ))}></i> Canvas
+				</a>
+			</div>
+            </th>
+            <th width="32px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.renderLayers()}
+        </tbody>
+      </table>
 
-          <table className="ui celled padded table spriteLayersTable">
-            <thead>
-              <tr>
-                <th width="32px">
-                	<i 
-                	className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )} 
-                	onClick={this.toggleAllVisibility.bind(this)}
-                	></i>
-                </th>
-                <th width="32px">
-                	<i 
-                	className={"icon " + (this.state.allLayersLocked ? "lock" : "unlock" )} 
-                	onClick={this.toggleAllLocking.bind(this)}
-                	></i>
-                </th>
-                <th width="200px">
-                  <i className="add circle icon" onClick={this.addLayer.bind(this)}></i>
-                </th>
-                {framesTH}
-                <th><i className="add circle icon" onClick={this.addFrame.bind(this)}></i></th>
-                <th width="32px"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderLayers()}
-            </tbody>
-          </table>
-
-        </div>
     );
   }
 }

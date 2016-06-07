@@ -873,51 +873,49 @@ export default class EditGraphic extends React.Component {
     let asset = this.props.asset
     let c2 = asset.content2
     let zoom = this.state.editScale
-    var selectedFrameIdx =  this.state.selectedFrameIdx
-    var selectedLayerIdx = this.state.selectedLayerIdx;
 
-    // Generate preview Canvasses
-    let previewCanvasses = _.map(c2.layerParams, (layer, idx) => {
-      return (
-      <div className="item" key={"previewCanvasItem"+idx.toString()}
-            onDragOver={this.handleDragOverPreview.bind(this)}
-            onDrop={this.handleDropPreview.bind(this,idx)}
-      >
-        <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)} style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
-          <canvas width={c2.width} height={c2.height}
-                  onClick={this.handleSelectFrame.bind(this, idx)}
-                  className={ selectedLayerIdx == idx ? "mgbEditGraphicSty_thickBorder" : "mgbEditGraphicSty_thinBorder"}></canvas>
-        </div>
-        <div className="middle aligned content">
-          <input placeholder={"Layer name"} value={layer.name}
-                 onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
+    // // Generate preview Canvasses
+    // let previewCanvasses = _.map(c2.layerParams, (layer, idx) => {
+    //   return (
+    //   <div className="item" key={"previewCanvasItem"+idx.toString()}
+    //         onDragOver={this.handleDragOverPreview.bind(this)}
+    //         onDrop={this.handleDropPreview.bind(this,idx)}
+    //   >
+    //     <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)} style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
+    //       <canvas width={c2.width} height={c2.height}
+    //               onClick={this.handleSelectFrame.bind(this, idx)}
+    //               className={ this.state.selectedLayerIdx == idx ? "mgbEditGraphicSty_thickBorder" : "mgbEditGraphicSty_thinBorder"}></canvas>
+    //     </div>
+    //     <div className="middle aligned content">
+    //       <input placeholder={"Layer name"} value={layer.name}
+    //              onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
 
-          <div className="ui tiny icon buttons">
-            <div className="ui button hazPopup"
-                 onClick={this.handleMoveFrameUp.bind(this, idx)}
-                 data-position="bottom center"
-                 data-title="Move Up"
-                 data-content="Move animation frame upwards">
-              <i className="up arrow icon" ></i>
-            </div>
-            <div className="ui button hazPopup"
-                 onClick={this.handleMoveFrameDown.bind(this, idx)}
-                 data-title="Move Down"
-                 data-content="Move animation frame downwards"
-                 data-position="bottom center">
-              <i className="down arrow icon" ></i>
-            </div>
-            <div className="ui button hazPopup"
-                 onClick={this.handleDeleteFrame.bind(this, idx)}
-                 data-title="Delete Frame"
-                 data-content="Delete Animation Frame"
-                 data-position="bottom center">
-              <i className="delete icon" ></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    )})
+    //       <div className="ui tiny icon buttons">
+    //         <div className="ui button hazPopup"
+    //              onClick={this.handleMoveFrameUp.bind(this, idx)}
+    //              data-position="bottom center"
+    //              data-title="Move Up"
+    //              data-content="Move animation frame upwards">
+    //           <i className="up arrow icon" ></i>
+    //         </div>
+    //         <div className="ui button hazPopup"
+    //              onClick={this.handleMoveFrameDown.bind(this, idx)}
+    //              data-title="Move Down"
+    //              data-content="Move animation frame downwards"
+    //              data-position="bottom center">
+    //           <i className="down arrow icon" ></i>
+    //         </div>
+    //         <div className="ui button hazPopup"
+    //              onClick={this.handleDeleteFrame.bind(this, idx)}
+    //              data-title="Delete Frame"
+    //              data-content="Delete Animation Frame"
+    //              data-position="bottom center">
+    //           <i className="delete icon" ></i>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // )})
 
     let toolComponents = _.map(tools, (tool) => { return (
       <div  className={"ui button" + (this.state.toolChosen === tool ? " active" : "" )}
@@ -930,29 +928,6 @@ export default class EditGraphic extends React.Component {
         <i className={"large " + tool.icon}></i>
       </div>);
     });
-
-    let framesTH = _.map(c2.frameNames, (frameName, idx) => { return (
-      <th width="10px">{idx+1}</th>);
-    });
-
-    let framesTD = _.map(c2.frameNames, (frameName, idx) => { return (
-      <td onClick={this.handleSelectFrame.bind(this, idx)}>
-          {/* selectedFrameIdx === idx ? <i className="circle icon"></i> : "" */}
-      </td>);
-    });
-
-    let spriteLayers = _.map(c2.layerParams, (layer, idx) => { return (
-      <tr 
-        className={this.state.selectedLayerIdx === idx ? "active" : ""}
-        onClick={this.handleSelectLayer.bind(this, idx)} >
-          <td><i className="unhide icon"></i></td>
-          <td><i className="lock icon"></i></td>
-          <td>{layer.name}</td>
-          {framesTD}
-          <td></td>
-          <td><i className="remove icon"></i></td>
-      </tr>
-    )});
 
     // Make element
     return (
@@ -1088,71 +1063,28 @@ export default class EditGraphic extends React.Component {
         </div>
 
         {/***  Right Column for animations and frames  ***/}
+        {/*
+
+        // <div className="ui four wide column ">
+        //   <div className="ui items mgbPreviewCanvasContainer">
+        //       {previewCanvasses} 
+        //   </div>
+        //   <a className="ui compact button"  onClick={this.handleAddFrame.bind(this)} >Add Frame</a>
+        // </div>
+        */} 
 
 
-        <div className="ui four wide column ">
-          <div className="ui items mgbPreviewCanvasContainer">
-            {previewCanvasses}
-          </div>
-          <a className="ui compact button" /* onClick={this.handleAddFrame.bind(this)} */>Add Frame</a>
-        </div>
-
-
-        {/*** Layers and frames ***/}
+      {/*** SpriteLayers ***/}
         <div className="ui sixteen wide column">
+          <SpriteLayers 
+            content2={c2}
+            EditGraphic={this}
+            canEdit={this.props.canEdit}
 
-          <table className="ui celled padded table">
-            <thead>
-              <tr>
-                <th width="32px"><i className="unhide icon"></i></th>
-                <th width="32px"><i className="lock icon"></i></th>
-                <th width="200px">
-                  <i className="add circle icon" /* onClick={this.handleAddLayer.bind(this)} */></i>
-                </th>
-                {framesTH}
-                <th></th>
-                <th width="32px"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {spriteLayers}
-            </tbody>
-          </table>
-                
-
-        {/***
-            <div className="ui celled list">
-
-              <div className="item">
-                <div className="ui horizontal list">
-                  <div className="item"><i className="unhide icon"></i></div>
-                  <div className="item"><i className="lock icon"></i></div>
-                  <div className="item"><div className="header">New Layer 1</div></div>
-                  <div className="item"><i className="circle icon"></i></div>    
-                  <div className="item">
-                    <div className="ui celled horizontal list">
-                      <div className="item">t</div>
-                      <div className="item">f</div>
-                      <div className="item">f</div>
-                    </div>
-                  </div>
-                  <div className="item right floated"><i className="remove icon"></i></div> 
-                </div>
-              </div>
-
-            </div>
-
-        ***/}
+            handleSave={this.handleSave.bind(this)}     
+            forceUpdate={this.forceUpdate.bind(this)}   
+          />
         </div>
-
-        <SpriteLayers 
-          content2={c2}
-          EditGraphic={this}
-          canEdit={this.props.canEdit}
-
-          handleSave={this.handleSave.bind(this)}     
-          forceUpdate={this.forceUpdate.bind(this)}   
-        />
 
 
       </div>

@@ -12,6 +12,8 @@ import ToolCircle from './ToolCircle.js';
 import ToolRect from './ToolRect.js';
 import ToolEyedropper from './ToolEyedropper.js';
 
+import SpriteLayers from './EditGraphic/SpriteLayers.js';
+
 import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
 
 const tools = {
@@ -53,6 +55,8 @@ export default class EditGraphic extends React.Component {
       toolActive: false,
       toolChosen: null
     }
+
+    this.fixingOldAssets();
   }
 
 
@@ -60,7 +64,7 @@ export default class EditGraphic extends React.Component {
   //
   // content2.width
   // content2.height
-  // content2.layerNames[layerIndex]     // array of layer names (content is string)
+  // content2.layerParams[layerIndex]     // array of layer params {name, isHiddden, isLocked}
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
 
@@ -107,6 +111,19 @@ export default class EditGraphic extends React.Component {
     this.doSnapshotActivity()
   }
 
+  // old assets had only string param name. This function just adds additional default params
+  fixingOldAssets(){
+    let c2 = this.props.asset.content2;
+    console.log(c2.layerParams, c2.layerNames);
+    if(!c2.layerParams && c2.layerNames){
+      c2.layerParams = [];
+      for(let i=0; i<c2.layerNames.length; i++){
+        c2.layerParams[i] = {name:c2.layerNames[i], isHidden: false, isLocked: false};
+      } 
+    }
+    this.handleSave("Automatic fixing old assets");
+  }
+
 
   activateToolPopups()
   {
@@ -138,9 +155,10 @@ export default class EditGraphic extends React.Component {
       asset.content2 = {
         width: 64,
         height: 32,
-        layerNames: ["Layer 1"],
+        layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
         frameNames: ["Frame 1"],
-        frameData: [ [ ] ]}
+        frameData: [ [ ] ],
+      };
     }
   }
 
@@ -162,9 +180,10 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
     let c2 = asset.content2;
-    let layerCount = c2.layerNames.length;
+    let layerCount = c2.layerParams.length;
 
-    this.previewCanvasArray = $(".mgbPreviewCanvasContainer").find("canvas").get()
+    // this.previewCanvasArray = $(".mgbPreviewCanvasContainer").find("canvas").get()
+    this.previewCanvasArray = $(".spriteLayersTable").find("canvas").get();
 
     for (let i = 0; i < layerCount; i++) {
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
@@ -178,7 +197,7 @@ export default class EditGraphic extends React.Component {
   loadPreviewsFromAssetAsync()
   {
     let c2 = this.props.asset.content2;
-    let layerCount = c2.layerNames.length;
+    let layerCount = c2.layerParams.length;
 
     for (let i = 0; i < layerCount; i++) {
       let dataURI = c2.frameData[this.state.selectedFrameIdx][i];
@@ -494,40 +513,40 @@ export default class EditGraphic extends React.Component {
 // Add/Select/Remove etc animation frames
 
 
-  handleAddFrame()
-  {
-    if (!this.props.canEdit)
-    { 
-      this.props.editDeniedReminder()
-      return
-    }
+  // handleAddFrame()
+  // {
+  //   if (!this.props.canEdit)
+  //   { 
+  //     this.props.editDeniedReminder()
+  //     return
+  //   }
 
-    this.doSaveStateForUndo("Add Frame")
-    let fN = this.props.asset.content2.frameNames
-    let newFrameName = "Frame " + (fN.length+1).toString()
-    fN.push(newFrameName)
-    this.props.asset.content2.frameData.push([])
-    this.handleSave('Add frame to graphic')
-    this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-  }
+  //   this.doSaveStateForUndo("Add Frame")
+  //   let fN = this.props.asset.content2.frameNames
+  //   let newFrameName = "Frame " + (fN.length+1).toString()
+  //   fN.push(newFrameName)
+  //   this.props.asset.content2.frameData.push([])
+  //   this.handleSave('Add frame to graphic')
+  //   this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+  // }
 
-  handleAddLayer(){
-    if (!this.props.canEdit)
-    { 
-      this.props.editDeniedReminder();
-      return;
-    }
-    this.doSaveStateForUndo("Add Layer");
-    let lN = this.props.asset.content2.layerNames;
-    let newLayerName = "Layer " + (lN.length+1).toString();
-    lN.push(newLayerName);
-    let fD = this.props.asset.content2.frameData;
-    for(let i; i<fD.length; i++){
-      fD[i][lN.length-1] = null;
-    }
-    this.handleSave('Add layer to graphic');
-    this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-  }
+  // handleAddLayer(){
+  //   if (!this.props.canEdit)
+  //   { 
+  //     this.props.editDeniedReminder();
+  //     return;
+  //   }
+  //   this.doSaveStateForUndo("Add Layer");
+  //   let c2 = this.props.asset.content2;
+  //   let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
+  //   c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
+  //   let fD = c2.frameData;
+  //   for(let i; i<fD.length; i++){
+  //     fD[i][lN.length-1] = null;
+  //   }
+  //   this.handleSave('Add layer to graphic');
+  //   this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+  // }
 
 
   doSwapCanvases(i,j)
@@ -732,14 +751,16 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
     let c2    = asset.content2;
-    let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerNames.length
 
-    for (let i = 0; i < layerCount; i++) {
-      c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
+    if(this.previewCanvasArray){ // hack for automatic checking and saving old assets to new
+      let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerParams.length
+      for (let i = 0; i < layerCount; i++) {
+        c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
+      }
+      asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
     }
 
 
-    asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
     this.props.handleContentChange(c2, asset.thumbnail, changeText);
     this.doSnapshotActivity()
   }
@@ -869,51 +890,49 @@ export default class EditGraphic extends React.Component {
     let asset = this.props.asset
     let c2 = asset.content2
     let zoom = this.state.editScale
-    var selectedFrameIdx =  this.state.selectedFrameIdx
-    var selectedLayerIdx = this.state.selectedLayerIdx;
 
-    // Generate preview Canvasses
-    let previewCanvasses = _.map(c2.layerNames, (name, idx) => {
-      return (
-      <div className="item" key={"previewCanvasItem"+idx.toString()}
-            onDragOver={this.handleDragOverPreview.bind(this)}
-            onDrop={this.handleDropPreview.bind(this,idx)}
-      >
-        <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)} style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
-          <canvas width={c2.width} height={c2.height}
-                  onClick={this.handleSelectFrame.bind(this, idx)}
-                  className={ selectedLayerIdx == idx ? "mgbEditGraphicSty_thickBorder" : "mgbEditGraphicSty_thinBorder"}></canvas>
-        </div>
-        <div className="middle aligned content">
-          <input placeholder={"Layer name"} value={c2.layerNames[idx]}
-                 onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
+    // // Generate preview Canvasses
+    // let previewCanvasses = _.map(c2.layerParams, (layer, idx) => {
+    //   return (
+    //   <div className="item" key={"previewCanvasItem"+idx.toString()}
+    //         onDragOver={this.handleDragOverPreview.bind(this)}
+    //         onDrop={this.handleDropPreview.bind(this,idx)}
+    //   >
+    //     <div className="ui image" draggable="true" onDragStart={this.handlePreviewDragStart.bind(this, idx)} style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
+    //       <canvas width={c2.width} height={c2.height}
+    //               onClick={this.handleSelectFrame.bind(this, idx)}
+    //               className={ this.state.selectedLayerIdx == idx ? "mgbEditGraphicSty_thickBorder" : "mgbEditGraphicSty_thinBorder"}></canvas>
+    //     </div>
+    //     <div className="middle aligned content">
+    //       <input placeholder={"Layer name"} value={layer.name}
+    //              onChange={this.handleFrameNameChangeInteractive.bind(this, idx)}></input>
 
-          <div className="ui tiny icon buttons">
-            <div className="ui button hazPopup"
-                 onClick={this.handleMoveFrameUp.bind(this, idx)}
-                 data-position="bottom center"
-                 data-title="Move Up"
-                 data-content="Move animation frame upwards">
-              <i className="up arrow icon" ></i>
-            </div>
-            <div className="ui button hazPopup"
-                 onClick={this.handleMoveFrameDown.bind(this, idx)}
-                 data-title="Move Down"
-                 data-content="Move animation frame downwards"
-                 data-position="bottom center">
-              <i className="down arrow icon" ></i>
-            </div>
-            <div className="ui button hazPopup"
-                 onClick={this.handleDeleteFrame.bind(this, idx)}
-                 data-title="Delete Frame"
-                 data-content="Delete Animation Frame"
-                 data-position="bottom center">
-              <i className="delete icon" ></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    )})
+    //       <div className="ui tiny icon buttons">
+    //         <div className="ui button hazPopup"
+    //              onClick={this.handleMoveFrameUp.bind(this, idx)}
+    //              data-position="bottom center"
+    //              data-title="Move Up"
+    //              data-content="Move animation frame upwards">
+    //           <i className="up arrow icon" ></i>
+    //         </div>
+    //         <div className="ui button hazPopup"
+    //              onClick={this.handleMoveFrameDown.bind(this, idx)}
+    //              data-title="Move Down"
+    //              data-content="Move animation frame downwards"
+    //              data-position="bottom center">
+    //           <i className="down arrow icon" ></i>
+    //         </div>
+    //         <div className="ui button hazPopup"
+    //              onClick={this.handleDeleteFrame.bind(this, idx)}
+    //              data-title="Delete Frame"
+    //              data-content="Delete Animation Frame"
+    //              data-position="bottom center">
+    //           <i className="delete icon" ></i>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // )})
 
     let toolComponents = _.map(tools, (tool) => { return (
       <div  className={"ui button" + (this.state.toolChosen === tool ? " active" : "" )}
@@ -926,29 +945,6 @@ export default class EditGraphic extends React.Component {
         <i className={"large " + tool.icon}></i>
       </div>);
     });
-
-    let framesTH = _.map(c2.frameNames, (frameName, idx) => { return (
-      <th width="10px">{idx+1}</th>);
-    });
-
-    let framesTD = _.map(c2.frameNames, (frameName, idx) => { return (
-      <td onClick={this.handleSelectFrame.bind(this, idx)}>
-          {/* selectedFrameIdx === idx ? <i className="circle icon"></i> : "" */}
-      </td>);
-    });
-
-    let spriteLayers = _.map(c2.layerNames, (layerName, idx) => { return (
-      <tr 
-        className={this.state.selectedLayerIdx === idx ? "active" : ""}
-        onClick={this.handleSelectLayer.bind(this, idx)} >
-          <td><i className="unhide icon"></i></td>
-          <td><i className="lock icon"></i></td>
-          <td>{layerName}</td>
-          {framesTD}
-          <td></td>
-          <td><i className="remove icon"></i></td>
-      </tr>
-    )});
 
     // Make element
     return (
@@ -1084,61 +1080,27 @@ export default class EditGraphic extends React.Component {
         </div>
 
         {/***  Right Column for animations and frames  ***/}
+        {/*
+
+        // <div className="ui four wide column ">
+        //   <div className="ui items mgbPreviewCanvasContainer">
+        //       {previewCanvasses} 
+        //   </div>
+        //   <a className="ui compact button"  onClick={this.handleAddFrame.bind(this)} >Add Frame</a>
+        // </div>
+        */} 
 
 
-        <div className="ui four wide column ">
-          <div className="ui items mgbPreviewCanvasContainer">
-            {previewCanvasses}
-          </div>
-          <a className="ui compact button" onClick={this.handleAddFrame.bind(this)}>Add Frame</a>
-        </div>
-
-
-        {/*** Layers and frames ***/}
+      {/*** SpriteLayers ***/}
         <div className="ui sixteen wide column">
+          <SpriteLayers 
+            content2={c2}
+            EditGraphic={this}
+            canEdit={this.props.canEdit}
 
-          <table className="ui celled padded table">
-            <thead>
-              <tr>
-                <th width="32px"><i className="unhide icon"></i></th>
-                <th width="32px"><i className="lock icon"></i></th>
-                <th width="200px">
-                  <i className="add circle icon" onClick={this.handleAddLayer.bind(this)}></i>
-                </th>
-                {framesTH}
-                <th></th>
-                <th width="32px"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {spriteLayers}
-            </tbody>
-          </table>
-                
-
-        {/***
-            <div className="ui celled list">
-
-              <div className="item">
-                <div className="ui horizontal list">
-                  <div className="item"><i className="unhide icon"></i></div>
-                  <div className="item"><i className="lock icon"></i></div>
-                  <div className="item"><div className="header">New Layer 1</div></div>
-                  <div className="item"><i className="circle icon"></i></div>    
-                  <div className="item">
-                    <div className="ui celled horizontal list">
-                      <div className="item">t</div>
-                      <div className="item">f</div>
-                      <div className="item">f</div>
-                    </div>
-                  </div>
-                  <div className="item right floated"><i className="remove icon"></i></div> 
-                </div>
-              </div>
-
-            </div>
-
-        ***/}
+            handleSave={this.handleSave.bind(this)}     
+            forceUpdate={this.forceUpdate.bind(this)}   
+          />
         </div>
 
 

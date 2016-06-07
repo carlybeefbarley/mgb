@@ -20,3 +20,11 @@
   left: 16px;
   top: -16px;
 }
+
+.hidden {
+	display: none !important;
+}
+
+.highlight {
+	background-color: #ccc;
+}

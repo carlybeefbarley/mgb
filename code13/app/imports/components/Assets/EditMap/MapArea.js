@@ -48,6 +48,8 @@ export default class MapArea extends React.Component {
 
     this.layers = [];
     this.tilesets = [];
+    //this.margin = 0;
+    this.spacing = 0;
   }
 
   removeDots(sin){
@@ -183,6 +185,7 @@ export default class MapArea extends React.Component {
 
   // TODO: optimize this.. seems pretty slow on maps with many/big tilesets..
   updateImages(cb){
+    window.TileHelper = TileHelper;
     console.log("generating palette.. ");
     const start = Date.now();
     const map = this.map;
@@ -194,11 +197,10 @@ export default class MapArea extends React.Component {
     const canvas = document.createElement("canvas");
     canvas.ctx = canvas.getContext("2d");
     this.errors.length = 0;
-
     // generate small image for every available gid
     let index = 0;
     for(let ts of map.tilesets){
-      let fgid = ts.firstgid;
+      const fgid = ts.firstgid;
       if(!this.images[ts.image]){
         this.errors.push("missing: '" + ts.image + "'" );
         continue;
@@ -206,7 +208,7 @@ export default class MapArea extends React.Component {
       let tot = ts.tilecount;
       let pos = {x: 0, y: 0};
       for(let i=0; i<tot; i++) {
-        TileHelper.getTilePosWithOffsets(i, Math.floor(ts.imagewidth / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos);
+        TileHelper.getTilePosWithOffsets(i, Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos);
         this.gidCache[fgid + i] = {
           image: this.images[ts.image],
           index,
@@ -214,7 +216,8 @@ export default class MapArea extends React.Component {
           h: ts.tileheight,
           x: pos.x,
           y: pos.y,
-          ts: ts
+          ts: ts,
+          gid: fgid + i
         };
       }
       index++;
@@ -346,6 +349,20 @@ export default class MapArea extends React.Component {
     this.tilesets.forEach((tileset) => {
       tileset.drawTiles();
     });
+  }
+  // TODO: keep aspect ratio
+  // find out correct thumbnail size
+  generatePreview(){
+    const canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 150;
+    const ctx = canvas.getContext("2d");
+
+    for(let i=0; i<this.layers.length; i++){
+      const c = this.layers[i].refs.canvas;
+      ctx.drawImage(c, 0, 0, c.width, c.height, 0, 0, canvas.width, canvas.height);
+    }
+    return canvas.toDataURL();
   }
 
   renderMap(){

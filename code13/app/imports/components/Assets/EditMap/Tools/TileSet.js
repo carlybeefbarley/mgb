@@ -11,13 +11,12 @@ export default class TileSet extends React.Component {
     this.prevTile = null;
   }
 
-
   componentWillUnmount(){
     const mapTilesets = this.props.info.content.map.tilesets;
     mapTilesets.splice(mapTilesets.indexof(this), 1);
   }
 
-  onMouseMove(e){
+  highlightTile(event, e = event.nativeEvent, force = false){
     const map = this.props.info.content.map;
     const ts = map.map.tilesets[map.activeTileset];
     const palette = map.gidCache;
@@ -27,58 +26,80 @@ export default class TileSet extends React.Component {
       y: 0,
       id: 0
     };
-    TileHelper.getTileCoordsRel(e.offsetX, e.offsetY, ts.tilewidth, ts.tileheight, pos);
-    pos.id = pos.x + pos.y * Math.floor(ts.imagewidth / ts.tilewidth);
-    //this.drawTile(palette[pos.id], pos);
+
+    const spacing = 1;
+
+    TileHelper.getTileCoordsRel(
+      (e.offsetX < 0 ? 0 : e.offsetX),
+      (e.offsetY < 0 ? 0 : e.offsetY),
+      ts.tilewidth, ts.tileheight, spacing, pos);
+
+    pos.id = pos.x + pos.y * (1 + Math.floor(ts.imagewidth / (ts.tilewidth + spacing))) + ts.firstgid;
 
     if(this.prevTile){
-      if(this.prevTile.x == pos.x && this.prevTile.y == pos.y){
+      if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
         return;
       }
-      this.drawTile(palette[this.prevTile.id], this.prevTile, ts, true);
+      if(force){
+        this.drawTiles();
+      }
+      else {
+        let pal = palette[this.prevTile.id];
+        if (pal) {
+          this.drawTile(palette[this.prevTile.id], this.prevTile, true);
+        }
+        else {
+          this.ctx.clearRect(
+            this.prevTile.x * ts.tilewidth + this.prevTile.x,
+            this.prevTile.y * ts.tileheight + this.prevTile.y,
+            ts.tilewidth, ts.tileheight);
+        }
+      }
     }
 
-    this.ctx.fillStyle = "rgba(0,0,255, 0.5)";
-    this.ctx.fillRect(pos.x, pos.y, ts.tilewidth, ts.tileheight);
+    this.ctx.fillStyle = "rgba(0,0,255, 0.3)";
+    this.ctx.fillRect(pos.x * ts.tilewidth + pos.x, pos.y * ts.tileheight + pos.y, ts.tilewidth, ts.tileheight);
     this.prevTile = pos;
 
+  }
+
+  componentUpdate(){
+    console.log("update!");
   }
 
   componentDidMount() {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
+    const map = this.props.info.content.map;
+    const ts = map.map.tilesets[map.activeTileset];
 
     const canvas = this.refs.canvas;
-    const $el = $(this.refs.layer);
-    canvas.width = $el.width();
-    canvas.height = $el.height();
+    canvas.width = ts.imagewidth;
+    canvas.height = ts.imageheight;
 
     this.ctx = canvas.getContext("2d");
     this.props.info.content.map.tilesets.push(this);
   }
 
   selectTile(e){
-    const $el = $(e.target);
     const map = this.props.info.content.map;
     const ts = map.map.tilesets[map.activeTileset];
-
-    // some kind of jquery bug...
-    // const gid = $el.data("gid");
-    const gid = e.target.getAttribute("data-gid");
-
-    const wasActive = $el.hasClass("active");
+    if(!this.prevTile){
+      this.highlightTile(e);
+    }
+    const gid = this.prevTile.id;
+    const wasActive = map.selection.indexOf(gid);
     map.clearActiveSelection();
-    $el.parent().find(".active").removeClass("active");
-
-    if(!wasActive){
-      $el.addClass("active");
+    if(wasActive == -1){
       map.addToActiveSelection(gid);
     }
+
+    this.highlightTile(e, e.nativeEvent, true);
   }
 
   selectTileset(tilesetNum){
     this.props.info.content.map.activeTileset = tilesetNum
-    this.forceUpdate();
+    this.drawTiles();
   }
 
   renderEmpty(){
@@ -115,26 +136,30 @@ export default class TileSet extends React.Component {
     const tiles = [];
     const pos = {x:0, y:0};
 
-    for (let i = ts.firstgid; i < ts.tilecount; i++) {
-      TileHelper.getTilePosRel(i, mapData.width, ts.tilewidth, ts.tileheight, pos);
-      if(!palette[i]){
-        continue;
-      }
-      const pal = palette[i];
-      this.drawTile(pal, ts, pos);
-
+    const spacing = 0;
+    let gid = 0;
+    for (let i = 0; i < ts.tilecount; i++) {
+      gid = ts.firstgid + i;
+      TileHelper.getTilePosRel(i, Math.floor((ts.imagewidth + spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, pos);
+      const pal = palette[gid];
+      this.drawTile(pal, pos);
     }
   }
-  drawTile(palette, pos, ts, clear = false){
+  drawTile(pal, pos, clear = false){
     if(clear){
-      this.ctx.clearRect(pos.x, pos.x, palette.w, palette.h);
+      this.ctx.clearRect(pos.x * (pal.ts.tilewidth + 1), pos.y * (pal.ts.tileheight + 1), pal.w, pal.h);
     }
-    this.ctx.drawImage(palette.image,
-      palette.x, palette.y, palette.w, palette.h,
-      pos.x * (ts.tilewidth + 1), pos.y * (ts.tileheight + 1) , palette.w, palette.h,
+    this.ctx.drawImage(pal.image,
+      pal.x, pal.y, pal.w, pal.h,
+      pos.x * (pal.ts.tilewidth + 1), pos.y * (pal.ts.tileheight + 1) , pal.w, pal.h,
     );
+    if(map.selection.indexOf(pal.gid) > -1){
+      this.ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
+      this.ctx.fillRect(
+        pos.x * (pal.ts.tilewidth + 1), pos.y * (pal.ts.tileheight + 1) , pal.w, pal.h,
+      );
+    }
   }
-
   render() {
     const map = this.props.info.content.map;
     const tss = map.map.tilesets;
@@ -182,9 +207,10 @@ export default class TileSet extends React.Component {
                 overflow: "auto",
                 clear: "both"
               }}
-              onClick={this.selectTile.bind(this)}>
+              >
               <canvas ref="canvas"
-                onMouseMove={this.onMouseMove.bind(this)}
+                      onClick={this.selectTile.bind(this)}
+                      onMouseMove={this.highlightTile.bind(this)}
                 ></canvas>
             </div>
           </div>

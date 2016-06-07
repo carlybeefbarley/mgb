@@ -23,9 +23,9 @@ const TileHelper = {
     return ret;
   },
 
-  getTileCoordsRel: (x, y, tilewidth, tileheight, ret = {x: 0, y: 0} ) => {
-    ret.x = Math.floor(x / tilewidth);
-    ret.y = Math.floor(y / tileheight);
+  getTileCoordsRel: (x, y, tilewidth, tileheight, spacing = 0, ret = {x: 0, y: 0} ) => {
+    ret.x = Math.floor(x / (tilewidth + spacing));
+    ret.y = Math.floor(y / (tileheight + spacing) );
     return ret;
   },
 

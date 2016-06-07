@@ -33,9 +33,9 @@ export default class EditMap extends React.Component {
   }
 
   handleSave(e){
-    // TODO: save stored images
+    // TODO: convert uploaded images to assets
     const changeText = "Changing Map:" + this.props.asset.name;
-    this.props.handleContentChange(this.props.asset.content2, "", changeText);
+    this.props.handleContentChange(this.props.asset.content2, this.refs.mapArea.generatePreview(), changeText);
   }
 
   render() {
@@ -55,7 +55,7 @@ export default class EditMap extends React.Component {
     return (
       <div className="ui grid">
         <div className="ten wide column">
-          <MapArea asset={asset} parent={this}>{asset}</MapArea>
+          <MapArea asset={asset} parent={this} ref="mapArea">{asset}</MapArea>
         </div>
         <div className="six wide column">
           {tools}

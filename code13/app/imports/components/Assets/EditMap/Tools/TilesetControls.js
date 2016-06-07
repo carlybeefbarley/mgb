@@ -62,7 +62,6 @@ export default class TilesetControls extends React.Component {
     
     tss.splice(active, 1);
     map.fullUpdate();
-
   }
 
   render() {

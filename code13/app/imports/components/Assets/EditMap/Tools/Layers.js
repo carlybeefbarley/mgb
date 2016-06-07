@@ -16,9 +16,11 @@ export default class Layers extends React.Component {
   showOrHideLayer(layer, visible, e){
     e.preventDefault();
     e.stopPropagation();
+    console.log("show / hide");
     const mapData = this.props.info.content.map.map;
     mapData.layers[layer].visible = !visible;
     this.props.info.content.map.forceUpdate();
+
     this.forceUpdate();
   }
 

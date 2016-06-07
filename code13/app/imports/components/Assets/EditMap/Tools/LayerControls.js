@@ -12,7 +12,7 @@ export default class LayerControls extends React.Component {
 
     lss.push(ls);
     map.forceUpdate();
-    parent.forceUpdate();
+    parent.drawTiles();
   }
 
   removeLayer() {

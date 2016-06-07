@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router';
+import QLink from '../../routes/QLink';
 
 export default ProjectSelector = React.createClass({
   propTypes: {
@@ -66,9 +66,9 @@ export default ProjectSelector = React.createClass({
           <div className="ui right menu simple">
             { choices }           
             <div className="divider"></div>
-            <Link className="ui item" to={this.props.ProjectListLinkUrl}>
+            <QLink className="ui item" to={this.props.ProjectListLinkUrl}>
               { this.props.canEdit ? "Manage Projects" : "View Projects" }
-            </Link>
+            </QLink>
           </div>
         </div>
     );

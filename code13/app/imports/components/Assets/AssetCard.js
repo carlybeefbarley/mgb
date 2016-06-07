@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import {Link, browserHistory} from 'react-router';
+import { browserHistory } from 'react-router';
+import QLink from "../../routes/QLink";
 import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 import {logActivity} from '../../schemas/activity';
@@ -209,20 +210,20 @@ export default AssetCard = React.createClass({
             </span>                           
             <span className="right floated author">
                 <i className="large user icon"></i>
-                <Link to={`/user/${asset.ownerId}`}>
+                <QLink to={`/user/${asset.ownerId}`}>
                   {ownerName ? ownerName : `#${asset.ownerId}`}
-                </Link>
+                </QLink>
             </span>
           </div>
         }
         
         { this.props.showHeader && !renderShort &&         
           <div className="ui four small bottom attached icon buttons">
-            <div className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
+            <QLink to={`/assetEdit/${asset._id}`} className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
                   onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
               <small>&nbsp;Edit</small>
-            </div>
+            </QLink>
             <div className={(canEdit ? "" : "disabled ") + "ui blue compact button"} 
                   onClick={this.handleCompletedClick} >
               <i className={ asset.isCompleted ? "ui checkmark icon" : "ui remove icon"}></i>

@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import {Link, browserHistory} from 'react-router';
+import { browserHistory } from 'react-router';
+import QLink from "../../routes/QLink";
 import {logActivity} from '../../schemas/activity';
 import NavRecentGET from './NavRecentGET.js';
 import WhatsNew from './WhatsNew.js';
@@ -66,9 +67,9 @@ export default Nav = React.createClass({
           
           
           { /* Right Hand Side */ }
-          <Link to={user ? `/user/${user._id}/assets`: '/assets'} className="item right">
+          <QLink to={user ? `/user/${user._id}/assets`: '/assets'} className="item right">
             <i className="home icon"></i>
-          </Link>
+          </QLink>
           
           
           { user ?
@@ -81,15 +82,15 @@ export default Nav = React.createClass({
                 &nbsp;{user.profile.name} 
                 <i className="dropdown icon"></i>
                 <div className="menu simple">
-                  <Link to={`/user/${this.props.user._id}`} className="item">
+                  <QLink to={`/user/${this.props.user._id}`} className="item">
                     <i className="user icon" /> Profile
-                  </Link>
-                  <Link to={`/user/${this.props.user._id}/assets`} className="item">
+                  </QLink>
+                  <QLink to={`/user/${this.props.user._id}/assets`} className="item">
                     <i className="home icon" /> My Assets
-                  </Link>
-                  <Link to={`/user/${this.props.user._id}/projects`} className="item">
+                  </QLink>
+                  <QLink to={`/user/${this.props.user._id}/projects`} className="item">
                     <i className="sitemap icon" /> My Projects
-                  </Link>
+                  </QLink>
                   <div className="divider"></div>
                   <a href="#" onClick={this.logout} className="ui item">
                     <i className="sign out icon" /> Logout
@@ -100,8 +101,8 @@ export default Nav = React.createClass({
             :
             // If signed out, show   | Sign-in, Join |  options inline
             [
-              <Link to="/signin" className="item"  key="signin">Login</Link>,
-              <Link to="/join" className="item"  key="join">Join</Link>
+              <QLink to="/signin" className="item"  key="signin">Login</QLink>,
+              <QLink to="/join" className="item"  key="join">Join</QLink>
             ]
           }
           { !this.props.flexPanelIsVisible && 

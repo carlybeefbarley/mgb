@@ -497,40 +497,40 @@ export default class EditGraphic extends React.Component {
 // Add/Select/Remove etc animation frames
 
 
-  handleAddFrame()
-  {
-    if (!this.props.canEdit)
-    { 
-      this.props.editDeniedReminder()
-      return
-    }
+  // handleAddFrame()
+  // {
+  //   if (!this.props.canEdit)
+  //   { 
+  //     this.props.editDeniedReminder()
+  //     return
+  //   }
 
-    this.doSaveStateForUndo("Add Frame")
-    let fN = this.props.asset.content2.frameNames
-    let newFrameName = "Frame " + (fN.length+1).toString()
-    fN.push(newFrameName)
-    this.props.asset.content2.frameData.push([])
-    this.handleSave('Add frame to graphic')
-    this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-  }
+  //   this.doSaveStateForUndo("Add Frame")
+  //   let fN = this.props.asset.content2.frameNames
+  //   let newFrameName = "Frame " + (fN.length+1).toString()
+  //   fN.push(newFrameName)
+  //   this.props.asset.content2.frameData.push([])
+  //   this.handleSave('Add frame to graphic')
+  //   this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+  // }
 
-  handleAddLayer(){
-    if (!this.props.canEdit)
-    { 
-      this.props.editDeniedReminder();
-      return;
-    }
-    this.doSaveStateForUndo("Add Layer");
-    let c2 = this.props.asset.content2;
-    let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
-    c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
-    let fD = c2.frameData;
-    for(let i; i<fD.length; i++){
-      fD[i][lN.length-1] = null;
-    }
-    this.handleSave('Add layer to graphic');
-    this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-  }
+  // handleAddLayer(){
+  //   if (!this.props.canEdit)
+  //   { 
+  //     this.props.editDeniedReminder();
+  //     return;
+  //   }
+  //   this.doSaveStateForUndo("Add Layer");
+  //   let c2 = this.props.asset.content2;
+  //   let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
+  //   c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
+  //   let fD = c2.frameData;
+  //   for(let i; i<fD.length; i++){
+  //     fD[i][lN.length-1] = null;
+  //   }
+  //   this.handleSave('Add layer to graphic');
+  //   this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+  // }
 
 
   doSwapCanvases(i,j)
@@ -1093,7 +1093,7 @@ export default class EditGraphic extends React.Component {
           <div className="ui items mgbPreviewCanvasContainer">
             {previewCanvasses}
           </div>
-          <a className="ui compact button" onClick={this.handleAddFrame.bind(this)}>Add Frame</a>
+          <a className="ui compact button" /* onClick={this.handleAddFrame.bind(this)} */>Add Frame</a>
         </div>
 
 
@@ -1106,7 +1106,7 @@ export default class EditGraphic extends React.Component {
                 <th width="32px"><i className="unhide icon"></i></th>
                 <th width="32px"><i className="lock icon"></i></th>
                 <th width="200px">
-                  <i className="add circle icon" onClick={this.handleAddLayer.bind(this)}></i>
+                  <i className="add circle icon" /* onClick={this.handleAddLayer.bind(this)} */></i>
                 </th>
                 {framesTH}
                 <th></th>
@@ -1146,7 +1146,9 @@ export default class EditGraphic extends React.Component {
 
         <SpriteLayers 
           content2={c2}
-          handleSave={this.handleSave.bind(this)}           
+          canEdit={this.props.canEdit}
+          handleSave={this.handleSave.bind(this)}     
+          forceUpdate={this.forceUpdate.bind(this)}   
         />
 
 

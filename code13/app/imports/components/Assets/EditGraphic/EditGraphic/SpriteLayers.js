@@ -15,10 +15,6 @@ export default class SpriteLayers extends React.Component {
 	    };
 	}
 
-	handleAddLayer(){
-
-	}
-
 	toggleAllVisibility(){
 		this.setState({ allLayersHidden: !this.state.allLayersHidden });
 		let layerParams = this.props.content2.layerParams;
@@ -44,6 +40,39 @@ export default class SpriteLayers extends React.Component {
 
 	selectFrame(idx){
 		this.setState({ selectedFrameIdx: idx });
+	}
+
+	addFrame(){
+	    // if (!this.props.canEdit)
+	    // { 
+	    //   this.props.editDeniedReminder()
+	    //   return
+	    // }
+	    // this.doSaveStateForUndo("Add Frame");
+	    let fN = this.props.content2.frameNames
+	    let newFrameName = "Frame " + (fN.length+1).toString()
+	    fN.push(newFrameName)
+	    this.props.content2.frameData.push([])
+	    this.handleSave('Add frame to graphic')
+	    this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+	 }
+
+	addLayer(){
+	    // if (!this.props.canEdit)
+	    // { 
+	    //   this.props.editDeniedReminder();
+	    //   return;
+	    // }
+	    // this.doSaveStateForUndo("Add Layer");
+	    let c2 = this.props.content2;
+	    let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
+	    c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
+	    let fD = c2.frameData;
+	    for(let i; i<fD.length; i++){
+	      fD[i][lN.length-1] = null;
+	    }
+	    this.handleSave('Add layer to graphic');
+	    this.props.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
 	}
 
 	handleSave(changeText="change graphic"){
@@ -72,6 +101,8 @@ export default class SpriteLayers extends React.Component {
 				frameNames={c2.frameNames} 
 				selectedFrame={this.state.selectedFrameIdx}
 				isSelected={this.state.selectedLayerIdx === idx}
+				width={c2.width}
+				height={c2.height}
 
 				selectLayer={this.selectLayer.bind(this)}
 				handleSave={this.handleSave.bind(this)}
@@ -104,10 +135,10 @@ export default class SpriteLayers extends React.Component {
                 	></i>
                 </th>
                 <th width="200px">
-                  <i className="add circle icon" onClick={this.handleAddLayer.bind(this)}></i>
+                  <i className="add circle icon" onClick={this.addLayer.bind(this)}></i>
                 </th>
                 {framesTH}
-                <th></th>
+                <th><i className="add circle icon" onClick={this.addFrame.bind(this)}></i></th>
                 <th width="32px"></th>
               </tr>
             </thead>

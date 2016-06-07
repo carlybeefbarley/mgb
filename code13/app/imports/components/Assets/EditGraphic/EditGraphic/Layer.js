@@ -10,6 +10,7 @@ export default class Layer extends React.Component {
 	 
 	    this.state = {
 	    	editName: false,
+	    	isCanvasVisible: true,
 	    };
 	}
 
@@ -33,8 +34,8 @@ export default class Layer extends React.Component {
 
 	editName(){
 		ReactDOM.findDOMNode(this.refs.nameInput).value = ReactDOM.findDOMNode(this.refs.nameText).textContent;	
-		ReactDOM.findDOMNode(this.refs.nameInput).focus();
-		// ReactDOM.findDOMNode(this.refs.nameInput).select();
+		ReactDOM.findDOMNode(this.refs.nameInput).select();
+		ReactDOM.findDOMNode(this.refs.nameInput).focus();	
 		this.setState({ editName: true });
 	}
 
@@ -74,7 +75,15 @@ export default class Layer extends React.Component {
           	<form className={"ui input " + (this.state.editName ? "visible" : "hidden")} ><input ref="nameInput" type="text" /></form>
           </td>
           {framesTD}
-          <td></td>
+          <td>
+          	<div 
+          		className={"ui image " + (this.state.isCanvasVisible ? "" : "hidden") }
+          		draggable="true" 
+          		/* onDragStart={this.handlePreviewDragStart.bind(this, idx)} */ 
+          		style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
+          			<canvas width={this.props.width} height={this.props.height}></canvas>
+        	</div>
+          </td>
           <td><i className="remove icon"></i></td>
       </tr>
     );
@@ -87,6 +96,8 @@ Layer.propTypes = {
   frameNames: PropTypes.array.isRequired,
   selectedFrame: PropTypes.number.isRequired,
   isSelected: PropTypes.bool.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
 
   selectLayer: PropTypes.func.isRequired,
   handleSave: PropTypes.func.isRequired,

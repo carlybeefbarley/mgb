@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import QLink from '../../routes/QLink';
 import { browserHistory } from 'react-router';
+import {logActivity} from '../../schemas/activity';
 
 export default npUser = React.createClass({
   

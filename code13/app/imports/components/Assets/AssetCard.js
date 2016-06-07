@@ -85,6 +85,21 @@ export default AssetCard = React.createClass({
     }
   },
 
+  // proabbaly we could set global map<asset._id> Asset and escape stringifying;
+  startDrag(asset, e){
+    const url  = `/api/asset/png/${asset._id}`;
+    console.log("asset", url);
+
+    e.dataTransfer.setData("link", url);
+    e.dataTransfer.setData("asset", JSON.stringify(asset));
+
+    $(document.body).addClass("dragging");
+  },
+
+  endDrag(asset, e){
+    $(document.body).removeClass("dragging");
+  },
+
   render() {
     if (!this.props.asset)
       return null;
@@ -124,9 +139,12 @@ export default AssetCard = React.createClass({
                             handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
                             />
                           
-
+    // TODO: add allowDrag to props.. and walk through AssetCard use cases;
     return (
-      <div key={asset._id} className="ui card">
+      <div key={asset._id} className="ui card" draggable="true"
+           onDragStart={this.startDrag.bind(this, asset)}
+           onDragEnd={this.endDrag.bind(this, asset)}
+        >
       
           { this.props.showHeader &&
             <div className="ui centered image">

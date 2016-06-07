@@ -3,54 +3,43 @@ import React from 'react';
 import TileHelper from '../TileHelper.js';
 export default class TilesetControls extends React.Component {
 
-  constructor(...args) {
-    super(...args);
-
-    this.oldpaste;
-    // TODO: Loading..
-    this.onpaste = (e) => {
-      const data = e.clipboardData.getData("text/plain");
-      // if it fails... just ignore
-      let img = new Image();
-      img.onload = (e) => {
-        this.addTileset(img);
-      };
-      img.src = data;
-    }
-  }
-
-  componentDidMount() {
-    // TODO: will we ever unmount this control???
-    this.oldpaste = document.body.onpaste;
-    document.body.onpaste = this.onpaste;
-  }
-
-  componentWillUnmount() {
-    document.body.onpaste = this.oldpaste;
-  }
-
   addImageFromInput(e) {
     // enter key
     if(e.which != 13){
       return;
     }
-    console.log("adding image:", this.refs.input.value);
+    this.addTilesetFromUrl(this.refs.input.value)
+  }
+
+  addTilesetFromUrl(url){
+    if(!url){
+      return;
+    }
+    let val = url;
+    if(url.indexOf(location.origin) == 0){
+      val = val.substr(location.origin.length);
+    }
+
     let img = new Image();
     img.onload = (e) => {
       this.addTileset(img);
     };
-    img.src = this.refs.input.value;
+    img.onerror = (e)=> {
+      console.log("failed to load image:", val);
+    };
+    img.src = val;
   }
 
   addTileset(img) {
     const parent = this.props.tileset;
     const map = parent.props.info.content.map;
-    const tss = map.map.tilesets;
-    const ts = TileHelper.genTileset(map.map, img.src, img.width, img.height);
+    const tss = map.data.tilesets;
+    const ts = TileHelper.genTileset(map.data, img.src, img.width, img.height);
 
     tss.push(ts);
     map.images[img.src] = img;
     map.updateImages();
+    parent.selectTileset(tss.length - 1);
   }
 
   removeTileset() {
@@ -58,8 +47,8 @@ export default class TilesetControls extends React.Component {
     const map = parent.props.info.content.map;
     const tss = map.map.tilesets;
     const active = map.activeTileset;
+
     map.activeTileset = 0;
-    
     tss.splice(active, 1);
     map.fullUpdate();
   }

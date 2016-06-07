@@ -13,7 +13,10 @@ export default class TileSet extends React.Component {
 
   componentWillUnmount(){
     const mapTilesets = this.props.info.content.map.tilesets;
-    mapTilesets.splice(mapTilesets.indexof(this), 1);
+    const index = mapTilesets.indexOf(this);
+    if(index > -1){
+      mapTilesets.splice(mapTilesets.indexOf(this), 1);
+    }
   }
 
   highlightTile(event, e = event.nativeEvent, force = false){
@@ -100,6 +103,25 @@ export default class TileSet extends React.Component {
   selectTileset(tilesetNum){
     this.props.info.content.map.activeTileset = tilesetNum
     this.drawTiles();
+    this.forceUpdate();
+  }
+
+  onDrop(e){
+    e.preventDefault();
+    const assetJson = e.dataTransfer.getData("asset");
+    let asset;
+    if(assetJson){
+      asset = JSON.parse(assetJson);
+    }
+    if(asset.kind != "graphic"){
+      return;
+    }
+    const url = e.dataTransfer.getData("link");
+    this.refs.controls.addTilesetFromUrl(url);
+  }
+
+  onDrag(e){
+    e.dataTransfer.dropEffect = 'copy';
   }
 
   renderEmpty(){
@@ -112,8 +134,12 @@ export default class TileSet extends React.Component {
               {this.props.info.title}
             </span>
           </div>
-          <div className="active content">
-            <TilesetControls tileset={this} />
+          <div className="active content tilesets accept-drop"
+               drop-text="Drop asset here to create TileSet"
+               onDrop={this.onDrop.bind(this)}
+               onDrag={this.onDrag.bind(this)}
+            >
+            <TilesetControls tileset={this} ref="controls"/>
           </div>
         </div>
       </div>
@@ -179,7 +205,7 @@ export default class TileSet extends React.Component {
     }
     /* TODO: save active tileset and use only that as active */
     return (
-      <div className="mgbAccordionScroller">
+      <div className="mgbAccordionScroller tilesets">
         <div className="ui fluid styled accordion">
           <div className="active title">
             <span className="explicittrigger">
@@ -197,8 +223,13 @@ export default class TileSet extends React.Component {
             </div>
 
           </div>
-          <div className="active content">
-            <TilesetControls tileset={this} />
+          <div className="active content tilesets acceptDrop"
+               data-drop-text="Drop asset here to create TileSet"
+               onDrop={this.onDrop.bind(this)}
+               onDragOver={(e) => {e.preventDefault();}}
+
+            >
+            <TilesetControls tileset={this} ref="controls"/>
             <div
               className="tileset"
               ref="layer"

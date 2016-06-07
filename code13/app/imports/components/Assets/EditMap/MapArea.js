@@ -185,9 +185,6 @@ export default class MapArea extends React.Component {
 
   // TODO: optimize this.. seems pretty slow on maps with many/big tilesets..
   updateImages(cb){
-    window.TileHelper = TileHelper;
-    console.log("generating palette.. ");
-    const start = Date.now();
     const map = this.map;
     // map has not loaded
     if(!map || !map.tilesets){
@@ -229,7 +226,6 @@ export default class MapArea extends React.Component {
     else {
       this.removeTool("error");
     }
-    console.log("Generated palette in:", (Date.now() - start).toFixed(2) + "ms");
     if(typeof cb === "function"){
       cb();
     }

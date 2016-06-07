@@ -27,6 +27,28 @@
   font-weight: bold;
 }
 
+.accept-drop{
+  position: relative;
+}
+
+body.dragging .accept-drop:after{
+  content: attr(data-drop-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  height: 100%;
+  background-color: rgba(255,255,255,0.5);
+  font-size: 32pt;
+  text-align: center;
+  word-spacing: 20px;
+  line-height: 40pt;
+  padding: 20px;
+  font-weight: bold;
+}
+
+
 /* 3d preview */
 .map-filled.preview{
   transform: rotatey(45deg) rotatex(5deg) scale(0.9);
@@ -38,6 +60,8 @@
 .tilemap-wrapper{
   perspective: 2000px;
 }
+
+
 .map-filled.preview .tilemap-layer:nth-of-type(1) { transform: translatez(-100px); }
 .map-filled.preview .tilemap-layer:nth-of-type(2) { transform: translatez(-60px); }
 .map-filled.preview .tilemap-layer:nth-of-type(3) { transform: translatez(-40px); }

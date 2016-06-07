@@ -7,6 +7,12 @@ const TileHelper = {
     return ret;
   },
 
+  getTilePosRel: (id, widthInTiles, tilewidth, tileheight, ret = {x:0, y:0}) => {
+    ret.x = (id % widthInTiles);
+    ret.y = Math.floor(id / widthInTiles);
+    return ret;
+  },
+
   getTilePosWithOffsets: (id, widthInTiles, tilewidth, tileheight, margin = 0, spacing = 0, ret = {x:0, y:0}) => {
     let tx = (id % widthInTiles);
     let ty = Math.floor(id / widthInTiles);
@@ -14,6 +20,12 @@ const TileHelper = {
     ret.x = margin + tx * tilewidth + tx*spacing;
     ret.y = margin + ty * tileheight + ty*spacing;
 
+    return ret;
+  },
+
+  getTileCoordsRel: (x, y, tilewidth, tileheight, ret = {x: 0, y: 0} ) => {
+    ret.x = Math.floor(x / tilewidth);
+    ret.y = Math.floor(y / tileheight);
     return ret;
   },
 

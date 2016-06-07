@@ -46,21 +46,30 @@ export default class MapArea extends React.Component {
       y: 45
     };
 
+    this.layers = [];
+    this.tilesets = [];
   }
 
   removeDots(sin){
     return sin.replace(/\./gi,'*');
   }
+
   set map(val){
-    this.props.asset.content2 = val;
+    this.data = val;
   }
   get map(){
+    return this.data;
+  }
+
+  set data(val){
+    this.props.asset.content2 = val;
+  }
+  get data(){
     if(this.props.asset && !this.props.asset.content2.width){
       this.props.asset.content2 = TileHelper.genNewMap();
     }
     return this.props.asset.content2;
   }
-
   generateImages(cb){
     const imgs = this.props.asset.content2.images;
     if(!imgs){
@@ -194,28 +203,23 @@ export default class MapArea extends React.Component {
         this.errors.push("missing: '" + ts.image + "'" );
         continue;
       }
-      canvas.width = ts.tilewidth;
-      canvas.height = ts.tileheight;
-
       let tot = ts.tilecount;
       let pos = {x: 0, y: 0};
-      for(let i=0; i<tot; i++){
-        TileHelper.getTilePosWithOffsets(i, Math.floor(ts.imagewidth / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing,  pos);
-        canvas.ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.ctx.drawImage(this.images[ts.image],
-          pos.x, pos.y,
-          ts.tilewidth, ts.tileheight,
-          0, 0,
-          ts.tilewidth, ts.tileheight
-        );
-
+      for(let i=0; i<tot; i++) {
+        TileHelper.getTilePosWithOffsets(i, Math.floor(ts.imagewidth / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos);
         this.gidCache[fgid + i] = {
-          url: canvas.toDataURL(),
+          image: this.images[ts.image],
+          index,
+          w: ts.tilewidth,
+          h: ts.tileheight,
+          x: pos.x,
+          y: pos.y,
           ts: ts
         };
       }
       index++;
     }
+
     if(this.errors.length) {
       this.addTool("error", "Errors", this.errors);
     }
@@ -233,7 +237,7 @@ export default class MapArea extends React.Component {
     this.addTool("Layers", "Layers", {map: this}, Layers)
   }
   addTilesetTool(){
-    let ts = this.map.tilesets[this.activeTileset]
+    let ts = this.data.tilesets[this.activeTileset]
     this.addTool("Tileset", "Tilesets", {map:this}, TileSet);
   }
   /*
@@ -322,11 +326,25 @@ export default class MapArea extends React.Component {
   componentDidMount(){
     this.fullUpdate();
   }
-  // TODO: optimize - this one is really slow
+
   fullUpdate(){
     this.generateImages(() => {
       this.addLayerTool();
       this.addTilesetTool();
+      this.redrawLayers();
+      this.redrawTilesets();
+    });
+  }
+
+  redrawLayers(){
+    this.layers.forEach((layer) => {
+      layer.drawTiles();
+    });
+  }
+
+  redrawTilesets(){
+    this.tilesets.forEach((tileset) => {
+      tileset.drawTiles();
     });
   }
 
@@ -337,7 +355,7 @@ export default class MapArea extends React.Component {
       return (<div className="map-empty" ref="mapElement" />);
     }
     else{
-      let layers = [];
+      const layers = [];
       for (var i = 0; i < map.layers.length; i++) {
         if(!map.layers[i].visible){
           continue;
@@ -364,15 +382,6 @@ export default class MapArea extends React.Component {
   }
 
   render (){
-    let styles = [];
-    const keys = Object.keys(this.gidCache);
-
-    styles.push(".tilemap-tile { width: " + this.map.tilewidth + "px; height: " + this.map.tileheight + "px;}");
-    keys.forEach((k) => {
-      let c = this.gidCache[k];
-      styles.push(".tilemap-tile.gid-" + k + "{ background-image: url('"+ c.url +"'); width: " +c.ts.tilewidth+ "px; height: " +c.ts.tileheight+ "px;}");
-    });
-
     return (
       <div
         className="tilemap-wrapper"
@@ -381,7 +390,6 @@ export default class MapArea extends React.Component {
         onMouseMove={this.movePreview.bind(this)}
         onMouseUp={this.handleMouseUp.bind(this)}
         >
-        <style>{styles}</style>
         <button className="ui primary button"
           >Drop here to import</button>
         <button className="ui button"

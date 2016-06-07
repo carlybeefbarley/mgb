@@ -6,9 +6,55 @@ import TilesetControls from "./TilesetControls.js";
 
 export default class TileSet extends React.Component {
 
+  constructor(...args){
+    super(...args);
+    this.prevTile = null;
+  }
+
+
+  componentWillUnmount(){
+    const mapTilesets = this.props.info.content.map.tilesets;
+    mapTilesets.splice(mapTilesets.indexof(this), 1);
+  }
+
+  onMouseMove(e){
+    const map = this.props.info.content.map;
+    const ts = map.map.tilesets[map.activeTileset];
+    const palette = map.gidCache;
+
+    const pos = {
+      x: 0,
+      y: 0,
+      id: 0
+    };
+    TileHelper.getTileCoordsRel(e.offsetX, e.offsetY, ts.tilewidth, ts.tileheight, pos);
+    pos.id = pos.x + pos.y * Math.floor(ts.imagewidth / ts.tilewidth);
+    //this.drawTile(palette[pos.id], pos);
+
+    if(this.prevTile){
+      if(this.prevTile.x == pos.x && this.prevTile.y == pos.y){
+        return;
+      }
+      this.drawTile(palette[this.prevTile.id], this.prevTile, ts, true);
+    }
+
+    this.ctx.fillStyle = "rgba(0,0,255, 0.5)";
+    this.ctx.fillRect(pos.x, pos.y, ts.tilewidth, ts.tileheight);
+    this.prevTile = pos;
+
+  }
+
   componentDidMount() {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
+
+    const canvas = this.refs.canvas;
+    const $el = $(this.refs.layer);
+    canvas.width = $el.width();
+    canvas.height = $el.height();
+
+    this.ctx = canvas.getContext("2d");
+    this.props.info.content.map.tilesets.push(this);
   }
 
   selectTile(e){
@@ -20,7 +66,7 @@ export default class TileSet extends React.Component {
     // const gid = $el.data("gid");
     const gid = e.target.getAttribute("data-gid");
 
-    let wasActive = $el.hasClass("active");
+    const wasActive = $el.hasClass("active");
     map.clearActiveSelection();
     $el.parent().find(".active").removeClass("active");
 
@@ -53,36 +99,50 @@ export default class TileSet extends React.Component {
     );
   }
 
+  drawTiles(){
+    this.prevTile = null;
+
+    const map = this.props.info.content.map;
+    const tss = map.map.tilesets;
+    const ts = tss[map.activeTileset];
+
+    const palette = map.gidCache;
+    const mapData = map.data;
+    const ctx = this.ctx;
+
+    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+
+    const tiles = [];
+    const pos = {x:0, y:0};
+
+    for (let i = ts.firstgid; i < ts.tilecount; i++) {
+      TileHelper.getTilePosRel(i, mapData.width, ts.tilewidth, ts.tileheight, pos);
+      if(!palette[i]){
+        continue;
+      }
+      const pal = palette[i];
+      this.drawTile(pal, ts, pos);
+
+    }
+  }
+  drawTile(palette, pos, ts, clear = false){
+    if(clear){
+      this.ctx.clearRect(pos.x, pos.x, palette.w, palette.h);
+    }
+    this.ctx.drawImage(palette.image,
+      palette.x, palette.y, palette.w, palette.h,
+      pos.x * (ts.tilewidth + 1), pos.y * (ts.tileheight + 1) , palette.w, palette.h,
+    );
+  }
+
   render() {
     const map = this.props.info.content.map;
     const tss = map.map.tilesets;
-
+    const ts = tss[map.activeTileset];
     if(!tss.length){
       return this.renderEmpty();
     }
-
-    const ts = tss[map.activeTileset];
-
-    let tiles = [];
-    let tilesets = [];
-
-    let tot = ts.tilecount;
-    let pos = {x: 0, y: 0};
-    let fgid = ts.firstgid;
-
-    for(let i=0; i<tot; i++){
-      TileHelper.getTilePosWithOffsets(i, Math.floor(ts.imagewidth / ts.tilewidth), ts.tilewidth, ts.tileheight, 0, 0, pos);
-
-      tiles.push(<Tile
-        gid       = {fgid + i}
-        key       = {i}
-        width     = {ts.tilewidth}
-        height    = {ts.tileheight}
-        x         = {pos.x}
-        y         = {pos.y}
-        />);
-    }
-
+    const tilesets = [];
     for(let i=0; i<tss.length; i++){
       tilesets.push(
         <a className={tss[i] === ts ? "item active" : "item" }
@@ -116,13 +176,16 @@ export default class TileSet extends React.Component {
             <TilesetControls tileset={this} />
             <div
               className="tileset"
+              ref="layer"
               style={{
                 height: ts.imageheight+"px",
                 overflow: "auto",
                 clear: "both"
               }}
               onClick={this.selectTile.bind(this)}>
-            {tiles}
+              <canvas ref="canvas"
+                onMouseMove={this.onMouseMove.bind(this)}
+                ></canvas>
             </div>
           </div>
         </div>

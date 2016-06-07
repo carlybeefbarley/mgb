@@ -24,12 +24,12 @@ export default class Layer extends React.Component {
 		this.props.handleSave('Layer locking');
 	}
 
-	handleSelectLayer(){
+	selectLayer(){
 		this.props.selectLayer(this.props.idx);
 	}
 
-	handleSelectFrame(){
-
+	selectFrame(frameID){
+		this.props.selectFrame(frameID);
 	}
 
 	editName(){
@@ -48,8 +48,9 @@ export default class Layer extends React.Component {
 
 
   render() {
-  	let framesTD = _.map(this.props.frameNames, (frameName, idx) => { return (
-      <td onClick={this.handleSelectFrame.bind(this, idx)}>
+  	let framesTD = _.map(this.props.frameNames, (frameName, frameID) => { return (
+      <td onClick={this.selectFrame.bind(this, frameID)}
+      	className={this.props.isSelected && this.props.selectedFrame === frameID ? "highlight" : ""}>
           {/* selectedFrameIdx === idx ? <i className="circle icon"></i> : "" */}
       </td>);
     });
@@ -57,7 +58,7 @@ export default class Layer extends React.Component {
     return (
       <tr 
         className={this.props.isSelected ? "active" : ""}
-        onClick={this.handleSelectLayer.bind(this)} >
+        onClick={this.selectLayer.bind(this)} >
           <td>
           	<i 
           		className={"icon " + (this.props.layer.isHidden ? "hide" : "unhide" )}
@@ -79,7 +80,7 @@ export default class Layer extends React.Component {
           	<div 
           		className={"ui image " + (this.state.isCanvasVisible ? "" : "hidden") }
           		draggable="true" 
-          		/* onDragStart={this.handlePreviewDragStart.bind(this, idx)} */ 
+          		/* onDragStart={this.handlePreviewDragStart.bind(this, this.props.idx)} */ 
           		style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
           			<canvas width={this.props.width} height={this.props.height}></canvas>
         	</div>
@@ -100,5 +101,6 @@ Layer.propTypes = {
   height: PropTypes.number.isRequired,
 
   selectLayer: PropTypes.func.isRequired,
+  selectFrame: PropTypes.func.isRequired,
   handleSave: PropTypes.func.isRequired,
 };

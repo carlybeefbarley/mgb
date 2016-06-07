@@ -8,8 +8,6 @@ export default class SpriteLayers extends React.Component {
 	    super(props);
 	 
 	    this.state = {
-	    	selectedFrameIdx: 0,
-          	selectedLayerIdx: 0,
 	    	allLayersHidden: false,
 	    	allLayersLocked: false,
 	    };
@@ -35,11 +33,14 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	selectLayer(idx){
-		this.setState({ selectedLayerIdx: idx });
+		// this.setState({ selectedLayerIdx: idx });
+		// this.props.EditGraphic.setState({ selectedLayerIdx: idx });
+		this.props.EditGraphic.handleSelectLayer(idx);
 	}
 
 	selectFrame(idx){
-		this.setState({ selectedFrameIdx: idx });
+		// this.setState({ selectedFrameIdx: idx });
+		this.props.EditGraphic.handleSelectFrame(idx);
 	}
 
 	addFrame(){
@@ -99,12 +100,13 @@ export default class SpriteLayers extends React.Component {
 				idx={idx} 
 				layer={layer}
 				frameNames={c2.frameNames} 
-				selectedFrame={this.state.selectedFrameIdx}
-				isSelected={this.state.selectedLayerIdx === idx}
+				selectedFrame={this.props.EditGraphic.state.selectedFrameIdx}
+				isSelected={this.props.EditGraphic.state.selectedLayerIdx === idx}
 				width={c2.width}
 				height={c2.height}
 
 				selectLayer={this.selectLayer.bind(this)}
+				selectFrame={this.selectFrame.bind(this)}
 				handleSave={this.handleSave.bind(this)}
 			/>
 		));		
@@ -119,7 +121,7 @@ export default class SpriteLayers extends React.Component {
     return (
       	<div className="ui sixteen wide column">
 
-          <table className="ui celled padded table">
+          <table className="ui celled padded table spriteLayersTable">
             <thead>
               <tr>
                 <th width="32px">

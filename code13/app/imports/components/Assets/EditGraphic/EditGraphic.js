@@ -167,7 +167,8 @@ export default class EditGraphic extends React.Component {
     let c2 = asset.content2;
     let layerCount = c2.layerParams.length;
 
-    this.previewCanvasArray = $(".mgbPreviewCanvasContainer").find("canvas").get()
+    // this.previewCanvasArray = $(".mgbPreviewCanvasContainer").find("canvas").get()
+    this.previewCanvasArray = $(".spriteLayersTable").find("canvas").get();
 
     for (let i = 0; i < layerCount; i++) {
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
@@ -1146,7 +1147,9 @@ export default class EditGraphic extends React.Component {
 
         <SpriteLayers 
           content2={c2}
+          EditGraphic={this}
           canEdit={this.props.canEdit}
+
           handleSave={this.handleSave.bind(this)}     
           forceUpdate={this.forceUpdate.bind(this)}   
         />

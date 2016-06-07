@@ -24,3 +24,7 @@
 .hidden {
 	display: none !important;
 }
+
+.highlight {
+	background-color: #ccc;
+}

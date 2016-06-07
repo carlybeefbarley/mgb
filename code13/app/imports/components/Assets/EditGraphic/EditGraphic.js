@@ -55,6 +55,8 @@ export default class EditGraphic extends React.Component {
       toolActive: false,
       toolChosen: null
     }
+
+    this.fixingOldAssets();
   }
 
 
@@ -107,6 +109,19 @@ export default class EditGraphic extends React.Component {
     this.mgb_MAX_BITMAP_HEIGHT = 1024
     
     this.doSnapshotActivity()
+  }
+
+  // old assets had only string param name. This function just adds additional default params
+  fixingOldAssets(){
+    let c2 = this.props.asset.content2;
+    console.log(c2.layerParams, c2.layerNames);
+    if(!c2.layerParams && c2.layerNames){
+      c2.layerParams = [];
+      for(let i=0; i<c2.layerNames.length; i++){
+        c2.layerParams[i] = {name:c2.layerNames[i], isHidden: false, isLocked: false};
+      } 
+    }
+    this.handleSave("Automatic fixing old assets");
   }
 
 
@@ -736,14 +751,16 @@ export default class EditGraphic extends React.Component {
 
     let asset = this.props.asset;
     let c2    = asset.content2;
-    let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerParams.length
 
-    for (let i = 0; i < layerCount; i++) {
-      c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
+    if(this.previewCanvasArray){ // hack for automatic checking and saving old assets to new
+      let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerParams.length
+      for (let i = 0; i < layerCount; i++) {
+        c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
+      }
+      asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
     }
 
 
-    asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
     this.props.handleContentChange(c2, asset.thumbnail, changeText);
     this.doSnapshotActivity()
   }

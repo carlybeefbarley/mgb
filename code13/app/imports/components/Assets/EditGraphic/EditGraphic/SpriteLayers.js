@@ -15,20 +15,22 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	toggleAllVisibility(){
-		this.setState({ allLayersHidden: !this.state.allLayersHidden });
+		let isVisible = !this.state.allLayersHidden;
+		this.setState({ allLayersHidden: isVisible });
 		let layerParams = this.props.content2.layerParams;
 		for(let i=0; i<layerParams.length; i++){
-			layerParams[i].isHidden = this.state.allLayersHidden;
+			layerParams[i].isHidden = isVisible;
 		}
 		console.log(this.state.allLayersHidden, layerParams[0].isHidden);
 		this.handleSave("All layers visibility");
 	}
 
 	toggleAllLocking(){
-		this.setState({ allLayersLocked: !this.state.allLayersLocked });
+		let isLocked = !this.state.allLayersLocked;
+		this.setState({ allLayersLocked: isLocked });
 		let layerParams = this.props.content2.layerParams;
 		for(let i=0; i<layerParams.length; i++){
-			layerParams[i].isLocked = this.state.allLayersLocked;
+			layerParams[i].isLocked = isLocked;
 		}
 		this.handleSave("All layers locking");
 	}

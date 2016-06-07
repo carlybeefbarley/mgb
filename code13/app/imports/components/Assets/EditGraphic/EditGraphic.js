@@ -114,7 +114,7 @@ export default class EditGraphic extends React.Component {
   // old assets had only string param name. This function just adds additional default params
   fixingOldAssets(){
     let c2 = this.props.asset.content2;
-    console.log(c2.layerParams, c2.layerNames);
+    // console.log(c2.layerParams, c2.layerNames);
     if(!c2.layerParams && c2.layerNames){
       c2.layerParams = [];
       for(let i=0; i<c2.layerNames.length; i++){

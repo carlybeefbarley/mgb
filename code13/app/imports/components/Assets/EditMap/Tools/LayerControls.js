@@ -8,11 +8,12 @@ export default class LayerControls extends React.Component {
     const parent = this.props.layer;
     const map = parent.props.info.content.map;
     const lss = map.map.layers;
+    // TODO: check for duplicate names.. as they are confusing
     const ls = TileHelper.genLayer(map.map.width, map.map.height, "Layer " + (lss.length + 1));
 
     lss.push(ls);
     map.forceUpdate();
-    parent.drawTiles();
+    parent.forceUpdate();
   }
 
   removeLayer() {

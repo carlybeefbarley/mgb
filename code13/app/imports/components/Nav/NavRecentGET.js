@@ -16,6 +16,9 @@ export default NavRecentGET = React.createClass({
   },
   
   getMeteorData: function() {
+    if (!this.props.user)
+      return
+      
     let uid = this.props.user._id
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", uid);
     let handleActivity = Meteor.subscribe("activity.public.recent.userId", uid, 10) 
@@ -52,17 +55,19 @@ export default NavRecentGET = React.createClass({
   
   render: function() 
   {
+    if (!this.props.user)
+      return null
+
     if (this.data.loading)
       return null      
       
     return (
-      <div className="ui simple dropdown item" key="dropdown">
-        <i className="time icon"></i>
-        <div className="menu simple">
+        <div className="ui fluid inverted small vertical menu">
+          <div className="item">
+            <h3 className="ui inverted header">Recently Edited</h3>
+          </div>
           { this.renderMergedActivities() }
         </div>
-      </div>
-
     )
   }
 })

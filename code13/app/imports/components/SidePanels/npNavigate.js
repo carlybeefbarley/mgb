@@ -1,13 +1,12 @@
 import React, { PropTypes } from 'react';
 import QLink from '../../routes/QLink';
 
-export default fpNavigate = React.createClass({
+export default npNavigate = React.createClass({
   
   propTypes: {
-    currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
-    flexPanelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
+    currUser:           PropTypes.object,             // Currently Logged in user. Can be null/undefined
+    user:               PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
+    panelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
   },
 
 
@@ -32,7 +31,7 @@ export default fpNavigate = React.createClass({
 
 
     return (
-      <div className="ui vertical inverted menu">
+      <div className="ui vertical inverted fluid menu">
         <div className="item"><b>My Game Builder</b></div>
         <div className="item">
           <div className="header">Home</div>

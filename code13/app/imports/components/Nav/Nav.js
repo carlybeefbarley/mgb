@@ -45,8 +45,15 @@ export default Nav = React.createClass({
   render: function() {
     const user = this.props.user;
     
+    const sty = {
+      borderRadius: "0px", 
+      marginRight: this.props.flexPanelWidth,
+      marginLeft: this.props.navPanelWidth,
+      marginBottom: "0px"
+    }
+    
     return (
-      <div className="ui inverted menu" style={{borderRadius: "0px", marginRight: this.props.flexPanelWidth, marginBottom: "0px"}}>
+      <div className="ui attached inverted menu" style={sty}>
           <a href="#" className="header item" onClick={this.props.handleToggleSidebar}>
             <i className="sidebar icon" ></i>
           </a>
@@ -67,7 +74,6 @@ export default Nav = React.createClass({
           { user ?
             // If signed in, show Profile, Logout choices as  | username |   dropdown
             [
-              <NavRecentGET user={this.props.user} key="navr"/>,
               <div className="ui simple dropdown author item" key="dropdown" style={{paddingTop: "0px", paddingBottom: "0px"}}>
                 <img  className="ui avatar image" 
                       src={user.profile.avatar}>
@@ -103,6 +109,7 @@ export default Nav = React.createClass({
               <i  className={"chevron " + (this.props.flexPanelIsVisible ? "right" : "left") +" icon"}></i>
             </a>
           }
+          <div style={{width: this.props.navPanelWidth}} />
 
         </div>
     );

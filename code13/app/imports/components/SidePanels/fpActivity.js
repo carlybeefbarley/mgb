@@ -11,7 +11,7 @@ export default fpActivity = React.createClass({
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
-    flexPanelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
+    panelWidth:             PropTypes.string.isRequired   // Typically something like "200px". 
   },
 
 

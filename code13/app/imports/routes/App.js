@@ -11,7 +11,8 @@ import {Users, Activity} from '../schemas';
 
 import Spinner from '../components/Nav/Spinner';
 import Toast from '../components/Nav/Toast';
-import FlexPanel from '../components/FlexPanel/FlexPanel';
+import FlexPanel from '../components/SidePanels/FlexPanel';
+import NavPanel from '../components/SidePanels/NavPanel';
 
 import urlMaker from './urlMaker';
 
@@ -64,26 +65,25 @@ export default App = React.createClass({
   },
 
   render() {
-    if (this.data.loading) {
+    if (this.data.loading)
       return (<div><Spinner /></div>);
-    }
 
     const {currUser, user} = this.data
+    const { query } = this.props.location
 
-    // TODO(dgolds): clean up this back nav - proposal is to have a breadcrumb bar instead
-    //Back arrow button in nav menu works by either grabbing "back" props in Route (see index.js in /routes)
-    //Or by clearing all params/queries
-    const { query, pathname } = this.props.location
-    const backLink =
-        !_.isEmpty(query) ? pathname :
-        this.props.routes[1].back ? this.props.routes[1].back :
-        null
+    let mainPanelDivSty = {}
 
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue
-    const flexPanelWidth = showFlexPanel ? "225px" : "0px"    // The 226px width works well with default vertical menu size and padding=8px 
-    const mainPanelDivSty = showFlexPanel ? { marginRight: flexPanelWidth} : {}
+    const flexPanelWidth = showFlexPanel ? "225px" : "0px"    // The 225px width works well with default vertical menu size and padding=8px 
+    if (showFlexPanel) mainPanelDivSty.marginRight = flexPanelWidth
+
+    const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
+    const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
+    const navPanelWidth = showNavPanel ? "290px" : "60px 
+//    if (showNavPanel) 
+    mainPanelDivSty.marginLeft = navPanelWidth
 
     //Check permissions of current user for super-admin,
     //if user is on their own profile route,
@@ -122,6 +122,17 @@ export default App = React.createClass({
           />
 
         <div className="pusher">
+        
+            <NavPanel 
+              currUser={currUser}
+              user={user}
+              selectedViewTag={navPanelQueryValue}
+              handleNavPanelToggle={this.handleNavPanelToggle}
+              handleNavPanelChange={this.handleNavPanelChange}
+              navPanelWidth={navPanelWidth}
+              navPanelIsVisible={showNavPanel}
+            />
+            
             <Nav
               user={currUser}
               handleToggleSidebar={this.handleToggleSidebar}
@@ -129,7 +140,8 @@ export default App = React.createClass({
               handleFlexPanelToggle={this.handleFlexPanelToggle}
               flexPanelWidth={flexPanelWidth}
               flexPanelIsVisible={showFlexPanel}
-              back={backLink} />
+              navPanelWidth={navPanelWidth}
+              navPanelIsVisible={showNavPanel} />
 
             {this.state.showToast ?
               <Toast
@@ -141,11 +153,11 @@ export default App = React.createClass({
               <FlexPanel 
                 currUser={currUser}
                 user={user}
-                handleFlexPanelToggle={this.handleFlexPanelToggle}  
-                flexPanelIsVisible={showFlexPanel}
-                flexPanelWidth={flexPanelWidth} 
                 selectedViewTag={flexPanelQueryValue}
+                handleFlexPanelToggle={this.handleFlexPanelToggle}  
                 handleFlexPanelChange={this.handleFlexPanelChange}
+                flexPanelWidth={flexPanelWidth} 
+                flexPanelIsVisible={showFlexPanel}
                 activity={this.data.activity} 
                 /> 
             }
@@ -194,6 +206,34 @@ export default App = React.createClass({
   },
 
 
+  /** 
+   * This will show/hide the Nav Panel
+   */
+  handleNavPanelToggle: function()
+  {
+    const loc = this.props.location
+    const qp = urlMaker.queryParams("app_navPanel")
+    let newQ
+    if (loc.query[qp])
+      newQ = _.omit(loc.query, qp)
+    else
+      newQ = {...loc.query, [qp]:"1"}
+    browserHistory.push( {  ...loc,  query: newQ })
+  },
+
+
+  handleNavPanelChange: function(newFpView)
+  {
+    const qp = urlMaker.queryParams("app_navPanel")
+
+    const queryModifier = {[qp]: newFpView}
+    const loc = this.props.location
+    const newQ = {...loc.query, ...queryModifier }
+    browserHistory.push( {  ...loc,  query: newQ })
+  },
+  
+
+
   showToast(content, type) {
     this.setState({
       showToast: true,
@@ -206,6 +246,7 @@ export default App = React.createClass({
       this.closeToast()
     }, 2500);
   },
+
 
   closeToast() {
     this.setState({

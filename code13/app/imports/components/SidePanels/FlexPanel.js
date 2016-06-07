@@ -1,17 +1,14 @@
 import React, { PropTypes } from 'react';
-
-import fpNavigate from './fpNavigate';
 import fpActivity from './fpActivity';
 import fpAssets from './fpAssets';
 import fpUsers from './fpUsers';
 
 const flexPanelViews = [
   { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
-  { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: fpNavigate },
   { tag: "assets",    icon: "pencil",     hdr: "Assets",    el: fpAssets   },
+  { tag: "users",     icon: "users",      hdr: "Users",     el: fpUsers    },
   { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
 //{ tag: "focuser",   icon: "university", hdr: "Focuser"  },
-  { tag: "users",     icon: "users",      hdr: "Users",     el: fpUsers    },
   { tag: "pins",      icon: "pin",        hdr: "Pins"     },
   { tag: "chat",      icon: "chat",       hdr: "Chat"     }
 ]
@@ -113,7 +110,7 @@ export default FlexPanel = React.createClass({
                     <ElementFP  currUser={this.props.currUser} 
                               user={this.props.user} 
                               activity={this.props.activity}
-                              flexPanelWidth={this.props.flexPanelWidth} /> 
+                              panelWidth={this.props.flexPanelWidth} /> 
                   }
                 </div>
               </div>

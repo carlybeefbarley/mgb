@@ -13,7 +13,32 @@
 
 export default mgbReleaseInfo = {
   "releases":
-  [        
+  [ 
+    
+    { 
+      "timestamp":     "Tue Jun 07 2016 01:00:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "386"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.navpanel",
+          "type":           "feature",
+          "changeName":     "Nav Panel Framework",
+          "changeSummary":  "Added the new Nav Panel framework. This is on the left. There is a permanent 1st level nav which unlocks 2nd level nav that can be hidden/shown by clicking on the 1st level nav icon. Needs tidying up, but this is the intent for replaceing the sidebar and top nav",
+          "otherUrls":      []
+        }
+      ]             
+    },                    
+       
     
     { 
       "timestamp":     "Sun Jun 05 2016 13:45:00 GMT-0700 (PDT)",
@@ -57,8 +82,6 @@ export default mgbReleaseInfo = {
           "changeSummary":  "Temporary way to add tilemaps by pasting in an MGB Asset URL",
           "otherUrls":      []
         }
-        
-              
       ]             
     },                    
 

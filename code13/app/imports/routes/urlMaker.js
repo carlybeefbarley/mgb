@@ -18,7 +18,8 @@
 
 let _appRouter = undefined
 var _queryParamMap = {
-  "_fp": { qGroup: "APP", symbolName: "app_flexPanel" } // APP queryGroup queries are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
+  "_fp": { qGroup: "APP", symbolName: "app_flexPanel" },  // APP queryGroup queries are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
+  "_np": { qGroup: "APP", symbolName: "app_navPanel" }    // APP queryGroup queries are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
 }
 
 export default urlMaker = {

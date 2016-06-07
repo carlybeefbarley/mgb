@@ -7,6 +7,7 @@
 //            feature:      New Feature
 //            improvement:  Enhanced existing feature
 //            bugfix:       Fix a bug
+//            removed:      Feature Removed
 
 // For iteration, I just simply use the number of commits (including this) at https://github.com/devlapse/mgb
 
@@ -17,12 +18,12 @@ export default mgbReleaseInfo = {
     
     
     { 
-      "timestamp":     "Tue Jun 07 2016 10:15:00 GMT-0700 (PDT)",
+      "timestamp":     "Tue Jun 07 2016 14:16:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "400"
+        "iteration":   "410"
       },
 
       "releaseManagement": {
@@ -34,7 +35,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "nav.links",
           "type":           "improvement",
           "changeName":     "Nav Panel Framework",
-          "changeSummary":  "More Links are now preserving the panel states. A few more to go still..",
+          "changeSummary":  "All  Links are now preserving the panel states.",
           "otherUrls":      []
         },
         {
@@ -42,6 +43,13 @@ export default mgbReleaseInfo = {
           "type":           "improvement",
           "changeName":     "Show/Lock/Preview frame/layer",
           "changeSummary":  "Show/Hide/Lock/Unlock layer (buttons, not working yet), show preview canvas, add frame",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.sidebar",
+          "type":           "removed",
+          "changeName":     "Sidebar removed",
+          "changeSummary":  "This has been replaced by the nav panel which can persist and provide a two-level navigation",
           "otherUrls":      []
         }
       ]             

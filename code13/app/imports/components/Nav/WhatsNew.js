@@ -128,7 +128,8 @@ export default WhatsNew = React.createClass({
       { 
         "feature":     "green plus",
         "improvement": "grey plus",
-        "bugfix":      "red bug" 
+        "bugfix":      "red bug", 
+        "removed":     "red remove" 
       }
                  
     return <i className={"ui icon " + iconNames[ct]}></i>

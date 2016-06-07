@@ -1,13 +1,12 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
-import { Link } from 'react-router';
+import QLink from '../../routes/QLink';
 import InlineEdit from 'react-edit-inline';
 
 
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
 
-// TODO: Make this use <Link> instead of <a> so we don't force extra loading
 
 export default ProjectCard = React.createClass({
   propTypes : {
@@ -39,7 +38,7 @@ export default ProjectCard = React.createClass({
     const linkTo = "/user/" + project.ownerId + "/project/" + project._id
 
     const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
-    return  <Link className="ui bordered card" key={project._id} to={linkTo}>
+    return  <QLink className="ui bordered card" key={project._id} to={linkTo}>
               <div className="image">
                 <img src="http://semantic-ui.com/images/wireframe/image.png"></img>
               </div>
@@ -72,6 +71,6 @@ export default ProjectCard = React.createClass({
                   </div>
                 }
               </div>
-            </Link>
+            </QLink>
   }
 })

@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {Link, browserHistory} from 'react-router';
+import QLink from '../../routes/QLink';
 import reactMixin from 'react-mixin';
 import {Activity, ActivitySnapshots} from '../../schemas';
 import {AssetKinds} from '../../schemas/assets';
@@ -43,9 +43,9 @@ export default NavRecentGET = React.createClass({
       {
         // We only add Asset activities so far - not profile views etc
         const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind);
-        retval.push( <Link to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
+        retval.push( <QLink to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
                       <i className={assetKindIconClassName}></i>{a.toAssetKind} '{a.toAssetName || "<unnamed>"}'
-                    </Link> )
+                    </QLink> )
       }           
     })
      

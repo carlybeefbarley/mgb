@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {Link, browserHistory} from 'react-router';
+import QLink from '../../routes/QLink';
 import reactMixin from 'react-mixin';
 import moment from 'moment';
 import UserItem from '../Users/UserItem';
@@ -42,7 +42,7 @@ export default ProjectMembersGET = React.createClass({
                   createdAt={user.createdAt}
                   avatar={user.profile.avatar}  />
               <div className="ui bottom attached buttons">
-                <Link to={uLink + "/projects"} className="ui button">Projects</Link>
+                <QLink to={uLink + "/projects"} className="ui button">Projects</QLink>
                 { this.props.enableRemoveButton && 
                   <div className="ui red button" onClick={this.handleRemove.bind(this, user)}>Remove</div> }
               </div>

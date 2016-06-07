@@ -1,21 +1,14 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
-
-
-import {Link, browserHistory} from 'react-router';
+import QLink from '../../routes/QLink';
 
 export default class Sidebar extends Component {
 
   // static PropTypes = {
   //   user: PropTypes.object,
   //   showSidebar: PropTypes.boolean,
-  //   activity: PropTypes.array
   // }
 
-  constructor() {
-    super();
-    this.handleBrandClick = this.handleBrandClick.bind(this);
-  }
 
   render() {
     const {currUser} = this.props;
@@ -25,15 +18,15 @@ export default class Sidebar extends Component {
         <div className="item">
           <div className="header">My stuff</div>
             <div className="menu">
-              <Link to={`/user/${currUser._id}/assets`} className="item">My Assets</Link>
-              <Link to={`/user/${currUser._id}/projects`} className="item">My Projects</Link>
+              <QLink to={`/user/${currUser._id}/assets`} className="item">My Assets</QLink>
+              <QLink to={`/user/${currUser._id}/projects`} className="item">My Projects</QLink>
           </div>
         </div>
       )
       :
       (
         <div className="item">
-          <Link to="/join">Get Started</Link>
+          <QLink to="/join">Get Started</QLink>
         </div>
       );
 
@@ -44,25 +37,20 @@ export default class Sidebar extends Component {
         <div className="item">
           <div className="header">Home</div>
           <div className="menu">
-            <Link to="/" className="item">Home Page</Link>
+            <QLink to="/" className="item">Home Page</QLink>
           </div>
         </div>
         {userContent}
         <div className="item">
           <div className="header">People</div>
           <div className="menu">
-            <Link to="/users" className="item">Users</Link>
-            <Link to={`/assets`} className="item">Public Assets</Link>
+            <QLink to="/users" className="item">Users</QLink>
+            <QLink to={`/assets`} className="item">Public Assets</QLink>
           </div>
         </div>
       </div>
         );
   }
-
-  handleBrandClick() {
-    browserHistory.push(`/`);
-  }
-
 
   componentDidMount() {
     // TODO: Use context as a way to get rid of the DOM warning from sidebar.

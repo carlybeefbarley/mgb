@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import {Link} from 'react-router';
+import QLink from '../../routes/QLink';
 
 // TODO: Format like  http://semantic-ui.com/examples/login.html
 
@@ -29,25 +29,25 @@ export default class AuthLinks extends Component {
         case 'join':
           return (
             <div key={i} className="ui item">
-              <Link to="/join" >
+              <QLink to="/join" >
                 Need an account? Join Now
-              </Link>
+              </QLink>
             </div>
           );
         case 'forgot':
           return (
             <div key={i} className="ui item">
-            <Link to="/forgot-password">
+            <QLink to="/forgot-password">
               Forgot Password? 
-            </Link>
+            </QLink>
           </div>
           );
         case 'signin':
           return (
             <div key={i} className="ui item">
-            <Link to="/signin">
+            <QLink to="/signin">
               Already have an account? Login
-            </Link>
+            </QLink>
           </div>
           );
       }

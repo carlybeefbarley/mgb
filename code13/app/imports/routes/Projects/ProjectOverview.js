@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
-import {Link, browserHistory} from 'react-router';
+import QLink from '../QLink';
 import {Projects} from '../../schemas';
 import ProjectCard from '../../components/Projects/ProjectCard';
 import ProjectMembersGET from '../../components/Projects/ProjectMembersGET';
@@ -87,13 +87,13 @@ export default ProjectOverview = React.createClass({
             canEdit={canEd}
             handleFieldChanged={this.handleFieldChanged}
             />
-            <Link to={"/user/" + project.ownerId + "/assets?project="+project.name} className="ui fluid button" >
+            <QLink to={"/user/" + project.ownerId + "/assets?project="+project.name} className="ui fluid button" >
               View Project Assets
-            </Link>
+            </QLink>
             <br></br>
-            <Link to={"/user/" + project.ownerId} className="ui fluid button" >
+            <QLink to={"/user/" + project.ownerId} className="ui fluid button" >
               View Project Owner
-            </Link>
+            </QLink>
             { this.renderRenameDeleteProject() } 
         </div>
         

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import styles from './home.css';
-import {Link} from 'react-router';
+import QLink from './QLink';
 import Footer from '../components/Footer/Footer';
 
 
@@ -20,13 +20,13 @@ export default class Home extends Component {
               </h1>
               <h2>The Game-building Game</h2>
               { currUser ?
-                <Link to={`/user/${currUser._id}/assets`}>
+                <QLink to={`/user/${currUser._id}/assets`}>
                   <div className="ui huge primary button">Keep Going <i className="right arrow icon"></i></div>
-                </Link>
+                </QLink>
                 : 
-                <Link to={`/assets`}>
+                <QLink to={`/assets`}>
                   <div className="ui huge primary button">Get Started <i className="right arrow icon"></i></div>
-                </Link>
+                </QLink>
               }
               
             </div>
@@ -48,9 +48,9 @@ export default class Home extends Component {
               </div>
               <div className="row">
                 <div className="center aligned column">
-                  <Link to={`/assets`}>
+                  <QLink to={`/assets`}>
                     <div className="ui huge button">See Games Being Built</div>
-                  </Link>
+                  </QLink>
                 </div>
               </div>
             </div>

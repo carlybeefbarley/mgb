@@ -2,11 +2,7 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import urlMaker from './urlMaker';
 
-
-// TODO   implement nav= variant
-// TODO   replace <Link> with <QLink> everywhere
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
-
 
 function isLeftClickEvent(event) {
   return event.button === 0

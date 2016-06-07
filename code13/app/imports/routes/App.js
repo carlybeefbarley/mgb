@@ -81,7 +81,7 @@ export default App = React.createClass({
 
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
     const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
-    const navPanelWidth = showNavPanel ? "290px" : "60px 
+    const navPanelWidth = showNavPanel ? "290px" : "60px"
 //    if (showNavPanel) 
     mainPanelDivSty.marginLeft = navPanelWidth
 

@@ -86,10 +86,10 @@ export default AssetCard = React.createClass({
     }
   },
 
-  // proabbaly we could set global map<asset._id> Asset and escape stringifying;
+  // probably we could set global map<asset._id> Asset and escape stringifying;
   startDrag(asset, e){
     const url  = `/api/asset/png/${asset._id}`;
-    console.log("asset", url);
+    console.log("Start dragging Asset  url=", url);
 
     e.dataTransfer.setData("link", url);
     e.dataTransfer.setData("asset", JSON.stringify(asset));

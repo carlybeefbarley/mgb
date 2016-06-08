@@ -3,7 +3,7 @@ import Tile from './Tile.js';
 import TileHelper from "./TileHelper.js";
 
 export default class TileMapLayer extends React.Component {
-
+  /* lifecycle functions */
   constructor(...args){
     super(...args);
     this.ctx = null;
@@ -12,8 +12,34 @@ export default class TileMapLayer extends React.Component {
 
     this._mup = this.handleMouseUp.bind(this);
   }
+  componentDidMount(){
+    const canvas = this.refs.canvas;
+    const $el = $(this.refs.layer);
+    canvas.width = $el.width();
+    canvas.height = $el.height();
+    this.ctx = canvas.getContext("2d");
+
+    this.props.map.layers.push(this);
+    this.drawTiles();
+
+
+    document.body.addEventListener("mouseup", this._mup);
+  }
+  componentWillUnmount(){
+    this.props.map.layers.splice(this.props.map.layers.indexOf(this), 1);
+    document.body.removeEventListener("mouseup", this._mup);
+  }
+  /* endof lifecycle functions */
+
+  get options(){
+    return this.props.data;
+  }
 
   changeTile (ere, e = ere.nativeEvent, force = false) {
+    // do nothing if layer is not visible
+    if(!this.options.visible){
+      return;
+    }
     if(!this.prevTile){
       this.highlightTiles(ere, e);
     }
@@ -26,31 +52,39 @@ export default class TileMapLayer extends React.Component {
     this.highlightTiles(ere, e, true);
   }
 
-  handleMouseDown(e){
-    if(e.button == 0){
-      this.mouseDown = true;
-      this.handleMouseMove(e);
+  drawTiles(){
+    const d = this.props.data.data;
+    const map = this.props.map;
+    const palette = map.gidCache;
+    const mapData = map.data;
+    const ctx = this.ctx;
+
+    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+
+    const tiles = [];
+    const pos = {x:0, y:0};
+
+    if(!d) {
+      return;
     }
-  }
-  // this should be triggered on window instead of main element
-  handleMouseUp (e){
-    if(e.button == 0) {
-      this.mouseDown = false;
-      if(e.target == this.refs.canvas){
-        this.changeTile(e, e, true);
+
+    for (let i = 0; i < d.length; i++) {
+      TileHelper.getTilePosRel(i, mapData.width, mapData.tilewidth, mapData.tileheight, pos);
+      const pal = palette[d[i]];
+      if(pal){
+        this.drawTile(pal, pos, map.spacing);
       }
     }
   }
-
-  handleMouseMove(e){
-    if(this.mouseDown){
-      this.changeTile(e, e.nativeEvent, true);
+  drawTile(pal, pos, spacing = 0, clear = false){
+    if(clear){
+      this.ctx.clearRect(pos.x * (pal.ts.tilewidth + spacing), pos.y * (pal.ts.tileheight + spacing), pal.w, pal.h);
     }
-    else{
-      this.highlightTiles(e);
-    }
+    this.ctx.drawImage(pal.image,
+      pal.x, pal.y, pal.w, pal.h,
+      pos.x * (pal.ts.tilewidth + spacing), pos.y * (pal.ts.tileheight + spacing), pal.w, pal.h,
+    );
   }
-
   highlightTiles(ere, e = ere.nativeEvent, force = true){
     const map = this.props.map;
     const ts = map.map.tilesets[map.activeTileset];
@@ -84,84 +118,72 @@ export default class TileMapLayer extends React.Component {
       }
     }
 
-    this.ctx.fillStyle = "rgba(0,0,255, 0.5)";
+    //TODO: draw full selection with multiple tiles
+    const sel = map.selection[0];
+    if(sel) {
+      this.ctx.globalAlpha = 0.6;
+      const pal = palette[sel];
+      this.drawTile(pal, pos, map.spacing);
+      this.ctx.globalAlpha = 1;
+    }
+
+    this.ctx.fillStyle = "rgba(0,0,255, 0.2)";
     this.ctx.fillRect(
       pos.x * (map.data.tilewidth + map.spacing),
       pos.y * (map.data.tileheight + map.spacing),
       map.data.tilewidth, map.data.tileheight
     );
+
     this.prevTile = pos;
 
   }
 
-  drawTiles(){
-    const d = this.props.data.data;
-    const map = this.props.map;
-    const palette = map.gidCache;
-    const mapData = map.data;
-    const ctx = this.ctx;
-
-    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
-
-    const tiles = [];
-    const pos = {x:0, y:0};
-
-    if(!d) {
+  /* events */
+  handleMouseDown(e){
+    if(e.button == 0){
+      this.mouseDown = true;
+      this.handleMouseMove(e);
+    }
+  }
+  // this should be triggered on window instead of main element
+  handleMouseUp (e){
+    if(e.button !== 0) {
       return;
     }
-
-    for (let i = 0; i < d.length; i++) {
-      TileHelper.getTilePosRel(i, mapData.width, mapData.tilewidth, mapData.tileheight, pos);
-      const pal = palette[d[i]];
-      if(pal){
-        this.drawTile(pal, pos, map.spacing);
-      }
+    this.mouseDown = false;
+    if(e.target == this.refs.canvas){
+      this.changeTile(e, e, true);
     }
   }
-
-  drawTile(pal, pos, spacing = 0, clear = false){
-    if(clear){
-      this.ctx.clearRect(pos.x * (pal.ts.tilewidth + spacing), pos.y * (pal.ts.tileheight + spacing), pal.w, pal.h);
+  handleMouseMove(e){
+    if(this.mouseDown){
+      this.changeTile(e, e.nativeEvent, true);
     }
-    this.ctx.drawImage(pal.image,
-      pal.x, pal.y, pal.w, pal.h,
-      pos.x * (pal.ts.tilewidth + spacing), pos.y * (pal.ts.tileheight + spacing), pal.w, pal.h,
-    );
+    else{
+      this.highlightTiles(e);
+    }
   }
-
-  componentWillUnmount(){
-    this.props.map.layers.splice(this.props.map.layers.indexOf(this), 1);
-    document.body.removeEventListener("mouseup", this._mup);
-  }
-
-  componentDidMount(){
-    const canvas = this.refs.canvas;
-    const $el = $(this.refs.layer);
-    canvas.width = $el.width();
-    canvas.height = $el.height();
-    this.ctx = canvas.getContext("2d");
-
-    this.props.map.layers.push(this);
+  onMouseLeave(e){
+    this.prevTile = null;
     this.drawTiles();
-
-
-    document.body.addEventListener("mouseup", this._mup);
   }
+  /* end of events */
 
   render(){
+    // TODO - probably we can leave only canvas element here
     return (<div
       ref="layer"
       className={this.props.active ? "tilemap-layer" : "tilemap-layer no-events"}
       data-name={this.props.data.name}
-
-      onMouseMove={this.handleMouseMove.bind(this)}
-      //onMouseUp={this.handleMouseUp.bind(this)}
-      onMouseDown={this.handleMouseDown.bind(this)}
-
       >
-    <canvas ref="canvas" style={{
-    width: "100%", height: "100%", display: "block"
-    }}></canvas>
+    <canvas ref="canvas"
+            onMouseMove={this.handleMouseMove.bind(this)}
+            onMouseDown={this.handleMouseDown.bind(this)}
+            onMouseLeave={this.onMouseLeave.bind(this)}
+            style={{
+              width: "100%", height: "100%", display: "block"
+            }}>
+    </canvas>
     </div>);
   }
 }

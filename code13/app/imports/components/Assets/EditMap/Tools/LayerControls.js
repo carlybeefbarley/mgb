@@ -4,12 +4,24 @@ import TileHelper from '../TileHelper.js';
 
 export default class LayerControls extends React.Component {
 
+  constructor(...args){
+    super(...args);
+  }
+
+  get map(){
+    const parent = this.props.layer;
+    return parent.props.info.content.map;
+  }
+  get options(){
+    return this.map.meta.options;
+  }
+
   addLayer() {
     const parent = this.props.layer;
     const map = parent.props.info.content.map;
     const lss = map.map.layers;
-    // TODO: check for duplicate names.. as they are confusing
-    const ls = TileHelper.genLayer(map.map.width, map.map.height, "Layer " + (lss.length + 1));
+    // TODO: check for duplicate names..
+    const ls = TileHelper.genLayer(map.data.width, map.data.height, "Layer " + (lss.length + 1));
 
     lss.push(ls);
     map.forceUpdate();
@@ -26,7 +38,20 @@ export default class LayerControls extends React.Component {
     map.forceUpdate();
   }
 
+  highlightActiveLayerToggle(){
+    this.options.highlightActiveLayers = !this.options.highlightActiveLayers;
+    if(this.options.highlightActiveLayers){
+      $(this.map.refs.mapElement).addClass("highlight-active-layer");
+    }
+    else{
+      $(this.map.refs.mapElement).removeClass("highlight-active-layer");
+    }
+    this.forceUpdate();
+  }
+
   render() {
+    const highlihgtClassName = `ui floated icon button ${this.options.highlightActiveLayers ? 'active' : ''}`;
+
     return (
       <div className="ui mini">
         <div className="ui icon buttons mini"
@@ -38,8 +63,13 @@ export default class LayerControls extends React.Component {
           >
           <button className="ui floated icon button"
                   onClick={this.addLayer.bind(this)}
-            >
-            <i className="add icon"></i>
+                  title="Create new Layer"
+            ><i className="add icon"></i>
+          </button>
+          <button className={highlihgtClassName}
+                  onClick={this.highlightActiveLayerToggle.bind(this)}
+                  title="Highlight Active layer"
+            ><i className="add icon"></i>
           </button>
         </div>
         <div className="ui icon buttons right floated mini"

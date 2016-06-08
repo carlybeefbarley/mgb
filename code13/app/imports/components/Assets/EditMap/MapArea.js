@@ -41,6 +41,7 @@ export default class MapArea extends React.Component {
     this.state = {
       preview: false
     };
+    // x/y are angles not pixels
     this.preview = {
       x: 5,
       y: 45
@@ -72,6 +73,18 @@ export default class MapArea extends React.Component {
     }
     return this.props.asset.content2;
   }
+
+  // store meta information about current map
+  // don't forget to strip meta when exporting it
+  get meta(){
+    if(!this.data.meta){
+      this.data.meta = {
+        options: {}
+      };
+    }
+    return this.data.meta;
+  }
+
   generateImages(cb){
     const imgs = this.props.asset.content2.images;
     if(!imgs){
@@ -371,13 +384,15 @@ export default class MapArea extends React.Component {
         if(!map.layers[i].visible){
           continue;
         }
-        layers.push(<TileMapLayer
-          data={map.layers[i]}
-          key={i}
-          map={this}
-          active={this.activeLayer == i}
-          onClick={this.handleMapClicked.bind(this)}
-          />);
+        if(map.layers[i].type == "tilelayer") {
+          layers.push(<TileMapLayer
+            data={map.layers[i]}
+            key={i}
+            map={this}
+            active={this.activeLayer == i}
+            onClick={this.handleMapClicked.bind(this)}
+            />);
+        }
       }
       return (
         <div className={this.state.preview ? "map-filled preview" : "map-filled"}

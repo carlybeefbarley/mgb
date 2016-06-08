@@ -37,6 +37,21 @@ export default fpActivity = React.createClass({
   },
 
 
+  enablePopups()
+  {
+    $(".hazRecentPopup").popup()
+  },
+
+  componentDidMount()
+  {
+    this.enablePopups()
+  },
+
+  componentDidUpdate()
+  {
+    this.enablePopups()
+  },
+
   renderOneActivity: function(act, idx) {
     const iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
     const ago = moment(act.timestamp).fromNow()         // TODO: Make reactive
@@ -49,9 +64,11 @@ export default fpActivity = React.createClass({
     else if (act.activityType.startsWith("asset.")) {
       const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
       const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
+      const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
+      const dataHtml = `<img src="${assetThumbnailUrl}" />`
 
       return  this.wrapActivity(idx, ago, iconClass, assetKindIconClassName, act.byUserName, act.byUserId, 
-                <small>
+                <small data-html={dataHtml} data-position="left center" className="hazRecentPopup">
                   <QLink to={"/assetEdit/" + act.toAssetId}>
                     {assetName}
                   </QLink>

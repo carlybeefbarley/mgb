@@ -24,7 +24,7 @@ export default UserProfileRoute = React.createClass({
   
   getMeteorData: function() {
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", this.props.params.id);
-    let handleActivity = Meteor.subscribe("activity.public.recent.userId", this.props.params.id, 10) 
+    let handleActivity = Meteor.subscribe("activity.public.recent.userId", this.props.params.id) 
 
     return {
       activitySnapshots: ActivitySnapshots.find({ byUserId: this.props.params.id }).fetch(),

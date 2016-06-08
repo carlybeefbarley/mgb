@@ -49,9 +49,9 @@ export default AssetEditRoute = React.createClass({
 
   getMeteorData: function() {
     let assetId = this.props.params.id
-    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", assetId);
-    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId);
-    let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId, 20) 
+    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", assetId)
+    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
+    let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 
 
     let selector = { toAssetId: assetId }
     let options = {sort: {timestamp: -1}}

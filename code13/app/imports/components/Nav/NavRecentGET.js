@@ -6,6 +6,10 @@ import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 // GET - becuase this is a component that GETs it's own data via getMeteorData() callback
 
 export default NavRecentGET = React.createClass({
@@ -21,13 +25,28 @@ export default NavRecentGET = React.createClass({
       
     let uid = this.props.user._id
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", uid);
-    let handleActivity = Meteor.subscribe("activity.public.recent.userId", uid, 10) 
+    let handleActivity = Meteor.subscribe("activity.public.recent.userId", uid) 
 
     return {
       activitySnapshots: ActivitySnapshots.find({ byUserId: uid }).fetch(),
       activity: Activity.find({ byUserId: uid }, {sort: {timestamp: -1}}).fetch(),
       loading: !handleActivity.ready() && !handleForActivitySnapshots.ready()
     }
+  },
+
+  enablePopups()
+  {
+    $(".hazRecentPopup").popup()
+  },
+
+  componentDidMount()
+  {
+    this.enablePopups()
+  },
+
+  componentDidUpdate()
+  {
+    this.enablePopups()
   },
   
   renderMergedActivities()   // merge and sort by timestamp.. assets only? idk
@@ -45,10 +64,18 @@ export default NavRecentGET = React.createClass({
       if (a.toAssetId)
       {
         // We only add Asset activities so far - not profile views etc
-        const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind);
-        retval.push( <QLink to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
-                      <i className={assetKindIconClassName}></i>{a.toAssetKind} '{a.toAssetName || "<unnamed>"}'
-                    </QLink> )
+        const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind)
+        const assetKindCap = capitalizeFirstLetter(a.toAssetKind)
+        const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
+        const dataHtml = `<img src="${assetThumbnailUrl}" />`
+        //  title={ago} 
+        retval.push( 
+          <div className="ui item hazRecentPopup"  key={a._id}  data-html={dataHtml} data-position="right center" >
+            <QLink to={"/assetEdit/" + a.toAssetId} >
+              <i className={assetKindIconClassName}></i>{assetKindCap} '{a.toAssetName || "<unnamed>"}'
+            </QLink>
+          </div> 
+        )
       }           
     })
      
@@ -58,8 +85,6 @@ export default NavRecentGET = React.createClass({
   
   render: function() 
   {
- 
-      
     return (
         <div className="ui fluid inverted small vertical menu">
           <div className="item">

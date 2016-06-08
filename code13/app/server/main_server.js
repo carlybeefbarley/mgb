@@ -65,54 +65,78 @@ require('fs').readFile.call;
 // REST API.  These should match what is in AssetUrlGenerator.js
 // TODO - move to separate file/folder and then IMPORT
 var RestApi = new Restivus({
-    useDefaultAuth: true,
-    prettyJson: true
-  });
+  useDefaultAuth: true,
+  prettyJson: true
+});
 
 RestApi.addRoute('asset/:id', {authRequired: false}, {
-    get: function () {
-        var asset = Azzets.findOne(this.urlParams.id);
-        return asset ? asset : {};
-    }
-  });
+  get: function () {
+    var asset = Azzets.findOne(this.urlParams.id);
+    return asset ? asset : {};
+  }
+});
 
 RestApi.addRoute('asset/png/:id', {authRequired: false}, {
-    get: function () {
-        var asset = Azzets.findOne(this.urlParams.id);
+  get: function () {
+    var asset = Azzets.findOne(this.urlParams.id);
 // TODO: Handle case where the frameData has not yet been created
-        if (asset)
-        {
-            // is there more elegent way? e.g. asset/png/:id/:frame?
-            const frame = this.queryParams.frame || 0;
-            return {
-                statusCode: 200,
-                headers: {
-                    'Content-Type': 'image/png'
-                },
-                body: dataUriToBuffer(asset.content2.frameData[frame][0])
-            };
-        }
-        else {
-            return {
-                statusCode: 404                
-            };
-        }
+    if (asset)
+    {
+        // is there more elegent way? e.g. asset/png/:id/:frame?
+      const frame = this.queryParams.frame || 0;
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'image/png'
+        },
+        body: dataUriToBuffer(asset.content2.frameData[frame][0])
+      }
     }
-  });
+    else {
+      return {
+        statusCode: 404                
+      }
+    }
+  }
+});
+
+
+RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
+  get: function () {
+    var asset = Azzets.findOne(this.urlParams.id);
+    if (asset)
+    {
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'image/png'
+        },
+        body: dataUriToBuffer(asset.thumbnail)
+      };
+    }
+    else {
+      return {
+        statusCode: 404                
+      }
+    }
+  }
+})
+  
+
 RestApi.addRoute('asset/json/:id', {authRequired: false}, {
-    get: function () {
-        var asset = Azzets.findOne(this.urlParams.id);
-        if (asset)
-        {
-          return JSON.parse(asset.content2.src);    // MAKE SURE THIS MATCHES WHAT WE ACTUALLY STORE (ie. object vs string)            
-        }
-        else {
-            return {
-                statusCode: 404                
-            };
-        }
+  get: function () {
+    var asset = Azzets.findOne(this.urlParams.id);
+    if (asset)
+    {
+      return JSON.parse(asset.content2.src);    // MAKE SURE THIS MATCHES WHAT WE ACTUALLY STORE (ie. object vs string)            
     }
-  });
+    else {
+      return {
+        statusCode: 404                
+      }
+    }
+  }
+});
 
 
 console.log('\n\nRunning on server only (main_server.js)');

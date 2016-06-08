@@ -16,6 +16,7 @@ export default class TileMapLayer extends React.Component {
 
     this.ctx = canvas.getContext("2d");
     this.drawGrid();
+    this.alignToActiveLayer();
   }
 
   // align grid to active layer in preview mode
@@ -30,20 +31,7 @@ export default class TileMapLayer extends React.Component {
     }
     // remove this function from current stack - as layers are registering themselfes on DidMount
     setTimeout(() => {
-      const layerData = map.data.layers[map.activeLayer];
-      let index = 0;
-      for(let i=0; i<map.layers.length; i++){
-        if(map.layers[i].props.data == layerData){
-          index = i;
-          break;
-        }
-      }
-
-      const activeLayer = map.layers[index];
-      if(activeLayer && activeLayer.kind == "tilemaplayer"){
-        this.refs.layer.style['transform'] = getComputedStyle(activeLayer.refs.layer)["transform"];
-      }
-
+      this.alignToActiveLayer();
     }, 0);
 
     return false;
@@ -56,6 +44,22 @@ export default class TileMapLayer extends React.Component {
     document.body.removeEventListener("mouseup", this._mup);
   }
   /* endof lifecycle functions */
+
+  alignToActiveLayer(){
+    const layerData = map.data.layers[map.activeLayer];
+    let index = 0;
+    for(let i=0; i<map.layers.length; i++){
+      if(map.layers[i].props.data == layerData){
+        index = i;
+        break;
+      }
+    }
+
+    const activeLayer = map.layers[index];
+    if(activeLayer && activeLayer.kind == "tilemaplayer"){
+      this.refs.layer.style['transform'] = getComputedStyle(activeLayer.refs.layer)["transform"];
+    }
+  }
 
   drawGrid (){
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);

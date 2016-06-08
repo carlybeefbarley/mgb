@@ -30,7 +30,7 @@ export default NavRecentGET = React.createClass({
     return {
       activitySnapshots: ActivitySnapshots.find({ byUserId: uid }).fetch(),
       activity: Activity.find({ byUserId: uid }, {sort: {timestamp: -1}}).fetch(),
-      loading: !handleActivity.ready() && !handleForActivitySnapshots.ready()
+      loading: !handleActivity.ready() || !handleForActivitySnapshots.ready()
     }
   },
 
@@ -100,7 +100,7 @@ export default NavRecentGET = React.createClass({
           <div className="item">
             <h3 className="ui inverted header" style={{textAlign: "center"}}>
               <i className="time icon" />
-              My Recent Edits
+              My Recents
             </h3>
           </div>
           { this.renderMergedActivities() }

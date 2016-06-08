@@ -29,7 +29,7 @@ export default UserProfileRoute = React.createClass({
     return {
       activitySnapshots: ActivitySnapshots.find({ byUserId: this.props.params.id }).fetch(),
       activity: Activity.find({ byUserId: this.props.params.id }, {sort: {timestamp: -1}}).fetch(),
-      loading: !handleActivity.ready() && !handleForActivitySnapshots.ready()
+      loading: !handleActivity.ready() || !handleForActivitySnapshots.ready()
     };
   },
   

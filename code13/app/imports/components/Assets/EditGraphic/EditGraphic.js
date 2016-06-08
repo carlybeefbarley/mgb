@@ -1121,7 +1121,7 @@ export default class EditGraphic extends React.Component {
 
 
       {/*** SpriteLayers ***/}
-        <div className="ui sixteen wide column">
+        
           <SpriteLayers 
             content2={c2}
             EditGraphic={this}
@@ -1130,7 +1130,7 @@ export default class EditGraphic extends React.Component {
             handleSave={this.handleSave.bind(this)}     
             forceUpdate={this.forceUpdate.bind(this)}   
           />
-        </div>
+        
 
 
       </div>

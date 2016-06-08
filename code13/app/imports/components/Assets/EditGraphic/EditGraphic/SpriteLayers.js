@@ -11,6 +11,7 @@ export default class SpriteLayers extends React.Component {
 	    	allLayersHidden: false,
 	    	allLayersLocked: false,
 	    	isCanvasVisible: false,
+	    	isPlaying: false,
 	    };
 	}
 
@@ -82,10 +83,26 @@ export default class SpriteLayers extends React.Component {
 		this.setState({ isCanvasVisible: !this.state.isCanvasVisible });
 	}
 
+	togglePlayAnimation(){
+		this.setState({ isPlaying: !this.state.isPlaying });
+	}
+
+	stepFrame(isForward){
+		let selectedID = this.props.EditGraphic.state.selectedFrameIdx;
+		let frameID = isForward ? selectedID+1 : selectedID-1;
+		if(frameID >= 0 && frameID < this.props.content2.layerParams.length){
+			this.selectFrame(frameID);	
+		}
+	}
+
+	rewindFrames(isForward){
+		let frameID = isForward ? this.props.content2.layerParams.length-1 : 0; 
+		this.selectFrame(frameID);
+	}
+
 	handleSave(changeText="change graphic"){
 		this.props.handleSave(changeText);
 	}
-
 
 	renderLayers(){
 		let c2 = this.props.content2;
@@ -115,6 +132,31 @@ export default class SpriteLayers extends React.Component {
 
     return (
       	
+      <div className="ui sixteen wide column">
+      <div className="row">
+  		<div onClick={this.rewindFrames.bind(this, false)} className="ui button">
+			<i className="icon step backward"></i>
+		</div>
+		<div onClick={this.stepFrame.bind(this, false)} className="ui button">
+			<i className="icon backward"></i>
+		</div>
+		<div onClick={this.togglePlayAnimation.bind(this)} className="ui button">
+			<i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
+		</div>
+		<div onClick={this.stepFrame.bind(this, true)} className="ui button">
+			<i className="icon forward"></i>
+		</div>
+		<div onClick={this.rewindFrames.bind(this, true)} className="ui button">
+			<i className="icon step forward"></i>
+		</div>
+		<div className="ui labeled input">
+		  <div className="ui label">
+		    FPS
+		  </div>
+		  <input type="number" min="1" max="60" />
+		</div>
+      </div>
+
       <table className="ui celled padded table spriteLayersTable">
         <thead>
           <tr>
@@ -143,7 +185,7 @@ export default class SpriteLayers extends React.Component {
 				</a>
 				<span>&nbsp;&nbsp;</span>
 				<a class="ui label" onClick={this.toggleCanvasVisibility.bind(this)}>
-				    <i className={"icon " + ((this.state.isCanvasVisible ? "unhide" : "hide" ))}></i> Canvas
+				    <i className={"icon " + (this.state.isCanvasVisible ? "unhide" : "hide" )}></i> Canvas
 				</a>
 			</div>
             </th>
@@ -154,6 +196,7 @@ export default class SpriteLayers extends React.Component {
           {this.renderLayers()}
         </tbody>
       </table>
+      </div>
 
     );
   }

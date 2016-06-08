@@ -23,7 +23,7 @@ export default class LayerControls extends React.Component {
   addLayer() {
     const parent = this.props.layer;
     const map = parent.props.info.content.map;
-    const lss = map.map.layers;
+    const lss = map.data.layers;
     // TODO: check for duplicate names..
     const ls = TileHelper.genLayer(map.data.width, map.data.height, "Layer " + (lss.length + 1));
 
@@ -35,7 +35,7 @@ export default class LayerControls extends React.Component {
   removeLayer() {
     const parent = this.props.layer;
     const map = parent.props.info.content.map;
-    const lss = map.map.layers;
+    const lss = map.data.layers;
 
     lss.splice(map.activeLayer, 1);
     parent.forceUpdate();

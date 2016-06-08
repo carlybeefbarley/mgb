@@ -7,7 +7,6 @@ export default class TileMapLayer extends React.Component {
   constructor(...args){
     super(...args);
     this.ctx = null;
-    window.grid = this;
   }
   componentDidMount(){
     const canvas = this.refs.canvas;
@@ -50,7 +49,10 @@ export default class TileMapLayer extends React.Component {
     return false;
   }
   componentWillUnmount(){
-    this.props.map.layers.splice(this.props.map.layers.indexOf(this), 1);
+    const index = this.props.map.layers.indexOf(this);
+    if(index > -1){
+      this.props.map.layers.splice(index, 1);
+    }
     document.body.removeEventListener("mouseup", this._mup);
   }
   /* endof lifecycle functions */

@@ -20,8 +20,8 @@ export default class TileMapLayer extends React.Component {
     canvas.height = $el.height();
     this.ctx = canvas.getContext("2d");
 
-    console.log("Added tilemap layer to map!", this.options.name);
     this.props.map.layers.push(this);
+    console.log("Added tilemap layer to map!", this.options.name, this.props.map.layers);
 
     this.drawTiles();
 
@@ -30,8 +30,8 @@ export default class TileMapLayer extends React.Component {
   componentWillUnmount(){
     const index = this.props.map.layers.indexOf(this);
     if(index > -1){
-      console.log("Removed tilemap layer to map!", this.options.name);
-      this.props.map.layers.splice(this.props.map.layers.indexOf(this), 1);
+      this.props.map.layers.splice(index, 1);
+      console.log("Removed tilemap layer from map!", this.options.name, this.props.map.layers);
     }
     document.body.removeEventListener("mouseup", this._mup);
   }
@@ -50,10 +50,12 @@ export default class TileMapLayer extends React.Component {
       this.highlightTiles(ere, e);
     }
 
-    let index = this.prevTile.id;
-    if (e.ctrlKey) {
-      index = 0;
+    if(this.prevTile.outOfBounds){
+      alert("adding tile outside of the tileset bounds not supported.. yet");
+      this.mouseDown = false;
+      return;
     }
+    let index = this.prevTile.id;
     this.props.onClick(e, index);
     this.highlightTiles(ere, e, true);
   }
@@ -107,10 +109,32 @@ export default class TileMapLayer extends React.Component {
     const pos = {
       x: 0,
       y: 0,
-      id: 0
+      id: 0,
+      outOfBounds: false
     };
 
     TileHelper.getTileCoordsRel(e.offsetX - camera.x, e.offsetY - camera.y, map.data.tilewidth, map.data.tileheight, map.spacing, pos);
+
+    // TODO: resize layer so we can push in new tiles
+    if(pos.x >= layer.width){
+      //console.log("Out of bound to right");
+      pos.outOfBounds = true;
+      //return;
+    }
+    if(pos.x < 0){
+      //console.log("Out of bound to left");
+      pos.outOfBounds = true;
+    }
+    if(pos.y > layer.height){
+      //console.log("Out of bound to bottom");
+      pos.outOfBounds = true;
+    }
+    if(pos.y < 0){
+      //console.log("Out of bound to top");
+      pos.outOfBounds = true;
+    }
+
+
     pos.id = pos.x + pos.y * layer.width;
 
     if(this.prevTile){
@@ -118,7 +142,7 @@ export default class TileMapLayer extends React.Component {
         return;
       }
       const pal = palette[layer.data[this.prevTile.id]];
-      if(pal){
+      if(pal && !this.prevTile.outOfBounds){
         this.drawTile(pal, this.prevTile, map.spacing, true);
       }
       else{

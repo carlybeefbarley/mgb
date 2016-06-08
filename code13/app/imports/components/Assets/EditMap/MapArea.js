@@ -248,18 +248,6 @@ export default class MapArea extends React.Component {
     });
   }
 
-  /* TODO: move TileLayer specific function to TileLayer - map will handle all sorts of layers */
-  /* TODO: fill from selection */
-  handleMapClicked(e, key){
-
-    const sel = this.selection[0];
-    if(!e.ctrlKey && !sel){
-      return;
-    }
-    const layer = this.map.layers[this.activeLayer];
-    layer.data[key] = sel;
-
-  }
   // tileset calls this method..
   /* TODO: selection should be matrix - new class?*/
   addToActiveSelection (gid){
@@ -295,7 +283,32 @@ export default class MapArea extends React.Component {
     });
   }
 
-  moveMap(e){
+
+
+  /* TODO: move TileLayer specific function to TileLayer - map will handle all sorts of layers */
+  /* TODO: fill from selection */
+  handleMapClicked(e, key){
+
+    let sel = this.selection[0];
+    if(!e.ctrlKey && !sel){
+      return;
+    }
+    if(e.ctrlKey){
+      sel = 0;
+    }
+    const layer = this.map.layers[this.activeLayer];
+    layer.data[key] = sel;
+
+  }
+
+  resetCamera(){
+    this.lastEvent = null;
+    this.camera.x = 0;
+    this.camera.y = 0;
+    this.refs.grid.drawGrid();
+    this.redrawLayers();
+  }
+  moveCamera(e){
     if(!this.lastEvent){
       this.lastEvent = {
         pageX: e.pageX,
@@ -312,7 +325,7 @@ export default class MapArea extends React.Component {
     this.redrawLayers();
   }
   movePreview(e){
-    if(this.state.preview && e.button == 1) {
+    if(this.state.preview && (e.button == 1)) {
       if(!this.lastEvent){
         this.lastEvent = {
           pageX: e.pageX,
@@ -330,8 +343,8 @@ export default class MapArea extends React.Component {
       this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
 
     }
-    else if(e.button === 1){
-      this.moveMap(e);
+    else if(e.button === 1 || e.button == 2){
+      this.moveCamera(e);
     }
   }
   handleMouseUp(e){
@@ -450,6 +463,7 @@ export default class MapArea extends React.Component {
         onDragOver={this.prepareForDrag.bind(this)}
         onMouseMove={this.movePreview.bind(this)}
         onMouseUp={this.handleMouseUp.bind(this)}
+        onContextMenu={(e)=>{e.preventDefault(); return false;}}
         >
         <button className="ui primary button"
           >Drop here to import</button>
@@ -457,9 +471,11 @@ export default class MapArea extends React.Component {
           onClick={this.togglePreviewState.bind(this)}
           >Preview</button>
         <button className="ui primary button"
-                onClick={(e)=>{this.props.parent.handleSave(e)}}
+                onClick={(e)=>{this.props.parent.handleSave(e);}}
           >Save</button>
-
+        <button className="ui primary button"
+                onClick={()=>{this.resetCamera();}}
+          >Reset camera</button>
         {this.renderMap()}
       </div>
     )

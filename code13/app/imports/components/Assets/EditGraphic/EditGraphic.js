@@ -197,20 +197,31 @@ export default class EditGraphic extends React.Component {
    */
   getPreviewCanvasReferences()
   {
+
+    let asset = this.props.asset;
+    let c2 = asset.content2;
+
+    // TODO rename to layerCanvas and cts arrays instead of preview
+
     this.previewCanvasArray = []                // Preview canvas for this animation frame
     this.previewCtxArray = []                   // 2d drawing context for the animation frame
     this.previewCtxImageData1x1Array = []       // Used for painting quickly to each preview frame
 
-    let asset = this.props.asset;
-    let c2 = asset.content2;
-    let layerCount = c2.layerParams.length;
-
-    // this.previewCanvasArray = $(".mgbPreviewCanvasContainer").find("canvas").get()
-    this.previewCanvasArray = $(".spriteLayersTable").find("canvas").get();
-
-    for (let i = 0; i < layerCount; i++) {
+    this.previewCanvasArray = $(".spriteLayersTable td").find("canvas").get();
+    for (let i = 0; i < c2.layerParams.length; i++) {
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
       this.previewCtxImageData1x1Array[i] = this.previewCtxArray[i].createImageData(1,1);
+    }
+
+
+    this.frameCanvasArray = [];    // frame canvases where layers are merged
+    this.frameCtxArray = [];
+    this.frameCtxImageData1x1Array = [];
+
+    this.frameCanvasArray = $(".spriteLayersTable th").find("canvas").get();
+    for (let i = 0; i < c2.frameNames.length; i++) {
+      this.frameCtxArray[i] = this.frameCanvasArray[i].getContext('2d');
+      this.frameCtxImageData1x1Array[i] = this.frameCtxArray[i].createImageData(1,1);
     }
   }
 
@@ -251,17 +262,23 @@ export default class EditGraphic extends React.Component {
     let w = this.previewCanvasArray[this.state.selectedLayerIdx].width
     let h = this.previewCanvasArray[this.state.selectedLayerIdx].height
     let s = this.state.editScale
+    let c2 = this.props.asset.content2;
     this.editCtx.imageSmoothingEnabled = this.checked
     this.editCtx.mozImageSmoothingEnabled = this.checked
     this.editCtx.webkitImageSmoothingEnabled = this.checked
     this.editCtx.msImageSmoothingEnabled = this.checked
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
+    this.frameCtxArray[this.state.selectedFrameIdx].clearRect(0, 0, c2.width, c2.height);
     this.mergedCtx.clearRect(0, 0, this.mergedCanvas.width, this.mergedCanvas.height);
 
-    // draws all layers on edit canvas and merged canvas
+    // draws all layers on edit canvas and layer canvas
     for(let i=this.previewCanvasArray.length-1; i>=0; i--){
       if(!this.props.asset.content2.layerParams[i].isHidden){ 
         this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s);
+        this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
+
+
+        // TODO delete later on mergedCanvas and leave frameCanvases
         this.mergedCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
       }
     }

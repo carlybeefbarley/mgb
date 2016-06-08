@@ -163,9 +163,19 @@ export default class SpriteLayers extends React.Component {
 
   render() { 
   	let c2 = this.props.content2;
+
   	let framesTH = _.map(c2.frameNames, (frameName, idx) => { return (
       <th width="10px">{idx+1}</th>);
     });
+
+    let framesTHcanvas = _.map(c2.frameNames, (frameName, idx) => { return (
+      <th className="layerCanvases">
+      	<div className="ui image "
+          	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
+      		<canvas width={c2.width} height={c2.height}></canvas>
+      	</div>
+      </th>
+    )});
 
     return (
       	
@@ -228,6 +238,15 @@ export default class SpriteLayers extends React.Component {
 			</div>
             </th>
             <th width="32px"></th>
+          </tr>
+
+          <tr>
+          	<th></th>
+          	<th></th>
+          	<th></th>
+          	{framesTHcanvas}
+          	<th></th>
+          	<th></th>
           </tr>
         </thead>
         <tbody>

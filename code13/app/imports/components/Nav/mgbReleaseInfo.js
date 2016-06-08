@@ -15,7 +15,37 @@
 export default mgbReleaseInfo = {
   "releases":
   [ 
-    
+        
+    { 
+      "timestamp":     "Wed Jun 08 2016 13:45:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "436"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Grids, Layers, fixes",
+          "changeSummary":  "Grids for each layer, Active Layer Highlight, other fixes",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Graphic Animations",
+          "changeSummary":  "Graphic Animations, also layer/frame features work now",
+          "otherUrls":      []
+        }
+      ]             
+    },                    
     
     { 
       "timestamp":     "Tue Jun 07 2016 14:16:00 GMT-0700 (PDT)",

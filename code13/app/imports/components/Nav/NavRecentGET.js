@@ -39,6 +39,16 @@ export default NavRecentGET = React.createClass({
     $(".hazRecentPopup").popup()
   },
 
+  destroyPopups()
+  {
+     $(".hazRecentPopup").popup('destroy')
+  },
+
+  componentWillUnmount()
+  {
+    this.destroyPopups()
+  },
+
   componentDidMount()
   {
     this.enablePopups()

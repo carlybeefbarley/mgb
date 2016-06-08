@@ -21,7 +21,6 @@ export default class SpriteLayers extends React.Component {
 		for(let i=0; i<layerParams.length; i++){
 			layerParams[i].isHidden = isVisible;
 		}
-		console.log(this.state.allLayersHidden, layerParams[0].isHidden);
 		this.handleSave("All layers visibility");
 	}
 

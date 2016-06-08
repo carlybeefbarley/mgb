@@ -67,6 +67,7 @@ export default class EditGraphic extends React.Component {
   // content2.layerParams[layerIndex]     // array of layer params {name, isHiddden, isLocked}
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
+  // content2.spriteData[]    // dataUrl. Same frameData elements but with merged layers
 
 
   // React Callback: componentDidMount()
@@ -74,6 +75,8 @@ export default class EditGraphic extends React.Component {
     this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas);
     this.editCtx = this.editCanvas.getContext('2d');
     this.editCtxImageData1x1 = this.editCtx.createImageData(1,1);
+    this.mergedCanvas = ReactDOM.findDOMNode(this.refs.mergedCanvas);
+    this.mergedCtx = this.mergedCanvas.getContext('2d');
 
     //this.editCanvasOverlay =  ReactDOM.findDOMNode(this.refs.editCanvasOverlay);
     //this.editCtxOverlay = this.editCanvasOverlay.getContext('2d');
@@ -121,6 +124,9 @@ export default class EditGraphic extends React.Component {
         c2.layerParams[i] = {name:c2.layerNames[i], isHidden: false, isLocked: false};
       } 
     }
+    if(!c2.spriteData){
+      c2.spriteData = [];
+    }
     this.handleSave("Automatic fixing old assets");
   }
 
@@ -158,6 +164,7 @@ export default class EditGraphic extends React.Component {
         layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
         frameNames: ["Frame 1"],
         frameData: [ [ ] ],
+        spriteData: [],
       };
     }
   }
@@ -233,10 +240,15 @@ export default class EditGraphic extends React.Component {
     this.editCtx.webkitImageSmoothingEnabled = this.checked
     this.editCtx.msImageSmoothingEnabled = this.checked
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
-    // draws all layers on edit canvas
+    this.mergedCtx.clearRect(0, 0, this.mergedCanvas.width, this.mergedCanvas.height);
+
+    // draws all layers on edit canvas and merged canvas
     for(let i=this.previewCanvasArray.length-1; i>=0; i--){
       this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s);
+      this.mergedCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
     }
+    
+    
   }
 
   // A plugin-api for the graphic editing tools in Tools.js
@@ -758,6 +770,8 @@ export default class EditGraphic extends React.Component {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
       }
       asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
+
+      c2.spriteData[this.state.selectedFrameIdx] = this.mergedCanvas.toDataURL('image/png');
     }
 
 
@@ -1077,6 +1091,15 @@ export default class EditGraphic extends React.Component {
 
             </div>
           </div>
+        </div>
+
+      {/*** Canvas with merged layers ***/}
+        <div className="ui four wide column ">
+          <canvas 
+            ref="mergedCanvas"
+            width={c2.width}
+            height={c2.height}>
+          </canvas>
         </div>
 
         {/***  Right Column for animations and frames  ***/}

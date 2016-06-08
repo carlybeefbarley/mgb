@@ -244,7 +244,7 @@ export default class EditGraphic extends React.Component {
 
     // draws all layers on edit canvas and merged canvas
     for(let i=this.previewCanvasArray.length-1; i>=0; i--){
-      if(!this.props.asset.content2.layerParams[i].isHidden){
+      if(!this.props.asset.content2.layerParams[i].isHidden){ 
         this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s);
         this.mergedCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
       }
@@ -402,8 +402,12 @@ export default class EditGraphic extends React.Component {
 
 
   handleMouseDown(event) {
-    
-    if (this.state.toolChosen !== null) {
+    let layerParam = this.props.asset.content2.layerParams[this.state.selectedLayerIdx];
+    if(layerParam.isLocked || layerParam.isHidden){
+      // TODO alert popup
+      console.log("You can't draw on locked or hidden layer!");
+    }
+    else if (this.state.toolChosen !== null) {
       if (this.state.toolChosen.changesImage === true)
       {
         if (!this.props.canEdit)

@@ -19,7 +19,10 @@ export default npUsers = React.createClass({
           <div>
           
             <div className="ui item" key="authHdr">
-              <h2 className="ui inverted header" style={{textAlign: "center"}}>Users</h2>
+              <h3 className="ui inverted header" style={{textAlign: "center"}}>
+                <i className="users icon" />
+                  People
+              </h3>
             </div>
             <QLink to="/users" className="item">
               <i className="user icon" /> All Users

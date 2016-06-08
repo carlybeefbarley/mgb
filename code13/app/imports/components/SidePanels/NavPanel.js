@@ -44,8 +44,7 @@ export default NavPanel = React.createClass({
       position: "absolute", 
       left: "0px", 
       top: "0px", 
-      minHeight: "600px", 
-      height: "100%",
+      bottom: "0px",
       width: navPanelWidth, 
       backgroundColor: "#000"
     }
@@ -54,36 +53,41 @@ export default NavPanel = React.createClass({
       borderRadius: 0, 
       marginRight: "1px", 
       width: "60px", 
+      position: "absolute",
+      top: "0px",
+      bottom: "0px",
+      left: "0px",
       marginBottom: 0
     }
 
     const panelScrollContainerStyle = {
-      height: "100%", 
-      overflow: "scroll"
-    }
-    
-    const panelInnerStyle = {
       position: "absolute", 
       left: "62px", 
       right: "2px",
       top: "0px", 
-      minHeight: "600px",       
-      height: "auto" 
+      bottom: "0px",
+      backgroundColor: "#1b1c1d",       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
+      overflow: "scroll"
     }
     
+    const miniNavItemStyle = {
+      borderRadius: "0px"           // Otherwise active first-item / last-item is rounded
+    }
+        
     // If the nav Panel choice isn't recognized, just default to using our first one
     const navPanelChoice = _.find(navPanelViews, ['tag', this.props.selectedViewTag]) || navPanelViews[0]
     const navPanelHdr = navPanelChoice.hdr      
     const ElementNP = navPanelChoice.el    // Can be null
       
-    return  <div className="basic segment" style={panelStyle}>
+    return  <div className="basic segment mgbNavPanel" style={panelStyle}>
     
-              <div className="ui inverted vertical big icon menu" style={miniNavStyle}>
+              <div className="ui inverted attached borderless vertical big icon menu" style={miniNavStyle}>
                 { navPanelViews.map(v => { 
                   const actv = (v.tag===this.props.selectedViewTag) ? " active " : ""
                   return  <div 
                             key={v.tag}
                             className={actv + "item"} 
+                            style={miniNavItemStyle}
                             onClick={this.npViewSelect.bind(this, v.tag)}>
                             <i className={v.icon + actv + " big icon"} />
                           </div>
@@ -93,13 +97,11 @@ export default NavPanel = React.createClass({
 
               { this.props.navPanelIsVisible && 
                 <div style={panelScrollContainerStyle}>
-                  <div style={panelInnerStyle}>           
-                    { !ElementNP ? <div className="ui fluid label">TODO: {navPanelHdr} navPanel</div> : 
-                      <ElementNP  currUser={this.props.currUser} 
-                                  user={this.props.user} 
-                                  panelWidth={this.props.navPanelWidth} /> 
-                    }
-                  </div>
+                  { !ElementNP ? <div className="ui fluid label">TODO: {navPanelHdr} navPanel</div> : 
+                    <ElementNP  currUser={this.props.currUser} 
+                                user={this.props.user} 
+                                panelWidth={this.props.navPanelWidth} /> 
+                  }
                 </div>
               }
             </div>  

@@ -76,9 +76,7 @@ export default ProjectOverview = React.createClass({
           meta={[
               {"name": "description", "content": "Projects"}
           ]}
-        />
-        
-        <div className="one wide column"></div>
+        />        
 
         <div className="six wide column" style={{minWidth: "250px"}}>
           <ProjectCard 
@@ -100,8 +98,8 @@ export default ProjectOverview = React.createClass({
         <div className="eight wide column">
           <h3 className="ui header">Project Members</h3>
           <div className="ui basic segment">
-            Project Members may create, edit or delete assets in this project        
-            <p className="ui tiny orange label">! Access Control Not Yet Implemented !</p>  
+            Project Members may create, edit or delete assets in this project &nbsp;        
+            <p className="ui tiny orange label">&nbsp; ! Access Control Not Yet Implemented !</p>  
             <ProjectMembersGET 
                 project={this.data.project} 
                 enableRemoveButton={canEdit} 
@@ -110,9 +108,7 @@ export default ProjectOverview = React.createClass({
           </div>
           { this.renderAddPeople() } 
         </div>
-        
-        <div className="one wide column"></div>        
-        
+                
       </div>
     );
   },  

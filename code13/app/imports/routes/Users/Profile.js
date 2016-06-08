@@ -112,7 +112,7 @@ export default UserProfileRoute = React.createClass({
 
   
   render: function() {
-    const {user, ownsProfile, currUser} = this.props;
+    const {user, ownsProfile} = this.props;
 
     //if id params don't link to a user...
     if (!user) {
@@ -137,14 +137,11 @@ export default UserProfileRoute = React.createClass({
           ]}
         />
         
-        <div className="one wide column">
-        </div>
-
         <div className="six wide column" style={{minWidth: "250px"}}>
           <h2>User: {user.profile.name}</h2>
           <UserCard
             user={user}
-            canEditProfile={this.props.ownsProfile}
+            canEditProfile={ownsProfile}
             handleProfileFieldChanged={this.handleProfileFieldChanged}
             />
 
@@ -162,9 +159,6 @@ export default UserProfileRoute = React.createClass({
           { this.renderActivitySnapshots() }
           <h2 title="List of recent actions by this user. This list typically has several weeks of history">Recent edits</h2>
           { this.renderActivities() }
-        </div>
-        
-        <div className="one wide column">
         </div>
         
       </div>

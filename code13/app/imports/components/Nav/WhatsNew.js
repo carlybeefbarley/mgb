@@ -8,8 +8,7 @@ import mgbReleaseInfo from './mgbReleaseInfo.js';
 export default WhatsNew = React.createClass({
 
   propTypes: {
-    user: PropTypes.object,                 // Can be null 
-    userSawNewsHandler: PropTypes.func      // Can be null
+    user: PropTypes.object,                 // Can be null (if user is not logged in)
   },
   
   
@@ -18,6 +17,26 @@ export default WhatsNew = React.createClass({
     return {
       releaseIdx: 0,       // Index into mgbReleaseInfo[] for currently viewed release
       changeIdx: 0         // Index into mgbReleaseInfo[] for currently viewed release
+    }
+  },
+  
+  
+  /** This is called when the WhatsNew popup has been clicked and shown. 
+   *  We are to note the current timestamp of the latest release in the user profile 
+   */
+  handleUserSawNews: function(latestNewsTimestampSeen)
+  {
+    let user = this.props.user
+    
+    if (user && user.profile.latestNewsTimestampSeen !== latestNewsTimestampSeen)
+    {      
+      Meteor.call('User.updateProfile', user._id, {
+        "profile.latestNewsTimestampSeen": latestNewsTimestampSeen
+      }, (error) => {
+        if (error)
+          console.log("Could not update profile with news timestamp")      
+      });      
+      
     }
   },
   
@@ -37,8 +56,8 @@ export default WhatsNew = React.createClass({
         position : 'bottom left',
         on: "click",
         offset: -12,
-        onVisible: (m,p) => { 
-          this.props.userSawNewsHandler && this.props.userSawNewsHandler(this.latestRelTimestamp())
+        onVisible: () => {
+          this.handleUserSawNews(this.latestRelTimestamp())
         }
       })
     ;

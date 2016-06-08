@@ -15,32 +15,7 @@ export default Nav = React.createClass({
     name: PropTypes.string                              // Page title to show in Nav bar // TODO: Replace this with something more useful
   },
 
-  logout: function() {
-    let userName = Meteor.user().profile.name
-    logActivity("user.login",  `Logging out "${userName}"`, null, null);         
-
-    Meteor.logout();
-    browserHistory.push(`/`);
-  },
   
-  /** This is called when the WhatsNew popup has been clicked and shown. 
-   *  We are to note the current timestamp of the latest release in the user profile 
-   */
-  handleUserSawNews: function(latestNewsTimestampSeen)
-  {
-    let user = this.props.user
-    
-    if (user && user.profile.latestNewsTimestampSeen !== latestNewsTimestampSeen)
-    {      
-      Meteor.call('User.updateProfile', user._id, {
-        "profile.latestNewsTimestampSeen": latestNewsTimestampSeen
-      }, (error) => {
-        if (error)
-          console.log("Could not update profile with news timestamp")      
-      });      
-      
-    }
-  },
 
   render: function() {
     const user = this.props.user;
@@ -55,54 +30,14 @@ export default Nav = React.createClass({
     return (
       <div className="ui attached inverted menu" style={sty}>
 
-          <WhatsNew user={this.props.user} userSawNewsHandler={this.handleUserSawNews}/>
+          <WhatsNew user={this.props.user}/>
           
           <div className="item">
             {this.props.name}
           </div>
-          
-          
-          { /* Right Hand Side */ }
-          <QLink to={user ? `/user/${user._id}/assets`: '/assets'} className="item right">
-            <i className="home icon"></i>
-          </QLink>
-          
-          
-          { user ?
-            // If signed in, show Profile, Logout choices as  | username |   dropdown
-            [
-              <div className="ui simple dropdown author item" key="dropdown" style={{paddingTop: "0px", paddingBottom: "0px"}}>
-                <img  className="ui avatar image" 
-                      src={user.profile.avatar}>
-                </img> 
-                &nbsp;{user.profile.name} 
-                <i className="dropdown icon"></i>
-                <div className="menu simple">
-                  <QLink to={`/user/${this.props.user._id}`} className="item">
-                    <i className="user icon" /> Profile
-                  </QLink>
-                  <QLink to={`/user/${this.props.user._id}/assets`} className="item">
-                    <i className="home icon" /> My Assets
-                  </QLink>
-                  <QLink to={`/user/${this.props.user._id}/projects`} className="item">
-                    <i className="sitemap icon" /> My Projects
-                  </QLink>
-                  <div className="divider"></div>
-                  <a href="#" onClick={this.logout} className="ui item">
-                    <i className="sign out icon" /> Logout
-                  </a>
-                </div>
-              </div>
-            ]
-            :
-            // If signed out, show   | Sign-in, Join |  options inline
-            [
-              <QLink to="/signin" className="item"  key="signin">Login</QLink>,
-              <QLink to="/join" className="item"  key="join">Join</QLink>
-            ]
-          }
+         
           { !this.props.flexPanelIsVisible && 
-            <a className="header item" onClick={this.props.handleFlexPanelToggle}>
+            <a className="header item right" onClick={this.props.handleFlexPanelToggle}>
               <i  className={"chevron " + (this.props.flexPanelIsVisible ? "right" : "left") +" icon"}></i>
             </a>
           }

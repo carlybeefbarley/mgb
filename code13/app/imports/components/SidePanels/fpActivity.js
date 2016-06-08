@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
-
+import QLink from '../../routes/QLink';
 import {ActivityTypes} from '../../schemas/activity.js';
 import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
@@ -22,9 +21,9 @@ export default fpActivity = React.createClass({
               </div>
               <div className="content">
                 <div className="summary">
-                  <Link to={"/user/" + uId}>
+                  <QLink to={"/user/" + uId}>
                     { uName }
-                  </Link>
+                  </QLink>
                   <div className="date">
                     <small>{ago}</small>
                   </div>
@@ -53,9 +52,9 @@ export default fpActivity = React.createClass({
 
       return  this.wrapActivity(idx, ago, iconClass, assetKindIconClassName, act.byUserName, act.byUserId, 
                 <small>
-                  <Link to={"/assetEdit/" + act.toAssetId}>
+                  <QLink to={"/assetEdit/" + act.toAssetId}>
                     {assetName}
-                  </Link>
+                  </QLink>
                   <br></br>
                   &nbsp;{act.description}
                 </small>

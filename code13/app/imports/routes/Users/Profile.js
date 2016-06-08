@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import moment from 'moment';
 
 import UserCard from '../../components/Users/UserCard';
-import {Link} from 'react-router';
+import QLink from '../QLink';
 import EditProfile from '../../components/Users/EditProfile';
 import {Activity, ActivitySnapshots} from '../../schemas';
 import {ActivityTypes} from '../../schemas/activity.js';
@@ -59,21 +59,21 @@ export default UserProfileRoute = React.createClass({
       let iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
       
       if (act.activityType.startsWith("user.")) {
-        return <Link to={"/user/" + act.byUserId}  className="item" key={i} title={ago}>
+        return <QLink to={"/user/" + act.byUserId}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i>{act.description}
-              </Link>
+              </QLink>
       }
       else if (act.activityType.startsWith("asset.")) {
         const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind);
 
-        return  <Link to={"/assetEdit/" + act.toAssetId}  className="item" key={i} title={ago}>
+        return  <QLink to={"/assetEdit/" + act.toAssetId}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i><i className={assetKindIconClassName}></i>{act.description} '{act.toAssetName}'  
-              </Link>
+              </QLink>
       } 
       else if (act.activityType.startsWith("project.")) {
-        return <Link to={"/user/" + act.byUserId}  className="item" key={i}> title={ago}
+        return <QLink to={"/user/" + act.byUserId}  className="item" key={i}> title={ago}
                 <i className={iconClass}></i> {act.description}
-              </Link>
+              </QLink>
       }
       //else...
       return <div className="item" key={i}>!error! {act.activityType} activityType not in Profile code</div>              
@@ -100,9 +100,9 @@ export default UserProfileRoute = React.createClass({
       else if (a.toAssetKind === "graphic")
         detail2 = ` at frame #${a.passiveAction.selectedFrameIdx+1}`
       
-      return <Link to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
+      return <QLink to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
               <i className="ui eye grey icon"></i><i className={assetKindIconClassName}></i>View {a.toAssetKind} '{a.toAssetName || "<unnamed>"}'{detail2}
-              </Link>
+              </QLink>
     })
     
     return  <div className="ui small fluid vertical menu">
@@ -112,7 +112,7 @@ export default UserProfileRoute = React.createClass({
 
   
   render: function() {
-    const {user, ownsProfile, currUser} = this.props;
+    const {user, ownsProfile} = this.props;
 
     //if id params don't link to a user...
     if (!user) {
@@ -137,24 +137,21 @@ export default UserProfileRoute = React.createClass({
           ]}
         />
         
-        <div className="one wide column">
-        </div>
-
         <div className="six wide column" style={{minWidth: "250px"}}>
           <h2>User: {user.profile.name}</h2>
           <UserCard
             user={user}
-            canEditProfile={this.props.ownsProfile}
+            canEditProfile={ownsProfile}
             handleProfileFieldChanged={this.handleProfileFieldChanged}
             />
 
 
-          <Link to={`/user/${user._id}/assets`} className="ui button" >
+          <QLink to={`/user/${user._id}/assets`} className="ui button" >
             Assets
-          </Link>
-          <Link to={`/user/${user._id}/projects`}  className="ui button" >
+          </QLink>
+          <QLink to={`/user/${user._id}/projects`}  className="ui button" >
             Projects
-          </Link>
+          </QLink>
         </div>
         
         <div className="eight wide column">
@@ -162,9 +159,6 @@ export default UserProfileRoute = React.createClass({
           { this.renderActivitySnapshots() }
           <h2 title="List of recent actions by this user. This list typically has several weeks of history">Recent edits</h2>
           { this.renderActivities() }
-        </div>
-        
-        <div className="one wide column">
         </div>
         
       </div>

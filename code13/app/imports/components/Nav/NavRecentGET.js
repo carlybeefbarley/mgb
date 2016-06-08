@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {Link, browserHistory} from 'react-router';
+import QLink from '../../routes/QLink';
 import reactMixin from 'react-mixin';
 import {Activity, ActivitySnapshots} from '../../schemas';
 import {AssetKinds} from '../../schemas/assets';
@@ -17,7 +17,7 @@ export default NavRecentGET = React.createClass({
   
   getMeteorData: function() {
     if (!this.props.user)
-      return
+      return {}
       
     let uid = this.props.user._id
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", uid);
@@ -27,11 +27,14 @@ export default NavRecentGET = React.createClass({
       activitySnapshots: ActivitySnapshots.find({ byUserId: uid }).fetch(),
       activity: Activity.find({ byUserId: uid }, {sort: {timestamp: -1}}).fetch(),
       loading: !handleActivity.ready() && !handleForActivitySnapshots.ready()
-    };
+    }
   },
   
   renderMergedActivities()   // merge and sort by timestamp.. assets only? idk
   {
+    if (!this.props.user || this.data.loading)
+      return null      
+      
     let mergedArray = this.data.activity.concat(this.data.activitySnapshots)
     mergedArray = _.sortBy(mergedArray, x => { return -x.timestamp.getTime()})  // Sort by most recent
     mergedArray = _.uniqBy(mergedArray, 'toAssetId')    // Remove later duplicate assetIds
@@ -43,9 +46,9 @@ export default NavRecentGET = React.createClass({
       {
         // We only add Asset activities so far - not profile views etc
         const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind);
-        retval.push( <Link to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
+        retval.push( <QLink to={"/assetEdit/" + a.toAssetId} className="item" key={a._id} title={ago}>
                       <i className={assetKindIconClassName}></i>{a.toAssetKind} '{a.toAssetName || "<unnamed>"}'
-                    </Link> )
+                    </QLink> )
       }           
     })
      
@@ -55,16 +58,15 @@ export default NavRecentGET = React.createClass({
   
   render: function() 
   {
-    if (!this.props.user)
-      return null
-
-    if (this.data.loading)
-      return null      
+ 
       
     return (
         <div className="ui fluid inverted small vertical menu">
           <div className="item">
-            <h3 className="ui inverted header">Recently Edited</h3>
+            <h3 className="ui inverted header" style={{textAlign: "center"}}>
+              <i className="time icon" />
+              Recently Edited
+            </h3>
           </div>
           { this.renderMergedActivities() }
         </div>

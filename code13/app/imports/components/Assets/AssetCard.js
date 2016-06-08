@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import {Link, browserHistory} from 'react-router';
+import { browserHistory } from 'react-router';
+import QLink from "../../routes/QLink";
 import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 import {logActivity} from '../../schemas/activity';
@@ -85,6 +86,21 @@ export default AssetCard = React.createClass({
     }
   },
 
+  // proabbaly we could set global map<asset._id> Asset and escape stringifying;
+  startDrag(asset, e){
+    const url  = `/api/asset/png/${asset._id}`;
+    console.log("asset", url);
+
+    e.dataTransfer.setData("link", url);
+    e.dataTransfer.setData("asset", JSON.stringify(asset));
+
+    $(document.body).addClass("dragging");
+  },
+
+  endDrag(asset, e){
+    $(document.body).removeClass("dragging");
+  },
+
   render() {
     if (!this.props.asset)
       return null;
@@ -124,9 +140,12 @@ export default AssetCard = React.createClass({
                             handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
                             />
                           
-
+    // TODO: add allowDrag to props.. and walk through AssetCard use cases;
     return (
-      <div key={asset._id} className="ui card">
+      <div key={asset._id} className="ui card" draggable="true"
+           onDragStart={this.startDrag.bind(this, asset)}
+           onDragEnd={this.endDrag.bind(this, asset)}
+        >
       
           { this.props.showHeader &&
             <div className="ui centered image">
@@ -191,20 +210,20 @@ export default AssetCard = React.createClass({
             </span>                           
             <span className="right floated author">
                 <i className="large user icon"></i>
-                <Link to={`/user/${asset.ownerId}`}>
+                <QLink to={`/user/${asset.ownerId}`}>
                   {ownerName ? ownerName : `#${asset.ownerId}`}
-                </Link>
+                </QLink>
             </span>
           </div>
         }
         
         { this.props.showHeader && !renderShort &&         
           <div className="ui four small bottom attached icon buttons">
-            <div className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
+            <QLink to={`/assetEdit/${asset._id}`} className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
                   onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
               <small>&nbsp;Edit</small>
-            </div>
+            </QLink>
             <div className={(canEdit ? "" : "disabled ") + "ui blue compact button"} 
                   onClick={this.handleCompletedClick} >
               <i className={ asset.isCompleted ? "ui checkmark icon" : "ui remove icon"}></i>

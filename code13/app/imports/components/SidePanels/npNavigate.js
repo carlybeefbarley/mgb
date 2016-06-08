@@ -31,7 +31,7 @@ export default npNavigate = React.createClass({
 
 
     return (
-      <div className="ui vertical inverted fluid menu">
+      <div className="ui vertical attached inverted fluid menu">
         <div className="item"><b>My Game Builder</b></div>
         <div className="item">
           <div className="header">Home</div>

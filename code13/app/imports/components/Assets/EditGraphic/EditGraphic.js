@@ -244,8 +244,10 @@ export default class EditGraphic extends React.Component {
 
     // draws all layers on edit canvas and merged canvas
     for(let i=this.previewCanvasArray.length-1; i>=0; i--){
-      this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s);
-      this.mergedCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
+      if(!this.props.asset.content2.layerParams[i].isHidden){
+        this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s);
+        this.mergedCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
+      }
     }
     
     

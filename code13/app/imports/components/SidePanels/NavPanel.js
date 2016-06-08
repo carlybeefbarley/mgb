@@ -6,10 +6,10 @@ import npRecent from './npRecent';
 
 
 const navPanelViews = [
-  { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: npNavigate },
-  { tag: "user",      icon: "user",       hdr: "User",      el: npUser     },
-  { tag: "users",     icon: "users",      hdr: "Users",     el: npUsers    },
-  { tag: "recent",    icon: "time",       hdr: "Recent",    el: npRecent   }
+  { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: npNavigate, hideIfNoUser: false  },
+  { tag: "user",      icon: "user",       hdr: "User",      el: npUser,     hideIfNoUser: false  },
+  { tag: "users",     icon: "users",      hdr: "Users",     el: npUsers,    hideIfNoUser: false  },
+  { tag: "recent",    icon: "time",       hdr: "Recent",    el: npRecent,   hideIfNoUser: true   }
 
   // { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
   // { tag: "skills",    icon: "university", hdr: "Skills" }
@@ -84,6 +84,8 @@ export default NavPanel = React.createClass({
     
               <div className="ui inverted attached borderless vertical big icon menu" style={miniNavStyle}>
                 { navPanelViews.map(v => { 
+                  if (v.hideIfNoUser && !this.props.currUser)
+                    return null
                   const actv = (v.tag===this.props.selectedViewTag) ? " active " : ""
                   return  <div 
                             key={v.tag}

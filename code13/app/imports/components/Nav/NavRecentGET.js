@@ -32,6 +32,9 @@ export default NavRecentGET = React.createClass({
   
   renderMergedActivities()   // merge and sort by timestamp.. assets only? idk
   {
+    if (!this.props.user || this.data.loading)
+      return null      
+      
     let mergedArray = this.data.activity.concat(this.data.activitySnapshots)
     mergedArray = _.sortBy(mergedArray, x => { return -x.timestamp.getTime()})  // Sort by most recent
     mergedArray = _.uniqBy(mergedArray, 'toAssetId')    // Remove later duplicate assetIds
@@ -55,11 +58,7 @@ export default NavRecentGET = React.createClass({
   
   render: function() 
   {
-    if (!this.props.user)
-      return null
-
-    if (this.data.loading)
-      return null      
+ 
       
     return (
         <div className="ui fluid inverted small vertical menu">

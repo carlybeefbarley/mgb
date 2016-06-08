@@ -52,11 +52,17 @@ export default class MapArea extends React.Component {
     this.tilesets = [];
     //this.margin = 0;
     this.spacing = 0;
+
+    this.globalMouseMove = (...args) => {this.mouseMove(...args);}
   }
 
   componentDidMount(){
     $(this.refs.mapElement).addClass("map-filled");
     this.fullUpdate();
+    window.addEventListener("mousemove", this.globalMouseMove);
+  }
+  componentWillUnmount(){
+    window.removeEventListener("mousemove", this.globalMouseMove);
   }
 
   removeDots(sin){
@@ -325,23 +331,26 @@ export default class MapArea extends React.Component {
     this.redrawLayers();
   }
   movePreview(e){
+    if(!this.lastEvent){
+      this.lastEvent = {
+        pageX: e.pageX,
+        pageY: e.pageY
+      };
+      this.refs.mapElement.style.transition = "0s";
+      return;
+    }
+
+    this.preview.y += this.lastEvent.pageX - e.pageX;
+    this.preview.x -= this.lastEvent.pageY - e.pageY;
+
+    this.lastEvent.pageX = e.pageX;
+    this.lastEvent.pageY = e.pageY;
+    this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
+  }
+  mouseMove(e){
+    // move Preview
     if(this.state.preview && (e.button == 1)) {
-      if(!this.lastEvent){
-        this.lastEvent = {
-          pageX: e.pageX,
-          pageY: e.pageY
-        };
-        this.refs.mapElement.style.transition = "0s";
-        return;
-      }
-
-      this.preview.y += this.lastEvent.pageX - e.pageX;
-      this.preview.x -= this.lastEvent.pageY - e.pageY;
-
-      this.lastEvent.pageX = e.pageX;
-      this.lastEvent.pageY = e.pageY;
-      this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
-
+      this.movePreview(e);
     }
     else if(e.button === 1 || e.button == 2){
       this.moveCamera(e);
@@ -461,7 +470,6 @@ export default class MapArea extends React.Component {
         className="tilemap-wrapper"
         onDrop={this.importFromDrop.bind(this)}
         onDragOver={this.prepareForDrag.bind(this)}
-        onMouseMove={this.movePreview.bind(this)}
         onMouseUp={this.handleMouseUp.bind(this)}
         onContextMenu={(e)=>{e.preventDefault(); return false;}}
         >

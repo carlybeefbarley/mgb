@@ -82,8 +82,8 @@ const TileHelper = {
 
 
     const extraPixels = imagewidth % tilewidth;
-    const rows = (imagewidth - extraPixels) / tilewidth;
-    const columns = (imageheight - (imageheight % tileheight)) / tileheight;
+    const columns = (imagewidth - extraPixels) / tilewidth;
+    const rows = (imageheight - (imageheight % tileheight)) / tileheight;
 
     if(margin != -1){
       if(spacing == -1){

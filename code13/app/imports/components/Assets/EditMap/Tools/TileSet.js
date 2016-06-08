@@ -77,13 +77,16 @@ export default class TileSet extends React.Component {
     const map = this.props.info.content.map;
     const tss = map.map.tilesets;
     const ts = tss[map.activeTileset];
+    const ctx = this.ctx;
+    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+
     if(!ts){
+
       return;
     }
     const palette = map.gidCache;
     const mapData = map.data;
-    const ctx = this.ctx;
-    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+
 
     const pos = {x:0, y:0};
     const spacing = map.spacing;

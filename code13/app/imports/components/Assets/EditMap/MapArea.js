@@ -85,7 +85,10 @@ export default class MapArea extends React.Component {
   get meta(){
     if(!this.data.meta){
       this.data.meta = {
-        options: {}
+        options: {
+          // empty maps aren't visible without grid
+          showGrid: 1
+        }
       };
     }
     return this.data.meta;
@@ -321,6 +324,10 @@ export default class MapArea extends React.Component {
     });
   }
 
+  moveMap(e){
+    
+  }
+
   movePreview(e){
     if(this.state.preview && e.button == 1) {
       if(!this.lastEvent){
@@ -339,6 +346,9 @@ export default class MapArea extends React.Component {
       this.lastEvent.pageY = e.pageY;
       this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
 
+    }
+    else if(e.button === 0){
+      this.moveMap(e);
     }
   }
 

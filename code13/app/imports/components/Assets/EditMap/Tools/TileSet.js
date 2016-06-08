@@ -220,7 +220,7 @@ export default class TileSet extends React.Component {
           className="tileset"
           ref="layer"
           style={{
-                height: (ts ? (TileHelper.getTilesetHeight(ts) + scrollingMargin) : 200)+"px",
+                //height: (ts ? (TileHelper.getTilesetHeight(ts) + scrollingMargin) : 200)+"px",
                 overflow: "auto",
                 clear: "both"
               }}

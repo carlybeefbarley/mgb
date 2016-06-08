@@ -1,6 +1,7 @@
 "use strict";
 import React, { PropTypes } from 'react';
 import TileMapLayer from "./TileMapLayer.js";
+import GridLayer from "./GridLayer.js";
 import TileSet from "./Tools/TileSet.js";
 import Layers from "./Tools/Layers.js";
 import TileHelper from "./TileHelper.js";
@@ -51,6 +52,11 @@ export default class MapArea extends React.Component {
     this.tilesets = [];
     //this.margin = 0;
     this.spacing = 0;
+  }
+
+  componentDidMount(){
+    $(this.refs.mapElement).addClass("map-filled");
+    this.fullUpdate();
   }
 
   removeDots(sin){
@@ -193,8 +199,6 @@ export default class MapArea extends React.Component {
     img.src = URL.createObjectURL(blob);
   }
 
-
-  // TODO: optimize this.. seems pretty slow on maps with many/big tilesets..
   updateImages(cb){
     const map = this.map;
     // map has not loaded
@@ -202,10 +206,7 @@ export default class MapArea extends React.Component {
       return;
     }
 
-    const canvas = document.createElement("canvas");
-    canvas.ctx = canvas.getContext("2d");
     this.errors.length = 0;
-    // generate small image for every available gid
     let index = 0;
     for(let ts of map.tilesets){
       const fgid = ts.firstgid;
@@ -272,10 +273,14 @@ export default class MapArea extends React.Component {
     });
   }
 
+  /* TODO: move TileLayer specific function to TileLayer - map will handle all sorts of layers */
   /* TODO: fill from selection */
   handleMapClicked(e, key){
 
     const sel = this.selection[0];
+    if(!e.ctrlKey && !sel){
+      return;
+    }
     const layer = this.map.layers[this.activeLayer];
     layer.data[key] = sel;
 
@@ -302,6 +307,15 @@ export default class MapArea extends React.Component {
   togglePreviewState(){
     this.refs.mapElement.style.transform = "";
     this.lastEvent = null;
+
+    // next state...
+    if(!this.state.preview){
+      $(this.refs.mapElement).addClass("preview");
+    }
+    else{
+      $(this.refs.mapElement).removeClass("preview");
+    }
+    // this is not synchronous function !!!
     this.setState({
       preview: !this.state.preview
     });
@@ -331,10 +345,6 @@ export default class MapArea extends React.Component {
   handleMouseUp(e){
     this.lastEvent = null;
     this.refs.mapElement.style.transition = "0.3s";
-  }
-
-  componentDidMount(){
-    this.fullUpdate();
   }
 
   fullUpdate(){
@@ -380,7 +390,8 @@ export default class MapArea extends React.Component {
     }
     else{
       const layers = [];
-      for (var i = 0; i < map.layers.length; i++) {
+      let i=0;
+      for ( ; i < map.layers.length; i++) {
         if(!map.layers[i].visible){
           continue;
         }
@@ -394,8 +405,13 @@ export default class MapArea extends React.Component {
             />);
         }
       }
+      if(this.meta.options.showGrid) {
+        layers.push(
+          <GridLayer map={this} key={i} />
+        );
+      }
       return (
-        <div className={this.state.preview ? "map-filled preview" : "map-filled"}
+        <div
              ref="mapElement"
              style={{
               width: (map.width * map.tilewidth)+"px",
@@ -406,7 +422,6 @@ export default class MapArea extends React.Component {
       );
     }
   }
-
   render (){
     return (
       <div

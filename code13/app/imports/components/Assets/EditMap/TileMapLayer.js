@@ -9,24 +9,27 @@ export default class TileMapLayer extends React.Component {
     this.ctx = null;
     this.prevTile = null;
     this.mouseDown = false;
-
+    this.kind = "tilemaplayer";
     this._mup = this.handleMouseUp.bind(this);
   }
+
   componentDidMount(){
     const canvas = this.refs.canvas;
     const $el = $(this.refs.layer);
     canvas.width = $el.width();
     canvas.height = $el.height();
     this.ctx = canvas.getContext("2d");
-
     this.props.map.layers.push(this);
-    this.drawTiles();
 
+    this.drawTiles();
 
     document.body.addEventListener("mouseup", this._mup);
   }
   componentWillUnmount(){
-    this.props.map.layers.splice(this.props.map.layers.indexOf(this), 1);
+    const index = this.props.map.layers.indexOf(this);
+    if(index > -1){
+      this.props.map.layers.splice(this.props.map.layers.indexOf(this), 1);
+    }
     document.body.removeEventListener("mouseup", this._mup);
   }
   /* endof lifecycle functions */
@@ -145,6 +148,7 @@ export default class TileMapLayer extends React.Component {
       this.handleMouseMove(e);
     }
   }
+
   // this should be triggered on window instead of main element
   handleMouseUp (e){
     if(e.button !== 0) {
@@ -155,6 +159,7 @@ export default class TileMapLayer extends React.Component {
       this.changeTile(e, e, true);
     }
   }
+
   handleMouseMove(e){
     if(this.mouseDown){
       this.changeTile(e, e.nativeEvent, true);

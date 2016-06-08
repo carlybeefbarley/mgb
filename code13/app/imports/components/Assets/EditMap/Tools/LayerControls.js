@@ -8,6 +8,10 @@ export default class LayerControls extends React.Component {
     super(...args);
   }
 
+  componentDidMount(){
+    this.updateOptions();
+  }
+
   get map(){
     const parent = this.props.layer;
     return parent.props.info.content.map;
@@ -38,20 +42,30 @@ export default class LayerControls extends React.Component {
     map.forceUpdate();
   }
 
-  highlightActiveLayerToggle(){
-    this.options.highlightActiveLayers = !this.options.highlightActiveLayers;
+  updateOptions(){
     if(this.options.highlightActiveLayers){
       $(this.map.refs.mapElement).addClass("highlight-active-layer");
     }
     else{
       $(this.map.refs.mapElement).removeClass("highlight-active-layer");
     }
+
+  }
+  highlightActiveLayerToggle(){
+    this.options.highlightActiveLayers = !this.options.highlightActiveLayers;
+    this.updateOptions();
     this.forceUpdate();
+  }
+  showGridToggle(){
+    this.options.showGrid = !this.options.showGrid;
+    this.forceUpdate();
+    this.map.forceUpdate();
   }
 
   render() {
     const highlihgtClassName = `ui floated icon button ${this.options.highlightActiveLayers ? 'active' : ''}`;
-
+    const showGridClassName = `ui floated icon button ${this.options.showGrid ? 'active' : ''}`;
+    // TODO: ask David to get nice highligh layer icon - atm - paste was closest I could find
     return (
       <div className="ui mini">
         <div className="ui icon buttons mini"
@@ -69,7 +83,12 @@ export default class LayerControls extends React.Component {
           <button className={highlihgtClassName}
                   onClick={this.highlightActiveLayerToggle.bind(this)}
                   title="Highlight Active layer"
-            ><i className="add icon"></i>
+            ><i className="paste icon"></i>
+          </button>
+          <button className={showGridClassName}
+                  onClick={this.showGridToggle.bind(this)}
+                  title="Show Grid"
+            ><i className="grid layout icon"></i>
           </button>
         </div>
         <div className="ui icon buttons right floated mini"

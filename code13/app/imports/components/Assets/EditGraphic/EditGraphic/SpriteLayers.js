@@ -36,13 +36,10 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	selectLayer(idx){
-		// this.setState({ selectedLayerIdx: idx });
-		// this.props.EditGraphic.setState({ selectedLayerIdx: idx });
 		this.props.EditGraphic.handleSelectLayer(idx);
 	}
 
 	selectFrame(idx){
-		// this.setState({ selectedFrameIdx: idx });
 		this.props.EditGraphic.handleSelectFrame(idx);
 	}
 

@@ -683,13 +683,12 @@ export default class EditGraphic extends React.Component {
 
   handleSelectFrame(frameIndex)
   {
-    this.doSnapshotActivity(frameIndex)
+    // this.doSnapshotActivity(frameIndex)
     this.setState( { selectedFrameIdx: frameIndex}  )
 
     // for new frame clears preview canvases and update edit canvas
     let c2 = this.props.asset.content2;
     if(c2.frameData[frameIndex].length === 0){
-      console.log("switched to new frame");
       for(let i=0; i<this.previewCtxArray.length; i++){
         this.previewCtxArray[i].clearRect(0, 0, c2.width, c2.height);
       }

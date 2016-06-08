@@ -162,8 +162,9 @@ export default class SpriteLayers extends React.Component {
 		<div onClick={this.stepFrame.bind(this, false)} className="ui icon button">
 			<i className="icon backward"></i>
 		</div>
-		<div onClick={this.togglePlayAnimation.bind(this)} className="ui icon button">
-			<i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
+		<div onClick={this.togglePlayAnimation.bind(this)} 
+			className={"ui icon button " + (this.state.isPlaying ? "black" : "")}>
+				<i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
 		</div>
 		<div onClick={this.stepFrame.bind(this, true)} className="ui icon button">
 			<i className="icon forward"></i>

@@ -29,6 +29,14 @@ const TileHelper = {
     return ret;
   },
 
+  getTilesetWidth: (tileset, spacing = 1) => {
+    return tileset.columns * (tileset.tilewidth + spacing);
+  },
+
+  getTilesetHeight: (tileset, spacing = 1) => {
+    return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight);
+  },
+
   genNewMap: (widthInTiles = 20, heightInTiles = 20, tilewidth = 32, tileheight = 32, numlayers = 1) => {
     let layers = new Array(numlayers);
 

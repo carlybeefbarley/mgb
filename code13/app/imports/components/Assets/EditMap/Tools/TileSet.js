@@ -97,10 +97,10 @@ export default class TileSet extends React.Component {
     const map = this.props.info.content.map;
     const ts = map.map.tilesets[map.activeTileset];
     const canvas = this.refs.canvas;
-    
+
     if(ts){
-      canvas.width = ts.imagewidth;
-      canvas.height = ts.imageheight;
+      canvas.width = TileHelper.getTilesetWidth(ts);
+      canvas.height = TileHelper.getTilesetHeight(ts);
     }
     else{
       canvas.width = map.data.width * map.data.tilewidth;
@@ -164,7 +164,7 @@ export default class TileSet extends React.Component {
           className="tileset"
           ref="layer"
           style={{
-                height: (ts ? ts.imageheight : 200)+"px",
+                height: (ts ? (TileHelper.getTilesetHeight(ts) + 4) : 200)+"px",
                 overflow: "auto",
                 clear: "both"
               }}
@@ -221,9 +221,14 @@ export default class TileSet extends React.Component {
   render() {
     const map = this.props.info.content.map;
     const tss = map.map.tilesets;
-    const ts = tss[map.activeTileset];
     if(!tss.length){
       return this.renderEmpty();
+    }
+
+    let ts = tss[map.activeTileset];
+    // TODO: this should not happen - debug!
+    if(!ts){
+      ts = tss[0];
     }
     const tilesets = [];
     for(let i=0; i<tss.length; i++){

@@ -45,6 +45,10 @@ export default class Layer extends React.Component {
 		this.props.handleSave('Changed layer name');
 	}
 
+  deleteLayer(){
+    this.props.deleteLayer(this.props.idx);
+  }
+
 
   render() {
   	let framesTD = _.map(this.props.frameNames, (frameName, frameID) => { return (
@@ -84,7 +88,10 @@ export default class Layer extends React.Component {
           			<canvas width={this.props.width} height={this.props.height}></canvas>
         	</div>
           </td>
-          <td><i className="remove icon"></i></td>
+          <td>
+            <i onClick={this.deleteLayer.bind(this)}
+              className="remove icon"></i>
+          </td>
       </tr>
     );
   }
@@ -102,5 +109,6 @@ Layer.propTypes = {
 
   selectLayer: PropTypes.func.isRequired,
   selectFrame: PropTypes.func.isRequired,
+  deleteLayer: PropTypes.func.isRequired,
   handleSave: PropTypes.func.isRequired,
 };

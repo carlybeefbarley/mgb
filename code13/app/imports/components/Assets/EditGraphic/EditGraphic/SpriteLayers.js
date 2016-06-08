@@ -119,6 +119,23 @@ export default class SpriteLayers extends React.Component {
 		this.props.handleSave("Changed FPS");
 	}
 
+	deleteLayer(layerID){
+		// TODO check permissons
+		// TODO confirmation popup
+		let c2 = this.props.content2;
+		if(c2.layerParams.length === 1){
+			// TODO alert popup
+			console.log("Only layer cannot be deleted!");
+			return;
+		}
+
+		c2.layerParams.splice(layerID, 1);
+		for(let frameID=0; frameID<c2.frameNames; frameID++){
+			c2.frameData[frameID].splice(layerID, 1);
+		}
+		this.handleSave("Deleted layer");
+	}
+
 	handleSave(changeText="change graphic"){
 		this.props.handleSave(changeText);
 	}
@@ -138,6 +155,7 @@ export default class SpriteLayers extends React.Component {
 
 				selectLayer={this.selectLayer.bind(this)}
 				selectFrame={this.selectFrame.bind(this)}
+				deleteLayer={this.deleteLayer.bind(this)}
 				handleSave={this.handleSave.bind(this)}
 			/>
 		));		

@@ -90,7 +90,7 @@ export default NavRecentGET = React.createClass({
           <div className="item">
             <h3 className="ui inverted header" style={{textAlign: "center"}}>
               <i className="time icon" />
-              Recently Edited
+              My Recent Edits
             </h3>
           </div>
           { this.renderMergedActivities() }

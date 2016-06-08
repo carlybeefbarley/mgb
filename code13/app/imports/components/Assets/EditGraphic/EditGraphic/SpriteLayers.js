@@ -10,7 +10,8 @@ export default class SpriteLayers extends React.Component {
 	    this.state = {
 	    	allLayersHidden: false,
 	    	allLayersLocked: false,
-	    	isCanvasVisible: false,
+	    	isCanvasFramesVisible: false,
+	    	isCanvasLayersVisible: false,
 	    	isPlaying: false,
 	    };
 	}
@@ -76,8 +77,12 @@ export default class SpriteLayers extends React.Component {
 	    this.props.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
 	}
 
-	toggleCanvasVisibility(){
-		this.setState({ isCanvasVisible: !this.state.isCanvasVisible });
+	toggleCanvasFramesVisibility(){
+		this.setState({ isCanvasFramesVisible: !this.state.isCanvasFramesVisible });
+	}
+
+	toggleCanvasLayersVisibility(){
+		this.setState({ isCanvasLayersVisible: !this.state.isCanvasLayersVisible });
 	}
 
 	togglePlayAnimation(){
@@ -151,7 +156,7 @@ export default class SpriteLayers extends React.Component {
 				isSelected={this.props.EditGraphic.state.selectedLayerIdx === idx}
 				width={c2.width}
 				height={c2.height}
-				isCanvasVisible={this.state.isCanvasVisible}
+				isCanvasLayersVisible={this.state.isCanvasLayersVisible}
 
 				selectLayer={this.selectLayer.bind(this)}
 				selectFrame={this.selectFrame.bind(this)}
@@ -169,7 +174,7 @@ export default class SpriteLayers extends React.Component {
     });
 
     let framesTHcanvas = _.map(c2.frameNames, (frameName, idx) => { return (
-      <th className="layerCanvases">
+      <th>
       	<div className="ui image "
           	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
       		<canvas width={c2.width} height={c2.height}></canvas>
@@ -203,6 +208,12 @@ export default class SpriteLayers extends React.Component {
 		  </div>
 		  <input type="number" min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
 		</div>
+		<div className="ui right floated mini button" onClick={this.toggleCanvasFramesVisibility.bind(this)}>
+			<i className={"icon " + (this.state.isCanvasFramesVisible ? "unhide" : "hide" )}></i> Frames
+		</div>
+		<div className="ui right floated mini button" onClick={this.toggleCanvasLayersVisibility.bind(this)}>
+			<i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
+		</div>
       </div>
 
       <table className="ui celled padded table spriteLayersTable">
@@ -231,16 +242,12 @@ export default class SpriteLayers extends React.Component {
             	<a class="ui label" onClick={this.addFrame.bind(this)}>
 				    <i className="add circle icon"></i> Add Frame
 				</a>
-				<span>&nbsp;&nbsp;</span>
-				<a class="ui label" onClick={this.toggleCanvasVisibility.bind(this)}>
-				    <i className={"icon " + (this.state.isCanvasVisible ? "unhide" : "hide" )}></i> Canvas
-				</a>
 			</div>
             </th>
             <th width="32px"></th>
           </tr>
 
-          <tr>
+          <tr className={"layerCanvases " + (this.state.isCanvasFramesVisible ? "" : "hidden")}>
           	<th></th>
           	<th></th>
           	<th></th>

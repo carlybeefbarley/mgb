@@ -63,6 +63,7 @@ export default class MapArea extends React.Component {
     return sin.replace(/\./gi,'*');
   }
 
+  // TODO: check all usecases and change to data.. as map.map looks confusing and ugly
   set map(val){
     this.data = val;
   }
@@ -87,11 +88,62 @@ export default class MapArea extends React.Component {
       this.data.meta = {
         options: {
           // empty maps aren't visible without grid
-          showGrid: 1
+          showGrid: 1,
+          camera: {
+            x:0, y:0
+          }
         }
       };
     }
     return this.data.meta;
+  }
+  get camera(){
+    // backwards compatibility with older maps.. should be safe to remove in the future
+    if(!this.meta.options.camera){
+      this.meta.options.camera = {x: 0, y: 0};
+    }
+    return this.meta.options.camera;
+  }
+
+  /* TODO: browser compatibility - IE don't have TextDecoder - https://github.com/inexorabletash/text-encoding*/
+  xmlToJson(xml){
+    window.xml = xml;
+  }
+  handleFileByExt_tmx(name, buffer){
+    // https://github.com/inexorabletash/text-encoding
+    const xmlString = (new TextDecoder).decode(new Uint8Array(buffer));
+    //
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlString, "text/xml");
+    alert("Sorry: TMX import is not implemented... yet\nTry JSON");
+
+    this.map = this.xmlToJson(xml);
+  }
+  handleFileByExt_json(name, buffer){
+    const jsonString = (new TextDecoder).decode(new Uint8Array(buffer));
+    this.map = JSON.parse(jsonString);
+    this.updateImages();
+  }
+  handleFileByExt_png(name, buffer){
+    const blob = new Blob([buffer], {type: 'application/octet-binary'});
+    const img = new Image();
+    img.onload = () => {
+      // TODO: this is hackish hack - find out less hackish way!!!
+      // we should be able to create dataUrl from buffer or blob directly
+      const c = document.createElement("canvas");
+      c.ctx = c.getContext("2d");
+      c.width = img.width;
+      c.height = img.height;
+      c.ctx.drawImage(img, 0, 0);
+      img.onload = () => {
+        this.images[name] = img;
+        this.updateImages();
+      };
+
+      img.src = c.toDataURL();
+    };
+    
+    img.src = URL.createObjectURL(blob);
   }
 
   generateImages(cb){
@@ -116,92 +168,13 @@ export default class MapArea extends React.Component {
         loaded++;
         this.images[i] = img;
         if(loaded == keys.length){
-            this.updateImages(cb);
+          this.updateImages(cb);
         }
       };
       img.src = imgs[i];
     });
     return true;
   }
-/*
-  componentWillReceiveProps (props){
-    console.log("PROPS:", props);
-  }
-*/
-  importFromDrop (e) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (!this.props.parent.props.canEdit) {
-      this.props.parent.props.editDeniedReminder();
-      return;
-    }
-    let files = e.dataTransfer.files; // FileList object.
-    // file has been dropped
-    if(files.length){
-      Array.prototype.forEach.call(files, (file, i) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const ext = file.name.split(".").pop().toLowerCase();
-          const method = 'handleFileByExt_'+ext;
-          if(this[method]){
-            this[method](file.name, e.target.result);
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      });
-    }
-  }
-
-  prepareForDrag(e){
-    e.stopPropagation();
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-  }
-
-  /* TODO: browser compatibility - ie don't have TextDecoder - https://github.com/inexorabletash/text-encoding*/
-  handleFileByExt_tmx(name, buffer){
-    // https://github.com/inexorabletash/text-encoding
-    const xmlString = (new TextDecoder).decode(new Uint8Array(buffer));
-    //
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(xmlString, "text/xml");
-    alert("Sorry: TMX import is not implemented... yet\nTry JSON");
-
-    this.map = this.xmlToJson(xml);
-  }
-
-  xmlToJson(xml){
-    window.xml = xml;
-  }
-
-  handleFileByExt_json(name, buffer){
-    const jsonString = (new TextDecoder).decode(new Uint8Array(buffer));
-    this.map = JSON.parse(jsonString);
-    this.updateImages();
-  }
-
-  handleFileByExt_png(name, buffer){
-    const blob = new Blob([buffer], {type: 'application/octet-binary'});
-    const img = new Image();
-    img.onload = () => {
-      // TODO: this is hackish hack - find out less hackish way!!!
-      // we should be able to create dataUrl from buffer or blob directly
-      const c = document.createElement("canvas");
-      c.ctx = c.getContext("2d");
-      c.width = img.width;
-      c.height = img.height;
-      c.ctx.drawImage(img, 0, 0);
-      img.onload = () => {
-        this.images[name] = img;
-        this.updateImages();
-      };
-
-      img.src = c.toDataURL();
-    };
-    
-    img.src = URL.createObjectURL(blob);
-  }
-
   updateImages(cb){
     const map = this.map;
     // map has not loaded
@@ -267,7 +240,6 @@ export default class MapArea extends React.Component {
       tools: ptools
     });
   }
-
   removeTool(id){
     let ptools = this.props.parent.state.tools;
     delete ptools[id];
@@ -288,7 +260,6 @@ export default class MapArea extends React.Component {
     layer.data[key] = sel;
 
   }
-
   // tileset calls this method..
   /* TODO: selection should be matrix - new class?*/
   addToActiveSelection (gid){
@@ -325,9 +296,21 @@ export default class MapArea extends React.Component {
   }
 
   moveMap(e){
-    
-  }
+    if(!this.lastEvent){
+      this.lastEvent = {
+        pageX: e.pageX,
+        pageY: e.pageY
+      };
+      return;
+    }
+    this.camera.x -= this.lastEvent.pageX - e.pageX;
+    this.camera.y -= this.lastEvent.pageY - e.pageY;
+    this.lastEvent.pageX = e.pageX;
+    this.lastEvent.pageY = e.pageY;
 
+    this.refs.grid.drawGrid();
+    this.redrawLayers();
+  }
   movePreview(e){
     if(this.state.preview && e.button == 1) {
       if(!this.lastEvent){
@@ -347,14 +330,42 @@ export default class MapArea extends React.Component {
       this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
 
     }
-    else if(e.button === 0){
+    else if(e.button === 1){
       this.moveMap(e);
     }
   }
-
   handleMouseUp(e){
     this.lastEvent = null;
     this.refs.mapElement.style.transition = "0.3s";
+  }
+  importFromDrop (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!this.props.parent.props.canEdit) {
+      this.props.parent.props.editDeniedReminder();
+      return;
+    }
+    let files = e.dataTransfer.files; // FileList object.
+    // file has been dropped
+    if(files.length){
+      Array.prototype.forEach.call(files, (file, i) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const ext = file.name.split(".").pop().toLowerCase();
+          const method = 'handleFileByExt_'+ext;
+          if(this[method]){
+            this[method](file.name, e.target.result);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+  }
+
+  prepareForDrag(e){
+    e.stopPropagation();
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
   }
 
   fullUpdate(){
@@ -365,18 +376,17 @@ export default class MapArea extends React.Component {
       this.redrawTilesets();
     });
   }
-
   redrawLayers(){
     this.layers.forEach((layer) => {
       layer.drawTiles();
     });
   }
-
   redrawTilesets(){
     this.tilesets.forEach((tileset) => {
       tileset.drawTiles();
     });
   }
+
   // TODO: keep aspect ratio
   // find out correct thumbnail size
   generatePreview(){
@@ -417,7 +427,7 @@ export default class MapArea extends React.Component {
       }
       if(this.meta.options.showGrid) {
         layers.push(
-          <GridLayer map={this} key={i} />
+          <GridLayer map={this} key={i} ref="grid" />
         );
       }
       return (

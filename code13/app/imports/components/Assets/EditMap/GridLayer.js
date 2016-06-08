@@ -7,6 +7,7 @@ export default class TileMapLayer extends React.Component {
   constructor(...args){
     super(...args);
     this.ctx = null;
+    window.grid = this;
   }
   componentDidMount(){
     const canvas = this.refs.canvas;
@@ -55,28 +56,34 @@ export default class TileMapLayer extends React.Component {
   /* endof lifecycle functions */
 
   drawGrid (){
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    const camera = this.props.map.camera;
     if(this.ctx.setLineDash){
-      this.ctx.setLineDash([5, 3]);
     }
     const data = this.props.map.data;
     this.ctx.beginPath();
+
+    const offsetX = camera.x % data.tilewidth;
+    const offsetY = camera.y % data.tilewidth;
+
+    this.ctx.setLineDash([5, 3]);
     // vertical lines
     let i=0;
     for(; i<data.width; i++){
-      this.ctx.moveTo(i * data.tilewidth + 0.5, 0);
-      this.ctx.lineTo(i * data.tilewidth + 0.5, this.ctx.canvas.height);
+      this.ctx.moveTo(i * data.tilewidth + 0.5 + offsetX, 0);
+      this.ctx.lineTo(i * data.tilewidth + 0.5 + offsetX, this.ctx.canvas.height);
     }
-    this.ctx.moveTo(i * data.tilewidth - 0.5, 0);
-    this.ctx.lineTo(i * data.tilewidth - 0.5, this.ctx.canvas.height);
+    this.ctx.moveTo(i * data.tilewidth - 0.5 + offsetX, 0);
+    this.ctx.lineTo(i * data.tilewidth - 0.5 + offsetX, this.ctx.canvas.height);
 
     // horizontal lines
     i=0;
     for(; i<data.height; i++){
-      this.ctx.moveTo(0, i * data.tileheight + 0.5);
-      this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight + 0.5);
+      this.ctx.moveTo(0, i * data.tileheight + 0.5 + offsetY);
+      this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight + 0.5 + offsetY);
     }
-    this.ctx.moveTo(0, i * data.tileheight - 0.5);
-    this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight - 0.5);
+    this.ctx.moveTo(0, i * data.tileheight - 0.5 + offsetY);
+    this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight - 0.5 + offsetY);
 
     this.ctx.strokeStyle="black";
     this.ctx.stroke();

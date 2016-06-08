@@ -19,6 +19,8 @@ export default class TileMapLayer extends React.Component {
     canvas.width = $el.width();
     canvas.height = $el.height();
     this.ctx = canvas.getContext("2d");
+
+    console.log("Added tilemap layer to map!", this.options.name);
     this.props.map.layers.push(this);
 
     this.drawTiles();
@@ -28,6 +30,7 @@ export default class TileMapLayer extends React.Component {
   componentWillUnmount(){
     const index = this.props.map.layers.indexOf(this);
     if(index > -1){
+      console.log("Removed tilemap layer to map!", this.options.name);
       this.props.map.layers.splice(this.props.map.layers.indexOf(this), 1);
     }
     document.body.removeEventListener("mouseup", this._mup);
@@ -80,19 +83,25 @@ export default class TileMapLayer extends React.Component {
     }
   }
   drawTile(pal, pos, spacing = 0, clear = false){
+    const camera = this.props.map.camera;
     if(clear){
-      this.ctx.clearRect(pos.x * (pal.ts.tilewidth + spacing), pos.y * (pal.ts.tileheight + spacing), pal.w, pal.h);
+      this.ctx.clearRect(
+        pos.x * (pal.ts.tilewidth  + spacing) + camera.x,
+        pos.y * (pal.ts.tileheight + spacing) + camera.y,
+        pal.w, pal.h);
     }
     this.ctx.drawImage(pal.image,
       pal.x, pal.y, pal.w, pal.h,
-      pos.x * (pal.ts.tilewidth + spacing), pos.y * (pal.ts.tileheight + spacing), pal.w, pal.h,
+      pos.x * (pal.ts.tilewidth  + spacing) + camera.x,
+      pos.y * (pal.ts.tileheight + spacing) + camera.y,
+      pal.w, pal.h,
     );
   }
   highlightTiles(ere, e = ere.nativeEvent, force = true){
     const map = this.props.map;
     const ts = map.map.tilesets[map.activeTileset];
     const palette = map.gidCache;
-
+    const camera = this.props.map.camera;
     const layer = map.data.layers[map.activeLayer];
 
     const pos = {
@@ -101,7 +110,7 @@ export default class TileMapLayer extends React.Component {
       id: 0
     };
 
-    TileHelper.getTileCoordsRel(e.offsetX, e.offsetY, map.data.tilewidth, map.data.tileheight, map.spacing, pos);
+    TileHelper.getTileCoordsRel(e.offsetX - camera.x, e.offsetY - camera.y, map.data.tilewidth, map.data.tileheight, map.spacing, pos);
     pos.id = pos.x + pos.y * layer.width;
 
     if(this.prevTile){
@@ -114,8 +123,8 @@ export default class TileMapLayer extends React.Component {
       }
       else{
         this.ctx.clearRect(
-          this.prevTile.x * (map.data.tilewidth + map.spacing),
-          this.prevTile.y * (map.data.tileheight + map.spacing),
+          this.prevTile.x * (map.data.tilewidth  + map.spacing) + camera.x,
+          this.prevTile.y * (map.data.tileheight + map.spacing) + camera.y,
           map.data.tilewidth, map.data.tileheight
         );
       }
@@ -132,8 +141,8 @@ export default class TileMapLayer extends React.Component {
 
     this.ctx.fillStyle = "rgba(0,0,255, 0.2)";
     this.ctx.fillRect(
-      pos.x * (map.data.tilewidth + map.spacing),
-      pos.y * (map.data.tileheight + map.spacing),
+      pos.x * (map.data.tilewidth + map.spacing) + camera.x,
+      pos.y * (map.data.tileheight + map.spacing) + camera.y,
       map.data.tilewidth, map.data.tileheight
     );
 

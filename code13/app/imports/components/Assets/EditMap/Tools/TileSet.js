@@ -52,6 +52,10 @@ export default class TileSet extends React.Component {
     const ts = map.map.tilesets[map.activeTileset];
     if(!this.prevTile){
       this.highlightTile(e);
+      // something really wrong here!!!
+      if(!this.prevTile){
+        return;
+      }
     }
     const gid = this.prevTile.id;
     const wasActive = map.selection.indexOf(gid);

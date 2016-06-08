@@ -1,6 +1,7 @@
 "use strict";
 import React, { PropTypes } from 'react';
 import TileMapLayer from "./TileMapLayer.js";
+import GridLayer from "./GridLayer.js";
 import TileSet from "./Tools/TileSet.js";
 import Layers from "./Tools/Layers.js";
 import TileHelper from "./TileHelper.js";
@@ -41,6 +42,7 @@ export default class MapArea extends React.Component {
     this.state = {
       preview: false
     };
+    // x/y are angles not pixels
     this.preview = {
       x: 5,
       y: 45
@@ -50,12 +52,24 @@ export default class MapArea extends React.Component {
     this.tilesets = [];
     //this.margin = 0;
     this.spacing = 0;
+
+    this.globalMouseMove = (...args) => {this.mouseMove(...args);}
+  }
+
+  componentDidMount(){
+    $(this.refs.mapElement).addClass("map-filled");
+    this.fullUpdate();
+    window.addEventListener("mousemove", this.globalMouseMove);
+  }
+  componentWillUnmount(){
+    window.removeEventListener("mousemove", this.globalMouseMove);
   }
 
   removeDots(sin){
     return sin.replace(/\./gi,'*');
   }
 
+  // TODO: check all usecases and change to data.. as map.map looks confusing and ugly
   set map(val){
     this.data = val;
   }
@@ -72,71 +86,35 @@ export default class MapArea extends React.Component {
     }
     return this.props.asset.content2;
   }
-  generateImages(cb){
-    const imgs = this.props.asset.content2.images;
-    if(!imgs){
-      if(typeof cb == "function"){
-        cb();
-      }
-      return false;
-    }
-    const keys = Object.keys(imgs);
-    if(!keys.length){
-      if(typeof cb == "function"){
-        cb();
-      }
-      return false;
-    }
-    let loaded = 0;
-    keys.forEach((i, index) => {
-      const img = new Image;
-      img.onload = () => {
-        loaded++;
-        this.images[i] = img;
-        if(loaded == keys.length){
-            this.updateImages(cb);
+
+  // store meta information about current map
+  // don't forget to strip meta when exporting it
+  get meta(){
+    if(!this.data.meta){
+      this.data.meta = {
+        options: {
+          // empty maps aren't visible without grid
+          showGrid: 1,
+          camera: {
+            x:0, y:0
+          }
         }
       };
-      img.src = imgs[i];
-    });
-    return true;
-  }
-/*
-  componentWillReceiveProps (props){
-    console.log("PROPS:", props);
-  }
-*/
-  importFromDrop (e) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (!this.props.parent.props.canEdit) {
-      this.props.parent.props.editDeniedReminder();
-      return;
     }
-    let files = e.dataTransfer.files; // FileList object.
-    // file has been dropped
-    if(files.length){
-      Array.prototype.forEach.call(files, (file, i) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const ext = file.name.split(".").pop().toLowerCase();
-          const method = 'handleFileByExt_'+ext;
-          if(this[method]){
-            this[method](file.name, e.target.result);
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      });
+    return this.data.meta;
+  }
+  get camera(){
+    // backwards compatibility with older maps.. should be safe to remove in the future
+    if(!this.meta.options.camera){
+      this.meta.options.camera = {x: 0, y: 0};
     }
+    return this.meta.options.camera;
   }
 
-  prepareForDrag(e){
-    e.stopPropagation();
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
+  /* TODO: browser compatibility - IE don't have TextDecoder - https://github.com/inexorabletash/text-encoding*/
+  xmlToJson(xml){
+    window.xml = xml;
   }
-
-  /* TODO: browser compatibility - ie don't have TextDecoder - https://github.com/inexorabletash/text-encoding*/
   handleFileByExt_tmx(name, buffer){
     // https://github.com/inexorabletash/text-encoding
     const xmlString = (new TextDecoder).decode(new Uint8Array(buffer));
@@ -147,17 +125,11 @@ export default class MapArea extends React.Component {
 
     this.map = this.xmlToJson(xml);
   }
-
-  xmlToJson(xml){
-    window.xml = xml;
-  }
-
   handleFileByExt_json(name, buffer){
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer));
     this.map = JSON.parse(jsonString);
     this.updateImages();
   }
-
   handleFileByExt_png(name, buffer){
     const blob = new Blob([buffer], {type: 'application/octet-binary'});
     const img = new Image();
@@ -180,8 +152,35 @@ export default class MapArea extends React.Component {
     img.src = URL.createObjectURL(blob);
   }
 
-
-  // TODO: optimize this.. seems pretty slow on maps with many/big tilesets..
+  generateImages(cb){
+    const imgs = this.props.asset.content2.images;
+    if(!imgs){
+      if(typeof cb == "function"){
+        cb();
+      }
+      return false;
+    }
+    const keys = Object.keys(imgs);
+    if(!keys.length){
+      if(typeof cb == "function"){
+        cb();
+      }
+      return false;
+    }
+    let loaded = 0;
+    keys.forEach((i, index) => {
+      const img = new Image;
+      img.onload = () => {
+        loaded++;
+        this.images[i] = img;
+        if(loaded == keys.length){
+          this.updateImages(cb);
+        }
+      };
+      img.src = imgs[i];
+    });
+    return true;
+  }
   updateImages(cb){
     const map = this.map;
     // map has not loaded
@@ -189,10 +188,7 @@ export default class MapArea extends React.Component {
       return;
     }
 
-    const canvas = document.createElement("canvas");
-    canvas.ctx = canvas.getContext("2d");
     this.errors.length = 0;
-    // generate small image for every available gid
     let index = 0;
     for(let ts of map.tilesets){
       const fgid = ts.firstgid;
@@ -250,22 +246,12 @@ export default class MapArea extends React.Component {
       tools: ptools
     });
   }
-
   removeTool(id){
     let ptools = this.props.parent.state.tools;
     delete ptools[id];
     this.props.parent.setState({
       tools: ptools
     });
-  }
-
-  /* TODO: fill from selection */
-  handleMapClicked(e, key){
-
-    const sel = this.selection[0];
-    const layer = this.map.layers[this.activeLayer];
-    layer.data[key] = sel;
-
   }
 
   // tileset calls this method..
@@ -289,39 +275,119 @@ export default class MapArea extends React.Component {
   togglePreviewState(){
     this.refs.mapElement.style.transform = "";
     this.lastEvent = null;
+
+    // next state...
+    if(!this.state.preview){
+      $(this.refs.mapElement).addClass("preview");
+    }
+    else{
+      $(this.refs.mapElement).removeClass("preview");
+    }
+    // this is not synchronous function !!!
     this.setState({
       preview: !this.state.preview
     });
   }
 
-  movePreview(e){
-    if(this.state.preview && e.button == 1) {
-      if(!this.lastEvent){
-        this.lastEvent = {
-          pageX: e.pageX,
-          pageY: e.pageY
-        };
-        this.refs.mapElement.style.transition = "0s";
-        return;
-      }
 
-      this.preview.y += this.lastEvent.pageX - e.pageX;
-      this.preview.x -= this.lastEvent.pageY - e.pageY;
 
-      this.lastEvent.pageX = e.pageX;
-      this.lastEvent.pageY = e.pageY;
-      this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
+  /* TODO: move TileLayer specific function to TileLayer - map will handle all sorts of layers */
+  /* TODO: fill from selection */
+  handleMapClicked(e, key){
 
+    let sel = this.selection[0];
+    if(!e.ctrlKey && !sel){
+      return;
     }
+    if(e.ctrlKey){
+      sel = 0;
+    }
+    const layer = this.map.layers[this.activeLayer];
+    layer.data[key] = sel;
+
   }
 
+  resetCamera(){
+    this.lastEvent = null;
+    this.camera.x = 0;
+    this.camera.y = 0;
+    this.refs.grid.drawGrid();
+    this.redrawLayers();
+  }
+  moveCamera(e){
+    if(!this.lastEvent){
+      this.lastEvent = {
+        pageX: e.pageX,
+        pageY: e.pageY
+      };
+      return;
+    }
+    this.camera.x -= this.lastEvent.pageX - e.pageX;
+    this.camera.y -= this.lastEvent.pageY - e.pageY;
+    this.lastEvent.pageX = e.pageX;
+    this.lastEvent.pageY = e.pageY;
+
+    this.refs.grid.drawGrid();
+    this.redrawLayers();
+  }
+  movePreview(e){
+    if(!this.lastEvent){
+      this.lastEvent = {
+        pageX: e.pageX,
+        pageY: e.pageY
+      };
+      this.refs.mapElement.style.transition = "0s";
+      return;
+    }
+
+    this.preview.y += this.lastEvent.pageX - e.pageX;
+    this.preview.x -= this.lastEvent.pageY - e.pageY;
+
+    this.lastEvent.pageX = e.pageX;
+    this.lastEvent.pageY = e.pageY;
+    this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
+  }
+  mouseMove(e){
+    // move Preview
+    if(this.state.preview && (e.button == 1)) {
+      this.movePreview(e);
+    }
+    else if(e.button === 1 || e.button == 2){
+      this.moveCamera(e);
+    }
+  }
   handleMouseUp(e){
     this.lastEvent = null;
     this.refs.mapElement.style.transition = "0.3s";
   }
+  importFromDrop (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!this.props.parent.props.canEdit) {
+      this.props.parent.props.editDeniedReminder();
+      return;
+    }
+    let files = e.dataTransfer.files; // FileList object.
+    // file has been dropped
+    if(files.length){
+      Array.prototype.forEach.call(files, (file, i) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const ext = file.name.split(".").pop().toLowerCase();
+          const method = 'handleFileByExt_'+ext;
+          if(this[method]){
+            this[method](file.name, e.target.result);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+  }
 
-  componentDidMount(){
-    this.fullUpdate();
+  prepareForDrag(e){
+    e.stopPropagation();
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
   }
 
   fullUpdate(){
@@ -332,18 +398,17 @@ export default class MapArea extends React.Component {
       this.redrawTilesets();
     });
   }
-
   redrawLayers(){
     this.layers.forEach((layer) => {
       layer.drawTiles();
     });
   }
-
   redrawTilesets(){
     this.tilesets.forEach((tileset) => {
       tileset.drawTiles();
     });
   }
+
   // TODO: keep aspect ratio
   // find out correct thumbnail size
   generatePreview(){
@@ -367,20 +432,28 @@ export default class MapArea extends React.Component {
     }
     else{
       const layers = [];
-      for (var i = 0; i < map.layers.length; i++) {
+      let i=0;
+      for ( ; i < map.layers.length; i++) {
         if(!map.layers[i].visible){
           continue;
         }
-        layers.push(<TileMapLayer
-          data={map.layers[i]}
-          key={i}
-          map={this}
-          active={this.activeLayer == i}
-          onClick={this.handleMapClicked.bind(this)}
-          />);
+        if(map.layers[i].type == "tilelayer") {
+          layers.push(<TileMapLayer
+            data={map.layers[i]}
+            key={i}
+            map={this}
+            active={this.activeLayer == i}
+            onClick={this.handleMapClicked.bind(this)}
+            />);
+        }
+      }
+      if(this.meta.options.showGrid) {
+        layers.push(
+          <GridLayer map={this} key={i} ref="grid" />
+        );
       }
       return (
-        <div className={this.state.preview ? "map-filled preview" : "map-filled"}
+        <div
              ref="mapElement"
              style={{
               width: (map.width * map.tilewidth)+"px",
@@ -391,15 +464,14 @@ export default class MapArea extends React.Component {
       );
     }
   }
-
   render (){
     return (
       <div
         className="tilemap-wrapper"
         onDrop={this.importFromDrop.bind(this)}
         onDragOver={this.prepareForDrag.bind(this)}
-        onMouseMove={this.movePreview.bind(this)}
         onMouseUp={this.handleMouseUp.bind(this)}
+        onContextMenu={(e)=>{e.preventDefault(); return false;}}
         >
         <button className="ui primary button"
           >Drop here to import</button>
@@ -407,9 +479,11 @@ export default class MapArea extends React.Component {
           onClick={this.togglePreviewState.bind(this)}
           >Preview</button>
         <button className="ui primary button"
-                onClick={(e)=>{this.props.parent.handleSave(e)}}
+                onClick={(e)=>{this.props.parent.handleSave(e);}}
           >Save</button>
-
+        <button className="ui primary button"
+                onClick={()=>{this.resetCamera();}}
+          >Reset camera</button>
         {this.renderMap()}
       </div>
     )

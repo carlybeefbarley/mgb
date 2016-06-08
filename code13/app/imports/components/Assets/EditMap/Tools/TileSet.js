@@ -5,70 +5,12 @@ import TileHelper from '../TileHelper.js';
 import TilesetControls from "./TilesetControls.js";
 
 export default class TileSet extends React.Component {
-
+  /* lifecycle functions */
   constructor(...args){
     super(...args);
     this.prevTile = null;
+    this.spacing = 1;
   }
-
-  componentWillUnmount(){
-    const mapTilesets = this.props.info.content.map.tilesets;
-    const index = mapTilesets.indexOf(this);
-    if(index > -1){
-      mapTilesets.splice(mapTilesets.indexOf(this), 1);
-    }
-  }
-
-  highlightTile(event, e = event.nativeEvent, force = false){
-    const map = this.props.info.content.map;
-    const ts = map.map.tilesets[map.activeTileset];
-    if(!ts){
-      return;
-    }
-    const palette = map.gidCache;
-
-    const pos = {
-      x: 0,
-      y: 0,
-      id: 0
-    };
-
-    const spacing = 1;
-
-    TileHelper.getTileCoordsRel(
-      (e.offsetX < 0 ? 0 : e.offsetX),
-      (e.offsetY < 0 ? 0 : e.offsetY),
-      ts.tilewidth, ts.tileheight, spacing, pos);
-
-    pos.id = pos.x + pos.y * (1 + Math.floor(ts.imagewidth / (ts.tilewidth + spacing))) + ts.firstgid;
-
-    if(this.prevTile){
-      if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
-        return;
-      }
-      if(force){
-        this.drawTiles();
-      }
-      else {
-        let pal = palette[this.prevTile.id];
-        if (pal) {
-          this.drawTile(palette[this.prevTile.id], this.prevTile, true);
-        }
-        else {
-          this.ctx.clearRect(
-            this.prevTile.x * ts.tilewidth + this.prevTile.x,
-            this.prevTile.y * ts.tileheight + this.prevTile.y,
-            ts.tilewidth, ts.tileheight);
-        }
-      }
-    }
-
-    this.ctx.fillStyle = "rgba(0,0,255, 0.3)";
-    this.ctx.fillRect(pos.x * ts.tilewidth + pos.x, pos.y * ts.tileheight + pos.y, ts.tilewidth, ts.tileheight);
-    this.prevTile = pos;
-
-  }
-
   componentDidMount() {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} });
@@ -76,23 +18,16 @@ export default class TileSet extends React.Component {
     this.adjustCanvas();
     this.props.info.content.map.tilesets.push(this);
   }
-
-  selectTile(e){
-    const map = this.props.info.content.map;
-    const ts = map.map.tilesets[map.activeTileset];
-    if(!this.prevTile){
-      this.highlightTile(e);
+  componentWillUnmount(){
+    const mapTilesets = this.props.info.content.map.tilesets;
+    const index = mapTilesets.indexOf(this);
+    if(index > -1){
+      mapTilesets.splice(mapTilesets.indexOf(this), 1);
     }
-    const gid = this.prevTile.id;
-    const wasActive = map.selection.indexOf(gid);
-    map.clearActiveSelection();
-    if(wasActive == -1){
-      map.addToActiveSelection(gid);
-    }
-
-    this.highlightTile(e, e.nativeEvent, true);
   }
+  /* endof lifecycle functions */
 
+  /* helpers */
   adjustCanvas(){
     const map = this.props.info.content.map;
     const ts = map.map.tilesets[map.activeTileset];
@@ -109,13 +44,132 @@ export default class TileSet extends React.Component {
 
     this.ctx = canvas.getContext("2d");
   }
+  /* endof helpers */
+
+  /* functionality */
+  selectTile(e){
+    const map = this.props.info.content.map;
+    const ts = map.map.tilesets[map.activeTileset];
+    if(!this.prevTile){
+      this.highlightTile(e);
+      // something really wrong here!!!
+      if(!this.prevTile){
+        return;
+      }
+    }
+    const gid = this.prevTile.id;
+    const wasActive = map.selection.indexOf(gid);
+    map.clearActiveSelection();
+    if(wasActive == -1){
+      map.addToActiveSelection(gid);
+    }
+
+    this.highlightTile(e, e.nativeEvent, true);
+  }
   selectTileset(tilesetNum){
     this.props.info.content.map.activeTileset = tilesetNum
     this.adjustCanvas();
     this.drawTiles();
     this.forceUpdate();
   }
+  /* endof functionlity */
 
+  /* drawing on canvas*/
+  drawTiles(){
+    this.prevTile = null;
+
+    const map = this.props.info.content.map;
+    const tss = map.map.tilesets;
+    const ts = tss[map.activeTileset];
+    const ctx = this.ctx;
+    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+
+    if(!ts){
+
+      return;
+    }
+    const palette = map.gidCache;
+    const mapData = map.data;
+
+
+    const pos = {x:0, y:0};
+    const spacing = map.spacing;
+
+    let gid = 0;
+    for (let i = 0; i < ts.tilecount; i++) {
+      gid = ts.firstgid + i;
+      TileHelper.getTilePosRel(i, Math.floor((ts.imagewidth + spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, pos);
+      const pal = palette[gid];
+      this.drawTile(pal, pos);
+    }
+  }
+  drawTile(pal, pos, clear = false){
+    if(clear){
+      this.ctx.clearRect(pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing), pal.w, pal.h);
+    }
+    this.ctx.drawImage(pal.image,
+      pal.x, pal.y, pal.w, pal.h,
+      pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h,
+    );
+    if(map.selection.indexOf(pal.gid) > -1){
+      this.ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
+      this.ctx.fillRect(
+        pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h,
+      );
+    }
+  }
+  highlightTile(event, e = event.nativeEvent, force = false){
+    const map = this.props.info.content.map;
+    const ts = map.map.tilesets[map.activeTileset];
+    if(!ts){
+      return;
+    }
+    const palette = map.gidCache;
+
+    const pos = {
+      x: 0,
+      y: 0,
+      id: 0
+    };
+
+    const spacing = this.spacing;
+
+    TileHelper.getTileCoordsRel(
+      (e.offsetX < 0 ? 0 : e.offsetX),
+      (e.offsetY < 0 ? 0 : e.offsetY),
+      ts.tilewidth, ts.tileheight, spacing, pos);
+
+    pos.id = pos.x + pos.y * (spacing + Math.floor(ts.imagewidth / (ts.tilewidth + spacing))) + ts.firstgid;
+
+    if(this.prevTile){
+      if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
+        return;
+      }
+      if(force){
+        this.drawTiles();
+      }
+      else {
+        let pal = palette[this.prevTile.id];
+        if (pal) {
+          this.drawTile(pal, this.prevTile, true);
+        }
+        else {
+          this.ctx.clearRect(
+            this.prevTile.x * ts.tilewidth + this.prevTile.x,
+            this.prevTile.y * ts.tileheight + this.prevTile.y,
+            ts.tilewidth, ts.tileheight);
+        }
+      }
+    }
+
+    this.ctx.fillStyle = "rgba(0,0,255, 0.3)";
+    this.ctx.fillRect(pos.x * ts.tilewidth + pos.x, pos.y * ts.tileheight + pos.y, ts.tilewidth, ts.tileheight);
+    this.prevTile = pos;
+
+  }
+  /* endof drawing on canvas */
+
+  /* events */
   onDrop(e){
     e.preventDefault();
     const assetJson = e.dataTransfer.getData("asset");
@@ -129,12 +183,21 @@ export default class TileSet extends React.Component {
     const url = e.dataTransfer.getData("link");
     this.refs.controls.addTilesetFromUrl(url);
   }
-
   // TODO: this is not working!!!
   onDrag(e){
     e.dataTransfer.dropEffect = 'copy';
   }
+  onMouseMove(e){
+    this.highlightTile(e);
+  }
+  onMouseLeave(e){
+    // remove highlighted tile
+    this.drawTiles();
+    this.prevTile = null;
+  }
+  /* endof events */
 
+  /* react dom */
   renderEmpty(){
     return (
       <div className="mgbAccordionScroller">
@@ -150,8 +213,8 @@ export default class TileSet extends React.Component {
       </div>
     );
   }
-
   renderContent(ts = null){
+    const scrollingMargin = 20;
     return (
       <div className="active content tilesets accept-drop"
            data-drop-text="Drop asset here to create TileSet"
@@ -164,59 +227,19 @@ export default class TileSet extends React.Component {
           className="tileset"
           ref="layer"
           style={{
-                height: (ts ? (TileHelper.getTilesetHeight(ts) + 4) : 200)+"px",
+                //height: (ts ? (TileHelper.getTilesetHeight(ts) + scrollingMargin) : 200)+"px",
                 overflow: "auto",
                 clear: "both"
               }}
           >
           <canvas ref="canvas"
                   onClick={this.selectTile.bind(this)}
-                  onMouseMove={this.highlightTile.bind(this)}
+                  onMouseMove={this.onMouseMove.bind(this)}
+                  onMouseLeave={this.onMouseLeave.bind(this)}
             ></canvas>
         </div>
       </div>
     )
-  }
-  drawTiles(){
-    this.prevTile = null;
-
-    const map = this.props.info.content.map;
-    const tss = map.map.tilesets;
-    const ts = tss[map.activeTileset];
-    if(!ts){
-      return;
-    }
-    const palette = map.gidCache;
-    const mapData = map.data;
-    const ctx = this.ctx;
-    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
-
-    const tiles = [];
-    const pos = {x:0, y:0};
-
-    const spacing = 0;
-    let gid = 0;
-    for (let i = 0; i < ts.tilecount; i++) {
-      gid = ts.firstgid + i;
-      TileHelper.getTilePosRel(i, Math.floor((ts.imagewidth + spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, pos);
-      const pal = palette[gid];
-      this.drawTile(pal, pos);
-    }
-  }
-  drawTile(pal, pos, clear = false){
-    if(clear){
-      this.ctx.clearRect(pos.x * (pal.ts.tilewidth + 1), pos.y * (pal.ts.tileheight + 1), pal.w, pal.h);
-    }
-    this.ctx.drawImage(pal.image,
-      pal.x, pal.y, pal.w, pal.h,
-      pos.x * (pal.ts.tilewidth + 1), pos.y * (pal.ts.tileheight + 1) , pal.w, pal.h,
-    );
-    if(map.selection.indexOf(pal.gid) > -1){
-      this.ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
-      this.ctx.fillRect(
-        pos.x * (pal.ts.tilewidth + 1), pos.y * (pal.ts.tileheight + 1) , pal.w, pal.h,
-      );
-    }
   }
   render() {
     const map = this.props.info.content.map;

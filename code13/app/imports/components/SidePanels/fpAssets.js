@@ -66,7 +66,13 @@ export default fpAssets = React.createClass({
     const $button = $(this.refs.searchGoButton)
     $button.addClass("orange")
   },
-  
+
+  // small hack - so I don't need to reach mouse
+  handleSearchNameBoxKeyUp(e){
+    if(e.which == 13){
+      $(this.refs.searchGoButton).click();
+    }
+  },
   
   render: function () {
     if (this.data.loading)
@@ -81,7 +87,8 @@ export default fpAssets = React.createClass({
                           placeholder="Search..." 
                           defaultValue={this.state.searchName} 
                           onChange={this.handleSearchNameBoxChanges}
-                          ref="searchNameInput" 
+                          onKeyUp={this.handleSearchNameBoxKeyUp}
+                          ref="searchNameInput"
                           size="16"></input>
                   <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
                     <i className="search icon"></i>

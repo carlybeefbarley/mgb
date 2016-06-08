@@ -7,6 +7,9 @@ export default class Layers extends React.Component {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
   }
+  get map(){
+    return this.props.info.content.map;
+  }
 
   handleClick(layerNum){
     this.props.info.content.map.activeLayer = layerNum;
@@ -16,21 +19,26 @@ export default class Layers extends React.Component {
   showOrHideLayer(layer, visible, e){
     e.preventDefault();
     e.stopPropagation();
-    const mapData = this.props.info.content.map.map;
+
+    const mapData = this.map.data;
     mapData.layers[layer].visible = !visible;
-    this.props.info.content.map.forceUpdate();
+
     this.forceUpdate();
+
+    setTimeout(() => {
+      this.map.forceUpdate();
+    }, 0);
   }
 
   render() {
     let layers = [];
 
-    const map = this.props.info.content.map.map;
-    const active = this.props.info.content.map.activeLayer;
+    const data = this.map.data;
+    const active = this.map.activeLayer;
     // layers goes from bottom to top - as first drawn layer will be last visible
-    for(let i=map.layers.length-1; i>-1; i--){
+    for(let i=data.layers.length-1; i>-1; i--){
       let className = "icon"
-        + (map.layers[i].visible ? " unhide" : " hide")
+        + (data.layers[i].visible ? " unhide" : " hide")
       ;
 
       layers.push(
@@ -40,8 +48,8 @@ export default class Layers extends React.Component {
            href="javascript:;"
           >
           <i className={className}
-             onClick={this.showOrHideLayer.bind(this, i, map.layers[i].visible)}
-            ></i><a href="javascript:;">{map.layers[i].name}</a></div>
+             onClick={this.showOrHideLayer.bind(this, i, data.layers[i].visible)}
+            ></i><a href="javascript:;">{data.layers[i].name}</a></div>
       );
     }
     return (

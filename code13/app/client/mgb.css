@@ -15,6 +15,10 @@
   transition: .3s;
   min-height: 500px;
 }
+.map-filled.highlight-active-layer .no-events:not(.grid-layer){
+  opacity: 0.5;
+}
+
 .tilemap-layer{
   position: absolute;
   width: 100%;
@@ -50,6 +54,12 @@ body.dragging .accept-drop:after{
 
 
 /* 3d preview */
+.tilemap-wrapper{
+  perspective: 2000px;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
 .map-filled.preview{
   transform: rotatey(45deg) rotatex(5deg) scale(0.9);
   transform-style: preserve-3d;
@@ -57,12 +67,8 @@ body.dragging .accept-drop:after{
 .map-filled.preview:active{
   transition-duration: 0;
 }
-.tilemap-wrapper{
-  perspective: 2000px;
-}
 
-
-.map-filled.preview .tilemap-layer:nth-of-type(1) { transform: translatez(-100px); }
-.map-filled.preview .tilemap-layer:nth-of-type(2) { transform: translatez(-60px); }
-.map-filled.preview .tilemap-layer:nth-of-type(3) { transform: translatez(-40px); }
-.map-filled.preview .tilemap-layer:nth-of-type(4) { transform: translatez(-20px); }
+.map-filled.preview .tilemap-layer:nth-of-type(1):not(.grid-layer) { transform: translatez(-120px); }
+.map-filled.preview .tilemap-layer:nth-of-type(2):not(.grid-layer) { transform: translatez(-80px); }
+.map-filled.preview .tilemap-layer:nth-of-type(3):not(.grid-layer) { transform: translatez(-40px); }
+.map-filled.preview .tilemap-layer:nth-of-type(4):not(.grid-layer) { transform: translatez(-20px); }

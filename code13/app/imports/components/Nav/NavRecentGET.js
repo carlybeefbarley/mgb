@@ -17,7 +17,7 @@ export default NavRecentGET = React.createClass({
   
   getMeteorData: function() {
     if (!this.props.user)
-      return
+      return {}
       
     let uid = this.props.user._id
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", uid);
@@ -27,7 +27,7 @@ export default NavRecentGET = React.createClass({
       activitySnapshots: ActivitySnapshots.find({ byUserId: uid }).fetch(),
       activity: Activity.find({ byUserId: uid }, {sort: {timestamp: -1}}).fetch(),
       loading: !handleActivity.ready() && !handleForActivitySnapshots.ready()
-    };
+    }
   },
   
   renderMergedActivities()   // merge and sort by timestamp.. assets only? idk
@@ -64,7 +64,10 @@ export default NavRecentGET = React.createClass({
     return (
         <div className="ui fluid inverted small vertical menu">
           <div className="item">
-            <h3 className="ui inverted header">Recently Edited</h3>
+            <h3 className="ui inverted header" style={{textAlign: "center"}}>
+              <i className="time icon" />
+              Recently Edited
+            </h3>
           </div>
           { this.renderMergedActivities() }
         </div>

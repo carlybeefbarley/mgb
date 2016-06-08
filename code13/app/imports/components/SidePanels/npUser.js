@@ -27,16 +27,18 @@ export default npUser = React.createClass({
       <div className="ui vertical inverted fluid menu">
         { currUser ?
           <div>
-          
             <div className="ui item" key="authHdr">
-              <img className="ui centered small image" src={currUser.profile.avatar} style={{marginTop: "20px"}} />
-              <h2 className="ui inverted header" style={{textAlign: "center"}}>{currUser.profile.name}</h2>
+              <h3 className="ui inverted header" style={{textAlign: "center"}}>
+                <i className="user icon" />
+                {currUser.profile.name}
+              </h3>
+              <img className="ui centered small image" src={currUser.profile.avatar} />
             </div>
             <QLink to={`/user/${this.props.currUser._id}`} className="item">
               <i className="user icon" /> My Profile
             </QLink>
             <QLink to={`/user/${this.props.currUser._id}/assets`} className="item">
-              <i className="home icon" /> My Assets
+              <i className="pencil icon" /> My Assets
             </QLink>
             <QLink to={`/user/${this.props.currUser._id}/projects`} className="item">
               <i className="sitemap icon" /> My Projects
@@ -49,8 +51,14 @@ export default npUser = React.createClass({
           :
           // If signed out, show   | Sign-in, Join |  options inline
           [
-            <QLink to="/signin" className="item"  key="signin">Login</QLink>,
-            <QLink to="/join" className="item"  key="join">Join</QLink>
+            <div className="ui item" key="authHdr">
+              <h3 className="ui inverted header" style={{textAlign: "center"}}>
+                <i className="user icon" />
+                Login
+              </h3>
+            </div>,
+            <QLink to="/signin" className="item" key="login">Login</QLink>,
+            <QLink to="/join" className="item" key="join">Join</QLink>
           ]
         }
       </div>

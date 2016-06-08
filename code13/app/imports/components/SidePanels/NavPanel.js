@@ -66,6 +66,7 @@ export default NavPanel = React.createClass({
       right: "2px",
       top: "0px", 
       bottom: "0px",
+      paddingTop: "8px",
       backgroundColor: "#1b1c1d",       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
       overflow: "scroll"
     }

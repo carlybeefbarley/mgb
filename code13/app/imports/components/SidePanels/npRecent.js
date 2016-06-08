@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import QLink from '../../routes/QLink';
 import NavRecentGET from '../Nav/NavRecentGET.js';
 
 export default npRecent = React.createClass({
@@ -10,14 +9,7 @@ export default npRecent = React.createClass({
     panelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
   },
 
-
   render: function () {    
-    const {currUser} = this.props;
-
-    return (
-      <NavRecentGET user={currUser}/>
-    )
-  }
-
-  
+    return <NavRecentGET user={this.props.currUser}/>
+  }  
 })

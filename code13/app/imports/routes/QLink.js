@@ -24,6 +24,13 @@ function createLocationDescriptor(to, _ref) {
   return to;
 }
 
+
+// BUGBUG/TODO: WARN when there are query params on the to: field
+//   e.g. http://v2.mygamebuilder.com/user/iCyqxrbq8K9oLGx7h/project/i6b87vSCfEubkmhFf?_fp=activity&_np=nav then click 'View Project Assets'
+// The correct action for the caller is to have a query=object prop instead of using ?
+
+
+
 // This is a Query-aware Link that adds some MGB-related smarts to the standard 
 // React Router <Link> as documented at https://github.com/reactjs/react-router/blob/master/docs/API.md#link
 

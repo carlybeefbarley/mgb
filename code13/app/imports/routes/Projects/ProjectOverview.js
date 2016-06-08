@@ -85,7 +85,7 @@ export default ProjectOverview = React.createClass({
             canEdit={canEd}
             handleFieldChanged={this.handleFieldChanged}
             />
-            <QLink to={"/user/" + project.ownerId + "/assets?project="+project.name} className="ui fluid button" >
+            <QLink to={"/user/" + project.ownerId + "/assets"} query={{project:project.name}} className="ui fluid button" >
               View Project Assets
             </QLink>
             <br></br>

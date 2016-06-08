@@ -22,6 +22,9 @@ export default class TileSet extends React.Component {
   highlightTile(event, e = event.nativeEvent, force = false){
     const map = this.props.info.content.map;
     const ts = map.map.tilesets[map.activeTileset];
+    if(!ts){
+      return;
+    }
     const palette = map.gidCache;
 
     const pos = {
@@ -68,15 +71,9 @@ export default class TileSet extends React.Component {
 
   componentDidMount() {
     $('.ui.accordion')
-      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
-    const map = this.props.info.content.map;
-    const ts = map.map.tilesets[map.activeTileset];
+      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} });
 
-    const canvas = this.refs.canvas;
-    canvas.width = ts.imagewidth;
-    canvas.height = ts.imageheight;
-
-    this.ctx = canvas.getContext("2d");
+    this.adjustCanvas();
     this.props.info.content.map.tilesets.push(this);
   }
 
@@ -96,8 +93,25 @@ export default class TileSet extends React.Component {
     this.highlightTile(e, e.nativeEvent, true);
   }
 
+  adjustCanvas(){
+    const map = this.props.info.content.map;
+    const ts = map.map.tilesets[map.activeTileset];
+    const canvas = this.refs.canvas;
+    
+    if(ts){
+      canvas.width = ts.imagewidth;
+      canvas.height = ts.imageheight;
+    }
+    else{
+      canvas.width = map.data.width * map.data.tilewidth;
+      canvas.height = map.data.height * map.data.tileheight;
+    }
+
+    this.ctx = canvas.getContext("2d");
+  }
   selectTileset(tilesetNum){
     this.props.info.content.map.activeTileset = tilesetNum
+    this.adjustCanvas();
     this.drawTiles();
     this.forceUpdate();
   }
@@ -116,6 +130,7 @@ export default class TileSet extends React.Component {
     this.refs.controls.addTilesetFromUrl(url);
   }
 
+  // TODO: this is not working!!!
   onDrag(e){
     e.dataTransfer.dropEffect = 'copy';
   }
@@ -130,29 +145,50 @@ export default class TileSet extends React.Component {
               {this.props.info.title}
             </span>
           </div>
-          <div className="active content tilesets accept-drop"
-               drop-text="Drop asset here to create TileSet"
-               onDrop={this.onDrop.bind(this)}
-               onDrag={this.onDrag.bind(this)}
-            >
-            <TilesetControls tileset={this} ref="controls"/>
-          </div>
+          {this.renderContent()}
         </div>
       </div>
     );
   }
 
+  renderContent(ts = null){
+    return (
+      <div className="active content tilesets accept-drop"
+           data-drop-text="Drop asset here to create TileSet"
+           onDrop={this.onDrop.bind(this)}
+           onDragOver={(e) => {e.preventDefault();}}
+
+        >
+        <TilesetControls tileset={this} ref="controls"/>
+        <div
+          className="tileset"
+          ref="layer"
+          style={{
+                height: (ts ? ts.imageheight : 200)+"px",
+                overflow: "auto",
+                clear: "both"
+              }}
+          >
+          <canvas ref="canvas"
+                  onClick={this.selectTile.bind(this)}
+                  onMouseMove={this.highlightTile.bind(this)}
+            ></canvas>
+        </div>
+      </div>
+    )
+  }
   drawTiles(){
     this.prevTile = null;
 
     const map = this.props.info.content.map;
     const tss = map.map.tilesets;
     const ts = tss[map.activeTileset];
-
+    if(!ts){
+      return;
+    }
     const palette = map.gidCache;
     const mapData = map.data;
     const ctx = this.ctx;
-
     ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
 
     const tiles = [];
@@ -217,30 +253,8 @@ export default class TileSet extends React.Component {
                 {tilesets}
               </div>
             </div>
-
           </div>
-          <div className="active content tilesets acceptDrop"
-               data-drop-text="Drop asset here to create TileSet"
-               onDrop={this.onDrop.bind(this)}
-               onDragOver={(e) => {e.preventDefault();}}
-
-            >
-            <TilesetControls tileset={this} ref="controls"/>
-            <div
-              className="tileset"
-              ref="layer"
-              style={{
-                height: ts.imageheight+"px",
-                overflow: "auto",
-                clear: "both"
-              }}
-              >
-              <canvas ref="canvas"
-                      onClick={this.selectTile.bind(this)}
-                      onMouseMove={this.highlightTile.bind(this)}
-                ></canvas>
-            </div>
-          </div>
+          {this.renderContent(ts)}
         </div>
       </div>
     )

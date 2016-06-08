@@ -84,7 +84,23 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	togglePlayAnimation(){
-		this.setState({ isPlaying: !this.state.isPlaying });
+		let isPlaying = !this.state.isPlaying; 
+		this.setState({ isPlaying: isPlaying });
+
+		if(isPlaying){
+			this.playAnimation(this.props.EditGraphic.state.selectedFrameIdx);
+		}
+	}
+
+	playAnimation(frameID){
+		this.selectFrame(frameID);
+		let nextFrameID = (frameID+1) % this.props.content2.frameNames.length;
+		let self = this;
+		setTimeout(function(){
+			if(self.state.isPlaying){
+				self.playAnimation(nextFrameID);
+			}
+		}, Math.round(1000/this.props.content2.fps));	
 	}
 
 	stepFrame(isForward){
@@ -98,6 +114,12 @@ export default class SpriteLayers extends React.Component {
 	rewindFrames(isForward){
 		let frameID = isForward ? this.props.content2.layerParams.length-1 : 0; 
 		this.selectFrame(frameID);
+	}
+
+	changeFps(event){
+		console.log(event.target.value);
+		this.props.content2.fps = event.target.value;
+		this.props.handleSave("Changed FPS");
 	}
 
 	handleSave(changeText="change graphic"){
@@ -134,26 +156,26 @@ export default class SpriteLayers extends React.Component {
       	
       <div className="ui sixteen wide column">
       <div className="row">
-  		<div onClick={this.rewindFrames.bind(this, false)} className="ui button">
+  		<div onClick={this.rewindFrames.bind(this, false)} className="ui icon button">
 			<i className="icon step backward"></i>
 		</div>
-		<div onClick={this.stepFrame.bind(this, false)} className="ui button">
+		<div onClick={this.stepFrame.bind(this, false)} className="ui icon button">
 			<i className="icon backward"></i>
 		</div>
-		<div onClick={this.togglePlayAnimation.bind(this)} className="ui button">
+		<div onClick={this.togglePlayAnimation.bind(this)} className="ui icon button">
 			<i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
 		</div>
-		<div onClick={this.stepFrame.bind(this, true)} className="ui button">
+		<div onClick={this.stepFrame.bind(this, true)} className="ui icon button">
 			<i className="icon forward"></i>
 		</div>
-		<div onClick={this.rewindFrames.bind(this, true)} className="ui button">
+		<div onClick={this.rewindFrames.bind(this, true)} className="ui icon button">
 			<i className="icon step forward"></i>
 		</div>
 		<div className="ui labeled input">
 		  <div className="ui label">
 		    FPS
 		  </div>
-		  <input type="number" min="1" max="60" />
+		  <input type="number" min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
 		</div>
       </div>
 

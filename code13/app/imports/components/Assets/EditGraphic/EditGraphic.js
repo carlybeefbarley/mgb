@@ -64,10 +64,12 @@ export default class EditGraphic extends React.Component {
   //
   // content2.width
   // content2.height
+  // content2.fps    // default fps = 10
   // content2.layerParams[layerIndex]     // array of layer params {name, isHiddden, isLocked}
   // content2.frameNames[frameIndex]
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
   // content2.spriteData[]    // dataUrl. Same frameData elements but with merged layers
+  // content2.animations[]    // { animationName, frames[], fps }
 
 
   // React Callback: componentDidMount()
@@ -114,8 +116,9 @@ export default class EditGraphic extends React.Component {
     this.doSnapshotActivity()
   }
 
-  // old assets had only string param name. This function just adds additional default params
+  // there are some missing params for old assets beeing added here
   fixingOldAssets(){
+    let autoFix = false;
     let c2 = this.props.asset.content2;
     // console.log(c2.layerParams, c2.layerNames);
     if(!c2.layerParams && c2.layerNames){
@@ -123,11 +126,22 @@ export default class EditGraphic extends React.Component {
       for(let i=0; i<c2.layerNames.length; i++){
         c2.layerParams[i] = {name:c2.layerNames[i], isHidden: false, isLocked: false};
       } 
+      autoFix = true;
     }
     if(!c2.spriteData){
       c2.spriteData = [];
+      autoFix = true;
     }
-    this.handleSave("Automatic fixing old assets");
+    if(!c2.fps){
+      c2.fps = 10;
+      autoFix = true;
+    }
+    if(!c2.animations){
+      c2.animations = [];
+      autoFix = true;
+    }
+
+    if(autoFix) this.handleSave("Automatic fixing old assets");
   }
 
 
@@ -161,10 +175,12 @@ export default class EditGraphic extends React.Component {
       asset.content2 = {
         width: 64,
         height: 32,
+        fps: 10,
         layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
         frameNames: ["Frame 1"],
         frameData: [ [ ] ],
         spriteData: [],
+        animations: [],
       };
     }
   }

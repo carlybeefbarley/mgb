@@ -186,8 +186,11 @@ export default class EditGraphic extends React.Component {
   // React Callback: componentDidUpdate()
   componentDidUpdate(prevProps,  prevState)
   {
-    this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
-    this.loadPreviewsFromAssetAsync()
+    // [guntis] TODO update all previewCanvases only if layer is deleted
+    // [guntis] TODO update editCanvas if selected another frame
+
+      this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
+      this.loadPreviewsFromAssetAsync()
   }
 
   /** Stash references to the preview canvases after initial render and subsequent renders
@@ -226,38 +229,10 @@ export default class EditGraphic extends React.Component {
 
   // Note that this has to use Image.onload so it will complete asynchronously.
   // TODO(DGOLDS): Add an on-complete callback including a timeout handler to support better error handling and avoid races
-  // loadPreviewsFromAssetAsync()
-  // {
-  //   let c2 = this.props.asset.content2;
-  //   let layerCount = c2.layerParams.length;
-
-  //   for (let i = 0; i < layerCount; i++) {
-  //     let dataURI = c2.frameData[this.state.selectedFrameIdx][i];
-
-  //     if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-  //       var _img = new Image
-  //       var self = this
-  //       _img.mgb_hack_idx = i     // so in onload() callback we know which previewCtx to apply the data to
-  //       _img.onload = function (e) {
-  //         let loadedImage = e.target
-  //         self.previewCtxArray[loadedImage.mgb_hack_idx].clearRect(0,0, _img.width, _img.height)
-  //         self.previewCtxArray[loadedImage.mgb_hack_idx].drawImage(loadedImage, 0, 0)
-  //         if (loadedImage.mgb_hack_idx === self.state.selectedLayerIdx)
-  //           self.updateEditCanvasFromSelectedPreviewCanvas()
-  //       }
-  //       _img.src = dataURI    // Trigger load & onload -> data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-  //     }
-  //     else {
-  //       // TODO: May need some error indication here
-  //       this.updateEditCanvasFromSelectedPreviewCanvas();
-  //     }
-  //   }
-  // }
-
   loadPreviewsFromAssetAsync(){
     let c2 = this.props.asset.content2;
     let frameCount = c2.frameNames.length;
-    let layerCount = c2.layerNames.length;
+    let layerCount = c2.layerParams.length;
 
     console.log("load previews");
 
@@ -275,8 +250,8 @@ export default class EditGraphic extends React.Component {
             if(loadedImage.frameID === self.state.selectedFrameIdx){
               self.previewCtxArray[loadedImage.layerID].clearRect(0,0, _img.width, _img.height);
               self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
-              if(loadedImage.layerID === layerCount-1){
-                // update edit canvas when last layer is loaded
+              if(loadedImage.layerID === 0){
+                // update edit canvas when bottom layer is loaded
                 self.updateEditCanvasFromSelectedPreviewCanvas();  
               }
             }
@@ -593,42 +568,6 @@ export default class EditGraphic extends React.Component {
   }
 
 // Add/Select/Remove etc animation frames
-
-
-  // handleAddFrame()
-  // {
-  //   if (!this.props.canEdit)
-  //   { 
-  //     this.props.editDeniedReminder()
-  //     return
-  //   }
-
-  //   this.doSaveStateForUndo("Add Frame")
-  //   let fN = this.props.asset.content2.frameNames
-  //   let newFrameName = "Frame " + (fN.length+1).toString()
-  //   fN.push(newFrameName)
-  //   this.props.asset.content2.frameData.push([])
-  //   this.handleSave('Add frame to graphic')
-  //   this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-  // }
-
-  // handleAddLayer(){
-  //   if (!this.props.canEdit)
-  //   { 
-  //     this.props.editDeniedReminder();
-  //     return;
-  //   }
-  //   this.doSaveStateForUndo("Add Layer");
-  //   let c2 = this.props.asset.content2;
-  //   let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
-  //   c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
-  //   let fD = c2.frameData;
-  //   for(let i; i<fD.length; i++){
-  //     fD[i][lN.length-1] = null;
-  //   }
-  //   this.handleSave('Add layer to graphic');
-  //   this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-  // }
 
 
   doSwapCanvases(i,j)

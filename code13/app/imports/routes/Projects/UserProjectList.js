@@ -9,8 +9,6 @@ import Helmet from 'react-helmet';
 import {logActivity} from '../../schemas/activity';
 import {snapshotActivity} from '../../schemas/activitySnapshots.js';
 
-// TODO: Strip Create Project etc from UserAssetList.js and ProjectSelector.js
-
 // NOTE: UI mockups for this page are at https://v2.mygamebuilder.com/assetEdit/Ev2AWBDywffWTtJRc# 
 
 export default UserProjectList = React.createClass({

@@ -66,10 +66,14 @@ export default fpActivity = React.createClass({
       const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
       const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
       const dataHtml = `<img src="${assetThumbnailUrl}" />`
+      const linkTo = act.toOwnerId ? 
+                `/user/${act.toOwnerId}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
+                `/assetEdit/${act.toAssetId}`                       // Old format
+
 
       return  this.wrapActivity(idx, ago, iconClass, assetKindIconClassName, act.byUserName, act.byUserId, 
                 <small data-html={dataHtml} data-position="left center" className="hazRecentPopup">
-                  <QLink to={"/assetEdit/" + act.toAssetId}>
+                  <QLink to={linkTo}>
                     {assetName}
                   </QLink>
                   <br></br>

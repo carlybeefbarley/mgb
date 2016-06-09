@@ -13,6 +13,7 @@ import AssetShowStableSelector from '../../components/Assets/AssetShowStableSele
 import AssetListSortBy from '../../components/Assets/AssetListSortBy';
 import ProjectSelector from '../../components/Assets/ProjectSelector';
 
+import { utilPushTo } from '../QLink';
 import Spinner from '../../components/Nav/Spinner';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
@@ -44,6 +45,11 @@ export default UserAssetListRoute = React.createClass({
     currUser: PropTypes.object,     // Currently Logged in user
     ownsProfile: PropTypes.bool,
     location: PropTypes.object      // We get this from react-router
+  },
+  
+    
+  contextTypes: {
+    urlLocation: React.PropTypes.object
   },
   
   
@@ -118,6 +124,7 @@ export default UserAssetListRoute = React.createClass({
     let loc = this.props.location
     let newQ = {...loc.query, ...queryModifier }
     newQ = this._stripQueryOfDefaults(newQ)
+    // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
     browserHistory.push( {  ...loc,  query: newQ })
   },
   
@@ -409,7 +416,7 @@ export default UserAssetListRoute = React.createClass({
       } else {
         newAsset._id = result; // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset);
-        browserHistory.push(`/assetEdit/${result}`)
+        utilPushTo(this.context.urlLocation.query, `/user/${this.props.currUser._id}/asset/${result}`)
       }
     });
   }

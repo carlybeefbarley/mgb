@@ -79,9 +79,13 @@ export default NavRecentGET = React.createClass({
         const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
         const dataHtml = `<img src="${assetThumbnailUrl}" />`
         //  title={ago} 
+        // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now
+        const linkTo = a.toOwnerId ? 
+                        `/user/${a.toOwnerId}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016
+                        `/assetEdit/${a.toAssetId}`                     // Old format
         retval.push( 
           <div className="ui item hazRecentPopup"  key={a._id}  data-html={dataHtml} data-position="right center" >
-            <QLink to={"/assetEdit/" + a.toAssetId} >
+            <QLink to={linkTo}>
               <i className={assetKindIconClassName}></i>{assetKindCap} '{a.toAssetName || "<unnamed>"}'
             </QLink>
           </div> 

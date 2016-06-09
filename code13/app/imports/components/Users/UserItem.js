@@ -1,6 +1,6 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes } from 'react';
 import moment from 'moment';
-import {browserHistory} from 'react-router';
+import { utilPushTo } from '../../routes/QLink';
 
 
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
@@ -14,13 +14,17 @@ export default UserItem = React.createClass({
     handleClickUser: PropTypes.func,  // Optional. If provided, call this with the userId instead of going to the user Profile Page
     renderAttached: PropTypes.bool    // if true, then render attached
   },
+
+  contextTypes: {
+    urlLocation: React.PropTypes.object
+  },
     
   handleClickUser: function() {
     let uid = this.props._id
     if (this.props.handleClickUser)
       this.props.handleClickUser(uid, this.props.name)
     else
-      browserHistory.push(`/user/${uid}`)
+      utilPushTo(this.context.urlLocation.query, `/user/${uid}`)
   },
   
   render: function() {

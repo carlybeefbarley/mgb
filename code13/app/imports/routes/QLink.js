@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import urlMaker from './urlMaker';
 
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
@@ -89,7 +89,7 @@ export default QLink = React.createClass({
     event.preventDefault()    // Stop Link.handleClick from doing anything further
   },
 
-  render: function render() {
+  render: function () {
     const p = this.props
 
     if (!p.nav)
@@ -117,3 +117,10 @@ export default QLink = React.createClass({
   
 })
 
+/** This is a replacement for browserHistory.push() */
+export function utilPushTo(existingQuery, newTo)
+{
+  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)
+  const location = createLocationDescriptor(newTo, { query: appScopedQuery })
+  browserHistory.push(location)
+}

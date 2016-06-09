@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { browserHistory } from 'react-router';
-import QLink from "../../routes/QLink";
+import QLink, { utilPushTo } from "../../routes/QLink";
 import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 import {logActivity} from '../../schemas/activity';
@@ -22,6 +22,12 @@ export default AssetCard = React.createClass({
     showEditButton: PropTypes.bool,             // Shall we *show* the Edit button
     renderType: PropTypes.string                // One of null/undefined  OR  "short"
   },
+
+
+  contextTypes: {
+    urlLocation: React.PropTypes.object
+  },
+
 
   getDefaultProps: function()  {
     return {
@@ -219,7 +225,9 @@ export default AssetCard = React.createClass({
         
         { this.props.showHeader && !renderShort &&         
           <div className="ui four small bottom attached icon buttons">
-            <QLink to={`/assetEdit/${asset._id}`} className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
+            <QLink 
+                  to={`/user/${asset.ownerId}/asset/${asset._id}`} 
+                  className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
                   onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
               <small>&nbsp;Edit</small>
@@ -290,7 +298,8 @@ export default AssetCard = React.createClass({
   },
 
   handleEditClick() {
-    browserHistory.push(`/assetEdit/${this.props.asset._id}`)
+    const asset = this.props.asset
+    utilPushTo(this.context.urlLocation.query, "/user/" + asset.ownerId + "/asset/" + asset._id)
   }
   
 })

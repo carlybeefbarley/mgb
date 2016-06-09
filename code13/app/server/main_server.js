@@ -103,22 +103,17 @@ RestApi.addRoute('asset/png/:id', {authRequired: false}, {
 
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
   get: function () {
-    var asset = Azzets.findOne(this.urlParams.id);
-    if (asset)
-    {
-      return {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'image/png'
-        },
-        body: dataUriToBuffer(asset.thumbnail)
-      };
-    }
-    else {
-      return {
-        statusCode: 404                
-      }
-    }
+    var asset = Azzets.findOne(this.urlParams.id)
+    // Return an empty image if there's no thumbnail yet. This from http://png-pixel.com/
+    var emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'image/png'
+//      'Cache-Control': 'max-age=5, private'  // Max-age is in seconds?   seems to be over-active :()
+      },
+      body: dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel )
+    }   
   }
 })
   

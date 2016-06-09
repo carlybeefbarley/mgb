@@ -653,7 +653,7 @@ export default class EditCode extends React.Component {
 
   detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
     let phaserVerNNN = this.state.defaultPhaserVersionNNN
-    let versionArray = src.match(/^\/\/\MGBOPT_phaser_version\s*=\s*([\.\d]+)/)
+    let versionArray = src && src.match(/^\/\/\MGBOPT_phaser_version\s*=\s*([\.\d]+)/)
     if (versionArray && versionArray.length > 1)
     {
       phaserVerNNN = versionArray[1]

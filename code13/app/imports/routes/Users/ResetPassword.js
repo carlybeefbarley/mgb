@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import {browserHistory} from 'react-router';
+import { utilPushTo } from '../QLink';
 import {handleForms} from '../../components/Forms/FormDecorator';
 import UserForms from '../../components/Users/UserForms.js';
 
@@ -7,6 +7,10 @@ export default ResetPasswordRoute = React.createClass({
 
   propTypes: {
      params: PropTypes.object
+  },
+
+  contextTypes: {
+    urlLocation: React.PropTypes.object
   },
 
   getInitialState: function() {
@@ -67,13 +71,13 @@ export default ResetPasswordRoute = React.createClass({
 
     Accounts.resetPassword(this.props.params.token, password, (error) => {
       if (error) {
-        this.props.showToast('Coudl not reset password', 'error')
+        this.props.showToast('Could not reset password', 'error')
         return;
       } else {
         this.props.showToast('Success! Your password has been reset.     Redirecting...', 'success')
         window.setTimeout(() => {
-          browserHistory.push(`/`);
-        }, 1000);
+          utilPushTo(this.context.urlLocation.query, `/`);
+        }, 1500);
       }
     });
   }

@@ -26,6 +26,7 @@ var schema = {
   // Identifers for scope of the action
   toProjectName: String,  // null if not a project-scoped action
   toOwnerName: String,    // Owner's user NAME
+  toOwnerId: String,      // Owner's user ID (Added June 8th 2016)
   toAssetId: String,      // The asset that was changed - or null if not an asset
   toAssetName: String,    // Asset's name (duplicated here for speed)
   toAssetKind: String     // Asset's kind (image, map, etc)
@@ -115,6 +116,7 @@ export function logActivity(activityType, description, thumbnail, asset) {
     // Identifers for target of the activity
     toProjectName:          (asset && asset.projectName ?  asset.projectName : ""), 
     toOwnerName:            (asset && asset.dn_ownerName ?  asset.dn_ownerName : ""),
+    toOwnerId:              (asset && asset.ownerId ? asset.ownerId : ""),    
     toAssetId:              (asset && asset._id ? asset._id : ""),
     toAssetName:            (asset && asset.name ? asset.name : ""),
     toAssetKind:            (asset && asset.kind ? asset.kind : "")

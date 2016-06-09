@@ -3,12 +3,14 @@ import npNavigate from './npNavigate';
 import npUser from './npUser';
 import npUsers from './npUsers';
 import npRecent from './npRecent';
+import npProjects from './npProjects';
 
 
 const navPanelViews = [
   { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: npNavigate, hideIfNoUser: false  },
   { tag: "user",      icon: "user",       hdr: "User",      el: npUser,     hideIfNoUser: false  },
   { tag: "recent",    icon: "time",       hdr: "Recent",    el: npRecent,   hideIfNoUser: true   },
+  { tag: "projects",  icon: "sitemap",    hdr: "Projects",  el: npProjects, hideIfNoUser: true  },
   { tag: "users",     icon: "users",      hdr: "Users",     el: npUsers,    hideIfNoUser: false  }
 
   // { tag: "projects",  icon: "sitemap",    hdr: "Projects" },

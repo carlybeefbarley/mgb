@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import {browserHistory} from 'react-router';
+import React from 'react';
+import { utilPushTo } from '../QLink';
 import UserForms from '../../components/Users/UserForms.js';
 import AuthLinks from '../../components/Users/AuthLinks.js';
 import md5 from 'blueimp-md5';
@@ -9,6 +9,10 @@ import {logActivity} from '../../schemas/activity';
 
 export default JoinRoute = React.createClass({
 
+  contextTypes: {
+    urlLocation: React.PropTypes.object
+  },
+
   getInitialState: function() {    
     return {
       errors: {},
@@ -16,13 +20,13 @@ export default JoinRoute = React.createClass({
     };
   },
   
-   //throttles errors from showing up too fast when typing.
+   // throttles errors from showing up too fast when typing.
   componentWillMount: function() {
-    this.throttledSetErrorState = _.debounce(this.throttledSetErrorState,500);
+    this.throttledSetErrorState = _.debounce(this.throttledSetErrorState, 500);
   },
   
   componentDidMount() {
-    window.onkeydown = this.listenForEnter;
+    window.onkeydown = this.listenForEnter;   // TODO: remove event listener
   },
 
   throttledSetErrorState: function(newError) {
@@ -109,10 +113,10 @@ export default JoinRoute = React.createClass({
   },
 
   confirmPassword: function(value) {
-      if (value !== this.state.values.password) {
-        return ('Passwords must match');
-      }
-      return '';
+    if (value !== this.state.values.password) {
+      return ('Passwords must match');
+    }
+    return '';
   },
 
   required: function(value) {
@@ -189,8 +193,8 @@ export default JoinRoute = React.createClass({
         logActivity("user.join",  `New user "${newUserName}"`, null, null); 
         this.props.showToast('Welcome!  Taking you to your assets', 'success')
         window.setTimeout(() => {
-          browserHistory.push(`/user/${Meteor.user()._id}/assets`);
-        }, 1500);
+          utilPushTo(this.context.urlLocation.query, `/user/${Meteor.user()._id}/assets`)
+        }, 2000);
       }
     });
   }

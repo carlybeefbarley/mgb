@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import moment from 'moment';
-import {browserHistory} from 'react-router';
+import { utilPushTo } from '../../routes/QLink';
 import InlineEdit from 'react-edit-inline';
 
 
@@ -17,6 +17,10 @@ export default UserProfile = React.createClass({
     handleProfileFieldChanged: PropTypes.func // Function callback if fields are changed. e.g. profile.bio: "new text"
   },  
   
+  contextTypes: {
+    urlLocation: React.PropTypes.object
+  },
+
   getDefaultProps: function() {
     return {
       canEditProfile: false,
@@ -37,14 +41,17 @@ export default UserProfile = React.createClass({
     return (text.length >= 0 && text.length < 64);
   },
 
+  handleCardClick: function() {
+    if (this.props.makeClickable)
+      utilPushTo(this.context.urlLocation.query, `/user/${this.props.user._id}`)
+  },
 
   render: function() {
     const createdAt = this.props.user.createdAt
     const editsDisabled = !this.props.canEditProfile
     
     return (
-      <div className="ui card" 
-           onClick={this.props.makeClickable ? browserHistory.push(`/user/${this.props.user._id}`) : ''}>
+      <div className="ui card"  onClick={this.handleCardClick}>
         <div className="ui image">
           <img src={this.props.user.profile.avatar} />
         </div>

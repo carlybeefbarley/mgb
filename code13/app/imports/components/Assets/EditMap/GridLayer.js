@@ -9,11 +9,8 @@ export default class TileMapLayer extends React.Component {
     this.ctx = null;
   }
   componentDidMount(){
+    this.adjustCanvas();
     const canvas = this.refs.canvas;
-    const $el = $(canvas.parentElement);
-    canvas.width = $el.width();
-    canvas.height = $el.height();
-
     this.ctx = canvas.getContext("2d");
     this.drawGrid();
     this.alignToActiveLayer();
@@ -44,6 +41,13 @@ export default class TileMapLayer extends React.Component {
     document.body.removeEventListener("mouseup", this._mup);
   }
   /* endof lifecycle functions */
+
+  adjustCanvas(){
+    const canvas = this.refs.canvas;
+    const $el = $(canvas.parentElement);
+    canvas.width = $el.width();
+    canvas.height = $el.height();
+  }
 
   alignToActiveLayer(){
     const layerData = map.data.layers[map.activeLayer];
@@ -77,7 +81,8 @@ export default class TileMapLayer extends React.Component {
 
     // vertical lines
     let i=0;
-    for(; i<data.width / camera.zoom; i++){
+    const width = Math.min(Math.floor(this.ctx.canvas.width /data.tilewidth), data.width );
+    for(; i< width / camera.zoom; i++){
       this.ctx.moveTo(i * data.tilewidth * camera.zoom + 0.5 + offsetX, -data.tileheight + offsetY);
       this.ctx.lineTo(i * data.tilewidth * camera.zoom + 0.5 + offsetX, this.ctx.canvas.height);
     }
@@ -86,7 +91,8 @@ export default class TileMapLayer extends React.Component {
 
     // horizontal lines
     i=0;
-    for(; i<data.height / camera.zoom; i++){
+    const height = Math.min(Math.floor(this.ctx.canvas.height /data.tileheight), data.height);
+    for(; i<height / camera.zoom; i++){
       this.ctx.moveTo(-data.tilewidth + offsetX, i * data.tileheight * camera.zoom + 0.5 + offsetY);
       this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight * camera.zoom + 0.5 + offsetY);
     }

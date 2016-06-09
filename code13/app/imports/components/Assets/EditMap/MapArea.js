@@ -53,8 +53,17 @@ export default class MapArea extends React.Component {
     //this.margin = 0;
     this.spacing = 0;
 
-    this.globalMouseMove = (...args) => {this.handleMouseMove(...args);}
-    this.globalMouseUp = (...args) => {this.handleMouseUp(...args);}
+    this.globalMouseMove = (...args) => {this.handleMouseMove(...args);};
+    this.globalMouseUp = (...args) => {this.handleMouseUp(...args);};
+    this.gloablResize = () => {
+      this.layers.forEach((l)=>{
+        l.adjustCanvas();
+        l.drawTiles();
+      });
+      this.refs.grid && this.refs.grid.adjustCanvas();
+      this.refs.grid && this.refs.grid.drawGrid();
+
+    };
   }
 
   componentDidMount(){
@@ -62,10 +71,12 @@ export default class MapArea extends React.Component {
     this.fullUpdate();
     window.addEventListener("mousemove", this.globalMouseMove);
     window.addEventListener("mouseup", this.globalMouseUp);
+    window.addEventListener("resize", this.gloablResize);
   }
   componentWillUnmount(){
     window.removeEventListener("mousemove", this.globalMouseMove);
     window.removeEventListener("mouseup", this.globalMouseUp);
+    window.removeEventListener("resize", this.gloablResize);
   }
 
   removeDots(sin){
@@ -230,6 +241,7 @@ export default class MapArea extends React.Component {
       cb();
     }
     this.forceUpdate();
+    this.updateTilesets();
   }
 
   addLayerTool(){
@@ -317,6 +329,7 @@ export default class MapArea extends React.Component {
     this.lastEvent = null;
     this.camera.x = 0;
     this.camera.y = 0;
+    this.camera.zoom = 1;
     this.refs.grid.drawGrid();
     this.redrawLayers();
   }
@@ -333,7 +346,9 @@ export default class MapArea extends React.Component {
     this.lastEvent.pageX = e.pageX;
     this.lastEvent.pageY = e.pageY;
 
-    this.refs.grid.drawGrid();
+    if(this.refs.grid){
+      this.refs.grid.drawGrid();
+    }
     this.redrawLayers();
   }
   zoomCamera(newZoom, e){
@@ -453,7 +468,14 @@ export default class MapArea extends React.Component {
       tileset.drawTiles();
     });
   }
-
+  // we need to update these - to show errors about missing images after tileset import
+  updateTilesets(){
+    // do we have more than 1 tileset ?????
+    // TODO: atm we are using only 1 tileset tool..
+    this.tilesets.forEach((tileset) => {
+      tileset.selectTileset(0);
+    });
+  }
   // TODO: keep aspect ratio
   // find out correct thumbnail size
   generatePreview(){
@@ -497,12 +519,13 @@ export default class MapArea extends React.Component {
           <GridLayer map={this} key={i} ref="grid" />
         );
       }
+      // TODO: adjust canvas size
       return (
         <div
              ref="mapElement"
              style={{
-              width: (map.width * map.tilewidth)+"px",
-              height: (map.height * map.tileheight)+"px",
+              //width: (640)+"px",
+              height: (640)+"px",
               position: "relative",
               margin: "10px 0"
           }}>{layers}</div>

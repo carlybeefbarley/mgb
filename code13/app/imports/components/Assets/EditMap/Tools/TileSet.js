@@ -38,8 +38,8 @@ export default class TileSet extends React.Component {
       canvas.height = TileHelper.getTilesetHeight(ts);
     }
     else{
-      canvas.width = map.data.width * map.data.tilewidth;
-      canvas.height = map.data.height * map.data.tileheight;
+      canvas.width = 480;
+      canvas.height = 640;
     }
 
     this.ctx = canvas.getContext("2d");
@@ -79,13 +79,16 @@ export default class TileSet extends React.Component {
     this.prevTile = null;
 
     const map = this.props.info.content.map;
-    const tss = map.map.tilesets;
+    // mas is not loaded
+    if(!map.data){
+      return;
+    }
+    const tss = map.data.tilesets;
     const ts = tss[map.activeTileset];
     const ctx = this.ctx;
     ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
 
     if(!ts){
-
       return;
     }
     const palette = map.gidCache;
@@ -100,6 +103,10 @@ export default class TileSet extends React.Component {
       gid = ts.firstgid + i;
       TileHelper.getTilePosRel(i, Math.floor((ts.imagewidth + spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, pos);
       const pal = palette[gid];
+      // missing image
+      if(!pal){
+        return;
+      }
       this.drawTile(pal, pos);
     }
   }

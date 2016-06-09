@@ -77,8 +77,6 @@ export default class EditGraphic extends React.Component {
     this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas);
     this.editCtx = this.editCanvas.getContext('2d');
     this.editCtxImageData1x1 = this.editCtx.createImageData(1,1);
-    this.mergedCanvas = ReactDOM.findDOMNode(this.refs.mergedCanvas);
-    this.mergedCtx = this.mergedCanvas.getContext('2d');
 
     //this.editCanvasOverlay =  ReactDOM.findDOMNode(this.refs.editCanvasOverlay);
     //this.editCtxOverlay = this.editCanvasOverlay.getContext('2d');
@@ -269,17 +267,12 @@ export default class EditGraphic extends React.Component {
     this.editCtx.msImageSmoothingEnabled = this.checked
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
     this.frameCtxArray[this.state.selectedFrameIdx].clearRect(0, 0, c2.width, c2.height);
-    this.mergedCtx.clearRect(0, 0, this.mergedCanvas.width, this.mergedCanvas.height);
 
     // draws all layers on edit canvas and layer canvas
     for(let i=this.previewCanvasArray.length-1; i>=0; i--){
       if(!this.props.asset.content2.layerParams[i].isHidden){ 
         this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s);
         this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
-
-
-        // TODO delete later on mergedCanvas and leave frameCanvases
-        this.mergedCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
       }
     }
     
@@ -808,8 +801,7 @@ export default class EditGraphic extends React.Component {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
       }
       asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
-
-      c2.spriteData[this.state.selectedFrameIdx] = this.mergedCanvas.toDataURL('image/png');
+      c2.spriteData[this.state.selectedFrameIdx] = this.frameCanvases[this.state.selectedFrameIdx].toDataURL('image/png');
     }
 
 
@@ -1129,15 +1121,6 @@ export default class EditGraphic extends React.Component {
 
             </div>
           </div>
-        </div>
-
-      {/*** Canvas with merged layers ***/}
-        <div className="ui four wide column ">
-          <canvas 
-            ref="mergedCanvas"
-            width={c2.width}
-            height={c2.height}>
-          </canvas>
         </div>
 
         {/***  Right Column for animations and frames  ***/}

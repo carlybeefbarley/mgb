@@ -1,6 +1,8 @@
 import React, {PropTypes} from 'react';
 import {browserHistory} from 'react-router';
 
+// TODO.. 1. Fix this so it works again
+// TODO.. 2. change to use   utilPushTo(this.context.urlLocation.query, ...) instead of browserHistory.push()
 export default SocialAuth = React.createClass({
 
   propTypes: {

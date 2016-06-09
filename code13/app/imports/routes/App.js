@@ -24,7 +24,7 @@ export default App = React.createClass({
   // }
     
   childContextTypes: {
-    urlLocation: React.PropTypes.object
+    urlLocation: React.PropTypes.object    
   },
 
   getChildContext() {
@@ -48,7 +48,7 @@ export default App = React.createClass({
       showToast: false,
       toastMsg: '',
       toastType: 'success',
-      activityHistoryLimit: 20
+      activityHistoryLimit: 31
     };
   },
 
@@ -81,7 +81,6 @@ export default App = React.createClass({
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
     const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
     const navPanelWidth = showNavPanel ? "290px" : "60px"
-//    if (showNavPanel) 
     mainPanelDivSty.marginLeft = navPanelWidth
 
     //Check permissions of current user for super-admin,

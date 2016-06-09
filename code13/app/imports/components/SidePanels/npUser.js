@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
-import QLink from '../../routes/QLink';
-import { browserHistory } from 'react-router';
-import {logActivity} from '../../schemas/activity';
+import QLink, { utilPushTo } from '../../routes/QLink';
+import { logActivity } from '../../schemas/activity';
 
 export default npUser = React.createClass({
   
@@ -11,13 +10,17 @@ export default npUser = React.createClass({
     panelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
   },
 
+  contextTypes: {
+    urlLocation: React.PropTypes.object
+  },
+
 
   logout: function() {
     let userName = Meteor.user().profile.name
-    logActivity("user.login",  `Logging out "${userName}"`, null, null);         
+    logActivity("user.logout",  `Logging out "${userName}"`, null, null);         
 
     Meteor.logout();
-    browserHistory.push(`/`);
+    utilPushTo(this.context.urlLocation.query, "/");
   },
 
   render: function () {    

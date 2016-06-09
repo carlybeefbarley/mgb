@@ -24,12 +24,12 @@ export default UserProfileRoute = React.createClass({
   
   getMeteorData: function() {
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", this.props.params.id);
-    let handleActivity = Meteor.subscribe("activity.public.recent.userId", this.props.params.id, 10) 
+    let handleActivity = Meteor.subscribe("activity.public.recent.userId", this.props.params.id) 
 
     return {
       activitySnapshots: ActivitySnapshots.find({ byUserId: this.props.params.id }).fetch(),
       activity: Activity.find({ byUserId: this.props.params.id }, {sort: {timestamp: -1}}).fetch(),
-      loading: !handleActivity.ready() && !handleForActivitySnapshots.ready()
+      loading: !handleActivity.ready() || !handleForActivitySnapshots.ready()
     };
   },
   
@@ -65,8 +65,11 @@ export default UserProfileRoute = React.createClass({
       }
       else if (act.activityType.startsWith("asset.")) {
         const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind);
+        const linkTo = act.toOwnerId ? 
+                `/user/${act.toOwnerId}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
+                `/assetEdit/${act.toAssetId}`                       // Old format
 
-        return  <QLink to={"/assetEdit/" + act.toAssetId}  className="item" key={i} title={ago}>
+        return  <QLink to={linkTo}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i><i className={assetKindIconClassName}></i>{act.description} '{act.toAssetName}'  
               </QLink>
       } 

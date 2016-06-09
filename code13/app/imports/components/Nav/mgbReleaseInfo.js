@@ -17,12 +17,12 @@ export default mgbReleaseInfo = {
   [ 
         
     { 
-      "timestamp":     "Wed Jun 08 2016 13:45:00 GMT-0700 (PDT)",
+      "timestamp":     "Wed Jun 08 2016 21:10:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "436"
+        "iteration":   "456"
       },
 
       "releaseManagement": {
@@ -43,7 +43,22 @@ export default mgbReleaseInfo = {
           "changeName":     "Graphic Animations",
           "changeSummary":  "Graphic Animations, also layer/frame features work now",
           "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.navpanel.recent",
+          "type":           "improvement",
+          "changeName":     "Recent asset thumbnails",
+          "changeSummary":  "Show thumbnail previews for Recent assets on hover",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel.activity",
+          "type":           "improvement",
+          "changeName":     "Active asset thumbnails",
+          "changeSummary":  "Show thumbnail previews for Active assets on hover",
+          "otherUrls":      []
         }
+        
       ]             
     },                    
     

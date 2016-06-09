@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {browserHistory} from 'react-router';
+import { utilPushTo } from '../QLink';
 
 import {handleForms} from '../../components/Forms/FormDecorator';
 import UserForms from '../../components/Users/UserForms.js';
@@ -15,6 +15,10 @@ export default  SignInRoute = React.createClass({
       errors: {},
       values: {}
     }
+  },
+
+  contextTypes: {
+    urlLocation: React.PropTypes.object
   },
 
   render: function() {
@@ -125,8 +129,8 @@ export default  SignInRoute = React.createClass({
         logActivity("user.login",  `Logging in "${userName}"`, null, null);         
         this.props.showToast('Welcome Back!   Taking you to your Assets', 'success')
         window.setTimeout(() => {
-          browserHistory.push(`/user/${Meteor.user()._id}/assets`);
-        }, 1000);
+          utilPushTo(this.context.urlLocation.query, `/user/${Meteor.user()._id}/assets`)
+        }, 2000);
       }
     });
   },

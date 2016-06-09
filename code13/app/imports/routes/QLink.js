@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import urlMaker from './urlMaker';
 
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
@@ -23,6 +23,13 @@ function createLocationDescriptor(to, _ref) {
 
   return to;
 }
+
+
+// BUGBUG/TODO: WARN when there are query params on the to: field
+//   e.g. http://v2.mygamebuilder.com/user/iCyqxrbq8K9oLGx7h/project/i6b87vSCfEubkmhFf?_fp=activity&_np=nav then click 'View Project Assets'
+// The correct action for the caller is to have a query=object prop instead of using ?
+
+
 
 // This is a Query-aware Link that adds some MGB-related smarts to the standard 
 // React Router <Link> as documented at https://github.com/reactjs/react-router/blob/master/docs/API.md#link
@@ -82,7 +89,7 @@ export default QLink = React.createClass({
     event.preventDefault()    // Stop Link.handleClick from doing anything further
   },
 
-  render: function render() {
+  render: function () {
     const p = this.props
 
     if (!p.nav)
@@ -110,3 +117,10 @@ export default QLink = React.createClass({
   
 })
 
+/** This is a replacement for browserHistory.push() */
+export function utilPushTo(existingQuery, newTo)
+{
+  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)
+  const location = createLocationDescriptor(newTo, { query: appScopedQuery })
+  browserHistory.push(location)
+}

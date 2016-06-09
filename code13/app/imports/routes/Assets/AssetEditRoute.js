@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
+import { utilPushTo } from '../QLink';
 import reactMixin from 'react-mixin';
-import {Azzets} from '../../schemas';
 
+import {Azzets} from '../../schemas';
 import Spinner from '../../components/Nav/Spinner';
-import {handleForms} from '../../components/Forms/FormDecorator';
+
 import Helmet from 'react-helmet';
 import AssetEdit from '../../components/Assets/AssetEdit';
 import AssetCard from '../../components/Assets/AssetCard.js';
@@ -23,17 +24,33 @@ export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,       // params.id is the ASSET id
+    params: PropTypes.object,       // params.assetId is the ASSET id
     user: PropTypes.object,
     currUser: PropTypes.object,
     ownsProfile: PropTypes.bool     // true IFF user is valid and asset owner is currently logged in user
   },
-  
-  
+    
+  contextTypes: {
+    urlLocation: React.PropTypes.object
+  },
+
+  // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId
+  // TODO: Make this QLink-smart so it preserves queries
+  checkForRedirect() {
+    if (!this.props.user && !!this.data.asset)
+      utilPushTo(this.context.urlLocation.query, "/user/" + this.data.asset.ownerId + "/asset/" + this.data.asset._id)
+  },
+
+
   componentDidMount() {
     window.addEventListener('keydown', this.listenForEnterOrEsc)
+    this.checkForRedirect()
   },
-  
+
+  componentDidUpdate() {
+    this.checkForRedirect()
+  },
+
   componentWillUnmount() {
     window.removeEventListener('keydown', this.listenForEnterOrEsc)
     this.handleAssetNameChangeInteractive()     // In case we have any pending saves    
@@ -48,10 +65,10 @@ export default AssetEditRoute = React.createClass({
   },
 
   getMeteorData: function() {
-    let assetId = this.props.params.id
-    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", assetId);
-    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId);
-    let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId, 20) 
+    let assetId = this.props.params.assetId
+    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", assetId)
+    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
+    let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 
 
     let selector = { toAssetId: assetId }
     let options = {sort: {timestamp: -1}}
@@ -107,14 +124,14 @@ export default AssetEditRoute = React.createClass({
         </div>
         
         <div className="ui five wide column">
-          { /* We use this.props.params.id since it is available sooner than the asset */ }
+          { /* We use this.props.params.assetId since it is available sooner than the asset */ }
           <AssetActivityDetail 
-                        assetId={this.props.params.id} 
+                        assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
                         activitySnapshots={this.data.activitySnapshots} />
                         &nbsp;
           <AssetHistoryDetail 
-                        assetId={this.props.params.id} 
+                        assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
                         assetActivity={this.data.assetActivity} />
 
@@ -150,16 +167,19 @@ export default AssetEditRoute = React.createClass({
   },
 
   handleAssetNameChangeInteractive: function() {
-    let newName = this.refs.assetNameInput.value;
+    if (this.refs && this.refs.assetNameInput)      // In case things have been torn down
+    {
+      let newName = this.refs.assetNameInput.value;
 
-    if (newName !== this.data.asset.name) {
-      Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {name: newName}, (err, res) => {
-        if (err) {
-          this.props.showToast(err.reason, 'error')
-        }
-      });
-      
-      logActivity("asset.rename",  `Rename to "${newName}" from `, null, this.data.asset); 
+      if (newName !== this.data.asset.name) {
+        Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {name: newName}, (err, res) => {
+          if (err) {
+            this.props.showToast(err.reason, 'error')
+          }
+        });
+        
+        logActivity("asset.rename",  `Rename to "${newName}" from `, null, this.data.asset); 
+      }
     }
   }
 })

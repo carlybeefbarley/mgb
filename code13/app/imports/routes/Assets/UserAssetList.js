@@ -13,6 +13,7 @@ import AssetShowStableSelector from '../../components/Assets/AssetShowStableSele
 import AssetListSortBy from '../../components/Assets/AssetListSortBy';
 import ProjectSelector from '../../components/Assets/ProjectSelector';
 
+import { utilPushTo } from '../QLink';
 import Spinner from '../../components/Nav/Spinner';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
@@ -44,6 +45,11 @@ export default UserAssetListRoute = React.createClass({
     currUser: PropTypes.object,     // Currently Logged in user
     ownsProfile: PropTypes.bool,
     location: PropTypes.object      // We get this from react-router
+  },
+  
+    
+  contextTypes: {
+    urlLocation: React.PropTypes.object
   },
   
   
@@ -118,6 +124,7 @@ export default UserAssetListRoute = React.createClass({
     let loc = this.props.location
     let newQ = {...loc.query, ...queryModifier }
     newQ = this._stripQueryOfDefaults(newQ)
+    // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
     browserHistory.push( {  ...loc,  query: newQ })
   },
   
@@ -280,6 +287,10 @@ export default UserAssetListRoute = React.createClass({
     const {user, ownsProfile, location} = this.props
     const qN = this.queryNormalized(location.query)
 
+    // For some reason this isn't working as 'hidden divider' TODO - find out why
+    const hiddenDivider =  <div className="ui divider" style={{borderStyle: "none"}}></div>
+
+
     if (user) {
       var {_id, createdAt} = user;
       var {name, avatar} = user.profile;     
@@ -321,8 +332,8 @@ export default UserAssetListRoute = React.createClass({
             : null }
           </div>
              
-          <div className="ui hidden divider"></div>
-
+          { hiddenDivider }
+          
           <div className="ui row">
             <div className="ui action input">
               <input  type="text" 
@@ -337,14 +348,14 @@ export default UserAssetListRoute = React.createClass({
             </div>            
           </div>
 
-          <div className="ui hidden divider"></div>
+          { hiddenDivider }
 
           <div className="ui row">
             Show asset kinds:
             <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
           </div>
           
-          <div className="ui hidden divider"></div>
+          { hiddenDivider }
 
           <div className="ui row">
             <div className="ui secondary compact borderless fitted menu">            
@@ -364,7 +375,7 @@ export default UserAssetListRoute = React.createClass({
             </div>
           </div>
           
-          <div className="ui hidden divider"></div>
+          { hiddenDivider }
 
           <div className="ui row">          
             { !this.data.loading && qN.kinds==="" ? <div className="ui message"><div className="header">Select one or more Asset kinds to be shown here</div><p>This list is empty because you have not selected any of the available Asset kinds to view</p></div> : null}
@@ -405,7 +416,7 @@ export default UserAssetListRoute = React.createClass({
       } else {
         newAsset._id = result; // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset);
-        browserHistory.push(`/assetEdit/${result}`)
+        utilPushTo(this.context.urlLocation.query, `/user/${this.props.currUser._id}/asset/${result}`)
       }
     });
   }

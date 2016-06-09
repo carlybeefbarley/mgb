@@ -10,7 +10,7 @@ export default class SpriteLayers extends React.Component {
 	    this.state = {
 	    	allLayersHidden: false,
 	    	allLayersLocked: false,
-	    	isCanvasFramesVisible: true,
+	    	isCanvasFramesVisible: false,
 	    	isCanvasLayersVisible: false,
 	    	isPlaying: false,
 	    };

@@ -226,30 +226,68 @@ export default class EditGraphic extends React.Component {
 
   // Note that this has to use Image.onload so it will complete asynchronously.
   // TODO(DGOLDS): Add an on-complete callback including a timeout handler to support better error handling and avoid races
-  loadPreviewsFromAssetAsync()
-  {
+  // loadPreviewsFromAssetAsync()
+  // {
+  //   let c2 = this.props.asset.content2;
+  //   let layerCount = c2.layerParams.length;
+
+  //   for (let i = 0; i < layerCount; i++) {
+  //     let dataURI = c2.frameData[this.state.selectedFrameIdx][i];
+
+  //     if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+  //       var _img = new Image
+  //       var self = this
+  //       _img.mgb_hack_idx = i     // so in onload() callback we know which previewCtx to apply the data to
+  //       _img.onload = function (e) {
+  //         let loadedImage = e.target
+  //         self.previewCtxArray[loadedImage.mgb_hack_idx].clearRect(0,0, _img.width, _img.height)
+  //         self.previewCtxArray[loadedImage.mgb_hack_idx].drawImage(loadedImage, 0, 0)
+  //         if (loadedImage.mgb_hack_idx === self.state.selectedLayerIdx)
+  //           self.updateEditCanvasFromSelectedPreviewCanvas()
+  //       }
+  //       _img.src = dataURI    // Trigger load & onload -> data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
+  //     }
+  //     else {
+  //       // TODO: May need some error indication here
+  //       this.updateEditCanvasFromSelectedPreviewCanvas();
+  //     }
+  //   }
+  // }
+
+  loadPreviewsFromAssetAsync(){
     let c2 = this.props.asset.content2;
-    let layerCount = c2.layerParams.length;
+    let frameCount = c2.frameNames.length;
+    let layerCount = c2.layerNames.length;
 
-    for (let i = 0; i < layerCount; i++) {
-      let dataURI = c2.frameData[this.state.selectedFrameIdx][i];
+    console.log("load previews");
 
-      if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-        var _img = new Image
-        var self = this
-        _img.mgb_hack_idx = i     // so in onload() callback we know which previewCtx to apply the data to
-        _img.onload = function (e) {
-          let loadedImage = e.target
-          self.previewCtxArray[loadedImage.mgb_hack_idx].clearRect(0,0, _img.width, _img.height)
-          self.previewCtxArray[loadedImage.mgb_hack_idx].drawImage(loadedImage, 0, 0)
-          if (loadedImage.mgb_hack_idx === self.state.selectedLayerIdx)
-            self.updateEditCanvasFromSelectedPreviewCanvas()
+    for(let frameID=0; frameID<frameCount; frameID++){
+      this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
+      for(let layerID=layerCount-1; layerID>=0; layerID--){
+        let dataURI = c2.frameData[frameID][layerID];
+        if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+          _img = new Image;
+          _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
+          _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
+          let self = this;
+          _img.onload = function(e){            
+            let loadedImage = e.target;
+            if(loadedImage.frameID === self.state.selectedFrameIdx){
+              self.previewCtxArray[loadedImage.layerID].clearRect(0,0, _img.width, _img.height);
+              self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
+              if(loadedImage.layerID === layerCount-1){
+                // update edit canvas when last layer is loaded
+                self.updateEditCanvasFromSelectedPreviewCanvas();  
+              }
+            }
+            self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
+          }
+          _img.src = dataURI;
         }
-        _img.src = dataURI    // Trigger load & onload -> data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-      }
-      else {
-        // TODO: May need some error indication here
-        this.updateEditCanvasFromSelectedPreviewCanvas();
+        else {
+          // TODO: May need some error indication here
+          this.updateEditCanvasFromSelectedPreviewCanvas();
+        }
       }
     }
   }

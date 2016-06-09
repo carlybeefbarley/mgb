@@ -801,7 +801,7 @@ export default class EditGraphic extends React.Component {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
       }
       asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
-      c2.spriteData[this.state.selectedFrameIdx] = this.frameCanvases[this.state.selectedFrameIdx].toDataURL('image/png');
+      c2.spriteData[this.state.selectedFrameIdx] = this.frameCanvasArray[this.state.selectedFrameIdx].toDataURL('image/png');
     }
 
 

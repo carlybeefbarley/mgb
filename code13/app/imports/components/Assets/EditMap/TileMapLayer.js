@@ -84,20 +84,50 @@ export default class TileMapLayer extends React.Component {
       }
     }
   }
+  highlightTile(pos, fillStyle){
+    const map = this.props.map;
+    const camera = map.camera;
+    // make little bit smaller highlight - while zooming - alpha bleeds out a little bit
+    const drawX = (pos.x * (map.data.tilewidth  + map.spacing) + camera.x) * camera.zoom;
+    const drawY = (pos.y * (map.data.tileheight + map.spacing) + camera.y) * camera.zoom + 0.5;
+
+    const drawW = map.data.tilewidth  * camera.zoom;
+    const drawH = map.data.tileheight * camera.zoom;
+
+    if(!fillStyle){
+      this.ctx.clearRect(drawX, drawY, drawW, drawH);
+    }
+    else{
+      this.ctx.fillStyle = fillStyle;
+      this.ctx.fillRect(drawX + 0.5, drawY + 0.5, drawW - 1, drawH - 1);
+    }
+  }
   drawTile(pal, pos, spacing = 0, clear = false){
     const camera = this.props.map.camera;
+    const drawX = (pos.x * (pal.ts.tilewidth  + spacing) + camera.x) * camera.zoom;
+    const drawY = (pos.y * (pal.ts.tileheight + spacing) + camera.y) * camera.zoom;
+
+    const drawW = pal.w * camera.zoom;
+    const drawH = pal.h * camera.zoom
+
+    // out of bounds checks - are they are already in the canvas native functions???
+    if(drawX + drawW < 0){ return; }
+    if(drawX > this.ctx.canvas.width){ return; }
+    if(drawY + drawH < 0){ return; }
+    if(drawY > this.ctx.canvas.height){ return; }
+
     if(clear){
       this.ctx.clearRect(
-        pos.x * (pal.ts.tilewidth  + spacing) + camera.x,
-        pos.y * (pal.ts.tileheight + spacing) + camera.y,
-        pal.w, pal.h);
+        drawX, drawY,
+        drawW, drawH
+      );
     }
     this.ctx.drawImage(pal.image,
-      pal.x, pal.y, pal.w, pal.h,
-      pos.x * (pal.ts.tilewidth  + spacing) + camera.x,
-      pos.y * (pal.ts.tileheight + spacing) + camera.y,
-      pal.w, pal.h,
+      pal.x, pal.y, pal.w , pal.h ,
+      drawX, drawY,
+      drawW, drawH
     );
+
   }
   highlightTiles(ere, e = ere.nativeEvent, force = true){
     const map = this.props.map;
@@ -113,7 +143,7 @@ export default class TileMapLayer extends React.Component {
       outOfBounds: false
     };
 
-    TileHelper.getTileCoordsRel(e.offsetX - camera.x, e.offsetY - camera.y, map.data.tilewidth, map.data.tileheight, map.spacing, pos);
+    TileHelper.getTileCoordsRel(e.offsetX / camera.zoom - camera.x, e.offsetY / camera.zoom - camera.y, map.data.tilewidth, map.data.tileheight, map.spacing, pos);
 
     // TODO: resize layer so we can push in new tiles
     if(pos.x >= layer.width){
@@ -121,7 +151,7 @@ export default class TileMapLayer extends React.Component {
       pos.outOfBounds = true;
       //return;
     }
-    if(pos.x < 0){
+    else if(pos.x < 0){
       //console.log("Out of bound to left");
       pos.outOfBounds = true;
     }
@@ -129,12 +159,10 @@ export default class TileMapLayer extends React.Component {
       //console.log("Out of bound to bottom");
       pos.outOfBounds = true;
     }
-    if(pos.y < 0){
+    else if(pos.y < 0){
       //console.log("Out of bound to top");
       pos.outOfBounds = true;
     }
-
-
     pos.id = pos.x + pos.y * layer.width;
 
     if(this.prevTile){
@@ -146,11 +174,7 @@ export default class TileMapLayer extends React.Component {
         this.drawTile(pal, this.prevTile, map.spacing, true);
       }
       else{
-        this.ctx.clearRect(
-          this.prevTile.x * (map.data.tilewidth  + map.spacing) + camera.x,
-          this.prevTile.y * (map.data.tileheight + map.spacing) + camera.y,
-          map.data.tilewidth, map.data.tileheight
-        );
+        this.highlightTile(this.prevTile);
       }
     }
 
@@ -162,13 +186,7 @@ export default class TileMapLayer extends React.Component {
       this.drawTile(pal, pos, map.spacing);
       this.ctx.globalAlpha = 1;
     }
-
-    this.ctx.fillStyle = "rgba(0,0,255, 0.2)";
-    this.ctx.fillRect(
-      pos.x * (map.data.tilewidth + map.spacing) + camera.x,
-      pos.y * (map.data.tileheight + map.spacing) + camera.y,
-      map.data.tilewidth, map.data.tileheight
-    );
+    this.highlightTile(pos, "rgba(0,0,255,0.3)");
 
     this.prevTile = pos;
 

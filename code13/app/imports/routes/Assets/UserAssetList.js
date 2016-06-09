@@ -280,6 +280,10 @@ export default UserAssetListRoute = React.createClass({
     const {user, ownsProfile, location} = this.props
     const qN = this.queryNormalized(location.query)
 
+    // For some reason this isn't working as 'hidden divider' TODO - find out why
+    const hiddenDivider =  <div className="ui divider" style={{borderStyle: "none"}}></div>
+
+
     if (user) {
       var {_id, createdAt} = user;
       var {name, avatar} = user.profile;     
@@ -321,8 +325,8 @@ export default UserAssetListRoute = React.createClass({
             : null }
           </div>
              
-          <div className="ui hidden divider"></div>
-
+          { hiddenDivider }
+          
           <div className="ui row">
             <div className="ui action input">
               <input  type="text" 
@@ -337,14 +341,14 @@ export default UserAssetListRoute = React.createClass({
             </div>            
           </div>
 
-          <div className="ui hidden divider"></div>
+          { hiddenDivider }
 
           <div className="ui row">
             Show asset kinds:
             <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
           </div>
           
-          <div className="ui hidden divider"></div>
+          { hiddenDivider }
 
           <div className="ui row">
             <div className="ui secondary compact borderless fitted menu">            
@@ -364,7 +368,7 @@ export default UserAssetListRoute = React.createClass({
             </div>
           </div>
           
-          <div className="ui hidden divider"></div>
+          { hiddenDivider }
 
           <div className="ui row">          
             { !this.data.loading && qN.kinds==="" ? <div className="ui message"><div className="header">Select one or more Asset kinds to be shown here</div><p>This list is empty because you have not selected any of the available Asset kinds to view</p></div> : null}

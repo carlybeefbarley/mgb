@@ -22,7 +22,7 @@ export default mgbReleaseInfo = {
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "464"
+        "iteration":   "465"
       },
 
       "releaseManagement": {
@@ -39,7 +39,7 @@ export default mgbReleaseInfo = {
         }
       ]
     },
-    
+
     { 
       "timestamp":     "Wed Jun 08 2016 21:10:00 GMT-0700 (PDT)",
       

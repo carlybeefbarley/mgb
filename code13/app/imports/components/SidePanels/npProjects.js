@@ -59,7 +59,7 @@ export default npProjects = React.createClass({
       if (isOwner === ownedFlag) 
       {
         count++
-        return  <QLink to={`/user/${p.ownerId}/project/${p._id}`} className="item">
+        return  <QLink to={`/user/${p.ownerId}/project/${p._id}`} className="item" key={p._id}>
                   { p.name }
                 </QLink>
       }

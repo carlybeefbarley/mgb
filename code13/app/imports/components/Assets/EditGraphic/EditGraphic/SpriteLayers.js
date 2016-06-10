@@ -128,18 +128,19 @@ export default class SpriteLayers extends React.Component {
 	deleteLayer(layerID){
 		// TODO check permissons
 		// TODO confirmation popup
-		let c2 = this.props.content2;
-		if(c2.layerParams.length === 1){
-			// TODO alert popup
-			console.log("Only layer cannot be deleted!");
-			return;
-		}
+		// let c2 = this.props.content2;
+		// if(c2.layerParams.length === 1){
+		// 	// TODO alert popup
+		// 	console.log("Only layer cannot be deleted!");
+		// 	return;
+		// }
 
-		c2.layerParams.splice(layerID, 1);
-		for(let frameID=0; frameID<c2.frameNames; frameID++){
-			c2.frameData[frameID].splice(layerID, 1);
-		}
-		this.handleSave("Deleted layer");
+		// c2.layerParams.splice(layerID, 1);
+		// for(let frameID=0; frameID<c2.frameNames; frameID++){
+		// 	c2.frameData[frameID].splice(layerID, 1);
+		// }
+		// this.handleSave("Deleted layer");
+		this.props.EditGraphic.handleDeleteLayer(layerID);
 	}
 
 	handleSave(changeText="change graphic"){

@@ -711,6 +711,26 @@ export default class EditGraphic extends React.Component {
     this.handleSave(`Delete frame`)
   }
 
+  handleDeleteLayer(idx){
+    let c2 = this.props.asset.content2
+
+    c2.layerParams.splice(idx, 1);
+    for(let frameID=0; frameID<c2.frameNames.length; frameID++){
+      c2.frameData[frameID].splice(idx, 1);
+    }
+
+    let i = idx;
+    while (i < this.previewCanvasArray.length-1)
+    {
+      let tmp = this.previewCtxArray[i+1].getImageData(0,0, c2.width, c2.height)
+      this.previewCtxArray[i].putImageData(tmp, 0, 0)
+      i++;
+    }
+    this.previewCanvasArray.pop();
+    
+    this.handleSave('Delete layer');
+  }
+
 
   handleFrameNameChangeInteractive(idx, event) {
     if (!this.props.canEdit)

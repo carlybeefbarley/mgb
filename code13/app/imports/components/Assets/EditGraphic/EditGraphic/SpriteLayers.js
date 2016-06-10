@@ -228,7 +228,29 @@ export default class SpriteLayers extends React.Component {
 	            </th>
 	            {
 	            	_.map(c2.frameNames, (frameName, idx) => { return (
-				      <th key={"th_"+idx} width="10px">{idx+1}</th>);
+				      <th key={"th_"+idx} width="10px">
+				      	<div className="ui simple dropdown">
+				      		<div className="text">{idx+1}</div>
+				      		<div className="menu">
+				      			<div className="item">
+				      				<i className="setting icon"></i>
+				      				Properties
+				      			</div>
+				      			<div className="item">
+				      				<i className="add circle icon"></i>
+				      				New
+				      			</div>
+				      			<div className="item">
+				      				<i className="circle icon outline"></i>
+				      				New Empty Frame
+				      			</div>
+				      			<div className="item">
+				      				<i className="remove icon"></i>
+				      				Delete
+				      			</div>
+				      		</div>
+				      	</div>
+				      </th>);
 				    })
 	            }
 	            <th>

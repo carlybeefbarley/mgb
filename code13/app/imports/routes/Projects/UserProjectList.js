@@ -1,13 +1,13 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import reactMixin from 'react-mixin';
-import {Projects} from '../../schemas';
+import { Projects } from '../../schemas';
+import { projectMakeSelector } from '../../schemas/projects';
 
 import ProjectCard from '../../components/Projects/ProjectCard';
 import Spinner from '../../components/Nav/Spinner';
 import Helmet from 'react-helmet';
 
-import {logActivity} from '../../schemas/activity';
-import {snapshotActivity} from '../../schemas/activitySnapshots.js';
+import { logActivity } from '../../schemas/activity';
 
 // NOTE: UI mockups for this page are at https://v2.mygamebuilder.com/assetEdit/Ev2AWBDywffWTtJRc# 
 
@@ -22,18 +22,12 @@ export default UserProjectList = React.createClass({
   
   
   getMeteorData: function() {
-    let userId = this.props.params.id
-    let handleForProjects = Meteor.subscribe("projects.byUserId", userId);
-
-    let selector = {
-      "$or": [
-        { ownerId: userId },
-        { memberIds: { $in: [userId]} }
-      ]
-    }  
+    const userId = this.props.params.id
+    const handleForProjects = Meteor.subscribe("projects.byUserId", userId);
+    const projectSelector = projectMakeSelector(userId)
 
     return {
-      projects: Projects.find(selector).fetch(),
+      projects: Projects.find(projectSelector).fetch(),
       loading: !handleForProjects.ready()
     };
   },
@@ -52,7 +46,7 @@ export default UserProjectList = React.createClass({
     // Projects provided via getMeteorData()
     let projects = this.data.projects;
     if (this.data.loading)
-      return null;
+      return <Spinner />
 
     const canEd = this.canEdit()
     const ownerName = this.props.user.profile.name
@@ -111,8 +105,7 @@ export default UserProjectList = React.createClass({
     return  <div className="ui action input">
               <div className="ui green button" onClick={this.handleNewProject}>Create New Project</div>
               <input type="text" ref="newProjectName" placeholder="New Project Name" />
-            </div>   
-
+            </div>
   },
     
     

@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 
 import { Azzets, Projects } from '../../schemas';
-import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, AssetMakeSelector } from '../../schemas/assets';
+import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector } from '../../schemas/assets';
 import { logActivity } from '../../schemas/activity';
 
 import AssetList from '../../components/Assets/AssetList';
@@ -142,7 +142,7 @@ export default UserAssetListRoute = React.createClass({
                                   qN.showDeleted === "1", 
                                   qN.showStable === "1")
     let assetSorter = sorters[qN.sort]
-    let assetSelector = AssetMakeSelector(
+    let assetSelector = assetMakeSelector(
                                   this.props.params.id, 
                                   qN.kinds.split(safeAssetKindStringSepChar), 
                                   qN.searchName, 

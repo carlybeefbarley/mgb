@@ -22,6 +22,7 @@ export default NavPanel = React.createClass({
   
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
+    currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     selectedViewTag:        PropTypes.string,             // One of the navPanelViews.tags values
     navPanelIsVisible:      PropTypes.bool.isRequired,
@@ -104,6 +105,7 @@ export default NavPanel = React.createClass({
                 <div style={panelScrollContainerStyle}>
                   { !ElementNP ? <div className="ui fluid label">TODO: {navPanelHdr} navPanel</div> : 
                     <ElementNP  currUser={this.props.currUser} 
+                                currUserProjects={this.props.currUserProjects}
                                 user={this.props.user} 
                                 panelWidth={this.props.navPanelWidth} /> 
                   }

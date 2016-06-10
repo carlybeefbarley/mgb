@@ -1,7 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router';
 import {AssetKinds, AssetKindKeys} from '../../schemas/assets';
-
 
 export default class AssetCreateNew extends React.Component {
   // propTypes:{

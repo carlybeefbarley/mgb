@@ -21,6 +21,21 @@ var schema = {
 };
 
 
+/** This is intended for use by publications.js and any Meteor.subscribe calls
+ *  Selector will return projects relevant to this userId.. This includes owner, member, etc
+
+ */
+export function projectMakeSelector(userId) 
+{
+  return {
+    "$or": [
+      { ownerId: userId },
+      { memberIds: { $in: [userId]} }
+    ]
+  }
+}
+
+
 Meteor.methods({
 
   /** Projects.create

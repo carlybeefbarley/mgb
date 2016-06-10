@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 
 import { Azzets, Projects } from '../../schemas';
-import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, AssetMakeSelector } from '../../schemas/assets';
+import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector } from '../../schemas/assets';
 import { logActivity } from '../../schemas/activity';
 
 import AssetList from '../../components/Assets/AssetList';
@@ -142,7 +142,7 @@ export default UserAssetListRoute = React.createClass({
                                   qN.showDeleted === "1", 
                                   qN.showStable === "1")
     let assetSorter = sorters[qN.sort]
-    let assetSelector = AssetMakeSelector(
+    let assetSelector = assetMakeSelector(
                                   this.props.params.id, 
                                   qN.kinds.split(safeAssetKindStringSepChar), 
                                   qN.searchName, 
@@ -260,7 +260,7 @@ export default UserAssetListRoute = React.createClass({
     if (this.props.user)
     {
       // Enable a user info popup
-      $('.large.header')
+      $('.hazUserPopup')
       .popup({
         inline   : true,
         position : 'bottom left',
@@ -271,6 +271,7 @@ export default UserAssetListRoute = React.createClass({
   
   componentWillUnmount() {
     window.removeEventListener('keydown', this.listenForEnter)
+    $('.hazUserPopup').popup('destroy')
   },
   
   listenForEnter: function(e) {
@@ -309,7 +310,7 @@ export default UserAssetListRoute = React.createClass({
         <div className="ui segment" style={{ minHeight: "600px", minWidth:"220px", maxWidth:"220px" }}>
 
           <div className="ui row">
-            <div className="ui large header">{ user ? (<span><a>{name}</a>'s Assets</span>) : ("Public assets") }</div>     
+            <div className="ui hazUserPopup large header">{ user ? (<span><a>{name}</a>'s Assets</span>) : ("Public assets") }</div>     
             <div className="ui popup" style={{minWidth: "260px"}}>
               {user ? <UserItem
                         name={name}

@@ -1,6 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-
 
 export default class AssetShowStableSelector extends React.Component {
   // propTypes:{
@@ -14,16 +12,13 @@ export default class AssetShowStableSelector extends React.Component {
   
   // React Callback: componentDidMount()
   componentDidMount() {
-    this.activateToolPopups();
+    $(".assetShowStablePopup").popup()
   }
 
-  activateToolPopups() {
-    // See http://semantic-ui.com/modules/popup.html#/usage
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.popup()    // No need to look for class since it's the outer element
+  componentWillUnmount() {
+    $(".assetShowStablePopup").popup('destroy')
   }
 
-  
   handleChangeFlagClick()
   {
     // Flip between "0" and "1"
@@ -33,7 +28,7 @@ export default class AssetShowStableSelector extends React.Component {
   render() {
     let active = this.props.showStableFlag === "1"
     return (
-            <a className={"ui " + (active ? "green button" : "button")} 
+            <a className={"assetShowStablePopup ui " + (active ? "green button" : "button")} 
                 data-value="showStable"
                 onClick={this.handleChangeFlagClick.bind(this)}
                 data-position="bottom center"

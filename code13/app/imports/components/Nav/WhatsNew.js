@@ -50,7 +50,7 @@ export default WhatsNew = React.createClass({
   /** React callback - after render() first called */
   componentDidMount: function ()
   {
-    $('.announcement.icon')
+    $('.whatsNewPopup')
       .popup({
         inline   : true,
         position : 'bottom left',
@@ -63,7 +63,11 @@ export default WhatsNew = React.createClass({
     ;
   },
   
-  
+  componentWillUnmount()
+  {
+     $(".whatsNewPopup").popup('destroy')
+  },
+
   render: function() 
   {
     const popupStyle={
@@ -81,7 +85,7 @@ export default WhatsNew = React.createClass({
 
     return (
       <div className="ui item" key="dropdown">
-        <i className={hilite + " announcement icon"}></i>
+        <i className={hilite + " announcement icon whatsNewPopup"}></i>
         <div className="ui fluid popup transition hidden" style={popupStyle}>
           { this.renderNewsPopupStructure() }
         </div>

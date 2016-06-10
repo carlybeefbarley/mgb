@@ -53,16 +53,30 @@ export default class MapArea extends React.Component {
     //this.margin = 0;
     this.spacing = 0;
 
-    this.globalMouseMove = (...args) => {this.mouseMove(...args);}
+    this.globalMouseMove = (...args) => {this.handleMouseMove(...args);};
+    this.globalMouseUp = (...args) => {this.handleMouseUp(...args);};
+    this.gloablResize = () => {
+      this.layers.forEach((l)=>{
+        l.adjustCanvas();
+        l.drawTiles();
+      });
+      this.refs.grid && this.refs.grid.adjustCanvas();
+      this.refs.grid && this.refs.grid.drawGrid();
+
+    };
   }
 
   componentDidMount(){
     $(this.refs.mapElement).addClass("map-filled");
     this.fullUpdate();
     window.addEventListener("mousemove", this.globalMouseMove);
+    window.addEventListener("mouseup", this.globalMouseUp);
+    window.addEventListener("resize", this.gloablResize);
   }
   componentWillUnmount(){
     window.removeEventListener("mousemove", this.globalMouseMove);
+    window.removeEventListener("mouseup", this.globalMouseUp);
+    window.removeEventListener("resize", this.gloablResize);
   }
 
   removeDots(sin){
@@ -106,7 +120,10 @@ export default class MapArea extends React.Component {
   get camera(){
     // backwards compatibility with older maps.. should be safe to remove in the future
     if(!this.meta.options.camera){
-      this.meta.options.camera = {x: 0, y: 0};
+      this.meta.options.camera = {x: 0, y: 0, zoom: 1};
+    }
+    if( !this.meta.options.camera.zoom || isNaN(this.meta.options.camera.zoom) ){
+      this.meta.options.camera.zoom = 1;
     }
     return this.meta.options.camera;
   }
@@ -224,6 +241,7 @@ export default class MapArea extends React.Component {
       cb();
     }
     this.forceUpdate();
+    this.updateTilesets();
   }
 
   addLayerTool(){
@@ -311,6 +329,7 @@ export default class MapArea extends React.Component {
     this.lastEvent = null;
     this.camera.x = 0;
     this.camera.y = 0;
+    this.camera.zoom = 1;
     this.refs.grid.drawGrid();
     this.redrawLayers();
   }
@@ -322,10 +341,37 @@ export default class MapArea extends React.Component {
       };
       return;
     }
-    this.camera.x -= this.lastEvent.pageX - e.pageX;
-    this.camera.y -= this.lastEvent.pageY - e.pageY;
+    this.camera.x -= (this.lastEvent.pageX - e.pageX) / this.camera.zoom;
+    this.camera.y -= (this.lastEvent.pageY - e.pageY) / this.camera.zoom;
     this.lastEvent.pageX = e.pageX;
     this.lastEvent.pageY = e.pageY;
+
+    if(this.refs.grid){
+      this.refs.grid.drawGrid();
+    }
+    this.redrawLayers();
+  }
+  zoomCamera(newZoom, e){
+
+    if(e){
+      // zoom right on the cursor position
+      // feels like a I need a separate class for camera at this point..
+      const bounds = this.refs.mapElement.getBoundingClientRect();
+
+      const ox = e.nativeEvent.offsetX / bounds.width;
+      const oy = e.nativeEvent.offsetY / bounds.height;
+
+      const width = bounds.width / this.camera.zoom;
+      const newWidth = bounds.width / newZoom;
+
+      const height = bounds.height / this.camera.zoom;
+      const newHeight = bounds.height / newZoom;
+
+      this.camera.x -= (width - newWidth) * ox;
+      this.camera.y -= (height - newHeight) * oy;
+    }
+
+    this.camera.zoom = newZoom;
 
     this.refs.grid.drawGrid();
     this.redrawLayers();
@@ -347,7 +393,8 @@ export default class MapArea extends React.Component {
     this.lastEvent.pageY = e.pageY;
     this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
   }
-  mouseMove(e){
+
+  handleMouseMove(e){
     // move Preview
     if(this.state.preview && (e.button == 1)) {
       this.movePreview(e);
@@ -360,6 +407,19 @@ export default class MapArea extends React.Component {
     this.lastEvent = null;
     this.refs.mapElement.style.transition = "0.3s";
   }
+  handleOnWheel(e){
+    e.preventDefault();
+    const step = 0.1;
+    if(e.deltaY < 0){
+      this.zoomCamera(this.camera.zoom + step, e);
+    }
+    else if(e.deltaY > 0){
+      if(this.camera.zoom > step*2){
+        this.zoomCamera(this.camera.zoom - step, e);
+      }
+    }
+  }
+
   importFromDrop (e) {
     e.stopPropagation();
     e.preventDefault();
@@ -408,7 +468,14 @@ export default class MapArea extends React.Component {
       tileset.drawTiles();
     });
   }
-
+  // we need to update these - to show errors about missing images after tileset import
+  updateTilesets(){
+    // do we have more than 1 tileset ?????
+    // TODO: atm we are using only 1 tileset tool..
+    this.tilesets.forEach((tileset) => {
+      tileset.selectTileset(0);
+    });
+  }
   // TODO: keep aspect ratio
   // find out correct thumbnail size
   generatePreview(){
@@ -452,12 +519,13 @@ export default class MapArea extends React.Component {
           <GridLayer map={this} key={i} ref="grid" />
         );
       }
+      // TODO: adjust canvas size
       return (
         <div
              ref="mapElement"
              style={{
-              width: (map.width * map.tilewidth)+"px",
-              height: (map.height * map.tileheight)+"px",
+              //width: (640)+"px",
+              height: (640)+"px",
               position: "relative",
               margin: "10px 0"
           }}>{layers}</div>
@@ -470,8 +538,8 @@ export default class MapArea extends React.Component {
         className="tilemap-wrapper"
         onDrop={this.importFromDrop.bind(this)}
         onDragOver={this.prepareForDrag.bind(this)}
-        onMouseUp={this.handleMouseUp.bind(this)}
         onContextMenu={(e)=>{e.preventDefault(); return false;}}
+        onWheel={this.handleOnWheel.bind(this)}
         >
         <button className="ui primary button"
           >Drop here to import</button>

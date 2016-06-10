@@ -15,7 +15,31 @@
 export default mgbReleaseInfo = {
   "releases":
   [ 
-        
+
+    { 
+      "timestamp":     "Th Jun 09 2016 22:40:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "465"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.navpanel.project",
+          "type":           "feature",
+          "changeName":     "NavPanel for Projects",
+          "changeSummary":  "Extra NavPanel showing Owned and Member-of projects",
+          "otherUrls":      []
+        }
+      ]
+    },
+
     { 
       "timestamp":     "Wed Jun 08 2016 21:10:00 GMT-0700 (PDT)",
       

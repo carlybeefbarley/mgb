@@ -62,8 +62,8 @@ export default UserProjectList = React.createClass({
         />        
 
         <h2 className="ui header">Projects owned by {ownerName}</h2>          
-        { this.renderProjectsAsCards(projects, true) }
         { canEd && this.renderCreateProject() } 
+        { this.renderProjectsAsCards(projects, true) }
 
         <div className="ui divider"></div>
         <h2 className="ui header">Projects {ownerName} is a member of</h2>          
@@ -102,9 +102,11 @@ export default UserProjectList = React.createClass({
   
   renderCreateProject()
   {
-    return  <div className="ui action input">
-              <div className="ui green button" onClick={this.handleNewProject}>Create New Project</div>
-              <input type="text" ref="newProjectName" placeholder="New Project Name" />
+    return  <div className="ui basic segment">
+              <div className="ui action input">
+                <div className="ui green button" onClick={this.handleNewProject}>Create New Project</div>
+                <input type="text" ref="newProjectName" placeholder="New Project Name" />
+              </div>
             </div>
   },
     

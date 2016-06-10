@@ -77,7 +77,7 @@ export default NavRecentGET = React.createClass({
         const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind)
         const assetKindCap = capitalizeFirstLetter(a.toAssetKind)
         const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
-        const dataHtml = `<img src="${assetThumbnailUrl}" />`
+        const dataHtml = `<div><img src="${assetThumbnailUrl}" /><p><small style="text-align: center;">${ago}</small></p></div>`
         //  title={ago} 
         // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now
         const linkTo = a.toOwnerId ? 

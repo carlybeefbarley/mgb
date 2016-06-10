@@ -76,7 +76,7 @@ export default fpActivity = React.createClass({
       const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
       const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
       const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
-      const dataHtml = `<img src="${assetThumbnailUrl}" />`
+      const dataHtml = `<div><img src="${assetThumbnailUrl}" /><p><small style="text-align: center;">${ago}</small></p></div>`
       const linkTo = act.toOwnerId ? 
                 `/user/${act.toOwnerId}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
                 `/assetEdit/${act.toAssetId}`                       // Old format

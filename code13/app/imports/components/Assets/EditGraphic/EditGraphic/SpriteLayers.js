@@ -126,22 +126,12 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	deleteLayer(layerID){
-		// TODO check permissons
-		// TODO confirmation popup
-		// let c2 = this.props.content2;
-		// if(c2.layerParams.length === 1){
-		// 	// TODO alert popup
-		// 	console.log("Only layer cannot be deleted!");
-		// 	return;
-		// }
-
-		// c2.layerParams.splice(layerID, 1);
-		// for(let frameID=0; frameID<c2.frameNames; frameID++){
-		// 	c2.frameData[frameID].splice(layerID, 1);
-		// }
-		// this.handleSave("Deleted layer");
 		this.props.EditGraphic.handleDeleteLayer(layerID);
 	}
+
+	deleteFrame(frameID){
+		this.props.EditGraphic.handleDeleteFrame(frameID);
+	}	
 
 	handleSave(changeText="change graphic"){
 		this.props.handleSave(changeText);
@@ -244,7 +234,7 @@ export default class SpriteLayers extends React.Component {
 				      				<i className="circle icon outline"></i>
 				      				New Empty Frame
 				      			</div>
-				      			<div className="item">
+				      			<div onClick={this.deleteFrame.bind(this, idx)} className="item">
 				      				<i className="remove icon"></i>
 				      				Delete
 				      			</div>

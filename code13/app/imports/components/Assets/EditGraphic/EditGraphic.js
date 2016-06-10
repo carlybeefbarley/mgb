@@ -690,28 +690,40 @@ export default class EditGraphic extends React.Component {
       return
     }
     
-    let c2 = this.props.asset.content2
+    let c2 = this.props.asset.content2;
 
-    this.doSaveStateForUndo("Delete Frame")
+    this.doSaveStateForUndo("Delete Frame");
 
-    c2.frameNames.splice(idx,1)
+    c2.frameNames.splice(idx, 1);
+    c2.frameData.splice(idx, 1);
+    if(this.state.selectedFrameIdx > c2.frameNames.length-1){
+      this.setState({ selectedFrameIdx: c2.frameNames.length-1 });
+    }
+
     let i = idx
-    while (i < this.previewCanvasArray.length-1)
+    while (i < this.frameCtxArray.length-1)
     {
-      let tmp = this.previewCtxArray[i+1].getImageData(0,0, c2.width, c2.height)
-      this.previewCtxArray[i].putImageData(tmp, 0, 0)
+      let tmp = this.frameCtxArray[i+1].getImageData(0,0, c2.width, c2.height)
+      this.frameCtxArray[i].putImageData(tmp, 0, 0)
       i++
     }
+    this.frameCtxArray.pop();
     
-    // Delete Frame seems to provoke a timing issuee where the popup exists while React is destroying it's parents. 
-    // For now, it seems simplest to hide the popups directly when we delete a frame
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup('hide')  
+    // // Delete Frame seems to provoke a timing issuee where the popup exists while React is destroying it's parents. 
+    // // For now, it seems simplest to hide the popups directly when we delete a frame
+    // let $a = $(ReactDOM.findDOMNode(this))
+    // $a.find('.hazPopup').popup('hide')  
 
-    this.handleSave(`Delete frame`)
+    this.handleSave('Delete frame', true);
   }
 
   handleDeleteLayer(idx){
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+
     let c2 = this.props.asset.content2
 
     c2.layerParams.splice(idx, 1);
@@ -727,7 +739,8 @@ export default class EditGraphic extends React.Component {
       i++;
     }
     this.previewCanvasArray.pop();
-    
+    // TODO check selected layer idx
+
     this.handleSave('Delete layer');
   }
 
@@ -837,7 +850,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  handleSave(changeText="change graphic")    // TODO(DGOLDS): Maybe _.debounce() this?
+  handleSave(changeText="change graphic", dontSaveFrameData)    // TODO(DGOLDS): Maybe _.debounce() this?
   {
     if (!this.props.canEdit)
     { 
@@ -848,7 +861,8 @@ export default class EditGraphic extends React.Component {
     let asset = this.props.asset;
     let c2    = asset.content2;
 
-    if(this.previewCanvasArray){ // hack for automatic checking and saving old assets to new
+    if(this.previewCanvasArray && !dontSaveFrameData){ // hack for automatic checking and saving old assets to new
+                                                        // dontSaveFrameData - hack when deleting/moving frames then previewCanvases are not updated
       let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerParams.length
       for (let i = 0; i < layerCount; i++) {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')

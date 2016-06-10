@@ -150,7 +150,8 @@ export default class SpriteLayers extends React.Component {
 		let c2 = this.props.content2;
 		return c2.layerParams.map((layer, idx) => (
 			<Layer 
-				idx={idx} 
+				key={idx}
+				idx={idx}
 				layer={layer}
 				frameNames={c2.frameNames} 
 				selectedFrame={this.props.EditGraphic.state.selectedFrameIdx}
@@ -170,98 +171,97 @@ export default class SpriteLayers extends React.Component {
   render() { 
   	let c2 = this.props.content2;
 
-  	let framesTH = _.map(c2.frameNames, (frameName, idx) => { return (
-      <th width="10px">{idx+1}</th>);
-    });
-
-    let framesTHcanvas = _.map(c2.frameNames, (frameName, idx) => { return (
-      <th>
-      	<div className="ui image "
-          	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
-      		<canvas width={c2.width} height={c2.height}></canvas>
-      	</div>
-      </th>
-    )});
-
     return (
       	
       <div className="ui sixteen wide column">
-      <canvas ref="tmpCanvas" width="10px" height="10px"></canvas>
-      <div className="row">
-  		<div onClick={this.rewindFrames.bind(this, false)} className="ui icon button">
-			<i className="icon step backward"></i>
-		</div>
-		<div onClick={this.stepFrame.bind(this, false)} className="ui icon button">
-			<i className="icon backward"></i>
-		</div>
-		<div onClick={this.togglePlayAnimation.bind(this)} 
-			className={"ui icon button " + (this.state.isPlaying ? "black" : "")}>
-				<i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
-		</div>
-		<div onClick={this.stepFrame.bind(this, true)} className="ui icon button">
-			<i className="icon forward"></i>
-		</div>
-		<div onClick={this.rewindFrames.bind(this, true)} className="ui icon button">
-			<i className="icon step forward"></i>
-		</div>
-		<div className="ui labeled input">
-		  <div className="ui label">
-		    FPS
-		  </div>
-		  <input type="number" min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
-		</div>
-		<div className="ui right floated mini button" onClick={this.toggleCanvasFramesVisibility.bind(this)}>
-			<i className={"icon " + (this.state.isCanvasFramesVisible ? "unhide" : "hide" )}></i> Frames
-		</div>
-		<div className="ui right floated mini button" onClick={this.toggleCanvasLayersVisibility.bind(this)}>
-			<i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
-		</div>
-      </div>
-
-      <table className="ui celled padded table spriteLayersTable">
-        <thead>
-          <tr>
-            <th width="32px">
-            	<i 
-            	className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )} 
-            	onClick={this.toggleAllVisibility.bind(this)}
-            	></i>
-            </th>
-            <th width="32px">
-            	<i 
-            	className={"icon " + (this.state.allLayersLocked ? "lock" : "unlock" )} 
-            	onClick={this.toggleAllLocking.bind(this)}
-            	></i>
-            </th>
-            <th width="200px">
-	            <a class="ui label" onClick={this.addLayer.bind(this)}>
-				    <i className="add circle icon"></i> Add Layer
-				</a>
-            </th>
-            {framesTH}
-            <th>
-            <div className="row">
-            	<a class="ui label" onClick={this.addFrame.bind(this)}>
-				    <i className="add circle icon"></i> Add Frame
-				</a>
+	      <div className="row">
+	  		<div onClick={this.rewindFrames.bind(this, false)} className="ui icon button">
+				<i className="icon step backward"></i>
 			</div>
-            </th>
-            <th width="32px"></th>
-          </tr>
+			<div onClick={this.stepFrame.bind(this, false)} className="ui icon button">
+				<i className="icon backward"></i>
+			</div>
+			<div onClick={this.togglePlayAnimation.bind(this)} 
+				className={"ui icon button " + (this.state.isPlaying ? "black" : "")}>
+					<i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
+			</div>
+			<div onClick={this.stepFrame.bind(this, true)} className="ui icon button">
+				<i className="icon forward"></i>
+			</div>
+			<div onClick={this.rewindFrames.bind(this, true)} className="ui icon button">
+				<i className="icon step forward"></i>
+			</div>
+			<div className="ui labeled input">
+			  <div className="ui label">
+			    FPS
+			  </div>
+			  <input type="number" min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
+			</div>
+			<div className="ui right floated mini button" onClick={this.toggleCanvasFramesVisibility.bind(this)}>
+				<i className={"icon " + (this.state.isCanvasFramesVisible ? "unhide" : "hide" )}></i> Frames
+			</div>
+			<div className="ui right floated mini button" onClick={this.toggleCanvasLayersVisibility.bind(this)}>
+				<i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
+			</div>
+	      </div>
 
-          <tr className={"layerCanvases " + (this.state.isCanvasFramesVisible ? "" : "hidden")}>
-          	<th></th>
-          	<th></th>
-          	<th></th>
-          	{framesTHcanvas}
-          	<th></th>
-          	<th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.renderLayers()}
-        </tbody>
-      </table>
+	      <table className="ui celled padded table spriteLayersTable">
+	        <thead>
+	          <tr>
+	            <th width="32px">
+	            	<i 
+	            	className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )} 
+	            	onClick={this.toggleAllVisibility.bind(this)}
+	            	></i>
+	            </th>
+	            <th width="32px">
+	            	<i 
+	            	className={"icon " + (this.state.allLayersLocked ? "lock" : "unlock" )} 
+	            	onClick={this.toggleAllLocking.bind(this)}
+	            	></i>
+	            </th>
+	            <th width="200px">
+		            <a class="ui label" onClick={this.addLayer.bind(this)}>
+					    <i className="add circle icon"></i> Add Layer
+					</a>
+	            </th>
+	            {
+	            	_.map(c2.frameNames, (frameName, idx) => { return (
+				      <th key={"th_"+idx} width="10px">{idx+1}</th>);
+				    })
+	            }
+	            <th>
+	            <div className="row">
+	            	<a class="ui label" onClick={this.addFrame.bind(this)}>
+					    <i className="add circle icon"></i> Add Frame
+					</a>
+				</div>
+	            </th>
+	            <th width="32px"></th>
+	          </tr>
+
+	          <tr className={"layerCanvases " + (this.state.isCanvasFramesVisible ? "" : "hidden")}>
+	          	<th></th>
+	          	<th></th>
+	          	<th></th>
+	          	{
+	          		_.map(c2.frameNames, (frameName, idx) => { return (
+				      <th key={"thCanvas_"+idx}>
+				      	<div className="ui image "				      		
+				          	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
+				      		<canvas width={c2.width} height={c2.height}></canvas>
+				      	</div>
+				      </th>
+				    )})
+	          	}
+	          	<th></th>
+	          	<th></th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	          {this.renderLayers()}
+	        </tbody>
+	      </table>
       </div>
 
     );

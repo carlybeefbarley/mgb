@@ -260,7 +260,7 @@ export default UserAssetListRoute = React.createClass({
     if (this.props.user)
     {
       // Enable a user info popup
-      $('.large.header')
+      $('.hazUserPopup')
       .popup({
         inline   : true,
         position : 'bottom left',
@@ -271,6 +271,7 @@ export default UserAssetListRoute = React.createClass({
   
   componentWillUnmount() {
     window.removeEventListener('keydown', this.listenForEnter)
+    $('.hazUserPopup').popup('destroy')
   },
   
   listenForEnter: function(e) {
@@ -309,7 +310,7 @@ export default UserAssetListRoute = React.createClass({
         <div className="ui segment" style={{ minHeight: "600px", minWidth:"220px", maxWidth:"220px" }}>
 
           <div className="ui row">
-            <div className="ui large header">{ user ? (<span><a>{name}</a>'s Assets</span>) : ("Public assets") }</div>     
+            <div className="ui hazUserPopup large header">{ user ? (<span><a>{name}</a>'s Assets</span>) : ("Public assets") }</div>     
             <div className="ui popup" style={{minWidth: "260px"}}>
               {user ? <UserItem
                         name={name}

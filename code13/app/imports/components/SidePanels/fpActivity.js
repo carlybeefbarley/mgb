@@ -39,7 +39,12 @@ export default fpActivity = React.createClass({
 
   enablePopups()
   {
-    $(".hazRecentPopup").popup()
+    $(".hazActivityPopup").popup()
+  },
+
+  destroyPopups()
+  {
+     $(".hazActivityPopup").popup('destroy')
   },
 
   componentDidMount()
@@ -51,6 +56,12 @@ export default fpActivity = React.createClass({
   {
     this.enablePopups()
   },
+
+  componentWillUnmount()
+  {
+    this.destroyPopups()
+  },
+
 
   renderOneActivity: function(act, idx) {
     const iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
@@ -72,7 +83,7 @@ export default fpActivity = React.createClass({
 
 
       return  this.wrapActivity(idx, ago, iconClass, assetKindIconClassName, act.byUserName, act.byUserId, 
-                <small data-html={dataHtml} data-position="left center" className="hazRecentPopup">
+                <small data-html={dataHtml} data-position="left center" className="hazActivityPopup">
                   <QLink to={linkTo}>
                     {assetName}
                   </QLink>

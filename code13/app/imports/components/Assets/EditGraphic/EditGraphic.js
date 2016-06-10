@@ -635,50 +635,98 @@ export default class EditGraphic extends React.Component {
     }
         
     let c2 = this.props.asset.content2
-    var tmp0 = this.previewCtxArray[i].getImageData(0,0, c2.width, c2.height)
-    var tmp1 = this.previewCtxArray[j].getImageData(0,0, c2.width, c2.height)
-    this.previewCtxArray[j].putImageData(tmp0, 0, 0)
-    this.previewCtxArray[i].putImageData(tmp1, 0, 0)
+    var tmp0 = i.getImageData(0,0, c2.width, c2.height)
+    var tmp1 = j.getImageData(0,0, c2.width, c2.height)
+    j.putImageData(tmp0, 0, 0)
+    i.putImageData(tmp1, 0, 0)
   }
 
 
-  handleMoveFrameUp(currentIdx)
-  {
+  // handleMoveFrameUp(currentIdx)
+  // {
+  //   if (!this.props.canEdit)
+  //   { 
+  //     this.props.editDeniedReminder()
+  //     return
+  //   }
+
+  //   let c2 = this.props.asset.content2
+  //   let fN = c2.frameNames
+
+  //   if (currentIdx > 0)
+  //   {
+  //     this.doSaveStateForUndo("Move Frame Up");
+
+  //     [ fN[currentIdx],  fN[currentIdx-1] ] =  [  fN[currentIdx-1],  fN[currentIdx] ]
+  //     this.doSwapCanvases(currentIdx, currentIdx-1)
+  //     this.handleSave(`Change frame order`)
+  //     this.handleSelectFrame(currentIdx-1)
+  //     this.forceUpdate()
+  //   }
+  // }
+
+  // handleMoveFrameDown(currentIdx)
+  // {
+  //   let c2 = this.props.asset.content2
+  //   let fN = c2.frameNames
+
+  //   if (currentIdx < this.previewCanvasArray.length-1)
+  //   {
+  //     this.doSaveStateForUndo("Move Frame Down");
+  //     [ fN[currentIdx],  fN[currentIdx+1] ] =  [  fN[currentIdx+1],  fN[currentIdx] ]
+  //     this.doSwapCanvases(currentIdx, currentIdx+1)
+  //     this.handleSave(`Change frame order`)
+  //     this.handleSelectFrame(currentIdx+1)
+  //     this.forceUpdate()     // Needed since the Reactivity doesn't look down this far (true?)
+  //   }
+  // }
+
+  frameMoveLeft(frameID){
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+    if(frameID <= 0){
+      return;
+    } 
+
+    let c2 = this.props.asset.content2
+
+    let tmpName = c2.frameNames[frameID];
+    c2.frameNames[frameID] = c2.frameNames[frameID-1];
+    c2.frameNames[frameID-1] = tmpName;
+
+    let tmpData = c2.frameData[frameID];
+    c2.frameData[frameID] = c2.frameData[frameID-1];
+    c2.frameData[frameID-1] = tmpData;
+
+    this.doSwapCanvases(this.frameCtxArray[frameID], this.frameCtxArray[frameID-1]);
+    this.handleSave(`Change frame order`, true);
+  }
+
+  frameMoveRight(frameID){
     if (!this.props.canEdit)
     { 
       this.props.editDeniedReminder()
       return
     }
 
-    let c2 = this.props.asset.content2
-    let fN = c2.frameNames
+    let c2 = this.props.asset.content2;
+    if(frameID >= c2.frameNames.length-1){
+      return;
+    } 
 
-    if (currentIdx > 0)
-    {
-      this.doSaveStateForUndo("Move Frame Up");
+    let tmpName = c2.frameNames[frameID];
+    c2.frameNames[frameID] = c2.frameNames[frameID+1];
+    c2.frameNames[frameID+1] = tmpName;
 
-      [ fN[currentIdx],  fN[currentIdx-1] ] =  [  fN[currentIdx-1],  fN[currentIdx] ]
-      this.doSwapCanvases(currentIdx, currentIdx-1)
-      this.handleSave(`Change frame order`)
-      this.handleSelectFrame(currentIdx-1)
-      this.forceUpdate()
-    }
-  }
+    let tmpData = c2.frameData[frameID];
+    c2.frameData[frameID] = c2.frameData[frameID+1];
+    c2.frameData[frameID+1] = tmpData;
 
-  handleMoveFrameDown(currentIdx)
-  {
-    let c2 = this.props.asset.content2
-    let fN = c2.frameNames
-
-    if (currentIdx < this.previewCanvasArray.length-1)
-    {
-      this.doSaveStateForUndo("Move Frame Down");
-      [ fN[currentIdx],  fN[currentIdx+1] ] =  [  fN[currentIdx+1],  fN[currentIdx] ]
-      this.doSwapCanvases(currentIdx, currentIdx+1)
-      this.handleSave(`Change frame order`)
-      this.handleSelectFrame(currentIdx+1)
-      this.forceUpdate()     // Needed since the Reactivity doesn't look down this far (true?)
-    }
+    this.doSwapCanvases(this.frameCtxArray[frameID], this.frameCtxArray[frameID+1]);
+    this.handleSave(`Change frame order`, true);
   }
 
 

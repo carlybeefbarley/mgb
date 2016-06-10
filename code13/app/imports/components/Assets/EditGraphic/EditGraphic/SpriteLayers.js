@@ -125,6 +125,14 @@ export default class SpriteLayers extends React.Component {
 		this.props.handleSave("Changed FPS");
 	}
 
+	frameMoveLeft(frameID){
+		this.props.EditGraphic.frameMoveLeft(frameID);
+	}
+
+	frameMoveRight(frameID){
+		this.props.EditGraphic.frameMoveRight(frameID);
+	}
+
 	deleteLayer(layerID){
 		this.props.EditGraphic.handleDeleteLayer(layerID);
 	}
@@ -234,6 +242,20 @@ export default class SpriteLayers extends React.Component {
 				      				<i className="circle icon outline"></i>
 				      				New Empty Frame
 				      			</div>
+				      			<div className="divider"></div>
+				      			<div 
+				      				onClick={this.frameMoveLeft.bind(this, idx)}
+				      				className={"item " + (idx === 0 ? "disabled" : "")}>
+				      				<i className="arrow left icon"></i>
+				      				Move Left
+				      			</div>
+				      			<div 
+				      				onClick={this.frameMoveRight.bind(this, idx)}
+				      				className={"item " + (idx === this.props.content2.frameNames.length-1 ? "disabled" : "")}>
+				      				<i className="arrow right icon"></i>
+				      				Move Right
+				      			</div>
+				      			<div className="divider"></div>
 				      			<div onClick={this.deleteFrame.bind(this, idx)} className="item">
 				      				<i className="remove icon"></i>
 				      				Delete

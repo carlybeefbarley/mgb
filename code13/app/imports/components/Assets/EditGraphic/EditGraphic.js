@@ -83,7 +83,7 @@ export default class EditGraphic extends React.Component {
 
     //this.initDefaultContent2()              // Probably superfluous since done in render() but here to be sure.
     this.getPreviewCanvasReferences()
-    this.loadPreviewsFromAssetAsync()
+    this.loadAllPreviewsAsync()
 
     // Initialize Status bar
     this._statusBar = {
@@ -190,7 +190,7 @@ export default class EditGraphic extends React.Component {
     // [guntis] TODO update editCanvas if selected another frame
 
       this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
-      this.loadPreviewsFromAssetAsync()
+      this.loadAllPreviewsAsync()
   }
 
   /** Stash references to the preview canvases after initial render and subsequent renders
@@ -229,41 +229,95 @@ export default class EditGraphic extends React.Component {
 
   // Note that this has to use Image.onload so it will complete asynchronously.
   // TODO(DGOLDS): Add an on-complete callback including a timeout handler to support better error handling and avoid races
-  loadPreviewsFromAssetAsync(){
+  // loadPreviewsFromAssetAsync(){
+  //   let c2 = this.props.asset.content2;
+  //   let frameCount = c2.frameNames.length;
+  //   let layerCount = c2.layerParams.length;
+
+  //   console.log("load previews");
+
+  //   for(let frameID=0; frameID<frameCount; frameID++){
+  //     this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
+  //     for(let layerID=layerCount-1; layerID>=0; layerID--){
+  //       let dataURI = c2.frameData[frameID][layerID];
+  //       if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+  //         _img = new Image;
+  //         _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
+  //         _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
+  //         let self = this;
+  //         _img.onload = function(e){            
+  //           let loadedImage = e.target;
+  //           if(loadedImage.frameID === self.state.selectedFrameIdx){
+  //             self.previewCtxArray[loadedImage.layerID].clearRect(0,0, _img.width, _img.height);
+  //             self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
+  //             if(loadedImage.layerID === 0){
+  //               // update edit canvas when bottom layer is loaded
+  //               self.updateEditCanvasFromSelectedPreviewCanvas();  
+  //             }
+  //           }
+  //           self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
+  //         }
+  //         _img.src = dataURI;
+  //       }
+  //       else {
+  //         // TODO: May need some error indication here
+  //         this.updateEditCanvasFromSelectedPreviewCanvas();
+  //       }
+  //     }
+  //   }
+  // }
+
+  loadAllPreviewsAsync(){
     let c2 = this.props.asset.content2;
     let frameCount = c2.frameNames.length;
     let layerCount = c2.layerParams.length;
 
-    console.log("load previews");
-
     for(let frameID=0; frameID<frameCount; frameID++){
       this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
       for(let layerID=layerCount-1; layerID>=0; layerID--){
-        let dataURI = c2.frameData[frameID][layerID];
-        if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-          _img = new Image;
-          _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
-          _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
-          let self = this;
-          _img.onload = function(e){            
-            let loadedImage = e.target;
-            if(loadedImage.frameID === self.state.selectedFrameIdx){
-              self.previewCtxArray[loadedImage.layerID].clearRect(0,0, _img.width, _img.height);
-              self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
-              if(loadedImage.layerID === 0){
-                // update edit canvas when bottom layer is loaded
-                self.updateEditCanvasFromSelectedPreviewCanvas();  
-              }
-            }
-            self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
+        this.loadAssetAsync(frameID, layerID);
+      }
+    }
+  }
+
+  loadFramAssync(frameID){
+    let c2 = this.props.asset.content2;
+    let layerCount = c2.layerParams.length;
+    this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
+    for(let layerID=layerCount-1; layerID>=0; layerID--){
+      this.loadAssetAsync(frameID, layerID);
+    }
+  }
+
+  loadAssetAsync(frameID, layerID){
+    let c2 = this.props.asset.content2;
+    this.previewCtxArray[layerID].clearRect(0,0, c2.width, c2.height); // have to clear previewcanvases here because some frameData are empty
+    if(!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) return;
+    let dataURI = c2.frameData[frameID][layerID];
+    if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+      _img = new Image;
+      _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
+      _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
+      let self = this;
+      _img.onload = function(e){            
+        let loadedImage = e.target;
+        // console.log(self.state.selectedFrameIdx);
+        if(loadedImage.frameID === self.state.selectedFrameIdx){          
+          self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
+          if(loadedImage.layerID === 0){
+            // update edit canvas when bottom layer is loaded
+            self.updateEditCanvasFromSelectedPreviewCanvas(loadedImage.frameID);  
           }
-          _img.src = dataURI;
         }
-        else {
-          // TODO: May need some error indication here
-          this.updateEditCanvasFromSelectedPreviewCanvas();
+        if(!c2.layerParams[loadedImage.layerID].isHidden){ 
+          self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
         }
       }
+      _img.src = dataURI;
+    }
+    else {
+      // TODO: May need some error indication here
+      this.updateEditCanvasFromSelectedPreviewCanvas();
     }
   }
 
@@ -280,6 +334,8 @@ export default class EditGraphic extends React.Component {
     this.editCtx.msImageSmoothingEnabled = this.checked
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
     this.frameCtxArray[this.state.selectedFrameIdx].clearRect(0, 0, c2.width, c2.height);
+
+    // console.log(this.state.selectedFrameIdx);
 
     // draws all layers on edit canvas and layer canvas
     for(let i=this.previewCanvasArray.length-1; i>=0; i--){

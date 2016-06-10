@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 
 import Layer from './Layer.js';
 
@@ -51,7 +52,7 @@ export default class SpriteLayers extends React.Component {
 	    //   return
 	    // }
 	    // this.doSaveStateForUndo("Add Frame");
-	    let fN = this.props.content2.frameNames
+	    let fN = this.props.content2.frameNames;
 	    let newFrameName = "Frame " + (fN.length+1).toString()
 	    fN.push(newFrameName)
 	    this.props.content2.frameData.push([])
@@ -185,6 +186,7 @@ export default class SpriteLayers extends React.Component {
     return (
       	
       <div className="ui sixteen wide column">
+      <canvas ref="tmpCanvas" width="10px" height="10px"></canvas>
       <div className="row">
   		<div onClick={this.rewindFrames.bind(this, false)} className="ui icon button">
 			<i className="icon step backward"></i>

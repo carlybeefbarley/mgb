@@ -125,6 +125,10 @@ export default class SpriteLayers extends React.Component {
 		this.props.handleSave("Changed FPS");
 	}
 
+	insertFrameAfter(frameID, doCopy){
+		this.props.EditGraphic.insertFrameAfter(frameID, doCopy);
+	}
+
 	frameMoveLeft(frameID){
 		this.props.EditGraphic.frameMoveLeft(frameID);
 	}
@@ -234,11 +238,15 @@ export default class SpriteLayers extends React.Component {
 				      				<i className="setting icon"></i>
 				      				Properties
 				      			</div>
-				      			<div className="item">
+				      			<div 
+				      				onClick={this.insertFrameAfter.bind(this, idx, true)}
+				      				className="item">
 				      				<i className="add circle icon"></i>
 				      				New
 				      			</div>
-				      			<div className="item">
+				      			<div 
+				      				onClick={this.insertFrameAfter.bind(this, idx, false)}
+				      				className="item">
 				      				<i className="circle icon outline"></i>
 				      				New Empty Frame
 				      			</div>

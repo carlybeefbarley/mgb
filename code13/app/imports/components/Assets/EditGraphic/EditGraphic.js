@@ -66,7 +66,7 @@ export default class EditGraphic extends React.Component {
   // content2.height
   // content2.fps    // default fps = 10
   // content2.layerParams[layerIndex]     // array of layer params {name, isHiddden, isLocked}
-  // content2.frameNames[frameIndex]
+  // content2.frameNames[frameIndex]  // TODO get rid of frameNames. no practical use.
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
   // content2.spriteData[]    // dataUrl. Same frameData elements but with merged layers
   // content2.animations[]    // { animationName, frames[], fps }
@@ -727,6 +727,24 @@ export default class EditGraphic extends React.Component {
 
     this.doSwapCanvases(this.frameCtxArray[frameID], this.frameCtxArray[frameID+1]);
     this.handleSave(`Change frame order`, true);
+  }
+
+  insertFrameAfter(frameID, doCopy){
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+
+    let c2 = this.props.asset.content2;
+    c2.frameNames.splice(frameID+1, 0, "Frame "+(frameID+1));
+    c2.frameData.splice(frameID+1, 0, []);
+    for(let i=0; i<c2.layerParams.length; i++){
+      let tmp = doCopy ? c2.frameData[frameID][i] : null;
+      c2.frameData[frameID+1].push(tmp);
+    }
+    this.handleSave(`Insert frame`, true);
+
   }
 
 

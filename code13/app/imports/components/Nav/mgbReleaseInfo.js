@@ -22,7 +22,7 @@ export default mgbReleaseInfo = {
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "477"
+        "iteration":   "481"
       },
 
       "releaseManagement": {

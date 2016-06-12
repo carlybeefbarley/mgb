@@ -65,7 +65,8 @@ export default fpActivity = React.createClass({
 
   renderOneActivity: function(act, idx) {
     const iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
-    const ago = moment(act.timestamp).fromNow()         // TODO: Make reactive
+    const isSnapshot = act.hasOwnProperty("currentUrl")
+    const ago = (isSnapshot ? "Viewed " : "Edited ") + moment(act.timestamp).fromNow()                   // TODO: Make reactive
 
     if (act.activityType.startsWith("user.")) {
       return  this.wrapActivity(idx, ago, iconClass, null, act.byUserName, act.byUserId,

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import QLink from '../../routes/QLink';
-
+import WhatsNew from '../Nav/WhatsNew';
 export default npNavigate = React.createClass({
   
   propTypes: {
@@ -37,6 +37,9 @@ export default npNavigate = React.createClass({
           <div className="header">Home</div>
           <div className="menu">
             <QLink to="/" className="item">Home Page</QLink>
+            <QLink to="/whatsnew" className="item">
+              What's New<WhatsNew currUser={currUser} />
+            </QLink>
           </div>
         </div>
         {userContent}

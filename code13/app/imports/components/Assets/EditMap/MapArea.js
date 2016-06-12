@@ -545,13 +545,13 @@ export default class MapArea extends React.Component {
           >Drop here to import</button>
         <button className="ui button"
           onClick={this.togglePreviewState.bind(this)}
-          >Preview</button>
-        <button className="ui primary button"
-                onClick={(e)=>{this.props.parent.handleSave(e);}}
-          >Save</button>
+          >3D View</button>
         <button className="ui primary button"
                 onClick={()=>{this.resetCamera();}}
           >Reset camera</button>
+        <button className="ui primary button"
+                onClick={(e)=>{this.props.parent.handleSave(e);}}
+          >Save</button>
         {this.renderMap()}
       </div>
     )

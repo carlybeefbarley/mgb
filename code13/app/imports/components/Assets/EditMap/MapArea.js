@@ -6,6 +6,8 @@ import TileSet from "./Tools/TileSet.js";
 import Layers from "./Tools/Layers.js";
 import MapTools from "./Tools/MapTools.js";
 import TileHelper from "./TileHelper.js";
+import TileCollection from "./Tools/TileCollection.js";
+import TileSelection from "./Tools/TileSelection.js";
 
 export default class MapArea extends React.Component {
 
@@ -33,16 +35,14 @@ export default class MapArea extends React.Component {
         return true;
       }
     });
-    // TODO: this should be some kind of matrix
-    this.selection = [];
+
+
+    this.selection = new TileCollection();
     this.errors = [];
     this.gidCache = {};
 
     this.activeLayer = 0;
     this.activeTileset = 0;
-    this.state = {
-      preview: false
-    };
     // x/y are angles not pixels
     this.preview = {
       x: 5,
@@ -56,15 +56,17 @@ export default class MapArea extends React.Component {
 
     this.globalMouseMove = (...args) => {this.handleMouseMove(...args);};
     this.globalMouseUp = (...args) => {this.handleMouseUp(...args);};
-    this.gloablResize = () => {
+    this.globalResize = () => {
       this.layers.forEach((l)=>{
         l.adjustCanvas();
         l.drawTiles();
       });
       this.refs.grid && this.refs.grid.adjustCanvas();
       this.refs.grid && this.refs.grid.drawGrid();
-
     };
+    this.globalKeyUp = (...args) => {
+      this.handleKeyUp(...args);
+    }
   }
 
   componentDidMount(){
@@ -72,12 +74,14 @@ export default class MapArea extends React.Component {
     this.fullUpdate();
     window.addEventListener("mousemove", this.globalMouseMove);
     window.addEventListener("mouseup", this.globalMouseUp);
-    window.addEventListener("resize", this.gloablResize);
+    window.addEventListener("resize", this.globalResize);
+    window.addEventListener("keyup", this.globalKeyUp);
   }
   componentWillUnmount(){
     window.removeEventListener("mousemove", this.globalMouseMove);
     window.removeEventListener("mouseup", this.globalMouseUp);
-    window.removeEventListener("resize", this.gloablResize);
+    window.removeEventListener("resize", this.globalResize);
+    window.removeEventListener("keyup", this.globalKeyUp);
   }
 
   removeDots(sin){
@@ -111,8 +115,11 @@ export default class MapArea extends React.Component {
           // empty maps aren't visible without grid
           showGrid: 1,
           camera: {
-            x:0, y:0
-          }
+            x:0, y:0, zoom: 1
+          },
+          preview: false,
+          mode: "stamp",
+          randomMode: false
         }
       };
     }
@@ -131,6 +138,7 @@ export default class MapArea extends React.Component {
   get options(){
     return this.meta.options;
   }
+
   /* TODO: browser compatibility - IE don't have TextDecoder - https://github.com/inexorabletash/text-encoding*/
   xmlToJson(xml){
     window.xml = xml;
@@ -298,36 +306,57 @@ export default class MapArea extends React.Component {
     this.lastEvent = null;
 
     // next state...
-    if(!this.state.preview){
+    if(!this.options.preview){
       $(this.refs.mapElement).addClass("preview");
     }
     else{
       $(this.refs.mapElement).removeClass("preview");
     }
     // this is not synchronous function !!!
-    this.setState({
-      preview: !this.state.preview
-    });
+    this.options.preview = !this.options.preview
+    this.forceUpdate();
   }
-
 
 
   /* TODO: move TileLayer specific function to TileLayer - map will handle all sorts of layers */
   /* TODO: fill from selection */
-  handleMapClicked(e, key){
+  /* This is main Edit constroller.. everything related with map editing starts from here!!! */
+  handleMapClicked(e, tileInfo){
 
-    let sel = this.selection[0];
-    if(!e.ctrlKey && !sel){
+    const layer = this.map.layers[this.activeLayer];
+
+    if(e.ctrlKey || this.options.mode == "eraser"){
+      layer.data[tileIndex] = 0;
       return;
     }
-    if(e.ctrlKey){
-      sel = 0;
+    else{
+      let sel = 0;
+      if(this.options.randomMode){
+        sel = this.selection.random();
+        layer.data[tileInfo.id] = sel.gid;
+      }
+      else if( this.selection.length){
+        let tpos = new TileSelection(tileInfo);
+        const ox = this.selection[0].x;
+        const oy = this.selection[0].y;
+
+        for(let i=0; i<map.selection.length; i++){
+          sel = this.selection[i];
+
+          if(sel) {
+            tpos.x = sel.x + tileInfo.x - ox;
+            tpos.y = sel.y + tileInfo.y - oy;
+            tpos.id = tpos.x + tpos.y * layer.width;
+
+            layer.data[tpos.id] = sel.gid;
+          }
+        }
+      }
     }
-    const layer = this.map.layers[this.activeLayer];
-    layer.data[key] = sel;
 
   }
 
+  /* camera stuff */
   resetCamera(){
     this.lastEvent = null;
     this.camera.x = 0;
@@ -396,10 +425,12 @@ export default class MapArea extends React.Component {
     this.lastEvent.pageY = e.pageY;
     this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
   }
+  /* endof camera stuff */
 
+  /* events */
   handleMouseMove(e){
     // move Preview
-    if(this.state.preview && (e.button == 1)) {
+    if(this.options.preview && (e.button == 1)) {
       this.movePreview(e);
     }
     else if(e.button === 1 || e.button == 2){
@@ -422,6 +453,32 @@ export default class MapArea extends React.Component {
       }
     }
   }
+  handleKeyUp(e){
+    let update = false;
+    switch(e.which){
+      case 37: //left
+        this.camera.x += this.data.tilewidth * this.camera.zoom;
+        update = true
+        break;
+      case 38: //top
+
+        this.camera.y += this.data.tileheight * this.camera.zoom;
+        update = true;
+        break;
+      case 39: //right
+        this.camera.x -= this.data.tilewidth * this.camera.zoom;
+        update = true;
+        break;
+      case 40: // down
+        this.camera.y -= this.data.tileheight * this.camera.zoom;
+        update = true;
+        break;
+    }
+    if(update){
+      this.redraw();
+    }
+  }
+
 
   importFromDrop (e) {
     e.stopPropagation();
@@ -446,13 +503,14 @@ export default class MapArea extends React.Component {
       });
     }
   }
-
   prepareForDrag(e){
     e.stopPropagation();
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
   }
+  /* endof events */
 
+  /* update stuff */
   fullUpdate(){
     this.generateImages(() => {
       this.addLayerTool();
@@ -461,6 +519,12 @@ export default class MapArea extends React.Component {
       this.redrawTilesets();
     });
   }
+
+  redraw(){
+    this.redrawLayers();
+    this.refs.grid.sync();
+  }
+
   redrawLayers(){
     this.layers.forEach((layer) => {
       layer.drawTiles();
@@ -471,7 +535,6 @@ export default class MapArea extends React.Component {
       tileset.drawTiles();
     });
   }
-  // we need to update these - to show errors about missing images after tileset import
   updateTilesets(){
     // do we have more than 1 tileset ?????
     // TODO: atm we are using only 1 tileset tool..
@@ -479,6 +542,8 @@ export default class MapArea extends React.Component {
       tileset.selectTileset(0);
     });
   }
+  /* endof update stuff */
+
   // TODO: keep aspect ratio
   // find out correct thumbnail size
   generatePreview(){

@@ -22,7 +22,7 @@ export default class TileMapLayer extends React.Component {
   // align grid to active layer in preview mode
   shouldComponentUpdate(){
     const map = this.props.map;
-    if(!map.state.preview){
+    if(!map.options.preview){
       this.refs.layer.style['transform'] = '';
       return false;
     }
@@ -85,20 +85,23 @@ export default class TileMapLayer extends React.Component {
 
     // vertical lines
     let i=0;
-    const width = Math.floor(this.ctx.canvas.width /data.tilewidth);
+    const width = Math.ceil(this.ctx.canvas.width /data.tilewidth);
+    let tmp = 0;
     for(; i<= width / camera.zoom; i++){
-      this.ctx.moveTo(i * data.tilewidth * camera.zoom + 0.5 + offsetX, -data.tileheight + offsetY);
-      this.ctx.lineTo(i * data.tilewidth * camera.zoom + 0.5 + offsetX, this.ctx.canvas.height);
+      tmp = i * data.tilewidth * camera.zoom + 0.5 + offsetX;
+      this.ctx.moveTo(tmp, -data.tileheight + offsetY);
+      this.ctx.lineTo(tmp, this.ctx.canvas.height);
     }
     //this.ctx.moveTo(i * data.tilewidth * camera.zoom - 0.5 + offsetX, -data.tileheight + offsetY);
     //this.ctx.lineTo(i * data.tilewidth * camera.zoom - 0.5 + offsetX, this.ctx.canvas.height);
 
     // horizontal lines
     i=0;
-    const height = Math.floor(this.ctx.canvas.height /data.tileheight);
+    const height = Math.ceil(this.ctx.canvas.height /data.tileheight);
     for(; i<= height / camera.zoom; i++){
-      this.ctx.moveTo(-data.tilewidth + offsetX, i * data.tileheight * camera.zoom + 0.5 + offsetY);
-      this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight * camera.zoom + 0.5 + offsetY);
+      tmp = i * data.tileheight * camera.zoom + 0.5 + offsetY;
+      this.ctx.moveTo(-data.tilewidth + offsetX, tmp);
+      this.ctx.lineTo(this.ctx.canvas.width, tmp);
     }
     //this.ctx.moveTo(-data.tilewidth + offsetX, i * data.tileheight * camera.zoom - 0.5 + offsetY);
     //this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight * camera.zoom - 0.5 + offsetY);

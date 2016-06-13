@@ -3,6 +3,7 @@ import React from 'react';
 import Tile from '../Tile.js';
 import TileHelper from '../TileHelper.js';
 import TilesetControls from "./TilesetControls.js";
+import TileSelection from "./TileSelection.js";
 
 export default class TileSet extends React.Component {
   /* lifecycle functions */
@@ -10,6 +11,8 @@ export default class TileSet extends React.Component {
     super(...args);
     this.prevTile = null;
     this.spacing = 1;
+    this.mouseDown = false;
+    this.startingtilePos = null;
   }
   componentDidMount() {
     $('.ui.accordion')
@@ -26,6 +29,10 @@ export default class TileSet extends React.Component {
     }
   }
   /* endof lifecycle functions */
+
+  get map(){
+    return this.props.info.content.map;
+  }
 
   /* helpers */
   adjustCanvas(){
@@ -44,27 +51,68 @@ export default class TileSet extends React.Component {
 
     this.ctx = canvas.getContext("2d");
   }
+  getTilePosInfo(e){
+    const map = this.map;
+    const ts = map.data.tilesets[map.activeTileset];
+    const pos = new TileSelection();
+    pos.updateFromMouse(e, ts, this.spacing);
+    return pos;
+  }
   /* endof helpers */
 
   /* functionality */
-  selectTile(e){
-    const map = this.props.info.content.map;
-    const ts = map.map.tilesets[map.activeTileset];
+  selectTile(e, clear){
+    const map = this.map;
+    const ts = map.data.tilesets[map.activeTileset];
     if(!this.prevTile){
-      this.highlightTile(e);
-      // something really wrong here!!!
+      this.prevTile = this.getTilePosInfo(e);
+      // failed to get prev tile.. e.g. click was out of bounds
       if(!this.prevTile){
         return;
       }
     }
-    const gid = this.prevTile.id;
-    const wasActive = map.selection.indexOf(gid);
-    map.clearActiveSelection();
-    if(wasActive == -1){
-      map.addToActiveSelection(gid);
+
+    map.selection.pushOrRemove(new TileSelection(this.prevTile));
+    this.highlightTile(e, e.nativeEvent, true);
+  }
+  selectRectangle(e, clear){
+    const map = this.map;
+    const ts = map.data.tilesets[map.activeTileset];
+    const pos = this.getTilePosInfo(e.nativeEvent);
+
+    if(!e.ctrlKey){
+      map.clearActiveSelection();
     }
 
-    this.highlightTile(e, e.nativeEvent, true);
+    let startx, endx, starty, endy;
+    if(this.startingtilePos.x < pos.x){
+      startx = this.startingtilePos.x;
+      endx = pos.x;
+    }
+    else{
+      startx = pos.x;
+      endx = this.startingtilePos.x;
+    }
+    if(this.startingtilePos.y < pos.y){
+      starty = this.startingtilePos.y;
+      endy = pos.y;
+    }
+    else{
+      starty = pos.y;
+      endy = this.startingtilePos.y;
+    }
+
+    for(let y = starty; y<=endy; y++){
+      for(let x = startx; x<=endx; x++){
+        pos.x = x;
+        pos.y = y;
+        pos.getId(ts, this.spacing);
+        map.selection.pushUnique(new TileSelection(pos));
+      }
+    }
+
+    map.selection.width = endx - startx;
+    this.drawTiles();
   }
   selectTileset(tilesetNum){
     this.props.info.content.map.activeTileset = tilesetNum
@@ -118,7 +166,7 @@ export default class TileSet extends React.Component {
       pal.x, pal.y, pal.w, pal.h,
       pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h,
     );
-    if(map.selection.indexOf(pal.gid) > -1){
+    if(map.selection.indexOfGid(pal.gid) > -1){
       this.ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
       this.ctx.fillRect(
         pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h,
@@ -132,21 +180,7 @@ export default class TileSet extends React.Component {
       return;
     }
     const palette = map.gidCache;
-
-    const pos = {
-      x: 0,
-      y: 0,
-      id: 0
-    };
-
-    const spacing = this.spacing;
-
-    TileHelper.getTileCoordsRel(
-      (e.offsetX < 0 ? 0 : e.offsetX),
-      (e.offsetY < 0 ? 0 : e.offsetY),
-      ts.tilewidth, ts.tileheight, spacing, pos);
-
-    pos.id = pos.x + pos.y * (spacing + Math.floor(ts.imagewidth / (ts.tilewidth + spacing))) + ts.firstgid;
+    const pos = this.getTilePosInfo(e);
 
     if(this.prevTile){
       if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
@@ -156,7 +190,7 @@ export default class TileSet extends React.Component {
         this.drawTiles();
       }
       else {
-        let pal = palette[this.prevTile.id];
+        let pal = palette[this.prevTile.gid];
         if (pal) {
           this.drawTile(pal, this.prevTile, true);
         }
@@ -190,17 +224,33 @@ export default class TileSet extends React.Component {
     const url = e.dataTransfer.getData("link");
     this.refs.controls.addTilesetFromUrl(url);
   }
-  // TODO: this is not working!!!
-  onDrag(e){
+  onDragOver(e){
     e.dataTransfer.dropEffect = 'copy';
+    e.preventDefault();
+  }
+
+  onMouseDown(e){
+    if(!e.ctrlKey){
+      this.map.clearActiveSelection();
+    }
+    this.mouseDown = true;
+    this.selectTile(e);
+    this.startingtilePos = new TileSelection(this.prevTile);
+  }
+  onMouseUp(e){
+    this.mouseDown = false;
   }
   onMouseMove(e){
+    if(this.mouseDown){
+      this.selectRectangle(e);
+    }
     this.highlightTile(e);
   }
   onMouseLeave(e){
     // remove highlighted tile
     this.drawTiles();
     this.prevTile = null;
+    this.mouseDown = false;
   }
   /* endof events */
 
@@ -226,7 +276,7 @@ export default class TileSet extends React.Component {
       <div className="active content tilesets accept-drop"
            data-drop-text="Drop asset here to create TileSet"
            onDrop={this.onDrop.bind(this)}
-           onDragOver={(e) => {e.preventDefault();}}
+           onDragOver={this.onDragOver.bind(this)}
 
         >
         <TilesetControls tileset={this} ref="controls"/>
@@ -240,7 +290,8 @@ export default class TileSet extends React.Component {
               }}
           >
           <canvas ref="canvas"
-                  onClick={this.selectTile.bind(this)}
+                  onMouseDown={this.onMouseDown.bind(this)}
+                  onMouseUp={this.onMouseUp.bind(this)}
                   onMouseMove={this.onMouseMove.bind(this)}
                   onMouseLeave={this.onMouseLeave.bind(this)}
             ></canvas>

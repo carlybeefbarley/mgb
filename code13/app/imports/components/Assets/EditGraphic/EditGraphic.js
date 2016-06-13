@@ -939,8 +939,14 @@ export default class EditGraphic extends React.Component {
       for (let i = 0; i < layerCount; i++) {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
       }
-      asset.thumbnail = this.previewCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
-      c2.spriteData[this.state.selectedFrameIdx] = this.frameCanvasArray[this.state.selectedFrameIdx].toDataURL('image/png');
+      asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
+
+      // saving data for using in map editor
+      c2.spriteData = [];
+      for(let i = 0; i < this.frameCanvasArray.length; i++){
+        c2.spriteData[i] = this.frameCanvasArray[i].toDataURL('image/png');  
+      }
+      
     }
 
 

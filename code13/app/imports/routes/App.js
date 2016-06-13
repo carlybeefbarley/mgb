@@ -1,17 +1,18 @@
 import React, {Component, PropTypes} from 'react';
-import {Link, browserHistory} from 'react-router';
+import { browserHistory } from 'react-router';
 
 import reactMixin from 'react-mixin';
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+
+import { Users, Activity, Projects } from '../schemas';
+import { projectMakeSelector } from '../schemas/projects';
 
 import Nav from '../components/Nav/Nav';
-import Helmet from "react-helmet";
-import {Users, Activity} from '../schemas';
-
-import Spinner from '../components/Nav/Spinner';
 import Toast from '../components/Nav/Toast';
-import FlexPanel from '../components/SidePanels/FlexPanel';
+import Helmet from "react-helmet";
+import Spinner from '../components/Nav/Spinner';
 import NavPanel from '../components/SidePanels/NavPanel';
+import FlexPanel from '../components/SidePanels/FlexPanel';
 
 import urlMaker from './urlMaker';
 
@@ -53,21 +54,27 @@ export default App = React.createClass({
   },
 
   getMeteorData() {
-    let handle = Meteor.subscribe("user", this.props.params.id) // BUGBUG - no such param in some cases (like AssetEdit)
-    let handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
+    const pathUserId = this.props.params.id           // This is the userId on the url /user/xxxx/...
+    const currUser = Meteor.user()
+    const currUserId = currUser && currUser._id
+    const handleForUser = Meteor.subscribe("user", pathUserId) // BUGBUG - no such param in some cases (like AssetEdit)
+    const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
+    const handleForProjects = Meteor.subscribe("projects.byUserId", currUserId)
+    const projectSelector = projectMakeSelector(currUserId)
     return {
-      currUser: Meteor.user(), //putting it here makes it reactive
-      user: Meteor.users.findOne(this.props.params.id),
-      activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),
-      loading: !handle.ready()
+      currUser: currUser,                           // Currently Logged in user. Putting it here makes it reactive
+      currUserProjects: Projects.find(projectSelector).fetch(),
+      user:     Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
+      activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
+      loading:  !handleForUser.ready() || !handleActivity.ready() || !handleForProjects.ready
     };
   },
 
   render() {
     if (this.data.loading)
-      return (<div><Spinner /></div>);
+      return <Spinner />
 
-    const {currUser, user} = this.data
+    const { currUser, user, currUserProjects } = this.data
     const { query } = this.props.location
 
     let mainPanelDivSty = {}
@@ -116,6 +123,7 @@ export default App = React.createClass({
         
             <NavPanel 
               currUser={currUser}
+              currUserProjects={currUserProjects}
               user={user}
               selectedViewTag={navPanelQueryValue}
               handleNavPanelToggle={this.handleNavPanelToggle}
@@ -157,6 +165,7 @@ export default App = React.createClass({
                   // Make below props available to all routes.
                   user: user,
                   currUser: currUser,
+                  currUserProjects: currUserProjects,
                   ownsProfile: ownsProfile,
                   isSuperAdmin: isSuperAdmin,
                   showToast: this.showToast

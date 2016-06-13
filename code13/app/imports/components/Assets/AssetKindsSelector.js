@@ -1,9 +1,7 @@
-// UI Component to render menus to allow asset types to be selected
-
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {AssetKinds, AssetKindKeys, safeAssetKindStringSepChar} from '../../schemas/assets';
 
+// UI Component to render menus to allow asset types to be selected
 
 export default AssetKindsSelector =  React.createClass({
   PropTypes: {
@@ -11,19 +9,14 @@ export default AssetKindsSelector =  React.createClass({
     handleToggleKindCallback: React.PropTypes.func    // We will call this back with a string indicating which Kind to toggle. Special value "__all" means enable all  
   },
 
-
   // React Callback: componentDidMount()
   componentDidMount: function() {
-    this.activateToolPopups()
-  },
-
-
-  activateToolPopups: function() {
-    // See http://semantic-ui.com/modules/popup.html#/usage
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup()
+    $('.hazAkPopup').popup()
   },
   
+  componentWillUnmount: function() {
+    $('.hazAkPopup').popup('destroy')
+  },
 
   render: function() {
     // Split kinds string into array for convenience
@@ -37,7 +30,7 @@ export default AssetKindsSelector =  React.createClass({
       const sty = active ? {} : { color: "#ccc"}
       const icon = active ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>
       return (
-        <a  className={"ui hazPopup " + (active ? "active item" : "item")} 
+        <a  className={"ui hazAkPopup " + (active ? "active item" : "item")} 
             data-value={k} 
             key={k} 
             style={sty}
@@ -52,7 +45,7 @@ export default AssetKindsSelector =  React.createClass({
     
     const allActive = (countActive === choices.length)
     choices.unshift(
-      <a  className={"ui hazPopup " + (allActive ? "active item" : "item")} 
+      <a  className={"ui hazAkPopup " + (allActive ? "active item" : "item")} 
             data-value="__all" 
             key="__all"
             onClick={this.handleToggleKindClick.bind(this,"__all")}

@@ -11,6 +11,8 @@ import Projects from './Projects';
 
 import NotFoundPage from './NotFoundPage';
 import urlMaker from './urlMaker';
+import WhatsNewRoute from './WhatsNewRoute';
+
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -26,6 +28,7 @@ Meteor.startup(function () {
     <Router history={browserHistory}>
       <Route component={App}>
         <Route path="/" component={Home} name="MyGameBuilder v2" />
+        <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
 
         <Route path="join" component={Users.Join} name="Sign up" />
         <Route path="signin" component={Users.SignIn} name="Sign In" />
@@ -37,7 +40,7 @@ Meteor.startup(function () {
         <Route path="user/:id" component={Users.Profile} name="User Profile"/>
         <Route path="user/:id/assets" component={Azzets.UserAssetList} name="User's Assets" />
         <Route path="user/:id/asset/:assetId" component={Azzets.AssetEdit} name="Edit Asset" />        
-       <Route path="user/:id/projects" component={Projects.UserProjectList} name="User's Projects" />
+        <Route path="user/:id/projects" component={Projects.UserProjectList} name="User's Projects" />
         <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Overview" />
         <Route path="assets" component={Azzets.UserAssetList} name="All Assets" />
 

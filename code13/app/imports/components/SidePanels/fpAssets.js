@@ -6,7 +6,7 @@ import Spinner from '../../components/Nav/Spinner';
 import AssetList from '../../components/Assets/AssetList';
 
 import { Azzets } from '../../schemas';
-import { AssetKindKeys, AssetMakeSelector } from '../../schemas/assets';
+import { AssetKindKeys, assetMakeSelector } from '../../schemas/assets';
 
 export default fpAssets = React.createClass({
   mixins: [ReactMeteorData],
@@ -40,7 +40,7 @@ export default fpAssets = React.createClass({
                                   false,  // Shw only Stable
                                   10)     // Limit
     const assetSorter = { updatedAt: -1}
-    let assetSelector = AssetMakeSelector(null, AssetKindKeys, nameSearch)
+    let assetSelector = assetMakeSelector(null, AssetKindKeys, nameSearch)
 
     return {
       assets: Azzets.find(assetSelector, {sort: assetSorter}).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large

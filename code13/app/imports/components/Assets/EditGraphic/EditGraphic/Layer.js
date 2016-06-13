@@ -51,17 +51,12 @@ export default class Layer extends React.Component {
 
 
   render() {
-  	let framesTD = _.map(this.props.frameNames, (frameName, frameID) => { return (
-      <td onClick={this.selectFrame.bind(this, frameID)}
-      	className={this.props.isSelected && this.props.selectedFrame === frameID ? "highlight" : ""}>
-          {/* selectedFrameIdx === idx ? <i className="circle icon"></i> : "" */}
-      </td>);
-    });
-
     return (
       <tr 
         className={this.props.isSelected ? "active" : ""}
-        onClick={this.selectLayer.bind(this)} >
+        onClick={this.selectLayer.bind(this)} 
+        key={this.props.idx}
+        >
           <td>
           	<i 
           		className={"icon " + (this.props.layer.isHidden ? "hide" : "unhide" )}
@@ -78,7 +73,14 @@ export default class Layer extends React.Component {
           	<div ref="nameText" className={this.state.editName ? "hidden" : "visible"}>{this.props.layer.name}</div>
           	<form className={"ui input " + (this.state.editName ? "visible" : "hidden")} ><input ref="nameInput" type="text" /></form>
           </td>
-          {framesTD}
+          {
+            _.map(this.props.frameNames, (frameName, frameID) => { return (
+              <td onClick={this.selectFrame.bind(this, frameID)}
+                key={this.props.idx+"_"+frameID}
+                className={this.props.isSelected && this.props.selectedFrame === frameID ? "highlight" : ""}>
+              </td>)  
+            })
+          }
           <td>
           	<div 
           		className={"ui image " + (this.props.isCanvasLayersVisible ? "" : "hidden") }

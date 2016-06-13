@@ -2,7 +2,9 @@
 
 import {Users, Azzets, Projects, Activity, ActivitySnapshots } from '../schemas';
 
-import { AssetMakeSelector } from '../schemas/assets';
+import { assetMakeSelector } from '../schemas/assets';
+import { projectMakeSelector } from '../schemas/projects';
+
 //
 //    USERS
 //
@@ -71,7 +73,7 @@ Meteor.publish('assets.public', function(
                                     showStable=false, 
                                     limitCount=50) 
 {
-  let selector = AssetMakeSelector(userId, 
+  let selector = assetMakeSelector(userId, 
                       selectedAssetKinds, 
                       nameSearch, 
                       projectName, 
@@ -102,12 +104,7 @@ Meteor.publish('projects.forProjectId', function(projectId) {
 
 // Return projects relevant to this userId.. This includes owner, member, etc
 Meteor.publish('projects.byUserId', function(userId) {
-  let selector = {
-    "$or": [
-      { ownerId: userId },
-      { memberIds: { $in: [userId]} }
-    ]
-  }  
+  const selector = projectMakeSelector(userId)
   return Projects.find(selector);
 });
 

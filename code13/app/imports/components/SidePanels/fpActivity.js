@@ -39,7 +39,12 @@ export default fpActivity = React.createClass({
 
   enablePopups()
   {
-    $(".hazRecentPopup").popup()
+    $(".hazActivityPopup").popup()
+  },
+
+  destroyPopups()
+  {
+     $(".hazActivityPopup").popup('destroy')
   },
 
   componentDidMount()
@@ -52,9 +57,16 @@ export default fpActivity = React.createClass({
     this.enablePopups()
   },
 
+  componentWillUnmount()
+  {
+    this.destroyPopups()
+  },
+
+
   renderOneActivity: function(act, idx) {
     const iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
-    const ago = moment(act.timestamp).fromNow()         // TODO: Make reactive
+    const isSnapshot = act.hasOwnProperty("currentUrl")
+    const ago = (isSnapshot ? "Viewed " : "Edited ") + moment(act.timestamp).fromNow()                   // TODO: Make reactive
 
     if (act.activityType.startsWith("user.")) {
       return  this.wrapActivity(idx, ago, iconClass, null, act.byUserName, act.byUserId,
@@ -65,14 +77,14 @@ export default fpActivity = React.createClass({
       const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
       const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
       const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
-      const dataHtml = `<img src="${assetThumbnailUrl}" />`
+      const dataHtml = `<div><img src="${assetThumbnailUrl}" /><p><small style="text-align: center;">${ago}</small></p></div>`
       const linkTo = act.toOwnerId ? 
                 `/user/${act.toOwnerId}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
                 `/assetEdit/${act.toAssetId}`                       // Old format
 
 
       return  this.wrapActivity(idx, ago, iconClass, assetKindIconClassName, act.byUserName, act.byUserId, 
-                <small data-html={dataHtml} data-position="left center" className="hazRecentPopup">
+                <small data-html={dataHtml} data-position="left center" className="hazActivityPopup">
                   <QLink to={linkTo}>
                     {assetName}
                   </QLink>

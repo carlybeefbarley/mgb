@@ -1,6 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-
 
 export default class AssetShowDeletedSelector extends React.Component {
 //   propTypes:{
@@ -15,28 +13,24 @@ export default class AssetShowDeletedSelector extends React.Component {
   
   // React Callback: componentDidMount()
   componentDidMount() {
-    this.activateToolPopups();
+    $(".assetShowDeletedPopup").popup()
   }
 
-  activateToolPopups() {
-    // See http://semantic-ui.com/modules/popup.html#/usage
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.popup()    // No need to look for class since it's the outer element
+  componentWillUnmount() {
+    $(".assetShowDeletedPopup").popup('destroy')
   }
 
-  
   handleChangeFlagClick()
   {
     // Flip between "0" and "1"
     return this.props.handleChangeFlag( this.props.showDeletedFlag === "1" ? "0" : "1" )
   }
 
-
   render() {
     let active = this.props.showDeletedFlag === "1"
 
     return (
-            <a className={"ui " + (active ? "red button" : "button")} 
+            <a className={"assetShowDeletedPopup ui " + (active ? "red button" : "button")} 
                 data-value="showDeleted"
                 onClick={this.handleChangeFlagClick.bind(this)}
                 data-position="bottom center"

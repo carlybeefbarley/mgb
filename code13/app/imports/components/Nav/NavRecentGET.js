@@ -6,6 +6,7 @@ import {AssetKinds} from '../../schemas/assets';
 import moment from 'moment';
 
 
+
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -70,16 +71,16 @@ export default NavRecentGET = React.createClass({
     let retval = []
 
     _.each(mergedArray, a => {
-      const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
       if (a.toAssetId)
       {
         // We only add Asset activities so far - not profile views etc
         const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind)
         const assetKindCap = capitalizeFirstLetter(a.toAssetKind)
         const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
-        const dataHtml = `<img src="${assetThumbnailUrl}" />`
-        //  title={ago} 
-        // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now
+        const isSnapshot = a.hasOwnProperty("currentUrl")
+        const ago = (isSnapshot ? "Viewed " : "Edited ") + moment(a.timestamp).fromNow()                   // TODO: Make reactive
+        const dataHtml = `<div><img src="${assetThumbnailUrl}" /><p><small style="text-align: center;">${ago}</small></p></div>`
+        // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now in those cases
         const linkTo = a.toOwnerId ? 
                         `/user/${a.toOwnerId}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016
                         `/assetEdit/${a.toAssetId}`                     // Old format

@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 import { browserHistory } from 'react-router';
-import QLink from "../../routes/QLink";
 import {logActivity} from '../../schemas/activity';
 import NavRecentGET from './NavRecentGET.js';
 import WhatsNew from './WhatsNew.js';
@@ -30,7 +29,7 @@ export default Nav = React.createClass({
     return (
       <div className="ui attached inverted menu" style={sty}>
 
-          <WhatsNew user={this.props.user}/>
+          <WhatsNew currUser={this.props.user} asHidingLink={true}/>
           
           <div className="item">
             {this.props.name}

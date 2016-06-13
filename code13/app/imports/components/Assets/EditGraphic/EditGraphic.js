@@ -66,7 +66,7 @@ export default class EditGraphic extends React.Component {
   // content2.height
   // content2.fps    // default fps = 10
   // content2.layerParams[layerIndex]     // array of layer params {name, isHiddden, isLocked}
-  // content2.frameNames[frameIndex]
+  // content2.frameNames[frameIndex]  // TODO get rid of frameNames. no practical use.
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
   // content2.spriteData[]    // dataUrl. Same frameData elements but with merged layers
   // content2.animations[]    // { animationName, frames[], fps }
@@ -83,7 +83,7 @@ export default class EditGraphic extends React.Component {
 
     //this.initDefaultContent2()              // Probably superfluous since done in render() but here to be sure.
     this.getPreviewCanvasReferences()
-    this.loadPreviewsFromAssetAsync()
+    this.loadAllPreviewsAsync()
 
     // Initialize Status bar
     this._statusBar = {
@@ -186,8 +186,11 @@ export default class EditGraphic extends React.Component {
   // React Callback: componentDidUpdate()
   componentDidUpdate(prevProps,  prevState)
   {
-    this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
-    this.loadPreviewsFromAssetAsync()
+    // [guntis] TODO update all previewCanvases only if layer is deleted
+    // [guntis] TODO update editCanvas if selected another frame
+
+      this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
+      this.loadAllPreviewsAsync()
   }
 
   /** Stash references to the preview canvases after initial render and subsequent renders
@@ -226,69 +229,95 @@ export default class EditGraphic extends React.Component {
 
   // Note that this has to use Image.onload so it will complete asynchronously.
   // TODO(DGOLDS): Add an on-complete callback including a timeout handler to support better error handling and avoid races
-  // loadPreviewsFromAssetAsync()
-  // {
+  // loadPreviewsFromAssetAsync(){
   //   let c2 = this.props.asset.content2;
+  //   let frameCount = c2.frameNames.length;
   //   let layerCount = c2.layerParams.length;
 
-  //   for (let i = 0; i < layerCount; i++) {
-  //     let dataURI = c2.frameData[this.state.selectedFrameIdx][i];
+  //   console.log("load previews");
 
-  //     if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-  //       var _img = new Image
-  //       var self = this
-  //       _img.mgb_hack_idx = i     // so in onload() callback we know which previewCtx to apply the data to
-  //       _img.onload = function (e) {
-  //         let loadedImage = e.target
-  //         self.previewCtxArray[loadedImage.mgb_hack_idx].clearRect(0,0, _img.width, _img.height)
-  //         self.previewCtxArray[loadedImage.mgb_hack_idx].drawImage(loadedImage, 0, 0)
-  //         if (loadedImage.mgb_hack_idx === self.state.selectedLayerIdx)
-  //           self.updateEditCanvasFromSelectedPreviewCanvas()
+  //   for(let frameID=0; frameID<frameCount; frameID++){
+  //     this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
+  //     for(let layerID=layerCount-1; layerID>=0; layerID--){
+  //       let dataURI = c2.frameData[frameID][layerID];
+  //       if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+  //         _img = new Image;
+  //         _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
+  //         _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
+  //         let self = this;
+  //         _img.onload = function(e){            
+  //           let loadedImage = e.target;
+  //           if(loadedImage.frameID === self.state.selectedFrameIdx){
+  //             self.previewCtxArray[loadedImage.layerID].clearRect(0,0, _img.width, _img.height);
+  //             self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
+  //             if(loadedImage.layerID === 0){
+  //               // update edit canvas when bottom layer is loaded
+  //               self.updateEditCanvasFromSelectedPreviewCanvas();  
+  //             }
+  //           }
+  //           self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
+  //         }
+  //         _img.src = dataURI;
   //       }
-  //       _img.src = dataURI    // Trigger load & onload -> data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
-  //     }
-  //     else {
-  //       // TODO: May need some error indication here
-  //       this.updateEditCanvasFromSelectedPreviewCanvas();
+  //       else {
+  //         // TODO: May need some error indication here
+  //         this.updateEditCanvasFromSelectedPreviewCanvas();
+  //       }
   //     }
   //   }
   // }
 
-  loadPreviewsFromAssetAsync(){
+  loadAllPreviewsAsync(){
     let c2 = this.props.asset.content2;
     let frameCount = c2.frameNames.length;
-    let layerCount = c2.layerNames.length;
-
-    console.log("load previews");
+    let layerCount = c2.layerParams.length;
 
     for(let frameID=0; frameID<frameCount; frameID++){
       this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
       for(let layerID=layerCount-1; layerID>=0; layerID--){
-        let dataURI = c2.frameData[frameID][layerID];
-        if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-          _img = new Image;
-          _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
-          _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
-          let self = this;
-          _img.onload = function(e){            
-            let loadedImage = e.target;
-            if(loadedImage.frameID === self.state.selectedFrameIdx){
-              self.previewCtxArray[loadedImage.layerID].clearRect(0,0, _img.width, _img.height);
-              self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
-              if(loadedImage.layerID === layerCount-1){
-                // update edit canvas when last layer is loaded
-                self.updateEditCanvasFromSelectedPreviewCanvas();  
-              }
-            }
-            self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
+        this.loadAssetAsync(frameID, layerID);
+      }
+    }
+  }
+
+  loadFramAssync(frameID){
+    let c2 = this.props.asset.content2;
+    let layerCount = c2.layerParams.length;
+    this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
+    for(let layerID=layerCount-1; layerID>=0; layerID--){
+      this.loadAssetAsync(frameID, layerID);
+    }
+  }
+
+  loadAssetAsync(frameID, layerID){
+    let c2 = this.props.asset.content2;
+    this.previewCtxArray[layerID].clearRect(0,0, c2.width, c2.height); // have to clear previewcanvases here because some frameData are empty
+    if(!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) return;
+    let dataURI = c2.frameData[frameID][layerID];
+    if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+      _img = new Image;
+      _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
+      _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
+      let self = this;
+      _img.onload = function(e){            
+        let loadedImage = e.target;
+        // console.log(self.state.selectedFrameIdx);
+        if(loadedImage.frameID === self.state.selectedFrameIdx){          
+          self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
+          if(loadedImage.layerID === 0){
+            // update edit canvas when bottom layer is loaded
+            self.updateEditCanvasFromSelectedPreviewCanvas(loadedImage.frameID);  
           }
-          _img.src = dataURI;
         }
-        else {
-          // TODO: May need some error indication here
-          this.updateEditCanvasFromSelectedPreviewCanvas();
+        if(!c2.layerParams[loadedImage.layerID].isHidden){ 
+          self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
         }
       }
+      _img.src = dataURI;
+    }
+    else {
+      // TODO: May need some error indication here
+      this.updateEditCanvasFromSelectedPreviewCanvas();
     }
   }
 
@@ -305,6 +334,8 @@ export default class EditGraphic extends React.Component {
     this.editCtx.msImageSmoothingEnabled = this.checked
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
     this.frameCtxArray[this.state.selectedFrameIdx].clearRect(0, 0, c2.width, c2.height);
+
+    // console.log(this.state.selectedFrameIdx);
 
     // draws all layers on edit canvas and layer canvas
     for(let i=this.previewCanvasArray.length-1; i>=0; i--){
@@ -595,42 +626,6 @@ export default class EditGraphic extends React.Component {
 // Add/Select/Remove etc animation frames
 
 
-  // handleAddFrame()
-  // {
-  //   if (!this.props.canEdit)
-  //   { 
-  //     this.props.editDeniedReminder()
-  //     return
-  //   }
-
-  //   this.doSaveStateForUndo("Add Frame")
-  //   let fN = this.props.asset.content2.frameNames
-  //   let newFrameName = "Frame " + (fN.length+1).toString()
-  //   fN.push(newFrameName)
-  //   this.props.asset.content2.frameData.push([])
-  //   this.handleSave('Add frame to graphic')
-  //   this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-  // }
-
-  // handleAddLayer(){
-  //   if (!this.props.canEdit)
-  //   { 
-  //     this.props.editDeniedReminder();
-  //     return;
-  //   }
-  //   this.doSaveStateForUndo("Add Layer");
-  //   let c2 = this.props.asset.content2;
-  //   let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
-  //   c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
-  //   let fD = c2.frameData;
-  //   for(let i; i<fD.length; i++){
-  //     fD[i][lN.length-1] = null;
-  //   }
-  //   this.handleSave('Add layer to graphic');
-  //   this.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-  // }
-
-
   doSwapCanvases(i,j)
   {
     if (!this.props.canEdit)
@@ -640,50 +635,116 @@ export default class EditGraphic extends React.Component {
     }
         
     let c2 = this.props.asset.content2
-    var tmp0 = this.previewCtxArray[i].getImageData(0,0, c2.width, c2.height)
-    var tmp1 = this.previewCtxArray[j].getImageData(0,0, c2.width, c2.height)
-    this.previewCtxArray[j].putImageData(tmp0, 0, 0)
-    this.previewCtxArray[i].putImageData(tmp1, 0, 0)
+    var tmp0 = i.getImageData(0,0, c2.width, c2.height)
+    var tmp1 = j.getImageData(0,0, c2.width, c2.height)
+    j.putImageData(tmp0, 0, 0)
+    i.putImageData(tmp1, 0, 0)
   }
 
 
-  handleMoveFrameUp(currentIdx)
-  {
+  // handleMoveFrameUp(currentIdx)
+  // {
+  //   if (!this.props.canEdit)
+  //   { 
+  //     this.props.editDeniedReminder()
+  //     return
+  //   }
+
+  //   let c2 = this.props.asset.content2
+  //   let fN = c2.frameNames
+
+  //   if (currentIdx > 0)
+  //   {
+  //     this.doSaveStateForUndo("Move Frame Up");
+
+  //     [ fN[currentIdx],  fN[currentIdx-1] ] =  [  fN[currentIdx-1],  fN[currentIdx] ]
+  //     this.doSwapCanvases(currentIdx, currentIdx-1)
+  //     this.handleSave(`Change frame order`)
+  //     this.handleSelectFrame(currentIdx-1)
+  //     this.forceUpdate()
+  //   }
+  // }
+
+  // handleMoveFrameDown(currentIdx)
+  // {
+  //   let c2 = this.props.asset.content2
+  //   let fN = c2.frameNames
+
+  //   if (currentIdx < this.previewCanvasArray.length-1)
+  //   {
+  //     this.doSaveStateForUndo("Move Frame Down");
+  //     [ fN[currentIdx],  fN[currentIdx+1] ] =  [  fN[currentIdx+1],  fN[currentIdx] ]
+  //     this.doSwapCanvases(currentIdx, currentIdx+1)
+  //     this.handleSave(`Change frame order`)
+  //     this.handleSelectFrame(currentIdx+1)
+  //     this.forceUpdate()     // Needed since the Reactivity doesn't look down this far (true?)
+  //   }
+  // }
+
+  frameMoveLeft(frameID){
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+    if(frameID <= 0){
+      return;
+    } 
+
+    let c2 = this.props.asset.content2
+
+    let tmpName = c2.frameNames[frameID];
+    c2.frameNames[frameID] = c2.frameNames[frameID-1];
+    c2.frameNames[frameID-1] = tmpName;
+
+    let tmpData = c2.frameData[frameID];
+    c2.frameData[frameID] = c2.frameData[frameID-1];
+    c2.frameData[frameID-1] = tmpData;
+
+    this.doSwapCanvases(this.frameCtxArray[frameID], this.frameCtxArray[frameID-1]);
+    this.handleSave(`Change frame order`, true);
+  }
+
+  frameMoveRight(frameID){
     if (!this.props.canEdit)
     { 
       this.props.editDeniedReminder()
       return
     }
 
-    let c2 = this.props.asset.content2
-    let fN = c2.frameNames
+    let c2 = this.props.asset.content2;
+    if(frameID >= c2.frameNames.length-1){
+      return;
+    } 
 
-    if (currentIdx > 0)
-    {
-      this.doSaveStateForUndo("Move Frame Up");
+    let tmpName = c2.frameNames[frameID];
+    c2.frameNames[frameID] = c2.frameNames[frameID+1];
+    c2.frameNames[frameID+1] = tmpName;
 
-      [ fN[currentIdx],  fN[currentIdx-1] ] =  [  fN[currentIdx-1],  fN[currentIdx] ]
-      this.doSwapCanvases(currentIdx, currentIdx-1)
-      this.handleSave(`Change frame order`)
-      this.handleSelectFrame(currentIdx-1)
-      this.forceUpdate()
-    }
+    let tmpData = c2.frameData[frameID];
+    c2.frameData[frameID] = c2.frameData[frameID+1];
+    c2.frameData[frameID+1] = tmpData;
+
+    this.doSwapCanvases(this.frameCtxArray[frameID], this.frameCtxArray[frameID+1]);
+    this.handleSave(`Change frame order`, true);
   }
 
-  handleMoveFrameDown(currentIdx)
-  {
-    let c2 = this.props.asset.content2
-    let fN = c2.frameNames
-
-    if (currentIdx < this.previewCanvasArray.length-1)
-    {
-      this.doSaveStateForUndo("Move Frame Down");
-      [ fN[currentIdx],  fN[currentIdx+1] ] =  [  fN[currentIdx+1],  fN[currentIdx] ]
-      this.doSwapCanvases(currentIdx, currentIdx+1)
-      this.handleSave(`Change frame order`)
-      this.handleSelectFrame(currentIdx+1)
-      this.forceUpdate()     // Needed since the Reactivity doesn't look down this far (true?)
+  insertFrameAfter(frameID, doCopy){
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
     }
+
+    let c2 = this.props.asset.content2;
+    c2.frameNames.splice(frameID+1, 0, "Frame "+(frameID+1));
+    c2.frameData.splice(frameID+1, 0, []);
+    for(let i=0; i<c2.layerParams.length; i++){
+      let tmp = doCopy ? c2.frameData[frameID][i] : null;
+      c2.frameData[frameID+1].push(tmp);
+    }
+    this.handleSave(`Insert frame`, true);
+
   }
 
 
@@ -695,25 +756,58 @@ export default class EditGraphic extends React.Component {
       return
     }
     
+    let c2 = this.props.asset.content2;
+
+    this.doSaveStateForUndo("Delete Frame");
+
+    c2.frameNames.splice(idx, 1);
+    c2.frameData.splice(idx, 1);
+    if(this.state.selectedFrameIdx > c2.frameNames.length-1){
+      this.setState({ selectedFrameIdx: c2.frameNames.length-1 });
+    }
+
+    let i = idx
+    while (i < this.frameCtxArray.length-1)
+    {
+      let tmp = this.frameCtxArray[i+1].getImageData(0,0, c2.width, c2.height)
+      this.frameCtxArray[i].putImageData(tmp, 0, 0)
+      i++
+    }
+    this.frameCtxArray.pop();
+    
+    // // Delete Frame seems to provoke a timing issuee where the popup exists while React is destroying it's parents. 
+    // // For now, it seems simplest to hide the popups directly when we delete a frame
+    // let $a = $(ReactDOM.findDOMNode(this))
+    // $a.find('.hazPopup').popup('hide')  
+
+    this.handleSave('Delete frame', true);
+  }
+
+  handleDeleteLayer(idx){
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+
     let c2 = this.props.asset.content2
 
-    this.doSaveStateForUndo("Delete Frame")
+    c2.layerParams.splice(idx, 1);
+    for(let frameID=0; frameID<c2.frameNames.length; frameID++){
+      c2.frameData[frameID].splice(idx, 1);
+    }
 
-    c2.frameNames.splice(idx,1)
-    let i = idx
+    let i = idx;
     while (i < this.previewCanvasArray.length-1)
     {
       let tmp = this.previewCtxArray[i+1].getImageData(0,0, c2.width, c2.height)
       this.previewCtxArray[i].putImageData(tmp, 0, 0)
-      i++
+      i++;
     }
-    
-    // Delete Frame seems to provoke a timing issuee where the popup exists while React is destroying it's parents. 
-    // For now, it seems simplest to hide the popups directly when we delete a frame
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup('hide')  
+    this.previewCanvasArray.pop();
+    // TODO check selected layer idx
 
-    this.handleSave(`Delete frame`)
+    this.handleSave('Delete layer');
   }
 
 
@@ -822,7 +916,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  handleSave(changeText="change graphic")    // TODO(DGOLDS): Maybe _.debounce() this?
+  handleSave(changeText="change graphic", dontSaveFrameData)    // TODO(DGOLDS): Maybe _.debounce() this?
   {
     if (!this.props.canEdit)
     { 
@@ -833,7 +927,8 @@ export default class EditGraphic extends React.Component {
     let asset = this.props.asset;
     let c2    = asset.content2;
 
-    if(this.previewCanvasArray){ // hack for automatic checking and saving old assets to new
+    if(this.previewCanvasArray && !dontSaveFrameData){ // hack for automatic checking and saving old assets to new
+                                                        // dontSaveFrameData - hack when deleting/moving frames then previewCanvases are not updated
       let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerParams.length
       for (let i = 0; i < layerCount; i++) {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')

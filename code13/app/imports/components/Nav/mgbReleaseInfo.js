@@ -15,7 +15,39 @@
 export default mgbReleaseInfo = {
   "releases":
   [ 
+
+    { 
+      "timestamp":     "Fri Jun 10 2016 22:32:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "481"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.navpanel.project",
+          "type":           "feature",
+          "changeName":     "NavPanel for Projects",
+          "changeSummary":  "Extra NavPanel showing Owned and Member-of projects",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Frame ops",
+          "changeSummary":  "Extra operations for frames - delete, move, insert",
+          "otherUrls":      []
+        }
         
+      ]
+    },
+
     { 
       "timestamp":     "Wed Jun 08 2016 21:10:00 GMT-0700 (PDT)",
       

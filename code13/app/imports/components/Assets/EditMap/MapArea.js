@@ -84,8 +84,12 @@ export default class MapArea extends React.Component {
     window.removeEventListener("keyup", this.globalKeyUp);
   }
 
-  removeDots(sin){
-    return sin.replace(/\./gi,'*');
+  removeDots(url){
+    let val = url;
+    if (url.indexOf(location.origin) == 0) {
+      val = val.substr(location.origin.length);
+    }
+    return val.replace(/\./gi,'*');
   }
 
   // TODO: check all usecases and change to data.. as map.map looks confusing and ugly

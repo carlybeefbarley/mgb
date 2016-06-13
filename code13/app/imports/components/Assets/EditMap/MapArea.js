@@ -353,7 +353,6 @@ export default class MapArea extends React.Component {
         }
       }
     }
-
   }
 
   /* camera stuff */

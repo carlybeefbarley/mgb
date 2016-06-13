@@ -1,4 +1,5 @@
 import React from 'react';
+import EditModes from "./EditModes";
 export default class InfoTool extends React.Component {
 
   doPreview() {
@@ -27,6 +28,11 @@ export default class InfoTool extends React.Component {
   enableMode(mode){
     this.props.map.options.mode = mode;
     this.forceUpdate();
+  }
+  enableEraser(){
+    this.enableMode(EditModes.eraser);
+    this.props.map.selection.clear();
+    this.props.map.redrawTilesets();
   }
   render() {
     if(!this.props.map.options.mode){
@@ -93,7 +99,7 @@ export default class InfoTool extends React.Component {
             ><i className="fill icon"></i>
           </button>
           <button className={(this.props.map.options.mode == "eraser" ? "ui button primary" : "ui button")}
-                  onClick={this.enableMode.bind(this, "eraser")}
+                  onClick={this.enableEraser.bind(this)}
                   title="Eraser"
             ><i className="eraser icon"></i>
           </button>

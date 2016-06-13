@@ -98,17 +98,17 @@ const TileHelper = {
         margin = 0;
       }
       // assume that margin and spacing tends to be equal
-      const spacingRows = rows - 1;
+      const spacingColumns = columns - 1;
       // all goes to margin
-      if(extraPixels < spacingRows){
+      if(extraPixels < spacingColumns){
         // TODO: divide margin with 2?
         margin = extraPixels;
         spacing = 0;
       }
       // all goes to spacing
-      else if(extraPixels % spacingRows == 0){
+      else if(extraPixels % spacingColumns == 0){
         // TODO: divide margin with 2?
-        spacing = extraPixels / spacingRows;
+        spacing = extraPixels / spacingColumns;
         margin = 0;
       }
       else{

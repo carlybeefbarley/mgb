@@ -55,6 +55,10 @@ export default class TileSet extends React.Component {
   getTilePosInfo(e){
     const map = this.map;
     const ts = map.data.tilesets[map.activeTileset];
+    // image has not been loaded
+    if(!ts){
+      return;
+    }
     const pos = new TileSelection();
     pos.updateFromMouse(e, ts, this.spacing);
     return pos;
@@ -79,6 +83,10 @@ export default class TileSet extends React.Component {
   selectRectangle(e, clear){
     const map = this.map;
     const ts = map.data.tilesets[map.activeTileset];
+    // new map!
+    if(!ts){
+      return;
+    }
     const pos = this.getTilePosInfo(e.nativeEvent);
 
     if(!e.ctrlKey){
@@ -219,7 +227,7 @@ export default class TileSet extends React.Component {
     if(assetJson){
       asset = JSON.parse(assetJson);
     }
-    if(asset.kind != "graphic"){
+    if(asset && asset.kind != "graphic"){
       return;
     }
     const url = e.dataTransfer.getData("link");

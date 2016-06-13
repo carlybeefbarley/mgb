@@ -4,6 +4,7 @@ import Tile from '../Tile.js';
 import TileHelper from '../TileHelper.js';
 import TilesetControls from "./TilesetControls.js";
 import TileSelection from "./TileSelection.js";
+import EditModes from "./EditModes.js";
 
 export default class TileSet extends React.Component {
   /* lifecycle functions */
@@ -230,6 +231,10 @@ export default class TileSet extends React.Component {
   }
 
   onMouseDown(e){
+    this.map.options.mode = EditModes.stamp;
+    // update active tool
+    this.map.refs.tools.forceUpdate();
+
     if(!e.ctrlKey){
       this.map.clearActiveSelection();
     }

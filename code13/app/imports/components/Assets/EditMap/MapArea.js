@@ -326,7 +326,7 @@ export default class MapArea extends React.Component {
     const layer = this.map.layers[this.activeLayer];
 
     if(e.ctrlKey || this.options.mode == "eraser"){
-      layer.data[tileIndex] = 0;
+      layer.data[tileInfo.id] = 0;
       return;
     }
     else{
@@ -609,7 +609,7 @@ export default class MapArea extends React.Component {
         onContextMenu={(e)=>{e.preventDefault(); return false;}}
         onWheel={this.handleOnWheel.bind(this)}
         >
-        <MapTools map={this} />
+        <MapTools map={this} ref="tools" />
         {this.renderMap()}
       </div>
     )

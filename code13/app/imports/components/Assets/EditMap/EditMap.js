@@ -10,22 +10,6 @@ export default class EditMap extends React.Component {
       tools: {}
     };
   }
-
-  // static PropTypes = {
-  //   asset: PropTypes.object
-  // }
-
-
-  // Map asset - Data format:
-  //
-  // content2.src                     // String with Tiled Map Editor (mapeditor.org) exported in JSON format
-  //
-  // We are using the https://www.npmjs.com/package/react-ace control to Edit
-  //
-  // React Callback: componentDidMount()
-  componentDidMount() {
-
-  }
   
   handleOnChange(updatedSourceCodeAsString) {
     let newC2 = { src: updatedSourceCodeAsString };

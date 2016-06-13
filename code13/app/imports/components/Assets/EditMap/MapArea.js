@@ -4,6 +4,7 @@ import TileMapLayer from "./TileMapLayer.js";
 import GridLayer from "./GridLayer.js";
 import TileSet from "./Tools/TileSet.js";
 import Layers from "./Tools/Layers.js";
+import MapTools from "./Tools/MapTools.js";
 import TileHelper from "./TileHelper.js";
 
 export default class MapArea extends React.Component {
@@ -127,7 +128,9 @@ export default class MapArea extends React.Component {
     }
     return this.meta.options.camera;
   }
-
+  get options(){
+    return this.meta.options;
+  }
   /* TODO: browser compatibility - IE don't have TextDecoder - https://github.com/inexorabletash/text-encoding*/
   xmlToJson(xml){
     window.xml = xml;
@@ -541,17 +544,7 @@ export default class MapArea extends React.Component {
         onContextMenu={(e)=>{e.preventDefault(); return false;}}
         onWheel={this.handleOnWheel.bind(this)}
         >
-        <button className="ui primary button"
-          >Drop here to import</button>
-        <button className="ui button"
-          onClick={this.togglePreviewState.bind(this)}
-          >Preview</button>
-        <button className="ui primary button"
-                onClick={(e)=>{this.props.parent.handleSave(e);}}
-          >Save</button>
-        <button className="ui primary button"
-                onClick={()=>{this.resetCamera();}}
-          >Reset camera</button>
+        <MapTools map={this} />
         {this.renderMap()}
       </div>
     )

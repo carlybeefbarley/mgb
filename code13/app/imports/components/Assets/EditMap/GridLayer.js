@@ -9,13 +9,16 @@ export default class TileMapLayer extends React.Component {
     this.ctx = null;
   }
   componentDidMount(){
-    this.adjustCanvas();
     const canvas = this.refs.canvas;
     this.ctx = canvas.getContext("2d");
+    this.adjustCanvas();
     this.drawGrid();
     this.alignToActiveLayer();
   }
-
+  sync(){
+    this.adjustCanvas();
+    this.drawGrid();
+  }
   // align grid to active layer in preview mode
   shouldComponentUpdate(){
     const map = this.props.map;
@@ -66,7 +69,8 @@ export default class TileMapLayer extends React.Component {
   }
 
   drawGrid (){
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.adjustCanvas();
+    //this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     const camera = this.props.map.camera;
     if(this.ctx.setLineDash){
       this.ctx.setLineDash([5, 3]);
@@ -81,34 +85,47 @@ export default class TileMapLayer extends React.Component {
 
     // vertical lines
     let i=0;
-    const width = Math.min(Math.floor(this.ctx.canvas.width /data.tilewidth), data.width );
-    for(; i< width / camera.zoom; i++){
+    const width = Math.floor(this.ctx.canvas.width /data.tilewidth);
+    for(; i<= width / camera.zoom; i++){
       this.ctx.moveTo(i * data.tilewidth * camera.zoom + 0.5 + offsetX, -data.tileheight + offsetY);
       this.ctx.lineTo(i * data.tilewidth * camera.zoom + 0.5 + offsetX, this.ctx.canvas.height);
     }
-    this.ctx.moveTo(i * data.tilewidth * camera.zoom - 0.5 + offsetX, -data.tileheight + offsetY);
-    this.ctx.lineTo(i * data.tilewidth * camera.zoom - 0.5 + offsetX, this.ctx.canvas.height);
+    //this.ctx.moveTo(i * data.tilewidth * camera.zoom - 0.5 + offsetX, -data.tileheight + offsetY);
+    //this.ctx.lineTo(i * data.tilewidth * camera.zoom - 0.5 + offsetX, this.ctx.canvas.height);
 
     // horizontal lines
     i=0;
-    const height = Math.min(Math.floor(this.ctx.canvas.height /data.tileheight), data.height);
-    for(; i<height / camera.zoom; i++){
+    const height = Math.floor(this.ctx.canvas.height /data.tileheight);
+    for(; i<= height / camera.zoom; i++){
       this.ctx.moveTo(-data.tilewidth + offsetX, i * data.tileheight * camera.zoom + 0.5 + offsetY);
       this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight * camera.zoom + 0.5 + offsetY);
     }
-    this.ctx.moveTo(-data.tilewidth + offsetX, i * data.tileheight * camera.zoom - 0.5 + offsetY);
-    this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight * camera.zoom - 0.5 + offsetY);
+    //this.ctx.moveTo(-data.tilewidth + offsetX, i * data.tileheight * camera.zoom - 0.5 + offsetY);
+    //this.ctx.lineTo(this.ctx.canvas.width, i * data.tileheight * camera.zoom - 0.5 + offsetY);
 
     this.ctx.strokeStyle="black";
     this.ctx.stroke();
 
-
     this.ctx.beginPath();
-    this.ctx.moveTo(0.5 + camera.x * camera.zoom, 0);
-    this.ctx.lineTo(0.5 + camera.x * camera.zoom, this.ctx.canvas.height);
 
-    this.ctx.moveTo(0,  0.5 + camera.y * camera.zoom);
-    this.ctx.lineTo(this.ctx.canvas.width, 0.5 + camera.y * camera.zoom);
+    const startx = 0.5 + camera.x * camera.zoom;
+    const endx = 0.5 + (camera.x + data.width * data.tilewidth) * camera.zoom;
+
+    const starty = 0.5 + camera.y * camera.zoom;
+    const endy = 0.5 + (camera.y + data.height * data.tileheight) * camera.zoom;
+
+
+    this.ctx.moveTo(startx, Math.min(starty, camera.y * camera.zoom));
+    this.ctx.lineTo(startx, Math.min(this.ctx.canvas.height, endy));
+    this.ctx.moveTo(endx, Math.min(starty, camera.y * camera.zoom));
+    this.ctx.lineTo(endx, Math.min(this.ctx.canvas.height, endy));
+
+
+    this.ctx.moveTo(Math.min(startx, camera.x * camera.zoom), starty);
+    this.ctx.lineTo(Math.min(endx, this.ctx.canvas.width), starty);
+    this.ctx.moveTo(Math.min(startx, camera.x * camera.zoom), endy);
+    this.ctx.lineTo(Math.min(endx, this.ctx.canvas.width), endy);
+
     if(this.ctx.setLineDash){
       this.ctx.setLineDash([]);
     }

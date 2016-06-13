@@ -291,8 +291,13 @@ export default class EditGraphic extends React.Component {
 
   loadAssetAsync(frameID, layerID){
     let c2 = this.props.asset.content2;
-    this.previewCtxArray[layerID].clearRect(0,0, c2.width, c2.height); // have to clear previewcanvases here because some frameData are empty
-    if(!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) return;
+    if(!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) { // manage empty frameData cases
+      // console.log('empty framedata', frameID, layerID)
+      if(frameID === this.state.selectedFrameIdx){
+        this.previewCtxArray[layerID].clearRect(0,0, c2.width, c2.height);
+      }
+      return;
+    }
     let dataURI = c2.frameData[frameID][layerID];
     if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
       _img = new Image;
@@ -302,7 +307,8 @@ export default class EditGraphic extends React.Component {
       _img.onload = function(e){            
         let loadedImage = e.target;
         // console.log(self.state.selectedFrameIdx);
-        if(loadedImage.frameID === self.state.selectedFrameIdx){          
+        if(loadedImage.frameID === self.state.selectedFrameIdx){       
+          self.previewCtxArray[loadedImage.layerID].clearRect(0,0, c2.width, c2.height); 
           self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
           if(loadedImage.layerID === 0){
             // update edit canvas when bottom layer is loaded

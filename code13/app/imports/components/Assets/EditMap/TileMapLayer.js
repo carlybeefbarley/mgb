@@ -1,6 +1,8 @@
 import React from 'react';
 import Tile from './Tile.js';
 import TileHelper from "./TileHelper.js";
+import TileSelection from "./Tools/TileSelection.js";
+import EditModes from "./Tools/EditModes.js";
 
 export default class TileMapLayer extends React.Component {
   /* lifecycle functions */
@@ -12,7 +14,6 @@ export default class TileMapLayer extends React.Component {
     this.kind = "tilemaplayer";
     this._mup = this.handleMouseUp.bind(this);
   }
-
   componentDidMount(){
     this.adjustCanvas();
     const canvas = this.refs.canvas;
@@ -49,10 +50,12 @@ export default class TileMapLayer extends React.Component {
   }
 
   changeTile (ere, e = ere.nativeEvent, force = false) {
+
     // do nothing if layer is not visible
     if(!this.options.visible){
       return;
     }
+
     if(!this.prevTile){
       this.highlightTiles(ere, e);
     }
@@ -62,9 +65,22 @@ export default class TileMapLayer extends React.Component {
       this.mouseDown = false;
       return;
     }
-    let index = this.prevTile.id;
-    this.props.onClick(e, index);
+    this.props.onClick(e, this.prevTile);
     this.highlightTiles(ere, e, true);
+  }
+
+  getTilePosInfo(e){
+    const map = this.props.map;
+    const ts = map.data.tilesets[map.activeTileset];
+    const pos = new TileSelection();
+    pos.updateFromPos(
+      (e.offsetX + map.camera.x) * map.camera.zoom,
+      (e.offsetY + map.camera.y) * map.camera.zoom,
+      map.data.tilewidth, map.data.tileheight, 0);
+
+    pos.id = pos.getMapId(map.data);
+    map.selection.push(pos);
+    return pos;
   }
 
   // large maps are still slow on movement..
@@ -85,16 +101,6 @@ export default class TileMapLayer extends React.Component {
     if(!d) {
       return;
     }
-    /* TODO break loop if we reach out of bounds
-      change to 2 loops x/y..
-      xxxxxxxxxxx
-      xxxoooooxxx
-      xxxoooooxxx
-      xxxoooooxxx
-      xxxxxxxxxxx
-      skip x
-    */
-    let i=0;
 
     let skipy = Math.floor(-camera.y / mapData.tileheight);
     // at least for now
@@ -109,6 +115,7 @@ export default class TileMapLayer extends React.Component {
     endx = Math.min(endx, mapData.width);
     endx += 1;
 
+    let i=0;
     for (let y = skipy; y < endy; y++) {
       for(let x = skipx; x < endx; x++) {
         i = x + y * mapData.height;
@@ -125,7 +132,6 @@ export default class TileMapLayer extends React.Component {
       }
     }
   }
-
   drawTile(pal, pos, spacing = 0, clear = false){
     const map = this.props.map;
     const camera = map.camera;
@@ -139,7 +145,8 @@ export default class TileMapLayer extends React.Component {
     if(clear){
       this.ctx.clearRect(
         drawX, drawY,
-        drawW, drawH
+        map.data.tilewidth * camera.zoom,
+        map.data.tileheight * camera.zoom
       );
     }
     this.ctx.drawImage(pal.image,
@@ -185,7 +192,7 @@ export default class TileMapLayer extends React.Component {
     }
     pos.id = pos.x + pos.y * layer.width;
 
-    if(this.prevTile){
+    if(this.prevTile && (map.options.randomMode || map.selection.length < 2)){
       if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
         return;
       }
@@ -198,22 +205,51 @@ export default class TileMapLayer extends React.Component {
       }
     }
 
-    //TODO: draw full selection with multiple tiles
-    const sel = map.selection[0];
-    if(sel) {
-      this.ctx.globalAlpha = 0.6;
-      const pal = palette[sel];
-      this.drawTile(pal, pos, map.spacing);
-      this.ctx.globalAlpha = 1;
+    let sel;
+    if(map.options.randomMode){
+      sel = map.selection.random();
+      if(sel) {
+        this.ctx.globalAlpha = 0.6;
+        const pal = palette[sel.gid];
+        this.drawTile(pal, pos, map.spacing);
+        this.ctx.globalAlpha = 1;
+      }
+      this.highlightTile(pos, "rgba(0,0,255,0.3)", ts);
     }
-    this.highlightTile(pos, "rgba(0,0,255,0.3)");
+    else if( map.selection.length){
+      // clear all brefore drawing
+      // TODO: clear only selected tiles?
+      this.drawTiles();
+      let tpos = new TileSelection(pos);
+      const ox = map.selection[0].x;
+      const oy = map.selection[0].y;
+      // TODO: this is messy and repeats for this layer an map in general - move to external source or smth like that
+      // as highlight and map modify uses same logic only on different conditions
+      for(let i=0; i<map.selection.length; i++){
+        sel = map.selection[i];
+
+        if(sel) {
+          tpos.x = pos.x + sel.x - ox;
+          tpos.y = pos.y + sel.y - oy;
+
+          this.ctx.globalAlpha = 0.6;
+          const pal = palette[sel.gid];
+          if(pal){
+            this.drawTile(pal, tpos, map.spacing);
+          }
+          this.highlightTile(tpos, "rgba(0,0,255,0.3)", ts);
+          this.ctx.globalAlpha = 1;
+        }
+      }
+    }
 
     this.prevTile = pos;
 
   }
-  highlightTile(pos, fillStyle){
+  highlightTile(pos, fillStyle, ts){
     const map = this.props.map;
     const camera = map.camera;
+    let width, height;
     // make little bit smaller highlight - while zooming - alpha bleeds out a little bit
     const drawX = (pos.x * (map.data.tilewidth  + map.spacing) + camera.x) * camera.zoom;
     const drawY = (pos.y * (map.data.tileheight + map.spacing) + camera.y) * camera.zoom + 0.5;
@@ -253,6 +289,15 @@ export default class TileMapLayer extends React.Component {
       this.changeTile(e, e.nativeEvent, true);
     }
     else{
+      const map = this.props.map;
+      const layer = map.data.layers[map.activeLayer];
+      if(map.options.mode == EditModes.fill){
+        map.selection.clear();
+        const pos = this.getTilePosInfo(e.nativeEvent);
+        pos.gid = layer.data[pos.id];
+        map.selection.push(pos);
+        console.log("pick: ", pos);
+      }
       this.highlightTiles(e);
     }
   }

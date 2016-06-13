@@ -63,8 +63,8 @@ export default class LayerControls extends React.Component {
   }
 
   render() {
-    const highlihgtClassName = `ui floated icon button ${this.options.highlightActiveLayers ? 'active' : ''}`;
-    const showGridClassName = `ui floated icon button ${this.options.showGrid ? 'active' : ''}`;
+    const highlihgtClassName = `ui floated icon button ${this.options.highlightActiveLayers ? 'primary' : ''}`;
+    const showGridClassName = `ui floated icon button ${this.options.showGrid ? 'primary' : ''}`;
     // TODO: ask David to get nice highligh layer icon - atm - paste was closest I could find
     return (
       <div className="ui mini">

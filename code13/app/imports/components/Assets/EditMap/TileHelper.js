@@ -113,8 +113,8 @@ const TileHelper = {
       }
       else{
         // TODO: divide margin with 2?
-        margin = extraPixels % spacingRows;
-        spacing = (extraPixels - extraPixels % spacingRows) / spacingRows;
+        margin = extraPixels % spacingColumns;
+        spacing = (extraPixels - extraPixels % spacingColumns) / spacingColumns;
       }
     }
 

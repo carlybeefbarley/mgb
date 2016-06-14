@@ -322,7 +322,7 @@ export default class MapArea extends React.Component {
   }
 
 
-  /* TODO: move TileLayer specific function to TileLayer - map will handle all sorts of layers */
+  /* TODO: move TileLayer specific functions to TileLayer - map will handle all sorts of layers */
   /* TODO: fill from selection */
   /* This is main Edit constroller.. everything related with map editing starts from here!!! */
   handleMapClicked(e, tileInfo){
@@ -337,7 +337,9 @@ export default class MapArea extends React.Component {
       let sel = 0;
       if(this.options.randomMode){
         sel = this.selection.random();
-        layer.data[tileInfo.id] = sel.gid;
+        if(sel){
+          layer.data[tileInfo.id] = sel.gid;
+        }
       }
       else if( this.selection.length){
         let tpos = new TileSelection(tileInfo);

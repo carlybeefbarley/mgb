@@ -85,7 +85,8 @@ Meteor.methods({
     check(data, _.omit(schema, '_id'));
 
     var docId = Activity.insert(data);
-    console.log(`  [Activity.log]  #${docId}  ${data.activityType}  by: ${data.byUserName}   from: ${data.byIpAddress}`);
+    if (Meteor.isServer)
+      console.log(`  [Activity.log]  #${docId}  ${data.activityType}  by: ${data.byUserName}   from: ${data.byIpAddress}`);
     return docId;
   }
   

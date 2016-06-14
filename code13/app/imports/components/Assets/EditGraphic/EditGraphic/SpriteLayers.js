@@ -264,7 +264,8 @@ export default class SpriteLayers extends React.Component {
 				      				Move Right
 				      			</div>
 				      			<div className="divider"></div>
-				      			<div onClick={this.deleteFrame.bind(this, idx)} className="item">
+				      			<div className={"item " + (this.props.content2.frameData.length === 1 ? "disabled" : "")}
+				      				onClick={this.deleteFrame.bind(this, idx)}>
 				      				<i className="remove icon"></i>
 				      				Delete
 				      			</div>

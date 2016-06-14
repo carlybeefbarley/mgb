@@ -683,9 +683,13 @@ export default class EditGraphic extends React.Component {
       this.props.editDeniedReminder()
       return
     }
-    
-    let c2 = this.props.asset.content2;
 
+    let c2 = this.props.asset.content2;
+    if(c2.frameData.length === 1){
+      alert("Can't delete sole frame");
+      return;
+    }
+    
     this.doSaveStateForUndo("Delete Frame");
 
     c2.frameNames.splice(idx, 1);
@@ -714,6 +718,12 @@ export default class EditGraphic extends React.Component {
     }
 
     let c2 = this.props.asset.content2
+    if(c2.layerParams.length === 1){
+      alert("Can't delete sole layer");
+      return;
+    }
+
+    this.doSaveStateForUndo("Delete Layer");
 
     c2.layerParams.splice(idx, 1);
     // change selectedLayer if it is last and beeing removed

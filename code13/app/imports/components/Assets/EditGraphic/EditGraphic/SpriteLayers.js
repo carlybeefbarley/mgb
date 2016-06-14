@@ -137,6 +137,20 @@ export default class SpriteLayers extends React.Component {
 		this.props.EditGraphic.frameMoveRight(frameID);
 	}
 
+
+	thOnDragStart(frameID){
+		console.log('drag start', frameID);
+	}
+
+	thOnDragEnd(frameID){
+		console.log('drag end', frameID);
+	}
+
+	thOnDragEnter(frameID){
+		console.log('drag enter', frameID);
+	}
+
+
 	deleteLayer(layerID){
 		this.props.EditGraphic.handleDeleteLayer(layerID);
 	}
@@ -230,9 +244,19 @@ export default class SpriteLayers extends React.Component {
 	            </th>
 	            {
 	            	_.map(c2.frameNames, (frameName, idx) => { return (
-				      <th key={"th_"+idx} width="10px">
-				      	<div className="ui simple dropdown">
-				      		<div className="text">{idx+1}</div>
+				      <th key={"th_"+idx} 
+				      	width="32px"
+				      	className="frameTH"
+				      	
+				      	>
+				      	<div className="ui simple dropdown"
+				      	onDragStart={this.thOnDragStart.bind(this, idx)}
+				      	onDragEnd={this.thOnDragEnd.bind(this, idx)}
+				      	onDragEnter={this.thOnDragEnter.bind(this, idx)}
+
+
+				      	>
+				      		{idx+1}
 				      		<div className="menu">
 				      			<div className="item">
 				      				<i className="setting icon"></i>

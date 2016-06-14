@@ -77,7 +77,7 @@ export default class Layer extends React.Component {
           </td>
           {
             _.map(this.props.frameNames, (frameName, frameID) => { return (
-              <td onClick={this.selectFrame.bind(this, frameID)}
+              <td className="selectable" onClick={this.selectFrame.bind(this, frameID)}
                 key={this.props.idx+"_"+frameID}
                 className={this.props.isSelected && this.props.selectedFrame === frameID ? "highlight" : ""}>
               </td>)  

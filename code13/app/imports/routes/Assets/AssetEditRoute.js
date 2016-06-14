@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { utilPushTo } from '../QLink';
+import QLink, { utilPushTo } from '../QLink';
 import reactMixin from 'react-mixin';
 
 import {Azzets} from '../../schemas';
@@ -16,8 +16,26 @@ import {logActivity} from '../../schemas/activity';
 import {snapshotActivity} from '../../schemas/activitySnapshots.js';
 import {ActivitySnapshots, Activity} from '../../schemas';
 
+import InlineEdit from 'react-edit-inline';
 
-// TODO: Add a Leave hook for unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
+
+
+// This AssetEditRoute serves the following objectives
+// 1. Provide a reactive this.data.___ for the data needed to view/edit this Asset
+// 2. Provide a UI header that shows the important metadata about the asset being shown/edited. These include
+//      Essential:  
+//                      Asset Owner (immutable)
+//                      Asset Projects (mutable)
+//                      Asset Kind (immutable)
+//                      Asset Name (mutable)
+//                      ReadOnly / Writeable indicator (changes via project membership)
+//                      Indicate current active viewers/editors of same asset (dynamic) [Could use FlexPanel to show those users]
+//                      Pinned/Unpinned (mutable)
+//                      Asset Change history (dynamic) [Could use FlexPanel to see history]
+//
+// 3. Provide functions for sub components to call which will store the Asset
+// 4. (TODO) Provide "Leave hooks" for warning about unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
+
 
 
 export default AssetEditRoute = React.createClass({
@@ -41,27 +59,12 @@ export default AssetEditRoute = React.createClass({
       utilPushTo(this.context.urlLocation.query, "/user/" + this.data.asset.ownerId + "/asset/" + this.data.asset._id)
   },
 
-
   componentDidMount() {
-    window.addEventListener('keydown', this.listenForEnterOrEsc)
     this.checkForRedirect()
   },
 
   componentDidUpdate() {
     this.checkForRedirect()
-  },
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.listenForEnterOrEsc)
-    this.handleAssetNameChangeInteractive()     // In case we have any pending saves    
-  },
-  
-  listenForEnterOrEsc: function(e) {
-    e = e || window.event;
-    if (e.keyCode === 13) 
-      this.handleAssetNameChangeInteractive();
-    else if (e.keyCode === 27 && !this.data.loading)
-      this.refs.assetNameInput.value = this.data.asset.name
   },
 
   getMeteorData: function() {
@@ -89,15 +92,57 @@ export default AssetEditRoute = React.createClass({
            this.data.asset.ownerId === this.props.currUser._id
   },
 
-  render: function() {
-    // One Asset provided via getMeteorData()
-    let asset = this.data.asset;
-    if (!asset || this.data.loading)
-      return null;
 
-    const canEd = this.canEdit();
-    
-    var nameFieldHighlight = (canEd && (!asset.name || asset.name === "")) ? " error" : "";
+  fieldChanged: function(data) {
+    // data = { description: "New validated text comes here" }
+    // Update your model from here    
+    if (this.validateEnteredAssetName(data.name))
+      this.handleAssetNameChange(data.name)
+  },
+
+
+  validateEnteredAssetName: function(text) {
+    const NameErrStr = AssetKinds.validateAssetName(text)
+    if (NameErrStr !== null)
+      console.log(`Name "${text}" not valid: ${NameErrStr}`)
+    return NameErrStr === null ? true : false
+  },
+
+
+  /** This used by render() to render something like...
+   *      OwnerName [> Project(s)] > Kind > AssetName
+   * @param   a is the Asset (typically from this.data.asset)
+   * 
+   */
+  renderAssetPathElements(a, canEdit) {
+    const oName = a.dn_ownerName || `User#${a.ownerId}`
+    const editOrView = canEdit ? <span style={{color: "green"}}>Edit</span> : <span>View</span>
+    return <span>
+            {editOrView}&nbsp;&nbsp;
+            <QLink to={`/user/${a.ownerId}`}>{oName}</QLink>
+            &nbsp;>&nbsp;
+            <QLink to={`/user/${a.ownerId}/assets`}>Assets</QLink>
+            &nbsp;>&nbsp;
+            <QLink to={`/user/${a.ownerId}/assets`} query={{kinds: a.kind}}>
+              { AssetKinds.getNamePlural(a.kind) }
+            </QLink>
+            &nbsp;>&nbsp;
+            <InlineEdit
+              validate={this.validateEnteredAssetName}
+              activeClassName="editing"
+              text={a.name || "(Type asset name here)"}
+              paramName="name"
+              change={this.fieldChanged}
+              isDisabled={!canEdit}
+              />            
+          </span>
+  },
+
+
+  render: function() {    
+    const asset = this.data.asset         // One Asset provided via getMeteorData()
+    if (!asset || this.data.loading) return null
+    const canEd = this.canEdit()    
 
     return (
       <div className="ui padded grid">
@@ -109,22 +154,14 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui five wide column">
-          <div className={"ui small left action input fluid" + nameFieldHighlight}>
-            <div className="ui small teal icon button">
-              <div className="ui small label teal">Edit {asset.kind}</div>
-              <i className={AssetKinds.getIconClass(asset.kind)}></i>
-            </div>
-            <input ref="assetNameInput"
-                   disabled={!canEd}
-                   placeholder={"Unnamed " + asset.kind}
-                   defaultValue={asset.name}
-                   onBlur={this.handleAssetNameChangeInteractive}></input>
-          </div>
+        <div className="ui six wide column">
+          { this.renderAssetPathElements(asset, canEd) }
         </div>
         
         <div className="ui five wide column">
-          { /* We use this.props.params.assetId since it is available sooner than the asset */ }
+          { /* We use this.props.params.assetId since it is available sooner than the asset 
+             * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
+             * */ }
           <AssetActivityDetail 
                         assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
@@ -137,7 +174,7 @@ export default AssetEditRoute = React.createClass({
 
         </div>
 
-        <div className="six wide column">
+        <div className="five wide column">
             <AssetCard
               showHeader={false}
               canEdit={canEd}
@@ -166,20 +203,21 @@ export default AssetEditRoute = React.createClass({
     $('.mgbReadOnlyReminder').transition({ animation: 'tada', duration: '500ms' })
   },
 
-  handleAssetNameChangeInteractive: function() {
-    if (this.refs && this.refs.assetNameInput)      // In case things have been torn down
-    {
-      let newName = this.refs.assetNameInput.value;
 
-      if (newName !== this.data.asset.name) {
-        Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {name: newName}, (err, res) => {
-          if (err) {
-            this.props.showToast(err.reason, 'error')
-          }
-        });
-        
-        logActivity("asset.rename",  `Rename to "${newName}" from `, null, this.data.asset); 
-      }
+  handleAssetNameChange: function(newName) {
+    if (newName !== this.data.asset.name) {
+      Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {name: newName}, (err, res) => {
+        if (err) {
+          this.props.showToast(err.reason, 'error')
+        }
+      });
+      
+      logActivity("asset.rename",  `Rename to "${newName}" from `, null, this.data.asset); 
     }
   }
+  // TODO:  Call snapshotActivity after rename so it will fix up any stale names:
+  //            We would need the most recent passiveActivity which is asset-kind-specific
+  //            so we need to pass down a handler for the asset-specific editors to let us
+  //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use 
+  //            the most recent passive activity 
 })

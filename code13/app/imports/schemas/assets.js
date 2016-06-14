@@ -42,20 +42,26 @@ var schema = {
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const AssetKinds = {
 //  "search":  { name: "Search",  disable: true,  longName: "Search query",    icon: "find", description: "Saved search query" },
-  "palette": { name: "Palette", disable: true,  longName: "Color Palette",   icon: "block layout", description: "Color palette" },
-  "graphic": { name: "Graphic", disable: false, longName: "Graphic",         icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
-  "map":     { name: "Map",     disable: false, longName: "Game Level Map",  icon: "marker", description: "Map/Level used in a game" },
-  "physics": { name: "Physics", disable: true,  longName: "Physics Config",  icon: "rocket", description: "Physics configuration" },
-  "code":    { name: "Code",    disable: false, longName: "Code Script",     icon: "puzzle", description: "Source code script" },
-  "cheatsheet": { name: "Cheatsheet", disable: true, longName: "Cheat Sheet",icon: "student", description: "Cheat Sheet to help reember useful stuff" },
-  "cutscene":{ name: "Cutscene",disable: true,  longName: "Cut Scene",       icon: "file video outline", description: "Cut scene used in a game" },
-  "audio":   { name: "Audio",   disable: true,  longName: "Audio sound",     icon: "file audio outline", description: "Sound Effect, song, voice etc"},
-  "game":    { name: "Game",    disable: true,  longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
-  "_mgbui":  { name: "MGB UI",  disable: false, longName: "MGB UI Mockup",   icon: "code", description: "HTML using Semantic UI for mocking up MGB UI" },
+  "palette": { name: "Palette", selfPlural: false,  disable: true,  longName: "Color Palette",   icon: "block layout", description: "Color palette" },
+  "graphic": { name: "Graphic", selfPlural: false,  disable: false, longName: "Graphic",         icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
+  "map":     { name: "Map",     selfPlural: false,  disable: false, longName: "Game Level Map",  icon: "marker", description: "Map/Level used in a game" },
+  "physics": { name: "Physics", selfPlural: true,   disable: true,  longName: "Physics Config",  icon: "rocket", description: "Physics configuration" },
+  "code":    { name: "Code",    selfPlural: true,   disable: false, longName: "Code Script",     icon: "puzzle", description: "Source code script" },
+  "cheatsheet": { name: "Cheatsheet", selfPlural: false,  disable: true, longName: "Cheat Sheet",icon: "student", description: "Cheat Sheet to help reember useful stuff" },
+  "cutscene":{ name: "Cutscene",selfPlural: false,  disable: true,  longName: "Cut Scene",       icon: "file video outline", description: "Cut scene used in a game" },
+  "audio":   { name: "Audio",   selfPlural: true,   disable: true,  longName: "Audio sound",     icon: "file audio outline", description: "Sound Effect, song, voice etc"},
+  "game":    { name: "Game",    selfPlural: false,  disable: true,  longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
+  "_mgbui":  { name: "MGB UI",  selfPlural: true,   disable: false, longName: "MGB UI Mockup",   icon: "code", description: "HTML using Semantic UI for mocking up MGB UI" },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},
   getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")},
-  getName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : "Unknown Asset Kind")}
+  getName:      function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : "Unknown Asset Kind")},
+  getNamePlural:function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? "" : "s") : "Unknown Asset Kinds")},
+  validateAssetName: function (n) { 
+    if (n.length > 64) return "Too long. Max length is 64 characters"
+    // TODO: Look for invalid characters.  /^[a-zA-Z\-_. ]$/ or something fancier like http://stackoverflow.com/questions/6381752/validating-users-utf-8-name-in-javascript
+    return null
+  }
 };
 
 // Suggested separator to be used for query.kinds. Note that "," and "+" and others can get messy

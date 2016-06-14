@@ -229,44 +229,6 @@ export default class EditGraphic extends React.Component {
 
   // Note that this has to use Image.onload so it will complete asynchronously.
   // TODO(DGOLDS): Add an on-complete callback including a timeout handler to support better error handling and avoid races
-  // loadPreviewsFromAssetAsync(){
-  //   let c2 = this.props.asset.content2;
-  //   let frameCount = c2.frameNames.length;
-  //   let layerCount = c2.layerParams.length;
-
-  //   console.log("load previews");
-
-  //   for(let frameID=0; frameID<frameCount; frameID++){
-  //     this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
-  //     for(let layerID=layerCount-1; layerID>=0; layerID--){
-  //       let dataURI = c2.frameData[frameID][layerID];
-  //       if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-  //         _img = new Image;
-  //         _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
-  //         _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
-  //         let self = this;
-  //         _img.onload = function(e){            
-  //           let loadedImage = e.target;
-  //           if(loadedImage.frameID === self.state.selectedFrameIdx){
-  //             self.previewCtxArray[loadedImage.layerID].clearRect(0,0, _img.width, _img.height);
-  //             self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
-  //             if(loadedImage.layerID === 0){
-  //               // update edit canvas when bottom layer is loaded
-  //               self.updateEditCanvasFromSelectedPreviewCanvas();  
-  //             }
-  //           }
-  //           self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
-  //         }
-  //         _img.src = dataURI;
-  //       }
-  //       else {
-  //         // TODO: May need some error indication here
-  //         this.updateEditCanvasFromSelectedPreviewCanvas();
-  //       }
-  //     }
-  //   }
-  // }
-
   loadAllPreviewsAsync(){
     let c2 = this.props.asset.content2;
     let frameCount = c2.frameNames.length;
@@ -646,46 +608,6 @@ export default class EditGraphic extends React.Component {
     j.putImageData(tmp0, 0, 0)
     i.putImageData(tmp1, 0, 0)
   }
-
-
-  // handleMoveFrameUp(currentIdx)
-  // {
-  //   if (!this.props.canEdit)
-  //   { 
-  //     this.props.editDeniedReminder()
-  //     return
-  //   }
-
-  //   let c2 = this.props.asset.content2
-  //   let fN = c2.frameNames
-
-  //   if (currentIdx > 0)
-  //   {
-  //     this.doSaveStateForUndo("Move Frame Up");
-
-  //     [ fN[currentIdx],  fN[currentIdx-1] ] =  [  fN[currentIdx-1],  fN[currentIdx] ]
-  //     this.doSwapCanvases(currentIdx, currentIdx-1)
-  //     this.handleSave(`Change frame order`)
-  //     this.handleSelectFrame(currentIdx-1)
-  //     this.forceUpdate()
-  //   }
-  // }
-
-  // handleMoveFrameDown(currentIdx)
-  // {
-  //   let c2 = this.props.asset.content2
-  //   let fN = c2.frameNames
-
-  //   if (currentIdx < this.previewCanvasArray.length-1)
-  //   {
-  //     this.doSaveStateForUndo("Move Frame Down");
-  //     [ fN[currentIdx],  fN[currentIdx+1] ] =  [  fN[currentIdx+1],  fN[currentIdx] ]
-  //     this.doSwapCanvases(currentIdx, currentIdx+1)
-  //     this.handleSave(`Change frame order`)
-  //     this.handleSelectFrame(currentIdx+1)
-  //     this.forceUpdate()     // Needed since the Reactivity doesn't look down this far (true?)
-  //   }
-  // }
 
   frameMoveLeft(frameID){
     if (!this.props.canEdit)
@@ -1267,18 +1189,6 @@ export default class EditGraphic extends React.Component {
             </div>
           </div>
         </div>
-
-        {/***  Right Column for animations and frames  ***/}
-        {/*
-
-        // <div className="ui four wide column ">
-        //   <div className="ui items mgbPreviewCanvasContainer">
-        //       {previewCanvasses} 
-        //   </div>
-        //   <a className="ui compact button"  onClick={this.handleAddFrame.bind(this)} >Add Frame</a>
-        // </div>
-        */} 
-
 
       {/*** SpriteLayers ***/}
         

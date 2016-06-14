@@ -85,13 +85,30 @@ export default WhatsNewRoute = React.createClass({
   
   /** The 3 column structure for update info */  
   renderNews: function() {
+
+              <div className="item">
+                <div className="content">
+                  
+                </div>
+                <div className="meta">
+                 {ago}
+                </div>
+              </div>
+    const relIdx = this.state.releaseIdx
+    const rel = mgbReleaseInfo.releases[relIdx]
+    const state = rel.id.state === 'alpha' ? 'α' : (rel.id.state + "#")
+    const ago = moment(new Date(rel.timestamp)).fromNow() 
+
+
     return <div className="ui padded three column relaxed equal height divided grid">
             <div className="column">
               <h4 className="ui header">MGBv2 updates</h4>
               { this.renderNewsMgbVersionsColumn() }
             </div>
             <div className="column">
-              <h4 className="ui header">Changes</h4>
+              <h4 className="ui header">
+                Changes in v{rel.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + rel.id.iteration}</i></small>
+              </h4>
               { this.renderNewsRelChangesColumn() }
             </div>
             <div className="column">
@@ -147,6 +164,8 @@ export default WhatsNewRoute = React.createClass({
   renderNewsRelChangesColumn: function() {
     const relIdx = this.state.releaseIdx
     const rel = mgbReleaseInfo.releases[relIdx]
+    const state = rel.id.state === 'alpha' ? 'α' : (rel.id.state + "#")
+    const ago = moment(new Date(rel.timestamp)).fromNow() 
     const gry = {color: "#888"}
     const blk = {color: "#000"}    
     

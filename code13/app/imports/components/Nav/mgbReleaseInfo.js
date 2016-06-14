@@ -17,6 +17,38 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
+      "timestamp":     "Tue Jun 14 2016 14:15:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "509"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.assetedit",
+          "type":           "improvement",
+          "changeName":     "Navigation Breadcrumb bar",
+          "changeSummary":  "Improved the left-half of the Asset Edit header. The breadcrumb bar now provides more context and also easy navigation to related material",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Delete ops",
+          "changeSummary":  "Delete frame / layer is more robust now",
+          "otherUrls":      []
+        }
+        
+      ]
+    },
+
+    { 
       "timestamp":     "Mon Jun 13 2016 23:45:00 GMT-0700 (PDT)",
       
       "id": {

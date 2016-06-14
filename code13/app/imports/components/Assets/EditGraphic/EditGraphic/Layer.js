@@ -23,8 +23,10 @@ export default class Layer extends React.Component {
 		this.props.handleSave('Layer locking');
 	}
 
-	selectLayer(){
-		this.props.selectLayer(this.props.idx);
+	selectLayer(event){
+    if(event.target.className.search('remove') === -1){ // don't invoke select if remove layer
+		  this.props.selectLayer(this.props.idx);
+    }
 	}
 
 	selectFrame(frameID){

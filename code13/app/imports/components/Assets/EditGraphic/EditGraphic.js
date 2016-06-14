@@ -716,6 +716,7 @@ export default class EditGraphic extends React.Component {
     let c2 = this.props.asset.content2
 
     c2.layerParams.splice(idx, 1);
+    // change selectedLayer if it is last and beeing removed
     if(this.state.selectedLayerIdx > c2.layerParams.length-1){
       this.setState({ selectedLayerIdx: c2.layerParams.length-1 });
     }

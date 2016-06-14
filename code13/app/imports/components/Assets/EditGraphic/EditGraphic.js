@@ -702,11 +702,6 @@ export default class EditGraphic extends React.Component {
       i++
     }
     this.frameCtxArray.pop();
-    
-    // // Delete Frame seems to provoke a timing issuee where the popup exists while React is destroying it's parents. 
-    // // For now, it seems simplest to hide the popups directly when we delete a frame
-    // let $a = $(ReactDOM.findDOMNode(this))
-    // $a.find('.hazPopup').popup('hide')  
 
     this.handleSave('Delete frame', true);
   }
@@ -721,6 +716,9 @@ export default class EditGraphic extends React.Component {
     let c2 = this.props.asset.content2
 
     c2.layerParams.splice(idx, 1);
+    if(this.state.selectedLayerIdx > c2.layerParams.length-1){
+      this.setState({ selectedLayerIdx: c2.layerParams.length-1 });
+    }
     for(let frameID=0; frameID<c2.frameNames.length; frameID++){
       c2.frameData[frameID].splice(idx, 1);
     }
@@ -733,8 +731,6 @@ export default class EditGraphic extends React.Component {
       i++;
     }
     this.previewCanvasArray.pop();
-    // TODO check selected layer idx
-
     this.handleSave('Delete layer');
   }
 

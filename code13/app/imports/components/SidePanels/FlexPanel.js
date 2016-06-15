@@ -2,19 +2,15 @@ import React, { PropTypes } from 'react';
 import fpActivity from './fpActivity';
 import fpAssets from './fpAssets';
 import fpUsers from './fpUsers';
+import fpChat from './fpChat';
+
 
 const flexPanelViews = [
   { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
   { tag: "assets",    icon: "pencil",     hdr: "Assets",    el: fpAssets   },
   { tag: "users",     icon: "users",      hdr: "Users",     el: fpUsers    },
-//{ tag: "projects",  icon: "sitemap",    hdr: "Projects" },
-//{ tag: "focuser",   icon: "university", hdr: "Focuser"  },
-//{ tag: "pins",      icon: "pin",        hdr: "Pins"     },
-  { tag: "chat",      icon: "chat",       hdr: "Chat"     }
+  { tag: "chat",      icon: "chat",       hdr: "Chat",      el: fpChat     }
 ]
-
-// TODO 1   Implement DragAndDrop interface for fpAssets
-// TODO 2   Update all <Link>s across project to preserve app-level query params!
 
 export default FlexPanel = React.createClass({
   

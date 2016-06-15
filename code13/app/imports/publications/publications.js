@@ -1,6 +1,6 @@
 // This file should be imported by the main_server.js file
 
-import {Users, Azzets, Projects, Activity, ActivitySnapshots } from '../schemas';
+import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '../schemas';
 
 import { assetMakeSelector } from '../schemas/assets';
 import { projectMakeSelector } from '../schemas/projects';
@@ -165,3 +165,22 @@ Meteor.publish('activitysnapshots.userId', function(userId) {
 //     > db.activity_snapshots.dropIndexes()
 //     > db.activity_snapshots.getIndexes()   // check it is dropped ok
 ActivitySnapshots._ensureIndex( { "timestamp": 1 }, { expireAfterSeconds: 60*5 } )
+
+
+
+//
+//    CHATS
+//
+
+
+// TODO: Make sure userId can't be faked on server. Allow/deny rules required...
+Meteor.publish('chats.userId', function(userId, limit=30) {
+  // Paginated chats.
+  if (limit > 200) 
+    limit = 200
+
+  let selector = { } //$or: [ { toOwnerId: null}, {toOwnerId: userId} ] }
+  let options = {limit: limit, sort: {createdAt: -1} }
+
+  return Chats.find(selector, options);
+});

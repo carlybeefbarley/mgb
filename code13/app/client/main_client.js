@@ -4,3 +4,4 @@ import {Routes} from '../imports/routes';
 
 import '../imports/schemas/users.js';
 import '../imports/schemas/assets.js';
+import '../imports/schemas/chats.js';

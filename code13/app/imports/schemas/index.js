@@ -8,3 +8,4 @@ export const Azzets = new Mongo.Collection('azzets');   // Because 'Assets' is a
 export const Activity = new Mongo.Collection('activity');  
 export const ActivitySnapshots = new Mongo.Collection('activity_snapshots');  
 export const Projects = new Mongo.Collection('projects');  
+export const Chats = new Mongo.Collection('chats');  

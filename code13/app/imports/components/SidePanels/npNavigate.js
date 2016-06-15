@@ -12,23 +12,6 @@ export default npNavigate = React.createClass({
 
   render: function () {    
     const {currUser} = this.props;
-    const userContent = !!currUser ?
-      (
-        <div className="item">
-          <div className="header">My stuff</div>
-            <div className="menu">
-              <QLink to={`/user/${currUser._id}/assets`} className="item">My Assets</QLink>
-              <QLink to={`/user/${currUser._id}/projects`} className="item">My Projects</QLink>
-          </div>
-        </div>
-      )
-      :
-      (
-        <div className="item">
-          <QLink to="/join">Get Started</QLink>
-        </div>
-      );
-
 
     return (
       <div className="ui vertical attached inverted fluid menu">
@@ -40,14 +23,6 @@ export default npNavigate = React.createClass({
             <QLink to="/whatsnew" className="item">
               What's New<WhatsNew currUser={currUser} />
             </QLink>
-          </div>
-        </div>
-        {userContent}
-        <div className="item">
-          <div className="header">People</div>
-          <div className="menu">
-            <QLink to="/users" className="item">Users</QLink>
-            <QLink to="/assets" className="item">Public Assets</QLink>
           </div>
         </div>
       </div>

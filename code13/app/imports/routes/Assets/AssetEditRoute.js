@@ -116,6 +116,7 @@ export default AssetEditRoute = React.createClass({
    */
   renderAssetPathElements(a, canEdit) {
     const oName = a.dn_ownerName || `User#${a.ownerId}`
+    const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
     const editOrView = canEdit ? <span style={{color: "green"}}>Edit</span> : <span>View</span>
     return <span>
             {editOrView}&nbsp;&nbsp;
@@ -130,7 +131,7 @@ export default AssetEditRoute = React.createClass({
             <InlineEdit
               validate={this.validateEnteredAssetName}
               activeClassName="editing"
-              text={a.name || "(Type asset name here)"}
+              text={a.name || untitledAssetString}
               paramName="name"
               change={this.fieldChanged}
               isDisabled={!canEdit}

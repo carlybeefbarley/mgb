@@ -8,6 +8,7 @@ import MapTools from "./Tools/MapTools.js";
 import TileHelper from "./TileHelper.js";
 import TileCollection from "./Tools/TileCollection.js";
 import TileSelection from "./Tools/TileSelection.js";
+import EditModes from "./Tools/EditModes.js";
 
 export default class MapArea extends React.Component {
 
@@ -338,8 +339,15 @@ export default class MapArea extends React.Component {
     this.tmpSelection.clear();
   }
   selectionToTmp(){
+    this.tmpSelection.clear();
     for(let i=0; i<this.selection.length; i++){
-      this.selection.push(this.selection[i]);
+      this.tmpSelection.push(this.selection[i]);
+    }
+  }
+  selectionToCollection(){
+    this.collection.clear();
+    for(let i=0; i<this.selection.length; i++){
+      this.collection.push(this.selection[i]);
     }
   }
 
@@ -431,6 +439,13 @@ export default class MapArea extends React.Component {
     this.camera.x = 0;
     this.camera.y = 0;
     this.camera.zoom = 1;
+
+    if(this.options.preview) {
+      this.preview.x = 5;
+      this.preview.y = 45;
+      this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
+    }
+
     this.redrawLayers();
     this.refs.grid.drawGrid();
   }
@@ -541,6 +556,11 @@ export default class MapArea extends React.Component {
       case 40: // down
         this.camera.y -= this.data.tileheight * this.camera.zoom;
         update = true;
+        break;
+      case 13: // enter
+        this.selectionToCollection();
+        this.selection.clear();
+        this.refs.tools.enableMode(EditModes.stamp);
         break;
     }
     if(update){

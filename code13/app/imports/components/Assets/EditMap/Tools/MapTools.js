@@ -46,92 +46,93 @@ export default class MapTools extends React.Component {
     return (
       <div>
         {/* mics buttons / camera / view / save */}
-        <div className="ui icon buttons small">
-          <button className="ui button"
+        <div className="ui icon buttons small ">
+          <span className="ui button"
                   title="Drop tileset on the map area to import it"
-            ><i className="question icon"></i></button>
-          <button className={(this.props.map.options.preview ? "ui button primary" : "ui button")}
+            ><i className="question icon"></i>
+          </span>
+          <span className={(this.props.map.options.preview ? "ui button primary" : "ui button")}
                   onClick={this.doPreview.bind(this)}
                   title="3d Preview"
             >Preview
-          </button>
-          <button className="ui button"
+          </span>
+          <span className="ui button"
                   onClick={this.doCameraReset.bind(this)}
                   title="Reset camera"
             ><i className="marker icon"></i>
-          </button>
-          <button className="ui button"
+          </span>
+          <span className="ui button"
                   onClick={this.doSave.bind(this)}
                   title="Save map"
             ><i className="save icon"></i>
-          </button>
+          </span>
         </div>
         {/* undo / redo */}
         <div className="ui icon small buttons">
-          <button className="ui button disabled"
+          <span className="ui button disabled"
                   onClick={this.doUndo.bind(this)}
                   title="Undo"
             ><i className="undo icon"></i>
-          </button>
-          <button className="ui button disabled"
+          </span>
+          <span className="ui button disabled"
                   onClick={this.doRedo.bind(this)}
                   title="Redo"
             ><i className="undo icon" style={{transform: "scaleX(-1)"}}></i>
-          </button>
+          </span>
         </div>
         {/* randomize */}
         <div className="ui icon buttons small">
-          <button className={(this.props.map.options.randomMode ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.randomMode ? "ui button primary" : "ui button")}
                   onClick={this.toggleRandomMode.bind(this)}
                   title="Random Mode - picks one tile from the selection"
             ><i className="random icon"></i>
-          </button>
+          </span>
         </div>
         {/* put something on map */}
         <div className="ui icon buttons small">
-          <button className={(this.props.map.options.mode == "stamp" ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.mode == "stamp" ? "ui button primary" : "ui button")}
                   onClick={this.enableMode.bind(this, "stamp")}
                   title="Stamp Tool"
             ><i className="legal stamp icon"></i>
-          </button>
-          <button className={(this.props.map.options.mode == "terrain" ? "ui button primary disabled" : "ui button disabled")}
+          </span>
+          <span className={(this.props.map.options.mode == "terrain" ? "ui button primary disabled" : "ui button disabled")}
                   onClick={this.enableMode.bind(this, "terrain")}
                   title="Terrain Tool"
             ><i className="terrain icon"></i>
-          </button>
-          <button className={(this.props.map.options.mode == "fill" ? "ui button primary" : "ui button")}
+          </span>
+          <span className={(this.props.map.options.mode == "fill" ? "ui button primary" : "ui button")}
                   onClick={this.enableMode.bind(this, "fill")}
                   title="bucket fill tool"
             ><i className="theme fill icon"></i>
-          </button>
-          <button className={(this.props.map.options.mode == "eraser" ? "ui button primary" : "ui button")}
+          </span>
+          <span className={(this.props.map.options.mode == "eraser" ? "ui button primary" : "ui button")}
                   onClick={this.enableEraser.bind(this)}
                   title="Eraser"
             ><i className="eraser icon"></i>
-          </button>
+          </span>
         </div>
         {/* select something */}
         <div className="ui icon buttons small">
-          <button className={(this.props.map.options.mode == "rectanlge" ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.mode == "rectanlge" ? "ui button primary" : "ui button")}
                   onClick={this.enableMode.bind(this, "rectanlge")}
                   title="Rectangle selection"
             ><i className="square outline rectangle icon"></i>
-          </button>
-          <button className={(this.props.map.options.mode == "wand" ? "ui button primary" : "ui button")}
+          </span>
+          <span className={(this.props.map.options.mode == "wand" ? "ui button primary" : "ui button")}
                   onClick={this.enableMode.bind(this, "wand")}
                   title="Magic Wand selection - select same adjascent tiles"
             ><i className="wizard icon"></i>
-          </button>
-          <button className={(this.props.map.options.mode == "picker" ? "ui button primary" : "ui button")}
+          </span>
+          <span className={(this.props.map.options.mode == "picker" ? "ui button primary" : "ui button")}
                   onClick={this.enableMode.bind(this, "picker")}
                   title="Select same tiles "
             ><i className="qrcode picker icon"></i>
-          </button>
-          <button className="ui button"
+          </span>
+          <span className="ui button"
                   onClick={this.clearSelection.bind(this)}
                   title="Clear Selection"
             ><i className="ban icon"></i>
-          </button>
+          </span>
         </div>
       </div>
     )

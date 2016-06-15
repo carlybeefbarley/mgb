@@ -105,12 +105,12 @@ export default class TileMapLayer extends React.Component {
 
     for(let y = starty; y<=endy; y++){
       pos.y = y;
-      if(pos.y < 0 || pos.y > this.options.height){
+      if(pos.y < 0 || pos.y > this.options.height - 1){
         continue;
       }
       for(let x = startx; x<=endx; x++){
         pos.x = x;
-        if(pos.x < 0 || pos.x > this.options.width){
+        if(pos.x < 0 || pos.x > this.options.width - 1){
           continue;
         }
         pos.getGidFromLayer(this.options);

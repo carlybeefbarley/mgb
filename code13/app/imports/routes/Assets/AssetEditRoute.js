@@ -213,7 +213,7 @@ export default AssetEditRoute = React.createClass({
         }
       });
       
-      logActivity("asset.rename",  `Rename to "${newName}" from `, null, this.data.asset); 
+      logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset); 
     }
   }
   // TODO:  Call snapshotActivity after rename so it will fix up any stale names:

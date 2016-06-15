@@ -43,6 +43,8 @@ export default class SpriteLayers extends React.Component {
 
 	selectFrame(idx){
 		this.props.EditGraphic.handleSelectFrame(idx);
+
+		console.log(this.getAnimationsTH());
 	}
 
 	addFrame(){
@@ -138,6 +140,7 @@ export default class SpriteLayers extends React.Component {
 	}
 
 
+	/* Selecting frames testing */
 	thOnDragStart(frameID){
 		console.log('drag start', frameID);
 	}
@@ -148,6 +151,62 @@ export default class SpriteLayers extends React.Component {
 
 	thOnDragEnter(frameID){
 		console.log('drag enter', frameID);
+	}
+
+
+	/* ANIMATIONS */
+
+	getAnimIdByFrame(frameID){
+		let c2 = this.props.content2;	
+		let animID = false;
+		for(let i=0; i<c2.animations.length; i++){
+			let animation = c2.animations[i];
+			if(frameID >= animation.frames[0] && frameID <= animation.frames[animation.frames.length-1]){
+				animID = i;
+				break;
+			}
+		}
+		return animID;	
+	}
+
+	addAnimation(frameID){
+		let c2 = this.props.content2;	
+		let animID = this.getAnimIdByFrame(frameID);
+
+		if(animID === false){
+			c2.animations.push({ 
+				name: "Anim "+c2.animations.length,
+				frames: [frameID],
+				fps: 10, 
+			});
+		}
+		this.handleSave('Add animation');
+	}
+
+	getAnimationsTH(){
+		let colors = ["red", "orange", "green", "yellow", "black"];
+		let colorID = 0;
+
+		let c2 = this.props.content2;
+		let animTH = [];
+		for(let frameID=0; frameID<c2.frameNames.length; frameID++){
+			let animID = this.getAnimIdByFrame(frameID);
+
+			if(animID === false){
+				animTH.push({ name:"", colspan:1, color:""});
+			} 
+			else {
+				let animation = c2.animations[animID];
+				animTH.push({
+					name: animation.name,
+					colspan: animation.frames.length,
+					color: colors[colorID],
+				});
+				colorID++;
+				frameID += animation.frames.length-1;	
+			}	
+		}
+		return animTH;
 	}
 
 
@@ -185,8 +244,20 @@ export default class SpriteLayers extends React.Component {
 		));		
 	}
 
+
   render() { 
   	let c2 = this.props.content2;
+
+  	{/** 
+  	let animations = [
+  		{"first", [2,3], 10}
+  		, {"second", [4,5,6], 10}
+  	];
+
+  	for(let i=0; i<content2.frameData.length; i++){
+
+  	}
+  **/}
 
     return (
       	
@@ -224,6 +295,38 @@ export default class SpriteLayers extends React.Component {
 
 	      <table className="ui celled padded table spriteLayersTable">
 	        <thead>
+	    {/** Animation tabs **/}
+	          <tr className={c2.animations.length === 0 ? "hidden" : ""}>
+	          	<th></th>
+	          	<th></th>
+	          	<th></th>
+	          	{
+	          		_.map(this.getAnimationsTH(), (item, idx) => { return (
+				      <th key={"thAnim_"+idx} >
+						<div className={"ui "+(item.color ? "simple dropdown label "+item.color : "")} colspan={c2.colspan}>
+							{item.name}
+							<div className="menu">
+								<div 
+				      				onClick={this.insertFrameAfter.bind(this, idx, true)}
+				      				className="item">
+				      				<i className="add circle icon"></i>
+				      				New
+				      			</div>
+				      			<div 
+				      				onClick={this.insertFrameAfter.bind(this, idx, true)}
+				      				className="item">
+				      				<i className="add circle icon"></i>
+				      				New
+				      			</div>
+							</div>
+						</div>
+				      </th>
+				    )})
+	          	}
+	          	<th></th>
+	          	<th></th>
+	          </tr>
+
 	          <tr>
 	            <th width="32px">
 	            	<i 
@@ -257,11 +360,7 @@ export default class SpriteLayers extends React.Component {
 
 				      	>
 				      		{idx+1}
-				      		<div className="menu">
-				      			<div className="item">
-				      				<i className="setting icon"></i>
-				      				Properties
-				      			</div>
+				      		<div className="menu">				      			
 				      			<div 
 				      				onClick={this.insertFrameAfter.bind(this, idx, true)}
 				      				className="item">
@@ -273,6 +372,11 @@ export default class SpriteLayers extends React.Component {
 				      				className="item">
 				      				<i className="circle icon outline"></i>
 				      				New Empty Frame
+				      			</div>
+				      			<div className="item"
+				      				onClick={this.addAnimation.bind(this, idx)}>
+				      				<i className="wait icon"></i>
+				      				Add animation
 				      			</div>
 				      			<div className="divider"></div>
 				      			<div 
@@ -308,6 +412,7 @@ export default class SpriteLayers extends React.Component {
 	            <th width="32px"></th>
 	          </tr>
 
+	      {/** Previews for frames **/}
 	          <tr className={"layerCanvases " + (this.state.isCanvasFramesVisible ? "" : "hidden")}>
 	          	<th></th>
 	          	<th></th>

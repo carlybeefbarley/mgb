@@ -69,7 +69,7 @@ export default class EditGraphic extends React.Component {
   // content2.frameNames[frameIndex]  // TODO get rid of frameNames. no practical use.
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
   // content2.spriteData[]    // dataUrl. Same frameData elements but with merged layers
-  // content2.animations[]    // { animationName, frames[], fps }
+  // content2.animations[]    // { name, frames[], fps }
 
 
   // React Callback: componentDidMount()

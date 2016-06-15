@@ -17,12 +17,12 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
-      "timestamp":     "Tue Jun 14 2016 22:00:00 GMT-0700 (PDT)",
+      "timestamp":     "Wed Jun 15 2016 01:45:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "520"
+        "iteration":   "522"
       },
 
       "releaseManagement": {
@@ -35,6 +35,13 @@ export default mgbReleaseInfo = {
           "type":           "improvement",
           "changeName":     "Navigation Breadcrumb bar",
           "changeSummary":  "Improved the left-half of the Asset Edit header. The breadcrumb bar now provides more context and also easy navigation to related material",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.chat",
+          "type":           "feature",
+          "changeName":     "Chat!",
+          "changeSummary":  "Only global chat for now. Channels and DMs are coming soon. Use the Chat FlexPanel on the right to see and send chat messages",
           "otherUrls":      []
         },
         {

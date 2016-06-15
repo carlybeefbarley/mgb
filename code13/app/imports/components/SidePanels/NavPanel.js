@@ -1,17 +1,17 @@
 import React, { PropTypes } from 'react';
-import npNavigate from './npNavigate';
+import npHome from './npHome';
 import npUser from './npUser';
-import npUsers from './npUsers';
+import npPeople from './npPeople';
 import npHistory from './npHistory';
 import npProjects from './npProjects';
 
 
 const navPanelViews = [
-  { tag: "nav",       icon: "compass",    hdr: "Navigate",  el: npNavigate, hideIfNoUser: false  },
+  { tag: "home",      icon: "home",       hdr: "Home",      el: npHome,     hideIfNoUser: false  },
   { tag: "user",      icon: "user",       hdr: "User",      el: npUser,     hideIfNoUser: false  },
   { tag: "history",   icon: "history",    hdr: "History",   el: npHistory,  hideIfNoUser: true   },
   { tag: "projects",  icon: "sitemap",    hdr: "Projects",  el: npProjects, hideIfNoUser: true  },
-  { tag: "users",     icon: "users",      hdr: "Users",     el: npUsers,    hideIfNoUser: false  }
+  { tag: "people",    icon: "users",      hdr: "People",    el: npPeople,   hideIfNoUser: false  }
 
   // { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
   // { tag: "skills",    icon: "university", hdr: "Skills" }

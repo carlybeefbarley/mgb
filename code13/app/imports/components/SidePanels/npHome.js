@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react';
 import QLink from '../../routes/QLink';
+import WhatsNew from '../Nav/WhatsNew';
 
-export default npUsers = React.createClass({
+
+export default npHome = React.createClass({
   
   propTypes: {
     currUser:           PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -9,22 +11,31 @@ export default npUsers = React.createClass({
     panelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
   },
 
+
   render: function () {    
+    const {currUser} = this.props;
+
     return (
-      <div className="ui vertical inverted fluid menu">
+      <div className="ui vertical attached inverted fluid menu">
         <div className="ui item" key="authHdr">
           <h3 className="ui inverted header" style={{textAlign: "center"}}>
-            <i className="users icon" />
-            People
+            <i className="home icon" />
+            Home
           </h3>
+        </div>      
+        <div className="item">
+          <div className="header">My Game Builder v2</div>
+          <div className="menu">
+            <QLink to="/" className="item">Home Page</QLink>
+            <QLink to="/whatsnew" className="item">
+              What's New
+              <WhatsNew currUser={currUser} />
+            </QLink>
+          </div>
         </div>
-        <QLink to="/users" className="item">
-          <i className="users icon" /> All Users
-        </QLink>
-        <QLink to="/assets" className="item">
-          <i className="pencil icon" /> All Assets
-        </QLink>
       </div>
-    )
+        );
   }
+
+  
 })

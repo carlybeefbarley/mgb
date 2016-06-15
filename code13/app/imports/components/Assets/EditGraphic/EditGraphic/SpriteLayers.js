@@ -43,8 +43,6 @@ export default class SpriteLayers extends React.Component {
 
 	selectFrame(idx){
 		this.props.EditGraphic.handleSelectFrame(idx);
-
-		console.log(this.getAnimationsTH());
 	}
 
 	addFrame(){
@@ -184,7 +182,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	getAnimationsTH(){
-		let colors = ["red", "orange", "green", "yellow", "black"];
+		// let colors = ["olive", "green", "teal", "blue"];
+		let colors = ["orange", "green", "blue", "violet"];
 		let colorID = 0;
 
 		let c2 = this.props.content2;
@@ -201,7 +200,7 @@ export default class SpriteLayers extends React.Component {
 					animID: animID,
 					name: animation.name,
 					colspan: animation.frames.length,
-					color: colors[colorID],
+					color: colors[colorID%colors.length],
 					startFrame: animation.frames[0] + 1,
 					endFrame: animation.frames[animation.frames.length-1] + 1,
 				});
@@ -258,6 +257,7 @@ export default class SpriteLayers extends React.Component {
 
 	deleteAnimation(animID){
 		this.props.content2.animations.splice(animID, 1);
+		console.log(this.props.content2.animations);
 		this.handleSave("Delete animation");
 	}
 
@@ -340,28 +340,30 @@ export default class SpriteLayers extends React.Component {
 
 	    {/** Animation tabs **/}
 
-	          <tr className={c2.animations.length === 0 ? "hidden" : ""}>
+	          <tr className={"animTR " + (c2.animations.length === 0 ? "hidden" : "")}>
 	          	<th></th>
 	          	<th></th>
 	          	<th></th>
 	          	{
 	          		_.map(this.getAnimationsTH(), (item, idx) => { return (
-				      <th key={"thAnim_"+idx} colSpan={item.colspan}>
+				      <th key={"thAnim_"+idx} colSpan={item.colspan} className="animTH">
 						<div className={"ui "+(item.color ? "simple dropdown label "+item.color : "")}>
 							{item.name}
 							{
 								item.name ? (
 									<div className="menu">
-										<div className="item labeled input">
-										<div className="ui label">Name:</div>
-											<input type="text" value={item.name} onChange={this.renameAnimation.bind(this, item.animID)} />						      				
-						      			</div>
-						      			<div className="item input">
-						      				<div className="ui label">From:</div>
+										<div className="ui item input">
+											<span className="text">
+												Name
+											</span>
+											<input type="text" value={item.name} onChange={this.renameAnimation.bind(this, item.animID)} />		
+										</div>		
+						      			<div className="ui item input">
+						      				<span className="text">From:</span>
 						      				<input 
 						      					onChange={this.changeAnimStart.bind(this, item.animID)} 
 						      					type="number" value={item.startFrame} min="1" max={c2.frameNames.length} />
-						      				<div className="ui label">To:</div>
+						      				<span className="text">To:</span>
 						      				<input 
 						      					onChange={this.changeAnimEnd.bind(this, item.animID)} 
 						      					type="number" value={item.endFrame} min="1" max={c2.frameNames.length} />

@@ -40,3 +40,18 @@
 	text-align: center;
 
 }
+
+.animTR th {
+	/*background-color: transparent !important;*/
+	border-left: none !important;
+	border-right: none !important;
+}
+
+.animTH {
+	padding: 0 !important;
+}
+
+.animTH .label {
+	width: 100% !important;
+	text-align: center;
+}

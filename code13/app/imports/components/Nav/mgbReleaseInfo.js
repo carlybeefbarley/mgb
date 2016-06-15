@@ -22,7 +22,7 @@ export default mgbReleaseInfo = {
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "509"
+        "iteration":   "513"
       },
 
       "releaseManagement": {
@@ -35,6 +35,13 @@ export default mgbReleaseInfo = {
           "type":           "improvement",
           "changeName":     "Navigation Breadcrumb bar",
           "changeSummary":  "Improved the left-half of the Asset Edit header. The breadcrumb bar now provides more context and also easy navigation to related material",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.navpanel.recent",
+          "type":           "improvement",
+          "changeName":     "History - Ranges and Actions",
+          "changeSummary":  "Improved the NavPanel recent/history panel. It now shows history broken into three age ranges, and provides more feedback on what changed",
           "otherUrls":      []
         },
         {

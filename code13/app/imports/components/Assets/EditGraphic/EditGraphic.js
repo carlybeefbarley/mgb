@@ -1084,7 +1084,7 @@ export default class EditGraphic extends React.Component {
 
         {/***  Center Column for Edit and other wide stuff  ***/}
 
-        <div className={"mgbEditGraphicSty_tagPosition ui ten wide column"} >
+        <div className={"mgbEditGraphicSty_tagPosition ui fifteen wide column"} >
           <div className="row">
             <a className="ui label" onClick={this.handleUndo.bind(this)}>
               <i className="icon undo"></i>Undo {this.mgb_undoStack.length}

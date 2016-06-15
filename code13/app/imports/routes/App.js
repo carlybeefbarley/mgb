@@ -32,15 +32,15 @@ export default App = React.createClass({
     return { urlLocation: this.props.location }
   },
 
-  toggleFlexPanelKeyHandler: function(e) {
+  togglePanelsKeyHandler: function(e) {
     e = e || window.event;
     if (e.key === 'Escape' || e.keyCode === 27) {
-      this.handleFlexPanelToggle();
+      this.handleDualPaneToggle()
     }
   },
 
   componentDidMount: function() {
-    window.onkeydown = this.toggleFlexPanelKeyHandler;
+    window.onkeydown = this.togglePanelsKeyHandler;
   },
 
   getInitialState: function() {
@@ -178,6 +178,8 @@ export default App = React.createClass({
   },
 
 
+
+
   /** 
    * This will show/hide the Flex Panel
    */
@@ -231,7 +233,18 @@ export default App = React.createClass({
     browserHistory.push( {  ...loc,  query: newQ })
   },
   
-
+  handleDualPaneToggle: function()
+  {
+    const loc = this.props.location
+    const qpNp = urlMaker.queryParams("app_navPanel")
+    const qpFp = urlMaker.queryParams("app_flexPanel")
+    let newQ
+    if (loc.query[qpNp] || loc.query[qpFp])
+      newQ = _.omit(loc.query, [qpNp, qpFp])
+    else
+      newQ = {...loc.query, [qpNp]:"1", [qpFp]:"1"}
+    browserHistory.push( {  ...loc,  query: newQ })
+  },
 
   showToast(content, type) {
     this.setState({

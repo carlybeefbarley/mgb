@@ -14,7 +14,7 @@ import AssetUrlGenerator from './AssetUrlGenerator.js';
 export default AssetCard = React.createClass({
   
   propTypes: {
-    showHeader: PropTypes.bool,                 // If false, just have a very MINI asset card
+    showHeader: PropTypes.bool,                 // If false, just have a very MINI asset card (used by AssetEditRoute only at present)
     asset: PropTypes.object,
     ownersProjects: PropTypes.array,            // Project array for Asset Owner. Can be null. Can include ones they are a member of, so watch out!
     currUser: PropTypes.object,                 // currently Logged In user (not always provided)
@@ -111,7 +111,7 @@ export default AssetCard = React.createClass({
     if (!this.props.asset)
       return null;
       
-    const {renderType, asset, showEditButton, currUser, canEdit } = this.props;
+    const {renderType, asset, showEditButton, currUser, canEdit, showHeader } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindLongName = AssetKinds.getLongName(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
@@ -131,6 +131,8 @@ export default AssetCard = React.createClass({
     const ago = moment(asset.updatedAt).fromNow()                      // TODO: Make reactive
     const ownerName = asset.dn_ownerName
     
+    const contentStyle = showHeader ? {} : { padding: "8px"}
+
     // Project Membership editor
     
     const chosenProjectNamesArray = asset.projectNames || [];
@@ -146,6 +148,8 @@ export default AssetCard = React.createClass({
                             handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
                             />
                           
+
+
     // TODO: add allowDrag to props.. and walk through AssetCard use cases;
     return (
       <div key={asset._id} className="ui card" draggable="true"
@@ -153,7 +157,7 @@ export default AssetCard = React.createClass({
            onDragEnd={this.endDrag.bind(this, asset)}
         >
       
-          { this.props.showHeader &&
+          { showHeader &&
             <div className="ui centered image">
               <canvas 
                 ref="thumbnailCanvas" 
@@ -163,11 +167,11 @@ export default AssetCard = React.createClass({
               </canvas> 
               </div>
           }
-        <div className="content">
+        <div className="content" style={contentStyle}>
           
           { /* CONTENT */ }
           {
-             ( !this.props.showHeader && 
+             ( !showHeader && 
               (canEdit ? 
                 <a className="ui right floated mini green label">editable</a> : 
                 <a className="ui mgbReadOnlyReminder right floated mini red label">read-only</a> 
@@ -175,11 +179,11 @@ export default AssetCard = React.createClass({
             )
           }
 
-          { this.props.showHeader && 
+          { showHeader && 
               <i className="right floated star icon"></i>
           }
           
-          { this.props.showHeader && 
+          { showHeader && 
           <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}>
             <small>{asset.name || "(untitled)"}</small>
           </div>
@@ -191,7 +195,7 @@ export default AssetCard = React.createClass({
             </div>
           }
 
-          { this.props.showHeader && info2 && !renderShort &&
+          { showHeader && info2 && !renderShort &&
             <div className="meta">
               <small>{info2}</small>
             </div>
@@ -208,7 +212,7 @@ export default AssetCard = React.createClass({
         </div>     
         { /* End Content */}
         
-        { this.props.showHeader && 
+        { showHeader && 
           <div className="extra content">
             <span className="left floated icon label">
               <i className={"large " + assetKindIcon}></i>
@@ -223,7 +227,7 @@ export default AssetCard = React.createClass({
           </div>
         }
         
-        { this.props.showHeader && !renderShort &&         
+        { showHeader && !renderShort &&         
           <div className="ui four small bottom attached icon buttons">
             <QLink 
                   to={`/user/${asset.ownerId}/asset/${asset._id}`} 

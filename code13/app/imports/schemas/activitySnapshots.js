@@ -86,7 +86,8 @@ Meteor.methods({
 
 // Helper function to invoke a snapshotActivity function. 
 export function snapshotActivity(asset, passiveAction, url) { 
-console.trace("snapshot", passiveAction)
+
+  //console.trace("snapshot", passiveAction)
   let mUser = Meteor.user()
   let username = mUser ? mUser.profile.name : "<guest>"
 

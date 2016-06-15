@@ -17,6 +17,59 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
+      "timestamp":     "Wed Jun 15 2016 02:01:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "524"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.assetedit",
+          "type":           "improvement",
+          "changeName":     "Navigation Breadcrumb bar",
+          "changeSummary":  "Improved the left-half of the Asset Edit header. The breadcrumb bar now provides more context and also easy navigation to related material",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.chat",
+          "type":           "feature",
+          "changeName":     "Chat!",
+          "changeSummary":  "Only global chat for now. Channels and DMs are coming soon. Use the Chat FlexPanel on the right to see and send chat messages",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.esc",
+          "type":           "feature",
+          "changeName":     "ESC key toggles Panels",
+          "changeSummary":  "Press ESC to show/hide both sets of Panels",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.navpanel.recent",
+          "type":           "improvement",
+          "changeName":     "History - Ranges and Actions",
+          "changeSummary":  "Improved the NavPanel recent/history panel. It now shows history broken into three age ranges, and provides more feedback on what changed",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Delete ops",
+          "changeSummary":  "Delete frame / layer is more robust now",
+          "otherUrls":      []
+        }
+        
+      ]
+    },
+
+    { 
       "timestamp":     "Mon Jun 13 2016 23:45:00 GMT-0700 (PDT)",
       
       "id": {

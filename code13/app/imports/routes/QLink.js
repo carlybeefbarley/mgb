@@ -70,13 +70,15 @@ export default QLink = React.createClass({
   /** This click handler will be called by the <Link> we create. 
    *  This click handler effectively overrides from the handleClick() in node_modules/react-router/es6/Link.js
    *  since that calls us and we then disable it with event.preventDefault()
+   * 
+   *  Any explicit original key/value pairs in props.query will override the app-scoped params so this can be 
+   *  used to change NavPanels and FlexPanels for example
    */
   handleClick: function (event) {
     const p = this.props
 
-    // TODO: Might need to merge in props.query some time
     const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
-    
+    const combinedQuery = Object.assign({}, appScopedQuery, this.props.query)
     if (p.onClick) 
       p.onClick(event)    // Call the click handler we were given. Note that it has thr option to preventDefault()
       
@@ -84,7 +86,7 @@ export default QLink = React.createClass({
       return;             // Browser needs to handle this. It's new window / new tab etc so beyond our scope. // TODO ideally we could still mokey patch the query? 
 
 // TODO: Decode p.nav to p.to here also.. or use something else
-    const location = createLocationDescriptor(p.to, { query: appScopedQuery, hash: p.hash, state: p.state });
+    const location = createLocationDescriptor(p.to, { query: combinedQuery, hash: p.hash, state: p.state })
     this.context.router.push(location);
     event.preventDefault()    // Stop Link.handleClick from doing anything further
   },

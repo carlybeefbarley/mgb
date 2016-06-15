@@ -48,7 +48,8 @@ export default ProjectCard = React.createClass({
                 <div className="meta"><i className="users icon"></i>{MemberStr}</div>
 
                 <div className="ui description">
-                  <b>Description:</b> <InlineEdit
+                  <b>Description:</b> 
+                  <InlineEdit
                     validate={this.customValidateText}
                     activeClassName="editing"
                     text={project.description || "(no description)"}

@@ -29,7 +29,7 @@ export default AssetHistoryDetail = React.createClass({
     return (
           <div className="ui small compact menu">
             <div className="ui simple dropdown item">
-              <i className="icon lightning"></i> Changes<i className="dropdown icon"></i>
+              <i className="icon lightning"></i> Changes
               <div className={"floating ui tiny green label"}>
                 { changesCount }
               </div>

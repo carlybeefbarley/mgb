@@ -55,7 +55,7 @@ export const ActivityTypes = {
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
   getIconClass: function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : "warning sign") + " icon"},
   getPri: function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].pri : 0)},
-  getDescription:  function (key) { return (ActivityTypes.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Activity type (" + key + ")")}
+  getDescription:  function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].description : "Unknown Activity type (" + key + ")")}
 };
 
 
@@ -85,7 +85,8 @@ Meteor.methods({
     check(data, _.omit(schema, '_id'));
 
     var docId = Activity.insert(data);
-    console.log(`  [Activity.log]  #${docId}  ${data.activityType}  by: ${data.byUserName}   from: ${data.byIpAddress}`);
+    if (Meteor.isServer)
+      console.log(`  [Activity.log]  #${docId}  ${data.activityType}  by: ${data.byUserName}   from: ${data.byIpAddress}`);
     return docId;
   }
   
@@ -99,9 +100,7 @@ var priorLog;   // The prior activity that was logged - for de-dupe purposes
 // limited co-allesce capability for duplicate activities
 export function logActivity(activityType, description, thumbnail, asset) {
  
- let username = Meteor.user().profile.name;
- 
- 
+  const username = Meteor.user().profile.name  
   var logData = {
     "activityType":         activityType, // One of the keys of the ActivityTypes object defined above
     "priority":             ActivityTypes.getPri(activityType),

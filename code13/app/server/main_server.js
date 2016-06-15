@@ -3,6 +3,7 @@ import dataUriToBuffer from 'data-uri-to-buffer';
 
 // Import server-side stubs for Meteor.call()
 import '../imports/schemas/users.js';
+import '../imports/schemas/chats.js';
 import '../imports/schemas/assets.js';
 import '../imports/schemas/projects.js';
 import '../imports/schemas/activity.js';

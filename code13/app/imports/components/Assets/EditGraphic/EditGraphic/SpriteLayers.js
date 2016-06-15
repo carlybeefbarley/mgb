@@ -213,18 +213,33 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	changeAnimStart(animID, e) {
+		let c2 = this.props.content2;
+		let animation = c2.animations[animID];
+		let endFrame = animation.frames[animation.frames.length-1];
+		let startFrame = e.target.value-1; 	// value is -1, because user sees frames from 1 instead of 0
+		if(endFrame < startFrame) return;
 
+		animation.frames = []; 	// clear frames and add then in for loop
+		for(let i=endFrame; i>=startFrame && i>=0; i--){
+			let tmpID = this.getAnimIdByFrame(i);
+			if(tmpID === false || tmpID === animID){	// everything ok, this frame can be added to animation
+				animation.frames.unshift(i);
+			} else { 	// overlaps with next animation
+				break;
+			}
+		}
+		this.handleSave("Changed animation length");
 	}
 
 	changeAnimEnd(animID, e) {
 		let c2 = this.props.content2;
 		let animation = c2.animations[animID];
 		let startFrame = animation.frames[0];
-		let endFrame = e.target.value; 	// value is already +1, because user sees frames from 1 instead of 0
-		if(endFrame-1 < startFrame) return;
+		let endFrame = e.target.value-1; 	// value is -1, because user sees frames from 1 instead of 0
+		if(endFrame < startFrame) return;
 
 		animation.frames = []; 			// clear frames and add then in for loop		
-		for(let i=startFrame; i<endFrame || i<c2.animations.length; i++){
+		for(let i=startFrame; i<=endFrame && i<c2.frameNames.length; i++){
 			let tmpID = this.getAnimIdByFrame(i);
 			if(tmpID === false || tmpID === animID){	// everything ok, this frame can be added to animation
 				animation.frames.push(i);
@@ -232,7 +247,6 @@ export default class SpriteLayers extends React.Component {
 				break;
 			}
 		}
-		console.log(animation.frames);
 		this.handleSave("Changed animation length");
 	}
 
@@ -346,11 +360,11 @@ export default class SpriteLayers extends React.Component {
 						      				<div className="ui label">From:</div>
 						      				<input 
 						      					onChange={this.changeAnimStart.bind(this, item.animID)} 
-						      					type="number" value={item.startFrame} min="0" max={c2.frameNames.length} />
+						      					type="number" value={item.startFrame} min="1" max={c2.frameNames.length} />
 						      				<div className="ui label">To:</div>
 						      				<input 
 						      					onChange={this.changeAnimEnd.bind(this, item.animID)} 
-						      					type="number" value={item.endFrame} min="0" max={c2.frameNames.length} />
+						      					type="number" value={item.endFrame} min="1" max={c2.frameNames.length} />
 						      			</div>
 						      			<div className="divide"></div>
 						      			<div className="item" onClick={this.deleteAnimation.bind(this, item.animID)}>

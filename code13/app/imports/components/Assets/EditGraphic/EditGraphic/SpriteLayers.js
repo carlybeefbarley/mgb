@@ -199,6 +199,7 @@ export default class SpriteLayers extends React.Component {
 				animTH.push({
 					animID: animID,
 					name: animation.name,
+					fps: animation.fps,
 					colspan: animation.frames.length,
 					color: colors[colorID%colors.length],
 					startFrame: animation.frames[0] + 1,
@@ -247,6 +248,14 @@ export default class SpriteLayers extends React.Component {
 			}
 		}
 		this.handleSave("Changed animation length");
+	}
+
+	changeAnimFPS(animID, e){
+		let newFPS = e.target.value;
+		if(newFPS < 1 || newFPS > 60) return;
+		this.props.content2.animations[animID].fps = newFPS;
+		this.handleSave("Change animation FPS");
+			
 	}
 
 	renameAnimation(animID, e) {
@@ -368,6 +377,12 @@ export default class SpriteLayers extends React.Component {
 						      					onChange={this.changeAnimEnd.bind(this, item.animID)} 
 						      					type="number" value={item.endFrame} min="1" max={c2.frameNames.length} />
 						      			</div>
+						      			<div className="ui item input">
+											<span className="text">
+												FPS
+											</span>
+											<input type="number" value={item.fps} min="1" max="60" onChange={this.changeAnimFPS.bind(this, item.animID)} />		
+										</div>	
 						      			<div className="divide"></div>
 						      			<div className="item" onClick={this.deleteAnimation.bind(this, item.animID)}>
 						      				<i className="remove icon"></i>

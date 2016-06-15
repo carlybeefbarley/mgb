@@ -7,9 +7,9 @@ const flexPanelViews = [
   { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
   { tag: "assets",    icon: "pencil",     hdr: "Assets",    el: fpAssets   },
   { tag: "users",     icon: "users",      hdr: "Users",     el: fpUsers    },
-  { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
+//{ tag: "projects",  icon: "sitemap",    hdr: "Projects" },
 //{ tag: "focuser",   icon: "university", hdr: "Focuser"  },
-  { tag: "pins",      icon: "pin",        hdr: "Pins"     },
+//{ tag: "pins",      icon: "pin",        hdr: "Pins"     },
   { tag: "chat",      icon: "chat",       hdr: "Chat"     }
 ]
 

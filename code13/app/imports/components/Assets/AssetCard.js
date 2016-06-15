@@ -131,7 +131,7 @@ export default AssetCard = React.createClass({
     const ago = moment(asset.updatedAt).fromNow()                      // TODO: Make reactive
     const ownerName = asset.dn_ownerName
     
-    const contentStyle = showHeader ? {} : { padding: "6px"}
+    const contentStyle = showHeader ? {} : { padding: "8px"}
 
     // Project Membership editor
     

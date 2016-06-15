@@ -10,10 +10,10 @@ const navPanelViews = [
   { tag: "home",      icon: "home",       hdr: "Home",      el: npHome,     hideIfNoUser: false  },
   { tag: "user",      icon: "user",       hdr: "User",      el: npUser,     hideIfNoUser: false  },
   { tag: "history",   icon: "history",    hdr: "History",   el: npHistory,  hideIfNoUser: true   },
+//{ tag: "pins",      icon: "pin",        hdr: "Pins",      el: npPins,     hideIfNoUser: true   },
   { tag: "projects",  icon: "sitemap",    hdr: "Projects",  el: npProjects, hideIfNoUser: true  },
   { tag: "people",    icon: "users",      hdr: "People",    el: npPeople,   hideIfNoUser: false  }
 
-  // { tag: "projects",  icon: "sitemap",    hdr: "Projects" },
   // { tag: "skills",    icon: "university", hdr: "Skills" }
 ]
 

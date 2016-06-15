@@ -15,7 +15,7 @@ export default fpActivity = React.createClass({
 
 
   wrapActivity: function (key, ago, labelIconClass, labelExtraIconClass, uName, uId, actJSX) {
-    return  <div className="event" key={key}>
+    return  <div className="event" key={key} style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
               <div className="label">
                 <i className={labelIconClass}></i>
               </div>
@@ -66,7 +66,8 @@ export default fpActivity = React.createClass({
   renderOneActivity: function(act, idx) {
     const iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
     const isSnapshot = act.hasOwnProperty("currentUrl")
-    const ago = (isSnapshot ? "Viewed " : "Edited ") + moment(act.timestamp).fromNow()                   // TODO: Make reactive
+    const mTime = moment(act.timestamp)
+    const ago = (isSnapshot ? "Viewed" : ActivityTypes.getDescription(act.activityType)) + " - " + mTime.fromNow()                   // TODO: Make reactive
 
     if (act.activityType.startsWith("user.")) {
       return  this.wrapActivity(idx, ago, iconClass, null, act.byUserName, act.byUserId,
@@ -77,7 +78,7 @@ export default fpActivity = React.createClass({
       const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
       const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
       const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
-      const dataHtml = `<div><img src="${assetThumbnailUrl}" /><p><small style="text-align: center;">${ago}</small></p></div>`
+      const dataHtml = `<div><small><p>${ago}</p></small><img src="${assetThumbnailUrl}" /><small><p>Owner: ${act.toOwnerName}</p></small></div>`
       const linkTo = act.toOwnerId ? 
                 `/user/${act.toOwnerId}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
                 `/assetEdit/${act.toAssetId}`                       // Old format

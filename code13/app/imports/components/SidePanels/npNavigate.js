@@ -21,7 +21,8 @@ export default npNavigate = React.createClass({
           <div className="menu">
             <QLink to="/" className="item">Home Page</QLink>
             <QLink to="/whatsnew" className="item">
-              What's New<WhatsNew currUser={currUser} />
+              What's New
+              <WhatsNew currUser={currUser} />
             </QLink>
           </div>
         </div>

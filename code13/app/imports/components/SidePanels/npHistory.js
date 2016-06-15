@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import NavRecentGET from '../Nav/NavRecentGET.js';
 
-export default npRecent = React.createClass({
+export default npHistory = React.createClass({
   
   propTypes: {
     currUser:           PropTypes.object              // Currently Logged in user. Can be null/undefined

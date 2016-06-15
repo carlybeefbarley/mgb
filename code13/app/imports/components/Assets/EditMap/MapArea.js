@@ -661,6 +661,7 @@ export default class MapArea extends React.Component {
       return (
         <div
              ref="mapElement"
+             onContextMenu={(e)=>{e.preventDefault(); return false;}}
              style={{
               //width: (640)+"px",
               height: (640)+"px",
@@ -676,7 +677,6 @@ export default class MapArea extends React.Component {
         className="tilemap-wrapper"
         onDrop={this.importFromDrop.bind(this)}
         onDragOver={this.prepareForDrag.bind(this)}
-        onContextMenu={(e)=>{e.preventDefault(); return false;}}
         onWheel={this.handleOnWheel.bind(this)}
         >
         <MapTools map={this} ref="tools" />

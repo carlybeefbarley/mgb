@@ -198,15 +198,53 @@ export default class SpriteLayers extends React.Component {
 			else {
 				let animation = c2.animations[animID];
 				animTH.push({
+					animID: animID,
 					name: animation.name,
 					colspan: animation.frames.length,
 					color: colors[colorID],
+					startFrame: animation.frames[0] + 1,
+					endFrame: animation.frames[animation.frames.length-1] + 1,
 				});
 				colorID++;
 				frameID += animation.frames.length-1;	
 			}	
 		}
 		return animTH;
+	}
+
+	changeAnimStart(animID, e) {
+
+	}
+
+	changeAnimEnd(animID, e) {
+		let c2 = this.props.content2;
+		let animation = c2.animations[animID];
+		let startFrame = animation.frames[0];
+		let endFrame = e.target.value; 	// value is already +1, because user sees frames from 1 instead of 0
+		if(endFrame-1 < startFrame) return;
+
+		animation.frames = []; 			// clear frames and add then in for loop		
+		for(let i=startFrame; i<endFrame || i<c2.animations.length; i++){
+			let tmpID = this.getAnimIdByFrame(i);
+			if(tmpID === false || tmpID === animID){	// everything ok, this frame can be added to animation
+				animation.frames.push(i);
+			} else { 	// overlaps with next animation
+				break;
+			}
+		}
+		console.log(animation.frames);
+		this.handleSave("Changed animation length");
+	}
+
+	renameAnimation(animID, e) {
+		let newName = e.target.value;
+		this.props.content2.animations[animID].name = newName;
+		this.handleSave("Rename animation");
+	}
+
+	deleteAnimation(animID){
+		this.props.content2.animations.splice(animID, 1);
+		this.handleSave("Delete animation");
 	}
 
 
@@ -248,17 +286,6 @@ export default class SpriteLayers extends React.Component {
   render() { 
   	let c2 = this.props.content2;
 
-  	{/** 
-  	let animations = [
-  		{"first", [2,3], 10}
-  		, {"second", [4,5,6], 10}
-  	];
-
-  	for(let i=0; i<content2.frameData.length; i++){
-
-  	}
-  **/}
-
     return (
       	
       <div className="ui sixteen wide column">
@@ -295,30 +322,45 @@ export default class SpriteLayers extends React.Component {
 
 	      <table className="ui celled padded table spriteLayersTable">
 	        <thead>
+
+
 	    {/** Animation tabs **/}
+
 	          <tr className={c2.animations.length === 0 ? "hidden" : ""}>
 	          	<th></th>
 	          	<th></th>
 	          	<th></th>
 	          	{
 	          		_.map(this.getAnimationsTH(), (item, idx) => { return (
-				      <th key={"thAnim_"+idx} >
-						<div className={"ui "+(item.color ? "simple dropdown label "+item.color : "")} colspan={c2.colspan}>
+				      <th key={"thAnim_"+idx} colSpan={item.colspan}>
+						<div className={"ui "+(item.color ? "simple dropdown label "+item.color : "")}>
 							{item.name}
-							<div className="menu">
-								<div 
-				      				onClick={this.insertFrameAfter.bind(this, idx, true)}
-				      				className="item">
-				      				<i className="add circle icon"></i>
-				      				New
-				      			</div>
-				      			<div 
-				      				onClick={this.insertFrameAfter.bind(this, idx, true)}
-				      				className="item">
-				      				<i className="add circle icon"></i>
-				      				New
-				      			</div>
-							</div>
+							{
+								item.name ? (
+									<div className="menu">
+										<div className="item labeled input">
+										<div className="ui label">Name:</div>
+											<input type="text" value={item.name} onChange={this.renameAnimation.bind(this, item.animID)} />						      				
+						      			</div>
+						      			<div className="item input">
+						      				<div className="ui label">From:</div>
+						      				<input 
+						      					onChange={this.changeAnimStart.bind(this, item.animID)} 
+						      					type="number" value={item.startFrame} min="0" max={c2.frameNames.length} />
+						      				<div className="ui label">To:</div>
+						      				<input 
+						      					onChange={this.changeAnimEnd.bind(this, item.animID)} 
+						      					type="number" value={item.endFrame} min="0" max={c2.frameNames.length} />
+						      			</div>
+						      			<div className="divide"></div>
+						      			<div className="item" onClick={this.deleteAnimation.bind(this, item.animID)}>
+						      				<i className="remove icon"></i>
+				      						Delete
+						      			</div>
+									</div>)
+									:
+									""
+							}
 						</div>
 				      </th>
 				    )})
@@ -326,6 +368,7 @@ export default class SpriteLayers extends React.Component {
 	          	<th></th>
 	          	<th></th>
 	          </tr>
+		{/* animations end */}
 
 	          <tr>
 	            <th width="32px">

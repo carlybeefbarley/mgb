@@ -17,12 +17,12 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
-      "timestamp":     "Wed Jun 15 2016 01:45:00 GMT-0700 (PDT)",
+      "timestamp":     "Wed Jun 15 2016 02:01:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "522"
+        "iteration":   "524"
       },
 
       "releaseManagement": {
@@ -42,6 +42,13 @@ export default mgbReleaseInfo = {
           "type":           "feature",
           "changeName":     "Chat!",
           "changeSummary":  "Only global chat for now. Channels and DMs are coming soon. Use the Chat FlexPanel on the right to see and send chat messages",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.esc",
+          "type":           "feature",
+          "changeName":     "ESC key toggles Panels",
+          "changeSummary":  "Press ESC to show/hide both sets of Panels",
           "otherUrls":      []
         },
         {

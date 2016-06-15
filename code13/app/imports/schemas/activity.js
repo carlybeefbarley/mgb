@@ -55,7 +55,7 @@ export const ActivityTypes = {
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
   getIconClass: function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : "warning sign") + " icon"},
   getPri: function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].pri : 0)},
-  getDescription:  function (key) { return (ActivityTypes.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Activity type (" + key + ")")}
+  getDescription:  function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].description : "Unknown Activity type (" + key + ")")}
 };
 
 

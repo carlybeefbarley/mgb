@@ -15,10 +15,6 @@ export default class TileMapLayer extends React.Component {
     this.drawGrid();
     this.alignToActiveLayer();
   }
-  sync(){
-    this.adjustCanvas();
-    this.drawGrid();
-  }
   // align grid to active layer in preview mode
   shouldComponentUpdate(){
     const map = this.props.map;

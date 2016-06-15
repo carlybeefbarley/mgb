@@ -4,6 +4,8 @@ import Tile from '../Tile.js';
 import TileHelper from '../TileHelper.js';
 import TilesetControls from "./TilesetControls.js";
 import TileSelection from "./TileSelection.js";
+import TileCollection from "./TileCollection.js";
+
 import EditModes from "./EditModes.js";
 
 export default class TileSet extends React.Component {
@@ -77,10 +79,10 @@ export default class TileSet extends React.Component {
       }
     }
 
-    map.selection.pushOrRemove(new TileSelection(this.prevTile));
+    map.collection.pushOrRemove(new TileSelection(this.prevTile));
     this.highlightTile(e, e.nativeEvent, true);
   }
-  selectRectangle(e, clear){
+  selectRectangle(e){
     const map = this.map;
     const ts = map.data.tilesets[map.activeTileset];
     // new map!
@@ -112,15 +114,14 @@ export default class TileSet extends React.Component {
     }
 
     for(let y = starty; y<=endy; y++){
+      pos.y = y;
       for(let x = startx; x<=endx; x++){
         pos.x = x;
-        pos.y = y;
-        pos.getId(ts, this.spacing);
-        map.selection.pushUnique(new TileSelection(pos));
+        pos.getGid(ts, this.spacing);
+        map.collection.pushUnique(new TileSelection(pos));
       }
     }
 
-    map.selection.width = endx - startx;
     this.drawTiles();
   }
   selectTileset(tilesetNum){
@@ -173,12 +174,12 @@ export default class TileSet extends React.Component {
     }
     this.ctx.drawImage(pal.image,
       pal.x, pal.y, pal.w, pal.h,
-      pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h,
+      pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h
     );
-    if(map.selection.indexOfGid(pal.gid) > -1){
+    if(map.collection.indexOfGid(pal.gid) > -1){
       this.ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
       this.ctx.fillRect(
-        pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h,
+        pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h
       );
     }
   }
@@ -239,7 +240,10 @@ export default class TileSet extends React.Component {
   }
 
   onMouseDown(e){
-    this.map.options.mode = EditModes.stamp;
+    if(this.map.options.mode != EditModes.fill && this.map.options.mode != EditModes.stamp) {
+      this.map.options.mode = EditModes.stamp;
+    }
+
     // update active tool
     this.map.refs.tools.forceUpdate();
 
@@ -283,8 +287,7 @@ export default class TileSet extends React.Component {
       </div>
     );
   }
-  renderContent(ts = null){
-    const scrollingMargin = 20;
+  renderContent(){
     return (
       <div className="active content tilesets accept-drop"
            data-drop-text="Drop asset here to create TileSet"
@@ -297,7 +300,7 @@ export default class TileSet extends React.Component {
           className="tileset"
           ref="layer"
           style={{
-                //height: (ts ? (TileHelper.getTilesetHeight(ts) + scrollingMargin) : 200)+"px",
+                //height: "250px",
                 overflow: "auto",
                 clear: "both"
               }}

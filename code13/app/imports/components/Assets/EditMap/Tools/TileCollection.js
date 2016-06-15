@@ -13,22 +13,52 @@ TileCollection.prototype = Object.create(Array.prototype);
 
 TileCollection.prototype.pushUnique = function(id){
   if(this.indexOf(id) === -1){
-    this.push(id);
+    return this.push(id);
   }
+  return this.length;
+};
+
+TileCollection.prototype.pushUniquePos = function(tp){
+  for(let i=0; i<this.length; i++){
+    if(this[i].isEqual(tp)){
+      return this.length;
+    }
+  }
+  return this.push(tp);
+};
+TileCollection.prototype.removeByPos = function(tp){
+  for(let i=0; i<this.length; i++){
+    if(this[i].isEqual(tp)){
+      this.splice(i, 1);
+      break;
+    }
+  }
+  return this.length;
+};
+
+TileCollection.prototype.pushUniquePosOrRemove = function(tp){
+  for(let i=0; i<this.length; i++){
+    if(this[i].isEqual(tp)){
+      this.splice(i, 1);
+      return this.length;
+    }
+  }
+  return this.push(tp);
 };
 TileCollection.prototype.remove = function(tileSelection){
   const index = this.indexOf(tileSelection);
   if(index > -1){
-    this.splice(index, 1);
+    return this.splice(index, 1);
   }
+  return null;
 };
 TileCollection.prototype.pushOrRemove = function(tileSelection){
   const index = this.indexOf(tileSelection);
   if(index === -1){
-    this.push(tileSelection);
+    return this.push(tileSelection);
   }
   else{
-    this.remove(tileSelection);
+    return this.remove(tileSelection);
   }
 };
 
@@ -54,6 +84,48 @@ TileCollection.prototype.indexOfGid = function(gid){
   }
   return index;
 };
+TileCollection.prototype.indexOfId = function(id){
+  let index = -1;
+  for(let i=0; i<this.length; i++){
+    if(this[i].id == id){
+      index = i;
+      break;
+    }
+  }
+  return index;
+};
 TileCollection.prototype.debug = function(){
   console.log(this.x, this.y, this.gid);
+};
+TileCollection.prototype.to2DimArray = function(){
+  const ret = [];
+  for(let i=0; i<this.length; i++){
+    if(!ret[this[i].y]) {
+      ret[this[i].y] = [];
+    }
+    ret[this[i].y][this[i].x] = this[i];
+  }
+
+  let shifts = [];
+  for(let y=0; y<ret.length; y++){
+    if(!ret[y] || !ret[y].length){
+      ret.shift();
+      y--;
+      continue;
+    }
+
+    shifts[y] = 0;
+    for(let x=0; x<ret[y].length; x++){
+      if(ret[y][x]){
+        break;
+      }
+      shifts[y]++;
+    }
+  }
+  const shift = Math.min.apply(Math, shifts);
+  for(let y=0; y<ret.length; y++){
+    ret[y].splice(0, shift);
+  }
+
+  return ret;
 };

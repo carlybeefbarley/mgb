@@ -37,7 +37,13 @@ export default class MapArea extends React.Component {
     });
 
 
+    // here will be kept selections from tilesets
+    this.collection = new TileCollection();
+
+    // any modifications will be limited to the selection if not empty
     this.selection = new TileCollection();
+    this.tmpSelection = new TileCollection();
+
     this.errors = [];
     this.gidCache = {};
 
@@ -85,14 +91,10 @@ export default class MapArea extends React.Component {
   }
 
   removeDots(url){
-    let val = url;
-    if (url.indexOf(location.origin) == 0) {
-      val = val.substr(location.origin.length);
-    }
-    return val.replace(/\./gi,'*');
+    return TileHelper.normalizePath(url).replace(/\./gi,'*');
   }
 
-  // TODO: check all usecases and change to data.. as map.map looks confusing and ugly
+  // TODO: check all use cases and change to data.. as map.map looks confusing and ugly
   set map(val){
     this.data = val;
   }
@@ -143,6 +145,10 @@ export default class MapArea extends React.Component {
     return this.meta.options;
   }
 
+  // palette is just more intuitive name
+  get palette(){
+    return this.gidCache;
+  }
   /* TODO: browser compatibility - IE don't have TextDecoder - https://github.com/inexorabletash/text-encoding*/
   xmlToJson(xml){
     window.xml = xml;
@@ -290,19 +296,51 @@ export default class MapArea extends React.Component {
   // tileset calls this method..
   /* TODO: selection should be matrix - new class?*/
   addToActiveSelection (gid){
-    const index = this.selection.indexOf(gid);
+    const index = this.collection.indexOf(gid);
     if(index == -1){
-      this.selection.push(gid);
+      this.collection.push(gid);
     }
   }
   removeFromActiveSelection(gid){
-    const index = this.selection.indexOf(gid);
+    const index = this.collection.indexOf(gid);
     if(index > -1){
-      this.selection.splice(index, 1);
+      this.collection.splice(index, 1);
     }
   }
   clearActiveSelection(){
-    this.selection.length = 0;
+    this.collection.length = 0;
+  }
+  swapOutSelection(){
+    for(let i=0; i<this.tmpSelection.length; i++){
+      this.selection.pushUniquePos(this.tmpSelection[i]);
+    }
+    this.tmpSelection.clear();
+  }
+  removeFromSelection(){
+    for(let i=0; i<this.tmpSelection.length; i++){
+      this.selection.removeByPos(this.tmpSelection[i]);
+    }
+    this.tmpSelection.clear();
+  }
+  // keep only matching form both selections
+  keepDiffInSelection(){
+    const tmp = new TileCollection();
+
+    for(let i=0; i<this.tmpSelection.length; i++){
+      for(let j=0; j<this.selection.length; j++){
+        if(this.tmpSelection[i].isEqual(this.selection[j])){
+          tmp.pushUniquePos(this.selection[j]);
+        }
+      }
+    }
+
+    this.selection = tmp;
+    this.tmpSelection.clear();
+  }
+  selectionToTmp(){
+    for(let i=0; i<this.selection.length; i++){
+      this.selection.push(this.selection[i]);
+    }
   }
 
   togglePreviewState(){
@@ -325,40 +363,66 @@ export default class MapArea extends React.Component {
   /* TODO: move TileLayer specific functions to TileLayer - map will handle all sorts of layers */
   /* TODO: fill from selection */
   /* This is main Edit constroller.. everything related with map editing starts from here!!! */
+  /* moved to: TilemapLayer.. edit */
   handleMapClicked(e, tileInfo){
 
     const layer = this.map.layers[this.activeLayer];
 
     if(e.ctrlKey || this.options.mode == "eraser"){
-      layer.data[tileInfo.id] = 0;
+      if(this.selection.length > 0){
+        if(this.selection.indexOfId(tpos.id) > -1){
+          layer.data[tileInfo.id] = 0;
+        }
+      }
+      else{
+        layer.data[tileInfo.id] = 0;
+      }
+
       return;
     }
-    else{
-      let sel = 0;
-      if(this.options.randomMode){
-        sel = this.selection.random();
-        if(sel){
+
+    let sel = 0;
+    if (this.options.randomMode) {
+      sel = this.collection.random();
+      // is selection is empty?
+      if (sel) {
+        if (this.selection.length > 0) {
+          if (this.selection.indexOfId(tpos.id) > -1) {
+            layer.data[tileInfo.id] = sel.gid;
+          }
+        }
+        else {
           layer.data[tileInfo.id] = sel.gid;
         }
       }
-      else if( this.selection.length){
-        let tpos = new TileSelection(tileInfo);
-        const ox = this.selection[0].x;
-        const oy = this.selection[0].y;
+    }
+    else if (this.collection.length) {
+      let tpos = new TileSelection(tileInfo);
+      const ox = this.collection[0].x;
+      const oy = this.collection[0].y;
 
-        for(let i=0; i<map.selection.length; i++){
-          sel = this.selection[i];
+      for (let i = 0; i < map.collection.length; i++) {
+        sel = this.collection[i];
 
-          if(sel) {
-            tpos.x = sel.x + tileInfo.x - ox;
-            tpos.y = sel.y + tileInfo.y - oy;
-            tpos.id = tpos.x + tpos.y * layer.width;
-
+        if (sel) {
+          tpos.x = sel.x + tileInfo.x - ox;
+          tpos.y = sel.y + tileInfo.y - oy;
+          if (tpos.x < 0 || tpos.x > layer.width || tpos.y < 0 || tpos.y > layer.height) {
+            continue;
+          }
+          tpos.id = tpos.x + tpos.y * layer.width;
+          if (this.selection.length > 0) {
+            if (this.selection.indexOfId(tpos.id) > -1) {
+              layer.data[tpos.id] = sel.gid;
+            }
+          }
+          else {
             layer.data[tpos.id] = sel.gid;
           }
         }
       }
     }
+
   }
 
   /* camera stuff */
@@ -367,8 +431,8 @@ export default class MapArea extends React.Component {
     this.camera.x = 0;
     this.camera.y = 0;
     this.camera.zoom = 1;
-    this.refs.grid.drawGrid();
     this.redrawLayers();
+    this.refs.grid.drawGrid();
   }
   moveCamera(e){
     if(!this.lastEvent){
@@ -527,11 +591,12 @@ export default class MapArea extends React.Component {
 
   redraw(){
     this.redrawLayers();
-    this.refs.grid.sync();
+    this.refs.grid.drawGrid();
   }
 
   redrawLayers(){
     this.layers.forEach((layer) => {
+      layer.adjustCanvas();
       layer.drawTiles();
     });
   }

@@ -60,7 +60,7 @@ const TileHelper = {
   genLayer: (widthInTiles = 32, heightInTiles = 32, name = "Layer") => {
     const mapSize = widthInTiles * heightInTiles;
 
-    let layer = {
+    const layer = {
       data: [],
       name: name,
       draworder: "topdown",
@@ -77,13 +77,25 @@ const TileHelper = {
     return layer;
   },
 
-  genTileset: (map, imagepath, imagewidth, imageheight,
-               tilewidth = map.tilewidth, tileheight = map.tileheight, name = imagepath, margin = -1, spacing = -1) => {
+  normalizePath: (raw) => {
+    let val = raw;
+    if (raw.indexOf(location.origin) == 0) {
+      val = val.substr(location.origin.length);
+    }
+    return val;
+  },
+  extractName: (path) => {
+    return path.substring(path.lastIndexOf("/") + 1);
+  },
 
+  genTileset: (map, imagepath, imagewidth, imageheight,
+               tilewidth = map.tilewidth, tileheight = map.tileheight, name = TileHelper.extractName(imagepath), margin = -1, spacing = -1) => {
+
+    let path = TileHelper.normalizePath(imagepath);
 
     const extraPixels = imagewidth % tilewidth;
     const columns = (imagewidth - extraPixels) / tilewidth;
-    const rows = (imageheight - (imageheight % tileheight)) / tileheight;
+    let rows = (imageheight - (imageheight % tileheight)) / tileheight;
 
     if(margin != -1){
       if(spacing == -1){
@@ -111,10 +123,20 @@ const TileHelper = {
         spacing = extraPixels / spacingColumns;
         margin = 0;
       }
+      // very common case when all sides of tile has equal white space
+      else if(extraPixels % (columns + 1) == 0){
+        margin = extraPixels % (columns + 1);
+        spacing = margin;
+      }
       else{
         // TODO: divide margin with 2?
         margin = extraPixels % spacingColumns;
         spacing = (extraPixels - extraPixels % spacingColumns) / spacingColumns;
+      }
+
+      // adjust rows - as we have added margin and spacing
+      while(margin + (tileheight + spacing) * rows - spacing > imageheight && rows){
+        rows--;
       }
     }
 
@@ -122,10 +144,6 @@ const TileHelper = {
       if ((imagewidth % tilewidth) % 2) {
         margin = (imagewidth % tilewidth) / 2;
       }
-    }
-
-    if(spacing == -1){
-
     }
 
     const tilecount = columns * rows;
@@ -140,7 +158,7 @@ const TileHelper = {
     return {
       columns,
       firstgid,
-      image: imagepath,
+      image: path,
       imagewidth,
       imageheight,
       spacing,

@@ -82,7 +82,7 @@ export default NavRecentGET = React.createClass({
         const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
         const mTime = moment(a.timestamp)
         const ago = (isSnapshot ? "Viewed" : ActivityTypes.getDescription(a.activityType)) + " - " + mTime.fromNow()                   // TODO: Make reactive
-        const dataHtml = `<div><img src="${assetThumbnailUrl}" /><p><small style="text-align: center;">${ago}</small></p></div>`
+        const dataHtml = `<div><small><p>${ago}</p></small><img src="${assetThumbnailUrl}" /><small><p>Owner: ${a.toOwnerName}</p></small></div>`
         // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now in those cases
         const linkTo = a.toOwnerId ? 
                         `/user/${a.toOwnerId}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016

@@ -66,7 +66,7 @@ export default class MapArea extends React.Component {
 
     this._camera = null;
     this.undoSteps = [];
-
+    this.ignoreUndo = 0;
 
     this.globalMouseMove = (...args) => {this.handleMouseMove(...args);};
     this.globalMouseUp = (...args) => {this.handleMouseUp(...args);};
@@ -105,6 +105,12 @@ export default class MapArea extends React.Component {
     window.removeEventListener("keyup", this.globalKeyUp);
   }
 
+  forceUpdate(...args){
+    // ignore undo for local updates
+    this.ignoreUndo++;
+    super.forceUpdate(...args);
+    this.ignoreUndo--;
+  }
 
   removeDots(url){
     return TileHelper.normalizePath(url).replace(/\./gi,'*');
@@ -208,11 +214,15 @@ export default class MapArea extends React.Component {
 
   // TMP - one undo step - just to prevent data loss
   saveForUndo(){
+
     if(this.ignoreUndo){
       return;
     }
+    console.error("save undo!");
+
     const toSave = this.copyData(this.data);
     if(this.undoSteps[this.undoSteps.length-1] == toSave){
+      console.log("nothing to save!");
       return;
     }
     this.undoSteps.push(toSave);
@@ -220,11 +230,11 @@ export default class MapArea extends React.Component {
   }
   doUndo(){
     // prevent double saving undo
-    this.ignoreUndo = true;
+    this.ignoreUndo++;
     if(this.undoSteps.length){
       this.data = JSON.parse(this.undoSteps.pop());
       this.fullUpdate(() => {
-        this.ignoreUndo = false;
+        this.ignoreUndo--;
       });
     }
   }

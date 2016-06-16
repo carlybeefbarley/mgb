@@ -14,7 +14,7 @@ import ToolEyedropper from './ToolEyedropper.js';
 
 import SpriteLayers from './EditGraphic/SpriteLayers.js';
 
-import {snapshotActivity} from '../../../schemas/activitySnapshots.js';
+import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
 const tools = {
   ToolPen,
@@ -42,7 +42,7 @@ export default class EditGraphic extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log(props.asset.content2);
+//    console.log(props.asset.content2);
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
@@ -827,6 +827,11 @@ export default class EditGraphic extends React.Component {
     u.push(this.doMakeUndoStackEntry(changeInfoString))
   }
 
+  /* This stores a short-term record indicating this user is viewing this graphic
+   * It provides the data for the 'just now' part of the history navigation and also 
+   * the 'viewers' indicator. It helps users know other people are looking at some asset
+   * right now
+   */
   doSnapshotActivity(frameIdxOverride)
   {
     let passiveAction = {

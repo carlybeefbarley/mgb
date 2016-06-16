@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import MapArea from "./MapArea.js";
 import InfoTool from "./Tools/InfoTool.js";
+import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
 
 export default class EditMap extends React.Component {
@@ -10,13 +11,31 @@ export default class EditMap extends React.Component {
       tools: {}
     };
   }
+
+
+  /* This stores a short-term record indicating this user is viewing this Map
+   * It provides the data for the 'just now' part of the history navigation and also 
+   * the 'viewers' indicator. It helps users know other people are looking at some asset
+   * right now
+   */
+  doSnapshotActivity()
+  {
+    let passiveAction = {
+      isMap: true     // This could in future have info such as which layer is being edited, but not needed yet 
+    }
+    snapshotActivity(this.props.asset, passiveAction)
+  }
+
+  componentDidMount() {
+    this.doSnapshotActivity()
+  }
   
   handleOnChange(updatedSourceCodeAsString) {
     let newC2 = { src: updatedSourceCodeAsString };
     this.props.handleContentChange( newC2, "" ); // TODO: Thumbnail is second param
   }
 
-  handleSave(e){
+  handleSave(e) {
     // TODO: convert uploaded images to assets
     const changeText = "Changing Map:" + this.props.asset.name;
     this.props.handleContentChange(this.props.asset.content2, this.refs.mapArea.generatePreview(), changeText);
@@ -24,7 +43,7 @@ export default class EditMap extends React.Component {
 
   render() {
     if (!this.props.asset){
-      return null;
+      return null
     }
 
     const asset = this.props.asset;

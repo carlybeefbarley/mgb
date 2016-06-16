@@ -67,18 +67,19 @@ export default fpActivity = React.createClass({
     const iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
     const isSnapshot = act.hasOwnProperty("currentUrl")
     const mTime = moment(act.timestamp)
-    const ago = (isSnapshot ? "Viewed" : ActivityTypes.getDescription(act.activityType)) + " - " + mTime.fromNow()                   // TODO: Make reactive
+    const actionAgo = (isSnapshot ? "Viewed" : ActivityTypes.getDescription(act.activityType)) + " - " + mTime.fromNow()                   // TODO: Make reactive
+    const ago = mTime.fromNow()                   // TODO: Make reactive
 
     if (act.activityType.startsWith("user.")) {
       return  this.wrapActivity(idx, ago, iconClass, null, act.byUserName, act.byUserId,
-                <span>{act.description}</span>
+                <small>{act.description}</small>
       )
     }
     else if (act.activityType.startsWith("asset.")) {
       const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
       const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
       const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
-      const dataHtml = `<div><small><p>${ago}</p></small><img src="${assetThumbnailUrl}" /><small><p>Owner: ${act.toOwnerName}</p></small></div>`
+      const dataHtml = `<div><small><p>${actionAgo}</p></small><img src="${assetThumbnailUrl}" /><small><p>Owner: ${act.toOwnerName}</p></small></div>`
       const linkTo = act.toOwnerId ? 
                 `/user/${act.toOwnerId}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
                 `/assetEdit/${act.toAssetId}`                       // Old format
@@ -96,14 +97,14 @@ export default fpActivity = React.createClass({
     } 
     else if (act.activityType.startsWith("project.")) {
       return  this.wrapActivity(idx, ago, iconClass, null,  act.byUserName, act.byUserId,
-                <span>
+                <small>
                   {act.description}
-                </span>
+                </small>
       )
     }
     //else...
     return this.wrapActivity(idx, ago, iconClass, act.byUserName, act.byUserId,
-                <div>{act.activityType} not known in this version</div>)             
+                <small>{act.activityType} not known in this version</small>)             
   },
 
 

@@ -50,7 +50,8 @@ export default class LayerControls extends React.Component {
 
     map.saveForUndo();
 
-    lss.splice(map.activeLayer + 1, 0, layer[0]);
+    map.activeLayer++;
+    lss.splice(map.activeLayer, 0, layer[0]);
     parent.forceUpdate();
     map.forceUpdate();
   }
@@ -61,8 +62,9 @@ export default class LayerControls extends React.Component {
     const layer = lss.splice(map.activeLayer, 1);
 
     map.saveForUndo();
-
-    lss.splice(map.activeLayer - 1, 0, layer[0]);
+    
+    map.activeLayer--;
+    lss.splice(map.activeLayer, 0, layer[0]);
     parent.forceUpdate();
     map.forceUpdate();
   }

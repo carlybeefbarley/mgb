@@ -15,6 +15,45 @@
 export default mgbReleaseInfo = {
   "releases":
   [ 
+    { 
+      "timestamp":     "Thu Jun 16 2016 18:15:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "541"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Tile Layer Tools",
+          "changeSummary":  "More tools and fixes for maps",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel.activity",
+          "type":           "improvement",
+          "changeName":     "Activity Flexpanel more compact",
+          "changeSummary":  "Shrunk fonts/sizes and tightened text for activity feed",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Graphic animation improvements",
+          "changeSummary":  "In graphic editor, it is easier now to manage animations. Also, shrunk tools slightly",
+          "otherUrls":      []
+        }
+        
+      ]
+    },
+
 
     { 
       "timestamp":     "Wed Jun 15 2016 02:01:00 GMT-0700 (PDT)",

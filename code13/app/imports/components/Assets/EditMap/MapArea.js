@@ -1,9 +1,11 @@
 "use strict";
-import React, { PropTypes } from 'react';
+import React from 'react';
 import TileMapLayer from "./TileMapLayer.js";
 import GridLayer from "./GridLayer.js";
 import TileSet from "./Tools/TileSet.js";
 import Layers from "./Tools/Layers.js";
+import Properties from "./Tools/Properties.js";
+
 import MapTools from "./Tools/MapTools.js";
 import TileHelper from "./TileHelper.js";
 import TileCollection from "./Tools/TileCollection.js";
@@ -61,6 +63,11 @@ export default class MapArea extends React.Component {
     //this.margin = 0;
     this.spacing = 0;
 
+
+    this._camera = null;
+    this.undoSteps = [];
+
+
     this.globalMouseMove = (...args) => {this.handleMouseMove(...args);};
     this.globalMouseUp = (...args) => {this.handleMouseUp(...args);};
     this.globalResize = () => {
@@ -84,6 +91,14 @@ export default class MapArea extends React.Component {
     window.addEventListener("resize", this.globalResize);
     window.addEventListener("keyup", this.globalKeyUp);
   }
+  componentWillUpdate(){
+    // allow to roll back updated changes
+    this.saveForUndo();
+  }
+  componentDidUpdate(){
+    console.log("Updated!");
+    this.redraw();
+  }
   componentWillUnmount(){
     window.removeEventListener("mousemove", this.globalMouseMove);
     window.removeEventListener("mouseup", this.globalMouseUp);
@@ -91,8 +106,24 @@ export default class MapArea extends React.Component {
     window.removeEventListener("keyup", this.globalKeyUp);
   }
 
+
   removeDots(url){
     return TileHelper.normalizePath(url).replace(/\./gi,'*');
+  }
+
+  initDatGui(){
+
+    /* this is temporary testing stuff */
+    $.getScript("/lib/dat.gui.min.js", () => {
+      console.log("GOT it!");
+      var gui = this.gui = new dat.GUI();
+      for(let i in this.data){
+        if(typeof(this.data[i]) == "object"){
+          continue;
+        }
+        gui.add(this.data, i);
+      }
+    });
   }
 
   // TODO: check all use cases and change to data.. as map.map looks confusing and ugly
@@ -122,7 +153,7 @@ export default class MapArea extends React.Component {
           // empty maps aren't visible without grid
           showGrid: 1,
           camera: {
-            x:0, y:0, zoom: 1
+            _x:0, _y:0, _zoom: 1
           },
           preview: false,
           mode: "stamp",
@@ -133,6 +164,10 @@ export default class MapArea extends React.Component {
     return this.data.meta;
   }
   get camera(){
+    // prevent camera adjustments on asset update
+    if(this._camera){
+      return this._camera;
+    }
     // backwards compatibility with older maps.. should be safe to remove in the future
     if(!this.meta.options.camera){
       this.meta.options.camera = {x: 0, y: 0, zoom: 1};
@@ -140,6 +175,27 @@ export default class MapArea extends React.Component {
     if( !this.meta.options.camera.zoom || isNaN(this.meta.options.camera.zoom) ){
       this.meta.options.camera.zoom = 1;
     }
+    const self = this;
+    this._camera = {
+      _x: this.meta.options.camera.x,
+      _y: this.meta.options.camera.y,
+      _zoom: this.meta.options.camera.zoom,
+      set x(val){
+        self.meta.options.camera.x = val;
+        this._x = val;
+      },
+      get x(){return this._x},
+      set y(val){
+        self.meta.options.camera.y = val;
+        this._y = val;
+      },
+      get y(){return this._y},
+      set zoom(val){
+        self.meta.options.camera.zoom = val;
+        this._zoom = val;
+      },
+      get zoom(){return this._zoom}
+    };
     return this.meta.options.camera;
   }
   get options(){
@@ -150,6 +206,33 @@ export default class MapArea extends React.Component {
   get palette(){
     return this.gidCache;
   }
+
+  // TMP - one undo step - just to prevent data loss
+  saveForUndo(){
+    if(this.ignoreUndo){
+      return;
+    }
+    const toSave = this.copyData(this.data);
+    if(this.undoSteps[this.undoSteps.length-1] == toSave){
+      return;
+    }
+    this.undoSteps.push(toSave);
+    this.refs.tools.forceUpdate();
+  }
+  doUndo(){
+    // prevent double saving undo
+    this.ignoreUndo = true;
+    if(this.undoSteps.length){
+      this.data = JSON.parse(this.undoSteps.pop());
+      this.fullUpdate(() => {
+        this.ignoreUndo = false;
+      });
+    }
+  }
+  copyData(data){
+    return JSON.stringify(data);
+  }
+
   /* TODO: browser compatibility - IE don't have TextDecoder - https://github.com/inexorabletash/text-encoding*/
   xmlToJson(xml){
     window.xml = xml;
@@ -259,19 +342,21 @@ export default class MapArea extends React.Component {
     else {
       this.removeTool("error");
     }
+    this.forceUpdate();
+    this.updateTilesets();
     if(typeof cb === "function"){
       cb();
     }
-    this.forceUpdate();
-    this.updateTilesets();
   }
 
   addLayerTool(){
     this.addTool("Layers", "Layers", {map: this}, Layers)
   }
   addTilesetTool(){
-    let ts = this.data.tilesets[this.activeTileset]
     this.addTool("Tileset", "Tilesets", {map:this}, TileSet);
+  }
+  addPropertiesTool(){
+    this.addTool("Properties", "Properties", {map:this}, Properties);
   }
   /*
   * TODO: move tools to the EditMap.js
@@ -600,12 +685,14 @@ export default class MapArea extends React.Component {
   /* endof events */
 
   /* update stuff */
-  fullUpdate(){
+  fullUpdate(cb = () => {}){
     this.generateImages(() => {
       this.addLayerTool();
       this.addTilesetTool();
+      this.addPropertiesTool();
       this.redrawLayers();
       this.redrawTilesets();
+      cb();
     });
   }
 

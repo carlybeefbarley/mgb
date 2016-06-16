@@ -1,6 +1,15 @@
 import React from 'react';
 import EditModes from "./EditModes";
+
 export default class MapTools extends React.Component {
+
+  componentDidMount(){
+    this.activateToolPopups();
+  }
+  activateToolPopups() {
+    console.log("activate popup!");
+    $('.hazPopup', this.refs.mainElement).popup();
+  }
 
   doPreview() {
     this.props.map.togglePreviewState();
@@ -14,7 +23,8 @@ export default class MapTools extends React.Component {
     this.props.map.resetCamera();
   }
   doUndo(){
-
+    this.props.map.doUndo();
+    this.forceUpdate();
   }
   doRedo(){
 
@@ -43,8 +53,11 @@ export default class MapTools extends React.Component {
     if(!this.props.map.options.mode){
       this.props.map.options.mode = "stamp";
     }
+    const undoClass = this.props.map.undoSteps.length ? "ui button" : "ui button disabled";
+    //const undoClass = this.props.map.undoSteps.length ? "ui button hazPopup" : "ui button disabled hazPopup";
+    //const undoCount = this.props.map.undoSteps.length;/// ? `<div class="floating ui tiny grey label">${this.props.map.undoSteps.length}</div>` : "";
     return (
-      <div>
+      <div ref="mainElement">
         {/* mics buttons / camera / view / save */}
         <div className="ui icon buttons small ">
           <span className="ui button"
@@ -59,7 +72,7 @@ export default class MapTools extends React.Component {
           <span className="ui button"
                   onClick={this.doCameraReset.bind(this)}
                   title="Reset camera"
-            ><i className="marker icon"></i>
+            ><i className="crosshairs icon"></i>
           </span>
           <span className="ui button"
                   onClick={this.doSave.bind(this)}
@@ -69,10 +82,11 @@ export default class MapTools extends React.Component {
         </div>
         {/* undo / redo */}
         <div className="ui icon small buttons">
-          <span className="ui button disabled"
+          <span className={undoClass}
                   onClick={this.doUndo.bind(this)}
                   title="Undo"
-            ><i className="undo icon"></i>
+                  data-position="top center"
+            ><i className="undo icon"></i>{this.props.map.undoSteps.length}
           </span>
           <span className="ui button disabled"
                   onClick={this.doRedo.bind(this)}

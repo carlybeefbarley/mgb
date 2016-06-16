@@ -78,8 +78,9 @@ export default class TileMapLayer extends React.Component {
 
   selectRectangle(pos){
     const map = this.map;
-    if(!this.startingTilePos || this.startingTilePos.isEqual(this.lastTilePos)){
+    if(!this.startingTilePos){
       if(!map.tmpSelection.length){
+        console.log("single!", map.tmpSelection.length);
         map.tmpSelection.pushUniquePos(new TileSelection(pos));
       }
       return;
@@ -425,6 +426,8 @@ edit[EditModes.fill] = function(e, up){
   const pos = this.getTilePosInfo(e);
 
   if(up){
+    this.map.saveForUndo();
+
     let temp = this.map.tmpSelection;
     for(let i=0; i<temp.length; i++){
       this.options.data[temp[i].id] = temp[i].gid;
@@ -495,51 +498,8 @@ edit[EditModes.fill] = function(e, up){
       }
     }
   }
-  //this.map.tmpSelection.clear();
-  // swap out - tmp selection will hide on mouseleave
-  // while selection remains - and looks ugly
-
-  //this.map.tmpSelection = this.map.selection;
-  //this.map.selection = temp;
-
   this.drawTiles();
   return;
-
-/*
-  for(let y=0; y<this.options.height; y++){
-    datay = arr[y % arr.length];
-    for(let x=0; x<this.options.width; x++){
-      let ins = new TileSelection();
-      ins.x = x;
-      ins.y = y;
-      ins.gid = datay[x % datay.length].gid;
-      if (ins.gid) {
-        ins.getRawId(this.options.width);
-        if (this.map.tmpSelection.indexOfId(ins.id)) {
-          this.map.selection.push(ins);
-        }
-      }
-    }
-
-  }
-
-  this.drawTiles();
-  return;
-
-/*
-
-  this.map.tmpSelection.clear();
-  for(let i=0; i<this.options.width * this.options.height; i++){
-    let ins = this.map.collection[i % this.map.collection.length];
-      //tmp.updateFromId(i, this.options.width);
-      //tmp.getGidFromLayer(this.options);
-      let inss = new TileSelection(ins);
-      inss.updateFromId(i, this.options.width);
-
-      this.map.selection.push(inss);
-  }
-  this.drawTiles();
-*/
 };
 edit[EditModes.stamp] = function(e, up){
   // nothing from tileset is selected
@@ -550,6 +510,9 @@ edit[EditModes.stamp] = function(e, up){
   if(!this.mouseDown && !up) {
     this.highlightTiles(e);
     return;
+  }
+  if(e.type == "mousedown"){
+    this.map.saveForUndo();
   }
 
   const pos = this.getTilePosInfo(e);
@@ -563,7 +526,6 @@ edit[EditModes.stamp] = function(e, up){
     else {
       this.options.data[pos.id] = ts.gid;
     }
-
     this.drawTiles();
     return;
   }
@@ -577,7 +539,10 @@ edit[EditModes.stamp] = function(e, up){
     let ts = this.map.collection[i];
     tpos.x = ts.x + pos.x - ox;
     tpos.y = ts.y + pos.y - oy;
-    if (tpos.x < 0 || tpos.x > this.options.width || tpos.y < 0 || tpos.y > this.options.height) {
+    if (tpos.x < 0 || tpos.x > this.options.width-1 || tpos.y < 0 || tpos.y > this.options.height-1) {
+      console.log("out of bounds!");
+
+      //this.mouseDown = false;
       continue;
     }
     tpos.id = tpos.x + tpos.y * this.options.width;
@@ -591,31 +556,6 @@ edit[EditModes.stamp] = function(e, up){
     }
   }
   this.drawTiles();
-
-
-
-// do nothing if layer is not visible
-/*
-  if(!this.prevTile){
-    this.highlightTiles(e);
-  }
-
-  if(this.prevTile.outOfBounds){
-    alert("adding tile outside of the tileset bounds not supported.. yet");
-    this.mouseDown = false;
-    return;
-  }
-
-  this.props.onClick(e, this.prevTile);
-  this.highlightTiles(e, true);
-*/
-  /*
-  if(this.mouseDown || mouseUp){
-    this.changeTile(e, true);
-  }
-  else{
-    this.highlightTiles(e);
-  }*/
 };
 edit[EditModes.eraser] = function(e, up){
   if(!this.mouseDown && !up) {
@@ -626,10 +566,12 @@ edit[EditModes.eraser] = function(e, up){
 
   if (this.map.selection.length > 0) {
     if (this.map.selection.indexOfId(pos.id) > -1) {
+      this.map.saveForUndo();
       layer.data[pos.id] = 0;
     }
   }
   else {
+    this.map.saveForUndo();
     layer.data[pos.id] = 0;
   }
   this.drawTiles();

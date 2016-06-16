@@ -42,6 +42,31 @@ export default class LayerControls extends React.Component {
     map.forceUpdate();
   }
 
+  raiseLayer() {
+    const parent = this.props.layer;
+    const map = this.map;
+    const lss = map.data.layers;
+    const layer = lss.splice(map.activeLayer, 1);
+
+    map.saveForUndo();
+
+    lss.splice(map.activeLayer + 1, 0, layer[0]);
+    parent.forceUpdate();
+    map.forceUpdate();
+  }
+  lowerLayer() {
+    const parent = this.props.layer;
+    const map = this.map;
+    const lss = map.data.layers;
+    const layer = lss.splice(map.activeLayer, 1);
+
+    map.saveForUndo();
+
+    lss.splice(map.activeLayer - 1, 0, layer[0]);
+    parent.forceUpdate();
+    map.forceUpdate();
+  }
+
   updateOptions(){
     if(this.options.highlightActiveLayers){
       $(this.map.refs.mapElement).addClass("highlight-active-layer");
@@ -65,15 +90,30 @@ export default class LayerControls extends React.Component {
   render() {
     const highlihgtClassName = `ui floated icon button ${this.options.highlightActiveLayers ? 'primary' : ''}`;
     const showGridClassName = `ui floated icon button ${this.options.showGrid ? 'primary' : ''}`;
-    // TODO: ask David to get nice highligh layer icon - atm - paste was closest I could find
+
+    const rise =(
+      <button className={ this.map.activeLayer < this.map.data.layers.length - 1 ? "ui floated icon button" : "ui floated icon button disabled"}
+                         onClick={this.raiseLayer.bind(this)}
+                         title="Raise Layer"
+      ><i className="angle up icon"></i>
+      </button>
+    );
+    const lower = (
+      <button className={ this.map.activeLayer > 0 ? "ui floated icon button" : "ui floated icon button disabled"}
+                        onClick={this.lowerLayer.bind(this)}
+                        title="Lower Layer"
+        ><i className="angle down icon"></i>
+      </button>
+    );
+
+    // TODO: ask David to get nice highlight layer icon - atm - paste was closest I could find
     return (
-      <div className="ui mini">
+      <div className="ui mini" style={{
+              position: "relative",
+              top: "-10px"
+            }}>
         <div className="ui icon buttons mini"
              title="New Layer"
-             style={{
-                    position: "relative",
-                    top: "-10px"
-                  }}
           >
           <button className="ui floated icon button"
                   onClick={this.addLayer.bind(this)}
@@ -91,12 +131,13 @@ export default class LayerControls extends React.Component {
             ><i className="grid layout icon"></i>
           </button>
         </div>
+        <div className="ui icon buttons mini">
+          {rise}
+          {lower}
+        </div>
         <div className="ui icon buttons right floated mini"
              title="Remove Active Layer"
-             style={{
-              position: "relative",
-              top: "-10px"
-            }}>
+             >
           <button className="ui icon button"
                   onClick={this.removeLayer.bind(this)}
             >

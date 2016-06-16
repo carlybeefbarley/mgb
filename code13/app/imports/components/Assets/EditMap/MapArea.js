@@ -96,7 +96,6 @@ export default class MapArea extends React.Component {
     this.saveForUndo();
   }
   componentDidUpdate(){
-    console.log("Updated!");
     this.redraw();
   }
   componentWillUnmount(){

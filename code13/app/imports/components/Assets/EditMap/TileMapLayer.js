@@ -511,7 +511,7 @@ edit[EditModes.stamp] = function(e, up){
     this.highlightTiles(e);
     return;
   }
-  if(e.type == "mousedown"){
+  if(e.type == "mousedown" && e.target == this.refs.canvas){
     this.map.saveForUndo();
   }
 

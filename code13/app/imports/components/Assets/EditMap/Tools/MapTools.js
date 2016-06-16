@@ -67,7 +67,7 @@ export default class MapTools extends React.Component {
           <span className={(this.props.map.options.preview ? "ui button primary" : "ui button")}
                   onClick={this.doPreview.bind(this)}
                   title="3d Preview"
-            >Preview
+            ><i className="cube icon"></i>
           </span>
           <span className="ui button"
                   onClick={this.doCameraReset.bind(this)}
@@ -112,7 +112,7 @@ export default class MapTools extends React.Component {
           <span className={(this.props.map.options.mode == "terrain" ? "ui button primary disabled" : "ui button disabled")}
                   onClick={this.enableMode.bind(this, "terrain")}
                   title="Terrain Tool"
-            ><i className="terrain icon"></i>
+            ><i className="world terrain icon"></i>
           </span>
           <span className={(this.props.map.options.mode == "fill" ? "ui button primary" : "ui button")}
                   onClick={this.enableMode.bind(this, "fill")}

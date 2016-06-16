@@ -79,7 +79,6 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	moveLayerUp(layerID){
-		console.log('move up', layerID);
 		let c2 = this.props.content2;
 
 		let tmpParam = c2.layerParams[layerID];
@@ -96,8 +95,19 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	moveLayerDown(layerID){
-		console.log('move down', layerID);
+		let c2 = this.props.content2;
 
+		let tmpParam = c2.layerParams[layerID];
+		c2.layerParams[layerID] = c2.layerParams[layerID+1];
+		c2.layerParams[layerID+1] = tmpParam;
+
+		for(let i=0; i<c2.frameNames.length; i++){
+			let frame = c2.frameData[i];
+			let tmpData = frame[layerID];
+			frame[layerID] = frame[layerID+1];
+			frame[layerID+1] = tmpData;
+		}
+		this.handleSave('Layer moved down', true);
 	}
 
 	toggleCanvasFramesVisibility(){

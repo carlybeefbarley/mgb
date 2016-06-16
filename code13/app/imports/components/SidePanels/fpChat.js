@@ -88,7 +88,7 @@ export default fpChat = React.createClass({
 
               <form className="ui small form">
                 <div className="field">
-                  <textarea placeholder="message..." ref="theMessage"></textarea>
+                  <textarea rows="3" placeholder="your message..." ref="theMessage"></textarea>
                 </div>
                 <div className="ui blue right floated labeled submit icon button" onClick={this.sendMessage}>
                   <i className="chat icon"></i> Send Message

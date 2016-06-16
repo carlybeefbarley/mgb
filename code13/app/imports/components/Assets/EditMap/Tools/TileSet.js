@@ -48,8 +48,8 @@ export default class TileSet extends React.Component {
       canvas.height = TileHelper.getTilesetHeight(ts);
     }
     else{
-      canvas.width = 480;
-      canvas.height = 640;
+      canvas.width = 1;
+      canvas.height = 1;
     }
 
     this.ctx = canvas.getContext("2d");
@@ -282,12 +282,12 @@ export default class TileSet extends React.Component {
               {this.props.info.title}
             </span>
           </div>
-          {this.renderContent()}
+          {this.renderContent(true)}
         </div>
       </div>
     );
   }
-  renderContent(){
+  renderContent(empty = false){
     return (
       <div className="active content tilesets accept-drop"
            data-drop-text="Drop asset here to create TileSet"
@@ -296,6 +296,7 @@ export default class TileSet extends React.Component {
 
         >
         <TilesetControls tileset={this} ref="controls"/>
+        {!empty ? <span>Drop graphics here to create new tileset</span> : ''}
         <div
           className="tileset"
           ref="layer"

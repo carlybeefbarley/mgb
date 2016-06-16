@@ -1,15 +1,160 @@
+"use strict";
 import React from 'react';
 
 export default class Properties extends React.Component {
+  constructor(...args){
+    super(...args);
+    this.ready = 0;
+    this.settings = null;
 
+    $.getScript("/lib/Otito.js", () => {
+      this.runOnReady();
+    });
+  }
   componentDidMount() {
     $('.ui.accordion')
-      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
+      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} });
+    this.runOnReady();
+  }
+  componentDidUpdate(){
+    if(this.settings){
+      this.settings.map.update(this.map.data);
+      this.settings.layer.update(this.map.data.layers[this.map.activeLayer]);
+      this.settings.tileset.update(this.map.data.tilesets[this.map.activeTileset]);
+    }
   }
   get map(){
     return this.props.info.content.map;
   }
 
+  runOnReady(){
+    this.ready++;
+    if(this.ready > 1){
+      this.settings = {};
+      //Otito.selfTest();
+
+      this.settings.map = new Otito(this.map.data, {
+        Map: {
+          _type: Otito.type.folder,
+          contentClassName: "ui content two column stackable grid",
+          content: {
+            width: {
+              _type: Otito.type.number,
+              head: "width",
+              min: 1
+            },
+            height: {
+              _type: Otito.type.number,
+              head: "height",
+              min: 1
+            },
+            tile: {
+              _type: Otito.type.folder,
+              className: "active",
+              contentClassName: "ui content two column stackable grid active",
+              content:{
+                tilewidth: {
+                  _type: Otito.type.int,
+                  head: "width",
+                  min: 1
+                },
+                tileheight: {
+                  _type: Otito.type.int,
+                  head: "height",
+                  min: 1
+                }
+              }
+            }
+          }
+        },
+
+      }, (...args) => {
+        //console.log("Update: ", args);
+        this.map.forceUpdate();
+        //this.settings.update(this.map.data);
+      });
+      this.settings.map.append(this.refs.map);
+
+      this.settings.layer = new Otito(this.map.data.layers[this.map.activeLayer], {
+        Layer: {
+          _type: Otito.type.folder,
+          contentClassName: "ui content two column stackable grid",
+          content: {
+            name: {
+              _type: Otito.type.input,
+            },
+            offset: {
+              _type: "folder",
+              contentClassName: "ui content two column stackable grid",
+              head: "Offsets",
+              content: {
+                x: {
+                  _type: Otito.type.number,
+                  head: "Horzontal offset"
+                },
+                y: {
+                  _type: Otito.type.number,
+                  head: "Vertical offset"
+                }
+              }
+            }
+          }
+        }
+      },() => {
+        this.map.addLayerTool();
+        this.map.redraw();
+      });
+      this.settings.layer.append(this.refs.layer);
+
+      this.settings.tileset = new Otito(this.map.data.tilesets[this.map.activeTileset], {
+        Tileset: {
+          _type: "folder",
+          contentClassName: "ui content",
+          content: {
+            name: {
+              _type: Otito.type.text,
+              _className: "fluid"
+            },
+            tiling: {
+              _type: "folder",
+              contentClassName: "ui content two column stackable grid active",
+              content: {
+                tilewidth: {
+                  _type: Otito.type.int,
+                  head: "tilewidth",
+                  min: 1
+                },
+                tileheight: {
+                  _type: Otito.type.int,
+                  head: "tileheight",
+                  min: 1
+                },
+                margin: {
+                  _type: Otito.type.int,
+                  head: "margin",
+                  min: 0
+                },
+                spacing: {
+                  _type: Otito.type.int,
+                  head: "spacing",
+                  min: 0
+                },
+              }
+            }
+
+          }
+        }
+      }, () => {
+        this.map.updateImages(() => {
+          //this.map.addTilesetTool();
+          //this.map.redraw();
+        });
+      });
+      this.settings.tileset.append(this.refs.tileset);
+
+      window.settings = this.settings;
+    }
+  }
   handleClick(layerNum){
 
   }
@@ -24,7 +169,9 @@ export default class Properties extends React.Component {
             </span>
           </div>
           <div className="active content menu">
-            <div>Hello World!</div>
+            <div ref="map"></div>
+            <div ref="tileset"></div>
+            <div ref="layer"></div>
           </div>
         </div>
       </div>

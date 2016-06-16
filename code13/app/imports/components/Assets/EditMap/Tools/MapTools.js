@@ -7,7 +7,6 @@ export default class MapTools extends React.Component {
     this.activateToolPopups();
   }
   activateToolPopups() {
-    console.log("activate popup!");
     $('.hazPopup', this.refs.mainElement).popup();
   }
 
@@ -44,7 +43,6 @@ export default class MapTools extends React.Component {
     this.props.map.redrawTilesets();
   }
   clearSelection(){
-    console.log("clear selection");
     this.props.map.tmpSelection.clear();
     this.props.map.selection.clear();
     this.props.map.redraw();
@@ -54,6 +52,9 @@ export default class MapTools extends React.Component {
     if(!this.props.map.options.mode){
       this.props.map.options.mode = "stamp";
     }
+
+    // const activeClass = "black";
+    const activeClass = "primary";
     const undoClass = this.props.map.undoSteps.length ? "ui button" : "ui button disabled";
     const redoClass = this.props.map.redoSteps.length ? "ui button" : "ui button disabled";
     //const undoClass = this.props.map.undoSteps.length ? "ui button hazPopup" : "ui button disabled hazPopup";
@@ -66,7 +67,7 @@ export default class MapTools extends React.Component {
                   title="Drop tileset on the map area to import it"
             ><i className="question icon"></i>
           </span>
-          <span className={(this.props.map.options.preview ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.preview ? "ui button " + activeClass : "ui button")}
                   onClick={this.doPreview.bind(this)}
                   title="3d Preview"
             ><i className="cube icon"></i>
@@ -98,7 +99,7 @@ export default class MapTools extends React.Component {
         </div>
         {/* randomize */}
         <div className="ui icon buttons small">
-          <span className={(this.props.map.options.randomMode ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.randomMode ? "ui button " + activeClass : "ui button")}
                   onClick={this.toggleRandomMode.bind(this)}
                   title="Random Mode - picks one tile from the selection"
             ><i className="random icon"></i>
@@ -106,22 +107,22 @@ export default class MapTools extends React.Component {
         </div>
         {/* put something on map */}
         <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == "stamp" ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.mode == "stamp" ? "ui button " + activeClass : "ui button")}
                   onClick={this.enableMode.bind(this, "stamp")}
                   title="Stamp Tool"
             ><i className="legal stamp icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "terrain" ? "ui button primary disabled" : "ui button disabled")}
+          <span className={(this.props.map.options.mode == "terrain" ? "ui button disabled" + activeClass : "ui button disabled")}
                   onClick={this.enableMode.bind(this, "terrain")}
                   title="Terrain Tool"
             ><i className="world terrain icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "fill" ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.mode == "fill" ? "ui button " + activeClass : "ui button")}
                   onClick={this.enableMode.bind(this, "fill")}
                   title="bucket fill tool"
             ><i className="theme fill icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "eraser" ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.mode == "eraser" ? "ui button " + activeClass : "ui button")}
                   onClick={this.enableEraser.bind(this)}
                   title="Eraser"
             ><i className="eraser icon"></i>
@@ -129,17 +130,17 @@ export default class MapTools extends React.Component {
         </div>
         {/* select something */}
         <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == "rectanlge" ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.mode == "rectanlge" ? "ui button " + activeClass : "ui button")}
                   onClick={this.enableMode.bind(this, "rectanlge")}
                   title="Rectangle selection"
             ><i className="square outline rectangle icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "wand" ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.mode == "wand" ? "ui button " + activeClass : "ui button")}
                   onClick={this.enableMode.bind(this, "wand")}
                   title="Magic Wand selection - select same adjascent tiles"
             ><i className="wizard icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "picker" ? "ui button primary" : "ui button")}
+          <span className={(this.props.map.options.mode == "picker" ? "ui button " + activeClass : "ui button")}
                   onClick={this.enableMode.bind(this, "picker")}
                   title="Select same tiles "
             ><i className="qrcode picker icon"></i>

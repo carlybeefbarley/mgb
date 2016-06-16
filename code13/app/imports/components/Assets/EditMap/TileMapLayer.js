@@ -216,20 +216,15 @@ export default class TileMapLayer extends React.Component {
 
     // TODO: resize layer so we can push in new tiles
     if(pos.x >= layer.width){
-      //console.log("Out of bound to right");
       pos.outOfBounds = true;
-      //return;
     }
     else if(pos.x < 0){
-      //console.log("Out of bound to left");
       pos.outOfBounds = true;
     }
     if(pos.y > layer.height){
-      //console.log("Out of bound to bottom");
       pos.outOfBounds = true;
     }
     else if(pos.y < 0){
-      //console.log("Out of bound to top");
       pos.outOfBounds = true;
     }
     pos.id = pos.x + pos.y * layer.width;
@@ -397,7 +392,7 @@ export default class TileMapLayer extends React.Component {
     // TODO - probably we can leave only canvas element here
     return (<div
       ref="layer"
-      className={this.props.active ? "tilemap-layer" : "tilemap-layer no-events"}
+      className={this.isActive() ? "tilemap-layer" : "tilemap-layer no-events"}
       data-name={this.props.data.name}
       >
     <canvas ref="canvas"

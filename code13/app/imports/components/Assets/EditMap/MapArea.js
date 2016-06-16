@@ -87,14 +87,21 @@ export default class MapArea extends React.Component {
   componentDidMount(){
     $(this.refs.mapElement).addClass("map-filled");
     this.fullUpdate();
+    //this.resetCamera();
+
     window.addEventListener("mousemove", this.globalMouseMove);
     window.addEventListener("mouseup", this.globalMouseUp);
     window.addEventListener("resize", this.globalResize);
     window.addEventListener("keyup", this.globalKeyUp);
   }
+
+  /*shouldComponentUpdate(){
+    return false;
+  }*/
+
   componentWillUpdate(){
     // allow to roll back updated changes
-    this.saveForUndo();
+    // this.saveForUndo();
   }
   componentDidUpdate(){
     this.redraw();
@@ -121,7 +128,6 @@ export default class MapArea extends React.Component {
 
     /* this is temporary testing stuff */
     $.getScript("/lib/dat.gui.min.js", () => {
-      console.log("GOT it!");
       var gui = this.gui = new dat.GUI();
       for(let i in this.data){
         if(typeof(this.data[i]) == "object"){
@@ -215,20 +221,17 @@ export default class MapArea extends React.Component {
 
   // TMP - one undo step - just to prevent data loss
   saveForUndo(skipRedo = false){
-
     if(this.ignoreUndo){
       return;
     }
-    console.error("save undo!");
-
     const toSave = this.copyData(this.data);
     if(this.undoSteps[this.undoSteps.length-1] == toSave){
-      console.log("nothing to save!");
       return;
     }
     if(!skipRedo){
       this.redoSteps.length = 0;
     }
+    console.error("saving for undo!");
     this.undoSteps.push(toSave);
     this.refs.tools.forceUpdate();
   }
@@ -308,6 +311,8 @@ export default class MapArea extends React.Component {
     if(!imgs){
       if(typeof cb == "function"){
         cb();
+        // reset camera only if map is empty
+        this.resetCamera();
       }
       return false;
     }
@@ -410,6 +415,7 @@ export default class MapArea extends React.Component {
 
   // tileset calls this method..
   /* TODO: selection should be matrix - new class?*/
+  /* selection methods */
   addToActiveSelection (gid){
     const index = this.collection.indexOf(gid);
     if(index == -1){
@@ -464,6 +470,8 @@ export default class MapArea extends React.Component {
       this.collection.push(this.selection[i]);
     }
   }
+  /* end of selection */
+
 
   togglePreviewState(){
     this.refs.mapElement.style.transform = "";
@@ -479,72 +487,6 @@ export default class MapArea extends React.Component {
     // this is not synchronous function !!!
     this.options.preview = !this.options.preview
     this.forceUpdate();
-  }
-
-
-  /* TODO: move TileLayer specific functions to TileLayer - map will handle all sorts of layers */
-  /* TODO: fill from selection */
-  /* This is main Edit constroller.. everything related with map editing starts from here!!! */
-  /* moved to: TilemapLayer.. edit */
-  handleMapClicked(e, tileInfo){
-
-    const layer = this.map.layers[this.activeLayer];
-
-    if(e.ctrlKey || this.options.mode == "eraser"){
-      if(this.selection.length > 0){
-        if(this.selection.indexOfId(tpos.id) > -1){
-          layer.data[tileInfo.id] = 0;
-        }
-      }
-      else{
-        layer.data[tileInfo.id] = 0;
-      }
-
-      return;
-    }
-
-    let sel = 0;
-    if (this.options.randomMode) {
-      sel = this.collection.random();
-      // is selection is empty?
-      if (sel) {
-        if (this.selection.length > 0) {
-          if (this.selection.indexOfId(tpos.id) > -1) {
-            layer.data[tileInfo.id] = sel.gid;
-          }
-        }
-        else {
-          layer.data[tileInfo.id] = sel.gid;
-        }
-      }
-    }
-    else if (this.collection.length) {
-      let tpos = new TileSelection(tileInfo);
-      const ox = this.collection[0].x;
-      const oy = this.collection[0].y;
-
-      for (let i = 0; i < map.collection.length; i++) {
-        sel = this.collection[i];
-
-        if (sel) {
-          tpos.x = sel.x + tileInfo.x - ox;
-          tpos.y = sel.y + tileInfo.y - oy;
-          if (tpos.x < 0 || tpos.x > layer.width || tpos.y < 0 || tpos.y > layer.height) {
-            continue;
-          }
-          tpos.id = tpos.x + tpos.y * layer.width;
-          if (this.selection.length > 0) {
-            if (this.selection.indexOfId(tpos.id) > -1) {
-              layer.data[tpos.id] = sel.gid;
-            }
-          }
-          else {
-            layer.data[tpos.id] = sel.gid;
-          }
-        }
-      }
-    }
-
   }
 
   /* camera stuff */
@@ -653,13 +595,16 @@ export default class MapArea extends React.Component {
   }
   handleKeyUp(e){
     let update = false;
+    // don't steal events from inputs
+    if(e.target.tagName == "INPUT"){
+      return;
+    }
     switch(e.which){
       case 37: //left
         this.camera.x += this.data.tilewidth * this.camera.zoom;
         update = true
         break;
       case 38: //top
-
         this.camera.y += this.data.tileheight * this.camera.zoom;
         update = true;
         break;
@@ -676,6 +621,9 @@ export default class MapArea extends React.Component {
         this.selection.clear();
         this.refs.tools.enableMode(EditModes.stamp);
         break;
+    }
+    if(e.ctrlKey){
+      console.log(e.which);
     }
     if(update){
       this.redraw();
@@ -727,7 +675,7 @@ export default class MapArea extends React.Component {
 
   redraw(){
     this.redrawLayers();
-    this.refs.grid.drawGrid();
+    this.refs.grid && this.refs.grid.drawGrid();
   }
 
   redrawLayers(){
@@ -784,7 +732,6 @@ export default class MapArea extends React.Component {
             key={i}
             map={this}
             active={this.activeLayer == i}
-            onClick={this.handleMapClicked.bind(this)}
             />);
         }
       }

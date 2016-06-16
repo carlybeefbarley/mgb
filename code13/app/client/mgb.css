@@ -65,7 +65,7 @@ body.dragging .accept-drop:after{
   transform-style: preserve-3d;
 }
 .map-filled.preview:active{
-  transition-duration: 0;
+  transition-duration: unset;
 }
 
 .map-filled.preview .tilemap-layer:nth-of-type(1):not(.grid-layer) { transform: translatez(-120px); }

@@ -116,7 +116,7 @@ export default fpActivity = React.createClass({
 
    
   render: function () {    
-    return  <div className="ui feed">
+    return  <div className="ui small feed">
               { this.renderActivityContent(this.props.activity) }
             </div>
   }

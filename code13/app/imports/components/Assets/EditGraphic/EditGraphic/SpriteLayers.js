@@ -307,33 +307,33 @@ export default class SpriteLayers extends React.Component {
 
 
   render() { 
-  	let c2 = this.props.content2;
+  	const c2 = this.props.content2;
 
     return (
       	
       <div className="ui sixteen wide column">
 	      <div className="row">
-	  		<div onClick={this.rewindFrames.bind(this, false)} className="ui icon button">
+	  		<div onClick={this.rewindFrames.bind(this, false)} className="ui small icon button">
 				<i className="icon step backward"></i>
 			</div>
-			<div onClick={this.stepFrame.bind(this, false)} className="ui icon button">
+			<div onClick={this.stepFrame.bind(this, false)} className="ui small icon button">
 				<i className="icon backward"></i>
 			</div>
 			<div onClick={this.togglePlayAnimation.bind(this)} 
-				className={"ui icon button " + (this.state.isPlaying ? "black" : "")}>
-					<i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
+				className={"ui small icon button " + (this.state.isPlaying ? "black" : "")}>
+					<i className={"icon small " + (this.state.isPlaying ? "pause" : "play" )}></i>
 			</div>
-			<div onClick={this.stepFrame.bind(this, true)} className="ui icon button">
-				<i className="icon forward"></i>
+			<div onClick={this.stepFrame.bind(this, true)} className="ui small icon button">
+				<i className="icon small forward"></i>
 			</div>
-			<div onClick={this.rewindFrames.bind(this, true)} className="ui icon button">
-				<i className="icon step forward"></i>
+			<div onClick={this.rewindFrames.bind(this, true)} className="ui small icon button">
+				<i className="icon small step forward"></i>
 			</div>
-			<div className="ui labeled input">
-			  <div className="ui label">
+			<div className="ui small labeled input">
+			  <div className="ui small label" title="Frames Per Second">
 			    FPS
 			  </div>
-			  <input type="number" min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
+			  <input className="ui small input" type="number" min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
 			</div>
 			<div className="ui right floated mini button" onClick={this.toggleCanvasFramesVisibility.bind(this)}>
 				<i className={"icon " + (this.state.isCanvasFramesVisible ? "unhide" : "hide" )}></i> Frames
@@ -343,7 +343,7 @@ export default class SpriteLayers extends React.Component {
 			</div>
 	      </div>
 
-	      <table className="ui celled padded table spriteLayersTable">
+	      <table className="ui celled small padded table spriteLayersTable">
 	        <thead>
 
 
@@ -356,7 +356,7 @@ export default class SpriteLayers extends React.Component {
 	          	{
 	          		_.map(this.getAnimationsTH(), (item, idx) => { return (
 				      <th key={"thAnim_"+idx} colSpan={item.colspan} className="animTH">
-						<div className={"ui "+(item.color ? "simple dropdown label "+item.color : "")}>
+						<div className={"ui "+(item.color ? "simple small dropdown label "+item.color : "")}>
 							{item.name}
 							{
 								item.name ? (

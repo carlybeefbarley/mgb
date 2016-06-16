@@ -186,9 +186,6 @@ export default class EditGraphic extends React.Component {
   // React Callback: componentDidUpdate()
   componentDidUpdate(prevProps,  prevState)
   {
-    // [guntis] TODO update all previewCanvases only if layer is deleted
-    // [guntis] TODO update editCanvas if selected another frame
-
       this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
       this.loadAllPreviewsAsync()
   }
@@ -1129,7 +1126,7 @@ export default class EditGraphic extends React.Component {
             <br></br>
           </div>
           <div className="row" style={{"minHeight": "276px"}}>
-            <div   style={{ "overflow": "scroll", "maxWidth": "600px", "maxHeight": "600px"}}>
+            <div   style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
               <canvas ref="editCanvas"
                         style={ this.state.toolChosen ? {"cursor": this.state.toolChosen.editCursor} : {} }
                         width={zoom*c2.width}

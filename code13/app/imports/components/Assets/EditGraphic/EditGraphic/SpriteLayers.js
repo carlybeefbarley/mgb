@@ -496,7 +496,7 @@ export default class SpriteLayers extends React.Component {
 	          		_.map(c2.frameNames, (frameName, idx) => { return (
 				      <th key={"thCanvas_"+idx}>
 				      	<div className="ui image "				      		
-				          	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
+				          	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}>
 				      		<canvas width={c2.width} height={c2.height}></canvas>
 				      	</div>
 				      </th>

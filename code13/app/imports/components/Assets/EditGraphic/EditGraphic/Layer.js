@@ -88,7 +88,7 @@ export default class Layer extends React.Component {
           		className={"ui image " + (this.props.isCanvasLayersVisible ? "" : "hidden") }
           		draggable="true" 
           		/* onDragStart={this.handlePreviewDragStart.bind(this, this.props.idx)} */ 
-          		style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "scroll" }}>
+          		style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}>
           			<canvas width={this.props.width} height={this.props.height}></canvas>
         	</div>
           </td>

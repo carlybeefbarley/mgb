@@ -45,10 +45,10 @@ export default ProjectCard = React.createClass({
               <div className="content">
                 <i className="right floated star icon"></i>
                 <div className="header">{project.name}</div>
-                <div className="meta"><i className="users icon"></i>{MemberStr}</div>
+                <div className="meta"><i className="users icon"></i>&nbsp;{MemberStr}</div>
 
                 <div className="ui description">
-                  <b>Description:</b> 
+                  <b>Description:&nbsp;</b> 
                   <InlineEdit
                     validate={this.customValidateText}
                     activeClassName="editing"

@@ -43,11 +43,11 @@ export default FlexPanel = React.createClass({
   render: function () {    
     const {flexPanelWidth} = this.props
     const panelStyle = {
-      position: "absolute", 
+      position: "fixed", 
       right: "0px", 
       top: "0px", 
       minHeight: "600px", 
-      height: "100%",
+      bottom: "0px",
       width: flexPanelWidth, 
       backgroundColor: "#ddd"
     }
@@ -60,12 +60,16 @@ export default FlexPanel = React.createClass({
     }
 
     const panelScrollContainerStyle = {
-      height: "100%", 
+      position: "fixed",
+      top: "40px",                /// TODO calculate this 
+      bottom: "0px",
+      width: flexPanelWidth, 
       overflow: "scroll"
     }
     
     const panelInnerStyle = {
       padding: "8px",
+      paddingBottom: "24px",
       height: "auto" 
     }
     

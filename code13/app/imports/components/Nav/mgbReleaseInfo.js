@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Wed Jun 15 2016 19:30:00 GMT-0700 (PDT)",
+      "timestamp":     "Wed Jun 15 2016 19:45:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "542"
+        "iteration":   "543"
       },
 
       "releaseManagement": {
@@ -41,6 +41,13 @@ export default mgbReleaseInfo = {
           "type":           "improvement",
           "changeName":     "Activity Flexpanel more compact, has user images",
           "changeSummary":  "Shrunk fonts/sizes and tightened text for activity feed. Added user images!",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel.chat",
+          "type":           "improvement",
+          "changeName":     "Chat Flexpanel has user images",
+          "changeSummary":  "Added user images to Chat Flexpanel and fixed bug with empty messages",
           "otherUrls":      []
         },
         {

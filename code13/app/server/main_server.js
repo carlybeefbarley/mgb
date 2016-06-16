@@ -146,6 +146,7 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
         statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
         headers: {
           'Location': user.profile.avatar
+          // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200 
         },
         body: {}
       }

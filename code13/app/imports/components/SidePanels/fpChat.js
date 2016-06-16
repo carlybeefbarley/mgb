@@ -31,19 +31,22 @@ export default fpChat = React.createClass({
 
 
   sendMessage: function() {
-    let chatMsg = {
+    const msg = this.refs.theMessage.value
+    if (!msg || msg.length < 1)
+      return
+
+    const chatMsg = {
       // toChannelName: null,
       // toProjectName: null,
       // toAssetId: null,
       // toOwnerName: null,
       // toOwnerId: null,
-      message: this.refs.theMessage.value
+      message: msg
     }
 
     Meteor.call('Chats.send', chatMsg, (error, result) => {
-      if (error) {
-          alert("cannot send message because: " + error.reason);
-      }
+      if (error) 
+        alert("cannot send message because: " + error.reason)
       else
         this.refs.theMessage.value = ""
     })
@@ -53,12 +56,15 @@ export default fpChat = React.createClass({
     const ago = moment(c.createdAt).fromNow()
     const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
     return  <div className="comment" key={c._id}>
+              <a className="avatar">
+                <img src={`/api/user/${c.byUserId}/avatar`}></img>
+              </a>
               <div className="content">
                 <a className="author">{c.byUserName}</a>
                 <div className="metadata">
                   <span className="date" title={absTime}>{ago}</span>
                 </div>
-                <div className="text">{c.message}</div>
+                <div className="text">{c.message}&nbsp;</div>
               </div>
             </div>
   },

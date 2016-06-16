@@ -29,6 +29,9 @@ export default fpChat = React.createClass({
     $(".fpChatDropDown").dropdown()
   },
 
+  componentDidUpdate: function() {
+    this.refs.sendChatMessage.scrollIntoView(false)
+  },
 
   sendMessage: function() {
     const msg = this.refs.theMessage.value
@@ -90,11 +93,11 @@ export default fpChat = React.createClass({
                 <div className="field">
                   <textarea rows="3" placeholder="your message..." ref="theMessage"></textarea>
                 </div>
-                <div className="ui blue right floated labeled submit icon button" onClick={this.sendMessage}>
+                <div className="ui blue right floated labeled submit icon button" ref="sendChatMessage" onClick={this.sendMessage}>
                   <i className="chat icon"></i> Send Message
                 </div>
               </form>
-              <br></br>&nbsp;
+             <p >&nbsp;</p> 
             </div>
   }  
 })

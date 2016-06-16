@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Wed Jun 15 2016 19:45:00 GMT-0700 (PDT)",
+      "timestamp":     "Thu Jun 16 2016 03:05:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "543"
+        "iteration":   "552"
       },
 
       "releaseManagement": {
@@ -47,7 +47,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "nav.flexpanel.chat",
           "type":           "improvement",
           "changeName":     "Chat Flexpanel has user images",
-          "changeSummary":  "Added user images to Chat Flexpanel and fixed bug with empty messages",
+          "changeSummary":  "Added user images to Chat Flexpanel and fixed bug with empty messages and scrolling",
           "otherUrls":      []
         },
         {

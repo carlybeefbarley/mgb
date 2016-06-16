@@ -65,8 +65,9 @@ export default class MapArea extends React.Component {
 
 
     this._camera = null;
-    this.undoSteps = [];
     this.ignoreUndo = 0;
+    this.undoSteps = [];
+    this.redoSteps = [];
 
     this.globalMouseMove = (...args) => {this.handleMouseMove(...args);};
     this.globalMouseUp = (...args) => {this.handleMouseUp(...args);};
@@ -213,7 +214,7 @@ export default class MapArea extends React.Component {
   }
 
   // TMP - one undo step - just to prevent data loss
-  saveForUndo(){
+  saveForUndo(skipRedo = false){
 
     if(this.ignoreUndo){
       return;
@@ -225,18 +226,37 @@ export default class MapArea extends React.Component {
       console.log("nothing to save!");
       return;
     }
+    if(!skipRedo){
+      this.redoSteps.length = 0;
+    }
     this.undoSteps.push(toSave);
     this.refs.tools.forceUpdate();
   }
   doUndo(){
     // prevent double saving undo
-    this.ignoreUndo++;
+
     if(this.undoSteps.length){
+      this.redoSteps.push(this.data);
       this.data = JSON.parse(this.undoSteps.pop());
+
+      this.ignoreUndo++;
       this.fullUpdate(() => {
         this.ignoreUndo--;
       });
     }
+  }
+  doRedo(){
+    if(!this.redoSteps.length){
+      return;
+    }
+    this.saveForUndo(true);
+
+    this.data = this.redoSteps.pop();
+
+    this.ignoreUndo++;
+    this.fullUpdate(() => {
+      this.ignoreUndo--;
+    });
   }
   copyData(data){
     return JSON.stringify(data);

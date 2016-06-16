@@ -27,7 +27,8 @@ export default class MapTools extends React.Component {
     this.forceUpdate();
   }
   doRedo(){
-
+    this.props.map.doRedo();
+    this.forceUpdate();
   }
   toggleRandomMode(){
     this.props.map.options.randomMode = !this.props.map.options.randomMode;
@@ -54,6 +55,7 @@ export default class MapTools extends React.Component {
       this.props.map.options.mode = "stamp";
     }
     const undoClass = this.props.map.undoSteps.length ? "ui button" : "ui button disabled";
+    const redoClass = this.props.map.redoSteps.length ? "ui button" : "ui button disabled";
     //const undoClass = this.props.map.undoSteps.length ? "ui button hazPopup" : "ui button disabled hazPopup";
     //const undoCount = this.props.map.undoSteps.length;/// ? `<div class="floating ui tiny grey label">${this.props.map.undoSteps.length}</div>` : "";
     return (
@@ -88,7 +90,7 @@ export default class MapTools extends React.Component {
                   data-position="top center"
             ><i className="undo icon"></i>{this.props.map.undoSteps.length}
           </span>
-          <span className="ui button disabled"
+          <span className={redoClass}
                   onClick={this.doRedo.bind(this)}
                   title="Redo"
             ><i className="undo icon" style={{transform: "scaleX(-1)"}}></i>

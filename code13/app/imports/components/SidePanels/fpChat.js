@@ -94,6 +94,7 @@ export default fpChat = React.createClass({
                   <i className="chat icon"></i> Send Message
                 </div>
               </form>
+              <br></br>&nbsp;
             </div>
   }  
 })

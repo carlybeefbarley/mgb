@@ -47,6 +47,14 @@ export default class Layer extends React.Component {
 		this.props.handleSave('Changed layer name');
 	}
 
+  moveLayerUp(){
+    this.props.moveLayerUp(this.props.idx);
+  }
+
+  moveLayerDown(){
+    this.props.moveLayerDown(this.props.idx);
+  }
+
   deleteLayer(){
     this.props.deleteLayer(this.props.idx);
   }
@@ -73,7 +81,34 @@ export default class Layer extends React.Component {
           </td>
           <td onDoubleClick={this.editName.bind(this)} onSubmit={this.changeName.bind(this)}>
           	<div ref="nameText" className={this.state.editName ? "hidden" : "visible"}>{this.props.layer.name}</div>
-          	<form className={"ui input " + (this.state.editName ? "visible" : "hidden")} ><input ref="nameInput" type="text" /></form>
+          	<form className={"ui input " + (this.state.editName ? "visible" : "hidden")} ><input ref="nameInput" type="text" /></form>          
+          </td>
+          <td>
+            <div className="ui simple dropdown">
+              <i className="icon setting"></i>
+              <div className="menu">
+                <div onClick={this.moveLayerUp.bind(this)}
+                  className={"item " + (this.props.idx === 0 ? "disabled" : "") }>
+                  <i className="arrow up icon"></i>
+                  Move Up
+                </div>
+                <div onClick={this.moveLayerDown.bind(this)}
+                  className={"item " + (this.props.layerCount-1 === this.props.idx ? "disabled" : "")}>
+                  <i className="arrow down icon"></i>
+                  Move Down
+                </div>
+                <div onClick={this.editName.bind(this)}
+                  className="item">
+                  <i className="edit icon"></i>
+                  Rename
+                </div>
+                <div onClick={this.deleteLayer.bind(this)}
+                  className="item">
+                  <i className="remove icon"></i>
+                  Delete
+                </div>
+              </div>
+            </div>
           </td>
           {
             _.map(this.props.frameNames, (frameName, frameID) => { return (
@@ -104,6 +139,7 @@ export default class Layer extends React.Component {
 Layer.propTypes = {
   idx: PropTypes.number.isRequired,
   layer: PropTypes.object.isRequired,
+  layerCount: PropTypes.number.isRequired,
   frameNames: PropTypes.array.isRequired,
   selectedFrame: PropTypes.number.isRequired,
   isSelected: PropTypes.bool.isRequired,
@@ -112,6 +148,8 @@ Layer.propTypes = {
   isCanvasLayersVisible: PropTypes.bool.isRequired,
 
   selectLayer: PropTypes.func.isRequired,
+  moveLayerUp: PropTypes.func.isRequired,
+  moveLayerDown: PropTypes.func.isRequired,
   selectFrame: PropTypes.func.isRequired,
   deleteLayer: PropTypes.func.isRequired,
   handleSave: PropTypes.func.isRequired,

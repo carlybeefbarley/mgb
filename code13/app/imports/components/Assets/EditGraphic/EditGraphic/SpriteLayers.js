@@ -78,6 +78,28 @@ export default class SpriteLayers extends React.Component {
 	    this.props.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
 	}
 
+	moveLayerUp(layerID){
+		console.log('move up', layerID);
+		let c2 = this.props.content2;
+
+		let tmpParam = c2.layerParams[layerID];
+		c2.layerParams[layerID] = c2.layerParams[layerID-1];
+		c2.layerParams[layerID-1] = tmpParam;
+
+		for(let i=0; i<c2.frameNames.length; i++){
+			let frame = c2.frameData[i];
+			let tmpData = frame[layerID];
+			frame[layerID] = frame[layerID-1];
+			frame[layerID-1] = tmpData;
+		}
+		this.handleSave('Layer moved up', true);
+	}
+
+	moveLayerDown(layerID){
+		console.log('move down', layerID);
+
+	}
+
 	toggleCanvasFramesVisibility(){
 		this.setState({ isCanvasFramesVisible: !this.state.isCanvasFramesVisible });
 	}
@@ -280,8 +302,8 @@ export default class SpriteLayers extends React.Component {
 		this.props.EditGraphic.handleDeleteFrame(frameID);
 	}	
 
-	handleSave(changeText="change graphic"){
-		this.props.handleSave(changeText);
+	handleSave(changeText="change graphic", dontSaveFrameData){
+		this.props.handleSave(changeText, dontSaveFrameData);
 	}
 
 	renderLayers(){
@@ -291,6 +313,7 @@ export default class SpriteLayers extends React.Component {
 				key={idx}
 				idx={idx}
 				layer={layer}
+				layerCount={c2.layerParams.length}
 				frameNames={c2.frameNames} 
 				selectedFrame={this.props.EditGraphic.state.selectedFrameIdx}
 				isSelected={this.props.EditGraphic.state.selectedLayerIdx === idx}
@@ -299,6 +322,8 @@ export default class SpriteLayers extends React.Component {
 				isCanvasLayersVisible={this.state.isCanvasLayersVisible}
 
 				selectLayer={this.selectLayer.bind(this)}
+				moveLayerUp={this.moveLayerUp.bind(this)}
+				moveLayerDown={this.moveLayerDown.bind(this)}
 				selectFrame={this.selectFrame.bind(this)}
 				deleteLayer={this.deleteLayer.bind(this)}
 				handleSave={this.handleSave.bind(this)}
@@ -351,6 +376,7 @@ export default class SpriteLayers extends React.Component {
 	    {/** Animation tabs **/}
 
 	          <tr className={"animTR " + (c2.animations.length === 0 ? "hidden" : "")}>
+	          	<th></th>
 	          	<th></th>
 	          	<th></th>
 	          	<th></th>
@@ -420,6 +446,7 @@ export default class SpriteLayers extends React.Component {
 					    <i className="add circle icon"></i> Add Layer
 					</a>
 	            </th>
+	            <th width="32px"></th>
 	            {
 	            	_.map(c2.frameNames, (frameName, idx) => { return (
 				      <th key={"th_"+idx} 
@@ -489,6 +516,7 @@ export default class SpriteLayers extends React.Component {
 
 	      {/** Previews for frames **/}
 	          <tr className={"layerCanvases " + (this.state.isCanvasFramesVisible ? "" : "hidden")}>
+	          	<th></th>
 	          	<th></th>
 	          	<th></th>
 	          	<th></th>

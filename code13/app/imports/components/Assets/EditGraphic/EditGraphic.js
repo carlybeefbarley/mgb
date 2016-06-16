@@ -42,7 +42,7 @@ export default class EditGraphic extends React.Component {
 
   constructor(props) {
     super(props);
-//    console.log(props.asset.content2);
+   console.log(props.asset.content2);
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,

@@ -356,7 +356,7 @@ export default class SpriteLayers extends React.Component {
 	          	{
 	          		_.map(this.getAnimationsTH(), (item, idx) => { return (
 				      <th key={"thAnim_"+idx} colSpan={item.colspan} className="animTH">
-						<div className={"ui "+(item.color ? "simple small dropdown label "+item.color : "")}>
+						<div className={"ui "+(item.color ? "simple tiny dropdown label "+item.color : "")}>
 							{item.name}
 							{
 								item.name ? (

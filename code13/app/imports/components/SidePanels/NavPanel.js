@@ -43,8 +43,8 @@ export default NavPanel = React.createClass({
 
   render: function () {    
     const { navPanelWidth } = this.props
-    const panelStyle = {
-      position: "absolute", 
+    const panelStyle = {    // This is the overall NavPanel with either just the first column (just icons, always shown), or 1st and 2nd columns
+      position: "fixed", 
       left: "0px", 
       top: "0px", 
       bottom: "0px",
@@ -52,15 +52,15 @@ export default NavPanel = React.createClass({
       backgroundColor: "#000"
     }
       
-    const miniNavStyle = {
-      borderRadius: 0, 
-      marginRight: "1px", 
-      width: "60px", 
-      position: "absolute",
+    const miniNavStyle = {  // This is the First column of the NavPanel (just icons, always shown). It is logically nested within the outer panel 
+      position: "fixed",
       top: "0px",
       bottom: "0px",
       left: "0px",
-      marginBottom: 0
+      width: "60px", 
+      borderRadius: 0, 
+      marginRight: "1px", 
+      marginBottom: "0px"
     }
 
     const panelScrollContainerStyle = {

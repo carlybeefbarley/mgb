@@ -14,10 +14,10 @@ export default fpActivity = React.createClass({
   },
 
 
-  wrapActivity: function (key, ago, labelIconClass, labelExtraIconClass, uName, uId, actJSX) {
+  wrapActivity: function (key, ago, userId, labelExtraIconClass, uName, uId, actJSX) {
     return  <div className="event" key={key} style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
               <div className="label">
-                <i className={labelIconClass}></i>
+              <img src={`/api/user/${userId}/avatar`}></img>
               </div>
               <div className="content">
                 <div className="summary">
@@ -71,8 +71,8 @@ export default fpActivity = React.createClass({
     const ago = mTime.fromNow()                   // TODO: Make reactive
 
     if (act.activityType.startsWith("user.")) {
-      return  this.wrapActivity(idx, ago, iconClass, null, act.byUserName, act.byUserId,
-                <small>{act.description}</small>
+      return  this.wrapActivity(idx, ago, act.byUserId, null, act.byUserName, act.byUserId,
+                <small><i className={iconClass}></i>&nbsp;{act.description}</small>
       )
     }
     else if (act.activityType.startsWith("asset.")) {
@@ -85,25 +85,25 @@ export default fpActivity = React.createClass({
                 `/assetEdit/${act.toAssetId}`                       // Old format
 
 
-      return  this.wrapActivity(idx, ago, iconClass, assetKindIconClassName, act.byUserName, act.byUserId, 
+      return  this.wrapActivity(idx, ago, act.byUserId, assetKindIconClassName, act.byUserName, act.byUserId, 
                 <small data-html={dataHtml} data-position="left center" className="hazActivityPopup">
                   <QLink to={linkTo}>
                     {assetName}
                   </QLink>
                   <br></br>
-                  &nbsp;{act.description}
+                   <i className={iconClass}></i>&nbsp;{act.description}
                 </small>
       )
     } 
     else if (act.activityType.startsWith("project.")) {
-      return  this.wrapActivity(idx, ago, iconClass, null,  act.byUserName, act.byUserId,
+      return  this.wrapActivity(idx, ago, act.byUserId, null,  act.byUserName, act.byUserId,
                 <small>
-                  {act.description}
+                  <i className={iconClass}></i>&nbsp;{act.description}
                 </small>
       )
     }
     //else...
-    return this.wrapActivity(idx, ago, iconClass, act.byUserName, act.byUserId,
+    return this.wrapActivity(idx, ago, act.byUserId, act.byUserName, act.byUserId,
                 <small>{act.activityType} not known in this version</small>)             
   },
 

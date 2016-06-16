@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Thu Jun 16 2016 18:15:00 GMT-0700 (PDT)",
+      "timestamp":     "Wed Jun 15 2016 19:30:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "541"
+        "iteration":   "542"
       },
 
       "releaseManagement": {
@@ -39,8 +39,8 @@ export default mgbReleaseInfo = {
         {
           "featureTag":     "nav.flexpanel.activity",
           "type":           "improvement",
-          "changeName":     "Activity Flexpanel more compact",
-          "changeSummary":  "Shrunk fonts/sizes and tightened text for activity feed",
+          "changeName":     "Activity Flexpanel more compact, has user images",
+          "changeSummary":  "Shrunk fonts/sizes and tightened text for activity feed. Added user images!",
           "otherUrls":      []
         },
         {

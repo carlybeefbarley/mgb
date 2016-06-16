@@ -135,4 +135,28 @@ RestApi.addRoute('asset/json/:id', {authRequired: false}, {
 });
 
 
+
+// This lets the client easily get user avatar.. e.g http://localhost:3000/api/user/raMDZ9atjHABXu5KG/avatar
+RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
+  get: function () {
+    var user = Meteor.users.findOne(this.urlParams.id);
+    if (user)
+    {
+      return {
+        statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
+        headers: {
+          'Location': user.profile.avatar
+        },
+        body: {}
+      }
+    }
+    else {
+      return {
+        statusCode: 404                
+      }
+    }
+  }
+});
+
+
 console.log('\n\nRunning on server only (main_server.js)');

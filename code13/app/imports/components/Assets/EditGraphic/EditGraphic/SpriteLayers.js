@@ -260,6 +260,7 @@ export default class SpriteLayers extends React.Component {
 
 	renameAnimation(animID, e) {
 		let newName = e.target.value;
+		if(newName === "") return;
 		this.props.content2.animations[animID].name = newName;
 		this.handleSave("Rename animation");
 	}

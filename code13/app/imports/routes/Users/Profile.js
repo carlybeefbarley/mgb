@@ -140,7 +140,6 @@ export default UserProfileRoute = React.createClass({
         />
         
         <div className="six wide column" style={{minWidth: "250px"}}>
-          <h2>User: {user.profile.name}</h2>
           <UserCard
             user={user}
             canEditProfile={ownsProfile}

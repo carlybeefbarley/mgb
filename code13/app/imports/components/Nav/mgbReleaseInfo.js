@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Thu Jun 16 2016 18:40:00 GMT-0700 (PDT)",
+      "timestamp":     "Thu Jun 16 2016 20:40:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "562"
+        "iteration":   "572"
       },
 
       "releaseManagement": {
@@ -48,6 +48,13 @@ export default mgbReleaseInfo = {
           "type":           "improvement",
           "changeName":     "FlexPanels are browser height",
           "changeSummary":  "FlexPanels on the right are now fixed in place and don't scroll with page",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.assets",
+          "type":           "improvement",
+          "changeName":     "Asset card avatars and links",
+          "changeSummary":  "Asset cards now show User avatars. Asset cards are also now clickable to edit/view using the thumbnail or title",
           "otherUrls":      []
         },
         {

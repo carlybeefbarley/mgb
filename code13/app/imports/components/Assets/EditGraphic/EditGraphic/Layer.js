@@ -55,6 +55,14 @@ export default class Layer extends React.Component {
     this.props.moveLayerDown(this.props.idx);
   }
 
+  copyLayer(){
+    this.props.copyLayer(this.props.idx);
+  }
+
+  pasteLayer(){
+    this.props.pasteLayer(this.props.idx);
+  }
+
   deleteLayer(){
     this.props.deleteLayer(this.props.idx);
   }
@@ -102,6 +110,16 @@ export default class Layer extends React.Component {
                   <i className="edit icon"></i>
                   Rename
                 </div>
+                <div onClick={this.copyLayer.bind(this)}
+                  className={"item "}>
+                  <i className="copy icon"></i>
+                  Copy
+                </div>
+                <div onClick={this.pasteLayer.bind(this)}
+                  className={"item " + (this.props.copyLayerID === null ? "disabled" : "")}>
+                  <i className="paste icon"></i>
+                  Paste
+                </div>
                 <div onClick={this.deleteLayer.bind(this)}
                   className="item">
                   <i className="remove icon"></i>
@@ -146,10 +164,13 @@ Layer.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   isCanvasLayersVisible: PropTypes.bool.isRequired,
+  copyLayerID: PropTypes.number,
 
   selectLayer: PropTypes.func.isRequired,
   moveLayerUp: PropTypes.func.isRequired,
   moveLayerDown: PropTypes.func.isRequired,
+  copyLayer: PropTypes.func.isRequired,
+  pasteLayer: PropTypes.func.isRequired,
   selectFrame: PropTypes.func.isRequired,
   deleteLayer: PropTypes.func.isRequired,
   handleSave: PropTypes.func.isRequired,

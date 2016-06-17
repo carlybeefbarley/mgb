@@ -15,6 +15,7 @@ export default class SpriteLayers extends React.Component {
 	    	isCanvasLayersVisible: false,
 	    	isPlaying: false,
 	    	copyFrameID: null,
+	    	copyLayerID: null,
 	    };
 	}
 
@@ -317,6 +318,21 @@ export default class SpriteLayers extends React.Component {
 		this.handleSave("Delete animation");
 	}
 
+	copyLayer(layerID){
+		this.setState({ copyLayerID: layerID });
+	}
+
+	pasteLayer(layerID){
+		let c2 = this.props.content2;
+		if(this.state.copyLayerID === null) return;
+		for(let i=0; i<c2.frameNames.length; i++){
+			let frame = c2.frameData[i];
+			frame[layerID] = frame[this.state.copyLayerID];
+		}
+
+		this.handleSave("Paste layer #"+(this.state.copyLayerID)+" to #"+layerID, true);
+	}
+
 
 	deleteLayer(layerID){
 		this.props.EditGraphic.handleDeleteLayer(layerID);
@@ -344,10 +360,13 @@ export default class SpriteLayers extends React.Component {
 				width={c2.width}
 				height={c2.height}
 				isCanvasLayersVisible={this.state.isCanvasLayersVisible}
+				copyLayerID={this.state.copyLayerID}
 
 				selectLayer={this.selectLayer.bind(this)}
 				moveLayerUp={this.moveLayerUp.bind(this)}
 				moveLayerDown={this.moveLayerDown.bind(this)}
+				copyLayer={this.copyLayer.bind(this)}
+				pasteLayer={this.pasteLayer.bind(this)}
 				selectFrame={this.selectFrame.bind(this)}
 				deleteLayer={this.deleteLayer.bind(this)}
 				handleSave={this.handleSave.bind(this)}

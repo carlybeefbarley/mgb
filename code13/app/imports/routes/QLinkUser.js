@@ -1,12 +1,14 @@
 import React, { PropTypes } from 'react';
 import QLink from './QLink';
 
+// This is designed primarily for the 'extra content' section of Cards
+
 export default QLinkUser = React.createClass({
 
   propTypes: {
     targetUser: PropTypes.object
   },
-    
+
 
   render: function () {
     const u = this.props.targetUser

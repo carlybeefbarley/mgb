@@ -158,7 +158,7 @@ export default AssetCard = React.createClass({
         >
       
           { showHeader &&
-            <div className="ui centered image">
+            <div className="ui centered image" onClick={this.handleEditClick}>
               <canvas 
                 ref="thumbnailCanvas" 
                 width={iw} 
@@ -184,7 +184,7 @@ export default AssetCard = React.createClass({
           }
           
           { showHeader && 
-          <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}>
+          <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}  onClick={this.handleEditClick}>
             <small>{asset.name || "(untitled)"}</small>
           </div>
           }
@@ -218,12 +218,12 @@ export default AssetCard = React.createClass({
               <i className={"large " + assetKindIcon}></i>
               { assetKindName }
             </span>                           
-            <span className="right floated author">
-                <i className="large user icon"></i>
-                <QLink to={`/user/${asset.ownerId}`}>
-                  {ownerName ? ownerName : `#${asset.ownerId}`}
-                </QLink>
-            </span>
+            <QLink to={`/user/${asset.ownerId}`}>
+              <div className="right floated author">
+                <img className="ui avatar image" src={`/api/user/${asset.ownerId}/avatar`}>
+                </img> {ownerName ? ownerName : `#${asset.ownerId}`}
+              </div>
+            </QLink>
           </div>
         }
         

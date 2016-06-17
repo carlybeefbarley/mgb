@@ -157,7 +157,8 @@ export default class TileMapLayer extends React.Component {
     let i=0;
     for (let y = skipy; y < endy; y++) {
       for(let x = skipx; x < endx; x++) {
-        i = x + y * mapData.height;
+        //debugger;
+        i = x + y * mapData.width;
         // skip empty tiles
         if (!d[i]) {
           continue;
@@ -234,11 +235,12 @@ export default class TileMapLayer extends React.Component {
         return;
       }
       const pal = palette[layer.data[this.prevTile.id]];
+      // this one clears selection
       if(pal && !this.prevTile.outOfBounds){
         this.drawTile(pal, this.prevTile, map.spacing, true);
       }
       else{
-        this.highlightTile(this.prevTile);
+        //this.highlightTile(this.prevTile);
       }
     }
 

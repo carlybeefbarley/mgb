@@ -114,6 +114,10 @@ export default class EditGraphic extends React.Component {
     this.doSnapshotActivity()
   }
 
+  // componentWillUpdate(){
+  //  console.error("wil update");
+  // }
+
   // there are some missing params for old assets beeing added here
   fixingOldAssets(){
     let autoFix = false;
@@ -486,6 +490,17 @@ export default class EditGraphic extends React.Component {
       if (this.state.toolChosen.supportsDrag === false && this.state.toolChosen.changesImage === true)
         this.handleSave(`Drawing`)   // This is a one-shot tool, so save it's results now
     }
+  }
+
+  hasPermission(){
+    if (!this.props.canEdit){ 
+      this.props.editDeniedReminder();
+      return false;
+    }
+    else {
+      return true;
+    }
+
   }
 
 
@@ -1010,8 +1025,8 @@ export default class EditGraphic extends React.Component {
           <SpriteLayers 
             content2={c2}
             EditGraphic={this}
-            canEdit={this.props.canEdit}
 
+            hasPermission={this.hasPermission.bind(this)}
             handleSave={this.handleSave.bind(this)}     
             forceUpdate={this.forceUpdate.bind(this)}   
           />

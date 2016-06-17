@@ -26,12 +26,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	addFrame(){
-	    // if (!this.props.canEdit)
-	    // { 
-	    //   this.props.editDeniedReminder()
-	    //   return
-	    // }
-	    // this.doSaveStateForUndo("Add Frame");
+	    if(!this.hasPermission()) return;
+
 	    let fN = this.props.content2.frameNames;
 	    let newFrameName = "Frame " + (fN.length+1).toString()
 	    fN.push(newFrameName)
@@ -45,11 +41,7 @@ export default class SpriteLayers extends React.Component {
 	}	
 
 	insertFrameAfter(frameID, doCopy){
-		// if (!this.props.canEdit)
-	 //    { 
-	 //      this.props.editDeniedReminder()
-	 //      return
-	 //    }
+		if(!this.hasPermission()) return;
 
 	    let c2 = this.props.content2;
 	    c2.frameNames.splice(frameID+1, 0, "Frame "+(frameID+1));
@@ -62,10 +54,13 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	copyFrame(frameID){
+		if(!this.hasPermission()) return;
 		this.setState({ copyFrameID: frameID });
 	}
 
 	pasteFrame(frameID){
+		if(!this.hasPermission()) return;
+
 		let c2 = this.props.content2;
 		if(this.state.copyFrameID === null) return;
 		if(!c2.frameData[this.state.copyFrameID]) return;
@@ -75,14 +70,9 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	frameMoveLeft(frameID){
-		// if (!this.props.canEdit)
-	 //    { 
-	 //      this.props.editDeniedReminder()
-	 //      return
-	 //    }
-	    if(frameID <= 0){
-	      return;
-	    } 
+		if(!this.hasPermission()) return;
+
+	    if(frameID <= 0) return;
 
 	    let c2 = this.props.content2
 
@@ -98,11 +88,7 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	frameMoveRight(frameID){
-		// if (!this.props.canEdit)
-	 //    { 
-	 //      this.props.editDeniedReminder()
-	 //      return
-	 //    }
+		if(!this.hasPermission()) return;
 
 	    let c2 = this.props.content2;
 	    if(frameID >= c2.frameNames.length-1){
@@ -121,11 +107,7 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	deleteFrame(frameID){
-		// if (!this.props.canEdit)
-	 //    { 
-	 //      this.props.editDeniedReminder()
-	 //      return
-	 //    }
+		if(!this.hasPermission()) return;
 
 	    let c2 = this.props.content2;
 	    if(c2.frameData.length === 1){
@@ -195,7 +177,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	changeFps(event){
-		console.log(event.target.value);
+		if(!this.hasPermission()) return;
+
 		this.props.content2.fps = event.target.value;
 		this.handleSave("Changed FPS");
 	}
@@ -214,6 +197,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	addAnimation(frameID){
+		if(!this.hasPermission()) return;
+
 		let c2 = this.props.content2;	
 		let animID = this.getAnimIdByFrame(frameID);
 
@@ -259,6 +244,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	changeAnimStart(animID, e) {
+		if(!this.hasPermission()) return;
+
 		let c2 = this.props.content2;
 		let animation = c2.animations[animID];
 		let endFrame = animation.frames[animation.frames.length-1];
@@ -278,6 +265,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	changeAnimEnd(animID, e) {
+		if(!this.hasPermission()) return;
+
 		let c2 = this.props.content2;
 		let animation = c2.animations[animID];
 		let startFrame = animation.frames[0];
@@ -297,6 +286,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	changeAnimFPS(animID, e){
+		if(!this.hasPermission()) return;
+
 		let newFPS = e.target.value;
 		if(newFPS < 1 || newFPS > 60) return;
 		this.props.content2.animations[animID].fps = newFPS;
@@ -305,6 +296,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	renameAnimation(animID, e) {
+		if(!this.hasPermission()) return;
+
 		let newName = e.target.value;
 		if(newName === "") return;
 		this.props.content2.animations[animID].name = newName;
@@ -312,6 +305,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	deleteAnimation(animID){
+		if(!this.hasPermission()) return;
+
 		this.props.content2.animations.splice(animID, 1);
 		console.log(this.props.content2.animations);
 		this.handleSave("Delete animation");
@@ -331,6 +326,7 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	toggleAllLocking(){
+		if(!this.hasPermission()) return;
 		let isLocked = !this.state.allLayersLocked;
 		this.setState({ allLayersLocked: isLocked });
 		let layerParams = this.props.content2.layerParams;
@@ -349,11 +345,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	addLayer(){
-	    // if (!this.props.canEdit)
-	    // { 
-	    //   this.props.editDeniedReminder();
-	    //   return;
-	    // }
+	    if(!this.hasPermission()) return;
+
 	    // this.doSaveStateForUndo("Add Layer");
 	    let c2 = this.props.content2;
 	    let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
@@ -367,10 +360,13 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	copyLayer(layerID){
+		if(!this.hasPermission()) return;
 		this.setState({ copyLayerID: layerID });
 	}
 
 	pasteLayer(layerID){
+		if(!this.hasPermission()) return;
+
 		let c2 = this.props.content2;
 		if(this.state.copyLayerID === null) return;
 		for(let i=0; i<c2.frameNames.length; i++){
@@ -382,11 +378,7 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	deleteLayer(layerID){
-		// if (!this.props.canEdit)
-	 //    { 
-	 //      this.props.editDeniedReminder()
-	 //      return
-	 //    }
+		if(!this.hasPermission()) return;
 
 	    let c2 = this.props.content2;
 	    if(c2.layerParams.length === 1){
@@ -409,6 +401,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	moveLayerUp(layerID){
+		if(!this.hasPermission()) return;
+
 		let c2 = this.props.content2;
 
 		let tmpParam = c2.layerParams[layerID];
@@ -425,6 +419,8 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	moveLayerDown(layerID){
+		if(!this.hasPermission()) return;
+		
 		let c2 = this.props.content2;
 
 		let tmpParam = c2.layerParams[layerID];
@@ -470,6 +466,10 @@ export default class SpriteLayers extends React.Component {
 
 	handleSave(changeText="change graphic", dontSaveFrameData){
 		this.props.handleSave(changeText, dontSaveFrameData);
+	}
+
+	hasPermission(){
+		return this.props.hasPermission();
 	}
 
 
@@ -700,4 +700,5 @@ export default class SpriteLayers extends React.Component {
  
 SpriteLayers.propTypes = {
   content2: PropTypes.object.isRequired,
+  hasPermission: PropTypes.func.isRequired
 };

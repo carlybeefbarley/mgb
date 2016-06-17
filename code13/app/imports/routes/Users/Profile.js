@@ -5,7 +5,6 @@ import moment from 'moment';
 
 import UserCard from '../../components/Users/UserCard';
 import QLink from '../QLink';
-import EditProfile from '../../components/Users/EditProfile';
 import {Activity, ActivitySnapshots} from '../../schemas';
 import {ActivityTypes} from '../../schemas/activity.js';
 import {AssetKinds} from '../../schemas/assets';

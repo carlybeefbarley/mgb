@@ -6,7 +6,6 @@ export default class Properties extends React.Component {
     super(...args);
     this.ready = 0;
     this.settings = null;
-
     $.getScript("/lib/Otito.js", () => {
       this.runOnReady();
     });
@@ -51,7 +50,7 @@ export default class Properties extends React.Component {
             tile: {
               _type: Otito.type.folder,
               className: "active",
-              contentClassName: "ui content two column stackable grid active",
+              contentClassName: "ui content two column stackable grid",
               content:{
                 tilewidth: {
                   _type: Otito.type.int,
@@ -66,8 +65,7 @@ export default class Properties extends React.Component {
               }
             }
           }
-        },
-
+        }
       }, (...args) => {
         //console.log("Update: ", args);
         this.map.forceUpdate();
@@ -81,9 +79,25 @@ export default class Properties extends React.Component {
           contentClassName: "ui content two column stackable grid",
           content: {
             name: {
-              _type: Otito.type.input,
+              _type: Otito.type.text,
+              _className: "fluid"
             },
-            offset: {
+            Size: {
+              _type: "folder",
+              contentClassName: "ui content two column stackable grid",
+              head: "Size",
+              content: {
+                width: {
+                  _type: Otito.type.number,
+                  head: "Width in tiles"
+                },
+                height: {
+                  _type: Otito.type.number,
+                  head: "Height in tiles"
+                }
+              }
+            },
+            Offset: {
               _type: "folder",
               contentClassName: "ui content two column stackable grid",
               head: "Offsets",
@@ -115,30 +129,31 @@ export default class Properties extends React.Component {
               _type: Otito.type.text,
               _className: "fluid"
             },
-            tiling: {
+            Tiling: {
               _type: "folder",
-              contentClassName: "ui content two column stackable grid active",
+              head: "Tiling",
+              contentClassName: "ui content two column stackable grid",
               content: {
                 tilewidth: {
                   _type: Otito.type.int,
-                  head: "tilewidth",
+                  head: "Tile width",
                   min: 1
                 },
                 tileheight: {
                   _type: Otito.type.int,
-                  head: "tileheight",
+                  head: "Tile height",
                   min: 1
                 },
                 margin: {
                   _type: Otito.type.int,
-                  head: "margin",
+                  head: "Margin",
                   min: 0
                 },
                 spacing: {
                   _type: Otito.type.int,
-                  head: "spacing",
+                  head: "Spacing",
                   min: 0
-                },
+                }
               }
             }
 
@@ -169,9 +184,9 @@ export default class Properties extends React.Component {
             </span>
           </div>
           <div className="active content menu">
-            <div ref="map"></div>
             <div ref="tileset"></div>
             <div ref="layer"></div>
+            <div ref="map"></div>
           </div>
         </div>
       </div>

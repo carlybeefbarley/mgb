@@ -30,7 +30,7 @@ this.Otito.options = {
 	precision: 10000,
 	arrayClassName: "array",
 	
-	mainClassName: "",
+	mainClassName: "compact",
 	
 	headTagName: "div",
 	headClassName: "title",
@@ -41,7 +41,9 @@ this.Otito.options = {
 	
 	labelTagName: "label",
 	labelClassName: "column",
-	
+
+	inputWrapperClassName: "ui input fluid",
+
 	removeLinkClassName: "delete",
 	
 	headlessClassName: "headless"
@@ -203,10 +205,12 @@ this.Otito.prototype = {
 				
 				if(meta._type == "folder"){
 					f = this._updateObjectRecord(meta.content, key, this.object);
-					f.body.className = this.options.folderClassName + " " + (meta.className ? meta.className : "") + " " + (meta.__className ?  meta.__className : "");
-          if(meta.contentClassName && f.input.html.className.indexOf(meta.contentClassName) == -1){
-            f.input.html.className += " " + meta.contentClassName;
-          }
+					var cls = (this.options.folderClassName + " " + (meta.className ? meta.className : "") + " " + (meta.__className ?  meta.__className : "")).split(" ");
+					cls.forEach((c) => {c && f.body.classList.add(c);});
+					//f.body.className
+					if(meta.contentClassName && f.input.html.className.indexOf(meta.contentClassName) == -1){
+							f.input.html.className += " " + meta.contentClassName;
+					}
 					this._enableFolderToggle(f, meta);
 					if(meta.open){
 						f.body.classList.add(this.options.folderOpenClassName);
@@ -394,8 +398,15 @@ this.Otito.prototype = {
 		return r;
 	},
 	_createHead: function(oldHead, meta, key){
-		var head = oldHead || document.createElement(this.options.headTagName);
-		head.className = this.options.headClassName;
+		var head;
+		if(oldHead){
+				head = oldHead;
+		}
+		else {
+				head = document.createElement(this.options.headTagName);
+				head.className = this.options.headClassName;
+		}
+
 		head.innerHTML = meta.head || key;
 		head.setAttribute("title", key);
 		return head;
@@ -655,7 +666,7 @@ this.Otito.prototype = {
 		var inputType = this._getInputType("meta");
 		
 		var wrapper = document.createElement("div");
-		wrapper.className = "ui input";
+		wrapper.className = this.options.inputWrapperClassName;
 		wrapper.input = input;
 		
 		wrapper.meta = {};

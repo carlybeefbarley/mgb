@@ -102,6 +102,7 @@ export default class MapArea extends React.Component {
   componentWillUpdate(){
     // allow to roll back updated changes
     // this.saveForUndo();
+    //console.error("will update");
   }
   componentDidUpdate(){
     this.redraw();
@@ -352,6 +353,13 @@ export default class MapArea extends React.Component {
         this.errors.push("missing: '" + ts.image + "'" );
         continue;
       }
+      // update tileset to match new image / settings
+      const extraPixels = ts.imagewidth % ts.tilewidth;
+      const columns = (ts.imagewidth - extraPixels) / ts.tilewidth;
+      let rows = (ts.imageheight - (ts.imageheight % ts.tileheight)) / ts.tileheight;
+      ts.tilecount = columns * rows;
+      ts.columns = columns;
+
       let tot = ts.tilecount;
       let pos = {x: 0, y: 0};
       for(let i=0; i<tot; i++) {

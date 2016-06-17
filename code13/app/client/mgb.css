@@ -72,3 +72,37 @@ body.dragging .accept-drop:after{
 .map-filled.preview .tilemap-layer:nth-of-type(2):not(.grid-layer) { transform: translatez(-80px); }
 .map-filled.preview .tilemap-layer:nth-of-type(3):not(.grid-layer) { transform: translatez(-40px); }
 .map-filled.preview .tilemap-layer:nth-of-type(4):not(.grid-layer) { transform: translatez(-20px); }
+
+/* map editor properties */
+.compact {
+  margin-top: -19px;
+}
+.compact .compact > .ui.accordion .title.active,
+.compact .compact > .ui.accordion label .title
+{
+  padding-bottom: 0 !important;
+  padding-top: 3px !important;
+  margin: 0 !important;
+}
+.compact .compact.ui.content.active {
+  padding: 4px;
+  margin: 0;
+}
+.ui.styled.accordion .compact .accordion .active.title {
+  padding-bottom: 0;
+}
+.ui.styled.accordion .compact .accordion .column > .title {
+  padding-bottom: 0;
+  padding-top: 0.1em;
+}
+.ui.styled.accordion .compact .accordion label {
+  padding: 0;
+}
+.compact .ui.input > input {
+  font-size: 10pt;
+  padding: 0.3em 0.5em;
+  margin: 2px;
+}
+.compact > label .title{
+  padding: 0.1em;
+}

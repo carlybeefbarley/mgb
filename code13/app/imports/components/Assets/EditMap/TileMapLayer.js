@@ -151,19 +151,19 @@ export default class TileMapLayer extends React.Component {
     let skipx = Math.floor(-camera.x / mapData.tilewidth);
     if(skipx < 0){skipx = 0;}
     let endx = Math.ceil(skipx + (this.ctx.canvas.width / camera.zoom) / mapData.tilewidth);
-    endx = Math.min(endx, mapData.width);
+    endx = Math.min(endx, this.options.width);
     endx += 1;
 
     let i=0;
     for (let y = skipy; y < endy; y++) {
       for(let x = skipx; x < endx; x++) {
         //debugger;
-        i = x + y * mapData.width;
+        i = x + y * this.options.width;
         // skip empty tiles
         if (!d[i]) {
           continue;
         }
-        TileHelper.getTilePosRel(i, mapData.width, mapData.tilewidth, mapData.tileheight, pos);
+        TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos);
 
         const pal = palette[d[i]];
         if (pal) {
@@ -240,6 +240,7 @@ export default class TileMapLayer extends React.Component {
         this.drawTile(pal, this.prevTile, map.spacing, true);
       }
       else{
+        // hmm.... why this is broken - and why this is required at all???
         //this.highlightTile(this.prevTile);
       }
     }

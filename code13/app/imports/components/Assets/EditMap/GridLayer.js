@@ -77,8 +77,6 @@ export default class TileMapLayer extends React.Component {
     const offsetX = camera.x % data.tilewidth * camera.zoom;
     const offsetY = camera.y % data.tileheight * camera.zoom;
 
-
-
     // vertical lines
     let i=0;
     const width = Math.ceil(this.ctx.canvas.width /data.tilewidth);
@@ -105,13 +103,22 @@ export default class TileMapLayer extends React.Component {
     this.ctx.strokeStyle="black";
     this.ctx.stroke();
 
+    let tilelayer = null, tw, th;
+    if(data.layers[this.props.map.activeLayer].type = "tilelayer"){
+      tilelayer = data.layers[this.props.map.activeLayer];
+      tw = tilelayer.width; th = tilelayer.height;
+    }
+    else{
+      tw = data.width; th = data.height;
+    }
+
     this.ctx.beginPath();
 
     const startx = 0.5 + camera.x * camera.zoom;
-    const endx = 0.5 + (camera.x + data.width * data.tilewidth) * camera.zoom;
+    const endx = 0.5 + (camera.x + tw * data.tilewidth) * camera.zoom;
 
     const starty = 0.5 + camera.y * camera.zoom;
-    const endy = 0.5 + (camera.y + data.height * data.tileheight) * camera.zoom;
+    const endy = 0.5 + (camera.y + th * data.tileheight) * camera.zoom;
 
 
     this.ctx.moveTo(startx, Math.min(starty, camera.y * camera.zoom));

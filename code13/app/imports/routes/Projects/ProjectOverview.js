@@ -85,12 +85,8 @@ export default ProjectOverview = React.createClass({
             canEdit={canEd}
             handleFieldChanged={this.handleFieldChanged}
             />
-            <QLink to={"/user/" + project.ownerId + "/assets"} query={{project:project.name}} className="ui fluid button" >
-              View Project Assets
-            </QLink>
-            <br></br>
-            <QLink to={"/user/" + project.ownerId} className="ui fluid button" >
-              View Project Owner
+            <QLink to={"/user/" + project.ownerId + "/assets"} query={{project:project.name}} className="ui button" >
+              Project Assets
             </QLink>
             { this.renderRenameDeleteProject() } 
         </div>
@@ -156,7 +152,7 @@ export default ProjectOverview = React.createClass({
   },
   
   
-  // TODO - Activity - filter for project / user.  Maybe Have an Activity Page
+  // TODO - Activity - filter for project / user.  Maybe have a Project-related Activity Page
   
   renderRenameDeleteProject: function()
   {
@@ -164,18 +160,18 @@ export default ProjectOverview = React.createClass({
     if (!canEdit)
       return null
     
-    return  <div className="ui secondary segment">
-              <div  className="ui fluid labeled icon button"
-                    onClick={ () => { alert("Not Yet Implemented")}} >
-                <i className="trash icon"></i>
-                <span className="text">Rename</span>        
-              </div>
-              <br></br>
-              <div  className="ui fluid red labeled icon button"
-                    onClick={ () => { alert("Not Yet Implemented")}} >
-                <i className="trash icon"></i>
-                <span className="text">Destroy</span>        
-              </div>
+    return  <div className="ui secondary compact segment">
+              <div className="ui header">Manage Project</div>
+                <div  className="ui labeled icon button"
+                      onClick={ () => { alert("Not Yet Implemented")}} >
+                  <i className="edit icon"></i>
+                  <span className="text">Rename</span>        
+                </div>
+                <div  className="ui red labeled icon button"
+                      onClick={ () => { alert("Not Yet Implemented")}} >
+                  <i className="trash icon"></i>
+                  <span className="text">Destroy</span>        
+                </div>
             </div>
   },
     
@@ -196,8 +192,8 @@ export default ProjectOverview = React.createClass({
                   renderVertical={true} 
                   hideTitle={true}/>
     
-    return  <div className="ui secondary segment">
-              <div  className={"ui fluid green labeled icon button" + (active ? " active" : "")}
+    return  <div className={`ui secondary ${active ? "" : "compact"} segment`}>
+              <div  className={"ui green labeled icon button" + (active ? " active" : "")}
                     onClick={ () => { this.setState({showAddUserSearch: !active})}} >
                 <i className="add user icon"></i>
                 <span className="text">Add Members</span>        
@@ -208,7 +204,7 @@ export default ProjectOverview = React.createClass({
   
   
   // TODO: Use this!
-  handleProjectNameChangeInteractive: function() {
+  DORMANT__handleProjectNameChangeInteractive: function() {
     let newName = this.refs.projectNameInput.value;
 
     if (newName !== this.data.project.name) {

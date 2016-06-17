@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Thu Jun 16 2016 20:40:00 GMT-0700 (PDT)",
+      "timestamp":     "Thu Jun 16 2016 23:10:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "572"
+        "iteration":   "573"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.navbar",
+          "type":           "improvement",
+          "changeName":     "Breadcrumb bar on Nav Bar (top row)",
+          "changeSummary":  "All pages now show a navigation context on the Navigation bar. The smalled assetEdit breadcrumb bar has shrunk to remove duplicate content",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "asset.graphic",
           "type":           "improvement",

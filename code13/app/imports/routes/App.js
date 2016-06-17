@@ -57,7 +57,7 @@ export default App = React.createClass({
     const pathUserId = this.props.params.id           // This is the userId on the url /user/xxxx/...
     const currUser = Meteor.user()
     const currUserId = currUser && currUser._id
-    const handleForUser = Meteor.subscribe("user", pathUserId) // BUGBUG - no such param in some cases (like AssetEdit)
+    const handleForUser = Meteor.subscribe("user", pathUserId) // BUGBUG - no such param in rare cases (like the depracated /assetEdit route)
     const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
     const handleForProjects = Meteor.subscribe("projects.byUserId", currUserId)
     const projectSelector = projectMakeSelector(currUserId)
@@ -133,8 +133,10 @@ export default App = React.createClass({
             />
             
             <Nav
-              user={currUser}
+              currUser={currUser}
+              user={user}              
               name={this.props.routes[1].name}
+              params={this.props.params}
               handleFlexPanelToggle={this.handleFlexPanelToggle}
               flexPanelWidth={flexPanelWidth}
               flexPanelIsVisible={showFlexPanel}

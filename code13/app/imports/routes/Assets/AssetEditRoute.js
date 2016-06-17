@@ -118,12 +118,15 @@ export default AssetEditRoute = React.createClass({
     const oName = a.dn_ownerName || `User#${a.ownerId}`
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
     const editOrView = canEdit ? <span style={{color: "green"}}>Edit</span> : <span>View</span>
+
+    // The following were moved to the Nav.js Breadcrumb bar
+    // <QLink to={`/user/${a.ownerId}`}>{oName}</QLink>
+    // &nbsp;>&nbsp;
+    // <QLink to={`/user/${a.ownerId}/assets`}>Assets</QLink>
+    // &nbsp;>&nbsp;
+
     return <span>
             {editOrView}&nbsp;&nbsp;
-            <QLink to={`/user/${a.ownerId}`}>{oName}</QLink>
-            &nbsp;>&nbsp;
-            <QLink to={`/user/${a.ownerId}/assets`}>Assets</QLink>
-            &nbsp;>&nbsp;
             <QLink to={`/user/${a.ownerId}/assets`} query={{kinds: a.kind}}>
               { AssetKinds.getNamePlural(a.kind) }
             </QLink>

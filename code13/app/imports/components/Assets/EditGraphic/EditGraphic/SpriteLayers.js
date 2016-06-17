@@ -669,7 +669,7 @@ export default class SpriteLayers extends React.Component {
 	          </tr>
 
 	      {/** Previews for frames **/}
-	          <tr className={"layerCanvases " + (this.state.isCanvasFramesVisible ? "" : "hidden")}>
+	          <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "hidden")}>
 	          	<th></th>
 	          	<th></th>
 	          	<th></th>

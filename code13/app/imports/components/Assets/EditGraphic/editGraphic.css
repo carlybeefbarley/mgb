@@ -25,6 +25,14 @@
 	display: none !important;
 }
 
+.frameCanvases th {
+	padding: 0 !important;
+}
+
+.layerCanvas {
+	padding: 0 !important;
+}
+
 .highlight {
 	background-color: #ccc;
 }

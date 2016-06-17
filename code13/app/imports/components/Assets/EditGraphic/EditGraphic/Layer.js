@@ -146,7 +146,7 @@ export default class Layer extends React.Component {
               </td>)  
             })
           }
-          <td>
+          <td className="layerCanvas">
           	<div 
           		className={"ui image " + (this.props.isCanvasLayersVisible ? "" : "hidden") }
           		draggable="true" 

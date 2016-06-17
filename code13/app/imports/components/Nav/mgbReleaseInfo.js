@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Thu Jun 16 2016 23:10:00 GMT-0700 (PDT)",
+      "timestamp":     "Fri Jun 17 2016 00:10:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "573"
+        "iteration":   "575"
       },
 
       "releaseManagement": {
@@ -33,7 +33,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "nav.navbar",
           "type":           "improvement",
           "changeName":     "Breadcrumb bar on Nav Bar (top row)",
-          "changeSummary":  "All pages now show a navigation context on the Navigation bar. The smalled assetEdit breadcrumb bar has shrunk to remove duplicate content",
+          "changeSummary":  "All pages now show a navigation context on the Navigation bar. The smaller assetEdit breadcrumb bar has shrunk to remove duplicate content",
           "otherUrls":      []
         },
         {
@@ -47,7 +47,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "asset.map",
           "type":           "improvement",
           "changeName":     "Undo/Redo for maps",
-          "changeSummary":  "Undo and Redo for maps. NOTE it is a bit slow at present. Press button and wait...",
+          "changeSummary":  "Undo and Redo for maps.",
           "otherUrls":      []
         },
         {

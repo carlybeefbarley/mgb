@@ -24,12 +24,16 @@ export default class Layer extends React.Component {
 	}
 
 	selectLayer(event){
-    if(
-      event.target.className.search('remove') === -1
-      && event.target.firstChild.className.search('remove') === -1
-    ){ // don't invoke select if remove layer
-		  this.props.selectLayer(this.props.idx);
+    let clickedDiv = event.target;
+    // don't invoke select if remove layer
+    if(clickedDiv.className.search('remove') !== -1){
+      return;
     }
+    if(clickedDiv.firstChild && clickedDiv.firstChild.className.search('remove') !== -1){
+      return;
+    }
+
+    this.props.selectLayer(this.props.idx);
 	}
 
 	selectFrame(frameID){

@@ -198,16 +198,16 @@ export default class TileMapLayer extends React.Component {
       if(this.options.tileStartDrawPosition == "rightdown"){
       }
       else if(this.options.tileStartDrawPosition == "leftdown") {
-        drawX -= (drawW - map.data.tilewidth);
+        drawX -= (drawW - map.data.tilewidth * camera.zoom);
       }
       else if(this.options.tileStartDrawPosition == "leftup"){
-        drawX -= (drawW - map.data.tilewidth);
-        drawY -= (drawH - map.data.tileheight);
+        drawX -= (drawW - map.data.tilewidth * camera.zoom);
+        drawY -= (drawH - map.data.tileheight * camera.zoom);
       }
     }
     // default for tiled is: right up
     else{
-      drawY -= (drawH - map.data.tileheight);
+      drawY -= (drawH - map.data.tileheight * camera.zoom);
     }
 
     if(clear){

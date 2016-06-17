@@ -16,6 +16,59 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
+      "timestamp":     "Thu Jun 16 2016 17:00:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "562"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Raise/Lower Map Layer",
+          "changeSummary":  "More tools and fixes for maps",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Undo/Redo for maps",
+          "changeSummary":  "Undo and Redo for maps. NOTE it is a bit slow at present. Press button and wait...",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel",
+          "type":           "improvement",
+          "changeName":     "FlexPanels are browser height",
+          "changeSummary":  "FlexPanels on the right are now fixed in place and don't scroll with page",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.navpanel",
+          "type":           "improvement",
+          "changeName":     "NavPanels are browser height",
+          "changeSummary":  "NavPanels on the left are now fixed in place and don't scroll with page",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel.chat",
+          "type":           "improvement",
+          "changeName":     "Chat autoscrolls to end",
+          "changeSummary":  "The Chat FlexPanel now autoscrolls to most recent message. No way to prevent this yet",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+
+    { 
       "timestamp":     "Thu Jun 16 2016 03:05:00 GMT-0700 (PDT)",
       
       "id": {
@@ -57,7 +110,6 @@ export default mgbReleaseInfo = {
           "changeSummary":  "In graphic editor, it is easier now to manage animations. Also, shrunk tools slightly",
           "otherUrls":      []
         }
-        
       ]
     },
 
@@ -111,7 +163,6 @@ export default mgbReleaseInfo = {
           "changeSummary":  "Delete frame / layer is more robust now",
           "otherUrls":      []
         }
-        
       ]
     },
 
@@ -143,9 +194,9 @@ export default mgbReleaseInfo = {
           "changeSummary":  "Extra operations for frames - delete, move, insert",
           "otherUrls":      []
         }
-        
       ]
     },
+
 
     { 
       "timestamp":     "Wed Jun 08 2016 21:10:00 GMT-0700 (PDT)",
@@ -189,10 +240,10 @@ export default mgbReleaseInfo = {
           "changeSummary":  "Show thumbnail previews for Active assets on hover",
           "otherUrls":      []
         }
-        
       ]             
     },                    
     
+
     { 
       "timestamp":     "Tue Jun 07 2016 14:16:00 GMT-0700 (PDT)",
       
@@ -302,6 +353,7 @@ export default mgbReleaseInfo = {
       ]             
     },                    
 
+
     { 
       "timestamp":     "Thu Jun 02 2016 23:45:00 GMT-0700 (PDT)",
       
@@ -327,6 +379,7 @@ export default mgbReleaseInfo = {
       ]             
     },            
     
+
     { 
       "timestamp":     "Thu Jun 02 2016 10:35:00 GMT-0700 (PDT)",
       
@@ -456,6 +509,7 @@ export default mgbReleaseInfo = {
       ]             
     },
     
+
     { 
       "timestamp":     "Tue May 24 2016 20:50:00 GMT-0700 (PDT)",
       
@@ -484,10 +538,10 @@ export default mgbReleaseInfo = {
           "changeSummary":  "Trying a yellow background to make this stand out from the rest of the site.. since it is meta ",
           "otherUrls":      []
         }
-
       ]             
     },
     
+
     { 
       "timestamp":     "Mon May 23 2016 18:20:00 GMT-0700 (PDT)",
       
@@ -509,10 +563,10 @@ export default mgbReleaseInfo = {
           "changeSummary":  "New MGBUI asset kind (for MGB devs only) to edit/preview our SemanticUi markup. Including HTML smart editor and Semantic UI hints for icons and elements",
           "otherUrls":      []
         }
-
       ]             
     },
     
+
     { 
       "timestamp":     "Sat May 21 2016 19:45:00 GMT-0700 (PDT)",
       
@@ -534,10 +588,10 @@ export default mgbReleaseInfo = {
           "changeSummary":  "Filters column is fixed size and white now",
           "otherUrls":      []
         }        
-
       ]             
     },
     
+
     { 
       "timestamp":     "Fri May 20 2016 23:45:00 GMT-0700 (PDT)",
       
@@ -566,7 +620,6 @@ export default mgbReleaseInfo = {
           "changeSummary":  "Moved the search selectors to a left column.",
           "otherUrls":      []
         }        
-
       ]             
     },
     
@@ -597,11 +650,11 @@ export default mgbReleaseInfo = {
           "changeName":     "Audio & Cutscene icons",
           "changeSummary":  "Audio & Cutscene asset types now have more relevant icons",
           "otherUrls":      []
-        }        
-
+        }
       ]             
     },
-    
+
+
     { 
       "timestamp":     "Wed May 18 2016 16:30:00 GMT-0700 (PDT)",
       
@@ -632,7 +685,8 @@ export default mgbReleaseInfo = {
         }        
       ]             
     },
-    
+
+
     { 
       "timestamp":     "Mon May 16 2016 22:30:00 GMT-0700 (PDT)",
       

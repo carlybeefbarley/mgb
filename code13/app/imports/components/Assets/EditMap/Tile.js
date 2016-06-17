@@ -4,7 +4,7 @@ import React from 'react';
 export default class Tile extends React.Component {
 
   click(e){
-    console.log("clicked tile with gid:", this.props);
+    //console.log("clicked tile with gid:", this.props);
   }
 
   render(){

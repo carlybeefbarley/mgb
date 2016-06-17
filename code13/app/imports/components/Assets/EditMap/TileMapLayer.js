@@ -27,7 +27,7 @@ export default class TileMapLayer extends React.Component {
     this.ctx = canvas.getContext("2d");
 
     this.props.map.layers.push(this);
-    console.log("Added tilemap layer to map!", this.options.name, this.props.map.layers);
+    //console.log("Added tilemap layer to map!", this.options.name, this.props.map.layers);
 
     this.drawTiles();
 
@@ -38,7 +38,7 @@ export default class TileMapLayer extends React.Component {
     const index = this.props.map.layers.indexOf(this);
     if(index > -1){
       this.props.map.layers.splice(index, 1);
-      console.log("Removed tilemap layer from map!", this.options.name, this.props.map.layers);
+      //console.log("Removed tilemap layer from map!", this.options.name, this.props.map.layers);
     }
     document.body.removeEventListener("mouseup", this._mup);
 
@@ -80,7 +80,7 @@ export default class TileMapLayer extends React.Component {
     const map = this.map;
     if(!this.startingTilePos){
       if(!map.tmpSelection.length){
-        console.log("single!", map.tmpSelection.length);
+        //console.log("single!", map.tmpSelection.length);
         map.tmpSelection.pushUniquePos(new TileSelection(pos));
       }
       return;
@@ -438,7 +438,7 @@ const edit = {
   debug: function(e, mouseUp){
     const pos = this.getTilePosInfo(e);
     pos.gid = this.options.data[pos.id];
-    console.log("debug - "+this.map.options.mode+": ", pos);
+    //console.log("debug - "+this.map.options.mode+": ", pos);
   }
 };
 //???
@@ -559,7 +559,7 @@ edit[EditModes.stamp] = function(e, up){
     tpos.x = ts.x + pos.x - ox;
     tpos.y = ts.y + pos.y - oy;
     if (tpos.x < 0 || tpos.x > this.options.width-1 || tpos.y < 0 || tpos.y > this.options.height-1) {
-      console.log("out of bounds!");
+      //console.log("out of bounds!");
 
       //this.mouseDown = false;
       continue;
@@ -688,7 +688,7 @@ edit[EditModes.wand] = function(e, up, collection = this.map.tmpSelection){
   const fillSelection = () => {
     check++;
     if(this.options.width * this.options.height < check){
-      console.error("Something not right!!");
+      //console.error("Something not right!!");
       done();
       return;
     }

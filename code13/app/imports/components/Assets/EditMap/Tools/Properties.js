@@ -16,7 +16,7 @@ export default class Properties extends React.Component {
     this.runOnReady();
   }
   componentDidUpdate(){
-    console.log("update!");
+    //console.log("update!");
     if(this.settings){
       this.settings.map.update(this.map.data);
       this.settings.layer.update(this.map.data.layers[this.map.activeLayer]);
@@ -183,9 +183,9 @@ export default class Properties extends React.Component {
           }
         }
       }, () => {
-        console.log("ACTIVE tileset: ", this,map.activeTileset);
+        //console.log("ACTIVE tileset: ", this,map.activeTileset);
         this.map.updateImages(() => {
-          console.log("ACTIVE tileset: ", this.map.activeTileset);
+          //console.log("ACTIVE tileset: ", this.map.activeTileset);
 
           //this.map.addTilesetTool();
           //this.map.redraw();

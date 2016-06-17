@@ -141,22 +141,25 @@ export default class TileMapLayer extends React.Component {
       return;
     }
 
+    const widthInTiles = Math.ceil(  (this.ctx.canvas.width / camera.zoom) / mapData.tilewidth  );
+    const heightInTiles = Math.ceil( (this.ctx.canvas.height / camera.zoom) / mapData.tileheight);
+
     let skipy = Math.floor(-camera.y / mapData.tileheight);
     // at least for now
     if(skipy < 0){skipy = 0;}
-    let endy = Math.ceil(skipy + (this.ctx.canvas.height / camera.zoom) / mapData.tileheight);
+    let endy = skipy + heightInTiles;
     endy = Math.min(endy,  mapData.height);
     endy += 1;
 
     let skipx = Math.floor(-camera.x / mapData.tilewidth);
     if(skipx < 0){skipx = 0;}
-    let endx = Math.ceil(skipx + (this.ctx.canvas.width / camera.zoom) / mapData.tilewidth);
+    let endx = skipx + widthInTiles;
     endx = Math.min(endx, this.options.width);
     endx += 1;
 
     // loop through large tiles
-    skipx -= mapData.width;
-    skipy -= mapData.height;
+    skipx -= widthInTiles;
+    skipy -= heightInTiles;
 
     let i=0;
     for (let y = skipy; y < endy; y++) {

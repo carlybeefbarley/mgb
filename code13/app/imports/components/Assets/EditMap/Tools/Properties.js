@@ -157,6 +157,7 @@ export default class Properties extends React.Component {
                   min: 1,
                   // return false to discard new value
                   onchange: function(input, otito){
+                    console.log("something changing??");
                     if(!input.value){
                       return false;
                     }

@@ -472,10 +472,7 @@ edit[EditModes.fill] = function(e, up){
     }
   }
 
-
   let datay;
-  // TODO: optimize this.. most likely Wand will return much less results that looping through full map
-  // loop through map instead of all tiles.. fall back to this function only if wand returns 0 results?
   for(let i=0; i<temp.length; i++){
     let ins = new TileSelection(temp[i]);
 
@@ -498,6 +495,8 @@ edit[EditModes.fill] = function(e, up){
 };
 edit[EditModes.stamp] = function(e, up){
   // nothing from tileset is selected
+  const pos = this.getTilePosInfo(e);
+  //console.log(pos);
   if(!this.map.collection.length){
     return;
   }
@@ -510,7 +509,7 @@ edit[EditModes.stamp] = function(e, up){
     this.map.saveForUndo();
   }
 
-  const pos = this.getTilePosInfo(e);
+
   if (this.options.randomMode) {
     let ts = this.map.collection.random();
     if (this.selection.length > 0) {

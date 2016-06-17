@@ -71,7 +71,7 @@ export default NavPanel = React.createClass({
       bottom: "0px",
       paddingTop: "8px",
       backgroundColor: "#1b1c1d",       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
-      overflow: "scroll"
+      overflowY: "scroll" // Or auto should be good enough???
     }
     
     const miniNavItemStyle = {

@@ -243,7 +243,7 @@ export default class MapArea extends React.Component {
       this.data = JSON.parse(this.undoSteps.pop());
 
       this.ignoreUndo++;
-      this.fullUpdate(() => {
+      this.update(() => {
         this.ignoreUndo--;
       });
     }
@@ -257,7 +257,7 @@ export default class MapArea extends React.Component {
     this.data = this.redoSteps.pop();
 
     this.ignoreUndo++;
-    this.fullUpdate(() => {
+    this.update(() => {
       this.ignoreUndo--;
     });
   }
@@ -664,14 +664,19 @@ export default class MapArea extends React.Component {
   /* update stuff */
   fullUpdate(cb = () => {}){
     this.generateImages(() => {
-      this.addLayerTool();
-      this.addTilesetTool();
-      this.addPropertiesTool();
-      this.redrawLayers();
-      this.redrawTilesets();
-      cb();
+      this.update(cb);
     });
   }
+  /* update all except images */
+  update(cb = ()=>{}){
+    this.addLayerTool();
+    this.addTilesetTool();
+    this.addPropertiesTool();
+    this.redrawLayers();
+    this.redrawTilesets();
+    cb();
+  }
+
 
   redraw(){
     this.redrawLayers();

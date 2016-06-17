@@ -128,7 +128,7 @@ export default class TileSet extends React.Component {
     this.props.info.content.map.activeTileset = tilesetNum
     this.adjustCanvas();
     this.drawTiles();
-    this.forceUpdate();
+    this.map.updateTools();
   }
   /* endof functionlity */
 
@@ -231,8 +231,9 @@ export default class TileSet extends React.Component {
     if(asset && asset.kind != "graphic"){
       return;
     }
+    console.log("Got asset:", asset);
     const url = e.dataTransfer.getData("link");
-    this.refs.controls.addTilesetFromUrl(url);
+    this.refs.controls.addTilesetFromUrl(url, asset);
   }
   onDragOver(e){
     e.dataTransfer.dropEffect = 'copy';
@@ -330,12 +331,13 @@ export default class TileSet extends React.Component {
     }
     const tilesets = [];
     for(let i=0; i<tss.length; i++){
+      let title = `${tss[i].name} ${tss[i].imagewidth}x${tss[i].imageheight}`;
       tilesets.push(
         <a className={tss[i] === ts ? "item active" : "item" }
            href="javascript:;"
            onClick={this.selectTileset.bind(this, i)}
            key={i}
-          >{tss[i].name} {tss[i].imagewidth}x{tss[i].imageheight}</a>
+          ><span class="tileset-title">{title}</span></a>
       );
     }
     /* TODO: save active tileset and use only that as active */
@@ -348,9 +350,22 @@ export default class TileSet extends React.Component {
               {this.props.info.title}
             </span>
             <div className="ui simple dropdown item"
-                 style={{float:"right", paddingRight: "20px"}}
+                 style={{
+                 float:"right",
+                 paddingRight: "20px",
+                 "whiteSpace": "nowrap",
+                 "maxWidth": "70%"
+                 }}
               >
-              <i className="dropdown icon"></i>{ts.name.substr(-20)} {ts.imagewidth}x{ts.imageheight}
+              <i className="dropdown icon"></i><span className="tileset-title"
+                 title={ts.imagewidth + "x" + ts.imageheight}
+                 style={{
+                  "textOverflow": "ellipsis",
+                  "maxWidth": "85%",
+                  float: "right",
+                  "overflow": "hidden",
+                 }}
+              >{ts.name} {ts.imagewidth + "x" + ts.imageheight}</span>
               <div className="floating ui tiny green label">{tss.length}</div>
               <div className="menu">
                 {tilesets}

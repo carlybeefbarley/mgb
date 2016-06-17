@@ -78,7 +78,7 @@ body.dragging .accept-drop:after{
   margin-top: -19px;
 }
 .compact .compact > .ui.accordion .title.active,
-.compact .compact > .ui.accordion label .title
+.compact .compact > .ui.accordion div.label .title
 {
   padding-bottom: 0 !important;
   padding-top: 3px !important;
@@ -95,13 +95,16 @@ body.dragging .accept-drop:after{
   padding-bottom: 0;
   padding-top: 0.1em;
 }
-.ui.styled.accordion .compact .accordion label {
+.ui.styled.accordion .compact .accordion div.label {
   padding: 0;
 }
-.compact .ui.input > input {
+.compact .ui.input > input,
+.compact .ui.input > select,
+.compact .ui.input > .dropdown{
   font-size: 10pt;
   padding: 0.3em 0.5em;
   margin: 2px;
+  min-height: 2em;
 }
 .compact > label .title{
   padding: 0.1em;

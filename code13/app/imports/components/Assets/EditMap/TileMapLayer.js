@@ -154,6 +154,10 @@ export default class TileMapLayer extends React.Component {
     endx = Math.min(endx, this.options.width);
     endx += 1;
 
+    // loop through large tiles
+    skipx -= mapData.width;
+    skipy -= mapData.height;
+
     let i=0;
     for (let y = skipy; y < endy; y++) {
       for(let x = skipx; x < endx; x++) {
@@ -179,11 +183,29 @@ export default class TileMapLayer extends React.Component {
     const map = this.props.map;
     const camera = map.camera;
 
-    const drawX = (pos.x * (map.data.tilewidth  + spacing) + camera.x) * camera.zoom;
-    const drawY = (pos.y * (map.data.tileheight + spacing) + camera.y) * camera.zoom;
+    let drawX = (pos.x * (map.data.tilewidth  + spacing) + camera.x) * camera.zoom;
+    let drawY = (pos.y * (map.data.tileheight + spacing) + camera.y) * camera.zoom;
 
-    const drawW = pal.w * camera.zoom;
-    const drawH = pal.h * camera.zoom
+    let drawW = pal.w * camera.zoom;
+    let drawH = pal.h * camera.zoom;
+
+    // TODO: move these strings somewhere outside
+    if(this.options.tileStartDrawPosition && this.options.tileStartDrawPosition !== "rightup"){
+      // default browser canvas
+      if(this.options.tileStartDrawPosition == "rightdown"){
+      }
+      else if(this.options.tileStartDrawPosition == "leftdown") {
+        drawX -= (drawW - map.data.tilewidth);
+      }
+      else if(this.options.tileStartDrawPosition == "leftup"){
+        drawX -= (drawW - map.data.tilewidth);
+        drawY -= (drawH - map.data.tileheight);
+      }
+    }
+    // default for tiled is: right up
+    else{
+      drawY -= (drawH - map.data.tileheight);
+    }
 
     if(clear){
       this.ctx.clearRect(

@@ -421,6 +421,9 @@ export default class MapArea extends React.Component {
     });
   }
 
+  updateTools () {
+    this.props.parent.forceUpdate();
+  }
   // tileset calls this method..
   /* TODO: selection should be matrix - new class?*/
   /* selection methods */
@@ -706,7 +709,7 @@ export default class MapArea extends React.Component {
     // do we have more than 1 tileset ?????
     // TODO: atm we are using only 1 tileset tool..
     this.tilesets.forEach((tileset) => {
-      tileset.selectTileset(0);
+      tileset.selectTileset(this.activeTileset);
     });
   }
   /* endof update stuff */

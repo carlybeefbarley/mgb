@@ -16,11 +16,13 @@ export default class Properties extends React.Component {
     this.runOnReady();
   }
   componentDidUpdate(){
+    console.log("update!");
     if(this.settings){
       this.settings.map.update(this.map.data);
       this.settings.layer.update(this.map.data.layers[this.map.activeLayer]);
       this.settings.tileset.update(this.map.data.tilesets[this.map.activeTileset]);
     }
+    //$(this.refs.holder).find("select").dropdown();
   }
   get map(){
     return this.props.info.content.map;
@@ -36,6 +38,7 @@ export default class Properties extends React.Component {
         Map: {
           _type: Otito.type.folder,
           contentClassName: "ui content two column stackable grid",
+          title: "Hello world!",
           content: {
             width: {
               _type: Otito.type.number,
@@ -82,6 +85,19 @@ export default class Properties extends React.Component {
               _type: Otito.type.text,
               _className: "fluid"
             },
+            tileStartDrawPosition: {
+              _type: Otito.type.list,
+              head: "TileDraw",
+              value: "rightup",
+              className: "ui dropdown fluid",
+              list: {
+                "rightdown": "Right Down",
+                "rightup": "Right Up",
+                "leftdown": "Left Down",
+                "leftup": "Left Up"
+              },
+              _className: "fluid"// fluid ui dropdown
+            },
             Size: {
               _type: "folder",
               contentClassName: "ui content two column stackable grid",
@@ -126,6 +142,7 @@ export default class Properties extends React.Component {
           contentClassName: "ui content",
           content: {
             name: {
+              _head: "Name",
               _type: Otito.type.text,
               _className: "fluid"
             },
@@ -137,7 +154,13 @@ export default class Properties extends React.Component {
                 tilewidth: {
                   _type: Otito.type.int,
                   head: "Tile width",
-                  min: 1
+                  min: 1,
+                  // return false to discard new value
+                  onchange: function(input, otito){
+                    if(!input.value){
+                      return false;
+                    }
+                  }
                 },
                 tileheight: {
                   _type: Otito.type.int,
@@ -160,13 +183,16 @@ export default class Properties extends React.Component {
           }
         }
       }, () => {
+        console.log("ACTIVE tileset: ", this,map.activeTileset);
         this.map.updateImages(() => {
+          console.log("ACTIVE tileset: ", this.map.activeTileset);
+
           //this.map.addTilesetTool();
           //this.map.redraw();
         });
       });
       this.settings.tileset.append(this.refs.tileset);
-
+      $(this.refs.holder).find("select").dropdown();
       window.settings = this.settings;
     }
   }
@@ -183,7 +209,7 @@ export default class Properties extends React.Component {
               {this.props.info.title}
             </span>
           </div>
-          <div className="active content menu">
+          <div className="active content menu" ref="holder">
             <div ref="tileset"></div>
             <div ref="layer"></div>
             <div ref="map"></div>

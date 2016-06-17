@@ -11,7 +11,7 @@ export default class TilesetControls extends React.Component {
     this.addTilesetFromUrl(this.refs.input.value)
   }
 
-  addTilesetFromUrl(url){
+  addTilesetFromUrl(url, asset){
     if(!url){
       return;
     }
@@ -22,7 +22,7 @@ export default class TilesetControls extends React.Component {
 
     let img = new Image();
     img.onload = (e) => {
-      this.addTileset(img);
+      this.addTileset(img, asset);
     };
     img.onerror = (e)=> {
       console.error("failed to load image:", url, val);
@@ -30,11 +30,13 @@ export default class TilesetControls extends React.Component {
     img.src = val;
   }
 
-  addTileset(img) {
+  addTileset(img, asset) {
     const parent = this.props.tileset;
     const map = parent.props.info.content.map;
     const tss = map.data.tilesets;
-    const ts = TileHelper.genTileset(map.data, img.src, img.width, img.height);
+    const ts = TileHelper.genTileset(map.data, img.src, img.width, img.height,
+      map.tilewidth, map.tileheight, asset.name
+    );
 
     tss.push(ts);
     map.images[img.src] = img;

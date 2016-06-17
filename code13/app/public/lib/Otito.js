@@ -39,8 +39,8 @@ this.Otito.options = {
 	folderClassName: "ui accordion",
 	folderOpenClassName: "active",
 	
-	labelTagName: "label",
-	labelClassName: "column",
+	labelTagName: "div",
+	labelClassName: "column label",
 
 	inputWrapperClassName: "ui input fluid",
 

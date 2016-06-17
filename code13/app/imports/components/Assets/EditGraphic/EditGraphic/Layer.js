@@ -24,7 +24,10 @@ export default class Layer extends React.Component {
 	}
 
 	selectLayer(event){
-    if(event.target.className.search('remove') === -1){ // don't invoke select if remove layer
+    if(
+      event.target.className.search('remove') === -1
+      && event.target.firstChild.className.search('remove') === -1
+    ){ // don't invoke select if remove layer
 		  this.props.selectLayer(this.props.idx);
     }
 	}

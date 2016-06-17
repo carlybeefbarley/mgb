@@ -21,8 +21,8 @@ export default class SpriteLayers extends React.Component {
 
 	/************************** FRAMES ******************************/
 
-	selectFrame(idx){
-		this.props.EditGraphic.handleSelectFrame(idx);
+	selectFrame(frameID){
+		this.props.EditGraphic.handleSelectFrame(frameID);
 	}
 
 	addFrame(){
@@ -45,7 +45,20 @@ export default class SpriteLayers extends React.Component {
 	}	
 
 	insertFrameAfter(frameID, doCopy){
-		this.props.EditGraphic.insertFrameAfter(frameID, doCopy);
+		// if (!this.props.canEdit)
+	 //    { 
+	 //      this.props.editDeniedReminder()
+	 //      return
+	 //    }
+
+	    let c2 = this.props.content2;
+	    c2.frameNames.splice(frameID+1, 0, "Frame "+(frameID+1));
+	    c2.frameData.splice(frameID+1, 0, []);
+	    for(let i=0; i<c2.layerParams.length; i++){
+	      let tmp = doCopy ? c2.frameData[frameID][i] : null;
+	      c2.frameData[frameID+1].push(tmp);
+	    }
+	    this.handleSave('Insert frame', true);
 	}
 
 	copyFrame(frameID){
@@ -62,15 +75,73 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	frameMoveLeft(frameID){
-		this.props.EditGraphic.frameMoveLeft(frameID);
+		// if (!this.props.canEdit)
+	 //    { 
+	 //      this.props.editDeniedReminder()
+	 //      return
+	 //    }
+	    if(frameID <= 0){
+	      return;
+	    } 
+
+	    let c2 = this.props.content2
+
+	    let tmpName = c2.frameNames[frameID];
+	    c2.frameNames[frameID] = c2.frameNames[frameID-1];
+	    c2.frameNames[frameID-1] = tmpName;
+
+	    let tmpData = c2.frameData[frameID];
+	    c2.frameData[frameID] = c2.frameData[frameID-1];
+	    c2.frameData[frameID-1] = tmpData;
+
+	    this.handleSave(`Change frame order`, true);
 	}
 
 	frameMoveRight(frameID){
-		this.props.EditGraphic.frameMoveRight(frameID);
+		// if (!this.props.canEdit)
+	 //    { 
+	 //      this.props.editDeniedReminder()
+	 //      return
+	 //    }
+
+	    let c2 = this.props.content2;
+	    if(frameID >= c2.frameNames.length-1){
+	      return;
+	    } 
+
+	    let tmpName = c2.frameNames[frameID];
+	    c2.frameNames[frameID] = c2.frameNames[frameID+1];
+	    c2.frameNames[frameID+1] = tmpName;
+
+	    let tmpData = c2.frameData[frameID];
+	    c2.frameData[frameID] = c2.frameData[frameID+1];
+	    c2.frameData[frameID+1] = tmpData;
+
+	    this.handleSave(`Change frame order`, true);
 	}
 
 	deleteFrame(frameID){
-		this.props.EditGraphic.handleDeleteFrame(frameID);
+		// if (!this.props.canEdit)
+	 //    { 
+	 //      this.props.editDeniedReminder()
+	 //      return
+	 //    }
+
+	    let c2 = this.props.content2;
+	    if(c2.frameData.length === 1){
+	      alert("Can't delete sole frame");
+	      return;
+	    }
+	    
+	    // this.doSaveStateForUndo("Delete Frame");
+
+	    c2.frameNames.splice(frameID, 1);
+	    c2.frameData.splice(frameID, 1);
+	    if(this.props.EditGraphic.state.selectedFrameIdx > c2.frameNames.length-1){
+	      this.props.EditGraphic.setState({ selectedFrameIdx: c2.frameNames.length-1 });
+	    }
+
+	    this.handleSave('Delete frame', true);
 	}	
 
 
@@ -273,8 +344,8 @@ export default class SpriteLayers extends React.Component {
 		this.setState({ isCanvasLayersVisible: !this.state.isCanvasLayersVisible });
 	}
 
-	selectLayer(idx){
-		this.props.EditGraphic.handleSelectLayer(idx);
+	selectLayer(layerID){
+		this.props.EditGraphic.handleSelectLayer(layerID);
 	}
 
 	addLayer(){
@@ -311,7 +382,30 @@ export default class SpriteLayers extends React.Component {
 	}
 
 	deleteLayer(layerID){
-		this.props.EditGraphic.handleDeleteLayer(layerID);
+		// if (!this.props.canEdit)
+	 //    { 
+	 //      this.props.editDeniedReminder()
+	 //      return
+	 //    }
+
+	    let c2 = this.props.content2;
+	    if(c2.layerParams.length === 1){
+	      alert("Can't delete sole layer");
+	      return;
+	    }
+
+	    // this.doSaveStateForUndo("Delete Layer");
+
+	    c2.layerParams.splice(layerID, 1);
+	    // change selectedLayer if it is last and beeing removed
+	    if(this.props.EditGraphic.state.selectedLayerIdx > c2.layerParams.length-1){
+	      this.props.EditGraphic.setState({ selectedLayerIdx: c2.layerParams.length-1 });
+	    }
+	    for(let frameID=0; frameID<c2.frameNames.length; frameID++){
+	      c2.frameData[frameID].splice(layerID, 1);
+	    }
+
+	    this.handleSave('Delete layer', true);
 	}
 
 	moveLayerUp(layerID){

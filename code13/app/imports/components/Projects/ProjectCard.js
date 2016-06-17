@@ -40,10 +40,12 @@ export default ProjectCard = React.createClass({
 
     const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
     return  <div className="ui bordered card" key={project._id}>
+
               <QLink className="image" to={linkTo}>
                 <img src="http://semantic-ui.com/images/wireframe/image.png"></img>
               </QLink>
-              <QLink className="content"  to={linkTo}>
+    
+              <QLink className="content" to={linkTo}>
                 <i className="right floated star icon"></i>
                 <div className="header">{project.name}</div>
                 <div className="meta"><i className="users icon"></i>&nbsp;{MemberStr}</div>
@@ -59,8 +61,8 @@ export default ProjectCard = React.createClass({
                     isDisabled={editsDisabled}
                     />
                 </div>
-                
               </QLink>
+
               <div className="extra content">
                 <span className="left floated icon">
                   <i className="large sitemap icon"></i>

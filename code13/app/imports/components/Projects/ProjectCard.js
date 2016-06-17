@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import moment from 'moment';
 import QLink from '../../routes/QLink';
+import QLinkUser from '../../routes/QLinkUser';
 import InlineEdit from 'react-edit-inline';
 
 
@@ -38,11 +39,11 @@ export default ProjectCard = React.createClass({
     const linkTo = "/user/" + project.ownerId + "/project/" + project._id
 
     const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
-    return  <QLink className="ui bordered card" key={project._id} to={linkTo}>
-              <div className="image">
+    return  <div className="ui bordered card" key={project._id}>
+              <QLink className="image" to={linkTo}>
                 <img src="http://semantic-ui.com/images/wireframe/image.png"></img>
-              </div>
-              <div className="content">
+              </QLink>
+              <QLink className="content"  to={linkTo}>
                 <i className="right floated star icon"></i>
                 <div className="header">{project.name}</div>
                 <div className="meta"><i className="users icon"></i>&nbsp;{MemberStr}</div>
@@ -59,19 +60,14 @@ export default ProjectCard = React.createClass({
                     />
                 </div>
                 
-              </div>
+              </QLink>
               <div className="extra content">
                 <span className="left floated icon">
                   <i className="large sitemap icon"></i>
                   Project
-                </span>                             
-                { owner && <div className="right floated author">
-                    <img 
-                      className="ui avatar image" 
-                      src={owner.profile.avatar}></img> {owner.profile.name}
-                  </div>
-                }
+                </span>
+                <QLinkUser targetUser={owner} />
               </div>
-            </QLink>
+            </div>
   }
 })

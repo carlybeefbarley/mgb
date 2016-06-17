@@ -7,13 +7,14 @@ export default class SpriteLayers extends React.Component {
 
 	constructor(props) {
 	    super(props);
-	 
+
 	    this.state = {
 	    	allLayersHidden: false,
 	    	allLayersLocked: false,
 	    	isCanvasFramesVisible: false,
 	    	isCanvasLayersVisible: false,
 	    	isPlaying: false,
+	    	copyFrameID: null,
 	    };
 	}
 
@@ -154,11 +155,24 @@ export default class SpriteLayers extends React.Component {
 	changeFps(event){
 		console.log(event.target.value);
 		this.props.content2.fps = event.target.value;
-		this.props.handleSave("Changed FPS");
+		this.handleSave("Changed FPS");
 	}
 
 	insertFrameAfter(frameID, doCopy){
 		this.props.EditGraphic.insertFrameAfter(frameID, doCopy);
+	}
+
+	copyFrame(frameID){
+		this.setState({ copyFrameID: frameID });
+	}
+
+	pasteFrame(frameID){
+		let c2 = this.props.content2;
+		if(this.state.copyFrameID === null) return;
+		if(!c2.frameData[this.state.copyFrameID]) return;
+
+		c2.frameData[frameID] = c2.frameData[this.state.copyFrameID];
+		this.handleSave("Paste frame #"+(this.state.copyFrameID)+" to #"+frameID, true);
 	}
 
 	frameMoveLeft(frameID){
@@ -489,6 +503,19 @@ export default class SpriteLayers extends React.Component {
 				      				onClick={this.addAnimation.bind(this, idx)}>
 				      				<i className="wait icon"></i>
 				      				Add animation
+				      			</div>
+				      			<div className="divider"></div>
+				      			<div 
+				      				onClick={this.copyFrame.bind(this, idx)}
+				      				className={"item "}>
+				      				<i className="copy icon"></i>
+				      				Copy
+				      			</div>
+				      			<div 
+				      				onClick={this.pasteFrame.bind(this, idx)}
+				      				className={"item " + (this.state.copyFrameID === null ? "disabled" : "")}>
+				      				<i className="paste icon"></i>
+				      				Paste
 				      			</div>
 				      			<div className="divider"></div>
 				      			<div 

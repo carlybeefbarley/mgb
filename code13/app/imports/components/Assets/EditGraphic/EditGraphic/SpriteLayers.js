@@ -19,29 +19,7 @@ export default class SpriteLayers extends React.Component {
 	    };
 	}
 
-	toggleAllVisibility(){
-		let isVisible = !this.state.allLayersHidden;
-		this.setState({ allLayersHidden: isVisible });
-		let layerParams = this.props.content2.layerParams;
-		for(let i=0; i<layerParams.length; i++){
-			layerParams[i].isHidden = isVisible;
-		}
-		this.handleSave("All layers visibility");
-	}
-
-	toggleAllLocking(){
-		let isLocked = !this.state.allLayersLocked;
-		this.setState({ allLayersLocked: isLocked });
-		let layerParams = this.props.content2.layerParams;
-		for(let i=0; i<layerParams.length; i++){
-			layerParams[i].isLocked = isLocked;
-		}
-		this.handleSave("All layers locking");
-	}
-
-	selectLayer(idx){
-		this.props.EditGraphic.handleSelectLayer(idx);
-	}
+	/************************** FRAMES ******************************/
 
 	selectFrame(idx){
 		this.props.EditGraphic.handleSelectFrame(idx);
@@ -60,65 +38,57 @@ export default class SpriteLayers extends React.Component {
 	    this.props.content2.frameData.push([])
 	    this.handleSave('Add frame to graphic')
 	    this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-	 }
-
-	addLayer(){
-	    // if (!this.props.canEdit)
-	    // { 
-	    //   this.props.editDeniedReminder();
-	    //   return;
-	    // }
-	    // this.doSaveStateForUndo("Add Layer");
-	    let c2 = this.props.content2;
-	    let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
-	    c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
-	    let fD = c2.frameData;
-	    for(let i; i<fD.length; i++){
-	      fD[i][lN.length-1] = null;
-	    }
-	    this.handleSave('Add layer to graphic');
-	    this.props.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-	}
-
-	moveLayerUp(layerID){
-		let c2 = this.props.content2;
-
-		let tmpParam = c2.layerParams[layerID];
-		c2.layerParams[layerID] = c2.layerParams[layerID-1];
-		c2.layerParams[layerID-1] = tmpParam;
-
-		for(let i=0; i<c2.frameNames.length; i++){
-			let frame = c2.frameData[i];
-			let tmpData = frame[layerID];
-			frame[layerID] = frame[layerID-1];
-			frame[layerID-1] = tmpData;
-		}
-		this.handleSave('Layer moved up', true);
-	}
-
-	moveLayerDown(layerID){
-		let c2 = this.props.content2;
-
-		let tmpParam = c2.layerParams[layerID];
-		c2.layerParams[layerID] = c2.layerParams[layerID+1];
-		c2.layerParams[layerID+1] = tmpParam;
-
-		for(let i=0; i<c2.frameNames.length; i++){
-			let frame = c2.frameData[i];
-			let tmpData = frame[layerID];
-			frame[layerID] = frame[layerID+1];
-			frame[layerID+1] = tmpData;
-		}
-		this.handleSave('Layer moved down', true);
-	}
+	}	
 
 	toggleCanvasFramesVisibility(){
 		this.setState({ isCanvasFramesVisible: !this.state.isCanvasFramesVisible });
+	}	
+
+	insertFrameAfter(frameID, doCopy){
+		this.props.EditGraphic.insertFrameAfter(frameID, doCopy);
 	}
 
-	toggleCanvasLayersVisibility(){
-		this.setState({ isCanvasLayersVisible: !this.state.isCanvasLayersVisible });
+	copyFrame(frameID){
+		this.setState({ copyFrameID: frameID });
 	}
+
+	pasteFrame(frameID){
+		let c2 = this.props.content2;
+		if(this.state.copyFrameID === null) return;
+		if(!c2.frameData[this.state.copyFrameID]) return;
+
+		c2.frameData[frameID] = c2.frameData[this.state.copyFrameID];
+		this.handleSave("Paste frame #"+(this.state.copyFrameID)+" to #"+frameID, true);
+	}
+
+	frameMoveLeft(frameID){
+		this.props.EditGraphic.frameMoveLeft(frameID);
+	}
+
+	frameMoveRight(frameID){
+		this.props.EditGraphic.frameMoveRight(frameID);
+	}
+
+	deleteFrame(frameID){
+		this.props.EditGraphic.handleDeleteFrame(frameID);
+	}	
+
+
+	/* Selecting frames testing */
+	thOnDragStart(frameID){
+		console.log('drag start', frameID);
+	}
+
+	thOnDragEnd(frameID){
+		console.log('drag end', frameID);
+	}
+
+	thOnDragEnter(frameID){
+		console.log('drag enter', frameID);
+	}
+
+
+	/************************** ANIMATIONS ******************************/
 
 	togglePlayAnimation(){
 		let isPlaying = !this.state.isPlaying; 
@@ -158,48 +128,6 @@ export default class SpriteLayers extends React.Component {
 		this.props.content2.fps = event.target.value;
 		this.handleSave("Changed FPS");
 	}
-
-	insertFrameAfter(frameID, doCopy){
-		this.props.EditGraphic.insertFrameAfter(frameID, doCopy);
-	}
-
-	copyFrame(frameID){
-		this.setState({ copyFrameID: frameID });
-	}
-
-	pasteFrame(frameID){
-		let c2 = this.props.content2;
-		if(this.state.copyFrameID === null) return;
-		if(!c2.frameData[this.state.copyFrameID]) return;
-
-		c2.frameData[frameID] = c2.frameData[this.state.copyFrameID];
-		this.handleSave("Paste frame #"+(this.state.copyFrameID)+" to #"+frameID, true);
-	}
-
-	frameMoveLeft(frameID){
-		this.props.EditGraphic.frameMoveLeft(frameID);
-	}
-
-	frameMoveRight(frameID){
-		this.props.EditGraphic.frameMoveRight(frameID);
-	}
-
-
-	/* Selecting frames testing */
-	thOnDragStart(frameID){
-		console.log('drag start', frameID);
-	}
-
-	thOnDragEnd(frameID){
-		console.log('drag end', frameID);
-	}
-
-	thOnDragEnter(frameID){
-		console.log('drag enter', frameID);
-	}
-
-
-	/* ANIMATIONS */
 
 	getAnimIdByFrame(frameID){
 		let c2 = this.props.content2;	
@@ -318,6 +246,55 @@ export default class SpriteLayers extends React.Component {
 		this.handleSave("Delete animation");
 	}
 
+
+	/************************** LAYERS ******************************/
+
+	toggleAllVisibility(){
+		let isVisible = !this.state.allLayersHidden;
+		this.setState({ allLayersHidden: isVisible });
+		let layerParams = this.props.content2.layerParams;
+		for(let i=0; i<layerParams.length; i++){
+			layerParams[i].isHidden = isVisible;
+		}
+		this.handleSave("All layers visibility");
+	}
+
+	toggleAllLocking(){
+		let isLocked = !this.state.allLayersLocked;
+		this.setState({ allLayersLocked: isLocked });
+		let layerParams = this.props.content2.layerParams;
+		for(let i=0; i<layerParams.length; i++){
+			layerParams[i].isLocked = isLocked;
+		}
+		this.handleSave("All layers locking");
+	}
+
+	toggleCanvasLayersVisibility(){
+		this.setState({ isCanvasLayersVisible: !this.state.isCanvasLayersVisible });
+	}
+
+	selectLayer(idx){
+		this.props.EditGraphic.handleSelectLayer(idx);
+	}
+
+	addLayer(){
+	    // if (!this.props.canEdit)
+	    // { 
+	    //   this.props.editDeniedReminder();
+	    //   return;
+	    // }
+	    // this.doSaveStateForUndo("Add Layer");
+	    let c2 = this.props.content2;
+	    let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
+	    c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
+	    let fD = c2.frameData;
+	    for(let i; i<fD.length; i++){
+	      fD[i][lN.length-1] = null;
+	    }
+	    this.handleSave('Add layer to graphic');
+	    this.props.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+	}
+
 	copyLayer(layerID){
 		this.setState({ copyLayerID: layerID });
 	}
@@ -333,18 +310,41 @@ export default class SpriteLayers extends React.Component {
 		this.handleSave("Paste layer #"+(this.state.copyLayerID)+" to #"+layerID, true);
 	}
 
-
 	deleteLayer(layerID){
 		this.props.EditGraphic.handleDeleteLayer(layerID);
 	}
 
-	deleteFrame(frameID){
-		this.props.EditGraphic.handleDeleteFrame(frameID);
-	}	
+	moveLayerUp(layerID){
+		let c2 = this.props.content2;
 
-	handleSave(changeText="change graphic", dontSaveFrameData){
-		this.props.handleSave(changeText, dontSaveFrameData);
+		let tmpParam = c2.layerParams[layerID];
+		c2.layerParams[layerID] = c2.layerParams[layerID-1];
+		c2.layerParams[layerID-1] = tmpParam;
+
+		for(let i=0; i<c2.frameNames.length; i++){
+			let frame = c2.frameData[i];
+			let tmpData = frame[layerID];
+			frame[layerID] = frame[layerID-1];
+			frame[layerID-1] = tmpData;
+		}
+		this.handleSave('Layer moved up', true);
 	}
+
+	moveLayerDown(layerID){
+		let c2 = this.props.content2;
+
+		let tmpParam = c2.layerParams[layerID];
+		c2.layerParams[layerID] = c2.layerParams[layerID+1];
+		c2.layerParams[layerID+1] = tmpParam;
+
+		for(let i=0; i<c2.frameNames.length; i++){
+			let frame = c2.frameData[i];
+			let tmpData = frame[layerID];
+			frame[layerID] = frame[layerID+1];
+			frame[layerID+1] = tmpData;
+		}
+		this.handleSave('Layer moved down', true);
+	}	
 
 	renderLayers(){
 		let c2 = this.props.content2;
@@ -372,6 +372,10 @@ export default class SpriteLayers extends React.Component {
 				handleSave={this.handleSave.bind(this)}
 			/>
 		));		
+	}
+
+	handleSave(changeText="change graphic", dontSaveFrameData){
+		this.props.handleSave(changeText, dontSaveFrameData);
 	}
 
 

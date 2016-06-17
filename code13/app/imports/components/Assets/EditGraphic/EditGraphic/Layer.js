@@ -105,11 +105,13 @@ export default class Layer extends React.Component {
                   <i className="arrow down icon"></i>
                   Move Down
                 </div>
+                <div className="divider"></div>
                 <div onClick={this.editName.bind(this)}
                   className="item">
                   <i className="edit icon"></i>
                   Rename
                 </div>
+                <div className="divider"></div>
                 <div onClick={this.copyLayer.bind(this)}
                   className={"item "}>
                   <i className="copy icon"></i>
@@ -120,6 +122,7 @@ export default class Layer extends React.Component {
                   <i className="paste icon"></i>
                   Paste
                 </div>
+                <div className="divider"></div>
                 <div onClick={this.deleteLayer.bind(this)}
                   className="item">
                   <i className="remove icon"></i>

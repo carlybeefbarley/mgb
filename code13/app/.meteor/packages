@@ -27,3 +27,4 @@ flemay:less-autoprefixer
 babel-runtime
 semantic:ui
 meteorhacks:kadira
+meteorhacks:kadira-profiler

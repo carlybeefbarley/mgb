@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Sat Jun 18 2016 12:25:00 GMT-0700 (PDT)",
+      "timestamp":     "Sat Jun 18 2016 16:10:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "593"
+        "iteration":   "597"
       },
 
       "releaseManagement": {
@@ -30,10 +30,17 @@ export default mgbReleaseInfo = {
       
       "changes": [
         {
+          "featureTag":     "user.profile.focus",
+          "type":           "feature",
+          "changeName":     "Focus Message in Profile and Nav",
+          "changeSummary":  "On your profile, there is now a 'Focus' field. If set, this shows in your top Nav bar. Changes are also logged in the activity tracker. It is intended to help you remember and communicate your current focus.",
+          "otherUrls":      []
+        },
+        {
           "featureTag":     "ops.scale",
           "type":           "improvement",
           "changeName":     "MGBv2 server farm",
-          "changeSummary":  "The servers have been scaled up. There are three front-end server nodes plus three bank-end MongoDB replica nodes. In addition, load profiling/alerting have been enabled",
+          "changeSummary":  "The servers have been scaled up. There are three front-end server nodes plus three back-end MongoDB Database replica nodes. In addition, load profiling/alerting have been enabled for the servers.",
           "otherUrls":      []
         },
         {

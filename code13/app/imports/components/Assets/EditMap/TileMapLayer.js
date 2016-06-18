@@ -255,7 +255,7 @@ export default class TileMapLayer extends React.Component {
     }
     pos.id = pos.x + pos.y * layer.width;
 
-    if(this.prevTile && (map.options.randomMode || map.collection.length < 2)){
+    /*if(this.prevTile && false){
       if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
         return;
       }
@@ -266,9 +266,13 @@ export default class TileMapLayer extends React.Component {
       }
       else{
         // hmm.... why this is broken - and why this is required at all???
-        //this.highlightTile(this.prevTile);
+        this.highlightTile(this.prevTile);
       }
-    }
+    }*/
+
+    // clear all brefore drawing
+    // TODO: clear only selected tiles?
+    this.drawTiles();
 
     let sel;
     if(map.options.randomMode){
@@ -284,9 +288,7 @@ export default class TileMapLayer extends React.Component {
       this.highlightTile(pos, "rgba(0,0,255,0.3)", ts);
     }
     else if( map.collection.length){
-      // clear all brefore drawing
-      // TODO: clear only selected tiles?
-      this.drawTiles();
+
       const tpos = new TileSelection(pos);
       let ox = map.collection[0].x;
       let oy = map.collection[0].y;
@@ -524,6 +526,10 @@ edit[EditModes.fill] = function(e, up){
 edit[EditModes.stamp] = function(e, up){
   // nothing from tileset is selected
   const pos = this.getTilePosInfo(e);
+  if(this.lastTilePos && this.lastTilePos.isEqual(pos) && !up){
+    return;
+  }
+  this.lastTilePos = pos;
   //console.log(pos);
   if(!this.map.collection.length){
     return;
@@ -538,15 +544,17 @@ edit[EditModes.stamp] = function(e, up){
   }
 
 
-  if (this.options.randomMode) {
+  if (this.map.options.randomMode) {
     let ts = this.map.collection.random();
-    if (this.selection.length > 0) {
-      if (this.selection.indexOfId(pos.id) > -1) {
+    if (this.map.selection.length > 0) {
+      if (this.map.selection.indexOfId(pos.id) > -1) {
         this.options.data[pos.id] = ts.gid;
       }
     }
     else {
-      this.options.data[pos.id] = ts.gid;
+      if ( !(pos.x < 0 || pos.x > this.options.width-1 || pos.y < 0 || pos.y > this.options.height-1) ) {
+        this.options.data[pos.id] = ts.gid;
+      }
     }
     this.drawTiles();
     return;

@@ -291,10 +291,9 @@ export default UserAssetListRoute = React.createClass({
     // For some reason this isn't working as 'hidden divider' TODO - find out why
     const hiddenDivider =  <div className="ui divider" style={{borderStyle: "none"}}></div>
 
-
     if (user) {
-      var {_id, createdAt} = user;
-      var {name, avatar} = user.profile;     
+      var { _id, createdAt } = user;
+      var { name, avatar, bio, title, focusMsg, focusStart } = user.profile;     
     }
     
     return (
@@ -315,6 +314,10 @@ export default UserAssetListRoute = React.createClass({
               {user ? <UserItem
                         name={name}
                         avatar={avatar ? avatar : null}
+                        profileTitle={title}
+                        profileBio={bio}
+                        profileFocusMsg={focusMsg}
+                        profileFocusStart={focusStart}                        
                         createdAt={createdAt}
                         _id={_id} />
                       : null

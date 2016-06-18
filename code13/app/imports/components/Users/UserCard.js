@@ -79,6 +79,16 @@ export default UserProfile = React.createClass({
               isDisabled={editsDisabled}
               />
           </div>
+          <div className="ui description">
+            <b>Focus:</b> <InlineEdit
+              validate={this.customValidateText}
+              activeClassName="editing"
+              text={this.props.user.profile.focusMsg || "(no current focus)"}
+              paramName="profile.focusMsg"
+              change={this.profileFieldChanged}
+              isDisabled={editsDisabled}
+              />
+          </div>
         </div>
         <div className="ui extra content">
             <span className="ui right floated">

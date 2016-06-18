@@ -14,22 +14,24 @@ const schema = {
     address: String,
     verified: optional(Boolean)
   },
-  profile: {
+  profile: {                          // TODO: Flatten this out since user.profile is handle specially by Meteor and has security problems
     name: optional(String),
     latestNewsTimestampSeen: optional(String),    
     avatar: optional(String),
     title: optional(String),
     bio: optional(String),
+    focusMsg: optional(String),          // A message to remind the person of their current focus. Good for ADHD people!
+    focusStart: optional(Date),          // When that focus message was changed
     images: optional([String]),
     isDeleted: optional(Boolean), //soft delete
     invites: optional([]),
     projectNames: optional([String])   // An array of strings  
   },
-  permissions: {
+  permissions: {                      // DEPRACATED. TODO: Replace with real permissions system
     teamId: optional(String),
     teamName: optional(String),
-    roles: optional([String]),
-  },
+    roles: optional([String])
+  }
 };
 
 Meteor.methods({
@@ -37,8 +39,8 @@ Meteor.methods({
     check( url, String );
 
     try {
-      Meteor.users.update(Meteor.userId(), {$push: {"profile.images": url}});
-      Meteor.users.update(Meteor.userId(), {$set: {"profile.avatar": url }});
+      Meteor.users.update(Meteor.userId(), {$push: {"profile.images": url}})
+      Meteor.users.update(Meteor.userId(), {$set: {"profile.avatar": url }})
     } catch( exception ) {
       return exception;
     }
@@ -46,21 +48,21 @@ Meteor.methods({
 
   "User.setProfileImage": function ( url ) {
     check( url, String );
-    Meteor.users.update(Meteor.userId(), {$set: {"profile.avatar": url }});
+    Meteor.users.update(Meteor.userId(), {$set: {"profile.avatar": url }})
   },
 
   "User.updateEmail": function(docId, data) {
 
     check(docId, String);
-    if (!this.userId) throw new Meteor.Error(401, "Login required");
-    if (this.userId !== docId) throw new Meteor.Error(401, "You don't have permission to edit this Profile");
+    if (!this.userId) throw new Meteor.Error(401, "Login required")
+    if (this.userId !== docId) throw new Meteor.Error(401, "You don't have permission to edit this Profile")
 
     // whitelist what can be updated
     check(data, {
-      "emails": optional(schema.emails),
+      "emails": optional(schema.emails)
     });
 
-    count = Meteor.users.update(docId, {$push: data});
+    count = Meteor.users.update(docId, {$push: data})
 
     console.log("[User.update]", count, docId);
     return count;
@@ -74,9 +76,9 @@ Meteor.methods({
 
     check(docId, String);
     if (!this.userId) 
-      throw new Meteor.Error(401, "Login required");
+      throw new Meteor.Error(401, "Login required")
     if (this.userId !== docId)
-      throw new Meteor.Error(401, "You don't have permission to edit this Profile");
+      throw new Meteor.Error(401, "You don't have permission to edit this Profile")
     // whitelist what can be updated
     
     check(data, {
@@ -84,6 +86,8 @@ Meteor.methods({
       "profile.avatar": optional(schema.profile.avatar),
       "profile.title": optional(schema.profile.title),
       "profile.bio": optional(schema.profile.bio),
+      "profile.focusMsg": optional(schema.profile.focusMsg),
+      "profile.focusStart": optional(schema.profile.focusStart),
       "profile.images": optional(schema.profile.images),
       "profile.isDeleted": optional(schema.profile.isDeleted),
       "profile.projectNames": optional(schema.profile.projectNames),

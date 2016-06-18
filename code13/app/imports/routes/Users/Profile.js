@@ -5,9 +5,9 @@ import moment from 'moment';
 
 import UserCard from '../../components/Users/UserCard';
 import QLink from '../QLink';
-import {Activity, ActivitySnapshots} from '../../schemas';
-import {ActivityTypes} from '../../schemas/activity.js';
-import {AssetKinds} from '../../schemas/assets';
+import { Activity, ActivitySnapshots } from '../../schemas';
+import { ActivityTypes, logActivity } from '../../schemas/activity.js';
+import { AssetKinds } from '../../schemas/assets';
 
 
 export default UserProfileRoute = React.createClass({
@@ -38,6 +38,16 @@ export default UserProfileRoute = React.createClass({
    */
   handleProfileFieldChanged: function(changeObj)
   {
+    const fMsg = changeObj["profile.focusMsg"]
+    if (fMsg || fMsg === "")
+    {
+      // focusMessage has some additional handling.. activity Logging and also
+      changeObj["profile.focusStart"] = new Date()
+      if (fMsg.length > 0)
+        logActivity("user.changeFocus", `Focus is now '${fMsg}''`)
+      else
+        logActivity("user.clearFocus", `Prior focus '${this.props.user.profile.focusMsg}' has been cleared` )
+    }
     Meteor.call('User.updateProfile', this.props.user._id, changeObj, (error) => {
       if (error) 
         console.log("Could not update profile: ", error.reason)      

@@ -77,7 +77,8 @@ export default App = React.createClass({
     const { currUser, user, currUserProjects } = this.data
     const { query } = this.props.location
 
-    let mainPanelDivSty = {}
+    // The NavPanel (left), NavBar (top) and FlexPanel (right) are fixed/absolute positioned so we need to account for that
+    let mainPanelDivSty = { marginTop: "40px"}
 
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]

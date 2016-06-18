@@ -3,6 +3,8 @@ import { browserHistory } from 'react-router';
 import {logActivity} from '../../schemas/activity';
 import NavRecentGET from './NavRecentGET.js';
 import WhatsNew from './WhatsNew.js';
+import QLink from '../../routes/QLink';
+import moment from 'moment';
 
 export default Nav = React.createClass({
   
@@ -49,16 +51,22 @@ export default Nav = React.createClass({
 
 
   render: function() {
+    const { currUser } = this.props
     
     const sty = {
-      borderRadius: "0px", 
-      marginRight: this.props.flexPanelWidth,         // This messes up the scrollbar location. TODO - something that doesn't mess up the scroll bar?  Note that Slack uses a thing they built called Monkey Scroll Bars
-      marginLeft: this.props.navPanelWidth,
+      position: "absolute",
+      top:      "0px",
+      left:     this.props.navPanelWidth, 
+      right:    this.props.flexPanelWidth, 
+      // borderRadius: "0px", 
+      // marginRight: this.props.flexPanelWidth,  
+      // marginLeft: this.props.navPanelWidth,
       marginBottom: "0px"
     }
     
     return (
-      <div className="ui attached inverted menu" style={sty}>
+      <div style={sty}>
+      <div className="ui attached inverted menu" >
 
           <WhatsNew currUser={this.props.currUser} asHidingLink={true}/>
 
@@ -71,14 +79,22 @@ export default Nav = React.createClass({
           <div className="item">
             { this.renderBreadcrumbBar() }
           </div>
-         
-          { !this.props.flexPanelIsVisible && 
-            <a className="header item right" onClick={this.props.handleFlexPanelToggle}>
-              <i  className={"chevron " + (this.props.flexPanelIsVisible ? "right" : "left") +" icon"}></i>
-            </a>
-          }
-          <div style={{width: this.props.navPanelWidth}} />
 
+
+          <div className="right menu">
+            { (currUser && currUser.profile.focusMsg) && 
+              <QLink to={`/user/${currUser._id}`} className=" item " title={"You set this focus goal " + moment(currUser.profile.focusStart).fromNow()}>
+                <i className="alarm icon"></i> {currUser.profile.focusMsg}
+              </QLink>
+            }
+
+            { !this.props.flexPanelIsVisible && 
+              <a className="header item" onClick={this.props.handleFlexPanelToggle}>
+                <i className={"chevron " + (this.props.flexPanelIsVisible ? "right" : "left") +" icon"}></i>
+              </a>
+            }
+          </div>
+        </div>
         </div>
     );
   }

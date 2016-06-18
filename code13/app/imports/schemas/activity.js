@@ -1,8 +1,8 @@
-
+// Activity log for MGB users. This is a persistent log that we will keep many weeks of history for
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 
-import {Activity} from '../schemas';
+import { Activity } from '../schemas';
 import { check, Match } from 'meteor/check';
 
 var schema = {
@@ -38,6 +38,8 @@ export const ActivityTypes = {
   "user.join":    { icon: "green user",       pri:  5,  description: "User joined" },
   "user.login":   { icon: "user",             pri:  9,  description: "User Logged In" },
   "user.logout":  { icon: "grey user",        pri:  9,  description: "User Logged Out" },
+  "user.changeFocus":  { icon: "green alarm", pri:  9,  description: "User changed their focus" },
+  "user.clearFocus":   { icon: "grey alarm",  pri:  9,  description: "User cleared their focus" },
 
   "asset.create": { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.edit":   { icon: "edit",             pri: 15,  description: "Edit asset" },
@@ -106,7 +108,7 @@ export function logActivity(activityType, description, thumbnail, asset) {
     "priority":             ActivityTypes.getPri(activityType),
     
     "description":          description || "",  
-    "thumbnail":            thumbnail || "",
+    "thumbnail":            thumbnail || "",        // TODO - use this in future as a cheap versioning technique?
 
     // Identifiers for the user/team that initiated the activity
     byUserName:             username,           // TODO - server will also validate

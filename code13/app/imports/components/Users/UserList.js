@@ -14,6 +14,10 @@ export default UserList = React.createClass({
           key={user._id}
           _id={user._id}
           name={user.profile.name}
+          profileTitle={user.profile.title}
+          profileBio={user.profile.bio}
+          profileFocusMsg={user.profile.focusMsg}
+          profileFocusStart={user.profile.focusStart}
           createdAt={user.createdAt}
           avatar={user.profile.avatar} 
           handleClickUser={this.props.handleClickUser} />
@@ -24,6 +28,6 @@ export default UserList = React.createClass({
       <div className="ui middle aligned divided relaxed animated list">
         {users}
       </div>
-    );
+    )
   }
 })

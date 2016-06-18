@@ -505,10 +505,11 @@ export default class EditGraphic extends React.Component {
 
   setStatusBarInfo(mouseAtText = null, colorAtText = null, colorCSSstring = null)
   {
-    if (mouseAtText === null)
-      this._statusBar.outer.hide()
+    if (mouseAtText === null) {  
+      this._statusBar.outer.css( {visibility: "hidden"} )
+    }
     else {
-      this._statusBar.outer.show()
+      this._statusBar.outer.css( {visibility: "visible"} )
       this._statusBar.mouseAtText.text(mouseAtText)
       this._statusBar.colorAtText.html(colorAtText)
       if (colorCSSstring !== null)

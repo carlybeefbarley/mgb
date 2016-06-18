@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Fri Jun 17 2016 00:10:00 GMT-0700 (PDT)",
+      "timestamp":     "Sat Jun 18 2016 12:25:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "575"
+        "iteration":   "593"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "ops.scale",
+          "type":           "improvement",
+          "changeName":     "MGBv2 server farm",
+          "changeSummary":  "The servers have been scaled up. There are three front-end server nodes plus three bank-end MongoDB replica nodes. In addition, load profiling/alerting have been enabled",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "nav.navbar",
           "type":           "improvement",

@@ -55,6 +55,8 @@ Azzets._ensureIndex({
   "name": "text"        // Index the name field. See https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor
 });
 
+Azzets._ensureIndex({"isDeleted": 1, "kind": 1})
+Azzets._ensureIndex({"isDeleted": 1, "name": 1, "kind": 1})
 
 
 /** 
@@ -135,6 +137,12 @@ Meteor.publish('activity.public.recent.assetid', function(assetId, limitCount=50
 });
 
 
+// ACTIVITY Indexes. These were built based on the stats at https://mlab.com/clusters/rs-ds021730#slowqueries    
+
+Activity._ensureIndex({"timestamp": -1})
+Activity._ensureIndex({"toAssetId": 1, "timestamp": -1})
+Activity._ensureIndex({"byUserId": 1, "timestamp": -1})
+
 //
 //    ACTIVITY SNAPSHOTS (and purge)
 //
@@ -157,6 +165,8 @@ Meteor.publish('activitysnapshots.userId', function(userId) {
   let options = {limit: 100, sort: {timestamp: -1} }
   return ActivitySnapshots.find(selector, options);
 });
+
+// SPECIAL INDEX TO AUTO_DELETE ITEMS
 // NOTE THAT THE expireAfterSeconds value cannot be changed! 
 // You have to drop the index to change it (or use the complicated collMod approach)
 // Here's how to drop it using the CLI: 
@@ -166,7 +176,9 @@ Meteor.publish('activitysnapshots.userId', function(userId) {
 //     > db.activity_snapshots.getIndexes()   // check it is dropped ok
 ActivitySnapshots._ensureIndex( { "timestamp": 1 }, { expireAfterSeconds: 60*5 } )
 
-
+// Normal INDEXES for Activity Snapshots
+ActivitySnapshots._ensureIndex( {"byUserId": 1, "toAssetId": 1} )
+ActivitySnapshots._ensureIndex( {"toAssetId": 1, "timestamp": -1} )
 
 //
 //    CHATS

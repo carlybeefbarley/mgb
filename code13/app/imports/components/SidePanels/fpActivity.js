@@ -17,7 +17,9 @@ export default fpActivity = React.createClass({
   wrapActivity: function (key, ago, userId, labelExtraIconClass, uName, uId, actJSX) {
     return  <div className="event" key={key} style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
               <div className="label">
-              <img src={`/api/user/${userId}/avatar`}></img>
+              <QLink to={"/user/" + uId}>
+                <img src={`/api/user/${userId}/avatar`}></img>
+              </QLink>
               </div>
               <div className="content">
                 <div className="summary">

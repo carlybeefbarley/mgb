@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Sat Jun 18 2016 16:10:00 GMT-0700 (PDT)",
+      "timestamp":     "Sat Jun 18 2016 21:15:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "597"
+        "iteration":   "607"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "assets",
+          "type":           "improvement",
+          "changeName":     "Assets have a description field",
+          "changeSummary":  "Asset descriptions can be edited in the Asset Editor using the header. If there is no description nd you do not have write access, then the line is not shown",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "user.profile.focus",
           "type":           "feature",

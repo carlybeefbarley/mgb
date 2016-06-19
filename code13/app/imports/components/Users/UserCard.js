@@ -94,9 +94,9 @@ export default UserProfile = React.createClass({
             <span className="ui right floated">
               Joined {moment(createdAt).format('MMMM DD, YYYY')}
             </span>
-            <span>
+            <QLink to="/users">
               <i className="ui user icon"></i>User
-            </span>            
+            </QLink>            
           </div>    
       </div>
     );

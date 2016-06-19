@@ -37,7 +37,7 @@ var schema = {
   isPrivate: Boolean
 };
 
-
+const UAKerr = "Unknown Asset Kind"
 // Info on each kind of asset, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const AssetKinds = {
@@ -54,12 +54,22 @@ export const AssetKinds = {
   "_mgbui":  { name: "MGB UI",  selfPlural: true,   disable: false, longName: "MGB UI Mockup",   icon: "code", description: "HTML using Semantic UI for mocking up MGB UI" },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},
-  getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : "Unknown Asset Kind")},
-  getName:      function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : "Unknown Asset Kind")},
-  getNamePlural:function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? "" : "s") : "Unknown Asset Kinds")},
-  validateAssetName: function (n) { 
-    if (n.length > 64) return "Too long. Max length is 64 characters"
-    // TODO: Look for invalid characters.  /^[a-zA-Z\-_. ]$/ or something fancier like http://stackoverflow.com/questions/6381752/validating-users-utf-8-name-in-javascript
+  getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : UAKerr)},
+  getDescription:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].description : UAKerr)},
+  getName:      function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : UAKerr)},
+  getNamePlural:function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? "" : "s") : UAKerr)},
+  validateAssetField: function (field, str) { 
+    if (!field || !str) return "invalid params"
+    switch(field) {
+    case "name":
+      if (str.length > 64) 
+        return "Too long. Max length is 64 characters"
+      break
+    case "text":
+      if (str.length > 120) 
+        return "Too long. Max length is 120 characters"
+      break      
+    }
     return null
   }
 };
@@ -129,18 +139,21 @@ Meteor.methods({
     data.createdAt = now
     data.updatedAt = now
     data.ownerId = this.userId
-    data.dn_ownerName = Meteor.user().profile.name;
-    data.content = "";
-    data.projectNames = [];
-    data.thumbnail = "";
-    data.content2 = {};
+    data.dn_ownerName = Meteor.user().profile.name
+    data.content = ""                                 // This is stale. Can be removed one day
+    data.text = ""                                    // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
+    data.projectNames = []
+    data.thumbnail = ""
+    data.content2 = {}
 
-    check(data, _.omit(schema, '_id'));
+    check(data, _.omit(schema, '_id'))
 
-    let docId = Azzets.insert(data);
+    let docId = Azzets.insert(data)
 
-    console.log(`  [Azzets.create]  "${data.name}"  #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`);
-    return docId;
+    if (Meteor.isServer)
+      console.log(`  [Azzets.create]  "${data.name}"  #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`);
+
+    return docId
   },
 
   "Azzets.update": function(docId, canEdit, data) {
@@ -181,11 +194,11 @@ Meteor.methods({
 
     count = Azzets.update(selector, {$set: data});
 
-    console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`); // These fields might not be provided for updates
+    if (Meteor.isServer)
+      console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`); // These fields might not be provided for updates
 
-    return count;
-  },
-  
+    return count
+  }  
   
 
 });

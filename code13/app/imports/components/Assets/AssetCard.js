@@ -113,7 +113,7 @@ export default AssetCard = React.createClass({
       
     const {renderType, asset, showEditButton, currUser, canEdit, showHeader } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
-    const assetKindLongName = AssetKinds.getLongName(asset.kind)
+    const assetKindDescription = AssetKinds.getDescription(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
     const c2 = asset.content2 || { width:64, height:64 }
     const renderShort = renderType === "short"
@@ -149,7 +149,6 @@ export default AssetCard = React.createClass({
                             />
                           
 
-
     // TODO: add allowDrag to props.. and walk through AssetCard use cases;
     return (
       <div key={asset._id} className="ui card" draggable="true"
@@ -180,19 +179,22 @@ export default AssetCard = React.createClass({
           }
 
           { showHeader && 
-              <i className="right floated star icon"></i>
+            <i className="right floated star icon"></i>
           }
           
           { showHeader && 
-          <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}  onClick={this.handleEditClick}>
-            <small>{asset.name || "(untitled)"}</small>
-          </div>
+            <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}  onClick={this.handleEditClick} title="Asset Name">
+              <small>{asset.name || "(untitled)"}</small>
+            </div>
+          }
+          { (showHeader && asset.text && asset.text !== "") && 
+            <div className="meta" style={{ "color": 'black'}}  onClick={this.handleEditClick} title="Asset Description">
+              <small>{asset.text}</small>
+            </div>
           }
         
           { asset.isDeleted &&            
-            <div className="meta">
-              <p className="ui small red label">DELETED</p>           
-            </div>
+            <div className="ui massive red corner label"><span style={{fontSize: "10px", paddingLeft: "10px"}}>DELETED</span></div>
           }
 
           { showHeader && info2 && !renderShort &&
@@ -214,11 +216,11 @@ export default AssetCard = React.createClass({
         
         { showHeader && 
           <div className="extra content">
-            <span className="left floated icon label">
+            <span className="left floated icon label" title={assetKindDescription}>
               <i className={"large " + assetKindIcon}></i>
               { assetKindName }
             </span>                           
-            <QLink to={`/user/${asset.ownerId}`}>
+            <QLink to={`/user/${asset.ownerId}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
                 <img className="ui avatar image" src={`/api/user/${asset.ownerId}/avatar`}>
                 </img> {ownerName ? ownerName : `#${asset.ownerId}`}

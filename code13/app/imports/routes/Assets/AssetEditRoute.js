@@ -96,26 +96,36 @@ export default AssetEditRoute = React.createClass({
   fieldChanged: function(data) {
     // data = { description: "New validated text comes here" }
     // Update your model from here    
-    if (this.validateEnteredAssetName(data.name))
+    if (data.name)
       this.handleAssetNameChange(data.name)
+    if (data.text)
+      this.handleAssetDescriptionChange(data.text)
   },
 
 
-  validateEnteredAssetName: function(text) {
-    const NameErrStr = AssetKinds.validateAssetName(text)
-    if (NameErrStr !== null)
-      console.log(`Name "${text}" not valid: ${NameErrStr}`)
-    return NameErrStr === null ? true : false
+  validateEnteredField(field, str) {
+    const errStr = AssetKinds.validateAssetField(field, str)
+    if (errStr !== null)
+      console.log(`Asset ${field} "${str}" not valid: ${errStr}`)   // TODO proper err alert
+    return errStr === null ? true : false
+  },
+
+
+  validateEnteredAssetName: function(str) {
+    return this.validateEnteredField("name", str)
+  },
+
+
+  validateEnteredAssetDescription: function(str) {
+    return this.validateEnteredField("text", str)
   },
 
 
   /** This used by render() to render something like...
-   *      OwnerName [> Project(s)] > Kind > AssetName
+   *      Kind > AssetName
    * @param   a is the Asset (typically from this.data.asset)
-   * 
    */
   renderAssetPathElements(a, canEdit) {
-    const oName = a.dn_ownerName || `User#${a.ownerId}`
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
     const editOrView = canEdit ? <span style={{color: "green"}}>Edit</span> : <span>View</span>
 
@@ -128,7 +138,7 @@ export default AssetEditRoute = React.createClass({
     return <span>
             {editOrView}&nbsp;&nbsp;
             <QLink to={`/user/${a.ownerId}/assets`} query={{kinds: a.kind}}>
-              { AssetKinds.getNamePlural(a.kind) }
+              { AssetKinds.getName(a.kind) }
             </QLink>
             &nbsp;>&nbsp;
             <InlineEdit
@@ -147,6 +157,7 @@ export default AssetEditRoute = React.createClass({
     const asset = this.data.asset         // One Asset provided via getMeteorData()
     if (!asset || this.data.loading) return null
     const canEd = this.canEdit()    
+    const emptyAssetDescriptionText = "(none)"
 
     return (
       <div className="ui padded grid">
@@ -159,7 +170,24 @@ export default AssetEditRoute = React.createClass({
         />
 
         <div className="ui six wide column">
-          { this.renderAssetPathElements(asset, canEd) }
+          <div className="ui row">
+            { this.renderAssetPathElements(asset, canEd) }
+          </div>
+          { (canEd || (asset.text && asset.text !== "")) &&   
+            <div className="ui row">
+              <small>
+                <div className="ui fluid input">
+                  <InlineEdit
+                    validate={this.validateEnteredAssetDescription}
+                    text={asset.text || emptyAssetDescriptionText}
+                    paramName="text"
+                    change={this.fieldChanged}
+                    isDisabled={!canEd}
+                    />     
+                </div>
+              </small>
+            </div>
+          }
         </div>
         
         <div className="ui five wide column">
@@ -208,17 +236,28 @@ export default AssetEditRoute = React.createClass({
   },
 
 
+  handleAssetDescriptionChange: function(newText) {
+    if (newText !== this.data.asset.text) {
+      Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {text: newText}, (err, res) => {
+        if (err) 
+          this.props.showToast(err.reason, 'error')
+      })      
+      logActivity("asset.description",  `Update description to "${newText}"`, null, this.data.asset); 
+    }
+  },
+
+
   handleAssetNameChange: function(newName) {
     if (newName !== this.data.asset.name) {
       Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {name: newName}, (err, res) => {
-        if (err) {
+        if (err)
           this.props.showToast(err.reason, 'error')
-        }
-      });
-      
+      })      
       logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset); 
     }
   }
+
+  
   // TODO:  Call snapshotActivity after rename so it will fix up any stale names:
   //            We would need the most recent passiveActivity which is asset-kind-specific
   //            so we need to pass down a handler for the asset-specific editors to let us

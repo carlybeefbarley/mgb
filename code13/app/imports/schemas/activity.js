@@ -127,7 +127,6 @@ export function logActivity(activityType, description, thumbnail, asset) {
 
   if (priorLog && 
       priorLog.activityType === logData.activityType &&
-      logData.activityType !== "asset.rename" &&              // This is coallesced already in AssetEditRoute
       priorLog.description === logData.description &&         // This can be a bit noisy for edit.
       priorLog.toAssetId === logData.toAssetId)
     fSkipLog = true;

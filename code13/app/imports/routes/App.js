@@ -79,7 +79,7 @@ export default App = React.createClass({
 
     // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
     trackJs.configure({ 
-      userId: (Meteor.user() ? Meteor.user().name : ""),
+      userId: (Meteor.user() ? Meteor.user().profile.name : ""),
       version: `${ver.ver} ${ver.state} ${ver.ietration}`,
       sessionId: Meteor.default_connection._lastSessionId
 

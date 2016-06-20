@@ -104,7 +104,7 @@ export default class TileMapLayer extends React.Component {
     this.ctx.stroke();
 
     let tilelayer = null, tw, th;
-    if(data.layers[this.props.map.activeLayer].type = "tilelayer"){
+    if(data.layers.length && data.layers[this.props.map.activeLayer].type == "tilelayer"){
       tilelayer = data.layers[this.props.map.activeLayer];
       tw = tilelayer.width; th = tilelayer.height;
     }
@@ -114,11 +114,11 @@ export default class TileMapLayer extends React.Component {
 
     this.ctx.beginPath();
 
-    const startx = 0.5 + camera.x * camera.zoom;
-    const endx = 0.5 + (camera.x + tw * data.tilewidth) * camera.zoom;
+    const startx = 0.5 + (camera.x + tilelayer.x) * camera.zoom;
+    const endx = 0.5 + (camera.x + tilelayer.x + tw * data.tilewidth) * camera.zoom;
 
-    const starty = 0.5 + camera.y * camera.zoom;
-    const endy = 0.5 + (camera.y + th * data.tileheight) * camera.zoom;
+    const starty = 0.5 + (camera.y + tilelayer.y) * camera.zoom;
+    const endy = 0.5 + (camera.y + tilelayer.y + th * data.tileheight) * camera.zoom;
 
 
     this.ctx.moveTo(startx, Math.min(starty, camera.y * camera.zoom));

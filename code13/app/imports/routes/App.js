@@ -78,13 +78,15 @@ export default App = React.createClass({
     let ver=mgbReleaseInfo.releases[0].id
 
     // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
-    trackJs.configure({ 
+    /*
+    ads blocking stuff blocks trackJS
+    */
+
+    window.trackJs && trackJs.configure({
       userId: (Meteor.user() ? Meteor.user().profile.name : ""),
       version: `${ver.ver} ${ver.state} ${ver.ietration}`,
       sessionId: Meteor.default_connection._lastSessionId
-
-    })
-
+    });
     const { currUser, user, currUserProjects } = this.data
     const { query } = this.props.location
 

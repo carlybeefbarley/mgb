@@ -607,13 +607,13 @@ export default class MapArea extends React.Component {
   handleKeyUp(e){
     let update = false;
     // don't steal events from inputs
-    if(e.target.tagName == "INPUT"){
+    if(e.target.tagName == "INPUT") {
       return;
     }
-    switch(e.which){
+    switch (e.which) {
       case 37: //left
         this.camera.x += this.data.tilewidth * this.camera.zoom;
-        update = true
+        update = true;
         break;
       case 38: //top
         this.camera.y += this.data.tileheight * this.camera.zoom;
@@ -632,6 +632,15 @@ export default class MapArea extends React.Component {
         this.selection.clear();
         this.refs.tools.enableMode(EditModes.stamp);
         break;
+      case 90: // ctrl + z
+        if (e.ctrlKey) {
+          if (e.shiftKey) {
+            this.doRedo();
+          }
+          else {
+            this.doUndo();
+          }
+        }
     }
     if(e.ctrlKey){
       console.log(e.which);
@@ -691,9 +700,12 @@ export default class MapArea extends React.Component {
 
   redraw(){
     this.redrawLayers();
-    this.refs.grid && this.refs.grid.drawGrid();
+    this.redrawGrid();
   }
 
+  redrawGrid(){
+    this.refs.grid && this.refs.grid.drawGrid();
+  }
   redrawLayers(){
     this.layers.forEach((layer) => {
       layer.adjustCanvas();

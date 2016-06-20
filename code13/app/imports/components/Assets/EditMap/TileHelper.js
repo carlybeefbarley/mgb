@@ -37,7 +37,7 @@ const TileHelper = {
     return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight);
   },
 
-  genNewMap: (widthInTiles = 20, heightInTiles = 20, tilewidth = 32, tileheight = 32, numlayers = 1) => {
+  genNewMap: (widthInTiles = 2, heightInTiles = 2, tilewidth = 32, tileheight = 32, numlayers = 1) => {
     let layers = new Array(numlayers);
 
     for(let i=0; i<numlayers; i++){

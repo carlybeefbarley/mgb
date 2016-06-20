@@ -12,9 +12,10 @@ export default class Layers extends React.Component {
   }
 
   handleClick(layerNum){
-    this.props.info.content.map.activeLayer = layerNum;
-    this.props.info.content.map.forceUpdate();
-    this.forceUpdate();
+    this.map.activeLayer = layerNum;
+    this.map.update();
+
+    //this.forceUpdate();
   }
   showOrHideLayer(layer, visible, e){
     e.preventDefault();

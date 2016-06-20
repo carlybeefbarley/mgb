@@ -1,3 +1,4 @@
+"use strict";
 import React from 'react';
 import Tile from './Tile.js';
 import TileHelper from "./TileHelper.js";
@@ -52,6 +53,56 @@ export default class TileMapLayer extends React.Component {
     return this.props.map;
   }
 
+  // this might get pretty slow and at some point there will be requirement for camera events
+  get camera(){
+    if(!this._camera){
+      this._camera = Object.create(this.map.camera);
+    }
+    this._camera.x = this.map.camera.x + this.options.x;
+    this._camera.y = this.map.camera.y + this.options.y;
+    this._camera.zoom = this.map.camera.zoom;
+    return this._camera;
+  }
+
+  isActive(){
+    return this.options == map.data.layers[map.activeLayer];
+  }
+
+  increaseSizeToTop(pos){
+    for(let i=0; i<this.options.width; i++){
+      this.options.data.unshift(0);
+    }
+    this.options.y -= this.map.data.tileheight;
+    this.options.height++;
+  }
+
+  increaseSizeToRight(pos){
+    // one step at the time..
+    // this method will be called more - if necessary
+    // reverse as first splice will resize array
+    for(let i=this.options.height; i>0; i--){
+      this.options.data.splice(i * this.options.width, 0, 0);
+    }
+    this.options.width++;
+  }
+
+  increaseSizeToBottom(pos){
+    for(let i=0; i<this.options.width; i++){
+      this.options.data.push(0);
+    }
+    this.options.height++;
+  }
+
+  increaseSizeToLeft(pos){
+    this.options.x -= this.map.data.tilewidth;
+    // reverse as first splice will resize array
+    for(let i=this.options.height - 1; i>-1; i--){
+      this.options.data.splice(i*this.options.width, 0, 0);
+    }
+    console.log("Increased to left:", this.options.data.length);
+    this.options.width++;
+  }
+
   adjustCanvas(){
     const canvas = this.refs.canvas;
     const $el = $(this.refs.layer);
@@ -63,17 +114,13 @@ export default class TileMapLayer extends React.Component {
     const map = this.props.map;
     const pos = new TileSelection();
     pos.updateFromPos(
-      (e.offsetX / map.camera.zoom - map.camera.x) ,
-      (e.offsetY / map.camera.zoom - map.camera.y) ,
+      (e.offsetX / this.camera.zoom - this.camera.x) ,
+      (e.offsetY / this.camera.zoom - this.camera.y) ,
       map.data.tilewidth, map.data.tileheight, 0
     );
     pos.getRawId(this.options.width);
     pos.gid = this.options.data[pos.id];
     return pos;
-  }
-
-  isActive(){
-    return this.options == map.data.layers[map.activeLayer];
   }
 
   selectRectangle(pos){
@@ -132,7 +179,7 @@ export default class TileMapLayer extends React.Component {
     const palette = map.gidCache;
     const mapData = map.data;
     const ctx = this.ctx;
-    const camera = map.camera;
+    const camera = this.camera;
 
     ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
 
@@ -147,13 +194,13 @@ export default class TileMapLayer extends React.Component {
     let skipy = Math.floor(-camera.y / mapData.tileheight);
     // at least for now
     if(skipy < 0){skipy = 0;}
-    let endy = skipy + heightInTiles;
-    endy = Math.min(endy,  mapData.height);
+    let endy = skipy + heightInTiles*2;
+    endy = Math.min(endy, this.options.height);
     endy += 1;
 
     let skipx = Math.floor(-camera.x / mapData.tilewidth);
     if(skipx < 0){skipx = 0;}
-    let endx = skipx + widthInTiles;
+    let endx = skipx + widthInTiles*2;
     endx = Math.min(endx, this.options.width);
     endx += 1;
 
@@ -184,7 +231,7 @@ export default class TileMapLayer extends React.Component {
   }
   drawTile(pal, pos, spacing = 0, clear = false){
     const map = this.props.map;
-    const camera = map.camera;
+    const camera = this.camera;
 
     let drawX = (pos.x * (map.data.tilewidth  + spacing) + camera.x) * camera.zoom;
     let drawY = (pos.y * (map.data.tileheight + spacing) + camera.y) * camera.zoom;
@@ -228,7 +275,7 @@ export default class TileMapLayer extends React.Component {
     const map = this.props.map;
     const ts = map.map.tilesets[map.activeTileset];
     const palette = map.gidCache;
-    const camera = this.props.map.camera;
+    const camera = this.camera;
     const layer = map.data.layers[map.activeLayer];
 
     const pos = {
@@ -318,7 +365,7 @@ export default class TileMapLayer extends React.Component {
   }
   highlightTile(pos, fillStyle, ts){
     const map = this.props.map;
-    const camera = map.camera;
+    const camera = this.camera;
     let width, height;
     // make little bit smaller highlight - while zooming - alpha bleeds out a little bit
     const drawX = (pos.x * (map.data.tilewidth  + map.spacing) + camera.x) * camera.zoom;
@@ -483,7 +530,6 @@ edit[EditModes.fill] = function(e, up){
     this.isDirtySelection = true;
   }
 
-
   this.map.tmpSelection.clear();
 
   const temp = this.map.selection;
@@ -523,10 +569,10 @@ edit[EditModes.fill] = function(e, up){
   this.drawTiles();
   return;
 };
-edit[EditModes.stamp] = function(e, up){
+edit[EditModes.stamp] = function(e, up, safeForUndo = true){
   // nothing from tileset is selected
   const pos = this.getTilePosInfo(e);
-  if(this.lastTilePos && this.lastTilePos.isEqual(pos) && !up){
+  if(this.lastTilePos && this.lastTilePos.isEqual(pos) && !up && e.type != "mousedown"){
     return;
   }
   this.lastTilePos = pos;
@@ -540,7 +586,7 @@ edit[EditModes.stamp] = function(e, up){
     return;
   }
   if(e.type == "mousedown" && e.target == this.refs.canvas){
-    this.map.saveForUndo();
+    safeForUndo && this.map.saveForUndo();
   }
 
 
@@ -552,14 +598,35 @@ edit[EditModes.stamp] = function(e, up){
       }
     }
     else {
-      if ( !(pos.x < 0 || pos.x > this.options.width-1 || pos.y < 0 || pos.y > this.options.height-1) ) {
-        this.options.data[pos.id] = ts.gid;
+
+      if( pos.x < 0 ){
+        this.increaseSizeToLeft(pos);
+        edit[EditModes.stamp].call(this, e, up, false);
+        return;
       }
+      if( pos.y < 0 ){
+        this.increaseSizeToTop(pos);
+        edit[EditModes.stamp].call(this, e, up, false);
+        return;
+      }
+      if(pos.x > this.options.width-1){
+        this.increaseSizeToRight(pos);
+        edit[EditModes.stamp].call(this, e, up, false);
+        return;
+      }
+      if ( pos.y > this.options.height-1) {
+        this.increaseSizeToBottom(pos);
+        // force "up" - increasing to bottom doesn't change position
+        edit[EditModes.stamp].call(this, e, true, false);
+        return;
+      }
+
+      this.options.data[pos.id] = ts.gid;
     }
+    this.map.redrawGrid();
     this.drawTiles();
     return;
   }
-
 
   const ox = this.map.collection[0].x;
   const oy = this.map.collection[0].y;
@@ -569,11 +636,30 @@ edit[EditModes.stamp] = function(e, up){
     let ts = this.map.collection[i];
     tpos.x = ts.x + pos.x - ox;
     tpos.y = ts.y + pos.y - oy;
-    if (tpos.x < 0 || tpos.x > this.options.width-1 || tpos.y < 0 || tpos.y > this.options.height-1) {
-      //console.log("out of bounds!");
 
-      //this.mouseDown = false;
-      continue;
+    if( tpos.x < 0 ){
+      this.increaseSizeToLeft(tpos);
+      edit[EditModes.stamp].call(this, e, up, false);
+      //this.drawTiles();
+      return;
+    }
+    if( tpos.y < 0 ){
+      this.increaseSizeToTop(tpos);
+      edit[EditModes.stamp].call(this, e, up, false);
+      //this.drawTiles();
+      return;
+    }
+    if(tpos.x > this.options.width-1){
+      this.increaseSizeToRight(tpos);
+      edit[EditModes.stamp].call(this, e, up), false;
+      //this.drawTiles();
+      return;
+    }
+    if ( tpos.y > this.options.height-1) {
+      this.increaseSizeToBottom(tpos);
+      edit[EditModes.stamp].call(this, e, true, false);
+      //this.drawTiles();
+      return;
     }
     tpos.id = tpos.x + tpos.y * this.options.width;
     if (this.map.selection.length > 0) {
@@ -585,6 +671,7 @@ edit[EditModes.stamp] = function(e, up){
       this.options.data[tpos.id] = ts.gid;
     }
   }
+  this.map.redrawGrid();
   this.drawTiles();
 };
 edit[EditModes.eraser] = function(e, up){

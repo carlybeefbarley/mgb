@@ -18,13 +18,14 @@ const ToolPen = {
       drawEnv.setColorRGBA(...d)
     }
     else {
+      console.log("draw", drawEnv.x, drawEnv.y)
       drawEnv.setPixelsAt(drawEnv.x, drawEnv.y)
     }
   },
 
   handleMouseMove: ( drawEnv ) => { ToolPen.handleMouseDown(drawEnv) },
 
-  handleMouseUp: ( drawEnv ) => {},
+  handleMouseUp: ( drawEnv ) => { ToolPen.handleMouseDown(drawEnv)  },
 
   handleMouseLeave: ( drawEnv ) => {}
 

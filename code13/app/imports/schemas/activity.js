@@ -135,7 +135,7 @@ export function logActivity(activityType, description, thumbnail, asset) {
   priorLog = logData;
   
   if (fSkipLog) {
-    console.log("Activity is similar to prior logged activity, so not placing in ActivityDB");
+//    console.log("Activity is similar to prior logged activity, so not placing in ActivityDB");
   }
   else {
     Meteor.call('Activity.log', logData, (err, res) => {

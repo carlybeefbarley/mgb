@@ -21,7 +21,7 @@ export default mgbReleaseInfo = {
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "607"
+        "iteration":   "615"
       },
 
       "releaseManagement": {
@@ -30,10 +30,17 @@ export default mgbReleaseInfo = {
       
       "changes": [
         {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Graphic editor fixes for fill and pen",
+          "changeSummary":  "Fill was only filling if colors were significantly different. Tolerance has been reduced from 128 to 8. Also fixed single-click pen bug - this now renders 1 pixel change. Edits were sometimes lost with drawing after save - now fixed",
+          "otherUrls":      []
+        },
+        {
           "featureTag":     "assets",
           "type":           "improvement",
           "changeName":     "Assets have a description field",
-          "changeSummary":  "Asset descriptions can be edited in the Asset Editor using the header. If there is no description nd you do not have write access, then the line is not shown",
+          "changeSummary":  "Asset descriptions can be edited in the Asset Editor using the header. If there is no description and you do not have write access, then the description is not shown",
           "otherUrls":      []
         },
         {

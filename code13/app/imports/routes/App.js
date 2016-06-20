@@ -13,6 +13,7 @@ import Helmet from "react-helmet";
 import Spinner from '../components/Nav/Spinner';
 import NavPanel from '../components/SidePanels/NavPanel';
 import FlexPanel from '../components/SidePanels/FlexPanel';
+import mgbReleaseInfo from '../components/Nav/mgbReleaseInfo.js';
 
 import urlMaker from './urlMaker';
 
@@ -57,7 +58,7 @@ export default App = React.createClass({
     const pathUserId = this.props.params.id           // This is the userId on the url /user/xxxx/...
     const currUser = Meteor.user()
     const currUserId = currUser && currUser._id
-    const handleForUser = Meteor.subscribe("user", pathUserId) // BUGBUG - no such param in rare cases (like the depracated /assetEdit route)
+    const handleForUser = Meteor.subscribe("user", pathUserId) // BUGBUG - no such param in rare cases (like the deprecated /assetEdit route)
     const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
     const handleForProjects = Meteor.subscribe("projects.byUserId", currUserId)
     const projectSelector = projectMakeSelector(currUserId)
@@ -71,8 +72,18 @@ export default App = React.createClass({
   },
 
   render() {
+    
     if (this.data.loading)
       return <Spinner />
+    let ver=mgbReleaseInfo.releases[0].id
+
+    // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
+    trackJs.configure({ 
+      userId: (Meteor.user() ? Meteor.user().name : ""),
+      version: `${ver.ver} ${ver.state} ${ver.ietration}`,
+      sessionId: Meteor.default_connection._lastSessionId
+
+    })
 
     const { currUser, user, currUserProjects } = this.data
     const { query } = this.props.location

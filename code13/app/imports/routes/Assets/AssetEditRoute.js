@@ -221,6 +221,7 @@ export default AssetEditRoute = React.createClass({
             asset={asset} 
             canEdit={canEd} 
             currUser={this.props.currUser}
+            handleContentChange={this.handleContentChange}
             editDeniedReminder={this.handleEditDeniedReminder}
             activitySnapshots={this.data.activitySnapshots} 
           />
@@ -229,10 +230,30 @@ export default AssetEditRoute = React.createClass({
     );
   },
 
+
   handleEditDeniedReminder: function()
   {
     // This is a style in the AssetCard. TODO: Pass the name in as a prop
     $('.mgbReadOnlyReminder').transition({ animation: 'tada', duration: '500ms' })
+  },
+
+
+  handleContentChange(content2Object, thumbnail, changeText="content change")
+  {
+    const asset = this.data.asset;
+    let updateObj = {}
+    if (content2Object)
+      updateObj.content2 = content2Object
+    if (thumbnail)
+      updateObj.thumbnail = thumbnail
+    Meteor.call('Azzets.update', asset._id, this.canEdit(), updateObj, (err, res) => {
+      if (err) {
+        // TODO: NOT alert() ! !
+        alert('error: ' + err.reason)
+      }
+    });
+    
+    logActivity("asset.edit", changeText, null, asset)
   },
 
 
@@ -242,7 +263,7 @@ export default AssetEditRoute = React.createClass({
         if (err) 
           this.props.showToast(err.reason, 'error')
       })      
-      logActivity("asset.description",  `Update description to "${newText}"`, null, this.data.asset); 
+      logActivity("asset.description",  `Update description to "${newText}"`, null, this.data.asset)
     }
   },
 
@@ -253,7 +274,7 @@ export default AssetEditRoute = React.createClass({
         if (err)
           this.props.showToast(err.reason, 'error')
       })      
-      logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset); 
+      logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset)
     }
   }
 

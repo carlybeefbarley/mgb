@@ -15,7 +15,18 @@ export default class TileSet extends React.Component {
     this.prevTile = null;
     this.spacing = 1;
     this.mouseDown = false;
+    this.mouseRightDown = false;
     this.startingtilePos = null;
+
+    this.globalMouseMove = (e) => {
+      if(!this.mouseRightDown){
+        return;
+      }
+      this.onMouseMove(e);
+    };
+    this.globalMouseUp = (e) => {
+      this.onMouseUp(e);
+    };
   }
   componentDidMount() {
     $('.ui.accordion')
@@ -23,6 +34,10 @@ export default class TileSet extends React.Component {
 
     this.adjustCanvas();
     this.props.info.content.map.tilesets.push(this);
+    // racing condition!!!!
+    // TODO: create global event handler with priorities
+    window.addEventListener("mousemove", this.globalMouseMove, true);
+    window.addEventListener("mouseup", this.globalMouseUp);
   }
   componentWillUnmount(){
     const mapTilesets = this.props.info.content.map.tilesets;
@@ -80,7 +95,7 @@ export default class TileSet extends React.Component {
     }
 
     map.collection.pushOrRemove(new TileSelection(this.prevTile));
-    this.highlightTile(e, e.nativeEvent, true);
+    this.highlightTile(e.nativeEvent, true);
   }
   selectRectangle(e){
     const map = this.map;
@@ -89,7 +104,7 @@ export default class TileSet extends React.Component {
     if(!ts){
       return;
     }
-    const pos = this.getTilePosInfo(e.nativeEvent);
+    const pos = this.getTilePosInfo(e);
 
     if(!e.ctrlKey){
       map.clearActiveSelection();
@@ -183,7 +198,7 @@ export default class TileSet extends React.Component {
       );
     }
   }
-  highlightTile(event, e = event.nativeEvent, force = false){
+  highlightTile(e, force = false){
     const map = this.props.info.content.map;
     const ts = map.map.tilesets[map.activeTileset];
     if(!ts){
@@ -241,6 +256,11 @@ export default class TileSet extends React.Component {
   }
 
   onMouseDown(e){
+    if(e.button == 2){
+      this.mouseRightDown = true;
+      e.preventDefault();
+      return false;
+    }
     if(this.map.options.mode != EditModes.fill && this.map.options.mode != EditModes.stamp) {
       this.map.options.mode = EditModes.stamp;
     }
@@ -257,8 +277,16 @@ export default class TileSet extends React.Component {
   }
   onMouseUp(e){
     this.mouseDown = false;
+    this.mouseRightDown = false;
   }
   onMouseMove(e){
+    if(this.mouseRightDown){
+      this.refs.layer.scrollLeft -= e.movementX;
+      this.refs.layer.scrollTop -= e.movementY;
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     if(this.mouseDown){
       this.selectRectangle(e);
     }
@@ -302,16 +330,17 @@ export default class TileSet extends React.Component {
           className="tileset"
           ref="layer"
           style={{
-                //height: "250px",
+                maxHeight: "250px",
                 overflow: "auto",
                 clear: "both"
               }}
           >
           <canvas ref="canvas"
                   onMouseDown={this.onMouseDown.bind(this)}
-                  onMouseUp={this.onMouseUp.bind(this)}
-                  onMouseMove={this.onMouseMove.bind(this)}
+                  //onMouseUp={this.onMouseUp.bind(this)}
+                  onMouseMove={(e) => {this.onMouseMove(e.nativeEvent)}}
                   onMouseLeave={this.onMouseLeave.bind(this)}
+                  onContextMenu={(e) => {e.preventDefault(); return false;}}
             ></canvas>
         </div>
       </div>

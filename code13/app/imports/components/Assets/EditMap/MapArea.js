@@ -190,9 +190,9 @@ export default class MapArea extends React.Component {
     }
     const self = this;
     this._camera = {
-      _x: this.meta.options.camera.x,
-      _y: this.meta.options.camera.y,
-      _zoom: this.meta.options.camera.zoom,
+      _x: this.meta.options.camera.x || 0,
+      _y: this.meta.options.camera.y || 0,
+      _zoom: this.meta.options.camera.zoom || 1,
       set x(val){
         self.meta.options.camera.x = val;
         this._x = val;

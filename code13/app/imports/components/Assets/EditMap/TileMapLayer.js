@@ -28,8 +28,6 @@ export default class TileMapLayer extends React.Component {
     this.ctx = canvas.getContext("2d");
 
     this.props.map.layers.push(this);
-    //console.log("Added tilemap layer to map!", this.options.name, this.props.map.layers);
-
     this.drawTiles();
 
     document.body.addEventListener("mouseup", this._mup);
@@ -39,7 +37,6 @@ export default class TileMapLayer extends React.Component {
     const index = this.props.map.layers.indexOf(this);
     if(index > -1){
       this.props.map.layers.splice(index, 1);
-      //console.log("Removed tilemap layer from map!", this.options.name, this.props.map.layers);
     }
     document.body.removeEventListener("mouseup", this._mup);
 
@@ -99,7 +96,6 @@ export default class TileMapLayer extends React.Component {
     for(let i=this.options.height - 1; i>-1; i--){
       this.options.data.splice(i*this.options.width, 0, 0);
     }
-    console.log("Increased to left:", this.options.data.length);
     this.options.width++;
   }
 
@@ -127,7 +123,6 @@ export default class TileMapLayer extends React.Component {
     const map = this.map;
     if(!this.startingTilePos){
       if(!map.tmpSelection.length){
-        //console.log("single!", map.tmpSelection.length);
         map.tmpSelection.pushUniquePos(new TileSelection(pos));
       }
       return;
@@ -490,7 +485,6 @@ const edit = {
   debug: function(e, mouseUp){
     const pos = this.getTilePosInfo(e);
     pos.gid = this.options.data[pos.id];
-    //console.log("debug - "+this.map.options.mode+": ", pos);
   }
 };
 //???
@@ -569,14 +563,13 @@ edit[EditModes.fill] = function(e, up){
   this.drawTiles();
   return;
 };
-edit[EditModes.stamp] = function(e, up, safeForUndo = true){
+edit[EditModes.stamp] = function(e, up, saveForUndo = true){
   // nothing from tileset is selected
   const pos = this.getTilePosInfo(e);
   if(this.lastTilePos && this.lastTilePos.isEqual(pos) && !up && e.type != "mousedown"){
     return;
   }
   this.lastTilePos = pos;
-  //console.log(pos);
   if(!this.map.collection.length){
     return;
   }
@@ -586,7 +579,7 @@ edit[EditModes.stamp] = function(e, up, safeForUndo = true){
     return;
   }
   if(e.type == "mousedown" && e.target == this.refs.canvas){
-    safeForUndo && this.map.saveForUndo();
+    saveForUndo && this.map.saveForUndo();
   }
 
 

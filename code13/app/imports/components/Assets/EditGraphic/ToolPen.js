@@ -18,7 +18,6 @@ const ToolPen = {
       drawEnv.setColorRGBA(...d)
     }
     else {
-      console.log("draw", drawEnv.x, drawEnv.y)
       drawEnv.setPixelsAt(drawEnv.x, drawEnv.y)
     }
   },

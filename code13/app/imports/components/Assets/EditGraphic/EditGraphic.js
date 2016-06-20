@@ -198,7 +198,7 @@ export default class EditGraphic extends React.Component {
     if (this.props.asset.content2.changeMarker === recentMarker)
     {
       // This is the data we just sent up.. So let's _not_ nuke any subsequent edits (i.e don't call loadAllPreviewsAsync())
-      recentMarker = null // So we don't ignore this data in future
+//      recentMarker = null // So we don't ignore this data in future
       // TODO.. we may need a window of a few recentMarkers in case of slow updates. Maybe just hold back sends while there is a pending save?
     }
     else

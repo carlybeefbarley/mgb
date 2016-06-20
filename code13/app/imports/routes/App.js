@@ -90,7 +90,7 @@ export default App = React.createClass({
     };
     if(!window.trackJs){
       // fallback to local version
-      $.getScript("/lib/trackjs.js", doTrack);
+      $.getScript("/lib/tracker.js", doTrack);
     }
     else {
       doTrack();

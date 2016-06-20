@@ -26,6 +26,10 @@ const tools = {
   ToolEyedropper
 };
 
+
+// This is used to see if incoming changes actually recently came from us.. in which case we will 
+let recentMarker = null
+
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
 //   1. Drawing on preview+Editor canvas
@@ -189,8 +193,18 @@ export default class EditGraphic extends React.Component {
   // React Callback: componentDidUpdate()
   componentDidUpdate(prevProps,  prevState)
   {
-      this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
-      this.loadAllPreviewsAsync()
+    this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
+
+    if (this.props.asset.content2.changeMarker === recentMarker)
+    {
+      // This is the data we just sent up.. So let's _not_ nuke any subsequent edits (i.e don't call loadAllPreviewsAsync())
+      recentMarker = null // So we don't ignore this data in future
+      // TODO.. we may need a window of a few recentMarkers in case of slow updates. Maybe just hold back sends while there is a pending save?
+    }
+    else
+    {
+      this.loadAllPreviewsAsync()     // It wasn't the change we just sent, so apply the data
+    }
   }
 
   /** Stash references to the preview canvases after initial render and subsequent renders
@@ -288,6 +302,8 @@ export default class EditGraphic extends React.Component {
       this.updateEditCanvasFromSelectedPreviewCanvas();
     }
   }
+
+
 
 
   updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): This still has some smoothing issues. Do i still need the per-browser flags?
@@ -717,7 +733,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  handleSave(changeText="change graphic", dontSaveFrameData)    // TODO(DGOLDS): Maybe _.debounce() this?
+  handleSave(changeText="change graphic", dontSaveFrameData)    // TODO(DGOLDS): Maybe _.throttle() this?
   {
     if (!this.props.canEdit)
     { 
@@ -741,11 +757,12 @@ export default class EditGraphic extends React.Component {
       for(let i = 0; i < this.frameCanvasArray.length; i++){
         c2.spriteData[i] = this.frameCanvasArray[i].toDataURL('image/png');  
       }
-      
+
+      recentMarker = "_graphic_" + Random.id()     // http://docs.meteor.com/packages/random.html
+      c2.changeMarker = recentMarker      
     }
 
-
-    this.props.handleContentChange(c2, asset.thumbnail, changeText);
+    this.props.handleContentChange(c2, asset.thumbnail, changeText)
     this.doSnapshotActivity()
   }
 

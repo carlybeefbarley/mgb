@@ -9,10 +9,12 @@ import '../imports/schemas/projects.js';
 import '../imports/schemas/activity.js';
 import '../imports/schemas/activitySnapshots.js';
 
+import '../imports/schemas/denyRules.js';
 import '../imports/publications/publications.js';
 
 import './EmailTemplates.js';
 import './CreateUser.js';
+
 
 // Create fixtures on first time app is launched
 import {createUsers} from './fixtures.js';

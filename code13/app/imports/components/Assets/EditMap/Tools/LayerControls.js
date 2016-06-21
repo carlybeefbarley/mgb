@@ -1,6 +1,7 @@
 "use strict";
 import React from 'react';
 import TileHelper from '../TileHelper.js';
+import LayerTypes from "./LayerTypes.js";
 
 export default class LayerControls extends React.Component {
 
@@ -9,6 +10,7 @@ export default class LayerControls extends React.Component {
   }
 
   componentDidMount(){
+    $(".ui.dropdown").dropdown();
     this.updateOptions();
   }
 
@@ -20,12 +22,22 @@ export default class LayerControls extends React.Component {
     return this.map.meta.options;
   }
 
-  addLayer() {
+  addLayer(type) {
     const parent = this.props.layer;
     const map = parent.props.info.content.map;
     const lss = map.data.layers;
     // TODO: check for duplicate names..
-    const ls = TileHelper.genLayer(map.data.width, map.data.height, "Layer " + (lss.length + 1));
+    // TODO: get rid of strings
+    let ls;
+    if(type == LayerTypes.tile){
+      ls = TileHelper.genLayer(map.data.width, map.data.height, "Tile Layer " + (lss.length + 1));
+    }
+    else if(type == LayerTypes.image){
+      ls = TileHelper.genImageLayer("Image Layer " + (lss.length + 1));
+    }
+    else if(type == LayerTypes.object){
+      ls = TileHelper.genObjectLayer();
+    }
 
     lss.push(ls);
     map.forceUpdate();
@@ -113,11 +125,16 @@ export default class LayerControls extends React.Component {
         <div className="ui icon buttons mini"
              title="New Layer"
           >
-          <button className="ui floated icon button"
-                  onClick={this.addLayer.bind(this)}
-                  title="Create new Layer"
-            ><i className="add icon"></i>
-          </button>
+          <div className="ui dropdown button"><i className="add icon"></i>
+            <div className="menu">
+              <div className="item"
+                   onClick={this.addLayer.bind(this, LayerTypes.tile)}>Add New Tile Layer</div>
+              <div className="item"
+                   onClick={this.addLayer.bind(this, LayerTypes.image)}>Add New Image Layer</div>
+              <div className="item"
+                   onClick={this.addLayer.bind(this, LayerTypes.object)}>Add New Object Layer</div>
+            </div>
+          </div>
           <button className={highlihgtClassName}
                   onClick={this.highlightActiveLayerToggle.bind(this)}
                   title="Highlight Active layer"

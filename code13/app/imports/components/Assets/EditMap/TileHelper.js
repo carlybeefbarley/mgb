@@ -36,7 +36,19 @@ const TileHelper = {
   getTilesetHeight: (tileset, spacing = 1) => {
     return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight);
   },
+  /* helpers */
+  normalizePath: (raw) => {
+    let val = raw;
+    if (raw.indexOf(location.origin) == 0) {
+      val = val.substr(location.origin.length);
+    }
+    return val;
+  },
+  extractName: (path) => {
+    return path.substring(path.lastIndexOf("/") + 1);
+  },
 
+  /* generators */
   genNewMap: (widthInTiles = 2, heightInTiles = 2, tilewidth = 32, tileheight = 32, numlayers = 1) => {
     let layers = new Array(numlayers);
 
@@ -77,15 +89,29 @@ const TileHelper = {
     return layer;
   },
 
-  normalizePath: (raw) => {
-    let val = raw;
-    if (raw.indexOf(location.origin) == 0) {
-      val = val.substr(location.origin.length);
+  genImageLayer: (name) => {
+    return {
+      "image": "",
+      "name": name,
+      "opacity":1,
+      "type": "imagelayer",
+      "visible": true,
+      "x":0,
+      "y":0
     }
-    return val;
   },
-  extractName: (path) => {
-    return path.substring(path.lastIndexOf("/") + 1);
+
+  genObjectLayer: (name) => {
+    return {
+      "draworder":"topdown",
+      "name": name,
+      "opacity":1,
+      "type":"objectgroup",
+      "visible":true,
+      objects: [],
+      "x":0,
+      "y":0
+    }
   },
 
   genTileset: (map, imagepath, imagewidth, imageheight,

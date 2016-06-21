@@ -101,7 +101,7 @@ export default class LayerControls extends React.Component {
   }
 
   render() {
-    const highlihgtClassName = `ui floated icon button ${this.options.highlightActiveLayers ? 'primary' : ''}`;
+    const highlightClassName = `ui floated icon button ${this.options.highlightActiveLayers ? 'primary' : ''}`;
     const showGridClassName = `ui floated icon button ${this.options.showGrid ? 'primary' : ''}`;
 
     const rise =(
@@ -138,7 +138,7 @@ export default class LayerControls extends React.Component {
                    onClick={this.addLayer.bind(this, LayerTypes.object)}>Add New Object Layer</div>
             </div>
           </div>
-          <button className={highlihgtClassName}
+          <button className={highlightClassName}
                   onClick={this.highlightActiveLayerToggle.bind(this)}
                   title="Highlight Active layer"
             ><i className="paste icon"></i>

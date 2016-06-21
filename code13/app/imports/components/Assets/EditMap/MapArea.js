@@ -133,20 +133,6 @@ export default class MapArea extends React.Component {
     return TileHelper.normalizePath(url).replace(/\./gi,'*');
   }
 
-  initDatGui(){
-
-    /* this is temporary testing stuff */
-    $.getScript("/lib/dat.gui.min.js", () => {
-      var gui = this.gui = new dat.GUI();
-      for(let i in this.data){
-        if(typeof(this.data[i]) == "object"){
-          continue;
-        }
-        gui.add(this.data, i);
-      }
-    });
-  }
-
   // TODO: check all use cases and change to data.. as map.map looks confusing and ugly
   set map(val){
     this.data = val;
@@ -316,16 +302,20 @@ export default class MapArea extends React.Component {
   }
 
   generateImages(cb){
-    const imgs = this.props.asset.content2.images;
-    if(!imgs){
-      if(typeof cb == "function"){
-        cb();
-        // reset camera only if map is empty
-        this.resetCamera();
-      }
-      return false;
+    // image layer has separate field for image
+    if(!this.data.images){
+      this.data.images = {};
     }
+    const imgs = this.data.images;
+
+    for(let i=0; i<this.data.layers.length; i++){
+      if(this.data.layers[i].image){
+        this.data.images[this.data.layers[i].image] = this.data.layers[i].image;
+      }
+    }
+
     const keys = Object.keys(imgs);
+
     if(!keys.length){
       if(typeof cb == "function"){
         cb();
@@ -660,6 +650,11 @@ export default class MapArea extends React.Component {
 
 
   importFromDrop (e) {
+    console.log("DROP map area!");
+    const layer = this.getActiveLayer();
+    if(layer && layer.onDrop){
+      layer.onDrop(e);
+    }
     e.stopPropagation();
     e.preventDefault();
     if (!this.props.parent.props.canEdit) {
@@ -734,6 +729,17 @@ export default class MapArea extends React.Component {
   }
   /* endof update stuff */
 
+  getLayer(ld){
+    for(let i=0; i < this.layers.length; i++){
+      if(this.layers[i].options == ld){
+        return this.layers[i];
+      }
+    }
+  }
+  getActiveLayer(){
+    return this.getLayer(this.data.layers[this.activeLayer]);
+  }
+
   // TODO: keep aspect ratio
   // find out correct thumbnail size
   generatePreview(){
@@ -742,15 +748,9 @@ export default class MapArea extends React.Component {
     canvas.height = 150;
     const ctx = canvas.getContext("2d");
     const ratio = canvas.height / canvas.width;
-    const getLayer = (ld) => {
-      for(let i=0; i < this.layers.length; i++){
-        if(this.layers[i].options == ld){
-          return this.layers[i];
-        }
-      }
-    };
+
     for(let i=0; i<this.data.layers.length; i++){
-      const layer = getLayer(this.data.layers[i]);
+      const layer = this.getLayer(this.data.layers[i]);
       if(!layer){continue;}
       const c = layer.refs.canvas;
       ctx.drawImage(c, 0, 0, c.width, c.height*ratio, 0, 0, canvas.width, canvas.height);

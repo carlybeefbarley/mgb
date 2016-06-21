@@ -59,7 +59,7 @@ export default class TileMapLayer extends React.Component {
     }
 
     const activeLayer = map.layers[index];
-    if(activeLayer && activeLayer.kind == "tilemaplayer"){
+    if(activeLayer){
       this.refs.layer.style['transform'] = getComputedStyle(activeLayer.refs.layer)["transform"];
     }
   }

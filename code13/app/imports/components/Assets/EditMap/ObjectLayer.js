@@ -2,8 +2,13 @@
 import React from 'react';
 import AbstractLayer from "./AbstractLayer.js";
 import TileHelper from "./TileHelper.js";
+import LayerTypes from "./Tools/LayerTypes.js";
 
 export default class ObjectLayer extends AbstractLayer {
+  constructor(...args){
+    super(...args);
+    this.kind = LayerTypes.object;
+  }
   handleMouseMove(){
 
   }

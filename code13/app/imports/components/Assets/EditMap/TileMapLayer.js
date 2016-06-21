@@ -1,11 +1,12 @@
 "use strict";
 import React from 'react';
 import Tile from './Tile.js';
-import TileHelper from "./TileHelper.js";
 import TileSelection from "./Tools/TileSelection.js";
 import EditModes from "./Tools/EditModes.js";
+import LayerTypes from "./Tools/LayerTypes.js";
 import TileCollection from "./Tools/TileCollection.js";
 import AbstractLayer from "./AbstractLayer.js";
+import TileHelper from "./TileHelper.js";
 
 export default class TileMapLayer extends AbstractLayer {
   /* lifecycle functions */
@@ -14,7 +15,9 @@ export default class TileMapLayer extends AbstractLayer {
     this.ctx = null;
     this.prevTile = null;
     this.mouseDown = false;
-    this.kind = "tilemaplayer";
+
+    this.kind = LayerTypes.tile;
+
     this._mup = this.handleMouseUp.bind(this);
 
     this.startingTilePos = null;

@@ -36,7 +36,7 @@ export default class LayerControls extends React.Component {
       ls = TileHelper.genImageLayer("Image Layer " + (lss.length + 1));
     }
     else if(type == LayerTypes.object){
-      ls = TileHelper.genObjectLayer();
+      ls = TileHelper.genObjectLayer("Object Layer " + (lss.length + 1));
     }
 
     lss.push(ls);
@@ -50,6 +50,9 @@ export default class LayerControls extends React.Component {
     const lss = map.data.layers;
 
     lss.splice(map.activeLayer, 1);
+    if(map.activeLayer >= map.data.layers.length){
+      map.activeLayer = map.data.layers.length -1;
+    }
     parent.forceUpdate();
     map.forceUpdate();
   }

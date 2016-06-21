@@ -1,7 +1,11 @@
 "use strict";
 import React from 'react';
+
 import TileMapLayer from "./TileMapLayer.js";
+import ImageLayer from "./ImageLayer.js";
+import ObjectLayer from "./ObjectLayer.js";
 import GridLayer from "./GridLayer.js";
+
 import TileSet from "./Tools/TileSet.js";
 import Layers from "./Tools/Layers.js";
 import Properties from "./Tools/Properties.js";
@@ -11,6 +15,8 @@ import TileHelper from "./TileHelper.js";
 import TileCollection from "./Tools/TileCollection.js";
 import TileSelection from "./Tools/TileSelection.js";
 import EditModes from "./Tools/EditModes.js";
+import LayerTypes from "./Tools/LayerTypes.js";
+
 
 export default class MapArea extends React.Component {
 
@@ -74,10 +80,12 @@ export default class MapArea extends React.Component {
     this.globalResize = () => {
       this.layers.forEach((l)=>{
         l.adjustCanvas();
-        l.drawTiles();
+        l.draw();
       });
-      this.refs.grid && this.refs.grid.adjustCanvas();
-      this.refs.grid && this.refs.grid.drawGrid();
+      if(this.refs.grid){
+        this.refs.grid.adjustCanvas();
+        this.refs.grid.drawGrid();
+      }
     };
     this.globalKeyUp = (...args) => {
       this.handleKeyUp(...args);
@@ -709,7 +717,7 @@ export default class MapArea extends React.Component {
   redrawLayers(){
     this.layers.forEach((layer) => {
       layer.adjustCanvas();
-      layer.drawTiles();
+      layer.draw();
     });
   }
   redrawTilesets(){
@@ -763,8 +771,24 @@ export default class MapArea extends React.Component {
         if(!map.layers[i].visible){
           continue;
         }
-        if(map.layers[i].type == "tilelayer") {
+        if(map.layers[i].type == LayerTypes.tile) {
           layers.push(<TileMapLayer
+            data={map.layers[i]}
+            key={i}
+            map={this}
+            active={this.activeLayer == i}
+            />);
+        }
+        else if(map.layers[i].type == LayerTypes.image) {
+          layers.push(<ImageLayer
+            data={map.layers[i]}
+            key={i}
+            map={this}
+            active={this.activeLayer == i}
+            />);
+        }
+        else if(map.layers[i].type == LayerTypes.object) {
+          layers.push(<ObjectLayer
             data={map.layers[i]}
             key={i}
             map={this}

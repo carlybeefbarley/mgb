@@ -110,6 +110,7 @@ export default class TileMapLayer extends React.Component {
     }
     else{
       tw = data.width; th = data.height;
+      tilelayer = {x:0, y:0};
     }
 
     this.ctx.beginPath();

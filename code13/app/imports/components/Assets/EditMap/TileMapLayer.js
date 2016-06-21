@@ -5,9 +5,9 @@ import TileHelper from "./TileHelper.js";
 import TileSelection from "./Tools/TileSelection.js";
 import EditModes from "./Tools/EditModes.js";
 import TileCollection from "./Tools/TileCollection.js";
+import AbstractLayer from "./AbstractLayer.js";
 
-
-export default class TileMapLayer extends React.Component {
+export default class TileMapLayer extends AbstractLayer {
   /* lifecycle functions */
   constructor(...args){
     super(...args);
@@ -99,13 +99,6 @@ export default class TileMapLayer extends React.Component {
     this.options.width++;
   }
 
-  adjustCanvas(){
-    const canvas = this.refs.canvas;
-    const $el = $(this.refs.layer);
-    canvas.width = $el.width();
-    canvas.height = $el.height();
-  }
-
   getTilePosInfo(e){
     const map = this.props.map;
     const pos = new TileSelection();
@@ -166,6 +159,9 @@ export default class TileMapLayer extends React.Component {
 
   // large maps are still slow on movement..
   // dirty rectalngles (in our case dirty tiles :) are great for super fast map movement
+  draw(){
+    this.drawTiles();
+  }
   drawTiles(){
 
     const ts = this.props.data;

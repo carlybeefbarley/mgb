@@ -733,10 +733,19 @@ export default class MapArea extends React.Component {
     canvas.width = 200;
     canvas.height = 150;
     const ctx = canvas.getContext("2d");
-
-    for(let i=0; i<this.layers.length; i++){
-      const c = this.layers[i].refs.canvas;
-      ctx.drawImage(c, 0, 0, c.width, c.height, 0, 0, canvas.width, canvas.height);
+    const ratio = canvas.height / canvas.width;
+    const getLayer = (ld) => {
+      for(let i=0; i < this.layers.length; i++){
+        if(this.layers[i].options == ld){
+          return this.layers[i];
+        }
+      }
+    };
+    for(let i=0; i<this.data.layers.length; i++){
+      const layer = getLayer(this.data.layers[i]);
+      if(!layer){continue;}
+      const c = layer.refs.canvas;
+      ctx.drawImage(c, 0, 0, c.width, c.height*ratio, 0, 0, canvas.width, canvas.height);
     }
     return canvas.toDataURL();
   }

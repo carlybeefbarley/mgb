@@ -51,7 +51,10 @@ export default class TileSet extends React.Component {
   get map(){
     return this.props.info.content.map;
   }
-
+  get data(){
+    const tss = map.data.tilesets;
+    return tss[map.activeTileset];
+  }
   /* helpers */
   adjustCanvas(){
     const map = this.props.info.content.map;
@@ -236,7 +239,7 @@ export default class TileSet extends React.Component {
   /* endof drawing on canvas */
 
   /* events */
-  onDrop(e){
+  onDropOnLayer(e){
     e.preventDefault();
     const assetJson = e.dataTransfer.getData("asset");
     let asset;
@@ -249,6 +252,20 @@ export default class TileSet extends React.Component {
     console.log("Got asset:", asset);
     const url = e.dataTransfer.getData("link");
     this.refs.controls.addTilesetFromUrl(url, asset);
+  }
+  onDropChangeTilesetImage(e){
+    e.preventDefault();
+    const assetJson = e.dataTransfer.getData("asset");
+    let asset;
+    if(assetJson){
+      asset = JSON.parse(assetJson);
+    }
+    if(asset && asset.kind != "graphic"){
+      return;
+    }
+    console.log(this.data, this.props);
+    const url = e.dataTransfer.getData("link");
+    this.refs.controls.updateTilesetFromUrl(url, this.data);
   }
   onDragOver(e){
     e.dataTransfer.dropEffect = 'copy';
@@ -320,7 +337,7 @@ export default class TileSet extends React.Component {
     return (
       <div className="active content tilesets accept-drop"
            data-drop-text="Drop asset here to create TileSet"
-           onDrop={this.onDrop.bind(this)}
+           onDrop={this.onDropOnLayer.bind(this)}
            onDragOver={this.onDragOver.bind(this)}
 
         >
@@ -373,7 +390,11 @@ export default class TileSet extends React.Component {
     return (
       <div className="mgbAccordionScroller tilesets">
         <div className="ui fluid styled accordion">
-          <div className="active title">
+          <div className="active title accept-drop"
+               data-drop-text="Drop asset here to update tileset image"
+               onDragOver={this.onDragOver.bind(this)}
+               onDrop={this.onDropChangeTilesetImage.bind(this)}
+            >
             <span className="explicittrigger">
               <i className="dropdown icon"></i>
               {this.props.info.title}

@@ -15,10 +15,7 @@ export default class TilesetControls extends React.Component {
     if(!url){
       return;
     }
-    let val = url;
-    if(url.indexOf(location.origin) == 0){
-      val = val.substr(location.origin.length);
-    }
+    let val = TileHelper.normalizePath(url);
 
     let img = new Image();
     img.onload = (e) => {
@@ -28,6 +25,29 @@ export default class TilesetControls extends React.Component {
       console.error("failed to load image:", url, val);
     };
     img.src = val;
+  }
+  updateTilesetFromUrl(url, tileset){
+    if(!url){
+      return;
+    }
+    let val = TileHelper.normalizePath(url);
+    let img = new Image();
+    img.onload = (e) => {
+      this.updateTileset(img, tileset);
+    };
+    img.onerror = (e)=> {
+      console.error("failed to load image:", url, val);
+    };
+    img.src = val;
+  }
+  updateTileset(img, tileset){
+    const parent = this.props.tileset;
+    const map = parent.props.info.content.map;
+    const src = TileHelper.normalizePath(img.src);
+    map.images[src] = img;
+    tileset.image = src;
+
+    map.updateImages(()=>{map.update();});
   }
 
   addTileset(img, asset) {
@@ -39,7 +59,7 @@ export default class TilesetControls extends React.Component {
     );
 
     tss.push(ts);
-    map.images[img.src] = img;
+    map.images[TileHelper.normalizePath(img.src)] = img;
     map.updateImages();
     parent.selectTileset(tss.length - 1);
   }

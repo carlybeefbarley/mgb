@@ -44,12 +44,12 @@ body.dragging .accept-drop:after{
   z-index: 1;
   height: 100%;
   background-color: rgba(255,255,255,0.5);
-  font-size: 32pt;
   text-align: center;
-  word-spacing: 20px;
-  line-height: 40pt;
-  padding: 20px;
-  font-weight: bold;
+  font-size: 140%;
+  border: solid 1px;
+}
+body.dragging .accept-drop:hover{
+  background-color: rgba(255,255,255,0.9);
 }
 
 

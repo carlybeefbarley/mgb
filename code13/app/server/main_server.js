@@ -119,7 +119,23 @@ RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
     }   
   }
 })
-  
+
+RestApi.addRoute('asset/map/:id', {authRequired: false}, {
+  get: function () {
+    var asset = Azzets.findOne(this.urlParams.id);
+    if (asset){
+      // map editor stores some info in the meta - e.g. camera position / active tool etc
+      delete asset.content2.meta;
+      // TODO: content2 will be moved
+      return asset.content2;
+    }
+    else {
+      return {
+        statusCode: 404
+      }
+    }
+  }
+});
 
 RestApi.addRoute('asset/json/:id', {authRequired: false}, {
   get: function () {

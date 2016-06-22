@@ -6,7 +6,7 @@ const ToolMove = {
   editCursor: "move",
   supportsDrag: true,
   shortcutKey: 'm',
-  changesImage: true,            // This does not cause changes to the image, so don't mark image as dirty if used.
+  changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
 
 
   handleMouseDown: ( drawEnv ) => {

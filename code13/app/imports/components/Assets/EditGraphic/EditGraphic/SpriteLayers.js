@@ -1,444 +1,436 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-
 import Layer from './Layer.js';
+
+// TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
+// TODO - see if we can avoid using props.EditGraphic                           [DG]
 
 export default class SpriteLayers extends React.Component {
 
-	constructor(props) {
-	    super(props);
+  constructor(props) {
+    super(props)
 
-	    this.state = {
-	    	allLayersHidden: false,
-	    	allLayersLocked: false,
-	    	isCanvasFramesVisible: false,
-	    	isCanvasLayersVisible: false,
-	    	isPlaying: false,
-	    	copyFrameID: null,
-	    	copyLayerID: null,
-	    };
-	}
+    this.state = {
+      allLayersHidden: false,
+      allLayersLocked: false,
+      isCanvasFramesVisible: false,
+      isCanvasLayersVisible: false,
+      isPlaying: false,
+      copyFrameID: null,
+      copyLayerID: null
+    }
+  }
 
 	/************************** FRAMES ******************************/
 
-	selectFrame(frameID){
-		this.props.EditGraphic.handleSelectFrame(frameID);
-	}
+  selectFrame(frameID) {
+    this.props.EditGraphic.handleSelectFrame(frameID)
+  }
 
-	addFrame(){
-	    if(!this.hasPermission()) return;
+  addFrame(){
+    if (!this.hasPermission()) return
 
-	    let fN = this.props.content2.frameNames;
-	    let newFrameName = "Frame " + (fN.length+1).toString()
-	    fN.push(newFrameName)
-	    this.props.content2.frameData.push([])
-	    this.handleSave('Add frame to graphic')
-	    this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-	}	
+    let fN = this.props.content2.frameNames
+    let newFrameName = "Frame " + (fN.length+1).toString()
+    fN.push(newFrameName)
+    this.props.content2.frameData.push([])
+    this.handleSave('Add frame to graphic')
+    this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+  }	
 
-	toggleCanvasFramesVisibility(){
-		this.setState({ isCanvasFramesVisible: !this.state.isCanvasFramesVisible });
-	}	
+  toggleCanvasFramesVisibility() {
+    this.setState({ isCanvasFramesVisible: !this.state.isCanvasFramesVisible })
+  }	
 
-	insertFrameAfter(frameID, doCopy){
-		if(!this.hasPermission()) return;
+  insertFrameAfter(frameID, doCopy) { 
+    if (!this.hasPermission()) return
 
-	    let c2 = this.props.content2;
-	    c2.frameNames.splice(frameID+1, 0, "Frame "+(frameID+1));
-	    c2.frameData.splice(frameID+1, 0, []);
-	    for(let i=0; i<c2.layerParams.length; i++){
-	      let tmp = doCopy ? c2.frameData[frameID][i] : null;
-	      c2.frameData[frameID+1].push(tmp);
-	    }
-	    this.handleSave('Insert frame', true);
-	}
+    let c2 = this.props.content2
+    c2.frameNames.splice(frameID+1, 0, "Frame "+(frameID+1))
+    c2.frameData.splice(frameID+1, 0, [])
+    for (let i=0; i<c2.layerParams.length; i++) {
+      let tmp = doCopy ? c2.frameData[frameID][i] : null
+      c2.frameData[frameID+1].push(tmp)
+    }
+    this.handleSave('Insert frame', true)
+  }
 
-	copyFrame(frameID){
-		if(!this.hasPermission()) return;
-		this.setState({ copyFrameID: frameID });
-	}
+  copyFrame(frameID) {
+    if (!this.hasPermission()) return
+    this.setState({ copyFrameID: frameID })
+  }
 
-	pasteFrame(frameID){
-		if(!this.hasPermission()) return;
+  pasteFrame(frameID) {
+    if (!this.hasPermission()) return
 
-		let c2 = this.props.content2;
-		if(this.state.copyFrameID === null) return;
-		if(!c2.frameData[this.state.copyFrameID]) return;
+    let c2 = this.props.content2
+    if (this.state.copyFrameID === null) return
+    if (!c2.frameData[this.state.copyFrameID]) return
 
-		c2.frameData[frameID] = c2.frameData[this.state.copyFrameID];
-		this.handleSave("Paste frame #"+(this.state.copyFrameID)+" to #"+frameID, true);
-	}
+    // TODO? Is this copying references or values?
+    c2.frameData[frameID] = c2.frameData[this.state.copyFrameID]
+    this.handleSave("Paste frame #"+(this.state.copyFrameID)+" to #"+frameID, true)
+  }
 
-	frameMoveLeft(frameID){
-		if(!this.hasPermission()) return;
+  frameMoveLeft(frameID) {
+    if (!this.hasPermission()) return
 
-	    if(frameID <= 0) return;
+    if (frameID <= 0) return
 
-	    let c2 = this.props.content2
+    let c2 = this.props.content2
 
-	    let tmpName = c2.frameNames[frameID];
-	    c2.frameNames[frameID] = c2.frameNames[frameID-1];
-	    c2.frameNames[frameID-1] = tmpName;
+    // TODO -- aren't frameNames a dead concept?  kill this code if so...
+    let tmpName = c2.frameNames[frameID]
+    c2.frameNames[frameID] = c2.frameNames[frameID-1]
+    c2.frameNames[frameID-1] = tmpName
 
-	    let tmpData = c2.frameData[frameID];
-	    c2.frameData[frameID] = c2.frameData[frameID-1];
-	    c2.frameData[frameID-1] = tmpData;
+    let tmpData = c2.frameData[frameID]
+    c2.frameData[frameID] = c2.frameData[frameID-1]
+    c2.frameData[frameID-1] = tmpData
 
-	    this.handleSave(`Change frame order`, true);
-	}
+    this.handleSave(`Move frame ${frameID} left`, true)
+  }
 
-	frameMoveRight(frameID){
-		if(!this.hasPermission()) return;
+  frameMoveRight(frameID) {
+    if (!this.hasPermission()) return
 
-	    let c2 = this.props.content2;
-	    if(frameID >= c2.frameNames.length-1){
-	      return;
-	    } 
+    let c2 = this.props.content2
+    if (frameID >= c2.frameNames.length-1) return
 
-	    let tmpName = c2.frameNames[frameID];
-	    c2.frameNames[frameID] = c2.frameNames[frameID+1];
-	    c2.frameNames[frameID+1] = tmpName;
+    // TODO -- aren't frameNames a dead concept?  kill this code if so...
+    let tmpName = c2.frameNames[frameID]
+    c2.frameNames[frameID] = c2.frameNames[frameID+1]
+    c2.frameNames[frameID+1] = tmpName
 
-	    let tmpData = c2.frameData[frameID];
-	    c2.frameData[frameID] = c2.frameData[frameID+1];
-	    c2.frameData[frameID+1] = tmpData;
+    let tmpData = c2.frameData[frameID]
+    c2.frameData[frameID] = c2.frameData[frameID+1]
+    c2.frameData[frameID+1] = tmpData
 
-	    this.handleSave(`Change frame order`, true);
-	}
+    this.handleSave(`Move frame ${frameID} right`, true)
+  }
 
-	deleteFrame(frameID){
-		if(!this.hasPermission()) return;
 
-	    let c2 = this.props.content2;
-	    if(c2.frameData.length === 1){
-	      alert("Can't delete sole frame");
-	      return;
-	    }
-	    
-	    // this.doSaveStateForUndo("Delete Frame");
+  deleteFrame(frameID) {
+    if (!this.hasPermission()) return
 
-	    c2.frameNames.splice(frameID, 1);
-	    c2.frameData.splice(frameID, 1);
-	    if(this.props.EditGraphic.state.selectedFrameIdx > c2.frameNames.length-1){
-	      this.props.EditGraphic.setState({ selectedFrameIdx: c2.frameNames.length-1 });
-	    }
+    let c2 = this.props.content2
+    if (c2.frameData.length === 1) {
+      alert("Can't delete sole frame")
+      return
+    }
 
-	    this.handleSave('Delete frame', true);
-	}	
+    // this.doSaveStateForUndo("Delete Frame");
 
+    c2.frameNames.splice(frameID, 1);
+    c2.frameData.splice(frameID, 1);
+    if (this.props.EditGraphic.state.selectedFrameIdx > c2.frameNames.length-1)
+      this.props.EditGraphic.setState({ selectedFrameIdx: c2.frameNames.length-1 })
+    this.handleSave('Delete frame', true)
+  }	
 
 	/* Selecting frames testing */
-	thOnDragStart(frameID){
-		console.log('drag start', frameID);
+	thOnDragStart(frameID) {
+		console.log('drag start', frameID)
 	}
 
-	thOnDragEnd(frameID){
-		console.log('drag end', frameID);
+	thOnDragEnd(frameID) {
+		console.log('drag end', frameID)
 	}
 
-	thOnDragEnter(frameID){
-		console.log('drag enter', frameID);
+	thOnDragEnter(frameID) {
+		console.log('drag enter', frameID)
 	}
 
 
 	/************************** ANIMATIONS ******************************/
 
-	togglePlayAnimation(){
-		let isPlaying = !this.state.isPlaying; 
-		this.setState({ isPlaying: isPlaying });
+  togglePlayAnimation() {
+    let isPlaying = !this.state.isPlaying
+    this.setState({ isPlaying: isPlaying })
 
-		if(isPlaying){
-			this.playAnimation(this.props.EditGraphic.state.selectedFrameIdx);
-		}
-	}
+    if (isPlaying)
+      this.playAnimation(this.props.EditGraphic.state.selectedFrameIdx)
+  }
 
-	playAnimation(frameID){
-		this.selectFrame(frameID);
-		let nextFrameID = (frameID+1) % this.props.content2.frameNames.length;
-		let self = this;
-		setTimeout(function(){
-			if(self.state.isPlaying){
-				self.playAnimation(nextFrameID);
-			}
-		}, Math.round(1000/this.props.content2.fps));	
-	}
+  playAnimation(frameID) {
+    this.selectFrame(frameID)
+    let nextFrameID = (frameID+1) % this.props.content2.frameNames.length
+    let self = this
+    setTimeout(function() {
+      if (self.state.isPlaying) 
+        self.playAnimation(nextFrameID)
+    }, Math.round(1000/this.props.content2.fps))
+  }
 
-	stepFrame(isForward){
-		let selectedID = this.props.EditGraphic.state.selectedFrameIdx;
-		let frameID = isForward ? selectedID+1 : selectedID-1;
-		if(frameID >= 0 && frameID < this.props.content2.layerParams.length){
-			this.selectFrame(frameID);	
-		}
-	}
+  stepFrame(isForward) {
+    let selectedID = this.props.EditGraphic.state.selectedFrameIdx
+    let frameID = isForward ? selectedID+1 : selectedID-1
+    if (frameID >= 0 && frameID < this.props.content2.layerParams.length)
+      this.selectFrame(frameID)
+  }
 
-	rewindFrames(isForward){
-		let frameID = isForward ? this.props.content2.layerParams.length-1 : 0; 
-		this.selectFrame(frameID);
-	}
+  rewindFrames(isForward) {
+    let frameID = isForward ? this.props.content2.layerParams.length-1 : 0
+    this.selectFrame(frameID)
+  }
 
-	changeFps(event){
-		if(!this.hasPermission()) return;
+  changeFps(event) {
+    if (!this.hasPermission()) return
 
-		this.props.content2.fps = event.target.value;
-		this.handleSave("Changed FPS");
-	}
+    this.props.content2.fps = event.target.value
+    this.handleSave("Changed FPS")
+  }
 
-	getAnimIdByFrame(frameID){
-		let c2 = this.props.content2;	
-		let animID = false;
-		for(let i=0; i<c2.animations.length; i++){
-			let animation = c2.animations[i];
-			if(frameID >= animation.frames[0] && frameID <= animation.frames[animation.frames.length-1]){
-				animID = i;
-				break;
-			}
-		}
-		return animID;	
-	}
+  getAnimIdByFrame(frameID) {
+    let c2 = this.props.content2
+    let animID = false
+    for (let i=0; i<c2.animations.length; i++) {
+      let animation = c2.animations[i]
+      if (frameID >= animation.frames[0] && frameID <= animation.frames[animation.frames.length-1]) {
+        animID = i
+        break
+      }
+    }
+    return animID
+  }
 
-	addAnimation(frameID){
-		if(!this.hasPermission()) return;
+  addAnimation(frameID) {
+    if (!this.hasPermission()) return
 
-		let c2 = this.props.content2;	
-		let animID = this.getAnimIdByFrame(frameID);
+    let c2 = this.props.content2	
+    let animID = this.getAnimIdByFrame(frameID)
 
-		if(animID === false){
-			c2.animations.push({ 
-				name: "Anim "+c2.animations.length,
-				frames: [frameID],
-				fps: 10, 
-			});
-		}
-		this.handleSave('Add animation');
-	}
+    if (animID === false) {
+      c2.animations.push({ 
+        name: "Anim "+c2.animations.length,
+        frames: [frameID],
+        fps: 10 
+      });
+    }
+    this.handleSave('Add animation')
+  }
 
-	getAnimationsTH(){
-		// let colors = ["olive", "green", "teal", "blue"];
-		let colors = ["orange", "green", "blue", "violet"];
-		let colorID = 0;
+  getAnimationsTH() {
+    let colors = ["orange", "green", "blue", "violet"]
+    let colorID = 0;
 
-		let c2 = this.props.content2;
-		let animTH = [];
-		for(let frameID=0; frameID<c2.frameNames.length; frameID++){
-			let animID = this.getAnimIdByFrame(frameID);
+    let c2 = this.props.content2
+    let animTH = []
+    for (let frameID=0; frameID<c2.frameNames.length; frameID++) {
+      let animID = this.getAnimIdByFrame(frameID)
 
-			if(animID === false){
-				animTH.push({ name:"", colspan:1, color:""});
-			} 
-			else {
-				let animation = c2.animations[animID];
-				animTH.push({
-					animID: animID,
-					name: animation.name,
-					fps: animation.fps,
-					colspan: animation.frames.length,
-					color: colors[colorID%colors.length],
-					startFrame: animation.frames[0] + 1,
-					endFrame: animation.frames[animation.frames.length-1] + 1,
-				});
-				colorID++;
-				frameID += animation.frames.length-1;	
-			}	
-		}
-		return animTH;
-	}
+      if (animID === false) {
+        animTH.push({ name:"", colspan:1, color:""})
+      } 
+      else {
+        let animation = c2.animations[animID]
+        animTH.push({
+          animID: animID,
+          name: animation.name,
+          fps: animation.fps,
+          colspan: animation.frames.length,
+          color: colors[colorID%colors.length],
+          startFrame: animation.frames[0] + 1,
+          endFrame: animation.frames[animation.frames.length-1] + 1
+        })
+        colorID++
+        frameID += animation.frames.length-1
+      }	
+    }
+    return animTH
+  }
 
-	changeAnimStart(animID, e) {
-		if(!this.hasPermission()) return;
+  changeAnimStart(animID, e) {
+    if (!this.hasPermission()) return
 
-		let c2 = this.props.content2;
-		let animation = c2.animations[animID];
-		let endFrame = animation.frames[animation.frames.length-1];
-		let startFrame = e.target.value-1; 	// value is -1, because user sees frames from 1 instead of 0
-		if(endFrame < startFrame) return;
+    let c2 = this.props.content2
+    let animation = c2.animations[animID]
+    let endFrame = animation.frames[animation.frames.length-1]
+    let startFrame = e.target.value-1 	// value is -1, because user sees frames from 1 instead of 0
+    if (endFrame < startFrame) return
 
-		animation.frames = []; 	// clear frames and add then in for loop
-		for(let i=endFrame; i>=startFrame && i>=0; i--){
-			let tmpID = this.getAnimIdByFrame(i);
-			if(tmpID === false || tmpID === animID){	// everything ok, this frame can be added to animation
-				animation.frames.unshift(i);
-			} else { 	// overlaps with next animation
-				break;
-			}
-		}
-		this.handleSave("Changed animation length");
-	}
+    animation.frames = [] 	// clear frames and add then in for loop
+    for (let i=endFrame; i>=startFrame && i>=0; i--) {
+      let tmpID = this.getAnimIdByFrame(i)
+      if (tmpID === false || tmpID === animID) {	// everything ok, this frame can be added to animation
+        animation.frames.unshift(i)
+      } else { 	// overlaps with next animation
+        break
+      }
+    }
+    this.handleSave("Changed animation start")
+  }
 
-	changeAnimEnd(animID, e) {
-		if(!this.hasPermission()) return;
+  changeAnimEnd(animID, e) {
+    if (!this.hasPermission()) return
 
-		let c2 = this.props.content2;
-		let animation = c2.animations[animID];
-		let startFrame = animation.frames[0];
-		let endFrame = e.target.value-1; 	// value is -1, because user sees frames from 1 instead of 0
-		if(endFrame < startFrame) return;
+    let c2 = this.props.content2
+    let animation = c2.animations[animID]
+    let startFrame = animation.frames[0]
+    let endFrame = e.target.value-1 	// value is -1, because user sees frames from 1 instead of 0
+    if (endFrame < startFrame) return
 
-		animation.frames = []; 			// clear frames and add then in for loop		
-		for(let i=startFrame; i<=endFrame && i<c2.frameNames.length; i++){
-			let tmpID = this.getAnimIdByFrame(i);
-			if(tmpID === false || tmpID === animID){	// everything ok, this frame can be added to animation
-				animation.frames.push(i);
-			} else { 	// overlaps with next animation
-				break;
-			}
-		}
-		this.handleSave("Changed animation length");
-	}
+    animation.frames = [] 			// clear frames and add then in for loop		
+    for (let i=startFrame; i<=endFrame && i<c2.frameNames.length; i++) {
+      let tmpID = this.getAnimIdByFrame(i)
+      if (tmpID === false || tmpID === animID) {	// everything ok, this frame can be added to animation
+        animation.frames.push(i);
+      } else { 	// overlaps with next animation
+        break
+      }
+    }
+    this.handleSave("Changed animation end")
+  }
 
-	changeAnimFPS(animID, e){
-		if(!this.hasPermission()) return;
+  changeAnimFPS(animID, e) {
+    if (!this.hasPermission()) return
 
-		let newFPS = e.target.value;
-		if(newFPS < 1 || newFPS > 60) return;
-		this.props.content2.animations[animID].fps = newFPS;
-		this.handleSave("Change animation FPS");
-			
-	}
+    let newFPS = e.target.value
+    if (newFPS < 1 || newFPS > 60) return
+    this.props.content2.animations[animID].fps = newFPS
+    this.handleSave("Change animation FPS")
+  }
 
-	renameAnimation(animID, e) {
-		if(!this.hasPermission()) return;
+  renameAnimation(animID, e) {
+    if (!this.hasPermission()) return
 
-		let newName = e.target.value;
-		if(newName === "") return;
-		this.props.content2.animations[animID].name = newName;
-		this.handleSave("Rename animation");
-	}
+    let newName = e.target.value
+    if (newName === "") return
+    this.props.content2.animations[animID].name = newName
+    this.handleSave("Rename animation")
+  }
 
-	deleteAnimation(animID){
-		if(!this.hasPermission()) return;
+  deleteAnimation(animID) {
+    if (!this.hasPermission()) return   
 
-		this.props.content2.animations.splice(animID, 1);
-		console.log(this.props.content2.animations);
-		this.handleSave("Delete animation");
-	}
+    this.props.content2.animations.splice(animID, 1)
+    this.handleSave("Delete animation")
+  }
 
 
 	/************************** LAYERS ******************************/
 
-	toggleAllVisibility(){
-		let isVisible = !this.state.allLayersHidden;
-		this.setState({ allLayersHidden: isVisible });
-		let layerParams = this.props.content2.layerParams;
-		for(let i=0; i<layerParams.length; i++){
-			layerParams[i].isHidden = isVisible;
-		}
-		this.handleSave("All layers visibility");
-	}
+  toggleAllVisibility() {
+    let isVisible = !this.state.allLayersHidden
+    this.setState({ allLayersHidden: isVisible })
+    let layerParams = this.props.content2.layerParams
+    for (let i=0; i<layerParams.length; i++) 
+      layerParams[i].isHidden = isVisible
+    this.handleSave("All layers visibility")
+  }
 
-	toggleAllLocking(){
-		if(!this.hasPermission()) return;
-		let isLocked = !this.state.allLayersLocked;
-		this.setState({ allLayersLocked: isLocked });
-		let layerParams = this.props.content2.layerParams;
-		for(let i=0; i<layerParams.length; i++){
-			layerParams[i].isLocked = isLocked;
-		}
-		this.handleSave("All layers locking");
-	}
+  toggleAllLocking() {
+    if (!this.hasPermission()) return
+    let isLocked = !this.state.allLayersLocked
+    this.setState({ allLayersLocked: isLocked })
+    let layerParams = this.props.content2.layerParams
+    for (let i=0; i<layerParams.length; i++)
+      layerParams[i].isLocked = isLocked
+    this.handleSave("All layers locking")
+  }
 
-	toggleCanvasLayersVisibility(){
-		this.setState({ isCanvasLayersVisible: !this.state.isCanvasLayersVisible });
-	}
+  toggleCanvasLayersVisibility() {
+    this.setState({ isCanvasLayersVisible: !this.state.isCanvasLayersVisible })
+  }
 
-	selectLayer(layerID){
-		this.props.EditGraphic.handleSelectLayer(layerID);
-	}
+  selectLayer(layerID) {
+    this.props.EditGraphic.handleSelectLayer(layerID)     // TODO: Cleaner to just have a prop.callback for this
+  }
 
-	addLayer(){
-	    if(!this.hasPermission()) return;
+  addLayer() {
+    if (!this.hasPermission()) return
 
-	    // this.doSaveStateForUndo("Add Layer");
-	    let c2 = this.props.content2;
-	    let newLayerName = "Layer " + (c2.layerParams.length+1).toString();
-	    c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false });
-	    let fD = c2.frameData;
-	    for(let i; i<fD.length; i++){
-	      fD[i][lN.length-1] = null;
-	    }
-	    this.handleSave('Add layer to graphic');
-	    this.props.forceUpdate();    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-	}
+    // TODO this.doSaveStateForUndo("Add Layer")
+    let c2 = this.props.content2
+    let newLayerName = "Layer " + (c2.layerParams.length+1).toString()
+    c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false })
+    let fD = c2.frameData
+    for (let i; i<fD.length; i++)
+      fD[i][lN.length-1] = null     // BUGBUG? What is lN?  
+    
+    this.handleSave('Add layer to graphic')
+    this.props.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+  }
 
-	copyLayer(layerID){
-		if(!this.hasPermission()) return;
-		this.setState({ copyLayerID: layerID });
-	}
+  copyLayer(layerID) {
+    if (!this.hasPermission()) return
+    this.setState({ copyLayerID: layerID })
+  }
 
-	pasteLayer(layerID){
-		if(!this.hasPermission()) return;
+  pasteLayer(layerID) {
+    if (!this.hasPermission()) return
+    if (this.state.copyLayerID === null) return
 
-		let c2 = this.props.content2;
-		if(this.state.copyLayerID === null) return;
-		for(let i=0; i<c2.frameNames.length; i++){
-			let frame = c2.frameData[i];
-			frame[layerID] = frame[this.state.copyLayerID];
-		}
+    let c2 = this.props.content2
+    for (let i=0; i<c2.frameNames.length; i++) {
+      let frame = c2.frameData[i]
+      frame[layerID] = frame[this.state.copyLayerID]
+    }
 
-		this.handleSave("Paste layer #"+(this.state.copyLayerID)+" to #"+layerID, true);
-	}
+    this.handleSave(`Paste layer #${this.state.copyLayerID} to #${layerID}`, true)
+  }
 
-	deleteLayer(layerID){
-		if(!this.hasPermission()) return;
+  deleteLayer(layerID) {
+    if (!this.hasPermission()) return
 
-	    let c2 = this.props.content2;
-	    if(c2.layerParams.length === 1){
-	      alert("Can't delete sole layer");
-	      return;
-	    }
+    let c2 = this.props.content2
+    if (c2.layerParams.length === 1) {
+      alert("Can't delete sole layer")
+      return
+    }
 
-	    // this.doSaveStateForUndo("Delete Layer");
+    // TODO this.doSaveStateForUndo("Delete Layer")
 
-	    c2.layerParams.splice(layerID, 1);
-	    // change selectedLayer if it is last and beeing removed
-	    if(this.props.EditGraphic.state.selectedLayerIdx > c2.layerParams.length-1){
-	      this.props.EditGraphic.setState({ selectedLayerIdx: c2.layerParams.length-1 });
-	    }
-	    for(let frameID=0; frameID<c2.frameNames.length; frameID++){
-	      c2.frameData[frameID].splice(layerID, 1);
-	    }
+    c2.layerParams.splice(layerID, 1)
+    // change selectedLayer if it is last and beeing removed
+    if (this.props.EditGraphic.state.selectedLayerIdx > c2.layerParams.length-1)
+      this.props.EditGraphic.setState({ selectedLayerIdx: c2.layerParams.length-1 })
+    
+    for (let frameID=0; frameID<c2.frameNames.length; frameID++)
+      c2.frameData[frameID].splice(layerID, 1)
 
-	    this.handleSave('Delete layer', true);
-	}
+    this.handleSave('Delete layer', true) 
+  }
 
-	moveLayerUp(layerID){
-		if(!this.hasPermission()) return;
+  moveLayerUp(layerID) {
+    if (!this.hasPermission()) return
 
-		let c2 = this.props.content2;
+    let c2 = this.props.content2
 
-		let tmpParam = c2.layerParams[layerID];
-		c2.layerParams[layerID] = c2.layerParams[layerID-1];
-		c2.layerParams[layerID-1] = tmpParam;
+    let tmpParam = c2.layerParams[layerID]
+    c2.layerParams[layerID] = c2.layerParams[layerID-1]
+    c2.layerParams[layerID-1] = tmpParam
 
-		for(let i=0; i<c2.frameNames.length; i++){
-			let frame = c2.frameData[i];
-			let tmpData = frame[layerID];
-			frame[layerID] = frame[layerID-1];
-			frame[layerID-1] = tmpData;
-		}
-		this.handleSave('Layer moved up', true);
-	}
+    for (let i=0; i<c2.frameNames.length; i++) {
+      let frame = c2.frameData[i]
+      let tmpData = frame[layerID]
+      frame[layerID] = frame[layerID-1]
+      frame[layerID-1] = tmpData
+    }
+    this.handleSave('Layer moved up', true)
+  }
 
-	moveLayerDown(layerID){
-		if(!this.hasPermission()) return;
+  moveLayerDown(layerID) {
+    if (!this.hasPermission()) return
 		
-		let c2 = this.props.content2;
+    let c2 = this.props.content2
 
-		let tmpParam = c2.layerParams[layerID];
-		c2.layerParams[layerID] = c2.layerParams[layerID+1];
-		c2.layerParams[layerID+1] = tmpParam;
+    let tmpParam = c2.layerParams[layerID]
+    c2.layerParams[layerID] = c2.layerParams[layerID+1]
+    c2.layerParams[layerID+1] = tmpParam
 
-		for(let i=0; i<c2.frameNames.length; i++){
-			let frame = c2.frameData[i];
-			let tmpData = frame[layerID];
-			frame[layerID] = frame[layerID+1];
-			frame[layerID+1] = tmpData;
-		}
-		this.handleSave('Layer moved down', true);
-	}	
+    for (let i=0; i<c2.frameNames.length; i++) {
+      let frame = c2.frameData[i]
+      let tmpData = frame[layerID]
+      frame[layerID] = frame[layerID+1]
+      frame[layerID+1] = tmpData
+    }
+    this.handleSave('Layer moved down', true)
+  }	
 
-	renderLayers(){
-		let c2 = this.props.content2;
-		return c2.layerParams.map((layer, idx) => (
+  renderLayers() {
+    const c2 = this.props.content2
+    return c2.layerParams.map((layer, idx) => (
 			<Layer 
 				key={idx}
 				idx={idx}
@@ -461,23 +453,21 @@ export default class SpriteLayers extends React.Component {
 				deleteLayer={this.deleteLayer.bind(this)}
 				handleSave={this.handleSave.bind(this)}
 			/>
-		));		
-	}
+		))
+  }
 
-	handleSave(changeText="change graphic", dontSaveFrameData){
-		this.props.handleSave(changeText, dontSaveFrameData);
-	}
+  handleSave(changeText="change graphic", dontSaveFrameData) {
+    this.props.handleSave(changeText, dontSaveFrameData)
+  }
 
-	hasPermission(){
-		return this.props.hasPermission();
-	}
-
+  hasPermission() {
+    return this.props.hasPermission()
+  }
 
   render() { 
-  	const c2 = this.props.content2;
+    const c2 = this.props.content2
 
     return (
-      	
       <div className="ui sixteen wide column">
 	      <div className="row">
 	  		<div onClick={this.rewindFrames.bind(this, false)} className="ui small icon button">
@@ -674,11 +664,12 @@ export default class SpriteLayers extends React.Component {
 	          	<th></th>
 	          	<th></th>
 	          	<th></th>
-	          	{
+	          	{ // TODO: change from frameNames[] to frameData[] ? 
 	          		_.map(c2.frameNames, (frameName, idx) => { return (
 				      <th key={"thCanvas_"+idx}>
 				      	<div className="ui image "				      		
-				          	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}>
+				          	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}
+                    title={`Preview for combined visible layers of Frame #${idx}`}>
 				      		<canvas width={c2.width} height={c2.height}></canvas>
 				      	</div>
 				      </th>

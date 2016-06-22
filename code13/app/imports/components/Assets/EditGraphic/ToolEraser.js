@@ -2,11 +2,11 @@
 const ToolEraser = {
   name: "Eraser",
   description: "Click and drag to erase individual pixels on the frame",
-  icon: "eraser icon",        // Semantic-UI icon CSS class
+  icon: "eraser icon",            // Semantic-UI icon CSS class
   editCursor: "not-allowed",
   supportsDrag: true,
   shortcutKey: 'e',
-  changesImage: true,            // This does not cause changes to the image, so don't mark image as dirty if used.
+  changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
 
 
   handleMouseDown: ( drawEnv ) => {
@@ -16,7 +16,7 @@ const ToolEraser = {
 
   handleMouseMove: ( drawEnv ) => { ToolEraser.handleMouseDown(drawEnv) },
 
-  handleMouseUp: ( drawEnv ) => {},
+  handleMouseUp: ( drawEnv ) => { ToolEraser.handleMouseDown(drawEnv) },
 
   handleMouseLeave: ( drawEnv ) => {}
 };

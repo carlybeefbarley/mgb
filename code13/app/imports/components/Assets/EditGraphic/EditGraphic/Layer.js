@@ -29,7 +29,7 @@ export default class Layer extends React.Component {
     if(clickedDiv.className.search('remove') !== -1){
       return;
     }
-    if(clickedDiv.firstChild && clickedDiv.firstChild.className.search('remove') !== -1){
+    if(clickedDiv.firstChild && clickedDiv.firstChild.className && clickedDiv.firstChild.className.search('remove') !== -1){
       return;
     }
 
@@ -139,10 +139,14 @@ export default class Layer extends React.Component {
             </div>
           </td>
           {
-            _.map(this.props.frameNames, (frameName, frameID) => { return (
+            _.map(this.props.frameNames, (frameName, frameID) => { 
+              const isActiveCell = this.props.isSelected && this.props.selectedFrame === frameID
+              return (
               <td className="selectable" onClick={this.selectFrame.bind(this, frameID)}
                 key={this.props.idx+"_"+frameID}
-                className={this.props.isSelected && this.props.selectedFrame === frameID ? "highlight" : ""}>
+                title={isActiveCell ? `This is the current edit focus: Layer "${this.props.layer.name}" of Frame #${this.props.selectedFrame+1}`: "click here to edit this frame/layer"}
+                className={isActiveCell ? "highlight" : ""}>
+                {isActiveCell ? "•" : ""}
               </td>)  
             })
           }
@@ -150,6 +154,7 @@ export default class Layer extends React.Component {
           	<div 
           		className={"ui image " + (this.props.isCanvasLayersVisible ? "" : "hidden") }
           		draggable="true" 
+              title={`Preview for Layer "${this.props.layer.name}" of Frame #${this.props.selectedFrame+1}`}
           		/* onDragStart={this.handlePreviewDragStart.bind(this, this.props.idx)} */ 
           		style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}>
           			<canvas width={this.props.width} height={this.props.height}></canvas>

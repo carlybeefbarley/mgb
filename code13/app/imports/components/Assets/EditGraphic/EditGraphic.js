@@ -27,14 +27,26 @@ const tools = {
 };
 
 
-// This is used to see if incoming changes actually recently came from us.. in which case we will 
-let recentMarker = null
-
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
 //   1. Drawing on preview+Editor canvas
 //   2. Some popup handling (uses Semanticui .popup() jquery extension. Typically these have the 'hazPopup' class
 //   3. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
+
+
+// Also, in order to optimize some draw and draw-while-save-is-pending scenarios, there is some special handling 
+// of saves via this.handleSave()
+//   The normal flow of changes are..
+//          Step 1.   User changes graphic locally with tool. The tool should save to the preview and edit canvases
+//          Step 2.   We send the saved data to the Meteor server. Note that this may take a few hundred ms
+//          Step 3.   While the save-response is pending, we allow the user to continue editing
+//          Step 4.   The change to the Azzet collection comes back to us via the meteor DDP sync mechanism..
+//                       ** At this point we must decide what to do with the subsequent edits. We use a special
+//                       ** marker in the asset.content2 object:   content2.recentMarker.. which we change randomly each 
+//                       ** time we save data. If the recentMarker coming back is one we just set, then we don't allow
+//                       ** this data from the server to replace the user's subsequent edits. 
+//                       ** See the code using 'recentMarker' variable for the actual implementation of this optimization. 
+let recentMarker = null  // See explanation above
 
 
 export default class EditGraphic extends React.Component {
@@ -45,7 +57,7 @@ export default class EditGraphic extends React.Component {
   // }
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
@@ -53,13 +65,13 @@ export default class EditGraphic extends React.Component {
       selectedColors:   {
         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
         // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
-        fg:    { hex: "00ff00", rgb: {r: 0, g: 255, b:0, a: 1} }    // Alpha = 0...1
+        fg:    { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
       },
       toolActive: false,
       toolChosen: null
     }
 
-    this.fixingOldAssets();
+    this.fixingOldAssets()
   }
 
 
@@ -77,14 +89,10 @@ export default class EditGraphic extends React.Component {
 
   // React Callback: componentDidMount()
   componentDidMount() {
-    this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas);
-    this.editCtx = this.editCanvas.getContext('2d');
-    this.editCtxImageData1x1 = this.editCtx.createImageData(1,1);
+    this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas)
+    this.editCtx = this.editCanvas.getContext('2d')
+    this.editCtxImageData1x1 = this.editCtx.createImageData(1,1)
 
-    //this.editCanvasOverlay =  ReactDOM.findDOMNode(this.refs.editCanvasOverlay);
-    //this.editCtxOverlay = this.editCanvasOverlay.getContext('2d');
-
-    //this.initDefaultContent2()              // Probably superfluous since done in render() but here to be sure.
     this.getPreviewCanvasReferences()
     this.loadAllPreviewsAsync()
 
@@ -98,17 +106,17 @@ export default class EditGraphic extends React.Component {
     }
     this.setStatusBarInfo()
 
-    this.handleColorChangeComplete('fg', { hex: "00ff00", rgb: {r: 0, g: 255, b:0, a: 1} } )
+    this.handleColorChangeComplete('fg', { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} } )
 
 
-    this.editCanvas.addEventListener('wheel',         this.handleMouseWheel.bind(this));
-    this.editCanvas.addEventListener('mousemove',     this.handleMouseMove.bind(this));
-    this.editCanvas.addEventListener('mousedown',     this.handleMouseDown.bind(this));
-    this.editCanvas.addEventListener('mouseup',       this.handleMouseUp.bind(this));
-    this.editCanvas.addEventListener('mouseleave',    this.handleMouseLeave.bind(this));
+    this.editCanvas.addEventListener('wheel',         this.handleMouseWheel.bind(this))
+    this.editCanvas.addEventListener('mousemove',     this.handleMouseMove.bind(this))
+    this.editCanvas.addEventListener('mousedown',     this.handleMouseDown.bind(this))
+    this.editCanvas.addEventListener('mouseup',       this.handleMouseUp.bind(this))
+    this.editCanvas.addEventListener('mouseleave',    this.handleMouseLeave.bind(this))
 
     // Tool button initializations
-    this.activateToolPopups();
+    this.activateToolPopups()
     
     // Some constants we will use
     this.mgb_MAX_BITMAP_WIDTH = 1024
@@ -117,36 +125,33 @@ export default class EditGraphic extends React.Component {
     this.doSnapshotActivity()
   }
 
-  // componentWillUpdate(){
-  //  console.error("wil update");
-  // }
 
-  // there are some missing params for old assets beeing added here
-  fixingOldAssets(){
-    let autoFix = false;
-    let c2 = this.props.asset.content2;
-    // console.log(c2.layerParams, c2.layerNames);
-    if(!c2.layerParams && c2.layerNames){
-      c2.layerParams = [];
+  // there are some missing params for old assets being added here
+  fixingOldAssets() {
+    let autoFix = false
+    let c2 = this.props.asset.content2
+
+    if (!c2.layerParams && c2.layerNames) {
+      c2.layerParams = []
       for(let i=0; i<c2.layerNames.length; i++){
-        c2.layerParams[i] = {name:c2.layerNames[i], isHidden: false, isLocked: false};
+        c2.layerParams[i] = {name:c2.layerNames[i], isHidden: false, isLocked: false}
       } 
-      autoFix = true;
+      autoFix = true
     }
-    if(!c2.spriteData){
-      c2.spriteData = [];
-      autoFix = true;
+    if (!c2.spriteData) {
+      c2.spriteData = []
+      autoFix = true
     }
-    if(!c2.fps){
-      c2.fps = 10;
-      autoFix = true;
+    if (!c2.fps) {
+      c2.fps = 10
+      autoFix = true
     }
-    if(!c2.animations){
-      c2.animations = [];
-      autoFix = true;
+    if (!c2.animations) {
+      c2.animations = []
+      autoFix = true
     }
 
-    if(autoFix) this.handleSave("Automatic fixing old assets");
+    if (autoFix) this.handleSave("Automatic fixing old assets")
   }
 
 
@@ -173,7 +178,7 @@ export default class EditGraphic extends React.Component {
   }
 
 // TODO: DGOLDS to clean this up
-  initDefaultContent2()       // TODO - this isn't ideal React since it is messing with props.
+  initDefaultContent2()       // TODO - this isn't ideal React since it is messing with props
   {
     let asset = this.props.asset
     if (!asset.hasOwnProperty("content2") || !asset.content2.hasOwnProperty('width')) {
@@ -185,20 +190,22 @@ export default class EditGraphic extends React.Component {
         frameNames: ["Frame 1"],
         frameData: [ [ ] ],
         spriteData: [],
-        animations: [],
-      };
+        animations: []
+      }
     }
   }
 
   // React Callback: componentDidUpdate()
-  componentDidUpdate(prevProps,  prevState)
+  componentDidUpdate(prevProps, prevState)
   {
     this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
 
-    if (this.props.asset.content2.changeMarker === recentMarker)
+    if (recentMarker !== null && this.props.asset.content2.changeMarker === recentMarker)
     {
+      /* Do nothing.. */
+      // console.log("Backwash prevented by marker "+recentMarker)
+
       // This is the data we just sent up.. So let's _not_ nuke any subsequent edits (i.e don't call loadAllPreviewsAsync())
-//      recentMarker = null // So we don't ignore this data in future
       // TODO.. we may need a window of a few recentMarkers in case of slow updates. Maybe just hold back sends while there is a pending save?
     }
     else
@@ -212,9 +219,8 @@ export default class EditGraphic extends React.Component {
    */
   getPreviewCanvasReferences()
   {
-
-    let asset = this.props.asset;
-    let c2 = asset.content2;
+    let asset = this.props.asset
+    let c2 = asset.content2
 
     // TODO rename to layerCanvas and cts arrays instead of preview
 
@@ -222,115 +228,111 @@ export default class EditGraphic extends React.Component {
     this.previewCtxArray = []                   // 2d drawing context for the animation frame
     this.previewCtxImageData1x1Array = []       // Used for painting quickly to each preview frame
 
-    this.previewCanvasArray = $(".spriteLayersTable td").find("canvas").get();
+    this.previewCanvasArray = $(".spriteLayersTable td").find("canvas").get()
     for (let i = 0; i < c2.layerParams.length; i++) {
-      this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d');
-      this.previewCtxImageData1x1Array[i] = this.previewCtxArray[i].createImageData(1,1);
+      this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d')
+      this.previewCtxImageData1x1Array[i] = this.previewCtxArray[i].createImageData(1,1)
     }
 
 
-    this.frameCanvasArray = [];    // frame canvases where layers are merged
-    this.frameCtxArray = [];
-    this.frameCtxImageData1x1Array = [];
+    this.frameCanvasArray = []     // frame canvases where layers are merged
+    this.frameCtxArray = []
+    this.frameCtxImageData1x1Array = []
 
-    this.frameCanvasArray = $(".spriteLayersTable th").find("canvas").get();
+    this.frameCanvasArray = $(".spriteLayersTable th").find("canvas").get()
     for (let i = 0; i < c2.frameNames.length; i++) {
-      this.frameCtxArray[i] = this.frameCanvasArray[i].getContext('2d');
-      this.frameCtxImageData1x1Array[i] = this.frameCtxArray[i].createImageData(1,1);
+      this.frameCtxArray[i] = this.frameCanvasArray[i].getContext('2d')
+      this.frameCtxImageData1x1Array[i] = this.frameCtxArray[i].createImageData(1,1)
     }
   }
 
 
-  // Note that this has to use Image.onload so it will complete asynchronously.
+  // Note that this HAS to use Image.onload so it will complete asynchronously.
   // TODO(DGOLDS): Add an on-complete callback including a timeout handler to support better error handling and avoid races
-  loadAllPreviewsAsync(){
-    let c2 = this.props.asset.content2;
-    let frameCount = c2.frameNames.length;
-    let layerCount = c2.layerParams.length;
+  loadAllPreviewsAsync() {
+    let c2 = this.props.asset.content2
+    let frameCount = c2.frameNames.length
+    let layerCount = c2.layerParams.length
 
-    for(let frameID=0; frameID<frameCount; frameID++){
-      this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
-      for(let layerID=layerCount-1; layerID>=0; layerID--){
-        this.loadAssetAsync(frameID, layerID);
+    for(let frameID=0; frameID<frameCount; frameID++) {
+      this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height)
+      for(let layerID=layerCount-1; layerID>=0; layerID--) {
+        this.loadAssetAsync(frameID, layerID)
       }
     }
   }
 
-  loadFramAssync(frameID){
-    let c2 = this.props.asset.content2;
-    let layerCount = c2.layerParams.length;
-    this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
-    for(let layerID=layerCount-1; layerID>=0; layerID--){
-      this.loadAssetAsync(frameID, layerID);
-    }
-  }
+  // TODO(@shmikucis): This appears to be dead code? - DG
+  // loadFramAssync(frameID){
+  //   let c2 = this.props.asset.content2;
+  //   let layerCount = c2.layerParams.length;
+  //   this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
+  //   for(let layerID=layerCount-1; layerID>=0; layerID--){
+  //     this.loadAssetAsync(frameID, layerID);
+  //   }
+  // }
 
-  loadAssetAsync(frameID, layerID){
-    let c2 = this.props.asset.content2;
-    if(!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) { // manage empty frameData cases
+  loadAssetAsync(frameID, layerID) {
+    let c2 = this.props.asset.content2
+    if (!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) { // manage empty frameData cases
       // console.log('empty framedata', frameID, layerID)
-      if(frameID === this.state.selectedFrameIdx){
-        this.previewCtxArray[layerID].clearRect(0,0, c2.width, c2.height);
+      if (frameID === this.state.selectedFrameIdx) {
+        this.previewCtxArray[layerID].clearRect(0,0, c2.width, c2.height)
       }
-      return;
+      return
     }
     let dataURI = c2.frameData[frameID][layerID];
     if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-      _img = new Image;
-      _img.frameID = frameID;   // hack so in onload() we know which frame is loaded
-      _img.layerID = layerID;   // hack so in onload() we know which layer is loaded
-      let self = this;
-      _img.onload = function(e){            
-        let loadedImage = e.target;
-        // console.log(self.state.selectedFrameIdx);
-        if(loadedImage.frameID === self.state.selectedFrameIdx){       
-          self.previewCtxArray[loadedImage.layerID].clearRect(0,0, c2.width, c2.height); 
-          self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0);
-          if(loadedImage.layerID === 0){
+      var _img = new Image;
+      _img.frameID = frameID   // hack so in onload() we know which frame is loaded
+      _img.layerID = layerID   // hack so in onload() we know which layer is loaded
+      let self = this
+      _img.onload = function(e) {            
+        let loadedImage = e.target
+        if(loadedImage.frameID === self.state.selectedFrameIdx) {       
+          self.previewCtxArray[loadedImage.layerID].clearRect(0,0, c2.width, c2.height)
+          self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0)
+          if(loadedImage.layerID === 0) {
             // update edit canvas when bottom layer is loaded
-            self.updateEditCanvasFromSelectedPreviewCanvas(loadedImage.frameID);  
+            // TODO: See if we could have a bug here with out-of-order async responses? is the 0th last?
+            self.updateEditCanvasFromSelectedPreviewCanvas(loadedImage.frameID)
           }
         }
-        if(!c2.layerParams[loadedImage.layerID].isHidden){ 
-          self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0);
+        if(!c2.layerParams[loadedImage.layerID].isHidden) { 
+          self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0)
         }
       }
-      _img.src = dataURI;
+      _img.src = dataURI
     }
     else {
       // TODO: May need some error indication here
-      this.updateEditCanvasFromSelectedPreviewCanvas();
+      console.trace("Unrecognized dataURI for Asset#", this.props.asset._id)
+      this.updateEditCanvasFromSelectedPreviewCanvas()
     }
   }
 
 
-
-
-  updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): This still has some smoothing issues. Do i still need the per-browser flags?
+  updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): Do we still need the vendor-prefix smoothing flags?
   {
     let w = this.previewCanvasArray[this.state.selectedLayerIdx].width
     let h = this.previewCanvasArray[this.state.selectedLayerIdx].height
     let s = this.state.editScale
-    let c2 = this.props.asset.content2;
-    this.editCtx.imageSmoothingEnabled = this.checked
-    this.editCtx.mozImageSmoothingEnabled = this.checked
-//  this.editCtx.webkitImageSmoothingEnabled = this.checked
-    this.editCtx.msImageSmoothingEnabled = this.checked
+    let c2 = this.props.asset.content2
+    this.editCtx.imageSmoothingEnabled = false
+    this.editCtx.mozImageSmoothingEnabled = false
+    this.editCtx.msImageSmoothingEnabled = false
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
-    this.frameCtxArray[this.state.selectedFrameIdx].clearRect(0, 0, c2.width, c2.height);
-
-    // console.log(this.state.selectedFrameIdx);
+    this.frameCtxArray[this.state.selectedFrameIdx].clearRect(0, 0, c2.width, c2.height)
 
     // draws all layers on edit canvas and layer canvas
-    for(let i=this.previewCanvasArray.length-1; i>=0; i--){
-      if(!this.props.asset.content2.layerParams[i].isHidden){ 
-        this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s);
-        this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h);
+    for (let i=this.previewCanvasArray.length-1; i>=0; i--) {
+      if (!this.props.asset.content2.layerParams[i].isHidden) { 
+        this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s)
+        this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h)
       }
     }
-    
-    
   }
+
 
   // A plugin-api for the graphic editing tools in Tools.js
 
@@ -339,14 +341,15 @@ export default class EditGraphic extends React.Component {
     d[0] = c.r ; d[1] = c.g ; d[2] = c.b ; d[3] = c.a * 255
   }
 
+
   collateDrawingToolEnv(event)  // used to gather current useful state for the Tools and passed to them in most callbacks
   {
-    let asset = this.props.asset;
-    let c2    = asset.content2;
+    let asset = this.props.asset
+    let c2    = asset.content2
     let pCtx  = this.previewCtxArray[this.state.selectedLayerIdx]
 
     let pCtxImageData1x1 = this.previewCtxImageData1x1Array[this.state.selectedLayerIdx]
-    var self = this;
+    var self = this
 
     let retval =  {
       x: Math.floor(event.offsetX / this.state.editScale),
@@ -364,13 +367,11 @@ export default class EditGraphic extends React.Component {
       editCtx:                this.editCtx,
       editCtxImageData1x1:    this.editCtxImageData1x1,
 
-      // setPixelsAt() Like CanvasRenderingContext2D.fillRect, but
-      //   (a) It SETS rather than draws-with-alpha-blending
-      //   (b) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
-      //   So this is faster than a ClearRect+FillRect in many cases.
+      // setPreviewPixelsAt() Like CanvasRenderingContext2D.fillRect, but
+      //   It SETS rather than draws-with-alpha-blending
       setPreviewPixelsAt: function (x, y, w=1, h=1) {
 
-        // First set Pixels on the Preview context
+        // Set Pixels on the Preview context ONLY
         self._setImageData4BytesFromRGBA(retval.previewCtxImageData1x1.data, retval.chosenColor.rgb)
         for (let i = 0; i < w; i++) {
           for (let j = 0; j < h; j++) {
@@ -419,8 +420,10 @@ export default class EditGraphic extends React.Component {
 
   handleZoom()
   {
+    recentMarker = null       // Since we now want to reload data for our new EditCanvas
     this.setState( {editScale : (this.state.editScale == 8 ? 1 : (this.state.editScale << 1))})
   }
+
 
   // handleMouseWheel is an alias for zoom
   handleMouseWheel(event)
@@ -429,17 +432,17 @@ export default class EditGraphic extends React.Component {
     if (event.altKey === false)
       return
 
-    event.preventDefault();     // No default scroll behavior in these cases
+    event.preventDefault()      // No default scroll behavior in these cases
 
     // WheelDelta system is to handle MacOS that has frequent small deltas,
     // rather than windows wheels which typically have +/- 120
-    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta;
-    let wd =  this.mgb_wheelDeltaAccumulator;    // shorthand
+    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta
+    let wd =  this.mgb_wheelDeltaAccumulator    // shorthand
 
     if (Math.abs(wd) > 60) {
       if (event.shiftKey === true) {
         // if wheel is for scale:
-        let s = this.state.editScale;
+        let s = this.state.editScale
         if (wd > 0 && s > 1)
           this.setState({editScale: s >> 1})
         else if (wd < 0 && s < 8)
@@ -447,10 +450,10 @@ export default class EditGraphic extends React.Component {
       }
       else {
         // if wheel is for frame
-        let f = this.state.selectedLayerIdx;
+        let f = this.state.selectedFrameIdx
         if (wd < 0 && f > 0)
           this.handleSelectFrame(f - 1)
-        else if (wd > 0 && f + 1 < this.previewCanvasArray.length)
+        else if (wd > 0 && f + 1 < this.frameCanvasArray.length)  // aka c2.frameNames.length
           this.handleSelectFrame(f + 1)
       }
       this.mgb_wheelDeltaAccumulator = 0
@@ -473,7 +476,7 @@ export default class EditGraphic extends React.Component {
       let c2 = this.props.asset.content2
       c2.width = Math.min(c2.width+dw, this.mgb_MAX_BITMAP_WIDTH)
       c2.height = Math.min(c2.height+dh, this.mgb_MAX_BITMAP_HEIGHT)
-      this.handleSave(`Resize image`);      // Less spammy in activity log      
+      this.handleSave(`Resize image`)      // Less spammy in activity log      
     }
     // TODO: Toast on error
     // TODO: Reduce zoom if very large
@@ -482,66 +485,83 @@ export default class EditGraphic extends React.Component {
 
   handleMouseDown(event) {
     let layerParam = this.props.asset.content2.layerParams[this.state.selectedLayerIdx];
-    if(layerParam.isLocked || layerParam.isHidden){
-      // TODO alert popup
-      console.log("You can't draw on locked or hidden layer!");
+    if (layerParam.isLocked || layerParam.isHidden) {
+      this.setStatusBarWarning("You can't draw on locked or hidden layers")
+      return
     }
-    else if (this.state.toolChosen !== null) {
-      if (this.state.toolChosen.changesImage === true)
-      {
-        if (!this.props.canEdit)
-        { 
-          this.props.editDeniedReminder()
-          return
-        }
 
-        this.doSaveStateForUndo(this.state.toolChosen.name)   // So that tools like eyedropper don't save and need undo
-      }
-      if (this.state.toolChosen.supportsDrag === true)
-        this.setState({ toolActive: true });
-
-      this.state.toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
-
-      if (this.state.toolChosen.supportsDrag === false && this.state.toolChosen.changesImage === true)
-        this.handleSave(`Drawing`)   // This is a one-shot tool, so save it's results now
+    if (this.state.toolChosen === null) {
+      this.setStatusBarWarning("Select a drawing tool on the left")
+      return
     }
+
+    if (this.state.toolChosen.changesImage && !this.props.canEdit)
+    {
+      this.setStatusBarWarning("You do not have permission to edit this image")
+      this.props.editDeniedReminder()
+      return
+    }
+
+    if (this.state.toolChosen.changesImage)
+      this.doSaveStateForUndo(this.state.toolChosen.name)   // So that tools like eyedropper don't save and need undo
+
+    if (this.state.toolChosen.supportsDrag === true)
+      this.setState({ toolActive: true })
+
+    this.state.toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
+
+    if (this.state.toolChosen.supportsDrag === false && this.state.toolChosen.changesImage === true)
+      this.handleSave(`Drawing`, false, false)   // This is a one-shot tool, so save its results now
   }
 
-  hasPermission(){
-    if (!this.props.canEdit){ 
-      this.props.editDeniedReminder();
-      return false;
+  hasPermission() {
+    if (!this.props.canEdit) { 
+      this.props.editDeniedReminder()
+      return false
     }
     else {
-      return true;
+      return true
     }
-
   }
 
 
-  setStatusBarInfo(mouseAtText = null, colorAtText = null, colorCSSstring = null)
+  setStatusBarWarning(warningText = "")
   {
-    if (mouseAtText === null) {  
+    this._statusBar.colorAtText.html("")
+    this._statusBar.colorAtIcon.css( { color: "rgba(0,0,0,0)" } )
+    this._statusBar.mouseAtText.text(warningText)
+    this._statusBar.outer.css( {visibility: "visible"} )
+  }
+
+
+  setStatusBarInfo(mouseAtText = "", colorAtText = "", colorCSSstring = "rgba(0,0,0,0)")
+  {
+    if (mouseAtText === "") {  
       this._statusBar.outer.css( {visibility: "hidden"} )
     }
     else {
-      this._statusBar.outer.css( {visibility: "visible"} )
-      this._statusBar.mouseAtText.text(mouseAtText)
+      let layerIdx = this.state.selectedLayerIdx
+      let layerParam = this.props.asset.content2.layerParams[layerIdx]
+      let layerMsg = ` of Layer ${layerIdx+1}` 
+                    + (layerParam.isLocked ? " (locked)": "") 
+                    + (layerParam.isHidden ? " (hidden)" : "")
+
+      this._statusBar.colorAtIcon.css( { color: colorCSSstring } )
+      this._statusBar.mouseAtText.text(mouseAtText + layerMsg)
       this._statusBar.colorAtText.html(colorAtText)
-      if (colorCSSstring !== null)
-        this._statusBar.colorAtIcon.css( { color: colorCSSstring } )
+      this._statusBar.outer.css( {visibility: "visible"} )
     }
   }
 
   RGBToHex(r,g,b) {
-    var bin = r << 16 | g << 8 | b;
-    return (function(h){
+    var bin = r << 16 | g << 8 | b
+    return (function(h) {
       return new Array(7-h.length).join("0")+h
     })(bin.toString(16).toLowerCase())
   }
 
   // Might be better to have two event handlers, each with a clearer role? 
-  // This does two things: Update SB, and call on to Tool 
+  // This does two things: (1) Update SB, and (2) Call on to Tool handler
   handleMouseMove(event)
   {
     // Update statusBar
@@ -566,8 +586,8 @@ export default class EditGraphic extends React.Component {
     if (this.state.toolChosen !== null && this.state.toolActive === true) {
       this.state.toolChosen.handleMouseUp(this.collateDrawingToolEnv(event))
       if (this.state.toolChosen.changesImage === true)
-        this.handleSave(`Drawing`)
-      this.setState({ toolActive: false });
+        this.handleSave(`Drawing`, false, false)
+      this.setState({ toolActive: false })
     }
   }
 
@@ -577,27 +597,18 @@ export default class EditGraphic extends React.Component {
     this.setStatusBarInfo()
     if (this.state.toolChosen !== null && this.state.toolActive === true) {
       this.state.toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
-      this.handleSave(`Drawing`)
-      this.setState({ toolActive: false });
+      if (this.state.toolChosen.changesImage === true)
+        this.handleSave(`Drawing`, false, false)
+      this.setState({ toolActive: false })
     }
   }
-
-
-  // TODO: DGolds to provide shortcut key subsystem
-  //handleKeyDown(event)
-  //{
-  //  for (let t of tools)
-  //  {
-  //    console.log(t)
-  //  }
-  //
-  //}
 
 
 // Tool selection action. 
   handleToolSelected(tool)
   {
-    this.setState({ toolChosen: tool });
+    this.setState({ toolChosen: tool })
+    this.setStatusBarWarning(`${tool.name} tool selected`)
   }
 
 
@@ -610,15 +621,13 @@ export default class EditGraphic extends React.Component {
     this.state.selectedColors[colortype] = chosenColor;
     this.setState( { selectedColors: this.state.selectedColors } )      // Won't trigger redraw because React does shallow compare? Fast but not the 'react-way'
 
-    // So we have to fix up UI stuff
+    // So we have to fix up UI stuff. This is a bit of a hack for perf. See statusBarInfo()
     let colorCSSstring = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
-
-    $(ReactDOM.findDOMNode(this.refs.colorPickerIcon)).css( { color: colorCSSstring});
-
+    $(ReactDOM.findDOMNode(this.refs.colorPickerIcon)).css( { color: colorCSSstring})
   }
 
-// Add/Select/Remove etc animation frames
 
+// Add/Select/Remove etc animation frames
 
   doSwapCanvases(i,j)
   {
@@ -635,24 +644,25 @@ export default class EditGraphic extends React.Component {
     i.putImageData(tmp1, 0, 0)
   }
 
+
   handleSelectFrame(frameIndex)
   {
-    // this.doSnapshotActivity(frameIndex)
+    this.doSnapshotActivity(frameIndex)
     this.setState( { selectedFrameIdx: frameIndex}  )
 
     // for new frame clears preview canvases and update edit canvas
-    let c2 = this.props.asset.content2;
-    if(c2.frameData[frameIndex].length === 0){
-      for(let i=0; i<this.previewCtxArray.length; i++){
-        this.previewCtxArray[i].clearRect(0, 0, c2.width, c2.height);
+    let c2 = this.props.asset.content2
+    if (c2.frameData[frameIndex].length === 0) {
+      for (let i=0; i<this.previewCtxArray.length; i++) {
+        this.previewCtxArray[i].clearRect(0, 0, c2.width, c2.height)
       }
-      this.updateEditCanvasFromSelectedPreviewCanvas();
+      this.updateEditCanvasFromSelectedPreviewCanvas()
     }
   }
 
   handleSelectLayer(layerIndex){
-    // this.doSnapshotActivity(layerIndex);         // TODO guntis need to understand what is snapshotActivity
-    this.setState( { selectedLayerIdx: layerIndex } );
+    // this.doSnapshotActivity(layerIndex)          // TODO guntis need to understand what is snapshotActivity
+    this.setState( { selectedLayerIdx: layerIndex } )
   }
 
   // SAVE and UNDO
@@ -678,6 +688,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+
   doMakeUndoStackEntry(changeInfoString)
   {
     return {
@@ -689,6 +700,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+
   doTrimUndoStack()
   {
     let u = this.mgb_undoStack
@@ -696,13 +708,14 @@ export default class EditGraphic extends React.Component {
       u.shift()         // Remove 0th element (which is the oldest)
   }
 
+
   doSaveStateForUndo(changeInfoString)
   {
     let u = this.mgb_undoStack
     this.doTrimUndoStack()
-    //console.log(`doSaveStateForUndo(${changeInfoString})`)
     u.push(this.doMakeUndoStackEntry(changeInfoString))
   }
+
 
   /* This stores a short-term record indicating this user is viewing this graphic
    * It provides the data for the 'just now' part of the history navigation and also 
@@ -717,55 +730,68 @@ export default class EditGraphic extends React.Component {
     snapshotActivity(this.props.asset, passiveAction)
   }
 
+
   handleUndo()
   {
     let u = this.mgb_undoStack
     if (u.length > 0)
     {
       let zombie = u.pop()
-      this.props.handleContentChange(
-        zombie.savedContent2,
-        zombie.savedContent2.frameData[0][0],         // MAINTAIN: Match semantics of handleSave()
-        "Undo changes"
-      )
-      this.doSnapshotActivity()
+      let c2 = zombie.savedContent2
+      // Make sure we aren't on a frame/layer that doesn't exist
+      if (this.state.selectedFrameIdx > c2.frameNames.length-1 && c2.frameNames.length > 0)
+        this.setState({ selectedFrameIdx: c2.frameNames.length-1 })
+      if (this.state.selectedLayerIdx > c2.layerParams.length-1 && c2.layerParams.length > 0)
+        this.setState({ selectedLayerIdx: c2.layerParams.length-1 })
+      // Now force this into the DB and that will cause a re-render
+      this.saveChangedContent2(c2, c2.frameData[0][0], "Undo changes", true)        // Allow Backwash from database to replace current viewed state
+      
     }
   }
+  
 
-
-  handleSave(changeText="change graphic", dontSaveFrameData)    // TODO(DGOLDS): Maybe _.throttle() this?
+  handleSave(changeText="change graphic", dontSaveFrameData = false, allowBackwash = true)    // TODO(DGOLDS): Maybe _.throttle() this?
   {
     if (!this.props.canEdit)
-    { 
+    {
       this.props.editDeniedReminder()
       return
     }
 
-    let asset = this.props.asset;
-    let c2    = asset.content2;
+    // Make really sure we have the frameCanvasArrays up-to-date with the latest edits from all layers
+    if (this.previewCanvasArray && !dontSaveFrameData)
+      this.updateEditCanvasFromSelectedPreviewCanvas() 
 
-    if(this.previewCanvasArray && !dontSaveFrameData){ // hack for automatic checking and saving old assets to new
+    let asset = this.props.asset
+    let c2    = asset.content2
+
+    if (this.previewCanvasArray && !dontSaveFrameData) { // hack for automatic checking and saving old assets to new
                                                         // dontSaveFrameData - hack when deleting/moving frames then previewCanvases are not updated
-      let layerCount = this.previewCanvasArray.length; // New layer is not yet added, so we don't use c2.layerParams.length
+      let layerCount = this.previewCanvasArray.length  // New layer is not yet added, so we don't use c2.layerParams.length
       for (let i = 0; i < layerCount; i++) {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
       }
-      asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')   // MAINTAIN: Match semantics of handleUndo()
+      asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')
 
-      // saving data for using in map editor
+      // Saving the composite Frame (using all layers for this frame) for convenient use in the map editor.
+      // TODO(@stauzs): Would this be nicer as a list comprehension?    c2.spriteData = _.map(this.frameCanvasArray, c => c.toDataURL('image/png'))
       c2.spriteData = [];
       for(let i = 0; i < this.frameCanvasArray.length; i++){
-        c2.spriteData[i] = this.frameCanvasArray[i].toDataURL('image/png');  
+        c2.spriteData[i] = this.frameCanvasArray[i].toDataURL('image/png')
       }
-
-      recentMarker = "_graphic_" + Random.id()     // http://docs.meteor.com/packages/random.html
-      c2.changeMarker = recentMarker      
     }
-
-    this.props.handleContentChange(c2, asset.thumbnail, changeText)
-    this.doSnapshotActivity()
+    this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }
 
+
+  saveChangedContent2(c2, thumbnail, changeText, allowBackwash = false)
+  {
+    recentMarker = allowBackwash ? null : "_graphic_" + Random.id()   // http://docs.meteor.com/packages/random.html
+    c2.changeMarker = recentMarker      
+console.log("Backwash marker = " + recentMarker)
+    this.props.handleContentChange(c2, thumbnail, changeText)
+    this.doSnapshotActivity()
+  }
 
 
   /// Drag & Drop of image files over preview and editor
@@ -774,29 +800,29 @@ export default class EditGraphic extends React.Component {
   /// Allow Previews to put info in DataTransfer object so we can drag them around
   handlePreviewDragStart(idx, e) {
     // Target (this) element is the source node.
-    let dragSrcEl = e.target;
+    let dragSrcEl = e.target
 
     if (idx === -1)                         // The Edit Window does this
-      idx = this.state.selectedLayerIdx;
+      idx = this.state.selectedLayerIdx
 
-    e.dataTransfer.effectAllowed = 'copy';  // This must match what is in handleDragOverPreview()
+    e.dataTransfer.effectAllowed = 'copy'   // This must match what is in handleDragOverPreview()
     e.dataTransfer.setData('mgb/image', this.previewCanvasArray[idx].toDataURL('image/png')
-    );
+    )
   }
 
 
   handleDragOverPreview(event)
   {
-    event.stopPropagation();
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+    event.stopPropagation()
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'copy'   // Explicitly show this is a copy.
   }
 
 
   handleDropPreview(idx, event)
   {
-    event.stopPropagation();
-    event.preventDefault();
+    event.stopPropagation()
+    event.preventDefault()
     
     if (!this.props.canEdit)
     { 
@@ -804,19 +830,19 @@ export default class EditGraphic extends React.Component {
       return
     }
     
-    var self = this;
+    var self = this
 
     if (idx === -1)                         // The Edit Window does this
-      idx = this.state.selectedLayerIdx;
+      idx = this.state.selectedLayerIdx
       
     // Note that idx === -2 means the MgbResizerHost control. 
     // In thise case we must ONLY resize the graphics, not actually import the graphic. 
 
-    let mgbImageDataUri =  event.dataTransfer.getData('mgb/image');
+    let mgbImageDataUri =  event.dataTransfer.getData('mgb/image')
     if (mgbImageDataUri !== undefined && mgbImageDataUri !== null && mgbImageDataUri.length > 0)
     {
       // SPECIAL CASE - DRAG FROM us to us   i.e. Frame-to-frame image drag within MGB (or across MGB windows)
-      var img = new Image;
+      var img = new Image
       img.onload = function(e) {
         // Seems to have loaded ok..
         self.doSaveStateForUndo(`Drag+Drop Frame to Frame #`+idx.toString())
@@ -832,27 +858,26 @@ export default class EditGraphic extends React.Component {
           let w = self.props.asset.content2.width
           let h = self.props.asset.content2.height
           self.previewCtxArray[idx].clearRect(0,0,w,h)
-          self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
+          self.previewCtxArray[idx].drawImage(e.target, 0, 0)   // add w, h to scale it.
           if (idx === self.state.selectedLayerIdx)
-            self.updateEditCanvasFromSelectedPreviewCanvas();
-          self.handleSave(`Copy frame to frame #${idx+1}`);
+            self.updateEditCanvasFromSelectedPreviewCanvas()
+          self.handleSave(`Copy frame to frame #${idx+1}`)
         }
-      };
-      img.src = mgbImageDataUri; // is the data URL because called
+      }
+      img.src = mgbImageDataUri    // is the data URL because called
       return
     }
 
-    let files = event.dataTransfer.files; // FileList object.
+    let files = event.dataTransfer.files     // FileList object.
     if (files.length > 0)
     {
-      var reader = new FileReader();
+      var reader = new FileReader()
       reader.onload = function(event) {
         let theUrl = event.target.result
-        var img = new Image;
+        var img = new Image
         img.onload = function(e) {
           // The DataURI seems to have loaded ok now as an Image, so process what to do with it
           self.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
-          //console.log(img.width + "x" + img.height); // image is loaded; sizes are available
 
           if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
           {
@@ -867,15 +892,15 @@ export default class EditGraphic extends React.Component {
             let h = self.props.asset.content2.height  
             
             self.previewCtxArray[idx].clearRect(0,0,w,h)
-            self.previewCtxArray[idx].drawImage(e.target, 0, 0);// add w, h to scale it.
+            self.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.
             if (idx === self.state.selectedLayerIdx)
-                self.updateEditCanvasFromSelectedPreviewCanvas();
-            self.handleSave(`Drag external file to frame #${idx+1}`);
+                self.updateEditCanvasFromSelectedPreviewCanvas()
+            self.handleSave(`Drag external file to frame #${idx+1}`)
           }
         };
-        img.src = theUrl; // is the data URL because called
+        img.src = theUrl  // is the data URL because called
       }
-      reader.readAsDataURL(files[0]);
+      reader.readAsDataURL(files[0])
     }
   }
   
@@ -893,7 +918,7 @@ export default class EditGraphic extends React.Component {
     let zoom = this.state.editScale
 
     let toolComponents = _.map(tools, (tool) => { return (
-      <div  className={"ui button" + (this.state.toolChosen === tool ? " active" : "" )}
+      <div  className={"ui button hazPopup " + (this.state.toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}
             key={tool.name}
             data-title={tool.name + " (" + tool.shortcutKey + ")"}
@@ -1047,8 +1072,6 @@ export default class EditGraphic extends React.Component {
             handleSave={this.handleSave.bind(this)}     
             forceUpdate={this.forceUpdate.bind(this)}   
           />
-        
-
 
       </div>
     )

@@ -71,30 +71,29 @@ export default App = React.createClass({
     };
   },
 
-  render() {
-    
-    if (this.data.loading)
-      return <Spinner />
-    let ver=mgbReleaseInfo.releases[0].id
-
+  configureTrackJs() {
     // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
-    /*
-    ads blocking stuff blocks trackJS
-    */
     const doTrack = () => {
+      const ver = mgbReleaseInfo.releases[0].id
       trackJs.configure({
         userId: (Meteor.user() ? Meteor.user().profile.name : ""),
         version: `${ver.ver} ${ver.state} ${ver.iteration}`,
         sessionId: Meteor.default_connection._lastSessionId
-      });
-    };
-    if(!window.trackJs){
-      // fallback to local version
-      $.getScript("/lib/tracker.js", doTrack);
+      })
     }
-    else {
-      doTrack();
-    }
+    if (window.trackJs) 
+      doTrack()
+    else
+      $.getScript("/lib/tracker.js", doTrack)   // fallback to local version because of AdBlocks etc
+  },
+
+  render() {
+    
+    if (this.data.loading)
+      return <Spinner />
+
+    this.configureTrackJs()
+
     const { currUser, user, currUserProjects } = this.data
     const { query } = this.props.location
 

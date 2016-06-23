@@ -157,7 +157,7 @@ export default AssetEditRoute = React.createClass({
     const asset = this.data.asset         // One Asset provided via getMeteorData()
     if (!asset || this.data.loading) return null
     const canEd = this.canEdit()    
-    const emptyAssetDescriptionText = "(none)"
+    const emptyAssetDescriptionText = "(no description)"
 
     return (
       <div className="ui padded grid">

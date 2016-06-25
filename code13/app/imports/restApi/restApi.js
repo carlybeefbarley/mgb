@@ -10,6 +10,8 @@ import xml2js from 'xml2js';
 
 const aws_s3_region = 'us-east-1'       // US-East-1 is the 'global' site for S3
 
+AWS.config.update({accessKeyId: '104QCDA4V07YPPSVBKG2', secretAccessKey: 'QB65XLlJzlQ4w8ifWhkhv/a48ayihIS9k8v7CSPn'});
+
 // REST API.  These should match what is in AssetUrlGenerator.js
 // Note that Restivus's default url prefix is /api
 var RestApi = new Restivus({
@@ -159,6 +161,7 @@ RestApi.addRoute('mgb1/actor/:account/:project/:name', {authRequired: false}, {
     catch (err)
     {
       savedError = err    // We're gonan report everything as 404 really
+      console.dir(err)
     }
 
     if (savedError && savedError.code)

@@ -85,7 +85,7 @@ export default class Properties extends React.Component {
               _type: Otito.type.text,
               _className: "fluid"
             },
-            tileStartDrawPosition: {
+            tiledrawdirection: {
               _type: Otito.type.list,
               head: "TileDraw",
               value: "rightup",

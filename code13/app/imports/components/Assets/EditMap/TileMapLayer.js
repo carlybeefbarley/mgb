@@ -234,14 +234,15 @@ export default class TileMapLayer extends AbstractLayer {
     let drawH = pal.h * camera.zoom;
 
     // TODO: move these strings somewhere outside
-    if(this.options.tileStartDrawPosition && this.options.tileStartDrawPosition !== "rightup"){
+    // tileStartDrawPosition changed to tiledrawdirection
+    if(this.options.tiledrawdirection && this.options.tiledrawdirection !== "rightup"){
       // default browser canvas
-      if(this.options.tileStartDrawPosition == "rightdown"){
+      if(this.options.tiledrawdirection == "rightdown"){
       }
-      else if(this.options.tileStartDrawPosition == "leftdown") {
+      else if(this.options.tiledrawdirection == "leftdown") {
         drawX -= (drawW - map.data.tilewidth * camera.zoom);
       }
-      else if(this.options.tileStartDrawPosition == "leftup"){
+      else if(this.options.tiledrawdirection == "leftup"){
         drawX -= (drawW - map.data.tilewidth * camera.zoom);
         drawY -= (drawH - map.data.tileheight * camera.zoom);
       }

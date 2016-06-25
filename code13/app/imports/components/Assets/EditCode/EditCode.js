@@ -702,6 +702,7 @@ export default class EditCode extends React.Component {
         this._consoleAdd(data)
       else if (data.mgbCmd === "mgbScreenshotCanvasResponse")
       {
+        console.log("got ss response")
         // In a Phaser game, this is needed to enable screenshots if using WebGL renderer
         //game.preserveDrawingBuffer = true;
         // OR use Phaser.CANVAS as the renderer
@@ -908,7 +909,7 @@ export default class EditCode extends React.Component {
                         </a>
                       }
                       { isPlaying && 
-                        <a className={"ui right floated mini icon button"} onClick={this.handleScreenshotIFrame.bind(this)}>
+                        <a className={"ui right floated mini icon button"} onClick={this.handleScreenshotIFrame.bind(this)} title="This will make a screenshot of the CANVAS element in the page">
                             <i className={"write square icon"}></i>Set thumbnail
                         </a>
                       }

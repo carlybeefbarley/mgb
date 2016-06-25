@@ -79,14 +79,14 @@ export default class Properties extends React.Component {
       this.settings.layer = new Otito(this.map.data.layers[this.map.activeLayer], {
         Layer: {
           _type: Otito.type.folder,
-          contentClassName: "ui content two column stackable grid",
+          contentClassName: "ui content one column stackable grid",
           content: {
             name: {
               _type: Otito.type.text,
               _className: "fluid"
             },
             tiledrawdirection: {
-              _type: Otito.type.list,
+              _type: Otito.type.hidden,
               head: "TileDraw",
               value: "rightup",
               className: "ui dropdown fluid",

@@ -178,7 +178,9 @@ function _getCaller() {
               mgbCmd: "mgbScreenshotCanvasResponse",
               pngDataUrl: asDataUrl
             }, "*");
-          }          
+          }
+          else
+            console.log("No <canvas> element to screenshot")          
         }
         else if (e.data.mgbCommand === 'startRun')
         {

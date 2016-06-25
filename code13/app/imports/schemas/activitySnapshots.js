@@ -77,7 +77,8 @@ Meteor.methods({
       byUserId: data.byUserId 
     }
     var upsertResult = ActivitySnapshots.upsert(selector, data);
-    //console.log(`  [ActivitySnapshot.setSnapshot]  by: ${data.byUserName}/${data.byUserId}  from: ${data.byIpAddress}`);
+    if (Meteor.isServer)
+      console.log(`  [ActivitySnapshot.setSnapshot]  by: ${data.byUserName}/${data.byUserId}  from: ${data.byIpAddress} with url ${data.currentUrl}`);
     return upsertResult;
   }
   

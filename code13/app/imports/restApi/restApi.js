@@ -311,6 +311,9 @@ function _makeNameMap(layers)
 // MGBv1 MAP
 // eg http://localhost:3000/api/mgb1/map2/.acey53/Club%20Penguin%20Agents%20Under%20Attack/HQ
 // or http://localhost:3000/api/mgb1/map2/foo/project1/chaosMap1
+
+// TODO: Tileset  imagewidth/imageheight/tileheight/tilewidth params
+// TODO: Event layer (layer[3].. the 4th layer. For MGBv1 this is mostly warps/teleports, game-win, and start/stop music)
 RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
   get: function () {
     let s3Key = `${this.urlParams.account}/${this.urlParams.project}/map/${this.urlParams.name}`

@@ -53,7 +53,8 @@ export default class TileSet extends React.Component {
   }
   get data(){
     const tss = map.data.tilesets;
-    return tss[map.activeTileset];
+    const data = tss[map.activeTileset];
+    return data;
   }
   /* helpers */
   adjustCanvas(){
@@ -183,21 +184,38 @@ export default class TileSet extends React.Component {
       if(!pal){
         return;
       }
-      this.drawTile(pal, pos);
+      let tinfo = null;
+      if(ts.tiles && ts.tiles[i]) {
+        tinfo = ts.tiles[i];
+      }
+
+      this.drawTile(pal, pos, tinfo);
     }
   }
-  drawTile(pal, pos, clear = false){
+  drawTile(pal, pos, info, clear = false){
     if(clear){
       this.ctx.clearRect(pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing), pal.w, pal.h);
     }
+
+    const drawX = pos.x * (pal.ts.tilewidth + this.spacing);
+    const drawY = pos.y * (pal.ts.tileheight + this.spacing);
     this.ctx.drawImage(pal.image,
       pal.x, pal.y, pal.w, pal.h,
-      pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h
+      drawX, drawY, pal.w, pal.h
     );
+
+    if(info && info.animation){
+      this.ctx.fillStyle = "rgba(255, 0, 0, 1)";
+      // TODO: add nice animation icon
+      this.ctx.beginPath();
+      this.ctx.arc(drawX + pal.w*0.75, drawY + pal.h*0.75,pal.h*0.25,0,Math.PI*2);
+      //this.ctx.fillRect(drawX + pal.w*0.5, drawY + pal.h*0.5, pal.w *0.5, pal.h*0.5);
+      this.ctx.fill();
+    }
     if(map.collection.indexOfGid(pal.gid) > -1){
       this.ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
       this.ctx.fillRect(
-        pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing) , pal.w, pal.h
+        drawX, drawY, pal.w, pal.h
       );
     }
   }
@@ -211,7 +229,9 @@ export default class TileSet extends React.Component {
     const pos = this.getTilePosInfo(e);
 
     if(this.prevTile){
-      if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
+      // TODO: optimize later - if needed.. currently redraw all
+      this.drawTiles();
+      /*if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
         return;
       }
       if(force){
@@ -220,7 +240,9 @@ export default class TileSet extends React.Component {
       else {
         let pal = palette[this.prevTile.gid];
         if (pal) {
-          this.drawTile(pal, this.prevTile, true);
+          if(ts.tiles && ts.tiles[this.prevTile.id])
+          const tsi = ts.tiles
+          this.drawTile(pal, this.prevTile, null, true);
         }
         else {
           this.ctx.clearRect(
@@ -228,7 +250,7 @@ export default class TileSet extends React.Component {
             this.prevTile.y * ts.tileheight + this.prevTile.y,
             ts.tilewidth, ts.tileheight);
         }
-      }
+      }*/
     }
 
     this.ctx.fillStyle = "rgba(0,0,255, 0.3)";

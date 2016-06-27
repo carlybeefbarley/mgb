@@ -16,6 +16,9 @@ export default class TileMapLayer extends AbstractLayer {
     this.prevTile = null;
     this.mouseDown = false;
 
+    this.drawInterval = 10000;
+    this.nextDraw = this.drawInterval;
+
     this.kind = LayerTypes.tile;
 
     this._mup = this.handleMouseUp.bind(this);
@@ -23,7 +26,17 @@ export default class TileMapLayer extends AbstractLayer {
     this.startingTilePos = null;
     this.lastTilePos = null;
     // if dirty - needs to be cleaned....
+
     this.isDirtySelection = false;
+    this.isDirty = true;
+    this.isVisible = false;
+    this.lastTimeout = 0;
+
+    this._raf = () => {
+      this._drawTiles();
+      window.requestAnimationFrame(this._raf);
+    };
+    this._raf();
   }
   componentDidMount(){
     this.adjustCanvas();
@@ -34,7 +47,7 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawTiles();
 
     document.body.addEventListener("mouseup", this._mup);
-
+    this.isVisible = true;
   }
   componentWillUnmount(){
     const index = this.props.map.layers.indexOf(this);
@@ -42,7 +55,7 @@ export default class TileMapLayer extends AbstractLayer {
       this.props.map.layers.splice(index, 1);
     }
     document.body.removeEventListener("mouseup", this._mup);
-
+    this.isVisible = false;
   }
   /* endof lifecycle functions */
 
@@ -163,13 +176,34 @@ export default class TileMapLayer extends AbstractLayer {
   // large maps are still slow on movement..
   // dirty rectalngles (in our case dirty tiles :) are great for super fast map movement
   draw(){
-    this.drawTiles();
+    this.isDirty = true;
   }
-  drawTiles(){
+
+  queueDrawTiles(timeout){
+
+    // this might be heavier than redrawing - need to research how heavy is set/clear Timeout!!! + new fn
+    if(timeout < this.nextDraw) {
+      this.nextDraw = timeout;
+      clearTimeout(this.lastTimeout);
+      this.lastTimeout = setTimeout(() => {
+        this.isDirty = true;
+      }, timeout);
+    }
+
+  }
+
+  drawTiles() {
+    this.isDirty = true;
+  }
+
+  _drawTiles(){
+    if(!this.isDirty || !this.isVisible) {
+      return;
+    }
 
     const ts = this.props.data;
     const d = ts.data;
-    const map = this.props.map;
+    const map = this.map;
     const palette = map.gidCache;
     const mapData = map.data;
     const ctx = this.ctx;
@@ -220,10 +254,47 @@ export default class TileMapLayer extends AbstractLayer {
       }
     }
 
+    this._highlightTiles();
     this.drawSelection();
     this.drawSelection(true);
   }
   drawTile(pal, pos, spacing = 0, clear = false){
+    //console.log("draw Tile:", pal);
+    if(pal.ts.tiles){
+      let tileId = pal.gid - (pal.ts.firstgid);
+      const tileInfo = pal.ts.tiles[tileId];
+      if(tileInfo){
+        if(tileInfo.animation){
+          const delta = Date.now() - this.map.startTime;
+          // TODO: cache this!
+          let tot = 0;
+          let anim;
+          /* e.g.
+           duration: 200
+           tileid: 11
+           */
+          for(let i=0; i<tileInfo.animation.length; i++){
+            tot += tileInfo.animation[i].duration;
+          }
+          const relDelta = delta % tot;
+          tot = 0;
+          for(let i=0; i<tileInfo.animation.length; i++){
+            anim = tileInfo.animation[i];
+            tot += anim.duration;
+            if(tot > relDelta){
+              if(anim.tileid != tileId){
+                let gid = anim.tileid + pal.ts.firstgid;
+                this.queueDrawTiles(anim.duration - (tot - relDelta));
+                this.drawTile(this.map.palette[gid], pos, spacing, clear);
+                return;
+              }
+              break;
+            }
+          }
+          this.queueDrawTiles(anim.duration - (tot - relDelta));
+        }
+      }
+    }
     const map = this.props.map;
     const camera = this.camera;
 
@@ -233,18 +304,27 @@ export default class TileMapLayer extends AbstractLayer {
     let drawW = pal.w * camera.zoom;
     let drawH = pal.h * camera.zoom;
 
+    // TODO: remove this at some point!!!
+    if(this.options.tiledrawdirection){
+      this.options.mgb_tiledrawdirection = this.options.tiledrawdirection;
+      delete this.options.tiledrawdirection;
+    }
+
     // TODO: move these strings somewhere outside
-    // tileStartDrawPosition changed to tiledrawdirection
-    if(this.options.tiledrawdirection && this.options.tiledrawdirection !== "rightup"){
-      // default browser canvas
-      if(this.options.tiledrawdirection == "rightdown"){
-      }
-      else if(this.options.tiledrawdirection == "leftdown") {
+    // tileStartDrawPosition changed to mgb_tiledrawdirection
+
+    if(this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== "rightup"){
+
+      if(this.options.mgb_tiledrawdirection == "leftdown") {
         drawX -= (drawW - map.data.tilewidth * camera.zoom);
       }
-      else if(this.options.tiledrawdirection == "leftup"){
+      else if(this.options.mgb_tiledrawdirection == "leftup"){
         drawX -= (drawW - map.data.tilewidth * camera.zoom);
         drawY -= (drawH - map.data.tileheight * camera.zoom);
+      }
+      // default browser canvas - do nothing
+      else if(this.options.mgb_tiledrawdirection == "rightdown"){
+
       }
     }
     // default for tiled is: right up
@@ -266,7 +346,13 @@ export default class TileMapLayer extends AbstractLayer {
     );
 
   }
-  highlightTiles(e, force = true){
+
+  //drawTiles will call this
+  _highlightTiles(e = this.lastEvent){
+    if(!this.lastEvent){
+      return;
+    }
+
     const map = this.props.map;
     const ts = map.map.tilesets[map.activeTileset];
     const palette = map.gidCache;
@@ -296,25 +382,6 @@ export default class TileMapLayer extends AbstractLayer {
       pos.outOfBounds = true;
     }
     pos.id = pos.x + pos.y * layer.width;
-
-    /*if(this.prevTile && false){
-      if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
-        return;
-      }
-      const pal = palette[layer.data[this.prevTile.id]];
-      // this one clears selection
-      if(pal && !this.prevTile.outOfBounds){
-        this.drawTile(pal, this.prevTile, map.spacing, true);
-      }
-      else{
-        // hmm.... why this is broken - and why this is required at all???
-        this.highlightTile(this.prevTile);
-      }
-    }*/
-
-    // clear all brefore drawing
-    // TODO: clear only selected tiles?
-    this.drawTiles();
 
     let sel;
     if(map.options.randomMode){
@@ -363,12 +430,32 @@ export default class TileMapLayer extends AbstractLayer {
     const camera = this.camera;
     let width, height;
     // make little bit smaller highlight - while zooming - alpha bleeds out a little bit
-    const drawX = (pos.x * (map.data.tilewidth  + map.spacing) + camera.x) * camera.zoom;
-    const drawY = (pos.y * (map.data.tileheight + map.spacing) + camera.y) * camera.zoom + 0.5;
+    let drawX = (pos.x * (map.data.tilewidth  + map.spacing) + camera.x) * camera.zoom;
+    let drawY = (pos.y * (map.data.tileheight + map.spacing) + camera.y) * camera.zoom + 0.5;
 
-    const drawW = map.data.tilewidth  * camera.zoom;
-    const drawH = map.data.tileheight * camera.zoom;
+    let drawW = map.data.tilewidth  * camera.zoom;
+    let drawH = map.data.tileheight * camera.zoom;
 
+
+    if(this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== "rightup"){
+
+      if(this.options.mgb_mgb_tiledrawdirection == "leftdown") {
+        drawX -= (drawW - map.data.tilewidth * camera.zoom);
+      }
+      else if(this.options.mgb_tiledrawdirection == "leftup"){
+        drawX -= (drawW - map.data.tilewidth * camera.zoom);
+        drawY -= (drawH - map.data.tileheight * camera.zoom);
+      }
+      // default browser canvas - do nothing
+      else if(this.options.mgb_tiledrawdirection == "rightdown"){
+
+      }
+    }
+    // default for tiled is: right up
+    else{
+      drawY -= (drawH - map.data.tileheight * camera.zoom);
+    }
+    
     if(!fillStyle){
       this.ctx.clearRect(drawX, drawY, drawW, drawH);
     }
@@ -424,6 +511,7 @@ export default class TileMapLayer extends AbstractLayer {
 
     this.mouseDown = false;
     if(e.target == this.refs.canvas){
+      this.lastEvent = nat;
       if(edit[map.options.mode]){
         if(!this.options.visible){
           return;
@@ -437,6 +525,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
   handleMouseMove(e){
     const nat = e.nativeEvent ? e.nativeEvent : e;
+    this.lastEvent = nat;
 
     if(edit[map.options.mode]){
       // not visible
@@ -450,8 +539,10 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
   onMouseLeave(e){
+    const nat = e.nativeEvent ? e.nativeEvent : e;
     this.prevTile = null;
     this.map.tmpSelection.clear();
+    this.lastEvent = nat
     if(this.isDirtySelection){
       this.map.selection.clear();
     }
@@ -575,7 +666,7 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
   }
 
   if(!this.mouseDown && !up) {
-    this.highlightTiles(e);
+    this.drawTiles(e);
     return;
   }
   if(e.type == "mousedown" && e.target == this.refs.canvas){

@@ -23,6 +23,7 @@ export default class MapArea extends React.Component {
   constructor(props){
     super(props);
     let images = {};
+    this.startTime = Date.now();
     // expose map for debugging purposes - access in console
     window.map = this;
 
@@ -44,7 +45,6 @@ export default class MapArea extends React.Component {
         return true;
       }
     });
-
 
     // here will be kept selections from tilesets
     this.collection = new TileCollection();
@@ -89,7 +89,9 @@ export default class MapArea extends React.Component {
     };
     this.globalKeyUp = (...args) => {
       this.handleKeyUp(...args);
-    }
+    };
+
+    console.log("Map area initialized!");
   }
 
   componentDidMount(){
@@ -220,6 +222,7 @@ export default class MapArea extends React.Component {
       return;
     }
     const toSave = this.copyData(this.data);
+    // prevent double saving undo
     if(this.undoSteps[this.undoSteps.length-1] == toSave){
       return;
     }
@@ -231,8 +234,6 @@ export default class MapArea extends React.Component {
     this.refs.tools.forceUpdate();
   }
   doUndo(){
-    // prevent double saving undo
-
     if(this.undoSteps.length){
       this.redoSteps.push(this.data);
       this.data = JSON.parse(this.undoSteps.pop());
@@ -325,12 +326,16 @@ export default class MapArea extends React.Component {
     let loaded = 0;
     keys.forEach((i, index) => {
       const img = new Image;
+      img.setAttribute('crossOrigin', 'anonymous');
       img.onload = () => {
         loaded++;
         this.images[i] = img;
         if(loaded == keys.length){
           this.updateImages(cb);
         }
+      };
+      img.onerror = () => {
+        console.error("Failed to load an image:", i);
       };
       img.src = imgs[i];
     });
@@ -351,6 +356,16 @@ export default class MapArea extends React.Component {
         this.errors.push("missing: '" + ts.image + "'" );
         continue;
       }
+      const img = this.images[ts.image];
+      // this should be imported from mgb1
+      if(!ts.imagewidth){
+        ts.imagewidth = img.width;
+        ts.imageheight = img.height;
+        ts.tilewidth = img.width;
+        ts.tileheight = img.height;
+        ts.width = 1;
+        ts.height = 1;
+      }
       // update tileset to match new image / settings
       const extraPixels = ts.imagewidth % ts.tilewidth;
       const columns = (ts.imagewidth - extraPixels) / ts.tilewidth;
@@ -363,7 +378,7 @@ export default class MapArea extends React.Component {
       for(let i=0; i<tot; i++) {
         TileHelper.getTilePosWithOffsets(i, Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos);
         this.gidCache[fgid + i] = {
-          image: this.images[ts.image],
+          image: img,
           index,
           w: ts.tilewidth,
           h: ts.tileheight,

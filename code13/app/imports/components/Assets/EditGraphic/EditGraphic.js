@@ -899,10 +899,14 @@ console.log("Backwash marker = " + recentMarker)
         let theUrl = event.target.result
         if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
         {
-          let c2 = self.props.asset.content2
-          c2.width = Math.min(img.width, self.mgb_MAX_BITMAP_WIDTH)
-          c2.height = Math.min(img.height, self.mgb_MAX_BITMAP_HEIGHT)
-          self.handleResize(0,0, true)
+          var img = new Image
+          img.onload = (e) => {
+            let c2 = self.props.asset.content2
+            c2.width = Math.min(img.width, self.mgb_MAX_BITMAP_WIDTH)
+            c2.height = Math.min(img.height, self.mgb_MAX_BITMAP_HEIGHT)
+            self.handleResize(0, 0, true)
+          }
+          img.src = theUrl
         }
         else{
           this.pasteImage(theUrl, idx)

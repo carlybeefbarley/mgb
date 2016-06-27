@@ -72,6 +72,23 @@ export default class EditGraphic extends React.Component {
     }
 
     this.fixingOldAssets()
+
+    this.onpaste = (e) => {
+      "use strict";
+      var items = e.clipboardData.items;
+      if (items) {
+        //access data directly
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf("image") !== -1) {
+            //image
+            var blob = items[i].getAsFile();
+            var source = URL.createObjectURL(blob);
+            this.pasteImage(source);
+          }
+        }
+        e.preventDefault();
+      }
+    }
   }
 
 
@@ -123,9 +140,15 @@ export default class EditGraphic extends React.Component {
     this.mgb_MAX_BITMAP_HEIGHT = 1024
     
     this.doSnapshotActivity()
+
+    //TODO: add only to canvas?
+    window.addEventListener("paste", this.onpaste, false);
   }
 
-
+  componentWillUnmount(){
+    "use strict";
+    window.removeEventListener("paste", this.onpaste);
+  }
   // there are some missing params for old assets being added here
   fixingOldAssets() {
     let autoFix = false
@@ -872,38 +895,44 @@ console.log("Backwash marker = " + recentMarker)
     if (files.length > 0)
     {
       var reader = new FileReader()
-      reader.onload = function(event) {
+      reader.onload = (event) => {
         let theUrl = event.target.result
-        var img = new Image
-        img.onload = function(e) {
-          // The DataURI seems to have loaded ok now as an Image, so process what to do with it
-          self.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
-
-          if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
-          {
-            let c2 = self.props.asset.content2
-            c2.width = Math.min(img.width, self.mgb_MAX_BITMAP_WIDTH)
-            c2.height = Math.min(img.height, self.mgb_MAX_BITMAP_HEIGHT)
-            self.handleResize(0,0, true)
-          }
-          else
-          {
-            let w = self.props.asset.content2.width  
-            let h = self.props.asset.content2.height  
-            
-            self.previewCtxArray[idx].clearRect(0,0,w,h)
-            self.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.
-            if (idx === self.state.selectedLayerIdx)
-                self.updateEditCanvasFromSelectedPreviewCanvas()
-            self.handleSave(`Drag external file to frame #${idx+1}`)
-          }
-        };
-        img.src = theUrl  // is the data URL because called
+        if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
+        {
+          let c2 = self.props.asset.content2
+          c2.width = Math.min(img.width, self.mgb_MAX_BITMAP_WIDTH)
+          c2.height = Math.min(img.height, self.mgb_MAX_BITMAP_HEIGHT)
+          self.handleResize(0,0, true)
+        }
+        else{
+          this.pasteImage(theUrl, idx)
+        }
       }
       reader.readAsDataURL(files[0])
     }
   }
-  
+
+  pasteImage(url, idx = this.state.selectedLayerIdx)
+  {
+    var img = new Image
+    img.onload = (e) => {
+      // The DataURI seems to have loaded ok now as an Image, so process what to do with it
+      this.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
+
+      let w = this.props.asset.content2.width
+      let h = this.props.asset.content2.height
+
+      this.previewCtxArray[idx].clearRect(0,0,w,h)
+      this.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.
+      if (idx === this.state.selectedLayerIdx) {
+        this.updateEditCanvasFromSelectedPreviewCanvas()
+      }
+      this.handleSave(`Drag external file to frame #${idx+1}`)
+    };
+    img.src = url  // is the data URL because called
+  }
+
+
   // <- End of drag-and-drop stuff
 
 

@@ -702,9 +702,8 @@ export default class EditCode extends React.Component {
         this._consoleAdd(data)
       else if (data.mgbCmd === "mgbScreenshotCanvasResponse")
       {
-        console.log("got ss response")
         // In a Phaser game, this is needed to enable screenshots if using WebGL renderer
-        //game.preserveDrawingBuffer = true;
+        //   game.preserveDrawingBuffer = true;
         // OR use Phaser.CANVAS as the renderer
 
         let asset = this.props.asset

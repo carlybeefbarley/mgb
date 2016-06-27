@@ -40,6 +40,7 @@ export default class TilesetControls extends React.Component {
     };
     img.src = val;
   }
+
   updateTileset(img, tileset){
     const parent = this.props.tileset;
     const map = parent.props.info.content.map;
@@ -62,6 +63,26 @@ export default class TilesetControls extends React.Component {
     map.images[TileHelper.normalizePath(img.src)] = img;
     map.updateImages();
     parent.selectTileset(tss.length - 1);
+  }
+  updateTilesetFromData(data){
+    const parent = this.props.tileset;
+    const map = parent.props.info.content.map;
+
+    const ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight,
+      data.tilewidth, data.tileheight, data.name
+    );
+    ts.tiles = data.tiles;
+
+    const tss = map.data.tilesets;
+    tss.push(ts);
+
+    const img = new Image();
+    img.onload = () => {
+      map.images[TileHelper.normalizePath(img.src)] = img;
+      map.updateImages();
+      parent.selectTileset(tss.length - 1);
+    };
+    img.src = data.image;
   }
 
   removeTileset() {

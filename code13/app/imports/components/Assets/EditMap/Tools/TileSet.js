@@ -208,7 +208,7 @@ export default class TileSet extends React.Component {
       this.ctx.fillStyle = "rgba(255, 0, 0, 1)";
       // TODO: add nice animation icon
       this.ctx.beginPath();
-      this.ctx.arc(drawX + pal.w*0.75, drawY + pal.h*0.75,pal.h*0.25,0,Math.PI*2);
+      this.ctx.arc(drawX + pal.w - 10, drawY + pal.h - 10, 10 ,0,Math.PI*2);
       //this.ctx.fillRect(drawX + pal.w*0.5, drawY + pal.h*0.5, pal.w *0.5, pal.h*0.5);
       this.ctx.fill();
     }
@@ -271,9 +271,18 @@ export default class TileSet extends React.Component {
     if(asset && asset.kind != "graphic"){
       return;
     }
-    console.log("Got asset:", asset);
-    const url = e.dataTransfer.getData("link");
-    this.refs.controls.addTilesetFromUrl(url, asset);
+
+    const infolink = "/api/asset/tileset-info/" + asset._id;
+    $.get(infolink, (data) => {
+      console.log(data);
+
+      //console.log(this.data, this.props);*/
+
+      console.log("Got asset:", asset, data);
+      this.refs.controls.updateTilesetFromData(data);
+    });
+
+
   }
   onDropChangeTilesetImage(e){
     e.preventDefault();
@@ -285,7 +294,6 @@ export default class TileSet extends React.Component {
     if(asset && asset.kind != "graphic"){
       return;
     }
-    console.log(this.data, this.props);
     const url = e.dataTransfer.getData("link");
     this.refs.controls.updateTilesetFromUrl(url, this.data);
   }

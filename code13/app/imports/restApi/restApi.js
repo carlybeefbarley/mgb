@@ -7,6 +7,7 @@ import dataUriToBuffer from 'data-uri-to-buffer';
 import AWS from 'aws-sdk';
 import pako from 'pako';
 import xml2js from 'xml2js';
+import Canvas from 'canvas';
 
 const aws_s3_region = 'us-east-1'       // US-East-1 is the 'global' site for S3
 
@@ -93,13 +94,114 @@ RestApi.addRoute('asset/json/:id', {authRequired: false}, {
     var asset = Azzets.findOne(this.urlParams.id);
     if (asset)
     {
-      return JSON.parse(asset.content2.src);    // MAKE SURE THIS MATCHES WHAT WE ACTUALLY STORE (ie. object vs string)            
+      return JSON.parse(asset.content2.src);    // MAKE SURE THIS MATCHES WHAT WE ACTUALLY STORE (ie. object vs string)
     }
     else {
       return {
         statusCode: 404                
       }
     }
+  }
+});
+
+RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
+  get: function () {
+    "use strict";
+    var asset = Azzets.findOne(this.urlParams.id);
+    if (!asset) {
+      return {
+        statusCode: 404
+      }
+    }
+      /*
+      firstgid:1
+      image:"main.png"
+      imageheight:100
+      imagewidth:256
+      margin:0
+      name:"main"
+      spacing:0
+      tilecount:4
+      tileheight:100
+      tiles:Object
+      tilewidth:64
+      */
+    const c2 = asset.content2;
+    const tiles = {};
+    c2.animations.forEach((anim) => {
+      const animation = [];
+      const duration = (1000 / anim.fps); // round?
+      anim.frames.forEach((frame) => {
+        animation.push({
+          duration,
+          tileid: frame
+        });
+      });
+      tiles[anim.frames[0]] = {animation};
+    });
+
+
+    return {
+      image: "/api/asset/tileset/" + this.urlParams.id,
+      name: asset.name,
+      imageheight: c2.height,
+      imagewidth: c2.width * c2.frameData.length,
+      tilecount: c2.frameData.length,
+      tileheight: c2.height,
+      tilewidth: c2.width,
+      tiles
+    };
+  }
+});
+
+// TODO: cache + invalidate cache
+// TODO: check hidden layers
+RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
+  get: function () {
+    "use strict";
+    const asset = Azzets.findOne(this.urlParams.id);
+    if(!asset){
+      return {
+        statusCode: 404
+      };
+    }
+
+    const c2 = asset.content2;
+    const canvas = new Canvas(c2.width * c2.frameData.length, c2.height);
+    const ctx = canvas.getContext('2d');
+    const img = new Canvas.Image();
+
+    const done = (callback) => {
+      const subDone = () => {
+        callback(null, {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'image/png'
+          },
+          body: canvas.toBuffer()
+        });
+      };
+
+      // this works like sync functions... confuses a little bit
+      const loadImageAndDraw = (src, offset) => {
+        img.onload = () => {
+          ctx.drawImage(img, offset * img.width, 0);
+        };
+        img.src = src;
+      };
+
+      asset.content2.frameData.forEach((d, i) => {
+        d.forEach((data) => {
+          loadImageAndDraw(data, i);
+        });
+      });
+
+      // this will be called after all drawings
+      // might seem bugous - but it's not!
+      subDone();
+    };
+
+    return Meteor.wrapAsync(done)();
   }
 });
 

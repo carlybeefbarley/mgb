@@ -309,7 +309,7 @@ RestApi.addRoute('mgb1/tile/:account/:project/:name', {authRequired: false}, {
     return {
       statusCode: 301,    // MOVED (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
       headers: {
-        'Location': newUrl
+        'Location': newUrl + "?quickHack=2" // fix problems with some files that were cached before I changed the CORS policy
         // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200 
       },
       body: {}
@@ -577,12 +577,12 @@ RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
           image:        aname,
           spacing:      0,
           margin:       0,
-          imagewidth:   mgbTilePixels,      // TODO!!!! fix this.. real height needed
-          imageheight:  mgbTilePixels,
+//          imagewidth:   mgbTilePixels,      // TODO!!!! fix this.. real height needed
+//          imageheight:  mgbTilePixels,
           name:         aname,
           tilecount:    1,
-          tileheight:   mgbTilePixels,              // Typically (mgbTilePixels) but could be bigger... TODO
-          tilewidth:    mgbTilePixels
+//          tileheight:   mgbTilePixels,              // Typically (mgbTilePixels) but could be bigger... TODO
+//          tilewidth:    mgbTilePixels
         })
         r.images[aname] = `/api/mgb1/actor/${this.urlParams.account}/${this.urlParams.project}/${aname}?getTilePngRedirect=1`
       }
@@ -601,7 +601,7 @@ RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
         x: 0,
         y: 0,
         tileStartDrawPosition: "rightup",
-        tiledrawdirection: "rightdown",   // Tile assumes 'leftup' but mgbv1 does rightdown. ***NOTE*** This is NON STANDARD for Tiled Maps
+        mgb_tiledrawdirection: "rightdown",   // Tile assumes 'leftup' but mgbv1 does rightdown. ***NOTE*** This is NON STANDARD for Tiled Maps
         data: []
       }
       _.each(l, cell => { layer.data.push(cell === "" ? 0 : nameMap.toIdx[cell]) } ) 

@@ -16,6 +16,63 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
+      "timestamp":     "Tue Jun 28 2016 00:30:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "655"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Support for maps from MGBv1",
+          "changeSummary":  "The import capabilities aren't exposed for users yet, but you can see some MGB1 maps starting to appear :)",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    
+    { 
+      "timestamp":     "Fri Jun 24 2016 21:00:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "639"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Graphic editor fixes and improvements",
+          "changeSummary":  "Undo now works after adding layers/frames. Hover help on preview frames. Warnings and info on tools and read-only cases. Hover help for tools. Optimized backwash for just relevant cases",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "api.mgb1",
+          "type":           "feature",
+          "changeName":     "Api for MGBv1 assets",
+          "changeSummary":  "New REST API for obtaining MGBv1 tiles as PNGs, and actor/map assets as JSON data. For example http://v2.mygamebuilder.com/api/mgb1/map/.acey53/Club%20Penguin%20Agents%20Under%20Attack/HQ",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+
+    { 
       "timestamp":     "Mon Jun 20 2016 01:10:00 GMT-0700 (PDT)",
       
       "id": {

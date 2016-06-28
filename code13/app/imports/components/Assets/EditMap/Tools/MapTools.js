@@ -1,3 +1,4 @@
+"use strict";
 import React from 'react';
 import EditModes from "./EditModes";
 
@@ -40,12 +41,25 @@ export default class MapTools extends React.Component {
   enableEraser(){
     this.enableMode(EditModes.eraser);
     this.props.map.selection.clear();
+    this.props.map.collection.clear();
     this.props.map.redrawTilesets();
   }
   clearSelection(){
     this.props.map.tmpSelection.clear();
     this.props.map.selection.clear();
+    this.props.map.collection.clear();
     this.props.map.redraw();
+  }
+
+  rotate(cw){
+    const l = this.props.map.getActiveLayer();
+    if(!l || !l.rotate){return;}
+    if(cw){
+      l.rotate();
+    }
+    else{
+      l.rotateBack();
+    }
   }
 
   render() {
@@ -149,6 +163,18 @@ export default class MapTools extends React.Component {
                   onClick={this.clearSelection.bind(this)}
                   title="Clear Selection"
             ><i className="ban icon"></i>
+          </span>
+        </div>
+        <div className="ui icon buttons small">
+          <span className="ui button"
+              onClick={this.rotate.bind(this, true)}
+              title="Rotate ClockWise - Z"
+          ><i className="share icon"></i>
+          </span>
+          <span className="ui button"
+                onClick={this.rotate.bind(this, false)}
+                title="Rotate CounterClockWise - Shift + Z"
+            ><i className="reply icon"></i>
           </span>
         </div>
       </div>

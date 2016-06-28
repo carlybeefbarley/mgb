@@ -243,9 +243,7 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
         };
 
         asset.content2.frameData.forEach((d, i) => {
-          d.forEach((data) => {
-            todo++;
-          });
+          todo += d.length;
         });
 
         asset.content2.frameData.forEach((d, i) => {
@@ -600,8 +598,7 @@ RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
         visible: true,
         x: 0,
         y: 0,
-        tileStartDrawPosition: "rightup",
-        mgb_tiledrawdirection: "rightdown",   // Tile assumes 'leftup' but mgbv1 does rightdown. ***NOTE*** This is NON STANDARD for Tiled Maps
+        mgb_tiledrawdirection: "rightdown",   // Tile assumes 'rightup' but mgbv1 does rightdown. ***NOTE*** This is NON STANDARD for Tiled Maps
         data: []
       }
       _.each(l, cell => { layer.data.push(cell === "" ? 0 : nameMap.toIdx[cell]) } ) 

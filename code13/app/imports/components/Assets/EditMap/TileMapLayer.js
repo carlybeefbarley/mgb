@@ -8,6 +8,10 @@ import TileCollection from "./Tools/TileCollection.js";
 import AbstractLayer from "./AbstractLayer.js";
 import TileHelper from "./TileHelper.js";
 
+const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+const FLIPPED_VERTICALLY_FLAG   = 0x40000000;
+const FLIPPED_DIAGONALLY_FLAG   = 0x20000000;
+
 export default class TileMapLayer extends AbstractLayer {
   /* lifecycle functions */
   constructor(...args){
@@ -21,7 +25,6 @@ export default class TileMapLayer extends AbstractLayer {
 
     this.kind = LayerTypes.tile;
 
-    this._mup = this.handleMouseUp.bind(this);
 
     this.startingTilePos = null;
     this.lastTilePos = null;
@@ -30,13 +33,56 @@ export default class TileMapLayer extends AbstractLayer {
     this.isDirtySelection = false;
     this.isDirty = true;
     this.isVisible = false;
+    this.isMouseOver = false;
     this.lastTimeout = 0;
+
+    this.drawInfo = {
+      v: 1,
+      h: 1,
+      d: 0
+    };
+
+    this.ctrl = {
+      v: 1,
+      h: 1,
+      d: 0
+    };
+
+    this._mup = this.handleMouseUp.bind(this);
 
     this._raf = () => {
       this._drawTiles();
       window.requestAnimationFrame(this._raf);
     };
     this._raf();
+
+    this._kup = (e) => {
+      const w = e.which;
+      /*console.log("KEY UP!");
+      if(w == "A".charCodeAt(0)){
+        this.ctrl.v = this.ctrl.v > 0 ? -1 : 1;
+      }
+      if(w == "S".charCodeAt(0)){
+        this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
+      }
+      if(w == "D".charCodeAt(0)){
+        this.ctrl.d = !this.ctrl.d;
+      }*/
+
+      if(w == "Z".charCodeAt(0)){
+        if(!e.shiftKey){
+          this.rotate();
+        }
+        else{
+          this.rotateBack();
+        }
+      }
+      if(w == "X".charCodeAt(0)){
+        this.flip();
+      }
+      this.draw();
+    };
+
   }
   componentDidMount(){
     this.adjustCanvas();
@@ -47,14 +93,17 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawTiles();
 
     document.body.addEventListener("mouseup", this._mup);
+    window.addEventListener("keyup", this._kup);
     this.isVisible = true;
   }
+
   componentWillUnmount(){
     const index = this.props.map.layers.indexOf(this);
     if(index > -1){
       this.props.map.layers.splice(index, 1);
     }
     document.body.removeEventListener("mouseup", this._mup);
+    window.removeEventListener("keyup", this._kup);
     this.isVisible = false;
   }
   /* endof lifecycle functions */
@@ -113,6 +162,64 @@ export default class TileMapLayer extends AbstractLayer {
       this.options.data.splice(i*this.options.width, 0, 0);
     }
     this.options.width++;
+  }
+
+  rotate(){
+    //this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
+    this.ctrl.d = !this.ctrl.d;
+
+    if(this.ctrl.h == 1 && this.ctrl.v == 1) {
+      this.ctrl.h = -1;
+    }
+    else{
+      if(this.ctrl.v == 1){
+        this.ctrl.v = -1;
+      }
+      else{
+        if(this.ctrl.h == -1){
+          this.ctrl.h = 1;
+        }
+        else{
+          this.ctrl.v = 1;
+        }
+      }
+    }
+  }
+  rotateBack(){
+    //this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
+    this.ctrl.d = !this.ctrl.d;
+
+    if(this.ctrl.h == 1 && this.ctrl.v == 1) {
+      this.ctrl.v = -1;
+    }
+    else{
+      if(this.ctrl.h == 1){
+        this.ctrl.h = -1;
+      }
+      else{
+        if(this.ctrl.v == -1){
+          this.ctrl.v = 1;
+        }
+        else{
+          this.ctrl.h = 1;
+        }
+      }
+    }
+  }
+  flip(){
+    this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
+  }
+
+  fixRotation(id){
+    if(this.ctrl.h == -1){
+      this.options.data[id] |= FLIPPED_HORIZONTALLY_FLAG;
+    }
+    if(this.ctrl.v == -1){
+      this.options.data[id] |= FLIPPED_VERTICALLY_FLAG;
+    }
+    if(this.ctrl.d){
+      this.options.data[id] |= FLIPPED_DIAGONALLY_FLAG;
+    }
   }
 
   getTilePosInfo(e){
@@ -215,6 +322,7 @@ export default class TileMapLayer extends AbstractLayer {
     if(!d) {
       return;
     }
+    //console.log("DrawTiles()");
 
     const widthInTiles = Math.ceil(  (this.ctx.canvas.width / camera.zoom) / mapData.tilewidth  );
     const heightInTiles = Math.ceil( (this.ctx.canvas.height / camera.zoom) / mapData.tileheight);
@@ -224,17 +332,19 @@ export default class TileMapLayer extends AbstractLayer {
     if(skipy < 0){skipy = 0;}
     let endy = skipy + heightInTiles*2;
     endy = Math.min(endy, this.options.height);
-    endy += 1;
+    //endy += 1;
 
     let skipx = Math.floor(-camera.x / mapData.tilewidth);
-    if(skipx < 0){skipx = 0;}
     let endx = skipx + widthInTiles*2;
     endx = Math.min(endx, this.options.width);
-    endx += 1;
+    //endx += 1;
 
     // loop through large tiles
     skipx -= widthInTiles;
     skipy -= heightInTiles;
+
+    if(skipx < 0){skipx = 0;}
+    if(skipy < 0){skipy = 0;}
 
     let i=0;
     for (let y = skipy; y < endy; y++) {
@@ -247,16 +357,33 @@ export default class TileMapLayer extends AbstractLayer {
         }
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos);
 
-        const pal = palette[d[i]];
+        const tileId = d[i] & ( ~(FLIPPED_HORIZONTALLY_FLAG |
+                                FLIPPED_VERTICALLY_FLAG |
+                                FLIPPED_DIAGONALLY_FLAG) );
+
+        this.drawInfo.h = (d[i] & FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1;
+        this.drawInfo.v = (d[i] & FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1;
+        this.drawInfo.d = (d[i] & FLIPPED_DIAGONALLY_FLAG  );
+
+        const pal = palette[tileId];
         if (pal) {
+
           this.drawTile(pal, pos, map.spacing);
         }
       }
     }
+    this.isDirty = false;
 
-    this._highlightTiles();
+    this.drawInfo.d = this.ctrl.d;
+    this.drawInfo.v = this.ctrl.v;
+    this.drawInfo.h = this.ctrl.h;
+
+    if(this.isMouseOver == true) {
+      this._highlightTiles();
+    }
     this.drawSelection();
     this.drawSelection(true);
+
   }
   drawTile(pal, pos, spacing = 0, clear = false){
     //console.log("draw Tile:", pal);
@@ -295,6 +422,7 @@ export default class TileMapLayer extends AbstractLayer {
         }
       }
     }
+
     const map = this.props.map;
     const camera = this.camera;
 
@@ -339,20 +467,32 @@ export default class TileMapLayer extends AbstractLayer {
         map.data.tileheight * camera.zoom
       );
     }
+    this.ctx.save();
+    const tx = drawX + drawW * 0.5;
+    const ty = drawY + drawH * 0.5;
+    this.ctx.translate(tx, ty);
+
+
+    if(this.drawInfo.d){
+      // there should be more elegant way to rotate / flip tile
+      this.ctx.rotate(-Math.PI * 0.5 * this.drawInfo.h * this.drawInfo.v);
+      this.ctx.scale(this.drawInfo.h * -1, this.drawInfo.v);
+    }
+    else{
+      this.ctx.scale(this.drawInfo.h, this.drawInfo.v);
+    }
+
+    this.ctx.translate(-tx, -ty);
     this.ctx.drawImage(pal.image,
       pal.x, pal.y, pal.w , pal.h ,
       drawX, drawY,
       drawW, drawH
     );
-
+    this.ctx.restore();
   }
 
   //drawTiles will call this
   _highlightTiles(e = this.lastEvent){
-    if(!this.lastEvent){
-      return;
-    }
-
     const map = this.props.map;
     const ts = map.map.tilesets[map.activeTileset];
     const palette = map.gidCache;
@@ -397,7 +537,7 @@ export default class TileMapLayer extends AbstractLayer {
       this.highlightTile(pos, "rgba(0,0,255,0.3)", ts);
     }
     else if( map.collection.length){
-
+      this.ctx.globalAlpha = 0.6;
       const tpos = new TileSelection(pos);
       let ox = map.collection[0].x;
       let oy = map.collection[0].y;
@@ -410,25 +550,34 @@ export default class TileMapLayer extends AbstractLayer {
           tpos.x = pos.x + sel.x - ox;
           tpos.y = pos.y + sel.y - oy;
 
-          this.ctx.globalAlpha = 0.6;
-          const pal = palette[sel.gid];
+          let gid = sel.gid;
+          // TODO: way to apply transformations to multiple tiles
+          if(map.collection.length > 1) {
+            this.drawInfo.h = (gid & FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1;
+            this.drawInfo.v = (gid & FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1;
+            this.drawInfo.d = (gid & FLIPPED_DIAGONALLY_FLAG  );
+          }
+          gid &= ( ~( FLIPPED_HORIZONTALLY_FLAG |
+          FLIPPED_VERTICALLY_FLAG |
+          FLIPPED_DIAGONALLY_FLAG) );
+
+          const pal = palette[gid];
           if(pal){
             this.drawTile(pal, tpos, map.spacing);
           }
           this.highlightTile(tpos, "rgba(0,0,255,0.3)", ts);
-          this.ctx.globalAlpha = 1;
+
         }
       }
+      this.ctx.globalAlpha = 1;
     }
-    this.drawSelection();
-
     this.prevTile = pos;
 
   }
   highlightTile(pos, fillStyle, ts){
     const map = this.props.map;
     const camera = this.camera;
-    let width, height;
+
     // make little bit smaller highlight - while zooming - alpha bleeds out a little bit
     let drawX = (pos.x * (map.data.tilewidth  + map.spacing) + camera.x) * camera.zoom;
     let drawY = (pos.y * (map.data.tileheight + map.spacing) + camera.y) * camera.zoom + 0.5;
@@ -475,16 +624,22 @@ export default class TileMapLayer extends AbstractLayer {
 
     let sel;
     const toDraw = tmp ? map.tmpSelection : map.selection;
-
     for(let i=0; i<toDraw.length; i++){
       sel = toDraw[i];
       if(!sel) {
         continue;
       }
 
+      let gid = sel.gid &  ( ~( FLIPPED_HORIZONTALLY_FLAG |
+        FLIPPED_VERTICALLY_FLAG |
+        FLIPPED_DIAGONALLY_FLAG) );
 
-      const pal = palette[sel.gid];
+      const pal = palette[gid];
       if(pal){
+        this.drawInfo.h = (sel.gid & FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1;
+        this.drawInfo.v = (sel.gid & FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1;
+        this.drawInfo.d = (sel.gid & FLIPPED_DIAGONALLY_FLAG  );
+
         this.ctx.globalAlpha = 0.5;
         this.drawTile(pal, sel, map.spacing);
         this.ctx.globalAlpha = 1;
@@ -526,7 +681,7 @@ export default class TileMapLayer extends AbstractLayer {
   handleMouseMove(e){
     const nat = e.nativeEvent ? e.nativeEvent : e;
     this.lastEvent = nat;
-
+    this.isMouseOver = true;
     if(edit[map.options.mode]){
       // not visible
       if(!this.options.visible){
@@ -540,9 +695,9 @@ export default class TileMapLayer extends AbstractLayer {
   }
   onMouseLeave(e){
     const nat = e.nativeEvent ? e.nativeEvent : e;
-    this.prevTile = null;
+    this.isMouseOver = false;
     this.map.tmpSelection.clear();
-    this.lastEvent = nat
+    this.lastEvent = nat;
     if(this.isDirtySelection){
       this.map.selection.clear();
     }
@@ -655,6 +810,25 @@ edit[EditModes.fill] = function(e, up){
   return;
 };
 edit[EditModes.stamp] = function(e, up, saveForUndo = true){
+  // button 2 is for the map movement and 3d rotate
+  // we will use shift + button 1
+  if(e.shiftKey){
+    if(up){
+      this.map.swapOutSelection();
+      this.map.selectionToCollection();
+      this.map.selection.clear();
+    }
+    else{
+      edit[EditModes.rectanlge].call(this, e, up);
+    }
+    this.drawTiles();
+    return;
+  }
+  if(e.ctrlKey){
+    edit[EditModes.eraser].call(this, e, up);
+    this.drawTiles();
+    return;
+  }
   // nothing from tileset is selected
   const pos = this.getTilePosInfo(e);
   if(this.lastTilePos && this.lastTilePos.isEqual(pos) && !up && e.type != "mousedown"){
@@ -679,6 +853,7 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
     if (this.map.selection.length > 0) {
       if (this.map.selection.indexOfId(pos.id) > -1) {
         this.options.data[pos.id] = ts.gid;
+        this.fixRotation(pos.id);
       }
     }
     else {
@@ -706,6 +881,8 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
       }
 
       this.options.data[pos.id] = ts.gid;
+      this.fixRotation(pos.id);
+
     }
     this.map.redrawGrid();
     this.drawTiles();
@@ -724,35 +901,33 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
     if( tpos.x < 0 ){
       this.increaseSizeToLeft(tpos);
       edit[EditModes.stamp].call(this, e, up, false);
-      //this.drawTiles();
       return;
     }
     if( tpos.y < 0 ){
       this.increaseSizeToTop(tpos);
       edit[EditModes.stamp].call(this, e, up, false);
-      //this.drawTiles();
       return;
     }
     if(tpos.x > this.options.width-1){
       this.increaseSizeToRight(tpos);
       edit[EditModes.stamp].call(this, e, up), false;
-      //this.drawTiles();
       return;
     }
     if ( tpos.y > this.options.height-1) {
       this.increaseSizeToBottom(tpos);
       edit[EditModes.stamp].call(this, e, true, false);
-      //this.drawTiles();
       return;
     }
     tpos.id = tpos.x + tpos.y * this.options.width;
     if (this.map.selection.length > 0) {
       if (this.map.selection.indexOfId(tpos.id) > -1) {
         this.options.data[tpos.id] = ts.gid;
+        this.fixRotation(tpos.id);
       }
     }
     else {
       this.options.data[tpos.id] = ts.gid;
+      this.fixRotation(tpos.id);
     }
   }
   this.map.redrawGrid();
@@ -777,7 +952,9 @@ edit[EditModes.eraser] = function(e, up){
   }
   this.drawTiles();
 };
+/* selections */
 edit[EditModes.rectanlge] = function(e, mouseUp){
+  this.drawTiles();
   const pos = this.getTilePosInfo(e);
   pos.gid = this.options.data[pos.id];
   if(mouseUp){
@@ -814,6 +991,7 @@ edit[EditModes.rectanlge] = function(e, mouseUp){
   this.isDirtySelection = false;
 };
 edit[EditModes.wand] = function(e, up, collection = this.map.tmpSelection){
+  this.drawTiles();
   if(up){
     if(!e.shiftKey){
       this.map.selection.clear();
@@ -917,6 +1095,7 @@ edit[EditModes.wand] = function(e, up, collection = this.map.tmpSelection){
   this.isDirtySelection = false;
 };
 edit[EditModes.picker] = function(e, up){
+  this.drawTiles();
   if(up){
     if(!e.shiftKey && !e.ctrlKey){
       this.map.selection.clear();

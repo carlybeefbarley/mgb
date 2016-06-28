@@ -7,7 +7,8 @@ import dataUriToBuffer from 'data-uri-to-buffer';
 import AWS from 'aws-sdk';
 import pako from 'pako';
 import xml2js from 'xml2js';
-import Canvas from 'canvas';
+//import Canvas from 'canvas';
+import Jimp from 'jimp';
 
 const aws_s3_region = 'us-east-1'       // US-East-1 is the 'global' site for S3
 
@@ -156,6 +157,8 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
 
 // TODO: cache + invalidate cache
 // TODO: check hidden layers
+/*
+node-canvas implementation - faster (theoretically) than Jimp but requires to compile cairo
 RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
   get: function () {
     "use strict";
@@ -204,7 +207,74 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
     return Meteor.wrapAsync(done)();
   }
 });
+*/
 
+/*
+Jimp is pure JS implementation - slower (theoretically), but doesn't require native modules
+ */
+RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
+  get: function () {
+    "use strict";
+    const asset = Azzets.findOne(this.urlParams.id);
+    if(!asset){
+      return {
+        statusCode: 404
+      };
+    }
+
+    const c2 = asset.content2;
+    const done = (callback) => {
+      let todo = 0;
+      new Jimp(c2.width * c2.frameData.length, c2.height, (err, canvas) => {
+        if(err){
+          callback(err);
+          return;
+        }
+        const loadImageAndDraw = (src, offset) => {
+          new Jimp(dataUriToBuffer(src), (err, img) => {
+            if(err){
+              console.error("Failed to load asset:", err);
+              subDone();
+              return;
+            }
+            canvas.composite(img, offset * img.bitmap.width, 0);
+            subDone();
+          });
+        };
+
+        asset.content2.frameData.forEach((d, i) => {
+          d.forEach((data) => {
+            todo++;
+          });
+        });
+
+        asset.content2.frameData.forEach((d, i) => {
+          d.forEach((data) => {
+            loadImageAndDraw(data, i);
+          });
+        });
+
+        const subDone = () => {
+          todo--;
+          if(todo){
+            return;
+          }
+
+          canvas.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+            callback(null, {
+              statusCode: 200,
+              headers: {
+                'Content-Type': 'image/png'
+              },
+              body: buffer
+            });
+          });
+        };
+      });
+    };
+    return Meteor.wrapAsync(done)();
+  }
+});
 
 // This lets the client easily get user avatar.. e.g http://localhost:3000/api/user/raMDZ9atjHABXu5KG/avatar
 RestApi.addRoute('user/:id/avatar', {authRequired: false}, {

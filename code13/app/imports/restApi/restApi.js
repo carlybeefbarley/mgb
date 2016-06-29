@@ -478,10 +478,11 @@ function _makeNameMap(layers)
 }
 
 // SECOND ATTEMPT - goal is to get VERY close to TMX/JSON format that our map editor uses
-// MGBv1 MAP
+// MGBv1 MAP -> MGB2 map on-the-fly (use redirects for tiles)
 // eg http://localhost:3000/api/mgb1/map2/.acey53/Club%20Penguin%20Agents%20Under%20Attack/HQ
 // or http://localhost:3000/api/mgb1/map2/foo/project1/chaosMap1
-// or http://localhost:3000/api/mgb1/map2/drblakeman/Two%20Cities%20Bother%20and%20Wise/LOST%20IN%20THE%20OLD%20FOREST - include rotations/flips
+// or http://localhost:3000/api/mgb1/map2/drblakeman/Two%20Cities%20Bother%20and%20Wise/The%20Map3
+// or http://localhost:3000/api/mgb1/map2/drblakeman/Two%20Cities%20Bother%20and%20Wise/LOST%20IN%20THE%20OLD%20FOREST - includes rotations/flips
 
 // TODO: Tileset  imagewidth/imageheight/tileheight/tilewidth params
 // TODO: Event layer (layer[3].. the 4th layer. For MGBv1 this is mostly warps/teleports, game-win, and start/stop music)

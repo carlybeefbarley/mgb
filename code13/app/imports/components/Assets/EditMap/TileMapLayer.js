@@ -59,7 +59,8 @@ export default class TileMapLayer extends AbstractLayer {
 
   }
   componentDidMount(...args){
-    this.super(...args);
+
+    super.componentDidMount(...args);
     this.adjustCanvas();
     const canvas = this.refs.canvas;
     this.ctx = canvas.getContext("2d");
@@ -72,7 +73,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   componentWillUnmount(...args){
-    this.super(...args);
+    super.componentWillUnmount(...args);
 
     const index = this.props.map.layers.indexOf(this);
     if(index > -1){

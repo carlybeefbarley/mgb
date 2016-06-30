@@ -12,7 +12,15 @@ export default class Layers extends React.Component {
   }
 
   handleClick(layerNum){
+
+    let l = this.map.getActiveLayer();
+    l && l.deactivate();
+
     this.map.activeLayer = layerNum;
+
+    l = this.map.getActiveLayer();
+    l && l.activate();
+
     this.map.update();
 
     //this.forceUpdate();

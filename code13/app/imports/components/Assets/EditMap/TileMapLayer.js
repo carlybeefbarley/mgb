@@ -83,6 +83,15 @@ export default class TileMapLayer extends AbstractLayer {
     window.removeEventListener("keyup", this._kup);
     this.isVisible = false;
   }
+
+  activate(){
+    if(this.activeMode){
+      this.map.setMode(this.activeMode);
+    }
+  }
+  deactivate(){
+    this.activeMode = this.map.options.mode;
+  }
   /* endof lifecycle functions */
 
   get options(){

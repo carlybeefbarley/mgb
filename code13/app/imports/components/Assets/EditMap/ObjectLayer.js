@@ -2,8 +2,10 @@
 import React from 'react';
 import AbstractLayer from "./AbstractLayer.js";
 import TileHelper from "./TileHelper.js";
-import LayerTypes from "./Tools/LayerTypes.js";
 import ObjectHelper from "./ObjectHelper.js";
+
+import LayerTypes from "./Tools/LayerTypes.js";
+import EditModes from "./Tools/EditModes.js";
 
 // TODO move these to some good place.. probably mapArea???
 const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
@@ -25,6 +27,13 @@ export default class ObjectLayer extends AbstractLayer {
     };
 
     this.pickedObject = null;
+  }
+
+  activate(){
+    if(!this.activeMode) {
+      this.map.setMode(EditModes.rectanlge);
+    }
+    super.activate();
   }
 
   getMaxId(){
@@ -80,9 +89,10 @@ export default class ObjectLayer extends AbstractLayer {
     if(e.button !== 0){
       return;
     }
-
-    this.pickedObject = this.pickObject(e);
-    this.isDirty = true;
+    if(this.map.options.mode == EditModes.rectanlge){
+      this.pickedObject = this.pickObject(e);
+      this.isDirty = true;
+    }
   }
   handleMouseUp(ep){
 
@@ -93,7 +103,7 @@ export default class ObjectLayer extends AbstractLayer {
       return;
     }
 
-    if(this.map.collection.length && this.map.options.mode == "stamp"){
+    if(this.map.collection.length && this.map.options.mode == EditModes.stamp){
       const tile = this.map.collection[0];
       const pal = this.map.palette[tile.gid];
 

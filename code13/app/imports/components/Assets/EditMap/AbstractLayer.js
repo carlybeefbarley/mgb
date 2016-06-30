@@ -13,6 +13,7 @@ export default class AbstractLayer extends React.Component {
     super(...args);
     this.ctx = null;
     this.mouseDown = false;
+
     this._mup = this.handleMouseUp.bind(this);
     this._kup = this._onKeyUp.bind(this);
   }
@@ -33,7 +34,17 @@ export default class AbstractLayer extends React.Component {
     document.body.removeEventListener("mouseup", this._mup);
     window.removeEventListener("keyup", this._kup);
   }
+  // this layer has been selected
+  activate(){
+    if(this.activeMode){
+      this.map.setMode(this.activeMode);
+    }
+  }
 
+  // this layer has been deselected - called before another layer activate
+  deactivate(){
+    this.activeMode = this.map.options.mode;
+  }
   /* endof lifecycle functions */
 
   get options() {

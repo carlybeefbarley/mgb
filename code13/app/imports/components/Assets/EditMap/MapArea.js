@@ -670,7 +670,9 @@ export default class MapArea extends React.Component {
     }
   }
 
-
+  setMode(mode){
+    this.refs.tools.enableMode(mode);
+  }
   importFromDrop (e) {
     console.log("DROP map area!");
     const layer = this.getActiveLayer();

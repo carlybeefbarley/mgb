@@ -56,35 +56,10 @@ export default class TileMapLayer extends AbstractLayer {
     };
     this._raf();
 
-    this._kup = (e) => {
-      const w = e.which;
-      /*console.log("KEY UP!");
-      if(w == "A".charCodeAt(0)){
-        this.ctrl.v = this.ctrl.v > 0 ? -1 : 1;
-      }
-      if(w == "S".charCodeAt(0)){
-        this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
-      }
-      if(w == "D".charCodeAt(0)){
-        this.ctrl.d = !this.ctrl.d;
-      }*/
-
-      if(w == "Z".charCodeAt(0)){
-        if(!e.shiftKey){
-          this.rotate();
-        }
-        else{
-          this.rotateBack();
-        }
-      }
-      if(w == "X".charCodeAt(0)){
-        this.flip();
-      }
-      this.draw();
-    };
 
   }
-  componentDidMount(){
+  componentDidMount(...args){
+    this.super(...args);
     this.adjustCanvas();
     const canvas = this.refs.canvas;
     this.ctx = canvas.getContext("2d");
@@ -93,11 +68,12 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawTiles();
 
     document.body.addEventListener("mouseup", this._mup);
-    window.addEventListener("keyup", this._kup);
     this.isVisible = true;
   }
 
-  componentWillUnmount(){
+  componentWillUnmount(...args){
+    this.super(...args);
+
     const index = this.props.map.layers.indexOf(this);
     if(index > -1){
       this.props.map.layers.splice(index, 1);
@@ -113,17 +89,6 @@ export default class TileMapLayer extends AbstractLayer {
   }
   get map(){
     return this.props.map;
-  }
-
-  // this might get pretty slow and at some point there will be requirement for camera events
-  get camera(){
-    if(!this._camera){
-      this._camera = Object.create(this.map.camera);
-    }
-    this._camera.x = this.map.camera.x + this.options.x;
-    this._camera.y = this.map.camera.y + this.options.y;
-    this._camera.zoom = this.map.camera.zoom;
-    return this._camera;
   }
 
   isActive(){
@@ -703,6 +668,33 @@ export default class TileMapLayer extends AbstractLayer {
     }
 
     this.drawTiles();
+  }
+
+  onKeyUp(e){
+    const w = e.which;
+    /*console.log("KEY UP!");
+     if(w == "A".charCodeAt(0)){
+     this.ctrl.v = this.ctrl.v > 0 ? -1 : 1;
+     }
+     if(w == "S".charCodeAt(0)){
+     this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
+     }
+     if(w == "D".charCodeAt(0)){
+     this.ctrl.d = !this.ctrl.d;
+     }*/
+
+    if(w == "Z".charCodeAt(0)){
+      if(!e.shiftKey){
+        this.rotate();
+      }
+      else{
+        this.rotateBack();
+      }
+    }
+    if(w == "X".charCodeAt(0)){
+      this.flip();
+    }
+    this.draw();
   }
   /* end of events */
 

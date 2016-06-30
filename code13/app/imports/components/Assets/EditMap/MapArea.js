@@ -198,12 +198,18 @@ export default class MapArea extends React.Component {
         self.meta.options.camera.y = val;
         this._y = val;
       },
+      get width(){
+        return self.refs.mapElement.offsetWidth / this.zoom;
+      },
+      get height(){
+        return self.refs.mapElement.offsetHeight / this.zoom;
+      },
       get y(){return this._y},
       set zoom(val){
         self.meta.options.camera.zoom = val;
         this._zoom = val;
       },
-      get zoom(){return this._zoom}
+      get zoom(){return this._zoom},
     };
     return this.meta.options.camera;
   }
@@ -552,16 +558,17 @@ export default class MapArea extends React.Component {
     if(e){
       // zoom right on the cursor position
       // feels like a I need a separate class for camera at this point..
-      const bounds = this.refs.mapElement.getBoundingClientRect();
+      // .getBoundingClientRect(); returns width with transformations - that is not what is needed in this case
+      const bounds = this.refs.mapElement;
 
-      const ox = e.nativeEvent.offsetX / bounds.width;
-      const oy = e.nativeEvent.offsetY / bounds.height;
+      const ox = e.nativeEvent.offsetX / bounds.offsetWidth;
+      const oy = e.nativeEvent.offsetY / bounds.offsetHeight;
 
-      const width = bounds.width / this.camera.zoom;
-      const newWidth = bounds.width / newZoom;
+      const width = bounds.offsetWidth / this.camera.zoom;
+      const newWidth = bounds.offsetWidth / newZoom;
 
-      const height = bounds.height / this.camera.zoom;
-      const newHeight = bounds.height / newZoom;
+      const height = bounds.offsetHeight / this.camera.zoom;
+      const newHeight = bounds.offsetHeight / newZoom;
 
       this.camera.x -= (width - newWidth) * ox;
       this.camera.y -= (height - newHeight) * oy;

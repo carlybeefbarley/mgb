@@ -14,6 +14,7 @@ export default class AbstractLayer extends React.Component {
     this.ctx = null;
     this.mouseDown = false;
     this._mup = this.handleMouseUp.bind(this);
+    this._kup = this._onKeyUp.bind(this);
   }
   componentDidMount() {
     this.adjustCanvas();
@@ -22,7 +23,7 @@ export default class AbstractLayer extends React.Component {
 
     this.props.map.layers.push(this);
     document.body.addEventListener("mouseup", this._mup);
-
+    window.addEventListener("keyup", this._kup);
   }
   componentWillUnmount() {
     const index = this.props.map.layers.indexOf(this);
@@ -30,6 +31,7 @@ export default class AbstractLayer extends React.Component {
       this.props.map.layers.splice(index, 1);
     }
     document.body.removeEventListener("mouseup", this._mup);
+    window.removeEventListener("keyup", this._kup);
   }
 
   /* endof lifecycle functions */
@@ -37,12 +39,16 @@ export default class AbstractLayer extends React.Component {
   get options() {
     return this.props.data;
   }
+  get data() {
+    return this.props.data;
+  }
   get map() {
     return this.props.map;
   }
+
   // this might get pretty slow and at some point there will be requirement for camera events
-  get camera() {
-    if (!this._camera) {
+  get camera(){
+    if(!this._camera){
       this._camera = Object.create(this.map.camera);
     }
     this._camera.x = this.map.camera.x + this.options.x;
@@ -61,8 +67,9 @@ export default class AbstractLayer extends React.Component {
   }
 
   draw(){
-
+    this.isDirty = true;
   }
+
 
   /* events */
   handleMouseUp(){
@@ -70,6 +77,28 @@ export default class AbstractLayer extends React.Component {
   }
   handleMouseDown(){
     this.mouseDown = true;
+  }
+  _onKeyUp(e){
+    if(this.isActive()){
+      this.onKeyUp(e);
+    }
+  }
+
+  render(){
+    return (<div
+      ref="layer"
+      className={this.isActive() ? "tilemap-layer" : "tilemap-layer no-events"}
+      data-name={this.props.data.name}
+      >
+      <canvas ref="canvas"
+              onMouseMove={this.handleMouseMove.bind(this)}
+              onMouseDown={this.handleMouseDown.bind(this)}
+              onMouseLeave={this.onMouseLeave.bind(this)}
+              style={{
+              display: "block"
+            }}>
+      </canvas>
+    </div>);
   }
 
 }

@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import EditGraphic from './EditGraphic/EditGraphic.js';
 import EditCode from './EditCode/EditCode.js';
 import EditMap from './EditMap/EditMap.js';
+import EditDoc from './EditDoc/EditDoc.js';
 import EditMGBUI from './EditMGBUI/EditMGBUI.js';
 import EditUnknown from './EditUnknown.js';
 
@@ -11,6 +12,7 @@ const editElementsForKind = {
   'graphic': EditGraphic,
   'code':    EditCode,
   'map':     EditMap,
+  'doc':     EditDoc,
   '_mgbui':  EditMGBUI
 }
 

@@ -47,6 +47,7 @@ export const AssetKinds = {
   "map":     { name: "Map",     selfPlural: false,  disable: false, longName: "Game Level Map",  icon: "marker", description: "Map/Level used in a game" },
   "physics": { name: "Physics", selfPlural: true,   disable: true,  longName: "Physics Config",  icon: "rocket", description: "Physics configuration" },
   "code":    { name: "Code",    selfPlural: true,   disable: false, longName: "Code Script",     icon: "puzzle", description: "Source code script" },
+  "doc":     { name: "Doc",     selfPlural: false,  disable: false, longName: "Document",        icon: "file text outline", description: "Text Document" },
   "cheatsheet": { name: "Cheatsheet", selfPlural: false,  disable: true, longName: "Cheat Sheet",icon: "student", description: "Cheat Sheet to help reember useful stuff" },
   "cutscene":{ name: "Cutscene",selfPlural: false,  disable: true,  longName: "Cut Scene",       icon: "file video outline", description: "Cut scene used in a game" },
   "audio":   { name: "Audio",   selfPlural: true,   disable: true,  longName: "Audio sound",     icon: "file audio outline", description: "Sound Effect, song, voice etc"},

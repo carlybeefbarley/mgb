@@ -33,11 +33,11 @@ import stickers from './stickers';
 import mentions from './mentions';
 import {
   // convertToRaw,
-  // convertFromRaw,
+  //convertFromRaw,
   ContentState,
   EditorState,
 } from 'draft-js';
-// import initialState from './initialState';
+//import initialState from './initialState';
 
 const emojiPlugin = createEmojiPlugin();
 const hashtagPlugin = createHashtagPlugin();
@@ -91,8 +91,8 @@ const plugins = [
 
 
 
-const contentState = ContentState.createFromBlockArray(convertFromRaw(initialState));
-//const contentState = ContentState.createFromText('Initial text …');
+//const contentState = ContentState.createFromBlockArray(convertFromRaw(initialState));
+const contentState = ContentState.createFromText(`You can edit here, but this won't save yet. I'm not sure yet how I feel about draftjs as a editor`);
 
 export default class EditDoc extends Component {
 
@@ -179,7 +179,5 @@ export default class EditDoc extends Component {
         </div>
       </div>
     );
-  }
-}
   }
 }

@@ -483,7 +483,8 @@ function _makeNameMap(layers)
 // or http://localhost:3000/api/mgb1/map2/foo/project1/chaosMap1
 // or http://localhost:3000/api/mgb1/map2/drblakeman/Two%20Cities%20Bother%20and%20Wise/The%20Map3
 // or http://localhost:3000/api/mgb1/map2/drblakeman/Two%20Cities%20Bother%20and%20Wise/LOST%20IN%20THE%20OLD%20FOREST - includes rotations/flips
-
+// or http://localhost:3000/api/mgb1/map2/hooliganza/Crab%20Invasion%20II/castle%20room%201
+// or http://localhost:3000/api/mgb1/map2/hooliganza/project1/Crab%20Invasion
 // TODO: Tileset  imagewidth/imageheight/tileheight/tilewidth params
 // TODO: Event layer (layer[3].. the 4th layer. For MGBv1 this is mostly warps/teleports, game-win, and start/stop music)
 RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {

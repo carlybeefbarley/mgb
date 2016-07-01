@@ -237,7 +237,7 @@ export default class ObjectLayer extends AbstractLayer {
     // translate to canvas drawing pos
     this.ctx.translate(0, -h);
     if(this.drawDebug && obj.name){
-      this.ctx.fillText(obj.name + "("+x.toFixed(2)+","+y.toFixed(2)+")", 0, 0);
+      this.ctx.fillText(obj.name + "("+obj.x.toFixed(2)+","+obj.y.toFixed(2)+")", 0, 0);
     }
 
     if(flipX < 0 || flipY < 0){

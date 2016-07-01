@@ -15,8 +15,8 @@ const ObjectHelper = window.ObjectHelper = {
     return  !(
       // add extra space to all box sides as pos to camera is related from drawing position
       // and also rotation point in tiled is left / bottom corner
-      -cam.x + cam.width < box.x - box.width ||
-      -cam.y + cam.height < box.y - box.height ||
+      -cam.x + cam.dwidth < box.x - box.width ||
+      -cam.y + cam.dheight < box.y - box.height ||
       -cam.x > box.x + box.width * 2 ||
       -cam.y > box.y + box.height * 2);
   },

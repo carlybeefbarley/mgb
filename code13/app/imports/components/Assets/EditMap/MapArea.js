@@ -16,7 +16,12 @@ import TileCollection from "./Tools/TileCollection.js";
 import TileSelection from "./Tools/TileSelection.js";
 import EditModes from "./Tools/EditModes.js";
 import LayerTypes from "./Tools/LayerTypes.js";
+import Camera from "./Camera.js";
+if(!window.Proxy){
+  window.Proxy = function(obj, props){
 
+  };
+}
 
 export default class MapArea extends React.Component {
 
@@ -177,40 +182,7 @@ export default class MapArea extends React.Component {
     if(this._camera){
       return this._camera;
     }
-    // backwards compatibility with older maps.. should be safe to remove in the future
-    if(!this.meta.options.camera){
-      this.meta.options.camera = {x: 0, y: 0, zoom: 1};
-    }
-    if( !this.meta.options.camera.zoom || isNaN(this.meta.options.camera.zoom) ){
-      this.meta.options.camera.zoom = 1;
-    }
-    const self = this;
-    this._camera = {
-      _x: this.meta.options.camera.x || 0,
-      _y: this.meta.options.camera.y || 0,
-      _zoom: this.meta.options.camera.zoom || 1,
-      set x(val){
-        self.meta.options.camera.x = val;
-        this._x = val;
-      },
-      get x(){return this._x},
-      set y(val){
-        self.meta.options.camera.y = val;
-        this._y = val;
-      },
-      get width(){
-        return self.refs.mapElement.offsetWidth / this.zoom;
-      },
-      get height(){
-        return self.refs.mapElement.offsetHeight / this.zoom;
-      },
-      get y(){return this._y},
-      set zoom(val){
-        self.meta.options.camera.zoom = val;
-        this._zoom = val;
-      },
-      get zoom(){return this._zoom},
-    };
+    this._camera = new Camera(this);
     return this.meta.options.camera;
   }
   get options(){

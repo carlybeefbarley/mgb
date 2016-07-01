@@ -25,7 +25,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.selRect = {
       x: 0, y: 0, width: 0, height: 0
     };
-
+    this.drawDebug = false;
     this.pickedObject = null;
   }
 
@@ -53,7 +53,8 @@ export default class ObjectLayer extends AbstractLayer {
     const x = e.offsetX / this.camera.zoom  - this.camera.x;
     const y = e.offsetY / this.camera.zoom - this.camera.y;
     console.log("picking", x, y);
-    for(let i=0; i<this.data.objects.length; i++){
+    // reverse order last drawn - first pick
+    for(let i=this.data.objects.length-1; i>-1; i--){
       obj = this.data.objects[i];
       if(ObjectHelper.PointvsAABB(obj, x, y)){
         console.log("picked:", obj);
@@ -76,19 +77,21 @@ export default class ObjectLayer extends AbstractLayer {
 
     // TODO: movement X/Y - is not supported by all browsers!
     if(this.pickedObject){
-      this.pickedObject.x += e.movementX * this.camera.zoom;
-      this.pickedObject.y += e.movementY * this.camera.zoom;
+      this.pickedObject.x += (e.movementX / this.camera.zoom);// + this.camera.movementX;
+      this.pickedObject.y += (e.movementY / this.camera.zoom);// + this.camera.movementY;
     }
 
     this.isDirty = true;
   }
   handleMouseDown(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
-    super.handleMouseDown(e);
-
     if(e.button !== 0){
+      this.mouseDown = false;
       return;
     }
+    this.map.saveForUndo();
+    super.handleMouseDown(e);
+
     if(this.map.options.mode == EditModes.rectanlge){
       this.pickedObject = this.pickObject(e);
       this.isDirty = true;
@@ -102,7 +105,7 @@ export default class ObjectLayer extends AbstractLayer {
     if(e.target != this.refs.canvas || e.button !== 0){
       return;
     }
-
+    this.map.saveForUndo();
     if(this.map.collection.length && this.map.options.mode == EditModes.stamp){
       const tile = this.map.collection[0];
       const pal = this.map.palette[tile.gid];
@@ -138,6 +141,11 @@ export default class ObjectLayer extends AbstractLayer {
     if(e.which == 46 && this.pickedObject){
       this.deleteObject(this.pickedObject);
       this.pickedObject = null;
+    }
+
+    if(e.which == "B".charCodeAt(0)){
+      this.drawDebug = !this.drawDebug;
+      this.draw();
     }
   }
 
@@ -175,13 +183,13 @@ export default class ObjectLayer extends AbstractLayer {
     this.isDirty = false;
   }
 
-  drawTile(tileObject){
-    const gid = tileObject.gid &  ( ~( FLIPPED_HORIZONTALLY_FLAG |
+  drawTile(obj){
+    const gid = obj.gid &  ( ~( FLIPPED_HORIZONTALLY_FLAG |
       FLIPPED_VERTICALLY_FLAG |
       FLIPPED_DIAGONALLY_FLAG) );
 
-    const flipX = (tileObject.gid & FLIPPED_HORIZONTALLY_FLAG ? -1 : 1);
-    const flipY = (tileObject.gid & FLIPPED_VERTICALLY_FLAG ? -1 : 1);
+    const flipX = (obj.gid & FLIPPED_HORIZONTALLY_FLAG ? -1 : 1);
+    const flipY = (obj.gid & FLIPPED_VERTICALLY_FLAG ? -1 : 1);
     const pal = this.map.palette[gid];
     // images might be not loaded
     if(!pal){
@@ -189,10 +197,10 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     const cam = this.camera;
-    let x = (cam.x + tileObject.x) * cam.zoom;
-    let y = (cam.y + tileObject.y) * cam.zoom;
-    let w = tileObject.width * cam.zoom;
-    let h = tileObject.width * cam.zoom;
+    let x = (cam.x + obj.x) * cam.zoom;
+    let y = (cam.y + obj.y) * cam.zoom;
+    let w = obj.width * cam.zoom;
+    let h = obj.width * cam.zoom;
 
     if(this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== "rightup"){
       if(this.options.mgb_tiledrawdirection == "leftdown") {
@@ -212,19 +220,24 @@ export default class ObjectLayer extends AbstractLayer {
     this.ctx.save();
 
     const tx = x;
-    const ty = y + h;
-    // translate to TILED drawing pos
-    this.ctx.translate(tx, ty);
+    const ty = y;
 
-    if(tileObject.rotation){
+    this.ctx.translate(x, y+h);
+
+    if(this.drawDebug) {
+      //picking debug
+      this.ctx.strokeRect(0.5, 0.5, obj.width, obj.height);
+    }
+
+    if(obj.rotation){
       // rotate
-      this.ctx.rotate(tileObject.rotation * (Math.PI / 180));
+      this.ctx.rotate(obj.rotation * (Math.PI / 180));
     }
 
     // translate to canvas drawing pos
     this.ctx.translate(0, -h);
-    if(tileObject.name){
-      this.ctx.fillText(tileObject.name, 0, 0);
+    if(this.drawDebug && obj.name){
+      this.ctx.fillText(obj.name + "("+x.toFixed(2)+","+y.toFixed(2)+")", 0, 0);
     }
 
     if(flipX < 0 || flipY < 0){
@@ -238,7 +251,7 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.ctx.drawImage(pal.image, pal.x, pal.y, pal.w, pal.h, 0, 0, w, h);
 
-    if(tileObject == this.pickedObject){
+    if(obj == this.pickedObject){
       this.ctx.fillStyle="rgba(255,0,0,0.3)";
       this.ctx.fillRect(0, 0, w, h);
     }
@@ -256,23 +269,20 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.ctx.save();
 
-    const tx = x;
-    const ty = y;
-
     // translate to TILED drawing pos
-    this.ctx.translate(tx, ty);
+    this.ctx.translate(x, y);
     if(obj.rotation){
       // rotate
       this.ctx.rotate(obj.rotation * (Math.PI / 180));
     }
-    if(obj.name){
+    if(this.drawDebug && obj.name){
       this.ctx.fillText(obj.name, 0, 0);
     }
 
-    this.ctx.strokeRect(0, 0, w, h);
+    this.ctx.strokeRect(0.5, 0.5, w, h);
     if(obj == this.pickedObject){
       this.ctx.fillStyle="rgba(255,0,0,0.3)";
-      this.ctx.fillRect(0, 0, w, h);
+      this.ctx.fillRect(0.5, 0.5, w, h);
     }
 
     this.ctx.restore();

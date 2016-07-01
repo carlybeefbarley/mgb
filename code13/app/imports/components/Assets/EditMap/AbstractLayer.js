@@ -15,6 +15,7 @@ export default class AbstractLayer extends React.Component {
     this.mouseDown = false;
 
     this._mup = this.handleMouseUp.bind(this);
+    this._mov = this.handleMouseMove.bind(this);
     this._kup = this._onKeyUp.bind(this);
   }
   componentDidMount() {
@@ -25,6 +26,7 @@ export default class AbstractLayer extends React.Component {
     this.props.map.layers.push(this);
     document.body.addEventListener("mouseup", this._mup);
     window.addEventListener("keyup", this._kup);
+    window.addEventListener("mousemove", this._mov);
   }
   componentWillUnmount() {
     const index = this.props.map.layers.indexOf(this);
@@ -33,6 +35,7 @@ export default class AbstractLayer extends React.Component {
     }
     document.body.removeEventListener("mouseup", this._mup);
     window.removeEventListener("keyup", this._kup);
+    window.removeEventListener("mousemove", this._mov);
   }
   // this layer has been selected
   activate(){
@@ -102,7 +105,6 @@ export default class AbstractLayer extends React.Component {
       data-name={this.props.data.name}
       >
       <canvas ref="canvas"
-              onMouseMove={this.handleMouseMove.bind(this)}
               onMouseDown={this.handleMouseDown.bind(this)}
               onMouseLeave={this.onMouseLeave.bind(this)}
               style={{

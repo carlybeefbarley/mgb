@@ -1,4 +1,9 @@
 
+// Eraser tool. 
+
+// TODO: This is a bit confusing when erasing a lower layer - it shows erased on the top level
+// briefly, then redraws to show the change
+
 const ToolEraser = {
   name: "Eraser",
   description: "Click and drag to erase individual pixels on the frame",

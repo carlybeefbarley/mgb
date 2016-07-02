@@ -5,6 +5,9 @@ import Layer from './Layer.js';
 // TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
 
+const emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    
+
 export default class SpriteLayers extends React.Component {
 
   constructor(props) {
@@ -27,15 +30,16 @@ export default class SpriteLayers extends React.Component {
     this.props.EditGraphic.handleSelectFrame(frameID)
   }
 
-  addFrame(){
+  // Append frame at end of frame list
+  addFrame() {
     if (!this.hasPermission()) return
 
     let fN = this.props.content2.frameNames
     let newFrameName = "Frame " + (fN.length+1).toString()
     fN.push(newFrameName)
     this.props.content2.frameData.push([])
-    this.handleSave('Add frame to graphic')
-    this.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+    this.handleSave('Append frame to graphic')
+    this.forceUpdate()    // Force react to update.. needed since we need render() to create new canvasses
   }	
 
   toggleCanvasFramesVisibility() {
@@ -49,10 +53,11 @@ export default class SpriteLayers extends React.Component {
     c2.frameNames.splice(frameID+1, 0, "Frame "+(frameID+1))
     c2.frameData.splice(frameID+1, 0, [])
     for (let i=0; i<c2.layerParams.length; i++) {
-      let tmp = doCopy ? c2.frameData[frameID][i] : null
+      let tmp = doCopy ? c2.frameData[frameID][i] : emptyPixel
       c2.frameData[frameID+1].push(tmp)
     }
     this.handleSave('Insert frame', true)
+    this.forceUpdate()    // Force react to update.. needed since we need render() to create new canvasses
   }
 
   copyFrame(frameID) {
@@ -345,8 +350,10 @@ export default class SpriteLayers extends React.Component {
     let newLayerName = "Layer " + (c2.layerParams.length+1).toString()
     c2.layerParams.push({name: newLayerName, isHidden: false, isLocked: false })
     let fD = c2.frameData
+    let lN = this.props.content2.layerParams
     for (let i; i<fD.length; i++)
-      fD[i][lN.length-1] = null     // BUGBUG? What is lN?  
+      fD[i][lN.length-1] = emptypixel     // BUGBUG? What is lN?    let lN = this.props.content2.layerParams
+  
     
     this.handleSave('Add layer to graphic')
     this.props.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
@@ -598,7 +605,7 @@ export default class SpriteLayers extends React.Component {
 				      				onClick={this.insertFrameAfter.bind(this, idx, true)}
 				      				className="item">
 				      				<i className="add circle icon"></i>
-				      				New
+				      				Duplicate Frame
 				      			</div>
 				      			<div 
 				      				onClick={this.insertFrameAfter.bind(this, idx, false)}

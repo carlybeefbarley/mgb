@@ -125,7 +125,6 @@ export default class EditGraphic extends React.Component {
 
     this.handleColorChangeComplete('fg', { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} } )
 
-
     this.editCanvas.addEventListener('wheel',         this.handleMouseWheel.bind(this))
     this.editCanvas.addEventListener('mousemove',     this.handleMouseMove.bind(this))
     this.editCanvas.addEventListener('mousedown',     this.handleMouseDown.bind(this))
@@ -149,6 +148,7 @@ export default class EditGraphic extends React.Component {
     "use strict";
     window.removeEventListener("paste", this.onpaste);
   }
+
   // there are some missing params for old assets being added here
   fixingOldAssets() {
     let autoFix = false
@@ -183,7 +183,7 @@ export default class EditGraphic extends React.Component {
     // See http://semantic-ui.com/modules/popup.html#/usage
 
     let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup()
+    $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
 
     let $cp =  $a.find('.mgbColorPickerHost')
     $cp.popup({
@@ -201,7 +201,7 @@ export default class EditGraphic extends React.Component {
   }
 
 // TODO: DGOLDS to clean this up
-  initDefaultContent2()       // TODO - this isn't ideal React since it is messing with props
+  initDefaultContent2() 
   {
     let asset = this.props.asset
     if (!asset.hasOwnProperty("content2") || !asset.content2.hasOwnProperty('width')) {
@@ -218,6 +218,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+
   // React Callback: componentDidUpdate()
   componentDidUpdate(prevProps, prevState)
   {
@@ -227,7 +228,6 @@ export default class EditGraphic extends React.Component {
     {
       /* Do nothing.. */
       // console.log("Backwash prevented by marker "+recentMarker)
-
       // This is the data we just sent up.. So let's _not_ nuke any subsequent edits (i.e don't call loadAllPreviewsAsync())
       // TODO.. we may need a window of a few recentMarkers in case of slow updates. Maybe just hold back sends while there is a pending save?
     }
@@ -652,25 +652,10 @@ export default class EditGraphic extends React.Component {
 
 // Add/Select/Remove etc animation frames
 
-  doSwapCanvases(i,j)
-  {
-    if (!this.props.canEdit)
-    { 
-      this.props.editDeniedReminder()
-      return
-    }
-        
-    let c2 = this.props.asset.content2
-    var tmp0 = i.getImageData(0,0, c2.width, c2.height)
-    var tmp1 = j.getImageData(0,0, c2.width, c2.height)
-    j.putImageData(tmp0, 0, 0)
-    i.putImageData(tmp1, 0, 0)
-  }
-
-
   handleSelectFrame(frameIndex)
   {
     this.doSnapshotActivity(frameIndex)
+    recentMarker = null       // Since we now want to reload data for our new EditCanvas
     this.setState( { selectedFrameIdx: frameIndex}  )
 
     // for new frame clears preview canvases and update edit canvas
@@ -789,7 +774,7 @@ export default class EditGraphic extends React.Component {
     let c2    = asset.content2
 
     if (this.previewCanvasArray && !dontSaveFrameData) { // hack for automatic checking and saving old assets to new
-                                                        // dontSaveFrameData - hack when deleting/moving frames then previewCanvases are not updated
+                                                        // dontSaveFrameData - hack when deleting/moving frames (previewCanvases are not yet updated)
       let layerCount = this.previewCanvasArray.length  // New layer is not yet added, so we don't use c2.layerParams.length
       for (let i = 0; i < layerCount; i++) {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')

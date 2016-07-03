@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Sat Jul 02 2016 22:00:20 GMT-0700 (PDT)",
+      "timestamp":     "Sun Jul 02 2016 14:20:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "672"
+        "iteration":   "673"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.flexpanel",
+          "type":           "improvement",
+          "changeName":     "New FlexPanel Ui model",
+          "changeSummary":  "FlexPanel is now a mini menu bar on right. Much faster navigation",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "nav.assets",
           "type":           "bugfix",

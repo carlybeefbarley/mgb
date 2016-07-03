@@ -98,18 +98,33 @@ export default App = React.createClass({
     const { query } = this.props.location
 
     // The NavPanel (left), NavBar (top) and FlexPanel (right) are fixed/absolute positioned so we need to account for that
-    let mainPanelDivSty = { marginTop: "40px"}
 
-    // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
-    const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
-    const showFlexPanel = !!flexPanelQueryValue
-    const flexPanelWidth = showFlexPanel ? "225px" : "0px"    // The 225px width works well with default vertical menu size and padding=8px 
-    if (showFlexPanel) mainPanelDivSty.marginRight = flexPanelWidth
-
+    // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
     const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
     const navPanelWidth = showNavPanel ? "290px" : "60px"
-    mainPanelDivSty.marginLeft = navPanelWidth
+
+    // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
+    const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
+    const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
+    const flexPanelWidth = showFlexPanel ? "265px" : "40px"    // The 225px width works well with default vertical menu size and padding=8px 
+
+    // The main Panel:  Outer is for the scroll container; inner is for content
+    let mainPanelOuterDivSty = { 
+      position: "fixed",
+      top:      "40px",
+      bottom: "0px",
+      left:     navPanelWidth, 
+      right:    flexPanelWidth, 
+      overflow: "scroll",
+      marginBottom: "0px"      
+    }
+
+    let mainPanelInnerDivSty = { 
+      padding: "4px",
+      paddingBottom: "24px",
+      height: "auto" 
+    }
 
     //Check permissions of current user for super-admin,
     //if user is on their own profile route,
@@ -158,9 +173,7 @@ export default App = React.createClass({
               user={user}              
               name={this.props.routes[1].name}
               params={this.props.params}
-              handleFlexPanelToggle={this.handleFlexPanelToggle}
               flexPanelWidth={flexPanelWidth}
-              flexPanelIsVisible={showFlexPanel}
               navPanelWidth={navPanelWidth}
               navPanelIsVisible={showNavPanel} />
 
@@ -170,30 +183,31 @@ export default App = React.createClass({
                 type={this.state.toastType} />
             : null}
 
-            { showFlexPanel && 
-              <FlexPanel 
-                currUser={currUser}
-                user={user}
-                selectedViewTag={flexPanelQueryValue}
-                handleFlexPanelToggle={this.handleFlexPanelToggle}  
-                handleFlexPanelChange={this.handleFlexPanelChange}
-                flexPanelWidth={flexPanelWidth} 
-                flexPanelIsVisible={showFlexPanel}
-                activity={this.data.activity} 
-                /> 
-            }
-            <div style={mainPanelDivSty}>
-              {
-                this.props.children && React.cloneElement(this.props.children, {
-                  // Make below props available to all routes.
-                  user: user,
-                  currUser: currUser,
-                  currUserProjects: currUserProjects,
-                  ownsProfile: ownsProfile,
-                  isSuperAdmin: isSuperAdmin,
-                  showToast: this.showToast
-                })
-              }
+            <FlexPanel 
+              currUser={currUser}
+              user={user}
+              selectedViewTag={flexPanelQueryValue}
+              handleFlexPanelToggle={this.handleFlexPanelToggle}  
+              handleFlexPanelChange={this.handleFlexPanelChange}
+              flexPanelWidth={flexPanelWidth} 
+              flexPanelIsVisible={showFlexPanel}
+              activity={this.data.activity} 
+              /> 
+
+            <div style={mainPanelOuterDivSty}>
+              <div style={mainPanelInnerDivSty}>
+                {
+                  this.props.children && React.cloneElement(this.props.children, {
+                    // Make below props available to all routes.
+                    user: user,
+                    currUser: currUser,
+                    currUserProjects: currUserProjects,
+                    ownsProfile: ownsProfile,
+                    isSuperAdmin: isSuperAdmin,
+                    showToast: this.showToast
+                  })
+                }
+              </div>
             </div>
           </div>
       </div>

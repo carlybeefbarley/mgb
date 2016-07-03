@@ -82,7 +82,7 @@ Meteor.publish('assets.public', function(
                       projectName, 
                       showDeleted, 
                       showStable)
-  let assetSorter = assetSorters[assetSortType]
+  let assetSorter = assetSortType ? assetSorters[assetSortType] : assetSorters["edited"]
   const findOpts = {
     fields: {content2: 0},
     sort:  assetSorter,

@@ -38,6 +38,7 @@ export default fpAssets = React.createClass({
                                   null,   // Project 
                                   false,  // Show Only Deleted
                                   false,  // Shw only Stable
+                                  undefined,  // Use default sort order
                                   10)     // Limit
     const assetSorter = { updatedAt: -1}
     let assetSelector = assetMakeSelector(null, AssetKindKeys, nameSearch)

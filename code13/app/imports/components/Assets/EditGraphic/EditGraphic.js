@@ -3,28 +3,12 @@ import ReactDOM from 'react-dom';
 import sty from  './editGraphic.css';
 import ColorPicker from 'react-color';        // http://casesandberg.github.io/react-color/
 import AssetUrlGenerator from '../AssetUrlGenerator.js';
-
-import ToolPen from './ToolPen.js';
-import ToolEraser from './ToolEraser.js';
-import ToolFill from './ToolFill.js';
-import ToolMove from './ToolMove.js';
-import ToolCircle from './ToolCircle.js';
-import ToolRect from './ToolRect.js';
-import ToolEyedropper from './ToolEyedropper.js';
+import Tools from './GraphicTools';
 
 import SpriteLayers from './EditGraphic/SpriteLayers.js';
 
 import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
-const tools = {
-  ToolPen,
-  ToolEraser,
-  ToolFill,
-  ToolMove,
-  ToolCircle,
-  ToolRect,
-  ToolEyedropper
-};
 
 
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
@@ -357,7 +341,7 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  // A plugin-api for the graphic editing tools in Tools.js
+  // A plugin-api for the graphic editing Tools in Tools.js
 
   _setImageData4BytesFromRGBA(d, c)
   {
@@ -935,7 +919,7 @@ console.log("Backwash marker = " + recentMarker)
     let c2 = asset.content2
     let zoom = this.state.editScale
 
-    let toolComponents = _.map(tools, (tool) => { return (
+    let toolComponents = _.map(Tools, (tool) => { return (
       <div  className={"ui button hazPopup " + (this.state.toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}
             key={tool.name}

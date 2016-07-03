@@ -1,3 +1,8 @@
+// Pen tool. 
+
+import bline from './bresenhamLine';
+
+let priorPoint = null         // Used for tracking line draws from prior point to current point
 
 const ToolPen = {
   name: "Pen",
@@ -17,18 +22,32 @@ const ToolPen = {
       let imageDataAtMouse = drawEnv.previewCtx.getImageData(drawEnv.x, drawEnv.y, 1, 1)
       let d = imageDataAtMouse.data
       drawEnv.setColorRGBA(...d)
+      priorPoint = null
     }
     else {
+      priorPoint = { x: drawEnv.x, y: drawEnv.y }
       drawEnv.setPixelsAt(drawEnv.x, drawEnv.y)
     }
   },
 
-  handleMouseMove: ( drawEnv ) => { ToolPen.handleMouseDown(drawEnv) },
+  handleMouseMove: ( drawEnv ) => { 
+    if (priorPoint)
+    {
+      bline(drawEnv.setPixelsAt, priorPoint.x, priorPoint.y, drawEnv.x, drawEnv.y)
+      priorPoint = { x: drawEnv.x, y: drawEnv.y }
+    }
+  },
 
-  handleMouseUp: ( drawEnv ) => { ToolPen.handleMouseDown(drawEnv)  },
+  handleMouseUp: ( drawEnv ) => {   
+    if (priorPoint)
+    {
+      bline(drawEnv.setPixelsAt, priorPoint.x, priorPoint.y, drawEnv.x, drawEnv.y)
+      priorPoint = { x: drawEnv.x, y: drawEnv.y }
+      priorPoint = null
+    }
+  },
 
   handleMouseLeave: ( drawEnv ) => {}
-
 };
 
 export default ToolPen

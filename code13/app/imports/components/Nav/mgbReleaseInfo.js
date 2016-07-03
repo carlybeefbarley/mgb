@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Tue Jun 28 2016 00:30:00 GMT-0700 (PDT)",
+      "timestamp":     "Sat Jul 02 2016 20:50:20 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "655"
+        "iteration":   "671"
       },
 
       "releaseManagement": {
@@ -30,10 +30,31 @@ export default mgbReleaseInfo = {
       
       "changes": [
         {
+          "featureTag":     "asset.graphic",
+          "type":           "bugfix",
+          "changeName":     "Fixed graphic frame select issues.",
+          "changeSummary":  "The edit area now reliably matches the selected frame/layer, even after inserts, moves etc",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Graphic Pen/Erase tools more responsive",
+          "changeSummary":  "The Pen and Edit tools no longer leave gaps when mouse movement is rapid",
+          "otherUrls":      []
+        },
+        {
           "featureTag":     "asset.map",
           "type":           "improvement",
           "changeName":     "Support for maps from MGBv1",
           "changeSummary":  "The import capabilities aren't exposed for users yet, but you can see some MGB1 maps starting to appear :)",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.doc",
+          "type":           "improvement",
+          "changeName":     "Experimenting with a document edit control",
+          "changeSummary":  "Documents can't yet be saved.",
           "otherUrls":      []
         }
       ]

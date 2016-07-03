@@ -7,7 +7,6 @@ import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-
 import createEmojiPlugin from 'draft-js-emoji-plugin'; // eslint-disable-line import/no-unresolved
 import createUndoPlugin from 'draft-js-undo-plugin'; // eslint-disable-line import/no-unresolved
 import createRichButtonsPlugin from 'draft-js-richbuttons-plugin';
-import undoStyles from 'draft-js-undo-plugin/lib/plugin.css';
 import hashtagStyles from 'draft-js-hashtag-plugin/lib/plugin.css';
 import stickerStyles from 'draft-js-sticker-plugin/lib/plugin.css';
 import mentionStyles from 'draft-js-mention-plugin/lib/plugin.css';
@@ -17,7 +16,7 @@ import styles from './styles.css';
 import draftStyles from 'draft-js/dist/Draft.css';
 
 // This is using https://www.draft-js-plugins.com/ which is a simplified wrapper over draft.js, 
-// but it has some problems..
+// but it has some problems.  TODO: We may just go back to draft.js and put up with less nice but broken bits
 
   // #1 If using a draft.js version 0.7 or later, you may hit problems with 
   // plugins (e.g sticker and blockRenderMap - see https://github.com/draft-js-plugins/draft-js-plugins/issues/281)
@@ -122,8 +121,8 @@ export default class EditDoc extends Component {
 
   render() {
     return (
-      <div className={styles.root}>
-        <div className={styles.editor} onClick={this.focus}>
+      <div className="mgbDraftjsRoot">
+        <div className="mgbDraftjsEditor" onClick={this.focus}>
           <Editor
             editorState={this.state.editorState}
             onChange={this.onChange}
@@ -138,16 +137,13 @@ export default class EditDoc extends Component {
             suggestions={this.state.suggestions}
           />
           <EmojiSuggestions />
-          <div className={styles.editorButton}>
-            <StickerSelect editor={this} />
-          </div>
-          <div className={styles.editorButton}>
-            <UndoButton />
-          </div>
-          <div className={styles.editorButton}>
-            <RedoButton />
-          </div>
           <div className="myToolbar">
+            <UndoButton className="ui small compact icon button">
+              <MyIconButton iconName="undo"/>
+            </UndoButton>
+            <RedoButton className="ui small compact icon button">
+              <MyIconButton iconName="redo"/>
+            </RedoButton>
             <BoldButton>
               <MyIconButton iconName="bold"/>
             </BoldButton>
@@ -175,6 +171,8 @@ export default class EditDoc extends Component {
             <OLButton>
               <MyIconBlockButton iconName="ordered list"/>
             </OLButton>
+            &nbsp;
+            <StickerSelect editor={this} />
           </div>
         </div>
       </div>

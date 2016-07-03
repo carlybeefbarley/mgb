@@ -63,7 +63,7 @@ export default FlexPanel = React.createClass({
       top: "0px",
       bottom: "0px",
       right: "0px",
-      width: "40px", 
+      width: "45px", 
 
       borderRadius: 0, 
       marginBottom: 0
@@ -73,7 +73,7 @@ export default FlexPanel = React.createClass({
       position: "fixed",
       top: "40px",                /// TODO calculate this 
       bottom: "0px",
-      right: "40px",
+      right: "45px",
       width: "225px", 
       overflow: "scroll"
     }

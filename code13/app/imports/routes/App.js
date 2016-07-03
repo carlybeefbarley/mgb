@@ -107,13 +107,13 @@ export default App = React.createClass({
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
-    const flexPanelWidth = showFlexPanel ? "265px" : "40px"    // The 225px width works well with default vertical menu size and padding=8px 
+    const flexPanelWidth = showFlexPanel ? "270px" : "45px"    // The 225px width works well with default vertical menu size and padding=8px 
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     let mainPanelOuterDivSty = { 
       position: "fixed",
       top:      "40px",
-      bottom: "0px",
+      bottom:   "0px",
       left:     navPanelWidth, 
       right:    flexPanelWidth, 
       overflow: "scroll",
@@ -121,9 +121,9 @@ export default App = React.createClass({
     }
 
     let mainPanelInnerDivSty = { 
-      padding: "4px",
+      padding:       "0px",
       paddingBottom: "24px",
-      height: "auto" 
+      height:        "auto" 
     }
 
     //Check permissions of current user for super-admin,

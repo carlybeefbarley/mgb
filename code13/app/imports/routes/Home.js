@@ -38,7 +38,7 @@ export default class Home extends Component {
               <div className="row">
                 <div className="nine wide column">
                   <h3 className="ui header">Level Up from Noob to Guru</h3>
-                  <p>Grow your REAL skill tree: javascript programming, pixel art animation, game design, story writing and more.</p>
+                  <p>Grow your REAL skill tree: javascript programming, pixel art animation, game design, audio, music, story writing, analytics and more.</p>
                   <h3 className="ui header">Multimaker collaboration</h3>
                   <p>Making a game is now an MMO in of itself: Make, watch, chat and play games with friends so you learn together.</p>
                 </div>

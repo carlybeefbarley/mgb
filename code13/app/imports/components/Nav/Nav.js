@@ -56,7 +56,7 @@ export default Nav = React.createClass({
       top:      "0px",
       left:     this.props.navPanelWidth, 
       right:    this.props.flexPanelWidth, 
-      marginBottom: "0px"
+      margin:   "0px"
     }
     
     return (

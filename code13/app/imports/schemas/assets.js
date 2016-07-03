@@ -129,6 +129,12 @@ export function assetMakeSelector(
   return selector
 }
 
+export const assetSorters = { 
+  "edited": { updatedAt: -1}, 
+  "name":   { name: 1 }, 
+  "kind":   { kind: 1 } 
+}
+
 
 Meteor.methods({
 

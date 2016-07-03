@@ -2,7 +2,7 @@
 
 import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '../schemas';
 
-import { assetMakeSelector } from '../schemas/assets';
+import { assetMakeSelector, assetSorters } from '../schemas/assets';
 import { projectMakeSelector } from '../schemas/projects';
 
 //
@@ -73,6 +73,7 @@ Meteor.publish('assets.public', function(
                                     projectName=null, 
                                     showDeleted=false, 
                                     showStable=false, 
+                                    assetSortType,    // one of the keys of assetSorters
                                     limitCount=50) 
 {
   let selector = assetMakeSelector(userId, 
@@ -81,7 +82,13 @@ Meteor.publish('assets.public', function(
                       projectName, 
                       showDeleted, 
                       showStable)
-  return Azzets.find(selector, {fields: {content2: 0}, limit: limitCount} );
+  let assetSorter = assetSorters[assetSortType]
+  const findOpts = {
+    fields: {content2: 0},
+    sort:  assetSorter,
+    limit: limitCount
+  }
+  return Azzets.find(selector, findOpts );
 });
 
 

@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 
 import { Azzets, Projects } from '../../schemas';
-import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector } from '../../schemas/assets';
+import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters } from '../../schemas/assets';
 import { logActivity } from '../../schemas/activity';
 
 import AssetList from '../../components/Assets/AssetList';
@@ -19,17 +19,12 @@ import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
 import UserItem from '../../components/Users/UserItem.js';
 
-const sorters = { 
-  "edited": { updatedAt: -1}, 
-  "name":   { name: 1 }, 
-  "kind":   { kind: 1 } 
-}
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = { 
   project: null,        // Null string means match all
   searchName: "",       // Empty string means match all (more convenient than null for input box)
-  sort: "edited",       // Should be one of the keys of sorters
+  sort: "edited",       // Should be one of the keys of assetSorters{}
   showDeleted: "0",     // Should be "0" or "1"  -- as a string
   showStable: "0",      // Should be "0" or "1"  -- as a string
   kinds: ""             // Asset kinds. Empty means 'match all valid, non-disabled assets'
@@ -66,7 +61,7 @@ export default UserAssetListRoute = React.createClass({
     // Validate and apply values from location query
     
     // query.sort
-    if (sorters.hasOwnProperty(q.sort))
+    if (assetSorters.hasOwnProperty(q.sort))
       newQ.sort = q.sort
     
     // query.project
@@ -140,8 +135,9 @@ export default UserAssetListRoute = React.createClass({
                                   qN.searchName, 
                                   qN.project, 
                                   qN.showDeleted === "1", 
-                                  qN.showStable === "1")
-    let assetSorter = sorters[qN.sort]
+                                  qN.showStable === "1",
+                                  qN.sort)
+    let assetSorter = assetSorters[qN.sort]
     let assetSelector = assetMakeSelector(
                                   this.props.params.id, 
                                   qN.kinds.split(safeAssetKindStringSepChar), 

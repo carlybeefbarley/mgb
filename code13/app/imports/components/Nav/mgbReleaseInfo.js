@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Sat Jul 02 2016 20:50:20 GMT-0700 (PDT)",
+      "timestamp":     "Sat Jul 02 2016 22:00:20 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "671"
+        "iteration":   "672"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.assets",
+          "type":           "bugfix",
+          "changeName":     "SortBy selections now work",
+          "changeSummary":  "The sortBy selections were only being applied locally. The server now honors the same orderings",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "asset.graphic",
           "type":           "bugfix",

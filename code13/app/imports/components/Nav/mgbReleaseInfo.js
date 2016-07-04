@@ -21,7 +21,7 @@ export default mgbReleaseInfo = {
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "680"
+        "iteration":   "682"
       },
 
       "releaseManagement": {
@@ -40,7 +40,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "nav.flexpanel.chat",
           "type":           "improvement",
           "changeName":     "Chat channels",
-          "changeSummary":  "Chat now has multiple channels!",
+          "changeSummary":  "Chat now has multiple channels.. with security!",
           "otherUrls":      []
         },
         {

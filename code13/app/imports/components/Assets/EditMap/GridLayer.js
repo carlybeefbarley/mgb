@@ -63,7 +63,10 @@ export default class TileMapLayer extends React.Component {
       this.refs.layer.style['transform'] = getComputedStyle(activeLayer.refs.layer)["transform"];
     }
   }
-
+  draw(){
+    "use strict";
+    this.drawGrid();
+  }
   drawGrid (){
     this.adjustCanvas();
     //this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -91,7 +94,7 @@ export default class TileMapLayer extends React.Component {
 
     // horizontal lines
     i=0;
-    const height = Math.ceil(this.ctx.canvas.height /data.tileheight);
+    const height = Math.ceil(this.ctx.canvas.height / data.tileheight);
     for(; i<= height / camera.zoom; i++){
       tmp = i * data.tileheight * camera.zoom + 0.5 + offsetY;
       this.ctx.moveTo(-data.tilewidth + offsetX, tmp);

@@ -1,3 +1,5 @@
+// Data model for MGB Chats. 
+// See https://github.com/devlapse/mgb/issues/40 for discussion of requirements
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
@@ -30,7 +32,72 @@ var schema = {
   message: String         // Project Name (scoped to owner). Case sensitive
 };
 
+export const ChatChannels = {
+  SYSTEM: { 
+    name:         "mgb-system",
+    icon:         "announcement",
+    description:  "Global announcements from core MGB engineering team",
+    subscopes:    {}
+  },
+  GENERAL: { 
+    name:         "general",
+    icon:         "world",
+    description:  "General suggestions, discussions and questions related to MGB",
+    subscopes:    {}
+  },
+  RANDOM: {
+    name:         "random",
+    icon:         "random",
+    description:  "Off-topic discussions not related to MGB",
+    subscopes:    {}
+  },
+  MGBBUGS: { 
+    name:         "mgb-bugs",
+    icon:         "bug",
+    description:  "Discussions about potential bugs and fixes in MGB",
+    subscopes:    {}
+  },
+  MGBHELP: { 
+    name:         "mgb-help",
+    icon:         "help circle",
+    description:  "Ask for help in how to use the MGB site",
+    subscopes:    {}
+  },
+  LOOKINGFORGROUP: { 
+    name:         "lfg",
+    icon:         "users",
+    description:  "Looking for group - message here to find people to work with on MGB projects",
+    subscopes:    {}
+  },
+ 
+  // ASSET: { 
+  //   name:         "asset",
+  //   icon:         "write",
+  //   description:  "Discussion about the currently viewed/edited asset",
+  //   subscopes:    { assetId: true }
+  // },
+ 
+ 
+  // TODO: Project chat is a bit complex.. will do that later: Limited membership, viewership etc
+  // PROJECTMEMBERS: { 
+  //   name:         "project-members",
+  //   icon:         "",
+  //   description:  "Comments/Discussion by project members about a specific project",
+  //   subscopes:    { projectId: true },
+  //   index:        110
+  // },
+  // PROJECTPUBLIC: { 
+  //   name:         "project-public",
+  //   icon:         "",
+  //   description:  "Comments/Discussion by anyone about a specific project",
+  //   subscopes:    { projectId: true },
+  //   index:        120
+  // },
+  getIconClass: function (key) { return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : "warning sign") + " icon"},
+  sortedKeys: ["SYSTEM", "GENERAL", "RANDOM", "MGBBUGS", "MGBHELP", "LOOKINGFORGROUP"]
+}
 
+ 
 Meteor.methods({
 
   /** Chats.create

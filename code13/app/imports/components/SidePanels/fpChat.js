@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import reactMixin from 'react-mixin';
-import {Chats} from '../../schemas';
+import { Chats } from '../../schemas';
+import { ChatChannels } from '../../schemas/chats';
 import moment from 'moment';
 
 
@@ -13,10 +14,16 @@ export default fpChat = React.createClass({
     panelWidth:             PropTypes.string.isRequired   // Typically something like "200px". 
   },
 
+  getInitialState: function() {
+    return {
+      activeChannelKey: "GENERAL"
+    }
+  },
 
   getMeteorData: function() {
-    let uid = this.props.currUser ? this.props.currUser._id : null
-    let handleForChats = Meteor.subscribe("chats.userId", uid)
+    const chatChannel = ChatChannels[this.state.activeChannelKey]
+    const uid = this.props.currUser ? this.props.currUser._id : null
+    const handleForChats = Meteor.subscribe("chats.userId", uid, chatChannel.name)
 
     return {
       chats: Chats.find({}, {sort: {createdAt: 1}}).fetch(),
@@ -24,9 +31,15 @@ export default fpChat = React.createClass({
     }
   },
 
+  changeChannel: function(selectedChannelKey)
+  {
+    this.setState( {activeChannelKey: selectedChannelKey})
+  },
 
   componentDidMount: function() {
-    $(".fpChatDropDown").dropdown()
+    const $dropDown = $(".fpChatDropDown")
+    $dropDown.dropdown( 'set exactly', this.state.activeChannelKey)
+    $dropDown.dropdown( {  onChange: selectedChannelKey => this.changeChannel(selectedChannelKey) })
   },
 
   componentDidUpdate: function() {
@@ -34,12 +47,13 @@ export default fpChat = React.createClass({
   },
 
   sendMessage: function() {
+    const chatChannel = ChatChannels[this.state.activeChannelKey]
     const msg = this.refs.theMessage.value
     if (!msg || msg.length < 1)
       return
 
     const chatMsg = {
-      // toChannelName: null,
+      toChannelName: chatChannel.name,
       // toProjectName: null,
       // toAssetId: null,
       // toOwnerName: null,
@@ -74,14 +88,23 @@ export default fpChat = React.createClass({
 
   render: function () {    
     return  <div>
-              <div className="ui fluid mini search multiple selection dropdown fpChatDropDown">
+              <div className="ui fluid tiny search selection dropdown fpChatDropDown">
                 <input type="hidden" name="channels" defaultValue=""></input>
                 <i className="dropdown icon"></i>
                 <div className="default text">All Channels</div>
                 <div className="menu">
-                  <div className="item" title="Chat only about the currently viewed/edited asset" data-value="asset"><i className="pencil icon"></i>Asset</div>
-                  <div className="item" title="Chat about projects you are involved in" data-value="project"><i className="sitemap icon"></i>Projects</div>
-                  <div className="item" title="MGB Site development Team" data-value="mgb"><i className="home icon"></i>MGB Team</div>
+                  {
+                    ChatChannels.sortedKeys.map( k => { 
+                      const chan = ChatChannels[k]
+                      return !chan ? null : 
+                        <div className="item" 
+                             title={chan.description} 
+                             key={k}
+                             data-value={k} >
+                          <i className={chan.icon + " icon"}></i>{chan.name}
+                        </div>                      
+                    })
+                  }
                 </div>
               </div>
 

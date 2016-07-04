@@ -193,13 +193,12 @@ ActivitySnapshots._ensureIndex( {"toAssetId": 1, "timestamp": -1} )
 
 
 // TODO: Make sure userId can't be faked on server. Allow/deny rules required...
-Meteor.publish('chats.userId', function(userId, limit=30) {
+Meteor.publish('chats.userId', function(userId, toChannelName, limit=30) {
   // Paginated chats.
   if (limit > 200) 
     limit = 200
 
-  let selector = { } //$or: [ { toOwnerId: null}, {toOwnerId: userId} ] }
+  let selector = { toChannelName: toChannelName } //$or: [ { toOwnerId: null}, {toOwnerId: userId} ] }
   let options = {limit: limit, sort: {createdAt: -1} }
-
   return Chats.find(selector, options);
 });

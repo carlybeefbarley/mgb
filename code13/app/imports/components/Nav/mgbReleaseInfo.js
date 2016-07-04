@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Sun Jul 02 2016 21:15:00 GMT-0700 (PDT)",
+      "timestamp":     "Sun Jul 03 2016 22:20:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "676"
+        "iteration":   "680"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "asset.map",
+          "type":           "bugfix",
+          "changeName":     "Map grid bugfix",
+          "changeSummary":  "The visual and log errors from moving maps when grid=off have been fixed",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "nav.flexpanel.chat",
           "type":           "improvement",

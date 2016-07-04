@@ -486,7 +486,7 @@ export default class MapArea extends React.Component {
     else{
       $(this.refs.mapElement).removeClass("preview");
     }
-    // this is not synchronous function !!!
+    // this is not a synchronous function !!!
     this.options.preview = !this.options.preview
     this.forceUpdate();
   }
@@ -504,8 +504,8 @@ export default class MapArea extends React.Component {
       this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
     }
 
-    this.redrawLayers();
-    this.refs.grid.drawGrid();
+    this.redrawLayers();    // TODO(@stauzs): Maybe just call this.redraw()?
+    this.redrawGrid();
   }
   moveCamera(e){
     if(!this.lastEvent){
@@ -520,9 +520,7 @@ export default class MapArea extends React.Component {
     this.lastEvent.pageX = e.pageX;
     this.lastEvent.pageY = e.pageY;
 
-    if(this.refs.grid){
-      this.refs.grid.drawGrid();
-    }
+    this.redrawGrid();    // TODO(@stauzs): Maybe just call this.redraw()?
     this.redrawLayers();
   }
   zoomCamera(newZoom, e){
@@ -548,7 +546,7 @@ export default class MapArea extends React.Component {
 
     this.camera.zoom = newZoom;
 
-    this.refs.grid.drawGrid();
+    this.redrawGrid();
     this.redrawLayers();
   }
   movePreview(e){

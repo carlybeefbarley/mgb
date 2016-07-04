@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Sun Jul 02 2016 14:20:00 GMT-0700 (PDT)",
+      "timestamp":     "Sun Jul 02 2016 21:15:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "673"
+        "iteration":   "676"
       },
 
       "releaseManagement": {
@@ -30,17 +30,24 @@ export default mgbReleaseInfo = {
       
       "changes": [
         {
+          "featureTag":     "nav.flexpanel.chat",
+          "type":           "improvement",
+          "changeName":     "Chat channels",
+          "changeSummary":  "Chat now has multiple channels!",
+          "otherUrls":      []
+        },
+        {
           "featureTag":     "nav.flexpanel",
           "type":           "improvement",
-          "changeName":     "New FlexPanel Ui model",
-          "changeSummary":  "FlexPanel is now a mini menu bar on right. Much faster navigation",
+          "changeName":     "FlexPanel Select/hide column",
+          "changeSummary":  "FlexPanel is now a mini menu column on the right of the window. This provides much faster navigation and will also enable notification for chat etc",
           "otherUrls":      []
         },
         {
           "featureTag":     "nav.assets",
           "type":           "bugfix",
-          "changeName":     "SortBy selections now work",
-          "changeSummary":  "The sortBy selections were only being applied locally. The server now honors the same orderings",
+          "changeName":     "Asset List sort-by selections fixed",
+          "changeSummary":  "The sort-by selections for Assets were only being applied locally. The server now honors the same orderings so the list makes sense now",
           "otherUrls":      []
         },
         {
@@ -48,6 +55,13 @@ export default mgbReleaseInfo = {
           "type":           "bugfix",
           "changeName":     "Fixed graphic frame select issues.",
           "changeSummary":  "The edit area now reliably matches the selected frame/layer, even after inserts, moves etc",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "bugfix",
+          "changeName":     "Play-animation no longer spams database",
+          "changeSummary":  "Changing frame/layer can only update the viewer/activity database every five seconds now.. Not everytime the animation frame changes!",
           "otherUrls":      []
         },
         {

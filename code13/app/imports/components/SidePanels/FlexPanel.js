@@ -3,13 +3,15 @@ import fpActivity from './fpActivity';
 import fpAssets from './fpAssets';
 import fpUsers from './fpUsers';
 import fpChat from './fpChat';
+import fpSuperAdmin from './fpSuperAdmin';
 
 
 const flexPanelViews = [
-  { tag: "activity",  icon: "lightning",  hdr: "Activity",  el: fpActivity },
-  { tag: "assets",    icon: "pencil",     hdr: "Assets",    el: fpAssets   },
-  { tag: "users",     icon: "users",      hdr: "Users",     el: fpUsers    },
-  { tag: "chat",      icon: "chat",       hdr: "Chat",      el: fpChat     }
+  { tag: "activity",  icon: "lightning",  hdr: "Activity",   el: fpActivity,   superAdminOnly: false },
+  { tag: "assets",    icon: "pencil",     hdr: "Assets",     el: fpAssets,     superAdminOnly: false },
+  { tag: "users",     icon: "users",      hdr: "Users",      el: fpUsers,      superAdminOnly: false },
+  { tag: "chat",      icon: "chat",       hdr: "Chat",       el: fpChat,       superAdminOnly: false },
+  { tag: "super",     icon: "red bomb",   hdr: "SuperAdmin", el: fpSuperAdmin, superAdminOnly: true }
 ]
 
 export default FlexPanel = React.createClass({
@@ -22,7 +24,8 @@ export default FlexPanel = React.createClass({
     flexPanelIsVisible:     PropTypes.bool.isRequired,
     handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for enabling/disabling FlexPanel view
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
-    flexPanelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
+    flexPanelWidth:         PropTypes.string.isRequired,  // Typically something like "200px". 
+    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
   },
 
 
@@ -88,7 +91,7 @@ export default FlexPanel = React.createClass({
     const flexPanelChoice = _.find(flexPanelViews, ['tag', this.props.selectedViewTag]) || flexPanelViews[0]
     const flexPanelHdr = flexPanelChoice.hdr      
     const flexPanelIcon = flexPanelChoice.icon 
-    const ElementFP = flexPanelChoice.el    // Can be null
+    const ElementFP = (!this.props.isSuperAdmin && flexPanelChoice.superAdminOnly) ? null : flexPanelChoice.el
       
     return  <div className="basic segment mgbFlexPanel" style={panelStyle}>
     
@@ -107,7 +110,9 @@ export default FlexPanel = React.createClass({
                         <ElementFP  currUser={this.props.currUser} 
                                   user={this.props.user} 
                                   activity={this.props.activity}
-                                  panelWidth={this.props.flexPanelWidth} /> 
+                                  panelWidth={this.props.flexPanelWidth} 
+                                  isSuperAdmin={this.props.isSuperAdmin}
+                                  /> 
                       }
                     </div>
                   </div>
@@ -117,13 +122,14 @@ export default FlexPanel = React.createClass({
               <div className="ui grey inverted attached borderless vertical icon menu" style={miniNavStyle}>
                 { flexPanelViews.map(v => { 
                   const actv = (v.tag===this.props.selectedViewTag) ? " active " : ""
-                  return  <div 
-                            key={v.tag}
-                            className={actv + "item"} 
-                            title={v.hdr}
-                            onClick={this.fpViewSelect.bind(this, v.tag)}>
-                            <i className={v.icon + " icon"} />
-                          </div>
+                  return  (v.superAdminOnly && !this.props.isSuperAdmin) ? null : 
+                    <div 
+                          key={v.tag}
+                          className={actv + "item"} 
+                          title={v.hdr}
+                          onClick={this.fpViewSelect.bind(this, v.tag)}>
+                      <i className={v.icon + " icon"} />
+                  </div>
                   })
                 }
               </div>

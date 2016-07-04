@@ -166,6 +166,7 @@ export default App = React.createClass({
               handleNavPanelChange={this.handleNavPanelChange}
               navPanelWidth={navPanelWidth}
               navPanelIsVisible={showNavPanel}
+              isSuperAdmin={isSuperAdmin}              
             />
             
             <Nav
@@ -175,7 +176,8 @@ export default App = React.createClass({
               params={this.props.params}
               flexPanelWidth={flexPanelWidth}
               navPanelWidth={navPanelWidth}
-              navPanelIsVisible={showNavPanel} />
+              navPanelIsVisible={showNavPanel} 
+              />
 
             {this.state.showToast ?
               <Toast
@@ -192,6 +194,7 @@ export default App = React.createClass({
               flexPanelWidth={flexPanelWidth} 
               flexPanelIsVisible={showFlexPanel}
               activity={this.data.activity} 
+              isSuperAdmin={isSuperAdmin}
               /> 
 
             <div style={mainPanelOuterDivSty}>

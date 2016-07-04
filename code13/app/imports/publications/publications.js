@@ -10,13 +10,23 @@ import { projectMakeSelector } from '../schemas/projects';
 //
 //  TODO: Exclude stuff like profile.email doh
 
+
+// This is for Meteor.user()   See http://www.east5th.co/blog/2015/03/16/user-fields-and-universal-publications/
+Meteor.publish(null, function() {
+  if (this.userId) 
+    return Meteor.users.find(  { _id: this.userId }, { fields: {username: 1, profile: 1, permissions: 1 }})
+  else
+    return null
+})
+
+
 Meteor.publish('users', function(limit) {
-  //Paginated users.
-  if (limit) {
-    return Meteor.users.find({}, {limit: limit, sort: {date: -1}});
-  }
-  return Meteor.users.find({}, {sort: {date: -1}});
-});
+  // Paginated users.
+  if (limit) 
+    return Meteor.users.find({}, {limit: limit, sort: {date: -1}})
+  else
+    return Meteor.users.find({}, {sort: {date: -1}})
+})
 
 
 Meteor.publish('users.byName', function(nameSearch, limit) {
@@ -32,18 +42,18 @@ Meteor.publish('users.byName', function(nameSearch, limit) {
     options["limit"] = limit    //Paginated users.
 
   return Meteor.users.find(selector, options)
-});
+})
 
 
 // This is used for example by the project membership list
 Meteor.publish('users.getByIdList', function(idArray) {
   const selector = {_id: {"$in": idArray}}
-  return Meteor.users.find(selector);
-});
+  return Meteor.users.find(selector)
+})
 
 Meteor.publish('user', function(id) {
-  return Meteor.users.find(id);
-});
+  return Meteor.users.find(id)
+})
 
 //
 //   ASSETS  

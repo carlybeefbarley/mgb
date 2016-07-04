@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import { Chats } from '../../schemas';
-import { ChatChannels } from '../../schemas/chats';
+import { ChatChannels, currUserCanSend, ChatMessageMaxLen, ChatSendMessage } from '../../schemas/chats';
 import moment from 'moment';
 
 
@@ -11,7 +11,8 @@ export default fpChat = React.createClass({
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:             PropTypes.string.isRequired   // Typically something like "200px". 
+    panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px". 
+    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff    
   },
 
   getInitialState: function() {
@@ -42,32 +43,25 @@ export default fpChat = React.createClass({
     $dropDown.dropdown( {  onChange: selectedChannelKey => this.changeChannel(selectedChannelKey) })
   },
 
+
   componentDidUpdate: function() {
-    this.refs.sendChatMessage.scrollIntoView(false)
+    this.refs.bottomOfMessageDiv.scrollIntoView(false)
   },
 
-  sendMessage: function() {
-    const chatChannel = ChatChannels[this.state.activeChannelKey]
+
+  doSendMessage: function() {    
     const msg = this.refs.theMessage.value
     if (!msg || msg.length < 1)
       return
 
-    const chatMsg = {
-      toChannelName: chatChannel.name,
-      // toProjectName: null,
-      // toAssetId: null,
-      // toOwnerName: null,
-      // toOwnerId: null,
-      message: msg
-    }
-
-    Meteor.call('Chats.send', chatMsg, (error, result) => {
+    ChatSendMessage(this.state.activeChannelKey, msg, (error, result) => {
       if (error) 
         alert("cannot send message because: " + error.reason)
       else
         this.refs.theMessage.value = ""
     })
   },
+
  
   renderMessage: function(c) {
     const ago = moment(c.createdAt).fromNow()
@@ -86,7 +80,11 @@ export default fpChat = React.createClass({
             </div>
   },
 
+
   render: function () {    
+    const canSend = currUserCanSend(this.props.currUser, this.state.activeChannelKey)
+    var disabler = cls => ( (canSend ? "" : "disabled ") + cls)
+
     return  <div>
               <div className="ui fluid tiny search selection dropdown fpChatDropDown">
                 <input type="hidden" name="channels" defaultValue=""></input>
@@ -113,14 +111,15 @@ export default fpChat = React.createClass({
               </div>
 
               <form className="ui small form">
-                <div className="field">
-                  <textarea rows="3" placeholder="your message..." ref="theMessage"></textarea>
+                <div className={disabler("field")}>
+                  <textarea rows="3" placeholder="your message..." ref="theMessage" maxLength={ChatMessageMaxLen}></textarea>
                 </div>
-                <div className="ui blue right floated labeled submit icon button" ref="sendChatMessage" onClick={this.sendMessage}>
+                <div className={disabler("ui blue right floated labeled submit icon button")} ref="sendChatMessage" onClick={this.doSendMessage}>
                   <i className="chat icon"></i> Send Message
                 </div>
               </form>
-             <p >&nbsp;</p> 
+
+             <p ref="bottomOfMessageDiv">&nbsp;</p> 
             </div>
   }  
 })

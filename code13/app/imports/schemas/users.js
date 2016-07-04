@@ -27,10 +27,10 @@ const schema = {
     invites: optional([]),
     projectNames: optional([String])   // An array of strings  
   },
-  permissions: {                      // DEPRACATED. TODO: Replace with real permissions system
+  permissions: {                      // TODO: Replace with real permissions system
     teamId: optional(String),
     teamName: optional(String),
-    roles: optional([String])
+    roles: optional([String])         // See in App.js for 'super-admin' handling 
   }
 };
 

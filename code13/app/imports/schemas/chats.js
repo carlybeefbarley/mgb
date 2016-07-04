@@ -32,48 +32,72 @@ var schema = {
   message: String         // Project Name (scoped to owner). Case sensitive
 };
 
+export const ChatMessageMaxLen = 200
+
+export const ChatPosters = {
+  SUPERADMIN: "@@superAdmin",
+  ACTIVEUSER: "@@activeUser"
+}
+
 export const ChatChannels = {
   SYSTEM: { 
-    name:         "mgb-system",
+    name:         "mgb-announce",
     icon:         "announcement",
-    description:  "Global announcements from core MGB engineering team",
+    poster:       ChatPosters.SUPERADMIN,
+    description:  "Global announcements/alerts from core MGB engineering team",
     subscopes:    {}
   },
   GENERAL: { 
     name:         "general",
     icon:         "world",
+    poster:       ChatPosters.ACTIVEUSER,
     description:  "General suggestions, discussions and questions related to MGB",
-    subscopes:    {}
-  },
-  RANDOM: {
-    name:         "random",
-    icon:         "random",
-    description:  "Off-topic discussions not related to MGB",
     subscopes:    {}
   },
   MGBBUGS: { 
     name:         "mgb-bugs",
     icon:         "bug",
+    poster:       ChatPosters.ACTIVEUSER,
     description:  "Discussions about potential bugs and fixes in MGB",
     subscopes:    {}
   },
   MGBHELP: { 
     name:         "mgb-help",
     icon:         "help circle",
+    poster:       ChatPosters.ACTIVEUSER,
     description:  "Ask for help in how to use the MGB site",
     subscopes:    {}
   },
   LOOKINGFORGROUP: { 
     name:         "lfg",
     icon:         "users",
+    poster:       ChatPosters.ACTIVEUSER,
     description:  "Looking for group - message here to find people to work with on MGB projects",
     subscopes:    {}
   },
+  RANDOM: {
+    name:         "random",
+    icon:         "random",
+    poster:       ChatPosters.ACTIVEUSER,
+    description:  "Off-topic discussions not related to MGB",
+    subscopes:    {}
+  },
+
+  // This one is for testing... 
+  //
+  // CHATTESTCHANNEL: { 
+  //   name:         "mgb-chat-testing",
+  //   icon:         "users",
+  //   poster:       ChatPosters.SUPERADMIN,
+  //   description:  "Hidden channel for chat devs. Mwahaha",
+  //   subscopes:    {}
+  // },
  
   // ASSET: { 
   //   name:         "asset",
   //   icon:         "write",
   //   description:  "Discussion about the currently viewed/edited asset",
+  //   poster:       ChatPosters.ACTIVEUSER,
   //   subscopes:    { assetId: true }
   // },
  
@@ -82,22 +106,75 @@ export const ChatChannels = {
   // PROJECTMEMBERS: { 
   //   name:         "project-members",
   //   icon:         "",
+  //   poster:       "@@projectMember",
   //   description:  "Comments/Discussion by project members about a specific project",
-  //   subscopes:    { projectId: true },
-  //   index:        110
+  //   subscopes:    { projectId: true }
   // },
+
   // PROJECTPUBLIC: { 
   //   name:         "project-public",
   //   icon:         "",
+  //   poster:       ChatPosters.ACTIVEUSER,
   //   description:  "Comments/Discussion by anyone about a specific project",
-  //   subscopes:    { projectId: true },
-  //   index:        120
+  //   subscopes:    { projectId: true }
   // },
   getIconClass: function (key) { return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : "warning sign") + " icon"},
-  sortedKeys: ["SYSTEM", "GENERAL", "RANDOM", "MGBBUGS", "MGBHELP", "LOOKINGFORGROUP"]
+  sortedKeys: [ 
+    "SYSTEM", 
+    "GENERAL", 
+    "MGBBUGS", 
+    "MGBHELP", 
+    "LOOKINGFORGROUP", 
+    "RANDOM"
+    // "CHATTESTCHANNEL"
+  ]
 }
 
- 
+function userIsSuperAdmin(currUser) {
+  let isSuperAdmin = false
+  if (currUser && currUser.permissions) {
+    currUser.permissions.map((perm) => {
+      if (perm.roles[0] === "super-admin")
+        isSuperAdmin = true
+    })
+  }
+  return isSuperAdmin
+}
+
+export function currUserCanSend(currUser, channelKey) {
+  const chatChannel = ChatChannels[channelKey]
+  const validPoster = chatChannel.poster
+  if (!validPoster)
+    return false          // No posters record -> no sends allowed (fail securely)
+  switch (validPoster)
+  {
+    case ChatPosters.SUPERADMIN:
+      return userIsSuperAdmin(currUser)
+    case ChatPosters.ACTIVEUSER:
+      return !!currUser
+    default:
+      console.trace("Unknown Permission requirement message posting: ", validPoster)
+      return false
+  }
+}
+
+// Version of lodash/underscore on server doesn't have _.findKey :(
+function __findKey(obj, predicate) {
+  let keys = _.keys(obj), key
+  for (let i = 0, length = keys.length; i < length; i++) {
+    key = keys[i]
+    if (predicate(obj[key], key, obj)) 
+      return key
+  }
+  return null
+}
+
+function _getChannelKeyFromName(cName) {
+  return __findKey(ChatChannels, c => (c.name === cName) )
+} 
+
+
+
 Meteor.methods({
 
   /** Chats.create
@@ -105,20 +182,62 @@ Meteor.methods({
    */
   "Chats.send": function(data) {
     if (!this.userId) 
-      throw new Meteor.Error(401, "Login required");      // TODO: Better access check
-      
+      throw new Meteor.Error(401, "Login required")
+
+    if (!data.message || data.message.length < 1)
+      throw new Meteor.Error(400, "Message empty")
+
+    if (data.message.length > ChatMessageMaxLen)
+      throw new Meteor.Error(400, "Message too long")
+
+    const channelKey = _getChannelKeyFromName(data.toChannelName)
+
+    if (!channelKey)
+      throw new Meteor.Error(404, "Channel not known: "+data.toChannelName)
+
+    const currUser = Meteor.user()
+    const canSend = currUserCanSend(currUser, channelKey)
+    if (!canSend)
+      throw new Meteor.Error(401, "No access to write to that channel")
+
     const now = new Date()
     data.createdAt = now
     data.updatedAt = now
     data.byUserId = this.userId
-    data.byUserName = Meteor.user().profile.name
-    check(data, _.omit(schema, '_id'));
+    data.byUserName = currUser.profile.name
+    check(data, _.omit(schema, '_id'))
 
-    let docId = Chats.insert(data);
+    let docId = Chats.insert(data)
     if (Meteor.isServer)
-      console.log(`  [Chats.send]  "${data.message}"  #${docId}  `);
+      console.log(`  [Chats.send]  "${data.message}"  #${docId}  `)
 
-    return docId;
+    return docId
   }
   
 });
+
+
+export function ChatSendMessage(channelKey, msg, completionCallback) {
+  const chatChannel = ChatChannels[channelKey]
+  if (!msg || msg.length < 1)
+  {
+    completionCallback({reason: "Message empty"}, null)
+    return
+  }
+  if (msg.length > ChatMessageMaxLen)
+  {
+    completionCallback({reason: ("Message too long. Max length is " + ChatMessageMaxLen) }, null)
+    return
+  }
+
+  const chatMsg = {
+    toChannelName: chatChannel.name,
+    // toProjectName: null,
+    // toAssetId: null,
+    // toOwnerName: null,
+    // toOwnerId: null,
+    message: msg
+  }
+
+  Meteor.call('Chats.send', chatMsg, completionCallback)
+}

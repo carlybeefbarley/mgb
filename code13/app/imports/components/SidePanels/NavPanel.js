@@ -28,7 +28,8 @@ export default NavPanel = React.createClass({
     navPanelIsVisible:      PropTypes.bool.isRequired,
     handleNavPanelToggle:   PropTypes.func.isRequired,    // Callback for enabling/disabling NavPanel view
     handleNavPanelChange:   PropTypes.func.isRequired,    // Callback to change pane - records it in URL
-    navPanelWidth:          PropTypes.string.isRequired   // Typically something like "200px". 
+    navPanelWidth:          PropTypes.string.isRequired,  // Typically something like "200px". 
+    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
   },
 
 

@@ -42,6 +42,9 @@ export default class EditGraphic extends React.Component {
 
   constructor(props) {
     super(props)
+
+    this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
+
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
@@ -709,10 +712,13 @@ export default class EditGraphic extends React.Component {
   }
 
 
+
   /* This stores a short-term record indicating this user is viewing this graphic
    * It provides the data for the 'just now' part of the history navigation and also 
    * the 'viewers' indicator. It helps users know other people are looking at some asset
    * right now
+   * 
+   * This gets _.throttle()d in the constructor so we don't kill the DB
    */
   doSnapshotActivity(frameIdxOverride)
   {

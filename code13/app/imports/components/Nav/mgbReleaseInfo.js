@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Sun Jul 03 2016 22:20:00 GMT-0700 (PDT)",
+      "timestamp":     "Tue Jul 05 2016 16:10:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "682"
+        "iteration":   "699"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.layout",
+          "type":           "improvement",
+          "changeName":     "Home page and scrollbar cleanup",
+          "changeSummary":  "Added webkit-specific styling options to shrink the scrollbars on Windows for Webkit-based browsers (notably Google Chrome). Shrunk the Home page masthead and changed it's colorscheme to black-on-white.",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "asset.map",
           "type":           "bugfix",

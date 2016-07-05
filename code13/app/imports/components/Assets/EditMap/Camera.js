@@ -6,6 +6,10 @@ const Camera = function(map){
   if(!map.options.camera){
     map.options.camera = {x: 0, y: 0, zoom: 1};
   }
+  else{
+    map.options.camera.x = map.options.camera.x || 0;
+    map.options.camera.y = map.options.camera.y || 0;
+  }
   if( !map.options.camera.zoom || isNaN(map.options.camera.zoom) ){
     map.options.camera.zoom = 1;
   }

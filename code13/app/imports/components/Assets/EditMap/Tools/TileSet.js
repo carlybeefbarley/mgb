@@ -263,11 +263,12 @@ export default class TileSet extends React.Component {
   /* events */
   onDropOnLayer(e){
     e.preventDefault();
-    const assetJson = e.dataTransfer.getData("asset");
-    let asset;
-    if(assetJson){
-      asset = JSON.parse(assetJson);
+    const dataStr = e.dataTransfer.getData("text");
+    let asset, data;
+    if(dataStr){
+       data = JSON.parse(dataStr);
     }
+    asset = data.asset;
     if(asset && asset.kind != "graphic"){
       return;
     }
@@ -285,21 +286,27 @@ export default class TileSet extends React.Component {
 
   }
   onDropChangeTilesetImage(e){
+    console.log("Dropped!");
     e.preventDefault();
-    const assetJson = e.dataTransfer.getData("asset");
-    let asset;
-    if(assetJson){
-      asset = JSON.parse(assetJson);
+    e.stopPropagation();
+    const dataStr = e.dataTransfer.getData("text");
+    let asset, data;
+    if(dataStr){
+      data = JSON.parse(dataStr);
     }
+    asset = data.asset;
     if(asset && asset.kind != "graphic"){
       return;
     }
-    const url = e.dataTransfer.getData("link");
+    const url = data.link;
     this.refs.controls.updateTilesetFromUrl(url, this.data);
   }
   onDragOver(e){
-    e.dataTransfer.dropEffect = 'copy';
+    e.stopPropagation();
     e.preventDefault();
+    e.dataTransfer.effectAllowed = 'copy';
+    // IE crashes
+    // e.dataTransfer.dropEffect = 'copy';
   }
 
   onMouseDown(e){
@@ -369,6 +376,7 @@ export default class TileSet extends React.Component {
            data-drop-text="Drop asset here to create TileSet"
            onDrop={this.onDropOnLayer.bind(this)}
            onDragOver={this.onDragOver.bind(this)}
+           onDragEnter={this.onDragOver.bind(this)}
 
         >
         <TilesetControls tileset={this} ref="controls"/>

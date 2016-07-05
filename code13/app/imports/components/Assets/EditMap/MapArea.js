@@ -676,7 +676,10 @@ export default class MapArea extends React.Component {
   prepareForDrag(e){
     e.stopPropagation();
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
+    e.dataTransfer.effectAllowed = 'copy';
+    // IE crashes
+    // e.dataTransfer.dropEffect = 'copy';
+
   }
   /* endof events */
 
@@ -813,12 +816,11 @@ export default class MapArea extends React.Component {
     if(this.data.width * this.data.height > 100000){
       notification = <div>This is map is larger than our recommended size - so editing may be slower than normal!</div>;
     }
-
     return (
       <div
         className="tilemap-wrapper"
-        onDrop={this.importFromDrop.bind(this)}
         onDragOver={this.prepareForDrag.bind(this)}
+        onDrop={this.importFromDrop.bind(this)}
         onWheel={this.handleOnWheel.bind(this)}
         >
         <MapTools map={this} ref="tools" />
@@ -826,5 +828,6 @@ export default class MapArea extends React.Component {
         {this.renderMap()}
       </div>
     )
+
   }
 };

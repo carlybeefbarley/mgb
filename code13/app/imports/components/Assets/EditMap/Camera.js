@@ -63,11 +63,7 @@ Camera.prototype = {
     this.y = 0;
     this.zoom = 1;
 
-    if(this.map.options.preview) {
-      this.map.resetPreview();
-    }
-
-    this.redraw();
+    this.map.redraw();
   }
 };
 

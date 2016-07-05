@@ -488,8 +488,12 @@ export default class MapArea extends React.Component {
   resetCamera(){
     this.lastEvent = null;
     this.camera.reset();
-    this.resetPreview();
+
+    if(this.options.preview) {
+      this.resetPreview();
+    }
   }
+
   resetPreview(){
     this.preview.x = 5;
     this.preview.y = 45;

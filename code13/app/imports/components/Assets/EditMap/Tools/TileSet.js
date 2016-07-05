@@ -282,11 +282,8 @@ export default class TileSet extends React.Component {
       console.log("Got asset:", asset, data);
       this.refs.controls.updateTilesetFromData(data);
     });
-
-
   }
   onDropChangeTilesetImage(e){
-    console.log("Dropped!");
     e.preventDefault();
     e.stopPropagation();
     const dataStr = e.dataTransfer.getData("text");

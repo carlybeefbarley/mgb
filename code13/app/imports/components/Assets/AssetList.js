@@ -21,7 +21,9 @@ export default  AssetList = React.createClass({
             key={asset._id}
             showEditButton={true}
             showToast={this.props.showToast} 
-            renderType={this.props.renderType}/>
+            renderType={this.props.renderType}
+            location={this.props.location}// atm - this can be only "panel"
+            />
       );
     })
 

@@ -99,8 +99,6 @@ export default class MapArea extends React.Component {
     this.globalKeyUp = (...args) => {
       this.handleKeyUp(...args);
     };
-
-    console.log("Map area initialized!");
   }
 
   componentDidMount(){
@@ -646,7 +644,6 @@ export default class MapArea extends React.Component {
     this.refs.tools.enableMode(mode);
   }
   importFromDrop (e) {
-    console.log("DROP map area!");
     const layer = this.getActiveLayer();
     if(layer && layer.onDrop){
       layer.onDrop(e);
@@ -773,6 +770,7 @@ export default class MapArea extends React.Component {
           layers.push(<TileMapLayer
             data={map.layers[i]}
             key={i}
+            anotherUsableKey={i}
             map={this}
             active={this.activeLayer == i}
             />);
@@ -782,6 +780,7 @@ export default class MapArea extends React.Component {
             data={map.layers[i]}
             key={i}
             map={this}
+            anotherUsableKey={i}
             active={this.activeLayer == i}
             />);
         }
@@ -790,6 +789,7 @@ export default class MapArea extends React.Component {
             data={map.layers[i]}
             key={i}
             map={this}
+            anotherUsableKey={i}
             active={this.activeLayer == i}
             />);
         }
@@ -814,7 +814,7 @@ export default class MapArea extends React.Component {
   render (){
     let notification = "";
     if(this.data.width * this.data.height > 100000){
-      notification = <div>This is map is larger than our recommended size - so editing may be slower than normal!</div>;
+      notification = <div>This map is larger than our recommended size - so editing may be slower than normal!</div>;
     }
     return (
       <div

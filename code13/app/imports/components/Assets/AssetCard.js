@@ -157,7 +157,7 @@ export default AssetCard = React.createClass({
 
     // TODO: add allowDrag to props.. and walk through AssetCard use cases;
     return (
-      <div key={asset._id} className="ui card" draggable="true" style={{ overflow: "hidden", minWidth: "200px"}}
+      <div key={asset._id} className="ui card" draggable={this.props.location == "panel" ? "true": "false"} style={{ overflow: "hidden", minWidth: "200px"}}
            onDragStart={this.startDrag.bind(this, asset)}
            onDragEnd={this.endDrag.bind(this, asset)}
         >

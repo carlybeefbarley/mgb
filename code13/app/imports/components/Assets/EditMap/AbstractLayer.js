@@ -91,6 +91,11 @@ export default class AbstractLayer extends React.Component {
   }
   handleMouseDown(e){
     this.mouseDown = true;
+    if(e.buttons == 4){
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
   }
   _onKeyUp(e){
     if(this.isActive()){

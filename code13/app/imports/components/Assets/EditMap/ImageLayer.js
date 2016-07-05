@@ -13,7 +13,7 @@ export default class ImageLayer extends AbstractLayer {
     if(!this.options.image){
       return;
     }
-    const img = this.map.images[this.options.image];
+    const img = this.map.images.get(this.options.image);
     if(!img){
       return;
     }
@@ -37,16 +37,19 @@ export default class ImageLayer extends AbstractLayer {
   onDrop(e){
     e.preventDefault();
     e.stopPropagation();
-    const assetJson = e.dataTransfer.getData("asset");
-    let asset;
-    if(assetJson){
-      asset = JSON.parse(assetJson);
+    const dataStr = e.dataTransfer.getData("text");
+    let asset, data;
+    if(dataStr){
+      data = JSON.parse(dataStr);
     }
+    asset = data.asset;
+
     if(asset && asset.kind != "graphic"){
       return;
     }
     console.log("Dropped asset:", asset);
-    this.options.image = e.dataTransfer.getData("link");
+
+    this.options.image = data.link;
     this.map.fullUpdate();
   }
   render(){

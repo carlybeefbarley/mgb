@@ -23,6 +23,10 @@ const ObjectHelper = window.ObjectHelper = {
   PointvsAABB: (box, x, y) => {
     return !(box.x > x || box.y > y || box.x + box.width  < x || box.y + box.height < y);
   },
+  // transform coords to match bottom / up drawing
+  PointvsTile: (box, x, y) => {
+    return ObjectHelper.PointvsAABB(box, x, y+box.height);
+  },
   createTileObject: (pal, id, x, y) => {
     return {
       "gid": pal.gid,

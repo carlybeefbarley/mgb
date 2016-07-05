@@ -17,11 +17,6 @@ import TileSelection from "./Tools/TileSelection.js";
 import EditModes from "./Tools/EditModes.js";
 import LayerTypes from "./Tools/LayerTypes.js";
 import Camera from "./Camera.js";
-if(!window.Proxy){
-  window.Proxy = function(obj, props){
-
-  };
-}
 
 export default class MapArea extends React.Component {
 
@@ -33,7 +28,7 @@ export default class MapArea extends React.Component {
     window.map = this;
 
     // temporary workaround for saved images until we connect asset editor and map editor
-    this.images = new Proxy(images, {
+    /*this.images = new Proxy(images, {
       get: (target, property, receiver) => {
         // meteor throws error about properties with . in name
         // could be related: https://github.com/meteor/meteor/issues/4522
@@ -49,7 +44,23 @@ export default class MapArea extends React.Component {
         this.map.images[property] = value.src;
         return true;
       }
-    });
+    });*/
+
+    this.images = {
+      set: (property, value) => {
+        property = this.removeDots(property);
+        images[property] = value;
+        if(!this.map.images){
+          this.map.images = {};
+        }
+        this.map.images[property] = value.src;
+        return true;
+      },
+      get: (property) => {
+        property = this.removeDots(property);
+        return images[property];
+      }
+    };
 
     // here will be kept selections from tilesets
     this.collection = new TileCollection();
@@ -83,14 +94,7 @@ export default class MapArea extends React.Component {
     this.globalMouseMove = (...args) => {this.handleMouseMove(...args);};
     this.globalMouseUp = (...args) => {this.handleMouseUp(...args);};
     this.globalResize = () => {
-      this.layers.forEach((l)=>{
-        l.adjustCanvas();
-        l.draw();
-      });
-      if(this.refs.grid){
-        this.refs.grid.adjustCanvas();
-        this.refs.grid.drawGrid();
-      }
+      this.redraw();
     };
     this.globalKeyUp = (...args) => {
       this.handleKeyUp(...args);
@@ -270,7 +274,7 @@ export default class MapArea extends React.Component {
       c.height = img.height;
       c.ctx.drawImage(img, 0, 0);
       img.onload = () => {
-        this.images[name] = img;
+        this.images.set(name, img);
         this.updateImages();
       };
 
@@ -307,7 +311,7 @@ export default class MapArea extends React.Component {
       img.setAttribute('crossOrigin', 'anonymous');
       img.onload = () => {
         loaded++;
-        this.images[i] = img;
+        this.images.set(i, img);
         if(loaded == keys.length){
           this.updateImages(cb);
         }
@@ -330,11 +334,11 @@ export default class MapArea extends React.Component {
     let index = 0;
     for(let ts of map.tilesets){
       const fgid = ts.firstgid;
-      if(!this.images[ts.image]){
+      if(!this.images.get(ts.image)){
         this.errors.push("missing: '" + ts.image + "'" );
         continue;
       }
-      const img = this.images[ts.image];
+      const img = this.images.get(ts.image);
       // this should be imported from mgb1
       if(!ts.imagewidth){
         ts.imagewidth = img.width;
@@ -494,18 +498,18 @@ export default class MapArea extends React.Component {
   /* camera stuff */
   resetCamera(){
     this.lastEvent = null;
-    this.camera.x = 0;
-    this.camera.y = 0;
-    this.camera.zoom = 1;
+    this.camera.reset();
 
     if(this.options.preview) {
-      this.preview.x = 5;
-      this.preview.y = 45;
-      this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
+      this.resetPreview();
     }
+  }
 
-    this.redrawLayers();    // TODO(@stauzs): Maybe just call this.redraw()?
-    this.redrawGrid();
+  resetPreview(){
+    this.preview.x = 5;
+    this.preview.y = 45;
+    // seems too far away
+    this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
   }
   moveCamera(e){
     if(!this.lastEvent){
@@ -520,8 +524,7 @@ export default class MapArea extends React.Component {
     this.lastEvent.pageX = e.pageX;
     this.lastEvent.pageY = e.pageY;
 
-    this.redrawGrid();    // TODO(@stauzs): Maybe just call this.redraw()?
-    this.redrawLayers();
+    this.redraw();
   }
   zoomCamera(newZoom, e){
 
@@ -546,8 +549,7 @@ export default class MapArea extends React.Component {
 
     this.camera.zoom = newZoom;
 
-    this.redrawGrid();
-    this.redrawLayers();
+    this.redraw();
   }
   movePreview(e){
     if(!this.lastEvent){
@@ -674,7 +676,10 @@ export default class MapArea extends React.Component {
   prepareForDrag(e){
     e.stopPropagation();
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
+    e.dataTransfer.effectAllowed = 'copy';
+    // IE crashes
+    // e.dataTransfer.dropEffect = 'copy';
+
   }
   /* endof events */
 
@@ -689,11 +694,10 @@ export default class MapArea extends React.Component {
     this.addLayerTool();
     this.addTilesetTool();
     this.addPropertiesTool();
-    this.redrawLayers();
+    this.redraw();
     this.redrawTilesets();
     cb();
   }
-
 
   redraw(){
     this.redrawLayers();
@@ -701,7 +705,7 @@ export default class MapArea extends React.Component {
   }
 
   redrawGrid(){
-    this.refs.grid && this.refs.grid.drawGrid();
+    this.refs.grid.draw();
   }
   redrawLayers(){
     this.layers.forEach((layer) => {
@@ -790,11 +794,9 @@ export default class MapArea extends React.Component {
             />);
         }
       }
-      if(this.meta.options.showGrid) {
-        layers.push(
-          <GridLayer map={this} key={i} ref="grid" />
-        );
-      }
+      layers.push(
+        <GridLayer map={this} key={i} ref="grid" />
+      );
       // TODO: adjust canvas size
       return (
         <div
@@ -810,16 +812,22 @@ export default class MapArea extends React.Component {
     }
   }
   render (){
+    let notification = "";
+    if(this.data.width * this.data.height > 100000){
+      notification = <div>This is map is larger than our recommended size - so editing may be slower than normal!</div>;
+    }
     return (
       <div
         className="tilemap-wrapper"
-        onDrop={this.importFromDrop.bind(this)}
         onDragOver={this.prepareForDrag.bind(this)}
+        onDrop={this.importFromDrop.bind(this)}
         onWheel={this.handleOnWheel.bind(this)}
         >
         <MapTools map={this} ref="tools" />
+        {notification}
         {this.renderMap()}
       </div>
     )
+
   }
 };

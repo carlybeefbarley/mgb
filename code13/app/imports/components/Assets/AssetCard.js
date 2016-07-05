@@ -97,8 +97,14 @@ export default AssetCard = React.createClass({
     const url  = `/api/asset/png/${asset._id}`;
     console.log("Start dragging Asset  url=", url);
 
-    e.dataTransfer.setData("link", url);
-    e.dataTransfer.setData("asset", JSON.stringify(asset));
+    // IE supports only text.. so - encode everything in the "text"
+    e.dataTransfer.setData("text", JSON.stringify({
+      link: url,
+      asset: asset
+    }));
+
+    // IE needs this!!!
+    e.dataTransfer.effectAllowed = "copy";
 
     $(document.body).addClass("dragging");
   },

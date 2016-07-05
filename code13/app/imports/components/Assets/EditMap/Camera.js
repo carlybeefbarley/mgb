@@ -6,6 +6,10 @@ const Camera = function(map){
   if(!map.options.camera){
     map.options.camera = {x: 0, y: 0, zoom: 1};
   }
+  else{
+    map.options.camera.x = map.options.camera.x || 0;
+    map.options.camera.y = map.options.camera.y || 0;
+  }
   if( !map.options.camera.zoom || isNaN(map.options.camera.zoom) ){
     map.options.camera.zoom = 1;
   }
@@ -55,7 +59,16 @@ Camera.prototype = {
     this.map.options.camera.zoom = val;
     this._zoom = val;
   },
-  get zoom(){return this._zoom}
+  get zoom(){return this._zoom},
+
+  reset(){
+
+    this.x = 0;
+    this.y = 0;
+    this.zoom = 1;
+
+    this.map.redraw();
+  }
 };
 
 export default Camera;

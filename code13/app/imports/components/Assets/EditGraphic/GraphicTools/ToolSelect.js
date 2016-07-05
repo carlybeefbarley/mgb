@@ -1,31 +1,27 @@
-function drawHorizLine(drawEnv, x1, x2, y, fillFlag = false)
+function drawHorizLine(drawEnv, x1, x2, y)
 {
   if (x1 > x2)
     [x1, x2] = [x2, x1]
 
-  if (fillFlag)
-  {
-
-    while (x1 <= x2) {
-      if (x1 >= -1 && y >= -1)                 // Tiny bit easy perf tweak. Could do for right/bottom if important. -1 because of Math.round
-        drawEnv.setSelectPixelsAt(x1, y);
-      x1 = x1 + 1;
-    }
-  }
-  else
-  {
-    drawEnv.setSelectPixelsAt( x1, y);
-    drawEnv.setSelectPixelsAt( x2, y);
+  for(let i=x1; i<=x2; i++){
+    drawEnv.setSelectPixelsAt(i, y);
   }
 }
 
-function drawRect(drawEnv, x0, y0, w, h, fillFlag = false) {
-  h = Math.abs(h)
-  w = Math.abs(w)
+function drawVerticLine(drawEnv, y1, y2, x){
+  if (y1 > y2)
+    [y1, y2] = [y2, y1]
 
-  for (let j=0; j<=h; j++) {
-    drawHorizLine(drawEnv, x0, x0 + w, y0 + j, (j===0 || j===h) ? true : fillFlag)
+  for(let i=y1; i<=y2; i++){
+    drawEnv.setSelectPixelsAt(x, i);
   }
+}
+
+function drawRect(drawEnv, startX, startY, endX, endY) {
+  drawHorizLine(drawEnv, startX, endX, startY);
+  drawHorizLine(drawEnv, startX, endX, endY);
+  drawVerticLine(drawEnv, startY, endY, startX);
+  drawVerticLine(drawEnv, startY, endY, endX);
 }
 
 
@@ -51,18 +47,12 @@ const ToolSelect = {
 
     let w = drawEnv.x - ToolSelect._startx
     let h = drawEnv.y - ToolSelect._starty
-    let fillFlag = drawEnv.event.shiftKey === true
 
-    // reset the preview canvas to how it was at MouseDown
-    drawEnv.previewCtx.putImageData(ToolSelect._storedPreviewImageData, 0, 0)
-
+    // update canvas clearing from previous select area
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
 
     // Draw a rectangle here
-    drawRect(drawEnv, ToolSelect._startx, ToolSelect._starty, w, h, fillFlag)
-
-    // Clone and scale to edit Canvas
-    // drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
+    drawRect(drawEnv, ToolSelect._startx, ToolSelect._starty, drawEnv.x, drawEnv.y);
   },
 
   handleMouseUp: ( drawEnv ) => {

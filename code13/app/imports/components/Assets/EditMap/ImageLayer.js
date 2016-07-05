@@ -13,7 +13,7 @@ export default class ImageLayer extends AbstractLayer {
     if(!this.options.image){
       return;
     }
-    const img = this.map.images[this.options.image];
+    const img = this.map.images.get(this.options.image);
     if(!img){
       return;
     }

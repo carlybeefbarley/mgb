@@ -17,11 +17,6 @@ import TileSelection from "./Tools/TileSelection.js";
 import EditModes from "./Tools/EditModes.js";
 import LayerTypes from "./Tools/LayerTypes.js";
 import Camera from "./Camera.js";
-if(!window.Proxy){
-  window.Proxy = function(obj, props){
-
-  };
-}
 
 export default class MapArea extends React.Component {
 
@@ -33,7 +28,7 @@ export default class MapArea extends React.Component {
     window.map = this;
 
     // temporary workaround for saved images until we connect asset editor and map editor
-    this.images = new Proxy(images, {
+    /*this.images = new Proxy(images, {
       get: (target, property, receiver) => {
         // meteor throws error about properties with . in name
         // could be related: https://github.com/meteor/meteor/issues/4522
@@ -49,7 +44,23 @@ export default class MapArea extends React.Component {
         this.map.images[property] = value.src;
         return true;
       }
-    });
+    });*/
+
+    this.images = {
+      set: (property, value) => {
+        property = this.removeDots(property);
+        images[property] = value;
+        if(!this.map.images){
+          this.map.images = {};
+        }
+        this.map.images[property] = value.src;
+        return true;
+      },
+      get: (property) => {
+        property = this.removeDots(property);
+        return images[property];
+      }
+    };
 
     // here will be kept selections from tilesets
     this.collection = new TileCollection();
@@ -263,7 +274,7 @@ export default class MapArea extends React.Component {
       c.height = img.height;
       c.ctx.drawImage(img, 0, 0);
       img.onload = () => {
-        this.images[name] = img;
+        this.images.set(name, img);
         this.updateImages();
       };
 
@@ -300,7 +311,7 @@ export default class MapArea extends React.Component {
       img.setAttribute('crossOrigin', 'anonymous');
       img.onload = () => {
         loaded++;
-        this.images[i] = img;
+        this.images.set(i, img);
         if(loaded == keys.length){
           this.updateImages(cb);
         }
@@ -323,11 +334,11 @@ export default class MapArea extends React.Component {
     let index = 0;
     for(let ts of map.tilesets){
       const fgid = ts.firstgid;
-      if(!this.images[ts.image]){
+      if(!this.images.get(ts.image)){
         this.errors.push("missing: '" + ts.image + "'" );
         continue;
       }
-      const img = this.images[ts.image];
+      const img = this.images.get(ts.image);
       // this should be imported from mgb1
       if(!ts.imagewidth){
         ts.imagewidth = img.width;

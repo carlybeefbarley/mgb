@@ -17,6 +17,7 @@ import mgbReleaseInfo from '../components/Nav/mgbReleaseInfo.js';
 
 import urlMaker from './urlMaker';
 
+import webkitSmallScrollbars from './webkitSmallScrollbars.css';
 
 export default App = React.createClass({
   mixins: [ReactMeteorData],
@@ -197,7 +198,7 @@ export default App = React.createClass({
               isSuperAdmin={isSuperAdmin}
               /> 
 
-            <div style={mainPanelOuterDivSty}>
+            <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
               <div style={mainPanelInnerDivSty}>
                 {
                   this.props.children && React.cloneElement(this.props.children, {

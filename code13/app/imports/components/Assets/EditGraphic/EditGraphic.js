@@ -408,6 +408,18 @@ export default class EditGraphic extends React.Component {
         }
       },
 
+
+      setSelectPixelsAt: function (x, y, w=1, h=1) {
+
+        // Now set Pixels (zoomed) to the Edit context
+        self._setImageData4BytesFromRGBA(retval.editCtxImageData1x1.data,    retval.chosenColor.rgb)
+        for (let i = 0; i < w; i++) {
+          for (let j = 0; j < h; j++) {
+            retval.editCtx.putImageData(retval.editCtxImageData1x1, (x * retval.scale) + i, (y * retval.scale) + j)
+          }
+        }
+      },
+
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
       //   (a) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is more convenient than a ClearRect+FillRect in many cases.

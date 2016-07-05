@@ -5,6 +5,7 @@ import ToolMove from './ToolMove.js';
 import ToolCircle from './ToolCircle.js';
 import ToolRect from './ToolRect.js';
 import ToolEyedropper from './ToolEyedropper.js';
+import ToolSelect from './ToolSelect.js';
 
 const Tools = {
   ToolPen,
@@ -13,7 +14,8 @@ const Tools = {
   ToolMove,
   ToolCircle,
   ToolRect,
-  ToolEyedropper
+  ToolEyedropper,
+  ToolSelect
 };
 
 export default Tools

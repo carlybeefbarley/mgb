@@ -13,22 +13,23 @@ class Handle{
     this.x = x; this.y = y;
   }
   // TODO: move hover x/y out from draw ?
-  draw(ctx, x, y){
+  draw(ctx, active = false){
     ctx.beginPath();
-    ctx.fillStyle = "rgba(255,0,0,0.5)";
-    if(this.vsPoint(x, y)){
-      ctx.arc(this.x, this.y, this.radius+2, 0, PI2);
-      ctx.fill();
 
+    if(active){
+      ctx.fillStyle = "rgba(255,0,0,1)";
+      ctx.arc(this.x, this.y, this.radius*2, 0, PI2);
+      ctx.fill();
     }
     else{
+      ctx.fillStyle = "rgba(255,0,0,0.5)";
       ctx.arc(this.x, this.y, this.radius, 0, PI2);
       ctx.stroke();
 
     }
   }
   vsPoint(x, y){
-    return Math.abs(this.x - x) < this.radius && Math.abs(this.y - y) < this.radius
+    return Math.abs(this.x - x) < this.radius && Math.abs(this.y - y) < this.radius;
   }
 }
 // maybe we need to expose these...
@@ -47,6 +48,8 @@ export default class HandleCollection {
   constructor(x, y, width, height){
     this.handles = [];
     this.action = "resize";
+    this.activeHandle = null;
+
     for(let i=0; i<9; i++){
       this.handles.push(new Handle(0, 0));
     }
@@ -55,6 +58,7 @@ export default class HandleCollection {
 
   update(x, y, width, height){
     const h = this.handles;
+
     h[TOP_LEFT].update(x, y);
     h[TOP].update(x + width * 0.5, y);
     h[TOP_RIGHT].update(x + width, y);
@@ -67,13 +71,26 @@ export default class HandleCollection {
     h[BOTTOM].update(x + width * 0.5, y + height);
     h[BOTTOM_RIGHT].update(x + width, y + height);
 
-
   }
 
   draw(ctx, x, y){
     for(let i=0; i<this.handles.length; i++){
-      this.handles[i].draw(ctx, x, y);
+      this.handles[i].draw(ctx, this.handles[i] == this.activeHandle);
     }
   }
 
+  moveActiveHandle(x, y){
+
+  }
+
+  setActive(x, y){
+    this.activeHandle = null;
+    for(let i=0; i<this.handles.length; i++){
+      if(this.handles[i].vsPoint(x, y)){
+        this.activeHandle = this.handles[i];
+        return true;
+      }
+    }
+    return false;
+  }
 }

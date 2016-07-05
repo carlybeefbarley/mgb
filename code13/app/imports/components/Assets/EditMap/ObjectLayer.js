@@ -64,13 +64,13 @@ export default class ObjectLayer extends AbstractLayer {
       if(obj.gid){
         if(ObjectHelper.PointvsTile(obj, x, y)){
           console.log("picked:", obj);
-          return obj;
+          return i;
         }
       }
       else{
         if(ObjectHelper.PointvsAABB(obj, x, y)){
           console.log("picked:", obj);
-          return obj;
+          return i;
         }
       }
     }
@@ -80,32 +80,43 @@ export default class ObjectLayer extends AbstractLayer {
   handleMouseMove(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
 
-    this.mouseX = e.offsetX * this.map.camera.zoom;
-    this.mouseY = e.offsetY * this.map.camera.zoom;
+    this.mouseY = e.offsetY;// / this.map.camera.zoom;
+    this.mouseX = e.offsetX;// / this.map.camera.zoom;
+
+    this.isDirty = true;
 
     if(!this.mouseDown){
-      // TODO: use raf instead
-      this.highlightSelected();
+      this.handles.setActive(this.mouseX, this.mouseY);
       return;
     }
 
     // TODO: movement X/Y - is not supported by all browsers!
     this.movementX += (e.movementX / this.camera.zoom);
     this.movementY += (e.movementY / this.camera.zoom);
+
+
+    if(this.handles.activeHandle){
+      this.handles.moveActiveHandle(this.mouseX, this.mouseY);
+      return;
+    }
+    // else move object
+
+    // todo
     if(this.pickedObject){
+      const po = this.data.objects[this.pickedObject];
+
       const tw = this.map.data.tilewidth;
       const th = this.map.data.tileheight;
 
-      this.pickedObject.x = this.startPosX + this.movementX; // + this.camera.movementX;
-      this.pickedObject.y = this.startPosY + this.movementY; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
+      po.x = this.startPosX + this.movementX; // + this.camera.movementX;
+      po.y = this.startPosY + this.movementY; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
 
       if(e.ctrlKey){
-        this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw;
-        this.pickedObject.y = Math.round(this.pickedObject.y / th) * th;
+        po.x = Math.round(po.x / tw) * tw;
+        po.y = Math.round(po.y / th) * th;
       }
     }
 
-    this.isDirty = true;
   }
 
   handleMouseDown(ep){
@@ -120,8 +131,10 @@ export default class ObjectLayer extends AbstractLayer {
     this.movementY = 0;
     this.startPosX= 0;
     this.startPosY = 0;
-    this.mouseX = e.offsetX * this.map.camera.zoom;
-    this.mouseY = e.offsetY * this.map.camera.zoom;
+    this.mouseX = e.offsetX;
+    this.mouseY = e.offsetY;
+
+    this.handles.setActive(this.mouseX, this.mouseY);
 
     this.map.saveForUndo();
     super.handleMouseDown(e);
@@ -228,6 +241,15 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     this.highlightSelected();
+
+    if(this.drawDebug) {
+      // show mouse - after transforms
+      this.ctx.beginPath();
+      this.ctx.arc(this.mouseX, this.mouseY, 5, 0, Math.PI * 2);
+      this.ctx.fillStyle = "rgba(0, 255, 0, 1)";
+      this.ctx.fill();
+    }
+    
     this.isDirty = false;
   }
 
@@ -393,11 +415,10 @@ export default class ObjectLayer extends AbstractLayer {
     o.height = maxy - miny;
 
 
+    this.ctx.stroke();
     if(o.polygon){
+      this.ctx.fillStyle="rgba(70, 70, 70, 1)";
       this.ctx.fill();
-    }
-    else{
-      this.ctx.stroke();
     }
     this.ctx.restore();
   }

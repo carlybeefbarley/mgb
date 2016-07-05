@@ -685,7 +685,6 @@ export default class MapArea extends React.Component {
     cb();
   }
 
-
   redraw(){
     this.redrawLayers();
     this.redrawGrid();
@@ -799,6 +798,11 @@ export default class MapArea extends React.Component {
     }
   }
   render (){
+    let notification = "";
+    if(this.data.width * this.data.height > 100000){
+      notification = <div>This is map is larger than our recommended size - so editing may be slower than normal!</div>;
+    }
+
     return (
       <div
         className="tilemap-wrapper"
@@ -807,6 +811,7 @@ export default class MapArea extends React.Component {
         onWheel={this.handleOnWheel.bind(this)}
         >
         <MapTools map={this} ref="tools" />
+        {notification}
         {this.renderMap()}
       </div>
     )

@@ -64,11 +64,13 @@ export default class TileMapLayer extends React.Component {
     }
   }
   draw(){
-    "use strict";
-    this.drawGrid();
+    this.adjustCanvas();
+    if(this.props.map.options.showGrid){
+      this.drawGrid();
+    }
   }
   drawGrid (){
-    this.adjustCanvas();
+
     //this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     const camera = this.props.map.camera;
     if(this.ctx.setLineDash){

@@ -55,7 +55,20 @@ Camera.prototype = {
     this.map.options.camera.zoom = val;
     this._zoom = val;
   },
-  get zoom(){return this._zoom}
+  get zoom(){return this._zoom},
+
+  reset(){
+
+    this.x = 0;
+    this.y = 0;
+    this.zoom = 1;
+
+    if(this.map.options.preview) {
+      this.map.resetPreview();
+    }
+
+    this.redraw();
+  }
 };
 
 export default Camera;

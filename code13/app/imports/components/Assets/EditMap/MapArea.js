@@ -83,14 +83,7 @@ export default class MapArea extends React.Component {
     this.globalMouseMove = (...args) => {this.handleMouseMove(...args);};
     this.globalMouseUp = (...args) => {this.handleMouseUp(...args);};
     this.globalResize = () => {
-      this.layers.forEach((l)=>{
-        l.adjustCanvas();
-        l.draw();
-      });
-      if(this.refs.grid){
-        this.refs.grid.adjustCanvas();
-        this.refs.grid.drawGrid();
-      }
+      this.redraw();
     };
     this.globalKeyUp = (...args) => {
       this.handleKeyUp(...args);
@@ -494,18 +487,14 @@ export default class MapArea extends React.Component {
   /* camera stuff */
   resetCamera(){
     this.lastEvent = null;
-    this.camera.x = 0;
-    this.camera.y = 0;
-    this.camera.zoom = 1;
-
-    if(this.options.preview) {
-      this.preview.x = 5;
-      this.preview.y = 45;
-      this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
-    }
-
-    this.redrawLayers();    // TODO(@stauzs): Maybe just call this.redraw()?
-    this.redrawGrid();
+    this.camera.reset();
+    this.resetPreview();
+  }
+  resetPreview(){
+    this.preview.x = 5;
+    this.preview.y = 45;
+    // seems too far away
+    this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
   }
   moveCamera(e){
     if(!this.lastEvent){
@@ -520,8 +509,7 @@ export default class MapArea extends React.Component {
     this.lastEvent.pageX = e.pageX;
     this.lastEvent.pageY = e.pageY;
 
-    this.redrawGrid();    // TODO(@stauzs): Maybe just call this.redraw()?
-    this.redrawLayers();
+    this.redraw();
   }
   zoomCamera(newZoom, e){
 
@@ -546,8 +534,7 @@ export default class MapArea extends React.Component {
 
     this.camera.zoom = newZoom;
 
-    this.redrawGrid();
-    this.redrawLayers();
+    this.redraw();
   }
   movePreview(e){
     if(!this.lastEvent){
@@ -689,7 +676,7 @@ export default class MapArea extends React.Component {
     this.addLayerTool();
     this.addTilesetTool();
     this.addPropertiesTool();
-    this.redrawLayers();
+    this.redraw();
     this.redrawTilesets();
     cb();
   }
@@ -701,7 +688,7 @@ export default class MapArea extends React.Component {
   }
 
   redrawGrid(){
-    this.refs.grid && this.refs.grid.drawGrid();
+    this.refs.grid.draw();
   }
   redrawLayers(){
     this.layers.forEach((layer) => {
@@ -790,11 +777,9 @@ export default class MapArea extends React.Component {
             />);
         }
       }
-      if(this.meta.options.showGrid) {
-        layers.push(
-          <GridLayer map={this} key={i} ref="grid" />
-        );
-      }
+      layers.push(
+        <GridLayer map={this} key={i} ref="grid" />
+      );
       // TODO: adjust canvas size
       return (
         <div

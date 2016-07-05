@@ -29,9 +29,13 @@ export default class ObjectLayer extends AbstractLayer {
       x: 0, y: 0, width: 0, height: 0
     };
     this.drawDebug = false;
-    this.pickedObject = null;
+    this._pickedObject = null;
     // as noun :)
     this.handles = new HandleCollection(0,0,0,0);
+  }
+
+  get pickedObject(){
+    return this.data.objects[this._pickedObject];
   }
 
   activate(){
@@ -103,17 +107,16 @@ export default class ObjectLayer extends AbstractLayer {
 
     // todo
     if(this.pickedObject){
-      const po = this.data.objects[this.pickedObject];
 
       const tw = this.map.data.tilewidth;
       const th = this.map.data.tileheight;
 
-      po.x = this.startPosX + this.movementX; // + this.camera.movementX;
-      po.y = this.startPosY + this.movementY; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
+      this.pickedObject.x = this.startPosX + this.movementX; // + this.camera.movementX;
+      this.pickedObject.y = this.startPosY + this.movementY; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
 
       if(e.ctrlKey){
-        po.x = Math.round(po.x / tw) * tw;
-        po.y = Math.round(po.y / th) * th;
+        this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw;
+        this.pickedObject.y = Math.round(this.pickedObject.y / th) * th;
       }
     }
 
@@ -140,7 +143,7 @@ export default class ObjectLayer extends AbstractLayer {
     super.handleMouseDown(e);
 
     if(this.map.options.mode == EditModes.rectanlge){
-      this.pickedObject = this.pickObject(e);
+      this._pickedObject = this.pickObject(e);
       if(this.pickedObject) {
         this.startPosX = this.pickedObject.x;
         this.startPosY = this.pickedObject.y;
@@ -193,7 +196,7 @@ export default class ObjectLayer extends AbstractLayer {
     console.log("Key UP", e.which);
     if(e.which == 46 && this.pickedObject){
       this.deleteObject(this.pickedObject);
-      this.pickedObject = null;
+      this._pickedObject = null;
     }
 
     if(e.which == "B".charCodeAt(0)){
@@ -249,7 +252,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.ctx.fillStyle = "rgba(0, 255, 0, 1)";
       this.ctx.fill();
     }
-    
+
     this.isDirty = false;
   }
 

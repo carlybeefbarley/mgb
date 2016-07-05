@@ -14,6 +14,8 @@ const flexPanelViews = [
   { tag: "super",     icon: "red bomb",   hdr: "SuperAdmin", el: fpSuperAdmin, superAdminOnly: true }
 ]
 
+const defaultPanelViewIndex = 0
+
 export default FlexPanel = React.createClass({
   
   propTypes: {
@@ -34,6 +36,10 @@ export default FlexPanel = React.createClass({
     return {
       selectedViewTag: "activity"
     }
+  },
+
+  statics: {
+    getDefaultPanelViewTag: function() { return flexPanelViews[defaultPanelViewIndex].tag }
   },
 
     
@@ -87,8 +93,8 @@ export default FlexPanel = React.createClass({
       height: "auto" 
     }
     
-    // If the FlexPanel choice isn't recognized, just default to using our first one
-    const flexPanelChoice = _.find(flexPanelViews, ['tag', this.props.selectedViewTag]) || flexPanelViews[0]
+    // If the FlexPanel choice isn't recognized, just default to using our default one
+    const flexPanelChoice = _.find(flexPanelViews, ['tag', this.props.selectedViewTag]) || flexPanelViews[defaultPanelViewIndex]
     const flexPanelHdr = flexPanelChoice.hdr      
     const flexPanelIcon = flexPanelChoice.icon 
     const ElementFP = (!this.props.isSuperAdmin && flexPanelChoice.superAdminOnly) ? null : flexPanelChoice.el

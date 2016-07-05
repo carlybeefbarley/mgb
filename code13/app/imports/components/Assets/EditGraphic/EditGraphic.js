@@ -428,10 +428,20 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  handleZoom()
-  {
+  // handleZoom()
+  // {
+  //   recentMarker = null       // Since we now want to reload data for our new EditCanvas
+  //   this.setState( {editScale : (this.state.editScale == 8 ? 1 : (this.state.editScale << 1))})
+  // }
+
+  zoomIn(){
     recentMarker = null       // Since we now want to reload data for our new EditCanvas
-    this.setState( {editScale : (this.state.editScale == 8 ? 1 : (this.state.editScale << 1))})
+    this.setState( {editScale : (this.state.editScale == 8 ? 8 : (this.state.editScale << 1))})
+  }
+
+  zoomOut(){
+    recentMarker = null       // Since we now want to reload data for our new EditCanvas
+    this.setState( {editScale : (this.state.editScale == 1 ? 1 : (this.state.editScale >> 1))})
   }
 
 
@@ -967,6 +977,8 @@ console.log("Backwash marker = " + recentMarker)
                         onDrop={this.handleDropPreview.bind(this,-2)}>
               <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
             </a>
+
+            {/*
             <span>&nbsp;&nbsp;</span>
             <a className="ui label hazPopup" onClick={this.handleZoom.bind(this)}
                data-content="Click here or ALT+SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
@@ -974,6 +986,25 @@ console.log("Backwash marker = " + recentMarker)
                data-position="bottom center">
               <i className="icon zoom"></i>Zoom {zoom}x
             </a>
+          */}
+
+            <span>&nbsp;&nbsp;</span>
+
+            <span className="ui label hazPopup"
+              data-content="Click here or ALT+SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
+              data-variation="tiny"
+              data-position="bottom center">
+              <span style={{"cursor": "pointer"}} onClick={this.zoomOut.bind(this)}>
+                <i className="icon zoom out"></i>
+              </span>
+              {zoom}x
+              <span>&nbsp;&nbsp;</span>
+              <span style={{"cursor": "pointer"}} onClick={this.zoomIn.bind(this)}>
+                <i className="icon zoom"></i>
+              </span>
+            </span>
+
+
             <span>&nbsp;&nbsp;</span>
             <a className="ui label hazPopup" onClick={this.handleSave.bind(this, "Manual save")}
                data-content="Changes are continuously saved and updated to other viewers "

@@ -173,10 +173,9 @@ function __findKey(obj, predicate) {
   return null
 }
 
-function _getChannelKeyFromName(cName) {
+export function getChannelKeyFromName(cName) {
   return __findKey(ChatChannels, c => (c.name === cName) )
 } 
-
 
 
 Meteor.methods({
@@ -194,7 +193,7 @@ Meteor.methods({
     if (data.message.length > chatParams.maxChatMessageTextLen)
       throw new Meteor.Error(400, "Message too long")
 
-    const channelKey = _getChannelKeyFromName(data.toChannelName)
+    const channelKey = getChannelKeyFromName(data.toChannelName)
 
     if (!channelKey)
       throw new Meteor.Error(404, "Channel not known: "+data.toChannelName)

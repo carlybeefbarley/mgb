@@ -1,31 +1,53 @@
 import React, { PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import { Chats } from '../../schemas';
-import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams } from '../../schemas/chats';
+import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '../../schemas/chats';
 import moment from 'moment';
 
 const initialMessageLimit = 5
 const additionalMessageIncrement = 15
 
+// This is a little more complicated than it should be because Semantic UI has some peculiarities with the 
+// 'dropdown' control. In order to hve it so pretty, they take some liberties with the <option> element.
+// The result for us is that we can't set it in render() directly. We have to set it in componentDidMount()/
+// componentDidUpdate() and then we also have to explicitly squash any idemponent changes creating loops.
+// 
+// So.. this is ok while I understand it, but if it gets any more complex it may be worth looking at a less
+// 'special' ui control than dropdown
+
 export default fpChat = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px". 
-    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff    
+    currUser:                 PropTypes.object,             // Currently Logged in user. Can be null/undefined
+    user:                     PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
+    panelWidth:               PropTypes.string.isRequired,  // Typically something like "200px". 
+    isSuperAdmin:             PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff    
+    subNavParam:              PropTypes.string.isRequired,  // "" or a string that defines the sub-nav within this FlexPanel
+    handleChangeSubNavParam:  PropTypes.func.isRequired     // Call this back with the SubNav string (queryParam ?fp=___.subnavStr) to change it
   },
+
+  _calculateActiveChannelKey: function() {    
+    const channelName = this.props.subNavParam              // This is something like mgb-announce.. i.e a valid ChatChannels[something].name
+    const channelKey = getChannelKeyFromName(channelName)   // So this should be something like 'MGBBUGS'.. i.e. a key into ChatChannels{}
+    return channelKey || "GENERAL"
+  },
+
+
+  _calculateActiveChannelName: function() {    
+    return ChatChannels[this._calculateActiveChannelKey()].name
+  },
+
 
   getInitialState: function() {
     return {
-      activeChannelKey: "GENERAL",
       pastMessageLimit: initialMessageLimit
     }
   },
 
+
   getMeteorData: function() {
-    const chatChannel = ChatChannels[this.state.activeChannelKey]
+    const chatChannel = ChatChannels[this._calculateActiveChannelKey()]
     const uid = this.props.currUser ? this.props.currUser._id : null
     const handleForChats = Meteor.subscribe("chats.userId", uid, chatChannel.name, this.state.pastMessageLimit)
 
@@ -35,24 +57,38 @@ export default fpChat = React.createClass({
     }
   },
 
-  changeChannel: function(selectedChannelKey)
+
+  changeChannel: function(selectedChannelName)
   {
-    this.setState( {
-      activeChannelKey: selectedChannelKey,
-      pastMessageLimit: initialMessageLimit
-    })
+    // Magic and important squishing of idempotent changes below. See comment at start of file for some context on this.
+    if (selectedChannelName && selectedChannelName.length > 0 && selectedChannelName !== this._calculateActiveChannelName())
+    {
+      this.setState( { pastMessageLimit: initialMessageLimit })
+      this.props.handleChangeSubNavParam(selectedChannelName)
+    }
   },
+
 
   componentDidMount: function() {
     const $dropDown = $(".fpChatDropDown")
-    $dropDown.dropdown( 'set exactly', this.state.activeChannelKey)
-    $dropDown.dropdown( {  onChange: selectedChannelKey => this.changeChannel(selectedChannelKey) })
+
+    // TODO: See how to set this in render() instead. See comment at start of file for some context on this.
+    $dropDown.dropdown( 'set exactly', this._calculateActiveChannelName() )
+
+    // Callback to handle changes in channel Name. This is overactive because of the 'set exactly' 
+    // operations, hence the squishing in this.changeChannel()
+    $dropDown.dropdown( {  onChange: selectedChannelName => this.changeChannel(selectedChannelName) })
   },
 
 
-  componentDidUpdate: function() {
+  componentDidUpdate: function(prevProps) {
     if (this.state.pastMessageLimit <= initialMessageLimit)
       this.refs.bottomOfMessageDiv.scrollIntoView(false)
+
+    // TODO: See how to set this in render() instead. 
+    const $dropDown = $(".fpChatDropDown")    
+    if (prevProps.subNavParam !== this.props.subNavParam)
+      $dropDown.dropdown( 'set exactly', this._calculateActiveChannelName() )  // See notes above to see how we avoid infite loops on this
   },
 
 
@@ -61,7 +97,7 @@ export default fpChat = React.createClass({
     if (!msg || msg.length < 1)
       return
 
-    ChatSendMessage(this.state.activeChannelKey, msg, (error, result) => {
+    ChatSendMessage(this._calculateActiveChannelKey(), msg, (error, result) => {
       if (error) 
         alert("cannot send message because: " + error.reason)
       else
@@ -121,12 +157,16 @@ export default fpChat = React.createClass({
 
 
   render: function () {    
-    const canSend = currUserCanSend(this.props.currUser, this.state.activeChannelKey)
+
+    const channelKey = this._calculateActiveChannelKey()
+    const channelName = this._calculateActiveChannelName()
+
+    const canSend = currUserCanSend(this.props.currUser, channelKey)
     var disabler = cls => ( (canSend ? "" : "disabled ") + cls)
 
     return  <div>
               <div className="ui fluid tiny search selection dropdown fpChatDropDown">
-                <input type="hidden" name="channels" defaultValue=""></input>
+                <input type="hidden" name="channels" value={channelName}></input>
                 <i className="dropdown icon"></i>
                 <div className="default text">All Channels</div>
                 <div className="menu">
@@ -137,7 +177,7 @@ export default fpChat = React.createClass({
                         <div className="item" 
                              title={chan.description} 
                              key={k}
-                             data-value={k} >
+                             data-value={chan.name} >
                           <i className={chan.icon + " icon"}></i>{chan.name}
                         </div>                      
                     })

@@ -15,13 +15,14 @@ const FLIPPED_DIAGONALLY_FLAG   = 0x20000000;
 export default class TileMapLayer extends AbstractLayer {
   /* lifecycle functions */
   constructor(...args){
+    console.log("here!");
     super(...args);
     this.ctx = null;
     this.prevTile = null;
     this.mouseDown = false;
 
     this.drawInterval = 10000;
-    this.nextDraw = this.drawInterval;
+    this.nextDraw = Date.now() + this.drawInterval;
 
     this.kind = LayerTypes.tile;
 
@@ -264,12 +265,8 @@ export default class TileMapLayer extends AbstractLayer {
   queueDrawTiles(timeout){
 
     // this might be heavier than redrawing - need to research how heavy is set/clear Timeout!!! + new fn
-    if(timeout < this.nextDraw) {
-      this.nextDraw = timeout;
-      clearTimeout(this.lastTimeout);
-      this.lastTimeout = setTimeout(() => {
-        this.isDirty = true;
-      }, timeout);
+    if(this.nextDraw - Date.now() > timeout) {
+      this.nextDraw = Date.now() + timeout;
     }
 
   }
@@ -279,10 +276,9 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   _drawTiles(){
-    if(!this.isDirty || !this.isVisible) {
+    if( !( this.isDirty || this.nextDraw < Date.now() ) || !this.isVisible) {
       return;
     }
-
     const ts = this.props.data;
     const d = ts.data;
     const map = this.map;
@@ -297,7 +293,10 @@ export default class TileMapLayer extends AbstractLayer {
     if(!d) {
       return;
     }
-    //console.log("DrawTiles()");
+
+    // TODO: isDIrty actually is same as next draw < Date.now() - unneeded flag
+    this.isDirty = false;
+    this.nextDraw = Date.now() + this.drawInterval;
 
     const widthInTiles = Math.ceil(  (this.ctx.canvas.width / camera.zoom) / mapData.tilewidth  );
     const heightInTiles = Math.ceil( (this.ctx.canvas.height / camera.zoom) / mapData.tileheight);
@@ -347,7 +346,7 @@ export default class TileMapLayer extends AbstractLayer {
         }
       }
     }
-    this.isDirty = false;
+
 
     this.drawInfo.d = this.ctrl.d;
     this.drawInfo.v = this.ctrl.v;
@@ -579,7 +578,7 @@ export default class TileMapLayer extends AbstractLayer {
     else{
       drawY -= (drawH - map.data.tileheight * camera.zoom);
     }
-    
+
     if(!fillStyle){
       this.ctx.clearRect(drawX, drawY, drawW, drawH);
     }
@@ -634,6 +633,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
   // this should be triggered on window instead of main element
   handleMouseUp (e){
+
     if(e.button !== 0) {
       return;
     }
@@ -656,6 +656,10 @@ export default class TileMapLayer extends AbstractLayer {
   handleMouseMove(e){
     const nat = e.nativeEvent ? e.nativeEvent : e;
     this.lastEvent = nat;
+    if(e.target !== this.refs.canvas){
+      return
+    }
+
     this.isMouseOver = true;
     if(edit[map.options.mode]){
       // not visible
@@ -708,24 +712,6 @@ export default class TileMapLayer extends AbstractLayer {
   }
   /* end of events */
 
-  render(){
-    // TODO - probably we can leave only canvas element here
-    return (<div
-      ref="layer"
-      className={this.isActive() ? "tilemap-layer" : "tilemap-layer no-events"}
-      data-name={this.props.data.name}
-      >
-    <canvas ref="canvas"
-            onMouseMove={this.handleMouseMove.bind(this)}
-            onMouseDown={this.handleMouseDown.bind(this)}
-            onMouseLeave={this.onMouseLeave.bind(this)}
-            style={{
-              //width: "100%", height: "100%",
-              display: "block"
-            }}>
-    </canvas>
-    </div>);
-  }
 }
 
 /* !!! this - in this scope is instance of tilemap layer (above) */

@@ -12,13 +12,13 @@ export default class Home extends Component {
     return (
       <div>
         <div className="pusher">
-          <div className="ui inverted vertical masthead center aligned segment">
+          <div className="ui vertical masthead center aligned segment">
 
             <div className="ui text container">
-              <h1 className="ui inverted header">
+              <h1 className="ui header">
                 My Game Builder
               </h1>
-              <h2>The Game-building Game</h2>
+              <h2>The Online Game-building Game</h2>
               { currUser ?
                 <QLink to={`/user/${currUser._id}/assets`}>
                   <div className="ui huge primary button">Keep Going <i className="right arrow icon"></i></div>
@@ -30,7 +30,6 @@ export default class Home extends Component {
               }
               
             </div>
-
           </div>
 
           <div className="ui vertical stripe segment">

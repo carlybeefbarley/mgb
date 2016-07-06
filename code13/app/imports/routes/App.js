@@ -17,6 +17,7 @@ import mgbReleaseInfo from '../components/Nav/mgbReleaseInfo.js';
 
 import urlMaker from './urlMaker';
 
+import webkitSmallScrollbars from './webkitSmallScrollbars.css';
 
 export default App = React.createClass({
   mixins: [ReactMeteorData],
@@ -197,7 +198,7 @@ export default App = React.createClass({
               isSuperAdmin={isSuperAdmin}
               /> 
 
-            <div style={mainPanelOuterDivSty}>
+            <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
               <div style={mainPanelInnerDivSty}>
                 {
                   this.props.children && React.cloneElement(this.props.children, {
@@ -231,7 +232,7 @@ export default App = React.createClass({
     if (loc.query[qp])
       newQ = _.omit(loc.query, qp)
     else
-      newQ = {...loc.query, [qp]:"1"}
+      newQ = {...loc.query, [qp]:NavPanel.getDefaultPanelViewTag()}
     browserHistory.push( {  ...loc,  query: newQ })
   },
 
@@ -258,7 +259,7 @@ export default App = React.createClass({
     if (loc.query[qp])
       newQ = _.omit(loc.query, qp)
     else
-      newQ = {...loc.query, [qp]:"1"}
+      newQ = {...loc.query, [qp]:FlexPanel.getDefaultPanelViewTag()}
     browserHistory.push( {  ...loc,  query: newQ })
   },
 
@@ -282,7 +283,7 @@ export default App = React.createClass({
     if (loc.query[qpNp] || loc.query[qpFp])
       newQ = _.omit(loc.query, [qpNp, qpFp])
     else
-      newQ = {...loc.query, [qpNp]:"1", [qpFp]:"1"}
+      newQ = {...loc.query, [qpNp]:NavPanel.getDefaultPanelViewTag(), [qpFp]:FlexPanel.getDefaultPanelViewTag()}
     browserHistory.push( {  ...loc,  query: newQ })
   },
 

@@ -17,6 +17,7 @@ const navPanelViews = [
   // { tag: "skills",    icon: "university", hdr: "Skills" }
 ]
 
+const defaultPanelViewIndex = 0
 
 export default NavPanel = React.createClass({
   
@@ -32,6 +33,9 @@ export default NavPanel = React.createClass({
     isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
   },
 
+  statics: {
+    getDefaultPanelViewTag: function() { return navPanelViews[defaultPanelViewIndex].tag }
+  },
 
   npViewSelect(npViewTag)
   {
@@ -79,8 +83,8 @@ export default NavPanel = React.createClass({
       borderRadius: "0px"           // Otherwise active first-item / last-item is rounded
     }
         
-    // If the nav Panel choice isn't recognized, just default to using our first one
-    const navPanelChoice = _.find(navPanelViews, ['tag', this.props.selectedViewTag]) || navPanelViews[0]
+    // If the nav Panel choice isn't recognized, just default to using our 'default' one
+    const navPanelChoice = _.find(navPanelViews, ['tag', this.props.selectedViewTag]) || navPanelViews[defaultPanelViewIndex]
     const navPanelHdr = navPanelChoice.hdr      
     const ElementNP = navPanelChoice.el    // Can be null
       

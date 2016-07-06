@@ -14,12 +14,15 @@ const flexPanelViews = [
   { tag: "super",     icon: "red bomb",   hdr: "SuperAdmin", el: fpSuperAdmin, superAdminOnly: true }
 ]
 
+const defaultPanelViewIndex = 0
+
+
 export default FlexPanel = React.createClass({
   
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values
+    selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values (or validtagkeyhere.somesuffix)
     activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible:     PropTypes.bool.isRequired,
     handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for enabling/disabling FlexPanel view
@@ -29,18 +32,51 @@ export default FlexPanel = React.createClass({
   },
 
 
-  getDefaultState: function()
-  {
-    return {
-      selectedViewTag: "activity"
-    }
+  statics: {
+    getDefaultPanelViewTag: function() { return flexPanelViews[defaultPanelViewIndex].tag }
   },
 
+
+  _viewTagMatchesPropSelectedViewTag: function(viewTag)
+  {
+    if (!this.props.selectedViewTag)
+      return false
+
+    const selectedViewTagParts = this.props.selectedViewTag.split(".")
+    return selectedViewTagParts[0] === viewTag
+  },
+
+
+  _getSelectedFlexPanelChoice: function()
+  {
+    const defaultReturnValue = flexPanelViews[defaultPanelViewIndex]
+    if (!this.props.selectedViewTag)
+      return defaultReturnValue
+
+    const selectedViewTagParts = this.props.selectedViewTag.split(".")
+    // If the FlexPanel choice isn't recognized, just default to using our default one
+    return _.find(flexPanelViews, [ 'tag', selectedViewTagParts[0] ]) || defaultReturnValue
+  },
+
+  // Return the suffix (if any) of this.props.selectedViewTag.. For example 'chats.general' will return "general";    but 'chats' will return ""
+  getSubNavParam: function()
+  {
+    const selectedViewTagParts = this.props.selectedViewTag.split(".")
+    return selectedViewTagParts[1] || ""
+  },
+
+  handleChangeSubNavParam: function(newSubNavParamStr)
+  {
+    const P = this.props    
+    const selectedViewTagParts = this.props.selectedViewTag.split(".")
+    const newFullViewTag = selectedViewTagParts[0] + "." + newSubNavParamStr
+    P.handleFlexPanelChange(newFullViewTag)
+  },
     
   fpViewSelect(fpViewTag)
   {
     const P = this.props
-    if (P.flexPanelIsVisible && P.selectedViewTag === fpViewTag)
+    if (P.flexPanelIsVisible && this._viewTagMatchesPropSelectedViewTag(fpViewTag))
       P.handleFlexPanelToggle()
     else
       P.handleFlexPanelChange(fpViewTag)
@@ -87,8 +123,7 @@ export default FlexPanel = React.createClass({
       height: "auto" 
     }
     
-    // If the FlexPanel choice isn't recognized, just default to using our first one
-    const flexPanelChoice = _.find(flexPanelViews, ['tag', this.props.selectedViewTag]) || flexPanelViews[0]
+    const flexPanelChoice = this._getSelectedFlexPanelChoice()
     const flexPanelHdr = flexPanelChoice.hdr      
     const flexPanelIcon = flexPanelChoice.icon 
     const ElementFP = (!this.props.isSuperAdmin && flexPanelChoice.superAdminOnly) ? null : flexPanelChoice.el
@@ -112,6 +147,8 @@ export default FlexPanel = React.createClass({
                                   activity={this.props.activity}
                                   panelWidth={this.props.flexPanelWidth} 
                                   isSuperAdmin={this.props.isSuperAdmin}
+                                  subNavParam={this.getSubNavParam()}
+                                  handleChangeSubNavParam={this.handleChangeSubNavParam}
                                   /> 
                       }
                     </div>
@@ -121,7 +158,7 @@ export default FlexPanel = React.createClass({
               }
               <div className="ui grey inverted attached borderless vertical icon menu" style={miniNavStyle}>
                 { flexPanelViews.map(v => { 
-                  const actv = (v.tag===this.props.selectedViewTag) ? " active " : ""
+                  const actv = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active " : ""
                   return  (v.superAdminOnly && !this.props.isSuperAdmin) ? null : 
                     <div 
                           key={v.tag}

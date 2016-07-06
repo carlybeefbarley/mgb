@@ -61,7 +61,6 @@ export default class ObjectLayer extends AbstractLayer {
     let obj;
     const x = e.offsetX / this.camera.zoom  - this.camera.x;
     const y = e.offsetY / this.camera.zoom - this.camera.y;
-    console.log("picking", x, y);
     // reverse order last drawn - first pick
     for(let i=this.data.objects.length-1; i>-1; i--){
       obj = this.data.objects[i];
@@ -180,8 +179,6 @@ export default class ObjectLayer extends AbstractLayer {
         x, y
       );
 
-      console.log("Added new object:", tileObject);
-
       this.data.objects.push(tileObject);
       this.isDirty = true;
     }
@@ -189,11 +186,9 @@ export default class ObjectLayer extends AbstractLayer {
 
   onMouseLeave(){
     this.isDirty = true;
-    console.log("Mouse leave!");
   }
 
   onKeyUp(e){
-    console.log("Key UP", e.which);
     if(e.which == 46 && this.pickedObject){
       this.deleteObject(this.pickedObject);
       this._pickedObject = null;

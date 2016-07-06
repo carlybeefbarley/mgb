@@ -43,7 +43,7 @@ export const ActivityTypes = {
 
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.edit":        { icon: "edit",             pri: 15,  description: "Edit asset" },
-  "asset.description": { icon: "edit",             pri: 15,  description: "Change asset description" },
+  "asset.description": { icon: "edit",             pri: 14,  description: "Change asset description" },
   "asset.stable":      { icon: "green checkmark",  pri: 6,   description: "Asset marked stable" },
   "asset.unstable":    { icon: "red checkmark",    pri: 6,   description: "Asset marked stable" },
   "asset.rename":      { icon: "write",            pri: 11,  description: "Rename asset" },  
@@ -128,7 +128,7 @@ export function logActivity(activityType, description, thumbnail, asset) {
 
   if (priorLog && 
       priorLog.activityType === logData.activityType &&
-      priorLog.description === logData.description &&         // This can be a bit noisy for edit.
+//    priorLog.description === logData.description &&         // This can be a bit noisy for edit.
       priorLog.toAssetId === logData.toAssetId)
     fSkipLog = true;
   

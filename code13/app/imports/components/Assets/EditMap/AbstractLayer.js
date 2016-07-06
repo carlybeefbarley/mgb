@@ -24,7 +24,7 @@ export default class AbstractLayer extends React.Component {
     this.ctx = canvas.getContext("2d");
 
     this.props.map.layers.push(this);
-    document.body.addEventListener("mouseup", this._mup);
+    window.addEventListener("mouseup", this._mup);
     window.addEventListener("keyup", this._kup);
     window.addEventListener("mousemove", this._mov);
   }
@@ -33,7 +33,7 @@ export default class AbstractLayer extends React.Component {
     if (index > -1) {
       this.props.map.layers.splice(index, 1);
     }
-    document.body.removeEventListener("mouseup", this._mup);
+    window.removeEventListener("mouseup", this._mup);
     window.removeEventListener("keyup", this._kup);
     window.removeEventListener("mousemove", this._mov);
   }
@@ -89,8 +89,13 @@ export default class AbstractLayer extends React.Component {
   handleMouseUp(){
     this.mouseDown = false;
   }
-  handleMouseDown(){
+  handleMouseDown(e){
     this.mouseDown = true;
+    if(e.buttons == 4){
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
   }
   _onKeyUp(e){
     if(this.isActive()){
@@ -99,7 +104,12 @@ export default class AbstractLayer extends React.Component {
   }
 
   render(){
+    const style = this.map.options.preview ? {
+      "transform": "translatez(-" + (120 - (30 + 30 * this.props.anotherUsableKey)) + "px)"
+    } : '';
+
     return (<div
+      style={{style}}
       ref="layer"
       className={this.isActive() ? "tilemap-layer" : "tilemap-layer no-events"}
       data-name={this.props.data.name}

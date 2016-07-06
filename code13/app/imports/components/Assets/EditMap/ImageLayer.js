@@ -47,8 +47,6 @@ export default class ImageLayer extends AbstractLayer {
     if(asset && asset.kind != "graphic"){
       return;
     }
-    console.log("Dropped asset:", asset);
-
     this.options.image = data.link;
     this.map.fullUpdate();
   }

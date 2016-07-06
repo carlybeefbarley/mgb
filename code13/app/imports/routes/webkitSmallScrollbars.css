@@ -1,0 +1,21 @@
+::-webkit-scrollbar {
+  width: 8px !important;  /* remove scrollbar space */
+  height: 8px !important;  /* remove scrollbar space */
+  background: transparent;  /* optional: just make scrollbar invisible */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 3px rgba(0,0,0,0.1); 
+  border-radius: 6px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: rgba(0,0,0,0.3); 
+  box-shadow: inset 0 0 3px rgba(0,0,0,0.2); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(0,0,0,0.1); 
+}

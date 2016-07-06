@@ -96,7 +96,8 @@ export default fpAssets = React.createClass({
                   </button>
                 </div>            
               </div>
-              <AssetList 
+              <AssetList
+                  location="panel"
                   assets={assets} 
                   currUser={this.props.currUser}
                   renderType="short" />

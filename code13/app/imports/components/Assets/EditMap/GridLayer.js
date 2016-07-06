@@ -151,6 +151,7 @@ export default class TileMapLayer extends React.Component {
       className="tilemap-layer no-events grid-layer"
       data-name="Grid"
       ref="layer"
+      style={{zIndex: 2}}
       >
       <canvas ref="canvas"
               style={{

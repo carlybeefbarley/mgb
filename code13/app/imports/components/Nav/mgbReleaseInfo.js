@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Sun Jul 03 2016 22:20:00 GMT-0700 (PDT)",
+      "timestamp":     "Tue Jul 05 2016 22:20:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "682"
+        "iteration":   "705"
       },
 
       "releaseManagement": {
@@ -29,6 +29,27 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.flexpanel.chat",
+          "type":           "improvement",
+          "changeName":     "Chat can load earlier messages",
+          "changeSummary":  "Chat only loads 5 most recent messages initially, and user can load more history as desired",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel.chat",
+          "type":           "improvement",
+          "changeName":     "Chat channels are on the url",
+          "changeSummary":  "Chat channels are now part of the url (e.g ?_fp=chat.random) so back/fwd navigation and deep links work correctly",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.layout",
+          "type":           "improvement",
+          "changeName":     "Home page and scrollbar cleanup",
+          "changeSummary":  "Added webkit-specific styling options to shrink the scrollbars on Windows for Webkit-based browsers (notably Google Chrome). Shrunk the Home page masthead and changed it's colorscheme to black-on-white.",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "asset.map",
           "type":           "bugfix",

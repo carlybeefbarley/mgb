@@ -100,7 +100,15 @@ export default class MapArea extends React.Component {
       this.handleKeyUp(...args);
     };
 
-    console.log("Map area initialized!");
+    // prevent IE scrolling thingy
+    this.globalIEScroll = (e) => {
+      if(e.buttons == 4) {
+        e.preventScrolling && e.preventScrolling();
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      }
+    }
   }
 
   componentDidMount(){
@@ -108,10 +116,12 @@ export default class MapArea extends React.Component {
     this.fullUpdate();
     //this.resetCamera();
 
-    window.addEventListener("mousemove", this.globalMouseMove);
-    window.addEventListener("mouseup", this.globalMouseUp);
-    window.addEventListener("resize", this.globalResize);
-    window.addEventListener("keyup", this.globalKeyUp);
+    window.addEventListener("mousemove", this.globalMouseMove, false);
+    window.addEventListener("mouseup", this.globalMouseUp, false);
+    window.addEventListener("resize", this.globalResize, false);
+    window.addEventListener("keyup", this.globalKeyUp, false);
+
+    document.body.addEventListener("mousedown", this.globalIEScroll);
   }
 
   /*shouldComponentUpdate(){
@@ -529,8 +539,6 @@ export default class MapArea extends React.Component {
   zoomCamera(newZoom, e){
 
     if(e){
-      // zoom right on the cursor position
-      // feels like a I need a separate class for camera at this point..
       // .getBoundingClientRect(); returns width with transformations - that is not what is needed in this case
       const bounds = this.refs.mapElement;
 
@@ -572,11 +580,18 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove(e){
-    // move Preview
-    if(this.options.preview && (e.button == 1)) {
+
+    // IE always reports button === 0
+    // and yet: If the user presses a mouse button, use the button property to determine which button was pressed.
+    // https://msdn.microsoft.com/en-us/library/ms536947(v=vs.85).aspx
+
+    // it seems that IE and chrome reports "buttons" correctly
+    // console.log(e.buttons);
+    // 1 - left; 2 - right; 4 - middle + combinations
+    if(this.options.preview && (e.buttons == 4)) {
       this.movePreview(e);
     }
-    else if(e.button === 1 || e.button == 2){
+    else if(e.buttons == 2 || e.buttons == 4 || e.buttons == 2+4){
       this.moveCamera(e);
     }
   }
@@ -646,7 +661,6 @@ export default class MapArea extends React.Component {
     this.refs.tools.enableMode(mode);
   }
   importFromDrop (e) {
-    console.log("DROP map area!");
     const layer = this.getActiveLayer();
     if(layer && layer.onDrop){
       layer.onDrop(e);
@@ -773,6 +787,7 @@ export default class MapArea extends React.Component {
           layers.push(<TileMapLayer
             data={map.layers[i]}
             key={i}
+            anotherUsableKey={i}
             map={this}
             active={this.activeLayer == i}
             />);
@@ -782,6 +797,7 @@ export default class MapArea extends React.Component {
             data={map.layers[i]}
             key={i}
             map={this}
+            anotherUsableKey={i}
             active={this.activeLayer == i}
             />);
         }
@@ -790,6 +806,7 @@ export default class MapArea extends React.Component {
             data={map.layers[i]}
             key={i}
             map={this}
+            anotherUsableKey={i}
             active={this.activeLayer == i}
             />);
         }
@@ -814,7 +831,7 @@ export default class MapArea extends React.Component {
   render (){
     let notification = "";
     if(this.data.width * this.data.height > 100000){
-      notification = <div>This is map is larger than our recommended size - so editing may be slower than normal!</div>;
+      notification = <div>This map is larger than our recommended size - so editing may be slower than normal!</div>;
     }
     return (
       <div

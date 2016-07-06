@@ -1,4 +1,6 @@
 "use strict";
+const TO_DEGREES = (Math.PI / 180);
+
 // collection with useful functions
 const ObjectHelper = window.ObjectHelper = {
   // aabb may be any object who contains: {x, y, width, height}
@@ -25,8 +27,24 @@ const ObjectHelper = window.ObjectHelper = {
   },
   // transform coords to match bottom / up drawing
   PointvsTile: (box, x, y) => {
+    if(box.rotation){
+      const angle = -box.rotation * TO_DEGREES;
+      const sin = Math.sin(angle);
+      const cos = Math.cos(angle);
+      const nx = ObjectHelper.rpx(sin, cos, x, y, box.x, box.y);
+      const ny = ObjectHelper.rpy(sin, cos, x, y, box.x, box.y);
+      return ObjectHelper.PointvsAABB(box, nx, ny+box.height);
+    }
     return ObjectHelper.PointvsAABB(box, x, y+box.height);
   },
+  // rotate per x
+  rpx: (sin, cos, x, y, cx, cy) => {
+    return (x - cx)*cos - (y - cy)*sin + cx;
+  },
+  rpy: (sin, cos, x, y, cx, cy) => {
+    return (y - cy)*cos + (x - cx)*sin + cy;
+  },
+
   createTileObject: (pal, id, x, y) => {
     return {
       "gid": pal.gid,

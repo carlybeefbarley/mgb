@@ -261,7 +261,8 @@ export default class ObjectLayer extends AbstractLayer {
           (this.pickedObject.x + this.map.camera.x) * this.map.camera.zoom,
           (this.pickedObject.y - this.pickedObject.height + this.map.camera.y) * this.map.camera.zoom,
           this.pickedObject.width * this.map.camera.zoom,
-          this.pickedObject.height * this.map.camera.zoom
+          this.pickedObject.height * this.map.camera.zoom,
+          this.pickedObject.rotation
         );
       }
       else if(true){

@@ -1,9 +1,11 @@
 "use strict";
+import ObjectHelper from "../ObjectHelper.js";
 /*
   we wil have 8 handles with 2 actions (resize / rotate)
   + 1 extra handle for a pivot point
  */
 const PI2 = Math.PI*2;
+const TO_DEGREES = (Math.PI / 180);
 class Handle{
   constructor(x, y){
     this.radius = 3;
@@ -27,6 +29,14 @@ class Handle{
       ctx.stroke();
 
     }
+  }
+  rotate(angle, pivotX, pivotY){
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const x = ObjectHelper.rpx(sin, cos, this.x, this.y, pivotX, pivotY);
+    const y = ObjectHelper.rpy(sin, cos, this.x, this.y, pivotX, pivotY);
+    this.x = x;
+    this.y = y;
   }
   vsPoint(x, y){
     return Math.abs(this.x - x) < this.radius && Math.abs(this.y - y) < this.radius;
@@ -56,7 +66,8 @@ export default class HandleCollection {
     this.update(x, y, width, height);
   }
 
-  update(x, y, width, height){
+  update(x, y, width, height, angleDegrees){
+    const angle = angleDegrees * TO_DEGREES;
     const h = this.handles;
 
     h[TOP_LEFT].update(x, y);
@@ -70,6 +81,21 @@ export default class HandleCollection {
     h[BOTTOM_LEFT].update(x, y + height);
     h[BOTTOM].update(x + width * 0.5, y + height);
     h[BOTTOM_RIGHT].update(x + width, y + height);
+
+    if(angle){
+      const p = h[BOTTOM_LEFT];
+      h[TOP].rotate(angle, p.x, p.y);
+      h[TOP_LEFT].rotate(angle, p.x, p.y);
+      h[TOP_RIGHT].rotate(angle, p.x, p.y);
+
+      h[LEFT].rotate(angle, p.x, p.y);
+      h[CENTER].rotate(angle, p.x, p.y);
+      h[RIGHT].rotate(angle, p.x, p.y);
+
+      h[BOTTOM_LEFT].rotate(angle, p.x, p.y);
+      h[BOTTOM].rotate(angle, p.x, p.y);
+      h[BOTTOM_RIGHT].rotate(angle, p.x, p.y);
+    }
 
   }
 

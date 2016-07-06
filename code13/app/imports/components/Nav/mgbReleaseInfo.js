@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Tue Jul 05 2016 16:10:00 GMT-0700 (PDT)",
+      "timestamp":     "Tue Jul 05 2016 18:50:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "699"
+        "iteration":   "700"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.flexpanel.chat",
+          "type":           "improvement",
+          "changeName":     "Chat can load earlier messages",
+          "changeSummary":  "Chat only loads 5 most recent messages initially, and user can load more history as desired",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "nav.layout",
           "type":           "improvement",

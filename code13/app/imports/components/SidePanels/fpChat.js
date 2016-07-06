@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import { Chats } from '../../schemas';
-import { ChatChannels, currUserCanSend, ChatMessageMaxLen, ChatSendMessage } from '../../schemas/chats';
+import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams } from '../../schemas/chats';
 import moment from 'moment';
 
+const initialMessageLimit = 5
+const additionalMessageIncrement = 15
 
 export default fpChat = React.createClass({
   mixins: [ReactMeteorData],
@@ -17,14 +19,15 @@ export default fpChat = React.createClass({
 
   getInitialState: function() {
     return {
-      activeChannelKey: "GENERAL"
+      activeChannelKey: "GENERAL",
+      pastMessageLimit: initialMessageLimit
     }
   },
 
   getMeteorData: function() {
     const chatChannel = ChatChannels[this.state.activeChannelKey]
     const uid = this.props.currUser ? this.props.currUser._id : null
-    const handleForChats = Meteor.subscribe("chats.userId", uid, chatChannel.name)
+    const handleForChats = Meteor.subscribe("chats.userId", uid, chatChannel.name, this.state.pastMessageLimit)
 
     return {
       chats: Chats.find({}, {sort: {createdAt: 1}}).fetch(),
@@ -34,7 +37,10 @@ export default fpChat = React.createClass({
 
   changeChannel: function(selectedChannelKey)
   {
-    this.setState( {activeChannelKey: selectedChannelKey})
+    this.setState( {
+      activeChannelKey: selectedChannelKey,
+      pastMessageLimit: initialMessageLimit
+    })
   },
 
   componentDidMount: function() {
@@ -45,7 +51,8 @@ export default fpChat = React.createClass({
 
 
   componentDidUpdate: function() {
-    this.refs.bottomOfMessageDiv.scrollIntoView(false)
+    if (this.state.pastMessageLimit <= initialMessageLimit)
+      this.refs.bottomOfMessageDiv.scrollIntoView(false)
   },
 
 
@@ -62,6 +69,38 @@ export default fpChat = React.createClass({
     })
   },
 
+  renderGetMoreMessages() {
+    const { chats } = this.data
+    const maxH = chatParams.maxClientChatHistory
+    if (this.data.loading)
+      return <p>loading...</p>
+
+    if (!chats)
+      return null
+
+    if (chats.length < this.state.pastMessageLimit)
+      return <div className="ui horizontal divider tiny header"
+                title={`There are no earlier messages in this channel`}>
+                  (start of topic)
+              </div>
+
+    if (chats.length >= maxH)
+      return <div className="ui horizontal divider tiny header"
+                title={`You may only go back ${maxH} messages`}>
+                  (history limit reached)
+              </div>
+
+    return <a title={`Currently showing most recent ${chats.length} messages. Click here to get up to ${additionalMessageIncrement} earlier messages`}
+              onClick={this.doGetMoreMessages}>
+                Get earlier messages..
+            </a>
+  },
+
+
+  doGetMoreMessages() {
+    const newMessageLimit = Math.min(chatParams.maxClientChatHistory, this.state.pastMessageLimit + additionalMessageIncrement)
+    this.setState({ pastMessageLimit: newMessageLimit} )
+  },
  
   renderMessage: function(c) {
     const ago = moment(c.createdAt).fromNow()
@@ -105,14 +144,16 @@ export default fpChat = React.createClass({
                   }
                 </div>
               </div>
-
+              
+              
               <div className="ui small comments">
+              { this.renderGetMoreMessages() }
               { this.data.chats && this.data.chats.map( c => (this.renderMessage(c))) }
               </div>
 
               <form className="ui small form">
                 <div className={disabler("field")}>
-                  <textarea rows="3" placeholder="your message..." ref="theMessage" maxLength={ChatMessageMaxLen}></textarea>
+                  <textarea rows="3" placeholder="your message..." ref="theMessage" maxLength={chatParams.maxChatMessageTextLen}></textarea>
                 </div>
                 <div className={disabler("ui blue right floated labeled submit icon button")} ref="sendChatMessage" onClick={this.doSendMessage}>
                   <i className="chat icon"></i> Send Message

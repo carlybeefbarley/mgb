@@ -32,7 +32,6 @@ var schema = {
   message: String         // Project Name (scoped to owner). Case sensitive
 };
 
-export const ChatMessageMaxLen = 200
 
 export const ChatPosters = {
   SUPERADMIN: "@@superAdmin",
@@ -130,7 +129,12 @@ export const ChatChannels = {
   ]
 }
 
-function userIsSuperAdmin(currUser) {
+export const chatParams = {
+  maxChatMessageTextLen: 220,     // Maximum number of chars in a single message
+  maxClientChatHistory:  200      // Maximum number of historical messages to send back to client
+}
+
+function _userIsSuperAdmin(currUser) {
   let isSuperAdmin = false
   if (currUser && currUser.permissions) {
     currUser.permissions.map((perm) => {
@@ -149,7 +153,7 @@ export function currUserCanSend(currUser, channelKey) {
   switch (validPoster)
   {
     case ChatPosters.SUPERADMIN:
-      return userIsSuperAdmin(currUser)
+      return _userIsSuperAdmin(currUser)
     case ChatPosters.ACTIVEUSER:
       return !!currUser
     default:
@@ -187,7 +191,7 @@ Meteor.methods({
     if (!data.message || data.message.length < 1)
       throw new Meteor.Error(400, "Message empty")
 
-    if (data.message.length > ChatMessageMaxLen)
+    if (data.message.length > chatParams.maxChatMessageTextLen)
       throw new Meteor.Error(400, "Message too long")
 
     const channelKey = _getChannelKeyFromName(data.toChannelName)
@@ -224,9 +228,9 @@ export function ChatSendMessage(channelKey, msg, completionCallback) {
     completionCallback({reason: "Message empty"}, null)
     return
   }
-  if (msg.length > ChatMessageMaxLen)
+  if (msg.length > chatParams.maxChatMessageTextLen)
   {
-    completionCallback({reason: ("Message too long. Max length is " + ChatMessageMaxLen) }, null)
+    completionCallback({reason: ("Message too long. Max length is " + chatParams.maxChatMessageTextLen) }, null)
     return
   }
 

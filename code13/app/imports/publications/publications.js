@@ -4,6 +4,7 @@ import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '../
 
 import { assetMakeSelector, assetSorters } from '../schemas/assets';
 import { projectMakeSelector } from '../schemas/projects';
+import { chatParams } from '../schemas/chats';
 
 //
 //    USERS
@@ -205,10 +206,10 @@ ActivitySnapshots._ensureIndex( {"toAssetId": 1, "timestamp": -1} )
 
 
 // TODO: Make sure userId can't be faked on server. Allow/deny rules required...
-Meteor.publish('chats.userId', function(userId, toChannelName, limit=30) {
+Meteor.publish('chats.userId', function(userId, toChannelName, limit=20) {
   // Paginated chats.
-  if (limit > 200) 
-    limit = 200
+  if (limit > chatParams.maxClientChatHistory) 
+    limit = chatParams.maxClientChatHistory
 
   let selector = { toChannelName: toChannelName } //$or: [ { toOwnerId: null}, {toOwnerId: userId} ] }
   let options = {limit: limit, sort: {createdAt: -1} }

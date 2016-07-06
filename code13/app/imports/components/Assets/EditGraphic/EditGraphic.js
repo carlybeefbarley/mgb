@@ -343,11 +343,41 @@ export default class EditGraphic extends React.Component {
 
   drawSelectRect(selectRect){
     var self = this;
-    this._setImageData4BytesFromRGBA(this.editCtxImageData1x1.data, {r: 255, g: 0, b: 0, a: 1});
-    drawHorizLine(selectRect.startX, selectRect.endX, selectRect.startY);
-    drawHorizLine(selectRect.startX, selectRect.endX, selectRect.endY); 
-    drawVerticLine(selectRect.startY, selectRect.endY, selectRect.startX);
-    drawVerticLine(selectRect.startY, selectRect.endY, selectRect.endX);    
+    // this._setImageData4BytesFromRGBA(this.editCtxImageData1x1.data, {r: 255, g: 0, b: 0, a: 1});
+    // drawHorizLine(selectRect.startX, selectRect.endX, selectRect.startY);
+    // drawHorizLine(selectRect.startX, selectRect.endX, selectRect.endY); 
+    // drawVerticLine(selectRect.startY, selectRect.endY, selectRect.startX);
+    // drawVerticLine(selectRect.startY, selectRect.endY, selectRect.endX);    
+
+    // normalize rect with scale and set always x1,y1 as top left corner 
+    // 0.5 hack to draw 1 px line
+    let scaleRect = {
+      x1: (selectRect.startX < selectRect.endX ? selectRect.startX : selectRect.endX) * self.state.editScale -0.5
+      , x2: (selectRect.startX > selectRect.endX ? selectRect.startX : selectRect.endX) * self.state.editScale +0.5
+      , y1: (selectRect.startY < selectRect.endY ? selectRect.startY : selectRect.endY) * self.state.editScale -0.5
+      , y2: (selectRect.startY > selectRect.endY ? selectRect.startY : selectRect.endY) * self.state.editScale +0.5
+    };
+
+    this.editCtx.lineWidth = 1;
+    this.editCtx.strokeStyle = '#000000';
+    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x2, scaleRect.y1);
+    drawLine(scaleRect.x2, scaleRect.y1, scaleRect.x2, scaleRect.y2);
+    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x1, scaleRect.y2);
+    drawLine(scaleRect.x1, scaleRect.y2, scaleRect.x2, scaleRect.y2);
+
+    let width = Math.abs(scaleRect.x1 - scaleRect.x2);
+    let height = Math.abs(scaleRect.y1 - scaleRect.y2);
+    let dashSize = 10;
+    let dashCount = Math.ceil(width/(dashSize*2));
+    this.editCtx.strokeStyle = '#ffffff';
+    for(let i=0; i<dashCount; i++){
+      let x = scaleRect.x1 + i*dashSize*2;
+      let x2 = x+dashSize;
+      if(x2 > scaleRect.x2) x2 = scaleRect.x2;
+      drawLine(x, scaleRect.y1, x2, scaleRect.y1); 
+    }
+
+    
 
     function drawHorizLine(x1, x2, y){
       if (x1 > x2)
@@ -369,6 +399,14 @@ export default class EditGraphic extends React.Component {
 
     function drawPoint(x, y){
       self.editCtx.putImageData(self.editCtxImageData1x1, (x * self.state.editScale) + 0, (y * self.state.editScale) + 0);
+    }
+
+
+    function drawLine(x1, y1, x2, y2){
+      self.editCtx.beginPath();
+      self.editCtx.moveTo(x1, y1);
+      self.editCtx.lineTo(x2, y2);
+      self.editCtx.stroke();
     }
 }
 
@@ -439,6 +477,10 @@ export default class EditGraphic extends React.Component {
 
       saveSelectRect: function(startX, startY, endX, endY){
         self.selectRect = { startX: startX, startY: startY, endX: endX, endY: endY };
+      },
+
+      unselect: function(){
+        self.selectRect = null;
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
@@ -837,7 +879,6 @@ export default class EditGraphic extends React.Component {
 
   cutSelected(){
     if(!this.selectRect) return;
-    console.log('cut selected');
 
     this.copySelected();
     let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
@@ -847,7 +888,6 @@ export default class EditGraphic extends React.Component {
 
   copySelected(){
     if(!this.selectRect) return;
-    console.log('copy selected');
 
     let x = this.selectRect.startX;
     let y = this.selectRect.startY;
@@ -867,7 +907,6 @@ export default class EditGraphic extends React.Component {
 
   pasteSelected(){
     if(!this.pasteRect) return;
-    console.log('paste selected');
 
     let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
     ctx.putImageData(this.pasteRect.imgData, this.pasteRect.x, this.pasteRect.y);

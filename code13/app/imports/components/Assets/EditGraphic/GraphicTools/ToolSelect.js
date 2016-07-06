@@ -16,6 +16,7 @@ const ToolSelect = {
     ToolSelect._storedPreviewImageData = drawEnv.previewCtx.getImageData(0,0, drawEnv.width, drawEnv.height)
     ToolSelect._startx = drawEnv.x
     ToolSelect._starty = drawEnv.y
+    drawEnv.unselect();
   },
 
   handleMouseMove: ( drawEnv ) => {

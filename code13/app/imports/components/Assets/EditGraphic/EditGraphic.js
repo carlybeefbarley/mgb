@@ -341,7 +341,7 @@ export default class EditGraphic extends React.Component {
 
   drawSelectRect(selectRect){
     var self = this;
-    this._setImageData4BytesFromRGBA(this.editCtxImageData1x1.data, this.state.selectedColors['fg'].rgb)
+    this._setImageData4BytesFromRGBA(this.editCtxImageData1x1.data, {r: 255, g: 0, b: 0, a: 1});
     drawHorizLine(selectRect.startX, selectRect.endX, selectRect.startY);
     drawHorizLine(selectRect.startX, selectRect.endX, selectRect.endY); 
     drawVerticLine(selectRect.startY, selectRect.endY, selectRect.startX);

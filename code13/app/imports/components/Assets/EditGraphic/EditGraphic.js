@@ -32,7 +32,6 @@ import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 //                       ** See the code using 'recentMarker' variable for the actual implementation of this optimization. 
 let recentMarker = null  // See explanation above
 
-
 export default class EditGraphic extends React.Component {
   // static PropTypes = {   // Note - static requires Ecmascript 7
   //   asset: PropTypes.object,
@@ -109,6 +108,9 @@ export default class EditGraphic extends React.Component {
 
     }
     this.setStatusBarInfo()
+
+    // if asset area is selected then value {startX, startY, endX, endY}
+    this.selectRect = null;
 
     this.handleColorChangeComplete('fg', { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} } )
 
@@ -272,16 +274,6 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  // TODO(@shmikucis): This appears to be dead code? - DG
-  // loadFramAssync(frameID){
-  //   let c2 = this.props.asset.content2;
-  //   let layerCount = c2.layerParams.length;
-  //   this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height);
-  //   for(let layerID=layerCount-1; layerID>=0; layerID--){
-  //     this.loadAssetAsync(frameID, layerID);
-  //   }
-  // }
-
   loadAssetAsync(frameID, layerID) {
     let c2 = this.props.asset.content2
     if (!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) { // manage empty frameData cases
@@ -341,7 +333,43 @@ export default class EditGraphic extends React.Component {
         this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h)
       }
     }
+
+    // if there is something selected - draw it
+    if(this.selectRect) this.drawSelectRect();
+    
   }
+
+  drawSelectRect(){
+    var self = this;
+    self._setImageData4BytesFromRGBA(self.editCtxImageData1x1.data, self.state.selectedColors['fg'].rgb)
+    drawHorizLine(this.selectRect.startX, this.selectRect.endX, this.selectRect.startY);
+    drawHorizLine(this.selectRect.startX, this.selectRect.endX, this.selectRect.endY); 
+    drawVerticLine(this.selectRect.startY, this.selectRect.endY, this.selectRect.startX);
+    drawVerticLine(this.selectRect.startY, this.selectRect.endY, this.selectRect.endX);    
+
+    function drawHorizLine(x1, x2, y){
+      if (x1 > x2)
+        [x1, x2] = [x2, x1]
+
+      for(let x=x1; x<=x2; x++){
+        drawPoint(x, y);
+      }
+    }
+
+    function drawVerticLine(y1, y2, x){
+      if (y1 > y2)
+        [y1, y2] = [y2, y1]
+
+      for(let y=y1; y<=y2; y++){
+        drawPoint(x, y);
+      }
+    }
+
+    function drawPoint(x, y){
+      // self._setImageData4BytesFromRGBA(self.editCtxImageData1x1.data, self.state.selectedColors['fg'].rgb)
+      self.editCtx.putImageData(self.editCtxImageData1x1, (x * self.state.editScale) + 0, (y * self.state.editScale) + 0);
+    }
+}
 
 
   // A plugin-api for the graphic editing Tools in Tools.js
@@ -409,15 +437,13 @@ export default class EditGraphic extends React.Component {
       },
 
 
-      setSelectPixelsAt: function (x, y, w=1, h=1) {
-
-        // Now set Pixels (zoomed) to the Edit context
+      setSelectPixelsAt: function (x, y) {
         self._setImageData4BytesFromRGBA(retval.editCtxImageData1x1.data,    retval.chosenColor.rgb)
-        for (let i = 0; i < w; i++) {
-          for (let j = 0; j < h; j++) {
-            retval.editCtx.putImageData(retval.editCtxImageData1x1, (x * retval.scale) + i, (y * retval.scale) + j)
-          }
-        }
+        retval.editCtx.putImageData(retval.editCtxImageData1x1, (x * retval.scale) + 0, (y * retval.scale) + 0);
+      },
+
+      saveSelectRect: function(startX, startY, endX, endY){
+        self.selectRect = { startX: startX, startY: startY, endX: endX, endY: endY };
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but

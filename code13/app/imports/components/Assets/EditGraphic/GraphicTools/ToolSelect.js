@@ -32,7 +32,7 @@ const ToolSelect = {
   editCursor: "crosshair",
   supportsDrag: true,
   shortcutKey: 's',
-  changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
+  changesImage: false,             // This does cause changes to the image, so image is dirty if this tool used
 
 
   handleMouseDown: ( drawEnv ) => {
@@ -53,10 +53,11 @@ const ToolSelect = {
 
     // Draw a rectangle here
     drawRect(drawEnv, ToolSelect._startx, ToolSelect._starty, drawEnv.x, drawEnv.y);
+
+    drawEnv.saveSelectRect(ToolSelect._startx, ToolSelect._starty, drawEnv.x, drawEnv.y);
   },
 
   handleMouseUp: ( drawEnv ) => {
-
     ToolSelect._storedPreviewImageData = null
     ToolSelect._startx = null
     ToolSelect._starty = null

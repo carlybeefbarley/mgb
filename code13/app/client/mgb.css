@@ -23,6 +23,7 @@
   position: absolute;
   width: 100%;
   height: 100%;
+  transition: inherit;
 }
 .tileset{
   position: relative;
@@ -60,18 +61,14 @@ body.dragging .accept-drop:hover{
   cursor: default;
 }
 
-.map-filled.preview{
+/*.map-filled.preview{
   transform: rotatey(45deg) rotatex(5deg) scale(0.9);
   transform-style: preserve-3d;
-}
+}*/
+
 .map-filled.preview:active{
   transition-duration: unset;
 }
-
-.map-filled.preview .tilemap-layer:nth-of-type(1):not(.grid-layer) { transform: translatez(-120px); }
-.map-filled.preview .tilemap-layer:nth-of-type(2):not(.grid-layer) { transform: translatez(-80px); }
-.map-filled.preview .tilemap-layer:nth-of-type(3):not(.grid-layer) { transform: translatez(-40px); }
-.map-filled.preview .tilemap-layer:nth-of-type(4):not(.grid-layer) { transform: translatez(-20px); }
 
 /* map editor properties */
 .compact {

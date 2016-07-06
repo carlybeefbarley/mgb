@@ -490,7 +490,7 @@ export default class MapArea extends React.Component {
 
 
   togglePreviewState(){
-    this.refs.mapElement.style.transform = "";
+    /*this.refs.mapElement.style.transform = "";
     this.lastEvent = null;
 
     // next state...
@@ -499,9 +499,10 @@ export default class MapArea extends React.Component {
     }
     else{
       $(this.refs.mapElement).removeClass("preview");
-    }
+    }*/
     // this is not a synchronous function !!!
-    this.options.preview = !this.options.preview
+    this.options.preview = !this.options.preview;
+    this.adjustPreview();
     this.forceUpdate();
   }
 
@@ -574,7 +575,40 @@ export default class MapArea extends React.Component {
 
     this.lastEvent.pageX = e.pageX;
     this.lastEvent.pageY = e.pageY;
-    this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
+
+    this.adjustPreview();
+    //this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex("+this.preview.x+"deg) scale(0.9)";
+
+  }
+  adjustPreview(){
+    this.layers.forEach((l, i) => {
+      if(!this.options.preview){
+        l.refs.layer.style.transform = "";
+        return;
+      }
+      const tr = this.preview;
+      if(Math.abs(tr.x) >= 360){tr.x = 0;}
+      if(Math.abs(tr.y) >= 360){tr.y = 0;}
+
+      l.refs.layer.style.transform =  "perspective(2000px) rotateX(" + this.preview.x + "deg) "+
+        "rotateY(" + this.preview.y + "deg) rotateZ(0deg) "+
+        "translateZ(-" +((this.layers.length - i)*20) + "px)";
+      var ay = Math.abs(tr.y);
+      var ax = Math.abs(tr.x);
+
+      if(ay > 90 && ay < 270 && ax > 90 && ax < 270){
+        this.layers[i].refs.layer.style.zIndex = i;
+      }
+      else if(ay > 90 && ay < 270 || ax > 90 && ax < 270){
+        this.layers[i].refs.layer.style.zIndex = this.layers.length - i;
+      }
+      else {
+        this.layers[i].refs.layer.style.zIndex = i;
+      }
+
+    });
+
+    this.refs.grid.alignToActiveLayer();
   }
   /* endof camera stuff */
 

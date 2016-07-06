@@ -104,12 +104,7 @@ export default class AbstractLayer extends React.Component {
   }
 
   render(){
-    const style = this.map.options.preview ? {
-      "transform": "translatez(-" + (120 - (30 + 30 * this.props.anotherUsableKey)) + "px)"
-    } : '';
-
     return (<div
-      style={{style}}
       ref="layer"
       className={this.isActive() ? "tilemap-layer" : "tilemap-layer no-events"}
       data-name={this.props.data.name}

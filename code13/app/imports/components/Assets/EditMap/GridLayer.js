@@ -60,7 +60,9 @@ export default class TileMapLayer extends React.Component {
 
     const activeLayer = map.layers[index];
     if(activeLayer){
-      this.refs.layer.style['transform'] = getComputedStyle(activeLayer.refs.layer)["transform"];
+      //const style = getComputedStyle(activeLayer.refs.layer);
+      this.refs.layer.style['transform'] = activeLayer.refs.layer.style["transform"];
+      this.refs.layer.style['z-index'] = activeLayer.refs.layer.style["z-index"];
     }
   }
   draw(){

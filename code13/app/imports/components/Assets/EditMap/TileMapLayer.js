@@ -60,28 +60,13 @@ export default class TileMapLayer extends AbstractLayer {
 
   }
   componentDidMount(...args){
-
     super.componentDidMount(...args);
-    this.adjustCanvas();
-    const canvas = this.refs.canvas;
-    this.ctx = canvas.getContext("2d");
-
-    this.props.map.layers.push(this);
     this.drawTiles();
-
-    document.body.addEventListener("mouseup", this._mup);
     this.isVisible = true;
   }
 
   componentWillUnmount(...args){
     super.componentWillUnmount(...args);
-
-    const index = this.props.map.layers.indexOf(this);
-    if(index > -1){
-      this.props.map.layers.splice(index, 1);
-    }
-    document.body.removeEventListener("mouseup", this._mup);
-    window.removeEventListener("keyup", this._kup);
     this.isVisible = false;
   }
 

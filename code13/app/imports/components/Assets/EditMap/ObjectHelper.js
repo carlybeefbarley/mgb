@@ -25,17 +25,21 @@ const ObjectHelper = window.ObjectHelper = {
   PointvsAABB: (box, x, y) => {
     return !(box.x > x || box.y > y || box.x + box.width  < x || box.y + box.height < y);
   },
-  // transform coords to match bottom / up drawing
+
   PointvsTile: (box, x, y) => {
     if(box.rotation){
+      // rotate one point to opposite direction instead of 4 box points
       const angle = -box.rotation * TO_DEGREES;
       const sin = Math.sin(angle);
       const cos = Math.cos(angle);
       const nx = ObjectHelper.rpx(sin, cos, x, y, box.x, box.y);
       const ny = ObjectHelper.rpy(sin, cos, x, y, box.x, box.y);
-      return ObjectHelper.PointvsAABB(box, nx, ny+box.height);
+
+      // transform coords to match bottom / up drawing
+      return ObjectHelper.PointvsAABB(box, nx, ny + box.height);
     }
-    return ObjectHelper.PointvsAABB(box, x, y+box.height);
+    // transform coords to match bottom / up drawing
+    return ObjectHelper.PointvsAABB(box, x, y + box.height);
   },
   // rotate per x
   rpx: (sin, cos, x, y, cx, cy) => {

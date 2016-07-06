@@ -59,6 +59,7 @@ export default class HandleCollection {
     this.handles = [];
     this.action = "resize";
     this.activeHandle = null;
+    this.activeHandleType = -1;
 
     for(let i=0; i<9; i++){
       this.handles.push(new Handle(0, 0));
@@ -104,15 +105,73 @@ export default class HandleCollection {
       this.handles[i].draw(ctx, this.handles[i] == this.activeHandle);
     }
   }
+  // idea behind this is to move points around and then figure what has changed
+  moveActiveHandle(udx, udy, obj, type = this.activeHandleType){
+    if(!udx && !udy){
+      return;
+    }
+    let dx = udx;
+    let dy = udy;
+    //if(obj.rotation){
+      const p = this.handles[BOTTOM_LEFT];
+      const sin = Math.sin(-obj.rotation * TO_DEGREES);
+      const cos = Math.cos(-obj.rotation * TO_DEGREES);
+      dx = ObjectHelper.rpx(sin, cos, udx, udy, 0, 0);
+      dy = ObjectHelper.rpy(sin, cos, udx, udy, 0, 0);
+   // }
 
-  moveActiveHandle(x, y){
+    console.log("move:",  udx + "=>"+dx, udy + "=>" +dy);
+
+    switch (type) {
+      case CENTER:
+        this.activeHandle.x += dx;
+        this.activeHandle.y += dy;
+        break;
+
+      case BOTTOM:
+        obj.height += dy;
+        obj.y += dy;
+        break;
+      case TOP:
+        obj.height -= dy;
+        //obj.y += dy;
+        break;
+
+      case LEFT:
+        obj.x += dx;
+        obj.width -= dx;
+        break;
+      case RIGHT:
+        obj.width += dx;
+        break;
+
+      case TOP_LEFT:
+        this.moveActiveHandle(dx, dy, obj, TOP);
+        this.moveActiveHandle(dx, dy, obj, LEFT);
+        break;
+      case TOP_RIGHT:
+        this.moveActiveHandle(dx, dy, obj, TOP);
+        this.moveActiveHandle(dx, dy, obj, RIGHT);
+        break;
+      case BOTTOM_LEFT:
+        this.moveActiveHandle(dx, dy, obj, BOTTOM);
+        this.moveActiveHandle(dx, dy, obj, LEFT);
+        break;
+      case BOTTOM_RIGHT:
+        this.moveActiveHandle(dx, dy, obj, BOTTOM);
+        this.moveActiveHandle(dx, dy, obj, RIGHT);
+        break;
+
+    }
 
   }
 
   setActive(x, y){
     this.activeHandle = null;
+    this.activeHandleType = -1;
     for(let i=0; i<this.handles.length; i++){
       if(this.handles[i].vsPoint(x, y)){
+        this.activeHandleType = i;
         this.activeHandle = this.handles[i];
         return true;
       }

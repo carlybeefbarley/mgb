@@ -17,13 +17,13 @@ export default fpActivity = React.createClass({
   wrapActivity: function (key, ago, userId, labelExtraIconClass, uName, uId, actJSX) {
     return  <div className="event" key={key} style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
               <div className="label">
-              <QLink to={"/user/" + uId}>
+              <QLink to={"/u/" + uName}>
                 <img src={`/api/user/${userId}/avatar`}></img>
               </QLink>
               </div>
               <div className="content">
                 <div className="summary">
-                  <QLink to={"/user/" + uId}>
+                  <QLink to={"/u/" + uName}>
                     { uName }
                   </QLink>
                   <div className="date">
@@ -83,8 +83,8 @@ export default fpActivity = React.createClass({
       const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
       const dataHtml = `<div><small><p>${actionAgo}</p></small><img src="${assetThumbnailUrl}" /><small><p>Owner: ${act.toOwnerName}</p></small></div>`
       const linkTo = act.toOwnerId ? 
-                `/user/${act.toOwnerId}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
-                `/assetEdit/${act.toAssetId}`                       // Old format
+                `/u/${act.toOwnerName}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
+                `/assetEdit/${act.toAssetId}`                       // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
 
 
       return  this.wrapActivity(idx, ago, act.byUserId, assetKindIconClassName, act.byUserName, act.byUserId, 

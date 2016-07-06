@@ -22,13 +22,15 @@ export default UserProfileRoute = React.createClass({
   
   
   getMeteorData: function() {
-    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", this.props.params.id);
-    let handleActivity = Meteor.subscribe("activity.public.recent.userId", this.props.params.id) 
+    const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
+
+    let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", userId);
+    let handleActivity = Meteor.subscribe("activity.public.recent.userId", userId) 
 
     return {
-      activitySnapshots: ActivitySnapshots.find({ byUserId: this.props.params.id }).fetch(),
-      activity: Activity.find({ byUserId: this.props.params.id }, {sort: {timestamp: -1}}).fetch(),
-      loading: !handleActivity.ready() || !handleForActivitySnapshots.ready()
+      activitySnapshots: userId && ActivitySnapshots.find({ byUserId: userId }).fetch(),
+      activity: userId && Activity.find({ byUserId: userId }, {sort: {timestamp: -1}}).fetch(),
+      loading: userId && (!handleActivity.ready() || !handleForActivitySnapshots.ready())
     };
   },
   
@@ -68,22 +70,22 @@ export default UserProfileRoute = React.createClass({
       let iconClass = "ui " + ActivityTypes.getIconClass(act.activityType)
       
       if (act.activityType.startsWith("user.")) {
-        return <QLink to={"/user/" + act.byUserId}  className="item" key={i} title={ago}>
+        return <QLink to={"/u/" + act.byUserName}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i>{act.description}
               </QLink>
       }
       else if (act.activityType.startsWith("asset.")) {
         const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind);
         const linkTo = act.toOwnerId ? 
-                `/user/${act.toOwnerId}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
-                `/assetEdit/${act.toAssetId}`                       // Old format
+                `/u/${act.toOwnerName}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
+                `/assetEdit/${act.toAssetId}`                       // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
 
         return  <QLink to={linkTo}  className="item" key={i} title={ago}>
                 <i className={iconClass}></i><i className={assetKindIconClassName}></i>{act.description} '{act.toAssetName}'  
               </QLink>
       } 
       else if (act.activityType.startsWith("project.")) {
-        return <QLink to={"/user/" + act.byUserId}  className="item" key={i}> title={ago}
+        return <QLink to={"/u/" + act.byUserName}  className="item" key={i}> title={ago}
                 <i className={iconClass}></i> {act.description}
               </QLink>
       }
@@ -126,7 +128,7 @@ export default UserProfileRoute = React.createClass({
   render: function() {
     const {user, ownsProfile} = this.props;
 
-    //if id params don't link to a user...
+    // if id params don't link to a user...
     if (!user) {
       return (
         <div className="ui segment">
@@ -157,10 +159,10 @@ export default UserProfileRoute = React.createClass({
             />
 
 
-          <QLink to={`/user/${user._id}/assets`} className="ui button" >
+          <QLink to={`/u/${user.profile.name}/assets`} className="ui button" >
             Assets
           </QLink>
-          <QLink to={`/user/${user._id}/projects`}  className="ui button" >
+          <QLink to={`/u/${user.profile.name}/projects`}  className="ui button" >
             Projects
           </QLink>
         </div>

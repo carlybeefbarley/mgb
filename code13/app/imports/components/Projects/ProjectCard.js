@@ -36,7 +36,7 @@ export default ProjectCard = React.createClass({
     const createdAt = project.createdAt
     const editsDisabled = !this.props.canEdit
 
-    const linkTo = "/user/" + project.ownerId + "/project/" + project._id
+    const linkTo = "/u/" + project.ownerName + "/project/" + project._id
 
     const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
     return  <div className="ui bordered card" key={project._id}>

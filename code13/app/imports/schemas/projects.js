@@ -1,9 +1,8 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-import { Projects } from '../schemas';
+import { Projects, Users } from '../schemas';
 import { check, Match } from 'meteor/check';
-
 
 var schema = {
   _id: String,
@@ -11,7 +10,8 @@ var schema = {
   createdAt: Date,
   updatedAt: Date,
 
-  ownerId: String,          // owner user id
+  ownerId:   String,          // owner user id
+  ownerName: String,          // owner user id
 
   // the actual project information
   name: String,             // Project Name (scoped to owner). Case sensitive
@@ -38,6 +38,33 @@ export function projectMakeSelector(userId)
 
 Meteor.methods({
 
+  "Projects.fixup": function() {
+    
+console.log("Starting fixup (dry run)")
+console.log(` Invoked by `)
+console.log(Meteor.user())
+
+    let allProjects = Projects.find().fetch()
+    _.each(allProjects, p => {
+      console.log("Project ", p._id, p.name, p.ownerId)
+      var u = Meteor.users.findOne( { _id: p.ownerId} )
+      if (u)
+      {
+        var uname = u.profile.name
+        console.log(`  UserId ${p.ownerId} is username ${uname}`)
+        var selector = {_id: p._id};
+        var data = { ownerName: uname}
+        console.log("Selector: ", selector)
+        console.log("Data: ", data)
+        var count = Projects.update(selector, {$set: data})
+        console.log(`  [Projects.fixup - update]  (${count}) `); 
+      }
+      else
+        console.log(`  UserId ${p.ownerId} not found`)
+    })
+
+  },
+
   /** Projects.create
    *  @param data.name           Name of Project
    *  @param data.description    Description field
@@ -50,6 +77,7 @@ Meteor.methods({
     data.createdAt = now
     data.updatedAt = now
     data.ownerId = this.userId
+    data.ownerName = Meteor.user().profile.name
     data.memberIds = []
     data.avatarAssetId = ""
 

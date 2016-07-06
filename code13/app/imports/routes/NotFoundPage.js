@@ -20,7 +20,7 @@ export default class NotFoundPage extends Component {
               </h1>
               <h2>404 - Page Not Found</h2>
               { currUser ?
-                <QLink to={`/user/${currUser._id}/assets`}>
+                <QLink to={`/u/${currUser.profile.name}/assets`}>
                   <div className="ui huge primary button">Keep Going <i className="right arrow icon"></i></div>
                 </QLink>
                 : 

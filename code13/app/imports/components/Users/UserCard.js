@@ -43,7 +43,7 @@ export default UserProfile = React.createClass({
 
   handleCardClick: function() {
     if (this.props.makeClickable)
-      utilPushTo(this.context.urlLocation.query, `/user/${this.props.user._id}`)
+      utilPushTo(this.context.urlLocation.query, `/u/${this.props.user.profile.name}`)
   },
 
   render: function() {

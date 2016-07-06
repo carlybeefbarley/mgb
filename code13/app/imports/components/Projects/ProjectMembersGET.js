@@ -34,7 +34,7 @@ export default ProjectMembersGET = React.createClass({
   renderMembers()
   {
     return this.data.users.map( user => {
-      const uLink = "/user/"+user._id
+      const uLink = "/u/"+user.profile.name
       return <div className="ui basic segment" key={user._id}>
               <UserItem renderAttached={true}                    
                   _id={user._id}

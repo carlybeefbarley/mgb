@@ -129,7 +129,7 @@ export default  SignInRoute = React.createClass({
         logActivity("user.login",  `Logging in "${userName}"`, null, null);         
         this.props.showToast('Welcome Back!   Taking you to your Assets', 'success')
         window.setTimeout(() => {
-          utilPushTo(this.context.urlLocation.query, `/user/${Meteor.user()._id}/assets`)
+          utilPushTo(this.context.urlLocation.query, `/u/${Meteor.user().profile.name}/assets`)
         }, 2000);
       }
     });

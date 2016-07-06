@@ -56,6 +56,12 @@ Meteor.publish('user', function(id) {
   return Meteor.users.find(id)
 })
 
+Meteor.publish('user.byName', function(username) {
+  let selector = { "profile.name": username }
+  return Meteor.users.find(selector)
+})
+
+
 //
 //   ASSETS  
 //

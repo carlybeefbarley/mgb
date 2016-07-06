@@ -111,6 +111,8 @@ export default class EditGraphic extends React.Component {
 
     // if asset area is selected then value {startX, startY, endX, endY}
     this.selectRect = null;
+    // if object cut or copied then {x, y, width, height, imgData}
+    this.pasteRect = null;
 
     this.handleColorChangeComplete('fg', { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} } )
 
@@ -833,6 +835,46 @@ export default class EditGraphic extends React.Component {
   }
 
 
+  cutSelected(){
+    if(!this.selectRect) return;
+    console.log('cut selected');
+
+    this.copySelected();
+    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
+    ctx.clearRect(this.pasteRect.x, this.pasteRect.y, this.pasteRect.width, this.pasteRect.height);
+    this.handleSave("Cut selected area");
+  }
+
+  copySelected(){
+    if(!this.selectRect) return;
+    console.log('copy selected');
+
+    let x = this.selectRect.startX;
+    let y = this.selectRect.startY;
+    let width = Math.abs(this.selectRect.startX - this.selectRect.endX); 
+    let height = Math.abs(this.selectRect.startY - this.selectRect.endY);
+    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
+    // console.log(ctx.getImageData(x, y, width, height));
+
+    this.pasteRect = {
+      x: x
+      , y: y
+      , width: width 
+      , height: height
+      , imgData: ctx.getImageData(x, y, width, height)
+    };
+  }
+
+  pasteSelected(){
+    if(!this.pasteRect) return;
+    console.log('paste selected');
+
+    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
+    ctx.putImageData(this.pasteRect.imgData, this.pasteRect.x, this.pasteRect.y);
+    this.handleSave("Paste selected area");
+  }
+
+
   /// Drag & Drop of image files over preview and editor
   // TODO: See how to factor this into another function? Depends how much of our internal state it needs
 
@@ -1009,16 +1051,6 @@ map
               <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
             </a>
 
-            {/*
-            <span>&nbsp;&nbsp;</span>
-            <a className="ui label hazPopup" onClick={this.handleZoom.bind(this)}
-               data-content="Click here or ALT+SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
-               data-variation="tiny"
-               data-position="bottom center">
-              <i className="icon zoom"></i>Zoom {zoom}x
-            </a>
-          */}
-
             <span>&nbsp;&nbsp;</span>
 
             <span className="ui label hazPopup"
@@ -1052,6 +1084,31 @@ map
             </a>
             <span>&nbsp;&nbsp;</span>
             <AssetUrlGenerator asset={this.props.asset} />
+
+            <span>&nbsp;&nbsp;</span>
+            <a className={"ui label hazPopup " + (this.selectRect ? "" : "disabled")} 
+              onClick={this.cutSelected.bind(this)}
+               data-content="Cut selected area"
+               data-variation="tiny"
+               data-position="bottom center">
+              <i className="cut icon"></i>Cut
+            </a>
+
+            <a className={"ui label hazPopup " + (this.selectRect ? "" : "disabled")} 
+              onClick={this.copySelected.bind(this)}
+               data-content="Copy selected area"
+               data-variation="tiny"
+               data-position="bottom center">
+              <i className="copy icon"></i>Copy
+            </a>
+
+            <a className={"ui label hazPopup " + (this.pasteRect ? "" : "disabled")} 
+              onClick={this.pasteSelected.bind(this)}
+               data-content="Paste copied region"
+               data-variation="tiny"
+               data-position="bottom center">
+              <i className="paste icon"></i>Paste
+            </a>
 
 
           </div>

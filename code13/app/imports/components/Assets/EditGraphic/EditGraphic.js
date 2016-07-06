@@ -796,7 +796,7 @@ export default class EditGraphic extends React.Component {
   {
     recentMarker = allowBackwash ? null : "_graphic_" + Random.id()   // http://docs.meteor.com/packages/random.html
     c2.changeMarker = recentMarker      
-console.log("Backwash marker = " + recentMarker)
+    //console.log("Backwash marker = " + recentMarker)
     this.props.handleContentChange(c2, thumbnail, changeText)
     this.doSnapshotActivity()
   }
@@ -923,7 +923,7 @@ console.log("Backwash marker = " + recentMarker)
 
 
   // <- End of drag-and-drop stuff
-
+map
 
   // React Callback: render()
   // See http://semantic-ui.com to understand the classNames we are using.

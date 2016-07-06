@@ -1,29 +1,4 @@
-function drawHorizLine(drawEnv, x1, x2, y)
-{
-  if (x1 > x2)
-    [x1, x2] = [x2, x1]
-
-  for(let i=x1; i<=x2; i++){
-    drawEnv.setSelectPixelsAt(i, y);
-  }
-}
-
-function drawVerticLine(drawEnv, y1, y2, x){
-  if (y1 > y2)
-    [y1, y2] = [y2, y1]
-
-  for(let i=y1; i<=y2; i++){
-    drawEnv.setSelectPixelsAt(x, i);
-  }
-}
-
-function drawRect(drawEnv, startX, startY, endX, endY) {
-  drawHorizLine(drawEnv, startX, endX, startY);
-  drawHorizLine(drawEnv, startX, endX, endY);
-  drawVerticLine(drawEnv, startY, endY, startX);
-  drawVerticLine(drawEnv, startY, endY, endX);
-}
-
+// Select Tool 
 
 const ToolSelect = {
   name: "Select",
@@ -48,13 +23,10 @@ const ToolSelect = {
     let w = drawEnv.x - ToolSelect._startx
     let h = drawEnv.y - ToolSelect._starty
 
+    drawEnv.saveSelectRect(ToolSelect._startx, ToolSelect._starty, drawEnv.x, drawEnv.y);
+
     // update canvas clearing from previous select area
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
-
-    // Draw a rectangle here
-    drawRect(drawEnv, ToolSelect._startx, ToolSelect._starty, drawEnv.x, drawEnv.y);
-
-    drawEnv.saveSelectRect(ToolSelect._startx, ToolSelect._starty, drawEnv.x, drawEnv.y);
   },
 
   handleMouseUp: ( drawEnv ) => {
@@ -65,9 +37,6 @@ const ToolSelect = {
   },
 
   handleMouseLeave: ( drawEnv ) => {
-    // Treat as cancel:
-    // drawEnv.previewCtx.clearRect(0,0, drawEnv.width, drawEnv.height)
-    // drawEnv.previewCtx.putImageData(toolMove._storedPreviewImageData, 0, 0)
     ToolSelect.handleMouseUp()
   }
 

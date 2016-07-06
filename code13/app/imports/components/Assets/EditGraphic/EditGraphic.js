@@ -335,17 +335,17 @@ export default class EditGraphic extends React.Component {
     }
 
     // if there is something selected - draw it
-    if(this.selectRect) this.drawSelectRect();
+    if(this.selectRect) this.drawSelectRect(this.selectRect);
     
   }
 
-  drawSelectRect(){
+  drawSelectRect(selectRect){
     var self = this;
-    self._setImageData4BytesFromRGBA(self.editCtxImageData1x1.data, self.state.selectedColors['fg'].rgb)
-    drawHorizLine(this.selectRect.startX, this.selectRect.endX, this.selectRect.startY);
-    drawHorizLine(this.selectRect.startX, this.selectRect.endX, this.selectRect.endY); 
-    drawVerticLine(this.selectRect.startY, this.selectRect.endY, this.selectRect.startX);
-    drawVerticLine(this.selectRect.startY, this.selectRect.endY, this.selectRect.endX);    
+    this._setImageData4BytesFromRGBA(this.editCtxImageData1x1.data, this.state.selectedColors['fg'].rgb)
+    drawHorizLine(selectRect.startX, selectRect.endX, selectRect.startY);
+    drawHorizLine(selectRect.startX, selectRect.endX, selectRect.endY); 
+    drawVerticLine(selectRect.startY, selectRect.endY, selectRect.startX);
+    drawVerticLine(selectRect.startY, selectRect.endY, selectRect.endX);    
 
     function drawHorizLine(x1, x2, y){
       if (x1 > x2)
@@ -366,7 +366,6 @@ export default class EditGraphic extends React.Component {
     }
 
     function drawPoint(x, y){
-      // self._setImageData4BytesFromRGBA(self.editCtxImageData1x1.data, self.state.selectedColors['fg'].rgb)
       self.editCtx.putImageData(self.editCtxImageData1x1, (x * self.state.editScale) + 0, (y * self.state.editScale) + 0);
     }
 }
@@ -434,12 +433,6 @@ export default class EditGraphic extends React.Component {
             retval.editCtx.putImageData(retval.editCtxImageData1x1, (x * retval.scale) + i, (y * retval.scale) + j)
           }
         }
-      },
-
-
-      setSelectPixelsAt: function (x, y) {
-        self._setImageData4BytesFromRGBA(retval.editCtxImageData1x1.data,    retval.chosenColor.rgb)
-        retval.editCtx.putImageData(retval.editCtxImageData1x1, (x * retval.scale) + 0, (y * retval.scale) + 0);
       },
 
       saveSelectRect: function(startX, startY, endX, endY){

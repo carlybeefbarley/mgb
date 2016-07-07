@@ -49,6 +49,36 @@ const ObjectHelper = window.ObjectHelper = {
     return (y - cy)*cos + (x - cx)*sin + cy;
   },
 
+  rotateObject: (o, angle) => {
+    const oldAngle = o.rotation * Math.PI/180;
+
+    const ccx = o.x + (o.width * 0.5);
+    let ccy;
+    // tile objects are upside down
+    if(o.gid){
+      ccy = o.y - (o.height * 0.5);
+    }
+    else{
+      ccy = o.y + (o.height * 0.5);
+    }
+
+    const csin = Math.sin(oldAngle);
+    const ccos = Math.cos(oldAngle);
+
+    const centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.x, o.y);
+    const centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.x, o.y);
+
+
+    const sin = Math.sin(angle - oldAngle);
+    const cos = Math.cos(angle - oldAngle);
+    const x = ObjectHelper.rpx(sin, cos, o.x, o.y, centerx, centery);
+    const y = ObjectHelper.rpy(sin, cos, o.x, o.y, centerx, centery);
+
+    o.x = x;
+    o.y = y;
+    o.rotation = angle * (180 / Math.PI);
+  },
+
   createTileObject: (pal, id, x, y) => {
     return {
       "gid": pal.gid,

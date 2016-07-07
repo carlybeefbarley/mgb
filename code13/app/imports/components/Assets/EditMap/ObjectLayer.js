@@ -120,11 +120,6 @@ export default class ObjectLayer extends AbstractLayer {
           // TODO: move to config rotation step?
           const newRotation = Math.round(this.cloneObject.rotation / 15) * 15;
           this.rotateSelected(newRotation);
-          /*if(newRotation != this._pickedObject.rotation){
-            this.pickedObject.rotation = newRotation;
-            this.pickedObject.x = this.cloneObject.x;
-            this.pickedObject.y = this.cloneObject.y;
-          }*/
         }
       }
       else{
@@ -288,52 +283,12 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     this.highlightSelected();
-
-    if(this.drawDebug) {
-      // show mouse - after transforms
-      this.ctx.beginPath();
-      this.ctx.arc(this.mouseX, this.mouseY, 5, 0, Math.PI * 2);
-      this.ctx.fillStyle = "rgba(0, 255, 0, 1)";
-      this.ctx.fill();
-    }
-
-    if(!this.drawDebugPoint){
-      this.drawDebugPoint = {
-        x: 0,y:0
-      }
-    }
-    this.ctx.beginPath();
-    this.ctx.arc(this.drawDebugPoint.x, this.drawDebugPoint.y, 5, 0, Math.PI * 2);
-    this.ctx.fillStyle = "rgba(0, 255, 0, 1)";
-    this.ctx.fill();
-
-
     this.isDirty = false;
   }
 
   rotateSelected(rotation){
     const angle = rotation * Math.PI/180;
-    const o = this.pickedObject;
-    const oldAngle = o.rotation * Math.PI/180;
-
-    const ccx = o.x + (o.width * 0.5);
-    const ccy = o.y - (o.height * 0.5);
-
-    const csin = Math.sin(oldAngle);
-    const ccos = Math.cos(oldAngle);
-
-    const centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.x, o.y);
-    const centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.x, o.y);
-
-
-    const sin = Math.sin(angle - oldAngle);
-    const cos = Math.cos(angle - oldAngle);
-    const x = ObjectHelper.rpx(sin, cos, o.x, o.y, centerx, centery);
-    const y = ObjectHelper.rpy(sin, cos, o.x, o.y, centerx, centery);
-
-    o.x = x;
-    o.y = y;
-    o.rotation = angle * (180 / Math.PI);
+    ObjectHelper.rotateObject(this.pickedObject, angle);
     this.draw();
   }
 
@@ -353,7 +308,13 @@ export default class ObjectLayer extends AbstractLayer {
         );
       }
       else if(true){
-        this.handles.update(this.pickedObject.x, this.pickedObject.y, this.pickedObject.width, this.pickedObject.height);
+        this.handles.update(
+          this.pickedObject.x,
+          this.pickedObject.y,
+          this.pickedObject.width,
+          this.pickedObject.height,
+          this.pickedObject.rotation, false
+        );
       }
       // draw on grid which is always on the top
 

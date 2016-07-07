@@ -75,7 +75,7 @@ export default class HandleCollection {
   unlock(){
     this.isLocked = false;
   }
-  update(x, y, width, height, angleDegrees){
+  update(x, y, width, height, angleDegrees, isTileObject = true){
     const angle = angleDegrees * FROM_DEGREES;
     const h = this.handles;
 
@@ -97,7 +97,10 @@ export default class HandleCollection {
     h[BOTTOM_RIGHT].update(x + width, y + height);
 
     if(angle){
-      const p = h[BOTTOM_LEFT];
+      let p = h[BOTTOM_LEFT];
+      if(!isTileObject){
+        p = h[TOP_LEFT];
+      }
       h[TOP].rotate(angle, p.x, p.y);
       h[TOP_LEFT].rotate(angle, p.x, p.y);
       h[TOP_RIGHT].rotate(angle, p.x, p.y);
@@ -172,25 +175,37 @@ export default class HandleCollection {
         h.x += udx;
         h.y += udy;
 
-        const base = this.handles[BOTTOM_LEFT];
         const center = this.handles[CENTER];
         const an = Math.atan2(h.y - center.y, h.x - center.x) + Math.PI * 0.5;
 
-        // this will rotate around base point
+        // this will rotate around base point - change only rotation
         //obj.rotation = an * FROM_RADIANS;
 
-        // this will rotate around middle
+        // this will rotate around middle point
         this.rotateObject(obj, an);
-
         break;
 
       case BOTTOM:
+        // this is same fro NON tile as for tile TOP
+        if(!obj.gid){
+          obj.height += dy;
+          break;
+        }
+
         obj.x -= dy * Math.sin(obj.rotation * FROM_DEGREES);
         obj.y += dy * Math.cos(obj.rotation * FROM_DEGREES);
         obj.height += dy;
         break;
 
       case TOP:
+        //
+        if(!obj.gid) {
+          obj.x -= dy * Math.sin(obj.rotation * FROM_DEGREES);
+          obj.y += dy * Math.cos(obj.rotation * FROM_DEGREES);
+          obj.height -= dy;
+          break;
+        }
+
         obj.height -= dy;
         break;
 
@@ -221,26 +236,7 @@ export default class HandleCollection {
   }
 
   rotateObject(o, angle){
-    const oldAngle = o.rotation * Math.PI/180;
-
-    const ccx = o.x + (o.width * 0.5);
-    const ccy = o.y - (o.height * 0.5);
-
-    const csin = Math.sin(oldAngle);
-    const ccos = Math.cos(oldAngle);
-
-    const centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.x, o.y);
-    const centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.x, o.y);
-
-
-    const sin = Math.sin(angle - oldAngle);
-    const cos = Math.cos(angle - oldAngle);
-    const x = ObjectHelper.rpx(sin, cos, o.x, o.y, centerx, centery);
-    const y = ObjectHelper.rpy(sin, cos, o.x, o.y, centerx, centery);
-
-    o.x = x;
-    o.y = y;
-    o.rotation = angle * (180 / Math.PI);
+    ObjectHelper.rotateObject(o, angle);
   }
 
 }

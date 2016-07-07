@@ -345,17 +345,12 @@ export default class EditGraphic extends React.Component {
     }
 
     // if there is something selected - draw it
-    if(this.selectRect) this.drawSelectRect(this.selectRect);
+    // if(this.selectRect) this.drawSelectRect(this.selectRect);
     
   }
 
   drawSelectRect(selectRect){
-    var self = this;
-    // this._setImageData4BytesFromRGBA(this.editCtxImageData1x1.data, {r: 255, g: 0, b: 0, a: 1});
-    // drawHorizLine(selectRect.startX, selectRect.endX, selectRect.startY);
-    // drawHorizLine(selectRect.startX, selectRect.endX, selectRect.endY); 
-    // drawVerticLine(selectRect.startY, selectRect.endY, selectRect.startX);
-    // drawVerticLine(selectRect.startY, selectRect.endY, selectRect.endX);    
+    var self = this; 
 
     // normalize rect with scale and set always x1,y1 as top left corner 
     // 0.5 hack to draw 1 px line
@@ -375,53 +370,34 @@ export default class EditGraphic extends React.Component {
 
     let time = new Date().getMilliseconds();
     time = Math.round(time/100);
-    let timeOffset = time % 10;
+    let timeOffset = (time % 10) * 2;
 
 
     this.editCtx.strokeStyle = '#ffffff';
     let width = Math.abs(scaleRect.x1 - scaleRect.x2);
     let height = Math.abs(scaleRect.y1 - scaleRect.y2);
     let dashSize = 10;
-    let dashCount = Math.ceil((width-timeOffset)/(dashSize*2));
+    let dashCount = Math.ceil((width+dashSize-timeOffset)/(dashSize*2));
+    // draw horizontal dashes
     for(let i=0; i<dashCount; i++){
-      let x = scaleRect.x1 + timeOffset + i*dashSize*2;
+      let x = scaleRect.x1 - dashSize + timeOffset + i*dashSize*2;
       let x2 = x+dashSize;
+      if(x < scaleRect.x1) x = scaleRect.x1;
       if(x2 > scaleRect.x2) x2 = scaleRect.x2;
       drawLine(x, scaleRect.y1, x2, scaleRect.y1); 
       drawLine(x, scaleRect.y2, x2, scaleRect.y2); 
     }
 
-    dashCount = Math.ceil((height-timeOffset)/(dashSize*2));
+    dashCount = Math.ceil((height+dashSize-timeOffset)/(dashSize*2));
+    // draw vertical dashes
     for(let i=0; i<dashCount; i++){
-      let y = scaleRect.y1 + timeOffset + i*dashSize*2;
+      let y = scaleRect.y1 - dashSize + timeOffset + i*dashSize*2;
       let y2 = y+dashSize;
+      if(y < scaleRect.y1) y = scaleRect.y1;
       if(y2 > scaleRect.y2) y2 = scaleRect.y2;
       drawLine(scaleRect.x1, y, scaleRect.x1, y2); 
       drawLine(scaleRect.x2, y, scaleRect.x2, y2);
     }
-    
-
-    // function drawHorizLine(x1, x2, y){
-    //   if (x1 > x2)
-    //     [x1, x2] = [x2, x1]
-
-    //   for(let x=x1; x<=x2; x++){
-    //     drawPoint(x, y);
-    //   }
-    // }
-
-    // function drawVerticLine(y1, y2, x){
-    //   if (y1 > y2)
-    //     [y1, y2] = [y2, y1]
-
-    //   for(let y=y1; y<=y2; y++){
-    //     drawPoint(x, y);
-    //   }
-    // }
-
-    // function drawPoint(x, y){
-    //   self.editCtx.putImageData(self.editCtxImageData1x1, (x * self.state.editScale) + 0, (y * self.state.editScale) + 0);
-    // }
 
 
     function drawLine(x1, y1, x2, y2){

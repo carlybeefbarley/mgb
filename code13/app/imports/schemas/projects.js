@@ -38,32 +38,32 @@ export function projectMakeSelector(userId)
 
 Meteor.methods({
 
-  "Projects.fixup": function() {
+//   "Projects.fixup": function() {
     
-console.log("Starting fixup (dry run)")
-console.log(` Invoked by `)
-console.log(Meteor.user())
+// console.log("Starting fixup (dry run)")
+// console.log(` Invoked by `)
+// console.log(Meteor.user())
 
-    let allProjects = Projects.find().fetch()
-    _.each(allProjects, p => {
-      console.log("Project ", p._id, p.name, p.ownerId)
-      var u = Meteor.users.findOne( { _id: p.ownerId} )
-      if (u)
-      {
-        var uname = u.profile.name
-        console.log(`  UserId ${p.ownerId} is username ${uname}`)
-        var selector = {_id: p._id};
-        var data = { ownerName: uname}
-        console.log("Selector: ", selector)
-        console.log("Data: ", data)
-        var count = Projects.update(selector, {$set: data})
-        console.log(`  [Projects.fixup - update]  (${count}) `); 
-      }
-      else
-        console.log(`  UserId ${p.ownerId} not found`)
-    })
+//     let allProjects = Projects.find().fetch()
+//     _.each(allProjects, p => {
+//       console.log("Project ", p._id, p.name, p.ownerId)
+//       var u = Meteor.users.findOne( { _id: p.ownerId} )
+//       if (u)
+//       {
+//         var uname = u.profile.name
+//         console.log(`  UserId ${p.ownerId} is username ${uname}`)
+//         var selector = {_id: p._id};
+//         var data = { ownerName: uname}
+//         console.log("Selector: ", selector)
+//         console.log("Data: ", data)
+//         var count = Projects.update(selector, {$set: data})
+//         console.log(`  [Projects.fixup - update]  (${count}) `); 
+//       }
+//       else
+//         console.log(`  UserId ${p.ownerId} not found`)
+//     })
 
-  },
+//   },
 
   /** Projects.create
    *  @param data.name           Name of Project

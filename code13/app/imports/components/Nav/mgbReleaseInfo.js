@@ -16,6 +16,44 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
+      "timestamp":     "Wed Jul 06 2016 16:45:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "719"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.urls",
+          "type":           "improvement",
+          "changeName":     "Urls now have username instead of ID",
+          "changeSummary":  "The /user/XXXXXXXXXXXXXX urls have been replaced by nicer /u/name urls",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "feature",
+          "changeName":     "Cut/Copy/Paste in graphics",
+          "changeSummary":  "Select, Copy and Cut work as expected. Paste is going to get more work so it is easy to reposition where to paste to",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.map",
+          "type":           "bugfix",
+          "changeName":     "3D preview fix for Internet Explorer",
+          "changeSummary":  "The 3D map preview now works in Internet Explorer 10",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    { 
       "timestamp":     "Tue Jul 05 2016 22:20:00 GMT-0700 (PDT)",
       
       "id": {

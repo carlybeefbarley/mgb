@@ -5,7 +5,8 @@ import ObjectHelper from "../ObjectHelper.js";
   + 1 extra handle for a pivot point
  */
 const PI2 = Math.PI*2;
-const TO_DEGREES = (Math.PI / 180);
+const FROM_DEGREES = (Math.PI / 180);
+const FROM_RADIANS = 1/FROM_DEGREES;
 class Handle{
   constructor(x, y){
     this.radius = 3;
@@ -15,17 +16,17 @@ class Handle{
     this.x = x; this.y = y;
   }
   // TODO: move hover x/y out from draw ?
-  draw(ctx, active = false){
+  draw(ctx, camera, active = false){
     ctx.beginPath();
 
     if(active){
       ctx.fillStyle = "rgba(255,0,0,1)";
-      ctx.arc(this.x, this.y, this.radius*2, 0, PI2);
+      ctx.arc((this.x + camera.x) * camera.zoom, (this.y + camera.y) * camera.zoom, this.radius*2, 0, PI2);
       ctx.fill();
     }
     else{
       ctx.fillStyle = "rgba(255,0,0,0.5)";
-      ctx.arc(this.x, this.y, this.radius, 0, PI2);
+      ctx.arc((this.x + camera.x) * camera.zoom, (this.y + camera.y) * camera.zoom, this.radius, 0, PI2);
       ctx.stroke();
 
     }
@@ -52,6 +53,7 @@ const BOTTOM_LEFT = 5;
 const LEFT = 6;
 const TOP_LEFT = 7;
 const CENTER = 8;
+const ROTATE = 9;
 
 // this will update for every object...
 export default class HandleCollection {
@@ -61,14 +63,20 @@ export default class HandleCollection {
     this.activeHandle = null;
     this.activeHandleType = -1;
 
-    for(let i=0; i<9; i++){
+    for(let i=0; i<10; i++){
       this.handles.push(new Handle(0, 0));
     }
     this.update(x, y, width, height);
   }
 
+  lock(){
+    this.isLocked = true;
+  }
+  unlock(){
+    this.isLocked = false;
+  }
   update(x, y, width, height, angleDegrees){
-    const angle = angleDegrees * TO_DEGREES;
+    const angle = angleDegrees * FROM_DEGREES;
     const h = this.handles;
 
     h[TOP_LEFT].update(x, y);
@@ -77,6 +85,11 @@ export default class HandleCollection {
 
     h[LEFT].update(x, y + height * 0.5);
     h[CENTER].update(x + width * 0.5, y + height * 0.5);
+
+    if(!this.isLocked){
+      h[ROTATE].update(x + width * 0.5, y - height * 0.5);
+    }
+
     h[RIGHT].update(x + width, y + height * 0.5);
 
     h[BOTTOM_LEFT].update(x, y + height);
@@ -91,6 +104,11 @@ export default class HandleCollection {
 
       h[LEFT].rotate(angle, p.x, p.y);
       h[CENTER].rotate(angle, p.x, p.y);
+
+      if(!this.isLocked){
+        h[ROTATE].rotate(angle, p.x, p.y);
+      }
+
       h[RIGHT].rotate(angle, p.x, p.y);
 
       h[BOTTOM_LEFT].rotate(angle, p.x, p.y);
@@ -100,9 +118,13 @@ export default class HandleCollection {
 
   }
 
-  draw(ctx, x, y){
+  draw(ctx, camera){
     for(let i=0; i<this.handles.length; i++){
-      this.handles[i].draw(ctx, this.handles[i] == this.activeHandle);
+      // skip center handle - as it don't have any functionality atm
+      if(i == CENTER){
+        continue;
+      }
+      this.handles[i].draw(ctx, camera, this.handles[i] == this.activeHandle);
     }
   }
   // idea behind this is to move points around and then figure what has changed
@@ -110,58 +132,77 @@ export default class HandleCollection {
     if(!udx && !udy){
       return;
     }
+    // TODO: split this function?
+    switch(type){
+      case TOP_LEFT:
+        this.moveActiveHandle(udx, udy, obj, TOP);
+        this.moveActiveHandle(udx, udy, obj, LEFT);
+        return;
+      case TOP_RIGHT:
+        this.moveActiveHandle(udx, udy, obj, TOP);
+        this.moveActiveHandle(udx, udy, obj, RIGHT);
+        return;
+      case BOTTOM_LEFT:
+        this.moveActiveHandle(udx, udy, obj, BOTTOM);
+        this.moveActiveHandle(udx, udy, obj, LEFT);
+        return;
+      case BOTTOM_RIGHT:
+        this.moveActiveHandle(udx, udy, obj, BOTTOM);
+        this.moveActiveHandle(udx, udy, obj, RIGHT);
+        return;
+    }
+
+
     let dx = udx;
     let dy = udy;
-    //if(obj.rotation){
-      const p = this.handles[BOTTOM_LEFT];
-      const sin = Math.sin(-obj.rotation * TO_DEGREES);
-      const cos = Math.cos(-obj.rotation * TO_DEGREES);
+
+    // if no rotation we can skip extra calculations
+    if(obj.rotation){
+      const sin = Math.sin(-obj.rotation * FROM_DEGREES);
+      const cos = Math.cos(-obj.rotation * FROM_DEGREES);
       dx = ObjectHelper.rpx(sin, cos, udx, udy, 0, 0);
       dy = ObjectHelper.rpy(sin, cos, udx, udy, 0, 0);
-   // }
+    }
 
-    console.log("move:",  udx + "=>"+dx, udy + "=>" +dy);
 
+    // TODO: add pivot point e.g. 50% of left & right would do 50% smaller changes to left and 50% smaller changes to right
     switch (type) {
-      case CENTER:
-        this.activeHandle.x += dx;
-        this.activeHandle.y += dy;
+      case ROTATE:
+        const h = this.handles[ROTATE];
+        h.x += udx;
+        h.y += udy;
+
+        const base = this.handles[BOTTOM_LEFT];
+        const center = this.handles[CENTER];
+        const an = Math.atan2(h.y - center.y, h.x - center.x) + Math.PI * 0.5;
+
+        // this will rotate around base point
+        //obj.rotation = an * FROM_RADIANS;
+
+        // this will rotate around middle
+        this.rotateObject(obj, an);
+
         break;
 
       case BOTTOM:
+        obj.x -= dy * Math.sin(obj.rotation * FROM_DEGREES);
+        obj.y += dy * Math.cos(obj.rotation * FROM_DEGREES);
         obj.height += dy;
-        obj.y += dy;
         break;
+
       case TOP:
         obj.height -= dy;
-        //obj.y += dy;
         break;
 
       case LEFT:
-        obj.x += dx;
+        obj.x += dx * Math.cos(obj.rotation * FROM_DEGREES);
+        obj.y += dx * Math.sin(obj.rotation * FROM_DEGREES);
         obj.width -= dx;
         break;
+
       case RIGHT:
         obj.width += dx;
         break;
-
-      case TOP_LEFT:
-        this.moveActiveHandle(dx, dy, obj, TOP);
-        this.moveActiveHandle(dx, dy, obj, LEFT);
-        break;
-      case TOP_RIGHT:
-        this.moveActiveHandle(dx, dy, obj, TOP);
-        this.moveActiveHandle(dx, dy, obj, RIGHT);
-        break;
-      case BOTTOM_LEFT:
-        this.moveActiveHandle(dx, dy, obj, BOTTOM);
-        this.moveActiveHandle(dx, dy, obj, LEFT);
-        break;
-      case BOTTOM_RIGHT:
-        this.moveActiveHandle(dx, dy, obj, BOTTOM);
-        this.moveActiveHandle(dx, dy, obj, RIGHT);
-        break;
-
     }
 
   }
@@ -178,4 +219,28 @@ export default class HandleCollection {
     }
     return false;
   }
+
+  rotateObject(o, angle){
+    const oldAngle = o.rotation * Math.PI/180;
+
+    const ccx = o.x + (o.width * 0.5);
+    const ccy = o.y - (o.height * 0.5);
+
+    const csin = Math.sin(oldAngle);
+    const ccos = Math.cos(oldAngle);
+
+    const centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.x, o.y);
+    const centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.x, o.y);
+
+
+    const sin = Math.sin(angle - oldAngle);
+    const cos = Math.cos(angle - oldAngle);
+    const x = ObjectHelper.rpx(sin, cos, o.x, o.y, centerx, centery);
+    const y = ObjectHelper.rpy(sin, cos, o.x, o.y, centerx, centery);
+
+    o.x = x;
+    o.y = y;
+    o.rotation = angle * (180 / Math.PI);
+  }
+
 }

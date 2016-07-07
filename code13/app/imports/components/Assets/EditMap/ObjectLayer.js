@@ -67,7 +67,7 @@ export default class ObjectLayer extends AbstractLayer {
       obj = this.data.objects[i];
       if(obj.gid){
         if(ObjectHelper.PointvsTile(obj, x, y)){
-          console.log("picked:", obj);
+          console.log("picked tile:", obj);
           return i;
         }
       }
@@ -91,8 +91,8 @@ export default class ObjectLayer extends AbstractLayer {
 
     if(!this.mouseDown){
       this.handles.setActive(
-        (this.mouseX - this.camera.x) * this.camera.zoom,
-        (this.mouseY - this.camera.y) * this.camera.zoom
+        (this.mouseX / this.camera.zoom - this.camera.x),
+        (this.mouseY / this.camera.zoom - this.camera.y)
       );
       return;
     }
@@ -108,7 +108,28 @@ export default class ObjectLayer extends AbstractLayer {
     const ny = this.startPosY + this.movementY;
 
     if(this.handles.activeHandle){
-      this.handles.moveActiveHandle(dx, dy, this.pickedObject);
+      this.handles.moveActiveHandle(dx, dy, this.cloneObject);
+      if(e.ctrlKey){
+        if(this.handles.activeHandleType != 9){
+          this.pickedObject.x = Math.round(this.cloneObject.x / this.map.data.tilewidth) * this.map.data.tilewidth;
+          this.pickedObject.y = Math.round(this.cloneObject.y / this.map.data.tileheight) * this.map.data.tileheight;
+          this.pickedObject.width = Math.round(this.cloneObject.width / this.map.data.tilewidth) * this.map.data.tilewidth;
+          this.pickedObject.height = Math.round(this.cloneObject.height / this.map.data.tileheight) * this.map.data.tileheight;
+        }
+        else{
+          // TODO: move to config rotation step?
+          const newRotation = Math.round(this.cloneObject.rotation / 15) * 15;
+          this.rotateSelected(newRotation);
+          /*if(newRotation != this._pickedObject.rotation){
+            this.pickedObject.rotation = newRotation;
+            this.pickedObject.x = this.cloneObject.x;
+            this.pickedObject.y = this.cloneObject.y;
+          }*/
+        }
+      }
+      else{
+        Object.assign(this.pickedObject, this.cloneObject);
+      }
       return;
     }
     // else move object
@@ -148,12 +169,14 @@ export default class ObjectLayer extends AbstractLayer {
 
     const prevHandle = this.handles.activeHandle;
     this.handles.setActive(
-      (this.mouseX - this.camera.x) * this.camera.zoom,
-      (this.mouseY - this.camera.y) * this.camera.zoom
+      (this.mouseX / this.camera.zoom - this.camera.x),
+      (this.mouseY / this.camera.zoom - this.camera.y)
     );
     // is same handle?
     if(prevHandle && prevHandle == this.handles.activeHandle){
       this.handles.lock();
+      this.cloneObject = {};
+      Object.assign(this.cloneObject, this.pickedObject);
       this.handleMouseMove(e);
       // we will move handle on next move
       return;
@@ -274,7 +297,44 @@ export default class ObjectLayer extends AbstractLayer {
       this.ctx.fill();
     }
 
+    if(!this.drawDebugPoint){
+      this.drawDebugPoint = {
+        x: 0,y:0
+      }
+    }
+    this.ctx.beginPath();
+    this.ctx.arc(this.drawDebugPoint.x, this.drawDebugPoint.y, 5, 0, Math.PI * 2);
+    this.ctx.fillStyle = "rgba(0, 255, 0, 1)";
+    this.ctx.fill();
+
+
     this.isDirty = false;
+  }
+
+  rotateSelected(rotation){
+    const angle = rotation * Math.PI/180;
+    const o = this.pickedObject;
+    const oldAngle = o.rotation * Math.PI/180;
+
+    const ccx = o.x + (o.width * 0.5);
+    const ccy = o.y - (o.height * 0.5);
+
+    const csin = Math.sin(oldAngle);
+    const ccos = Math.cos(oldAngle);
+
+    const centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.x, o.y);
+    const centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.x, o.y);
+
+
+    const sin = Math.sin(angle - oldAngle);
+    const cos = Math.cos(angle - oldAngle);
+    const x = ObjectHelper.rpx(sin, cos, o.x, o.y, centerx, centery);
+    const y = ObjectHelper.rpy(sin, cos, o.x, o.y, centerx, centery);
+
+    o.x = x;
+    o.y = y;
+    o.rotation = angle * (180 / Math.PI);
+    this.draw();
   }
 
   highlightSelected(){

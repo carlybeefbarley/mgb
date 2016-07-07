@@ -676,7 +676,7 @@ export default class SpriteLayers extends React.Component {
 				      <th key={"thCanvas_"+idx}>
 				      	<div className="ui image "				      		
 				          	style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}
-                    title={`Preview for combined visible layers of Frame #${idx}`}>
+                    title={`Preview for combined visible layers of Frame #${idx+1}`}>
 				      		<canvas width={c2.width} height={c2.height}></canvas>
 				      	</div>
 				      </th>

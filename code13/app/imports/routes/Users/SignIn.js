@@ -125,11 +125,11 @@ export default  SignInRoute = React.createClass({
         this.props.showToast(error.reason, 'error')
         return;
       } else {
-        let userName = Meteor.user().profile.name
+        var userName = Meteor.user().profile.name
         logActivity("user.login",  `Logging in "${userName}"`, null, null);         
         this.props.showToast('Welcome Back!   Taking you to your Assets', 'success')
         window.setTimeout(() => {
-          utilPushTo(this.context.urlLocation.query, `/u/${Meteor.user().profile.name}/assets`)
+          utilPushTo(this.context.urlLocation.query, `/u/${userName}/assets`)
         }, 2000);
       }
     });

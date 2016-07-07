@@ -23,7 +23,18 @@ const ObjectHelper = window.ObjectHelper = {
       -cam.y > box.y + box.height * 2);
   },
   PointvsAABB: (box, x, y) => {
-    return !(box.x > x || box.y > y || box.x + box.width  < x || box.y + box.height < y);
+    let nx = x;
+    let ny = y;
+    if(box.rotation){
+      // rotate one point to opposite direction instead of 4 box points
+      const angle = -box.rotation * TO_DEGREES;
+      const sin = Math.sin(angle);
+      const cos = Math.cos(angle);
+      nx = ObjectHelper.rpx(sin, cos, x, y, box.x, box.y);
+      ny = ObjectHelper.rpy(sin, cos, x, y, box.x, box.y);
+    }
+
+    return !(box.x > nx || box.y > ny || box.x + box.width < nx || box.y + box.height < ny);
   },
 
   PointvsTile: (box, x, y) => {

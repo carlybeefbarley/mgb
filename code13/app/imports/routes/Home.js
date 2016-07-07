@@ -20,7 +20,7 @@ export default class Home extends Component {
               </h1>
               <h2>The Online Game-building Game</h2>
               { currUser ?
-                <QLink to={`/user/${currUser._id}/assets`}>
+                <QLink to={`/u/${currUser.profile.name}/assets`}>
                   <div className="ui huge primary button">Keep Going <i className="right arrow icon"></i></div>
                 </QLink>
                 : 

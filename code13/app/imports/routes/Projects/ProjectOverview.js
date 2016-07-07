@@ -18,8 +18,8 @@ export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,       // Contains params.projectId and params.id
-    user:   PropTypes.object,       // App.js gave us this from params.id
+    params: PropTypes.object,       // Contains params.projectId
+    user:   PropTypes.object,       // App.js gave us this from params.id OR params.username
     currUser: PropTypes.object
   },
   
@@ -85,7 +85,7 @@ export default ProjectOverview = React.createClass({
             canEdit={canEd}
             handleFieldChanged={this.handleFieldChanged}
             />
-            <QLink to={"/user/" + project.ownerId + "/assets"} query={{project:project.name}} className="ui button" >
+            <QLink to={"/u/" + project.ownerName + "/assets"} query={{project:project.name}} className="ui button" >
               Project Assets
             </QLink>
             { this.renderRenameDeleteProject() } 

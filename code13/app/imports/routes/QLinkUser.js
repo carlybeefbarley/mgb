@@ -6,16 +6,19 @@ import QLink from './QLink';
 export default QLinkUser = React.createClass({
 
   propTypes: {
-    targetUser: PropTypes.object
+    targetUser:        PropTypes.object
   },
 
 
   render: function () {
     const u = this.props.targetUser
-    if (!u) return null
+    if (!u) 
+      return null
+
+    const to = `/u/${u.profile.name}`
 
     return (
-      <QLink to={`/user/${u._id}`}>
+      <QLink to={to}>
         <div className="right floated author">
           <img 
             className="ui avatar image" 

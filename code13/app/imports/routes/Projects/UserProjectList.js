@@ -15,14 +15,14 @@ export default UserProjectList = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,             // params.id is the USER id
+    params: PropTypes.object,             // params.id is the USER id  OR  params.username is the username
     user: PropTypes.object,               // This is the related user record. We list the projects for this user
     currUser: PropTypes.object
   },
   
   
   getMeteorData: function() {
-    const userId = this.props.params.id
+    const userId = this.props.user._id
     const handleForProjects = Meteor.subscribe("projects.byUserId", userId);
     const projectSelector = projectMakeSelector(userId)
 
@@ -33,11 +33,11 @@ export default UserProjectList = React.createClass({
   },
 
 
-  /** Return true if logged on user is props.param.id and the projects have been loaded */
+  /** Return true if logged on user._id is currUser._id and the projects have been loaded */
   canEdit: function() {
     return !this.data.loading &&
            this.props.currUser && 
-           this.props.params.id === this.props.currUser._id &&
+           this.props.user._id === this.props.currUser._id &&
            this.data.projects
   },
   
@@ -84,7 +84,7 @@ export default UserProjectList = React.createClass({
     const retval =   
         <div className="ui link cards">
           { projects.map( (project) => {
-            const isOwner = (project.ownerId === this.props.params.id)
+            const isOwner = (project.ownerId === this.props.user._id)
             if (isOwner === ownedFlag) 
             {
               count++

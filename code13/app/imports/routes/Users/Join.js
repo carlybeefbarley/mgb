@@ -193,7 +193,7 @@ export default JoinRoute = React.createClass({
         logActivity("user.join",  `New user "${newUserName}"`, null, null); 
         this.props.showToast('Welcome!  Taking you to your assets', 'success')
         window.setTimeout(() => {
-          utilPushTo(this.context.urlLocation.query, `/user/${Meteor.user()._id}/assets`)
+          utilPushTo(this.context.urlLocation.query, `/u/${Meteor.user().profile.name}/assets`)
         }, 2000);
       }
     });

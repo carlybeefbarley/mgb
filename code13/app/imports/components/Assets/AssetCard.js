@@ -226,7 +226,7 @@ export default AssetCard = React.createClass({
               <i className={"large " + assetKindIcon}></i>
               { assetKindName }
             </span>                           
-            <QLink to={`/user/${asset.ownerId}`} title="Asset Owner. Click to go to their profile page.">
+            <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
                 <img className="ui avatar image" src={`/api/user/${asset.ownerId}/avatar`}>
                 </img> {ownerName ? ownerName : `#${asset.ownerId}`}
@@ -238,7 +238,7 @@ export default AssetCard = React.createClass({
         { showHeader && !renderShort &&         
           <div className="ui four small bottom attached icon buttons">
             <QLink 
-                  to={`/user/${asset.ownerId}/asset/${asset._id}`} 
+                  to={`/u/${asset.dn_ownerName}/asset/${asset._id}`} 
                   className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
                   onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
@@ -311,7 +311,7 @@ export default AssetCard = React.createClass({
 
   handleEditClick() {
     const asset = this.props.asset
-    utilPushTo(this.context.urlLocation.query, "/user/" + asset.ownerId + "/asset/" + asset._id)
+    utilPushTo(this.context.urlLocation.query, "/u/" + asset.dn_ownerName + "/asset/" + asset._id)
   }
   
 })

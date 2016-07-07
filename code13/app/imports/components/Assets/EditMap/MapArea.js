@@ -520,7 +520,8 @@ export default class MapArea extends React.Component {
     this.preview.x = 5;
     this.preview.y = 45;
     // seems too far away
-    this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
+    // this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
+    this.adjustPreview();
   }
   moveCamera(e){
     if(!this.lastEvent){
@@ -869,6 +870,7 @@ export default class MapArea extends React.Component {
     }
     return (
       <div
+        ref={(...a) => {console.log("ref test", a);}}
         className="tilemap-wrapper"
         onDragOver={this.prepareForDrag.bind(this)}
         onDrop={this.importFromDrop.bind(this)}

@@ -34,6 +34,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.handles = new HandleCollection(0,0,0,0);
   }
 
+  //TODO: change this to abstract box.. and on change - change all elements inside this box
   get pickedObject(){
     return this.data.objects[this._pickedObject];
   }
@@ -93,13 +94,18 @@ export default class ObjectLayer extends AbstractLayer {
       return;
     }
 
-    // TODO: movement X/Y - is not supported by all browsers!
-    this.movementX += (e.movementX / this.camera.zoom);
-    this.movementY += (e.movementY / this.camera.zoom);
 
+    const dx = (e.movementX / this.camera.zoom);
+    const dy = (e.movementY / this.camera.zoom);
+    // TODO: movement X/Y - is not supported by all browsers!
+    this.movementX += dx;
+    this.movementY += dy;
+
+    const nx = this.startPosX + this.movementX;
+    const ny = this.startPosY + this.movementY;
 
     if(this.handles.activeHandle){
-      this.handles.moveActiveHandle(this.mouseX, this.mouseY);
+      this.handles.moveActiveHandle(dx, dy, this.pickedObject);
       return;
     }
     // else move object
@@ -110,8 +116,8 @@ export default class ObjectLayer extends AbstractLayer {
       const tw = this.map.data.tilewidth;
       const th = this.map.data.tileheight;
 
-      this.pickedObject.x = this.startPosX + this.movementX; // + this.camera.movementX;
-      this.pickedObject.y = this.startPosY + this.movementY; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
+      this.pickedObject.x = nx; // + this.camera.movementX;
+      this.pickedObject.y = ny; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
 
       if(e.ctrlKey){
         this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw;
@@ -127,6 +133,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.mouseDown = false;
       return;
     }
+    super.handleMouseDown(e);
 
     // these seems too hackish (ugly).. find better place for this.. ? custom event handler ? or at least put these in the abstract layer (super)?
     this.movementX = 0;
@@ -136,10 +143,17 @@ export default class ObjectLayer extends AbstractLayer {
     this.mouseX = e.offsetX;
     this.mouseY = e.offsetY;
 
+    const prevHandle = this.handles.activeHandle;
     this.handles.setActive(this.mouseX, this.mouseY);
+    // is same handle?
+    if(prevHandle && prevHandle == this.handles.activeHandle){
+      this.handleMouseMove(e);
+      // we will move handle on next move
+      return;
+    }
 
     this.map.saveForUndo();
-    super.handleMouseDown(e);
+
 
     if(this.map.options.mode == EditModes.rectanlge){
       this._pickedObject = this.pickObject(e);
@@ -158,7 +172,11 @@ export default class ObjectLayer extends AbstractLayer {
     if(e.target != this.refs.canvas || e.button !== 0){
       return;
     }
-    this.map.saveForUndo();
+    this.mouseDown = false;
+
+
+
+    // this puts new tile Object on the map
     if(this.map.collection.length && this.map.options.mode == EditModes.stamp){
       const tile = this.map.collection[0];
       const pal = this.map.palette[tile.gid];
@@ -179,6 +197,7 @@ export default class ObjectLayer extends AbstractLayer {
         x, y
       );
 
+      this.map.saveForUndo();
       this.data.objects.push(tileObject);
       this.isDirty = true;
     }
@@ -257,11 +276,13 @@ export default class ObjectLayer extends AbstractLayer {
     if(this.pickedObject){
       // tile
       if(this.pickedObject.gid){
+
         this.handles.update(
           (this.pickedObject.x + this.map.camera.x) * this.map.camera.zoom,
           (this.pickedObject.y - this.pickedObject.height + this.map.camera.y) * this.map.camera.zoom,
           this.pickedObject.width * this.map.camera.zoom,
-          this.pickedObject.height * this.map.camera.zoom
+          this.pickedObject.height * this.map.camera.zoom,
+          this.pickedObject.rotation
         );
       }
       else if(true){
@@ -291,7 +312,7 @@ export default class ObjectLayer extends AbstractLayer {
     let x = (cam.x + obj.x) * cam.zoom;
     let y = (cam.y + obj.y) * cam.zoom;
     let w = obj.width * cam.zoom;
-    let h = obj.width * cam.zoom;
+    let h = obj.height * cam.zoom;
 
     if(this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== "rightup"){
       if(this.options.mgb_tiledrawdirection == "leftdown") {

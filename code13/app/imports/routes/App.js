@@ -56,17 +56,20 @@ export default App = React.createClass({
   },
 
   getMeteorData() {
-    const pathUserId = this.props.params.id           // This is the userId on the url /user/xxxx/...
+    const pathUserName = this.props.params.username      // This is the username (profile.name) on the url /u/xxxx/...
+    const pathUserId = this.props.params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
     const currUser = Meteor.user()
     const currUserId = currUser && currUser._id
-    const handleForUser = Meteor.subscribe("user", pathUserId) // BUGBUG - no such param in rare cases (like the deprecated /assetEdit route)
+    const handleForUser = pathUserName ? 
+                             Meteor.subscribe("user.byName", pathUserName) 
+                           : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
     const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
     const handleForProjects = Meteor.subscribe("projects.byUserId", currUserId)
     const projectSelector = projectMakeSelector(currUserId)
     return {
       currUser: currUser,                           // Currently Logged in user. Putting it here makes it reactive
       currUserProjects: Projects.find(projectSelector).fetch(),
-      user:     Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
+      user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
       activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
       loading:  !handleForUser.ready() || !handleActivity.ready() || !handleForProjects.ready
     };
@@ -77,7 +80,7 @@ export default App = React.createClass({
     const doTrack = () => {
       const ver = mgbReleaseInfo.releases[0].id
       trackJs.configure({
-        userId: (Meteor.user() ? Meteor.user().profile.name : ""),
+        userId: (Meteor.user() ? Meteor.user().profile.name : "(NotLoggedIntoMgb)"),
         version: `${ver.ver} ${ver.state} ${ver.iteration}`,
         sessionId: Meteor.default_connection._lastSessionId
       })

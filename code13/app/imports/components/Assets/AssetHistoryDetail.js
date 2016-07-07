@@ -17,7 +17,7 @@ export default AssetHistoryDetail = React.createClass({
       
     let changes = _.map(assetActivity, a => { 
       const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
-      const href = (a.byUserId.indexOf("BY_SESSION") !== 0) ? {href:`/user/${a.byUserId}`} : {}  // See http://stackoverflow.com/questions/29483741/rendering-a-with-optional-href-in-react-js
+      const href = (a.byUserId.indexOf("BY_SESSION") !== 0) ? {href:`/u/${a.byUserName}`} : {}  // See http://stackoverflow.com/questions/29483741/rendering-a-with-optional-href-in-react-js
       
       return <a className="item" key={a._id} title={ago} {...href}>
               {a.byUserName}: {a.description}

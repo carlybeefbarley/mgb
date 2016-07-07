@@ -635,7 +635,8 @@ export default class EditGraphic extends React.Component {
     else {
       let layerIdx = this.state.selectedLayerIdx
       let layerParam = this.props.asset.content2.layerParams[layerIdx]
-      let layerMsg = ` of Layer ${layerIdx+1}` 
+      let layerName = layerParam.name && layerParam.name.length > 0 ? layerParam.name : `Unnamed layer #${layerIdx+1}`
+      let layerMsg = ` of \"${layerName}\"` 
                     + (layerParam.isLocked ? " (locked)": "") 
                     + (layerParam.isHidden ? " (hidden)" : "")
 
@@ -739,7 +740,7 @@ export default class EditGraphic extends React.Component {
   }
 
   handleSelectLayer(layerIndex){
-    // this.doSnapshotActivity(layerIndex)          // TODO guntis need to understand what is snapshotActivity
+    // this.doSnapshotActivity(layerIndex)        
     this.setState( { selectedLayerIdx: layerIndex } )
   }
 
@@ -903,8 +904,10 @@ export default class EditGraphic extends React.Component {
     };
   }
 
-  pasteSelected(){
-    if(!this.pasteRect) return;
+  pasteSelected() {
+    // TODO: Provide a way to place this at other points, probably like the paste-preview mode of MGBv1
+    if (!this.pasteRect) 
+      return
 
     let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
     ctx.putImageData(this.pasteRect.imgData, this.pasteRect.x, this.pasteRect.y);
@@ -1141,7 +1144,7 @@ map
 
             <a className={"ui label hazPopup " + (this.pasteRect ? "" : "disabled")} 
               onClick={this.pasteSelected.bind(this)}
-               data-content="Paste copied region"
+               data-content="Paste copied region (incomplete function - location cannot be changed yet)"
                data-variation="tiny"
                data-position="bottom center">
               <i className="paste icon"></i>Paste

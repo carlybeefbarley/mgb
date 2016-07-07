@@ -35,7 +35,7 @@ export default UserAssetListRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,       // .id Maybe absent if route is /assets
+    params: PropTypes.object,       // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object,         // Maybe absent if route is /assets
     currUser: PropTypes.object,     // Currently Logged in user
     ownsProfile: PropTypes.bool,
@@ -128,9 +128,10 @@ export default UserAssetListRoute = React.createClass({
    * Optionally get the Project info - if this is a user-scoped view
    */
   getMeteorData: function() {
+    const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     const qN = this.queryNormalized(this.props.location.query)
     let handleForAssets = Meteor.subscribe("assets.public", 
-                                  this.props.params.id, 
+                                  userId, 
                                   qN.kinds.split(safeAssetKindStringSepChar), 
                                   qN.searchName, 
                                   qN.project, 
@@ -139,14 +140,13 @@ export default UserAssetListRoute = React.createClass({
                                   qN.sort)
     let assetSorter = assetSorters[qN.sort]
     let assetSelector = assetMakeSelector(
-                                  this.props.params.id, 
+                                  userId, 
                                   qN.kinds.split(safeAssetKindStringSepChar), 
                                   qN.searchName, 
                                   qN.project, 
                                   qN.showDeleted === "1", 
                                   qN.showStable === "1")
                           
-    const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     
     let handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null 
     let selectorForProjects = {
@@ -327,7 +327,7 @@ export default UserAssetListRoute = React.createClass({
                       user={user}
                       handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
                       availableProjects={projects}
-                      ProjectListLinkUrl={"/user/" + user._id + "/projects"}
+                      ProjectListLinkUrl={"/u/" + user.profile.name + "/projects"}
                       chosenProjectName={qN.project} />
             : null }
           </div>
@@ -416,7 +416,7 @@ export default UserAssetListRoute = React.createClass({
       } else {
         newAsset._id = result; // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset);
-        utilPushTo(this.context.urlLocation.query, `/user/${this.props.currUser._id}/asset/${result}`)
+        utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/asset/${result}`)
       }
     });
   }

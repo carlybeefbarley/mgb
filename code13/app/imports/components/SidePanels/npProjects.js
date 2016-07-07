@@ -28,13 +28,13 @@ export default npProjects = React.createClass({
             </h3>
           </div>
 
-          <QLink to={`/user/${this.props.currUser._id}/projects`} className="header item" title="Projects you are owner of">
+          <QLink to={`/u/${this.props.currUser.profile.name}/projects`} className="header item" title="Projects you are owner of">
             <i className="sitemap icon" /> My Owned Projects
           </QLink>
           <div className="menu">
             { this.renderProjectMenuItems(currUserProjects, true) }
           </div>
-          <QLink to={`/user/${this.props.currUser._id}/projects`} className="header item" title="Projects you are a member of">
+          <QLink to={`/u/${this.props.currUser.profile.name}/projects`} className="header item" title="Projects you are a member of">
             <i className="sitemap icon" /> Project Memberships
           </QLink>
           <div className="menu">
@@ -59,7 +59,7 @@ export default npProjects = React.createClass({
       if (isOwner === ownedFlag) 
       {
         count++
-        return  <QLink to={`/user/${p.ownerId}/project/${p._id}`} className="item" key={p._id}>
+        return  <QLink to={`/u/${p.ownerName}/project/${p._id}`} className="item" key={p._id}>
                   { p.name }
                 </QLink>
       }

@@ -35,6 +35,7 @@ export default SocialAuth = React.createClass({
             errors: { 'facebook': error.reason }
           });
         } else {
+           // TODO: Can we use /u/${user.profile.name} yet?
            browserHistory.push(`/user/${Meteor.user()._id}`);
         }
     });
@@ -49,7 +50,8 @@ export default SocialAuth = React.createClass({
           errors: { 'google': error.reason }
         });
       } else {
-         browserHistory.push(`/user/${Meteor.user()._id}`);
+        // TODO: Can we use /u/${user.profile.name} yet?
+        browserHistory.push(`/user/${Meteor.user()._id}`);
       }
     });
   },
@@ -61,6 +63,7 @@ export default SocialAuth = React.createClass({
           errors: { 'twitter': error.reason }
         });
       } else {
+        // TODO: Can we use /u/${user.profile.name} yet?
         browserHistory.push(`/user/${Meteor.user()._id}`);
       }
     });

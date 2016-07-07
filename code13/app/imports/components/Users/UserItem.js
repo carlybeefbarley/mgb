@@ -27,7 +27,7 @@ export default UserItem = React.createClass({
     if (this.props.handleClickUser)
       this.props.handleClickUser(uid, this.props.name)
     else
-      utilPushTo(this.context.urlLocation.query, `/user/${uid}`)
+      utilPushTo(this.context.urlLocation.query, `/u/${this.props.name}`)
   },
   
   render: function() {
@@ -37,7 +37,7 @@ export default UserItem = React.createClass({
     return (
       <div  className={segClass}
             onClick={this.handleClickUser}>
-        <a className="ui blue ribbon label">{name}</a>
+        <div className="ui blue ribbon label">{name}</div>
         <img src={this.props.avatar} className="ui right floated avatar image" />
         { profileTitle && <div className="header">{profileTitle}</div> }
         <small>

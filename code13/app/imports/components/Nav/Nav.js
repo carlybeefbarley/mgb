@@ -11,7 +11,7 @@ export default Nav = React.createClass({
   propTypes: {
     params:                 PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
     currUser:               PropTypes.object,                 // Currently logged in user.. or null if not logged in.
-    user:                   PropTypes.object,                 // If there is a :id user id on the path, this is the user record for it
+    user:                   PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
     flexPanelWidth:         PropTypes.string.isRequired,      // Typically something like "200px".
     navPanelWidth:          PropTypes.string.isRequired,      // Typically something like "60px". NavPanel is always visible, but width varies
     name:                   PropTypes.string                  // Page title to show in Nav bar // TODO: Replace this with something more useful
@@ -25,21 +25,20 @@ export default Nav = React.createClass({
     const { name, user, params } = this.props
     const homeWord = "MyGameBuilder v2"
     const sep = <i className="mini right chevron icon"></i>
-    const id = params && params.id
     const assetId = params && params.assetId
     const projectId = params && params.projectId
 
     return  <div className="ui breadcrumb">
               <QLink to="/" className="section" style={{color: "rgba(255,255,255,0.9)"}}>{homeWord}&nbsp;</QLink>
 
-              { (id && user) && sep }
-              { (id && user) && <QLink className="section" to={`/user/${id}`}>{user.profile.name}&nbsp;</QLink> }
+              { user && sep }
+              { user && <QLink className="section" to={`/u/${user.profile.name}`}>{user.profile.name}&nbsp;</QLink> }
 
-              { assetId && sep }
-              { assetId && <QLink className="section" to={`/user/${id}/assets`}>Assets&nbsp;</QLink> }
+              { user && assetId && sep }
+              { user && assetId && <QLink className="section" to={`/u/${user.profile.name}/assets`}>Assets&nbsp;</QLink> }
 
-              { projectId && sep }
-              { projectId && <QLink className="section" to={`/user/${id}/projects`}>Projects&nbsp;</QLink> }
+              { user && projectId && sep }
+              { user && projectId && <QLink className="section" to={`/u/${user.profile.name}/projects`}>Projects&nbsp;</QLink> }
 
               { name && sep }
               { name && <span>{name}&nbsp;</span> }
@@ -72,7 +71,7 @@ export default Nav = React.createClass({
 
           <div className="right menu">
             { (currUser && currUser.profile.focusMsg) && 
-              <QLink to={`/user/${currUser._id}`} className=" item " title={"You set this focus goal " + moment(currUser.profile.focusStart).fromNow()}>
+              <QLink to={`/u/${currUser.profile.name}`} className=" item " title={"You set this focus goal " + moment(currUser.profile.focusStart).fromNow()}>
                 <i className="alarm icon"></i> {currUser.profile.focusMsg}
               </QLink>
             }

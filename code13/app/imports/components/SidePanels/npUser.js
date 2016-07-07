@@ -37,13 +37,13 @@ export default npUser = React.createClass({
               </h3>
               <img className="ui centered small image" src={currUser.profile.avatar} />
             </div>
-            <QLink to={`/user/${this.props.currUser._id}`} className="item">
+            <QLink to={`/u/${this.props.currUser.profile.name}`} className="item">
               <i className="user icon" /> My Profile
             </QLink>
-            <QLink to={`/user/${this.props.currUser._id}/assets`} className="item">
+            <QLink to={`/u/${this.props.currUser.profile.name}/assets`} className="item">
               <i className="pencil icon" /> My Assets
             </QLink>
-            <QLink to={`/user/${this.props.currUser._id}/projects`} className="item">
+            <QLink to={`/u/${this.props.currUser.profile.name}/projects`} className="item">
               <i className="sitemap icon" /> My Projects
             </QLink>
             <div className="item"></div>

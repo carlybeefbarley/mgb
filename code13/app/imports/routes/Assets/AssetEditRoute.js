@@ -56,7 +56,7 @@ export default AssetEditRoute = React.createClass({
   // TODO: Make this QLink-smart so it preserves queries
   checkForRedirect() {
     if (!this.props.user && !!this.data.asset)
-      utilPushTo(this.context.urlLocation.query, "/user/" + this.data.asset.ownerId + "/asset/" + this.data.asset._id)
+      utilPushTo(this.context.urlLocation.query, "/u/" + this.data.asset.dn_ownerName + "/asset/" + this.data.asset._id)
   },
 
   componentDidMount() {
@@ -130,14 +130,14 @@ export default AssetEditRoute = React.createClass({
     const editOrView = canEdit ? <span style={{color: "green"}}>Edit</span> : <span>View</span>
 
     // The following were moved to the Nav.js Breadcrumb bar
-    // <QLink to={`/user/${a.ownerId}`}>{oName}</QLink>
+    // <QLink to={`/u/${a.dn_ownerName}`}>{oName}</QLink>
     // &nbsp;>&nbsp;
-    // <QLink to={`/user/${a.ownerId}/assets`}>Assets</QLink>
+    // <QLink to={`/u/${a.dn_ownerName}/assets`}>Assets</QLink>
     // &nbsp;>&nbsp;
 
     return <span>
             {editOrView}&nbsp;&nbsp;
-            <QLink to={`/user/${a.ownerId}/assets`} query={{kinds: a.kind}}>
+            <QLink to={`/u/${a.dn_ownerName}/assets`} query={{kinds: a.kind}}>
               { AssetKinds.getName(a.kind) }
             </QLink>
             &nbsp;>&nbsp;

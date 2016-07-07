@@ -84,13 +84,16 @@ export default class ObjectLayer extends AbstractLayer {
   handleMouseMove(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
 
-    this.mouseY = e.offsetY;// / this.map.camera.zoom;
+    this.mouseY = e.offsetY;//;/ - this.camera. / this.map.camera.zoom;
     this.mouseX = e.offsetX;// / this.map.camera.zoom;
 
     this.isDirty = true;
 
     if(!this.mouseDown){
-      this.handles.setActive(this.mouseX, this.mouseY);
+      this.handles.setActive(
+        (this.mouseX - this.camera.x) * this.camera.zoom,
+        (this.mouseY - this.camera.y) * this.camera.zoom
+      );
       return;
     }
 
@@ -144,9 +147,13 @@ export default class ObjectLayer extends AbstractLayer {
     this.mouseY = e.offsetY;
 
     const prevHandle = this.handles.activeHandle;
-    this.handles.setActive(this.mouseX, this.mouseY);
+    this.handles.setActive(
+      (this.mouseX - this.camera.x) * this.camera.zoom,
+      (this.mouseY - this.camera.y) * this.camera.zoom
+    );
     // is same handle?
     if(prevHandle && prevHandle == this.handles.activeHandle){
+      this.handles.lock();
       this.handleMouseMove(e);
       // we will move handle on next move
       return;
@@ -173,7 +180,7 @@ export default class ObjectLayer extends AbstractLayer {
       return;
     }
     this.mouseDown = false;
-
+    this.handles.unlock();
 
 
     // this puts new tile Object on the map
@@ -278,10 +285,10 @@ export default class ObjectLayer extends AbstractLayer {
       if(this.pickedObject.gid){
 
         this.handles.update(
-          (this.pickedObject.x + this.map.camera.x) * this.map.camera.zoom,
-          (this.pickedObject.y - this.pickedObject.height + this.map.camera.y) * this.map.camera.zoom,
-          this.pickedObject.width * this.map.camera.zoom,
-          this.pickedObject.height * this.map.camera.zoom,
+          (this.pickedObject.x),
+          (this.pickedObject.y - this.pickedObject.height),
+          this.pickedObject.width,
+          this.pickedObject.height,
           this.pickedObject.rotation
         );
       }
@@ -291,7 +298,7 @@ export default class ObjectLayer extends AbstractLayer {
       // draw on grid which is always on the top
 
 
-      this.handles.draw(this.map.refs.grid.ctx,  this.mouseX, this.mouseY);
+      this.handles.draw(this.map.refs.grid.ctx, this.camera);
     }
   }
 

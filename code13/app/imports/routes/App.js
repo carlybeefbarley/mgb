@@ -183,11 +183,6 @@ export default App = React.createClass({
               navPanelIsVisible={showNavPanel} 
               />
 
-            {this.state.showToast ?
-              <Toast
-                content={this.state.toastMsg}
-                type={this.state.toastType} />
-            : null}
 
             <FlexPanel 
               currUser={currUser}
@@ -203,6 +198,7 @@ export default App = React.createClass({
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
               <div style={mainPanelInnerDivSty}>
+                { this.state.showToast && <Toast content={this.state.toastMsg} type={this.state.toastType} /> }
                 {
                   this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
@@ -299,7 +295,7 @@ export default App = React.createClass({
       toastType: type
     });
     window.setTimeout(() => {
-      this.closeToast()
+     this.closeToast()
     }, 2500);
   },
 

@@ -7,6 +7,7 @@ import TileSelection from "./TileSelection.js";
 import TileCollection from "./TileCollection.js";
 
 import EditModes from "./EditModes.js";
+import DragNDropHelper from "/imports/helpers/DragNDropHelper.js";
 
 export default class TileSet extends React.Component {
   /* lifecycle functions */
@@ -262,14 +263,8 @@ export default class TileSet extends React.Component {
 
   /* events */
   onDropOnLayer(e){
-    e.preventDefault();
-    const dataStr = e.dataTransfer.getData("text");
-    let asset, data;
-    if(dataStr){
-       data = JSON.parse(dataStr);
-    }
-    asset = data.asset;
-    if(asset && asset.kind != "graphic"){
+    const asset = DragNDropHelper.getAssetFromEvent(e);
+    if(!asset){
       return;
     }
 
@@ -293,13 +288,7 @@ export default class TileSet extends React.Component {
     const url = data.link;
     this.refs.controls.updateTilesetFromUrl(url, this.data);
   }
-  onDragOver(e){
-    e.stopPropagation();
-    e.preventDefault();
-    e.dataTransfer.effectAllowed = 'copy';
-    // IE crashes
-    // e.dataTransfer.dropEffect = 'copy';
-  }
+
 
   onMouseDown(e){
     if(e.button == 2){
@@ -367,9 +356,7 @@ export default class TileSet extends React.Component {
       <div className="active content tilesets accept-drop"
            data-drop-text="Drop asset here to create TileSet"
            onDrop={this.onDropOnLayer.bind(this)}
-           onDragOver={this.onDragOver.bind(this)}
-           onDragEnter={this.onDragOver.bind(this)}
-
+           onDragOver={DragNDropHelper.preventDefault}
         >
         <TilesetControls tileset={this} ref="controls"/>
         {!empty ? <span>Drop graphics here to create new tileset</span> : ''}
@@ -422,7 +409,7 @@ export default class TileSet extends React.Component {
         <div className="ui fluid styled accordion">
           <div className="active title accept-drop"
                data-drop-text="Drop asset here to update tileset image"
-               onDragOver={this.onDragOver.bind(this)}
+               onDragOver={ObjectHelper.preventDefault}
                onDrop={this.onDropChangeTilesetImage.bind(this)}
             >
             <span className="explicittrigger">

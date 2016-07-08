@@ -25,7 +25,7 @@ export default WhatsNew = React.createClass({
     const iconEl = <i className={hilite + " announcement icon"}></i>
 
     if (this.props.asHidingLink)
-      return laterNewsAvailable && <QLink to="/whatsnew" className="fitted item" style={{paddingLeft: "12px", marginTop: "-4px"}}><i className={"circular inverted yellow announcement icon"}></i></QLink>
+      return laterNewsAvailable && <QLink to="/whatsnew" className="fitted item" style={{paddingLeft: "16px"}}><i className={"circular inverted yellow announcement icon"}></i></QLink>
 
     return iconEl
   }

@@ -111,7 +111,7 @@ export default App = React.createClass({
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
-    const flexPanelWidth = showFlexPanel ? "270px" : "45px"    // The 225px width works well with default vertical menu size and padding=8px 
+    const flexPanelWidth = showFlexPanel ? "280px" : "48px"    // The 225px width works well with default vertical menu size and padding=8px 
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     let mainPanelOuterDivSty = { 
@@ -183,11 +183,6 @@ export default App = React.createClass({
               navPanelIsVisible={showNavPanel} 
               />
 
-            {this.state.showToast ?
-              <Toast
-                content={this.state.toastMsg}
-                type={this.state.toastType} />
-            : null}
 
             <FlexPanel 
               currUser={currUser}
@@ -203,6 +198,7 @@ export default App = React.createClass({
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
               <div style={mainPanelInnerDivSty}>
+                { this.state.showToast && <Toast content={this.state.toastMsg} type={this.state.toastType} /> }
                 {
                   this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
@@ -299,7 +295,7 @@ export default App = React.createClass({
       toastType: type
     });
     window.setTimeout(() => {
-      this.closeToast()
+     this.closeToast()
     }, 2500);
   },
 

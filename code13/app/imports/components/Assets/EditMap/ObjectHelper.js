@@ -23,7 +23,18 @@ const ObjectHelper = window.ObjectHelper = {
       -cam.y > box.y + box.height * 2);
   },
   PointvsAABB: (box, x, y) => {
-    return !(box.x > x || box.y > y || box.x + box.width  < x || box.y + box.height < y);
+    let nx = x;
+    let ny = y;
+    if(box.rotation){
+      // rotate one point to opposite direction instead of 4 box points
+      const angle = -box.rotation * TO_DEGREES;
+      const sin = Math.sin(angle);
+      const cos = Math.cos(angle);
+      nx = ObjectHelper.rpx(sin, cos, x, y, box.x, box.y);
+      ny = ObjectHelper.rpy(sin, cos, x, y, box.x, box.y);
+    }
+
+    return !(box.x > nx || box.y > ny || box.x + box.width < nx || box.y + box.height < ny);
   },
 
   PointvsTile: (box, x, y) => {
@@ -47,6 +58,36 @@ const ObjectHelper = window.ObjectHelper = {
   },
   rpy: (sin, cos, x, y, cx, cy) => {
     return (y - cy)*cos + (x - cx)*sin + cy;
+  },
+
+  rotateObject: (o, angle) => {
+    const oldAngle = o.rotation * Math.PI/180;
+
+    const ccx = o.x + (o.width * 0.5);
+    let ccy;
+    // tile objects are upside down
+    if(o.gid){
+      ccy = o.y - (o.height * 0.5);
+    }
+    else{
+      ccy = o.y + (o.height * 0.5);
+    }
+
+    const csin = Math.sin(oldAngle);
+    const ccos = Math.cos(oldAngle);
+
+    const centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.x, o.y);
+    const centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.x, o.y);
+
+
+    const sin = Math.sin(angle - oldAngle);
+    const cos = Math.cos(angle - oldAngle);
+    const x = ObjectHelper.rpx(sin, cos, o.x, o.y, centerx, centery);
+    const y = ObjectHelper.rpy(sin, cos, o.x, o.y, centerx, centery);
+
+    o.x = x;
+    o.y = y;
+    o.rotation = angle * (180 / Math.PI);
   },
 
   createTileObject: (pal, id, x, y) => {

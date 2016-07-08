@@ -8,6 +8,7 @@ import LayerTypes from "./Tools/LayerTypes.js";
 import EditModes from "./Tools/EditModes.js";
 
 import HandleCollection from "./MapObjects/HandleCollection.js";
+import Imitator from "./MapObjects/Imitator.js";
 
 // TODO move these to some good place.. probably mapArea???
 const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
@@ -32,10 +33,16 @@ export default class ObjectLayer extends AbstractLayer {
     this._pickedObject = null;
     // as noun :)
     this.handles = new HandleCollection(0,0,0,0);
+
+    // store calculated shapeBoxes here
+    this.shapeBoxes = {};
   }
 
   //TODO: change this to abstract box.. and on change - change all elements inside this box
   get pickedObject(){
+    if(this.shapeBoxes[this._pickedObject]){
+      return this.shapeBoxes[this._pickedObject];
+    }
     return this.data.objects[this._pickedObject];
   }
 
@@ -62,12 +69,24 @@ export default class ObjectLayer extends AbstractLayer {
     let obj;
     const x = e.offsetX / this.camera.zoom  - this.camera.x;
     const y = e.offsetY / this.camera.zoom - this.camera.y;
+
     // reverse order last drawn - first pick
     for(let i=this.data.objects.length-1; i>-1; i--){
       obj = this.data.objects[i];
       if(obj.gid){
         if(ObjectHelper.PointvsTile(obj, x, y)){
-          console.log("picked:", obj);
+          console.log("picked tile:", obj);
+          return i;
+        }
+      }
+      else if(obj.polyline || obj.polygon){
+        //if(!this.shapeBoxes[i]){
+          this.shapeBoxes[i] = new Imitator(obj);
+        //}
+        const imit = this.shapeBoxes[i];
+
+        if(ObjectHelper.PointvsAABB(imit, x, y)){
+          console.log("picked:", imit);
           return i;
         }
       }
@@ -84,13 +103,16 @@ export default class ObjectLayer extends AbstractLayer {
   handleMouseMove(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
 
-    this.mouseY = e.offsetY;// / this.map.camera.zoom;
+    this.mouseY = e.offsetY;//;/ - this.camera. / this.map.camera.zoom;
     this.mouseX = e.offsetX;// / this.map.camera.zoom;
 
     this.isDirty = true;
 
     if(!this.mouseDown){
-      this.handles.setActive(this.mouseX, this.mouseY);
+      this.handles.setActive(
+        (this.mouseX / this.camera.zoom - this.camera.x),
+        (this.mouseY / this.camera.zoom - this.camera.y)
+      );
       return;
     }
 
@@ -105,7 +127,32 @@ export default class ObjectLayer extends AbstractLayer {
     const ny = this.startPosY + this.movementY;
 
     if(this.handles.activeHandle){
-      this.handles.moveActiveHandle(dx, dy, this.pickedObject);
+      this.handles.moveActiveHandle(dx, dy, this.clonedObject);
+      // TODO: create some sort of replicator object who can convert global changes to local e.g. basic rectangle to shape
+      let selected  = this.pickedObject;
+      if(e.ctrlKey){
+        if(this.handles.activeHandleType != 9){
+          if(selected.orig && selected.orig == this.clonedObject.orig){
+            debugger;
+          }
+          selected.x = Math.round(this.clonedObject.x / this.map.data.tilewidth) * this.map.data.tilewidth;
+          selected.y = Math.round(this.clonedObject.y / this.map.data.tileheight) * this.map.data.tileheight;
+          selected.width = Math.round(this.clonedObject.width / this.map.data.tilewidth) * this.map.data.tilewidth;
+          selected.height = Math.round(this.clonedObject.height / this.map.data.tileheight) * this.map.data.tileheight;
+        }
+        else{
+          // TODO: move to config rotation step?
+          const newRotation = Math.round(this.clonedObject.rotation / 15) * 15;
+          this.rotateObject(newRotation, selected);
+        }
+      }
+      else{
+        selected.x = this.clonedObject.x;
+        selected.y = this.clonedObject.y;
+        selected.width = this.clonedObject.width;
+        selected.height = this.clonedObject.height;
+        selected.rotation = this.clonedObject.rotation;
+      }
       return;
     }
     // else move object
@@ -144,9 +191,26 @@ export default class ObjectLayer extends AbstractLayer {
     this.mouseY = e.offsetY;
 
     const prevHandle = this.handles.activeHandle;
-    this.handles.setActive(this.mouseX, this.mouseY);
+    this.handles.setActive(
+      (this.mouseX / this.camera.zoom - this.camera.x),
+      (this.mouseY / this.camera.zoom - this.camera.y)
+    );
     // is same handle?
     if(prevHandle && prevHandle == this.handles.activeHandle){
+      this.handles.lock();
+      // we need to store values somewhere instead of applying these directly
+      // for align to grid etc features
+      // this.objects[this._pickedObject] - as we don't need imitator itself here
+      if(this.pickedObject instanceof Imitator){
+        this.clonedObject = new Imitator(_.cloneDeep(this.pickedObject.orig));
+        if(this.clonedObject.orig == this.pickedObject.orig){
+          debugger;
+        }
+
+      }
+      else{
+        this.clonedObject = Object.assign({}, this.pickedObject);
+      }
       this.handleMouseMove(e);
       // we will move handle on next move
       return;
@@ -173,7 +237,7 @@ export default class ObjectLayer extends AbstractLayer {
       return;
     }
     this.mouseDown = false;
-
+    this.handles.unlock();
 
 
     // this puts new tile Object on the map
@@ -258,16 +322,13 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     this.highlightSelected();
-
-    if(this.drawDebug) {
-      // show mouse - after transforms
-      this.ctx.beginPath();
-      this.ctx.arc(this.mouseX, this.mouseY, 5, 0, Math.PI * 2);
-      this.ctx.fillStyle = "rgba(0, 255, 0, 1)";
-      this.ctx.fill();
-    }
-
     this.isDirty = false;
+  }
+
+  rotateObject(rotation, object = this.pickedObject){
+    const angle = rotation * Math.PI/180;
+    ObjectHelper.rotateObject(object, angle);
+    this.draw();
   }
 
   highlightSelected(){
@@ -278,20 +339,26 @@ export default class ObjectLayer extends AbstractLayer {
       if(this.pickedObject.gid){
 
         this.handles.update(
-          (this.pickedObject.x + this.map.camera.x) * this.map.camera.zoom,
-          (this.pickedObject.y - this.pickedObject.height + this.map.camera.y) * this.map.camera.zoom,
-          this.pickedObject.width * this.map.camera.zoom,
-          this.pickedObject.height * this.map.camera.zoom,
+          (this.pickedObject.x),
+          (this.pickedObject.y - this.pickedObject.height),
+          this.pickedObject.width,
+          this.pickedObject.height,
           this.pickedObject.rotation
         );
       }
       else if(true){
-        this.handles.update(this.pickedObject.x, this.pickedObject.y, this.pickedObject.width, this.pickedObject.height);
+        this.handles.update(
+          this.pickedObject.x,
+          this.pickedObject.y,
+          this.pickedObject.width,
+          this.pickedObject.height,
+          this.pickedObject.rotation, false
+        );
       }
       // draw on grid which is always on the top
 
 
-      this.handles.draw(this.map.refs.grid.ctx,  this.mouseX, this.mouseY);
+      this.handles.draw(this.map.refs.grid.ctx, this.camera);
     }
   }
 
@@ -373,7 +440,7 @@ export default class ObjectLayer extends AbstractLayer {
   drawRectangle(obj){
     const cam = this.camera;
     let x = (cam.x + obj.x) * cam.zoom;
-    let y = (cam.y + obj.y) * cam.zoom; // tiled stores coordinates bottom / up
+    let y = (cam.y + obj.y) * cam.zoom;
     let w = obj.width * cam.zoom;
     let h = obj.height * cam.zoom;
 
@@ -401,7 +468,7 @@ export default class ObjectLayer extends AbstractLayer {
   drawPolyline(o){
     const cam = this.camera;
     let x = (cam.x + o.x) * cam.zoom;
-    let y = (cam.y + o.y) * cam.zoom; // tiled stores coordinates bottom / up
+    let y = (cam.y + o.y) * cam.zoom;
 
     this.ctx.save();
     // translate to TILED drawing pos
@@ -415,24 +482,13 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     const lines = o.polyline ? o.polyline : o.polygon;
+
     this.ctx.beginPath();
-
-    let minx = lines[0].x, maxx = minx;
-    let miny = lines[0].y, maxy = miny;
-
     this.ctx.moveTo(lines[0].x, lines[0].y);
-
     for(let i=1; i<lines.length; i++){
       this.ctx.lineTo(lines[i].x * this.camera.zoom, lines[i].y * this.camera.zoom);
-      minx = Math.min(minx, lines[i].x);
-      miny = Math.min(miny, lines[i].y);
-      maxx = Math.max(maxx, lines[i].x);
-      maxy = Math.max(maxy, lines[i].y);
     }
-
-    o.width = maxx - minx;
-    o.height = maxy - miny;
-
+    this.ctx.lineTo(lines[0].x * this.camera.zoom, lines[0].y * this.camera.zoom);
 
     this.ctx.stroke();
     if(o.polygon){

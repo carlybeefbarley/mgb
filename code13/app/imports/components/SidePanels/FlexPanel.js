@@ -94,7 +94,7 @@ export default FlexPanel = React.createClass({
 
       bottom: "0px",
       width: flexPanelWidth, 
-      backgroundColor: "#ddd"
+      backgroundColor: "rgba(0, 0, 0, 0.05)"
     }
       
     const miniNavStyle = {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel 
@@ -102,7 +102,8 @@ export default FlexPanel = React.createClass({
       top: "0px",
       bottom: "0px",
       right: "0px",
-      width: "45px", 
+      width: "48px", 
+      border: "none",
 
       borderRadius: 0, 
       marginBottom: 0
@@ -112,8 +113,8 @@ export default FlexPanel = React.createClass({
       position: "fixed",
       top: "40px",                /// TODO calculate this 
       bottom: "0px",
-      right: "45px",
-      width: "225px", 
+      right: "48px",
+      width: "232px", 
       overflow: "scroll"
     }
     
@@ -133,9 +134,9 @@ export default FlexPanel = React.createClass({
               { flexPanelIsVisible && 
                 <div>
 
-                  <div className="ui grey attached inverted menu" >
+                  <div className="ui secondary menu">
                     <div className="ui borderless item">
-                      <i className={flexPanelIcon + " icon"} /> {flexPanelHdr}
+                      &nbsp;&nbsp;<i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
                     </div>
                   </div>
 
@@ -156,7 +157,7 @@ export default FlexPanel = React.createClass({
 
                 </div>
               }
-              <div className="ui grey inverted attached borderless vertical icon menu" style={miniNavStyle}>
+              <div className="ui attached vertical icon menu" style={miniNavStyle}>
                 { flexPanelViews.map(v => { 
                   const actv = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active " : ""
                   return  (v.superAdminOnly && !this.props.isSuperAdmin) ? null : 

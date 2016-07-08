@@ -16,6 +16,44 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
+      "timestamp":     "Thu Jul 07 2016 19:35:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "735"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.layout",
+          "type":           "improvement",
+          "changeName":     "Let there be light",
+          "changeSummary":  "The FlexPanel (column of stuff on the far right) and the NavBar (bar at top of central section) have been lightened up. Scrollbars also got a similar treatment and visual simplification",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "feature",
+          "changeName":     "Graphic area selection now animates",
+          "changeSummary":  "Pretty crawling-dashed lines. Unselect and paste-elsewhere coming soon",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Editor tweaks",
+          "changeSummary":  "Selections/handles and rotation improvements",
+          "otherUrls":      []
+        }
+      ]
+    },
+    
+    { 
       "timestamp":     "Wed Jul 06 2016 17:35:00 GMT-0700 (PDT)",
       
       "id": {

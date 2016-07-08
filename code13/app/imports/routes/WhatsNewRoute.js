@@ -63,8 +63,9 @@ export default WhatsNewRoute = React.createClass({
       <div>
         <div className="ui basic segment">
           <div className="ui container">
-            <div className="ui raised  padded segment">
-              <div className="ui header">My Game Builder v2 is currently under development.</div>
+            <h2 className="ui header"><i className="announcement icon" />What's New</h2>
+            <div className="ui raised padded segment">
+              <div className="ui header">My Game Builder v2 is currently under development</div>
               <div className="ui meta">
                 The site is unstable and rapidly changing, but you are welcome to use it and give feedback. We aim to be stable in July 2016
               </div>

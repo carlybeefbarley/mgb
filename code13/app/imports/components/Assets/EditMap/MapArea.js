@@ -499,7 +499,7 @@ export default class MapArea extends React.Component {
 
   resetPreview(){
     this.preview.x = 5;
-    this.preview.y = 45;
+    this.preview.y = 15;
     // seems too far away
     // this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)";
     this.adjustPreview();

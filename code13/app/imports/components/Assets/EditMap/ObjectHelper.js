@@ -135,6 +135,36 @@ const ObjectHelper = window.ObjectHelper = {
       "width":pal.w,
       x, y
     }
+  },
+
+  createRectangle: (id, x, y, width = 1, height = 1, name = "(unnamed rectangle #"+id+")") => {
+    return {
+      height,
+      id,
+      name,
+      width, x, y,
+
+      "rotation":0,
+      "type":"",
+      "visible":true
+    };
+  },
+
+  createPolyline: (id, x, y, width = 1, height = 1, name = "(unnamed shape #"+id+")") => {
+    return {
+      height,
+      id,
+      name,
+      width, x, y,
+
+      polyline: [{
+        "x": 0,
+        "y": 0
+      }],
+      "rotation": 0,
+      "type": "",
+      "visible": true,
+    };
   }
 };
 

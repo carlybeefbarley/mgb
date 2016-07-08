@@ -229,7 +229,6 @@ export default class HandleCollection {
         obj.width += dx;
         break;
     }
-
   }
 
   setActive(x, y){
@@ -243,5 +242,9 @@ export default class HandleCollection {
       }
     }
     return false;
+  }
+  clearActive(){
+    this.activeHandle = null;
+    this.activeHandleType = -1;
   }
 }

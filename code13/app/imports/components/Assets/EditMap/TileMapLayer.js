@@ -325,12 +325,10 @@ export default class TileMapLayer extends AbstractLayer {
 
         const pal = palette[tileId];
         if (pal) {
-
           this.drawTile(pal, pos, map.spacing);
         }
       }
     }
-
 
     this.drawInfo.d = this.ctrl.d;
     this.drawInfo.v = this.ctrl.v;

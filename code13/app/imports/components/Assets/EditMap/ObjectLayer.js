@@ -313,6 +313,20 @@ export default class ObjectLayer extends AbstractLayer {
     this.draw();
   }
 
+  setPickedObject(obj, index){
+    this._pickedObject = index;
+    // TODO: make this more automatic
+    if(obj.polygon || obj.polyline) {
+      if (this.shapeBoxes[index]) {
+        this.shapeBoxes[index].update(obj)
+      }
+      else {
+        this.shapeBoxes[index] = new Imitator(obj);
+      }
+    }
+    this.highlightSelected();
+  }
+
   /* DRAWING methods */
   draw(){
     this.isDirty = true;
@@ -535,7 +549,11 @@ const edit = {};
 let obj;
 edit[EditModes.drawRectangle] = function(e){
   if(e.type == "mousedown"){
+    if((e.buttons & 0x2) == 0x2){
+      return;
+    }
     obj = ObjectHelper.createRectangle(this.getMaxId(), this.pointerPosX, this.pointerPosY);
+    this.map.saveForUndo();
     this.data.objects.push(obj);
     this.draw();
     return;
@@ -544,6 +562,7 @@ edit[EditModes.drawRectangle] = function(e){
     return;
   }
   if(e.type == "mouseup"){
+    this.setPickedObject(obj, this.data.objects.length - 1);
     obj = null;
     return;
   }
@@ -578,13 +597,19 @@ edit[EditModes.drawShape] = function(e){
         return;
       }
       obj = ObjectHelper.createPolyline(this.getMaxId(), this.pointerPosX, this.pointerPosY);
+      if(e.ctrlKey) {
+        const tw = this.map.data.tilewidth;
+        const th = this.map.data.tileheight;
+        obj.x = Math.round(obj.x / tw) * tw;
+        obj.y = Math.round(obj.y / th) * th;
+      }
       this.data.objects.push(obj);
       // first point is always at 0,0
       endPoint = {x:0, y:0};
       pointCache.x = 0;
       pointCache.y = 0;
+      this.map.saveForUndo();
       obj.polyline.push(endPoint);
-
       this.draw();
       return;
     }
@@ -594,9 +619,7 @@ edit[EditModes.drawShape] = function(e){
         obj.polyline.pop();
 
         // TODO: this is ugly - move to function??
-        this._pickedObject = this.data.objects.length-1;
-        this.shapeBoxes[this._pickedObject] = new Imitator(obj);
-        this.highlightSelected();
+        this.setPickedObject(obj, this.data.objects.length - 1);
 
         obj = null;
         endPoint = null;

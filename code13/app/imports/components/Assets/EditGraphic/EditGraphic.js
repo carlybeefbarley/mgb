@@ -56,7 +56,7 @@ export default class EditGraphic extends React.Component {
       toolActive: false,
       toolChosen: null,
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
-      pasteRect: null     // if object cut or copied then {x, y, width, height, imgData}
+      pasteCanvas: null     // if object cut or copied then {x, y, width, height, imgData}
     }
 
     this.fixingOldAssets()
@@ -118,11 +118,6 @@ export default class EditGraphic extends React.Component {
 
     }
     this.setStatusBarInfo()
-
-    // // if asset area is selected then value {startX, startY, endX, endY}
-    // this.selectRect = null;
-    // // if object cut or copied then {x, y, width, height, imgData}
-    // this.pasteRect = null;
 
     this.handleColorChangeComplete('fg', { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} } )
 
@@ -479,8 +474,8 @@ export default class EditGraphic extends React.Component {
         self.setState({ selectRect: { startX: startX, startY: startY, endX: endX, endY: endY } });
       },
 
-      getPasteRect: function(){
-        return self.state.pasteRect;
+      getPasteCanvas: function(){
+        return self.state.pasteCanvas;
       },
 
       unselect: function(){
@@ -529,36 +524,37 @@ export default class EditGraphic extends React.Component {
     let width = Math.abs(this.state.selectRect.startX - this.state.selectRect.endX); 
     let height = Math.abs(this.state.selectRect.startY - this.state.selectRect.endY);
     let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
-    // console.log(ctx.getImageData(x, y, width, height));
+    let imgData = ctx.getImageData(x, y, width, height);
 
-    this.setState({pasteRect: {
-      x: x
-      , y: y
-      , width: width 
-      , height: height
-      , imgData: ctx.getImageData(x, y, width, height)
-    } });
+    let pasteCanvas = document.createElement("canvas");
+    pasteCanvas.width = width;
+    pasteCanvas.height = height;
+    let pasteCtx = pasteCanvas.getContext("2d");
+    pasteCtx.putImageData(imgData, 0, 0);
+    this.setState({ pasteCanvas: pasteCanvas });
   }
 
   pasteSelected() {
-    // TODO: Provide a way to place this at other points, probably like the paste-preview mode of MGBv1
-    if (!this.state.pasteRect) 
+    if (!this.state.pasteCanvas) 
       return
+    console.log(Tools);
 
-    // console.log('paste selected');
+    let tool = null;
 
-    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
-    ctx.putImageData(this.state.pasteRect.imgData, this.state.pasteRect.x, this.state.pasteRect.y);
-    this.handleSave("Paste selected area");
+    // manually select paste tool
+    for (var key in Tools) {
+      if (Tools.hasOwnProperty(key)) {
+        if(Tools[key].name === "Paste"){
+          tool = Tools[key];
+          break; 
+        }
+      }
+    }
+
+    if(tool){
+      this.setState({ toolChosen: tool });
+    }
   }
-
-
-
-  // handleZoom()
-  // {
-  //   recentMarker = null       // Since we now want to reload data for our new EditCanvas
-  //   this.setState( {editScale : (this.state.editScale == 8 ? 1 : (this.state.editScale << 1))})
-  // }
 
   zoomIn(){
     recentMarker = null       // Since we now want to reload data for our new EditCanvas
@@ -723,6 +719,9 @@ export default class EditGraphic extends React.Component {
 
     // Tool api handoff
     if (this.state.toolChosen !== null && this.state.toolActive === true ) {
+      this.state.toolChosen.handleMouseMove(this.collateDrawingToolEnv(event))
+    }
+    else if(this.state.toolChosen !== null && this.state.toolChosen.hasHover === true){
       this.state.toolChosen.handleMouseMove(this.collateDrawingToolEnv(event))
     }
   }
@@ -1155,9 +1154,9 @@ map
               <i className="copy icon"></i>Copy
             </a>
 
-            <a className={"ui label hazPopup " + (this.state.pasteRect ? "" : "disabled")} 
+            <a className={"ui label hazPopup " + (this.state.pasteCanvas ? "" : "disabled")} 
               onClick={this.pasteSelected.bind(this)}
-               data-content="Paste copied region (incomplete function - location cannot be changed yet)"
+               data-content="Paste copied region"
                data-variation="tiny"
                data-position="bottom center">
               <i className="paste icon"></i>Paste

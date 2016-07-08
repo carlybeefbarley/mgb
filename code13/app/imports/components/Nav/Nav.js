@@ -29,7 +29,7 @@ export default Nav = React.createClass({
     const projectId = params && params.projectId
 
     return  <div className="ui breadcrumb">
-              <QLink to="/" className="section" style={{color: "rgba(255,255,255,0.9)"}}>{homeWord}&nbsp;</QLink>
+              <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
 
               { user && sep }
               { user && <QLink className="section" to={`/u/${user.profile.name}`}>{user.profile.name}&nbsp;</QLink> }
@@ -57,10 +57,16 @@ export default Nav = React.createClass({
       right:    this.props.flexPanelWidth, 
       margin:   "0px"
     }
+
+
+    const menuSty = {
+      border: "none",
+      boxShadow: "none"
+    }
     
     return (
       <div style={sty}>
-      <div className="ui attached inverted menu" >
+      <div className="ui  borderless menu" style={menuSty}>
 
           <WhatsNew currUser={this.props.currUser} asHidingLink={true}/>
 

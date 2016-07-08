@@ -203,7 +203,6 @@ export default class MapArea extends React.Component {
     if(!skipRedo){
       this.redoSteps.length = 0;
     }
-    //console.error("saving for undo!");
     this.undoSteps.push(toSave);
     this.refs.tools.forceUpdate();
   }

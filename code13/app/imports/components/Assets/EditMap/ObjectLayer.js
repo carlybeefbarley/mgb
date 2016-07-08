@@ -75,7 +75,6 @@ export default class ObjectLayer extends AbstractLayer {
       obj = this.data.objects[i];
       if(obj.gid){
         if(ObjectHelper.PointvsTile(obj, x, y)){
-          console.log("picked tile:", obj);
           return i;
         }
       }
@@ -84,13 +83,11 @@ export default class ObjectLayer extends AbstractLayer {
         const imit = this.shapeBoxes[i];
 
         if(ObjectHelper.PointvsAABB(imit, x, y, false, imit.orig.x, imit.orig.y)){
-          console.log("picked:", imit);
           return i;
         }
       }
       else{
         if(ObjectHelper.PointvsAABB(obj, x, y)){
-          console.log("picked:", obj);
           return i;
         }
       }

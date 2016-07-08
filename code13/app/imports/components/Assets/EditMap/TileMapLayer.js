@@ -15,7 +15,6 @@ const FLIPPED_DIAGONALLY_FLAG   = 0x20000000;
 export default class TileMapLayer extends AbstractLayer {
   /* lifecycle functions */
   constructor(...args){
-    console.log("here!");
     super(...args);
     this.ctx = null;
     this.prevTile = null;
@@ -345,7 +344,6 @@ export default class TileMapLayer extends AbstractLayer {
 
   }
   drawTile(pal, pos, spacing = 0, clear = false){
-    //console.log("draw Tile:", pal);
     if(pal.ts.tiles){
       let tileId = pal.gid - (pal.ts.firstgid);
       const tileInfo = pal.ts.tiles[tileId];
@@ -671,7 +669,7 @@ export default class TileMapLayer extends AbstractLayer {
 
   onKeyUp(e){
     const w = e.which;
-    /*console.log("KEY UP!");
+    /*
      if(w == "A".charCodeAt(0)){
      this.ctrl.v = this.ctrl.v > 0 ? -1 : 1;
      }
@@ -1021,7 +1019,6 @@ edit[EditModes.wand] = function(e, up, collection = this.map.tmpSelection){
   const fillSelection = () => {
     check++;
     if(this.options.width * this.options.height < check){
-      //console.error("Something not right!!");
       done();
       return;
     }

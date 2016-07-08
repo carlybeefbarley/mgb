@@ -345,9 +345,6 @@ export default class EditGraphic extends React.Component {
         this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h)
       }
     }
-
-    // if there is something selected - draw it
-    // if(this.state.selectRect) this.drawSelectRect(this.state.selectRect);
     
   }
 
@@ -477,6 +474,8 @@ export default class EditGraphic extends React.Component {
       },
 
       saveSelectRect: function(startX, startY, endX, endY){
+        if(startX > endX) [startX, endX] = [endX, startX];
+        if(startY > endY) [startY, endY] = [endY, startY];
         self.setState({ selectRect: { startX: startX, startY: startY, endX: endX, endY: endY } });
       },
 
@@ -514,7 +513,10 @@ export default class EditGraphic extends React.Component {
 
     this.copySelected();
     let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
-    ctx.clearRect(this.state.pasteRect.x, this.state.pasteRect.y, this.state.pasteRect.width, this.state.pasteRect.height);
+    let r = this.state.selectRect;
+    let width = Math.abs(r.startX - r.endX); 
+    let height = Math.abs(r.startY - r.endY);
+    ctx.clearRect(r.startX , r.startY, width, height);
     this.handleSave("Cut selected area");
   }
 

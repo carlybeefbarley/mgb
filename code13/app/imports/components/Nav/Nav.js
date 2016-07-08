@@ -28,7 +28,7 @@ export default Nav = React.createClass({
     const assetId = params && params.assetId
     const projectId = params && params.projectId
 
-    return  <div className="ui breadcrumb">
+    return  <div className="ui large breadcrumb">
               <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
 
               { user && sep }

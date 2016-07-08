@@ -450,14 +450,7 @@ export default class ObjectLayer extends AbstractLayer {
       // translate back
       this.ctx.translate(-w*0.5, -h*0.5);
     }
-
     this.ctx.drawImage(pal.image, pal.x, pal.y, pal.w, pal.h, 0, 0, w, h);
-
-    if(obj == this.pickedObject){
-      this.ctx.fillStyle="rgba(255,0,0,0.3)";
-      this.ctx.fillRect(0, 0, w, h);
-    }
-
     this.ctx.restore();
   }
 
@@ -480,13 +473,7 @@ export default class ObjectLayer extends AbstractLayer {
     if(this.drawDebug && obj.name){
       this.ctx.fillText(obj.name, 0, 0);
     }
-
     this.ctx.strokeRect(0.5, 0.5, w, h);
-    if(obj == this.pickedObject){
-      this.ctx.fillStyle="rgba(255,0,0,0.3)";
-      this.ctx.fillRect(0.5, 0.5, w, h);
-    }
-
     this.ctx.restore();
   }
 

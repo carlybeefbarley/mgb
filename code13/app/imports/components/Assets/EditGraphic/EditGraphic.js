@@ -5,7 +5,7 @@ import ColorPicker from 'react-color';        // http://casesandberg.github.io/r
 import AssetUrlGenerator from '../AssetUrlGenerator.js';
 import Tools from './GraphicTools';
 
-import SpriteLayers from './EditGraphic/SpriteLayers.js';
+import SpriteLayers from './Layers/SpriteLayers.js';
 
 import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
@@ -78,7 +78,7 @@ export default class EditGraphic extends React.Component {
       }
     }
 
-
+    // animframe for updating selecting rectangle animation
     this._raf = () => {
       if(this.state.selectRect) this.drawSelectRect(this.state.selectRect);
       window.requestAnimationFrame(this._raf);
@@ -480,6 +480,7 @@ export default class EditGraphic extends React.Component {
 
       unselect: function(){
         self.setState({ selectRect: null});
+        self.updateEditCanvasFromSelectedPreviewCanvas();
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but

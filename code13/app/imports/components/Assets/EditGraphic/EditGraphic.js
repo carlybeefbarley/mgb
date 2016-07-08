@@ -1061,7 +1061,9 @@ map
     let c2 = asset.content2
     let zoom = this.state.editScale
 
-    let toolComponents = _.map(Tools, (tool) => { return (
+    let toolComponents = _.map(Tools, (tool) => { 
+      if(tool.hideTool === true) return;
+      return (
       <div  className={"ui button hazPopup " + (this.state.toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}
             key={tool.name}

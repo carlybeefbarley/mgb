@@ -8,6 +8,7 @@ const ToolPaste = {
   shortcutKey: 'v',
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
   hasHover: true,                 // enable mouse hover (not only on drag. Needed for paste preview)
+  hideTool: true,                 // don't show tool in tool panel
 
 
   handleMouseDown: ( drawEnv ) => {

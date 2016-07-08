@@ -14,6 +14,7 @@
 .map-filled, .map-empty{
   transition: .3s;
   min-height: 500px;
+  transform-style: preserve-3d;
 }
 .map-filled.highlight-active-layer .no-events:not(.grid-layer){
   opacity: 0.5;

@@ -71,7 +71,7 @@ const ObjectHelper = window.ObjectHelper = {
     let ccy;
     // tile objects are upside down
     if(o.gid){
-      ccy = o.y;// - (o.height * 0.5);
+      ccy = o.y - (o.height * 0.5);
     }
     else{
       ccy = o.y + (o.height * 0.5);

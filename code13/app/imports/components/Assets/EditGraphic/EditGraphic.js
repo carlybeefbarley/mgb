@@ -6,6 +6,7 @@ import AssetUrlGenerator from '../AssetUrlGenerator.js';
 import Tools from './GraphicTools';
 
 import SpriteLayers from './Layers/SpriteLayers.js';
+import GraphicImport from './GraphicImport.js';
 
 import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
@@ -538,10 +539,8 @@ export default class EditGraphic extends React.Component {
   pasteSelected() {
     if (!this.state.pasteCanvas) 
       return
-    console.log(Tools);
 
     let tool = null;
-
     // manually select paste tool
     for (var key in Tools) {
       if (Tools.hasOwnProperty(key)) {
@@ -1047,6 +1046,11 @@ export default class EditGraphic extends React.Component {
     img.src = url  // is the data URL because called
   }
 
+  openImportPopup(){
+    console.log('open import popup')
+    $('.ui.modal').modal('show');
+  }
+
 
   // <- End of drag-and-drop stuff
 map
@@ -1165,6 +1169,14 @@ map
               <i className="paste icon"></i>Paste
             </a>
 
+            <span>&nbsp;&nbsp;</span>
+            <a className="ui label hazPopup"
+              onClick={this.openImportPopup.bind(this)}
+              data-content="Import sprite sheet or gif image"
+              data-variation="tiny"
+              data-position="bottom center">
+                <i className="add square icon"></i>Import
+            </a>
 
           </div>
           <div className="row">
@@ -1243,6 +1255,13 @@ map
             </div>
           </div>
         </div>
+
+      {/*** GraphicImport ***/}
+
+        <GraphicImport
+          EditGraphic={this}
+        />
+
 
       {/*** SpriteLayers ***/}
         

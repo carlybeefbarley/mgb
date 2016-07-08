@@ -9,6 +9,10 @@ const EditModes = {
   // also threated as edit modes - selecting and adding at the same time will be bogous ;)
   rectanlge: "rectanlge",
   wand: "wand",
-  picker: "picker"
+  picker: "picker",
+
+  // object tools
+  drawRectangle: "drawRectangle",
+  drawShape: "drawShape"
 };
 export default EditModes;

@@ -55,11 +55,14 @@ export default class ObjectLayer extends AbstractLayer {
 
   getMaxId(){
     let d;
-    let maxId = 0;
+    let maxId = 1;
     for(let i=0; i<this.data.objects.length; i++){
       d = this.data.objects[i];
       if(d.id > maxId){
         maxId = d.id + 1;
+      }
+      else{
+        maxId++;
       }
     }
     return maxId;
@@ -75,24 +78,19 @@ export default class ObjectLayer extends AbstractLayer {
       obj = this.data.objects[i];
       if(obj.gid){
         if(ObjectHelper.PointvsTile(obj, x, y)){
-          console.log("picked tile:", obj);
           return i;
         }
       }
       else if(obj.polyline || obj.polygon){
-        //if(!this.shapeBoxes[i]){
-          this.shapeBoxes[i] = new Imitator(obj);
-        //}
+        this.shapeBoxes[i] = new Imitator(obj);
         const imit = this.shapeBoxes[i];
 
-        if(ObjectHelper.PointvsAABB(imit, x, y)){
-          console.log("picked:", imit);
+        if(ObjectHelper.PointvsAABB(imit, x, y, false, imit.orig.x, imit.orig.y)){
           return i;
         }
       }
       else{
         if(ObjectHelper.PointvsAABB(obj, x, y)){
-          console.log("picked:", obj);
           return i;
         }
       }
@@ -100,13 +98,18 @@ export default class ObjectLayer extends AbstractLayer {
     return null;
   }
 
+  // TODO: clean up handle Event functions
   handleMouseMove(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
+    super.handleMouseMove(e);
 
-    this.mouseY = e.offsetY;//;/ - this.camera. / this.map.camera.zoom;
-    this.mouseX = e.offsetX;// / this.map.camera.zoom;
 
     this.isDirty = true;
+
+    if(edit[this.map.options.mode]){
+      edit[this.map.options.mode].call(this, e);
+      return;
+    }
 
     if(!this.mouseDown){
       this.handles.setActive(
@@ -116,12 +119,8 @@ export default class ObjectLayer extends AbstractLayer {
       return;
     }
 
-
     const dx = (e.movementX / this.camera.zoom);
     const dy = (e.movementY / this.camera.zoom);
-    // TODO: movement X/Y - is not supported by all browsers!
-    this.movementX += dx;
-    this.movementY += dy;
 
     const nx = this.startPosX + this.movementX;
     const ny = this.startPosY + this.movementY;
@@ -132,11 +131,9 @@ export default class ObjectLayer extends AbstractLayer {
       let selected  = this.pickedObject;
       if(e.ctrlKey){
         if(this.handles.activeHandleType != 9){
-          if(selected.orig && selected.orig == this.clonedObject.orig){
-            debugger;
-          }
           selected.x = Math.round(this.clonedObject.x / this.map.data.tilewidth) * this.map.data.tilewidth;
           selected.y = Math.round(this.clonedObject.y / this.map.data.tileheight) * this.map.data.tileheight;
+
           selected.width = Math.round(this.clonedObject.width / this.map.data.tilewidth) * this.map.data.tilewidth;
           selected.height = Math.round(this.clonedObject.height / this.map.data.tileheight) * this.map.data.tileheight;
         }
@@ -167,8 +164,11 @@ export default class ObjectLayer extends AbstractLayer {
       this.pickedObject.y = ny; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
 
       if(e.ctrlKey){
-        this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw;
-        this.pickedObject.y = Math.round(this.pickedObject.y / th) * th;
+        let dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0;
+        let dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0;
+
+        this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw + dx;
+        this.pickedObject.y = Math.round(this.pickedObject.y / th) * th + dy;
       }
     }
 
@@ -176,24 +176,23 @@ export default class ObjectLayer extends AbstractLayer {
 
   handleMouseDown(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
+    // TODO: fix - move camera and object at the same time
+
+    super.handleMouseDown(e);
+
+    if(edit[this.map.options.mode]){
+      edit[this.map.options.mode].call(this, e);
+      return;
+    }
+
     if(e.button !== 0){
       this.mouseDown = false;
       return;
     }
-    super.handleMouseDown(e);
-
-    // these seems too hackish (ugly).. find better place for this.. ? custom event handler ? or at least put these in the abstract layer (super)?
-    this.movementX = 0;
-    this.movementY = 0;
-    this.startPosX= 0;
-    this.startPosY = 0;
-    this.mouseX = e.offsetX;
-    this.mouseY = e.offsetY;
-
     const prevHandle = this.handles.activeHandle;
     this.handles.setActive(
-      (this.mouseX / this.camera.zoom - this.camera.x),
-      (this.mouseY / this.camera.zoom - this.camera.y)
+      this.pointerPosX,
+      this.pointerPosY
     );
     // is same handle?
     if(prevHandle && prevHandle == this.handles.activeHandle){
@@ -203,10 +202,6 @@ export default class ObjectLayer extends AbstractLayer {
       // this.objects[this._pickedObject] - as we don't need imitator itself here
       if(this.pickedObject instanceof Imitator){
         this.clonedObject = new Imitator(_.cloneDeep(this.pickedObject.orig));
-        if(this.clonedObject.orig == this.pickedObject.orig){
-          debugger;
-        }
-
       }
       else{
         this.clonedObject = Object.assign({}, this.pickedObject);
@@ -237,6 +232,11 @@ export default class ObjectLayer extends AbstractLayer {
       return;
     }
     this.mouseDown = false;
+    if(edit[this.map.options.mode]){
+      edit[this.map.options.mode].call(this, e);
+      return;
+    }
+
     this.handles.unlock();
 
 
@@ -283,11 +283,51 @@ export default class ObjectLayer extends AbstractLayer {
     }
   }
 
+  clearSelection(){
+    this.handles.clearActive();
+    this._pickedObject = -1;
+  }
+
   deleteObject(obj){
     this.data.objects.splice(this.data.objects.indexOf(obj), 1);
     this.isDirty = true;
   }
 
+  rotateObject(rotation, object = this.pickedObject){
+    const angle = rotation * Math.PI/180;
+    ObjectHelper.rotateObject(object, angle);
+    this.draw();
+  }
+
+  toggleFill(){
+    if(this.pickedObject && this.pickedObject.orig){
+      if(this.pickedObject.orig.polyline){
+        this.pickedObject.orig.polygon = this.pickedObject.orig.polyline;
+        delete this.pickedObject.orig.polyline;
+      }
+      else if(this.pickedObject.orig.polygon){
+        this.pickedObject.orig.polyline = this.pickedObject.orig.polygon;
+        delete this.pickedObject.orig.polygon;
+      }
+    }
+    this.draw();
+  }
+
+  setPickedObject(obj, index){
+    this._pickedObject = index;
+    // TODO: make this more automatic
+    if(obj.polygon || obj.polyline) {
+      if (this.shapeBoxes[index]) {
+        this.shapeBoxes[index].update(obj)
+      }
+      else {
+        this.shapeBoxes[index] = new Imitator(obj);
+      }
+    }
+    this.highlightSelected();
+  }
+
+  /* DRAWING methods */
   draw(){
     this.isDirty = true;
   }
@@ -298,9 +338,15 @@ export default class ObjectLayer extends AbstractLayer {
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height);
     // Don't loop through all objects.. use quadtree here some day
     // when we will support unlimited size streaming maps :D
+    // TODO: clean up ifs
     for(let i=0; i<this.data.objects.length; i++){
       let o = this.data.objects[i];
-
+      if(o.polygon || o.polyline){
+        if(!this.shapeBoxes[i]){
+          this.shapeBoxes[i] = new Imitator(o);
+        }
+        o = this.shapeBoxes[i];
+      }
       // skip objects invisible to camera
       if(!ObjectHelper.CameravsAABB(this.camera, o)){
         continue;
@@ -309,11 +355,13 @@ export default class ObjectLayer extends AbstractLayer {
       if(o.gid){
         this.drawTile(o);
       }
-      else if(o.polyline){
-        this.drawPolyline(o);
-      }
-      else if(o.polygon){
-        this.drawPolyline(o, true);
+      else if(o.orig){
+        if(o.orig.polyline){
+          this.drawPolyline(o.orig);
+        }
+        else{
+          this.drawPolyline(o.orig, true);
+        }
       }
       // TODO: is there convenient way to separate rectangles and shapes??
       else if(true){
@@ -323,43 +371,6 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.highlightSelected();
     this.isDirty = false;
-  }
-
-  rotateObject(rotation, object = this.pickedObject){
-    const angle = rotation * Math.PI/180;
-    ObjectHelper.rotateObject(object, angle);
-    this.draw();
-  }
-
-  highlightSelected(){
-    // TODO: don't hide grid's layer ( never ever ) - rename to overlay???
-    this.map.refs.grid.draw();
-    if(this.pickedObject){
-      // tile
-      if(this.pickedObject.gid){
-
-        this.handles.update(
-          (this.pickedObject.x),
-          (this.pickedObject.y - this.pickedObject.height),
-          this.pickedObject.width,
-          this.pickedObject.height,
-          this.pickedObject.rotation
-        );
-      }
-      else if(true){
-        this.handles.update(
-          this.pickedObject.x,
-          this.pickedObject.y,
-          this.pickedObject.width,
-          this.pickedObject.height,
-          this.pickedObject.rotation, false
-        );
-      }
-      // draw on grid which is always on the top
-
-
-      this.handles.draw(this.map.refs.grid.ctx, this.camera);
-    }
   }
 
   drawTile(obj){
@@ -425,17 +436,9 @@ export default class ObjectLayer extends AbstractLayer {
       // translate back
       this.ctx.translate(-w*0.5, -h*0.5);
     }
-
     this.ctx.drawImage(pal.image, pal.x, pal.y, pal.w, pal.h, 0, 0, w, h);
-
-    if(obj == this.pickedObject){
-      this.ctx.fillStyle="rgba(255,0,0,0.3)";
-      this.ctx.fillRect(0, 0, w, h);
-    }
-
     this.ctx.restore();
   }
-
 
   drawRectangle(obj){
     const cam = this.camera;
@@ -455,13 +458,7 @@ export default class ObjectLayer extends AbstractLayer {
     if(this.drawDebug && obj.name){
       this.ctx.fillText(obj.name, 0, 0);
     }
-
     this.ctx.strokeRect(0.5, 0.5, w, h);
-    if(obj == this.pickedObject){
-      this.ctx.fillStyle="rgba(255,0,0,0.3)";
-      this.ctx.fillRect(0.5, 0.5, w, h);
-    }
-
     this.ctx.restore();
   }
 
@@ -488,13 +485,170 @@ export default class ObjectLayer extends AbstractLayer {
     for(let i=1; i<lines.length; i++){
       this.ctx.lineTo(lines[i].x * this.camera.zoom, lines[i].y * this.camera.zoom);
     }
-    this.ctx.lineTo(lines[0].x * this.camera.zoom, lines[0].y * this.camera.zoom);
+
 
     this.ctx.stroke();
     if(o.polygon){
+      this.ctx.lineTo(lines[0].x * this.camera.zoom, lines[0].y * this.camera.zoom);
       this.ctx.fillStyle="rgba(70, 70, 70, 1)";
       this.ctx.fill();
     }
     this.ctx.restore();
   }
+
+  // this one is drawing on the grid layer - as overlay
+  highlightSelected(){
+    // TODO: don't hide grid's layer ( never ever ) - rename to overlay???
+    this.map.refs.grid.draw();
+    if(this.pickedObject){
+      // tile
+      if(this.pickedObject.gid){
+
+        this.handles.update(
+          (this.pickedObject.x),
+          (this.pickedObject.y - this.pickedObject.height),
+          this.pickedObject.width,
+          this.pickedObject.height,
+          this.pickedObject.rotation,
+          this.pickedObject.x,
+          this.pickedObject.y
+        );
+      }
+      else if(this.pickedObject instanceof Imitator){
+        this.handles.update(
+          this.pickedObject.x,
+          this.pickedObject.y,
+          this.pickedObject.width,
+          this.pickedObject.height,
+          this.pickedObject.rotation,
+          this.pickedObject.orig.x,
+          this.pickedObject.orig.y
+        );
+      }
+      else if(true){
+        this.handles.update(
+          this.pickedObject.x,
+          this.pickedObject.y,
+          this.pickedObject.width,
+          this.pickedObject.height,
+          this.pickedObject.rotation,
+          this.pickedObject.x,
+          this.pickedObject.y
+        );
+      }
+      // draw on grid which is always on the top
+
+
+      this.handles.draw(this.map.refs.grid.ctx, this.camera);
+    }
+  }
+  /* END of DRAWING methods */
 }
+
+const edit = {};
+let obj;
+edit[EditModes.drawRectangle] = function(e){
+  if(e.type == "mousedown"){
+    if((e.buttons & 0x2) == 0x2){
+      return;
+    }
+    obj = ObjectHelper.createRectangle(this.getMaxId(), this.pointerPosX, this.pointerPosY);
+    this.map.saveForUndo();
+    this.data.objects.push(obj);
+    this.draw();
+    return;
+  }
+  if(!obj){
+    return;
+  }
+  if(e.type == "mouseup"){
+    this.setPickedObject(obj, this.data.objects.length - 1);
+    obj = null;
+    return;
+  }
+
+  const x1 = this.pointerPosX;
+  const x2 = this.pointerPosX + this.movementX;
+  const y1 = this.pointerPosY;
+  const y2 = this.pointerPosY + this.movementY;
+
+  obj.x = Math.min(x1, x2);
+  obj.width = Math.abs(this.movementX);
+
+  obj.y = Math.min(y1, y2);
+  obj.height = Math.abs(this.movementY);
+
+  const tw = this.map.data.tilewidth;
+  const th = this.map.data.tileheight;
+
+  if(e.ctrlKey){
+    obj.x = Math.round(obj.x / tw) * tw;
+    obj.y = Math.round(obj.y / th) * th;
+    obj.width = Math.round(obj.width / tw) * tw;
+    obj.height = Math.round(obj.height / th) * th;
+  }
+};
+
+let endPoint, pointCache = {x: 0, y: 0};
+edit[EditModes.drawShape] = function(e){
+  if(e.type == "mousedown"){
+    if(!obj){
+      if((e.buttons & 0x2) == 0x2){
+        return;
+      }
+      obj = ObjectHelper.createPolyline(this.getMaxId(), this.pointerPosX, this.pointerPosY);
+      if(e.ctrlKey) {
+        const tw = this.map.data.tilewidth;
+        const th = this.map.data.tileheight;
+        obj.x = Math.round(obj.x / tw) * tw;
+        obj.y = Math.round(obj.y / th) * th;
+      }
+      this.data.objects.push(obj);
+      // first point is always at 0,0
+      endPoint = {x:0, y:0};
+      pointCache.x = 0;
+      pointCache.y = 0;
+      this.map.saveForUndo();
+      obj.polyline.push(endPoint);
+      this.draw();
+      return;
+    }
+    else{
+      // are buttons FLAGS?
+      if((e.buttons & 0x2) == 0x2){
+        obj.polyline.pop();
+
+        // TODO: this is ugly - move to function??
+        this.setPickedObject(obj, this.data.objects.length - 1);
+
+        obj = null;
+        endPoint = null;
+        this.draw();
+        return;
+      }
+      else{
+        endPoint = {x:endPoint.x, y:endPoint.y};
+        obj.polyline.push(endPoint);
+      }
+    }
+    return;
+  }
+
+  if(!obj){
+    return;
+  }
+  const tw = this.map.data.tilewidth;
+  const th = this.map.data.tileheight;
+
+  endPoint.x += e.movementX * this.camera.zoom;
+  endPoint.y += e.movementY * this.camera.zoom;
+  pointCache.x += e.movementX * this.camera.zoom;
+  pointCache.y += e.movementY * this.camera.zoom;
+
+  if(e.ctrlKey){
+    endPoint.x = Math.round(pointCache.x / tw) * tw;
+    endPoint.y = Math.round(pointCache.y / th) * th;
+  }
+
+
+};

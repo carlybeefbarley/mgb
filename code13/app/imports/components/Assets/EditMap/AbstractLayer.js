@@ -86,15 +86,48 @@ export default class AbstractLayer extends React.Component {
 
 
   /* events */
-  handleMouseUp(){
+  handleMouseUp(e){
     this.mouseDown = false;
+
+
+    this.movementX = 0;
+    this.movementY = 0;
+    this.startPosX = 0;
+    this.startPosY = 0;
+    this.mouseX = e.offsetX;
+    this.mouseY = e.offsetY;
+
+    this.pointerPosX = (this.mouseX / this.camera.zoom - this.camera.x);
+    this.pointerPosY = (this.mouseY / this.camera.zoom - this.camera.y);
+
   }
   handleMouseDown(e){
     this.mouseDown = true;
+
+
+    this.movementX = 0;
+    this.movementY = 0;
+    this.startPosX = 0;
+    this.startPosY = 0;
+    this.mouseX = e.offsetX;
+    this.mouseY = e.offsetY;
+
+    this.pointerPosX = (this.mouseX / this.camera.zoom - this.camera.x);
+    this.pointerPosY = (this.mouseY / this.camera.zoom - this.camera.y);
+
     if(e.buttons == 4){
       e.preventDefault();
       e.stopPropagation();
       return false;
+    }
+  }
+  handleMouseMove(e){
+    this.mouseY = e.offsetY;
+    this.mouseX = e.offsetX;
+    if(this.mouseDown){
+      this.movementX += (e.movementX / this.camera.zoom);
+      this.movementY += (e.movementY / this.camera.zoom);
+
     }
   }
   _onKeyUp(e){

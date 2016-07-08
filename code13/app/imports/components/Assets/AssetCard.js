@@ -157,9 +157,7 @@ export default AssetCard = React.createClass({
 
     // TODO: add allowDrag to props.. and walk through AssetCard use cases;
     return (
-      <div key={asset._id} className="ui card" draggable={this.props.location == "panel" ? "true": "false"} style={{ overflow: "hidden", minWidth: "200px"}}
-           onDragStart={this.startDrag.bind(this, asset)}
-           onDragEnd={this.endDrag.bind(this, asset)}
+      <div key={asset._id} className="ui card" style={{ overflow: "hidden", minWidth: "200px"}}
         >
       
           { showHeader &&
@@ -168,7 +166,11 @@ export default AssetCard = React.createClass({
                 ref="thumbnailCanvas" 
                 width={iw} 
                 height={ih} 
-                style={{backgroundColor: '#ffffff', minHeight:"150px", maxHeight:"150px", maxWidth:"290px", width:"auto"}} >
+                style={{backgroundColor: '#ffffff', minHeight:"150px", maxHeight:"150px", maxWidth:"290px", width:"auto"}}
+                draggable={this.props.location == "panel" ? "true": "false"}
+                onDragStart={this.startDrag.bind(this, asset)}
+                onDragEnd={this.endDrag.bind(this, asset)}
+                >
               </canvas> 
               </div>
           }

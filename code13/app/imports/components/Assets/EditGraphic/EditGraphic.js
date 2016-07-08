@@ -54,7 +54,9 @@ export default class EditGraphic extends React.Component {
         fg:    { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
       },
       toolActive: false,
-      toolChosen: null
+      toolChosen: null,
+      selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
+      pasteRect: null     // if object cut or copied then {x, y, width, height, imgData}
     }
 
     this.fixingOldAssets()
@@ -78,7 +80,7 @@ export default class EditGraphic extends React.Component {
 
 
     this._raf = () => {
-      if(this.selectRect) this.drawSelectRect(this.selectRect);
+      if(this.state.selectRect) this.drawSelectRect(this.state.selectRect);
       window.requestAnimationFrame(this._raf);
     };
     this._raf();
@@ -117,10 +119,10 @@ export default class EditGraphic extends React.Component {
     }
     this.setStatusBarInfo()
 
-    // if asset area is selected then value {startX, startY, endX, endY}
-    this.selectRect = null;
-    // if object cut or copied then {x, y, width, height, imgData}
-    this.pasteRect = null;
+    // // if asset area is selected then value {startX, startY, endX, endY}
+    // this.selectRect = null;
+    // // if object cut or copied then {x, y, width, height, imgData}
+    // this.pasteRect = null;
 
     this.handleColorChangeComplete('fg', { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} } )
 
@@ -345,7 +347,7 @@ export default class EditGraphic extends React.Component {
     }
 
     // if there is something selected - draw it
-    // if(this.selectRect) this.drawSelectRect(this.selectRect);
+    // if(this.state.selectRect) this.drawSelectRect(this.state.selectRect);
     
   }
 
@@ -442,6 +444,7 @@ export default class EditGraphic extends React.Component {
       editCtx:                this.editCtx,
       editCtxImageData1x1:    this.editCtxImageData1x1,
 
+
       // setPreviewPixelsAt() Like CanvasRenderingContext2D.fillRect, but
       //   It SETS rather than draws-with-alpha-blending
       setPreviewPixelsAt: function (x, y, w=1, h=1) {
@@ -474,11 +477,15 @@ export default class EditGraphic extends React.Component {
       },
 
       saveSelectRect: function(startX, startY, endX, endY){
-        self.selectRect = { startX: startX, startY: startY, endX: endX, endY: endY };
+        self.setState({ selectRect: { startX: startX, startY: startY, endX: endX, endY: endY } });
+      },
+
+      getPasteRect: function(){
+        return self.state.pasteRect;
       },
 
       unselect: function(){
-        self.selectRect = null;
+        self.setState({ selectRect: null});
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
@@ -499,6 +506,50 @@ export default class EditGraphic extends React.Component {
 
     return retval
   }
+
+
+  cutSelected(){
+    if(!this.state.selectRect) return;
+    // console.log('cut selected');
+
+    this.copySelected();
+    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
+    ctx.clearRect(this.state.pasteRect.x, this.state.pasteRect.y, this.state.pasteRect.width, this.state.pasteRect.height);
+    this.handleSave("Cut selected area");
+  }
+
+  copySelected(){
+    if(!this.state.selectRect) return;
+    // console.log('copy selected');
+
+    let x = this.state.selectRect.startX;
+    let y = this.state.selectRect.startY;
+    let width = Math.abs(this.state.selectRect.startX - this.state.selectRect.endX); 
+    let height = Math.abs(this.state.selectRect.startY - this.state.selectRect.endY);
+    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
+    // console.log(ctx.getImageData(x, y, width, height));
+
+    this.setState({pasteRect: {
+      x: x
+      , y: y
+      , width: width 
+      , height: height
+      , imgData: ctx.getImageData(x, y, width, height)
+    } });
+  }
+
+  pasteSelected() {
+    // TODO: Provide a way to place this at other points, probably like the paste-preview mode of MGBv1
+    if (!this.state.pasteRect) 
+      return
+
+    // console.log('paste selected');
+
+    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
+    ctx.putImageData(this.state.pasteRect.imgData, this.state.pasteRect.x, this.state.pasteRect.y);
+    this.handleSave("Paste selected area");
+  }
+
 
 
   // handleZoom()
@@ -875,46 +926,6 @@ export default class EditGraphic extends React.Component {
     this.doSnapshotActivity()
   }
 
-
-  cutSelected(){
-    if(!this.selectRect) return;
-
-    this.copySelected();
-    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
-    ctx.clearRect(this.pasteRect.x, this.pasteRect.y, this.pasteRect.width, this.pasteRect.height);
-    this.handleSave("Cut selected area");
-  }
-
-  copySelected(){
-    if(!this.selectRect) return;
-
-    let x = this.selectRect.startX;
-    let y = this.selectRect.startY;
-    let width = Math.abs(this.selectRect.startX - this.selectRect.endX); 
-    let height = Math.abs(this.selectRect.startY - this.selectRect.endY);
-    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
-    // console.log(ctx.getImageData(x, y, width, height));
-
-    this.pasteRect = {
-      x: x
-      , y: y
-      , width: width 
-      , height: height
-      , imgData: ctx.getImageData(x, y, width, height)
-    };
-  }
-
-  pasteSelected() {
-    // TODO: Provide a way to place this at other points, probably like the paste-preview mode of MGBv1
-    if (!this.pasteRect) 
-      return
-
-    let ctx = this.previewCtxArray[this.state.selectedLayerIdx];
-    ctx.putImageData(this.pasteRect.imgData, this.pasteRect.x, this.pasteRect.y);
-    this.handleSave("Paste selected area");
-  }
-
-
   /// Drag & Drop of image files over preview and editor
   // TODO: See how to factor this into another function? Depends how much of our internal state it needs
 
@@ -1126,7 +1137,7 @@ map
             <AssetUrlGenerator asset={this.props.asset} />
 
             <span>&nbsp;&nbsp;</span>
-            <a className={"ui label hazPopup " + (this.selectRect ? "" : "disabled")} 
+            <a className={"ui label hazPopup " + (this.state.selectRect ? "" : "disabled")} 
               onClick={this.cutSelected.bind(this)}
                data-content="Cut selected area"
                data-variation="tiny"
@@ -1134,7 +1145,7 @@ map
               <i className="cut icon"></i>Cut
             </a>
 
-            <a className={"ui label hazPopup " + (this.selectRect ? "" : "disabled")} 
+            <a className={"ui label hazPopup " + (this.state.selectRect ? "" : "disabled")} 
               onClick={this.copySelected.bind(this)}
                data-content="Copy selected area"
                data-variation="tiny"
@@ -1142,7 +1153,7 @@ map
               <i className="copy icon"></i>Copy
             </a>
 
-            <a className={"ui label hazPopup " + (this.pasteRect ? "" : "disabled")} 
+            <a className={"ui label hazPopup " + (this.state.pasteRect ? "" : "disabled")} 
               onClick={this.pasteSelected.bind(this)}
                data-content="Paste copied region (incomplete function - location cannot be changed yet)"
                data-variation="tiny"

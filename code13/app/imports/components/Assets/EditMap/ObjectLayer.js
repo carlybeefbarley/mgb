@@ -80,12 +80,10 @@ export default class ObjectLayer extends AbstractLayer {
         }
       }
       else if(obj.polyline || obj.polygon){
-        //if(!this.shapeBoxes[i]){
-          this.shapeBoxes[i] = new Imitator(obj);
-        //}
+        this.shapeBoxes[i] = new Imitator(obj);
         const imit = this.shapeBoxes[i];
 
-        if(ObjectHelper.PointvsAABB(imit, x, y)){
+        if(ObjectHelper.PointvsAABB(imit, x, y, false, imit.orig.x, imit.orig.y)){
           console.log("picked:", imit);
           return i;
         }
@@ -137,6 +135,7 @@ export default class ObjectLayer extends AbstractLayer {
           }
           selected.x = Math.round(this.clonedObject.x / this.map.data.tilewidth) * this.map.data.tilewidth;
           selected.y = Math.round(this.clonedObject.y / this.map.data.tileheight) * this.map.data.tileheight;
+
           selected.width = Math.round(this.clonedObject.width / this.map.data.tilewidth) * this.map.data.tilewidth;
           selected.height = Math.round(this.clonedObject.height / this.map.data.tileheight) * this.map.data.tileheight;
         }
@@ -167,8 +166,11 @@ export default class ObjectLayer extends AbstractLayer {
       this.pickedObject.y = ny; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
 
       if(e.ctrlKey){
-        this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw;
-        this.pickedObject.y = Math.round(this.pickedObject.y / th) * th;
+        let dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0;
+        let dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0;
+
+        this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw + dx;
+        this.pickedObject.y = Math.round(this.pickedObject.y / th) * th + dy;
       }
     }
 
@@ -298,9 +300,15 @@ export default class ObjectLayer extends AbstractLayer {
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height);
     // Don't loop through all objects.. use quadtree here some day
     // when we will support unlimited size streaming maps :D
+    // TODO: clean up ifs
     for(let i=0; i<this.data.objects.length; i++){
       let o = this.data.objects[i];
-
+      if(o.polygon || o.polyline){
+        if(!this.shapeBoxes[i]){
+          this.shapeBoxes[i] = new Imitator(o);
+        }
+        o = this.shapeBoxes[i];
+      }
       // skip objects invisible to camera
       if(!ObjectHelper.CameravsAABB(this.camera, o)){
         continue;
@@ -309,11 +317,13 @@ export default class ObjectLayer extends AbstractLayer {
       if(o.gid){
         this.drawTile(o);
       }
-      else if(o.polyline){
-        this.drawPolyline(o);
-      }
-      else if(o.polygon){
-        this.drawPolyline(o, true);
+      else if(o.orig){
+        if(o.orig.polyline){
+          this.drawPolyline(o.orig);
+        }
+        else{
+          this.drawPolyline(o.orig, true);
+        }
       }
       // TODO: is there convenient way to separate rectangles and shapes??
       else if(true){
@@ -343,7 +353,20 @@ export default class ObjectLayer extends AbstractLayer {
           (this.pickedObject.y - this.pickedObject.height),
           this.pickedObject.width,
           this.pickedObject.height,
-          this.pickedObject.rotation
+          this.pickedObject.rotation,
+          this.pickedObject.x,
+          this.pickedObject.y
+        );
+      }
+      else if(this.pickedObject instanceof Imitator){
+        this.handles.update(
+          this.pickedObject.x,
+          this.pickedObject.y,
+          this.pickedObject.width,
+          this.pickedObject.height,
+          this.pickedObject.rotation,
+          this.pickedObject.orig.x,
+          this.pickedObject.orig.y
         );
       }
       else if(true){
@@ -352,7 +375,9 @@ export default class ObjectLayer extends AbstractLayer {
           this.pickedObject.y,
           this.pickedObject.width,
           this.pickedObject.height,
-          this.pickedObject.rotation, false
+          this.pickedObject.rotation,
+          this.pickedObject.x,
+          this.pickedObject.y
         );
       }
       // draw on grid which is always on the top

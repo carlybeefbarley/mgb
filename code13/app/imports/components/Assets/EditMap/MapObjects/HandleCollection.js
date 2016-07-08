@@ -54,6 +54,8 @@ const LEFT = 6;
 const TOP_LEFT = 7;
 const CENTER = 8;
 const ROTATE = 9;
+// same as center ???
+const PIVOT = 10;
 
 // this will update for every object...
 export default class HandleCollection {
@@ -63,7 +65,7 @@ export default class HandleCollection {
     this.activeHandle = null;
     this.activeHandleType = -1;
 
-    for(let i=0; i<10; i++){
+    for(let i=0; i<11; i++){
       this.handles.push(new Handle(0, 0));
     }
     this.update(x, y, width, height);
@@ -75,7 +77,7 @@ export default class HandleCollection {
   unlock(){
     this.isLocked = false;
   }
-  update(x, y, width, height, angleDegrees, isTileObject = true){
+  update(x, y, width, height, angleDegrees, px, py){
     const angle = angleDegrees * FROM_DEGREES;
     const h = this.handles;
 
@@ -96,27 +98,28 @@ export default class HandleCollection {
     h[BOTTOM].update(x + width * 0.5, y + height);
     h[BOTTOM_RIGHT].update(x + width, y + height);
 
+    h[PIVOT].update(px, py);
     if(angle){
-      let p = h[BOTTOM_LEFT];
-      if(!isTileObject){
+      //let p = pivot;
+      /*if(!isTileObject){
         p = h[TOP_LEFT];
-      }
-      h[TOP].rotate(angle, p.x, p.y);
-      h[TOP_LEFT].rotate(angle, p.x, p.y);
-      h[TOP_RIGHT].rotate(angle, p.x, p.y);
+      }*/
+      h[TOP].rotate(angle, px, py);
+      h[TOP_LEFT].rotate(angle, px, py);
+      h[TOP_RIGHT].rotate(angle, px, py);
 
-      h[LEFT].rotate(angle, p.x, p.y);
-      h[CENTER].rotate(angle, p.x, p.y);
+      h[LEFT].rotate(angle, px, py);
+      h[CENTER].rotate(angle, px, py);
 
       if(!this.isLocked){
-        h[ROTATE].rotate(angle, p.x, p.y);
+        h[ROTATE].rotate(angle, px, py);
       }
 
-      h[RIGHT].rotate(angle, p.x, p.y);
+      h[RIGHT].rotate(angle, px, py);
 
-      h[BOTTOM_LEFT].rotate(angle, p.x, p.y);
-      h[BOTTOM].rotate(angle, p.x, p.y);
-      h[BOTTOM_RIGHT].rotate(angle, p.x, p.y);
+      h[BOTTOM_LEFT].rotate(angle, px, py);
+      h[BOTTOM].rotate(angle, px, py);
+      h[BOTTOM_RIGHT].rotate(angle, px, py);
     }
 
   }
@@ -125,6 +128,13 @@ export default class HandleCollection {
     for(let i=0; i<this.handles.length; i++){
       // skip center handle - as it don't have any functionality atm
       if(i == CENTER){
+        continue;
+      }
+      if(i == PIVOT){
+        const cst = ctx.strokeStyle;
+        ctx.strokeStyle = "rgb(0,255,0)";
+        this.handles[i].draw(ctx, camera, this.handles[i] == this.activeHandle);
+        ctx.strokeStyle = cst;
         continue;
       }
       this.handles[i].draw(ctx, camera, this.handles[i] == this.activeHandle);
@@ -182,7 +192,7 @@ export default class HandleCollection {
         //obj.rotation = an * FROM_RADIANS;
 
         // this will rotate around middle point
-        this.rotateObject(obj, an);
+        ObjectHelper.rotateObject(obj, an);
         break;
 
       case BOTTOM:
@@ -234,9 +244,4 @@ export default class HandleCollection {
     }
     return false;
   }
-
-  rotateObject(o, angle){
-    ObjectHelper.rotateObject(o, angle);
-  }
-
 }

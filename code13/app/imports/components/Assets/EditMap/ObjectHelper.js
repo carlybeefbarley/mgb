@@ -22,7 +22,7 @@ const ObjectHelper = window.ObjectHelper = {
       -cam.x > box.x + box.width * 2 ||
       -cam.y > box.y + box.height * 2);
   },
-  PointvsAABB: (box, x, y, skipRotation) => {
+  PointvsAABB: (box, x, y, skipRotation, px = box.x, py = box.y) => {
     let nx = x;
     let ny = y;
     if(box.rotation && !skipRotation){
@@ -30,8 +30,8 @@ const ObjectHelper = window.ObjectHelper = {
       const angle = -box.rotation * TO_RADIANS;
       const sin = Math.sin(angle);
       const cos = Math.cos(angle);
-      nx = ObjectHelper.rpx(sin, cos, x, y, box.x, box.y);
-      ny = ObjectHelper.rpy(sin, cos, x, y, box.x, box.y);
+      nx = ObjectHelper.rpx(sin, cos, x, y, px, py);
+      ny = ObjectHelper.rpy(sin, cos, x, y, px, py);
     }
 
     return !(box.x > nx || box.y > ny || box.x + box.width < nx || box.y + box.height < ny);
@@ -61,24 +61,30 @@ const ObjectHelper = window.ObjectHelper = {
   },
 
   rotateObject: (o, angle) => {
+    if(o.orig){
+      return ObjectHelper.rotateShape(o, angle);
+    }
     const oldAngle = o.rotation * Math.PI/180;
 
+    // ccx / ccy - is same as pivot point
     const ccx = o.x + (o.width * 0.5);
     let ccy;
     // tile objects are upside down
     if(o.gid){
-      ccy = o.y - (o.height * 0.5);
+      ccy = o.y;// - (o.height * 0.5);
     }
     else{
       ccy = o.y + (o.height * 0.5);
     }
 
-    const csin = Math.sin(oldAngle);
-    const ccos = Math.cos(oldAngle);
-
-    const centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.x, o.y);
-    const centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.x, o.y);
-
+    let centerx = ccx;
+    let centery = ccy;
+    if(oldAngle) {
+      const csin = Math.sin(oldAngle);
+      const ccos = Math.cos(oldAngle);
+      centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.x, o.y);
+      centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.x, o.y);
+    }
 
     const sin = Math.sin(angle - oldAngle);
     const cos = Math.cos(angle - oldAngle);
@@ -88,6 +94,33 @@ const ObjectHelper = window.ObjectHelper = {
     o.x = x;
     o.y = y;
     o.rotation = angle * TO_DEGREES;
+  },
+
+  rotateShape: (o, angle) => {
+    const oldAngle = o.rotation * Math.PI/180;
+
+    // ccx / ccy - is same as pivot point
+    const ccx = o.x + (o.width * 0.5);
+    const ccy = o.y + (o.height * 0.5);
+
+    let centerx = ccx;
+    let centery = ccy;
+    if(oldAngle) {
+      const csin = Math.sin(oldAngle);
+      const ccos = Math.cos(oldAngle);
+      centerx = ObjectHelper.rpx(csin, ccos, ccx, ccy, o.orig.x, o.orig.y);
+      centery = ObjectHelper.rpy(csin, ccos, ccx, ccy, o.orig.x, o.orig.y);
+    }
+
+    const sin = Math.sin(angle - oldAngle);
+    const cos = Math.cos(angle - oldAngle);
+    const x = ObjectHelper.rpx(sin, cos, o.orig.x, o.orig.y, centerx, centery);
+    const y = ObjectHelper.rpy(sin, cos, o.orig.x, o.orig.y, centerx, centery);
+
+    o.orig.x = x;
+    o.orig.y = y;
+    o.rotation = angle * TO_DEGREES;
+    o.update();
   },
 
   createTileObject: (pal, id, x, y) => {

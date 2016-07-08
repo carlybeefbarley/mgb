@@ -27,25 +27,6 @@ export default class MapArea extends React.Component {
     // expose map for debugging purposes - access in console
     window.map = this;
 
-    // temporary workaround for saved images until we connect asset editor and map editor
-    /*this.images = new Proxy(images, {
-      get: (target, property, receiver) => {
-        // meteor throws error about properties with . in name
-        // could be related: https://github.com/meteor/meteor/issues/4522
-        property = this.removeDots(property);
-        return images[property];
-      },
-      set: (target, property, value, receiver) => {
-        property = this.removeDots(property);
-        images[property] = value;
-        if(!this.map.images){
-          this.map.images = {};
-        }
-        this.map.images[property] = value.src;
-        return true;
-      }
-    });*/
-
     this.images = {
       set: (property, value) => {
         property = this.removeDots(property);
@@ -77,7 +58,7 @@ export default class MapArea extends React.Component {
     // x/y are angles not pixels
     this.preview = {
       x: 5,
-      y: 45
+      y: 15
     };
 
     this.layers = [];
@@ -135,6 +116,7 @@ export default class MapArea extends React.Component {
   }
   componentDidUpdate(){
     this.redraw();
+    this.adjustPreview();
   }
   componentWillUnmount(){
     window.removeEventListener("mousemove", this.globalMouseMove);
@@ -582,7 +564,11 @@ export default class MapArea extends React.Component {
 
   }
   adjustPreview(){
-    this.layers.forEach((l, i) => {
+    this.data.layers.forEach((lay, i) => {
+      const l = this.getLayer(lay);
+      if(!l){
+        return;
+      }
       if(!this.options.preview){
         l.refs.layer.style.transform = "";
         return;
@@ -591,20 +577,20 @@ export default class MapArea extends React.Component {
       if(Math.abs(tr.x) >= 360){tr.x = 0;}
       if(Math.abs(tr.y) >= 360){tr.y = 0;}
 
-      l.refs.layer.style.transform =  "perspective(2000px) rotateX(" + this.preview.x + "deg) "+
+      l.refs.layer.style.transform =  "perspective(8000px) rotateX(" + this.preview.x + "deg) "+
         "rotateY(" + this.preview.y + "deg) rotateZ(0deg) "+
-        "translateZ(-" +((this.layers.length - i)*20) + "px)";
+        "translateZ(-" +( ((this.layers.length - i)*50) + 200) + "px)";
       var ay = Math.abs(tr.y);
       var ax = Math.abs(tr.x);
 
       if(ay > 90 && ay < 270 && ax > 90 && ax < 270){
-        this.layers[i].refs.layer.style.zIndex = i;
+        l.refs.layer.style.zIndex = i;
       }
       else if(ay > 90 && ay < 270 || ax > 90 && ax < 270){
-        this.layers[i].refs.layer.style.zIndex = this.layers.length - i;
+        l.refs.layer.style.zIndex = this.layers.length - i;
       }
       else {
-        this.layers[i].refs.layer.style.zIndex = i;
+        l.refs.layer.style.zIndex = i;
       }
 
     });

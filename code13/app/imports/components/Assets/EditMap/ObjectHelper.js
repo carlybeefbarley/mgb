@@ -1,6 +1,6 @@
 "use strict";
-const TO_DEGREES = (Math.PI / 180);
-
+const TO_RADIANS = (Math.PI / 180);
+const TO_DEGREES = 1/TO_RADIANS;
 // collection with useful functions
 const ObjectHelper = window.ObjectHelper = {
   // aabb may be any object who contains: {x, y, width, height}
@@ -22,12 +22,12 @@ const ObjectHelper = window.ObjectHelper = {
       -cam.x > box.x + box.width * 2 ||
       -cam.y > box.y + box.height * 2);
   },
-  PointvsAABB: (box, x, y) => {
+  PointvsAABB: (box, x, y, skipRotation) => {
     let nx = x;
     let ny = y;
-    if(box.rotation){
+    if(box.rotation && !skipRotation){
       // rotate one point to opposite direction instead of 4 box points
-      const angle = -box.rotation * TO_DEGREES;
+      const angle = -box.rotation * TO_RADIANS;
       const sin = Math.sin(angle);
       const cos = Math.cos(angle);
       nx = ObjectHelper.rpx(sin, cos, x, y, box.x, box.y);
@@ -40,14 +40,14 @@ const ObjectHelper = window.ObjectHelper = {
   PointvsTile: (box, x, y) => {
     if(box.rotation){
       // rotate one point to opposite direction instead of 4 box points
-      const angle = -box.rotation * TO_DEGREES;
+      const angle = -box.rotation * TO_RADIANS;
       const sin = Math.sin(angle);
       const cos = Math.cos(angle);
       const nx = ObjectHelper.rpx(sin, cos, x, y, box.x, box.y);
       const ny = ObjectHelper.rpy(sin, cos, x, y, box.x, box.y);
 
       // transform coords to match bottom / up drawing
-      return ObjectHelper.PointvsAABB(box, nx, ny + box.height);
+      return ObjectHelper.PointvsAABB(box, nx, ny + box.height, true);
     }
     // transform coords to match bottom / up drawing
     return ObjectHelper.PointvsAABB(box, x, y + box.height);
@@ -87,7 +87,7 @@ const ObjectHelper = window.ObjectHelper = {
 
     o.x = x;
     o.y = y;
-    o.rotation = angle * (180 / Math.PI);
+    o.rotation = angle * TO_DEGREES;
   },
 
   createTileObject: (pal, id, x, y) => {

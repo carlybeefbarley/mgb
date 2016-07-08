@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+import QLink from '../../routes/QLink';
+
 import reactMixin from 'react-mixin';
 import { Chats } from '../../schemas';
 import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '../../schemas/chats';
@@ -140,13 +142,15 @@ export default fpChat = React.createClass({
  
   renderMessage: function(c) {
     const ago = moment(c.createdAt).fromNow()
+    const to = `/u/${c.byUserName}`
+
     const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
     return  <div className="comment" key={c._id}>
-              <a className="avatar">
+              <QLink to={to} className="avatar">
                 <img src={`/api/user/${c.byUserId}/avatar`}></img>
-              </a>
+              </QLink>
               <div className="content">
-                <a className="author">{c.byUserName}</a>
+                <QLink to={to} className="author">{c.byUserName}</QLink>
                 <div className="metadata">
                   <span className="date" title={absTime}>{ago}</span>
                 </div>

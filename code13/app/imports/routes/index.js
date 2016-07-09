@@ -63,6 +63,7 @@ Meteor.startup(function () {
         <Route path="u/:username/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
 
         <Route path="assets" component={Azzets.UserAssetList} name="Search All Assets" />
+        <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 
         <Route path="assetEdit/:assetId" component={Azzets.AssetEdit} name="Edit Asset (LEGACY route)" />        
  

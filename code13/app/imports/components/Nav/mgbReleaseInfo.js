@@ -16,7 +16,38 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
-      "timestamp":     "Thu Jul 07 2016 19:35:00 GMT-0700 (PDT)",
+      "timestamp":     "Sat Jul 09 2016 13:50:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "761"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.assets.new",
+          "type":           "improvement",
+          "changeName":     "'Create New Asset' is now a new page",
+          "changeSummary":  "The feature to create a new asset was previously a dropdown on the AssetsList page, but it was cramped, had limited explanation, and was not easily linkable. Moving this to it's own page solves these issues, and gives space to add new features such as 'choose project' for asset",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Editor retangles/polylines",
+          "changeSummary":  "Adding more MapEditor.org-compatible features - rectangles and polylines",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    { 
+      "timestamp":     "Thu Jul 07 2016 21:05:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",

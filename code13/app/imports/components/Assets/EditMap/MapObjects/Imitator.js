@@ -30,6 +30,22 @@ export default class Imitator{
       const x = l.x - this.minx;
       l.x = x * prop + this.minx;
     }
+
+    // move starting point back to 0,0
+    const red = this.lines[0].x;
+    for(let i=0; i<this.lines.length; i++){
+      this.lines[i].x -= red;
+    }
+
+    const sin = Math.sin(this.angle);
+    const cos = Math.cos(this.angle);
+
+    const x = ObjectHelper.rpx(sin, cos, red, 0, 0, 0);
+    const y = ObjectHelper.rpy(sin, cos, red, 0, 0, 0);
+
+    this.orig.x += x;
+    this.orig.y += y;
+
     this.update();
   }
 
@@ -44,6 +60,21 @@ export default class Imitator{
       const y = l.y - this.miny;
       l.y = y * prop + this.miny;
     }
+
+    // move starting point back to 0,0
+    const red = this.lines[0].y;
+    for(let i=0; i<this.lines.length; i++){
+      this.lines[i].y -= red;
+    }
+
+    const sin = Math.sin(this.angle);
+    const cos = Math.cos(this.angle);
+
+    const x = ObjectHelper.rpx(sin, cos, 0, red, 0, 0);
+    const y = ObjectHelper.rpy(sin, cos, 0, red, 0, 0);
+
+    this.orig.x += x;
+    this.orig.y += y;
     this.update();
   }
 
@@ -73,7 +104,11 @@ export default class Imitator{
     return this.orig.rotation;
   }
   set rotation(val){
+
     this.orig.rotation = val;
   }
 
+  get angle(){
+    return this.orig.rotation * Math.PI / 180;
+  }
 }

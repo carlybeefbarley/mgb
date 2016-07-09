@@ -49,8 +49,15 @@ export default class MapTools extends React.Component {
     this.props.map.selection.clear();
     this.props.map.collection.clear();
     this.props.map.redraw();
+    const l = this.props.map.getActiveLayer();
+    if(!l || !l.clearSelection){return;}
+    l.clearSelection();
   }
-
+  toggleFill(){
+    const l = this.props.map.getActiveLayer();
+    if(!l || !l.clearSelection){return;}
+    l.toggleFill();
+  }
   rotate(cw){
     const l = this.props.map.getActiveLayer();
     if(!l || !l.rotate){return;}
@@ -73,6 +80,10 @@ export default class MapTools extends React.Component {
     const redoClass = this.props.map.redoSteps.length ? "ui button" : "ui button disabled";
     //const undoClass = this.props.map.undoSteps.length ? "ui button hazPopup" : "ui button disabled hazPopup";
     //const undoCount = this.props.map.undoSteps.length;/// ? `<div class="floating ui tiny grey label">${this.props.map.undoSteps.length}</div>` : "";
+
+    // TODO: disable object drawing buttons if active layer is not ObjectLayer
+    //const canDraw;
+
     return (
       <div ref="mainElement">
         {/* mics buttons / camera / view / save */}
@@ -175,6 +186,23 @@ export default class MapTools extends React.Component {
                 onClick={this.rotate.bind(this, false)}
                 title="Rotate CounterClockWise - Shift + Z"
             ><i className="reply icon"></i>
+          </span>
+        </div>
+        <div className="ui icon buttons small">
+          <span className={(this.props.map.options.mode == "drawRectangle" ? "ui button " + activeClass : "ui button")}
+                onClick={this.enableMode.bind(this, "drawRectangle")}
+                title="Draw Rectangle object"
+            ><i className="stop icon"></i>
+          </span>
+          <span className={(this.props.map.options.mode == "drawShape" ? "ui button " + activeClass : "ui button")}
+                onClick={this.enableMode.bind(this, "drawShape")}
+                title="Draw Shape from multiple lines"
+            ><i className="pencil icon"></i>
+          </span>
+          <span className="ui button"
+                onClick={this.toggleFill.bind(this)}
+                title="Toggle shape fill"
+            ><i className="clone icon"></i>
           </span>
         </div>
       </div>

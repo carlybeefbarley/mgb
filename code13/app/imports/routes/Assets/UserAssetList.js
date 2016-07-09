@@ -1,23 +1,23 @@
 import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 
-import { Azzets, Projects } from '../../schemas';
-import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters } from '../../schemas/assets';
-import { logActivity } from '../../schemas/activity';
+import { Azzets, Projects } from '/imports/schemas';
+import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters } from '/imports/schemas/assets';
+import { logActivity } from '/imports/schemas/activity';
 
-import AssetList from '../../components/Assets/AssetList';
-import AssetCreateNew from '../../components/Assets/AssetCreateNew.js';
-import AssetKindsSelector from '../../components/Assets/AssetKindsSelector.js';
-import AssetShowDeletedSelector from '../../components/Assets/AssetShowDeletedSelector.js';
-import AssetShowStableSelector from '../../components/Assets/AssetShowStableSelector.js';
-import AssetListSortBy from '../../components/Assets/AssetListSortBy';
-import ProjectSelector from '../../components/Assets/ProjectSelector';
+import AssetList from '/imports/components/Assets/AssetList';
+import CreateAssetLinkButton from '/imports/components/Assets/NewAsset/CreateAssetLinkButton';
+import AssetKindsSelector from '/imports/components/Assets/AssetKindsSelector.js';
+import AssetShowDeletedSelector from '/imports/components/Assets/AssetShowDeletedSelector.js';
+import AssetShowStableSelector from '/imports/components/Assets/AssetShowStableSelector.js';
+import AssetListSortBy from '/imports/components/Assets/AssetListSortBy';
+import ProjectSelector from '/imports/components/Assets/ProjectSelector';
 
 import { utilPushTo } from '../QLink';
-import Spinner from '../../components/Nav/Spinner';
+import Spinner from '/imports/components/Nav/Spinner';
 import { browserHistory } from 'react-router';
 import Helmet from 'react-helmet';
-import UserItem from '../../components/Users/UserItem.js';
+import UserItem from '/imports/components/Users/UserItem.js';
 
 
 // Default values for url?query - i.e. the this.props.location.query keys
@@ -369,7 +369,7 @@ export default UserAssetListRoute = React.createClass({
           <div className="ui row">
             <div className="four wide right floated column">
               <div className="ui row">
-                <AssetCreateNew  handleCreateAssetClick={this.handleCreateAssetClickFromComponent}/>
+                <CreateAssetLinkButton />
                 <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
               </div>
             </div>
@@ -394,30 +394,6 @@ export default UserAssetListRoute = React.createClass({
       </div>
 
     );
-  },
-  
-  handleCreateAssetClickFromComponent(assetKindKey, assetName) {
-    let newAsset = {
-      name: assetName,
-      kind: assetKindKey,
-      text: "",
-      thumbnail: "",
-      content2: {},
-      dn_ownerName: this.props.currUser.name,
-
-      isCompleted: false,
-      isDeleted: false,
-      isPrivate: true,
-      teamId: ''
-    }
-    Meteor.call('Azzets.create', newAsset, (error, result) => {
-      if (error) {
-          alert("cannot create asset because: " + error.reason);
-      } else {
-        newAsset._id = result; // So activity log will work
-        logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset);
-        utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/asset/${result}`)
-      }
-    });
   }
+  
 })

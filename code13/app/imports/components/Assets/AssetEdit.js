@@ -16,33 +16,23 @@ const editElementsForKind = {
   '_mgbui':  EditMGBUI
 }
 
+export default AssetEdit = React.createClass({
+  propTypes: {
+    asset: PropTypes.object,
+    canEdit: PropTypes.bool.isRequired,
+    currUser: PropTypes.object,
+    handleContentChange: PropTypes.function,
+    editDeniedReminder: PropTypes.function,
+    activitySnapshots: PropTypes.array               // can be null whilst loading
+  },  
 
-export default class AssetEdit extends React.Component {
-  // static PropTypes = {
-  //   asset: PropTypes.object.isRequired
-  //   canEdit" PropTypes.bool.isRequired
-  //   currUser: PropTypes.object,
-  //   handleContentChange: PropTypes.function
-  //   editDeniedReminder: PropTypes.function
-  //   activitySnapshots: PropTypes.array               // can be null whilst loading
-  // }
-  
+  getEditorForAsset: function(asset) {
+    const Element = editElementsForKind[asset.kind] || EditUnknown
+    return <Element {...this.props}/>   
+  },
 
-  getEditorForAsset(asset) {
-    const Element = editElementsForKind[asset.kind] || EditUnknown    
-    return <Element
-              asset={asset}
-              canEdit={this.props.canEdit}
-              currUser={this.props.currUser}
-              editDeniedReminder={this.props.editDeniedReminder}
-              handleContentChange={this.props.handleContentChange}
-              activitySnapshots={this.props.activitySnapshots}
-              />   
-  }
-
-
-  render() {
-    const asset = this.props.asset;
+  render: function() {
+    const asset = this.props.asset
     return asset ? this.getEditorForAsset(asset) : <div>loading...</div>
   }
-}
+})

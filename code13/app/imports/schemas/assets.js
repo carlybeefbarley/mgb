@@ -1,8 +1,9 @@
+// ASSETS
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-
-import {Azzets} from '../schemas';
+import { Azzets } from '/imports/schemas';
+import { roleSuperAdmin } from '/imports/schemas/roles'
 import { check, Match } from 'meteor/check';
 
 
@@ -12,7 +13,7 @@ var schema = {
   createdAt: Date,
   updatedAt: Date,
 
-  teamId: String,       // team owner user id (FOR FUTURE USE)
+//teamId: String,       // team owner user id (NOT USED. TODO: REMOVE FROM DB RECORDS)
   ownerId: String,      // owner user id
   projectNames: [String],   // Project Name (scoped to owner). Case sensitive
 
@@ -28,37 +29,138 @@ var schema = {
   kind: String,       // Asset's kind (image, map, etc)
   text: String,       // A description field
   content: String,    // depends on asset type
-  content2: Object,   // THIS IS NOT IN PREVIW DOWNLOADS..TODO: Move some small but widely needed stuff like size, num frames to another field like content
-  thumbnail: String,  // data-uri base 64 of thumbnail image
+  content2: Object,   // THIS IS NOT IN PREVIEW DOWNLOADS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field such as 'content'
+  thumbnail: String,  // data-uri base 64 of thumbnail image (for example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
 
   //various flags
-  isCompleted: Boolean,
-  isDeleted: Boolean,
-  isPrivate: Boolean
+  isCompleted: Boolean,   // This supports the 'is stable' flag
+  isDeleted: Boolean,     // This is a soft marked-as-deleted indicator
+  isPrivate: Boolean      // Not currently used
 };
 
-const UAKerr = "Unknown Asset Kind"
+const UAKerr = "Unknown Asset Kind"     // An error message string used a few places in this file.
+
+
 // Info on each kind of asset, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
+
 export const AssetKinds = {
-//  "search":  { name: "Search",  disable: true,  longName: "Search query",    icon: "find", description: "Saved search query" },
-  "palette": { name: "Palette", selfPlural: false,  disable: true,  longName: "Color Palette",   icon: "block layout", description: "Color palette" },
-  "graphic": { name: "Graphic", selfPlural: false,  disable: false, longName: "Graphic",         icon: "file image outline", description: "Images, Sprites, tiles, animations, backgrounds etc" },
-  "map":     { name: "Map",     selfPlural: false,  disable: false, longName: "Game Level Map",  icon: "marker", description: "Map/Level used in a game" },
-  "physics": { name: "Physics", selfPlural: true,   disable: true,  longName: "Physics Config",  icon: "rocket", description: "Physics configuration" },
-  "code":    { name: "Code",    selfPlural: true,   disable: false, longName: "Code Script",     icon: "puzzle", description: "Source code script" },
-  "doc":     { name: "Doc",     selfPlural: false,  disable: false, longName: "Document",        icon: "file text outline", description: "Text Document" },
-  "cheatsheet": { name: "Cheatsheet", selfPlural: false,  disable: true, longName: "Cheat Sheet",icon: "student", description: "Cheat Sheet to help reember useful stuff" },
-  "cutscene":{ name: "Cutscene",selfPlural: false,  disable: true,  longName: "Cut Scene",       icon: "file video outline", description: "Cut scene used in a game" },
-  "audio":   { name: "Audio",   selfPlural: true,   disable: true,  longName: "Audio sound",     icon: "file audio outline", description: "Sound Effect, song, voice etc"},
-  "game":    { name: "Game",    selfPlural: false,  disable: true,  longName: "Game definition", icon: "gamepad", description: "Game rules and definition"},
-  "_mgbui":  { name: "MGB UI",  selfPlural: true,   disable: false, longName: "MGB UI Mockup",   icon: "code", description: "HTML using Semantic UI for mocking up MGB UI" },
+  //  "search":  { name: "Search",  disable: true,  longName: "Search query",    icon: "find", description: "Saved search query" },
+  "palette": {
+    name: "Palette",
+    selfPlural: false,
+    disable: true,
+    longName: "Color Palette",
+    icon: "block layout",
+    requiresUserRole: null,
+    description: "Color palette"
+  },
+  "graphic": {
+    name: "Graphic",
+    selfPlural: false,
+    disable: false,
+    longName: "Graphic",
+    icon: "file image outline",
+    requiresUserRole: null,
+    description: "Images, Sprites, tiles, animations, backgrounds etc"
+  },
+  "map": {
+    name: "Map",
+    selfPlural: false,
+    disable: false,
+    longName: "Game Level Map",
+    icon: "marker",
+    requiresUserRole: null,    
+    description: "Map/Level used in a game"
+  },
+  "physics": {
+    name: "Physics",
+    selfPlural: true,
+    disable: true,
+    longName: "Physics Config",
+    icon: "rocket",
+    requiresUserRole: null,
+    description: "Physics configuration"
+  },
+  "code": {
+    name: "Code",
+    selfPlural: true,
+    disable: false,
+    longName: "Code Script",
+    icon: "puzzle",
+    requiresUserRole: null,    
+    description: "Source code script"
+  },
+  "doc": {
+    name: "Doc",
+    selfPlural: false,
+    disable: false,
+    longName: "Document",
+    icon: "file text outline",
+    requiresUserRole: null,
+    description: "Text Document"
+  },
+  "cheatsheet": {
+    name: "Cheatsheet",
+    selfPlural: false,
+    disable: true,
+    longName: "Cheat Sheet",
+    icon: "student",
+    requiresUserRole: null,
+    description: "Cheat Sheet to help remember useful stuff"
+  },
+  "cutscene": {
+    name: "Cutscene",
+    selfPlural: false,
+    disable: true,
+    longName: "Cut Scene",
+    icon: "file video outline",
+    requiresUserRole: null,
+    description: "Cut scene used in a game"
+  },
+  "audio": {
+    name: "Audio",
+    selfPlural: true,
+    disable: true,
+    longName: "Audio sound",
+    icon: "file audio outline",
+    requiresUserRole: null,
+    description: "Sound Effect, song, voice etc"
+  },
+  "game": {
+    name: "Game",
+    selfPlural: false,
+    disable: true,
+    longName: "Game definition",
+    icon: "gamepad",
+    requiresUserRole: null,
+    description: "Game rules and definition"
+  },
+  "_mgbui": {
+    name: "MGB UI",
+    selfPlural: true,
+    disable: false,
+    longName: "MGB UI Mockup",
+    icon: "code",
+    requiresUserRole: roleSuperAdmin,    
+    description: "HTML using Semantic UI for mocking up MGB UI"
+  },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
-  getIconClass: function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"},
-  getLongName:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : UAKerr)},
-  getDescription:  function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].description : UAKerr)},
-  getName:      function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : UAKerr)},
-  getNamePlural:function (key) { return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? "" : "s") : UAKerr)},
+  getIconClass: function(key) {
+    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"
+  },
+  getLongName: function(key) {
+    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : UAKerr)
+  },
+  getDescription: function(key) {
+    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].description : UAKerr)
+  },
+  getName: function(key) {
+    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : UAKerr)
+  },
+  getNamePlural: function(key) {
+    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? "" : "s") : UAKerr)
+  },
   validateAssetField: function (field, str) { 
     if (!field || !str) return "invalid params"
     switch(field) {

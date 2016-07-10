@@ -32,7 +32,10 @@ export default AssetCreateNewRoute = React.createClass({
           ]}
         />
 
-        <AssetCreateNew handleCreateAssetClick={this.handleCreateAssetClickFromComponent}/>
+        <AssetCreateNew 
+          handleCreateAssetClick={this.handleCreateAssetClickFromComponent}
+          currUser={this.props.currUser}
+          />
       </div>
     )
   },
@@ -49,8 +52,7 @@ export default AssetCreateNewRoute = React.createClass({
 
       isCompleted: false,
       isDeleted: false,
-      isPrivate: true,
-      teamId: ''
+      isPrivate: true
     }
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {

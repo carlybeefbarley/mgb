@@ -1,22 +1,24 @@
 import React, {Component, PropTypes} from 'react';
 import { browserHistory } from 'react-router';
+import Helmet from "react-helmet";
 
 import reactMixin from 'react-mixin';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Users, Activity, Projects } from '../schemas';
-import { projectMakeSelector } from '../schemas/projects';
+import { isSameUser } from '/imports/schemas/users'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-import Nav from '../components/Nav/Nav';
-import Toast from '../components/Nav/Toast';
-import Helmet from "react-helmet";
-import Spinner from '../components/Nav/Spinner';
-import NavPanel from '../components/SidePanels/NavPanel';
-import FlexPanel from '../components/SidePanels/FlexPanel';
-import mgbReleaseInfo from '../components/Nav/mgbReleaseInfo.js';
+import { Users, Activity, Projects } from '/imports/schemas';
+import { projectMakeSelector } from '/imports/schemas/projects';
+
+import Nav from '/imports/components/Nav/Nav';
+import Toast from '/imports/components/Nav/Toast';
+import Spinner from '/imports/components/Nav/Spinner';
+import NavPanel from '/imports/components/SidePanels/NavPanel';
+import FlexPanel from '/imports/components/SidePanels/FlexPanel';
+import mgbReleaseInfo from '/imports/components/Nav/mgbReleaseInfo';
 
 import urlMaker from './urlMaker';
-
 import webkitSmallScrollbars from './webkitSmallScrollbars.css';
 
 export default App = React.createClass({
@@ -51,7 +53,7 @@ export default App = React.createClass({
       showToast: false,
       toastMsg: '',
       toastType: 'success',
-      activityHistoryLimit: 31
+      activityHistoryLimit: 11
     };
   },
 
@@ -133,20 +135,9 @@ export default App = React.createClass({
     //Check permissions of current user for super-admin,
     //if user is on their own profile route,
     //or if user has roles on current team route
-    let isSuperAdmin = false;
-    let ownsProfile = false;
-    if (currUser) {
-      if (user) 
-        ownsProfile = (currUser._id === user._id) // This isn't very useful and needs to be cleaned up.. TODO: cleanup the permissions model and get rid of this strange userprofile==currentuser concept
-      let permissions = currUser.permissions;
-      if (permissions) {
-        permissions.map((permission) => {
-          if (permission.roles[0] === "super-admin") {
-            isSuperAdmin = true;
-          }
-        })
-      }
-    }
+    let isSuperAdmin = isUserSuperAdmin(currUser)
+    let ownsProfile = isSameUser(currUser, user)
+ 
 
     return (
       <div >

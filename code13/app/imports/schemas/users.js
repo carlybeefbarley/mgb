@@ -27,9 +27,7 @@ const schema = {
     invites: optional([]),
     projectNames: optional([String])   // An array of strings  
   },
-  permissions: {                      // TODO: Replace with real permissions system
-    teamId: optional(String),
-    teamName: optional(String),
+  permissions: {                      // TODO: Replace with real permissions system    
     roles: optional([String])         // See in App.js for 'super-admin' handling 
   }
 };
@@ -100,3 +98,10 @@ Meteor.methods({
     return count;
   }
 });
+
+
+// helper functions
+export function isSameUser(user1, user2)
+{
+  return user1 && user2 && user1._id && user2._id && user1._id === user2._id
+}

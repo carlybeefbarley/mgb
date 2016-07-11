@@ -104,11 +104,11 @@ export default class GraphicImport extends React.Component {
 
 
 	changeTileWidth(event){
-		this.setState({ tileWidth: event.target.value});
+		this.setState({ tileWidth: parseInt(event.target.value)});
 	}
 
 	changeTileHeight(event){
-		this.setState({ tileHeight: event.target.value});
+		this.setState({ tileHeight: parseInt(event.target.value)});
 	}
 
 	finishImport(){

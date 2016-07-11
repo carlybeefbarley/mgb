@@ -1069,6 +1069,7 @@ export default class EditGraphic extends React.Component {
     c2.animations = [];
 
     this.handleSave("Import tileset", true);
+    $('.ui.modal').modal('hide');
   }
 
 

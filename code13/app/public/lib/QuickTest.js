@@ -17,7 +17,7 @@ import React from 'react';
 $.getScript("/lib/QuickTest.js");
 
 export default class MyComponent extends React.Component {
-  construct(...args){
+  constructor(...args){
     super(...args);
     this.myTest = new QuickTest("MyComponent", (success) => {
       this.element.innerHTML = ("Test: "+ (success ? "succeeded" : "failed"));

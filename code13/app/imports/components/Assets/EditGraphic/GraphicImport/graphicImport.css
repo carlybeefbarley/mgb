@@ -1,0 +1,18 @@
+.hidden {
+	display: none;
+}
+
+.uploadForm {
+	width: 100%;
+	text-align: center;
+	border: 5px dashed #999;
+
+}
+.uploadForm.draggedOver{
+	border-color: green;
+	background-color: #DFFAD4;
+}
+
+.uploadCanvas {
+	
+}

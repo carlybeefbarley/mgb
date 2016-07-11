@@ -6,7 +6,7 @@ import AssetUrlGenerator from '../AssetUrlGenerator.js';
 import Tools from './GraphicTools';
 
 import SpriteLayers from './Layers/SpriteLayers.js';
-import GraphicImport from './GraphicImport.js';
+import GraphicImport from './GraphicImport/GraphicImport.js';
 
 import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 

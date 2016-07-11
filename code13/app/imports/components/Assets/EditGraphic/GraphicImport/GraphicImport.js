@@ -12,12 +12,21 @@ export default class GraphicImport extends React.Component {
 	    	status: "empty" // empty, draggedOver, uploading, uploaded
 	    	, tileWidth: 64
 	    	, tileHeight: 64
+	    	, imgWidth: null
+	    	, imgHeight: null
 	    };
 	}
 
 	componentDidMount(){
 		this.canvas = ReactDOM.findDOMNode(this.refs.uploadCanvas);
 		this.ctx = this.canvas.getContext('2d');
+	}
+
+	componentDidUpdate(prevProps, prevState){
+		if(this.state.status === "uploaded" && this.loadedImg){
+			this.drawImage();
+			this.drawGrid();
+		}
 	}
 
 	onDragOver(event){
@@ -45,7 +54,7 @@ export default class GraphicImport extends React.Component {
 	        let tmpImg = new Image();
 	        tmpImg.onload = function(e){ // image is uploaded to browser
 	        	self.setState({ status: "uploaded" });
-	        	self.drawImage(tmpImg);
+	        	self.onImageLoaded(tmpImg);
 	        }
 	        tmpImg.src = theUrl;	        
 	      }
@@ -53,10 +62,44 @@ export default class GraphicImport extends React.Component {
 	    }
 	}
 
-	drawImage(img){
+	onImageLoaded(img){
+		this.loadedImg = img;
+		this.setState({ imgWidth: img.width, imgHeight: img.height});
 		this.canvas.width = img.width;
 		this.canvas.height = img.height;
-		this.ctx.drawImage(img, 0, 0);
+
+		this.drawImage();
+		this.drawGrid();
+	}
+
+	drawImage(){
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.drawImage(this.loadedImg, 0, 0);
+	}
+
+	drawGrid(){
+		let self = this;
+		this.ctx.lineWidth = 1;
+    	this.ctx.strokeStyle = '#000000';
+
+    	let cols = Math.ceil(this.canvas.width / this.state.tileWidth);
+		for(let col=0; col<cols; col++){
+			let x = (col+1)*this.state.tileWidth - 0.5;
+			drawLine(x, -0.5, x, this.canvas.height+0.5);
+		}
+
+		let rows = Math.ceil(this.canvas.height / this.state.tileHeight);
+		for(let row=0; row<rows; row++){
+			let y = (row+1)*this.state.tileHeight - 0.5;
+			drawLine(-0.5, y, this.canvas.width+0.5, y);
+		}
+
+		function drawLine(x1, y1, x2, y2){
+	      self.ctx.beginPath();
+	      self.ctx.moveTo(x1, y1);
+	      self.ctx.lineTo(x2, y2);
+	      self.ctx.stroke();
+	    }
 	}
 
 
@@ -75,6 +118,7 @@ export default class GraphicImport extends React.Component {
 	clearAll(){
 		this.setState({ status: "empty" });
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.loadedImg = null;
 	}
 	
 
@@ -119,9 +163,12 @@ export default class GraphicImport extends React.Component {
 							<i className="icon small remove circle"></i>Clear All
 						</div>
 
-			          </div>
+			        </div>
 
-	            	<canvas ref="uploadCanvas" ></canvas>
+			        <div className="ui divider"></div>
+			        <div   style={{ "overflow": "auto", "maxHeight": "600px"}}>
+	            		<canvas ref="uploadCanvas" ></canvas>
+	            	</div>
 
 	            </div>
 	          </div>

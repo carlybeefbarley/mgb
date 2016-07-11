@@ -149,7 +149,11 @@ const ObjectHelper = window.ObjectHelper = {
       "visible":true
     };
   },
-
+  createEllipse:  (id, x, y, width = 1, height = 1, name = "(unnamed elipse #"+id+")") => {
+    const ellipse = ObjectHelper.createRectangle(id, x, y, width, height, name);
+    ellipse.ellipse = true;
+    return ellipse;
+  },
   createPolyline: (id, x, y, width = 1, height = 1, name = "(unnamed shape #"+id+")") => {
     return {
       height,

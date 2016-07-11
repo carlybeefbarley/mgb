@@ -13,6 +13,7 @@ const EditModes = {
 
   // object tools
   drawRectangle: "drawRectangle",
+  drawEllipse: "drawEllipse",
   drawShape: "drawShape"
 };
 export default EditModes;

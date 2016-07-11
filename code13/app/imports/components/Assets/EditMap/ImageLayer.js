@@ -35,20 +35,9 @@ export default class ImageLayer extends AbstractLayer {
 
   }
   onDrop(e){
-    e.preventDefault();
-    e.stopPropagation();
-    const dataStr = e.dataTransfer.getData("text");
-    let asset, data;
-    if(dataStr){
-      data = JSON.parse(dataStr);
-    }
-    asset = data.asset;
-
-    if(asset && asset.kind != "graphic"){
-      return;
-    }
-    this.options.image = data.link;
-    this.map.fullUpdate();
+    // moved to map - as layer might not be initialized :(
+    // TODO: react kind of forces to make map (parent) as superObject - find out "correct" way
+    return this.map.onImageLayerDrop(e, this.options);
   }
   render(){
     // TODO - probably we can leave only canvas element here

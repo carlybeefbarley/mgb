@@ -364,6 +364,9 @@ export default class ObjectLayer extends AbstractLayer {
         }
       }
       // TODO: is there convenient way to separate rectangles and shapes??
+      else if(o.ellipse){
+        this.drawEllipse(o);
+      }
       else if(true){
         this.drawRectangle(o);
       }
@@ -460,6 +463,49 @@ export default class ObjectLayer extends AbstractLayer {
     }
     this.ctx.strokeRect(0.5, 0.5, w, h);
     this.ctx.restore();
+  }
+
+  drawEllipse(obj){
+    const cam = this.camera;
+    let x = (cam.x + obj.x) * cam.zoom;
+    let y = (cam.y + obj.y) * cam.zoom;
+    let w = obj.width * cam.zoom;
+    let h = obj.height * cam.zoom;
+
+    this.ctx.save();
+
+    // translate to TILED drawing pos
+    this.ctx.translate(x, y);
+    if(obj.rotation){
+      // rotate
+      this.ctx.rotate(obj.rotation * TO_DEGREES);
+    }
+    if(this.drawDebug && obj.name){
+      this.ctx.fillText(obj.name, 0, 0);
+    }
+    this._drawEllipse(this.ctx, 0.5, 0.5, w, h);
+    //this.ctx.strokeRect(0.5, 0.5, w, h);
+    this.ctx.restore();
+  }
+
+  _drawEllipse(ctx, x, y, w, h) {
+    var kappa = 0.5522848,
+      ox = (w / 2) * kappa, // control point offset horizontal
+      oy = (h / 2) * kappa, // control point offset vertical
+      xe = x + w,           // x-end
+      ye = y + h,           // y-end
+      xm = x + w / 2,       // x-middle
+      ym = y + h / 2;       // y-middle
+
+    ctx.beginPath();
+    ctx.moveTo(x, ym);
+    ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    ctx.closePath();
+    ctx.stroke();
+
   }
 
   drawPolyline(o){
@@ -588,7 +634,47 @@ edit[EditModes.drawRectangle] = function(e){
     obj.height = Math.round(obj.height / th) * th;
   }
 };
+edit[EditModes.drawEllipse] = function(e){
+  if(e.type == "mousedown"){
+    if((e.buttons & 0x2) == 0x2){
+      return;
+    }
+    obj = ObjectHelper.createEllipse(this.getMaxId(), this.pointerPosX, this.pointerPosY);
+    this.map.saveForUndo();
+    this.data.objects.push(obj);
+    this.draw();
+    return;
+  }
+  if(!obj){
+    return;
+  }
+  if(e.type == "mouseup"){
+    this.setPickedObject(obj, this.data.objects.length - 1);
+    obj = null;
+    return;
+  }
 
+  const x1 = this.pointerPosX;
+  const x2 = this.pointerPosX + this.movementX;
+  const y1 = this.pointerPosY;
+  const y2 = this.pointerPosY + this.movementY;
+
+  obj.x = Math.min(x1, x2);
+  obj.width = Math.abs(this.movementX);
+
+  obj.y = Math.min(y1, y2);
+  obj.height = Math.abs(this.movementY);
+
+  const tw = this.map.data.tilewidth;
+  const th = this.map.data.tileheight;
+
+  if(e.ctrlKey){
+    obj.x = Math.round(obj.x / tw) * tw;
+    obj.y = Math.round(obj.y / th) * th;
+    obj.width = Math.round(obj.width / tw) * tw;
+    obj.height = Math.round(obj.height / th) * th;
+  }
+};
 let endPoint, pointCache = {x: 0, y: 0};
 edit[EditModes.drawShape] = function(e){
   if(e.type == "mousedown"){

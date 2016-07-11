@@ -3,7 +3,6 @@ import MapArea from "./MapArea.js";
 import InfoTool from "./Tools/InfoTool.js";
 import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
-
 export default class EditMap extends React.Component {
   constructor(props){
     super(props);

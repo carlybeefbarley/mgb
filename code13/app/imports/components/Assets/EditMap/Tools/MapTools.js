@@ -132,22 +132,22 @@ export default class MapTools extends React.Component {
         </div>
         {/* put something on map */}
         <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == "stamp" ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, "stamp")}
+          <span className={(this.props.map.options.mode == EditModes.stamp ? "ui button " + activeClass : "ui button")}
+                  onClick={this.enableMode.bind(this, EditModes.stamp)}
                   title="Stamp Tool"
             ><i className="legal stamp icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "terrain" ? "ui button disabled" + activeClass : "ui button disabled")}
-                  onClick={this.enableMode.bind(this, "terrain")}
+          <span className={(this.props.map.options.mode == EditModes.terrain ? "ui button disabled" + activeClass : "ui button disabled")}
+                  onClick={this.enableMode.bind(this, EditModes.terrain)}
                   title="Terrain Tool"
             ><i className="world terrain icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "fill" ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, "fill")}
+          <span className={(this.props.map.options.mode == EditModes.fill ? "ui button " + activeClass : "ui button")}
+                  onClick={this.enableMode.bind(this, EditModes.fill)}
                   title="bucket fill tool"
             ><i className="theme fill icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "eraser" ? "ui button " + activeClass : "ui button")}
+          <span className={(this.props.map.options.mode == EditModes.eraser ? "ui button " + activeClass : "ui button")}
                   onClick={this.enableEraser.bind(this)}
                   title="Eraser"
             ><i className="eraser icon"></i>
@@ -155,18 +155,18 @@ export default class MapTools extends React.Component {
         </div>
         {/* select something */}
         <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == "rectanlge" ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, "rectanlge")}
+          <span className={(this.props.map.options.mode == EditModes.rectanlge ? "ui button " + activeClass : "ui button")}
+                  onClick={this.enableMode.bind(this,  EditModes.rectanlge)}
                   title="Rectangle selection"
             ><i className="square outline rectangle icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "wand" ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, "wand")}
+          <span className={(this.props.map.options.mode ==  EditModes.wand ? "ui button " + activeClass : "ui button")}
+                  onClick={this.enableMode.bind(this, EditModes.wand)}
                   title="Magic Wand selection - select same adjascent tiles"
             ><i className="wizard icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "picker" ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, "picker")}
+          <span className={(this.props.map.options.mode == EditModes.picker ? "ui button " + activeClass : "ui button")}
+                  onClick={this.enableMode.bind(this, EditModes.picker)}
                   title="Select same tiles "
             ><i className="qrcode picker icon"></i>
           </span>
@@ -189,13 +189,18 @@ export default class MapTools extends React.Component {
           </span>
         </div>
         <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == "drawRectangle" ? "ui button " + activeClass : "ui button")}
-                onClick={this.enableMode.bind(this, "drawRectangle")}
-                title="Draw Rectangle object"
+          <span className={(this.props.map.options.mode == EditModes.drawRectangle ? "ui button " + activeClass : "ui button")}
+                onClick={this.enableMode.bind(this, EditModes.drawRectangle)}
+                title="Draw Rectangle"
             ><i className="stop icon"></i>
           </span>
-          <span className={(this.props.map.options.mode == "drawShape" ? "ui button " + activeClass : "ui button")}
-                onClick={this.enableMode.bind(this, "drawShape")}
+          <span className={(this.props.map.options.mode == EditModes.drawEllipse ? "ui button " + activeClass : "ui button")}
+                onClick={this.enableMode.bind(this, EditModes.drawEllipse)}
+                title="Draw Ellipse"
+            ><i className="circle icon"></i>
+          </span>
+          <span className={(this.props.map.options.mode == EditModes.drawShape ? "ui button " + activeClass : "ui button")}
+                onClick={this.enableMode.bind(this, EditModes.drawShape)}
                 title="Draw Shape from multiple lines"
             ><i className="pencil icon"></i>
           </span>

@@ -634,7 +634,47 @@ edit[EditModes.drawRectangle] = function(e){
     obj.height = Math.round(obj.height / th) * th;
   }
 };
+edit[EditModes.drawEllipse] = function(e){
+  if(e.type == "mousedown"){
+    if((e.buttons & 0x2) == 0x2){
+      return;
+    }
+    obj = ObjectHelper.createEllipse(this.getMaxId(), this.pointerPosX, this.pointerPosY);
+    this.map.saveForUndo();
+    this.data.objects.push(obj);
+    this.draw();
+    return;
+  }
+  if(!obj){
+    return;
+  }
+  if(e.type == "mouseup"){
+    this.setPickedObject(obj, this.data.objects.length - 1);
+    obj = null;
+    return;
+  }
 
+  const x1 = this.pointerPosX;
+  const x2 = this.pointerPosX + this.movementX;
+  const y1 = this.pointerPosY;
+  const y2 = this.pointerPosY + this.movementY;
+
+  obj.x = Math.min(x1, x2);
+  obj.width = Math.abs(this.movementX);
+
+  obj.y = Math.min(y1, y2);
+  obj.height = Math.abs(this.movementY);
+
+  const tw = this.map.data.tilewidth;
+  const th = this.map.data.tileheight;
+
+  if(e.ctrlKey){
+    obj.x = Math.round(obj.x / tw) * tw;
+    obj.y = Math.round(obj.y / th) * th;
+    obj.width = Math.round(obj.width / tw) * tw;
+    obj.height = Math.round(obj.height / th) * th;
+  }
+};
 let endPoint, pointCache = {x: 0, y: 0};
 edit[EditModes.drawShape] = function(e){
   if(e.type == "mousedown"){

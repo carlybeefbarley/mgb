@@ -3,6 +3,8 @@ import MapArea from "./MapArea.js";
 import InfoTool from "./Tools/InfoTool.js";
 import { snapshotActivity } from '../../../schemas/activitySnapshots.js';
 
+// this is to avoid recompilation - replace it with  import A from B
+$.getScript("/lib/QuickTest.js");
 
 export default class EditMap extends React.Component {
   constructor(props){
@@ -10,6 +12,16 @@ export default class EditMap extends React.Component {
     this.state = {
       tools: {}
     };
+
+    this.test = new QuickTest("Quickie", (success) => {
+      if(success){
+        console.log("Test succeeded!");
+      }
+      else{
+        console.log("Test failed!");
+      }
+    });
+
   }
 
 

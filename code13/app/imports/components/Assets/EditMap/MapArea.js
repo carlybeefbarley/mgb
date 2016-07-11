@@ -937,7 +937,7 @@ export default class MapArea extends React.Component {
     }
     return (
       <div
-        ref={(...a) => {console.log("ref test", a);}}
+        //ref={(...a) => {console.log("ref test", a);}}
         className="tilemap-wrapper"
         onDragOver={this.prepareForDrag.bind(this)}
         onDrop={this.importFromDrop.bind(this)}

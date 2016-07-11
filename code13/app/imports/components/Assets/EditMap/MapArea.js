@@ -18,6 +18,8 @@ import EditModes from "./Tools/EditModes.js";
 import LayerTypes from "./Tools/LayerTypes.js";
 import Camera from "./Camera.js";
 
+import DragNDropHelper from "/imports/helpers/DragNDropHelper.js";
+
 export default class MapArea extends React.Component {
 
   constructor(props){
@@ -683,10 +685,24 @@ export default class MapArea extends React.Component {
   importFromDrop (e) {
     const layer = this.getActiveLayer();
     if(layer && layer.onDrop){
-      layer.onDrop(e);
+      // layer by it's own can handle drop
+      // e.g. image layer adds image
+      // true - layer did something with dropped stuff
+      if(layer.onDrop(e)){
+        return;
+      }
     }
-    e.stopPropagation();
-    e.preventDefault();
+    const asset = DragNDropHelper.getAssetFromEvent(e);
+    if(asset){
+      // TODO: use enums for asset types
+      if(asset.kind == "graphic"){
+        const layer_data = this.addLayer(LayerTypes.image);
+        this.onImageLayerDrop(e, layer_data);
+        //this.activateLayer(this.data.layers.length - 1);
+      }
+      return;
+    }
+
     if (!this.props.parent.props.canEdit) {
       this.props.parent.props.editDeniedReminder();
       return;
@@ -772,6 +788,72 @@ export default class MapArea extends React.Component {
     return this.getLayer(this.data.layers[this.activeLayer]);
   }
 
+  addLayer(type){
+    const map = this;
+    const lss = map.data.layers;
+    // TODO: check for duplicate names..
+    // TODO: get rid of strings
+    let ls;
+    if(type == LayerTypes.tile){
+      ls = TileHelper.genLayer(map.data.width, map.data.height, "Tile Layer " + (lss.length + 1));
+    }
+    else if(type == LayerTypes.image){
+      ls = TileHelper.genImageLayer("Image Layer " + (lss.length + 1));
+    }
+    else if(type == LayerTypes.object){
+      ls = TileHelper.genObjectLayer("Object Layer " + (lss.length + 1));
+    }
+
+    lss.push(ls);
+    map.forceUpdate();
+    return ls;
+  }
+  activateLayer(id){
+    let l = this.getActiveLayer();
+    l && l.deactivate();
+
+    this.activeLayer = id;
+
+    l = this.getActiveLayer();
+    l && l.activate();
+
+    this.update();
+  }
+  registerLayer(layer){
+    if(!this.getLayer(layer.data)){
+      this.layers.push(layer);
+    }
+  }
+  unregisterLayer(layer){
+    const index = this.layers.indexOf(layer);
+    if (index > -1) {
+      this.layers.splice(index, 1);
+    }
+  }
+  // this is moved from Image layer - as react elements actually isn't created on <Element - probably only on first mount (?)
+  // TODO: figure out rect like way not to make superobjects like this one
+  onImageLayerDrop(e, layer_data){
+    e.preventDefault();
+    e.stopPropagation();
+    const dataStr = e.dataTransfer.getData("text");
+    let asset, data;
+    if(!dataStr){
+      return false;
+    }
+    data = JSON.parse(dataStr);
+    if(!data || !data.asset){
+      return false;
+    }
+
+    asset = data.asset;
+
+    if(asset && asset.kind != "graphic"){
+      return false;
+    }
+    layer_data.image = data.link;
+    this.fullUpdate();
+    return true;
+  }
   // TODO: keep aspect ratio
   // find out correct thumbnail size
   generatePreview(){
@@ -791,39 +873,39 @@ export default class MapArea extends React.Component {
   }
 
   renderMap(){
-    const map = this.map;
-
-    if(!map || !map.layers) {
+    const data = this.data;
+    const layers = [];
+    layers.length = 0;
+    if(!data || !data.layers) {
       return (<div className="map-empty" ref="mapElement" />);
     }
     else{
-      const layers = [];
       let i=0;
-      for ( ; i < map.layers.length; i++) {
-        if(!map.layers[i].visible){
+      for ( ; i < data.layers.length; i++) {
+        if(!data.layers[i].visible){
           continue;
         }
-        if(map.layers[i].type == LayerTypes.tile) {
+        if(data.layers[i].type == LayerTypes.tile) {
           layers.push(<TileMapLayer
-            data={map.layers[i]}
+            data={data.layers[i]}
             key={i}
             anotherUsableKey={i}
             map={this}
             active={this.activeLayer == i}
             />);
         }
-        else if(map.layers[i].type == LayerTypes.image) {
+        else if(data.layers[i].type == LayerTypes.image) {
           layers.push(<ImageLayer
-            data={map.layers[i]}
+            data={data.layers[i]}
             key={i}
             map={this}
             anotherUsableKey={i}
             active={this.activeLayer == i}
             />);
         }
-        else if(map.layers[i].type == LayerTypes.object) {
+        else if(data.layers[i].type == LayerTypes.object) {
           layers.push(<ObjectLayer
-            data={map.layers[i]}
+            data={data.layers[i]}
             key={i}
             map={this}
             anotherUsableKey={i}

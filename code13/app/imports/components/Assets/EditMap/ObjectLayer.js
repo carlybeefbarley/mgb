@@ -364,6 +364,9 @@ export default class ObjectLayer extends AbstractLayer {
         }
       }
       // TODO: is there convenient way to separate rectangles and shapes??
+      else if(o.ellipse){
+        this.drawEllipse(o);
+      }
       else if(true){
         this.drawRectangle(o);
       }
@@ -460,6 +463,49 @@ export default class ObjectLayer extends AbstractLayer {
     }
     this.ctx.strokeRect(0.5, 0.5, w, h);
     this.ctx.restore();
+  }
+
+  drawEllipse(obj){
+    const cam = this.camera;
+    let x = (cam.x + obj.x) * cam.zoom;
+    let y = (cam.y + obj.y) * cam.zoom;
+    let w = obj.width * cam.zoom;
+    let h = obj.height * cam.zoom;
+
+    this.ctx.save();
+
+    // translate to TILED drawing pos
+    this.ctx.translate(x, y);
+    if(obj.rotation){
+      // rotate
+      this.ctx.rotate(obj.rotation * TO_DEGREES);
+    }
+    if(this.drawDebug && obj.name){
+      this.ctx.fillText(obj.name, 0, 0);
+    }
+    this._drawEllipse(this.ctx, 0.5, 0.5, w, h);
+    //this.ctx.strokeRect(0.5, 0.5, w, h);
+    this.ctx.restore();
+  }
+
+  _drawEllipse(ctx, x, y, w, h) {
+    var kappa = 0.5522848,
+      ox = (w / 2) * kappa, // control point offset horizontal
+      oy = (h / 2) * kappa, // control point offset vertical
+      xe = x + w,           // x-end
+      ye = y + h,           // y-end
+      xm = x + w / 2,       // x-middle
+      ym = y + h / 2;       // y-middle
+
+    ctx.beginPath();
+    ctx.moveTo(x, ym);
+    ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    ctx.closePath();
+    ctx.stroke();
+
   }
 
   drawPolyline(o){

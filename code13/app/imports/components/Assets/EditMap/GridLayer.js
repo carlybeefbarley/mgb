@@ -59,7 +59,8 @@ export default class TileMapLayer extends React.Component {
     }
 
     const activeLayer = map.layers[index];
-    if(activeLayer){
+    // why layer has no refs - just created and constructor isn't called???
+    if(activeLayer && activeLayer.refs.layer){
       //const style = getComputedStyle(activeLayer.refs.layer);
       this.refs.layer.style['transform'] = activeLayer.refs.layer.style["transform"];
       this.refs.layer.style['z-index'] = activeLayer.refs.layer.style["z-index"];

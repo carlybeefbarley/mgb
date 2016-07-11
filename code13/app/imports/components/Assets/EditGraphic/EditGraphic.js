@@ -43,6 +43,8 @@ export default class EditGraphic extends React.Component {
   constructor(props) {
     super(props)
 
+    // console.log(this.props.asset.content2);
+
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
     this.state = {
@@ -1047,8 +1049,26 @@ export default class EditGraphic extends React.Component {
   }
 
   openImportPopup(){
-    console.log('open import popup')
+    // console.log('open import popup')
     $('.ui.modal').modal('show');
+  }
+
+  importTileset(tileWidth, tileHeight, imgDataArr){ 
+    let c2 = this.props.asset.content2;
+
+    c2.width = tileWidth;
+    c2.height = tileHeight;
+    // c2.fps = 10;
+    for(let i=0; i<imgDataArr.length; i++){
+      c2.frameNames[i] = "Frame "+i;
+      c2.frameData[i] = [];
+      c2.frameData[i][0] = imgDataArr[i];
+      c2.spriteData[i] =  imgDataArr[i];
+    }
+    c2.layerParams = [{name:"Layer 1", isHidden: false, isLocked: false}];
+    c2.animations = [];
+
+    this.handleSave("Import tileset", true);
   }
 
 
@@ -1260,6 +1280,7 @@ map
 
         <GraphicImport
           EditGraphic={this}
+          importTileset={this.importTileset.bind(this)}
         />
 
 

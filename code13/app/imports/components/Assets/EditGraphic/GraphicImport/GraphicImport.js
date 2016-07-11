@@ -112,7 +112,31 @@ export default class GraphicImport extends React.Component {
 	}
 
 	finishImport(){
+		let tmpCanvas = document.createElement("canvas");
+		tmpCanvas.width = this.canvas.width;
+		tmpCanvas.height = this.canvas.height;
+		let tmpCtx = tmpCanvas.getContext('2d');
+		tmpCtx.drawImage(this.loadedImg, 0, 0);
 
+		let imgDataArr = [];
+
+		let cols = Math.floor(this.canvas.width / this.state.tileWidth);
+		let rows = Math.floor(this.canvas.height / this.state.tileHeight);
+
+		for(let row=0; row<rows; row++){
+			for(let col=0; col<cols; col++){
+				let imgData = tmpCtx.getImageData(col*this.state.tileWidth, row*this.state.tileHeight, this.state.tileWidth, this.state.tileHeight);
+				let canvas = document.createElement("canvas");
+				canvas.width = this.state.tileWidth;
+				canvas.height = this.state.tileHeight;
+				let ctx = canvas.getContext('2d');
+				ctx.putImageData(imgData, 0, 0);
+				imgDataArr.push( canvas.toDataURL('image/png') );
+			}
+		}
+
+		// console.log(imgDataArr);
+		this.props.importTileset(this.state.tileWidth, this.state.tileHeight, imgDataArr);
 	}
 
 	clearAll(){

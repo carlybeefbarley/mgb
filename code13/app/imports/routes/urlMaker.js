@@ -22,12 +22,45 @@ var _queryParamMap = {
   "_np": { qGroup: "APP", symbolName: "app_navPanel" }    // APP queryGroup queries are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
 }
 
-export default urlMaker = {
+const urlMaker = {
   
+  disableQueryParamPrefix: "-",    // Character used for disabling effects of a query param. Use by _np, _fp etc
+
+  isQueryEnabled(queryValue)
+  {
+    return !!(queryValue && !queryValue.startsWith(urlMaker.disableQueryParamPrefix))
+  },
+
+  enableQuery(queryValue, defaultValue)
+  {
+    // Empty -> Enabled(default)
+    if (!queryValue)
+      return defaultValue
+
+    // Disabled -> Enabled
+    if (!urlMaker.isQueryEnabled(queryValue))
+      return queryValue.slice(urlMaker.disableQueryParamPrefix.length)
+
+    // Enabled -> (same)
+    return queryValue
+  },
+
+  disableQuery(queryValue, defaultValue)
+  {
+    // Enabled -> Disabled (ie. disableQueryParamPrefix+queryValue or null if it is the default)
+    if (urlMaker.isQueryEnabled(queryValue))
+      return queryValue === defaultValue ? null : urlMaker.disableQueryParamPrefix + queryValue
+
+    // Empty -> same
+    // Disabled -> same
+    return queryValue
+  },
+
   setKnownRoutes(router) 
   {
     _appRouter = router
   },
+
   
   /** Returns only the query objects with keys that match this queryGroup
    * @param query   An Object of querykey: queryvalue pairs
@@ -75,3 +108,5 @@ export default urlMaker = {
   }  
   
 }
+
+export default urlMaker

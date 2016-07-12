@@ -1,13 +1,16 @@
 import React, { PropTypes } from 'react';
-import reactMixin from 'react-mixin';
-import { Projects } from '../../schemas';
-import { projectMakeSelector } from '../../schemas/projects';
-
-import ProjectCard from '../../components/Projects/ProjectCard';
-import Spinner from '../../components/Nav/Spinner';
 import Helmet from 'react-helmet';
+import reactMixin from 'react-mixin';
+import Spinner from '/imports/components/Nav/Spinner';
 
-import { logActivity } from '../../schemas/activity';
+import { Projects } from '/imports/schemas';
+import { projectMakeSelector } from '/imports/schemas/projects';
+import { logActivity } from '/imports/schemas/activity';
+
+import ProjectCard from '/imports/components/Projects/ProjectCard';
+
+import CreateProjectLinkButton from '/imports/components/Projects/NewProject/CreateProjectLinkButton';
+
 
 // NOTE: UI mockups for this page are at https://v2.mygamebuilder.com/assetEdit/Ev2AWBDywffWTtJRc# 
 
@@ -17,7 +20,7 @@ export default UserProjectList = React.createClass({
   propTypes: {
     params: PropTypes.object,             // params.id is the USER id  OR  params.username is the username
     user: PropTypes.object,               // This is the related user record. We list the projects for this user
-    currUser: PropTypes.object
+    currUser: PropTypes.object            // Currently Logged in user. Can be null
   },
   
   
@@ -62,7 +65,7 @@ export default UserProjectList = React.createClass({
         />        
 
         <h2 className="ui header">Projects owned by {ownerName}</h2>          
-        { canEd && this.renderCreateProject() } 
+        <CreateProjectLinkButton currUser={this.props.currUser} />
         { this.renderProjectsAsCards(projects, true) }
 
         <div className="ui divider"></div>
@@ -97,41 +100,7 @@ export default UserProjectList = React.createClass({
         </div>
 
     return count > 0 ? retval : Empty
-  },
-
-  
-  renderCreateProject()
-  {
-    return  <div className="ui basic segment">
-              <div className="ui action input">
-                <div className="ui green button" onClick={this.handleNewProject}>Create New Project</div>
-                <input type="text" ref="newProjectName" placeholder="New Project Name" />
-              </div>
-            </div>
-  },
-    
-    
-  handleNewProject: function()
-  {
-    let pName = this.refs.newProjectName.value
-    if (!pName || pName.length < 1)
-    {
-      console.log("TODO: Project name too short")
-      return
-    }
-    let newProj = {
-      name: pName,
-      description: "" 
-    }
-
-    Meteor.call('Projects.create', newProj, (error, result) => {
-      if (error) {
-         console.log("Could not create project")
-      } else {
-        logActivity("project.create",  `Create project ${pName}`);
-        this.refs.newProjectName.value = "";
-      }
-    })
   }
+
   
 })

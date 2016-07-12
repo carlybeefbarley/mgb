@@ -24,7 +24,7 @@ export default npUser = React.createClass({
   },
 
   render: function () {    
-    const {currUser} = this.props;
+    const {currUser} = this.props
 
     return (
       <div className="ui vertical inverted fluid menu">
@@ -37,16 +37,31 @@ export default npUser = React.createClass({
               </h3>
               <img className="ui centered small image" src={currUser.profile.avatar} />
             </div>
+
             <QLink to={`/u/${this.props.currUser.profile.name}`} className="item">
               <i className="user icon" /> My Profile
             </QLink>
+
             <QLink to={`/u/${this.props.currUser.profile.name}/assets`} className="item">
               <i className="pencil icon" /> My Assets
             </QLink>
+            <div className="menu">
+              <QLink to={`/assets/create`} className="item" title="Create New Asset">
+                <i className="green pencil icon" /> Create New Asset
+              </QLink>
+            </div>
+
             <QLink to={`/u/${this.props.currUser.profile.name}/projects`} className="item">
               <i className="sitemap icon" /> My Projects
             </QLink>
+            <div className="menu">
+              <QLink to={`/u/${this.props.currUser.profile.name}/projects/create`} className="item" title="Create New Project">
+                <i className="green sitemap icon" /> Create New Project
+              </QLink>
+            </div>
+
             <div className="item"></div>
+
             <a href="#" onClick={this.logout} className="ui item">
               <i className="sign out icon" /> Logout
             </a>

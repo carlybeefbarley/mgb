@@ -59,6 +59,9 @@ Meteor.startup(function () {
         <Route path="user/:id/projects" component={Projects.UserProjectList} name="User's Projects" />
         <Route path="u/:username/projects" component={Projects.UserProjectList} name="User's Projects" />
 
+        <Route path="user/:id/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
+        <Route path="u/:username/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
+
         <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
         <Route path="u/:username/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
 

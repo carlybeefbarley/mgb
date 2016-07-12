@@ -21,8 +21,8 @@ export default AssetEdit = React.createClass({
     asset: PropTypes.object,
     canEdit: PropTypes.bool.isRequired,
     currUser: PropTypes.object,
-    handleContentChange: PropTypes.function,
-    editDeniedReminder: PropTypes.function,
+    handleContentChange: PropTypes.func,
+    editDeniedReminder: PropTypes.func,
     activitySnapshots: PropTypes.array               // can be null whilst loading
   },  
 

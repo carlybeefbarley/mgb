@@ -23,21 +23,22 @@ export default npHome = React.createClass({
             Home
           </h3>
         </div>      
-        <div className="item">
-          <div className="header">My Game Builder v2</div>
-          <div className="menu">
-            <QLink to="/" className="item">Home Page</QLink>
-            <QLink to="/whatsnew" className="item">
-              What's New
-              <WhatsNew currUser={currUser} />
-            </QLink>
-          </div>
+  
+        <div className="header item">My Game Builder v2</div>
+        <div className="menu">
+          <QLink to="/" className="item">Home Page</QLink>
+          <QLink to="/whatsnew" className="item">
+            What's New
+            <WhatsNew currUser={currUser} />
+          </QLink>
         </div>
-        <div className="item">
-          <div className="header">Common Tasks</div>
-          <div className="menu">
-            <QLink to="/assets/create" className="item">Create New Asset</QLink>
-          </div>
+  
+        <div className="header item">Common Tasks</div>
+        <div className="menu">
+          <QLink to="/assets/create" className="item">
+            <i className="green pen icon" />
+            Create New Asset
+          </QLink>
         </div>
       </div>
         );

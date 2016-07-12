@@ -37,7 +37,7 @@ export default UserAssetListRoute = React.createClass({
   propTypes: {
     params: PropTypes.object,       // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object,         // Maybe absent if route is /assets
-    currUser: PropTypes.object,     // Currently Logged in user
+    currUser: PropTypes.object,     // Currently Logged in user. Can be null
     ownsProfile: PropTypes.bool,
     location: PropTypes.object      // We get this from react-router
   },

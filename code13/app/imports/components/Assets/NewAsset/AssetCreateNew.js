@@ -4,10 +4,10 @@ import AssetCreateSelectKind from './AssetCreateSelectKind';
 
 
 export default AssetCreateNew = React.createClass({
-  propTypes:{
-    handleCreateAssetClick: React.PropTypes.func.isRequired,        // Callback function to create the asset, and is expected to navigate to the new page. Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
-    placeholderName:        React.PropTypes.string,
-    currUser:               React.PropTypes.object                  // currently logged in user (if any)
+  propTypes: {
+    placeholderName:        PropTypes.string.isRequired,      // Note that a default is provided below 
+    handleCreateAssetClick: PropTypes.func.isRequired,        // Callback function to create the asset, and is expected to navigate to the new page. Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
+    currUser:               PropTypes.object                  // currently logged in user (if any)
   },
 
 

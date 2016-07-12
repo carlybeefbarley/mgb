@@ -34,12 +34,18 @@ export default npProjects = React.createClass({
           <div className="menu">
             { this.renderProjectMenuItems(currUserProjects, true) }
           </div>
+
+          <QLink to={`/u/${this.props.currUser.profile.name}/projects/create`} className="item" title="Create New Project">
+            <i className="green plus icon" /> Create New Project
+          </QLink>
+
           <QLink to={`/u/${this.props.currUser.profile.name}/projects`} className="header item" title="Projects you are a member of">
             <i className="sitemap icon" /> Project Memberships
           </QLink>
           <div className="menu">
             { this.renderProjectMenuItems(currUserProjects, false) }
           </div>
+
         </div>
       </div>
     );

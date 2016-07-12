@@ -778,6 +778,7 @@ edit[EditModes.rectangle] = function(e){
   if(e.type == "mousedown"){
     this.isDirty = true;
     this.mouseDown = true;
+    this.map.saveForUndo();
     if(this.pickObject(e) > -1) {
       this.startPosX = this.pickedObject.x;
       this.startPosY = this.pickedObject.y;

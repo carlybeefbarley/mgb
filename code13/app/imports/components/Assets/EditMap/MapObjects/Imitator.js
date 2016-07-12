@@ -1,6 +1,8 @@
 "use strict";
 // This object imitates rectangle from shapes
 // TODO: add multi object support - we could use this for selector
+import ObjectHelper from "../ObjectHelper.js";
+
 export default class Imitator{
   constructor(obj){
     this.update(obj);

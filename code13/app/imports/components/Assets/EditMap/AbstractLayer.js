@@ -127,7 +127,7 @@ export default class AbstractLayer extends React.Component {
   }
   _onKeyUp(e){
     if(this.isActive()){
-      this.onKeyUp(e);
+      this.onKeyUp && this.onKeyUp(e);
     }
   }
 

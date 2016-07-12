@@ -71,6 +71,57 @@ export default class HandleCollection {
     this.update(x, y, width, height);
   }
 
+  // make box compatible
+  get x(){
+    let min = Infinity;
+    for(let i=0; i<CENTER; i++){
+      if(this.handles[i].x < min){
+        min = this.handles[i].x;
+      }
+    }
+    return min;
+  }
+  get y(){
+    let min = Infinity;
+    for(let i=0; i<CENTER; i++){
+      if(this.handles[i].y < min){
+        min = this.handles[i].y;
+      }
+    }
+    return min;
+  }
+
+  get width(){
+    let max = -Infinity;
+    let min = Infinity;
+    for(let i=0; i<CENTER; i++){
+      if(this.handles[i].x > max){
+        max = this.handles[i].x;
+      }
+      if(this.handles[i].x < min){
+        min = this.handles[i].x;
+      }
+    }
+    return max - min;
+  }
+
+  get height(){
+    let max = -Infinity;
+    let min = Infinity;
+    for(let i=0; i<CENTER; i++){
+      if(this.handles[i].y > max){
+        max = this.handles[i].y;
+      }
+      if(this.handles[i].y < min){
+        min = this.handles[i].y;
+      }
+    }
+    return max - min;
+  }
+
+  debug(){
+    console.log(this.x, this.y, this.width, this.height);
+  }
   lock(){
     this.isLocked = true;
   }
@@ -132,11 +183,12 @@ export default class HandleCollection {
       }
       if(i == PIVOT){
         const cst = ctx.strokeStyle;
-        ctx.strokeStyle = "rgb(0,255,0)";
+        ctx.strokeStyle = "rgb(0, 255, 0)";
         this.handles[i].draw(ctx, camera, this.handles[i] == this.activeHandle);
         ctx.strokeStyle = cst;
         continue;
       }
+
       this.handles[i].draw(ctx, camera, this.handles[i] == this.activeHandle);
     }
   }

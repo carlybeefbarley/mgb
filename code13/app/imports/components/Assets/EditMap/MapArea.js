@@ -564,6 +564,7 @@ export default class MapArea extends React.Component {
 
   }
   adjustPreview(){
+    let z = 0;
     this.data.layers.forEach((lay, i) => {
       const l = this.getLayer(lay);
       if(!l){
@@ -579,7 +580,7 @@ export default class MapArea extends React.Component {
 
       l.refs.layer.style.transform =  "perspective(8000px) rotateX(" + this.preview.x + "deg) "+
         "rotateY(" + this.preview.y + "deg) rotateZ(0deg) "+
-        "translateZ(-" +( ((this.layers.length - i)*50) + 200) + "px)";
+        "translateZ(-" +( ((this.layers.length - z)*50) + 200) + "px)";
       var ay = Math.abs(tr.y);
       var ax = Math.abs(tr.x);
 
@@ -592,7 +593,7 @@ export default class MapArea extends React.Component {
       else {
         l.refs.layer.style.zIndex = i;
       }
-
+      z++;
     });
 
     this.refs.grid.alignToActiveLayer();

@@ -12,6 +12,12 @@ const ObjectHelper = {
       box1.y > box2.y + box2.height);
   },
 
+  rotAABBvsAABB: (box1, angle1, box2, angle2) => {
+    const a = {x: 0, y: 0, width: 0, height: 0};
+    const b = {x: 0, y: 0, width: 0, height: 0};
+
+  },
+
   // camera has inverse x/y
   CameravsAABB: (cam, box) => {
     return  !(

@@ -42,7 +42,7 @@ export default class ObjectLayer extends AbstractLayer {
       x: 0, y: 0, width: 0, height: 1
     };
 
-    this.selection = new MultiImitator();
+    this.selection = new MultiImitator(this);
   }
 
   //TODO: change this to abstract box.. and on change - change all elements inside this box
@@ -80,12 +80,14 @@ export default class ObjectLayer extends AbstractLayer {
     const x = e.offsetX / this.camera.zoom  - this.camera.x;
     const y = e.offsetY / this.camera.zoom - this.camera.y;
 
+    let ret = -1;
     // reverse order last drawn - first pick
     for(let i=this.data.objects.length-1; i>-1; i--){
       obj = this.data.objects[i];
       if(obj.gid){
         if(ObjectHelper.PointvsTile(obj, x, y)){
-          return i;
+          ret = i;
+          break;
         }
       }
       else if(obj.polyline || obj.polygon){
@@ -93,18 +95,22 @@ export default class ObjectLayer extends AbstractLayer {
         const imit = this.shapeBoxes[i];
 
         if(ObjectHelper.PointvsAABB(imit, x, y, false, imit.orig.x, imit.orig.y)){
-          return i;
+          ret = i;
+          break;
         }
       }
       else{
         if(ObjectHelper.PointvsAABB(obj, x, y)){
-          return i;
+          ret = i;
+          break;
         }
       }
     }
-    return null;
+    this._pickedObject = ret;
+    return ret;
   }
   selectObjects(box){
+    this.selection.clear();
     for(let i=0; i<this.data.objects.length; i++) {
       let o = this.data.objects[i];
       if (o.polygon || o.polyline) {
@@ -113,13 +119,13 @@ export default class ObjectLayer extends AbstractLayer {
         }
         o = this.shapeBoxes[i];
       }
-      if(!ObjectHelper.AABBvsAABB(box, o)){
+      this.updateHandles(o);
+      if(!ObjectHelper.AABBvsAABB(box, this.handles)){
         continue;
       }
       this.selection.add(o);
     }
   }
-
 
   // TODO: clean up handle Event functions
   /* Events */
@@ -127,13 +133,7 @@ export default class ObjectLayer extends AbstractLayer {
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
     super.handleMouseMove(e);
 
-
     this.isDirty = true;
-
-    if(edit[this.map.options.mode]){
-      edit[this.map.options.mode].call(this, e);
-      return;
-    }
 
     if(!this.mouseDown){
       this.handles.setActive(
@@ -143,74 +143,15 @@ export default class ObjectLayer extends AbstractLayer {
       return;
     }
 
-    let dx = (e.movementX / this.camera.zoom);
-    let dy = (e.movementY / this.camera.zoom);
-
-    const nx = this.startPosX + this.movementX;
-    const ny = this.startPosY + this.movementY;
-
-    if(this.handles.activeHandle){
-      this.handles.moveActiveHandle(dx, dy, this.clonedObject);
-      // TODO: create some sort of replicator object who can convert global changes to local e.g. basic rectangle to shape
-      let selected  = this.pickedObject;
-      if(e.ctrlKey){
-        if(this.handles.activeHandleType != 9){
-          selected.x = Math.round(this.clonedObject.x / this.map.data.tilewidth) * this.map.data.tilewidth;
-          selected.y = Math.round(this.clonedObject.y / this.map.data.tileheight) * this.map.data.tileheight;
-
-          selected.width = Math.round(this.clonedObject.width / this.map.data.tilewidth) * this.map.data.tilewidth;
-          selected.height = Math.round(this.clonedObject.height / this.map.data.tileheight) * this.map.data.tileheight;
-        }
-        else{
-          // TODO: move to config rotation step?
-          const newRotation = Math.round(this.clonedObject.rotation / 15) * 15;
-          this.rotateObject(newRotation, selected);
-        }
-      }
-      else{
-        selected.x = this.clonedObject.x;
-        selected.y = this.clonedObject.y;
-        selected.width = this.clonedObject.width;
-        selected.height = this.clonedObject.height;
-        selected.rotation = this.clonedObject.rotation;
-      }
-      return;
+    if(edit[this.map.options.mode]){
+      edit[this.map.options.mode].call(this, e);
     }
-    // else move object
-
-    if(this.pickedObject){
-
-      const tw = this.map.data.tilewidth;
-      const th = this.map.data.tileheight;
-
-      this.pickedObject.x = nx; // + this.camera.movementX;
-      this.pickedObject.y = ny; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
-
-      if(e.ctrlKey){
-        dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0;
-        dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0;
-
-        this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw + dx;
-        this.pickedObject.y = Math.round(this.pickedObject.y / th) * th + dy;
-      }
-    }
-
   }
   handleMouseDown(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
     // TODO: fix - move camera and object at the same time
 
     super.handleMouseDown(e);
-
-    if(edit[this.map.options.mode]){
-      edit[this.map.options.mode].call(this, e);
-      return;
-    }
-
-    if(e.button !== 0){
-      this.mouseDown = false;
-      return;
-    }
     const prevHandle = this.handles.activeHandle;
     this.handles.setActive(
       this.pointerPosX,
@@ -232,18 +173,20 @@ export default class ObjectLayer extends AbstractLayer {
       // we will move handle on next move
       return;
     }
+    this.handles.unlock();
+
+
+    if(edit[this.map.options.mode]){
+      edit[this.map.options.mode].call(this, e);
+      return;
+    }
+
+    if(e.button !== 0){
+      this.mouseDown = false;
+      return;
+    }
 
     this.map.saveForUndo();
-
-
-    if(this.map.options.mode == EditModes.rectangle){
-      this._pickedObject = this.pickObject(e);
-      if(this.pickedObject) {
-        this.startPosX = this.pickedObject.x;
-        this.startPosY = this.pickedObject.y;
-      }
-      this.isDirty = true;
-    }
   }
   handleMouseUp(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
@@ -262,7 +205,7 @@ export default class ObjectLayer extends AbstractLayer {
 
 
     // this puts new tile Object on the map
-    if(this.map.collection.length && this.map.options.mode == EditModes.stamp){
+    /*if(this.map.collection.length && this.map.options.mode == EditModes.stamp){
       const tile = this.map.collection[0];
       const pal = this.map.palette[tile.gid];
 
@@ -285,7 +228,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.map.saveForUndo();
       this.data.objects.push(tileObject);
       this.isDirty = true;
-    }
+    }*/
   }
   onMouseLeave(){
     this.isDirty = true;
@@ -307,6 +250,42 @@ export default class ObjectLayer extends AbstractLayer {
   }
   /* End of Events */
 
+  updateHandles(obj){
+    // tile
+    if(obj.gid){
+      this.handles.update(
+        obj.x,
+        obj.y - obj.height,
+        obj.width,
+        obj.height,
+        obj.rotation,
+        obj.x,
+        obj.y
+      );
+    }
+    else if(obj instanceof Imitator){
+      this.handles.update(
+        obj.x,
+        obj.y,
+        obj.width,
+        obj.height,
+        obj.rotation,
+        obj.orig.x,
+        obj.orig.y
+      );
+    }
+    else if(true){
+      this.handles.update(
+        obj.x,
+        obj.y,
+        obj.width,
+        obj.height,
+        obj.rotation,
+        obj.x,
+        obj.y
+      );
+    }
+  }
   clearSelection(){
     this.handles.clearActive();
     this._pickedObject = -1;
@@ -552,10 +531,10 @@ export default class ObjectLayer extends AbstractLayer {
     const ctx = this.map.refs.grid.ctx;
     if(this.selectionBox.width > 0 && this.selectionBox.height > 0) {
       ctx.strokeRect(
-        this.selectionBox.x + cam.x,
-        this.selectionBox.y + cam.y,
-        this.selectionBox.width,
-        this.selectionBox.height
+        (this.selectionBox.x + cam.x) * cam.zoom,
+        (this.selectionBox.y + cam.y) * cam.zoom,
+        this.selectionBox.width * cam.zoom,
+        this.selectionBox.height * cam.zoom
       );
     }
     //this.selectionBox
@@ -565,42 +544,8 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     if(obj){
-      // tile
-      if(obj.gid){
-        this.handles.update(
-          obj.x,
-          obj.y - obj.height,
-          obj.width,
-          obj.height,
-          obj.rotation,
-          obj.x,
-          obj.y
-        );
-      }
-      else if(obj instanceof Imitator){
-        this.handles.update(
-          obj.x,
-          obj.y,
-          obj.width,
-          obj.height,
-          obj.rotation,
-          obj.orig.x,
-          obj.orig.y
-        );
-      }
-      else if(true){
-        this.handles.update(
-          obj.x,
-          obj.y,
-          obj.width,
-          obj.height,
-          obj.rotation,
-          obj.x,
-          obj.y
-        );
-      }
+      this.updateHandles(obj);
       // draw on grid which is always on the top
-
 
       this.handles.draw(ctx, cam);
     }
@@ -608,8 +553,9 @@ export default class ObjectLayer extends AbstractLayer {
   /* END of DRAWING methods */
 }
 
+// TODO: move these to separate file
+let obj, endPoint, pointCache = {x: 0, y: 0};
 const edit = {};
-let obj;
 edit[EditModes.drawRectangle] = function(e){
   if(e.type == "mousedown"){
     if((e.buttons & 0x2) == 0x2){
@@ -692,7 +638,6 @@ edit[EditModes.drawEllipse] = function(e){
     obj.height = Math.round(obj.height / th) * th;
   }
 };
-let endPoint, pointCache = {x: 0, y: 0};
 edit[EditModes.drawShape] = function(e){
   if(e.type == "mousedown"){
     if(!obj){
@@ -752,10 +697,7 @@ edit[EditModes.drawShape] = function(e){
     endPoint.x = Math.round(pointCache.x / tw) * tw;
     endPoint.y = Math.round(pointCache.y / th) * th;
   }
-
-
 };
-
 edit[EditModes.stamp] = function(e){
   if(!this.map.collection.length || e.target != this.refs.canvas){
     return;
@@ -790,29 +732,106 @@ edit[EditModes.stamp] = function(e){
   this.highlightedObject.y = y;
 };
 
-
+// TODO: rework this and clean up
 edit[EditModes.rectangle] = function(e){
-  if(e.type == "mousedown"){
-    if((e.buttons & 0x2) == 0x2){
+  if((e.buttons & 0x2) == 0x2){
+    return;
+  }
+
+  let dx = (e.movementX / this.camera.zoom);
+  let dy = (e.movementY / this.camera.zoom);
+
+  const nx = this.startPosX + this.movementX;
+  const ny = this.startPosY + this.movementY;
+
+  if(this.mouseDown){
+
+    if(this.handles.activeHandle){
+      this.handles.moveActiveHandle(dx, dy, this.clonedObject);
+      // TODO: create some sort of replicator object who can convert global changes to local e.g. basic rectangle to shape
+      let selected  = this.pickedObject ? this.pickedObject : this.selection;
+      if(e.ctrlKey){
+        if(this.handles.activeHandleType != 9){
+          selected.x = Math.round(this.clonedObject.x / this.map.data.tilewidth) * this.map.data.tilewidth;
+          selected.y = Math.round(this.clonedObject.y / this.map.data.tileheight) * this.map.data.tileheight;
+
+          selected.width = Math.round(this.clonedObject.width / this.map.data.tilewidth) * this.map.data.tilewidth;
+          selected.height = Math.round(this.clonedObject.height / this.map.data.tileheight) * this.map.data.tileheight;
+        }
+        else{
+          // TODO: move to config rotation step?
+          const newRotation = Math.round(this.clonedObject.rotation / 15) * 15;
+          this.rotateObject(newRotation, selected);
+        }
+      }
+      else{
+        selected.x = this.clonedObject.x;
+        selected.y = this.clonedObject.y;
+        selected.width = this.clonedObject.width;
+        selected.height = this.clonedObject.height;
+        selected.rotation = this.clonedObject.rotation;
+      }
       return;
     }
+  }
+
+  if(e.type == "mousedown"){
+    this.isDirty = true;
+    this.mouseDown = true;
+    if(this.pickObject(e) > -1) {
+      this.startPosX = this.pickedObject.x;
+      this.startPosY = this.pickedObject.y;
+      return;
+    }
+
     this.selection.clear();
     obj = this.selectionBox;
     obj.x = this.pointerPosX;
     obj.y = this.pointerPosY;
     return;
   }
+
+  if(this.pickedObject && this.mouseDown){
+
+    this.pickedObject.x = nx;
+    this.pickedObject.y = ny;
+
+    if(e.ctrlKey) {
+      const tw = this.map.data.tilewidth;
+      const th = this.map.data.tileheight;
+      dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0;
+      dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0;
+
+      this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw + dx;
+      this.pickedObject.y = Math.round(this.pickedObject.y / th) * th + dy;
+    }
+    return;
+  }
+
+
+
+  if(!obj){
+    return;
+  }
+
   if(e.type == "mouseup"){
+    /*
     this.selectObjects(obj);
+    if(this.selection.length == 1){
+      this._pickedObject = this.data.objects.indexOf(this.selection.first());
+    }
+    */
+
     // invalidate
     this.selectionBox.width = 0;
+    this.startPosX = 0;
+    this.startPosY = 0;
+
     obj = null;
     this.draw();
     return;
   }
-  if(!obj){
-    return;
-  }
+
   const x1 = this.pointerPosX;
   const x2 = this.pointerPosX + this.movementX;
   const y1 = this.pointerPosY;
@@ -820,7 +839,8 @@ edit[EditModes.rectangle] = function(e){
 
   obj.x = Math.min(x1, x2);
   obj.width = Math.abs(this.movementX);
-
   obj.y = Math.min(y1, y2);
   obj.height = Math.abs(this.movementY);
+
+  this.selectObjects(obj);
 };

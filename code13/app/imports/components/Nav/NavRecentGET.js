@@ -119,7 +119,7 @@ export default NavRecentGET = React.createClass({
   render: function() 
   {
     return (
-        <div className="ui fluid inverted small vertical menu">
+        <div className="ui fluid inverted  vertical menu">
           <div className="item">
             <h3 className="ui inverted header" style={{textAlign: "center"}}>
               <i className="history icon" />

@@ -1058,6 +1058,9 @@ export default class EditGraphic extends React.Component {
 
     c2.width = tileWidth;
     c2.height = tileHeight;
+    c2.frameNames = [];
+    c2.frameData = [];
+    c2.spriteData = [];
     // c2.fps = 10;
     for(let i=0; i<imgDataArr.length; i++){
       c2.frameNames[i] = "Frame "+i;

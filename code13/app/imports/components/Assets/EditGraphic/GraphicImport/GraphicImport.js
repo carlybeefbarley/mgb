@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import gifParser from  './gifParser.js';
+import GifParser from  './GifParser.js';
 
 import sty from  './graphicImport.css';
 
@@ -56,7 +56,15 @@ export default class GraphicImport extends React.Component {
 	        let tmpImg = new Image();
 	        tmpImg.onload = function(e){ // image is uploaded to browser
 	        	self.setState({ status: "uploaded" });
-	        	self.onImageLoaded(tmpImg);
+	        	// GIF picture
+				if(tmpImg.src.startsWith("data:image/gif;base64,")){
+					self.gifLoaded(tmpImg);
+				} 
+				// SpriteSheet
+				else {
+					self.spriteSheetLoaded(tmpImg);	
+				}
+	        	
 	        }
 	        tmpImg.src = theUrl;	        
 	      }
@@ -64,27 +72,47 @@ export default class GraphicImport extends React.Component {
 	    }
 	}
 
-	onImageLoaded(img){
-		if(img.src.startsWith("data:image/png;base64,")){
-			console.log("Loaded png image");
-		} 
-		else if(img.src.startsWith("data:image/gif;base64,")){
-			console.log("Loaded gif image");
-			let sup1 = new gifParser({ gif: img } );
-			sup1.load(function(){
-				console.log('gif loaded');
-				console.log(sup1.getFrames());
-			});
-		} else {
-			console.log("Loaded file");
-		}
+	gifLoaded(img){
+		// console.log(img);
+		let self = this;
+		let parser = new GifParser({ gif: img } );
+		parser.load(function(){
+			let frames = parser.getFrames();
+			let cols = Math.ceil(Math.sqrt(frames.length));
+			let rows = Math.ceil(frames.length/cols);
+			self.setState({ tileWidth: img.width, tileHeight: img.height });
+			self.setState({ imgWidth: cols * img.width, imgHeight: rows * img.height  })
+			self.canvas.width = cols * img.width;
+			self.canvas.height = rows * img.height;
+
+			for(let row=0; row<rows; row++){
+				for(let col=0; col<cols; col++){
+					let i = row*cols + col;
+					if(frames[i]){
+						self.ctx.putImageData(frames[i].data, col*img.width, row*img.height);
+					}
+				}
+			}
+
+			let newImage = new Image();
+			newImage.onload = function(e){
+				self.loadedImg = newImage;
+
+				self.drawImage();
+				self.drawGrid();	
+			}
+			newImage.src = self.canvas.toDataURL('image/png');			
+		});	
+	}
+
+	spriteSheetLoaded(img){
 		this.loadedImg = img;
-		this.setState({ imgWidth: img.width, imgHeight: img.height});
+		this.setState({ imgWidth: img.width, imgHeight: img.height });
 		this.canvas.width = img.width;
 		this.canvas.height = img.height;
 
-		if(this.state.tileWidth > img.width) this.state.tileWidth = img.width;
-		if(this.state.tileHeight < img.height) this.state.tileHeight = img.height;
+		if(this.state.tileWidth > img.width) this.setState({ tileWidth: img.width });
+		if(this.state.tileHeight > img.height) this.setState({ tileHeight: img.height });
 
 		this.drawImage();
 		this.drawGrid();

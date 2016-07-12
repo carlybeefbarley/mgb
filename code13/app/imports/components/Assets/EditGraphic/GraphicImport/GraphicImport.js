@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
+import gifParser from  './gifParser.js';
+
 import sty from  './graphicImport.css';
 
 export default class GraphicImport extends React.Component {
@@ -63,10 +65,26 @@ export default class GraphicImport extends React.Component {
 	}
 
 	onImageLoaded(img){
+		if(img.src.startsWith("data:image/png;base64,")){
+			console.log("Loaded png image");
+		} 
+		else if(img.src.startsWith("data:image/gif;base64,")){
+			console.log("Loaded gif image");
+			let sup1 = new gifParser({ gif: img } );
+			sup1.load(function(){
+				console.log('gif loaded');
+				console.log(sup1.getFrames());
+			});
+		} else {
+			console.log("Loaded file");
+		}
 		this.loadedImg = img;
 		this.setState({ imgWidth: img.width, imgHeight: img.height});
 		this.canvas.width = img.width;
 		this.canvas.height = img.height;
+
+		if(this.state.tileWidth > img.width) this.state.tileWidth = img.width;
+		if(this.state.tileHeight < img.height) this.state.tileHeight = img.height;
 
 		this.drawImage();
 		this.drawGrid();

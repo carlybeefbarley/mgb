@@ -88,13 +88,11 @@ export default NavRecentGET = React.createClass({
                         `/u/${a.toOwnerName}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016
                         `/assetEdit/${a.toAssetId}`                     // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
         const item = ( 
-          <div className="ui item hazRecentPopup"  key={a._id}  data-html={dataHtml} data-position="right center" >
+          <QLink to={linkTo} className="ui item hazRecentPopup"  key={a._id}  data-html={dataHtml} data-position="right center" >
             <i className={assetKindIconClassName}></i>
             <i className={assetActivityIconClass}></i>
-            <QLink to={linkTo}>
-              {assetKindCap} '{a.toAssetName || "<unnamed>"}'
-            </QLink>
-          </div> 
+            {assetKindCap} '{a.toAssetName || "<unnamed>"}'
+          </QLink>
         )
         if (moment(a.timestamp).add(24, 'hours').isBefore())
           retval.older.push(item)
@@ -106,18 +104,15 @@ export default NavRecentGET = React.createClass({
     })
      
 
-    return [<div className="item" key="_justNow">
-              <div className="header">Just Now</div>
-              <div className="menu">{retval.justNow}</div>
-            </div>,
-            <div className="item" key="_today">
-              <div className="header">Today</div>
-              <div className="menu">{retval.today}</div>
-            </div>,
-            <div className="item" key="_older">
-              <div className="header">Older</div>
-              <div className="menu">{retval.older}</div>
-            </div>]
+    return [<div className="header item" key="_justNow">Just Now</div>,
+            <div className="menu">{retval.justNow}</div>,
+
+            <div className="header item" key="_today">Today</div>,
+            <div className="menu">{retval.today}</div>,
+
+            <div className="header item" key="_older">Older</div>,
+            <div className="menu">{retval.older}</div>
+            ]
   },
   
   

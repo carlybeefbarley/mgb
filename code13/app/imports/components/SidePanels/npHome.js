@@ -36,7 +36,7 @@ export default npHome = React.createClass({
         <div className="header item">Common Tasks</div>
         <div className="menu">
           <QLink to="/assets/create" className="item">
-            <i className="green pen icon" />
+            <i className="green pencil icon" />
             Create New Asset
           </QLink>
         </div>

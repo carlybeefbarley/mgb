@@ -9,6 +9,7 @@ import EditModes from "./Tools/EditModes.js";
 
 import HandleCollection from "./MapObjects/HandleCollection.js";
 import Imitator from "./MapObjects/Imitator.js";
+import MultiImitator from "./MapObjects/MultiImitator.js";
 
 // TODO move these to some good place.. probably mapArea???
 const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
@@ -26,16 +27,22 @@ export default class ObjectLayer extends AbstractLayer {
       window.requestAnimationFrame(this._raf);
     };
     this._raf();
-    this.selRect = {
-      x: 0, y: 0, width: 0, height: 0
-    };
     this.drawDebug = false;
-    this._pickedObject = null;
-    // as noun :)
+    this._pickedObject = -1;
+
     this.handles = new HandleCollection(0,0,0,0);
 
     // store calculated shapeBoxes here
     this.shapeBoxes = {};
+
+    // reference to highlighted tile object
+    this.highlightedObject = null;
+
+    this.selectionBox = {
+      x: 0, y: 0, width: 0, height: 1
+    };
+
+    this.selection = new MultiImitator();
   }
 
   //TODO: change this to abstract box.. and on change - change all elements inside this box
@@ -46,9 +53,10 @@ export default class ObjectLayer extends AbstractLayer {
     return this.data.objects[this._pickedObject];
   }
 
+  // this gets called when layer is activated
   activate(){
     if(!this.activeMode) {
-      this.map.setMode(EditModes.rectanlge);
+      this.map.setMode(EditModes.rectangle);
     }
     super.activate();
   }
@@ -67,7 +75,6 @@ export default class ObjectLayer extends AbstractLayer {
     }
     return maxId;
   }
-
   pickObject(e){
     let obj;
     const x = e.offsetX / this.camera.zoom  - this.camera.x;
@@ -97,8 +104,25 @@ export default class ObjectLayer extends AbstractLayer {
     }
     return null;
   }
+  selectObjects(box){
+    for(let i=0; i<this.data.objects.length; i++) {
+      let o = this.data.objects[i];
+      if (o.polygon || o.polyline) {
+        if (!this.shapeBoxes[i]) {
+          this.shapeBoxes[i] = new Imitator(o);
+        }
+        o = this.shapeBoxes[i];
+      }
+      if(!ObjectHelper.AABBvsAABB(box, o)){
+        continue;
+      }
+      this.selection.add(o);
+    }
+  }
+
 
   // TODO: clean up handle Event functions
+  /* Events */
   handleMouseMove(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
     super.handleMouseMove(e);
@@ -119,8 +143,8 @@ export default class ObjectLayer extends AbstractLayer {
       return;
     }
 
-    const dx = (e.movementX / this.camera.zoom);
-    const dy = (e.movementY / this.camera.zoom);
+    let dx = (e.movementX / this.camera.zoom);
+    let dy = (e.movementY / this.camera.zoom);
 
     const nx = this.startPosX + this.movementX;
     const ny = this.startPosY + this.movementY;
@@ -154,7 +178,6 @@ export default class ObjectLayer extends AbstractLayer {
     }
     // else move object
 
-    // todo
     if(this.pickedObject){
 
       const tw = this.map.data.tilewidth;
@@ -164,8 +187,8 @@ export default class ObjectLayer extends AbstractLayer {
       this.pickedObject.y = ny; //(e.movementY / this.camera.zoom);// + this.camera.movementY;
 
       if(e.ctrlKey){
-        let dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0;
-        let dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0;
+        dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0;
+        dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0;
 
         this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw + dx;
         this.pickedObject.y = Math.round(this.pickedObject.y / th) * th + dy;
@@ -173,7 +196,6 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
   }
-
   handleMouseDown(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
     // TODO: fix - move camera and object at the same time
@@ -214,7 +236,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.map.saveForUndo();
 
 
-    if(this.map.options.mode == EditModes.rectanlge){
+    if(this.map.options.mode == EditModes.rectangle){
       this._pickedObject = this.pickObject(e);
       if(this.pickedObject) {
         this.startPosX = this.pickedObject.x;
@@ -223,7 +245,6 @@ export default class ObjectLayer extends AbstractLayer {
       this.isDirty = true;
     }
   }
-
   handleMouseUp(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
     super.handleMouseUp(e);
@@ -266,15 +287,17 @@ export default class ObjectLayer extends AbstractLayer {
       this.isDirty = true;
     }
   }
-
   onMouseLeave(){
     this.isDirty = true;
+    if(this.highlightedObject){
+      this.deleteObject(this.highlightedObject);
+      this.highlightedObject = null;
+    }
   }
-
   onKeyUp(e){
     if(e.which == 46 && this.pickedObject){
       this.deleteObject(this.pickedObject);
-      this._pickedObject = null;
+      this._pickedObject = -1;
     }
 
     if(e.which == "B".charCodeAt(0)){
@@ -282,6 +305,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.draw();
     }
   }
+  /* End of Events */
 
   clearSelection(){
     this.handles.clearActive();
@@ -292,13 +316,11 @@ export default class ObjectLayer extends AbstractLayer {
     this.data.objects.splice(this.data.objects.indexOf(obj), 1);
     this.isDirty = true;
   }
-
   rotateObject(rotation, object = this.pickedObject){
     const angle = rotation * Math.PI/180;
     ObjectHelper.rotateObject(object, angle);
     this.draw();
   }
-
   toggleFill(){
     if(this.pickedObject && this.pickedObject.orig){
       if(this.pickedObject.orig.polyline){
@@ -312,7 +334,6 @@ export default class ObjectLayer extends AbstractLayer {
     }
     this.draw();
   }
-
   setPickedObject(obj, index){
     this._pickedObject = index;
     // TODO: make this more automatic
@@ -375,7 +396,6 @@ export default class ObjectLayer extends AbstractLayer {
     this.highlightSelected();
     this.isDirty = false;
   }
-
   drawTile(obj){
     const gid = obj.gid &  ( ~( FLIPPED_HORIZONTALLY_FLAG |
       FLIPPED_VERTICALLY_FLAG |
@@ -440,9 +460,12 @@ export default class ObjectLayer extends AbstractLayer {
       this.ctx.translate(-w*0.5, -h*0.5);
     }
     this.ctx.drawImage(pal.image, pal.x, pal.y, pal.w, pal.h, 0, 0, w, h);
+    if(obj == this.highlightedObject){
+      this.ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+      this.ctx.fillRect( 0, 0, w, h);
+    }
     this.ctx.restore();
   }
-
   drawRectangle(obj){
     const cam = this.camera;
     let x = (cam.x + obj.x) * cam.zoom;
@@ -464,7 +487,6 @@ export default class ObjectLayer extends AbstractLayer {
     this.ctx.strokeRect(0.5, 0.5, w, h);
     this.ctx.restore();
   }
-
   drawEllipse(obj){
     const cam = this.camera;
     let x = (cam.x + obj.x) * cam.zoom;
@@ -483,31 +505,10 @@ export default class ObjectLayer extends AbstractLayer {
     if(this.drawDebug && obj.name){
       this.ctx.fillText(obj.name, 0, 0);
     }
-    this._drawEllipse(this.ctx, 0.5, 0.5, w, h);
+    ObjectHelper.drawEllipse(this.ctx, 0.5, 0.5, w, h);
     //this.ctx.strokeRect(0.5, 0.5, w, h);
     this.ctx.restore();
   }
-
-  _drawEllipse(ctx, x, y, w, h) {
-    var kappa = 0.5522848,
-      ox = (w / 2) * kappa, // control point offset horizontal
-      oy = (h / 2) * kappa, // control point offset vertical
-      xe = x + w,           // x-end
-      ye = y + h,           // y-end
-      xm = x + w / 2,       // x-middle
-      ym = y + h / 2;       // y-middle
-
-    ctx.beginPath();
-    ctx.moveTo(x, ym);
-    ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-    ctx.closePath();
-    ctx.stroke();
-
-  }
-
   drawPolyline(o){
     const cam = this.camera;
     let x = (cam.x + o.x) * cam.zoom;
@@ -541,51 +542,67 @@ export default class ObjectLayer extends AbstractLayer {
     }
     this.ctx.restore();
   }
-
   // this one is drawing on the grid layer - as overlay
   highlightSelected(){
     // TODO: don't hide grid's layer ( never ever ) - rename to overlay???
     this.map.refs.grid.draw();
-    if(this.pickedObject){
-      // tile
-      if(this.pickedObject.gid){
+    let obj = this.pickedObject;
 
+    const cam = this.camera;
+    const ctx = this.map.refs.grid.ctx;
+    if(this.selectionBox.width > 0 && this.selectionBox.height > 0) {
+      ctx.strokeRect(
+        this.selectionBox.x + cam.x,
+        this.selectionBox.y + cam.y,
+        this.selectionBox.width,
+        this.selectionBox.height
+      );
+    }
+    //this.selectionBox
+
+    if(!this.selection.empty()){
+      obj = this.selection;
+    }
+
+    if(obj){
+      // tile
+      if(obj.gid){
         this.handles.update(
-          (this.pickedObject.x),
-          (this.pickedObject.y - this.pickedObject.height),
-          this.pickedObject.width,
-          this.pickedObject.height,
-          this.pickedObject.rotation,
-          this.pickedObject.x,
-          this.pickedObject.y
+          obj.x,
+          obj.y - obj.height,
+          obj.width,
+          obj.height,
+          obj.rotation,
+          obj.x,
+          obj.y
         );
       }
-      else if(this.pickedObject instanceof Imitator){
+      else if(obj instanceof Imitator){
         this.handles.update(
-          this.pickedObject.x,
-          this.pickedObject.y,
-          this.pickedObject.width,
-          this.pickedObject.height,
-          this.pickedObject.rotation,
-          this.pickedObject.orig.x,
-          this.pickedObject.orig.y
+          obj.x,
+          obj.y,
+          obj.width,
+          obj.height,
+          obj.rotation,
+          obj.orig.x,
+          obj.orig.y
         );
       }
       else if(true){
         this.handles.update(
-          this.pickedObject.x,
-          this.pickedObject.y,
-          this.pickedObject.width,
-          this.pickedObject.height,
-          this.pickedObject.rotation,
-          this.pickedObject.x,
-          this.pickedObject.y
+          obj.x,
+          obj.y,
+          obj.width,
+          obj.height,
+          obj.rotation,
+          obj.x,
+          obj.y
         );
       }
       // draw on grid which is always on the top
 
 
-      this.handles.draw(this.map.refs.grid.ctx, this.camera);
+      this.handles.draw(ctx, cam);
     }
   }
   /* END of DRAWING methods */
@@ -737,4 +754,73 @@ edit[EditModes.drawShape] = function(e){
   }
 
 
+};
+
+edit[EditModes.stamp] = function(e){
+  if(!this.map.collection.length || e.target != this.refs.canvas){
+    return;
+  }
+  const tile = this.map.collection[0];
+  const pal = this.map.palette[tile.gid];
+  const tw = this.map.data.tilewidth;
+  const th = this.map.data.tileheight;
+  const cam = this.camera;
+  let x = e.offsetX / cam.zoom - cam.x;
+  let y = (e.offsetY + pal.h ) * cam.zoom - cam.y;
+
+  if(!e.ctrlKey){
+    x = Math.floor(x / tw) * tw;
+    y = Math.floor(y / th) * th;
+  }
+
+  if(!this.highlightedObject){
+    this.highlightedObject = ObjectHelper.createTileObject(
+      pal, this.getMaxId(),
+      x, y
+    );
+    this.data.objects.push(this.highlightedObject);
+  }
+
+  if(e.type == "mouseup"){
+    this.highlightedObject = null;
+    return;
+  }
+
+  this.highlightedObject.x = x;
+  this.highlightedObject.y = y;
+};
+
+
+edit[EditModes.rectangle] = function(e){
+  if(e.type == "mousedown"){
+    if((e.buttons & 0x2) == 0x2){
+      return;
+    }
+    this.selection.clear();
+    obj = this.selectionBox;
+    obj.x = this.pointerPosX;
+    obj.y = this.pointerPosY;
+    return;
+  }
+  if(e.type == "mouseup"){
+    this.selectObjects(obj);
+    // invalidate
+    this.selectionBox.width = 0;
+    obj = null;
+    this.draw();
+    return;
+  }
+  if(!obj){
+    return;
+  }
+  const x1 = this.pointerPosX;
+  const x2 = this.pointerPosX + this.movementX;
+  const y1 = this.pointerPosY;
+  const y2 = this.pointerPosY + this.movementY;
+
+  obj.x = Math.min(x1, x2);
+  obj.width = Math.abs(this.movementX);
+
+  obj.y = Math.min(y1, y2);
+  obj.height = Math.abs(this.movementY);
 };

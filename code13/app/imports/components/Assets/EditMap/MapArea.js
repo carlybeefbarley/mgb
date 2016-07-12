@@ -13,7 +13,6 @@ import Properties from "./Tools/Properties.js";
 import MapTools from "./Tools/MapTools.js";
 import TileHelper from "./TileHelper.js";
 import TileCollection from "./Tools/TileCollection.js";
-import TileSelection from "./Tools/TileSelection.js";
 import EditModes from "./Tools/EditModes.js";
 import LayerTypes from "./Tools/LayerTypes.js";
 import Camera from "./Camera.js";

@@ -409,7 +409,7 @@ export default class TileSet extends React.Component {
         <div className="ui fluid styled accordion">
           <div className="active title accept-drop"
                data-drop-text="Drop asset here to update tileset image"
-               onDragOver={ObjectHelper.preventDefault}
+               onDragOver={DragNDropHelper.preventDefault}
                onDrop={this.onDropChangeTilesetImage.bind(this)}
             >
             <span className="explicittrigger">

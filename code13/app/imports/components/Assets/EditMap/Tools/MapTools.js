@@ -155,8 +155,8 @@ export default class MapTools extends React.Component {
         </div>
         {/* select something */}
         <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == EditModes.rectanlge ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this,  EditModes.rectanlge)}
+          <span className={(this.props.map.options.mode == EditModes.rectangle ? "ui button " + activeClass : "ui button")}
+                  onClick={this.enableMode.bind(this,  EditModes.rectangle)}
                   title="Rectangle selection"
             ><i className="square outline rectangle icon"></i>
           </span>

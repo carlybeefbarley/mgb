@@ -788,7 +788,7 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
       this.map.selection.clear();
     }
     else{
-      edit[EditModes.rectanlge].call(this, e, up);
+      edit[EditModes.rectangle].call(this, e, up);
     }
     this.drawTiles();
     return;
@@ -922,7 +922,7 @@ edit[EditModes.eraser] = function(e, up){
   this.drawTiles();
 };
 /* selections */
-edit[EditModes.rectanlge] = function(e, mouseUp){
+edit[EditModes.rectangle] = function(e, mouseUp){
   this.drawTiles();
   const pos = this.getTilePosInfo(e);
   pos.gid = this.options.data[pos.id];

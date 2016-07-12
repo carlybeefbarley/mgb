@@ -105,13 +105,13 @@ export default NavRecentGET = React.createClass({
      
 
     return [<div className="header item" key="_justNow">Just Now</div>,
-            <div className="menu">{retval.justNow}</div>,
+            <div className="menu" key="_justNow2">{retval.justNow}</div>,
 
             <div className="header item" key="_today">Today</div>,
-            <div className="menu">{retval.today}</div>,
+            <div className="menu" key="_today2">{retval.today}</div>,
 
             <div className="header item" key="_older">Older</div>,
-            <div className="menu">{retval.older}</div>
+            <div className="menu" key="_older2">{retval.older}</div>
             ]
   },
   
@@ -119,7 +119,7 @@ export default NavRecentGET = React.createClass({
   render: function() 
   {
     return (
-        <div className="ui fluid inverted small vertical menu">
+        <div className="ui fluid inverted  vertical menu">
           <div className="item">
             <h3 className="ui inverted header" style={{textAlign: "center"}}>
               <i className="history icon" />

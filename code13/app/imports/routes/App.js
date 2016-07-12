@@ -264,18 +264,39 @@ export default App = React.createClass({
     browserHistory.push( {  ...loc,  query: newQ })
   },
   
+  /**
+   * This hides/shows both Nav and FlexPanels. Press ESC for this
+   * Note that it takes a lot of care to preserve deep url state, but also discard url query params that are defaults 
+   */
   handleDualPaneToggle: function()
   {
     const loc = this.props.location
-    const qpNp = urlMaker.queryParams("app_navPanel")
-    const qpFp = urlMaker.queryParams("app_flexPanel")
+    const qpNp = urlMaker.queryParams("app_navPanel")    // Query Param for NavPanel (e.g "_np")
+    const qpFp = urlMaker.queryParams("app_flexPanel")   // Query Param for FlexPanel (e.g "_fp")
+    const qvNp = loc.query[qpNp]                         // Query Value for NavPanel
+    const qvFp = loc.query[qpFp]                         // Query Value for FlexPanel
+    const aPanelIsVisible = urlMaker.isQueryEnabled(qvNp) || urlMaker.isQueryEnabled(qvFp)
+
     let newQ
-    if (loc.query[qpNp] || loc.query[qpFp])
-      newQ = _.omit(loc.query, [qpNp, qpFp])
+    if (aPanelIsVisible)
+    {
+      const new_qvNp = urlMaker.disableQuery(qvNp, NavPanel.getDefaultPanelViewTag())
+      const new_qvFp = urlMaker.disableQuery(qvFp, FlexPanel.getDefaultPanelViewTag())
+      newQ = { ..._.omit(loc.query, [qpNp, qpFp]) }
+      if (new_qvNp) newQ[qpNp] = new_qvNp
+      if (new_qvFp) newQ[qpFp] = new_qvFp
+    }
     else
-      newQ = {...loc.query, [qpNp]:NavPanel.getDefaultPanelViewTag(), [qpFp]:FlexPanel.getDefaultPanelViewTag()}
+    {
+      newQ = {
+        ...loc.query, 
+        [qpNp]:urlMaker.enableQuery(qvNp, NavPanel.getDefaultPanelViewTag() ), 
+        [qpFp]:urlMaker.enableQuery(qvFp, FlexPanel.getDefaultPanelViewTag() )
+      }
+    }
     browserHistory.push( {  ...loc,  query: newQ })
   },
+
 
   showToast(content, type) {
     this.setState({

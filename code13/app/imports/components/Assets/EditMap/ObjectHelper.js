@@ -2,7 +2,7 @@
 const TO_RADIANS = (Math.PI / 180);
 const TO_DEGREES = 1/TO_RADIANS;
 // collection with useful functions
-const ObjectHelper = window.ObjectHelper = {
+const ObjectHelper = {
   // aabb may be any object who contains: {x, y, width, height}
   AABBvsAABB: (box1, box2) => {
     return  !(
@@ -10,6 +10,12 @@ const ObjectHelper = window.ObjectHelper = {
       box1.y + box1.height < box2.y ||
       box1.x > box2.x + box2.width ||
       box1.y > box2.y + box2.height);
+  },
+
+  rotAABBvsAABB: (box1, angle1, box2, angle2) => {
+    const a = {x: 0, y: 0, width: 0, height: 0};
+    const b = {x: 0, y: 0, width: 0, height: 0};
+
   },
 
   // camera has inverse x/y
@@ -169,6 +175,24 @@ const ObjectHelper = window.ObjectHelper = {
       "type": "",
       "visible": true,
     };
+  },
+  drawEllipse:  (ctx, x, y, w, h) => {
+    var kappa = 0.5522848,
+      ox = (w / 2) * kappa, // control point offset horizontal
+      oy = (h / 2) * kappa, // control point offset vertical
+      xe = x + w,           // x-end
+      ye = y + h,           // y-end
+      xm = x + w / 2,       // x-middle
+      ym = y + h / 2;       // y-middle
+
+    ctx.beginPath();
+    ctx.moveTo(x, ym);
+    ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    ctx.closePath();
+    ctx.stroke();
   }
 };
 

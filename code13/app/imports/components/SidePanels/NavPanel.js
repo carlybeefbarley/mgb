@@ -4,6 +4,7 @@ import npUser from './npUser';
 import npPeople from './npPeople';
 import npHistory from './npHistory';
 import npProjects from './npProjects';
+import urlMaker from '/imports/routes/urlMaker';
 
 
 const navPanelViews = [
@@ -40,7 +41,7 @@ export default NavPanel = React.createClass({
   npViewSelect(npViewTag)
   {
     if (npViewTag === this.props.selectedViewTag)
-      this.props.handleNavPanelChange("-" + npViewTag)
+      this.props.handleNavPanelChange(urlMaker.disableQueryParamPrefix + npViewTag)
     else 
       this.props.handleNavPanelChange(npViewTag)
   },  

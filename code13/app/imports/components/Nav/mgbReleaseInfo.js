@@ -16,6 +16,37 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     { 
+      "timestamp":     "Mon Jul 11 2016 23:40:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "779"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.projects.new",
+          "type":           "improvement",
+          "changeName":     "'Create New Project' is now it's own page",
+          "changeSummary":  "The feature to create a new Project was previously a dropdown on the ProjectsList page, but it was cramped, had limited explanation, and was not easily linkable. Moving this to it's own page solves these issues, and gives space to add new features for Projects",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Editor ellipses",
+          "changeSummary":  "Adding more MapEditor.org-compatible features - ellipses (adding functionality)",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    { 
       "timestamp":     "Sat Jul 09 2016 13:50:00 GMT-0700 (PDT)",
       
       "id": {

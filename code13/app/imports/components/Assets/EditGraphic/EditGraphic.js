@@ -572,9 +572,11 @@ export default class EditGraphic extends React.Component {
   // handleMouseWheel is an alias for zoom
   handleMouseWheel(event)
   {
-    // We only handle alt-key. Anything else is system behavior (scrolling etc)
-    if (event.altKey === false)
-      return
+
+    // We only handle alt/shift/ctrl-key. Anything else is system behavior (scrolling etc)
+    if (event.altKey === true || event.shiftKey === true || event.ctrlKey === true){
+      // everything fine
+    } else return;
 
     event.preventDefault()      // No default scroll behavior in these cases
 
@@ -584,48 +586,33 @@ export default class EditGraphic extends React.Component {
     let wd =  this.mgb_wheelDeltaAccumulator    // shorthand
 
     if (Math.abs(wd) > 60) {
-      if (event.shiftKey === true) {
-        // if wheel is for scale:
-        let s = this.state.editScale
-        if (wd > 0 && s > 1)
-          this.setState({editScale: s >> 1})
-        else if (wd < 0 && s < 8)
-          this.setState({editScale: s << 1})
-      }
+      // if paste tool then use ctrl/alt/shift for resizing, rotating, flipping
+      if(this.state.toolChosen !== null && this.state.toolChosen.name === "Paste"){
+
+      } 
+      // TODO maybe change keys so they are not the same as paste tool
+      // zooming canvas and changing frames
       else {
-        // if wheel is for frame
-        let f = this.state.selectedFrameIdx
-        if (wd < 0 && f > 0)
-          this.handleSelectFrame(f - 1)
-        else if (wd > 0 && f + 1 < this.frameCanvasArray.length)  // aka c2.frameNames.length
-          this.handleSelectFrame(f + 1)
+        if (event.shiftKey === true) {
+          // if wheel is for scale:
+          let s = this.state.editScale
+          if (wd > 0 && s > 1)
+            this.setState({editScale: s >> 1})
+          else if (wd < 0 && s < 8)
+            this.setState({editScale: s << 1})
+        }
+        else {
+          // if wheel is for frame
+          let f = this.state.selectedFrameIdx
+          if (wd < 0 && f > 0)
+            this.handleSelectFrame(f - 1)
+          else if (wd > 0 && f + 1 < this.frameCanvasArray.length)  // aka c2.frameNames.length
+            this.handleSelectFrame(f + 1)
+        }
       }
       this.mgb_wheelDeltaAccumulator = 0
     }
   }
-
-
-// TODO(Guntis): Replace Terrible UI with the four buttons! 
-  handleResize(dw, dh, force = false)
-  {
-    if (!this.props.canEdit)
-    { 
-      this.props.editDeniedReminder()
-      return
-    }
-    
-    if (dw !== 0 || dh !== 0 || force === true)
-    {
-      this.doSaveStateForUndo(`Resize by (${dw}, ${dh}) `)    // TODO: Only stack and save if different
-      let c2 = this.props.asset.content2
-      c2.width = Math.min(c2.width+dw, this.mgb_MAX_BITMAP_WIDTH)
-      c2.height = Math.min(c2.height+dh, this.mgb_MAX_BITMAP_HEIGHT)
-      this.handleSave(`Resize image`)      // Less spammy in activity log      
-    }
-    // TODO: Toast on error
-    // TODO: Reduce zoom if very large
-  }
-
 
   handleMouseDown(event) {
     let layerParam = this.props.asset.content2.layerParams[this.state.selectedLayerIdx];
@@ -656,53 +643,6 @@ export default class EditGraphic extends React.Component {
 
     if (this.state.toolChosen.supportsDrag === false && this.state.toolChosen.changesImage === true)
       this.handleSave(`Drawing`, false, false)   // This is a one-shot tool, so save its results now
-  }
-
-  hasPermission() {
-    if (!this.props.canEdit) { 
-      this.props.editDeniedReminder()
-      return false
-    }
-    else {
-      return true
-    }
-  }
-
-
-  setStatusBarWarning(warningText = "")
-  {
-    this._statusBar.colorAtText.html("")
-    this._statusBar.colorAtIcon.css( { color: "rgba(0,0,0,0)" } )
-    this._statusBar.mouseAtText.text(warningText)
-    this._statusBar.outer.css( {visibility: "visible"} )
-  }
-
-
-  setStatusBarInfo(mouseAtText = "", colorAtText = "", colorCSSstring = "rgba(0,0,0,0)")
-  {
-    if (mouseAtText === "") {  
-      this._statusBar.outer.css( {visibility: "hidden"} )
-    }
-    else {
-      let layerIdx = this.state.selectedLayerIdx
-      let layerParam = this.props.asset.content2.layerParams[layerIdx]
-      let layerName = layerParam.name && layerParam.name.length > 0 ? layerParam.name : `Unnamed layer #${layerIdx+1}`
-      let layerMsg = ` of \"${layerName}\"` 
-                    + (layerParam.isLocked ? " (locked)": "") 
-                    + (layerParam.isHidden ? " (hidden)" : "")
-
-      this._statusBar.colorAtIcon.css( { color: colorCSSstring } )
-      this._statusBar.mouseAtText.text(mouseAtText + layerMsg)
-      this._statusBar.colorAtText.html(colorAtText)
-      this._statusBar.outer.css( {visibility: "visible"} )
-    }
-  }
-
-  RGBToHex(r,g,b) {
-    var bin = r << 16 | g << 8 | b
-    return (function(h) {
-      return new Array(7-h.length).join("0")+h
-    })(bin.toString(16).toLowerCase())
   }
 
   // Might be better to have two event handlers, each with a clearer role? 
@@ -751,6 +691,74 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+
+// TODO(Guntis): Replace Terrible UI with the four buttons! 
+  handleResize(dw, dh, force = false)
+  {
+    if (!this.props.canEdit)
+    { 
+      this.props.editDeniedReminder()
+      return
+    }
+    
+    if (dw !== 0 || dh !== 0 || force === true)
+    {
+      this.doSaveStateForUndo(`Resize by (${dw}, ${dh}) `)    // TODO: Only stack and save if different
+      let c2 = this.props.asset.content2
+      c2.width = Math.min(c2.width+dw, this.mgb_MAX_BITMAP_WIDTH)
+      c2.height = Math.min(c2.height+dh, this.mgb_MAX_BITMAP_HEIGHT)
+      this.handleSave(`Resize image`)      // Less spammy in activity log      
+    }
+    // TODO: Toast on error
+    // TODO: Reduce zoom if very large
+  }
+
+  hasPermission() {
+    if (!this.props.canEdit) { 
+      this.props.editDeniedReminder()
+      return false
+    }
+    else {
+      return true
+    }
+  }
+
+
+  setStatusBarWarning(warningText = "")
+  {
+    this._statusBar.colorAtText.html("")
+    this._statusBar.colorAtIcon.css( { color: "rgba(0,0,0,0)" } )
+    this._statusBar.mouseAtText.text(warningText)
+    this._statusBar.outer.css( {visibility: "visible"} )
+  }
+
+
+  setStatusBarInfo(mouseAtText = "", colorAtText = "", colorCSSstring = "rgba(0,0,0,0)")
+  {
+    if (mouseAtText === "") {  
+      this._statusBar.outer.css( {visibility: "hidden"} )
+    }
+    else {
+      let layerIdx = this.state.selectedLayerIdx
+      let layerParam = this.props.asset.content2.layerParams[layerIdx]
+      let layerName = layerParam.name && layerParam.name.length > 0 ? layerParam.name : `Unnamed layer #${layerIdx+1}`
+      let layerMsg = ` of \"${layerName}\"` 
+                    + (layerParam.isLocked ? " (locked)": "") 
+                    + (layerParam.isHidden ? " (hidden)" : "")
+
+      this._statusBar.colorAtIcon.css( { color: colorCSSstring } )
+      this._statusBar.mouseAtText.text(mouseAtText + layerMsg)
+      this._statusBar.colorAtText.html(colorAtText)
+      this._statusBar.outer.css( {visibility: "visible"} )
+    }
+  }
+
+  RGBToHex(r,g,b) {
+    var bin = r << 16 | g << 8 | b
+    return (function(h) {
+      return new Array(7-h.length).join("0")+h
+    })(bin.toString(16).toLowerCase())
+  }
 
 // Tool selection action. 
   handleToolSelected(tool)

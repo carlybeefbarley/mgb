@@ -852,6 +852,7 @@ edit[EditModes.rectangle] = function(e){
     }
     // invalidate
     this.selectionBox.width = 0;
+    this.selectionBox.height = 0;
     this.startPosX = 0;
     this.startPosY = 0;
 

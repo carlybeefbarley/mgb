@@ -15,6 +15,45 @@
 export default mgbReleaseInfo = {
   "releases":
   [ 
+
+    { 
+      "timestamp":     "Tue Jul 12 2016 23:40:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "791"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.profile",
+          "type":           "improvement",
+          "changeName":     "User profile has MGB1 name + avatar",
+          "changeSummary":  "MGB1 users can enter their old MGB1 account name and show the icon here. There is no verification of this name (yet)",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphics",
+          "type":           "feature",
+          "changeName":     "Graphic Import from PNG/GIF",
+          "changeSummary":  "Use the IMPORT button to import PNGs/GIFs. PNGs with multiple frames ina 'filmstrip' can be split into individual animation frames at import time. GIFs get imported as multiple frames",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.layout",
+          "type":           "improvement",
+          "changeName":     "ESC key preserves panel states",
+          "changeSummary":  "The ESC key now preserves selected sub-panels for Flex and Nav Panels.. So pushing ESC twice no longer resets to default panels (home+activity)",
+          "otherUrls":      []
+        }
+      ]
+    },
+
     { 
       "timestamp":     "Mon Jul 11 2016 23:40:00 GMT-0700 (PDT)",
       

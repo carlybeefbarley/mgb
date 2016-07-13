@@ -46,19 +46,20 @@ export default WhatsNewRoute = React.createClass({
     return mgbReleaseInfo.releases[0].timestamp
   },
   
+
   handleReleaseClicked: function (releaseIdx)
   {
-    this.setState( { "releaseIdx": releaseIdx} )
+    this.setState( { "releaseIdx": releaseIdx, "changeIdx": 0 } )
   },
 
 
   handleChangeClicked: function (changeIdx)
   {
-    this.setState( { "changeIdx": changeIdx} )
+    this.setState( { "changeIdx": changeIdx } )
   },
 
-  render: function() {
 
+  render: function() {
     return (
       <div>
         <div className="ui basic segment">
@@ -79,27 +80,15 @@ export default WhatsNewRoute = React.createClass({
   },
 
 
-  
   // Some sub-functions to render various bits of this control. 
   // They are called (directly, or indirectly) by render() above
   // They use   state.releaseIdx   to know what is being selected
   
-  /** The 3 column structure for update info */  
+  /** This renders the 3 column structure for update info */  
   renderNews: function() {
-
-              <div className="item">
-                <div className="content">
-                  
-                </div>
-                <div className="meta">
-                 {ago}
-                </div>
-              </div>
-    const relIdx = this.state.releaseIdx
-    const rel = mgbReleaseInfo.releases[relIdx]
+    const { releaseIdx, changeIdx } = this.state
+    const rel = mgbReleaseInfo.releases[releaseIdx]
     const state = rel.id.state === 'alpha' ? 'α' : (rel.id.state + "#")
-    const ago = moment(new Date(rel.timestamp)).fromNow() 
-
 
     return <div className="ui padded three column relaxed equal height divided grid">
             <div className="column">
@@ -113,7 +102,7 @@ export default WhatsNewRoute = React.createClass({
               { this.renderNewsRelChangesColumn() }
             </div>
             <div className="column">
-              <h4 className="ui header">Details</h4>
+              <h4 className="ui header">Change #{changeIdx+1} of {rel.changes.length}:<p><small>{rel.changes[changeIdx].changeName}</small></p></h4>              
               { this.renderNewsChangeDetailsColumn() }
             </div>          
           </div>
@@ -126,7 +115,6 @@ export default WhatsNewRoute = React.createClass({
     const activeRelIdx = this.state.releaseIdx
     const gry = {color: "#888"}
     const blk = {color: "#000"}
-    
 
     return  <div className="ui list">
               { rels.map( (r, idx) =>  {
@@ -139,12 +127,10 @@ export default WhatsNewRoute = React.createClass({
                             <div className="right floated meta"><small>{ago}</small></div>
                           </div>
                         </div>
-              })
+                })
               }
-
             </div>
   },
-  
   
   
   /** ct is a string from mgbReleaseInfo.releases[].changes[].type */
@@ -185,7 +171,6 @@ export default WhatsNewRoute = React.createClass({
   },
 
 
-  
   /** This is the right-hand column. Uses React's state.releaseIdx and state.changeIdx */
   renderNewsChangeDetailsColumn: function() {
     const relIdx = this.state.releaseIdx

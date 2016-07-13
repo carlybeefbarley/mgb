@@ -237,7 +237,7 @@ export default class GraphicImport extends React.Component {
 
 			        <div className="ui divider"></div>
 			        <div   style={{ "overflow": "auto", "maxHeight": "600px"}}>
-	            		<canvas ref="uploadCanvas" ></canvas>
+	            		<canvas ref="uploadCanvas" className="uploadCanvas"></canvas>
 	            	</div>
 
 	            </div>

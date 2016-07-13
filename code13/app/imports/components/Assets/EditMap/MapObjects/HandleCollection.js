@@ -283,6 +283,10 @@ export default class HandleCollection {
     }
   }
 
+  /*oppositeHandle(obj, handle = this.activeHandleType){
+    switch
+  }*/
+
   setActive(x, y){
     this.activeHandle = null;
     this.activeHandleType = -1;

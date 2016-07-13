@@ -149,12 +149,12 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.isDirty = true;
 
-    if(!this.mouseDown){
+
+    if(!this.mouseDown && e.target == this.refs.canvas){
       this.handles.setActive(
         (this.mouseX / this.camera.zoom - this.camera.x),
         (this.mouseY / this.camera.zoom - this.camera.y)
       );
-      return;
     }
 
     if(edit[this.map.options.mode]){
@@ -181,7 +181,7 @@ export default class ObjectLayer extends AbstractLayer {
         this.clonedObject = new Imitator(_.cloneDeep(this.pickedObject.orig));
       }
       else{
-        this.clonedObject = Object.assign({}, this.pickedObject);
+        this.clonedObject = Object.create(this.pickedObject || this.selection);
       }
       this.handleMouseMove(e);
       // we will move handle on next move
@@ -205,10 +205,6 @@ export default class ObjectLayer extends AbstractLayer {
   handleMouseUp(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
     super.handleMouseUp(e);
-
-    if(e.target != this.refs.canvas || e.button !== 0){
-      return;
-    }
     this.mouseDown = false;
     if(edit[this.map.options.mode]){
       edit[this.map.options.mode].call(this, e);
@@ -216,35 +212,9 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     this.handles.unlock();
-
-
-    // this puts new tile Object on the map
-    /*if(this.map.collection.length && this.map.options.mode == EditModes.stamp){
-      const tile = this.map.collection[0];
-      const pal = this.map.palette[tile.gid];
-
-      const tw = this.map.data.tilewidth;
-      const th = this.map.data.tileheight;
-      const cam = this.camera;
-      let x = e.offsetX / cam.zoom - cam.x;
-      let y = (e.offsetY + pal.h ) * cam.zoom - cam.y;
-
-      if(!e.ctrlKey){
-        x = Math.floor(x / tw) * tw;
-        y = Math.floor(y / th) * th;
-      }
-
-      const tileObject = ObjectHelper.createTileObject(
-        pal, this.getMaxId(),
-        x, y
-      );
-
-      this.map.saveForUndo();
-      this.data.objects.push(tileObject);
-      this.isDirty = true;
-    }*/
   }
   onMouseLeave(){
+    console.log("leave");
     this.isDirty = true;
     if(this.highlightedObject){
       this.deleteObject(this.highlightedObject);
@@ -653,6 +623,7 @@ edit[EditModes.drawEllipse] = function(e){
   }
 };
 edit[EditModes.drawShape] = function(e){
+  console.log("draw shape!!!");
   if(e.type == "mousedown"){
     if(!obj){
       if((e.buttons & 0x2) == 0x2){
@@ -809,23 +780,29 @@ edit[EditModes.rectangle] = function(e){
     return;
   }
 
-  if(this.pickedObject && this.mouseDown && phase == 1){
+  if(this.mouseDown && phase == 1) {
+    if (this.pickedObject) {
 
-    this.pickedObject.x = nx;
-    this.pickedObject.y = ny;
+      this.pickedObject.x = nx;
+      this.pickedObject.y = ny;
 
-    if(e.ctrlKey) {
-      const tw = this.map.data.tilewidth;
-      const th = this.map.data.tileheight;
-      dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0;
-      dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0;
+      if (e.ctrlKey) {
+        const tw = this.map.data.tilewidth;
+        const th = this.map.data.tileheight;
+        dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0;
+        dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0;
 
-      this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw + dx;
-      this.pickedObject.y = Math.round(this.pickedObject.y / th) * th + dy;
+        this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw + dx;
+        this.pickedObject.y = Math.round(this.pickedObject.y / th) * th + dy;
+      }
+      return;
     }
-    return;
-  }
 
+    if(this.selection.length > 1){
+
+    }
+
+  }
 
 
   if(!obj){

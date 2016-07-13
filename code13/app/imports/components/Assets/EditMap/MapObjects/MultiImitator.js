@@ -11,14 +11,13 @@ export default class MultiImitator{
     this._height = 0;
 
     this.selection = [];
-    this._rotation = 0;
   }
 
   get x(){
     return this._x;
   }
   set x(v){
-    this._x = v;
+
   }
 
   get y(){
@@ -116,7 +115,7 @@ export default class MultiImitator{
     return 0;
   }
   set rotation(val){
-    this._rotation = val;
+
   }
 
   empty(){

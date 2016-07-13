@@ -43,7 +43,7 @@ export default class EditGraphic extends React.Component {
   constructor(props) {
     super(props)
 
-    // console.log(this.props.asset.content2);
+    console.log(this.props.asset.content2);
 
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
@@ -100,6 +100,7 @@ export default class EditGraphic extends React.Component {
   // content2.frameNames[frameIndex]  // TODO get rid of frameNames. no practical use.
   // content2.frameData[frameIndex][layerIndex]   /// each is a dataURL
   // content2.spriteData[]    // dataUrl. Same frameData elements but with merged layers
+  // content2.tileset         // all frames joined in one image
   // content2.animations[]    // { name, frames[], fps }
 
 
@@ -915,15 +916,34 @@ export default class EditGraphic extends React.Component {
       for (let i = 0; i < layerCount; i++) {
         c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
       }
-      asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')
+      asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')     
+    }
 
-      // Saving the composite Frame (using all layers for this frame) for convenient use in the map editor.
+    // Saving the composite Frame (using all layers for this frame) for convenient use in the map editor.
       // TODO(@stauzs): Would this be nicer as a list comprehension?    c2.spriteData = _.map(this.frameCanvasArray, c => c.toDataURL('image/png'))
       c2.spriteData = [];
       for(let i = 0; i < this.frameCanvasArray.length; i++){
         c2.spriteData[i] = this.frameCanvasArray[i].toDataURL('image/png')
       }
-    }
+
+    // tileset saving
+      let cols = Math.ceil(Math.sqrt(c2.frameNames.length));
+      let rows = Math.ceil(c2.frameNames.length/cols);
+      let canvas = document.createElement("canvas");
+      // let canvas = document.getElementById("tilesetCanvas");
+      canvas.width = c2.width * cols;
+      canvas.height = c2.height * rows;
+      let ctx = canvas.getContext('2d');
+      for(let row=0; row<rows; row++){
+        for(let col=0; col<cols; col++){
+          let i = row*cols + col;
+          if(this.frameCanvasArray[i]){
+            ctx.drawImage(this.frameCanvasArray[i], col*c2.width, row*c2.height);
+          }
+        }
+      }
+      // c2.tileset = canvas.toDataURL('image/png');
+
     this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }
 
@@ -1224,6 +1244,7 @@ map
                         onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-1)}>
               </canvas>
+              <canvas id="tilesetCanvas"></canvas>
             </div>
           </div>
 

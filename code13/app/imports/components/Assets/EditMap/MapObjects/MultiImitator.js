@@ -31,6 +31,9 @@ export default class MultiImitator{
     return this._width;
   }
   set width(v){
+    console.log("set width:", v);
+
+
     this.update();
   }
 
@@ -39,6 +42,8 @@ export default class MultiImitator{
     return this._height;
   }
   set height(v){
+    console.log("set width:", h);
+
     this.update();
   }
 
@@ -46,6 +51,9 @@ export default class MultiImitator{
     return this.selection.length;
   }
 
+  forEach(cb){
+    this.selection.forEach(cb);
+  }
   add(o){
     if(this.selection.indexOf(o) == -1){
       this.selection.push(o);

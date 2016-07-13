@@ -43,6 +43,8 @@ export default class ObjectLayer extends AbstractLayer {
     };
 
     this.selection = new MultiImitator(this);
+
+    this.lineWidth = 3;
   }
 
   //TODO: change this to abstract box.. and on change - change all elements inside this box
@@ -214,17 +216,31 @@ export default class ObjectLayer extends AbstractLayer {
     this.handles.unlock();
   }
   onMouseLeave(){
-    console.log("leave");
     this.isDirty = true;
     if(this.highlightedObject){
       this.deleteObject(this.highlightedObject);
       this.highlightedObject = null;
     }
+
   }
   onKeyUp(e){
-    if(e.which == 46 && this.pickedObject){
-      this.deleteObject(this.pickedObject);
-      this.clearSelection();
+    // delete key
+    if(e.which == 46){
+      if(this.pickedObject){
+        this.deleteObject(this.pickedObject);
+      }
+
+      this.selection.forEach((o) => {
+        let x = o;
+        if(o instanceof Imitator){
+          x = o.orig;
+        }
+        console.log("Delete:", x);
+        this.deleteObject(x);
+      });
+
+      this.clearSelection(true);
+      this.isDirty = true;
     }
 
     if(e.which == "B".charCodeAt(0)){
@@ -270,14 +286,21 @@ export default class ObjectLayer extends AbstractLayer {
       );
     }
   }
-  clearSelection(){
+  clearSelection(alsoSelectedObjects = false){
     this.handles.clearActive();
+    if(alsoSelectedObjects){
+      this.selection.clear();
+    }
     this._pickedObject = -1;
   }
 
   deleteObject(obj){
-    this.data.objects.splice(this.data.objects.indexOf(obj), 1);
-    this.isDirty = true;
+    const index = this.data.objects.indexOf(obj);
+    if(index > -1) {
+      delete this.shapeBoxes[index];
+      this.data.objects.splice(index, 1);
+      this.isDirty = true;
+    }
   }
   rotateObject(rotation, object = this.pickedObject){
     const angle = rotation * Math.PI/180;
@@ -395,14 +418,7 @@ export default class ObjectLayer extends AbstractLayer {
     // transform only once - and cache transformation
     this.ctx.save();
 
-    this.ctx.translate(x, y);
-
-    if(this.drawDebug) {
-      //picking debug
-      this.ctx.strokeRect(0.5, 0.5, obj.width, obj.height);
-    }
-
-    this.ctx.translate(0, h);
+    this.ctx.translate(x, y + h);
     if(obj.rotation){
       // rotate
       this.ctx.rotate(obj.rotation * TO_DEGREES);
@@ -447,6 +463,7 @@ export default class ObjectLayer extends AbstractLayer {
     if(this.drawDebug && obj.name){
       this.ctx.fillText(obj.name, 0, 0);
     }
+    this.ctx.lineWidth = this.lineWidth;
     this.ctx.strokeRect(0.5, 0.5, w, h);
     this.ctx.restore();
   }
@@ -468,6 +485,7 @@ export default class ObjectLayer extends AbstractLayer {
     if(this.drawDebug && obj.name){
       this.ctx.fillText(obj.name, 0, 0);
     }
+    this.ctx.lineWidth = this.lineWidth;
     ObjectHelper.drawEllipse(this.ctx, 0.5, 0.5, w, h);
     //this.ctx.strokeRect(0.5, 0.5, w, h);
     this.ctx.restore();
@@ -496,13 +514,14 @@ export default class ObjectLayer extends AbstractLayer {
       this.ctx.lineTo(lines[i].x * this.camera.zoom, lines[i].y * this.camera.zoom);
     }
 
-
-    this.ctx.stroke();
     if(o.polygon){
       this.ctx.lineTo(lines[0].x * this.camera.zoom, lines[0].y * this.camera.zoom);
       this.ctx.fillStyle="rgba(70, 70, 70, 1)";
       this.ctx.fill();
     }
+
+    this.ctx.lineWidth = this.lineWidth;
+    this.ctx.stroke();
     this.ctx.restore();
   }
   // this one is drawing on the grid layer - as overlay

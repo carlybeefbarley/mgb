@@ -11,21 +11,29 @@ const ToolPaste = {
   hideTool: true,                 // don't show tool in tool panel
 
 
+  _angle: 0,
+  _scale: 1,
+
+
   handleMouseDown: ( drawEnv ) => {
     let pasteCanvas = drawEnv.getPasteCanvas();
     if(!pasteCanvas) return;
 
+    drawEnv.previewCtx.translate(drawEnv.x, drawEnv.y);
+    drawEnv.previewCtx.rotate( ToolPaste._angle );
     drawEnv.previewCtx.drawImage(
       pasteCanvas
       , 0
       , 0
       , pasteCanvas.width
       , pasteCanvas.height
-      , drawEnv.x
-      , drawEnv.y
+      , 0
+      , 0
       , pasteCanvas.width
       , pasteCanvas.height
     );
+    drawEnv.previewCtx.rotate(-ToolPaste._angle );
+    drawEnv.previewCtx.translate(-drawEnv.x, -drawEnv.y);
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
   },
 
@@ -35,6 +43,8 @@ const ToolPaste = {
 
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
     drawEnv.editCtx.save();
+    drawEnv.editCtx.translate(drawEnv.x*drawEnv.scale, drawEnv.y*drawEnv.scale);
+    drawEnv.editCtx.rotate( ToolPaste._angle );
     drawEnv.editCtx.globalAlpha = 0.4;
     drawEnv.editCtx.drawImage(
       pasteCanvas
@@ -42,12 +52,28 @@ const ToolPaste = {
       , 0
       , pasteCanvas.width
       , pasteCanvas.height
-      , drawEnv.x*drawEnv.scale
-      , drawEnv.y*drawEnv.scale
+      , 0
+      , 0
       , pasteCanvas.width*drawEnv.scale
       , pasteCanvas.height*drawEnv.scale
     );
+    drawEnv.editCtx.rotate(-ToolPaste._angle );
+    drawEnv.editCtx.translate(-drawEnv.x*drawEnv.scale, -drawEnv.y*drawEnv.scale);
     drawEnv.editCtx.restore();
+  },
+
+  handleMouseWheel: ( drawEnv, wd ) => {
+    if(drawEnv.event.altKey){
+        let direction = wd > 0 ? -1 : 1;
+        ToolPaste._angle += direction * (2*Math.PI) / 16;
+        ToolPaste.handleMouseMove(drawEnv);
+    }
+    if(drawEnv.event.shiftKey){
+
+    }
+    if(drawEnv.event.ctrlKey){
+
+    }
   },
 
   handleMouseUp: ( drawEnv ) => {

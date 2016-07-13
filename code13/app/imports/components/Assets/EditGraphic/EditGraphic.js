@@ -588,7 +588,7 @@ export default class EditGraphic extends React.Component {
     if (Math.abs(wd) > 60) {
       // if paste tool then use ctrl/alt/shift for resizing, rotating, flipping
       if(this.state.toolChosen !== null && this.state.toolChosen.name === "Paste"){
-
+        this.state.toolChosen.handleMouseWheel(this.collateDrawingToolEnv(event), wd);
       } 
       // TODO maybe change keys so they are not the same as paste tool
       // zooming canvas and changing frames

@@ -35,10 +35,14 @@ export default UserProfile = React.createClass({
       this.props.handleProfileFieldChanged({...data})
   },
 
+  validateMGB1name: function (text) {
+    // TODO more safety content checks here
+    return (text.length >= 0 && text.length < 16)
+  },
 
   customValidateText: function(text) {
     // TODO more safety content checks here
-    return (text.length >= 0 && text.length < 64);
+    return (text.length >= 0 && text.length < 64)
   },
 
   handleCardClick: function() {
@@ -47,22 +51,27 @@ export default UserProfile = React.createClass({
   },
 
   render: function() {
-    const createdAt = this.props.user.createdAt
+    const user = this.props.user
+    if (!user || !user.profile)
+      return null
+
+    const createdAt = user.createdAt
     const editsDisabled = !this.props.canEditProfile
+    const { name, avatar, title, bio, focusMsg, mgb1name } = user.profile
     
     return (
       <div className="ui card"  onClick={this.handleCardClick}>
         <div className="ui image">
-          <img src={this.props.user.profile.avatar} />
+          <img src={avatar} />
         </div>
         <div className="ui content">
-          <div className="ui header">{this.props.user.profile.name}</div>
+          <div className="ui header">{name}</div>
           <div className="ui meta">
             
             <b>Title:</b> <InlineEdit
               validate={this.customValidateText}
               activeClassName="editing"
-              text={this.props.user.profile.title || "(no title)"}
+              text={title || "(no title)"}
               paramName="profile.title"
               change={this.profileFieldChanged}
               isDisabled={editsDisabled}
@@ -73,7 +82,7 @@ export default UserProfile = React.createClass({
             <b>Description:</b> <InlineEdit
               validate={this.customValidateText}
               activeClassName="editing"
-              text={this.props.user.profile.bio || "(no description)"}
+              text={bio || "(no description)"}
               paramName="profile.bio"
               change={this.profileFieldChanged}
               isDisabled={editsDisabled}
@@ -83,12 +92,28 @@ export default UserProfile = React.createClass({
             <b>Focus:</b> <InlineEdit
               validate={this.customValidateText}
               activeClassName="editing"
-              text={this.props.user.profile.focusMsg || "(no current focus)"}
+              text={focusMsg || "(no current focus)"}
               paramName="profile.focusMsg"
               change={this.profileFieldChanged}
               isDisabled={editsDisabled}
               />
           </div>
+          <div className="ui description" title="This is the user's name on the old MGBv1 system. There is currently no verification of this claim"> 
+            { mgb1name &&  
+              <a href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">
+                <img  className="right floated mini image" style={{ maxWidth: "64px", maxHeight: "64px" }}
+                      ref={ (c) => { if (c) c.src=`https://s3.amazonaws.com/JGI_test1/${mgb1name}/project1/tile/avatar` } } />
+              </a>
+            }
+            <b>MGB1 name:</b> <InlineEdit
+              validate={this.validateMGB1name}
+              activeClassName="editing"
+              text={mgb1name || "Username on http://mygamebuilder.com"}
+              paramName="profile.mgb1name"
+              change={this.profileFieldChanged}
+              isDisabled={editsDisabled}
+              />
+          </div>  
         </div>
         <div className="ui extra content">
             <span className="ui right floated">

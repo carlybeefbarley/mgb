@@ -62,7 +62,7 @@ export default class MultiImitator{
   }
   first(){
     if(this.selection.length){
-      return this.selection.selection[0];
+      return this.selection[0];
     }
   }
 

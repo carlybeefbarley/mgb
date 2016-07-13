@@ -110,6 +110,7 @@ export default class ObjectLayer extends AbstractLayer {
     return ret;
   }
   selectObjects(box){
+    let ret = 0;
     this.selection.clear();
     for(let i=0; i<this.data.objects.length; i++) {
       let o = this.data.objects[i];
@@ -124,7 +125,20 @@ export default class ObjectLayer extends AbstractLayer {
         continue;
       }
       this.selection.add(o);
+      ret++;
     }
+    //show single selected object - most use cases will be here
+    if(this.selection.length == 1){
+      // TODO: figure out a way to get rid of these checks
+      // maybe use Imitator like object for all shapes?
+      let f = this.selection.first();
+      if(f instanceof Imitator){
+        f = f.orig;
+      }
+      this._pickedObject = this.data.objects.indexOf(f);
+      this.selection.clear();
+    }
+    return ret;
   }
 
   // TODO: clean up handle Event functions
@@ -733,6 +747,7 @@ edit[EditModes.stamp] = function(e){
 };
 
 // TODO: rework this and clean up
+let phase = 0; // 0 - selecting; 1 - moving;
 edit[EditModes.rectangle] = function(e){
   if((e.buttons & 0x2) == 0x2){
     return;
@@ -744,7 +759,7 @@ edit[EditModes.rectangle] = function(e){
   const nx = this.startPosX + this.movementX;
   const ny = this.startPosY + this.movementY;
 
-  if(this.mouseDown){
+  if(this.mouseDown && phase == 1){
 
     if(this.handles.activeHandle){
       this.handles.moveActiveHandle(dx, dy, this.clonedObject);
@@ -782,9 +797,11 @@ edit[EditModes.rectangle] = function(e){
     if(this.pickObject(e) > -1) {
       this.startPosX = this.pickedObject.x;
       this.startPosY = this.pickedObject.y;
+      phase = 1;
       return;
     }
 
+    phase = 0;
     this.selection.clear();
     obj = this.selectionBox;
     obj.x = this.pointerPosX;
@@ -792,7 +809,7 @@ edit[EditModes.rectangle] = function(e){
     return;
   }
 
-  if(this.pickedObject && this.mouseDown){
+  if(this.pickedObject && this.mouseDown && phase == 1){
 
     this.pickedObject.x = nx;
     this.pickedObject.y = ny;
@@ -816,19 +833,30 @@ edit[EditModes.rectangle] = function(e){
   }
 
   if(e.type == "mouseup"){
-    /*
-    this.selectObjects(obj);
-    if(this.selection.length == 1){
-      this._pickedObject = this.data.objects.indexOf(this.selection.first());
-    }
-    */
+    const selCount = this.selectObjects(obj);
 
+    if(selCount > 0){
+      phase = 1;
+    }
+    else{
+      phase = 0;
+    }
+
+    if(selCount == 1){
+      this.startPosX = this.pickedObject.x;
+      this.startPosY = this.pickedObject.y;
+    }
+    else{
+      this._pickedObject = -1;
+    }
     // invalidate
     this.selectionBox.width = 0;
     this.startPosX = 0;
     this.startPosY = 0;
 
+
     obj = null;
+
     this.draw();
     return;
   }
@@ -843,5 +871,9 @@ edit[EditModes.rectangle] = function(e){
   obj.y = Math.min(y1, y2);
   obj.height = Math.abs(this.movementY);
 
-  this.selectObjects(obj);
+  if(this.selectObjects(obj) == 1){
+    this.startPosX = this.pickedObject.x;
+    this.startPosY = this.pickedObject.y;
+  }
+
 };

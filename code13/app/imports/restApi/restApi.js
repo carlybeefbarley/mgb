@@ -143,10 +143,11 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
 
 
     return {
-      image: "/api/asset/tileset/" + this.urlParams.id,
+      // image: "/api/asset/tileset/" + this.urlParams.id,
+      image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
       name: asset.name,
-      imageheight: c2.height,
-      imagewidth: c2.width * c2.frameData.length,
+      imageheight: c2.rows ? c2.rows*c2.height : c2.height,
+      imagewidth: c2.cols ? c2.cols*c2.width : c2.width * c2.frameData.length,
       tilecount: c2.frameData.length,
       tileheight: c2.height,
       tilewidth: c2.width,

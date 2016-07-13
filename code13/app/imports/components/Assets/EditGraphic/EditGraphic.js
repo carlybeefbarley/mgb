@@ -930,7 +930,10 @@ export default class EditGraphic extends React.Component {
       }
 
       // tileset saving
-      c2.tileset = this.createTileset(); 
+      let tilesetInfo = this.createTileset();
+      c2.tileset = tilesetInfo.image; 
+      c2.cols = tilesetInfo.cols;
+      c2.rows = tilesetInfo.rows;
     }
     this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }
@@ -952,7 +955,11 @@ export default class EditGraphic extends React.Component {
         }
       }
     }
-    return canvas.toDataURL('image/png');
+    return {
+      image: canvas.toDataURL('image/png')
+      , cols: cols
+      , rows: rows
+    };
   }
 
 

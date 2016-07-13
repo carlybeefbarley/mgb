@@ -254,7 +254,7 @@ export default class ObjectLayer extends AbstractLayer {
   onKeyUp(e){
     if(e.which == 46 && this.pickedObject){
       this.deleteObject(this.pickedObject);
-      this._pickedObject = -1;
+      this.clearSelection();
     }
 
     if(e.which == "B".charCodeAt(0)){
@@ -832,8 +832,9 @@ edit[EditModes.rectangle] = function(e){
     return;
   }
 
+  let selCount = 0;
   if(e.type == "mouseup"){
-    const selCount = this.selectObjects(obj);
+    selCount = this.selectObjects(obj);
 
     if(selCount > 0){
       phase = 1;
@@ -847,7 +848,7 @@ edit[EditModes.rectangle] = function(e){
       this.startPosY = this.pickedObject.y;
     }
     else{
-      this._pickedObject = -1;
+      this.clearSelection();
     }
     // invalidate
     this.selectionBox.width = 0;
@@ -871,9 +872,13 @@ edit[EditModes.rectangle] = function(e){
   obj.y = Math.min(y1, y2);
   obj.height = Math.abs(this.movementY);
 
-  if(this.selectObjects(obj) == 1){
+  selCount = this.selectObjects(obj);
+  if(selCount == 1){
     this.startPosX = this.pickedObject.x;
     this.startPosY = this.pickedObject.y;
+  }
+  if(selCount == 0){
+    this.clearSelection();
   }
 
 };

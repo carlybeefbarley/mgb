@@ -1195,7 +1195,7 @@ map
 
             <a className={"ui label hazPopup " + (this.state.pasteCanvas ? "" : "disabled")} 
               onClick={this.pasteSelected.bind(this)}
-               data-content="Rotate (Alt+Scroll). Resize (Shift+Scroll). Flip (Ctrl+Scroll)."
+               data-content="Rotate (Alt+Scroll). Scale (Shift+Scroll). Flip (Ctrl+Scroll)."
                data-variation="tiny"
                data-position="bottom center">
               <i className="paste icon"></i>Paste

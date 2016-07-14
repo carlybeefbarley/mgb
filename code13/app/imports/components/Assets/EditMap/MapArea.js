@@ -66,7 +66,8 @@ export default class MapArea extends React.Component {
     this.tilesets = [];
     //this.margin = 0;
     this.spacing = 0;
-
+    // current update timestamp
+    this.now = Date.now();
 
     this._camera = null;
     this.ignoreUndo = 0;
@@ -90,7 +91,13 @@ export default class MapArea extends React.Component {
         e.preventDefault();
         return false;
       }
-    }
+    };
+
+    this._raf = () => {
+      this.drawLayers();
+      window.requestAnimationFrame(this._raf);
+    };
+    this._raf();
   }
 
   componentDidMount(){
@@ -762,6 +769,13 @@ export default class MapArea extends React.Component {
       layer.adjustCanvas();
       layer.draw();
     });
+  }
+  // RAF calls this function
+  drawLayers(){
+    this.now = Date.now();
+    for(let i=0; i<this.layers.length; i++){
+      this.layers[i]._draw(this.now);
+    }
   }
   redrawTilesets(){
     this.tilesets.forEach((tileset) => {

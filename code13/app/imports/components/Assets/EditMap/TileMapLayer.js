@@ -48,14 +48,6 @@ export default class TileMapLayer extends AbstractLayer {
     };
 
     this._mup = this.handleMouseUp.bind(this);
-
-    this._raf = () => {
-      this._drawTiles();
-      window.requestAnimationFrame(this._raf);
-    };
-    this._raf();
-
-
   }
   componentDidMount(...args){
     super.componentDidMount(...args);
@@ -257,8 +249,8 @@ export default class TileMapLayer extends AbstractLayer {
     this.isDirty = true;
   }
 
-  _drawTiles(){
-    if( !( this.isDirty || this.nextDraw < Date.now() ) || !this.isVisible) {
+  _draw(now){
+    if( !( this.isDirty || this.nextDraw < now ) || !this.isVisible) {
       return;
     }
     const ts = this.props.data;
@@ -278,7 +270,7 @@ export default class TileMapLayer extends AbstractLayer {
 
     // TODO: isDIrty actually is same as next draw < Date.now() - unneeded flag
     this.isDirty = false;
-    this.nextDraw = Date.now() + this.drawInterval;
+    this.nextDraw = now + this.drawInterval;
 
     const widthInTiles = Math.ceil(  (this.ctx.canvas.width / camera.zoom) / mapData.tilewidth  );
     const heightInTiles = Math.ceil( (this.ctx.canvas.height / camera.zoom) / mapData.tileheight);
@@ -345,7 +337,7 @@ export default class TileMapLayer extends AbstractLayer {
       const tileInfo = pal.ts.tiles[tileId];
       if(tileInfo){
         if(tileInfo.animation){
-          const delta = Date.now() - this.map.startTime;
+          const delta = this.map.now - this.map.startTime;
           // TODO: cache this!
           let tot = 0;
           let anim;

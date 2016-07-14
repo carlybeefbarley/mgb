@@ -22,11 +22,6 @@ export default class ObjectLayer extends AbstractLayer {
   constructor(...args){
     super(...args);
     this.kind = LayerTypes.object;
-    this._raf = () => {
-      this.drawMap();
-      window.requestAnimationFrame(this._raf);
-    };
-    this._raf();
     this.drawDebug = false;
     this._pickedObject = -1;
 
@@ -406,22 +401,22 @@ export default class ObjectLayer extends AbstractLayer {
 
   /* DRAWING methods */
   queueDraw(timeout){
-    if(this.nextDraw - Date.now() > timeout) {
-      this.nextDraw = Date.now() + timeout;
+    if(this.nextDraw - this.map.now > timeout) {
+      this.nextDraw = this.map.now + timeout;
     }
   }
   draw(){
     this.isDirty = true;
   }
-  drawMap(){
+  _draw(now){
     // TODO: draw check can be moved to the parent
-    if( !( this.isDirty || this.nextDraw < Date.now() ) || !this.isVisible) {
+    if( !( this.isDirty || this.nextDraw < now ) || !this.isVisible) {
       return;
     }
 
     this.isDirty = false;
     // force refresh after a while
-    this.nextDraw = Date.now() + this.drawInterval;
+    this.nextDraw = now + this.drawInterval;
 
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height);
     // Don't loop through all objects.. use quadtree here some day
@@ -482,7 +477,7 @@ export default class ObjectLayer extends AbstractLayer {
     // TODO: this repeats from TileMapLayer - clean up and create separate function get_GID or similar
     if(tileInfo){
       if(tileInfo.animation){
-        const delta = Date.now() - this.map.startTime;
+        const delta = this.map.now - this.map.startTime;
         let tot = 0;
         let anim;
         for(let i=0; i<tileInfo.animation.length; i++){

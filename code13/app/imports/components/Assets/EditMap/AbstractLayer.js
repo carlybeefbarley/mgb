@@ -87,7 +87,9 @@ export default class AbstractLayer extends React.Component {
   draw(){
     this.isDirty = true;
   }
+  _draw(delta){
 
+  }
 
   /* events */
   handleMouseUp(e){

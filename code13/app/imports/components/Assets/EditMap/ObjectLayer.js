@@ -34,6 +34,8 @@ export default class ObjectLayer extends AbstractLayer {
 
     // store calculated shapeBoxes here
     this.shapeBoxes = {};
+    // array with elements to be copied / ctrl C/V
+    this.copy = [];
 
     // reference to highlighted tile object
     this.highlightedObject = null;
@@ -110,6 +112,9 @@ export default class ObjectLayer extends AbstractLayer {
     }
     this._pickedObject = ret;
     return ret;
+  }
+  selectObject(obj){
+    this._pickedObject = this.data.objects.indexOf(obj);
   }
   selectObjects(box){
     let ret = 0;
@@ -224,23 +229,77 @@ export default class ObjectLayer extends AbstractLayer {
 
   }
   onKeyUp(e){
-    // delete key
-    if(e.which == 46){
+    // todo Move functions to external file?
+    const remove = () => {
       if(this.pickedObject){
-        this.deleteObject(this.pickedObject);
+        this.deleteObject(this.pickedObject.orig ? this.pickedObject.orig : this.pickedObject);
       }
-
       this.selection.forEach((o) => {
         let x = o;
         if(o instanceof Imitator){
           x = o.orig;
         }
-        console.log("Delete:", x);
         this.deleteObject(x);
       });
 
       this.clearSelection(true);
       this.isDirty = true;
+    };
+    const paste = () => {
+      let minx = Infinity;
+      let miny = Infinity;
+      this.copy.forEach((data) => {
+        minx = Math.min(data.x, minx);
+        miny = Math.min(data.y, miny);
+      });
+      this.copy.forEach((data) => {
+        // TODO: require lodash?
+        const n = _.cloneDeep(data.obj);
+        n.id = this.getMaxId();
+        n.x = data.x + this.mouseInWorldX - minx;
+        n.y = data.y + this.mouseInWorldY - miny;
+
+        this.clearCache();
+        this.data.objects.push(n);
+        this.selectObject(n);
+
+        this.clearCache();
+        this.isDirty = true;
+      });
+    };
+    const copy = () => {
+      this.copy.length = 0;
+      const saveCopy = (obj) => {
+        const toSave = (obj.orig ? obj.orig : obj);
+        this.copy.push({
+          obj: toSave,
+          x: toSave.x - this.mouseInWorldX,
+          y: toSave.y - this.mouseInWorldY
+        });
+      };
+      if(this.pickedObject) {
+        saveCopy(this.pickedObject);
+      }
+      this.selection.forEach(saveCopy);
+    };
+
+    // delete key
+    if(e.which == 46){
+      remove();
+    }
+
+    // copy
+    if(e.ctrlKey) {
+      if (e.which == "V".charCodeAt(0)) {
+        paste();
+      }
+      if (e.which == "C".charCodeAt(0)) {
+        copy();
+      }
+      if(e.which == "X".charCodeAt(0)){
+        copy();
+        remove();
+      }
     }
 
     if(e.which == "B".charCodeAt(0)){
@@ -299,6 +358,7 @@ export default class ObjectLayer extends AbstractLayer {
     if(index > -1) {
       delete this.shapeBoxes[index];
       this.data.objects.splice(index, 1);
+      this.clearCache();
       this.isDirty = true;
     }
   }
@@ -332,6 +392,11 @@ export default class ObjectLayer extends AbstractLayer {
       }
     }
     this.highlightSelected();
+  }
+  clearCache(){
+    Object.keys(this.shapeBoxes).forEach((k) => {
+      delete this.shapeBoxes[k];
+    });
   }
 
   /* DRAWING methods */
@@ -566,6 +631,8 @@ edit[EditModes.drawRectangle] = function(e){
     }
     obj = ObjectHelper.createRectangle(this.getMaxId(), this.pointerPosX, this.pointerPosY);
     this.map.saveForUndo();
+
+    this.clearCache();
     this.data.objects.push(obj);
     this.draw();
     return;
@@ -607,6 +674,7 @@ edit[EditModes.drawEllipse] = function(e){
     }
     obj = ObjectHelper.createEllipse(this.getMaxId(), this.pointerPosX, this.pointerPosY);
     this.map.saveForUndo();
+    this.clearCache();
     this.data.objects.push(obj);
     this.draw();
     return;
@@ -655,6 +723,7 @@ edit[EditModes.drawShape] = function(e){
         obj.x = Math.round(obj.x / tw) * tw;
         obj.y = Math.round(obj.y / th) * th;
       }
+      this.clearCache();
       this.data.objects.push(obj);
       // first point is always at 0,0
       endPoint = {x:0, y:0};
@@ -724,6 +793,7 @@ edit[EditModes.stamp] = function(e){
       pal, this.getMaxId(),
       x, y
     );
+    this.clearCache();
     this.data.objects.push(this.highlightedObject);
   }
 
@@ -839,7 +909,7 @@ edit[EditModes.rectangle] = function(e){
       phase = 0;
     }
 
-    if(selCount == 1){
+    if(selCount == 1 && this.pickedObject){
       this.startPosX = this.pickedObject.x;
       this.startPosY = this.pickedObject.y;
     }
@@ -870,7 +940,7 @@ edit[EditModes.rectangle] = function(e){
   obj.height = Math.abs(this.movementY);
 
   selCount = this.selectObjects(obj);
-  if(selCount == 1){
+  if(selCount == 1 && this.pickedObject){
     this.startPosX = this.pickedObject.x;
     this.startPosY = this.pickedObject.y;
   }

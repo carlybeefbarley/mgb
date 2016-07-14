@@ -95,8 +95,8 @@ export default class AbstractLayer extends React.Component {
     this.mouseX = e.offsetX;
     this.mouseY = e.offsetY;
 
-    this.pointerPosX = (this.mouseX / this.camera.zoom - this.camera.x);
-    this.pointerPosY = (this.mouseY / this.camera.zoom - this.camera.y);
+    this.pointerPosX = this.mouseInWorldX;
+    this.pointerPosY = this.mouseInWorldY;
   }
   handleMouseDown(e){
     this.mouseDown = true;
@@ -107,8 +107,8 @@ export default class AbstractLayer extends React.Component {
     this.mouseX = e.offsetX;
     this.mouseY = e.offsetY;
 
-    this.pointerPosX = (this.mouseX / this.camera.zoom - this.camera.x);
-    this.pointerPosY = (this.mouseY / this.camera.zoom - this.camera.y);
+    this.pointerPosX = this.mouseInWorldX;
+    this.pointerPosY = this.mouseInWorldY;
 
     if(e.buttons == 4){
       e.preventDefault();
@@ -119,6 +119,8 @@ export default class AbstractLayer extends React.Component {
   handleMouseMove(e){
     this.mouseY = e.offsetY;
     this.mouseX = e.offsetX;
+    this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x);
+    this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y);
     if(this.mouseDown){
       this.movementX += (e.movementX / this.camera.zoom);
       this.movementY += (e.movementY / this.camera.zoom);

@@ -43,7 +43,7 @@ export default class EditGraphic extends React.Component {
   constructor(props) {
     super(props)
 
-    console.log(this.props.asset.content2);
+    // console.log(this.props.asset.content2);
 
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
@@ -227,6 +227,7 @@ export default class EditGraphic extends React.Component {
   componentDidUpdate(prevProps, prevState)
   {
     this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
+    // console.log(prevState.selectedFrameIdx, this.state.selectedFrameIdx);
 
     if (recentMarker !== null && this.props.asset.content2.changeMarker === recentMarker)
     {
@@ -234,6 +235,11 @@ export default class EditGraphic extends React.Component {
       // console.log("Backwash prevented by marker "+recentMarker)
       // This is the data we just sent up.. So let's _not_ nuke any subsequent edits (i.e don't call loadAllPreviewsAsync())
       // TODO.. we may need a window of a few recentMarkers in case of slow updates. Maybe just hold back sends while there is a pending save?
+    }
+    else if(prevState.selectedFrameIdx !== this.state.selectedFrameIdx)
+    {
+      /* Do nothing.. */
+      // Prevent frame preview canvas to redraw. Optimization for playing animation with lots of frames
     }
     else
     {
@@ -935,6 +941,7 @@ export default class EditGraphic extends React.Component {
       c2.cols = tilesetInfo.cols;
       c2.rows = tilesetInfo.rows;
     }
+    // console.log('handle save');
     this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }
 

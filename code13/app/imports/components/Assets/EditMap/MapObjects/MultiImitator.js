@@ -31,8 +31,21 @@ export default class MultiImitator{
     return this._width;
   }
   set width(v){
-    console.log("set width:", v);
+    const prop = v / this.width;
+    let diff;
+    // 0.5 here is actually pivot point
+    // interpolated between 0 - left 1 - right
+    this.forEach((o) => {
+      diff = o.width;
+      o.width *= prop;
+      diff -= o.width;
+      o.x += diff*0.5;
 
+      diff = o.height;
+      o.height *= prop;
+      diff -= o.height;
+      o.y += diff*0.5;
+    });
 
     this.update();
   }
@@ -42,8 +55,19 @@ export default class MultiImitator{
     return this._height;
   }
   set height(v){
-    console.log("set width:", h);
+    const prop = v / this.height;
+    let diff;
+    this.forEach((o) => {
+      diff = o.width;
+      o.width *= prop;
+      diff -= o.width;
+      o.x += diff*0.5;
 
+      diff = o.height;
+      o.height *= prop;
+      diff -= o.height;
+      o.y += diff*0.5;
+    });
     this.update();
   }
 

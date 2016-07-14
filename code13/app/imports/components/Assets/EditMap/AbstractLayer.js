@@ -17,8 +17,11 @@ export default class AbstractLayer extends React.Component {
     this._mup = this.handleMouseUp.bind(this);
     this._mov = this.handleMouseMove.bind(this);
     this._kup = this._onKeyUp.bind(this);
+
+    this.isVisible = false;
   }
   componentDidMount() {
+    this.isVisible = true;
     this.adjustCanvas();
     const canvas = this.refs.canvas;
     this.ctx = canvas.getContext("2d");
@@ -29,6 +32,7 @@ export default class AbstractLayer extends React.Component {
     window.addEventListener("mousemove", this._mov);
   }
   componentWillUnmount() {
+    this.isVisible = false;
     const index = this.props.map.layers.indexOf(this);
     if (index > -1) {
       this.props.map.layers.splice(index, 1);

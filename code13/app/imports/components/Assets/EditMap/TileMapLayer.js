@@ -32,7 +32,6 @@ export default class TileMapLayer extends AbstractLayer {
 
     this.isDirtySelection = false;
     this.isDirty = true;
-    this.isVisible = false;
     this.isMouseOver = false;
     this.lastTimeout = 0;
 
@@ -61,12 +60,11 @@ export default class TileMapLayer extends AbstractLayer {
   componentDidMount(...args){
     super.componentDidMount(...args);
     this.drawTiles();
-    this.isVisible = true;
+
   }
 
   componentWillUnmount(...args){
     super.componentWillUnmount(...args);
-    this.isVisible = false;
   }
 
   activate(){

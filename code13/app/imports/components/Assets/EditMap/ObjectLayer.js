@@ -47,6 +47,11 @@ export default class ObjectLayer extends AbstractLayer {
     this.selection = new MultiImitator(this);
 
     this.lineWidth = 3;
+
+    this.isDirty = true;
+
+    this.drawInterval = 10000;
+    this.nextDraw = Date.now() + this.drawInterval;
   }
 
   //TODO: change this to abstract box.. and on change - change all elements inside this box
@@ -400,13 +405,24 @@ export default class ObjectLayer extends AbstractLayer {
   }
 
   /* DRAWING methods */
+  queueDraw(timeout){
+    if(this.nextDraw - Date.now() > timeout) {
+      this.nextDraw = Date.now() + timeout;
+    }
+  }
   draw(){
     this.isDirty = true;
   }
   drawMap(){
-    if(!this.isDirty){
+    // TODO: draw check can be moved to the parent
+    if( !( this.isDirty || this.nextDraw < Date.now() ) || !this.isVisible) {
       return;
     }
+
+    this.isDirty = false;
+    // force refresh after a while
+    this.nextDraw = Date.now() + this.drawInterval;
+
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height);
     // Don't loop through all objects.. use quadtree here some day
     // when we will support unlimited size streaming maps :D
@@ -445,7 +461,7 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     this.highlightSelected();
-    this.isDirty = false;
+
   }
   drawTile(obj){
     const gid = obj.gid &  ( ~( FLIPPED_HORIZONTALLY_FLAG |
@@ -454,10 +470,40 @@ export default class ObjectLayer extends AbstractLayer {
 
     const flipX = (obj.gid & FLIPPED_HORIZONTALLY_FLAG ? -1 : 1);
     const flipY = (obj.gid & FLIPPED_VERTICALLY_FLAG ? -1 : 1);
-    const pal = this.map.palette[gid];
+    let pal = this.map.palette[gid];
     // images might be not loaded
     if(!pal){
       return;
+    }
+
+
+    let tileId = pal.gid - (pal.ts.firstgid);
+    const tileInfo = pal.ts.tiles[tileId];
+    // TODO: this repeats from TileMapLayer - clean up and create separate function get_GID or similar
+    if(tileInfo){
+      if(tileInfo.animation){
+        const delta = Date.now() - this.map.startTime;
+        let tot = 0;
+        let anim;
+        for(let i=0; i<tileInfo.animation.length; i++){
+          tot += tileInfo.animation[i].duration;
+        }
+        const relDelta = delta % tot;
+        tot = 0;
+        for(let i=0; i<tileInfo.animation.length; i++){
+          anim = tileInfo.animation[i];
+          tot += anim.duration;
+          if(tot > relDelta){
+            if(anim.tileid != tileId){
+              let ngid = anim.tileid + pal.ts.firstgid;
+              this.queueDraw(anim.duration - (tot - relDelta));
+              pal = this.map.palette[ngid];
+            }
+            break;
+          }
+        }
+        this.queueDraw(anim.duration - (tot - relDelta));
+      }
     }
 
     const cam = this.camera;

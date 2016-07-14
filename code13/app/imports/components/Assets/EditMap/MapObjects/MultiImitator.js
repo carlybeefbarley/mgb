@@ -46,7 +46,6 @@ export default class MultiImitator{
       diff -= o.height;
       o.y += diff*0.5;
     });
-
     this.update();
   }
 

@@ -496,13 +496,13 @@ export default class ObjectLayer extends AbstractLayer {
           if(tot > relDelta){
             if(anim.tileid != tileId){
               let ngid = anim.tileid + pal.ts.firstgid;
-              this.queueDraw(anim.duration - (tot - relDelta));
+              this.queueDraw(anim.duration - (tot - relDelta) + 1);
               pal = this.map.palette[ngid];
             }
             break;
           }
         }
-        this.queueDraw(anim.duration - (tot - relDelta));
+        this.queueDraw(anim.duration - (tot - relDelta) + 1);
       }
     }
 

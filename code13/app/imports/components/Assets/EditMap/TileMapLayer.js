@@ -364,14 +364,14 @@ export default class TileMapLayer extends AbstractLayer {
             if(tot > relDelta){
               if(anim.tileid != tileId){
                 let gid = anim.tileid + pal.ts.firstgid;
-                this.queueDrawTiles(anim.duration - (tot - relDelta));
+                this.queueDrawTiles(anim.duration - (tot - relDelta)  + 1);
                 this.drawTile(this.map.palette[gid], pos, spacing, clear);
                 return;
               }
               break;
             }
           }
-          this.queueDrawTiles(anim.duration - (tot - relDelta));
+          this.queueDrawTiles(anim.duration - (tot - relDelta) + 1);
         }
       }
     }

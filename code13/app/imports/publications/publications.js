@@ -74,8 +74,10 @@ Azzets._ensureIndex({
   "name": "text"        // Index the name field. See https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor
 });
 
+Azzets._ensureIndex({"isDeleted": 1, "updatedAt": -1})
 Azzets._ensureIndex({"isDeleted": 1, "kind": 1})
 Azzets._ensureIndex({"isDeleted": 1, "name": 1, "kind": 1})
+Azzets._ensureIndex({"isDeleted": 1, "name": 1, "updatedAt": -1})
 Azzets._ensureIndex({"isDeleted": 1, "kind": 1, "updatedAt": -1})
 Azzets._ensureIndex({"isDeleted": 1, "ownerId": 1, "kind": 1, "updatedAt": -1})
 

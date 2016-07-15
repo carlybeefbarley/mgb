@@ -47,6 +47,8 @@ export default class EditGraphic extends React.Component {
 
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
+    this.zoomLevels = [1, 2, 4, 6, 8];
+
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
@@ -579,14 +581,22 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  zoomIn(){
+  zoomIn(){let 
     recentMarker = null       // Since we now want to reload data for our new EditCanvas
-    this.setState( {editScale : (this.state.editScale == 8 ? 8 : (this.state.editScale << 1))})
+    let i = this.zoomLevels.indexOf(this.state.editScale);
+    if(i<this.zoomLevels.length-1){
+      i++;
+      this.setState({ editScale: this.zoomLevels[i]});
+    }
   }
 
   zoomOut(){
     recentMarker = null       // Since we now want to reload data for our new EditCanvas
-    this.setState( {editScale : (this.state.editScale == 1 ? 1 : (this.state.editScale >> 1))})
+    let i = this.zoomLevels.indexOf(this.state.editScale);
+    if(i>0){
+      i--;
+      this.setState({ editScale: this.zoomLevels[i]});
+    }
   }
 
 
@@ -618,9 +628,9 @@ export default class EditGraphic extends React.Component {
           // if wheel is for scale:
           let s = this.state.editScale
           if (wd > 0 && s > 1)
-            this.setState({editScale: s >> 1})
+            this.zoomOut();
           else if (wd < 0 && s < 8)
-            this.setState({editScale: s << 1})
+            this.zoomIn();
         }
         else {
           // if wheel is for frame
@@ -1282,7 +1292,7 @@ map
                         onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-1)}>
               </canvas>
-              <canvas id="tilesetCanvas"></canvas>
+              {/*** <canvas id="tilesetCanvas"></canvas> ***/}
             </div>
           </div>
 

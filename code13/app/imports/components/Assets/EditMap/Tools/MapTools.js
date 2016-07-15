@@ -278,7 +278,7 @@ export default class MapTools extends React.Component {
           icon: "pencil",
           label: "Shape",
           tooltip: "Draw Shape on the map",
-          shortcut: "R",
+          shortcut: "S",
           level: 5
         },
         {

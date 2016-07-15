@@ -33,20 +33,35 @@ export default AssetCreateNew = React.createClass({
     const chosenKindStr = isKindChosen ? AssetKinds[this.state.selectedKind].name : "Asset"
     const chosenNameStr = isAssetNameValid ? `"${this.state.newAssetName}"` : ""
     const isButtonDisabled = this.state.buttonActionPending || !isAssetReadyToCreate
-    const createButtonClassName = "ui primary" + (isButtonDisabled ? " disabled " : " ") + "button"
+    const createButtonClassName = "ui primary right floated " + (isButtonDisabled ? " disabled " : " ") + "button"
     const createButtonTooltip = isAssetReadyToCreate ? "Click here to create your new Asset" : "You must choose a valid name and 'kind' for your new asset. You can rename it later if you wish, but you cannot change it's 'kind' later"
     
     return (
       <div>
-        <div title={createButtonTooltip}>
-          <div className={createButtonClassName} onClick={this.handleCreateAssetClick} >
-            Create {chosenKindStr} {chosenNameStr}
-            <i className="right chevron icon"></i>
+
+        <div className="ui fluid small ordered evenly divided steps">
+          <div className={(isAssetNameValid ? "completed " : "active ") + "step"}>
+            <div className="content">
+              <div className="title">Name</div>
+              <div className="description">Name your new asset</div>
+            </div>
+          </div>
+          <div className={(isKindChosen ? "completed " : "active ") + "step"}>
+            <div className="content">
+              <div className="title">Kind</div>
+              <div className="description">Choose which kind to create</div>
+            </div>
+          </div>
+          <div className={ (this.state.buttonActionPending ? "completed ": (isAssetReadyToCreate ? "active " : "")) + "step" }>
+            <div className="content">
+              <div className="title">Confirm Create</div>
+              <div className="description">Create it!</div>
+            </div>
           </div>
         </div>
-
+        
         <div className="ui padded segment">
-          <h4 className="ui header">Enter Asset Name</h4>
+          <h4 className="ui header">1. Enter Asset Name</h4>
           <div className="ui items">
             <div className={"ui fluid input" + (isAssetNameValid ? "" : " error")}>
               <input className="fluid" type="text" value={this.state.newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={this.props.placeholderName} ref={inp => (inp && inp.focus())}></input>
@@ -55,12 +70,19 @@ export default AssetCreateNew = React.createClass({
         </div>
 
         <div className="ui padded segment">
-          <h4 className="ui header">Choose an Asset Kind</h4>        
+          <h4 className="ui header">2. Choose an Asset Kind</h4>        
           <AssetCreateSelectKind 
             currUser={currUser} 
             selectedKind={this.state.selectedKind} 
             handleSelectAsset={this.handleSelectAssetKindClick} />
         </div>
+
+        <div title={createButtonTooltip}>
+          <div className={createButtonClassName} onClick={this.handleCreateAssetClick} >
+            3. Create {chosenKindStr} {chosenNameStr}
+            <i className="right chevron icon"></i>
+          </div>
+        </div>        
       </div>
     )
   },

@@ -488,7 +488,7 @@ export default class ObjectLayer extends AbstractLayer {
         for(let i=0; i<tileInfo.animation.length; i++){
           anim = tileInfo.animation[i];
           tot += anim.duration;
-          if(tot > relDelta){
+          if(tot >= relDelta){
             if(anim.tileid != tileId){
               let ngid = anim.tileid + pal.ts.firstgid;
               // TODO: this won't flip / rotate tile???
@@ -753,7 +753,6 @@ edit[EditModes.drawEllipse] = function(e){
   }
 };
 edit[EditModes.drawShape] = function(e){
-  console.log("draw shape!!!");
   if(e.type == "mousedown"){
     if(!obj){
       if((e.buttons & 0x2) == 0x2){

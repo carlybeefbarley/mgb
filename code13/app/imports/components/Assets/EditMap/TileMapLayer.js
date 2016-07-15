@@ -353,7 +353,7 @@ export default class TileMapLayer extends AbstractLayer {
           for(let i=0; i<tileInfo.animation.length; i++){
             anim = tileInfo.animation[i];
             tot += anim.duration;
-            if(tot > relDelta){
+            if(tot >= relDelta){
               if(anim.tileid != tileId){
                 let gid = anim.tileid + pal.ts.firstgid;
                 this.queueDrawTiles(anim.duration - (tot - relDelta));
@@ -364,7 +364,7 @@ export default class TileMapLayer extends AbstractLayer {
               break;
             }
           }
-          this.queueDrawTiles(anim.duration - (tot - relDelta) + 1);
+          this.queueDrawTiles(anim.duration - (tot - relDelta));
         }
       }
     }
@@ -899,7 +899,7 @@ edit[EditModes.stamp] = function(e, up, saveUndo = true){
       edit[EditModes.stamp].call(this, e, true, false);
       return;
     }
-    
+
     this.options.data[tpos.id] = ts.gid;
     this.fixRotation(tpos.id);
   }

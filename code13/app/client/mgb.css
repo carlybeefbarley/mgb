@@ -108,3 +108,16 @@ body.dragging .accept-drop:hover{
 .compact > label .title{
   padding: 0.1em;
 }
+
+/* semantic hacks */
+.icon.flip{
+  transform: scaleX(-1);
+}
+
+.animate *{
+  transition: .3s;
+}
+.hidden{
+  opacity: 0;
+}
+

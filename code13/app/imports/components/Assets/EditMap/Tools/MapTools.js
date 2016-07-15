@@ -1,32 +1,26 @@
 "use strict";
 import React from 'react';
 import EditModes from "./EditModes";
+import Toolbar from "/imports/components/Toolbar/Toolbar.js";
 
 export default class MapTools extends React.Component {
 
-  componentDidMount(){
-    this.activateToolPopups();
-  }
-  activateToolPopups() {
-    $('.hazPopup', this.refs.mainElement).popup();
-  }
-
-  doPreview() {
+  preview() {
     this.props.map.togglePreviewState();
   }
 
-  doSave(e) {
+  save(e) {
     this.props.map.props.parent.handleSave(e);
   }
 
-  doCameraReset() {
+  resetCamera() {
     this.props.map.resetCamera();
   }
-  doUndo(){
+  undo(){
     this.props.map.doUndo();
     this.forceUpdate();
   }
-  doRedo(){
+  redo(){
     this.props.map.doRedo();
     this.forceUpdate();
   }
@@ -34,6 +28,31 @@ export default class MapTools extends React.Component {
     this.props.map.options.randomMode = !this.props.map.options.randomMode;
     this.forceUpdate();
   }
+  stamp(){
+    this.enableMode(EditModes.stamp);
+  }
+  terrain(){
+    this.enableMode(EditModes.terrain);
+  }
+  fill(){
+    this.enableMode(EditModes.fill);
+  }
+  eraser(){
+    this.enableMode(EditModes.eraser);
+  }
+  drawRectangle(){
+    this.enableMode(EditModes.drawRectangle);
+  }
+  drawEllipse(){
+    this.enableMode(EditModes.drawEllipse);
+  }
+  drawShape(){
+    this.enableMode(EditModes.drawShape);
+  }
+  rectangle(){
+    this.enableMode(EditModes.rectangle);
+  }
+
   enableMode(mode){
     this.props.map.options.mode = mode;
     this.forceUpdate();
@@ -58,6 +77,12 @@ export default class MapTools extends React.Component {
     if(!l || !l.clearSelection){return;}
     l.toggleFill();
   }
+  rotateClockwise(){
+    this.rotate(true);
+  }
+  rotateCounterClockwise(){
+    this.rotate(false);
+  }
   rotate(cw){
     const l = this.props.map.getActiveLayer();
     if(!l || !l.rotate){return;}
@@ -70,149 +95,276 @@ export default class MapTools extends React.Component {
   }
 
   render() {
+    // older maps don't have default mode
     if(!this.props.map.options.mode){
       this.props.map.options.mode = "stamp";
     }
 
-    // const activeClass = "black";
-    const activeClass = "primary";
-    const undoClass = this.props.map.undoSteps.length ? "ui button" : "ui button disabled";
-    const redoClass = this.props.map.redoSteps.length ? "ui button" : "ui button disabled";
-    //const undoClass = this.props.map.undoSteps.length ? "ui button hazPopup" : "ui button disabled hazPopup";
-    //const undoCount = this.props.map.undoSteps.length;/// ? `<div class="floating ui tiny grey label">${this.props.map.undoSteps.length}</div>` : "";
+    const config = {
+      level: 5,
+      buttons: [
+        {
+          name: "save",
+          label: "Save",
+          tooltip: "Save the map",
+          level: 1,
+          shortcut: "Ctrl+S" // Is it OK to override browsers save page?
+        },
+        {
+          name: "preview",
+          label: "3D Preview",
+          icon: "cube",
+          active: this.props.map.options.preview,
+          tooltip: "Separate layers in 3d view",
+          level: 5,
+          shortcut: "Ctrl+Alt+P"
+        },
+        {
+          name: "resetCamera",
+          icon: "crosshairs",
+          label: "Reset Camera",
+          tooltip: "Set Zoom to 100% and move map to 0,0 coordinates",
+          level: 5,
+          shortcut: "Ctrl+Alt+R"
+        },
+        {
+          name: "separator"
+        },
+        {
+          name: "undo",
+          label: "Undo",
+          iconText:  (this.props.map.undoSteps.length ? " "+this.props.map.undoSteps.length : ''),
+          disabled: !this.props.map.undoSteps.length,
+          tooltip: "Undo last action",
+          level: 2,
+          shortcut: "Ctrl+Z"
+        },
+        {
+          name: "redo",
+          icon: "undo flip", // redo is flipped undo
+          label: "Redo",
+          disabled: !this.props.map.redoSteps.length,
+          tooltip: "Redo previous action",
+          level: 2,
+          shortcut: "Ctrl+Shift+Z"
+        },
+        {
+          name: "separator"
+        },
+        {
+          name: "randomize",
+          icon: "random",
+          active: this.props.map.options.randomMode,
+          label: "Random mode",
+          tooltip: "Random Mode - picks one tile from the selection",
+          level: 5
+        },
+        {
+          name: "separator"
+        },
+        {
+          name: "stamp",
+          icon: "legal stamp",
+          active: this.props.map.options.mode == EditModes.stamp,
+          label: "Stamp",
+          tooltip: "Stamp tiles on the map",
+          level: 1,
+          shortcut: "Ctrl+Shift+S"
+        },
+        {
+          name: "terrain",
+          icon: "world terrain",
+          active: this.props.map.options.mode == EditModes.terrain,
+          label: "Terrain Tool",
+          tooltip: "Create advanced Terrains - not implemented :(",
+          level: 9,
+          shortcut: "Ctrl+Shift+T"
+        },
+        {
+          name: "fill",
+          icon: "theme fill",
+          label: "Fill",
+          active: this.props.map.options.mode == EditModes.fill,
+          tooltip: "Fill Map or Selection with selected tile(s)",
+          level: 4,
+          shortcut: "Ctrl+Shift+F"
+        },
+        {
+          name: "eraser",
+          label: "Eraser",
+          active: this.props.map.options.mode == EditModes.eraser,
+          tooltip: "Delete tile - or use [Ctrl + click] to quickly access this tool",
+          level: 1,
+          shortcut: "Ctrl+Shift+E"
+        },
+        {
+          name: "separator"
+        },
+        {
+          name: "rectangle",
+          icon: "square outline rectangle",
+          label: "Select",
+          active: this.props.map.options.mode == EditModes.rectangle,
+          tooltip: "Rectangle Selection Tool",
+          level: 3,
+          shortcut: "Ctrl + Shift + R"
+        },
+        {
+          name: "wand",
+          icon: "wizard",
+          active: this.props.map.options.mode == EditModes.wand,
+          label: "Magic Wand",
+          tooltip: "Magic Wand selection - select adjacent tiles with same ID",
+          level: 5
+        },
+        {
+          name: "picker",
+          active: this.props.map.options.mode == EditModes.picker,
+          icon: "qrcode picker",
+          label: "Tile Picker",
+          tooltip: "Tile Picker - Select All tiles with same ID",
+          level: 5
+        },
+        {
+          name: "clearSelection",
+          icon: "ban",
+          label: "Clear Selection",
+          tooltip: "Clear selected tiles and/or objects",
+          level: 3
+        },
+        {
+          name: "separator"
+        },
+        {
+          name: "rotateClockwise",
+          icon: "share",
+          label: "Rotate (CW)",
+          tooltip: "Rotate Tile ClockWise",
+          shortcut: "Z",
+          level: 7
+        },
+        {
+          name: "rotateCounterClockwise",
+          icon: "reply",
+          label: "Rotate (CCW)",
+          tooltip: "Rotate Tile Counter ClockWise",
+          shortcut: "Shift+Z",
+          level: 7
+        },
+        {
+          name: "separator"
+        },
+        {
+          name: "drawRectangle",
+          active: this.props.map.options.mode == EditModes.drawRectangle,
+          icon: "stop",
+          label: "Rectangle",
+          tooltip: "Draw Rectangle on the map",
+          shortcut: "R",
+          level: 3
+        },
+        {
+          name: "drawEllipse",
+          active: this.props.map.options.mode == EditModes.drawEllipse,
+          icon: "circle",
+          label: "Ellipse",
+          tooltip: "Draw Ellipse on the map",
+          shortcut: "E",
+          level: 4
+        },
+        {
+          name: "drawShape",
+          active: this.props.map.options.mode == EditModes.drawShape,
+          icon: "pencil",
+          label: "Shape",
+          tooltip: "Draw Shape on the map",
+          shortcut: "R",
+          level: 5
+        },
+        {
+          name: "togglePolygon",
+          icon: "clone",
+          label: "Polygon",
+          tooltip: "Toggle between polygon and polyline",
+          level: 5
+        },
+      ]
+    };
 
-    // TODO: disable object drawing buttons if active layer is not ObjectLayer
-    //const canDraw;
 
-    const undoTitle = "Undo" + (this.props.map.undoSteps.length ? " " + this.props.map.undoSteps[this.props.map.undoSteps.length - 1].reason : "");
+    return <Toolbar actions={this} config={config} className="map-tools" />
+  }
 
-    return (
-      <div ref="mainElement">
-        {/* mics buttons / camera / view / save */}
-        <div className="ui icon buttons small ">
-          <span className="ui button"
-                  title="Drop tileset on the map area to import it"
-            ><i className="question icon"></i>
-          </span>
-          <span className={(this.props.map.options.preview ? "ui button " + activeClass : "ui button")}
-                  onClick={this.doPreview.bind(this)}
-                  title="3d Preview"
-            ><i className="cube icon"></i>
-          </span>
-          <span className="ui button"
-                  onClick={this.doCameraReset.bind(this)}
-                  title="Reset camera"
-            ><i className="crosshairs icon"></i>
-          </span>
-          <span className="ui button"
-                  onClick={this.doSave.bind(this)}
-                  title="Save map"
-            ><i className="save icon"></i>
-          </span>
-        </div>
-        {/* undo / redo */}
-        <div className="ui icon small buttons">
-          <span className={undoClass}
-                  onClick={this.doUndo.bind(this)}
-                  title={undoTitle}
-                  data-position="top center"
-            ><i className="undo icon"></i>{this.props.map.undoSteps.length}
-          </span>
-          <span className={redoClass}
-                  onClick={this.doRedo.bind(this)}
-                  title="Redo"
-            ><i className="undo icon" style={{transform: "scaleX(-1)"}}></i>
-          </span>
-        </div>
-        {/* randomize */}
-        <div className="ui icon buttons small">
-          <span className={(this.props.map.options.randomMode ? "ui button " + activeClass : "ui button")}
-                  onClick={this.toggleRandomMode.bind(this)}
-                  title="Random Mode - picks one tile from the selection"
-            ><i className="random icon"></i>
-          </span>
-        </div>
-        {/* put something on map */}
-        <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == EditModes.stamp ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, EditModes.stamp)}
-                  title="Stamp Tool"
-            ><i className="legal stamp icon"></i>
-          </span>
-          <span className={(this.props.map.options.mode == EditModes.terrain ? "ui button disabled" + activeClass : "ui button disabled")}
-                  onClick={this.enableMode.bind(this, EditModes.terrain)}
-                  title="Terrain Tool"
-            ><i className="world terrain icon"></i>
-          </span>
-          <span className={(this.props.map.options.mode == EditModes.fill ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, EditModes.fill)}
-                  title="bucket fill tool"
-            ><i className="theme fill icon"></i>
-          </span>
-          <span className={(this.props.map.options.mode == EditModes.eraser ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableEraser.bind(this)}
-                  title="Eraser"
-            ><i className="eraser icon"></i>
-          </span>
-        </div>
-        {/* select something */}
-        <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == EditModes.rectangle ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this,  EditModes.rectangle)}
-                  title="Rectangle selection"
-            ><i className="square outline rectangle icon"></i>
-          </span>
-          <span className={(this.props.map.options.mode ==  EditModes.wand ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, EditModes.wand)}
-                  title="Magic Wand selection - select same adjascent tiles"
-            ><i className="wizard icon"></i>
-          </span>
-          <span className={(this.props.map.options.mode == EditModes.picker ? "ui button " + activeClass : "ui button")}
-                  onClick={this.enableMode.bind(this, EditModes.picker)}
-                  title="Select same tiles "
-            ><i className="qrcode picker icon"></i>
-          </span>
-          <span className="ui button"
-                  onClick={this.clearSelection.bind(this)}
-                  title="Clear Selection"
-            ><i className="ban icon"></i>
-          </span>
-        </div>
-        <div className="ui icon buttons small">
-          <span className="ui button"
-              onClick={this.rotate.bind(this, true)}
-              title="Rotate ClockWise - Z"
-          ><i className="share icon"></i>
-          </span>
-          <span className="ui button"
-                onClick={this.rotate.bind(this, false)}
-                title="Rotate CounterClockWise - Shift + Z"
-            ><i className="reply icon"></i>
-          </span>
-        </div>
-        <div className="ui icon buttons small">
-          <span className={(this.props.map.options.mode == EditModes.drawRectangle ? "ui button " + activeClass : "ui button")}
-                onClick={this.enableMode.bind(this, EditModes.drawRectangle)}
-                title="Draw Rectangle"
-            ><i className="stop icon"></i>
-          </span>
-          <span className={(this.props.map.options.mode == EditModes.drawEllipse ? "ui button " + activeClass : "ui button")}
-                onClick={this.enableMode.bind(this, EditModes.drawEllipse)}
-                title="Draw Ellipse"
-            ><i className="circle icon"></i>
-          </span>
-          <span className={(this.props.map.options.mode == EditModes.drawShape ? "ui button " + activeClass : "ui button")}
-                onClick={this.enableMode.bind(this, EditModes.drawShape)}
-                title="Draw Shape from multiple lines"
-            ><i className="pencil icon"></i>
-          </span>
-          <span className="ui button"
-                onClick={this.toggleFill.bind(this)}
-                title="Toggle shape fill"
-            ><i className="clone icon"></i>
-          </span>
-        </div>
-      </div>
-    )
+
+  testSample(){
+
+
+    class SampleComponent extends React.Component {
+      render(){
+        return <div className="button ui">{"Sample " + this.props.name}</div>;
+      }
+    }
+
+    const actions = {
+      save: () => {
+        alert("Saved!");
+      },
+      undo: () => {
+        alert("redo!");
+      }
+    };
+
+    const aconf = {
+      level: 2,
+      buttons: [
+        {
+          name: "stamp",
+          label: "Stamp Tool",
+          tooltip: "Put tile on the map",
+          level: 3
+        }
+        ,{
+          name: "terrain",
+          label: "Terrain Tool",
+          tooltip: "Terrain Tool",
+          level: 9
+        }
+      ]
+    };
+
+    const config = {
+      level: 2,
+      buttons: [
+        {
+          name: "save",
+          label: "Save",
+          tooltip: "Press this button to save...",
+          level: 1,
+          shortcut: "Ctrl+A"
+        }
+        ,{
+          name: "undo",
+          label: "Undo",
+          tooltip: "Restore previous state",
+          level: 2
+        }
+        ,{
+          name: "redo",
+          label: "Redo",
+          icon: "undo redo",
+          tooltip: "Revert last undo action",
+          level: 2
+        }
+        ,{
+          name: "component",
+          component: <SampleComponent name="Hello!" key="component" />
+        }
+        ,{
+          name: "anotherToolbar",
+          component: <Toolbar actions={actions} config={aconf} key="anotherToolbar" />
+        }
+      ]
+    };
+    return <Toolbar actions={actions} config={config} className="maparea" />;
   }
 }

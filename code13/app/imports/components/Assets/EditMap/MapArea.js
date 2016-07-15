@@ -201,7 +201,6 @@ export default class MapArea extends React.Component {
 
   // TMP - one undo step - just to prevent data loss
   saveForUndo(reason = "", skipRedo = false){
-    console.error("Saving undo:", reason);
     if(this.ignoreUndo){
       return;
     }
@@ -950,11 +949,13 @@ export default class MapArea extends React.Component {
       );
     }
   }
+
   render (){
     let notification = "";
     if(this.data.width * this.data.height > 100000){
       notification = <div>This map is larger than our recommended size - so editing may be slower than normal!</div>;
     }
+
     return (
       <div
         //ref={(...a) => {console.log("ref test", a);}}
@@ -963,9 +964,6 @@ export default class MapArea extends React.Component {
         onDrop={this.importFromDrop.bind(this)}
         onWheel={this.handleOnWheel.bind(this)}
         >
-        <Toolbar actions={{
-
-        }} />
         <MapTools map={this} ref="tools" />
         {notification}
         {this.renderMap()}

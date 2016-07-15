@@ -1237,7 +1237,7 @@ map
               <div className="ui small label" title="Canvas height">
                 h:
               </div>
-              <input className="ui small input" type="number" min="1" max="999" placeholder={c2.height} onChange={this.changeCanvasHeight.bind(this)} />
+              <input className="ui small input" type="number" min="1" max="999" placeholder={c2.height} onBlur={this.changeCanvasHeight.bind(this)} />
             </div>
 
 

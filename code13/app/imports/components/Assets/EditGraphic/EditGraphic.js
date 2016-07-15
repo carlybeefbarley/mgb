@@ -238,8 +238,8 @@ export default class EditGraphic extends React.Component {
     }
     else if(prevState.selectedFrameIdx !== this.state.selectedFrameIdx)
     {
-      /* Do nothing.. */
-      // Prevent frame preview canvas to redraw. Optimization for playing animation with lots of frames
+      // Optimization for playing animation with lots of frames. Redraw only current frame
+      this.updateFrameLayers();
     }
     else
     {
@@ -334,6 +334,17 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  updateFrameLayers(){
+    let w = this.previewCanvasArray[this.state.selectedLayerIdx].width
+    let h = this.previewCanvasArray[this.state.selectedLayerIdx].height
+    let s = this.state.editScale
+    let c2 = this.props.asset.content2;
+    let frameData = c2.frameData[this.state.selectedFrameIdx];
+    for(let i=frameData.length-1; i>=0; i--){
+      this.loadAssetAsync(this.state.selectedFrameIdx, i);
+    }
+  }
+
 
   updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): Do we still need the vendor-prefix smoothing flags?
   {
@@ -354,7 +365,6 @@ export default class EditGraphic extends React.Component {
         this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h)
       }
     }
-    
   }
 
   drawSelectRect(selectRect){

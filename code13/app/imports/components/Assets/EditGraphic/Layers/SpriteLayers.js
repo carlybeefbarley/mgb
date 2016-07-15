@@ -170,12 +170,12 @@ export default class SpriteLayers extends React.Component {
   stepFrame(isForward) {
     let selectedID = this.props.EditGraphic.state.selectedFrameIdx
     let frameID = isForward ? selectedID+1 : selectedID-1
-    if (frameID >= 0 && frameID < this.props.content2.layerParams.length)
+    if (frameID >= 0 && frameID < this.props.content2.frameNames.length)
       this.selectFrame(frameID)
   }
 
   rewindFrames(isForward) {
-    let frameID = isForward ? this.props.content2.layerParams.length-1 : 0
+    let frameID = isForward ? this.props.content2.frameNames.length-1 : 0
     this.selectFrame(frameID)
   }
 

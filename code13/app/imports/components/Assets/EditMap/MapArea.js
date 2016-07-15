@@ -18,6 +18,7 @@ import LayerTypes from "./Tools/LayerTypes.js";
 import Camera from "./Camera.js";
 
 import DragNDropHelper from "/imports/helpers/DragNDropHelper.js";
+import Toolbar from "/imports/components/Toolbar/Toolbar.js";
 
 export default class MapArea extends React.Component {
 
@@ -199,13 +200,14 @@ export default class MapArea extends React.Component {
   }
 
   // TMP - one undo step - just to prevent data loss
-  saveForUndo(skipRedo = false){
+  saveForUndo(reason = "", skipRedo = false){
+    console.error("Saving undo:", reason);
     if(this.ignoreUndo){
       return;
     }
-    const toSave = this.copyData(this.data);
+    const toSave = {data: this.copyData(this.data), reason};
     // prevent double saving undo
-    if(this.undoSteps[this.undoSteps.length-1] == toSave){
+    if(this.undoSteps.length && this.undoSteps[this.undoSteps.length - 1].data == toSave.data){
       return;
     }
     if(!skipRedo){
@@ -217,7 +219,7 @@ export default class MapArea extends React.Component {
   doUndo(){
     if(this.undoSteps.length){
       this.redoSteps.push(this.data);
-      this.data = JSON.parse(this.undoSteps.pop());
+      this.data = JSON.parse(this.undoSteps.pop().data);
 
       this.ignoreUndo++;
       this.update(() => {
@@ -229,7 +231,7 @@ export default class MapArea extends React.Component {
     if(!this.redoSteps.length){
       return;
     }
-    this.saveForUndo(true);
+    this.saveForUndo("Changes before Redo", true);
 
     this.data = this.redoSteps.pop();
 
@@ -237,6 +239,10 @@ export default class MapArea extends React.Component {
     this.update(() => {
       this.ignoreUndo--;
     });
+  }
+
+  save(){
+    this.props.parent.handleSave();
   }
   copyData(data){
     return JSON.stringify(data);
@@ -957,6 +963,9 @@ export default class MapArea extends React.Component {
         onDrop={this.importFromDrop.bind(this)}
         onWheel={this.handleOnWheel.bind(this)}
         >
+        <Toolbar actions={{
+
+        }} />
         <MapTools map={this} ref="tools" />
         {notification}
         {this.renderMap()}

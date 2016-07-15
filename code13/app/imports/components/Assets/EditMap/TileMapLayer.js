@@ -250,7 +250,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   _draw(now){
-    if( !( this.isDirty || this.nextDraw < now ) || !this.isVisible) {
+    if( !( this.isDirty || this.nextDraw <= now ) || !this.isVisible) {
       return;
     }
     const ts = this.props.data;
@@ -356,9 +356,10 @@ export default class TileMapLayer extends AbstractLayer {
             if(tot > relDelta){
               if(anim.tileid != tileId){
                 let gid = anim.tileid + pal.ts.firstgid;
-                this.queueDrawTiles(anim.duration - (tot - relDelta)  + 1);
-                this.drawTile(this.map.palette[gid], pos, spacing, clear);
-                return;
+                this.queueDrawTiles(anim.duration - (tot - relDelta));
+                pal = this.map.palette[gid];
+                //this.drawTile(this.map.palette[gid], pos, spacing, clear);
+                break;
               }
               break;
             }
@@ -481,7 +482,7 @@ export default class TileMapLayer extends AbstractLayer {
       }
       this.highlightTile(pos, "rgba(0,0,255,0.3)", ts);
     }
-    else if( map.collection.length){
+    else if( map.collection.length ){
       this.ctx.globalAlpha = 0.6;
       const tpos = new TileSelection(pos);
       let ox = map.collection[0].x;
@@ -507,7 +508,8 @@ export default class TileMapLayer extends AbstractLayer {
           FLIPPED_DIAGONALLY_FLAG) );
 
           const pal = palette[gid];
-          if(pal){
+          // draw tile image only when stamp mode is active
+          if(pal && this.map.options.mode == EditModes.stamp ){
             this.drawTile(pal, tpos, map.spacing);
           }
           this.highlightTile(tpos, "rgba(0,0,255,0.3)", ts);
@@ -520,6 +522,7 @@ export default class TileMapLayer extends AbstractLayer {
 
   }
   highlightTile(pos, fillStyle, ts){
+
     const map = this.props.map;
     const camera = this.camera;
 
@@ -533,7 +536,7 @@ export default class TileMapLayer extends AbstractLayer {
 
     if(this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== "rightup"){
 
-      if(this.options.mgb_mgb_tiledrawdirection == "leftdown") {
+      if(this.options.mgb_tiledrawdirection == "leftdown") {
         drawX -= (drawW - map.data.tilewidth * camera.zoom);
       }
       else if(this.options.mgb_tiledrawdirection == "leftup"){
@@ -697,8 +700,7 @@ edit[EditModes.fill] = function(e, up){
   const pos = this.getTilePosInfo(e);
 
   if(up){
-    this.map.saveForUndo();
-
+    this.map.saveForUndo("Fill tilemap");
     let temp = this.map.tmpSelection;
     for(let i=0; i<temp.length; i++){
       this.options.data[temp[i].id] = temp[i].gid;
@@ -725,6 +727,7 @@ edit[EditModes.fill] = function(e, up){
     this.map.selection.clear();
     // fill with magic wand
     edit[EditModes.wand].call(this, e);
+    // TODO: this seems to be invalid - 3rd parameter is collection - not boolean
     edit[EditModes.wand].call(this, e, true);
     this.isDirtySelection = true;
   }
@@ -768,9 +771,11 @@ edit[EditModes.fill] = function(e, up){
   this.drawTiles();
   return;
 };
-edit[EditModes.stamp] = function(e, up, saveForUndo = true){
-  // button 2 is for the map movement and 3d rotate
-  // we will use shift + button 1
+edit[EditModes.stamp] = function(e, up, saveUndo = true){
+  if(e.type != "mousedown"){
+    saveUndo = false;
+  }
+
   if(e.shiftKey){
     if(up){
       this.map.swapOutSelection();
@@ -802,21 +807,22 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
     this.drawTiles(e);
     return;
   }
-  if(e.type == "mousedown" && e.target == this.refs.canvas){
-    saveForUndo && this.map.saveForUndo();
-  }
-
 
   if (this.map.options.randomMode) {
     let ts = this.map.collection.random();
     if (this.map.selection.length > 0) {
       if (this.map.selection.indexOfId(pos.id) > -1) {
+        saveUndo && this.map.saveForUndo("Add Random Tile");
         this.options.data[pos.id] = ts.gid;
         this.fixRotation(pos.id);
       }
     }
     else {
-
+      // updating same tile - safe to skip
+      if(this.options.data[pos.id] == ts.gid){
+        return;
+      }
+      saveUndo && this.map.saveForUndo("Update Tile");
       if( pos.x < 0 ){
         this.increaseSizeToLeft(pos);
         edit[EditModes.stamp].call(this, e, up, false);
@@ -838,7 +844,7 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
         edit[EditModes.stamp].call(this, e, true, false);
         return;
       }
-
+      saveUndo && this.map.saveForUndo("Update Tile No: "+ pos.id);
       this.options.data[pos.id] = ts.gid;
       this.fixRotation(pos.id);
 
@@ -851,12 +857,28 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
   const ox = this.map.collection[0].x;
   const oy = this.map.collection[0].y;
 
+
   let tpos = new TileSelection(pos);
   for (let i = 0; i < this.map.collection.length; i++) {
     let ts = this.map.collection[i];
     tpos.x = ts.x + pos.x - ox;
     tpos.y = ts.y + pos.y - oy;
+    tpos.id = tpos.x + tpos.y * this.options.width;
+    if (this.map.selection.length > 0) {
+      if (this.map.selection.indexOfId(tpos.id) == -1) {
+        continue;
+      }
+    }
 
+    // updating same tile - safe to skip
+    if(this.options.data[tpos.id] == ts.gid){
+      continue;
+    }
+    if(saveUndo){
+      this.map.saveForUndo("Update Tile");
+      // save only once
+      saveUndo = false;
+    }
     if( tpos.x < 0 ){
       this.increaseSizeToLeft(tpos);
       edit[EditModes.stamp].call(this, e, up, false);
@@ -869,7 +891,7 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
     }
     if(tpos.x > this.options.width-1){
       this.increaseSizeToRight(tpos);
-      edit[EditModes.stamp].call(this, e, up), false;
+      edit[EditModes.stamp].call(this, e, up, false);
       return;
     }
     if ( tpos.y > this.options.height-1) {
@@ -877,17 +899,9 @@ edit[EditModes.stamp] = function(e, up, saveForUndo = true){
       edit[EditModes.stamp].call(this, e, true, false);
       return;
     }
-    tpos.id = tpos.x + tpos.y * this.options.width;
-    if (this.map.selection.length > 0) {
-      if (this.map.selection.indexOfId(tpos.id) > -1) {
-        this.options.data[tpos.id] = ts.gid;
-        this.fixRotation(tpos.id);
-      }
-    }
-    else {
-      this.options.data[tpos.id] = ts.gid;
-      this.fixRotation(tpos.id);
-    }
+    
+    this.options.data[tpos.id] = ts.gid;
+    this.fixRotation(tpos.id);
   }
   this.map.redrawGrid();
   this.drawTiles();
@@ -901,12 +915,12 @@ edit[EditModes.eraser] = function(e, up){
 
   if (this.map.selection.length > 0) {
     if (this.map.selection.indexOfId(pos.id) > -1) {
-      this.map.saveForUndo();
+      this.map.saveForUndo("Delete tile");
       layer.data[pos.id] = 0;
     }
   }
   else {
-    this.map.saveForUndo();
+    this.map.saveForUndo("Delete tile");
     layer.data[pos.id] = 0;
   }
   this.drawTiles();

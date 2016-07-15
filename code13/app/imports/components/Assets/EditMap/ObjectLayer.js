@@ -206,8 +206,6 @@ export default class ObjectLayer extends AbstractLayer {
       this.mouseDown = false;
       return;
     }
-
-    this.map.saveForUndo();
   }
   handleMouseUp(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
@@ -231,6 +229,7 @@ export default class ObjectLayer extends AbstractLayer {
   onKeyUp(e){
     // todo Move functions to external file?
     const remove = () => {
+      this.map.saveForUndo("Delete");
       if(this.pickedObject){
         this.deleteObject(this.pickedObject.orig ? this.pickedObject.orig : this.pickedObject);
       }
@@ -246,6 +245,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.isDirty = true;
     };
     const paste = () => {
+      this.map.saveForUndo("Paste");
       let minx = Infinity;
       let miny = Infinity;
       this.copy.forEach((data) => {
@@ -410,7 +410,7 @@ export default class ObjectLayer extends AbstractLayer {
   }
   _draw(now){
     // TODO: draw check can be moved to the parent
-    if( !( this.isDirty || this.nextDraw < now ) || !this.isVisible) {
+    if( !( this.isDirty || this.nextDraw <= now ) || !this.isVisible) {
       return;
     }
 
@@ -491,13 +491,16 @@ export default class ObjectLayer extends AbstractLayer {
           if(tot > relDelta){
             if(anim.tileid != tileId){
               let ngid = anim.tileid + pal.ts.firstgid;
-              this.queueDraw(anim.duration - (tot - relDelta) + 1);
+              // TODO: this won't flip / rotate tile???
+              // is it possible to contain rotated tiles in the animation?
+              // or first tile contains info about transformations - in that case this is correct and tileLayer has incorrect version
+              this.queueDraw(anim.duration - (tot - relDelta));
               pal = this.map.palette[ngid];
             }
             break;
           }
         }
-        this.queueDraw(anim.duration - (tot - relDelta) + 1);
+        this.queueDraw(anim.duration - (tot - relDelta));
       }
     }
 
@@ -652,10 +655,9 @@ export default class ObjectLayer extends AbstractLayer {
       obj = this.selection;
     }
 
-    if(obj){
+    if(obj && this.isActive()){
       this.updateHandles(obj);
       // draw on grid which is always on the top
-
       this.handles.draw(ctx, cam);
     }
   }
@@ -671,9 +673,9 @@ edit[EditModes.drawRectangle] = function(e){
       return;
     }
     obj = ObjectHelper.createRectangle(this.getMaxId(), this.pointerPosX, this.pointerPosY);
-    this.map.saveForUndo();
 
     this.clearCache();
+    this.map.saveForUndo("Draw Rectangle");
     this.data.objects.push(obj);
     this.draw();
     return;
@@ -714,8 +716,8 @@ edit[EditModes.drawEllipse] = function(e){
       return;
     }
     obj = ObjectHelper.createEllipse(this.getMaxId(), this.pointerPosX, this.pointerPosY);
-    this.map.saveForUndo();
     this.clearCache();
+    this.map.saveForUndo("Draw Ellipse");
     this.data.objects.push(obj);
     this.draw();
     return;
@@ -765,12 +767,12 @@ edit[EditModes.drawShape] = function(e){
         obj.y = Math.round(obj.y / th) * th;
       }
       this.clearCache();
+      this.map.saveForUndo("Draw Shape");
       this.data.objects.push(obj);
       // first point is always at 0,0
       endPoint = {x:0, y:0};
       pointCache.x = 0;
       pointCache.y = 0;
-      this.map.saveForUndo();
       obj.polyline.push(endPoint);
       this.draw();
       return;
@@ -835,6 +837,7 @@ edit[EditModes.stamp] = function(e){
       x, y
     );
     this.clearCache();
+    this.map.saveForUndo("Add Tile");
     this.data.objects.push(this.highlightedObject);
   }
 
@@ -894,7 +897,6 @@ edit[EditModes.rectangle] = function(e){
   if(e.type == "mousedown"){
     this.isDirty = true;
     this.mouseDown = true;
-    this.map.saveForUndo();
     if(this.pickObject(e) > -1) {
       this.startPosX = this.pickedObject.x;
       this.startPosY = this.pickedObject.y;

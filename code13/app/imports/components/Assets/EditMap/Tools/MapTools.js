@@ -84,6 +84,8 @@ export default class MapTools extends React.Component {
     // TODO: disable object drawing buttons if active layer is not ObjectLayer
     //const canDraw;
 
+    const undoTitle = "Undo" + (this.props.map.undoSteps.length ? " " + this.props.map.undoSteps[this.props.map.undoSteps.length - 1].reason : "");
+
     return (
       <div ref="mainElement">
         {/* mics buttons / camera / view / save */}
@@ -112,7 +114,7 @@ export default class MapTools extends React.Component {
         <div className="ui icon small buttons">
           <span className={undoClass}
                   onClick={this.doUndo.bind(this)}
-                  title="Undo"
+                  title={undoTitle}
                   data-position="top center"
             ><i className="undo icon"></i>{this.props.map.undoSteps.length}
           </span>

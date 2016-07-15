@@ -810,6 +810,12 @@ export default class EditCode extends React.Component {
     let asset = this.props.asset
     let docEmpty = this.state.documentIsEmpty
     let isPlaying = this.state.isPlaying
+
+    // const RunCodeIFrameStyle = {
+    //   transform: "scale(0.5)",  
+    //   transformOrigin: "0 0",
+    //   overflow: "hidden"
+    // }
     
     return ( 
         <div className="ui grid">

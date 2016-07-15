@@ -114,6 +114,8 @@ export default class EditGraphic extends React.Component {
 
     this.getPreviewCanvasReferences()
     this.loadAllPreviewsAsync()
+    ReactDOM.findDOMNode(this.refs.canvasWidth).value = this.props.asset.content2.width;
+    ReactDOM.findDOMNode(this.refs.canvasHeight).value = this.props.asset.content2.height;
 
     // Initialize Status bar
     this._statusBar = {
@@ -1161,6 +1163,18 @@ export default class EditGraphic extends React.Component {
     this.handleSave("Change canvas height");
   }
 
+  onKeyUpWidth(event){
+    if(event.key === "Enter"){
+      this.changeCanvasWidth(event);
+    }
+  }
+
+  onKeyUpHeight(event){
+    if(event.key === "Enter"){
+      this.changeCanvasHeight(event);
+    } 
+  }
+
 
   // <- End of drag-and-drop stuff
 map
@@ -1229,7 +1243,10 @@ map
               <div className="ui small label" title="Canvas width">
                 w:
               </div>
-              <input className="ui small input" type="number" min="1" max="999" placeholder={c2.width} onBlur={this.changeCanvasWidth.bind(this)} />
+              <input ref="canvasWidth" className="ui small input" type="number" min="1" max="999" placeholder={c2.width} 
+                onBlur={this.changeCanvasWidth.bind(this)} 
+                onKeyUp={this.onKeyUpWidth.bind(this)} 
+                />
             </div>
 
             <span>&nbsp;&nbsp;</span>
@@ -1237,7 +1254,10 @@ map
               <div className="ui small label" title="Canvas height">
                 h:
               </div>
-              <input className="ui small input" type="number" min="1" max="999" placeholder={c2.height} onBlur={this.changeCanvasHeight.bind(this)} />
+              <input ref="canvasHeight" className="ui small input" type="number" min="1" max="999" placeholder={c2.height} 
+                onBlur={this.changeCanvasHeight.bind(this)} 
+                onKeyUp={this.onKeyUpHeight.bind(this)} 
+                />
             </div>
 
 

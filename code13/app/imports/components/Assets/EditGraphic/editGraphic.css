@@ -69,3 +69,10 @@
 	width: 100% !important;
 	text-align: center;
 }
+
+.miniPadding {
+	padding-left: 0.5833em !important;
+	padding-right: 0.5833em !important;
+	/*font-size: 0.85714286rem !important;
+	line-height: 0.85714286rem !important;*/
+}

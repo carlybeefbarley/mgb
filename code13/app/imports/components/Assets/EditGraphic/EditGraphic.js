@@ -47,6 +47,8 @@ export default class EditGraphic extends React.Component {
 
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
+    this.zoomLevels = [1, 2, 4, 6, 8];
+
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
@@ -112,6 +114,8 @@ export default class EditGraphic extends React.Component {
 
     this.getPreviewCanvasReferences()
     this.loadAllPreviewsAsync()
+    ReactDOM.findDOMNode(this.refs.canvasWidth).value = this.props.asset.content2.width;
+    ReactDOM.findDOMNode(this.refs.canvasHeight).value = this.props.asset.content2.height;
 
     // Initialize Status bar
     this._statusBar = {
@@ -238,8 +242,8 @@ export default class EditGraphic extends React.Component {
     }
     else if(prevState.selectedFrameIdx !== this.state.selectedFrameIdx)
     {
-      /* Do nothing.. */
-      // Prevent frame preview canvas to redraw. Optimization for playing animation with lots of frames
+      // Optimization for playing animation with lots of frames. Redraw only current frame
+      this.updateFrameLayers();
     }
     else
     {
@@ -334,6 +338,17 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  updateFrameLayers(){
+    let w = this.previewCanvasArray[this.state.selectedLayerIdx].width
+    let h = this.previewCanvasArray[this.state.selectedLayerIdx].height
+    let s = this.state.editScale
+    let c2 = this.props.asset.content2;
+    let frameData = c2.frameData[this.state.selectedFrameIdx];
+    for(let i=frameData.length-1; i>=0; i--){
+      this.loadAssetAsync(this.state.selectedFrameIdx, i);
+    }
+  }
+
 
   updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): Do we still need the vendor-prefix smoothing flags?
   {
@@ -354,7 +369,6 @@ export default class EditGraphic extends React.Component {
         this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h)
       }
     }
-    
   }
 
   drawSelectRect(selectRect){
@@ -569,14 +583,22 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  zoomIn(){
+  zoomIn(){let 
     recentMarker = null       // Since we now want to reload data for our new EditCanvas
-    this.setState( {editScale : (this.state.editScale == 8 ? 8 : (this.state.editScale << 1))})
+    let i = this.zoomLevels.indexOf(this.state.editScale);
+    if(i<this.zoomLevels.length-1){
+      i++;
+      this.setState({ editScale: this.zoomLevels[i]});
+    }
   }
 
   zoomOut(){
     recentMarker = null       // Since we now want to reload data for our new EditCanvas
-    this.setState( {editScale : (this.state.editScale == 1 ? 1 : (this.state.editScale >> 1))})
+    let i = this.zoomLevels.indexOf(this.state.editScale);
+    if(i>0){
+      i--;
+      this.setState({ editScale: this.zoomLevels[i]});
+    }
   }
 
 
@@ -608,9 +630,9 @@ export default class EditGraphic extends React.Component {
           // if wheel is for scale:
           let s = this.state.editScale
           if (wd > 0 && s > 1)
-            this.setState({editScale: s >> 1})
+            this.zoomOut();
           else if (wd < 0 && s < 8)
-            this.setState({editScale: s << 1})
+            this.zoomIn();
         }
         else {
           // if wheel is for frame
@@ -774,6 +796,12 @@ export default class EditGraphic extends React.Component {
 // Tool selection action. 
   handleToolSelected(tool)
   {
+    // special case for select tool - toggleable button which also clears selected area
+    if(tool.name === "Select" && this.state.selectRect){
+      this.setState({ toolChosen: null, selectRect: null });
+      return;
+    }
+
     this.setState({ toolChosen: tool })
     this.setStatusBarWarning(`${tool.name} tool selected`)
   }
@@ -1125,6 +1153,28 @@ export default class EditGraphic extends React.Component {
     $('.ui.modal').modal('hide');
   }
 
+  changeCanvasWidth(event){
+    this.props.asset.content2.width = parseInt(event.target.value);
+    this.handleSave("Change canvas width");
+  }
+
+  changeCanvasHeight(event){
+    this.props.asset.content2.height = parseInt(event.target.value);
+    this.handleSave("Change canvas height");
+  }
+
+  onKeyUpWidth(event){
+    if(event.key === "Enter"){
+      this.changeCanvasWidth(event);
+    }
+  }
+
+  onKeyUpHeight(event){
+    if(event.key === "Enter"){
+      this.changeCanvasHeight(event);
+    } 
+  }
+
 
   // <- End of drag-and-drop stuff
 map
@@ -1175,19 +1225,45 @@ map
 
         <div className={"mgbEditGraphicSty_tagPosition ui fifteen wide column"} >
           <div className="row">
-            <a className="ui label" onClick={this.handleUndo.bind(this)}>
+
+            <div className="ui small button" onClick={this.handleUndo.bind(this)}>
               <i className="icon undo"></i>Undo {this.mgb_undoStack.length}
-            </a>
+            </div>
+
+            {/***
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label mgbResizerHost" data-position="right center"  onDragOver={this.handleDragOverPreview.bind(this)}
+            <a className="ui tiny label mgbResizerHost" data-position="right center"  onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-2)}>
               <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
             </a>
+            ***/}
 
             <span>&nbsp;&nbsp;</span>
+            <div className="ui small labeled input">
+              <div className="ui small label" title="Canvas width">
+                w:
+              </div>
+              <input ref="canvasWidth" className="ui small input" type="number" min="1" max="999" placeholder={c2.width} 
+                onBlur={this.changeCanvasWidth.bind(this)} 
+                onKeyUp={this.onKeyUpWidth.bind(this)} 
+                />
+            </div>
 
-            <span className="ui label hazPopup"
-              data-content="Click here or ALT+SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
+            <span>&nbsp;&nbsp;</span>
+            <div className="ui small labeled input">
+              <div className="ui small label" title="Canvas height">
+                h:
+              </div>
+              <input ref="canvasHeight" className="ui small input" type="number" min="1" max="999" placeholder={c2.height} 
+                onBlur={this.changeCanvasHeight.bind(this)} 
+                onKeyUp={this.onKeyUpHeight.bind(this)} 
+                />
+            </div>
+
+
+            <span>&nbsp;&nbsp;</span> 
+            <div className="ui small button miniPadding hazPopup"
+              data-content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
               data-variation="tiny"
               data-position="bottom center">
               <span style={{"cursor": "pointer"}} onClick={this.zoomOut.bind(this)}>
@@ -1198,59 +1274,59 @@ map
               <span style={{"cursor": "pointer"}} onClick={this.zoomIn.bind(this)}>
                 <i className="icon zoom"></i>
               </span>
-            </span>
+            </div>
 
 
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label hazPopup" onClick={this.handleSave.bind(this, "Manual save")}
+            <div className="ui small icon button hazPopup" onClick={this.handleSave.bind(this, "Manual save")}
                data-content="Changes are continuously saved and updated to other viewers "
                data-variation="tiny"
                data-position="bottom center">
               <i className="save icon"></i>
-            </a>
+            </div>
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label hazPopup"
+            <div className="ui small button hazPopup"
                data-content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                data-variation="tiny"
                data-position="bottom center">
               <i className="tasks icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
-            </a>
+            </div>
             <span>&nbsp;&nbsp;</span>
             <AssetUrlGenerator asset={this.props.asset} />
 
             <span>&nbsp;&nbsp;</span>
-            <a className={"ui label hazPopup " + (this.state.selectRect ? "" : "disabled")} 
+            <div className={"ui small button hazPopup " + (this.state.selectRect ? "" : "disabled")} 
               onClick={this.cutSelected.bind(this)}
                data-content="Cut selected area"
                data-variation="tiny"
                data-position="bottom center">
               <i className="cut icon"></i>Cut
-            </a>
+            </div>
 
-            <a className={"ui label hazPopup " + (this.state.selectRect ? "" : "disabled")} 
+            <div className={"ui small button hazPopup " + (this.state.selectRect ? "" : "disabled")} 
               onClick={this.copySelected.bind(this)}
                data-content="Copy selected area"
                data-variation="tiny"
                data-position="bottom center">
               <i className="copy icon"></i>Copy
-            </a>
+            </div>
 
-            <a className={"ui label hazPopup " + (this.state.pasteCanvas ? "" : "disabled")} 
+            <div className={"ui small button hazPopup " + (this.state.pasteCanvas ? "" : "disabled")} 
               onClick={this.pasteSelected.bind(this)}
                data-content="Rotate (Alt+Scroll). Scale (Shift+Scroll). Flip (Ctrl+Scroll)."
                data-variation="tiny"
                data-position="bottom center">
               <i className="paste icon"></i>Paste
-            </a>
+            </div>
 
             <span>&nbsp;&nbsp;</span>
-            <a className="ui label hazPopup"
+            <div className="ui small button hazPopup"
               onClick={this.openImportPopup.bind(this)}
               data-content="Import sprite sheet or gif image"
               data-variation="tiny"
               data-position="bottom center">
                 <i className="add square icon"></i>Import
-            </a>
+            </div>
 
           </div>
           <div className="row">
@@ -1266,7 +1342,7 @@ map
                         onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-1)}>
               </canvas>
-              <canvas id="tilesetCanvas"></canvas>
+              {/*** <canvas id="tilesetCanvas"></canvas> ***/}
             </div>
           </div>
 

@@ -784,6 +784,12 @@ export default class EditGraphic extends React.Component {
 // Tool selection action. 
   handleToolSelected(tool)
   {
+    // special case for select tool - toggleable button which also clears selected area
+    if(tool.name === "Select" && this.state.selectRect){
+      this.setState({ toolChosen: null, selectRect: null });
+      return;
+    }
+
     this.setState({ toolChosen: tool })
     this.setStatusBarWarning(`${tool.name} tool selected`)
   }

@@ -61,6 +61,8 @@ Meteor.publish('user.byName', function(username) {
   return Meteor.users.find(selector)
 })
 
+Meteor.users._ensureIndex({"profile.name": 1})
+
 
 //
 //   ASSETS  

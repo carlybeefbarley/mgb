@@ -52,7 +52,9 @@ export default class MapTools extends React.Component {
   rectangle(){
     this.enableMode(EditModes.rectangle);
   }
-
+  wand(){
+    this.enableMode(EditModes.wand);
+  }
   enableMode(mode){
     this.props.map.options.mode = mode;
     this.forceUpdate();
@@ -72,7 +74,7 @@ export default class MapTools extends React.Component {
     if(!l || !l.clearSelection){return;}
     l.clearSelection();
   }
-  toggleFill(){
+  togglePolygon(){
     const l = this.props.map.getActiveLayer();
     if(!l || !l.clearSelection){return;}
     l.toggleFill();
@@ -100,7 +102,7 @@ export default class MapTools extends React.Component {
       this.props.map.options.mode = "stamp";
     }
 
-    const config = {
+    this.config = this.config || {
       level: 5,
       buttons: [
         {
@@ -152,7 +154,7 @@ export default class MapTools extends React.Component {
           name: "separator"
         },
         {
-          name: "randomize",
+          name: "toggleRandomMode",
           icon: "random",
           active: this.props.map.options.randomMode,
           label: "Random mode",
@@ -292,7 +294,7 @@ export default class MapTools extends React.Component {
     };
 
 
-    return <Toolbar actions={this} config={config} className="map-tools" />
+    return <Toolbar actions={this} config={this.config} className="map-tools" />
   }
 
 

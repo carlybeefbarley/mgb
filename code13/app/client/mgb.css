@@ -114,10 +114,36 @@ body.dragging .accept-drop:hover{
   transform: scaleX(-1);
 }
 
-.animate *{
-  transition: .3s;
+.animate{
+  transition: .3s !important;
+  animation: zoomin;
 }
-.hidden{
-  opacity: 0;
+.no-animate .animate{
+  transition: 0s !important;
 }
 
+.invisible{
+  opacity: 0;
+  display: none !important;
+}
+.visible {
+  animation: zoomin;
+  position: relative;
+}
+@keyframes blur {
+  0%{
+    box-shadow: 0 0 5px 3px red;
+  }
+  100%{
+    box-shadow: 0 0 0 3px red;
+  }
+}
+@keyframes zoomin {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

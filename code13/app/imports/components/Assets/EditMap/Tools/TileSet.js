@@ -400,7 +400,7 @@ export default class TileSet extends React.Component {
            href="javascript:;"
            onClick={this.selectTileset.bind(this, i)}
            key={i}
-          ><span class="tileset-title">{title}</span></a>
+          ><span className="tileset-title">{title}</span></a>
       );
     }
     /* TODO: save active tileset and use only that as active */

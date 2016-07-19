@@ -660,17 +660,6 @@ export default class TileMapLayer extends AbstractLayer {
 
   onKeyUp(e){
     const w = e.which;
-    /*
-     if(w == "A".charCodeAt(0)){
-     this.ctrl.v = this.ctrl.v > 0 ? -1 : 1;
-     }
-     if(w == "S".charCodeAt(0)){
-     this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
-     }
-     if(w == "D".charCodeAt(0)){
-     this.ctrl.d = !this.ctrl.d;
-     }*/
-
     if(w == "Z".charCodeAt(0)){
       if(!e.shiftKey){
         this.rotate();
@@ -682,6 +671,16 @@ export default class TileMapLayer extends AbstractLayer {
     if(w == "X".charCodeAt(0)){
       this.flip();
     }
+    if(e.which == 46){
+      if(this.map.selection.length){
+        this.map.saveForUndo("Delete selection");
+      }
+      for(let i=0; i<this.map.selection.length; i++){
+        const ts = this.map.selection[i];
+        this.data.data[ts.id] = 0;
+      }
+    }
+    this.map.forceUpdate();
     this.draw();
   }
   /* end of events */

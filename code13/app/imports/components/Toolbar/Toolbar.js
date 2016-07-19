@@ -12,10 +12,13 @@ export default class Toolbar extends React.Component {
     super(...args);
 
     this.keyActions = {};
-    window._toolbar_known_actions = window._toolbar_known_actions || {};
+    this.buttons = window.buttons = [];
+
+
     // this is for debugging purposes atm
-    this.level = this.props.config.level;
-    console.log("LEVEL set to :", this.level);
+    window._toolbar_known_actions = window._toolbar_known_actions || {};
+    const savedLevel = localStorage.getItem("toolbarLevel");
+    this.level = savedLevel || this.props.config.level;
     let levelSlider = document.getElementById("levelSlider");
     if(!levelSlider){
       levelSlider = document.createElement("input");
@@ -32,12 +35,18 @@ export default class Toolbar extends React.Component {
 
       document.body.appendChild(levelSlider);
     }
-
     levelSlider.value = this.level;
     this.levelSlider = levelSlider;
 
+
+    this._activeButton = null;
+    this.startPos = null;
+
+    this.loadState();
+
     this._onChange = () => {
       this.level = parseInt(levelSlider.value, 10);
+      localStorage.setItem("toolbarLevel", this.level);
       this.forceUpdate();
     };
 
@@ -53,6 +62,63 @@ export default class Toolbar extends React.Component {
         this.keyActions[keyval](e);
       }
     };
+
+    this._onMouseMove = (e) => {
+      if(!this.activeButton){
+        return;
+      }
+
+      const box = this.activeButton.getBoundingClientRect();
+      this.activeButton.style.left = (e.pageX - this.startPos.x)+ "px";
+      this.activeButton.style.top = (e.pageY - this.startPos.y)+ "px";
+
+      const index = this.buttons.indexOf(this.activeButton);
+      const mainBox = this.refs.mainElement.getBoundingClientRect();
+
+      const row = this.getRow(mainBox, box);
+
+      // check back
+      for(let i=0; i<index; i++){
+        const ab = this.buttons[i];
+        if(!ab || ab.classList.contains("invisible")){
+          continue;
+        }
+        const rect = ab.getBoundingClientRect();
+
+        if( rect.left > box.left && this.getRow(mainBox, rect) == row ){
+          ab.style.left = box.width + "px";
+        }
+        else{
+          ab.style.left = 0;
+        }
+      }
+
+      for(let i=index +1; i<this.buttons.length; i++){
+        const ab = this.buttons[i];
+        if(!ab || ab.classList.contains("invisible")){
+          continue;
+        }
+        const rect = ab.getBoundingClientRect();
+        if(rect.left < box.left && + this.getRow(mainBox, rect) == row){
+          ab.style.left = -box.width + "px";
+        }
+        else{
+          ab.style.left = 0;
+        }
+      }
+    };
+
+    this._onMouseUp = this._moveButtonStop.bind(this);
+  }
+  set activeButton(v){
+    this._activeButton = v;
+  }
+  get activeButton(){
+    return this._activeButton;
+  }
+
+  getRow(mb, b){
+    return mb.width * Math.round((b.top - mb.top) / mb.height);
   }
 
   componentDidMount(){
@@ -62,12 +128,21 @@ export default class Toolbar extends React.Component {
     $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} );
 
     window.addEventListener("keyup", this._onKeyUp);
+    window.addEventListener("mousemove", this._onMouseMove);
+    window.addEventListener("mouseup", this._onMouseUp);
 
   }
   componentWillUnmount(){
     this.levelSlider.removeEventListener("input", this._onChange);
     window.removeEventListener("keyup", this._onKeyUp);
+    window.removeEventListener("mousemove", this._onMouseMove);
+    window.removeEventListener("mouseup", this._onMouseUp);
   }
+
+  componentWillReceiveProps(props){
+    _.merge(this.data, props.buttons);
+  }
+
 
   registerShortcut(shortcut, action){
     const keys = shortcut.split("+");
@@ -105,6 +180,19 @@ export default class Toolbar extends React.Component {
     this.keyActions[keyval] = this.props.actions[action].bind(this.props.actions);
   }
 
+  saveState(){
+    localStorage.setItem("toolbar-data", JSON.stringify(this.data));
+  }
+
+  loadState(){
+    /*const savedData = localStorage.getItem("toolbar-data");
+    if(savedData){
+      this.data = JSON.parse(savedData);
+    }
+    else{*/
+      this.data = this.props.config;
+    //}
+  }
 
   render(){
     let size;
@@ -124,8 +212,8 @@ export default class Toolbar extends React.Component {
     buttons.push(parent);
 
     let b;
-    for(let i=0; i<this.props.config.buttons.length; i++){
-      b = this.props.config.buttons[i];
+    for(let i=0; i<this.data.buttons.length; i++){
+      b = this.data.buttons[i];
       if(b.name == "separator"){
         parent = [];
         buttons.push(parent);
@@ -139,11 +227,15 @@ export default class Toolbar extends React.Component {
       content.push(<div className={"ui icon buttons animate " + size + " " + "level" + this.level} key={i}>{b}</div>)
     });
 
-    return <div>{content}</div>;
+    return <div ref="mainElement" className="Toolbar">{content}</div>;
   }
 
   /* private methods goes here */
   _handleClick(action, e){
+    console.log("Click", action);
+    if(this.activeButton == e.target){
+      return;
+    }
     if(this.props.actions[action]){
       this.props.actions[action](e);
     }
@@ -156,9 +248,9 @@ export default class Toolbar extends React.Component {
     if(b.component){
       return b.component;
     }
-    const label = this.level <= 3 ? [<br />, b.label] : '';
+    const label = this.level <= 3 ? <div >{b.label}</div> : '';
     const title = this.level > 3 ? b.label : '';
-    const hidden = b.level > this.level ? " hidden" : '';
+    const hidden = b.level > this.level ? " invisible" : ' isvisible';
     const active = b.active ? " primary" : '';
     const disabled = b.disabled ? " disabled" : '';
     if(b.shortcut){
@@ -166,14 +258,132 @@ export default class Toolbar extends React.Component {
     }
     return (
       <div className={"ui button hazPopup animate " + hidden + active + disabled}
+           style={{position: "relative"}}
+           ref={(button) => {this._addButton(button, index)}}
            onClick={this._handleClick.bind(this, b.name)}
+           onMouseDown={this._moveButtonStart.bind(this)}
            data-title={title}
            data-content={b.tooltip + (b.shortcut ? " [" + b.shortcut + "]" : '')}
            data-position="top center"
            key={index}
+           data-index={index}
         ><i className={(b.icon ? b.icon : b.name) + " icon"}></i>{b.iconText ? b.iconText : ''}
         {label}
       </div>
     );
+  }
+  // adds react dom element that represents button
+  _addButton(b, index){
+    if(!b){
+      // do I need to remove button here?
+      return;
+    }
+    this.buttons[index] = b;
+  }
+  _moveButtonStart(e){
+    let b = e.target;
+    if(this.buttons.indexOf(b) == -1){
+      if(this.buttons.indexOf(b.parentNode) > -1){
+        b = b.parentNode;
+      }
+      else{
+        return;
+      }
+    }
+    b.getBoundingClientRect();
+    this.startPos = {
+      x: e.pageX,// + b.left,
+      y: e.pageY// + b.top
+    };
+    this.activeButton = b;
+
+    $(this.activeButton).popup('disable');
+    b.classList.remove("animate");
+  }
+  _moveButtonStop(e){
+    console.log("Mouse up!!!");
+    if(!this.activeButton) {
+      return;
+    }
+    this.activeButton.classList.add("animate");
+    const box = this.activeButton.getBoundingClientRect();
+    const index = this.buttons.indexOf(this.activeButton);
+    const mainBox = this.refs.mainElement.getBoundingClientRect();
+    const row = this.getRow(mainBox, box);
+
+    let mostLeft, mostRight;
+    let left = 0;
+    for(let i=0; i<index; i++){
+      const ab = this.buttons[i];
+      if(!ab || !ab.parentNode || ab.classList.contains("invisible")){
+        continue;
+      }
+      const rect = ab.getBoundingClientRect();
+      if(rect.left + this.getRow(mainBox, rect) > box.left + row){
+        left -= rect.width;
+        // set first
+        if(!mostLeft){
+          mostLeft = ab;
+        }
+      }
+    }
+
+    for(let i=index +1; i<this.buttons.length; i++){
+      const ab = this.buttons[i];
+      if(!ab || !ab.parentNode || ab.classList.contains("invisible")){
+        continue;
+      }
+      const rect = ab.getBoundingClientRect();
+      if(rect.left + this.getRow(mainBox, rect) < box.left + row){
+        left += rect.width;
+        // set last
+        mostRight = ab;
+      }
+    }
+
+    // position has not changed
+    if(!mostLeft && !mostRight){
+      this.activeButton.style.top = 0;
+      this.activeButton.style.left = 0;
+      $(this.activeButton).popup('enable');
+      this.activeButton = null;
+      return;
+    }
+
+    // TODO: make browser compatible
+    const active = this.activeButton;
+    const sort = (e) => {
+      e.target.removeEventListener("transitionend", sort);
+      this.refs.mainElement.classList.add("no-animate");
+
+      const data = this.data.buttons;
+      const index = parseInt(active.dataset.index, 10);
+      const b = data.splice(index, 1);
+      if(mostLeft){
+        data.splice(parseInt(mostLeft.dataset.index, 10), 0, b[0]);
+      }
+      else if(mostRight){
+        data.splice(parseInt(mostRight.dataset.index, 10), 0, b[0]);
+      }
+      this.saveState();
+
+      this.forceUpdate();
+      for(let i=0; i<this.buttons.length; i++){
+        const btn = this.buttons[i];
+        if(btn) {
+          btn.style.left = 0;
+          btn.style.top = 0;
+        }
+      }
+      window.setTimeout(() => {
+        this.refs.mainElement.classList.remove("no-animate");
+      }, 10);
+      console.log(this.data.buttons.length, this.buttons.length);
+    };
+    this.activeButton.addEventListener("transitionend", sort);
+
+    this.activeButton.style.top = 0;
+    this.activeButton.style.left = left + "px";
+    this.activeButton = null;
   }
 }

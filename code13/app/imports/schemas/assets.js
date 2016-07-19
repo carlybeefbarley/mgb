@@ -121,7 +121,7 @@ export const AssetKinds = {
   "audio": {
     name: "Audio",
     selfPlural: true,
-    disable: true,
+    disable: false,
     longName: "Audio sound",
     icon: "file audio outline",
     requiresUserRole: null,

@@ -125,7 +125,8 @@ export const AssetKinds = {
     longName: "Audio sound",
     icon: "file audio outline",
     requiresUserRole: null,
-    description: "Sound Effect, song, voice etc"
+    // description: "Sound Effect, song, voice etc"
+    description: "NOT READY YET!"
   },
   "game": {
     name: "Game",

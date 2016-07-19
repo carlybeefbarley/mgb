@@ -41,6 +41,8 @@ export default class Toolbar extends React.Component {
 
     this._activeButton = null;
     this.startPos = null;
+    this.hasMoved = false;
+
 
     this.loadState();
 
@@ -111,6 +113,17 @@ export default class Toolbar extends React.Component {
     this._onMouseUp = this._moveButtonStop.bind(this);
   }
   set activeButton(v){
+    if(v) {
+      v.classList.remove("animate");
+      v.classList.add("main");
+      $(v).popup('destroy');
+    }
+    else{
+      this._activeButton.classList.add("animate");
+      this._activeButton.classList.remove("main");
+      // TODO: don;t repeat..
+      $(this._activeButton).popup( { delay: {show: 250, hide: 0}} );
+    }
     this._activeButton = v;
   }
   get activeButton(){
@@ -139,10 +152,24 @@ export default class Toolbar extends React.Component {
     window.removeEventListener("mouseup", this._onMouseUp);
   }
 
+  // we need to keep local order, but update another props
+  // probably convert to hashmap (object) and back would be faster
   componentWillReceiveProps(props){
-    _.merge(this.data, props.buttons);
-  }
+    let p = props.config.buttons;
+    let o = this.data.buttons;
 
+    for(let i=0; i<p.length; i++){
+      for(let j=0; j<o.length; j++){
+        if(o[j].name == p[i].name){
+          //const dataKeys = Object.keys(this.data[j]);
+          const newKeys = Object.keys(p[i]);
+          for(let k=0; k<newKeys.length; k++){
+            o[j][newKeys[k]] = p[i][newKeys[k]];
+          }
+        }
+      }
+    }
+  }
 
   registerShortcut(shortcut, action){
     const keys = shortcut.split("+");
@@ -181,17 +208,15 @@ export default class Toolbar extends React.Component {
   }
 
   saveState(){
-    localStorage.setItem("toolbar-data", JSON.stringify(this.data));
+    localStorage.setItem("toolbar-data", JSON.stringify(this.data.buttons));
   }
 
   loadState(){
-    /*const savedData = localStorage.getItem("toolbar-data");
+    const savedData = localStorage.getItem("toolbar-data");
+    this.data = this.props.config;
     if(savedData){
-      this.data = JSON.parse(savedData);
+      this.data.buttons = JSON.parse(savedData);
     }
-    else{*/
-      this.data = this.props.config;
-    //}
   }
 
   render(){
@@ -227,13 +252,26 @@ export default class Toolbar extends React.Component {
       content.push(<div className={"ui icon buttons animate " + size + " " + "level" + this.level} key={i}>{b}</div>)
     });
 
-    return <div ref="mainElement" className="Toolbar">{content}</div>;
+    return (
+      <div ref="mainElement" className="Toolbar">
+        {content}
+        <div className="ui button right floated mini reset"
+             onClick={this.reset.bind(this)}
+          >Reset<i className="level down reset icon"></i>
+        </div>
+      </div>
+    );
   }
 
+  reset(){
+    this.data = this.props.config;
+    this.saveState();
+    this.forceUpdate();
+  }
   /* private methods goes here */
   _handleClick(action, e){
     console.log("Click", action);
-    if(this.activeButton == e.target){
+    if(this.hasMoved || this.activeButton == this._extractButton(e.target) ){
       return;
     }
     if(this.props.actions[action]){
@@ -244,6 +282,17 @@ export default class Toolbar extends React.Component {
     }
   }
 
+  _extractButton(el){
+    let b = el;
+    if(this.buttons.indexOf(b) == -1){
+      if(this.buttons.indexOf(b.parentNode) > -1){
+        b = b.parentNode;
+        return b;
+      }
+      return null;
+    }
+    return b;
+  }
   _renderButton(b, index){
     if(b.component){
       return b.component;
@@ -280,15 +329,11 @@ export default class Toolbar extends React.Component {
     }
     this.buttons[index] = b;
   }
+
   _moveButtonStart(e){
-    let b = e.target;
-    if(this.buttons.indexOf(b) == -1){
-      if(this.buttons.indexOf(b.parentNode) > -1){
-        b = b.parentNode;
-      }
-      else{
-        return;
-      }
+    let b = this._extractButton(e.target);
+    if(!b){
+      return;
     }
     b.getBoundingClientRect();
     this.startPos = {
@@ -296,9 +341,6 @@ export default class Toolbar extends React.Component {
       y: e.pageY// + b.top
     };
     this.activeButton = b;
-
-    $(this.activeButton).popup('disable');
-    b.classList.remove("animate");
   }
   _moveButtonStop(e){
     console.log("Mouse up!!!");
@@ -341,6 +383,7 @@ export default class Toolbar extends React.Component {
       }
     }
 
+    this.hasMoved = false;
     // position has not changed
     if(!mostLeft && !mostRight){
       this.activeButton.style.top = 0;
@@ -349,7 +392,7 @@ export default class Toolbar extends React.Component {
       this.activeButton = null;
       return;
     }
-
+    this.hasMoved = true;
     // TODO: make browser compatible
     const active = this.activeButton;
     const sort = (e) => {

@@ -121,24 +121,39 @@ body.dragging .accept-drop:hover{
 .no-animate .animate{
   transition: 0s !important;
 }
+.ui.button.reset{
+  position: absolute;
+  height: 19px;
+  padding: 0;
+  margin: 0;
+  top: 0;
+  right: 0;
+  line-height: 19px;
+}
+
+.button.main{
+  z-index: 1;
+}
 
 .invisible{
   opacity: 0;
   display: none !important;
 }
-.visible {
-  animation: zoomin;
-  position: relative;
+/* class that highlights element for short duration */
+.ui .button.isvisible.hazPopup.animate {
+  animation-name: blur !important;
+  animation-iteration-count: 1 !important;
+  animation-duration: 2.5s !important;
 }
 @keyframes blur {
   0%{
-    box-shadow: 0 0 5px 3px red;
+    background-color: red;
   }
   100%{
-    box-shadow: 0 0 0 3px red;
+    
   }
 }
-@keyframes zoomin {
+@keyframes fadein {
   0% {
     opacity: 0;
   }

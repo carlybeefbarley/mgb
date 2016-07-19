@@ -55,6 +55,9 @@ export default class MapTools extends React.Component {
   wand(){
     this.enableMode(EditModes.wand);
   }
+  picker(){
+    this.enableMode(EditModes.picker);
+  }
   enableMode(mode){
     this.props.map.options.mode = mode;
     this.forceUpdate();
@@ -102,7 +105,7 @@ export default class MapTools extends React.Component {
       this.props.map.options.mode = "stamp";
     }
 
-    this.config = this.config || {
+    var config = {
       level: 5,
       buttons: [
         {
@@ -294,7 +297,7 @@ export default class MapTools extends React.Component {
     };
 
 
-    return <Toolbar actions={this} config={this.config} className="map-tools" />
+    return <Toolbar actions={this} config={config} className="map-tools" />
   }
 
 

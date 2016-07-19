@@ -114,10 +114,62 @@ body.dragging .accept-drop:hover{
   transform: scaleX(-1);
 }
 
-.animate *{
-  transition: .3s;
+.animate{
+  transition: .3s !important;
+  animation: zoomin;
 }
-.hidden{
-  opacity: 0;
+.no-animate .animate{
+  transition: 0s !important;
+}
+.ui.button.reset{
+  position: absolute;
+  height: 19px;
+  padding: 0;
+  margin: 0;
+  top: 0;
+  right: 0;
+  line-height: 19px;
 }
 
+.button.main{
+  z-index: 1;
+}
+
+.invisible{
+  opacity: 0;
+  display: none !important;
+}
+/* class that highlights element for short duration */
+.ui .button.isvisible.hazPopup.animate {
+  animation-name: rotate !important;
+  /*animation-iteration-count: infinite !important;*/
+  animation-iteration-count: 1 !important;
+  animation-duration: 1s !important;
+  perspective: 1500px;
+}
+@keyframes blur {
+  0%{
+    background-color: red;
+  }
+  100%{
+    
+  }
+}
+@keyframes rotate {
+  0%{
+    transform: rotateY(-90deg);
+    background-color: rgba(255,0,0,0.7);
+  }
+  100%{
+    transform: rotateY(360deg);
+  }
+}
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

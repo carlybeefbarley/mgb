@@ -8,7 +8,8 @@ export default class TilesetControls extends React.Component {
     if(e.which != 13){
       return;
     }
-    this.addTilesetFromUrl(this.refs.input.value)
+    this.addTilesetFromUrl(this.refs.input.value);
+    this.refs.input.value = "";
   }
 
   addTilesetFromUrl(url, asset){
@@ -55,8 +56,9 @@ export default class TilesetControls extends React.Component {
     const parent = this.props.tileset;
     const map = parent.props.info.content.map;
     const tss = map.data.tilesets;
+    const name = asset ? asset.name : img.src.split("/").pop();
     const ts = TileHelper.genTileset(map.data, img.src, img.width, img.height,
-      map.tilewidth, map.tileheight, asset.name
+      map.data.tilewidth, map.data.tileheight, name
     );
 
     tss.push(ts);

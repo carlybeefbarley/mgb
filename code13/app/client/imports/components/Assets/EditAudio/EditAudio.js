@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 
 import ImportAudio from './ImportAudio.js';
 import AudioStock from './AudioStock.js';
-import WaveSurfer from './WaveSurfer.js'
+import CreateAudio from './CreateAudio.js';
+import WaveSurfer from './WaveSurfer.js';
 
 export default class EditAudio extends React.Component {
 
@@ -44,6 +45,22 @@ export default class EditAudio extends React.Component {
 		c2.duration = audioObject.duration;
 		this.handleSave("Imported audio");
 		$('.ui.modal.importPopup').modal('hide');
+	}
+
+	openStockPopup(){
+		$('.ui.modal.stockPopup').modal('show');
+	}
+
+	getFromStock(audioObject){
+		console.log(audioObject);
+	}
+
+	openCreateAudioPopup(){
+		$('.ui.modal.createPopup').modal('show');
+	}
+
+	getCreatedAudio(audioObject){
+		console.log(audioObject);
 	}
 
 	togglePlayAudio(){
@@ -92,11 +109,11 @@ export default class EditAudio extends React.Component {
 						  <i className="add square icon"></i> Import (.ogg)
 						</button>
 						<button className="ui small icon button"
-							onClick={this.openImportPopup.bind(this)}>
+							onClick={this.openStockPopup.bind(this)}>
 						  <i className="folder icon"></i> Stock [not ready]
 						</button>
 						<button className="ui small icon button"
-							onClick={this.openImportPopup.bind(this)}>
+							onClick={this.openCreateAudioPopup.bind(this)}>
 						  <i className="configure icon"></i> Create [not ready]
 						</button>
 					</div>
@@ -118,8 +135,16 @@ export default class EditAudio extends React.Component {
 
 			{/*** POPUPS ***/}
 				<ImportAudio 
-						importAudio={this.importAudio.bind(this)}
-					/>
+					importAudio={this.importAudio.bind(this)}
+				/>
+
+				<AudioStock 
+					getFromStock={this.getFromStock.bind(this)}
+				/>
+
+				<CreateAudio
+					getCreatedAudio={this.getCreatedAudio.bind(this)}
+				/>
 
 			</div>
 		);

@@ -10,8 +10,12 @@ export default class AudioStock extends React.Component {
 
 	render(){
 		return (
-			<div>
-				Audio Stock
+			<div className="ui modal stockPopup">
+				<div className="content">
+
+					Here will be audio stock
+
+		    </div>
 			</div>
 		);
 	}	

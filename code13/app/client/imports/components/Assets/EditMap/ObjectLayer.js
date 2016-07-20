@@ -111,6 +111,8 @@ export default class ObjectLayer extends AbstractLayer {
       }
     }
     this._pickedObject = ret;
+
+    this.map.updateTools();
     return ret;
   }
   selectObject(obj){
@@ -155,7 +157,6 @@ export default class ObjectLayer extends AbstractLayer {
     super.handleMouseMove(e);
 
     this.isDirty = true;
-
 
     if(!this.mouseDown && e.target == this.refs.canvas){
       this.handles.setActive(
@@ -424,6 +425,9 @@ export default class ObjectLayer extends AbstractLayer {
     // TODO: clean up ifs
     for(let i=0; i<this.data.objects.length; i++){
       let o = this.data.objects[i];
+      if(!o.visible){
+        continue;
+      }
       if(o.polygon || o.polyline){
         if(!this.shapeBoxes[i]){
           this.shapeBoxes[i] = new Imitator(o);
@@ -889,6 +893,7 @@ edit[EditModes.rectangle] = function(e){
         selected.height = this.clonedObject.height;
         selected.rotation = this.clonedObject.rotation;
       }
+      this.map.updateTools();
       return;
     }
   }
@@ -926,6 +931,7 @@ edit[EditModes.rectangle] = function(e){
         this.pickedObject.x = Math.round(this.pickedObject.x / tw) * tw + dx;
         this.pickedObject.y = Math.round(this.pickedObject.y / th) * th + dy;
       }
+      this.map.updateTools();
       return;
     }
 

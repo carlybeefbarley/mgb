@@ -87,22 +87,52 @@ body.dragging .accept-drop:hover{
   padding: 4px;
   margin: 0;
 }
+.compact .ui.input.fluid{
+  padding-left: 30%;
+}
 .ui.styled.accordion .compact .accordion .active.title {
   padding-bottom: 0;
 }
 .ui.styled.accordion .compact .accordion .column > .title {
-  padding-bottom: 0;
-  padding-top: 0.1em;
+  padding: 0.1em 0 0 5px;
+  position: absolute;
+  background-color: #eee;
+  z-index: 1;
+  width: 38%;
+  line-height: 26px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  top: 1px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  white-space: nowrap;
+}
+.compact .ui.input.fluid a {
+  float: right;
+  cursor: pointer;
+}
+.compact .title {
+  position: relative;
+}
+.compact a.delete{
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-color: red;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 .ui.styled.accordion .compact .accordion div.label {
   padding: 0;
+  position: relative;
 }
 .compact .ui.input > input,
 .compact .ui.input > select,
 .compact .ui.input > .dropdown{
   font-size: 10pt;
-  padding: 0.3em 0.5em;
-  margin: 2px;
+  padding: 0.3em 0.5em 0.3em 10%;
+  margin: 2px 2px 2px 5px;
   min-height: 2em;
 }
 .compact > label .title{
@@ -140,7 +170,7 @@ body.dragging .accept-drop:hover{
   display: none !important;
 }
 /* class that highlights element for short duration */
-.ui .button.isvisible.hazPopup.animate {
+.ui .button.isvisible.hazPopup {
   animation-name: rotate !important;
   /*animation-iteration-count: infinite !important;*/
   animation-iteration-count: 1 !important;

@@ -332,7 +332,6 @@ this.Otito.prototype = {
 		}, "push", null, Otito.FLAGS.HEADLESS);
 		rec.body.className="add-more";
 		rec.input.html.className = "";
-		console.log(rec);
 	},
 	
 	_addArray: function(meta, key){
@@ -503,10 +502,11 @@ this.Otito.prototype = {
 		input.input.otito = this;
 		input.input.onchange = input.input.oninput = function(e){
       e.preventDefault();
-			if(this.type == "checkbox"){
-				this.value = this.checked;
+      var val = this.value;
+      if(this.type == "checkbox"){
+				val = this.checked;
 			}
-			this.setValue(this.value, e);
+			this.setValue(val, e);
 			if(this.value == that._normalizeInput(meta, this.otito.object[key])){
 				return;
 			}
@@ -571,7 +571,7 @@ this.Otito.prototype = {
 				input.type = "checkbox";
 				input.setValue = function (val){
 					this.checked = val;
-					this.value = val;
+					this.value = this.checked;
 				};
 			}
 				break;

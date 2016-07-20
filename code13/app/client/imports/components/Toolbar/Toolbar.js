@@ -249,7 +249,7 @@ export default class Toolbar extends React.Component {
 
     const content = [];
     buttons.forEach((b, i) => {
-      content.push(<div className={"ui icon buttons animate " + size + " " + "level" + this.level} key={i}>{b}</div>)
+      content.push(<div style={{marginRight: "4px"}} className={"ui icon buttons animate " + size + " " + "level" + this.level} key={i}>{b}</div>)
     });
 
     return (

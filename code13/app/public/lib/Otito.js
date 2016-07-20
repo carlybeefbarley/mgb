@@ -28,7 +28,7 @@ this.Otito.FLAGS = {
 };
 this.Otito.options = {
 	precision: 10000,
-	arrayClassName: "array",
+	arrayClassName: "array content",
 	
 	mainClassName: "compact",
 	
@@ -332,7 +332,6 @@ this.Otito.prototype = {
 		}, "push", null, Otito.FLAGS.HEADLESS);
 		rec.body.className="add-more";
 		rec.input.html.className = "";
-		console.log(rec);
 	},
 	
 	_addArray: function(meta, key){
@@ -341,6 +340,7 @@ this.Otito.prototype = {
 		}
 		var rec = this._updateObjectRecord(meta, key, this.object[key]);
 		this._addClass(rec.body, this.options.folderClassName + " " + this.options.arrayClassName);
+		this._addClass(rec.input.html, this.options.arrayClassName);
 		this._enableFolderToggle(rec, meta);
 	},
 	_addClass: function(el, cls){
@@ -369,8 +369,8 @@ this.Otito.prototype = {
 		}
 		
 		r = this.record[key] || {};
-		
-		
+
+
 		r.body = r.body || document.createElement("div");
 		r.input = this._updateChild(meta, key, r.input, object);
 		if(!(flags & Otito.FLAGS.HEADLESS) && !meta.headless){
@@ -503,10 +503,11 @@ this.Otito.prototype = {
 		input.input.otito = this;
 		input.input.onchange = input.input.oninput = function(e){
       e.preventDefault();
-			if(this.type == "checkbox"){
-				this.value = this.checked;
+      var val = this.value;
+      if(this.type == "checkbox"){
+				val = this.checked;
 			}
-			this.setValue(this.value, e);
+			this.setValue(val, e);
 			if(this.value == that._normalizeInput(meta, this.otito.object[key])){
 				return;
 			}
@@ -571,7 +572,7 @@ this.Otito.prototype = {
 				input.type = "checkbox";
 				input.setValue = function (val){
 					this.checked = val;
-					this.value = val;
+					this.value = this.checked;
 				};
 			}
 				break;

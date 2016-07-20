@@ -270,7 +270,6 @@ export default class Toolbar extends React.Component {
   }
   /* private methods goes here */
   _handleClick(action, e){
-    console.log("Click", action);
     if(this.hasMoved || this.activeButton == this._extractButton(e.target) ){
       return;
     }
@@ -343,7 +342,6 @@ export default class Toolbar extends React.Component {
     this.activeButton = b;
   }
   _moveButtonStop(e){
-    console.log("Mouse up!!!");
     if(!this.activeButton) {
       return;
     }
@@ -420,8 +418,7 @@ export default class Toolbar extends React.Component {
       }
       window.setTimeout(() => {
         this.refs.mainElement.classList.remove("no-animate");
-      }, 10);
-      console.log(this.data.buttons.length, this.buttons.length);
+      }, 1);
     };
     this.activeButton.addEventListener("transitionend", sort);
 

@@ -1,21 +1,21 @@
 import { Users, Azzets } from '../imports/schemas';
 
-// Import all server-side schema stubs in order to resgister their Meteor.call() methods
-import '../imports/schemas/users.js';
-import '../imports/schemas/chats.js';
-import '../imports/schemas/assets.js';
-import '../imports/schemas/projects.js';
-import '../imports/schemas/activity.js';
-import '../imports/schemas/activitySnapshots.js';
+// Import all server-side schema stubs in order to register their Meteor.call() methods
+import '/imports/schemas/users.js';
+import '/imports/schemas/chats.js';
+import '/imports/schemas/assets.js';
+import '/imports/schemas/projects.js';
+import '/imports/schemas/activity.js';
+import '/imports/schemas/activitySnapshots.js';
 
 // Import rules and publications
-import '../imports/schemas/denyRules.js';
-import '../imports/publications/publications.js';
+import '/imports/schemas/denyRules.js';
+import '/server/imports/publications/publications';
 
 import './EmailTemplates.js';
 import './CreateUser.js';
 
-import '../imports/restApi/restApi.js';
+import '/server/imports/restApi/restApi.js';
 
 // Create fixtures on first time app is launched (useful for dev/test)
 import { createUsers } from './fixtures.js';

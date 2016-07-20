@@ -3,7 +3,7 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-import { Chats } from '../schemas';
+import { Chats } from '/imports/schemas';
 import { check, Match } from 'meteor/check';
 
 const optional = Match.Optional     // Note that Optional does not permit null

@@ -2,7 +2,7 @@
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 
-import { Activity } from '../schemas';
+import { Activity } from '/imports/schemas';
 import { check, Match } from 'meteor/check';
 
 var schema = {

@@ -1,5 +1,5 @@
 /* global Accounts */
-import { Users } from '../imports/schemas';
+import { Users } from '/imports/schemas';
 import { roleSuperAdmin } from '/imports/schemas/roles';
 
 export function createUsers() {

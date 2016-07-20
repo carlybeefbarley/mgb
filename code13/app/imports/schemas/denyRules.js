@@ -3,7 +3,7 @@
 // Basically - deny the client, and only use Methods.
 
 
-import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '../schemas';
+import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '/imports/schemas';
 
 Azzets.deny({
   insert() { return true; },

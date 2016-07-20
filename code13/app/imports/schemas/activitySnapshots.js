@@ -12,7 +12,7 @@
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 
-import {ActivitySnapshots} from '../schemas';
+import {ActivitySnapshots} from '/imports/schemas';
 import { check, Match } from 'meteor/check';
 
 var schema = {
@@ -78,8 +78,9 @@ Meteor.methods({
     }
     var upsertResult = ActivitySnapshots.upsert(selector, data);
     if (Meteor.isServer)
-      console.log(`  [ActivitySnapshot.setSnapshot]  by: ${data.byUserName}/${data.byUserId}  from: ${data.byIpAddress} with url ${data.currentUrl}`);
-    return upsertResult;
+      console.log(`  [ActivitySnapshot.setSnapshot]  by: ${data.byUserName}/${data.byUserId}  from: ${data.byIpAddress} with url ${data.currentUrl}`)
+
+    return upsertResult
   }
   
 });
@@ -108,6 +109,9 @@ export function snapshotActivity(asset, passiveAction, url) {
     passiveAction:          passiveAction,
     currentUrl:             url ? url : window.location.href
   };
+
+//  console.trace(`  [ActivitySnapshot.setSnapshot]  by: ${snapData.byUserName}/${snapData.byUserId}  from: ${snapData.byIpAddress} with url ${snapData.currentUrl}`);
+
 
   Meteor.call('ActivitySnapshot.setSnapshot', snapData, (err, res) => {
     if (err) {

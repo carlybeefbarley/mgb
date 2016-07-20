@@ -17,6 +17,57 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
+      "timestamp":     "Tue Jul 19 2016 19:31:23 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "837"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Editor - adaptive toolbar",
+          "changeSummary":  "The Map Editor is using the new Editor Toolbar system. This provides more tooltip help, and also supports a 'simplify' mode which shows fewer tools with clearer buttons. Use the slider at the bottom-left of the window to change the Toolbar complexity level",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Editor - objects",
+          "changeSummary":  "The Map Editor supports more object types and object groups",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphics",
+          "type":           "improvement",
+          "changeName":     "Graphic Editor - nicer resizer",
+          "changeSummary":  "You can now enter the width or height of the graphic",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphics",
+          "type":           "improvement",
+          "changeName":     "Graphic Editor - paste modifiers",
+          "changeSummary":  "You can now flip/rotate the paste preview using the mousewheel",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.audio",
+          "type":           "feature",
+          "changeName":     "Audio Editor - preliminary",
+          "changeSummary":  "The Audio asset type has been enabled. So far it can import .ogg files, play them, but not save them (yet)",
+          "otherUrls":      []
+        }
+      ]
+    },
+    { 
       "timestamp":     "Tue Jul 12 2016 23:40:00 GMT-0700 (PDT)",
       
       "id": {

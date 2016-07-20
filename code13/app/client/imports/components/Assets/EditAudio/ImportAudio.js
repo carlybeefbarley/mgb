@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
 import sty from  './importAudio.css';
+import WaveSurfer from './WaveSurfer.js'
 
 export default class ImportAudio extends React.Component {
 
@@ -10,11 +11,17 @@ export default class ImportAudio extends React.Component {
 
   	this.state = {
 	    status: "empty" // empty, draggedOver, uploading, uploaded
+	    , playerStatus: "empty" // empty, play, pause
 	  }
 	}
 
 	componentDidMount(){
-		this.playAudio = ReactDOM.findDOMNode(this.refs.playAudio);
+		this.audioPlayer = ReactDOM.findDOMNode(this.refs.audioPlayer);
+		this.wavesurfer = WaveSurfer.create({
+		    container: '#waveform'
+		    , waveColor: 'violet'
+    		, progressColor: 'purple'
+		});
 	}
 
 	onDragOver(event){
@@ -55,11 +62,29 @@ export default class ImportAudio extends React.Component {
 
 	audioLoaded(audioObject){
 		// console.log(audioObject);
-		this.playAudio.src = audioObject.src;
+		this.audioPlayer.src = audioObject.src;
+		this.wavesurfer.load(audioObject.src);
+		var self = this;
+		this.wavesurfer.on('finish', function () {
+			self.wavesurfer.stop();
+    	self.setState({ playerStatus: "pause" });
+		});
+	}
+
+	togglePlayAudio(){
+		if(this.state.playerStatus === "play"){
+			this.wavesurfer.pause();
+			this.setState({ playerStatus: "pause" });
+		} else {
+			this.wavesurfer.play();
+			this.setState({ playerStatus: "play" });	
+		}
+		
 	}
 
 	clearAll(){
-		self.setState({ status: "empty" });
+		this.wavesurfer.stop();
+		this.setState({ status: "empty", playerStatus: "empty" });
 	}
 
 	finishImport(){
@@ -91,7 +116,11 @@ export default class ImportAudio extends React.Component {
 						</button>
 	        </div>
 	        <div className="ui divider"></div>
-	        <audio controls preload="auto" ref="playAudio"></audio>
+	        <audio controls preload="auto" ref="audioPlayer"></audio>
+	        <button className="ui icon button small" onClick={this.togglePlayAudio.bind(this)}>
+					  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>
+					</button>
+	        <div id="waveform"></div>
 	      </div>
 
 

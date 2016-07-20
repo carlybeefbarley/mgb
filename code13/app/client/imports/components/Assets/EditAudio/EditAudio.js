@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import ImportAudio from './ImportAudio.js';
 import AudioStock from './AudioStock.js';
+import WaveSurfer from './WaveSurfer.js'
 
 const TABS = {
 	IMPORT: 1

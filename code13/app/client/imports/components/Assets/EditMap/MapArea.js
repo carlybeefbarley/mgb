@@ -138,7 +138,9 @@ export default class MapArea extends React.Component {
   // TODO: handle here updates - atm disabled as updates move state in back in history
   componentWillReceiveProps(props){
     //console.log("New map data", props);
-    //this.activeAsset = props.asset;
+    if(!this.activeAsset){
+      this.activeAsset = props.asset;
+    }
   }
 
   forceUpdate(...args){

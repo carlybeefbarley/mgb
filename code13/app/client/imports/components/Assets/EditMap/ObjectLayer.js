@@ -840,11 +840,11 @@ edit[EditModes.stamp] = function(e){
       x, y
     );
     this.clearCache();
-    this.map.saveForUndo("Add Tile");
     this.data.objects.push(this.highlightedObject);
   }
 
   if(e.type == "mouseup"){
+    this.map.saveForUndo("Add Tile");
     this.highlightedObject = null;
     return;
   }

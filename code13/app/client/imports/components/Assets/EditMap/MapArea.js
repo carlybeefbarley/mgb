@@ -99,6 +99,8 @@ export default class MapArea extends React.Component {
       window.requestAnimationFrame(this._raf);
     };
     this._raf();
+
+    this.activeAsset = this.props.asset;
   }
 
   componentDidMount(){
@@ -133,6 +135,11 @@ export default class MapArea extends React.Component {
     window.removeEventListener("resize", this.globalResize);
     window.removeEventListener("keyup", this.globalKeyUp);
   }
+  // TODO: handle here updates - atm disabled as updates move state in back in history
+  componentWillReceiveProps(props){
+    //console.log("New map data", props);
+    //this.activeAsset = props.asset;
+  }
 
   forceUpdate(...args){
     // ignore undo for local updates
@@ -154,13 +161,13 @@ export default class MapArea extends React.Component {
   }
 
   set data(val){
-    this.props.asset.content2 = val;
+    this.activeAsset.content2 = val;
   }
   get data(){
-    if(this.props.asset && !this.props.asset.content2.width){
-      this.props.asset.content2 = TileHelper.genNewMap();
+    if(this.activeAsset && !this.activeAsset.content2.width){
+      this.activeAsset.content2 = TileHelper.genNewMap();
     }
-    return this.props.asset.content2;
+    return this.activeAsset.content2;
   }
 
   // store meta information about current map
@@ -214,6 +221,11 @@ export default class MapArea extends React.Component {
     }
     this.undoSteps.push(toSave);
     this.refs.tools.forceUpdate();
+
+    // next action will change map.. remove from stack.. and we should get good save state
+    window.setTimeout(() => {
+      this.save(reason);
+    }, 0);
   }
   doUndo(){
     if(this.undoSteps.length){
@@ -240,8 +252,9 @@ export default class MapArea extends React.Component {
     });
   }
 
-  save(){
-    this.props.parent.handleSave();
+  save(reason = "no reason"){
+    this.props.parent.handleSave(reason);
+    console.log("saved!");
   }
   copyData(data){
     return JSON.stringify(data);

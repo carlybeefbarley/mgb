@@ -902,6 +902,7 @@ edit[EditModes.rectangle] = function(e){
     this.isDirty = true;
     this.mouseDown = true;
     if(this.pickObject(e) > -1) {
+      this.map.saveForUndo("Edit Object");
       this.startPosX = this.pickedObject.x;
       this.startPosY = this.pickedObject.y;
       phase = 1;
@@ -974,6 +975,7 @@ edit[EditModes.rectangle] = function(e){
     obj = null;
 
     this.draw();
+    this.map.save("Edit Object");
     return;
   }
 

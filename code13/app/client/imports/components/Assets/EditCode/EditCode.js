@@ -836,7 +836,7 @@ export default class EditCode extends React.Component {
               <div className="active title">
                 <span className="explicittrigger">
                   <i className="dropdown icon"></i>
-                  Current line/selection code helpy
+                  Current line/selection code help
                   </span>                
               </div>
               }              

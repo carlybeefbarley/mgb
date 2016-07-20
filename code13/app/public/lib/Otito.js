@@ -28,7 +28,7 @@ this.Otito.FLAGS = {
 };
 this.Otito.options = {
 	precision: 10000,
-	arrayClassName: "array",
+	arrayClassName: "array content",
 	
 	mainClassName: "compact",
 	
@@ -340,6 +340,7 @@ this.Otito.prototype = {
 		}
 		var rec = this._updateObjectRecord(meta, key, this.object[key]);
 		this._addClass(rec.body, this.options.folderClassName + " " + this.options.arrayClassName);
+		this._addClass(rec.input.html, this.options.arrayClassName);
 		this._enableFolderToggle(rec, meta);
 	},
 	_addClass: function(el, cls){
@@ -368,8 +369,8 @@ this.Otito.prototype = {
 		}
 		
 		r = this.record[key] || {};
-		
-		
+
+
 		r.body = r.body || document.createElement("div");
 		r.input = this._updateChild(meta, key, r.input, object);
 		if(!(flags & Otito.FLAGS.HEADLESS) && !meta.headless){

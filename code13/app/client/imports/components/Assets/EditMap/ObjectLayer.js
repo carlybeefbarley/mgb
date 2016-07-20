@@ -373,10 +373,12 @@ export default class ObjectLayer extends AbstractLayer {
       if(this.pickedObject.orig.polyline){
         this.pickedObject.orig.polygon = this.pickedObject.orig.polyline;
         delete this.pickedObject.orig.polyline;
+        this.map.save("Polyline to polygon");
       }
       else if(this.pickedObject.orig.polygon){
         this.pickedObject.orig.polyline = this.pickedObject.orig.polygon;
         delete this.pickedObject.orig.polygon;
+        this.map.save("Polygon to polyline");
       }
     }
     this.draw();
@@ -791,6 +793,7 @@ edit[EditModes.drawShape] = function(e){
         obj = null;
         endPoint = null;
         this.draw();
+        this.map.save("Drawing lines");
         return;
       }
       else{

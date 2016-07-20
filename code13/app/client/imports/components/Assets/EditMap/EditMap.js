@@ -36,7 +36,6 @@ export default class EditMap extends React.Component {
 
   handleSave(reason) {
     // TODO: convert uploaded images to assets
-    console.log(reason);
     this.props.handleContentChange(this.refs.mapArea.data, this.refs.mapArea.generatePreview(), reason);
   }
 

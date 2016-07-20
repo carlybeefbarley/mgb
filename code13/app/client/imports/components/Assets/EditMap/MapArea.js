@@ -225,9 +225,11 @@ export default class MapArea extends React.Component {
     this.refs.tools.forceUpdate();
 
     // next action will change map.. remove from stack.. and we should get good save state
-    window.setTimeout(() => {
-      this.save(reason);
-    }, 0);
+    if(!skipRedo) {
+      window.setTimeout(() => {
+        this.save(reason);
+      }, 0);
+    }
   }
   doUndo(){
     if(this.undoSteps.length){
@@ -256,7 +258,6 @@ export default class MapArea extends React.Component {
 
   save(reason = "no reason"){
     this.props.parent.handleSave(reason);
-    console.log("saved!");
   }
   copyData(data){
     return JSON.stringify(data);

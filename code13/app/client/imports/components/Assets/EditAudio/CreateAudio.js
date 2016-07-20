@@ -26,7 +26,7 @@ export default class CreateAudio extends React.Component {
 	  this.PARAMS.sample_size = 8;
 
   	this.state = {
-  		params: this.PARAMS	// this.PARAMS is actual object in sfxr lib and this.state.params just updates UI
+  		params: clone(this.PARAMS)	// this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
 	  }
 	}
 
@@ -36,7 +36,7 @@ export default class CreateAudio extends React.Component {
 
 	gen(fx){
 	  this.PARAMS[fx]();
-	  this.setState({ params: this.PARAMS })
+	  this.setState({ params: clone(this.PARAMS) })
 	  this.playAudio();
 	}
 
@@ -59,8 +59,12 @@ export default class CreateAudio extends React.Component {
 	}
 
 	changeParam(paramID, event){
-		console.log( parseInt(event.target.value) );
-		// console.log( event, paramID );
+    this.PARAMS[event.target.id] = parseInt(event.target.value) / 1000.0;
+    this.setState({ params: clone(this.PARAMS) })
+	}
+
+	onEnd(event){
+		console.log(event);
 	}
 
 	render(){
@@ -68,9 +72,11 @@ export default class CreateAudio extends React.Component {
 		let effects = 'pickupCoin,laserShoot,explosion,powerUp,hitHurt,jump,blipSelect,random,tone'.split(',');
 		let effectButtons = _.map(effects, (effect) => { 
       return (
-      	<button key={"effect_"+effect} className="ui button small" onClick={this.gen.bind(this, effect)}>
-				  {effect}
-				</button>
+      	<div key={"effect_"+effect}>
+	      	<button className="ui button small" onClick={this.gen.bind(this, effect)}>
+					  {effect}
+					</button>
+				</div>
       );
     });
 
@@ -101,7 +107,10 @@ export default class CreateAudio extends React.Component {
     let sliders = _.map(sliderParams, (param) => {
     	return (
     		<div key={"slider_"+param.id}>
-    			<input type="range" value="200" min="100" max="500" step="10" onChange={this.changeParam.bind(this, param.id)} /> {param.title}<br/>
+    			<input id={param.id} type="range" value={this.state.params[param.id]*1000} min="0" max="1000" 
+    			onChange={this.changeParam.bind(this, param.id)} 
+    			onMouseUp={this.playAudio.bind(this, false)}
+    			/> {param.title}<br/>
     		</div>
     	);
     });
@@ -135,4 +144,14 @@ export default class CreateAudio extends React.Component {
 			</div>
 		);
 	}	
+}
+
+
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = {};
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
 }

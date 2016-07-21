@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
 import sty from  './importAudio.css';
-import WaveSurfer from './WaveSurfer.js'
+import WaveSurfer from './lib/WaveSurfer.js'
 
 export default class ImportAudio extends React.Component {
 

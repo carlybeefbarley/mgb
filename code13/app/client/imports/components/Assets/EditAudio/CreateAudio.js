@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import SFXR from './sfxr.js';
-import WaveSurfer from './WaveSurfer.js'
+import SFXR from './lib/sfxr.js';
+import WaveSurfer from './lib/WaveSurfer.js'
 
 SFXR.Params.prototype.query = function () {
   let result = "";
@@ -21,7 +21,7 @@ export default class CreateAudio extends React.Component {
   	super(props);
 
   	this.sound = null;
-	  this.resetParams();
+  	this.resetParams();
 
   	this.state = {
   		paramsUpdated: new Date().getTime()	// this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
@@ -48,7 +48,6 @@ export default class CreateAudio extends React.Component {
 	  this.PARAMS.sound_vol = 0.25;
 	  this.PARAMS.sample_rate = 44100;
 	  this.PARAMS.sample_size = 8;
-	  this.setState({ paramsUpdated: new Date().getTime() })
 	}
 
 	gen(fx){
@@ -92,6 +91,11 @@ export default class CreateAudio extends React.Component {
 		let audio = new Audio()
 		audio.src = this.sound.dataURI;
 		this.props.importAudio(audio, "Created sound");
+	}
+
+	resetSliders(){
+		this.resetParams();
+		this.setState({ paramsUpdated: new Date().getTime() })
 	}
 
 	render(){
@@ -177,8 +181,8 @@ export default class CreateAudio extends React.Component {
 							<button className="ui icon button massive" title="Save sound" onClick={this.saveAudio.bind(this)}>
 							  <i className="save icon"></i>
 							</button>
-							<button className="ui icon button massive" title="Reset sliders" onClick={this.resetParams.bind(this)}>
-							  <i className="remove icon"></i>
+							<button className="ui icon button massive" title="Reset sliders" onClick={this.resetSliders.bind(this)}>
+							  <i className="erase icon"></i>
 							</button>
 							<div>&nbsp;</div>
 							<div className="ui form">

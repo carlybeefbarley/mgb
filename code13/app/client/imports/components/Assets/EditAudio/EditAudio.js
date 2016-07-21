@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import ImportAudio from './ImportAudio.js';
 import AudioStock from './AudioStock.js';
 import CreateAudio from './CreateAudio.js';
-import WaveSurfer from './WaveSurfer.js';
+import WaveSurfer from './lib/WaveSurfer.js';
 
 export default class EditAudio extends React.Component {
 
@@ -132,7 +132,7 @@ export default class EditAudio extends React.Component {
 						<button className="ui small icon button"
 							title="Create sound with effect generator"
 							onClick={this.openCreateAudioPopup.bind(this)}>
-						  <i className="configure icon"></i> Create
+						  <i className="options icon"></i> Create
 						</button>
 					</div>
 

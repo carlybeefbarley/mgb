@@ -180,9 +180,6 @@ export default class MapTools extends React.Component {
           level: 5
         },
         {
-          name: "separator"
-        },
-        {
           name: "stamp",
           icon: "legal stamp",
           active: this.props.map.options.mode == EditModes.stamp,

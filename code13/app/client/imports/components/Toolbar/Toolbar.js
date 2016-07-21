@@ -49,6 +49,10 @@ export default class Toolbar extends React.Component {
       e.altKey && (keyval |= ALT)
 
       if(this.keyActions[keyval]){
+        const b = this.getButtonFromAction(this.keyActions[keyval].action);
+        if(!b || b.disabled){
+          return;
+        }
         e.preventDefault()
         this.keyActions[keyval](e)
       }
@@ -169,7 +173,11 @@ export default class Toolbar extends React.Component {
       }
     }*/
   }
-
+  getButtonFromAction(action){
+    return _.find(this.data.buttons, (o) => {
+      return o.name == action
+    })
+  }
   registerShortcut(shortcut, action){
     const keys = shortcut.split("+")
     // create unique index where
@@ -204,6 +212,7 @@ export default class Toolbar extends React.Component {
       return
     }
     this.keyActions[keyval] = this.props.actions[action].bind(this.props.actions)
+    this.keyActions[keyval].action = action;
   }
 
   saveState(){

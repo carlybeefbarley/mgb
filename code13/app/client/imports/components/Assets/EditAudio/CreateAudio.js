@@ -26,7 +26,7 @@ export default class CreateAudio extends React.Component {
 	  this.PARAMS.sample_size = 8;
 
   	this.state = {
-  		params: clone(this.PARAMS)	// this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
+  		paramsUpdated: new Date().getTime()	// this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
 	  }
 	}
 
@@ -36,7 +36,7 @@ export default class CreateAudio extends React.Component {
 
 	gen(fx){
 	  this.PARAMS[fx]();
-	  this.setState({ params: clone(this.PARAMS) })
+	  this.setState({ paramsUpdated: new Date().getTime() })
 	  this.playAudio();
 	}
 
@@ -60,11 +60,13 @@ export default class CreateAudio extends React.Component {
 
 	changeParam(paramID, event){
     this.PARAMS[event.target.id] = parseInt(event.target.value) / 1000.0;
-    this.setState({ params: clone(this.PARAMS) })
+    this.setState({ paramsUpdated: new Date().getTime() })
 	}
 
-	onEnd(event){
-		console.log(event);
+	changeWaveType(event){
+		this.PARAMS.wave_type = parseInt(event.target.value)
+		this.setState({ paramsUpdated: new Date().getTime() })
+		this.playAudio();
 	}
 
 	render(){
@@ -87,33 +89,45 @@ export default class CreateAudio extends React.Component {
     	, { id: "p_env_decay", title: "Decay time" }
     	, { id: "p_base_freq", title: "Start frequency" }
     	, { id: "p_freq_limit", title: "Min freq. cutoff" }
-    	, { id: "p_freq_ramp", title: "Slide" }
-    	, { id: "p_freq_dramp", title: "Delta slide" }
+    	, { id: "p_freq_ramp", title: "Slide", signed: true }
+    	, { id: "p_freq_dramp", title: "Delta slide", signed: true }
     	, { id: "p_vib_strength", title: "Depth" }
     	, { id: "p_vib_speed", title: "Speed" }
-    	, { id: "p_arp_mod", title: "Frequency mult" }
+    	, { id: "p_arp_mod", title: "Frequency mult", signed: true }
     	, { id: "p_arp_speed", title: "Change speed" }
     	, { id: "p_duty", title: "Duty cycle" }
-    	, { id: "p_duty_ramp", title: "Sweep" }
+    	, { id: "p_duty_ramp", title: "Sweep", signed: true }
     	, { id: "p_repeat_speed", title: "Rate" }
-    	, { id: "p_pha_offset", title: "Offset" }
-    	, { id: "p_pha_ramp", title: "Sweep" }
+    	, { id: "p_pha_offset", title: "Offset", signed: true }
+    	, { id: "p_pha_ramp", title: "Sweep", signed: true }
     	, { id: "p_lpf_freq", title: "Cutoff frequency" }
-    	, { id: "p_lpf_ramp", title: "Cutoff sweep" }
+    	, { id: "p_lpf_ramp", title: "Cutoff sweep", signed: true }
     	, { id: "p_lpf_resonance", title: "Resonance" }
     	, { id: "p_hpf_freq", title: "Cutoff frequency" }
-    	, { id: "p_hpf_ramp", title: "Cutoff sweep" }
+    	, { id: "p_hpf_ramp", title: "Cutoff sweep", signed: true }
     ];
     let sliders = _.map(sliderParams, (param) => {
     	return (
     		<div key={"slider_"+param.id}>
-    			<input id={param.id} type="range" value={this.state.params[param.id]*1000} min="0" max="1000" 
+    			<input id={param.id} type="range" value={this.PARAMS[param.id]*1000} min={param.signed ? -1000 : 0} max="1000" 
     			onChange={this.changeParam.bind(this, param.id)} 
     			onMouseUp={this.playAudio.bind(this, false)}
     			/> {param.title}<br/>
     		</div>
-    	);
-    });
+    	)
+    })
+
+    let shapeTypes = ["square", "sawtooth", "sine", "noise"];
+    let waveShapes = _.map(shapeTypes, (shape, nr) => {
+    	return (
+	    	<div key={"wavetype_"+shape} className="field">
+		      <div className="ui radio checkbox">
+		        <input onChange={this.changeWaveType.bind(this)} type="radio" value={nr} name="waveType" id={shape} checked={this.PARAMS.wave_type === nr ? "checked" : ""} />
+		        <label>{shape}</label>
+		      </div>
+		    </div>
+	    )
+    })
 
 
 
@@ -131,12 +145,16 @@ export default class CreateAudio extends React.Component {
 						</div>
 
 						<div style={{float: "left", width: "30%"}}>
-							<input type="range" value="200" min="100" max="500" step="10" onChange={this.changeParam.bind(this, "paramID")} />
 							{sliders}
 						</div>
 						
 						<div style={{float: "left", width: "30%"}}>
-							sdfgsd
+							<div className="ui form">
+							  <div className="grouped fields">
+							    <label>Wave Type</label>
+							    {waveShapes}
+							  </div>
+							</div>
 						</div>
 
 			    </div>

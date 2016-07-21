@@ -21,10 +21,7 @@ export default class CreateAudio extends React.Component {
   	super(props);
 
   	this.sound = null;
-	  this.PARAMS = new SFXR.Params();
-	  this.PARAMS.sound_vol = 0.25;
-	  this.PARAMS.sample_rate = 44100;
-	  this.PARAMS.sample_size = 8;
+	  this.resetParams();
 
   	this.state = {
   		paramsUpdated: new Date().getTime()	// this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
@@ -38,6 +35,7 @@ export default class CreateAudio extends React.Component {
 		    , waveColor: 'violet'
     		, progressColor: 'purple'
 		})
+
 		var self = this;
 		this.wavesurfer.on('finish', function () {
 			self.wavesurfer.stop();
@@ -45,7 +43,16 @@ export default class CreateAudio extends React.Component {
 		});
 	}
 
+	resetParams(){
+		this.PARAMS = new SFXR.Params();
+	  this.PARAMS.sound_vol = 0.25;
+	  this.PARAMS.sample_rate = 44100;
+	  this.PARAMS.sample_size = 8;
+	  this.setState({ paramsUpdated: new Date().getTime() })
+	}
+
 	gen(fx){
+		this.resetParams();
 	  this.PARAMS[fx]();
 	  this.setState({ paramsUpdated: new Date().getTime() })
 	  this.playAudio();
@@ -167,10 +174,10 @@ export default class CreateAudio extends React.Component {
 							<button className="ui icon button massive" title="Play" onClick={this.playAudio.bind(this, false)}>
 							  <i className="play icon"></i>
 							</button>
-							<button className="ui icon button massive" title="Save sound" onClick={this.saveAudio.bind(this, false)}>
+							<button className="ui icon button massive" title="Save sound" onClick={this.saveAudio.bind(this)}>
 							  <i className="save icon"></i>
 							</button>
-							<button className="ui icon button massive" title="Reset sliders" onClick={this.playAudio.bind(this, false)}>
+							<button className="ui icon button massive" title="Reset sliders" onClick={this.resetParams.bind(this)}>
 							  <i className="remove icon"></i>
 							</button>
 							<div>&nbsp;</div>

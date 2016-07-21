@@ -280,7 +280,7 @@ export default class MapTools extends React.Component {
           icon: "stop",
           label: "Rectangle",
           tooltip: "Draw Rectangle on the map",
-          shortcut: "R",
+          shortcut: "Shift+R",
           level: 3
         },
         {
@@ -289,7 +289,7 @@ export default class MapTools extends React.Component {
           icon: "circle",
           label: "Ellipse",
           tooltip: "Draw Ellipse on the map",
-          shortcut: "E",
+          shortcut: "Shift+E",
           level: 4
         },
         {
@@ -298,7 +298,7 @@ export default class MapTools extends React.Component {
           icon: "pencil",
           label: "Shape",
           tooltip: "Draw Shape on the map",
-          shortcut: "S",
+          shortcut: "Shift+S",
           level: 5
         },
         {
@@ -306,8 +306,9 @@ export default class MapTools extends React.Component {
           icon: "clone",
           label: "Polygon",
           tooltip: "Toggle between polygon and polyline",
+          shortcut: "Shift+P",
           level: 5
-        },
+        }
       ]
     };
 

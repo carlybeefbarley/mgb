@@ -812,10 +812,10 @@ edit[EditModes.drawShape] = function(e){
   const tw = this.map.data.tilewidth;
   const th = this.map.data.tileheight;
 
-  endPoint.x += e.movementX * this.camera.zoom;
-  endPoint.y += e.movementY * this.camera.zoom;
-  pointCache.x += e.movementX * this.camera.zoom;
-  pointCache.y += e.movementY * this.camera.zoom;
+  endPoint.x += e.movementX / this.camera.zoom;
+  endPoint.y += e.movementY / this.camera.zoom;
+  pointCache.x += e.movementX / this.camera.zoom;
+  pointCache.y += e.movementY / this.camera.zoom;
 
   if(e.ctrlKey){
     endPoint.x = Math.round(pointCache.x / tw) * tw;

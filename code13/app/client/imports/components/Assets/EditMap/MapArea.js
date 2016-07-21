@@ -138,7 +138,8 @@ export default class MapArea extends React.Component {
   // TODO: handle here updates - atm disabled as updates move state in back in history
   componentWillReceiveProps(props){
     //console.log("New map data", props);
-    if(!this.activeAsset){
+    // it's safe to update read only
+    if(!this.activeAsset || !this.props.parent.props.canEdit){
       this.activeAsset = props.asset;
     }
   }
@@ -815,15 +816,22 @@ export default class MapArea extends React.Component {
   }
   /* endof update stuff */
 
-  getLayer(ld){
+  // added id - as sometimes we fail to get active layer - e.g. in cases when map has been updated, but layer data haven't
+  getLayer(ld, id=0){
+    const l = this.layers[id];
+    // in most cases this will be valid
+    if(l && l.options == ld){
+      return l;
+    }
     for(let i=0; i < this.layers.length; i++){
       if(this.layers[i].options == ld){
         return this.layers[i];
       }
     }
+    return l;
   }
   getActiveLayer(){
-    return this.getLayer(this.data.layers[this.activeLayer]);
+    return this.getLayer(this.data.layers[this.activeLayer], this.activeLayer);
   }
 
   addLayer(type){

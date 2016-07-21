@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
 import SFXR from './sfxr.js';
+import WaveSurfer from './WaveSurfer.js'
 
 SFXR.Params.prototype.query = function () {
   let result = "";
@@ -27,11 +28,21 @@ export default class CreateAudio extends React.Component {
 
   	this.state = {
   		paramsUpdated: new Date().getTime()	// this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
+  		, playerStatus: "empty" // empty, play, pause
 	  }
 	}
 
 	componentDidMount(){
-		
+		this.wavesurfer = WaveSurfer.create({
+		    container: '#createAudioPlayer'
+		    , waveColor: 'violet'
+    		, progressColor: 'purple'
+		})
+		var self = this;
+		this.wavesurfer.on('finish', function () {
+			self.wavesurfer.stop();
+    	self.setState({ playerStatus: "pause" })
+		});
 	}
 
 	gen(fx){
@@ -54,6 +65,7 @@ export default class CreateAudio extends React.Component {
 	    audio.src = self.sound.dataURI;
 	    // $("#wav").attr("href", SOUND.dataURI);
 	    // $("#sfx").attr("href", "sfx.wav?" + PARAMS.query());
+	    self.wavesurfer.load(self.sound.dataURI);
 	    audio.play(); 
   	}, 0);
 	}
@@ -176,6 +188,8 @@ export default class CreateAudio extends React.Component {
 			    			onMouseUp={this.playAudio.bind(this, false)}
 			    			/>
 			    		</div>
+
+			    		<div id="createAudioPlayer"></div>
 						</div>
 
 			    </div>

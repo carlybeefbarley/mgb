@@ -17,9 +17,14 @@ export default class ImportAudio extends React.Component {
 
 	componentDidMount(){
 		this.wavesurfer = WaveSurfer.create({
-		    container: '#waveform'
+		    container: '#importAudioPlayer'
 		    , waveColor: 'violet'
     		, progressColor: 'purple'
+		})
+		var self = this;
+		this.wavesurfer.on('finish', function () {
+			self.wavesurfer.stop();
+    	self.setState({ playerStatus: "pause" })
 		});
 	}
 
@@ -62,11 +67,6 @@ export default class ImportAudio extends React.Component {
 	audioLoaded(audioObject){
 		this.audioObject = audioObject;
 		this.wavesurfer.load(audioObject.src);
-		var self = this;
-		this.wavesurfer.on('finish', function () {
-			self.wavesurfer.stop();
-    	self.setState({ playerStatus: "pause" })
-		});
 	}
 
 	togglePlayAudio(){
@@ -129,7 +129,7 @@ export default class ImportAudio extends React.Component {
 		        </div>
 		        <div className="ui divider"></div>
 		        
-		        <div id="waveform"></div>
+		        <div id="importAudioPlayer"></div>
 		      </div>
 
 		    </div>

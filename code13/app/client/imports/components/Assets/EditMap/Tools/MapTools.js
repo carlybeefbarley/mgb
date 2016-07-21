@@ -140,7 +140,7 @@ export default class MapTools extends React.Component {
           label: "Undo",
           iconText:  (this.props.map.undoSteps.length ? " "+this.props.map.undoSteps.length : ''),
           disabled: !this.props.map.undoSteps.length,
-          tooltip: "Undo last action",
+          tooltip: "Undo last action" + (_.last(this.props.map.undoSteps) ? ": " + _.last(this.props.map.undoSteps).reason : ''),
           level: 2,
           shortcut: "Ctrl+Z"
         },

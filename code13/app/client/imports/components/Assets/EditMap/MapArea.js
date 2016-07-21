@@ -163,7 +163,10 @@ export default class MapArea extends React.Component {
   }
 
   set data(val){
+    // get layer first as later data won't match until full react sync
+    const l = this.getActiveLayer();
     this.activeAsset.content2 = val;
+    l && l.clearCache && l.clearCache();
   }
   get data(){
     if(this.activeAsset && !this.activeAsset.content2.width){
@@ -246,9 +249,9 @@ export default class MapArea extends React.Component {
     if(!this.redoSteps.length){
       return;
     }
-    this.saveForUndo("Changes before Redo", true);
-
-    this.data = this.redoSteps.pop();
+    const pop = this.redoSteps.pop();
+    this.saveForUndo(pop.reason, true);
+    this.data = pop;
 
     this.ignoreUndo++;
     this.update(() => {

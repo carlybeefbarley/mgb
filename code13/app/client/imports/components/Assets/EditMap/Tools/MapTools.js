@@ -120,6 +120,9 @@ export default class MapTools extends React.Component {
           shortcut: "Ctrl+S" // Is it OK to override browsers save page?
         },
         {
+          name: "separator"
+        },
+        {
           name: "preview",
           label: "3D Preview",
           icon: "cube",
@@ -186,7 +189,7 @@ export default class MapTools extends React.Component {
           label: "Stamp",
           tooltip: "Stamp tiles on the map",
           level: 1,
-          shortcut: "Ctrl+Shift+S"
+          shortcut: "S"
         },
         {
           name: "terrain",
@@ -195,7 +198,7 @@ export default class MapTools extends React.Component {
           label: "Terrain Tool",
           tooltip: "Create advanced Terrains - not implemented :(",
           level: 9,
-          shortcut: "Ctrl+Shift+T"
+          shortcut: "T"
         },
         {
           name: "fill",
@@ -204,7 +207,7 @@ export default class MapTools extends React.Component {
           active: this.props.map.options.mode == EditModes.fill,
           tooltip: "Fill Map or Selection with selected tile(s)",
           level: 4,
-          shortcut: "Ctrl+Shift+F"
+          shortcut: "F"
         },
         {
           name: "eraser",
@@ -212,7 +215,7 @@ export default class MapTools extends React.Component {
           active: this.props.map.options.mode == EditModes.eraser,
           tooltip: "Delete tile - or use [Ctrl + click] to quickly access this tool",
           level: 1,
-          shortcut: "Ctrl+Shift+E"
+          shortcut: "E"
         },
         {
           name: "separator"

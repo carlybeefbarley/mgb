@@ -10,41 +10,27 @@ export default class Toolbar extends React.Component {
 
   constructor(...args){
     super(...args)
-
+    window.toolbar = this;
     this.keyActions = {}
     this.buttons = window.buttons = []
 
-    const savedLevel = localStorage.getItem("toolbarLevel")
-    let levelSlider = document.getElementById("levelSlider")
-
-    // this is for debugging purposes atm
-    this.level = savedLevel || this.props.config.level
-    if(!levelSlider){
-      levelSlider = document.createElement("input")
-      levelSlider.setAttribute("id", "levelSlider")
-      levelSlider.setAttribute("type", "range")
-      levelSlider.setAttribute("min", "1")
-      levelSlider.setAttribute("max", "10")
-      levelSlider.setAttribute("step", "1")
-
-      levelSlider.style.position = "absolute"
-      levelSlider.style.bottom = "0"
-      levelSlider.style.left = "0"
-      levelSlider.style.zIndex = "666"
-
-      document.body.appendChild(levelSlider)
+    if(this.props.name == void(0)){
+      console.warn("Every toolbar instance needs name");
     }
-    levelSlider.value = this.level
-    this.levelSlider = levelSlider
+    // separate these - and allow some toolbars to share level???
+    this.lsDataKey = "toolbar-data-" + this.props.name
+    this.lsLevelKey = "toolbar-level-" + this.props.levelName || this.props.name
 
     this._activeButton = null
     this.startPos = null
     this.hasMoved = false
 
-    this.lsDataKey = "toolbar-data-" + this.props.name;
-    this.lsLevelKey = "toolbar-level-" + this.props.name;
+    this.level = localStorage.getItem(this.lsLevelKey) || this.props.config.level
+    this.levelSlider = this._addLevelSlider()
 
     this.order = new Array(this.props.config.buttons.length)
+    // foreach will skip undefined values :/
+    this.order.fill(0);
     this.order.forEach((v, k) => {
       this.order[k] = k
     })
@@ -159,8 +145,16 @@ export default class Toolbar extends React.Component {
 
   // we need to keep local order, but update another props
   // probably convert to hashmap (object) and back would be faster
-  /*componentWillReceiveProps(props){
-    let p = props.config.buttons
+  componentWillReceiveProps(props){
+    const len = props.config.buttons.length;
+    // add extra buttons spots
+    if(this.order.length < len){
+      for(let i=this.order.len; i<len; i++){
+        this.order[i] = i;
+      }
+    }
+    this.data = props.config;
+    /*let p = props.config.buttons
     let o = this.data.buttons
 
     for(let i=0; i<p.length; i++){
@@ -173,8 +167,8 @@ export default class Toolbar extends React.Component {
           }
         }
       }
-    }
-  }*/
+    }*/
+  }
 
   registerShortcut(shortcut, action){
     const keys = shortcut.split("+")
@@ -213,21 +207,24 @@ export default class Toolbar extends React.Component {
   }
 
   saveState(){
-    localStorage.setItem(this.lsKey, JSON.stringify(this.data.buttons))
+    localStorage.setItem(this.lsDataKey, JSON.stringify(this.order))
   }
 
   loadState(){
-    const savedData = localStorage.getItem("toolbar-data")
+    const savedData = localStorage.getItem(this.lsDataKey)
     this.data = this.props.config
 
     if(savedData){
-      this.data.buttons = JSON.parse(savedData)
+      const pData = JSON.parse(savedData);
+      // ignore old config
+      if(pData.length && typeof(pData[0]) == "number" )
+      this.order = pData
     }
   }
 
   render(){
     let size
-    // TODO: are 3 levels enough
+    // TODO: are 3 levels enough?
     if(this.level < 3){
       size = "big"
     }
@@ -243,12 +240,19 @@ export default class Toolbar extends React.Component {
     buttons.push(parent)
 
     let b
-    for(let i=0; i<this.data.buttons.length; i++){
-      b = this.data.buttons[i]
+    for(let i=0; i<this.order.length; i++){
+      b = this.data.buttons[this.order[i]]
+      if(!b){
+        continue;
+      }
       if(b.name == "separator"){
         parent = []
         buttons.push(parent)
         continue
+      }
+      // ship invisible buttons - to show nice rounded borders for side buttons
+      if(b.level > this.level){
+        continue;
       }
       parent.push(this._renderButton(b, i))
     }
@@ -270,11 +274,23 @@ export default class Toolbar extends React.Component {
   }
 
   reset(){
-    this.data = this.props.config
+    this.order.forEach((v, k, o) => {
+      o[k] = k;
+    })
     this.saveState()
     this.forceUpdate()
   }
   /* private methods goes here */
+
+  // adds react dom element that represents button
+  _addButton(b, index){
+    if(!b){
+      // do I need to remove button here?
+      return
+    }
+    this.buttons[index] = b
+  }
+
   _handleClick(action, e){
     if(this.hasMoved || this.activeButton == this._extractButton(e.target) ){
       return
@@ -286,7 +302,6 @@ export default class Toolbar extends React.Component {
       console.error("Cannot find action for button:", action)
     }
   }
-
   _extractButton(el){
     let b = el
     if(this.buttons.indexOf(b) == -1){
@@ -304,7 +319,7 @@ export default class Toolbar extends React.Component {
     }
     const label = this.level <= 3 ? <div >{b.label}</div> : ''
     const title = this.level > 3 ? b.label : ''
-    const hidden = b.level > this.level ? " invisible" : ' isvisible'
+    const hidden = b.level > this.level ? " invisible" : ' isvisible' // isvisible because visible is reserved
     const active = b.active ? " primary" : ''
     const disabled = b.disabled ? " disabled" : ''
     if(b.shortcut){
@@ -326,13 +341,26 @@ export default class Toolbar extends React.Component {
       </div>
     )
   }
-  // adds react dom element that represents button
-  _addButton(b, index){
-    if(!b){
-      // do I need to remove button here?
-      return
+
+  _addLevelSlider(){
+    let levelSlider = document.getElementById("levelSlider")
+    if(!levelSlider){
+      levelSlider = document.createElement("input")
+      levelSlider.setAttribute("id", "levelSlider")
+      levelSlider.setAttribute("type", "range")
+      levelSlider.setAttribute("min", "1")
+      levelSlider.setAttribute("max", "10")
+      levelSlider.setAttribute("step", "1")
+
+      levelSlider.style.position = "absolute"
+      levelSlider.style.bottom = "0"
+      levelSlider.style.left = "0"
+      levelSlider.style.zIndex = "666"
+
+      document.body.appendChild(levelSlider)
     }
-    this.buttons[index] = b
+    levelSlider.value = this.level
+    return levelSlider;
   }
 
   _moveButtonStart(e){
@@ -399,11 +427,15 @@ export default class Toolbar extends React.Component {
     this.hasMoved = true
     // TODO: make browser compatible
     const active = this.activeButton
+
+    this.activeButton.style.top = 0
+    this.activeButton.style.left = left + "px"
+
     const sort = (e) => {
       e.target.removeEventListener("transitionend", sort)
       this.refs.mainElement.classList.add("no-animate")
 
-      const data = this.data.buttons
+      const data = this.order
       const index = parseInt(active.dataset.index, 10)
       const b = data.splice(index, 1)
       if(mostLeft){
@@ -426,10 +458,8 @@ export default class Toolbar extends React.Component {
         this.refs.mainElement.classList.remove("no-animate")
       }, 1)
     }
-    this.activeButton.addEventListener("transitionend", sort)
 
-    this.activeButton.style.top = 0
-    this.activeButton.style.left = left + "px"
+    this.activeButton.addEventListener("transitionend", sort)
     this.activeButton = null
   }
 }

@@ -111,10 +111,6 @@ export default class MapTools extends React.Component {
     }
 
     const layer = this.props.map.getActiveLayer();
-    if(!layer){
-      debugger;
-      this.props.map.getActiveLayer();
-    }
     var config = {
       level: 5,
       buttons: [

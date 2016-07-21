@@ -26,6 +26,8 @@ export default class LayerControls extends React.Component {
     const parent = this.props.layer;
     const map = parent.props.info.content.map;
     const lss = map.data.layers;
+    map.saveForUndo("Add Layer");
+
     // TODO: check for duplicate names..
     // TODO: get rid of strings
     let ls;
@@ -49,6 +51,7 @@ export default class LayerControls extends React.Component {
     const map = parent.props.info.content.map;
     const lss = map.data.layers;
 
+    map.saveForUndo("Remove Layer");
     lss.splice(map.activeLayer, 1);
     if(map.activeLayer >= map.data.layers.length){
       map.activeLayer = map.data.layers.length -1;
@@ -60,6 +63,8 @@ export default class LayerControls extends React.Component {
   raiseLayer() {
     const parent = this.props.layer;
     const map = this.map;
+    map.saveForUndo("Raise Layer");
+
     const lss = map.data.layers;
     const layer = lss.splice(map.activeLayer, 1);
 
@@ -72,6 +77,8 @@ export default class LayerControls extends React.Component {
   lowerLayer() {
     const parent = this.props.layer;
     const map = this.map;
+    map.saveForUndo("Lower Layer");
+
     const lss = map.data.layers;
     const layer = lss.splice(map.activeLayer, 1);
 

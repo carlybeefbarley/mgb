@@ -41,13 +41,16 @@ export default class Toolbar extends React.Component {
       this.forceUpdate()
     }
 
+    this._onKeyDown = (e) => {
+      let keyval = this.getKeyval(e);
+      if(this.keyActions[keyval]){
+        e.preventDefault();
+        // do we need this?
+        e.stopPropagation();
+      }
+    };
     this._onKeyUp = (e) => {
-      let keyval = e.which
-      // TODO: ADD OSX CMD.. threat as CTRL? ASK @dgolds
-      e.shiftKey && (keyval |= SHIFT)
-      e.ctrlKey && (keyval |= CTRL)
-      e.altKey && (keyval |= ALT)
-
+      let keyval = this.getKeyval(e);
       if(this.keyActions[keyval]){
         const b = this.getButtonFromAction(this.keyActions[keyval].action);
         if(!b || b.disabled){
@@ -127,6 +130,14 @@ export default class Toolbar extends React.Component {
 
   getRow(mb, b){
     return mb.width * Math.round((b.top - mb.top) / mb.height)
+  }
+  getKeyval(e){
+    let keyval = e.which
+    // TODO: ADD OSX CMD.. threat as CTRL? ASK @dgolds
+    e.shiftKey && (keyval |= SHIFT)
+    e.ctrlKey && (keyval |= CTRL)
+    e.altKey && (keyval |= ALT)
+    return keyval;
   }
 
   componentDidMount(){

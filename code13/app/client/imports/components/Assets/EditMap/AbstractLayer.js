@@ -14,9 +14,21 @@ export default class AbstractLayer extends React.Component {
     this.ctx = null;
     this.mouseDown = false;
 
-    this._mup = this.handleMouseUp.bind(this);
-    this._mov = this.handleMouseMove.bind(this);
-    this._kup = this._onKeyUp.bind(this);
+    this._mup = (e) => {
+      if(this.isActive()){
+        this.handleMouseUp(e);
+      }
+    };
+    this._mov = (e) => {
+      if(this.isActive()){
+        this.handleMouseMove(e);
+      }
+    };
+    this._kup = (e) => {
+      if(this.isActive()){
+        this._onKeyUp(e);
+      }
+    };
 
     this.isVisible = false;
   }

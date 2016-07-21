@@ -65,34 +65,34 @@ export default class ImportAudio extends React.Component {
 		var self = this;
 		this.wavesurfer.on('finish', function () {
 			self.wavesurfer.stop();
-    	self.setState({ playerStatus: "pause" });
+    	self.setState({ playerStatus: "pause" })
 		});
 	}
 
 	togglePlayAudio(){
 		if(this.state.playerStatus === "play"){
 			this.wavesurfer.pause();
-			this.setState({ playerStatus: "pause" });
+			this.setState({ playerStatus: "pause" })
 		} else {
 			this.wavesurfer.play();
-			this.setState({ playerStatus: "play" });	
+			this.setState({ playerStatus: "play" })
 		}
 	}
 
 	stopAudio(){
 		this.wavesurfer.stop();
-		this.setState({ playerStatus: "pause" });
+		this.setState({ playerStatus: "pause" })
 	}
 
 	clearAll(){
 		this.wavesurfer.stop();
 		this.wavesurfer.empty();
-		this.setState({ status: "empty", playerStatus: "empty" });
+		this.setState({ status: "empty", playerStatus: "empty" })
 	}
 
 	finishImport(){
 		// console.log(this.wavesurfer);
-		this.props.importAudio(this.audioObject)
+		this.props.importAudio(this.audioObject, "Imported audio")
 	}
 
 	render(){

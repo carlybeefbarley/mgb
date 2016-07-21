@@ -28,6 +28,11 @@ export default class EditAudio extends React.Component {
 		let c2 = this.props.asset.content2;
 		if(c2.dataUri){
 			this.wavesurfer.load(c2.dataUri);
+			let self = this;
+			this.wavesurfer.on('finish', function () {
+				self.wavesurfer.stop();
+	    	self.setState({ playerStatus: "pause" });
+			});
 		}
 	}
 
@@ -36,15 +41,16 @@ export default class EditAudio extends React.Component {
     $('.ui.modal.importPopup').modal('show');
   }
 
-	importAudio(audioObject){
+	importAudio(audioObject, saveText){
 		if(!this.hasPermission) return;
 
 		this.wavesurfer.load(audioObject.src);
 		let c2 = this.props.asset.content2;
 		c2.dataUri = audioObject.src;
 		c2.duration = audioObject.duration;
-		this.handleSave("Imported audio");
+		this.handleSave(saveText);
 		$('.ui.modal.importPopup').modal('hide');
+		$('.ui.modal.createPopup').modal('hide');
 	}
 
 	openStockPopup(){
@@ -57,10 +63,6 @@ export default class EditAudio extends React.Component {
 
 	openCreateAudioPopup(){
 		$('.ui.modal.createPopup').modal('show');
-	}
-
-	getCreatedAudio(audioObject){
-		console.log(audioObject);
 	}
 
 	togglePlayAudio(){
@@ -105,16 +107,19 @@ export default class EditAudio extends React.Component {
 			{/*** button row ***/}
 					<div className="row">
 						<button className="ui small icon button"
+							title="Import sound from your computer (only .ogg files now)"
 							onClick={this.openImportPopup.bind(this)}>
 						  <i className="add square icon"></i> Import (.ogg)
 						</button>
 						<button className="ui small icon button"
+							title="Get sound from stock"
 							onClick={this.openStockPopup.bind(this)}>
 						  <i className="folder icon"></i> Stock [not ready]
 						</button>
 						<button className="ui small icon button"
+							title="Create sound with effect generator"
 							onClick={this.openCreateAudioPopup.bind(this)}>
-						  <i className="configure icon"></i> Create [not ready]
+						  <i className="configure icon"></i> Create
 						</button>
 					</div>
 
@@ -143,7 +148,7 @@ export default class EditAudio extends React.Component {
 				/>
 
 				<CreateAudio
-					getCreatedAudio={this.getCreatedAudio.bind(this)}
+					importAudio={this.importAudio.bind(this)}
 				/>
 
 			</div>

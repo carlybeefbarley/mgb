@@ -373,10 +373,12 @@ export default class ObjectLayer extends AbstractLayer {
       if(this.pickedObject.orig.polyline){
         this.pickedObject.orig.polygon = this.pickedObject.orig.polyline;
         delete this.pickedObject.orig.polyline;
+        this.map.save("Polyline to polygon");
       }
       else if(this.pickedObject.orig.polygon){
         this.pickedObject.orig.polyline = this.pickedObject.orig.polygon;
         delete this.pickedObject.orig.polygon;
+        this.map.save("Polygon to polyline");
       }
     }
     this.draw();
@@ -398,6 +400,8 @@ export default class ObjectLayer extends AbstractLayer {
     Object.keys(this.shapeBoxes).forEach((k) => {
       delete this.shapeBoxes[k];
     });
+
+    this.isDirty = true;
   }
 
   /* DRAWING methods */
@@ -791,6 +795,7 @@ edit[EditModes.drawShape] = function(e){
         obj = null;
         endPoint = null;
         this.draw();
+        this.map.save("Drawing lines");
         return;
       }
       else{
@@ -807,10 +812,10 @@ edit[EditModes.drawShape] = function(e){
   const tw = this.map.data.tilewidth;
   const th = this.map.data.tileheight;
 
-  endPoint.x += e.movementX * this.camera.zoom;
-  endPoint.y += e.movementY * this.camera.zoom;
-  pointCache.x += e.movementX * this.camera.zoom;
-  pointCache.y += e.movementY * this.camera.zoom;
+  endPoint.x += e.movementX / this.camera.zoom;
+  endPoint.y += e.movementY / this.camera.zoom;
+  pointCache.x += e.movementX / this.camera.zoom;
+  pointCache.y += e.movementY / this.camera.zoom;
 
   if(e.ctrlKey){
     endPoint.x = Math.round(pointCache.x / tw) * tw;
@@ -840,11 +845,11 @@ edit[EditModes.stamp] = function(e){
       x, y
     );
     this.clearCache();
-    this.map.saveForUndo("Add Tile");
     this.data.objects.push(this.highlightedObject);
   }
 
   if(e.type == "mouseup"){
+    this.map.saveForUndo("Add Tile");
     this.highlightedObject = null;
     return;
   }
@@ -902,6 +907,7 @@ edit[EditModes.rectangle] = function(e){
     this.isDirty = true;
     this.mouseDown = true;
     if(this.pickObject(e) > -1) {
+      this.map.saveForUndo("Edit Object");
       this.startPosX = this.pickedObject.x;
       this.startPosY = this.pickedObject.y;
       phase = 1;
@@ -974,6 +980,7 @@ edit[EditModes.rectangle] = function(e){
     obj = null;
 
     this.draw();
+    this.map.save("Edit Object");
     return;
   }
 

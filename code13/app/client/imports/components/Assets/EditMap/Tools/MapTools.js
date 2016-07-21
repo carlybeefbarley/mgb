@@ -1,6 +1,7 @@
 "use strict";
 import React from 'react';
 import EditModes from "./EditModes";
+import LayerTypes from "./LayerTypes.js";
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js';
 
 export default class MapTools extends React.Component {
@@ -98,13 +99,22 @@ export default class MapTools extends React.Component {
       l.rotateBack();
     }
   }
+  showGridToggle(){
+    this.props.map.options.showGrid = !this.props.map.options.showGrid;
+    this.props.map.forceUpdate();
+  }
 
   render() {
     // older maps don't have default mode
     if(!this.props.map.options.mode){
-      this.props.map.options.mode = "stamp";
+      this.props.map.options.mode = EditModes.stamp;
     }
 
+    const layer = this.props.map.getActiveLayer();
+    if(!layer){
+      debugger;
+      this.props.map.getActiveLayer();
+    }
     var config = {
       level: 5,
       buttons: [
@@ -114,6 +124,9 @@ export default class MapTools extends React.Component {
           tooltip: "Save the map",
           level: 1,
           shortcut: "Ctrl+S" // Is it OK to override browsers save page?
+        },
+        {
+          name: "separator"
         },
         {
           name: "preview",
@@ -133,6 +146,15 @@ export default class MapTools extends React.Component {
           shortcut: "Ctrl+Alt+R"
         },
         {
+          name: "showGridToggle",
+          icon: "grid layout",
+          label: this.props.map.options.showGrid ? "Hide Grid" : "Show Grid",
+          tooltip: "Toggle grid visibilty on / off",
+          level: 4,
+          active: this.props.map.options.showGrid,
+          shortcut: "Alt+G"
+        },
+        {
           name: "separator"
         },
         {
@@ -140,7 +162,7 @@ export default class MapTools extends React.Component {
           label: "Undo",
           iconText:  (this.props.map.undoSteps.length ? " "+this.props.map.undoSteps.length : ''),
           disabled: !this.props.map.undoSteps.length,
-          tooltip: "Undo last action",
+          tooltip: "Undo last action" + (_.last(this.props.map.undoSteps) ? ": " + _.last(this.props.map.undoSteps).reason : ''),
           level: 2,
           shortcut: "Ctrl+Z"
         },
@@ -165,42 +187,42 @@ export default class MapTools extends React.Component {
           level: 5
         },
         {
-          name: "separator"
-        },
-        {
           name: "stamp",
           icon: "legal stamp",
           active: this.props.map.options.mode == EditModes.stamp,
           label: "Stamp",
           tooltip: "Stamp tiles on the map",
           level: 1,
-          shortcut: "Ctrl+Shift+S"
+          shortcut: "S"
         },
         {
           name: "terrain",
           icon: "world terrain",
           active: this.props.map.options.mode == EditModes.terrain,
+          disabled: (!layer || layer.kind != LayerTypes.tile),
           label: "Terrain Tool",
           tooltip: "Create advanced Terrains - not implemented :(",
           level: 9,
-          shortcut: "Ctrl+Shift+T"
+          shortcut: "T"
         },
         {
           name: "fill",
           icon: "theme fill",
           label: "Fill",
           active: this.props.map.options.mode == EditModes.fill,
+          disabled: (!layer || layer.kind != LayerTypes.tile),
           tooltip: "Fill Map or Selection with selected tile(s)",
           level: 4,
-          shortcut: "Ctrl+Shift+F"
+          shortcut: "F"
         },
         {
           name: "eraser",
           label: "Eraser",
           active: this.props.map.options.mode == EditModes.eraser,
           tooltip: "Delete tile - or use [Ctrl + click] to quickly access this tool",
+          disabled: (!layer || layer.kind != LayerTypes.tile),
           level: 1,
-          shortcut: "Ctrl+Shift+E"
+          shortcut: "E"
         },
         {
           name: "separator"
@@ -220,6 +242,7 @@ export default class MapTools extends React.Component {
           active: this.props.map.options.mode == EditModes.wand,
           label: "Magic Wand",
           tooltip: "Magic Wand selection - select adjacent tiles with same ID",
+          disabled: (!layer || layer.kind != LayerTypes.tile),
           level: 5
         },
         {
@@ -228,6 +251,7 @@ export default class MapTools extends React.Component {
           icon: "qrcode picker",
           label: "Tile Picker",
           tooltip: "Tile Picker - Select All tiles with same ID",
+          disabled: (!layer || layer.kind != LayerTypes.tile),
           level: 5
         },
         {
@@ -265,7 +289,8 @@ export default class MapTools extends React.Component {
           icon: "stop",
           label: "Rectangle",
           tooltip: "Draw Rectangle on the map",
-          shortcut: "R",
+          disabled: (!layer || layer.kind != LayerTypes.object),
+          shortcut: "Shift+R",
           level: 3
         },
         {
@@ -274,7 +299,8 @@ export default class MapTools extends React.Component {
           icon: "circle",
           label: "Ellipse",
           tooltip: "Draw Ellipse on the map",
-          shortcut: "E",
+          disabled: (!layer || layer.kind != LayerTypes.object),
+          shortcut: "Shift+E",
           level: 4
         },
         {
@@ -283,7 +309,8 @@ export default class MapTools extends React.Component {
           icon: "pencil",
           label: "Shape",
           tooltip: "Draw Shape on the map",
-          shortcut: "S",
+          disabled: (!layer || layer.kind != LayerTypes.object),
+          shortcut: "Shift+S",
           level: 5
         },
         {
@@ -291,13 +318,14 @@ export default class MapTools extends React.Component {
           icon: "clone",
           label: "Polygon",
           tooltip: "Toggle between polygon and polyline",
+          disabled: (!layer || layer.kind != LayerTypes.object),
+          shortcut: "Shift+P",
           level: 5
-        },
+        }
       ]
     };
 
-
-    return <Toolbar actions={this} config={config} className="map-tools" />
+    return <Toolbar actions={this} config={config} className="map-tools" name="MapTools" />
   }
 
 

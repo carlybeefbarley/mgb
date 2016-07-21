@@ -99,6 +99,8 @@ export default class MapArea extends React.Component {
       window.requestAnimationFrame(this._raf);
     };
     this._raf();
+
+    this.activeAsset = this.props.asset;
   }
 
   componentDidMount(){
@@ -133,6 +135,14 @@ export default class MapArea extends React.Component {
     window.removeEventListener("resize", this.globalResize);
     window.removeEventListener("keyup", this.globalKeyUp);
   }
+  // TODO: handle here updates - atm disabled as updates move state in back in history
+  componentWillReceiveProps(props){
+    //console.log("New map data", props);
+    // it's safe to update read only
+    if(!this.activeAsset || !this.props.parent.props.canEdit){
+      this.activeAsset = props.asset;
+    }
+  }
 
   forceUpdate(...args){
     // ignore undo for local updates
@@ -154,13 +164,16 @@ export default class MapArea extends React.Component {
   }
 
   set data(val){
-    this.props.asset.content2 = val;
+    // get layer first as later data won't match until full react sync
+    const l = this.getActiveLayer();
+    this.activeAsset.content2 = val;
+    l && l.clearCache && l.clearCache();
   }
   get data(){
-    if(this.props.asset && !this.props.asset.content2.width){
-      this.props.asset.content2 = TileHelper.genNewMap();
+    if(this.activeAsset && !this.activeAsset.content2.width){
+      this.activeAsset.content2 = TileHelper.genNewMap();
     }
-    return this.props.asset.content2;
+    return this.activeAsset.content2;
   }
 
   // store meta information about current map
@@ -214,6 +227,13 @@ export default class MapArea extends React.Component {
     }
     this.undoSteps.push(toSave);
     this.refs.tools.forceUpdate();
+
+    // next action will change map.. remove from stack.. and we should get good save state
+    if(!skipRedo) {
+      window.setTimeout(() => {
+        this.save(reason);
+      }, 0);
+    }
   }
   doUndo(){
     if(this.undoSteps.length){
@@ -230,9 +250,9 @@ export default class MapArea extends React.Component {
     if(!this.redoSteps.length){
       return;
     }
-    this.saveForUndo("Changes before Redo", true);
-
-    this.data = this.redoSteps.pop();
+    const pop = this.redoSteps.pop();
+    this.saveForUndo(pop.reason, true);
+    this.data = pop;
 
     this.ignoreUndo++;
     this.update(() => {
@@ -240,8 +260,8 @@ export default class MapArea extends React.Component {
     });
   }
 
-  save(){
-    this.props.parent.handleSave();
+  save(reason = "no reason"){
+    this.props.parent.handleSave(reason);
   }
   copyData(data){
     return JSON.stringify(data);
@@ -796,15 +816,22 @@ export default class MapArea extends React.Component {
   }
   /* endof update stuff */
 
-  getLayer(ld){
+  // added id - as sometimes we fail to get active layer - e.g. in cases when map has been updated, but layer data haven't
+  getLayer(ld, id=0){
+    const l = this.layers[id];
+    // in most cases this will be valid
+    if(l && l.options == ld){
+      return l;
+    }
     for(let i=0; i < this.layers.length; i++){
       if(this.layers[i].options == ld){
         return this.layers[i];
       }
     }
+    return l;
   }
   getActiveLayer(){
-    return this.getLayer(this.data.layers[this.activeLayer]);
+    return this.getLayer(this.data.layers[this.activeLayer], this.activeLayer);
   }
 
   addLayer(type){

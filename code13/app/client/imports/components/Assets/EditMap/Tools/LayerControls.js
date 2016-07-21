@@ -68,6 +68,7 @@ export default class LayerControls extends React.Component {
     parent.forceUpdate();
     map.forceUpdate();
   }
+
   lowerLayer() {
     const parent = this.props.layer;
     const map = this.map;
@@ -87,13 +88,14 @@ export default class LayerControls extends React.Component {
     else{
       $(this.map.refs.mapElement).removeClass("highlight-active-layer");
     }
-
   }
+
   highlightActiveLayerToggle(){
     this.options.highlightActiveLayers = !this.options.highlightActiveLayers;
     this.updateOptions();
     this.forceUpdate();
   }
+
   showGridToggle(){
     this.options.showGrid = !this.options.showGrid;
     this.forceUpdate();
@@ -143,11 +145,12 @@ export default class LayerControls extends React.Component {
                   title="Highlight Active layer"
             ><i className="paste icon"></i>
           </button>
+          {/* moved to Map Tools
           <button className={showGridClassName}
                   onClick={this.showGridToggle.bind(this)}
                   title="Show Grid"
             ><i className="grid layout icon"></i>
-          </button>
+          </button> */}
         </div>
         <div className="ui icon buttons mini">
           {rise}

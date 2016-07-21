@@ -98,11 +98,15 @@ export default class MapTools extends React.Component {
       l.rotateBack();
     }
   }
+  showGridToggle(){
+    this.props.map.options.showGrid = !this.props.map.options.showGrid;
+    this.props.map.forceUpdate();
+  }
 
   render() {
     // older maps don't have default mode
     if(!this.props.map.options.mode){
-      this.props.map.options.mode = "stamp";
+      this.props.map.options.mode = EditModes.stamp;
     }
 
     var config = {
@@ -131,6 +135,14 @@ export default class MapTools extends React.Component {
           tooltip: "Set Zoom to 100% and move map to 0,0 coordinates",
           level: 5,
           shortcut: "Ctrl+Alt+R"
+        },
+        {
+          name: "showGridToggle",
+          icon: "grid layout",
+          title: this.props.map.options.showGrid ? "Hide Grid" : "Show Grid",
+          level: 4,
+          active: this.props.map.options.showGrid,
+          shortcut: "Alt+G"
         },
         {
           name: "separator"
@@ -296,8 +308,7 @@ export default class MapTools extends React.Component {
       ]
     };
 
-
-    return <Toolbar actions={this} config={config} className="map-tools" />
+    return <Toolbar actions={this} config={config} className="map-tools" name="MapTools" />
   }
 
 

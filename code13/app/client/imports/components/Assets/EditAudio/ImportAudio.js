@@ -85,7 +85,7 @@ export default class ImportAudio extends React.Component {
 	}
 
 	clearAll(){
-		this.wavesurfer.stop();
+		if(this.wavesurfer.isPlaying()) this.wavesurfer.stop();
 		this.wavesurfer.empty();
 		this.setState({ status: "empty", playerStatus: "empty" })
 	}

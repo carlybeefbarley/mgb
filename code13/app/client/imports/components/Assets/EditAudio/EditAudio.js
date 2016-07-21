@@ -25,15 +25,24 @@ export default class EditAudio extends React.Component {
     		, progressColor: 'purple'
 		});
 
+		this.audioCanvas = $("#audioPlayer canvas")[0]
+		this.audioCtx = this.audioCanvas.getContext('2d')
+		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
+		this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
+
 		let c2 = this.props.asset.content2;
 		if(c2.dataUri){
 			this.wavesurfer.load(c2.dataUri);
-			let self = this;
-			this.wavesurfer.on('finish', function () {
-				self.wavesurfer.stop();
-	    	self.setState({ playerStatus: "pause" });
-			});
 		}
+
+		let self = this;
+		this.wavesurfer.on('finish', function () {
+			self.wavesurfer.stop();
+    	self.setState({ playerStatus: "pause" })
+		})
+		this.wavesurfer.on('ready', function () {
+			self.handleSave()
+		})
 	}
 
 	openImportPopup(){
@@ -48,7 +57,7 @@ export default class EditAudio extends React.Component {
 		let c2 = this.props.asset.content2;
 		c2.dataUri = audioObject.src;
 		c2.duration = audioObject.duration;
-		this.handleSave(saveText);
+		this.saveText = saveText;
 		$('.ui.modal.importPopup').modal('hide');
 		$('.ui.modal.createPopup').modal('hide');
 	}
@@ -90,12 +99,16 @@ export default class EditAudio extends React.Component {
     }
   }
 
-	handleSave(changeText="change audio")
+	handleSave()
   {
     if(!this.hasPermission) return;
+    if(!this.saveText) return; // don't save at start when audio is loaded
 
-    let c2 = this.props.asset.content2;
-    this.props.handleContentChange(c2, null, changeText);
+    let asset = this.props.asset
+    let c2    = asset.content2
+
+    this.thumbnailCtx.putImageData(this.audioCtx.getImageData(0, 0, 290, 128), 0, 0)
+    this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), this.saveText)
   }
 
 	render(){
@@ -125,6 +138,7 @@ export default class EditAudio extends React.Component {
 
 					<div className="content">
 						<div id="audioPlayer"></div>
+						<canvas ref="thumbnailCanvas" style={{display: "none"}} width="290px" height="128px"></canvas>
 						<div className="row">
 							<button className="ui icon button small" onClick={this.togglePlayAudio.bind(this)}>
 							  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>

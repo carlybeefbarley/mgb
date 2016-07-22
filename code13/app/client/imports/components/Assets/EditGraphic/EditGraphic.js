@@ -1128,7 +1128,8 @@ export default class EditGraphic extends React.Component {
 
   openImportPopup(){
     // console.log('open import popup')
-    $('.ui.modal').modal('show');
+    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup);
+    $(importPopup).modal('show');
   }
 
   importTileset(tileWidth, tileHeight, imgDataArr){ 
@@ -1150,7 +1151,9 @@ export default class EditGraphic extends React.Component {
     c2.animations = [];
 
     this.handleSave("Import tileset", true);
-    $('.ui.modal').modal('hide');
+    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup);
+    $(importPopup).modal('hide');
+    // $('.ui.modal').modal('hide');
   }
 
   changeCanvasWidth(event){
@@ -1408,11 +1411,12 @@ map
         </div>
 
       {/*** GraphicImport ***/}
-
-        <GraphicImport
-          EditGraphic={this}
-          importTileset={this.importTileset.bind(this)}
-        />
+        <div className="ui modal" ref="graphicImportPopup">
+          <GraphicImport
+            EditGraphic={this}
+            importTileset={this.importTileset.bind(this)}
+          />
+        </div>
 
 
       {/*** SpriteLayers ***/}

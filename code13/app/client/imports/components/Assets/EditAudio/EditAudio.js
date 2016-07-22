@@ -30,6 +30,11 @@ export default class EditAudio extends React.Component {
 		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
 		this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
 
+		// popups references
+		this.importAudioPopup = ReactDOM.findDOMNode(this.refs.importAudioPopup)
+		this.createAudioPopup = ReactDOM.findDOMNode(this.refs.createAudioPopup)
+		this.audioStockPopup = ReactDOM.findDOMNode(this.refs.audioStockPopup)
+
 		let c2 = this.props.asset.content2;
 		if(c2.dataUri){
 			this.wavesurfer.load(c2.dataUri);
@@ -46,8 +51,7 @@ export default class EditAudio extends React.Component {
 	}
 
 	openImportPopup(){
-    // console.log('open import popup')
-    $('.ui.modal.importPopup').modal('show');
+    $(this.importAudioPopup).modal('show');
   }
 
 	importAudio(audioObject, saveText){
@@ -58,12 +62,13 @@ export default class EditAudio extends React.Component {
 		c2.dataUri = audioObject.src;
 		c2.duration = audioObject.duration;
 		this.saveText = saveText;
-		$('.ui.modal.importPopup').modal('hide');
-		$('.ui.modal.createPopup').modal('hide');
+
+		$(this.importAudioPopup).modal('hide')
+		$(this.createAudioPopup).modal('hide')
 	}
 
 	openStockPopup(){
-		$('.ui.modal.stockPopup').modal('show');
+		$(this.audioStockPopup).modal('show');
 	}
 
 	getFromStock(audioObject){
@@ -71,7 +76,7 @@ export default class EditAudio extends React.Component {
 	}
 
 	openCreateAudioPopup(){
-		$('.ui.modal.createPopup').modal('show');
+		$(this.createAudioPopup).modal('show');
 	}
 
 	togglePlayAudio(){
@@ -153,17 +158,23 @@ export default class EditAudio extends React.Component {
 				</div>
 
 			{/*** POPUPS ***/}
-				<ImportAudio 
-					importAudio={this.importAudio.bind(this)}
-				/>
+				<div className="ui modal" ref="importAudioPopup">
+					<ImportAudio 
+						importAudio={this.importAudio.bind(this)}
+					/>
+				</div>
 
-				<AudioStock 
-					getFromStock={this.getFromStock.bind(this)}
-				/>
+				<div className="ui modal" ref="audioStockPopup">
+					<AudioStock 
+						getFromStock={this.getFromStock.bind(this)}
+					/>
+				</div>
 
-				<CreateAudio
-					importAudio={this.importAudio.bind(this)}
-				/>
+				<div className="ui modal" ref="createAudioPopup">
+					<CreateAudio
+						importAudio={this.importAudio.bind(this)}
+					/>
+				</div>
 
 			</div>
 		);

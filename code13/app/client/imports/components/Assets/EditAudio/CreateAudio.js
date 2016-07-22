@@ -161,51 +161,49 @@ export default class CreateAudio extends React.Component {
 
 
 		return (
-			<div className="ui modal createPopup">
-				<div className="content">
-					<div className="grid">
+			<div className="content">
+				<div className="grid">
 
-						<div style={{float: "left", width: "25%"}}>
-							{effectButtons}
+					<div style={{float: "left", width: "25%"}}>
+						{effectButtons}
+					</div>
+
+					<div style={{float: "left", width: "37%", paddingLeft: "20px" }}>
+						{sliders}
+						<div>&nbsp;</div>
+					</div>
+					
+					<div style={{float: "left", width: "30%"}}>
+						<button className="ui icon button massive" title="Play" onClick={this.playAudio.bind(this, false)}>
+						  <i className="play icon"></i>
+						</button>
+						<button className="ui icon button massive" title="Save sound" onClick={this.saveAudio.bind(this)}>
+						  <i className="save icon"></i>
+						</button>
+						<button className="ui icon button massive" title="Reset sliders" onClick={this.resetSliders.bind(this)}>
+						  <i className="erase icon"></i>
+						</button>
+						<div>&nbsp;</div>
+						<div className="ui form">
+						  <div className="grouped fields">
+						    <label>Wave Type</label>
+						    {waveShapes}
+						  </div>
 						</div>
 
-						<div style={{float: "left", width: "37%", paddingLeft: "20px" }}>
-							{sliders}
-							<div>&nbsp;</div>
-						</div>
-						
-						<div style={{float: "left", width: "30%"}}>
-							<button className="ui icon button massive" title="Play" onClick={this.playAudio.bind(this, false)}>
-							  <i className="play icon"></i>
-							</button>
-							<button className="ui icon button massive" title="Save sound" onClick={this.saveAudio.bind(this)}>
-							  <i className="save icon"></i>
-							</button>
-							<button className="ui icon button massive" title="Reset sliders" onClick={this.resetSliders.bind(this)}>
-							  <i className="erase icon"></i>
-							</button>
-							<div>&nbsp;</div>
-							<div className="ui form">
-							  <div className="grouped fields">
-							    <label>Wave Type</label>
-							    {waveShapes}
-							  </div>
-							</div>
+						<div>
+							<div><b>Volume</b></div>
+		    			<input id="sound_vol" type="range" value={this.PARAMS.sound_vol*1000} min="0" max="1000" 
+		    			onChange={this.changeParam.bind(this, "sound_vol")} 
+		    			onMouseUp={this.playAudio.bind(this, false)}
+		    			/>
+		    		</div>
 
-							<div>
-								<div><b>Volume</b></div>
-			    			<input id="sound_vol" type="range" value={this.PARAMS.sound_vol*1000} min="0" max="1000" 
-			    			onChange={this.changeParam.bind(this, "sound_vol")} 
-			    			onMouseUp={this.playAudio.bind(this, false)}
-			    			/>
-			    		</div>
+		    		<div id="createAudioPlayer"></div>
+					</div>
 
-			    		<div id="createAudioPlayer"></div>
-						</div>
-
-			    </div>
-			  </div>
-			</div>
+		    </div>
+		  </div>
 		);
 	}	
 }

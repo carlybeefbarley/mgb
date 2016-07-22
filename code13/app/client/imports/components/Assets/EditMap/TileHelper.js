@@ -1,4 +1,16 @@
 "use strict";
+export const FLIPPED_HORIZONTALLY_FLAG = 0x8;
+export const FLIPPED_VERTICALLY_FLAG   = 0x4;
+export const FLIPPED_DIAGONALLY_FLAG   = 0x2;
+
+export const ROTATE = {
+  "90": 0xA0,
+  "180": 0xC0,
+  "270": 0x60
+}
+
+
+
 const TileHelper = {
   // TODO: take in to account margins and paddings
   getTilePos: (id, widthInTiles, tilewidth, tileheight, ret = {x:0, y:0}) => {
@@ -46,6 +58,22 @@ const TileHelper = {
   },
   extractName: (path) => {
     return path.substring(path.lastIndexOf("/") + 1);
+  },
+
+  rotateTile(gid, deg){
+    // remove all rotations
+    let ngid = gid// & ((1 << 30) - 1);
+    if(ROTATE[deg]){
+      // append new rotation
+      ngid |= ROTATE[deg]
+    }
+    return ngid
+  },
+  flipTileX(gid){
+    return gid | FLIPPED_VERTICALLY_FLAG;
+  },
+  flipTileY(gid){
+    return gid | FLIPPED_HORIZONTALLY_FLAG;
   },
 
   /* generators */

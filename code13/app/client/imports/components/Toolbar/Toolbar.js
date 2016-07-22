@@ -62,48 +62,7 @@ export default class Toolbar extends React.Component {
     }
 
     this._onMouseMove = (e) => {
-      if(!this.activeButton){
-        return
-      }
-
-      const box = this.activeButton.getBoundingClientRect()
-      this.activeButton.style.left = (e.pageX - this.startPos.x)+ "px"
-      this.activeButton.style.top = (e.pageY - this.startPos.y)+ "px"
-
-      const index = this.buttons.indexOf(this.activeButton)
-      const mainBox = this.refs.mainElement.getBoundingClientRect()
-
-      const row = this.getRow(mainBox, box)
-
-      // check back
-      for(let i=0; i<index; i++){
-        const ab = this.buttons[i]
-        if(!ab || ab.classList.contains("invisible")){
-          continue
-        }
-        const rect = ab.getBoundingClientRect()
-
-        if( rect.left > box.left && this.getRow(mainBox, rect) == row ){
-          ab.style.left = box.width + "px"
-        }
-        else{
-          ab.style.left = 0
-        }
-      }
-
-      for(let i=index +1; i<this.buttons.length; i++){
-        const ab = this.buttons[i]
-        if(!ab || ab.classList.contains("invisible")){
-          continue
-        }
-        const rect = ab.getBoundingClientRect()
-        if(rect.left < box.left && + this.getRow(mainBox, rect) == row){
-          ab.style.left = -box.width + "px"
-        }
-        else{
-          ab.style.left = 0
-        }
-      }
+      this._moveButton(e);
     }
 
     this._onMouseUp = this._moveButtonStop.bind(this)
@@ -128,8 +87,16 @@ export default class Toolbar extends React.Component {
     return this._activeButton
   }
 
-  getRow(mb, b){
-    return mb.width * Math.round((b.top - mb.top) / mb.height)
+  getRow(mb, b,debug = false){
+    const totRows = Math.round(mb.height / b.height);
+    if(totRows == 0){
+      return 0
+    }
+    const relY = (b.top - mb.top)
+
+    const row = Math.round( (relY / mb.height) * totRows )
+    debug && console.log("row:", row)
+    return mb.width * row
   }
   getKeyval(e){
     let keyval = e.which
@@ -395,6 +362,52 @@ export default class Toolbar extends React.Component {
     }
     this.activeButton = b
   }
+
+  _moveButton(e){
+    if(!this.activeButton){
+      return
+    }
+
+    const box = this.activeButton.getBoundingClientRect()
+    this.activeButton.style.left = (e.pageX - this.startPos.x)+ "px"
+    this.activeButton.style.top = (e.pageY - this.startPos.y)+ "px"
+
+    const index = this.buttons.indexOf(this.activeButton)
+    const mainBox = this.refs.mainElement.getBoundingClientRect()
+
+    const row = this.getRow(mainBox, box, true)
+
+    // check back
+    for(let i=0; i<index; i++){
+      const ab = this.buttons[i]
+      if(!ab || ab.classList.contains("invisible")){
+        continue
+      }
+      const rect = ab.getBoundingClientRect()
+
+      if( rect.left > box.left && this.getRow(mainBox, rect) == row ){
+        ab.style.left = box.width + "px"
+      }
+      else{
+        ab.style.left = 0
+      }
+    }
+
+    for(let i=index +1; i<this.buttons.length; i++){
+      const ab = this.buttons[i]
+      if(!ab || ab.classList.contains("invisible")){
+        continue
+      }
+      const rect = ab.getBoundingClientRect()
+      if(rect.left < box.left && + this.getRow(mainBox, rect) == row){
+        ab.style.left = -box.width + "px"
+      }
+      else{
+        ab.style.left = 0
+      }
+    }
+  }
+
   _moveButtonStop(e){
     if(!this.activeButton) {
       return

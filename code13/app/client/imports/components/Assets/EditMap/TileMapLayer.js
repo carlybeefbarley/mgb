@@ -663,6 +663,9 @@ export default class TileMapLayer extends AbstractLayer {
     if(w == "Z".charCodeAt(0)){
       if(!e.shiftKey){
         this.rotate();
+        /*this.map.collection.forEach((o) => {
+          o.gid = TileHelper.rotateTile(o.gid, 90);
+        });*/
       }
       else{
         this.rotateBack();

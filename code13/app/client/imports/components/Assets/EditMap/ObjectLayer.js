@@ -832,7 +832,7 @@ edit[EditModes.stamp] = function(e){
   const th = this.map.data.tileheight;
   const cam = this.camera;
   let x = e.offsetX / cam.zoom - cam.x;
-  let y = (e.offsetY + pal.h ) * cam.zoom - cam.y;
+  let y = (e.offsetY + pal.h ) / cam.zoom - cam.y;
 
   if(!e.ctrlKey){
     x = Math.floor(x / tw) * tw;

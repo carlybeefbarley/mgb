@@ -63,15 +63,13 @@ export default class CreateAudio extends React.Component {
 	    let audio = new Audio()
 	    if (!noregen) {
 	      self.sound = new SFXR.SoundEffect(self.PARAMS).generate()
-	      // $("#file_size").text(Math.round(SOUND.wav.length / 1024) + "kB");
-	      // $("#num_samples").text(SOUND.header.subChunk2Size / 
-	      //                        (SOUND.header.bitsPerSample >> 3));
-	      // $("#clipping").text(SOUND.clipping);
 	    }
-	    audio.src = self.sound.dataURI;
-	    // $("#wav").attr("href", SOUND.dataURI);
-	    // $("#sfx").attr("href", "sfx.wav?" + PARAMS.query());
-	    self.wavesurfer.load(self.sound.dataURI);
+	    audio.src = self.sound.dataURI
+	    if(self.sound.dataURI.length > 100){ // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
+	    	self.wavesurfer.load(self.sound.dataURI)
+	    } else {
+	    	self.wavesurfer.empty()
+	    }
 	    audio.play(); 
   	}, 0);
 	}
@@ -90,7 +88,12 @@ export default class CreateAudio extends React.Component {
 	saveAudio(){
 		let audio = new Audio()
 		audio.src = this.sound.dataURI;
-		this.props.importAudio(audio, "Created sound");
+		if(this.sound.dataURI.length > 100){ // check if dataUri is not corrupted
+			this.props.importAudio(audio, "Created sound")
+		} else {
+			this.props.importAudio(null)
+		}
+		
 	}
 
 	resetSliders(){
@@ -99,7 +102,6 @@ export default class CreateAudio extends React.Component {
 	}
 
 	render(){
-
 		let effects = 'pickupCoin,laserShoot,explosion,powerUp,hitHurt,jump,blipSelect,random,tone'.split(',');
 		let effectButtons = _.map(effects, (effect) => { 
       return (
@@ -139,7 +141,7 @@ export default class CreateAudio extends React.Component {
     	return (
     		<div key={"slider_"+param.id}>
     			<input id={param.id} type="range" value={this.PARAMS[param.id]*1000} min={param.signed ? -1000 : 0} max="1000" 
-    			onChange={this.changeParam.bind(this, param.id)} 
+    			onChange={this.changeParam.bind(this, param.id)}
     			onMouseUp={this.playAudio.bind(this, false)}
     			/> {param.title}<br/>
     		</div>

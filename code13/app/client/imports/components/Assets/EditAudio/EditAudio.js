@@ -57,11 +57,13 @@ export default class EditAudio extends React.Component {
 	importAudio(audioObject, saveText){
 		if(!this.hasPermission) return;
 
-		this.wavesurfer.load(audioObject.src);
-		let c2 = this.props.asset.content2;
-		c2.dataUri = audioObject.src;
-		c2.duration = audioObject.duration;
-		this.saveText = saveText;
+		if(audioObject){
+			this.wavesurfer.load(audioObject.src);
+			let c2 = this.props.asset.content2;
+			c2.dataUri = audioObject.src;
+			c2.duration = audioObject.duration;
+			this.saveText = saveText;
+		}
 
 		$(this.importAudioPopup).modal('hide')
 		$(this.createAudioPopup).modal('hide')

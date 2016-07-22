@@ -238,6 +238,12 @@ export default class ObjectLayer extends AbstractLayer {
 
   }
   onKeyUp(e){
+    // don't steal events from input fields
+    // TODO: this repeats at least in 2 places.. Create Helper - DRY!!!! :)
+    if(["INPUT", "SELECT", "TEXTAREA"].indexOf(e.target.tagName) > -1){
+      return;
+    }
+
     // todo Move functions to external file?
     const remove = () => {
       this.map.saveForUndo("Delete");

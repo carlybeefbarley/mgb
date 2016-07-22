@@ -50,6 +50,10 @@ export default class Toolbar extends React.Component {
       }
     };
     this._onKeyUp = (e) => {
+      // don't steal events from input fields
+      if(["INPUT", "SELECT", "TEXTAREA"].indexOf(e.target.tagName) > -1){
+        return;
+      }
       let keyval = this.getKeyval(e);
       if(this.keyActions[keyval]){
         const b = this.getButtonFromAction(this.keyActions[keyval].action);

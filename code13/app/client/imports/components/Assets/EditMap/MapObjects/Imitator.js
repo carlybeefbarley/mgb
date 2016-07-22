@@ -28,7 +28,8 @@ export default class Imitator{
   get visible(){
     return this.orig.visible;
   }
-
+  // Proxy would be more useful here
+  // TODO: Research / if it's possible to extend Proxy (Proxy for IE???)
   set name(v){
     this.orig.name = v;
   }
@@ -37,10 +38,10 @@ export default class Imitator{
   }
 
   set type(v){
-    this.orig.name = v;
+    this.orig.type = v;
   }
   get type(){
-    return this.orig.name;
+    return this.orig.type;
   }
 
   get width(){

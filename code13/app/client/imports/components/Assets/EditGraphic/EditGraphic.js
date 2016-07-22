@@ -583,7 +583,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  zoomIn(){let 
+  zoomIn(){
     recentMarker = null       // Since we now want to reload data for our new EditCanvas
     let i = this.zoomLevels.indexOf(this.state.editScale);
     if(i<this.zoomLevels.length-1){

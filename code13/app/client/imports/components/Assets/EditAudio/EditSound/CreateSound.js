@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import SFXR from './sfxr.js';
-import WaveSurfer from './WaveSurfer.js'
+import SFXR from '../lib/sfxr.js';
+import WaveSurfer from '../lib/WaveSurfer.js'
 
 SFXR.Params.prototype.query = function () {
   let result = "";
@@ -15,16 +15,13 @@ SFXR.Params.prototype.query = function () {
 };
 
 
-export default class CreateAudio extends React.Component {
+export default class CreateSound extends React.Component {
 
 	constructor(props) {
   	super(props);
 
   	this.sound = null;
-	  this.PARAMS = new SFXR.Params();
-	  this.PARAMS.sound_vol = 0.25;
-	  this.PARAMS.sample_rate = 44100;
-	  this.PARAMS.sample_size = 8;
+  	this.resetParams();
 
   	this.state = {
   		paramsUpdated: new Date().getTime()	// this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
@@ -34,10 +31,11 @@ export default class CreateAudio extends React.Component {
 
 	componentDidMount(){
 		this.wavesurfer = WaveSurfer.create({
-		    container: '#createAudioPlayer'
+		    container: '#createSoundPlayer'
 		    , waveColor: 'violet'
     		, progressColor: 'purple'
 		})
+
 		var self = this;
 		this.wavesurfer.on('finish', function () {
 			self.wavesurfer.stop();
@@ -45,28 +43,34 @@ export default class CreateAudio extends React.Component {
 		});
 	}
 
-	gen(fx){
-	  this.PARAMS[fx]();
-	  this.setState({ paramsUpdated: new Date().getTime() })
-	  this.playAudio();
+	resetParams(){
+		this.PARAMS = new SFXR.Params();
+	  this.PARAMS.sound_vol = 0.25;
+	  this.PARAMS.sample_rate = 44100;
+	  this.PARAMS.sample_size = 8;
 	}
 
-	playAudio(noregen){
+	gen(fx){
+		this.resetParams();
+	  this.PARAMS[fx]();
+	  this.setState({ paramsUpdated: new Date().getTime() })
+	  this.playSound();
+	}
+
+	playSound(noregen){
 		let self = this;
 		setTimeout(function () { 
-	    let audio = new Audio()
+	    let sound = new Audio()
 	    if (!noregen) {
 	      self.sound = new SFXR.SoundEffect(self.PARAMS).generate()
-	      // $("#file_size").text(Math.round(SOUND.wav.length / 1024) + "kB");
-	      // $("#num_samples").text(SOUND.header.subChunk2Size / 
-	      //                        (SOUND.header.bitsPerSample >> 3));
-	      // $("#clipping").text(SOUND.clipping);
 	    }
-	    audio.src = self.sound.dataURI;
-	    // $("#wav").attr("href", SOUND.dataURI);
-	    // $("#sfx").attr("href", "sfx.wav?" + PARAMS.query());
-	    self.wavesurfer.load(self.sound.dataURI);
-	    audio.play(); 
+	    sound.src = self.sound.dataURI
+	    if(self.sound.dataURI.length > 100){ // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
+	    	self.wavesurfer.load(self.sound.dataURI)
+	    } else {
+	    	self.wavesurfer.empty()
+	    }
+	    sound.play(); 
   	}, 0);
 	}
 
@@ -81,14 +85,23 @@ export default class CreateAudio extends React.Component {
 		this.playAudio();
 	}
 
-	saveAudio(){
-		let audio = new Audio()
-		audio.src = this.sound.dataURI;
-		this.props.importAudio(audio, "Created sound");
+	saveSound(){
+		let sound = new Audio()
+		sound.src = this.sound.dataURI;
+		if(this.sound.dataURI.length > 100){ // check if dataUri is not corrupted
+			this.props.importSound(sound, "Created sound")
+		} else {
+			this.props.importSound(null)
+		}
+		
+	}
+
+	resetSliders(){
+		this.resetParams();
+		this.setState({ paramsUpdated: new Date().getTime() })
 	}
 
 	render(){
-
 		let effects = 'pickupCoin,laserShoot,explosion,powerUp,hitHurt,jump,blipSelect,random,tone'.split(',');
 		let effectButtons = _.map(effects, (effect) => { 
       return (
@@ -128,8 +141,8 @@ export default class CreateAudio extends React.Component {
     	return (
     		<div key={"slider_"+param.id}>
     			<input id={param.id} type="range" value={this.PARAMS[param.id]*1000} min={param.signed ? -1000 : 0} max="1000" 
-    			onChange={this.changeParam.bind(this, param.id)} 
-    			onMouseUp={this.playAudio.bind(this, false)}
+    			onChange={this.changeParam.bind(this, param.id)}
+    			onMouseUp={this.playSound.bind(this, false)}
     			/> {param.title}<br/>
     		</div>
     	)
@@ -150,51 +163,49 @@ export default class CreateAudio extends React.Component {
 
 
 		return (
-			<div className="ui modal createPopup">
-				<div className="content">
-					<div className="grid">
+			<div className="content">
+				<div className="grid">
 
-						<div style={{float: "left", width: "25%"}}>
-							{effectButtons}
+					<div style={{float: "left", width: "25%"}}>
+						{effectButtons}
+					</div>
+
+					<div style={{float: "left", width: "37%", paddingLeft: "20px" }}>
+						{sliders}
+						<div>&nbsp;</div>
+					</div>
+					
+					<div style={{float: "left", width: "30%"}}>
+						<button className="ui icon button massive" title="Play" onClick={this.playSound.bind(this, false)}>
+						  <i className="play icon"></i>
+						</button>
+						<button className="ui icon button massive" title="Save sound" onClick={this.saveSound.bind(this)}>
+						  <i className="save icon"></i>
+						</button>
+						<button className="ui icon button massive" title="Reset sliders" onClick={this.resetSliders.bind(this)}>
+						  <i className="erase icon"></i>
+						</button>
+						<div>&nbsp;</div>
+						<div className="ui form">
+						  <div className="grouped fields">
+						    <label>Wave Type</label>
+						    {waveShapes}
+						  </div>
 						</div>
 
-						<div style={{float: "left", width: "37%", paddingLeft: "20px" }}>
-							{sliders}
-							<div>&nbsp;</div>
-						</div>
-						
-						<div style={{float: "left", width: "30%"}}>
-							<button className="ui icon button massive" title="Play" onClick={this.playAudio.bind(this, false)}>
-							  <i className="play icon"></i>
-							</button>
-							<button className="ui icon button massive" title="Save sound" onClick={this.saveAudio.bind(this, false)}>
-							  <i className="save icon"></i>
-							</button>
-							<button className="ui icon button massive" title="Reset sliders" onClick={this.playAudio.bind(this, false)}>
-							  <i className="remove icon"></i>
-							</button>
-							<div>&nbsp;</div>
-							<div className="ui form">
-							  <div className="grouped fields">
-							    <label>Wave Type</label>
-							    {waveShapes}
-							  </div>
-							</div>
+						<div>
+							<div><b>Volume</b></div>
+		    			<input id="sound_vol" type="range" value={this.PARAMS.sound_vol*1000} min="0" max="1000" 
+		    			onChange={this.changeParam.bind(this, "sound_vol")} 
+		    			onMouseUp={this.playSound.bind(this, false)}
+		    			/>
+		    		</div>
 
-							<div>
-								<div><b>Volume</b></div>
-			    			<input id="sound_vol" type="range" value={this.PARAMS.sound_vol*1000} min="0" max="1000" 
-			    			onChange={this.changeParam.bind(this, "sound_vol")} 
-			    			onMouseUp={this.playAudio.bind(this, false)}
-			    			/>
-			    		</div>
+		    		<div id="createSoundPlayer"></div>
+					</div>
 
-			    		<div id="createAudioPlayer"></div>
-						</div>
-
-			    </div>
-			  </div>
-			</div>
+		    </div>
+		  </div>
 		);
 	}	
 }

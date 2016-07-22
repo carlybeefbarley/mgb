@@ -87,7 +87,7 @@ export default class Toolbar extends React.Component {
     return this._activeButton
   }
 
-  getRow(mb, b,debug = false){
+  getRow(mb, b){
     const totRows = Math.round(mb.height / b.height);
     if(totRows == 0){
       return 0
@@ -95,7 +95,6 @@ export default class Toolbar extends React.Component {
     const relY = (b.top - mb.top)
 
     const row = Math.round( (relY / mb.height) * totRows )
-    debug && console.log("row:", row)
     return mb.width * row
   }
   getKeyval(e){

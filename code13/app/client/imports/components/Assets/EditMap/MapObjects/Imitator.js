@@ -21,6 +21,28 @@ export default class Imitator{
     this.orig.y = v - this.miny;
   }
 
+  set visible(v){
+    this.orig.visible = v;
+  }
+
+  get visible(){
+    return this.orig.visible;
+  }
+
+  set name(v){
+    this.orig.name = v;
+  }
+  get name(){
+    return this.orig.name;
+  }
+
+  set type(v){
+    this.orig.name = v;
+  }
+  get type(){
+    return this.orig.name;
+  }
+
   get width(){
     return this.maxx - this.minx;
   }

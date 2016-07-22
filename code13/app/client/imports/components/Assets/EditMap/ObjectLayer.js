@@ -57,6 +57,16 @@ export default class ObjectLayer extends AbstractLayer {
     return this.data.objects[this._pickedObject];
   }
 
+  // TODO: isn't this confusing???
+  setPickedObjectSlow(id){
+    this._pickedObject = id;
+    this.clearCache();
+    this.map.forceUpdate();
+  }
+  getPickedObject(){
+    return this._pickedObject;
+  }
+
   // this gets called when layer is activated
   activate(){
     if(!this.activeMode) {

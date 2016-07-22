@@ -9,6 +9,7 @@ import GridLayer from "./GridLayer.js";
 import TileSet from "./Tools/TileSet.js";
 import Layers from "./Tools/Layers.js";
 import Properties from "./Tools/Properties.js";
+import ObjectList from "./Tools/ObjectList.js";
 
 import MapTools from "./Tools/MapTools.js";
 import TileHelper from "./TileHelper.js";
@@ -417,19 +418,22 @@ export default class MapArea extends React.Component {
     this.addTool("Tileset", "Tilesets", {map:this}, TileSet);
   }
   addPropertiesTool(){
-    this.addTool("Properties", "Properties", {map:this}, Properties);
+    this.addTool("Properties", "Properties", {map:this}, Properties, true);
+  }
+  addObjectTool(){
+    this.addTool("Objects", "Object List", {map:this}, ObjectList, true);
   }
   /*
   * TODO: move tools to the EditMap.js
   * MapArea should not handle tools
   * */
-  addTool(id, title, content, type){
-    let ptools = this.props.parent.state.tools;
-    ptools[id] = {
-      title, content, type
+  addTool(id, title, content, type, collpased = false){
+    let tools = this.props.parent.state.tools;
+    tools[id] = {
+      title, content, type, collpased
     };
     this.props.parent.setState({
-      tools: ptools
+      tools
     });
   }
   removeTool(id){
@@ -773,12 +777,17 @@ export default class MapArea extends React.Component {
   }
   /* update all except images */
   update(cb = ()=>{}){
-    this.addLayerTool();
-    this.addTilesetTool();
-    this.addPropertiesTool();
-    this.redraw();
-    this.redrawTilesets();
-    cb();
+    this.addTools()
+    this.redraw()
+    this.redrawTilesets()
+    cb()
+  }
+
+  addTools(){
+    this.addLayerTool()
+    this.addTilesetTool()
+    this.addPropertiesTool()
+    this.addObjectTool()
   }
 
   redraw(){

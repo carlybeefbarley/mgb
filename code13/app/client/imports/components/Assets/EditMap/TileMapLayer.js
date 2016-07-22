@@ -114,6 +114,8 @@ export default class TileMapLayer extends AbstractLayer {
     this.options.width++;
   }
 
+
+  // this only tells renderer to draw in the rotated position
   rotate(){
     //this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
     this.ctrl.d = !this.ctrl.d;
@@ -155,6 +157,11 @@ export default class TileMapLayer extends AbstractLayer {
         }
       }
     }
+  }
+  resetRotation(){
+    this.ctrl.d = false;
+    this.ctrl.h = 1;
+    this.ctrl.v = 1;
   }
   flip(){
     this.ctrl.h = this.ctrl.h > 0 ? -1 : 1;
@@ -235,7 +242,9 @@ export default class TileMapLayer extends AbstractLayer {
   draw(){
     this.isDirty = true;
   }
-
+  drawTiles() {
+    this.isDirty = true;
+  }
   queueDrawTiles(timeout){
 
     // this might be heavier than redrawing - need to research how heavy is set/clear Timeout!!! + new fn
@@ -243,10 +252,6 @@ export default class TileMapLayer extends AbstractLayer {
       this.nextDraw = Date.now() + timeout;
     }
 
-  }
-
-  drawTiles() {
-    this.isDirty = true;
   }
 
   _draw(now){
@@ -268,7 +273,7 @@ export default class TileMapLayer extends AbstractLayer {
       return;
     }
 
-    // TODO: isDIrty actually is same as next draw < Date.now() - unneeded flag
+    // TODO: cleanup: isDIrty actually is same as next draw < Date.now() - unneeded flag
     this.isDirty = false;
     this.nextDraw = now + this.drawInterval;
 
@@ -294,10 +299,9 @@ export default class TileMapLayer extends AbstractLayer {
     if(skipx < 0){skipx = 0;}
     if(skipy < 0){skipy = 0;}
 
-    let i=0;
+    let i=0, tileId, pal;
     for (let y = skipy; y < endy; y++) {
       for(let x = skipx; x < endx; x++) {
-        //debugger;
         i = x + y * this.options.width;
         // skip empty tiles
         if (!d[i]) {
@@ -305,7 +309,7 @@ export default class TileMapLayer extends AbstractLayer {
         }
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos);
 
-        const tileId = d[i] & ( ~(FLIPPED_HORIZONTALLY_FLAG |
+        tileId = d[i] & ( ~(FLIPPED_HORIZONTALLY_FLAG |
                                 FLIPPED_VERTICALLY_FLAG |
                                 FLIPPED_DIAGONALLY_FLAG) );
 
@@ -313,7 +317,7 @@ export default class TileMapLayer extends AbstractLayer {
         this.drawInfo.v = (d[i] & FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1;
         this.drawInfo.d = (d[i] & FLIPPED_DIAGONALLY_FLAG  );
 
-        const pal = palette[tileId];
+        pal = palette[tileId];
         if (pal) {
           this.drawTile(pal, pos, map.spacing);
         }
@@ -332,6 +336,7 @@ export default class TileMapLayer extends AbstractLayer {
 
   }
   drawTile(pal, pos, spacing = 0, clear = false){
+    // special tileset cases - currently only animation
     if(pal.ts.tiles){
       let tileId = pal.gid - (pal.ts.firstgid);
       const tileInfo = pal.ts.tiles[tileId];
@@ -469,11 +474,11 @@ export default class TileMapLayer extends AbstractLayer {
     }
     pos.id = pos.x + pos.y * layer.width;
 
-    let sel;
+    let sel, pal;
     if(map.options.randomMode){
       sel = map.collection.random();
       if(sel) {
-        const pal = palette[sel.gid];
+        pal = palette[sel.gid];
         if(pal){
           this.ctx.globalAlpha = 0.6;
           this.drawTile(pal, pos, map.spacing);
@@ -491,30 +496,29 @@ export default class TileMapLayer extends AbstractLayer {
       // as highlight and map modify uses same logic only on different conditions
       for(let i=0; i<map.collection.length; i++){
         sel = map.collection[i];
-
-        if(sel) {
-          tpos.x = pos.x + sel.x - ox;
-          tpos.y = pos.y + sel.y - oy;
-
-          let gid = sel.gid;
-          // TODO: way to apply transformations to multiple tiles
-          if(map.collection.length > 1) {
-            this.drawInfo.h = (gid & FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1;
-            this.drawInfo.v = (gid & FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1;
-            this.drawInfo.d = (gid & FLIPPED_DIAGONALLY_FLAG  );
-          }
-          gid &= ( ~( FLIPPED_HORIZONTALLY_FLAG |
-          FLIPPED_VERTICALLY_FLAG |
-          FLIPPED_DIAGONALLY_FLAG) );
-
-          const pal = palette[gid];
-          // draw tile image only when stamp mode is active
-          if(pal && this.map.options.mode == EditModes.stamp ){
-            this.drawTile(pal, tpos, map.spacing);
-          }
-          this.highlightTile(tpos, "rgba(0,0,255,0.3)", ts);
-
+        if(!sel) {
+          continue;
         }
+        tpos.x = pos.x + sel.x - ox;
+        tpos.y = pos.y + sel.y - oy;
+
+        let gid = sel.gid;
+        // TODO: Feature: tiled rotates all selection also instead of tiles only
+        /*if(map.collection.length > 1) {
+          this.drawInfo.h = (gid & FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1;
+          this.drawInfo.v = (gid & FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1;
+          this.drawInfo.d = (gid & FLIPPED_DIAGONALLY_FLAG  );
+        }*/
+        gid &= ( ~( FLIPPED_HORIZONTALLY_FLAG |
+        FLIPPED_VERTICALLY_FLAG |
+        FLIPPED_DIAGONALLY_FLAG) );
+
+        pal = palette[gid];
+        // draw tile image only when stamp mode is active
+        if(pal && this.map.options.mode == EditModes.stamp ){
+          this.drawTile(pal, tpos, map.spacing);
+        }
+        this.highlightTile(tpos, "rgba(0,0,255,0.3)", ts);
       }
       this.ctx.globalAlpha = 1;
     }

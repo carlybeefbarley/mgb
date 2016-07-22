@@ -90,7 +90,6 @@ export default class TileSet extends React.Component {
   /* functionality */
   selectTile(e, clear){
     const map = this.map;
-    const ts = map.data.tilesets[map.activeTileset];
     if(!this.prevTile){
       this.prevTile = this.getTilePosInfo(e);
       // failed to get prev tile.. e.g. click was out of bounds
@@ -98,7 +97,8 @@ export default class TileSet extends React.Component {
         return;
       }
     }
-
+    const l = map.getActiveLayer();
+    l && l.resetRotation();
     map.collection.pushOrRemove(new TileSelection(this.prevTile));
     this.highlightTile(e.nativeEvent, true);
   }
@@ -141,7 +141,8 @@ export default class TileSet extends React.Component {
         map.collection.pushUnique(new TileSelection(pos));
       }
     }
-
+    const l = map.getActiveLayer();
+    l && l.resetRotation();
     this.drawTiles();
   }
   selectTileset(tilesetNum){
@@ -288,7 +289,6 @@ export default class TileSet extends React.Component {
     const url = data.link;
     this.refs.controls.updateTilesetFromUrl(url, this.data);
   }
-
 
   onMouseDown(e){
     if(e.button == 2){

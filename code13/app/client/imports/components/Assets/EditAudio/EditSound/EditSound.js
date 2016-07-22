@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import ImportSound from './ImportSound.js';
 import SoundStock from './SoundStock.js';
 import CreateSound from './CreateSound.js';
-import WaveSurfer from '../audioLibs/WaveSurfer.js';
+import WaveSurfer from '../lib/WaveSurfer.js';
 
 export default class EditSound extends React.Component {
 

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import ImportMusic from './ImportMusic.js';
 import MusicStock from './MusicStock.js';
-import WaveSurfer from '../audioLibs/WaveSurfer.js';
+import WaveSurfer from '../lib/WaveSurfer.js';
 
 export default class EditMusic extends React.Component {
 

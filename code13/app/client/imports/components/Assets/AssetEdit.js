@@ -4,8 +4,8 @@ import EditGraphic from './EditGraphic/EditGraphic.js';
 import EditCode from './EditCode/EditCode.js';
 import EditMap from './EditMap/EditMap.js';
 import EditDoc from './EditDoc/EditDoc.js';
-import EditSound from './EditSound/EditSound.js';
-import EditMusic from './EditMusic/EditMusic.js';
+import EditSound from './EditAudio/EditSound/EditSound.js';
+import EditMusic from './EditAudio/EditMusic/EditMusic.js';
 import EditMGBUI from './EditMGBUI/EditMGBUI.js';
 import EditUnknown from './EditUnknown.js';
 

@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import SFXR from '../audioLibs/sfxr.js';
-import WaveSurfer from '../audioLibs/WaveSurfer.js'
+import SFXR from '../lib/sfxr.js';
+import WaveSurfer from '../lib/WaveSurfer.js'
 
 SFXR.Params.prototype.query = function () {
   let result = "";

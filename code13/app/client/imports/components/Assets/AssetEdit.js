@@ -4,7 +4,8 @@ import EditGraphic from './EditGraphic/EditGraphic.js';
 import EditCode from './EditCode/EditCode.js';
 import EditMap from './EditMap/EditMap.js';
 import EditDoc from './EditDoc/EditDoc.js';
-import EditAudio from './EditAudio/EditAudio.js';
+import EditSound from './EditSound/EditSound.js';
+import EditMusic from './EditMusic/EditMusic.js';
 import EditMGBUI from './EditMGBUI/EditMGBUI.js';
 import EditUnknown from './EditUnknown.js';
 
@@ -14,7 +15,8 @@ const editElementsForKind = {
   'code':    EditCode,
   'map':     EditMap,
   'doc':     EditDoc,
-  'audio':   EditAudio,
+  'sound':   EditSound,
+  'music':   EditMusic,
   '_mgbui':  EditMGBUI
 }
 

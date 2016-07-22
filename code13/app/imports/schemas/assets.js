@@ -121,12 +121,30 @@ export const AssetKinds = {
   "audio": {
     name: "Audio",
     selfPlural: true,
-    disable: false,
+    disable: true,
     longName: "Audio sound",
     icon: "file audio outline",
     requiresUserRole: null,
     // description: "Sound Effect, song, voice etc"
-    description: "NOT READY YET!"
+    description: "Sound Effect, song, voice etc"
+  },
+  "sound": {
+    name: "Sound",
+    selfPlural: true,
+    disable: false,
+    longName: "Sound",
+    icon: "file audio outline",
+    requiresUserRole: null,
+    description: "Sound Effect"
+  },
+  "music": {
+    name: "Music",
+    selfPlural: true,
+    disable: false,
+    longName: "Music",
+    icon: "file audio outline",
+    requiresUserRole: null,
+    description: "Bacground music"
   },
   "game": {
     name: "Game",

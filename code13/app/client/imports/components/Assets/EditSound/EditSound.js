@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import ImportAudio from './ImportAudio.js';
-import AudioStock from './AudioStock.js';
-import CreateAudio from './CreateAudio.js';
-import WaveSurfer from './lib/WaveSurfer.js';
+import ImportSound from './ImportSound.js';
+import SoundStock from './SoundStock.js';
+import CreateSound from './CreateSound.js';
+import WaveSurfer from '../audioLibs/WaveSurfer.js';
 
-export default class EditAudio extends React.Component {
+export default class EditSound extends React.Component {
 
 	constructor(props) {
   	super(props);
@@ -20,20 +20,20 @@ export default class EditAudio extends React.Component {
 
 	componentDidMount(){
 		this.wavesurfer = WaveSurfer.create({
-		    container: '#audioPlayer'
+		    container: '#soundPlayer'
 		    , waveColor: 'violet'
     		, progressColor: 'purple'
 		});
 
-		this.audioCanvas = $("#audioPlayer canvas")[0]
-		this.audioCtx = this.audioCanvas.getContext('2d')
+		this.soundCanvas = $("#soundPlayer canvas")[0]
+		this.soundCtx = this.soundCanvas.getContext('2d')
 		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
 		this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
 
 		// popups references
-		this.importAudioPopup = ReactDOM.findDOMNode(this.refs.importAudioPopup)
-		this.createAudioPopup = ReactDOM.findDOMNode(this.refs.createAudioPopup)
-		this.audioStockPopup = ReactDOM.findDOMNode(this.refs.audioStockPopup)
+		this.importSoundPopup = ReactDOM.findDOMNode(this.refs.importSoundPopup)
+		this.createSoundPopup = ReactDOM.findDOMNode(this.refs.createSoundPopup)
+		this.soundStockPopup = ReactDOM.findDOMNode(this.refs.soundStockPopup)
 
 		let c2 = this.props.asset.content2;
 		if(c2.dataUri){
@@ -51,37 +51,37 @@ export default class EditAudio extends React.Component {
 	}
 
 	openImportPopup(){
-    $(this.importAudioPopup).modal('show');
+    $(this.importSoundPopup).modal('show');
   }
 
-	importAudio(audioObject, saveText){
+	importSound(soundObject, saveText){
 		if(!this.hasPermission) return;
 
-		if(audioObject){
-			this.wavesurfer.load(audioObject.src);
+		if(soundObject){
+			this.wavesurfer.load(soundObject.src);
 			let c2 = this.props.asset.content2;
-			c2.dataUri = audioObject.src;
-			c2.duration = audioObject.duration;
+			c2.dataUri = soundObject.src;
+			c2.duration = soundObject.duration;
 			this.saveText = saveText;
 		}
 
-		$(this.importAudioPopup).modal('hide')
-		$(this.createAudioPopup).modal('hide')
+		$(this.importSoundPopup).modal('hide')
+		$(this.createSoundPopup).modal('hide')
 	}
 
 	openStockPopup(){
-		$(this.audioStockPopup).modal('show');
+		$(this.soundStockPopup).modal('show');
 	}
 
-	getFromStock(audioObject){
-		console.log(audioObject);
+	getFromStock(soundObject){
+		console.log(soundObject);
 	}
 
-	openCreateAudioPopup(){
-		$(this.createAudioPopup).modal('show');
+	openCreateSoundPopup(){
+		$(this.createSoundPopup).modal('show');
 	}
 
-	togglePlayAudio(){
+	togglePlaySound(){
 		if(this.state.playerStatus === "play"){
 			this.wavesurfer.pause();
 			this.setState({ playerStatus: "pause" });
@@ -91,7 +91,7 @@ export default class EditAudio extends React.Component {
 		}
 	}
 
-	stopAudio(){
+	stopSound(){
 		this.wavesurfer.stop();
 		this.setState({ playerStatus: "pause" });
 	}
@@ -109,12 +109,12 @@ export default class EditAudio extends React.Component {
 	handleSave()
   {
     if(!this.hasPermission) return;
-    if(!this.saveText) return; // don't save at start when audio is loaded
+    if(!this.saveText) return; // don't save at start when sound is loaded
 
     let asset = this.props.asset
     let c2    = asset.content2
 
-    this.thumbnailCtx.putImageData(this.audioCtx.getImageData(0, 0, 290, 128), 0, 0)
+    this.thumbnailCtx.putImageData(this.soundCtx.getImageData(0, 0, 290, 128), 0, 0)
     this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), this.saveText)
   }
 
@@ -138,19 +138,19 @@ export default class EditAudio extends React.Component {
 						</button>
 						<button className="ui small icon button"
 							title="Create sound with effect generator"
-							onClick={this.openCreateAudioPopup.bind(this)}>
+							onClick={this.openCreateSoundPopup.bind(this)}>
 						  <i className="options icon"></i> Create
 						</button>
 					</div>
 
 					<div className="content">
-						<div id="audioPlayer"></div>
+						<div id="soundPlayer"></div>
 						<canvas ref="thumbnailCanvas" style={{display: "none"}} width="290px" height="128px"></canvas>
 						<div className="row">
-							<button className="ui icon button small" onClick={this.togglePlayAudio.bind(this)}>
+							<button className="ui icon button small" onClick={this.togglePlaySound.bind(this)}>
 							  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>
 							</button>
-							<button className="ui icon button small" onClick={this.stopAudio.bind(this)}>
+							<button className="ui icon button small" onClick={this.stopSound.bind(this)}>
 							  <i className={"icon stop"}></i>
 							</button>
 						</div>
@@ -160,21 +160,21 @@ export default class EditAudio extends React.Component {
 				</div>
 
 			{/*** POPUPS ***/}
-				<div className="ui modal" ref="importAudioPopup">
-					<ImportAudio 
-						importAudio={this.importAudio.bind(this)}
+				<div className="ui modal" ref="importSoundPopup">
+					<ImportSound 
+						importSound={this.importSound.bind(this)}
 					/>
 				</div>
 
-				<div className="ui modal" ref="audioStockPopup">
-					<AudioStock 
+				<div className="ui modal" ref="soundStockPopup">
+					<SoundStock 
 						getFromStock={this.getFromStock.bind(this)}
 					/>
 				</div>
 
-				<div className="ui modal" ref="createAudioPopup">
-					<CreateAudio
-						importAudio={this.importAudio.bind(this)}
+				<div className="ui modal" ref="createSoundPopup">
+					<CreateSound
+						importSound={this.importSound.bind(this)}
 					/>
 				</div>
 

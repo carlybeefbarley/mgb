@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import sty from  './importAudio.css';
-import WaveSurfer from './lib/WaveSurfer.js'
+import sty from  './importMusic.css';
+import WaveSurfer from '../audioLibs/WaveSurfer.js'
 
-export default class ImportAudio extends React.Component {
+export default class ImportMusic extends React.Component {
 
 	constructor(props) {
   	super(props);
@@ -17,9 +17,9 @@ export default class ImportAudio extends React.Component {
 
 	componentDidMount(){
 		this.wavesurfer = WaveSurfer.create({
-		    container: '#importAudioPlayer'
-		    , waveColor: 'violet'
-    		, progressColor: 'purple'
+		    container: '#importMusicPlayer'
+		    , waveColor: '#4dd2ff'
+    		, progressColor: '#01a2d9'
 		})
 		var self = this;
 		this.wavesurfer.on('finish', function () {
@@ -50,26 +50,26 @@ export default class ImportAudio extends React.Component {
       reader.onload = (ev) => {
         let theUrl = ev.target.result
         
-        let tmpAudio = new Audio();
-        tmpAudio.oncanplaythrough = function(e){ // audio is uploaded to browser
+        let tmpMusic = new Audio();
+        tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
         	self.setState({ status: "uploaded" });
         	// TODO load other type of audio files and convert to ogg (especially wav)
-					if(tmpAudio.src.startsWith("data:audio/ogg;base64,")){
-						self.audioLoaded(tmpAudio);
+					if(tmpMusic.src.startsWith("data:audio/ogg;base64,")){
+						self.musicLoaded(tmpMusic);
 					}         	
         }
-        tmpAudio.src = theUrl;	        
+        tmpMusic.src = theUrl;	        
       }
       reader.readAsDataURL(files[0])
     }
 	}
 
-	audioLoaded(audioObject){
-		this.audioObject = audioObject;
-		this.wavesurfer.load(audioObject.src);
+	musicLoaded(musicObject){
+		this.musicObject = musicObject;
+		this.wavesurfer.load(musicObject.src);
 	}
 
-	togglePlayAudio(){
+	togglePlayMusic(){
 		if(this.state.playerStatus === "play"){
 			this.wavesurfer.pause();
 			this.setState({ playerStatus: "pause" })
@@ -79,7 +79,7 @@ export default class ImportAudio extends React.Component {
 		}
 	}
 
-	stopAudio(){
+	stopMusic(){
 		this.wavesurfer.stop();
 		this.setState({ playerStatus: "pause" })
 	}
@@ -92,7 +92,7 @@ export default class ImportAudio extends React.Component {
 
 	finishImport(){
 		// console.log(this.wavesurfer);
-		this.props.importAudio(this.audioObject, "Imported audio")
+		this.props.importMusic(this.musicObject, "Imported music")
 	}
 
 	render(){
@@ -105,17 +105,17 @@ export default class ImportAudio extends React.Component {
       		onDragLeave={this.onDragLeave.bind(this)}
       		onDrop={this.onDrop.bind(this)}>
       			<br/><br/><br/><br/><br/>
-      			<h2>Drop audio file here!</h2>
+      			<h2>Drop music file here!</h2>
       			<br/><br/><br/><br/><br/>
       	</div>
 
-      {/*** uploaded audio ***/}
+      {/*** uploaded music ***/}
       	<div className={this.state.status === "uploaded" ? "" : "hidden"}>
 	        <div className="row">
-		        <button className="ui icon button small" onClick={this.togglePlayAudio.bind(this)}>
+		        <button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
 						  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>
 						</button>
-						<button className="ui icon button small" onClick={this.stopAudio.bind(this)}>
+						<button className="ui icon button small" onClick={this.stopMusic.bind(this)}>
 						  <i className={"icon stop"}></i>
 						</button>
 						<span>&nbsp;&nbsp;&nbsp;</span>
@@ -128,7 +128,7 @@ export default class ImportAudio extends React.Component {
 	        </div>
 	        <div className="ui divider"></div>
 	        
-	        <div id="importAudioPlayer"></div>
+	        <div id="importMusicPlayer"></div>
 	      </div>
 
 	    </div>

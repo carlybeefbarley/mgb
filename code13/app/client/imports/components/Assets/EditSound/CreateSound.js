@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import SFXR from './lib/sfxr.js';
-import WaveSurfer from './lib/WaveSurfer.js'
+import SFXR from '../audioLibs/sfxr.js';
+import WaveSurfer from '../audioLibs/WaveSurfer.js'
 
 SFXR.Params.prototype.query = function () {
   let result = "";
@@ -15,7 +15,7 @@ SFXR.Params.prototype.query = function () {
 };
 
 
-export default class CreateAudio extends React.Component {
+export default class CreateSound extends React.Component {
 
 	constructor(props) {
   	super(props);
@@ -31,7 +31,7 @@ export default class CreateAudio extends React.Component {
 
 	componentDidMount(){
 		this.wavesurfer = WaveSurfer.create({
-		    container: '#createAudioPlayer'
+		    container: '#createSoundPlayer'
 		    , waveColor: 'violet'
     		, progressColor: 'purple'
 		})
@@ -54,23 +54,23 @@ export default class CreateAudio extends React.Component {
 		this.resetParams();
 	  this.PARAMS[fx]();
 	  this.setState({ paramsUpdated: new Date().getTime() })
-	  this.playAudio();
+	  this.playSound();
 	}
 
-	playAudio(noregen){
+	playSound(noregen){
 		let self = this;
 		setTimeout(function () { 
-	    let audio = new Audio()
+	    let sound = new Audio()
 	    if (!noregen) {
 	      self.sound = new SFXR.SoundEffect(self.PARAMS).generate()
 	    }
-	    audio.src = self.sound.dataURI
+	    sound.src = self.sound.dataURI
 	    if(self.sound.dataURI.length > 100){ // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
 	    	self.wavesurfer.load(self.sound.dataURI)
 	    } else {
 	    	self.wavesurfer.empty()
 	    }
-	    audio.play(); 
+	    sound.play(); 
   	}, 0);
 	}
 
@@ -85,13 +85,13 @@ export default class CreateAudio extends React.Component {
 		this.playAudio();
 	}
 
-	saveAudio(){
-		let audio = new Audio()
-		audio.src = this.sound.dataURI;
+	saveSound(){
+		let sound = new Audio()
+		sound.src = this.sound.dataURI;
 		if(this.sound.dataURI.length > 100){ // check if dataUri is not corrupted
-			this.props.importAudio(audio, "Created sound")
+			this.props.importSound(sound, "Created sound")
 		} else {
-			this.props.importAudio(null)
+			this.props.importSound(null)
 		}
 		
 	}
@@ -142,7 +142,7 @@ export default class CreateAudio extends React.Component {
     		<div key={"slider_"+param.id}>
     			<input id={param.id} type="range" value={this.PARAMS[param.id]*1000} min={param.signed ? -1000 : 0} max="1000" 
     			onChange={this.changeParam.bind(this, param.id)}
-    			onMouseUp={this.playAudio.bind(this, false)}
+    			onMouseUp={this.playSound.bind(this, false)}
     			/> {param.title}<br/>
     		</div>
     	)
@@ -176,10 +176,10 @@ export default class CreateAudio extends React.Component {
 					</div>
 					
 					<div style={{float: "left", width: "30%"}}>
-						<button className="ui icon button massive" title="Play" onClick={this.playAudio.bind(this, false)}>
+						<button className="ui icon button massive" title="Play" onClick={this.playSound.bind(this, false)}>
 						  <i className="play icon"></i>
 						</button>
-						<button className="ui icon button massive" title="Save sound" onClick={this.saveAudio.bind(this)}>
+						<button className="ui icon button massive" title="Save sound" onClick={this.saveSound.bind(this)}>
 						  <i className="save icon"></i>
 						</button>
 						<button className="ui icon button massive" title="Reset sliders" onClick={this.resetSliders.bind(this)}>
@@ -197,11 +197,11 @@ export default class CreateAudio extends React.Component {
 							<div><b>Volume</b></div>
 		    			<input id="sound_vol" type="range" value={this.PARAMS.sound_vol*1000} min="0" max="1000" 
 		    			onChange={this.changeParam.bind(this, "sound_vol")} 
-		    			onMouseUp={this.playAudio.bind(this, false)}
+		    			onMouseUp={this.playSound.bind(this, false)}
 		    			/>
 		    		</div>
 
-		    		<div id="createAudioPlayer"></div>
+		    		<div id="createSoundPlayer"></div>
 					</div>
 
 		    </div>

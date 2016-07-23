@@ -17,6 +17,93 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
+      "timestamp":     "Fri Jul 22 2016 17:30:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "875"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.sound",
+          "type":           "feature",
+          "changeName":     "Sound Editor - SFX generation",
+          "changeSummary":  "The Audio Editor has been replaced by two more specific assets/editors: Sound and Music. Sound editor now allows jsfxr-style sound effects to be re-edited, or for .ogg files to be imported",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.music",
+          "type":           "feature",
+          "changeName":     "Music Assets",
+          "changeSummary":  "The Audio Editor has been replaced by two more specific assets/editors: Sound and Music. Music editor allows .ogg music files to be imported. More features coming soon!",
+          "otherUrls":      []
+        },
+
+        {
+          "featureTag":     "asset.sound",
+          "type":           "improvement",
+          "changeName":     "Sound Editor - Thumbnails",
+          "changeSummary":  "The Sound Editor now saves thumbnails of sounds for Asset previews",
+          "otherUrls":      []
+        },
+
+        {
+          "featureTag":     "asset.music",
+          "type":           "improvement",
+          "changeName":     "Music Editor - Thumbnails",
+          "changeSummary":  "The Music Editor now saves thumbnails of sounds for Asset previews",
+          "otherUrls":      []
+        },
+
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Editor - fixes and tweaks",
+          "changeSummary":  "Map editor is almost functionally complete - so this build has various UI and auto-save tweaks & fixes",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    { 
+      "timestamp":     "Wed Jul 20 2016 21:25:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "848"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Map Editor - auto save",
+          "changeSummary":  "The Map Editor is now auto-saving in most cases - there are still some cases to be implemented though",
+          "otherUrls":      []
+        },
+
+        {
+          "featureTag":     "asset.audio",
+          "type":           "feature",
+          "changeName":     "Audio Editor - audio waveform preview",
+          "changeSummary":  "When importing or listing sounds, a waveform is displayed. A cursor shows/sets the current playback position within the sound",
+          "otherUrls":      []
+        }
+      ]
+    },
+    
+    { 
       "timestamp":     "Tue Jul 19 2016 19:31:23 GMT-0700 (PDT)",
       
       "id": {

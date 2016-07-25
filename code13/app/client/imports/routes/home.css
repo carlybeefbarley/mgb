@@ -2,8 +2,9 @@
       display: none;
     }
     .masthead.segment {
-      min-height: 360px;
+      min-height: 320px;
       padding: 1em 0em;
+      border-bottom: none !important;
     }
     .masthead .logo.item img {
       margin-right: 1em;
@@ -23,7 +24,7 @@
       font-weight: normal;
     }
     .ui.vertical.stripe {
-      padding: 6em 0em;
+      padding: 4em 0em;
     }
     .ui.vertical.stripe h3 {
       font-size: 2em;

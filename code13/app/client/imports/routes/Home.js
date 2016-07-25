@@ -7,13 +7,13 @@ import Footer from '/client/imports/components/Footer/Footer';
 export default class Home extends Component {
 
   render() {
-    const currUser = this.props.currUser;
+    const currUser = this.props.currUser
 
     return (
       <div>
-        <div className="pusher">
-          <div className="ui vertical masthead center aligned segment">
+        <div>
 
+          <div className="ui vertical masthead center aligned segment">
             <div className="ui text container">
               <h1 className="ui header">
                 My Game Builder
@@ -27,8 +27,7 @@ export default class Home extends Component {
                 <QLink to={`/assets`}>
                   <div className="ui huge primary button">Get Started <i className="right arrow icon"></i></div>
                 </QLink>
-              }
-              
+              }              
             </div>
           </div>
 
@@ -54,10 +53,10 @@ export default class Home extends Component {
               </div>
             </div>
           </div>
-
         </div>
-    <Footer />
-    </div>
-    );
+
+        <Footer />
+      </div>
+    )
   }
 }

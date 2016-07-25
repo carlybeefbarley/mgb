@@ -28,5 +28,4 @@ babel-runtime
 semantic:ui
 meteorhacks:kadira
 meteorhacks:kadira-profiler
-kadira:debug
 random

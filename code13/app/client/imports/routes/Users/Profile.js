@@ -52,7 +52,7 @@ export default UserProfileRoute = React.createClass({
       // focusMessage has some additional handling.. activity Logging and also
       changeObj["profile.focusStart"] = new Date()
       if (fMsg.length > 0)
-        logActivity("user.changeFocus", `Focus is now '${fMsg}''`)
+        logActivity("user.changeFocus", `Focus is now '${fMsg}'`)
       else
         logActivity("user.clearFocus", `Prior focus '${this.props.user.profile.focusMsg}' has been cleared` )
     }
@@ -270,7 +270,7 @@ export default UserProfileRoute = React.createClass({
               </QLink> 
               &emsp;<small>{isOwner ? "(owner)" : "(member)"}</small>
             </h4>
-            <p>{MemberStr}&emsp;<i className="play icon"></i>0,000 Plays</p>
+            <p title="(Plays counter not yet implemented)">{MemberStr}&emsp;<i className="play icon"></i>0,000 Plays</p>
           </div>
         </div>
       )
@@ -284,7 +284,11 @@ export default UserProfileRoute = React.createClass({
     return (
       <div className={className}>
       <h2><QLink to={`/u/${user.profile.name}/history`}>History</QLink></h2>
-        <NavRecentGET styledForNavPanel={false} currUser={this.props.user}/>
+        <NavRecentGET 
+          styledForNavPanel={false} 
+          currUser={this.props.user}
+          showUserActivities={true}
+        />
       </div>
     )
   }

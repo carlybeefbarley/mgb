@@ -118,7 +118,7 @@ export const AssetKinds = {
     requiresUserRole: null,
     description: "Cut scene used in a game"
   },
-  "audio": {
+  "audio": {            // TODO: probably get rid of this since we have 'sound' and 'music' instead
     name: "Audio",
     selfPlural: true,
     disable: true,
@@ -133,7 +133,7 @@ export const AssetKinds = {
     selfPlural: true,
     disable: false,
     longName: "Sound",
-    icon: "file audio outline",
+    icon: "volume up",
     requiresUserRole: null,
     description: "Sound Effect"
   },
@@ -142,7 +142,7 @@ export const AssetKinds = {
     selfPlural: true,
     disable: false,
     longName: "Music",
-    icon: "file audio outline",
+    icon: "music",
     requiresUserRole: null,
     description: "Bacground music"
   },

@@ -17,6 +17,37 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
+      "timestamp":     "Tue Jul 26 2016 13:10:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "882"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.profile",
+          "type":           "improvement",
+          "changeName":     "User Profile Page content",
+          "changeSummary":  "The User Profile page has been replaced. The new layout includes space for new user information including badges, skills and an activity heatmap. Skills are a placeholder currently, and activty heatmap is not enabled yet",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.layout",
+          "type":           "feature",
+          "changeName":     "Lightened footer and NotFound page",
+          "changeSummary":  "The NotFound(404) page and the Footer area of the Home page are no longer inverted, so they are less visually jarring",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    { 
       "timestamp":     "Fri Jul 22 2016 17:30:00 GMT-0700 (PDT)",
       
       "id": {

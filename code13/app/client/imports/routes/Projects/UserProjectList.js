@@ -26,7 +26,7 @@ export default UserProjectList = React.createClass({
   
   getMeteorData: function() {
     const userId = this.props.user._id
-    const handleForProjects = Meteor.subscribe("projects.byUserId", userId);
+    const handleForProjects = Meteor.subscribe("projects.byUserId", userId)
     const projectSelector = projectMakeSelector(userId)
 
     return {
@@ -47,7 +47,7 @@ export default UserProjectList = React.createClass({
 
   render: function() {
     // Projects provided via getMeteorData()
-    let projects = this.data.projects;
+    let projects = this.data.projects
     if (this.data.loading)
       return <Spinner />
 

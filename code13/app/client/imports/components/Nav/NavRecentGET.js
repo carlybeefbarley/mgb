@@ -17,7 +17,8 @@ export default NavRecentGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    currUser:     PropTypes.object        // Currently Logged in user. Can be null/undefined  
+    currUser:          PropTypes.object,           // Currently Logged in user. Can be null/undefined  
+    styledForNavPanel: PropTypes.bool.isRequired   // True if we want the NavPanel style (inverted etc)
   },
   
   getMeteorData: function() {
@@ -65,6 +66,8 @@ export default NavRecentGET = React.createClass({
     if (!this.props.currUser || this.data.loading)
       return null      
       
+    const isNp = this.props.styledForNavPanel
+
     let mergedArray = this.data.activity.concat(this.data.activitySnapshots)
     mergedArray = _.sortBy(mergedArray, x => { return -x.timestamp.getTime()})  // Sort by most recent
     mergedArray = _.uniqBy(mergedArray, 'toAssetId')    // Remove later duplicate assetIds
@@ -103,28 +106,36 @@ export default NavRecentGET = React.createClass({
       }           
     })
      
+    var retvalJsx = []
 
-    return [<div className="header item" key="_justNow">Just Now</div>,
-            <div className="menu" key="_justNow2">{retval.justNow}</div>,
-
-            <div className="header item" key="_today">Today</div>,
-            <div className="menu" key="_today2">{retval.today}</div>,
-
-            <div className="header item" key="_older">Older</div>,
-            <div className="menu" key="_older2">{retval.older}</div>
-            ]
+    const hdrSty = isNp ? {} : {marginTop: "8px"}
+    _.each([ "justNow/Just Now", "today/Today", "older/Before today"], v => {
+      const [k, txt] = v.split("/")
+      if (retval[k].length > 0)
+        retvalJsx.push(
+          <div className="header item" style={hdrSty} key={"_H"+k}>{txt}</div>,
+          <div className="menu" key={"_M"+k}>{retval[k]}</div>
+        )
+    })
+    
+    return retvalJsx
   },
   
   
   render: function() 
   {
+    const isNp = this.props.styledForNavPanel
+    const inverted = isNp ? "inverted" : "borderless fitted "
+    const menuSty = isNp ? {} : { boxShadow: "none", border: "none"}
     return (
-        <div className="ui fluid inverted  vertical menu">
+        <div className={"ui fluid " + inverted + " vertical menu"} style={menuSty}>
           <div className="item">
-            <h3 className="ui inverted header" style={{textAlign: "center"}}>
-              <i className="history icon" />
-              History
-            </h3>
+            { isNp && 
+              <h3 className={"ui " + inverted + "header"} style={{textAlign: "center"}}>
+                <i className="history icon" />
+                History
+              </h3>
+            }
           </div>
           { this.renderMergedActivities() }
         </div>

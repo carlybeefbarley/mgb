@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes } from 'react';
 import moment from 'moment';
 import { utilPushTo } from '/client/imports/routes/QLink';
 import InlineEdit from 'react-edit-inline';

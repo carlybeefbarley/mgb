@@ -8,6 +8,10 @@ export default npHistory = React.createClass({
   },
 
   render: function () {    
-    return <NavRecentGET currUser={this.props.currUser}/>
+    return (
+      <NavRecentGET 
+        styledForNavPanel={true} 
+        currUser={this.props.currUser} />
+    )
   }  
 })

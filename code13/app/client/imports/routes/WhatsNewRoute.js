@@ -13,8 +13,7 @@ export default WhatsNewRoute = React.createClass({
   /** React callback - before render() is called */
   getInitialState: function() {
     return {
-      releaseIdx: 0,       // Index into mgbReleaseInfo[] for currently viewed release
-      changeIdx: 0         // Index into mgbReleaseInfo[] for currently viewed release
+      releaseIdx: 0       // Index into mgbReleaseInfo[] for currently viewed release
     }
   },
 
@@ -49,15 +48,38 @@ export default WhatsNewRoute = React.createClass({
 
   handleReleaseClicked: function (releaseIdx)
   {
-    this.setState( { "releaseIdx": releaseIdx, "changeIdx": 0 } )
+    this.setState( { "releaseIdx": releaseIdx} )
   },
 
-
-  handleChangeClicked: function (changeIdx)
-  {
-    this.setState( { "changeIdx": changeIdx } )
-  },
-
+  headerMessage: (
+    <div className="ui raised padded segment">
+      <div className="ui header">My Game Builder v2 is ALPHA and in active development</div>
+      <div className="ui meta">
+        <p>
+          You are very welcome to use this new MyGameBuilder site and give us feedback 
+          using the <i className="chat icon" />chat panel on the right hand side of the screen
+        </p>
+        <ul>
+          <li>The Graphic, Map and Code asset types are quite stable and can be used safely</li>
+          <li>The Sound, Music and Doc assets are highly experimental currently</li>                  
+        </ul>
+        <p title="However, if you want to help us get the word out when we are ready, message us in Chat!">
+          Please do NOT post this v2.mygamebuilder.com link to news sites like 
+          Facebook/ProductHunt/Reddit/SlashDot/HackerNews etc. - we aren't ready for prime time yet!
+        </p>
+        Features planned for August 2016 include
+        <ul>
+          <li>MGBv1 asset migration (tiles, actors, maps)</li>
+          <li>MGBv1-style 'Actor' assets which enable game building without coding</li>
+          <li>Lots of work on the Code Editor and Coding help systems</li>
+          <li>Allow project members to edit assets in your projects</li>
+          <li>Chat improvements (notifications, DMs etc)</li>
+          <li>A new 'Game' asset will provide a way to promote games and track plays</li>
+          <li>Tutorial and progression systems to help learn how to make games</li>
+        </ul>
+      </div>
+    </div>
+  ),
 
   render: function() {
     return (
@@ -65,12 +87,7 @@ export default WhatsNewRoute = React.createClass({
         <div className="ui basic segment">
           <div className="ui container">
             <h2 className="ui header"><i className="announcement icon" />What's New</h2>
-            <div className="ui raised padded segment">
-              <div className="ui header">My Game Builder v2 is currently under development</div>
-              <div className="ui meta">
-                The site is unstable and rapidly changing, but you are welcome to use it and give feedback. We aim to be stable in July 2016
-              </div>
-            </div>
+            { this.headerMessage }
             { this.renderNews() }
           </div>
         </div>
@@ -84,28 +101,27 @@ export default WhatsNewRoute = React.createClass({
   // They are called (directly, or indirectly) by render() above
   // They use   state.releaseIdx   to know what is being selected
   
-  /** This renders the 3 column structure for update info */  
+  /** This renders the 2 column structure for update info */  
   renderNews: function() {
-    const { releaseIdx, changeIdx } = this.state
+    const { releaseIdx } = this.state
     const rel = mgbReleaseInfo.releases[releaseIdx]
     const state = rel.id.state === 'alpha' ? 'α' : (rel.id.state + "#")
+    const ago = moment(new Date(rel.timestamp)).fromNow() 
 
-    return <div className="ui padded three column relaxed equal height divided grid">
-            <div className="column">
-              <h4 className="ui header">MGBv2 updates</h4>
-              { this.renderNewsMgbVersionsColumn() }
-            </div>
-            <div className="column">
-              <h4 className="ui header">
-                Changes in v{rel.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + rel.id.iteration}</i></small>
-              </h4>
-              { this.renderNewsRelChangesColumn() }
-            </div>
-            <div className="column">
-              <h4 className="ui header">Change #{changeIdx+1} of {rel.changes.length}:<p><small>{rel.changes[changeIdx].changeName}</small></p></h4>              
-              { this.renderNewsChangeDetailsColumn() }
-            </div>          
-          </div>
+    return (
+      <div className="ui padded two column relaxed equal height divided grid">
+        <div className="column">
+          <h4 className="ui header">MGBv2 updates</h4>
+          { this.renderNewsMgbVersionsColumn() }
+        </div>
+        <div className="column">
+          <h4 className="ui header">
+            Changes in v{rel.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + rel.id.iteration}</i>&emsp;{ago}</small>
+          </h4>
+          { this.renderNewsRelChangesColumn() }
+        </div>
+      </div>
+    )
   },
   
 
@@ -116,20 +132,24 @@ export default WhatsNewRoute = React.createClass({
     const gry = {color: "#888"}
     const blk = {color: "#000"}
 
-    return  <div className="ui list">
-              { rels.map( (r, idx) =>  {
-                const sty = (activeRelIdx === idx) ? blk : gry
-                const ago = moment(new Date(r.timestamp)).fromNow() 
-                const state = r.id.state === 'alpha' ? 'α' : (r.id.state + "#")
-                return  <div className="item" key={r.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
-                          <div className="content">
-                            v{r.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + r.id.iteration}</i></small>
-                            <div className="right floated meta"><small>{ago}</small></div>
-                          </div>
-                        </div>
-                })
-              }
+    return  (
+      <div className="ui list">
+        { rels.map( (r, idx) =>  {
+          const sty = (activeRelIdx === idx) ? blk : gry
+          const ago = moment(new Date(r.timestamp)).fromNow() 
+          const state = r.id.state === 'alpha' ? 'α' : (r.id.state + "#")
+          return (
+            <div className="item" key={r.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
+              <div className="content">
+                v{r.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + r.id.iteration}</i></small>
+                <div className="right floated meta"><small>{ago}</small></div>
+              </div>
             </div>
+          )
+        })
+        }
+      </div>
+    )
   },
   
   
@@ -142,43 +162,33 @@ export default WhatsNewRoute = React.createClass({
         "bugfix":      "red bug", 
         "removed":     "red remove" 
       }
-                 
+
     return <i className={"ui icon " + iconNames[ct]}></i>
   },
 
   
-  /** This is the mid column. Uses React's state.releaseIdx */
+  /** This is the right column. Uses React's state.releaseIdx */
   renderNewsRelChangesColumn: function() {
     const relIdx = this.state.releaseIdx
     const rel = mgbReleaseInfo.releases[relIdx]
-    const state = rel.id.state === 'alpha' ? 'α' : (rel.id.state + "#")
-    const ago = moment(new Date(rel.timestamp)).fromNow() 
-    const gry = {color: "#888"}
-    const blk = {color: "#000"}    
     
-    return  <div className="ui list">
-              { rel.changes.map( (c, idx) =>  {
-                const sty = (this.state.changeIdx === idx) ? blk : gry
-                return  <div className=" item" key={c.changeName} style={sty} onClick={this.handleChangeClicked.bind(this, idx)}>
-                          { this.getIconForChangeType(c.type) }
-                          <div className="content">
-                            {c.changeName} 
-                          </div>
-                        </div>
-              })
-              }
+    return  (
+      <div className="ui icon items">
+        { rel.changes.map( (c, idx) => {
+          return (
+            <div className="ui item" key={c.changeName} >
+              { this.getIconForChangeType(c.type) }
+              <div className="content">
+                <div className="header"><small>{c.changeName}</small></div>
+                <div className="meta">
+                  <p>{ rel.changes[idx].changeSummary }</p>
+                </div>
+              </div>
             </div>
-  },
-
-
-  /** This is the right-hand column. Uses React's state.releaseIdx and state.changeIdx */
-  renderNewsChangeDetailsColumn: function() {
-    const relIdx = this.state.releaseIdx
-    const rel = mgbReleaseInfo.releases[relIdx]
-    const chg = rel.changes[this.state.changeIdx]
-    
-    return <div className="ui content">
-            {chg.changeSummary}
-          </div>
+          )
+        })
+        }
+      </div>
+    )
   }
 })

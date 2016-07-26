@@ -196,4 +196,6 @@ const ObjectHelper = {
   }
 };
 
+ObjectHelper.TO_RADIANS = TO_RADIANS;
+ObjectHelper.TO_DEGREES = TO_DEGREES;
 export default ObjectHelper;

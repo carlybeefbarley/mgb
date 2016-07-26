@@ -3,7 +3,7 @@ import React from 'react';
 import Tile from './Tile.js';
 import TileHelper from "./TileHelper.js";
 
-export default class TileMapLayer extends React.Component {
+export default class GridLayer extends React.Component {
   /* lifecycle functions */
   constructor(...args){
     super(...args);

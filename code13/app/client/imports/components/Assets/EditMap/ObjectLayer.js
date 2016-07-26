@@ -12,6 +12,8 @@ import HandleCollection from "./MapObjects/HandleCollection.js";
 import Imitator from "./MapObjects/Imitator.js";
 import MultiImitator from "./MapObjects/MultiImitator.js";
 
+import _ from "lodash";
+
 // TODO move these to some good place.. probably mapArea???
 const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
 const FLIPPED_VERTICALLY_FLAG   = 0x40000000;
@@ -67,7 +69,18 @@ export default class ObjectLayer extends AbstractLayer {
   getPickedObject(){
     return this._pickedObject;
   }
+  updateClonedObject(){
+    if(this.selection.length){
+      this.clonedObject = this.selection.toBox();
+    }
+    else if(this.pickedObject instanceof Imitator){
+      this.clonedObject = new Imitator(_.cloneDeep(this.pickedObject.orig));
+    }
+    else{
 
+      this.clonedObject = Object.assign({}, this.pickedObject);
+    }
+  }
   // this gets called when layer is activated
   activate(){
     if(!this.activeMode) {
@@ -196,12 +209,8 @@ export default class ObjectLayer extends AbstractLayer {
       // we need to store values somewhere instead of applying these directly
       // for align to grid etc features
       // this.objects[this._pickedObject] - as we don't need imitator itself here
-      if(this.pickedObject instanceof Imitator){
-        this.clonedObject = new Imitator(_.cloneDeep(this.pickedObject.orig));
-      }
-      else{
-        this.clonedObject = Object.create(this.pickedObject || this.selection);
-      }
+      console.log("Cloning object!");
+      this.updateClonedObject();
       this.handleMouseMove(e);
       // we will move handle on next move
       return;
@@ -839,6 +848,7 @@ edit[EditModes.drawShape] = function(e){
     endPoint.y = Math.round(pointCache.y / th) * th;
   }
 };
+
 edit[EditModes.stamp] = function(e){
   if(!this.map.collection.length || e.target != this.refs.canvas){
     return;
@@ -888,60 +898,137 @@ edit[EditModes.rectangle] = function(e){
   const nx = this.startPosX + this.movementX;
   const ny = this.startPosY + this.movementY;
 
+  const tw = this.map.data.tilewidth
+  const th = this.map.data.tileheight
+  if(e.type == "mouseup"){
+    if(obj && !this.handles.activeHandle){
+      let selCount = this.selectObjects(obj);
+      if(selCount > 0){
+        phase = 1;
+      }
+      else{
+        phase = 0;
+      }
+
+      if(selCount == 1 && this.pickedObject){
+        this.startPosX = this.pickedObject.x;
+        this.startPosY = this.pickedObject.y;
+      }
+      else{
+        this.clearSelection();
+      }
+      // invalidate
+      this.selectionBox.width = 0;
+      this.selectionBox.height = 0;
+
+      obj = null;
+
+      this.draw();
+      this.map.save("Edit Object");
+      return;
+    }
+    this.updateClonedObject();
+  }
+
+
+  if(e.type == "mousedown"){
+    this.map.saveForUndo("Edit Object");
+    if(!this.handles.activeHandle) {
+      this.isDirty = true;
+      this.mouseDown = true;
+      if (this.pickObject(e) > -1) {
+        if (!this.selection.length) {
+          this.startPosX = this.pickedObject.x;
+          this.startPosY = this.pickedObject.y;
+        }
+        else {
+          this._pickedObject = -1;
+          this.startPosX = this.selection.x;
+          this.startPosY = this.selection.y;
+        }
+        phase = 1;
+        return;
+      }
+
+      phase = 0;
+      this.selection.clear();
+      obj = this.selectionBox;
+      obj.x = this.pointerPosX;
+      obj.y = this.pointerPosY;
+      return;
+    }
+
+  }
+
   if(this.mouseDown && phase == 1){
 
     if(this.handles.activeHandle){
       this.handles.moveActiveHandle(dx, dy, this.clonedObject);
       // TODO: create some sort of replicator object who can convert global changes to local e.g. basic rectangle to shape
-      let selected  = this.pickedObject ? this.pickedObject : this.selection;
+      let selected  = this.selection.length < 2 ? this.pickedObject : this.selection;
       if(e.ctrlKey){
         if(this.handles.activeHandleType != 9){
-          selected.x = Math.round(this.clonedObject.x / this.map.data.tilewidth) * this.map.data.tilewidth;
-          selected.y = Math.round(this.clonedObject.y / this.map.data.tileheight) * this.map.data.tileheight;
+          selected.height = Math.round(this.clonedObject.height / th) * th
+          selected.width = Math.round(this.clonedObject.width / tw) * tw
+          if(selected != this.selection) {
+            selected.x = Math.round(this.clonedObject.x / tw) * tw
+            selected.y = Math.round(this.clonedObject.y / th) * th
+          }
+          else{
 
-          selected.width = Math.round(this.clonedObject.width / this.map.data.tilewidth) * this.map.data.tilewidth;
-          selected.height = Math.round(this.clonedObject.height / this.map.data.tileheight) * this.map.data.tileheight;
+          }
+
         }
         else{
           // TODO: move to config rotation step?
-          const newRotation = Math.round(this.clonedObject.rotation / 15) * 15;
-          this.rotateObject(newRotation, selected);
+          if(selected != this.selection) {
+            const newRotation = Math.round(this.clonedObject.rotation / 15) * 15;
+            this.rotateObject(newRotation, selected);
+          }
         }
       }
       else{
-        selected.x = this.clonedObject.x;
-        selected.y = this.clonedObject.y;
-        selected.width = this.clonedObject.width;
-        selected.height = this.clonedObject.height;
-        selected.rotation = this.clonedObject.rotation;
+        if(this.handles.activeHandleType != 9) {
+          selected.height = this.clonedObject.height
+          selected.width = this.clonedObject.width
+
+          // TODO: multiple rotated objects will be bogous
+          if(selected != this.selection) {
+            selected.x = this.clonedObject.x
+            selected.y = this.clonedObject.y
+          }
+          else{
+
+          }
+
+
+        }
+        else{
+          if(selected != this.selection) {
+            this.rotateObject(this.clonedObject.rotation, selected);
+          }
+        }
       }
       this.map.updateTools();
       return;
     }
-  }
 
-  if(e.type == "mousedown"){
-    this.isDirty = true;
-    this.mouseDown = true;
-    if(this.pickObject(e) > -1) {
-      this.map.saveForUndo("Edit Object");
-      this.startPosX = this.pickedObject.x;
-      this.startPosY = this.pickedObject.y;
-      phase = 1;
+    // move multiple objects
+    if(this.selection.length > 1){
+      this.selection.x = nx;
+      this.selection.y = ny;
+
+      if (e.ctrlKey) {
+
+
+        this.selection.x = Math.round(this.selection.x / tw) * tw
+        this.selection.y = Math.round(this.selection.y / th) * th
+      }
+      this.map.updateTools();
       return;
     }
 
-    phase = 0;
-    this.selection.clear();
-    obj = this.selectionBox;
-    obj.x = this.pointerPosX;
-    obj.y = this.pointerPosY;
-    return;
-  }
-
-  if(this.mouseDown && phase == 1) {
     if (this.pickedObject) {
-
       this.pickedObject.x = nx;
       this.pickedObject.y = ny;
 
@@ -958,46 +1045,11 @@ edit[EditModes.rectangle] = function(e){
       return;
     }
 
-    if(this.selection.length > 1){
-
-    }
-
   }
+
 
 
   if(!obj){
-    return;
-  }
-
-  let selCount = 0;
-  if(e.type == "mouseup"){
-    selCount = this.selectObjects(obj);
-
-    if(selCount > 0){
-      phase = 1;
-    }
-    else{
-      phase = 0;
-    }
-
-    if(selCount == 1 && this.pickedObject){
-      this.startPosX = this.pickedObject.x;
-      this.startPosY = this.pickedObject.y;
-    }
-    else{
-      this.clearSelection();
-    }
-    // invalidate
-    this.selectionBox.width = 0;
-    this.selectionBox.height = 0;
-    this.startPosX = 0;
-    this.startPosY = 0;
-
-
-    obj = null;
-
-    this.draw();
-    this.map.save("Edit Object");
     return;
   }
 
@@ -1011,7 +1063,7 @@ edit[EditModes.rectangle] = function(e){
   obj.y = Math.min(y1, y2);
   obj.height = Math.abs(this.movementY);
 
-  selCount = this.selectObjects(obj);
+  let selCount = this.selectObjects(obj);
   if(selCount == 1 && this.pickedObject){
     this.startPosX = this.pickedObject.x;
     this.startPosY = this.pickedObject.y;

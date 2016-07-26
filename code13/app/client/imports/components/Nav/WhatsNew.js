@@ -28,7 +28,7 @@ export default WhatsNew = React.createClass({
       return laterNewsAvailable && 
         <QLink  to="/whatsnew" 
                 title="Announcements of new features/fixes to MGBv2" 
-                changeclassName="fitted item" 
+                className="fitted item" 
                 style={{paddingLeft: "16px", marginTop: "6px"}}>
           <i className={"circular inverted yellow announcement icon"}></i>
         </QLink>

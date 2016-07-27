@@ -62,4 +62,10 @@ Meteor.startup(function () {
 Npm.require;
 Assets;
 
-console.log('\n\nRunning on server only (Entry point: main_server.js)');
+console.log(`
+  MGBv2 server running ${Meteor.release}
+  Meteor.isProduction: ${Meteor.isProduction}
+  Meteor.isDevelopment: ${Meteor.isDevelopment}
+  Entry point: main_server.js
+  `
+)

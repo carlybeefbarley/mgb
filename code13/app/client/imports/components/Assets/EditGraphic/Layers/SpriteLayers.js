@@ -581,7 +581,7 @@ export default class SpriteLayers extends React.Component {
 	            	></i>
 	            </th>
 	            <th width="200px">
-		            <a class="ui label" onClick={this.addLayer.bind(this)}>
+		            <a className="ui label" onClick={this.addLayer.bind(this)}>
 					    <i className="add circle icon"></i> Add Layer
 					</a>
 	            </th>
@@ -658,7 +658,7 @@ export default class SpriteLayers extends React.Component {
 	            }
 	            <th>
 	            <div className="row">
-	            	<a class="ui label" onClick={this.addFrame.bind(this)}>
+	            	<a className="ui label" onClick={this.addFrame.bind(this)}>
 					    <i className="add circle icon"></i> Add Frame
 					</a>
 				</div>

@@ -1,4 +1,5 @@
 "use strict";
+import _ from 'lodash';
 import React from 'react';
 import TileHelper from '../TileHelper.js';
 export default class TilesetControls extends React.Component {

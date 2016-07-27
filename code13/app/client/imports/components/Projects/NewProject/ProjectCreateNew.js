@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { PropTypes } from 'react';
 
 // The Create Project link is always in context of a user since only a user can create a project in their account. 

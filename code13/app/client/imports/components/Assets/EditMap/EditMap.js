@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import MapArea from "./MapArea.js";
 import InfoTool from "./Tools/InfoTool.js";

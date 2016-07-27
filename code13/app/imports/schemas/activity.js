@@ -1,7 +1,7 @@
 // Activity log for MGB users. This is a persistent log that we will keep many weeks of history for
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-
+import _ from 'lodash';
 import { Activity } from '/imports/schemas';
 import { check, Match } from 'meteor/check';
 

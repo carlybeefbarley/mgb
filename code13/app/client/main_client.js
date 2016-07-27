@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 
 import { Routes } from '/client/imports/routes'; 

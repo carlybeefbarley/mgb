@@ -2,6 +2,7 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
+import _ from 'lodash';
 import { Azzets } from '/imports/schemas';
 import { roleSuperAdmin } from '/imports/schemas/roles'
 import { check, Match } from 'meteor/check';

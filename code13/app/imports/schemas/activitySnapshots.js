@@ -11,8 +11,8 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-
-import {ActivitySnapshots} from '/imports/schemas';
+import _ from 'lodash';
+import { ActivitySnapshots } from '/imports/schemas';
 import { check, Match } from 'meteor/check';
 
 var schema = {

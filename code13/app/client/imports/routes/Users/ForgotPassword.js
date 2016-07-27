@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import {handleForms} from '/client/imports/components/Forms/FormDecorator';
 import UserForms from '/client/imports/components/Users/UserForms.js';

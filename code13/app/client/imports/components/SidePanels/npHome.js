@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import QLink from '/client/imports/routes/QLink';
 import WhatsNew from '../Nav/WhatsNew';

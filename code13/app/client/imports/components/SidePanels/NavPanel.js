@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import npHome from './npHome';
 import npUser from './npUser';

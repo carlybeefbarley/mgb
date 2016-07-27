@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, {Component, PropTypes} from 'react';
 import QLink from '/client/imports/routes/QLink';
 import reactMixin from 'react-mixin';

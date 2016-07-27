@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import {AssetKinds, AssetKindKeys, safeAssetKindStringSepChar} from '/imports/schemas/assets';
 
@@ -5,15 +6,15 @@ import {AssetKinds, AssetKindKeys, safeAssetKindStringSepChar} from '/imports/sc
 
 export default AssetKindsSelector =  React.createClass({
   PropTypes: {
-    kindsActive: React.PropTypes.string,              // String with safeAssetKindStringSepChar- separated list of AssetKindKeys strings which are active. 
-    handleToggleKindCallback: React.PropTypes.func    // We will call this back with a string indicating which Kind to toggle. Special value "__all" means enable all  
+    kindsActive: React.PropTypes.string,              // String with safeAssetKindStringSepChar- separated list of AssetKindKeys strings which are active.
+    handleToggleKindCallback: React.PropTypes.func    // We will call this back with a string indicating which Kind to toggle. Special value "__all" means enable all
   },
 
   // React Callback: componentDidMount()
   componentDidMount: function() {
     $('.hazAkPopup').popup()
   },
-  
+
   componentWillUnmount: function() {
     $('.hazAkPopup').popup('destroy')
   },
@@ -30,9 +31,9 @@ export default AssetKindsSelector =  React.createClass({
       const sty = active ? {} : { color: "#ccc"}
       const icon = active ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>
       return (
-        <a  className={"ui hazAkPopup " + (active ? "active item" : "item")} 
-            data-value={k} 
-            key={k} 
+        <a  className={"ui hazAkPopup " + (active ? "active item" : "item")}
+            data-value={k}
+            key={k}
             style={sty}
             onClick={this.handleToggleKindClick.bind(this,k)}
            data-position="right center"
@@ -40,25 +41,25 @@ export default AssetKindsSelector =  React.createClass({
            data-content={`Click to show only ${AssetKinds[k].name} assets. Alt-click to multi-select ${AssetKinds[k].name} which asset kinds to show`}>
             <i className={AssetKinds[k].icon + " icon"}></i><span>{icon} {AssetKinds[k].name}</span>
           </a>
-      ) 
+      )
     });
-    
+
     const allActive = (countActive === choices.length)
     choices.unshift(
-      <a  className={"ui hazAkPopup " + (allActive ? "active item" : "item")} 
-            data-value="__all" 
+      <a  className={"ui hazAkPopup " + (allActive ? "active item" : "item")}
+            data-value="__all"
             key="__all"
             onClick={this.handleToggleKindClick.bind(this,"__all")}
             data-position="right center"
             data-title="All"
             data-content="Click to show all asset kinds">
-            <i className="asterisk icon"></i> 
+            <i className="asterisk icon"></i>
             <span>{allActive ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>} All</span>
           </a>
     )
 
     return (
-          <div className="ui small secondary vertical menu">            
+          <div className="ui small secondary vertical menu">
             {choices}
           </div>
     );

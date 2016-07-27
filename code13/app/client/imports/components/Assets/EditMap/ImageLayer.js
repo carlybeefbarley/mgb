@@ -1,4 +1,5 @@
 "use strict";
+import _ from 'lodash';
 import React from 'react';
 import AbstractLayer from "./AbstractLayer.js";
 import LayerTypes from "./Tools/LayerTypes.js";

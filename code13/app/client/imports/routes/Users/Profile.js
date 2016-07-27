@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import Helmet from 'react-helmet';

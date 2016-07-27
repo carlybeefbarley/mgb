@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from "react";
 
 export const handleForms = ComposedComponent => class extends Component {

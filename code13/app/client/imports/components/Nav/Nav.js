@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, {Component, PropTypes} from 'react';
 import { browserHistory } from 'react-router';
 import {logActivity} from '/imports/schemas/activity';

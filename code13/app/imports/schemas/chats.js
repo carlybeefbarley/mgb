@@ -3,6 +3,7 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
+import _ from 'lodash';
 import { Chats } from '/imports/schemas';
 import { check, Match } from 'meteor/check';
 

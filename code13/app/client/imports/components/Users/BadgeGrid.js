@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import Badge, { getAllBadgesForUser } from '/client/imports/components/Controls/Badge/Badge';
 

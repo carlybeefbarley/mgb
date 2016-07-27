@@ -1,4 +1,5 @@
 "use strict";
+import _ from 'lodash';
 import React from 'react';
 
 export default class Properties extends React.Component {

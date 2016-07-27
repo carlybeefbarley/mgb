@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, NotFoundRoute, browserHistory } from 'react-router';

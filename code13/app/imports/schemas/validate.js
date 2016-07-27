@@ -6,7 +6,7 @@
 export default validate = {
 
   lengthCap: function (text, lengthCap) {
-    return (text && text.length && text.length >= 0 && text.length < lengthCap)
+    return _.isString(text) && text.length < lengthCap
   },
 
   mgb1name: function (text) {

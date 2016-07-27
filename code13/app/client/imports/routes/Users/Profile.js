@@ -197,15 +197,19 @@ export default UserProfileRoute = React.createClass({
             </div>
           </div>
         </div>
-        <InlineEdit
-          validate={validate.userTitle}
-          activeClassName="editing"
-          text={title || "(no title)"}
-          paramName="profile.title"
-          change={this.handleProfileFieldChanged}
-          isDisabled={editsDisabled} />
+        <div title="User's 'title'">
+          <i className="quote left icon blue icon" />
+          <InlineEdit
+            validate={validate.userTitle}
+            activeClassName="editing"
+            text={title || "(no title)"}
+            paramName="profile.title"
+            change={this.handleProfileFieldChanged}
+            isDisabled={editsDisabled} />
+            <i className="quote right icon blue" />
+        </div>
         <p>
-          <em><i className="clock icon"></i>Joined {moment(user.createdAt).format('MMMM DD, YYYY')}</em>
+          <em style={{color: "#888"}}><i className="clock icon" />Joined {moment(user.createdAt).format('MMMM DD, YYYY')}</em>
         </p>
       </div>
     )

@@ -69,6 +69,9 @@ Meteor.startup(function () {
         <Route path="user/:id/history" component={Users.UserHistory} name="User's History" />
         <Route path="u/:username/history" component={Users.UserHistory} name="User's History" />
 
+        <Route path="user/:id/badges" component={Users.BadgeList} name="User's Badges" />
+        <Route path="u/:username/badges" component={Users.BadgeList} name="User's Badges" />
+
         <Route path="assets" component={Azzets.UserAssetList} name="Search All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 

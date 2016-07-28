@@ -1,17 +1,19 @@
 import Join from './Join';
-import SignIn from './SignIn';
 import List from './List';
+import SignIn from './SignIn';
 import Profile from './Profile';
+import BadgeList from './BadgeList';
 import UserHistory from './UserHistory';
-import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
+import ForgotPassword from './ForgotPassword';
 
 export default {
   Join,
-  SignIn,
   List,
+  SignIn,
   Profile,
-  ForgotPassword,
+  BadgeList,
+  UserHistory,
   ResetPassword,
-  UserHistory
+  ForgotPassword
 }

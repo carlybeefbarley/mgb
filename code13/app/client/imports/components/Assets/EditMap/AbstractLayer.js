@@ -90,11 +90,17 @@ export default class AbstractLayer extends React.Component {
   isActive() {
     return this.options == map.data.layers[map.activeLayer];
   }
+
   adjustCanvas(){
     const canvas = this.refs.canvas;
-    const $el = $(this.refs.layer);
-    canvas.width = $el.width();
-    canvas.height = $el.height();
+    const b = this.refs.layer.getBoundingClientRect();
+    if(canvas.width != b.width){
+      canvas.width = b.width;
+    }
+    if(canvas.height != b.height){
+      canvas.height = b.height;
+    }
+    canvas.height = b.height;
   }
 
   draw(){

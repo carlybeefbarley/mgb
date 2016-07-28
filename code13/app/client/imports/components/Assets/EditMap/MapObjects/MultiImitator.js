@@ -1,6 +1,6 @@
 "use strict";
-// This object imitates rectangle from shapes
-// TODO: add multi object support - we could use this for selector
+import ObjectHelper from "../ObjectHelper.js"
+// This object imitates Multiple Objects as one big rectangle
 export default class MultiImitator{
   constructor(layer){
     // we need layer - as layer contains transformations
@@ -17,36 +17,87 @@ export default class MultiImitator{
     return this._x;
   }
   set x(v){
+    const diff = v - this._x;
+    if(!diff){
+      return;
+    }
+    this.forEach((o) => {
+      let dx = diff;
+      let dy = 0;
+      if(o.rotation) {
+        const angle = o.rotation * ObjectHelper.TO_RADIANS;
+        const sin = Math.sin(angle);
+        const cos = Math.cos(angle);
 
+        dx = -ObjectHelper.rpx(sin, cos, diff, 0, 0, 0);
+        dy = -ObjectHelper.rpy(sin, cos, diff, 0, 0, 0);
+      }
+      o.x += dx;
+      o.y += dy;
+    });
+    this.update();
   }
 
   get y(){
     return this._y;
   }
   set y(v){
-    this._y = v;
+    const diff = v - this._y;
+    if(!diff){
+      return;
+    }
+    console.log("Set Y");
+    this.forEach((o) => {
+      let dx = 0;
+      let dy = diff;
+      if(o.rotation) {
+        const angle = o.rotation * ObjectHelper.TO_RADIANS;
+        const sin = Math.sin(angle);
+        const cos = Math.cos(angle);
+
+        dx = -ObjectHelper.rpx(sin, cos, 0, diff, 0, 0);
+        dy = -ObjectHelper.rpy(sin, cos, 0, diff, 0, 0);
+      }
+      o.x += dx;
+      o.y += dy;
+    });
+    this.update();
   }
 
   get width(){
     return this._width;
   }
   set width(v){
-    const prop = v / this.width;
-    let diff;
-    // 0.5 here is actually pivot point
-    // interpolated between 0 - left 1 - right
+    const diff = v - this._width;
+    if(!diff){
+      return;
+    }
     this.forEach((o) => {
-      diff = o.width;
-      o.width *= prop;
-      diff -= o.width;
-      o.x += diff*0.5;
+      /*o.width += diff*2;
+      o.height += diff*2;
+      o.x -= diff;
+      o.y -= diff;*/
+      // below are sort of nicer resize - but it needs extra work for rotated objects - e.g. for objects upside down
+      let dx = diff;
+      let dy = 0;
+      if(o.rotation) {
+        const angle = o.rotation * ObjectHelper.TO_RADIANS;
+        const sin = Math.sin(angle);
+        const cos = Math.cos(angle);
 
-      diff = o.height;
-      o.height *= prop;
-      diff -= o.height;
-      o.y += diff*0.5;
+        dx = ObjectHelper.rpx(sin, cos, diff, 0, 0, 0);
+        dy = ObjectHelper.rpy(sin, cos, diff, 0, 0, 0);
+      }
+      if(dx != diff){
+        console.log("DX:", dx, diff);
+      }
+      o.width += dx;
+      o.height += dy;
+      //o.x += (diff - dx) * 0.5;
     });
-    this.update();
+    this._width = v;
+    //this.update()
+    //this._height += diff;
   }
 
 
@@ -54,20 +105,32 @@ export default class MultiImitator{
     return this._height;
   }
   set height(v){
-    const prop = v / this.height;
-    let diff;
+    const diff = v - this._height;
+    if(!diff){
+      return;
+    }
     this.forEach((o) => {
-      diff = o.width;
-      o.width *= prop;
-      diff -= o.width;
-      o.x += diff*0.5;
+      o.width += diff*2;
+      o.height += diff*2;
+      o.x -= diff;
+      o.y -= diff;
+      /*
+      let dx = 0;
+      let dy = diff;
+      if(o.rotation) {
+        const angle = -o.rotation * ObjectHelper.TO_RADIANS;
+        const sin = Math.sin(angle);
+        const cos = Math.cos(angle);
 
-      diff = o.height;
-      o.height *= prop;
-      diff -= o.height;
-      o.y += diff*0.5;
+        dx = ObjectHelper.rpx(sin, cos, 0, diff, 0, 0);
+        dy = ObjectHelper.rpy(sin, cos, 0, diff, 0, 0);
+      }
+      o.width += dx;
+      o.height += dy;
+      */
     });
-    this.update();
+    this._height = v;
+    //this.update()
   }
 
   get length(){
@@ -147,6 +210,17 @@ export default class MultiImitator{
   }
   set rotation(val){
 
+  }
+
+  toBox(){
+    this.update();
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+      rotation: 0
+    };
   }
 
   empty(){

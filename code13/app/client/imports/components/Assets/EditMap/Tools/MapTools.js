@@ -4,7 +4,6 @@ import React from 'react';
 import EditModes from "./EditModes";
 import LayerTypes from "./LayerTypes.js";
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js';
-import _ from "lodash";
 
 export default class MapTools extends React.Component {
 

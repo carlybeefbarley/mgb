@@ -12,8 +12,6 @@ import HandleCollection from "./MapObjects/HandleCollection.js";
 import Imitator from "./MapObjects/Imitator.js";
 import MultiImitator from "./MapObjects/MultiImitator.js";
 
-import _ from "lodash";
-
 // TODO move these to some good place.. probably mapArea???
 const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
 const FLIPPED_VERTICALLY_FLAG   = 0x40000000;
@@ -209,7 +207,6 @@ export default class ObjectLayer extends AbstractLayer {
       // we need to store values somewhere instead of applying these directly
       // for align to grid etc features
       // this.objects[this._pickedObject] - as we don't need imitator itself here
-      console.log("Cloning object!");
       this.updateClonedObject();
       this.handleMouseMove(e);
       // we will move handle on next move

@@ -17,12 +17,12 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
-      "timestamp":     "Tue Jul 26 2016 14:00:00 GMT-0700 (PDT)",
+      "timestamp":     "Wed Jul 27 2016 23:50:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "886"
+        "iteration":   "899"
       },
 
       "releaseManagement": {

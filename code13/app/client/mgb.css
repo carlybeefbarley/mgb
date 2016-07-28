@@ -189,7 +189,7 @@ body.dragging .accept-drop:hover{
   display: none !important;
 }
 /* class that highlights element for short duration */
-.ui .button.isvisible.hazPopup {
+.ui .button.isvisible.hazPopup.new {
   animation-name: rotate !important;
   /*animation-iteration-count: infinite !important;*/
   animation-iteration-count: 1 !important;

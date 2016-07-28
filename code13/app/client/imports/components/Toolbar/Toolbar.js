@@ -25,7 +25,9 @@ export default class Toolbar extends React.Component {
     this._activeButton = null
     this.startPos = null
     this.hasMoved = false
-
+    
+    this.visibleButtons = null;
+    
     // levelSlider will set this value
     this.maxLevel = 10
     this.level = localStorage.getItem(this.lsLevelKey) || this.props.config.level
@@ -231,7 +233,7 @@ export default class Toolbar extends React.Component {
     const buttons = []
     let parent = []
     buttons.push(parent)
-
+    const newButtons = []
     let b
     for(let i=0; i<this.order.length; i++){
       b = this.data.buttons[this.order[i]]
@@ -248,7 +250,9 @@ export default class Toolbar extends React.Component {
         continue;
       }
       parent.push(this._renderButton(b, i))
+      newButtons.push(i)
     }
+    this.visibleButtons = newButtons;
 
     const content = []
     const className = "ui icon buttons animate " + size + " " + "level" + this.level + (this.props.config.vertical ? " vertical" : '')
@@ -320,8 +324,19 @@ export default class Toolbar extends React.Component {
     if(b.shortcut){
       this.registerShortcut(b.shortcut, b.name)
     }
+    let className = "ui button hazPopup animate " + hidden + active + disabled;
+    // button is new
+    if(this.visibleButtons && this.visibleButtons.indexOf(index) == -1){
+      className += " new";
+    }
+    if(!this.visibleButtons){
+      this.visibleButtons = [index];
+    }
+    else{
+      this.visibleButtons.push(index);
+    }
     return (
-      <div className={"ui button hazPopup animate " + hidden + active + disabled}
+      <div className={className}
            style={{position: "relative"}}
            ref={(button) => {this._addButton(button, index)}}
            onClick={this._handleClick.bind(this, b.name)}

@@ -1,6 +1,7 @@
+var update = require('react-addons-update');
+
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
-var update = require('react-addons-update');
 import moment from 'moment';
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js';
 import { templateCode } from './templates/TemplateCode.js';
@@ -102,7 +103,7 @@ export default class EditCode extends React.Component {
 
     // Tern setup
     var myTernConfig = {
-      useWorker: false,
+      useWorker: true,
       defs: [Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser],
       completionTip: function (curData) { 
         // we get called for the CURRENTLY highlighted entry in the autocomplete list. 
@@ -110,7 +111,19 @@ export default class EditCode extends React.Component {
         //   name, type     ... pretty reliably
         //   doc, url       ... sometimes (depending on dataset) 
         return curData.doc  + (curData.type ? "\n\n"+curData.type : "") 
-      }
+      },
+      // TODO: is there a simple "meteor" way to get these files from node_modules???
+      workerDeps: [
+        "/lib/acorn/acorn.js",
+        "/lib/acorn/acorn_loose.js",
+        "/lib/acorn/walk.js",
+        "/lib/tern/signal.js",
+        "/lib/tern/tern.js",
+        "/lib/tern/def.js",
+        "/lib/tern/infer.js",
+        "/lib/tern/comment.js"
+      ],
+      workerScript: "/lib/TernWorker.js"
       // ,
       // responseFilter: function (doc, query, request, error, data)
       // {
@@ -121,6 +134,7 @@ export default class EditCode extends React.Component {
 
       // typeTip: function(..) this would be a function that creates a DOM element to render the typeTip
     }
+
     CodeMirror.tern = new CodeMirror.TernServer(myTernConfig)     // This is actually our instance which we have foolishly just attached to the global for now :( hack)
 
     InstallMgbTernExtensions(tern);

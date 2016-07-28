@@ -428,41 +428,52 @@ export default class EditCode extends React.Component {
     }
 
     var functionTypeInfo = null;
+    
+    const setState = (functionTypeInfo) => {
+      if (functionTypeInfo) {
+        JsonDocsFinder.getApiDocsAsync({
+          frameworkName: functionTypeInfo.origin, 
+          //frameworkVersion: "x.x.x",
+          symbolType: "method",
+          symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
+        },
+        (originalRequest, result) => {
+          // This callback will always be called, but could be sync or async
+          this.setState( {  "helpDocJsonMethodInfo": result.data,
+                            "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
+                            "functionArgPos": argPos,
+                            "functionTypeInfo": functionTypeInfo || {},
+                            currentToken: currentToken
+          })   // MIGHT BE SYNC OR ASYNC. THIS MATTERS. Maybe find a better way to handle this down in a component?
+        })
+      }
+      else {
+        this.setState( {  "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
+            "functionArgPos": argPos,
+            "helpDocJsonMethodInfo": null,
+            "functionTypeInfo": functionTypeInfo || {},
+            currentToken: currentToken
+        })
+      }
+    }
+    
+    
     if (argPos !== -1 && ternServer.cachedArgHints && ternServer.cachedArgHints.start)
     {
       ternServer.request(editor, "type", function(error, data) {
-        if (error)
-          functionTypeInfo = { "error": error } 
-        else
+        if (error) {
+          functionTypeInfo = { "error": error }
+        }
+        else{
           functionTypeInfo = data
+        }
+        setState(functionTypeInfo);
       }, ternServer.cachedArgHints.start)     // TODO - We need CodeMirror 5.13.5 so this will work
     }
-        
-    if (functionTypeInfo)
-    {
-      JsonDocsFinder.getApiDocsAsync({ 
-        frameworkName: functionTypeInfo.origin, 
-        //frameworkVersion: "x.x.x",
-        symbolType: "method",
-        symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
-      },
-      (originalRequest, result) => {
-        // This callback will always be called, but could be sync or async
-        this.setState( {  "helpDocJsonMethodInfo": result.data,
-                          "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
-                          "functionArgPos": argPos,
-                          "functionTypeInfo": functionTypeInfo || {},
-                          currentToken: currentToken
-        })   // MIGHT BE SYNC OR ASYNC. THIS MATTERS. Maybe find a better way to handle this down in a component?
-      })
+    else {
+      setState();
     }
-    else
-      this.setState( {  "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {}, 
-                      "functionArgPos": argPos,
-                      "helpDocJsonMethodInfo": null,
-                      "functionTypeInfo": functionTypeInfo || {},
-                      currentToken: currentToken
-                  })
+
   }
   
   

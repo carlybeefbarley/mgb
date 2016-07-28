@@ -151,18 +151,37 @@ body.dragging .accept-drop:hover{
 .no-animate .animate{
   transition: 0s !important;
 }
-.ui.button.reset{
+
+.Toolbar .ui.button.reset{
   position: absolute;
   height: 19px;
   padding: 0;
   margin: 0;
-  top: 0;
   right: 0;
   line-height: 19px;
 }
-
-.button.main{
+.Toolbar.vertical  .ui.button.reset{
+  right: auto;
+  bottom: 0;
+}
+.Toolbar .button.main{
   z-index: 1;
+}
+
+.Toolbar .vertical{
+  width: 100%;
+}
+.Toolbar .vertical *{
+  width: 100%;
+}
+/* adjust button text to match width*/
+.Toolbar .button div {
+  font-size: calc(0.7vw + 20%);
+  margin: 0 0 0 -10px;
+  text-align: center;
+  width: calc(100% + 20px);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .invisible{

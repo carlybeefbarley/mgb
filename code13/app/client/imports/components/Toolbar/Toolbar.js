@@ -26,6 +26,8 @@ export default class Toolbar extends React.Component {
     this.startPos = null
     this.hasMoved = false
 
+    // levelSlider will set this value
+    this.maxLevel = 10
     this.level = localStorage.getItem(this.lsLevelKey) || this.props.config.level
     this.levelSlider = this._addLevelSlider()
 
@@ -216,10 +218,10 @@ export default class Toolbar extends React.Component {
   render(){
     let size
     // TODO: are 3 levels enough?
-    if(this.level < 3){
+    if(this.level <= this.maxLevel / 3){
       size = "big"
     }
-    else if(this.level < 6){
+    else if(this.level <= this.maxLevel / 6){
       size = "medium"
     }
     else{
@@ -249,16 +251,18 @@ export default class Toolbar extends React.Component {
     }
 
     const content = []
+    const className = "ui icon buttons animate " + size + " " + "level" + this.level + (this.props.config.vertical ? " vertical" : '')
     buttons.forEach((b, i) => {
-      content.push(<div style={{marginRight: "4px"}} className={"ui icon buttons animate " + size + " " + "level" + this.level} key={i}>{b}</div>)
+      content.push(<div style={{marginRight: "4px"}} className={className} key={i}>{b}</div>)
     })
 
     return (
-      <div ref="mainElement" className="Toolbar">
+      <div ref="mainElement" className={"Toolbar" + (this.props.config.vertical ? " vertical" : '')}>
         {content}
         <div className="ui button right floated mini reset"
              onClick={this.reset.bind(this)}
-          >Reset<i className="level down reset icon"></i>
+             title="Reset Toolbar"
+          ><i className="level down reset icon"></i>
         </div>
       </div>
     )
@@ -334,13 +338,21 @@ export default class Toolbar extends React.Component {
   }
 
   _addLevelSlider(){
+    let maxLevel = -Infinity;
+    this.props.config.buttons.forEach((b) => {
+      if(b.level && maxLevel < b.level){
+        maxLevel = b.level;
+      }
+    })
+    this.maxLevel = maxLevel;
+
     let levelSlider = document.getElementById("levelSlider")
     if(!levelSlider){
       levelSlider = document.createElement("input")
       levelSlider.setAttribute("id", "levelSlider")
       levelSlider.setAttribute("type", "range")
       levelSlider.setAttribute("min", "1")
-      levelSlider.setAttribute("max", "10")
+      levelSlider.setAttribute("max", maxLevel+'')
       levelSlider.setAttribute("step", "1")
 
       levelSlider.style.position = "absolute"
@@ -388,12 +400,21 @@ export default class Toolbar extends React.Component {
         continue
       }
       const rect = ab.getBoundingClientRect()
-
-      if( rect.left > box.left && this.getRow(mainBox, rect) == row ){
-        ab.style.left = box.width + "px"
+      if(this.props.config.vertical) {
+        if(rect.top > box.top) {
+          ab.style.top = box.height + "px"
+        }
+        else {
+          ab.style.top = 0
+        }
       }
-      else{
-        ab.style.left = 0
+      else {
+        if( rect.left > box.left && this.getRow(mainBox, rect) == row ) {
+          ab.style.left = box.width + "px"
+        }
+        else {
+          ab.style.left = 0
+        }
       }
     }
 
@@ -403,11 +424,22 @@ export default class Toolbar extends React.Component {
         continue
       }
       const rect = ab.getBoundingClientRect()
-      if(rect.left < box.left && + this.getRow(mainBox, rect) == row){
-        ab.style.left = -box.width + "px"
+
+      if(this.props.config.vertical) {
+        if(rect.top < box.top){
+          ab.style.top = -box.height + "px"
+        }
+        else{
+          ab.style.top = 0
+        }
       }
       else{
-        ab.style.left = 0
+        if(rect.left < box.left && + this.getRow(mainBox, rect) == row){
+          ab.style.left = -box.width + "px"
+        }
+        else{
+          ab.style.left = 0
+        }
       }
     }
   }
@@ -422,50 +454,81 @@ export default class Toolbar extends React.Component {
     const mainBox = this.refs.mainElement.getBoundingClientRect()
     const row = this.getRow(mainBox, box)
 
-    let mostLeft, mostRight
-    let left = 0
+    let mostLeft, mostRight, mostTop, mostBottom
+    let left = 0, top = 0
+
     for(let i=0; i<index; i++){
       const ab = this.buttons[i]
-      if(!ab || !ab.parentNode || ab.classList.contains("invisible")){
+      if(!ab || ab == this.activeButton || !ab.parentNode || ab.classList.contains("invisible")){
         continue
       }
       const rect = ab.getBoundingClientRect()
-      if(rect.left + this.getRow(mainBox, rect) > box.left + row){
-        left -= rect.width
-        // set first
-        if(!mostLeft){
-          mostLeft = ab
+
+      if(this.props.config.vertical) {
+        if(rect.top > box.top){
+          top -= rect.height
+          if(!mostTop){
+            mostTop = ab
+          }
+        }
+      }
+      else{
+        if(rect.left + this.getRow(mainBox, rect) > box.left + row){
+          left -= rect.width
+          // set first
+          if(!mostLeft){
+            mostLeft = ab
+          }
         }
       }
     }
 
-    for(let i=index +1; i<this.buttons.length; i++){
+    for(let i=index; i<this.buttons.length; i++){
       const ab = this.buttons[i]
-      if(!ab || !ab.parentNode || ab.classList.contains("invisible")){
+      if(!ab || ab == this.activeButton || !ab.parentNode || ab.classList.contains("invisible")){
         continue
       }
       const rect = ab.getBoundingClientRect()
-      if(rect.left + this.getRow(mainBox, rect) < box.left + row){
-        left += rect.width
-        // set last
-        mostRight = ab
+      if(this.props.config.vertical) {
+        if (rect.top < box.top) {
+          top += rect.height
+          // set last
+          //if(!mostBottom){
+            mostBottom = ab
+          //}
+        }
+      }
+      else {
+        if (rect.left + this.getRow(mainBox, rect) < box.left + row) {
+          left += rect.width
+          // set last
+          mostRight = ab
+        }
       }
     }
 
     this.hasMoved = false
     // position has not changed
-    if(!mostLeft && !mostRight){
+    if(!mostLeft && !mostRight && !this.props.config.vertical){
       this.activeButton.style.top = 0
       this.activeButton.style.left = 0
       $(this.activeButton).popup('enable')
       this.activeButton = null
       return
     }
+    if(!mostTop && !mostBottom && this.props.config.vertical){
+      this.activeButton.style.top = 0
+      this.activeButton.style.left = 0
+      $(this.activeButton).popup('enable')
+      this.activeButton = null
+      return
+    }
+
     this.hasMoved = true
     // TODO: make browser compatible
     const active = this.activeButton
 
-    this.activeButton.style.top = 0
+    this.activeButton.style.top = top + "px"
     this.activeButton.style.left = left + "px"
 
     const sort = (e) => {
@@ -481,6 +544,15 @@ export default class Toolbar extends React.Component {
       else if(mostRight){
         data.splice(parseInt(mostRight.dataset.index, 10), 0, b[0])
       }
+      else if(mostBottom){
+        data.splice(parseInt(mostBottom.dataset.index, 10), 0, b[0])
+      }
+      else if(mostTop){
+        data.splice(parseInt(mostTop.dataset.index, 10), 0, b[0])
+      }
+
+
+
       this.saveState()
 
       this.forceUpdate()

@@ -11,7 +11,7 @@ import SpriteLayers from './Layers/SpriteLayers.js';
 import GraphicImport from './GraphicImport/GraphicImport.js';
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js';
-
+import Toolbar from '/client/imports/components/Toolbar/Toolbar.js';
 
 
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
@@ -1195,9 +1195,28 @@ map
     let c2 = asset.content2
     let zoom = this.state.editScale
 
+    const actions = {}
+    const config = {
+      // default level
+      level: 1,
+      vertical: true,
+      buttons: []
+    }
+
     let toolComponents = _.map(Tools, (tool) => { 
       if(tool.hideTool === true) return;
-      return (
+      config.buttons.push({
+        active: this.state.toolChosen === tool,
+        name: tool.name,
+        label: tool.name,
+        tooltip: tool.description,
+        shortcut: tool.shortcutKey,
+        level: tool.level || 3,
+        icon: tool.icon
+      })
+      actions[tool.name] = this.handleToolSelected.bind(this, tool)
+
+      /*return (
       <div  className={"ui button hazPopup " + (this.state.toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}
             key={tool.label}
@@ -1206,7 +1225,7 @@ map
             data-variation="tiny"
             data-position="right center">
         <i className={"large " + tool.icon}></i>
-      </div>);
+      </div>);*/
     });
 
     // Make element
@@ -1215,15 +1234,23 @@ map
 
         {/***  Left Column for tools  ***/}
 
-        <div className="ui one wide column">
-          <div className="ui vertical icon buttons" ref="toolbar">
+        <div className="ui one wide column" style={{
+          paddingLeft: "5px",
+          paddingRight: 0
+        }}>
+          <div className="ui vertical icon buttons" ref="toolbar" style={{
+             width: "115%",
+             maxWidth: "70px",
+             minWidth: "44px"
+          }}>
 
             <div className="ui button mgbColorPickerHost"
                  data-position="right center">
               <i className="block layout large icon" ref="colorPickerIcon"></i>
             </div>
             <br></br>
-            {toolComponents}
+            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
+            {/*toolComponents*/}
           </div>
 
           <div>

@@ -1208,9 +1208,9 @@ map
       config.buttons.push({
         active: this.state.toolChosen === tool,
         name: tool.name,
-        label: tool.name,
-        tooltip: tool.description,
-        shortcut: tool.shortcutKey,
+        label: tool.label,
+        tooltip: tool.tooltip,
+        shortcut: tool.shortcut,
         level: tool.level || 3,
         icon: tool.icon
       })

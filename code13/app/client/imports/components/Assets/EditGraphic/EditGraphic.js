@@ -801,6 +801,7 @@ export default class EditGraphic extends React.Component {
     // special case for select tool - toggleable button which also clears selected area
     if(tool.label === "Select" && this.state.selectRect){
       this.setState({ toolChosen: null, selectRect: null });
+      this.updateEditCanvasFromSelectedPreviewCanvas();
       return;
     }
 

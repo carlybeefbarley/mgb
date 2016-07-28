@@ -468,7 +468,7 @@ export default class EditCode extends React.Component {
           functionTypeInfo = data
         }
         setState(functionTypeInfo);
-      }, ternServer.cachedArgHints.start)     // TODO - We need CodeMirror 5.13.5 so this will work
+      }, currentCursorPos)     // TODO - We need CodeMirror 5.13.5 so this will work
     }
     else {
       setState();

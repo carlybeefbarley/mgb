@@ -13,15 +13,17 @@ export default BadgeGrid = React.createClass({
 
   render: function() {
     const { user } = this.props
-
     if (!user)
       return null
     
+    const badgesPageUrl = `/u/${user.profile.name}/badges`   
     const badgesForUser = getAllBadgesForUser(user)
     const getBadgeN = idx => (<Badge name={idx < badgesForUser.length ? badgesForUser[idx] : "blank"} />)
     return (
       <div className={this.props.className}>
-        <h2>Badges</h2>
+        <QLink to={badgesPageUrl}>
+          <h2>Badges</h2>
+        </QLink>
         <div className="ui equal width grid">
           <div className="equal width row">
             <div className="column">{getBadgeN(0)}</div>
@@ -37,7 +39,7 @@ export default BadgeGrid = React.createClass({
             <div className="column">{getBadgeN(6)}</div>
             <div className="column">{getBadgeN(7)}</div>
             <div className="column">
-              <QLink to={`/u/${name}/badges`}>
+              <QLink to={badgesPageUrl}>
                 <div className="ui label">more</div>
               </QLink>
               </div>

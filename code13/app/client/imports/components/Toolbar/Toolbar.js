@@ -329,12 +329,6 @@ export default class Toolbar extends React.Component {
     if(this.visibleButtons && this.visibleButtons.indexOf(index) == -1){
       className += " new";
     }
-    if(!this.visibleButtons){
-      this.visibleButtons = [index];
-    }
-    else{
-      this.visibleButtons.push(index);
-    }
     return (
       <div className={className}
            style={{position: "relative"}}

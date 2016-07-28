@@ -86,12 +86,13 @@ function pixelCompareAndSet(i, targetcolor, fillcolor, data, length, tolerance) 
 
 
 const ToolFill = {
-  name: "Fill",
-  description: "Click to fill an area with the chosen color. Color 00000000 is transparent/erase",
+  label: "Fill",
+  name: "fillTool",
+  tooltip: "Click to fill an area with the chosen color. Color 00000000 is transparent/erase",
   icon: "maximize icon",        // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: false,
-  shortcutKey: 'f',
+  shortcut: 'f',
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
 
   handleMouseDown: ( drawEnv ) => {

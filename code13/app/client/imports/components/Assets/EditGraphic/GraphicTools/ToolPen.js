@@ -5,12 +5,13 @@ import bline from './bresenhamLine';
 let priorPoint = null         // Used for tracking line draws from prior point to current point
 
 const ToolPen = {
-  name: "Pen",
-  description: "Click and drag to draw individual pixels on the frame. Alt-click to use like the eyedropper tool",
+  label: "Pen",
+  name: "penTool",
+  tooltip: "Click and drag to draw individual pixels on the frame. Alt-click to use like the eyedropper tool",
   icon: "pencil icon",        // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: true,
-  shortcutKey: 'p',
+  shortcut: 'p',
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
 
 

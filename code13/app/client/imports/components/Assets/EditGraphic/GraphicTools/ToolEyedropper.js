@@ -1,11 +1,12 @@
 
 const ToolEyedropper = {
-  name: "Eyedropper",
-  description: "Click to set drawing color based on current pixel",
+  label: "Eyedropper",
+  name: "eyedropperTool",
+  tooltip: "Click to set drawing color based on current pixel",
   icon: "eyedropper icon",        // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: false,
-  shortcutKey: 'd',
+  shortcut: 'd',
   changesImage: false,            // This does not cause changes to the image, so don't mark image as dirty if used.
 
   handleMouseDown: ( drawEnv ) => {

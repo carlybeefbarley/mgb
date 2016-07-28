@@ -42,12 +42,13 @@ function drawCircle(drawEnv, x0, y0, radius, fillFlag = false) {
   }
 }
 const ToolCircle = {
-  name: "Circle",
-  description: "Click center and then drag to radius to draw a circle. Use SHIFT+drag for filled circles",
+  label: "Circle",
+  name: "circleTool",
+  tooltip: "Click center and then drag to radius to draw a circle. Use SHIFT+drag for filled circles",
   icon: "circle icon",            // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: true,
-  shortcutKey: 'o',
+  shortcut: 'o',
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
 
 

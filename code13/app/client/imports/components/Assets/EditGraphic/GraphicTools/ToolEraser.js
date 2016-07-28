@@ -8,12 +8,13 @@ let priorPoint = null         // Used for tracking line draws from prior point t
 // briefly, then redraws to show the change
 
 const ToolEraser = {
-  name: "Eraser",
-  description: "Click and drag to erase individual pixels on the frame",
+  label: "Eraser",
+  name: "eraserTool",
+  tooltip: "Click and drag to erase individual pixels on the frame",
   icon: "eraser icon",            // Semantic-UI icon CSS class
   editCursor: "not-allowed",
   supportsDrag: true,
-  shortcutKey: 'e',
+  shortcut: 'e',
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
 
 

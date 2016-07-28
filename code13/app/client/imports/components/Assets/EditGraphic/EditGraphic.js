@@ -5,6 +5,7 @@ import sty from  './editGraphic.css';
 import ColorPicker from 'react-color';        // http://casesandberg.github.io/react-color/
 import AssetUrlGenerator from '../AssetUrlGenerator.js';
 import Tools from './GraphicTools';
+import GraphicTools from './GraphicTools/GraphicTools.js';
 
 import SpriteLayers from './Layers/SpriteLayers.js';
 import GraphicImport from './GraphicImport/GraphicImport.js';
@@ -572,7 +573,7 @@ export default class EditGraphic extends React.Component {
     // manually select paste tool
     for (var key in Tools) {
       if (Tools.hasOwnProperty(key)) {
-        if(Tools[key].name === "Paste"){
+        if(Tools[key].label === "Paste"){
           tool = Tools[key];
           break; 
         }
@@ -621,7 +622,7 @@ export default class EditGraphic extends React.Component {
 
     if (Math.abs(wd) > 60) {
       // if paste tool then use ctrl/alt/shift for resizing, rotating, flipping
-      if(this.state.toolChosen !== null && this.state.toolChosen.name === "Paste"){
+      if(this.state.toolChosen !== null && this.state.toolChosen.label === "Paste"){
         this.state.toolChosen.handleMouseWheel(this.collateDrawingToolEnv(event), wd);
       } 
       // TODO maybe change keys so they are not the same as paste tool
@@ -668,7 +669,7 @@ export default class EditGraphic extends React.Component {
     }
 
     if (this.state.toolChosen.changesImage)
-      this.doSaveStateForUndo(this.state.toolChosen.name)   // So that tools like eyedropper don't save and need undo
+      this.doSaveStateForUndo(this.state.toolChosen.label)   // So that tools like eyedropper don't save and need undo
 
     if (this.state.toolChosen.supportsDrag === true)
       this.setState({ toolActive: true })
@@ -798,13 +799,13 @@ export default class EditGraphic extends React.Component {
   handleToolSelected(tool)
   {
     // special case for select tool - toggleable button which also clears selected area
-    if(tool.name === "Select" && this.state.selectRect){
+    if(tool.label === "Select" && this.state.selectRect){
       this.setState({ toolChosen: null, selectRect: null });
       return;
     }
 
     this.setState({ toolChosen: tool })
-    this.setStatusBarWarning(`${tool.name} tool selected`)
+    this.setStatusBarWarning(`${tool.label} tool selected`)
   }
 
 
@@ -1198,9 +1199,9 @@ map
       return (
       <div  className={"ui button hazPopup " + (this.state.toolChosen === tool ? " active" : "" )}
             onClick={this.handleToolSelected.bind(this, tool)}
-            key={tool.name}
-            data-title={tool.name + " (" + tool.shortcutKey + ")"}
-            data-content={tool.description}
+            key={tool.label}
+            data-title={tool.label + " (" + tool.shortcut + ")"}
+            data-content={tool.tooltip}
             data-variation="tiny"
             data-position="right center">
         <i className={"large " + tool.icon}></i>
@@ -1223,6 +1224,11 @@ map
             <br></br>
             {toolComponents}
           </div>
+
+          <div>
+          {/**  <GraphicTools graphic={this} ref="tools" /> **/}
+          </div>
+
         </div>
 
         {/***  Center Column for Edit and other wide stuff  ***/}

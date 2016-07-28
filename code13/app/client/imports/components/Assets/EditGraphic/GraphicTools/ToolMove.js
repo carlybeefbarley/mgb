@@ -1,11 +1,12 @@
 
 const ToolMove = {
-  name: "Move",
-  description: "Grab and drag to move the the frame's contents up, down, left or right",
+  label: "Move",
+  name: "moveTool",
+  tooltip: "Grab and drag to move the the frame's contents up, down, left or right",
   icon: "move icon",        // Semantic-UI icon CSS class
   editCursor: "move",
   supportsDrag: true,
-  shortcutKey: 'm',
+  shortcut: 'm',
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
 
 

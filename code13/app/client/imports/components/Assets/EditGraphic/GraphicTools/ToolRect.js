@@ -32,12 +32,13 @@ function drawRect(drawEnv, x0, y0, w, h, fillFlag = false) {
 }
 
 const ToolRect = {
-  name: "Rectangle",
-  description: "Click center and then drag to corner to draw a rectangle. Use SHIFT+drag for filled rectangle",
+  label: "Rectangle",
+  name: "rectTool",
+  tooltip: "Click center and then drag to corner to draw a rectangle. Use SHIFT+drag for filled rectangle",
   icon: "square icon",            // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: true,
-  shortcutKey: 'r',
+  shortcut: 'r',
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
 
 

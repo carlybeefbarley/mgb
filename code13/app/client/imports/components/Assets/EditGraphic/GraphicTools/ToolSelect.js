@@ -1,12 +1,13 @@
 // Select Tool 
 
 const ToolSelect = {
-  name: "Select",
-  description: "Click and drag to select an area in the asset",
+  label: "Select",
+  name: "selectTool",
+  tooltip: "Click and drag to select an area in the asset",
   icon: "crosshairs icon",        // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: true,
-  shortcutKey: 's',
+  shortcut: 's',
   changesImage: false,             // This does cause changes to the image, so image is dirty if this tool used
 
 

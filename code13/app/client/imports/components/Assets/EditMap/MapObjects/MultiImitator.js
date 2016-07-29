@@ -24,14 +24,14 @@ export default class MultiImitator{
     this.forEach((o) => {
       let dx = diff;
       let dy = 0;
-      if(o.rotation) {
+      /*if(o.rotation) {
         const angle = o.rotation * ObjectHelper.TO_RADIANS;
         const sin = Math.sin(angle);
         const cos = Math.cos(angle);
 
         dx = -ObjectHelper.rpx(sin, cos, diff, 0, 0, 0);
         dy = -ObjectHelper.rpy(sin, cos, diff, 0, 0, 0);
-      }
+      }*/
       o.x += dx;
       o.y += dy;
     });
@@ -46,18 +46,17 @@ export default class MultiImitator{
     if(!diff){
       return;
     }
-    console.log("Set Y");
     this.forEach((o) => {
       let dx = 0;
       let dy = diff;
-      if(o.rotation) {
+      /*if(o.rotation) {
         const angle = o.rotation * ObjectHelper.TO_RADIANS;
         const sin = Math.sin(angle);
         const cos = Math.cos(angle);
 
         dx = -ObjectHelper.rpx(sin, cos, 0, diff, 0, 0);
         dy = -ObjectHelper.rpy(sin, cos, 0, diff, 0, 0);
-      }
+      }*/
       o.x += dx;
       o.y += dy;
     });
@@ -68,15 +67,17 @@ export default class MultiImitator{
     return this._width;
   }
   set width(v){
+    // disable for now at it needs to be redone
+    return;
     const diff = v - this._width;
     if(!diff){
       return;
     }
     this.forEach((o) => {
-      /*o.width += diff*2;
+      o.width += diff*2;
       o.height += diff*2;
-      o.x -= diff;
-      o.y -= diff;*/
+      //o.x += diff;
+      //o.y += diff;
       // below are sort of nicer resize - but it needs extra work for rotated objects - e.g. for objects upside down
       let dx = diff;
       let dy = 0;
@@ -85,15 +86,14 @@ export default class MultiImitator{
         const sin = Math.sin(angle);
         const cos = Math.cos(angle);
 
-        dx = ObjectHelper.rpx(sin, cos, diff, 0, 0, 0);
-        dy = ObjectHelper.rpy(sin, cos, diff, 0, 0, 0);
+        dx = ObjectHelper.rpx(sin, cos, diff, diff, 0, 0);
+        dy = ObjectHelper.rpy(sin, cos, diff, diff, 0, 0);
       }
       if(dx != diff){
         console.log("DX:", dx, diff);
       }
-      o.width += dx;
-      o.height += dy;
-      //o.x += (diff - dx) * 0.5;
+      o.x += 2*dx;
+      o.y += 2*dx;
     });
     this._width = v;
     //this.update()
@@ -105,6 +105,8 @@ export default class MultiImitator{
     return this._height;
   }
   set height(v){
+    // disable for now at it needs to be redone
+    return;
     const diff = v - this._height;
     if(!diff){
       return;

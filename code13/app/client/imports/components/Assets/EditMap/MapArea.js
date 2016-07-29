@@ -245,6 +245,7 @@ export default class MapArea extends React.Component {
       this.ignoreUndo++;
       this.update(() => {
         this.ignoreUndo--;
+        this.save("Undo");
       });
     }
   }
@@ -259,6 +260,7 @@ export default class MapArea extends React.Component {
     this.ignoreUndo++;
     this.update(() => {
       this.ignoreUndo--;
+      this.save("Undo");
     });
   }
 

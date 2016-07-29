@@ -77,7 +77,7 @@ export default class MapTools extends React.Component {
     this.props.map.redraw();
     const l = this.props.map.getActiveLayer();
     if(!l || !l.clearSelection){return;}
-    l.clearSelection();
+    l.clearSelection(true);
   }
   togglePolygon(){
     const l = this.props.map.getActiveLayer();

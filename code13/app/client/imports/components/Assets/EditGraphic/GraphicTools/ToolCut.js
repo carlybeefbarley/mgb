@@ -1,7 +1,6 @@
 const ToolCut = {
   label: "Cut",
   name: "cutSelected",
-  iconText: 2,
   tooltip: "Cut",
   icon: "cut icon",        // Semantic-UI icon CSS class
   shortcut: 'Ctrl+X',

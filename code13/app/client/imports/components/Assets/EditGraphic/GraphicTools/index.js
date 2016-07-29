@@ -1,3 +1,4 @@
+import ToolColorPicker from './ToolColorPicker.js';
 import ToolPen from './ToolPen.js';
 import ToolEraser from './ToolEraser.js';
 import ToolFill from './ToolFill.js';
@@ -14,6 +15,9 @@ import ToolRedo from './ToolRedo.js';
 import ToolSeparator from './ToolSeparator.js';
 
 const Tools = [
+  ToolColorPicker,
+  ToolSeparator,
+
   ToolUndo,
   ToolRedo,
   ToolSeparator,

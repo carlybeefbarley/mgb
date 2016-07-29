@@ -195,19 +195,20 @@ export default class EditGraphic extends React.Component {
     let $a = $(ReactDOM.findDOMNode(this))
     $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
 
-    let $cp =  $a.find('.mgbColorPickerHost')
+    // let $cp =  $a.find('.mgbColorPickerHost')
+    let $cp =  $a.find('.layout.icon').parent()
     $cp.popup({
       popup: '.mgbColorPickerWidget.popup',
-      lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
+      lastResort: 'right top',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
       hoverable: true
     })
 
-    let $resizer =  $a.find('.mgbResizerHost')
-    $resizer.popup({
-      popup: '.mgbResizer.popup',
-      lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
-      hoverable: true
-    })
+    // let $resizer =  $a.find('.mgbResizerHost')
+    // $resizer.popup({
+    //   popup: '.mgbResizer.popup',
+    //   lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
+    //   hoverable: true
+    // })
   }
 
 // TODO: DGOLDS to clean this up
@@ -828,7 +829,7 @@ export default class EditGraphic extends React.Component {
 
     // So we have to fix up UI stuff. This is a bit of a hack for perf. See statusBarInfo()
     let colorCSSstring = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
-    $(ReactDOM.findDOMNode(this.refs.colorPickerIcon)).css( { color: colorCSSstring})
+    $('.layout.icon').css( { color: colorCSSstring})
   }
 
 
@@ -1273,56 +1274,25 @@ map
     return (
       <div className="ui grid">
 
-        {/***  Left Column for tools  ***/}
-
-        <div className="ui one wide column" style={{
-          paddingLeft: "5px",
-          paddingRight: 0
-        }}>
-          <div className="ui vertical icon buttons" ref="toolbar" style={{
-             width: "115%",
-             maxWidth: "70px",
-             minWidth: "44px"
-          }}>
-
-            <div className="ui button mgbColorPickerHost"
-                 data-position="right center">
-              <i className="block layout large icon" ref="colorPickerIcon"></i>
-            </div>
-            <br></br>
-            
-            {/*toolComponents*/}
-          </div>
-
-          <div>
-          {/**  <GraphicTools graphic={this} ref="tools" /> **/}
-          </div>
-
-        </div>
-
         {/***  Center Column for Edit and other wide stuff  ***/}
 
-        <div className={"mgbEditGraphicSty_tagPosition ui fifteen wide column"} >
-          <div className="row">
-            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
-          </div>
+        <div className={"mgbEditGraphicSty_tagPosition ui sixteen wide column"} >
           <div className="row">
 
-            {/*
+            {/*****************
             <div className="ui small button" onClick={this.handleUndo.bind(this)}>
               <i className="icon undo"></i>Undo {this.undoSteps.length}
             </div>
-            */}
+            *****************/}
 
-            {/*
+            {/*****************
             <span>&nbsp;&nbsp;</span>
             <a className="ui tiny label mgbResizerHost" data-position="right center"  onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-2)}>
               <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
             </a>
-            */}
+            *****************/}
 
-            <span>&nbsp;&nbsp;</span>
             <div className="ui small labeled input">
               <div className="ui small label" title="Canvas width">
                 w:
@@ -1379,7 +1349,7 @@ map
             <AssetUrlGenerator asset={this.props.asset} />
 
 
-            {/*
+            {/*****************
             <span>&nbsp;&nbsp;</span>
             <div className={"ui small button hazPopup " + (this.state.selectRect ? "" : "disabled")} 
               onClick={this.cutSelected.bind(this)}
@@ -1404,7 +1374,7 @@ map
                data-position="bottom center">
               <i className="paste icon"></i>Paste
             </div>
-            */}
+            *****************/}
 
             <span>&nbsp;&nbsp;</span>
             <div className="ui small button hazPopup"
@@ -1415,6 +1385,9 @@ map
                 <i className="add square icon"></i>Import
             </div>
 
+          </div>
+          <div className="row">
+            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
           </div>
           <div className="row">
             <br></br>
@@ -1462,36 +1435,6 @@ map
                          color={this.state.selectedColors['fg'].rgb}/>
           </div>
 
-          <div className="ui popup mgbResizer">
-            <div className="ui">You can resize the Graphic using these buttons, or by dragging an image to this control</div>
-            <div className="ui horizontal icon buttons">
-              <div className="ui button" onClick={this.handleResize.bind(this, 1, 0)}
-                   data-content="Increase Width"
-                   data-variation="tiny"
-                   data-position="bottom center">
-                <i className="toggle right icon"></i>
-              </div>
-              <div className="ui button" onClick={this.handleResize.bind(this, -1, 0)}
-                   data-content="Decrease Width"
-                   data-variation="tiny"
-                   data-position="bottom center">
-                <i className="toggle left icon"></i>
-              </div>
-              <div className="ui button" onClick={this.handleResize.bind(this, 0, 1)}
-                   data-content="Increase height)"
-                   data-variation="tiny"
-                   data-position="bottom center">
-                <i className="toggle down icon"></i>
-              </div>
-              <div className="ui button" onClick={this.handleResize.bind(this, 0, -1)}
-                   data-content="Decrease height)"
-                   data-variation="tiny"
-                   data-position="bottom center">
-                <i className="toggle up icon"></i>
-              </div>
-
-            </div>
-          </div>
         </div>
 
       {/*** GraphicImport ***/}

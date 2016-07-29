@@ -1,7 +1,6 @@
 const ToolCopy = {
   label: "Copy",
   name: "copySelected",
-  iconText: 2,
   tooltip: "Copy",
   icon: "copy icon",        // Semantic-UI icon CSS class
   shortcut: 'Ctrl+C',

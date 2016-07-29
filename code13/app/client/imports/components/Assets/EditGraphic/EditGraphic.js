@@ -800,7 +800,7 @@ export default class EditGraphic extends React.Component {
   handleToolSelected(tool)
   {
     // if not selectable tool then trigger action here
-    if(tool.notSelectable){
+    if(tool.simpleTool){
       this.setState({ toolChosen: null })
       this.setStatusBarWarning('')
       this[tool.name]()
@@ -1244,7 +1244,7 @@ map
         icon: "undo icon",        // Semantic-UI icon CSS class
         shortcut: 'Ctrl+Z',
         level: 2,
-        notSelectable: true   // this tool is not selectable, only action is on tool click
+        simpleTool: true   // this tool is not selectable, only action is on tool click
       }
       , Redo: {
         label: "Redo",
@@ -1255,7 +1255,27 @@ map
         icon: "undo flip icon",        // Semantic-UI icon CSS class
         shortcut: 'Ctrl+Shift+Z',
         level: 2,
-        notSelectable: true   // this tool is not selectable, only action is on tool click
+        simpleTool: true   // this tool is not selectable, only action is on tool click
+      }
+      ,Cut: {
+        label: "Cut",
+        name: "cutSelected",
+        tooltip: "Cut",
+        disabled: !this.state.selectRect,
+        icon: "cut icon",        // Semantic-UI icon CSS class
+        shortcut: 'Ctrl+X',
+        level: 2,
+        simpleTool: true   // this tool is not selectable, only action is on tool click
+      }
+      ,Copy: {
+        label: "Copy",
+        name: "copySelected",
+        tooltip: "Copy",
+        disabled: !this.state.selectRect,
+        icon: "copy icon",        // Semantic-UI icon CSS class
+        shortcut: 'Ctrl+C',
+        level: 2,
+        simpleTool: true   // this tool is not selectable, only action is on tool click
       }
     }
 
@@ -1263,6 +1283,10 @@ map
       let toolLabel = Tools[i].label
       if(simpleTools[toolLabel]){
         Tools[i] = simpleTools[toolLabel]
+      }
+      // special case for disabling paste tool when there is no pasteCanvas
+      if(toolLabel === "Paste"){
+        Tools[i].disabled = !this.state.pasteCanvas
       }
     }
 

@@ -2,11 +2,11 @@
 const ToolPaste = {
   label: "Paste",
   name: "pasteTool",
-  tooltip: "Paste copied region",
+  tooltip: "Rotate (Alt+Scroll). Scale (Shift+Scroll). Flip (Ctrl+Scroll)",
   icon: "paste icon",        // Semantic-UI icon CSS class
   editCursor: "copy",
   supportsDrag: false,
-  shortcut: 'v',
+  shortcut: 'Ctrl+V',
   level: 2,
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
   hasHover: true,                 // enable mouse hover (not only on drag. Needed for paste preview)

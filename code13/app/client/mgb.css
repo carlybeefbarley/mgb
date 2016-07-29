@@ -34,6 +34,10 @@
   font-weight: bold;
 }
 
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
 .accept-drop{
   position: relative;
 }
@@ -242,3 +246,7 @@ body.dragging .accept-drop:hover{
 .lint-error:hover .lint-error-text {
   display: block;
 }
+
+
+
+

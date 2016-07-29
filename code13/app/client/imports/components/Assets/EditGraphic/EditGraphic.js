@@ -1307,17 +1307,20 @@ map
             {<Toolbar actions={actions} config={config} name="EditGraphic" />}
           </div>
           <div className="row">
+
+            {/*
             <div className="ui small button" onClick={this.handleUndo.bind(this)}>
               <i className="icon undo"></i>Undo {this.undoSteps.length}
             </div>
+            */}
 
-            {/***
+            {/*
             <span>&nbsp;&nbsp;</span>
             <a className="ui tiny label mgbResizerHost" data-position="right center"  onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-2)}>
               <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
             </a>
-            ***/}
+            */}
 
             <span>&nbsp;&nbsp;</span>
             <div className="ui small labeled input">
@@ -1375,6 +1378,8 @@ map
             <span>&nbsp;&nbsp;</span>
             <AssetUrlGenerator asset={this.props.asset} />
 
+
+            {/*
             <span>&nbsp;&nbsp;</span>
             <div className={"ui small button hazPopup " + (this.state.selectRect ? "" : "disabled")} 
               onClick={this.cutSelected.bind(this)}
@@ -1399,6 +1404,7 @@ map
                data-position="bottom center">
               <i className="paste icon"></i>Paste
             </div>
+            */}
 
             <span>&nbsp;&nbsp;</span>
             <div className="ui small button hazPopup"

@@ -862,7 +862,7 @@ export default class EditGraphic extends React.Component {
 
   initDefaultUndoStack()
   {
-    // mgb_undoStack will be an array of
+    // undoSteps will be an array of
     //   {
     //      when:           Date.now() of when it was added to the stack
     //      byUserName      username who made the change
@@ -873,9 +873,14 @@ export default class EditGraphic extends React.Component {
     //
     // Oldest items will be at index=0 in array
 
-    if (this.hasOwnProperty("mgb_undoStack") === false) {
-      this.mgb_undoStack = []
+    if (this.hasOwnProperty("undoSteps") === false) {
+      this.undoSteps = []
     }
+
+    if (this.hasOwnProperty("redoSteps") === false) {
+      this.redoSteps = []
+    }
+
   }
 
 
@@ -893,17 +898,26 @@ export default class EditGraphic extends React.Component {
 
   doTrimUndoStack()
   {
-    let u = this.mgb_undoStack
+    let u = this.undoSteps
     if (u.length > 20)
       u.shift()         // Remove 0th element (which is the oldest)
   }
 
-
   doSaveStateForUndo(changeInfoString)
   {
-    let u = this.mgb_undoStack
     this.doTrimUndoStack()
-    u.push(this.doMakeUndoStackEntry(changeInfoString))
+    this.undoSteps.push(this.doMakeUndoStackEntry(changeInfoString))
+  }
+
+
+
+  doTrimRedoStack(){
+    if(this.redoSteps.length > 20) this.redoSteps.shift()
+  }
+
+  doSaveStateForRedo(changeInfoString){
+    this.doTrimRedoStack()
+    this.redoSteps.push(this.doMakeUndoStackEntry(changeInfoString))
   }
 
 
@@ -926,19 +940,36 @@ export default class EditGraphic extends React.Component {
 
   handleUndo()
   {
-    let u = this.mgb_undoStack
-    if (u.length > 0)
+    if (this.undoSteps.length > 0)
     {
-      let zombie = u.pop()
+      let zombie = this.undoSteps.pop()
       let c2 = zombie.savedContent2
       // Make sure we aren't on a frame/layer that doesn't exist
       if (this.state.selectedFrameIdx > c2.frameNames.length-1 && c2.frameNames.length > 0)
         this.setState({ selectedFrameIdx: c2.frameNames.length-1 })
       if (this.state.selectedLayerIdx > c2.layerParams.length-1 && c2.layerParams.length > 0)
         this.setState({ selectedLayerIdx: c2.layerParams.length-1 })
+
+      this.doSaveStateForRedo("Redo changes")
       // Now force this into the DB and that will cause a re-render
       this.saveChangedContent2(c2, c2.frameData[0][0], "Undo changes", true)        // Allow Backwash from database to replace current viewed state
       
+    }
+  }
+
+  handleRedo(){
+    if(this.redoSteps.length > 0){
+      let zombie = this.redoSteps.pop()
+      let c2 = zombie.savedContent2
+      // Make sure we aren't on a frame/layer that doesn't exist
+      if (this.state.selectedFrameIdx > c2.frameNames.length-1 && c2.frameNames.length > 0)
+        this.setState({ selectedFrameIdx: c2.frameNames.length-1 })
+      if (this.state.selectedLayerIdx > c2.layerParams.length-1 && c2.layerParams.length > 0)
+        this.setState({ selectedLayerIdx: c2.layerParams.length-1 })
+
+      this.doSaveStateForUndo("Undo changes")
+      // Now force this into the DB and that will cause a re-render
+      this.saveChangedContent2(c2, c2.frameData[0][0], "Redo changes", true)        // Allow Backwash from database to replace current viewed state
     }
   }
   
@@ -1277,7 +1308,7 @@ map
           </div>
           <div className="row">
             <div className="ui small button" onClick={this.handleUndo.bind(this)}>
-              <i className="icon undo"></i>Undo {this.mgb_undoStack.length}
+              <i className="icon undo"></i>Undo {this.undoSteps.length}
             </div>
 
             {/***

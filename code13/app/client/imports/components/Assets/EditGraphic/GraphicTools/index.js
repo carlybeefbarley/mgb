@@ -11,20 +11,21 @@ import ToolUndo from './ToolUndo.js';
 import ToolRedo from './ToolRedo.js';
 import ToolSeparator from './ToolSeparator.js';
 
-const Tools = {
+const Tools = [
   ToolPen,
   ToolEraser,
   ToolFill,
   ToolMove,
   ToolCircle,
-  // ToolSeparator,
   ToolRect,
   ToolEyedropper,
   ToolSelect,
+  ToolSeparator,
   ToolUndo,
   ToolRedo,
+  ToolSeparator,
   ToolPaste
 
-};
+];
 
 export default Tools

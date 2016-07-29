@@ -7,6 +7,7 @@ const ToolPaste = {
   editCursor: "copy",
   supportsDrag: false,
   shortcut: 'v',
+  level: 2,
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used
   hasHover: true,                 // enable mouse hover (not only on drag. Needed for paste preview)
   // hideTool: false,                 // don't show tool in tool panel

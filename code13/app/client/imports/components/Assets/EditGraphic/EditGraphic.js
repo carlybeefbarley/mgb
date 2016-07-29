@@ -1234,6 +1234,38 @@ map
     let c2 = asset.content2
     let zoom = this.state.editScale
 
+    let simpleTools = {
+      Undo: {
+        label: "Undo",
+        name: "handleUndo",
+        tooltip: "Undo",
+        iconText: this.undoSteps.length,        
+        disabled: !this.undoSteps.length,
+        icon: "undo icon",        // Semantic-UI icon CSS class
+        shortcut: 'Ctrl+Z',
+        level: 2,
+        notSelectable: true   // this tool is not selectable, only action is on tool click
+      }
+      , Redo: {
+        label: "Redo",
+        name: "handleRedo",
+        tooltip: "Redo",
+        iconText: this.redoSteps.length,        
+        disabled: !this.redoSteps.length,
+        icon: "undo flip icon",        // Semantic-UI icon CSS class
+        shortcut: 'Ctrl+Shift+Z',
+        level: 2,
+        notSelectable: true   // this tool is not selectable, only action is on tool click
+      }
+    }
+
+    for(let i=0; i<Tools.length; i++){
+      let toolLabel = Tools[i].label
+      if(simpleTools[toolLabel]){
+        Tools[i] = simpleTools[toolLabel]
+      }
+    }
+
     const actions = {}
     const config = {
       // default level
@@ -1248,7 +1280,8 @@ map
         active: this.state.toolChosen === tool,
         name: tool.name,
         label: tool.label,
-        toolText: tool.toolText,
+        iconText: tool.iconText,
+        disabled: tool.disabled,
         tooltip: tool.tooltip,
         shortcut: tool.shortcut,
         level: tool.level || 3,

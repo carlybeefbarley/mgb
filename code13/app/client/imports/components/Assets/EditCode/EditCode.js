@@ -417,19 +417,36 @@ export default class EditCode extends React.Component {
         editor.clearGutter("CodeMirror-lint-markers");
         
         const errors = e.data[0]
+        // TODO: optimization: skip invisible lines?
+        // TODO: show multiple errors on same line
+        const msgs = {};
+        let icon, multi, msgContainer;
         for (var i = 0; i < errors.length; ++i) {
           const err = errors[i];
           if (!err) continue;
+          const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div");
+          // msg.errorTxt = err.reason;
 
-          const msg = document.createElement("div");
-          msg.errorTxt = err.reason;
-
-          const icon = msg.appendChild(document.createElement("span"));
-          //icon.innerHTML = "!";
-          icon.className = "CodeMirror-lint-marker-error";
-
-          const text = msg.appendChild(document.createElement("span"));
-          text.className = "lint-error-text";
+          if(!msgs[err.line]){
+            msgs[err.line] = msg;
+            multi = null;
+            icon = msg.appendChild(document.createElement("div"));
+            //icon.innerHTML = "!";
+            if(err.code.substring(0,1) == "W"){
+              icon.className = "CodeMirror-lint-marker-warning";
+            }
+            else{
+              icon.className = "CodeMirror-lint-marker-error";
+            }
+            msgContainer = msg.appendChild(document.createElement("div"));
+            msgContainer.className = "lint-error-text";
+          }
+          else if(!multi){
+            multi = icon.appendChild(document.createElement("div"));
+            multi.className = "CodeMirror-lint-marker-multiple";
+          }
+          
+          const text = msgContainer.appendChild(document.createElement("div"));
           text.appendChild(document.createTextNode(err.reason));
 
           msg.className = "lint-error";
@@ -454,9 +471,9 @@ export default class EditCode extends React.Component {
         predef: {
           "Phaser": false,
           "PIXI": false,
-          "console": false
-        },
-        laxcomma: false
+          "console": false,
+          "_": false
+        }
       };
       worker.postMessage([editor.getValue(), conf ]);
     });

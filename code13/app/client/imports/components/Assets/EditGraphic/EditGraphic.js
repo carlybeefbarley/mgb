@@ -1199,7 +1199,7 @@ map
     const config = {
       // default level
       level: 1,
-      vertical: true,
+      // vertical: true,
       buttons: []
     }
 
@@ -1209,6 +1209,7 @@ map
         active: this.state.toolChosen === tool,
         name: tool.name,
         label: tool.label,
+        toolText: tool.toolText,
         tooltip: tool.tooltip,
         shortcut: tool.shortcut,
         level: tool.level || 3,
@@ -1227,6 +1228,8 @@ map
         <i className={"large " + tool.icon}></i>
       </div>);*/
     });
+
+    // console.log(config)
 
     // Make element
     return (
@@ -1249,7 +1252,7 @@ map
               <i className="block layout large icon" ref="colorPickerIcon"></i>
             </div>
             <br></br>
-            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
+            
             {/*toolComponents*/}
           </div>
 
@@ -1263,7 +1266,9 @@ map
 
         <div className={"mgbEditGraphicSty_tagPosition ui fifteen wide column"} >
           <div className="row">
-
+            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
+          </div>
+          <div className="row">
             <div className="ui small button" onClick={this.handleUndo.bind(this)}>
               <i className="icon undo"></i>Undo {this.mgb_undoStack.length}
             </div>

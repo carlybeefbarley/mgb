@@ -33,6 +33,7 @@ export default class Toolbar extends React.Component {
     this.level = localStorage.getItem(this.lsLevelKey) || this.props.config.level
     this.levelSlider = this._addLevelSlider()
 
+
     this.order = new Array(this.props.config.buttons.length)
     // foreach will skip undefined values :/
     this.order.fill(0);
@@ -138,11 +139,13 @@ export default class Toolbar extends React.Component {
   componentWillReceiveProps(props){
     const len = props.config.buttons.length;
     // add extra buttons spots
+
     if(this.order.length < len){
-      for(let i=this.order.len; i<len; i++){
+      for(let i=this.order.length; i<len; i++){
         this.order[i] = i;
       }
     }
+
     this.data = props.config;
     /*let p = props.config.buttons
     let o = this.data.buttons
@@ -260,6 +263,7 @@ export default class Toolbar extends React.Component {
       content.push(<div style={{marginRight: "4px"}} className={className} key={i}>{b}</div>)
     })
 
+
     return (
       <div ref="mainElement" className={"Toolbar" + (this.props.config.vertical ? " vertical" : '')}>
         {content}
@@ -329,6 +333,7 @@ export default class Toolbar extends React.Component {
     if(this.visibleButtons && this.visibleButtons.indexOf(index) == -1){
       className += " new";
     }
+
     return (
       <div className={className}
            style={{position: "relative"}}

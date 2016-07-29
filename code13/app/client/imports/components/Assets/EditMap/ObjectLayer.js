@@ -924,9 +924,11 @@ edit[EditModes.rectangle] = function(e){
       this.map.save("Edit Object");
       return;
     }
+    if(e.which == 1){
+      this.map.save("Edit Object");
+    }
     this.updateClonedObject();
   }
-
 
   if(e.type == "mousedown"){
     this.map.saveForUndo("Edit Object");

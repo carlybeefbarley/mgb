@@ -58,6 +58,10 @@ export default class EditCode extends React.Component {
   constructor(props) {
     super(props);
     this.fontSizeSettingIndex = undefined;
+
+    // save jshint reference - so we can kill it later
+    this.jshintWorker = null
+
     this.state = {
       _preventRenders: false,        // We use this as a way to batch updates. 
       consoleMessages: [],
@@ -154,9 +158,9 @@ export default class EditCode extends React.Component {
       matchBrackets: true,
       viewportMargin: Infinity,
       
-      hintOptions: {
+      /*hintOptions: {
         completeSingle: false    //    See https://codemirror.net/doc/manual.html -> completeSingle
-      },
+      },*/
           
       gutters: [
         "CodeMirror-lint-markers", 
@@ -177,7 +181,7 @@ export default class EditCode extends React.Component {
         "Ctrl-S": function(cm) { CodeMirror.tern.selectName(cm); },
         "Ctrl-O": function(cm) { cm.foldCode(cm.getCursor()); }
       },
-      lint: true,   // TODO - use eslint instead? Something like jssc?
+      //lint: true,   // TODO - use eslint instead? Something like jssc?
       autofocus: true,
       highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
     }
@@ -360,20 +364,23 @@ export default class EditCode extends React.Component {
    */
   srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged = false)
   {
-    return // TODO make this user-selectable
-    var editor = this.codeMirror
+    //return // TODO make this user-selectable
+    const editor = this.codeMirror
     var widgets = this.hintWidgets
     var currentLineNumber = editor.getCursor().line + 1     // +1 since user code is 1...
 
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
-    this.codeMirror.operation(function() {
-
+    this.codeMirror.operation(() => {
+      /*if ( !fSourceMayHaveChanged ){
+        return;
+      }*/
       for (var i = 0; i < widgets.length; ++i)
         editor.removeLineWidget(widgets[i]);
         
       widgets.length = 0;
-      
+
+      /*
       if (fSourceMayHaveChanged === true)
         JSHINT(editor.getValue());      // TODO: Can we look at the JSHINT results that Codemirror has instead of re-running it?
           
@@ -394,7 +401,64 @@ export default class EditCode extends React.Component {
           noHScroll: true
         })
         );
+      }*/
+
+
+
+      // TODO: potentially uneffective - or even can crash browser - reuse current worker?
+      // terminate old worker
+      if(this.jshintWorker){
+        this.jshintWorker.terminate();
       }
+      // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
+      const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js");
+      worker.onmessage = function(e) {
+        // clean up old messages
+        editor.clearGutter("CodeMirror-lint-markers");
+        
+        const errors = e.data[0]
+        for (var i = 0; i < errors.length; ++i) {
+          const err = errors[i];
+          if (!err) continue;
+
+          const msg = document.createElement("div");
+          msg.errorTxt = err.reason;
+
+          const icon = msg.appendChild(document.createElement("span"));
+          //icon.innerHTML = "!";
+          icon.className = "CodeMirror-lint-marker-error";
+
+          const text = msg.appendChild(document.createElement("span"));
+          text.className = "lint-error-text";
+          text.appendChild(document.createTextNode(err.reason));
+
+          msg.className = "lint-error";
+          editor.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg);
+
+          //var evidence = msg.appendChild(document.createElement("span"));
+          //evidence.className = "lint-error-text evidence";
+          //evidence.appendChild(document.createTextNode(err.evidence));
+        }
+      };
+
+      const conf = {
+        browser: true,
+        esversion: 6,
+
+        //globalstrict: true,
+        //strict: "implied",
+
+        undef: true,
+        unused: true,
+        loopfunc: true,
+        predef: {
+          "Phaser": false,
+          "PIXI": false,
+          "console": false
+        },
+        laxcomma: false
+      };
+      worker.postMessage([editor.getValue(), conf ]);
     });
     
     var info = editor.getScrollInfo();

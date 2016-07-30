@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import React, {Component, PropTypes} from 'react';
 import { browserHistory } from 'react-router';
-import WhatsNew from './WhatsNew.js';
+import WhatsNew from './WhatsNew';
+import NavBarBreadcrumb from './NavBarBreadcrumb'
 import QLink from '/client/imports/routes/QLink';
 import moment from 'moment';
 
@@ -17,42 +18,13 @@ export default NavBar = React.createClass({
     user:                   PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
     flexPanelWidth:         PropTypes.string.isRequired,      // Typically something like "200px".
     navPanelWidth:          PropTypes.string.isRequired,      // Typically something like "60px". NavPanel is always visible, but width varies
-    name:                   PropTypes.string                  // Page title to show in Nav bar // TODO: Replace this with something more useful
-  },
-
-
-  /** This used by render() to render something like...
-   *      OwnerName [> Project(s)] > Edit Asset
-   */
-  renderBreadcrumbBar() {
-    const { name, user, params } = this.props
-    const homeWord = "MyGameBuilder v2"
-    const sep = <i className="mini right chevron icon"></i>
-    const assetId = params && params.assetId
-    const projectId = params && params.projectId
-
-    return  <div className="ui large breadcrumb">
-              <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
-
-              { user && sep }
-              { user && <QLink className="section" to={`/u/${user.profile.name}`}>{user.profile.name}&nbsp;</QLink> }
-
-              { user && assetId && sep }
-              { user && assetId && <QLink className="section" to={`/u/${user.profile.name}/assets`}>Assets&nbsp;</QLink> }
-
-              { user && projectId && sep }
-              { user && projectId && <QLink className="section" to={`/u/${user.profile.name}/projects`}>Projects&nbsp;</QLink> }
-
-              { name && sep }
-              { name && <span>{name}&nbsp;</span> }
-
-            </div>
+    name:                   PropTypes.string                  // Page title to show in NavBar breadcrumb
   },
 
 
   render: function() {
-    const { currUser } = this.props
-    
+    const { name, user, params, currUser } = this.props
+
     const sty = {
       position: "fixed",
       top:      "0px",
@@ -61,7 +33,6 @@ export default NavBar = React.createClass({
       margin:   "0px"
     }
 
-
     const menuSty = {
       border: "none",
       boxShadow: "none"
@@ -69,14 +40,13 @@ export default NavBar = React.createClass({
     
     return (
       <div style={sty}>
-      <div className="ui  borderless menu" style={menuSty}>
+      <div className="ui borderless menu" style={menuSty}>
 
-          <WhatsNew currUser={this.props.currUser} asHidingLink={true}/>
+          <WhatsNew currUser={currUser} asHidingLink={true}/>
 
           <div className="item">
-            { this.renderBreadcrumbBar() }
+            <NavBarBreadcrumb name={name} user={user} params={params} />
           </div>
-
 
           <div className="right menu">
             { (currUser && currUser.profile.focusMsg) && 

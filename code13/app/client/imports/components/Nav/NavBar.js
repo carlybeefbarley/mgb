@@ -1,13 +1,15 @@
 import _ from 'lodash';
 import React, {Component, PropTypes} from 'react';
 import { browserHistory } from 'react-router';
-import {logActivity} from '/imports/schemas/activity';
-import NavRecentGET from './NavRecentGET.js';
 import WhatsNew from './WhatsNew.js';
 import QLink from '/client/imports/routes/QLink';
 import moment from 'moment';
 
-export default Nav = React.createClass({
+// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column on the left and the FlexPanel on the right). 
+// The NavBar contains a breadcrumb bar (left) and a NavGadget (right). The NavGadget is primarliy used for the Level slider that changes the
+// complexity of any page from Beginner to Guru
+
+export default NavBar = React.createClass({
   
   propTypes: {
     params:                 PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params

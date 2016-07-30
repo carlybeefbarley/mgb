@@ -12,7 +12,7 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { Users, Activity, Projects } from '/imports/schemas';
 import { projectMakeSelector } from '/imports/schemas/projects';
 
-import Nav from '/client/imports/components/Nav/Nav';
+import NavBar from '/client/imports/components/Nav/NavBar';
 import Toast from '/client/imports/components/Nav/Toast';
 import Spinner from '/client/imports/components/Nav/Spinner';
 import NavPanel from '/client/imports/components/SidePanels/NavPanel';
@@ -165,7 +165,7 @@ export default App = React.createClass({
               isSuperAdmin={isSuperAdmin}              
             />
             
-            <Nav
+            <NavBar
               currUser={currUser}
               user={user}              
               name={this.props.routes[1].name}

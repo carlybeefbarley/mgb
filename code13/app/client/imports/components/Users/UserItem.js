@@ -32,20 +32,21 @@ export default UserItem = React.createClass({
   },
   
   render: function() {
-    const { name, createdAt, renderAttached, profileTitle, profileBio, profileFocusMsg, profileFocusStart } = this.props
+    const { name, avatar, createdAt, renderAttached, profileTitle, profileBio, profileFocusMsg, profileFocusStart } = this.props
     const createdAtFmt = moment(createdAt).format('MMMM DD, YYYY')
-    const segClass = renderAttached ? "ui attached segment" : "ui raised segment"
+    const segClass = renderAttached ? "ui attached clearing segment" : "ui raised clearing segment"
     return (
-      <div  className={segClass}
-            onClick={this.handleClickUser}>
-        <div className="ui blue ribbon label">{name}</div>
-        <img src={this.props.avatar} className="ui right floated avatar image" />
-        { profileTitle && <div className="header">{profileTitle}</div> }
-        <small>
-          { profileBio && <p>Bio: {profileBio}</p> }
-          { profileFocusMsg && <p title={"Focus goal was set " + moment(profileFocusStart).fromNow()}>Current Focus: {profileFocusMsg}</p> }
-          <p>Joined {createdAtFmt}</p>
-        </small>
+      <div className={segClass} onClick={this.handleClickUser}>
+        <div className="ui header huge">{name}</div>
+        <img src={avatar} className="ui floated image tiny" />
+        { profileTitle &&
+          <big><i className="quote left icon blue"></i>{profileTitle}<i className="quote right icon blue"></i></big>
+        }
+        <p><font color="lighblue">Joined {createdAtFmt}</font></p>
+        <i className="birthday icon big red"></i>
+        <i className="paint brush icon big orange"></i>
+        <i className="trophy icon big blue"></i>
+        <i className="unhide icon big purple"></i>
       </div>
     );
   }

@@ -69,7 +69,7 @@ export function utilActivateLevelSlider(maxLevel, levelKey, level) {
   {
     levelSliderEl.disabled = false
     levelSliderEl.parentElement.style.opacity = 1    
-    levelSliderEl.setAttribute("title", levelKey)
+    levelSliderEl.setAttribute("title", `Change Feature Level for ${levelKey} tools`)
     levelSliderEl.setAttribute("min", "1")
     levelSliderEl.setAttribute("max", maxLevel+'')
     levelSliderEl.setAttribute("step", "1")

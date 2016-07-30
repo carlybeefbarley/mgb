@@ -1,14 +1,16 @@
 import _ from 'lodash';
-import React, {Component, PropTypes} from 'react';
-import { browserHistory } from 'react-router';
+import React, { PropTypes } from 'react';
 import WhatsNew from './WhatsNew';
-import NavBarBreadcrumb from './NavBarBreadcrumb'
-import QLink from '/client/imports/routes/QLink';
-import moment from 'moment';
+import NavBarBreadcrumb from './NavBarBreadcrumb';
+import NavBarGadget from './NavBarGadget';
 
-// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column on the left and the FlexPanel on the right). 
-// The NavBar contains a breadcrumb bar (left) and a NavGadget (right). The NavGadget is primarliy used for the Level slider that changes the
-// complexity of any page from Beginner to Guru
+// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column 
+// on the left and the FlexPanel on the right). 
+
+// The NavBar contains a breadcrumb bar (left) and a NavBarGadget (right).
+
+// The NavBarGadget is primarily used for the Level slider that adjusts UX complexity
+// of any page from Beginner to Guru - hiding advanced options etc
 
 export default NavBar = React.createClass({
   
@@ -49,12 +51,7 @@ export default NavBar = React.createClass({
           </div>
 
           <div className="right menu">
-            { (currUser && currUser.profile.focusMsg) && 
-              <QLink to={`/u/${currUser.profile.name}`} className=" item " title={"You set this focus goal " + moment(currUser.profile.focusStart).fromNow()}>
-                <i className="alarm icon"></i> {currUser.profile.focusMsg}
-              </QLink>
-            }
-
+            <NavBarGadget name={name} currUser={currUser}/>
           </div>
         </div>
         </div>

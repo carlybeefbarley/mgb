@@ -1,12 +1,12 @@
 import _ from 'lodash';
-import React, {Component, PropTypes} from 'react';
-import { browserHistory } from 'react-router';
-import WhatsNew from './WhatsNew.js';
+import React, { PropTypes } from 'react';
 import QLink from '/client/imports/routes/QLink';
-import moment from 'moment';
 
-// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column on the left and the FlexPanel on the right). 
-// The NavBarBreadcrumb contains a breadcrumb bar that is generated based on name, user and params (assetId, project id etc)
+// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column 
+// on the left and the FlexPanel on the right). 
+
+// The NavBarBreadcrumb contains a breadcrumb bar that is generated based on name, user and
+// params (assetId, projectId etc)
 
 export default NavBarBreadcrumb = React.createClass({
   

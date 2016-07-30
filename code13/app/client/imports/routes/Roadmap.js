@@ -1,14 +1,8 @@
 import _ from 'lodash';
-import React, {PropTypes} from 'react';
-import QLink from './QLink';
+import React from 'react';
 import Footer from '/client/imports/components/Footer/Footer';
-import moment from 'moment';
 
 export default Roadmap = React.createClass({
-
-  propTypes: {
-    currUser: PropTypes.object,                 // Can be null (if user is not logged in)
-  },
 
   render: function() {
     return (

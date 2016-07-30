@@ -403,60 +403,77 @@ export default class EditCode extends React.Component {
         );
       }*/
 
-
-
-      // TODO: potentially uneffective - or even can crash browser - reuse current worker?
-      // terminate old worker
-      if(this.jshintWorker){
+      // terminate old busy worker - as jshint can take a lot time on huge scripts
+      if(this.jshintWorker && this.jshintWorker.isBusy){
         this.jshintWorker.terminate();
+        this.jshintWorker = null;
       }
-      // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
-      const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js");
-      worker.onmessage = function(e) {
-        // clean up old messages
-        editor.clearGutter("CodeMirror-lint-markers");
-        
-        const errors = e.data[0]
-        // TODO: optimization: skip invisible lines?
-        // TODO: show multiple errors on same line
-        const msgs = {};
-        let icon, multi, msgContainer;
-        for (var i = 0; i < errors.length; ++i) {
-          const err = errors[i];
-          if (!err) continue;
-          const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div");
-          // msg.errorTxt = err.reason;
 
-          if(!msgs[err.line]){
-            msgs[err.line] = msg;
-            multi = null;
-            icon = msg.appendChild(document.createElement("div"));
-            //icon.innerHTML = "!";
-            if(err.code.substring(0,1) == "W"){
-              icon.className = "CodeMirror-lint-marker-warning";
+      if(!this.jshintWorker) {
+        // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
+        const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js");
+
+        worker.onmessage = function (e) {
+          worker.isBusy = false;
+          // clean up old messages
+          editor.clearGutter("CodeMirror-lint-markers");
+
+          const errors = e.data[0]
+          // TODO: optimization: skip invisible lines?
+          // TODO: show multiple errors on same line
+          // TODO: allow user to change error level? Warning / Error?
+          const msgs = {};
+          let multi;
+          for (var i = 0; i < errors.length; ++i) {
+            const err = errors[i];
+            if (!err) continue;
+            const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div");
+            // msg.errorTxt = err.reason;
+
+            if (!msgs[err.line]) {
+              msgs[err.line] = msg;
+              multi = null;
+              msg.icon = msg.appendChild(document.createElement("div"));
+              //icon.innerHTML = "!";
+              if (err.code.substring(0, 1) == "W") {
+                msg.icon.className = "CodeMirror-lint-marker-warning";
+              }
+              else {
+                msg.icon.className = "CodeMirror-lint-marker-error";
+              }
+              msg.container = msg.appendChild(document.createElement("div"));
+              msg.container.className = "lint-error-text";
+
             }
-            else{
-              icon.className = "CodeMirror-lint-marker-error";
+            else if (!multi) {
+              multi = msg.icon.appendChild(document.createElement("div"));
+              multi.className = "CodeMirror-lint-marker-multiple";
             }
-            msgContainer = msg.appendChild(document.createElement("div"));
-            msgContainer.className = "lint-error-text";
-          }
-          else if(!multi){
-            multi = icon.appendChild(document.createElement("div"));
-            multi.className = "CodeMirror-lint-marker-multiple";
-          }
-          
-          const text = msgContainer.appendChild(document.createElement("div"));
-          text.appendChild(document.createTextNode(err.reason));
+            // override warning icon to Error
+            if (err.code.substring(0, 1) == "E") {
+              msg.icon.className = "CodeMirror-lint-marker-error";
+            }
 
-          msg.className = "lint-error";
-          editor.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg);
+            const text = msg.container.appendChild(document.createElement("div"));
+            const ico = text.appendChild(document.createElement("div"));
+            if (err.code.substring(0, 1) == "W") {
+              ico.className = "CodeMirror-lint-marker-warning";
+            }
+            else {
+              ico.className = "CodeMirror-lint-marker-error";
+            }
 
-          //var evidence = msg.appendChild(document.createElement("span"));
-          //evidence.className = "lint-error-text evidence";
-          //evidence.appendChild(document.createTextNode(err.evidence));
-        }
-      };
+            text.appendChild(document.createTextNode(" "+err.reason));
+
+            msg.className = "lint-error";
+            editor.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg);
+
+            //var evidence = msg.appendChild(document.createElement("span"));
+            //evidence.className = "lint-error-text evidence";
+            //evidence.appendChild(document.createTextNode(err.evidence));
+          }
+        };
+      }
 
       const conf = {
         browser: true,
@@ -475,7 +492,8 @@ export default class EditCode extends React.Component {
           "_": false
         }
       };
-      worker.postMessage([editor.getValue(), conf ]);
+      this.jshintWorker.isBusy = true;
+      this.jshintWorker.postMessage([editor.getValue(), conf ]);
     });
     
     var info = editor.getScrollInfo();

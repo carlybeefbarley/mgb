@@ -6,12 +6,6 @@
 
 export default SpecialGlobals = {
 
-  // Element Ids
-  ElementId: {
-    NavBarGadgetUxSlider: "NavBarGadgetUxSlider"   // See NavBarGadgetUxSlider.js
-
-  }
-
 }
 
 // 

@@ -1,9 +1,8 @@
 "use strict"
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import SpecialGlobals from '/client/imports/SpecialGlobals';
-
+import { utilMuteLevelSlider, utilActivateLevelSlider } from '/client/imports/components/Nav/NavBarGadgetUxSlider'
 
 const CTRL = 1 << 8
 const SHIFT = 1 << 9
@@ -145,6 +144,8 @@ export default class Toolbar extends React.Component {
 
     let $a = $(ReactDOM.findDOMNode(this))
     $a.find('.hazPopup').popup( 'destroy' )
+
+    utilMuteLevelSlider(this.levelSlider)
   }
 
 
@@ -379,21 +380,10 @@ export default class Toolbar extends React.Component {
   }
 
 
-  // Note that this relies on the slider created by /client/imports/Nav/NavBarGadgetUxSlider.js
+  // Note that this relies on the slider created by /client/imports/components/Nav/NavBarGadgetUxSlider.js
   _addLevelSlider() {
     const maxLevel = _.maxBy(this.props.config.buttons, 'level').level
-    const levelSlider = document.getElementById(SpecialGlobals.ElementId.NavBarGadgetUxSlider)
-
-    if (!levelSlider) 
-      console.warn(`Could not find SpecialGlobals.ElementId.NavBarGadgetUxSlider: ${SpecialGlobals.ElementId.NavBarGadgetUxSlider}`)
-    else
-    {
-      levelSlider.setAttribute("min", "1")
-      levelSlider.setAttribute("max", maxLevel+'')
-      levelSlider.setAttribute("step", "1")
-      levelSlider.value = this.level
-    }
-    return levelSlider
+    return utilActivateLevelSlider(maxLevel, this.lsLevelKey, this.level)
   }
 
 

@@ -1298,8 +1298,9 @@ map
       buttons: []
     }
 
-    let toolComponents = _.map(Tools, (tool) => { 
+    _.each(Tools, (tool) => {
       if(tool.hideTool === true) return;
+
       config.buttons.push({
         active: this.state.toolChosen === tool,
         name: tool.name,
@@ -1309,7 +1310,8 @@ map
         tooltip: tool.tooltip,
         shortcut: tool.shortcut,
         level: tool.level || 3,
-        icon: tool.icon
+        icon: tool.icon,
+        component: tool.component
       })
       actions[tool.name] = this.handleToolSelected.bind(this, tool)
 

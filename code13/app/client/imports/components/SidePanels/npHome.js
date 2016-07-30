@@ -32,6 +32,9 @@ export default npHome = React.createClass({
             What's New
             <WhatsNew currUser={currUser} />
           </QLink>
+          <QLink to="/roadmap" className="item">
+            Roadmap
+          </QLink>
         </div>
   
         <div className="header item">Common Tasks</div>

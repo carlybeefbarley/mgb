@@ -13,6 +13,7 @@ import Projects from './Projects';
 import NotFoundPage from './NotFoundPage';
 import urlMaker from './urlMaker';
 import WhatsNewRoute from './WhatsNewRoute';
+import Roadmap from './Roadmap';
 
 
 // To understand this file...
@@ -40,6 +41,7 @@ Meteor.startup(function () {
       <Route component={App}>
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
+        <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
         <Route path="join" component={Users.Join} name="Sign up" />
         <Route path="signin" component={Users.SignIn} name="Sign In" />

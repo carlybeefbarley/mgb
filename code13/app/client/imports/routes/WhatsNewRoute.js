@@ -68,6 +68,9 @@ export default WhatsNewRoute = React.createClass({
           Please do NOT post this v2.mygamebuilder.com link to news sites like 
           Facebook/ProductHunt/Reddit/SlashDot/HackerNews etc. - we aren't ready for prime time yet!
         </p>
+        <p>
+          See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
+        </p>
       </div>
     </div>
   ),

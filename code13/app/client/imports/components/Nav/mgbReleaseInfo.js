@@ -17,6 +17,51 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
+      "timestamp":     "Sun Jul 31 2016 00:40:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "950"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.featureLevels",
+          "type":           "feature",
+          "changeName":     "Feature Levels",
+          "changeSummary":  "The 'Feature Levels' slider has moved to the top of the page. There is also a 'Feature Levels FlexPanel' at the right of the screen that shows all feature levels for the current user",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.users",
+          "type":           "improvement",
+          "changeName":     "Tweaked UserItem Layout in lists",
+          "changeSummary":  "UserItem is still a work in progress - need to add real badges etc",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphics",
+          "type":           "improvement",
+          "changeName":     "Graphic toolbars now use Feature Levels",
+          "changeSummary":  "In Graphic Editor, the tools presented vary based on Feature Level",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.roadmap",
+          "type":           "feature",
+          "changeName":     "New Roadmap page",
+          "changeSummary":  "New Roadmap page - linked from Hoem NavPanel and from WhatsNew page",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    { 
       "timestamp":     "Wed Jul 27 2016 23:50:00 GMT-0700 (PDT)",
       
       "id": {

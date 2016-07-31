@@ -34,10 +34,12 @@ export default fpFeatureLevels = React.createClass({
 
     return (
       <div>
-        <p>Beginners see fewer features of this site so it is easier to learn without being ovewhelmed. These sliders show the current feature enablement of various tools</p>
+        <p>We hide many features from beginners and allow users to enable more functions as they learn the site.  These sliders show the current feature enablement of various tools. </p>
         <ul>
           { _.map(expectedToolbarScopeNames,  name => makeSlider(name)) }
         </ul>
+        <p>On pages that support 'Feature Levels' a slider will appear at the top of the page.</p>
+        <p>When this is shown, you can slide that Feature Level slider to rightwards to enable more features and to shrink icons</p>
       </div>
     )
   }  

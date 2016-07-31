@@ -37,7 +37,7 @@ export default UserItem = React.createClass({
     const segClass = renderAttached ? "ui attached clearing segment" : "ui raised clearing segment"
     return (
       <div className={segClass} onClick={this.handleClickUser}>
-        <div className="ui header huge">{name}</div>
+        <div className="ui header large">{name}</div>
         <img src={avatar} className="ui floated image tiny" />
         { profileTitle &&
           <big><i className="quote left icon blue"></i>{profileTitle}<i className="quote right icon blue"></i></big>

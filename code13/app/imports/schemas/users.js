@@ -36,6 +36,14 @@ const schema = {
 }
 
 
+export const userSorters = { 
+  "createdOldest":   { createdAt: 1 }, 
+  "createdNewest":   { createdAt: -1 }, 
+  "nameAscending":   { "profile.name": 1  }, 
+  "nameDescending":  { "profile.name": -1 }
+}
+
+
 Meteor.methods({
   "User.storeProfileImage": function( url ) {
     check( url, String )

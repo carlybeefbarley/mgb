@@ -1,11 +1,13 @@
-import _ from 'lodash';
-import React, {Component, PropTypes} from 'react';
-import reactMixin from 'react-mixin';
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import _ from 'lodash'
+import React, {Component, PropTypes} from 'react'
+import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 
-import {Users} from '/imports/schemas';
-import Spinner from '/client/imports/components/Nav/Spinner';
-import UserList from '/client/imports/components/Users/UserList';
+import { Users } from '/imports/schemas'
+import { userSorters } from '/imports/schemas/users'
+
+import Spinner from '/client/imports/components/Nav/Spinner'
+import UserList from '/client/imports/components/Users/UserList'
 
 export default UserListRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -28,27 +30,27 @@ export default UserListRoute = React.createClass({
   getInitialState: function() {
     return {
       userLimit: this.props.initialLimit,
-      searchName: ""
+      searchName: "",
+      userSort: "createdOldest"                 // Must be one of the keys of userSorters. TODO: Implement select UI for this
     }
   },
   
   getMeteorData() {
-    let nameSearch = this.state.searchName
-    let limit = this.state.userLimit
-    let handle = Meteor.subscribe("users.byName", nameSearch, limit)
+    const { searchName, userLimit, userSort } = this.state
+    let handle = Meteor.subscribe("users.byName", searchName, userLimit, userSort)
     let selector = {}
-    if (nameSearch && nameSearch.length > 0)
+    if (searchName && searchName.length > 0)
     {
       // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
-      selector["profile.name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
+      selector["profile.name"]= {$regex: new RegExp("^.*" + searchName, 'i')}
     }
     
-    let options = {sort: {date: -1}}
-    if (limit) 
-      options["limit"] = limit    // Paginated users. Kinda cheezy but ok for now since we have search
-      
+    let findOpts = { sort: userSorters[userSort] }
+    if (userLimit) 
+      findOpts["limit"] = userLimit    // Paginated users. Kinda cheezy but ok for now since we have search
+
     return {
-      users: Meteor.users.find(selector, options).fetch(),
+      users: Meteor.users.find(selector, findOpts).fetch(),
       loading: !handle.ready()
     };
   },
@@ -62,10 +64,9 @@ export default UserListRoute = React.createClass({
   },
   
   listenForEnter: function(e) {
-    e = e || window.event;
-    if (e.keyCode === 13) {
-      this.handleSearchGo();
-    }
+    e = e || window.event
+    if (e.keyCode === 13) 
+      this.handleSearchGo()
   },
 
   handleSearchGo: function()
@@ -92,9 +93,8 @@ export default UserListRoute = React.createClass({
   // TODO: Pagination is simplistic. Needs work to append users instead of refreshing whole list
 
   render() {
-    if (this.data.loading) {
-      return (<div><Spinner /></div>);
-    }
+    if (this.data.loading) 
+      return <div><Spinner /></div>
     
     let xArray = this.props.excludeUserIdsArray
     let filteredUsers = xArray 
@@ -102,8 +102,8 @@ export default UserListRoute = React.createClass({
                           : this.data.users
  
     const containerClassName = this.props.renderVertical ? "ui segments" : "ui horizontal segments"
-    const searchSegmentStyle = this.props.renderVertical ? {} : {  minWidth:"220px", maxWidth:"220px" }
-    const killBordersStyle = {borderStyle: "none", boxShadow: "none", maxWidth: "600px"}
+    const searchSegmentStyle = this.props.renderVertical ? {} : {  minWidth:"220px", maxWidth:"220px" }   // TODO(@dgolds): Move magic number to special globals or pass down?
+    const killBordersStyle = { borderStyle: "none", boxShadow: "none", maxWidth: "700px" }                // TODO(@dgolds): Move magic number to special globals or pass down?
     return (
       <div className={containerClassName} style={killBordersStyle}>
         <div className="ui segment" style={searchSegmentStyle}>

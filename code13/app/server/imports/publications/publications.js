@@ -1,68 +1,65 @@
 // This file should be imported by the main_server.js file
 
-import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '/imports/schemas';
-
-import { assetMakeSelector, assetSorters } from '/imports/schemas/assets';
-import { projectMakeSelector } from '/imports/schemas/projects';
-import { chatParams } from '/imports/schemas/chats';
+import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '/imports/schemas'
+import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
+import { userSorters } from '/imports/schemas/users'
+import { projectMakeSelector } from '/imports/schemas/projects'
+import { chatParams } from '/imports/schemas/chats'
 
 //
 //    USERS
 //
-//  TODO: Exclude stuff like profile.email doh
 
+const fieldsUserPublic = {username: 1, profile: 1, permissions: 1, createdAt: 1 }
+
+Meteor.users._ensureIndex({"profile.name": 1})
+Meteor.users._ensureIndex({"createdAt": 1})
 
 // This is for Meteor.user()   See http://www.east5th.co/blog/2015/03/16/user-fields-and-universal-publications/
 Meteor.publish(null, function() {
   if (this.userId) 
-    return Meteor.users.find(  { _id: this.userId }, { fields: {username: 1, profile: 1, permissions: 1, createdAt: 1 }})
+    return Meteor.users.find( { _id: this.userId }, { fields: fieldsUserPublic } )
   else
     return null
 })
 
 
-Meteor.publish('users', function(limit) {
-  // Paginated users.
-  if (limit) 
-    return Meteor.users.find({}, {limit: limit, sort: {date: -1}})
-  else
-    return Meteor.users.find({}, {sort: {date: -1}})
-})
-
-
-Meteor.publish('users.byName', function(nameSearch, limit) {
+Meteor.publish('users.byName', function(nameSearch, limitCount, userSortType) {
   let selector = {}
+  let userSorter = userSortType ? userSorters[userSortType] : userSorters["createdOldest"]
   if (nameSearch && nameSearch.length > 0)
   {
     // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
     selector["profile.name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
   }
   
-  let options = {sort: {date: -1}}
-  if (limit) 
-    options["limit"] = limit    //Paginated users.
+  let findOpts = {
+    fields: fieldsUserPublic,
+    sort:   userSorter
+  }
+  if (limitCount) 
+    findOpts.limit = limitCount
 
-  return Meteor.users.find(selector, options)
+  return Meteor.users.find(selector, findOpts)
 })
 
 
-// This is used for example by the project membership list
+// This is used for example by the project membership list. There is no limit, so no sort is supported. The client can sort
 Meteor.publish('users.getByIdList', function(idArray) {
   const selector = {_id: {"$in": idArray}}
-  return Meteor.users.find(selector)
+  return Meteor.users.find(selector, { fields: fieldsUserPublic } )
 })
 
+// get Exactly one user - by id
 Meteor.publish('user', function(id) {
-  return Meteor.users.find(id)
+  return Meteor.users.find(id, { fields: fieldsUserPublic } )
 })
 
+// get Exactly one user - by profile.name
 Meteor.publish('user.byName', function(username) {
   let selector = { "profile.name": username }
-  return Meteor.users.find(selector)
+  return Meteor.users.find(selector, { fields: fieldsUserPublic } )
 })
-
-Meteor.users._ensureIndex({"profile.name": 1})
-
 
 //
 //   ASSETS  
@@ -111,7 +108,7 @@ Meteor.publish('assets.public', function(
     sort:  assetSorter,
     limit: limitCount
   }
-  return Azzets.find(selector, findOpts );
+  return Azzets.find(selector, findOpts )
 });
 
 
@@ -131,7 +128,6 @@ Meteor.publish('assets.public.byId.withContent2', function(assetId) {
 Meteor.publish('projects.forProjectId', function(projectId) {
   return Projects.find(projectId);
 });
-
 
 
 // Return projects relevant to this userId.. This includes owner, member, etc

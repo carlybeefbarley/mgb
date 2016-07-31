@@ -23,6 +23,7 @@ export default Roadmap = React.createClass({
       <div>
         <h2>Features planned for August 2016</h2>
         <ul>
+          <li>Choose your avatar (not just gravatars)</li>
           <li>MGBv1 asset migration (tiles, actors, maps)</li>
           <li>MGBv1-style 'Actor' assets which enable game building without coding</li>
           <li>Lots of work on the Code Editor and Coding help systems</li>

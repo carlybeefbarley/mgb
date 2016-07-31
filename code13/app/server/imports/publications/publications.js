@@ -15,7 +15,7 @@ import { chatParams } from '/imports/schemas/chats';
 // This is for Meteor.user()   See http://www.east5th.co/blog/2015/03/16/user-fields-and-universal-publications/
 Meteor.publish(null, function() {
   if (this.userId) 
-    return Meteor.users.find(  { _id: this.userId }, { fields: {username: 1, profile: 1, permissions: 1 }})
+    return Meteor.users.find(  { _id: this.userId }, { fields: {username: 1, profile: 1, permissions: 1, createdAt: 1 }})
   else
     return null
 })

@@ -1,18 +1,21 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
+
+import fpFeatureLevels from './fpFeatureLevels';
+import fpSuperAdmin from './fpSuperAdmin';
 import fpActivity from './fpActivity';
 import fpAssets from './fpAssets';
 import fpUsers from './fpUsers';
 import fpChat from './fpChat';
-import fpSuperAdmin from './fpSuperAdmin';
 
 
 const flexPanelViews = [
-  { tag: "activity",  icon: "lightning",  hdr: "Activity",   el: fpActivity,   superAdminOnly: false },
-  { tag: "assets",    icon: "pencil",     hdr: "Assets",     el: fpAssets,     superAdminOnly: false },
-  { tag: "users",     icon: "users",      hdr: "Users",      el: fpUsers,      superAdminOnly: false },
-  { tag: "chat",      icon: "chat",       hdr: "Chat",       el: fpChat,       superAdminOnly: false },
-  { tag: "super",     icon: "red bomb",   hdr: "SuperAdmin", el: fpSuperAdmin, superAdminOnly: true }
+  { tag: "activity",  icon: "lightning",  hdr: "Activity",        el: fpActivity,      superAdminOnly: false },
+  { tag: "assets",    icon: "pencil",     hdr: "Assets",          el: fpAssets,        superAdminOnly: false },
+  { tag: "users",     icon: "users",      hdr: "Users",           el: fpUsers,         superAdminOnly: false },
+  { tag: "chat",      icon: "chat",       hdr: "Chat",            el: fpChat,          superAdminOnly: false },
+  { tag: "features",  icon: "university", hdr: "Feature Levels",  el: fpFeatureLevels, superAdminOnly: false },
+  { tag: "super",     icon: "red bomb",   hdr: "SuperAdmin",      el: fpSuperAdmin,    superAdminOnly: true }
 ]
 
 const defaultPanelViewIndex = 0

@@ -17,6 +17,15 @@ export const expectedToolbarScopeNames = {
   MapTools: "MapTools"
 }
 
+export function getLevelKey(name) {
+  return "toolbar-level-" + name
+}
+
+export function getLevelVal(name) {
+  return localStorage.getItem("toolbar-level-" + name)
+}
+
+
 export default class Toolbar extends React.Component {
 
   static propTypes = {

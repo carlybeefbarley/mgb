@@ -13,11 +13,30 @@ export default fpFeatureLevels = React.createClass({
 
 
   render: function () {    
+    const sliderStyle =  { 
+      marginTop: "10px", 
+      marginRight: "10px", 
+      marginLeft: "2px"
+    }
+
+    const makeSlider = (name) => (
+      <p key={name}>
+        <i className="ui university icon" />
+        {name} @ {getLevelVal(name)}
+        <input
+          style={sliderStyle} 
+          type="range" 
+          value={getLevelVal(name) || 1}
+          min={1} 
+          max={15} />
+      </p>
+    )
+
     return (
       <div>
-        <p>TODO: This will show the sliders for each of the toolbar / feature scopes:</p>
+        <p>Beginners see fewer features of this site so it is easier to learn without being ovewhelmed. These sliders show the current feature enablement of various tools</p>
         <ul>
-          { _.map(expectedToolbarScopeNames,  name => <li key={name}>{name}@{getLevelVal(name)}</li>) }
+          { _.map(expectedToolbarScopeNames,  name => makeSlider(name)) }
         </ul>
       </div>
     )

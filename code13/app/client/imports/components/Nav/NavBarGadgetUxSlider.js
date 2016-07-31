@@ -14,7 +14,7 @@ export const sliderConstants = {
 
   sliderElementId: "NavBarGadgetUxSlider",    // Element Ids
   inactiveTitleTxt: "(This page has no adaptive toolbars, so this control is inactive)",
-  disabledOpacity: 0.05
+  disabledOpacity: 0.0
 
 }
 

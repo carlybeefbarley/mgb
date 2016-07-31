@@ -10,10 +10,17 @@ const ALT = 1 << 10
 const META = 1 << 11            // Mac CMD key / Windows 'windows' key. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey
 
 
+// Here is a list of *known* toolbar scope names. This is so that a ui (e.g fpUxLevels.js) can enumerate them all
+export const expectedToolbarScopeNames = {
+  EditGraphic: "EditGraphic",       
+  GraphicTools: "GraphicTools", 
+  MapTools: "MapTools"
+}
+
 export default class Toolbar extends React.Component {
 
   static propTypes = {
-    name:         PropTypes.string.isRequired,      // Name of this toolbar instance
+    name:         PropTypes.string.isRequired,      // Name of this toolbar instance. Should be one of toolbarScopeNames
     config:       PropTypes.object.isRequired,      // Config.. { buttons: {}, vertical: bool }
     levelName:    PropTypes.string                  // TODO(@Stauzs) - please describe 
   }
@@ -27,6 +34,9 @@ export default class Toolbar extends React.Component {
     // separate these - and allow some toolbars to share level???
     this.lsDataKey = "toolbar-data-" + this.props.name
     this.lsLevelKey = "toolbar-level-" + (this.props.levelName || this.props.name)
+
+    if (!_.includes(expectedToolbarScopeNames, this.props.name))
+      console.trace(`Unexpected Toolbar name "${this.props.name}" in Toolbar.js. Devs should add new ones to expectedToolbarScopeNames"`)
 
     this._activeButton = null
     this.startPos = null

@@ -99,37 +99,36 @@ export default UserListRoute = React.createClass({
     if (this.data.loading) 
       return <div><Spinner /></div>
     
-    let xArray = this.props.excludeUserIdsArray
-    let filteredUsers = xArray 
-                          ? _.filter(this.data.users, u => { return !_.includes(this.props.excludeUserIdsArray, u._id) })
+    const { excludeUserIdsArray, renderVertical, hideTitle, handleClickUser } = this.props
+    let filteredUsers = excludeUserIdsArray 
+                          ? _.filter(this.data.users, u => { return !_.includes(excludeUserIdsArray, u._id) })
                           : this.data.users
  
-    const containerClassName = this.props.renderVertical ? "ui segments" : "ui horizontal segments"
-    const searchSegmentStyle = this.props.renderVertical ? {} : {  minWidth:"220px", maxWidth:"220px" }   // TODO(@dgolds): Move magic number to special globals or pass down?
-    const narrowItem = !! this.props.renderVertical
-
+    const containerClassName = renderVertical ? "" : "ui horizontal segments"
+    const searchSegmentStyle = renderVertical ? {} : {  minWidth:"220px", maxWidth:"220px" }   // TODO(@dgolds): Move magic number to special globals or pass down?
+    const narrowItem = !!renderVertical
+    const segClass = renderVertical ? "" : "ui basic segment"
     const killBordersStyle = { borderStyle: "none", boxShadow: "none", maxWidth: "700px" }                // TODO(@dgolds): Move magic number to special globals or pass down?
     return (
       <div className={containerClassName} style={killBordersStyle}>
-        <div className="ui segment" style={searchSegmentStyle}>
-          <div className="ui row">
-            { this.props.hideTitle ? null : <div className="ui large header">Search Users</div> }
-            <div className="ui action input">
-              <input  type="text" 
-                      placeholder="Search..." 
-                      defaultValue={this.state.searchName} 
-                      onChange={this.handleSearchNameBoxChanges}
-                      ref="searchNameInput" 
-                      size="16"></input>
-              <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
-                <i className="search icon"></i>
-              </button>
-            </div>       
+        <div className={segClass} style={searchSegmentStyle}>
+          { hideTitle ? null : <div className="ui large header">Search Users</div> }
+          <div className="ui fluid action input">
+            <input  type="text" 
+                    placeholder="Search..." 
+                    defaultValue={this.state.searchName} 
+                    onChange={this.handleSearchNameBoxChanges}
+                    ref="searchNameInput" 
+                    size="16"></input>
+            <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
+              <i className="search icon"></i>
+            </button>
           </div>
+          <br></br>
         </div>
 
-        <div className="ui basic segment">
-          <UserList users={filteredUsers} handleClickUser={this.props.handleClickUser} narrowItem={narrowItem}/>
+        <div className={segClass} >
+          <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem}/>
           <button onClick={this.handleLoadMore} className="ui button">Load more</button>
         </div>      
       </div>

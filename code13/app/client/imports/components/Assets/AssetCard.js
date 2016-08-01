@@ -157,8 +157,9 @@ export default AssetCard = React.createClass({
                           
 
     // TODO: add allowDrag to props.. and walk through AssetCard use cases;
+    // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
-      <div key={asset._id} className="ui card" style={{ overflow: "hidden", minWidth: "200px"}}
+      <div key={asset._id} className="ui card" style={{  minWidth: "200px"}}
         >
       
           { showHeader &&

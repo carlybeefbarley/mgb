@@ -35,24 +35,18 @@ export default ProjectMembersGET = React.createClass({
   renderMembers()
   {
     return this.data.users.map( user => {
-      const uLink = "/u/"+user.profile.name
-      return <div className="ui basic segment" key={user._id}>
-              <UserItem renderAttached={true}                    
-                  _id={user._id}
-                  name={user.profile.name}
-                  profileTitle={user.profile.title}
-                  profileBio={user.profile.bio}
-                  profileFocusMsg={user.profile.focusMsg}
-                  profileFocusStart={user.profile.focusStart}
-                  createdAt={user.createdAt}
-                  avatar={user.profile.avatar}  />
-              <div className="ui bottom attached buttons">
-                { this.props.enableRemoveButton && 
-                  <div className="ui button" onClick={this.handleRemove.bind(this, user)}><i className="ui red remove icon" />Remove Member from Project</div> }
-              </div>
-            </div>
+      return (
+        <div className="ui basic segment" key={user._id}>
+          <UserItem renderAttached={true} user={user} />
+          <div className="ui bottom attached buttons">
+            { this.props.enableRemoveButton && 
+              <div className="ui button" onClick={this.handleRemove.bind(this, user)}><i className="ui red remove icon" />Remove Member from Project</div> }
+          </div>
+        </div>
+      )
     })
   },
+  
   
   handleRemove: function(user)
   {
@@ -60,13 +54,12 @@ export default ProjectMembersGET = React.createClass({
     handler && handler(user._id, user.profile.name)
   },  
   
+
   render: function() 
   {
     if (this.data.loading)
       return null      
       
-    return  <div>        
-              { this.renderMembers() }
-            </div>
+    return  <div>{ this.renderMembers() }</div>
   }
 })

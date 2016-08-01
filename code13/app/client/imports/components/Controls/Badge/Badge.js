@@ -18,7 +18,7 @@ export const getImplicitBadgesForUser = function(user) {
 
   isUserSuperAdmin(user) && retval.push("mgbAdmin")
   user.profile.mgb1name && user.profile.mgb1name.length > 0 && retval.push("mgb1veteran")
-  user.profile.avatar && user.profile.avatar.length > 0 && retval.push("hasAvatar")
+  user.profile.avatar && user.profile.avatar.length > 0 && retval.push("hasAvatar")         // TODO: Fix this - it's wrong since we always do the gravatar hash
   user.createdAt < mgb2AlphUserCutoffDate && retval.push("mgb2AlphaTester")
 
   return retval
@@ -34,14 +34,17 @@ export const getAllBadgesForUser = function(user) {
 
 export default Badge = React.createClass({
   propTypes : {
-    name: PropTypes.string.isRequired
+    name:       PropTypes.string.isRequired,
+    forceSize:  PropTypes.number              // Width to force badge image to (in pixels)
   },  
 
   render: function()
   {
-    const badge = badgeList[this.props.name] || ["Unknown.png", `Badge "${this.props.name} not recognised`]
+    const { name, forceSize } = this.props
+    const badge = badgeList[name] || ["Unknown.png", `Badge "${name} not recognised`]
     const imgUrl = "/images/badges/" + badge[0]
     const title = badge[1]
-    return <img src={imgUrl} title={title}/>
+    const size = forceSize ? ({ width: `${forceSize}px`, height: `${forceSize}px`}) : ({})
+    return <img src={imgUrl} title={title} {...size} />
   }
 })

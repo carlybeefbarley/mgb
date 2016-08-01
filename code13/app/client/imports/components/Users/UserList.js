@@ -4,8 +4,9 @@ import UserItem from './UserItem.js';
 
 export default UserList = React.createClass({
   propTypes: {
-    users: React.PropTypes.array,     // Array of Users objects to be rendered
-    handleClickUser: PropTypes.func   // Optional. If provided, call this with the userId instead of going to the user Profile Page
+    users:            PropTypes.array,      // Array of Users objects to be rendered
+    narrowItem:       PropTypes.bool,       // if true, this is narrow format (e.g flexPanel)
+    handleClickUser:  PropTypes.func        // Optional. If provided, call this with the userId instead of going to the user Profile Page
   },
 
 
@@ -14,14 +15,8 @@ export default UserList = React.createClass({
       return (
         <UserItem
           key={user._id}
-          _id={user._id}
-          name={user.profile.name}
-          profileTitle={user.profile.title}
-          profileBio={user.profile.bio}
-          profileFocusMsg={user.profile.focusMsg}
-          profileFocusStart={user.profile.focusStart}
-          createdAt={user.createdAt}
-          avatar={user.profile.avatar}           
+          user={user}
+          narrowItem={this.props.narrowItem}
           handleClickUser={this.props.handleClickUser} />
       )
     })

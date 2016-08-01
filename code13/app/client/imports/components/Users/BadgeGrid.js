@@ -16,7 +16,7 @@ export default BadgeGrid = React.createClass({
     if (!user)
       return null
     
-    const badgesPageUrl = `/u/${user.profile.name}/badges`   
+    const badgesPageUrl = `/u/${user.profile.name}/badges`
     const badgesForUser = getAllBadgesForUser(user)
     const getBadgeN = idx => (<Badge name={idx < badgesForUser.length ? badgesForUser[idx] : "blank"} />)
     return (

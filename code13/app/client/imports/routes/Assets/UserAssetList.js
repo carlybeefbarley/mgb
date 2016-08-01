@@ -308,17 +308,7 @@ export default UserAssetListRoute = React.createClass({
           <div className="ui row">
             <div className="ui hazUserPopup large header">{ user ? (<span><a>{name}</a>'s Assets</span>) : ("Public assets") }</div>     
             <div className="ui popup" style={{minWidth: "260px"}}>
-              {user ? <UserItem
-                        name={name}
-                        avatar={avatar ? avatar : null}
-                        profileTitle={title}
-                        profileBio={bio}
-                        profileFocusMsg={focusMsg}
-                        profileFocusStart={focusStart}                        
-                        createdAt={createdAt}
-                        _id={_id} />
-                      : null
-            } 
+              { user && <UserItem user={user} renderNarrow={true}/> } 
             </div>
           </div>  
                     

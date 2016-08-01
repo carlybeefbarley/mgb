@@ -20,12 +20,14 @@ export default UserListRoute = React.createClass({
     hideTitle:          PropTypes.bool                // Optional. Default is false
   },
 
+
   getDefaultProps: function() {
     return {
       renderVertical: false,
       initialLimit: 21
     }
   },
+
 
   getInitialState: function() {
     return {
@@ -35,6 +37,7 @@ export default UserListRoute = React.createClass({
     }
   },
   
+
   getMeteorData() {
     const { searchName, userLimit, userSort } = this.state
     let handle = Meteor.subscribe("users.byName", searchName, userLimit, userSort)
@@ -103,6 +106,8 @@ export default UserListRoute = React.createClass({
  
     const containerClassName = this.props.renderVertical ? "ui segments" : "ui horizontal segments"
     const searchSegmentStyle = this.props.renderVertical ? {} : {  minWidth:"220px", maxWidth:"220px" }   // TODO(@dgolds): Move magic number to special globals or pass down?
+    const narrowItem = !! this.props.renderVertical
+
     const killBordersStyle = { borderStyle: "none", boxShadow: "none", maxWidth: "700px" }                // TODO(@dgolds): Move magic number to special globals or pass down?
     return (
       <div className={containerClassName} style={killBordersStyle}>
@@ -123,8 +128,8 @@ export default UserListRoute = React.createClass({
           </div>
         </div>
 
-        <div className="ui padded segment" style={killBordersStyle}>
-          <UserList users={filteredUsers} handleClickUser={this.props.handleClickUser}/>
+        <div className="ui basic segment">
+          <UserList users={filteredUsers} handleClickUser={this.props.handleClickUser} narrowItem={narrowItem}/>
           <button onClick={this.handleLoadMore} className="ui button">Load more</button>
         </div>      
       </div>

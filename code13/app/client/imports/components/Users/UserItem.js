@@ -1,53 +1,57 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import moment from 'moment';
-import { utilPushTo } from '/client/imports/routes/QLink';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import moment from 'moment'
+import { utilPushTo } from '/client/imports/routes/QLink'
+import Badge, { getAllBadgesForUser } from '/client/imports/components/Controls/Badge/Badge'
+
 
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
 // See http://v2.mygamebuilder.com/assetEdit/2Bot4CwduQRfRWBi6 for an example
 export default UserItem = React.createClass({
 
   propTypes: {
-    _id: PropTypes.string,            // The user id
-    name: PropTypes.string,           // The user name
-    avatar: PropTypes.string,         // User's avatar image src   
-    profileTitle: PropTypes.string,
-    profileBio: PropTypes.string,
-    profileFocusMsg: PropTypes.string,    
-    profileFocusStart: PropTypes.object,   // Actually a Date() object
-    handleClickUser: PropTypes.func,  // Optional. If provided, call this with the userId instead of going to the user Profile Page
-    renderAttached: PropTypes.bool    // if true, then render attached
+    user: PropTypes.object.isRequired,
+    handleClickUser: PropTypes.func,        // If provided, call this with the userId instead of going to the user Profile Page
+    narrowItem:  PropTypes.bool,            // if true, this is narrow format (e.g flexPanel)    
+    renderAttached: PropTypes.bool          // if true, then render attached
   },
+
 
   contextTypes: {
     urlLocation: React.PropTypes.object
   },
-    
+
+
   handleClickUser: function() {
-    let uid = this.props._id
+    const { name } = this.props.user.profile
+    const uid = this.props.user._id
     if (this.props.handleClickUser)
-      this.props.handleClickUser(uid, this.props.name)
+      this.props.handleClickUser(uid, name)
     else
-      utilPushTo(this.context.urlLocation.query, `/u/${this.props.name}`)
+      utilPushTo(this.context.urlLocation.query, `/u/${name}`)
   },
-  
+
+
   render: function() {
-    const { name, avatar, createdAt, renderAttached, profileTitle, profileBio, profileFocusMsg, profileFocusStart } = this.props
+    const { user, narrowItem, renderAttached } = this.props
+    const { profile, createdAt } = user
+    const { name, avatar, title } = profile
     const createdAtFmt = moment(createdAt).format('MMMM DD, YYYY')
-    const segClass = renderAttached ? "ui attached clearing segment" : "ui raised clearing segment"
-    return (
-      <div className={segClass} onClick={this.handleClickUser}>
+    const segClass = renderAttached ? "ui attached  segment" : "ui raised  segment"
+    const imageSize = narrowItem ? "small" : "tiny"
+    const titleSpan = <span><i className="quote left icon blue"></i>{title || "(no title)"}&nbsp;<i className="quote right icon blue"></i></span>
+    const badgesForUser = getAllBadgesForUser(user)
+    const getBadgeN = idx => (<Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : "blank"} />)
+
+    // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui segment' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
+    return ( 
+      <div className={segClass} onClick={this.handleClickUser} >
         <div className="ui header large">{name}</div>
-        <img src={avatar} className="ui floated image tiny" />
-        { profileTitle &&
-          <big><i className="quote left icon blue"></i>{profileTitle}<i className="quote right icon blue"></i></big>
-        }
+        <img src={avatar} className={`ui floated image ${imageSize}`} />
+        { narrowItem ? titleSpan : <big>{titleSpan}</big> }
         <p><font color="lighblue">Joined {createdAtFmt}</font></p>
-        <i className="birthday icon big red"></i>
-        <i className="paint brush icon big orange"></i>
-        <i className="trophy icon big blue"></i>
-        <i className="unhide icon big purple"></i>
+        { getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)} 
       </div>
-    );
+    )
   }
 })

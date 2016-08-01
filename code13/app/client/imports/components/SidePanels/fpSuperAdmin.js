@@ -13,7 +13,6 @@ export default fpSuperAdmin = React.createClass({
     const linkLi = (txt, url) => (<li><a target="_blank" href={url}>{txt}</a></li>)
 
     return  <div>
-              <div className="ui header">SuperAdmin panel</div>
               <div className="ui sub header">Team Quicklinks</div>
               <ul>
                 { linkLi("localhost/v2 flipside", this.getFlipsideUrl()) }

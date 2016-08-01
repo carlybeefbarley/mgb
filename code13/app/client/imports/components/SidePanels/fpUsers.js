@@ -15,14 +15,13 @@ export default fpUsers = React.createClass({
     // TODO
   },
 
-  render: function () {    
-
+  render: function () {
     return (
-           <UserListRoute  
-                  handleClickUser={this.handleClickUser}
-                  initialLimit={20}
-                  renderVertical={true} 
-                  hideTitle={true}/>
-          )
+      <UserListRoute  
+        handleClickUser={this.handleClickUser}
+        initialLimit={20}
+        renderVertical={true} 
+        hideTitle={true}/>
+    )
   }  
 })

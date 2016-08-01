@@ -51,10 +51,6 @@ export default class EditSound extends React.Component {
 		})
 	}
 
-	openImportPopup(){
-    $(this.importSoundPopup).modal('show');
-  }
-
 	importSound(soundObject, saveText){
 		if(!this.hasPermission) return;
 
@@ -68,14 +64,15 @@ export default class EditSound extends React.Component {
 
 		$(this.importSoundPopup).modal('hide')
 		$(this.createSoundPopup).modal('hide')
+		$(this.soundStockPopup).modal('hide')
 	}
+
+	openImportPopup(){
+    $(this.importSoundPopup).modal('show');
+  }
 
 	openStockPopup(){
 		$(this.soundStockPopup).modal('show');
-	}
-
-	getFromStock(soundObject){
-		console.log(soundObject);
 	}
 
 	openCreateSoundPopup(){
@@ -169,8 +166,7 @@ export default class EditSound extends React.Component {
 
 				<div className="ui modal" ref="soundStockPopup">
 					<SoundStock 
-						asset={this.props.asset}
-						getFromStock={this.getFromStock.bind(this)}
+						importSound={this.importSound.bind(this)}
 					/>
 				</div>
 

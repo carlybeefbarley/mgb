@@ -44,12 +44,22 @@ export default class SoundStock extends React.Component {
 	}
 
 	importSound(soundID){
-
+		let player = ReactDOM.findDOMNode(this.refs[soundID])
+		if(player.src){
+      this.props.importSound(player, "Imported stock sound")
+    }
+    else {
+    	let self = this
+		  const infolink = "/api/asset/sound/" + soundID;
+      $.get(infolink, (data) => {
+        player.src = data.dataUri
+        self.props.importSound(player, "Imported stock sound")
+      })
+    }
 	}
 
 	render(){
 		let soundItems = _.map(this.state.sounds, (sound, nr) => { 
-			console.log(sound)
 			return (
 			  <div key={"soundKey_"+nr} className="item">
 			    <button onClick={this.playSound.bind(this, sound._id)} className="ui icon button">
@@ -58,7 +68,7 @@ export default class SoundStock extends React.Component {
 			    {sound.name}
 			    &nbsp;&nbsp;
 			    {sound.duration}
-			    <audio ref={sound._id} controls></audio>
+			    <audio ref={sound._id}></audio>
 			    <button onClick={this.importSound.bind(this, sound._id)} className="ui icon right floated button">
             <i className="add square icon"></i> Import sound
           </button>

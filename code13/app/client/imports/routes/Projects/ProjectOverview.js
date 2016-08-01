@@ -161,20 +161,19 @@ export default ProjectOverview = React.createClass({
     if (!canEdit)
       return null
     
-    return  <div className="ui secondary compact segment">
-              <div className="ui header">Manage Project</div>
-                <div  className="ui labeled icon button"
-                      onClick={ () => { alert("Not Yet Implemented")}} >
-                  <i className="edit icon"></i>
-                  <span className="text">Rename</span>        
-                </div>
-                <div  className="ui red labeled icon button"
-                      onClick={ () => { alert("Not Yet Implemented")}} >
-                  <i className="trash icon"></i>
-                  <span className="text">Destroy</span>        
-                </div>
-            </div>
+    return  (
+      <div className="ui secondary compact segment">
+        <div className="ui header">Manage Project</div>
+          <div  className="ui small button" onClick={ () => { alert("Not Yet Implemented")}} >
+            <i className="edit icon" />Rename     
+          </div>
+          <div  className="ui small button" onClick={ () => { alert("Not Yet Implemented")}} >
+            <i className="red trash icon"></i>Destroy    
+          </div>
+      </div>
+    )
   },
+
     
   renderAddPeople: function()
   {

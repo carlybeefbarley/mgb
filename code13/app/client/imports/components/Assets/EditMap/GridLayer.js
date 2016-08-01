@@ -41,7 +41,6 @@ export default class GridLayer extends React.Component {
     document.body.removeEventListener("mouseup", this._mup);
   }
   /* endof lifecycle functions */
-
   adjustCanvas(){
     const canvas = this.refs.canvas;
     const $el = $(canvas.parentElement);
@@ -50,16 +49,16 @@ export default class GridLayer extends React.Component {
   }
 
   alignToActiveLayer(){
-    const layerData = map.data.layers[map.activeLayer];
+    const layerData = this.props.map.data.layers[this.props.map.activeLayer];
     let index = 0;
-    for(let i=0; i<map.layers.length; i++){
-      if(map.layers[i].props.data == layerData){
+    for(let i=0; i<this.props.map.layers.length; i++){
+      if(this.props.map.layers[i].props.data == layerData){
         index = i;
         break;
       }
     }
 
-    const activeLayer = map.layers[index];
+    const activeLayer = this.props.map.layers[index];
     // why layer has no refs - just created and constructor isn't called???
     if(activeLayer && activeLayer.refs.layer){
       //const style = getComputedStyle(activeLayer.refs.layer);

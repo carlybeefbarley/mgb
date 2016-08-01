@@ -199,7 +199,7 @@ export default class TileSet extends React.Component {
     if(clear){
       this.ctx.clearRect(pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing), pal.w, pal.h);
     }
-
+    const map = this.props.info.content.map;
     const drawX = pos.x * (pal.ts.tilewidth + this.spacing);
     const drawY = pos.y * (pal.ts.tileheight + this.spacing);
     this.ctx.drawImage(pal.image,

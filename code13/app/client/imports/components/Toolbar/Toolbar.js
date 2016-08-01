@@ -12,8 +12,8 @@ const META = 1 << 11            // Mac CMD key / Windows 'windows' key. https://
 
 // Here is a list of *known* toolbar scope names. This is so that a ui (e.g fpUxLevels.js) can enumerate them all
 export const expectedToolbarScopeNames = {
-  EditGraphic: "EditGraphic",       
-  GraphicTools: "GraphicTools", 
+  EditGraphic: "EditGraphic",
+  GraphicTools: "GraphicTools",
   MapTools: "MapTools"
 }
 
@@ -31,12 +31,11 @@ export default class Toolbar extends React.Component {
   static propTypes = {
     name:         PropTypes.string.isRequired,      // Name of this toolbar instance. Should be one of toolbarScopeNames
     config:       PropTypes.object.isRequired,      // Config.. { buttons: {}, vertical: bool }
-    levelName:    PropTypes.string                  // Use this if you want to share active level with other toolbars - by defaults to name
+    levelName:    PropTypes.string                  // Use this if you want to share active level with other toolbars - default = name
   }
 
   constructor(...args) {
     super(...args)
-    window.mgbd_toolbar = this                           // TODO(@Stauzs) - remove window.toolbar for Production builds.. also, ehrn you do these, can you have a prefix such as mgbd_ so they are easy to cleanup.. like windows.mgbd_toolbar
     this.keyActions = {}
     this.buttons = []
 
@@ -125,11 +124,6 @@ export default class Toolbar extends React.Component {
     window.addEventListener("keyup", this._onKeyUp)
     window.addEventListener("mousemove", this._onMouseMove)
     window.addEventListener("mouseup", this._onMouseUp)
-
-    // TODO(@stauzs) - debug why initPopups is not working from setState (above)
-    window.setTimeout(() => {
-      this.initPopups()
-    }, 0)
   }
 
   componentWillReceiveProps(props) {
@@ -160,8 +154,23 @@ export default class Toolbar extends React.Component {
     super.setState(state);
     Object.assign(this.state, state);
     localStorage.setItem(this.lsLevelKey, state.level)       // TODO(@dgolds): Store in User record if logged in
-    // seems harmless if called twice on the same element
     this.initPopups()
+  }
+
+  saveState() {
+    localStorage.setItem(this.lsDataKey, JSON.stringify(this.order))
+  }
+
+  loadState() {
+    const savedData = localStorage.getItem(this.lsDataKey)
+    this.data = this.props.config
+
+    if (savedData) {
+      const pData = JSON.parse(savedData)
+      // ignore old config
+      if (pData.length && typeof(pData[0]) == "number" )
+        this.order = pData
+    }
   }
   /* End of Lifecycle functions */
 
@@ -169,7 +178,11 @@ export default class Toolbar extends React.Component {
   // seems harmless if called more than once on the same element
   initPopups(){
     let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
+    // seems harmless if called twice on the same element
+    $a.find('.hazPopup').popup("destroy")
+    window.setTimeout(() => {
+      $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
+    }, 0)
   }
 
 
@@ -240,24 +253,6 @@ export default class Toolbar extends React.Component {
     }
     this.keyActions[keyval] = this.props.actions[action].bind(this.props.actions)
     this.keyActions[keyval].action = action
-  }
-
-
-  saveState() {
-    localStorage.setItem(this.lsDataKey, JSON.stringify(this.order))
-  }
-
-
-  loadState() {
-    const savedData = localStorage.getItem(this.lsDataKey)
-    this.data = this.props.config
-
-    if (savedData) {
-      const pData = JSON.parse(savedData)
-      // ignore old config
-      if (pData.length && typeof(pData[0]) == "number" )
-        this.order = pData
-    }
   }
 
 
@@ -511,9 +506,7 @@ export default class Toolbar extends React.Component {
         if (rect.top < box.top) {
           top += rect.height
           // set last
-          //if(!mostBottom){
-            mostBottom = ab
-          //}
+          mostBottom = ab
         }
       }
       else {

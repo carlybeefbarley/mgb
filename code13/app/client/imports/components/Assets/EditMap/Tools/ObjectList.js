@@ -17,6 +17,30 @@ export default class Layers extends React.Component {
     return layer
   }
 
+  raise() {
+    const parent = this.getLayer();
+    const map = this.map;
+    map.saveForUndo("Raise object");
+
+    parent.raiseLowerObject();
+
+    this.forceUpdate();
+    parent.forceUpdate();
+    map.forceUpdate();
+  }
+
+  lower() {
+    const parent = this.getLayer();
+    const map = this.map;
+    map.saveForUndo("Lower object");
+
+    parent.raiseLowerObject(true);
+
+    this.forceUpdate();
+    parent.forceUpdate();
+    map.forceUpdate();
+  }
+
   showOrHideObject(index){
     const activeLayer = this.map.getActiveLayer();
     const objects = activeLayer.data.objects;
@@ -34,7 +58,29 @@ export default class Layers extends React.Component {
     this.map.forceUpdate();
     this.forceUpdate();
   }
-  renderBlock(content = []){
+  renderBlock(content = [], active = 0){
+
+    let rise = '', lower = '';
+
+    if(content && content.length && active > -1){
+      const d = this.getLayer().data;
+      const l = d.objects ? d.objects.length -1 : 0;
+      rise =(
+        <button className={ active < l ? "ui floated icon button" : "ui floated icon button disabled"}
+                onClick={this.raise.bind(this)}
+                title="Raise Object"
+          ><i className="angle up icon"></i>
+        </button>
+      );
+      lower = (
+        <button className={ active > 0 ? "ui floated icon button" : "ui floated icon button disabled"}
+                onClick={this.lower.bind(this)}
+                title="Lower Object"
+          ><i className="angle down icon"></i>
+        </button>
+      );
+    }
+
     return (
       <div className="mgbAccordionScroller">
         <div className="ui fluid styled accordion">
@@ -44,7 +90,18 @@ export default class Layers extends React.Component {
                 {this.props.info.title}
               </span>
           </div>
-          <div className="active content menu">{content}</div>
+          <div className="active content menu">
+            <div className="ui mini" style={{
+                position: "relative",
+                top: "-10px"
+              }}>
+              <div className="ui icon buttons mini">
+                {rise}
+                {lower}
+              </div>
+            </div>
+            {content}
+          </div>
         </div>
       </div>
     );
@@ -55,6 +112,8 @@ export default class Layers extends React.Component {
     if(!activeLayer || activeLayer.kind != LayerTypes.object){
       return this.renderBlock()
     }
+
+
     // TODO: refactor - so I don't need to access "private" member
     const active = activeLayer.getPickedObject()
     const objects = activeLayer.data.objects
@@ -74,6 +133,6 @@ export default class Layers extends React.Component {
             ></i><a href="javascript:;">{objects[i].name || "(unnamed object)"}</a></div>
       )
     }
-    return this.renderBlock(toRender)
+    return this.renderBlock(toRender, active)
   }
 }

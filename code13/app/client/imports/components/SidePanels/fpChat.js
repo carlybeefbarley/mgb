@@ -81,6 +81,7 @@ export default fpChat = React.createClass({
     // Callback to handle changes in channel Name. This is overactive because of the 'set exactly' 
     // operations, hence the squishing in this.changeChannel()
     $dropDown.dropdown( {  onChange: selectedChannelName => this.changeChannel(selectedChannelName) })
+    this.latestMessage = null;
   },
 
 
@@ -94,6 +95,28 @@ export default fpChat = React.createClass({
       $dropDown.dropdown( 'set exactly', this._calculateActiveChannelName() )  // See notes above to see how we avoid infite loops on this
   },
 
+  // show notification with latest message if chat window is closed
+  getLatestMessage: function(){
+    // TODO: get msg
+    const msg = null;
+    if(this.latestMessage != msg){
+      this.latestMessage = msg;
+      this.showNotification(msg);
+    }
+  },
+
+  showNotification: function(msg){
+    Notification.requestPermission().then((result) => {
+      const n = new Notification(msg.toChannelName, {
+        body: msg.byUserName + " says:\n" + msg.message
+      })
+      // focus window and close notification
+      n.onclick = (e) => {
+        window.focus();
+        n.close();
+      }
+    });
+  },
 
   doSendMessage: function() {    
     const msg = this.refs.theMessage.value

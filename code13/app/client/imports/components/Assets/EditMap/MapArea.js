@@ -29,7 +29,6 @@ export default class MapArea extends React.Component {
     let images = {};
     this.startTime = Date.now();
     // expose map for debugging purposes - access in console
-    window.map = this;
 
     this.images = {
       set: (property, value) => {
@@ -604,9 +603,18 @@ export default class MapArea extends React.Component {
   }
   adjustPreview(){
     let z = 0;
+    let tot = 0;
     this.data.layers.forEach((lay, i) => {
+      if (lay.visible) {
+        tot++;
+      }
+    });
+    this.data.layers.forEach((lay, i) => {
+      if(!lay.visible){
+        return;
+      }
       const l = this.getLayer(lay);
-      if(!l){
+      if(!l || !l.isVisible){
         return;
       }
       if(!this.options.preview){
@@ -619,15 +627,15 @@ export default class MapArea extends React.Component {
 
       l.refs.layer.style.transform =  "perspective(8000px) rotateX(" + this.preview.x + "deg) "+
         "rotateY(" + this.preview.y + "deg) rotateZ(0deg) "+
-        "translateZ(-" +( ((this.layers.length - z)*50) + 200) + "px)";
-      var ay = Math.abs(tr.y);
-      var ax = Math.abs(tr.x);
+        "translateZ(-" +( (tot - z) * 50 + 300) + "px)";
+      const ay = Math.abs(tr.y);
+      const ax = Math.abs(tr.x);
 
       if(ay > 90 && ay < 270 && ax > 90 && ax < 270){
-        l.refs.layer.style.zIndex = i;
+        l.refs.layer.style.zIndex = -i;
       }
       else if(ay > 90 && ay < 270 || ax > 90 && ax < 270){
-        l.refs.layer.style.zIndex = this.layers.length - i;
+        l.refs.layer.style.zIndex = -(this.layers.length - i);
       }
       else {
         l.refs.layer.style.zIndex = i;
@@ -921,7 +929,7 @@ export default class MapArea extends React.Component {
     const ctx = canvas.getContext("2d");
     const ratio = canvas.height / canvas.width;
 
-    for(let i=0; i<this.data.layers.length; i++){
+    for(let i=this.data.layers.length-1; i>-1; i--){
       const layer = this.getLayer(this.data.layers[i]);
       if(!layer){continue;}
       const c = layer.refs.canvas;
@@ -981,7 +989,7 @@ export default class MapArea extends React.Component {
              onContextMenu={(e)=>{e.preventDefault(); return false;}}
              style={{
               //width: (640)+"px",
-              height: (640)+"px",
+              height: (640) + "px",
               position: "relative",
               margin: "10px 0"
           }}>{layers}</div>
@@ -1008,6 +1016,5 @@ export default class MapArea extends React.Component {
         {this.renderMap()}
       </div>
     )
-
   }
 };

@@ -43,16 +43,24 @@ Camera.prototype = {
     return ret;
   },
   get width(){
-    return this.map.refs.mapElement.offsetWidth;
+    if(this.map.refs.mapElement)
+      return this.map.refs.mapElement.offsetWidth;
+    return 100;
   },
   get height(){
-    return this.map.refs.mapElement.offsetHeight;
+    if(this.map.refs.mapElement)
+      return this.map.refs.mapElement.offsetHeight;
+    return 100;
   },
   get dwidth(){
-    return this.map.refs.mapElement.offsetWidth / this.zoom;
+    if(this.map.refs.mapElement)
+      return this.map.refs.mapElement.offsetWidth / this.zoom;
+    return 100;
   },
   get dheight(){
-    return this.map.refs.mapElement.offsetHeight / this.zoom;
+    if(this.map.refs.mapElement)
+      return this.map.refs.mapElement.offsetHeight / this.zoom;
+    return 100;
   },
   get y(){return this._y},
   set zoom(val){

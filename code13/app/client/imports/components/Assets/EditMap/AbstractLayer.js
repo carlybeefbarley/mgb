@@ -88,19 +88,21 @@ export default class AbstractLayer extends React.Component {
     return this._camera;
   }
   isActive() {
-    return this.options == map.data.layers[map.activeLayer];
+    return this.options == this.map.data.layers[this.map.activeLayer];
   }
 
   adjustCanvas(){
+    if(!this.map || !this.map.refs.mapElement){
+      return;
+    }
     const canvas = this.refs.canvas;
-    const b = this.refs.layer.getBoundingClientRect();
+    const b = this.camera;
     if(canvas.width != b.width){
       canvas.width = b.width;
     }
     if(canvas.height != b.height){
       canvas.height = b.height;
     }
-    canvas.height = b.height;
   }
 
   draw(){

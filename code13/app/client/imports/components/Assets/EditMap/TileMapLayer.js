@@ -60,26 +60,7 @@ export default class TileMapLayer extends AbstractLayer {
     super.componentWillUnmount(...args);
   }
 
-  activate(){
-    if(this.activeMode){
-      this.map.setMode(this.activeMode);
-    }
-  }
-  deactivate(){
-    this.activeMode = this.map.options.mode;
-  }
   /* endof lifecycle functions */
-
-  get options(){
-    return this.props.data;
-  }
-  get map(){
-    return this.props.map;
-  }
-
-  isActive(){
-    return this.options == map.data.layers[map.activeLayer];
-  }
 
   increaseSizeToTop(pos){
     for(let i=0; i<this.options.width; i++){
@@ -621,11 +602,11 @@ export default class TileMapLayer extends AbstractLayer {
     this.mouseDown = false;
     if(e.target == this.refs.canvas){
       this.lastEvent = nat;
-      if(edit[map.options.mode]){
+      if(edit[this.map.options.mode]){
         if(!this.options.visible){
           return;
         }
-        edit[map.options.mode].call(this, nat, true);
+        edit[this.map.options.mode].call(this, nat, true);
       }
       else{
         edit.debug.call(this, nat, true);
@@ -640,12 +621,12 @@ export default class TileMapLayer extends AbstractLayer {
     }
 
     this.isMouseOver = true;
-    if(edit[map.options.mode]){
+    if(edit[this.map.options.mode]){
       // not visible
       if(!this.options.visible){
         return;
       }
-      edit[map.options.mode].call(this, nat);
+      edit[this.map.options.mode].call(this, nat);
     }
     else{
       edit.debug.call(this, nat);

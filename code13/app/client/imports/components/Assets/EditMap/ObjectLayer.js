@@ -172,6 +172,22 @@ export default class ObjectLayer extends AbstractLayer {
     return ret;
   }
 
+  raiseLowerObject(lower = false){
+    let o = this._pickedObject;
+    if(o == -1){
+      return;
+    }
+    const rec = this.data.objects.splice(o, 1);
+    if(lower){
+      this.data.objects.splice(o-1, 0, rec[0]);
+      this.setPickedObjectSlow(o-1);
+    }
+    else{
+      this.data.objects.splice(o+1, 0, rec[0]);
+      this.setPickedObjectSlow(o+1);
+    }
+  }
+
   // TODO: clean up handle Event functions
   /* Events */
   handleMouseMove(ep){
@@ -667,7 +683,7 @@ export default class ObjectLayer extends AbstractLayer {
   // this one is drawing on the grid layer - as overlay
   highlightSelected(){
     // TODO: don't hide grid's layer ( never ever ) - rename to overlay???
-    this.map.refs.grid.draw();
+    this.map.refs.grid && this.map.refs.grid.draw();
     let obj = this.pickedObject;
 
     const cam = this.camera;

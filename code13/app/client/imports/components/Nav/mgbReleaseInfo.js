@@ -17,12 +17,12 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
-      "timestamp":     "Sun Jul 31 2016 00:40:00 GMT-0700 (PDT)",
+      "timestamp":     "Sun Jul 31 2016 21:30:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "950"
+        "iteration":   "963"
       },
 
       "releaseManagement": {
@@ -30,6 +30,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.users",
+          "type":           "improvement",
+          "changeName":     "User Lists with Badges",
+          "changeSummary":  "The User Lists (find users, project members, users FlexPanel) now are prettier and also show badges",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "nav.featureLevels",
           "type":           "feature",

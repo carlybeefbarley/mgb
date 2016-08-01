@@ -10,9 +10,9 @@ import WaveSurfer from '../lib/WaveSurfer.js';
 export default class EditSound extends React.Component {
 
 	constructor(props) {
-  	super(props);
+  	super(props)
 
-  	// console.log(props.asset.content2);
+  	// console.log(props)
 
   	this.state = {
   		playerStatus: "pause"
@@ -169,6 +169,7 @@ export default class EditSound extends React.Component {
 
 				<div className="ui modal" ref="soundStockPopup">
 					<SoundStock 
+						asset={this.props.asset}
 						getFromStock={this.getFromStock.bind(this)}
 					/>
 				</div>

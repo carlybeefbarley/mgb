@@ -275,6 +275,40 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
   }
 });
 
+// get sound by id
+RestApi.addRoute('asset/sound/:id', {authRequired: false}, {
+  get: function () {
+    "use strict";
+    let sound = Azzets.findOne(this.urlParams.id)
+
+    if(sound)
+      return sound.contet2.dataUri
+    else
+      return { statusCode: 404 }
+  }
+})
+
+// get sound from stock by name/tag
+RestApi.addRoute('asset/sound/name/:name', {authRequired: false}, {
+  get: function () {
+    "use strict";
+    const ownerId = "fijoMML4CZzTAdHuf"   // guntis id for test purposes
+    // let sound = Azzets.findOne(this.urlParams.id)
+    let query = Azzets.find({kind:"sound", ownerId: ownerId, name: {'$regex': this.urlParams.name} })
+
+    let sounds = []
+    query.forEach(function(item){
+      sounds.push({
+        _id: item._id
+        , name: item.name
+        , duration: item.content2.duration
+      })
+    })
+
+    return sounds
+  }
+})
+
 // This lets the client easily get user avatar.. e.g http://localhost:3000/api/user/raMDZ9atjHABXu5KG/avatar
 RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
   get: function () {

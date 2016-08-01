@@ -7,5 +7,5 @@ export VELOCITY_DEBUG=1
 export VELOCITY_DEBUG_MIRROR=1 
 export METEOR_PROFILE=1
 echo Bundler cache size is now `du -s -h .meteor/local/bundler-cache/`
-meteor mongo
+meteor  shell
 )

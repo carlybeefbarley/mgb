@@ -17,12 +17,12 @@ export default mgbReleaseInfo = {
   [ 
 
     { 
-      "timestamp":     "Sun Jul 31 2016 21:30:00 GMT-0700 (PDT)",
+      "timestamp":     "Sun Jul 31 2016 23:50:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "963"
+        "iteration":   "966"
       },
 
       "releaseManagement": {
@@ -34,7 +34,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "nav.users",
           "type":           "improvement",
           "changeName":     "User Lists with Badges",
-          "changeSummary":  "The User Lists (find users, project members, users FlexPanel) now are prettier and also show badges",
+          "changeSummary":  "The User Lists (find users, project members, users FlexPanel) are prettier and also show badges",
           "otherUrls":      []
         },
         {
@@ -42,13 +42,6 @@ export default mgbReleaseInfo = {
           "type":           "feature",
           "changeName":     "Feature Levels",
           "changeSummary":  "The 'Feature Levels' slider has moved to the top of the page. There is also a 'Feature Levels FlexPanel' at the right of the screen that shows all feature levels for the current user",
-          "otherUrls":      []
-        },
-        {
-          "featureTag":     "nav.users",
-          "type":           "improvement",
-          "changeName":     "Tweaked UserItem Layout in lists",
-          "changeSummary":  "UserItem is still a work in progress - need to add real badges etc",
           "otherUrls":      []
         },
         {

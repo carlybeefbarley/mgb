@@ -31,14 +31,14 @@ export default class Toolbar extends React.Component {
   static propTypes = {
     name:         PropTypes.string.isRequired,      // Name of this toolbar instance. Should be one of toolbarScopeNames
     config:       PropTypes.object.isRequired,      // Config.. { buttons: {}, vertical: bool }
-    levelName:    PropTypes.string                  // TODO(@Stauzs) - please describe 
+    levelName:    PropTypes.string                  // Use this if you want to share active level with other toolbars - by defaults to name
   }
 
   constructor(...args) {
     super(...args)
     window.mgbd_toolbar = this                           // TODO(@Stauzs) - remove window.toolbar for Production builds.. also, ehrn you do these, can you have a prefix such as mgbd_ so they are easy to cleanup.. like windows.mgbd_toolbar
     this.keyActions = {}
-    this.buttons = window.mgbd_buttons = []              // TODO(@Stauzs) - remove window.buttons for Production builds
+    this.buttons = []
 
     // separate these - and allow some toolbars to share level???
     this.lsDataKey = "toolbar-data-" + this.props.name
@@ -52,18 +52,16 @@ export default class Toolbar extends React.Component {
     this.hasMoved = false
     
     this.visibleButtons = null
-    
+
+    this.levelSlider = null
     // levelSlider will set this value
     this.maxLevel = 10
-    this.level = localStorage.getItem(this.lsLevelKey) || this.props.config.level
-    this.levelSlider = this._addLevelSlider()
+    this.state = {};
 
     this.order = _.range(this.props.config.buttons.length)    // Creates array [0, ... n]
 
     this._onChange = (e) => {
-      this.level = parseInt(e.target.value, 10)
-      localStorage.setItem(this.lsLevelKey, this.level)       // TODO(@dgolds): Store in User record if logged in
-      this.forceUpdate()                                      // ENHANCE? use setState() instead and we don't need forceUpdate()?
+      this.setState({level: parseInt(e.target.value, 10)})
     }
 
     this._onKeyDown = (e) => {
@@ -75,10 +73,9 @@ export default class Toolbar extends React.Component {
       }
     }
 
-
     this._onKeyUp = (e) => {
       // don't steal events from input fields
-    // TODO(@stauzs): Maybe worth using something like https://github.com/madrobby/keymaster to handle the edge cases like meta (cmd), input etc.
+      // TODO(@stauzs): Maybe worth using something like https://github.com/madrobby/keymaster to handle the edge cases like meta (cmd), input etc.
       if (["INPUT", "SELECT", "TEXTAREA"].indexOf(e.target.tagName) > -1)
         return
       
@@ -92,13 +89,11 @@ export default class Toolbar extends React.Component {
       }
     }
 
-    this._onMouseMove = (e) => { this._moveButton(e) }      // TODO(@Stauz) - why is this a fat arrow and the one after is a bind?
+    this._onMouseMove = this._moveButton.bind(this)
     this._onMouseUp = this._moveButtonStop.bind(this)
 
     this.loadState()
   }
-
-  // TODO(@Stauzs) should there be something to remove these event listeners? or is react magic going to do it?
 
 
   set activeButton(v) {
@@ -121,6 +116,62 @@ export default class Toolbar extends React.Component {
     return this._activeButton
   }
 
+  /* Lifecycle functions */
+  componentDidMount() {
+    this.setState({level:localStorage.getItem(this.lsLevelKey) || this.props.config.level})
+    this.levelSlider = this._addLevelSlider()
+
+    this.levelSlider.addEventListener("input", this._onChange)
+    window.addEventListener("keyup", this._onKeyUp)
+    window.addEventListener("mousemove", this._onMouseMove)
+    window.addEventListener("mouseup", this._onMouseUp)
+
+    // TODO(@stauzs) - debug why initPopups is not working from setState (above)
+    window.setTimeout(() => {
+      this.initPopups()
+    }, 0)
+  }
+
+  componentWillReceiveProps(props) {
+    const len = props.config.buttons.length
+
+    // add spaces for extra buttons
+    if (this.order.length < len) {
+      for (let i=this.order.length; i<len; i++)
+        this.order[i] = i
+    }
+
+    this.data = props.config
+  }
+
+  componentWillUnmount() {
+    this.levelSlider.removeEventListener("input", this._onChange)
+    window.removeEventListener("keyup", this._onKeyUp)
+    window.removeEventListener("mousemove", this._onMouseMove)
+    window.removeEventListener("mouseup", this._onMouseUp)
+
+    let $a = $(ReactDOM.findDOMNode(this))
+    $a.find('.hazPopup').popup( 'destroy' )
+
+    utilMuteLevelSlider(this.levelSlider)
+  }
+
+  setState(state){
+    super.setState(state);
+    Object.assign(this.state, state);
+    localStorage.setItem(this.lsLevelKey, state.level)       // TODO(@dgolds): Store in User record if logged in
+    // seems harmless if called twice on the same element
+    this.initPopups()
+  }
+  /* End of Lifecycle functions */
+
+  /* Helper/Misc function */
+  // seems harmless if called more than once on the same element
+  initPopups(){
+    let $a = $(ReactDOM.findDOMNode(this))
+    $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
+  }
+
 
   getRow(mb, b) {
     const totRows = Math.round(mb.height / b.height);
@@ -141,59 +192,6 @@ export default class Toolbar extends React.Component {
     e.ctrlKey  &&  (keyval |= CTRL)
     e.altKey   &&  (keyval |= ALT)
     return keyval
-  }
-
-
-  componentDidMount() {
-    this.levelSlider.addEventListener("input", this._onChange)
-    window.addEventListener("keyup", this._onKeyUp)
-    window.addEventListener("mousemove", this._onMouseMove)
-    window.addEventListener("mouseup", this._onMouseUp)
-
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
-  }
-
-
-  componentWillUnmount() {
-    this.levelSlider.removeEventListener("input", this._onChange)
-    window.removeEventListener("keyup", this._onKeyUp)
-    window.removeEventListener("mousemove", this._onMouseMove)
-    window.removeEventListener("mouseup", this._onMouseUp)
-
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup( 'destroy' )
-
-    utilMuteLevelSlider(this.levelSlider)
-  }
-
-
-  // we need to keep local order, but update another props
-  // probably convert to hashmap (object) and back would be faster
-  componentWillReceiveProps(props) {
-    const len = props.config.buttons.length
-
-    // add spaces for extra buttons
-    if (this.order.length < len) {
-      for (let i=this.order.length; i<len; i++)
-        this.order[i] = i
-    }
-
-    this.data = props.config
-    /*let p = props.config.buttons
-    let o = this.data.buttons
-
-    for(let i=0; i<p.length; i++){
-      for(let j=0; j<o.length; j++){
-        if(o[j].name == p[i].name){
-          //const dataKeys = Object.keys(this.data[j])
-          const newKeys = Object.keys(p[i])
-          for(let k=0 k<newKeys.length k++){
-            o[j][newKeys[k]] = p[i][newKeys[k]]
-          }
-        }
-      }
-    }*/
   }
 
 
@@ -265,10 +263,10 @@ export default class Toolbar extends React.Component {
 
   determineButtonSize() {
      // TODO: are 3 levels enough?  TODO(@dgolds) Should we make this a config option?
-    if (this.level <= this.maxLevel / 3)
+    if (this.state.level <= this.maxLevel / 3)
       return "big"
-    else if (this.level <= this.maxLevel / 6)
-      return "medium"    
+    else if (this.state.level <= this.maxLevel / 6)
+      return "medium"
     return "tiny"
   }
 
@@ -286,21 +284,24 @@ export default class Toolbar extends React.Component {
         continue
       if (b.name == "separator")
       {
+        if(!parent.length){
+          continue;
+        }
         parent = []
         buttons.push(parent)
         continue
       }
       // skip invisible buttons - to show nice rounded borders for side buttons
-      if (b.level > this.level)
+      if (b.level > this.state.level)
         continue
     
       parent.push(this._renderButton(b, i))
-      newButtons.push(i)
+      newButtons.push(b.name)
     }
     this.visibleButtons = newButtons
 
     const content = []
-    const className = "ui icon buttons animate " + size + " " + "level" + this.level + (this.props.config.vertical ? " vertical" : '')
+    const className = "ui icon buttons animate " + size + " " + "level" + this.state.level + (this.props.config.vertical ? " vertical" : '')
     buttons.forEach((b, i) => {
       content.push(<div style={{marginRight: "4px"}} className={className} key={i}>{b}</div>)
     })
@@ -325,11 +326,10 @@ export default class Toolbar extends React.Component {
     })
     this.saveState()
     this.forceUpdate()
+    this.initPopups()
   }
 
   /* private methods go here */
-
-
   // adds react dom element that represents button
   _addButton(b, index) {
     if (!b)
@@ -364,20 +364,23 @@ export default class Toolbar extends React.Component {
 
 
   _renderButton(b, index) {
-    if (b.component)
-      return b.component
-    
-    const label = this.level <= 3 ? <div >{b.label}</div> : ''
-    const title = this.level > 3 ? b.label : ''
-    const hidden = b.level > this.level ? " invisible" : ' isvisible' // isvisible because visible is reserved
+    const label = this.state.level <= 3 ? <div >{b.label}</div> : ''
+
+    if (b.component) {
+      const Component = b.component
+      return <Component label={label} key={index} />
+    }
+
+    const title = this.state.level > 3 ? b.label : ''
+    const hidden = b.level > this.state.level ? " invisible" : ' isvisible' // isvisible because visible is reserved
     const active = b.active ? " primary" : ''
     const disabled = b.disabled ? " disabled" : ''
     if(b.shortcut){
       this.registerShortcut(b.shortcut, b.name)
     }
-    let className = "ui button hazPopup animate " + hidden + active + disabled;
+    let className = "ui button hazPopup animate " + hidden + active + disabled
     // button is new
-    if (this.visibleButtons && this.visibleButtons.indexOf(index) == -1)
+    if (this.visibleButtons && this.visibleButtons.indexOf(b.name) == -1)
       className += " new"
     
 
@@ -402,19 +405,18 @@ export default class Toolbar extends React.Component {
   // Note that this relies on the slider created by /client/imports/components/Nav/NavBarGadgetUxSlider.js
   _addLevelSlider() {
     const maxLevel = _.maxBy(this.props.config.buttons, 'level').level
-    return utilActivateLevelSlider(maxLevel, this.lsLevelKey, this.level)
+    return utilActivateLevelSlider(maxLevel, this.lsLevelKey, this.state.level)
   }
 
-
+  /* Button sorting */
   _moveButtonStart(e) {
     const b = this._extractButton(e.target)
     if (!b)
       return
-    
-    b.getBoundingClientRect()
+
     this.startPos = {
-      x: e.pageX,// + b.left,
-      y: e.pageY// + b.top
+      x: e.pageX,
+      y: e.pageY
     }
     this.activeButton = b
   }
@@ -584,4 +586,5 @@ export default class Toolbar extends React.Component {
     this.activeButton.addEventListener("transitionend", sort)
     this.activeButton = null
   }
+  /* End of Button sorting */
 }

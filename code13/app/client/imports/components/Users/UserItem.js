@@ -38,7 +38,7 @@ export default UserItem = React.createClass({
     const { name, avatar, title } = profile
     const createdAtFmt = moment(createdAt).format('MMMM DD, YYYY')
     const segClass = renderAttached ? "ui attached  segment" : "ui raised  segment"
-    const imageSize = narrowItem ? "small" : "tiny"
+    const imageSize = narrowItem ? "mini" : "tiny"
     const titleSpan = <span><i className="quote left icon blue"></i>{title || "(no title)"}&nbsp;<i className="quote right icon blue"></i></span>
     const badgesForUser = getAllBadgesForUser(user)
     const getBadgeN = idx => (<Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : "blank"} />)
@@ -48,9 +48,9 @@ export default UserItem = React.createClass({
       <div className={segClass} onClick={this.handleClickUser} >
         <div className="ui header large">{name}</div>
         <img src={avatar} className={`ui floated image ${imageSize}`} />
-        { narrowItem ? titleSpan : <big>{titleSpan}</big> }
-        <p><font color="lighblue">Joined {createdAtFmt}</font></p>
-        { getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)} 
+        { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
+        <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
+        {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)} 
       </div>
     )
   }

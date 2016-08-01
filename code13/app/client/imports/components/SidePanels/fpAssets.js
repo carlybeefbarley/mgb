@@ -70,10 +70,9 @@ export default fpAssets = React.createClass({
   },
 
   // small hack - so I don't need to reach mouse
-  handleSearchNameBoxKeyUp(e){
-    if(e.which == 13){
-      $(this.refs.searchGoButton).click();
-    }
+  handleSearchNameBoxKeyUp(e) {
+    if (e.which === 13)
+      $(this.refs.searchGoButton).click()
   },
   
   render: function () {
@@ -83,8 +82,8 @@ export default fpAssets = React.createClass({
     const assets = this.data.assets       // list of assets provided via getMeteorData()
     
     return  <div>
-              <div className="ui segment">
-                <div className="ui small action input">
+              <div>
+                <div className="ui small fluid action input">
                   <input  type="text" 
                           placeholder="Search..." 
                           defaultValue={this.state.searchName} 
@@ -95,8 +94,9 @@ export default fpAssets = React.createClass({
                   <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
                     <i className="search icon"></i>
                   </button>
-                </div>            
+                </div>                 
               </div>
+              <br></br>
               <AssetList
                   location="panel"
                   assets={assets} 

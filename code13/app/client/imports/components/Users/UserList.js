@@ -4,9 +4,10 @@ import UserItem from './UserItem.js';
 
 export default UserList = React.createClass({
   propTypes: {
-    users: React.PropTypes.array,
+    users: React.PropTypes.array,     // Array of Users objects to be rendered
     handleClickUser: PropTypes.func   // Optional. If provided, call this with the userId instead of going to the user Profile Page
   },
+
 
   render: function() {    
     let users = this.props.users.map((user) => {      
@@ -20,9 +21,9 @@ export default UserList = React.createClass({
           profileFocusMsg={user.profile.focusMsg}
           profileFocusStart={user.profile.focusStart}
           createdAt={user.createdAt}
-          avatar={user.profile.avatar} 
+          avatar={user.profile.avatar}           
           handleClickUser={this.props.handleClickUser} />
-      );
+      )
     })
     
     return (

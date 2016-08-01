@@ -1315,19 +1315,7 @@ map
       })
       actions[tool.name] = this.handleToolSelected.bind(this, tool)
 
-      /*return (
-      <div  className={"ui button hazPopup " + (this.state.toolChosen === tool ? " active" : "" )}
-            onClick={this.handleToolSelected.bind(this, tool)}
-            key={tool.label}
-            data-title={tool.label + " (" + tool.shortcut + ")"}
-            data-content={tool.tooltip}
-            data-variation="tiny"
-            data-position="right center">
-        <i className={"large " + tool.icon}></i>
-      </div>);*/
     });
-
-    // console.log(config)
 
     // Make element
     return (
@@ -1337,20 +1325,6 @@ map
 
         <div className={"mgbEditGraphicSty_tagPosition ui sixteen wide column"} >
           <div className="row">
-
-            {/*****************
-            <div className="ui small button" onClick={this.handleUndo.bind(this)}>
-              <i className="icon undo"></i>Undo {this.undoSteps.length}
-            </div>
-            *****************/}
-
-            {/*****************
-            <span>&nbsp;&nbsp;</span>
-            <a className="ui tiny label mgbResizerHost" data-position="right center"  onDragOver={this.handleDragOverPreview.bind(this)}
-                        onDrop={this.handleDropPreview.bind(this,-2)}>
-              <i className="icon expand"></i>{"Size: " + c2.width + " x " + c2.height}
-            </a>
-            *****************/}
 
             <div className="ui small labeled input">
               <div className="ui small label" title="Canvas width">
@@ -1406,34 +1380,6 @@ map
             </div>
             <span>&nbsp;&nbsp;</span>
             <AssetUrlGenerator asset={this.props.asset} />
-
-
-            {/*****************
-            <span>&nbsp;&nbsp;</span>
-            <div className={"ui small button hazPopup " + (this.state.selectRect ? "" : "disabled")} 
-              onClick={this.cutSelected.bind(this)}
-               data-content="Cut selected area"
-               data-variation="tiny"
-               data-position="bottom center">
-              <i className="cut icon"></i>Cut
-            </div>
-
-            <div className={"ui small button hazPopup " + (this.state.selectRect ? "" : "disabled")} 
-              onClick={this.copySelected.bind(this)}
-               data-content="Copy selected area"
-               data-variation="tiny"
-               data-position="bottom center">
-              <i className="copy icon"></i>Copy
-            </div>
-
-            <div className={"ui small button hazPopup " + (this.state.pasteCanvas ? "" : "disabled")} 
-              onClick={this.pasteSelected.bind(this)}
-               data-content="Rotate (Alt+Scroll). Scale (Shift+Scroll). Flip (Ctrl+Scroll)."
-               data-variation="tiny"
-               data-position="bottom center">
-              <i className="paste icon"></i>Paste
-            </div>
-            *****************/}
 
             <span>&nbsp;&nbsp;</span>
             <div className="ui small button hazPopup"

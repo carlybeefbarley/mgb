@@ -47,9 +47,8 @@ export default ProjectMembersGET = React.createClass({
                   createdAt={user.createdAt}
                   avatar={user.profile.avatar}  />
               <div className="ui bottom attached buttons">
-                <QLink to={uLink + "/projects"} className="ui button">Projects</QLink>
                 { this.props.enableRemoveButton && 
-                  <div className="ui red button" onClick={this.handleRemove.bind(this, user)}>Remove</div> }
+                  <div className="ui button" onClick={this.handleRemove.bind(this, user)}><i className="ui red remove icon" />Remove Member from Project</div> }
               </div>
             </div>
     })

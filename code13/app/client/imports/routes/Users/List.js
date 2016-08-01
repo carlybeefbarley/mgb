@@ -31,7 +31,7 @@ export default UserListRoute = React.createClass({
     return {
       userLimit: this.props.initialLimit,
       searchName: "",
-      userSort: "createdOldest"                 // Must be one of the keys of userSorters. TODO: Implement select UI for this
+      userSort: "createdNewest"                 // Must be one of the keys of userSorters. TODO: Implement select UI for this
     }
   },
   

@@ -37,10 +37,12 @@ const schema = {
 
 
 export const userSorters = { 
-  "createdOldest":   { createdAt: 1 }, 
+  "default":         { createdAt: -1 },    // Should be same as one of the others..
   "createdNewest":   { createdAt: -1 }, 
+  "createdOldest":   { createdAt: 1 }, 
   "nameAscending":   { "profile.name": 1  }, 
   "nameDescending":  { "profile.name": -1 }
+//"mgbRecentsDate":  { "profile.latestNewsTimestampSeen": -1 },   // This can't work until the date strings are replaced with Date() values in the DB
 }
 
 

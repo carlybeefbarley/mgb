@@ -10,7 +10,7 @@ import { chatParams } from '/imports/schemas/chats'
 //    USERS
 //
 
-const fieldsUserPublic = {username: 1, profile: 1, permissions: 1, createdAt: 1 }
+const fieldsUserPublic = { username: 1, profile: 1, permissions: 1, createdAt: 1 }
 
 Meteor.users._ensureIndex({"profile.name": 1})
 Meteor.users._ensureIndex({"createdAt": 1})
@@ -26,13 +26,13 @@ Meteor.publish(null, function() {
 
 Meteor.publish('users.byName', function(nameSearch, limitCount, userSortType) {
   let selector = {}
-  let userSorter = userSortType ? userSorters[userSortType] : userSorters["createdOldest"]
+  let userSorter = userSortType ? userSorters[userSortType] : userSorters.default
   if (nameSearch && nameSearch.length > 0)
   {
     // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
     selector["profile.name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
   }
-  
+
   let findOpts = {
     fields: fieldsUserPublic,
     sort:   userSorter

@@ -282,7 +282,7 @@ RestApi.addRoute('asset/sound/:id', {authRequired: false}, {
     let sound = Azzets.findOne(this.urlParams.id)
 
     if(sound)
-      return sound.contet2.dataUri
+      return { dataUri: sound.content2.dataUri }
     else
       return { statusCode: 404 }
   }

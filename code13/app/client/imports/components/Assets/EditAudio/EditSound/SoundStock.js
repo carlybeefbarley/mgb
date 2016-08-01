@@ -8,11 +8,11 @@ export default class SoundStock extends React.Component {
   	super(props);
 
   	this.state = {
-  		searchField: ""
+  		searchField: "sound"
   		, sounds: []
   	}
 
-  	// this.testAjax();
+  	this.searchOnSubmit() // to be deleted
 	}
 
 	searchOnChange(event){
@@ -29,12 +29,18 @@ export default class SoundStock extends React.Component {
 	}
 
 	playSound(soundID){
-		console.log(soundID)
-		let self = this
-		const infolink = "/api/asset/asset/sound/" + soundID;
-    $.get(infolink, (dataUri) => {
-      self.setState({ sounds: sounds })
-    })
+		let player = ReactDOM.findDOMNode(this.refs[soundID])
+		if(player.src){
+			player.play()
+		}
+		else {
+		  let self = this
+		  const infolink = "/api/asset/sound/" + soundID;
+      $.get(infolink, (data) => {
+        player.src = data.dataUri
+        player.play()
+      })
+    }
 	}
 
 	importSound(soundID){
@@ -43,6 +49,7 @@ export default class SoundStock extends React.Component {
 
 	render(){
 		let soundItems = _.map(this.state.sounds, (sound, nr) => { 
+			console.log(sound)
 			return (
 			  <div key={"soundKey_"+nr} className="item">
 			    <button onClick={this.playSound.bind(this, sound._id)} className="ui icon button">
@@ -51,7 +58,7 @@ export default class SoundStock extends React.Component {
 			    {sound.name}
 			    &nbsp;&nbsp;
 			    {sound.duration}
-			    <audio ref={"sound_"+sound._id} controls></audio>
+			    <audio ref={sound._id} controls></audio>
 			    <button onClick={this.importSound.bind(this, sound._id)} className="ui icon right floated button">
             <i className="add square icon"></i> Import sound
           </button>

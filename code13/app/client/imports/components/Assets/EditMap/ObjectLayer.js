@@ -62,6 +62,7 @@ export default class ObjectLayer extends AbstractLayer {
   setPickedObjectSlow(id){
     this._pickedObject = id;
     this.clearCache();
+    this.map.updateTools();
     this.map.forceUpdate();
   }
   getPickedObject(){
@@ -864,6 +865,9 @@ edit[EditModes.drawShape] = function(e){
 
 edit[EditModes.stamp] = function(e){
   if(!this.map.collection.length || e.target != this.refs.canvas){
+    return;
+  }
+  if(e.which !== 1){
     return;
   }
   const tile = this.map.collection[0];

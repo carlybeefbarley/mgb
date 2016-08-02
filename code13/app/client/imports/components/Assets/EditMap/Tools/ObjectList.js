@@ -59,9 +59,6 @@ export default class Layers extends React.Component {
     }
     // TODO: create set/getActiveObject in the object layer
     l.setPickedObjectSlow(index);
-
-    this.map.forceUpdate();
-    this.forceUpdate();
   }
   renderBlock(content = [], active = 0){
 

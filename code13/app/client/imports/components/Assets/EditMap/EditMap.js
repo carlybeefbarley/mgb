@@ -21,7 +21,7 @@ export default class EditMap extends React.Component {
   doSnapshotActivity()
   {
     let passiveAction = {
-      isMap: true     // This could in future have info such as which layer is being edited, but not needed yet 
+      isMap: true     // This could in future have info such as which layer is being edited, but not needed yet
     }
     snapshotActivity(this.props.asset, passiveAction)
   }
@@ -35,9 +35,9 @@ export default class EditMap extends React.Component {
     this.props.handleContentChange( newC2, "" ); // TODO: Thumbnail is second param
   }
 
-  handleSave(reason) {
+  handleSave(reason, thumbnail) {
     // TODO: convert uploaded images to assets
-    this.props.handleContentChange(this.refs.mapArea.data, this.refs.mapArea.generatePreview(), reason);
+    this.props.handleContentChange(this.refs.mapArea.data, thumbnail, reason);
   }
 
   render() {

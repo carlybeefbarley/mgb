@@ -106,7 +106,7 @@ export default class Properties extends React.Component {
         }
       }
     }, () => {
-
+      this.map.redraw();
     });
     this.settings.object.append(this.refs.object);
 

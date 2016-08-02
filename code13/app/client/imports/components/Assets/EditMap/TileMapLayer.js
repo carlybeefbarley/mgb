@@ -764,6 +764,10 @@ edit[EditModes.stamp] = function(e, up, saveUndo = true){
     saveUndo = false;
   }
 
+  if(e.type == "mouseup"){
+    this.map.save("Inserting Tiles");
+  }
+
   if(e.shiftKey){
     if(up){
       this.map.swapOutSelection();

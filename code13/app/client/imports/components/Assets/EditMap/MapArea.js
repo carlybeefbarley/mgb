@@ -263,8 +263,18 @@ export default class MapArea extends React.Component {
     });
   }
 
-  save(reason = "no reason"){
-    this.props.parent.handleSave(reason);
+  save(reason = "no reason", force = false){
+    const newData = JSON.stringify(this.data);
+    // skip equal map save
+    if(!force && this.savedData == newData){
+      return;
+    }
+    this.savedData = newData;
+
+    // make sure thumbnail are nice - all layers has been drawn
+    window.requestAnimationFrame(() => {
+      this.props.parent.handleSave(reason, this.generatePreview());
+    })
   }
   copyData(data){
     return JSON.stringify(data);
@@ -927,7 +937,7 @@ export default class MapArea extends React.Component {
     canvas.width = 200;
     canvas.height = 150;
     const ctx = canvas.getContext("2d");
-    const ratio = canvas.height / canvas.width;
+    let ratio;
 
     for(let i=0; i<this.data.layers.length; i++){
       const ld = this.data.layers[i];
@@ -937,7 +947,8 @@ export default class MapArea extends React.Component {
       const layer = this.getLayer(ld);
       if(!layer){continue;}
       const c = layer.refs.canvas;
-      ctx.drawImage(c, 0, 0, c.width, c.height*ratio, 0, 0, canvas.width, canvas.height);
+      ratio = canvas.width / c.width;
+      ctx.drawImage(c, 0, 0, c.width, c.height, 0, 0, canvas.width, c.height * ratio);
     }
     return canvas.toDataURL();
   }

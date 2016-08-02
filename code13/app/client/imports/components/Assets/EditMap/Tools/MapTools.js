@@ -12,7 +12,8 @@ export default class MapTools extends React.Component {
   }
 
   save(e) {
-    this.props.map.save("Save Button Pressed")
+    // force to update thumbnail
+    this.props.map.save("Save Map", true)
   }
 
   resetCamera() {

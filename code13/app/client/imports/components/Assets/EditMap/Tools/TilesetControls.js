@@ -35,6 +35,8 @@ export default class TilesetControls extends React.Component {
     let val = TileHelper.normalizePath(url);
     let img = new Image();
     img.onload = (e) => {
+      tileset.imagewidth = img.width;
+      tileset.imageheight = img.height;
       this.updateTileset(img, tileset);
     };
     img.onerror = (e)=> {
@@ -70,10 +72,17 @@ export default class TilesetControls extends React.Component {
   updateTilesetFromData(data){
     const parent = this.props.tileset;
     const map = parent.props.info.content.map;
-
-    const ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight,
-      data.tilewidth, data.tileheight, data.name
-    );
+    let ts;
+    // guess tile size
+    if(data.imagewidth == data.tilewidth){
+      ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight);
+    }
+    // set knows size
+    else{
+      ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight,
+        data.tilewidth, data.tileheight, data.name
+      );
+    }
     ts.tiles = data.tiles;
 
     const tss = map.data.tilesets;

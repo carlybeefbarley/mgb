@@ -54,6 +54,7 @@ export default class TileSet extends React.Component {
     return this.props.info.content.map;
   }
   get data(){
+    const map = this.map;
     const tss = map.data.tilesets;
     const data = tss[map.activeTileset];
     return data;
@@ -99,7 +100,7 @@ export default class TileSet extends React.Component {
       }
     }
     const l = map.getActiveLayer();
-    l && l.resetRotation();
+    l && l.resetRotation && l.resetRotation();
     map.collection.pushOrRemove(new TileSelection(this.prevTile));
     this.highlightTile(e.nativeEvent, true);
   }
@@ -143,7 +144,7 @@ export default class TileSet extends React.Component {
       }
     }
     const l = map.getActiveLayer();
-    l && l.resetRotation();
+    l && l.resetRotation && l.resetRotation();
     this.drawTiles();
   }
   selectTileset(tilesetNum){

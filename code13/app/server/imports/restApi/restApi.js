@@ -301,6 +301,7 @@ RestApi.addRoute('asset/sound/name/:name', {authRequired: false}, {
       sounds.push({
         _id: item._id
         , name: item.name
+        , thumbnail: item.thumbnail
         , duration: item.content2.duration
       })
     })

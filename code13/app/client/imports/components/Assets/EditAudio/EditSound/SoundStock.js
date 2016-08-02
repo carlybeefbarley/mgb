@@ -10,9 +10,17 @@ export default class SoundStock extends React.Component {
   	this.state = {
   		searchField: "sound"
   		, sounds: []
+  		, playingSoundID: null
   	}
 
   	this.searchOnSubmit() // to be deleted
+
+  	// animframe for updating selecting rectangle animation
+    this._raf = () => {
+      if(this.state.playingSoundID) this.drawTimeline()
+      window.requestAnimationFrame(this._raf);
+    };
+    this._raf();
 	}
 
 	searchOnChange(event){
@@ -28,10 +36,29 @@ export default class SoundStock extends React.Component {
     })
 	}
 
+	togglePlay(soundID){
+		let player = ReactDOM.findDOMNode(this.refs[soundID])
+		if(this.state.playingSoundID === null){
+			this.playSound(soundID)
+		}
+		else if(soundID === this.state.playingSoundID){
+			player.pause()
+			this.setState({ playingSoundID: null })
+		} 
+		// if is played another sound already
+		else {
+			let player2 = ReactDOM.findDOMNode(this.refs[this.state.playingSoundID])
+			player2.pause()
+			player2.currentTime = 0
+			this.playSound(soundID)
+		}
+	}
+
 	playSound(soundID){
 		let player = ReactDOM.findDOMNode(this.refs[soundID])
 		if(player.src){
 			player.play()
+			this.setState({ playingSoundID: soundID })
 		}
 		else {
 		  let self = this
@@ -39,8 +66,28 @@ export default class SoundStock extends React.Component {
       $.get(infolink, (data) => {
         player.src = data.dataUri
         player.play()
+        self.setState({ playingSoundID: soundID })
       })
     }
+	}
+
+	drawTimeline(){
+		let player = ReactDOM.findDOMNode(this.refs[this.state.playingSoundID])
+		let timeLine = ReactDOM.findDOMNode(this.refs["timeline_"+this.state.playingSoundID])
+		let width = 280 * player.currentTime/player.duration
+		timeLine.width = width
+		console.log(width)
+		return width
+	}
+
+	audioEnded(event){
+		let soundID = event.target.dataset.id
+		let player = ReactDOM.findDOMNode(this.refs[soundID])
+		player.pause()
+		player.currentTime = 0
+		if(soundID === this.state.playingSoundID){
+			this.setState({ playingSoundID: null })
+		}
 	}
 
 	importSound(soundID){
@@ -58,20 +105,35 @@ export default class SoundStock extends React.Component {
     }
 	}
 
+	formatDuration(sec){
+		if(!sec) sec = 1;
+		sec = Math.round(sec);
+		let min = Math.floor(sec/60) + "";
+		if(min.length < 2) min = "0"+min;
+		sec = (sec%60) + "";
+		if(sec.length < 2) sec = "0"+sec;
+		return min+":"+sec;
+	}
+
 	render(){
 		let soundItems = _.map(this.state.sounds, (sound, nr) => { 
 			return (
-			  <div key={"soundKey_"+nr} className="item">
-			    <button onClick={this.playSound.bind(this, sound._id)} className="ui icon button">
-            <i className="play icon"></i>
-          </button>
+			  <div 
+			  key={"soundKey_"+nr} 
+			  className="item" 
+			  style={{width: "280px", margin: "3px", overflow: "hidden", border: "1px solid #fbe6fb", float: "left"}}>
+			  	<img src={sound.thumbnail} style={{ }}/>
+			  	<div ref={"timeline_"+sound._id} style={{ backgroundColor: "#c3c3c3", height: "128px", marginTop: "-134px", opacity: 0.5}}></div>	
+			  	<button onClick={this.togglePlay.bind(this, sound._id)} className="ui icon button">
+            <i className={"icon " + (this.state.playingSoundID === sound._id ? "pause" : "play")}></i>
+          </button>		    
 			    {sound.name}
 			    &nbsp;&nbsp;
-			    {sound.duration}
-			    <audio ref={sound._id}></audio>
+			    ({this.formatDuration(sound.duration)})
+			    <audio ref={sound._id} data-id={sound._id} onEnded={this.audioEnded.bind(this)}></audio>
 			    <button onClick={this.importSound.bind(this, sound._id)} className="ui icon right floated button">
-            <i className="add square icon"></i> Import sound
-          </button>
+            <i className="add square icon"></i>
+          </button>          
 			  </div>
 			)
 		})
@@ -86,9 +148,10 @@ export default class SoundStock extends React.Component {
 
         <div className="ui divider"></div>
 
-        <div className="ui list">
+        <div>
           {soundItems}
         </div>
+        <div>&nbsp;</div>
 
 	    </div>
 		);

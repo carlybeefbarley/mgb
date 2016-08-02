@@ -1,6 +1,6 @@
 "use strict";
 // This object imitates rectangle from shapes
-import ObjectHelper from "../ObjectHelper.js";
+import ObjectHelper from "../Helpers/ObjectHelper.js";
 
 export default class Imitator{
   constructor(obj){

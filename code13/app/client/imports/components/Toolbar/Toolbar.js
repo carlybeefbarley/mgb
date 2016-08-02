@@ -472,7 +472,8 @@ export default class Toolbar extends React.Component {
 
     for (let i=0; i<index; i++) {
       const ab = this.buttons[i]
-      if (!ab || ab == this.activeButton || !ab.parentNode || ab.classList.contains("invisible"))
+      // why do we have buttons detached from the dom tree?
+      if (!ab || ab == this.activeButton || !ab.parentNode || !ab.parentNode.parentNode || ab.classList.contains("invisible"))
         continue
       
       const rect = ab.getBoundingClientRect()
@@ -496,7 +497,7 @@ export default class Toolbar extends React.Component {
 
     for (let i=index; i<this.buttons.length; i++) {
       const ab = this.buttons[i]
-      if (!ab || ab == this.activeButton || !ab.parentNode || ab.classList.contains("invisible"))
+      if (!ab || ab == this.activeButton || !ab.parentNode || !ab.parentNode.parentNode || ab.classList.contains("invisible"))
         continue
       
       const rect = ab.getBoundingClientRect()
@@ -515,9 +516,6 @@ export default class Toolbar extends React.Component {
         }
       }
     }
-
-    this.hasMoved = false
-
     // position has not changed
     if (!mostLeft && !mostRight && !this.props.config.vertical) {
       this.activeButton.style.top = 0
@@ -535,7 +533,7 @@ export default class Toolbar extends React.Component {
       return
     }
 
-    this.hasMoved = true
+    this.hasMoved = true;
     // TODO: make browser compatible
     const active = this.activeButton
 

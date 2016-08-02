@@ -1,7 +1,7 @@
 "use strict";
 import _ from 'lodash';
 import React from 'react';
-import TileHelper from '../TileHelper.js';
+import TileHelper from '../Helpers/TileHelper.js';
 import LayerTypes from "./LayerTypes.js";
 
 export default class LayerControls extends React.Component {

@@ -1,13 +1,12 @@
 "use strict";
 import _ from 'lodash';
 import React from 'react';
-import Tile from './Tile.js';
-import TileSelection from "./Tools/TileSelection.js";
-import EditModes from "./Tools/EditModes.js";
-import LayerTypes from "./Tools/LayerTypes.js";
-import TileCollection from "./Tools/TileCollection.js";
+import TileSelection from "./../Tools/TileSelection.js";
+import EditModes from "./../Tools/EditModes.js";
+import LayerTypes from "./../Tools/LayerTypes.js";
+import TileCollection from "./../Tools/TileCollection.js";
 import AbstractLayer from "./AbstractLayer.js";
-import TileHelper from "./TileHelper.js";
+import TileHelper from "./../Helpers/TileHelper.js";
 
 const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
 const FLIPPED_VERTICALLY_FLAG   = 0x40000000;

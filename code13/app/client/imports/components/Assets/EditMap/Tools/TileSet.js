@@ -1,8 +1,7 @@
 "use strict";
 import _ from 'lodash';
 import React from 'react';
-import Tile from '../Tile.js';
-import TileHelper from '../TileHelper.js';
+import TileHelper from '../Helpers/TileHelper.js';
 import TilesetControls from "./TilesetControls.js";
 import TileSelection from "./TileSelection.js";
 import TileCollection from "./TileCollection.js";

@@ -2,15 +2,15 @@
 import _ from 'lodash';
 import React from 'react';
 import AbstractLayer from "./AbstractLayer.js";
-import TileHelper from "./TileHelper.js";
-import ObjectHelper from "./ObjectHelper.js";
+import TileHelper from "./../Helpers/TileHelper.js";
+import ObjectHelper from "./../Helpers/ObjectHelper.js";
 
-import LayerTypes from "./Tools/LayerTypes.js";
-import EditModes from "./Tools/EditModes.js";
+import LayerTypes from "./../Tools/LayerTypes.js";
+import EditModes from "./../Tools/EditModes.js";
 
-import HandleCollection from "./MapObjects/HandleCollection.js";
-import Imitator from "./MapObjects/Imitator.js";
-import MultiImitator from "./MapObjects/MultiImitator.js";
+import HandleCollection from "./../MapObjects/HandleCollection.js";
+import Imitator from "./../MapObjects/Imitator.js";
+import MultiImitator from "./../MapObjects/MultiImitator.js";
 
 // TODO move these to some good place.. probably mapArea???
 const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
@@ -245,13 +245,15 @@ export default class ObjectLayer extends AbstractLayer {
   handleMouseUp(ep){
     const e = ep.nativeEvent ? ep.nativeEvent : ep;
     super.handleMouseUp(e);
+    this.handles.unlock();
+
     this.mouseDown = false;
     if(edit[this.map.options.mode]){
       edit[this.map.options.mode].call(this, e);
       return;
     }
 
-    this.handles.unlock();
+
   }
   onMouseLeave(){
     this.isDirty = true;

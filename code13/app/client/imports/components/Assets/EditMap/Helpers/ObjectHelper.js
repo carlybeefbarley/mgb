@@ -1,4 +1,7 @@
 "use strict";
+import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets';
+import { logActivity } from '/imports/schemas/activity';
+
 const TO_RADIANS = (Math.PI / 180);
 const TO_DEGREES = 1/TO_RADIANS;
 // collection with useful functions
@@ -176,6 +179,44 @@ const ObjectHelper = {
       "visible": true,
     };
   },
+  createGraphic(name, data, userName, cb = () => {}){
+    const img = new Image();
+    img.onload = () => {
+      const assetKindKey = AssetKindKeys.graphic;
+      const newAsset = {
+        name,
+        kind: assetKindKey,
+        text: "",
+        thumbnail: "",
+        content2: {
+          width: img.width, height: img.height,
+          frameData: [[data]],
+          frameNames: ["Frame 1"],
+          layerParams: [
+            {name: "Layer 1", isHidden: false, isLocked: false}
+          ]
+        },
+        dn_ownerName: userName,
+
+        isCompleted: false,
+        isDeleted: false,
+        isPrivate: true
+      }
+
+      Meteor.call('Azzets.create', newAsset, (error, result) => {
+        if (error) {
+          alert("cannot create asset because: " + error.reason);
+        } else {
+          newAsset._id = result; // So activity log will work
+          logActivity("asset.create", `Create ${assetKindKey}`, null, newAsset);
+          cb(newAsset);
+        }
+      });
+    };
+
+    img.src = data;
+  },
+
   drawEllipse:  (ctx, x, y, w, h) => {
     var kappa = 0.5522848,
       ox = (w / 2) * kappa, // control point offset horizontal

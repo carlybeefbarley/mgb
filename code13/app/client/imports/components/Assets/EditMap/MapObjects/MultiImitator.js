@@ -1,5 +1,5 @@
 "use strict";
-import ObjectHelper from "../ObjectHelper.js"
+import ObjectHelper from "../Helpers/ObjectHelper.js"
 // This object imitates Multiple Objects as one big rectangle
 export default class MultiImitator{
   constructor(layer){

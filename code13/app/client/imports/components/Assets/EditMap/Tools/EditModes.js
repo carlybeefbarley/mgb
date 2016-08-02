@@ -6,7 +6,7 @@ const EditModes = {
   fill: "fill",
   eraser: "eraser",
   // select something from map
-  // also threated as edit modes - selecting and adding at the same time will be bogous ;)
+  // also threated as edit modes - selecting and adding at the same time would be bugous ;)
   rectangle: "rectangle",
   wand: "wand",
   picker: "picker",

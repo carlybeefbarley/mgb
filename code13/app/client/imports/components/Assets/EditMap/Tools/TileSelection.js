@@ -1,5 +1,5 @@
 "use strict";
-import TileHelper from '../TileHelper.js';
+import TileHelper from '../Helpers/TileHelper.js';
 
 export default class TileSelection {
   constructor(prevTileSelection){

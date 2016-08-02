@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import Tile from './Tile.js';
-import TileHelper from "./TileHelper.js";
+import TileHelper from "./../Helpers/TileHelper.js";
 
 export default class GridLayer extends React.Component {
   /* lifecycle functions */

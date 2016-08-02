@@ -1,7 +1,7 @@
 "use strict";
 import _ from 'lodash';
 import React from 'react';
-import TileHelper from '../TileHelper.js';
+import TileHelper from '../Helpers/TileHelper.js';
 export default class TilesetControls extends React.Component {
 
   addImageFromInput(e) {

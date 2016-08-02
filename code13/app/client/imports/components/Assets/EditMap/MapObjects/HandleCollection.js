@@ -1,5 +1,5 @@
 "use strict";
-import ObjectHelper from "../ObjectHelper.js";
+import ObjectHelper from "../Helpers/ObjectHelper.js";
 /*
   we wil have 8 handles with 2 actions (resize / rotate)
   + 1 extra handle for a pivot point

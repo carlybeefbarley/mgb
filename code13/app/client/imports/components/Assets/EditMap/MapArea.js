@@ -2,10 +2,10 @@
 import _ from 'lodash';
 import React from 'react';
 
-import TileMapLayer from "./TileMapLayer.js";
-import ImageLayer from "./ImageLayer.js";
-import ObjectLayer from "./ObjectLayer.js";
-import GridLayer from "./GridLayer.js";
+import TileMapLayer from "./Layers/TileMapLayer.js";
+import ImageLayer from "./Layers/ImageLayer.js";
+import ObjectLayer from "./Layers/ObjectLayer.js";
+import GridLayer from "./Layers/GridLayer.js";
 
 import TileSet from "./Tools/TileSet.js";
 import Layers from "./Tools/Layers.js";
@@ -13,7 +13,7 @@ import Properties from "./Tools/Properties.js";
 import ObjectList from "./Tools/ObjectList.js";
 
 import MapTools from "./Tools/MapTools.js";
-import TileHelper from "./TileHelper.js";
+import TileHelper from "./Helpers/TileHelper.js";
 import TileCollection from "./Tools/TileCollection.js";
 import EditModes from "./Tools/EditModes.js";
 import LayerTypes from "./Tools/LayerTypes.js";
@@ -740,6 +740,11 @@ export default class MapArea extends React.Component {
     this.refs.tools.enableMode(mode);
   }
   importFromDrop (e) {
+    if (!this.props.parent.props.canEdit) {
+      this.props.parent.props.editDeniedReminder();
+      return;
+    }
+    
     const layer = this.getActiveLayer();
     if(layer && layer.onDrop){
       // layer by it's own can handle drop
@@ -760,10 +765,7 @@ export default class MapArea extends React.Component {
       return;
     }
 
-    if (!this.props.parent.props.canEdit) {
-      this.props.parent.props.editDeniedReminder();
-      return;
-    }
+
     let files = e.dataTransfer.files; // FileList object.
     // file has been dropped
     if(files.length){

@@ -1,12 +1,11 @@
 "use strict";
 import _ from 'lodash';
 import React from 'react';
-import Tile from './Tile.js';
-import TileHelper from "./TileHelper.js";
-import TileSelection from "./Tools/TileSelection.js";
-import EditModes from "./Tools/EditModes.js";
-import TileCollection from "./Tools/TileCollection.js";
-import LayerTypes from "./Tools/LayerTypes.js";
+import TileHelper from "./../Helpers/TileHelper.js";
+import TileSelection from "./../Tools/TileSelection.js";
+import EditModes from "./../Tools/EditModes.js";
+import TileCollection from "./../Tools/TileCollection.js";
+import LayerTypes from "./../Tools/LayerTypes.js";
 
 export default class AbstractLayer extends React.Component {
   /* lifecycle functions */

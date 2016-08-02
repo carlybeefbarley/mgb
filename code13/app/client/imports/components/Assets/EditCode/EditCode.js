@@ -423,7 +423,6 @@ export default class EditCode extends React.Component {
           // TODO: show multiple errors on same line
           // TODO: allow user to change error level? Warning / Error?
           const msgs = {};
-          let multi;
           for (var i = 0; i < errors.length; ++i) {
             const err = errors[i];
             if (!err) continue;
@@ -432,7 +431,6 @@ export default class EditCode extends React.Component {
 
             if (!msgs[err.line]) {
               msgs[err.line] = msg;
-              multi = null;
               msg.icon = msg.appendChild(document.createElement("div"));
               //icon.innerHTML = "!";
               if (err.code.substring(0, 1) == "W") {
@@ -445,9 +443,9 @@ export default class EditCode extends React.Component {
               msg.container.className = "lint-error-text";
 
             }
-            else if (!multi) {
-              multi = msg.icon.appendChild(document.createElement("div"));
-              multi.className = "CodeMirror-lint-marker-multiple";
+            else if (!msg.multi) {
+              msg.multi = msg.icon.appendChild(document.createElement("div"));
+              msg.multi.className = "CodeMirror-lint-marker-multiple";
             }
             // override warning icon to Error
             if (err.code.substring(0, 1) == "E") {

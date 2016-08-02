@@ -26,6 +26,12 @@ export default class EditSound extends React.Component {
     		, progressColor: 'purple'
 		});
 
+		this.previewPlayer = WaveSurfer.create({
+		    container: '#previewDiv'
+		    , waveColor: 'violet'
+    		, progressColor: 'purple'
+		});
+
 		this.soundCanvas = $("#soundPlayer canvas")[0]
 		this.soundCtx = this.soundCanvas.getContext('2d')
 		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
@@ -39,6 +45,7 @@ export default class EditSound extends React.Component {
 		let c2 = this.props.asset.content2;
 		if(c2.dataUri){
 			this.wavesurfer.load(c2.dataUri);
+			this.previewPlayer.load(c2.dataUri);
 		}
 
 		let self = this;
@@ -47,6 +54,9 @@ export default class EditSound extends React.Component {
     	self.setState({ playerStatus: "pause" })
 		})
 		this.wavesurfer.on('ready', function () {
+			// self.handleSave()
+		})
+		this.previewPlayer.on('ready', function () {
 			self.handleSave()
 		})
 	}
@@ -55,7 +65,8 @@ export default class EditSound extends React.Component {
 		if(!this.hasPermission) return;
 
 		if(soundObject){
-			this.wavesurfer.load(soundObject.src);
+			this.wavesurfer.load(soundObject.src)
+			this.previewPlayer.load(soundObject.src)
 			let c2 = this.props.asset.content2;
 			c2.dataUri = soundObject.src;
 			c2.duration = soundObject.duration;
@@ -112,8 +123,9 @@ export default class EditSound extends React.Component {
     let asset = this.props.asset
     let c2    = asset.content2
 
-    this.thumbnailCtx.putImageData(this.soundCtx.getImageData(0, 0, 290, 128), 0, 0)
-    this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), this.saveText)
+    const previewCanvas = $("#previewDiv").children().first().children().first()[0]
+    // this.thumbnailCtx.putImageData(this.soundCtx.getImageData(0, 0, 280, 128), 0, 0)
+    this.props.handleContentChange(c2, previewCanvas.toDataURL('image/png'), this.saveText)
   }
 
 	render(){
@@ -143,7 +155,8 @@ export default class EditSound extends React.Component {
 
 					<div className="content">
 						<div id="soundPlayer"></div>
-						<canvas ref="thumbnailCanvas" style={{display: "none"}} width="290px" height="128px"></canvas>
+						<canvas ref="thumbnailCanvas" width="280px" height="128px"></canvas>
+						<div id="previewDiv" style={{width:"280px", height:"128px"}}></div>
 						<div className="row">
 							<button className="ui icon button small" onClick={this.togglePlaySound.bind(this)}>
 							  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>

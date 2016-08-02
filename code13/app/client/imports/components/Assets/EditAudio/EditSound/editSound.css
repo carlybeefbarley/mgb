@@ -1,0 +1,33 @@
+.hidden {
+	display: none;
+}
+
+.uploadForm {
+	width: 100%;
+	text-align: center;
+	border: 5px dashed #999;
+
+}
+.uploadForm.draggedOver{
+	border-color: green;
+	background-color: #DFFAD4;
+}
+
+
+.soundWrapper {
+	width: 280px;
+	margin: 3px; 
+	overflow: hidden; 
+	position: relative; 
+	border: 1px solid #fbe6fb; 
+	float: left;
+}
+
+.timelineCanvas{
+	width: 280px;
+	height: 128px;
+	opacity: 0.5; 
+	position: absolute; 
+	top: 0; 
+	left: 0;
+}

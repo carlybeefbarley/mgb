@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
-import sty from  './importSound.css';
+import sty from  './editSound.css';
 import WaveSurfer from '../lib/WaveSurfer.js'
 
 export default class ImportSound extends React.Component {

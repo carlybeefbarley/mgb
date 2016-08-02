@@ -2,6 +2,8 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
+import sty from  './editSound.css';
+
 export default class SoundStock extends React.Component {
 
 	constructor(props) {
@@ -80,15 +82,41 @@ export default class SoundStock extends React.Component {
 		let width = 280 * player.currentTime/player.duration
 		// timeLine.width = width
 		ctx.fillStyle="#c3c3c3"
-		ctx.fillRect(0, 0, width, 128)
+		ctx.clearRect(0, 0, 280, 160)
+		ctx.fillRect(0, 0, width, 160)
 		// console.log(width)
 		return width
 	}
 
-	clearTimeline(songID){
-		let timeLine = ReactDOM.findDOMNode(this.refs["timeline_"+songID])
+	timelineClick(soundID, duration, e){
+		let player = ReactDOM.findDOMNode(this.refs[soundID])
+		let timeLine = ReactDOM.findDOMNode(this.refs["timeline_"+soundID])
+		let rect = timeLine.getBoundingClientRect()
+		let x = e.clientX - rect.left
+		duration = player.duration ? player.duration : duration
+		// console.log(duration * x / 280)
+		player.currentTime = duration * x / 280
+
+		if(this.state.playingSoundID === soundID){
+			// do nothing
+		}
+		else if(this.state.playingSoundID === null){
+			this.playSound(soundID)
+		}
+		// another song is playing
+		else {
+			let player2 = ReactDOM.findDOMNode(this.refs[this.state.playingSoundID])
+			player2.pause()
+			player2.currentTime = 0
+			this.clearTimeline(this.state.playingSoundID)
+			this.playSound(soundID)
+		}
+	}
+
+	clearTimeline(soundID){
+		let timeLine = ReactDOM.findDOMNode(this.refs["timeline_"+soundID])
 		let ctx = timeLine.getContext('2d')
-		ctx.clearRect(0, 0, 280, 128)
+		ctx.clearRect(0, 0, 280, 160)
 	}
 
 	audioEnded(event){
@@ -130,13 +158,9 @@ export default class SoundStock extends React.Component {
 	render(){
 		let soundItems = _.map(this.state.sounds, (sound, nr) => { 
 			return (
-			  <div 
-			  key={"soundKey_"+nr} 
-			  className="item" 
-			  style={{width: "280px", margin: "3px", overflow: "hidden", position: "relative", border: "1px solid #fbe6fb", float: "left"}}>
-			  	<img src={sound.thumbnail} style={{ }}/>
-			  	{/* <div ref={"timeline_"+sound._id} style={{ backgroundColor: "#c3c3c3", height: "128px", marginTop: "-134px", opacity: 0.5}}></div>	*/}
-			  	<canvas height="128px" width="280px" ref={"timeline_"+sound._id} style={{opacity: 0.5, position: "absolute", top:0, left: 0}}></canvas>
+			  <div key={"soundKey_"+sound._id} className="soundWrapper" ref={"soundWave_"+sound._id}>
+			  	<img src={sound.thumbnail} />
+			  	<canvas onClick={this.timelineClick.bind(this, sound._id, sound.duration)} className="timelineCanvas" ref={"timeline_"+sound._id}></canvas>
 			  	<button onClick={this.togglePlay.bind(this, sound._id)} className="ui icon button">
             <i className={"icon " + (this.state.playingSoundID === sound._id ? "pause" : "play")}></i>
           </button>		    

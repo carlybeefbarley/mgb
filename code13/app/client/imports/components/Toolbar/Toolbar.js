@@ -517,15 +517,10 @@ export default class Toolbar extends React.Component {
       }
     }
     // position has not changed
-    if (!mostLeft && !mostRight && !this.props.config.vertical) {
-      this.activeButton.style.top = 0
-      this.activeButton.style.left = 0
-      $(this.activeButton).popup('enable')
-      this.activeButton = null
-      return
-    }
-
-    if (!mostTop && !mostBottom && this.props.config.vertical) {
+    if (
+        (!mostLeft && !mostRight && !this.props.config.vertical) ||
+        (!mostTop && !mostBottom && this.props.config.vertical)
+      ){
       this.activeButton.style.top = 0
       this.activeButton.style.left = 0
       $(this.activeButton).popup('enable')

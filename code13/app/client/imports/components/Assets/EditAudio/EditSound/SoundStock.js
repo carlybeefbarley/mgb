@@ -43,6 +43,7 @@ export default class SoundStock extends React.Component {
 		}
 		else if(soundID === this.state.playingSoundID){
 			player.pause()
+			this.clearTimeline(soundID)
 			this.setState({ playingSoundID: null })
 		} 
 		// if is played another sound already
@@ -50,6 +51,7 @@ export default class SoundStock extends React.Component {
 			let player2 = ReactDOM.findDOMNode(this.refs[this.state.playingSoundID])
 			player2.pause()
 			player2.currentTime = 0
+			this.clearTimeline(this.state.playingSoundID)
 			this.playSound(soundID)
 		}
 	}
@@ -74,10 +76,19 @@ export default class SoundStock extends React.Component {
 	drawTimeline(){
 		let player = ReactDOM.findDOMNode(this.refs[this.state.playingSoundID])
 		let timeLine = ReactDOM.findDOMNode(this.refs["timeline_"+this.state.playingSoundID])
+		let ctx = timeLine.getContext('2d')
 		let width = 280 * player.currentTime/player.duration
-		timeLine.width = width
-		console.log(width)
+		// timeLine.width = width
+		ctx.fillStyle="#c3c3c3"
+		ctx.fillRect(0, 0, width, 128)
+		// console.log(width)
 		return width
+	}
+
+	clearTimeline(songID){
+		let timeLine = ReactDOM.findDOMNode(this.refs["timeline_"+songID])
+		let ctx = timeLine.getContext('2d')
+		ctx.clearRect(0, 0, 280, 128)
 	}
 
 	audioEnded(event){
@@ -86,6 +97,7 @@ export default class SoundStock extends React.Component {
 		player.pause()
 		player.currentTime = 0
 		if(soundID === this.state.playingSoundID){
+			this.clearTimeline(soundID)
 			this.setState({ playingSoundID: null })
 		}
 	}
@@ -121,9 +133,10 @@ export default class SoundStock extends React.Component {
 			  <div 
 			  key={"soundKey_"+nr} 
 			  className="item" 
-			  style={{width: "280px", margin: "3px", overflow: "hidden", border: "1px solid #fbe6fb", float: "left"}}>
+			  style={{width: "280px", margin: "3px", overflow: "hidden", position: "relative", border: "1px solid #fbe6fb", float: "left"}}>
 			  	<img src={sound.thumbnail} style={{ }}/>
-			  	<div ref={"timeline_"+sound._id} style={{ backgroundColor: "#c3c3c3", height: "128px", marginTop: "-134px", opacity: 0.5}}></div>	
+			  	{/* <div ref={"timeline_"+sound._id} style={{ backgroundColor: "#c3c3c3", height: "128px", marginTop: "-134px", opacity: 0.5}}></div>	*/}
+			  	<canvas height="128px" width="280px" ref={"timeline_"+sound._id} style={{opacity: 0.5, position: "absolute", top:0, left: 0}}></canvas>
 			  	<button onClick={this.togglePlay.bind(this, sound._id)} className="ui icon button">
             <i className={"icon " + (this.state.playingSoundID === sound._id ? "pause" : "play")}></i>
           </button>		    

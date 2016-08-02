@@ -1221,23 +1221,12 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  // <- End of drag-and-drop stuff
-map
-
-  // React Callback: render()
-  // See http://semantic-ui.com to understand the classNames we are using.
-  render() {
-    this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
-    this.initDefaultUndoStack()
-
-    let asset = this.props.asset
-    let c2 = asset.content2
-    let zoom = this.state.editScale
+  generateToolbarActions() {
 
     let simpleTools = {
       Undo: {
         label: "Undo",
-        name: "handleUndo",
+        name: "handleUndo",      // function name in this class
         tooltip: "Undo",
         iconText: this.undoSteps.length,        
         disabled: !this.undoSteps.length,
@@ -1268,7 +1257,7 @@ map
         simpleTool: true   // this tool is not selectable, only action is on tool click
       }
       ,Copy: {
-        label: "Copy",
+        label: "Copy!",
         name: "copySelected",
         tooltip: "Copy",
         disabled: !this.state.selectRect,
@@ -1277,6 +1266,17 @@ map
         level: 2,
         simpleTool: true   // this tool is not selectable, only action is on tool click
       }
+      ,Import: {
+        label: "Import",
+        name: "openImportPopup", 
+        tooltip: "Import",
+        disabled: false,
+        icon: "add square icon",
+        shortcut: 'Ctrl+I',
+        level: 2,
+        simpleTool: true 
+      }
+
     }
 
     for(let i=0; i<Tools.length; i++){
@@ -1316,6 +1316,22 @@ map
       actions[tool.name] = this.handleToolSelected.bind(this, tool)
 
     });
+
+    return { actions, config }
+  }
+
+  // <- End of drag-and-drop stuff
+
+  // React Callback: render()
+  // See http://semantic-ui.com to understand the classNames we are using.
+  render() {
+    this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
+    this.initDefaultUndoStack()
+
+    const asset = this.props.asset
+    const c2 = asset.content2
+    const zoom = this.state.editScale
+    const { actions, config } = this.generateToolbarActions()
 
     // Make element
     return (
@@ -1381,14 +1397,6 @@ map
             <span>&nbsp;&nbsp;</span>
             <AssetUrlGenerator asset={this.props.asset} />
 
-            <span>&nbsp;&nbsp;</span>
-            <div className="ui small button hazPopup"
-              onClick={this.openImportPopup.bind(this)}
-              data-content="Import sprite sheet or gif image"
-              data-variation="tiny"
-              data-position="bottom center">
-                <i className="add square icon"></i>Import
-            </div>
 
           </div>
           <div className="row">

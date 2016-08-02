@@ -20,14 +20,8 @@ import ToolSeparator from './ToolSeparator.js'
 
 const Tools = [
   ToolColorPicker,
-  ToolSeparator,
-
-  { label: "Undo" },
-  { label: "Redo" },
-  ToolSeparator,
-
-  ToolSelect,
   ToolEyedropper,
+
   ToolSeparator,
 
   ToolPen,
@@ -36,13 +30,22 @@ const Tools = [
   ToolMove,
   ToolCircle,
   ToolRect,
+
   ToolSeparator,
-  
+
+  { label: "Undo" },
+  { label: "Redo" },
+
+  ToolSeparator,
+
+  ToolSelect,  
   { label: "Cut" },
   { label: "Copy" },
   ToolPaste,
-  { label: "Import" }
 
+  ToolSeparator,
+
+  { label: "Import" }
 ]
 
 export default Tools

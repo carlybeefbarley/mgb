@@ -5,7 +5,6 @@ import sty from  './editGraphic.css';
 import ColorPicker from 'react-color';        // http://casesandberg.github.io/react-color/
 import AssetUrlGenerator from '../AssetUrlGenerator.js';
 import Tools from './GraphicTools';
-import GraphicTools from './GraphicTools/GraphicTools.js';
 
 import SpriteLayers from './Layers/SpriteLayers.js';
 import GraphicImport from './GraphicImport/GraphicImport.js';
@@ -61,7 +60,7 @@ export default class EditGraphic extends React.Component {
         fg:    { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
       },
       toolActive: false,
-      toolChosen: null,
+      toolChosen: this.findToolByLabelString("Pen"),
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
       pasteCanvas: null     // if object cut or copied then {x, y, width, height, imgData}
     }
@@ -566,24 +565,28 @@ export default class EditGraphic extends React.Component {
     this.setState({ pasteCanvas: pasteCanvas });
   }
 
+  findToolByLabelString(labelString)
+  {
+    let tool = null
+
+    // manually select paste tool
+    for (var key in Tools) {
+      if (Tools.hasOwnProperty(key)) {
+        if (Tools[key].label === labelString) {
+          tool = Tools[key]
+          break
+        }
+      }
+    }
+    return tool
+  }
+
   pasteSelected() {
     if (!this.state.pasteCanvas) 
       return
 
-    let tool = null;
-    // manually select paste tool
-    for (var key in Tools) {
-      if (Tools.hasOwnProperty(key)) {
-        if(Tools[key].label === "Paste"){
-          tool = Tools[key];
-          break; 
-        }
-      }
-    }
-
-    if(tool){
-      this.setState({ toolChosen: tool });
-    }
+    const tool = this.findToolByLabelString("Paste")
+    if (tool) this.setState({ toolChosen: tool })
   }
 
   zoomIn(){
@@ -658,7 +661,7 @@ export default class EditGraphic extends React.Component {
     }
 
     if (this.state.toolChosen === null) {
-      this.setStatusBarWarning("Select a drawing tool on the left")
+      this.setStatusBarWarning("Choose a drawing tool such as Pen")
       return
     }
 
@@ -1253,17 +1256,17 @@ export default class EditGraphic extends React.Component {
         disabled: !this.state.selectRect,
         icon: "cut icon",        // Semantic-UI icon CSS class
         shortcut: 'Ctrl+X',
-        level: 2,
+        level: 6,
         simpleTool: true   // this tool is not selectable, only action is on tool click
       }
       ,Copy: {
-        label: "Copy!",
+        label: "Copy",
         name: "copySelected",
         tooltip: "Copy",
         disabled: !this.state.selectRect,
         icon: "copy icon",        // Semantic-UI icon CSS class
         shortcut: 'Ctrl+C',
-        level: 2,
+        level: 6,
         simpleTool: true   // this tool is not selectable, only action is on tool click
       }
       ,Import: {
@@ -1273,7 +1276,7 @@ export default class EditGraphic extends React.Component {
         disabled: false,
         icon: "add square icon",
         shortcut: 'Ctrl+I',
-        level: 2,
+        level: 3,
         simpleTool: true 
       }
 
@@ -1340,7 +1343,7 @@ export default class EditGraphic extends React.Component {
         {/***  Center Column for Edit and other wide stuff  ***/}
 
         <div className={"mgbEditGraphicSty_tagPosition ui sixteen wide column"} >
-          <div className="row">
+          <div className="row" style={{marginBottom: "6px"}}>
 
             <div className="ui small labeled input">
               <div className="ui small label" title="Canvas width">
@@ -1396,16 +1399,14 @@ export default class EditGraphic extends React.Component {
             </div>
             <span>&nbsp;&nbsp;</span>
             <AssetUrlGenerator asset={this.props.asset} />
-
-
           </div>
-          <div className="row">
+
+          <div className="row" style={{marginBottom: "6px"}}>
             {<Toolbar actions={actions} config={config} name="EditGraphic" />}
           </div>
-          <div className="row">
-            <br></br>
-          </div>
-          <div className="row" style={{"minHeight": "276px"}}>
+
+
+          <div className="row" style={{"minHeight": "92px"}}>
             <div   style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
               <canvas ref="editCanvas"
                         style={ this.state.toolChosen ? {"cursor": this.state.toolChosen.editCursor} : {} }

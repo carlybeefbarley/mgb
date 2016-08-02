@@ -12,7 +12,7 @@ export default class MapTools extends React.Component {
   }
 
   save(e) {
-    this.props.map.props.parent.handleSave(e);
+    this.props.map.save("Save Button Pressed")
   }
 
   resetCamera() {
@@ -83,6 +83,7 @@ export default class MapTools extends React.Component {
     const l = this.props.map.getActiveLayer();
     if(!l || !l.clearSelection){return;}
     l.toggleFill();
+    this.props.map.saveForUndo("Toggle Fill");
   }
   rotateClockwise(){
     this.rotate(true);

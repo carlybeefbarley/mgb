@@ -548,7 +548,9 @@ this.Otito.prototype = {
 		return otito;
 	},
 	_setValue: function(val){
-		this.value = val;
+		if(val != this.value){
+			this.value = val;
+		}
 	},
 	_getInputType: function(meta){
 		switch(meta._type) {

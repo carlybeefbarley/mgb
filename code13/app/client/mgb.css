@@ -142,7 +142,10 @@ body.dragging .accept-drop:hover{
 .compact > label .title{
   padding: 0.1em;
 }
-
+.compact > .ui.accordion.array.content {
+  padding: 0 10px;
+}
+/* end of map editor properties */
 /* semantic hacks */
 .icon.flip{
   transform: scaleX(-1);

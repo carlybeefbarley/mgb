@@ -5,6 +5,11 @@ import LayerTypes from './LayerTypes.js'
 
 export default class Layers extends React.Component {
 
+  componentDidMount(){
+    $('.ui.accordion')
+      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
+  }
+
   get map(){
     return this.props.info.content.map;
   }
@@ -62,18 +67,18 @@ export default class Layers extends React.Component {
 
     let rise = '', lower = '';
 
-    if(content && content.length && active > -1){
+    if(content && content.length){
       const d = this.getLayer().data;
       const l = d.objects ? d.objects.length -1 : 0;
       rise =(
-        <button className={ active < l ? "ui floated icon button" : "ui floated icon button disabled"}
+        <button className={ active < l && active > -1 ? "ui floated icon button" : "ui floated icon button disabled"}
                 onClick={this.raise.bind(this)}
                 title="Raise Object"
           ><i className="angle up icon"></i>
         </button>
       );
       lower = (
-        <button className={ active > 0 ? "ui floated icon button" : "ui floated icon button disabled"}
+        <button className={ active > 0 && active > -1 ? "ui floated icon button" : "ui floated icon button disabled"}
                 onClick={this.lower.bind(this)}
                 title="Lower Object"
           ><i className="angle down icon"></i>

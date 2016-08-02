@@ -157,8 +157,10 @@ const TileHelper = {
       }
     }
 
+    const autoGuess = spacing == -1 || (tilewidth == imagewidth && imagewidth > map.tilewidth * 5);
+
     // guess spacing and margin - should give wow! effect to users :)
-    if(spacing == -1){
+    if(autoGuess){
       if(!extraPixels){
         spacing = 0;
         margin = 0;

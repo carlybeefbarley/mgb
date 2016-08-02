@@ -272,8 +272,9 @@ Meteor.methods({
     data.content = ""                                 // This is stale. Can be removed one day
     data.text = ""                                    // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
     data.projectNames = []
-    data.thumbnail = ""
-    data.content2 = {}
+    data.thumbnail = data.thumbnail || ""
+    // TODO: this will get moved
+    data.content2 = data.content2 || {}
 
     check(data, _.omit(schema, '_id'))
 

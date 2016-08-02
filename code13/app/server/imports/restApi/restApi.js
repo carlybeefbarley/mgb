@@ -48,12 +48,26 @@ RestApi.addRoute('asset/png/:id', {authRequired: false}, {
     }
     else {
       return {
-        statusCode: 404                
+        statusCode: 404
       }
     }
   }
 });
 
+// MapEditor tries this while guessing image from imported map
+RestApi.addRoute('asset/png/:user/:name', {authRequired: false}, {
+  get: function () {
+    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false});
+    if (asset)
+    {
+      return asset._id
+    }
+    else {
+      // without body returns 200 and json: {statusCode: 404}
+      return {statusCode: 404, body:{}};
+    }
+  }
+});
 
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
   get: function () {

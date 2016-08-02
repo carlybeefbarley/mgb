@@ -1,330 +1,333 @@
-"use strict";
-import _ from 'lodash';
-import React from 'react';
-import EditModes from "./EditModes";
-import LayerTypes from "./LayerTypes.js";
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js';
+'use strict'
+import _ from 'lodash'
+import React from 'react'
+import EditModes from './EditModes'
+import LayerTypes from './LayerTypes.js'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 export default class MapTools extends React.Component {
 
-  preview() {
-    this.props.map.togglePreviewState();
+  preview () {
+    this.props.map.togglePreviewState()
   }
 
-  save(e) {
+  save (e) {
     // force to update thumbnail
-    this.props.map.save("Save Map", true)
+    this.props.map.save('Save Map', true)
   }
 
-  resetCamera() {
-    this.props.map.resetCamera();
+  resetCamera () {
+    this.props.map.resetCamera()
   }
-  undo(){
-    this.props.map.doUndo();
-    this.forceUpdate();
+  undo () {
+    this.props.map.doUndo()
+    this.forceUpdate()
   }
-  redo(){
-    this.props.map.doRedo();
-    this.forceUpdate();
+  redo () {
+    this.props.map.doRedo()
+    this.forceUpdate()
   }
-  toggleRandomMode(){
-    this.props.map.options.randomMode = !this.props.map.options.randomMode;
-    this.forceUpdate();
+  toggleRandomMode () {
+    this.props.map.options.randomMode = !this.props.map.options.randomMode
+    this.forceUpdate()
   }
-  stamp(){
-    this.enableMode(EditModes.stamp);
+  stamp () {
+    this.enableMode(EditModes.stamp)
   }
-  terrain(){
-    this.enableMode(EditModes.terrain);
+  terrain () {
+    this.enableMode(EditModes.terrain)
   }
-  fill(){
-    this.enableMode(EditModes.fill);
+  fill () {
+    this.enableMode(EditModes.fill)
   }
-  eraser(){
-    this.enableMode(EditModes.eraser);
+  eraser () {
+    this.enableMode(EditModes.eraser)
   }
-  drawRectangle(){
-    this.enableMode(EditModes.drawRectangle);
+  drawRectangle () {
+    this.enableMode(EditModes.drawRectangle)
   }
-  drawEllipse(){
-    this.enableMode(EditModes.drawEllipse);
+  drawEllipse () {
+    this.enableMode(EditModes.drawEllipse)
   }
-  drawShape(){
-    this.enableMode(EditModes.drawShape);
+  drawShape () {
+    this.enableMode(EditModes.drawShape)
   }
-  rectangle(){
-    this.enableMode(EditModes.rectangle);
+  rectangle () {
+    this.enableMode(EditModes.rectangle)
   }
-  wand(){
-    this.enableMode(EditModes.wand);
+  wand () {
+    this.enableMode(EditModes.wand)
   }
-  picker(){
-    this.enableMode(EditModes.picker);
+  picker () {
+    this.enableMode(EditModes.picker)
   }
-  enableMode(mode){
-    this.props.map.options.mode = mode;
-    this.forceUpdate();
+  enableMode (mode) {
+    this.props.map.options.mode = mode
+    this.forceUpdate()
   }
-  enableEraser(){
-    this.enableMode(EditModes.eraser);
-    this.props.map.selection.clear();
-    this.props.map.collection.clear();
-    this.props.map.redrawTilesets();
+  enableEraser () {
+    this.enableMode(EditModes.eraser)
+    this.props.map.selection.clear()
+    this.props.map.collection.clear()
+    this.props.map.redrawTilesets()
   }
-  clearSelection(){
-    this.props.map.tmpSelection.clear();
-    this.props.map.selection.clear();
-    this.props.map.collection.clear();
-    this.props.map.redraw();
-    const l = this.props.map.getActiveLayer();
-    if(!l || !l.clearSelection){return;}
-    l.clearSelection(true);
+  clearSelection () {
+    this.props.map.tmpSelection.clear()
+    this.props.map.selection.clear()
+    this.props.map.collection.clear()
+    this.props.map.redraw()
+    const l = this.props.map.getActiveLayer()
+    if (!l || !l.clearSelection) {return;}
+    l.clearSelection(true)
   }
-  togglePolygon(){
-    const l = this.props.map.getActiveLayer();
-    if(!l || !l.clearSelection){return;}
-    l.toggleFill();
-    this.props.map.saveForUndo("Toggle Fill");
+  togglePolygon () {
+    const l = this.props.map.getActiveLayer()
+    if (!l || !l.clearSelection) {return;}
+    l.toggleFill()
+    this.props.map.saveForUndo('Toggle Fill')
   }
-  rotateClockwise(){
-    this.rotate(true);
+  rotateClockwise () {
+    this.rotate(true)
   }
-  rotateCounterClockwise(){
-    this.rotate(false);
+  rotateCounterClockwise () {
+    this.rotate(false)
   }
-  rotate(cw){
-    const l = this.props.map.getActiveLayer();
-    if(!l || !l.rotate){return;}
-    if(cw){
-      l.rotate();
+  rotate (cw) {
+    const l = this.props.map.getActiveLayer()
+    if (!l || !l.rotate) {return;}
+    if (cw) {
+      l.rotate()
+    }else {
+      l.rotateBack()
     }
-    else{
-      l.rotateBack();
-    }
   }
-  showGridToggle(){
-    this.props.map.options.showGrid = !this.props.map.options.showGrid;
-    this.props.map.forceUpdate();
+  showGridToggle () {
+    this.props.map.options.showGrid = !this.props.map.options.showGrid
+    this.props.map.forceUpdate()
   }
 
-  render() {
+  render () {
     // older maps don't have default mode
-    if(!this.props.map.options.mode){
-      this.props.map.options.mode = EditModes.stamp;
+    if (!this.props.map.options.mode) {
+      this.props.map.options.mode = EditModes.stamp
     }
 
-    const layer = this.props.map.getActiveLayer();
+    const layer = this.props.map.getActiveLayer()
     var config = {
       level: 5,
       buttons: [
         {
-          name: "save",
-          label: "Save",
-          tooltip: "Save the map",
+          name: 'save',
+          label: 'Save',
+          tooltip: 'Save the map',
           level: 1,
-          shortcut: "Ctrl+S" // Is it OK to override browsers save page?
+          shortcut: 'Ctrl+S' // Is it OK to override browsers save page?
         },
         {
-          name: "separator"
+          name: 'separator'
         },
         {
-          name: "preview",
-          label: "3D Preview",
-          icon: "cube",
+          name: 'preview',
+          label: '3D Preview',
+          icon: 'cube',
           active: this.props.map.options.preview,
-          tooltip: "Separate layers in 3d view",
+          tooltip: 'Separate layers in 3d view',
           level: 5,
-          shortcut: "Ctrl+Alt+P"
+          shortcut: 'Ctrl+Alt+P'
         },
         {
-          name: "resetCamera",
-          icon: "crosshairs",
-          label: "Reset Camera",
-          tooltip: "Set Zoom to 100% and move map to 0,0 coordinates",
+          name: 'resetCamera',
+          icon: 'crosshairs',
+          label: 'Reset Camera',
+          tooltip: 'Set Zoom to 100% and move map to 0,0 coordinates',
           level: 5,
-          shortcut: "Ctrl+Alt+R"
+          shortcut: 'Ctrl+Alt+R'
         },
         {
-          name: "showGridToggle",
-          icon: "grid layout",
-          label: this.props.map.options.showGrid ? "Hide Grid" : "Show Grid",
-          tooltip: "Toggle grid visibilty on / off",
+          name: 'showGridToggle',
+          icon: 'grid layout',
+          label: this.props.map.options.showGrid ? 'Hide Grid' : 'Show Grid',
+          tooltip: 'Toggle grid visibilty on / off',
           level: 4,
           active: this.props.map.options.showGrid,
-          shortcut: "Alt+G"
+          shortcut: 'Alt+G'
         },
         {
-          name: "separator"
+          name: 'separator'
         },
         {
-          name: "undo",
-          label: "Undo",
-          iconText:  (this.props.map.undoSteps.length ? " "+this.props.map.undoSteps.length : ''),
+          name: 'undo',
+          label: 'Undo',
+          iconText: (this.props.map.undoSteps.length ? ' ' + this.props.map.undoSteps.length : ''),
           disabled: !this.props.map.undoSteps.length,
-          tooltip: "Undo last action" + (_.last(this.props.map.undoSteps) ? ": " + _.last(this.props.map.undoSteps).reason : ''),
+          tooltip: 'Undo last action' + (_.last(this.props.map.undoSteps) ? ': ' + _.last(this.props.map.undoSteps).reason : ''),
           level: 2,
-          shortcut: "Ctrl+Z"
+          shortcut: 'Ctrl+Z'
         },
         {
-          name: "redo",
-          icon: "undo flip", // redo is flipped undo
-          label: "Redo",
+          name: 'redo',
+          icon: 'undo flip', // redo is flipped undo
+          label: 'Redo',
           disabled: !this.props.map.redoSteps.length,
-          tooltip: "Redo previous action",
+          tooltip: 'Redo previous action',
           level: 2,
-          shortcut: "Ctrl+Shift+Z"
+          shortcut: 'Ctrl+Shift+Z'
         },
         {
-          name: "separator"
+          name: 'separator'
         },
         {
-          name: "toggleRandomMode",
-          icon: "random",
+          name: 'toggleRandomMode',
+          icon: 'random',
           active: this.props.map.options.randomMode,
-          label: "Random mode",
-          tooltip: "Random Mode - picks one tile from the selection",
+          label: 'Random mode',
+          tooltip: 'Random Mode - picks one tile from the selection',
           level: 5
         },
         {
-          name: "stamp",
-          icon: "legal stamp",
+          name: 'stamp',
+          icon: 'legal stamp',
           active: this.props.map.options.mode == EditModes.stamp,
-          label: "Stamp",
-          tooltip: "Stamp tiles on the map",
+          label: 'Stamp',
+          tooltip: 'Stamp tiles on the map',
           level: 1,
-          shortcut: "S"
+          shortcut: 'S'
         },
         {
-          name: "terrain",
-          icon: "world terrain",
+          name: 'terrain',
+          icon: 'world terrain',
           active: this.props.map.options.mode == EditModes.terrain,
           disabled: (!layer || layer.kind != LayerTypes.tile),
-          label: "Terrain Tool",
-          tooltip: "Create advanced Terrains - not implemented :(",
+          label: 'Terrain Tool',
+          tooltip: 'Create advanced Terrains - not implemented :(',
           level: 9,
-          shortcut: "T"
+          shortcut: 'T'
         },
         {
-          name: "fill",
-          icon: "theme fill",
-          label: "Fill",
+          name: 'fill',
+          icon: 'theme fill',
+          label: 'Fill',
           active: this.props.map.options.mode == EditModes.fill,
           disabled: (!layer || layer.kind != LayerTypes.tile),
-          tooltip: "Fill Map or Selection with selected tile(s)",
+          tooltip: 'Fill Map or Selection with selected tile(s)',
           level: 4,
-          shortcut: "F"
+          shortcut: 'F'
         },
         {
-          name: "eraser",
-          label: "Eraser",
+          name: 'eraser',
+          label: 'Eraser',
           active: this.props.map.options.mode == EditModes.eraser,
-          tooltip: "Delete tile - or use [Ctrl + click] to quickly access this tool",
+          tooltip: 'Delete tile - or use [Ctrl + click] to quickly access this tool',
           disabled: (!layer || layer.kind != LayerTypes.tile),
           level: 1,
-          shortcut: "E"
+          shortcut: 'E'
         },
         {
-          name: "separator"
+          name: 'separator'
         },
         {
-          name: "rectangle",
-          icon: "square outline rectangle",
-          label: "Select",
+          name: 'rectangle',
+          icon: 'square outline rectangle',
+          label: 'Select',
           active: this.props.map.options.mode == EditModes.rectangle,
-          tooltip: "Rectangle Selection Tool",
+          tooltip: 'Rectangle Selection Tool',
           level: 3,
-          shortcut: "Ctrl + Shift + R"
+          shortcut: 'Ctrl + Shift + R'
         },
         {
-          name: "wand",
-          icon: "wizard",
+          name: 'wand',
+          icon: 'wizard',
           active: this.props.map.options.mode == EditModes.wand,
-          label: "Magic Wand",
-          tooltip: "Magic Wand selection - select adjacent tiles with same ID",
+          label: 'Magic Wand',
+          tooltip: 'Magic Wand selection - select adjacent tiles with same ID',
           disabled: (!layer || layer.kind != LayerTypes.tile),
           level: 5
         },
         {
-          name: "picker",
+          name: 'picker',
           active: this.props.map.options.mode == EditModes.picker,
-          icon: "qrcode picker",
-          label: "Tile Picker",
-          tooltip: "Tile Picker - Select All tiles with same ID",
+          icon: 'qrcode picker',
+          label: 'Tile Picker',
+          tooltip: 'Tile Picker - Select All tiles with same ID',
           disabled: (!layer || layer.kind != LayerTypes.tile),
           level: 5
         },
         {
-          name: "clearSelection",
-          icon: "ban",
-          label: "Clear Selection",
-          tooltip: "Clear selected tiles and/or objects",
+          name: 'clearSelection',
+          icon: 'ban',
+          label: 'Clear Selection',
+          tooltip: 'Clear selected tiles and/or objects',
           level: 3
         },
         {
-          name: "separator"
+          name: 'separator'
         },
         {
-          name: "rotateClockwise",
-          icon: "share",
-          label: "Rotate (CW)",
-          tooltip: "Rotate Tile ClockWise",
-          shortcut: "Z",
+          name: 'rotateClockwise',
+          icon: 'share',
+          label: 'Rotate (CW)',
+          tooltip: 'Rotate Tile ClockWise',
+          shortcut: 'Z',
           level: 7
         },
         {
-          name: "rotateCounterClockwise",
-          icon: "reply",
-          label: "Rotate (CCW)",
-          tooltip: "Rotate Tile Counter ClockWise",
-          shortcut: "Shift+Z",
+          name: 'rotateCounterClockwise',
+          icon: 'reply',
+          label: 'Rotate (CCW)',
+          tooltip: 'Rotate Tile Counter ClockWise',
+          shortcut: 'Shift+Z',
           level: 7
         },
         {
-          name: "separator"
+          name: 'separator'
         },
         {
-          name: "drawRectangle",
+          name: 'drawRectangle',
           active: this.props.map.options.mode == EditModes.drawRectangle,
-          icon: "stop",
-          label: "Rectangle",
-          tooltip: "Draw Rectangle on the map",
+          icon: 'stop',
+          label: 'Rectangle',
+          tooltip: 'Draw Rectangle on the map',
           disabled: (!layer || layer.kind != LayerTypes.object),
-          shortcut: "Shift+R",
+          shortcut: 'Shift+R',
           level: 3
         },
         {
-          name: "drawEllipse",
+          name: 'drawEllipse',
           active: this.props.map.options.mode == EditModes.drawEllipse,
-          icon: "circle",
-          label: "Ellipse",
-          tooltip: "Draw Ellipse on the map",
+          icon: 'circle',
+          label: 'Ellipse',
+          tooltip: 'Draw Ellipse on the map',
           disabled: (!layer || layer.kind != LayerTypes.object),
-          shortcut: "Shift+E",
+          shortcut: 'Shift+E',
           level: 4
         },
         {
-          name: "drawShape",
+          name: 'drawShape',
           active: this.props.map.options.mode == EditModes.drawShape,
-          icon: "pencil",
-          label: "Shape",
-          tooltip: "Draw Shape on the map",
+          icon: 'pencil',
+          label: 'Shape',
+          tooltip: 'Draw Shape on the map',
           disabled: (!layer || layer.kind != LayerTypes.object),
-          shortcut: "Shift+S",
+          shortcut: 'Shift+S',
           level: 5
         },
         {
-          name: "togglePolygon",
-          icon: "clone",
-          label: "Polygon",
-          tooltip: "Toggle between polygon and polyline",
+          name: 'togglePolygon',
+          icon: 'clone',
+          label: 'Polygon',
+          tooltip: 'Toggle between polygon and polyline',
           disabled: (!layer || layer.kind != LayerTypes.object),
-          shortcut: "Shift+P",
+          shortcut: 'Shift+P',
           level: 5
         }
       ]
-    };
+    }
 
-    return <Toolbar actions={this} config={config} className="map-tools" name="MapTools" />
+    return <Toolbar
+             actions={this}
+             config={config}
+             className='map-tools'
+             name='MapTools' />
   }
 
 }

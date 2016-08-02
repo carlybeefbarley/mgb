@@ -15,6 +15,38 @@
 export default mgbReleaseInfo = {
   "releases":
   [ 
+    {
+      "timestamp":     "Tue Aug 02 2016 09:50:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "984"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.sound",
+          "type":           "improvement",
+          "changeName":     "Select stock sounds",
+          "changeSummary":  "There are only three so far, but there will be many soon..",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Graphic Editor Toolbar facelift",
+          "changeSummary":  "Improved layout of toolbar, added more ui levels for the slider",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+
 
     { 
       "timestamp":     "Sun Jul 31 2016 23:50:00 GMT-0700 (PDT)",

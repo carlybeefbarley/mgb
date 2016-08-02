@@ -8,7 +8,7 @@ const ToolEyedropper = {
   supportsDrag: false,
   shortcut: 'd',
   changesImage: false,            // This does not cause changes to the image, so don't mark image as dirty if used.
-  level: 3,
+  level: 4,
 
 
   handleMouseDown: ( drawEnv ) => {

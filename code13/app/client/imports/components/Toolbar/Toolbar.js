@@ -258,10 +258,10 @@ export default class Toolbar extends React.Component {
 
   determineButtonSize() {
      // TODO: are 3 levels enough?  TODO(@dgolds) Should we make this a config option?
-    if (this.state.level <= this.maxLevel / 3)
-      return "big"
-    else if (this.state.level <= this.maxLevel / 6)
+    if (this.state.level <= (0.33 * this.maxLevel))
       return "medium"
+    else if (this.state.level <= (0.66 * this.maxLevel))
+      return "small"
     return "tiny"
   }
 
@@ -295,11 +295,9 @@ export default class Toolbar extends React.Component {
     }
     this.visibleButtons = newButtons
 
-    const content = []
-    const className = "ui icon buttons animate " + size + " " + "level" + this.state.level + (this.props.config.vertical ? " vertical" : '')
-    buttons.forEach((b, i) => {
-      content.push(<div style={{marginRight: "4px"}} className={className} key={i}>{b}</div>)
-    })
+    const buttonGroupClassName = "ui icon buttons animate " + size + " " + "level" + this.state.level + (this.props.config.vertical ? " vertical" : '')
+    const buttonGroupStyle = { marginRight: "4px", marginBottom: "2px", marginTop: "2px" }
+    const content = buttons.map((b, i) => (<div style={buttonGroupStyle} className={buttonGroupClassName} key={i}>{b}</div>))
 
     return (
       <div ref="mainElement" className={"Toolbar" + (this.props.config.vertical ? " vertical" : '')}>
@@ -406,7 +404,7 @@ export default class Toolbar extends React.Component {
   /* Button sorting */
   _moveButtonStart(e) {
     const b = this._extractButton(e.target)
-    if (!b)
+    if (!b || e.which != 1)
       return
 
     this.startPos = {
@@ -474,7 +472,8 @@ export default class Toolbar extends React.Component {
 
     for (let i=0; i<index; i++) {
       const ab = this.buttons[i]
-      if (!ab || ab == this.activeButton || !ab.parentNode || ab.classList.contains("invisible"))
+      // why do we have buttons detached from the dom tree?
+      if (!ab || ab == this.activeButton || !ab.parentNode || !ab.parentNode.parentNode || ab.classList.contains("invisible"))
         continue
       
       const rect = ab.getBoundingClientRect()
@@ -498,7 +497,7 @@ export default class Toolbar extends React.Component {
 
     for (let i=index; i<this.buttons.length; i++) {
       const ab = this.buttons[i]
-      if (!ab || ab == this.activeButton || !ab.parentNode || ab.classList.contains("invisible"))
+      if (!ab || ab == this.activeButton || !ab.parentNode || !ab.parentNode.parentNode || ab.classList.contains("invisible"))
         continue
       
       const rect = ab.getBoundingClientRect()
@@ -517,11 +516,11 @@ export default class Toolbar extends React.Component {
         }
       }
     }
-
-    this.hasMoved = false
-
     // position has not changed
-    if (!mostLeft && !mostRight && !this.props.config.vertical) {
+    if (
+        (!mostLeft && !mostRight && !this.props.config.vertical) ||
+        (!mostTop && !mostBottom && this.props.config.vertical)
+      ){
       this.activeButton.style.top = 0
       this.activeButton.style.left = 0
       $(this.activeButton).popup('enable')
@@ -529,15 +528,7 @@ export default class Toolbar extends React.Component {
       return
     }
 
-    if (!mostTop && !mostBottom && this.props.config.vertical) {
-      this.activeButton.style.top = 0
-      this.activeButton.style.left = 0
-      $(this.activeButton).popup('enable')
-      this.activeButton = null
-      return
-    }
-
-    this.hasMoved = true
+    this.hasMoved = true;
     // TODO: make browser compatible
     const active = this.activeButton
 

@@ -1,77 +1,74 @@
-import _ from 'lodash';
-import React from 'react';
-import LayerControls from "./LayerControls.js";
+import _ from 'lodash'
+import React from 'react'
+import LayerControls from './LayerControls.js'
 
 export default class Layers extends React.Component {
 
-  componentDidMount() {
+  componentDidMount () {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
   }
-  get map(){
-    return this.props.info.content.map;
+  get map () {
+    return this.props.info.content.map
   }
 
-  handleClick(layerNum){
+  handleClick (layerNum) {
+    let l = this.map.getActiveLayer()
+    l && l.deactivate()
 
-    let l = this.map.getActiveLayer();
-    l && l.deactivate();
+    this.map.activeLayer = layerNum
 
-    this.map.activeLayer = layerNum;
+    l = this.map.getActiveLayer()
+    l && l.activate()
 
-    l = this.map.getActiveLayer();
-    l && l.activate();
+    this.map.update()
 
-    this.map.update();
-
-    //this.forceUpdate();
+  // this.forceUpdate()
   }
-  showOrHideLayer(layer, visible, e){
-    e.preventDefault();
-    e.stopPropagation();
+  showOrHideLayer (layer, visible, e) {
+    e.preventDefault()
+    e.stopPropagation()
 
-    const mapData = this.map.data;
-    mapData.layers[layer].visible = !visible;
+    const mapData = this.map.data
+    mapData.layers[layer].visible = !visible
 
-    this.forceUpdate();
+    this.forceUpdate()
 
     setTimeout(() => {
-      this.map.forceUpdate();
-    }, 0);
+      this.map.forceUpdate()
+    }, 0)
   }
 
-  render() {
-    let layers = [];
+  render () {
+    let layers = []
 
-    const data = this.map.data;
-    const active = this.map.activeLayer;
+    const data = this.map.data
+    const active = this.map.activeLayer
     // layers goes from bottom to top - as first drawn layer will be last visible
-    for(let i=data.layers.length-1; i>-1; i--){
-      let className = "icon"
-        + (data.layers[i].visible ? " unhide" : " hide")
-      ;
+    for (let i = data.layers.length - 1; i > -1; i--) {
+      let className = 'icon'
+      + (data.layers[i].visible ? ' unhide' : ' hide')
 
       layers.push(
-        <div key={i}
-           className={(i == active ? "bold active" : "item")}
-           onClick={this.handleClick.bind(this, i)}
-           href="javascript:;"
-          >
-          <i className={className}
-             onClick={this.showOrHideLayer.bind(this, i, data.layers[i].visible)}
-            ></i><a href="javascript:;">{data.layers[i].name}</a></div>
-      );
+        <div
+          key={i}
+          className={(i == active ? 'bold active' : 'item')}
+          onClick={this.handleClick.bind(this, i)}
+          href='javascript:;'>
+          <i className={className} onClick={this.showOrHideLayer.bind(this, i, data.layers[i].visible)}></i>
+          <a href='javascript:;'>
+            {data.layers[i].name}
+          </a>
+        </div>
+      )
     }
     return (
-      <div className="mgbAccordionScroller">
-        <div className="ui fluid styled accordion">
-          <div className="active title">
-            <span className="explicittrigger">
-              <i className="dropdown icon"></i>
-              {this.props.info.title}
-            </span>
+      <div className='mgbAccordionScroller'>
+        <div className='ui fluid styled accordion'>
+          <div className='active title'>
+            <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
           </div>
-          <div className="active content menu">
+          <div className='active content menu'>
             <LayerControls layer={this} />
             {layers}
           </div>

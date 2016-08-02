@@ -34,8 +34,6 @@ export default class EditSound extends React.Component {
 
 		this.soundCanvas = $("#soundPlayer canvas")[0]
 		this.soundCtx = this.soundCanvas.getContext('2d')
-		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
-		this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
 
 		// popups references
 		this.importSoundPopup = ReactDOM.findDOMNode(this.refs.importSoundPopup)
@@ -124,7 +122,6 @@ export default class EditSound extends React.Component {
     let c2    = asset.content2
 
     const previewCanvas = $("#previewDiv").children().first().children().first()[0]
-    // this.thumbnailCtx.putImageData(this.soundCtx.getImageData(0, 0, 280, 128), 0, 0)
     this.props.handleContentChange(c2, previewCanvas.toDataURL('image/png'), this.saveText)
   }
 
@@ -155,8 +152,6 @@ export default class EditSound extends React.Component {
 
 					<div className="content">
 						<div id="soundPlayer"></div>
-						<canvas ref="thumbnailCanvas" width="280px" height="128px"></canvas>
-						<div id="previewDiv" style={{width:"280px", height:"128px"}}></div>
 						<div className="row">
 							<button className="ui icon button small" onClick={this.togglePlaySound.bind(this)}>
 							  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>
@@ -166,6 +161,7 @@ export default class EditSound extends React.Component {
 							</button>
 						</div>
 					</div>
+					<div id="previewDiv" style={{width:"280px", height:"128px", visibility: "hidden"}}></div>
 
 
 				</div>

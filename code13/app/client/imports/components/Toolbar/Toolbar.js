@@ -302,10 +302,10 @@ export default class Toolbar extends React.Component {
     return (
       <div ref="mainElement" className={"Toolbar" + (this.props.config.vertical ? " vertical" : '')}>
         {content}
-        <div className="ui button right floated mini reset"
+        <div className="ui button right floated mini reset" style={{marginRight: "4px", paddingLeft: "4px"}}
              onClick={this.reset.bind(this)}
-             title="Reset Toolbar"
-          ><i className="level down reset icon"></i>
+             title="Reset Toolbar - Any Tool buttons you had drag-rearranged will be moved back to their original locations">
+          <i className="level down reset icon"></i>
         </div>
       </div>
     )

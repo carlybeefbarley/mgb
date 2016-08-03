@@ -190,11 +190,14 @@ export default class SpriteLayers extends React.Component {
   getAnimIdByFrame(frameID) {
     let c2 = this.props.content2
     let animID = false
-    for (let i=0; i<c2.animations.length; i++) {
-      let animation = c2.animations[i]
-      if (frameID >= animation.frames[0] && frameID <= animation.frames[animation.frames.length-1]) {
-        animID = i
-        break
+    if (c2.animations)
+    {
+      for (let i=0; i<c2.animations.length; i++) {
+        let animation = c2.animations[i]
+        if (frameID >= animation.frames[0] && frameID <= animation.frames[animation.frames.length-1]) {
+          animID = i
+          break
+        }
       }
     }
     return animID
@@ -514,7 +517,7 @@ export default class SpriteLayers extends React.Component {
 
 	    {/** Animation tabs **/}
 
-	          <tr className={"animTR " + (c2.animations.length === 0 ? "hidden" : "")}>
+	          <tr className={"animTR " + ((!c2.animations || c2.animations.length === 0) ? "hidden" : "")}>
 	          	<th></th>
 	          	<th></th>
 	          	<th></th>

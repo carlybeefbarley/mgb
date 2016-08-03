@@ -622,19 +622,9 @@ export default class TileMapLayer extends AbstractLayer {
 
   onKeyUp (e) {
     const w = e.which
-    if (w == 'Z'.charCodeAt(0)) {
-      if (!e.shiftKey) {
-        this.rotate()
-      /*this.map.collection.forEach((o) => {
-        o.gid = TileHelper.rotateTile(o.gid, 90)
-      });*/
-      }else {
-        this.rotateBack()
-      }
-    }
-    if (w == 'X'.charCodeAt(0)) {
+    /*if (w == 'X'.charCodeAt(0)) {
       this.flip()
-    }
+    }*/
     if (e.which == 46) {
       if (this.map.selection.length) {
         this.map.saveForUndo('Delete selection')

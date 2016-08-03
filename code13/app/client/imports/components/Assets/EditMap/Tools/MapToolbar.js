@@ -101,6 +101,11 @@ export default class MapToolbar extends React.Component {
       l.rotateBack()
     }
   }
+  flip (){
+    const l = this.props.map.getActiveLayer()
+    if (!l || !l.rotate) {return;}
+    l.flip()
+  }
   showGridToggle () {
     this.props.map.options.showGrid = !this.props.map.options.showGrid
     this.props.map.forceUpdate()
@@ -276,6 +281,14 @@ export default class MapToolbar extends React.Component {
           label: 'Rotate (CCW)',
           tooltip: 'Rotate Tile Counter ClockWise',
           shortcut: 'Shift+Z',
+          level: 7
+        },
+        {
+          name: 'flip',
+          icon: 'exchange',
+          label: 'Flip Tile',
+          tooltip: 'Mirror tile',
+          shortcut: 'X',
           level: 7
         },
         {

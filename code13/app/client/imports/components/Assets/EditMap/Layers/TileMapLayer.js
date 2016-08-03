@@ -1,7 +1,7 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
-import TileSelection from './../Tools/TileSelection.js'
+import TileSelection from './../Tools/SelectedTile.js'
 import EditModes from './../Tools/EditModes.js'
 import LayerTypes from './../Tools/LayerTypes.js'
 import TileCollection from './../Tools/TileCollection.js'

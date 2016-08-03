@@ -3,7 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import TileHelper from '../Helpers/TileHelper.js'
 import TilesetControls from './TilesetControls.js'
-import TileSelection from './TileSelection.js'
+import SelectedTile from './SelectedTile.js'
 import TileCollection from './TileCollection.js'
 
 import EditModes from './EditModes.js'
@@ -81,7 +81,7 @@ export default class TileSet extends React.Component {
     if (!ts) {
       return
     }
-    const pos = new TileSelection()
+    const pos = new SelectedTile()
     pos.updateFromMouse(e, ts, this.spacing)
     return pos
   }
@@ -99,7 +99,7 @@ export default class TileSet extends React.Component {
     }
     const l = map.getActiveLayer()
     l && l.resetRotation && l.resetRotation()
-    map.collection.pushOrRemove(new TileSelection(this.prevTile))
+    map.collection.pushOrRemove(new SelectedTile(this.prevTile))
     this.highlightTile(e.nativeEvent, true)
   }
   selectRectangle (e) {
@@ -136,7 +136,7 @@ export default class TileSet extends React.Component {
       for (let x = startx; x <= endx; x++) {
         pos.x = x
         pos.getGid(ts, this.spacing)
-        map.collection.pushUnique(new TileSelection(pos))
+        map.collection.pushUnique(new SelectedTile(pos))
       }
     }
     const l = map.getActiveLayer()
@@ -304,7 +304,7 @@ export default class TileSet extends React.Component {
     }
     this.mouseDown = true
     this.selectTile(e)
-    this.startingtilePos = new TileSelection(this.prevTile)
+    this.startingtilePos = new SelectedTile(this.prevTile)
   }
   onMouseUp (e) {
     this.mouseDown = false

@@ -1,10 +1,11 @@
 'use strict'
 import TileHelper from '../Helpers/TileHelper.js'
 
-export default class TileSelection {
-  constructor (prevTileSelection) {
-    if (prevTileSelection) {
-      this.update(prevTileSelection)
+// Represents one selected tile
+export default class SelectedTile {
+  constructor (prevSelectedTile) {
+    if (prevSelectedTile) {
+      this.update(prevSelectedTile)
     }else {
       this.x = 0
       this.y = 0

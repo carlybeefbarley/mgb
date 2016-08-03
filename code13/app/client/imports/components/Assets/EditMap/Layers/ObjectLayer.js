@@ -889,9 +889,6 @@ edit[EditModes.stamp] = function (e) {
   if (!this.map.collection.length || e.target != this.refs.canvas) {
     return
   }
-  if (e.which !== 1) {
-    return
-  }
   const tile = this.map.collection[0]
   const pal = this.map.palette[tile.gid]
   const tw = this.map.data.tilewidth
@@ -914,7 +911,7 @@ edit[EditModes.stamp] = function (e) {
     this.data.objects.push(this.highlightedObject)
   }
 
-  if (e.type == 'mouseup') {
+  if (e.type == 'mouseup' && e.which !== 1) {
     this.map.saveForUndo('Add Tile')
     this.highlightedObject = null
     return

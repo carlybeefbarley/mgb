@@ -11,7 +11,7 @@ import Layers from './Tools/Layers.js'
 import Properties from './Tools/Properties.js'
 import ObjectList from './Tools/ObjectList.js'
 
-import MapTools from './Tools/MapTools.js'
+import MapToolbar from './Tools/MapToolbar.js'
 import TileHelper from './Helpers/TileHelper.js'
 import ObjectHelper from './Helpers/ObjectHelper.js'
 
@@ -1096,7 +1096,7 @@ export default class MapArea extends React.Component {
         onDragOver={this.prepareForDrag.bind(this)}
         onDrop={this.importFromDrop.bind(this)}
         onWheel={this.handleOnWheel.bind(this)}>
-        <MapTools map={this} ref='tools' />
+        <MapToolbar map={this} ref='tools' />
         {notification}
         {this.renderMap()}
         <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />

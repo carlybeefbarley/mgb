@@ -5,7 +5,7 @@ import EditModes from './EditModes'
 import LayerTypes from './LayerTypes.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
-export default class MapTools extends React.Component {
+export default class MapToolbar extends React.Component {
 
   preview () {
     this.props.map.togglePreviewState()

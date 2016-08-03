@@ -136,7 +136,7 @@ export const AssetKinds = {
     longName: "Sound",
     icon: "volume up",
     requiresUserRole: null,
-    description: "Sound Effect"
+    description: "Sound Effects"
   },
   "music": {
     name: "Music",
@@ -145,7 +145,7 @@ export const AssetKinds = {
     longName: "Music",
     icon: "music",
     requiresUserRole: null,
-    description: "Bacground music"
+    description: "Background music"
   },
   "game": {
     name: "Game",
@@ -154,7 +154,7 @@ export const AssetKinds = {
     longName: "Game definition",
     icon: "gamepad",
     requiresUserRole: null,
-    description: "Game rules and definition"
+    description: "Game rules and play statistics"
   },
   "_mgbui": {
     name: "MGB UI",
@@ -163,7 +163,7 @@ export const AssetKinds = {
     longName: "MGB UI Mockup",
     icon: "code",
     requiresUserRole: roleSuperAdmin,    
-    description: "HTML using Semantic UI for mocking up MGB UI"
+    description: "(MGB Dev Team Only) MGB UI Prototyping tool"
   },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function(key) {

@@ -29,7 +29,7 @@ export default AssetHistoryDetail = React.createClass({
     let changesCount = changes.length   // Note this excludes ourselves
 
     return (
-      <div className="ui simple dropdown small label item">
+      <div className="ui simple dropdown small basic grey pointing below label item">
         <i className="icon lightning"></i>{Plural.numStr(changesCount, 'Change')}
         <div className="menu">
         { changes }

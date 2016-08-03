@@ -10,7 +10,9 @@ import ProjectMembershipEditor from './ProjectMembershipEditor';
 import AssetUrlGenerator from './AssetUrlGenerator.js';
 
 
-//TODO: Toast/error
+// TODO: Toast/error is a mess
+
+// TODO: I think showHeader===false is no longer required, so clean this up by getting rid of all that mess
 
 export default AssetCard = React.createClass({
   
@@ -159,8 +161,7 @@ export default AssetCard = React.createClass({
     // TODO: add allowDrag to props.. and walk through AssetCard use cases;
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
-      <div key={asset._id} className="ui card" style={{  minWidth: "200px"}}
-        >
+      <div key={asset._id} className="ui card" style={{  minWidth: "200px"}}>
       
           { showHeader &&
             <div className="ui centered image" onClick={this.handleEditClick}>

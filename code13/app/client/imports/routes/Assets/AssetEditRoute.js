@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import QLink, { utilPushTo } from '../QLink';
 import reactMixin from 'react-mixin';
 
@@ -8,7 +8,6 @@ import Spinner from '/client/imports/components/Nav/Spinner';
 
 import Helmet from 'react-helmet';
 import AssetEdit from '/client/imports/components/Assets/AssetEdit';
-import AssetCard from '/client/imports/components/Assets/AssetCard.js';
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail.js';
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail.js';
 
@@ -18,7 +17,6 @@ import {snapshotActivity} from '/imports/schemas/activitySnapshots.js';
 import {ActivitySnapshots, Activity} from '/imports/schemas';
 
 import InlineEdit from 'react-edit-inline';
-
 
 
 // This AssetEditRoute serves the following objectives
@@ -128,7 +126,11 @@ export default AssetEditRoute = React.createClass({
    */
   renderAssetPathElements(a, canEdit) {
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
-    const editOrView = canEdit ? <span style={{color: "green"}}>Edit</span> : <span>View</span>
+    const editOrView = 
+              (canEdit ? 
+                <a className="ui mini green label" title="You can edit this asset and changes will be saved automatically">Edit</a> : 
+                <a className="ui mgbReadOnlyReminder mini red label" title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">View</a> 
+              )
 
     // The following were moved to the Nav.js Breadcrumb bar
     // <QLink to={`/u/${a.dn_ownerName}`}>{oName}</QLink>
@@ -159,6 +161,9 @@ export default AssetEditRoute = React.createClass({
     if (!asset || this.data.loading) return null
     const canEd = this.canEdit()    
     const emptyAssetDescriptionText = "(no description)"
+
+    const chosenProjectNames = asset.projectNames || []
+    const inProjectsStr =  "Asset in projects: " + (chosenProjectNames.length === 0 ? "(none)" :  chosenProjectNames.join(", ") )
 
     return (
       <div className="ui padded grid">
@@ -199,22 +204,17 @@ export default AssetEditRoute = React.createClass({
                         assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
                         activitySnapshots={this.data.activitySnapshots} />
-                        &nbsp;
+                        &emsp;
           <AssetHistoryDetail 
                         assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
                         assetActivity={this.data.assetActivity} />
-
         </div>
 
-        <div className="five wide column">
-            <AssetCard
-              showHeader={false}
-              canEdit={canEd}
-              currUser={this.props.currUser}
-              asset={asset}
-              showEditButton={false}
-              showToast={this.props.showToast} />
+        <div className="ui five wide right aligned column" >
+          <div className="ui small basic grey label" title="(Currently you can only assign Assets to Projects using the 'My Assets' page. Sorry!)">
+            { inProjectsStr }
+          </div>
         </div>
 
         <div className="sixteen wide column">
@@ -234,8 +234,8 @@ export default AssetEditRoute = React.createClass({
 
   handleEditDeniedReminder: function()
   {
-    // This is a style in the AssetCard. TODO: Pass the name in as a prop
-    $('.mgbReadOnlyReminder').transition({ animation: 'tada', duration: '500ms' })
+    // This is a style on the Edit/view tag in render()
+    $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
   },
 
 

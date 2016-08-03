@@ -14,7 +14,7 @@ export default AssetActivityDetail = React.createClass({
   
   render() {
     // A list of ActivitySnapshots provided via getMeteorData(), including one by ourself probably
-    let { activitySnapshots } = this.props;
+    let { activitySnapshots } = this.props
     if (!activitySnapshots)
       return null
       
@@ -34,13 +34,14 @@ export default AssetActivityDetail = React.createClass({
               </a>
     })
     
-    let viewersCount = viewers.length   // Note this excludes ourselves
-
+    const viewersCount = viewers.length   // Note this excludes ourselves
+    const pointingClass = viewersCount ? "pointing below" : "" 
+    
     return (
-      <div className="ui simple dropdown small label item" style={{marginBottom: "4px"}}>
+      <div className={`ui simple dropdown small basic ${pointingClass} grey label item`} style={{marginBottom: "4px"}}>
         <i className="unhide icon"></i>{Plural.numStr(viewersCount, 'Viewer')}
         <div className="menu">
-        { viewers }
+          { viewers }
         </div>
       </div>
     )

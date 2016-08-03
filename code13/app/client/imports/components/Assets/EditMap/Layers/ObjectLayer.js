@@ -24,6 +24,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.kind = LayerTypes.object
     this.drawDebug = false
     this._pickedObject = -1
+    this.info = null;
 
     this.handles = new HandleCollection(0, 0, 0, 0)
 
@@ -57,6 +58,36 @@ export default class ObjectLayer extends AbstractLayer {
     return this.data.objects[this._pickedObject]
   }
 
+  getInfo(){
+    if(this.info > -1){
+      const o = this.data.objects[this.info];
+      return o ? (o.name || `(unnamed ${this.getObjectType(o)})`) : ''
+    }
+    return ''
+  }
+
+  getObjectType(o){
+    if (o.gid) {
+      return "tile"
+    }
+    else if (o.orig) {
+      if (o.orig.polyline) {
+        return "polyline"
+      }else {
+        return "polygon"
+      }
+    }
+    // TODO: is there convenient way to separate rectangles and shapes??
+    else if (o.ellipse) {
+      if(o.width == o.height){
+        return "circle"
+      }
+      return "ellipse"
+    }
+    else{
+      return "rectangle"
+    }
+  }
   // TODO: isn't this confusing???
   setPickedObjectSlow (id) {
     this._pickedObject = id
@@ -99,6 +130,13 @@ export default class ObjectLayer extends AbstractLayer {
     return maxId
   }
   pickObject (e) {
+    const ret = this.queryObject(e)
+    this._pickedObject = ret
+    this.map.updateTools()
+    return ret
+  }
+
+  queryObject(e){
     let obj
     const x = e.offsetX / this.camera.zoom - this.camera.x
     const y = e.offsetY / this.camera.zoom - this.camera.y
@@ -128,11 +166,9 @@ export default class ObjectLayer extends AbstractLayer {
         }
       }
     }
-    this._pickedObject = ret
-
-    this.map.updateTools()
     return ret
   }
+
   selectObject (obj) {
     this._pickedObject = this.data.objects.indexOf(obj)
   }
@@ -189,6 +225,7 @@ export default class ObjectLayer extends AbstractLayer {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
     super.handleMouseMove(e)
 
+    this.info = this.queryObject(e);
     this.isDirty = true
 
     if (!this.mouseDown && e.target == this.refs.canvas) {

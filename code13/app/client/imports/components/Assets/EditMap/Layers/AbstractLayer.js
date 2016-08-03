@@ -86,6 +86,10 @@ export default class AbstractLayer extends React.Component {
     this._camera.zoom = this.map.camera.zoom
     return this._camera
   }
+  getInfo () {
+    return 'Please set info!'
+  }
+
   isActive () {
     return this.options == this.map.data.layers[this.map.activeLayer]
   }

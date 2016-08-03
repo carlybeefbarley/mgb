@@ -18,9 +18,11 @@ import ObjectHelper from './Helpers/ObjectHelper.js'
 import TileCollection from './Tools/TileCollection.js'
 import EditModes from './Tools/EditModes.js'
 import LayerTypes from './Tools/LayerTypes.js'
+import PositionInfo from './Tools/PositionInfo.js'
 import Camera from './Camera.js'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
+import Plural from '/client/imports/helpers/Plural.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 export default class MapArea extends React.Component {
@@ -38,7 +40,7 @@ export default class MapArea extends React.Component {
         if (!this.map.images) {
           this.map.images = {}
         }
-        this.map.images[property] = value.src
+        this.map.images[property] = TileHelper.normalizePath(value.src)
         return true
       },
       get: (property) => {
@@ -307,27 +309,27 @@ export default class MapArea extends React.Component {
   // TODO: move api links to external resource?
   handleFileByExt_png (nameWithExt, buffer) {
     const blob = new Blob([buffer], {type: 'application/octet-binary'})
-    const src = URL.createObjectURL(blob);
+    const src = URL.createObjectURL(blob)
     this.createGraphicsAsset(nameWithExt, blob)
-    // this may seem too confusing if we pull out our asset instead of uploading users dropped asset
-    // TODO: check for duplicate names?
-    /*const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
-    // try to map image with user's asset
-    $.get(`/api/asset/png/${this.props.parent.getUser()}/${name}`)
-      .success((id) => {
-        const img = new Image()
-        img.onload = () => {
-          this.images.set(nameWithExt, img)
-          this.updateImages()
-        }
-        img.src = `/api/asset/png/${id}`
-      })
-      .error((d) => {
-        this.createGraphicsAsset(nameWithExt)
-      })
-      */
+  // this may seem too confusing if we pull out our asset instead of uploading users dropped asset
+  // TODO: check for duplicate names?
+  /*const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
+  // try to map image with user's asset
+  $.get(`/api/asset/png/${this.props.parent.getUser()}/${name}`)
+    .success((id) => {
+      const img = new Image()
+      img.onload = () => {
+        this.images.set(nameWithExt, img)
+        this.updateImages()
+      }
+      img.src = `/api/asset/png/${id}`
+    })
+    .error((d) => {
+      this.createGraphicsAsset(nameWithExt)
+    })
+    */
   }
-  createGraphicsAsset(nameWithExt, src){
+  createGraphicsAsset (nameWithExt, src) {
     const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
     const img = new Image()
     img.onload = () => {
@@ -724,10 +726,12 @@ export default class MapArea extends React.Component {
     else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4) {
       this.moveCamera(e)
     }
+    this.refs.positionInfo.forceUpdate()
   }
   handleMouseUp (e) {
     this.lastEvent = null
     this.refs.mapElement.style.transition = '0.3s'
+    this.refs.positionInfo.forceUpdate()
   }
   handleOnWheel (e) {
     e.preventDefault()
@@ -1007,6 +1011,28 @@ export default class MapArea extends React.Component {
     return canvas.toDataURL()
   }
 
+  getInfo () {
+    const l = this.getActiveLayer()
+    let st = ''
+    const col = this.collection.forEach((t) => {
+      st += ',' + t.gid
+    })
+    st = st.substr(1)
+    let info = !l? '' : l.getInfo();
+    info = info ? ': '+info : '';
+    return (
+      <div>
+        <div>
+          {!l ? '' : l.data.name + info}
+        </div>
+        <div>
+          {Plural.numStr2(this.collection.length, "Selected Tile")}
+          {st}
+        </div>
+      </div>
+    )
+  }
+
   renderMap () {
     const data = this.data
     const layers = []
@@ -1064,7 +1090,6 @@ export default class MapArea extends React.Component {
                        This map is larger than our recommended size - so editing may be slower than normal!
                      </div>
     }
-
     return (
       <div
         className='tilemap-wrapper'
@@ -1074,6 +1099,7 @@ export default class MapArea extends React.Component {
         <MapTools map={this} ref='tools' />
         {notification}
         {this.renderMap()}
+        <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
       </div>
     )
   }

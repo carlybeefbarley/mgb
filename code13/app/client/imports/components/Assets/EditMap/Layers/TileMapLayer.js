@@ -163,6 +163,9 @@ export default class TileMapLayer extends AbstractLayer {
     pos.gid = this.options.data[pos.id]
     return pos
   }
+  getInfo () {
+    return JSON.stringify(this.tilePosInfo)
+  }
 
   selectRectangle (pos) {
     const map = this.map
@@ -592,6 +595,7 @@ export default class TileMapLayer extends AbstractLayer {
     if (e.target !== this.refs.canvas) {
       return
     }
+    this.tilePosInfo = this.getTilePosInfo(e)
 
     this.isMouseOver = true
     if (edit[this.map.options.mode]) {

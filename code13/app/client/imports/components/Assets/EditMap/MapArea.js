@@ -306,8 +306,12 @@ export default class MapArea extends React.Component {
   }
   // TODO: move api links to external resource?
   handleFileByExt_png (nameWithExt, buffer) {
-    const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
     const blob = new Blob([buffer], {type: 'application/octet-binary'})
+    const src = URL.createObjectURL(blob);
+    this.createGraphicsAsset(nameWithExt, blob)
+    // this may seem too confusing if we pull out our asset instead of uploading users dropped asset
+    // TODO: check for duplicate names?
+    /*const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
     // try to map image with user's asset
     $.get(`/api/asset/png/${this.props.parent.getUser()}/${name}`)
       .success((id) => {
@@ -319,27 +323,32 @@ export default class MapArea extends React.Component {
         img.src = `/api/asset/png/${id}`
       })
       .error((d) => {
-        const img = new Image()
-        img.onload = () => {
-          // TODO: this is hackish hack - find out less hackish way!!!
-          // we should be able to create dataUrl from buffer or blob directly
-          const c = document.createElement('canvas')
-          c.ctx = c.getContext('2d')
-          c.width = img.width
-          c.height = img.height
-          c.ctx.drawImage(img, 0, 0)
-
-          ObjectHelper.createGraphic(name, c.toDataURL(), (newAsset) => {
-            const gim = new Image()
-            gim.onload = () => {
-              this.images.set(nameWithExt, gim)
-              this.updateImages()
-            }
-            gim.src = `/api/asset/png/${newAsset._id}`
-          })
-        }
-        img.src = URL.createObjectURL(blob)
+        this.createGraphicsAsset(nameWithExt)
       })
+      */
+  }
+  createGraphicsAsset(nameWithExt, src){
+    const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
+    const img = new Image()
+    img.onload = () => {
+      // TODO: this is hackish hack - find out less hackish way!!!
+      // we should be able to create dataUrl from buffer or blob directly
+      const c = document.createElement('canvas')
+      c.ctx = c.getContext('2d')
+      c.width = img.width
+      c.height = img.height
+      c.ctx.drawImage(img, 0, 0)
+
+      ObjectHelper.createGraphic(name, c.toDataURL(), (newAsset) => {
+        const gim = new Image()
+        gim.onload = () => {
+          this.images.set(nameWithExt, gim)
+          this.updateImages()
+        }
+        gim.src = `/api/asset/png/${newAsset._id}`
+      })
+    }
+    img.src = src
   }
 
   generateImages (cb) {

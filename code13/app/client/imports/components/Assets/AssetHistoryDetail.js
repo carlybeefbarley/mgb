@@ -1,20 +1,21 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import moment from 'moment';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import moment from 'moment'
+import Plural from '/client/imports/helpers/Plural'
 
 export default AssetHistoryDetail = React.createClass({
 
   propTypes: {
-    assetId: PropTypes.string.isRequired,        
+    assetId:       PropTypes.string.isRequired,        
     assetActivity: PropTypes.array,             // Can be empty while being loaded          
-    currUser: PropTypes.object                  // currently Logged In user (not always provided)
+    currUser:      PropTypes.object                  // currently Logged In user (not always provided)
   },
   
   render() {
     // A list of Activity records for an Asset provided via getMeteorData()
-    let { assetActivity } = this.props;
+    let { assetActivity } = this.props
     if (!assetActivity)
-      return null;
+      return null
       
     let changes = _.map(assetActivity, a => { 
       const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
@@ -28,18 +29,12 @@ export default AssetHistoryDetail = React.createClass({
     let changesCount = changes.length   // Note this excludes ourselves
 
     return (
-          <div className="ui small compact menu">
-            <div className="ui simple dropdown item">
-              <i className="icon lightning"></i> Changes
-              <div className={"floating ui tiny green label"}>
-                { changesCount }
-              </div>
-              <div className="menu">
-              { changes }
-              </div>
-            </div>
-          </div>
-      );
+      <div className="ui simple dropdown small label item">
+        <i className="icon lightning"></i>{Plural.numStr(changesCount, 'Change')}
+        <div className="menu">
+        { changes }
+        </div>
+      </div>
+    )
   }
-  
 })

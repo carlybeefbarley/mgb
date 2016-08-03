@@ -1,6 +1,7 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import moment from 'moment';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import moment from 'moment'
+import Plural from '/client/imports/helpers/Plural'
 
 
 export default AssetActivityDetail = React.createClass({
@@ -15,7 +16,7 @@ export default AssetActivityDetail = React.createClass({
     // A list of ActivitySnapshots provided via getMeteorData(), including one by ourself probably
     let { activitySnapshots } = this.props;
     if (!activitySnapshots)
-      return null;
+      return null
       
     var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
     let othersActivities =  _.filter(activitySnapshots, a => currUserId !== a.byUserId)                            
@@ -36,19 +37,12 @@ export default AssetActivityDetail = React.createClass({
     let viewersCount = viewers.length   // Note this excludes ourselves
 
     return (
-          <div className="ui small compact menu">
-            <div className="ui simple dropdown item">
-              <i className="unhide icon"></i> Viewers
-              <div className={"floating ui tiny " + (viewersCount ? "orange" : "grey") +  " label"}>
-                { viewersCount }
-              </div>
-              <div className="menu">
-              { viewers }
-              </div>
-            </div>
-          </div>
-      );
+      <div className="ui simple dropdown small label item" style={{marginBottom: "4px"}}>
+        <i className="unhide icon"></i>{Plural.numStr(viewersCount, 'Viewer')}
+        <div className="menu">
+        { viewers }
+        </div>
+      </div>
+    )
   }
-
-  
 })

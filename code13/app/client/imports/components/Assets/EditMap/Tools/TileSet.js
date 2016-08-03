@@ -354,12 +354,15 @@ export default class TileSet extends React.Component {
         <TilesetControls tileset={this} ref='controls' />
         {!empty ? <span>Drop graphics here to create new tileset</span> : ''}
         <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
-          <canvas ref='canvas'
-                  onMouseDown={this.onMouseDown.bind(this)}
-                  onMouseUp={this.onMouseUp.bind(this)}
-                  onMouseMove={(e) => {this.onMouseMove(e.nativeEvent)}}
-                  onMouseLeave={this.onMouseLeave.bind(this)}
-                  onContextMenu={(e) => {e.preventDefault(); return false;}}>
+          <canvas
+            ref='canvas'
+            onMouseDown={this.onMouseDown.bind(this)}
+            onMouseUp={this.onMouseUp.bind(this)}
+            onMouseMove={e => {
+                           this.onMouseMove(e.nativeEvent)}}
+            onMouseLeave={this.onMouseLeave.bind(this)}
+            onContextMenu={e => {
+                             e.preventDefault(); return false;}}>
           </canvas>
         </div>
       </div>

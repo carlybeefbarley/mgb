@@ -12,8 +12,8 @@ export default class EditMap extends React.Component {
     }
   }
 
-  getUser(){
-    return this.props.currUser.profile.name;
+  getUser () {
+    return this.props.currUser.profile.name
   }
 
   /* This stores a short-term record indicating this user is viewing this Map

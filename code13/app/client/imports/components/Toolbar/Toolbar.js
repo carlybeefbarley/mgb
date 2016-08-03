@@ -404,7 +404,7 @@ export default class Toolbar extends React.Component {
   /* Button sorting */
   _moveButtonStart(e) {
     const b = this._extractButton(e.target)
-    if (!b || e.which != 1)
+    if (!b || e.buttons != 1)
       return
 
     this.startPos = {

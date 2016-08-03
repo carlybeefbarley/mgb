@@ -146,11 +146,11 @@ export default class LayerControls extends React.Component {
             <i className='paste icon'></i>
           </button>
           {/* moved to Map Tools
-                                                                                          <button className={showGridClassName}
-                                                                                                  onClick={this.showGridToggle.bind(this)}
-                                                                                                  title="Show Grid"
-                                                                                            ><i className="grid layout icon"></i>
-                                                                                          </button> */}
+                                                                                                                                                                                                                                      <button className={showGridClassName}
+                                                                                                                                                                                                                                              onClick={this.showGridToggle.bind(this)}
+                                                                                                                                                                                                                                              title="Show Grid"
+                                                                                                                                                                                                                                        ><i className="grid layout icon"></i>
+                                                                                                                                                                                                                                      </button> */}
         </div>
         <div className='ui icon buttons mini'>
           {rise}

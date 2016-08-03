@@ -176,21 +176,22 @@ const ObjectHelper = {
       'visible': true
     }
   },
-  createGraphic(nameWithExt, dataUrl, cb = () => {}) {
-    name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt;
+  createGraphic(nameWithExt, dataUrl, cb = () => {
+    }) {
+    name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
 
     const img = new Image()
     img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = 200;
-      canvas.height = 150;
-      canvas.getContext("2d").drawImage(img, 0, 0, img.width, img.height);
+      const canvas = document.createElement('canvas')
+      canvas.width = 200
+      canvas.height = 150
+      canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height)
       // TODO: get rid of strings
-      const assetKindKey = "graphic"
+      const assetKindKey = 'graphic'
       const newAsset = {
         name,
         kind: assetKindKey,
-        text: "Imported from MapEditor: " + nameWithExt,
+        text: 'Imported from MapEditor: ' + nameWithExt,
         thumbnail: canvas.toDataURL(),
         content2: {
           width: img.width,

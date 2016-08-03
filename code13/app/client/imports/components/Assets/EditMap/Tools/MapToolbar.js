@@ -272,6 +272,7 @@ export default class MapToolbar extends React.Component {
           icon: 'share',
           label: 'Rotate (CW)',
           tooltip: 'Rotate Tile ClockWise',
+          disabled: (!layer || layer.kind != LayerTypes.tile),
           shortcut: 'Z',
           level: 7
         },
@@ -280,6 +281,7 @@ export default class MapToolbar extends React.Component {
           icon: 'reply',
           label: 'Rotate (CCW)',
           tooltip: 'Rotate Tile Counter ClockWise',
+          disabled: (!layer || layer.kind != LayerTypes.tile),
           shortcut: 'Shift+Z',
           level: 7
         },
@@ -287,6 +289,7 @@ export default class MapToolbar extends React.Component {
           name: 'flip',
           icon: 'exchange',
           label: 'Flip Tile',
+          disabled: (!layer || layer.kind != LayerTypes.tile),
           tooltip: 'Mirror tile',
           shortcut: 'X',
           level: 7

@@ -911,7 +911,7 @@ edit[EditModes.stamp] = function (e) {
     this.data.objects.push(this.highlightedObject)
   }
 
-  if (e.type == 'mouseup' && e.which !== 1) {
+  if (e.type == 'mouseup' && e.which == 1) {
     this.map.saveForUndo('Add Tile')
     this.highlightedObject = null
     return

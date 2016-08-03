@@ -150,6 +150,19 @@ export default class TileMapLayer extends AbstractLayer {
       this.options.data[id] |= FLIPPED_DIAGONALLY_FLAG
     }
   }
+  tileWithRotation(id){
+    let ret = id;
+    if (this.ctrl.h == -1) {
+      ret |= FLIPPED_HORIZONTALLY_FLAG
+    }
+    if (this.ctrl.v == -1) {
+      ret |= FLIPPED_VERTICALLY_FLAG
+    }
+    if (this.ctrl.d) {
+      ret |= FLIPPED_DIAGONALLY_FLAG
+    }
+    return ret;
+  }
 
   getTilePosInfo (e) {
     const map = this.props.map
@@ -764,12 +777,12 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   }
 
   if (this.map.options.randomMode) {
-    let ts = this.map.collection.random()
+    let ts = new TileSelection(this.map.collection.random())
+    ts.gid = this.tileWithRotation(ts.gid)
     if (this.map.selection.length > 0) {
       if (this.map.selection.indexOfId(pos.id) > -1) {
         saveUndo && this.map.saveForUndo('Add Random Tile')
         this.options.data[pos.id] = ts.gid
-        this.fixRotation(pos.id)
       }
     }else {
       // updating same tile - safe to skip
@@ -800,7 +813,6 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       }
       saveUndo && this.map.saveForUndo('Update Tile No: ' + pos.id)
       this.options.data[pos.id] = ts.gid
-      this.fixRotation(pos.id)
     }
     this.map.redrawGrid()
     this.drawTiles()
@@ -812,7 +824,9 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
 
   let tpos = new TileSelection(pos)
   for (let i = 0; i < this.map.collection.length; i++) {
-    let ts = this.map.collection[i]
+    let ts = new TileSelection(this.map.collection[i]);
+    ts.gid = this.tileWithRotation(ts.gid);
+
     tpos.x = ts.x + pos.x - ox
     tpos.y = ts.y + pos.y - oy
     tpos.id = tpos.x + tpos.y * this.options.width
@@ -853,7 +867,6 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     }
 
     this.options.data[tpos.id] = ts.gid
-    this.fixRotation(tpos.id)
   }
   this.map.redrawGrid()
   this.drawTiles()

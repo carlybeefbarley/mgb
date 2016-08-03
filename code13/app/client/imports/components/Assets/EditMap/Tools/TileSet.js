@@ -339,12 +339,12 @@ export default class TileSet extends React.Component {
           <div className='active title'>
             <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
           </div>
-          {this.renderContent(true)}
+          {this.renderContent(false)}
         </div>
       </div>
     )
   }
-  renderContent (empty = false) {
+  renderContent (tileset) {
     return (
       <div
         className='active content tilesets accept-drop'
@@ -352,7 +352,7 @@ export default class TileSet extends React.Component {
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
         <TilesetControls tileset={this} ref='controls' />
-        {empty ? <span>Drop Graphic (from side panel) here to create new tileset</span> : ''}
+        {!tileset ? <span>Drop Graphic (from side panel) here to create new tileset</span> : ''}
         <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
           <canvas
             ref='canvas'

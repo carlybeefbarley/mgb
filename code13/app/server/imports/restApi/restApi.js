@@ -143,7 +143,7 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
       */
     const c2 = asset.content2;
     const tiles = {};
-    c2.animations.forEach((anim) => {
+    c2.animations && c2.animations.forEach((anim) => {
       const animation = [];
       const duration = (1000 / anim.fps); // round?
       anim.frames.forEach((frame) => {

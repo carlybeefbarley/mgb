@@ -40,7 +40,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "asset.graphic",
           "type":           "improvement",
           "changeName":     "Graphic Editor Toolbar facelift",
-          "changeSummary":  "Improved layout of toolbar, added more ui levels for the slider",
+          "changeSummary":  "Improved layout of toolbar, added more UI levels for the slider",
           "otherUrls":      []
         }
       ]
@@ -87,7 +87,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "nav.roadmap",
           "type":           "feature",
           "changeName":     "New Roadmap page",
-          "changeSummary":  "New Roadmap page - linked from Hoem NavPanel and from WhatsNew page",
+          "changeSummary":  "New Roadmap page - linked from Home NavPanel and from WhatsNew page",
           "otherUrls":      []
         }
       ]

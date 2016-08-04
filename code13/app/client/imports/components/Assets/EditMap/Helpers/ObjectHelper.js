@@ -130,17 +130,18 @@ const ObjectHelper = {
     o.update()
   },
 
-  createTileObject: (pal, id, x, y) => {
+  createTileObject: (pal, id, x, y, name = '(unnamed tile #' + id + ')') => {
     return {
+      name,
+      x, y,
       'gid': pal.gid,
       'height': pal.h,
       'id': id,
-      'name': '(unnamed)',
       'rotation': 0,
       'type': '',
       'visible': true,
-      'width': pal.w,
-    x, y}
+      'width': pal.w
+    }
   },
 
   createRectangle: (id, x, y, width = 1 , height = 1 , name = '(unnamed rectangle #' + id + ')') => {

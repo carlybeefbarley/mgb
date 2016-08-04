@@ -77,8 +77,11 @@ Meteor.startup(function () {
         <Route path="assets" component={Azzets.UserAssetList} name="Search All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 
-        <Route path="assetEdit/:assetId" component={Azzets.AssetEdit} name="Edit Asset (LEGACY route)" />        
- 
+        <Route path="assetEdit/:assetId" component={Azzets.AssetEdit} name="Edit Asset (LEGACY route)" />
+
+        <Route path="user/:id/skilltree" component={Users.SkillTreePage} name="Skill Tree" />
+        <Route path="u/:username/skilltree" component={Users.SkillTreePage} name="Skill Tree" />
+
         <Route path="*" component={NotFoundPage} name="Page Not Found"/>
       </Route>
     </Router>

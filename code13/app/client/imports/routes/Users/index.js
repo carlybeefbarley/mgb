@@ -6,6 +6,7 @@ import BadgeList from './BadgeList';
 import UserHistory from './UserHistory';
 import ResetPassword from './ResetPassword';
 import ForgotPassword from './ForgotPassword';
+import SkillTreePage from './SkillTreePage';
 
 export default {
   Join,
@@ -15,5 +16,6 @@ export default {
   BadgeList,
   UserHistory,
   ResetPassword,
-  ForgotPassword
+  ForgotPassword,
+  SkillTreePage
 }

@@ -237,7 +237,7 @@ export default class MapToolbar extends React.Component {
           active: this.props.map.options.mode == EditModes.rectangle,
           tooltip: 'Rectangle Selection Tool',
           level: 3,
-          shortcut: 'Ctrl + Shift + R'
+          shortcut: 'S'
         },
         {
           name: 'wand',

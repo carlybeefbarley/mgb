@@ -5,6 +5,7 @@ import Helmet from 'react-helmet';
 import moment from 'moment';
 
 import BadgeGrid from '/client/imports/components/Users/BadgeGrid';
+import SkillGrid from '/client/imports/components/Users/SkillGrid';
 import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap';
 import SkillsMap from '/client/imports/components/Controls/SkillsMap/SkillsMap';
 
@@ -228,11 +229,7 @@ export default UserProfileRoute = React.createClass({
 
   renderUserSkills: function(user, className) {
     return (
-      <div className="four wide column">
-        <h2>Skills</h2>
-        <p>(coming soon...)</p>
-        <SkillsMap user={user}/>
-      </div>
+      <SkillGrid user={user} className={className} />
     )
   },
 

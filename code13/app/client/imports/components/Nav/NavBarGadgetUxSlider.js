@@ -11,11 +11,9 @@ import React, { PropTypes } from 'react';
 
 
 export const sliderConstants = {
-
   sliderElementId: "NavBarGadgetUxSlider",    // Element Ids
   inactiveTitleTxt: "(This page has no adaptive toolbars, so this control is inactive)",
   disabledOpacity: 0.0
-
 }
 
 export default NavBarGadgetUxSlider = React.createClass({
@@ -27,16 +25,22 @@ export default NavBarGadgetUxSlider = React.createClass({
 
 
   render: function() {
-    const { name, currUser, } = this.props
+    const { name, currUser } = this.props
+    
     const sliderStyle =  { 
-      marginTop: "10px", 
+      marginTop:   "10px", 
       marginRight: "10px", 
-      marginLeft: "2px"
+      marginLeft:   "2px"
+    }
+
+    const iconSty = {
+      position: "relative",
+      top:      "-3px" 
     }
 
     return (
       <div style={{ opacity: sliderConstants.disabledOpacity }}>
-        <i className="ui options icon" />
+        <i className="ui options icon" style={iconSty}/>
         <input
           style={sliderStyle} 
           id={sliderConstants.sliderElementId}

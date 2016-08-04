@@ -117,7 +117,7 @@ export default App = React.createClass({
     const flexPanelWidth = showFlexPanel ? "280px" : "48px"    // The 225px width works well with default vertical menu size and padding=8px 
 
     // The main Panel:  Outer is for the scroll container; inner is for content
-    let mainPanelOuterDivSty = { 
+    const mainPanelOuterDivSty = { 
       position: "fixed",
       top:      "40px",
       bottom:   "0px",
@@ -127,7 +127,7 @@ export default App = React.createClass({
       marginBottom: "0px"      
     }
 
-    let mainPanelInnerDivSty = { 
+    const mainPanelInnerDivSty = { 
       padding:       "0px",
       paddingBottom: "24px",
       height:        "auto" 
@@ -136,9 +136,14 @@ export default App = React.createClass({
     //Check permissions of current user for super-admin,
     //if user is on their own profile route,
     //or if user has roles on current team route
-    let isSuperAdmin = isUserSuperAdmin(currUser)
-    let ownsProfile = isSameUser(currUser, user)
- 
+    const isSuperAdmin = isUserSuperAdmin(currUser)
+    const ownsProfile = isSameUser(currUser, user)
+
+    // This is a flag used for some mid-colume elements (NavBar and Maybe page) to hint they should be 
+    // space conservative because the Nav and Flex panels are both being displayed. 
+    // Most things can be done reactively or with CSS, but this is useful for some extra cases
+    // This is probably not a long term solution - but is helpful for now
+    const conserveSpace = showNavPanel && showFlexPanel
 
     return (
       <div >
@@ -173,6 +178,7 @@ export default App = React.createClass({
               flexPanelWidth={flexPanelWidth}
               navPanelWidth={navPanelWidth}
               navPanelIsVisible={showNavPanel} 
+              conserveSpace={conserveSpace}
               />
 
 

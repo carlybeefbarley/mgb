@@ -15,17 +15,18 @@ import NavBarGadget from './NavBarGadget';
 export default NavBar = React.createClass({
   
   propTypes: {
-    params:                 PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
-    currUser:               PropTypes.object,                 // Currently logged in user.. or null if not logged in.
-    user:                   PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
-    flexPanelWidth:         PropTypes.string.isRequired,      // Typically something like "200px".
-    navPanelWidth:          PropTypes.string.isRequired,      // Typically something like "60px". NavPanel is always visible, but width varies
-    name:                   PropTypes.string                  // Page title to show in NavBar breadcrumb
+    params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
+    currUser:           PropTypes.object,                 // Currently logged in user.. or null if not logged in.
+    user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
+    navPanelWidth:      PropTypes.string.isRequired,      // Typically something like "60px". NavPanel is always visible, but width varies
+    flexPanelWidth:     PropTypes.string.isRequired,      // Typically something like "200px".
+    conserveSpace:      PropTypes.bool.isRequired,        // True if space should be used more conservatively               
+    name:               PropTypes.string                  // Page title to show in NavBar breadcrumb
   },
 
 
   render: function() {
-    const { name, user, params, currUser } = this.props
+    const { name, user, params, currUser, conserveSpace } = this.props
 
     const sty = {
       position: "fixed",
@@ -47,7 +48,7 @@ export default NavBar = React.createClass({
           <WhatsNew currUser={currUser} asHidingLink={true}/>
 
           <div className="item">
-            <NavBarBreadcrumb name={name} user={user} params={params} />
+            <NavBarBreadcrumb conserveSpace={conserveSpace} name={name} user={user} params={params} />
           </div>
 
           <div className="right menu">

@@ -11,15 +11,16 @@ import QLink from '/client/imports/routes/QLink';
 export default NavBarBreadcrumb = React.createClass({
   
   propTypes: {
-    params:                 PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
-    user:                   PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
-    name:                   PropTypes.string                  // Page title to show in NavBar breadcrumb
+    params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
+    user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
+    name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
+    conserveSpace:      PropTypes.bool.isRequired         // True if space should be used more conservatively               
   },
 
 
   render: function() {
-    const { name, user, params } = this.props
-    const homeWord = "MyGameBuilder v2"
+    const { name, user, params, conserveSpace } = this.props
+    const homeWord = conserveSpace ? "MGBv2" : "MyGameBuilder v2"
     const sep = <i className="mini right chevron icon"></i>
     const assetId = params && params.assetId
     const projectId = params && params.projectId

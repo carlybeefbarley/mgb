@@ -132,12 +132,6 @@ export default AssetEditRoute = React.createClass({
                 <a className="ui mgbReadOnlyReminder mini red label" title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">View</a> 
               )
 
-    // The following were moved to the Nav.js Breadcrumb bar
-    // <QLink to={`/u/${a.dn_ownerName}`}>{oName}</QLink>
-    // &nbsp;>&nbsp;
-    // <QLink to={`/u/${a.dn_ownerName}/assets`}>Assets</QLink>
-    // &nbsp;>&nbsp;
-
     return <span>
             {editOrView}&nbsp;&nbsp;
             <QLink to={`/u/${a.dn_ownerName}/assets`} query={{kinds: a.kind}}>
@@ -159,11 +153,18 @@ export default AssetEditRoute = React.createClass({
   render: function() {    
     const asset = this.data.asset         // One Asset provided via getMeteorData()
     if (!asset || this.data.loading) return null
+
     const canEd = this.canEdit()    
     const emptyAssetDescriptionText = "(no description)"
 
     const chosenProjectNames = asset.projectNames || []
-    const inProjectsStr =  "Asset in projects: " + (chosenProjectNames.length === 0 ? "(none)" :  chosenProjectNames.join(", ") )
+    const inProjectsStr = (asset.isDeleted ? "DELETED Asset. Was in projects: " : "Asset in projects: " ) + 
+                          (chosenProjectNames.length === 0 ? "(none)" :  chosenProjectNames.join(", ") )
+    const inProjectClassName = "ui small basic " + (asset.isDeleted ? "red" : "grey") + " label"
+    const inProjectTitle = asset.isDeleted ? 
+                            "(You can undelete this file from the Assets list. Use the Trashcan search filter to show deleted assets. Deleted items will be automatically purged after some number of days of non-use. Also, it is a bit weird, but we do let you edit deleted items.. why not?)" : 
+                            "(Currently you can only assign Assets to Projects using the 'My Assets' page.)"
+
 
     return (
       <div className="ui padded grid">
@@ -212,7 +213,7 @@ export default AssetEditRoute = React.createClass({
         </div>
 
         <div className="ui five wide right aligned column" >
-          <div className="ui small basic grey label" title="(Currently you can only assign Assets to Projects using the 'My Assets' page. Sorry!)">
+          <div className={inProjectClassName} title={inProjectTitle}>
             { inProjectsStr }
           </div>
         </div>

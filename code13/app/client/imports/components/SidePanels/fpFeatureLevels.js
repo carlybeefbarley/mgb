@@ -21,7 +21,7 @@ export default fpFeatureLevels = React.createClass({
 
     const makeSlider = (name) => (
       <p key={name}>
-        <i className="ui university icon" />
+        <i className="ui options icon" />
         {name} @ {getLevelVal(name)}
         <input
           style={sliderStyle} 
@@ -34,12 +34,12 @@ export default fpFeatureLevels = React.createClass({
 
     return (
       <div>
-        <p>We hide many features from beginners and allow users to enable more functions as they learn the site.  These sliders show the current feature enablement of various tools. </p>
+        <p>On pages that support 'Feature Levels' a <i className="ui small options icon" /> slider will appear at the top of the page.</p>
+        <p>It is a setting that hides advanced features from new users so they may learn without feeling overwhelmed. Slide right to increase the Feature Level</p>
+        <p>Current Feature Levels:</p>
         <ul>
           { _.map(expectedToolbarScopeNames,  name => makeSlider(name)) }
         </ul>
-        <p>On pages that support 'Feature Levels' a slider will appear at the top of the page.</p>
-        <p>When this is shown, you can slide that Feature Level slider to rightwards to enable more features and to shrink icons</p>
       </div>
     )
   }  

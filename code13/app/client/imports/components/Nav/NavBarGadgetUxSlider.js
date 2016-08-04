@@ -36,7 +36,7 @@ export default NavBarGadgetUxSlider = React.createClass({
 
     return (
       <div style={{ opacity: sliderConstants.disabledOpacity }}>
-        <i className="ui university icon" />
+        <i className="ui options icon" />
         <input
           style={sliderStyle} 
           id={sliderConstants.sliderElementId}

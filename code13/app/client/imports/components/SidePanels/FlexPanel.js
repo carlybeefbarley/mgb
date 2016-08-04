@@ -14,7 +14,7 @@ const flexPanelViews = [
   { tag: "assets",    icon: "pencil",     hdr: "Assets",          el: fpAssets,        superAdminOnly: false },
   { tag: "users",     icon: "users",      hdr: "Users",           el: fpUsers,         superAdminOnly: false },
   { tag: "chat",      icon: "chat",       hdr: "Chat",            el: fpChat,          superAdminOnly: false },
-  { tag: "features",  icon: "university", hdr: "Feature Levels",  el: fpFeatureLevels, superAdminOnly: false },
+  { tag: "features",  icon: "options",    hdr: "Feature Levels",  el: fpFeatureLevels, superAdminOnly: false },
   { tag: "super",     icon: "red bomb",   hdr: "SuperAdmin",      el: fpSuperAdmin,    superAdminOnly: true }
 ]
 

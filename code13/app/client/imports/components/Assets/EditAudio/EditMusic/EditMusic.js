@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 
 import ImportMusic from './ImportMusic.js';
 import MusicStock from './MusicStock.js';
+import GenerateMusic from './GenerateMusic.js';
+
 import WaveSurfer from '../lib/WaveSurfer.js';
 
 export default class EditMusic extends React.Component {
@@ -33,6 +35,7 @@ export default class EditMusic extends React.Component {
 		// popups references
 		this.importMusicPopup = ReactDOM.findDOMNode(this.refs.importMusicPopup)
 		this.musicStockPopup = ReactDOM.findDOMNode(this.refs.musicStockPopup)
+		this.generateMusicPopup = ReactDOM.findDOMNode(this.refs.generateMusicPopup)
 
 		let c2 = this.props.asset.content2;
 		if(c2.dataUri){
@@ -65,10 +68,16 @@ export default class EditMusic extends React.Component {
 		}
 
 		$(this.importMusicPopup).modal('hide')
+		this.musicStockPopup.modal('hide')
+		this.generateMusicPopup.modal('hide')
 	}
 
 	openStockPopup(){
-		$(this.musicStockPopup).modal('show');
+		$(this.musicStockPopup).modal('show')
+	}
+
+	openGeneratePopup(){
+		$(this.generateMusicPopup).modal('show')		
 	}
 
 	getFromStock(musicObject){
@@ -78,16 +87,16 @@ export default class EditMusic extends React.Component {
 	togglePlayMusic(){
 		if(this.state.playerStatus === "play"){
 			this.wavesurfer.pause();
-			this.setState({ playerStatus: "pause" });
+			this.setState({ playerStatus: "pause" })
 		} else {
 			this.wavesurfer.play();
-			this.setState({ playerStatus: "play" });	
+			this.setState({ playerStatus: "play" })	
 		}
 	}
 
 	stopMusic(){
 		this.wavesurfer.stop();
-		this.setState({ playerStatus: "pause" });
+		this.setState({ playerStatus: "pause" })
 	}
 
 	hasPermission() {
@@ -125,10 +134,17 @@ export default class EditMusic extends React.Component {
 							onClick={this.openImportPopup.bind(this)}>
 						  <i className="add square icon"></i> Import (.ogg)
 						</button>
+					{/*
 						<button className="ui small icon button"
 							title="Get sound from stock"
 							onClick={this.openStockPopup.bind(this)}>
 						  <i className="folder icon"></i> Stock [not ready]
+						</button>
+					*/}
+						<button className="ui small icon button"
+							title="Generate music"
+							onClick={this.openGeneratePopup.bind(this)}>
+						  <i className="options icon"></i> Generate music [not ready]
 						</button>
 					</div>
 
@@ -154,13 +170,18 @@ export default class EditMusic extends React.Component {
 						importMusic={this.importMusic.bind(this)}
 					/>
 				</div>
-
+				
 				<div className="ui modal" ref="musicStockPopup">
 					<MusicStock 
-						getFromStock={this.getFromStock.bind(this)}
+						importMusic={this.importMusic.bind(this)}
 					/>
 				</div>
 
+				<div className="ui modal" ref="generateMusicPopup">
+					<GenerateMusic 
+						importMusic={this.importMusic.bind(this)}
+					/>
+				</div>
 			</div>
 		);
 	}	

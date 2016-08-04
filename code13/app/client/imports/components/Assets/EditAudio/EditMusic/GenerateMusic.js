@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import Djent from './djent/Djent.js';
 
 
-export default class AudioStock extends React.Component {
+export default class GenerateMusic extends React.Component {
 
 	constructor(props) {
   	super(props);
@@ -15,9 +15,7 @@ export default class AudioStock extends React.Component {
 	render(){
 		return (
 			<div className="content">
-
-				Here will be audio stock
-
+				<Djent />
 	    </div>
 		)
 	}	

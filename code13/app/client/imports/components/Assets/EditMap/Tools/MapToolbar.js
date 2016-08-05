@@ -118,7 +118,7 @@ export default class MapToolbar extends React.Component {
     }
 
     const layer = this.props.map.getActiveLayer()
-    var config = {
+    const config = {
       level: 3,
       buttons: [
         {

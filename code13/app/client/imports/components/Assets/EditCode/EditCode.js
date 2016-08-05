@@ -1011,7 +1011,7 @@ export default class EditCode extends React.Component {
               }
               { docEmpty && 
                 <div className="active content">
-                  If you like, you can click one of the following buttons to past some useful template code into your empty file
+                  If you like, you can click one of the following buttons to paste some useful template code into your empty file
                   <div className="ui divided selection list">
                     {templateCodeChoices}
                   </div>

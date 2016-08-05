@@ -11,12 +11,12 @@ import BeatPanel from './components/BeatPanel';
 import PresetController from './components/PresetController';
 import BPMController from './components/BPMController';
 import BPMTapper from './components/BPMTapper';
+import SoundController from './containers/SoundController';
 
 
 import FadeController from './containers/FadeController';
 import Modal from './containers/Modal';
 import ShareController from './containers/ShareController';
-import SoundController from './containers/SoundController';
 import Visualiser from './containers/Visualiser';
 
 import presets from './utils/presets';
@@ -40,6 +40,12 @@ export default class Main extends Component {
         this.state = {
             activePresetID: activePresetID,
             preset: preset,
+            
+            isPlaying       : false,
+            isLooping       : true,
+            generationState : undefined,
+            currentBuffer   : undefined,
+            currentSrc      : undefined,
         }
 
         this.props.actions.applyPreset = this.applyPreset.bind(this)
@@ -47,6 +53,15 @@ export default class Main extends Component {
         this.props.actions.updateBeats = this.updateBeats.bind(this)
         this.props.actions.updateAllowedLengths = this.updateAllowedLengths.bind(this)
         this.props.actions.updateBPM = this.updateBPM.bind(this)
+        this.props.actions.updateInstrumentSound = this.updateInstrumentSound.bind(this)
+        this.props.actions.updateInstrumentPitch = this.updateInstrumentPitch.bind(this)
+
+        this.props.actions.updateIsPlaying = this.updateIsPlaying.bind(this)
+        this.props.actions.updateIsLooping = this.updateIsLooping.bind(this)
+        this.props.actions.updateGenerationState = this.updateGenerationState.bind(this)
+        this.props.actions.updateCurrentBuffer = this.updateCurrentBuffer.bind(this)
+        this.props.actions.updateCurrentSrc = this.updateCurrentSrc.bind(this)
+
 
     }
 
@@ -139,6 +154,47 @@ export default class Main extends Component {
         this.setState({ preset: preset })
 
     }
+
+    updateInstrumentSound({ soundID, parentID, prop, value }) {
+        console.log('updateInstrumentSound', soundID, parentID, prop, value)
+    }
+
+    updateInstrumentPitch({ instrumentID, value }) {
+        console.log('updateInstrumentSound', instrumentID, value, confineToRange(value, -1200, 1200))
+        return {
+            type: 'UPDATE_INSTRUMENT_DETUNE_PROP',
+            payload: { instrumentID, value: confineToRange(value, -1200, 1200) },
+        };
+    }
+
+
+    updateIsPlaying(isPlaying) { this.setState({ isPlaying: isPlaying }) }
+
+
+    updateIsLooping(isLooping){ this.setState({ isLooping: isLooping }) }
+
+    
+
+    // updateIsLoading(isLoading) {
+    //     return {
+    //         type: 'UPDATE_IS_LOADING',
+    //         payload: { isLoading },
+    //     };
+    // }
+
+    // export function updateError(error) {
+    //     return {
+    //         type: 'UPDATE_ERROR',
+    //         payload: { error },
+    //     };
+    // }
+
+    updateGenerationState(generationState) { this.setState({ generationState: generationState }) }
+
+    updateCurrentBuffer(currentBuffer) { this.setState({ currentBuffer: currentBuffer }) }
+
+    updateCurrentSrc(currentSrc) { this.setState({ currentSrc: currentSrc }) }
+
     // -------------- actions ----------------------
 
 
@@ -174,8 +230,8 @@ export default class Main extends Component {
     render = () => {
         // const isShareRoute = this.props.route.id === 'share';
         const isShareRoute = false;
-        const totalBeat = this.props.beats.find(beat => beat.id === 'total');
-        const beats = this.props.beats
+        const totalBeat = this.state.preset.settings.beats.find(beat => beat.id === 'total');
+        const beats = this.state.preset.settings.beats
             .filter(beat => beat.id !== 'total')
             .map((beat, i) => <BeatPanel beat={ beat } actions={this.props.actions} preset={this.state.preset} key={i} /> );
 
@@ -223,6 +279,15 @@ export default class Main extends Component {
                                         usePredefinedSettings={ usePredefinedSettings }
                                         generateButtonText={ generateButtonText }
                                         enableContinuousGenerationControl={ !isShareRoute }
+
+
+                                        isPlaying={this.state.isPlaying}
+                                        isLooping={this.state.isLooping}                                        
+                                        generationState={this.state.generationState}
+                                        currentBuffer={this.state.currentBuffer}
+                                        currentSrc={this.state.currentSrc}
+                                        
+                                        actions={this.props.actions}
                                     />
 
                                     <div className={`u-flex-row u-flex-wrap u-flex-${ isShareRoute ? 'center' : 'start' }`}>
@@ -295,7 +360,7 @@ export default class Main extends Component {
                                                         <div className="group-spacing-y-small">
                                                             <BeatsController
                                                                 beat={ totalBeat }
-                                                                actions={{ updateBeats: this.props.actions.updateBeats }}
+                                                                actions={this.props.actions}
                                                             />
                                                         </div>
                                                     </div>
@@ -321,7 +386,7 @@ export default class Main extends Component {
                                                     updateInstrumentSound: this.props.actions.updateInstrumentSound,
                                                     updateInstrumentPitch: this.props.actions.updateInstrumentPitch,
                                                 }}
-                                                instruments={this.props.instruments}
+                                                instruments={this.state.preset.settings.instruments}
                                             />
                                         </Panel>
                                     </div>

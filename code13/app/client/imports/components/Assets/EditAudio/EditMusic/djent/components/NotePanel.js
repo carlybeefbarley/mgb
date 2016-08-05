@@ -31,7 +31,8 @@ class NotePanel extends Component {
     render = () => {
         const { length, totalAmount } = this.props;
         // console.log(this.props)
-        const noteName = `${capitalize(length.name)} note`;
+        // const noteName = `${capitalize(length.name)} note`;
+        const noteName = length.id + "/4 note";
         const percentage = totalAmount ? Math.round(length.amount / totalAmount * 100) : 0;
         const isOn = length.amount > 0;
 

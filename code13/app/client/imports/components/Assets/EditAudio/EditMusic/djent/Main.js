@@ -7,7 +7,8 @@ import InstrumentList from './components/InstrumentList';
 import Panel from './components/Panel';
 import Spinner from './components/Spinner';
 
-import BeatPanel from './containers/BeatPanel';
+import BeatPanel from './components/BeatPanel';
+
 import BPMController from './containers/BPMController';
 import BPMTapper from './containers/BPMTapper';
 import FadeController from './containers/FadeController';
@@ -30,8 +31,28 @@ export default class Main extends Component {
         googleAPIHasLoaded: false
     }
 
+    constructor(props) {
+        super(props);
+
+        const activePresetID = 'adtr';
+        const preset = presets.find(function(a){ return a.id===activePresetID ? a : null })
+        this.state = {
+            activePresetID: activePresetID,
+            preset: preset,
+        }
+
+        this.props.actions.applyPreset = this.applyPreset.bind(this)
+        this.props.actions.updateHitChance = this.updateHitChance.bind(this)
+        this.props.actions.updateBeats = this.updateBeats.bind(this)
+        this.props.actions.updateAllowedLengths = this.updateAllowedLengths(this)
+    }
+
+    
+
     componentWillMount = () => {
         const shareID = this.props.params.shareID;
+
+        console.log(this.props.actions)
 
         handleGoogleAPI()
             .then(() => {
@@ -43,6 +64,7 @@ export default class Main extends Component {
         if (!shareID) {
             const presetID = this.props.params.presetID || this.props.activePresetID;
             const preset = presets.find(preset => preset.id === presetID) || presets.find(preset => preset.id === this.props.activePresetID);
+            console.log('apply preset')
             return this.props.actions.applyPreset(preset);
         }
 
@@ -53,6 +75,43 @@ export default class Main extends Component {
         });
 
     }
+
+
+    // ********** actions *******************
+    applyPreset(preset){
+        console.log('apply preset new', preset)
+    }
+
+    updateHitChance(hitChance) {
+        console.log('updatehitchance', hitChance)
+
+        if (!hitChance)       hitChance = 1;
+        if (hitChance < 0.05) hitChance = 0.05;
+        if (hitChance > 1)    hitChance = 1;
+
+        this.setState({ hitChance: hitChance})
+    }
+
+    updateBeats(id, prop, value) {
+        console.log('update beats', id, prop, value)
+        if (prop === 'bars' || prop === 'beats') {
+            if (!value)    value = 4;
+            if (value < 1) value = 1;
+            if (value > 8) value = 8;
+        }
+
+
+    }
+
+    updateAllowedLengths(allowedLengths){
+        console.log('update allowed length', allowedLengths)
+
+    }
+
+
+
+
+
 
     componentWillUpdate = (nextProps) => {
         if (!this.props.params.shareID && nextProps.params.shareID) {
@@ -86,7 +145,7 @@ export default class Main extends Component {
         const totalBeat = this.props.beats.find(beat => beat.id === 'total');
         const beats = this.props.beats
             .filter(beat => beat.id !== 'total')
-            .map((beat, i) => <BeatPanel beat={ beat } key={i} /> );
+            .map((beat, i) => <BeatPanel beat={ beat } actions={this.props.actions} preset={this.state.preset} key={i} /> );
 
         // console.log(this.props.hitChance)
 
@@ -103,9 +162,6 @@ export default class Main extends Component {
                             <h1 className="title-primary u-txt-light">
                                 Djenerator!!
                             </h1>
-                            <a className="" href="https://www.facebook.com/djenerationstation/" target="_blank">
-                                <img className="social-icon" src="/assets/images/F_icon.svg" width="39" height="39" />
-                            </a>
                         </div>
                     </div>
 

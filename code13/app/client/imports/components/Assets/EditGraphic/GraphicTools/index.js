@@ -19,6 +19,12 @@ import ToolSeparator from './ToolSeparator.js'
 // Items of the form {label: STRING } represent the tools in the main edit codebase (CodeEdit.js). 
 
 const Tools = [
+
+  { label: "Undo" },
+  { label: "Redo" },
+
+  ToolSeparator,
+
   ToolColorPicker,
   ToolEyedropper,
 
@@ -30,11 +36,6 @@ const Tools = [
   ToolMove,
   ToolCircle,
   ToolRect,
-
-  ToolSeparator,
-
-  { label: "Undo" },
-  { label: "Redo" },
 
   ToolSeparator,
 

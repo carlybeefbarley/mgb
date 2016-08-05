@@ -209,7 +209,7 @@ export default class SkillTree extends React.Component {
     }
     return (
       <div>
-        <Toolbar name='skillsmap' config={config} actions={this} />
+        <Toolbar name='SkillsMap' config={config} actions={this} />
         <div style={{position: 'relative'}}>
           {this.renderSkillNodes(SkillNodes)}
         </div>

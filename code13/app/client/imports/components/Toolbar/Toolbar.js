@@ -21,7 +21,8 @@ const sliderPcts = {
 export const expectedToolbarScopeNames = {
   EditGraphic: "EditGraphic",
   GraphicTools: "GraphicTools",
-  MapTools: "MapTools"
+  MapTools: "MapTools",
+  SkillsMap: "SkillsMap"
 }
 
 export function getLevelKey(name) {

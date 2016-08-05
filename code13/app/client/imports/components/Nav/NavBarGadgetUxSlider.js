@@ -23,6 +23,9 @@ export default NavBarGadgetUxSlider = React.createClass({
     name:         PropTypes.string        // Page title to show in NavBar breadcrumb
   },
 
+  sliderChanged: function (e) {
+//  DO something?    console.log(e.target)
+  },
 
   render: function() {
     const { name, currUser } = this.props
@@ -46,6 +49,7 @@ export default NavBarGadgetUxSlider = React.createClass({
           id={sliderConstants.sliderElementId}
           title={sliderConstants.inactiveTitleTxt}
           type="range" 
+          onChange={this.sliderChanged}
           min={1} 
           max={15} />
       </div>
@@ -80,4 +84,13 @@ export function utilActivateLevelSlider(maxLevel, levelKey, level) {
     levelSliderEl.value = level
   }
   return levelSliderEl
+}
+
+
+export function utilAdvertizeSlider(levelSliderEl) {
+  if (levelSliderEl) 
+  {
+    var d = levelSliderEl.parentElement
+    $(d).transition('jiggle', '2000ms')
+  }
 }

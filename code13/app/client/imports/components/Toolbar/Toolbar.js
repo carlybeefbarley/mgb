@@ -2,12 +2,19 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { utilMuteLevelSlider, utilActivateLevelSlider } from '/client/imports/components/Nav/NavBarGadgetUxSlider'
+import { utilMuteLevelSlider, utilActivateLevelSlider, utilAdvertizeSlider } from '/client/imports/components/Nav/NavBarGadgetUxSlider'
 
 const CTRL = 1 << 8
 const SHIFT = 1 << 9
 const ALT = 1 << 10
 const META = 1 << 11            // Mac CMD key / Windows 'windows' key. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey
+
+
+const sliderPcts = {
+  iconSizeBreak1:  0.25,
+  iconSizeBreak2:  0.66,
+  tooltipSlowdown: 0.5
+}
 
 
 // Here is a list of *known* toolbar scope names. This is so that a ui (e.g fpUxLevels.js) can enumerate them all
@@ -53,8 +60,8 @@ export default class Toolbar extends React.Component {
     this.visibleButtons = null
 
     this.levelSlider = null
-    // levelSlider will set this value
-    this.maxLevel = 10
+    this.maxLevel = 10      // _addLevelSlider will set this value to 1+ the highest level it sees. The 1+ is so there's a final level to hide the last text label and 'more buttons' button
+
     this.state = {};
 
     this.order = _.range(this.props.config.buttons.length)    // Creates array [0, ... n]
@@ -95,6 +102,12 @@ export default class Toolbar extends React.Component {
   }
 
 
+  _showDelay() 
+  {
+    return this.state.level <= (sliderPcts.tooltipSlowdown * this.maxLevel) ? 300 : 700
+  }
+
+
   set activeButton(v) {
     if (v) {
       v.classList.remove("animate")
@@ -105,7 +118,7 @@ export default class Toolbar extends React.Component {
       this._activeButton.classList.add("animate")
       this._activeButton.classList.remove("main")
       // TODO: dont repeat..
-      $(this._activeButton).popup( { delay: {show: 250, hide: 0}} )
+      $(this._activeButton).popup( { delay: {show: this._showDelay(), hide: 0}} )
     }
     this._activeButton = v
   }
@@ -150,15 +163,15 @@ export default class Toolbar extends React.Component {
     utilMuteLevelSlider(this.levelSlider)
   }
 
-  setState(state){
-    super.setState(state);
-    Object.assign(this.state, state);
+  setState(state) {
+    super.setState(state)
+    Object.assign(this.state, state)
     localStorage.setItem(this.lsLevelKey, state.level)       // TODO(@dgolds): Store in User record if logged in
     this.initPopups()
   }
 
   saveState() {
-    localStorage.setItem(this.lsDataKey, JSON.stringify(this.order))
+    localStorage.setItem(this.lsDataKey, JSON.stringify(this.order))     // TODO(@dgolds): Store in User record if logged in
   }
 
   loadState() {
@@ -176,12 +189,12 @@ export default class Toolbar extends React.Component {
 
   /* Helper/Misc function */
   // seems harmless if called more than once on the same element
-  initPopups(){
+  initPopups() {
     let $a = $(ReactDOM.findDOMNode(this))
     // seems harmless if called twice on the same element
     $a.find('.hazPopup').popup("destroy")
     window.setTimeout(() => {
-      $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
+      $a.find('.hazPopup').popup( { delay: {show: this._showDelay(), hide: 0}} )
     }, 0)
   }
 
@@ -258,9 +271,9 @@ export default class Toolbar extends React.Component {
 
   determineButtonSize() {
      // TODO: are 3 levels enough?  TODO(@dgolds) Should we make this a config option?
-    if (this.state.level <= (0.33 * this.maxLevel))
+    if (this.state.level <= sliderPcts.iconSizeBreak1 * this.maxLevel)
       return "medium"
-    else if (this.state.level <= (0.66 * this.maxLevel))
+    else if (this.state.level <= sliderPcts.iconSizeBreak1 * this.maxLevel)
       return "small"
     return "tiny"
   }
@@ -279,9 +292,8 @@ export default class Toolbar extends React.Component {
         continue
       if (b.name == "separator")
       {
-        if(!parent.length){
-          continue;
-        }
+        if (!parent.length)
+          continue        
         parent = []
         buttons.push(parent)
         continue
@@ -302,6 +314,19 @@ export default class Toolbar extends React.Component {
     return (
       <div ref="mainElement" className={"Toolbar" + (this.props.config.vertical ? " vertical" : '')}>
         {content}
+
+        <div style={buttonGroupStyle} className={buttonGroupClassName}>
+          { this.state.level < this.maxLevel-1 && 
+            <div className="ui button hazPopup" 
+                style={{borderStyle: "dashed", borderWidth: "thin", opacity: "0.5"}}
+                data-position="top center"
+                onClick={this.advertizeSlider.bind(this)}
+                data-content="More buttons available. Use the slider at the top of the page to show them">
+              <i className="ui options icon" />
+            </div>
+          }
+        </div>
+
         <div className="ui button right floated mini reset" style={{marginRight: "4px", paddingLeft: "4px"}}
              onClick={this.reset.bind(this)}
              title="Reset Toolbar - Any Tool buttons you had drag-rearranged will be moved back to their original locations">
@@ -311,6 +336,9 @@ export default class Toolbar extends React.Component {
     )
   }
 
+  advertizeSlider() {
+    utilAdvertizeSlider(this.levelSlider)
+  }
 
   // Reset any moved buttons to their original locations
   reset() {
@@ -357,26 +385,25 @@ export default class Toolbar extends React.Component {
 
 
   _renderButton(b, index) {
-    const label = this.state.level <= 3 ? <div >{b.label}</div> : ''
+    const label = (b.label && (this.state.level <= 2 || this.state.level === b.level)) ? " " + b.label : ''
 
     if (b.component) {
-      const Component = b.component
-      return <Component label={label} key={index} />
+      const ElComponent = b.component
+      return <ElComponent label={label} key={index} />
     }
 
     const title = this.state.level > 3 ? b.label : ''
     const hidden = b.level > this.state.level ? " invisible" : ' isvisible' // isvisible because visible is reserved
     const active = b.active ? " primary" : ''
     const disabled = b.disabled ? " disabled" : ''
-    if(b.shortcut){
+    if (b.shortcut)
       this.registerShortcut(b.shortcut, b.name)
-    }
+    
     let className = "ui button hazPopup animate " + hidden + active + disabled
     // button is new
-    if (this.visibleButtons && this.visibleButtons.indexOf(b.name) == -1)
+    if (this.visibleButtons && this.visibleButtons.indexOf(b.name) === -1)
       className += " new"
     
-
     return (
       <div className={className}
            style={{position: "relative"}}
@@ -397,8 +424,9 @@ export default class Toolbar extends React.Component {
 
   // Note that this relies on the slider created by /client/imports/components/Nav/NavBarGadgetUxSlider.js
   _addLevelSlider() {
-    const maxLevel = _.maxBy(this.props.config.buttons, 'level').level
-    return utilActivateLevelSlider(maxLevel, this.lsLevelKey, this.state.level)
+    // The 1+ is so the last tool will not have it's label shown
+    this.maxLevel = 1 + _.maxBy(this.props.config.buttons, 'level').level
+    return utilActivateLevelSlider(this.maxLevel, this.lsLevelKey, this.state.level)
   }
 
   /* Button sorting */

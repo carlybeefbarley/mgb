@@ -16,6 +16,44 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     {
+      "timestamp":     "Tue Aug 02 2016 20:50:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "998"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.edit",
+          "type":           "improvement",
+          "changeName":     "Improved visuals and hints for Asset-Edit header",
+          "changeSummary":  "The Asset Edit header is the area with asset name, #viewers, #changes, project etc. It is common to all the asset editors (graphics, map, sounds etc). It was pretty ugly before, but now loosk prettier and isn't so bizarre :)",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.sound",
+          "type":           "improvement",
+          "changeName":     "Sound timeline improvements",
+          "changeSummary":  "Clickable timeline for imported sounds. Thumbnail sound representation now renders all sound instead of part of it",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Tiled (MapEditor.org) map Import guesses images",
+          "changeSummary":  "When importing a 'Tiled' map, Map Editor now guesses images from user's Assets",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    {
       "timestamp":     "Tue Aug 02 2016 09:50:00 GMT-0700 (PDT)",
       
       "id": {

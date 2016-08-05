@@ -119,43 +119,14 @@ export default class MapToolbar extends React.Component {
 
     const layer = this.props.map.getActiveLayer()
     var config = {
-      level: 5,
+      level: 3,
       buttons: [
         {
           name: 'save',
           label: 'Save',
-          tooltip: 'Save the map',
+          tooltip: 'Save the map (auto save is ON)',
           level: 1,
           shortcut: 'Ctrl+S' // Is it OK to override browsers save page?
-        },
-        {
-          name: 'separator'
-        },
-        {
-          name: 'preview',
-          label: '3D Preview',
-          icon: 'cube',
-          active: this.props.map.options.preview,
-          tooltip: 'Separate layers in 3d view',
-          level: 5,
-          shortcut: 'Ctrl+Alt+P'
-        },
-        {
-          name: 'resetCamera',
-          icon: 'crosshairs',
-          label: 'Reset Camera',
-          tooltip: 'Set Zoom to 100% and move map to 0,0 coordinates',
-          level: 5,
-          shortcut: 'Ctrl+Alt+R'
-        },
-        {
-          name: 'showGridToggle',
-          icon: 'grid layout',
-          label: this.props.map.options.showGrid ? 'Hide Grid' : 'Show Grid',
-          tooltip: 'Toggle grid visibilty on / off',
-          level: 4,
-          active: this.props.map.options.showGrid,
-          shortcut: 'Alt+G'
         },
         {
           name: 'separator'
@@ -167,7 +138,7 @@ export default class MapToolbar extends React.Component {
           disabled: !this.props.map.undoSteps.length,
           tooltip: 'Undo last action' + (_.last(this.props.map.undoSteps) ? ': ' + _.last(this.props.map.undoSteps).reason : ''),
           level: 2,
-          shortcut: 'Ctrl+Z'
+          shortcut: 'Ctrl+Z' 
         },
         {
           name: 'redo',
@@ -182,12 +153,33 @@ export default class MapToolbar extends React.Component {
           name: 'separator'
         },
         {
-          name: 'toggleRandomMode',
-          icon: 'random',
-          active: this.props.map.options.randomMode,
-          label: 'Random mode',
-          tooltip: 'Random Mode - picks one tile from the selection',
-          level: 5
+          name: 'showGridToggle',
+          icon: 'grid layout',
+          label: this.props.map.options.showGrid ? 'Hide Grid' : 'Show Grid',
+          tooltip: 'Toggle grid visibilty on / off',
+          level: 3,
+          active: this.props.map.options.showGrid,
+          shortcut: 'Alt+G'
+        },
+        {
+          name: 'resetCamera',
+          icon: 'crosshairs',
+          label: 'Reset Camera',
+          tooltip: 'Set Zoom to 100% and move map to 0,0 coordinates',
+          level: 6,
+          shortcut: 'Ctrl+Alt+R'
+        },
+        {
+          name: 'preview',
+          label: '3D View',
+          icon: 'cube',
+          active: this.props.map.options.preview,
+          tooltip: 'Separate and pivot map layers in 3D view. Use center-click+drag mouse to spin map',
+          level: 9,
+          shortcut: 'Ctrl+Alt+P'
+        },
+        {
+          name: 'separator'
         },
         {
           name: 'stamp',
@@ -199,13 +191,21 @@ export default class MapToolbar extends React.Component {
           shortcut: 'S'
         },
         {
+          name: 'toggleRandomMode',
+          icon: 'random',
+          active: this.props.map.options.randomMode,
+          label: 'Random mode',
+          tooltip: 'Random Mode - picks one tile from the selection',
+          level: 11
+        },
+        {
           name: 'terrain',
           icon: 'world terrain',
           active: this.props.map.options.mode == EditModes.terrain,
           disabled: (!layer || layer.kind != LayerTypes.tile),
           label: 'Terrain Tool',
           tooltip: 'Create advanced Terrains - not implemented :(',
-          level: 9,
+          level: 26,
           shortcut: 'T'
         },
         {
@@ -215,9 +215,12 @@ export default class MapToolbar extends React.Component {
           active: this.props.map.options.mode == EditModes.fill,
           disabled: (!layer || layer.kind != LayerTypes.tile),
           tooltip: 'Fill Map or Selection with selected tile(s)',
-          level: 4,
+          level: 6,
           shortcut: 'F'
         },
+        {
+          name: 'separator'
+        },        
         {
           name: 'eraser',
           label: 'Eraser',
@@ -237,7 +240,7 @@ export default class MapToolbar extends React.Component {
           active: this.props.map.options.mode == EditModes.rectangle,
           tooltip: 'Rectangle Selection Tool',
           level: 3,
-          shortcut: 'S'
+          shortcut: 'Ctrl + Shift + R'
         },
         {
           name: 'wand',
@@ -246,7 +249,7 @@ export default class MapToolbar extends React.Component {
           label: 'Magic Wand',
           tooltip: 'Magic Wand selection - select adjacent tiles with same ID',
           disabled: (!layer || layer.kind != LayerTypes.tile),
-          level: 5
+          level: 12
         },
         {
           name: 'picker',
@@ -255,48 +258,19 @@ export default class MapToolbar extends React.Component {
           label: 'Tile Picker',
           tooltip: 'Tile Picker - Select All tiles with same ID',
           disabled: (!layer || layer.kind != LayerTypes.tile),
-          level: 5
+          level: 13
         },
         {
           name: 'clearSelection',
           icon: 'ban',
           label: 'Clear Selection',
           tooltip: 'Clear selected tiles and/or objects',
-          level: 3
+          level: 4
         },
         {
           name: 'separator'
         },
-        {
-          name: 'rotateClockwise',
-          icon: 'share',
-          label: 'Rotate (CW)',
-          tooltip: 'Rotate Tile ClockWise',
-          disabled: (!layer || layer.kind != LayerTypes.tile),
-          shortcut: 'Z',
-          level: 7
-        },
-        {
-          name: 'rotateCounterClockwise',
-          icon: 'reply',
-          label: 'Rotate (CCW)',
-          tooltip: 'Rotate Tile Counter ClockWise',
-          disabled: (!layer || layer.kind != LayerTypes.tile),
-          shortcut: 'Shift+Z',
-          level: 7
-        },
-        {
-          name: 'flip',
-          icon: 'exchange',
-          label: 'Flip Tile',
-          disabled: (!layer || layer.kind != LayerTypes.tile),
-          tooltip: 'Mirror tile',
-          shortcut: 'X',
-          level: 7
-        },
-        {
-          name: 'separator'
-        },
+
         {
           name: 'drawRectangle',
           active: this.props.map.options.mode == EditModes.drawRectangle,
@@ -305,7 +279,7 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Draw Rectangle on the map',
           disabled: (!layer || layer.kind != LayerTypes.object),
           shortcut: 'Shift+R',
-          level: 3
+          level: 17
         },
         {
           name: 'drawEllipse',
@@ -315,27 +289,55 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Draw Ellipse on the map',
           disabled: (!layer || layer.kind != LayerTypes.object),
           shortcut: 'Shift+E',
-          level: 4
+          level: 18
         },
         {
           name: 'drawShape',
           active: this.props.map.options.mode == EditModes.drawShape,
-          icon: 'pencil',
+          icon: 'empire',
           label: 'Shape',
           tooltip: 'Draw Shape on the map',
           disabled: (!layer || layer.kind != LayerTypes.object),
           shortcut: 'Shift+S',
-          level: 5
+          level: 19
         },
         {
           name: 'togglePolygon',
-          icon: 'clone',
+          icon: 'connectdevelop',
           label: 'Polygon',
           tooltip: 'Toggle between polygon and polyline',
           disabled: (!layer || layer.kind != LayerTypes.object),
           shortcut: 'Shift+P',
-          level: 5
+          level: 20
+        },
+        {
+          name: 'separator'
+        },
+        {
+          name: 'rotateClockwise',
+          icon: 'share',
+          label: 'Rotate (CW)',
+          tooltip: 'Rotate Tile ClockWise',
+          shortcut: 'Z',
+          level: 20
+        },
+        {
+          name: 'rotateCounterClockwise',
+          icon: 'reply',
+          label: 'Rotate (CCW)',
+          tooltip: 'Rotate Tile Counter ClockWise',
+          shortcut: 'Shift+Z',
+          level: 22
+        },
+        {
+          name: 'flip',
+          icon: 'exchange',
+          label: 'Flip Tile',
+          tooltip: 'Mirror tile',
+          shortcut: 'X',
+          level: 23
         }
+                
       ]
     }
 

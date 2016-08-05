@@ -8,13 +8,14 @@ import Panel from './components/Panel';
 import Spinner from './components/Spinner';
 
 import BeatPanel from './components/BeatPanel';
+import PresetController from './components/PresetController';
+
 
 import BPMController from './containers/BPMController';
 import BPMTapper from './containers/BPMTapper';
 import FadeController from './containers/FadeController';
 import Modal from './containers/Modal';
 import ShareController from './containers/ShareController';
-import PresetController from './containers/PresetController';
 import SoundController from './containers/SoundController';
 import Visualiser from './containers/Visualiser';
 
@@ -80,6 +81,7 @@ export default class Main extends Component {
     // ********** actions *******************
     applyPreset(preset){
         console.log('apply preset new', preset)
+        this.setState({ activePresetID: preset.id, preset: preset })
     }
 
     updateHitChance(hitChance) {
@@ -176,7 +178,7 @@ export default class Main extends Component {
                                             Preset
                                         </h2>
 
-                                        <PresetController />
+                                        <PresetController activePresetID={this.state.activePresetID} actions={this.props.actions} />
                                     </Panel>
                                 )
                             }

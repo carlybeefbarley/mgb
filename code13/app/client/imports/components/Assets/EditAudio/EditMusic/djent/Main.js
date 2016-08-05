@@ -9,10 +9,10 @@ import Spinner from './components/Spinner';
 
 import BeatPanel from './components/BeatPanel';
 import PresetController from './components/PresetController';
+import BPMController from './components/BPMController';
+import BPMTapper from './components/BPMTapper';
 
 
-import BPMController from './containers/BPMController';
-import BPMTapper from './containers/BPMTapper';
 import FadeController from './containers/FadeController';
 import Modal from './containers/Modal';
 import ShareController from './containers/ShareController';
@@ -45,7 +45,9 @@ export default class Main extends Component {
         this.props.actions.applyPreset = this.applyPreset.bind(this)
         this.props.actions.updateHitChance = this.updateHitChance.bind(this)
         this.props.actions.updateBeats = this.updateBeats.bind(this)
-        this.props.actions.updateAllowedLengths = this.updateAllowedLengths(this)
+        this.props.actions.updateAllowedLengths = this.updateAllowedLengths.bind(this)
+        this.props.actions.updateBPM = this.updateBPM.bind(this)
+
     }
 
     
@@ -91,7 +93,9 @@ export default class Main extends Component {
         if (hitChance < 0.05) hitChance = 0.05;
         if (hitChance > 1)    hitChance = 1;
 
-        this.setState({ hitChance: hitChance})
+        let preset = this.state.preset
+        preset.settings.config.hitChance = hitChance
+        this.setState({ preset: preset })
     }
 
     updateBeats(id, prop, value) {
@@ -102,14 +106,40 @@ export default class Main extends Component {
             if (value > 8) value = 8;
         }
 
+        let beats = this.state.preset.settings.beats
+        let beat = beats.find(function(a){ return a.id === id ? a : null })
+        let i = beats.indexOf(beat)
+        if(beat && beat[prop]){
+            beat[prop] = value
+            beats[i] = beat
 
+            let preset = this.state.preset
+            preset.settings.beats = beats
+            this.setState({ preset: preset })
+
+            console.log('updated beats')
+        }
     }
 
     updateAllowedLengths(allowedLengths){
         console.log('update allowed length', allowedLengths)
 
+        let preset = this.state.preset
+        preset.settings.config.allowedLengths = allowedLengths
+        this.setState({ preset: preset })
     }
 
+    updateBPM(bpm) {
+        if (!bpm)       bpm = 100;
+        if (bpm < 50)   bpm = 50;
+        if (bpm > 300) bpm = 300;
+
+        let preset = this.state.preset
+        preset.settings.config.bpm = bpm
+        this.setState({ preset: preset })
+
+    }
+    // -------------- actions ----------------------
 
 
 
@@ -248,10 +278,10 @@ export default class Main extends Component {
                                                 <div className="group-spacing-y-small">
                                                     <div className="u-flex-row u-flex-end">
                                                         <div className="u-flex-grow-1 u-mr1">
-                                                            <BPMController />
+                                                            <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.props.actions} />
                                                         </div>
                                                         <div className="">
-                                                            <BPMTapper />
+                                                            <BPMTapper actions={this.props.actions} />
                                                         </div>
                                                     </div>
                                                 </div>

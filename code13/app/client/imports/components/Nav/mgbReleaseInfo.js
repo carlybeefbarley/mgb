@@ -16,6 +16,44 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     {
+      "timestamp":     "Thu Aug 04 2016 17:10:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "1015"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "nav.featureLevels",
+          "type":           "improvement",
+          "changeName":     "Feature Levels icons and hints",
+          "changeSummary":  "The 'Feature Levels' icon now looks like sliders. There is now a 'more tools' tool/hint in the toolbars if there are hidden features. The icon text is shown for the most recent feature level increase so it is easy to see what new tools has been enabled per feature-level",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.map",
+          "type":           "improvement",
+          "changeName":     "Re-worked Map Editor Toolbar",
+          "changeSummary":  "Map Edit tool bar has been re-arranged and has slower progression of tools as Feature Level increases",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.music",
+          "type":           "feature",
+          "changeName":     "Music Generator (very rough)",
+          "changeSummary":  "The first cut of a thematic music generator is now available in Music Editor. It's rough, but you can do some head banging if that's your thing :)",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    {
       "timestamp":     "Tue Aug 02 2016 20:50:00 GMT-0700 (PDT)",
       
       "id": {
@@ -33,7 +71,7 @@ export default mgbReleaseInfo = {
           "featureTag":     "asset.edit",
           "type":           "improvement",
           "changeName":     "Improved visuals and hints for Asset-Edit header",
-          "changeSummary":  "The Asset Edit header is the area with asset name, #viewers, #changes, project etc. It is common to all the asset editors (graphics, map, sounds etc). It was pretty ugly before, but now loosk prettier and isn't so bizarre :)",
+          "changeSummary":  "The Asset Edit header is the area with asset name, #viewers, #changes, project etc. It is common to all the asset editors (graphics, map, sounds etc). It was pretty ugly before, but now looks prettier and isn't so bizarre :)",
           "otherUrls":      []
         },
         {

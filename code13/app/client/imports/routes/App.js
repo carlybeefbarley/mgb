@@ -109,7 +109,7 @@ export default App = React.createClass({
     // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
     const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
-    const navPanelWidth = showNavPanel ? "290px" : "60px"
+    const navPanelWidth = showNavPanel ? "260px" : "60px"
 
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]

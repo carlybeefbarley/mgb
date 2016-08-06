@@ -9,19 +9,6 @@ export default class Properties extends React.Component {
     super(...args)
     this.ready = 0
     this.settings = null
-
-    if (!window.Otito) {
-      const s = document.createElement('script')
-      s.onload = () => {
-        window.setTimeout(() => {
-          this.runOnReady()
-        }, 0)
-      }
-      s.src = '/lib/Otito.js'
-      document.head.appendChild(s)
-    }else {
-      this.runOnReady()
-    }
   }
   componentDidMount () {
     $('.ui.accordion')
@@ -52,11 +39,6 @@ export default class Properties extends React.Component {
   }
 
   runOnReady () {
-    this.ready++
-    if (this.ready <= 1) {
-      return
-    }
-
     this.settings = {}
     // Otito.selfTest()
 

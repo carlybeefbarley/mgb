@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     {
-      "timestamp":     "Thu Aug 04 2016 17:10:00 GMT-0700 (PDT)",
+      "timestamp":     "Fri Aug 05 2016 22:20:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "1015"
+        "iteration":   "1025"
       },
 
       "releaseManagement": {
@@ -29,6 +29,13 @@ export default mgbReleaseInfo = {
       },
       
       "changes": [
+        {
+          "featureTag":     "nav.navPanel",
+          "type":           "improvement",
+          "changeName":     "NavPanel shrink and History panel tweaks",
+          "changeSummary":  "The NavPanels have been shrunk a little and the History NavPanel has a much clearer presentation",
+          "otherUrls":      []
+        },
         {
           "featureTag":     "nav.featureLevels",
           "type":           "improvement",

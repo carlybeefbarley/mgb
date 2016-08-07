@@ -126,7 +126,7 @@ class SoundController extends Component {
         const { bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings } = this.props;
 
         // console.log('bpm', bpm)
-        console.log(bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings)
+        // console.log(bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings)
 
         const generationState = deepClone({ bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings });
 

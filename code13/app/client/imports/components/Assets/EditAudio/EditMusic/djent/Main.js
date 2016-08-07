@@ -12,12 +12,13 @@ import PresetController from './components/PresetController';
 import BPMController from './components/BPMController';
 import BPMTapper from './components/BPMTapper';
 import SoundController from './components/SoundController';
+import Visualiser from './components/Visualiser';
 
 
 import FadeController from './containers/FadeController';
 import Modal from './containers/Modal';
 import ShareController from './containers/ShareController';
-import Visualiser from './containers/Visualiser';
+
 
 
 import presets from './utils/presets';
@@ -325,14 +326,6 @@ export default class Main extends Component {
                 <div className="group-capped-x group-centered">
 
                     <div className="group-spacing-x">
-                        <div className="group-spacing-y-large u-flex-row u-flex-justify">
-                            <h1 className="title-primary u-txt-light">
-                                Djenerator!!
-                            </h1>
-                        </div>
-                    </div>
-
-                    <div className="group-spacing-x">
                         <div className="group-spacing-y">
                             {
                                 isShareRoute
@@ -349,7 +342,13 @@ export default class Main extends Component {
                             }
 
                             <Panel>
-                                <Visualiser pretext={ isShareRoute ? "Click 'Load Riff' to begin" : "Click 'Generate Riff' to begin" } />
+                                <Visualiser 
+                                    pretext={ isShareRoute ? "Click 'Load Riff' to begin" : "Click 'Generate Riff' to begin" } 
+
+                                    isPlaying={this.state.isPlaying}
+                                    currentBuffer={this.state.currentBuffer}
+                                    currentSrc={this.state.currentSrc}
+                                />
                             </Panel>
 
                             <Panel theme="dark" sizeY="small">

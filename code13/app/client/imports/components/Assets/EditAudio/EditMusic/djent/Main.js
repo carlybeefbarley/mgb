@@ -111,12 +111,36 @@ export default class Main extends Component {
      
 
         let instruments = preset.settings.instruments
+        // add missing instruments
         defaultInstruments.map(instrument => {
             const newInstrument = instruments.find(newInstrument => newInstrument.id === instrument.id)
             if (!newInstrument){
                 instruments.push(instrument)
             }
         })
+
+        // add missing params for instruments and sounds
+        instruments.map(instrument => {
+            const configInstrument = defaultInstruments.find(configInstrument => configInstrument.id === instrument.id)
+            Object.keys(configInstrument).map(param => {
+                if(!instrument[param])
+                    instrument[param] = configInstrument[param]
+            })
+
+
+            instrument.sounds.map(sound => {
+                const configSound = configInstrument.sounds.find(configSound => configSound.id === sound.id)
+                Object.keys(configSound).map(param => {
+                    if(!sound[param])
+                        sound[param] = configSound[param]
+                })
+            })
+
+
+        })
+
+
+
 
         let allowedLengths = preset.settings.config.allowedLengths
         defaultLengths.map(item => {

@@ -16,10 +16,12 @@ class Switch extends Component {
         };
         const { containerClassName, labelClassName, label, id } = inputProps;
 
+        console.log(this.props.isActive)
+
         return (
-            <div className='switch-input' onClick={this.props.onChange}>
-                <label className={ labelClassName } htmlFor={ id }>{ label }:</label>
-                <div className={`switch-input__toggle ${this.props.isActive ? 'is-active' : ''}`}></div>
+            <div className={"ui toggle checkbox "}>
+              <input type="checkbox" name={id} checked={(this.props.isActive ? "checked" : "")} onChange={this.props.onChange} />
+              <label>{ label }</label>
             </div>
         )
     }

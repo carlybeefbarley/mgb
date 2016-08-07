@@ -323,21 +323,20 @@ export default class Main extends Component {
         return (
             <section>
                 <Modal />
-                <div className="group-capped-x group-centered">
-
-                    <div className="group-spacing-x">
-                        <div className="group-spacing-y">
+                <div>
+                    <div>
+                        <div>
                             {
                                 isShareRoute
                                 ? null
                                 : (
-                                    <Panel>
-                                        <h2 className="title-primary">
+                                    <div className="row">
+                                        <span className="title-primary">
                                             Preset
-                                        </h2>
-
+                                        </span>
+                                        &nbsp;&nbsp;
                                         <PresetController activePresetID={this.state.activePresetID} actions={this.props.actions} />
-                                    </Panel>
+                                    </div>
                                 )
                             }
 
@@ -351,8 +350,8 @@ export default class Main extends Component {
                                 />
                             </Panel>
 
-                            <Panel theme="dark" sizeY="small">
-                                <div className="u-flex-row u-flex-justify u-flex-center u-flex-wrap">
+                            <Panel>
+                                <div>
                                     <SoundController
                                         usePredefinedSettings={ usePredefinedSettings }
                                         generateButtonText={ generateButtonText }
@@ -373,7 +372,6 @@ export default class Main extends Component {
 
                                         continuousGeneration={this.state.continuousGeneration}
                                         fadeIn={this.state.fadeIn}
-                                
 
                                         actions={this.props.actions}
                                     />

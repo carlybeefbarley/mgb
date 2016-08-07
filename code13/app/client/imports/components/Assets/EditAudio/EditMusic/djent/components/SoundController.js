@@ -242,31 +242,25 @@ class SoundController extends Component {
         return (
             <div>
                 { this.state.error ? <p className="txt-error">{ this.state.error }</p> : null }
-                <div className="u-flex-row u-flex-wrap">
-                    <div className="group-spacing-y-small u-mr05 u-mb0">
-                        <button className={`ui blue button button-primary ${ this.isOutDated ? 'button-primary--positive' : '' } ${ this.state.isLoading ? '' : 'icon-is-hidden' }`} 
-                        onClick={() => this.generateEvent()}>
-                            <span className="button-primary__inner">{ this.props.generateButtonText || 'Generate Riff' }</span>
-                            <span className="button-primary__icon">
-                                <span className="spinner" />
-                            </span>
-                        </button>
-                    </div>
+                <div className="row">
+                    <button className={`ui blue button button-primary ${ this.isOutDated ? 'button-primary--positive' : '' } ${ this.state.isLoading ? '' : 'icon-is-hidden' }`} 
+                    onClick={() => this.generateEvent()}>
+                        <span className="button-primary__inner">{ this.props.generateButtonText || 'Generate Riff' }</span>
+                        <span className="button-primary__icon">
+                            <span className="spinner" />
+                        </span>
+                    </button>
 
-                    <div className="group-spacing-y-small u-mr1 u-mb0">
-                        <button className={"ui button "+(!this.props.currentBuffer ? "disabled" : "")} title={ capitalize(eventName) } onClick={this.togglePlay}>
-                            <i className={"icon " + eventName}></i>
-                        </button>
-                    </div>
+                    <button className={"ui button "+(!this.props.currentBuffer ? "disabled" : "")} title={ capitalize(eventName) } onClick={this.togglePlay}>
+                        <i className={"icon " + eventName}></i>
+                    </button>
 
-                    <div className="group-spacing-y-small u-mr1">
-                        <LoopController
-                            isLooping={this.props.isLooping}
-                            actions={{
-                                updateIsLooping: (newVal) => this.props.actions.updateIsLooping(newVal)
-                            }}
-                        />
-                    </div>
+                    <LoopController
+                        isLooping={this.props.isLooping}
+                        actions={{
+                            updateIsLooping: (newVal) => this.props.actions.updateIsLooping(newVal)
+                        }}
+                    />
 
                     { continuousGeneration }
                 </div>

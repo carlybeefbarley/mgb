@@ -35,6 +35,7 @@ const preset = {
         instruments: [
             {
                 id: 'g',
+                // pitch: 0,
                 sounds: [
                     {
                         id: 'sixth-3-muted',

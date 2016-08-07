@@ -11,7 +11,7 @@ import BeatPanel from './components/BeatPanel';
 import PresetController from './components/PresetController';
 import BPMController from './components/BPMController';
 import BPMTapper from './components/BPMTapper';
-import SoundController from './containers/SoundController';
+import SoundController from './components/SoundController';
 
 
 import FadeController from './containers/FadeController';
@@ -19,10 +19,14 @@ import Modal from './containers/Modal';
 import ShareController from './containers/ShareController';
 import Visualiser from './containers/Visualiser';
 
+
 import presets from './utils/presets';
 import { getActiveSoundsFromHitTypes } from './utils/instruments';
 import { getPresetData, getPresetFromData, handleGoogleAPI } from './utils/short-urls';
 import { getAllowedLengthsFromSequence } from './utils/sequences';
+
+import defaultInstruments from './utils/default-instruments';
+import defaultLengths from './utils/defaultLengths';
 
 export default class Main extends Component {
     static contextTypes = {
@@ -46,6 +50,9 @@ export default class Main extends Component {
             generationState : undefined,
             currentBuffer   : undefined,
             currentSrc      : undefined,
+
+            continuousGeneration: false,
+            fadeIn: false,
         }
 
         this.props.actions.applyPreset = this.applyPreset.bind(this)
@@ -61,6 +68,9 @@ export default class Main extends Component {
         this.props.actions.updateGenerationState = this.updateGenerationState.bind(this)
         this.props.actions.updateCurrentBuffer = this.updateCurrentBuffer.bind(this)
         this.props.actions.updateCurrentSrc = this.updateCurrentSrc.bind(this)
+
+        this.props.actions.updateContinuousGeneration = this.updateContinuousGeneration.bind(this)
+        this.props.actions.updateFadeIn = this.updateFadeIn.bind(this)
 
 
     }
@@ -98,6 +108,25 @@ export default class Main extends Component {
     // ********** actions *******************
     applyPreset(preset){
         console.log('apply preset new', preset)
+     
+
+        let instruments = preset.settings.instruments
+        defaultInstruments.map(instrument => {
+            const newInstrument = instruments.find(newInstrument => newInstrument.id === instrument.id)
+            if (!newInstrument){
+                instruments.push(instrument)
+            }
+        })
+
+        let allowedLengths = preset.settings.config.allowedLengths
+        defaultLengths.map(item => {
+            const newLength = allowedLengths.find(newLength => newLength.id === item.id)
+            if (!newLength){
+                allowedLengths.push(item)
+            }
+        })
+
+        
         this.setState({ activePresetID: preset.id, preset: preset })
     }
 
@@ -157,10 +186,32 @@ export default class Main extends Component {
 
     updateInstrumentSound({ soundID, parentID, prop, value }) {
         console.log('updateInstrumentSound', soundID, parentID, prop, value)
+
+        let instruments = this.state.preset.setting.instruments
+        let parent = instruments.find(function(a){ return a.id === parentID ? a : null })
+        let parentNr = instruments.indexOf(parent)
+        if(parent){
+            let sound = parent.sounds.find(function(a){ a.id === soundID ? a : null })
+            let soundNr = parent.sounds.indexOf(sound)
+            if(sound){
+                sound[prop] = value
+
+                parent.sounds[soundNr] = sound
+                instruments[parentNr] = parent
+
+                let preset = this.state.preset
+                preset.settings.instruments = instruments
+                this.setState({ preset: preset })
+
+                console.log('updateInstrumentSound22222')
+            }
+        }
     }
 
     updateInstrumentPitch({ instrumentID, value }) {
-        console.log('updateInstrumentSound', instrumentID, value, confineToRange(value, -1200, 1200))
+        console.log('updateInstrumentPitch', instrumentID, value, confineToRange(value, -1200, 1200))
+
+
         return {
             type: 'UPDATE_INSTRUMENT_DETUNE_PROP',
             payload: { instrumentID, value: confineToRange(value, -1200, 1200) },
@@ -194,6 +245,10 @@ export default class Main extends Component {
     updateCurrentBuffer(currentBuffer) { this.setState({ currentBuffer: currentBuffer }) }
 
     updateCurrentSrc(currentSrc) { this.setState({ currentSrc: currentSrc }) }
+
+    updateContinuousGeneration(continuousGeneration) { this.setState({ continuousGeneration: continuousGeneration}) }
+
+    updateFadeIn(fadeIn) { this.setState({ fadeIn: fadeIn}) }
 
     // -------------- actions ----------------------
 
@@ -286,7 +341,17 @@ export default class Main extends Component {
                                         generationState={this.state.generationState}
                                         currentBuffer={this.state.currentBuffer}
                                         currentSrc={this.state.currentSrc}
-                                        
+
+                                        bpm={this.state.preset.settings.config.bpm} 
+                                        beats={this.state.preset.settings.beats} 
+                                        allowedLengths={this.state.preset.settings.config.allowedLengths}
+                                        hitChance={this.state.preset.settings.config.hitChance}
+                                        instruments={this.state.preset.settings.instruments}
+
+                                        continuousGeneration={this.state.continuousGeneration}
+                                        fadeIn={this.state.fadeIn}
+                                
+
                                         actions={this.props.actions}
                                     />
 

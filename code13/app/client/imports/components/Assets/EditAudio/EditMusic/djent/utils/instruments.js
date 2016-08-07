@@ -12,8 +12,11 @@ import {
 import { playSound } from './audio';
 
 const getInstrumentsSequences = ({ instruments, sequences, totalBeats, usePredefinedSettings }) =>
+
     Object.keys(sequences)
         .map(instrumentId => {
+            // console.log(instruments, sequences)
+
             const instrument = instruments.find(i => i.id === instrumentId);
             const predefinedSequence = instrument.predefinedSequence;
             const newSequence = usePredefinedSettings && predefinedSequence

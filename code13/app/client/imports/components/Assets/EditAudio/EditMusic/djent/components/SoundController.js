@@ -55,7 +55,6 @@ const generateNewBuffer = ({ bpm, beats, allowedLengths, hitChance, instruments,
     const grooveTotalBeatsProduct = grooveTotalBeats.beats * grooveTotalBeats.bars;
     const totalBeatsProduct       = totalBeats.beats * totalBeats.bars;
     const sequences               = getSequences(grooveTotalBeatsProduct, convertAllowedLengthsToArray(allowedLengths), hitChance);
-
     return generateRiff({ bpm, totalBeatsProduct, allowedLengths, sequences, instruments, usePredefinedSettings })
 }
 
@@ -126,7 +125,8 @@ class SoundController extends Component {
     generate = () => {
         const { bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings } = this.props;
 
-        // console.log(bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings)
+        // console.log('bpm', bpm)
+        console.log(bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings)
 
         const generationState = deepClone({ bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings });
 

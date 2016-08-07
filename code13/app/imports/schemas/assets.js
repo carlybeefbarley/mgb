@@ -263,12 +263,12 @@ Meteor.methods({
   "Azzets.create": function(data) {
     if (!this.userId) 
       throw new Meteor.Error(401, "Login required");      // TODO: Better access check
-      
-    const now = new Date();
+    const username = Meteor.user().profile.name
+    const now = new Date()
     data.createdAt = now
     data.updatedAt = now
     data.ownerId = this.userId
-    data.dn_ownerName = Meteor.user().profile.name
+    data.dn_ownerName = username
     data.content = ""                                 // This is stale. Can be removed one day
     data.text = ""                                    // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
     data.projectNames = []
@@ -281,10 +281,13 @@ Meteor.methods({
     let docId = Azzets.insert(data)
 
     if (Meteor.isServer)
-      console.log(`  [Azzets.create]  "${data.name}"  #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`);
-
+    {
+      console.log(`  [Azzets.create]  "${data.name}"  #${docId}  Kind=${data.kind}  Owner=${username}`)
+      Meteor.call('Slack.Assets.create', username, data.kind, data.name, docId)
+    }
     return docId
   },
+
 
   "Azzets.update": function(docId, canEdit, data) {
     var count, selector;
@@ -324,9 +327,9 @@ Meteor.methods({
 
     count = Azzets.update(selector, {$set: data});
 
-    if (Meteor.isServer)
+    if (Meteor.isServer)      
       console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`); // These fields might not be provided for updates
-
+    
     return count
   }  
   

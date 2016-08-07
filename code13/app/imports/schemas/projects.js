@@ -72,13 +72,14 @@ Meteor.methods({
    */
   "Projects.create": function(data) {
     if (!this.userId) 
-      throw new Meteor.Error(401, "Login required");      // TODO: Better access check
+      throw new Meteor.Error(401, "Login required")      // TODO: Better access check
       
-    const now = new Date();
+    const username = Meteor.user().profile.name
+    const now = new Date()
     data.createdAt = now
     data.updatedAt = now
     data.ownerId = this.userId
-    data.ownerName = Meteor.user().profile.name
+    data.ownerName = username
     data.memberIds = []
     data.avatarAssetId = ""
 
@@ -86,8 +87,11 @@ Meteor.methods({
 
     let docId = Projects.insert(data);
 
-    console.log(`  [Projects.create]  "${data.name}"  #${docId}  `);
-    return docId;
+    if (Meteor.isServer) {
+      console.log(`  [Projects.create]  "${data.name}"  #${docId}  `)
+      Meteor.call('Slack.Projects.create', username, data.name, docId)
+    }
+    return docId
   },
   
 

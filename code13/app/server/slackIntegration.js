@@ -50,3 +50,31 @@ Meteor.methods({
     })
   }
 })
+
+
+Meteor.methods({
+  "Slack.Assets.create": function(username, kind, assetname, docId) {
+
+    const userUrl=`https://v2.mygamebuilder.com/u/${username}`
+    const assetUrl=`https://v2.mygamebuilder.com/u/${username}/asset/${docId}`
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `MGBv2 @${username}`,
+      icon_emoji: ':pencil:',
+      text: `New ${kind} Asset <${assetUrl}|${assetname}> created by user <${userUrl}|${username}>`
+    })
+  }
+})
+
+
+Meteor.methods({
+  "Slack.Projects.create": function(username, projectname, docId) {
+
+    const userUrl=`https://v2.mygamebuilder.com/u/${username}`
+    const projectUrl=`https://v2.mygamebuilder.com/u/${username}/project/${docId}`
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `MGBv2 @${username}`,
+      icon_emoji: ':card_file_box:',
+      text: `New Project <${projectUrl}|${projectname}> created by user <${userUrl}|${username}>`
+    })
+  }
+})

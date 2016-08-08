@@ -63,8 +63,8 @@ export default NavPanel = React.createClass({
       position: "fixed",
       top: "0px",
       bottom: "0px",
-      left: "0px",
-      width: "60px", 
+      left: "-6px",
+      width: "57px", 
       borderRadius: 0, 
       marginRight: "1px", 
       marginBottom: "0px"
@@ -72,7 +72,7 @@ export default NavPanel = React.createClass({
 
     const panelScrollContainerStyle = {
       position: "absolute", 
-      left: "62px", 
+      left: "53px", 
       right: "2px",
       top: "0px", 
       bottom: "0px",

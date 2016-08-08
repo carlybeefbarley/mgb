@@ -1,11 +1,11 @@
-import _ from 'lodash';
-import React, {Component, PropTypes} from 'react';
-import QLink from '/client/imports/routes/QLink';
-import reactMixin from 'react-mixin';
-import {Activity, ActivitySnapshots} from '/imports/schemas';
-import { AssetKinds } from '/imports/schemas/assets';
-import { ActivityTypes } from '/imports/schemas/activity.js';
-import moment from 'moment';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import QLink from '/client/imports/routes/QLink'
+import reactMixin from 'react-mixin'
+import {Activity, ActivitySnapshots} from '/imports/schemas'
+import { AssetKinds } from '/imports/schemas/assets'
+import { ActivityTypes } from '/imports/schemas/activity.js'
+import moment from 'moment'
 
 
 function capitalizeFirstLetter(string) {
@@ -103,17 +103,19 @@ export default NavRecentGET = React.createClass({
         const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind)
         const assetActivityIconClass = isSnapshot ? "grey unhide icon" : ActivityTypes.getIconClass(a.activityType)
         const assetKindCap = capitalizeFirstLetter(a.toAssetKind)
+        const assetNameTruncated = (this.props.styledForNavPanel && a.toAssetName && a.toAssetName.length > 19) ? a.toAssetName.substring(0, 19) + "..." : a.toAssetName
         const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
-        const dataHtml = `<div><small><p>${ago}</p></small><img src="${assetThumbnailUrl}" /><small><p>Owner: ${a.toOwnerName}</p></small></div>`
+        const dataHtml = `<div><p>${assetKindCap}: ${a.toAssetName}</p><small><p>${ago}</p></small><img style="max-width: 240px;" src="${assetThumbnailUrl}" /><small><p>Owner: ${a.toOwnerName}</p></small></div>`
         // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now in those cases
         const linkTo = a.toOwnerId ? 
                         `/u/${a.toOwnerName}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016
-                        `/assetEdit/${a.toAssetId}`                     // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
+                        `/assetEdit/${a.toAssetId}`                    // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
         item = ( 
           <QLink to={linkTo} className="ui item hazRecentPopup"  key={a._id}  data-html={dataHtml} data-position="right center" >
-            <i className={assetKindIconClassName}></i>
+            <span>
+              <i className={assetKindIconClassName}></i>{assetNameTruncated || "(unnamed)"}
+            </span>
             <i className={assetActivityIconClass}></i>
-            {assetKindCap} '{a.toAssetName || "<unnamed>"}'
           </QLink>
         )        
       }  

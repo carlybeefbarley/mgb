@@ -1,6 +1,6 @@
 import React from "react"
 import Helmet from 'react-helmet';
-import SkillTree from '/client/imports/components/Users/SkillTree.js';
+import SkillsMap from '/client/imports/components/Skills/SkillsMap.js';
 
 export default class SkillTreePage extends React.Component{
   static propTypes = {
@@ -16,7 +16,7 @@ export default class SkillTreePage extends React.Component{
               {"name": "description", "content": "SkillTree"}
           ]}
           />
-        <SkillTree user={this.props.user} />
+        <SkillsMap user={this.props.user} />
       </div>
     )
   }

@@ -212,13 +212,14 @@ Meteor.methods({
     check(data, _.omit(schema, '_id'))
 
     let docId = Chats.insert(data)
-    if (Meteor.isServer)
+    if (Meteor.isServer) 
+    {
       console.log(`  [Chats.send]  "${data.message}"  #${docId}  `)
-
+      Meteor.call('Slack.Chats.send', currUser.profile.name, data.message, data.toChannelName)
+    }
     return docId
-  }
-  
-});
+  }  
+})
 
 
 export function ChatSendMessage(channelKey, msg, completionCallback) {

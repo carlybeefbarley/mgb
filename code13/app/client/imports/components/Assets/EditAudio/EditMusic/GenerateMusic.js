@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 
 import Djent from './djent/Djent.js';
 
-
 export default class GenerateMusic extends React.Component {
 
 	constructor(props) {
@@ -12,10 +11,16 @@ export default class GenerateMusic extends React.Component {
 
 	}
 
+	importAudio(audioObject){
+		this.props.importMusic(audioObject, "Generated music")
+	}
+
 	render(){
 		return (
 			<div className="content">
-				<Djent />
+				<Djent 
+					importAudio={this.importAudio.bind(this)}
+				/>
 	    </div>
 		)
 	}	

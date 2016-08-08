@@ -22,6 +22,8 @@ import {
     isIOS,
 } from '../utils/tools';
 
+import { saveAsWAVFile, saveAsMIDIFile } from '../utils/save';
+
 import IOSWarning from './IOSWarning';
 import LoopController from './LoopController';
 import SVG from './SVG';
@@ -226,6 +228,14 @@ class SoundController extends Component {
         this.props.actions.updateCustomPresetInstruments(instruments);
     }
 
+    importWav(){
+        let audioObject = saveAsWAVFile(this.props.currentBuffer)
+
+        console.log('import wav', audioObject)
+
+        this.props.actions.importAudio(audioObject)
+    }
+
     render () {
         const eventName = this.props.isPlaying ? 'stop' : 'play';
         const continuousGeneration = document.location.hash === '#beta' && this.props.enableContinuousGenerationControl ? (
@@ -263,6 +273,11 @@ class SoundController extends Component {
                     />
 
                     { continuousGeneration }
+
+                    <button className={"ui right floated button "+(!this.props.currentBuffer ? "disabled" : "")} title="Import" onClick={this.importWav.bind(this)}>
+                        <i className="add square icon"></i> Import
+                    </button>
+
                 </div>
             </div>
         );

@@ -68,8 +68,8 @@ export default class EditMusic extends React.Component {
 		}
 
 		$(this.importMusicPopup).modal('hide')
-		this.musicStockPopup.modal('hide')
-		this.generateMusicPopup.modal('hide')
+		$(this.musicStockPopup).modal('hide')
+		$(this.generateMusicPopup).modal('hide')
 	}
 
 	openStockPopup(){

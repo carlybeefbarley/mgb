@@ -376,6 +376,7 @@ export default class Main extends Component {
                                         actions={this.props.actions}
                                     />
 
+                                    {/*
                                     <div className={`u-flex-row u-flex-wrap u-flex-${ isShareRoute ? 'center' : 'start' }`}>
                                         <div className={`group-spacing-y-small u-mr05 ${ isShareRoute ? '' : 'u-mb0' }`}>
                                             <ExportController
@@ -406,6 +407,8 @@ export default class Main extends Component {
                                             )
                                         }
                                     </div>
+
+                                */}
 
                                 </div>
                             </Panel>

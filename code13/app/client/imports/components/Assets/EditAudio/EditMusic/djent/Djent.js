@@ -74,6 +74,7 @@ export default class Djent extends React.Component {
   	super(props)
 
   	// console.log(allowedLengths)
+    actions.importAudio = this.props.importAudio
 
 	}
 

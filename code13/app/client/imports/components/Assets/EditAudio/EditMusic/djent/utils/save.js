@@ -10,13 +10,18 @@ const saveAsWAVFile = (() => {
         const blob = new window.Blob([ new DataView(wav) ], {
           type: 'audio/wav'
         })
-        const url = window.URL.createObjectURL(blob)
 
-        a.href = url
-        a.download = 'djen.wav'
-        a.click();
+        let audio = new Audio()
+        audio.src = window.URL.createObjectURL(blob)
 
-        window.URL.revokeObjectURL(url);
+        return audio
+        // const url = window.URL.createObjectURL(blob)
+
+        // a.href = url
+        // a.download = 'djen.wav'
+        // a.click();
+
+        // window.URL.revokeObjectURL(url);
     };
 })();
 

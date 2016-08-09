@@ -13,7 +13,7 @@ export default class SkillTree extends React.Component {
     this.zoomLevel = 1
     this.countSkillTotals(SkillNodes, '', this.totals)
     // TODO: make it work
-    // Meteor.subscribe("user.skills", this.props.user._id);
+    // Meteor.subscribe("user.skills", this.props.user._id)
   }
   // use setState instead?
   updateSkills () {
@@ -21,27 +21,27 @@ export default class SkillTree extends React.Component {
     this.forceUpdate()
   }
   loadSkills () {
-    this.skills = {};
+    this.skills = {}
     // TODO: this should be in subscription?
     Meteor.call("Skill.getForUser", this.props.user._id, (err, skills) => {
       console.log("Skills:", skills)
-      this.skills = skills || {};
-      this.updateSkills();
-    });
+      this.skills = skills || {}
+      this.updateSkills()
+    })
   }
   learnSkill (key) {
     Meteor.call("Skill.grant", key, (...a) => {
       console.log("Skill granted", ...a)
       this.skills[key] = 1
       this.updateSkills()
-    });
+    })
   }
   // is it even possible?
   forgetSkill (key) {
     delete this.skills[key]
     Meteor.call("Skill.forget", key, () => {
       this.updateSkills()
-    });
+    })
   }
   // TODO: this looks ugly - hard to understand
   countSkillTotals (skillNodes, key, tot) {
@@ -61,7 +61,7 @@ export default class SkillTree extends React.Component {
       // TODO: this check will break in the future
       if (skillNodes[i].$meta.isLeaf) {
         if(!skillNodes[i].$meta.enabled){
-          continue;
+          continue
         }
         tot[newKey].total++
         ret.total++
@@ -91,9 +91,9 @@ export default class SkillTree extends React.Component {
     if (!node.$meta.enabled) {
       color = 'grey'
     }
-    let onClick;
+    let onClick
     if(!disabled && node.$meta.enabled){
-      onClick = this.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path);
+      onClick = this.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
     }
     return (
       <div
@@ -112,16 +112,16 @@ export default class SkillTree extends React.Component {
     if(!meta.requires.length){
       return true
     }
-    let total = 0;
+    let total = 0
     meta.requires.forEach((r) => {
       if(!totals[r]){
-        console.log("failed to resolve requirement:", r);
-        return;
+        console.log("failed to resolve requirement:", r)
+        return
       }
       if(totals[r].total === totals[r].has){
-        total++;
+        total++
       }
-    });
+    })
     if(meta.requireOneOf){
       return total > 0
     }
@@ -138,7 +138,7 @@ export default class SkillTree extends React.Component {
       }
       // requires && console.log("requires")
       const newKey = key ? key + '.' + i : i
-      let disabled = !this.hasRequirementsMet(skillNodes[i].$meta, this.totals);
+      let disabled = !this.hasRequirementsMet(skillNodes[i].$meta, this.totals)
 
       // TODO: technically isLeaf can be replaced with keys check or similar
       if (!skillNodes[i].$meta.isLeaf) {

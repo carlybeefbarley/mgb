@@ -4,13 +4,13 @@ import SkillNodes from '/imports/SkillNodes/SkillNodes.js'
 
 
 // are enums enough - or we need separate object for these?
-const UNKNOWN =       0;
-const SELF_CLAIMED =  0b001;
-const PEER_ASSERTED = 0b010;
-const MGB_MEASURED =  0b100;
+const UNKNOWN =       0
+const SELF_CLAIMED =  0b001
+const PEER_ASSERTED = 0b010
+const MGB_MEASURED =  0b100
 // temporary save in the ram
 // TODO: save in real DB
-const uSkills = {};
+const uSkills = {}
 
 var getSkillsRecord = (userId) => {
   if(!uSkills[userId]){
@@ -24,21 +24,21 @@ Meteor.methods({
   // TODO(find out): do we need to store which user have asserted skill? or asserters count
   "Skill.grant": function(key, userId = Meteor.userId(), origin = SELF_CLAIMED){
     let rec = getSkillsRecord(userId)
-    console.log("skill granted:", uSkills);
+    console.log("skill granted:", uSkills)
     if(!rec[key]){
       rec[key] = UNKNOWN
     }
     rec[key] |= origin
-    return rec;
+    return rec
   },
   "Skill.forget": function(key, userId = Meteor.userId()){
-    const rec = getSkillsRecord(userId);
-    delete rec[key];
+    const rec = getSkillsRecord(userId)
+    delete rec[key]
   },
   // TODO: publish this
   "Skill.getForUser": function(userId = Meteor.userId()){
     console.log("skills:", getSkillsRecord(userId), uSkills)
-    return getSkillsRecord(userId);
+    return getSkillsRecord(userId)
   }
 })
 

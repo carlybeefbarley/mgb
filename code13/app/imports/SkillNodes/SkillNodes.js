@@ -33,12 +33,12 @@ SkillNodes["code.js.basics.group"] = {
 
 const normalizeKey = (location, key) => {
   if(!key){
-    return [];
+    return []
   }
   const keys = key.split(",")
   return keys.map((key) => {
     if (key.substring(0, 1) != ".") {
-      return key;
+      return key
     }
     const ka = location.split('.')
     const ra = key.split('.')
@@ -59,33 +59,33 @@ const normalizeKey = (location, key) => {
 const fixKeys = (nodes) => {
   for(let i in nodes){
     if(i.indexOf(".") > -1){
-      const parts = i.split(".");
-      const oldi = i;
+      const parts = i.split(".")
+      const oldi = i
 
-      let n = nodes;
-      let key = parts.pop();
+      let n = nodes
+      let key = parts.pop()
       parts.forEach((p) => {
         if(!n[p]){
-          n[p] = {};
+          n[p] = {}
         }
-        n = n[p];
-      });
-      n[key] = nodes[oldi];
-      delete nodes[oldi];
+        n = n[p]
+      })
+      n[key] = nodes[oldi]
+      delete nodes[oldi]
     }
   }
 }
 
 // build maps from nodes e.g. from {code: {js: {basics: E}}} create: {"code.js.basics": E}
 const buildMap = (nodes, key = '') => {
-  fixKeys(nodes);
+  fixKeys(nodes)
   // final node
   for(let i in nodes){
     // skip meta
     if(i == "$meta"){
-      continue;
+      continue
     }
-    let node = nodes[i];
+    let node = nodes[i]
     const nextKey = key ? key + '.' + i : i
 
     if(!node) {
@@ -97,20 +97,20 @@ const buildMap = (nodes, key = '') => {
       node.$meta = {}
     }
 
-    node.$meta.key = nextKey;
-    SkillNodes.$meta.map[nextKey] = node;
+    node.$meta.key = nextKey
+    SkillNodes.$meta.map[nextKey] = node
 
     node.$meta.requires = normalizeKey(nextKey, node.$meta.requires)
     node.$meta.unlocks = normalizeKey(nextKey, node.$meta.unlocks)
 
     if(!nodes.$meta.isLeaf){
-      buildMap(node, nextKey);
+      buildMap(node, nextKey)
     }
   }
 }
 
 const resolveUnlocksAndRequires = () => {
-  const map = SkillNodes.$meta.map;
+  const map = SkillNodes.$meta.map
   for(let i in map){
     if(map[i].$meta.requires) {
         map[i].$meta.requires.forEach((k) => {
@@ -118,7 +118,7 @@ const resolveUnlocksAndRequires = () => {
             console.error(`Cannot resolve 'require' for ${i}:`, k)
           }
           else{
-            map[k].$meta.unlocks.push(i);
+            map[k].$meta.unlocks.push(i)
           }
         })
     }
@@ -128,7 +128,7 @@ const resolveUnlocksAndRequires = () => {
           console.error(`Cannot resolve 'require' for ${i}:`, k)
         }
         else{
-          map[k].$meta.requires.push(i);
+          map[k].$meta.requires.push(i)
         }
       })
     }
@@ -136,7 +136,7 @@ const resolveUnlocksAndRequires = () => {
 }
 
 buildMap(SkillNodes)
-resolveUnlocksAndRequires();
+resolveUnlocksAndRequires()
 
 if(Meteor.isClient){
   window.mgb_skills = SkillNodes

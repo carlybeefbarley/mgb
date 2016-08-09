@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
-
+// temporary save in the ram
+// TODO: save in real DB
 
 function hasSkill(skillKey)
 {

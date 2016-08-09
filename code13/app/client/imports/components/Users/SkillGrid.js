@@ -13,9 +13,11 @@ export default class SkillGrid extends React.Component{
     return (
       <div className={this.props.className}>
         <QLink to={page}>
-          <h2>Skill Tree</h2>
+          <h2>Skills</h2>
         </QLink>
-        (more to come)
+        <div className="ui fluid" style={{height: "200px", background: "#c5c5c5", display: "block"}}>
+          <p>Skills map summary (more to come)</p>
+        </div>
       </div>
     )
   }

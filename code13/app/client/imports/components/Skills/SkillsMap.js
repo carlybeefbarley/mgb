@@ -1,5 +1,5 @@
 import React from 'react'
-import SkillNodes from './SkillNodes/SkillNodes.js'
+import SkillNodes from '/imports/SkillNodes/SkillNodes.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 export default class SkillTree extends React.Component {

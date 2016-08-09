@@ -55,7 +55,7 @@ export default class Main extends Component {
             continuousGeneration: false,
             fadeIn: false,
 
-            isExpanded: true,
+            isExpanded: false,
         }
 
         this.props.actions.applyPreset = this.applyPreset.bind(this)
@@ -286,7 +286,15 @@ export default class Main extends Component {
 
     updateFadeIn(fadeIn) { this.setState({ fadeIn: fadeIn }) }
 
-    toggleSettings(isExpanded) { this.setState({ isExpanded: isExpanded }) }
+    toggleSettings(isExpanded) { 
+        this.setState({ isExpanded: isExpanded }) 
+        // console.log( $('.generateMusicPopup') )
+
+        // hack to adjust popup height
+        setTimeout(function(){
+            $('.generateMusicPopup').modal('refresh')
+        }, 300)
+    }
 
     // -------------- actions ----------------------
 

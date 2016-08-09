@@ -177,7 +177,7 @@ export default class EditMusic extends React.Component {
 					/>
 				</div>
 
-				<div className="ui modal" ref="generateMusicPopup">
+				<div className="ui modal generateMusicPopup" ref="generateMusicPopup">
 					<GenerateMusic 
 						importMusic={this.importMusic.bind(this)}
 					/>

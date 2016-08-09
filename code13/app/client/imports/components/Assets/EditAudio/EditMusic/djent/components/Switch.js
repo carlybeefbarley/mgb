@@ -16,7 +16,7 @@ class Switch extends Component {
         };
         const { containerClassName, labelClassName, label, id } = inputProps;
 
-        console.log(this.props.isActive)
+        // console.log(this.props.isActive)
 
         return (
             <div className={"ui toggle checkbox "}>

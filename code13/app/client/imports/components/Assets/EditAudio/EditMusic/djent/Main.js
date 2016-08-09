@@ -120,7 +120,7 @@ export default class Main extends Component {
             }
         })
 
-        // add missing params for instruments and sounds
+        // add missing params for instruments
         instruments.map(instrument => {
             const configInstrument = defaultInstruments.find(configInstrument => configInstrument.id === instrument.id)
             Object.keys(configInstrument).map(param => {
@@ -128,7 +128,7 @@ export default class Main extends Component {
                     instrument[param] = configInstrument[param]
             })
 
-
+            // add missing sound params
             instrument.sounds.map(sound => {
                 const configSound = configInstrument.sounds.find(configSound => configSound.id === sound.id)
                 Object.keys(configSound).map(param => {
@@ -137,6 +137,13 @@ export default class Main extends Component {
                 })
             })
 
+            // add missing sounds
+            configInstrument.sounds.map(configSound => {
+                const newSound = instrument.sounds.find(newSound => configSound.id === newSound.id)
+                if(!newSound){
+                    instrument.sounds.push(configSound)
+                }
+            })
 
         })
 
@@ -351,7 +358,7 @@ export default class Main extends Component {
 
                             <Panel>
                                 <Visualiser 
-                                    pretext={ isShareRoute ? "Click 'Load Riff' to begin" : "Click 'Generate Riff' to begin" } 
+                                    pretext={""} 
 
                                     isPlaying={this.state.isPlaying}
                                     currentBuffer={this.state.currentBuffer}
@@ -423,6 +430,8 @@ export default class Main extends Component {
                             </Panel>
                         </div>
 
+                        <div style={{clear:"both"}}>&nbsp;</div>
+
                         {
                             isShareRoute
                             ? null
@@ -437,10 +446,10 @@ export default class Main extends Component {
                                         <h3>Main Settings</h3>
 
                                         <div className="row">
-                                                <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.props.actions} />
-                                                &nbsp;&nbsp;
-                                                <BPMTapper actions={this.props.actions} />
-                                                &nbsp;&nbsp;
+                                            <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.props.actions} />
+                                            &nbsp;&nbsp;
+                                            <BPMTapper actions={this.props.actions} />
+                                            &nbsp;&nbsp;
 
                                             {
                                                 isShareRoute
@@ -457,26 +466,26 @@ export default class Main extends Component {
                                         </div>
                                     </Panel>
 
+                                    <div style={{clear:"both"}}>&nbsp;</div>
                                     <Panel>
                                         { beats }
                                     </Panel>
                                 </div>
 
-                                    <div className="group-spacing-y">
-                                        <Panel>
-                                            <h2 className="title-primary">Sounds</h2>
+                                    <div style={{clear:"both"}}>&nbsp;</div>
+                                    <Panel>
+                                        <h3>Sounds</h3>
 
-                                            <InstrumentList
-                                                actions={{
-                                                    disableModal: this.props.actions.disableModal,
-                                                    enableModal: this.props.actions.enableModal,
-                                                    updateInstrumentSound: this.props.actions.updateInstrumentSound,
-                                                    updateInstrumentPitch: this.props.actions.updateInstrumentPitch,
-                                                }}
-                                                instruments={this.state.preset.settings.instruments}
-                                            />
-                                        </Panel>
-                                    </div>
+                                        <InstrumentList
+                                            actions={{
+                                                disableModal: this.props.actions.disableModal,
+                                                enableModal: this.props.actions.enableModal,
+                                                updateInstrumentSound: this.props.actions.updateInstrumentSound,
+                                                updateInstrumentPitch: this.props.actions.updateInstrumentPitch,
+                                            }}
+                                            instruments={this.state.preset.settings.instruments}
+                                        />
+                                    </Panel>
                                 </Expandable>
                             )
                         }

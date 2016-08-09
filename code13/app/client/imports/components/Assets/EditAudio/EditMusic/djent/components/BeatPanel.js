@@ -21,14 +21,14 @@ class BeatPanel extends Component {
 
         return (
             <div>
-                <h2 className="title-primary">Randomised beat settings</h2>
+                <h3>Randomised beat settings</h3>
 
                 <AllowedLengthsController
                     actions={{ updateAllowedLengths: this.props.actions.updateAllowedLengths }}
                     allowedLengths={allowedLengths}
                 />
 
-                <div>&nbsp;</div>
+                <div style={{clear:"both"}}>&nbsp;</div>
 
                 <div className="row">
                     <HitChanceController

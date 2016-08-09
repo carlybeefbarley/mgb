@@ -66,8 +66,10 @@ export default class InstrumentList extends Component {
                 return (
                     <div className="u-mb2" key={index}>
                         <div className="u-flex-row" key={index}>
-                            <span onClick={e => this.launchSettings(instrument)} style={{width:"19px", height:"32px"}}><i className="setting icon"></i></span>
-                            <h3 className="title-secondary u-mb05">{instrument.description || instrument.id}</h3>
+                            <h4>
+                                <span onClick={e => this.launchSettings(instrument)} style={{width:"19px", height:"32px"}}><i className="setting icon"></i></span>
+                                {instrument.description || instrument.id}
+                            </h4>
                         </div>
                         {categories}
                     </div>

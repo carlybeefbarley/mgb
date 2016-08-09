@@ -30,12 +30,12 @@ export default {
           PI: C.E
         },
         functions: {
-          abs: C.E,
+          abs: C.meta({unlocks: ".round"}, C.E),
           round: C.E,
           max: C.E,
           min: C.E,
-          random: C.E,
-          sqrt: C.E
+          random: C.meta({requires: ".min,.max"}, C.E),
+          sqrt: C.meta({requires: ".min,.max", requireOneOf: 1}, C.E),
         }
       }
     },

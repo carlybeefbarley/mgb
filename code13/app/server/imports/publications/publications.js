@@ -221,9 +221,3 @@ Meteor.publish('chats.userId', function(userId, toChannelName, limit=20) {
   let options = {limit: limit, sort: {createdAt: -1} }
   return Chats.find(selector, options);
 });
-
-Meteor.publish('user.skills', (userId) => {
-  return {
-
-  };
-});

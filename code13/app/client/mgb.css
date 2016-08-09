@@ -269,3 +269,6 @@ body.dragging .accept-drop:hover{
   position: absolute;
   top: 0;
 }
+.semi-transparent{
+  opacity: 0.5;
+}

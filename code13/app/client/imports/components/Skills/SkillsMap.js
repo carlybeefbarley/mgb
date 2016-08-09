@@ -12,34 +12,38 @@ export default class SkillTree extends React.Component {
     this.totals = {}
     this.zoomLevel = 1
     this.countSkillTotals(SkillNodes, '', this.totals)
+    // TODO: make it work
+    // Meteor.subscribe("user.skills", this.props.user._id);
   }
-
-  saveSkills () {
-    localStorage.setItem('skills', JSON.stringify(this.skills))
+  // use setState instead?
+  updateSkills () {
     this.countSkillTotals(SkillNodes, '', this.totals)
     this.forceUpdate()
   }
   loadSkills () {
-    const sk = localStorage.getItem('skills')
-    if (sk) {
-      this.skills = JSON.parse(sk)
-    }else {
-      this.skills = {}
-    }
-  }
-  learnSkill (key) {
-    Meteor.call("Skill.grant", this.props.user._id, key, (...a) => {
-      console.log("Skill granted", ...a);
-      this.skills[key] = 1
-      this.saveSkills()
-
+    this.skills = {};
+    // TODO: this should be in subscription?
+    Meteor.call("Skill.getForUser", this.props.user._id, (err, skills) => {
+      console.log("Skills:", skills)
+      this.skills = skills || {};
+      this.updateSkills();
     });
   }
+  learnSkill (key) {
+    Meteor.call("Skill.grant", key, (...a) => {
+      console.log("Skill granted", ...a)
+      this.skills[key] = 1
+      this.updateSkills()
+    });
+  }
+  // is it even possible?
   forgetSkill (key) {
     delete this.skills[key]
-    this.saveSkills()
+    Meteor.call("Skill.forget", key, () => {
+      this.updateSkills()
+    });
   }
-
+  // TODO: this looks ugly - hard to understand
   countSkillTotals (skillNodes, key, tot) {
     const ret = {
       total: 0,
@@ -49,12 +53,16 @@ export default class SkillTree extends React.Component {
       if ((i + '').indexOf('$') === 0) {
         continue
       }
-      const newKey = key ? key + '.' + i : i
 
+      const newKey = key ? key + '.' + i : i
       tot[newKey] = tot[newKey] || {total: 0, has: 0}
+
 
       // TODO: this check will break in the future
       if (skillNodes[i].$meta.isLeaf) {
+        if(!skillNodes[i].$meta.enabled){
+          continue;
+        }
         tot[newKey].total++
         ret.total++
         tot[newKey] = {
@@ -77,39 +85,52 @@ export default class SkillTree extends React.Component {
     }
     return ret
   }
-
-  resolveRequire (key, req) {
-    const ka = key.split('.')
-    const ra = req.split('.')
-    for (let i = 0; i < ra.length; i++) {
-      if (ra[i] == '') {
-        ka.pop()
-        ra.shift()
-        i--
-      }else {
-        break
-      }
-    }
-    return ka.join('.') + '.' + ra.join('.')
-  }
-
+  // TODO: create separate component for that?
   renderSingleNode (node, key, path, disabled) {
     let color = this.skills[path] ? 'green' : 'red'
     if (!node.$meta.enabled) {
       color = 'grey'
     }
+    let onClick;
+    if(!disabled && node.$meta.enabled){
+      onClick = this.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path);
+    }
     return (
       <div
+        title={"requires:\n" + node.$meta.requires.join("\n") + " \n\nunlocks:\n" +  node.$meta.unlocks.join("\n")}
         key={path}
         style={{ backgroundColor: color, margin: '5px', border: 'solid 1px', display: 'inline-block', padding: '4px' }}
-        className={(!node.$meta.enabled || disabled) ? 'ui disabled button' : 'ui button'}
-        onClick={this.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)}>
+        className={(!node.$meta.enabled || disabled) ? 'ui semi-transparent button' : 'ui button'}
+        onClick={onClick}>
         <i className='icon settings big'></i>
         {key}
       </div>
     )
   }
-  renderSkillNodesMid (skillNodes, key = '' , requires = '') {
+  // move this to shared includes - as server also needs this check
+  hasRequirementsMet(meta, totals){
+    if(!meta.requires.length){
+      return true
+    }
+    let total = 0;
+    meta.requires.forEach((r) => {
+      if(!totals[r]){
+        console.log("failed to resolve requirement:", r);
+        return;
+      }
+      if(totals[r].total === totals[r].has){
+        total++;
+      }
+    });
+    if(meta.requireOneOf){
+      return total > 0
+    }
+    else{
+      return total == meta.requires.length
+    }
+  }
+  // TODO: create separate component for that?
+  renderSkillNodesMid (skillNodes, key = '' , requires = []) {
     const nodes = []
     for (let i in skillNodes) {
       if (i === "$meta") {
@@ -117,15 +138,9 @@ export default class SkillTree extends React.Component {
       }
       // requires && console.log("requires")
       const newKey = key ? key + '.' + i : i
-      let disabled = false
-      if (requires) {
-        if (this.totals[requires]) {
-          disabled = this.totals[requires].total !== this.totals[requires].has
-        }else {
-          console.log('cannot resolve require:', requires)
-        }
-      }
-      // TODO: this check will break in the future
+      let disabled = !this.hasRequirementsMet(skillNodes[i].$meta, this.totals);
+
+      // TODO: technically isLeaf can be replaced with keys check or similar
       if (!skillNodes[i].$meta.isLeaf) {
         nodes.push(
           <div
@@ -141,12 +156,6 @@ export default class SkillTree extends React.Component {
           </div>
         )
       }else {
-        if(skillNodes[i].$meta.requires){
-          const r = skillNodes[i].$meta.requires;
-          if (this.totals[r]) {
-            disabled = this.totals[r].total !== this.totals[r].has
-          }
-        }
         nodes.push(this.renderSingleNode(skillNodes[i], i, newKey, disabled))
       }
     }

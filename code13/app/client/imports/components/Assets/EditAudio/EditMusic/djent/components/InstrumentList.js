@@ -48,7 +48,7 @@ export default class InstrumentList extends Component {
                         return (
                             <Expandable
                                 title={ id || `${(instrument.description || capitalize(instrument.id))}` }
-                                className="expandable-list u-mb05"
+                                className="instruments"
                                 titleClassName="expandable-list__title"
                                 bodyClassName="expandable-list__body"
                                 isExpanded={isExpanded}
@@ -56,7 +56,7 @@ export default class InstrumentList extends Component {
                             >
                                 <ul className="sound-list">
                                     {sounds.map((sound, i) => (
-                                        <li id={sound.id} data-parent-id={instrument.id} onClick={this.onSoundToggle} className={`sound-list__item ${sound.enabled ? 'is-enabled' : ''}`} key={i} >{sound.description || sound.id} <span> {sound.enabled ? 'en' : 'dis'}</span></li>
+                                        <li id={sound.id} data-parent-id={instrument.id} onClick={this.onSoundToggle} className={`sound-list__item ${sound.enabled ? 'is-enabled' : ''}`} key={i} >{sound.description || sound.id}</li>
                                     ))}
                                 </ul>
                             </Expandable>

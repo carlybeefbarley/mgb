@@ -5,6 +5,8 @@ import NotePanel from './NotePanel';
 import SVG from './SVG';
 import { repeatArray } from '../utils/tools';
 
+import sty from  './style.css';
+
 class Expandable extends Component {
     isPristine = true;
 
@@ -38,7 +40,7 @@ class Expandable extends Component {
         return (
             <div className={`expandable ${ this.state.isExpanded ? 'is-expanded' : '' } ${ this.props.className ? this.props.className : '' }`}>
                 <div className={`expandable__title ${this.props.titleClassName ? this.props.titleClassName : ''}`} onClick={this.onClick}>
-                    { /* this.props.title */ }
+                    {  this.props.title  }
                 </div>
                 <div className={`expandable__body ${this.props.bodyClassName ? this.props.bodyClassName : ''}`} onClick={() => this.isPristine = false}>
                     { this.props.children }

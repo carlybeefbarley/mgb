@@ -1,0 +1,61 @@
+.instruments {
+	background-color: rgba(0,0,0,.1);
+  border-radius: 5px;
+  margin-bottom: 10px !important;
+}
+
+.instruments .expandable__title {
+	position: relative;
+  padding: 10px;
+  color: #444;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.instruments .expandable__body {
+	display: none;
+}
+
+.instruments.is-expanded .expandable__body {
+	display: block;
+}
+
+.instruments ul.sound-list {
+	padding: 10px;
+	padding-top: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.instruments .sound-list__item {
+    position: relative;
+    padding-left: 12.66667px;
+    color: #555;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.instruments .sound-list__item.is-enabled {
+	color: #222;
+}
+
+.instruments .sound-list__item::before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
+    background-color: #999;
+    left: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.instruments .sound-list__item.is-enabled::before  {
+    background-color: #a6bc18;
+}
+

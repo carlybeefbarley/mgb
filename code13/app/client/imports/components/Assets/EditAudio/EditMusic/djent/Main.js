@@ -226,15 +226,24 @@ export default class Main extends Component {
     }
 
     updateInstrumentSound({ soundID, parentID, prop, value }) {
-        console.log('updateInstrumentSound', soundID, parentID, prop, value)
+        let instruments = this.state.preset.settings.instruments
+        let parentNr = instruments.map( (item, nr) => {
+            if(item.id === parentID)
+                return nr
+        }).filter(isFinite)[0]
 
-        let instruments = this.state.preset.setting.instruments
-        let parent = instruments.find(function(a){ return a.id === parentID ? a : null })
-        let parentNr = instruments.indexOf(parent)
-        if(parent){
-            let sound = parent.sounds.find(function(a){ a.id === soundID ? a : null })
-            let soundNr = parent.sounds.indexOf(sound)
-            if(sound){
+        if(parentNr !== undefined){
+            let parent = instruments[parentNr]
+            let soundNr = parent.sounds.map( (item, nr) => {
+                if(item.id === soundID)
+                    return nr
+            }).filter(isFinite)[0]
+ 
+            if(soundNr !== undefined){
+                let sound = parent.sounds[soundNr]
+                console.log(sound, soundNr)
+
+
                 sound[prop] = value
 
                 parent.sounds[soundNr] = sound
@@ -243,8 +252,6 @@ export default class Main extends Component {
                 let preset = this.state.preset
                 preset.settings.instruments = instruments
                 this.setState({ preset: preset })
-
-                console.log('updateInstrumentSound22222')
             }
         }
     }

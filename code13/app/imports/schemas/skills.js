@@ -1,7 +1,39 @@
-import _ from 'lodash';
+import _ from 'lodash'
+import SkillNodes from '/imports/SkillNodes/SkillNodes.js'
 
+
+
+const UNKNOWN =       0;
+const SELF_CLAIMED =  0b001;
+const PEER_ASSERTED = 0b010;
+const MGB_MEASURED =  0b100; // do we need some sort of tests?
 // temporary save in the ram
 // TODO: save in real DB
+const uSkills = {};
+
+var getSkillsRecord = (userId) => {
+  if(!uSkills[userId]){
+    uSkills[userId] = {}
+  }
+  return uSkills[userId]
+}
+
+Meteor.methods({
+  // TODO: check if active user is allowed to grant skill
+  // TODO(find out): do we need to store which user have asserted skill? or asserters count
+  "Skill.grant": function(userId, key, origin = SELF_CLAIMED){
+    console.log("skill granted:", this)
+    let rec = getSkillsRecord(userId)
+    if(!rec[key]){
+      rec[key] = UNKNOWN
+    }
+    rec[key] |= origin
+    return rec;
+  }
+})
+
+
+
 
 function hasSkill(skillKey)
 {

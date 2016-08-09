@@ -28,8 +28,12 @@ export default class SkillTree extends React.Component {
     }
   }
   learnSkill (key) {
-    this.skills[key] = 1
-    this.saveSkills()
+    Meteor.call("Skill.grant", this.props.user._id, key, (...a) => {
+      console.log("Skill granted", ...a);
+      this.skills[key] = 1
+      this.saveSkills()
+
+    });
   }
   forgetSkill (key) {
     delete this.skills[key]
@@ -50,12 +54,13 @@ export default class SkillTree extends React.Component {
       tot[newKey] = tot[newKey] || {total: 0, has: 0}
 
       // TODO: this check will break in the future
-      if (typeof skillNodes[i] != 'object') {
-        if (!skillNodes[i]) {
-          continue
-        }
+      if (skillNodes[i].$meta.isLeaf) {
         tot[newKey].total++
         ret.total++
+        tot[newKey] = {
+          total: 1,
+          has: 0
+        }
         if (this.skills[newKey]) {
           tot[newKey].has++
           ret.has++
@@ -90,14 +95,14 @@ export default class SkillTree extends React.Component {
 
   renderSingleNode (node, key, path, disabled) {
     let color = this.skills[path] ? 'green' : 'red'
-    if (!node) {
+    if (!node.$meta.enabled) {
       color = 'grey'
     }
     return (
       <div
         key={path}
         style={{ backgroundColor: color, margin: '5px', border: 'solid 1px', display: 'inline-block', padding: '4px' }}
-        className={(!node || disabled) ? 'ui disabled button' : 'ui button'}
+        className={(!node.$meta.enabled || disabled) ? 'ui disabled button' : 'ui button'}
         onClick={this.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)}>
         <i className='icon settings big'></i>
         {key}
@@ -107,10 +112,7 @@ export default class SkillTree extends React.Component {
   renderSkillNodesMid (skillNodes, key = '' , requires = '') {
     const nodes = []
     for (let i in skillNodes) {
-      if (i.indexOf('$') === 0) {
-        if (i == '$requires') {
-          requires = this.resolveRequire(key, skillNodes[i])
-        }
+      if (i === "$meta") {
         continue
       }
       // requires && console.log("requires")
@@ -124,7 +126,7 @@ export default class SkillTree extends React.Component {
         }
       }
       // TODO: this check will break in the future
-      if (typeof skillNodes[i] == 'object') {
+      if (!skillNodes[i].$meta.isLeaf) {
         nodes.push(
           <div
             key={i}
@@ -132,13 +134,19 @@ export default class SkillTree extends React.Component {
             className={disabled ? 'animate disabled' : 'animate'}
             data-requires={requires}>
             <div className='progress'>
-              {i}
               <div className='value animate' style={{width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%'}}></div>
+              {i} ({newKey})
             </div>
-            {this.renderSkillNodesMid(skillNodes[i], newKey, requires)}
+            {this.renderSkillNodesMid(skillNodes[i], newKey, skillNodes[i].$meta.requires)}
           </div>
         )
       }else {
+        if(skillNodes[i].$meta.requires){
+          const r = skillNodes[i].$meta.requires;
+          if (this.totals[r]) {
+            disabled = this.totals[r].total !== this.totals[r].has
+          }
+        }
         nodes.push(this.renderSingleNode(skillNodes[i], i, newKey, disabled))
       }
     }
@@ -159,7 +167,7 @@ export default class SkillTree extends React.Component {
   renderSkillNodesSmall (skillNodes) {
     const nodes = []
     for (let i in skillNodes) {
-      if ((i + '').indexOf('$') === 0) {
+      if (i === "$meta") {
         continue
       }
       nodes.push(

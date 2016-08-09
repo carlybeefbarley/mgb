@@ -1,67 +1,79 @@
-import { E, D } from './Common.js'
+import C from './Common.js'
 
 export default {
-  $name: 'Coding',
-  $description: 'Represents coding skills',
+  $meta: {
+    name: 'Coding',
+    description: 'Represents coding skills',
+  },
   js: {
-    $name: 'Javascript',
-    $description: 'Javascript expertise',
+    $meta: {
+      name: 'Javascript',
+      description: 'Javascript expertise',
+    },
     basics: {
       statements: {
-        const: E,
-        let: E,
-        var: D
+        const: C.E,
+        let: C.meta({requires: ".const"}, C.E),
+        var: C.D
       },
       math: {
-        $requires: '.statements',
+        $meta: {
+          requires: '.statements',
+        },
         operators: {
-          '+': E,
-          '-': E,
-          '/': E,
-          '*': E
+          '+': C.E,
+          '-': C.meta({requires: ".+"}, C.E),
+          '*': C.meta({requires: ".-"}, C.E),
+          '/': C.meta({requires: ".*"}, C.E),
         },
         constants: {
-          PI: E
+          PI: C.E
         },
         functions: {
-          abs: E,
-          round: E,
-          max: E,
-          min: E,
-          random: E,
-          sqrt: E
+          abs: C.E,
+          round: C.E,
+          max: C.E,
+          min: C.E,
+          random: C.E,
+          sqrt: C.E
         }
       }
     },
     advanced: {
       math: {
-        $requires: '..basics.math',
-        E: E,
-        LN2: E,
-        LN10: E,
-        LOG2E: E,
-        LOG10E: E,
-        SQRT2: E,
-        SQRT1_2: E
+        $meta: {
+          requires: '..basics.math',
+        },
+        E: C.E,
+        LN2: C.E,
+        LN10: C.E,
+        LOG2E: C.E,
+        LOG10E: C.E,
+        SQRT2: C.E,
+        SQRT1_2: C.E
       }
     },
     fw: {
-      $requires: '.basics',
+      $meta: {
+        requires: '.basics',
+      },
       phaser: {
-        Game: E,
-        Loader: E
+        Game: C.E,
+        Loader: C.E
       },
       jquery: {
-        selectors: E,
-        animations: E,
-        plugins: D
+        selectors: C.E,
+        animations: C.E,
+        plugins: C.D
       }
     }
   },
   c: {
-    $name: 'C',
+    $meta: {
+      name: 'C'
+    },
     basics: {
-      statements: E
+      statements: C.E
     }
   }
 }

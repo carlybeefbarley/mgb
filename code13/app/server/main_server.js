@@ -7,6 +7,8 @@ import '/imports/schemas/assets.js';
 import '/imports/schemas/projects.js';
 import '/imports/schemas/activity.js';
 import '/imports/schemas/activitySnapshots.js';
+import '/imports/schemas/skills.js';
+
 
 // Import rules and publications
 import '/imports/schemas/denyRules.js';

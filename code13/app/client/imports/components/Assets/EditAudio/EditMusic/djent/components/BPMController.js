@@ -18,8 +18,8 @@ class BPMController extends Component {
             defaultValue: this.props.bpm,
             onChange: this.onBPMChange,
             step: 5,
-            className: 'input-base',
-            labelClassName: 'input-label',
+            min: 50,
+            max: 300,
         }
 
         return <InputBox { ...props } />

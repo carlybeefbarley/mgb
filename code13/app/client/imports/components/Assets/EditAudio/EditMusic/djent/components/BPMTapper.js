@@ -35,7 +35,7 @@ class BPMTapper extends Component {
             id: 'bpm',
             label: 'BPM',
             type: 'number',
-            className: 'button-primary button-primary--small',
+            className: 'ui button',
         }
 
         return (

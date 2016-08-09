@@ -17,17 +17,20 @@ class InputBox extends Component {
             labelClassName     : 'input-label-base',
             ...this.props,
         };
-        const { containerClassName, labelClassName, label, id } = inputProps;
+        const { containerClassName, labelClassName, label, id, rightFloated } = inputProps;
 
         delete inputProps.containerClassName
         delete inputProps.labelClassName
+        delete inputProps.rightFloated
 
         // console.log(inputProps)
 
         return (
-            <div className={containerClassName}>
-                <label className={ labelClassName } htmlFor={ id }>{ label }:</label>
-                <input ref="input" { ...inputProps} />
+            <div className={"ui labeled input "+(rightFloated ? "right floated" : "")}>
+              <div className="ui label">
+                { label }
+              </div>
+              <input name={ id } ref="input" { ...inputProps} />
             </div>
         )
     }

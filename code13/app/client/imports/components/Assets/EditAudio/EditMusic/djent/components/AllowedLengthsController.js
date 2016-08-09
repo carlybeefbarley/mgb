@@ -21,16 +21,14 @@ class AllowedLengthsController extends Component {
 
         const lengths = allowedLengths
             .map((length, i) => (
-                <div className="grid__item one-fifth gamma--one-third beta--one-half palm--one-whole" key={i} >
-                    <div className="u-mb1" key={i} >
-                        <NotePanel length={length} { ...notePanelProps } />
-                    </div>
+                <div style={{width:"150px", height:"150px", float:"left", margin:"10px", backgroundColor:"#424242", borderTop:"solid 5px #0088aa"}} key={i} >
+                    <NotePanel length={length} { ...notePanelProps } />
                 </div>
                 )
             );
 
         return (
-            <div className="grid grid--center">
+            <div className="row">
                 { lengths }
             </div>
         );

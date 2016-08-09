@@ -17,32 +17,30 @@ class BeatPanel extends Component {
         const hitChance = this.props.preset.settings.config.hitChance
         const beat = this.props.beat
 
+        allowedLengths.sort( (a,b) => a.id > b.id )
+
         return (
             <div>
                 <h2 className="title-primary">Randomised beat settings</h2>
 
-                <div className="group-spacing-y u-mb0">
-                    <AllowedLengthsController
-                        actions={{ updateAllowedLengths: this.props.actions.updateAllowedLengths }}
-                        allowedLengths={allowedLengths}
+                <AllowedLengthsController
+                    actions={{ updateAllowedLengths: this.props.actions.updateAllowedLengths }}
+                    allowedLengths={allowedLengths}
+                />
+
+                <div>&nbsp;</div>
+
+                <div className="row">
+                    <HitChanceController
+                        beatID={ beat.id }
+                        hitChance={ hitChance }
+                        actions={{ updateHitChance: this.props.actions.updateHitChance }}
                     />
-                </div>
 
-                <div className="grid grid--wide grid--middle">
-                    <div className="grid__item one-half alpha--one-whole u-mb1@alpha">
-                        <HitChanceController
-                            beatID={ beat.id }
-                            hitChance={ hitChance }
-                            actions={{ updateHitChance: this.props.actions.updateHitChance }}
-                        />
-                    </div>
-
-                    <div className="grid__item one-half alpha--one-whole">
-                        <BeatsController
-                            beat={ beat }
-                            actions={{ updateBeats: this.props.actions.updateBeats }}
-                        />
-                    </div>
+                    <BeatsController
+                        beat={ beat }
+                        actions={{ updateBeats: this.props.actions.updateBeats }}
+                    />
                 </div>
             </div>
         );

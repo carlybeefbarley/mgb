@@ -140,15 +140,24 @@ export default class Main extends Component {
 
         })
 
-
-
-
+        // add missing allowed lengths
         let allowedLengths = preset.settings.config.allowedLengths
         defaultLengths.map(item => {
             const newLength = allowedLengths.find(newLength => newLength.id === item.id)
             if (!newLength){
                 allowedLengths.push(item)
             }
+        })
+
+        // add missing allowed lengths params
+        allowedLengths.map(item => {
+           const defaultL = defaultLengths.find(defaultL => defaultL.id === item.id)
+
+           Object.keys(defaultL).map(param => {
+             if(!item[param]){
+                item[param] = defaultL[param]
+             }
+           }) 
         })
 
         
@@ -425,34 +434,23 @@ export default class Main extends Component {
                                 >
                                 <div>
                                     <Panel>
-                                        <h2 className="title-primary">Main Settings</h2>
+                                        <h3>Main Settings</h3>
 
-                                        <div className="grid grid--wide grid--middle">
-                                            <div className="grid__item one-half alpha--one-whole">
-                                                <div className="group-spacing-y-small">
-                                                    <div className="u-flex-row u-flex-end">
-                                                        <div className="u-flex-grow-1 u-mr1">
-                                                            <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.props.actions} />
-                                                        </div>
-                                                        <div className="">
-                                                            <BPMTapper actions={this.props.actions} />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div className="row">
+                                                <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.props.actions} />
+                                                &nbsp;&nbsp;
+                                                <BPMTapper actions={this.props.actions} />
+                                                &nbsp;&nbsp;
 
                                             {
                                                 isShareRoute
                                                 ? null
                                                 : (
-                                                    <div className="grid__item one-half alpha--one-whole">
-                                                        <div className="group-spacing-y-small">
-                                                            <BeatsController
-                                                                beat={ totalBeat }
-                                                                actions={this.props.actions}
-                                                            />
-                                                        </div>
-                                                    </div>
+                    
+                                                    <BeatsController
+                                                        beat={ totalBeat }
+                                                        actions={this.props.actions}
+                                                    />
                                                 )
                                             }
 

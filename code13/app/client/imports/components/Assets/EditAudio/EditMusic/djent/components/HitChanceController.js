@@ -19,6 +19,8 @@ class HitChanceController extends Component {
             defaultValue: Math.round(this.props.hitChance * 100),
             onChange: this.onChange,
             step: 5,
+            min: 0,
+            max: 100,
             className: 'input-base',
             labelClassName: 'input-label',
         }

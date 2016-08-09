@@ -37,18 +37,24 @@ class NotePanel extends Component {
         const isOn = length.amount > 0;
 
         return (
-            <div className={`note-panel ${ isOn ? '' : 'note-panel--disabled' }`}>
-                <img className="note-panel__svg" src={`/assets/images/notes/${length.name}.svg`} alt={noteName} title={noteName} />
-                <div className="note-panel__amount-container">
-                    <span className="note-panel__amount" title="Chance">{percentage}%</span>
-                    <div className="note-panel__btn-container">
-                        <button className="note-panel__btn note-panel__btn--up" title="Increase chance" onClick={(e) => this.onLengthAmountChange(e, 1)}></button>
-                        <button className="note-panel__btn note-panel__btn--down" title="Decrease chance" onClick={(e) => this.onLengthAmountChange(e, -1)}></button>
+            <div style={{color:"white"}}>
+                <div style={{ height:"65px" }}>
+                    <img src={`/images/notes/${length.name}.svg`} alt={noteName} title={noteName} style={{position:"relative", left:"50%", transform:"translateX(-50%)", top:"10px" }} />
+                </div>
+                <div style={{textAlign:"center"}}>
+                    <span title="Chance" style={{display:"inline-block"}}>{percentage}% &nbsp;</span>
+                    <div style={{display:"inline-block"}}>
+                        <button className="ui mini icon button" title="Increase chance" onClick={(e) => this.onLengthAmountChange(e, 1)}>
+                            <i className="arrow up icon"></i>
+                        </button>
+                        <button className="ui mini icon button" title="Decrease chance" onClick={(e) => this.onLengthAmountChange(e, -1)}>
+                            <i className="arrow down icon"></i>
+                        </button>
                     </div>
                 </div>
-                <div className="note-panel__checkbox-container">
-                    <label className="note-panel__label" htmlFor={`${length.id}-triplet`}>Triplet: </label>
-                    <input className="note-panel__checkbox" id={`${length.id}-triplet`} data-id={length.id} type="checkbox" checked={length.isTriplet} onChange={this.onIsTripletChange} />
+                <div className="ui checkbox" style={{ position:"relative", left:"50%", transform:"translateX(-50%)", marginTop:"10px" }}>
+                  <input type="checkbox" id={`${length.id}-triplet`} data-id={length.id}  checked={length.isTriplet} onChange={this.onIsTripletChange} />
+                  <label htmlFor={`${length.id}-triplet`} style={{color:"white"}}>Triplet</label>
                 </div>
 
             </div>

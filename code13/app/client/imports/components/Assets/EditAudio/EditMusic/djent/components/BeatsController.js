@@ -18,24 +18,23 @@ class BeatsController extends Component {
                 type: 'number',
                 id: type,
                 label: `${capitalize(type)} (1 - 8)`,
+                min: 1,
+                max: 8,
                 defaultValue : this.props.beat[type],
                 onChange: (event) => this.onChange(event, type),
                 className: 'input-base',
                 labelClassName: 'input-label',
+                rightFloated: true,
             }
         }
 
         return (
-            <div className="u-flex-row u-flex-center">
-                <div className="u-flex-grow-1">
-                    <InputBox { ...getProps('bars') } />
-                </div>
-                <span className="group-spacing-x-small u-mt1">&times;</span>
-                <div className="u-flex-grow-1">
-                    <InputBox { ...getProps('beats') } />
-                </div>
+            <div style={{width:"330px", float:"right"}}>
+                <InputBox { ...getProps('bars') } />
+                &nbsp;
+                <InputBox { ...getProps('beats') } />
             </div>
-        );
+        )
     }
 }
 

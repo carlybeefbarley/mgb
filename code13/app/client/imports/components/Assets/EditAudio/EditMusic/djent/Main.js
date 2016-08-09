@@ -54,6 +54,8 @@ export default class Main extends Component {
 
             continuousGeneration: false,
             fadeIn: false,
+
+            isExpanded: true,
         }
 
         this.props.actions.applyPreset = this.applyPreset.bind(this)
@@ -72,6 +74,9 @@ export default class Main extends Component {
 
         this.props.actions.updateContinuousGeneration = this.updateContinuousGeneration.bind(this)
         this.props.actions.updateFadeIn = this.updateFadeIn.bind(this)
+        this.props.actions.toggleSettings = this.toggleSettings.bind(this)
+
+        
 
 
     }
@@ -269,24 +274,7 @@ export default class Main extends Component {
 
     updateIsPlaying(isPlaying) { this.setState({ isPlaying: isPlaying }) }
 
-
     updateIsLooping(isLooping){ this.setState({ isLooping: isLooping }) }
-
-    
-
-    // updateIsLoading(isLoading) {
-    //     return {
-    //         type: 'UPDATE_IS_LOADING',
-    //         payload: { isLoading },
-    //     };
-    // }
-
-    // export function updateError(error) {
-    //     return {
-    //         type: 'UPDATE_ERROR',
-    //         payload: { error },
-    //     };
-    // }
 
     updateGenerationState(generationState) { this.setState({ generationState: generationState }) }
 
@@ -294,9 +282,11 @@ export default class Main extends Component {
 
     updateCurrentSrc(currentSrc) { this.setState({ currentSrc: currentSrc }) }
 
-    updateContinuousGeneration(continuousGeneration) { this.setState({ continuousGeneration: continuousGeneration}) }
+    updateContinuousGeneration(continuousGeneration) { this.setState({ continuousGeneration: continuousGeneration }) }
 
-    updateFadeIn(fadeIn) { this.setState({ fadeIn: fadeIn}) }
+    updateFadeIn(fadeIn) { this.setState({ fadeIn: fadeIn }) }
+
+    toggleSettings(isExpanded) { this.setState({ isExpanded: isExpanded }) }
 
     // -------------- actions ----------------------
 
@@ -395,11 +385,12 @@ export default class Main extends Component {
 
                                         continuousGeneration={this.state.continuousGeneration}
                                         fadeIn={this.state.fadeIn}
+                                        isExpanded={this.state.isExpanded}
 
                                         actions={this.props.actions}
                                     />
 
-                                    {/*
+                                    {/************
                                     <div className={`u-flex-row u-flex-wrap u-flex-${ isShareRoute ? 'center' : 'start' }`}>
                                         <div className={`group-spacing-y-small u-mr05 ${ isShareRoute ? '' : 'u-mb0' }`}>
                                             <ExportController
@@ -431,7 +422,7 @@ export default class Main extends Component {
                                         }
                                     </div>
 
-                                */}
+                                *************/}
 
                                 </div>
                             </Panel>
@@ -443,41 +434,37 @@ export default class Main extends Component {
                             isShareRoute
                             ? null
                             : (
-                                <Expandable
-                                    title="Settings"
-                                    titleClassName="u-curp u-mb1 title-primary dropdown-icon-after dropdown-icon-after--light u-dib u-txt-light u-txt-large"
-                                    enableStateSave={true}
-                                >
-                                <div>
-                                    <Panel>
-                                        <h3>Main Settings</h3>
+                                <div style={this.state.isExpanded ? {display:"block"} : {display:"none"}}>
+                                    <div>
+                                        <Panel>
+                                            <h3>Main Settings</h3>
 
-                                        <div className="row">
-                                            <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.props.actions} />
-                                            &nbsp;&nbsp;
-                                            <BPMTapper actions={this.props.actions} />
-                                            &nbsp;&nbsp;
+                                            <div className="row">
+                                                <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.props.actions} />
+                                                &nbsp;&nbsp;
+                                                <BPMTapper actions={this.props.actions} />
+                                                &nbsp;&nbsp;
 
-                                            {
-                                                isShareRoute
-                                                ? null
-                                                : (
-                    
-                                                    <BeatsController
-                                                        beat={ totalBeat }
-                                                        actions={this.props.actions}
-                                                    />
-                                                )
-                                            }
+                                                {
+                                                    isShareRoute
+                                                    ? null
+                                                    : (
+                        
+                                                        <BeatsController
+                                                            beat={ totalBeat }
+                                                            actions={this.props.actions}
+                                                        />
+                                                    )
+                                                }
 
-                                        </div>
-                                    </Panel>
+                                            </div>
+                                        </Panel>
 
-                                    <div style={{clear:"both"}}>&nbsp;</div>
-                                    <Panel>
-                                        { beats }
-                                    </Panel>
-                                </div>
+                                        <div style={{clear:"both"}}>&nbsp;</div>
+                                        <Panel>
+                                            { beats }
+                                        </Panel>
+                                    </div>
 
                                     <div style={{clear:"both"}}>&nbsp;</div>
                                     <Panel>
@@ -493,7 +480,7 @@ export default class Main extends Component {
                                             instruments={this.state.preset.settings.instruments}
                                         />
                                     </Panel>
-                                </Expandable>
+                                </div>
                             )
                         }
 

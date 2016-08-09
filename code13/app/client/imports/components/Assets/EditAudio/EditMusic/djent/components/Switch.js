@@ -14,13 +14,15 @@ class Switch extends Component {
             labelClassName     : 'input-label',
             ...this.props
         };
-        const { containerClassName, labelClassName, label, id } = inputProps;
+        const { containerClassName, labelClassName, customStyle, label, id } = inputProps;
 
-        // console.log(this.props.isActive)
+        delete inputProps.customStyle
+
+        // console.log(customStyle)
 
         return (
-            <div className={"ui toggle checkbox "}>
-              <input type="checkbox" name={id} checked={(this.props.isActive ? "checked" : "")} onChange={this.props.onChange} />
+            <div className={"ui toggle checkbox "} style={ customStyle ? customStyle : {} }>
+              <input type="checkbox" name={id} checked={(this.props.isActive ? "checked" : "")} onChange={this.props.onChange}/>
               <label>{ label }</label>
             </div>
         )

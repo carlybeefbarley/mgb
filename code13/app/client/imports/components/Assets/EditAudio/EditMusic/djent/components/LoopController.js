@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Switch from '../components/Switch';
+import Switch from './Switch';
 
 const LoopController = (props) => {
     const inputProps = {

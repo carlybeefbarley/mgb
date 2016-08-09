@@ -29,6 +29,7 @@ import LoopController from './LoopController';
 import SVG from './SVG';
 import Waveform from './Waveform';
 import ContinuousGenerationController from './ContinuousGenerationController';
+import Switch from './Switch';
 
 const getSequences = (grooveTotalBeats, allowedLengths, hitChance) => {
     const mainBeat       = generateSequence({ totalBeats: grooveTotalBeats, allowedLengths, hitChance });
@@ -273,6 +274,14 @@ class SoundController extends Component {
                     />
 
                     { continuousGeneration }
+
+                        <Switch 
+                            id={"settings"}
+                            label={"Settings"}
+                            isActive={this.props.isExpanded}
+                            customStyle={{float:"right", marginTop:"7.5px", marginLeft:"5px"}}
+                            onChange={this.props.actions.toggleSettings.bind(this, !this.props.isExpanded)}
+                        />
 
                     <button className={"ui right floated button "+(!this.props.currentBuffer ? "disabled" : "")} title="Import" onClick={this.importWav.bind(this)}>
                         <i className="add square icon"></i> Import

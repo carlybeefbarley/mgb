@@ -157,8 +157,14 @@ window.onload = function() {
 
   // TODO: somehow resolve user's script and global lib
   function loadImport(urlFinalPart, cb) {
+    var url;
+    if(urlFinalPart.indexOf("http") !== 0 && urlFinalPart.indexOf("//") !== 0){
+      url = '/api/asset/code/' + urlFinalPart
+    }
+    else{
+      url = urlFinalPart
+    }
     // atm server will try to generate script
-    var url = '/api/asset/code/' + urlFinalPart;
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function(){
       if (httpRequest.readyState !== XMLHttpRequest.DONE || httpRequest.status !== 200) {
@@ -166,9 +172,19 @@ window.onload = function() {
       }
       var src = httpRequest.responseText
       window.exports = {};
+      window.module = {exports:window.exports};
       loadScriptFromText(src, function(){
-        imports[urlFinalPart] = window.exports;
-        window.exports = {};
+        if(Object.keys(window.exports).length){
+          imports[urlFinalPart] = window.exports;
+        }
+        // hack for React like module loading
+        else{
+          imports[urlFinalPart] = window.module.exports;
+          const small = urlFinalPart.split("/").pop().split(".").shift();
+          if(small){
+            imports[small] = window.module.exports;
+          }
+        }
         cb && cb()
       })
     }
@@ -217,7 +233,7 @@ window.onload = function() {
     // TODO: load all at once ( usually much faster ) - atm scripts are included one by one
     var load = function(){
       if(imports.length){
-        loadImport(imports.pop(), load);
+        loadImport(imports.shift(), load);
       }
       else{
         ready();

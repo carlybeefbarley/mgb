@@ -13,6 +13,7 @@ import React, { PropTypes } from 'react';
 // Things get even more complicated once TERN (the code analysis system use for autocomplete smarts)
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/jsx/jsx';
 import 'codemirror/mode/css/css';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/addon/hint/show-hint';

@@ -347,14 +347,54 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
   }
 });
 
+// allow to export some libs 1 - allow to all 2 - allow to subscribers (e.g. for heavy libs or proprietary libs.. and etc)?
+const allowedLibs = {react: 1};
 // get code by id - tmp used for es6 import
 RestApi.addRoute('asset/code/:id', {authRequired: false}, {
   get: function () {
-    let asset = Azzets.findOne(this.urlParams.id)
-    if(asset)
-      return {statusCode: 200,headers: {'Content-Type': "text/plain"}, body: asset.content2.src};
-    else
-      return { statusCode: 404 }
+    console.log("API call!!!");
+    let content = null;
+    // TODO(stauzs): idea behind this is to create browserify module and serve it to client.
+    // this should create very similar sources as React creates
+    if(allowedLibs[this.urlParams.id]){
+      // let src = "import React from 'react'\nexport default React";
+      // var browserifyFn = require('browserify-string');
+      // var browserify = require('browserify');
+      // var babelify = require('babelify');
+
+      /*const pp = process.env.PWD + "/babel.js";
+
+      console.log("Require PP", pp);
+      browserify({ debug: true })
+        //.transform(babelify)
+        .require(pp, { entry: true })
+        .bundle()
+        .on("error", function (err) { console.log("Error: " + err.message); })
+        .on("done", (...a) => {
+          console.log("br done:", ...a);
+        })*/
+        //.pipe(fs.createWriteStream("bundle.js"));
+
+
+      /*browserifyFn(src)
+        .transform(babelify)
+        .bundle(function (err, src) {
+          console.log("browserify done:", err, src);
+        });*/
+    }
+    else{
+      let asset = Azzets.findOne(this.urlParams.id)
+      content = asset.content2.src;
+    }
+
+
+    if(content) {
+      return {statusCode: 200, headers: {'Content-Type': "text/plain"}, body: content};
+    }
+    // try to create required import
+    else {
+      return {statusCode: 404}
+    }
   }
 })
 

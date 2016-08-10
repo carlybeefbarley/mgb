@@ -142,7 +142,7 @@ export default class EditMusic extends React.Component {
 						</button>
 					*/}
 						<button className="ui small icon button"
-							title="Generate music"
+							title="Generate music (Currently only creates Heavy Metal.. More music styles to follow :)"
 							onClick={this.openGeneratePopup.bind(this)}>
 						  <i className="options icon"></i> Generate music [not ready]
 						</button>

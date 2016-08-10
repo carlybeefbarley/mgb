@@ -32,7 +32,6 @@ function _getCaller() {
   return null;
 }
 
-var consoleOrigFns = {} // See comment below for consoleOrigFns
 
 
 window.onload = function() {
@@ -44,7 +43,7 @@ window.onload = function() {
 
   // Wrap the console functions so we can pass the info to parent window
   var consoleMethodNames = ["log", "debug", "info", "warn", "error"]  // trace? dir?
-  // var consoleOrigFns = {}  -  These have been moved oustide the closure so we can put some debug directly to console and not push it to MGB editor
+  var consoleOrigFns = {}
   for (var i = 0; i < consoleMethodNames.length; i++) {
     var name = consoleMethodNames[i]
     if (console[name])
@@ -196,12 +195,12 @@ window.onload = function() {
   }
   function transform(srcText, filename) {
     // TODO: detect presets from code ?
-    consoleOrigFns.log.origFn("Transpiling " + filename + " (" + srcText.length + " bytes)")
+    console.trace("Transpiling " + filename + " (" + srcText.length + " bytes)")
     var tr = Babel.transform(srcText, { 
       filename: filename, 
       compact: false,           // Default of "auto" fails on ReactImport
       presets: ['es2015', 'react'] });
-    consoleOrigFns.log.origFn("Transpilation yielded " + tr.code.length + " bytes")
+    console.trace("Transpilation yielded " + tr.code.length + " bytes")
     return tr;
   }
 

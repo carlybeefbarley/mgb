@@ -13,9 +13,7 @@ export default class EditMusic extends React.Component {
 	constructor(props) {
   	super(props)
 
-  	console.log(props.asset.content2)
-
-  	// console.log(props.asset.content2);
+  	// console.log(props.asset.content2)
 
   	this.state = {
   		playerStatus: "pause"

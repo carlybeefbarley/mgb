@@ -97,6 +97,7 @@ class SoundController extends Component {
         isLoading  : false,
         error      : '',
         isConvertingWav: false,
+        isGenerating: false,
     }
 
     updateUI = (newState) => {
@@ -127,6 +128,7 @@ class SoundController extends Component {
     }
 
     generate = () => {
+        this.setState({ isGenerating: true })
         const { bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings } = this.props;
 
         // console.log('bpm', bpm)
@@ -138,13 +140,14 @@ class SoundController extends Component {
 
         this.isOutDated = false;
         this.updateUI({ isLoading: true });
-
+        let self = this
         return generateNewBuffer({ ...generationState, instruments })
             .then(({ buffer, instruments }) => {
                 const newState = { isLoading: false, error: '' };
                 if (!buffer) newState.error = 'Error!'
 
                 this.updateUI(newState);
+                self.setState({ isGenerating: false })
                 return {buffer, instruments};
             });
     }
@@ -267,12 +270,11 @@ class SoundController extends Component {
             <div>
                 { this.state.error ? <p className="txt-error">{ this.state.error }</p> : null }
                 <div className="row">
-                    <button className={`ui blue button button-primary ${ this.isOutDated ? 'button-primary--positive' : '' } ${ this.state.isLoading ? '' : 'icon-is-hidden' }`} 
-                    onClick={() => this.generateEvent()}>
-                        <span className="button-primary__inner">{ this.props.generateButtonText || 'Generate Riff' }</span>
-                        <span className="button-primary__icon">
-                            <span className="spinner" />
-                        </span>
+                    <button 
+                        className={"ui blue button " + (this.state.isGenerating ? "loading" : "")} 
+                        onClick={() => this.generateEvent()}>
+
+                        { this.props.generateButtonText || 'Generate Riff' }
                     </button>
 
                     <button className={"ui button "+(!this.props.currentBuffer ? "disabled" : "")} title={ capitalize(eventName) } onClick={this.togglePlay}>

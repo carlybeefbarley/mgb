@@ -43,7 +43,7 @@ export default ProjectCard = React.createClass({
     return  <div className="ui bordered card" key={project._id}>
 
               <QLink className="image" to={linkTo}>
-                <img src="https://semantic-ui.com/images/wireframe/image.png"></img>
+                <img src="/images/wireframe/image.png"></img>
               </QLink>
     
               <QLink className="content" to={linkTo}>

@@ -259,7 +259,7 @@ export default UserProfileRoute = React.createClass({
     const retval = projects.map( (project) => {
       const isOwner = (project.ownerId === this.props.user._id)
       const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Builder" : (project.memberIds.length + 1) + " Builders"
-      const projImg = "https://semantic-ui.com/images/wireframe/image.png"
+      const projImg = "/images/wireframe/image.png"
       return (isOwner !== ownedFlag) ? null : (
         <div className="ui grid" key={project._id}>
           <div className="four wide column">

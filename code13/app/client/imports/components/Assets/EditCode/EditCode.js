@@ -146,7 +146,7 @@ export default class EditCode extends React.Component {
     // CodeMirror setup
     const textareaNode = this.refs.textarea
     let cmOpts = {  
-      mode: "javascript",
+      mode: "jsx",
       theme: "eclipse",
       styleActiveLine: true,
       lineNumbers: true,
@@ -476,7 +476,7 @@ export default class EditCode extends React.Component {
       const conf = {
         browser: true,
         esversion: 6,
-
+        asi: true,
         //globalstrict: true,
         //strict: "implied",
 

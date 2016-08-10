@@ -347,7 +347,19 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
   }
 });
 
+// get code by id - tmp used for es6 import
+RestApi.addRoute('asset/code/:id', {authRequired: false}, {
+  get: function () {
+    let asset = Azzets.findOne(this.urlParams.id)
+    if(asset)
+      return {statusCode: 200,headers: {'Content-Type': "text/plain"}, body: asset.content2.src};
+    else
+      return { statusCode: 404 }
+  }
+})
 
+
+/* rest is MGB v1 stuff */
 // MGBv1 TILE
 // eg http://localhost:3000/api/mgb1/tile/.acey53/Club+Penguin+Agents+Under+Attack/100+coins
 

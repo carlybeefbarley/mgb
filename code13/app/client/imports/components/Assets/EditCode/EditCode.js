@@ -476,7 +476,7 @@ export default class EditCode extends React.Component {
       const conf = {
         browser: true,
         esversion: 6,
-
+        asi: true,
         //globalstrict: true,
         //strict: "implied",
 

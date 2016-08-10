@@ -24,7 +24,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.kind = LayerTypes.object
     this.drawDebug = false
     this._pickedObject = -1
-    this.info = null;
+    this.info = null
 
     this.handles = new HandleCollection(0, 0, 0, 0)
 
@@ -58,34 +58,33 @@ export default class ObjectLayer extends AbstractLayer {
     return this.data.objects[this._pickedObject]
   }
 
-  getInfo(){
-    if(this.info > -1){
-      const o = this.data.objects[this.info];
+  getInfo () {
+    if (this.info > -1) {
+      const o = this.data.objects[this.info]
       return o ? (o.name || `(unnamed ${this.getObjectType(o)})`) : ''
     }
     return ''
   }
 
-  getObjectType(o){
+  getObjectType (o) {
     if (o.gid) {
-      return "tile"
+      return 'tile'
     }
     else if (o.orig) {
       if (o.orig.polyline) {
-        return "polyline"
+        return 'polyline'
       }else {
-        return "polygon"
+        return 'polygon'
       }
     }
     // TODO: is there convenient way to separate rectangles and shapes??
     else if (o.ellipse) {
-      if(o.width == o.height){
-        return "circle"
+      if (o.width == o.height) {
+        return 'circle'
       }
-      return "ellipse"
-    }
-    else{
-      return "rectangle"
+      return 'ellipse'
+    }else {
+      return 'rectangle'
     }
   }
   // TODO: isn't this confusing???
@@ -136,7 +135,7 @@ export default class ObjectLayer extends AbstractLayer {
     return ret
   }
 
-  queryObject(e){
+  queryObject (e) {
     let obj
     const x = e.offsetX / this.camera.zoom - this.camera.x
     const y = e.offsetY / this.camera.zoom - this.camera.y
@@ -225,7 +224,7 @@ export default class ObjectLayer extends AbstractLayer {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
     super.handleMouseMove(e)
 
-    this.info = this.queryObject(e);
+    this.info = this.queryObject(e)
     this.isDirty = true
 
     if (!this.mouseDown && e.target == this.refs.canvas) {

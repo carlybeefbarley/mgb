@@ -3,7 +3,6 @@ import _ from 'lodash'
 import React from 'react'
 import Otito from '/client/imports/helpers/Otito.js'
 
-
 export default class Properties extends React.Component {
   constructor (...args) {
     super(...args)

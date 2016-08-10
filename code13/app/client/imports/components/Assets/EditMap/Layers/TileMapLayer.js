@@ -150,8 +150,8 @@ export default class TileMapLayer extends AbstractLayer {
       this.options.data[id] |= FLIPPED_DIAGONALLY_FLAG
     }
   }
-  tileWithRotation(id){
-    let ret = id;
+  tileWithRotation (id) {
+    let ret = id
     if (this.ctrl.h == -1) {
       ret |= FLIPPED_HORIZONTALLY_FLAG
     }
@@ -161,7 +161,7 @@ export default class TileMapLayer extends AbstractLayer {
     if (this.ctrl.d) {
       ret |= FLIPPED_DIAGONALLY_FLAG
     }
-    return ret;
+    return ret
   }
 
   getTilePosInfo (e) {
@@ -824,8 +824,8 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
 
   let tpos = new TileSelection(pos)
   for (let i = 0; i < this.map.collection.length; i++) {
-    let ts = new TileSelection(this.map.collection[i]);
-    ts.gid = this.tileWithRotation(ts.gid);
+    let ts = new TileSelection(this.map.collection[i])
+    ts.gid = this.tileWithRotation(ts.gid)
 
     tpos.x = ts.x + pos.x - ox
     tpos.y = ts.y + pos.y - oy

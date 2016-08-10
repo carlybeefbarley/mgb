@@ -35,13 +35,6 @@ export function getLevelVal(name) {
 
 
 export default class Toolbar extends React.Component {
-
-  static propTypes = {
-    name:         PropTypes.string.isRequired,      // Name of this toolbar instance. Should be one of toolbarScopeNames
-    config:       PropTypes.object.isRequired,      // Config.. { buttons: {}, vertical: bool }
-    levelName:    PropTypes.string                  // Use this if you want to share active level with other toolbars - default = name
-  }
-
   constructor(...args) {
     super(...args)
     this.keyActions = {}
@@ -600,4 +593,10 @@ export default class Toolbar extends React.Component {
     this.activeButton = null
   }
   /* End of Button sorting */
+}
+
+Toolbar.propTypes = {
+  name: PropTypes.string.isRequired, // Name of this toolbar instance. Should be one of toolbarScopeNames
+  config: PropTypes.object.isRequired, // Config.. { buttons: {}, vertical: bool }
+  levelName: PropTypes.string // Use this if you want to share active level with other toolbars - default = name
 }

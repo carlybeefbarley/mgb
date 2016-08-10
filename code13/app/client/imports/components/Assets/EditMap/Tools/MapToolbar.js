@@ -101,7 +101,7 @@ export default class MapToolbar extends React.Component {
       l.rotateBack()
     }
   }
-  flip (){
+  flip () {
     const l = this.props.map.getActiveLayer()
     if (!l || !l.rotate) {return;}
     l.flip()
@@ -138,7 +138,7 @@ export default class MapToolbar extends React.Component {
           disabled: !this.props.map.undoSteps.length,
           tooltip: 'Undo last action' + (_.last(this.props.map.undoSteps) ? ': ' + _.last(this.props.map.undoSteps).reason : ''),
           level: 2,
-          shortcut: 'Ctrl+Z' 
+          shortcut: 'Ctrl+Z'
         },
         {
           name: 'redo',
@@ -220,7 +220,7 @@ export default class MapToolbar extends React.Component {
         },
         {
           name: 'separator'
-        },        
+        },
         {
           name: 'eraser',
           label: 'Eraser',
@@ -337,7 +337,7 @@ export default class MapToolbar extends React.Component {
           shortcut: 'X',
           level: 23
         }
-                
+
       ]
     }
 

@@ -1,11 +1,14 @@
 import React from 'react'
 export default class PositionInfo extends React.Component {
-  static propTypes = {
-    getInfo: React.PropTypes.func.isRequired // callback which returns some sort of information
-  }
-  render(){
+  render () {
     return (
-      <div>{this.props.getInfo()}</div>
+      <div>
+        {this.props.getInfo()}
+      </div>
     )
   }
+}
+
+PositionInfo.propTypes = {
+  getInfo: React.PropTypes.func.isRequired // callback which returns some sort of information
 }

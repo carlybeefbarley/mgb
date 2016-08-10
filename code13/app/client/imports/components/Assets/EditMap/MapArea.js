@@ -1018,15 +1018,15 @@ export default class MapArea extends React.Component {
       st += ',' + t.gid
     })
     st = st.substr(1)
-    let info = !l? '' : l.getInfo();
-    info = info ? ': '+info : '';
+    let info = !l ? '' : l.getInfo()
+    info = info ? ': ' + info : ''
     return (
       <div>
         <div>
           {!l ? '' : l.data.name + info}
         </div>
         <div>
-          {Plural.numStr2(this.collection.length, "Selected Tile")}
+          {Plural.numStr2(this.collection.length, 'Selected Tile')}
           {st}
         </div>
       </div>

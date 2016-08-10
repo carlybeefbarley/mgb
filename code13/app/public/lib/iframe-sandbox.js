@@ -32,6 +32,9 @@ function _getCaller() {
   return null;
 }
 
+var consoleOrigFns = {} // See comment below for consoleOrigFns
+
+
 window.onload = function() {
   _isAlive = true;
   var imports = {};
@@ -41,7 +44,7 @@ window.onload = function() {
 
   // Wrap the console functions so we can pass the info to parent window
   var consoleMethodNames = ["log", "debug", "info", "warn", "error"]  // trace? dir?
-  var consoleOrigFns = {}
+  // var consoleOrigFns = {}  -  These have been moved oustide the closure so we can put some debug directly to console and not push it to MGB editor
   for (var i = 0; i < consoleMethodNames.length; i++) {
     var name = consoleMethodNames[i]
     if (console[name])
@@ -173,7 +176,7 @@ window.onload = function() {
       var src = httpRequest.responseText
       window.exports = {};
       window.module = {exports:window.exports};
-      loadScriptFromText(src, function(){
+      loadScriptFromText(src, urlFinalPart, function(){
         if(Object.keys(window.exports).length){
           imports[urlFinalPart] = window.exports;
         }
@@ -191,17 +194,22 @@ window.onload = function() {
     httpRequest.open('GET', url, true);
     httpRequest.send(null);
   }
-  function transform(srcText) {
+  function transform(srcText, filename) {
     // TODO: detect presets from code ?
-    var tr = Babel.transform(srcText, { presets: ['es2015', 'react'] });
+    consoleOrigFns.log.origFn("Transpiling " + filename + " (" + srcText.length + " bytes)")
+    var tr = Babel.transform(srcText, { 
+      filename: filename, 
+      compact: false,           // Default of "auto" fails on ReactImport
+      presets: ['es2015', 'react'] });
+    consoleOrigFns.log.origFn("Transpilation yielded " + tr.code.length + " bytes")
     return tr;
   }
 
   // this is used to make script names a little bit nicer
   var scriptsLoaded = 0;
-  function loadScriptFromText(srcText, callback) {
+  function loadScriptFromText(srcText, filename, callback) {
 
-    var output = transform(srcText);
+    var output = transform(srcText, filename);
     var imports = parseImport2(output);
 
     // loaded gets called one extra time
@@ -284,7 +292,7 @@ window.onload = function() {
       try {
         loadScript(e.data.gameEngineScriptToPreload, function() {
           //  eval(e.data.codeToRun);  // NOT using eval since we can't get good window.onError information from it
-          loadScriptFromText(e.data.codeToRun);
+          loadScriptFromText(e.data.codeToRun, e.data.filename);
         })
       } catch (err) {
         console.error("Could not load and execute script: " + err);

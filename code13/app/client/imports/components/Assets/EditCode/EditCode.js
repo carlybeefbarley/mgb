@@ -861,13 +861,15 @@ export default class EditCode extends React.Component {
       this.bound_handle_iFrameMessageReceiver = this._handle_iFrameMessageReceiver.bind(this)
     window.addEventListener('message', this.bound_handle_iFrameMessageReceiver)
     
-    let src = this.props.asset.content2.src
-    let gameEngineJsToLoad = this.detectGameEngine(src)
+    const { asset } = this.props
+    const src = asset.content2.src
+    const gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState( {isPlaying: true } )
     this._postMessageToIFrame(
       {
         mgbCommand: 'startRun',
         codeToRun: src, 
+        filename: asset.name || "",
         gameEngineScriptToPreload: gameEngineJsToLoad
       })    
     

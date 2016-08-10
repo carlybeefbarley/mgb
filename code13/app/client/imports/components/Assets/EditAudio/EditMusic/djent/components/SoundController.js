@@ -295,7 +295,7 @@ class SoundController extends Component {
                             label={"Settings"}
                             isActive={this.props.isExpanded}
                             customStyle={{float:"right", marginTop:"7.5px", marginLeft:"5px"}}
-                            onChange={this.props.actions.toggleSettings.bind(this, !this.props.isExpanded)}
+                            onChange={() => this.props.actions.toggleSettings(!this.props.isExpanded)}
                         />
 
                     <button className={"ui right floated button "+(!this.props.currentBuffer ? "disabled " : "")+(this.state.isConvertingWav ? "loading" : "")} title="Import" onClick={this.importWav.bind(this)}>

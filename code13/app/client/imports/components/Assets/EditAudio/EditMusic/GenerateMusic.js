@@ -19,7 +19,7 @@ export default class GenerateMusic extends React.Component {
 		return (
 			<div className="content">
 				<Djent 
-					importAudio={this.importAudio.bind(this)}
+					actions={{ importAudio: this.importAudio.bind(this) }}
 				/>
 	    </div>
 		)

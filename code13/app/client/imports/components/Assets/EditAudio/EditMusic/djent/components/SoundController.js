@@ -96,6 +96,7 @@ class SoundController extends Component {
     state = {
         isLoading  : false,
         error      : '',
+        isConvertingWav: false,
     }
 
     updateUI = (newState) => {
@@ -230,11 +231,23 @@ class SoundController extends Component {
     }
 
     importWav(){
-        let audioObject = saveAsWAVFile(this.props.currentBuffer)
+        var self = this
+        this.setState({ isConvertingWav: true})
+        let audioObject = saveAsWAVFile(this.props.currentBuffer, function(dataUri){
+            self.importWavCB(dataUri)
+        })
 
-        console.log('import wav', audioObject)
+        // console.log('import wav', audioObject)
+        // this.props.actions.importAudio(audioObject)
+    }
 
+    importWavCB(dataUri){
+        // console.log(dataUri)
+        let audioObject = new Audio()
+        audioObject.src = dataUri
         this.props.actions.importAudio(audioObject)
+        this.setState({ isConvertingWav: false})
+        
     }
 
     render () {
@@ -283,7 +296,7 @@ class SoundController extends Component {
                             onChange={this.props.actions.toggleSettings.bind(this, !this.props.isExpanded)}
                         />
 
-                    <button className={"ui right floated button "+(!this.props.currentBuffer ? "disabled" : "")} title="Import" onClick={this.importWav.bind(this)}>
+                    <button className={"ui right floated button "+(!this.props.currentBuffer ? "disabled " : "")+(this.state.isConvertingWav ? "loading" : "")} title="Import" onClick={this.importWav.bind(this)}>
                         <i className="add square icon"></i> Import
                     </button>
 

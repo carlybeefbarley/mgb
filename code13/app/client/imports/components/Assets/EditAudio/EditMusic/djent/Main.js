@@ -76,17 +76,13 @@ export default class Main extends Component {
         this.props.actions.updateFadeIn = this.updateFadeIn.bind(this)
         this.props.actions.toggleSettings = this.toggleSettings.bind(this)
 
-        
-
-
     }
 
-    
 
     componentWillMount = () => {
         const shareID = this.props.params.shareID;
 
-        console.log(this.props.actions)
+        // console.log(this.props.actions)
 
         handleGoogleAPI()
             .then(() => {
@@ -98,7 +94,7 @@ export default class Main extends Component {
         if (!shareID) {
             const presetID = this.props.params.presetID || this.props.activePresetID;
             const preset = presets.find(preset => preset.id === presetID) || presets.find(preset => preset.id === this.props.activePresetID);
-            console.log('apply preset')
+            // console.log('apply preset')
             return this.props.actions.applyPreset(preset);
         }
 
@@ -110,11 +106,9 @@ export default class Main extends Component {
 
     }
 
-
     // ********** actions *******************
     applyPreset(preset){
-        console.log('apply preset new', preset)
-     
+        // console.log('apply preset new', preset)
 
         let instruments = preset.settings.instruments
         // add missing instruments

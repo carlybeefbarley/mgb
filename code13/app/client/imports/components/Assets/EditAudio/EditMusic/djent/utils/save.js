@@ -5,16 +5,19 @@ const saveAsWAVFile = (() => {
     a.style = "display: none";
     document.body.appendChild(a);
 
-    return (audioBuffer) => {
+    return (audioBuffer, cb) => {
         const wav = audioBufferToWav(audioBuffer);
         const blob = new window.Blob([ new DataView(wav) ], {
           type: 'audio/wav'
         })
 
-        let audio = new Audio()
-        audio.src = window.URL.createObjectURL(blob)
+        var fileReader = new FileReader()
+        fileReader.onload = function() {
+            cb( this.result )
+        }
+        fileReader.readAsDataURL(blob)
 
-        return audio
+        // return audio
         // const url = window.URL.createObjectURL(blob)
 
         // a.href = url

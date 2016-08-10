@@ -11,7 +11,9 @@ import WaveSurfer from '../lib/WaveSurfer.js';
 export default class EditMusic extends React.Component {
 
 	constructor(props) {
-  	super(props);
+  	super(props)
+
+  	console.log(props.asset.content2)
 
   	// console.log(props.asset.content2);
 

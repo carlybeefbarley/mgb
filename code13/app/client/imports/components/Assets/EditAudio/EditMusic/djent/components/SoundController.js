@@ -30,6 +30,7 @@ import SVG from './SVG';
 import Waveform from './Waveform';
 import ContinuousGenerationController from './ContinuousGenerationController';
 import Switch from './Switch';
+import audioBufferToWav from 'audiobuffer-to-wav';
 
 const getSequences = (grooveTotalBeats, allowedLengths, hitChance) => {
     const mainBeat       = generateSequence({ totalBeats: grooveTotalBeats, allowedLengths, hitChance });
@@ -236,10 +237,19 @@ class SoundController extends Component {
     importWav(){
         var self = this
         this.setState({ isConvertingWav: true})
-        let audioObject = saveAsWAVFile(this.props.currentBuffer, function(dataUri){
-            self.importWavCB(dataUri)
+
+        const wav = audioBufferToWav(this.props.currentBuffer);
+        const blob = new window.Blob([ new DataView(wav) ], {
+          type: 'audio/wav'
         })
 
+        var fileReader = new FileReader()
+        fileReader.onload = function() {
+            self.importWavCB( this.result )
+        }
+        fileReader.readAsDataURL(blob)
+
+        // saveAsWAVFile( this.props.currentBuffer, dataUri => this.importWavCB(dataUri) )
         // console.log('import wav', audioObject)
         // this.props.actions.importAudio(audioObject)
     }

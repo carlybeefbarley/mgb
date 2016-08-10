@@ -52,26 +52,27 @@ export default class Djent extends Component {
             isExpanded: false,
         }
 
-        // this.props.actions.importAudio = this.props.importAudio
+        this.actions = {}
 
-        this.props.actions.applyPreset = this.applyPreset.bind(this)
-        this.props.actions.updateHitChance = this.updateHitChance.bind(this)
-        this.props.actions.updateBeats = this.updateBeats.bind(this)
-        this.props.actions.updateAllowedLengths = this.updateAllowedLengths.bind(this)
-        this.props.actions.updateBPM = this.updateBPM.bind(this)
-        this.props.actions.updateInstrumentSound = this.updateInstrumentSound.bind(this)
-        this.props.actions.updateInstrumentPitch = this.updateInstrumentPitch.bind(this)
-        this.props.actions.updateCustomPresetInstruments = this.updateCustomPresetInstruments.bind(this)        
+        this.actions.importAudio = this.props.importAudio
+        this.actions.applyPreset = this.applyPreset.bind(this)
+        this.actions.updateHitChance = this.updateHitChance.bind(this)
+        this.actions.updateBeats = this.updateBeats.bind(this)
+        this.actions.updateAllowedLengths = this.updateAllowedLengths.bind(this)
+        this.actions.updateBPM = this.updateBPM.bind(this)
+        this.actions.updateInstrumentSound = this.updateInstrumentSound.bind(this)
+        this.actions.updateInstrumentPitch = this.updateInstrumentPitch.bind(this)
+        this.actions.updateCustomPresetInstruments = this.updateCustomPresetInstruments.bind(this)        
 
-        this.props.actions.updateIsPlaying = this.updateIsPlaying.bind(this)
-        this.props.actions.updateIsLooping = this.updateIsLooping.bind(this)
-        this.props.actions.updateGenerationState = this.updateGenerationState.bind(this)
-        this.props.actions.updateCurrentBuffer = this.updateCurrentBuffer.bind(this)
-        this.props.actions.updateCurrentSrc = this.updateCurrentSrc.bind(this)
+        this.actions.updateIsPlaying = this.updateIsPlaying.bind(this)
+        this.actions.updateIsLooping = this.updateIsLooping.bind(this)
+        this.actions.updateGenerationState = this.updateGenerationState.bind(this)
+        this.actions.updateCurrentBuffer = this.updateCurrentBuffer.bind(this)
+        this.actions.updateCurrentSrc = this.updateCurrentSrc.bind(this)
 
-        this.props.actions.updateContinuousGeneration = this.updateContinuousGeneration.bind(this)
-        this.props.actions.updateFadeIn = this.updateFadeIn.bind(this)
-        this.props.actions.toggleSettings = this.toggleSettings.bind(this)
+        this.actions.updateContinuousGeneration = this.updateContinuousGeneration.bind(this)
+        this.actions.updateFadeIn = this.updateFadeIn.bind(this)
+        this.actions.toggleSettings = this.toggleSettings.bind(this)
 
     }
 
@@ -82,7 +83,7 @@ export default class Djent extends Component {
 
         const preset = presets.find(preset => preset.id === presetID) || presets.find(preset => preset.id === this.state.activePresetID);
         // console.log('apply preset')
-        return this.props.actions.applyPreset(preset);
+        return this.actions.applyPreset(preset);
     }
 
     // ********** actions *******************
@@ -281,7 +282,7 @@ export default class Djent extends Component {
         const totalBeat = this.state.preset.settings.beats.find(beat => beat.id === 'total');
         const beats = this.state.preset.settings.beats
             .filter(beat => beat.id !== 'total')
-            .map((beat, i) => <BeatPanel beat={ beat } actions={this.props.actions} preset={this.state.preset} key={i} /> );
+            .map((beat, i) => <BeatPanel beat={ beat } actions={this.actions} preset={this.state.preset} key={i} /> );
 
         return (
             <section>
@@ -295,7 +296,7 @@ export default class Djent extends Component {
                                     Preset
                                 </span>
                                 &nbsp;&nbsp;
-                                <PresetController activePresetID={this.state.activePresetID} actions={this.props.actions} />
+                                <PresetController activePresetID={this.state.activePresetID} actions={this.actions} />
                             </div>
  
                             <Panel>
@@ -332,7 +333,7 @@ export default class Djent extends Component {
                                         fadeIn={this.state.fadeIn}
                                         isExpanded={this.state.isExpanded}
 
-                                        actions={this.props.actions}
+                                        actions={this.actions}
                                     />
 
                                 </div>
@@ -346,14 +347,14 @@ export default class Djent extends Component {
                                         <h3>Main Settings</h3>
 
                                         <div className="row">
-                                            <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.props.actions} />
+                                            <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.actions} />
                                             &nbsp;&nbsp;
-                                            <BPMTapper actions={this.props.actions} />
+                                            <BPMTapper actions={this.actions} />
                                             &nbsp;&nbsp;
 
                                             <BeatsController
                                                 beat={ totalBeat }
-                                                actions={this.props.actions}
+                                                actions={this.actions}
                                             />
                                                 
                                         </div>
@@ -371,10 +372,10 @@ export default class Djent extends Component {
 
                                     <InstrumentList
                                         actions={{
-                                            disableModal: this.props.actions.disableModal,
-                                            enableModal: this.props.actions.enableModal,
-                                            updateInstrumentSound: this.props.actions.updateInstrumentSound,
-                                            updateInstrumentPitch: this.props.actions.updateInstrumentPitch,
+                                            disableModal: this.actions.disableModal,
+                                            enableModal: this.actions.enableModal,
+                                            updateInstrumentSound: this.actions.updateInstrumentSound,
+                                            updateInstrumentPitch: this.actions.updateInstrumentPitch,
                                         }}
                                         instruments={this.state.preset.settings.instruments}
                                     />

@@ -3,9 +3,9 @@ import {
     ProgramChangeEvent,
     Track,
     Writer,
-} from '../libraries/MidiWriter';
+} from './MidiWriter';
 
-import { initialState as configInitialState } from '../reducers/config';
+// import { initialState as configInitialState } from '../reducers/config';
 
 import { compose, roundToXPlaces } from './tools';
 

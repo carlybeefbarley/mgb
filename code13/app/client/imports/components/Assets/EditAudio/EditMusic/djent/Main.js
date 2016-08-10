@@ -13,11 +13,12 @@ import BPMController from './components/BPMController';
 import BPMTapper from './components/BPMTapper';
 import SoundController from './components/SoundController';
 import Visualiser from './components/Visualiser';
+import Modal from './components/Modal';
 
 
-import FadeController from './containers/FadeController';
-import Modal from './containers/Modal';
-import ShareController from './containers/ShareController';
+// import FadeController from './containers/FadeController';
+// import Modal from './containers/Modal';
+// import ShareController from './containers/ShareController';
 
 
 
@@ -65,6 +66,7 @@ export default class Main extends Component {
         this.props.actions.updateBPM = this.updateBPM.bind(this)
         this.props.actions.updateInstrumentSound = this.updateInstrumentSound.bind(this)
         this.props.actions.updateInstrumentPitch = this.updateInstrumentPitch.bind(this)
+        this.props.actions.updateCustomPresetInstruments = this.updateCustomPresetInstruments.bind(this)        
 
         this.props.actions.updateIsPlaying = this.updateIsPlaying.bind(this)
         this.props.actions.updateIsLooping = this.updateIsLooping.bind(this)
@@ -258,11 +260,16 @@ export default class Main extends Component {
     updateInstrumentPitch({ instrumentID, value }) {
         console.log('updateInstrumentPitch', instrumentID, value, confineToRange(value, -1200, 1200))
 
+        // return {
+        //     type: 'UPDATE_INSTRUMENT_DETUNE_PROP',
+        //     payload: { instrumentID, value: confineToRange(value, -1200, 1200) },
+        // };
+    }
 
-        return {
-            type: 'UPDATE_INSTRUMENT_DETUNE_PROP',
-            payload: { instrumentID, value: confineToRange(value, -1200, 1200) },
-        };
+    updateCustomPresetInstruments(instruments) {
+        // let preset = this.state.preset
+        // preset.settings.instruments = instruments
+        // this.setState({ preset: preset })
     }
 
 

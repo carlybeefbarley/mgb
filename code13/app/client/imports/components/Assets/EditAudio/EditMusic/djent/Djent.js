@@ -2,16 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
-import configureStore from './store/configureStore';
+// import configureStore from './store/configureStore';
 import defaultInstruments from './utils/default-instruments.js';
 import Main from './Main.js';
 
-import * as configActions from './actions/config';
-import * as instrumentsActions from './actions/instruments';
-import * as modalActions from './actions/modal';
-import { updateBeats } from './actions/beats';
+// import * as configActions from './actions/config';
+// import * as instrumentsActions from './actions/instruments';
+// import * as modalActions from './actions/modal';
+// import { updateBeats } from './actions/beats';
 
-const store = configureStore();
+// const store = configureStore();
 
 const initialState = {
     allowedLengths			 : [],
@@ -62,10 +62,10 @@ const allowedLengths = [
 ]
 
 const actions = {
-    ...configActions,
-    ...instrumentsActions,
-    ...modalActions,
-    updateBeats
+    // ...configActions,
+    // ...instrumentsActions,
+    // ...modalActions,
+    // updateBeats
 }
 
 export default class Djent extends React.Component {
@@ -81,8 +81,7 @@ export default class Djent extends React.Component {
 	render(){
 		
 		return (
-			<Provider store={store}>
-       <div className="TestClass">
+       <div className="generatorRoot">
        	
        	<Main
        		allowedLengths={allowedLengths}
@@ -95,7 +94,6 @@ export default class Djent extends React.Component {
        	/>
 
        </div>
-    	</Provider>
 		)
 	}
 

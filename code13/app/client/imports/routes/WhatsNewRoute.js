@@ -34,7 +34,7 @@ export default WhatsNewRoute = React.createClass({
         "profile.latestNewsTimestampSeen": latestNewsTimestampSeen
       }, (error) => {
         if (error)
-          console.log("Could not update profile with news timestamp")      
+          console.log("Could not update profile with What's New timestamp")      
       });      
       
     }
@@ -171,12 +171,20 @@ export default WhatsNewRoute = React.createClass({
       <div className="ui icon items">
         { rel.changes.map( (c, idx) => {
           return (
-            <div className="ui item" key={c.changeName} >
+            <div className="ui icon item" key={c.changeName} >
               { this.getIconForChangeType(c.type) }
               <div className="content">
                 <div className="header"><small>{c.changeName}</small></div>
                 <div className="meta">
-                  <p>{ rel.changes[idx].changeSummary }</p>
+                  <p>{ c.changeSummary }</p>
+                  { c.otherUrls && c.otherUrls.length && c.otherUrls.length > 0 ?  
+                    (
+                      <ul>
+                      { c.otherUrls.map( (u, idx) => (<li><a href={u.href} key={idx} target="_blank">{u.txt}</a></li>) )
+                      }
+                    </ul>
+                    ) : null
+                  }
                 </div>
               </div>
             </div>

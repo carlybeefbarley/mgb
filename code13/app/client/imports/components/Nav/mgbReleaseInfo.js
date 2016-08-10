@@ -16,6 +16,50 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     {
+      "timestamp":     "Wed Aug 10 2016 15:00:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "1067"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+
+        {
+          "featureTag":     "asset.code",
+          "type":           "feature",
+          "changeName":     "Code Editor: ES6 and JSX",
+          "changeSummary":  "The MGB Code Editor and Code Runner now support ECMAScript 6 and JSX. " + 
+                            "ECMAScript 6 (ES6) is sometimes called 'Javascript 2015' and provides many significant improvements " + 
+                            "beyond 'older' javascript versions. In order to maintain compatibility with all browsers, MGB " + 
+                            "automatically converts ES6 code into the older style of javascript before yoru game runs.  " + 
+                            "React is a popular Javascript framework for UI (User Interfaces) and is actually the one that we use for MGB itself.  " + 
+                            "We are looking at ways to let you write your own games' UI in React, but your game-loop code in " + 
+                            "game-oriented frameworks such as PhaserJS.. " + 
+                            "This will give a hybrid game+UI programming model that should make it easy to make games that also need a lot of " + 
+                            "Custom User Interface code",
+          "otherUrls":      [ 
+            { txt: "JSX/React MGB Code example", href: "https://v2.mygamebuilder.com/u/stauzs/asset/3bSLWyb3jDHbDqYCQ" },
+            { txt: "ES6 New Features summary", href: "http://es6-features.org/"},
+            { txt: "React/JS Getting started", href: "https://facebook.github.io/react/docs/displaying-data.html"}
+          ]
+        },
+        {
+          "featureTag":     "asset.music",
+          "type":           "feature",
+          "changeName":     "Music Generator (Metal)",
+          "changeSummary":  "MGB's Thematic music generator UI is now properly UI-styled. This first music generator still only supports 'heavy metal' -themed music, but more music themes will follow. This first music generator is based on https://djen.co/",
+          "otherUrls":      []
+        }
+      ]
+    },
+
+    {
       "timestamp":     "Sat Aug 06 2016 23:50:00 GMT-0700 (PDT)",
       
       "id": {

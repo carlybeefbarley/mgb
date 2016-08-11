@@ -189,7 +189,7 @@ export default class EditCode extends React.Component {
     this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
     
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
-    this.codeMirror.on("cursorActivity", this.codeMirrorUpdateHints.bind(this, false))
+    this.codeMirror.on("cursorActivity", this.codeMirrorOnCursorActivity.bind(this, false))
 
 
     this._currentCodemirrorValue = this.props.asset.content2.src || '';
@@ -217,6 +217,12 @@ export default class EditCode extends React.Component {
   }
 
 
+  codeMirrorOnCursorActivity() 
+  {
+    // Indirecting this to help with debugging and maybe some future optimizations
+    this.codeMirrorUpdateHints(false)  
+  }
+
   componentWillUnmount()
   {
     $(window).off("resize", this.edResizeHandler)
@@ -239,8 +245,9 @@ export default class EditCode extends React.Component {
     let newVal = nextProps.asset.content2.src
     
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
-      this.codeMirror.setValue(newVal);
-      this.codeMirror.setCursor(currentCursor);
+      this.codeMirror.setValue(newVal)
+      this._currentCodemirrorValue = newVal       // This needs to be done here or we will loop around forever
+      this.codeMirror.setCursor(currentCursor)    // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
     }  
   }
   

@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
   "releases":
   [ 
     {
-      "timestamp":     "Wed Aug 10 2016 16:45:00 GMT-0700 (PDT)",
+      "timestamp":     "Wed Aug 10 2016 18:20:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
         "state":       "alpha",
-        "iteration":   "1070"
+        "iteration":   "1073"
       },
 
       "releaseManagement": {
@@ -54,6 +54,13 @@ export default mgbReleaseInfo = {
           "type":           "feature",
           "changeName":     "Music Generator (Metal)",
           "changeSummary":  "MGB's Thematic music generator UI is now properly UI-styled. This first music generator still only supports 'heavy metal' -themed music, but more music themes will follow. This first music generator is based on https://djen.co/",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.code",
+          "type":           "bugfix",
+          "changeName":     "Fixed Code Edit collab loop",
+          "changeSummary":  "Fixed bug where watching another person edit code would go into an infinite loop of refreshing the source analysis",
           "otherUrls":      []
         }
       ]

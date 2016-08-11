@@ -8,16 +8,33 @@ importScripts("https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.1/jshint.min.js
 
 onmessage = function(e) {
   var str = e.data[0]
-  var trans = Babel.transform(str, {
-    compact: false,           // Default of "auto" fails on ReactImport
-    presets: ['react'],
-    plugins: ['transform-class-properties'],
-    retainLines: true
-  })
+  var code;
+  var trans;
+  var babelError;
+  try {
+    trans = Babel.transform(str, {
+      compact: false,           // Default of "auto" fails on ReactImport
+      presets: ['react'],
+      plugins: ['transform-class-properties'],
+      retainLines: true
+    })
+    code = trans.code
+  }
+  // TODO: what to do if babel fails to transform code?
+  catch(e){
+    code = str.substring(0, e.pos);
+    babelError = {
+      line: e.loc.line,
+      code: "EXXX",
+      reason: e.message.substring(0, e.message.indexOf("(") - 1)
+    }
+  }
 
 
   var conf = e.data[1]
-  JSHINT(trans.code, conf)
+  JSHINT(code, conf)
+  var errors = [JSHINT.errors]
+  babelError && errors.concat(babelError)
 
-  postMessage([JSHINT.errors])
+  postMessage(errors)
 };

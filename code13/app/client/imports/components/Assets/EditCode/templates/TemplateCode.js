@@ -1,17 +1,3 @@
-
-/*
-TODO: react templates can use:
- static defaultProps = {
-  name: "World"
- }
-
- static propTypes = {
-  imrequired: React.PropTypes.object.isRequired
- }
-But jshint complains about these
-need to fix that somehow in the future
- */
-
 export const templateCode = [
   
   { label: "PhaserJS outline",
@@ -138,6 +124,19 @@ function render()
 import React from "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.0/react.js"
 
 export default class extends React.Component {
+
+  /*
+    Define default values for your props
+  */
+  static defaultProps = {}
+
+  /*
+    React.PropTypes exports a range of validators that can be used to make sure the data you receive is valid.
+    When an invalid value is provided for a prop, a warning will be shown in the JavaScript console.
+    Note that for performance reasons propTypes is only checked in development mode
+    https://facebook.github.io/react/docs/reusable-components.html
+  */
+  static propTypes = {}
 
   constructor(...args) {
     super(...args)

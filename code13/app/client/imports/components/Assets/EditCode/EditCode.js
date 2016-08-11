@@ -500,8 +500,9 @@ export default class EditCode extends React.Component {
         unused: true,
         loopfunc: true,
         predef: {
-          "require": false,
-          "exports": false,
+          "alert": false,// why alert is not defined?
+          //"require": false,
+          //"exports": false,
           "Phaser": false,
           "PIXI": false,
           "console": false,

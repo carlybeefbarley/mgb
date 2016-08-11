@@ -175,9 +175,12 @@ window.onload = function() {
 
     console.trace("Transpiling " + filename + " (" + srcText.length + " bytes)")
     tr = Babel.transform(srcText, {
-      filename: filename, 
+      filename: filename,
       compact: false,           // Default of "auto" fails on ReactImport
-      presets: ['es2015', 'react'] });
+      presets: ['es2015', 'react'],
+      plugins: ['transform-class-properties'],
+      retainLines: true
+    });
     console.trace("Transpilation yielded " + tr.code.length + " bytes")
     return tr;
   }

@@ -170,12 +170,12 @@ export default class EditCode extends React.Component {
       ],
       extraKeys: {
         "Alt-F": "findPersistent",
-        "'.'": this.codeEditPassAndHint,
+        "'.'": cm => {this.codeEditPassAndHint(cm)},
         "Ctrl-Space": (cm) => { this.ternServer.complete(cm); },
         "Ctrl-I": (cm) => { this.ternServer.showType(cm); },
         "Ctrl-D": (cm) => { this.ternServer.showDocs(cm); },
         "Alt-J": (cm) => { this.ternServer.jumpToDef(cm); },
-        "Ctrl-B": this.handleJsBeautify.bind(this),
+        "Ctrl-B": (cm) => {this.handleJsBeautify(cm); },
         "Alt-,": (cm) => { this.ternServer.jumpBack(cm); },
         "Ctrl-Q": (cm) => { this.ternServer.rename(cm); },
         "Ctrl-S": (cm) => { this.ternServer.selectName(cm); },
@@ -492,13 +492,16 @@ export default class EditCode extends React.Component {
         browser: true,
         esversion: 6,
         asi: true,
+
         //globalstrict: true,
-        //strict: "implied",
+        strict: "implied",
 
         undef: true,
         unused: true,
         loopfunc: true,
         predef: {
+          "require": false,
+          "exports": false,
           "Phaser": false,
           "PIXI": false,
           "console": false,

@@ -27,7 +27,7 @@ import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/fold/comment-fold';
 import 'codemirror/addon/fold/xml-fold';
 import 'codemirror/addon/lint/lint';
-import 'codemirror/addon/lint/javascript-lint';
+// import 'codemirror/addon/lint/javascript-lint';
 import 'codemirror/addon/lint/json-lint';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/addon/search/jump-to-line';

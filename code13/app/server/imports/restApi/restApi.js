@@ -2,7 +2,7 @@
 
 // This file should be imported by /server/main_server.js
 
-import { Azzets } from '/imports/schemas';
+import { Azzets, Users } from '/imports/schemas';
 import dataUriToBuffer from 'data-uri-to-buffer';
 import AWS from 'aws-sdk';
 import pako from 'pako';
@@ -347,6 +347,7 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
   }
 });
 
+
 // allow to export some libs 1 - allow to all 2 - allow to subscribers (e.g. for heavy libs or proprietary libs.. and etc)?
 const allowedLibs = {react: 1};
 // get code by id - tmp used for es6 import
@@ -384,15 +385,68 @@ RestApi.addRoute('asset/code/:id', {authRequired: false}, {
     }
     else{
       let asset = Azzets.findOne(this.urlParams.id)
+      if(!asset){
+        return {statusCode: 404}
+      }
       content = asset.content2.src;
     }
 
-
     if(content) {
-      return {statusCode: 200, headers: {'Content-Type': "text/plain"}, body: content};
+      return {
+        statusCode: 200,
+        headers: {'Content-Type': "text/plain", 'file-name': asset.name},
+        body: content
+      };
     }
     // try to create required import
     else {
+      return {statusCode: 404}
+    }
+  }
+})
+
+// used in codeEdit - import X from '/codeName' - referrer is added automatically
+RestApi.addRoute('asset/code/:referrer/:name', {authRequired: false}, {
+  get: function(){
+    const referrer = Azzets.findOne(this.urlParams.referrer);
+    const asset = Azzets.findOne({owner: referrer.owner, name: this.urlParams.name})
+    if(asset) {
+      return {
+        statusCode: 200,
+        // filename header - idea is to tell e.g. ajax asset name
+        headers: {'Content-Type': "text/plain", 'file-name': asset.name},
+        body: asset.content2.src || "\n" // without new line API returns JSON
+      };
+    }
+    else{
+      return {statusCode: 404}
+    }
+  }
+})
+
+// TODO: permission check ?
+// used in codeEdit - import X from '/owner/codeName' - referrer is added automatically
+RestApi.addRoute('asset/code/:referrer/:owner/:name', {authRequired: false}, {
+  get: function(){
+    console.log("finding code:",this.urlParams );
+    // referrer is not used here
+    /*
+    const owner = Users.findOne({"profile.name": this.urlParams.owner})
+    if(!owner){
+      return {statusCode: 404}
+    }
+    */
+
+    const asset = Azzets.findOne({dn_ownerName: this.urlParams.owner, name: this.urlParams.name})
+    console.log(asset);
+    if(asset) {
+      return {
+        statusCode: 200,
+        headers: {'Content-Type': "text/plain", 'file-name': asset.name},
+        body: asset.content2.src
+      };
+    }
+    else{
       return {statusCode: 404}
     }
   }

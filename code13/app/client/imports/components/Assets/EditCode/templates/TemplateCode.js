@@ -129,16 +129,7 @@ export default class extends React.Component {
 
   constructor(...args) {
     super(...args)
-  }
-
-  /*
-    Invoked once before the component is mounted.
-    The return value will be used as the initial value of this.state
-  */
-  getInitialState() {
-    return {
-
-    }
+    this.state = {}
   }
 
   /*

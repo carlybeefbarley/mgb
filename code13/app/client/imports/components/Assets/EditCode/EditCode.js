@@ -883,7 +883,8 @@ export default class EditCode extends React.Component {
     this._postMessageToIFrame(
       {
         mgbCommand: 'startRun',
-        codeToRun: src, 
+        codeToRun: src,
+        asset_id: asset._id,
         filename: asset.name || "",
         gameEngineScriptToPreload: gameEngineJsToLoad
       })    

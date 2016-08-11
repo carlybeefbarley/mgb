@@ -36,7 +36,10 @@ function _getCaller() {
 
 window.onload = function() {
   _isAlive = true;
+  // here will be stored all imported objects
   var imports = {};
+  var asset_id;
+
   window.require = function(key){
     return imports[key];
   };
@@ -105,50 +108,7 @@ window.onload = function() {
     head.appendChild(script);
   }
 
-  // TODO: find out if we can get imports from babel AST
-  function parseImport(src){
-    var toFind = "require";
-    var buffer = '';
-    var ret = [];
-    var getImport = function(char){
-      if(char == " "){
-        return;
-      }
-      buffer += char;
-      if(buffer.length > toFind.length){
-        buffer = buffer.substring(1);
-      }
-      if(buffer == toFind){
-        buffer = '';
-        cb = getSource
-      }
-    }
-    var getSource = function(char){
-      if(char == " "){
-        return;
-      }
-      if(buffer == '' && char != "("){
-        cb = getImport;
-        cb(char);
-        return;
-      }
-      if(char == ")"){
-        // strip (' and final '
-        buffer = buffer.substring(2, buffer.length - 1);
-        ret.push(buffer)
-        buffer = '';
-        cb = getImport;
-      }
-      buffer += char;
-    }
-    var cb = getImport;
-    for(var i=0; i<src.length - 1; i++){
-      cb(src.substring(i, i+1))
-    }
-    return ret;
-  }
-
-  function parseImport2(babel){
+  function parseImport(babel){
     var imp = babel.metadata.modules.imports
     var ret = []
     for(var i=0; i<imp.length; i++){
@@ -156,13 +116,21 @@ window.onload = function() {
     }
     return ret
   }
-
+  function isExternalFile(url){
+    return !(url.indexOf("http") !== 0 && url.indexOf("//") !== 0)
+  }
   // TODO: somehow resolve user's script and global lib
   function loadImport(urlFinalPart, cb) {
     var url;
-    if(urlFinalPart.indexOf("http") !== 0 && urlFinalPart.indexOf("//") !== 0){
+    // import X from '/asset name' or import X from '/user/asset name'
+    if(urlFinalPart.indexOf("/") === 0 && urlFinalPart.indexOf("//") === -1){
+      url = '/api/asset/code/' + asset_id + urlFinalPart
+    }
+    // import X from 'http://cdn.com/x'
+    else if(!isExternalFile(urlFinalPart)){
       url = '/api/asset/code/' + urlFinalPart
     }
+    // import X from '_id'
     else{
       url = urlFinalPart
     }
@@ -182,9 +150,10 @@ window.onload = function() {
         // hack for React like module loading
         else{
           imports[urlFinalPart] = window.module.exports;
-          const small = urlFinalPart.split("/").pop().split(".").shift();
-          if(small){
-            imports[small] = window.module.exports;
+          // extract short name from url - e.g. react
+          var shortName = urlFinalPart.split("/").pop().split(".").shift();
+          if(shortName){
+            imports[shortName] = window.module.exports;
           }
         }
         cb && cb()
@@ -193,10 +162,19 @@ window.onload = function() {
     httpRequest.open('GET', url, true);
     httpRequest.send(null);
   }
+  // TODO: not all scripts needs to be transpiled - figure out - how to tell difference
   function transform(srcText, filename) {
     // TODO: detect presets from code ?
+    var tr;
+    if(isExternalFile(filename)){
+      // return structure compatible with babel
+      tr = Babel.transform('', {filename: filename, compact: false});
+      tr.code = srcText;
+      return tr
+    }
+
     console.trace("Transpiling " + filename + " (" + srcText.length + " bytes)")
-    var tr = Babel.transform(srcText, { 
+    tr = Babel.transform(srcText, {
       filename: filename, 
       compact: false,           // Default of "auto" fails on ReactImport
       presets: ['es2015', 'react'] });
@@ -209,7 +187,7 @@ window.onload = function() {
   function loadScriptFromText(srcText, filename, callback) {
 
     var output = transform(srcText, filename);
-    var imports = parseImport2(output);
+    var imports = parseImport(output);
 
     // loaded gets called one extra time
     var ready = function(){
@@ -217,13 +195,17 @@ window.onload = function() {
       // technically document head can be used: https://developer.mozilla.org/en-US/docs/Web/API/Document/head
       var head = document.getElementsByTagName('head')[0];
       var script = document.createElement('script');
-
+      var name = filename || "_doc_"+ (++scriptsLoaded) +"";
+      var cb;
+      if(name.substr(-3) != ".js"){
+        name += ".js";
+      }
       script.type = 'text/javascript';
       // todo: load asset name also and make sourceURL more recognizable???
-      script.text = output.code + "\n//# sourceURL=_doc_"+ (++scriptsLoaded) +".js" ;
+      script.text = output.code + "\n//# sourceURL=" + name;
       if (callback) {
         // execute on the next tick
-        var cb = function(){
+        cb = function(){
           window.setTimeout(callback, 0);
         }
         // this does not work with script.text (only with script.src)
@@ -288,6 +270,9 @@ window.onload = function() {
     {
       mgbHostMessageContext.msgSource = e.source;
       mgbHostMessageContext.msgOrigin = e.origin;
+      // this is used to import nice filenames
+      // get owner_id from asset - and find asset
+      asset_id = e.data.asset_id
       try {
         loadScript(e.data.gameEngineScriptToPreload, function() {
           //  eval(e.data.codeToRun);  // NOT using eval since we can't get good window.onError information from it

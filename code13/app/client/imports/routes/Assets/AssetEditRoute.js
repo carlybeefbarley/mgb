@@ -85,10 +85,10 @@ export default AssetEditRoute = React.createClass({
 
 
   canEdit: function() {
-    return this.data.asset &&
+    return !!(this.data.asset &&
            !this.data.loading &&
            this.props.currUser && 
-           this.data.asset.ownerId === this.props.currUser._id
+           this.data.asset.ownerId === this.props.currUser._id)
   },
 
 

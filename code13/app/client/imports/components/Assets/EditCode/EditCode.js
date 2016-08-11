@@ -139,7 +139,7 @@ export default class EditCode extends React.Component {
       // typeTip: function(..) this would be a function that creates a DOM element to render the typeTip
     }
 
-    CodeMirror.tern = new CodeMirror.TernServer(myTernConfig)     // This is actually our instance which we have foolishly just attached to the global for now :( hack)
+    this.ternServer = new CodeMirror.TernServer(myTernConfig)
 
     InstallMgbTernExtensions(tern);
 
@@ -169,17 +169,17 @@ export default class EditCode extends React.Component {
         "mgb-cm-user-markers"
       ],
       extraKeys: {
-        "Alt-F": "findPersistent",        
+        "Alt-F": "findPersistent",
         "'.'": this.codeEditPassAndHint,
-        "Ctrl-Space": function(cm) { CodeMirror.tern.complete(cm); },
-        "Ctrl-I": function(cm) { CodeMirror.tern.showType(cm); },
-        "Ctrl-D": function(cm) { CodeMirror.tern.showDocs(cm); },
-        "Alt-J": function(cm) { CodeMirror.tern.jumpToDef(cm); },
+        "Ctrl-Space": (cm) => { this.ternServer.complete(cm); },
+        "Ctrl-I": (cm) => { this.ternServer.showType(cm); },
+        "Ctrl-D": (cm) => { this.ternServer.showDocs(cm); },
+        "Alt-J": (cm) => { this.ternServer.jumpToDef(cm); },
         "Ctrl-B": this.handleJsBeautify.bind(this),
-        "Alt-,": function(cm) { CodeMirror.tern.jumpBack(cm); },
-        "Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); },
-        "Ctrl-S": function(cm) { CodeMirror.tern.selectName(cm); },
-        "Ctrl-O": function(cm) { cm.foldCode(cm.getCursor()); }
+        "Alt-,": (cm) => { this.ternServer.jumpBack(cm); },
+        "Ctrl-Q": (cm) => { this.ternServer.rename(cm); },
+        "Ctrl-S": (cm) => { this.ternServer.selectName(cm); },
+        "Ctrl-O": (cm) => { cm.foldCode(cm.getCursor()); }
       },
       //lint: true,   // TODO - use eslint instead? Something like jssc?
       autofocus: true,
@@ -227,13 +227,20 @@ export default class EditCode extends React.Component {
   {
     $(window).off("resize", this.edResizeHandler)
     // TODO: Destroy CodeMirror editor instance?
+
+    this.jshintWorker.terminate();
+    this.jshintWorker = null;
+
+    // this also will terminate worker (if in worker mode)
+    this.ternServer.destroy();
+    this.ternServer = null;
   }
   
 
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
-      setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000)      // Pop up a helper after a second
-// CodeMirror.tern.getHint(cm, function (hint) 
+      setTimeout(() => {this.ternServer.complete(cm);}, 1000)      // Pop up a helper after a second
+// this.ternServer.getHint(cm, function (hint) 
 // {
 // console.log("HINT",hint)
 // })    
@@ -291,8 +298,8 @@ export default class EditCode extends React.Component {
     }
   }
 
-
-  doHandleCommentFadeDelta(delta) {    // delta should be -1 or +1
+  // delta should be -1 or +1
+  doHandleCommentFadeDelta(delta) {
     // 0. Set default Alpha now if it hasn't been set already
     if (this.CommentAlphaSetting === undefined)
       this.CommentAlphaSetting = 100   // Default is 100% Opacity
@@ -511,7 +518,7 @@ export default class EditCode extends React.Component {
 
   srcUpdate_GetInfoForCurrentFunction()
   {
-    let ternServer=CodeMirror.tern;
+    let ternServer=this.ternServer;
     let editor = this.codeMirror
     ternServer.updateArgHints(this.codeMirror);
     let currentCursorPos = editor.getCursor()
@@ -584,7 +591,7 @@ export default class EditCode extends React.Component {
   
   srcUpdate_GetRelevantTypeInfo()
   {
-    let ternServer=CodeMirror.tern
+    let ternServer=this.ternServer
     let editor = this.codeMirror      
     let position = editor.getCursor()
     var self = this
@@ -605,7 +612,7 @@ export default class EditCode extends React.Component {
 
   srcUpdate_GetRefs()
   {     
-    let ternServer=CodeMirror.tern
+    let ternServer=this.ternServer
     let editor = this.codeMirror      
     let position = editor.getCursor()
     var self = this
@@ -620,7 +627,7 @@ export default class EditCode extends React.Component {
 
   srcUpdate_GetDef()
   {
-    let ternServer=CodeMirror.tern
+    let ternServer=this.ternServer
     let editor = this.codeMirror      
     let position = editor.getCursor()
     var self = this
@@ -652,7 +659,7 @@ export default class EditCode extends React.Component {
   // srcUpdate_getProperties()
   // {
     /// This doesn't seem super useful. It's just an array of completion strings, no extra data
-  //   let ternServer=CodeMirror.tern
+  //   let ternServer=this.ternServer
   //   let editor = this.codeMirror      
   //   let position = editor.getCursor()
   //   var self = this
@@ -673,7 +680,7 @@ export default class EditCode extends React.Component {
   srcUpdate_getMemberParent()
   {
     if (showDebugAST) {
-      let ternServer = CodeMirror.tern
+      let ternServer = this.ternServer
       let editor = this.codeMirror
       let position = editor.getCursor()
       var self = this

@@ -231,12 +231,13 @@ export default class EditCode extends React.Component {
   
 
   codeEditPassAndHint(cm) {
-    setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000);      // Pop up a helper after a second
+    if (this.props.canEdit)
+      setTimeout(function() {CodeMirror.tern.complete(cm);}, 1000)      // Pop up a helper after a second
 // CodeMirror.tern.getHint(cm, function (hint) 
 // {
 // console.log("HINT",hint)
 // })    
-    return CodeMirror.Pass;       // Allow the typed character to be part of the document
+    return CodeMirror.Pass       // Allow the typed character to be part of the document
   }
 
   

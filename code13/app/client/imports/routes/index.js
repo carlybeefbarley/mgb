@@ -6,6 +6,7 @@ import createBrowserHistory from 'history/lib/createBrowserHistory'
 
 import App from './App';
 import Home from './Home';
+import Home_Z2 from './Home_Z2';
 import Users from './Users';
 import Azzets from './Assets';
 import Projects from './Projects';
@@ -18,7 +19,7 @@ import Roadmap from './Roadmap';
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
-// Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md 
+// Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md
 
 // Conventions for this MGB site are encoded in /client/imports/routes/urlMaker.js
 // MAINTAIN: Keep paths here in sync with /client/imports/routes/urlMaker.js
@@ -36,10 +37,11 @@ import Roadmap from './Roadmap';
 const history = createBrowserHistory()
 
 Meteor.startup(function () {
-  const router = 
+  const router =
     <Router history={browserHistory}>
       <Route component={App}>
         <Route path="/" component={Home} />
+        <Route path="/Home_Z2" component={Home_Z2} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
@@ -49,13 +51,13 @@ Meteor.startup(function () {
         <Route path="reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
 
         <Route path="users" component={Users.List} name="Search All Users" />
-        
+
         <Route path="user/:id" component={Users.Profile} name="User Profile"/>
         <Route path="u/:username" component={Users.Profile} name="User Profile"/>
 
         <Route path="user/:id/assets" component={Azzets.UserAssetList} name="Assets" />
         <Route path="u/:username/assets" component={Azzets.UserAssetList} name="Assets" />
-        
+
         <Route path="user/:id/asset/:assetId" component={Azzets.AssetEdit} name="Asset Editor" />
         <Route path="u/:username/asset/:assetId" component={Azzets.AssetEdit} name="Asset Editor" />
 
@@ -85,7 +87,7 @@ Meteor.startup(function () {
         <Route path="*" component={NotFoundPage} name="Page Not Found"/>
       </Route>
     </Router>
-    
+
   urlMaker.setKnownRoutes(router)
-  ReactDOM.render(router, document.getElementById('root'))    
+  ReactDOM.render(router, document.getElementById('root'))
 });

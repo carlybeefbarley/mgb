@@ -31,6 +31,7 @@ export default fpSuperAdmin = React.createClass({
 
         <div className="ui sub header">Deployment/Monitoring Quicklinks</div>
         <ul>
+          { linkLi("Google Analytics (RT)", "https://analytics.google.com/analytics/web/?authuser=0#realtime/rt-overview/a82379171w121883491p127579308/%3F_r.dsa%3D1%26_.advseg%3D%26_.useg%3D%26_.sectionId%3D/") }
           { linkLi("TrackJs (client errors)", "https://my.trackjs.com/messages") }
           { linkLi("Galaxy (PaaS)", "https://galaxy.meteor.com/app/v2.mygamebuilder.com") }
           { linkLi("Kadira (Meteor stats)", "https://ui.kadira.io/apps/e7zK3YN4QZijYhpmY/dashboard/overview") }

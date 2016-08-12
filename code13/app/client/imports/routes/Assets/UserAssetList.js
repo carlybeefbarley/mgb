@@ -282,17 +282,13 @@ export default UserAssetListRoute = React.createClass({
     let assets = this.data.assets       // list of assets provided via getMeteorData()
     let projects = this.data.projects   // can be null due to empty or still loading, or public-assets
 
-    const {user, ownsProfile, location} = this.props
+    const { user, ownsProfile, location } = this.props
+    const name = user ? user.profile.name : ""
     const qN = this.queryNormalized(location.query)
 
     // For some reason this isn't working as 'hidden divider' TODO - find out why
-    const hiddenDivider =  <div className="ui divider" style={{borderStyle: "none"}}></div>
+    const hiddenDivider = <div className="ui divider" style={{borderStyle: "none"}}></div>
 
-    if (user) {
-      var { _id, createdAt } = user;
-      var { name, avatar, bio, title, focusMsg, focusStart } = user.profile;     
-    }
-    
     return (
       <div className="ui horizontal segments" style={{border: 0}}>
 
@@ -314,7 +310,7 @@ export default UserAssetListRoute = React.createClass({
                     
           <div className="ui row">
             { user ? <ProjectSelector 
-                      canEdit={this.props.ownsProfile}
+                      canEdit={ownsProfile}
                       user={user}
                       handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
                       availableProjects={projects}
@@ -358,12 +354,8 @@ export default UserAssetListRoute = React.createClass({
 
         <div className="ui segment" style={{ minHeight: "600px"}}>        
           <div className="ui row">
-            <div className="four wide right floated column">
-              <div className="ui row">
-                <CreateAssetLinkButton />
-                <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
-              </div>
-            </div>
+            <CreateAssetLinkButton />
+            <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
           </div>
           
           { hiddenDivider }

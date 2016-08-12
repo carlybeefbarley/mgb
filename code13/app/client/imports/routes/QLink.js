@@ -50,14 +50,15 @@ export default QLink = React.createClass({
     state: PropTypes.object,
     activeStyle: PropTypes.object,
     activeClassName: PropTypes.string,
-    onlyActiveOnIndex: PropTypes.bool.isRequired,
+//  onlyActiveOnIndex: PropTypes.bool.isRequired,
     onClick: PropTypes.func,
-    target: PropTypes.string
+    target: PropTypes.string,
+    elOverride: PropTypes.string  // eg "div"
   },
   
   getDefaultProps: function () {
     return {
-      onlyActiveOnIndex: false,
+//  onlyActiveOnIndex: false,
       style: {}
     };
   },
@@ -94,9 +95,11 @@ export default QLink = React.createClass({
 
   render: function () {
     const p = this.props
+    const chosenEl = p.elOverride ? p.elOverride : Link
+    const pClean = _.omit(p, ["elOverride"])
 
     if (!p.nav)
-      return React.createElement(Link, Object.assign({}, p, { onClick: this.handleClick }))
+      return React.createElement(chosenEl, Object.assign({}, pClean, { onClick: this.handleClick }))
 
 
     // Now try the             <QLink nav="users" className="item"></QLink> variant
@@ -113,8 +116,8 @@ export default QLink = React.createClass({
     }
 
     return React.createElement(
-                      Link, 
-                      Object.assign({}, p, { to: newTo, onClick: this.handleClick }),
+                      chosenEl, 
+                      Object.assign({}, pClean, { to: newTo, onClick: this.handleClick }),
                       <span>{newText}</span>)
   }
   

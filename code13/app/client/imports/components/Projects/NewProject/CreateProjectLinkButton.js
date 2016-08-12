@@ -18,10 +18,10 @@ export default CreateProjectLinkButton = React.createClass({
     const to=`/u/${currUser.profile.name}/projects/create`
 
     return (
-      <div className="ui green compact tiny inverted menu">
-        <QLink to={to} className="item">
+      <div className="ui green tiny button">
+        <QLink to={to} className="item" elOverride="div">
           Create New Project
-          </QLink>
+        </QLink>
       </div>
     )
   }

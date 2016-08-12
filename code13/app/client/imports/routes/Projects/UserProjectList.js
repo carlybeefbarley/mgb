@@ -52,8 +52,11 @@ export default UserProjectList = React.createClass({
     if (this.data.loading)
       return <Spinner />
 
-    const canEd = this.canEdit()
     const ownerName = this.props.user.profile.name
+
+    // For some reason this isn't working as 'hidden divider' TODO - find out why
+    const hiddenDivider = <div className="ui divider" style={{borderStyle: "none"}}></div>
+
     
     return (
       <div className="ui basic segment">
@@ -67,6 +70,9 @@ export default UserProjectList = React.createClass({
 
         <h2 className="ui header">Projects owned by {ownerName}</h2>          
         <CreateProjectLinkButton currUser={this.props.currUser} />
+
+        { hiddenDivider }
+
         { this.renderProjectsAsCards(projects, true) }
 
         <div className="ui divider"></div>

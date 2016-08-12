@@ -1,6 +1,6 @@
-import _ from 'lodash';
-import React from 'react';
-import QLink from '/client/imports/routes/QLink';
+import _ from 'lodash'
+import React from 'react'
+import QLink from '/client/imports/routes/QLink'
 
 export default ProjectSelector = React.createClass({
   propTypes: {
@@ -25,13 +25,17 @@ export default ProjectSelector = React.createClass({
     _.each(this.props.availableProjects, (project) => { 
       let isActive = (project.name === pName)
       if (project.ownerId === this.props.user._id)
-        choices.push( <a className={"ui item"+ (isActive ? " active" : "")} 
-                        data-value={project} 
-                        key={project._id} 
-                        onClick={this.handleChangeSelectedProjectName.bind(this, project)}>
-                        { this.renderSelectionIcon(isActive ) }
-                        { project.name }
-                      </a>)    
+      {
+        choices.push( 
+          <a  className={"ui item"+ (isActive ? " active" : "")} 
+              data-value={project} 
+              key={project._id} 
+              onClick={this.handleChangeSelectedProjectName.bind(this, project)}>
+            { this.renderSelectionIcon(isActive ) }
+            { project.name }
+          </a>
+        )
+      }
     })
     
     // TODO: Show projects that user is Member of.. Can provide the navigator for those projects at least
@@ -61,25 +65,24 @@ export default ProjectSelector = React.createClass({
     // Create the       | ProjectSelect v |      UI        
         
     return (
-        <div className="ui simple dropdown item">        
-          Project: {pName || "(Any Project)"}
-          <i className="dropdown icon"></i>
-          <div className="ui right menu simple">
-            { choices }           
-            <div className="divider"></div>
-            <QLink className="ui item" to={this.props.ProjectListLinkUrl}>
-              { this.props.canEdit ? "Manage Projects" : "View Projects" }
-            </QLink>
-          </div>
+      <div className="ui simple dropdown item">        
+        Project: {pName || <small>(Any Project)</small>}
+        <i className="dropdown icon"></i>
+        <div className="ui right menu simple">
+          { choices }           
+          <div className="divider"></div>
+          <QLink className="ui item" to={this.props.ProjectListLinkUrl}>
+            { this.props.canEdit ? "Manage Projects" : "View Projects" }
+          </QLink>
         </div>
-    );
+      </div>
+    )
   },
 
   handleChangeSelectedProjectName: function(chosenProject)
   {
     if (this.props.handleChangeSelectedProjectName)
-      this.props.handleChangeSelectedProjectName(chosenProject ? chosenProject.name : null);
-  }
-  
+      this.props.handleChangeSelectedProjectName(chosenProject ? chosenProject.name : null)
+  }  
   
 })

@@ -312,7 +312,7 @@ export default class Toolbar extends React.Component {
         <div style={buttonGroupStyle} className={buttonGroupClassName}>
           { this.state.level < this.maxLevel-1 && 
             <div className="ui button hazPopup" 
-                style={{borderStyle: "dashed", borderWidth: "thin", opacity: "0.5"}}
+                style={{borderStyle: "dashed", borderColor: "green",  borderWidth: "thin", opacity: "0.5"}}
                 data-position="top center"
                 onClick={this.advertizeSlider.bind(this)}
                 data-content="More buttons available. Use the slider at the top of the page to show them">

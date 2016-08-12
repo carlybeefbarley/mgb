@@ -22,6 +22,12 @@ import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo';
 import urlMaker from './urlMaker';
 import webkitSmallScrollbars from './webkitSmallScrollbars.css';
 
+const getPagenameFromProps = function(props)
+{
+  // This works because <App> is the first Route in /app/client/imports/routes
+  return props.routes[1].name
+}
+
 export default App = React.createClass({
   mixins: [ReactMeteorData],
   // static propTypes = {
@@ -47,6 +53,20 @@ export default App = React.createClass({
   componentDidMount: function() {
     window.onkeydown = this.togglePanelsKeyHandler;
   },
+
+
+  componentWillReceiveProps: function(nextProps) {
+    // We are using https://github.com/okgrow/analytics but it does not automatically log 
+    // react-router routes, so we need a specific call when the page changes
+
+    // analytics is from the Meteor package okgrow:analytics
+
+    // See https://segment.com/docs/sources/website/analytics.js/#page for the analytics.page() params
+    analytics.page(getPagenameFromProps(nextProps), {
+      path: nextProps.location.pathname
+    })
+  },
+
 
   getInitialState: function() {
     return {

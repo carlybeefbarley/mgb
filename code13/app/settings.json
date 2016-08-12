@@ -8,5 +8,10 @@
   "kadira": { 
     "appId": "e7zK3YN4QZijYhpmY", 
     "appSecret": "99fe1486-f031-427c-95e2-a3fe9d48b828" 
-  }  
+  },
+   "public": {
+    "analyticsSettings": {
+      "Google Analytics" : {"trackingId": "UA-82379171-1"}
+    }
+  }
 }

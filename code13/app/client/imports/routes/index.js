@@ -1,20 +1,19 @@
-import _ from 'lodash';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router, Route, Link, NotFoundRoute, browserHistory } from 'react-router';
-import createBrowserHistory from 'history/lib/createBrowserHistory'
+import _ from 'lodash'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Router, Route, Link, NotFoundRoute, browserHistory } from 'react-router'
 
-import App from './App';
-import Home from './Home';
-import Home_Z2 from './Home_Z2';
-import Users from './Users';
-import Azzets from './Assets';
-import Projects from './Projects';
+import App from './App'
+import Home from './Home'
+import Home_Z2 from './Home_Z2'
+import Users from './Users'
+import Azzets from './Assets'
+import Projects from './Projects'
 
-import NotFoundPage from './NotFoundPage';
-import urlMaker from './urlMaker';
-import WhatsNewRoute from './WhatsNewRoute';
-import Roadmap from './Roadmap';
+import NotFoundPage from './NotFoundPage'
+import urlMaker from './urlMaker'
+import WhatsNewRoute from './WhatsNewRoute'
+import Roadmap from './Roadmap'
 
 
 // To understand this file...
@@ -34,11 +33,10 @@ import Roadmap from './Roadmap';
 // 1) All /users/:id are legacy and shoudl be removed soon (superceded July 6 2016)
 // 2) The /assetEdit/:assetId route  is legacy - it  will redirect to user/:id/asset/:assetId once it gets the owner User id from the asset
 
-const history = createBrowserHistory()
 
 Meteor.startup(function () {
   const router =
-    <Router history={browserHistory}>
+    <Router  history={browserHistory}>
       <Route component={App}>
         <Route path="/" component={Home} />
         <Route path="/Home_Z2" component={Home_Z2} />
@@ -90,4 +88,4 @@ Meteor.startup(function () {
 
   urlMaker.setKnownRoutes(router)
   ReactDOM.render(router, document.getElementById('root'))
-});
+})

@@ -225,8 +225,9 @@ export default class EditMGBUI extends React.Component {
     let newVal = nextProps.asset.content2.src
     
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
-      this.codeMirror.setValue(newVal);
-      this.codeMirror.setCursor(currentCursor);
+      this.codeMirror.setValue(newVal)
+      this._currentCodemirrorValue = newVal
+      this.codeMirror.setCursor(currentCursor)
     }  
   }
 

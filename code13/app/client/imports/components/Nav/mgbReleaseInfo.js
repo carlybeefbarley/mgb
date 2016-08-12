@@ -15,6 +15,47 @@
 export default mgbReleaseInfo = {
   "releases":
   [ 
+
+    {
+      "timestamp":     "Fri Aug 12 2016 11:30:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "1088"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+
+        {
+          "featureTag":     "asset.graphics",
+          "type":           "bugfix",
+          "changeName":     "Mouse/Trackpad scroll actions",
+          "changeSummary":  "The Mousewheel/trackapd scroll actions (change frame, change zoom, paste-effects etc) were not working on some browsers. "+
+                            "This has now been fixed by using a more standard 'wheel' event which is supported by more browsers",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphics",
+          "type":           "improvement",
+          "changeName":     "Import and Tile sizes",
+          "changeSummary":  "Improved the explanation and enforcement of Tile size and image import limits. Max graphic size is now 1024x1024, max frames per graphic is now 64",
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.graphics",
+          "type":           "improvement",
+          "changeName":     "Improved buttons",
+          "changeSummary":  "Some button sizes and hover-help text have been improved",
+          "otherUrls":      []
+        }
+      ]
+    },
+    
     {
       "timestamp":     "Wed Aug 10 2016 18:20:00 GMT-0700 (PDT)",
       

@@ -169,7 +169,7 @@ export default WhatsNewRoute = React.createClass({
     
     return  (
       <div className="ui icon items">
-        { rel.changes.map( (c, idx) => {
+        { rel.changes.map( (c) => {
           return (
             <div className="ui icon item" key={c.changeName} >
               { this.getIconForChangeType(c.type) }
@@ -180,7 +180,7 @@ export default WhatsNewRoute = React.createClass({
                   { c.otherUrls && c.otherUrls.length && c.otherUrls.length > 0 ?  
                     (
                       <ul>
-                      { c.otherUrls.map( (u, idx) => (<li><a href={u.href} key={idx} target="_blank">{u.txt}</a></li>) )
+                      { c.otherUrls.map( (u, idx) => (<li key={idx}><a href={u.href} key={idx} target="_blank">{u.txt}</a></li>) )
                       }
                     </ul>
                     ) : null

@@ -82,11 +82,11 @@ export default class EditGraphic extends React.Component {
           if (items[i].type.indexOf("image") !== -1) {
             //image
             var blob = items[i].getAsFile();
-            var source = URL.createObjectURL(blob);
+            var source = URL.createObjectURL(blob)
             this.pasteImage(source);
           }
         }
-        e.preventDefault();
+        e.preventDefault()
       }
     }
 
@@ -94,8 +94,8 @@ export default class EditGraphic extends React.Component {
     this._raf = () => {
       if(this.state.selectRect) this.drawSelectRect(this.state.selectRect);
       window.requestAnimationFrame(this._raf);
-    };
-    this._raf();
+    }
+    this._raf()
 
   }
 
@@ -614,34 +614,27 @@ export default class EditGraphic extends React.Component {
   // handleMouseWheel is an alias for zoom
   handleMouseWheel(event)
   {
-
     // We only handle alt/shift/ctrl-key. Anything else is system behavior (scrolling etc)
-    if (event.altKey === true || event.shiftKey === true || event.ctrlKey === true){
-      // everything fine
-    } else return;
+    if (event.altKey === false && event.shiftKey === false && event.ctrlKey === false)
+      return
 
     event.preventDefault()      // No default scroll behavior in these cases
 
-    // WheelDelta system is to handle MacOS that has frequent small deltas,
-    // rather than windows wheels which typically have +/- 120
-    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta
-    let wd =  this.mgb_wheelDeltaAccumulator    // shorthand
-
-    if (Math.abs(wd) > 60) {
+    let wd = event.deltaY       // See https://developer.mozilla.org/en-US/docs/Web/Events/wheel
+    if (Math.abs(wd) >= 1) {
       // if paste tool then use ctrl/alt/shift for resizing, rotating, flipping
-      if(this.state.toolChosen !== null && this.state.toolChosen.label === "Paste"){
-        this.state.toolChosen.handleMouseWheel(this.collateDrawingToolEnv(event), wd);
-      } 
-      // TODO maybe change keys so they are not the same as paste tool
-      // zooming canvas and changing frames
+      if (this.state.toolChosen !== null && this.state.toolChosen.label === "Paste")
+        this.state.toolChosen.handleMouseWheel(this.collateDrawingToolEnv(event), wd)
       else {
+        // TODO maybe change keys so they are not the same as paste tool
+        // zooming canvas and changing frames
         if (event.shiftKey === true) {
           // if wheel is for scale:
           let s = this.state.editScale
           if (wd > 0 && s > 1)
-            this.zoomOut();
+            this.zoomOut()
           else if (wd < 0 && s < 8)
-            this.zoomIn();
+            this.zoomIn()
         }
         else {
           // if wheel is for frame
@@ -652,7 +645,6 @@ export default class EditGraphic extends React.Component {
             this.handleSelectFrame(f + 1)
         }
       }
-      this.mgb_wheelDeltaAccumulator = 0
     }
   }
 

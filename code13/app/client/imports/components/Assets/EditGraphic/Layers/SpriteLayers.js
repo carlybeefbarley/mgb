@@ -502,7 +502,7 @@ export default class SpriteLayers extends React.Component {
             <div className="ui mini label" title="Animation Frames Per Second">
               FPS
             </div>
-            <input className="ui small input" type="number" min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
+            <input className="ui small input" type="number" style={{width: "6em"}} min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
           </div>
           <div className="ui right floated mini button" onClick={this.toggleCanvasFramesVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasFramesVisible ? "unhide" : "hide" )}></i> Frames

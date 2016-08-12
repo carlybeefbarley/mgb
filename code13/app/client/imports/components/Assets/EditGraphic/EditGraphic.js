@@ -1197,13 +1197,21 @@ export default class EditGraphic extends React.Component {
   }
 
   changeCanvasWidth(event) {
-    this.props.asset.content2.width = parseInt(event.target.value)
-    this.handleSave("Change canvas width")
+    const clampedVal = _.clamp(parseInt(event.target.value), 1, MAX_BITMAP_WIDTH)
+    if (this.props.asset.content2.width !== clampedVal)
+    { 
+      this.props.asset.content2.width = clampedVal
+      this.handleSave("Change canvas width")
+    }
   }
 
   changeCanvasHeight(event) {
-    this.props.asset.content2.height = parseInt(event.target.value)
-    this.handleSave("Change canvas height")
+    const clampedVal = _.clamp(parseInt(event.target.value), 1, MAX_BITMAP_HEIGHT)
+    if (this.props.asset.content2.height !== clampedVal)
+    {
+      this.props.asset.content2.height = clampedVal
+      this.handleSave("Change canvas height")
+    }
   }
 
   onKeyUpWidth(event) {
@@ -1340,7 +1348,7 @@ export default class EditGraphic extends React.Component {
               <div className="ui small label" title="Canvas width">
                 w:
               </div>
-              <input ref="canvasWidth" className="ui small input" type="number" min="1" max="999" placeholder={c2.width} 
+              <input ref="canvasWidth" className="ui small input" type="number" min="1" max={MAX_BITMAP_WIDTH} style={{width: "6em"}} placeholder={c2.width} 
                 onBlur={this.changeCanvasWidth.bind(this)} 
                 onKeyUp={this.onKeyUpWidth.bind(this)} 
                 />
@@ -1351,7 +1359,7 @@ export default class EditGraphic extends React.Component {
               <div className="ui small label" title="Canvas height">
                 h:
               </div>
-              <input ref="canvasHeight" className="ui small input" type="number" min="1" max="999" placeholder={c2.height} 
+              <input ref="canvasHeight" className="ui small input" type="number" min="1" max={MAX_BITMAP_HEIGHT} style={{width: "6em"}} placeholder={c2.height} 
                 onBlur={this.changeCanvasHeight.bind(this)} 
                 onKeyUp={this.onKeyUpHeight.bind(this)} 
                 />

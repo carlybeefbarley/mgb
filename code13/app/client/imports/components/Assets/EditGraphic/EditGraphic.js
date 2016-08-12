@@ -14,8 +14,8 @@ import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 
 // Some constants we will use
-const MAX_BITMAP_WIDTH = 512
-const MAX_BITMAP_HEIGHT = 512
+const MAX_BITMAP_WIDTH = 1024
+const MAX_BITMAP_HEIGHT = 1024
 const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it generally
 
 

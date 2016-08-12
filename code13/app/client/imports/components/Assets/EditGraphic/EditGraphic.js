@@ -1,16 +1,22 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import sty from  './editGraphic.css';
-import ColorPicker from 'react-color';        // http://casesandberg.github.io/react-color/
-import AssetUrlGenerator from '../AssetUrlGenerator.js';
-import Tools from './GraphicTools';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import sty from  './editGraphic.css'
+import ColorPicker from 'react-color'        // http://casesandberg.github.io/react-color/
+import AssetUrlGenerator from '../AssetUrlGenerator.js'
+import Tools from './GraphicTools'
 
-import SpriteLayers from './Layers/SpriteLayers.js';
-import GraphicImport from './GraphicImport/GraphicImport.js';
+import SpriteLayers from './Layers/SpriteLayers.js'
+import GraphicImport from './GraphicImport/GraphicImport.js'
 
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js';
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js';
+import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+
+
+// Some constants we will use
+const MAX_BITMAP_WIDTH = 512
+const MAX_BITMAP_HEIGHT = 512
+const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it generally
 
 
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
@@ -139,9 +145,6 @@ export default class EditGraphic extends React.Component {
     // Tool button initializations
     this.activateToolPopups()
     
-    // Some constants we will use
-    this.mgb_MAX_BITMAP_WIDTH = 1024
-    this.mgb_MAX_BITMAP_HEIGHT = 1024
     
     this.doSnapshotActivity()
 
@@ -731,7 +734,6 @@ export default class EditGraphic extends React.Component {
   }
 
 
-// TODO(Guntis): Replace Terrible UI with the four buttons! 
   handleResize(dw, dh, force = false)
   {
     if (!this.props.canEdit)
@@ -744,22 +746,21 @@ export default class EditGraphic extends React.Component {
     {
       this.doSaveStateForUndo(`Resize by (${dw}, ${dh}) `)    // TODO: Only stack and save if different
       let c2 = this.props.asset.content2
-      c2.width = Math.min(c2.width+dw, this.mgb_MAX_BITMAP_WIDTH)
-      c2.height = Math.min(c2.height+dh, this.mgb_MAX_BITMAP_HEIGHT)
+      c2.width = Math.min(c2.width+dw,   MAX_BITMAP_WIDTH)
+      c2.height = Math.min(c2.height+dh, MAX_BITMAP_HEIGHT)
       this.handleSave(`Resize image`)      // Less spammy in activity log      
     }
     // TODO: Toast on error
     // TODO: Reduce zoom if very large
   }
 
+
   hasPermission() {
     if (!this.props.canEdit) { 
       this.props.editDeniedReminder()
       return false
     }
-    else {
-      return true
-    }
+    return true
   }
 
 
@@ -1107,8 +1108,8 @@ export default class EditGraphic extends React.Component {
         if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
         {
           let c2 = self.props.asset.content2
-          c2.width = Math.min(img.width, self.mgb_MAX_BITMAP_WIDTH)
-          c2.height = Math.min(img.height, self.mgb_MAX_BITMAP_HEIGHT)
+          c2.width = Math.min(img.width, MAX_BITMAP_WIDTH)
+          c2.height = Math.min(img.height, MAX_BITMAP_HEIGHT)
           self.handleResize(0,0, true)
         }
         else
@@ -1137,8 +1138,8 @@ export default class EditGraphic extends React.Component {
           var img = new Image
           img.onload = (e) => {
             let c2 = self.props.asset.content2
-            c2.width = Math.min(img.width, self.mgb_MAX_BITMAP_WIDTH)
-            c2.height = Math.min(img.height, self.mgb_MAX_BITMAP_HEIGHT)
+            c2.width = Math.min(img.width, MAX_BITMAP_WIDTH)
+            c2.height = Math.min(img.height, MAX_BITMAP_HEIGHT)
             self.handleResize(0, 0, true)
           }
           img.src = theUrl
@@ -1171,56 +1172,56 @@ export default class EditGraphic extends React.Component {
     img.src = url  // is the data URL because called
   }
 
-  openImportPopup(){
-    // console.log('open import popup')
-    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup);
-    $(importPopup).modal('show');
+
+  openImportPopup() {
+    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
+    $(importPopup).modal('show')
   }
 
-  importTileset(tileWidth, tileHeight, imgDataArr){ 
-    let c2 = this.props.asset.content2;
+ 
+  // This is passed to the <GraphicImport> Control so the tiles can be imported
+  importTileset(tileWidth, tileHeight, imgDataArr) { 
+    let c2 = this.props.asset.content2
 
-    c2.width = tileWidth;
-    c2.height = tileHeight;
-    c2.frameNames = [];
-    c2.frameData = [];
-    c2.spriteData = [];
+    c2.width = tileWidth
+    c2.height = tileHeight
+    c2.frameNames = []
+    c2.frameData = []
+    c2.spriteData = []
     // c2.fps = 10;
-    for(let i=0; i<imgDataArr.length; i++){
-      c2.frameNames[i] = "Frame "+i;
-      c2.frameData[i] = [];
-      c2.frameData[i][0] = imgDataArr[i];
-      c2.spriteData[i] =  imgDataArr[i];
+    for (let i=0; i<imgDataArr.length; i++) {
+      c2.frameNames[i] = "Frame "+i
+      c2.frameData[i] = []
+      c2.frameData[i][0] = imgDataArr[i]
+      c2.spriteData[i] =  imgDataArr[i]
     }
-    c2.layerParams = [{name:"Layer 1", isHidden: false, isLocked: false}];
-    c2.animations = [];
+    c2.layerParams = [ {name: "Layer 1", isHidden: false, isLocked: false} ]
+    c2.animations = []
 
-    this.handleSave("Import tileset", true);
-    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup);
-    $(importPopup).modal('hide');
+    this.handleSave("Import tileset", true)
+    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
+    $(importPopup).modal('hide')
     // $('.ui.modal').modal('hide');
   }
 
-  changeCanvasWidth(event){
-    this.props.asset.content2.width = parseInt(event.target.value);
-    this.handleSave("Change canvas width");
+  changeCanvasWidth(event) {
+    this.props.asset.content2.width = parseInt(event.target.value)
+    this.handleSave("Change canvas width")
   }
 
-  changeCanvasHeight(event){
-    this.props.asset.content2.height = parseInt(event.target.value);
-    this.handleSave("Change canvas height");
+  changeCanvasHeight(event) {
+    this.props.asset.content2.height = parseInt(event.target.value)
+    this.handleSave("Change canvas height")
   }
 
-  onKeyUpWidth(event){
-    if(event.key === "Enter"){
-      this.changeCanvasWidth(event);
-    }
+  onKeyUpWidth(event) {
+    if (event.key === "Enter")
+      this.changeCanvasWidth(event)
   }
 
-  onKeyUpHeight(event){
-    if(event.key === "Enter"){
-      this.changeCanvasHeight(event);
-    } 
+  onKeyUpHeight(event) {
+    if (event.key === "Enter")
+      this.changeCanvasHeight(event)
   }
 
 
@@ -1282,15 +1283,13 @@ export default class EditGraphic extends React.Component {
 
     }
 
-    for(let i=0; i<Tools.length; i++){
+    for (let i=0; i<Tools.length; i++) {
       let toolLabel = Tools[i].label
-      if(simpleTools[toolLabel]){
+      if (simpleTools[toolLabel])
         Tools[i] = simpleTools[toolLabel]
-      }
       // special case for disabling paste tool when there is no pasteCanvas
-      if(toolLabel === "Paste"){
+      if (toolLabel === "Paste")
         Tools[i].disabled = !this.state.pasteCanvas
-      }
     }
 
     const actions = {}
@@ -1302,7 +1301,7 @@ export default class EditGraphic extends React.Component {
     }
 
     _.each(Tools, (tool) => {
-      if(tool.hideTool === true) return;
+      if (tool.hideTool === true) return
 
       config.buttons.push({
         active: this.state.toolChosen === tool,
@@ -1456,6 +1455,8 @@ export default class EditGraphic extends React.Component {
           <GraphicImport
             EditGraphic={this}
             importTileset={this.importTileset.bind(this)}
+            maxTileWidth={MAX_BITMAP_WIDTH}
+            maxTileHeight={MAX_BITMAP_WIDTH}
           />
         </div>
 

@@ -1,13 +1,13 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 
-import fpFeatureLevels from './fpFeatureLevels';
-import fpSuperAdmin from './fpSuperAdmin';
-import fpActivity from './fpActivity';
-import fpAssets from './fpAssets';
-import fpUsers from './fpUsers';
-import fpChat from './fpChat';
-
+import fpFeatureLevels from './fpFeatureLevels'
+import fpSuperAdmin from './fpSuperAdmin'
+import fpActivity from './fpActivity'
+import fpNetwork from './fpNetwork'
+import fpAssets from './fpAssets'
+import fpUsers from './fpUsers'
+import fpChat from './fpChat'
 
 const flexPanelViews = [
   { tag: "activity",  icon: "lightning",  hdr: "Activity",        el: fpActivity,      superAdminOnly: false },
@@ -15,7 +15,8 @@ const flexPanelViews = [
   { tag: "users",     icon: "users",      hdr: "Users",           el: fpUsers,         superAdminOnly: false },
   { tag: "chat",      icon: "chat",       hdr: "Chat",            el: fpChat,          superAdminOnly: false },
   { tag: "features",  icon: "options",    hdr: "Feature Levels",  el: fpFeatureLevels, superAdminOnly: false },
-  { tag: "super",     icon: "red bomb",   hdr: "SuperAdmin",      el: fpSuperAdmin,    superAdminOnly: true }
+  { tag: "super",     icon: "red bomb",   hdr: "SuperAdmin",      el: fpSuperAdmin,    superAdminOnly: true  },
+  { tag: "network",   icon: "red signal", hdr: "Network",         el: fpNetwork,       superAdminOnly: true  }, // SuperAdmin while being tested  
 ]
 
 const defaultPanelViewIndex = 0

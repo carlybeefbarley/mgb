@@ -170,7 +170,7 @@ export default class EditCode extends React.Component {
       ],
       extraKeys: {
         "Alt-F": "findPersistent",
-        "'.'": cm => {this.codeEditPassAndHint(cm)},
+        "'.'": cm => {return this.codeEditPassAndHint(cm)},
         "Ctrl-Space": (cm) => { this.ternServer.complete(cm); },
         "Ctrl-I": (cm) => { this.ternServer.showType(cm); },
         "Ctrl-D": (cm) => { this.ternServer.showDocs(cm); },
@@ -239,7 +239,12 @@ export default class EditCode extends React.Component {
 
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
-      setTimeout(() => {this.ternServer.complete(cm);}, 1000)      // Pop up a helper after a second
+      setTimeout(() => {
+
+
+
+        this.ternServer.complete(cm);
+      }, 1000)      // Pop up a helper after a second
 // this.ternServer.getHint(cm, function (hint) 
 // {
 // console.log("HINT",hint)

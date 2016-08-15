@@ -121,6 +121,10 @@ window.onload = function() {
   }
   // TODO: somehow resolve user's script and global lib
   function loadImport(urlFinalPart, cb) {
+    if(imports[urlFinalPart]){
+      cb();
+      return;
+    }
     var url;
     // import X from '/asset name' or import X from '/user/asset name'
     if(urlFinalPart.indexOf("/") === 0 && urlFinalPart.indexOf("//") === -1){
@@ -172,7 +176,7 @@ window.onload = function() {
       tr.code = srcText;
       return tr
     }
-
+    const start = Date.now();
     console.trace("Transpiling " + filename + " (" + srcText.length + " bytes)")
     tr = Babel.transform(srcText, {
       filename: filename,
@@ -181,7 +185,7 @@ window.onload = function() {
       plugins: ['transform-class-properties'],
       retainLines: true
     });
-    console.trace("Transpilation yielded " + tr.code.length + " bytes")
+    console.trace("Transpilation yielded " + tr.code.length + " bytes" + ' ' + (Date.now() - start) + " ms")
     return tr;
   }
 

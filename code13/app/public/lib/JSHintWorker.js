@@ -22,7 +22,13 @@ onmessage = function(e) {
   }
   // TODO: what to do if babel fails to transform code?
   catch(e){
-    code = str.substring(0, e.pos);
+    /*var f = new Array(e.loc.line - 1);
+    f.fill("\n");
+    code = f.join("") + str.substring(e.pos);
+    */
+    const lines = str.split("\n");
+    lines.splice(e.loc.line - 1, 1);
+    code = '';//lines.join("\n");
     babelError = {
       line: e.loc.line,
       code: "EXXX",
@@ -34,7 +40,7 @@ onmessage = function(e) {
   var conf = e.data[1]
   JSHINT(code, conf)
   var errors = [JSHINT.errors]
-  babelError && errors.concat(babelError)
+  babelError && JSHINT.errors.push(babelError)
 
   postMessage(errors)
 };

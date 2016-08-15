@@ -188,7 +188,6 @@ export default class extends React.Component {
   */
   componentWillUpdate(nextProps, nextState) {
 
-
   }
 
   /*
@@ -238,6 +237,14 @@ export default class extends React.Component {
     code:
 `import React from "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.0/react.js"
 export default class extends React.Component {
+
+  static defaultProps = {
+
+  }
+  https://facebook.github.io/react/docs/reusable-components.html
+  static propTypes = {
+
+  }
 
   // add listeners / timeouts / interval etc here
   componentDidMount() {

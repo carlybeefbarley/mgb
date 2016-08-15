@@ -1,26 +1,28 @@
-import _ from 'lodash';
-import React, {Component, PropTypes} from 'react';
-import { browserHistory } from 'react-router';
-import Helmet from "react-helmet";
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import { browserHistory } from 'react-router'
+import Helmet from "react-helmet"
 
-import reactMixin from 'react-mixin';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-import { Users, Activity, Projects } from '/imports/schemas';
-import { projectMakeSelector } from '/imports/schemas/projects';
+import { Users, Activity, Projects, Settings } from '/imports/schemas'
+import { projectMakeSelector } from '/imports/schemas/projects'
 
-import NavBar from '/client/imports/components/Nav/NavBar';
-import Toast from '/client/imports/components/Nav/Toast';
-import Spinner from '/client/imports/components/Nav/Spinner';
-import NavPanel from '/client/imports/components/SidePanels/NavPanel';
-import FlexPanel from '/client/imports/components/SidePanels/FlexPanel';
-import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo';
+import NavBar from '/client/imports/components/Nav/NavBar'
+import Toast from '/client/imports/components/Nav/Toast'
+import Spinner from '/client/imports/components/Nav/Spinner'
+import NavPanel from '/client/imports/components/SidePanels/NavPanel'
+import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
+import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo'
 
-import urlMaker from './urlMaker';
-import webkitSmallScrollbars from './webkitSmallScrollbars.css';
+import urlMaker from './urlMaker'
+import webkitSmallScrollbars from './webkitSmallScrollbars.css'
+
+let G_localSettings = new ReactiveDict()
 
 const getPagenameFromProps = function(props)
 {
@@ -36,22 +38,27 @@ export default App = React.createClass({
   // }
     
   childContextTypes: {
-    urlLocation: React.PropTypes.object    
+    urlLocation: PropTypes.object,
+    settings:    PropTypes.object
   },
 
   getChildContext() {
-    return { urlLocation: this.props.location }
+    // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
+    return { 
+      urlLocation: this.props.location,
+      settings: this.data.settings            // We pass Settings in context since it will be a huge pain to pass it throughout the component tree
+    }
   },
 
   togglePanelsKeyHandler: function(e) {
-    e = e || window.event;
+    e = e || window.event
     if (e.key === 'Escape' || e.keyCode === 27) {
       this.handleDualPaneToggle()
     }
   },
 
   componentDidMount: function() {
-    window.onkeydown = this.togglePanelsKeyHandler;
+    window.onkeydown = this.togglePanelsKeyHandler
   },
 
 
@@ -75,7 +82,7 @@ export default App = React.createClass({
       toastMsg: '',
       toastType: 'success',
       activityHistoryLimit: 11
-    };
+    }
   },
 
   getMeteorData() {
@@ -86,16 +93,24 @@ export default App = React.createClass({
     const handleForUser = pathUserName ? 
                              Meteor.subscribe("user.byName", pathUserName) 
                            : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
+    const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
+    const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
     const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
-    const handleForProjects = Meteor.subscribe("projects.byUserId", currUserId)
+    const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
+    const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
     const projectSelector = projectMakeSelector(currUserId)
+    
     return {
       currUser: currUser,                           // Currently Logged in user. Putting it here makes it reactive
       currUserProjects: Projects.find(projectSelector).fetch(),
       user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
       activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
-      loading:  !handleForUser.ready() || !handleActivity.ready() || !handleForProjects.ready
-    };
+      settings: handleForSettings === null ? G_localSettings : Settings.findOne(currUserId),
+      loading:  !handleForUser.ready() || 
+                !handleActivity.ready() || 
+                !projectsReady || 
+                !settingsReady                
+    }
   },
 
   configureTrackJs() {
@@ -234,7 +249,7 @@ export default App = React.createClass({
             </div>
           </div>
       </div>
-    );
+    )
   },
 
 
@@ -334,18 +349,13 @@ export default App = React.createClass({
       toastMsg: content,
       //String: 'error' or 'success'
       toastType: type
-    });
-    window.setTimeout(() => {
-     this.closeToast()
-    }, 2500);
+    })
+    window.setTimeout(() => { this.closeToast() }, 2500)
   },
 
 
   closeToast() {
-    this.setState({
-      showToast: false,
-      toastMsg: ''
-    });
+    this.setState({ showToast: false, toastMsg: '' })
   }
 
 })

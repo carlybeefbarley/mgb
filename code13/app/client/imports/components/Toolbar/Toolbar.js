@@ -3,19 +3,20 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { utilMuteLevelSlider, utilActivateLevelSlider, utilAdvertizeSlider } from '/client/imports/components/Nav/NavBarGadgetUxSlider'
+import { getFeatureLevel, getToolbarData, setToolbarData } from '/imports/schemas/settings-client'
 
-const CTRL = 1 << 8
-const SHIFT = 1 << 9
-const ALT = 1 << 10
-const META = 1 << 11            // Mac CMD key / Windows 'windows' key. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey
-
+const keyModifiers = {
+  CTRL:  1 <<  8,
+  SHIFT: 1 <<  9,
+  ALT:   1 << 10,
+  META:  1 << 11      // Mac CMD key / Windows 'windows' key. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey
+}
 
 const sliderPcts = {
   iconSizeBreak1:  0.25,
   iconSizeBreak2:  0.66,
   tooltipSlowdown: 0.5
 }
-
 
 // Here is a list of *known* toolbar scope names. This is so that a ui (e.g fpUxLevels.js) can enumerate them all
 export const expectedToolbarScopeNames = {
@@ -25,12 +26,14 @@ export const expectedToolbarScopeNames = {
   SkillsMap: "SkillsMap"
 }
 
-export function getLevelKey(name) {
+// Make Toolbar Level Key using a well-known prefix on the Toolbar name
+export function makeLevelKey(name) {
   return "toolbar-level-" + name
 }
 
-export function getLevelVal(name) {
-  return localStorage.getItem("toolbar-level-" + name)
+// Make Toolbar Data Key using a well-known prefix on the Toolbar name
+export function makeTDataKey(name) {
+  return "toolbar-data-" + name
 }
 
 
@@ -41,8 +44,8 @@ export default class Toolbar extends React.Component {
     this.buttons = []
 
     // separate these - and allow some toolbars to share level???
-    this.lsDataKey = "toolbar-data-" + this.props.name
-    this.lsLevelKey = "toolbar-level-" + (this.props.levelName || this.props.name)
+    this.lsDataKey = makeTDataKey(this.props.name)
+    this.lsLevelKey = makeLevelKey(this.props.levelName || this.props.name)
 
     if (!_.includes(expectedToolbarScopeNames, this.props.name))
       console.trace(`Unexpected Toolbar name "${this.props.name}" in Toolbar.js. Devs should add new ones to expectedToolbarScopeNames"`)
@@ -56,12 +59,14 @@ export default class Toolbar extends React.Component {
     this.levelSlider = null
     this.maxLevel = 10      // _addLevelSlider will set this value to 1+ the highest level it sees. The 1+ is so there's a final level to hide the last text label and 'more buttons' button
 
-    this.state = {};
+    this.state = {}
 
     this.order = _.range(this.props.config.buttons.length)    // Creates array [0, ... n]
 
     this._onChange = (e) => {
-      this.setState({level: parseInt(e.target.value, 10)})
+      const newLevelVal = parseInt(e.target.value, 10)
+      //console.log("TOOLBAR @", newLevelVal)
+      this.setState({level: newLevelVal})
     }
 
     this._onKeyDown = (e) => {
@@ -96,7 +101,7 @@ export default class Toolbar extends React.Component {
   }
 
 
-  _showDelay() 
+  _calcTooltipShowDelay() 
   {
     return this.state.level <= (sliderPcts.tooltipSlowdown * this.maxLevel) ? 300 : 700
   }
@@ -112,7 +117,7 @@ export default class Toolbar extends React.Component {
       this._activeButton.classList.add("animate")
       this._activeButton.classList.remove("main")
       // TODO: dont repeat..
-      $(this._activeButton).popup( { delay: {show: this._showDelay(), hide: 0}} )
+      $(this._activeButton).popup( { delay: {show: this._calcTooltipShowDelay(), hide: 0}} )
     }
     this._activeButton = v
   }
@@ -122,9 +127,15 @@ export default class Toolbar extends React.Component {
     return this._activeButton
   }
 
+
+  getFeatureLevelNow() {
+    return getFeatureLevel(this.context.settings, this.lsLevelKey) || this.props.config.level 
+  }
+
+
   /* Lifecycle functions */
   componentDidMount() {
-    this.setState({level:localStorage.getItem(this.lsLevelKey) || this.props.config.level})
+    this.setState( { level: this.getFeatureLevelNow()} )
     this.levelSlider = this._addLevelSlider()
 
     this.levelSlider.addEventListener("input", this._onChange)
@@ -160,16 +171,15 @@ export default class Toolbar extends React.Component {
   setState(state) {
     super.setState(state)
     Object.assign(this.state, state)
-    localStorage.setItem(this.lsLevelKey, state.level)       // TODO(@dgolds): Store in User record if logged in
     this.initPopups()
   }
 
   saveState() {
-    localStorage.setItem(this.lsDataKey, JSON.stringify(this.order))     // TODO(@dgolds): Store in User record if logged in
+    setToolbarData(this.context.settings, this.lsDataKey, JSON.stringify(this.order))
   }
 
   loadState() {
-    const savedData = localStorage.getItem(this.lsDataKey)
+    const savedData = getToolbarData(this.context.settings, this.lsDataKey)
     this.data = this.props.config
 
     if (savedData) {
@@ -188,18 +198,17 @@ export default class Toolbar extends React.Component {
     // seems harmless if called twice on the same element
     $a.find('.hazPopup').popup("destroy")
     window.setTimeout(() => {
-      $a.find('.hazPopup').popup( { delay: {show: this._showDelay(), hide: 0}} )
+      $a.find('.hazPopup').popup( { delay: { show: this._calcTooltipShowDelay(), hide: 0 } } )
     }, 0)
   }
 
 
   getRow(mb, b) {
-    const totRows = Math.round(mb.height / b.height);
-    if(totRows == 0){
+    const totRows = Math.round(mb.height / b.height)
+    if (totRows === 0)
       return 0
-    }
+    
     const relY = (b.top - mb.top)
-
     const row = Math.round( (relY / mb.height) * totRows )
     return mb.width * row
   }
@@ -207,18 +216,16 @@ export default class Toolbar extends React.Component {
 
   getKeyval(e) {
     let keyval = e.which
-    e.metaKey  &&  (keyval |= META)
-    e.shiftKey &&  (keyval |= SHIFT)
-    e.ctrlKey  &&  (keyval |= CTRL)
-    e.altKey   &&  (keyval |= ALT)
+    e.metaKey  &&  (keyval |= keyModifiers.META)
+    e.shiftKey &&  (keyval |= keyModifiers.SHIFT)
+    e.ctrlKey  &&  (keyval |= keyModifiers.CTRL)
+    e.altKey   &&  (keyval |= keyModifiers.ALT)
     return keyval
   }
 
 
   getButtonFromAction(action) {
-    return _.find(this.data.buttons, (o) => {
-      return o.name == action
-    })
+    return _.find(this.data.buttons, (o) => { return o.name == action })
   }
 
 
@@ -226,36 +233,23 @@ export default class Toolbar extends React.Component {
     const keys = shortcut.split("+")
     // create unique index where
     // first 8 bits is keycode
-    // 9th bit is Ctrl    (see const CTRL)
-    // 10th bit is Shift  (see const SHIFT)
-    // 11th bit is Alt    (see const ALT)
-    // 12th bit is Meta (AppleKey / WindowsKey)  (see const META)
+    // 9th-12th bits are Ctrl/Shift/Alt/Meta - See keyModifiers.*
     let keyval = 0
     for (let i=0; i<keys.length; i++) {
-      const key = keys[i].toLowerCase().trim()
-      switch (key) {
-        case "ctrl":
-              keyval |= CTRL
-              break
-        case "alt":
-              keyval |= ALT
-              break
-        case "shift":
-              keyval |= SHIFT
-              break
-        case "meta":
-              keyval |= META
-              break
-        default:
-              if (key.length > 1)
-                console.error("unknown key: [" + key + "]")              
-              keyval |= key.toUpperCase().charCodeAt(0)
-              break
+      const key = keys[i].toUpperCase().trim()
+      if (key.length > 1)
+      {
+        if (keyModifiers.hasOwnProperty(key))
+          keyval |= keyModifiers[key]
+        else
+          console.error(`Unknown key modifier [$(key)] in shortcut '$(shortcut)'`)
       }
+      else if (key.length === 1)
+        keyval |= key.toUpperCase().charCodeAt(0)
     }
     // TODO: check duplicate shortcuts?
     if (!this.props.actions[action]) {
-      console.trace("missing action:", action)
+      console.trace(`Missing Toolbar action '$(action)' for shortcut'$(shortcut)'`)
       return
     }
     this.keyActions[keyval] = this.props.actions[action].bind(this.props.actions)
@@ -263,8 +257,8 @@ export default class Toolbar extends React.Component {
   }
 
 
+  // Return 'tiny', 'small' or 'medium' based on the slider config
   determineButtonSize() {
-     // TODO: are 3 levels enough?  TODO(@dgolds) Should we make this a config option?
     if (this.state.level <= sliderPcts.iconSizeBreak1 * this.maxLevel)
       return "medium"
     else if (this.state.level <= sliderPcts.iconSizeBreak1 * this.maxLevel)
@@ -284,7 +278,7 @@ export default class Toolbar extends React.Component {
       b = this.data.buttons[this.order[i]]
       if (!b)
         continue
-      if (b.name == "separator")
+      if (b.name === "separator")
       {
         if (!parent.length)
           continue        
@@ -315,7 +309,7 @@ export default class Toolbar extends React.Component {
                 style={{borderStyle: "dashed", borderColor: "green",  borderWidth: "thin", opacity: "0.5"}}
                 data-position="top center"
                 onClick={this.advertizeSlider.bind(this)}
-                data-content="More buttons available. Use the slider at the top of the page to show them">
+                data-content={`More buttons available. Use the slider at the top of the page to show them.  [Level ${this.state.level} of ${this.maxLevel}]`}>
               <i className="ui options icon" />
             </div>
           }
@@ -336,9 +330,7 @@ export default class Toolbar extends React.Component {
 
   // Reset any moved buttons to their original locations
   reset() {
-    this.order.forEach((v, k, o) => {
-      o[k] = k
-    })
+    this.order.forEach((v, k, o) => { o[k] = k })
     this.saveState()
     this.forceUpdate()
     this.initPopups()
@@ -347,15 +339,13 @@ export default class Toolbar extends React.Component {
   /* private methods go here */
   // adds react dom element that represents button
   _addButton(b, index) {
-    if (!b)
-      return        // TODO(@Stauzs)do I need to remove button here?
-
+    if (!b) return        // TODO(@Stauzs)do I need to remove button here?
     this.buttons[index] = b
   }
 
 
   _handleClick(action, e) {
-    if (this.hasMoved || this.activeButton == this._extractButton(e.target) )
+    if (this.hasMoved || this.activeButton === this._extractButton(e.target) )
       return
     
     if (this.props.actions[action])
@@ -429,10 +419,7 @@ export default class Toolbar extends React.Component {
     if (!b || e.buttons != 1)
       return
 
-    this.startPos = {
-      x: e.pageX,
-      y: e.pageY
-    }
+    this.startPos = { x: e.pageX, y: e.pageY }
     this.activeButton = b
   }
 
@@ -542,7 +529,7 @@ export default class Toolbar extends React.Component {
     if (
         (!mostLeft && !mostRight && !this.props.config.vertical) ||
         (!mostTop && !mostBottom && this.props.config.vertical)
-      ){
+      ) {
       this.activeButton.style.top = 0
       this.activeButton.style.left = 0
       $(this.activeButton).popup('enable')
@@ -550,7 +537,7 @@ export default class Toolbar extends React.Component {
       return
     }
 
-    this.hasMoved = true;
+    this.hasMoved = true
     // TODO: make browser compatible
     const active = this.activeButton
 
@@ -599,4 +586,8 @@ Toolbar.propTypes = {
   name: PropTypes.string.isRequired, // Name of this toolbar instance. Should be one of toolbarScopeNames
   config: PropTypes.object.isRequired, // Config.. { buttons: {}, vertical: bool }
   levelName: PropTypes.string // Use this if you want to share active level with other toolbars - default = name
+}
+
+Toolbar.contextTypes = {
+  settings:    PropTypes.object
 }

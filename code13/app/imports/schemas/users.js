@@ -65,7 +65,6 @@ Meteor.methods({
   },
 
   "User.updateEmail": function(docId, data) {
-
     check(docId, String)
     if (!this.userId) throw new Meteor.Error(401, "Login required")
     if (this.userId !== docId) throw new Meteor.Error(401, "You don't have permission to edit this Profile")
@@ -105,7 +104,7 @@ Meteor.methods({
       "profile.focusMsg": optional(schema.profile.focusMsg),
       "profile.focusStart": optional(schema.profile.focusStart),
       "profile.mgb1name": optional(schema.profile.mgb1name),
-//      "profile.mgb1nameVerified": optional(schema.profile.mgb1nameVerified),   // TODO: Some server-only validation for this
+//    "profile.mgb1nameVerified": optional(schema.profile.mgb1nameVerified),   // TODO: Some server-only validation for this
       "profile.images": optional(schema.profile.images),
       "profile.isDeleted": optional(schema.profile.isDeleted),
       "profile.projectNames": optional(schema.profile.projectNames),

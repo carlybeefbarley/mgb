@@ -3,34 +3,40 @@
 // Basically - deny the client, and only use Methods.
 
 
-import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '/imports/schemas';
+import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings } from '/imports/schemas'
 
 Azzets.deny({
   insert() { return true; },
   update() { return true; },
   remove() { return true; }
-});
+})
 
 Projects.deny({
   insert() { return true; },
   update() { return true; },
   remove() { return true; }
-});
+})
 
 Activity.deny({
   insert() { return true; },
   update() { return true; },
   remove() { return true; }
-});
+})
 
 ActivitySnapshots.deny({
   insert() { return true; },
   update() { return true; },
   remove() { return true; }
-});
+})
 
 Chats.deny({
   insert() { return true; },
   update() { return true; },
   remove() { return true; }
-});
+})
+
+Settings.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; }
+})

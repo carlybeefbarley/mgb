@@ -1,6 +1,6 @@
 // This file should be imported by the main_server.js file
 
-import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats } from '/imports/schemas'
+import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings } from '/imports/schemas'
 import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
 import { userSorters } from '/imports/schemas/users'
 import { projectMakeSelector } from '/imports/schemas/projects'
@@ -69,7 +69,7 @@ Meteor.publish('user.byName', function(username) {
 // TODO: Consider cost/benefit of this index.. VERY PROBABLY DELETE THIS INDEX
 Azzets._ensureIndex({
   "name": "text"        // Index the name field. See https://www.okgrow.com/posts/guide-to-full-text-search-in-meteor
-});
+})
 
 Azzets._ensureIndex({"isDeleted": 1, "updatedAt": -1})
 Azzets._ensureIndex({"isDeleted": 1, "kind": 1})
@@ -109,14 +109,14 @@ Meteor.publish('assets.public', function(
     limit: limitCount
   }
   return Azzets.find(selector, findOpts )
-});
+})
 
 
 
 // Return one asset. This is a good subscription for AssetEditRoute
 Meteor.publish('assets.public.byId.withContent2', function(assetId) {
-  return Azzets.find(assetId);
-});
+  return Azzets.find(assetId)
+})
 
 
 //
@@ -126,15 +126,15 @@ Meteor.publish('assets.public.byId.withContent2', function(assetId) {
 
 // Return one project. This is a good subscription for ProjectOverviewRoute
 Meteor.publish('projects.forProjectId', function(projectId) {
-  return Projects.find(projectId);
-});
+  return Projects.find(projectId)
+})
 
 
 // Return projects relevant to this userId.. This includes owner, member, etc
 Meteor.publish('projects.byUserId', function(userId) {
   const selector = projectMakeSelector(userId)
-  return Projects.find(selector);
-});
+  return Projects.find(selector)
+})
 
 
 //
@@ -146,21 +146,21 @@ Meteor.publish('activity.public.recent', function(limitCount=50) {
   let options = {limit: limitCount, sort: {timestamp: -1}}
 
   return Activity.find(selector, options)
-});
+})
 
 Meteor.publish('activity.public.recent.userId', function(userId, limitCount=50) {
   let selector = { byUserId: userId }
   let options = {limit: limitCount, sort: {timestamp: -1}}
 
   return Activity.find(selector, options)
-});
+})
 
 Meteor.publish('activity.public.recent.assetid', function(assetId, limitCount=50) {
   let selector = { toAssetId: assetId }
   let options = { limit: limitCount, sort: {timestamp: -1}}
 
   return Activity.find(selector, options)
-});
+})
 
 
 // ACTIVITY Indexes. These were built based on the stats at https://mlab.com/clusters/rs-ds021730#slowqueries    
@@ -179,8 +179,8 @@ Meteor.publish('activitysnapshots.assetid', function(assetId) {
   // to purge the records.
   let selector = { toAssetId: assetId }
   let options = {limit: 100, sort: {timestamp: -1} }
-  return ActivitySnapshots.find(selector, options);
-});
+  return ActivitySnapshots.find(selector, options)
+})
 
 
 Meteor.publish('activitysnapshots.userId', function(userId) {
@@ -189,8 +189,8 @@ Meteor.publish('activitysnapshots.userId', function(userId) {
   // to purge the records.
   let selector = { byUserId: userId }
   let options = {limit: 100, sort: {timestamp: -1} }
-  return ActivitySnapshots.find(selector, options);
-});
+  return ActivitySnapshots.find(selector, options)
+})
 
 // SPECIAL INDEX TO AUTO_DELETE ITEMS
 // NOTE THAT THE expireAfterSeconds value cannot be changed! 
@@ -206,6 +206,7 @@ ActivitySnapshots._ensureIndex( { "timestamp": 1 }, { expireAfterSeconds: 60*5 }
 ActivitySnapshots._ensureIndex( {"byUserId": 1, "toAssetId": 1} )
 ActivitySnapshots._ensureIndex( {"toAssetId": 1, "timestamp": -1} )
 
+
 //
 //    CHATS
 //
@@ -219,5 +220,16 @@ Meteor.publish('chats.userId', function(userId, toChannelName, limit=20) {
 
   let selector = { toChannelName: toChannelName } //$or: [ { toOwnerId: null}, {toOwnerId: userId} ] }
   let options = {limit: limit, sort: {createdAt: -1} }
-  return Chats.find(selector, options);
-});
+  return Chats.find(selector, options)
+})
+
+
+//
+//    SETTINGS (keyed by user._id)
+//
+
+
+// TODO: Make sure userId can't be faked on server. Allow/deny rules required...
+Meteor.publish('settings.userId', function(userId) {
+  return Settings.find(userId)
+})

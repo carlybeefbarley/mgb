@@ -140,7 +140,7 @@ export default FlexPanel = React.createClass({
                 <div>
 
                   <div className="ui secondary menu">
-                    <div className="ui borderless item">
+                    <div className="ui borderless sub header item">
                       &nbsp;&nbsp;<i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
                     </div>
                   </div>

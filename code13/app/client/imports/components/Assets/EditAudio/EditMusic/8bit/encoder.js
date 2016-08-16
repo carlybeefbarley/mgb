@@ -54,7 +54,7 @@ var RIFFWAVE = function(data)
         subChunk1Size: 16,                    // 16   4    16 for PCM
         audioFormat  : 1,                     // 20   2    PCM = 1
         numChannels  : 1,                     // 22   2    Mono = 1, Stereo = 2...
-        sampleRate   : sampleRate,            // 24   4    8000, 44100...
+        sampleRate   : 44100,                 // 24   4    8000, 44100...
         byteRate     : 0,                     // 28   4    SampleRate*NumChannels*BitsPerSample/8
         blockAlign   : 0,                     // 32   2    NumChannels*BitsPerSample/8
         bitsPerSample: 16,                    // 34   2    8 bits = 8, 16 bits = 16
@@ -109,3 +109,5 @@ var RIFFWAVE = function(data)
     if (data instanceof Array) this.Make(data);
 
 }; // end RIFFWAVE
+
+export default RIFFWAVE

@@ -1,3 +1,5 @@
+var sampleRate = 44100
+
 // piano instrument
 function PianoInstrument(){
 	this.name = "piano"
@@ -171,6 +173,8 @@ function Note(channel,key,start,end,vol) {
 		vol: 			vol ? vol : -1,
 	}	
 }
+
+function GetFreq(key) {return (Math.pow(Math.pow(2,1/12),key-49)*440);}//A key of 49 corresponds to a frequency of 440.
 
 function clone(obj) {
   if (null == obj || "object" != typeof obj) return obj;

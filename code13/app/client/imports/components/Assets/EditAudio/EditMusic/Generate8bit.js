@@ -16,6 +16,8 @@ export default class Generate8bit extends React.Component {
   	this.song = null
 
   	this.state = {
+  		canvasWidth: 860,
+  		canvasHeight: 480,
   		isPlaying: false,
   		isGenerating: false,
   		audio: null,
@@ -23,9 +25,21 @@ export default class Generate8bit extends React.Component {
 
 	}
 
+	componentDidMount(){
+		this.canvas = ReactDOM.findDOMNode(this.refs.canvas)
+		this.ctx = this.canvas.getContext("2d")
+	}
+
 	generate(){
-		this.song = new Song()
-		this.setState({ audio: this.generateSample(this.song) })
+		this.stop()
+		this.setState({ isGenerating: true, audio: null })
+		var self = this
+		setTimeout(() => {
+			this.song = new Song()
+			this.setState({ audio: this.generateSample(this.song) })
+			this.setState({ isGenerating: false })
+			this.play()
+		}, 50)		
 	}
 
 	generateSample(song) {
@@ -59,37 +73,37 @@ export default class Generate8bit extends React.Component {
 		for (t in data) {data[t]=Math.min(Math.round((data[t]/song.Channels.length)*this.maxval/4),this.maxval);}
 		
 		
-		// ctx.fillStyle='#ffffff';
-		// ctx.fillRect(0,0,Game.w,Game.h);
-		// /*
-		// for (i=0;i<Screen.width;i++)
-		// {
-		// 	t=Math.floor(i*data.length/Screen.width);
-		// 	ctx.strokeStyle='rgb(255,0,0)';
-		// 	ctx.drawLine(i-0.5,Screen.height-data[t]/(maxval/4)*Screen.height-0.5,i-0.5,Screen.height-0.5);
-		// }
-		// */
+		this.ctx.fillStyle='#ffffff';
+		this.ctx.fillRect(0, 0, this.state.canvasWidth, this.state.canvasHeight);
+		/*
+		for (i=0;i<Screen.width;i++)
+		{
+			t=Math.floor(i*data.length/Screen.width);
+			ctx.strokeStyle='rgb(255,0,0)';
+			ctx.drawLine(i-0.5,Screen.height-data[t]/(maxval/4)*Screen.height-0.5,i-0.5,Screen.height-0.5);
+		}
+		*/
 		
-		// for (var i in song.Channels)
-		// {
-		// 	channel=song.Channels[i];
-		// 	instrument=channel.instrument;
-		// 	for (var n in channel.notes)
-		// 	{
-		// 		note=channel.notes[n];
-		// 		var ns=((note.start*bpm)/duration)*Game.w;
-		// 		var ne=((note.end*bpm)/duration)*Game.w;
+		for (var i in song.Channels)
+		{
+			channel=song.Channels[i];
+			instrument=channel.instrument;
+			for (var n in channel.notes)
+			{
+				note=channel.notes[n];
+				var ns=((note.start*bpm)/duration) * this.state.canvasWidth
+				var ne=((note.end*bpm)/duration) * this.state.canvasWidth
 				
-		// 		if (i==0) ctx.fillStyle='rgba(128,128,255,0.5)';
-		// 		else if (i==1) ctx.fillStyle='rgba(128,255,128,0.5)';
-		// 		else if (i==2) ctx.fillStyle='rgba(255,128,128,0.5)';
-		// 		ctx.fillRect(ns,(note.key)*5,Math.max(2,ne-ns),5);
-		// 		ctx.strokeStyle='rgba(0,0,0,0.25)';
-		// 		ctx.strokeRect(ns-0.5,(note.key)*5-0.5,Math.max(2,ne-ns),5);
-		// 		ctx.strokeStyle='rgba(255,255,255,0.25)';
-		// 		ctx.strokeRect(ns+0.5,(note.key)*5+0.5,Math.max(2,ne-ns),5);
-		// 	}
-		// }
+				if (i==0) this.ctx.fillStyle='rgba(128,128,255,0.5)';
+				else if (i==1) this.ctx.fillStyle='rgba(128,255,128,0.5)';
+				else if (i==2) this.ctx.fillStyle='rgba(255,128,128,0.5)';
+				this.ctx.fillRect(ns,(note.key)*5,Math.max(2,ne-ns),5);
+				this.ctx.strokeStyle='rgba(0,0,0,0.25)';
+				this.ctx.strokeRect(ns-0.5,(note.key)*5-0.5,Math.max(2,ne-ns),5);
+				this.ctx.strokeStyle='rgba(255,255,255,0.25)';
+				this.ctx.strokeRect(ns+0.5,(note.key)*5+0.5,Math.max(2,ne-ns),5);
+			}
+		}
 
 
 		var wave = new RIFFWAVE(data);
@@ -104,11 +118,13 @@ export default class Generate8bit extends React.Component {
 	}
 
 	play(){
+		if(!this.state.audio) return
 		this.state.audio.play()
 		this.setState({ isPlaying: true })
 	}
 
 	stop(){
+		if(!this.state.audio) return
 		this.state.audio.pause()
 		this.state.audio.currentTime = 0
 		this.setState({ isPlaying: false })
@@ -128,7 +144,7 @@ export default class Generate8bit extends React.Component {
               Generate
           </button>
 
-          <button className={"ui button "+(!this.state.audio ? "disabled" : "")} onClick={this.togglePlay.bind(this)}>
+          <button className={"ui button "+((!this.state.audio || this.state.isGenerating) ? "disabled" : "")} onClick={this.togglePlay.bind(this)}>
           	<i className={"icon " + (this.state.isPlaying ? "stop" : "play")}></i>
           </button>
 
@@ -138,7 +154,7 @@ export default class Generate8bit extends React.Component {
 				</div>
 				<div className="ui divider"></div>
 				<div>
-
+					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"}></canvas>
 				</div>
 	    </div>
 		)

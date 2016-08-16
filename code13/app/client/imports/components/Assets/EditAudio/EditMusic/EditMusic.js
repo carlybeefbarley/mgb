@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import ImportMusic from './ImportMusic.js';
 import MusicStock from './MusicStock.js';
 import GenerateMusic from './GenerateMusic.js';
+import Generate8bit from './Generate8bit.js';
 
 import WaveSurfer from '../lib/WaveSurfer.js';
 
@@ -36,6 +37,7 @@ export default class EditMusic extends React.Component {
 		this.importMusicPopup = ReactDOM.findDOMNode(this.refs.importMusicPopup)
 		this.musicStockPopup = ReactDOM.findDOMNode(this.refs.musicStockPopup)
 		this.generateMusicPopup = ReactDOM.findDOMNode(this.refs.generateMusicPopup)
+		this.generate8bitPopup = ReactDOM.findDOMNode(this.refs.generate8bitPopup)
 
 		let c2 = this.props.asset.content2;
 		if(c2.dataUri){
@@ -70,6 +72,7 @@ export default class EditMusic extends React.Component {
 		$(this.importMusicPopup).modal('hide')
 		$(this.musicStockPopup).modal('hide')
 		$(this.generateMusicPopup).modal('hide')
+		$(this.generate8bitPopup).modal('hide')
 	}
 
 	openStockPopup(){
@@ -78,6 +81,10 @@ export default class EditMusic extends React.Component {
 
 	openGeneratePopup(){
 		$(this.generateMusicPopup).modal('show')		
+	}
+
+	open8bitPopup(){
+		$(this.generate8bitPopup).modal('show')	
 	}
 
 	getFromStock(musicObject){
@@ -144,7 +151,13 @@ export default class EditMusic extends React.Component {
 						<button className="ui small icon button"
 							title="Generate music (Currently only creates Heavy Metal.. More music styles to follow :)"
 							onClick={this.openGeneratePopup.bind(this)}>
-						  <i className="options icon"></i> Generate music [not ready]
+						  <i className="options icon"></i> Generate metal music [not ready]
+						</button>
+
+						<button className="ui small icon button"
+							title="Generate music (Currently only creates 8bit music.. More music styles to follow :)"
+							onClick={this.open8bitPopup.bind(this)}>
+						  <i className="options icon"></i> Generate 8bit music [not ready]
 						</button>
 					</div>
 
@@ -179,6 +192,11 @@ export default class EditMusic extends React.Component {
 
 				<div className="ui modal generateMusicPopup" ref="generateMusicPopup">
 					<GenerateMusic 
+						importMusic={this.importMusic.bind(this)}
+					/>
+				</div>
+				<div className="ui modal generate8bitPopup" ref="generate8bitPopup">
+					<Generate8bit
 						importMusic={this.importMusic.bind(this)}
 					/>
 				</div>

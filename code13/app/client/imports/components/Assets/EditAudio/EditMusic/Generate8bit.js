@@ -14,13 +14,18 @@ export default class Generate8bit extends React.Component {
   	this.sampleRate = 44100
 		this.maxval = 32767
   	this.song = null
+  	this.audio = null
 
   	this.state = {
   		canvasWidth: 860,
   		canvasHeight: 480,
   		isPlaying: false,
   		isGenerating: false,
-  		audio: null,
+  		isAudio: false,
+
+  		bpm: 140,
+  		isBass: true,
+  		isLoop: true, 
   	}
 
 	}
@@ -32,13 +37,15 @@ export default class Generate8bit extends React.Component {
 
 	generate(){
 		this.stop()
-		this.setState({ isGenerating: true, audio: null })
+		this.audio = null
+		this.setState({ isGenerating: true, isAudio: false })
 		var self = this
 		setTimeout(() => {
 			this.song = new Song()
-			this.setState({ audio: this.generateSample(this.song) })
-			this.setState({ isGenerating: false })
+			this.audio = this.generateSample(this.song)
+			this.audio.loop = this.state.isLoop
 			this.play()
+			this.setState({ isGenerating: false, isAudio: true })
 		}, 50)		
 	}
 
@@ -71,8 +78,15 @@ export default class Generate8bit extends React.Component {
 		}
 
 		for (t in data) {data[t]=Math.min(Math.round((data[t]/song.Channels.length)*this.maxval/4),this.maxval);}
-		
-		
+
+		this.drawNotes(song, bpm, duration)
+
+		var wave = new RIFFWAVE(data);
+		var audio = new Audio(wave.dataURI);
+		return audio;
+	}
+
+	drawNotes(song, bpm, duration){	
 		this.ctx.fillStyle='#ffffff';
 		this.ctx.fillRect(0, 0, this.state.canvasWidth, this.state.canvasHeight);
 		/*
@@ -84,15 +98,15 @@ export default class Generate8bit extends React.Component {
 		}
 		*/
 		
-		for (var i in song.Channels)
+		for (let i in song.Channels)
 		{
-			channel=song.Channels[i];
-			instrument=channel.instrument;
-			for (var n in channel.notes)
+			let channel=song.Channels[i];
+			// instrument=channel.instrument;
+			for (let n in channel.notes)
 			{
-				note=channel.notes[n];
-				var ns=((note.start*bpm)/duration) * this.state.canvasWidth
-				var ne=((note.end*bpm)/duration) * this.state.canvasWidth
+				let note=channel.notes[n];
+				let ns=((note.start*bpm)/duration) * this.state.canvasWidth
+				let ne=((note.end*bpm)/duration) * this.state.canvasWidth
 				
 				if (i==0) this.ctx.fillStyle='rgba(128,128,255,0.5)';
 				else if (i==1) this.ctx.fillStyle='rgba(128,255,128,0.5)';
@@ -104,35 +118,39 @@ export default class Generate8bit extends React.Component {
 				this.ctx.strokeRect(ns+0.5,(note.key)*5+0.5,Math.max(2,ne-ns),5);
 			}
 		}
-
-
-		var wave = new RIFFWAVE(data);
-		var audio = new Audio(wave.dataURI);
-		return audio;
 	}
 
 	togglePlay(){
-		if(!this.state.audio) return
+		if(!this.audio) return
 
 		this.state.isPlaying ? this.stop() : this.play()
 	}
 
 	play(){
-		if(!this.state.audio) return
-		this.state.audio.play()
+		if(!this.audio) return
+		this.audio.play()
 		this.setState({ isPlaying: true })
 	}
 
 	stop(){
-		if(!this.state.audio) return
-		this.state.audio.pause()
-		this.state.audio.currentTime = 0
+		if(!this.audio) return
+		this.audio.pause()
+		this.audio.currentTime = 0
 		this.setState({ isPlaying: false })
 	}
 
-	importAudio(){
-		this.props.importMusic(this.state.audio, "Generated 8bit music")
+	toggleLoop(){
+		if(this.audio) {
+			this.audio.loop = this.isLoop
+		}
+		this.setState({ isLoop: !this.state.isLoop })
 	}
+
+	importAudio(){
+		if(!this.audio) return
+		this.props.importMusic(this.audio, "Generated 8bit music")
+	}
+
 
 	render(){
 
@@ -144,11 +162,16 @@ export default class Generate8bit extends React.Component {
               Generate
           </button>
 
-          <button className={"ui button "+((!this.state.audio || this.state.isGenerating) ? "disabled" : "")} onClick={this.togglePlay.bind(this)}>
+          <button className={"ui button "+((!this.isAudio || this.state.isGenerating) ? "disabled" : "")} onClick={this.togglePlay.bind(this)}>
           	<i className={"icon " + (this.state.isPlaying ? "stop" : "play")}></i>
           </button>
 
-          <button className={"ui right floated button "+(!this.state.audio ? "disabled " : "")} title="Import" onClick={this.importAudio.bind(this)}>
+          <div className={"ui toggle checkbox "}>
+            <input type="checkbox" checked={(this.state.isLoop ? "checked" : "")} onChange={this.toggleLoop.bind(this)}/>
+            <label>Loop</label>
+          </div>
+
+          <button className={"ui right floated button "+(!this.isAudio ? "disabled " : "")} title="Import" onClick={this.importAudio.bind(this)}>
 	          <i className="add square icon"></i> Import
 	        </button>
 				</div>

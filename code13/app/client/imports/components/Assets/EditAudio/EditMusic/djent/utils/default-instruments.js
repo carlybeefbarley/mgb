@@ -19,7 +19,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-0-muted',
                 description: 'Fret 0',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-0-muted.mp3',
+                path: '/audio/metalSamples/guitar/sixth-0-muted.mp3',
                 enabled: false,
                 category: 'Sixth string [Muted]',
                 midi: {
@@ -35,7 +35,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-0-open',
                 description: 'Fret 0',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-0-open.mp3',
+                path: '/audio/metalSamples/guitar/sixth-0-open.mp3',
                 enabled: false,
                 category: 'Sixth string [Open]',
                 midi: {
@@ -49,7 +49,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-1-muted',
                 description: 'Fret 1',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-1-muted.mp3',
+                path: '/audio/metalSamples/guitar/sixth-1-muted.mp3',
                 enabled: false,
                 category: 'Sixth string [Muted]',
                 midi: {
@@ -65,7 +65,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-1-open',
                 description: 'Fret 1',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-1-open.mp3',
+                path: '/audio/metalSamples/guitar/sixth-1-open.mp3',
                 enabled: false,
                 category: 'Sixth string [Open]',
                 midi: {
@@ -79,7 +79,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-2-muted',
                 description: 'Fret 2',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-2-muted.mp3',
+                path: '/audio/metalSamples/guitar/sixth-2-muted.mp3',
                 enabled: false,
                 category: 'Sixth string [Muted]',
                 midi: {
@@ -95,7 +95,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-2-open',
                 description: 'Fret 2',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-2-open.mp3',
+                path: '/audio/metalSamples/guitar/sixth-2-open.mp3',
                 enabled: false,
                 category: 'Sixth string [Open]',
                 midi: {
@@ -109,7 +109,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-3-muted',
                 description: 'Fret 3',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-3-muted.mp3',
+                path: '/audio/metalSamples/guitar/sixth-3-muted.mp3',
                 enabled: true,
                 category: 'Sixth string [Muted]',
                 midi: {
@@ -125,7 +125,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-3-open',
                 description: 'Fret 3',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-3-open.mp3',
+                path: '/audio/metalSamples/guitar/sixth-3-open.mp3',
                 enabled: false,
                 category: 'Sixth string [Open]',
                 midi: {
@@ -139,7 +139,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-4-muted',
                 description: 'Fret 4',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-4-muted.mp3',
+                path: '/audio/metalSamples/guitar/sixth-4-muted.mp3',
                 enabled: true,
                 category: 'Sixth string [Muted]',
                 midi: {
@@ -155,7 +155,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-4-open',
                 description: 'Fret 4',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-4-open.mp3',
+                path: '/audio/metalSamples/guitar/sixth-4-open.mp3',
                 enabled: false,
                 category: 'Sixth string [Open]',
                 midi: {
@@ -169,7 +169,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-8-muted',
                 description: 'Fret 8',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-8-muted.mp3',
+                path: '/audio/metalSamples/guitar/sixth-8-muted.mp3',
                 enabled: false,
                 category: 'Sixth string [Muted]',
                 midi: {
@@ -185,7 +185,7 @@ const defaultInstruments = [
             {
                 id: 'sixth-8-open',
                 description: 'Fret 8',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/sixth-8-open.mp3',
+                path: '/audio/metalSamples/guitar/sixth-8-open.mp3',
                 enabled: false,
                 category: 'Sixth string [Open]',
                 midi: {
@@ -200,7 +200,7 @@ const defaultInstruments = [
             {
                 id: 'fifth-5-open',
                 description: 'Fret 5',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/fifth-5-open.mp3',
+                path: '/audio/metalSamples/guitar/fifth-5-open.mp3',
                 enabled: false,
                 category: 'Fifth string [Open]',
                 midi: {
@@ -215,7 +215,7 @@ const defaultInstruments = [
             {
                 id: 'fifth-6-open',
                 description: 'Fret 6',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/fifth-6-open.mp3',
+                path: '/audio/metalSamples/guitar/fifth-6-open.mp3',
                 enabled: false,
                 category: 'Fifth string [Open]',
                 midi: {
@@ -229,7 +229,7 @@ const defaultInstruments = [
             {
                 id: 'fifth-7-open',
                 description: 'Fret 7',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/fifth-7-open.mp3',
+                path: '/audio/metalSamples/guitar/fifth-7-open.mp3',
                 enabled: false,
                 category: 'Fifth string [Open]',
                 midi: {
@@ -243,7 +243,7 @@ const defaultInstruments = [
             {
                 id: 'fifth-8-open',
                 description: 'Fret 8',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/fifth-8-open.mp3',
+                path: '/audio/metalSamples/guitar/fifth-8-open.mp3',
                 enabled: false,
                 category: 'Fifth string [Open]',
                 midi: {
@@ -257,7 +257,7 @@ const defaultInstruments = [
             {
                 id: 'fifth-9-open',
                 description: 'Fret 9',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/fifth-9-open.mp3',
+                path: '/audio/metalSamples/guitar/fifth-9-open.mp3',
                 enabled: false,
                 category: 'Fifth string [Open]',
                 midi: {
@@ -271,7 +271,7 @@ const defaultInstruments = [
             {
                 id: 'fifth-10-open',
                 description: 'Fret 10',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/fifth-10-open.mp3',
+                path: '/audio/metalSamples/guitar/fifth-10-open.mp3',
                 enabled: false,
                 category: 'Fifth string [Open]',
                 midi: {
@@ -285,7 +285,7 @@ const defaultInstruments = [
             {
                 id: 'fifth-11-open',
                 description: 'Fret 11',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/fifth-11-open.mp3',
+                path: '/audio/metalSamples/guitar/fifth-11-open.mp3',
                 enabled: false,
                 category: 'Fifth string [Open]',
                 midi: {
@@ -299,7 +299,7 @@ const defaultInstruments = [
             {
                 id: 'fifth-12-open',
                 description: 'Fret 12',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/fifth-12-open.mp3',
+                path: '/audio/metalSamples/guitar/fifth-12-open.mp3',
                 enabled: false,
                 category: 'Fifth string [Open]',
                 midi: {
@@ -314,7 +314,7 @@ const defaultInstruments = [
             {
                 id: 'third-7-open',
                 description: 'Fret 7',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/third-7-open.mp3',
+                path: '/audio/metalSamples/guitar/third-7-open.mp3',
                 enabled: false,
                 category: 'Third string [Open]',
                 midi: {
@@ -328,7 +328,7 @@ const defaultInstruments = [
             {
                 id: 'third-8-open',
                 description: 'Fret 8',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/third-8-open.mp3',
+                path: '/audio/metalSamples/guitar/third-8-open.mp3',
                 enabled: false,
                 category: 'Third string [Open]',
                 midi: {
@@ -342,7 +342,7 @@ const defaultInstruments = [
             {
                 id: 'third-9-open',
                 description: 'Fret 9',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/third-9-open.mp3',
+                path: '/audio/metalSamples/guitar/third-9-open.mp3',
                 enabled: false,
                 category: 'Third string [Open]',
                 midi: {
@@ -356,7 +356,7 @@ const defaultInstruments = [
             {
                 id: 'third-10-open',
                 description: 'Fret 10',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/third-10-open.mp3',
+                path: '/audio/metalSamples/guitar/third-10-open.mp3',
                 enabled: false,
                 category: 'Third string [Open]',
                 midi: {
@@ -371,7 +371,7 @@ const defaultInstruments = [
             {
                 id: 'third-7-bend',
                 description: 'Fret 7',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/third-7-bend.mp3',
+                path: '/audio/metalSamples/guitar/third-7-bend.mp3',
                 enabled: false,
                 category: 'Third string [Bend]',
                 midi: {
@@ -386,7 +386,7 @@ const defaultInstruments = [
             {
                 id: 'third-8-bend',
                 description: 'Fret 8',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/third-8-bend.mp3',
+                path: '/audio/metalSamples/guitar/third-8-bend.mp3',
                 enabled: false,
                 category: 'Third string [Bend]',
                 midi: {
@@ -402,7 +402,7 @@ const defaultInstruments = [
             {
                 id: 'dissonance-10',
                 description: 'Dissonance at fret 10',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/dissonance-10.mp3',
+                path: '/audio/metalSamples/guitar/dissonance-10.mp3',
                 enabled: false,
                 category: 'Misc',
                 midi: {
@@ -417,7 +417,7 @@ const defaultInstruments = [
             {
                 id: 'dissonance-16',
                 description: 'Dissonance at fret 16',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/dissonance-16.mp3',
+                path: '/audio/metalSamples/guitar/dissonance-16.mp3',
                 enabled: false,
                 category: 'Misc',
                 midi: {
@@ -432,7 +432,7 @@ const defaultInstruments = [
             {
                 id: 'scratch',
                 description: 'Scratch',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/guitar/scratch.mp3',
+                path: '/audio/metalSamples/guitar/scratch.mp3',
                 enabled: false,
                 category: 'Misc',
                 midi: {
@@ -455,7 +455,7 @@ const defaultInstruments = [
             {
                 id: 'k',
                 description: 'Basic kick',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/mastered/kick.wav',
+                path: '/audio/metalSamples/mastered/kick.ogg',
                 enabled: true,
                 midi: {
                     pitch: [ kickMidiNote ],
@@ -470,7 +470,7 @@ const defaultInstruments = [
             {
                 id: 's',
                 description: 'Basic snare',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/mastered/snare.wav',
+                path: '/audio/metalSamples/mastered/snare.ogg',
                 enabled: true,
                 midi: {
                     pitch: [ snareMidiNote ],
@@ -485,7 +485,7 @@ const defaultInstruments = [
             {
                 id: 'h',
                 description: 'Basic hihat',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/mastered/hihat.wav',
+                path: '/audio/metalSamples/mastered/hihat.ogg',
                 enabled: false,
                 midi: {
                     pitch: [ hihatMidiNote ],
@@ -501,7 +501,7 @@ const defaultInstruments = [
             {
                 id: 'crash-left',
                 description: 'Crash left',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/mastered/crash-left.wav',
+                path: '/audio/metalSamples/mastered/crash-left.ogg',
                 enabled: false,
                 category: 'Crash',
                 midi: {
@@ -512,7 +512,7 @@ const defaultInstruments = [
             {
                 id: 'crash-right',
                 description: 'Crash right',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/mastered/crash-right.wav',
+                path: '/audio/metalSamples/mastered/crash-right.ogg',
                 enabled: false,
                 category: 'Crash',
                 midi: {
@@ -523,7 +523,7 @@ const defaultInstruments = [
             {
                 id: 'china-left',
                 description: 'China left',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/mastered/china-left.wav',
+                path: '/audio/metalSamples/mastered/china-left.ogg',
                 enabled: true,
                 category: 'China',
                 midi: {
@@ -540,19 +540,19 @@ const defaultInstruments = [
             {
                 id: 'drone-medium',
                 description: 'Medium',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/drones/drone-medium.mp3',
+                path: '/audio/metalSamples/drones/drone-medium.mp3',
                 enabled: false,
             },
             {
                 id: 'drone-high',
                 description: 'High',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/drones/drone-high.mp3',
+                path: '/audio/metalSamples/drones/drone-high.mp3',
                 enabled: false,
             },
             {
                 id: 'drone-high-2',
                 description: 'Creepy',
-                path: 'https://raw.githubusercontent.com/RossMcMillan92/djent/master/assets/audio/drones/drone-high-2.mp3',
+                path: '/audio/metalSamples/drones/drone-high-2.mp3',
                 enabled: false,
             },
         ],

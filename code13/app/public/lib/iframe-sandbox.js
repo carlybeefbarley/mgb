@@ -16,7 +16,7 @@ var knownLibs = {
     src: function(version){
       version = version || "2.4.7";
       //return 'http://localhost:3000/phaser/2.4.6/phaser.js'
-      return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.min.js'
+      return '/phaser/' + version + '/phaser.min.js'
     }
   },
   "test": function(){

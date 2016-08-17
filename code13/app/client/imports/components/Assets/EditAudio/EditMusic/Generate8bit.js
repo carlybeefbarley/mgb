@@ -41,7 +41,7 @@ export default class Generate8bit extends React.Component {
 		this.setState({ isGenerating: true, isAudio: false })
 		var self = this
 		setTimeout(() => {
-			this.song = new Song()
+			this.song = new Song(this.state.isBass)
 			this.audio = this.generateSample(this.song)
 			this.audio.loop = this.state.isLoop
 			this.play()
@@ -51,7 +51,7 @@ export default class Generate8bit extends React.Component {
 
 	generateSample(song) {
 		var downsample=2; //increasing this will speed up generation but yield lower-res sound
-		var bpm=140;
+		var bpm = this.state.bpm;
 		bpm=1/(bpm/120);
 		var duration=song.bars*song.secperbar*bpm;//duration of the song in seconds		
 		var data=[];
@@ -151,6 +151,14 @@ export default class Generate8bit extends React.Component {
 		this.props.importMusic(this.audio, "Generated 8bit music")
 	}
 
+	changeBPM(e){
+		this.setState({ bpm: parseInt(e.target.value) })
+	}
+
+	toggleBass(){
+		this.setState({ isBass: !this.state.isBass })
+	}
+
 
 	render(){
 
@@ -162,7 +170,7 @@ export default class Generate8bit extends React.Component {
               Generate
           </button>
 
-          <button className={"ui button "+((!this.isAudio || this.state.isGenerating) ? "disabled" : "")} onClick={this.togglePlay.bind(this)}>
+          <button className={"ui button "+((!this.state.isAudio || this.state.isGenerating) ? "disabled" : "")} onClick={this.togglePlay.bind(this)}>
           	<i className={"icon " + (this.state.isPlaying ? "stop" : "play")}></i>
           </button>
 
@@ -171,7 +179,7 @@ export default class Generate8bit extends React.Component {
             <label>Loop</label>
           </div>
 
-          <button className={"ui right floated button "+(!this.isAudio ? "disabled " : "")} title="Import" onClick={this.importAudio.bind(this)}>
+          <button className={"ui right floated button "+(!this.state.isAudio ? "disabled " : "")} title="Import" onClick={this.importAudio.bind(this)}>
 	          <i className="add square icon"></i> Import
 	        </button>
 				</div>
@@ -179,6 +187,16 @@ export default class Generate8bit extends React.Component {
 				<div>
 					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"}></canvas>
 				</div>
+				<div>
+					<div title="Beats per minute"><b>BPM</b></div>
+    			<input type="range" value={this.state.bpm} min="30" max="240" 
+	    			onChange={this.changeBPM.bind(this)} 
+	    			/>
+    		</div>
+    		<div className={"ui toggle checkbox "}>
+          <input type="checkbox" checked={(this.state.isBass ? "checked" : "")} onChange={this.toggleBass.bind(this)}/>
+          <label>Bass</label>
+        </div>
 	    </div>
 		)
 	}	

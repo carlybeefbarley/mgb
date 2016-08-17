@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 
 import { PianoInstrument, NoiseInstrument, SinWaveInstrument } from './instruments.js'
 
-function Song()
+function Song(isBass)
 {
 	this.Channels=[];
 	this.bars=4;
@@ -22,7 +22,7 @@ function Song()
 		var pianoInstrument = new PianoInstrument()
 		this.addChannel(pianoInstrument)
 		this.addChannel(new NoiseInstrument())
-		this.addChannel(new SinWaveInstrument(pianoInstrument.beatNotes))
+		this.addChannel(new SinWaveInstrument(pianoInstrument.beatNotes, isBass))
 
 		// this.Channels[2].notes = []
 		// this.Channels[1].notes = []

@@ -3,6 +3,7 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
 
 var STACK_FRAME_RE = /at ((\S+)\s)?\(?([^:]+):(\d+):(\d+)\)?/;
 var THIS_FILE = "codeEditSandbox.html"
+var MODULE_SERVER = 'http://127.0.0.1:8888/'
 
 function _getCaller() {
   // TODO: Support more browsers.. See https://github.com/stacktracejs/error-stack-parser/blob/master/error-stack-parser.js
@@ -119,10 +120,14 @@ window.onload = function() {
   function isExternalFile(url){
     return !(url.indexOf("http") !== 0 && url.indexOf("//") !== 0)
   }
+  function canSkipTranspile(url){
+    return url.substring(0, 1) !== "/" || isExternalFile(url)
+  }
   // TODO: somehow resolve user's script and global lib
   function loadImport(urlFinalPart, cb) {
-    if(imports[urlFinalPart]){
-      cb();
+    if(false && imports[urlFinalPart]){
+      console.log("From cache!");
+      cb && cb()
       return;
     }
     var url;
@@ -130,11 +135,12 @@ window.onload = function() {
     if(urlFinalPart.indexOf("/") === 0 && urlFinalPart.indexOf("//") === -1){
       url = '/api/asset/code/' + asset_id + urlFinalPart
     }
-    // import X from 'http://cdn.com/x'
-    else if(!isExternalFile(urlFinalPart)){
-      url = '/api/asset/code/' + urlFinalPart
+    // import X from 'react' OR
+    // import X from 'asset_id'
+    else if( !isExternalFile(urlFinalPart) ){
+      url = MODULE_SERVER + urlFinalPart
     }
-    // import X from '_id'
+    // import X from 'http://cdn.com/x'
     else{
       url = urlFinalPart
     }
@@ -170,7 +176,7 @@ window.onload = function() {
   function transform(srcText, filename) {
     // TODO: detect presets from code ?
     var tr;
-    if(isExternalFile(filename)){
+    if(canSkipTranspile(filename)){
       // return structure compatible with babel
       tr = Babel.transform('', {filename: filename, compact: false});
       tr.code = srcText;
@@ -283,7 +289,7 @@ window.onload = function() {
       try {
         loadScript(e.data.gameEngineScriptToPreload, function() {
           //  eval(e.data.codeToRun);  // NOT using eval since we can't get good window.onError information from it
-          loadScriptFromText(e.data.codeToRun, e.data.filename);
+          loadScriptFromText(e.data.codeToRun, "/" + e.data.filename);
         })
       } catch (err) {
         console.error("Could not load and execute script: " + err);

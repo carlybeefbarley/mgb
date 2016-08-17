@@ -25,6 +25,7 @@ export default class Generate8bit extends React.Component {
 
   		bpm: 140,
   		isBass: true,
+  		bassVolume: 4,
   		isLoop: true, 
   	}
 
@@ -41,7 +42,7 @@ export default class Generate8bit extends React.Component {
 		this.setState({ isGenerating: true, isAudio: false })
 		var self = this
 		setTimeout(() => {
-			this.song = new Song(this.state.isBass)
+			this.song = new Song(this.state.isBass, this.state.bassVolume)
 			this.audio = this.generateSample(this.song)
 			this.audio.loop = this.state.isLoop
 			this.play()
@@ -64,6 +65,7 @@ export default class Generate8bit extends React.Component {
 			for (var n in channel.notes)
 			{				
 				note=channel.notes[n];
+				console.log(note.vol)
 				var ns=Math.floor(note.start*this.sampleRate*bpm);
 				var ne=Math.floor(note.end*this.sampleRate*bpm);
 				for (var t=ns;t<ne;t+=downsample)
@@ -89,14 +91,6 @@ export default class Generate8bit extends React.Component {
 	drawNotes(song, bpm, duration){	
 		this.ctx.fillStyle='#ffffff';
 		this.ctx.fillRect(0, 0, this.state.canvasWidth, this.state.canvasHeight);
-		/*
-		for (i=0;i<Screen.width;i++)
-		{
-			t=Math.floor(i*data.length/Screen.width);
-			ctx.strokeStyle='rgb(255,0,0)';
-			ctx.drawLine(i-0.5,Screen.height-data[t]/(maxval/4)*Screen.height-0.5,i-0.5,Screen.height-0.5);
-		}
-		*/
 		
 		for (let i in song.Channels)
 		{
@@ -159,6 +153,10 @@ export default class Generate8bit extends React.Component {
 		this.setState({ isBass: !this.state.isBass })
 	}
 
+	changeBassVolume(e){
+		this.setState({ bassVolume: parseInt(e.target.value)/10 })
+	}
+
 
 	render(){
 
@@ -197,6 +195,12 @@ export default class Generate8bit extends React.Component {
           <input type="checkbox" checked={(this.state.isBass ? "checked" : "")} onChange={this.toggleBass.bind(this)}/>
           <label>Bass</label>
         </div>
+        <div>
+					<div title="Beats per minute"><b>Bass volume</b></div>
+    			<input type="range" value={this.state.bassVolume*10} min="0" max="60" 
+	    			onChange={this.changeBassVolume.bind(this)} 
+	    			/>
+    		</div>
 	    </div>
 		)
 	}	

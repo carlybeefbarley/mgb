@@ -129,7 +129,7 @@ function NoiseInstrument(){
 }
 
 // sinwave instrument
-function SinWaveInstrument(beatNotes, isBass){
+function SinWaveInstrument(beatNotes, isBass, bassVolume){
 	this.name = "sin wave"
 	this.notes = beatNotes
 	// console.log(beatNotes)
@@ -155,7 +155,7 @@ function SinWaveInstrument(beatNotes, isBass){
 
 		if(isBass){
 			for (i=8;i<16;i+=0.5){ 	//more hit-hat on the second bar
-				this.addNote(2,65,i,i+1/8,6) 	//plus some beat
+				this.addNote(2, 65, i, i+1/8, bassVolume) 	//plus some beat
 			}
 		}
 	}

@@ -67,6 +67,18 @@ export default class Generate8bit extends React.Component {
 		}, 50)		
 	}
 
+	randomize(){
+		let pianoParams = this.state.pianoParams
+		pianoParams.v = Math.floor(Math.random()*4)-2
+		pianoParams.v1 = Math.floor(Math.random()*20)-10
+		pianoParams.v2 = Math.floor(Math.random()*20)-10
+		pianoParams.v3 = Math.floor(Math.random()*20)-10
+		pianoParams.vv = Math.floor(Math.random()*2)+3
+		let bpm = Math.floor(Math.random()*100)+80
+		let bassVolume = Math.floor(Math.random()*4)+2
+		this.setState({ pianoParams: pianoParams, bpm: bpm, bassVolume: bassVolume })
+	}
+
 	generateSample(song) {
 		var downsample=2; //increasing this will speed up generation but yield lower-res sound
 		var bpm = this.state.bpm;
@@ -187,7 +199,12 @@ export default class Generate8bit extends React.Component {
 		return (
 			<div className="content">
 				<div className="row">
-					<button className={"ui blue button " + (this.state.isGenerating ? "loading" : "")} 
+					<button className={"ui button "} 
+              onClick={this.randomize.bind(this)}>
+              Randomize
+          </button>
+
+          <button className={"ui blue button " + (this.state.isGenerating ? "loading" : "")} 
               onClick={this.generate.bind(this)}>
               Generate
           </button>

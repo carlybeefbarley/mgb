@@ -27,6 +27,15 @@ export default class Generate8bit extends React.Component {
   		isBass: true,
   		bassVolume: 4,
   		isLoop: true, 
+
+  		pianoParams: {
+				v: Math.floor(Math.random()*4)-2, 		// -2 1
+				v1: Math.floor(Math.random()*20)-10,	// -10 9
+				v2: Math.floor(Math.random()*20)-10,	//-10 9
+				v3: Math.floor(Math.random()*20)-10,	//-10 9
+				vv: Math.floor(Math.random()*2)+3,		// 3 5
+			}
+
   	}
 
 	}
@@ -42,7 +51,11 @@ export default class Generate8bit extends React.Component {
 		this.setState({ isGenerating: true, isAudio: false })
 		var self = this
 		setTimeout(() => {
-			this.song = new Song(this.state.isBass, this.state.bassVolume)
+			const bassParams = {
+				isBass: this.state.isBass,
+				bassVolume: this.state.bassVolume,
+			}
+			this.song = new Song(bassParams, this.state.pianoParams)
 			this.audio = this.generateSample(this.song)
 			this.audio.loop = this.state.isLoop
 			this.play()
@@ -65,7 +78,7 @@ export default class Generate8bit extends React.Component {
 			for (var n in channel.notes)
 			{				
 				note=channel.notes[n];
-				console.log(note.vol)
+				// console.log(note.vol)
 				var ns=Math.floor(note.start*this.sampleRate*bpm);
 				var ne=Math.floor(note.end*this.sampleRate*bpm);
 				for (var t=ns;t<ne;t+=downsample)
@@ -157,6 +170,13 @@ export default class Generate8bit extends React.Component {
 		this.setState({ bassVolume: parseInt(e.target.value)/10 })
 	}
 
+	changePianoParams(id, e){
+		let pianoParams = this.state.pianoParams
+		pianoParams[id] = parseInt(e.target.value)
+		this.setState({ pianoParams: pianoParams })
+		console.log(this.state.pianoParams)
+	}
+
 
 	render(){
 
@@ -196,10 +216,18 @@ export default class Generate8bit extends React.Component {
           <label>Bass</label>
         </div>
         <div>
-					<div title="Beats per minute"><b>Bass volume</b></div>
+					<div title="Bass volume"><b>Bass volume</b></div>
     			<input type="range" value={this.state.bassVolume*10} min="0" max="60" 
 	    			onChange={this.changeBassVolume.bind(this)} 
 	    			/>
+    		</div>
+    		<div>
+					<div title="Piano params"><b>Piano</b></div>
+    			<input type="range" value={this.state.pianoParams.v} min="-2" max="1" step="1" onChange={this.changePianoParams.bind(this, "v")} /><br/>
+    			<input type="range" value={this.state.pianoParams.v1} min="-10" max="9" step="1" onChange={this.changePianoParams.bind(this, "v1")} /><br/>
+    			<input type="range" value={this.state.pianoParams.v2} min="-10" max="9" step="1" onChange={this.changePianoParams.bind(this, "v2")} /><br/>
+    			<input type="range" value={this.state.pianoParams.v3} min="-10" max="9" step="1" onChange={this.changePianoParams.bind(this, "v3")} /><br/>
+    			<input type="range" value={this.state.pianoParams.vv} min="3" max="5" step="1" onChange={this.changePianoParams.bind(this, "vv")} />
     		</div>
 	    </div>
 		)

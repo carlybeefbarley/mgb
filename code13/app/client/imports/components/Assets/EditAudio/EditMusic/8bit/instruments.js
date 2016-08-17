@@ -1,7 +1,7 @@
 var sampleRate = 44100
 
-// piano instrument
-function PianoInstrument(){
+// ##################### piano instrument ########################
+function PianoInstrument(params){
 	this.name = "piano"
 	this.notes = []
 	this.beatNotes = []
@@ -23,12 +23,21 @@ function PianoInstrument(){
 	}
 
 	this.generateNotes = function(){
-		var v = Math.floor(Math.random()*4)-2;
-		var v1 = Math.floor(Math.random()*20)-10;
-		var v2 = Math.floor(Math.random()*20)-10;
-		var v3 = Math.floor(Math.random()*20)-10;
+		var self = this
+
+		// var v = Math.floor(Math.random()*4)-2;
+		// var v1 = Math.floor(Math.random()*20)-10;
+		// var v2 = Math.floor(Math.random()*20)-10;
+		// var v3 = Math.floor(Math.random()*20)-10;
+		// var vv = Math.floor(Math.random()*2)+3;
+
+		var v = params.v
+		var v1 = params.v1
+		var v2 = params.v2
+		var v3 = params.v3
+		var vv = params.vv
+
 		var s = 4;
-		var vv = Math.floor(Math.random()*2)+3;
 
 		for (var i=0; i<s*2; i++){
 			var delay=(Math.random()<0.4)*(Math.floor(Math.random()*3)*(1/2));
@@ -37,7 +46,6 @@ function PianoInstrument(){
 		}
 
 		var tmpNotes = clone(this.notes)
-		var self = this
 		tmpNotes.forEach(function(note, i){
 			self.addNote(0,note.key+v1,note.start+2,note.end+2);
 			self.addNote(0,note.key+v2,note.start+4,note.end+4);
@@ -75,7 +83,7 @@ function PianoInstrument(){
 
 }
 
-// noise instrument
+// ###################### noise instrument #############################
 function NoiseInstrument(){
 	this.name = "noise"
 	this.notes = []
@@ -128,8 +136,9 @@ function NoiseInstrument(){
 	this.generateNotes()
 }
 
-// sinwave instrument
-function SinWaveInstrument(beatNotes, isBass, bassVolume){
+
+// ################# sinwave instrument #########################
+function SinWaveInstrument(beatNotes, params){
 	this.name = "sin wave"
 	this.notes = beatNotes
 	// console.log(beatNotes)
@@ -153,15 +162,16 @@ function SinWaveInstrument(beatNotes, isBass, bassVolume){
 	this.generateNotes = function(){
 		var v=Math.floor(Math.random()*4)-2
 
-		if(isBass){
+		if(params.isBass){
 			for (i=8;i<16;i+=0.5){ 	//more hit-hat on the second bar
-				this.addNote(2, 65, i, i+1/8, bassVolume) 	//plus some beat
+				this.addNote(2, 65, i, i+1/8, params.bassVolume) 	//plus some beat
 			}
 		}
 	}
 
 	this.generateNotes()
 }
+
 
 
 

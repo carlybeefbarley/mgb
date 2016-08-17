@@ -34,6 +34,8 @@ export default class Generate8bit extends React.Component {
 				v2: Math.floor(Math.random()*20)-10,	//-10 9
 				v3: Math.floor(Math.random()*20)-10,	//-10 9
 				vv: Math.floor(Math.random()*2)+3,		// 3 5
+
+				melodyNoteCount: 4,
 			}
 
   	}
@@ -227,7 +229,8 @@ export default class Generate8bit extends React.Component {
     			<input type="range" value={this.state.pianoParams.v1} min="-10" max="9" step="1" onChange={this.changePianoParams.bind(this, "v1")} /><br/>
     			<input type="range" value={this.state.pianoParams.v2} min="-10" max="9" step="1" onChange={this.changePianoParams.bind(this, "v2")} /><br/>
     			<input type="range" value={this.state.pianoParams.v3} min="-10" max="9" step="1" onChange={this.changePianoParams.bind(this, "v3")} /><br/>
-    			<input type="range" value={this.state.pianoParams.vv} min="3" max="5" step="1" onChange={this.changePianoParams.bind(this, "vv")} />
+    			<input type="range" value={this.state.pianoParams.vv} min="3" max="5" step="1" onChange={this.changePianoParams.bind(this, "vv")} /><br/>
+    			<input type="range" value={this.state.pianoParams.melodyNoteCount} min="3" max="5" step="1" onChange={this.changePianoParams.bind(this, "melodyNoteCount")} /><br/>
     		</div>
 	    </div>
 		)

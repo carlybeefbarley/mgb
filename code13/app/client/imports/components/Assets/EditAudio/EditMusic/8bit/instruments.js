@@ -37,7 +37,7 @@ function PianoInstrument(params){
 		var v3 = params.v3
 		var vv = params.vv
 
-		var s = 4;
+		var s = params.melodyNoteCount;
 
 		for (var i=0; i<s*2; i++){
 			var delay=(Math.random()<0.4)*(Math.floor(Math.random()*3)*(1/2));

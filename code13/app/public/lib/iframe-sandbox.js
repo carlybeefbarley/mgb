@@ -3,7 +3,25 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
 
 var STACK_FRAME_RE = /at ((\S+)\s)?\(?([^:]+):(\d+):(\d+)\)?/;
 var THIS_FILE = "codeEditSandbox.html"
+//var MODULE_SERVER = 'https://wzrd.in/debug-standalone/'
 var MODULE_SERVER = 'https://wzrd.in/standalone/'
+
+
+var knownLibs = {
+  // wzrd serves bad version of phaser because it requires extra steps to build: https://www.npmjs.com/package/phaser#browserify--cjs
+  "phaser": {
+    useGlobal: true,
+    src: function(version){
+      version = version || "latest";
+      //return 'http://localhost:3000/phaser/2.4.6/phaser.js'
+      return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.min.js'
+    }
+  },
+  "test": function(){
+    return '/test.js'
+  }
+}
+
 
 function _getCaller() {
   // TODO: Support more browsers.. See https://github.com/stacktracejs/error-stack-parser/blob/master/error-stack-parser.js
@@ -37,13 +55,39 @@ function _getCaller() {
 
 window.onload = function() {
   _isAlive = true;
+  var asset_id;
   // here will be stored all imported objects
   var imports = {};
-  var asset_id;
+  var errorCount = 0;
+  /*var exports = {};
+  Object.defineProperty(window, "module", {
+    get:function(){
+      return imports
+    },
+    set: function(val){
+      console.log("Overwriting imports");
+    }
+  })
+
+  Object.defineProperty(window, "exports", {
+    get:function(){
+      return exports
+    },
+    set: function(val){
+
+      console.log("Overwriting exports");
+    }
+  })*/
 
   window.require = function(key){
-    return imports[key];
-  };
+    // true is for global modules
+    if(imports[key] && imports[key] !== true) {
+      return imports[key]
+    }
+    // try to fallback to global
+    var name = key.split("@").shift();
+    return window[key] || window[name.substring(0, 1).toUpperCase() + name.substring(1)]
+  }
 
   // Wrap the console functions so we can pass the info to parent window
   var consoleMethodNames = ["log", "debug", "info", "warn", "error"]  // trace? dir?
@@ -75,8 +119,9 @@ window.onload = function() {
     }
   }
 
-  originalWindowOnerror = window.onerror
+  window.originalWindowOnerror = window.onerror
   window.onerror = function(message, url, lineNumber) {
+    errorCount++
     window.parent.postMessage( {
       args: [message],      // TODO: A stringify to handle the stuff that can't be xferred. See https://github.com/jsbin/jsbin/blob/master/public/js/vendor/stringify.js
       mgbCmd: "mgbConsoleMsg",
@@ -84,8 +129,8 @@ window.onload = function() {
       timestamp: new Date(),
       line: lineNumber
     }, "*");
-    if (originalWindowOnerror)
-      return originalWindowOnerror(message, url, lineNumber);
+    if (window.originalWindowOnerror)
+      return window.originalWindowOnerror(message, url, lineNumber);
     else
       return false;
   }
@@ -99,8 +144,10 @@ window.onload = function() {
 
     // Then bind the event to the callback function.
     // There are several events for cross browser compatibility, so do both
-    script.onreadystatechange = callback;
-    script.onload = callback;
+    script.onreadystatechange = script.onload = function(){
+      setTimeout(callback, 0)
+    }
+
     script.onerror = function(err) {
       console.warn("Could not load script: " + url);
     }
@@ -123,22 +170,35 @@ window.onload = function() {
   function canSkipTranspile(url){
     return url.substring(0, 1) !== "/" || isExternalFile(url)
   }
+  function getKnowLib(urlFinalPart){
+    var parts = urlFinalPart.split("@")
+    var name = parts[0]
+    var ver = parts[1]
+    var lib = knownLibs[name]
+    if(lib){
+      lib.ver = ver
+      lib.name = name
+      return lib
+    }
+    return null
+  }
   function resolveUrl(urlFinalPart){
-    var url = "";
+    var lib = getKnowLib(urlFinalPart)
+    if(lib){
+      return lib.src(lib.ver);
+    }
     // import X from '/asset name' or import X from '/user/asset name'
     if(urlFinalPart.indexOf("/") === 0 && urlFinalPart.indexOf("//") === -1){
-      url = '/api/asset/code/' + asset_id + urlFinalPart
+      return '/api/asset/code/' + asset_id + urlFinalPart
     }
     // import X from 'react' OR
     // import X from 'asset_id'
-    else if( !isExternalFile(urlFinalPart) ){
-      url = MODULE_SERVER + urlFinalPart
+    if( !isExternalFile(urlFinalPart) ){
+      return MODULE_SERVER + urlFinalPart
     }
+
     // import X from 'http://cdn.com/x'
-    else{
-      url = urlFinalPart
-    }
-    return url;
+      return urlFinalPart
   }
   // TODO: somehow resolve user's script and global lib
   function loadImport(urlFinalPart, cb) {
@@ -165,10 +225,25 @@ window.onload = function() {
     httpRequest.send(null);
   }
   function loadModule(src, urlFinalPart, cb){
-    window.exports = {};
-    window.module = {exports: window.exports};
+    var lib = getKnowLib(urlFinalPart);
+    if(!lib || !lib.useGlobal){
+      window.module = {exports: {}};
+      window.exports = window.module.exports;
+    }
+    else{
+      // atm this is only for Phaser - as it has bug in module exports:
+      // PIXI is not defined - as pixi will be added as module, but Phaser expects global PIXI :/
+      delete window.module;
+      delete window.exports;
+    }
+
     loadScriptFromText(src, urlFinalPart, function(){
-      if(Object.keys(window.exports).length){
+      if(lib && lib.useGlobal){
+        // mark lib as has been loaded
+        imports[urlFinalPart] = true;
+      }
+      // babel adds keys to exports
+      else if(Object.keys(window.exports).length){
         imports[urlFinalPart] = window.exports;
       }
       // hack for React like module loading
@@ -180,10 +255,14 @@ window.onload = function() {
           imports[shortName] = window.module.exports;
         }
       }
+      window.module = {exports: {}};
+      window.exports = window.module.exports;
+
       cb && cb()
     })
   }
   // TODO: not all scripts needs to be transpiled - figure out - how to tell difference
+  // atm we are not transpiling external sources
   function transform(srcText, filename) {
     // TODO: detect presets from code ?
     var tr;
@@ -195,13 +274,23 @@ window.onload = function() {
     }
     const start = Date.now();
     console.trace("Transpiling " + filename + " (" + srcText.length + " bytes)")
-    tr = Babel.transform(srcText, {
-      filename: filename,
-      compact: false,           // Default of "auto" fails on ReactImport
-      presets: ['es2015', 'react'],
-      plugins: ['transform-class-properties'],
-      retainLines: true
-    });
+    try {
+      tr = Babel.transform(srcText, {
+        filename: filename,
+        compact: false,           // Default of "auto" fails on ReactImport
+        presets: ['es2015', 'react'],
+        plugins: ['transform-class-properties'],// , "transform-es2015-modules-amd" - not working
+        retainLines: true
+      });
+    }
+    // show nice error to user
+    catch(e){
+      console.error(e.message)
+      return {
+        metadata:{modules:{imports:[]}},
+        code: ''
+      }
+    }
     console.trace("Transpilation yielded " + tr.code.length + " bytes" + ' ' + (Date.now() - start) + " ms")
     return tr;
   }
@@ -213,18 +302,20 @@ window.onload = function() {
     var imports = parseImport(output);
 
     var ready = function(){
-      // Adding the script tag to the head to load it
-      // technically document head can be used: https://developer.mozilla.org/en-US/docs/Web/API/Document/head
-      var head = document.getElementsByTagName('head')[0];
       var script = document.createElement('script');
+      script.setAttribute("data-origin", filename);
+
       var name = filename || "_doc_"+ (++scriptsLoaded) +"";
       var cb;
       if(name.substr(-3) != ".js"){
         name += ".js";
       }
       script.type = 'text/javascript';
-      // todo: load asset name also and make sourceURL more recognizable???
       script.text = output.code + "\n//# sourceURL=" + name;
+
+      // var src = output.code + "\n//# sourceURL=" + name;
+      // script.src = URL.createObjectURL(new Blob([src]));
+
       if (callback) {
         // execute on the next tick
         cb = function(){
@@ -233,33 +324,55 @@ window.onload = function() {
         // this does not work with script.text (only with script.src)
         // script.onreadystatechange = script.onload = cb;
       }
+
       script.onerror = function(err) {
         console.warn("Could not load script ["+ filename + "]");
       }
+
+      // Adding the script tag to the head to load it
+      var head = document.getElementsByTagName('head')[0];
       // Fire the loading
-      head.appendChild(script);
-      cb && cb();
-    };
+      head.appendChild(script)
+      cb && cb()
+    }
 
     // TODO: load all at once ( usually much faster ) - atm scripts are included one by one
-    var load = function(){
+    var load = function load(){
       if(imports.length){
-        loadFromCache(imports.shift(), load);
+        loadFromCache(imports.shift(), load)
       }
       else{
-        ready();
+        ready()
       }
-    };
-    load();
+    }
+    load()
   }
 
   var cbs = {};
   var cbId = 0;
 
   function loadFromCache(urlFinalPart, cb){
+    // don't load at all
+    if(imports[urlFinalPart]){
+      console.log("From cache:", urlFinalPart)
+      cb && cb()
+      return
+    }
+    var url = resolveUrl(urlFinalPart)
+    // don't cache local files
+    if(!isExternalFile(url)){
+      loadImport(urlFinalPart, cb)
+      return
+    }
+    /*else{
+      loadScript(url, cb)
+      return
+    }*/
+    // store callback for response handling
     cbId++;
     cbs[cbId] = function(src, id){
       if(src === void(0)){
+        //loadScript(resolveUrl(urlFinalPart), cb)
         loadImport(urlFinalPart, cb)
       }
       else{
@@ -267,6 +380,8 @@ window.onload = function() {
       }
       delete cbs[id]
     }
+
+    // ask parent - as it may have cached source
     mainWindow.postMessage({
       mgbCmd: "mgbGetFromCache",
       filename: urlFinalPart,
@@ -311,10 +426,15 @@ window.onload = function() {
       // get owner_id from asset - and find asset
       asset_id = e.data.asset_id
       try {
-        loadScript(e.data.gameEngineScriptToPreload, function() {
+
+        //loadScript(e.data.gameEngineScriptToPreload, function() {
           //  eval(e.data.codeToRun);  // NOT using eval since we can't get good window.onError information from it
-          loadScriptFromText(e.data.codeToRun, "/" + e.data.filename);
-        })
+          loadScriptFromText(e.data.codeToRun, "/" + e.data.filename, function(){
+            if(errorCount === 0){
+              console.info("All Files loaded successfully!")
+            }
+          });
+        //})
       } catch (err) {
         console.error("Could not load and execute script: " + err);
       }
@@ -332,7 +452,7 @@ window.onload = function() {
       commands[e.data.mgbCommand](e)
     }
     else{
-      console.dir("Unknow command received: ["+ e.data.mgbCommand +']')
+      console.error("Unknown command received: ["+ e.data.mgbCommand +']')
     }
   });
 }

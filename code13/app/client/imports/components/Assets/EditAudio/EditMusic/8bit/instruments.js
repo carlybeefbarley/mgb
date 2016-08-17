@@ -40,9 +40,9 @@ function PianoInstrument(params){
 		var s = params.melodyNoteCount;
 
 		for (var i=0; i<s*2; i++){
-			var delay=(Math.random()<0.4)*(Math.floor(Math.random()*3)*(1/2));
-			delay=(Math.random()<0.2)*(Math.floor(Math.random()*3)*(1/4));
-			if (Math.random()>0.25) this.addNote(0,49-12+Math.floor(Math.random()*3)*12-12+v+0*(Math.floor(Math.pow(Math.random(),2)*3)*2-2)-vv*(Math.random()<0.2),i/s+delay/s,i/s+1/s+delay/s)
+			let delay=(Math.random()<0.4)*(Math.floor(Math.random()*3)*(1/2));
+			delay=(Math.random()<params.delay)*(Math.floor(Math.random()*3)*(1/4));
+			if (Math.random()>params.noteProbability) this.addNote(0,49-12+Math.floor(Math.random()*3)*12-12+v+0*(Math.floor(Math.pow(Math.random(),2)*3)*2-2)-vv*(Math.random()<0.2),i/s+delay/s,i/s+1/s+delay/s)
 		}
 
 		var tmpNotes = clone(this.notes)

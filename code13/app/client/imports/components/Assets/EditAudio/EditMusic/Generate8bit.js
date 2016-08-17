@@ -36,6 +36,8 @@ export default class Generate8bit extends React.Component {
 				vv: Math.floor(Math.random()*2)+3,		// 3 5
 
 				melodyNoteCount: 4,
+				delay: 0.2,
+				noteProbability: 0.25,
 			}
 
   	}
@@ -174,7 +176,7 @@ export default class Generate8bit extends React.Component {
 
 	changePianoParams(id, e){
 		let pianoParams = this.state.pianoParams
-		pianoParams[id] = parseInt(e.target.value)
+		pianoParams[id] = parseFloat(e.target.value)
 		this.setState({ pianoParams: pianoParams })
 		console.log(this.state.pianoParams)
 	}
@@ -231,6 +233,8 @@ export default class Generate8bit extends React.Component {
     			<input type="range" value={this.state.pianoParams.v3} min="-10" max="9" step="1" onChange={this.changePianoParams.bind(this, "v3")} /><br/>
     			<input type="range" value={this.state.pianoParams.vv} min="3" max="5" step="1" onChange={this.changePianoParams.bind(this, "vv")} /><br/>
     			<input type="range" value={this.state.pianoParams.melodyNoteCount} min="3" max="5" step="1" onChange={this.changePianoParams.bind(this, "melodyNoteCount")} /><br/>
+    			<input type="range" value={this.state.pianoParams.delay} min="0" max="0.5" step="0.05" onChange={this.changePianoParams.bind(this, "delay")} /><br/>
+    			<input type="range" value={this.state.pianoParams.noteProbability} min="0" max="0.5" step="0.05" onChange={this.changePianoParams.bind(this, "noteProbability")} /><br/>
     		</div>
 	    </div>
 		)

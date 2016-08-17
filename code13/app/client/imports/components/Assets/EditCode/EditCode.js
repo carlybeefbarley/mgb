@@ -82,6 +82,7 @@ export default class EditCode extends React.Component {
       mgbopt_game_engine: null,               // Determined anywhere in the file
       currentLineDeterminesGameEngine: null   // Determined by current line/selection
     }
+    this.cache = {};
     this.hintWidgets = [];
   }
   
@@ -845,18 +846,30 @@ export default class EditCode extends React.Component {
     var data = event.data
     if (source === this.iFrameWindow.contentWindow && data.hasOwnProperty("mgbCmd"))
     {
-      if (data.mgbCmd === "mgbConsoleMsg")
-        this._consoleAdd(data)
-      else if (data.mgbCmd === "mgbScreenshotCanvasResponse")
-      {
-        // In a Phaser game, this is needed to enable screenshots if using WebGL renderer
-        //   game.preserveDrawingBuffer = true;
-        // OR use Phaser.CANVAS as the renderer
+      switch(data.mgbCmd){
+        case "mgbConsoleMsg": {
+          this._consoleAdd(data)
+        } break
 
-        let asset = this.props.asset
-        asset.thumbnail = data.pngDataUrl
-        this.props.handleContentChange(null, asset.thumbnail, "update thumbnail")
+        case "mgbScreenshotCanvasResponse": {
+          // In a Phaser game, this is needed to enable screenshots if using WebGL renderer
+          //   game.preserveDrawingBuffer = true;
+          // OR use Phaser.CANVAS as the renderer
+
+          let asset = this.props.asset
+          asset.thumbnail = data.pngDataUrl
+          this.props.handleContentChange(null, asset.thumbnail, "update thumbnail")
+        } break
+
+        case "mgbStoreCache": {
+          this.cache[data.filename] = data.src
+        } break
+
+        case "mgbGetFromCache": {
+          this.postToIFrame("mgbFromCache", {src: this.cache[data.filename], cbId: data.cbId})
+        } break
       }
+
     }
   }
   
@@ -869,11 +882,17 @@ export default class EditCode extends React.Component {
         recommendedHeight: 150            // See AssetCard for this size        
       })            
   }
-  
-  
+
+  postToIFrame(cmd, data)
+  {
+    if (this.state.isPlaying) {
+      data.mgbCommand = cmd
+      this._postMessageToIFrame(data)
+    }
+  }
   _postMessageToIFrame(messageObject)
   {
-    this.iFrameWindow.contentWindow.postMessage(messageObject, "*")  
+    this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
   
   

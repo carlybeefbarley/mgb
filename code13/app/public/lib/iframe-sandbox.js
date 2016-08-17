@@ -3,7 +3,7 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
 
 var STACK_FRAME_RE = /at ((\S+)\s)?\(?([^:]+):(\d+):(\d+)\)?/;
 var THIS_FILE = "codeEditSandbox.html"
-var MODULE_SERVER = 'http://127.0.0.1:8888/'
+var MODULE_SERVER = 'https://wzrd.in/standalone/'
 
 function _getCaller() {
   // TODO: Support more browsers.. See https://github.com/stacktracejs/error-stack-parser/blob/master/error-stack-parser.js
@@ -123,14 +123,8 @@ window.onload = function() {
   function canSkipTranspile(url){
     return url.substring(0, 1) !== "/" || isExternalFile(url)
   }
-  // TODO: somehow resolve user's script and global lib
-  function loadImport(urlFinalPart, cb) {
-    if(false && imports[urlFinalPart]){
-      console.log("From cache!");
-      cb && cb()
-      return;
-    }
-    var url;
+  function resolveUrl(urlFinalPart){
+    var url = "";
     // import X from '/asset name' or import X from '/user/asset name'
     if(urlFinalPart.indexOf("/") === 0 && urlFinalPart.indexOf("//") === -1){
       url = '/api/asset/code/' + asset_id + urlFinalPart
@@ -144,33 +138,50 @@ window.onload = function() {
     else{
       url = urlFinalPart
     }
+    return url;
+  }
+  // TODO: somehow resolve user's script and global lib
+  function loadImport(urlFinalPart, cb) {
+    var url = resolveUrl(urlFinalPart)
     // atm server will try to generate script
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function(){
-      if (httpRequest.readyState !== XMLHttpRequest.DONE || httpRequest.status !== 200) {
+      if (httpRequest.readyState !== XMLHttpRequest.DONE ){
+        return;
+      }
+      if( httpRequest.status !== 200 ){
+        console.error("Failed to load script: ["+ url +"]", httpRequest.status)
         return;
       }
       var src = httpRequest.responseText
-      window.exports = {};
-      window.module = {exports:window.exports};
-      loadScriptFromText(src, urlFinalPart, function(){
-        if(Object.keys(window.exports).length){
-          imports[urlFinalPart] = window.exports;
-        }
-        // hack for React like module loading
-        else{
-          imports[urlFinalPart] = window.module.exports;
-          // extract short name from url - e.g. react
-          var shortName = urlFinalPart.split("/").pop().split(".").shift();
-          if(shortName){
-            imports[shortName] = window.module.exports;
-          }
-        }
-        cb && cb()
-      })
+      mainWindow.postMessage({
+        mgbCmd: "mgbStoreCache",
+        src: src,
+        filename: urlFinalPart
+      }, "*")
+      loadModule(src, urlFinalPart, cb)
     }
     httpRequest.open('GET', url, true);
     httpRequest.send(null);
+  }
+  function loadModule(src, urlFinalPart, cb){
+    window.exports = {};
+    window.module = {exports: window.exports};
+    loadScriptFromText(src, urlFinalPart, function(){
+      if(Object.keys(window.exports).length){
+        imports[urlFinalPart] = window.exports;
+      }
+      // hack for React like module loading
+      else{
+        imports[urlFinalPart] = window.module.exports;
+        // extract short name from url - e.g. react
+        var shortName = urlFinalPart.split("/").pop().split(".").shift();
+        if(shortName){
+          imports[shortName] = window.module.exports;
+        }
+      }
+      cb && cb()
+    })
   }
   // TODO: not all scripts needs to be transpiled - figure out - how to tell difference
   function transform(srcText, filename) {
@@ -198,11 +209,9 @@ window.onload = function() {
   // this is used to make script names a little bit nicer
   var scriptsLoaded = 0;
   function loadScriptFromText(srcText, filename, callback) {
-
     var output = transform(srcText, filename);
     var imports = parseImport(output);
 
-    // loaded gets called one extra time
     var ready = function(){
       // Adding the script tag to the head to load it
       // technically document head can be used: https://developer.mozilla.org/en-US/docs/Web/API/Document/head
@@ -225,7 +234,7 @@ window.onload = function() {
         // script.onreadystatechange = script.onload = cb;
       }
       script.onerror = function(err) {
-        console.warn("Could not load script from provided SourceText");
+        console.warn("Could not load script ["+ filename + "]");
       }
       // Fire the loading
       head.appendChild(script);
@@ -235,7 +244,7 @@ window.onload = function() {
     // TODO: load all at once ( usually much faster ) - atm scripts are included one by one
     var load = function(){
       if(imports.length){
-        loadImport(imports.shift(), load);
+        loadFromCache(imports.shift(), load);
       }
       else{
         ready();
@@ -244,16 +253,32 @@ window.onload = function() {
     load();
   }
 
+  var cbs = {};
+  var cbId = 0;
 
-
-  window.addEventListener('message', function (e) {
-    var mainWindow = e.source;
-    if (e.data === 'ping')
-    {
-      mainWindow.postMessage(_isAlive, e.origin);
+  function loadFromCache(urlFinalPart, cb){
+    cbId++;
+    cbs[cbId] = function(src, id){
+      if(src === void(0)){
+        loadImport(urlFinalPart, cb)
+      }
+      else{
+        loadModule(src, urlFinalPart, cb)
+      }
+      delete cbs[id]
     }
-    else if (e.data.mgbCommand === 'screenshotCanvas')
-    {
+    mainWindow.postMessage({
+      mgbCmd: "mgbGetFromCache",
+      filename: urlFinalPart,
+      cbId: cbId
+    }, "*")
+  }
+
+  var commands = {
+    ping: function(e){
+      mainWindow.postMessage(_isAlive, e.origin);
+    },
+    screenshotCanvas: function(e){
       var desiredHeight = e.data.recommendedHeight || 150;
       var gameCanvas = document.getElementsByTagName ('canvas').item(0);
       if (gameCanvas)
@@ -278,9 +303,8 @@ window.onload = function() {
       }
       else
         console.log("No <canvas> element to screenshot")
-    }
-    else if (e.data.mgbCommand === 'startRun')
-    {
+    },
+    startRun: function(e){
       mgbHostMessageContext.msgSource = e.source;
       mgbHostMessageContext.msgOrigin = e.origin;
       // this is used to import nice filenames
@@ -294,6 +318,21 @@ window.onload = function() {
       } catch (err) {
         console.error("Could not load and execute script: " + err);
       }
+    },
+    mgbFromCache: function(e){
+      if(e.data.cbId){
+        cbs[e.data.cbId](e.data.src, e.data.cbId)
+      }
+    }
+  }
+  var mainWindow;
+  window.addEventListener('message', function (e) {
+    mainWindow = e.source;
+    if(commands[e.data.mgbCommand]){
+      commands[e.data.mgbCommand](e)
+    }
+    else{
+      console.dir("Unknow command received: ["+ e.data.mgbCommand +']')
     }
   });
 }

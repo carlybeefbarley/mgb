@@ -14,7 +14,51 @@
 
 export default mgbReleaseInfo = {
   "releases":
-  [ 
+  [
+
+    {
+      "timestamp":     "Wed Aug 17 2016 13:10:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "1122"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.code",
+          "type":           "improvement",
+          "changeName":     "Code: ES6 Module Imports",
+          "changeSummary":  "It is now possible to import npm and other packages/libraries dynamically using the EcmaScript 6 import command. This is definitely alpha quality at present so let us know if you find bugs and we will fix them quickly", 
+          "otherUrls":      [ 
+            { txt: "Phaser/ES6 example", href: "https://v2.mygamebuilder.com/u/stauzs/assets?_fp=assets&_np=people&project=Phaser+ES6" },
+            { txt: "React/ES6/JSX example", href: "https://v2.mygamebuilder.com/u/stauzs/assets?_fp=assets&_np=people&project=Code+Import+Test" },
+            { txt: "NPM respository", href: "https://npmjs.com" },
+            { txt: "Mozilla documents for ES6 import", href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import" }
+          ]
+        },
+        {
+          "featureTag":     "nav.flexpanel.featurelevels",
+          "type":           "improvement",
+          "changeName":     "Feature Levels are part of User settings",
+          "changeSummary":  "The Feature Level slider values are now stored in the cloud (they were previously only in local browser storage). Also, the featureLevels Flex Panel (sliders icon on right hand side of window) is now correctly connected to the settings so the correct values are shown and can be changed also from there. They are a little bit laggy for now when dragged, but that will improved in the next few days.", 
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.music",
+          "type":           "feature",
+          "changeName":     "New Music generator: 8bit music",
+          "changeSummary":  "Aded our 2nd Thematic music generator - this one creates casual/platformery 8 bit music based on various parameters",
+          "otherUrls":      []
+        }
+      ]
+    },
+    
 
     {
       "timestamp":     "Fri Aug 12 2016 13:30:00 GMT-0700 (PDT)",
@@ -55,7 +99,7 @@ export default mgbReleaseInfo = {
         }
       ]
     },
-    
+        
     {
       "timestamp":     "Wed Aug 10 2016 18:20:00 GMT-0700 (PDT)",
       

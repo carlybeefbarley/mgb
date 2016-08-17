@@ -58,9 +58,10 @@ function _getCaller() {
 window.onload = function() {
   _isAlive = true;
   var asset_id;
-  // here will be stored all imported objects
-  var imports = {};
+
   var errorCount = 0;
+
+  var mainWindow; // reference to the last poster
   /*
   TODO: make use of these setters?
   var exports = {};
@@ -82,14 +83,19 @@ window.onload = function() {
     }
   })*/
 
+  // here will be stored all imported objects
+  var imports = {};
+  // SuperSimple implementation for CommonJS like module loading
   window.require = function(key){
     // true is for global modules
     if(imports[key] && imports[key] !== true) {
       return imports[key]
     }
     // try to fallback to global
+    // TODO: make this more universal - it would fail on something like CamelCaseLib
+    // Trace global keys Object.keys(window) before and after loading???
     var name = key.split("@").shift();
-    return window[key] || window[name.substring(0, 1).toUpperCase() + name.substring(1)]
+    return window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)]
   }
 
   // Wrap the console functions so we can pass the info to parent window
@@ -353,7 +359,6 @@ window.onload = function() {
 
   var cbs = {};
   var cbId = 0;
-
   function loadFromCache(urlFinalPart, cb){
     // don't load at all
     if(imports[urlFinalPart]){
@@ -367,7 +372,9 @@ window.onload = function() {
       loadImport(urlFinalPart, cb)
       return
     }
-    /*else{
+    /*
+    Don't do this - loadModule never will be called
+    else{
       loadScript(url, cb)
       return
     }*/
@@ -429,7 +436,8 @@ window.onload = function() {
       // get owner_id from asset - and find asset
       asset_id = e.data.asset_id
       try {
-
+        // moved to import Phaser from 'phaser'
+        // TODO: restore MGBOPT_phaser_version
         //loadScript(e.data.gameEngineScriptToPreload, function() {
           //  eval(e.data.codeToRun);  // NOT using eval since we can't get good window.onError information from it
           loadScriptFromText(e.data.codeToRun, "/" + e.data.filename, function(){
@@ -448,7 +456,7 @@ window.onload = function() {
       }
     }
   }
-  var mainWindow;
+
   window.addEventListener('message', function (e) {
     mainWindow = e.source;
     if(commands[e.data.mgbCommand]){

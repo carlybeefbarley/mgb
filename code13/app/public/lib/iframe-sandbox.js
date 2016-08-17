@@ -362,7 +362,6 @@ window.onload = function() {
   function loadFromCache(urlFinalPart, cb){
     // don't load at all
     if(imports[urlFinalPart]){
-      console.log("From cache:", urlFinalPart)
       cb && cb()
       return
     }

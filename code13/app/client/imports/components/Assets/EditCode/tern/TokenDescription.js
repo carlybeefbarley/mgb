@@ -885,12 +885,14 @@ export { import1 as name1, import2 as name2, …, nameN } from …;`,
 
 function warnForHelp(helpItem) {
   return !(helpItem && helpItem.origin === "ecma6") ? null :
-    <div className="ui small label" style={{color: "red"}}>
+    <small>'<code>{helpItem.ts}</code>' introduced in <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a></small>
+  /*  <div className="ui small label" style={{color: "red"}}>
       <i className="ui circle warning icon"></i>
       <small>'<code>{helpItem.ts}</code>' is an <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a> feature, but MGB only supports
         EcmaScript 5
       </small>
     </div>
+  */
 }
 
 // Codemirror has a token type called string-2 which seems to almost always be a RegEx, so handle specially

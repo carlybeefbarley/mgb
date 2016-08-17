@@ -75,7 +75,7 @@ function PianoInstrument(params){
 		var tmpNotes = clone(this.notes)
 		tmpNotes.forEach(function(note, i){  //duplicate everything to a second bar
 			self.addNote(0, note.key, note.start+8, note.end+8, note.vol);
-			self.addNote(0, note.key+12, note.start+8, note.end+0.375+8, note.vol/2);
+			if(params.enchance) self.addNote(0, note.key+12, note.start+8, note.end+0.375+8, note.vol/2);
 		})
 	}
 

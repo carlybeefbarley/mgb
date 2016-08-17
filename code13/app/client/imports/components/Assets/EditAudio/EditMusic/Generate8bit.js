@@ -38,6 +38,7 @@ export default class Generate8bit extends React.Component {
 				melodyNoteCount: 4,
 				delay: 0.2,
 				noteProbability: 0.25,
+				enchance: true,
 			}
 
   	}
@@ -190,7 +191,13 @@ export default class Generate8bit extends React.Component {
 		let pianoParams = this.state.pianoParams
 		pianoParams[id] = parseFloat(e.target.value)
 		this.setState({ pianoParams: pianoParams })
-		console.log(this.state.pianoParams)
+		// console.log(this.state.pianoParams)
+	}
+
+	toggleEnchancePiano(e){
+		let pianoParams = this.state.pianoParams
+		pianoParams.enchance = !pianoParams.enchance
+		this.setState({ pianoParams: pianoParams })
 	}
 
 
@@ -226,23 +233,31 @@ export default class Generate8bit extends React.Component {
 				<div>
 					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"}></canvas>
 				</div>
-				<div>
-					<div title="Beats per minute"><b>BPM</b></div>
-    			<input type="range" value={this.state.bpm} min="30" max="240" 
-	    			onChange={this.changeBPM.bind(this)} 
-	    			/>
-    		</div>
-    		<div className={"ui toggle checkbox "}>
-          <input type="checkbox" checked={(this.state.isBass ? "checked" : "")} onChange={this.toggleBass.bind(this)}/>
-          <label>Bass</label>
-        </div>
-        <div>
-					<div title="Bass volume"><b>Bass volume</b></div>
-    			<input type="range" value={this.state.bassVolume*10} min="0" max="60" 
-	    			onChange={this.changeBassVolume.bind(this)} 
-	    			/>
-    		</div>
-    		<div>
+				<div style={{width:"150px", float:"left", marginRight:"20px"}}>
+					<div>
+						<div title="Beats per minute"><b>BPM</b></div>
+	    			<input type="range" value={this.state.bpm} min="30" max="240" 
+		    			onChange={this.changeBPM.bind(this)} 
+		    			/>
+	    		</div>
+	    		<div title="Enabling, disabling bass"><b>Bass</b></div>
+	    		<div className={"ui toggle checkbox "}>
+	          <input type="checkbox" checked={(this.state.isBass ? "checked" : "")} onChange={this.toggleBass.bind(this)}/>
+	          <label></label>
+	        </div>
+	        <div>
+						<div title="Bass volume"><b>Bass volume</b></div>
+	    			<input type="range" value={this.state.bassVolume*10} min="0" max="60" 
+		    			onChange={this.changeBassVolume.bind(this)} 
+		    			/>
+	    		</div>
+	    		<div title="Enchance piano on second part of song"><b>Enchance piano</b></div>
+	    		<div className={"ui toggle checkbox "}>
+	          <input type="checkbox" checked={(this.state.pianoParams.enchance ? "checked" : "")} onChange={this.toggleEnchancePiano.bind(this)}/>
+	          <label></label>
+	        </div>
+	    	</div>
+    		<div style={{width:"150px", float:"left", marginRight:"20px"}}>
 					<div title="Piano params"><b>Piano</b></div>
     			<input type="range" value={this.state.pianoParams.v} min="-2" max="1" step="1" onChange={this.changePianoParams.bind(this, "v")} /><br/>
     			<input type="range" value={this.state.pianoParams.v1} min="-10" max="9" step="1" onChange={this.changePianoParams.bind(this, "v1")} /><br/>

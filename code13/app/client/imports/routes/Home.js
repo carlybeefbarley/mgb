@@ -1,34 +1,32 @@
-import _ from 'lodash';
-import React, {Component} from 'react';
-import styles from './home.css';
-import QLink from './QLink';
-import Footer from '/client/imports/components/Footer/Footer';
-
+import React, {Component} from 'react'
+import styles from './home.css'
+import QLink from './QLink'
+import Footer from '/client/imports/components/Footer/Footer'
 
 export default class Home extends Component {
 
   render() {
     const currUser = this.props.currUser
+    const username = currUser ? currUser.profile.name : "guest"
 
     return (
       <div>
         <div>
-
           <div className="ui vertical masthead center aligned segment">
             <div className="ui text container">
               <h1 className="ui header">
                 My Game Builder
               </h1>
-              <h2>The Online Game-building Game</h2>
+              <h2>The Online Game-builder!</h2>
               { currUser ?
                 <QLink to={`/u/${currUser.profile.name}/assets`}>
-                  <div className="ui huge primary button">Keep Going <i className="right arrow icon"></i></div>
+                  <div className="ui huge primary button">Hello {username} <i className="right arrow icon"></i></div>
                 </QLink>
                 : 
                 <QLink to={`/assets`}>
                   <div className="ui huge primary button">Get Started <i className="right arrow icon"></i></div>
                 </QLink>
-              }              
+              }
             </div>
           </div>
 

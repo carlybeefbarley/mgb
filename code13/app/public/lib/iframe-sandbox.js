@@ -1,3 +1,5 @@
+// TODO: cleanup and split module loader from console hacks etc
+// TODO: make AllInOne version without external dependencies
 var _isAlive = false;
 var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
 
@@ -59,7 +61,9 @@ window.onload = function() {
   // here will be stored all imported objects
   var imports = {};
   var errorCount = 0;
-  /*var exports = {};
+  /*
+  TODO: make use of these setters?
+  var exports = {};
   Object.defineProperty(window, "module", {
     get:function(){
       return imports
@@ -74,7 +78,6 @@ window.onload = function() {
       return exports
     },
     set: function(val){
-
       console.log("Overwriting exports");
     }
   })*/
@@ -231,8 +234,8 @@ window.onload = function() {
       window.exports = window.module.exports;
     }
     else{
-      // atm this is only for Phaser - as it has bug in module exports:
-      // PIXI is not defined - as pixi will be added as module, but Phaser expects global PIXI :/
+      // atm this is only for Phaser - as it has a bug in module exports:
+      // PIXI is not defined - as PIXI will be added as module, but Phaser expects global PIXI :/
       delete window.module;
       delete window.exports;
     }
@@ -246,7 +249,7 @@ window.onload = function() {
       else if(Object.keys(window.exports).length){
         imports[urlFinalPart] = window.exports;
       }
-      // hack for React like module loading
+      // hack for React like module loading - as some versions are overwriting window.exports with their own version
       else{
         imports[urlFinalPart] = window.module.exports;
         // extract short name from url - e.g. react

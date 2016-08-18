@@ -5,8 +5,10 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
 
 var STACK_FRAME_RE = /at ((\S+)\s)?\(?([^:]+):(\d+):(\d+)\)?/;
 var THIS_FILE = "codeEditSandbox.html"
-//var MODULE_SERVER = 'https://wzrd.in/debug-standalone/'
-var MODULE_SERVER = 'https://wzrd.in/bundle/'
+// var MODULE_SERVER = 'https://wzrd.in/debug-standalone/'
+// var MODULE_SERVER = 'https://wzrd.in/standalone/'
+// var MODULE_SERVER = '//cdn.jsdelivr.net/jquery.validation/latest/jquery.validate.min.js'
+var MODULE_SERVER = "http://127.0.0.1:8888/"
 
 function _getCaller() {
   // TODO: Support more browsers.. See https://github.com/stacktracejs/error-stack-parser/blob/master/error-stack-parser.js

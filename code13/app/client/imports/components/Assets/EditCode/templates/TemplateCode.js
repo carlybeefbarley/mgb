@@ -121,7 +121,7 @@ function render()
 `//https://facebook.github.io/react/docs/reusable-components.html#es6-classes
 //https://facebook.github.io/react/docs/component-specs.html
 
-import React from "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.0/react.js"
+import React from "react"
 
 export default class extends React.Component {
 
@@ -235,11 +235,11 @@ export default class extends React.Component {
     label: "Empty React Component - simplified",
     description: "Empty Component - ready for export",
     code:
-`import React from "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.0/react.js"
+`import React from "react"
 export default class extends React.Component {
 
   static defaultProps = {
-
+    name: "world"
   }
 
   // https://facebook.github.io/react/docs/reusable-components.html
@@ -258,7 +258,7 @@ export default class extends React.Component {
   }
 
   render() {
-    return "Hello!"
+    return <div>Hello {this.props.name}!</div>
   }
 }
 `

@@ -1,8 +1,8 @@
 How it works:
-1) Babel parses main (active) file and we extract imports from babel response
-	* we are using babel on local scripts only -
-	as libs should be (and usually are) already in ES5 standalone format for browser compatibility
-2) There are several types of imports:
+
+1. Babel parses main (active) file and we extract imports from babel response
+	* we are using babel on local scripts only - as libs should be (and usually are) already in ES5 standalone format for browser compatibility
+2. There are several types of imports:
 	* import [X [as Y] from] '/asset_name' (import asset's owners script by name)
 	* import [X [as Y] from] '/user_name/asset_name' (import user_name script by name) - recommended if creating libs for sharing
 	* import [X [as Y] from] 'lib':
@@ -13,7 +13,7 @@ How it works:
 	import [X [as Y] from] 'lib@version' (e.g. 'react@15.0.0')
 	* it's also possible to include full url (usually works - I have tested with React / jQuery and jquery-validate plugin):
 	import [X [as Y] from] '//some.cdn.com/hosted/lib/on/cdn/lib.min.js'
-3) Caching:
+3. Caching:
 	* before loading external source script is checking cache - we are using 2 ways to cache sources:
 		1) we store imported variables in the separate object (as lib_name:exported_object map)
 		and if lib is defined we will immediately return defined object
@@ -23,7 +23,7 @@ How it works:
 			* else we will request source from external resource (usually CDN)
 	* local user scripts are not cached -
 		as user(s) may work on multiple files at the same time (space for improvements?)
-4) in the knownLibs it's possible to define different source or way how lib is loaded:
+4. in the knownLibs it's possible to define different source or way how lib is loaded:
 ```javascript
 ...
 custom_lib: {

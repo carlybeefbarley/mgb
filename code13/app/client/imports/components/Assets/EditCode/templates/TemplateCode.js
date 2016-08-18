@@ -241,6 +241,7 @@ export default class extends React.Component {
   static defaultProps = {
 
   }
+  
   // https://facebook.github.io/react/docs/reusable-components.html
   static propTypes = {
 

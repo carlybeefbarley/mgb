@@ -6,24 +6,7 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
 var STACK_FRAME_RE = /at ((\S+)\s)?\(?([^:]+):(\d+):(\d+)\)?/;
 var THIS_FILE = "codeEditSandbox.html"
 //var MODULE_SERVER = 'https://wzrd.in/debug-standalone/'
-var MODULE_SERVER = 'https://wzrd.in/standalone/'
-
-
-var knownLibs = {
-  // wzrd serves bad version of phaser because it requires extra steps to build: https://www.npmjs.com/package/phaser#browserify--cjs
-  "phaser": {
-    useGlobal: true,
-    src: function(version){
-      version = version || "2.4.7";
-      //return 'http://localhost:3000/phaser/2.4.6/phaser.js'
-      return '/phaser/' + version + '/phaser.min.js'
-    }
-  },
-  "test": function(){
-    return '/test.js'
-  }
-}
-
+var MODULE_SERVER = 'https://wzrd.in/bundle/'
 
 function _getCaller() {
   // TODO: Support more browsers.. See https://github.com/stacktracejs/error-stack-parser/blob/master/error-stack-parser.js
@@ -56,12 +39,10 @@ function _getCaller() {
 
 
 window.onload = function() {
-  _isAlive = true;
+  var knownLibs = {};
   var asset_id;
-
   var errorCount = 0;
-
-  var mainWindow; // reference to the last poster
+  var mainWindow = window.parent; // reference to the last poster
   /*
   TODO: make use of these setters?
   var exports = {};
@@ -371,12 +352,6 @@ window.onload = function() {
       loadImport(urlFinalPart, cb)
       return
     }
-    /*
-    Don't do this - loadModule never will be called
-    else{
-      loadScript(url, cb)
-      return
-    }*/
     // store callback for response handling
     cbId++;
     cbs[cbId] = function(src, id){
@@ -456,6 +431,10 @@ window.onload = function() {
     }
   }
 
+  loadScript("/lib/knownLibs.js", function(){
+    knownLibs = module.exports;
+    _isAlive = true
+  })
   window.addEventListener('message', function (e) {
     mainWindow = e.source;
     if(commands[e.data.mgbCommand]){
@@ -464,5 +443,5 @@ window.onload = function() {
     else{
       console.error("Unknown command received: ["+ e.data.mgbCommand +']')
     }
-  });
+  })
 }

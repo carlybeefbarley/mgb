@@ -27,6 +27,18 @@ export default class Channel extends React.Component {
 		}
 	}
 
+	componentDidUpdate(prevProps, prevState){
+		if(this.wave){
+			if(this.props.isPlaying && !prevProps.isPlaying){
+				this.wave.play()
+			} 
+			else if(!this.props.isPlaying && prevProps.isPlaying){
+				this.wave.pause()
+			}
+			
+		}
+	}
+
 	changeVolume(e){
 		this.props.channel.volume = parseFloat(e.target.value)
 		this.props.handleSave("Volume change")

@@ -95,9 +95,9 @@ export default class EditMusic extends React.Component {
 
 	togglePlayMusic(){
 		if(this.state.isPlaying){
-			this.wavesurfer.pause();
+			// this.wavesurfer.pause();
 		} else {
-			this.wavesurfer.play();
+			// this.wavesurfer.play();
 		}
 		this.setState({ isPlaying: !this.state.isPlaying })	
 	}
@@ -158,13 +158,14 @@ export default class EditMusic extends React.Component {
   		return (<div>No channels added...</div>)
   	}
 
-  	return // TODO remove this to render channels
+  	// return // TODO remove this to render channels
 
   	return c2.channels.map((channel, id) => (
 			<Channel 
 				key={id}
 				id={id}
 				channel={channel}
+				isPlaying={this.state.isPlaying}
 
 				handleSave={this.handleSave.bind(this)}
 				deleteChannel={this.deleteChannel.bind(this)}
@@ -206,13 +207,11 @@ export default class EditMusic extends React.Component {
 					</div>
 
 					<div className="row">
-					{/*
 						<button className="ui small icon button"
 							title="Add new audio channel"
 							onClick={this.addChannel.bind(this, null)}>
 						  <i className="add square icon"></i> Add channel
 						</button>
-					*/}
 						<button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
 						  <i className={"icon " + (this.state.isPlaying ? "pause" : "play")}></i>
 						</button>

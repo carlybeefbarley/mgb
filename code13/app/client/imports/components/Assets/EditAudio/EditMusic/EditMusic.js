@@ -18,13 +18,7 @@ export default class EditMusic extends React.Component {
   	// console.log(props.asset.content2)
 
   	this.state = {
-  		playerStatus: "pause",
-
-  		channels: [
-  			{ title:"1st channel", volume: 0.75 }, 
-  			{ title:"hello world", volume: 0.5 }, 
-  			{ title:"last", volume: 1 },
-  		],
+  		isPlaying: false,
   	}
 	}
 
@@ -46,15 +40,15 @@ export default class EditMusic extends React.Component {
 		this.generateMusicPopup = ReactDOM.findDOMNode(this.refs.generateMusicPopup)
 		this.generate8bitPopup = ReactDOM.findDOMNode(this.refs.generate8bitPopup)
 
-		let c2 = this.props.asset.content2;
+		let c2 = this.props.asset.content2
 		if(c2.dataUri){
-			this.wavesurfer.load(c2.dataUri);
+			this.wavesurfer.load(c2.dataUri)
 		}
 
 		let self = this;
 		this.wavesurfer.on('finish', function () {
 			self.wavesurfer.stop();
-    	self.setState({ playerStatus: "pause" })
+    	self.setState({ isPlaying: false })
 		})
 		this.wavesurfer.on('ready', function () {
 			self.handleSave()
@@ -65,15 +59,16 @@ export default class EditMusic extends React.Component {
     $(this.importMusicPopup).modal('show');
   }
 
-	importMusic(musicObject, saveText){
+	importMusic(audioObject, saveText){
 		if(!this.hasPermission) return;
 
-		if(musicObject){
-			this.wavesurfer.load(musicObject.src);
+		if(audioObject){
+			this.wavesurfer.load(audioObject.src);
 			let c2 = this.props.asset.content2;
-			c2.dataUri = musicObject.src;
-			c2.duration = musicObject.duration;
+			c2.dataUri = audioObject.src;
+			c2.duration = audioObject.duration;
 			this.saveText = saveText;
+			this.addChannel(audioObject.src)
 		}
 
 		$(this.importMusicPopup).modal('hide')
@@ -94,23 +89,22 @@ export default class EditMusic extends React.Component {
 		$(this.generate8bitPopup).modal('show')	
 	}
 
-	getFromStock(musicObject){
-		console.log(musicObject);
+	getFromStock(audioObject){
+		console.log(audioObject);
 	}
 
 	togglePlayMusic(){
-		if(this.state.playerStatus === "play"){
+		if(this.state.isPlaying){
 			this.wavesurfer.pause();
-			this.setState({ playerStatus: "pause" })
 		} else {
 			this.wavesurfer.play();
-			this.setState({ playerStatus: "play" })	
 		}
+		this.setState({ isPlaying: !this.state.isPlaying })	
 	}
 
 	stopMusic(){
 		this.wavesurfer.stop();
-		this.setState({ playerStatus: "pause" })
+		this.setState({ isPlaying: false })
 	}
 
 	hasPermission() {
@@ -140,12 +134,13 @@ export default class EditMusic extends React.Component {
     this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
   }
 
-  addChannel(){
+  addChannel(dataUri){
   	let c2 = this.props.asset.content2
   	if(!c2.channels) c2.channels = []
   	c2.channels.push({
   		title: "Channel "+c2.channels.length,
   		volume: 0.75,
+  		dataUri: dataUri,
   	})
   	this.handleSave("Add channel")
   }
@@ -204,11 +199,18 @@ export default class EditMusic extends React.Component {
 						  <i className="options icon"></i> Generate 8bit music [not ready]
 						</button>
 					</div>
+
 					<div className="row">
 						<button className="ui small icon button"
 							title="Add new audio channel"
 							onClick={this.addChannel.bind(this)}>
 						  <i className="add square icon"></i> Add channel
+						</button>
+						<button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
+						  <i className={"icon " + (this.state.isPlaying ? "pause" : "play")}></i>
+						</button>
+						<button className="ui icon button small" onClick={this.stopMusic.bind(this)}>
+						  <i className={"icon stop"}></i>
 						</button>
 					</div>
 
@@ -220,14 +222,6 @@ export default class EditMusic extends React.Component {
 
 
 						<canvas ref="thumbnailCanvas" style={{display: "none"}} width="290px" height="128px"></canvas>
-						<div className="row">
-							<button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
-							  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>
-							</button>
-							<button className="ui icon button small" onClick={this.stopMusic.bind(this)}>
-							  <i className={"icon stop"}></i>
-							</button>
-						</div>
 					</div>
 
 

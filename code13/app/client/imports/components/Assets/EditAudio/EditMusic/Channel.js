@@ -15,6 +15,18 @@ export default class Channel extends React.Component {
   	}
 	}
 
+	componentDidMount(){
+		const channel = this.props.channel
+		if(channel.dataUri){
+			this.wave = WaveSurfer.create({
+			    container: '#wave'+this.props.id
+			    , waveColor: '#4dd2ff'
+	    		, progressColor: '#01a2d9'
+			})
+			this.wave.load(channel.dataUri)
+		}
+	}
+
 	changeVolume(e){
 		this.props.channel.volume = parseFloat(e.target.value)
 		this.props.handleSave("Volume change")
@@ -27,7 +39,7 @@ export default class Channel extends React.Component {
 	render(){
 		let channel = this.props.channel
 		return (
-			<div key={this.props.id} className="channelContainer">
+			<div key={this.props.id} id={"wave"+this.props.id} className="channelContainer">
 				<div className="controls">
 					{channel.title}
 					<div>

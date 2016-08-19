@@ -147,13 +147,18 @@ export default class EditMusic extends React.Component {
 
   deleteChannel(channelID){
   	let c2 = this.props.asset.content2
+  	console.log(channelID, c2.channels)
   	c2.channels.splice(channelID, 1)
   	this.handleSave("Remove channel")
   }
 
   renderChannels(){
   	let c2 = this.props.asset.content2
-  	if(!c2.channels) return
+  	if(!c2.channels) {
+  		return (<div>No channels added...</div>)
+  	}
+
+  	return // TODO remove this to render channels
 
   	return c2.channels.map((channel, id) => (
 			<Channel 
@@ -201,11 +206,13 @@ export default class EditMusic extends React.Component {
 					</div>
 
 					<div className="row">
+					{/*
 						<button className="ui small icon button"
 							title="Add new audio channel"
-							onClick={this.addChannel.bind(this)}>
+							onClick={this.addChannel.bind(this, null)}>
 						  <i className="add square icon"></i> Add channel
 						</button>
+					*/}
 						<button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
 						  <i className={"icon " + (this.state.isPlaying ? "pause" : "play")}></i>
 						</button>

@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
 
-import sty from  './importMusic.css';
+import sty from  './editMusic.css'
 import WaveSurfer from '../lib/WaveSurfer.js'
 
 export default class ImportMusic extends React.Component {

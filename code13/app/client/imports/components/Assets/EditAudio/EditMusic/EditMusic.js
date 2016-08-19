@@ -8,6 +8,7 @@ import GenerateMusic from './GenerateMusic.js';
 import Generate8bit from './Generate8bit.js';
 
 import WaveSurfer from '../lib/WaveSurfer.js';
+import Channel from './Channel.js';
 
 export default class EditMusic extends React.Component {
 
@@ -17,7 +18,13 @@ export default class EditMusic extends React.Component {
   	// console.log(props.asset.content2)
 
   	this.state = {
-  		playerStatus: "pause"
+  		playerStatus: "pause",
+
+  		channels: [
+  			{ title:"1st channel", volume: 0.75 }, 
+  			{ title:"hello world", volume: 0.5 }, 
+  			{ title:"last", volume: 1 },
+  		],
   	}
 	}
 
@@ -116,16 +123,53 @@ export default class EditMusic extends React.Component {
     }
   }
 
-	handleSave()
+  onAudioLoaded(){
+  	if(!this.saveText) return; // don't save at start when music is loaded
+  	this.handleSave(this.saveText)
+  	this.saveText = null
+  }
+
+	handleSave(saveText)
   {
     if(!this.hasPermission) return;
-    if(!this.saveText) return; // don't save at start when music is loaded
-
+    
     let asset = this.props.asset
     let c2    = asset.content2
 
     this.thumbnailCtx.putImageData(this.musicCtx.getImageData(0, 0, 290, 128), 0, 0)
-    this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), this.saveText)
+    this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
+  }
+
+  addChannel(){
+  	let c2 = this.props.asset.content2
+  	if(!c2.channels) c2.channels = []
+  	c2.channels.push({
+  		title: "Channel "+c2.channels.length,
+  		volume: 0.75,
+  	})
+  	this.handleSave("Add channel")
+  }
+
+  deleteChannel(channelID){
+  	let c2 = this.props.asset.content2
+  	c2.channels.splice(channelID, 1)
+  	this.handleSave("Remove channel")
+  }
+
+  renderChannels(){
+  	let c2 = this.props.asset.content2
+  	if(!c2.channels) return
+
+  	return c2.channels.map((channel, id) => (
+			<Channel 
+				key={id}
+				id={id}
+				channel={channel}
+
+				handleSave={this.handleSave.bind(this)}
+				deleteChannel={this.deleteChannel.bind(this)}
+			/>
+		))
   }
 
 	render(){
@@ -160,9 +204,21 @@ export default class EditMusic extends React.Component {
 						  <i className="options icon"></i> Generate 8bit music [not ready]
 						</button>
 					</div>
+					<div className="row">
+						<button className="ui small icon button"
+							title="Add new audio channel"
+							onClick={this.addChannel.bind(this)}>
+						  <i className="add square icon"></i> Add channel
+						</button>
+					</div>
 
 					<div className="content">
 						<div id="musicPlayer"></div>
+
+
+						{this.renderChannels()}
+
+
 						<canvas ref="thumbnailCanvas" style={{display: "none"}} width="290px" height="128px"></canvas>
 						<div className="row">
 							<button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>

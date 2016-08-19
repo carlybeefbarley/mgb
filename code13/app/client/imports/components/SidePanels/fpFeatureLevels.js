@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { expectedToolbarScopeNames, makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
+import { expectedToolbarScopeNames, expectedToolbarScopeMaxValues, makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import { getFeatureLevel, setFeatureLevel } from '/imports/schemas/settings-client'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-
+import NumberInput from '/client/imports/components/Controls/NumberInput'
 
 export default fpFeatureLevels = React.createClass({
   mixins: [ReactMeteorData],
@@ -20,38 +20,64 @@ export default fpFeatureLevels = React.createClass({
   },
 
   getMeteorData: function() {
-    const foo = _.map(expectedToolbarScopeNames, name => (this.getLevelVal(name) ) )
+    const foo = _.map(expectedToolbarScopeNames, name => (this.getLevelValFromSettings(name) ) )
     return { levels: foo }
   },
 
-  setLevelFromEvent(name, event) {
-    setFeatureLevel(this.context.settings, makeLevelKey(name), parseInt(event.target.value, 10))
+  setLevelFromNum(name, newLevelVal) {
+    setFeatureLevel(this.context.settings, makeLevelKey(name), newLevelVal)
   },
 
-  getLevelVal(name) {
+
+  setLevelFromEvent(name, event) {
+    const parsedVal = parseInt(event.target.value, 10)
+    const newLevelVal = _.clamp( parsedVal || 1, 1, event.target.max)
+    setFeatureLevel(this.context.settings, makeLevelKey(name), newLevelVal)
+  },
+
+  getLevelValFromSettings(name) {
     return getFeatureLevel(this.context.settings, makeLevelKey(name))
   },
 
   render: function () {
     const sliderStyle =  {
       marginTop: "10px",
-      marginRight: "10px",
+      marginRight: "2px",
       marginLeft: "2px"
     }
+    const numStyle =  {
+      marginTop: "10px",
+      marginRight: "10px",
+      marginLeft: "2px",
+      width: "3em",
+      backgroundColor: "rgba(0,0,0,0)" 
+    }
 
-    const makeSlider = (name) => (
-      <p key={name}>
-        <i className="ui options icon" />
-        {name} @ {this.getLevelVal(name)}
-        <input
-          style={sliderStyle} 
-          type="range" 
-          value={this.getLevelVal(name) || 1}
-          onChange={(e) => this.setLevelFromEvent(name, e)}
-          min={1} 
-          max={15} />
-      </p>
-    )
+
+    const makeSlider = (name) => {
+      const maxVal = expectedToolbarScopeMaxValues[name] || 20
+      return (
+        <p key={name}>
+          <i className="ui options icon" />
+          {name} @ 
+          <NumberInput
+            style={numStyle} 
+            dottedBorderStyle={true}
+            className="ui small input"
+            value={this.getLevelValFromSettings(name) || 1}
+            onValidChange={(num) => this.setLevelFromNum(name, num)}
+            min={1} 
+            max={maxVal} /> of {maxVal}
+          <input
+            style={sliderStyle} 
+            type="range"
+            value={this.getLevelValFromSettings(name) || 1}
+            onChange={(e) => this.setLevelFromEvent(name, e)}
+            min={1} 
+            max={maxVal} />
+        </p>
+      )
+    }
 
     return (
       <div>

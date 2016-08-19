@@ -15,14 +15,14 @@ window.module.exports = {
   "react-dom": {
     src: function(version) {
       version = version || "latest";
-      return 'https://cdn.jsdelivr.net/react/'+version+'/react-dom.js';
+      return 'https://cdn.jsdelivr.net/react/'+version+'/react-dom.min.js';
     }
   },
   // use react from same cdn as react-dom for better compatibility
   react: {
     src: function(version) {
       version = version || "latest";
-      return 'https://cdn.jsdelivr.net/react/'+version+'/react.js';
+      return 'https://cdn.jsdelivr.net/react/'+version+'/react.min.js';
     }
   },
   "test": {

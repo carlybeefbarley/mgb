@@ -236,7 +236,6 @@ export default class EditCode extends React.Component {
     this.ternServer.destroy();
     this.ternServer = null;
   }
-  
 
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
@@ -867,6 +866,13 @@ export default class EditCode extends React.Component {
 
         case "mgbGetFromCache": {
           this.postToIFrame("mgbFromCache", {src: this.cache[data.filename], cbId: data.cbId})
+        } break
+
+        case "AllInOneSource" : {
+          console.log("Stored as bundle!");
+          const value = this.codeMirror.getValue()
+          let newC2 = { src: value, bundle: data.src };
+          this.props.handleContentChange( newC2, null, `Store code bundle`)
         } break
       }
 

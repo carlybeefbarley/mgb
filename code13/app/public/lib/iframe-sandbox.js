@@ -449,27 +449,27 @@ window.onload = function() {
                     '} ' +
                     'var name = key.split("@").shift();'+
                     'return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])' +
-                  '};'
+                  '}; '
               for(var i in AIOsources){
                 if(AIOsources[i].global){
-                  allInOne += 'delete window.exports; delete window.module;'
+                  allInOne += "\n" + 'delete window.exports; delete window.module; '
                 }
                 else{
-                  allInOne += 'window.module = {exports: {}};window.exports = window.module.exports;'
+                  allInOne += "\n"+ 'window.module = {exports: {}};window.exports = window.module.exports; '
                 }
-                allInOne += ";" + AIOsources[i].src + ";"
+                allInOne += ";" + AIOsources[i].src + "; "
                 if(AIOsources[i].global){
-                  allInOne += 'imports["'+i+'"] = true;'
+                  allInOne += 'imports["'+i+'"] = true; '
                 }
                 else{
                   allInOne +=
-                    ' if(Object.keys(window.exports).length){' +
+                    'if(Object.keys(window.exports).length){' +
                       'imports["'+i+'"] = window.exports;' +
                     '}else{'+
                       'imports["'+i+'"] = window.module.exports;' +
-                    '};';
+                    '} ';
                   if(AIOsources[i].shortName){
-                    allInOne += 'imports["'+AIOsources[i].shortName+'"] = window.module.exports;'
+                    allInOne +=  "\n"+ 'imports["'+AIOsources[i].shortName+'"] = window.module.exports;'
                   }
                 }
               }

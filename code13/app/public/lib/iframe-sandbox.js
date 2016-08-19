@@ -150,11 +150,21 @@ window.onload = function() {
   }
 
   function parseImport(babel){
-    var imp = babel.metadata.modules.imports
-    var ret = []
+    var imp, ret = [];
+
+    imp = babel.metadata.modules.imports
     for(var i=0; i<imp.length; i++){
-      ret.push(imp[i].source)
+      ret.indexOf(imp[i].source) === -1 && ret.push(imp[i].source)
     }
+
+    // also add export from 'externalSource'
+    imp = babel.metadata.modules.exports.specifiers
+    for(var i=0; i<imp.length; i++){
+      if(imp[i].kind == "external" && imp[i].source){
+        ret.indexOf(imp[i].source) === -1 && ret.push(imp[i].source)
+      }
+    }
+
     return ret
   }
   function isExternalFile(url){
@@ -192,6 +202,10 @@ window.onload = function() {
 
     // import X from 'http://cdn.com/x'
       return urlFinalPart
+  }
+  function getShortName(fullUrl){
+    var name = fullUrl.split("/").pop().split("@").shift().split(".").shift();
+    return name;
   }
   // TODO: somehow resolve user's script and global lib
   function loadImport(urlFinalPart, cb) {
@@ -243,7 +257,7 @@ window.onload = function() {
       else{
         imports[urlFinalPart] = window.module.exports;
         // extract short name from url - e.g. react
-        var shortName = urlFinalPart.split("/").pop().split(".").shift();
+        var shortName = getShortName(urlFinalPart)
         if(shortName){
           imports[shortName] = window.module.exports;
         }
@@ -312,7 +326,9 @@ window.onload = function() {
       if (callback) {
         // execute on the next tick
         cb = function(){
-          window.setTimeout(callback, 0);
+          window.setTimeout(function() {
+            callback()
+          }, 0);
         }
         // this does not work with script.text (only with script.src)
         // script.onreadystatechange = script.onload = cb;

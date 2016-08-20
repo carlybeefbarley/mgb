@@ -11,6 +11,7 @@ import GraphicImport from './GraphicImport/GraphicImport.js'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import NumberInput from '/client/imports/components/Controls/NumberInput'
 
 
 // Some constants we will use
@@ -247,15 +248,10 @@ export default class EditGraphic extends React.Component {
       // This is the data we just sent up.. So let's _not_ nuke any subsequent edits (i.e don't call loadAllPreviewsAsync())
       // TODO.. we may need a window of a few recentMarkers in case of slow updates. Maybe just hold back sends while there is a pending save?
     }
-    else if(prevState.selectedFrameIdx !== this.state.selectedFrameIdx)
-    {
-      // Optimization for playing animation with lots of frames. Redraw only current frame
-      this.updateFrameLayers();
-    }
+    else if (prevState.selectedFrameIdx !== this.state.selectedFrameIdx)
+      this.updateFrameLayers()
     else
-    {
       this.loadAllPreviewsAsync()     // It wasn't the change we just sent, so apply the data
-    }
   }
 
   /** Stash references to the preview canvases after initial render and subsequent renders
@@ -277,7 +273,6 @@ export default class EditGraphic extends React.Component {
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d')
       this.previewCtxImageData1x1Array[i] = this.previewCtxArray[i].createImageData(1,1)
     }
-
 
     this.frameCanvasArray = []     // frame canvases where layers are merged
     this.frameCtxArray = []
@@ -345,15 +340,12 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  updateFrameLayers(){
-    let w = this.previewCanvasArray[this.state.selectedLayerIdx].width
-    let h = this.previewCanvasArray[this.state.selectedLayerIdx].height
-    let s = this.state.editScale
-    let c2 = this.props.asset.content2;
-    let frameData = c2.frameData[this.state.selectedFrameIdx];
-    for(let i=frameData.length-1; i>=0; i--){
-      this.loadAssetAsync(this.state.selectedFrameIdx, i);
-    }
+
+  updateFrameLayers() {
+    let c2 = this.props.asset.content2
+    let frameData = c2.frameData[this.state.selectedFrameIdx]
+    for (let i=frameData.length-1; i>=0; i--)
+      this.loadAssetAsync(this.state.selectedFrameIdx, i)
   }
 
 
@@ -1249,11 +1241,11 @@ export default class EditGraphic extends React.Component {
   }
 
   //
-  // CHANGE TILE WIDTH
+  // CHANGE TILE WIDTH/HEIGHT
   //
 
-  changeCanvasWidth(event) {
-    const clampedVal = _.clamp(parseInt(event.target.value), 1, MAX_BITMAP_WIDTH)
+  changeCanvasWidth(clampedVal) {
+    // The caller must have ensure clampedVal is an integer in range 1...MAX_BITMAP_WIDTH
     if (this.props.asset.content2.width !== clampedVal)
     { 
       this.props.asset.content2.width = clampedVal
@@ -1261,8 +1253,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  changeCanvasHeight(event) {
-    const clampedVal = _.clamp(parseInt(event.target.value), 1, MAX_BITMAP_HEIGHT)
+  changeCanvasHeight(clampedVal) {
     if (this.props.asset.content2.height !== clampedVal)
     {
       this.props.asset.content2.height = clampedVal
@@ -1270,15 +1261,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  onKeyUpWidth(event) {
-    if (event.key === "Enter")
-      this.changeCanvasWidth(event)
-  }
 
-  onKeyUpHeight(event) {
-    if (event.key === "Enter")
-      this.changeCanvasHeight(event)
-  }
 
   //
   // TOOLBAR
@@ -1396,7 +1379,7 @@ export default class EditGraphic extends React.Component {
     return (
       <div className="ui grid">
 
-        {/***  Center Column for Edit and other wide stuff  ***/}
+        {/***  Central Column is for Edit and other wide stuff  ***/}
 
         <div className={"mgbEditGraphicSty_tagPosition ui sixteen wide column"} >
           <div className="row" style={{marginBottom: "6px"}}>
@@ -1405,9 +1388,14 @@ export default class EditGraphic extends React.Component {
               <div className="ui small label" title="Canvas width">
                 w:
               </div>
-              <input ref="canvasWidth" className="ui small input" type="number" min="1" max={MAX_BITMAP_WIDTH} style={{width: "6em"}} placeholder={c2.width} 
-                onBlur={this.changeCanvasWidth.bind(this)} 
-                onKeyUp={this.onKeyUpWidth.bind(this)} 
+              <NumberInput
+                ref="canvasWidth"
+                className="ui small input"
+                min={1}
+                max={MAX_BITMAP_WIDTH}
+                style={{width: "6em"}}
+                value={c2.width}
+                onFinalChange={(num) => {this.changeCanvasWidth(num)} } 
                 />
             </div>
 
@@ -1416,9 +1404,14 @@ export default class EditGraphic extends React.Component {
               <div className="ui small label" title="Canvas height">
                 h:
               </div>
-              <input ref="canvasHeight" className="ui small input" type="number" min="1" max={MAX_BITMAP_HEIGHT} style={{width: "6em"}} placeholder={c2.height} 
-                onBlur={this.changeCanvasHeight.bind(this)} 
-                onKeyUp={this.onKeyUpHeight.bind(this)} 
+              <NumberInput
+                ref="canvasHeight"
+                className="ui small input"
+                min={1}
+                max={MAX_BITMAP_HEIGHT}
+                style={{width: "6em"}}
+                value={c2.height}
+                onFinalChange={(num) => {this.changeCanvasHeight(num)} }
                 />
             </div>
 

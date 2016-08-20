@@ -10,14 +10,15 @@ import React, { PropTypes } from 'react'
 // Replace this in fpFeatureLevels, in EditGraphic. Maybe in other places... sounds/graphic?
 
 const _propTypes = {    // These are applied to the class at the bottom of this file
-  value:              PropTypes.number.isRequired,
-  min:                PropTypes.number.isRequired,
-  max:                PropTypes.number.isRequired,
+  value:              PropTypes.number.isRequired,  // The value. See comment on //placeholder below.
+  min:                PropTypes.number.isRequired,  // min value. Should be an integer...
+  max:                PropTypes.number.isRequired,  // max value. Should be an integer...
   className:          PropTypes.string,
-  style:              PropTypes.object,
+  style:              PropTypes.object,             // Optional style for <input> element
   dottedBorderStyle:  PropTypes.bool,               // True for the convenient built-in dotted style instead of the default
-  placeholder:        PropTypes.number,
-  onValidChange:      PropTypes.func.isRequired     // Callback param will be an integer guranteed to be in range min...max
+//placeholder:        PropTypes.number,             // No placeholder value supported. We are only supporting the 'controlled input' pattern in order to reduce the compat/test matrix
+  onValidChange:      PropTypes.func,               // Callback param will be an integer guaranteed to be in range min...max. Called whenever input value is valid
+  onFinalChange:      PropTypes.func                // Callback param will be an integer guaranteed to be in range min...max
 }
 
 export default class NumberInput extends React.Component {
@@ -41,22 +42,25 @@ export default class NumberInput extends React.Component {
     return _.clamp(parsedVal, min, max)
   }
 
-  _exposeChangedVal(event) {
-    const { value, onValidChange } = this.props
+  _exposeChangedVal(event, callFinalAlso = false) {
+    const { value, onValidChange, onFinalChange } = this.props
     const clampedVal = this._calcValidatedValue(event)
     this.setState({ internalValue: clampedVal })
 
-    if (value !== clampedVal)
+    if (value !== clampedVal && onValidChange)
       onValidChange(clampedVal)
+
+    if (callFinalAlso && value !== clampedVal && onFinalChange)
+      onFinalChange(clampedVal)
   }
 
   _onBlur(event) {
-    this._exposeChangedVal(event)
+    this._exposeChangedVal(event, true)
   }
 
   _onKeyUp(event) {
     if (event.key === "Enter")
-      this._exposeChangedVal(event)
+      this._exposeChangedVal(event, true)
     
     if (event.key === 27) {
       this.setState({ internalValue: this.props.value })
@@ -69,10 +73,11 @@ export default class NumberInput extends React.Component {
   // also send the current (valid) value up to the calling Component via props.onValidChange()
   _onInternalChange(event)
   {
+    const { onValidChange } = this.props
     this.setState( { internalValue: event.target.value } )  // Note that this is a string and can be null or ""
     const enteredValAsNum = parseInt(event.target.value, 10)
-    if (this._calcValidatedValue(event) === enteredValAsNum)
-      this.props.onValidChange(enteredValAsNum) //Looks good enough to do something with (i.e. it it in range)
+    if (this._calcValidatedValue(event) === enteredValAsNum && onValidChange)
+      onValidChange(enteredValAsNum) //Looks good enough to do something with (i.e. it it in range)
   }
 
   render() {

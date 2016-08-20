@@ -89,7 +89,7 @@ export default class Home_Z2 extends Component {
                   { currUser ?
                     <button className="ui teal large button">Set skill goals</button>
                     :
-                    <button className="ui teal large button">Make a game</button>
+                    <button className="ui teal large button">Build a game</button>
                   }
                   </QLink>
                 </div>

@@ -83,11 +83,13 @@ export default class Home_Z2 extends Component {
                       </div>
                     </div>
                   </div>
-                { currUser ?
-                  <button className="ui teal large button">Set skill goals</button>
-                  :
-                  <button className="ui teal large button">Make a game</button>
-                }
+                  <QLink to={`/assets`}>
+                  { currUser ?
+                    <button className="ui teal large button">Set skill goals</button>
+                    :
+                    <button className="ui teal large button">Make a game</button>
+                  }
+                  </QLink>
                 </div>
                 <div className="column">
                   <h2>Watch games being made</h2>
@@ -114,7 +116,9 @@ export default class Home_Z2 extends Component {
                       </div>
                     </div>
                   </div>
-                  <button className="ui black large button">See more games</button>
+                  <QLink to={`/assets`}>
+                    <button className="ui black large button">See more games</button>
+                  </QLink>
                 </div>
                 <div className="column">
                   <h2>Meet creative friends</h2>
@@ -141,7 +145,9 @@ export default class Home_Z2 extends Component {
                       </div>
                     </div>
                   </div>
-                  <button className="ui black large button">See more creators</button>
+                  <QLink to={`/assets`}>
+                    <button className="ui black large button">See more creators</button>
+                  </QLink>
                 </div>
               </div>
             </div>

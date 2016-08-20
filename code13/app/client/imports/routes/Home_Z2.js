@@ -36,7 +36,9 @@ export default class Home_Z2 extends Component {
                 <p style={{ fontSize: '1.5em', marginTop: '1.75em' }}>
                   Creating a game is now an MMO:<br />Make, watch, chat and play games with friends so you learn together.
                   <br />
-                  <button className="ui primary large button" style={{ marginTop: '1em' }}>Get started</button>
+                  <QLink to={`/getstarted_z2`}>
+                    <button className="ui primary large button" style={{ marginTop: '1em' }}>Get started</button>
+                  </QLink>
                 </p>
               }
               </div>

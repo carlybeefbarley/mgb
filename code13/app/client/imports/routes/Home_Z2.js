@@ -85,7 +85,7 @@ export default class Home_Z2 extends Component {
                       </div>
                     </div>
                   </div>
-                  <QLink to={`/assets`}>
+                  <QLink to={`/getstarted_z2`}>
                   { currUser ?
                     <button className="ui teal large button">Set skill goals</button>
                     :

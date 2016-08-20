@@ -14,7 +14,7 @@ export default class GetStarted_Z2 extends Component {
       // TODO: JSX does not seem to allow !important overrides, so either we need to add some global styling for
       // narrow containers or handle the centering some other way
       <div className="ui container" style={{padding: '0 52px'}}>
-        <div className="ui grid stackable" style={{marginTop: '4.5em'}}>
+        <div className="ui grid stackable" style={{marginTop: '1em'}}>
           <div className="row">
             <div className="column">
               <h1 className="ui huge header" style={{fontSize: '2.5em'}}>

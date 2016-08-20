@@ -122,8 +122,6 @@ export default class EditGraphic extends React.Component {
 
     this.getPreviewCanvasReferences()
     this.loadAllPreviewsAsync()
-    ReactDOM.findDOMNode(this.refs.canvasWidth).value = this.props.asset.content2.width;
-    ReactDOM.findDOMNode(this.refs.canvasHeight).value = this.props.asset.content2.height;
 
     // Initialize Status bar
     this._statusBar = {
@@ -928,8 +926,8 @@ export default class EditGraphic extends React.Component {
   {
     return {
       when: Date.now(),
-      byUserName: "usernameTODO",
-      byUserContext: "someMachineTODO",
+      byUserName: "usernameTODO",        // TODO
+      byUserContext: "someMachineTODO",  // TODO
       changeInfo: changeInfoString,
       savedContent2: $.extend(true, {}, this.props.asset.content2)
     }
@@ -1240,27 +1238,31 @@ export default class EditGraphic extends React.Component {
     // $('.ui.modal').modal('hide');
   }
 
+
   //
   // CHANGE TILE WIDTH/HEIGHT
   //
 
   changeCanvasWidth(clampedVal) {
     // The caller must have ensure clampedVal is an integer in range 1...MAX_BITMAP_WIDTH
-    if (this.props.asset.content2.width !== clampedVal)
-    { 
+    const currWidth = this.props.asset.content2.width
+    if (currWidth !== clampedVal)
+    {
+      this.doSaveStateForUndo(`Change Graphic Width from ${currWidth} to ${clampedVal}`)
       this.props.asset.content2.width = clampedVal
       this.handleSave("Change canvas width")
     }
   }
 
   changeCanvasHeight(clampedVal) {
-    if (this.props.asset.content2.height !== clampedVal)
+    const currHeight = this.props.asset.content2.height
+    if (currHeight !== clampedVal)
     {
+      this.doSaveStateForUndo(`Change Graphic Height from ${currHeight} to ${clampedVal}`)
       this.props.asset.content2.height = clampedVal
       this.handleSave("Change canvas height")
     }
   }
-
 
 
   //
@@ -1389,7 +1391,6 @@ export default class EditGraphic extends React.Component {
                 w:
               </div>
               <NumberInput
-                ref="canvasWidth"
                 className="ui small input"
                 min={1}
                 max={MAX_BITMAP_WIDTH}
@@ -1405,7 +1406,6 @@ export default class EditGraphic extends React.Component {
                 h:
               </div>
               <NumberInput
-                ref="canvasHeight"
                 className="ui small input"
                 min={1}
                 max={MAX_BITMAP_HEIGHT}

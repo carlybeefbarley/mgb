@@ -49,7 +49,7 @@ let showDebugAST = false    // Handy thing while doing TERN dev work
 export default class EditCode extends React.Component {
   // static PropTypes = {
   //   asset: PropTypes.object.isRequired
-  //   canEdit" PropTypes.bool.isRequired
+  //   canEdit: PropTypes.bool.isRequired
   //   editDeniedReminder: PropTypes.function
   //   handleContentChange: PropTypes.function.isRequired
   //   activitySnapshots: PropTypes.array               // can be null whilst loading
@@ -869,10 +869,13 @@ export default class EditCode extends React.Component {
         } break
 
         case "AllInOneSource" : {
-          console.log("Stored as bundle!");
-          const value = this.codeMirror.getValue()
-          let newC2 = { src: value, bundle: data.src };
-          this.props.handleContentChange( newC2, null, `Store code bundle`)
+          if (this.props.canEdit)
+          {
+            console.log("Saving code as transpiled bundle!")
+            const value = this.codeMirror.getValue()
+            let newC2 = { src: value, bundle: data.src }
+            this.props.handleContentChange( newC2, null, `Store code bundle`)
+          }
         } break
       }
 

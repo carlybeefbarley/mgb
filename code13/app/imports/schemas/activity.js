@@ -103,7 +103,15 @@ var priorLog;   // The prior activity that was logged - for de-dupe purposes
 // limited co-allesce capability for duplicate activities
 export function logActivity(activityType, description, thumbnail, asset) {
  
-  const username = Meteor.user().profile.name  
+  const user = Meteor.user()
+
+  if (!user)
+  {
+    console.trace('Attempted to logActivity when not logged in')
+    return
+  }
+
+  const username = user.profile.name  
   var logData = {
     "activityType":         activityType, // One of the keys of the ActivityTypes object defined above
     "priority":             ActivityTypes.getPri(activityType),

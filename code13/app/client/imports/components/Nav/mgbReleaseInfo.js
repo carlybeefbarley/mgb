@@ -17,6 +17,32 @@ export default mgbReleaseInfo = {
   [
 
     {
+      "timestamp":     "Mon Aug 22 2016 13:30:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "1163"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.sound",
+          "type":           "improvement",
+          "changeName":     "Load and Play Sound & music in games from code",
+          "changeSummary":  "For example, in a Phaser game:  game.load.audio('music', '/api/asset/music/3KvwCMbDkMQqMfsWB/music.mp3')", 
+          "otherUrls":      [ 
+            { txt: "Example with music and sound effect", href: "/u/guntis/asset/WMijM7t8Waz76kz86" }
+          ]
+        }
+      ]
+    },
+
+    {
       "timestamp":     "Sat Aug 20 2016 09:30:00 GMT-0700 (PDT)",
       
       "id": {
@@ -50,8 +76,8 @@ export default mgbReleaseInfo = {
           "changeName":     "Code: ES6 Module re-Exports",
           "changeSummary":  "We now support 'export {} from 'External Source'. This allows you to have a file that centralizes which versions of external libraries to use. It's a lightweight alternative to the package.json file you would use with NodeJs.", 
           "otherUrls":      [ 
-            { txt: "Phaser/ES6 example", href: "https://v2.mygamebuilder.com/u/stauzs/assets?_fp=assets&_np=people&project=Phaser+ES6" },
-            { txt: "React/ES6/JSX example", href: "https://v2.mygamebuilder.com/u/stauzs/assets?_fp=assets&_np=people&project=Code+Import+Test" },
+            { txt: "Phaser/ES6 example", href: "/u/stauzs/assets?_fp=assets&_np=people&project=Phaser+ES6" },
+            { txt: "React/ES6/JSX example", href: "/u/stauzs/assets?_fp=assets&_np=people&project=Code+Import+Test" },
             { txt: "NPM respository", href: "https://npmjs.com" },
             { txt: "Mozilla documents for ES6 export", href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export" }
           ]
@@ -79,8 +105,8 @@ export default mgbReleaseInfo = {
           "changeName":     "Code: ES6 Module Imports",
           "changeSummary":  "It is now possible to import npm and other packages/libraries dynamically using the EcmaScript 6 import command. This is definitely alpha quality at present so let us know if you find bugs and we will fix them quickly", 
           "otherUrls":      [ 
-            { txt: "Phaser/ES6 example", href: "https://v2.mygamebuilder.com/u/stauzs/assets?_fp=assets&_np=people&project=Phaser+ES6" },
-            { txt: "React/ES6/JSX example", href: "https://v2.mygamebuilder.com/u/stauzs/assets?_fp=assets&_np=people&project=Code+Import+Test" },
+            { txt: "Phaser/ES6 example", href: "/u/stauzs/assets?_fp=assets&_np=people&project=Phaser+ES6" },
+            { txt: "React/ES6/JSX example", href: "/u/stauzs/assets?_fp=assets&_np=people&project=Code+Import+Test" },
             { txt: "NPM respository", href: "https://npmjs.com" },
             { txt: "Mozilla documents for ES6 import", href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import" }
           ]

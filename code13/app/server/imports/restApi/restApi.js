@@ -32,7 +32,6 @@ RestApi.addRoute('asset/:id', {authRequired: false}, {
 
 RestApi.addRoute('asset/png/:id', {authRequired: false}, {
   get: function () {
-    console.log('pnnnngggg----')
     var asset = Azzets.findOne(this.urlParams.id);
 // TODO: Handle case where the frameData has not yet been created
     if (asset)
@@ -291,25 +290,24 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
 });
 
 // get sound by id
-RestApi.addRoute('asset/sound/:id/sound.ogg', {authRequired: false}, {
+RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {
   get: function () {
     "use strict";
     let sound = Azzets.findOne(this.urlParams.id)
-    console.log('soooooouuund------')
 
-    if(sound)      
-      return {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'audio/ogg'
-        },
-        body: dataUriToBuffer(sound.content2.dataUri)
+    if(sound) {     
+      const regex = /^data:.+\/(.+);base64,(.*)$/;
+
+      const matches = sound.content2.dataUri.match(regex)
+      const extension = matches[1]
+        return {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'audio/'+extension
+          },
+          body: dataUriToBuffer(sound.content2.dataUri)
+        }
       }
-
-      // return {        
-      //   uri: sound.content2.dataUri,
-      //   type: "ogg"
-      // }
     else
       return { statusCode: 404 }
   }

@@ -297,30 +297,39 @@ RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {
 
     if(sound) {     
       const regex = /^data:.+\/(.+);base64,(.*)$/;
-
-      const matches = sound.content2.dataUri.match(regex)
+      const matches = sound.content2.dataUri.substring(0, 100).match(regex)
       const extension = matches[1]
-        return {
-          statusCode: 200,
-          headers: {
-            'Content-Type': 'audio/'+extension
-          },
-          body: dataUriToBuffer(sound.content2.dataUri)
-        }
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'audio/'+extension
+        },
+        body: dataUriToBuffer(sound.content2.dataUri)
       }
+    }
     else
       return { statusCode: 404 }
   }
 })
 
 // get music by id
-RestApi.addRoute('asset/music/:id', {authRequired: false}, {
+RestApi.addRoute('asset/music/:id/music.mp3', {authRequired: false}, {
   get: function () {
     "use strict";
     let music = Azzets.findOne(this.urlParams.id)
 
-    if(music)
-      return { dataUri: music.content2.dataUri }
+    if(music) {     
+      const regex = /^data:.+\/(.+);base64,(.*)$/;
+      const matches = music.content2.dataUri.substring(0, 100).match(regex)
+      const extension = matches[1]
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'audio/'+extension
+        },
+        body: dataUriToBuffer(music.content2.dataUri)
+      }
+    }
     else
       return { statusCode: 404 }
   }

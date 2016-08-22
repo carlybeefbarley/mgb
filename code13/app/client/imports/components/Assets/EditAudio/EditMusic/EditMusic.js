@@ -95,9 +95,9 @@ export default class EditMusic extends React.Component {
 
 	togglePlayMusic(){
 		if(this.state.isPlaying){
-			// this.wavesurfer.pause();
+			this.wavesurfer.pause();
 		} else {
-			// this.wavesurfer.play();
+			this.wavesurfer.play();
 		}
 		this.setState({ isPlaying: !this.state.isPlaying })	
 	}
@@ -158,7 +158,7 @@ export default class EditMusic extends React.Component {
   		return (<div>No channels added...</div>)
   	}
 
-  	// return // TODO remove this to render channels
+  	return // TODO remove this to render channels
 
   	return c2.channels.map((channel, id) => (
 			<Channel 

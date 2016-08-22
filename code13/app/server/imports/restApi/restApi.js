@@ -294,9 +294,34 @@ RestApi.addRoute('asset/sound/:id', {authRequired: false}, {
   get: function () {
     "use strict";
     let sound = Azzets.findOne(this.urlParams.id)
+    console.log('soooooouuund------')
 
-    if(sound)
-      return { dataUri: sound.content2.dataUri }
+    if(sound)      
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'audio/ogg'
+        },
+        body: dataUriToBuffer(sound.content2.dataUri)
+      }
+
+      // return {        
+      //   uri: sound.content2.dataUri,
+      //   type: "ogg"
+      // }
+    else
+      return { statusCode: 404 }
+  }
+})
+
+// get music by id
+RestApi.addRoute('asset/music/:id', {authRequired: false}, {
+  get: function () {
+    "use strict";
+    let music = Azzets.findOne(this.urlParams.id)
+
+    if(music)
+      return { dataUri: music.content2.dataUri }
     else
       return { statusCode: 404 }
   }

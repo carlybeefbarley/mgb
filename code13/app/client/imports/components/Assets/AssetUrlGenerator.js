@@ -24,6 +24,12 @@ export default AssetUrlGenerator = React.createClass({
       case 'map':
         retval.push( { "msg":"map by ID", "url":"/api/asset/json/"+asset._id })
         break;
+      case 'sound':
+        retval.push( { "msg":"sound by ID", "url":"/api/asset/sound/"+asset._id })
+        break;
+      case 'music':
+        retval.push( { "msg":"music by ID", "url":"/api/asset/music/"+asset._id })
+        break;
       default:
         break;
     }

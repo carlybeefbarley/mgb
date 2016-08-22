@@ -9,6 +9,7 @@
     "aws-sdk": "^2.4.10",
     "babel-plugin-transform-class-properties": "^6.11.5",
     "babel-runtime": "^6.11.6",
+    "bcrypt": "^0.8.7",
     "blueimp-md5": "^2.3.0",
     "codemirror": "^5.17.0",
     "data-uri-to-buffer": "0.0.4",

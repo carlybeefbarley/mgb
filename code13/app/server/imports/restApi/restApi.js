@@ -347,49 +347,15 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
   }
 });
 
-
-// allow to export some libs 1 - allow to all 2 - allow to subscribers (e.g. for heavy libs or proprietary libs.. and etc)?
-const allowedLibs = {react: 1};
 // get code by id - tmp used for es6 import
 RestApi.addRoute('asset/code/:id', {authRequired: false}, {
   get: function () {
-    console.log("API call!!!");
-    let content = null;
-    // TODO(stauzs): idea behind this is to create browserify module and serve it to client.
-    // this should create very similar sources as React creates
-    if(allowedLibs[this.urlParams.id]){
-      // let src = "import React from 'react'\nexport default React";
-      // var browserifyFn = require('browserify-string');
-      // var browserify = require('browserify');
-      // var babelify = require('babelify');
-
-      /*const pp = process.env.PWD + "/babel.js";
-
-      console.log("Require PP", pp);
-      browserify({ debug: true })
-        //.transform(babelify)
-        .require(pp, { entry: true })
-        .bundle()
-        .on("error", function (err) { console.log("Error: " + err.message); })
-        .on("done", (...a) => {
-          console.log("br done:", ...a);
-        })*/
-        //.pipe(fs.createWriteStream("bundle.js"));
-
-
-      /*browserifyFn(src)
-        .transform(babelify)
-        .bundle(function (err, src) {
-          console.log("browserify done:", err, src);
-        });*/
+    let content;
+    let asset = Azzets.findOne(this.urlParams.id)
+    if(!asset){
+      return {statusCode: 404}
     }
-    else{
-      let asset = Azzets.findOne(this.urlParams.id)
-      if(!asset){
-        return {statusCode: 404}
-      }
-      content = asset.content2.src;
-    }
+    content = asset.content2.src;
 
     if(content) {
       return {
@@ -398,7 +364,6 @@ RestApi.addRoute('asset/code/:id', {authRequired: false}, {
         body: content
       };
     }
-    // try to create required import
     else {
       return {statusCode: 404}
     }
@@ -452,6 +417,35 @@ RestApi.addRoute('asset/code/:referrer/:owner/:name', {authRequired: false}, {
   }
 })
 
+RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
+  get: function () {
+    let content;
+    let asset = Azzets.findOne(this.urlParams.id)
+    if(!asset){
+      return {statusCode: 404}
+    }
+    content = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>${asset.name}</title>
+</head>
+<body><script>${asset.content2.bundle}</script></body>
+</html>
+`
+
+    if(content) {
+      return {
+        statusCode: 200,
+        headers: {'Content-Type': "text/html", 'file-name': asset.name},
+        body: content
+      };
+    }
+    else {
+      return {statusCode: 404}
+    }
+  }
+})
 
 /* rest is MGB v1 stuff */
 // MGBv1 TILE

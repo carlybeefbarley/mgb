@@ -17,6 +17,49 @@ export default mgbReleaseInfo = {
   [
 
     {
+      "timestamp":     "Sat Aug 20 2016 09:30:00 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "1148"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.graphic",
+          "type":           "improvement",
+          "changeName":     "Graphic Editor: Touch/Pen support",
+          "changeSummary":  "The Graphic Editor now supports Touch events, so you can use touch or stylus/iPencil to draw using supported devices. We also improved some menus and buttons in the Edit Graphic UI to work better on tablets and phones.", 
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "nav.flexpanel.featurelevels",
+          "type":           "improvement",
+          "changeName":     "Feature Levels - show/set value",
+          "changeSummary":  "The Feature Levels Flex Panel (slider icon tab on right hand of page) now allows the feature levels to be changed using a numeric field. This is because some users are reporting problems with the slider control on mobile devices.", 
+          "otherUrls":      []
+        },
+        {
+          "featureTag":     "asset.code",
+          "type":           "improvement",
+          "changeName":     "Code: ES6 Module re-Exports",
+          "changeSummary":  "We now support 'export {} from 'External Source'. This allows you to have a file that centralizes which versions of external libraries to use. It's a lightweight alternative to the package.json file you would use with NodeJs.", 
+          "otherUrls":      [ 
+            { txt: "Phaser/ES6 example", href: "https://v2.mygamebuilder.com/u/stauzs/assets?_fp=assets&_np=people&project=Phaser+ES6" },
+            { txt: "React/ES6/JSX example", href: "https://v2.mygamebuilder.com/u/stauzs/assets?_fp=assets&_np=people&project=Code+Import+Test" },
+            { txt: "NPM respository", href: "https://npmjs.com" },
+            { txt: "Mozilla documents for ES6 export", href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export" }
+          ]
+        }
+      ]
+    },
+
+    {
       "timestamp":     "Wed Aug 17 2016 13:10:00 GMT-0700 (PDT)",
       
       "id": {

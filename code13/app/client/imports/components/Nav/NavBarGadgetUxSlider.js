@@ -47,7 +47,7 @@ export default NavBarGadgetUxSlider = React.createClass({
   sliderChanged: function (event) {
     const levelSliderEl = document.getElementById(sliderConstants.sliderElementId)
     const newSliderLevel = parseInt(event.target.value, 10)
-    console.log("GADGET_SLIDER_CHANGED", newSliderLevel) 
+    
     if (levelSliderEl && levelSliderEl._levelKey)
       setFeatureLevel(this.context.settings, levelSliderEl._levelKey, newSliderLevel)
 
@@ -87,9 +87,6 @@ export default NavBarGadgetUxSlider = React.createClass({
     }
 
     const sliderLevel = this.getLevel()
-    //console.log("GADGET_RENDER_LEVEL ", sliderLevel)
-
-
 
     return (
       <div style={{ opacity: sliderConstants.disabledOpacity }}>

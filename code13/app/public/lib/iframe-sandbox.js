@@ -39,13 +39,15 @@ function _getCaller() {
   return null;
 }
 
-
-
 window.onload = function() {
   var knownLibs = {};
   var asset_id;
   var errorCount = 0;
   var mainWindow = window.parent; // reference to the last poster
+  // all code in one string - used for stand alone export
+  var allInOne = "";
+  var AIOsources = {};
+
   /*
   TODO: make use of these setters?
   var exports = {};
@@ -233,6 +235,7 @@ window.onload = function() {
   }
   function loadModule(src, urlFinalPart, cb){
     var lib = getKnowLib(urlFinalPart);
+    var aio = {};
     if(!lib || !lib.useGlobal){
       window.module = {exports: {}};
       window.exports = window.module.exports;
@@ -242,28 +245,35 @@ window.onload = function() {
       // PIXI is not defined - as PIXI will be added as module, but Phaser expects global PIXI :/
       delete window.module;
       delete window.exports;
+      aio.global = true;
     }
 
-    loadScriptFromText(src, urlFinalPart, function(){
+    loadScriptFromText(src, urlFinalPart, function(transpiledSrc){
+
+      aio.src = transpiledSrc;
+      AIOsources[urlFinalPart] = aio;
+
       if(lib && lib.useGlobal){
         // mark lib as has been loaded
         imports[urlFinalPart] = true;
       }
       // babel adds keys to exports
       else if(Object.keys(window.exports).length){
-        imports[urlFinalPart] = window.exports;
+        imports[urlFinalPart] = window.exports
       }
       // hack for React like module loading - as some versions are overwriting window.exports with their own version
       else{
-        imports[urlFinalPart] = window.module.exports;
+        imports[urlFinalPart] = window.module.exports
         // extract short name from url - e.g. react
         var shortName = getShortName(urlFinalPart)
         if(shortName){
-          imports[shortName] = window.module.exports;
+          imports[shortName] = window.module.exports
+          aio.shortName = shortName
         }
       }
-      window.module = {exports: {}};
-      window.exports = window.module.exports;
+      // restore module map
+      window.module = {exports: {}}
+      window.exports = window.module.exports
 
       cb && cb()
     })
@@ -301,38 +311,20 @@ window.onload = function() {
     console.trace("Transpilation yielded " + tr.code.length + " bytes" + ' ' + (Date.now() - start) + " ms")
     return tr;
   }
-
-  // this is used to make script names a little bit nicer
   var scriptsLoaded = 0;
-  function loadScriptFromText(srcText, filename, callback) {
-    var output = transform(srcText, filename);
-    var imports = parseImport(output);
-
-    var ready = function(){
+  function appendScript(filename, code, cb){
       var script = document.createElement('script');
       script.setAttribute("data-origin", filename);
-
       var name = filename || "_doc_"+ (++scriptsLoaded) +"";
-      var cb;
       if(name.substr(-3) != ".js"){
         name += ".js";
       }
+
       script.type = 'text/javascript';
-      script.text = output.code + "\n//# sourceURL=" + name;
+      script.text = code + "\n//# sourceURL=" + name;
 
-      // var src = output.code + "\n//# sourceURL=" + name;
+      // var src = code + "\n//# sourceURL=" + name;
       // script.src = URL.createObjectURL(new Blob([src]));
-
-      if (callback) {
-        // execute on the next tick
-        cb = function(){
-          window.setTimeout(function() {
-            callback()
-          }, 0);
-        }
-        // this does not work with script.text (only with script.src)
-        // script.onreadystatechange = script.onload = cb;
-      }
 
       script.onerror = function(err) {
         console.warn("Could not load script ["+ filename + "]");
@@ -343,22 +335,34 @@ window.onload = function() {
       // Fire the loading
       head.appendChild(script)
       cb && cb()
+  }
+
+  function loadScriptFromText(srcText, filename, callback) {
+    var output = transform(srcText, filename)
+    var imports = parseImport(output)
+    var cb
+    if (callback) {
+      // execute callback on the next tick
+      cb = function(){
+        window.setTimeout(function(){
+          callback(output.code)
+        }, 0)
+      }
     }
 
-    // TODO: load all at once ( usually much faster ) - atm scripts are included one by one
     var load = function load(){
       if(imports.length){
         loadFromCache(imports.shift(), load)
       }
       else{
-        ready()
+        appendScript(filename, output.code, cb)
       }
     }
     load()
   }
 
-  var cbs = {};
-  var cbId = 0;
+  var cbs = {}
+  var cbId = 0
   function loadFromCache(urlFinalPart, cb){
     // don't load at all
     if(imports[urlFinalPart]){
@@ -372,7 +376,7 @@ window.onload = function() {
       return
     }
     // store callback for response handling
-    cbId++;
+    cbId++
     cbs[cbId] = function(src, id){
       if(src === void(0)){
         //loadScript(resolveUrl(urlFinalPart), cb)
@@ -423,8 +427,8 @@ window.onload = function() {
         console.log("No <canvas> element to screenshot")
     },
     startRun: function(e){
-      mgbHostMessageContext.msgSource = e.source;
-      mgbHostMessageContext.msgOrigin = e.origin;
+      mgbHostMessageContext.msgSource = e.source
+      mgbHostMessageContext.msgOrigin = e.origin
       // this is used to import nice filenames
       // get owner_id from asset - and find asset
       asset_id = e.data.asset_id
@@ -433,9 +437,46 @@ window.onload = function() {
         // TODO: restore MGBOPT_phaser_version
         //loadScript(e.data.gameEngineScriptToPreload, function() {
           //  eval(e.data.codeToRun);  // NOT using eval since we can't get good window.onError information from it
-          loadScriptFromText(e.data.codeToRun, "/" + e.data.filename, function(){
+          loadScriptFromText(e.data.codeToRun, "/" + e.data.filename, function(transpiled){
             if(errorCount === 0){
               console.info("All Files loaded successfully!")
+              allInOne =
+                '(function(){'+
+                  'var imports = {};'+
+                  'window.require = function(key){ '+
+                    'if(imports[key] && imports[key] !== true) {'+
+                      'return imports[key];' +
+                    '} ' +
+                    'var name = key.split("@").shift();'+
+                    'return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])' +
+                  '}; '
+              for(var i in AIOsources){
+                if(AIOsources[i].global){
+                  allInOne += "\n" + 'delete window.exports; delete window.module; '
+                }
+                else{
+                  allInOne += "\n"+ 'window.module = {exports: {}};window.exports = window.module.exports; '
+                }
+                allInOne += ";" + AIOsources[i].src + "; "
+                if(AIOsources[i].global){
+                  allInOne += 'imports["'+i+'"] = true; '
+                }
+                else{
+                  allInOne +=
+                    'if(Object.keys(window.exports).length){' +
+                      'imports["'+i+'"] = window.exports;' +
+                    '}else{'+
+                      'imports["'+i+'"] = window.module.exports;' +
+                    '} ';
+                  if(AIOsources[i].shortName){
+                    allInOne +=  "\n"+ 'imports["'+AIOsources[i].shortName+'"] = window.module.exports;'
+                  }
+                }
+              }
+              allInOne += "\n" + transpiled
+              allInOne += "\n" + "})(); "
+              // TODO: create enum with all available sources
+              mainWindow.postMessage({src: allInOne, mgbCmd: "AllInOneSource"}, "*");
             }
           });
         //})
@@ -449,9 +490,9 @@ window.onload = function() {
       }
     }
   }
-
+  // cache this file?
   loadScript("/lib/knownLibs.js", function(){
-    knownLibs = module.exports;
+    knownLibs = module.exports
     _isAlive = true
   })
   window.addEventListener('message', function (e) {

@@ -1,26 +1,25 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import QLink, { utilPushTo } from '../QLink';
-import reactMixin from 'react-mixin';
+import React, { PropTypes } from 'react'
+import QLink, { utilPushTo } from '../QLink'
+import reactMixin from 'react-mixin'
 
-import {Azzets} from '/imports/schemas';
-import Spinner from '/client/imports/components/Nav/Spinner';
+import { Azzets } from '/imports/schemas'
+import Spinner from '/client/imports/components/Nav/Spinner'
 
-import Helmet from 'react-helmet';
-import AssetEdit from '/client/imports/components/Assets/AssetEdit';
-import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail.js';
-import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail.js';
+import Helmet from 'react-helmet'
+import AssetEdit from '/client/imports/components/Assets/AssetEdit'
+import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail.js'
+import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail.js'
 
-import {AssetKinds} from '/imports/schemas/assets';
-import {logActivity} from '/imports/schemas/activity';
-import {snapshotActivity} from '/imports/schemas/activitySnapshots.js';
-import {ActivitySnapshots, Activity} from '/imports/schemas';
+import { AssetKinds } from '/imports/schemas/assets'
+import { logActivity } from '/imports/schemas/activity'
+import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
+import { ActivitySnapshots, Activity } from '/imports/schemas'
 
-import InlineEdit from 'react-edit-inline';
+import InlineEdit from 'react-edit-inline'
 
 
 // This AssetEditRoute serves the following objectives
-// 1. Provide a reactive this.data.___ for the data needed to view/edit this Asset
+// 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset
 // 2. Provide a UI header that shows the important metadata about the asset being shown/edited. These include
 //      Essential:  
 //                      Asset Owner (immutable)
@@ -156,15 +155,20 @@ export default AssetEditRoute = React.createClass({
 
     const canEd = this.canEdit()    
     const emptyAssetDescriptionText = "(no description)"
-
     const chosenProjectNames = asset.projectNames || []
-    const inProjectsStr = (asset.isDeleted ? "DELETED Asset. Was in projects: " : "Asset in projects: " ) + 
-                          (chosenProjectNames.length === 0 ? "(none)" :  chosenProjectNames.join(", ") )
+    const inProjectsStr = (
+      <span>
+        { asset.isDeleted && "DELETED " }
+        <i className="ui icon sitemap" />
+        { (chosenProjectNames.length === 0 ? "(none)" :  chosenProjectNames.join(", ") ) }
+      </span>
+    )
     const inProjectClassName = "ui small basic " + (asset.isDeleted ? "red" : "grey") + " label"
-    const inProjectTitle = asset.isDeleted ? 
-                            "(You can undelete this file from the Assets list. Use the Trashcan search filter to show deleted assets. Deleted items will be automatically purged after some number of days of non-use. Also, it is a bit weird, but we do let you edit deleted items.. why not?)" : 
-                            "(Currently you can only assign Assets to Projects using the 'My Assets' page.)"
-
+    const inProjectTitle = "Projects to which this asset belongs. " + 
+                            ( asset.isDeleted ? 
+                              "(This asset is deleted. You can undelete this file from the Assets list. Use the Trashcan search filter to show deleted assets. Deleted items will be automatically purged after some number of days of non-use. Also, it is a bit weird, but we do let you edit deleted items.. why not?)" :
+                              "(Currently you can only assign Assets to Projects using the 'My Assets' page.)"
+                            )
 
     return (
       <div className="ui padded grid">
@@ -176,7 +180,7 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui six wide column">
+        <div className="ui eight wide column">
           <div className="ui row">
             { this.renderAssetPathElements(asset, canEd) }
           </div>
@@ -197,7 +201,7 @@ export default AssetEditRoute = React.createClass({
           }
         </div>
         
-        <div className="ui five wide column">
+        <div className="ui eight wide right aligned column" >
           { /* We use this.props.params.assetId since it is available sooner than the asset 
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }
@@ -205,14 +209,12 @@ export default AssetEditRoute = React.createClass({
                         assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
                         activitySnapshots={this.data.activitySnapshots} />
-                        &emsp;
+          &emsp;
           <AssetHistoryDetail 
                         assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
                         assetActivity={this.data.assetActivity} />
-        </div>
-
-        <div className="ui five wide right aligned column" >
+          &emsp;
           <div className={inProjectClassName} title={inProjectTitle}>
             { inProjectsStr }
           </div>
@@ -229,7 +231,7 @@ export default AssetEditRoute = React.createClass({
           />
         </div>
       </div>
-    );
+    )
   },
 
 

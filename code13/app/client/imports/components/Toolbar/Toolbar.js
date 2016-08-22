@@ -19,12 +19,15 @@ const sliderPcts = {
 }
 
 // Here is a list of *known* toolbar scope names. This is so that a ui (e.g fpUxLevels.js) can enumerate them all
-export const expectedToolbarScopeNames = {
-  EditGraphic: "EditGraphic",
-  GraphicTools: "GraphicTools",
-  MapTools: "MapTools",
-  SkillsMap: "SkillsMap"
+export const expectedToolbarScopeMaxValues = {
+  EditGraphic: 10,
+//GraphicTools: 21,
+  MapTools: 27
+//SkillsMap: 23
 }
+
+export const expectedToolbarScopeNames = _.keys(expectedToolbarScopeMaxValues)
+
 
 // Make Toolbar Level Key using a well-known prefix on the Toolbar name
 export function makeLevelKey(name) {

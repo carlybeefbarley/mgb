@@ -9,6 +9,7 @@ import Generate8bit from './Generate8bit.js';
 
 import WaveSurfer from '../lib/WaveSurfer.js';
 import Channel from './Channel.js';
+import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 
 export default class EditMusic extends React.Component {
 
@@ -125,7 +126,7 @@ export default class EditMusic extends React.Component {
 
 	handleSave(saveText)
   {
-    if(!this.hasPermission) return;
+    if(!this.hasPermission()) return;
     
     let asset = this.props.asset
     let c2    = asset.content2
@@ -178,6 +179,7 @@ export default class EditMusic extends React.Component {
 		return (
 			<div className="ui grid">
 				<div className="ui sixteen wide column">
+					<BrowserCompat context="edit.music" />
 
 			{/*** button row ***/}
 					<div className="row">

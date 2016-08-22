@@ -32,6 +32,7 @@ RestApi.addRoute('asset/:id', {authRequired: false}, {
 
 RestApi.addRoute('asset/png/:id', {authRequired: false}, {
   get: function () {
+    console.log('pnnnngggg----')
     var asset = Azzets.findOne(this.urlParams.id);
 // TODO: Handle case where the frameData has not yet been created
     if (asset)
@@ -290,7 +291,7 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
 });
 
 // get sound by id
-RestApi.addRoute('asset/sound/:id', {authRequired: false}, {
+RestApi.addRoute('asset/sound/:id/sound.ogg', {authRequired: false}, {
   get: function () {
     "use strict";
     let sound = Azzets.findOne(this.urlParams.id)

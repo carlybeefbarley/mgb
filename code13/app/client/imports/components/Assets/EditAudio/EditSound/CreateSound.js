@@ -83,7 +83,7 @@ export default class CreateSound extends React.Component {
 	changeWaveType(event){
 		this.PARAMS.wave_type = parseInt(event.target.value)
 		this.setState({ paramsUpdated: new Date().getTime() })
-		this.playAudio();
+		this.playSound();
 	}
 
 	saveSound(){

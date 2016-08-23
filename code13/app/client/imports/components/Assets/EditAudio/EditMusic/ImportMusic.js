@@ -50,12 +50,12 @@ export default class ImportMusic extends React.Component {
       var reader = new FileReader()
       reader.onload = (ev) => {
         let theUrl = ev.target.result
+        // console.log(theUrl)
         
         let tmpMusic = new Audio();
         tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
         	self.setState({ status: "uploaded" });
-        	// TODO load other type of audio files and convert to ogg (especially wav)
-					if(tmpMusic.src.startsWith("data:audio/ogg;base64,")){
+					if(tmpMusic.src.startsWith("data:audio/")){
 						self.musicLoaded(tmpMusic);
 					}         	
         }

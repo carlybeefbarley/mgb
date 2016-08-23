@@ -1,5 +1,5 @@
 module.exports = {
-  'Login': ''+function (client) {
+  'Login': function (client) {
     // TODO: move all important button selectors to external file for reuse?
     // TODO: login will be required all the time.. should it be first test always??
     const sidePanelButton = '.mgbNavPanel .ui.inverted.icon.menu .item .user';

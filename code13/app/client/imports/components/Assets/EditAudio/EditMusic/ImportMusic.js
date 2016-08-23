@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 
 import sty from  './editMusic.css'
 import WaveSurfer from '../lib/WaveSurfer.js'
+import lamejs from '../lib/lame.all.js'
 
 export default class ImportMusic extends React.Component {
 
@@ -44,26 +45,77 @@ export default class ImportMusic extends React.Component {
 		event.stopPropagation()
   	event.preventDefault()
 
-  	let self = this;
   	let files = event.dataTransfer.files;
-  	if (files.length > 0){
-      var reader = new FileReader()
-      reader.onload = (ev) => {
-        let theUrl = ev.target.result
-        // console.log(theUrl)
-        
-        let tmpMusic = new Audio();
-        tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
-        	self.setState({ status: "uploaded" });
-					if(tmpMusic.src.startsWith("data:audio/")){
-						self.musicLoaded(tmpMusic);
-					}         	
-        }
-        tmpMusic.src = theUrl;	        
-      }
-      reader.readAsDataURL(files[0])
-    }
+  	if(files.length > 0){
+  		let file = files[0]
+  		if(file.type === "audio/wav"){
+  			this.loadWav(file)	// read as arraybuffer and encode to mp3
+  		} else {
+  			this.loadEncoded(file)	// read as dataUrl
+  		}
+  	}
 	}
+
+	loadWav(file){
+		let reader = new FileReader()
+    reader.onload = (e) => {
+      let audioData = e.target.result
+      let wav = lamejs.WavHeader.readHeader(new DataView(audioData));
+      let samples = new Int16Array(audioData, wav.dataOffset, wav.dataLen / 2);
+      this.encodeMono(wav.channels, wav.sampleRate, samples);
+    }
+    reader.readAsArrayBuffer(file)
+	}
+
+	encodeMono(channels, sampleRate, samples) {
+		var self = this
+    var buffer = []
+    var mp3enc = new lamejs.Mp3Encoder(channels, sampleRate, 128)
+    var remaining = samples.length
+    var maxSamples = 1152
+    for (var i = 0; remaining >= maxSamples; i += maxSamples) {
+        var mono = samples.subarray(i, i + maxSamples)
+        var mp3buf = mp3enc.encodeBuffer(mono)
+        if (mp3buf.length > 0) {
+            buffer.push(new Int8Array(mp3buf))
+        }
+        remaining -= maxSamples
+    }
+    var d = mp3enc.flush()
+    if(d.length > 0){
+        buffer.push(new Int8Array(d))
+    }
+    console.log('done encoding, size=', buffer.length)
+    var blob = new Blob(buffer, {type: 'audio/mp3'})
+    var bUrl = window.URL.createObjectURL(blob)
+    console.log('Blob created, URL:', bUrl)
+    tmpMusic = new Audio()
+    tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
+    	self.setState({ status: "uploaded" })
+    	self.musicLoaded(tmpMusic)       	
+    }
+    tmpMusic.src = bUrl
+  }
+
+  loadEncoded(file){
+  	let self = this
+  	let reader = new FileReader()
+    reader.onload = (ev) => {
+      let audioData = ev.target.result        
+      
+      let tmpMusic = new Audio()
+      tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
+      	self.setState({ status: "uploaded" })
+				if(tmpMusic.src.startsWith("data:audio/")){
+					self.musicLoaded(tmpMusic)
+				} else {
+					console.warn("Data type is not audio!")
+				} 	
+      }
+      tmpMusic.src = audioData	        
+    }
+    reader.readAsDataURL(file)
+  }
 
 	musicLoaded(musicObject){
 		this.musicObject = musicObject;

@@ -32,3 +32,4 @@ random@1.0.10
 okgrow:analytics
 reactive-dict@1.1.8
 shell-server
+dispatch:mocha

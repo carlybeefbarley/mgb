@@ -3,8 +3,7 @@ export const templateCode = [
   { label: "PhaserJS outline",
     description: "Empty functions for preload(), create() and render()",
     code: `// Start to make a Phaser game.
-//MGBOPT_phaser_version = 2.4.6
-
+import 'phaser@2.4.6'
 var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
 
 // In a Phaser game, this is needed to enable screenshots if using WebGL renderer (because of Phaser.AUTO)
@@ -40,8 +39,8 @@ function render()
   { label: "Moving player",
     description: "Player character that can move and jump",
     code: `// Start to make a Phaser game.
-//MGBOPT_phaser_version = 2.4.7
 
+import 'phaser'
 // Create the Phaser Game. 
 // 
 var game = new Phaser.Game(

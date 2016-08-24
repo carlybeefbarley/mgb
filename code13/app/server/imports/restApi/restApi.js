@@ -462,21 +462,16 @@ RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
 <head>
 <meta charset="UTF-8" />
 <title>${asset.name}</title>
+<style>html, body{padding: 0; margin: 0}</style>
 </head>
 <body><script>${asset.content2.bundle}</script></body>
 </html>
 `
-
-    if(content) {
-      return {
-        statusCode: 200,
-        headers: {'Content-Type': "text/html", 'file-name': asset.name},
-        body: content
-      };
-    }
-    else {
-      return {statusCode: 404}
-    }
+    return {
+      statusCode: 200,
+      headers: {'Content-Type': "text/html", 'file-name': asset.name},
+      body: content
+    };
   }
 })
 

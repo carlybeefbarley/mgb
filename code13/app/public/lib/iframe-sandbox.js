@@ -476,7 +476,7 @@ window.onload = function() {
               allInOne += "\n" + transpiled
               allInOne += "\n" + "})(); "
               // TODO: create enum with all available sources
-              mainWindow.postMessage({src: allInOne, mgbCmd: "AllInOneSource"}, "*");
+              mainWindow.postMessage({src: allInOne, mgbCmd: "mgbAllInOneSource"}, "*");
             }
           });
         //})

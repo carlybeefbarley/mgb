@@ -82,8 +82,9 @@ export default class EditCode extends React.Component {
       mgbopt_game_engine: null,               // Determined anywhere in the file
       currentLineDeterminesGameEngine: null   // Determined by current line/selection
     }
-    this.cache = {};
-    this.hintWidgets = [];
+    this.cache = {}
+    this.lastBundle = null
+    this.hintWidgets = []
   }
   
   
@@ -93,7 +94,7 @@ export default class EditCode extends React.Component {
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue;
     let newC2 = { src: newValue }
-    this.props.handleContentChange( newC2, null, `Beautify code`)
+    this.handleContentChange( newC2, null, `Beautify code`)
   }
 
 
@@ -224,8 +225,7 @@ export default class EditCode extends React.Component {
     this.codeMirrorUpdateHints(false)  
   }
 
-  componentWillUnmount()
-  {
+  componentWillUnmount() {
     $(window).off("resize", this.edResizeHandler)
     // TODO: Destroy CodeMirror editor instance?
 
@@ -235,6 +235,10 @@ export default class EditCode extends React.Component {
     // this also will terminate worker (if in worker mode)
     this.ternServer.destroy();
     this.ternServer = null;
+
+    // clean up
+    this.cache = {};
+    this.lastBundle = null;
   }
 
   codeEditPassAndHint(cm) {
@@ -780,7 +784,7 @@ export default class EditCode extends React.Component {
       const newValue = doc.getValue();
       this._currentCodemirrorValue = newValue;
       let newC2 = { src: newValue }
-      this.props.handleContentChange( newC2, null, "Edit code" )
+      this.handleContentChange( newC2, null, "Edit code" )
       this.codeMirrorUpdateHints(true)
     }
   }
@@ -857,7 +861,7 @@ export default class EditCode extends React.Component {
 
           let asset = this.props.asset
           asset.thumbnail = data.pngDataUrl
-          this.props.handleContentChange(null, asset.thumbnail, "update thumbnail")
+          this.handleContentChange(null, asset.thumbnail, "update thumbnail")
         } break
 
         case "mgbStoreCache": {
@@ -868,13 +872,13 @@ export default class EditCode extends React.Component {
           this.postToIFrame("mgbFromCache", {src: this.cache[data.filename], cbId: data.cbId})
         } break
 
-        case "AllInOneSource" : {
+        case "mgbAllInOneSource" : {
           if (this.props.canEdit)
           {
-            console.log("Saving code as transpiled bundle!")
             const value = this.codeMirror.getValue()
             let newC2 = { src: value, bundle: data.src }
-            this.props.handleContentChange( newC2, null, `Store code bundle`)
+            this.lastBundle = data.src
+            this.handleContentChange( newC2, null, `Store code bundle`)
           }
         } break
       }
@@ -946,7 +950,14 @@ export default class EditCode extends React.Component {
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue;
     let newC2 = { src: newValue }
-    this.props.handleContentChange( newC2, null, `Template code: ${item.label}`)
+    this.handleContentChange( newC2, null, `Template code: ${item.label}`)
+  }
+
+  handleContentChange(c2, thumbnail, reason){
+    if(!c2.bundle && this.lastBundle){
+      c2.bundle = this.lastBundle
+    }
+    this.props.handleContentChange(c2, thumbnail, reason);
   }
 
 

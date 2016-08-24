@@ -10,3 +10,6 @@
   * for browser capabilities check: https://www.browserstack.com/automate/node#setting-os-and-browser
 
 * helper/ - misc helpers for selenium-webdriver
+* Local server:
+  * Follow instructions: https://github.com/SeleniumHQ/selenium/wiki/RemoteWebDriverServer
+  * download link: http://selenium-release.storage.googleapis.com/index.html - look for laterst standalone server

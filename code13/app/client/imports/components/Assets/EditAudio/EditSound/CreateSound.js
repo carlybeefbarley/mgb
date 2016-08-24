@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 
 import SFXR from '../lib/sfxr.js';
 import WaveSurfer from '../lib/WaveSurfer.js'
+import lamejs from '../lib/lame.all.js'
 
 SFXR.Params.prototype.query = function () {
   let result = "";
@@ -55,21 +56,26 @@ export default class CreateSound extends React.Component {
 		this.resetParams();
 	  this.PARAMS[fx]();
 	  this.setState({ paramsUpdated: new Date().getTime() })
-	  this.playSound();
+	  this.regenerateSound();
 	}
 
-	playSound(noregen){
-		let self = this;
-		setTimeout(function () { 
+	regenerateSound(){
+		this.sound = new SFXR.SoundEffect(this.PARAMS).generate()
+		lamejs.encodeMono(1, this.sound.header.sampleRate, this.sound.samples, (audioObject) => {
+			// console.log(audioObject)
+      this.sound.dataURI = audioObject.src
+      this.playSound()
+    })		
+	}
+
+	playSound(){
+		setTimeout( () => { 
 	    let sound = new Audio()
-	    if (!noregen) {
-	      self.sound = new SFXR.SoundEffect(self.PARAMS).generate()
-	    }
-	    sound.src = self.sound.dataURI
-	    if(self.sound.dataURI.length > 100){ // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
-	    	self.wavesurfer.load(self.sound.dataURI)
+	    sound.src = this.sound.dataURI
+	    if(this.sound.dataURI.length > 100){ // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
+	    	this.wavesurfer.load(this.sound.dataURI)
 	    } else {
-	    	self.wavesurfer.empty()
+	    	this.wavesurfer.empty()
 	    }
 	    sound.play(); 
   	}, 0);
@@ -143,7 +149,7 @@ export default class CreateSound extends React.Component {
     		<div key={"slider_"+param.id}>
     			<input id={param.id} type="range" value={this.PARAMS[param.id]*1000} min={param.signed ? -1000 : 0} max="1000" 
     			onChange={this.changeParam.bind(this, param.id)}
-    			onMouseUp={this.playSound.bind(this, false)}
+    			onMouseUp={this.regenerateSound.bind(this)}
     			/> {param.title}<br/>
     		</div>
     	)
@@ -177,7 +183,7 @@ export default class CreateSound extends React.Component {
 					</div>
 					
 					<div style={{float: "left", width: "30%"}}>
-						<button className="ui icon button massive" title="Play" onClick={this.playSound.bind(this, false)}>
+						<button className="ui icon button massive" title="Play" onClick={this.regenerateSound.bind(this)}>
 						  <i className="play icon"></i>
 						</button>
 						<button className="ui icon button massive" title="Save sound" onClick={this.saveSound.bind(this)}>
@@ -198,7 +204,7 @@ export default class CreateSound extends React.Component {
 							<div><b>Volume</b></div>
 		    			<input id="sound_vol" type="range" value={this.PARAMS.sound_vol*1000} min="0" max="1000" 
 		    			onChange={this.changeParam.bind(this, "sound_vol")} 
-		    			onMouseUp={this.playSound.bind(this, false)}
+		    			onMouseUp={this.regenerateSound.bind(this)}
 		    			/>
 		    		</div>
 

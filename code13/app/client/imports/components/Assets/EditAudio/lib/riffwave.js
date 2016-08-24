@@ -110,7 +110,19 @@ var RIFFWAVE = function(data) {
       u32ToArray(this.header.subChunk2Size),
       this.data
     );
-    this.dataURI = 'data:audio/wav;base64,'+FastBase64.Encode(this.wav);
+    // console.log(this.wav)
+
+    var samples = new Int16Array(this.wav.length)
+    for(var i=0; i<this.wav.length; i++){
+      var val = this.wav[i]
+      var signedFloatVal = (val - 256/2) / (256/2)
+      let newVal = signedFloatVal < 0 ? signedFloatVal * 32768 : signedFloatVal * 32767
+      samples[i] = Math.round(newVal)
+    }
+
+    // console.log(samples)
+    this.samples = samples
+    // this.dataURI = 'data:audio/wav;base64,'+FastBase64.Encode(this.wav);
   };
 
   if (data instanceof Array) this.Make(data);

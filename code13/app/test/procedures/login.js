@@ -30,6 +30,7 @@ module.exports = (browser) => {
     sel.css(buttons.login).click()
 
     // fill the form
+    // TODO: move login info to the env
     sel.css(inputs.email).sendKeys('tester@example.com');
     sel.css(inputs.password).sendKeys('tester1');
     //sel.css(inputs.password).sendKeys('tester1', Key.ENTER);

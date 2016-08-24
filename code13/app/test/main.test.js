@@ -10,7 +10,7 @@ try {npm = Npm}catch(e){
 }
 const BrowserFactory = npm.require(r + "procedures/startBrowser.js");
 
-describe("Connecting to selenium server", function() {
+describe("Connecting to selenium server (this might take few minutes)", function() {
   // allow max execution time 60 secs ( default - 2 - is not enought to get connected to BrowserStack and do the tests)
   this.timeout(120000)
   // TODO: check args and replace "default"
@@ -18,31 +18,32 @@ describe("Connecting to selenium server", function() {
   afterEach(() => {
     // TODO: check if browser has closed..
   })
-  it("Should create new browser", (done) => {
+  it("Created new browser [" + browserName + "]", (done) => {
     browser = BrowserFactory(browserName)
+    // TODO: login is sort of test by itself
     login = npm.require(r + "procedures/login.js")(browser)
     browser.call(done)
   })
 
-  it("Should Login with test user", (done) => {
+  it("Login with test user", (done) => {
     login(done)
   })
 
   // this may be useful on failed login
   // this one fails on IE as IE don't provide logs
-  it("Should receive logs", function (done) {
+  it("Received logs", (done) => {
     // console.error will show in the log
     // browser.executeScript('console.error("Hello, I\'m Error!!")')
     // console.log won't show up
     // browser.executeScript('console.log("Hello, I\'m Simple log!!")')
-    const logs = browser.manage().logs().get("browser")
+    const log = browser.manage().logs().get("browser")
     browser.call(done)
     browser.call(() => {
-      if (logs.value) {
-        console.log("Collected logs: ", logs.value)
+      if (log.value) {
+        console.log("Collected logs: ", log.value)
       }
       else{
-        console.log("Logs was empty")
+        console.log("Log was empty")
       }
     })
   })

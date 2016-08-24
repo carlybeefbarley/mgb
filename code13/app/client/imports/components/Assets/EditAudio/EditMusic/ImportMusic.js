@@ -62,6 +62,17 @@ export default class ImportMusic extends React.Component {
       let audioData = e.target.result
       let wav = lamejs.WavHeader.readHeader(new DataView(audioData));
       let samples = new Int16Array(audioData, wav.dataOffset, wav.dataLen / 2);
+      // from stereo to mono
+      if(wav.channels === 2){	
+        let s = new Int16Array(samples.length/2)
+        for(let i=0; i<samples.length; i+=2){
+        	let nextSample = samples.length-1 >= i+1 ? samples[i+1] : samples[i]	// special case for last element
+        	s[i/2] = Math.round((samples[i] + nextSample)/2)
+        }
+        samples = s
+        wav.channels = 1
+    	}
+    	// console.log(wav.channels, wav.sampleRate, samples)
       this.encodeMono(wav.channels, wav.sampleRate, samples);
     }
     reader.readAsArrayBuffer(file)
@@ -88,7 +99,7 @@ export default class ImportMusic extends React.Component {
     console.log('done encoding, size=', buffer.length)
     var blob = new Blob(buffer, {type: 'audio/mp3'})
     var bUrl = window.URL.createObjectURL(blob)
-    console.log('Blob created, URL:', bUrl)
+    // console.log('Blob created, URL:', bUrl)
     tmpMusic = new Audio()
     tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
     	self.setState({ status: "uploaded" })

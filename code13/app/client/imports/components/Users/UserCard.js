@@ -1,8 +1,7 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import moment from 'moment';
-import { utilPushTo } from '/client/imports/routes/QLink';
-import InlineEdit from 'react-edit-inline';
+import React, { PropTypes } from 'react'
+import moment from 'moment'
+import { utilPushTo } from '/client/imports/routes/QLink'
+import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 
 
 // This is a User Card which is a card-format version of the User information.

@@ -10,7 +10,7 @@ import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'
 import SkillsMap from '/client/imports/components/Controls/SkillsMap/SkillsMap'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
-import InlineEdit from 'react-edit-inline'
+import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
 
 import { Projects } from '/imports/schemas'

@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
 import validate from '/imports/schemas/validate'
-import InlineEdit from 'react-edit-inline'
+import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 
   /** This used by  to render something like...
    *      Kind > AssetName

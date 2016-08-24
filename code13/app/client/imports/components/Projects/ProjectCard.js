@@ -1,9 +1,8 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import moment from 'moment';
-import QLink from '/client/imports/routes/QLink';
-import QLinkUser from '/client/imports/routes/QLinkUser';
-import InlineEdit from 'react-edit-inline';
+import React, { PropTypes } from 'react'
+import moment from 'moment'
+import QLink from '/client/imports/routes/QLink'
+import QLinkUser from '/client/imports/routes/QLinkUser'
+import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 
 
 // This is a Project Card which is a card-format version of the Project information.

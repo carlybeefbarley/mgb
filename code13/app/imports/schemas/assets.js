@@ -33,6 +33,7 @@ var schema = {
   content2: Object,   // THIS IS NOT IN PREVIEW DOWNLOADS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field such as 'content'
   thumbnail: String,  // data-uri base 64 of thumbnail image (for example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
 
+  isUnconfirmedSave: Boolean,   // Set on client as True (isSimulation). set on server as False (isSimulation)
   //various flags
   isCompleted: Boolean,   // This supports the 'is stable' flag
   isDeleted: Boolean,     // This is a soft marked-as-deleted indicator
@@ -259,6 +260,7 @@ Meteor.methods({
     data.text = ""                                    // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
     data.projectNames = []
     data.thumbnail = data.thumbnail || ""
+    data.isUnconfirmedSave = this.isSimulation
     // TODO: this will get moved
     data.content2 = data.content2 || {}
 
@@ -289,7 +291,8 @@ Meteor.methods({
     if (!canEdit)
       throw new Meteor.Error(401, "You don't have permission to edit this.");   //TODO - make this secure,
 
-    data.updatedAt = new Date();
+    data.updatedAt = new Date()
+    data.isUnconfirmedSave = this.isSimulation
     
     // whitelist what can be updated
     check(data, {
@@ -302,6 +305,7 @@ Meteor.methods({
       content: optional(schema.content),
       content2: optional(schema.content2),
       thumbnail: optional(schema.thumbnail),
+      isUnconfirmedSave: optional(schema.isUnconfirmedSave),
 
       isCompleted: optional(schema.isCompleted),
       isDeleted: optional(schema.isDeleted),

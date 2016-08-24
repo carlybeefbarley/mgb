@@ -109,6 +109,7 @@ export default AssetEditRoute = React.createClass({
         <div className="ui eight wide column">
           <AssetPathDetail 
             canEdit={canEd}
+            isUnconfirmedSave={asset.isUnconfirmedSave}
             ownerName={asset.dn_ownerName}
             kind={asset.kind}
             name={asset.name}

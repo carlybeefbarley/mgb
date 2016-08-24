@@ -16,6 +16,7 @@ export default AssetPathDetail = React.createClass({
     kind:       PropTypes.string.isRequired,
     name:       PropTypes.string,                       // Asset name (can be null)
     text:       PropTypes.string,                       // Asset description text (can be null)
+    isUnconfirmedSave: PropTypes.bool,                  // not present == saved.. for legacy data
     handleNameChange: PropTypes.func.isRequired,
     handleDescriptionChange: PropTypes.func.isRequired
   },
@@ -31,19 +32,28 @@ export default AssetPathDetail = React.createClass({
   },
 
   render() {
-    const { name, kind, text, ownerName, canEdit } = this.props
+    const { name, kind, text, ownerName, canEdit, isUnconfirmedSave } = this.props
     const emptyAssetDescriptionText = "(no description)"
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
-    const editOrView = 
-              (canEdit ? 
-                <a className="ui mini green icon label" title="You can edit this asset and changes will be saved automatically"><i className="ui save icon" />Edit</a> : 
-                <a className="ui mgbReadOnlyReminder mini red icon label" title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)"><i className="ui unhide icon" />View</a> 
-              )
 
     return (
       <div>
         <div className="ui row">
-          {editOrView}&nbsp;&nbsp;
+          {
+            canEdit ? 
+              (
+                <div className="ui small green icon label" title="You can edit this asset and changes will be saved automatically">
+                  <i className={`ui ${isUnconfirmedSave && "orange "} save icon`} />Edit
+                </div>
+              ) 
+              : 
+              (
+                <div className="ui mgbReadOnlyReminder small red icon label" title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">
+                  <i className="ui unhide icon" />View
+                </div>
+              )        
+          }
+          &nbsp;&nbsp;
           <QLink to={`/u/${ownerName}/assets`} query={{kinds: kind}}>
             { AssetKinds.getName(kind) }
           </QLink>
@@ -56,21 +66,20 @@ export default AssetPathDetail = React.createClass({
             change={this.fieldChanged}
             isDisabled={!canEdit} />            
         </div>
-        { (canEdit || (text && text !== "")) &&   
-            <div className="ui row">
-              <small>
-                <div className="ui fluid input">
-                  <InlineEdit
-                    validate={validate.assetDescription}
-                    text={text || emptyAssetDescriptionText}
-                    paramName="text"
-                    change={this.fieldChanged}
-                    isDisabled={!canEdit}
-                    />
-                </div>
-              </small>
+        
+        <div className="ui row">
+          <small>
+            <div className="ui fluid input">
+              <InlineEdit
+                validate={validate.assetDescription}
+                text={(text && text.length > 0) ? text : emptyAssetDescriptionText}
+                paramName="text"
+                change={this.fieldChanged}
+                isDisabled={!canEdit}
+                />
             </div>
-        }
+          </small>
+        </div>
       </div>
     )
   }

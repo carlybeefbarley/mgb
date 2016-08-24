@@ -67,7 +67,7 @@ export default class EditCode extends React.Component {
       consoleMessages: [],
       gameRenderIterationKey: 0,
       isPlaying: false,
-      previewAssetIdsArray: [],        // Array of strings with asset ids.
+      previewAssetIdsArray: [],        // Array of { id: assetIdString, kind: assetKindString } e.g. { id: "asdxzi87q", kind: "graphic" }
       
       documentIsEmpty: true,          // until loaded
       
@@ -354,14 +354,18 @@ export default class EditCode extends React.Component {
   }
   
   
-  _getPNGsInLine(lineText)
+  _getMgbAssetIdsInLine(lineText)
   {
-    let re=/api\/asset\/png\/([A-Za-z0-9]+)/g
+    let re=/api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
     let matches=[]
     let match
-    while ( ( match = re.exec( lineText ) ) && matches.push( match[1] ) ) 
+    while ( ( match = re.exec( lineText ) ) && matches.push( 
+      { id: match[2],
+        kind: match[1]
+      }
+       ) ) 
       ;
-    return _.uniq(matches)
+    return _.uniqBy(matches, 'id')
   }
   
   /** Just show the Clean Sheet helpers if there is no code */
@@ -375,11 +379,13 @@ export default class EditCode extends React.Component {
   srcUpdate_LookForMgbAssets()
   {
     // Extract Asset IDs in current line for 'Current line help' view
-    let thisLine = this.codeMirror.getSelection(';');
-    if (!thisLine || thisLine.length === 0)
-      thisLine = this.codeMirror.getLine(this.codeMirror.getCursor().line);
-    let PNGids = this._getPNGsInLine(thisLine);
-    this.setState( { previewAssetIdsArray: PNGids } );    
+    let thisLine = this.codeMirror.getSelection(';')
+    if (!thisLine || thisLine.length === 0) {
+      const thisLineNum = this.codeMirror.getCursor().line
+      thisLine = this.codeMirror.getLine(thisLineNum)
+    }
+    const AssetIdsAndKinds = this._getMgbAssetIdsInLine(thisLine)
+    this.setState( { previewAssetIdsArray: AssetIdsAndKinds } )
   }
 
   /** Runs JSHINT on the user's code and show any relevant issues as widgets 
@@ -987,12 +993,12 @@ export default class EditCode extends React.Component {
                 <div className="ui green horizontal label">{item.label}</div>
                 {item.description}
               </a>
-    })
+    }) 
     
-    const previewIdThings = this.state.previewAssetIdsArray.map( id => {
-      return <a className="ui label" key={id}>
-                <img className="ui right spaced avatar image" src={`/api/asset/png/${id}`}></img>
-                URL references asset ID#{id}
+    const previewIdThings = this.state.previewAssetIdsArray.map( assetInfo => {
+      return <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}}>
+                <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
+                URL references MGB <strong>{assetInfo.kind}</strong> asset ID#{assetInfo.id}
               </a>
     })
     

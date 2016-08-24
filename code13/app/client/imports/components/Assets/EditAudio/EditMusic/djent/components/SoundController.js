@@ -32,6 +32,8 @@ import ContinuousGenerationController from './ContinuousGenerationController';
 import Switch from './Switch';
 import audioBufferToWav from 'audiobuffer-to-wav';
 
+import lamejs from '../../../lib/lame.all.js'
+
 const getSequences = (grooveTotalBeats, allowedLengths, hitChance) => {
     const mainBeat       = generateSequence({ totalBeats: grooveTotalBeats, allowedLengths, hitChance });
     const cymbalSequence = getSequenceForInstrument('cymbal');
@@ -239,7 +241,6 @@ class SoundController extends Component {
         this.setState({ isConvertingWav: true})
 
         let channelData = this.props.currentBuffer.getChannelData(0)
-        console.log(channelData)
 
         let samples = new Int16Array(channelData.length);
         for(var i=0; i<channelData.length; i++){
@@ -248,38 +249,11 @@ class SoundController extends Component {
             samples[i] = Math.round(v)
         }
 
-
-        console.log(samples)
-
-        
-
-
-
-
-
-        const wav = audioBufferToWav(this.props.currentBuffer);
-        const blob = new window.Blob([ new DataView(wav) ], {
-          type: 'audio/wav'
+        // convert to mp3
+        lamejs.encodeMono(1, 44100, samples, (audioObject) => {
+            this.props.actions.importAudio(audioObject)
+            this.setState({ isConvertingWav: false}) 
         })
-
-        var fileReader = new FileReader()
-        fileReader.onload = function() {
-            self.importWavCB( this.result )
-        }
-        fileReader.readAsDataURL(blob)
-
-        // saveAsWAVFile( this.props.currentBuffer, dataUri => this.importWavCB(dataUri) )
-        // console.log('import wav', audioObject)
-        // this.props.actions.importAudio(audioObject)
-    }
-
-    importWavCB(dataUri){
-        // console.log(dataUri)
-        let audioObject = new Audio()
-        audioObject.src = dataUri
-        this.props.actions.importAudio(audioObject)
-        this.setState({ isConvertingWav: false})
-        
     }
 
     render () {

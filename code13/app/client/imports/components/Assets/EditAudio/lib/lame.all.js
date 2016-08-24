@@ -1,7 +1,47 @@
 function lamejs() {
 
 
+function encodeMono(channels, sampleRate, samples, callback){
+    if(channels === 2){ // from stereo to mono
+        let s = new Int16Array(samples.length/2)
+        for(let i=0; i<samples.length; i+=2){
+            let nextSample = samples.length-1 >= i+1 ? samples[i+1] : samples[i]    // special case for last element
+            s[i/2] = Math.round((samples[i] + nextSample)/2)
+        }
+        samples = s
+        channels = 1
+    }
 
+    var buffer = []
+    var mp3enc = new Mp3Encoder(channels, sampleRate, 128)
+    var remaining = samples.length
+    var maxSamples = 1152
+    for (var i = 0; remaining >= maxSamples; i += maxSamples) {
+        var mono = samples.subarray(i, i + maxSamples)
+        var mp3buf = mp3enc.encodeBuffer(mono)
+        if (mp3buf.length > 0) {
+            buffer.push(new Int8Array(mp3buf))
+        }
+        remaining -= maxSamples
+    }
+    var d = mp3enc.flush()
+    if(d.length > 0){
+        buffer.push(new Int8Array(d))
+    }
+    console.log('done encoding, size=', buffer.length)
+    var blob = new Blob(buffer, {type: 'audio/mp3'})
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+        let dataUri = e.target.result
+        tmpMusic = new Audio()
+        tmpMusic.oncanplaythrough = (event) => { 
+            callback(tmpMusic)        
+        }
+        tmpMusic.src = dataUri
+    }
+    reader.readAsDataURL(blob)
+}
 
     
 function new_byte(count) {
@@ -15591,6 +15631,7 @@ L3Side.SFBMAX = (Encoder.SBMAX_s * 3);
 //testFullLength();
 lamejs.Mp3Encoder = Mp3Encoder;
 lamejs.WavHeader = WavHeader;
+lamejs.encodeMono = encodeMono;
 }
 //fs=require('fs');
 lamejs();

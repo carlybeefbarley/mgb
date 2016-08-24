@@ -61,55 +61,14 @@ export default class ImportMusic extends React.Component {
     reader.onload = (e) => {
       let audioData = e.target.result
       let wav = lamejs.WavHeader.readHeader(new DataView(audioData));
-      let samples = new Int16Array(audioData, wav.dataOffset, wav.dataLen / 2);
-      // from stereo to mono
-      if(wav.channels === 2){	
-        let s = new Int16Array(samples.length/2)
-        for(let i=0; i<samples.length; i+=2){
-        	let nextSample = samples.length-1 >= i+1 ? samples[i+1] : samples[i]	// special case for last element
-        	s[i/2] = Math.round((samples[i] + nextSample)/2)
-        }
-        samples = s
-        wav.channels = 1
-    	}
-    	// console.log(wav.channels, wav.sampleRate, samples)
-      this.encodeMono(wav.channels, wav.sampleRate, samples);
+      let samples = new Int16Array(audioData, wav.dataOffset, wav.dataLen / 2)
+      lamejs.encodeMono(wav.channels, wav.sampleRate, samples, (audioObject) => {
+      	this.setState({ status: "uploaded" })
+    		this.musicLoaded(audioObject)  
+      })
     }
     reader.readAsArrayBuffer(file)
 	}
-
-	encodeMono(channels, sampleRate, samples) {
-    var buffer = []
-    var mp3enc = new lamejs.Mp3Encoder(channels, sampleRate, 128)
-    var remaining = samples.length
-    var maxSamples = 1152
-    for (var i = 0; remaining >= maxSamples; i += maxSamples) {
-        var mono = samples.subarray(i, i + maxSamples)
-        var mp3buf = mp3enc.encodeBuffer(mono)
-        if (mp3buf.length > 0) {
-            buffer.push(new Int8Array(mp3buf))
-        }
-        remaining -= maxSamples
-    }
-    var d = mp3enc.flush()
-    if(d.length > 0){
-        buffer.push(new Int8Array(d))
-    }
-    console.log('done encoding, size=', buffer.length)
-    var blob = new Blob(buffer, {type: 'audio/mp3'})
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-    	let dataUri = e.target.result
-    	tmpMusic = new Audio()
-	    tmpMusic.oncanplaythrough = (event) => { // music is uploaded to browser
-	    	this.setState({ status: "uploaded" })
-	    	this.musicLoaded(tmpMusic)       	
-	    }
-	    tmpMusic.src = dataUri
-    }
-    reader.readAsDataURL(blob)
-  }
 
   loadEncoded(file){
   	let reader = new FileReader()

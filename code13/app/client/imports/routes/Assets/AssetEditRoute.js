@@ -7,8 +7,9 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 
 import Helmet from 'react-helmet'
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
-import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail.js'
-import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail.js'
+import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
+import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
+import AssetProjectDetail from '/client/imports/components/Assets/AssetProjectDetail'
 
 import { AssetKinds } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
@@ -127,8 +128,8 @@ export default AssetEditRoute = React.createClass({
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
     const editOrView = 
               (canEdit ? 
-                <a className="ui mini green label" title="You can edit this asset and changes will be saved automatically">Edit</a> : 
-                <a className="ui mgbReadOnlyReminder mini red label" title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">View</a> 
+                <a className="ui mini green icon label" title="You can edit this asset and changes will be saved automatically"><i className="ui save icon" />Edit</a> : 
+                <a className="ui mgbReadOnlyReminder mini red icon label" title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)"><i className="ui unhide icon" />View</a> 
               )
 
     return <span>
@@ -154,21 +155,7 @@ export default AssetEditRoute = React.createClass({
     if (!asset || this.data.loading) return null
 
     const canEd = this.canEdit()    
-    const emptyAssetDescriptionText = "(no description)"
-    const chosenProjectNames = asset.projectNames || []
-    const inProjectsStr = (
-      <span>
-        { asset.isDeleted && "DELETED " }
-        <i className="ui icon sitemap" />
-        { (chosenProjectNames.length === 0 ? "(none)" :  chosenProjectNames.join(", ") ) }
-      </span>
-    )
-    const inProjectClassName = "ui small basic " + (asset.isDeleted ? "red" : "grey") + " label"
-    const inProjectTitle = "Projects to which this asset belongs. " + 
-                            ( asset.isDeleted ? 
-                              "(This asset is deleted. You can undelete this file from the Assets list. Use the Trashcan search filter to show deleted assets. Deleted items will be automatically purged after some number of days of non-use. Also, it is a bit weird, but we do let you edit deleted items.. why not?)" :
-                              "(Currently you can only assign Assets to Projects using the 'My Assets' page.)"
-                            )
+    const emptyAssetDescriptionText = "(no description)"    
 
     return (
       <div className="ui padded grid">
@@ -205,7 +192,7 @@ export default AssetEditRoute = React.createClass({
           { /* We use this.props.params.assetId since it is available sooner than the asset 
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }
-          <AssetActivityDetail 
+          <AssetActivityDetail
                         assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
                         activitySnapshots={this.data.activitySnapshots} />
@@ -215,9 +202,9 @@ export default AssetEditRoute = React.createClass({
                         currUser={this.props.currUser}
                         assetActivity={this.data.assetActivity} />
           &emsp;
-          <div className={inProjectClassName} title={inProjectTitle}>
-            { inProjectsStr }
-          </div>
+          <AssetProjectDetail 
+            projectNames={asset.projectNames || []}
+            isDeleted={asset.isDeleted} />
         </div>
 
         <div className="sixteen wide column">

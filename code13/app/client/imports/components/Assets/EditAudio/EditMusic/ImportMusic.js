@@ -98,14 +98,26 @@ export default class ImportMusic extends React.Component {
     }
     console.log('done encoding, size=', buffer.length)
     var blob = new Blob(buffer, {type: 'audio/mp3'})
-    var bUrl = window.URL.createObjectURL(blob)
-    // console.log('Blob created, URL:', bUrl)
-    tmpMusic = new Audio()
-    tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
-    	self.setState({ status: "uploaded" })
-    	self.musicLoaded(tmpMusic)       	
+    // var bUrl = window.URL.createObjectURL(blob)
+    // // console.log('Blob created, URL:', bUrl)
+    // tmpMusic = new Audio()
+    // tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
+    // 	self.setState({ status: "uploaded" })
+    // 	self.musicLoaded(tmpMusic)       	
+    // }
+    // tmpMusic.src = bUrl
+
+    const reader = new FileReader()
+    reader.onload = function(e) {
+    	let dataUri = e.target.result
+    	tmpMusic = new Audio()
+	    tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
+	    	self.setState({ status: "uploaded" })
+	    	self.musicLoaded(tmpMusic)       	
+	    }
+	    tmpMusic.src = dataUri
     }
-    tmpMusic.src = bUrl
+    reader.readAsDataURL(blob)
   }
 
   loadEncoded(file){

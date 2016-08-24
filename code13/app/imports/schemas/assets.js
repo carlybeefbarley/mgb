@@ -180,22 +180,8 @@ export const AssetKinds = {
   },
   getNamePlural: function(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? "" : "s") : UAKerr)
-  },
-  validateAssetField: function (field, str) { 
-    if (!field || !str) return "invalid params"
-    switch(field) {
-    case "name":
-      if (str.length > 64) 
-        return "Too long. Max length is 64 characters"
-      break
-    case "text":
-      if (str.length > 120) 
-        return "Too long. Max length is 120 characters"
-      break      
-    }
-    return null
   }
-};
+}
 
 // Suggested separator to be used for query.kinds. Note that "," and "+" and others can get messy
 // due to url encoding schemes. The safest ones are - _ . and ~

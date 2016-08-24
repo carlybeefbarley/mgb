@@ -114,6 +114,7 @@ export default AssetEditRoute = React.createClass({
             ownerName={asset.dn_ownerName}
             kind={asset.kind}
             name={asset.name}
+            text={asset.text}
             handleNameChange={this.handleAssetNameChange}
             handleDescriptionChange={this.handleAssetDescriptionChange}/>
         </div>

@@ -1,10 +1,9 @@
-import _ from 'lodash';
-
+import _ from 'lodash'
 
 export default validate = {
 
   lengthCap: function (text, lengthCap) {
-    return _.isString(text) && text.length < lengthCap
+    return _.isString(text) && text.length <= lengthCap
   },
 
   mgb1name: function (text) {
@@ -26,6 +25,14 @@ export default validate = {
 
   userFocusMsg: function (text) {
     return validate.lengthCap(text, 64)
+  },
+
+  assetName: function(text) {
+    return validate.lengthCap(text, 64)
+  },
+
+  assetDescription: function(text) {
+    return validate.lengthCap(text, 120)
   }
   
 }

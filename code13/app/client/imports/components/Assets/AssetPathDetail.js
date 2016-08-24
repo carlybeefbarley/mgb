@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
+import validate from '/imports/schemas/validate'
 import InlineEdit from 'react-edit-inline'
 
   /** This used by  to render something like...
@@ -20,7 +21,6 @@ export default AssetPathDetail = React.createClass({
   },
   
 
-
   fieldChanged: function(data) {
     // data = { description: "New validated text comes here" }
     // Update your model from here    
@@ -29,25 +29,6 @@ export default AssetPathDetail = React.createClass({
     if (data.text)
       this.props.handleDescriptionChange(data.text)
   },
-
-
-  validateEnteredField(field, str) {
-    const errStr = AssetKinds.validateAssetField(field, str)
-    if (errStr !== null)
-      console.log(`Asset ${field} "${str}" not valid: ${errStr}`)   // TODO proper err alert
-    return errStr === null ? true : false
-  },
-
-
-  validateEnteredAssetName: function(str) {
-    return this.validateEnteredField("name", str)
-  },
-
-
-  validateEnteredAssetDescription: function(str) {
-    return this.validateEnteredField("text", str)
-  },
-
 
   render() {
     const { name, kind, text, ownerName, canEdit } = this.props
@@ -68,7 +49,7 @@ export default AssetPathDetail = React.createClass({
           </QLink>
           &nbsp;>&nbsp;
           <InlineEdit
-            validate={this.validateEnteredAssetName}
+            validate={validate.assetName}
             activeClassName="editing"
             text={name || untitledAssetString}
             paramName="name"
@@ -80,7 +61,7 @@ export default AssetPathDetail = React.createClass({
               <small>
                 <div className="ui fluid input">
                   <InlineEdit
-                    validate={this.validateEnteredAssetDescription}
+                    validate={validate.assetDescription}
                     text={text || emptyAssetDescriptionText}
                     paramName="text"
                     change={this.fieldChanged}

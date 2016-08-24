@@ -30,6 +30,7 @@ RestApi.addRoute('asset/:id', {authRequired: false}, {
 });
 
 
+// TODO: Maybe make this asset/graphic ? Look also at AssetUrlGenerator and generateUrlOptions()
 RestApi.addRoute('asset/png/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id);
@@ -69,6 +70,7 @@ RestApi.addRoute('asset/png/:user/:name', {authRequired: false}, {
   }
 });
 
+// Get any kind of asset's Thumbnail *as* a PNG
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)

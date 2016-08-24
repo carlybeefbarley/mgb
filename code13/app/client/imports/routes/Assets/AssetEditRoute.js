@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import QLink, { utilPushTo } from '../QLink'
+import { utilPushTo } from '../QLink'
 import reactMixin from 'react-mixin'
 
 import { Azzets } from '/imports/schemas'
@@ -17,7 +17,6 @@ import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
 
 
-
 // This AssetEditRoute serves the following objectives
 // 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset
 // 2. Provide a UI header that shows the important metadata about the asset being shown/edited. These include
@@ -33,7 +32,6 @@ import { ActivitySnapshots, Activity } from '/imports/schemas'
 //
 // 3. Provide functions for sub components to call which will store the Asset
 // 4. (TODO) Provide "Leave hooks" for warning about unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
-
 
 
 export default AssetEditRoute = React.createClass({
@@ -79,9 +77,8 @@ export default AssetEditRoute = React.createClass({
       activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
       assetActivity: Activity.find(selector, options).fetch(),
       loading: !handleForAsset.ready()    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
-    };
+    }
   },
-
 
   canEdit: function() {
     return !!(this.data.asset &&
@@ -89,8 +86,6 @@ export default AssetEditRoute = React.createClass({
            this.props.currUser && 
            this.data.asset.ownerId === this.props.currUser._id)
   },
-
-
 
   render: function() {    
     const asset = this.data.asset         // One Asset provided via getMeteorData()
@@ -173,7 +168,7 @@ export default AssetEditRoute = React.createClass({
         // TODO: NOT alert() ! !
         alert('error: ' + err.reason)
       }
-    });
+    })
     
     logActivity("asset.edit", changeText, null, asset)
   },

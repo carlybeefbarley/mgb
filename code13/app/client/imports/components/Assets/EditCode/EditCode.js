@@ -980,7 +980,7 @@ export default class EditCode extends React.Component {
 
   render() {
     if (!this.props.asset) 
-      return null;
+      return null
       
     const templateCodeChoices = templateCode.map(item => {
       return  <a className="item" key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
@@ -1102,11 +1102,17 @@ export default class EditCode extends React.Component {
                             <i className={"stop icon"}></i>Stop
                         </a>
                       }
+                      { !!asset.content2.bundle && 
+                        <a className={"ui mini labeled icon button"} href={`/api/asset/code/bundle/${asset._id}`} target="_blank">
+                            <i className={"external icon"}></i>Full
+                        </a>
+                      }
                       { isPlaying && 
                         <a className={"ui right floated mini icon button"} onClick={this.handleScreenshotIFrame.bind(this)} title="This will make a screenshot of the CANVAS element in the page">
                             <i className={"write square icon"}></i>Set thumbnail
                         </a>
                       }
+                      
                 </div>
               }
               { !docEmpty &&

@@ -138,7 +138,7 @@ export default class EditSound extends React.Component {
 						<button className="ui small icon button"
 							title="Import sound from your computer (only .ogg files now)"
 							onClick={this.openImportPopup.bind(this)}>
-						  <i className="add square icon"></i> Import (.ogg)
+						  <i className="add square icon"></i> Import
 						</button>
 						<button className="ui small icon button"
 							title="Get sound from stock"

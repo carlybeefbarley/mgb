@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 
 import sty from  './editSound.css';
 import WaveSurfer from '../lib/WaveSurfer.js'
+import lamejs from '../lib/lame.all.js'
 
 export default class ImportSound extends React.Component {
 
@@ -44,30 +45,53 @@ export default class ImportSound extends React.Component {
 		event.stopPropagation()
   	event.preventDefault()
 
-  	let self = this;
   	let files = event.dataTransfer.files;
-  	if (files.length > 0){
-      var reader = new FileReader()
-      reader.onload = (ev) => {
-        let theUrl = ev.target.result
-        
-        let tmpSound = new Audio();
-        tmpSound.oncanplaythrough = function(e){ // sound is uploaded to browser
-        	self.setState({ status: "uploaded" });
-        	// TODO load other type of audio files and convert to ogg (especially wav)
-					if(tmpSound.src.startsWith("data:audio/ogg;base64,")){
-						self.soundLoaded(tmpSound);
-					}         	
-        }
-        tmpSound.src = theUrl;	        
-      }
-      reader.readAsDataURL(files[0])
-    }
+  	if(files.length > 0){
+  		let file = files[0]
+  		if(file.type === "audio/wav"){
+  			this.loadWav(file)	// read as arraybuffer and encode to mp3
+  		} else {
+  			this.loadEncoded(file)	// read as dataUrl
+  		}
+  	}
 	}
 
-	soundLoaded(soundObject){
-		this.soundObject = soundObject;
-		this.wavesurfer.load(soundObject.src);
+	loadWav(file){
+		let reader = new FileReader()
+    reader.onload = (e) => {
+      let audioData = e.target.result
+      let wav = lamejs.WavHeader.readHeader(new DataView(audioData));
+      let samples = new Int16Array(audioData, wav.dataOffset, wav.dataLen / 2)
+      lamejs.encodeMono(wav.channels, wav.sampleRate, samples, (audioObject) => {
+      	this.setState({ status: "uploaded" })
+    		this.audioLoaded(audioObject)  
+      })
+    }
+    reader.readAsArrayBuffer(file)
+	}
+
+  loadEncoded(file){
+  	let reader = new FileReader()
+    reader.onload = (ev) => {
+      let audioData = ev.target.result        
+      
+      let tmpMusic = new Audio()
+      tmpMusic.oncanplaythrough = (e) => { // music is uploaded to browser
+      	this.setState({ status: "uploaded" })
+				if(tmpMusic.src.startsWith("data:audio/")){
+					this.audioLoaded(tmpMusic)
+				} else {
+					console.warn("Data type is not audio!")
+				} 	
+      }
+      tmpMusic.src = audioData	        
+    }
+    reader.readAsDataURL(file)
+  }
+
+	audioLoaded(audioObject){
+		this.audioObject = audioObject;
+		this.wavesurfer.load(audioObject.src);
 	}
 
 	togglePlaySound(){
@@ -93,7 +117,7 @@ export default class ImportSound extends React.Component {
 
 	finishImport(){
 		// console.log(this.wavesurfer);
-		this.props.importSound(this.soundObject, "Imported sound")
+		this.props.importSound(this.audioObject, "Imported sound")
 	}
 
 	render(){

@@ -79,7 +79,6 @@ export default class ImportMusic extends React.Component {
 	}
 
 	encodeMono(channels, sampleRate, samples) {
-		var self = this
     var buffer = []
     var mp3enc = new lamejs.Mp3Encoder(channels, sampleRate, 128)
     var remaining = samples.length
@@ -98,22 +97,14 @@ export default class ImportMusic extends React.Component {
     }
     console.log('done encoding, size=', buffer.length)
     var blob = new Blob(buffer, {type: 'audio/mp3'})
-    // var bUrl = window.URL.createObjectURL(blob)
-    // // console.log('Blob created, URL:', bUrl)
-    // tmpMusic = new Audio()
-    // tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
-    // 	self.setState({ status: "uploaded" })
-    // 	self.musicLoaded(tmpMusic)       	
-    // }
-    // tmpMusic.src = bUrl
 
     const reader = new FileReader()
-    reader.onload = function(e) {
+    reader.onload = (e) => {
     	let dataUri = e.target.result
     	tmpMusic = new Audio()
-	    tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
-	    	self.setState({ status: "uploaded" })
-	    	self.musicLoaded(tmpMusic)       	
+	    tmpMusic.oncanplaythrough = (event) => { // music is uploaded to browser
+	    	this.setState({ status: "uploaded" })
+	    	this.musicLoaded(tmpMusic)       	
 	    }
 	    tmpMusic.src = dataUri
     }
@@ -121,16 +112,15 @@ export default class ImportMusic extends React.Component {
   }
 
   loadEncoded(file){
-  	let self = this
   	let reader = new FileReader()
     reader.onload = (ev) => {
       let audioData = ev.target.result        
       
       let tmpMusic = new Audio()
-      tmpMusic.oncanplaythrough = function(e){ // music is uploaded to browser
-      	self.setState({ status: "uploaded" })
+      tmpMusic.oncanplaythrough = (e) => { // music is uploaded to browser
+      	this.setState({ status: "uploaded" })
 				if(tmpMusic.src.startsWith("data:audio/")){
-					self.musicLoaded(tmpMusic)
+					this.musicLoaded(tmpMusic)
 				} else {
 					console.warn("Data type is not audio!")
 				} 	

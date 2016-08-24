@@ -92,7 +92,7 @@ export default AssetEditRoute = React.createClass({
   render: function() {    
     const asset = this.data.asset         // One Asset provided via getMeteorData()
     if (this.data.loading) return <Spinner />
-    if (!this.asset) return <ThingNotFound type='Asset' id={this.props.params.assetId} />
+    if (!asset) return <ThingNotFound type='Asset' id={this.props.params.assetId} />
 
     const canEd = this.canEdit()    
 

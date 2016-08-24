@@ -4,6 +4,7 @@ import reactMixin from 'react-mixin'
 
 import { Azzets } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
+import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
 import Helmet from 'react-helmet'
 
@@ -12,6 +13,7 @@ import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetProjectDetail from '/client/imports/components/Assets/AssetProjectDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
+
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
@@ -70,7 +72,7 @@ export default AssetEditRoute = React.createClass({
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 
 
     let selector = { toAssetId: assetId }
-    let options = {sort: {timestamp: -1}}
+    let options = { sort: { timestamp: -1} }
 
     return {
       asset: Azzets.findOne(assetId),
@@ -89,7 +91,8 @@ export default AssetEditRoute = React.createClass({
 
   render: function() {    
     const asset = this.data.asset         // One Asset provided via getMeteorData()
-    if (!asset || this.data.loading) return null
+    if (this.data.loading) return <Spinner />
+    if (!this.asset) return <ThingNotFound type='Asset' id={this.props.params.assetId} />
 
     const canEd = this.canEdit()    
 

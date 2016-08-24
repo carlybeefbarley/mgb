@@ -1,23 +1,24 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import reactMixin from 'react-mixin';
-import Helmet from 'react-helmet';
-import moment from 'moment';
 
-import BadgeGrid from '/client/imports/components/Users/BadgeGrid';
-import SkillGrid from '/client/imports/components/Users/SkillGrid';
-import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap';
-import SkillsMap from '/client/imports/components/Controls/SkillsMap/SkillsMap';
+import React, { PropTypes } from 'react'
+import reactMixin from 'react-mixin'
+import Helmet from 'react-helmet'
+import moment from 'moment'
 
-import InlineEdit from 'react-edit-inline';
-import validate from '/imports/schemas/validate';
+import BadgeGrid from '/client/imports/components/Users/BadgeGrid'
+import SkillGrid from '/client/imports/components/Users/SkillGrid'
+import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'
+import SkillsMap from '/client/imports/components/Controls/SkillsMap/SkillsMap'
+import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
-import { Projects } from '/imports/schemas';
-import { logActivity } from '/imports/schemas/activity';
-import { projectMakeSelector } from '/imports/schemas/projects';
+import InlineEdit from 'react-edit-inline'
+import validate from '/imports/schemas/validate'
 
-import NavRecentGET from '/client/imports/components/Nav/NavRecentGET.js';
-import QLink from '../QLink';
+import { Projects } from '/imports/schemas'
+import { logActivity } from '/imports/schemas/activity'
+import { projectMakeSelector } from '/imports/schemas/projects'
+
+import NavRecentGET from '/client/imports/components/Nav/NavRecentGET.js'
+import QLink from '../QLink'
 
 
 export default UserProfileRoute = React.createClass({
@@ -69,7 +70,7 @@ export default UserProfileRoute = React.createClass({
     const { user, ownsProfile } = this.props
 
     if (!user)
-      return this.renderUserNotFound()
+      return <ThingNotFound type="User" />
 
     return (
       <div className="ui padded stackable grid">
@@ -95,19 +96,6 @@ export default UserProfileRoute = React.createClass({
     );
   },
 
-
-  renderUserNotFound: function() {
-    return (
-      <div className="ui segment">
-        <div className="ui error message">
-          <div className="header">
-            User not found
-          </div>
-          <p>This user does not exist. Weird.</p>
-        </div>
-      </div>
-    );
-  },
 
 
   renderAvatarColumn: function(user, ownsProfile, className) {

@@ -238,6 +238,25 @@ class SoundController extends Component {
         var self = this
         this.setState({ isConvertingWav: true})
 
+        let channelData = this.props.currentBuffer.getChannelData(0)
+        console.log(channelData)
+
+        let samples = new Int16Array(channelData.length);
+        for(var i=0; i<channelData.length; i++){
+            let n = channelData[i]
+            let v = n < 0 ? n * 32768 : n * 32767
+            samples[i] = Math.round(v)
+        }
+
+
+        console.log(samples)
+
+        
+
+
+
+
+
         const wav = audioBufferToWav(this.props.currentBuffer);
         const blob = new window.Blob([ new DataView(wav) ], {
           type: 'audio/wav'

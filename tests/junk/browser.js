@@ -1,6 +1,5 @@
 const webdriver = require('selenium-webdriver');
 const fs = require('fs');
-
 webdriver.WebDriver.prototype.saveScreenshot = function (filename) {
   return this.takeScreenshot().then((data) => {
     fs.writeFile(

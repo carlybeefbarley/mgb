@@ -11,6 +11,7 @@
     "babel-runtime": "^6.11.6",
     "bcrypt": "^0.8.7",
     "blueimp-md5": "^2.3.0",
+    "bufferutil": "^1.2.1",
     "codemirror": "^5.17.0",
     "data-uri-to-buffer": "0.0.4",
     "deep-extend": "^0.4.1",
@@ -53,7 +54,9 @@
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",
+    "selenium-webdriver": "^3.0.0-beta-2",
     "tern": "^0.19.0",
+    "utf-8-validate": "^1.2.1",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {

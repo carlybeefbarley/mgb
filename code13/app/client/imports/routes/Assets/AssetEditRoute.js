@@ -6,17 +6,16 @@ import { Azzets } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 import Helmet from 'react-helmet'
+
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
-import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
+import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetProjectDetail from '/client/imports/components/Assets/AssetProjectDetail'
+import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 
-import { AssetKinds } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
 
-import InlineEdit from 'react-edit-inline'
 
 
 // This AssetEditRoute serves the following objectives
@@ -92,70 +91,12 @@ export default AssetEditRoute = React.createClass({
   },
 
 
-  fieldChanged: function(data) {
-    // data = { description: "New validated text comes here" }
-    // Update your model from here    
-    if (data.name)
-      this.handleAssetNameChange(data.name)
-    if (data.text)
-      this.handleAssetDescriptionChange(data.text)
-  },
-
-
-  validateEnteredField(field, str) {
-    const errStr = AssetKinds.validateAssetField(field, str)
-    if (errStr !== null)
-      console.log(`Asset ${field} "${str}" not valid: ${errStr}`)   // TODO proper err alert
-    return errStr === null ? true : false
-  },
-
-
-  validateEnteredAssetName: function(str) {
-    return this.validateEnteredField("name", str)
-  },
-
-
-  validateEnteredAssetDescription: function(str) {
-    return this.validateEnteredField("text", str)
-  },
-
-
-  /** This used by render() to render something like...
-   *      Kind > AssetName
-   * @param   a is the Asset (typically from this.data.asset)
-   */
-  renderAssetPathElements(a, canEdit) {
-    const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
-    const editOrView = 
-              (canEdit ? 
-                <a className="ui mini green icon label" title="You can edit this asset and changes will be saved automatically"><i className="ui save icon" />Edit</a> : 
-                <a className="ui mgbReadOnlyReminder mini red icon label" title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)"><i className="ui unhide icon" />View</a> 
-              )
-
-    return <span>
-            {editOrView}&nbsp;&nbsp;
-            <QLink to={`/u/${a.dn_ownerName}/assets`} query={{kinds: a.kind}}>
-              { AssetKinds.getName(a.kind) }
-            </QLink>
-            &nbsp;>&nbsp;
-            <InlineEdit
-              validate={this.validateEnteredAssetName}
-              activeClassName="editing"
-              text={a.name || untitledAssetString}
-              paramName="name"
-              change={this.fieldChanged}
-              isDisabled={!canEdit}
-              />            
-          </span>
-  },
-
 
   render: function() {    
     const asset = this.data.asset         // One Asset provided via getMeteorData()
     if (!asset || this.data.loading) return null
 
     const canEd = this.canEdit()    
-    const emptyAssetDescriptionText = "(no description)"    
 
     return (
       <div className="ui padded grid">
@@ -168,24 +109,13 @@ export default AssetEditRoute = React.createClass({
         />
 
         <div className="ui eight wide column">
-          <div className="ui row">
-            { this.renderAssetPathElements(asset, canEd) }
-          </div>
-          { (canEd || (asset.text && asset.text !== "")) &&   
-            <div className="ui row">
-              <small>
-                <div className="ui fluid input">
-                  <InlineEdit
-                    validate={this.validateEnteredAssetDescription}
-                    text={asset.text || emptyAssetDescriptionText}
-                    paramName="text"
-                    change={this.fieldChanged}
-                    isDisabled={!canEd}
-                    />     
-                </div>
-              </small>
-            </div>
-          }
+          <AssetPathDetail 
+            canEdit={canEd}
+            ownerName={asset.dn_ownerName}
+            kind={asset.kind}
+            name={asset.name}
+            handleNameChange={this.handleAssetNameChange}
+            handleDescriptionChange={this.handleAssetDescriptionChange}/>
         </div>
         
         <div className="ui eight wide right aligned column" >
@@ -271,6 +201,7 @@ export default AssetEditRoute = React.createClass({
 
   
   // TODO:  Call snapshotActivity after rename so it will fix up any stale names:
+  // import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
   //            We would need the most recent passiveActivity which is asset-kind-specific
   //            so we need to pass down a handler for the asset-specific editors to let us
   //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use 

@@ -184,7 +184,7 @@ export default class EditMusic extends React.Component {
 			{/*** button row ***/}
 					<div className="row">
 						<button className="ui small icon button"
-							title="Import sound from your computer (only .ogg files now)"
+							title="Import sound from your computer"
 							onClick={this.openImportPopup.bind(this)}>
 						  <i className="add square icon"></i> Import
 						</button>
@@ -198,13 +198,13 @@ export default class EditMusic extends React.Component {
 						<button className="ui small icon button"
 							title="Generate music (Currently only creates Heavy Metal.. More music styles to follow :)"
 							onClick={this.openGeneratePopup.bind(this)}>
-						  <i className="options icon"></i> Generate metal music [not ready]
+						  <i className="options icon"></i> Generate metal music
 						</button>
 
 						<button className="ui small icon button"
 							title="Generate music (Currently only creates 8bit music.. More music styles to follow :)"
 							onClick={this.open8bitPopup.bind(this)}>
-						  <i className="options icon"></i> Generate 8bit music [not ready]
+						  <i className="options icon"></i> Generate 8bit music
 						</button>
 					</div>
 

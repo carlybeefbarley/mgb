@@ -1,10 +1,11 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
 
-import Song from './8bit/song.js';
-import RIFFWAVE from './8bit/encoder.js';
-
+import Song from './8bit/song.js'
+import RIFFWAVE from './8bit/encoder.js'
+// import RIFFWAVE from '../lib/riffwave.js'
+import lamejs from '../lib/lame.all.js'
 
 export default class Generate8bit extends React.Component {
 
@@ -13,7 +14,6 @@ export default class Generate8bit extends React.Component {
 
   	this.sampleRate = 44100
 		this.maxval = 32767
-  	this.song = null
   	this.audio = null
 
   	this.state = {
@@ -60,11 +60,17 @@ export default class Generate8bit extends React.Component {
 				isBass: this.state.isBass,
 				bassVolume: this.state.bassVolume,
 			}
-			this.song = new Song(bassParams, this.state.pianoParams)
-			this.audio = this.generateSample(this.song)
-			this.audio.loop = this.state.isLoop
-			this.play()
-			this.setState({ isGenerating: false, isAudio: true })
+			let song = new Song(bassParams, this.state.pianoParams)
+			let wave = this.generateSample(song)
+			lamejs.encodeMono(1, wave.header.sampleRate, wave.samples, (audioObject) => {
+				// console.log(audioObject)
+				this.audio = new Audio(audioObject.src)
+				// this.audio = new Audio(wave.dataURI)
+				this.audio.loop = this.state.isLoop
+				this.play()
+				this.setState({ isGenerating: false, isAudio: true })
+			})
+			
 		}, 50)		
 	}
 
@@ -113,9 +119,9 @@ export default class Generate8bit extends React.Component {
 
 		this.drawNotes(song, bpm, duration)
 
-		var wave = new RIFFWAVE(data);
-		var audio = new Audio(wave.dataURI);
-		return audio;
+		return new RIFFWAVE(data)
+		// var audio = new Audio(wave.dataURI);
+		// return audio;
 	}
 
 	drawNotes(song, bpm, duration){	

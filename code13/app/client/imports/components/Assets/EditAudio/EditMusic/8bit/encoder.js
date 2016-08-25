@@ -7,7 +7,6 @@ var FastBase64 = {
         for (var i=0; i<4096; i++) {
             this.encLookup[i] = this.chars[i >> 6] + this.chars[i & 0x3F];
         }
-        // console.log("FastBase64", this.encLookup)
     },
 
     Encode: function(src) {
@@ -82,28 +81,47 @@ var RIFFWAVE = function(data)
     }
 
     this.Make = function(data) {
-        if (data instanceof Array) this.data = data;
-        this.header.blockAlign = (this.header.numChannels * this.header.bitsPerSample) >> 3;
-        this.header.byteRate = this.header.blockAlign * this.sampleRate;
-        this.header.subChunk2Size = this.data.length * (this.header.bitsPerSample >> 3);
-        this.header.chunkSize = 36 + this.header.subChunk2Size;
+        // if (data instanceof Array) this.data = data;
+        // this.header.blockAlign = (this.header.numChannels * this.header.bitsPerSample) >> 3;
+        // this.header.byteRate = this.header.blockAlign * this.sampleRate;
+        // this.header.subChunk2Size = this.data.length * (this.header.bitsPerSample >> 3);
+        // this.header.chunkSize = 36 + this.header.subChunk2Size;
 
-        this.wav = this.header.chunkId.concat(
-            u32ToArray(this.header.chunkSize),
-            this.header.format,
-            this.header.subChunk1Id,
-            u32ToArray(this.header.subChunk1Size),
-            u16ToArray(this.header.audioFormat),
-            u16ToArray(this.header.numChannels),
-            u32ToArray(this.header.sampleRate),
-            u32ToArray(this.header.byteRate),
-            u16ToArray(this.header.blockAlign),
-            u16ToArray(this.header.bitsPerSample),    
-            this.header.subChunk2Id,
-            u32ToArray(this.header.subChunk2Size),
-            (this.header.bitsPerSample == 16) ? split16bitArray(this.data) : this.data
-        );
-        this.dataURI = 'data:audio/wav;base64,'+FastBase64.Encode(this.wav);
+        // this.wav = this.header.chunkId.concat(
+        //     u32ToArray(this.header.chunkSize),
+        //     this.header.format,
+        //     this.header.subChunk1Id,
+        //     u32ToArray(this.header.subChunk1Size),
+        //     u16ToArray(this.header.audioFormat),
+        //     u16ToArray(this.header.numChannels),
+        //     u32ToArray(this.header.sampleRate),
+        //     u32ToArray(this.header.byteRate),
+        //     u16ToArray(this.header.blockAlign),
+        //     u16ToArray(this.header.bitsPerSample),    
+        //     this.header.subChunk2Id,
+        //     u32ToArray(this.header.subChunk2Size),
+        //     // this.data
+        //     (this.header.bitsPerSample == 16) ? split16bitArray(this.data) : this.data
+        // );
+
+        // console.log(this.wav)
+
+        // var samples = new Int16Array(this.wav.length)
+        // var min = 0
+        // var max = 0
+        // for(var i=0; i<this.wav.length; i++){
+        //   var val = this.wav[i]
+        //   if(val < min) min = val
+        //   if(val > max) max = val
+        //   var signedFloatVal = (val - 256/2) / (256/2)
+        //   let newVal = signedFloatVal < 0 ? signedFloatVal * 32768 : signedFloatVal * 32767
+        //   samples[i] = Math.round(newVal)
+        // }
+        // console.log(min, max)
+
+        this.samples = new Int16Array( data )
+
+        // this.dataURI = 'data:audio/wav;base64,'+FastBase64.Encode(this.wav);
     };
 
     if (data instanceof Array) this.Make(data);

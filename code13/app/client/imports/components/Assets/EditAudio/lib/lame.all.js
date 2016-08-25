@@ -28,7 +28,7 @@ function encodeMono(channels, sampleRate, samples, callback){
     if(d.length > 0){
         buffer.push(new Int8Array(d))
     }
-    console.log('done encoding, size=', buffer.length)
+    // console.log('done encoding, size=', buffer.length)
     var blob = new Blob(buffer, {type: 'audio/mp3'})
 
     const reader = new FileReader()

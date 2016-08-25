@@ -10,6 +10,7 @@ export function doesUserHaveRole(user, roleStr) {
     user && 
     user.permissions && 
     user.permissions.length > 0 &&
+    user.permissions[0].roles && 
     user.permissions[0].roles[0] === roleStr)
 }
 

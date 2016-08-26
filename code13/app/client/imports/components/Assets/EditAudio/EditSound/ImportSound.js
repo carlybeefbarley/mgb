@@ -60,11 +60,22 @@ export default class ImportSound extends React.Component {
 		let reader = new FileReader()
     reader.onload = (e) => {
       let audioData = e.target.result
-      let wav = lamejs.WavHeader.readHeader(new DataView(audioData));
-      let samples = new Int16Array(audioData, wav.dataOffset, wav.dataLen / 2)
-      lamejs.encodeMono(wav.channels, wav.sampleRate, samples, (audioObject) => {
-      	this.setState({ status: "uploaded" })
-    		this.audioLoaded(audioObject)  
+      let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+      audioCtx.decodeAudioData(audioData, (audioBuffer) => {
+      	var channelData = audioBuffer.getChannelData(0)
+        // console.log(channelData)
+
+        let samples = new Int16Array(channelData.length);
+        for(var i=0; i<channelData.length; i++){
+            let n = channelData[i]
+            let v = n < 0 ? n * 32768 : n * 32767
+            samples[i] = Math.round(v)
+        }
+
+        lamejs.encodeMono(1, audioBuffer.sampleRate, samples, (audioObject) => {
+	      	this.setState({ status: "uploaded" })
+	    		this.audioLoaded(audioObject)  
+	      })
       })
     }
     reader.readAsArrayBuffer(file)

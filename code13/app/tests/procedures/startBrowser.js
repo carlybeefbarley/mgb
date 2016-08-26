@@ -1,13 +1,7 @@
-
-
 module.exports = function(browserName, options){
   options = options || {}
-  console.log("Creating new Browser!");
   const webdriver = require('selenium-webdriver')
-  const By = webdriver.By
-  const until = webdriver.until
-
-  const caps = require("../browsers/" + browserName + ".js")
+  const caps = require("../browsers/" + browserName)
 
   const capabilities = Object.assign({}, caps.browser, options);
   const browser = new webdriver.Builder().
@@ -19,6 +13,7 @@ module.exports = function(browserName, options){
   // don't forget to close browser when all is done
   const flow = browser.controlFlow()
   const scheduleClose = () => {
+    // there might be other "idle" listeners - so wait 1 sec - to be sure queue is empty
     setTimeout(() => {
       if(flow.isIdle()){
         console.log("all DONE!");

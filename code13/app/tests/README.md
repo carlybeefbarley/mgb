@@ -1,4 +1,5 @@
 * use test/ instead of tests/ because we would like to _meteor test_ pick up those tests when they are ready
+* also we need to meteor app server to ignore test files - so rest files are in the tests/ folder
 * in the browsers/ we are storing browser configuration from BrowserStack (also called _capabilities_)
   * browsers/default.js will be used by meteor test command - usually it will will use local selenium
 * in the automation/ tests for BrowserStack (for Selenium to be more specific) located

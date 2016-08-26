@@ -33,8 +33,9 @@ module.exports = (browser) => {
     // TODO: move login info to the env
     sel.css(inputs.email).sendKeys('tester@example.com');
     sel.css(inputs.password).sendKeys('tester1');
+    // login with ENTER key
     //sel.css(inputs.password).sendKeys('tester1', Key.ENTER);
-    // click submit button - we are sending ENTER key
+    // login with click on the submit button
     sel.css(buttons.submitLoginForm).click()
 
     // wait for logged in element

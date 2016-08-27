@@ -27,7 +27,7 @@ export default JoinRoute = React.createClass({
   },
   
   componentDidMount() {
-    window.onkeydown = this.listenForEnter;   // TODO: remove event listener
+    window.addEventListener('keydown', this.listenForEnter)
   },
 
   componentWillUnmount() {

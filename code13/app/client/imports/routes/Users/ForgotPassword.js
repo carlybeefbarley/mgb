@@ -15,7 +15,7 @@ export default class ForgotPasswordRoute extends React.Component {
   }
 
   render() {
-    const inputsToUse = ["email"];
+    const inputsToUse = ["email"]
 
     return (
       <div >
@@ -34,7 +34,7 @@ export default class ForgotPasswordRoute extends React.Component {
   }
 
   componentDidMount() {
-    window.onkeydown = this.listenForEnter;
+    window.addEventListener('keydown', this.listenForEnter)
   }
 
   componentWillUnmount() {

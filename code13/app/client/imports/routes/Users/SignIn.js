@@ -54,7 +54,7 @@ export default  SignInRoute = React.createClass({
   },
 
   componentDidMount: function() {
-    window.onkeydown = this.listenForEnter;
+    window.addEventListener('keydown', this.listenForEnter)
   },
 
   componentWillUnmount() {

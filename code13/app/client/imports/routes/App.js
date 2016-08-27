@@ -183,8 +183,8 @@ export default App = React.createClass({
     return (
       <div >
         <Helmet
-          title="MyGameBuilder v2"
-          titleTemplate="%s - devlapse.com"
+          title="MGB2"
+          titleTemplate="%s"
           meta={[
               {"name": "description", "content": "MyGameBuilder v2"}
           ]}

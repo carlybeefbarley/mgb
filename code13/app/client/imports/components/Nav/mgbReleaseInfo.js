@@ -17,6 +17,31 @@ export default mgbReleaseInfo = {
   [
 
     {
+      "timestamp":     "Sat Aug 27 2016 08:07:25 GMT+0100 (BST)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "1202"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset.sound",
+          "type":           "improvement",
+          "changeName":     "Sounds & Music MP3 encoding",
+          "changeSummary":  "Sound and Music are now preferentially encoded in MP3 format, for improved compatability and compression. Previously we generated .ogg and .wav", 
+          "otherUrls":      [ ]
+        }
+      ]
+    },
+
+
+    {
       "timestamp":     "Mon Aug 22 2016 15:50:00 GMT-0700 (PDT)",
       
       "id": {

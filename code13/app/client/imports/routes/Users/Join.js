@@ -30,6 +30,11 @@ export default JoinRoute = React.createClass({
     window.onkeydown = this.listenForEnter;   // TODO: remove event listener
   },
 
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.listenForEnter)
+  },
+
+
   throttledSetErrorState: function(newError) {
     this.setState({ errors: newError });
   },

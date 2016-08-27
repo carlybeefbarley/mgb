@@ -56,7 +56,12 @@ export default  SignInRoute = React.createClass({
   componentDidMount: function() {
     window.onkeydown = this.listenForEnter;
   },
-  
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.listenForEnter)
+  },
+
+
   throttledSetErrorState: function(newError) {
     this.setState({ errors: newError });
   },

@@ -37,6 +37,11 @@ export default class ForgotPasswordRoute extends React.Component {
     window.onkeydown = this.listenForEnter;
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.listenForEnter)
+  }
+
+
   listenForEnter(e) {
     e = e || window.event;
     if (e.keyCode === 13) {

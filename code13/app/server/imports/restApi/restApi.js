@@ -454,11 +454,13 @@ RestApi.addRoute('asset/code/:referrer/:owner/:name', {authRequired: false}, {
 
 RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
   get: function () {
-    let content;
-    let asset = Azzets.findOne(this.urlParams.id)
-    if(!asset){
-      return {statusCode: 404}
-    }
+    let content
+    const asset = Azzets.findOne(this.urlParams.id)
+    if (!asset)
+      return { statusCode: 404 }
+    const { bundle } = asset.content2
+    const extraMessage = !!bundle ? "" : "No bundle yet. Please run the source file in the code to generate/refresh the bundle"
+    
     content = `<!DOCTYPE html>
 <html>
 <head>
@@ -466,7 +468,7 @@ RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
 <title>${asset.name}</title>
 <style>html, body{padding: 0; margin: 0}</style>
 </head>
-<body><script>${asset.content2.bundle}</script></body>
+<body><script>${asset.content2.bundle}</script>${extraMessage}</body>
 </html>
 `
     return {

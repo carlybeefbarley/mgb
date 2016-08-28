@@ -3,7 +3,6 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
 import ColorPicker from 'react-color'        // http://casesandberg.github.io/react-color/
-import AssetUrlGenerator from '../AssetUrlGenerator.js'
 import Tools from './GraphicTools'
 
 import SpriteLayers from './Layers/SpriteLayers.js'
@@ -1446,8 +1445,6 @@ export default class EditGraphic extends React.Component {
                data-position="bottom center">
               <i className="tasks icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
             </div>
-            <span>&nbsp;&nbsp;</span>
-            <AssetUrlGenerator asset={this.props.asset} />
           </div>
 
           <div className="row" style={{marginBottom: "6px"}}>

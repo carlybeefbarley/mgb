@@ -13,7 +13,7 @@ import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetProjectDetail from '/client/imports/components/Assets/AssetProjectDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
-
+import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
@@ -122,6 +122,8 @@ export default AssetEditRoute = React.createClass({
           { /* We use this.props.params.assetId since it is available sooner than the asset 
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }
+          <AssetUrlGenerator asset={this.data.asset} />
+          &emsp;
           <AssetActivityDetail
                         assetId={this.props.params.assetId} 
                         currUser={this.props.currUser}
@@ -135,6 +137,7 @@ export default AssetEditRoute = React.createClass({
           <AssetProjectDetail 
             projectNames={asset.projectNames || []}
             isDeleted={asset.isDeleted} />
+
         </div>
 
         <div className="sixteen wide column">

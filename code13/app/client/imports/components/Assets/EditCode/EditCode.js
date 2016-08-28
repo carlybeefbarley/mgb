@@ -959,11 +959,11 @@ export default class EditCode extends React.Component {
     this.handleContentChange( newC2, null, `Template code: ${item.label}`)
   }
 
-  handleContentChange(c2, thumbnail, reason){
-    if(!c2.bundle && this.lastBundle){
+  // Note that either c2 or thumnail could be null/undefined.
+  handleContentChange(c2, thumbnail, reason) {
+    if (c2 && !c2.bundle && this.lastBundle)
       c2.bundle = this.lastBundle
-    }
-    this.props.handleContentChange(c2, thumbnail, reason);
+    this.props.handleContentChange(c2, thumbnail, reason)
   }
 
 

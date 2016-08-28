@@ -8,5 +8,4 @@ this.browser = {
   'browser_version' : '9.1',
   'browserstack.user' : 'kasparsstauzs1',
   'browserstack.key' : 'Bz7NKqjsmsLdsESGeN3y',
-  'browserstack.local' : 'true'
 }

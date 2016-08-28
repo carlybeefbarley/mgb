@@ -16,7 +16,7 @@ else {
 }
 const fs = npm.require("fs");
 const r = process.env.PWD + "/tests/";
-const BrowserFactory = npm.require(r + "procedures/startBrowser.js");
+const CreateBrowser = npm.require(r + "procedures/startBrowser.js");
 
 if (shouldRun) {
   prepareRun();
@@ -24,7 +24,7 @@ if (shouldRun) {
 
 function prepareRun() {
   describe("Preparing to run", function () {
-    // TODO (stauzs): this should be "before" - but mocha 2 doesn't support async before
+    // TODO (stauzs): this should be in "before" - but mocha 2 doesn't support async before
     // change it to before after meteor updates mocha to v3
 
     let alreadyDone = false;
@@ -32,6 +32,7 @@ function prepareRun() {
       this.timeout(10000);
       this.slow(5000);
 
+      // meteor will collect all generated tests - add only once
       if (!alreadyDone) {
         prepareAllTests(done)
         alreadyDone = true;
@@ -54,13 +55,13 @@ function prepareAllTests(mainDone) {
     const toTest = collectFiles(list)
     fs.readdir(testsLocation, (err, list) => {
       const tests = collectFiles(list)
-
       // this is required to make tests run in parallel
+      // it slightly breaks reporting
       describe("Starting parallel browser tests", function () {
         toTest.forEach((browserName) => {
-          it(`Running on: [${browserName}]`, function () {
-            runTests(browserName, tests);
-          })
+          //it(`Running on: [${browserName}]`, function () {
+          runTests(browserName, tests);
+          //})
         })
       })
 
@@ -71,15 +72,14 @@ function prepareAllTests(mainDone) {
 
 function runTests(browserName, tests) {
   const testsLocation = r + "tests/";
-  console.log("Running tests!")
-  //const browser = BrowserFactory(browserName)
-
+  const browser = CreateBrowser(browserName)
   tests.forEach((name) => {
     describe(`[${name}] on ${browserName}`, function () {
-      npm.require(testsLocation + name)(null, r)
+      this.timeout(120 * 1000)
+      this.slow(10 * 1000)
+      npm.require(testsLocation + name)(browser, r)
     })
   })
-
 }
 
 function collectFiles(list) {

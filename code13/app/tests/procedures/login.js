@@ -1,8 +1,10 @@
 const webdriver = require('selenium-webdriver');
-const By = webdriver.By
-const until = webdriver.until
 const Key = webdriver.Key
+
+//const By = webdriver.By
+//const until = webdriver.until
 const SeleniumHelper = require("../helpers/selenium.js")
+
 
 const buttons = {
   sidePanelLogin: '.mgbNavPanel .ui.inverted.icon.menu .item .user',
@@ -42,6 +44,6 @@ module.exports = (browser) => {
     // TODO: get a better way to check if user has successfully logged in
     sel.css(buttons.sidePanelHistory)
 
-    browser.call(done)
+    done && browser.call(done)
   }
 }

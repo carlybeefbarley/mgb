@@ -1,5 +1,5 @@
 /*
- Need to figure out how to "NOT" put describe in the "it" (probably I'm currently misusing mocha)
+ TODO (stauzs): figure out how to "NOT" put describe in the "it" (probably ( and most likely )  I'm currently misusing meteor:mocha) - nothing in docs about this
  Otherwise meteor will make infinite tests by every time adding new to the stack
 */
 let npm, parallel, shouldRun = false;

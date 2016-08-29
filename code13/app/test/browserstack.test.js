@@ -69,7 +69,8 @@ function runTestsForEachBrowser(browsers, tests) {
 
   // this is required to make tests run in parallel
   // it slightly breaks reporting
-  parallel("Starting parallel browser tests", function () {
+  // parallel("Starting parallel browser tests", function () {
+  describe("Starting parallel browser tests", function () {
     browsers.forEach((browserName) => {
       //it(`Running on: [${browserName}]`, function () {
       runTests(browserName, tests)

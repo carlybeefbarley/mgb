@@ -3,7 +3,8 @@ module.exports = {
   browsers: {
     // if this is filled - only those tests will be tested
     // TODO: add extension automatically
-    only: ["safari_9.1", "chrome", "edge", "firefox"],
+    //only: ["win8.1_ie"],//, "safari_9.1", "chrome", "edge", "firefox"],
+    only: ["win8.1_ie", "safari_9.1", "chrome", "edge", "firefox"],
     // add here some tests to skip
     skip: []
   },

@@ -34,7 +34,7 @@ module.exports = function create(browserName, options){
   return browser;
   /*
   TODO (stauzs): meteor doesn't support Proxy Object - but it's necessary to recreate browser after it closes (as meteor are caching test cases)
-  Proxy isn't require for mocha - as it collects all tests, runs, and exits
+  Proxy isn't required for mocha - as it collects all tests, runs, and exits
   let browser;
   const P = (typeof Proxy !== "function") ? function(t, n){return Proxy.create(t, n)} : Proxy;
 

@@ -18,6 +18,6 @@
   * browserstack test will read all browsers from tests/browsers/ - it's possible to add only / skip (to the filename)- to test only necessary files
 test for each browser will run in parallel ( currently only from commandline _mocha_)
   * then script will loop thought tests/tests/ and execute every file ( skip / only also supported here ) - those tests are executed one by one - as they will be using same browser
-
+  * added tests/selenium.config.js - to allow skip browsers/tests without renaming files
 * check login - as sample
 

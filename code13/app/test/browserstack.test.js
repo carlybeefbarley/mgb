@@ -29,7 +29,7 @@ function prepareRun() {
   describe("Selenium tests", function () {
     before(function (done) {
       if (!testsAdded) {
-        testsAdded = true;
+        testsAdded = true
         setTimeout(function () {
           prepareAllTests(function (b, t) {
             done()
@@ -85,38 +85,38 @@ function runTests(browserName, tests) {
   const testsLocation = testWorkingDirectory + "tests/"
   let browser
   const getBrowser = () => {
-    if(!browser){
+    if (!browser) {
       // skip rest of the tests
       throw new Error(`Not connected to browser [${browserName}]`)
     }
     return browser
-  };
+  }
 
   describe(`Connecting to browser [${browserName}] ...`, function () {
     this.timeout(45 * 1000)
     this.slow(10 * 1000)
     // create new instance of browser.. it can actually fail on some cases
-    it("connected to browser", function(done){
+    it("connected to browser", function (done) {
       /*
-      TODO: due to meteor test specifics - 2nd time describe() won't be called - and
-      if 2 tests are running in parallel (on 2 or more separate windows) both will crash - as
-      they will overwrite browser instance
-      child process should resolve this, but error reporting will suffer
-      */
+       TODO: due to meteor test specifics - 2nd time describe() won't be called - and
+       if 2 tests are running in parallel (on 2 or more separate windows) both will crash - as
+       they will overwrite browser instance
+       child process should resolve this, but error reporting will suffer
+       */
       const waitForPreviousBrowserToClose = () => {
-        if(browser){
+        if (browser) {
           setTimeout(waitForPreviousBrowserToClose, 100)
         }
-        else{
+        else {
           // only assign reference to browser - when all good
           const tmpbrowser = CreateBrowser(browserName)
-          tmpbrowser.call(function(){
+          tmpbrowser.call(function () {
             browser = tmpbrowser
             browser.call(done)
           })
         }
       }
-      waitForPreviousBrowserToClose();
+      waitForPreviousBrowserToClose()
     })
     tests.forEach((name) => {
       npm.require(testsLocation + name)(getBrowser, testWorkingDirectory)

@@ -15,6 +15,7 @@ const createBrowser = function(browserName, options){
     setTimeout(() => {
       if(flow.isIdle()){
         browser.close()
+        browser.quit()
         // TODO (stauzs): is this available from browser?
         browser.hasClosed = true;
       }

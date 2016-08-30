@@ -7,11 +7,12 @@ const _propTypes = {    // These are applied to the class at the bottom of this 
 }
 
 const checks = [
-  {
-    browserCheck: !window.OfflineAudioContext,
-    contexts: [ "edit.sound", "edit.music" ],
-    msg: "Audio generation, import and playback are not working correctly on Safari currently. "
-  }
+  // This one looks ok now! 
+  // {
+  //   browserCheck: !window.OfflineAudioContext,
+  //   contexts: [ "edit.sound", "edit.music" ],
+  //   msg: "Audio generation, import and playback are not working correctly on Safari currently. "
+  // }
 ]
 
 export default class BrowserCompat extends React.Component {

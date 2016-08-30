@@ -26,9 +26,10 @@ export default fpNetwork = React.createClass({
 
   render: function () {    
     const st = this.data.meteorStatus
+    const cxnId = Meteor.default_connection._lastSessionId
 
     if (!st)
-      return <div>No Status</div>
+      return <div className="ui sub header">No Connection Status</div>
 
     const retryInSeconds = (MSTATUS_WAITING === st.status) ? Math.ceil((st.retryTime - (new Date()).getTime())/1000) : 0
 
@@ -47,6 +48,7 @@ export default fpNetwork = React.createClass({
           { (MSTATUS_FAILED === st.status) && 
             <li>Failed reason: {st.reason}</li>
           }
+          <li>CxnId: <small>{Meteor.default_connection._lastSessionId}</small></li>
         </ul>
       </div>
     )

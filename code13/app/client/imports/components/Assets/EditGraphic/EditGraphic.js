@@ -354,6 +354,7 @@ export default class EditGraphic extends React.Component {
     let c2 = this.props.asset.content2
     this.editCtx.imageSmoothingEnabled = false
     this.editCtx.mozImageSmoothingEnabled = false
+    this.editCtx.webkitImageSmoothingEnabled = false    // Needed for Safari, even though Chrome complains about it
     this.editCtx.msImageSmoothingEnabled = false
     this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
     this.frameCtxArray[this.state.selectedFrameIdx].clearRect(0, 0, c2.width, c2.height)

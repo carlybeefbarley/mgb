@@ -1,36 +1,32 @@
-const cp = require("child_process");
-const fs = require("fs");
-var child = cp.fork(__dirname + '/child.js',{
-	stdio: [
-		0, // Use parents stdin for child
-		'pipe', // Pipe child's stdout to parent
-		fs.openSync('err.out', 'w') // Direct child's stderr to a file
-		, "ipc"
-	]
-});
+const cp = require("child_process")
+const fs = require("fs")
+var child = cp.fork(__dirname + '/child.js', {
+  stdio: [
+    0, // Use parents stdin for child
+    'pipe', // Pipe child's stdout to parent
+    fs.openSync('err.out', 'w') // Direct child's stderr to a file
+    , "ipc"
+  ]
+})
 
 child.on('message', (m) => {
-	console.log('PARENT got message:', m);
-});
+  console.log('PARENT got message:', m)
+})
 
 child.on('exit', (code) => {
-	console.log(`child exitted with code: ${code}`);
-});
+  console.log(`child exitted with code: ${code}`)
+})
 
 child.on('stdout', (m) => {
-	console.log("STDOUT:", m);
-});
-child.send({ files: ['./test.js'] });
+  console.log("STDOUT:", m)
+})
+child.send({files: ['./test.js']})
 
 
 const reportFD = fs.openSync('report.html', 'w')
 
-let offset = 0;
-
 child.stdout && child.stdout.on("data", (d) => {
-	
-	fs.write(reportFD, d, 0, d.length)
-	offset += d.length;
-	//report.write(d);
-	//console.log(d.toString());
-});
+  fs.write(reportFD, d, 0, d.length)
+  //report.write(d);
+  //console.log(d.toString());
+})

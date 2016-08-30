@@ -24,25 +24,30 @@ if (shouldRun) {
 }
 
 function prepareRun() {
-  describe("Preparing to run", function () {
-    // TODO (stauzs): this should be in "before" - but mocha 2 doesn't support async before
-    // change it to before after meteor updates mocha to v3
-
-    let alreadyDone = false
-    it("Entering async world", function (done) {
-      this.timeout(10000)
-      this.slow(5000)
-
-      // meteor will collect all generated tests - add only once
-      if (!alreadyDone) {
-        prepareAllTests(done)
-        alreadyDone = true
+  let testsAdded = false
+  // this is required because otherwise mocha will automatically exit
+  describe("Selenium tests", function () {
+    before(function (done) {
+      if (!testsAdded) {
+        testsAdded = true;
+        setTimeout(function () {
+          prepareAllTests(function (b, t) {
+            done()
+            runTestsForEachBrowser(b, t)
+          })
+        })
       }
       else {
         done()
       }
     })
+
+    it("Preparing tests", function (done) {
+      // 1 second should be enough to read directories and register collected tests
+      setTimeout(done, 0)
+    })
   })
+
 }
 
 function prepareAllTests(mainDone) {
@@ -60,39 +65,66 @@ function prepareAllTests(mainDone) {
         throw err
       }
       const tests = config.tests.only.length === 0 ? collectFiles(list, config.tests.skip) : config.tests.only
-      runTestsForEachBrowser(browsers, tests)
-      mainDone()
+      mainDone(browsers, tests)
     })
   })
 }
 function runTestsForEachBrowser(browsers, tests) {
-
   // this is required to make tests run in parallel
   // it slightly breaks reporting
   // parallel("Starting parallel browser tests", function () {
-  describe("Starting parallel browser tests", function () {
-    browsers.forEach((browserName) => {
-      //it(`Running on: [${browserName}]`, function () {
-      runTests(browserName, tests)
-      //})
-    })
+  browsers.forEach((browserName) => {
+    //it(`Running on: [${browserName}]`, function () {
+    runTests(browserName, tests)
+    //})
   })
 }
 
-
+// TODO: to run in parallel - check out child process
 function runTests(browserName, tests) {
   const testsLocation = testWorkingDirectory + "tests/"
-  const browser = CreateBrowser(browserName)
-  // show nice message when running prallel tests as it breaks (not showing) describe
-  it(`Starting tests on ${browserName}`, () => {})
-  tests.forEach((name) => {
-    // this breaks
-    describe(`[${name}] on ${browserName}`, function () {
-      // parallel doesn't support timeout / slow
-      this.timeout(120 * 1000)
-      this.slow(10 * 1000)
+  let browser
+  const getBrowser = () => {
+    return browser
+  };
 
-      npm.require(testsLocation + name)(browser, testWorkingDirectory)
+  describe(`Connecting to browser [${browserName}] ...`, function () {
+
+    // parallel doesn't support timeout / slow
+    this.timeout(120 * 1000)
+    this.slow(10 * 1000)
+    // create new instance of browser.. it can actually fail on some cases
+    it("connected to browser", function(done){
+      /*
+      TODO: if 2 tests are running ir parallel both will crash - as they will overwrite browsers instance
+      child process should resolve this, but error reporting will suffer
+      */
+      const waitForPreviousBrowserToClose = () => {
+        if(browser){
+          setTimeout(waitForPreviousBrowserToClose, 100)
+        }
+        else{
+          browser = CreateBrowser(browserName)
+          // make sure we are returning correct instance
+          browser.call(done)
+        }
+      }
+      waitForPreviousBrowserToClose();
+    })
+    tests.forEach((name) => {
+      npm.require(testsLocation + name)(getBrowser, testWorkingDirectory)
+    })
+  })
+
+  // we need to separate this because otherwise it will be called earlier than tests - in a case if tests will be wrapped into describe
+  describe(`Finalizing [${browserName}]`, function () {
+    // actually we are just waiting here for browser to close
+    it("closing browser", function (done) {
+      this.timeout(2000)
+      this.slow(10001)
+      //browser will auto close after 2 seconds
+      browser = null
+      setTimeout(done, 1000)
     })
   })
 }

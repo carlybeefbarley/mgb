@@ -14,7 +14,6 @@ const createBrowser = function(browserName, options){
     // there might be other "idle" listeners - so wait 1 sec - to be sure queue is empty
     setTimeout(() => {
       if(flow.isIdle()){
-        console.log("all DONE!");
         browser.close()
         // TODO (stauzs): is this available from browser?
         browser.hasClosed = true;
@@ -30,9 +29,9 @@ const createBrowser = function(browserName, options){
 
 module.exports = function create(browserName, options){
   options = options || {}
-  const browser = createBrowser(browserName, options)
-  return browser;
+  return createBrowser(browserName, options)
   /*
+  changed to function getBrowser - to avoid proxy
   TODO (stauzs): meteor doesn't support Proxy Object - but it's necessary to recreate browser after it closes (as meteor are caching test cases)
   Proxy isn't required for mocha - as it collects all tests, runs, and exits
   let browser;

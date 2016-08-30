@@ -85,18 +85,22 @@ function runTests(browserName, tests) {
   const testsLocation = testWorkingDirectory + "tests/"
   let browser
   const getBrowser = () => {
+    if(!browser){
+      // skip rest of the tests
+      throw new Error(`Not connected to browser [${browserName}]`)
+    }
     return browser
   };
 
   describe(`Connecting to browser [${browserName}] ...`, function () {
-
-    // parallel doesn't support timeout / slow
-    this.timeout(120 * 1000)
+    this.timeout(45 * 1000)
     this.slow(10 * 1000)
     // create new instance of browser.. it can actually fail on some cases
     it("connected to browser", function(done){
       /*
-      TODO: if 2 tests are running ir parallel both will crash - as they will overwrite browsers instance
+      TODO: due to meteor test specifics - 2nd time describe() won't be called - and
+      if 2 tests are running in parallel (on 2 or more separate windows) both will crash - as
+      they will overwrite browser instance
       child process should resolve this, but error reporting will suffer
       */
       const waitForPreviousBrowserToClose = () => {
@@ -104,9 +108,12 @@ function runTests(browserName, tests) {
           setTimeout(waitForPreviousBrowserToClose, 100)
         }
         else{
-          browser = CreateBrowser(browserName)
-          // make sure we are returning correct instance
-          browser.call(done)
+          // only assign reference to browser - when all good
+          const tmpbrowser = CreateBrowser(browserName)
+          tmpbrowser.call(function(){
+            browser = tmpbrowser
+            browser.call(done)
+          })
         }
       }
       waitForPreviousBrowserToClose();
@@ -122,7 +129,7 @@ function runTests(browserName, tests) {
     it("closing browser", function (done) {
       this.timeout(2000)
       this.slow(10001)
-      //browser will auto close after 2 seconds
+      //browser will auto close after 1-2 seconds
       browser = null
       setTimeout(done, 1000)
     })

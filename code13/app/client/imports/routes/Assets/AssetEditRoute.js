@@ -76,7 +76,7 @@ export default AssetEditRoute = React.createClass({
     this.checkForRedirect()
     this.m_deferredSaveObj = null
     this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => { 
-      console.log("TICK")
+      //console.log("TICK")
       this._attemptToSendAnyDeferredChanges() 
     } , 5000 )
   },

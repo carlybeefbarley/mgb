@@ -16,12 +16,13 @@ export default class EditMusic extends React.Component {
 	constructor(props) {
   	super(props)
 
-  	// console.log(props.asset.content2)
+  	console.log(props.asset.content2)
 
   	this.state = {
   		isPlaying: false,
-  		canvasWidth: 900,
+  		canvasWidth: 900,		// changing depending on props.duration
   		canvasHeight: 128,
+  		pxPerSecond: 30,		// defines width of canvass 
   	}
 	}
 
@@ -36,6 +37,10 @@ export default class EditMusic extends React.Component {
 		this.musicCtx = this.musicCanvas.getContext('2d')
 		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
 		this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
+
+		this.timelineCanvas = ReactDOM.findDOMNode(this.refs.timeline)
+		this.timelineCtx = this.timelineCanvas.getContext('2d')
+		this.drawTimeline()
 
 		// popups references
 		this.importMusicPopup = ReactDOM.findDOMNode(this.refs.importMusicPopup)
@@ -110,6 +115,25 @@ export default class EditMusic extends React.Component {
 		this.setState({ isPlaying: false })
 	}
 
+	drawTimeline(){
+		this.timelineCtx.clearRect(0, 0, this.state.canvasWidth, 50)
+		let c2 = this.props.asset.content2
+		if(!c2.duration) return
+		let count = Math.floor(c2.duration)
+		this.timelineCtx.save()
+   	this.timelineCtx.strokeStyle = '#333'
+   	this.timelineCtx.globalAlpha = 0.4
+		for(let i=0; i<count; i++){
+			const x = i * this.state.pxPerSecond + 0.5	// 0.5 for 1px line instead of 2px
+			const y = i%5==0 ? 10 : 5
+			this.timelineCtx.beginPath()
+     	this.timelineCtx.moveTo( x, 0 )
+     	this.timelineCtx.lineTo( x, y )
+     	this.timelineCtx.stroke()
+		}
+		this.timelineCtx.restore()
+	}
+
 	hasPermission() {
     if (!this.props.canEdit) { 
       this.props.editDeniedReminder()
@@ -135,6 +159,13 @@ export default class EditMusic extends React.Component {
 
     this.thumbnailCtx.putImageData(this.musicCtx.getImageData(0, 0, 290, 128), 0, 0)
     this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
+  }
+
+  changeDuration(e){
+  	let c2 = this.props.asset.content2
+  	c2.duration = parseFloat(e.target.value)
+  	this.handleSave("Change duration")
+  	this.drawTimeline()		// force draw
   }
 
   addChannel(dataUri){
@@ -179,6 +210,8 @@ export default class EditMusic extends React.Component {
   }
 
 	render(){
+
+		let c2 = this.props.asset.content2
 
 		return (
 			<div className="ui grid">
@@ -228,7 +261,19 @@ export default class EditMusic extends React.Component {
 
 					<div className="content">
 						<div id="musicPlayer"></div>
-
+						<div className="channelsHeader">
+							<div className="controls">
+								<div className="ui labeled input">
+								  <div className="ui label">
+								    Duration
+								  </div>
+								  <input type="number" value={Math.floor(c2.duration)} min="1" max="999" onChange={this.changeDuration.bind(this)} />
+								</div>
+							</div>
+							<div className="timeline">
+								<canvas ref="timeline" width={this.state.canvasWidth} height="50px"></canvas>
+							</div>
+						</div>
 
 						{this.renderChannels()}
 

@@ -8,7 +8,7 @@ export default class Channel extends React.Component {
 
 	constructor(props) {
   	super(props)
-  	// console.log(props.asset.content2)
+  	// console.log(props)
 
   	this.state = {
 
@@ -130,7 +130,7 @@ export default class Channel extends React.Component {
 	render(){
 		let channel = this.props.channel
 		return (
-			<div key={this.props.id} id={"wave"+this.props.id} className="channelContainer">
+			<div key={this.props.id} className="channelContainer">
 				<div className="controls">
 					{channel.title}
 					<div>

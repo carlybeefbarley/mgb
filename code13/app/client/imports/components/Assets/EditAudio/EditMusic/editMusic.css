@@ -17,6 +17,26 @@
 
 
 
+
+
+/******************* channels ************************/
+.channelsHeader {
+	width: 100%;
+	height: 50px;
+	overflow: auto;
+}
+
+.channelsHeader .controls {
+	width: 200px;
+	height: 50px;
+	float: left;
+}
+
+.channelsHeader .timeline {
+	
+}
+
+
 /******************* channel ************************/
 .channelContainer{
 	width: 100%;
@@ -24,7 +44,7 @@
 	overflow: auto;
 }
 
-.controls {
+.channelContainer .controls {
 	width: 200px;
 	float: left;
 }

@@ -76,8 +76,6 @@ export default fpAssets = React.createClass({
   },
   
   render: function () {
-    if (this.data.loading)
-      return <Spinner />
       
     const assets = this.data.assets       // list of assets provided via getMeteorData()
     
@@ -97,11 +95,13 @@ export default fpAssets = React.createClass({
                 </div>                 
               </div>
               <br></br>
-              <AssetList
-                  location="panel"
-                  assets={assets} 
-                  currUser={this.props.currUser}
-                  renderType="short" />
+              { this.data.loading ? <Spinner /> : 
+                <AssetList
+                    location="panel"
+                    assets={assets} 
+                    currUser={this.props.currUser}
+                    renderType="short" />
+              }
             </div>
     
   }

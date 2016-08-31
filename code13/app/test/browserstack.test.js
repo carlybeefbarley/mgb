@@ -93,7 +93,7 @@ function runTests(browserName, tests) {
   }
 
   describe(`Connecting to browser [${browserName}] ...`, function () {
-    this.timeout(45 * 1000)
+    this.timeout(120 * 1000)
     this.slow(10 * 1000)
     // create new instance of browser.. it can actually fail on some cases
     it("connected to browser", function (done) {

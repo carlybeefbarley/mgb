@@ -1,6 +1,6 @@
 const cp = require("child_process")
 const fs = require("fs")
-var child = cp.fork(__dirname + '/child.js', {
+const child = cp.fork(__dirname + '/child.js', {
   stdio: [
     0, // Use parents stdin for child
     'pipe', // Pipe child's stdout to parent

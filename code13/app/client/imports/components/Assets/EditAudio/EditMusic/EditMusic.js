@@ -75,8 +75,6 @@ export default class EditMusic extends React.Component {
       window.requestAnimationFrame(this._raf);
     }
     this._raf()
-
-    console.log(this.refs)
 	}
 
 	componentDidUpdate(prevProps, prevState){
@@ -135,8 +133,11 @@ export default class EditMusic extends React.Component {
 	}
 
 	stopMusic(){
-		this.wavesurfer.stop();
+		// this.wavesurfer.stop();
 		this.setState({ isPlaying: false })
+		this.songTime = 0
+		this.updateCursor()
+		this.callChildren("stop")
 	}
 
 	callChildren(func, args){
@@ -172,8 +173,8 @@ export default class EditMusic extends React.Component {
 			const deltaTime = ms - this.splitTime
 			this.songTime += deltaTime
 			this.splitTime = ms
-			if(this.soungTime/1000 >= this.props.asset.content2.duration){
-				this.setState({ isPlaying: false })
+			if(this.songTime/1000 >= this.props.asset.content2.duration){
+				this.stopMusic()
 			}
 			this.updateCursor()
 		}

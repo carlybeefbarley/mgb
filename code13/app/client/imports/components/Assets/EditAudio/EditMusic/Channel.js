@@ -86,6 +86,11 @@ export default class Channel extends React.Component {
 		this.audioCtx.suspend()
 	}
 
+	stop(){
+		this.pause()
+		this.initAudio()
+	}
+
 	drawWave(){
 		if(!this.buffer) return	// in situations when audio is not decoded yet
 		// console.log('draw wave')

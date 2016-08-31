@@ -89,7 +89,8 @@ export default class Channel extends React.Component {
 		if(!this.buffer) return	// in situations when audio is not decoded yet
 		// console.log('draw wave')
 		const channelData = this.buffer.getChannelData(0)
-		const chunk = Math.floor(channelData.length / this.props.canvasWidth)
+		const channelWidth = Math.floor( this.buffer.duration * this.props.pxPerSecond )
+		const chunk = Math.floor(channelData.length / channelWidth)
 		const subChunk = 10
 		const subChunkVal = Math.floor(chunk/subChunk)
 		this.waveCtx.clearRect(0, 0, this.props.canvasWidth, this.props.canvasHeight)
@@ -97,7 +98,7 @@ export default class Channel extends React.Component {
    	this.waveCtx.strokeStyle = '#4dd2ff'
    	this.waveCtx.globalAlpha = 0.4
    	const y = this.props.canvasHeight/2
-		for(let i=0; i<this.props.canvasWidth; i++){
+		for(let i=0; i<channelWidth; i++){
 			for(var j=0; j<subChunk; j++){
 				const val = channelData[i*chunk + j*subChunkVal]
 				// const x = i+j*(1/subChunk)
@@ -149,7 +150,7 @@ export default class Channel extends React.Component {
 	    			<i className="remove icon"></i>
 	    		</buton>
 				</div>
-				<div className="audioWave">
+				<div className="channelWave">
 					<canvas ref="waveCanvas" width={this.props.canvasWidth} height={this.props.canvasHeight}></canvas>
 				</div>
 			</div>

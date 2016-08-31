@@ -62,6 +62,18 @@ export default class EditMusic extends React.Component {
 		this.wavesurfer.on('ready', function () {
 			self.handleSave()
 		})
+
+
+		this.cursor = ReactDOM.findDOMNode(this.refs.cursor)
+		this.cursorOffsetX = 200
+		this.songTime = 0
+		this.splitTime = 0
+		// animframe for updating cursor position
+    this._raf = () => {
+      this.updateTimer()
+      window.requestAnimationFrame(this._raf);
+    }
+    this._raf()
 	}
 
 	componentDidUpdate(prevProps, prevState){
@@ -111,6 +123,7 @@ export default class EditMusic extends React.Component {
 		if(this.state.isPlaying){
 			// this.wavesurfer.pause();
 		} else {
+			this.splitTime = Date.now()
 			// this.wavesurfer.play();
 		}
 		this.setState({ isPlaying: !this.state.isPlaying })	
@@ -138,6 +151,22 @@ export default class EditMusic extends React.Component {
      	this.timelineCtx.stroke()
 		}
 		this.timelineCtx.restore()
+	}
+
+	updateTimer(){
+		if(this.state.isPlaying){
+			const ms = Date.now()
+			// const deltaTime = (date - this.splitTime) * this.speed
+			const deltaTime = ms - this.splitTime
+			this.songTime += deltaTime
+			this.splitTime = ms
+			this.updateCursor()
+		}
+	}
+
+	updateCursor(){
+		const x = this.cursorOffsetX + this.state.pxPerSecond * this.songTime / 1000
+		this.cursor.style.left = x + "px"
 	}
 
 	hasPermission() {
@@ -209,6 +238,7 @@ export default class EditMusic extends React.Component {
 				isPlaying={this.state.isPlaying}
 				canvasWidth={this.state.canvasWidth}
 				canvasHeight={this.state.canvasHeight}
+				pxPerSecond={this.state.pxPerSecond}
 
 				handleSave={this.handleSave.bind(this)}
 				deleteChannel={this.deleteChannel.bind(this)}
@@ -270,7 +300,7 @@ export default class EditMusic extends React.Component {
 						<div id="musicPlayer"></div>
 						<div className="channelsHeader">
 							<div className="controls">
-								<div className="ui labeled input">
+								<div className="ui small labeled input">
 								  <div className="ui label">
 								    Duration
 								  </div>
@@ -282,7 +312,10 @@ export default class EditMusic extends React.Component {
 							</div>
 						</div>
 
-						{this.renderChannels()}
+						<div className="channelList">
+							<div ref="cursor" className="cursor" style={{ left:this.cursorOffsetX+"px" }}></div>
+							{this.renderChannels()}
+						</div>
 
 
 						<canvas ref="thumbnailCanvas" style={{display: "none"}} width="290px" height="128px"></canvas>

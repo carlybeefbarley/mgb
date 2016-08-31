@@ -64,6 +64,7 @@ export default class Channel extends React.Component {
 		this.source.playbackRate.value = 1
     this.source.connect(this.gainNode)
 		this.gainNode.connect(this.audioCtx.destination)
+		this.gainNode.gain.value = this.props.channel.volume
 
 		this.source.start(0, startTime)		// delay, startTime
 		this.audioCtx.suspend()

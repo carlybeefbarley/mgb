@@ -50,11 +50,9 @@ export default class Channel extends React.Component {
 	}
 
 	drawWave(){
-		
 		const chunk = Math.floor(this.buffer.length / this.props.canvasWidth)
 		const subChunk = 10
 		const subChunkVal = Math.floor(chunk/subChunk)
-		console.log(chunk)
 		this.waveCtx.save()
    	this.waveCtx.strokeStyle = '#4dd2ff'
    	this.waveCtx.globalAlpha = 0.4
@@ -62,7 +60,8 @@ export default class Channel extends React.Component {
 		for(let i=0; i<this.props.canvasWidth; i++){
 			for(var j=0; j<subChunk; j++){
 				const val = this.buffer[i*chunk + j*subChunkVal]
-				const x = i+j*(1/subChunk)
+				// const x = i+j*(1/subChunk)
+				const x = i
 				this.waveCtx.beginPath()
 	     	this.waveCtx.moveTo( x, y )
 	     	this.waveCtx.lineTo( x, y + val*y )

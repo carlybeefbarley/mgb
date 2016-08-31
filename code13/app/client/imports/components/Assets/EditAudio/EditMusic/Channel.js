@@ -30,7 +30,8 @@ export default class Channel extends React.Component {
     reader.onload = (e) => {
       let audioData = e.target.result
       this.audioCtx.decodeAudioData(audioData, (audioBuffer) => {
-      	this.buffer = audioBuffer.getChannelData(0)
+      	this.buffer = audioBuffer
+      	this.initAudio()
       	this.drawWave()	
 	    })
     }
@@ -40,17 +41,49 @@ export default class Channel extends React.Component {
 	componentDidUpdate(prevProps, prevState){
 		if(this.buffer){
 			if(this.props.isPlaying && !prevProps.isPlaying){
-				// this.wave.play()
+				this.play()
 			} 
 			else if(!this.props.isPlaying && prevProps.isPlaying){
-				// this.wave.pause()
+				this.pause()
 			}
 			
 		}
 	}
 
+	initAudio(){
+		this.clearAudio()
+		let startTime = 0
+		this.source = this.audioCtx.createBufferSource()
+		this.gainNode = this.audioCtx.createGain()
+
+		this.source.buffer = this.buffer
+		this.source.playbackRate.value = 1
+    this.source.connect(this.gainNode)
+		this.gainNode.connect(this.audioCtx.destination)
+
+		this.source.start(0, startTime)		// delay, startTime
+		this.audioCtx.suspend()
+	}
+
+	clearAudio(){
+		if(this.source) {
+			this.source.stop()
+			this.source.disconnect(0)
+		}
+		if(this.gainNode) this.gainNode.disconnect(0)
+	}
+
+	play(){
+		this.audioCtx.resume()
+	}
+
+	pause(){
+		this.audioCtx.suspend()
+	}
+
 	drawWave(){
-		const chunk = Math.floor(this.buffer.length / this.props.canvasWidth)
+		const channelData = this.buffer.getChannelData(0)
+		const chunk = Math.floor(channelData.length / this.props.canvasWidth)
 		const subChunk = 10
 		const subChunkVal = Math.floor(chunk/subChunk)
 		this.waveCtx.save()
@@ -59,7 +92,7 @@ export default class Channel extends React.Component {
    	const y = this.props.canvasHeight/2
 		for(let i=0; i<this.props.canvasWidth; i++){
 			for(var j=0; j<subChunk; j++){
-				const val = this.buffer[i*chunk + j*subChunkVal]
+				const val = channelData[i*chunk + j*subChunkVal]
 				// const x = i+j*(1/subChunk)
 				const x = i
 				this.waveCtx.beginPath()

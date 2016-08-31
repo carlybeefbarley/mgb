@@ -21,6 +21,7 @@ export default class EditMusic extends React.Component {
 
   	this.state = {
   		isPlaying: false,
+  		isLooping: true,
   		canvasWidth: pxPerSecond*props.asset.content2.duration,		// changing depending on props.duration
   		canvasHeight: 128,
   		pxPerSecond: pxPerSecond,		// defines width of canvass 
@@ -74,6 +75,8 @@ export default class EditMusic extends React.Component {
       window.requestAnimationFrame(this._raf);
     }
     this._raf()
+
+    console.log(this.refs)
 	}
 
 	componentDidUpdate(prevProps, prevState){
@@ -121,9 +124,11 @@ export default class EditMusic extends React.Component {
 
 	togglePlayMusic(){
 		if(this.state.isPlaying){
+			this.callChildren("pause")
 			// this.wavesurfer.pause();
 		} else {
 			this.splitTime = Date.now()
+			this.callChildren("play")
 			// this.wavesurfer.play();
 		}
 		this.setState({ isPlaying: !this.state.isPlaying })	
@@ -132,6 +137,13 @@ export default class EditMusic extends React.Component {
 	stopMusic(){
 		this.wavesurfer.stop();
 		this.setState({ isPlaying: false })
+	}
+
+	callChildren(func, args){
+		if(!args) args = []
+		this.props.asset.content2.channels.forEach((channel, id) => {
+			this.refs["channel"+id][func]()
+		})
 	}
 
 	drawTimeline(){
@@ -160,6 +172,9 @@ export default class EditMusic extends React.Component {
 			const deltaTime = ms - this.splitTime
 			this.songTime += deltaTime
 			this.splitTime = ms
+			if(this.soungTime/1000 >= this.props.asset.content2.duration){
+				this.setState({ isPlaying: false })
+			}
 			this.updateCursor()
 		}
 	}
@@ -234,8 +249,8 @@ export default class EditMusic extends React.Component {
 			<Channel 
 				key={id}
 				id={id}
+				ref={"channel"+id}
 				channel={channel}
-				isPlaying={this.state.isPlaying}
 				canvasWidth={this.state.canvasWidth}
 				canvasHeight={this.state.canvasHeight}
 				pxPerSecond={this.state.pxPerSecond}

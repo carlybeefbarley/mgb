@@ -20,6 +20,8 @@ export default class EditMusic extends React.Component {
 
   	this.state = {
   		isPlaying: false,
+  		canvasWidth: 900,
+  		canvasHeight: 128,
   	}
 	}
 
@@ -96,9 +98,9 @@ export default class EditMusic extends React.Component {
 
 	togglePlayMusic(){
 		if(this.state.isPlaying){
-			this.wavesurfer.pause();
+			// this.wavesurfer.pause();
 		} else {
-			this.wavesurfer.play();
+			// this.wavesurfer.play();
 		}
 		this.setState({ isPlaying: !this.state.isPlaying })	
 	}
@@ -159,7 +161,7 @@ export default class EditMusic extends React.Component {
   		return (<div>No channels added...</div>)
   	}
 
-  	return // TODO remove this to render channels
+  	// return // TODO remove this to render channels
 
   	return c2.channels.map((channel, id) => (
 			<Channel 
@@ -167,6 +169,8 @@ export default class EditMusic extends React.Component {
 				id={id}
 				channel={channel}
 				isPlaying={this.state.isPlaying}
+				canvasWidth={this.state.canvasWidth}
+				canvasHeight={this.state.canvasHeight}
 
 				handleSave={this.handleSave.bind(this)}
 				deleteChannel={this.deleteChannel.bind(this)}

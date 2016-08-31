@@ -13,30 +13,75 @@ export default class Channel extends React.Component {
   	this.state = {
 
   	}
+  	
 	}
 
 	componentDidMount(){
 		const channel = this.props.channel
-		if(channel.dataUri){
-			this.wave = WaveSurfer.create({
-			    container: '#wave'+this.props.id
-			    , waveColor: '#4dd2ff'
-	    		, progressColor: '#01a2d9'
-			})
-			this.wave.load(channel.dataUri)
-		}
+		if(!channel.dataUri) return
+
+		this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+  	this.buffer = []
+  	this.waveCanvas = ReactDOM.findDOMNode(this.refs.waveCanvas)
+		this.waveCtx = this.waveCanvas.getContext('2d')
+
+		const soundBlob = this.dataURItoBlob(channel.dataUri)
+		let reader = new FileReader()
+    reader.onload = (e) => {
+      let audioData = e.target.result
+      this.audioCtx.decodeAudioData(audioData, (audioBuffer) => {
+      	this.buffer = audioBuffer.getChannelData(0)
+      	this.drawWave()	
+	    })
+    }
+    reader.readAsArrayBuffer(soundBlob)
 	}
 
 	componentDidUpdate(prevProps, prevState){
-		if(this.wave){
+		if(this.buffer){
 			if(this.props.isPlaying && !prevProps.isPlaying){
-				this.wave.play()
+				// this.wave.play()
 			} 
 			else if(!this.props.isPlaying && prevProps.isPlaying){
-				this.wave.pause()
+				// this.wave.pause()
 			}
 			
 		}
+	}
+
+	drawWave(){
+		
+		const chunk = Math.floor(this.buffer.length / this.props.canvasWidth)
+		const subChunk = 10
+		const subChunkVal = Math.floor(chunk/subChunk)
+		console.log(chunk)
+		this.waveCtx.save()
+   	this.waveCtx.strokeStyle = '#4dd2ff'
+   	this.waveCtx.globalAlpha = 0.4
+   	const y = this.props.canvasHeight/2
+		for(let i=0; i<this.props.canvasWidth; i++){
+			for(var j=0; j<subChunk; j++){
+				const val = this.buffer[i*chunk + j*subChunkVal]
+				const x = i+j*(1/subChunk)
+				this.waveCtx.beginPath()
+	     	this.waveCtx.moveTo( x, y )
+	     	this.waveCtx.lineTo( x, y + val*y )
+	     	this.waveCtx.stroke()
+     }
+		}
+		this.waveCtx.restore();
+	}
+
+	dataURItoBlob(dataURI) {
+	  var byteString = atob(dataURI.split(',')[1]);
+	  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+	  var ab = new ArrayBuffer(byteString.length);
+	  var ia = new Uint8Array(ab);
+	  for (var i = 0; i < byteString.length; i++) {
+	      ia[i] = byteString.charCodeAt(i);
+	  }
+	  var blob = new Blob([ab], {type: mimeString});
+	  return blob;
 	}
 
 	changeVolume(e){
@@ -64,7 +109,7 @@ export default class Channel extends React.Component {
 	    		</buton>
 				</div>
 				<div className="audioWave">
-
+					<canvas ref="waveCanvas" width={this.props.canvasWidth} height={this.props.canvasHeight}></canvas>
 				</div>
 			</div>
 		)

@@ -119,6 +119,8 @@ export default class Channel extends React.Component {
 	changeVolume(e){
 		this.props.channel.volume = parseFloat(e.target.value)
 		this.props.handleSave("Volume change")
+		this.gainNode.gain.value = this.props.channel.volume
+		// console.log(parseFloat(e.target.value))
 	}
 
 	deleteChannel(){
@@ -132,7 +134,7 @@ export default class Channel extends React.Component {
 				<div className="controls">
 					{channel.title}
 					<div>
-	    			<input type="range" value={channel.volume} min="0" max="1" step="0.1"
+	    			<input type="range" value={channel.volume} min="0" max="1" step="0.05"
 	    			onChange={this.changeVolume.bind(this)}
 	    			/> Volume<br/>
 	    		</div>

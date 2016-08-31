@@ -46,6 +46,10 @@ export default class Channel extends React.Component {
 			else if(!this.props.isPlaying && prevProps.isPlaying){
 				this.pause()
 			}
+
+			if(this.props.canvasWidth !== prevProps.canvasWidth){
+				this.drawWave()
+			}
 			
 		}
 	}
@@ -82,10 +86,13 @@ export default class Channel extends React.Component {
 	}
 
 	drawWave(){
+		if(!this.buffer) return	// in situations when audio is not decoded yet
+		// console.log('draw wave')
 		const channelData = this.buffer.getChannelData(0)
 		const chunk = Math.floor(channelData.length / this.props.canvasWidth)
 		const subChunk = 10
 		const subChunkVal = Math.floor(chunk/subChunk)
+		this.waveCtx.clearRect(0, 0, this.props.canvasWidth, this.props.canvasHeight)
 		this.waveCtx.save()
    	this.waveCtx.strokeStyle = '#4dd2ff'
    	this.waveCtx.globalAlpha = 0.4

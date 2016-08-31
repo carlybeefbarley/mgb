@@ -16,13 +16,14 @@ export default class EditMusic extends React.Component {
 	constructor(props) {
   	super(props)
 
-  	console.log(props.asset.content2)
+  	// console.log(props.asset.content2)
+  	const pxPerSecond = 30
 
   	this.state = {
   		isPlaying: false,
-  		canvasWidth: 900,		// changing depending on props.duration
+  		canvasWidth: pxPerSecond*props.asset.content2.duration,		// changing depending on props.duration
   		canvasHeight: 128,
-  		pxPerSecond: 30,		// defines width of canvass 
+  		pxPerSecond: pxPerSecond,		// defines width of canvass 
   	}
 	}
 
@@ -61,6 +62,11 @@ export default class EditMusic extends React.Component {
 		this.wavesurfer.on('ready', function () {
 			self.handleSave()
 		})
+	}
+
+	componentDidUpdate(prevProps, prevState){
+		// console.log('did update')
+		this.drawTimeline()
 	}
 
 	openImportPopup(){
@@ -165,7 +171,8 @@ export default class EditMusic extends React.Component {
   	let c2 = this.props.asset.content2
   	c2.duration = parseFloat(e.target.value)
   	this.handleSave("Change duration")
-  	this.drawTimeline()		// force draw
+  	let canvasWidth = c2.duration * this.state.pxPerSecond+1
+  	this.setState({ canvasWidth: canvasWidth })
   }
 
   addChannel(dataUri){

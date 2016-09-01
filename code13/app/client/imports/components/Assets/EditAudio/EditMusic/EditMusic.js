@@ -237,10 +237,11 @@ export default class EditMusic extends React.Component {
   }
 
   deleteChannel(channelID){
-  	let c2 = this.props.asset.content2
-  	console.log(channelID, c2.channels)
+  	let c2 = this.props.asset.content2	
   	c2.channels.splice(channelID, 1)
   	this.handleSave("Remove channel")
+  	setTimeout( () =>	this.callChildren("initWave"), 50)		// force redraw wave, because react doesn't update it
+  	console.log(channelID, c2.channels)
   }
 
   renderChannels(){
@@ -251,7 +252,9 @@ export default class EditMusic extends React.Component {
 
   	// return // TODO remove this to render channels
 
-  	return c2.channels.map((channel, id) => (
+
+  	return c2.channels.map((channel, id) => { 
+  		return (
 			<Channel 
 				key={id}
 				id={id}
@@ -264,7 +267,7 @@ export default class EditMusic extends React.Component {
 				handleSave={this.handleSave.bind(this)}
 				deleteChannel={this.deleteChannel.bind(this)}
 			/>
-		))
+		)}) 
   }
 
 	render(){
@@ -311,7 +314,7 @@ export default class EditMusic extends React.Component {
 								<button className="ui small icon button"
 									title="Add new audio channel"
 									onClick={this.addChannel.bind(this, null)}>
-								  <i className="add square icon"></i> Add channel
+								  <i className="add square icon"></i>
 								</button>
 
 								<button 

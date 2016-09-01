@@ -17,13 +17,25 @@ export default class Channel extends React.Component {
 	}
 
 	componentDidMount(){
-		const channel = this.props.channel
-		if(!channel.dataUri) return
-
 		this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-  	this.buffer = []
   	this.waveCanvas = ReactDOM.findDOMNode(this.refs.waveCanvas)
 		this.waveCtx = this.waveCanvas.getContext('2d')
+		this.initWave()
+	}
+
+	componentDidUpdate(prevProps, prevState){
+		if(this.buffer){
+
+			if(this.props.canvasWidth !== prevProps.canvasWidth){
+				this.drawWave()
+			}
+			
+		}
+	}
+
+	initWave(){
+		const channel = this.props.channel
+		if(!channel.dataUri) return
 
 		const soundBlob = this.dataURItoBlob(channel.dataUri)
 		let reader = new FileReader()
@@ -36,16 +48,6 @@ export default class Channel extends React.Component {
 	    })
     }
     reader.readAsArrayBuffer(soundBlob)
-	}
-
-	componentDidUpdate(prevProps, prevState){
-		if(this.buffer){
-			
-			if(this.props.canvasWidth !== prevProps.canvasWidth){
-				this.drawWave()
-			}
-			
-		}
 	}
 
 	initAudio(){
@@ -87,7 +89,6 @@ export default class Channel extends React.Component {
 
 	drawWave(){
 		if(!this.buffer) return	// in situations when audio is not decoded yet
-		// console.log('draw wave')
 		const channelData = this.buffer.getChannelData(0)
 		const channelWidth = Math.floor( this.buffer.duration * this.props.pxPerSecond )
 		const chunk = Math.floor(channelData.length / channelWidth)

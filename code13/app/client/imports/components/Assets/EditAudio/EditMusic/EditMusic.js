@@ -90,12 +90,16 @@ export default class EditMusic extends React.Component {
 		if(!this.hasPermission) return;
 
 		if(audioObject){
-			this.wavesurfer.load(audioObject.src);
-			let c2 = this.props.asset.content2;
-			c2.dataUri = audioObject.src;
-			c2.duration = audioObject.duration;
+			this.wavesurfer.load(audioObject.src)
+			let c2 = this.props.asset.content2
+			c2.dataUri = audioObject.src
+			let duration = c2.duration
+			if(!duration) duration = audioObject.duration
+			else if(duration < audioObject.duration) duration = audioObject.duration
+			c2.duration = duration
 			this.saveText = saveText;
 			this.addChannel(audioObject.src)
+			this.updateCanvasLength()
 		}
 
 		$(this.importMusicPopup).modal('hide')
@@ -221,6 +225,11 @@ export default class EditMusic extends React.Component {
   	let c2 = this.props.asset.content2
   	c2.duration = parseFloat(e.target.value)
   	this.handleSave("Change duration")
+  	this.updateCanvasLength()
+  }
+
+  updateCanvasLength(){
+  	let c2 = this.props.asset.content2
   	let canvasWidth = c2.duration * this.state.pxPerSecond+1
   	this.setState({ canvasWidth: canvasWidth })
   }
@@ -241,7 +250,6 @@ export default class EditMusic extends React.Component {
   	c2.channels.splice(channelID, 1)
   	this.handleSave("Remove channel")
   	setTimeout( () =>	this.callChildren("initWave"), 50)		// force redraw wave, because react doesn't update it
-  	console.log(channelID, c2.channels)
   }
 
   renderChannels(){

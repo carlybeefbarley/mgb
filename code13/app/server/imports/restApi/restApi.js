@@ -151,7 +151,9 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
       anim.frames.forEach((frame) => {
         animation.push({
           duration,
-          tileid: frame
+          tileid: frame,
+          mgb_name: anim.name,
+          mgb_fps: anim.fps
         });
       });
       tiles[anim.frames[0]] = {animation};

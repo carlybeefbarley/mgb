@@ -282,8 +282,11 @@ export default class TileSet extends React.Component {
     if (asset && asset.kind != 'graphic') {
       return
     }
-    const url = data.link
-    this.refs.controls.updateTilesetFromUrl(url, this.data)
+
+    const infolink = '/api/asset/tileset-info/' + data.asset._id
+    $.get(infolink, (data) => {
+      this.refs.controls.updateTilesetFromData(data)
+    })
   }
 
   onMouseDown (e) {

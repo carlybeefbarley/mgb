@@ -124,7 +124,7 @@ RestApi.addRoute('asset/json/:id', {authRequired: false}, {
 RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
   get: function () {
     "use strict";
-    var asset = Azzets.findOne(this.urlParams.id);
+    const asset = Azzets.findOne(this.urlParams.id);
     if (!asset) {
       return {
         statusCode: 404
@@ -159,8 +159,9 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
 
 
     return {
-      // image: "/api/asset/tileset/" + this.urlParams.id,
-      image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
+      image: "/api/asset/tileset/" + this.urlParams.id,
+      // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
+      //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
       name: asset.name,
       imageheight: c2.rows ? c2.rows*c2.height : c2.height,
       imagewidth: c2.cols ? c2.cols*c2.width : c2.width * c2.frameData.length,
@@ -171,7 +172,24 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
     };
   }
 });
-
+RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne(this.urlParams.id);
+    if (!asset || !asset.content2 || !asset.content2.tileset) {
+      return {
+        statusCode: 404
+      }
+    }
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'image/png'
+      },
+      // TODO: cache
+      body: dataUriToBuffer(asset.content2.tileset)
+    }
+  }
+})
 // TODO: cache + invalidate cache
 // TODO: check hidden layers
 /*
@@ -225,10 +243,10 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
   }
 });
 */
-
 /*
 Jimp is pure JS implementation - slower (theoretically), but doesn't require native modules
  */
+/*
 RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
   get: function () {
     "use strict";
@@ -290,7 +308,7 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
     return Meteor.wrapAsync(done)();
   }
 });
-
+*/
 // get sound by id
 RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {
   get: function () {

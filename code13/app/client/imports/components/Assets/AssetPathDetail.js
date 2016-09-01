@@ -17,7 +17,8 @@ export default AssetPathDetail = React.createClass({
     name:       PropTypes.string,                       // Asset name (can be null)
     text:       PropTypes.string,                       // Asset description text (can be null)
     isUnconfirmedSave: PropTypes.bool,                  // not present == saved.. for legacy data
-    handleNameChange: PropTypes.func.isRequired,
+    hasUnsentSaves:    PropTypes.bool.isRequired,       // if true, then some saves have not yet been sent for this asset, so reflect that in UI (orange label)
+    handleNameChange:  PropTypes.func.isRequired,
     handleDescriptionChange: PropTypes.func.isRequired
   },
   
@@ -32,9 +33,11 @@ export default AssetPathDetail = React.createClass({
   },
 
   render() {
-    const { name, kind, text, ownerName, canEdit, isUnconfirmedSave } = this.props
+    const { name, kind, text, ownerName, canEdit, isUnconfirmedSave, hasUnsentSaves } = this.props
     const emptyAssetDescriptionText = "(no description)"
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
+    const labelBgColor = hasUnsentSaves ? "orange" : "green"
+    const saveIconColor = isUnconfirmedSave ? "orange" : ""
 
     return (
       <div>
@@ -42,8 +45,8 @@ export default AssetPathDetail = React.createClass({
           {
             canEdit ? 
               (
-                <div className="ui small green icon label" title="You can edit this asset and changes will be saved automatically">
-                  <i className={`ui ${isUnconfirmedSave && "orange "} save icon`} />Edit
+                <div className={`ui small ${labelBgColor} icon label`} title="You can edit this asset. Your changes will be saved automatically to the server">
+                  <i className={`ui ${saveIconColor} save icon`} />Edit
                 </div>
               ) 
               : 

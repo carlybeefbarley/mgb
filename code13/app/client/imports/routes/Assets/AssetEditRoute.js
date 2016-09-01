@@ -2,12 +2,11 @@ import React, { PropTypes } from 'react'
 import { utilPushTo } from '../QLink'
 import reactMixin from 'react-mixin'
 
-import { Azzets } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-
 import Helmet from 'react-helmet'
 
+import { Azzets } from '/imports/schemas'
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
 import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
@@ -36,6 +35,13 @@ import { ActivitySnapshots, Activity } from '/imports/schemas'
 // 4. (TODO) Provide "Leave hooks" for warning about unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
 
 
+
+// ALSO TODO: Add a 'editorLease' field.. This would contain a userid, sessionId and lease-until timestamp. 
+// This SHOULD prevent edits from other users: BLUE editor field, and details of edit actions.  Field is disregarded if not present or is expired. 
+// TBD who does cleanup.
+// Note that the Lease field should not be set on client.. it should be guarded by !isSimulation
+// BUT this will not work if clients' clocks are wrong :(  So instead, the leases should be managed on server:  ??????
+
 export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
@@ -50,6 +56,15 @@ export default AssetEditRoute = React.createClass({
     urlLocation: React.PropTypes.object
   },
 
+
+
+  // getInitialState: function() {
+  //   return {
+  //     deferredSaveObj: null     // null, or ONE object of form { content2Object: object, thumbnail: string, changeText: string }
+  //   }
+  // },
+
+
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId
   // TODO: Make this QLink-smart so it preserves queries
   checkForRedirect() {
@@ -59,6 +74,21 @@ export default AssetEditRoute = React.createClass({
 
   componentDidMount() {
     this.checkForRedirect()
+    this.m_deferredSaveObj = null
+    this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => { 
+      //console.log("TICK")
+      this._attemptToSendAnyDeferredChanges() 
+    } , 5000 )
+  },
+
+  componentWillUnmount() {
+    if (this.m_tickIntervalFunctionHandle)
+    {
+      console.log("Clearing TICK timer")
+      Meteor.clearInterval(this.m_tickIntervalFunctionHandle)
+      this.m_tickIntervalFunctionHandle = null
+      this._doSendDeferredChangeNow()   // Let's flush anything needed. 
+    }
   },
 
   componentDidUpdate() {
@@ -89,12 +119,25 @@ export default AssetEditRoute = React.createClass({
            this.data.asset.ownerId === this.props.currUser._id)
   },
 
-  render: function() {    
-    const asset = this.data.asset         // One Asset provided via getMeteorData()
-    if (this.data.loading) return <Spinner />
-    if (!asset) return <ThingNotFound type='Asset' id={this.props.params.assetId} />
+  render: function() {
+    if (this.data.loading) 
+      return <Spinner />
 
-    const canEd = this.canEdit()    
+    let asset = Object.assign( {}, this.data.asset )        // One Asset provided via getMeteorData()
+    if (!this.data.asset)
+      return <ThingNotFound type='Asset' id={this.props.params.assetId} />
+
+    // Overlay any newer data to the child component so that it gets what it expects based on last save attempt
+    const dso = this.m_deferredSaveObj
+    if (dso)
+    {
+      if (dso.content2Object)
+        asset.content2 = dso.content2Object
+      if (dso.thumbnail)
+        asset.thumbnail = dso.thumbnail
+    }
+
+    const canEd = this.canEdit()
 
     return (
       <div className="ui padded grid">
@@ -110,6 +153,7 @@ export default AssetEditRoute = React.createClass({
           <AssetPathDetail 
             canEdit={canEd}
             isUnconfirmedSave={asset.isUnconfirmedSave}
+            hasUnsentSaves={!!this.m_deferredSaveObj}
             ownerName={asset.dn_ownerName}
             kind={asset.kind}
             name={asset.name}
@@ -122,17 +166,17 @@ export default AssetEditRoute = React.createClass({
           { /* We use this.props.params.assetId since it is available sooner than the asset 
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }
-          <AssetUrlGenerator asset={this.data.asset} />
+          <AssetUrlGenerator asset={asset} />
           &emsp;
           <AssetActivityDetail
-                        assetId={this.props.params.assetId} 
-                        currUser={this.props.currUser}
-                        activitySnapshots={this.data.activitySnapshots} />
+            assetId={this.props.params.assetId} 
+            currUser={this.props.currUser}
+            activitySnapshots={this.data.activitySnapshots} />
           &emsp;
           <AssetHistoryDetail 
-                        assetId={this.props.params.assetId} 
-                        currUser={this.props.currUser}
-                        assetActivity={this.data.assetActivity} />
+            assetId={this.props.params.assetId} 
+            currUser={this.props.currUser}
+            assetActivity={this.data.assetActivity} />
           &emsp;
           <AssetProjectDetail 
             projectNames={asset.projectNames || []}
@@ -145,7 +189,7 @@ export default AssetEditRoute = React.createClass({
             asset={asset} 
             canEdit={canEd} 
             currUser={this.props.currUser}
-            handleContentChange={this.handleContentChange}
+            handleContentChange={this._deferContentChange}
             editDeniedReminder={this.handleEditDeniedReminder}
             activitySnapshots={this.data.activitySnapshots} 
           />
@@ -162,18 +206,78 @@ export default AssetEditRoute = React.createClass({
   },
 
 
+  _deferContentChange(content2Object, thumbnail, changeText="content change")
+  {
+    this.m_deferredSaveObj = { content2Object: content2Object, thumbnail: thumbnail, changeText: changeText }
+    this.forceUpdate()  // Yuck, but I have to, coz I can't put a deferal data structure in this.state
+  },
+
+  
+  // This could be called by a timer, or on error/ok return from a Meteor.call
+  _attemptToSendAnyDeferredChanges()
+  {
+    const asset = this.data.asset
+    if (asset && this.m_deferredSaveObj)
+    {
+      // Something is deferred.. Can we send it yet?
+      if (!Meteor.status().connected)
+      {
+        console.log(`Can't send deferred save of asset ${asset.name} because the connection is currently offline`)
+      }
+      else
+      {
+        // We're connected.. Are we waiting for a pending write confirmation on this asset?
+        if (asset.isUnconfirmedSave)
+        {
+          console.log(`Can't send deferred save of asset ${asset.name} because the prior save's results are still pending. Keeping it in deferred save Object list so it Will retry later..`)
+        }
+        else
+        {
+          // At this point, we have an asset with a deferred save, the connection is up, and there is no pending Meteor RPC save for it..
+          // ... so try save it!
+          this._doSendDeferredChangeNow()
+        }
+      }
+    }
+  },
+
+
+  // No ifs and buts - just send it (and immediately take it off of the deferred list)
+  _doSendDeferredChangeNow()
+  {
+    if (this.m_deferredSaveObj)
+    {
+      console.log(`Sending deferred change now`)
+      const toBeSent = this.m_deferredSaveObj
+      this.handleContentChange(toBeSent.content2Object, toBeSent.thumbnail, toBeSent.changeText)
+      this.m_deferredSaveObj =  null
+    }
+  },
+
+
+
+
   handleContentChange(content2Object, thumbnail, changeText="content change")
   {
-    const asset = this.data.asset;
-    let updateObj = {}
-    if (content2Object)
-      updateObj.content2 = content2Object
-    if (thumbnail)
-      updateObj.thumbnail = thumbnail
+    const asset = this.data.asset
+    if (asset && asset.isUnconfirmedSave)
+    {
+      console.log(`Deferring a save of asset ${asset.name} because the prior save's results are still pending confirmation from server`)
+      this._deferContentChange(content2Object, thumbnail, changeText)
+      return
+    }
+
+    const updateObj = _makeUpdateObj(content2Object, thumbnail)
     Meteor.call('Azzets.update', asset._id, this.canEdit(), updateObj, (err, res) => {
       if (err) {
-        // TODO: NOT alert() ! !
-        alert('error: ' + err.reason)
+        console.error(`Azzets.update failed: ${err.reason}`,err)
+        alert('error: ' + err.reason)         // TODO: NOT alert() ! !
+        // Also TODO: What about the data we couldn't save?
+      }
+      else
+      {
+        console.log(`Azzets.update succeeded. Checking for any pending saves...`)
+        this._attemptToSendAnyDeferredChanges(content2Object, thumbnail, changeText)
       }
     })
     
@@ -210,3 +314,13 @@ export default AssetEditRoute = React.createClass({
   //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use 
   //            the most recent passive activity 
 })
+
+
+function _makeUpdateObj(content2Object, thumbnail) {
+  let updateObj = {}
+  if (content2Object)
+    updateObj.content2 = content2Object
+  if (thumbnail)
+    updateObj.thumbnail = thumbnail
+  return updateObj
+}

@@ -96,8 +96,6 @@ export default UserListRoute = React.createClass({
   // TODO: Pagination is simplistic. Needs work to append users instead of refreshing whole list
 
   render() {
-    if (this.data.loading) 
-      return <div><Spinner /></div>
     
     const { excludeUserIdsArray, renderVertical, hideTitle, handleClickUser } = this.props
     let filteredUsers = excludeUserIdsArray 
@@ -127,10 +125,12 @@ export default UserListRoute = React.createClass({
           <br></br>
         </div>
 
-        <div className={segClass} >
-          <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem}/>
-          <button onClick={this.handleLoadMore} className="ui button">Load more</button>
-        </div>      
+        { this.data.loading ? <Spinner /> : 
+          <div className={segClass} >
+            <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem}/>
+            <button onClick={this.handleLoadMore} className="ui button">Load more</button>
+          </div> 
+        }     
       </div>
     )
   },

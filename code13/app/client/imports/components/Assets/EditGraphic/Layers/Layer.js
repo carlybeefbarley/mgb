@@ -147,7 +147,7 @@ export default class Layer extends React.Component {
                 key={this.props.idx+"_"+frameID}
                 title={isActiveCell ? `This is the current edit focus: Layer "${this.props.layer.name}" of Frame #${this.props.selectedFrame+1}`: "click here to edit this frame/layer"}
                 className={isActiveCell ? "highlight" : ""}>
-                {isActiveCell ? "•" : ""}
+                {isActiveCell ? <div style={{textAlign: "center"}}><i className="ui check icon" /></div> : null}
               </td>)  
             })
           }

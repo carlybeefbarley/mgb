@@ -13,7 +13,7 @@ import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 
 // **GLOBAL*** Tern JS - See comment below...   
 import scoped_tern from "tern";
-tern = scoped_tern;   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
+window.tern = scoped_tern;   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
 
 // Tern 'definition files'
 import "tern/lib/def";     // Do I need? since I'm doing it differently in next 2 lines...
@@ -763,7 +763,7 @@ export default class EditCode extends React.Component {
       this.srcUpdate_GetRelevantTypeInfo()
       this.srcUpdate_GetRefs()
       this.srcUpdate_GetDef()
-      this.srcUpdate_getMgbOpts()    
+      this.srcUpdate_getMgbOpts()
       
       this.srcUpdate_getMemberParent()
 
@@ -780,7 +780,7 @@ export default class EditCode extends React.Component {
   {
     if (nextState._preventRenders === true)
       return false
-    return true    
+    return true
   }
   
   codemirrorValueChanged (doc, change) {

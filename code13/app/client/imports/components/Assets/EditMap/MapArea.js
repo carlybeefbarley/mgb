@@ -32,6 +32,7 @@ export default class MapArea extends React.Component {
     let images = {}
     this.startTime = Date.now()
     // expose map for debugging purposes - access in console
+    window.mgb_map = this;
 
     this.images = {
       set: (property, value) => {

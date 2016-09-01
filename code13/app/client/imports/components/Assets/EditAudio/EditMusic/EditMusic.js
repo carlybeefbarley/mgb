@@ -22,7 +22,7 @@ export default class EditMusic extends React.Component {
   	this.state = {
   		isPlaying: false,
   		isLoop: true,
-  		canvasWidth: pxPerSecond*props.asset.content2.duration,		// changing depending on props.duration
+  		canvasWidth: pxPerSecond*props.asset.content2.duration+1,		// changing depending on props.duration
   		canvasHeight: 128,
   		pxPerSecond: pxPerSecond,		// defines width of canvass 
   	}
@@ -155,7 +155,7 @@ export default class EditMusic extends React.Component {
 		this.timelineCtx.clearRect(0, 0, this.state.canvasWidth, 50)
 		let c2 = this.props.asset.content2
 		if(!c2.duration) return
-		let count = Math.floor(c2.duration)
+		let count = Math.floor(c2.duration)+1
 		this.timelineCtx.save()
    	this.timelineCtx.strokeStyle = '#333'
    	this.timelineCtx.globalAlpha = 0.4
@@ -333,7 +333,7 @@ export default class EditMusic extends React.Component {
 
 			          &nbsp;&nbsp;
 
-								<div className="ui small labeled input">
+								<div className="ui small labeled input" title="Audio duration">
 								  <div className="ui label">
 								    Duration
 								  </div>

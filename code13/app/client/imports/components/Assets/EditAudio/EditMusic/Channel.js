@@ -40,13 +40,7 @@ export default class Channel extends React.Component {
 
 	componentDidUpdate(prevProps, prevState){
 		if(this.buffer){
-			if(this.props.isPlaying && !prevProps.isPlaying){
-				this.play()
-			} 
-			else if(!this.props.isPlaying && prevProps.isPlaying){
-				this.pause()
-			}
-
+			
 			if(this.props.canvasWidth !== prevProps.canvasWidth){
 				this.drawWave()
 			}

@@ -17,6 +17,7 @@ export default class EditMusic extends React.Component {
   	super(props)
 
   	// console.log(props.asset.content2)
+  	this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   	const pxPerSecond = 30
 
   	this.state = {
@@ -126,11 +127,11 @@ export default class EditMusic extends React.Component {
 
 	togglePlayMusic(){
 		if(this.state.isPlaying){
-			this.callChildren("pause")
+			this.audioCtx.suspend()
 			// this.wavesurfer.pause();
 		} else {
 			this.splitTime = Date.now()
-			this.callChildren("play")
+			this.audioCtx.resume()
 			// this.wavesurfer.play();
 		}
 		this.setState({ isPlaying: !this.state.isPlaying })	
@@ -139,9 +140,10 @@ export default class EditMusic extends React.Component {
 	stopMusic(){
 		// this.wavesurfer.stop();
 		this.setState({ isPlaying: false })
+		this.audioCtx.suspend()
 		this.songTime = 0
 		this.updateCursor()
-		this.callChildren("stop")
+		this.callChildren("initAudio")
 	}
 
 	toggleLoop(){
@@ -268,6 +270,7 @@ export default class EditMusic extends React.Component {
 				id={id}
 				ref={"channel"+id}
 				channel={channel}
+				audioCtx={this.audioCtx}
 				canvasWidth={this.state.canvasWidth}
 				canvasHeight={this.state.canvasHeight}
 				pxPerSecond={this.state.pxPerSecond}

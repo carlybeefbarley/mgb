@@ -17,7 +17,6 @@ export default class Channel extends React.Component {
 	}
 
 	componentDidMount(){
-		this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   	this.waveCanvas = ReactDOM.findDOMNode(this.refs.waveCanvas)
 		this.waveCtx = this.waveCanvas.getContext('2d')
 		this.initWave()
@@ -41,7 +40,7 @@ export default class Channel extends React.Component {
 		let reader = new FileReader()
     reader.onload = (e) => {
       let audioData = e.target.result
-      this.audioCtx.decodeAudioData(audioData, (audioBuffer) => {
+      this.props.audioCtx.decodeAudioData(audioData, (audioBuffer) => {
       	this.buffer = audioBuffer
       	this.initAudio()
       	this.drawWave()	
@@ -53,17 +52,17 @@ export default class Channel extends React.Component {
 	initAudio(){
 		this.clearAudio()
 		let startTime = 0
-		this.source = this.audioCtx.createBufferSource()
-		this.gainNode = this.audioCtx.createGain()
+		this.source = this.props.audioCtx.createBufferSource()
+		this.gainNode = this.props.audioCtx.createGain()
 
 		this.source.buffer = this.buffer
 		this.source.playbackRate.value = 1
     this.source.connect(this.gainNode)
-		this.gainNode.connect(this.audioCtx.destination)
+		this.gainNode.connect(this.props.audioCtx.destination)
 		this.gainNode.gain.value = this.props.channel.volume
 
 		this.source.start(0, startTime)		// delay, startTime
-		this.audioCtx.suspend()
+		this.props.audioCtx.suspend()
 	}
 
 	clearAudio(){
@@ -72,19 +71,6 @@ export default class Channel extends React.Component {
 			this.source.disconnect(0)
 		}
 		if(this.gainNode) this.gainNode.disconnect(0)
-	}
-
-	play(){
-		this.audioCtx.resume()
-	}
-
-	pause(){
-		this.audioCtx.suspend()
-	}
-
-	stop(){
-		this.pause()
-		this.initAudio()
 	}
 
 	drawWave(){

@@ -21,7 +21,7 @@ export default class EditMusic extends React.Component {
 
   	this.state = {
   		isPlaying: false,
-  		isLooping: true,
+  		isLoop: true,
   		canvasWidth: pxPerSecond*props.asset.content2.duration,		// changing depending on props.duration
   		canvasHeight: 128,
   		pxPerSecond: pxPerSecond,		// defines width of canvass 
@@ -140,6 +140,10 @@ export default class EditMusic extends React.Component {
 		this.callChildren("stop")
 	}
 
+	toggleLoop(){
+		this.setState({ isLoop: !this.state.isLoop })
+	}
+
 	callChildren(func, args){
 		if(!args) args = []
 		this.props.asset.content2.channels.forEach((channel, id) => {
@@ -175,6 +179,7 @@ export default class EditMusic extends React.Component {
 			this.splitTime = ms
 			if(this.songTime/1000 >= this.props.asset.content2.duration){
 				this.stopMusic()
+				if(this.state.isLoop) this.togglePlayMusic()
 			}
 			this.updateCursor()
 		}
@@ -298,30 +303,47 @@ export default class EditMusic extends React.Component {
 						</button>
 					</div>
 
-					<div className="row">
-						<button className="ui small icon button"
-							title="Add new audio channel"
-							onClick={this.addChannel.bind(this, null)}>
-						  <i className="add square icon"></i> Add channel
-						</button>
-						<button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
-						  <i className={"icon " + (this.state.isPlaying ? "pause" : "play")}></i>
-						</button>
-						<button className="ui icon button small" onClick={this.stopMusic.bind(this)}>
-						  <i className={"icon stop"}></i>
-						</button>
-					</div>
-
 					<div className="content">
 						<div id="musicPlayer"></div>
 						<div className="channelsHeader">
-							<div className="controls">
+							{/***** Control buttons *****/}
+							<div className="row">
+								<button className="ui small icon button"
+									title="Add new audio channel"
+									onClick={this.addChannel.bind(this, null)}>
+								  <i className="add square icon"></i> Add channel
+								</button>
+
+								<button 
+									title={this.state.isPlaying ? "Pause channels" : "Play channels"}
+									className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
+								  <i className={"icon " + (this.state.isPlaying ? "pause" : "play")}></i>
+								</button>
+
+								<button 
+									title="Stop channels"
+									className="ui icon button small" onClick={this.stopMusic.bind(this)}>
+								  <i className={"icon stop"}></i>
+								</button>
+
+								<div className={"ui toggle checkbox "} title="Enable audio looping">
+			            <input type="checkbox" checked={(this.state.isLoop ? "checked" : "")} onChange={this.toggleLoop.bind(this)}/>
+			            <label>Loop</label>
+			          </div>
+
+			          &nbsp;&nbsp;
+
 								<div className="ui small labeled input">
 								  <div className="ui label">
 								    Duration
 								  </div>
 								  <input type="number" value={Math.floor(c2.duration)} min="1" max="999" onChange={this.changeDuration.bind(this)} />
 								</div>
+
+
+							</div>
+							<div className="controls">
+								
 							</div>
 							<div className="timeline">
 								<canvas ref="timeline" width={this.state.canvasWidth} height="50px"></canvas>

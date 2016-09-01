@@ -285,7 +285,7 @@ export default class TileSet extends React.Component {
 
     const infolink = '/api/asset/tileset-info/' + data.asset._id
     $.get(infolink, (data) => {
-      this.refs.controls.updateTilesetFromData(data)
+      this.refs.controls.updateTilesetFromData(data, this.data)
     })
   }
 

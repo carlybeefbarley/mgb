@@ -32,6 +32,10 @@ export default class Channel extends React.Component {
 		}
 	}
 
+	getBuffer(){
+		return this.buffer ? this.buffer.getChannelData(0) : null
+	}
+
 	initWave(){
 		const channel = this.props.channel
 		if(!channel.dataUri) return

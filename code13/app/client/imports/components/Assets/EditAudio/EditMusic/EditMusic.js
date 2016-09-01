@@ -101,6 +101,9 @@ export default class EditMusic extends React.Component {
 			this.saveText = saveText;
 			this.addChannel(audioObject.src)
 			this.updateCanvasLength()
+
+			// TODO implement this proper way via callbacks
+			setTimeout( () => this.sumChannelBuffers(), 500)	
 		}
 
 		$(this.importMusicPopup).modal('hide')
@@ -174,6 +177,27 @@ export default class EditMusic extends React.Component {
      	this.timelineCtx.stroke()
 		}
 		this.timelineCtx.restore()
+	}
+
+	sumChannelBuffers(){
+		let bufferList = []
+		this.props.asset.content2.channels.forEach((channel, id) => {
+			const buffer = this.refs["channel"+id].getBuffer()
+			if(buffer && buffer.length > 0){
+				bufferList.push(buffer)
+			}
+		})
+
+		const arrayLength = Math.floor(this.props.asset.content2.duration * this.audioCtx.sampleRate)
+		let sumBuffer = new Float32Array(arrayLength)
+		bufferList.forEach((buffer) => {
+			const bufferLength = buffer.length < arrayLength ? buffer.length : arrayLength
+			for(let i=0; i<bufferLength; i++){
+				sumBuffer[i] += buffer[i]
+			}
+		})
+
+		console.log( sumBuffer )
 	}
 
 	updateTimer(){

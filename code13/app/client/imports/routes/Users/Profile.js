@@ -1,4 +1,3 @@
-
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
 import Helmet from 'react-helmet'
@@ -9,6 +8,7 @@ import SkillGrid from '/client/imports/components/Users/SkillGrid'
 import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'
 import SkillsMap from '/client/imports/components/Controls/SkillsMap/SkillsMap'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
+import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
@@ -17,9 +17,8 @@ import { Projects } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
-import NavRecentGET from '/client/imports/components/Nav/NavRecentGET.js'
+import NavRecentGET from '/client/imports/components/Nav/NavRecentGET'
 import QLink from '../QLink'
-
 
 export default UserProfileRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -97,18 +96,6 @@ export default UserProfileRoute = React.createClass({
   },
 
 
-
-  renderAvatarColumn: function(user, ownsProfile, className) {
-    const { avatar } = user.profile
-
-    return (
-      <div className={className}>
-        <img className="ui fluid image" src={avatar}></img>
-      </div>
-    )
-  },
-
-
   renderUserInfo: function(user, ownsProfile, className) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile
@@ -116,11 +103,13 @@ export default UserProfileRoute = React.createClass({
     return (
       <div className={className}>
         <div className="ui items">
-          <div className=" item">        
+          <div className="item">
             
-            <div className="image">
-              <img src={avatar}></img>
-            </div>
+            <ImageShowOrChange
+              className="image"
+              imageSrc={avatar}
+              canEdit={ownsProfile}
+              handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
 
             <div className="content">          
 

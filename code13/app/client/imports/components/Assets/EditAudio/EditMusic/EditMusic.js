@@ -84,9 +84,19 @@ export default class EditMusic extends React.Component {
 		this.waveDraw = new WaveDraw(data)
 	}
 
+	componentWillUpdate(nextProps, newxtState){
+		// console.log("next", nextProps.asset.content2.channels.length, this.props.asset.content2.channels.length)
+	}
+
 	componentDidUpdate(prevProps, prevState){
 		// console.log('did update')
 		this.drawTimeline()
+
+		// console.log(prevProps.asset.content2.channels.length, this.props.asset.content2.channels.length)
+	}
+
+	componentWillReceiveProps(a, b){
+		console.log(a.asset.content2.channels.length, this.props.asset.content2.channels.length)
 	}
 
 	openImportPopup(){
@@ -303,7 +313,8 @@ export default class EditMusic extends React.Component {
   	let c2 = this.props.asset.content2	
   	c2.channels.splice(channelID, 1)
   	this.handleSave("Remove channel")
-  	setTimeout( () =>	this.callChildren("initWave"), 50)		// force redraw wave, because react doesn't update it
+  	setTimeout( () =>	this.callChildren("initWave"), 200)		// force redraw wave, because react doesn't update it
+  	setTimeout( () =>	this.mergeChannels("Merge channels"), 200)		// hack to merge channels after deleting
   }
 
   renderChannels(){

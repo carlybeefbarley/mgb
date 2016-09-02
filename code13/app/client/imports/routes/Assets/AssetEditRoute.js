@@ -42,6 +42,21 @@ import { ActivitySnapshots, Activity } from '/imports/schemas'
 // Note that the Lease field should not be set on client.. it should be guarded by !isSimulation
 // BUT this will not work if clients' clocks are wrong :(  So instead, the leases should be managed on server:  ??????
 
+
+// The deferred saves are handled by the following data:
+  //     this.m_deferredSaveObj: null     
+  // null, or ONE object of form 
+  // {
+  //   content2Object: object, 
+  //   thumbnail: string, 
+  //   changeText: string, 
+  //   timeOfLastChange, 
+  //   timeOfLastWrite 
+  // }
+  // ... Note that this isn't in React's this.state.___ because we need access to it after the component has been unmounted
+  /// (Hmm.. maybe I should create a state container for this outside this component)
+
+
 export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
@@ -58,11 +73,6 @@ export default AssetEditRoute = React.createClass({
 
 
 
-  // getInitialState: function() {
-  //   return {
-  //     deferredSaveObj: null     // null, or ONE object of form { content2Object: object, thumbnail: string, changeText: string }
-  //   }
-  // },
 
 
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId

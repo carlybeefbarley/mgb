@@ -7,8 +7,8 @@ import MusicStock from './MusicStock.js';
 import GenerateMusic from './GenerateMusic.js';
 import Generate8bit from './Generate8bit.js';
 
-import WaveSurfer from '../lib/WaveSurfer.js';
-import Channel from './Channel.js';
+import Channel from './Channel.js'
+import lamejs from '../lib/lame.all.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 
 export default class EditMusic extends React.Component {
@@ -30,13 +30,11 @@ export default class EditMusic extends React.Component {
 	}
 
 	componentDidMount(){
-		this.wavesurfer = WaveSurfer.create({
-		    container: '#musicPlayer'
-		    , waveColor: '#4dd2ff'
-    		, progressColor: '#01a2d9'
-		});
 
-		this.musicCanvas = $("#musicPlayer canvas")[0]
+  //   waveColor: '#4dd2ff'
+		// progressColor: '#01a2d9'
+
+		this.musicCanvas = ReactDOM.findDOMNode(this.refs.musicCanvas)
 		this.musicCtx = this.musicCanvas.getContext('2d')
 		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
 		this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
@@ -53,17 +51,11 @@ export default class EditMusic extends React.Component {
 
 		let c2 = this.props.asset.content2
 		if(c2.dataUri){
-			this.wavesurfer.load(c2.dataUri)
+			// TODO draw audio wave
+			setTimeout( () => this.sumChannelBuffers(), 500)	
 		}
 
-		let self = this;
-		this.wavesurfer.on('finish', function () {
-			self.wavesurfer.stop();
-    	self.setState({ isPlaying: false })
-		})
-		this.wavesurfer.on('ready', function () {
-			self.handleSave()
-		})
+
 
 
 		this.cursor = ReactDOM.findDOMNode(this.refs.cursor)
@@ -91,7 +83,8 @@ export default class EditMusic extends React.Component {
 		if(!this.hasPermission) return;
 
 		if(audioObject){
-			this.wavesurfer.load(audioObject.src)
+			// TODO draw audio wave
+
 			let c2 = this.props.asset.content2
 			c2.dataUri = audioObject.src
 			let duration = c2.duration
@@ -131,17 +124,14 @@ export default class EditMusic extends React.Component {
 	togglePlayMusic(){
 		if(this.state.isPlaying){
 			this.audioCtx.suspend()
-			// this.wavesurfer.pause();
 		} else {
 			this.splitTime = Date.now()
 			this.audioCtx.resume()
-			// this.wavesurfer.play();
 		}
 		this.setState({ isPlaying: !this.state.isPlaying })	
 	}
 
 	stopMusic(){
-		// this.wavesurfer.stop();
 		this.setState({ isPlaying: false })
 		this.audioCtx.suspend()
 		this.songTime = 0
@@ -196,8 +186,45 @@ export default class EditMusic extends React.Component {
 				sumBuffer[i] += buffer[i]
 			}
 		})
+		this.drawWave(sumBuffer)
 
-		console.log( sumBuffer )
+		let samples = new Int16Array( sumBuffer.length )
+		sumBuffer.forEach((val, i) => {
+			if(val > 1) val = 1
+			else if(val < -1) val = 1
+      val = val < 0 ? val * 32768 : val * 32767
+      samples[i] = Math.round(val)
+		})
+
+		lamejs.encodeMono(1, this.audioCtx.sampleRate, samples, (audioObject) => {
+    	audioObject.play()
+    	this.handleSave("Music import")
+    })
+	}
+
+	drawWave(samples){
+		const channelData = samples
+		const channelWidth = 1200
+		const chunk = Math.floor(channelData.length / channelWidth)
+		const subChunk = 10
+		const subChunkVal = Math.floor(chunk/subChunk)
+		this.musicCtx.clearRect(0, 0, 1200, 128)
+		this.musicCtx.save()
+   	this.musicCtx.strokeStyle = '#4dd2ff'
+   	this.musicCtx.globalAlpha = 0.4
+   	const y = 128/2
+		for(let i=0; i<channelWidth; i++){
+			for(var j=0; j<subChunk; j++){
+				const val = channelData[i*chunk + j*subChunkVal]
+				// const x = i+j*(1/subChunk)
+				const x = i
+				this.musicCtx.beginPath()
+	     	this.musicCtx.moveTo( x, y )
+	     	this.musicCtx.lineTo( x, y + val*y )
+	     	this.musicCtx.stroke()
+     }
+		}
+		this.musicCtx.restore();
 	}
 
 	updateTimer(){
@@ -342,7 +369,9 @@ export default class EditMusic extends React.Component {
 					</div>
 
 					<div className="content">
-						<div id="musicPlayer"></div>
+						<div>
+							<canvas ref="musicCanvas" width={"1200px"} height="128px"></canvas>
+						</div>
 						<div className="channelsHeader">
 							{/***** Control buttons *****/}
 							<div className="row">

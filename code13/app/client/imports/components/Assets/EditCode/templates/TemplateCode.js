@@ -261,5 +261,40 @@ export default class extends React.Component {
   }
 }
 `
+  },
+  {
+    label: "Load MGB Map in phaser",
+    description: "",
+    code:
+`
+import 'phaser'
+import '/stauzs/mgb-map-loader'
+
+const game = new Phaser.Game(27*16, 15*16, Phaser.AUTO, document.body, {
+  preload: function(){
+    this.game.load.mgbMap("{REPLACE_WITH_MAP_ID}")
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  },
+
+  create: function(){
+    /*
+    mgb map structure: {
+      data, // raw map data in tiled json format
+      layers, // Object containing layer with name - layer can be either group or tilemaplayer
+      map // reference to phaser tilemap object
+    }
+    */
+    const mgbMap = this.game.create.mgbMap("{REPLACE_WITH_MAP_ID}")
+    // set world bound to match map size
+    this.game.world.setBounds(0, 0,
+                              mgbMap.data.width * mgbMap.data.tilewidth,
+                              mgbMap.data.height* mgbMap.data.tileheight
+    );
+
+  }
+})
+// allow to take screenshots in the webgl mode
+game.preserveDrawingBuffer = true;
+`
   }
 ]

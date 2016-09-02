@@ -17,8 +17,13 @@ let AudioConverter = function(audioCtx){
 	}
 
 	// datUri will be mp3
-	this.bufferToDataUri = function(buffer){
-
+	this.bufferToDataUri = function(buffer, callback){
+		if(buffer instanceof Float32Array){
+			buffer = this.float32ToInt16(buffer)
+		}
+		lamejs.encodeMono(1, this.audioCtx.sampleRate, buffer, (audioObject) => {
+    	callback(audioObject.src)
+    })
 	}
 
 	this.dataURItoBlob = function(dataURI) {

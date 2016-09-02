@@ -98,7 +98,7 @@ export default class EditMusic extends React.Component {
 
 		if(audioObject){
  			let c2 = this.props.asset.content2
-			c2.dataUri = audioObject.src
+			// c2.dataUri = audioObject.src
 			let duration = c2.duration
 			if(!duration) duration = audioObject.duration
 			else if(duration < audioObject.duration) duration = audioObject.duration
@@ -107,7 +107,7 @@ export default class EditMusic extends React.Component {
 			this.addChannel(audioObject.src)
 			this.updateCanvasLength()
 
-			setTimeout( () => this.mergeChannels(), 200)	// hack to get merge channels after channel is added
+			setTimeout( () => this.mergeChannels("Merge channels"), 200)	// hack to get merge channels after channel is added
 		}
 
 		$(this.importMusicPopup).modal('hide')
@@ -180,7 +180,9 @@ export default class EditMusic extends React.Component {
 		this.timelineCtx.restore()
 	}
 
-	mergeChannels(){
+	mergeChannels(saveText){
+		let c2 = this.props.asset.content2
+		console.log("merge channels", c2.channels.length)
 		let bufferList = []
 		this.props.asset.content2.channels.forEach((channel, id) => {
 			const buffer = this.refs["channel"+id].getBuffer()
@@ -188,19 +190,15 @@ export default class EditMusic extends React.Component {
 				bufferList.push(buffer)
 			}
 		})
-		console.log(bufferList, this.props.asset.content2.channels.length)
 
 		let buffer = this.converter.mergeBuffers(bufferList, this.props.asset.content2.duration)
-		// console.log(buffer)
+		this.bufferLoaded(buffer)
 
-		const data = {
-			audioCtx: 	this.audioCtx,
-			duration: 	this.props.asset.content2.duration, 
-			canvas: 		this.musicCanvas,
-			color: 			this.state.waveColor,
-			buffer: 		buffer,
-		}
-		this.waveDraw = new WaveDraw(data)
+		this.converter.bufferToDataUri(buffer, (dataUri) => {
+			// console.log(dataUri)
+			c2.dataUri = dataUri
+			this.handleSave(saveText)
+		})
 
 	}
 
@@ -272,6 +270,7 @@ export default class EditMusic extends React.Component {
     let asset = this.props.asset
     let c2    = asset.content2
 
+    // console.log("SAVE", saveText)
     this.thumbnailCtx.putImageData(this.musicCtx.getImageData(0, 0, 290, 128), 0, 0)
     this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
   }

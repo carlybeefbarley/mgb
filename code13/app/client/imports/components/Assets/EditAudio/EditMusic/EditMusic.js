@@ -9,6 +9,7 @@ import Generate8bit from './Generate8bit.js';
 
 import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
+import WaveDraw from '../lib/WaveDraw.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 
 export default class EditMusic extends React.Component {
@@ -35,7 +36,6 @@ export default class EditMusic extends React.Component {
 		// progressColor: '#01a2d9'
 
 		this.musicCanvas = ReactDOM.findDOMNode(this.refs.musicCanvas)
-		this.musicCtx = this.musicCanvas.getContext('2d')
 		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
 		this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
 
@@ -178,54 +178,43 @@ export default class EditMusic extends React.Component {
 			}
 		})
 
-		const arrayLength = Math.floor(this.props.asset.content2.duration * this.audioCtx.sampleRate)
-		let sumBuffer = new Float32Array(arrayLength)
-		bufferList.forEach((buffer) => {
-			const bufferLength = buffer.length < arrayLength ? buffer.length : arrayLength
-			for(let i=0; i<bufferLength; i++){
-				sumBuffer[i] += buffer[i]
-			}
-		})
-		this.drawWave(sumBuffer)
+		const data = {
+			audioCtx: 	this.audioCtx,
+			duration: 	this.props.asset.content2.duration, 
+			canvas: 		this.musicCanvas,
+			color: 			'#4dd2ff',
+			bufferList: bufferList,
 
-		let samples = new Int16Array( sumBuffer.length )
-		sumBuffer.forEach((val, i) => {
-			if(val > 1) val = 1
-			else if(val < -1) val = 1
-      val = val < 0 ? val * 32768 : val * 32767
-      samples[i] = Math.round(val)
-		})
 
-		lamejs.encodeMono(1, this.audioCtx.sampleRate, samples, (audioObject) => {
-    	audioObject.play()
-    	this.handleSave("Music import")
-    })
-	}
 
-	drawWave(samples){
-		const channelData = samples
-		const channelWidth = 1200
-		const chunk = Math.floor(channelData.length / channelWidth)
-		const subChunk = 10
-		const subChunkVal = Math.floor(chunk/subChunk)
-		this.musicCtx.clearRect(0, 0, 1200, 128)
-		this.musicCtx.save()
-   	this.musicCtx.strokeStyle = '#4dd2ff'
-   	this.musicCtx.globalAlpha = 0.4
-   	const y = 128/2
-		for(let i=0; i<channelWidth; i++){
-			for(var j=0; j<subChunk; j++){
-				const val = channelData[i*chunk + j*subChunkVal]
-				// const x = i+j*(1/subChunk)
-				const x = i
-				this.musicCtx.beginPath()
-	     	this.musicCtx.moveTo( x, y )
-	     	this.musicCtx.lineTo( x, y + val*y )
-	     	this.musicCtx.stroke()
-     }
 		}
-		this.musicCtx.restore();
+		this.waveDraw = new WaveDraw(data)
 	}
+
+	// drawWave(samples){
+	// 	const channelData = samples
+	// 	const channelWidth = 1200
+	// 	const chunk = Math.floor(channelData.length / channelWidth)
+	// 	const subChunk = 10
+	// 	const subChunkVal = Math.floor(chunk/subChunk)
+	// 	this.musicCtx.clearRect(0, 0, 1200, 128)
+	// 	this.musicCtx.save()
+ //   	this.musicCtx.strokeStyle = '#4dd2ff'
+ //   	this.musicCtx.globalAlpha = 0.4
+ //   	const y = 128/2
+	// 	for(let i=0; i<channelWidth; i++){
+	// 		for(var j=0; j<subChunk; j++){
+	// 			const val = channelData[i*chunk + j*subChunkVal]
+	// 			// const x = i+j*(1/subChunk)
+	// 			const x = i
+	// 			this.musicCtx.beginPath()
+	//      	this.musicCtx.moveTo( x, y )
+	//      	this.musicCtx.lineTo( x, y + val*y )
+	//      	this.musicCtx.stroke()
+ //     }
+	// 	}
+	// 	this.musicCtx.restore();
+	// }
 
 	updateTimer(){
 		if(this.state.isPlaying){

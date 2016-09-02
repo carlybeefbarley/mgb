@@ -54,8 +54,6 @@ let WaveDraw = function(data){
 			if(val > 1) sumBuffer[i] = 1
 		})
 
-		console.log("sum buffer list", sumBuffer)
-
 		return sumBuffer
 
 		// this.drawWave(sumBuffer)

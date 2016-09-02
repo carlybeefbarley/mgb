@@ -10,6 +10,7 @@ import Generate8bit from './Generate8bit.js';
 import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
 import WaveDraw from '../lib/WaveDraw.js'
+import AudioConverter from '../lib/AudioConverter.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 
 export default class EditMusic extends React.Component {
@@ -52,7 +53,11 @@ export default class EditMusic extends React.Component {
 		let c2 = this.props.asset.content2
 		if(c2.dataUri){
 			// TODO draw audio wave
-			setTimeout( () => this.sumChannelBuffers(), 500)	
+			// setTimeout( () => this.sumChannelBuffers(), 500)	
+
+			// TODO dataUri to audioBuffer
+			let converter = new AudioConverter(this.audioCtx)
+			converter.dataUriToBuffer(c2.dataUri, this.bufferLoaded.bind(this))
 		}
 
 
@@ -68,6 +73,18 @@ export default class EditMusic extends React.Component {
       window.requestAnimationFrame(this._raf);
     }
     this._raf()
+	}
+
+	bufferLoaded(buffer){
+		console.log(buffer, this.cursorOffsetX)
+		const data = {
+			audioCtx: 	this.audioCtx,
+			duration: 	this.props.asset.content2.duration, 
+			canvas: 		this.musicCanvas,
+			color: 			'#4dd2ff',
+			buffer: buffer,
+		}
+		this.waveDraw = new WaveDraw(data)
 	}
 
 	componentDidUpdate(prevProps, prevState){

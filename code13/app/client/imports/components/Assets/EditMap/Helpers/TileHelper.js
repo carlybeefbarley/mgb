@@ -44,7 +44,7 @@ const TileHelper = {
   },
 
   getTilesetHeight: (tileset, spacing = 1) => {
-    return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight)
+    return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight) - spacing
   },
   /* helpers */
   normalizePath: (raw) => {

@@ -430,16 +430,18 @@ export default class MapArea extends React.Component {
         }
         else if (this.missingImages.indexOf(ts.image) > -1) {
           this.errors.push("missing: '" + ts.image + "'")
-        }else {
+        }
+        else {
           this.getImage(ts.image)
         }
         continue
       }
       const img = this.images.get(ts.image)
       // this should be imported from mgb1
-      if (!ts.imagewidth) {
-        ts.imagewidth = img.width
-        ts.imageheight = img.height
+      ts.imagewidth = img.width
+      ts.imageheight = img.height
+      
+      if (!ts.tilewidth) {
         ts.tilewidth = img.width
         ts.tileheight = img.height
         ts.width = 1

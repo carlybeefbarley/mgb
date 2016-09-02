@@ -488,7 +488,11 @@ RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
 <title>${asset.name}</title>
 <style>html, body{padding: 0; margin: 0}</style>
 </head>
-<body><script>${asset.content2.bundle}</script>${extraMessage}</body>
+<body><script type="text/javascript">
+//<!--
+${asset.content2.bundle}
+//-->
+</script>${extraMessage}</body>
 </html>
 `
     return {

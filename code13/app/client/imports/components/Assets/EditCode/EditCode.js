@@ -883,8 +883,11 @@ export default class EditCode extends React.Component {
           {
             const value = this.codeMirror.getValue()
             let newC2 = { src: value, bundle: data.src }
-            this.lastBundle = data.src
-            this.handleContentChange( newC2, null, `Store code bundle`)
+            // don't save - if not changed
+            if(this.lastBundle != data.src) {
+              this.lastBundle = data.src
+              this.handleContentChange(newC2, null, `Store code bundle`)
+            }
           }
         } break
       }

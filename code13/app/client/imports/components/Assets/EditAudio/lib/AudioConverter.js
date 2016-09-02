@@ -16,6 +16,11 @@ let AudioConverter = function(audioCtx){
     reader.readAsArrayBuffer(blob)
 	}
 
+	// datUri will be mp3
+	this.bufferToDataUri = function(buffer){
+
+	}
+
 	this.dataURItoBlob = function(dataURI) {
 	  var byteString = atob(dataURI.split(',')[1]);
 	  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
@@ -36,6 +41,26 @@ let AudioConverter = function(audioCtx){
         samples[i] = Math.round(v)
     }
     return samples
+	}
+
+	this.mergeBuffers = function(bufferList, duration){
+		const arrayLength = Math.floor(duration * this.audioCtx.sampleRate)
+		let sumBuffer = new Float32Array(arrayLength)
+		bufferList.forEach((buffer) => {
+			// buffer length shouldn't exceed all track length
+			const bufferLength = buffer.length < arrayLength ? buffer.length : arrayLength	
+			for(let i=0; i<bufferLength; i++){
+				sumBuffer[i] += buffer[i]
+			}
+		})
+
+		// summing buffers some values could be greater than -1 to 1 range. need to avoid this
+		sumBuffer.forEach((val, i) => {
+			if(val < -1) sumBuffer[i] = -1
+			if(val > 1) sumBuffer[i] = 1
+		})
+
+		return sumBuffer
 	}
 }
 

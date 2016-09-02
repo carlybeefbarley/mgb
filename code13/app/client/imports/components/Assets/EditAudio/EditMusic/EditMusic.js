@@ -28,6 +28,7 @@ export default class EditMusic extends React.Component {
   		canvasWidth: pxPerSecond*props.asset.content2.duration+1,		// changing depending on props.duration
   		canvasHeight: 128,
   		pxPerSecond: pxPerSecond,		// defines width of canvass 
+  		waveColor: '#4dd2ff',
   	}
 	}
 
@@ -37,6 +38,7 @@ export default class EditMusic extends React.Component {
 		// progressColor: '#01a2d9'
 
 		this.musicCanvas = ReactDOM.findDOMNode(this.refs.musicCanvas)
+		this.musicCtx = this.musicCanvas.getContext('2d')
 		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
 		this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
 
@@ -50,14 +52,10 @@ export default class EditMusic extends React.Component {
 		this.generateMusicPopup = ReactDOM.findDOMNode(this.refs.generateMusicPopup)
 		this.generate8bitPopup = ReactDOM.findDOMNode(this.refs.generate8bitPopup)
 
+		this.converter = new AudioConverter(this.audioCtx)
 		let c2 = this.props.asset.content2
 		if(c2.dataUri){
-			// TODO draw audio wave
-			// setTimeout( () => this.sumChannelBuffers(), 500)	
-
-			// TODO dataUri to audioBuffer
-			let converter = new AudioConverter(this.audioCtx)
-			converter.dataUriToBuffer(c2.dataUri, this.bufferLoaded.bind(this))
+			this.converter.dataUriToBuffer(c2.dataUri, this.bufferLoaded.bind(this))
 		}
 
 
@@ -76,12 +74,11 @@ export default class EditMusic extends React.Component {
 	}
 
 	bufferLoaded(buffer){
-		console.log(buffer, this.cursorOffsetX)
 		const data = {
 			audioCtx: 	this.audioCtx,
 			duration: 	this.props.asset.content2.duration, 
 			canvas: 		this.musicCanvas,
-			color: 			'#4dd2ff',
+			color: 			this.state.waveColor,
 			buffer: buffer,
 		}
 		this.waveDraw = new WaveDraw(data)
@@ -100,9 +97,7 @@ export default class EditMusic extends React.Component {
 		if(!this.hasPermission) return;
 
 		if(audioObject){
-			// TODO draw audio wave
-
-			let c2 = this.props.asset.content2
+ 			let c2 = this.props.asset.content2
 			c2.dataUri = audioObject.src
 			let duration = c2.duration
 			if(!duration) duration = audioObject.duration
@@ -112,8 +107,7 @@ export default class EditMusic extends React.Component {
 			this.addChannel(audioObject.src)
 			this.updateCanvasLength()
 
-			// TODO implement this proper way via callbacks
-			setTimeout( () => this.sumChannelBuffers(), 500)	
+			setTimeout( () => this.mergeChannels(), 200)	// hack to get merge channels after channel is added
 		}
 
 		$(this.importMusicPopup).modal('hide')
@@ -186,7 +180,7 @@ export default class EditMusic extends React.Component {
 		this.timelineCtx.restore()
 	}
 
-	sumChannelBuffers(){
+	mergeChannels(){
 		let bufferList = []
 		this.props.asset.content2.channels.forEach((channel, id) => {
 			const buffer = this.refs["channel"+id].getBuffer()
@@ -194,18 +188,20 @@ export default class EditMusic extends React.Component {
 				bufferList.push(buffer)
 			}
 		})
+		console.log(bufferList, this.props.asset.content2.channels.length)
+
+		let buffer = this.converter.mergeBuffers(bufferList, this.props.asset.content2.duration)
+		// console.log(buffer)
 
 		const data = {
 			audioCtx: 	this.audioCtx,
 			duration: 	this.props.asset.content2.duration, 
 			canvas: 		this.musicCanvas,
-			color: 			'#4dd2ff',
-			bufferList: bufferList,
-
-
-
+			color: 			this.state.waveColor,
+			buffer: 		buffer,
 		}
 		this.waveDraw = new WaveDraw(data)
+
 	}
 
 	// drawWave(samples){

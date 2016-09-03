@@ -97,7 +97,7 @@ export default fpAssets = React.createClass({
               <br></br>
               { this.data.loading ? <Spinner /> : 
                 <AssetList
-                    location="panel"
+                    allowDrag={true}
                     assets={assets} 
                     currUser={this.props.currUser}
                     renderType="short" />

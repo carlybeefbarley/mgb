@@ -23,7 +23,8 @@ export default AssetCard = React.createClass({
     currUser: PropTypes.object,                 // currently Logged In user (not always provided)
     canEdit: PropTypes.bool,                    // Whether changes (like stable, delete etc) are allowed. Can be false
     showEditButton: PropTypes.bool,             // Shall we *show* the Edit button
-    renderType: PropTypes.string                // One of null/undefined  OR  "short"
+    renderType: PropTypes.string,               // One of null/undefined  OR  "short"
+    allowDrag: PropTypes.bool.isRequired        // True if drag is allowed
   },
 
 
@@ -120,7 +121,7 @@ export default AssetCard = React.createClass({
     if (!this.props.asset)
       return null;
       
-    const {renderType, asset, showEditButton, currUser, canEdit, showHeader } = this.props;
+    const { renderType, asset, showEditButton, canEdit, showHeader, allowDrag, ownersProjects } = this.props;
     const assetKindIcon = AssetKinds.getIconClass(asset.kind);
     const assetKindDescription = AssetKinds.getDescription(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
@@ -147,18 +148,17 @@ export default AssetCard = React.createClass({
     const chosenProjectNamesArray = asset.projectNames || [];
 
     const availableProjectNamesArray = 
-        this.props.ownersProjects ? 
-          _.map(_.filter(this.props.ownersProjects, {"ownerId": asset.ownerId}), 'name')
+        ownersProjects ? 
+          _.map(_.filter(ownersProjects, {"ownerId": asset.ownerId}), 'name')
         : []
     const editProjects = <ProjectMembershipEditor 
-                            canEdit={this.props.canEdit}
+                            canEdit={canEdit}
                             availableProjectNamesArray={availableProjectNamesArray}
                             chosenProjectNames={chosenProjectNamesArray}
                             handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
                             />
                           
 
-    // TODO: add allowDrag to props.. and walk through AssetCard use cases;
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
       <div key={asset._id} className="ui card" style={ { minWidth: "200px"} }>
@@ -171,7 +171,7 @@ export default AssetCard = React.createClass({
                 width={iw} 
                 height={ih} 
                 style={{backgroundColor: '#ffffff', minHeight:"150px", maxHeight:"150px", maxWidth:"290px", width:"auto"}}
-                draggable={this.props.location == "panel" ? "true": "false"}
+                draggable={allowDrag ? "true" : "false"}
                 onDragStart={this.startDrag.bind(this, asset)}
                 onDragEnd={this.endDrag.bind(this, asset)}
                 >
@@ -218,8 +218,8 @@ export default AssetCard = React.createClass({
           { !renderShort && 
             <div className="meta">
               <small>          
-                {editProjects}
-                { !this.props.showHeader ? null : "Updated " + ago }
+                { editProjects }
+                { !showHeader ? null : "Updated " + ago }
               </small>
             </div>
           }
@@ -245,7 +245,7 @@ export default AssetCard = React.createClass({
           <div className="ui four small bottom attached icon buttons">
             <QLink 
                   to={`/u/${asset.dn_ownerName}/asset/${asset._id}`} 
-                  className={(this.props.showEditButton ? "" : "disabled ") + "ui green compact button"} 
+                  className={(showEditButton ? "" : "disabled ") + "ui green compact button"} 
                   onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
               <small>&nbsp;Edit</small>

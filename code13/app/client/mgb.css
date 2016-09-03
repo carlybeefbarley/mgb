@@ -38,6 +38,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.mgb-pixelated {
+  image-rendering: -moz-crisp-edges;         /* Firefox */
+  image-rendering:   -o-crisp-edges;         /* Opera */
+  image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;       
+}
+
 .accept-drop{
   position: relative;
 }

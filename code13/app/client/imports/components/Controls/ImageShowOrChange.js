@@ -20,7 +20,7 @@ export default class ImageShowOrChange extends React.Component {
         className={className}           
         onDragOver={(e) => this.prepareForDrag(e) }
         onDrop={(e) => this.importFromDrop(e) } >
-        <img className="ui fluid image" src={imageSrc} />
+        <img className="ui fluid image mgb-pixelated" src={imageSrc} />
       </div>
     )
   }

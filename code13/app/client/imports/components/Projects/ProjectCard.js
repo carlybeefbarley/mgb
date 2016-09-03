@@ -44,11 +44,13 @@ export default ProjectCard = React.createClass({
     return (
        <div className="ui bordered card" key={project._id}>
 
-        <ImageShowOrChange
-          className="image"
-          imageSrc={projectAvatarImageUrl}
-          canEdit={canEdit}
-          handleChange={(newUrl, avatarId) => this.props.handleFieldChanged( { "avatarAssetId": avatarId }) } />
+        <QLink className="image" to={linkTo}>
+          <ImageShowOrChange
+            className="image"
+            imageSrc={projectAvatarImageUrl}
+            canEdit={canEdit}
+            handleChange={(newUrl, avatarId) => this.props.handleFieldChanged( { "avatarAssetId": avatarId }) } />
+        </QLink>
 
         <QLink className="content" to={linkTo}>
           <i className="right floated star icon"></i>

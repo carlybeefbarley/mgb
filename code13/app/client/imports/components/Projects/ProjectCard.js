@@ -1,8 +1,10 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import moment from 'moment'
 import QLink from '/client/imports/routes/QLink'
 import QLinkUser from '/client/imports/routes/QLinkUser'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
+import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 
 
 // This is a Project Card which is a card-format version of the Project information.
@@ -32,44 +34,48 @@ export default ProjectCard = React.createClass({
   },
 
   render: function() {
-    const { project, owner, wholeCardIsLink } = this.props        
+    const { project, owner, wholeCardIsLink, canEdit } = this.props        
     const createdAt = project.createdAt
     const editsDisabled = !this.props.canEdit
-
+    const projectAvatarImageUrl = (project.avatarAssetId.length && project.avatarAssetId.length && project.avatarAssetId.length > 0) ? `/api/asset/png/${project.avatarAssetId}` : "/images/wireframe/image.png"
     const linkTo = "/u/" + project.ownerName + "/project/" + project._id
-
     const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
-    return  <div className="ui bordered card" key={project._id}>
 
-              <QLink className="image" to={linkTo}>
-                <img src="/images/wireframe/image.png"></img>
-              </QLink>
-    
-              <QLink className="content" to={linkTo}>
-                <i className="right floated star icon"></i>
-                <div className="header">{project.name}</div>
-                <div className="meta"><i className="users icon"></i>&nbsp;{MemberStr}</div>
+    return (
+       <div className="ui bordered card" key={project._id}>
 
-                <div className="ui description">
-                  <b>Description:&nbsp;</b> 
-                  <InlineEdit
-                    validate={this.customValidateText}
-                    activeClassName="editing"
-                    text={project.description || "(no description)"}
-                    paramName="description"
-                    change={this.fieldChanged}
-                    isDisabled={editsDisabled}
-                    />
-                </div>
-              </QLink>
+        <ImageShowOrChange
+          className="image"
+          imageSrc={projectAvatarImageUrl}
+          canEdit={canEdit}
+          handleChange={(newUrl, avatarId) => this.props.handleFieldChanged( { "avatarAssetId": avatarId }) } />
 
-              <div className="extra content">
-                <span className="left floated icon">
-                  <i className="large sitemap icon"></i>
-                  Project
-                </span>
-                <QLinkUser targetUser={owner} />
-              </div>
-            </div>
+        <QLink className="content" to={linkTo}>
+          <i className="right floated star icon"></i>
+          <div className="header">{project.name}</div>
+          <div className="meta"><i className="users icon"></i>&nbsp;{MemberStr}</div>
+
+          <div className="ui description">
+            <b>Description:&nbsp;</b> 
+            <InlineEdit
+              validate={this.customValidateText}
+              activeClassName="editing"
+              text={project.description || "(no description)"}
+              paramName="description"
+              change={this.fieldChanged}
+              isDisabled={editsDisabled}
+              />
+          </div>
+        </QLink>
+
+        <div className="extra content">
+          <span className="left floated icon">
+            <i className="large sitemap icon"></i>
+            Project
+          </span>
+          <QLinkUser targetUser={owner} />
+        </div>
+      </div>
+    )
   }
 })

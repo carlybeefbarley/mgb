@@ -6,7 +6,7 @@ const _propTypes = {
   className:    PropTypes.string.isRequired,    // Classname for the outer div
   imageSrc:     PropTypes.string.isRequired,    // A string which will be passed to img.src
   canEdit:      PropTypes.bool.isRequired,      // True if this shoudl be able to accept changes via Drag
-  handleChange: PropTypes.func.isRequired       // Function callback - takes (newUrlString) as single param
+  handleChange: PropTypes.func.isRequired       // Function callback - takes (newUrlString, assetIdString) as params
 }
 
 export default class ImageShowOrChange extends React.Component {
@@ -41,7 +41,9 @@ export default class ImageShowOrChange extends React.Component {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     if (asset && asset.kind === 'graphic') {
       const imgUrl = `/api/asset/png/${asset._id}`
-      this.props.handleChange(imgUrl)
+      this.props.handleChange(imgUrl, asset._id)
     }
   }
 }
+
+ImageShowOrChange._propTypes = _propTypes

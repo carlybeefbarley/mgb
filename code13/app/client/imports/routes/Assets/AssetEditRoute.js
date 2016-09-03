@@ -17,6 +17,7 @@ import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerat
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
 
+const FLUSH_TIMER_INTERVAL_MS = 5000    // Milliseconds between timed flush attempts
 
 // This AssetEditRoute serves the following objectives
 // 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset
@@ -50,11 +51,12 @@ import { ActivitySnapshots, Activity } from '/imports/schemas'
   //   content2Object: object, 
   //   thumbnail: string, 
   //   changeText: string, 
-  //   timeOfLastChange, 
-  //   timeOfLastWrite 
+  //   timeOfLastChange,
+  //   timeOfLastWriteAttempt     // TODO
   // }
-  // ... Note that this isn't in React's this.state.___ because we need access to it after the component has been unmounted
-  /// (Hmm.. maybe I should create a state container for this outside this component)
+  // And this is structure is set in deferContentChange()
+  // ... Note that this isn't being stored in React's this.state.___ because we need access to it after the component has been unmounted
+  /// (Hmm.. maybe I should create a global state container for this outside this component?)
 
 
 export default AssetEditRoute = React.createClass({
@@ -73,8 +75,6 @@ export default AssetEditRoute = React.createClass({
 
 
 
-
-
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId
   // TODO: Make this QLink-smart so it preserves queries
   checkForRedirect() {
@@ -85,10 +85,22 @@ export default AssetEditRoute = React.createClass({
   componentDidMount() {
     this.checkForRedirect()
     this.m_deferredSaveObj = null
+
+    console.log("Preparing TICK Timer")
     this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => { 
       //console.log("TICK")
       this._attemptToSendAnyDeferredChanges() 
-    } , 5000 )
+    } , FLUSH_TIMER_INTERVAL_MS )
+  },
+
+
+  componentWillReceiveProps(nextProps)
+  {
+    if (nextProps.params.assetId !== this.props.params.assetId)
+    {
+      console.log("Asset changed. Flush deferred saves!")
+      this._attemptToSendAnyDeferredChanges({ forceResend: true })
+    }
   },
 
   componentWillUnmount() {
@@ -97,7 +109,7 @@ export default AssetEditRoute = React.createClass({
       console.log("Clearing TICK timer")
       Meteor.clearInterval(this.m_tickIntervalFunctionHandle)
       this.m_tickIntervalFunctionHandle = null
-      this._doSendDeferredChangeNow()   // Let's flush anything needed. 
+      this._attemptToSendAnyDeferredChanges({ forceResend: true })
     }
   },
 
@@ -116,6 +128,7 @@ export default AssetEditRoute = React.createClass({
 
     return {
       asset: Azzets.findOne(assetId),
+      isServerOnlineNow: Meteor.status().connected,
       activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
       assetActivity: Activity.find(selector, options).fetch(),
       loading: !handleForAsset.ready()    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
@@ -161,6 +174,7 @@ export default AssetEditRoute = React.createClass({
 
         <div className="ui eight wide column">
           <AssetPathDetail 
+            isServerOnlineNow={this.data.isServerOnlineNow}
             canEdit={canEd}
             isUnconfirmedSave={asset.isUnconfirmedSave}
             hasUnsentSaves={!!this.m_deferredSaveObj}
@@ -169,7 +183,8 @@ export default AssetEditRoute = React.createClass({
             name={asset.name}
             text={asset.text}
             handleNameChange={this.handleAssetNameChange}
-            handleDescriptionChange={this.handleAssetDescriptionChange}/>
+            handleDescriptionChange={this.handleAssetDescriptionChange}
+            handleSaveNowRequest={this.handleSaveNowRequest} />
         </div>
         
         <div className="ui eight wide right aligned column" >
@@ -199,7 +214,7 @@ export default AssetEditRoute = React.createClass({
             asset={asset} 
             canEdit={canEd} 
             currUser={this.props.currUser}
-            handleContentChange={this._deferContentChange}
+            handleContentChange={this.deferContentChange}
             editDeniedReminder={this.handleEditDeniedReminder}
             activitySnapshots={this.data.activitySnapshots} 
           />
@@ -216,35 +231,59 @@ export default AssetEditRoute = React.createClass({
   },
 
 
-  _deferContentChange(content2Object, thumbnail, changeText="content change")
+  // See comment at top of file for format of m_deferredSaveObj
+  deferContentChange(content2Object, thumbnail, changeText="content change")
   {
-    this.m_deferredSaveObj = { content2Object: content2Object, thumbnail: thumbnail, changeText: changeText }
-    this.forceUpdate()  // Yuck, but I have to, coz I can't put a deferal data structure in this.state
+    const asset = this.data.asset   // TODO: Change interface so this gets passed in instead?
+
+    if (this.m_deferredSaveObj)
+    {
+      const d = this.m_deferredSaveObj
+      console.log("Replacing deferred save: ", d.assetId, asset._id, (new Date()) - d.timeOfLastChange)
+    }
+    this.m_deferredSaveObj = {
+      assetId: asset._id,
+      content2Object: content2Object, 
+      thumbnail: thumbnail, 
+      changeText: changeText,
+      timeOfLastChange: new Date()
+    }
+    this.forceUpdate()  // Yuck, but I have to, coz I can't put a deferral data structure in this.state
   },
 
-  
-  // This could be called by a timer, or on error/ok return from a Meteor.call
-  _attemptToSendAnyDeferredChanges()
+
+  // Note that can be called directly by the Sub-components. 
+  // Primary use case is user hits 'save now' button
+  handleSaveNowRequest: function()
+  {
+    console.log("User requested: Save deferred changes now")
+    this._attemptToSendAnyDeferredChanges({ forceResend: true })
+  },
+
+
+  // This 'flush' could be called by a 'tick' timer OR user force-save-click OR unmount (navigate away from page)
+  // TODO: test props change of jump to different asset - is that a props change or an unmount?!!!
+  _attemptToSendAnyDeferredChanges( options = {} )
   {
     const asset = this.data.asset
-    if (asset && this.m_deferredSaveObj)
+    if (this.m_deferredSaveObj)
     {
-      // Something is deferred.. Can we send it yet?
       if (!Meteor.status().connected)
       {
         console.log(`Can't send deferred save of asset ${asset.name} because the connection is currently offline`)
       }
       else
       {
-        // We're connected.. Are we waiting for a pending write confirmation on this asset?
-        if (asset.isUnconfirmedSave)
+        // We're connected... 
+        // Do we think we are waiting for a pending write confirmation on this asset?
+        if (asset && asset.isUnconfirmedSave && !options.forceResend)
         {
-          console.log(`Can't send deferred save of asset ${asset.name} because the prior save's results are still pending. Keeping it in deferred save Object list so it Will retry later..`)
+          console.log(`Won't send deferred save of asset ${asset.name} yet because the prior save's results are still pending. Keeping it in deferred save Object list so it Will retry later..`)
         }
         else
         {
           // At this point, we have an asset with a deferred save, the connection is up, and there is no pending Meteor RPC save for it..
-          // ... so try save it!
+          // ... so send the change to the server now
           this._doSendDeferredChangeNow()
         }
       }
@@ -252,49 +291,48 @@ export default AssetEditRoute = React.createClass({
   },
 
 
-  // No ifs and buts - just send it (and immediately take it off of the deferred list)
+  // No ifs and buts - just send any deferred change now (and immediately take it off of the deferred list)
   _doSendDeferredChangeNow()
   {
-    if (this.m_deferredSaveObj)
+    const toBeSent = this.m_deferredSaveObj
+    if (toBeSent)
     {
-      console.log(`Sending deferred change now`)
-      const toBeSent = this.m_deferredSaveObj
-      this.handleContentChange(toBeSent.content2Object, toBeSent.thumbnail, toBeSent.changeText)
-      this.m_deferredSaveObj =  null
+      const asset = this.data.asset
+      if (asset && asset.isUnconfirmedSave)
+      {
+        console.log(`Warning: A save of asset ${asset.name} was still pending confirmation from server, but we are re-sending anyway`)
+      }
+      console.log(`Sending deferred change now. It has been deferred ${ ( (new Date()) - toBeSent.timeOfLastChange) / 1000}s so far`)
+      this._sendContentChange(toBeSent.assetId, toBeSent.content2Object, toBeSent.thumbnail, toBeSent.changeText)
+      this.m_deferredSaveObj = null
+      // Note that potentially we can no longer recover from a failed save.. but the sub-component does have the data still..
     }
   },
 
 
 
-
-  handleContentChange(content2Object, thumbnail, changeText="content change")
+  // Internal only. Can't be called by sub-components
+  // This intentionally does NOT use or manipulate this.m_deferredSaveObj, nor is it smart about asset.isUnconfirmedSave
+  _sendContentChange(assetId, content2Object, thumbnail, changeText="content change")
   {
-    const asset = this.data.asset
-    if (asset && asset.isUnconfirmedSave)
-    {
-      console.log(`Deferring a save of asset ${asset.name} because the prior save's results are still pending confirmation from server`)
-      this._deferContentChange(content2Object, thumbnail, changeText)
-      return
-    }
-
     const updateObj = _makeUpdateObj(content2Object, thumbnail)
-    Meteor.call('Azzets.update', asset._id, this.canEdit(), updateObj, (err, res) => {
+    Meteor.call('Azzets.update', assetId, this.canEdit(), updateObj, (err, res) => {
       if (err) {
-        console.error(`Azzets.update failed: ${err.reason}`,err)
-        alert('error: ' + err.reason)         // TODO: NOT alert() ! !
+        console.error(`Azzets.update failed: ${err.reason}`, err)
         // Also TODO: What about the data we couldn't save?
       }
       else
       {
-        console.log(`Azzets.update succeeded. Checking for any pending saves...`)
-        this._attemptToSendAnyDeferredChanges(content2Object, thumbnail, changeText)
+        console.log(`Azzets.update succeeded.`)
+        // We will rely on the tick() to send any future pending saves
       }
     })
     
-    logActivity("asset.edit", changeText, null, asset)
+    logActivity("asset.edit", changeText, null, this.data.asset || { _id: assetId } ) 
   },
 
 
+// This should not conflict with the deferred changes since those don't change these fields :)
   handleAssetDescriptionChange: function(newText) {
     if (newText !== this.data.asset.text) {
       Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {text: newText}, (err, res) => {
@@ -305,7 +343,7 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-
+// This should not conflict with the deferred changes since those don't change these fields :)
   handleAssetNameChange: function(newName) {
     if (newName !== this.data.asset.name) {
       Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {name: newName}, (err, res) => {

@@ -36,17 +36,17 @@ export default fpNetwork = React.createClass({
     return (
       <div>
         <div className="ui sub header">Connection Status</div>
+        <div className={st.connected ? "ui small green label" : "ui small purple label"}>{st.connected ? "Connected" : "Disconnected"}</div>
         <ul>
-          <li>Connection: {st.connected ? "Connected" : "Disconnected"}</li>
           { st.retryCount > 0 &&
             <li>Connection retries attempted: {st.retryCount}</li>
           }
           { retryInSeconds > 0 &&
             <li>Retry Interval: {retryInSeconds} seconds</li>
           }
-          <li>Status: {st.status}</li>
+          <li>Status: "{st.status}"</li>
           { (MSTATUS_FAILED === st.status) && 
-            <li>Failed reason: {st.reason}</li>
+            <li>Failed reason: "{st.reason}"</li>
           }
           <li>CxnId: <small>{Meteor.default_connection._lastSessionId}</small></li>
         </ul>

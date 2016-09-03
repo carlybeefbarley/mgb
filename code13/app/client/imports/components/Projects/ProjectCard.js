@@ -49,6 +49,7 @@ export default ProjectCard = React.createClass({
             className="image"
             imageSrc={projectAvatarImageUrl}
             canEdit={canEdit}
+            canLinkToSrc={canEdit}
             handleChange={(newUrl, avatarId) => this.props.handleFieldChanged( { "avatarAssetId": avatarId }) } />
         </QLink>
 

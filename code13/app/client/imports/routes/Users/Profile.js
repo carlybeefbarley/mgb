@@ -109,6 +109,7 @@ export default UserProfileRoute = React.createClass({
               className="image"
               imageSrc={avatar}
               canEdit={ownsProfile}
+              canLinkToSrc={true}
               handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
 
             <div className="content">          

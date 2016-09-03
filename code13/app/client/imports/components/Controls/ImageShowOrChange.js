@@ -1,6 +1,12 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+import QLink from '/client/imports/routes/QLink'
 
+
+function _getAssetIdFromUrl(url) {
+  return url.startsWith("/api/asset/png") ? _.last(url.split("/")) : null
+}
 
 const _propTypes = {
   className:    PropTypes.string.isRequired,    // Classname for the outer div
@@ -13,15 +19,16 @@ export default class ImageShowOrChange extends React.Component {
 
   render() {
     const { className, imageSrc, canEdit } = this.props
-
+    const avatarAssetId = _getAssetIdFromUrl(imageSrc)
+    const href = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrc
     return (
-      <div 
+      <QLink to={href}
         title={ canEdit && "Drag an Image asset here to change the chosen image" }
         className={className}           
         onDragOver={(e) => this.prepareForDrag(e) }
         onDrop={(e) => this.importFromDrop(e) } >
         <img className="ui fluid image mgb-pixelated" src={imageSrc} />
-      </div>
+      </QLink>
     )
   }
 

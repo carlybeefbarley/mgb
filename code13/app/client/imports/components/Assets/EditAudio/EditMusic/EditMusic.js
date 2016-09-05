@@ -11,6 +11,7 @@ import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
 import WaveDraw from '../lib/WaveDraw.js'
 import AudioConverter from '../lib/AudioConverter.js'
+import deepClone from '../lib/deepClone.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 
 export default class EditMusic extends React.Component {
@@ -18,8 +19,10 @@ export default class EditMusic extends React.Component {
 	constructor(props) {
   	super(props)
 
-  	// console.log(props.asset.content2)
+  	console.log(props.asset.content2.channels)
   	this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+  	this.channelsMounted = props.asset.content2.channels ? props.asset.content2.channels.length : 0
+		this.areChannelsMounted = false
   	const pxPerSecond = 30
 
   	this.state = {
@@ -84,19 +87,36 @@ export default class EditMusic extends React.Component {
 		this.waveDraw = new WaveDraw(data)
 	}
 
-	componentWillUpdate(nextProps, newxtState){
-		// console.log("next", nextProps.asset.content2.channels.length, this.props.asset.content2.channels.length)
-	}
-
 	componentDidUpdate(prevProps, prevState){
 		// console.log('did update')
 		this.drawTimeline()
 
-		// console.log(prevProps.asset.content2.channels.length, this.props.asset.content2.channels.length)
+		// if channel is added deleted then force redraw everything
+		if(prevProps.asset.content2.channels){
+			if(prevProps.asset.content2.channels.length > this.props.asset.content2.channels.length){
+					this.callChildren("drawWave")
+					this.mergeChannels()
+			}
+			if(prevProps.asset.content2.duration !== this.props.asset.content2.duration){
+				this.updateCanvasLength()
+			}
+		}
 	}
 
-	componentWillReceiveProps(a, b){
-		console.log(a.asset.content2.channels.length, this.props.asset.content2.channels.length)
+	mountChannel(){
+		if(this.areChannelsMounted){
+			this.mergeChannels()
+		}
+
+		this.channelsMounted--
+		if(this.channelsMounted <= 0){
+			this.areChannelsMounted = true
+		}
+	}
+
+	unMountChannel(){
+		this.callChildren('drawWave')
+		this.mergeChannels()
 	}
 
 	openImportPopup(){
@@ -107,17 +127,12 @@ export default class EditMusic extends React.Component {
 		if(!this.hasPermission) return;
 
 		if(audioObject){
- 			let c2 = this.props.asset.content2
-			// c2.dataUri = audioObject.src
-			let duration = c2.duration
-			if(!duration) duration = audioObject.duration
-			else if(duration < audioObject.duration) duration = audioObject.duration
-			c2.duration = duration
-			this.saveText = saveText;
-			this.addChannel(audioObject.src)
-			this.updateCanvasLength()
-
-			setTimeout( () => this.mergeChannels("Merge channels"), 200)	// hack to get merge channels after channel is added
+			console.log(audioObject.duration)
+ 			let c2 = deepClone( this.props.asset.content2 )
+			if(!c2.duration || c2.duration < audioObject.duration) {
+				c2.duration = audioObject.duration
+			}
+			this.addChannel(audioObject.src, c2)
 		}
 
 		$(this.importMusicPopup).modal('hide')
@@ -166,8 +181,10 @@ export default class EditMusic extends React.Component {
 
 	callChildren(func, args){
 		if(!args) args = []
+		console.log(this.refs)
 		this.props.asset.content2.channels.forEach((channel, id) => {
-			this.refs["channel"+id][func]()
+			console.log(channel.id)
+			this.refs["channel"+channel.id][func]()
 		})
 	}
 
@@ -190,24 +207,25 @@ export default class EditMusic extends React.Component {
 		this.timelineCtx.restore()
 	}
 
-	mergeChannels(saveText){
-		let c2 = this.props.asset.content2
+	mergeChannels(c2){
+		if(!c2) c2 = deepClone( this.props.asset.content2 )
+		
 		console.log("merge channels", c2.channels.length)
 		let bufferList = []
-		this.props.asset.content2.channels.forEach((channel, id) => {
-			const buffer = this.refs["channel"+id].getBuffer()
+		c2.channels.forEach((channel, id) => {
+			const buffer = this.refs["channel"+channel.id].getBuffer()
 			if(buffer && buffer.length > 0){
 				bufferList.push(buffer)
 			}
 		})
 
-		let buffer = this.converter.mergeBuffers(bufferList, this.props.asset.content2.duration)
+		let buffer = this.converter.mergeBuffers(bufferList, c2.duration)
 		this.bufferLoaded(buffer)
 
 		this.converter.bufferToDataUri(buffer, (dataUri) => {
 			// console.log(dataUri)
 			c2.dataUri = dataUri
-			this.handleSave(saveText)
+			this.handleSave("Merge channels", c2)
 		})
 
 	}
@@ -267,29 +285,23 @@ export default class EditMusic extends React.Component {
     }
   }
 
-  onAudioLoaded(){
-  	if(!this.saveText) return; // don't save at start when music is loaded
-  	this.handleSave(this.saveText)
-  	this.saveText = null
-  }
-
-	handleSave(saveText)
+	handleSave(saveText, c2)
   {
     if(!this.hasPermission()) return;
     
-    let asset = this.props.asset
-    let c2    = asset.content2
+    // let asset = this.props.asset
+    // let c2    = asset.content2
+    if(!c2) c2 = this.props.asset.content2
 
-    // console.log("SAVE", saveText)
+    console.log("SAVE", saveText, c2)
     this.thumbnailCtx.putImageData(this.musicCtx.getImageData(0, 0, 290, 128), 0, 0)
     this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
   }
 
   changeDuration(e){
-  	let c2 = this.props.asset.content2
+  	let c2 = deepClone( this.props.asset.content2 )
   	c2.duration = parseFloat(e.target.value)
-  	this.handleSave("Change duration")
-  	this.updateCanvasLength()
+  	this.handleSave("Change duration", c2)
   }
 
   updateCanvasLength(){
@@ -298,23 +310,22 @@ export default class EditMusic extends React.Component {
   	this.setState({ canvasWidth: canvasWidth })
   }
 
-  addChannel(dataUri){
-  	let c2 = this.props.asset.content2
+  addChannel(dataUri, c2){
   	if(!c2.channels) c2.channels = []
   	c2.channels.push({
+  		id: Math.floor(Math.random()*999999),
   		title: "Channel "+c2.channels.length,
   		volume: 0.75,
   		dataUri: dataUri,
   	})
-  	this.handleSave("Add channel")
+  	this.handleSave("Add channel", c2)
   }
 
   deleteChannel(channelID){
-  	let c2 = this.props.asset.content2	
+  	let c2 = deepClone( this.props.asset.content2	)
   	c2.channels.splice(channelID, 1)
-  	this.handleSave("Remove channel")
-  	setTimeout( () =>	this.callChildren("initWave"), 200)		// force redraw wave, because react doesn't update it
-  	setTimeout( () =>	this.mergeChannels("Merge channels"), 200)		// hack to merge channels after deleting
+  	// this.mergeChannels(c2)
+  	this.handleSave("Remove channel", c2)
   }
 
   renderChannels(){
@@ -326,12 +337,13 @@ export default class EditMusic extends React.Component {
   	// return // TODO remove this to render channels
 
 
-  	return c2.channels.map((channel, id) => { 
+  	return c2.channels.map((channel, nr) => { 
   		return (
 			<Channel 
-				key={id}
-				id={id}
-				ref={"channel"+id}
+				key={channel.id}
+				id={channel.id}
+				nr={nr}
+				ref={"channel"+channel.id}
 				channel={channel}
 				audioCtx={this.audioCtx}
 				canvasWidth={this.state.canvasWidth}
@@ -340,6 +352,8 @@ export default class EditMusic extends React.Component {
 
 				handleSave={this.handleSave.bind(this)}
 				deleteChannel={this.deleteChannel.bind(this)}
+				unMountChannel={this.unMountChannel.bind(this)}
+				mountChannel={this.mountChannel.bind(this)}
 			/>
 		)}) 
   }
@@ -416,7 +430,7 @@ export default class EditMusic extends React.Component {
 								  <div className="ui label">
 								    Duration
 								  </div>
-								  <input type="number" value={Math.floor(c2.duration)} min="1" max="999" onChange={this.changeDuration.bind(this)} />
+								  <input type="number" value={c2.duration ? Math.floor(c2.duration) : 1} min="1" max="999" onChange={this.changeDuration.bind(this)} />
 								</div>
 
 

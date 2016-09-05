@@ -19,6 +19,7 @@ export default class Channel extends React.Component {
 	componentDidMount(){
   	this.waveCanvas = ReactDOM.findDOMNode(this.refs.waveCanvas)
 		this.waveCtx = this.waveCanvas.getContext('2d')
+		this.tmpStart = Date.now()
 		this.initWave()
 	}
 
@@ -31,6 +32,11 @@ export default class Channel extends React.Component {
 			
 		}
 	}
+
+	// componentWillUnmount(){
+	// 	this.clearAudio()
+	// 	this.props.unMountChannel()
+	// }
 
 	getBuffer(){
 		return this.buffer ? this.buffer.getChannelData(0) : null
@@ -48,6 +54,8 @@ export default class Channel extends React.Component {
       	this.buffer = audioBuffer
       	this.initAudio()
       	this.drawWave()	
+      	this.props.mountChannel()
+      	console.log(Date.now()-this.tmpStart, this.props.id)
 	    })
     }
     reader.readAsArrayBuffer(soundBlob)
@@ -79,6 +87,7 @@ export default class Channel extends React.Component {
 
 	drawWave(){
 		if(!this.buffer) return	// in situations when audio is not decoded yet
+		console.log("draw wave", this.props.id)
 		const channelData = this.buffer.getChannelData(0)
 		const channelWidth = Math.floor( this.buffer.duration * this.props.pxPerSecond )
 		const chunk = Math.floor(channelData.length / channelWidth)
@@ -123,7 +132,8 @@ export default class Channel extends React.Component {
 	}
 
 	deleteChannel(){
-		this.props.deleteChannel(this.props.id)
+		this.clearAudio()
+		this.props.deleteChannel(this.props.nr)
 	}
 
 	render(){

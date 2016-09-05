@@ -51,7 +51,8 @@ let AudioConverter = function(audioCtx){
 	this.mergeBuffers = function(bufferList, duration){
 		const arrayLength = Math.floor(duration * this.audioCtx.sampleRate)
 		let sumBuffer = new Float32Array(arrayLength)
-		bufferList.forEach((buffer) => {
+		bufferList.forEach((buffer, i) => {
+			console.log('buffer '+i)
 			// buffer length shouldn't exceed all track length
 			const bufferLength = buffer.length < arrayLength ? buffer.length : arrayLength	
 			for(let i=0; i<bufferLength; i++){

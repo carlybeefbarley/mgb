@@ -47,6 +47,13 @@ export default class MapArea extends React.Component {
       get: (property) => {
         property = this.removeDots(property)
         return images[property]
+      },
+      clear: (property) => {
+        property = this.removeDots(property)
+        delete images[property]
+      },
+      clearAll: () => {
+        images = {}
       }
     }
 
@@ -480,9 +487,12 @@ export default class MapArea extends React.Component {
     this.forceUpdate()
     this.updateTilesets()
     if (typeof cb === 'function') {
+      // clean up map - make sure gidCache is valid.. otherwise we will break all map
+      TileHelper.zeroOutUnreachableTiles(this.data, this.gidCache)
       cb()
     }
   }
+
 
   addLayerTool () {
     this.addTool('Layers', 'Layers', {map: this}, Layers)
@@ -850,8 +860,10 @@ export default class MapArea extends React.Component {
   /* endof events */
 
   /* update stuff */
-  fullUpdate (cb = () => {
-    }) {
+  fullUpdate (cb = () => {}) {
+    this.gidCache = {}
+    this.images.clearAll()
+
     this.generateImages(() => {
       this.update(cb)
     })

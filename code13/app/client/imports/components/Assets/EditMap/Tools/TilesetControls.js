@@ -78,7 +78,7 @@ export default class TilesetControls extends React.Component {
     if (data.imagewidth == data.tilewidth) {
       ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight)
     }
-    // set knows size
+    // set known size
     else {
       ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight,
         data.tilewidth, data.tileheight, data.name
@@ -96,6 +96,10 @@ export default class TilesetControls extends React.Component {
           continue;
         }
         ref[i] = ts[i]
+      }
+      // sen name for tilesets with one image
+      if(data.name){
+        ref.name = data.name
       }
     }
 

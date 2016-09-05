@@ -65,6 +65,10 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.options.y -= this.map.data.tileheight
     this.options.height++
+    // adjust map to biggest layer
+    if(this.map.options.height < this.options.height){
+      this.map.options.height = this.options.height
+    }
   }
 
   increaseSizeToRight (pos) {
@@ -75,6 +79,10 @@ export default class TileMapLayer extends AbstractLayer {
       this.options.data.splice(i * this.options.width, 0, 0)
     }
     this.options.width++
+    // adjust map to biggest layer
+    if(this.map.options.width < this.options.width){
+      this.map.options.width = this.options.width
+    }
   }
 
   increaseSizeToBottom (pos) {
@@ -82,6 +90,10 @@ export default class TileMapLayer extends AbstractLayer {
       this.options.data.push(0)
     }
     this.options.height++
+    // adjust map to biggest layer
+    if(this.map.options.height < this.options.height){
+      this.map.options.height = this.options.height
+    }
   }
 
   increaseSizeToLeft (pos) {
@@ -91,6 +103,10 @@ export default class TileMapLayer extends AbstractLayer {
       this.options.data.splice(i * this.options.width, 0, 0)
     }
     this.options.width++
+    // adjust map to biggest layer
+    if(this.map.options.width < this.options.width){
+      this.map.options.width = this.options.width
+    }
   }
 
   // this only tells renderer to draw in the rotated position

@@ -7,8 +7,9 @@ import dataUriToBuffer from 'data-uri-to-buffer';
 import AWS from 'aws-sdk';
 import pako from 'pako';
 import xml2js from 'xml2js';
-//import Canvas from 'canvas';
-import Jimp from 'jimp';
+// we are not drawing on server anymore
+// import Canvas from 'canvas';
+// import Jimp from 'jimp';
 
 const aws_s3_region = 'us-east-1'       // US-East-1 is the 'global' site for S3
 

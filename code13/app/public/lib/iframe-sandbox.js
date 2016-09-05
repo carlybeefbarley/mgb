@@ -45,7 +45,7 @@ window.onload = function() {
   var errorCount = 0;
   var mainWindow = window.parent; // reference to the last poster
   // all code in one string - used for stand alone export
-  var allInOne = "";
+  var allInOneBundle = "";
   var AIOsources = {};
 
   /*
@@ -295,9 +295,10 @@ window.onload = function() {
       tr = Babel.transform(srcText, {
         filename: filename,
         compact: false,           // Default of "auto" fails on ReactImport
-        presets: ['es2015', 'react'],
+        presets: ['es2015', 'react'],// remove comments as they will break bundled code
         plugins: ['transform-class-properties'],// , "transform-es2015-modules-amd" - not working
-        retainLines: true
+        retainLines: true,
+        ast: false
       });
     }
     // show nice error to user
@@ -440,7 +441,7 @@ window.onload = function() {
           loadScriptFromText(e.data.codeToRun, "/" + e.data.filename, function(transpiled){
             if(errorCount === 0){
               console.info("All Files loaded successfully!")
-              allInOne =
+              allInOneBundle =
                 '(function(){'+
                   'var imports = {};'+
                   'window.require = function(key){ '+
@@ -452,31 +453,48 @@ window.onload = function() {
                   '}; '
               for(var i in AIOsources){
                 if(AIOsources[i].global){
-                  allInOne += "\n" + 'delete window.exports; delete window.module; '
+                  allInOneBundle += "\n" + 'delete window.exports; delete window.module; '
                 }
                 else{
-                  allInOne += "\n"+ 'window.module = {exports: {}};window.exports = window.module.exports; '
+                  allInOneBundle += "\n"+ 'window.module = {exports: {}};window.exports = window.module.exports; '
                 }
-                allInOne += ";" + AIOsources[i].src + "; "
+                allInOneBundle += ";" + AIOsources[i].src + "; "
                 if(AIOsources[i].global){
-                  allInOne += 'imports["'+i+'"] = true; '
+                  allInOneBundle += 'imports["'+i+'"] = true; '
                 }
                 else{
-                  allInOne +=
+                  allInOneBundle +=
                     'if(Object.keys(window.exports).length){' +
                       'imports["'+i+'"] = window.exports;' +
                     '}else{'+
                       'imports["'+i+'"] = window.module.exports;' +
                     '} ';
                   if(AIOsources[i].shortName){
-                    allInOne +=  "\n"+ 'imports["'+AIOsources[i].shortName+'"] = window.module.exports;'
+                    allInOneBundle +=  "\n"+ 'imports["'+AIOsources[i].shortName+'"] = window.module.exports;'
                   }
                 }
               }
-              allInOne += "\n" + transpiled
-              allInOne += "\n" + "})(); "
+              allInOneBundle += "\n" + transpiled
+              allInOneBundle += "\n" + "})(); "
+
+              let bundle = allInOneBundle;
+              //console.log("transpiling bundle", allInOneBundle.length);
+              /*
+              const start = Date.now();
+              const tr = Babel.transform(allInOneBundle, {
+                filename: "bundle.js",
+                compact: true,
+                minified: true,
+                comments: false,
+                ast: false,
+                retainLines: false
+              });
+              bundle = tr.code;
+              */
+              //console.log("bundle-done", tr.code.length, Date.now() - start);
+              //console.log("saved:", (allInOneBundle.length - tr.code.length))
               // TODO: create enum with all available sources
-              mainWindow.postMessage({src: allInOne, mgbCmd: "mgbAllInOneSource"}, "*");
+              mainWindow.postMessage({src: bundle, mgbCmd: "mgbAllInOneSource"}, "*");
             }
           });
         //})

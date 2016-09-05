@@ -324,8 +324,10 @@ export default class EditGraphic extends React.Component {
             self.updateEditCanvasFromSelectedPreviewCanvas(loadedImage.frameID)
           }
         }
-        if(!c2.layerParams[loadedImage.layerID].isHidden) { 
-          self.frameCtxArray[loadedImage.frameID].drawImage(loadedImage, 0, 0)
+        if (!c2.layerParams[loadedImage.layerID].isHidden) { 
+          let frame = self.frameCtxArray[loadedImage.frameID]
+          if (frame) 
+            frame.drawImage(loadedImage, 0, 0)  // There seems to be a race condition that means frame is sometime null. 
         }
       }
       _img.src = dataURI

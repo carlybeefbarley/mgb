@@ -1,4 +1,6 @@
 'use strict'
+import LayerTypes from '../Tools/LayerTypes.js'
+
 export const FLIPPED_HORIZONTALLY_FLAG = 0x8
 export const FLIPPED_VERTICALLY_FLAG = 0x4
 export const FLIPPED_DIAGONALLY_FLAG = 0x2
@@ -44,7 +46,7 @@ const TileHelper = {
   },
 
   getTilesetHeight: (tileset, spacing = 1) => {
-    return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight)
+    return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight) - spacing
   },
   /* helpers */
   normalizePath: (raw) => {
@@ -198,9 +200,11 @@ const TileHelper = {
     }
 
     const tilecount = columns * rows
-    let firstgid = 1
+    let firstgid = 101
     for (let i = 0; i < map.tilesets.length; i++) {
-      let nextgid = map.tilesets[i].firstgid + map.tilesets[i].tilecount
+      const ts = map.tilesets[i]
+      let nextgid = TileHelper.getNextGid(ts)
+      //let nextgid = map.tilesets[i].firstgid + map.tilesets[i].tilecount
       if (nextgid > firstgid) {
         firstgid = nextgid
       }
@@ -217,8 +221,72 @@ const TileHelper = {
       name,
       tilecount,
       tileheight,
-    tilewidth}
-  }
+      tilewidth
+    }
+  },
+  zeroOutUnreachableTiles: (mapdata, gidCache) => {
 
+    for(let i=0; i<mapdata.layers.length; i++){
+      const layer = mapdata.layers[i]
+      if(layer.type == LayerTypes.tile){
+        for(let j=0; j<layer.data.length; j++){
+          const tile = layer.data[j]
+          if(tile && !gidCache[tile]){
+            console.log("unknow tile:", tile)
+            layer.data[j] = 0
+          }
+        }
+      }
+      else if(layer.type == LayerTypes.object){
+        for(let j=0; j<layer.objects.length; j++){
+          const tile = layer.objects[j]
+          if(!gidCache[tile.gid]){
+            layer.objects[j].gid = 0
+          }
+        }
+      }
+    }
+  },
+  fixTilesetGids: (mapdata) => {
+    let nextGid = 101
+    const changedTiles = {} // map with changed tiles
+
+    for(let i=0; i<mapdata.tilesets.length; i++){
+
+      const ts = mapdata.tilesets[i]
+      if(ts.firstgid != nextGid){
+        for(let j=0; j<ts.tilecount; j++){
+          changedTiles[ts.firstgid + j] = nextGid + j
+        }
+        ts.firstgid = nextGid
+      }
+
+      nextGid = TileHelper.getNextGid(ts)
+    }
+
+    for(let i=0; i<mapdata.layers.length; i++){
+      const layer = mapdata.layers[i]
+      if(layer.type == LayerTypes.tile){
+        for(let j=0; j<layer.data.length; j++){
+          const tile = layer.data[j]
+          if(changedTiles[tile]){
+            layer.data[j] = changedTiles[tile]
+          }
+        }
+      }
+      else if(layer.type == LayerTypes.object){
+        for(let j=0; j<layer.objects.length; j++){
+          const tile = layer.objects[j]
+          if(tile.gid && changedTiles[tile.gid]){
+            layer.objects[j].gid = changedTiles[tile.gid]
+          }
+        }
+      }
+    }
+  },
+
+  getNextGid: (ts) => {
+    return ts.firstgid + (Math.floor(ts.tilecount/100) + 1) * 100
+  }
 }
 export default TileHelper

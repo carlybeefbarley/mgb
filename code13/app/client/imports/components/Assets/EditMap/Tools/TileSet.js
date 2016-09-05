@@ -6,6 +6,8 @@ import TilesetControls from './TilesetControls.js'
 import SelectedTile from './SelectedTile.js'
 import TileCollection from './TileCollection.js'
 
+import LayerTypes from './LayerTypes.js'
+
 import EditModes from './EditModes.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 
@@ -282,8 +284,26 @@ export default class TileSet extends React.Component {
     if (asset && asset.kind != 'graphic') {
       return
     }
-    const url = data.link
-    this.refs.controls.updateTilesetFromUrl(url, this.data)
+
+    const infolink = '/api/asset/tileset-info/' + data.asset._id
+    const map = this.props.info.content.map
+    const previousTileCount = this.data.tilecount;
+    $.get(infolink, (data) => {
+      this.refs.controls.updateTilesetFromData(data, this.data)
+
+      // console.log("Old tileset had:", previousTileCount)
+      // console.log("new tileset has:", this.data.tilecount)
+
+      // if tile count match it's safe to update directly - otherwise we need to adjust tilesets
+      // reformat all tilesets and store all changed tiles
+
+      if(previousTileCount != this.data.tilecount){
+        console.log("Fixing tilesets")
+        TileHelper.fixTilesetGids(map.data)
+      }
+
+      map.fullUpdate()
+    })
   }
 
   onMouseDown (e) {

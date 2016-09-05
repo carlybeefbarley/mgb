@@ -70,7 +70,7 @@ export default class TilesetControls extends React.Component {
     map.updateImages()
     parent.selectTileset(tss.length - 1)
   }
-  updateTilesetFromData (data) {
+  updateTilesetFromData (data, ref = null) {
     const parent = this.props.tileset
     const map = parent.props.info.content.map
     let ts
@@ -78,22 +78,38 @@ export default class TilesetControls extends React.Component {
     if (data.imagewidth == data.tilewidth) {
       ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight)
     }
-    // set knows size
+    // set known size
     else {
       ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight,
         data.tilewidth, data.tileheight, data.name
       )
     }
     ts.tiles = data.tiles
-
     const tss = map.data.tilesets
-    tss.push(ts)
+
+    if(!ref) {
+      tss.push(ts)
+    }
+    else{
+      for(let i in ts){
+        if(i == "firstgid"){
+          continue;
+        }
+        ref[i] = ts[i]
+      }
+      // sen name for tilesets with one image
+      if(data.name){
+        ref.name = data.name
+      }
+    }
 
     const img = new Image()
     img.onload = () => {
       map.images.set(TileHelper.normalizePath(img.src), img)
       map.updateImages()
-      parent.selectTileset(tss.length - 1)
+      if(!ref) {
+        parent.selectTileset(tss.length - 1)
+      }
     }
     img.src = data.image
   }

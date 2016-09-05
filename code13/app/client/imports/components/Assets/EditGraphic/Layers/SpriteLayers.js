@@ -134,19 +134,6 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Delete frame', true)
   }    
 
-    /* Selecting frames testing */
-    thOnDragStart(frameID) {
-        console.log('drag start', frameID)
-    }
-
-    thOnDragEnd(frameID) {
-        console.log('drag end', frameID)
-    }
-
-    thOnDragEnter(frameID) {
-        console.log('drag enter', frameID)
-    }
-
 
     /************************** ANIMATIONS ******************************/
 
@@ -596,10 +583,7 @@ export default class SpriteLayers extends React.Component {
                 _.map(c2.frameNames, (frameName, idx) => { return (
                   <th key={"th_"+idx} width="32px" className="frameTH">
                     <div className="ui dropdown" 
-                        ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
-                          onDragStart={this.thOnDragStart.bind(this, idx)}
-                          onDragEnd={this.thOnDragEnd.bind(this, idx)}
-                          onDragEnter={this.thOnDragEnter.bind(this, idx)}>
+                        ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } } >
                       {idx+1}
                       <div className="ui vertical menu">
                         <div className="header item">

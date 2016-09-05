@@ -7,8 +7,9 @@ import dataUriToBuffer from 'data-uri-to-buffer';
 import AWS from 'aws-sdk';
 import pako from 'pako';
 import xml2js from 'xml2js';
-//import Canvas from 'canvas';
-import Jimp from 'jimp';
+// we are not drawing on server anymore
+// import Canvas from 'canvas';
+// import Jimp from 'jimp';
 
 const aws_s3_region = 'us-east-1'       // US-East-1 is the 'global' site for S3
 
@@ -151,7 +152,9 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
       anim.frames.forEach((frame) => {
         animation.push({
           duration,
-          tileid: frame
+          tileid: frame,
+          mgb_name: anim.name,
+          mgb_fps: anim.fps
         });
       });
       tiles[anim.frames[0]] = {animation};
@@ -486,7 +489,11 @@ RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
 <title>${asset.name}</title>
 <style>html, body{padding: 0; margin: 0}</style>
 </head>
-<body><script>${asset.content2.bundle}</script>${extraMessage}</body>
+<body><script type="text/javascript">
+//<!--
+${asset.content2.bundle}
+//-->
+</script>${extraMessage}</body>
 </html>
 `
     return {

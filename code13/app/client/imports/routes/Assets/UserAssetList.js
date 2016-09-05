@@ -367,6 +367,7 @@ export default UserAssetListRoute = React.createClass({
                 <div><Spinner /></div>
               :
                 <AssetList 
+                  allowDrag={true}
                   assets={assets} 
                   currUser={this.props.currUser} 
                   ownersProjects={projects}  />

@@ -32,11 +32,6 @@ export default class Channel extends React.Component {
 		}
 	}
 
-	// componentWillUnmount(){
-	// 	this.clearAudio()
-	// 	this.props.unMountChannel()
-	// }
-
 	getBuffer(){
 		return this.buffer ? this.buffer.getChannelData(0) : null
 	}

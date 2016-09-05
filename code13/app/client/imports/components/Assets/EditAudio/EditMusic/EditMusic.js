@@ -22,7 +22,7 @@ export default class EditMusic extends React.Component {
   	// console.log(props.asset.content2)
   	this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   	this.channelsMounted = props.asset.content2.channels ? props.asset.content2.channels.length : 0
-		this.areChannelsMounted = false
+		this.areChannelsMounted = props.asset.content2.channels ? false : true
   	const pxPerSecond = 30
 
   	this.state = {
@@ -91,8 +91,8 @@ export default class EditMusic extends React.Component {
 		// console.log('did update')
 		this.drawTimeline()
 
-		// if channel is added deleted then force redraw everything
 		if(prevProps.asset.content2.channels){
+			// channel deleted
 			if(prevProps.asset.content2.channels.length > this.props.asset.content2.channels.length){
 					this.callChildren("drawWave")
 					this.mergeChannels()
@@ -103,6 +103,7 @@ export default class EditMusic extends React.Component {
 		}
 	}
 
+	// checks if all channel are loaded and sets flag to true. After that each newly added channel is automatically merged
 	mountChannel(){
 		if(this.areChannelsMounted){
 			this.mergeChannels()
@@ -226,31 +227,6 @@ export default class EditMusic extends React.Component {
 
 	}
 
-	// drawWave(samples){
-	// 	const channelData = samples
-	// 	const channelWidth = 1200
-	// 	const chunk = Math.floor(channelData.length / channelWidth)
-	// 	const subChunk = 10
-	// 	const subChunkVal = Math.floor(chunk/subChunk)
-	// 	this.musicCtx.clearRect(0, 0, 1200, 128)
-	// 	this.musicCtx.save()
- //   	this.musicCtx.strokeStyle = '#4dd2ff'
- //   	this.musicCtx.globalAlpha = 0.4
- //   	const y = 128/2
-	// 	for(let i=0; i<channelWidth; i++){
-	// 		for(var j=0; j<subChunk; j++){
-	// 			const val = channelData[i*chunk + j*subChunkVal]
-	// 			// const x = i+j*(1/subChunk)
-	// 			const x = i
-	// 			this.musicCtx.beginPath()
-	//      	this.musicCtx.moveTo( x, y )
-	//      	this.musicCtx.lineTo( x, y + val*y )
-	//      	this.musicCtx.stroke()
- //     }
-	// 	}
-	// 	this.musicCtx.restore();
-	// }
-
 	updateTimer(){
 		if(this.state.isPlaying){
 			const ms = Date.now()
@@ -289,7 +265,7 @@ export default class EditMusic extends React.Component {
     // let c2    = asset.content2
     if(!c2) c2 = this.props.asset.content2
 
-    // console.log("SAVE", saveText, c2)
+    console.log("SAVE", saveText, c2)
     this.thumbnailCtx.putImageData(this.musicCtx.getImageData(0, 0, 290, 128), 0, 0)
     this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
   }
@@ -348,7 +324,6 @@ export default class EditMusic extends React.Component {
 
 				handleSave={this.handleSave.bind(this)}
 				deleteChannel={this.deleteChannel.bind(this)}
-				unMountChannel={this.unMountChannel.bind(this)}
 				mountChannel={this.mountChannel.bind(this)}
 			/>
 		)}) 

@@ -19,7 +19,6 @@ export default class Channel extends React.Component {
 	componentDidMount(){
   	this.waveCanvas = ReactDOM.findDOMNode(this.refs.waveCanvas)
 		this.waveCtx = this.waveCanvas.getContext('2d')
-		this.tmpStart = Date.now()
 		this.initWave()
 	}
 
@@ -55,7 +54,6 @@ export default class Channel extends React.Component {
       	this.initAudio()
       	this.drawWave()	
       	this.props.mountChannel()
-      	console.log(Date.now()-this.tmpStart, this.props.id)
 	    })
     }
     reader.readAsArrayBuffer(soundBlob)
@@ -87,7 +85,7 @@ export default class Channel extends React.Component {
 
 	drawWave(){
 		if(!this.buffer) return	// in situations when audio is not decoded yet
-		console.log("draw wave", this.props.id)
+		// console.log("draw wave", this.props.id)
 		const channelData = this.buffer.getChannelData(0)
 		const channelWidth = Math.floor( this.buffer.duration * this.props.pxPerSecond )
 		const chunk = Math.floor(channelData.length / channelWidth)

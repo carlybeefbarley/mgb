@@ -19,7 +19,7 @@ export default class EditMusic extends React.Component {
 	constructor(props) {
   	super(props)
 
-  	console.log(props.asset.content2.channels)
+  	// console.log(props.asset.content2)
   	this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   	this.channelsMounted = props.asset.content2.channels ? props.asset.content2.channels.length : 0
 		this.areChannelsMounted = false
@@ -127,7 +127,6 @@ export default class EditMusic extends React.Component {
 		if(!this.hasPermission) return;
 
 		if(audioObject){
-			console.log(audioObject.duration)
  			let c2 = deepClone( this.props.asset.content2 )
 			if(!c2.duration || c2.duration < audioObject.duration) {
 				c2.duration = audioObject.duration
@@ -181,9 +180,7 @@ export default class EditMusic extends React.Component {
 
 	callChildren(func, args){
 		if(!args) args = []
-		console.log(this.refs)
 		this.props.asset.content2.channels.forEach((channel, id) => {
-			console.log(channel.id)
 			this.refs["channel"+channel.id][func]()
 		})
 	}
@@ -210,7 +207,6 @@ export default class EditMusic extends React.Component {
 	mergeChannels(c2){
 		if(!c2) c2 = deepClone( this.props.asset.content2 )
 		
-		console.log("merge channels", c2.channels.length)
 		let bufferList = []
 		c2.channels.forEach((channel, id) => {
 			const buffer = this.refs["channel"+channel.id].getBuffer()
@@ -293,7 +289,7 @@ export default class EditMusic extends React.Component {
     // let c2    = asset.content2
     if(!c2) c2 = this.props.asset.content2
 
-    console.log("SAVE", saveText, c2)
+    // console.log("SAVE", saveText, c2)
     this.thumbnailCtx.putImageData(this.musicCtx.getImageData(0, 0, 290, 128), 0, 0)
     this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
   }

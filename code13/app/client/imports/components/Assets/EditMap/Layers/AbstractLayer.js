@@ -87,7 +87,7 @@ export default class AbstractLayer extends React.Component {
     return this._camera
   }
   getInfo () {
-    return 'Please set info!'
+    return 'Please set info! Override getInfo method@'+this.constructor.name;
   }
 
   isActive () {

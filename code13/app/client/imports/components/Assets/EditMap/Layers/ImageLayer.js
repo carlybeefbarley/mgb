@@ -18,6 +18,7 @@ export default class ImageLayer extends AbstractLayer {
     if (!img) {
       return
     }
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
     // TODO: cut invisible parts
     this.ctx.drawImage(img,
       0, 0, img.width, img.height,
@@ -26,6 +27,9 @@ export default class ImageLayer extends AbstractLayer {
       img.width * this.map.camera.zoom, img.height * this.map.camera.zoom)
   }
 
+  getInfo(){
+    return ''
+  }
   handleMouseMove () {}
   handleMouseDown () {}
   onMouseLeave () {}

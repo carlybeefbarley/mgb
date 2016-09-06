@@ -300,6 +300,7 @@ export default class TileSet extends React.Component {
       if(previousTileCount != this.data.tilecount){
         console.log("Fixing tilesets")
         TileHelper.fixTilesetGids(map.data)
+        map.save("Update Tileset")
       }
 
       map.fullUpdate()

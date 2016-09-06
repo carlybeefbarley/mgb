@@ -51,6 +51,13 @@ export default class EditMusic extends React.Component {
 		this.generate8bitPopup = ReactDOM.findDOMNode(this.refs.generate8bitPopup)
 
 
+    $(this.importMusicPopup)
+  	  .modal('setting', {
+        onHide: () => {
+          this.stopPopupAudio()
+        }
+      })
+
     $(this.generateMusicPopup)
   	  .modal('setting', {
         onHide: () => {
@@ -154,6 +161,7 @@ export default class EditMusic extends React.Component {
 
   stopPopupAudio(){
     // console.log("stop popup audio")  
+    this.refs.importMusic.stopMusic()
     this.refs.generateMusic.stop()
     this.refs.generate8bit.stop()
   }
@@ -440,7 +448,7 @@ export default class EditMusic extends React.Component {
 
 			{/*** POPUPS ***/}
 				<div className="ui modal" ref="importMusicPopup">
-					<ImportMusic
+					<ImportMusic ref="importMusic"
 						importMusic={this.importMusic.bind(this)}
 					/>
 				</div>

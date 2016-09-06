@@ -11,7 +11,6 @@ import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
 import WaveDraw from '../lib/WaveDraw.js'
 import AudioConverter from '../lib/AudioConverter.js'
-import deepClone from '../lib/deepClone.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 
 export default class EditMusic extends React.Component {
@@ -19,7 +18,7 @@ export default class EditMusic extends React.Component {
 	constructor(props) {
   	super(props)
 
-  	// console.log(props.asset.content2)
+  	console.log(props.asset.content2)
   	this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   	this.channelsMounted = props.asset.content2.channels ? props.asset.content2.channels.length : 0
 		this.areChannelsMounted = props.asset.content2.channels ? false : true
@@ -36,10 +35,6 @@ export default class EditMusic extends React.Component {
 	}
 
 	componentDidMount(){
-
-  //   waveColor: '#4dd2ff'
-		// progressColor: '#01a2d9'
-
 		this.musicCanvas = ReactDOM.findDOMNode(this.refs.musicCanvas)
 		this.musicCtx = this.musicCanvas.getContext('2d')
 		this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
@@ -128,7 +123,7 @@ export default class EditMusic extends React.Component {
 		if(!this.hasPermission) return;
 
 		if(audioObject){
- 			let c2 = deepClone( this.props.asset.content2 )
+ 			let c2 = _.cloneDeep( this.props.asset.content2 )
 			if(!c2.duration || c2.duration < audioObject.duration) {
 				c2.duration = audioObject.duration
 			}
@@ -206,7 +201,7 @@ export default class EditMusic extends React.Component {
 	}
 
 	mergeChannels(c2){
-		if(!c2) c2 = deepClone( this.props.asset.content2 )
+		if(!c2) c2 = _.cloneDeep( this.props.asset.content2 )
 		
 		let bufferList = []
 		c2.channels.forEach((channel, id) => {
@@ -259,19 +254,16 @@ export default class EditMusic extends React.Component {
 
 	handleSave(saveText, c2)
   {
-    if(!this.hasPermission()) return;
-    
-    // let asset = this.props.asset
-    // let c2    = asset.content2
+    if(!this.hasPermission()) return
     if(!c2) c2 = this.props.asset.content2
 
-    console.log("SAVE", saveText, c2)
+    // console.log("SAVE", saveText, c2)
     this.thumbnailCtx.putImageData(this.musicCtx.getImageData(0, 0, 290, 128), 0, 0)
     this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
   }
 
   changeDuration(e){
-  	let c2 = deepClone( this.props.asset.content2 )
+  	let c2 = _.cloneDeep( this.props.asset.content2 )
   	c2.duration = parseFloat(e.target.value)
   	this.handleSave("Change duration", c2)
   }
@@ -283,6 +275,7 @@ export default class EditMusic extends React.Component {
   }
 
   addChannel(dataUri, c2){
+  	if(!c2) c2 = _.cloneDeep(this.props.asset.content2)
   	if(!c2.channels) c2.channels = []
   	c2.channels.push({
   		id: Math.floor(Math.random()*999999),
@@ -294,7 +287,7 @@ export default class EditMusic extends React.Component {
   }
 
   deleteChannel(channelID){
-  	let c2 = deepClone( this.props.asset.content2	)
+  	let c2 = _.cloneDeep( this.props.asset.content2	)
   	c2.channels.splice(channelID, 1)
   	// this.mergeChannels(c2)
   	this.handleSave("Remove channel", c2)
@@ -305,9 +298,6 @@ export default class EditMusic extends React.Component {
   	if(!c2.channels) {
   		return (<div>No channels added...</div>)
   	}
-
-  	// return // TODO remove this to render channels
-
 
   	return c2.channels.map((channel, nr) => { 
   		return (
@@ -374,7 +364,7 @@ export default class EditMusic extends React.Component {
 							<div className="row">
 								<button className="ui small icon button"
 									title="Add new audio channel"
-									onClick={this.addChannel.bind(this, null)}>
+									onClick={this.addChannel.bind(this, null, null)}>
 								  <i className="add square icon"></i>
 								</button>
 

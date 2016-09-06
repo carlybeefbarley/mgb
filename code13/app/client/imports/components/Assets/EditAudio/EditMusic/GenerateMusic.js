@@ -15,10 +15,14 @@ export default class GenerateMusic extends React.Component {
 		this.props.importMusic(audioObject, "Generated music")
 	}
 
+  stop(){
+    this.refs.djent.stop()
+  }
+
 	render(){
 		return (
 			<div className="content">
-				<Djent 
+				<Djent ref="djent"
 					importAudio={ this.importAudio.bind(this) }
 				/>
 	    </div>

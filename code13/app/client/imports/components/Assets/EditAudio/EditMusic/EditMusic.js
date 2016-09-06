@@ -32,18 +32,6 @@ export default class EditMusic extends React.Component {
   		pxPerSecond: pxPerSecond,		// defines width of canvass 
   		waveColor: '#4dd2ff',
   	}
-
-  	// this.fixOldMusic()
-	}
-
-	fixOldMusic(){
-		let c2 = this.props.asset.content2
-		if(c2.channels){
-			c2.channels.forEach((channel) => {
-				if(!channel.id) channel.id = Math.floor(Math.random()*999999)
-					console.log(channel.id)
-			})
-		}
 	}
 
 	componentDidMount(){
@@ -61,6 +49,22 @@ export default class EditMusic extends React.Component {
 		this.musicStockPopup = ReactDOM.findDOMNode(this.refs.musicStockPopup)
 		this.generateMusicPopup = ReactDOM.findDOMNode(this.refs.generateMusicPopup)
 		this.generate8bitPopup = ReactDOM.findDOMNode(this.refs.generate8bitPopup)
+
+
+    $(this.generateMusicPopup)
+  	  .modal('setting', {
+        onHide: () => {
+          this.stopPopupAudio()
+        }
+      })
+
+    $(this.generate8bitPopup)
+  	  .modal('setting', {
+        onHide: () => {
+          this.stopPopupAudio()
+        }
+      })
+
 
 		this.converter = new AudioConverter(this.audioCtx)
 		let c2 = this.props.asset.content2
@@ -147,6 +151,12 @@ export default class EditMusic extends React.Component {
 		$(this.generateMusicPopup).modal('hide')
 		$(this.generate8bitPopup).modal('hide')
 	}
+
+  stopPopupAudio(){
+    // console.log("stop popup audio")  
+    this.refs.generateMusic.stop()
+    this.refs.generate8bit.stop()
+  }
 
 	openStockPopup(){
 		$(this.musicStockPopup).modal('show')
@@ -442,12 +452,12 @@ export default class EditMusic extends React.Component {
 				</div>
 
 				<div className="ui modal generateMusicPopup" ref="generateMusicPopup">
-					<GenerateMusic 
+					<GenerateMusic ref="generateMusic"
 						importMusic={this.importMusic.bind(this)}
 					/>
 				</div>
 				<div className="ui modal generate8bitPopup" ref="generate8bitPopup">
-					<Generate8bit
+					<Generate8bit ref="generate8bit"
 						importMusic={this.importMusic.bind(this)}
 					/>
 				</div>

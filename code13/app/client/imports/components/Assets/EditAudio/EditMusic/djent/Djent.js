@@ -85,6 +85,10 @@ export default class Djent extends Component {
         // console.log('apply preset')
         return this.actions.applyPreset(preset);
     }
+    
+    stop(){
+      this.refs.soundController.stopEvent()
+    }
 
     // ********** actions *******************
     applyPreset(preset){
@@ -312,6 +316,7 @@ export default class Djent extends Component {
                             <Panel>
                                 <div>
                                     <SoundController
+                                        ref="soundController"
                                         usePredefinedSettings={ false }
                                         generateButtonText={ 'Generate Riff' }
                                         enableContinuousGenerationControl={ true }

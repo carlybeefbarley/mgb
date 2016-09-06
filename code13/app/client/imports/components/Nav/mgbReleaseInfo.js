@@ -15,6 +15,71 @@
 export default mgbReleaseInfo = {
   "releases":
   [
+    {
+      "timestamp":     "Tue Sep 06 2016 13:12:03 GMT-0700 (PDT)",
+      
+      "id": {
+        "ver":         "0.0.1",
+        "state":       "alpha",
+        "iteration":   "1282"
+      },
+
+      "releaseManagement": {
+        "eng":         "dgolds"
+      },
+      
+      "changes": [
+        {
+          "featureTag":     "asset",
+          "type":           "improvement",
+          "changeName":     "Background save improvements",
+          "changeSummary":  "Asset saves to the server now happen on a timer interval (currently set to 5 seconds, but can vary). Also, we now show the state of the asset in the Asset Edit Header area: Red label means read-only. Purple label means offline, can't save.  Orange label means changes waiting to be sent to cloud.  Green label with orange icon means changes sent to cloud but not confirmed as saved yet. Green label with white icon means all changes sent to cloud and confirmed received.", 
+          "otherUrls":      [ ]
+        },
+        {
+          "featureTag":     "nav.user.avatar",
+          "type":           "improvement",
+          "changeName":     "Choose User Avatar",
+          "changeSummary":  "To set a User avatar, go to your profile, then drag a Graphic asset to your User's avatar iamge preview. The easiest way to do this is by using the (right hand) flexPanel for Assets (the Pencil icon). This can be tricky on mobile devices.. sorry. You can also drag an asset from a different MGB2 browser window - for example from the List Assets page. To edit your avatar, you just edit the graphic it uses. If you forget what this is, MGB can find it for you: click your avatar area when on your own profile page, it will take you to the editor for that graphic asset. Avatars currently only use the first frame of the graphic, animations are not yet supported.  Note that MGB will instantly update your User Avatar previews if you change which asset it uses, but changes to the graphic (i.e. changing some pixels) will only be shown for other users/windows when the page reloads/refreshes - ie.. User Avatar images are NOT fully reactive in the way other assets are", 
+          "otherUrls":      [ ]
+        },
+        {
+          "featureTag":     "nav.project.avatar",
+          "type":           "improvement",
+          "changeName":     "Choose Project Avatar",
+          "changeSummary":  "This is simlar to the new User avatars. TO set these, go to your Project Overview page, then drag a Graphic asset to your User's avatar iamge preview. The easiest way to do this is by using the (right hand) flexPanel for Assets (the Pencil icon). This can be tricky on mobile devices.. sorry. You can also drag an asset from a different MGB2 browser window - for example from the List Assets page. To edit your avatar, you just edit the graphic it uses. If you forget what this is, MGB can find it for you: click your avatar area when on your own Project Overview page: it will take you to the editor for that graphic asset. Project Avatars currently only use the first frame of the graphic, animations are not yet supported.", 
+          "otherUrls":      [ ]
+        },
+        {
+          "featureTag":     "render.image.pixelated",
+          "type":           "improvement",
+          "changeName":     "Pixelated Image rendering",
+          "changeSummary":  "Image smoothing is now disabled for all images shown in MGBv2 - i.e. smaller images will show as 'pixelated' when zoomed to a larger size, for example in an Avatar image, or Graphic Asset preview card.", 
+          "otherUrls":      [ ]
+        },
+        {
+          "featureTag":     "asset.music",
+          "type":           "improvement",
+          "changeName":     "Multi-channel music",
+          "changeSummary":  "In preparation for some fancy new stuff, music files are now multi-channel so they can combine multiple 'tracks' mixed at different volume levels. This was a major data format change, and since there's no significant Music content in the system so far, we decided to simplify this change by deleting all existing MGB2 Music assets (instead of dynamically modifying the old format). These deleted music assets are actually just *marked* as deleted, so if you really want to get one back, there's a way...", 
+          "otherUrls":      [ ]
+        },
+        {
+          "featureTag":     "asset.code",
+          "type":           "improvement",
+          "changeName":     "Helpers to load MGB assets in Phaser games",
+          "changeSummary":  "There are multiple new internal APIs and new importable scripts that help load graphics, tiles, tilesets, music, sounds etc into a Phaser Game. We will publish some examples to show how this can be done easily now", 
+          "otherUrls":      [ ]
+        },
+        {
+          "featureTag":     "asset.sound",
+          "type":           "improvement",
+          "changeName":     "Apple/Safari compatability for Audio",
+          "changeSummary":  "Music and Sound now should work OK on Safari browser and on iOS devices!", 
+          "otherUrls":      [ ]
+        }
+      ]
+    },
 
     {
       "timestamp":     "Sat Aug 27 2016 08:07:25 GMT+0100 (BST)",

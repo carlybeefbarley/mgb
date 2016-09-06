@@ -55,6 +55,7 @@ export default class Channel extends React.Component {
 	}
 
 	initAudio(){
+		if(!this.buffer) return
 		this.clearAudio()
 		let startTime = 0
 		this.source = this.props.audioCtx.createBufferSource()

@@ -18,7 +18,7 @@ export default class EditMusic extends React.Component {
 	constructor(props) {
   	super(props)
 
-  	console.log(props.asset.content2)
+  	// console.log(props.asset.content2)
   	this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   	this.channelsMounted = props.asset.content2.channels ? props.asset.content2.channels.length : 0
 		this.areChannelsMounted = props.asset.content2.channels ? false : true
@@ -32,6 +32,18 @@ export default class EditMusic extends React.Component {
   		pxPerSecond: pxPerSecond,		// defines width of canvass 
   		waveColor: '#4dd2ff',
   	}
+
+  	// this.fixOldMusic()
+	}
+
+	fixOldMusic(){
+		let c2 = this.props.asset.content2
+		if(c2.channels){
+			c2.channels.forEach((channel) => {
+				if(!channel.id) channel.id = Math.floor(Math.random()*999999)
+					console.log(channel.id)
+			})
+		}
 	}
 
 	componentDidMount(){
@@ -278,7 +290,7 @@ export default class EditMusic extends React.Component {
   	if(!c2) c2 = _.cloneDeep(this.props.asset.content2)
   	if(!c2.channels) c2.channels = []
   	c2.channels.push({
-  		id: Math.floor(Math.random()*999999),
+  		id: Date.now(),
   		title: "Channel "+c2.channels.length,
   		volume: 0.75,
   		dataUri: dataUri,

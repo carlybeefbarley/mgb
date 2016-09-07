@@ -16,7 +16,7 @@ export default mgbReleaseInfo = {
   "releases":
   [
     {
-      "timestamp":     "Tue Sep 06 2016 13:12:03 GMT-0700 (PDT)",
+      "timestamp":     "Tue Sep 06 2016 13:15:00 GMT-0700 (PDT)",
       
       "id": {
         "ver":         "0.0.1",
@@ -69,6 +69,13 @@ export default mgbReleaseInfo = {
           "type":           "improvement",
           "changeName":     "Helpers to load MGB assets in Phaser games",
           "changeSummary":  "There are multiple new internal APIs and new importable scripts that help load graphics, tiles, tilesets, music, sounds etc into a Phaser Game. We will publish some examples to show how this can be done easily now", 
+          "otherUrls":      [ ]
+        },
+        {
+          "featureTag":     "nav.navpanel",
+          "type":           "improvement",
+          "changeName":     "Alt-click large NavPanel icons for quick jump",
+          "changeSummary":  "The Large Black-background column of icons on the left of the MGB window are the NavPanel selectors. If you alt-click them with a amouse, they load the most common page for their sub-menu. Thus saving you a click!", 
           "otherUrls":      [ ]
         },
         {

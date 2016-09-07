@@ -1042,13 +1042,13 @@ export default class EditGraphic extends React.Component {
       c2.spriteData = []
       for (let i = 0; i < this.frameCanvasArray.length; i++) 
         c2.spriteData[i] = this.frameCanvasArray[i].toDataURL('image/png')
-      
-      // tileset saving
-      let tilesetInfo = this.createTileset()
-      c2.tileset = tilesetInfo.image
-      c2.cols = tilesetInfo.cols
-      c2.rows = tilesetInfo.rows
     }
+
+    // tileset saving
+    let tilesetInfo = this.createTileset()
+    c2.tileset = tilesetInfo.image
+    c2.cols = tilesetInfo.cols
+    c2.rows = tilesetInfo.rows
 
     this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }

@@ -1,6 +1,5 @@
-import _ from 'lodash';
-import React from 'react';
-import Footer from '/client/imports/components/Footer/Footer';
+import React from 'react'
+import Footer from '/client/imports/components/Footer/Footer'
 
 export default Roadmap = React.createClass({
 
@@ -21,9 +20,8 @@ export default Roadmap = React.createClass({
   renderRoadmap: function() {
     return (
       <div>
-        <h2>Features planned for August 2016</h2>
+        <h2>Features planned for September 2016</h2>
         <ul>
-          <li>Choose your avatar (not just gravatars)</li>
           <li>MGBv1 asset migration (tiles, actors, maps)</li>
           <li>MGBv1-style 'Actor' assets which enable game building without coding</li>
           <li>Lots of work on the Code Editor and Coding help systems</li>
@@ -34,6 +32,6 @@ export default Roadmap = React.createClass({
         </ul>
       </div>
     )
-  },
+  }
 
 })

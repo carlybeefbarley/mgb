@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 // This is based on https://github.com/kaivi/ReactInlineEdit/blob/master/index.jsx
-// dgolds copied it here August 2016 since the compoent wasn't being maintained and
+// dgolds copied it here August 2016 since the component wasn't being maintained and
 // we are using it a lot - also it may benefit from some specialization for MGB.
 
 // See https://github.com/kaivi/ReactInlineEdit/blob/master/README.md for info

@@ -3,6 +3,10 @@ import React, { PropTypes } from 'react'
 import moment from 'moment'
 import Plural from '/client/imports/helpers/Plural'
 
+// This is the  VIEWERS  ui that shows other active viewers
+
+const SESSION_MAGIC_TEXT = "BY_SESSION:" 
+const _getCurrUserIdentifier = (currUser) => (currUser ? currUser._id : SESSION_MAGIC_TEXT + Meteor.default_connection._lastSessionId)
 
 export default AssetActivityDetail = React.createClass({
 
@@ -14,15 +18,15 @@ export default AssetActivityDetail = React.createClass({
   
   render() {
     // A list of ActivitySnapshots provided via getMeteorData(), including one by ourself probably
-    let { activitySnapshots } = this.props
+    const { activitySnapshots, currUser } = this.props
     if (!activitySnapshots)
       return null
       
-    var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
+    var currUserId = _getCurrUserIdentifier(currUser)
     let othersActivities =  _.filter(activitySnapshots, a => currUserId !== a.byUserId)                            
     let viewers = _.map(othersActivities, a => { 
       const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
-      const href = (a.byUserId.indexOf("BY_SESSION") !== 0) ? {href:`/u/${a.byUserName}`} : {}  // See http://stackoverflow.com/questions/29483741/rendering-a-with-optional-href-in-react-js
+      const href = (a.byUserId.indexOf(SESSION_MAGIC_TEXT) !== 0) ? {href:`/u/${a.byUserName}`} : {}  // See http://stackoverflow.com/questions/29483741/rendering-a-with-optional-href-in-react-js
       let detail2 = null
       if (a.toAssetKind === "code")
         detail2 = ` at line ${a.passiveAction.position.line+1}`
@@ -35,10 +39,10 @@ export default AssetActivityDetail = React.createClass({
     })
     
     const viewersCount = viewers.length   // Note this excludes ourselves
-    const pointingClass = viewersCount ? "pointing below" : "" 
+    const pointingClass = viewersCount ? "black pointing below" : "grey" 
     
     return (
-      <div className={`ui simple dropdown small basic ${pointingClass} grey label item`} style={{marginBottom: "4px"}}>
+      <div className={`ui simple dropdown small basic ${pointingClass} label item`} style={{marginBottom: "4px"}}>
         <i className="unhide icon"></i>{Plural.numStr(viewersCount, 'Viewer')}
         <div className="menu">
           { viewers }

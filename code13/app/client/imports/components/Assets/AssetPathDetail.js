@@ -55,9 +55,9 @@ export default AssetPathDetail = React.createClass({
               ) 
               : 
               (
-                <div className={`ui mgbReadOnlyReminder small red icon label`} title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">
+                <a className={`ui mgbReadOnlyReminder small red icon label`} title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">
                   <i className="ui unhide icon" />View
-                </div>
+                </a>
               )        
           }
           &nbsp;&nbsp;

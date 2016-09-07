@@ -391,7 +391,7 @@ export default class EditMusic extends React.Component {
                     Loop
                   </label>
                 </div>
-                &nbsp
+                &nbsp;
                 <div className='ui small labeled input' title='Audio duration'>
                   <div className='ui label'>
                     Duration

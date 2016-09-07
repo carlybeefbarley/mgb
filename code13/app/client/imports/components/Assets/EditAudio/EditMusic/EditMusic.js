@@ -296,6 +296,7 @@ export default class EditMusic extends React.Component {
     let c2 = this.props.asset.content2
     let canvasWidth = c2.duration * this.state.pxPerSecond + 1
     this.setState({ canvasWidth: canvasWidth })
+    this.callChildren("drawWave")
   }
 
   addChannel (dataUri, c2) {
@@ -332,6 +333,7 @@ export default class EditMusic extends React.Component {
           id={channel.id}
           nr={nr}
           ref={'channel' + channel.id}
+          duration={c2.duration}
           channel={channel}
           audioCtx={this.audioCtx}
           canvasWidth={this.state.canvasWidth}

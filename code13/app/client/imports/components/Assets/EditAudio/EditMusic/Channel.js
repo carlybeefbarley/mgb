@@ -13,6 +13,9 @@ export default class Channel extends React.Component {
     this.state = {
 
     }
+
+    this.duration = 0
+    this.offsetDuration = 0   // in sec
   }
 
   componentDidMount () {
@@ -54,6 +57,8 @@ export default class Channel extends React.Component {
   initAudio () {
     if (!this.buffer) return
     this.clearAudio()
+    this.duration = this.buffer.length / this.props.audioCtx.sampleRate
+    console.log("channel duration", this.duration)
     let startTime = 0
     this.source = this.props.audioCtx.createBufferSource()
     this.gainNode = this.props.audioCtx.createGain()
@@ -77,6 +82,9 @@ export default class Channel extends React.Component {
   }
 
   drawWave () {
+    this.waveCtx.clearRect(0, 0, this.props.canvasWidth, this.props.canvasHeight)
+    this.drawTimeline()
+    this.drawSampleBG()
     if (!this.buffer) return // in situations when audio is not decoded yet
     // console.log("draw wave", this.props.id)
     const channelData = this.buffer.getChannelData(0)
@@ -84,7 +92,6 @@ export default class Channel extends React.Component {
     const chunk = Math.floor(channelData.length / channelWidth)
     const subChunk = 10
     const subChunkVal = Math.floor(chunk / subChunk)
-    this.waveCtx.clearRect(0, 0, this.props.canvasWidth, this.props.canvasHeight)
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
     this.waveCtx.globalAlpha = 0.4
@@ -99,6 +106,30 @@ export default class Channel extends React.Component {
         this.waveCtx.lineTo(x, y + val * y)
         this.waveCtx.stroke()
       }
+    }
+    this.waveCtx.restore()
+  }
+
+  drawSampleBG () {
+    this.waveCtx.save()
+    this.waveCtx.globalAlpha = 0.2
+    this.waveCtx.fillStyle = '#4dd2ff'
+    const width = this.duration * this.props.pxPerSecond
+    this.waveCtx.fillRect(0, 0, width, this.props.canvasHeight)
+    this.waveCtx.restore()
+  }
+
+  drawTimeline () {
+    let count = Math.floor(this.props.duration) + 1
+    this.waveCtx.save()
+    this.waveCtx.strokeStyle = '#333'
+    this.waveCtx.globalAlpha = 0.2
+    for (let i = 0; i < count; i++) {
+      const x = i * this.props.pxPerSecond + 0.5 // 0.5 for 1px line instead of 2px
+      this.waveCtx.beginPath()
+      this.waveCtx.moveTo(x, 0)
+      this.waveCtx.lineTo(x, this.props.canvasHeight)
+      this.waveCtx.stroke()
     }
     this.waveCtx.restore()
   }

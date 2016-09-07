@@ -11,9 +11,6 @@ export default class Channel extends React.Component {
     // console.log(props)
 
     this.state = {
-    	let i = 0
-    	
-
 
     }
   }

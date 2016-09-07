@@ -58,7 +58,6 @@ export default class Channel extends React.Component {
     if (!this.buffer) return
     this.clearAudio()
     this.duration = this.buffer.length / this.props.audioCtx.sampleRate
-    console.log("channel duration", this.duration)
     let startTime = 0
     this.source = this.props.audioCtx.createBufferSource()
     this.gainNode = this.props.audioCtx.createGain()
@@ -146,6 +145,22 @@ export default class Channel extends React.Component {
     return blob
   }
 
+  onClick (e) {
+    console.log('onClick')
+  }
+
+  onDragStart (e) {
+    console.log('drag start')
+    let ghost = e.target.cloneNode(true)
+    ghost.style.display = "none"
+    e.dataTransfer.setDragImage(ghost, 0, 0)
+  }
+
+  onDrag (e) {
+    console.log('drag')
+    e.preventDefault()
+  }
+
   changeVolume (e) {
     this.props.channel.volume = parseFloat(e.target.value)
     this.props.handleSave('Volume change')
@@ -179,7 +194,15 @@ export default class Channel extends React.Component {
           </buton>
         </div>
         <div className='channelWave'>
-          <canvas ref='waveCanvas' width={this.props.canvasWidth} height={this.props.canvasHeight}></canvas>
+          <canvas 
+            ref='waveCanvas'
+            draggable={true}
+            onDragStart={this.onDragStart.bind(this)}
+            onDrag={this.onDrag.bind(this)}
+            onClick={this.onClick.bind(this)}
+            width={this.props.canvasWidth}
+            height={this.props.canvasHeight}>
+          </canvas>
         </div>
       </div>
     )

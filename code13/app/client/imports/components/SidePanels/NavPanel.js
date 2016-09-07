@@ -147,7 +147,7 @@ export default NavPanel = React.createClass({
     return (
       <div className="basic segment mgbNavPanel" style={panelStyle}>
 
-        <div className="ui inverted attached borderless vertical big icon menu" style={miniNavStyle}>
+        <div className="ui inverted attached borderless vertical large icon menu" style={miniNavStyle}>
           { navPanelViews.map(v => { 
             if (v.hideIfNoUser && !this.props.currUser)
               return null

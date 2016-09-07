@@ -59,7 +59,7 @@ mongo-id@1.0.5
 mongo-livedata@1.0.12
 nimble:restivus@0.8.11
 npm-bcrypt@0.9.1
-npm-mongo@1.5.48
+npm-mongo@1.5.49
 observe-sequence@1.0.12
 okgrow:analytics@2.0.0
 ordered-dict@1.0.8
@@ -78,7 +78,7 @@ reload@1.1.10
 retry@1.0.8
 routepolicy@1.0.11
 semantic:ui@2.2.1
-semantic:ui-data@2.2.1
+semantic:ui-data@2.2.4
 service-configuration@1.0.10
 session@1.1.6
 sha@1.0.8

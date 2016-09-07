@@ -25,7 +25,6 @@ service-configuration@1.0.10
 react-meteor-data
 flemay:less-autoprefixer
 babel-runtime@0.1.11
-semantic:ui
 meteorhacks:kadira
 meteorhacks:kadira-profiler
 random@1.0.10
@@ -34,3 +33,4 @@ reactive-dict@1.1.8
 shell-server
 dispatch:mocha
 practicalmeteor:mocha
+semantic:ui

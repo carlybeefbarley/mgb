@@ -19,6 +19,8 @@ import { ActivitySnapshots, Activity } from '/imports/schemas'
 
 const FLUSH_TIMER_INTERVAL_MS = 5000    // Milliseconds between timed flush attempts
 
+const fAllowSuperAdminToEditAnything = false // PUT IN SERVER POLICY
+
 // This AssetEditRoute serves the following objectives
 // 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset
 // 2. Provide a UI header that shows the important metadata about the asset being shown/edited. These include
@@ -63,10 +65,13 @@ export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,       // params.assetId is the ASSET id
+    params: PropTypes.object,           // params.assetId is the ASSET id
     user: PropTypes.object,
     currUser: PropTypes.object,
-    ownsProfile: PropTypes.bool     // true IFF user is valid and asset owner is currently logged in user
+    currUserProjects: PropTypes.array,  // Both Owned and memberOf. Check ownerName / ownerId fields to know which
+    isSuperAdmin: PropTypes.bool,       
+    ownsProfile: PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
+    showToast: PropTypes.func           // For user feedback
   },
     
   contextTypes: {
@@ -135,11 +140,45 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-  canEdit: function() {
-    return !!(this.data.asset &&
-           !this.data.loading &&
-           this.props.currUser && 
-           this.data.asset.ownerId === this.props.currUser._id)
+
+  canCurrUserEditThisAsset: function() {
+    if (!this.data.asset || this.data.loading || !this.props.currUser)
+      return false  // Need to at least be logged in and have the data to do any edits!
+    
+    const { asset } = this.data
+    const { currUser, currUserProjects } = this.props
+    if (asset.ownerId === currUser._id)
+      return true   // Owner can always edit
+
+    // Are we superAdmin?
+    if (this.props.isSuperAdmin && fAllowSuperAdminToEditAnything)
+    {
+      console.log(`CanEdit=true because current User is SuperAdmin`)
+      return true
+    }
+
+    // Are we a projectMember for any of this asset's Projects?
+    const apn = asset.projectNames     // Shorthand
+    const cup = currUserProjects       // Shorthand
+    if (apn && apn.length > 0 && cup && cup.length > 0)
+    {
+      // There's at least one possibility of a matching project'
+      for (let currUserProjectIdx = 0; currUserProjectIdx < cup.length; currUserProjectIdx++)
+      {
+        for (let assetProjectIdx = 0; assetProjectIdx < apn.length; assetProjectIdx++)
+        {
+          if (asset.ownerId === cup[currUserProjectIdx].ownerId
+           && apn[assetProjectIdx] === cup[currUserProjectIdx].name)
+          {
+            console.log(`CanEdit=true because asset "${asset.name}" is in project "${apn[assetProjectIdx]}" and user ${currUser.profile.name} is a member of Project "${asset.ownerName}.${cup[currUserProjectIdx].name}"`)
+            return true
+          }
+        }
+      }
+    }
+
+    console.log(`CanEdit=false because of the reasons`)
+    return false    // Nope, can't edit it bro
   },
 
   render: function() {
@@ -160,7 +199,7 @@ export default AssetEditRoute = React.createClass({
         asset.thumbnail = dso.thumbnail
     }
 
-    const canEd = this.canEdit()
+    const canEd = this.canCurrUserEditThisAsset()
 
     return (
       <div className="ui padded grid">
@@ -316,7 +355,7 @@ export default AssetEditRoute = React.createClass({
   _sendContentChange(assetId, content2Object, thumbnail, changeText="content change")
   {
     const updateObj = _makeUpdateObj(content2Object, thumbnail)
-    Meteor.call('Azzets.update', assetId, this.canEdit(), updateObj, (err, res) => {
+    Meteor.call('Azzets.update', assetId, this.canCurrUserEditThisAsset(), updateObj, (err, res) => {
       if (err) {
         console.error(`Azzets.update failed: ${err.reason}`, err)
         // Also TODO: What about the data we couldn't save?
@@ -335,7 +374,7 @@ export default AssetEditRoute = React.createClass({
 // This should not conflict with the deferred changes since those don't change these fields :)
   handleAssetDescriptionChange: function(newText) {
     if (newText !== this.data.asset.text) {
-      Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {text: newText}, (err, res) => {
+      Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {text: newText}, (err, res) => {
         if (err) 
           this.props.showToast(err.reason, 'error')
       })      
@@ -346,7 +385,7 @@ export default AssetEditRoute = React.createClass({
 // This should not conflict with the deferred changes since those don't change these fields :)
   handleAssetNameChange: function(newName) {
     if (newName !== this.data.asset.name) {
-      Meteor.call('Azzets.update', this.data.asset._id, this.canEdit(), {name: newName}, (err, res) => {
+      Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {name: newName}, (err, res) => {
         if (err)
           this.props.showToast(err.reason, 'error')
       })      

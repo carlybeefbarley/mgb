@@ -3,7 +3,7 @@ const ToolMove = {
   label: "Move",
   name: "moveTool",
   tooltip: "Grab and drag to move the the frame's contents up, down, left or right",
-  icon: "move icon",        // Semantic-UI icon CSS class
+  icon: "hand paper icon",        // Semantic-UI icon CSS class
   editCursor: "move",
   supportsDrag: true,
   shortcut: 'm',

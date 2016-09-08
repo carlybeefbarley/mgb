@@ -16,13 +16,12 @@ export default class Channel extends React.Component {
 
     this.sample = {
       duration: 0,
-      delay: 0,   // in sec
-      offsetX: 0,
+      delay: props.channel.delay || 0,   // in sec
+      offsetX: (props.channel.delay || 0) * props.pxPerSecond,
       width: 0,
       dragStartX: 0,
     }
 
-    
   }
 
   componentDidMount () {

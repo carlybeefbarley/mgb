@@ -231,7 +231,7 @@ window.onload = function() {
           }
         }
         else{
-          console.log("All filed has loaded!")
+          console.log("(info) All files have loaded.")
         }
       };
       run()

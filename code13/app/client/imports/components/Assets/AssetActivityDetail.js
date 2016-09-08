@@ -44,9 +44,11 @@ export default AssetActivityDetail = React.createClass({
     return (
       <div className={`ui simple dropdown small basic ${pointingClass} label item`} style={{marginBottom: "4px"}}>
         <i className="unhide icon"></i>{Plural.numStr(viewersCount, 'Viewer')}
-        <div className="menu">
-          { viewers }
-        </div>
+        { viewers.length > 0 &&
+          <div className="menu">
+            { viewers }
+          </div>
+        }
       </div>
     )
   }

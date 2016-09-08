@@ -58,9 +58,11 @@ const AssetProjectDetail = (props) => {
         <i className="ui icon sitemap" />
         { (!hasProjects ? "(none)" : projectsTableAsJsx ) }
       </span>
-      <div className="ui small menu">
-        { projectsMenuAsJsxArray }
-      </div>
+      { hasProjects && 
+        <div className="ui small menu">
+          { projectsMenuAsJsxArray }
+        </div>
+      }
     </div>
   )
 }

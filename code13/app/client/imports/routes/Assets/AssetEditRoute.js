@@ -141,6 +141,7 @@ export default AssetEditRoute = React.createClass({
   },
 
 
+
   canCurrUserEditThisAsset: function() {
     if (!this.data.asset || this.data.loading || !this.props.currUser)
       return false  // Need to at least be logged in and have the data to do any edits!
@@ -162,7 +163,9 @@ export default AssetEditRoute = React.createClass({
     const cup = currUserProjects       // Shorthand
     if (apn && apn.length > 0 && cup && cup.length > 0)
     {
-      // There's at least one possibility of a matching project'
+      // There's at least one possibility of a matching project:
+      // Let's cycle through them and return true as soon as we find one
+      // TODO: find the lodash way to this in one line :)
       for (let currUserProjectIdx = 0; currUserProjectIdx < cup.length; currUserProjectIdx++)
       {
         for (let assetProjectIdx = 0; assetProjectIdx < apn.length; assetProjectIdx++)
@@ -185,9 +188,11 @@ export default AssetEditRoute = React.createClass({
     if (this.data.loading) 
       return <Spinner />
 
+    const { params, currUser, currUserProjects } = this.props
+
     let asset = Object.assign( {}, this.data.asset )        // One Asset provided via getMeteorData()
     if (!this.data.asset)
-      return <ThingNotFound type='Asset' id={this.props.params.assetId} />
+      return <ThingNotFound type='Asset' id={params.assetId} />
 
     // Overlay any newer data to the child component so that it gets what it expects based on last save attempt
     const dso = this.m_deferredSaveObj
@@ -200,6 +205,8 @@ export default AssetEditRoute = React.createClass({
     }
 
     const canEd = this.canCurrUserEditThisAsset()
+    const currUserId = currUser ? currUser._id : null
+
 
     return (
       <div className="ui padded grid">
@@ -233,16 +240,19 @@ export default AssetEditRoute = React.createClass({
           <AssetUrlGenerator asset={asset} />
           &emsp;
           <AssetActivityDetail
-            assetId={this.props.params.assetId} 
-            currUser={this.props.currUser}
+            assetId={params.assetId} 
+            currUser={currUser}
             activitySnapshots={this.data.activitySnapshots} />
           &emsp;
           <AssetHistoryDetail 
-            assetId={this.props.params.assetId} 
-            currUser={this.props.currUser}
+            assetId={params.assetId} 
+            currUser={currUser}
             assetActivity={this.data.assetActivity} />
           &emsp;
           <AssetProjectDetail 
+            currUserId={currUserId}
+            asset={asset}
+            currUserProjects={currUserProjects}
             projectNames={asset.projectNames || []}
             isDeleted={asset.isDeleted} />
 
@@ -252,7 +262,7 @@ export default AssetEditRoute = React.createClass({
           <AssetEdit 
             asset={asset} 
             canEdit={canEd} 
-            currUser={this.props.currUser}
+            currUser={currUser}
             handleContentChange={this.deferContentChange}
             editDeniedReminder={this.handleEditDeniedReminder}
             activitySnapshots={this.data.activitySnapshots} 

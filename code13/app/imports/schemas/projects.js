@@ -264,8 +264,10 @@ var schema = {
   description: String,      // A description field
   memberIds: [String],      // Array of memberIds (User._id keys)
   avatarAssetId: String     // Asset that will be used as the avatar for this project (should be of kind=graphic)
-};
+}
 
+
+// Helper functions
 
 /** This is intended for use by publications.js and any Meteor.subscribe calls
  *  Selector will return projects relevant to this userId.. This includes owner, member, etc
@@ -280,6 +282,45 @@ export function projectMakeSelector(userId)
     ]
   }
 }
+
+/***
+ * Check if the user has write access to a list of projects via Project Membership
+ * @param currUserId - the User._id string key for the currently logged in User. 
+ * @param asset - the asset object from assets.js  If null, then return value is NULL (we have no data to use). We will care specifically about asset.ownerId and asset.projectNames[]
+ * @param currUsersProjects - the array of projects (from projects.js) that the currently Logged in user is owner/member of. null/undefined is treated as an empty array []
+ *
+ */
+export function calculateProjectAccessRightsForAsset(currUserId, asset, currUsersProjects = []) {
+  
+  if (!asset) 
+    return null
+
+  return _.map( asset.projectNames, (pName) => (
+    {
+      projectName: pName,
+      isCurrUserProjectOwner:  asset.ownerId === currUserId,    // Pretty simple logic for this given that it's our axiom
+      isCurrUserProjectMember: _.some(currUsersProjects, usrProj => (
+        usrProj.name === pName && 
+        usrProj.ownerId === asset.ownerId &&
+        _.includes(usrProj.memberIds, currUserId) 
+      ))
+    }
+  ))
+}
+
+
+const OWNED_COLOR = "green"
+const MEMBER_COLOR = "blue"
+const NOACCESS_COLOR = "grey"
+
+/**
+ * This is a helper for visuals. It uses the ProjectTableEntries returned from calculateProjectAccessRightsForAsset() above
+ * It returns a css color string, e.g. "red"
+ */
+export const getColorNameForProjectAccess = (pte) => ( 
+  pte.isCurrUserProjectOwner ? OWNED_COLOR :
+    (pte.isCurrUserProjectMember ? MEMBER_COLOR : NOACCESS_COLOR)
+)
 
 
 Meteor.methods({

@@ -158,7 +158,10 @@ export default class Channel extends React.Component {
   }
 
   onClick (e) {
-    console.log('onClick')
+    let canvasX = this.waveCanvas.getBoundingClientRect().left
+    let cursorX = e.clientX - canvasX
+    let newTime = Math.round((cursorX/this.props.pxPerSecond)*1000)
+    this.props.setAudioTime(newTime)
   }
 
   onDragStart (e) {

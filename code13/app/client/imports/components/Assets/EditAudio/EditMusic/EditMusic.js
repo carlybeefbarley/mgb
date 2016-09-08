@@ -195,6 +195,13 @@ export default class EditMusic extends React.Component {
     this.callChildren('initAudio', [this.songTime])
   }
 
+  setAudioTime (newTime) {
+    this.songTime = newTime
+    this.callChildren('initAudio', [this.songTime])
+    if(this.state.isPlaying) this.audioCtx.resume()
+    else this.updateCursor()
+  }
+
   saveChannel (channel) {
     this.callChildren('initAudio', [this.songTime])
     if(this.state.isPlaying) this.audioCtx.resume()
@@ -351,6 +358,7 @@ export default class EditMusic extends React.Component {
           pxPerSecond={this.state.pxPerSecond}
           handleSave={this.handleSave.bind(this)}
           saveChannel={this.saveChannel.bind(this)}
+          setAudioTime={this.setAudioTime.bind(this)}
           deleteChannel={this.deleteChannel.bind(this)}
           mountChannel={this.mountChannel.bind(this)} />
       )})

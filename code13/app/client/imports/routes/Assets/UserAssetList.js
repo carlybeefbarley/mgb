@@ -303,7 +303,7 @@ export default UserAssetListRoute = React.createClass({
 
           <div className="ui row">
             <div className="ui hazUserPopup large header">{ user ? (<span><a>{name}</a>'s Assets</span>) : ("Public assets") }</div>     
-            <div className="ui popup" style={{minWidth: "260px"}}>
+            <div className="ui popup" style={{minWidth: "300px"}}>
               { user && <UserItem user={user} renderNarrow={true}/> } 
             </div>
           </div>  

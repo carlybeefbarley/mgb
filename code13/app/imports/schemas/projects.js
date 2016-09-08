@@ -1,9 +1,33 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-import _ from 'lodash';
-import { Projects, Users } from '/imports/schemas';
-import { check, Match } from 'meteor/check';
+import _ from 'lodash'
+import { Projects } from '/imports/schemas'
+import { check, Match } from 'meteor/check'
+
+// The projects/assets data model for MGB has some very simple axioms:
+//
+// Containment Axioms:
+//   A 'project'' has exactly one owner
+//   An 'asset' can only have one owner
+//   The 'asset' owner MUST also be the project owner
+//   An 'asset' can be part of zero-or-more 'projects' as long as they are all owned by the asset owner
+// 
+// Rights Axioms:
+//  A user can ALWAYS modify/destroy/create assets they own, regardless of the asset's project memberships (including the asset being in no projects)
+//  A member of a project can modify (including changing the mark-as-deleted flag) assets for projects they are members of
+//  TBD: A member of a project can ?SOMETIMES? create new assets in a user's project *which would be owned by the Project Owner)
+//  TBD: A member of a project can ?SOMETIMES? edit the project membership of an asset they do not own (thus adding/removing it to a project)
+//
+// Consequences of Axioms:
+//  A project MAY contain no assets
+//  An asset MAY be part of no projects
+//  An asset MUST never have no owner
+//  An asset MUST never have two-or-more owners
+//  Every asset in a project MUST be owned by the project owner (asset.ownerId ==== project.ownerId)
+//  All assets in a project MUST have the same owner
+//  An asset MUST never be in two projects which have different owners (in fact our chosen data structure has no way to represent this case - intentionally)
+
 
 var schema = {
   _id: String,

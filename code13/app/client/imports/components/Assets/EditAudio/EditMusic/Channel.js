@@ -183,7 +183,9 @@ export default class Channel extends React.Component {
   onDragEnd (e) {
     // calculate audio offset in sec
     this.sample.delay = this.sample.offsetX / this.props.pxPerSecond
-    this.props.refreshChannels()
+    let channel = this.props.channel
+    channel.delay = this.sample.delay
+    this.props.saveChannel(channel)
     // console.log(this.sample.delay)
   }
 

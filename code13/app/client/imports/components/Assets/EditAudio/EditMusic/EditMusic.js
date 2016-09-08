@@ -195,9 +195,14 @@ export default class EditMusic extends React.Component {
     this.callChildren('initAudio', [this.songTime])
   }
 
-  refreshChannels () {
+  saveChannel (channel) {
     this.callChildren('initAudio', [this.songTime])
     if(this.state.isPlaying) this.audioCtx.resume()
+    // updates channel, merge rest of channels and saves to db
+    let c2 = _.cloneDeep(this.props.asset.content2)
+    let nr = _.findIndex(c2.channels, (a) => a.id == channel.id)
+    c2.channels[nr] = channel
+    this.mergeChannels(c2)
   }
 
   toggleLoop () {
@@ -345,7 +350,7 @@ export default class EditMusic extends React.Component {
           canvasHeight={this.state.canvasHeight}
           pxPerSecond={this.state.pxPerSecond}
           handleSave={this.handleSave.bind(this)}
-          refreshChannels={this.refreshChannels.bind(this)}
+          saveChannel={this.saveChannel.bind(this)}
           deleteChannel={this.deleteChannel.bind(this)}
           mountChannel={this.mountChannel.bind(this)} />
       )})

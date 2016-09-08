@@ -370,6 +370,25 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  forceDraw ()
+  {
+    let c2 = this.props.asset.content2
+    if(!c2.frameData || !c2.frameData[0]) return
+
+    this.frameCtxArray[0].clearRect(0, 0, c2.width, c2.height)
+    for(let i=c2.frameData[0].length-1; i>=0; i--){
+      let lData = c2.frameData[0][i]
+      let img = new Image()
+      img.width = c2.width
+      img.height = c2.height
+      img.src = lData
+      this.previewCtxArray[i].clearRect(0, 0, c2.width, c2.height)
+      this.previewCtxArray[i].drawImage(img, 0, 0)
+      this.frameCtxArray[0].drawImage(img, 0, 0)
+    }
+    this.editCtx.drawImage(this.frameCanvasArray[0], 0, 0)
+  }
+
   drawSelectRect(selectRect) {
     var self = this
 
@@ -1034,8 +1053,7 @@ export default class EditGraphic extends React.Component {
         // dontSaveFrameData - hack when deleting/moving frames (previewCanvases are not yet updated)
       let layerCount = this.previewCanvasArray.length  // New layer is not yet added, so we don't use c2.layerParams.length
       for (let i = 0; i < layerCount; i++)
-        c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')      
-      asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')     
+        c2.frameData[this.state.selectedFrameIdx][i] = this.previewCanvasArray[i].toDataURL('image/png')
 
       // Saving the composite Frame (using all layers for this frame) for convenient use in the map editor.
       // TODO(@stauzs): Would this be nicer as a list comprehension?    c2.spriteData = _.map(this.frameCanvasArray, c => c.toDataURL('image/png'))
@@ -1049,6 +1067,9 @@ export default class EditGraphic extends React.Component {
     c2.tileset = tilesetInfo.image
     c2.cols = tilesetInfo.cols
     c2.rows = tilesetInfo.rows
+
+    // thumbnail
+    if(this.frameCanvasArray[0]) asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')
 
     this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }
@@ -1519,6 +1540,7 @@ export default class EditGraphic extends React.Component {
 
             hasPermission={this.hasPermission.bind(this)}
             handleSave={this.handleSave.bind(this)}     
+            forceDraw={this.forceDraw.bind(this)}
             forceUpdate={this.forceUpdate.bind(this)}   
           />
 

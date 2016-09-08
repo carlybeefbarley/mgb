@@ -94,6 +94,7 @@ export default class SpriteLayers extends React.Component {
     c2.frameData[frameID] = c2.frameData[frameID-1]
     c2.frameData[frameID-1] = tmpData
 
+    this.props.forceDraw()
     this.handleSave(`Move frame ${frameID} left`, true)
   }
 
@@ -112,6 +113,7 @@ export default class SpriteLayers extends React.Component {
     c2.frameData[frameID] = c2.frameData[frameID+1]
     c2.frameData[frameID+1] = tmpData
 
+    this.props.forceDraw()
     this.handleSave(`Move frame ${frameID} right`, true)
   }
 
@@ -131,6 +133,7 @@ export default class SpriteLayers extends React.Component {
     c2.frameData.splice(frameID, 1);
     if (this.props.EditGraphic.state.selectedFrameIdx > c2.frameNames.length-1)
       this.props.EditGraphic.setState({ selectedFrameIdx: c2.frameNames.length-1 })
+    this.props.forceDraw()
     this.handleSave('Delete frame', true)
   }    
 
@@ -345,9 +348,8 @@ export default class SpriteLayers extends React.Component {
     for (let i; i<fD.length; i++)
       fD[i][lN.length-1] = emptypixel     // BUGBUG? What is lN?    let lN = this.props.content2.layerParams
   
-    
-    this.handleSave('Add layer to graphic')
     this.props.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
+    this.handleSave('Add layer to graphic')    
   }
 
   copyLayer(layerID) {

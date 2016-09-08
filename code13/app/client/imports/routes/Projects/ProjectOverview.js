@@ -96,7 +96,6 @@ export default ProjectOverview = React.createClass({
           <h3 className="ui header">Project Members</h3>
           <div className="ui basic segment">
             Project Members may create, edit or delete assets in this project &nbsp;        
-            <p className="ui tiny orange label">&nbsp; ! Access Control Not Yet Implemented !</p>  
             <ProjectMembersGET 
                 project={this.data.project} 
                 enableRemoveButton={canEdit} 

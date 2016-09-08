@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import QLink from '/client/imports/routes/QLink'
 import { calculateProjectAccessRightsForAsset, getColorNameForProjectAccess } from '/imports/schemas/projects'
 
 const _propTypes = {
@@ -29,12 +30,12 @@ const AssetProjectDetail = (props) => {
   )
 
   const projectsMenuAsJsxArray = projectsTable.map( (p,idx) => (
-    <a className={"ui small " + getColorNameForProjectAccess(p) + " basic label item"} key={idx}>
+    <QLink to={"/u/" + asset.dn_ownerName + "/projects/"} className={"ui small " + getColorNameForProjectAccess(p) + " basic label item"} key={idx}>
       {p.projectName}
       {p.isCurrUserProjectMember ? <small> (member)</small> : ""}
       {p.isCurrUserProjectOwner ? <small> (owner)</small> : ""}
       {(!p.isCurrUserProjectOwner && !p.isCurrUserProjectMember) ? <small> (no access)</small> : ""}
-    </a> 
+    </QLink>
   ))
 
   const inProjectClassName = (

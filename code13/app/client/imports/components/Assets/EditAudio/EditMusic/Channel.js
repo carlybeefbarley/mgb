@@ -16,8 +16,8 @@ export default class Channel extends React.Component {
 
     this.sample = {
       duration: 0,
-      offsetDuration: 0,   // in sec
-      offsetX: 150,
+      delay: 0,   // in sec
+      offsetX: 0,
       width: 0,
       dragStartX: 0,
     }
@@ -61,12 +61,11 @@ export default class Channel extends React.Component {
     reader.readAsArrayBuffer(soundBlob)
   }
 
-  initAudio () {
+  initAudio (songTime = 0) {
     if (!this.buffer) return
     this.clearAudio()
     this.sample.duration = this.buffer.length / this.props.audioCtx.sampleRate
     this.sample.width = Math.floor(this.sample.duration * this.props.pxPerSecond)
-    let startTime = 0
     this.source = this.props.audioCtx.createBufferSource()
     this.gainNode = this.props.audioCtx.createGain()
 
@@ -76,7 +75,14 @@ export default class Channel extends React.Component {
     this.gainNode.connect(this.props.audioCtx.destination)
     this.gainNode.gain.value = this.props.channel.volume
 
-    this.source.start(0, startTime) // delay, startTime
+    let startTime = 0
+    let delay = this.sample.delay - songTime/1000
+    if(delay < 0) {
+      startTime = Math.abs(delay)
+      delay = 0
+    }
+    // console.log(delay, startTime)
+    this.source.start(this.props.audioCtx.currentTime + delay, startTime) // delay, startTime
     this.props.audioCtx.suspend()
   }
 
@@ -157,7 +163,7 @@ export default class Channel extends React.Component {
   }
 
   onDragStart (e) {
-    console.log('drag start')
+    // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
     let ghost = e.target.cloneNode(true)
     ghost.style.display = "none"
     e.dataTransfer.setDragImage(ghost, 0, 0)
@@ -174,8 +180,11 @@ export default class Channel extends React.Component {
     this.drawWave()
   }
 
-  onDragStop (e) {
-    // TODO calculate audio duration offset
+  onDragEnd (e) {
+    // calculate audio offset in sec
+    this.sample.delay = this.sample.offsetX / this.props.pxPerSecond
+    this.props.refreshChannels()
+    // console.log(this.sample.delay)
   }
 
   changeVolume (e) {
@@ -216,6 +225,7 @@ export default class Channel extends React.Component {
             draggable={true}
             onDragStart={this.onDragStart.bind(this)}
             onDrag={this.onDrag.bind(this)}
+            onDragEnd={this.onDragEnd.bind(this)}
             onClick={this.onClick.bind(this)}
             width={this.props.canvasWidth}
             height={this.props.canvasHeight}>

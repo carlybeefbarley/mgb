@@ -192,7 +192,12 @@ export default class EditMusic extends React.Component {
     this.audioCtx.suspend()
     this.songTime = 0
     this.updateCursor()
-    this.callChildren('initAudio')
+    this.callChildren('initAudio', [this.songTime])
+  }
+
+  refreshChannels () {
+    this.callChildren('initAudio', [this.songTime])
+    if(this.state.isPlaying) this.audioCtx.resume()
   }
 
   toggleLoop () {
@@ -204,7 +209,7 @@ export default class EditMusic extends React.Component {
     if (!c2.channels) return
     if (!args) args = []
     c2.channels.forEach((channel, id) => {
-      this.refs['channel' + channel.id][func]()
+      this.refs['channel' + channel.id][func](...args)
     })
   }
 
@@ -340,6 +345,7 @@ export default class EditMusic extends React.Component {
           canvasHeight={this.state.canvasHeight}
           pxPerSecond={this.state.pxPerSecond}
           handleSave={this.handleSave.bind(this)}
+          refreshChannels={this.refreshChannels.bind(this)}
           deleteChannel={this.deleteChannel.bind(this)}
           mountChannel={this.mountChannel.bind(this)} />
       )})

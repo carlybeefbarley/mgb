@@ -14,8 +14,15 @@ export default class Channel extends React.Component {
 
     }
 
-    this.duration = 0
-    this.offsetDuration = 0   // in sec
+    this.sample = {
+      duration: 0,
+      offsetDuration: 0,   // in sec
+      offsetX: 150,
+      width: 0,
+      dragStartX: 0,
+    }
+
+    
   }
 
   componentDidMount () {
@@ -57,7 +64,8 @@ export default class Channel extends React.Component {
   initAudio () {
     if (!this.buffer) return
     this.clearAudio()
-    this.duration = this.buffer.length / this.props.audioCtx.sampleRate
+    this.sample.duration = this.buffer.length / this.props.audioCtx.sampleRate
+    this.sample.width = Math.floor(this.sample.duration * this.props.pxPerSecond)
     let startTime = 0
     this.source = this.props.audioCtx.createBufferSource()
     this.gainNode = this.props.audioCtx.createGain()
@@ -87,19 +95,18 @@ export default class Channel extends React.Component {
     if (!this.buffer) return // in situations when audio is not decoded yet
     // console.log("draw wave", this.props.id)
     const channelData = this.buffer.getChannelData(0)
-    const channelWidth = Math.floor(this.buffer.duration * this.props.pxPerSecond)
-    const chunk = Math.floor(channelData.length / channelWidth)
+    const chunk = Math.floor(channelData.length / this.sample.width)
     const subChunk = 10
     const subChunkVal = Math.floor(chunk / subChunk)
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
     this.waveCtx.globalAlpha = 0.4
     const y = this.props.canvasHeight / 2
-    for (let i = 0; i < channelWidth; i++) {
+    for (let i = 0; i < this.sample.width; i++) {
       for (var j = 0; j < subChunk; j++) {
         const val = channelData[i * chunk + j * subChunkVal]
         // const x = i+j*(1/subChunk)
-        const x = i
+        const x = i + this.sample.offsetX
         this.waveCtx.beginPath()
         this.waveCtx.moveTo(x, y)
         this.waveCtx.lineTo(x, y + val * y)
@@ -113,8 +120,8 @@ export default class Channel extends React.Component {
     this.waveCtx.save()
     this.waveCtx.globalAlpha = 0.2
     this.waveCtx.fillStyle = '#4dd2ff'
-    const width = this.duration * this.props.pxPerSecond
-    this.waveCtx.fillRect(0, 0, width, this.props.canvasHeight)
+    const width = this.sample.duration * this.props.pxPerSecond
+    this.waveCtx.fillRect(this.sample.offsetX, 0, width, this.props.canvasHeight)
     this.waveCtx.restore()
   }
 
@@ -154,11 +161,21 @@ export default class Channel extends React.Component {
     let ghost = e.target.cloneNode(true)
     ghost.style.display = "none"
     e.dataTransfer.setDragImage(ghost, 0, 0)
+    this.sample.dragStartX = e.clientX
   }
 
   onDrag (e) {
-    console.log('drag')
-    e.preventDefault()
+    // console.log('drag')
+    // e.preventDefault()
+    if(e.clientX == 0 && e.clientY == 0) return   // avoiding weid glitch when at the end of drag 0,0 coords returned
+    const deltaX = e.clientX - this.sample.dragStartX
+    this.sample.offsetX += deltaX
+    this.sample.dragStartX = e.clientX
+    this.drawWave()
+  }
+
+  onDragStop (e) {
+    // TODO calculate audio duration offset
   }
 
   changeVolume (e) {

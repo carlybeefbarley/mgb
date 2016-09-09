@@ -93,6 +93,7 @@ export default class SourceTools {
   }
 
   addDefsOrFile(filename, code) {
+
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       // this only works when not in worker mode..
@@ -101,6 +102,10 @@ export default class SourceTools {
       this.tern.server.addDefs && this.tern.server.addDefs(lib.defs, true)
     }
     else {
+      // TODO: debug: sometimes code isn't defined at all
+      if(code){
+        return
+      }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
         const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
         this.tern.server.delFile(cleanFileName, code)

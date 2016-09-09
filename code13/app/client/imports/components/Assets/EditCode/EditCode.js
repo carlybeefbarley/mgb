@@ -927,7 +927,6 @@ export default class EditCode extends React.Component {
         filename: asset.name || "",
         //gameEngineScriptToPreload: gameEngineJsToLoad
       })
-      this.forceUpdate()
     })
     this.tools.createBundle((bundle) => {
       const value = this.codeMirror.getValue()
@@ -996,6 +995,8 @@ export default class EditCode extends React.Component {
         {item.description}
       </a>
     })
+
+    this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
       return <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}}>

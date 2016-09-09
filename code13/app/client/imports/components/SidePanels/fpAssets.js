@@ -88,15 +88,18 @@ export default fpAssets = React.createClass({
       
     const assets = this.data.assets       // list of assets provided via getMeteorData()
     const user = this.props.user
-
-    // this is copied from UserAssetList - repeats.. needs cleanup
-    let selectorForProjects = {
-      "$or": [
-        { ownerId: user._id },
-        { memberIds: { $in: [user._id]} }
-      ]
+    let selectorForProjects, projects
+    if(user) {
+      // this is copied from UserAssetList - repeats.. needs cleanup
+      selectorForProjects = {
+        "$or": [
+          {ownerId: user._id},
+          {memberIds: {$in: [user._id]}}
+        ]
+      }
+      projects = Projects.find(selectorForProjects).fetch()
     }
-    const projects = Projects.find(selectorForProjects).fetch()
+
 
     return  <div>
               <div>

@@ -20,6 +20,8 @@ export default ProjectSelector = React.createClass({
   
   render: function() {
     const pName = this.props.chosenProjectName
+    const { user } = this.props
+
     let choices = []
     // Build the list of 'View Project' Menu choices of OWNED projects
     _.each(this.props.availableProjects, (project) => { 
@@ -48,7 +50,7 @@ export default ProjectSelector = React.createClass({
         <a  className="ui header" 
             data-value="__ownedHdr" 
             key="__ownedHdr">
-            Owned projects
+            Projects owned by {user.profile.name}
         </a>)
       choices.push(
         <a  className={"ui item"+ (isActive ? " active" : "")} 
@@ -72,7 +74,7 @@ export default ProjectSelector = React.createClass({
           { choices }           
           <div className="divider"></div>
           <QLink className="ui item" to={this.props.ProjectListLinkUrl}>
-            { this.props.canEdit ? "Manage Projects" : "View Projects" }
+            { this.props.canEdit ? "Manage Projects" : "View Project List" }
           </QLink>
         </div>
       </div>

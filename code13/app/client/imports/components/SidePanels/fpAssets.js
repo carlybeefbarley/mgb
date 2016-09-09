@@ -116,8 +116,8 @@ export default fpAssets = React.createClass({
                   </button>
                 </div>
                 { user ? <ProjectSelector
-                  key="fpProjectSelector" // don't conflit with asset project selector
-                  canEdit={true}
+                  key="fpProjectSelector" // don't conflict with asset project selector
+                  canEdit={false}
                   user={user}
                   handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
                   availableProjects={projects}

@@ -1064,17 +1064,20 @@ export default class EditGraphic extends React.Component {
 
     // tileset saving
     let tilesetInfo = this.createTileset()
-    c2.tileset = tilesetInfo.image
-    c2.cols = tilesetInfo.cols
-    c2.rows = tilesetInfo.rows
+    if(tilesetInfo){
+      c2.tileset = tilesetInfo.image
+      c2.cols = tilesetInfo.cols
+      c2.rows = tilesetInfo.rows
+    }
 
     // thumbnail
-    if(this.frameCanvasArray[0]) asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')
+    if(this.frameCanvasArray && this.frameCanvasArray[0]) asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')
 
     this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }
 
   createTileset() {
+    if(!this.frameCanvasArray || this.frameCanvasArray.length == 0) return null
     let c2   = this.props.asset.content2
     let cols = Math.ceil(Math.sqrt(c2.frameNames.length))
     let rows = Math.ceil(c2.frameNames.length/cols)

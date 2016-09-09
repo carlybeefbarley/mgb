@@ -7,7 +7,7 @@ const MODULE_SERVER = 'https://cdn.jsdelivr.net/phaser/latest/'
 // this will insanely speed up run
 const INVALIDATE_CACHE_TIMEOUT = 30000
 // add only smalls libs to tern
-const MAX_ACCEPTABLE_SOURCE_SIZE = 653937 + 1 // REACT sice for testing purposes - 1024 * 10 // 10 kb
+const MAX_ACCEPTABLE_SOURCE_SIZE = 1700653 // REACT sice for testing purposes - 1024 * 10 // 10 kb
 const tmpCache = {}
 
 export default class SourceTools {
@@ -81,7 +81,13 @@ export default class SourceTools {
     const lib = SourceTools.getKnowLib(name)
     const useGlobal = !(!lib || !lib.useGlobal)
     this.collectedSources.push({name, code, useGlobal})
-    this.addDefsOrFile(name, this.transpileCache[name].src)
+    // MGB assets will have cache.. remote won't
+    if(this.transpileCache[name]){
+      this.addDefsOrFile(name, this.transpileCache[name].src)
+    }
+    else{
+      this.addDefsOrFile(name, code)
+    }
 
     cb && cb()
   }
@@ -96,12 +102,12 @@ export default class SourceTools {
     }
     else {
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
-
-        this.tern.server.delFile(filename.substr(2), code)
-        this.tern.server.addFile(filename.substr(2), code)
+        const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
+        this.tern.server.delFile(cleanFileName, code)
+        this.tern.server.addFile(cleanFileName, code)
       }
       else {
-        console.log(`source is too big [${filename} -> ${code.length}bytes] and no defs defined`)
+        console.log(`${filename} is too big [${code.length} bytes] and no defs defined`)
       }
     }
   }

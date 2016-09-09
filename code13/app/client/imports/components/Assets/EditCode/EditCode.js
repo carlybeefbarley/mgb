@@ -34,6 +34,9 @@ import cm_tern_lib_comment from "tern/lib/comment";
 import cm_tern_modules from "tern/plugin/modules";
 // adds ES import support to tern
 import cm_tern_es_modules from "tern/plugin/es_modules";
+// extract docs from comment
+import cm_tern_doc_comment from "tern/plugin/doc_comment";
+
 // ?  <script src="/tern/plugin/doc_comment.js"></script>
 
 
@@ -141,7 +144,11 @@ export default class EditCode extends React.Component {
       ],
       plugins: {
         modules: true,
-        es_modules: true
+        comment: true,
+        es_modules: true,
+        doc_comment: {
+          strong: true
+        }
       },
       workerScript: "/lib/TernWorker.js"
       /*,
@@ -640,6 +647,7 @@ export default class EditCode extends React.Component {
     }
 
     ternServer.request(editor, query, function (error, data) {
+      //console.log(data)
       if (error)
         self.setState({atCursorTypeRequestResponse: {"error": error}})
       else
@@ -919,6 +927,7 @@ export default class EditCode extends React.Component {
         filename: asset.name || "",
         //gameEngineScriptToPreload: gameEngineJsToLoad
       })
+      this.forceUpdate()
     })
     this.tools.createBundle((bundle) => {
       const value = this.codeMirror.getValue()

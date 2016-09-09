@@ -6,8 +6,10 @@ import { Link } from 'react-router';
 import Spinner from '/client/imports/components/Nav/Spinner';
 import AssetList from '/client/imports/components/Assets/AssetList';
 
-import { Azzets } from '/imports/schemas';
+import { Azzets, Projects } from '/imports/schemas';
 import { AssetKindKeys, assetMakeSelector } from '/imports/schemas/assets';
+
+import ProjectSelector from '/client/imports/components/Assets/ProjectSelector';
 
 export default fpAssets = React.createClass({
   mixins: [ReactMeteorData],
@@ -22,7 +24,8 @@ export default fpAssets = React.createClass({
 
   getInitialState: function () {
     return { 
-      searchName: "" 
+      searchName: "",
+      project: null
     }
   },
 
@@ -36,7 +39,7 @@ export default fpAssets = React.createClass({
                                   null, 
                                   AssetKindKeys, 
                                   nameSearch,
-                                  null,   // Project 
+                                  this.state.project,   // Project
                                   false,  // Show Only Deleted
                                   false,  // Shw only Stable
                                   undefined,  // Use default sort order
@@ -74,11 +77,27 @@ export default fpAssets = React.createClass({
     if (e.which === 13)
       $(this.refs.searchGoButton).click()
   },
-  
+  handleChangeSelectedProjectName(name){
+    this.setState({
+      project: name
+    })
+  },
   render: function () {
       
     const assets = this.data.assets       // list of assets provided via getMeteorData()
-    
+    const user = this.props.user
+
+    // this is copied from UserAssetList - repeats.. needs cleanup
+    let selectorForProjects = {
+      "$or": [
+        { ownerId: user._id },
+        { memberIds: { $in: [user._id]} }
+      ]
+    }
+    const projects = Projects.find(selectorForProjects).fetch()
+    //const qN = this.queryNormalized(this.props.location.query)
+
+
     return  <div>
               <div>
                 <div className="ui small fluid action input">
@@ -92,7 +111,15 @@ export default fpAssets = React.createClass({
                   <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
                     <i className="search icon"></i>
                   </button>
-                </div>                 
+                </div>
+                { user ? <ProjectSelector
+                  canEdit={true}
+                  user={user}
+                  handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+                  availableProjects={projects}
+                  ProjectListLinkUrl={"/u/" + user.profile.name + "/projects"}
+                  chosenProjectName={this.state.project} />
+                  : null }
               </div>
               <br></br>
               { this.data.loading ? <Spinner /> : 

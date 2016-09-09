@@ -7,6 +7,7 @@ import MusicStock from './MusicStock.js'
 import GenerateMusic from './GenerateMusic.js'
 import Generate8bit from './Generate8bit.js'
 
+import Preview from './Preview.js'
 import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
 import WaveDraw from '../lib/WaveDraw.js'
@@ -28,7 +29,6 @@ export default class EditMusic extends React.Component {
     this.state = {
       isPlaying: false,
       isLoop: true,
-      // canvasWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
       viewWidth: 500, // temporary width
       trackWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
       canvasHeight: 128,
@@ -418,6 +418,11 @@ export default class EditMusic extends React.Component {
             <div>
               <canvas ref='musicCanvas' width={"1200px"} height='128px'></canvas>
             </div>
+
+            <Preview
+
+            />
+            
             <div className='channelsHeader'>
               {/***** Control buttons *****/}
               <div className='row'>

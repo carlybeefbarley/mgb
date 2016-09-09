@@ -30,6 +30,10 @@ import Defs_browser from './tern/Defs/browser.json';
 import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js';
 
 import cm_tern_lib_comment from "tern/lib/comment";
+// es_modules depends on this
+import cm_tern_modules from "tern/plugin/modules";
+// adds ES import support to tern
+import cm_tern_es_modules from "tern/plugin/es_modules";
 // ?  <script src="/tern/plugin/doc_comment.js"></script>
 
 
@@ -114,7 +118,8 @@ export default class EditCode extends React.Component {
     //console.log("Sample Defs:", Defs_sample);
     // Tern setup
     var myTernConfig = {
-      // temporary disable useWorker: true,
+      // temporary disable - as worker doesn't accept defs
+      // useWorker: true,
       defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
       completionTip: function (curData) {
         // we get called for the CURRENTLY highlighted entry in the autocomplete list. 
@@ -134,6 +139,10 @@ export default class EditCode extends React.Component {
         "/lib/tern/infer.js",
         "/lib/tern/comment.js"
       ],
+      plugins: {
+        modules: true,
+        es_modules: true
+      },
       workerScript: "/lib/TernWorker.js"
       /*,
       responseFilter: function (doc, query, request, error, data) {
@@ -154,11 +163,13 @@ export default class EditCode extends React.Component {
     const textareaNode = this.refs.textarea
     let cmOpts = {
       mode: "jsx",
+      // change theme for read only?
       theme: "eclipse",
       styleActiveLine: true,
       lineNumbers: true,
       lineWrapping: true,
       tabSize: 2,
+      // to change at runtime: cm.setOption("readOnly", !this.props.canEdit)
       readOnly: !this.props.canEdit,    // Note, not reactive, so be aware of that if we do dynamic permissions in future.
       foldGutter: true,
       autoCloseBrackets: true,
@@ -263,7 +274,6 @@ export default class EditCode extends React.Component {
     this.ternServer = null;
 
     // clean up
-    this.cache = {};
     this.lastBundle = null;
 
     this.tools.destroy();
@@ -758,6 +768,7 @@ export default class EditCode extends React.Component {
     this.setState({_preventRenders: true})
 
     try {
+      // TODO: update Read only???
       // TODO: Batch the async setState() calls also. 
       this.srcUpdate_CleanSheetCase()
       this.srcUpdate_LookForMgbAssets()
@@ -859,23 +870,6 @@ export default class EditCode extends React.Component {
         let asset = this.props.asset
         asset.thumbnail = data.pngDataUrl
         this.handleContentChange(null, asset.thumbnail, "update thumbnail")
-      },
-      mgbStoreCache: function (data) {
-        this.cache[data.filename] = data.src
-      },
-      mgbGetFromCache: function (data) {
-        this.postToIFrame("mgbFromCache", {src: this.cache[data.filename], cbId: data.cbId})
-      },
-      mgbAllInOneSource: function (data) {
-        if (this.props.canEdit) {
-          const value = this.codeMirror.getValue()
-          const newC2 = {src: value, bundle: data.src}
-          // don't save - if not changed
-          if (this.lastBundle != data.src) {
-            this.lastBundle = data.src
-            this.handleContentChange(newC2, null, `Store code bundle`)
-          }
-        }
       }
     }
 
@@ -914,13 +908,12 @@ export default class EditCode extends React.Component {
     window.addEventListener('message', this.bound_handle_iFrameMessageReceiver)
 
     const { asset } = this.props
-    const src = asset.content2.src
 
     //const gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState({isPlaying: true})
     this.tools.collectSources((collectedSources) => {
       this._postMessageToIFrame({
-        mgbCommand: 'startRunX',
+        mgbCommand: 'startRun',
         sourcesToRun: collectedSources,
         asset_id: asset._id,
         filename: asset.name || "",

@@ -1,6 +1,8 @@
 let babelWorker;
 import knownLibs from "./knownLibs.js"
 
+// serving modules from...
+const MODULE_SERVER = 'https://cdn.jsdelivr.net/phaser/latest/'
 // ajax requests cache - invalidate every few seconds
 // this will insanely speed up run
 const INVALIDATE_CACHE_TIMEOUT = 30000
@@ -26,13 +28,35 @@ export default class SourceTools {
     this.cache = {}
     // here we will keep our transpiled files
     this.transpileCache = {}
+
+    // set to true by default.. to wait for first action
+    this._inProgress = true
+    this._firstTime = true
+  }
+
+  set inProgress(val) {
+    console.log("_inProgress", val)
+    this._inProgress = val
+  }
+  get inProgress(){
+    return this._inProgress
   }
 
   destroy() {
     this.cache = null
     this.transpileCache = null
     this.babelWorker.terminate()
+
+    // next will be first time again :)
+    this._firstTime = true
+
+    // clean global cache
+    // TODO: clean only changed files.. add some sort of meteor subscriber
+    for(let i in tmpCache){
+      delete tmpCache[i]
+    }
   }
+
   // probably events would work better
   collectSources(cb) {
     if (this.inProgress) {
@@ -57,28 +81,31 @@ export default class SourceTools {
     const lib = SourceTools.getKnowLib(name)
     const useGlobal = !(!lib || !lib.useGlobal)
     this.collectedSources.push({name, code, useGlobal})
-    this.addDefsOrFile(name, code)
+    this.addDefsOrFile(name, this.transpileCache[name].src)
 
     cb && cb()
   }
-  addDefsOrFile(filename, code){
+
+  addDefsOrFile(filename, code) {
     const lib = SourceTools.getKnowLib(filename)
-    if(lib && lib.defs){
+    if (lib && lib.defs) {
+      // this only works when not in worker mode..
+      // TODO: find out how to fix that
       // true override everything
       this.tern.server.addDefs && this.tern.server.addDefs(lib.defs, true)
     }
-    else{
-      if(code.length < MAX_ACCEPTABLE_SOURCE_SIZE){
+    else {
+      if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
 
-        // this only works when not in worker mode..
-        // TODO: find out how to fix that
-        this.tern.server.addFile(filename, code)
+        this.tern.server.delFile(filename.substr(2), code)
+        this.tern.server.addFile(filename.substr(2), code)
       }
-      else{
+      else {
         console.log(`source is too big [${filename} -> ${code.length}bytes] and no defs defined`)
       }
     }
   }
+
   isAlreadyTranspiled(filename) {
     return this.collectedSources.find(s => s.name == filename)
   }
@@ -92,13 +119,13 @@ export default class SourceTools {
     }
 
     // temporary workaround - wait until finises running one and then start again new one
-    if (this.inProgress) {
+    if (this.inProgress && !this._firstTime) {
       this.timeout = window.setTimeout(() => {
         this.collectAndTranspile(srcText, filename, callback)
       }, 100)
       return;
     }
-
+    this._firstTime = false
 
     // clean up old data
     this.collectedSources.length = 0
@@ -151,8 +178,8 @@ export default class SourceTools {
 
   transpile(filename, src, cb) {
     //
-    if(this.transpileCache[filename]){
-      if(this.transpileCache[filename].src == src){
+    if (this.transpileCache[filename]) {
+      if (this.transpileCache[filename].src == src) {
         cb(this.transpileCache[filename].data)
         return
       }
@@ -175,6 +202,10 @@ export default class SourceTools {
       return
     }
     var url = SourceTools.resolveUrl(urlFinalPart, this.asset_id)
+    if (!url) {
+      cb && cb('', '')
+      return
+    }
     // don't cache local files
     if (!SourceTools.isExternalFile(url)) {
       SourceTools.loadImport(url, (src) => {
@@ -188,35 +219,36 @@ export default class SourceTools {
       this.collectScript(urlFinalPart, src, cb)
     })
   }
-  createBundle(cb){
+
+  createBundle(cb) {
     this.collectSources((sources) => {
       let allInOneBundle =
-        '(function(){'+
-        'var imports = {};'+
-        'window.require = function(key){ '+ "\n" +
-        'if(imports[key] && imports[key] !== true) {'+ "\n" +
-        'return imports[key];' + "\n" +
+        '(function(){' +
+        'var imports = {};' +
+        'window.require = function(key){ ' +
+        'if(imports[key] && imports[key] !== true) {' +
+        'return imports[key];' +
         '} ' +
-        'var name = key.split("@").shift();'+ "\n" +
+        'var name = key.split("@").shift();' +
         'return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])' +
         '}; '
-      for(var i in sources){
+      for (var i in sources) {
         const key = sources[i].name.split("@").shift();
-        if(sources[i].useGlobal){
+        if (sources[i].useGlobal) {
           allInOneBundle += "\n" + 'delete window.exports; delete window.module; '
         }
-        else{
-          allInOneBundle += "\n"+ 'window.module = {exports: {}};window.exports = window.module.exports; '
+        else {
+          allInOneBundle += "\n" + 'window.module = {exports: {}};window.exports = window.module.exports; '
         }
         allInOneBundle += ";" + sources[i].code + "; "
-        if(sources[i].useGlobal){
+        if (sources[i].useGlobal) {
           allInOneBundle += 'imports["' + sources[i].name + '"] = true; '
         }
-        else{
+        else {
           allInOneBundle +=
-            'imports["'+key+'"] = (window.exports === window.module.export ? window.exports : window.module.exports)';
-          if(sources[i].name){
-            allInOneBundle +=  "\n"+ 'imports["' + sources[i].name + '"] = window.module.exports;'
+            'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)';
+          if (sources[i].name) {
+            allInOneBundle += "\n" + 'imports["' + sources[i].name + '"] = window.module.exports;'
           }
         }
       }
@@ -272,13 +304,13 @@ export default class SourceTools {
       return lib.src(lib.ver);
     }
     // import X from '/asset name' or import X from '/user/asset name'
-    if (urlFinalPart.indexOf("/") === 0 && urlFinalPart.indexOf("//") === -1) {
-      return '/api/asset/code/' + asset_id + urlFinalPart
+    if (urlFinalPart.indexOf("./") === 0 && urlFinalPart.indexOf("//") === -1) {
+      return '/api/asset/code/' + asset_id + urlFinalPart.substr(1)
     }
     // import X from 'react' OR
     // import X from 'asset_id'
     if (!SourceTools.isExternalFile(urlFinalPart)) {
-      return MODULE_SERVER + urlFinalPart
+      return ''
     }
 
     // import X from 'http://cdn.com/x'
@@ -286,8 +318,11 @@ export default class SourceTools {
   }
 
   static loadImport(url, cb) {
-    if(tmpCache[url]){
-      window.setTimeout(() => {cb(tmpCache[url])}, 0)
+    if (tmpCache[url]) {
+      // remove from stack to maintain order
+      window.setTimeout(() => {
+        cb(tmpCache[url])
+      }, 0)
       return
     }
     // atm server will try to generate script
@@ -298,6 +333,7 @@ export default class SourceTools {
       }
       if (httpRequest.status !== 200) {
         console.error("Failed to load script: [" + url + "]", httpRequest.status)
+        cb("")
         return;
       }
       var src = httpRequest.responseText

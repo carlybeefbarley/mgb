@@ -5,11 +5,6 @@ var mgbHostMessageContext = { msgSource: null, msgOrigin: null };
 
 var STACK_FRAME_RE = /at ((\S+)\s)?\(?([^:]+):(\d+):(\d+)\)?/;
 var THIS_FILE = "codeEditSandbox.html"
-var MODULE_SERVER = 'https://wzrd.in/standalone/'
-
-// var MODULE_SERVER = 'https://wzrd.in/debug-standalone/'
-// var MODULE_SERVER = '//cdn.jsdelivr.net/jquery.validation/latest/jquery.validate.min.js'
-// var MODULE_SERVER = "http://127.0.0.1:8888/"
 
 function _getCaller() {
   // TODO: Support more browsers.. See https://github.com/stacktracejs/error-stack-parser/blob/master/error-stack-parser.js
@@ -40,12 +35,8 @@ function _getCaller() {
 }
 
 window.onload = function() {
-  var asset_id;
   var errorCount = 0;
   var mainWindow = window.parent; // reference to the last poster
-  // all code in one string - used for stand alone export
-  var allInOneBundle = "";
-  var AIOsources = {};
 
   // here will be stored all imported objects
   var imports = {};
@@ -116,6 +107,7 @@ window.onload = function() {
       return false;
   }
 
+  // is it safe to remove?
   function loadScript(url, callback) {
     // Adding the script tag to the head to load it
     var head = document.getElementsByTagName('head')[0];
@@ -137,8 +129,6 @@ window.onload = function() {
     head.appendChild(script);
   }
 
-  // TODO: not all scripts needs to be transpiled - figure out - how to tell difference
-  // atm we are not transpiling external sources
   var scriptsLoaded = 0;
   function appendScript(filename, code, cb){
       var script = document.createElement('script');
@@ -202,7 +192,7 @@ window.onload = function() {
       else
         console.log("No <canvas> element to screenshot")
     },
-    startRunX: function(e){
+    startRun: function(e){
       mgbHostMessageContext.msgSource = e.source
       mgbHostMessageContext.msgOrigin = e.origin
       var sources = e.data.sourcesToRun
@@ -211,18 +201,19 @@ window.onload = function() {
         if(source){
           console.log("Loading:", source.name)
           if(source.useGlobal){
-            delete window.module;
-            delete window.exports;
+            delete window.module
+            delete window.exports
           }
           else{
-            window.module = {exports: {}};
-            window.exports = window.module.exports;
+            window.module = {exports: {}}
+            window.exports = window.module.exports
           }
 
           appendScript(source.name, source.code, run)
 
-          var key = source.name.split("@").shift();
+          var key = source.name.split("@").shift()
           if(source.useGlobal){
+            // otherwise we would show warning
             imports[key] = true
           }
           else{
@@ -235,86 +226,6 @@ window.onload = function() {
         }
       };
       run()
-    },
-    startRun: function(e){
-      mgbHostMessageContext.msgSource = e.source
-      mgbHostMessageContext.msgOrigin = e.origin
-      // this is used to import nice filenames
-      // get owner_id from asset - and find asset
-      asset_id = e.data.asset_id
-      try {
-        // moved to import Phaser from 'phaser'
-        // TODO: restore MGBOPT_phaser_version
-        //loadScript(e.data.gameEngineScriptToPreload, function() {
-          //  eval(e.data.codeToRun);  // NOT using eval since we can't get good window.onError information from it
-          loadScriptFromText(e.data.codeToRun, "/" + e.data.filename, function(transpiled){
-            if(errorCount === 0){
-              console.info("All Files loaded successfully!")
-              allInOneBundle =
-                '(function(){'+
-                  'var imports = {};'+
-                  'window.require = function(key){ '+
-                    'if(imports[key] && imports[key] !== true) {'+
-                      'return imports[key];' +
-                    '} ' +
-                    'var name = key.split("@").shift();'+
-                    'return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])' +
-                  '}; '
-              for(var i in AIOsources){
-                if(AIOsources[i].global){
-                  allInOneBundle += "\n" + 'delete window.exports; delete window.module; '
-                }
-                else{
-                  allInOneBundle += "\n"+ 'window.module = {exports: {}};window.exports = window.module.exports; '
-                }
-                allInOneBundle += ";" + AIOsources[i].src + "; "
-                if(AIOsources[i].global){
-                  allInOneBundle += 'imports["'+i+'"] = true; '
-                }
-                else{
-                  allInOneBundle +=
-                    'if(Object.keys(window.exports).length){' +
-                      'imports["'+i+'"] = window.exports;' +
-                    '}else{'+
-                      'imports["'+i+'"] = window.module.exports;' +
-                    '} ';
-                  if(AIOsources[i].shortName){
-                    allInOneBundle +=  "\n"+ 'imports["'+AIOsources[i].shortName+'"] = window.module.exports;'
-                  }
-                }
-              }
-              allInOneBundle += "\n" + transpiled
-              allInOneBundle += "\n" + "})(); "
-
-              let bundle = allInOneBundle;
-              //console.log("transpiling bundle", allInOneBundle.length);
-              /*
-              const start = Date.now();
-              const tr = Babel.transform(allInOneBundle, {
-                filename: "bundle.js",
-                compact: true,
-                minified: true,
-                comments: false,
-                ast: false,
-                retainLines: false
-              });
-              bundle = tr.code;
-              */
-              //console.log("bundle-done", tr.code.length, Date.now() - start);
-              //console.log("saved:", (allInOneBundle.length - tr.code.length))
-              // TODO: create enum with all available sources
-              mainWindow.postMessage({src: bundle, mgbCmd: "mgbAllInOneSource"}, "*");
-            }
-          });
-        //})
-      } catch (err) {
-        console.error("Could not load and execute script: " + err);
-      }
-    },
-    mgbFromCache: function(e){
-      if(e.data.cbId){
-        cbs[e.data.cbId](e.data.src, e.data.cbId)
-      }
     }
   }
 

@@ -184,7 +184,8 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
     const asset = Azzets.findOne(this.urlParams.id);
     if (!asset || !asset.content2 || !asset.content2.tileset) {
       return {
-        statusCode: 404
+        statusCode: 404,
+        body: {} // body required to correctly set 404 header
       }
     }
     return {
@@ -413,7 +414,10 @@ RestApi.addRoute('asset/code/:id', {authRequired: false}, {
     let content;
     let asset = Azzets.findOne(this.urlParams.id)
     if(!asset){
-      return {statusCode: 404}
+      return {
+        statusCode: 404,
+        body: {} // body required to correctly show 404 not found header
+      }
     }
     content = asset.content2.src;
 
@@ -425,7 +429,10 @@ RestApi.addRoute('asset/code/:id', {authRequired: false}, {
       };
     }
     else {
-      return {statusCode: 404}
+      return {
+        statusCode: 404,
+        body: {}
+      }
     }
   }
 })
@@ -444,7 +451,7 @@ RestApi.addRoute('asset/code/:referrer/:name', {authRequired: false}, {
       };
     }
     else{
-      return {statusCode: 404}
+      return {statusCode: 404,body: {}} // body required to correctly show 404 not found header}
     }
   }
 })

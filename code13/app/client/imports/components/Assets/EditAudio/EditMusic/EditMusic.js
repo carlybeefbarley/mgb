@@ -10,7 +10,6 @@ import Generate8bit from './Generate8bit.js'
 import Preview from './Preview.js'
 import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
-import WaveDraw from '../lib/WaveDraw.js'
 import AudioConverter from '../lib/AudioConverter.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 
@@ -40,11 +39,6 @@ export default class EditMusic extends React.Component {
   }
 
   componentDidMount () {
-    this.musicCanvas = ReactDOM.findDOMNode(this.refs.musicCanvas)
-    this.musicCtx = this.musicCanvas.getContext('2d')
-    this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
-    this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
-
     this.timelineCanvas = ReactDOM.findDOMNode(this.refs.timeline)
     this.timelineCtx = this.timelineCanvas.getContext('2d')
     this.timelineDiv = ReactDOM.findDOMNode(this.refs.timelineDiv)
@@ -81,10 +75,7 @@ export default class EditMusic extends React.Component {
       })
 
     this.converter = new AudioConverter(this.audioCtx)
-    let c2 = this.props.asset.content2
-    if (c2.dataUri) {
-      this.converter.dataUriToBuffer(c2.dataUri, this.bufferLoaded.bind(this))
-    }
+    this.refs.previewComponent.loadDataUri( this.props.asset.content2.dataUri )
 
     this.cursor = ReactDOM.findDOMNode(this.refs.cursor)
     this.cursorOffsetX = 200
@@ -96,17 +87,6 @@ export default class EditMusic extends React.Component {
       window.requestAnimationFrame(this._raf)
     }
     this._raf()
-  }
-
-  bufferLoaded (buffer) {
-    const data = {
-      audioCtx: this.audioCtx,
-      duration: this.props.asset.content2.duration,
-      canvas: this.musicCanvas,
-      color: this.state.waveColor,
-      buffer: buffer
-    }
-    this.waveDraw = new WaveDraw(data)
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -265,7 +245,7 @@ export default class EditMusic extends React.Component {
     })
 
     let buffer = this.converter.mergeBuffers(bufferList, c2.duration)
-    this.bufferLoaded(buffer)
+    this.refs.previewComponent.loadBuffer(buffer)
 
     this.converter.bufferToDataUri(buffer, (dataUri) => {
       // console.log(dataUri)
@@ -308,8 +288,8 @@ export default class EditMusic extends React.Component {
     if (!c2) c2 = this.props.asset.content2
 
     // console.log("SAVE", saveText, c2)
-    this.thumbnailCtx.putImageData(this.musicCtx.getImageData(0, 0, 290, 128), 0, 0)
-    this.props.handleContentChange(c2, this.thumbnailCanvas.toDataURL('image/png'), saveText)
+    const thumbnail = this.refs.previewComponent.getThumbnail()
+    this.props.handleContentChange(c2, thumbnail, saveText)
   }
 
   changeDuration (e) {
@@ -415,11 +395,13 @@ export default class EditMusic extends React.Component {
             </button>
           </div>
           <div className='content'>
-            <div>
-              <canvas ref='musicCanvas' width={"1200px"} height='128px'></canvas>
-            </div>
 
             <Preview
+              ref="previewComponent"
+              audioCtx={this.audioCtx}
+              duration={c2.duration}
+              waveColor={this.state.waveColor}
+
 
             />
             
@@ -477,11 +459,6 @@ export default class EditMusic extends React.Component {
               <div ref='cursor' className='cursor' style={{ left: this.cursorOffsetX + 'px' }}></div>
               {this.renderChannels()}
             </div>
-            <canvas
-              ref='thumbnailCanvas'
-              style={{display: 'none'}}
-              width='290px'
-              height='128px'></canvas>
           </div>
         </div>
         {/*** POPUPS ***/}

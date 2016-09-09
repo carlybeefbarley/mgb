@@ -77,11 +77,13 @@ export default fpAssets = React.createClass({
     if (e.which === 13)
       $(this.refs.searchGoButton).click()
   },
+
   handleChangeSelectedProjectName(name){
     this.setState({
       project: name
     })
   },
+
   render: function () {
       
     const assets = this.data.assets       // list of assets provided via getMeteorData()
@@ -95,8 +97,6 @@ export default fpAssets = React.createClass({
       ]
     }
     const projects = Projects.find(selectorForProjects).fetch()
-    //const qN = this.queryNormalized(this.props.location.query)
-
 
     return  <div>
               <div>
@@ -113,6 +113,7 @@ export default fpAssets = React.createClass({
                   </button>
                 </div>
                 { user ? <ProjectSelector
+                  key="fpProjectSelector" // don't conflit with asset project selector
                   canEdit={true}
                   user={user}
                   handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}

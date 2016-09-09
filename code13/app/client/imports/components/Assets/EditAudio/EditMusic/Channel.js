@@ -39,7 +39,19 @@ export default class Channel extends React.Component {
   }
 
   getBuffer () {
-    return this.buffer ? this.buffer.getChannelData(0) : null
+    if(!this.buffer) return null
+    const bufferLength = this.props.duration * this.props.audioCtx.sampleRate
+    const delayLength = this.sample.delay * this.props.audioCtx.sampleRate
+    // console.log(bufferLength, delayLength)
+    let returnBuffer = new Float32Array(bufferLength)
+    const channelData = this.buffer.getChannelData(0)
+    let i = delayLength < 0 ? Math.abs(delayLength) : 0
+    const maxInd = delayLength + channelData.length > bufferLength ? bufferLength - delayLength : channelData.length
+    let returnInd = delayLength < 0 ? 0 : delayLength
+    for(; i<maxInd; i++, returnInd++){
+      returnBuffer[returnInd] = channelData[i]
+    }
+    return returnBuffer
   }
 
   initWave () {

@@ -451,10 +451,14 @@ export default class EditMusic extends React.Component {
                 </div>
 
                 &nbsp;&nbsp;
-                <button className='ui small icon button' title='Zoom in sound wave' onClick={this.zoom.bind(this, true)}>
+                <button className={'ui small icon button ' + (zoomInd >= this.zoomLevels.length-1 ? "disabled" : "")} 
+                  title='Zoom in sound wave' 
+                  onClick={this.zoom.bind(this, true)}>
                   <i className='zoom icon'></i>
                 </button>
-                <button className='ui small icon button' title='Zoom out sound wave' onClick={this.zoom.bind(this, false)}>
+                <button className={'ui small icon button ' + (zoomInd <= 0 ? "disabled" : "")} 
+                  title='Zoom out sound wave' 
+                  onClick={this.zoom.bind(this, false)}>
                   <i className='zoom out icon'></i>
                 </button>
               </div>

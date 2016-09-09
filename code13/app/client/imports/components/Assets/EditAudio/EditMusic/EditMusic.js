@@ -8,6 +8,7 @@ import GenerateMusic from './GenerateMusic.js'
 import Generate8bit from './Generate8bit.js'
 
 import Preview from './Preview.js'
+import Timeline from './Timeline.js'
 import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
 import AudioConverter from '../lib/AudioConverter.js'
@@ -39,14 +40,6 @@ export default class EditMusic extends React.Component {
   }
 
   componentDidMount () {
-    this.timelineCanvas = ReactDOM.findDOMNode(this.refs.timeline)
-    this.timelineCtx = this.timelineCanvas.getContext('2d')
-    this.timelineDiv = ReactDOM.findDOMNode(this.refs.timelineDiv)
-    this.setState({ viewWidth: this.timelineDiv.offsetWidth })
-    this.drawTimeline()
-
-
-
     // popups references
     this.importMusicPopup = ReactDOM.findDOMNode(this.refs.importMusicPopup)
     this.musicStockPopup = ReactDOM.findDOMNode(this.refs.musicStockPopup)
@@ -91,8 +84,6 @@ export default class EditMusic extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     // console.log('did update')
-    this.drawTimeline()
-
     if (prevProps.asset.content2.channels) {
       // channel deleted
       if (prevProps.asset.content2.channels.length > this.props.asset.content2.channels.length) {
@@ -214,25 +205,6 @@ export default class EditMusic extends React.Component {
     })
   }
 
-  drawTimeline () {
-    this.timelineCtx.clearRect(0, 0, this.state.viewWidth, 50)
-    let c2 = this.props.asset.content2
-    if (!c2.duration) return
-    let count = Math.floor(c2.duration) + 1
-    this.timelineCtx.save()
-    this.timelineCtx.strokeStyle = '#333'
-    this.timelineCtx.globalAlpha = 0.4
-    for (let i = 0; i < count; i++) {
-      const x = i * this.state.pxPerSecond + 0.5 // 0.5 for 1px line instead of 2px
-      const y = i % 5 == 0 ? 10 : 5
-      this.timelineCtx.beginPath()
-      this.timelineCtx.moveTo(x, 0)
-      this.timelineCtx.lineTo(x, y)
-      this.timelineCtx.stroke()
-    }
-    this.timelineCtx.restore()
-  }
-
   mergeChannels (c2) {
     if (!c2) c2 = _.cloneDeep(this.props.asset.content2)
 
@@ -266,6 +238,7 @@ export default class EditMusic extends React.Component {
         if (this.state.isLoop) this.togglePlayMusic()
       }
       this.updateCursor()
+      this.refs.previewComponent.update(this.songTime)
     }
   }
 
@@ -451,9 +424,13 @@ export default class EditMusic extends React.Component {
               </div>
               <div className='controls'>
               </div>
-              <div className='timeline' ref="timelineDiv">
-                <canvas ref='timeline' width={this.state.viewWidth} height='50px'></canvas>
-              </div>
+              
+              <Timeline
+                duration={c2.duration}
+                viewWidth={this.state.viewWidth}
+                pxPerSecond={this.state.pxPerSecond}
+              />
+
             </div>
             <div className='channelList'>
               <div ref='cursor' className='cursor' style={{ left: this.cursorOffsetX + 'px' }}></div>

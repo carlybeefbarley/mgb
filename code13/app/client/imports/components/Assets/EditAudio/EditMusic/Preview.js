@@ -61,6 +61,10 @@ export default class Preview extends React.Component {
     this.waveDraw = new WaveDraw(data)
   }
 
+  update (songTime) {
+    
+  }
+
   getThumbnail () {
     this.thumbnailCtx.putImageData(this.previewCtx.getImageData(0, 0, 290, 128), 0, 0)
     return this.thumbnailCanvas.toDataURL('image/png')

@@ -17,8 +17,8 @@ export default class Channel extends React.Component {
     this.sample = {
       duration: 0,
       delay: props.channel.delay || 0,   // in sec
-      offsetX: (props.channel.delay || 0) * props.pxPerSecond,
-      width: 0,
+      offsetX: this.calculateOffsetX(),
+      // width: 0,
       dragStartX: 0,
     }
 
@@ -36,6 +36,7 @@ export default class Channel extends React.Component {
         this.drawWave()
       }
       if(this.props.pxPerSecond !== prevProps.pxPerSecond){
+        this.sample.offsetX = this.calculateOffsetX()
         this.drawWave()
       }
     }
@@ -79,7 +80,6 @@ export default class Channel extends React.Component {
     if (!this.buffer) return
     this.clearAudio()
     this.sample.duration = this.buffer.length / this.props.audioCtx.sampleRate
-    this.sample.width = Math.floor(this.sample.duration * this.props.pxPerSecond)
     this.source = this.props.audioCtx.createBufferSource()
     this.gainNode = this.props.audioCtx.createGain()
 
@@ -108,21 +108,26 @@ export default class Channel extends React.Component {
     if (this.gainNode) this.gainNode.disconnect(0)
   }
 
+  calculateOffsetX () {
+    return (this.props.channel.delay || 0) * this.props.pxPerSecond
+  }
+
   drawWave () {
     this.waveCtx.clearRect(0, 0, this.props.viewWidth, this.props.canvasHeight)
     this.drawTimeline()
     this.drawSampleBG()
     if (!this.buffer) return // in situations when audio is not decoded yet
     // console.log("draw wave", this.props.id)
+    const sampleWidth = Math.floor(this.sample.duration * this.props.pxPerSecond)
     const channelData = this.buffer.getChannelData(0)
-    const chunk = Math.floor(channelData.length / this.sample.width)
+    const chunk = Math.floor(channelData.length / sampleWidth)
     const subChunk = 10
     const subChunkVal = Math.floor(chunk / subChunk)
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
     this.waveCtx.globalAlpha = 0.4
     const y = this.props.canvasHeight / 2
-    for (let i = 0; i < this.sample.width; i++) {
+    for (let i = 0; i < sampleWidth; i++) {
       for (var j = 0; j < subChunk; j++) {
         const val = channelData[i * chunk + j * subChunkVal]
         // const x = i+j*(1/subChunk)

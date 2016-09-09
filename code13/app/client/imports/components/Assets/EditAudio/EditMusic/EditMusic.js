@@ -29,7 +29,7 @@ export default class EditMusic extends React.Component {
       isPlaying: false,
       isLoop: true,
       // canvasWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
-      viewWidth: pxPerSecond * props.asset.content2.duration + 1,
+      viewWidth: 500, // temporary width
       trackWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
       canvasHeight: 128,
       pxPerSecond: pxPerSecond, // defines width of canvass 
@@ -47,7 +47,11 @@ export default class EditMusic extends React.Component {
 
     this.timelineCanvas = ReactDOM.findDOMNode(this.refs.timeline)
     this.timelineCtx = this.timelineCanvas.getContext('2d')
+    this.timelineDiv = ReactDOM.findDOMNode(this.refs.timelineDiv)
+    this.setState({ viewWidth: this.timelineDiv.offsetWidth })
     this.drawTimeline()
+
+
 
     // popups references
     this.importMusicPopup = ReactDOM.findDOMNode(this.refs.importMusicPopup)
@@ -456,7 +460,7 @@ export default class EditMusic extends React.Component {
               </div>
               <div className='controls'>
               </div>
-              <div className='timeline'>
+              <div className='timeline' ref="timelineDiv">
                 <canvas ref='timeline' width={this.state.viewWidth} height='50px'></canvas>
               </div>
             </div>

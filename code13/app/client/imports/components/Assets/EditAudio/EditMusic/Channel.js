@@ -32,7 +32,10 @@ export default class Channel extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     if (this.buffer) {
-      if (this.props.canvasWidth !== prevProps.canvasWidth) {
+      if (this.props.viewWidth !== prevProps.viewWidth) {
+        this.drawWave()
+      }
+      if(this.props.pxPerSecond !== prevProps.pxPerSecond){
         this.drawWave()
       }
     }
@@ -106,7 +109,7 @@ export default class Channel extends React.Component {
   }
 
   drawWave () {
-    this.waveCtx.clearRect(0, 0, this.props.canvasWidth, this.props.canvasHeight)
+    this.waveCtx.clearRect(0, 0, this.props.viewWidth, this.props.canvasHeight)
     this.drawTimeline()
     this.drawSampleBG()
     if (!this.buffer) return // in situations when audio is not decoded yet
@@ -243,7 +246,7 @@ export default class Channel extends React.Component {
             onDrag={this.onDrag.bind(this)}
             onDragEnd={this.onDragEnd.bind(this)}
             onClick={this.onClick.bind(this)}
-            width={this.props.canvasWidth}
+            width={this.props.viewWidth}
             height={this.props.canvasHeight}>
           </canvas>
         </div>

@@ -22,16 +22,21 @@ export default class EditMusic extends React.Component {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
     this.channelsMounted = props.asset.content2.channels ? props.asset.content2.channels.length : 0
     this.areChannelsMounted = props.asset.content2.channels ? false : true
-    const pxPerSecond = 30
+    this.zoomLevels = [8, 15, 30, 60, 120]
+    const pxPerSecond = this.zoomLevels[2]
 
     this.state = {
       isPlaying: false,
       isLoop: true,
-      canvasWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
+      // canvasWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
+      viewWidth: pxPerSecond * props.asset.content2.duration + 1,
+      trackWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
       canvasHeight: 128,
       pxPerSecond: pxPerSecond, // defines width of canvass 
       waveColor: '#4dd2ff'
     }
+
+
   }
 
   componentDidMount () {
@@ -226,7 +231,7 @@ export default class EditMusic extends React.Component {
   }
 
   drawTimeline () {
-    this.timelineCtx.clearRect(0, 0, this.state.canvasWidth, 50)
+    this.timelineCtx.clearRect(0, 0, this.state.viewWidth, 50)
     let c2 = this.props.asset.content2
     if (!c2.duration) return
     let count = Math.floor(c2.duration) + 1
@@ -311,9 +316,23 @@ export default class EditMusic extends React.Component {
 
   updateCanvasLength () {
     let c2 = this.props.asset.content2
-    let canvasWidth = c2.duration * this.state.pxPerSecond + 1
-    this.setState({ canvasWidth: canvasWidth })
+    let viewWidth = c2.duration * this.state.pxPerSecond + 1
+    this.setState({ viewWidth: viewWidth })
     this.callChildren("drawWave")
+  }
+
+  zoom (zoomIn) { // boolean zoomIn or zoomOut
+    let i = this.zoomLevels.indexOf(this.state.pxPerSecond)
+    // zooming in
+    if(zoomIn && i < this.zoomLevels.length-1){
+      i++
+      this.setState({ pxPerSecond: this.zoomLevels[i]})
+    }
+    // zooming out
+    else if(!zoomIn && i > 0){
+      i--
+      this.setState({ pxPerSecond: this.zoomLevels[i] })
+    }
   }
 
   addChannel (dataUri, c2) {
@@ -353,7 +372,7 @@ export default class EditMusic extends React.Component {
           duration={c2.duration}
           channel={channel}
           audioCtx={this.audioCtx}
-          canvasWidth={this.state.canvasWidth}
+          viewWidth={this.state.viewWidth}
           canvasHeight={this.state.canvasHeight}
           pxPerSecond={this.state.pxPerSecond}
           handleSave={this.handleSave.bind(this)}
@@ -366,6 +385,7 @@ export default class EditMusic extends React.Component {
 
   render () {
     let c2 = this.props.asset.content2
+    let zoomInd = this.zoomLevels.indexOf(this.state.pxPerSecond)
 
     return (
       <div className='ui grid'>
@@ -377,12 +397,12 @@ export default class EditMusic extends React.Component {
               <i className='add square icon'></i> Import
             </button>
             {/*
-                      <button className="ui small icon button"
-                        title="Get sound from stock"
-                        onClick={this.openStockPopup.bind(this)}>
-                        <i className="folder icon"></i> Stock [not ready]
-                      </button>
-                    */}
+              <button className="ui small icon button"
+                title="Get sound from stock"
+                onClick={this.openStockPopup.bind(this)}>
+                <i className="folder icon"></i> Stock [not ready]
+              </button>
+            */}
             <button className='ui small icon button' title='Generate music (Currently only creates Heavy Metal.. More music styles to follow :)' onClick={this.openGeneratePopup.bind(this)}>
               <i className='options icon'></i> Generate metal music
             </button>
@@ -412,6 +432,7 @@ export default class EditMusic extends React.Component {
                     Loop
                   </label>
                 </div>
+
                 &nbsp;
                 <div className='ui small labeled input' title='Audio duration'>
                   <div className='ui label'>
@@ -424,11 +445,19 @@ export default class EditMusic extends React.Component {
                     max='999'
                     onChange={this.changeDuration.bind(this)} />
                 </div>
+
+                &nbsp;&nbsp;
+                <button className='ui small icon button' title='Zoom in sound wave' onClick={this.zoom.bind(this, true)}>
+                  <i className='zoom icon'></i>
+                </button>
+                <button className='ui small icon button' title='Zoom out sound wave' onClick={this.zoom.bind(this, false)}>
+                  <i className='zoom out icon'></i>
+                </button>
               </div>
               <div className='controls'>
               </div>
               <div className='timeline'>
-                <canvas ref='timeline' width={this.state.canvasWidth} height='50px'></canvas>
+                <canvas ref='timeline' width={this.state.viewWidth} height='50px'></canvas>
               </div>
             </div>
             <div className='channelList'>

@@ -310,7 +310,8 @@ export default class SourceTools {
     // import X from 'react' OR
     // import X from 'asset_id'
     if (!SourceTools.isExternalFile(urlFinalPart)) {
-      return ''
+      // try CDN
+      return MODULE_SERVER + urlFinalPart
     }
 
     // import X from 'http://cdn.com/x'

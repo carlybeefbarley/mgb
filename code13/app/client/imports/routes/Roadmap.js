@@ -22,13 +22,13 @@ export default Roadmap = React.createClass({
       <div>
         <h2>Features planned for September 2016</h2>
         <ul>
+          <li>(DONE) Allow project members to edit assets in your projects</li>
+          <li>(IN PROGRESS) Lots of work on the Code Editor and Coding help systems</li>
+          <li>Tutorial and progression systems to help learn how to make games</li>
           <li>MGBv1 asset migration (tiles, actors, maps)</li>
           <li>MGBv1-style 'Actor' assets which enable game building without coding</li>
-          <li>Lots of work on the Code Editor and Coding help systems</li>
-          <li>Allow project members to edit assets in your projects</li>
           <li>Chat improvements (notifications, DMs etc)</li>
           <li>A new 'Game' asset will provide a way to promote games and track plays</li>
-          <li>Tutorial and progression systems to help learn how to make games</li>
         </ul>
       </div>
     )

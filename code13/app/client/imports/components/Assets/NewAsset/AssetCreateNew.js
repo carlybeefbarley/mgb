@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
 import AssetCreateSelectKind from './AssetCreateSelectKind'
 
-
 export default AssetCreateNew = React.createClass({
   propTypes: {
     placeholderName:        PropTypes.string.isRequired,      // Note that a default is provided below 

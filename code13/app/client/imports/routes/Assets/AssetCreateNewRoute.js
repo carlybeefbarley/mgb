@@ -10,7 +10,7 @@ export default AssetCreateNewRoute = React.createClass({
     params: PropTypes.object,           // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object,             // Maybe absent if route is /assets
     currUser: PropTypes.object,         // Currently Logged in user
-    currUserProjects: PropTypes.object, 
+    currUserProjects: PropTypes.array, 
     ownsProfile: PropTypes.bool,
     location: PropTypes.object          // We get this from react-router
   },

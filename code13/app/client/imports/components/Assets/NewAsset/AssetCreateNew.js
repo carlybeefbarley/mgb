@@ -34,7 +34,7 @@ export default AssetCreateNew = React.createClass({
     const chosenKindStr = isKindChosen ? AssetKinds[this.state.selectedKind].name : "Asset"
     const chosenNameStr = isAssetNameValid ? `"${this.state.newAssetName}"` : ""
     const isButtonDisabled = this.state.buttonActionPending || !isAssetReadyToCreate
-    const createButtonClassName = "ui primary right floated " + (isButtonDisabled ? " disabled " : " ") + "button"
+    const createButtonClassName = "ui primary " + (isButtonDisabled ? " disabled " : " ") + "button"
     const createButtonTooltip = isAssetReadyToCreate ? "Click here to create your new Asset" : "You must choose a valid name and 'kind' for your new asset. You can rename it later if you wish, but you cannot change it's 'kind' later"
     
     return (

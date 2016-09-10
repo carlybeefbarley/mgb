@@ -14,11 +14,11 @@ export default AssetCreateSelectKind = React.createClass({
     const activeAK = selectedKind ? AssetKinds[selectedKind] : null
 
     return (
-      <div className="">
+      <div>
         { AssetKindKeys.map((k) => {
           const ak = AssetKinds[k]
           const isActive = (k === selectedKind)
-          let sty = { width: "6em" }
+          let sty = { width: "6em", marginBottom: "4px" }
           if (ak.requiresUserRole)
           {
             if (!doesUserHaveRole(currUser, ak.requiresUserRole))
@@ -35,7 +35,7 @@ export default AssetCreateSelectKind = React.createClass({
           )
         })
       }
-      { activeAK && <p> { <em>{activeAK.name}</em> + ": " + activeAK.description } </p> }
+      { activeAK && <p> { activeAK.description } </p> }
       </div>
     )
   }

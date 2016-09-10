@@ -15,6 +15,51 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Fri Sep 09 2016 18:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1335'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'security.projects',
+          'type': 'improvement',
+          'changeName': 'Create New Asset in Project',
+          'changeSummary': 'Project OWNERS can now create new Assets in a chosen project',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code: ES6 Module Imports Code Analysis',
+          'changeSummary': 'The dynamic code analysis now automatically parses and infers docs/types from imported dependencies',
+          'otherUrls': [
+            { txt: 'Phaser/ES6 example', href: '/u/stauzs/assets?_fp=assets&_np=people&project=Phaser+ES6' },
+            { txt: 'React/ES6/JSX example', href: '/u/stauzs/assets?_fp=assets&_np=people&project=Code+Import+Test' },
+            { txt: 'NPM respository', href: 'https://npmjs.com' },
+            { txt: 'Mozilla documents for ES6 import', href: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import' }
+          ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code: Dynamic JSDoc parsing',
+          'changeSummary': 'The dynamic code analysis now can read jsdoc comments and uses that information to supplement type inference for code completion and other code help',
+          'otherUrls': [
+            { txt: 'JsDoc', href: 'http://usejsdoc.org/' }
+          ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Thu Sep 08 2016 10:30:00 GMT-0700 (PDT)',
 
       'id': {

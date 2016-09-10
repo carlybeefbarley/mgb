@@ -1,33 +1,35 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets';
-import AssetCreateSelectKind from './AssetCreateSelectKind';
+import React, { PropTypes } from 'react'
+import { AssetKinds } from '/imports/schemas/assets'
+import AssetCreateSelectKind from './AssetCreateSelectKind'
 
 
 export default AssetCreateNew = React.createClass({
   propTypes: {
     placeholderName:        PropTypes.string.isRequired,      // Note that a default is provided below 
     handleCreateAssetClick: PropTypes.func.isRequired,        // Callback function to create the asset, and is expected to navigate to the new page. Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
-    currUser:               PropTypes.object                  // currently logged in user (if any)
+    currUser:               PropTypes.object,                 // currently logged in user (if any)
+    currUserProjects:       PropTypes.object
   },
-
 
   getDefaultProps: function () {
     return { placeholderName: 'name for new asset..' }
   },
 
-
   getInitialState: function () {
-    return { 
+    return {
+      project: "",
       buttonActionPending: false,     // True after the button has been pushed. so it doesn't get pushed twice
       selectedKind: "",               // "" or one of AssetKindKeys[]
       newAssetName: ""                // "" or a valid assetName string
     }
   },
 
+  handleChangeSelectedProjectName: function (newName) {
+    this.setState( { project: newName})
+  },
 
   render: function() {
-    const { currUser } = this.props
+    const { currUser, currUserProjects } = this.props
     const isAssetNameValid = (this.state.newAssetName !== "")   // TODO - some checks for crazy characters
     const isKindChosen = (this.state.selectedKind !== "")
     const isAssetReadyToCreate = isKindChosen && isAssetNameValid
@@ -39,24 +41,29 @@ export default AssetCreateNew = React.createClass({
     
     return (
       <div>
-
         <div className="ui fluid small ordered evenly divided steps">
           <div className={(isAssetNameValid ? "completed " : "active ") + "step"}>
             <div className="content">
               <div className="title">Name</div>
-              <div className="description">Name your new asset</div>
+              <div className="description">Name your<br />new asset</div>
             </div>
           </div>
           <div className={(isKindChosen ? "completed " : "active ") + "step"}>
             <div className="content">
               <div className="title">Kind</div>
-              <div className="description">Choose which kind to create</div>
+              <div className="description">Choose which<br />kind to create</div>
+            </div>
+          </div>
+          <div className={ (this.state.buttonActionPending ? "completed ": (isAssetReadyToCreate ? "active " : "")) + "step" }>
+            <div className="content">
+              <div className="title">Choose Project</div>
+              <div className="description">Optionally place<br />Asset in a Project</div>
             </div>
           </div>
           <div className={ (this.state.buttonActionPending ? "completed ": (isAssetReadyToCreate ? "active " : "")) + "step" }>
             <div className="content">
               <div className="title">Confirm Create</div>
-              <div className="description">Create it!</div>
+              <div className="description">Create it!<br />&nbsp;</div>
             </div>
           </div>
         </div>
@@ -78,9 +85,20 @@ export default AssetCreateNew = React.createClass({
             handleSelectAsset={this.handleSelectAssetKindClick} />
         </div>
 
+        <div className="ui padded segment">
+          <h4 className="ui header">3. Optionally - place the new asset within a project</h4>        
+          <ProjectSelector
+                  canEdit={false}
+                  user={currUser}
+                  handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+                  availableProjects={currUserProjects}
+                  ProjectListLinkUrl={"/u/" + currUser.profile.name + "/projects"}
+                  chosenProjectName={this.state.project} />
+        </div>
+
         <div title={createButtonTooltip}>
           <div className={createButtonClassName} onClick={this.handleCreateAssetClick} >
-            3. Create {chosenKindStr} {chosenNameStr}
+            4. Create {chosenKindStr} {chosenNameStr}
             <i className="right chevron icon"></i>
           </div>
         </div>        
@@ -88,17 +106,15 @@ export default AssetCreateNew = React.createClass({
     )
   },
 
-
   handleSelectAssetKindClick: function(assetKindKey)
   {
     this.setState( { selectedKind: assetKindKey})
   },
 
-
   handleCreateAssetClick: function()
   {
     this.setState( { buttonActionPending: true})
-    this.props.handleCreateAssetClick(this.state.selectedKind, this.state.newAssetName)
+    this.props.handleCreateAssetClick(this.state.selectedKind, this.state.newAssetName, this.state.project)
   }
 
 })

@@ -2,11 +2,10 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-import _ from 'lodash';
-import { Azzets } from '/imports/schemas';
+import _ from 'lodash'
+import { Azzets } from '/imports/schemas'
 import { roleSuperAdmin } from '/imports/schemas/roles'
-import { check, Match } from 'meteor/check';
-
+import { check, Match } from 'meteor/check'
 
 var schema = {
   _id: String,
@@ -38,7 +37,7 @@ var schema = {
   isCompleted: Boolean,   // This supports the 'is stable' flag
   isDeleted: Boolean,     // This is a soft marked-as-deleted indicator
   isPrivate: Boolean      // Not currently used
-};
+}
 
 const UAKerr = "Unknown Asset Kind"     // An error message string used a few places in this file.
 
@@ -189,21 +188,19 @@ export const AssetKinds = {
 //  TODO: Add an assert to ensure that this character is NOT one of the AssetKinds keys!
 //  NOTE - this is used in our URLs, so changing this character would break existing query strings with a set of kinds (e.g as used in the assetList ui) 
 export const safeAssetKindStringSepChar = "-"   
-export const AssetKindKeysALL = Object.keys(AssetKinds);  // For convenience. This gets ALL keys (including functions and disabled)
+export const AssetKindKeysALL = Object.keys(AssetKinds)  // For convenience. This gets ALL keys (including functions and disabled)
 
 // All valid Asset kinds that are enabled for all users
 export const AssetKindKeys = _.filter(AssetKindKeysALL, (k) => {
   return (typeof(AssetKinds[k]) !== 'function' && AssetKinds[k].disable !== true) 
-});
+})
 
 // All valid Asset kinds including disabled ones
 export const AssetKindKeysIncludingDisabled = _.filter(AssetKindKeysALL, (k) => {
   return (typeof(AssetKinds[k]) !== 'function') 
-});
-
+})
 
 /** This is intended for use by publications.js and any Meteor.subscribe calls
- * 
  */
 export function assetMakeSelector(
                       userId, 
@@ -213,9 +210,7 @@ export function assetMakeSelector(
                       showDeleted=false, 
                       showStable=false) 
 {
-  let selector = {
-    isDeleted: showDeleted,
-  }  
+  let selector = { isDeleted: showDeleted }  
 
   if (projectName && projectName.length > 0)
     selector["projectNames"] = projectName
@@ -244,12 +239,10 @@ export const assetSorters = {
   "kind":   { kind: 1 } 
 }
 
-
 Meteor.methods({
-
   "Azzets.create": function(data) {
     if (!this.userId) 
-      throw new Meteor.Error(401, "Login required");      // TODO: Better access check
+      throw new Meteor.Error(401, "Login required")      // TODO: Better access check
     const username = Meteor.user().profile.name
     const now = new Date()
     data.createdAt = now
@@ -258,7 +251,8 @@ Meteor.methods({
     data.dn_ownerName = username
     data.content = ""                                 // This is stale. Can be removed one day
     data.text = ""                                    // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
-    data.projectNames = []
+    if (!data.projectNames)
+      data.projectNames = []
     data.thumbnail = data.thumbnail || ""
     data.isUnconfirmedSave = this.isSimulation
     // TODO: this will get moved
@@ -276,20 +270,19 @@ Meteor.methods({
     return docId
   },
 
-
   "Azzets.update": function(docId, canEdit, data) {
-    var count, selector;
-    var optional = Match.Optional;
+    var count, selector
+    var optional = Match.Optional
 
-    check(docId, String);
+    check(docId, String)
     if (!this.userId)
-      throw new Meteor.Error(401, "Login required");
+      throw new Meteor.Error(401, "Login required")
 
     // TODO: Move this access check to be server side..
     //   Or check publications have correct deny rules.
     //   See comment below for selector = ...
     if (!canEdit)
-      throw new Meteor.Error(401, "You don't have permission to edit this.");   //TODO - make this secure,
+      throw new Meteor.Error(401, "You don't have permission to edit this.")   //TODO - make this secure,
 
     data.updatedAt = new Date()
     data.isUnconfirmedSave = this.isSimulation
@@ -313,15 +306,13 @@ Meteor.methods({
     });
 
     // if caller doesn't own doc, update will fail because fields like ownerId won't match
-    selector = {_id: docId};
+    selector = { _id: docId }
 
-    count = Azzets.update(selector, {$set: data});
+    count = Azzets.update(selector, { $set: data } )
 
     if (Meteor.isServer)      
-      console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`); // These fields might not be provided for updates
+      console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`) // These fields might not be provided for updates
     
     return count
-  }  
-  
-
-});
+  }
+})

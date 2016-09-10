@@ -8,7 +8,7 @@ export default AssetCreateNew = React.createClass({
     placeholderName:        PropTypes.string.isRequired,      // Note that a default is provided below 
     handleCreateAssetClick: PropTypes.func.isRequired,        // Callback function to create the asset, and is expected to navigate to the new page. Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
     currUser:               PropTypes.object,                 // currently logged in user (if any)
-    currUserProjects:       PropTypes.object
+    currUserProjects:       PropTypes.array
   },
 
   getDefaultProps: function () {

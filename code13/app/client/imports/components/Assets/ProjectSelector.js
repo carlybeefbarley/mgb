@@ -68,7 +68,7 @@ export default ProjectSelector = React.createClass({
         
     return (
       <div className="ui simple dropdown item">        
-        Project: {pName || <small>(Any Project)</small>}
+        <small>Within Project: {pName || "(Any Project)"} </small> 
         <i className="dropdown icon"></i>
         <div className="ui right menu simple">
           { choices }           

@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import React, { PropTypes } from 'react'
 
 // The Create Project link is always in context of a user since only a user can create a project in their account. 
 
@@ -36,15 +35,7 @@ export default ProjectCreateNew = React.createClass({
     
     return (
       <div>
-        <div title={createButtonTooltip}>
-          <div className={createButtonClassName} onClick={this.handleCreateProjectClick} >
-            Create New Project {chosenNameStr}
-            <i className="right chevron icon"></i>
-          </div>
-        </div>
-
-        <p></p>
-        <p>Projects are a way to group a set of related assets, and allow other people to also edit those assets directly:</p>
+        <p><em>Projects</em> are a way to group a set of related assets, and allow other people to also edit those assets directly:</p>
         <ol>
           <li>Projects can be used as kind of 'tag' to search for assets, chats etc that are part of the project</li>
           <li>You can let other users be members of your projects. This allows them to also edit assets which are part of that project</li>
@@ -61,6 +52,13 @@ export default ProjectCreateNew = React.createClass({
             <div className={"ui fluid input" + (isProjectNameValid ? "" : " error")}>
               <input className="fluid" type="text" value={this.state.newProjectName} onChange={(e) => this.setState({ newProjectName: e.target.value})} placeholder={this.props.placeholderName} ref={inp => (inp && inp.focus())}></input>
             </div>
+          </div>
+        </div>
+
+        <div title={createButtonTooltip}>
+          <div className={createButtonClassName} onClick={this.handleCreateProjectClick} >
+            Create New Project {chosenNameStr}
+            <i className="right chevron icon"></i>
           </div>
         </div>
 

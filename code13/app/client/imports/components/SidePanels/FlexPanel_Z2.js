@@ -104,7 +104,8 @@ export default FlexPanel = React.createClass({
 
       bottom: "0px",
       width: flexPanelWidth,
-      backgroundColor: "rgba(0, 0, 0, 0.05)"
+      backgroundColor: "rgba(0, 0, 0, 0.05)",
+      borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
     }
 
     const miniNavStyle = {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
@@ -112,7 +113,7 @@ export default FlexPanel = React.createClass({
       top: "0px",
       bottom: "0px",
       right: "0px",
-      width: "60px",
+      width: "61px",
       border: "none",
       borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
       borderRadius: 0,
@@ -126,7 +127,7 @@ export default FlexPanel = React.createClass({
       bottom: "0px",
       right: "60px",
       width: "285px",
-      overflow: "scroll"
+      overflow: "scroll",
     }
 
     const panelInnerStyle = {

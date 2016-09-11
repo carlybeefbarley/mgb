@@ -126,7 +126,7 @@ export default NavPanel = React.createClass({
       top: "0px",
       bottom: "0px",
       left: "0px",
-      width: "60px",
+      width: "61px",
       borderRadius: 0,
       marginRight: "0px",
       marginBottom: "0px",

@@ -22,23 +22,13 @@ const navPanelViews = [
   },
   {
     tag: "user",
-    name: "profile",
+    name: "me",
     icon: "user",
     hdr: "User",
     getDirectUrl: (uname) => (uname ? `/u/${uname}` : '/signin'),
     el: npUser,
     hideIfNoUser: false
   },
-  {
-    tag: "history",
-    name: "history",
-    icon: "history",
-    hdr: "History",
-    getDirectUrl: (uname) => (uname ? `/u/${uname}/assets` : '/assets'),
-    el: npHistory,
-    hideIfNoUser: true
-  },
-  //{ tag: "pins",      icon: "pin",      hdr: "Pins",      getDirectUrl: (uname) => (`/u/${uname}/projects`),  el: npPins,     hideIfNoUser: true   },
   {
     tag: "projects",
     name: "projects",
@@ -56,7 +46,16 @@ const navPanelViews = [
     getDirectUrl: (uname) => (`/users`),
     el: npPeople,
     hideIfNoUser: false
-  }
+  },
+  {
+    tag: "history",
+    name: "history",
+    icon: "history",
+    hdr: "History",
+    getDirectUrl: (uname) => (uname ? `/u/${uname}/assets` : '/assets'),
+    el: npHistory,
+    hideIfNoUser: true
+  },
   // { tag: "skills",    icon: "university", hdr: "Skills" }
 ]
 

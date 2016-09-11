@@ -122,10 +122,10 @@ export default FlexPanel = React.createClass({
 
     const panelScrollContainerStyle = {
       position: "fixed",
-      top: "40px",                /// TODO calculate this
+      top: "50px",                /// TODO calculate this
       bottom: "0px",
       right: "60px",
-      width: "232px",
+      width: "285px",
       overflow: "scroll"
     }
 
@@ -145,9 +145,12 @@ export default FlexPanel = React.createClass({
               { flexPanelIsVisible &&
                 <div>
 
-                  <div className="ui secondary menu">
-                    <div className="ui borderless sub header item">
-                      <i className={flexPanelIcon + " icon"} />{flexPanelHdr}
+                  <div className="flex header">
+                    <span className="title">
+                      <i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
+                    </span>
+                    <div className="ui top right pointing dropdown">
+                      <i className="caret down icon" />
                     </div>
                   </div>
 

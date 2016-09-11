@@ -1,26 +1,26 @@
-.mgbFlexPanel.header
+.flex.header
 {
 	font-size: 1.25em;
-	margin: -15px -15px 15px -15px;
+	margin-right: 60px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
-.mgbFlexPanel.header .dropdown
+.flex.header .dropdown
 {
 	float: right;
 	color: black;
 	border-left: 1px solid rgba(0, 0, 0, 0.1);
 }
-.mgbFlexPanel.header .dropdown:hover
+.flex.header .dropdown:hover
 {
 	background: rgba(0, 0, 0, 0.05);
 	cursor: pointer;
 }
-.mgbFlexPanel.header .title
+.flex.header .title
 {
 	display: inline-block;
 }
-.mgbFlexPanel.header .dropdown,
-.mgbFlexPanel.header .title
+.flex.header .dropdown,
+.flex.header .title
 {
 	padding: 15px 15px 15px 15px;
 }
@@ -33,13 +33,13 @@
 	border-radius: 0 !important;
 }
 
-.mgbFlexPanel.header .dropdown .menu
+.flex.header .dropdown .menu
 {
 	right: 0.35em !important;
 	margin: 0.35em 0 0 0 !important;
 }
 
-.mgbFlexPanel.header .dropdown .menu .item
+.flex.header .dropdown .menu .item
 {
 	font-size: 1em;
 }

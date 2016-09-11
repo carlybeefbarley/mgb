@@ -16,7 +16,7 @@ import NavBar from '/client/imports/components/Nav/NavBar'
 import Toast from '/client/imports/components/Nav/Toast'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
-import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
+import FlexPanel from '/client/imports/components/SidePanels/FlexPanel_Z2'
 import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo'
 
 import urlMaker from './urlMaker'
@@ -36,7 +36,7 @@ export default App = React.createClass({
   //   params: PropTypes.object,
   //   query: PropTypes.object
   // }
-    
+
   childContextTypes: {
     urlLocation: PropTypes.object,
     settings:    PropTypes.object
@@ -44,7 +44,7 @@ export default App = React.createClass({
 
   getChildContext() {
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
-    return { 
+    return {
       urlLocation: this.props.location,
       settings: this.data.settings            // We pass Settings in context since it will be a huge pain to pass it throughout the component tree
     }
@@ -63,7 +63,7 @@ export default App = React.createClass({
 
 
   componentWillReceiveProps: function(nextProps) {
-    // We are using https://github.com/okgrow/analytics but it does not automatically log 
+    // We are using https://github.com/okgrow/analytics but it does not automatically log
     // react-router routes, so we need a specific call when the page changes
 
     // analytics is from the Meteor package okgrow:analytics
@@ -90,26 +90,26 @@ export default App = React.createClass({
     const pathUserId = this.props.params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
     const currUser = Meteor.user()
     const currUserId = currUser && currUser._id
-    const handleForUser = pathUserName ? 
-                             Meteor.subscribe("user.byName", pathUserName) 
+    const handleForUser = pathUserName ?
+                             Meteor.subscribe("user.byName", pathUserName)
                            : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
     const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
     const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
-    const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit) 
+    const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit)
     const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
     const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
     const projectSelector = projectMakeSelector(currUserId)
-    
+
     return {
       currUser: currUser,                           // Currently Logged in user. Putting it here makes it reactive
       currUserProjects: Projects.find(projectSelector).fetch(),
       user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
       activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
       settings: handleForSettings === null ? G_localSettings : Settings.findOne(currUserId),
-      loading:  !handleForUser.ready() || 
-                !handleActivity.ready() || 
-                !projectsReady || 
-                !settingsReady                
+      loading:  !handleForUser.ready() ||
+                !handleActivity.ready() ||
+                !projectsReady ||
+                !settingsReady
     }
   },
 
@@ -123,14 +123,14 @@ export default App = React.createClass({
         sessionId: Meteor.default_connection._lastSessionId
       })
     }
-    if (window.trackJs) 
+    if (window.trackJs)
       doTrack()
     else
       $.getScript("/lib/tracker.js", doTrack)   // fallback to local version because of AdBlocks etc
   },
 
   render() {
-    
+
     if (this.data.loading)
       return <Spinner />
 
@@ -149,23 +149,23 @@ export default App = React.createClass({
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
-    const flexPanelWidth = showFlexPanel ? "280px" : "48px"    // The 225px width works well with default vertical menu size and padding=8px 
+    const flexPanelWidth = showFlexPanel ? "292px" : "60px"    // The 225px width works well with default vertical menu size and padding=8px
 
     // The main Panel:  Outer is for the scroll container; inner is for content
-    const mainPanelOuterDivSty = { 
+    const mainPanelOuterDivSty = {
       position: "fixed",
       top:      "40px",
       bottom:   "0px",
-      left:     navPanelWidth, 
-      right:    flexPanelWidth, 
+      left:     navPanelWidth,
+      right:    flexPanelWidth,
       overflow: "scroll",
-      marginBottom: "0px"      
+      marginBottom: "0px"
     }
 
-    const mainPanelInnerDivSty = { 
+    const mainPanelInnerDivSty = {
       padding:       "0px",
       paddingBottom: "24px",
-      height:        "auto" 
+      height:        "auto"
     }
 
     //Check permissions of current user for super-admin,
@@ -174,8 +174,8 @@ export default App = React.createClass({
     const isSuperAdmin = isUserSuperAdmin(currUser)
     const ownsProfile = isSameUser(currUser, user)
 
-    // This is a flag used for some mid-colume elements (NavBar and Maybe page) to hint they should be 
-    // space conservative because the Nav and Flex panels are both being displayed. 
+    // This is a flag used for some mid-colume elements (NavBar and Maybe page) to hint they should be
+    // space conservative because the Nav and Flex panels are both being displayed.
     // Most things can be done reactively or with CSS, but this is useful for some extra cases
     // This is probably not a long term solution - but is helpful for now
     const conserveSpace = showNavPanel && showFlexPanel
@@ -192,8 +192,8 @@ export default App = React.createClass({
 
 
         <div>
-        
-            <NavPanel 
+
+            <NavPanel
               currUser={currUser}
               currUserProjects={currUserProjects}
               user={user}
@@ -202,37 +202,37 @@ export default App = React.createClass({
               handleNavPanelChange={this.handleNavPanelChange}
               navPanelWidth={navPanelWidth}
               navPanelIsVisible={showNavPanel}
-              isSuperAdmin={isSuperAdmin}              
+              isSuperAdmin={isSuperAdmin}
             />
-            
+
             <NavBar
               currUser={currUser}
-              user={user}              
+              user={user}
               name={this.props.routes[1].name}
               params={this.props.params}
               flexPanelWidth={flexPanelWidth}
               navPanelWidth={navPanelWidth}
-              navPanelIsVisible={showNavPanel} 
+              navPanelIsVisible={showNavPanel}
               conserveSpace={conserveSpace}
               />
 
 
-            <FlexPanel 
+            <FlexPanel
               currUser={currUser}
               user={user}
               selectedViewTag={flexPanelQueryValue}
-              handleFlexPanelToggle={this.handleFlexPanelToggle}  
+              handleFlexPanelToggle={this.handleFlexPanelToggle}
               handleFlexPanelChange={this.handleFlexPanelChange}
-              flexPanelWidth={flexPanelWidth} 
+              flexPanelWidth={flexPanelWidth}
               flexPanelIsVisible={showFlexPanel}
-              activity={this.data.activity} 
+              activity={this.data.activity}
               isSuperAdmin={isSuperAdmin}
-              /> 
+              />
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
               <div style={mainPanelInnerDivSty}>
-                { this.state.showToast && 
-                  <Toast content={this.state.toastMsg} type={this.state.toastType} /> 
+                { this.state.showToast &&
+                  <Toast content={this.state.toastMsg} type={this.state.toastType} />
                 }
                 {
                   this.props.children && React.cloneElement(this.props.children, {
@@ -255,7 +255,7 @@ export default App = React.createClass({
 
 
 
-  /** 
+  /**
    * This will show/hide the Flex Panel
    */
   handleFlexPanelToggle: function()
@@ -282,7 +282,7 @@ export default App = React.createClass({
   },
 
 
-  /** 
+  /**
    * This will show/hide the Nav Panel
    */
   handleNavPanelToggle: function()
@@ -307,10 +307,10 @@ export default App = React.createClass({
     const newQ = {...loc.query, ...queryModifier }
     browserHistory.push( {  ...loc,  query: newQ })
   },
-  
+
   /**
    * This hides/shows both Nav and FlexPanels. Press ESC for this
-   * Note that it takes a lot of care to preserve deep url state, but also discard url query params that are defaults 
+   * Note that it takes a lot of care to preserve deep url state, but also discard url query params that are defaults
    */
   handleDualPaneToggle: function()
   {
@@ -333,8 +333,8 @@ export default App = React.createClass({
     else
     {
       newQ = {
-        ...loc.query, 
-        [qpNp]:urlMaker.enableQuery(qvNp, NavPanel.getDefaultPanelViewTag() ), 
+        ...loc.query,
+        [qpNp]:urlMaker.enableQuery(qvNp, NavPanel.getDefaultPanelViewTag() ),
         [qpFp]:urlMaker.enableQuery(qvFp, FlexPanel.getDefaultPanelViewTag() )
       }
     }

@@ -1,0 +1,97 @@
+.mgbFlexPanel.header
+{
+	font-size: 1.25em;
+	margin: -15px -15px 15px -15px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.mgbFlexPanel.header .dropdown
+{
+	float: right;
+	color: black;
+	border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.mgbFlexPanel.header .dropdown:hover
+{
+	background: rgba(0, 0, 0, 0.05);
+	cursor: pointer;
+}
+.mgbFlexPanel.header .title
+{
+	display: inline-block;
+}
+.mgbFlexPanel.header .dropdown,
+.mgbFlexPanel.header .title
+{
+	padding: 15px 15px 15px 15px;
+}
+
+.ui.icon.menu .item
+{
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 15px;
+	border-radius: 0 !important;
+}
+
+.mgbFlexPanel.header .dropdown .menu
+{
+	right: 0.35em !important;
+	margin: 0.35em 0 0 0 !important;
+}
+
+.mgbFlexPanel.header .dropdown .menu .item
+{
+	font-size: 1em;
+}
+
+.ui.pointing.dropdown > .menu:after
+{
+	box-shadow: -0.5px -0.5px 0 0.5px rgba(34,36,38,.15);
+}
+
+.icon.menu .item span
+{
+	opacity: 0.5;
+	position: relative;
+	font-style: italic;
+	top: 5px;
+}
+
+.icon.menu .item:hover,
+.icon.menu .item.selected
+{
+	background: #f3f3f3;
+	cursor: pointer;
+}
+
+.icon.menu.inverted .item:hover,
+.icon.menu.inverted .item.selected
+{
+	background: #424b4b;
+	cursor: pointer;
+}
+
+.icon.menu .item.selected span
+{
+	opacity: 0.7;
+}
+
+.goals
+{
+	position: relative;
+	height: 100%;
+}
+
+.goals .completed
+{
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 50px;
+}
+
+.course li.complete
+{
+	text-decoration: line-through;
+	opacity: 0.65;
+}

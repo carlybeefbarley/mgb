@@ -149,9 +149,6 @@ export default FlexPanel = React.createClass({
                     <span className="title">
                       <i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
                     </span>
-                    <div className="ui top right pointing dropdown">
-                      <i className="caret down icon" />
-                    </div>
                   </div>
 
                   <div style={panelScrollContainerStyle}>

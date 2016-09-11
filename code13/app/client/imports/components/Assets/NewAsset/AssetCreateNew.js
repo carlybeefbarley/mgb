@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
 import AssetCreateSelectKind from './AssetCreateSelectKind'
+import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
+import validate from '/imports/schemas/validate'
 
 export default AssetCreateNew = React.createClass({
   propTypes: {
@@ -16,20 +18,21 @@ export default AssetCreateNew = React.createClass({
 
   getInitialState: function () {
     return {
-      project: "",
+      projectCompoundName: "",
+      selectedProject: null,          // 
       buttonActionPending: false,     // True after the button has been pushed. so it doesn't get pushed twice
       selectedKind: "",               // "" or one of AssetKindKeys[]
       newAssetName: ""                // "" or a valid assetName string
     }
   },
 
-  handleChangeSelectedProjectName: function (newName) {
-    this.setState( { project: newName})
+  handleChangeSelectedProjectName: function (selectedProjName, selectedProj, selectedCompoundName) {
+    this.setState( { projectCompoundName: selectedCompoundName, selectedProject: selectedProj } )
   },
 
   render: function() {
     const { currUser, currUserProjects } = this.props
-    const isAssetNameValid = (this.state.newAssetName !== "")   // TODO - some checks for crazy characters
+    const isAssetNameValid = validate.assetName(this.state.newAssetName)   // TODO - some checks for crazy characters
     const isKindChosen = (this.state.selectedKind !== "")
     const isAssetReadyToCreate = isKindChosen && isAssetNameValid
     const chosenKindStr = isKindChosen ? AssetKinds[this.state.selectedKind].name : "Asset"
@@ -87,12 +90,13 @@ export default AssetCreateNew = React.createClass({
         <div className="ui padded segment">
           <h4 className="ui header">3. Optionally - place the new asset within a project</h4>        
           <ProjectSelector
-                  canEdit={false}
-                  user={currUser}
-                  handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
-                  availableProjects={currUserProjects}
-                  ProjectListLinkUrl={"/u/" + currUser.profile.name + "/projects"}
-                  chosenProjectName={this.state.project} />
+              canEdit={false}
+              user={currUser}
+              handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+              availableProjects={currUserProjects}
+              ProjectListLinkUrl={"/u/" + currUser.profile.name + "/projects"}
+              showProjectsUserIsMemberOf={true}
+              chosenProjectName={this.state.projectCompoundName} />
         </div>
 
         <div title={createButtonTooltip}>
@@ -112,8 +116,12 @@ export default AssetCreateNew = React.createClass({
 
   handleCreateAssetClick: function()
   {
-    this.setState( { buttonActionPending: true})
-    this.props.handleCreateAssetClick(this.state.selectedKind, this.state.newAssetName, this.state.project)
+    this.setState( { buttonActionPending: true } )
+    this.props.handleCreateAssetClick(
+      this.state.selectedKind, 
+      this.state.newAssetName, 
+      this.state.selectedProject.name,
+      this.state.selectedProject.ownerId,
+      this.state.selectedProject.ownerName)
   }
-
 })

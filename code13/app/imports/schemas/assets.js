@@ -14,12 +14,13 @@ var schema = {
   updatedAt: Date,
 
 //teamId: String,       // team owner user id (NOT USED. TODO: REMOVE FROM DB RECORDS)
-  ownerId: String,      // owner user id
+  ownerId: String,      // Owner user id
   projectNames: [String],   // Project Name (scoped to owner). Case sensitive
 
   // Some denormalized information that saves us from joins with big tables
   // for commonly used but very stable data - best example is user name
-  dn_ownerName: String, // User.profile.name from userId at last asset create/update
+  dn_ownerName: String, // User.profile.name from userId at last asset create/update. 
+                        // See /app/DeveloperDocs/AvoidingServerSideJoins.md for reasoning
                         // ::MAINTAIN:: any user-profile-name rename function will need to update these
                         // ::MIGRATE::  assets created prior to 222016 do not have this so any render code
                         //              must fallback to user#userid
@@ -29,14 +30,15 @@ var schema = {
   kind: String,       // Asset's kind (image, map, etc)
   text: String,       // A description field
   content: String,    // depends on asset type
-  content2: Object,   // THIS IS NOT IN PREVIEW DOWNLOADS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field such as 'content'
+  content2: Object,   // THIS IS NOT IN PREVIEW SUBSCRIPTIONS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field such as 'content'
   thumbnail: String,  // data-uri base 64 of thumbnail image (for example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
 
-  isUnconfirmedSave: Boolean,   // Set on client as True (isSimulation). set on server as False (isSimulation)
-  //various flags
-  isCompleted: Boolean,   // This supports the 'is stable' flag
-  isDeleted: Boolean,     // This is a soft marked-as-deleted indicator
-  isPrivate: Boolean      // Not currently used
+  isUnconfirmedSave: Boolean,   // This is Set on client as True (isSimulation). This is set on server as False (isSimulation)
+
+  // Various Asset flags
+  isCompleted: Boolean,     // This supports the 'is stable' flag
+  isDeleted:   Boolean,     // This is a soft marked-as-deleted indicator
+  isPrivate:   Boolean      // Not currently used
 }
 
 const UAKerr = "Unknown Asset Kind"     // An error message string used a few places in this file.
@@ -183,11 +185,13 @@ export const AssetKinds = {
   }
 }
 
-// Suggested separator to be used for query.kinds. Note that "," and "+" and others can get messy
-// due to url encoding schemes. The safest ones are - _ . and ~
-//  TODO: Add an assert to ensure that this character is NOT one of the AssetKinds keys!
-//  NOTE - this is used in our URLs, so changing this character would break existing query strings with a set of kinds (e.g as used in the assetList ui) 
-export const safeAssetKindStringSepChar = "-"   
+// safeAssetKindStringSepChar is the separator to be used in the URL for encoding query.kinds    
+//     Note that "," and "+" and others can get messy due to url encoding schemes. 
+//     The safest ones are - _ . and ~ and so we picked _ at random-ish
+//   TODO: Add an Assert to ensure that this character is NOT in ANY of the AssetKinds keys
+//   NOTE - this is used in our URLs, so changing this character would break existing 
+//          query strings with a set of kinds (e.g as used in the assetList ui) 
+export const safeAssetKindStringSepChar = "-"
 export const AssetKindKeysALL = Object.keys(AssetKinds)  // For convenience. This gets ALL keys (including functions and disabled)
 
 // All valid Asset kinds that are enabled for all users
@@ -241,14 +245,31 @@ export const assetSorters = {
 
 Meteor.methods({
   "Azzets.create": function(data) {
-    if (!this.userId) 
-      throw new Meteor.Error(401, "Login required")      // TODO: Better access check
     const username = Meteor.user().profile.name
+
+    if (!data.ownerId) data.ownerId = this.userId                   // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
+    if (!data.dn_ownerName) data.dn_ownerName = username
+
+    if (!this.userId)
+      throw new Meteor.Error(401, "Login required")                 // TODO: Better access check
+
+    if (this.userId !== data.ownerId)
+    {
+      if (!data.projectNames || data.projectNames.length === 0 || data.projectNames.length > 1 || data.projectNames[0] === "")
+        throw new Meteor.Error(401, "Must exactly one ProjectName when creating Asset in another User's context")
+
+      if (Meteor.isServer)
+      {
+        console.log(`TODO #insecure# check that user '${username}' is really part of project '${data.projectNames[0]}' `)
+        // CHECK THEY REALLY CAN DO THIS.  
+        // Is this.userId in Project.memberList for   project.ownerName === data.ownerName && project.name === data.projectNames[0]
+        // ALSO CHECK that USERNAME AND USERID MATCH
+      } 
+    }
+
     const now = new Date()
     data.createdAt = now
     data.updatedAt = now
-    data.ownerId = this.userId
-    data.dn_ownerName = username
     data.content = ""                                 // This is stale. Can be removed one day
     data.text = ""                                    // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
     if (!data.projectNames)
@@ -303,11 +324,10 @@ Meteor.methods({
       isCompleted: optional(schema.isCompleted),
       isDeleted: optional(schema.isDeleted),
       isPrivate: optional(schema.isPrivate)
-    });
+    })
 
     // if caller doesn't own doc, update will fail because fields like ownerId won't match
     selector = { _id: docId }
-
     count = Azzets.update(selector, { $set: data } )
 
     if (Meteor.isServer)      

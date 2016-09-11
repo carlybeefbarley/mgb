@@ -1,90 +1,102 @@
 import _ from 'lodash'
-import React from 'react'
+import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
+
+// TODO: Handle name collisiions with OTHERs' projects
 
 export default ProjectSelector = React.createClass({
   propTypes: {
-    canEdit: React.PropTypes.bool,
-    user: React.PropTypes.object.isRequired,
-    availableProjects: React.PropTypes.array,   // See projects.js for schema. Can include owned or memberOf
-    chosenProjectName: React.PropTypes.string,  // null means 'all'
-    handleChangeSelectedProjectName: React.PropTypes.func
+    canEdit:              PropTypes.bool,
+    user:                 PropTypes.object.isRequired,  // User who we are selecting on behalf of
+    availableProjects:    PropTypes.array,              // Array of Projects for that user (owned & memberOf). See projects.js for schema. Can include owned or memberOf
+    chosenProjectName:    PropTypes.string,             // null means 'all'    // TODO: Also ADD projectOWNER !!!!!!!!!!!!!
+    showProjectsUserIsMemberOf:  PropTypes.bool,        // if True then also show MemberOf projects
+    handleChangeSelectedProjectName: PropTypes.func.isRequired   // Callback params will be (projectName, projectOwnerId, projectOwnerName)
   },
   
-  renderSelectionIcon: function(isActive)
-  {
-    return isActive ? 
-              <i className="ui green sitemap icon"></i> : 
-              <i className="ui grey sitemap disabled icon"></i>
-  },
-  
+  renderSelectionIcon: (isActive) => (<i className={`ui ${isActive ? "green" : "grey disabled"} sitemap icon`} />),
+  makeCompoundProjectName: (ownerName, projectName) => (`${ownerName} ➟ ${projectName}`),
+
   render: function() {
     const pName = this.props.chosenProjectName
-    const { user } = this.props
+    const { user, canEdit, availableProjects, showProjectsUserIsMemberOf, ProjectListLinkUrl } = this.props
+    let ownedProjects = []
+    let memberOfProjects = []
 
-    let choices = []
-    // Build the list of 'View Project' Menu choices of OWNED projects
-    _.each(this.props.availableProjects, (project) => { 
-      let isActive = (project.name === pName)
-      if (project.ownerId === this.props.user._id)
-      {
-        choices.push( 
-          <a  className={"ui item"+ (isActive ? " active" : "")} 
-              data-value={project} 
-              key={project._id} 
-              onClick={this.handleChangeSelectedProjectName.bind(this, project)}>
-            { this.renderSelectionIcon(isActive ) }
-            { project.name }
-          </a>
+    // Build the list of 'View Project' Menu choices of OWNED  and MEMBER projects
+    _.each(availableProjects, (project) => { 
+      const isActive = (project.name === pName)     // TODO: Also ADD projectOWNER !!!!!!!!!!!!!
+      const isOwner = (project.ownerId === user._id)
+      const entry = (
+        <a  className={"ui item"+ (isActive ? " active" : "")} 
+            data-value={project} 
+            key={project._id} 
+            onClick={this.handleChangeSelectedProjectName.bind(this, project)}>
+          { this.renderSelectionIcon(isActive ) }
+          { isOwner ? (project.name) : this.makeCompoundProjectName(project.ownerName, project.name) }
+        </a>
         )
-      }
+      if (isOwner)
+        ownedProjects.push( entry )
+      else if (showProjectsUserIsMemberOf)
+        memberOfProjects.push( entry )
     })
     
-    // TODO: Show projects that user is Member of.. Can provide the navigator for those projects at least
-    
-    // Add '(Any Project) if there are 1 or more projects owned by this user
-    if (choices.length > 0)
+    // Add '(Any Project) if there are 1 or more projects Owned by this user
+    if (ownedProjects.length > 0)
     {
       let isActive = (pName === null)
-      choices.unshift(
-        <a  className="ui header" 
-            data-value="__ownedHdr" 
-            key="__ownedHdr">
-            Projects owned by {user.profile.name}
-        </a>)
-      choices.push(
+      ownedProjects.unshift(
         <a  className={"ui item"+ (isActive ? " active" : "")} 
+            title="An Asset placed in 'any project' is actually _not_ in a project, but will be shown in searches that include 'any project'"
             data-value="__all" 
             key="__all" 
             onClick={this.handleChangeSelectedProjectName.bind(this, null)}>
             { this.renderSelectionIcon(isActive ) }
             (Any Project)
-        </a>)                
+        </a>)
+      ownedProjects.unshift(
+        <a  className="ui header"
+            data-value="__ownedHdr"
+            key="__ownedHdr">
+            Projects owned by {user.profile.name}
+        </a>)
     }
     else
-      choices = <div className="ui disabled item">(No projects for this user)</div>
-      
-    // Create the       | ProjectSelect v |      UI        
-        
+      ownedProjects = <div className="ui disabled item">(No projects owned by {user.profile.name}</div>
+
+    if (memberOfProjects.length > 0)
+      memberOfProjects.unshift(
+        <a  className="ui header"
+            data-value="__memberHdr"
+            key="__memberHdr">
+            Projects {user.profile.name} is a Member of
+        </a>
+      )
+
+    // Create the   |  Within Project:  (ProjectSelect v)    |    UI        
+
     return (
       <div className="ui simple dropdown item">        
-        <small>Within Project: {pName || "(Any Project)"} </small> 
+        <small >Within Project: {pName || "(Any Project)"} </small>
         <i className="dropdown icon"></i>
         <div className="ui right menu simple">
-          { choices }           
+          { ownedProjects }
+          { showProjectsUserIsMemberOf && memberOfProjects }
           <div className="divider"></div>
-          <QLink className="ui item" to={this.props.ProjectListLinkUrl}>
-            { this.props.canEdit ? "Manage Projects" : "View Project List" }
+          <QLink className="ui item" to={ProjectListLinkUrl}>
+            { canEdit ? "Manage Projects" : "View Project List" }
           </QLink>
         </div>
       </div>
     )
   },
 
-  handleChangeSelectedProjectName: function(chosenProject)
+  handleChangeSelectedProjectName: function(proj)
   {
-    if (this.props.handleChangeSelectedProjectName)
-      this.props.handleChangeSelectedProjectName(chosenProject ? chosenProject.name : null)
-  }  
-  
+    if (proj)
+      this.props.handleChangeSelectedProjectName( proj.name, proj, this.makeCompoundProjectName(proj.ownerName, proj.name) )
+    else
+      this.props.handleChangeSelectedProjectName( null, null, "" )
+  }
 })

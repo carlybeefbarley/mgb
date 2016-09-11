@@ -38,31 +38,36 @@ export default AssetCreateNewRoute = React.createClass({
     )
   },
 
-  handleCreateAssetClickFromComponent(assetKindKey, assetName, projectName) {
+  handleCreateAssetClickFromComponent(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) {
     let newAsset = {
       name: assetName,
       kind: assetKindKey,
       text: "",
       thumbnail: "",
       content2: {},
-      dn_ownerName: this.props.currUser.name,
+      dn_ownerName: this.props.currUser.name,         // Will be replaced below if in another project
 
       isCompleted: false,
-      isDeleted: false,
-      isPrivate: true
+      isDeleted:   false,
+      isPrivate:   false
     }
-    if (projectName && projectName !== "")
+    if (projectName && projectName !== "") {
       newAsset.projectNames = [projectName]
+      newAsset.dn_ownerName = projectOwnerName
+      newAsset.ownerId = projectOwnerId
+    }
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
-          alert("cannot create asset because: " + error.reason);
+          alert("cannot create Asset because: " + error.reason)
       } else {
-        newAsset._id = result; // So activity log will work
-        logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset);
+        newAsset._id = result             // So activity log will work
+        logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)
+        // Now go to the new Asset
         utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/asset/${result}`)
       }
     })
+
   }
 
 })

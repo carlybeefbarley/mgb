@@ -1,5 +1,6 @@
 import _ from 'lodash'
 
+// These functions return true for ok
 export default validate = {
 
   lengthCap: function (text, lengthCap) {

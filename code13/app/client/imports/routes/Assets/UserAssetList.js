@@ -1,25 +1,24 @@
-import _ from 'lodash';
-import React, { Component, PropTypes } from 'react';
-import reactMixin from 'react-mixin';
+import _ from 'lodash'
+import React, { Component, PropTypes } from 'react'
+import reactMixin from 'react-mixin'
 
-import { Azzets, Projects } from '/imports/schemas';
-import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters } from '/imports/schemas/assets';
-import { logActivity } from '/imports/schemas/activity';
+import { Azzets, Projects } from '/imports/schemas'
+import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters } from '/imports/schemas/assets'
+import { logActivity } from '/imports/schemas/activity'
 
-import AssetList from '/client/imports/components/Assets/AssetList';
-import CreateAssetLinkButton from '/client/imports/components/Assets/NewAsset/CreateAssetLinkButton';
-import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSelector.js';
-import AssetShowDeletedSelector from '/client/imports/components/Assets/AssetShowDeletedSelector.js';
-import AssetShowStableSelector from '/client/imports/components/Assets/AssetShowStableSelector.js';
-import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy';
-import ProjectSelector from '/client/imports/components/Assets/ProjectSelector';
+import AssetList from '/client/imports/components/Assets/AssetList'
+import CreateAssetLinkButton from '/client/imports/components/Assets/NewAsset/CreateAssetLinkButton'
+import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSelector.js'
+import AssetShowDeletedSelector from '/client/imports/components/Assets/AssetShowDeletedSelector.js'
+import AssetShowStableSelector from '/client/imports/components/Assets/AssetShowStableSelector.js'
+import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
+import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 
-import { utilPushTo } from '../QLink';
-import Spinner from '/client/imports/components/Nav/Spinner';
-import { browserHistory } from 'react-router';
-import Helmet from 'react-helmet';
-import UserItem from '/client/imports/components/Users/UserItem.js';
-
+import { utilPushTo } from '../QLink'
+import Spinner from '/client/imports/components/Nav/Spinner'
+import { browserHistory } from 'react-router'
+import Helmet from 'react-helmet'
+import UserItem from '/client/imports/components/Users/UserItem.js'
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = { 
@@ -30,7 +29,6 @@ const queryDefaults = {
   showStable: "0",      // Should be "0" or "1"  -- as a string
   kinds: ""             // Asset kinds. Empty means 'match all valid, non-disabled assets'
 }
-
 
 export default UserAssetListRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -43,11 +41,9 @@ export default UserAssetListRoute = React.createClass({
     location: PropTypes.object      // We get this from react-router
   },
   
-    
   contextTypes: {
     urlLocation: React.PropTypes.object
   },
-  
   
   /** 
    * queryNormalized() takes a location query that comes in via the browser url.
@@ -84,9 +80,7 @@ export default UserAssetListRoute = React.createClass({
     // query.kinds 
     // This one is more complicated.. It will be dynamically expanded to be a comma-separated list of all valid enabled asset kinds
     if (q.kinds && q.kinds === safeAssetKindStringSepChar)
-    {
       newQ.kinds = ""     // Externally "-" becomes "" internally
-    }
     else if (q.kinds && q.kinds.length > 0)
     {
       // url supplied a list, so parse for valid ones and put back into string
@@ -147,42 +141,31 @@ export default UserAssetListRoute = React.createClass({
                                   qN.project, 
                                   qN.showDeleted === "1", 
                                   qN.showStable === "1")
-                          
-    
+
     let handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null 
     let selectorForProjects = {
       "$or": [
         { ownerId: userId },
         { memberIds: { $in: [userId]} }
       ]
-    }  
+    }
     return {
-      assets: Azzets.find(assetSelector, {sort: assetSorter}).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
-      projects: userId ? Projects.find(selectorForProjects).fetch() : null,   // Can be null
+      assets: Azzets.find(assetSelector, {sort: assetSorter}).fetch(),      // Note that the subscription we used excludes the content2 field which can get quite large
+      projects: userId ? Projects.find(selectorForProjects).fetch() : null, // Can be null
       loading: !handleForAssets.ready()
-    };
+    }
   },
 
-
-  /** This is the callback from AssetsKindSelector
-   * 
-   */
+  // This is the callback from AssetsKindSelector
   handleToggleKind(k, altKey) // k is the string for the AssetKindsKey to toggle existence of in the array
   {    
-    
     // get current qN.kinds
     const qN = this.queryNormalized(this.props.location.query)
     let newKindsString
     if (k === "__all")
-    {
-      // special case.. show all kinds
-      newKindsString = ""
-    }
+      newKindsString = ""         // special case.. show all kinds
     else if (!altKey)
-    { 
-      // Alt key means ONLY this kind - pretty simple - the string is the given kind
-      newKindsString = k
-    }
+      newKindsString = k          // Alt key means ONLY this kind - pretty simple - the string is the given kind
     else
     {
       // Alt key, so this is a toggle
@@ -193,9 +176,7 @@ export default UserAssetListRoute = React.createClass({
       // Beware that "".split("-") is [""] so we have to special case empty string
       const kindsArray = (kindsStr === "" ) ? [] : kindsStr.split(safeAssetKindStringSepChar)
       // Toggle it being there
-      const newKindsArray =  _.indexOf(kindsArray,k)===-1 ? 
-                          _.union(kindsArray,[k]) : 
-                          _.without(kindsArray,k)
+      const newKindsArray =  _.indexOf(kindsArray,k) === -1 ? _.union(kindsArray,[k]) : _.without(kindsArray,k)
       if (newKindsArray.length === 0)
         newKindsString = safeAssetKindStringSepChar   // No keys selected - we encode that as "-" in the externalized url query
       else if (_.difference(AssetKindKeys, newKindsArray).length === 0)
@@ -206,7 +187,6 @@ export default UserAssetListRoute = React.createClass({
     // Finally, special case the empty and full situations
     this._updateLocationQuery( { "kinds": newKindsString })
   },
-
   
   handleChangeShowDeletedFlag(newValue)
   {
@@ -245,7 +225,7 @@ export default UserAssetListRoute = React.createClass({
     // mark if the button needs to be pushed
     const qN = this.queryNormalized(this.props.location.query)
     const $button = $(this.refs.searchGoButton)
-    if  (this.refs.searchNameInput.value !== qN.searchName)
+    if (this.refs.searchNameInput.value !== qN.searchName)
       $button.addClass("orange")
     else
       $button.removeClass("orange")
@@ -376,8 +356,6 @@ export default UserAssetListRoute = React.createClass({
         </div>
         
       </div>
-
-    );
+    )
   }
-  
 })

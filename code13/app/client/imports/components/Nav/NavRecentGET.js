@@ -18,7 +18,7 @@ export default NavRecentGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    currUser:            PropTypes.object,           // Currently Logged in user. Can be null/undefined  
+    currUser:            PropTypes.object,           // Currently Logged in user. Can be null/undefined
     styledForNavPanel:   PropTypes.bool.isRequired,  // True if we want the NavPanel style (inverted etc)
     showUserActivities:  PropTypes.bool.isRequired
   },
@@ -29,14 +29,14 @@ export default NavRecentGET = React.createClass({
       showUserActivities: false
     }
   },
-  
+
   getMeteorData: function() {
     if (!this.props.currUser)
       return {}
-      
+
     let uid = this.props.currUser._id
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.userId", uid);
-    let handleActivity = Meteor.subscribe("activity.public.recent.userId", uid) 
+    let handleActivity = Meteor.subscribe("activity.public.recent.userId", uid)
 
     return {
       activitySnapshots: ActivitySnapshots.find({ byUserId: uid }).fetch(),
@@ -69,12 +69,12 @@ export default NavRecentGET = React.createClass({
   {
     this.enablePopups()
   },
-  
+
   renderMergedActivities()   // merge and sort by timestamp.. assets only? idk
   {
     if (!this.props.currUser || this.data.loading)
-      return null      
-      
+      return null
+
     const isNp = this.props.styledForNavPanel
 
     let mergedArray = this.data.activity.concat(this.data.activitySnapshots)
@@ -107,18 +107,18 @@ export default NavRecentGET = React.createClass({
         const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
         const dataHtml = `<div><p>${assetKindCap}: ${a.toAssetName}</p><small><p>${ago}</p></small><img style="max-width: 240px;" src="${assetThumbnailUrl}" /><small><p>Owner: ${a.toOwnerName}</p></small></div>`
         // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now in those cases
-        const linkTo = a.toOwnerId ? 
+        const linkTo = a.toOwnerId ?
                         `/u/${a.toOwnerName}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016
                         `/assetEdit/${a.toAssetId}`                    // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
-        item = ( 
+        item = (
           <QLink to={linkTo} className="ui item hazRecentPopup"  key={a._id}  data-html={dataHtml} data-position="right center" >
             <span>
               <i className={assetKindIconClassName}></i>{assetNameTruncated || "(unnamed)"}
             </span>
             <i className={assetActivityIconClass}></i>
           </QLink>
-        )        
-      }  
+        )
+      }
       else if (a.activityType.startsWith("project.")) {
         item = (
           <QLink to={`/u/${a.byUserName}/projects`} className="ui item" key={a._id}  data-html={basicDataHtml} data-position="right center" >
@@ -127,7 +127,7 @@ export default NavRecentGET = React.createClass({
           </QLink>
         )
       }
-       
+
       if (item)
       {
         if (moment(a.timestamp).add(24, 'hours').isBefore())
@@ -136,9 +136,9 @@ export default NavRecentGET = React.createClass({
           retval.today.push(item)
         else
           retval.justNow.push(item)
-      }  
+      }
     })
-     
+
     var retvalJsx = []
 
     const hdrSty = isNp ? {} : {marginTop: "8px"}
@@ -150,20 +150,21 @@ export default NavRecentGET = React.createClass({
           <div className="menu" key={"_M"+k}>{retval[k]}</div>
         )
     })
-    
+
     return retvalJsx
   },
-  
-  
-  render: function() 
+
+
+  render: function()
   {
     const isNp = this.props.styledForNavPanel
     const inverted = isNp ? "inverted" : "borderless fitted "
-    const menuSty = isNp ? {} : { boxShadow: "none", border: "none"}
+    const menuSty = isNp ? { backgroundColor: "transparent" } : { boxShadow: "none", border: "none"}
+    // TODO: use site.less for styling inverted menu
     return (
         <div className={"ui fluid " + inverted + " vertical menu"} style={menuSty}>
           <div className="item">
-            { isNp && 
+            { isNp &&
               <h3 className={"ui " + inverted + "header"} style={{textAlign: "center"}}>
                 <i className="history icon" />
                 History

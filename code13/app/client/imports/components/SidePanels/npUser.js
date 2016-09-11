@@ -4,11 +4,11 @@ import QLink, { utilPushTo } from '/client/imports/routes/QLink';
 import { logActivity } from '/imports/schemas/activity';
 
 export default npUser = React.createClass({
-  
+
   propTypes: {
     currUser:           PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:               PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
+    panelWidth:         PropTypes.string.isRequired   // Typically something like "200px".
   },
 
   contextTypes: {
@@ -18,17 +18,18 @@ export default npUser = React.createClass({
 
   logout: function() {
     let userName = Meteor.user().profile.name
-    logActivity("user.logout",  `Logging out "${userName}"`, null, null);         
+    logActivity("user.logout",  `Logging out "${userName}"`, null, null);
 
     Meteor.logout();
     utilPushTo(this.context.urlLocation.query, "/");
   },
 
-  render: function () {    
+  render: function () {
     const {currUser} = this.props
 
     return (
-      <div className="ui vertical inverted fluid menu">
+      // TODO: use site.less for styling inverted menu
+      <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
         { currUser ?
           <div>
             <div className="ui item" key="authHdr">
@@ -84,5 +85,5 @@ export default npUser = React.createClass({
     );
   }
 
-  
+
 })

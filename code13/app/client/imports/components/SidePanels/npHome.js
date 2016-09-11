@@ -5,26 +5,27 @@ import WhatsNew from '../Nav/WhatsNew';
 
 
 export default npHome = React.createClass({
-  
+
   propTypes: {
     currUser:           PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:               PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:         PropTypes.string.isRequired   // Typically something like "200px". 
+    panelWidth:         PropTypes.string.isRequired   // Typically something like "200px".
   },
 
 
-  render: function () {    
+  render: function () {
     const {currUser} = this.props;
 
     return (
-      <div className="ui vertical attached inverted fluid menu">
+       // TODO: use site.less for styling inverted menu
+      <div className="ui vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
         <div className="ui item" key="authHdr">
           <h3 className="ui inverted header" style={{textAlign: "center"}}>
             <i className="home icon" />
             Home
           </h3>
-        </div>      
-  
+        </div>
+
         <div className="header item">My Game Builder v2</div>
         <div className="menu">
           <QLink to="/" className="item">Home Page</QLink>
@@ -36,7 +37,7 @@ export default npHome = React.createClass({
             Roadmap
           </QLink>
         </div>
-  
+
         <div className="header item">Common Tasks</div>
         <div className="menu">
           <QLink to="/assets/create" className="item">
@@ -48,5 +49,5 @@ export default npHome = React.createClass({
         );
   }
 
-  
+
 })

@@ -15,7 +15,7 @@ import { projectMakeSelector } from '/imports/schemas/projects'
 import NavBar from '/client/imports/components/Nav/NavBar'
 import Toast from '/client/imports/components/Nav/Toast'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import NavPanel from '/client/imports/components/SidePanels/NavPanel'
+import NavPanel from '/client/imports/components/SidePanels/NavPanel_Z2'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel_Z2'
 import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo'
 
@@ -144,7 +144,7 @@ export default App = React.createClass({
     // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
     const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
-    const navPanelWidth = showNavPanel ? "252px" : "52px"
+    const navPanelWidth = showNavPanel ? "268px" : "60px"
 
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]

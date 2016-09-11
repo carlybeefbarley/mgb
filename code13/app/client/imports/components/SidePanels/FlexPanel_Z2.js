@@ -115,9 +115,9 @@ export default FlexPanel = React.createClass({
       width: "60px",
       border: "none",
       borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
-
       borderRadius: 0,
-      marginBottom: 0
+      marginBottom: 0,
+      backgroundColor: "none",
     }
 
     const panelScrollContainerStyle = {

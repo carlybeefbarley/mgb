@@ -58,7 +58,7 @@ export default App = React.createClass({
   },
 
   componentDidMount: function() {
-    window.onkeydown = this.togglePanelsKeyHandler
+    window.onkeyup = this.togglePanelsKeyHandler
   },
 
 

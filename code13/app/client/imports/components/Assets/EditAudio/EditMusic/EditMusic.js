@@ -23,7 +23,7 @@ export default class EditMusic extends React.Component {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
     this.channelsMounted = props.asset.content2.channels ? props.asset.content2.channels.length : 0
     this.areChannelsMounted = props.asset.content2.channels ? false : true
-    this.zoomLevels = [8, 15, 30, 60, 120]
+    this.zoomLevels = [8, 15, 30, 60, 120, 200]
     const pxPerSecond = this.zoomLevels[2]
 
     this.state = {
@@ -69,6 +69,7 @@ export default class EditMusic extends React.Component {
 
     this.converter = new AudioConverter(this.audioCtx)
     this.refs.previewComponent.loadDataUri( this.props.asset.content2.dataUri )
+    this.setState({ viewWidth: ReactDOM.findDOMNode(this.refs.channelList).offsetWidth - 200 })
 
     this.cursor = ReactDOM.findDOMNode(this.refs.cursor)
     this.cursorOffsetX = 200
@@ -90,9 +91,9 @@ export default class EditMusic extends React.Component {
         this.callChildren('drawWave')
         this.mergeChannels()
       }
-      if (prevProps.asset.content2.duration !== this.props.asset.content2.duration) {
-        this.updateCanvasLength()
-      }
+      // if (prevProps.asset.content2.duration !== this.props.asset.content2.duration) {
+      //   this.updateCanvasLength()
+      // }
     }
   }
 
@@ -272,12 +273,12 @@ export default class EditMusic extends React.Component {
     this.mergeChannels(c2, "Change duration")
   }
 
-  updateCanvasLength () {
-    let c2 = this.props.asset.content2
-    let viewWidth = c2.duration * this.state.pxPerSecond + 1
-    this.setState({ viewWidth: viewWidth })
-    this.callChildren("drawWave")
-  }
+  // updateCanvasLength () {
+  //   let c2 = this.props.asset.content2
+  //   let viewWidth = c2.duration * this.state.pxPerSecond + 1
+  //   this.setState({ viewWidth: viewWidth })
+  //   this.callChildren("drawWave")
+  // }
 
   zoom (zoomIn) { // boolean zoomIn or zoomOut
     let i = this.zoomLevels.indexOf(this.state.pxPerSecond)
@@ -434,7 +435,7 @@ export default class EditMusic extends React.Component {
               />
 
             </div>
-            <div className='channelList'>
+            <div className='channelList' ref="channelList">
               <div ref='cursor' className='cursor' style={{ left: this.cursorOffsetX + 'px' }}></div>
               {this.renderChannels()}
             </div>

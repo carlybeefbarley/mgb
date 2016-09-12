@@ -31,49 +31,6 @@ let WaveDraw = function(data){
 		this.canvasCtx.restore();
 	}
 
-	// function int16ToFloat32(int16){
-	// 	// TODO conversion here
-	// 	return int16
-	// }
-
-	this.sumBufferList = function(bufferList){
-		
-		const arrayLength = Math.floor(this.duration * this.audioCtx.sampleRate)
-		let sumBuffer = new Float32Array(arrayLength)
-		bufferList.forEach((buffer) => {
-			// buffer length shouldn't exceed all track length
-			const bufferLength = buffer.length < arrayLength ? buffer.length : arrayLength	
-			for(let i=0; i<bufferLength; i++){
-				sumBuffer[i] += buffer[i]
-			}
-		})
-
-		// summing buffers some values could be greater than -1 to 1 range. need to avoid this
-		sumBuffer.forEach((val, i) => {
-			if(val < -1) sumBuffer[i] = -1
-			if(val > 1) sumBuffer[i] = 1
-		})
-
-		return sumBuffer
-
-		// this.drawWave(sumBuffer)
-
-		// let samples = new Int16Array( sumBuffer.length )
-		// sumBuffer.forEach((val, i) => {
-		// 	if(val > 1) val = 1
-		// 	else if(val < -1) val = 1
-  //     val = val < 0 ? val * 32768 : val * 32767
-  //     samples[i] = Math.round(val)
-		// })
-
-		// lamejs.encodeMono(1, this.audioCtx.sampleRate, samples, (audioObject) => {
-  //   	audioObject.play()
-  //   	this.handleSave("Music import")
-  //   })
-	}
-
-
-
 
 	this.audioCtx = data.audioCtx
 	this.duration = data.duration

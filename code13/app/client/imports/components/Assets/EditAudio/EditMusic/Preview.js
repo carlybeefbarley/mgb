@@ -59,13 +59,43 @@ export default class Preview extends React.Component {
       buffer: this.buffer
     }
     this.waveDraw = new WaveDraw(data)
-
+    this.drawSlider()
   }
 
   drawSlider(){
     if(this.props.duration * this.props.pxPerSecond > this.props.viewWidth){
-      let visibleDuration = this.props.viewWidth / this.propx.pxPerSecond
+      const visibleDuration = this.props.viewWidth / this.props.pxPerSecond
+      const previewPxPerSecond = this.state.previewWidth / this.props.duration
+      this.sliderWidth = visibleDuration * previewPxPerSecond
+
+      this.previewCtx.save()
+      this.previewCtx.fillStyle = "#333333"
+      this.previewCtx.globalAlpha = 0.4  // looks a way cooler than alpha = 1
+      this.previewCtx.fillRect(this.sliderX, 0, this.sliderWidth, 128)
+      this.previewCtx.restore();
     }
+  }
+
+  onDragStart(e){
+    if(this.sliderWidth == 0) return  // no slider to draw
+    let ghost = e.target.cloneNode(true)
+    ghost.style.display = "none"
+    e.dataTransfer.setDragImage(ghost, 0, 0)
+    this.dragStartX = e.clientX
+  }
+
+  onDrag(e){
+    if(e.clientX == 0 && e.clientY == 0) return   // avoiding weid glitch when at the end of drag 0,0 coords returned
+    const deltaX = e.clientX - this.dragStartX
+    this.sliderX += deltaX
+    if(this.sliderX < 0) this.sliderX = 0
+    else if(this.sliderX + this.sliderWidth > this.state.previewWidth) this.sliderX = this.state.previewWidth - this.sliderWidth
+    this.dragStartX = e.clientX
+    this.draw()
+  }
+
+  onDragEnd(){
+
   }
 
   update (songTime) {
@@ -80,7 +110,16 @@ export default class Preview extends React.Component {
   render () {
     return (
       <div ref="previewDiv">
-        <canvas ref='previewCanvas' width={this.state.previewWidth} height='128px'></canvas>
+        <canvas 
+          ref='previewCanvas' 
+          width={this.state.previewWidth} 
+          height='128px'
+          draggable={true}
+          onDragStart={this.onDragStart.bind(this)}
+          onDrag={this.onDrag.bind(this)}
+          onDragEnd={this.onDragEnd.bind(this)}
+          >
+        </canvas>
         <canvas
           ref='thumbnailCanvas'
           style={{display: 'none'}}

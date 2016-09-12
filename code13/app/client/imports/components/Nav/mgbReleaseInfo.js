@@ -13,6 +13,36 @@
 
 export default mgbReleaseInfo = {
   'releases': [
+    {
+      'timestamp': 'Sun Sep 11 2016 17:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1345'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'Revised NavPanel and FlexPanel style',
+          'changeSummary': 'NavPanel bar on left is now dark grey; Both FlexPanel and NavPanel have been widened slightly, and text has been added for initial navigation. There will be an option later to remove the text for users who don\'t want it',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'security.projects',
+          'type': 'improvement',
+          'changeName': 'Create Asset as Project Member',
+          'changeSummary': 'Users can now create asset in Projects they are a MEMBER of. Prior to this change they had to be project owners.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Fri Sep 09 2016 18:00:00 GMT-0700 (PDT)',

@@ -17,20 +17,20 @@ export default class Preview extends React.Component {
     }
 
     this.buffer
+    this.sliderX = 0
+    this.sliderWidth = 0
 
   }
 
   componentDidMount () {
     this.converter = new AudioConverter(this.props.audioCtx)
 
+    this.previewDiv = ReactDOM.findDOMNode(this.refs.previewDiv)
     this.previewCanvas = ReactDOM.findDOMNode(this.refs.previewCanvas)
     this.previewCtx = this.previewCanvas.getContext('2d')
     this.thumbnailCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
     this.thumbnailCtx = this.thumbnailCanvas.getContext('2d')
-
-    this.previewCanvas = ReactDOM.findDOMNode(this.refs.previewCanvas)
-    this.previewDiv = ReactDOM.findDOMNode(this.refs.previewDiv)
-
+    
     this.setState({ previewWidth: this.previewDiv.offsetWidth})
   }
 
@@ -59,6 +59,13 @@ export default class Preview extends React.Component {
       buffer: this.buffer
     }
     this.waveDraw = new WaveDraw(data)
+
+  }
+
+  drawSlider(){
+    if(this.props.duration * this.props.pxPerSecond > this.props.viewWidth){
+      let visibleDuration = this.props.viewWidth / this.propx.pxPerSecond
+    }
   }
 
   update (songTime) {

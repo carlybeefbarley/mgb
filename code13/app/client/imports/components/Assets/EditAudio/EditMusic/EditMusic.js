@@ -205,7 +205,7 @@ export default class EditMusic extends React.Component {
     })
   }
 
-  mergeChannels (c2) {
+  mergeChannels (c2, saveText="Merge channels") {
     if (!c2) c2 = _.cloneDeep(this.props.asset.content2)
 
     let bufferList = []
@@ -222,7 +222,7 @@ export default class EditMusic extends React.Component {
     this.converter.bufferToDataUri(buffer, (dataUri) => {
       // console.log(dataUri)
       c2.dataUri = dataUri
-      this.handleSave('Merge channels', c2)
+      this.handleSave(saveText, c2)
     })
   }
 
@@ -268,7 +268,8 @@ export default class EditMusic extends React.Component {
   changeDuration (e) {
     let c2 = _.cloneDeep(this.props.asset.content2)
     c2.duration = parseFloat(e.target.value)
-    this.handleSave('Change duration', c2)
+    // this.handleSave('Change duration', c2)
+    this.mergeChannels(c2, "Change duration")
   }
 
   updateCanvasLength () {
@@ -374,7 +375,8 @@ export default class EditMusic extends React.Component {
               audioCtx={this.audioCtx}
               duration={c2.duration}
               waveColor={this.state.waveColor}
-
+              pxPerSecond={this.state.pxPerSecond}
+              viewWidth={this.state.viewWidth}
 
             />
             

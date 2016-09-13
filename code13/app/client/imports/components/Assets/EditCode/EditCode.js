@@ -7,7 +7,6 @@ import { snapshotActivity } from '/imports/schemas/activitySnapshots.js';
 import { templateCode } from './templates/TemplateCode.js';
 import { js_beautify } from 'js-beautify';
 import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
-window.CM = CodeMirror;
 import KeyBindingAssist from '../../Skills/Keybindings.js';
 import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
@@ -162,7 +161,7 @@ export default class EditCode extends React.Component {
       // typeTip: function(..) this would be a function that creates a DOM element to render the typeTip
     }
 
-    this.ternServer = window.mgb_tern = new CodeMirror.TernServer(myTernConfig)
+    this.ternServer = new CodeMirror.TernServer(myTernConfig)
     this.tools = new SourceTools(this.ternServer, this.props.asset._id)
 
     InstallMgbTernExtensions(tern);

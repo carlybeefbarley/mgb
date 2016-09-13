@@ -17,7 +17,7 @@ export default class SourceTools {
       babelWorker.terminate()
     }
 
-    window.mgb_tools = this
+    //window.mgb_tools = this
     this.asset_id = asset_id
     this.tern = ternServer
     this.babelWorker = babelWorker = new Worker("/lib/BabelWorker.js")

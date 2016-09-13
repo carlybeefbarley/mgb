@@ -52,7 +52,6 @@ makeTable(hdrs, fields, data, highlightRow = undefined) {
 },
 // beautify type - TODO: make nice indent for object like types
 beautifyType: function(type){
-  console.log(type)
   // for cases {}
   if(type.length < 3){
     return type

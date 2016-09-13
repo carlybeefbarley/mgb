@@ -128,7 +128,7 @@ export default class SourceTools {
     return this.collectedSources.find(s => s.name == filename)
   }
 
-  updateNow(cb){
+  updateNow(cb) {
 
     // wait for active job to complete
     if (this.inProgress) {
@@ -144,11 +144,11 @@ export default class SourceTools {
       window.clearTimeout(this.timeout);
       this.timeout = 0;
 
-      this.delayed();
+      this.delayed(true);
       this.updateNow(cb);
     }
     // already on the latest version, yay!
-    else{
+    else {
       cb()
     }
   }
@@ -161,21 +161,23 @@ export default class SourceTools {
       window.clearTimeout(this.timeout)
       this.timeout = 0;
     }
-    
+
     const prev = this._lastAction
     // wait for previous action and transpile lazy - as full core refresh and reanalyze makes text cursor feel sluggish
-    if(!force) {
+    if (!force) {
       if ((this.inProgress && !this._firstTime) || (prev.src === srcText || Date.now() - prev.time < SMALL_CHANGES_TIMEOUT)) {
-        this.delayed = () => {
+        this.delayed = (force) => {
           // this may never be called if new sources will come in
-          this.collectAndTranspile(srcText, filename, callback)
+          this.collectAndTranspile(srcText, filename, callback, force)
         }
         this.timeout = window.setTimeout(this.delayed, UPDATE_DELAY)
         return
       }
     }
+    else if(this.inProgress){
+      console.log("This never should happen - Debug ASAP!")
+    }
 
-    console.log("Collect and transpile!")
     this._lastAction.src = srcText
     this._lastAction.time = Date.now()
 
@@ -316,7 +318,6 @@ export default class SourceTools {
       const worker = new Worker("/lib/BabelWorker.js")
       worker.onmessage = (e) => {
         cb(e.data.code)
-        console.log("Bundle has been created")
         worker.terminate()
       };
       worker.postMessage(["bundled_" + this.mainJS, allInOneBundle, {

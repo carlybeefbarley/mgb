@@ -294,6 +294,10 @@ export default class EditMusic extends React.Component {
     }
   }
 
+  setViewOffset (seconds) {
+    this.callChildren("setViewOffset", [seconds])
+  }
+
   addChannel (dataUri, c2) {
     if (!c2) c2 = _.cloneDeep(this.props.asset.content2)
     if (!c2.channels) c2.channels = []
@@ -378,6 +382,7 @@ export default class EditMusic extends React.Component {
               waveColor={this.state.waveColor}
               pxPerSecond={this.state.pxPerSecond}
               viewWidth={this.state.viewWidth}
+              setViewOffset={this.setViewOffset.bind(this)}
 
             />
             

@@ -22,6 +22,8 @@ export default class Channel extends React.Component {
       dragStartX: 0,
     }
 
+    this.viewOffset = 0 // in sec
+
   }
 
   componentDidMount () {
@@ -123,6 +125,7 @@ export default class Channel extends React.Component {
     const chunk = Math.floor(channelData.length / sampleWidth)
     const subChunk = 10
     const subChunkVal = Math.floor(chunk / subChunk)
+    const viewOffsetX = this.viewOffset * this.props.pxPerSecond
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
     this.waveCtx.globalAlpha = 0.4
@@ -131,7 +134,7 @@ export default class Channel extends React.Component {
       for (var j = 0; j < subChunk; j++) {
         const val = channelData[i * chunk + j * subChunkVal]
         // const x = i+j*(1/subChunk)
-        const x = i + this.sample.offsetX
+        const x = i + this.sample.offsetX + viewOffsetX
         this.waveCtx.beginPath()
         this.waveCtx.moveTo(x, y)
         this.waveCtx.lineTo(x, y + val * y)
@@ -139,6 +142,11 @@ export default class Channel extends React.Component {
       }
     }
     this.waveCtx.restore()
+  }
+
+  setViewOffset (seconds) {
+    this.viewOffset = seconds
+    this.drawWave()
   }
 
   drawSampleBG () {

@@ -90,10 +90,17 @@ export default class Preview extends React.Component {
     else if(this.sliderX + this.sliderWidth > this.state.previewWidth) this.sliderX = this.state.previewWidth - this.sliderWidth
     this.dragStartX = e.clientX
     this.drawSlider()
+    this.calculateViewOffset()
   }
 
   onDragEnd(){
+    
+  }
 
+  calculateViewOffset(){
+    const previewPxPerSecond = this.state.previewWidth / this.props.duration
+    const viewOffset = this.sliderX / previewPxPerSecond  // offset in seconds
+    this.props.setViewOffset(viewOffset)
   }
 
   update (songTime) {

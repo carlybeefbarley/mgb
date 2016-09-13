@@ -201,7 +201,7 @@ export default class EditGraphic extends React.Component {
     let $cp =  $a.find('.layout.icon').parent()
     $cp.popup({
       popup: '.mgbColorPickerWidget.popup',
-      lastResort: 'right top',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
+      lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
       hoverable: true
     })
 

@@ -146,6 +146,8 @@ export default class SourceTools {
     this.collectedSources.length = 0
     this.inProgress = true
     this._collectAndTranspile(srcText, filename, () => {
+      // force tern to update arg hint cache as we may have loaded new files / defs / docs
+      this.tern.cachedArgHints = null
       callback && callback()
       this.inProgress = false
     })

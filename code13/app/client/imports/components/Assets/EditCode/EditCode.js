@@ -943,6 +943,8 @@ export default class EditCode extends React.Component {
   }
   handleFullScreen(id){
     if(this.props.canEdit) {
+      // for editors we could load also sandbox iframe.. but probably it's not the best idea - as dev would like to how looks bundled version also
+      //
       const child = window.open('about:blank', "Bundle")
       child.document.write(`
 <h1>Creating bundle</h1>

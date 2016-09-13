@@ -12,7 +12,8 @@ const UPDATE_DELAY = 15 * 1000
 // add only smalls libs to tern
 const MAX_ACCEPTABLE_SOURCE_SIZE = 1700653 // REACT sice for testing purposes - 1024 * 10 // 10 kb
 const tmpCache = {}
-
+// we don't want to ping 404 on CDNs all the time
+const cached404 = {}
 export default class SourceTools {
   constructor(ternServer, asset_id) {
     // terminate old babel worker - just in case..
@@ -394,6 +395,11 @@ export default class SourceTools {
       }, 0)
       return
     }
+    if(cached404[url]){
+      console.error("Failed to load script: [" + url + "]", cached404[url])
+      cb("")
+      return;
+    }
     // atm server will try to generate script
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = () => {
@@ -402,6 +408,7 @@ export default class SourceTools {
       }
       if (httpRequest.status !== 200) {
         console.error("Failed to load script: [" + url + "]", httpRequest.status)
+        cached404[url] = httpRequest.status
         cb("")
         return;
       }

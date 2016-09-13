@@ -70,7 +70,6 @@ export default class EditCode extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log("here!")
     this.fontSizeSettingIndex = undefined;
 
     // save jshint reference - so we can kill it later
@@ -121,7 +120,6 @@ export default class EditCode extends React.Component {
     // Semantic-UI item setup (Accordion etc)
     $('.ui.accordion').accordion({exclusive: false, selector: {trigger: '.title .explicittrigger'}})
 
-    //console.log("Sample Defs:", Defs_sample);
     // Tern setup
     var myTernConfig = {
       // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
@@ -556,10 +554,7 @@ export default class EditCode extends React.Component {
       this.jshintWorker.postMessage([editor.getValue(), conf])
 
       if (fSourceMayHaveChanged) {
-        if (!self.tools) {
-          console.log("Tools is not ready!!!")
-        }
-        else {
+        if (self.tools) {
           self.tools.collectAndTranspile(editor.getValue(), self.props.asset.name)
         }
       }
@@ -606,7 +601,6 @@ export default class EditCode extends React.Component {
             symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
           },
           (originalRequest, result) => {
-            console.log("FN info:", result)
             // This callback will always be called, but could be sync or async
             this.setState({
               "helpDocJsonMethodInfo": result.data,
@@ -658,7 +652,6 @@ export default class EditCode extends React.Component {
     }
 
     ternServer.request(editor, query, function (error, data) {
-      //console.log(data)
       if (error)
         self.setState({atCursorTypeRequestResponse: {"error": error}})
       else
@@ -940,16 +933,18 @@ export default class EditCode extends React.Component {
         //gameEngineScriptToPreload: gameEngineJsToLoad
       })
     })
-    this.tools.createBundle((bundle) => {
-      const value = this.codeMirror.getValue()
-      const newC2 = { src: value, bundle: bundle }
-      // don't save - if not changed
-      if(this.lastBundle != bundle) {
-        this.lastBundle = bundle
-        this.handleContentChange(newC2, null, `Store code bundle`)
-        console.log("Bundle saved!");
-      }
-    })
+    // create only for someone who can also change it
+    if(this.props.canEdit) {
+      this.tools.createBundle((bundle) => {
+        const value = this.codeMirror.getValue()
+        const newC2 = {src: value, bundle: bundle}
+        // don't save - if not changed
+        if (this.lastBundle != bundle) {
+          this.lastBundle = bundle
+          this.handleContentChange(newC2, null, `Store code bundle`)
+        }
+      })
+    }
 
     // Make sure that it's really visible.. and also auto-close accordion above so there's space.
     $('.ui.accordion').accordion('close', 0);

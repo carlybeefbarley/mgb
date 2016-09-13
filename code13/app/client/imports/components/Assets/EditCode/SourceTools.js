@@ -38,7 +38,6 @@ export default class SourceTools {
   }
 
   set inProgress(val) {
-    console.log("_inProgress", val)
     this._inProgress = val
   }
   get inProgress(){
@@ -110,7 +109,7 @@ export default class SourceTools {
       }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
         const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
-        console.log("Adding file: ", cleanFileName)
+        // console.log("Adding file: ", cleanFileName)
         this.tern.server.delFile(cleanFileName)
         this.tern.server.addFile(cleanFileName, code)
       }

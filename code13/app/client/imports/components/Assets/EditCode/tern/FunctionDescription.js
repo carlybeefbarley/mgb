@@ -18,6 +18,7 @@ export default FunctionDescription = React.createClass({
  */
 makeTable(hdrs, fields, data, highlightRow = undefined) {
   let m = this.props.helpDocJsonMethodInfo;
+  // TODO: add extra description for the rest/spread arguments ... (three dots)
   return ( 
     <table className="ui very compact small celled table">
       { !hdrs ? null : 
@@ -28,7 +29,7 @@ makeTable(hdrs, fields, data, highlightRow = undefined) {
       <tbody>
         { data.map( (rowData, rowIdx) => {
 
-            // TODO: We also have 'InlineHelp" -- maybe use this as a bolded versioin?
+            // TODO: We also have 'InlineHelp" -- maybe use this as a bolded version?
           var paramHelp = (m && m.parameters && m.parameters.length > rowIdx) ? (m.parameters[rowIdx].help || m.parameters[rowIdx].inlineHelp || m.parameters[rowIdx].description): null
           return (
             [<tr key={rowIdx} className={highlightRow === rowIdx ? "active": ""}>

@@ -528,15 +528,6 @@ export default class EditCode extends React.Component {
             //evidence.className = "lint-error-text evidence";
             //evidence.appendChild(document.createTextNode(err.evidence));
           }
-
-          if (sourceIsValid) {
-            if (!self.tools) {
-              console.log("Tools is not ready!!!")
-            }
-            else {
-              self.tools.collectAndTranspile(editor.getValue(), self.props.asset.name)
-            }
-          }
         }
       }
 
@@ -562,9 +553,17 @@ export default class EditCode extends React.Component {
         }
       }
       this.jshintWorker.isBusy = true
-
-
       this.jshintWorker.postMessage([editor.getValue(), conf])
+
+      if (fSourceMayHaveChanged) {
+        if (!self.tools) {
+          console.log("Tools is not ready!!!")
+        }
+        else {
+          self.tools.collectAndTranspile(editor.getValue(), self.props.asset.name)
+        }
+      }
+
     });
 
     var info = editor.getScrollInfo();

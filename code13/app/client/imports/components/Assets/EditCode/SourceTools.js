@@ -72,7 +72,6 @@ export default class SourceTools {
     cb(this.collectedSources)
   }
 
-
   collectScript(name, code, cb) {
     // skip transpiled and compiled and empty scripts
     if (!name || !code || this.isAlreadyTranspiled(name)) {

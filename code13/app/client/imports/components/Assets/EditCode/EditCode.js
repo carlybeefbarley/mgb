@@ -926,17 +926,7 @@ export default class EditCode extends React.Component {
       })
     })
     // create only for someone who can also change it
-    if(this.props.canEdit) {
-      this.tools.createBundle((bundle) => {
-        const value = this.codeMirror.getValue()
-        const newC2 = {src: value, bundle: bundle}
-        // don't save - if not changed
-        if (this.lastBundle != bundle) {
-          this.lastBundle = bundle
-          this.handleContentChange(newC2, null, `Store code bundle`)
-        }
-      })
-    }
+    this.createBundle()
 
     // Make sure that it's really visible.. and also auto-close accordion above so there's space.
     $('.ui.accordion').accordion('close', 0);
@@ -951,8 +941,44 @@ export default class EditCode extends React.Component {
     })
     window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
   }
-
-
+  handleFullScreen(id){
+    if(this.props.canEdit) {
+      const child = window.open('about:blank', "Bundle")
+      child.document.write(`
+<h1>Creating bundle</h1>
+<p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>
+    `)
+      this.createBundle(() => {
+        child.location = `/api/asset/code/bundle/${id}`
+      })
+    }
+    else{
+      window.open(`/api/asset/code/bundle/${id}`, "Bundle")
+    }
+  }
+  createBundle(cb){
+    if(this.props.canEdit) {
+      this.tools.createBundle((bundle) => {
+        // if code contains errors - bundle will fail silently.. don't overwrite good version with empty
+        // TODO: error reporting
+        if(!bundle){
+          cb && cb()
+          return
+        }
+        const value = this.codeMirror.getValue()
+        const newC2 = {src: value, bundle: bundle}
+        // don't save - if not changed
+        if (this.lastBundle != bundle) {
+          this.lastBundle = bundle
+          this.handleContentChange(newC2, null, `Store code bundle`)
+        }
+        cb && cb()
+      })
+    }
+    else{
+      cb && cb()
+    }
+  }
   pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
     let newValue = item.code
     this.codeMirror.setValue(newValue)
@@ -1112,8 +1138,7 @@ export default class EditCode extends React.Component {
                 </a>
                 }
                 { !!asset.content2.bundle &&
-                <a className={"ui mini labeled icon button"} href={`/api/asset/code/bundle/${asset._id}`}
-                   target="_blank">
+                <a className={"ui mini labeled icon button"} onClick={this.handleFullScreen.bind(this, asset._id)}>
                   <i className={"external icon"}></i>Full
                 </a>
                 }

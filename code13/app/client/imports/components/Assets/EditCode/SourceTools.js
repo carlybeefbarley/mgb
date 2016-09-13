@@ -32,10 +32,12 @@ export default class SourceTools {
     this.cache = {}
     // here we will keep our transpiled files
     this.transpileCache = {}
+    this.cachedBundle = ''
 
     // set to true by default.. to wait for first action
     this._inProgress = true
     this._firstTime = true
+    this._hasSourceChanged = true
 
     this._lastAction = {
       src: '',
@@ -56,11 +58,13 @@ export default class SourceTools {
   destroy() {
     this.cache = null
     this.transpileCache = null
+    this.cachedBundle = '';
+
     this.babelWorker.terminate()
 
     // next will be first time again :)
     this._firstTime = true
-
+    this._hasSourceChanged = true
     // clean global cache
     // TODO: clean only changed files.. add some sort of meteor subscriber
     for (let i in tmpCache) {
@@ -149,6 +153,7 @@ export default class SourceTools {
     }
     // already on the latest version, yay!
     else {
+      console.log("latest version")
       cb()
     }
   }
@@ -201,6 +206,7 @@ export default class SourceTools {
       callback && callback(compiled.code)
       return;
     }
+    this._hasSourceChanged = true
     this.transform(srcText, filename, (output) => {
       var imports = SourceTools.parseImport(output)
       var cb
@@ -280,6 +286,9 @@ export default class SourceTools {
   }
 
   createBundle(cb) {
+    if(!this._hasSourceChanged){
+      cb(this.cachedBundle)
+    }
     this.collectSources((sources) => {
       let allInOneBundle =
         '(function(){' +
@@ -319,7 +328,7 @@ export default class SourceTools {
       worker.onmessage = (e) => {
         cb(e.data.code)
         worker.terminate()
-      };
+      }
       worker.postMessage(["bundled_" + this.mainJS, allInOneBundle, {
         compact: true,
         minified: true,
@@ -327,6 +336,8 @@ export default class SourceTools {
         ast: false,
         retainLines: false
       }])
+      this.cachedBundle = allInOneBundle
+      this._hasSourceChanged = false
     })
   }
 

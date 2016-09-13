@@ -7,6 +7,8 @@ const MODULE_SERVER = 'https://cdn.jsdelivr.net/phaser/latest/'
 // this will insanely speed up run
 const INVALIDATE_CACHE_TIMEOUT = 30 * 1000
 const SMALL_CHANGES_TIMEOUT = 5 * 1000 // force refresh other mgb assets - even if current isn't changed
+const UPDATE_DELAY = 15 * 1000
+
 // add only smalls libs to tern
 const MAX_ACCEPTABLE_SOURCE_SIZE = 1700653 // REACT sice for testing purposes - 1024 * 10 // 10 kb
 const tmpCache = {}
@@ -68,14 +70,10 @@ export default class SourceTools {
 
   // probably events would work better
   collectSources(cb) {
-    if (this.inProgress) {
-      setTimeout(() => {
-        this.collectSources(cb)
-      }, 1000)
-      return;
-    }
-
-    cb(this.collectedSources)
+    // make sure we are collecting latest sources
+    this.updateNow(() => {
+      cb(this.collectedSources)
+    })
   }
 
   collectScript(name, code, cb) {
@@ -130,7 +128,32 @@ export default class SourceTools {
     return this.collectedSources.find(s => s.name == filename)
   }
 
-  collectAndTranspile(srcText, filename, callback) {
+  updateNow(cb){
+
+    // wait for active job to complete
+    if (this.inProgress) {
+      setTimeout(() => {
+        this.updateNow(cb)
+      }, 100)
+      return;
+    }
+
+    // call manually pending changes
+    if (this.timeout) {
+      // this will trigger in progress and waiting will start again
+      window.clearTimeout(this.timeout);
+      this.timeout = 0;
+
+      this.delayed();
+      this.updateNow(cb);
+    }
+    // already on the latest version, yay!
+    else{
+      cb()
+    }
+  }
+
+  collectAndTranspile(srcText, filename, callback, force = false) {
     // TODO: break instantly callback chain
 
     // clean previous pending call
@@ -141,13 +164,18 @@ export default class SourceTools {
     
     const prev = this._lastAction
     // wait for previous action and transpile lazy - as full core refresh and reanalyze makes text cursor feel sluggish
-    if (this.inProgress && !this._firstTime || (prev.src === srcText || Date.now() - prev.time < SMALL_CHANGES_TIMEOUT) ) {
-      this.timeout = window.setTimeout(() => {
-        this.collectAndTranspile(srcText, filename, callback)
-      }, 100)
-      return
+    if(!force) {
+      if ((this.inProgress && !this._firstTime) || (prev.src === srcText || Date.now() - prev.time < SMALL_CHANGES_TIMEOUT)) {
+        this.delayed = () => {
+          // this may never be called if new sources will come in
+          this.collectAndTranspile(srcText, filename, callback)
+        }
+        this.timeout = window.setTimeout(this.delayed, UPDATE_DELAY)
+        return
+      }
     }
 
+    console.log("Collect and transpile!")
     this._lastAction.src = srcText
     this._lastAction.time = Date.now()
 

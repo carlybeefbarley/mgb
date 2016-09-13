@@ -291,17 +291,11 @@ export default class TileSet extends React.Component {
     $.get(infolink, (data) => {
       this.refs.controls.updateTilesetFromData(data, this.data)
 
-      // console.log("Old tileset had:", previousTileCount)
-      // console.log("new tileset has:", this.data.tilecount)
-
-      // if tile count match it's safe to update directly - otherwise we need to adjust tilesets
-      // reformat all tilesets and store all changed tiles
-
-      if(previousTileCount != this.data.tilecount){
+      //if(previousTileCount != this.data.tilecount){
         console.log("Fixing tilesets")
         TileHelper.fixTilesetGids(map.data)
         map.save("Update Tileset")
-      }
+      //}
 
       map.fullUpdate()
     })

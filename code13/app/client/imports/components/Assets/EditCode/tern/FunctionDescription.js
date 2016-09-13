@@ -50,7 +50,19 @@ makeTable(hdrs, fields, data, highlightRow = undefined) {
     
   )
 },
+// beautify type - TODO: make nice indent for object like types
+beautifyType: function(type){
+  console.log(type)
+  // for cases {}
+  if(type.length < 3){
+    return type
+  }
+  return type
+    .replace(/\{/gi, '{\n ')
+    .replace(/,/gi, ',\n')
+    .replace(/}/gi, '\n}\n')
 
+},
 render: function() {
   let fh = this.props.functionHelp
   let hDoc = this.props.helpDocJsonMethodInfo
@@ -70,7 +82,10 @@ render: function() {
   if (hDoc && hDoc.__typeIs === "classConstructor") 
     retInfoHelpText = <span style={colorBlue}>This 'function' is actually a <i>class constructor</i> and should be called with <b><code><span style={{color: "purple"}}>new</span> {name}(...)</code></b> so that it returns an <i>Object</i> that is a new <i>instance</i> of the <i>class</i> <code>{name}</code></span>
   else
-    retInfoHelpText = <span><span style={colorGrey}>This <i>function</i> will return data of type: </span> {fh.type.rettype ? <code>{fh.type.rettype}</code> : <span><code>null</code> <small style={colorGrey}>(the function does not return a value)</small></span>}</span>    
+    retInfoHelpText = <span><span style={colorGrey}>This <i>function</i> will return data of type: </span>
+      {fh.type.rettype
+        ? <code style={{whiteSpace: 'pre'}}>{this.beautifyType(fh.type.rettype)}</code>
+        : <span><code>null</code> <small style={colorGrey}>(the function does not return a value)</small></span>}</span>
   
   
   // Inheritance info

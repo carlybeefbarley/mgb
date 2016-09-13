@@ -7,6 +7,7 @@ import { snapshotActivity } from '/imports/schemas/activitySnapshots.js';
 import { templateCode } from './templates/TemplateCode.js';
 import { js_beautify } from 'js-beautify';
 import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
+window.CM = CodeMirror;
 import KeyBindingAssist from '../../Skills/Keybindings.js';
 import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
@@ -98,6 +99,7 @@ export default class EditCode extends React.Component {
 
     this.lastBundle = null
     this.hintWidgets = []
+
   }
 
 
@@ -122,7 +124,8 @@ export default class EditCode extends React.Component {
     //console.log("Sample Defs:", Defs_sample);
     // Tern setup
     var myTernConfig = {
-      // temporary disable - as worker doesn't accept defs
+      // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
+      // TODO: find workaround and uncomment
       // useWorker: true,
       defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
       completionTip: function (curData) {
@@ -158,7 +161,6 @@ export default class EditCode extends React.Component {
         console.log("REQ", request, "  DATA", data)
         return data
       }*/
-
       // typeTip: function(..) this would be a function that creates a DOM element to render the typeTip
     }
 
@@ -233,6 +235,7 @@ export default class EditCode extends React.Component {
     }
 
     this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
+    this.updateDocName()
 
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
     this.codeMirror.on("cursorActivity", this.codeMirrorOnCursorActivity.bind(this, false))
@@ -261,9 +264,16 @@ export default class EditCode extends React.Component {
     $(window).on("resize", this.edResizeHandler)
     this.edResizeHandler();
 
-
+    this.updateDocName()
   }
-
+  // update file name - to correctly report 'part of'
+  updateDocName(){
+    if(this.codeMirror){
+      const doc = this.codeMirror.getDoc()
+      this.ternServer.delDoc(doc)
+      this.ternServer.addDoc(this.props.asset.name, doc)
+    }
+  }
 
   codeMirrorOnCursorActivity() {
     // Indirecting this to help with debugging and maybe some future optimizations
@@ -597,6 +607,7 @@ export default class EditCode extends React.Component {
             symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
           },
           (originalRequest, result) => {
+            console.log("FN info:", result)
             // This callback will always be called, but could be sync or async
             this.setState({
               "helpDocJsonMethodInfo": result.data,
@@ -819,6 +830,7 @@ export default class EditCode extends React.Component {
   componentDidUpdate() {
     this.getElementReferences()
     this.cm_updateActivityMarkers()
+    this.updateDocName()
   }
 
 

@@ -16,7 +16,7 @@ export default class SourceTools {
     if (babelWorker) {
       babelWorker.terminate()
     }
-    debugger;
+
     window.mgb_tools = this
     this.asset_id = asset_id
     this.tern = ternServer
@@ -33,6 +33,8 @@ export default class SourceTools {
     // set to true by default.. to wait for first action
     this._inProgress = true
     this._firstTime = true
+
+
   }
 
   set inProgress(val) {
@@ -97,7 +99,7 @@ export default class SourceTools {
 
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
-      // this only works when not in worker mode..
+      // this only works when NOT in worker mode..
       // TODO: find out how to fix that
       // true override everything
       this.tern.server.addDefs && this.tern.server.addDefs(lib.defs, true)
@@ -110,7 +112,7 @@ export default class SourceTools {
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
         const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
         console.log("Adding file: ", cleanFileName)
-        this.tern.server.delFile(cleanFileName, code)
+        this.tern.server.delFile(cleanFileName)
         this.tern.server.addFile(cleanFileName, code)
       }
       else {

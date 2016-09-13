@@ -288,6 +288,7 @@ export default class SourceTools {
   createBundle(cb) {
     if(!this._hasSourceChanged){
       cb(this.cachedBundle)
+      return
     }
     this.collectSources((sources) => {
       let allInOneBundle =

@@ -402,14 +402,12 @@ export default class EditCode extends React.Component {
 
 
   _getMgbAssetIdsInLine(lineText) {
-    let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
+    //  let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
+    let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)|(mgbMap)\w*\(["'`]([A-Za-z0-9]+)\w*['"`]\w*\)/g
     let matches = []
     let match
     while (( match = re.exec(lineText) ) && matches.push(
-      {
-        id: match[2],
-        kind: match[1]
-      }
+      match[3] === "mgbMap" ? { id: match[4], kind: "map" } : { id: match[2], kind: match[1] }
     ))
       ;
     return _.uniqBy(matches, 'id')

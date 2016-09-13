@@ -14,6 +14,37 @@
 export default mgbReleaseInfo = {
   'releases': [
     {
+      'timestamp': 'Mon Sep 12 2016 17:00:09 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1357'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphics',
+          'type': 'improvement',
+          'changeName': 'Small bugfixes for Graphics',
+          'changeSummary': 'Fixed bug with Color Picker not showing, and esc key triigering unwanted actions',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code analysis perf improvements',
+          'changeSummary': 'Improved caching of code analysis hints',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Sun Sep 11 2016 17:00:00 GMT-0700 (PDT)',
 
       'id': {

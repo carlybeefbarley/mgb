@@ -69,6 +69,7 @@ export default class EditCode extends React.Component {
 
   constructor(props) {
     super(props);
+    console.log("here!")
     this.fontSizeSettingIndex = undefined;
 
     // save jshint reference - so we can kill it later

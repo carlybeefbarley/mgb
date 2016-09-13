@@ -16,6 +16,7 @@ export default class SourceTools {
     if (babelWorker) {
       babelWorker.terminate()
     }
+    debugger;
     window.mgb_tools = this
     this.asset_id = asset_id
     this.tern = ternServer
@@ -103,11 +104,12 @@ export default class SourceTools {
     }
     else {
       // TODO: debug: sometimes code isn't defined at all
-      if(code){
+      if(!code){
         return
       }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
         const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
+        console.log("Adding file: ", cleanFileName)
         this.tern.server.delFile(cleanFileName, code)
         this.tern.server.addFile(cleanFileName, code)
       }

@@ -41,7 +41,7 @@ export default ExpressionDescription = React.createClass({
         <span style={colorGrey}>Type:</span>  <code>{type}</code><br></br>
         <span style={colorGrey}>Name:</span>  <code>{name}</code><br></br>
         { origin && <p><small>Part of '{origin}'</small></p> }
-        { doc && <p>{doc}</p> }
+        { doc && <p style={{whiteSpace: 'pre-line'}}>{doc}</p> }
         { url && <p><a href={url}><small>{url}</small></a></p> }
       </div>
     )

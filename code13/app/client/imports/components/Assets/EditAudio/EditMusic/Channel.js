@@ -66,6 +66,24 @@ export default class Channel extends React.Component {
     return returnBuffer
   }
 
+  getSelectBuffer (selectStart, selectDuration) {   // in sec
+    let bufferLength = Math.round(selectDuration * this.props.audioCtx.sampleRate)
+    let selectBuffer = new Float32Array(bufferLength)
+    if(!this.buffer) return selectBuffer
+    let sampleInd = this.sample.delay < selectStart ? selectStart - this.sample.delay : 0
+    sampleInd = Math.round(sampleInd * this.props.audioCtx.sampleRate)
+    let startInd = this.sample.delay < selectStart ? 0 : this.sample.delay - selectStart
+    startInd = Math.round(startInd * this.props.audioCtx.sampleRate)
+    if(startInd > bufferLength || this.sample.delay + this.sample.duration < selectStart) return selectBuffer   // sample out of selection
+    const channelData = this.buffer.getChannelData(0)
+    for(let i=startInd; i<bufferLength; i++, sampleInd++){
+      if(channelData.length > sampleInd){
+        selectBuffer[i] = channelData[sampleInd]
+      }
+    }
+    return selectBuffer
+  }
+
   initWave () {
     const channel = this.props.channel
     if (!channel.dataUri) return

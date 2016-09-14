@@ -331,6 +331,25 @@ export default class EditMusic extends React.Component {
     })
   }
 
+  cutSelected () {
+
+  }
+
+  copySelected () {
+    if(!this.state.selectData){
+      console.log("Something wrong with selecting")
+      return
+    }
+
+    const sData = this.state.selectData
+    const selectBuffer = this.refs["channel"+sData.channelID].getSelectBuffer(sData.selectStart, sData.selectDuration)
+    this.setState({ pasteData: selectBuffer })
+  }
+
+  pasteSelected () {
+
+  }
+
   enableDrag () {
     this.setState({ isDrag: !this.state.isDrag })
   }
@@ -483,14 +502,17 @@ export default class EditMusic extends React.Component {
                   <i className='crosshairs icon'></i>
                 </button>
                 <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
+                  onClick={this.cutSelected.bind(this)}
                   title="Cut selected area">
                   <i className='cut icon'></i>
                 </button>
                 <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
+                  onClick={this.copySelected.bind(this)}
                   title="Copy selected area">
                   <i className='copy icon'></i>
                 </button>
                 <button className={'ui small icon button ' + (this.state.pasteData ? "" : "disabled")}
+                  onClick={this.pasteSelected.bind(this)}
                   title="Paste selected area">
                   <i className='paste icon'></i>
                 </button>

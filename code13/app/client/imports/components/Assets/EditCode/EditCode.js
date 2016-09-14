@@ -123,14 +123,15 @@ export default class EditCode extends React.Component {
       // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
       // TODO: find workaround and uncomment
       // useWorker: true,
+      // debug: true,
       defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
-      completionTip: function (curData) {
+      /*completionTip: function (curData) {
         // we get called for the CURRENTLY highlighted entry in the autocomplete list. 
         // We are provided fields like
         //   name, type     ... pretty reliably
         //   doc, url       ... sometimes (depending on dataset) 
         return curData.doc + (curData.type ? "\n\n" + curData.type : "")
-      },
+      },*/
       // TODO: is there a simple "meteor" way to get these files from node_modules???
       workerDeps: [
         "/lib/acorn/acorn.js",
@@ -143,7 +144,7 @@ export default class EditCode extends React.Component {
         "/lib/tern/comment.js"
       ],
       plugins: {
-        modules: true,
+        //modules: true, we are injecting files directly - no need for additional module + it have
         comment: true,
         es_modules: true,
         doc_comment: {
@@ -161,6 +162,7 @@ export default class EditCode extends React.Component {
     }
 
     this.ternServer = new CodeMirror.TernServer(myTernConfig)
+    //this.ternServer.server.debug = true
     this.tools = new SourceTools(this.ternServer, this.props.asset._id)
 
     InstallMgbTernExtensions(tern);
@@ -560,24 +562,40 @@ export default class EditCode extends React.Component {
 
 
   srcUpdate_GetInfoForCurrentFunction() {
-    let ternServer = this.ternServer;
+    let ternServer = this.ternServer
     let editor = this.codeMirror
-    ternServer.updateArgHints(this.codeMirror);
-    let currentCursorPos = editor.getCursor()
 
+
+    ternServer.updateArgHints(this.codeMirror)
+
+    let currentCursorPos = editor.getCursor()
+    // we need to force internal tern cache to clean up - move cursor to 0,0 and then back
+    // TODO: (stauzs) debug this in free time
+    let {line, char} = currentCursorPos;
+    currentCursorPos.line = 0;
+    currentCursorPos.char = 0;
+    // get token at 0,0
+    editor.getTokenAt(currentCursorPos, true)
+    currentCursorPos.line = line;
+    currentCursorPos.char = char;
+    // get token at current pos
     let currentToken = editor.getTokenAt(currentCursorPos, true)
+
 
     // I stole the following approach from 
     // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
     // which is otherwise not stored/exposed
     var argPos = -1
     if (!editor.somethingSelected()) {
-      var state = currentToken.state;
-      var inner = CodeMirror.innerMode(editor.getMode(), state);
+      var state = currentToken.state
+      // state.context.state.lexical.pos = 0
+      // currentToken.state.
+      var inner = CodeMirror.innerMode(editor.getMode(), state)
       if (inner.mode.name === "javascript") {
-        var lex = inner.state.lexical;
-        if (lex.info === "call")
+        var lex = inner.state.lexical
+        if (lex.info === "call") {
           argPos = lex.pos || 0
+        }
       }
     }
 
@@ -614,7 +632,7 @@ export default class EditCode extends React.Component {
     }
 
 
-    if (argPos !== -1 && ternServer.cachedArgHints && ternServer.cachedArgHints.start) {
+    if (argPos !== -1) {
       ternServer.request(editor, "type", function (error, data) {
         if (error) {
           functionTypeInfo = {"error": error}
@@ -1138,7 +1156,7 @@ export default class EditCode extends React.Component {
                   <i className={"stop icon"}></i>Stop
                 </a>
                 }
-                { !!asset.content2.bundle &&
+                { !!(asset.content2.bundle || this.props.canEdit) &&
                 <a className={"ui mini labeled icon button"} onClick={this.handleFullScreen.bind(this, asset._id)}>
                   <i className={"external icon"}></i>Full
                 </a>

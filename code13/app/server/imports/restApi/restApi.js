@@ -491,7 +491,11 @@ RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
     if (!asset)
       return { statusCode: 404 }
     const { bundle } = asset.content2
-    const extraMessage = !!bundle ? "" : "No bundle yet. Please run the source file in the code to generate/refresh the bundle"
+    // reload page after 1 second - as bundle may be in the way to the server
+    const extraMessage = !!bundle ? "" : `
+No bundle yet. Please run the source file in the code to generate/refresh the bundle
+<script>window.setTimeout(function(){window.location.reload()}, 1000)</script>
+`
     
     content = `<!DOCTYPE html>
 <html>

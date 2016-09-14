@@ -167,7 +167,7 @@ export default class Channel extends React.Component {
     this.drawWave()
   }
 
-  drawSampleBG (startX, width) {
+  drawSampleBG () {
     this.waveCtx.save()
     this.waveCtx.globalAlpha = 0.2
     this.waveCtx.fillStyle = '#4dd2ff'

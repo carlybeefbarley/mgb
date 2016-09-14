@@ -68,10 +68,14 @@ export default class Preview extends React.Component {
       const visibleDuration = this.props.viewWidth / this.props.pxPerSecond
       const previewPxPerSecond = this.state.previewWidth / this.props.duration
       this.sliderWidth = visibleDuration * previewPxPerSecond
-
-      this.previewSlider.style.left = this.sliderX+"px"
-      this.previewSlider.style.width = this.sliderWidth+"px"
+    } else {
+      this.sliderX = 0
+      this.sliderWidth = 0
+      this.calculateViewOffset()  // resets offset for channels
     }
+
+    this.previewSlider.style.left = this.sliderX+"px"
+    this.previewSlider.style.width = this.sliderWidth+"px"
   }
 
   onDragStart(e){

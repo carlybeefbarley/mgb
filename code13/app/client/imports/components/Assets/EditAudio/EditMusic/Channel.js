@@ -128,16 +128,16 @@ export default class Channel extends React.Component {
     const subChunkVal = Math.floor(chunk / subChunk)
     const viewOffsetX = this.viewOffset * this.props.pxPerSecond
     // startX and endX draws only visible wave for sake of optimization
-    let startX = viewOffsetX - this.sample.offsetX
+    let startX = Math.round(viewOffsetX - this.sample.offsetX)
     let endX = sampleWidth
     if(startX > sampleWidth) return false  // no need to draw because outside of view on left side
     if(startX < 0){
       if(Math.abs(startX) > this.props.viewWidth) return false  // no draw because outside on right side
-      endX = this.props.viewWidth + startX
+      endX = Math.round(this.props.viewWidth + startX)
       if(endX > sampleWidth) endX = sampleWidth
       startX = 0
     } else {
-      endX = this.props.viewWidth + startX
+      endX = Math.round(this.props.viewWidth + startX)
       if(endX > sampleWidth) endX = sampleWidth
     }
     // console.log(startX, endX)
@@ -167,12 +167,13 @@ export default class Channel extends React.Component {
     this.drawWave()
   }
 
-  drawSampleBG () {
+  drawSampleBG (startX, width) {
     this.waveCtx.save()
     this.waveCtx.globalAlpha = 0.2
     this.waveCtx.fillStyle = '#4dd2ff'
+    const viewOffsetX = this.viewOffset * this.props.pxPerSecond
     const width = this.sample.duration * this.props.pxPerSecond
-    this.waveCtx.fillRect(this.sample.offsetX, 0, width, this.props.canvasHeight)
+    this.waveCtx.fillRect(this.sample.offsetX - viewOffsetX, 0, width, this.props.canvasHeight)
     this.waveCtx.restore()
   }
 

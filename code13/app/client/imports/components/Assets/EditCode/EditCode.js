@@ -404,13 +404,24 @@ export default class EditCode extends React.Component {
 
   _getMgbAssetIdsInLine(lineText) {
     //  let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
-    let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)|(mgbMap)\w*\(["'`]([A-Za-z0-9]+)\w*['"`]\w*\)/g
+    // TODO: split regexp for each case
+    // load.mgbMap - as create takes in key (it may or may not be id) - not sure about this
+    let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)|(load\.mgbMap)\s*\(\s*["'`]([A-Za-z0-9]+)["'`]\s*(,\s*["'`]\.\/([A-Za-z0-9\/]+)["'`])*\s*\)/g
     let matches = []
     let match
-    while (( match = re.exec(lineText) ) && matches.push(
-      match[3] === "mgbMap" ? { id: match[4], kind: "map" } : { id: match[2], kind: match[1] }
-    ))
-      ;
+    while (match = re.exec(lineText) ){
+      // single arg fn
+      if(match[3] === "mgbMap"){
+        if(match[5])// second arg
+          matches.push({id: match[6], kind: "map", refType: "ID#"}) // :user/:name
+        else
+          matches.push({id: match[4], kind: "map", refType: "ID#"})
+      }
+      // 2 arg fn - 1st key, 2nd link
+      else {
+        matches.push({id: match[2], kind: match[1], refType: ""}) // :user/:name
+      }
+    }
     return _.uniqBy(matches, 'id')
   }
 
@@ -1042,7 +1053,7 @@ export default class EditCode extends React.Component {
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
       return <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}}>
         <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
-        URL references MGB <strong>{assetInfo.kind}</strong> asset ID#{assetInfo.id}
+        URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
       </a>
     })
 

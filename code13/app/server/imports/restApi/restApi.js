@@ -87,6 +87,21 @@ RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
     }   
   }
 })
+RestApi.addRoute('asset/thumbnail/png/:user/:name', {authRequired: false}, {
+  get: function () {
+    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
+    // Return an empty image if there's no thumbnail yet. This from http://png-pixel.com/
+    var emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'image/png'
+//      'Cache-Control': 'max-age=5, private'  // Max-age is in seconds?   seems to be over-active :()
+      },
+      body: dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel )
+    }
+  }
+})
 
 RestApi.addRoute('asset/map/:id', {authRequired: false}, {
   get: function () {
@@ -107,7 +122,7 @@ RestApi.addRoute('asset/map/:id', {authRequired: false}, {
 
 RestApi.addRoute('asset/map/:user/:name', {authRequired: false}, {
   get: function () {
-    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false});
+    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
     if (asset){
       // map editor stores some info in the meta - e.g. camera position / active tool etc
       delete asset.content2.meta;

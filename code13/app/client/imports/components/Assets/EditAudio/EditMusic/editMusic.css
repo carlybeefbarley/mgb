@@ -69,6 +69,17 @@
 	overflow: hidden;
 }
 
+.selectDiv {
+  position: absolute;
+  z-index: 1;
+  background-color: #333;
+  opacity: 0.4;
+  top: 0;
+/*  left: 100px;
+  width: 150px;*/
+  height: 128px;
+  pointer-events: none;
+}
 
 /******************* preview ************************/
 .previewSlider {

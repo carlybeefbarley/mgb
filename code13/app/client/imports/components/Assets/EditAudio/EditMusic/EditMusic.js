@@ -33,7 +33,11 @@ export default class EditMusic extends React.Component {
       trackWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
       canvasHeight: 128,
       pxPerSecond: pxPerSecond, // defines width of canvass 
-      waveColor: '#4dd2ff'
+      waveColor: '#4dd2ff', 
+      enableDrag: false,
+      isSelecting: false,
+      selectRect: null,
+      pasteData: null,
     }
 
 
@@ -299,6 +303,14 @@ export default class EditMusic extends React.Component {
     this.callChildren("setViewOffset", [seconds])
   }
 
+  startSelecting () {
+    this.setState({ isSelecting: !this.state.isSelecting })
+  }
+
+  enableDrag () {
+    this.setState({ isDrag: !this.state.isDrag })
+  }
+
   addChannel (dataUri, c2) {
     if (!c2) c2 = _.cloneDeep(this.props.asset.content2)
     if (!c2.channels) c2.channels = []
@@ -339,6 +351,8 @@ export default class EditMusic extends React.Component {
           viewWidth={this.state.viewWidth}
           canvasHeight={this.state.canvasHeight}
           pxPerSecond={this.state.pxPerSecond}
+          isSelecting={this.state.isSelecting}
+
           handleSave={this.handleSave.bind(this)}
           saveChannel={this.saveChannel.bind(this)}
           setAudioTime={this.setAudioTime.bind(this)}
@@ -429,6 +443,30 @@ export default class EditMusic extends React.Component {
                   title='Zoom out sound wave' 
                   onClick={this.zoom.bind(this, false)}>
                   <i className='zoom out icon'></i>
+                </button>
+
+                &nbsp;&nbsp;
+                <button className={'ui small icon button ' + (this.state.isDrag ? "active" : "")}
+                  onClick={this.enableDrag.bind(this)}
+                  title="Drag audio sample">
+                  <i className='hand paper icon'></i>
+                </button>
+                <button className={'ui small icon button ' + (this.state.isSelecting ? "active" : "")}
+                  onClick={this.startSelecting.bind(this)}
+                  title="Select tool. Click and drag to select wave area">
+                  <i className='crosshairs icon'></i>
+                </button>
+                <button className={'ui small icon button ' + (this.state.selectRect ? "" : "disabled")}
+                  title="Cut selected area">
+                  <i className='cut icon'></i>
+                </button>
+                <button className={'ui small icon button ' + (this.state.selectRect ? "" : "disabled")}
+                  title="Copy selected area">
+                  <i className='copy icon'></i>
+                </button>
+                <button className={'ui small icon button ' + (this.state.pasteData ? "" : "disabled")}
+                  title="Paste selected area">
+                  <i className='paste icon'></i>
                 </button>
               </div>
               <div className='controls'>

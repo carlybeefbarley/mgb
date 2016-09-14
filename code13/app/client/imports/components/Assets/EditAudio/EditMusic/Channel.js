@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
+import sty from  './editMusic.css'
 import WaveSurfer from '../lib/WaveSurfer.js'
 
 export default class Channel extends React.Component {
@@ -18,10 +19,9 @@ export default class Channel extends React.Component {
       duration: 0,
       delay: props.channel.delay || 0,   // in sec
       offsetX: this.calculateOffsetX(),
-      // width: 0,
-      dragStartX: 0,
     }
 
+    this.dragStartX = 0
     this.viewOffset = 0 // in sec
 
   }
@@ -29,6 +29,7 @@ export default class Channel extends React.Component {
   componentDidMount () {
     this.waveCanvas = ReactDOM.findDOMNode(this.refs.waveCanvas)
     this.waveCtx = this.waveCanvas.getContext('2d')
+    this.selectDiv = ReactDOM.findDOMNode(this.refs.selectDiv)
     this.initWave()
   }
 
@@ -217,26 +218,61 @@ export default class Channel extends React.Component {
     let ghost = e.target.cloneNode(true)
     ghost.style.display = "none"
     e.dataTransfer.setDragImage(ghost, 0, 0)
-    this.sample.dragStartX = e.clientX
+    if(this.props.isSelecting){
+      this.clearSelect()
+    }
+    this.dragStartX = e.clientX
   }
 
   onDrag (e) {
-    // console.log('drag')
-    // e.preventDefault()
     if(e.clientX == 0 && e.clientY == 0) return   // avoiding weid glitch when at the end of drag 0,0 coords returned
-    const deltaX = e.clientX - this.sample.dragStartX
-    this.sample.offsetX += deltaX
-    this.sample.dragStartX = e.clientX
-    this.drawWave()
+
+    // drag select
+    if(this.props.isSelecting){
+      const canvasX = this.waveCanvas.getBoundingClientRect().left
+      let x, width
+      if(e.clientX > this.dragStartX){
+        x = this.dragStartX - canvasX
+        width = e.clientX - this.dragStartX
+      } else {
+        x = e.clientX - canvasX
+        width = this.dragStartX - e.clientX
+      }
+      if(x < 0) x=0
+      if(width > this.props.viewWidth) width = this.props.viewWidth
+      this.selectDiv.style.left = x+"px"
+      this.selectDiv.style.width = width+"px"
+    }
+
+    // drag sample
+    else {
+      const deltaX = e.clientX - this.dragStartX
+      this.sample.offsetX += deltaX
+      this.dragStartX = e.clientX
+      this.drawWave()
+    }
   }
 
   onDragEnd (e) {
-    // calculate audio offset in sec
-    this.sample.delay = this.sample.offsetX / this.props.pxPerSecond
-    let channel = this.props.channel
-    channel.delay = this.sample.delay
-    this.props.saveChannel(channel)
-    // console.log(this.sample.delay)
+    // selecting
+    if(this.props.isSelecting){
+
+    } 
+
+    // moving
+    else {
+      // calculate audio offset in sec
+      this.sample.delay = this.sample.offsetX / this.props.pxPerSecond
+      let channel = this.props.channel
+      channel.delay = this.sample.delay
+      this.props.saveChannel(channel)
+      // console.log(this.sample.delay)
+    }
+  }
+
+  clearSelect () {
+    this.selectDiv.style.left = "0px"
+    this.selectDiv.style.width = "0px"
   }
 
   changeVolume (e) {
@@ -271,7 +307,7 @@ export default class Channel extends React.Component {
             <i className='remove icon'></i>
           </buton>
         </div>
-        <div className='channelWave'>
+        <div className='channelWave' style={{position:"relative"}}>
           <canvas 
             ref='waveCanvas'
             draggable={true}
@@ -282,6 +318,7 @@ export default class Channel extends React.Component {
             width={this.props.viewWidth}
             height={this.props.canvasHeight}>
           </canvas>
+          <div ref="selectDiv" className="selectDiv"></div>
         </div>
       </div>
     )

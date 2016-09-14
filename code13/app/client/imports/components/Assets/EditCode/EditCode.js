@@ -97,7 +97,6 @@ export default class EditCode extends React.Component {
 
     this.lastBundle = null
     this.hintWidgets = []
-
   }
 
 
@@ -1144,7 +1143,7 @@ export default class EditCode extends React.Component {
                   <i className={"external icon"}></i>Full
                 </a>
                 }
-                { isPlaying &&
+                { isPlaying && this.props.canEdit && 
                 <a className={"ui right floated mini icon button"} onClick={this.handleScreenshotIFrame.bind(this)}
                    title="This will make a screenshot of the CANVAS element in the page">
                   <i className={"write square icon"}></i>Set thumbnail

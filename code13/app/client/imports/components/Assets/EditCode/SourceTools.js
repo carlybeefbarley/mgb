@@ -84,7 +84,7 @@ export default class SourceTools {
 
   // probably events would work better
   collectSources(cb) {
-    if(this._isDestroyed) return
+    if(this.isDestroyed) return
     // make sure we are collecting latest sources
     this.updateNow(() => {
       cb(this.collectedSources)
@@ -92,7 +92,7 @@ export default class SourceTools {
   }
 
   collectScript(name, code, cb) {
-    if(this._isDestroyed) return
+    if(this.isDestroyed) return
     // skip transpiled and compiled and empty scripts
     if (!name || !code || this.isAlreadyTranspiled(name)) {
       cb && cb()
@@ -115,7 +115,7 @@ export default class SourceTools {
   }
 
   addDefsOrFile(filename, code) {
-    if(this._isDestroyed) return
+    if(this.isDestroyed) return
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       // this only works when NOT in worker mode..
@@ -145,7 +145,7 @@ export default class SourceTools {
   }
 
   updateNow(cb) {
-    if(this._isDestroyed) return
+    if(this.isDestroyed) return
     // wait for active job to complete
     if (this.inProgress) {
       setTimeout(() => {
@@ -172,7 +172,7 @@ export default class SourceTools {
 
   collectAndTranspile(srcText, filename, callback, force = false) {
     // TODO: break instantly callback chain
-
+    if(this.isDestroyed) return
     // clean previous pending call
     if (this.timeout) {
       window.clearTimeout(this.timeout)
@@ -205,6 +205,7 @@ export default class SourceTools {
     this.collectedSources.length = 0
     this.inProgress = true
     this._collectAndTranspile(srcText, filename, () => {
+      if(this.isDestroyed) return
       // force tern to update arg hint cache as we may have loaded new files / defs / docs
       this.tern.cachedArgHints = null
       callback && callback()
@@ -213,6 +214,7 @@ export default class SourceTools {
   }
 
   _collectAndTranspile(srcText, filename, callback) {
+    if(this.isDestroyed) return
     const compiled = this.isAlreadyTranspiled(filename);
     if (compiled) {
       callback && callback(compiled.code)
@@ -246,6 +248,7 @@ export default class SourceTools {
   }
 
   transform(srcText, filename, cb) {
+    if(this.isDestroyed) return
     let code = '';
     if (!SourceTools.isExternalFile(filename)) {
       code = srcText;
@@ -255,9 +258,8 @@ export default class SourceTools {
 
   transpile(filename, src, cb) {
     // this instance has been destroyed while doing some background work
-    if(!this.transpileCache){
-      return;
-    }
+    if(this.isDestroyed) return
+
     if (this.transpileCache[filename]) {
       if (this.transpileCache[filename].src == src) {
         cb(this.transpileCache[filename].data)
@@ -275,6 +277,8 @@ export default class SourceTools {
 
   // cb usually will be this@load
   loadFromCache(urlFinalPart, cb) {
+    if(this.isDestroyed) return
+
     // don't load at all
     if (this.cache[urlFinalPart] || !urlFinalPart) {
       this.collectScript(urlFinalPart, this.cache[urlFinalPart])
@@ -301,6 +305,8 @@ export default class SourceTools {
   }
 
   createBundle(cb) {
+    if(this.isDestroyed) return
+    
     if(!this._hasSourceChanged){
       cb(this.cachedBundle)
       return

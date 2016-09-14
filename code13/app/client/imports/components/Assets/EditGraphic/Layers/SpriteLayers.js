@@ -493,10 +493,10 @@ export default class SpriteLayers extends React.Component {
             </div>
             <input className="ui small input" type="number" style={{width: "6em"}} min="1" max="60" value={this.props.content2.fps} onChange={this.changeFps.bind(this)} />
           </div>
-          <div className="ui right floated mini button" onClick={this.toggleCanvasFramesVisibility.bind(this)}>
+          <div className={"ui " + (this.state.isCanvasFramesVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasFramesVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasFramesVisible ? "unhide" : "hide" )}></i> Frames
           </div>
-          <div className="ui right floated mini button" onClick={this.toggleCanvasLayersVisibility.bind(this)}>
+          <div className={"ui " + (this.state.isCanvasLayersVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasLayersVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
           </div>
         </div>

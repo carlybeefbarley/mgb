@@ -91,7 +91,7 @@ export default AssetEditRoute = React.createClass({
     this.checkForRedirect()
     this.m_deferredSaveObj = null
 
-    console.log("Preparing TICK Timer")
+    //console.log("Preparing TICK Timer")
     this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => { 
       //console.log("TICK")
       this._attemptToSendAnyDeferredChanges() 
@@ -103,7 +103,7 @@ export default AssetEditRoute = React.createClass({
   {
     if (nextProps.params.assetId !== this.props.params.assetId)
     {
-      console.log("Asset changed. Flush deferred saves!")
+      console.log("Switch to different Asset. Flushing deferred saves to existing asset.")
       this._attemptToSendAnyDeferredChanges({ forceResend: true })
     }
   },
@@ -111,7 +111,7 @@ export default AssetEditRoute = React.createClass({
   componentWillUnmount() {
     if (this.m_tickIntervalFunctionHandle)
     {
-      console.log("Clearing TICK timer")
+      //console.log("Clearing TICK timer")
       Meteor.clearInterval(this.m_tickIntervalFunctionHandle)
       this.m_tickIntervalFunctionHandle = null
       this._attemptToSendAnyDeferredChanges({ forceResend: true })
@@ -180,7 +180,6 @@ export default AssetEditRoute = React.createClass({
       }
     }
 
-    console.log(`CanEdit=false because of the reasons`)
     return false    // Nope, can't edit it bro
   },
 
@@ -305,7 +304,7 @@ export default AssetEditRoute = React.createClass({
   // Primary use case is user hits 'save now' button
   handleSaveNowRequest: function()
   {
-    console.log("User requested: Save deferred changes now")
+    console.log("User request: Save deferred changes now")
     this._attemptToSendAnyDeferredChanges({ forceResend: true })
   },
 

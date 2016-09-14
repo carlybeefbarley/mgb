@@ -125,13 +125,13 @@ export default class EditCode extends React.Component {
       // useWorker: true,
       // debug: true,
       defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
-      /*completionTip: function (curData) {
+      completionTip: function (curData) {
         // we get called for the CURRENTLY highlighted entry in the autocomplete list. 
         // We are provided fields like
         //   name, type     ... pretty reliably
         //   doc, url       ... sometimes (depending on dataset) 
         return curData.doc + (curData.type ? "\n\n" + curData.type : "")
-      },*/
+      },
       // TODO: is there a simple "meteor" way to get these files from node_modules???
       workerDeps: [
         "/lib/acorn/acorn.js",
@@ -588,14 +588,11 @@ export default class EditCode extends React.Component {
     var argPos = -1
     if (!editor.somethingSelected()) {
       var state = currentToken.state
-      // state.context.state.lexical.pos = 0
-      // currentToken.state.
       var inner = CodeMirror.innerMode(editor.getMode(), state)
       if (inner.mode.name === "javascript") {
         var lex = inner.state.lexical
-        if (lex.info === "call") {
+        if (lex.info === "call")
           argPos = lex.pos || 0
-        }
       }
     }
 

@@ -40,6 +40,8 @@ export default class SourceTools {
     this._firstTime = true
     this._hasSourceChanged = true
 
+    this._isDestroyed = false
+
     this._lastAction = {
       src: '',
       time: 0
@@ -56,11 +58,18 @@ export default class SourceTools {
     return this._inProgress
   }
 
+  get isDestoyed(){
+    if(this._isDestroyed){
+      console.log("destroyed!!!")
+    }
+    return this._isDestroyed
+  }
   destroy() {
     this.cache = null
     this.transpileCache = null
-    this.cachedBundle = '';
+    this.cachedBundle = ''
 
+    this._isDestroyed = true
     this.babelWorker.terminate()
 
     // next will be first time again :)
@@ -75,6 +84,7 @@ export default class SourceTools {
 
   // probably events would work better
   collectSources(cb) {
+    if(this._isDestroyed) return
     // make sure we are collecting latest sources
     this.updateNow(() => {
       cb(this.collectedSources)
@@ -82,6 +92,7 @@ export default class SourceTools {
   }
 
   collectScript(name, code, cb) {
+    if(this._isDestroyed) return
     // skip transpiled and compiled and empty scripts
     if (!name || !code || this.isAlreadyTranspiled(name)) {
       cb && cb()
@@ -104,7 +115,7 @@ export default class SourceTools {
   }
 
   addDefsOrFile(filename, code) {
-
+    if(this._isDestroyed) return
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       // this only works when NOT in worker mode..
@@ -134,7 +145,7 @@ export default class SourceTools {
   }
 
   updateNow(cb) {
-
+    if(this._isDestroyed) return
     // wait for active job to complete
     if (this.inProgress) {
       setTimeout(() => {
@@ -243,7 +254,10 @@ export default class SourceTools {
   }
 
   transpile(filename, src, cb) {
-    //
+    // this instance has been destroyed while doing some background work
+    if(!this.transpileCache){
+      return;
+    }
     if (this.transpileCache[filename]) {
       if (this.transpileCache[filename].src == src) {
         cb(this.transpileCache[filename].data)

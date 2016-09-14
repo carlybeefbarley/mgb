@@ -66,7 +66,7 @@ render: function() {
   let fh = this.props.functionHelp
   let hDoc = this.props.helpDocJsonMethodInfo
   let argPos = this.props.functionArgPos     // 0 for first argument, -1 for Not in a function at all
-  
+
   if (!fh || _.isEmpty(fh) ||  argPos === -1)
     return null
     

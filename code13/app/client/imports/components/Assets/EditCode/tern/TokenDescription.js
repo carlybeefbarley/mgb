@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import React, {PropTypes} from 'react';
+import _ from 'lodash'
+import React, {PropTypes} from 'react'
 
 
 // TODO - embed/link to MDN docs using https://developer.mozilla.org/en-US/docs/MDN/Contribute/Tools/Document_parameters
@@ -16,13 +16,11 @@ var xlinks = {
   ecma6: "https://github.com/lukehoban/es6features#readme"
 }
 
+let _GLOBAL_toggle_show = true
 
 // For these Token types, render nothing at all
 const noHelpTypes = [
-  // "property",
-  // "variable",
-  // "number",
-  // "string"
+  // "variable"
 ]
 
 
@@ -43,6 +41,35 @@ const helpInfo = [
     advice: "Javascript is mostly a simple to learn language, but 'this' is the really quirky part that can confuse learners.",
     advice2: "It is well worth sitting down and reading the page on 'this' once a week/month until you really understand it!",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/this"
+  },
+
+
+
+  // property
+  {
+    tt: "property", ts: null, origin: "ecma5",
+    help: "JavaScript is designed on a simple object-based paradigm. An object is a collection of properties, and a property is an association between a name (or key) and a value.",
+    advice: "A property's value can be a function, in which case the property is known as a method",
+    advice2: "Unassigned properties of an object are undefined (and not null).",
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects"
+  },
+
+  // number
+  {
+    tt: "number", ts: null, origin: "ecma5",
+    help: "A number represents a numeric value. Unlike other languages which have different types for supporting integers, floating point numbers etc; Javascript uses the single Number type for all kinds of numeric values",
+    advice: "A Javascript Number can safely represent values as low as -(2^53 - 1) and as high as (2^53 - 1).",
+    advice2: "There are some special values like Number.NaN. Number.NEGATIVE_INFINITY and Number.POSITIVE_INFINITY that are used in specific mathemtaical circumstances",
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number"
+  },
+
+  // string
+  {
+    tt: "string", ts: null, origin: "ecma5",
+    help: "A string is a sequence of characters. Strings have a special property .length which represents the number of characters in the string.",
+    advice: "A string can be bounded by (starts & ends with) either a single quote ('), a double quote (\") or a backquote (`). The backquote variant is knows as a Template Literal. Each of those three ways to create string literals has some specific features.",
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    url2: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals"
   },
 
 
@@ -922,37 +949,32 @@ function specialHandlerString2(rString) {
 
 // Explain multi-line and single-line comments. Note that there is special code elsewhere for //MGBOPT_ stuff
 function specialHandlerComment(str) {
-  let grn = {color: "green"}
+  let grn = { color: "green", fontWeight: "bold" }
   // explain single line
   if (str.startsWith("//"))
-    return <div><small>
-      <p>Javascript single line comments start at <code style={grn}>//</code> and go to the end of the current line</p>
-      <p>
-          There are some 'special' kinds of single line comments that help the editor/compiler
-          to know how to run the code. For example in MyGameBuilder, we have a special comment format
-                    <code style={grn}><br></br>
-                        //MGBOPT_phaser_version = 2.4.6
-                    <br></br></code>
-          that tells MyGameBuilder which version of the <a href="phaser.io" target="_blank">Phaser</a> game framework to use
-          with your code
-      </p>
-      </small></div>
+    return (
+      <div>
+        <p>Javascript <em>single line comments</em> start with <code style={grn}>//</code> and continue until the end of the current line</p>
+      </div>
+    )
 
   // else explain multiline
-  return <div>
-    <small>
-      <p>Javascript multi line comments start with <code style={grn}>/*</code> and end with <code style={grn}>*/</code></p>
-      <p>There may be line breaks and any other characters between the <code style={grn}>/*</code> and <code style={grn}>*/</code></p>
-      <pre style={grn}>/* This is an<br></br> example multiline comment */</pre>
-      <p>
-        You may also see/use a special variant of multiline javascript comments 
-        with <code style={grn}>@something</code> strings like <code style={grn}>@param</code>.
-        Developers use these to document their code so that automatic help text 
-        and api documentation can be extracted from the source code. See <a
-        href={xlinks.jsDoc} target="_blank">jsdoc.org</a> for details
-      </p>
-    </small>
-  </div>
+  return (
+    <div>
+      <p>Javascript <em>multi line comments</em> start with <code style={grn}>/*</code> and end with <code style={grn}>*/</code></p>
+      <small>
+        <p>There may be line breaks and any other characters between the <code style={grn}>/*</code> and <code style={grn}>*/</code></p>
+        <pre style={grn}>/* This is an<br></br> example multiline comment */</pre>
+        <p>
+          You may also see/use a special variant of multiline javascript comments 
+          with <code style={grn}>@something</code> strings like <code style={grn}>@param</code>.
+          Developers use these to document their code so that automatic help text 
+          and api documentation can be extracted from the source code. See <a
+          href={xlinks.jsDoc} target="_blank">jsdoc.org</a> for details
+        </p>
+      </small>
+    </div>
+  )
 }
 
 
@@ -980,10 +1002,14 @@ export default TokenDescription = React.createClass({
     currentToken: PropTypes.object
   },
 
+  getInitialState: () => ({ showExpanded: _GLOBAL_toggle_show}),
+
   render: function () {
 
     if (!this.props.currentToken || !this.props.currentToken.type)
       return null
+
+    const { showExpanded } = this.state 
 
     let token = this.props.currentToken
     let ts = token.string.trim()
@@ -993,11 +1019,10 @@ export default TokenDescription = React.createClass({
 
     let specialHandler = specialHelpTypes[token.type]
 
-
     const maxTokenLenToShow = 20
     let tsTrunc = ts.length > maxTokenLenToShow ? ts.substr(0, maxTokenLenToShow) + "..." : ts
 
-    let help = _.find(helpInfo, h => (h.tt === token.type && h.ts === ts))
+    let help = _.find(helpInfo, h => (h.tt === token.type && (h.ts === null || h.ts === ts)))
     let tokenTypeToDisplay = specialHandler ? specialHandler.betterTypeName : token.type
 
     // TODO.. something useful with token.state?
@@ -1007,32 +1032,35 @@ export default TokenDescription = React.createClass({
         <a className="ui purple left ribbon label">
           <small>{tokenTypeToDisplay}</small>
           <code><b>&nbsp;&nbsp;{tsTrunc}</b></code></a>
-        <a className="ui purple right corner label">
-          <i className="help icon"></i>
+        <a  className="ui purple right corner label" 
+            title={`Click to ${ showExpanded ? "hide" : "show" } the explanation of this javascript language feature`}
+            onClick={() => { _GLOBAL_toggle_show = !_GLOBAL_toggle_show; this.setState( { showExpanded: _GLOBAL_toggle_show} ) }}>
+          <i className={(showExpanded ? "" : "grey ")+ "help icon"}></i>
         </a>
         <p></p>
 
+        { showExpanded &&  
+          ( specialHandler ? specialHandler.renderFn(ts) :
+            <div>
+              { help && warnForHelp(help) }
+              { help && help.help && <p>{help.help}</p> }
+              { help && help.syntax && <pre><small>{help.syntax}</small></pre> }
 
-        { specialHandler ? specialHandler.renderFn(ts) :
-          <div>
-            { help && warnForHelp(help) }
-            { help && help.help && <p>{help.help}</p> }
-            { help && help.syntax && <pre><small>{help.syntax}</small></pre> }
+              { help && help.advice && <p><i className="ui info circle icon"></i>
+                <small>{help.advice}</small>
+              </p> }
+              { help && help.advice2 && <p><i className="ui info circle icon"></i>
+                <small>{help.advice2}</small>
+              </p> }
 
-            { help && help.advice && <p><i className="ui info circle icon"></i>
-              <small>{help.advice}</small>
-            </p> }
-            { help && help.advice2 && <p><i className="ui info circle icon"></i>
-              <small>{help.advice2}</small>
-            </p> }
-
-            { help && help.url && <p>
-              { urlLink(help.url) }
-              { help.url2 && <span>, {urlLink(help.url2)}</span> }
-              { help.url3 && <span>, {urlLink(help.url3)}</span> }
-            </p>
-            }
-          </div>
+              { help && help.url && <p>
+                { urlLink(help.url) }
+                { help.url2 && <span>, {urlLink(help.url2)}</span> }
+                { help.url3 && <span>, {urlLink(help.url3)}</span> }
+              </p>
+              }
+            </div>
+          )
         }
       </div>
     )

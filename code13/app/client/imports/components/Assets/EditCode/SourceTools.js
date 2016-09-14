@@ -5,7 +5,8 @@ import knownLibs from "./knownLibs.js"
 const MODULE_SERVER = 'https://cdn.jsdelivr.net/phaser/latest/'
 // ajax requests cache - invalidate every few seconds
 // this will insanely speed up run
-const INVALIDATE_CACHE_TIMEOUT = 30000
+const INVALIDATE_CACHE_TIMEOUT = 30 * 1000
+const SMALL_CHANGES_TIMEOUT = 5 * 1000 // force refresh other mgb assets - even if current isn't changed
 // add only smalls libs to tern
 const MAX_ACCEPTABLE_SOURCE_SIZE = 1700653 // REACT sice for testing purposes - 1024 * 10 // 10 kb
 const tmpCache = {}
@@ -34,13 +35,19 @@ export default class SourceTools {
     this._inProgress = true
     this._firstTime = true
 
-
+    this._lastAction = {
+      src: '',
+      time: 0
+    }
+    // store entry point filename
+    this.mainJS = "main.js"
   }
 
   set inProgress(val) {
     this._inProgress = val
   }
-  get inProgress(){
+
+  get inProgress() {
     return this._inProgress
   }
 
@@ -54,7 +61,7 @@ export default class SourceTools {
 
     // clean global cache
     // TODO: clean only changed files.. add some sort of meteor subscriber
-    for(let i in tmpCache){
+    for (let i in tmpCache) {
       delete tmpCache[i]
     }
   }
@@ -83,10 +90,10 @@ export default class SourceTools {
     const useGlobal = !(!lib || !lib.useGlobal)
     this.collectedSources.push({name, code, useGlobal})
     // MGB assets will have cache.. remote won't
-    if(this.transpileCache[name]){
+    if (this.transpileCache[name]) {
       this.addDefsOrFile(name, this.transpileCache[name].src)
     }
-    else{
+    else {
       this.addDefsOrFile(name, code)
     }
 
@@ -104,7 +111,7 @@ export default class SourceTools {
     }
     else {
       // TODO: debug: sometimes code isn't defined at all
-      if(!code){
+      if (!code) {
         return
       }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
@@ -126,19 +133,26 @@ export default class SourceTools {
   collectAndTranspile(srcText, filename, callback) {
     // TODO: break instantly callback chain
 
+    // clean previous pending call
     if (this.timeout) {
       window.clearTimeout(this.timeout)
       this.timeout = 0;
     }
-
-    // temporary workaround - wait until finises running one and then start again new one
-    if (this.inProgress && !this._firstTime) {
+    
+    const prev = this._lastAction
+    // wait for previous action and transpile lazy - as full core refresh and reanalyze makes text cursor feel sluggish
+    if (this.inProgress && !this._firstTime || (prev.src === srcText || Date.now() - prev.time < SMALL_CHANGES_TIMEOUT) ) {
       this.timeout = window.setTimeout(() => {
         this.collectAndTranspile(srcText, filename, callback)
       }, 100)
-      return;
+      return
     }
+
+    this._lastAction.src = srcText
+    this._lastAction.time = Date.now()
+
     this._firstTime = false
+    this.mainJS = filename
 
     // clean up old data
     this.collectedSources.length = 0
@@ -270,22 +284,20 @@ export default class SourceTools {
 
       allInOneBundle += "\n" + "})(); "
 
-      let bundle = allInOneBundle;
-      //console.log("transpiling bundle", allInOneBundle.length);
-      /*
-       const start = Date.now();
-       const tr = Babel.transform(allInOneBundle, {
-       filename: "bundle.js",
-       compact: true,
-       minified: true,
-       comments: false,
-       ast: false,
-       retainLines: false
-       });
-       bundle = tr.code;
-       */
-
-      cb(bundle)
+      // spawn new babel worker and create bundle in the background - as it can take few seconds to transpile
+      const worker = new Worker("/lib/BabelWorker.js")
+      worker.onmessage = (e) => {
+        cb(e.data.code)
+        console.log("Bundle has been created")
+        worker.terminate()
+      };
+      worker.postMessage(["bundled_" + this.mainJS, allInOneBundle, {
+        compact: true,
+        minified: true,
+        comments: false,
+        ast: false,
+        retainLines: false
+      }])
     })
   }
 

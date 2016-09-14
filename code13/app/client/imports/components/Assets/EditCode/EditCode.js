@@ -552,12 +552,7 @@ export default class EditCode extends React.Component {
       this.jshintWorker.isBusy = true
       this.jshintWorker.postMessage([editor.getValue(), conf])
 
-      if (fSourceMayHaveChanged) {
-        if (self.tools) {
-          self.tools.collectAndTranspile(editor.getValue(), self.props.asset.name)
-        }
-      }
-
+      self.tools && self.tools.collectAndTranspile(editor.getValue(), self.props.asset.name)
     });
 
     var info = editor.getScrollInfo();

@@ -199,7 +199,7 @@ window.onload = function() {
       var run = function run(){
         var source = sources.shift()
         if(source){
-          console.log("Loading:", source.name)
+          // console.log("Loading:", source.name)
           if(source.useGlobal){
             delete window.module
             delete window.exports

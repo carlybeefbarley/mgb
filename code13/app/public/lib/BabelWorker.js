@@ -4,22 +4,28 @@
 this.window = this
 importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.js")
 
-onmessage = function(e) {
+onmessage = function (e) {
   var filename = e.data[0]
   var srcText = e.data[1]
-  var trans
-  try {
-    trans = Babel.transform(srcText, {
+  var options = e.data[2] || {
       filename: filename,
       compact: false,           // Default of "auto" fails on ReactImport
-      presets: ['es2015', 'react'],// remove comments as they will break bundled code
-      plugins: ['transform-class-properties'],// , "transform-es2015-modules-amd" - not working
+      presets: ['es2015', 'react'], // remove comments as they will break bundled code
+      plugins: ['transform-class-properties'], // , "transform-es2015-modules-amd" - not working
       retainLines: true,
       ast: false
-    });
+    }
+  if (!options.filename) {
+    options.filename = filename
   }
-  // TODO: what to do if babel fails to transform code?
-  catch(e){
+
+  var trans
+  try {
+    trans = Babel.transform(srcText, options);
+  }
+    // TODO: what to do if babel fails to transform code?
+  catch (e) {
+    // dummy transform
     trans = Babel.transform('', {
       filename: filename,
       compact: false,           // Default of "auto" fails on ReactImport

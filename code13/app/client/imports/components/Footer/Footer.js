@@ -42,10 +42,10 @@ export default class Footer extends React.Component {
         <div className="ui section divider"></div>
         <div className="ui center aligned container">
           <div className="ui horizontal small relaxed divided link list">
-            <a className="item" href="#">Site Map</a>
-            <a className="item" href="#">Contact Us</a>
+            <a className="item" href="#">Copyright ©2016 MyCodeBuilder Inc. All Rights Reserved.</a>
             <a className="item" href="#">Terms and Conditions</a>
             <a className="item" href="#">Privacy Policy</a>
+            <a className="item" href="#">Contact Us</a>
           </div>
         </div>
       </div>

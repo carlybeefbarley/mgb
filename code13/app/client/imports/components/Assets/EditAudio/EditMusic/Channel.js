@@ -24,6 +24,11 @@ export default class Channel extends React.Component {
     this.dragStartX = 0
     this.viewOffset = 0 // in sec
 
+    this.selectX = 0  // px
+    this.selectWidth = 0  // px
+    // this.selectStart = 0  // in ms
+    // this.selectDuration = 0 // in ms
+
   }
 
   componentDidMount () {
@@ -230,18 +235,16 @@ export default class Channel extends React.Component {
     // drag select
     if(this.props.isSelecting){
       const canvasX = this.waveCanvas.getBoundingClientRect().left
-      let x, width
       if(e.clientX > this.dragStartX){
-        x = this.dragStartX - canvasX
-        width = e.clientX - this.dragStartX
+        this.selectX = this.dragStartX - canvasX
+        this.selectWidth = e.clientX - this.dragStartX
       } else {
-        x = e.clientX - canvasX
-        width = this.dragStartX - e.clientX
+        this.selectX = e.clientX - canvasX
+        this.selectWidth = this.dragStartX - e.clientX
       }
-      if(x < 0) x=0
-      if(width > this.props.viewWidth) width = this.props.viewWidth
-      this.selectDiv.style.left = x+"px"
-      this.selectDiv.style.width = width+"px"
+      if(this.selectX < 0) this.selectX = 0
+      if(this.selectWidth > this.props.viewWidth) this.selectWidth = this.props.viewWidth
+      this.drawSelect()
     }
 
     // drag sample
@@ -256,8 +259,11 @@ export default class Channel extends React.Component {
   onDragEnd (e) {
     // selecting
     if(this.props.isSelecting){
-
-    } 
+      const viewOffsetX = this.viewOffset * this.props.pxPerSecond
+      let selectStart = (this.selectX + viewOffsetX) / this.props.pxPerSecond   // in sec
+      let selectDuration = this.selectWidth / this.props.pxPerSecond  // in sec
+      this.props.setSelected(this.props.id, selectStart, selectDuration)
+    }
 
     // moving
     else {
@@ -271,8 +277,14 @@ export default class Channel extends React.Component {
   }
 
   clearSelect () {
-    this.selectDiv.style.left = "0px"
-    this.selectDiv.style.width = "0px"
+    this.selectX = 0
+    this.selectWidth = 0
+    this.drawSelect()
+  }
+
+  drawSelect () {
+    this.selectDiv.style.left = this.selectX + "px"
+    this.selectDiv.style.width = this.selectWidth + "px"
   }
 
   changeVolume (e) {

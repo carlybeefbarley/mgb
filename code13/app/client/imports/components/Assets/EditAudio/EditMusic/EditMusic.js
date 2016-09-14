@@ -36,7 +36,7 @@ export default class EditMusic extends React.Component {
       waveColor: '#4dd2ff', 
       enableDrag: false,
       isSelecting: false,
-      selectRect: null,
+      selectData: null,
       pasteData: null,
     }
 
@@ -304,7 +304,31 @@ export default class EditMusic extends React.Component {
   }
 
   startSelecting () {
+    let c2 = this.props.asset.content2
+    if(this.state.isSelecting && c2.channels){  // unselect all selections
+      c2.channels.forEach((channel) => {
+        this.refs["channel"+channel.id].clearSelect()
+      })
+      this.setState({ selectData: null })
+    }
     this.setState({ isSelecting: !this.state.isSelecting })
+  }
+
+  setSelected (channelID, selectStart, selectDuration) { // in sec
+    this.setState({
+      selectData: {
+        channelID: channelID,
+        selectStart: selectStart,
+        selectDuration: selectDuration,
+      }
+    })
+
+    let c2 = this.props.asset.content2
+    c2.channels.forEach((channel) => {
+      if(channel.id !== channelID){
+        this.refs["channel"+channel.id].clearSelect()
+      }
+    })
   }
 
   enableDrag () {
@@ -357,7 +381,9 @@ export default class EditMusic extends React.Component {
           saveChannel={this.saveChannel.bind(this)}
           setAudioTime={this.setAudioTime.bind(this)}
           deleteChannel={this.deleteChannel.bind(this)}
-          mountChannel={this.mountChannel.bind(this)} />
+          mountChannel={this.mountChannel.bind(this)}
+          setSelected={this.setSelected.bind(this)}
+        />
       )})
   }
 
@@ -456,11 +482,11 @@ export default class EditMusic extends React.Component {
                   title="Select tool. Click and drag to select wave area">
                   <i className='crosshairs icon'></i>
                 </button>
-                <button className={'ui small icon button ' + (this.state.selectRect ? "" : "disabled")}
+                <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
                   title="Cut selected area">
                   <i className='cut icon'></i>
                 </button>
-                <button className={'ui small icon button ' + (this.state.selectRect ? "" : "disabled")}
+                <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
                   title="Copy selected area">
                   <i className='copy icon'></i>
                 </button>

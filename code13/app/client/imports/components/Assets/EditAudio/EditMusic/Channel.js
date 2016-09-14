@@ -179,14 +179,15 @@ export default class Channel extends React.Component {
 
   drawTimeline () {
     let count = Math.floor(this.props.duration) + 1
+    const viewOffsetX = this.viewOffset * this.props.pxPerSecond
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#333'
     this.waveCtx.globalAlpha = 0.2
     for (let i = 0; i < count; i++) {
       const x = i * this.props.pxPerSecond + 0.5 // 0.5 for 1px line instead of 2px
       this.waveCtx.beginPath()
-      this.waveCtx.moveTo(x, 0)
-      this.waveCtx.lineTo(x, this.props.canvasHeight)
+      this.waveCtx.moveTo(x - viewOffsetX, 0)
+      this.waveCtx.lineTo(x - viewOffsetX, this.props.canvasHeight)
       this.waveCtx.stroke()
     }
     this.waveCtx.restore()

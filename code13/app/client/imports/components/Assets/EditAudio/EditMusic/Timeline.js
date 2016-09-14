@@ -13,6 +13,8 @@ export default class Timeline extends React.Component {
     this.state = {
 
     }
+
+    this.viewOffsetX = 0
   }
 
   componentDidMount () {
@@ -27,6 +29,11 @@ export default class Timeline extends React.Component {
     this.draw()
   }
 
+  setViewOffset (viewOffset) {
+    this.viewOffsetX = viewOffset * this.props.pxPerSecond
+    this.draw()
+  }
+
   draw () {
     this.timelineCtx.clearRect(0, 0, this.props.viewWidth, 50)
     if (!this.props.duration) return
@@ -38,8 +45,8 @@ export default class Timeline extends React.Component {
       const x = i * this.props.pxPerSecond + 0.5 // 0.5 for 1px line instead of 2px
       const y = i % 5 == 0 ? 10 : 5
       this.timelineCtx.beginPath()
-      this.timelineCtx.moveTo(x, 0)
-      this.timelineCtx.lineTo(x, y)
+      this.timelineCtx.moveTo(x - this.viewOffsetX, 0)
+      this.timelineCtx.lineTo(x - this.viewOffsetX, y)
       this.timelineCtx.stroke()
     }
     this.timelineCtx.restore()

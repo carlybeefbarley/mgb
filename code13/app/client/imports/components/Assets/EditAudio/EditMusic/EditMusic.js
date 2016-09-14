@@ -295,6 +295,7 @@ export default class EditMusic extends React.Component {
   }
 
   setViewOffset (seconds) {
+    this.refs.timelineComponent.setViewOffset(seconds)
     this.callChildren("setViewOffset", [seconds])
   }
 
@@ -434,6 +435,7 @@ export default class EditMusic extends React.Component {
               </div>
               
               <Timeline
+                ref="timelineComponent"
                 duration={c2.duration}
                 viewWidth={this.state.viewWidth}
                 pxPerSecond={this.state.pxPerSecond}

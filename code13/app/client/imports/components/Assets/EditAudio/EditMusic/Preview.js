@@ -93,7 +93,7 @@ export default class Preview extends React.Component {
     this.calculateViewOffset()
   }
 
-  onDragEnd(){
+  onDragEnd(e){
     
   }
 

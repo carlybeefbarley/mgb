@@ -47,7 +47,7 @@ export default class Channel extends React.Component {
   getBuffer () {
     if(!this.buffer) return null
     const bufferLength = this.props.duration * this.props.audioCtx.sampleRate
-    const delayLength = this.sample.delay * this.props.audioCtx.sampleRate
+    const delayLength = Math.round(this.sample.delay * this.props.audioCtx.sampleRate)
     // console.log(bufferLength, delayLength)
     let returnBuffer = new Float32Array(bufferLength)
     const channelData = this.buffer.getChannelData(0)
@@ -123,24 +123,42 @@ export default class Channel extends React.Component {
     const sampleWidth = Math.floor(this.sample.duration * this.props.pxPerSecond)
     const channelData = this.buffer.getChannelData(0)
     const chunk = Math.floor(channelData.length / sampleWidth)
-    const subChunk = 10
+    let subChunk = 10
+    if(this.props.pxPerSecond > 60) subChunk = 3
     const subChunkVal = Math.floor(chunk / subChunk)
     const viewOffsetX = this.viewOffset * this.props.pxPerSecond
+    // startX and endX draws only visible wave for sake of optimization
+    let startX = viewOffsetX - this.sample.offsetX
+    let endX = sampleWidth
+    if(startX > sampleWidth) return false  // no need to draw because outside of view on left side
+    if(startX < 0){
+      if(Math.abs(startX) > this.props.viewWidth) return false  // no draw because outside on right side
+      endX = this.props.viewWidth + startX
+      if(endX > sampleWidth) endX = sampleWidth
+      startX = 0
+    } else {
+      endX = this.props.viewWidth + startX
+      if(endX > sampleWidth) endX = sampleWidth
+    }
+    // console.log(startX, endX)
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
     this.waveCtx.globalAlpha = 0.4
+    let count = 0
     const y = this.props.canvasHeight / 2
-    for (let i = 0; i < sampleWidth; i++) {
+    for (let i = startX; i < endX; i++) {
       for (var j = 0; j < subChunk; j++) {
         const val = channelData[i * chunk + j * subChunkVal]
         // const x = i+j*(1/subChunk)
-        const x = i + this.sample.offsetX + viewOffsetX
+        const x = i + this.sample.offsetX - viewOffsetX
         this.waveCtx.beginPath()
         this.waveCtx.moveTo(x, y)
         this.waveCtx.lineTo(x, y + val * y)
         this.waveCtx.stroke()
+        count++
       }
     }
+    // console.log(count, startX, endX)
     this.waveCtx.restore()
   }
 

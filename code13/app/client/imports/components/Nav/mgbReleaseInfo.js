@@ -13,6 +13,31 @@
 
 export default mgbReleaseInfo = {
   'releases': [
+
+    {
+      'timestamp': 'Tue Sep 13 2016 23:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1372'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Editor - Perf & Visuals',
+          'changeSummary': 'Improved auto-build caching; implemented more javascript language help; javascript language help can be hidden (click \'?\')',
+          'otherUrls': []
+        }
+      ]
+    },
+
     {
       'timestamp': 'Mon Sep 12 2016 17:00:09 GMT-0700 (PDT)',
 

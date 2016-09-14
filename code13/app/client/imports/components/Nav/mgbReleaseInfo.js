@@ -15,12 +15,12 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Tue Sep 13 2016 23:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Wed Sep 14 2016 09:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1372'
+        'iteration': '1383'
       },
 
       'releaseManagement': {
@@ -33,6 +33,13 @@ export default mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Code Editor - Perf & Visuals',
           'changeSummary': 'Improved auto-build caching; implemented more javascript language help; javascript language help can be hidden (click \'?\')',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.music',
+          'type': 'improvement',
+          'changeName': 'Music Editor - Fixes, Perf & Visuals',
+          'changeSummary': 'Improved previews and timeline handling',
           'otherUrls': []
         }
       ]

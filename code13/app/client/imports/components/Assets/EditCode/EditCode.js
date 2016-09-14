@@ -411,7 +411,7 @@ export default class EditCode extends React.Component {
     let match
     while (match = re.exec(lineText) ){
       // single arg fn
-      if(match[3] === "mgbMap"){
+      if(match[3] === "load.mgbMap"){
         if(match[5])// second arg
           matches.push({id: match[6], kind: "map", refType: "ID#"}) // :user/:name
         else

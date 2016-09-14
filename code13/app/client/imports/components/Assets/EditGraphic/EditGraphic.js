@@ -605,16 +605,6 @@ export default class EditGraphic extends React.Component {
     return tool
   }
 
-  pasteSelected() {
-    // is this dead code?
-    debugger
-    if (!this.state.pasteCanvas) 
-      return
-
-    const tool = this.findToolByLabelString("Paste")
-    if (tool) this.setState({ toolChosen: tool })
-  }
-
   zoomIn() {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i < this.zoomLevels.length-1) {

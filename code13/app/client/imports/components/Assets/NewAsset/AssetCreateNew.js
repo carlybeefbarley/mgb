@@ -116,12 +116,13 @@ export default AssetCreateNew = React.createClass({
 
   handleCreateAssetClick: function()
   {
+    const { selectedKind, newAssetName, selectedProject } = this.state
     this.setState( { buttonActionPending: true } )
     this.props.handleCreateAssetClick(
-      this.state.selectedKind, 
-      this.state.newAssetName, 
-      this.state.selectedProject.name,
-      this.state.selectedProject.ownerId,
-      this.state.selectedProject.ownerName)
+      selectedKind, 
+      newAssetName, 
+      selectedProject ? selectedProject.name : null,
+      selectedProject ? selectedProject.ownerId : null,
+      selectedProject ? selectedProject.ownerName : null)
   }
 })

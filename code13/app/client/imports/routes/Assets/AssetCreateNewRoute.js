@@ -38,6 +38,15 @@ export default AssetCreateNewRoute = React.createClass({
     )
   },
 
+  /**
+   * 
+   * 
+   * @param {string} assetKindKey - must be one of assetKindKey
+   * @param {string} assetName - string. Can be "" but that is discouraged
+   * @param {string} projectName - can be "" or null/undefined; those values indicate No Project
+   * @param {string} projectOwnerId - if projectName is a nonEmpty string, should be a valid projectOwnerId
+   * @param {string} projectOwnerName - if projectName is a nonEmpty string, should be a valid projectOwnerName
+   */
   handleCreateAssetClickFromComponent(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) {
     let newAsset = {
       name: assetName,

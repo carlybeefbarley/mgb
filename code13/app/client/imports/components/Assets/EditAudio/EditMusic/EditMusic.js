@@ -38,6 +38,7 @@ export default class EditMusic extends React.Component {
       isSelecting: false,
       selectData: null,
       pasteData: null,
+      isPaste: false,
     }
 
 
@@ -347,7 +348,7 @@ export default class EditMusic extends React.Component {
   }
 
   pasteSelected () {
-
+    this.setState({ isPaste: !this.state.isPaste})
   }
 
   enableDrag () {
@@ -395,6 +396,8 @@ export default class EditMusic extends React.Component {
           canvasHeight={this.state.canvasHeight}
           pxPerSecond={this.state.pxPerSecond}
           isSelecting={this.state.isSelecting}
+          isPaste={this.state.isPaste}
+          pasteData={this.state.pasteData}
 
           handleSave={this.handleSave.bind(this)}
           saveChannel={this.saveChannel.bind(this)}

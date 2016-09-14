@@ -294,6 +294,12 @@ export default class Channel extends React.Component {
     }
   }
 
+  onMouseOver (e) {
+    if(this.props.isPaste){ // paste tool is actived
+      
+    }
+  }
+
   clearSelect () {
     this.selectX = 0
     this.selectWidth = 0
@@ -345,6 +351,7 @@ export default class Channel extends React.Component {
             onDrag={this.onDrag.bind(this)}
             onDragEnd={this.onDragEnd.bind(this)}
             onClick={this.onClick.bind(this)}
+            onMouseOver={this.onMouseOver.bind(this)}
             width={this.props.viewWidth}
             height={this.props.canvasHeight}>
           </canvas>

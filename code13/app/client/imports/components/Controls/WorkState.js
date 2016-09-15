@@ -15,7 +15,8 @@ const _propTypes = {
 
 const _initPopup = (c, popupPosition) => (
   c && $(c).popup( {
-    on: "click", 
+    on: "hover",
+    hoverable: true,    // So mouse-over popup keeps it visible
     inline: true, 
     closable: true,
     position: popupPosition || "bottom right"

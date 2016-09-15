@@ -14,7 +14,7 @@ export default class Home_Z2 extends Component {
 
     return (
       <div>
-        <div style={{backgroundColor: "#f7f7f7"}}>
+        <div style={{backgroundColor: "#f3f3f3"}}>
           <div className="ui container slim">
             <div className="ui padded grid stackable" style={{ paddingTop: '3em', paddingBottom: '2.5em' }}>
               <div className="row" style={ currUser ? { maxWidth:"768px" } : { maxWidth:"512px" }}>

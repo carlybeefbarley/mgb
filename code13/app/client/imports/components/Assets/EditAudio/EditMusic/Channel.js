@@ -34,6 +34,8 @@ export default class Channel extends React.Component {
   componentDidMount () {
     this.waveCanvas = ReactDOM.findDOMNode(this.refs.waveCanvas)
     this.waveCtx = this.waveCanvas.getContext('2d')
+    this.pasteCanvas = ReactDOM.findDOMNode(this.refs.pasteCanvas)
+    this.pasteCtx = this.pasteCanvas.getContext('2d')
     this.selectDiv = ReactDOM.findDOMNode(this.refs.selectDiv)
     this.initWave()
   }
@@ -168,7 +170,7 @@ export default class Channel extends React.Component {
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
     this.waveCtx.globalAlpha = 0.4
-    let count = 0
+    // let count = 0
     const y = this.props.canvasHeight / 2
     for (let i = startX; i < endX; i++) {
       for (var j = 0; j < subChunk; j++) {
@@ -179,7 +181,7 @@ export default class Channel extends React.Component {
         this.waveCtx.moveTo(x, y)
         this.waveCtx.lineTo(x, y + val * y)
         this.waveCtx.stroke()
-        count++
+        // count++
       }
     }
     // console.log(count, startX, endX)
@@ -230,10 +232,18 @@ export default class Channel extends React.Component {
   }
 
   onClick (e) {
-    let canvasX = this.waveCanvas.getBoundingClientRect().left
-    let cursorX = e.clientX - canvasX
-    let newTime = Math.round((cursorX/this.props.pxPerSecond)*1000)
-    this.props.setAudioTime(newTime)
+    // paste sample
+    if(this.props.isPaste){
+      this.pasteSample(e)
+    }
+
+    // set cursor
+    else {
+      let canvasX = this.waveCanvas.getBoundingClientRect().left
+      let cursorX = e.clientX - canvasX
+      let newTime = Math.round((cursorX/this.props.pxPerSecond)*1000)
+      this.props.setAudioTime(newTime)
+    }
   }
 
   onDragStart (e) {
@@ -294,8 +304,44 @@ export default class Channel extends React.Component {
     }
   }
 
-  onMouseOver (e) {
-    if(this.props.isPaste){ // paste tool is actived
+  pastePreview (e) {
+    if(this.props.isPaste && this.props.pasteData){ // paste tool is actived
+      this.clearPastePreview()
+      const canvasX = this.waveCanvas.getBoundingClientRect().left
+      const startX = e.clientX - canvasX
+      const duration = this.props.pasteData.length / this.props.audioCtx.sampleRate  // in sec
+      const sampleWidth = Math.floor(duration * this.props.pxPerSecond)
+      const chunk = Math.floor(this.props.pasteData.length / sampleWidth)
+      let subChunk = 10
+      if(this.props.pxPerSecond > 60) subChunk = 3
+      const subChunkVal = Math.floor(chunk / subChunk)
+
+      this.pasteCtx.save()
+      this.pasteCtx.strokeStyle = '#00ff00'
+      this.pasteCtx.globalAlpha = 0.4
+      const y = this.props.canvasHeight / 2
+      for (let i = 0; i < sampleWidth; i++) {
+        for (var j = 0; j < subChunk; j++) {
+          const val = this.props.pasteData[i * chunk + j * subChunkVal]
+          const x = i + startX
+          this.pasteCtx.beginPath()
+          this.pasteCtx.moveTo(x, y)
+          this.pasteCtx.lineTo(x, y + val * y)
+          this.pasteCtx.stroke()
+        }
+      }
+      this.pasteCtx.restore()
+    }
+  }
+
+  clearPastePreview () {
+    if(this.props.isPaste){
+      this.pasteCtx.clearRect(0, 0, this.props.viewWidth, this.props.canvasHeight)
+    }
+  }
+
+  pasteSample (e) {
+    if(this.props.isPaste && this.props.pasteData){
       
     }
   }
@@ -346,12 +392,19 @@ export default class Channel extends React.Component {
         <div className='channelWave' style={{position:"relative"}}>
           <canvas 
             ref='waveCanvas'
+            width={this.props.viewWidth}
+            height={this.props.canvasHeight}>
+          </canvas>
+          <canvas
+            ref="pasteCanvas"
+            className="pasteCanvas"
+            onMouseMove={this.pastePreview.bind(this)}
+            onMouseOut={this.clearPastePreview.bind(this)}
             draggable={true}
             onDragStart={this.onDragStart.bind(this)}
             onDrag={this.onDrag.bind(this)}
             onDragEnd={this.onDragEnd.bind(this)}
             onClick={this.onClick.bind(this)}
-            onMouseOver={this.onMouseOver.bind(this)}
             width={this.props.viewWidth}
             height={this.props.canvasHeight}>
           </canvas>

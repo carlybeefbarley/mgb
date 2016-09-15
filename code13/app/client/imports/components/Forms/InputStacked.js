@@ -1,32 +1,32 @@
-import _ from 'lodash';
-import React from 'react';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 
 export default InputStacked = React.createClass({
   propTypes: {
-    errorMsg: React.PropTypes.string,
-    label: React.PropTypes.string,
-    iconClass: React.PropTypes.string,
-    type: React.PropTypes.string,
-    name: React.PropTypes.string,
-    value: React.PropTypes.string,
-    handleBlur: React.PropTypes.func,
-    handleChange: React.PropTypes.func,
+    errorMsg:   PropTypes.string,
+    label:      PropTypes.string,
+    iconClass:  PropTypes.string,
+    type:       PropTypes.string,
+    name:       PropTypes.string,
+    value:      PropTypes.string,
+    handleBlur: PropTypes.func,
+    handleChange: PropTypes.func
   },
 
   getDefaultProps: function() {
     return {
       type: 'text',
       required: false
-    };
+    }
   },
 
   render: function() {
-    let errorMsg = this.props.errorMsg;
+    let { errorMsg, label, name, styles, type, handleChange, value, validateBy, required, defaultValue } = this.props
 
     return (
       <div className="inline twelve wide field">
-        <label htmlFor={ this.props.name } title={ this.props.label }>
-          {this.props.label} 
+        <label htmlFor={ name } title={ label }>
+          {label} 
           { errorMsg ? 
             <div className="ui pointing below red basic label">{errorMsg}</div>
               :
@@ -34,19 +34,19 @@ export default InputStacked = React.createClass({
           }
         </label>
         <input
-          className={this.props.styles || "ui input"}
-          type={this.props.type}
-          data-name={this.props.name}
-          onChange={this.props.handleChange}
-          value={this.props.value}
-          checked={this.props.value == true ? this.props.value : null}
-          placeholder={this.props.label}
-          data-validateby={this.props.validateBy}
-          required={this.props.required}
-          defaultValue={this.props.defaultValue}
-          {...this.props} />
+          className={styles || "ui input"}
+          type={type}
+          data-name={name}
+          onChange={handleChange}
+          value={value}
+          checked={!!value ? value : null}
+          placeholder={label}
+          data-validateby={validateBy}
+          required={required}
+          defaultValue={defaultValue}
+          {..._.omit(this.props, ["handleChange","errorMsg","type","validateBy","required"])} />
 
       </div>
-    );
+    )
   }
 })

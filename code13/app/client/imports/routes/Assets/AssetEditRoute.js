@@ -241,6 +241,7 @@ export default AssetEditRoute = React.createClass({
           &emsp;
           <WorkState 
             workState={asset.workState} 
+            showMicro={true}
             canEdit={canEd}
             handleChange={this.handleWorkStateChange}/>
           &emsp;

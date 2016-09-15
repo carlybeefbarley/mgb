@@ -6,6 +6,7 @@ import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
 import { roleSuperAdmin } from '/imports/schemas/roles'
 import { check, Match } from 'meteor/check'
+import { defaultWorkStateName } from '/imports/Enums/workStates'
 
 var schema = {
   _id: String,
@@ -29,6 +30,7 @@ var schema = {
   name: String,       // Asset's name
   kind: String,       // Asset's kind (image, map, etc)
   text: String,       // A description field
+  workState: String,  // A value matching a key from workStates.js
   content: String,    // depends on asset type
   content2: Object,   // THIS IS NOT IN PREVIEW SUBSCRIPTIONS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field such as 'content'
   thumbnail: String,  // data-uri base 64 of thumbnail image (for example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
@@ -270,6 +272,7 @@ Meteor.methods({
     const now = new Date()
     data.createdAt = now
     data.updatedAt = now
+    data.workState = defaultWorkStateName
     data.content = ""                                 // This is stale. Can be removed one day
     data.text = ""                                    // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
     if (!data.projectNames)
@@ -316,6 +319,7 @@ Meteor.methods({
       name: optional(schema.name),
       kind: optional(schema.kind),
       text: optional(schema.text),
+      workState: optional(schema.workState),
       content: optional(schema.content),
       content2: optional(schema.content2),
       thumbnail: optional(schema.thumbnail),

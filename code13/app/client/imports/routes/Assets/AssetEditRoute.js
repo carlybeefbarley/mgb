@@ -13,6 +13,7 @@ import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDe
 import AssetProjectDetail from '/client/imports/components/Assets/AssetProjectDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
+import WorkState from '/client/imports/components/Controls/WorkState'
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
@@ -237,6 +238,8 @@ export default AssetEditRoute = React.createClass({
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }
           <AssetUrlGenerator asset={asset} />
+          &emsp;
+          <WorkState workState={asset.workState} />
           &emsp;
           <AssetActivityDetail
             assetId={params.assetId} 

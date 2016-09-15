@@ -16,30 +16,28 @@ export default fpSuperAdmin = React.createClass({
 
     return (
       <div>
-        <div className="ui sub header">Dev Quicklinks</div>
-        <ul>
-          { linkLi("localhost/v2 flipside", this.getFlipsideUrl()) }
-          { linkLi("Slack", "https://devlapse.slack.com/messages/mgb-dev") }
-          { linkLi("Github", "https://github.com/devlapse/mgb") }
-          { linkLi("SemanticUI", "http://semantic-ui.com/") }
-          { linkLi("TimeTracker spreadsheet", "https://docs.google.com/spreadsheets/d/1dq1FjxoHfMl49R-dIoxi7kpTZFi6HCHlz78-9QUO-Ds/edit#gid=131993583")}
-        </ul>
-
-        <div className="ui sub header">Stock Assets Quicklinks</div>
-        <ul>
-          { linkLi("Stock Assets spreadsheet", "https://docs.google.com/spreadsheets/d/1LMmh_dTbBS51Nus8zLfXNAusoiUodBcJSMFzJz1agsg/edit#gid=1512032697")}
-          { linkLi("'!vault/Stock Assets' view", "https://v2.mygamebuilder.com/u/!vault/assets?_np=user&project=Stock+Assets")}
-        </ul>
-
-        <div className="ui sub header">Deployment/Monitoring Quicklinks</div>
-        <ul>
-          { linkLi("Google Analytics (RT)", "https://analytics.google.com/analytics/web/?authuser=0#realtime/rt-overview/a82379171w121883491p127579308/%3F_r.dsa%3D1%26_.advseg%3D%26_.useg%3D%26_.sectionId%3D/") }
-          { linkLi("TrackJs (client errors)", "https://my.trackjs.com/messages") }
-          { linkLi("Galaxy (PaaS)", "https://galaxy.meteor.com/app/v2.mygamebuilder.com") }
-          { linkLi("Kadira (Meteor stats)", "https://ui.kadira.io/apps/e7zK3YN4QZijYhpmY/dashboard/overview") }
-          { linkLi("mLab telemetry", "https://mlab.com/realtime-dashboard?server=s-ds021730-a0") }
-          { linkLi("mLab cluster", "https://mlab.com/clusters/rs-ds021730") }
-        </ul>
+      <h3>Current goal</h3>
+      <div className="ui card course">
+        <div className="content">
+          <i className="right floated code icon"></i>
+          <div className="header">Display an image</div>
+          <div className="description">
+            <ol className="ui list">
+              <li className="complete">Load an image using the asset selector</li>
+              <li className="active">Create a sprite using the image</li>
+            </ol>
+            <button className="ui button">
+              <i className="code icon"></i>
+              View documentation
+            </button>
+          </div>
+        </div>
+        <div className="extra content">
+          <div className="ui tiny green progress" data-percent="50" style={{marginBottom: "0"}}>
+            <div className="bar"></div>
+          </div>
+        </div>
+      </div>
       </div>
     )
   },

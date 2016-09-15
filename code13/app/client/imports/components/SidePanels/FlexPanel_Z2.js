@@ -22,6 +22,7 @@ const flexPanelViews = [
   { tag: "features",  name: "options",  icon: "options",    hdr: "Feature Levels",  el: fpFeatureLevels, superAdminOnly: false },
   { tag: "super",     name: "admin",    icon: "red bomb",   hdr: "SuperAdmin",      el: fpSuperAdmin,    superAdminOnly: true  },
   { tag: "network",   name: "network",  icon: "red signal", hdr: "Network",         el: fpNetwork,       superAdminOnly: true  }, // SuperAdmin while being tested
+  { tag: "goals",     name: "goals",    icon: "red student",hdr: "Goals",           el: fpGoals_Z2,      superAdminOnly: true  }, // SuperAdmin while being tested
 ]
 
 const defaultPanelViewIndex = 0
@@ -127,11 +128,11 @@ export default FlexPanel = React.createClass({
       bottom: "0px",
       right: "60px",
       width: "285px",
-      overflow: "scroll",
+      overflowY: "scroll",
     }
 
     const panelInnerStyle = {
-      padding: "8px",
+      padding: "10px",
       paddingBottom: "24px",
       height: "auto"
     }

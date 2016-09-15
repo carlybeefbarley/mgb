@@ -890,7 +890,7 @@ export default class MapArea extends React.Component {
   }
 
   redrawGrid () {
-    this.refs.grid.draw()
+    this.refs.grid && this.refs.grid.draw()
   }
   redrawLayers () {
     this.layers.forEach((layer) => {

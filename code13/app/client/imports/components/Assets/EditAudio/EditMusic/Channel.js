@@ -342,7 +342,40 @@ export default class Channel extends React.Component {
 
   pasteSample (e) {
     if(this.props.isPaste && this.props.pasteData){
-      
+      const canvasX = this.waveCanvas.getBoundingClientRect().left
+      const viewOffsetX = this.viewOffset * this.props.pxPerSecond
+      const startX = e.clientX - canvasX + viewOffsetX
+      const pasteDelay = startX/this.props.pxPerSecond
+      const pasteDuration = this.props.pasteData.length / this.props.audioCtx.sampleRate
+      const startTime = this.sample.delay < pasteDelay ? this.sample.delay : pasteDelay
+      const endTime = this.sample.delay + this.sample.duration > pasteDelay + pasteDuration ? this.sample.delay + this.sample.duration : pasteDelay + pasteDuration
+      const sampleData = this.buffer.getChannelData(0)
+      // console.log(this.sample.delay, this.sample.duration, pasteDelay, pasteDuration, startTime, endTime)
+
+      // no need for new audioBuffer because pasted in existing sample
+      if(this.sample.delay <= startTime && this.sample.delay + this.sample.duration >= endTime){
+
+      }
+      // paste wave is outside existing sample, need for new audioBuffer
+      else {
+        const bufferLength = Math.round(this.props.audioCtx.sampleRate * (endTime-startTime))
+        this.buffer = this.props.audioCtx.createBuffer(1, bufferLength, this.props.audioCtx.sampleRate)
+      }
+      const channelData = this.buffer.getChannelData(0)
+      this.copyData(sampleData, Math.round((this.sample.delay-startTime)*this.props.audioCtx.sampleRate), channelData)
+      this.copyData(this.props.pasteData, Math.round((pasteDelay-startTime)*this.props.audioCtx.sampleRate), channelData)
+      this.sample.delay = startTime
+      this.calculateOffsetX()
+      this.initAudio()
+      this.drawWave()
+    }
+  }
+
+  copyData (source, offset, destination) {
+    if(offset >= destination.length) return
+    const end = destination.length >= offset + source.length ? destination.length : offset + source.length
+    for(let i=offset; i<end; i++){
+      destination[i] = source[i-offset]
     }
   }
 

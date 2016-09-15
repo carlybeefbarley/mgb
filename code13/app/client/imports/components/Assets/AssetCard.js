@@ -1,18 +1,18 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import { browserHistory } from 'react-router';
-import QLink, { utilPushTo } from "/client/imports/routes/QLink";
-import {AssetKinds} from '/imports/schemas/assets';
-import moment from 'moment';
-import {logActivity} from '/imports/schemas/activity';
-import ProjectMembershipEditor from './ProjectMembershipEditor';
-import AssetUrlGenerator from './AssetUrlGenerator.js';
-
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import QLink, { utilPushTo } from "/client/imports/routes/QLink"
+import { AssetKinds } from '/imports/schemas/assets'
+import moment from 'moment'
+import { logActivity } from '/imports/schemas/activity'
+import ProjectMembershipEditor from './ProjectMembershipEditor'
+import AssetUrlGenerator from './AssetUrlGenerator.js'
+import WorkState from '/client/imports/components/Controls/WorkState'
 
 // TODO: Toast/error is a mess
 
-// TODO: I think showHeader===false is no longer required, so clean this up by getting rid of all that mess
+// TODO: I think showHeader===false is no longer required, so clean 
+//       this up by getting rid of all that mess
 
 export default AssetCard = React.createClass({
   
@@ -27,11 +27,9 @@ export default AssetCard = React.createClass({
     allowDrag: PropTypes.bool.isRequired        // True if drag is allowed
   },
 
-
   contextTypes: {
     urlLocation: React.PropTypes.object
   },
-
 
   getDefaultProps: function()  {
     return {
@@ -47,7 +45,6 @@ export default AssetCard = React.createClass({
       discoveredImageHeight: undefined    // If we don't have the full asset with .content2 then we only know the width after we've loaded the thumbnail      
     }
   },
-
 
   componentDidMount()
   {
@@ -97,7 +94,7 @@ export default AssetCard = React.createClass({
   },
 
   // probably we could set global map<asset._id> Asset and escape stringifying;
-  startDrag(asset, e){
+  startDrag(asset, e) {
     const url  = `/api/asset/png/${asset._id}`;
     console.log("Start dragging Asset  url=", url);
 
@@ -113,7 +110,7 @@ export default AssetCard = React.createClass({
     $(document.body).addClass("dragging");
   },
 
-  endDrag(asset, e){
+  endDrag(asset, e) {
     $(document.body).removeClass("dragging");
   },
 
@@ -196,7 +193,12 @@ export default AssetCard = React.createClass({
           
           { showHeader && 
             <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}  onClick={this.handleEditClick} title="Asset Name">
-              <small>{asset.name || "(untitled)"}</small>
+              <small>{asset.name || "(untitled)"}&nbsp;</small>
+              <WorkState 
+                workState={asset.workState} 
+                popupPosition="bottom center"
+                showMicro={true}
+                canEdit={false}/>
             </div>
           }
           { (showHeader && asset.text && asset.text !== "") && 

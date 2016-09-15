@@ -46,6 +46,8 @@ export const ActivityTypes = {
   "asset.description": { icon: "edit",             pri: 14,  description: "Change asset description" },
   "asset.stable":      { icon: "green checkmark",  pri: 6,   description: "Asset marked stable" },
   "asset.unstable":    { icon: "red checkmark",    pri: 6,   description: "Asset marked stable" },
+  "asset.workState":   { icon: "orange checkmark", pri: 6,   description: "Asset workState changed" },
+
   "asset.rename":      { icon: "write",            pri: 11,  description: "Rename asset" },  
   "asset.delete":      { icon: "red trash",        pri: 12,  description: "Delete asset" },
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },

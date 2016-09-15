@@ -9,3 +9,12 @@ export const workStateNames =
   ]
 
 export const defaultWorkStateName = "unknown"
+
+export const workStateColors = {
+  "broken": "brown",
+  "experimental": "orange",
+  "unknown": "yellow",
+  "working": "olive",
+  "polished": "green",
+  "showcase": "teal"
+}

@@ -239,7 +239,10 @@ export default AssetEditRoute = React.createClass({
              * */ }
           <AssetUrlGenerator asset={asset} />
           &emsp;
-          <WorkState workState={asset.workState} />
+          <WorkState 
+            workState={asset.workState} 
+            canEdit={canEd}
+            handleChange={this.handleWorkStateChange}/>
           &emsp;
           <AssetActivityDetail
             assetId={params.assetId} 
@@ -403,8 +406,22 @@ export default AssetEditRoute = React.createClass({
       })      
       logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset)
     }
+  },
+
+
+// This should not conflict with the deferred changes since those don't change these fields :)
+  handleWorkStateChange: function(newWorkState) {
+    const oldState = this.data.asset.workState
+    if (newWorkState !== oldState) {
+      Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {workState: newWorkState}, (err, res) => {
+        if (err)
+          this.props.showToast(err.reason, 'error')
+      })
+      logActivity("asset.workState",  `WorkState changed from ${oldState} to "${newWorkState}"`, null, this.data.asset)
+    }
   }
 
+  
   
   // TODO:  Call snapshotActivity after rename so it will fix up any stale names:
   // import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'

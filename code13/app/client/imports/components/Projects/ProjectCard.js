@@ -5,6 +5,7 @@ import QLink from '/client/imports/routes/QLink'
 import QLinkUser from '/client/imports/routes/QLinkUser'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
+import WorkState from '/client/imports/components/Controls/WorkState'
 
 
 // This is a Project Card which is a card-format version of the Project information.
@@ -55,7 +56,15 @@ export default ProjectCard = React.createClass({
 
         <QLink className="content" to={linkTo}>
           <i className="right floated star icon"></i>
-          <div className="header">{project.name}</div>
+          <div className="header">
+            {project.name}&nbsp;
+            <WorkState 
+                workState={project.workState} 
+                popupPosition="bottom center"
+                showMicro={true}
+                handleChange={(newWorkState) => this.props.handleFieldChanged( { "workState": newWorkState } )}
+                canEdit={canEdit}/>
+          </div>
           <div className="meta"><i className="users icon"></i>&nbsp;{MemberStr}</div>
 
           <div className="ui description">

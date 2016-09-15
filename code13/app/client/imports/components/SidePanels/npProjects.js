@@ -1,7 +1,6 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import QLink from '/client/imports/routes/QLink';
-import {logActivity} from '/imports/schemas/activity';
+import React, { PropTypes } from 'react'
+import QLink from '/client/imports/routes/QLink'
+import WorkState from '/client/imports/components/Controls/WorkState'
 
 export default npProjects = React.createClass({
 
@@ -12,15 +11,13 @@ export default npProjects = React.createClass({
     panelWidth:         PropTypes.string.isRequired   // Typically something like "200px".
   },
 
-
   render: function () {
-    const {currUser, currUserProjects} = this.props;
+    const { currUser, currUserProjects } = this.props
 
     if (!currUser)
       return null
 
     return (
-      // TODO: use site.less for styling inverted menu
       <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
         <div>
           <div className="ui item" key="authHdr">
@@ -50,9 +47,8 @@ export default npProjects = React.createClass({
 
         </div>
       </div>
-    );
+    )
   },
-
 
   renderProjectMenuItems(projects, ownedFlag)
   {
@@ -68,7 +64,12 @@ export default npProjects = React.createClass({
       {
         count++
         return  <QLink to={`/u/${p.ownerName}/project/${p._id}`} className="item" key={p._id}>
-                  { p.name }
+                  <WorkState 
+                      workState={p.workState} 
+                      popupPosition="bottom center"
+                      showMicro={true}
+                      canEdit={false}/>                  
+                  &emsp;{ p.name }
                 </QLink>
       }
     })

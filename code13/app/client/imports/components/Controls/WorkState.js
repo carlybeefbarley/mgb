@@ -13,10 +13,10 @@ const _propTypes = {
   canEdit:        PropTypes.bool                    // If false, then don't allow popup/change
 }
 
-const _initPopup = (c, popupPosition) => (
+const _initPopup = (c, popupPosition, isHoverable) => (
   c && $(c).popup( {
     on: "hover",
-    hoverable: true,    // So mouse-over popup keeps it visible
+    hoverable: isHoverable,    // So mouse-over popup keeps it visible for Edit for example
     inline: true, 
     closable: true,
     position: popupPosition || "bottom right"
@@ -29,7 +29,7 @@ const WorkState = (props) => {
     <span>
       <a  className={`ui ${workStateColors[props.workState]} ${props.showMicro ? "empty circular " : ""} label`}
           title={ props.canEdit ? null : description }
-          ref={ (c) => { _initPopup(c, props.popupPosition); this._popupInitiator = c } }>
+          ref={ (c) => { _initPopup(c, props.popupPosition, props.canEdit); this._popupInitiator = c } }>
         { !props.showMicro && description }
       </a>
       { props.canEdit && 

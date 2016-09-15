@@ -4,6 +4,7 @@
 import _ from 'lodash'
 import { Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
+import { defaultWorkStateName } from '/imports/Enums/workStates'
 
 // The 'projects' concept is a BIG DEAL in MGB, so get ready for a big-ass comment explaining it 
 // all. Got a coffee? You may need one :)  
@@ -260,10 +261,11 @@ var schema = {
   ownerName: String,          // owner user name (DENORMALIZED)
 
   // the actual project information
-  name: String,             // Project Name (scoped to owner). Case sensitive
-  description: String,      // A description field
-  memberIds: [String],      // Array of memberIds (User._id keys)
-  avatarAssetId: String     // Asset that will be used as the avatar for this project (should be of kind=graphic)
+  name: String,               // Project Name (scoped to owner). Case sensitive
+  description: String,        // A description field
+  workState: String,          // A value matching a key from workStates.js
+  memberIds: [String],        // Array of memberIds (User._id keys)
+  avatarAssetId: String       // Asset that will be used as the avatar for this project (should be of kind=graphic)
 }
 
 
@@ -366,6 +368,7 @@ Meteor.methods({
     data.updatedAt = now
     data.ownerId = this.userId
     data.ownerName = username
+    data.workState = defaultWorkStateName
     data.memberIds = []
     data.avatarAssetId = ""
 
@@ -383,37 +386,37 @@ Meteor.methods({
 
   "Projects.update": function(docId, canEdit, data) {
     var count, selector;
-    var optional = Match.Optional;
+    var optional = Match.Optional
 
-    check(docId, String);
+    check(docId, String)
     if (!this.userId)
-      throw new Meteor.Error(401, "Login required");
+      throw new Meteor.Error(401, "Login required")
 
     // TODO: Move this access check to be server side..
     //   Or check publications have correct deny rules.
     //   See comment below for selector = ...
     if (!canEdit)
-      throw new Meteor.Error(401, "You don't have permission to edit this.");   //TODO - make this secure,
+      throw new Meteor.Error(401, "You don't have permission to edit this.")   //TODO - make this secure,
 
-    data.updatedAt = new Date();
+    data.updatedAt = new Date()
     
     // whitelist what can be updated
     check(data, {
       updatedAt: schema.updatedAt,
       name: optional(schema.name),
       description: optional(schema.description),
+      workState: optional(schema.workState),
       memberIds: optional(schema.memberIds),   
       avatarAssetId: optional(schema.avatarAssetId)
-    });
+    })
 
     // if caller doesn't own doc, update will fail because fields like ownerId won't match
-    selector = {_id: docId};
+    selector = {_id: docId}
 
-    count = Projects.update(selector, {$set: data});
+    count = Projects.update(selector, {$set: data})
+    console.log(`  [Projects.update]  (${count}) #${docId}`)
 
-    console.log(`  [Projects.update]  (${count}) #${docId}`); 
-
-    return count;
+    return count
   }
 
-});
+})

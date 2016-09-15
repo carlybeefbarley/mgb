@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import styles from './home.css';
 import QLink from './QLink';
 import Footer from '/client/imports/components/Footer/Footer';
+import getStartedStyle from './GetStarted_Z2.css';
 
 
 export default class Home_Z2 extends Component {
@@ -13,7 +14,7 @@ export default class Home_Z2 extends Component {
 
     return (
       <div>
-        <div className="ui container">
+        <div className="ui container slim">
           <div className="ui padded grid stackable" style={{ marginTop: '4.5em', marginBottom: '4.5em' }}>
             <div className="row" style={ currUser ? { maxWidth:"768px" } : { maxWidth:"512px" }}>
               <div className="column">
@@ -97,21 +98,21 @@ export default class Home_Z2 extends Component {
                   <h2>Watch games being made</h2>
                   <div className="ui very relaxed list">
                     <div className="item">
-                      <img className="ui small middle aligned image rounded bordered" style={{ width: 120 }} src="/images/frontpage_mgb1.png" />
+                      <img className="ui small middle aligned image rounded bordered" style={{ width: 100 }} src="/images/frontpage_mgb1.png" />
                       <div className="content middle aligned" style={{ marginLeft: '1em' }}>
                         <h3>Maze escape 3</h3>
                         <p><i className="play icon" />10,510 Plays</p>
                       </div>
                     </div>
                     <div className="item">
-                      <img className="ui small middle aligned image rounded bordered" style={{ width: 120 }} src="/images/frontpage_mgb1.png" />
+                      <img className="ui small middle aligned image rounded bordered" style={{ width: 100 }} src="/images/frontpage_mgb1.png" />
                       <div className="content middle aligned" style={{ marginLeft: '1em' }}>
                         <h3>Snail racer</h3>
                         <p><i className="play icon" />3,489 Plays</p>
                       </div>
                     </div>
                     <div className="item">
-                      <img className="ui small middle aligned image rounded bordered" style={{ width: 120 }} src="/images/frontpage_mgb1.png" />
+                      <img className="ui small middle aligned image rounded bordered" style={{ width: 100 }} src="/images/frontpage_mgb1.png" />
                       <div className="content middle aligned" style={{ marginLeft: '1em' }}>
                         <h3>untitled_4</h3>
                         <p><i className="play icon" />1,302 Plays</p>

@@ -32,13 +32,13 @@ export default class GetStarted_Z2 extends Component {
     }
 
     return (
-      <div className="ui container getStarted">
+      <div className="ui container slim">
         <div className="ui grid stackable" style={{marginTop: '3.5em'}}>
           <div className="row">
             <div className="column">
               <h1 className="ui huge header" style={{fontSize: '2.5em'}}>
                 What would you like to try?
-                <em className="sub header">There are a lot of skills to learn</em>
+                <em className="sub header">There are lots of skills to learn</em>
               </h1>
             </div>
           </div>
@@ -66,7 +66,7 @@ export default class GetStarted_Z2 extends Component {
                 <a className="card" style={cardStyle} href="/Home_Z2">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
-                      <img src="/images/mascots/shark.png" />
+                      <img src="/images/mascots/samurai.png" />
                     </div>
                     <h2 style={headerStyle}><i className="music icon" />&nbsp;Audio &amp; music</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
@@ -75,7 +75,7 @@ export default class GetStarted_Z2 extends Component {
                 <a className="card" style={cardStyle} href="/Home_Z2">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
-                      <img src="/images/mascots/samurai.png" />
+                      <img src="/images/mascots/slimy.png" />
                     </div>
                     <h2 style={headerStyle}><i className="idea icon" />&nbsp;Game design</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
@@ -93,7 +93,7 @@ export default class GetStarted_Z2 extends Component {
                 <a className="card" style={cardStyle} href="/Home_Z2">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
-                      <img src="/images/mascots/slimy.png" />
+                      <img src="/images/mascots/shark.png" />
                     </div>
                     <h2 style={headerStyle}><i className="area chart icon" />&nbsp;Analytics</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>

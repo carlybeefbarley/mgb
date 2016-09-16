@@ -86,7 +86,7 @@ export default class SourceTools {
     // close all used subscriptions
     for(let i in this.subscriptions){
       this.subscriptions[i].subscription.stop()
-      this.subscriptions[i].cursor.stop()
+      this.subscriptions[i].observer.stop()
     }
     this.subscriptions = null
   }
@@ -317,7 +317,7 @@ export default class SourceTools {
       // TODO: optimize use one cursor for all documents???
       const cursor = Azzets.find({dn_ownerName: owner, name: name})
       // from now on only observe asset and update tern on changes only
-      cursor.observeChanges({
+      const observer = cursor.observeChanges({
         changed: (id, changes) => {
           if(changes.content2 && changes.content2.src){
             this.removeTranspiled(urlFinalPart)
@@ -352,7 +352,7 @@ export default class SourceTools {
             cb("")
           }
         }),
-        cursor
+        observer
       }
       // ajax
       /*

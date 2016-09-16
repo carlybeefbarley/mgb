@@ -15,6 +15,37 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Thu Sep 15 2016 14:20:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1411'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.assets',
+          'type': 'improvement',
+          'changeName': 'Assets now have a workState',
+          'changeSummary': 'You can set and see the work status of an Asset:  "broken" / "experiment" / "unknown" / "working" / "polished" / "showcase"',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'nav.projects',
+          'type': 'improvement',
+          'changeName': 'Projects now have a workState',
+          'changeSummary': 'You can set and see the work status of a Project:  "broken" / "experiment" / "unknown" / "working" / "polished" / "showcase"',
+          'otherUrls': []
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Wed Sep 14 2016 09:30:00 GMT-0700 (PDT)',
 
       'id': {

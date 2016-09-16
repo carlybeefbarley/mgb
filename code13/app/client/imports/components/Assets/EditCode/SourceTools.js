@@ -1,12 +1,12 @@
 let babelWorker;
 import knownLibs from "./knownLibs.js"
-
+import { Azzets } from '/imports/schemas'
 // serving modules from...
 const MODULE_SERVER = 'https://cdn.jsdelivr.net/phaser/latest/'
 // ajax requests cache - invalidate every few seconds
 // this will insanely speed up run
 const INVALIDATE_CACHE_TIMEOUT = 30 * 1000
-const SMALL_CHANGES_TIMEOUT = 5 * 1000 // force refresh other mgb assets - even if current isn't changed
+const SMALL_CHANGES_TIMEOUT = 1000 // force refresh other mgb assets - even if current isn't changed
 const UPDATE_DELAY = 15 * 1000
 
 // add only smalls libs to tern
@@ -21,6 +21,8 @@ export default class SourceTools {
       babelWorker.terminate()
     }
 
+    this.subscriptions = []
+    window.Azzets = Azzets;
     //window.mgb_tools = this
     this.asset_id = asset_id
     this.tern = ternServer
@@ -80,6 +82,13 @@ export default class SourceTools {
     for (let i in tmpCache) {
       delete tmpCache[i]
     }
+
+    // close all used subscriptions
+    for(let i in this.subscriptions){
+      this.subscriptions[i].subscription.stop()
+      this.subscriptions[i].cursor.stop()
+    }
+    this.subscriptions = null
   }
 
   // probably events would work better
@@ -98,6 +107,7 @@ export default class SourceTools {
       cb && cb()
       return;
     }
+    console.log("Collected:", name)
     // remove use strict added by babel - as it may break code silently
     code = code.replace(/use strict/gi, '')
     const lib = SourceTools.getKnowLib(name)
@@ -130,7 +140,7 @@ export default class SourceTools {
       }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
         const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
-        // console.log("Adding file: ", cleanFileName)
+        //console.info("Adding file: ", cleanFileName)
         this.tern.server.delFile(cleanFileName)
         this.tern.server.addFile(cleanFileName, code)
       }
@@ -143,7 +153,12 @@ export default class SourceTools {
   isAlreadyTranspiled(filename) {
     return this.collectedSources.find(s => s.name == filename)
   }
-
+  removeTranspiled(filename){
+    const item = this.isAlreadyTranspiled(filename)
+    if(item){
+      this.collectedSources.splice(this.collectedSources.indexOf(item), 1)
+    }
+  }
   updateNow(cb) {
     if(this.isDestroyed) return
     // wait for active job to complete
@@ -213,6 +228,7 @@ export default class SourceTools {
     })
   }
 
+  // force - don't check cache
   _collectAndTranspile(srcText, filename, callback) {
     if(this.isDestroyed) return
     const compiled = this.isAlreadyTranspiled(filename);
@@ -292,9 +308,58 @@ export default class SourceTools {
     }
     // don't cache local files
     if (!SourceTools.isExternalFile(url)) {
+      console.log("loading local file: ", url)
+      const parts = url.split("/")
+      console.log("parts", parts)
+      const name = parts.pop()
+      const owner = parts.length == 6 ? parts.pop() : Meteor.user().profile.name
+
+      // TODO: optimize use one cursor for all documents???
+      const cursor = Azzets.find({dn_ownerName: owner, name: name})
+      // from now on only observe asset and update tern on changes only
+      cursor.observeChanges({
+        changed: (id, changes) => {
+          if(changes.content2 && changes.content2.src){
+            this.removeTranspiled(urlFinalPart)
+            this._collectAndTranspile(changes.content2.src, urlFinalPart)
+          }
+        }
+      })
+      const getSourceAndTranspile = () => {
+        const assets = cursor.fetch()
+        console.log(assets)
+        if(assets[0]){
+          this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb)
+        }
+        else{
+          cb("")
+        }
+      }
+      // already subscribed and observing
+      if(this.subscriptions[url]){
+        //getSourceAndTranspile()
+        return
+      }
+
+      // should I close subscriptions
+      this.subscriptions[url] = {
+        subscription: Meteor.subscribe("assets.public.owner.name", owner, name, {
+          onReady: () => {
+            getSourceAndTranspile()
+          },
+          onError: (...args) => {
+            console.log("Error:", name, ...args)
+            cb("")
+          }
+        }),
+        cursor
+      }
+      // ajax
+      /*
       SourceTools.loadImport(url, (src) => {
         this._collectAndTranspile(src, urlFinalPart, cb)
       })
+      */
       return
     }
     // load external file and cache - so we can skip loading next time
@@ -420,6 +485,8 @@ export default class SourceTools {
       cb("")
       return;
     }
+
+    console.log("Loading:", url)
     // atm server will try to generate script
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = () => {

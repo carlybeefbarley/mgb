@@ -14,32 +14,32 @@ export default class Home_Z2 extends Component {
 
     return (
       <div>
-        <div style={{backgroundColor: "#f3f3f3"}}>
+        <div className="hero">
           <div className="ui container slim">
             <div className="ui padded grid stackable" style={{ paddingTop: '3em', paddingBottom: '2.5em' }}>
-              <div className="row" style={ currUser ? { maxWidth:"768px" } : { maxWidth:"512px" }}>
+              <div className="row">
                 <div className="column">
-                  <h1 className="ui huge header" style={{fontSize: '3em'}}>
+                  <img className="ui small right floated image" src="/images/mascots/team.png" style={{width: "480px", marginTop: "1.5em"}} />
+                  <h1 className="ui huge header" style={{fontSize: '3em', marginBottom: '0.5em'}}>
                     My Game Builder
-                    <em className="sub header">The Online Game-builder</em>
+                    <em className="sub header" style={{fontSize: '0.5em'}}>The Online Game-builder</em>
                   </h1>
-                  <img className="ui tiny left floated image" src="/images/mascots/slimy.png" style={{ width: 160, marginTop: '2em', paddingRight: '1em' }} />
                 { currUser ?
-                  <p style={{fontSize: '1.5em', marginTop: '1.75em'}}>
+                  <p style={{fontSize: '1.5em', maxWidth: '400px'}}>
                     Welcome back, {username}!
                     <br />
                     Last time you were working on ImportTestSize.
                     <br />
                     Want to keep going?
                     <br />
-                    <button className="ui primary large button" style={{ marginTop: '1em' }}>Get back to work</button>
+                    <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Get back to work</button>
                   </p>
                   :
-                  <p style={{ fontSize: '1.5em', marginTop: '1.75em' }}>
+                  <p style={{ fontSize: '1.5em', maxWidth: '450px' }}>
                     Creating a game is now an MMO:<br />Make, watch, chat and play games with friends so you learn together.
                     <br />
                     <QLink to={`/getstarted_z2`}>
-                      <button className="ui primary large button" style={{ marginTop: '1em' }}>Get started</button>
+                      <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Get started</button>
                     </QLink>
                   </p>
                 }
@@ -48,8 +48,8 @@ export default class Home_Z2 extends Component {
             </div>
           </div>
         </div>
-        <div className="ui container slim">
-          <div className="ui padded grid stackable" style={{ marginTop: '4.5em', marginBottom: '4.5em' }}>
+        <div className="ui container slim" style={{paddingTop: "3em"}}>
+          <div className="ui padded grid stackable">
             <div className="equal width row">
               <div className="ui stackable three column grid">
                 <div className="column">

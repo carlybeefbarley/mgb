@@ -25,6 +25,8 @@ const _initPopup = (c, popupPosition, isHoverable) => (
 
 const WorkState = (props) => {
   const description = `Quality: ${props.workState}`
+  const labelSty = { marginBottom: "4px" }
+
   return (
     <span>
       <a  className={`ui ${workStateColors[props.workState]} ${props.showMicro ? "empty circular " : ""} label`}
@@ -38,24 +40,23 @@ const WorkState = (props) => {
             <div className="ui left aligned header"><small>Stated Quality is:</small></div>
           }
           { 
-            _.map(workStateNames, (name,idx) => {
-              return (
-                <div key={idx} className="ui labels">
-                  <div 
-                    className={`ui fluid ${workStateColors[name]} label`}
-                    onClick={(e) => { 
-                      e.preventDefault()
-                      $(this._popupInitiator).popup('hide')
-                      props.canEdit && props.handleChange && props.handleChange(name)
-                    }}>
-                    {name} 
-                    <div className="detail">
-                      <i className={(name === props.workState) ? "black checkmark icon" : "icon"} />
-                    </div>
+            _.map(workStateNames, (name,idx) => (
+                <div 
+                  key={idx} 
+                  style={labelSty}
+                  className={`ui fluid ${workStateColors[name]} label`}
+                  onClick={(e) => { 
+                    e.preventDefault()
+                    $(this._popupInitiator).popup('hide')
+                    props.canEdit && props.handleChange && props.handleChange(name)
+                  }}>
+                  {name} 
+                  <div className="detail">
+                    <i className={(name === props.workState) ? "black checkmark icon" : "icon"} />
                   </div>
                 </div>
               )
-            }) 
+            ) 
           }
         </div>
       }

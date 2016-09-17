@@ -33,14 +33,19 @@ export default class Home extends Component {
                     <em className="sub header" style={{fontSize: '0.5em'}}>The Online Game-builder</em>
                   </h1>
                 { currUser ?
-                  <p style={{fontSize: '1.5em', maxWidth: '400px'}}>
+                  <p style={{fontSize: '1.5em', maxWidth: '450px'}}>
                     Welcome back, {username}!
                     <br />
-                    Last time you were working on <RecentlyEditedAssetGET userId={userId} />
+                    Last time you were working
                     <br />
-                    Want to keep going?
+                    on <em><RecentlyEditedAssetGET userId={userId} /></em>.
                     <br />
-                    <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Get back to work</button>
+                    <QLink to={`/u/${this.props.currUser.profile.name}/assets`}>
+                      <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Keep going</button>
+                    </QLink>
+                    <QLink to={`/getstarted`}>
+                      <button className="ui teal huge button" style={{ marginTop: '1.5em', marginLeft: '0.5em' }}>Set skill goals</button>
+                    </QLink>
                   </p>
                   :
                   <p style={{ fontSize: '1.5em', maxWidth: '450px' }}>

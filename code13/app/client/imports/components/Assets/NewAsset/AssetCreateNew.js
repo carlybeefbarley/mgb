@@ -94,7 +94,7 @@ export default AssetCreateNew = React.createClass({
               user={currUser}
               handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
               availableProjects={currUserProjects}
-              ProjectListLinkUrl={"/u/" + currUser.profile.name + "/projects"}
+              ProjectListLinkUrl={currUser && "/u/" + currUser.profile.name + "/projects"}
               showProjectsUserIsMemberOf={true}
               chosenProjectName={this.state.projectCompoundName} />
         </div>

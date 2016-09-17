@@ -49,7 +49,7 @@ export default class Home extends Component {
             </div>
           </div>
         </div>
-        <div className="ui container slim" style={{paddingTop: "3em"}}>
+        <div className="ui container slim" style={{paddingTop: "3em", paddingBottom: "2em"}}>
           <div className="ui padded grid stackable">
             <div className="equal width row">
               <div className="ui stackable three column grid">

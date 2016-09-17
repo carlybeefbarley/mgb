@@ -164,7 +164,6 @@ export default App = React.createClass({
 
     const mainPanelInnerDivSty = {
       padding:       "0px",
-      paddingBottom: "24px",
       height:        "auto"
     }
 

@@ -308,7 +308,7 @@ export default class SourceTools {
     }
     // don't cache local files
     if (!SourceTools.isExternalFile(url)) {
-      console.log("loading local file: ", url)
+      /*console.log("loading local file: ", url)
       const parts = url.split("/")
       console.log("parts", parts)
       const name = parts.pop()
@@ -353,13 +353,13 @@ export default class SourceTools {
           }
         }),
         observer
-      }
-      // ajax
-      /*
+      }*/
+      // ajax*
+
       SourceTools.loadImport(url, (src) => {
         this._collectAndTranspile(src, urlFinalPart, cb)
       })
-      */
+      
       return
     }
     // load external file and cache - so we can skip loading next time

@@ -159,6 +159,14 @@ Meteor.publish('activity.public.recent.userId', function(userId, limitCount=50) 
   return Activity.find(selector, options)
 })
 
+Meteor.publish('activity.public.assets.recent.userId', function(userId, limitCount=50) {
+  let selector = { byUserId: userId, toAssetId: {"$ne": "" } }
+  let options = { limit: limitCount, sort: {timestamp: -1} }
+
+  return Activity.find(selector, options)
+})
+
+
 Meteor.publish('activity.public.recent.assetid', function(assetId, limitCount=50) {
   let selector = { toAssetId: assetId }
   let options = { limit: limitCount, sort: {timestamp: -1}}

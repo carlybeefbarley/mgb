@@ -27,7 +27,7 @@ var schema = {
   toProjectName: String,  // null if not a project-scoped action
   toOwnerName: String,    // Owner's user NAME
   toOwnerId: String,      // Owner's user ID (Added June 8th 2016)
-  toAssetId: String,      // The asset that was changed - or null if not an asset
+  toAssetId: String,      // The asset that was changed - or "" if not an asset
   toAssetName: String,    // Asset's name (duplicated here for speed)
   toAssetKind: String     // Asset's kind (image, map, etc)
 };

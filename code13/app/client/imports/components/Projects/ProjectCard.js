@@ -6,6 +6,7 @@ import QLinkUser from '/client/imports/routes/QLinkUser'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import WorkState from '/client/imports/components/Controls/WorkState'
+import { getProjectAvatarUrl } from '/imports/schemas/projects'
 
 
 // This is a Project Card which is a card-format version of the Project information.

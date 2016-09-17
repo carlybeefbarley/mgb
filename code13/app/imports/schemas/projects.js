@@ -338,6 +338,12 @@ export const getMsgForProjectAccess = (pte) => (
 )
 
 
+export const getProjectAvatarUrl = (p) => ( 
+  (p.avatarAssetId.length && p.avatarAssetId.length && p.avatarAssetId.length > 0) 
+  ? `/api/asset/png/${p.avatarAssetId}` 
+  : "/images/wireframe/image.png"
+) 
+
 Meteor.methods({
 
 //   "Projects.fixup": function() {

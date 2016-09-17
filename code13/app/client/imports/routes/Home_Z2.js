@@ -16,7 +16,7 @@ export default class Home_Z2 extends Component {
       <div>
         <div className="hero">
           <div className="ui container slim">
-            <div className="ui padded grid stackable" style={{ paddingTop: '3em', paddingBottom: '2.5em' }}>
+            <div className="ui padded grid stackable" style={{ paddingTop: '1.25em', paddingBottom: '1.75em' }}>
               <div className="row">
                 <div className="column">
                   <img className="ui small right floated image" src="/images/mascots/team.png" style={{width: "480px", marginTop: "1.5em"}} />

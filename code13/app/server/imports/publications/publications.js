@@ -117,7 +117,11 @@ Meteor.publish('assets.public', function(
 Meteor.publish('assets.public.byId.withContent2', function(assetId) {
   return Azzets.find(assetId)
 })
-
+// TODO: this repeats from - API - clean up api and this
+Meteor.publish('assets.public.owner.name', function(owner, name) {
+  // oops findOne is not working here
+  return Azzets.find({dn_ownerName: owner, name: name})
+})
 
 //
 //    PROJECTS

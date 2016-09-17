@@ -129,8 +129,9 @@ export default class EditCode extends React.Component {
         // we get called for the CURRENTLY highlighted entry in the autocomplete list. 
         // We are provided fields like
         //   name, type     ... pretty reliably
-        //   doc, url       ... sometimes (depending on dataset) 
-        return curData.doc + (curData.type ? "\n\n" + curData.type : "")
+        //   doc, url       ... sometimes (depending on dataset)
+        const doc = curData.doc ? curData.doc : '';
+        return doc + (doc ? "\n\n" + curData.type : "")
       },
       // TODO: is there a simple "meteor" way to get these files from node_modules???
       workerDeps: [
@@ -144,7 +145,7 @@ export default class EditCode extends React.Component {
         "/lib/tern/comment.js"
       ],
       plugins: {
-        //modules: true, we are injecting files directly - no need for additional module + it have
+        // modules: true, we are injecting files directly - no need for additional module + it have
         comment: true,
         es_modules: true,
         doc_comment: {
@@ -200,7 +201,7 @@ export default class EditCode extends React.Component {
           return this.codeEditPassAndHint(cm)
         },
         "Ctrl-Space": (cm) => {
-          this.ternServer.complete(cm);
+          return this.ternServer.complete(cm);
         },
         "Ctrl-I": (cm) => {
           this.ternServer.showType(cm);
@@ -268,8 +269,10 @@ export default class EditCode extends React.Component {
   updateDocName(){
     if(this.codeMirror){
       const doc = this.codeMirror.getDoc()
-      this.ternServer.delDoc(doc)
-      this.ternServer.addDoc(this.props.asset.name, doc)
+      if(this.ternServer && doc) {
+        this.ternServer.delDoc(doc)
+        this.ternServer.addDoc(this.props.asset.name, doc)
+      }
     }
   }
 
@@ -413,11 +416,10 @@ export default class EditCode extends React.Component {
       // single arg fn
       if(match[3] === "load.mgbMap"){
         if(match[5])// second arg
-          matches.push({id: match[6], kind: "map", refType: "ID#"}) // :user/:name
+          matches.push({id: match[6], kind: "map", refType: ""}) // :user/:name
         else
           matches.push({id: match[4], kind: "map", refType: "ID#"})
       }
-      // 2 arg fn - 1st key, 2nd link
       else {
         matches.push({id: match[2], kind: match[1], refType: ""}) // :user/:name
       }

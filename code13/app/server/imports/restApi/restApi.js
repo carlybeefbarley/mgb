@@ -487,6 +487,7 @@ RestApi.addRoute('asset/code/:referrer/:name', {authRequired: false}, {
 })
 
 // TODO: permission check ?
+// TODO: cleanup - make single function that requires assets ? DRY?
 // used in codeEdit - import X from '/owner/codeName' - referrer is added automatically
 RestApi.addRoute('asset/code/:referrer/:owner/:name', {authRequired: false}, {
   get: function(){

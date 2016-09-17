@@ -15,7 +15,7 @@ import validate from '/imports/schemas/validate'
 
 import { Projects } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
-import { projectMakeSelector } from '/imports/schemas/projects'
+import { projectMakeSelector, getProjectAvatarUrl } from '/imports/schemas/projects'
 
 import NavRecentGET from '/client/imports/components/Nav/NavRecentGET'
 import QLink from '../QLink'
@@ -216,8 +216,9 @@ export default UserProfileRoute = React.createClass({
     const { projects } = this.data
     return (
       <div className="eight wide column">
-      <h2><QLink to={`/u/${user.profile.name}/projects`}>Projects</QLink></h2>
+      <h2><QLink to={`/u/${user.profile.name}/projects`}>My Owned Projects</QLink></h2>
         { this.renderProjects(user, projects, true) }
+      <h2><QLink to={`/u/${user.profile.name}/projects`}>Projects I am a member of</QLink></h2>
         { this.renderProjects(user, projects, false) }
       </div>
     )
@@ -226,7 +227,7 @@ export default UserProfileRoute = React.createClass({
 
   renderProjects(user, projects, ownedFlag)
   {
-    const Empty = <p>No projects for this user</p>
+    const Empty = <p>No projects</p>
 
     if (!projects)
       return null
@@ -236,8 +237,9 @@ export default UserProfileRoute = React.createClass({
       
     const retval = projects.map( (project) => {
       const isOwner = (project.ownerId === this.props.user._id)
-      const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Builder" : (project.memberIds.length + 1) + " Builders"
-      const projImg = "/images/wireframe/image.png"
+      const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Member"
+      const projImg = getProjectAvatarUrl(project)
+
       return (isOwner !== ownedFlag) ? null : (
         <div className="ui grid" key={project._id}>
           <div className="four wide column">

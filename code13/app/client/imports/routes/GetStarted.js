@@ -2,10 +2,10 @@ import _ from 'lodash';
 import React, {Component} from 'react';
 import styles from './home.css';
 import QLink from './QLink';
-import getStartedStyle from './GetStarted_Z2.css';
+import getStartedStyle from './GetStarted.css';
 
 
-export default class GetStarted_Z2 extends Component {
+export default class GetStarted extends Component {
 
   render() {
     const currUser = this.props.currUser
@@ -45,7 +45,7 @@ export default class GetStarted_Z2 extends Component {
           <div className="row">
             <div className="column">
               <div className="ui two cards stackable skills">
-                <a className="card" style={cardStyle} href="/Home_Z2">
+                <a className="card" style={cardStyle} href="/Home">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/alien.png" />
@@ -54,7 +54,7 @@ export default class GetStarted_Z2 extends Component {
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
                 </a>
-                <a className="card" style={cardStyle} href="/Home_Z2">
+                <a className="card" style={cardStyle} href="/Home">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/penguin.png" />
@@ -63,7 +63,7 @@ export default class GetStarted_Z2 extends Component {
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
                 </a>
-                <a className="card" style={cardStyle} href="/Home_Z2">
+                <a className="card" style={cardStyle} href="/Home">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/samurai.png" />
@@ -72,7 +72,7 @@ export default class GetStarted_Z2 extends Component {
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
                 </a>
-                <a className="card" style={cardStyle} href="/Home_Z2">
+                <a className="card" style={cardStyle} href="/Home">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/slimy.png" />
@@ -81,7 +81,7 @@ export default class GetStarted_Z2 extends Component {
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
                 </a>
-                <a className="card" style={cardStyle} href="/Home_Z2">
+                <a className="card" style={cardStyle} href="/Home">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/vampire.png" />
@@ -90,7 +90,7 @@ export default class GetStarted_Z2 extends Component {
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
                 </a>
-                <a className="card" style={cardStyle} href="/Home_Z2">
+                <a className="card" style={cardStyle} href="/Home">
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/shark.png" />

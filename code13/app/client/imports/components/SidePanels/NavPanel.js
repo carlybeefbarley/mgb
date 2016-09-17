@@ -8,48 +8,54 @@ import npProjects from './npProjects'
 import urlMaker from '/client/imports/routes/urlMaker'
 import { utilPushTo } from '/client/imports/routes/QLink'
 
+import style from './FlexPanel.css' // TODO(nico): get rid of this css
+
 const navPanelViews = [
   {
     tag: "home",
+    name: "home",
     icon: "home",
     hdr: "Home",
     getDirectUrl: (uname) => ("/"),
     el: npHome,
     hideIfNoUser: false
-  }, 
+  },
   {
     tag: "user",
+    name: "me",
     icon: "user",
     hdr: "User",
     getDirectUrl: (uname) => (uname ? `/u/${uname}` : '/signin'),
     el: npUser,
     hideIfNoUser: false
-  }, 
+  },
+  {
+    tag: "projects",
+    name: "projects",
+    icon: "sitemap",
+    hdr: "Projects",
+    getDirectUrl: (uname) => (uname ? `/u/${uname}/projects` : '/u/!vault/projects'),
+    el: npProjects,
+    hideIfNoUser: true
+  },
+  {
+    tag: "people",
+    name: "people",
+    icon: "users",
+    hdr: "People",
+    getDirectUrl: (uname) => (`/users`),
+    el: npPeople,
+    hideIfNoUser: false
+  },
   {
     tag: "history",
+    name: "history",
     icon: "history",
     hdr: "History",
     getDirectUrl: (uname) => (uname ? `/u/${uname}/assets` : '/assets'),
     el: npHistory,
     hideIfNoUser: true
   },
-  //{ tag: "pins",      icon: "pin",      hdr: "Pins",      getDirectUrl: (uname) => (`/u/${uname}/projects`),  el: npPins,     hideIfNoUser: true   },
-  {
-    tag: "projects",
-    icon: "sitemap",
-    hdr: "Projects",
-    getDirectUrl: (uname) => (uname ? `/u/${uname}/projects` : '/u/!vault/projects'),
-    el: npProjects,
-    hideIfNoUser: true
-  }, 
-  {
-    tag: "people",
-    icon: "users",
-    hdr: "People",
-    getDirectUrl: (uname) => (`/users`),
-    el: npPeople,
-    hideIfNoUser: false
-  }
   // { tag: "skills",    icon: "university", hdr: "Skills" }
 ]
 
@@ -62,7 +68,7 @@ function _getNavPanelViewFromTag(npViewTag) {
 
 
 export default NavPanel = React.createClass({
-  
+
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
@@ -71,7 +77,7 @@ export default NavPanel = React.createClass({
     navPanelIsVisible:      PropTypes.bool.isRequired,
     handleNavPanelToggle:   PropTypes.func.isRequired,    // Callback for enabling/disabling NavPanel view
     handleNavPanelChange:   PropTypes.func.isRequired,    // Callback to change pane - records it in URL
-    navPanelWidth:          PropTypes.string.isRequired,  // Typically something like "200px". 
+    navPanelWidth:          PropTypes.string.isRequired,  // Typically something like "200px".
     isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
   },
 
@@ -88,7 +94,7 @@ export default NavPanel = React.createClass({
     if (fGoDirect)
     {
       // Go directly to the default URL for this NavPanel
-      const navPanelChoice = _getNavPanelViewFromTag(npViewTag) 
+      const navPanelChoice = _getNavPanelViewFromTag(npViewTag)
       const newUrl = navPanelChoice.getDirectUrl(this.props.currUser ? this.props.currUser.profile.name : null)
       if (newUrl)
         utilPushTo(this.context.urlLocation.query, newUrl)
@@ -97,81 +103,85 @@ export default NavPanel = React.createClass({
     {
       if (npViewTag === this.props.selectedViewTag)
         this.props.handleNavPanelChange(urlMaker.disableQueryParamPrefix + npViewTag)
-      else 
+      else
         this.props.handleNavPanelChange(npViewTag)
     }
-  },  
+  },
 
 
-  render: function () {    
+  render: function () {
     const { navPanelWidth } = this.props
     const panelStyle = {    // This is the overall NavPanel with either just the first column (just icons, always shown), or 1st and 2nd columns
-      position: "fixed", 
-      left: "0px", 
-      top: "0px", 
+      position: "fixed",
+      left: "0px",
+      top: "0px",
       bottom: "0px",
-      width: navPanelWidth, 
-      backgroundColor: "#000"
+      width: navPanelWidth,
+      backgroundColor: "rgb(50, 60, 60)"
     }
-      
-    const miniNavStyle = {  // This is the First column of the NavPanel (just icons, always shown). It is logically nested within the outer panel 
+
+    const miniNavStyle = {  // This is the First column of the NavPanel (just icons, always shown). It is logically nested within the outer panel
       position: "fixed",
       top: "0px",
       bottom: "0px",
-      left: "-8px",
-      width: "57px", 
-      borderRadius: 0, 
-      marginRight: "1px", 
-      marginBottom: "0px"
+      left: "0px",
+      width: "61px",
+      borderRadius: 0,
+      marginRight: "0px",
+      marginBottom: "0px",
+      backgroundColor: "transparent"
     }
 
     const panelScrollContainerStyle = {
-      position: "absolute", 
-      left: "51px", 
-      right: "2px",
-      top: "0px", 
+      position: "absolute",
+      left: "60px",
+      right: "0px",
+      top: "0px",
       bottom: "0px",
       paddingTop: "8px",
-      backgroundColor: "#1b1c1d",       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
-      overflowY: "crop" 
+      paddingLeft: "1px",
+      backgroundColor: "rgb(40, 50, 50)",       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
+      overflowY: "crop"
     }
-    
+
     const miniNavItemStyle = {
       borderRadius: "0px"           // Otherwise active first-item / last-item is rounded
     }
-        
+
     const navPanelChoice = _getNavPanelViewFromTag(this.props.selectedViewTag)
-    const navPanelHdr = navPanelChoice.hdr      
+    const navPanelHdr = navPanelChoice.hdr
     const ElementNP = navPanelChoice.el    // Can be null
 
     return (
       <div className="basic segment mgbNavPanel" style={panelStyle}>
 
-        <div className="ui inverted attached borderless vertical large icon menu" style={miniNavStyle}>
-          { navPanelViews.map(v => { 
+        <div className="ui inverted attached vertical icon menu" style={miniNavStyle}>
+          { navPanelViews.map(v => {
             if (v.hideIfNoUser && !this.props.currUser)
               return null
-            const actv = (v.tag === this.props.selectedViewTag) ? " active " : ""
+            const actv = (v.tag === this.props.selectedViewTag) ? " active selected " : ""
             return (
-              <div 
+              <div
                 key={v.tag}
-                className={actv + "item"} 
+                className={actv + "item"}
+                title={v.name}
                 style={miniNavItemStyle}
                 onClick={(e) => { this.npViewSelect(v.tag, e.altKey)}}>
                 <i className={v.icon + actv + " big icon"} />
+                <span>{v.name}</span>
               </div>
             )
           })}
         </div>
 
-        { this.props.navPanelIsVisible && 
+        { this.props.navPanelIsVisible &&
           <div style={panelScrollContainerStyle}>
-            { !ElementNP ? <div className="ui fluid label">TODO: {navPanelHdr} navPanel</div> : 
-              <ElementNP  
-                currUser={this.props.currUser} 
+            { !ElementNP ? <div className="ui fluid label">TODO: {navPanelHdr} navPanel</div> :
+              <ElementNP
+                currUser={this.props.currUser}
                 currUserProjects={this.props.currUserProjects}
-                user={this.props.user} 
-                panelWidth={this.props.navPanelWidth} /> 
+                user={this.props.user}
+                panelWidth={this.props.navPanelWidth} />
             }
           </div>
         }

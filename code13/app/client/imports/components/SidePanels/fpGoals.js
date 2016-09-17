@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 
-import style from './FlexPanel_Z2.css'
+import style from './FlexPanel.css'
 
 export default fpSuperAdmin = React.createClass({
 

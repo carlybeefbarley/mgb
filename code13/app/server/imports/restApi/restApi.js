@@ -419,12 +419,12 @@ RestApi.addRoute('asset/sound/name/:name', {authRequired: false}, {
 RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
   get: function () {
     var user = Meteor.users.findOne(this.urlParams.id);
-    if (user)
+    if (user && user.profile.avatar)
     {
       return {
         statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
         headers: {
-          'Location': user.profile.avatar
+          'Location': user.profile.avatar 
           // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200 
         },
         body: {}

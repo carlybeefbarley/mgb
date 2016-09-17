@@ -15,6 +15,37 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Sat Sep 17 2016 15:10:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1445'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'New Home and Get Started pages',
+          'changeSummary': 'They are incomplete, but show the design direction for getting started leading into tutorials. There is also the beginnings of a new Keyboard shortcuts page',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'nav.projects',
+          'type': 'improvement',
+          'changeName': 'Change Project while editing Asset',
+          'changeSummary': 'Asset owners can change the Projects for an Asset while editing the Asset (click the top right projects label)',
+          'otherUrls': []
+        }
+      ]
+    }, 
+
+    {
       'timestamp': 'Thu Sep 15 2016 14:20:00 GMT-0700 (PDT)',
 
       'id': {

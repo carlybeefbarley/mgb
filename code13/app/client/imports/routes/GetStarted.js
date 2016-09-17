@@ -45,7 +45,7 @@ export default class GetStarted extends Component {
           <div className="row">
             <div className="column">
               <div className="ui two cards stackable skills">
-                <a className="card" style={cardStyle} href="/Home">
+                <QLink className="card" style={cardStyle} to={`/assets/create`}>
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/alien.png" />
@@ -53,8 +53,8 @@ export default class GetStarted extends Component {
                     <h2 style={headerStyle}><i className="code icon" />&nbsp;Coding</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
-                </a>
-                <a className="card" style={cardStyle} href="/Home">
+                </QLink>
+                <QLink className="card" style={cardStyle} to={`/assets/create`}>
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/penguin.png" />
@@ -62,8 +62,8 @@ export default class GetStarted extends Component {
                     <h2 style={headerStyle}><i className="paint brush icon" />&nbsp;Pixel art</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
-                </a>
-                <a className="card" style={cardStyle} href="/Home">
+                </QLink>
+                <QLink className="card" style={cardStyle} to={`/assets/create`}>
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/samurai.png" />
@@ -71,8 +71,8 @@ export default class GetStarted extends Component {
                     <h2 style={headerStyle}><i className="music icon" />&nbsp;Audio &amp; music</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
-                </a>
-                <a className="card" style={cardStyle} href="/Home">
+                </QLink>
+                <QLink className="card" style={cardStyle} to={`/assets/create`}>
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/slimy.png" />
@@ -80,8 +80,8 @@ export default class GetStarted extends Component {
                     <h2 style={headerStyle}><i className="idea icon" />&nbsp;Game design</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
-                </a>
-                <a className="card" style={cardStyle} href="/Home">
+                </QLink>
+                <QLink className="card" style={cardStyle} to={`/assets/create`}>
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/vampire.png" />
@@ -89,8 +89,8 @@ export default class GetStarted extends Component {
                     <h2 style={headerStyle}><i className="write icon" />&nbsp;Story writing</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
-                </a>
-                <a className="card" style={cardStyle} href="/Home">
+                </QLink>
+                <QLink className="card" style={cardStyle} to={`/assets/create`}>
                   <div className="content">
                     <div className="ui left floated image" style={mascotStyle}>
                       <img src="/images/mascots/shark.png" />
@@ -98,7 +98,7 @@ export default class GetStarted extends Component {
                     <h2 style={headerStyle}><i className="area chart icon" />&nbsp;Analytics</h2>
                     <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
                   </div>
-                </a>
+                </QLink>
               </div>
             </div>
           </div>

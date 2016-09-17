@@ -32,7 +32,7 @@ export default class GetStarted extends Component {
     }
 
     return (
-      <div className="ui container slim">
+      <div className="ui basic padded segment">
         <div className="ui grid stackable" style={{marginTop: '3.5em'}}>
           <div className="row">
             <div className="column">

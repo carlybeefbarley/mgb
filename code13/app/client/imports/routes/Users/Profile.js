@@ -237,7 +237,7 @@ export default UserProfileRoute = React.createClass({
       
     const retval = projects.map( (project) => {
       const isOwner = (project.ownerId === this.props.user._id)
-      const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Member"
+      const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
       const projImg = getProjectAvatarUrl(project)
 
       return (isOwner !== ownedFlag) ? null : (

@@ -19,8 +19,8 @@ export default RecentlyEditedAssetGET = React.createClass({
 
     return {
       activity: Activity.find( 
-        { byUserId: userId, toAssetId: {"$ne": "" }, limit: 4 }, 
-        { sort: {timestamp: -1} } 
+        { byUserId: userId, toAssetId: {"$ne": "" } }, 
+        { sort: {timestamp: -1}, limit: 1 } 
       ).fetch(),
       
       loading: !handleActivity.ready()
@@ -32,7 +32,7 @@ export default RecentlyEditedAssetGET = React.createClass({
     if (!userId || userId === "") return null
     if (this.data.loading) return <span>...</span>
     const nothin = <span><em>nothing yet...</em></span>
-debugger    
+
     if (!this.data.activity || this.data.activity.length === 0) return nothin
     const activity = this.data.activity[0]
     if (!activity) return nothin

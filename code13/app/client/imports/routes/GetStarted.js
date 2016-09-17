@@ -32,13 +32,13 @@ export default class GetStarted extends Component {
     }
 
     return (
-      <div className="ui basic padded segment">
+      <div className="ui basic padded segment slim" style={{margin: '0 auto'}}>
         <div className="ui grid stackable" style={{marginTop: '3.5em'}}>
           <div className="row">
             <div className="column">
               <h1 className="ui huge header" style={{fontSize: '2.5em'}}>
                 What would you like to try?
-                <em className="sub header">There are lots of skills to learn</em>
+                <em className="sub header">There's a lot to learn</em>
               </h1>
             </div>
           </div>

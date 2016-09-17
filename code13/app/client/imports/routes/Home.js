@@ -1,16 +1,24 @@
-import _ from 'lodash';
-import React, {Component} from 'react';
-import styles from './home.css';
-import QLink from './QLink';
-import Footer from '/client/imports/components/Footer/Footer';
-import getStartedStyle from './GetStarted.css';
+import React, { PropTypes, Component } from 'react'
+import styles from './home.css'
+import QLink from './QLink'
+import Footer from '/client/imports/components/Footer/Footer'
+import getStartedStyle from './GetStarted.css'
+import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
+
+
+const _propTypes = {
+  params: PropTypes.object,           // params.assetId is the ASSET id
+  currUser: PropTypes.object,
+  currUserProjects: PropTypes.array   // Both Owned and memberOf. Check ownerName / ownerId fields to know which
+}
 
 
 export default class Home extends Component {
 
   render() {
-    const currUser = this.props.currUser
+    const { currUser } = this.props
     const username = currUser ? currUser.profile.name : "guest"
+    const userId = currUser ? currUser._id : null
 
     return (
       <div>
@@ -25,15 +33,14 @@ export default class Home extends Component {
                     <em className="sub header" style={{fontSize: '0.5em'}}>The Online Game-builder</em>
                   </h1>
                 { currUser ?
-                  <p style={{fontSize: '1.5em', maxWidth: '450px'}}>
-                    Creating a game is now an MMO:<br />Make, watch, chat and play games with friends so you learn together.
+                  <p style={{fontSize: '1.5em', maxWidth: '400px'}}>
+                    Welcome back, {username}!
                     <br />
-                    <QLink to={`/getstarted`}>
-                      <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Get started</button>
-                    </QLink>
-                    <QLink to={`/u/${this.props.currUser.profile.name}/assets`}>
-                      <button className="ui teal huge button" style={{ marginTop: '1.5em', marginLeft: '0.75em' }}>Keep going</button>
-                    </QLink>
+                    Last time you were working on <RecentlyEditedAssetGET userId={userId} />
+                    <br />
+                    Want to keep going?
+                    <br />
+                    <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Get back to work</button>
                   </p>
                   :
                   <p style={{ fontSize: '1.5em', maxWidth: '450px' }}>

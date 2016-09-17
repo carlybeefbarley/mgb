@@ -7,7 +7,6 @@ import { snapshotActivity } from '/imports/schemas/activitySnapshots.js';
 import { templateCode } from './templates/TemplateCode.js';
 import { js_beautify } from 'js-beautify';
 import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
-import KeyBindingAssist from '../../Skills/Keybindings.js';
 import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
 
@@ -1201,23 +1200,6 @@ export default class EditCode extends React.Component {
               </div>
               }
 
-
-              { /* Keyboard/Mouse shortcuts */}
-              <div className="title">
-                <span className="explicittrigger">
-                  <i className="dropdown icon"></i>
-                  Code Editor Keyboard/Mouse shortcuts
-                  </span>
-              </div>
-              <div className="content">
-                <KeyBindingAssist commandContext="editor.text."/>
-
-                <p>Mouse: <code>alt-shift</code> + Mouse Wheel in the code edit window will change the editor font size
-                </p>
-
-                <p>Mouse: <code>alt</code> + Mouse Wheel in the code edit window will fade comments in/out for
-                  readability</p>
-              </div>
             </div>
           </div>
 

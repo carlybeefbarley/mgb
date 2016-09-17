@@ -1,29 +1,32 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
 
 // TODO: use full list from view-source:https://codemirror.net/demo/search.html
 
-export default KeyBindingAssist = React.createClass({
+export default KeyBindings = React.createClass({
   propTypes: {
     commandContext: PropTypes.string
   },
 
   makeList: function (cmdContext) {
-    return keysDB.filter(v => v.command.startsWith(cmdContext)).map(v2 => <a className='item' key={v2.command}>
-                                                                            <div className='ui horizontal label'>
-                                                                              {v2.pcKey} </div>
-                                                                            {v2.description}
-                                                                          </a>
+    return keysDB.filter(v => v.command.startsWith(cmdContext)).map(v2 => (
+      <a className='item' key={v2.command}>
+        <div className='ui horizontal label' style={{width: "5em"}}>
+          {v2.pcKey} 
+        </div>
+        <small>{v2.description}</small>
+      </a>
+      )
     )
   },
 
   render: function () {
+    const { commandContext } = this.props
     return (
-      <div className='ui divided selection list'>
-        {this.makeList(this.props.commandContext)}
+      <div className='ui divided selection list' title="This isn't really correct yet. Sorry!" >
+        Keys for context: { commandContext } 
+        {this.makeList(commandContext)}
       </div>)
   }
-
 })
 
 export const keysDB = [

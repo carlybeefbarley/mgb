@@ -4,24 +4,26 @@ import React, { PropTypes } from 'react'
 import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'
 import fpActivity from './fpActivity'
+import fpKeyboard from './fpKeyboard'
 import fpNetwork from './fpNetwork'
 import fpAssets from './fpAssets'
+import fpGoals from './fpGoals'
 import fpUsers from './fpUsers'
 import fpChat from './fpChat'
-import fpGoals from './fpGoals'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const flexPanelViews = [
   //{ tag: "chat",  name: "chat",  icon: "chat",    el: fpGoals },
-  { tag: "activity",  name: "activity", icon: "lightning",  hdr: "Activity",        el: fpActivity,      superAdminOnly: false },
-  { tag: "assets",    name: "assets",   icon: "pencil",     hdr: "Assets",          el: fpAssets,        superAdminOnly: false },
-  { tag: "users",     name: "users",    icon: "users",      hdr: "Users",           el: fpUsers,         superAdminOnly: false },
-  { tag: "chat",      name: "chat",     icon: "chat",       hdr: "Chat",            el: fpChat,          superAdminOnly: false },
-  { tag: "features",  name: "options",  icon: "options",    hdr: "Feature Levels",  el: fpFeatureLevels, superAdminOnly: false },
-  { tag: "super",     name: "admin",    icon: "red bomb",   hdr: "SuperAdmin",      el: fpSuperAdmin,    superAdminOnly: true  },
-  { tag: "network",   name: "network",  icon: "red signal", hdr: "Network",         el: fpNetwork,       superAdminOnly: true  }, // SuperAdmin while being tested
-  { tag: "goals",     name: "goals",    icon: "red student",hdr: "Goals",           el: fpGoals,         superAdminOnly: true  }, // SuperAdmin while being tested
+  { tag: "activity",  name: "activity", icon: "lightning",  hdr: "Activity",          el: fpActivity,      superAdminOnly: false },
+  { tag: "assets",    name: "assets",   icon: "pencil",     hdr: "Assets",            el: fpAssets,        superAdminOnly: false },
+  { tag: "users",     name: "users",    icon: "users",      hdr: "Users",             el: fpUsers,         superAdminOnly: false },
+  { tag: "chat",      name: "chat",     icon: "chat",       hdr: "Chat",              el: fpChat,          superAdminOnly: false },
+  { tag: "features",  name: "options",  icon: "options",    hdr: "Feature Levels",    el: fpFeatureLevels, superAdminOnly: false },
+  { tag: "keys",      name: "keys",     icon: "keyboard",   hdr: "Keyboard Shortcuts",el: fpKeyboard,      superAdminOnly: false },
+  { tag: "super",     name: "admin",    icon: "red bomb",   hdr: "SuperAdmin",        el: fpSuperAdmin,    superAdminOnly: true  }, // ALWAYS SuperAdmin
+  { tag: "network",   name: "network",  icon: "red signal", hdr: "Network",           el: fpNetwork,       superAdminOnly: true  }, // SuperAdmin while being tested
+  { tag: "goals",     name: "goals",    icon: "red student",hdr: "Goals",             el: fpGoals,         superAdminOnly: true  }  // SuperAdmin while being tested
 ]
 
 const defaultPanelViewIndex = 0

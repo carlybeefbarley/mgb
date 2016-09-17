@@ -29,6 +29,7 @@ export default npHome = React.createClass({
         <div className="header item">My Game Builder v2</div>
         <div className="menu">
           <QLink to="/" className="item">Home Page</QLink>
+          <QLink to="/getstarted" className="item">Get Started</QLink>
           <QLink to="/whatsnew" className="item">
             What's New
             <WhatsNew currUser={currUser} />

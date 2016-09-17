@@ -25,14 +25,15 @@ export default class Home extends Component {
                     <em className="sub header" style={{fontSize: '0.5em'}}>The Online Game-builder</em>
                   </h1>
                 { currUser ?
-                  <p style={{fontSize: '1.5em', maxWidth: '400px'}}>
-                    Welcome back, {username}!
+                  <p style={{fontSize: '1.5em', maxWidth: '450px'}}>
+                    Creating a game is now an MMO:<br />Make, watch, chat and play games with friends so you learn together.
                     <br />
-                    Last time you were working on ImportTestSize.
-                    <br />
-                    Want to keep going?
-                    <br />
-                    <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Get back to work</button>
+                    <QLink to={`/getstarted`}>
+                      <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Get started</button>
+                    </QLink>
+                    <QLink to={`/u/${this.props.currUser.profile.name}/assets`}>
+                      <button className="ui teal huge button" style={{ marginTop: '1.5em', marginLeft: '0.75em' }}>Keep going</button>
+                    </QLink>
                   </p>
                   :
                   <p style={{ fontSize: '1.5em', maxWidth: '450px' }}>

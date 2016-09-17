@@ -49,12 +49,12 @@ export default class Home extends Component {
             </div>
           </div>
         </div>
-        <div className="ui container slim" style={{paddingTop: "3em", paddingBottom: "2em"}}>
+        <div className="ui container slim" style={{paddingTop: "2.5em", paddingBottom: "2em"}}>
           <div className="ui padded grid stackable">
             <div className="equal width row">
               <div className="ui stackable three column grid">
                 <div className="column">
-                  <h2>Grow your <em>real</em> skill tree</h2>
+                  <h2 style={{marginBottom: "1em"}}>Grow your <em>real</em> skill tree</h2>
                   <div className="ui very relaxed list">
                     <div className="item">
                       <i className="code large icon" />
@@ -93,6 +93,7 @@ export default class Home extends Component {
                       </div>
                     </div>
                   </div>
+                  <br />
                   <QLink to={`/getstarted`}>
                   { currUser ?
                     <button className="ui teal large button">Set skill goals</button>
@@ -102,7 +103,7 @@ export default class Home extends Component {
                   </QLink>
                 </div>
                 <div className="column">
-                  <h2>Watch games being made</h2>
+                  <h2 style={{marginBottom: "1em"}}>Watch games being made</h2>
                   <div className="ui very relaxed list">
                     <div className="item">
                       <img className="ui small middle aligned image rounded bordered" style={{ width: 100 }} src="/images/frontpage_mgb1.png" />
@@ -126,12 +127,13 @@ export default class Home extends Component {
                       </div>
                     </div>
                   </div>
+                  <br />
                   <QLink to={`/assets`}>
                     <button className="ui black large button">See more games</button>
                   </QLink>
                 </div>
                 <div className="column">
-                  <h2>Meet creative friends</h2>
+                  <h2 style={{marginBottom: "1em"}}>Meet creative friends</h2>
                   <div className="ui very relaxed list">
                     <div className="item">
                       <img className="ui image avatar middle aligned" style={{ height: 60, width: 60 }} src="http://semantic-ui.com/images/avatar/small/helen.jpg" />
@@ -155,6 +157,7 @@ export default class Home extends Component {
                       </div>
                     </div>
                   </div>
+                  <br />
                   <QLink to={`/assets`}>
                     <button className="ui black large button">See more creators</button>
                   </QLink>

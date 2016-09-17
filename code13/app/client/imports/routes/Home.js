@@ -44,7 +44,7 @@ export default class Home extends Component {
                       <button className="ui teal huge button" style={{ marginTop: '1.5em' }}>Keep going</button>
                     </QLink>
                     <QLink to={`/getstarted`}>
-                      <button className="ui teal huge button" style={{ marginTop: '1.5em', marginLeft: '0.5em' }}>Set skill goals</button>
+                      <button className="ui teal huge button" style={{ marginTop: '1.5em', marginLeft: '0.5em' }}>Learn new skills</button>
                     </QLink>
                   </p>
                   :

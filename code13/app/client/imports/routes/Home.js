@@ -170,7 +170,7 @@ export default class Home extends Component {
                     </div>
                   </div>
                   <br />
-                  <QLink to={`/assets`}>
+                  <QLink to={`/users`}>
                     <button className="ui black large button">See more creators</button>
                   </QLink>
                 </div>

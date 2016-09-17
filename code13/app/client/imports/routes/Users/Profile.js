@@ -216,9 +216,9 @@ export default UserProfileRoute = React.createClass({
     const { projects } = this.data
     return (
       <div className="eight wide column">
-      <h2><QLink to={`/u/${user.profile.name}/projects`}>My Owned Projects</QLink></h2>
+      <h2><QLink to={`/u/${user.profile.name}/projects`}>Owned Projects</QLink></h2>
         { this.renderProjects(user, projects, true) }
-      <h2><QLink to={`/u/${user.profile.name}/projects`}>Projects I am a member of</QLink></h2>
+      <h2><QLink to={`/u/${user.profile.name}/projects`}>Member of</QLink></h2>
         { this.renderProjects(user, projects, false) }
       </div>
     )

@@ -7,7 +7,7 @@ import QLink from '/client/imports/routes/QLink'
 export default ProjectSelector = React.createClass({
   propTypes: {
     canEdit:              PropTypes.bool,
-    user:                 PropTypes.object.isRequired,  // User who we are selecting on behalf of
+    user:                 PropTypes.object,             // User who we are selecting on behalf of. CAN BE NULL
     availableProjects:    PropTypes.array,              // Array of Projects for that user (owned & memberOf). See projects.js for schema. Can include owned or memberOf
     chosenProjectName:    PropTypes.string,             // null means 'all'    // TODO: Also ADD projectOWNER !!!!!!!!!!!!!
     showProjectsUserIsMemberOf:  PropTypes.bool,        // if True then also show MemberOf projects
@@ -22,11 +22,12 @@ export default ProjectSelector = React.createClass({
     const { user, canEdit, availableProjects, showProjectsUserIsMemberOf, ProjectListLinkUrl } = this.props
     let ownedProjects = []
     let memberOfProjects = []
+    const userName = user ? user.profile.name : "guest"
 
-    // Build the list of 'View Project' Menu choices of OWNED  and MEMBER projects
+    // Build the list of 'View Project' Menu choices of OWNED and MEMBER projects
     _.each(availableProjects, (project) => { 
       const isActive = (project.name === pName)     // TODO: Also ADD projectOWNER !!!!!!!!!!!!!
-      const isOwner = (project.ownerId === user._id)
+      const isOwner = user && (project.ownerId === user._id)
       const entry = (
         <a  className={"ui item"+ (isActive ? " active" : "")} 
             data-value={project} 
@@ -59,18 +60,18 @@ export default ProjectSelector = React.createClass({
         <a  className="ui header"
             data-value="__ownedHdr"
             key="__ownedHdr">
-            Projects owned by {user.profile.name}
+            Projects owned by {userName}
         </a>)
     }
     else
-      ownedProjects = <div className="ui disabled item">(No projects owned by {user.profile.name}</div>
+      ownedProjects = <div className="ui disabled item">(No projects owned by {userName}</div>
 
     if (memberOfProjects.length > 0)
       memberOfProjects.unshift(
         <a  className="ui header"
             data-value="__memberHdr"
             key="__memberHdr">
-            Projects {user.profile.name} is a Member of
+            Projects {userName} is a Member of
         </a>
       )
 
@@ -84,9 +85,11 @@ export default ProjectSelector = React.createClass({
           { ownedProjects }
           { showProjectsUserIsMemberOf && memberOfProjects }
           <div className="divider"></div>
-          <QLink className="ui item" to={ProjectListLinkUrl}>
-            { canEdit ? "Manage Projects" : "View Project List" }
-          </QLink>
+          { user &&
+            <QLink className="ui item" to={ProjectListLinkUrl}>
+              { canEdit ? "Manage Projects" : "View Project List" }
+            </QLink>
+          }
         </div>
       </div>
     )

@@ -48,6 +48,11 @@ export default AssetCreateNewRoute = React.createClass({
    * @param {string} projectOwnerName - if projectName is a nonEmpty string, should be a valid projectOwnerName
    */
   handleCreateAssetClickFromComponent(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) {
+    if (!this.props.currUser) {
+      alert("You must be login to create a new Asset")
+      return
+    }
+
     let newAsset = {
       name: assetName,
       kind: assetKindKey,
@@ -76,7 +81,5 @@ export default AssetCreateNewRoute = React.createClass({
         utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/asset/${result}`)
       }
     })
-
   }
-
 })

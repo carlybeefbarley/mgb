@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { utilPushTo } from '../QLink'
 import reactMixin from 'react-mixin'
@@ -17,6 +18,8 @@ import WorkState from '/client/imports/components/Controls/WorkState'
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
+
+import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
 const FLUSH_TIMER_INTERVAL_MS = 5000    // Milliseconds between timed flush attempts
 
@@ -141,8 +144,6 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-
-
   canCurrUserEditThisAsset: function() {
     if (!this.data.asset || this.data.loading || !this.props.currUser)
       return false  // Need to at least be logged in and have the data to do any edits!
@@ -174,7 +175,7 @@ export default AssetEditRoute = React.createClass({
           if (asset.ownerId === cup[currUserProjectIdx].ownerId
            && apn[assetProjectIdx] === cup[currUserProjectIdx].name)
           {
-            console.log(`CanEdit=true because asset "${asset.name}" is in project "${apn[assetProjectIdx]}" and user ${currUser.profile.name} is a member of Project "${asset.ownerName}.${cup[currUserProjectIdx].name}"`)
+            console.log(`CanEdit=true because asset "${asset.name}" is in project "${apn[assetProjectIdx]}" and user ${currUser.profile.name} is a member of Project "${asset.dn_ownerName}.${cup[currUserProjectIdx].name}"`)
             return true
           }
         }
@@ -206,6 +207,12 @@ export default AssetEditRoute = React.createClass({
 
     const canEd = this.canCurrUserEditThisAsset()
     const currUserId = currUser ? currUser._id : null
+
+    const chosenProjectNamesArray = asset.projectNames || [];
+    const availableProjectNamesArray = 
+        currUserProjects ? 
+          _.map(_.filter(currUserProjects, {"ownerId": asset.ownerId}), 'name')
+        : []
 
 
     return (
@@ -255,13 +262,13 @@ export default AssetEditRoute = React.createClass({
             currUser={currUser}
             assetActivity={this.data.assetActivity} />
           &emsp;
-          <AssetProjectDetail 
-            currUserId={currUserId}
+          <ProjectMembershipEditorV2 
+            canEdit={canEd}
             asset={asset}
-            currUserProjects={currUserProjects}
-            projectNames={asset.projectNames || []}
-            isDeleted={asset.isDeleted} />
-
+            currUserId={currUserId}
+            currUserProjects={currUserProjects}            
+            handleToggleProjectName={this.handleToggleProjectName}
+            />
         </div>
 
         <div className="sixteen wide column">
@@ -407,8 +414,14 @@ export default AssetEditRoute = React.createClass({
       })      
       logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset)
     }
+    // TODO:  Call snapshotActivity after rename so it will fix up any stale names:
+    // import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
+    //            We would need the most recent passiveActivity which is asset-kind-specific
+    //            so we need to pass down a handler for the asset-specific editors to let us
+    //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use 
+    //            the most recent passive activity 
+    
   },
-
 
 // This should not conflict with the deferred changes since those don't change these fields :)
   handleWorkStateChange: function(newWorkState) {
@@ -420,16 +433,28 @@ export default AssetEditRoute = React.createClass({
       })
       logActivity("asset.workState",  `WorkState changed from ${oldState} to "${newWorkState}"`, null, this.data.asset)
     }
-  }
+  },
 
+// This should not conflict with the deferred changes since those don't change these fields :)
+  handleToggleProjectName: function(pName)
+  {
+    const { asset } = this.data
+    const list = asset.projectNames || []
+    const inList = _.includes(list, pName)
+    let newChosenProjectNamesArray = inList ? _.without(list, pName) : _.union(list,[pName])
+    newChosenProjectNamesArray.sort()
+
+    Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), {projectNames: newChosenProjectNamesArray}, (err, res) => {
+      if (err)
+        this.props.showToast(err.reason, 'error')
+    })
+    
+    if (inList)
+      logActivity("asset.project",  `removed Asset from project '${pName}'`, null, asset)
+    else
+      logActivity("asset.project",  `Added Asset to project '${pName}'`, null, asset)
+  }  
   
-  
-  // TODO:  Call snapshotActivity after rename so it will fix up any stale names:
-  // import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-  //            We would need the most recent passiveActivity which is asset-kind-specific
-  //            so we need to pass down a handler for the asset-specific editors to let us
-  //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use 
-  //            the most recent passive activity 
 })
 
 

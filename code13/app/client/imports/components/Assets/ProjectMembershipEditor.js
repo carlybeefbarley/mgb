@@ -1,6 +1,5 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import {Link} from 'react-router';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 
 // This is a compact editor for membership
 

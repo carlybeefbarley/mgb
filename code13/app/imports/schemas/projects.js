@@ -302,8 +302,7 @@ export function calculateProjectAccessRightsForAsset(currUserId, asset, currUser
       projectName: pName,
       isCurrUserProjectOwner:  asset.ownerId === currUserId,    // Pretty simple logic for this given that it's our axiom
       isCurrUserProjectMember: _.some(currUsersProjects, usrProj => (
-        usrProj.name === pName && 
-        usrProj.ownerId === asset.ownerId &&
+        ( usrProj.name === pName &&  usrProj.ownerId === asset.ownerId ) &&
         _.includes(usrProj.memberIds, currUserId) 
       ))
     }
@@ -322,6 +321,20 @@ const NOACCESS_COLOR = "grey"
 export const getColorNameForProjectAccess = (pte) => ( 
   pte.isCurrUserProjectOwner ? OWNED_COLOR :
     (pte.isCurrUserProjectMember ? MEMBER_COLOR : NOACCESS_COLOR)
+)
+
+
+const OWNED_MSG = "owner"
+const MEMBER_MSG = "member"
+const NOACCESS_MSG = "no access"
+
+/**
+ * This is a helper for visuals. It uses the ProjectTableEntries returned from calculateProjectAccessRightsForAsset() above
+ * It returns a css color string, e.g. "red"
+ */
+export const getMsgForProjectAccess = (pte) => ( 
+  pte.isCurrUserProjectOwner ? OWNED_MSG :
+    (pte.isCurrUserProjectMember ? MEMBER_MSG : NOACCESS_MSG)
 )
 
 

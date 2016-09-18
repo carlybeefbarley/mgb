@@ -4,7 +4,7 @@
 import _ from 'lodash'
 import { Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
-import { defaultWorkStateName } from '/imports/Enums/workStates'
+import { bestWorkStateName, defaultWorkStateName } from '/imports/Enums/workStates'
 
 // The 'projects' concept is a BIG DEAL in MGB, so get ready for a big-ass comment explaining it 
 // all. Got a coffee? You may need one :)  
@@ -282,6 +282,13 @@ export function projectMakeSelector(userId)
       { ownerId: userId },
       { memberIds: { $in: [userId]} }
     ]
+  }
+}
+
+export function projectMakeFrontPageListSelector() 
+{
+  return {
+    workState: bestWorkStateName
   }
 }
 

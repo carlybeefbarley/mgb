@@ -3,7 +3,7 @@
 import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings } from '/imports/schemas'
 import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
 import { userSorters } from '/imports/schemas/users'
-import { projectMakeSelector } from '/imports/schemas/projects'
+import { projectMakeSelector, projectMakeFrontPageListSelector } from '/imports/schemas/projects'
 import { chatParams } from '/imports/schemas/chats'
 
 //
@@ -139,6 +139,14 @@ Meteor.publish('projects.byUserId', function(userId) {
   const selector = projectMakeSelector(userId)
   return Projects.find(selector)
 })
+
+Meteor.publish('projects.frontPageList', function (limitCount=5) {
+  const selector = projectMakeFrontPageListSelector()
+  return Projects.find(selector, { limit: limitCount, sort: {updatedAt: -1} } )
+})
+
+Projects._ensureIndex({"updatedAt": -1})
+Projects._ensureIndex({"workState": -1})
 
 
 //

@@ -4,6 +4,7 @@ import QLink from './QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import getStartedStyle from './GetStarted.css'
 import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
+import ProjectsBeingMadeGET from '/client/imports/components/Projects/ProjectsBeingMadeGET'
 
 
 const _propTypes = {
@@ -12,6 +13,7 @@ const _propTypes = {
   currUserProjects: PropTypes.array   // Both Owned and memberOf. Check ownerName / ownerId fields to know which
 }
 
+const _hdrSpaceBelowSty = {marginBottom: "1em"}
 
 const HeroBanner = (props) => (
   <div className="ui padded grid stackable" style={{ paddingTop: '1.25em', paddingBottom: '1.75em' }}>
@@ -53,7 +55,7 @@ const HeroBanner = (props) => (
 
 const SkillTreeColumn = (props) => (
   <div className="column">
-    <h2 style={{marginBottom: "1em"}}>Grow your <em>real</em> skill tree</h2>
+    <h2 style={_hdrSpaceBelowSty}>Grow your <em>real</em> skill tree</h2>
     <div className="ui very relaxed list">
       <div className="item">
         <i className="code large icon" />
@@ -105,40 +107,19 @@ const SkillTreeColumn = (props) => (
 
 const ProjectsBeingMadeColumn = () => (
   <div className="column">
-    <h2 style={{marginBottom: "1em"}}>Watch games being made</h2>
-    <div className="ui very relaxed list">
-      <div className="item">
-        <img className="ui small middle aligned image rounded bordered" style={{ width: 100 }} src="/images/frontpage_mgb1.png" />
-        <div className="content middle aligned" style={{ marginLeft: '1em' }}>
-          <h3>Maze escape 3</h3>
-          <p><i className="play icon" />10,510 Plays</p>
-        </div>
-      </div>
-      <div className="item">
-        <img className="ui small middle aligned image rounded bordered" style={{ width: 100 }} src="/images/frontpage_mgb1.png" />
-        <div className="content middle aligned" style={{ marginLeft: '1em' }}>
-          <h3>Snail racer</h3>
-          <p><i className="play icon" />3,489 Plays</p>
-        </div>
-      </div>
-      <div className="item">
-        <img className="ui small middle aligned image rounded bordered" style={{ width: 100 }} src="/images/frontpage_mgb1.png" />
-        <div className="content middle aligned" style={{ marginLeft: '1em' }}>
-          <h3>untitled_4</h3>
-          <p><i className="play icon" />1,302 Plays</p>
-        </div>
-      </div>
-    </div>
+    <h2 style={_hdrSpaceBelowSty}>Watch games being made</h2>
+    <ProjectsBeingMadeGET numEntries={4} chosenClassName="ui very relaxed list" />
     <br />
     <QLink to={`/assets`}>
       <button className="ui black large button">See more games</button>
     </QLink>
-  </div>  
+  </div>
 )
+
 
 const MeetFriendsColumn = () => (
   <div className="column">
-    <h2 style={{marginBottom: "1em"}}>Meet creative friends</h2>
+    <h2 style={_hdrSpaceBelowSty}>Meet creative friends</h2>
     <div className="ui very relaxed list">
       <div className="item">
         <img className="ui image avatar middle aligned" style={{ height: 60, width: 60 }} src="http://semantic-ui.com/images/avatar/small/helen.jpg" />

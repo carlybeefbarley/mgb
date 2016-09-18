@@ -37,6 +37,10 @@ function userHasLoggedIn(loginInfo)
 
 Meteor.startup(function () {
 
+  if (Meteor.isProduction)
+    Meteor.call('Slack.MGB.productionStartup')
+
+
   Accounts.onLogin(userHasLoggedIn)
   
   //sets up keys for social logins

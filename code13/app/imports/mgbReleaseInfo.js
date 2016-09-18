@@ -15,12 +15,12 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Sun Sep 18 2016 10:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun Sep 18 2016 12:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1447'
+        'iteration': '1451'
       },
 
       'releaseManagement': {
@@ -32,7 +32,7 @@ export default mgbReleaseInfo = {
           'featureTag': 'nav.layout',
           'type': 'improvement',
           'changeName': 'New Home and Get Started pages',
-          'changeSummary': 'They are incomplete, but show the design direction for getting started leading into tutorials.',
+          'changeSummary': 'These are incomplete, but show the design direction for \`Getting Started\` leading into the (coming soon) tutorials UI.',
           'otherUrls': []
         },
         {

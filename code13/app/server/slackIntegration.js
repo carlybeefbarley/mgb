@@ -1,4 +1,6 @@
 import request from 'request'
+import os from 'os'   // Node OS import for os.hostname()
+import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 // Server side webhook
 
 // The following was defined by dgolds who has config rights for the devlapse.slack.com account:
@@ -75,6 +77,28 @@ Meteor.methods({
       username: `MGBv2 @${username}`,
       icon_emoji: ':card_file_box:',
       text: `New Project <${projectUrl}|${projectname}> created by user <${userUrl}|${username}>`
+    })
+  }
+})
+
+Meteor.methods({
+  "Slack.MGB.productionStartup": function() {
+    const mgbVer = `Iteration ${mgbReleaseInfo.releases[0].id.iteration}`
+    const configDumpMsg=!os ? "(no OS object)" : `
+[
+  MGB=${mgbVer}
+  Hostname=${os.hostname()}
+  Meteor=${Meteor.release}
+  Arch=${os.arch()}
+  CpuCount=${os.cpus().length}
+  FreeMem=${(os.freemem()/(1024*1024*1024)).toFixed(2)}GB
+  TotalMem=${os.totalmem()/(1024*1024*1024)}GB
+  OS=${os.platform()}-${os.release()}
+]`
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `(MGBv2 DEPLOYMENT ENGINEER)`,
+      icon_emoji: ':airplane_departure:',
+      text: `MGB PRODUCTION DEPLOYMENT STARTUP ${configDumpMsg}`
     })
   }
 })

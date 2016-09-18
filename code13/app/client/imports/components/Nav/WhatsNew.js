@@ -1,7 +1,6 @@
-import _ from 'lodash';
-import React, {PropTypes} from 'react';
-import mgbReleaseInfo from './mgbReleaseInfo.js';
-import QLink from "/client/imports/routes/QLink";
+import React, { PropTypes } from 'react'
+import mgbReleaseInfo from '/imports/mgbReleaseInfo'
+import QLink from "/client/imports/routes/QLink"
 
 // Would be nice to do something like http://thejoyofux.tumblr.com/post/85707480676/the-wolf-of-trello-presenting-rew-features-in-a
 

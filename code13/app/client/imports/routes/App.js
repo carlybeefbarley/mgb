@@ -17,7 +17,7 @@ import Toast from '/client/imports/components/Nav/Toast'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
-import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo'
+import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'

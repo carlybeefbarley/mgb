@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react'
 import QLink from './QLink'
 import Footer from '/client/imports/components/Footer/Footer'
-import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo'
+import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import moment from 'moment'
 
 export default WhatsNewRoute = React.createClass({

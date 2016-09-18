@@ -27,7 +27,10 @@ const _initPopup = (c, popupPosition, isHoverable) => (
 
 const WorkState = (props) => {
   const description = `Quality: ${props.workState}`
-  const labelSty = { marginBottom: "4px" }
+  const labelSty = {
+    marginBottom: "4px",
+    textAlign: "left",
+  }
 
   return (
     <span>
@@ -38,29 +41,33 @@ const WorkState = (props) => {
         { !props.showMicro && description }
       </div>
       { props.canEdit &&
-        <div className="ui popup">
+        <div className="ui popup" style={{fontSize: '16px'}}>
           { props.showMicro &&
-            <div className="ui left aligned header"><small>Stated Quality is:</small></div>
+            <div className="ui left aligned header"><small>Quality level</small></div>
           }
+          <div className="ui left aligned selection list">
           {
             _.map(workStateNames, (name,idx) => (
                 <div
                   key={idx}
                   style={labelSty}
-                  className={`ui fluid ${workStateColors[name]} label`}
+                  className={`ui item left aligned fluid ${workStateColors[name]} ${(name == props.workState) ? "active" : ""}`}
                   onClick={(e) => {
                     e.preventDefault()
                     $(this._popupInitiator).popup('hide')
                     props.canEdit && props.handleChange && props.handleChange(name)
                   }}>
-                  {name}
-                  <div className="detail">
-                    <i className={(name === props.workState) ? "black checkmark icon" : "icon"} />
+                  <div className={`workstate ui ${workStateColors[name]} circular label`}
+                      title={name}>
+                      <i className={`black ${workStateIcons[name]} icon`} style={{margin: '0'}}></i>
                   </div>
+                  &nbsp;&nbsp;
+                  {name}
                 </div>
               )
             )
           }
+          </div>
         </div>
       }
     </span>

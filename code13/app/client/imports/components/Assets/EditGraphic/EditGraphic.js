@@ -197,20 +197,6 @@ export default class EditGraphic extends React.Component {
     let $a = $(ReactDOM.findDOMNode(this))
     $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
 
-    // let $cp =  $a.find('.mgbColorPickerHost')
-    let $cp =  $a.find('.layout.icon').parent()
-    $cp.popup({
-      popup: '.mgbColorPickerWidget.popup',
-      lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
-      hoverable: true
-    })
-
-    // let $resizer =  $a.find('.mgbResizerHost')
-    // $resizer.popup({
-    //   popup: '.mgbResizer.popup',
-    //   lastResort: 'right center',               // https://github.com/Semantic-Org/Semantic-UI/issues/3004
-    //   hoverable: true
-    // })
   }
 
 // TODO: DGOLDS to clean this up
@@ -879,7 +865,7 @@ export default class EditGraphic extends React.Component {
 
     // So we have to fix up UI stuff. This is a bit of a hack for perf. See statusBarInfo()
     let colorCSSstring = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
-    $('.layout.icon').css( { color: colorCSSstring})
+    $('.mgbColorPickerIcon.icon').css( { color: colorCSSstring})
   }
 
 

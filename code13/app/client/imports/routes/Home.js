@@ -16,10 +16,10 @@ const _propTypes = {
 const _hdrSpaceBelowSty = {marginBottom: "1em"}
 
 const HeroBanner = (props) => (
-  <div className="ui basic padded segment slim" style={{ margin: '0 auto', paddingTop: '1.25em', paddingBottom: '1.75em' }}>
+  <div className="ui basic segment slim" style={{ margin: '0 auto', paddingTop: '1.25em', paddingBottom: '2.75em' }}>
     <div className="row">
       <div className="column">
-        <img className="ui small right floated image" src="/images/mascots/team.png" style={{width: "480px", marginTop: "1.5em"}} />
+        <img className="ui small right floated image" src="/images/mascots/team.png" style={{width: "480px"}} />
         <h1 className="ui huge header" style={{fontSize: '3em', marginBottom: '0.5em'}}>
           My Game Builder
           <em className="sub header" style={{fontSize: '0.5em'}}>The Online Game-builder</em>

@@ -1,4 +1,4 @@
-export const workStateNames = 
+export const workStateNames =
   [
     "broken",
     "experiment",
@@ -12,10 +12,19 @@ export const defaultWorkStateName = "unknown"
 export const bestWorkStateName = "showcase"
 
 export const workStateColors = {
-  "broken": "brown",
+  "broken": "",
   "experiment": "orange",
   "unknown": "yellow",
-  "working": "olive",
-  "polished": "green",
-  "showcase": "teal"
+  "working": "green",
+  "polished": "teal",
+  "showcase": "pink"
+}
+
+export const workStateIcons = {
+  "broken": "bug",
+  "experiment": "lab",
+  "unknown": "help",
+  "working": "thumbs up",
+  "polished": "heart",
+  "showcase": "trophy"
 }

@@ -3,7 +3,7 @@
   z-index: 1000 !important
 }
 
-#root { 
+#root {
   height: auto;
 }
 
@@ -43,7 +43,7 @@ body {
   image-rendering:   -o-crisp-edges;         /* Opera */
   image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
   image-rendering: crisp-edges;
-  image-rendering: pixelated;       
+  image-rendering: pixelated;
 }
 
 .accept-drop{
@@ -211,7 +211,7 @@ body.dragging .accept-drop:hover{
     background-color: red;
   }
   100%{
-    
+
   }
 }
 @keyframes highlight {
@@ -279,4 +279,15 @@ body.dragging .accept-drop:hover{
 }
 .semi-transparent{
   opacity: 0.5;
+}
+
+/* make semantic-ui cards stack when we need to conserve space */
+.conserveSpace .ui.stackable.cards
+{
+  display: block;
+}
+
+.conserveSpace .ui.stackable.cards > .card
+{
+  width: calc(100% - 2em);
 }

@@ -16,7 +16,7 @@ const _propTypes = {
 const _hdrSpaceBelowSty = {marginBottom: "1em"}
 
 const HeroBanner = (props) => (
-  <div className="ui padded grid stackable" style={{ paddingTop: '1.25em', paddingBottom: '1.75em' }}>
+  <div className="ui basic padded segment slim" style={{ margin: '0 auto', paddingTop: '1.25em', paddingBottom: '1.75em' }}>
     <div className="row">
       <div className="column">
         <img className="ui small right floated image" src="/images/mascots/team.png" style={{width: "480px", marginTop: "1.5em"}} />

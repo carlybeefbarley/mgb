@@ -228,7 +228,9 @@ export default App = React.createClass({
               isSuperAdmin={isSuperAdmin}
               />
 
-            <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
+            <div
+              style={mainPanelOuterDivSty}
+              className={conserveSpace ? "conserveSpace noScrollbarDiv" : "noScrollbarDiv"}>
               <div style={mainPanelInnerDivSty}>
                 { this.state.showToast &&
                   <Toast content={this.state.toastMsg} type={this.state.toastType} />

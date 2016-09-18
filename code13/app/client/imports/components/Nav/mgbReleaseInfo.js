@@ -15,12 +15,12 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Sat Sep 17 2016 15:10:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun Sep 18 2016 10:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1445'
+        'iteration': '1447'
       },
 
       'releaseManagement': {
@@ -32,7 +32,21 @@ export default mgbReleaseInfo = {
           'featureTag': 'nav.layout',
           'type': 'improvement',
           'changeName': 'New Home and Get Started pages',
-          'changeSummary': 'They are incomplete, but show the design direction for getting started leading into tutorials. There is also the beginnings of a new Keyboard shortcuts page',
+          'changeSummary': 'They are incomplete, but show the design direction for getting started leading into tutorials.',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'nav.flexpanel.keys',
+          'type': 'feature',
+          'changeName': 'Keyboard shortcuts FlexPanel',
+          'changeSummary': 'There is new Keyboard shortcuts FlexPanel on the right of the window. This is only partially functional so far but will be context sensitive soon',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'nav.whatsnew',
+          'type': 'improvement',
+          'changeName': "Change summary in left column",
+          'changeSummary': 'The WhatsNew page now has change summaries in the left column',
           'otherUrls': []
         },
         {
@@ -40,6 +54,13 @@ export default mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Change Project while editing Asset',
           'changeSummary': 'Asset owners can change the Projects for an Asset while editing the Asset (click the top right projects label)',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.graphics',
+          'type': 'bugfix',
+          'changeName': 'Color Picker bugfix',
+          'changeSummary': 'There was a bug where the Color Picker would not work if the UI slider was at a minimum setting whern the page loaded. This is now fixed. ',
           'otherUrls': []
         }
       ]

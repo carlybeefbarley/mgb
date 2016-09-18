@@ -1,9 +1,8 @@
-import _ from 'lodash';
-import React, {PropTypes} from 'react';
-import QLink from './QLink';
-import Footer from '/client/imports/components/Footer/Footer';
-import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo';
-import moment from 'moment';
+import React, {PropTypes} from 'react'
+import QLink from './QLink'
+import Footer from '/client/imports/components/Footer/Footer'
+import mgbReleaseInfo from '/client/imports/components/Nav/mgbReleaseInfo'
+import moment from 'moment'
 
 export default WhatsNewRoute = React.createClass({
 
@@ -35,7 +34,7 @@ export default WhatsNewRoute = React.createClass({
       }, (error) => {
         if (error)
           console.log("Could not update profile with What's New timestamp")      
-      });      
+      })      
       
     }
   },
@@ -119,6 +118,20 @@ export default WhatsNewRoute = React.createClass({
     )
   },
   
+  
+  /** ct is a string from mgbReleaseInfo.releases[].changes[].type */
+  getIconForChangeType: function(ct) {
+    const iconNames = 
+      { 
+        "feature":     "green plus",
+        "improvement": "grey plus",
+        "bugfix":      "red bug", 
+        "removed":     "red remove" 
+      }
+
+    return <i className={"ui icon " + iconNames[ct]}></i>
+  },
+
 
   /** This is the left column. Uses React's state.releaseIdx */
   renderNewsMgbVersionsColumn: function() {
@@ -139,6 +152,10 @@ export default WhatsNewRoute = React.createClass({
                 v{r.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + r.id.iteration}</i></small>
                 <div className="right floated meta"><small>{ago}</small></div>
               </div>
+              <div className="meta">
+                { r.changes.map( (c,idx) => (<span key={idx}>&emsp;{ this.getIconForChangeType(c.type) }&nbsp;{ c.changeName }<br /></span>) )  }
+                <br />
+              </div>
             </div>
           )
         })
@@ -147,20 +164,6 @@ export default WhatsNewRoute = React.createClass({
     )
   },
   
-  
-  /** ct is a string from mgbReleaseInfo.releases[].changes[].type */
-  getIconForChangeType: function(ct) {
-    const iconNames = 
-      { 
-        "feature":     "green plus",
-        "improvement": "grey plus",
-        "bugfix":      "red bug", 
-        "removed":     "red remove" 
-      }
-
-    return <i className={"ui icon " + iconNames[ct]}></i>
-  },
-
   
   /** This is the right column. Uses React's state.releaseIdx */
   renderNewsRelChangesColumn: function() {

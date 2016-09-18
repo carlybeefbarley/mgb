@@ -34,6 +34,7 @@ const WorkState = (props) => {
   const labelSty = {
     marginBottom: "4px",
     textAlign: "left",
+    whiteSpace: "nowrap"
   }
 
   return (

@@ -25,8 +25,12 @@ const _initPopup = (c, popupPosition, isHoverable) => (
   })
 )
 
+const WorkStateIcon = (props) => (
+  <i className={`black ${workStateIcons[props.name]} icon`} style={{ margin: '0 0 0 -0.07em', fontSize: '1.25em'}}></i>
+)
+
 const WorkState = (props) => {
-  const description = `Quality: ${props.workState}`
+  const description = props.workState
   const labelSty = {
     marginBottom: "4px",
     textAlign: "left",
@@ -37,7 +41,7 @@ const WorkState = (props) => {
       <div className={`workstate ui ${workStateColors[props.workState]} ${props.showMicro ? "circular " : ""} label`}
           title={ props.canEdit ? null : description }
           ref={ (c) => { _initPopup(c, props.popupPosition, props.canEdit); this._popupInitiator = c } }>
-          <i className={`black ${workStateIcons[props.workState]} icon`} style={{margin: '0'}}></i>
+          <WorkStateIcon name={props.workState} />
         { !props.showMicro && description }
       </div>
       { props.canEdit &&
@@ -59,7 +63,7 @@ const WorkState = (props) => {
                   }}>
                   <div className={`workstate ui ${workStateColors[name]} circular label`}
                       title={name}>
-                      <i className={`black ${workStateIcons[name]} icon`} style={{margin: '0'}}></i>
+                      <WorkStateIcon name={name} />
                   </div>
                   &nbsp;&nbsp;
                   {name}

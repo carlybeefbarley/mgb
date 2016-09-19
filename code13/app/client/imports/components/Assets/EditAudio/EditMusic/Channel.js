@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 
 import sty from  './editMusic.css'
 import WaveSurfer from '../lib/WaveSurfer.js'
+import AudioConverter from '../lib/AudioConverter.js'
 
 export default class Channel extends React.Component {
 
@@ -32,6 +33,7 @@ export default class Channel extends React.Component {
   }
 
   componentDidMount () {
+    this.converter = new AudioConverter(this.props.audioCtx)
     this.waveCanvas = ReactDOM.findDOMNode(this.refs.waveCanvas)
     this.waveCtx = this.waveCanvas.getContext('2d')
     this.pasteCanvas = ReactDOM.findDOMNode(this.refs.pasteCanvas)
@@ -368,7 +370,13 @@ export default class Channel extends React.Component {
       this.calculateOffsetX()
       this.initAudio()
       this.drawWave()
-      this.props.saveChannel(this.props.channel)
+
+
+      this.converter.bufferToDataUri(channelData, (dataUri) => {
+        // console.log(dataUri)
+        this.props.channel.dataUri = dataUri
+        this.props.saveChannel(this.props.channel)
+      })
     }
   }
 

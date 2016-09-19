@@ -51,6 +51,59 @@ export default class SourceTools {
     this.mainJS = "main.js"
   }
 
+  collectAndTranspile(srcText, filename, callback, force = false) {
+    // TODO: break instantly callback chain
+    if (this.isDestroyed) return
+    // clean previous pending call
+    if (this.timeout) {
+      window.clearTimeout(this.timeout)
+      this.timeout = 0;
+    }
+
+    const prev = this._lastAction
+    // wait for previous action and transpile lazy - as full core refresh and reanalyze makes text cursor feel sluggish
+    if (!force) {
+      if ((this.inProgress && !this._firstTime) || (prev.src === srcText || Date.now() - prev.time < SMALL_CHANGES_TIMEOUT)) {
+        this.delayed = (force) => {
+          // this may never be called if new sources will come in
+          this.collectAndTranspile(srcText, filename, callback, force)
+        }
+        this.timeout = window.setTimeout(this.delayed, UPDATE_DELAY)
+        return
+      }
+    }
+    else if (this.inProgress) {
+      console.log("This never should happen - Debug ASAP!")
+    }
+
+    this._lastAction.src = srcText
+    this._lastAction.time = Date.now()
+
+    this._firstTime = false
+    this.mainJS = filename
+
+    this.cleanup()
+
+    // this.collectedSources.length = 0
+
+    this.inProgress = true
+    this._collectAndTranspile(srcText, filename, () => {
+      if (this.isDestroyed) return
+      // force tern to update arg hint cache as we may have loaded new files / defs / docs
+      callback && callback()
+      this.inProgress = false
+    })
+  }
+  collectSources(cb) {
+    if (this.isDestroyed) return
+    // make sure we are collecting latest sources
+    this.updateNow(() => {
+      cb(this.collectedSources)
+    })
+  }
+
+
+
   set inProgress(val) {
     this._inProgress = val
   }
@@ -59,7 +112,7 @@ export default class SourceTools {
     return this._inProgress
   }
 
-  get isDestoyed() {
+  get isDestroyed() {
     if (this._isDestroyed) {
       console.log("destroyed!!!")
     }
@@ -67,11 +120,12 @@ export default class SourceTools {
   }
 
   destroy() {
+    this._isDestroyed = true
+
     this.cache = null
     this.transpileCache = null
     this.cachedBundle = ''
 
-    this._isDestroyed = true
     this.babelWorker.terminate()
 
     // next will be first time again :)
@@ -91,13 +145,13 @@ export default class SourceTools {
     this.subscriptions = null
   }
 
-  // probably events would work better
-  collectSources(cb) {
-    if (this.isDestroyed) return
-    // make sure we are collecting latest sources
-    this.updateNow(() => {
-      cb(this.collectedSources)
-    })
+  // clean up old data
+  cleanup(){
+    this.removeTranspiled(this.mainJS)
+    for(let i=0; i<this.collectedSources.length; i++){
+      this.tern.server.delFile(this.collectedSources[i].name)
+    }
+    this.collectedSources.length = 0;
   }
 
   collectScript(name, code, cb) {
@@ -132,6 +186,7 @@ export default class SourceTools {
       // TODO: find out how to fix that
       // true override everything
       this.tern.server.addDefs && this.tern.server.addDefs(lib.defs, true)
+      this.tern.cachedArgHints = null
     }
     else {
       // TODO: debug: sometimes code isn't defined at all
@@ -143,6 +198,7 @@ export default class SourceTools {
         //console.info("Adding file: ", cleanFileName)
         this.tern.server.delFile(cleanFileName)
         this.tern.server.addFile(cleanFileName, code)
+        this.tern.cachedArgHints = null
       }
       else {
         console.log(`${filename} is too big [${code.length} bytes] and no defs defined`)
@@ -187,50 +243,6 @@ export default class SourceTools {
     }
   }
 
-  collectAndTranspile(srcText, filename, callback, force = false) {
-    // TODO: break instantly callback chain
-    if (this.isDestroyed) return
-    // clean previous pending call
-    if (this.timeout) {
-      window.clearTimeout(this.timeout)
-      this.timeout = 0;
-    }
-
-    const prev = this._lastAction
-    // wait for previous action and transpile lazy - as full core refresh and reanalyze makes text cursor feel sluggish
-    if (!force) {
-      if ((this.inProgress && !this._firstTime) || (prev.src === srcText || Date.now() - prev.time < SMALL_CHANGES_TIMEOUT)) {
-        this.delayed = (force) => {
-          // this may never be called if new sources will come in
-          this.collectAndTranspile(srcText, filename, callback, force)
-        }
-        this.timeout = window.setTimeout(this.delayed, UPDATE_DELAY)
-        return
-      }
-    }
-    else if (this.inProgress) {
-      console.log("This never should happen - Debug ASAP!")
-    }
-
-    this._lastAction.src = srcText
-    this._lastAction.time = Date.now()
-
-    this._firstTime = false
-    this.mainJS = filename
-
-    // clean up old data
-    this.collectedSources.length = 0
-    this.inProgress = true
-    this._collectAndTranspile(srcText, filename, () => {
-      if (this.isDestroyed) return
-      // force tern to update arg hint cache as we may have loaded new files / defs / docs
-      this.tern.cachedArgHints = null
-      callback && callback()
-      this.inProgress = false
-    })
-  }
-
-  // force - don't check cache
   _collectAndTranspile(srcText, filename, callback) {
     if (this.isDestroyed) return
     const compiled = this.isAlreadyTranspiled(filename);
@@ -289,6 +301,8 @@ export default class SourceTools {
     this.babelWorker.onmessage = (m) => {
       this.transpileCache[filename] = {src, data: m.data}
       cb(m.data)
+      // prevent extra calls
+      this.babelWorker.onmessage = null
     };
     this.babelWorker.postMessage([filename, src])
   }
@@ -308,59 +322,13 @@ export default class SourceTools {
       cb && cb('', '')
       return
     }
-    // don't cache local files
+
     if (!SourceTools.isExternalFile(url)) {
-      /*console.log("loading local file: ", url)
-       const parts = url.split("/")
-       console.log("parts", parts)
-       const name = parts.pop()
-       const owner = parts.length == 6 ? parts.pop() : Meteor.user().profile.name
-
-       // TODO: optimize use one cursor for all documents???
-       const cursor = Azzets.find({dn_ownerName: owner, name: name})
-       // from now on only observe asset and update tern on changes only
-       const observer = cursor.observeChanges({
-       changed: (id, changes) => {
-       if(changes.content2 && changes.content2.src){
-       this.removeTranspiled(urlFinalPart)
-       this._collectAndTranspile(changes.content2.src, urlFinalPart)
-       }
-       }
-       })
-       const getSourceAndTranspile = () => {
-       const assets = cursor.fetch()
-       console.log(assets)
-       if(assets[0]){
-       this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb)
-       }
-       else{
-       cb("")
-       }
-       }
-       // already subscribed and observing
-       if(this.subscriptions[url]){
-       //getSourceAndTranspile()
-       return
-       }
-
-       // should I close subscriptions
-       this.subscriptions[url] = {
-       subscription: Meteor.subscribe("assets.public.owner.name", owner, name, {
-       onReady: () => {
-       getSourceAndTranspile()
-       },
-       onError: (...args) => {
-       console.log("Error:", name, ...args)
-       cb("")
-       }
-       }),
-       observer
-       }*/
-      // ajax*
-
-      SourceTools.loadImport(url, (src) => {
+      this.loadAndObserveLocalFile(url, urlFinalPart, cb)
+      // ajax
+      /*SourceTools.loadImport(url, (src) => {
         this._collectAndTranspile(src, urlFinalPart, cb)
-      })
+      })*/
 
       return
     }
@@ -371,9 +339,58 @@ export default class SourceTools {
     })
   }
 
+  loadAndObserveLocalFile(url, urlFinalPart, cb){
+    const parts = url.split("/")
+    const name = parts.pop()
+    const owner = parts.length == 6 ? parts.pop() : Meteor.user().profile.name
+    const cursor = Azzets.find({dn_ownerName: owner, name: name})
+
+    const getSourceAndTranspile = () => {
+      const assets = cursor.fetch()
+      if (assets[0]) {
+        this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb)
+      }
+      else {
+        cb("")
+      }
+    }
+
+    // already subscribed and observing
+    // TODO: this can be skipped - but requires to check all edge cases - e.g. first time load / file removed and then added again etc
+    // atm this seems pretty quick
+    if (this.subscriptions[url]) {
+      getSourceAndTranspile()
+      return
+    }
+
+    // from now on only observe asset and update tern on changes only
+    const observer = cursor.observeChanges({
+      changed: (id, changes) => {
+        if (changes.content2 && changes.content2.src) {
+          console.log("Updated:", urlFinalPart)
+          this.removeTranspiled(urlFinalPart)
+          this._collectAndTranspile(changes.content2.src, urlFinalPart)
+        }
+      }
+    })
+
+    this.subscriptions[url] = {
+      subscription: Meteor.subscribe("assets.public.owner.name", owner, name, {
+        onReady: () => {
+          getSourceAndTranspile()
+        },
+        onError: (...args) => {
+          console.log("Error:", name, ...args)
+          cb("")
+        }
+      }),
+      observer
+    }
+  }
+
   createBundle(cb) {
     if (this.isDestroyed) return
-
+    console.log("Create bundle")
     if (!this._hasSourceChanged) {
       cb(this.cachedBundle)
       return

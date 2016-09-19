@@ -29,6 +29,7 @@ import Defs_browser from './tern/Defs/browser.json';
 import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js';
 
 /*
+moved to worker
 import cm_tern_lib_comment from "tern/lib/comment";
 // es_modules depends on this
 import cm_tern_modules from "tern/plugin/modules";

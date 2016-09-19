@@ -368,6 +368,7 @@ export default class Channel extends React.Component {
       this.calculateOffsetX()
       this.initAudio()
       this.drawWave()
+      this.props.saveChannel(this.props.channel)
     }
   }
 

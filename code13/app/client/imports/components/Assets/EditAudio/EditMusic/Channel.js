@@ -373,7 +373,7 @@ export default class Channel extends React.Component {
 
   copyData (source, offset, destination) {
     if(offset >= destination.length) return
-    const end = destination.length >= offset + source.length ? destination.length : offset + source.length
+    const end = destination.length < offset + source.length ? destination.length : offset + source.length
     for(let i=offset; i<end; i++){
       destination[i] = source[i-offset]
     }

@@ -54,7 +54,7 @@ export default class EditGraphic extends React.Component {
 
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
-    this.zoomLevels = [1, 2, 4, 6, 8];
+    this.zoomLevels = [1, 2, 4, 6, 8, 10, 12, 14, 16]
 
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
@@ -1379,6 +1379,16 @@ export default class EditGraphic extends React.Component {
     const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
 
+    let imgEditorSty = {}
+    if (zoom >= 8)
+    {
+      // Following two lines are for the gridlines
+      imgEditorSty.backgroundSize =  `${zoom}px ${zoom}px`,
+      imgEditorSty.backgroundImage = `repeating-linear-gradient(0deg, #888, #888 1px, transparent 1px, transparent ${zoom}px),repeating-linear-gradient(-90deg, #888, #888 1px, transparent 1px, transparent ${zoom}px`
+    }
+    if (this.state.toolChosen)
+      imgEditorSty.cursor = this.state.toolChosen.editCursor
+
     // Make element
     return (
       <div className="ui grid">
@@ -1458,9 +1468,9 @@ export default class EditGraphic extends React.Component {
           <div className="row" style={{"minHeight": "92px"}}>
             <div   style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
               <canvas ref="editCanvas"
-                        style={ this.state.toolChosen ? {"cursor": this.state.toolChosen.editCursor} : {} }
-                        width={zoom*c2.width}
-                        height={zoom*c2.height}
+                        style={imgEditorSty}
+                        width={zoom * c2.width}
+                        height={zoom * c2.height}
                         className={"mgbEditGraphicSty_checkeredBackground mgbEditGraphicSty_thinBorder mgbEditGraphicSty_atZeroZero"}
                         onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-1)}>

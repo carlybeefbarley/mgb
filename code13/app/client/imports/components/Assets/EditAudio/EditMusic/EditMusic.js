@@ -333,7 +333,14 @@ export default class EditMusic extends React.Component {
   }
 
   cutSelected () {
+    if(!this.state.selectData){
+      console.log("Something wrong with selecting")
+      return
+    }
 
+    this.copySelected()
+    const sData = this.state.selectData
+    this.refs["channel"+sData.channelID].clearBufferPart(sData.selectStart, sData.selectDuration)
   }
 
   copySelected () {

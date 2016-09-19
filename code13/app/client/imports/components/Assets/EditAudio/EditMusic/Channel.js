@@ -368,16 +368,42 @@ export default class Channel extends React.Component {
       this.copyData(this.props.pasteData, Math.round((pasteDelay-startTime)*this.props.audioCtx.sampleRate), channelData)
       this.sample.delay = startTime
       this.calculateOffsetX()
-      this.initAudio()
-      this.drawWave()
-
-
-      this.converter.bufferToDataUri(channelData, (dataUri) => {
-        // console.log(dataUri)
-        this.props.channel.dataUri = dataUri
-        this.props.saveChannel(this.props.channel)
-      })
+      this.saveNewBuffer()
     }
+  }
+
+  saveNewBuffer(){
+    this.initAudio()
+    this.drawWave()
+    const channelData = this.buffer.getChannelData(0)
+    this.converter.bufferToDataUri(channelData, (dataUri) => {
+      this.props.channel.dataUri = dataUri
+      this.props.saveChannel(this.props.channel)
+    })
+  }
+
+  clearBufferPart(selectStart, selectDuration){
+    let startId = this.timeToArrayId(selectStart)
+    let endId = this.timeToArrayId(selectStart + selectDuration)
+    const channelData = this.buffer.getChannelData(0)
+    for(let i=startId; i<endId; i++){
+      channelData[i] = 0
+    }
+    this.saveNewBuffer()
+  }
+
+  timeToArrayId(time){
+    let ind
+    if(this.sample.delay > time){
+      ind = 0
+    }
+    else if(this.sample.delay + this.sample.duration < time){
+      ind = this.sample.duration
+    }
+    else {
+      ind = time - this.sample.delay
+    }
+    return Math.round(ind * this.props.audioCtx.sampleRate)
   }
 
   copyData (source, offset, destination) {

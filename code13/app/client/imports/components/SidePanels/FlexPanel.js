@@ -21,8 +21,8 @@ const flexPanelViews = [
   { tag: "chat",      name: "chat",     icon: "chat",       hdr: "Chat",              el: fpChat,          superAdminOnly: false },
   { tag: "features",  name: "options",  icon: "options",    hdr: "Feature Levels",    el: fpFeatureLevels, superAdminOnly: false },
   { tag: "keys",      name: "keys",     icon: "keyboard",   hdr: "Keyboard Shortcuts",el: fpKeyboard,      superAdminOnly: false },
+  { tag: "network",   name: "network",  icon: "signal",     hdr: "Network",           el: fpNetwork,       superAdminOnly: false },
   { tag: "super",     name: "admin",    icon: "red bomb",   hdr: "SuperAdmin",        el: fpSuperAdmin,    superAdminOnly: true  }, // ALWAYS SuperAdmin
-  { tag: "network",   name: "network",  icon: "red signal", hdr: "Network",           el: fpNetwork,       superAdminOnly: true  }, // SuperAdmin while being tested
   { tag: "goals",     name: "goals",    icon: "red student",hdr: "Goals",             el: fpGoals,         superAdminOnly: true  }  // SuperAdmin while being tested
 ]
 

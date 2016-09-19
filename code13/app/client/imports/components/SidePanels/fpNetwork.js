@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
 
@@ -11,17 +10,9 @@ const MSTATUS_OFFLINE = "offline"             // user has disconnected the conne
 
 export default fpNetwork = React.createClass({
   mixins: [ReactMeteorData],
-
-  propTypes: {
-    currUser:        PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    user:            PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:      PropTypes.string.isRequired   // Typically something like "200px". 
-  },
   
   getMeteorData: function() {
-    return {
-      meteorStatus: Meteor.status()
-    }
+    return { meteorStatus: Meteor.status() }
   },
 
   render: function () {    
@@ -35,24 +26,31 @@ export default fpNetwork = React.createClass({
 
     return (
       <div>
-        <div className="ui sub header">Connection Status</div>
-        <div className={st.connected ? "ui small green label" : "ui small purple label"}>{st.connected ? "Connected" : "Disconnected"}</div>
-        <ul>
-          { st.retryCount > 0 &&
-            <li>Connection retries attempted: {st.retryCount}</li>
-          }
-          { retryInSeconds > 0 &&
-            <li>Retry Interval: {retryInSeconds} seconds</li>
-          }
-          <li>Status: "{st.status}"</li>
-          { (MSTATUS_FAILED === st.status) && 
-            <li>Failed reason: "{st.reason}"</li>
-          }
-          <li>CxnId: <small>{Meteor.default_connection._lastSessionId}</small></li>
-        </ul>
+        <div className={`ui large ${st.connected ? "positive" : "negative"} message`}>
+          <div className="header">Network {st.status}</div>
+            { st.retryCount > 0 &&
+              <ul className="list">
+                <li><small>Connection retries attempted: </small>{st.retryCount}</li>
+                { retryInSeconds > 0 &&
+                  <li><small>Retry Interval: </small>{retryInSeconds} <small>seconds</small></li>
+                }
+                { (MSTATUS_FAILED === st.status) && 
+                  <li>Connection Failed reason: "{st.reason}"</li>
+                }
+              </ul>
+            }
+          </div>
+          <br />
+        { !st.connected &&
+          <a className="ui large primary button" onClick={() => Meteor.reconnect()}>
+            Reconnect now
+          </a>
+        }
+        <br />
+        <br />
+        <br />
+        <p><small>Connection ID: {cxnId}</small></p>
       </div>
     )
-  },
-
-
+  }
 })

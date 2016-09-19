@@ -7,6 +7,12 @@ var server;
 
 this.onmessage = function(e) {
   var data = e.data;
+
+  if(!server && data.type != "init"){
+    console.log("Server not ready!")
+    return
+  }
+
   switch (data.type) {
     case "init": return startServer(data.defs, data.plugins, data.scripts);
     case "add": return server.addFile(data.name, data.text);
@@ -14,6 +20,7 @@ this.onmessage = function(e) {
     case "req": return server.request(data.body, function(err, reqData) {
       postMessage({id: data.id, body: reqData, err: err && String(err)});
     });
+    case "addDefs": return server.addDefs(data.defs, true);
     case "getFile":
       var c = pending[data.id];
       delete pending[data.id];

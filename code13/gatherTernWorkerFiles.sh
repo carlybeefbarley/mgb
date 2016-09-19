@@ -18,5 +18,5 @@ fi
 
 echo "copying latest tern files"
 mkdir -p app/public/lib/tern
-cp -a app/node_modules/tern/lib/* app/public/lib/tern
+cp -a app/node_modules/tern/{lib,plugin} app/public/lib/tern
 )

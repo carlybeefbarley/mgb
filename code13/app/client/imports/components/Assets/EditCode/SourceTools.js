@@ -22,8 +22,7 @@ export default class SourceTools {
     }
 
     this.subscriptions = []
-    window.Azzets = Azzets;
-    //window.mgb_tools = this
+    window.mgb_tools = this
     this.asset_id = asset_id
     this.tern = ternServer
     this.babelWorker = babelWorker = new Worker("/lib/BabelWorker.js")
@@ -60,12 +59,13 @@ export default class SourceTools {
     return this._inProgress
   }
 
-  get isDestoyed(){
-    if(this._isDestroyed){
+  get isDestoyed() {
+    if (this._isDestroyed) {
       console.log("destroyed!!!")
     }
     return this._isDestroyed
   }
+
   destroy() {
     this.cache = null
     this.transpileCache = null
@@ -84,7 +84,7 @@ export default class SourceTools {
     }
 
     // close all used subscriptions
-    for(let i in this.subscriptions){
+    for (let i in this.subscriptions) {
       this.subscriptions[i].subscription.stop()
       this.subscriptions[i].observer.stop()
     }
@@ -93,7 +93,7 @@ export default class SourceTools {
 
   // probably events would work better
   collectSources(cb) {
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
     // make sure we are collecting latest sources
     this.updateNow(() => {
       cb(this.collectedSources)
@@ -101,7 +101,7 @@ export default class SourceTools {
   }
 
   collectScript(name, code, cb) {
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
     // skip transpiled and compiled and empty scripts
     if (!name || !code || this.isAlreadyTranspiled(name)) {
       cb && cb()
@@ -111,7 +111,7 @@ export default class SourceTools {
     // remove use strict added by babel - as it may break code silently
     code = code.replace(/use strict/gi, '')
     const lib = SourceTools.getKnowLib(name)
-    const useGlobal = !(!lib || !lib.useGlobal)
+    const useGlobal = lib && lib.useGlobal
     this.collectedSources.push({name, code, useGlobal})
     // MGB assets will have cache.. remote won't
     if (this.transpileCache[name]) {
@@ -125,7 +125,7 @@ export default class SourceTools {
   }
 
   addDefsOrFile(filename, code) {
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       // this only works when NOT in worker mode..
@@ -153,14 +153,16 @@ export default class SourceTools {
   isAlreadyTranspiled(filename) {
     return this.collectedSources.find(s => s.name == filename)
   }
-  removeTranspiled(filename){
+
+  removeTranspiled(filename) {
     const item = this.isAlreadyTranspiled(filename)
-    if(item){
+    if (item) {
       this.collectedSources.splice(this.collectedSources.indexOf(item), 1)
     }
   }
+
   updateNow(cb) {
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
     // wait for active job to complete
     if (this.inProgress) {
       setTimeout(() => {
@@ -187,7 +189,7 @@ export default class SourceTools {
 
   collectAndTranspile(srcText, filename, callback, force = false) {
     // TODO: break instantly callback chain
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
     // clean previous pending call
     if (this.timeout) {
       window.clearTimeout(this.timeout)
@@ -206,7 +208,7 @@ export default class SourceTools {
         return
       }
     }
-    else if(this.inProgress){
+    else if (this.inProgress) {
       console.log("This never should happen - Debug ASAP!")
     }
 
@@ -220,7 +222,7 @@ export default class SourceTools {
     this.collectedSources.length = 0
     this.inProgress = true
     this._collectAndTranspile(srcText, filename, () => {
-      if(this.isDestroyed) return
+      if (this.isDestroyed) return
       // force tern to update arg hint cache as we may have loaded new files / defs / docs
       this.tern.cachedArgHints = null
       callback && callback()
@@ -230,7 +232,7 @@ export default class SourceTools {
 
   // force - don't check cache
   _collectAndTranspile(srcText, filename, callback) {
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
     const compiled = this.isAlreadyTranspiled(filename);
     if (compiled) {
       callback && callback(compiled.code)
@@ -264,7 +266,7 @@ export default class SourceTools {
   }
 
   transform(srcText, filename, cb) {
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
     let code = '';
     if (!SourceTools.isExternalFile(filename)) {
       code = srcText;
@@ -274,7 +276,7 @@ export default class SourceTools {
 
   transpile(filename, src, cb) {
     // this instance has been destroyed while doing some background work
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
 
     if (this.transpileCache[filename]) {
       if (this.transpileCache[filename].src == src) {
@@ -293,7 +295,7 @@ export default class SourceTools {
 
   // cb usually will be this@load
   loadFromCache(urlFinalPart, cb) {
-    if(this.isDestroyed) return
+    if (this.isDestroyed) return
 
     // don't load at all
     if (this.cache[urlFinalPart] || !urlFinalPart) {
@@ -309,57 +311,57 @@ export default class SourceTools {
     // don't cache local files
     if (!SourceTools.isExternalFile(url)) {
       /*console.log("loading local file: ", url)
-      const parts = url.split("/")
-      console.log("parts", parts)
-      const name = parts.pop()
-      const owner = parts.length == 6 ? parts.pop() : Meteor.user().profile.name
+       const parts = url.split("/")
+       console.log("parts", parts)
+       const name = parts.pop()
+       const owner = parts.length == 6 ? parts.pop() : Meteor.user().profile.name
 
-      // TODO: optimize use one cursor for all documents???
-      const cursor = Azzets.find({dn_ownerName: owner, name: name})
-      // from now on only observe asset and update tern on changes only
-      const observer = cursor.observeChanges({
-        changed: (id, changes) => {
-          if(changes.content2 && changes.content2.src){
-            this.removeTranspiled(urlFinalPart)
-            this._collectAndTranspile(changes.content2.src, urlFinalPart)
-          }
-        }
-      })
-      const getSourceAndTranspile = () => {
-        const assets = cursor.fetch()
-        console.log(assets)
-        if(assets[0]){
-          this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb)
-        }
-        else{
-          cb("")
-        }
-      }
-      // already subscribed and observing
-      if(this.subscriptions[url]){
-        //getSourceAndTranspile()
-        return
-      }
+       // TODO: optimize use one cursor for all documents???
+       const cursor = Azzets.find({dn_ownerName: owner, name: name})
+       // from now on only observe asset and update tern on changes only
+       const observer = cursor.observeChanges({
+       changed: (id, changes) => {
+       if(changes.content2 && changes.content2.src){
+       this.removeTranspiled(urlFinalPart)
+       this._collectAndTranspile(changes.content2.src, urlFinalPart)
+       }
+       }
+       })
+       const getSourceAndTranspile = () => {
+       const assets = cursor.fetch()
+       console.log(assets)
+       if(assets[0]){
+       this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb)
+       }
+       else{
+       cb("")
+       }
+       }
+       // already subscribed and observing
+       if(this.subscriptions[url]){
+       //getSourceAndTranspile()
+       return
+       }
 
-      // should I close subscriptions
-      this.subscriptions[url] = {
-        subscription: Meteor.subscribe("assets.public.owner.name", owner, name, {
-          onReady: () => {
-            getSourceAndTranspile()
-          },
-          onError: (...args) => {
-            console.log("Error:", name, ...args)
-            cb("")
-          }
-        }),
-        observer
-      }*/
+       // should I close subscriptions
+       this.subscriptions[url] = {
+       subscription: Meteor.subscribe("assets.public.owner.name", owner, name, {
+       onReady: () => {
+       getSourceAndTranspile()
+       },
+       onError: (...args) => {
+       console.log("Error:", name, ...args)
+       cb("")
+       }
+       }),
+       observer
+       }*/
       // ajax*
 
       SourceTools.loadImport(url, (src) => {
         this._collectAndTranspile(src, urlFinalPart, cb)
       })
-      
+
       return
     }
     // load external file and cache - so we can skip loading next time
@@ -370,9 +372,9 @@ export default class SourceTools {
   }
 
   createBundle(cb) {
-    if(this.isDestroyed) return
-    
-    if(!this._hasSourceChanged){
+    if (this.isDestroyed) return
+
+    if (!this._hasSourceChanged) {
       cb(this.cachedBundle)
       return
     }
@@ -480,7 +482,7 @@ export default class SourceTools {
       }, 0)
       return
     }
-    if(cached404[url]){
+    if (cached404[url]) {
       console.error("Failed to load script: [" + url + "]", cached404[url])
       cb("")
       return;

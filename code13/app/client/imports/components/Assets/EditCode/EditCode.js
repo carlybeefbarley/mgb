@@ -28,6 +28,7 @@ import Defs_browser from './tern/Defs/browser.json';
 
 import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js';
 
+/*
 import cm_tern_lib_comment from "tern/lib/comment";
 // es_modules depends on this
 import cm_tern_modules from "tern/plugin/modules";
@@ -35,7 +36,7 @@ import cm_tern_modules from "tern/plugin/modules";
 import cm_tern_es_modules from "tern/plugin/es_modules";
 // extract docs from comment
 import cm_tern_doc_comment from "tern/plugin/doc_comment";
-
+*/
 // ?  <script src="/tern/plugin/doc_comment.js"></script>
 
 
@@ -121,8 +122,7 @@ export default class EditCode extends React.Component {
     var myTernConfig = {
       // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
       // TODO: find workaround and uncomment
-      // useWorker: true,
-      // debug: true,
+      useWorker: true,
       defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
       completionTip: function (curData) {
         // we get called for the CURRENTLY highlighted entry in the autocomplete list. 
@@ -137,11 +137,14 @@ export default class EditCode extends React.Component {
         "/lib/acorn/acorn.js",
         "/lib/acorn/acorn_loose.js",
         "/lib/acorn/walk.js",
-        "/lib/tern/signal.js",
-        "/lib/tern/tern.js",
-        "/lib/tern/def.js",
-        "/lib/tern/infer.js",
-        "/lib/tern/comment.js"
+        "/lib/tern/lib/signal.js",
+        "/lib/tern/lib/tern.js",
+        "/lib/tern/lib/def.js",
+        "/lib/tern/lib/infer.js",
+        "/lib/tern/lib/comment.js",
+        "/lib/tern/plugin/modules.js",
+        "/lib/tern/plugin/es_modules.js",
+        "/lib/tern/plugin/doc_comment.js"
       ],
       plugins: {
         // modules: true, we are injecting files directly - no need for additional module + it have
@@ -162,6 +165,14 @@ export default class EditCode extends React.Component {
     }
 
     this.ternServer = new CodeMirror.TernServer(myTernConfig)
+    if (!this.ternServer.server.addDefs) {
+      this.ternServer.server.addDefs = (defs) => {
+        this.ternServer.worker.postMessage({
+          type: "addDefs",
+          defs: defs
+        })
+      }
+    }
     //this.ternServer.server.debug = true
     this.tools = new SourceTools(this.ternServer, this.props.asset._id)
 

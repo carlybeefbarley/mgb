@@ -563,12 +563,6 @@ export default class EditCode extends React.Component {
         unused: true,
         loopfunc: true,
         predef: {
-          "alert": false,// why alert is not defined?
-          //"require": false,
-          //"exports": false,
-          "Phaser": false,
-          "PIXI": false,
-          "console": false,
           "_": false
         }
       }
@@ -590,21 +584,21 @@ export default class EditCode extends React.Component {
     let editor = this.codeMirror
 
 
-    ternServer.updateArgHints(this.codeMirror)
-
     let currentCursorPos = editor.getCursor()
     // we need to force internal tern cache to clean up - move cursor to 0,0 and then back
     // TODO: (stauzs) debug this in free time
-    let {line, char} = currentCursorPos;
-    currentCursorPos.line = 0;
-    currentCursorPos.char = 0;
+    let {line, char} = currentCursorPos
+    currentCursorPos.line = 0
+    currentCursorPos.char = 0
+
     // get token at 0,0
     editor.getTokenAt(currentCursorPos, true)
-    currentCursorPos.line = line;
-    currentCursorPos.char = char;
+    currentCursorPos.line = line
+    currentCursorPos.char = char
+
+
     // get token at current pos
     let currentToken = editor.getTokenAt(currentCursorPos, true)
-
 
     // I stole the following approach from 
     // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
@@ -615,13 +609,20 @@ export default class EditCode extends React.Component {
       var inner = CodeMirror.innerMode(editor.getMode(), state)
       if (inner.mode.name === "javascript") {
         var lex = inner.state.lexical
-        if (lex.info === "call")
+        if (lex.info === "call") {
           argPos = lex.pos || 0
+          lex.pos = argPos
+        }
       }
     }
+    // this hint tooltip is still off when cursor is in the comment.. e.g.
+    // fn(
+    //  arg1, // comment about arg1
+    //  arg2
+    // )
+    ternServer.updateArgHints(this.codeMirror)
 
     var functionTypeInfo = null;
-
     const setState = (functionTypeInfo) => {
       if (functionTypeInfo) {
         JsonDocsFinder.getApiDocsAsync({

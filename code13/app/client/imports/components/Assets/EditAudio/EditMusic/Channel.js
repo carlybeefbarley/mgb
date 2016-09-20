@@ -394,6 +394,25 @@ export default class Channel extends React.Component {
     this.saveNewBuffer()
   }
 
+  eraseBufferPart(selectStart, selectDuration){
+    const startId = this.timeToArrayId(selectStart)
+    const endId = this.timeToArrayId(selectStart + selectDuration)
+    const deleteLength = endId - startId
+    const oldBuffer = this.buffer.getChannelData(0)
+    if(deleteLength <= 0 || deleteLength > oldBuffer.length) return false
+    let newLength = oldBuffer.length - deleteLength
+    if(newLength == 0) newLength = 1
+    this.buffer = this.props.audioCtx.createBuffer(1, newLength, this.props.audioCtx.sampleRate)
+    const channelData = this.buffer.getChannelData(0)
+    for(let i=0; i<newLength; i++){
+      let key = i < startId ? i : i+deleteLength
+      channelData[i] = oldBuffer[key]
+    }
+    this.sample.duration = newLength * this.props.audioCtx.sampleRate
+    this.props.duration = this.sample.duration
+    this.saveNewBuffer()
+  }
+
   timeToArrayId(time){
     let ind
     if(this.sample.delay > time){

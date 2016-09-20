@@ -354,6 +354,16 @@ export default class EditMusic extends React.Component {
     this.setState({ pasteData: selectBuffer })
   }
 
+  eraseSelected () {
+    if(!this.state.selectData){
+      console.log("Something wrong with selecting")
+      return
+    }
+
+    const sData = this.state.selectData
+    this.refs["channel"+sData.channelID].eraseBufferPart(sData.selectStart, sData.selectDuration)
+  }
+
   selectableButtons (button) {
     this.clearSelection()
     let newState = {}
@@ -513,6 +523,11 @@ export default class EditMusic extends React.Component {
                   onClick={this.selectableButtons.bind(this, "isSelecting")}
                   title="Select tool. Click and drag to select wave area">
                   <i className='crosshairs icon'></i>
+                </button>
+                <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
+                  onClick={this.eraseSelected.bind(this)}
+                  title="Erase selected area">
+                  <i className='eraser icon'></i>
                 </button>
                 <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
                   onClick={this.cutSelected.bind(this)}

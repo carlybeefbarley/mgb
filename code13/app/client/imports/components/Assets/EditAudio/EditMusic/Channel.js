@@ -168,6 +168,7 @@ export default class Channel extends React.Component {
       endX = Math.round(this.props.viewWidth + startX)
       if(endX > sampleWidth) endX = sampleWidth
     }
+
     // console.log(startX, endX)
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
@@ -367,7 +368,8 @@ export default class Channel extends React.Component {
       this.copyData(sampleData, Math.round((this.sample.delay-startTime)*this.props.audioCtx.sampleRate), channelData)
       this.copyData(this.props.pasteData, Math.round((pasteDelay-startTime)*this.props.audioCtx.sampleRate), channelData)
       this.sample.delay = startTime
-      this.calculateOffsetX()
+      this.props.channel.delay = startTime
+      this.sample.offsetX = this.calculateOffsetX()
       this.saveNewBuffer()
     }
   }

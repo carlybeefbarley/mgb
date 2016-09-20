@@ -305,7 +305,7 @@ export default class EditMusic extends React.Component {
     this.callChildren("setViewOffset", [seconds])
   }
 
-  startSelecting () {
+  clearSelection () {
     let c2 = this.props.asset.content2
     if(this.state.isSelecting && c2.channels){  // unselect all selections
       c2.channels.forEach((channel) => {
@@ -313,7 +313,6 @@ export default class EditMusic extends React.Component {
       })
       this.setState({ selectData: null })
     }
-    this.setState({ isSelecting: !this.state.isSelecting })
   }
 
   setSelected (channelID, selectStart, selectDuration) { // in sec
@@ -355,12 +354,14 @@ export default class EditMusic extends React.Component {
     this.setState({ pasteData: selectBuffer })
   }
 
-  pasteSelected () {
-    this.setState({ isPaste: !this.state.isPaste})
-  }
-
-  enableDrag () {
-    this.setState({ isDrag: !this.state.isDrag })
+  selectableButtons (button) {
+    this.clearSelection()
+    let newState = {}
+    const buttonArr = ['isDrag', 'isSelecting', 'isPaste']
+    buttonArr.forEach((key) => {
+      newState[key] = key === button ? !this.state[key] : false
+    })
+    this.setState(newState)
   }
 
   addChannel (dataUri, c2) {
@@ -504,12 +505,12 @@ export default class EditMusic extends React.Component {
 
                 &nbsp;&nbsp;
                 <button className={'ui small icon button ' + (this.state.isDrag ? "active" : "")}
-                  onClick={this.enableDrag.bind(this)}
+                  onClick={this.selectableButtons.bind(this, "isDrag")}
                   title="Drag audio sample">
                   <i className='hand paper icon'></i>
                 </button>
                 <button className={'ui small icon button ' + (this.state.isSelecting ? "active" : "")}
-                  onClick={this.startSelecting.bind(this)}
+                  onClick={this.selectableButtons.bind(this, "isSelecting")}
                   title="Select tool. Click and drag to select wave area">
                   <i className='crosshairs icon'></i>
                 </button>
@@ -523,8 +524,8 @@ export default class EditMusic extends React.Component {
                   title="Copy selected area">
                   <i className='copy icon'></i>
                 </button>
-                <button className={'ui small icon button ' + (this.state.pasteData ? "" : "disabled")}
-                  onClick={this.pasteSelected.bind(this)}
+                <button className={'ui small icon button ' + (this.state.pasteData ? "" : "disabled ") + (this.state.isPaste ? "active" : "")}
+                  onClick={this.selectableButtons.bind(this, "isPaste")}
                   title="Paste selected area">
                   <i className='paste icon'></i>
                 </button>

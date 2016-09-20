@@ -50,7 +50,7 @@ export default class EditGraphic extends React.Component {
   constructor(props) {
     super(props)
 
-    // console.log(this.props.asset.content2);
+    // console.log(this.props.asset.content2)
 
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
@@ -282,6 +282,7 @@ export default class EditGraphic extends React.Component {
         this.loadAssetAsync(frameID, layerID)
       }
     }
+    setTimeout(() => this.updateEditCanvasFromSelectedPreviewCanvas(), 0)
   }
 
   loadAssetAsync(frameID, layerID) {
@@ -299,16 +300,11 @@ export default class EditGraphic extends React.Component {
       _img.frameID = frameID   // hack so in onload() we know which frame is loaded
       _img.layerID = layerID   // hack so in onload() we know which layer is loaded
       let self = this
-      _img.onload = function(e) {            
+      _img.onload = function(e) {
         let loadedImage = e.target
         if(loadedImage.frameID === self.state.selectedFrameIdx) {       
           self.previewCtxArray[loadedImage.layerID].clearRect(0,0, c2.width, c2.height)
           self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0)
-          if(loadedImage.layerID === 0) {
-            // update edit canvas when bottom layer is loaded
-            // TODO: See if we could have a bug here with out-of-order async responses? is the 0th last?
-            self.updateEditCanvasFromSelectedPreviewCanvas(loadedImage.frameID)
-          }
         }
         if (!c2.layerParams[loadedImage.layerID].isHidden) { 
           let frame = self.frameCtxArray[loadedImage.frameID]
@@ -331,6 +327,7 @@ export default class EditGraphic extends React.Component {
     let frameData = c2.frameData[this.state.selectedFrameIdx]
     for (let i=frameData.length-1; i>=0; i--)
       this.loadAssetAsync(this.state.selectedFrameIdx, i)
+    setTimeout(() => this.updateEditCanvasFromSelectedPreviewCanvas(), 0)
   }
 
 

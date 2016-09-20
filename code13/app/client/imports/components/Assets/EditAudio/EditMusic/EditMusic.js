@@ -207,6 +207,7 @@ export default class EditMusic extends React.Component {
     if (!c2.channels) return
     if (!args) args = []
     c2.channels.forEach((channel, id) => {
+      if(!this.refs['channel' + channel.id]) return false
       this.refs['channel' + channel.id][func](...args)
     })
   }

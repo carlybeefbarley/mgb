@@ -230,7 +230,7 @@ export default class SourceTools {
     this.collectedSources.length = 0;
   }
 
-  collectScript(name, code, cb) {
+  collectScript(name, code, cb, localName = name) {
     if (this.isDestroyed) return
     // skip transpiled and compiled and empty scripts
     if (!name || !code || this.isAlreadyTranspiled(name)) {
@@ -242,7 +242,7 @@ export default class SourceTools {
     code = code.replace(/use strict/gi, '')
     const lib = SourceTools.getKnowLib(name)
     const useGlobal = lib && lib.useGlobal
-    this.collectedSources.push({name, code, useGlobal})
+    this.collectedSources.push({name, code, useGlobal, localName})
     // MGB assets will have cache.. remote won't
     if (this.transpileCache[name]) {
       this.addDefsOrFile(name, this.transpileCache[name].src)
@@ -342,7 +342,8 @@ export default class SourceTools {
 
       var load = () => {
         if (imports.length) {
-          this.loadFromCache(imports.shift(), load)
+          const imp = imports.shift()
+          this.loadFromCache(imp.src, load, imp.name)
         }
         else {
           this.collectScript(filename, output.code, cb)
@@ -384,12 +385,12 @@ export default class SourceTools {
   }
 
   // cb usually will be this@load
-  loadFromCache(urlFinalPart, cb) {
+  loadFromCache(urlFinalPart, cb, localName) {
     if (this.isDestroyed) return
 
     // don't load at all
     if (this.cache[urlFinalPart] || !urlFinalPart) {
-      this.collectScript(urlFinalPart, this.cache[urlFinalPart])
+      this.collectScript(urlFinalPart, this.cache[urlFinalPart], null, localName)
       cb && cb('', '')
       return
     }
@@ -411,7 +412,7 @@ export default class SourceTools {
     // load external file and cache - so we can skip loading next time
     SourceTools.loadImport(url, (src) => {
       this.cache[urlFinalPart] = src
-      this.collectScript(urlFinalPart, src, cb)
+      this.collectScript(urlFinalPart, src, cb, localName)
     })
   }
 
@@ -554,14 +555,20 @@ export default class SourceTools {
 
     imp = babel.data.modules.imports
     for (let i = 0; i < imp.length; i++) {
-      ret.indexOf(imp[i].source) === -1 && ret.push(imp[i].source)
+      ret.indexOf(imp[i].source) === -1 && ret.push({
+        src: imp[i].source,
+        name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null
+      })
     }
 
     // also add export from 'externalSource'
     imp = babel.data.modules.exports.specifiers
     for (let i = 0; i < imp.length; i++) {
       if (imp[i].kind == "external" && imp[i].source) {
-        ret.indexOf(imp[i].source) === -1 && ret.push(imp[i].source)
+        ret.indexOf(imp[i].source) === -1 && ret.push({
+          src: imp[i].source,
+          name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null
+        })
       }
     }
 

@@ -1,16 +1,15 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import QLink from '/client/imports/routes/QLink';
+import React, { PropTypes } from 'react'
+import QLink from '/client/imports/routes/QLink'
 
 export default npPeople = React.createClass({
 
   propTypes: {
-    currUser:           PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    user:               PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:         PropTypes.string.isRequired   // Typically something like "200px".
+    navPanelIsOverlay:  PropTypes.bool.isRequired     // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
   },
 
   render: function () {
+    const { navPanelIsOverlay } = this.props
+    
     return (
       // TODO: use site.less for styling inverted menu
       <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
@@ -20,10 +19,10 @@ export default npPeople = React.createClass({
             People
           </h3>
         </div>
-        <QLink to="/users" className="item">
+        <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/users" className="item">
           <i className="users icon" /> All Users
         </QLink>
-        <QLink to="/assets" className="item">
+        <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/assets" className="item">
           <i className="pencil icon" /> All Assets
         </QLink>
       </div>

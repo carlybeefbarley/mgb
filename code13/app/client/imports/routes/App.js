@@ -30,6 +30,8 @@ const getPagenameFromProps = function(props)
   return props.routes[1].name
 }
 
+const npColumn1Width = "60px"
+
 export default App = React.createClass({
   mixins: [ReactMeteorData],
   // static propTypes = {
@@ -38,15 +40,15 @@ export default App = React.createClass({
   // }
 
   childContextTypes: {
-    urlLocation: PropTypes.object,
-    settings:    PropTypes.object
+    urlLocation:        PropTypes.object,
+    settings:           PropTypes.object
   },
 
   getChildContext() {
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
     return {
-      urlLocation: this.props.location,
-      settings: this.data.settings            // We pass Settings in context since it will be a huge pain to pass it throughout the component tree
+      urlLocation:        this.props.location,
+      settings:           this.data.settings   // We pass Settings in context since it will be a huge pain to pass it throughout the component tree
     }
   },
 
@@ -61,7 +63,6 @@ export default App = React.createClass({
     window.onkeyup = this.togglePanelsKeyHandler
   },
 
-
   componentWillReceiveProps: function(nextProps) {
     // We are using https://github.com/okgrow/analytics but it does not automatically log
     // react-router routes, so we need a specific call when the page changes
@@ -74,16 +75,17 @@ export default App = React.createClass({
     })
   },
 
-
   getInitialState: function() {
     return {
       initialLoad: true,
       showToast: false,
       toastMsg: '',
       toastType: 'success',
+      fNavPanelIsOverlay: true,    // Could make this inital value based on screen size, but that might be odd
       activityHistoryLimit: 11
     }
   },
+
 
   getMeteorData() {
     const pathUserName = this.props.params.username      // This is the username (profile.name) on the url /u/xxxx/...
@@ -136,6 +138,7 @@ export default App = React.createClass({
 
     this.configureTrackJs()
 
+    const { fNavPanelIsOverlay, showToast, toastMsg, toastType } = this.state
     const { currUser, user, currUserProjects } = this.data
     const { query } = this.props.location
 
@@ -144,7 +147,8 @@ export default App = React.createClass({
     // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
     const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
-    const navPanelWidth = showNavPanel ? "268px" : "60px"
+    const navPanelWidth = showNavPanel ? "268px" : npColumn1Width     // Available width to render
+    const navPanelReservedWidth = fNavPanelIsOverlay ? npColumn1Width : navPanelWidth    // Space main page area cannot use
 
     // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
@@ -156,7 +160,7 @@ export default App = React.createClass({
       position: "fixed",
       top:      "40px",
       bottom:   "0px",
-      left:     navPanelWidth,
+      left:     navPanelReservedWidth,
       right:    flexPanelWidth,
       overflow: "scroll",
       marginBottom: "0px"
@@ -173,11 +177,11 @@ export default App = React.createClass({
     const isSuperAdmin = isUserSuperAdmin(currUser)
     const ownsProfile = isSameUser(currUser, user)
 
-    // This is a flag used for some mid-colume elements (NavBar and Maybe page) to hint they should be
+    // This is a flag used for some mid-column elements (NavBar and Maybe page) to hint they should be
     // space conservative because the Nav and Flex panels are both being displayed.
     // Most things can be done reactively or with CSS, but this is useful for some extra cases
     // This is probably not a long term solution - but is helpful for now
-    const conserveSpace = showNavPanel && showFlexPanel
+    const conserveSpace = showNavPanel && showFlexPanel && !fNavPanelIsOverlay
 
     return (
       <div >
@@ -188,7 +192,6 @@ export default App = React.createClass({
               {"name": "description", "content": "MyGameBuilder v2"}
           ]}
         />
-
 
         <div>
 
@@ -202,7 +205,18 @@ export default App = React.createClass({
               navPanelWidth={navPanelWidth}
               navPanelIsVisible={showNavPanel}
               isSuperAdmin={isSuperAdmin}
+              navPanelIsOverlay={fNavPanelIsOverlay}
             />
+
+            { showNavPanel && 
+              <i 
+                title={!fNavPanelIsOverlay ? 
+                   `The Navigation Panel is locked, so it will not auto-hide when used. Clicking this icon will unlock it and enable auto-hide`
+                 : `The Navigation Panel is unlocked, so it auto-hides when used. Clicking this icon will lock it and disable auto-hide` }
+                className={`ui grey ${fNavPanelIsOverlay ? "unlock":"lock"} icon`} 
+                onClick={() => this.setState( { "fNavPanelIsOverlay": !fNavPanelIsOverlay } ) }
+                style={{position: "fixed", bottom: "8px", left: npColumn1Width, zIndex: 200}} />
+            }
 
             <NavBar
               currUser={currUser}
@@ -210,7 +224,7 @@ export default App = React.createClass({
               name={this.props.routes[1].name}
               params={this.props.params}
               flexPanelWidth={flexPanelWidth}
-              navPanelWidth={navPanelWidth}
+              navPanelWidth={navPanelReservedWidth}
               navPanelIsVisible={showNavPanel}
               conserveSpace={conserveSpace}
               />
@@ -232,8 +246,8 @@ export default App = React.createClass({
               style={mainPanelOuterDivSty}
               className={conserveSpace ? "conserveSpace noScrollbarDiv" : "noScrollbarDiv"}>
               <div style={mainPanelInnerDivSty}>
-                { this.state.showToast &&
-                  <Toast content={this.state.toastMsg} type={this.state.toastType} />
+                { showToast &&
+                  <Toast content={toastMsg} type={toastType} />
                 }
                 {
                   this.props.children && React.cloneElement(this.props.children, {
@@ -252,8 +266,6 @@ export default App = React.createClass({
       </div>
     )
   },
-
-
 
 
   /**

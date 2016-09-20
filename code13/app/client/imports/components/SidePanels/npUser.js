@@ -1,7 +1,6 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import QLink, { utilPushTo } from '/client/imports/routes/QLink';
-import { logActivity } from '/imports/schemas/activity';
+import React, { PropTypes } from 'react'
+import QLink, { utilPushTo } from '/client/imports/routes/QLink'
+import { logActivity } from '/imports/schemas/activity'
 
 export default npUser = React.createClass({
 
@@ -18,14 +17,14 @@ export default npUser = React.createClass({
 
   logout: function() {
     let userName = Meteor.user().profile.name
-    logActivity("user.logout",  `Logging out "${userName}"`, null, null);
+    logActivity("user.logout",  `Logging out "${userName}"`, null, null)
 
-    Meteor.logout();
-    utilPushTo(this.context.urlLocation.query, "/");
+    Meteor.logout()
+    utilPushTo(this.context.urlLocation.query, "/")
   },
 
   render: function () {
-    const {currUser} = this.props
+    const { currUser, navPanelIsOverlay } = this.props
 
     return (
       // TODO: use site.less for styling inverted menu
@@ -40,24 +39,41 @@ export default npUser = React.createClass({
               <img className="ui centered small image" src={currUser.profile.avatar} />
             </div>
 
-            <QLink to={`/u/${this.props.currUser.profile.name}`} className="item">
+            <QLink 
+                to={`/u/${this.props.currUser.profile.name}`} 
+                closeNavPanelOnClick={navPanelIsOverlay} 
+                className="item">
               <i className="user icon" /> My Profile
             </QLink>
 
-            <QLink to={`/u/${this.props.currUser.profile.name}/assets`} className="item">
+            <QLink 
+                to={`/u/${this.props.currUser.profile.name}/assets`} 
+                closeNavPanelOnClick={navPanelIsOverlay} 
+                className="item">
               <i className="pencil icon" /> My Assets
             </QLink>
             <div className="menu">
-              <QLink to={`/assets/create`} className="item" title="Create New Asset">
+              <QLink 
+                  to={`/assets/create`} 
+                  closeNavPanelOnClick={navPanelIsOverlay} 
+                  className="item" 
+                  title="Create New Asset">
                 <i className="green pencil icon" /> Create New Asset
               </QLink>
             </div>
 
-            <QLink to={`/u/${this.props.currUser.profile.name}/projects`} className="item">
+            <QLink 
+                to={`/u/${this.props.currUser.profile.name}/projects`} 
+                closeNavPanelOnClick={navPanelIsOverlay} 
+                className="item">
               <i className="sitemap icon" /> My Projects
             </QLink>
             <div className="menu">
-              <QLink to={`/u/${this.props.currUser.profile.name}/projects/create`} className="item" title="Create New Project">
+              <QLink 
+                  to={`/u/${this.props.currUser.profile.name}/projects/create`} 
+                  closeNavPanelOnClick={navPanelIsOverlay} 
+                  className="item" 
+                  title="Create New Project">
                 <i className="green sitemap icon" /> Create New Project
               </QLink>
             </div>
@@ -77,13 +93,11 @@ export default npUser = React.createClass({
                 Login
               </h3>
             </div>,
-            <QLink to="/signin" className="item" key="login">Login</QLink>,
-            <QLink to="/join" className="item" key="join">Join</QLink>
+            <QLink to="/signin" closeNavPanelOnClick={navPanelIsOverlay} className="item" key="login">Login</QLink>,
+            <QLink to="/join" closeNavPanelOnClick={navPanelIsOverlay} className="item" key="join">Join</QLink>
           ]
         }
       </div>
-    );
+    )
   }
-
-
 })

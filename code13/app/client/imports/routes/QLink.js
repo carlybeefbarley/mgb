@@ -44,16 +44,17 @@ export default QLink = React.createClass({
 
 // propTypes are same as from node_modules/react-router/es6/Link.js
   propTypes: {
-//    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-    query: PropTypes.object,
-    hash: PropTypes.string,
-    state: PropTypes.object,
-    activeStyle: PropTypes.object,
-    activeClassName: PropTypes.string,
-//  onlyActiveOnIndex: PropTypes.bool.isRequired,
-    onClick: PropTypes.func,
-    target: PropTypes.string,
-    elOverride: PropTypes.string  // eg "div"
+//  to:                   PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+    query:                PropTypes.object,
+    hash:                 PropTypes.string,
+    state:                PropTypes.object,
+    activeStyle:          PropTypes.object,
+    activeClassName:      PropTypes.string,
+//  onlyActiveOnIndex:    PropTypes.bool.isRequired,
+    onClick:              PropTypes.func,
+    closeNavPanelOnClick: PropTypes.bool,   // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
+    target:               PropTypes.string,
+    elOverride:           PropTypes.string  // eg "div"
   },
   
   getDefaultProps: function () {
@@ -79,7 +80,9 @@ export default QLink = React.createClass({
   handleClick: function (event) {
     const p = this.props
 
-    const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
+    const excludedSymbolName = p.closeNavPanelOnClick ? "app_navPanel" : null
+    const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query, excludedSymbolName)
+
     const combinedQuery = Object.assign({}, appScopedQuery, this.props.query)
     if (p.onClick) 
       p.onClick(event)    // Call the click handler we were given. Note that it has thr option to preventDefault()
@@ -96,7 +99,7 @@ export default QLink = React.createClass({
   render: function () {
     const p = this.props
     const chosenEl = p.elOverride ? p.elOverride : Link
-    const pClean = _.omit(p, ["elOverride"])
+    const pClean = _.omit(p, ["elOverride","closeNavPanelOnClick"])
 
     if (!p.nav)
       return React.createElement(chosenEl, Object.assign({}, pClean, { onClick: this.handleClick }))

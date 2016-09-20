@@ -20,6 +20,7 @@ export default NavRecentGET = React.createClass({
   propTypes: {
     currUser:            PropTypes.object,           // Currently Logged in user. Can be null/undefined
     styledForNavPanel:   PropTypes.bool.isRequired,  // True if we want the NavPanel style (inverted etc)
+    navPanelIsOverlay:   PropTypes.bool,             // If true, we must close NavPanel when links are clicked.. we do this with a QLink option    
     showUserActivities:  PropTypes.bool.isRequired
   },
 
@@ -50,14 +51,9 @@ export default NavRecentGET = React.createClass({
     $(".hazRecentPopup").popup()
   },
 
-  destroyPopups()
-  {
-     $(".hazRecentPopup").popup('destroy')
-  },
-
   componentWillUnmount()
   {
-    this.destroyPopups()
+    $(".hazRecentPopup").popup('destroy')
   },
 
   componentDidMount()
@@ -82,6 +78,9 @@ export default NavRecentGET = React.createClass({
     mergedArray = _.uniqBy(mergedArray, 'toAssetId')    // Remove later duplicate assetIds
     let retval = { justNow: [], today: [], older: []}
 
+    const { navPanelIsOverlay } = this.props
+
+
     _.each(mergedArray, a => {
       const isSnapshot = a.hasOwnProperty("currentUrl")
       const mTime = moment(a.timestamp)
@@ -91,7 +90,13 @@ export default NavRecentGET = React.createClass({
       if (this.props.showUserActivities && a.activityType && a.activityType.startsWith("user.")) {
 
         item = (
-          <QLink to={`/u/${a.byUserName}`} className="ui item" key={a._id}  data-html={basicDataHtml} data-position="right center" >
+          <QLink 
+              to={`/u/${a.byUserName}`} 
+              closeNavPanelOnClick={navPanelIsOverlay}
+              className="ui item" 
+              key={a._id}  
+              data-html={basicDataHtml} 
+              data-position="right center" >
             <i className={"ui " + ActivityTypes.getIconClass(a.activityType)}></i>
             {a.description}
           </QLink>
@@ -111,7 +116,13 @@ export default NavRecentGET = React.createClass({
                         `/u/${a.toOwnerName}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016
                         `/assetEdit/${a.toAssetId}`                    // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
         item = (
-          <QLink to={linkTo} className="ui item hazRecentPopup"  key={a._id}  data-html={dataHtml} data-position="right center" >
+          <QLink 
+              to={linkTo} 
+              closeNavPanelOnClick={navPanelIsOverlay}
+              className="ui item hazRecentPopup"  
+              key={a._id}  
+              data-html={dataHtml} 
+              data-position="right center" >
             <span>
               <i className={assetKindIconClassName}></i>{assetNameTruncated || "(unnamed)"}
             </span>
@@ -121,7 +132,13 @@ export default NavRecentGET = React.createClass({
       }
       else if (a.activityType.startsWith("project.")) {
         item = (
-          <QLink to={`/u/${a.byUserName}/projects`} className="ui item" key={a._id}  data-html={basicDataHtml} data-position="right center" >
+          <QLink 
+              to={`/u/${a.byUserName}/projects`} 
+              closeNavPanelOnClick={navPanelIsOverlay}
+              className="ui item" 
+              key={a._id}  
+              data-html={basicDataHtml} 
+              data-position="right center" >
             <i className={"ui " + ActivityTypes.getIconClass(a.activityType)}></i>
             {a.description}
           </QLink>

@@ -78,6 +78,7 @@ export default NavPanel = React.createClass({
     handleNavPanelToggle:   PropTypes.func.isRequired,    // Callback for enabling/disabling NavPanel view
     handleNavPanelChange:   PropTypes.func.isRequired,    // Callback to change pane - records it in URL
     navPanelWidth:          PropTypes.string.isRequired,  // Typically something like "200px".
+    navPanelIsOverlay:      PropTypes.bool.isRequired,    // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
     isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
   },
 
@@ -110,14 +111,15 @@ export default NavPanel = React.createClass({
 
 
   render: function () {
-    const { navPanelWidth } = this.props
+    const { navPanelWidth, navPanelIsOverlay } = this.props
     const panelStyle = {    // This is the overall NavPanel with either just the first column (just icons, always shown), or 1st and 2nd columns
       position: "fixed",
       left: "0px",
       top: "0px",
       bottom: "0px",
       width: navPanelWidth,
-      backgroundColor: "rgb(50, 60, 60)"
+      backgroundColor: `rgba(50, 60, 60, ${navPanelIsOverlay ? 0.85 : 1})`,
+      zIndex: 100
     }
 
     const miniNavStyle = {  // This is the First column of the NavPanel (just icons, always shown). It is logically nested within the outer panel
@@ -129,7 +131,7 @@ export default NavPanel = React.createClass({
       borderRadius: 0,
       marginRight: "0px",
       marginBottom: "0px",
-      backgroundColor: "transparent"
+      backgroundColor: "rgba(50, 60, 60, 1)"
     }
 
     const panelScrollContainerStyle = {
@@ -140,7 +142,7 @@ export default NavPanel = React.createClass({
       bottom: "0px",
       paddingTop: "8px",
       paddingLeft: "1px",
-      backgroundColor: "rgb(40, 50, 50)",       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
+      backgroundColor: `rgba(40, 50, 50, ${navPanelIsOverlay ? 0.85 : 1})`,       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
       overflowY: "crop"
     }
 
@@ -181,6 +183,7 @@ export default NavPanel = React.createClass({
                 currUser={this.props.currUser}
                 currUserProjects={this.props.currUserProjects}
                 user={this.props.user}
+                navPanelIsOverlay={navPanelIsOverlay}
                 panelWidth={this.props.navPanelWidth} />
             }
           </div>

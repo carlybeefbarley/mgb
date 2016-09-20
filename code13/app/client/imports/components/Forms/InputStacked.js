@@ -44,7 +44,7 @@ export default InputStacked = React.createClass({
           data-validateby={validateBy}
           required={required}
           defaultValue={defaultValue}
-          {..._.omit(this.props, ["handleChange","errorMsg","type","validateBy","required"])} />
+          {..._.omit(this.props, ["handleChange","errors","errorMsg","type","validateBy","required"])} />
 
       </div>
     )

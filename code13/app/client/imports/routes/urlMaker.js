@@ -67,14 +67,23 @@ const urlMaker = {
    * @param query   An Object of querykey: queryvalue pairs
    * @param qGroup  A string with the queryGroup name, for example "APP". See _queryParamMap for definitions
    */
-  getQueryParamsMatchingQueryGroup: function(query, qGroup)
+  getQueryParamsMatchingQueryGroup: function(query, qGroup, excludedSymbolName)
   {
-    return _.pickBy(query, (val, key) => (_queryParamMap[key] && _queryParamMap[key].qGroup === qGroup))
+    return _.pickBy(query, (val, key) => (
+      _queryParamMap[key] && 
+      _queryParamMap[key].qGroup === qGroup && 
+      (!excludedSymbolName || excludedSymbolName !== _queryParamMap[key].symbolName)
+      ))
   },
   
-  /** This is used to preserve any cross-app query parans */
-  getCrossAppQueryParams: function(query) {
-    return this.getQueryParamsMatchingQueryGroup(query, "APP")
+  /** This is used to preserve any cross-app query params
+   * 
+   * @param {string} query  The initial Query String
+   * @param {string} [excludedSymbolName=null]  Optional - if present, then those entries from _queryParamMap will be excluded. The main case for this is the NavPanel auto-close
+   * @returns {array}
+   */
+  getCrossAppQueryParams: function(query, excludedSymbolName = null) {
+    return this.getQueryParamsMatchingQueryGroup(query, "APP", excludedSymbolName)
   },
 
   /** This function checks that the query parameter is known (by symbolName) and returns the short form */  

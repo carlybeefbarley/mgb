@@ -34,7 +34,7 @@ export default class EditMusic extends React.Component {
       canvasHeight: 128,
       pxPerSecond: pxPerSecond, // defines width of canvass 
       waveColor: '#4dd2ff', 
-      enableDrag: false,
+      isDrag: false,
       isSelecting: false,
       selectData: null,
       pasteData: null,
@@ -403,6 +403,7 @@ export default class EditMusic extends React.Component {
           viewWidth={this.state.viewWidth}
           canvasHeight={this.state.canvasHeight}
           pxPerSecond={this.state.pxPerSecond}
+          isDrag={this.state.isDrag}
           isSelecting={this.state.isSelecting}
           isPaste={this.state.isPaste}
           pasteData={this.state.pasteData}

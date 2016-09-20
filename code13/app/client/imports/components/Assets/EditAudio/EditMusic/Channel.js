@@ -279,7 +279,7 @@ export default class Channel extends React.Component {
     }
 
     // drag sample
-    else {
+    else if(this.props.isDrag) {
       const deltaX = e.clientX - this.dragStartX
       this.sample.offsetX += deltaX
       this.dragStartX = e.clientX
@@ -297,7 +297,7 @@ export default class Channel extends React.Component {
     }
 
     // moving
-    else {
+    else if (this.props.isDrag) {
       // calculate audio offset in sec
       this.sample.delay = this.sample.offsetX / this.props.pxPerSecond
       let channel = this.props.channel

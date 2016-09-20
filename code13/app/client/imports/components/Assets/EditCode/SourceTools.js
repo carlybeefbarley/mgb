@@ -22,7 +22,7 @@ const ERROR = {
 
 
 export default class SourceTools {
-  constructor(ternServer, asset_id) {
+  constructor(ternServer, asset_id, owner) {
     // terminate old babel worker - just in case..
     if (babelWorker) {
       babelWorker.terminate()
@@ -37,6 +37,7 @@ export default class SourceTools {
     this.collectedSources = []
     this.timeout = 0
 
+    this.owner = owner
     // here will live external libraries
     this.cache = {}
     // here we will keep our transpiled files
@@ -424,7 +425,7 @@ export default class SourceTools {
     const toInclude = parts.pop()
     const sparts = toInclude.split(":")
     const name = sparts.pop()
-    const owner = sparts.pop()
+    const owner = sparts.length > 1 ? sparts.pop() : this.owner
 
 
     // import './stauzs/asset_name'

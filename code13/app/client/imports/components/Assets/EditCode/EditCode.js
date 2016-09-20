@@ -176,7 +176,7 @@ export default class EditCode extends React.Component {
       }
     }
     //this.ternServer.server.debug = true
-    this.tools = new SourceTools(this.ternServer, this.props.asset._id)
+    this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
     this.tools.onError(errors => {
       this.showErrors(errors)
     })
@@ -947,7 +947,7 @@ export default class EditCode extends React.Component {
     if (this.state.isPlaying)
       this._postMessageToIFrame({
         mgbCommand: 'screenshotCanvas',
-        recommendedHeight: 150            // See AssetCard for this size        
+        recommendedHeight: 150            // See AssetCard for this size
       })
   }
 

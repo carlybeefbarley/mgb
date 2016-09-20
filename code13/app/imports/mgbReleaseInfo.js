@@ -15,6 +15,79 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Tue Sep 20 2016 15:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1489'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.navpanel',
+          'type': 'improvement',
+          'changeName': 'NavPanel auto-hides by default',
+          'changeSummary': 'The NavPanel is the dark menu column of navigation options to the left of the MGB page. The NavPanel now auto-hides by default when one of it\'s link is clicked. This auto-hide can be disabled by clicking the lock/unlock icon at the bottom of the expanded NavPanel',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': "Code Asset thumbnails based on source code",
+          'changeSummary': 'Not all source code files actually render anything which could be a thumbnail, so the assets preview looks pretty dull for source code. To improve that. we have added a new way to create a thumbnail based on the source code.. For now this is very simple (just the source file name and names of any imports). However, it will have some fancier variants in the near future. For now, click \'AST Thumbnail\' to update the simple source-base code asset thumbnail',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.music',
+          'type': 'feature',
+          'changeName': "Cut/Copy/Paste time segments in Music Channels",
+          'changeSummary': 'It is now possible to select a time range in a music channel, then delete/cut/copy/paste that segment into another sound channel. Woah',
+          'otherUrls': []
+        },        
+        {
+          'featureTag': 'nav.flexpanel.network',
+          'type': 'feature',
+          'changeName': 'New \'network status\' FlexPanel',
+          'changeSummary': 'There is new Network Status FlexPanel on the right-hand side of the page. This provides basic connectivity status information, and a \'receonnect now\' button',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.music',
+          'type': 'bugfix',
+          'changeName': "Bugfixes for Music editor",
+          'changeSummary': 'Improved stability and ui for Music editor',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.sound',
+          'type': 'bugfix',
+          'changeName': "Bugfixes for Sound editor",
+          'changeSummary': 'Improved stability and ui for Sound editor',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'bugfix',
+          'changeName': "Bugfixes for Graphic editor",
+          'changeSummary': 'Added more zoom sizes and enabled a grid at zooms of 8x and above. Fixed some drawing bugs with layers',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'bugfix',
+          'changeName': "Bugfixes for Code editor",
+          'changeSummary': 'Improved stability and compatibility for various kinds of imports',
+          'otherUrls': []
+        }
+      ]
+    }, 
+
+    {
       'timestamp': 'Sun Sep 18 2016 12:00:00 GMT-0700 (PDT)',
 
       'id': {
@@ -52,7 +125,7 @@ export default mgbReleaseInfo = {
         {
           'featureTag': 'nav.projects',
           'type': 'improvement',
-          'changeName': 'Change Project while editing Asset',
+          'changeName': 'Change Asset\'s Project list from Asset Editor',
           'changeSummary': 'Asset owners can change the Projects for an Asset while editing the Asset (click the top right projects label)',
           'otherUrls': []
         },

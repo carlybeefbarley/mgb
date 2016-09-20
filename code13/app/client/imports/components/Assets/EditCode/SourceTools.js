@@ -10,10 +10,17 @@ const SMALL_CHANGES_TIMEOUT = 1000 // force refresh other mgb assets - even if c
 const UPDATE_DELAY = 15 * 1000
 
 // add only smalls libs to tern
-const MAX_ACCEPTABLE_SOURCE_SIZE = 1700653 // REACT sice for testing purposes - 1024 * 10 // 10 kb
+const MAX_ACCEPTABLE_SOURCE_SIZE = 170065300 //
 const tmpCache = {}
 // we don't want to ping 404 on CDNs all the time
 const cached404 = {}
+
+const ERROR = {
+  SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
+  MULTIPLE_SOURCES: "W-ST-002"
+}
+
+
 export default class SourceTools {
   constructor(ternServer, asset_id) {
     // terminate old babel worker - just in case..
@@ -49,6 +56,67 @@ export default class SourceTools {
     }
     // store entry point filename
     this.mainJS = "main.js"
+
+    this.errorCBs = []
+    this.errors = {}
+  }
+  // this will handle errors in the EditCode
+
+  onError(cb){
+    this.errorCBs.push(cb)
+  }
+  getErrors(){
+    const ret = []
+    for(let i in this.errors){
+      ret.push(this.errors[i])
+    }
+    return ret
+  }
+  setError(err){
+    console.log("setting error:", err)
+    this.errors[err.code] = err
+    const errors = this.getErrors()
+    this.errorCBs.forEach((c) => {
+      c(errors)
+    })
+  }
+
+  getAST(cb = () => {}){
+    const self = this;
+    this.collectSources((s) => {
+      const getFiles = (e) => {
+        // clean up
+        self.tern.worker.removeEventListener("message", getFiles)
+
+        const ternFiles = e.data;
+
+        const ret = []
+        s.forEach((sp) => {
+          // || strip ./ from local includes
+          const ternFile = ternFiles[sp.name] || ternFiles[sp.name.substr(2)]
+          let tokens = (self.transpileCache[sp.name] && self.transpileCache[sp.name].data) ? self.transpileCache[sp.name].data.astTokens : ''
+          if(ternFile){
+            ret.push({
+              name: sp.name,
+              code: sp.code,
+              ast: ternFile.ast,
+              tokens
+            })
+          }
+          else {
+            ret.push({
+              name: sp.name,
+              code: sp.code,
+              tokens
+            })
+          }
+
+        }, this)
+        cb(ret)
+      }
+      this.tern.worker.addEventListener("message", getFiles)
+      this.tern.worker.postMessage({type: "getFiles"})
+    })
   }
 
   collectAndTranspile(srcText, filename, callback, force = false) {
@@ -59,6 +127,8 @@ export default class SourceTools {
       window.clearTimeout(this.timeout)
       this.timeout = 0;
     }
+
+
 
     const prev = this._lastAction
     // wait for previous action and transpile lazy - as full core refresh and reanalyze makes text cursor feel sluggish
@@ -75,6 +145,9 @@ export default class SourceTools {
     else if (this.inProgress) {
       console.log("This never should happen - Debug ASAP!")
     }
+
+    // clean up old errors
+    this.errors = {}
 
     this._lastAction.src = srcText
     this._lastAction.time = Date.now()
@@ -143,6 +216,8 @@ export default class SourceTools {
       this.subscriptions[i].observer.stop()
     }
     this.subscriptions = null
+    this.errorCBs = null
+    this.errors = null
   }
 
   // clean up old data
@@ -186,7 +261,7 @@ export default class SourceTools {
       // TODO: find out how to fix that
       // true override everything
       this.tern.server.addDefs && this.tern.server.addDefs(lib.defs, true)
-      this.tern.cachedArgHints = null
+      //this.tern.cachedArgHints = null
     }
     else {
       // TODO: debug: sometimes code isn't defined at all
@@ -198,7 +273,7 @@ export default class SourceTools {
         //console.info("Adding file: ", cleanFileName)
         this.tern.server.delFile(cleanFileName)
         this.tern.server.addFile(cleanFileName, code)
-        this.tern.cachedArgHints = null
+        //this.tern.cachedArgHints = null
       }
       else {
         console.log(`${filename} is too big [${code.length} bytes] and no defs defined`)
@@ -341,16 +416,37 @@ export default class SourceTools {
 
   loadAndObserveLocalFile(url, urlFinalPart, cb){
     const parts = url.split("/")
+
+
+
+
+     // import './stauzs:asset_name'
+    const toInclude = parts.pop()
+    const sparts = toInclude.split(":")
+    const name = sparts.pop()
+    const owner = sparts.pop()
+
+
+    // import './stauzs/asset_name'
+    /*
     const name = parts.pop()
     const owner = parts.length == 6 ? parts.pop() : Meteor.user().profile.name
+    */
+
     const cursor = Azzets.find({dn_ownerName: owner, name: name})
 
     const getSourceAndTranspile = () => {
       const assets = cursor.fetch()
+
+      if(assets.length > 1){
+        this.setError({reason: "Multiple candidates found for " + urlFinalPart, evidence: urlFinalPart, code: ERROR.MULTIPLE_SOURCES})
+      }
       if (assets[0]) {
         this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb)
       }
       else {
+        // TODO somewhere in callstack get line number and pass to this function - atm EditCode is guessing lines by evidence string
+        this.setError({reason: "Unable to locate: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.SOURCE_NOT_FOUND})
         cb("")
       }
     }

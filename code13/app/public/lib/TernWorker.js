@@ -25,6 +25,8 @@ this.onmessage = function(e) {
       var c = pending[data.id];
       delete pending[data.id];
       return c(data.err, data.text);
+    case "getFiles":
+      return postMessage(server.fileMap)
     default: throw new Error("Unknown message type: " + data.type);
   }
 };

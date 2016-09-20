@@ -71,7 +71,7 @@ export default class EditCode extends React.Component {
   constructor(props) {
     super(props);
     this.fontSizeSettingIndex = undefined;
-
+    window.mgb_edit_code = this
     // save jshint reference - so we can kill it later
     this.jshintWorker = null
 
@@ -98,6 +98,7 @@ export default class EditCode extends React.Component {
 
     this.lastBundle = null
     this.hintWidgets = []
+    this.errorMessageCache = {}
   }
 
 
@@ -148,7 +149,7 @@ export default class EditCode extends React.Component {
         "/lib/tern/plugin/doc_comment.js"
       ],
       plugins: {
-        // modules: true, we are injecting files directly - no need for additional module + it have
+        modules: true, //we are injecting files directly - no need for additional module + it have
         comment: true,
         es_modules: true,
         doc_comment: {
@@ -176,6 +177,9 @@ export default class EditCode extends React.Component {
     }
     //this.ternServer.server.debug = true
     this.tools = new SourceTools(this.ternServer, this.props.asset._id)
+    this.tools.onError(errors => {
+      this.showErrors(errors)
+    })
 
     InstallMgbTernExtensions(tern);
 
@@ -488,66 +492,11 @@ export default class EditCode extends React.Component {
         // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
         const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js");
 
-        worker.onmessage = function (e) {
+        worker.onmessage = (e) => {
           worker.isBusy = false;
-          // clean up old messages
-          editor.clearGutter("CodeMirror-lint-markers");
+          this.showErrors(e.data[0], true)
 
-          const errors = e.data[0]
-          // TODO: optimization: skip invisible lines?
-          // TODO: show multiple errors on same line
-          // TODO: allow user to change error level? Warning / Error?
-          const msgs = {}
-          // make sure we start to transpile code only after it's clean
-          // assume that only errors count
-          let sourceIsValid = true
-          for (var i = 0; i < errors.length; ++i) {
-            const err = errors[i];
-            if (!err) continue;
-            const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div");
-            // msg.errorTxt = err.reason;
-
-            if (!msgs[err.line]) {
-              msgs[err.line] = msg;
-              msg.icon = msg.appendChild(document.createElement("div"));
-              //icon.innerHTML = "!";
-              if (err.code.substring(0, 1) == "W") {
-                msg.icon.className = "CodeMirror-lint-marker-warning";
-              }
-              else {
-                msg.icon.className = "CodeMirror-lint-marker-error";
-              }
-              msg.container = msg.appendChild(document.createElement("div"));
-              msg.container.className = "lint-error-text";
-
-            }
-            else if (!msg.multi) {
-              msg.multi = msg.icon.appendChild(document.createElement("div"));
-              msg.multi.className = "CodeMirror-lint-marker-multiple";
-            }
-            // override warning icon to Error
-            if (err.code.substring(0, 1) == "E") {
-              msg.icon.className = "CodeMirror-lint-marker-error";
-            }
-
-            const text = msg.container.appendChild(document.createElement("div"));
-            const ico = text.appendChild(document.createElement("div"));
-            if (err.code.substring(0, 1) == "W") {
-              ico.className = "CodeMirror-lint-marker-warning";
-            }
-            else {
-              ico.className = "CodeMirror-lint-marker-error";
-            }
-
-            text.appendChild(document.createTextNode(" " + err.reason));
-
-            msg.className = "lint-error";
-            editor.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg);
-
-            //var evidence = msg.appendChild(document.createElement("span"));
-            //evidence.className = "lint-error-text evidence";
-            //evidence.appendChild(document.createTextNode(err.evidence));
-          }
+          this.showErrors(this.tools.getErrors())
         }
       }
 
@@ -562,7 +511,14 @@ export default class EditCode extends React.Component {
         undef: true,
         unused: true,
         loopfunc: true,
+        // otherwise jshint will complain about some of these globals
         predef: {
+          "alert": false,// why alert is not defined?
+          //"require": false,
+          //"exports": false,
+          "Phaser": false,
+          "PIXI": false,
+          "console": false,
           "_": false
         }
       }
@@ -570,6 +526,7 @@ export default class EditCode extends React.Component {
       this.jshintWorker.postMessage([editor.getValue(), conf])
 
       self.tools && self.tools.collectAndTranspile(editor.getValue(), self.props.asset.name)
+
     });
 
     var info = editor.getScrollInfo();
@@ -578,6 +535,68 @@ export default class EditCode extends React.Component {
       editor.scrollTo(null, after - info.clientHeight + 3);
   }
 
+  showErrors(errors, clear){
+    // TODO: optimization: skip invisible lines?
+    // TODO: show multiple errors on same line
+    // TODO: allow user to change error level? Warning / Error?
+    if(clear){
+      this.codeMirror.clearGutter("CodeMirror-lint-markers")
+      this.errorMessageCache = {}
+    }
+    const msgs = this.errorMessageCache
+
+    for (var i = 0; i < errors.length; ++i) {
+      const err = errors[i];
+      if (!err) continue;
+      // get line
+      if (!err.line || !clear) {
+        const doc = this.codeMirror.getValue().split("\n")
+        err.line = doc.findIndex(v => v.indexOf(err.evidence) > -1) + 1
+      }
+      const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div")
+      // msg.errorTxt = err.reason;
+
+      if (!msgs[err.line]) {
+        msgs[err.line] = msg
+        msg.icon = msg.appendChild(document.createElement("div"))
+        if (err.code.substring(0, 1) == "W") {
+          msg.icon.className = "CodeMirror-lint-marker-warning"
+        }
+        else {
+          msg.icon.className = "CodeMirror-lint-marker-error"
+        }
+        msg.container = msg.appendChild(document.createElement("div"))
+        msg.container.className = "lint-error-text"
+
+      }
+      else if (!msg.multi) {
+        msg.multi = msg.icon.appendChild(document.createElement("div"))
+        msg.multi.className = "CodeMirror-lint-marker-multiple"
+      }
+      // override warning icon to Error
+      if (err.code.substring(0, 1) == "E") {
+        msg.icon.className = "CodeMirror-lint-marker-error"
+      }
+
+      const text = msg.container.appendChild(document.createElement("div"))
+      const ico = text.appendChild(document.createElement("div"))
+      if (err.code.substring(0, 1) == "W") {
+        ico.className = "CodeMirror-lint-marker-warning"
+      }
+      else {
+        ico.className = "CodeMirror-lint-marker-error"
+      }
+
+      text.appendChild(document.createTextNode(" " + err.reason));
+
+      msg.className = "lint-error";
+      this.codeMirror.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg);
+
+      //var evidence = msg.appendChild(document.createElement("span"));
+      //evidence.className = "lint-error-text evidence";
+      //evidence.appendChild(document.createTextNode(err.evidence));
+    }
+  }
 
   srcUpdate_GetInfoForCurrentFunction() {
     let ternServer = this.ternServer
@@ -932,6 +951,33 @@ export default class EditCode extends React.Component {
       })
   }
 
+  setAstThumbnail(){
+    this.tools.getAST((list) => {
+      /*
+      list will contain objects with the following structure : {
+       name,
+       code,
+       ast, // tern ast - can be empty e.g. for phaser - as phaser uses defs file
+       tokens // tokens exported from babel ast ( there is no easy way to extract full babel ast from worker )
+      }
+      */
+
+
+
+      console.log(list)
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      canvas.width = 150
+      canvas.height = 150
+      for(let i=0; i<list.length; i++){
+        ctx.fillText(list[i].name, i*12, (i + 1)*12, 150 - i*12)
+      }
+      this.props.asset.thumbnail = canvas.toDataURL('image/png')
+      this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
+
+    })
+  }
+
   postToIFrame(cmd, data) {
     if (this.state.isPlaying) {
       data.mgbCommand = cmd
@@ -1187,6 +1233,12 @@ export default class EditCode extends React.Component {
                 <a className={"ui right floated mini icon button"} onClick={this.handleScreenshotIFrame.bind(this)}
                    title="This will make a screenshot of the CANVAS element in the page">
                   <i className={"write square icon"}></i>Set thumbnail
+                </a>
+                }
+                {this.props.canEdit &&
+                <a className={"ui right floated mini icon button"} onClick={this.setAstThumbnail.bind(this)}
+                   title="This will make abstract image of your code">
+                  <i className={"write square icon"}></i>Set AST Thumbnail
                 </a>
                 }
 

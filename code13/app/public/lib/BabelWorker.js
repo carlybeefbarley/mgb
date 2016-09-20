@@ -13,7 +13,7 @@ onmessage = function (e) {
       presets: ['es2015', 'react'], // remove comments as they will break bundled code
       plugins: ['transform-class-properties'], // , "transform-es2015-modules-amd" - not working
       retainLines: true,
-      ast: false
+      ast: true
     }
   if (!options.filename) {
     options.filename = filename
@@ -32,10 +32,11 @@ onmessage = function (e) {
       presets: ['es2015', 'react'],// remove comments as they will break bundled code
       plugins: ['transform-class-properties'],// , "transform-es2015-modules-amd" - not working
       retainLines: true,
-      ast: false
+      ast: true
     });
     trans.code = `throw new Error('${e.message.split("\n").shift()}')`
+    trans.error = {message: e.message, loc: e.loc}
   }
 
-  postMessage({data: trans.metadata, code: trans.code})
+  postMessage({data: trans.metadata, code: trans.code, error: trans.error, astTokens: JSON.parse(JSON.stringify(trans.ast.tokens))})
 };

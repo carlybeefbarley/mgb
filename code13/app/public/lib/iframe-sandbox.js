@@ -212,7 +212,7 @@ window.onload = function() {
           appendScript(source.name, source.code, run)
 
           var key = source.name.split("@").shift()
-          
+
           var localKeyWithExt = key.split("/").pop()
           var localKey = localKeyWithExt.split(".").shift()
           if(source.useGlobal){

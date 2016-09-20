@@ -2,7 +2,13 @@ let babelWorker;
 import knownLibs from "./knownLibs.js"
 import { Azzets } from '/imports/schemas'
 // serving modules from...
-const MODULE_SERVER = 'https://cdn.jsdelivr.net/phaser/latest/'
+
+const getModuleServer = (lib) => {
+  return 'https://cdn.jsdelivr.net/' + lib + '/latest/' + lib + ".js"
+}
+
+
+
 // ajax requests cache - invalidate every few seconds
 // this will insanely speed up run
 const INVALIDATE_CACHE_TIMEOUT = 30 * 1000
@@ -588,7 +594,8 @@ export default class SourceTools {
     // import X from 'asset_id'
     if (!SourceTools.isExternalFile(urlFinalPart)) {
       // try CDN
-      return MODULE_SERVER + urlFinalPart
+      return getModuleServer(urlFinalPart)
+      //return MODULE_SERVER + urlFinalPart
     }
 
     // import X from 'http://cdn.com/x'

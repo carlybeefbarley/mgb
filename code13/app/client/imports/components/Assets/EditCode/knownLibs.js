@@ -1,5 +1,7 @@
 // TODO: add predefined defs files
+// TODO: load these defs dynamically
 import Defs_phaser from "./tern/Defs/DefsPhaser";
+import DefsLodash from "./tern/Defs/DefsLodash";
 
 export default {
   phaser: {
@@ -26,6 +28,14 @@ export default {
       version = version || "latest";
       return 'https://cdn.jsdelivr.net/react/' + version + '/react-dom.min.js';
     }
+  },
+  lodash: {
+    //return 'https://cdn.jsdelivr.net/' + lib + '/latest/' + lib + ".js"
+    src: function (version) {
+      version = version || "latest";
+      return 'https://cdn.jsdelivr.net/lodash/' + version + '/lodash.js';
+    },
+    defs: DefsLodash
   }
 }
 

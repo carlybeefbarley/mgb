@@ -15,7 +15,21 @@ this.onmessage = function(e) {
 
   switch (data.type) {
     case "init": return startServer(data.defs, data.plugins, data.scripts);
-    case "add": return server.addFile(data.name, data.text);
+    case "add": {
+      if(server.fileMap[data.name]){
+        // update file only if we have replace flag
+        if(data.replace){
+          server.delFile(data.name);
+          return server.addFile(data.name, data.text);
+        }
+        else{
+          console.log("Skipping file:", data.name)
+        }
+      }
+      else{
+        return server.addFile(data.name, data.text);
+      }
+    }
     case "del": return server.delFile(data.name);
     case "req": return server.request(data.body, function(err, reqData) {
       postMessage({id: data.id, body: reqData, err: err && String(err)});

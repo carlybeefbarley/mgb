@@ -37,6 +37,6 @@ onmessage = function (e) {
     trans.code = `throw new Error('${e.message.split("\n").shift()}')`
     trans.error = {message: e.message, loc: e.loc}
   }
-  var tokens = trans && trans.ast ? JSON.parse(JSON.stringify(trans.ast.tokens)) : null
-  postMessage({data: trans.metadata, code: trans.code, error: trans.error, astTokens: tokens})
+  //var tokens = trans && trans.ast ? JSON.parse(JSON.stringify(trans.ast.tokens)) : null
+  postMessage({data: trans.metadata, code: trans.code, error: trans.error, astTokens: null})
 };

@@ -343,6 +343,14 @@ for (x in obj)`,
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Conditional_Operator"
   },
 
+  {
+    tt: "operator", ts: "?", origin: "ecma5",
+    syntax: "conditionToTest ? expressionEvaluatedIfTrue : expressionEvaluatedIfFalse",
+    help: "If conditionToTest is true, the operator returns the value of expressionEvaluatedIfTrue; otherwise, it returns the value of expressionEvaluatedIfFalse",
+    help2: "This operator is frequently used as a shortcut for the if statement",
+    advice: "The conditional (ternary) operator is the ONLY JavaScript operator that takes three operands.",
+    url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Conditional_Operator"
+  },
 
   // The comma operator   ,
   // NOTE THAT codemirror can't really get this token at present so don't worry too much

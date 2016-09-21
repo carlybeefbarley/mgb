@@ -11,7 +11,7 @@ const getModuleServer = (lib) => {
 
 // ajax requests cache - invalidate every few seconds
 // this will insanely speed up run
-const INVALIDATE_CACHE_TIMEOUT = 30 * 1000
+const INVALIDATE_CACHE_TIMEOUT = 3 * 1000
 const SMALL_CHANGES_TIMEOUT = 1000 // force refresh other mgb assets - even if current isn't changed
 const UPDATE_DELAY = 15 * 1000
 
@@ -20,6 +20,7 @@ const MAX_ACCEPTABLE_SOURCE_SIZE = 170065300 //
 const tmpCache = {}
 // we don't want to ping 404 on CDNs all the time
 const cached404 = {}
+
 
 const ERROR = {
   SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
@@ -35,6 +36,8 @@ export default class SourceTools {
       babelWorker.terminate()
     }
 
+
+    this.addedFilesAndDefs = {}
     this.subscriptions = []
     window.mgb_tools = this
     this.asset_id = asset_id
@@ -81,7 +84,6 @@ export default class SourceTools {
     return ret
   }
   setError(err){
-    console.log("setting error:", err)
     this.errors[err.code] = err
     const errors = this.getErrors()
     this.errorCBs.forEach((c) => {
@@ -171,7 +173,8 @@ export default class SourceTools {
     this._collectAndTranspile(srcText, filename, () => {
       if (this.isDestroyed) return
       // force tern to update arg hint cache as we may have loaded new files / defs / docs
-      callback && callback()
+      callback && callback(this.collectedSources)
+      console.log("Collected")
       this.inProgress = false
     })
   }
@@ -226,14 +229,19 @@ export default class SourceTools {
     this.subscriptions = null
     this.errorCBs = null
     this.errors = null
+
+    this.cleanup()
+    for(let i=0; i<this.collectedSources.length; i++){
+     this.tern.server.delFile(this.collectedSources[i].name)
+    }
   }
 
   // clean up old data
   cleanup(){
     this.removeTranspiled(this.mainJS)
-    for(let i=0; i<this.collectedSources.length; i++){
+    /*for(let i=0; i<this.collectedSources.length; i++){
       this.tern.server.delFile(this.collectedSources[i].name)
-    }
+    }*/
     this.collectedSources.length = 0;
   }
 
@@ -244,7 +252,6 @@ export default class SourceTools {
       cb && cb()
       return;
     }
-    console.log("Collected:", name)
     // remove use strict added by babel - as it may break code silently
     code = code.replace(/use strict/gi, '')
     const lib = SourceTools.getKnowLib(name)
@@ -252,7 +259,7 @@ export default class SourceTools {
     this.collectedSources.push({name, code, useGlobal, localName})
     // MGB assets will have cache.. remote won't
     if (this.transpileCache[name]) {
-      this.addDefsOrFile(name, this.transpileCache[name].src)
+      this.addDefsOrFile(name, this.transpileCache[name].src, true)
     }
     else {
       this.addDefsOrFile(name, code)
@@ -261,15 +268,21 @@ export default class SourceTools {
     cb && cb()
   }
 
-  addDefsOrFile(filename, code) {
+  addDefsOrFile(filename, code, replace = false) {
     if (this.isDestroyed) return
+    // skip added defs and files
+    if(this.addedFilesAndDefs[filename]){
+      return
+    }
+
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       // this only works when NOT in worker mode..
       // TODO: find out how to fix that
       // true override everything
       this.tern.server.addDefs && this.tern.server.addDefs(lib.defs, true)
-      //this.tern.cachedArgHints = null
+      this.addedFilesAndDefs[filename] = true
+      this.tern.cachedArgHints = null
     }
     else {
       // TODO: debug: sometimes code isn't defined at all
@@ -277,11 +290,12 @@ export default class SourceTools {
         return
       }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
+        if(!replace){
+          this.addedFilesAndDefs[filename] = true
+        }
         const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
-        //console.info("Adding file: ", cleanFileName)
-        this.tern.server.delFile(cleanFileName)
-        this.tern.server.addFile(cleanFileName, code)
-        //this.tern.cachedArgHints = null
+        this.tern.server.addFile(cleanFileName, code, replace)
+        this.tern.cachedArgHints = null
       }
       else {
         console.log(`${filename} is too big [${code.length} bytes] and no defs defined`)
@@ -305,8 +319,9 @@ export default class SourceTools {
     // wait for active job to complete
     if (this.inProgress) {
       setTimeout(() => {
+        console.log("waiting...")
         this.updateNow(cb)
-      }, 100)
+      }, 1000)
       return;
     }
 
@@ -321,7 +336,7 @@ export default class SourceTools {
     }
     // already on the latest version, yay!
     else {
-      console.log("latest version")
+      console.log("All OK - latest version")
       cb()
     }
   }
@@ -475,7 +490,6 @@ export default class SourceTools {
     const observer = cursor.observeChanges({
       changed: (id, changes) => {
         if (changes.content2 && changes.content2.src) {
-          console.log("Updated:", urlFinalPart)
           this.removeTranspiled(urlFinalPart)
           this._collectAndTranspile(changes.content2.src, urlFinalPart)
         }
@@ -498,9 +512,8 @@ export default class SourceTools {
 
   createBundle(cb) {
     if (this.isDestroyed) return
-    console.log("Create bundle")
     if (!this._hasSourceChanged) {
-      cb(this.cachedBundle)
+      cb(this.cachedBundle, true)
       return
     }
     this.collectSources((sources) => {
@@ -620,7 +633,6 @@ export default class SourceTools {
       return;
     }
 
-    console.log("Loading:", url)
     // atm server will try to generate script
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = () => {

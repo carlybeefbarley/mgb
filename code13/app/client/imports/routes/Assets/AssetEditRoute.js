@@ -300,7 +300,7 @@ export default AssetEditRoute = React.createClass({
     if (this.m_deferredSaveObj)
     {
       const d = this.m_deferredSaveObj
-      console.log("Replacing deferred save: ", d.assetId, asset._id, (new Date()) - d.timeOfLastChange)
+      // too loud =) console.log("Replacing deferred save: ", d.assetId, asset._id, (new Date()) - d.timeOfLastChange)
     }
     this.m_deferredSaveObj = {
       assetId: asset._id,

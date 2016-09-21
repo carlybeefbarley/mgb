@@ -22,10 +22,10 @@ onmessage = function(e) {
   }
   // TODO: what to do if babel fails to transform code?
   catch(e){
-    /*var f = new Array(e.loc.line - 1);
+    var f = new Array(e.loc.line - 1);
     f.fill("\n");
     code = f.join("") + str.substring(e.pos);
-    */
+
     const lines = str.split("\n");
     lines.splice(e.loc.line - 1, 1);
     code = '';//lines.join("\n");

@@ -96,7 +96,6 @@ export default class EditCode extends React.Component {
       currentLineDeterminesGameEngine: null   // Determined by current line/selection
     }
 
-    this.lastBundle = null
     this.hintWidgets = []
     this.errorMessageCache = {}
   }
@@ -114,8 +113,15 @@ export default class EditCode extends React.Component {
   componentDidMount() {
     this.getElementReferences()
 
+    const codeMirrorUpdateHints = this.codeMirrorUpdateHints
     // Debounce the codeMirrorUpdateHints() function
     this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
+
+    // previous debounce eats up changes
+    this.codeMirrorUpdateHintsChanged = _.debounce(() => {
+      codeMirrorUpdateHints.call(this, true)
+    }, 100, true)
+
 
     // Semantic-UI item setup (Accordion etc)
     $('.ui.accordion').accordion({exclusive: false, selector: {trigger: '.title .explicittrigger'}})
@@ -175,6 +181,13 @@ export default class EditCode extends React.Component {
         })
       }
     }
+    // overwrite default function - so we can use replace
+    this.ternServer.server.addFile = (name, text, replace) => {
+      this.ternServer.worker.postMessage({type: "add", name, text, replace})
+    }
+
+
+
     //this.ternServer.server.debug = true
     this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
     this.tools.onError(errors => {
@@ -198,7 +211,7 @@ export default class EditCode extends React.Component {
       foldGutter: true,
       autoCloseBrackets: true,
       matchBrackets: true,
-      viewportMargin: Infinity,
+      viewportMargin: 10,
 
       /*hintOptions: {
        completeSingle: false    //    See https://codemirror.net/doc/manual.html -> completeSingle
@@ -257,7 +270,7 @@ export default class EditCode extends React.Component {
 
     this._currentCodemirrorValue = this.props.asset.content2.src || '';
 
-    this.codeMirrorUpdateHints(true)
+    this.codeMirrorUpdateHintsChanged()
 
     this.codeMirror.getWrapperElement().addEventListener('wheel', this.handleMouseWheel.bind(this));
 
@@ -300,15 +313,12 @@ export default class EditCode extends React.Component {
     $(window).off("resize", this.edResizeHandler)
     // TODO: Destroy CodeMirror editor instance?
 
-    this.jshintWorker.terminate();
+    this.jshintWorker && this.jshintWorker.terminate();
     this.jshintWorker = null;
 
     // this also will terminate worker (if in worker mode)
     this.ternServer.destroy();
     this.ternServer = null;
-
-    // clean up
-    this.lastBundle = null;
 
     this.tools.destroy();
   }
@@ -467,94 +477,95 @@ export default class EditCode extends React.Component {
   srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged = false) {
     //return // TODO make this user-selectable
     const editor = this.codeMirror
-    var widgets = this.hintWidgets
-    var currentLineNumber = editor.getCursor().line + 1     // +1 since user code is 1...
-    const self = this
+    const currentLineNumber = editor.getCursor().line + 1     // +1 since user code is 1...
+
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
     this.codeMirror.operation(() => {
-      /*if ( !fSourceMayHaveChanged ){
-       return;
-       }*/
-      /*for (var i = 0; i < widgets.length; ++i)
-       editor.removeLineWidget(widgets[i]);
-
-       widgets.length = 0;
-       */
-
-      // terminate old busy worker - as jshint can take a lot time on huge scripts
-      if (this.jshintWorker && this.jshintWorker.isBusy) {
-        this.jshintWorker.terminate();
-        this.jshintWorker = null;
+      if(!fSourceMayHaveChanged){
+        return
       }
-
-      if (!this.jshintWorker) {
-        // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
-        const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js");
-
-        worker.onmessage = (e) => {
-          worker.isBusy = false;
-          this.showErrors(e.data[0], true)
-
-          this.showErrors(this.tools.getErrors())
-        }
+      const val = editor.getValue()
+      this.runJSHintWorker(val);
+      if(this.tools){
+        this.tools.collectAndTranspile(editor.getValue(), this.props.asset.name, (sources) => {
+          // last is always this file
+          // debugger
+          //this.runJSHintWorker(sources[sources.length-1].code)
+        })
       }
-
-      const conf = {
-        browser: true,
-        esversion: 6,
-        asi: true,
-
-        //globalstrict: true,
-        strict: "implied",
-
-        undef: true,
-        unused: true,
-        loopfunc: true,
-        // otherwise jshint will complain about some of these globals
-        predef: {
-          "alert": false,// why alert is not defined?
-          //"require": false,
-          //"exports": false,
-          "Phaser": false,
-          "PIXI": false,
-          "console": false,
-          "_": false
-        }
-      }
-      this.jshintWorker.isBusy = true
-      this.jshintWorker.postMessage([editor.getValue(), conf])
-
-      self.tools && self.tools.collectAndTranspile(editor.getValue(), self.props.asset.name)
 
     });
 
-    var info = editor.getScrollInfo();
-    var after = editor.charCoords({line: currentLineNumber, ch: 0}, "local").top;
+    const info = editor.getScrollInfo();
+    const after = editor.charCoords({line: currentLineNumber, ch: 0}, "local").top;
     if (info.top + info.clientHeight < after)
       editor.scrollTo(null, after - info.clientHeight + 3);
   }
 
+  runJSHintWorker(code){
+
+    // terminate old busy worker - as jshint can take a lot time on huge scripts
+    if (this.jshintWorker && this.jshintWorker.isBusy) {
+      this.jshintWorker.terminate();
+      this.jshintWorker = null;
+    }
+
+    if (!this.jshintWorker) {
+      // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
+      const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js");
+
+      worker.onmessage = (e) => {
+        worker.isBusy = false;
+        // merge arrays ???
+        this.showErrors(e.data[0], true)
+        this.showErrors(this.tools.getErrors())
+      }
+    }
+
+    const conf = {
+      browser: true,
+      esversion: 6,
+      asi: true,
+      //globalstrict: true,
+      strict: "implied",
+      undef: true,
+      unused: true,
+      loopfunc: true,
+      // otherwise jshint will complain about some of these globals
+      predef: {
+        "alert": false,// why alert is not defined?
+        //"require": false,
+        //"exports": false,
+        "Phaser": false,
+        "PIXI": false,
+        "console": false,
+        "_": false
+      }
+    }
+
+    this.jshintWorker.isBusy = true
+    this.jshintWorker.postMessage([code, conf])
+  }
+
   showErrors(errors, clear){
-    // TODO: optimization: skip invisible lines?
-    // TODO: show multiple errors on same line
     // TODO: allow user to change error level? Warning / Error?
-    if(clear){
+    if (clear) {
       this.codeMirror.clearGutter("CodeMirror-lint-markers")
       this.errorMessageCache = {}
     }
-    const msgs = this.errorMessageCache
 
+    const msgs = this.errorMessageCache
     for (var i = 0; i < errors.length; ++i) {
       const err = errors[i];
       if (!err) continue;
+
       // get line
       if (!err.line || !clear) {
         const doc = this.codeMirror.getValue().split("\n")
         err.line = doc.findIndex(v => v.indexOf(err.evidence) > -1) + 1
       }
       const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div")
-      // msg.errorTxt = err.reason;
 
       if (!msgs[err.line]) {
         msgs[err.line] = msg
@@ -573,6 +584,7 @@ export default class EditCode extends React.Component {
         msg.multi = msg.icon.appendChild(document.createElement("div"))
         msg.multi.className = "CodeMirror-lint-marker-multiple"
       }
+
       // override warning icon to Error
       if (err.code.substring(0, 1) == "E") {
         msg.icon.className = "CodeMirror-lint-marker-error"
@@ -587,14 +599,16 @@ export default class EditCode extends React.Component {
         ico.className = "CodeMirror-lint-marker-error"
       }
 
-      text.appendChild(document.createTextNode(" " + err.reason));
+      text.appendChild(document.createTextNode(" " + err.reason))
 
-      msg.className = "lint-error";
-      this.codeMirror.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg);
+      msg.className = "lint-error"
+      this.codeMirror.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg)
 
-      //var evidence = msg.appendChild(document.createElement("span"));
-      //evidence.className = "lint-error-text evidence";
-      //evidence.appendChild(document.createTextNode(err.evidence));
+      /*
+        var evidence = msg.appendChild(document.createElement("span"));
+        evidence.className = "lint-error-text evidence";
+        evidence.appendChild(document.createTextNode(err.evidence));
+      */
     }
   }
 
@@ -814,9 +828,8 @@ export default class EditCode extends React.Component {
   }
 
   // This gets called by CodeMirror when there is CursorActivity
-  // This gets _.debounced in componentDidMount()
+  // This gets _.debounced in componentDidMount() and split into 2 parts +haveChanges
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {
-
     // Update the activity snapshot if the code line has changed
     // TODO: Batch this so it only fires when line# is changed
     let editor = this.codeMirror
@@ -864,7 +877,7 @@ export default class EditCode extends React.Component {
       this._currentCodemirrorValue = newValue;
       let newC2 = {src: newValue}
       this.handleContentChange(newC2, null, "Edit code")
-      this.codeMirrorUpdateHints(true)
+      this.codeMirrorUpdateHintsChanged(true)
     }
   }
 
@@ -1009,9 +1022,10 @@ export default class EditCode extends React.Component {
         filename: asset.name || "",
         //gameEngineScriptToPreload: gameEngineJsToLoad
       })
+      // do this right after run
+      this.createBundle()
     })
-    // create only for someone who can also change it
-    this.createBundle()
+
 
     // Make sure that it's really visible.. and also auto-close accordion above so there's space.
     $('.ui.accordion').accordion('close', 0);
@@ -1045,20 +1059,16 @@ export default class EditCode extends React.Component {
   }
   createBundle(cb){
     if(this.props.canEdit) {
-      this.tools.createBundle((bundle) => {
+      this.tools.createBundle((bundle, notChanged) => {
         // if code contains errors - bundle will fail silently.. don't overwrite good version with empty
         // TODO: error reporting
-        if(!bundle){
+        if(!bundle || notChanged){
           cb && cb()
           return
         }
         const value = this.codeMirror.getValue()
         const newC2 = {src: value, bundle: bundle}
-        // don't save - if not changed
-        if (this.lastBundle != bundle) {
-          this.lastBundle = bundle
-          this.handleContentChange(newC2, null, `Store code bundle`)
-        }
+        this.handleContentChange(newC2, null, `Store code bundle`)
         cb && cb()
       })
     }
@@ -1076,8 +1086,6 @@ export default class EditCode extends React.Component {
 
   // Note that either c2 or thumnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
-    if (c2 && !c2.bundle && this.lastBundle)
-      c2.bundle = this.lastBundle
     this.props.handleContentChange(c2, thumbnail, reason)
   }
 

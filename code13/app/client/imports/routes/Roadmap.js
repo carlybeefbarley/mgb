@@ -52,4 +52,25 @@ export default Roadmap = React.createClass({
     )
   }
 
+
+/* More stuff to add to displayed roadmap in future *
+
+Flagging (content, accounts.. penalties like timeouts)
+Cutscenes
+Documents
+License handling & Attribution of sources
+Tagging
+  project goals: ProjectGoal: [scratch/learn/jam/resume/showcase/product]
+Test reporting 
+  Playtest reporting
+  Feature coverae reporting
+  Code coverage
+MGB feature usage
+MGB plugin tools (graphic edit etc)
+MCB (MyCodeBuilder) skin + Interface designer / React Storybook / 
+Javascript - Katas & Koans
+Pro accounts (private projects, ...)
+Quotas
+*/
+
 })

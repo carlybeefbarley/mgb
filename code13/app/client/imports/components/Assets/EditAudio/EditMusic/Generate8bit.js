@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
+import sty from  './editMusic.css'
 import Song from './8bit/song.js'
 import RIFFWAVE from './8bit/encoder.js'
 // import RIFFWAVE from '../lib/riffwave.js'
@@ -19,6 +20,7 @@ export default class Generate8bit extends React.Component {
   	this.state = {
   		canvasWidth: 860,
   		canvasHeight: 480,
+  		isHidden: true,
   		isPlaying: false,
   		isGenerating: false,
   		isAudio: false,
@@ -52,6 +54,12 @@ export default class Generate8bit extends React.Component {
 	}
 
 	generate(){
+		if(this.state.isHidden) {
+			this.setState({isHidden: false})
+			setTimeout( () => {
+          $('.generate8bitPopup').modal('refresh')
+      }, 300)
+		}
 		this.stop()
 		this.audio = null
 		this.setState({ isGenerating: true, isAudio: false })
@@ -238,7 +246,7 @@ export default class Generate8bit extends React.Component {
 				</div>
 				<div className="ui divider"></div>
 				<div>
-					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"}></canvas>
+					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"} className={this.state.isHidden ? "hidden" : ""}></canvas>
 				</div>
 				<div style={{width:"150px", float:"left", marginRight:"20px"}}>
 					<div>

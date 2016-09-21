@@ -23,6 +23,7 @@ export default Roadmap = React.createClass({
         <h2>Features planned for September 2016</h2>
         <ul>
           <li>(DONE) Allow project members to edit assets in your projects</li>
+          <li>(DONE) Avatars for users and projects (drag graphic asset from FlexPanel)</li>
           <li>(DONE) Multi-channel/track music editing/mixing</li>
           <li>(IN PROGRESS) Code Editor code-assist features</li>
           <li>(IN PROGRESS) Tutorial and progression systems to help learn how to make games</li>
@@ -41,6 +42,7 @@ export default Roadmap = React.createClass({
           <li>Improved UI for touch-only devices like iPads</li>
           <li>Keyboard shortcut editor and help</li>
           <li>Mentoring and AskForhelp systems</li>
+          <li>Project rename/delete</li>
           <li>Test runner for MGB Code Assets</li>
           <li>TODO tracker</li>
           <li>Skills tracker</li>

@@ -15,6 +15,37 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Wed Sep 21 2016 14:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1494'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.roadmap',
+          'type': 'improvement',
+          'changeName': 'Updated Roadmap page',
+          'changeSummary': 'Updated Roadmap page with September progress and post-september work list',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.music',
+          'type': 'bugfix',
+          'changeName': "Bugfixes for Music editor",
+          'changeSummary': 'Improved stability and ui for Music editor',
+          'otherUrls': []
+        }      
+      ]
+    },
+        
+    {
       'timestamp': 'Tue Sep 20 2016 15:00:00 GMT-0700 (PDT)',
 
       'id': {

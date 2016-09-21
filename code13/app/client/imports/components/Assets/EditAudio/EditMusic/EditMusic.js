@@ -572,7 +572,7 @@ export default class EditMusic extends React.Component {
         <div className='ui modal generateMusicPopup' ref='generateMusicPopup'>
           <GenerateMusic ref='generateMusic' importMusic={this.importMusic.bind(this)} />
         </div>
-        <div className='ui modal generate8bitPopup' ref='generate8bitPopup'>
+        <div className='ui modal generate8bitPopup' ref='generate8bitPopup'  style={{minWidth:"860px"}}>
           <Generate8bit ref='generate8bit' importMusic={this.importMusic.bind(this)} />
         </div>
       </div>

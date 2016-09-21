@@ -48,6 +48,7 @@ export default class Generate8bit extends React.Component {
 	componentDidMount(){
 		this.canvas = ReactDOM.findDOMNode(this.refs.canvas)
 		this.ctx = this.canvas.getContext("2d")
+
 	}
 
 	generate(){
@@ -274,6 +275,7 @@ export default class Generate8bit extends React.Component {
     			<input type="range" value={this.state.pianoParams.delay} min="0" max="0.5" step="0.05" onChange={this.changePianoParams.bind(this, "delay")} /><br/>
     			<input type="range" value={this.state.pianoParams.noteProbability} min="0" max="0.5" step="0.05" onChange={this.changePianoParams.bind(this, "noteProbability")} /><br/>
     		</div>
+    		<div style={{clear:"both"}}></div>
 	    </div>
 		)
 	}	

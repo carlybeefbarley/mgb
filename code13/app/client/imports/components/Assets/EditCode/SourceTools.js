@@ -23,7 +23,8 @@ const cached404 = {}
 
 const ERROR = {
   SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
-  MULTIPLE_SOURCES: "W-ST-002"
+  MULTIPLE_SOURCES: "W-ST-002",
+  UNREACHABLE_EXTERNAL_SOURCE: "W-ST-003"
 }
 
 
@@ -416,10 +417,13 @@ export default class SourceTools {
       return
     }
     // load external file and cache - so we can skip loading next time
-    SourceTools.loadImport(url, (src) => {
+    SourceTools.loadImport(url, (src, error) => {
+      if(error){
+        this.setError(error)
+      }
       this.cache[urlFinalPart] = src
       this.collectScript(urlFinalPart, src, cb, localName)
-    })
+    }, urlFinalPart)
   }
 
   loadAndObserveLocalFile(url, urlFinalPart, cb){
@@ -602,7 +606,7 @@ export default class SourceTools {
     return urlFinalPart
   }
 
-  static loadImport(url, cb) {
+  static loadImport(url, cb, urlFinalPart = '') {
     if (tmpCache[url]) {
       // remove from stack to maintain order
       window.setTimeout(() => {
@@ -611,8 +615,8 @@ export default class SourceTools {
       return
     }
     if (cached404[url]) {
-      console.error("Failed to load script: [" + url + "]", cached404[url])
-      cb("")
+      //console.error("Failed to load script: [" + url + "]", cached404[url])
+      cb("", {reason: "Failed to include external source: " + urlFinalPart + " ("+cached404[url]+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
       return;
     }
 
@@ -624,9 +628,9 @@ export default class SourceTools {
         return;
       }
       if (httpRequest.status !== 200) {
-        console.error("Failed to load script: [" + url + "]", httpRequest.status)
+        //console.error("Failed to load script: [" + url + "]", httpRequest.status)
         cached404[url] = httpRequest.status
-        cb("")
+        cb("", {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
         return;
       }
       var src = httpRequest.responseText

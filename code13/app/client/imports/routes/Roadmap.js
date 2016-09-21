@@ -44,6 +44,7 @@ export default Roadmap = React.createClass({
           <li>Mentoring and AskForhelp systems</li>
           <li>Project rename/delete</li>
           <li>Test runner for MGB Code Assets</li>
+          <li>Tutorials and Tutorial editor</li>        
           <li>TODO tracker</li>
           <li>Skills tracker</li>
           <li>Stock/sample assets system</li>
@@ -57,7 +58,7 @@ export default Roadmap = React.createClass({
 
 Flagging (content, accounts.. penalties like timeouts)
 Cutscenes
-Documents
+Documents (and Cheat sheets. and presentations?)
 License handling & Attribution of sources
 Tagging
   project goals: ProjectGoal: [scratch/learn/jam/resume/showcase/product]

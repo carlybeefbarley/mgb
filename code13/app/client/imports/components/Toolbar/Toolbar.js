@@ -22,7 +22,8 @@ const sliderPcts = {
 export const expectedToolbarScopeMaxValues = {
   EditGraphic: 10,
 //GraphicTools: 21,
-  MapTools: 27
+  MapTools: 27,
+  AudioTools: 25,
 //SkillsMap: 23
 }
 

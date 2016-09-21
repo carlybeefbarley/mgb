@@ -7,6 +7,7 @@ import MusicStock from './MusicStock.js'
 import GenerateMusic from './GenerateMusic.js'
 import Generate8bit from './Generate8bit.js'
 
+import AudioToolbar from './AudioToolbar.js'
 import Preview from './Preview.js'
 import Timeline from './Timeline.js'
 import Channel from './Channel.js'
@@ -545,6 +546,11 @@ export default class EditMusic extends React.Component {
                   <i className='paste icon'></i>
                 </button>
               </div>
+
+              <AudioToolbar
+
+              />
+
               <div className='controls'>
               </div>
               

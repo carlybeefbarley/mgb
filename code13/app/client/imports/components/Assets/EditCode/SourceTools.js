@@ -16,7 +16,7 @@ const SMALL_CHANGES_TIMEOUT = 1000 // force refresh other mgb assets - even if c
 const UPDATE_DELAY = 15 * 1000
 
 // add only smalls libs to tern
-const MAX_ACCEPTABLE_SOURCE_SIZE = 170065300 //
+const MAX_ACCEPTABLE_SOURCE_SIZE = 1024 * 100 // 100 KB
 const tmpCache = {}
 // we don't want to ping 404 on CDNs all the time
 const cached404 = {}
@@ -25,7 +25,8 @@ const cached404 = {}
 const ERROR = {
   SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
   MULTIPLE_SOURCES: "W-ST-002",
-  UNREACHABLE_EXTERNAL_SOURCE: "W-ST-003"
+  UNREACHABLE_EXTERNAL_SOURCE: "W-ST-003",
+  RECURSION_DETECTED:  "W-ST-004"
 }
 
 
@@ -38,7 +39,7 @@ export default class SourceTools {
 
 
     this.addedFilesAndDefs = {}
-    this.subscriptions = []
+    this.subscriptions = {}
     window.mgb_tools = this
     this.asset_id = asset_id
     this.tern = ternServer
@@ -70,6 +71,7 @@ export default class SourceTools {
 
     this.errorCBs = []
     this.errors = {}
+    this.pendingChanges = {}
   }
   // this will handle errors in the EditCode
 
@@ -343,20 +345,20 @@ export default class SourceTools {
 
   _collectAndTranspile(srcText, filename, callback) {
     if (this.isDestroyed) return
+    this.pendingChanges[filename] = true
     const compiled = this.isAlreadyTranspiled(filename);
     if (compiled) {
       callback && callback(compiled.code)
-      return;
+      return
     }
     this._hasSourceChanged = true
     this.transform(srcText, filename, (output) => {
       var imports = SourceTools.parseImport(output)
       var cb
-
       if (callback) {
         // execute callback on the next tick
-        cb = function () {
-          window.setTimeout(function () {
+        cb = () => {
+          window.setTimeout(() => {
             callback(output.code)
           }, 0)
         }
@@ -365,10 +367,17 @@ export default class SourceTools {
       var load = () => {
         if (imports.length) {
           const imp = imports.shift()
+          // TODO: find out how to resolve this - if ever possible
+          if(this.pendingChanges[imp.src]){
+            this.setError({reason: "Recursion detected: " + filename, evidence: filename, code: ERROR.RECURSION_DETECTED})
+            load()
+            return
+          }
           this.loadFromCache(imp.src, load, imp.name)
         }
         else {
           this.collectScript(filename, output.code, cb)
+          delete this.pendingChanges[filename]
         }
       }
       load()
@@ -444,20 +453,16 @@ export default class SourceTools {
   loadAndObserveLocalFile(url, urlFinalPart, cb){
     const parts = url.split("/")
 
-
-
-
      // import './stauzs:asset_name'
     const toInclude = parts.pop()
     const sparts = toInclude.split(":")
     const name = sparts.pop()
     const owner = sparts.length > 1 ? sparts.pop() : this.owner
 
-
     // import './stauzs/asset_name'
     /*
     const name = parts.pop()
-    const owner = parts.length == 6 ? parts.pop() : Meteor.user().profile.name
+    const owner = parts.length == 6 ? parts.pop() : this.owner
     */
 
     const cursor = Azzets.find({dn_ownerName: owner, name: name})

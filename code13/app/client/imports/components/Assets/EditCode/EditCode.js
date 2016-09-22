@@ -488,7 +488,7 @@ export default class EditCode extends React.Component {
       const val = editor.getValue()
       this.runJSHintWorker(val);
       if(this.tools){
-        this.tools.collectAndTranspile(editor.getValue(), this.props.asset.name, (sources) => {
+        this.tools.collectAndTranspile(val, this.props.asset.name, (sources) => {
           // last is always this file
           // debugger
           //this.runJSHintWorker(sources[sources.length-1].code)

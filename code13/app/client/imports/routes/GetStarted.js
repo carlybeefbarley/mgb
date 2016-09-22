@@ -60,7 +60,7 @@ export default class GetStarted extends Component {
                       <img src="/images/mascots/penguin.png" />
                     </div>
                     <h2 style={headerStyle}><i className="paint brush icon" />&nbsp;Pixel art</h2>
-                    <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
+                    <p style={descStyle}>Learn to make animated sprites, spritesheets and tilemaps for games.</p>
                   </div>
                 </QLink>
                 <QLink className="card" style={cardStyle} to={`/assets/create`}>
@@ -69,7 +69,7 @@ export default class GetStarted extends Component {
                       <img src="/images/mascots/samurai.png" />
                     </div>
                     <h2 style={headerStyle}><i className="music icon" />&nbsp;Audio &amp; music</h2>
-                    <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
+                    <p style={descStyle}>Bring engagement and mood to games through music and sound.</p>
                   </div>
                 </QLink>
                 <QLink className="card" style={cardStyle} to={`/assets/create`}>
@@ -78,7 +78,7 @@ export default class GetStarted extends Component {
                       <img src="/images/mascots/slimy.png" />
                     </div>
                     <h2 style={headerStyle}><i className="idea icon" />&nbsp;Game design</h2>
-                    <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
+                    <p style={descStyle}>Design game levels, try different gameplay mechanics and balance your games.</p>
                   </div>
                 </QLink>
                 <QLink className="card" style={cardStyle} to={`/assets/create`}>
@@ -87,7 +87,7 @@ export default class GetStarted extends Component {
                       <img src="/images/mascots/vampire.png" />
                     </div>
                     <h2 style={headerStyle}><i className="write icon" />&nbsp;Story writing</h2>
-                    <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
+                    <p style={descStyle}>Bring game stories to life through plot, character, narrative and dialog.</p>
                   </div>
                 </QLink>
                 <QLink className="card" style={cardStyle} to={`/assets/create`}>
@@ -96,7 +96,7 @@ export default class GetStarted extends Component {
                       <img src="/images/mascots/shark.png" />
                     </div>
                     <h2 style={headerStyle}><i className="area chart icon" />&nbsp;Analytics</h2>
-                    <p style={descStyle}>Code using JavaScript and game engines like Phaser and others.</p>
+                    <p style={descStyle}>Data beats opinions: analyze actual game usage and use it to improve.</p>
                   </div>
                 </QLink>
               </div>

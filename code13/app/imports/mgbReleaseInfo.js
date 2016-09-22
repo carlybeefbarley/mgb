@@ -15,12 +15,12 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Wed Sep 21 2016 14:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Wed Sep 21 2016 18:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1494'
+        'iteration': '1500'
       },
 
       'releaseManagement': {
@@ -38,10 +38,17 @@ export default mgbReleaseInfo = {
         {
           'featureTag': 'asset.music',
           'type': 'bugfix',
-          'changeName': "Bugfixes for Music editor",
-          'changeSummary': 'Improved stability and ui for Music editor',
+          'changeName': "More Bugfixes for Music editor",
+          'changeSummary': 'Further improved stability and UI for Music editor',
           'otherUrls': []
-        }      
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'bugfix',
+          'changeName': "More Bugfixes for Code editor",
+          'changeSummary': 'Further improved stability and compatibility for various kinds of imports and evil test cases',
+          'otherUrls': []
+        }       
       ]
     },
         

@@ -15,6 +15,44 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Thu Sep 22 2016 15:45:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1508'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.roadmap',
+          'type': 'improvement',
+          'changeName': 'Updated Roadmap page',
+          'changeSummary': 'Updated Roadmap page with September progress and post-September work list. Updated notes on stability of asset types.',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'nav.gettingStarted',
+          'type': 'improvement',
+          'changeName': 'New Home and Get Started pages',
+          'changeSummary': 'The \`Getting Started\` page now has text that matches the skills areas.',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.music',
+          'type': 'improvement',
+          'changeName': 'Music Editor Tools on feature-level toolbar',
+          'changeSummary': 'The Music Editor Tools are now on a feature-level dependent toolbar. For new users, we just show the main tools initially. Users can use the feature slider to enable more tools over time as they learn to use MGB',
+          'otherUrls': []
+        }        
+      ]
+    },
+
+    {
       'timestamp': 'Wed Sep 21 2016 18:30:00 GMT-0700 (PDT)',
 
       'id': {

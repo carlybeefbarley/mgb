@@ -20,6 +20,10 @@ export default class AudioToolbar extends React.Component {
     this.props.stopMusic()
   }
 
+  toggleLoop(){
+    this.props.toggleLoop()
+  }
+
   zoomIn(){
     this.props.zoom(true)
   }
@@ -78,6 +82,13 @@ export default class AudioToolbar extends React.Component {
           label: 'Stop',
           icon:  'stop',
           tooltip: 'Stop',
+          level: 1,
+        },
+        {
+          name: 'toggleLoop',
+          label: 'Loop',
+          icon:  this.props.isLoop ? 'toggle on' : 'toggle off',
+          tooltip: 'Loop audio',
           level: 1,
         },
         // loop component

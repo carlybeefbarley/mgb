@@ -14,6 +14,7 @@ import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
 import AudioConverter from '../lib/AudioConverter.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
+import NumberInput from '/client/imports/components/Controls/NumberInput'
 
 export default class EditMusic extends React.Component {
 
@@ -273,9 +274,9 @@ export default class EditMusic extends React.Component {
     this.props.handleContentChange(c2, thumbnail, saveText)
   }
 
-  changeDuration (e) {
+  changeDuration (newDuration) {
     let c2 = _.cloneDeep(this.props.asset.content2)
-    c2.duration = parseFloat(e.target.value)
+    c2.duration = newDuration
     // this.handleSave('Change duration', c2)
     this.mergeChannels(c2, "Change duration")
   }
@@ -456,6 +457,21 @@ export default class EditMusic extends React.Component {
             <button className='ui small icon button' title='Generate music (Currently only creates 8bit music.. More music styles to follow :)' onClick={this.open8bitPopup.bind(this)}>
               <i className='options icon'></i> Generate 8bit music
             </button>
+
+            <div className='ui small labeled input' title='Audio duration'>
+              <div className='ui label'>
+                Duration
+              </div>
+              <NumberInput
+                className="ui small input"
+                min={1}
+                max={999}
+                style={{width: "6em"}}
+                value={c2.duration ? Math.floor(c2.duration) : 1}
+                onFinalChange={(num) => {this.changeDuration(num)} }
+              />
+            </div>
+
           </div>
           <div className='content'>
 
@@ -471,36 +487,12 @@ export default class EditMusic extends React.Component {
             />
             
             <div className='channelsHeader'>
-              {/***** Control buttons *****/}
-              <div className='row'>
-
-                <div className={"ui toggle checkbox "} title='Enable audio looping'>
-                  <input type='checkbox' checked={(this.state.isLoop ? 'checked' : '')} onChange={this.toggleLoop.bind(this)} />
-                  <label>
-                    Loop
-                  </label>
-                </div>
-
-                &nbsp;
-                <div className='ui small labeled input' title='Audio duration'>
-                  <div className='ui label'>
-                    Duration
-                  </div>
-                  <input
-                    type='number'
-                    value={c2.duration ? Math.floor(c2.duration) : 1}
-                    min='1'
-                    max='999'
-                    onChange={this.changeDuration.bind(this)} />
-                </div>
-
-              </div>
-
 
               <AudioToolbar
                 isPlaying={this.state.isPlaying}
                 selectData={this.state.selectData}
                 pasteData={this.state.pasteData}
+                isLoop={this.state.isLoop}
 
                 isDrag={this.state.isDrag}
                 isSelecting={this.state.isSelecting}
@@ -509,6 +501,7 @@ export default class EditMusic extends React.Component {
                 addChannel={this.addChannel.bind(this)}
                 togglePlayMusic={this.togglePlayMusic.bind(this)}
                 stopMusic={this.stopMusic.bind(this)}
+                toggleLoop={this.toggleLoop.bind(this)}
                 zoom={this.zoom.bind(this)}
                 eraseSelected={this.eraseSelected.bind(this)}
                 cutSelected={this.cutSelected.bind(this)}

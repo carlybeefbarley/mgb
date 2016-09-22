@@ -39,7 +39,7 @@ export default ProjectsBeingMadeGET = React.createClass({
             <QLink key={idx} className="link item" to={`/u/${p.ownerName}/project/${p._id}`}>
               <img className="ui small middle aligned image" style={{ width: 100 }} src={getProjectAvatarUrl(p)} />
               <div className="content middle aligned" style={{ marginLeft: '1em' }}>
-                <h3>{p.name}</h3>
+                <h3><small>{p.name}</small></h3>
                 <p><i className="play icon" />00,000 Plays</p>
               </div>
             </QLink>

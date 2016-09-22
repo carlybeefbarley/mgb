@@ -59,8 +59,8 @@ export default ConsoleMessageViewer = React.createClass({
       return null
 
     return (
-        <div className="ui grey segment" style={{backgroundColor: "rgba(0,0,0,0.03)"}}>
-        <div className="header">Latest Console output from program</div>
+        <div className="ui grey segment" style={{backgroundColor: "rgba(0,0,0,0.03)", maxHeight: "200px", overflow: "scroll"}}>
+          <div className="header">Latest Console output from program</div>
           { this.smartRender() }
         </div>
       )

@@ -47,7 +47,11 @@ window.onload = function() {
       return imports[key]
     }
     // test without @version
-    var name = key.split("@").shift().split(":").pop();
+    var name = key.split("@").shift()
+    if(imports[name] && imports[name] !== true) {
+      return imports[name]
+    }
+    name = name.split(":").pop();
     if(imports[name] && imports[name] !== true) {
       return imports[name]
     }
@@ -73,13 +77,46 @@ window.onload = function() {
         "origFn": console[name]
       }
       !function() {
-        var stableName = name;
+        var maxLength =10
+        var stableName = name
         console[stableName] = function(msg) {
           consoleOrigFns[stableName].origFn.apply(this, arguments);
-
+          var args = []
+          for(let i=0; i<arguments.length; i++){
+            if(typeof arguments[i] == "object"){
+              var cache = [];
+              args[i] = JSON.stringify(arguments[i], function (key, value) {
+                if(cache.length > maxLength){
+                  return
+                }
+                if (typeof key === 'symbol') {
+                  return
+                }
+                if (key.indexOf("_") === 0) {
+                  return
+                }
+                if (typeof value === 'function') {
+                  return
+                }
+                if (typeof value === 'object' && value !== null) {
+                  if (cache.indexOf(value) !== -1) {
+                    // Circular reference found, discard key
+                    return
+                  }
+                  // Store value in our collection
+                  cache.push(value)
+                }
+                return value
+              }, "  ")
+              cache = null
+            }
+            else{
+              args[i] = arguments[i]
+            }
+          }
           var fromWhence = _getCaller()
           window.parent.postMessage( {
-            args: Array.prototype.slice.call(arguments),
+            args: args,
             mgbCmd: "mgbConsoleMsg",
             consoleFn: stableName,
             timestamp: new Date(),

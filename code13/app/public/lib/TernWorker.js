@@ -63,5 +63,6 @@ function startServer(defs, plugins, scripts) {
 }
 
 var console = {
-  log: function(v) { postMessage({type: "debug", message: v}); }
+  log: function(v) { postMessage({type: "debug", message: v}); },
+  error: function(v) { postMessage({type: "debug", message: v}); }
 };

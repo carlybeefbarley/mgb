@@ -10,6 +10,9 @@ import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
 import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
 
+// import tlint from 'tern-lint'
+
+
 // **GLOBAL*** Tern JS - See comment below...   
 import scoped_tern from "tern";
 window.tern = scoped_tern;   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
@@ -153,11 +156,19 @@ export default class EditCode extends React.Component {
         "/lib/tern/plugin/modules.js",
         "/lib/tern/plugin/es_modules.js",
         "/lib/tern/plugin/doc_comment.js"
+        //"/lib/tern/plugin/lint.js"
       ],
       plugins: {
-        modules: true, //we are injecting files directly - no need for additional module + it have
+        // modules: true, //we are injecting files directly - no need for additional module + it have
         comment: true,
         es_modules: true,
+        /*lint: {
+          rules:{
+            ES6Modules: {
+              severity: "none"
+            }
+          }
+        },*/
         doc_comment: {
           strong: true
         }

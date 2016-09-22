@@ -457,7 +457,7 @@ export default class SourceTools {
     const toInclude = parts.pop()
     const sparts = toInclude.split(":")
     const name = sparts.pop()
-    const owner = sparts.length > 1 ? sparts.pop() : this.owner
+    const owner = sparts.length > 0 ? sparts.pop() : this.owner
 
     // import './stauzs/asset_name'
     /*
@@ -522,16 +522,23 @@ export default class SourceTools {
       return
     }
     this.collectSources((sources) => {
-      let allInOneBundle =
-        '(function(){' +
-        'var imports = {};' +
-        'window.require = function(key){ ' +
-        'if(imports[key] && imports[key] !== true) {' +
-        'return imports[key];' +
-        '} ' +
-        'var name = key.split("@").shift();' +
-        'return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])' +
-        '}; '
+      let allInOneBundle = `
+(function(){
+  var imports = {};
+  window.require = function(key){
+    if(imports[key] && imports[key] !== true) {
+      return imports[key];
+    }
+    var name = key.split("@").shift()
+    if(imports[name] && imports[name] !== true) {
+      return imports[name]
+    }
+    name = name.split(":").pop();
+    if(imports[name] && imports[name] !== true) {
+      return imports[name]
+    }
+    return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])
+  };`
       for (var i in sources) {
         const key = sources[i].name.split("@").shift();
         if (sources[i].useGlobal) {

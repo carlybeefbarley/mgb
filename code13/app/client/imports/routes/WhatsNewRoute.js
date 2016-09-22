@@ -60,8 +60,7 @@ export default WhatsNewRoute = React.createClass({
           using the <i className="chat icon" />chat panel on the right hand side of the screen
         </p>
         <ul>
-          <li>The Graphic, Map and Code asset types are quite stable and can be used safely</li>
-          <li>The Sound, Music and Doc assets are highly experimental currently</li>
+          <li>The Sounds, Music, Graphic, Map and Code Asset types are quite stable and can be used safely</li>
           <li>For best results, use Google's Chrome browser. Some features like Audio are buggy on other browsers currently</li>
         </ul>
         <p title="However, if you want to help us get the word out when we are ready, message us in Chat!">

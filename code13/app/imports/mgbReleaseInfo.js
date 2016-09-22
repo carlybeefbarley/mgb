@@ -20,7 +20,7 @@ export default mgbReleaseInfo = {
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1500'
+        'iteration': '1501'
       },
 
       'releaseManagement': {
@@ -32,7 +32,7 @@ export default mgbReleaseInfo = {
           'featureTag': 'nav.roadmap',
           'type': 'improvement',
           'changeName': 'Updated Roadmap page',
-          'changeSummary': 'Updated Roadmap page with September progress and post-september work list',
+          'changeSummary': 'Updated Roadmap page with September progress and post-September work list. Updated notes on stability of asset types.',
           'otherUrls': []
         },
         {
@@ -48,7 +48,14 @@ export default mgbReleaseInfo = {
           'changeName': "More Bugfixes for Code editor",
           'changeSummary': 'Further improved stability and compatibility for various kinds of imports and evil test cases',
           'otherUrls': []
-        }       
+        },
+        {
+          'featureTag': 'asset.doc',
+          'type': 'bugfix',
+          'changeName': "Remove Doc Asset type",
+          'changeSummary': 'Removed Doc Asset type for now.',
+          'otherUrls': []
+        }
       ]
     },
         

@@ -102,7 +102,7 @@ export const AssetKinds = {
     disable: false,
     longName: "Document",
     icon: "file text outline",
-    requiresUserRole: null,
+    requiresUserRole: roleSuperAdmin,    
     description: "Text Document"
   },
   "cheatsheet": {

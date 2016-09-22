@@ -473,15 +473,7 @@ export default class EditMusic extends React.Component {
             <div className='channelsHeader'>
               {/***** Control buttons *****/}
               <div className='row'>
-                <button className='ui small icon button' title='Add new audio channel' onClick={this.addChannel.bind(this, null, null)}>
-                  <i className='add square icon'></i>
-                </button>
-                <button title={this.state.isPlaying ? 'Pause channels' : 'Play channels'} className='ui icon button small' onClick={this.togglePlayMusic.bind(this)}>
-                  <i className={'icon ' + (this.state.isPlaying ? 'pause' : 'play')}></i>
-                </button>
-                <button title='Stop channels' className='ui icon button small' onClick={this.stopMusic.bind(this)}>
-                  <i className={"icon stop"}></i>
-                </button>
+
                 <div className={"ui toggle checkbox "} title='Enable audio looping'>
                   <input type='checkbox' checked={(this.state.isLoop ? 'checked' : '')} onChange={this.toggleLoop.bind(this)} />
                   <label>
@@ -502,54 +494,28 @@ export default class EditMusic extends React.Component {
                     onChange={this.changeDuration.bind(this)} />
                 </div>
 
-                &nbsp;&nbsp;
-                <button className={'ui small icon button ' + (zoomInd >= this.zoomLevels.length-1 ? "disabled" : "")} 
-                  title='Zoom in sound wave' 
-                  onClick={this.zoom.bind(this, true)}>
-                  <i className='zoom icon'></i>
-                </button>
-                <button className={'ui small icon button ' + (zoomInd <= 0 ? "disabled" : "")} 
-                  title='Zoom out sound wave' 
-                  onClick={this.zoom.bind(this, false)}>
-                  <i className='zoom out icon'></i>
-                </button>
-
-                &nbsp;&nbsp;
-                <button className={'ui small icon button ' + (this.state.isDrag ? "active" : "")}
-                  onClick={this.selectableButtons.bind(this, "isDrag")}
-                  title="Drag audio sample">
-                  <i className='hand paper icon'></i>
-                </button>
-                <button className={'ui small icon button ' + (this.state.isSelecting ? "active" : "")}
-                  onClick={this.selectableButtons.bind(this, "isSelecting")}
-                  title="Select tool. Click and drag to select wave area">
-                  <i className='crosshairs icon'></i>
-                </button>
-                <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
-                  onClick={this.eraseSelected.bind(this)}
-                  title="Erase selected area">
-                  <i className='eraser icon'></i>
-                </button>
-                <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
-                  onClick={this.cutSelected.bind(this)}
-                  title="Cut selected area">
-                  <i className='cut icon'></i>
-                </button>
-                <button className={'ui small icon button ' + (this.state.selectData ? "" : "disabled")}
-                  onClick={this.copySelected.bind(this)}
-                  title="Copy selected area">
-                  <i className='copy icon'></i>
-                </button>
-                <button className={'ui small icon button ' + (this.state.pasteData ? "" : "disabled ") + (this.state.isPaste ? "active" : "")}
-                  onClick={this.selectableButtons.bind(this, "isPaste")}
-                  title="Paste selected area">
-                  <i className='paste icon'></i>
-                </button>
               </div>
 
-              <AudioToolbar
 
+              <AudioToolbar
+                isPlaying={this.state.isPlaying}
+                selectData={this.state.selectData}
+                pasteData={this.state.pasteData}
+
+                isDrag={this.state.isDrag}
+                isSelecting={this.state.isSelecting}
+                isPaste={this.state.isPaste}
+
+                addChannel={this.addChannel.bind(this)}
+                togglePlayMusic={this.togglePlayMusic.bind(this)}
+                stopMusic={this.stopMusic.bind(this)}
+                zoom={this.zoom.bind(this)}
+                eraseSelected={this.eraseSelected.bind(this)}
+                cutSelected={this.cutSelected.bind(this)}
+                copySelected={this.copySelected.bind(this)}
+                selectableButtons={this.selectableButtons.bind(this)}
               />
+
 
               <div className='controls'>
               </div>

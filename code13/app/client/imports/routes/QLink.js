@@ -10,7 +10,7 @@ function isLeftClickEvent(event) {
 }
 
 function isModifiedEvent(event) {
-  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)
+  return !!(event.metaKey || event.ctrlKey || event.shiftKey)  // alt is handled specially in handleClick()
 }
 
 function createLocationDescriptor(to, _ref) {
@@ -44,8 +44,11 @@ export default QLink = React.createClass({
 
 // propTypes are same as from node_modules/react-router/es6/Link.js
   propTypes: {
-//  to:                   PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+//  to:                   PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,   // The click href
+//  altTo:                PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,   // The alt-click href
+
     query:                PropTypes.object,
+//  altQuery:             PropTypes.object,       // The alt-click query
     hash:                 PropTypes.string,
     state:                PropTypes.object,
     activeStyle:          PropTypes.object,
@@ -83,15 +86,27 @@ export default QLink = React.createClass({
     const excludedSymbolName = p.closeNavPanelOnClick ? "app_navPanel" : null
     const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query, excludedSymbolName)
 
-    const combinedQuery = Object.assign({}, appScopedQuery, this.props.query)
     if (p.onClick) 
-      p.onClick(event)    // Call the click handler we were given. Note that it has thr option to preventDefault()
+      p.onClick(event)    // Call the click handler we were given. Note that it has the option to preventDefault()
       
-    if (event.defaultPrevented === true || isModifiedEvent(event) || !isLeftClickEvent(event) || p.target) 
-      return;             // Browser needs to handle this. It's new window / new tab etc so beyond our scope. // TODO ideally we could still mokey patch the query? 
+    if (
+         event.defaultPrevented === true  // p.OnClick() handler preventedDefault processing, that includes us.
+      || isModifiedEvent(event)           // Dont handle clicks with Shift, Meta, Ctrl etc  -- leave to Browser
+      || (event.altKey && !p.altTo)       // Don't handle Alt key - unless we have been told to have an override
+      || !isLeftClickEvent(event)         // Don't handle other mouse buttons
+      || p.target)                        // there is a target such as _blank, so just jump to it, no fancy stuff
+      return      // Browser needs to handle this. It's beyond our scope. (TODO ideally we could still monkey patch the query?)
 
-// TODO: Decode p.nav to p.to here also.. or use something else
-    const location = createLocationDescriptor(p.to, { query: combinedQuery, hash: p.hash, state: p.state })
+    // resolve any modifiers to select altTo/AltQuery etc
+    const modifiedTo = (event.altKey && p.altTo) ? p.altTo : p.to
+    const modifiedQuery = (event.altKey && p.altTo) ? p.altQuery : p.query
+    // Todo AltHash if needed
+
+    // Combine the links' query with special appScoped query params we want to preserve such as _np= (this is all decided in urlMaker.js)
+    const combinedQuery = Object.assign({}, appScopedQuery, modifiedQuery)
+
+    // TODO: Decode p.nav to p.to here also.. or use something else
+    const location = createLocationDescriptor(modifiedTo, { query: combinedQuery, hash: p.hash, state: p.state })
     this.context.router.push(location);
     event.preventDefault()    // Stop Link.handleClick from doing anything further
   },
@@ -99,7 +114,7 @@ export default QLink = React.createClass({
   render: function () {
     const p = this.props
     const chosenEl = p.elOverride ? p.elOverride : Link
-    const pClean = _.omit(p, ["elOverride","closeNavPanelOnClick"])
+    const pClean = _.omit(p, ["elOverride" , "closeNavPanelOnClick", "altTo", "altQuery"])
 
     if (!p.nav)
       return React.createElement(chosenEl, Object.assign({}, pClean, { onClick: this.handleClick }))

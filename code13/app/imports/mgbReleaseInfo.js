@@ -15,6 +15,53 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Fri Sep 22 2016 12:40:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1519'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.navpanel.projects',
+          'type': 'feature',
+          'changeName': 'Alt-click for Project NavPanel links',
+          'changeSummary': 'The Projects NavPanel has a new feature: if you hold the alt key while mouse-clicking a Project link, it will open the Assets list for that Project. A normal mouse-click still just opens the Project overview page, as it did before this change.',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'ES6 import code improvements',
+          'changeSummary': 'Support more ES6 module/CSS import scenarios and special cases.',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.mgbui',
+          'type': 'removed',
+          'changeName': 'Removed the hidden MGBUI Asset type',
+          'changeSummary': 'This was initially used for UI prototyping for MGB itself. This is no longer needed since it can be done using the Stardust library as normal Javascript code',
+          'otherUrls': [ 
+            { txt: 'Stardust simple example', href: '/u/dgolds/asset/vEF8o5yrrb9in2NsA' }
+          ]
+        },
+        {
+          'featureTag': 'asset.doc',
+          'type': 'removed',
+          'changeName': 'Removed the Docs type for now',
+          'changeSummary': 'This needs more work, but isn\'t urgent so removing this for now. it will come back in a few weeks',
+          'otherUrls': []
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Thu Sep 22 2016 15:45:00 GMT-0700 (PDT)',
 
       'id': {

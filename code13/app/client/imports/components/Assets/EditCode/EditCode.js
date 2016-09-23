@@ -957,6 +957,10 @@ export default class EditCode extends React.Component {
         let asset = this.props.asset
         asset.thumbnail = data.pngDataUrl
         this.handleContentChange(null, asset.thumbnail, "update thumbnail")
+      },
+
+      mgbAdjustIframe: function(){
+        this.adjustIframe()
       }
     }
 
@@ -966,6 +970,26 @@ export default class EditCode extends React.Component {
     }
   }
 
+  adjustIframe() {
+    if(this.state.isPlaying) {
+
+      window.setTimeout(() => {
+
+        if(!this.state.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body){
+          return
+        }
+        const newHeight =
+          Math.max(
+            Math.min(this.iFrameWindow.contentWindow.document.body.offsetHeight + 5, 500),
+            200
+          )
+
+        this.iFrameWindow.setAttribute("height", newHeight + "")
+        // keep adjusting
+        this.adjustIframe()
+      }, 100)
+    }
+  }
 
   handleScreenshotIFrame() {
     if (this.state.isPlaying)
@@ -1025,6 +1049,7 @@ export default class EditCode extends React.Component {
 
     //const gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState({isPlaying: true})
+
     this.tools.collectSources((collectedSources) => {
       this._postMessageToIFrame({
         mgbCommand: 'startRun',

@@ -413,14 +413,19 @@ export default class SourceTools {
         return
       }
     }
-
+    if(this.babelWorker.isBusy){
+      debugger
+      return
+    }
     // TODO: spawn extra workers?
     this.babelWorker.onmessage = (m) => {
       this.transpileCache[filename] = {src, data: m.data}
-      cb(m.data)
       // prevent extra calls
       this.babelWorker.onmessage = null
+      this.babelWorker.isBusy = false
+      cb(m.data)
     };
+    this.babelWorker.isBusy = filename
     this.babelWorker.postMessage([filename, src])
   }
 
@@ -503,7 +508,8 @@ export default class SourceTools {
     // from now on only observe asset and update tern on changes only
     const observer = cursor.observeChanges({
       changed: (id, changes) => {
-        if (changes.content2 && changes.content2.src) {
+        // it gets called one extra time when asset.src arrives for the first time
+        if (this.isAlreadyTranspiled(urlFinalPart) && changes.content2 && changes.content2.src) {
           this._collectAndTranspile(changes.content2.src, urlFinalPart, null, true)
         }
       }

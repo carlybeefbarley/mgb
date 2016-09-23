@@ -269,6 +269,11 @@ window.onload = function() {
         }
         else{
           console.log("(info) All files have loaded.")
+          window.setTimeout(function () {
+            window.parent.postMessage( {
+              mgbCmd: "mgbAdjustIframe",
+            }, "*");
+          }, 500)
         }
       };
       run()

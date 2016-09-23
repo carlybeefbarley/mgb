@@ -99,7 +99,7 @@ export const AssetKinds = {
   "doc": {
     name: "Doc",
     selfPlural: false,
-    disable: false,
+    disable: true,              // Disabled 9/23/2016 by dgolds
     longName: "Document",
     icon: "file text outline",
     requiresUserRole: roleSuperAdmin,    
@@ -163,7 +163,7 @@ export const AssetKinds = {
   "_mgbui": {
     name: "MGB UI",
     selfPlural: true,
-    disable: false,
+    disable: true,      // Disabled 9/23/2016 by dgolds since we now have stardust!
     longName: "MGB UI Mockup",
     icon: "code",
     requiresUserRole: roleSuperAdmin,    

@@ -1059,7 +1059,7 @@ export default class EditCode extends React.Component {
         //gameEngineScriptToPreload: gameEngineJsToLoad
       })
       // do this right after run
-      this.createBundle()
+      // this.createBundle()
     })
 
 
@@ -1085,26 +1085,40 @@ export default class EditCode extends React.Component {
 <h1>Creating bundle</h1>
 <p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>
     `)
-      this.createBundle(() => {
+      if(!this.props.asset.bundle) {
+        this.createBundle(() => {
+          child.location = `/api/asset/code/bundle/${id}`
+        })
+      }
+      else{
         child.location = `/api/asset/code/bundle/${id}`
-      })
+      }
     }
     else{
       window.open(`/api/asset/code/bundle/${id}`, "Bundle")
     }
   }
   createBundle(cb){
+    if(this.state.creatingBundle){
+      console.log("creating bundle")
+      cb && cb()
+      return
+    }
     if(this.props.canEdit) {
+      this.setState({
+        creatingBundle: true
+      })
       this.tools.createBundle((bundle, notChanged) => {
         // if code contains errors - bundle will fail silently.. don't overwrite good version with empty
         // TODO: error reporting
-        if(!bundle || notChanged){
-          cb && cb()
-          return
+        if(bundle && !notChanged){
+          const value = this.codeMirror.getValue()
+          const newC2 = {src: value, bundle: bundle}
+          this.handleContentChange(newC2, null, `Store code bundle`)
         }
-        const value = this.codeMirror.getValue()
-        const newC2 = {src: value, bundle: bundle}
-        this.handleContentChange(newC2, null, `Store code bundle`)
+        this.setState({
+          creatingBundle: false
+        })
         cb && cb()
       })
     }
@@ -1268,10 +1282,19 @@ export default class EditCode extends React.Component {
                   <i className={"stop icon"}></i>Stop
                 </a>
                 }
-                { !!(asset.content2.bundle || this.props.canEdit) &&
-                <a className={"ui mini labeled icon button"} onClick={this.handleFullScreen.bind(this, asset._id)}>
-                  <i className={"external icon"}></i>Full
-                </a>
+                {
+                <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""} tabindex="0">
+                  <a className="ui mini labeled icon button"  onClick={this.handleFullScreen.bind(this, asset._id)}>
+                    <i className={"external icon"}></i>Full
+                  </a>
+                  { (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit &&
+                    <a className="ui mini left pointing label reload" onClick={() => {this.createBundle( () => {} )}}
+                      title="Update Bundle"
+                      >
+                      <i className={this.state.creatingBundle ? "refresh icon animate rotate" : "refresh icon "}></i>
+                    </a>
+                  }
+                </span>
                 }
                 { isPlaying && this.props.canEdit && 
                 <a className={"ui right floated mini icon button"} onClick={this.handleScreenshotIFrame.bind(this)}

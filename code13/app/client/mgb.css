@@ -153,7 +153,12 @@ body.dragging .accept-drop:hover{
 .icon.flip{
   transform: scaleX(-1);
 }
-
+.icon.animate.rotate{
+  -webkit-animation: rotate 5s infinite; /* Chrome, Safari, Opera */
+  animation: rotate 5s infinite;
+  -webkit-animation-timing-function: linear; /* Chrome, Safari, Opera */
+  animation-timing-function: linear;
+}
 .animate{
   transition: .3s !important;
 }
@@ -234,7 +239,15 @@ body.dragging .accept-drop:hover{
     opacity: 1;
   }
 }
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
 
+  100% {
+    transform: rotate(359deg);
+  }
+}
 /* code editor */
 .lint-error-text {
   display: none;

@@ -506,29 +506,30 @@ export default class SourceTools {
     }
 
     // from now on only observe asset and update tern on changes only
-    const observer = cursor.observeChanges({
-      changed: (id, changes) => {
-        // it gets called one extra time when asset.src arrives for the first time
-        if (this.isAlreadyTranspiled(urlFinalPart) && changes.content2 && changes.content2.src) {
-          this._collectAndTranspile(changes.content2.src, urlFinalPart, null, true)
-        }
-      }
-    })
 
     this.subscriptions[url] = {
       subscription: Meteor.subscribe("assets.public.owner.name", owner, name, {
         onReady: () => {
           getSourceAndTranspile()
+          this.subscriptions[url].observer = cursor.observeChanges({
+            changed: (id, changes) => {
+              // it gets called one extra time when asset.src arrives for the first time
+              if (changes.content2 && changes.content2.src) {
+                this._collectAndTranspile(changes.content2.src, urlFinalPart, null, true)
+              }
+            }
+          })
         },
         onError: (...args) => {
           console.log("Error:", name, ...args)
           cb("")
         }
-      }),
-      observer
+      })
     }
   }
-
+  hasChanged(){
+    return this._hasSourceChanged
+  }
   createBundle(cb) {
     if (this.isDestroyed) return
     if (!this._hasSourceChanged) {

@@ -978,6 +978,7 @@ export default class EditCode extends React.Component {
         if(!this.state.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body){
           return
         }
+        this.iFrameWindow.contentWindow.document.body.style.overflow = "hidden"
         const newHeight =
           Math.max(
             // +4 the size of the iframe border (2 top / 2 bottom)
@@ -985,10 +986,13 @@ export default class EditCode extends React.Component {
             200
           )
 
+        if (parseInt(this.iFrameWindow.getAttribute("height"), 10) == newHeight) {
+          return
+        }
         this.iFrameWindow.setAttribute("height", newHeight + "")
         // keep adjusting
         this.adjustIframe()
-      }, 100)
+      }, 1000)
     }
   }
 

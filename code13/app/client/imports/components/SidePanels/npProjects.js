@@ -79,8 +79,11 @@ export default npProjects = React.createClass({
         count++
         return  <QLink 
                     to={`/u/${p.ownerName}/project/${p._id}`} 
+                    altTo={`/u/${p.ownerName}/assets`} 
+                    altQuery={{project:p.name}}
                     closeNavPanelOnClick={navPanelIsOverlay}
                     className="item" 
+                    title="click for project page; alt-click for project Assets"
                     key={p._id}>
                   <WorkState 
                       workState={p.workState} 

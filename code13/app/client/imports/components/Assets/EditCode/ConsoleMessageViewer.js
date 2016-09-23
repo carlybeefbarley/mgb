@@ -47,7 +47,7 @@ export default ConsoleMessageViewer = React.createClass({
       let fn = msg.consoleFn
       let s = { whiteSpace: "pre-wrap", marginTop: "2px", marginBottom: "0px", lineHeight: "12px", fontSize: "10px"}
       $.extend(s, fmt[fn].style)
-      let atLine = !msg.line ? null : <a onClick={this.invokeGotoLinehandler.bind(this, msg.line)}>[line {msg.line}] </a>    
+      let atLine = !msg.line ? null : <a onClick={this.invokeGotoLinehandler.bind(this, msg.line)} style={{cursor: "pointer"}}>[line {msg.line}] </a>
       let icon = <i className={`ui ${fmt[fn].icon} icon`}></i>
       let time = moment(msg.timestamp).format('h:mm:ss a')
       return <pre key={idx} style={s}>{time} {icon} {atLine}{this.cleanupMessage(msg.args)}</pre>

@@ -247,10 +247,10 @@ export default class SourceTools {
     this.collectedSources.length = 0;
   }
 
-  collectScript(name, code, cb, localName = name) {
+  collectScript(name, code, cb, localName = name, force = false) {
     if (this.isDestroyed) return
     // skip transpiled and compiled and empty scripts
-    if (!name || !code || this.isAlreadyTranspiled(name)) {
+    if (!name || !code || (!force && this.isAlreadyTranspiled(name)) ) {
       cb && cb()
       return;
     }
@@ -258,7 +258,7 @@ export default class SourceTools {
     code = code.replace(/use strict/gi, '')
     const lib = SourceTools.getKnowLib(name)
     const useGlobal = lib && lib.useGlobal
-    this.collectedSources.push({name, code, useGlobal, localName})
+    this.collectSource({name, code, useGlobal, localName})
     // MGB assets will have cache.. remote won't
     if (this.transpileCache[name]) {
       this.addDefsOrFile(name, this.transpileCache[name].src, true)
@@ -304,7 +304,16 @@ export default class SourceTools {
       }
     }
   }
-
+  collectSource(source){
+    const oldSource = this.isAlreadyTranspiled(source.name)
+    if(oldSource){
+      oldSource.code = source.code
+      oldSource.useGlobal = source.useGlobal
+      oldSource.localName = source.localName
+      return
+    }
+    this.collectedSources.push(source)
+  }
   isAlreadyTranspiled(filename) {
     return this.collectedSources.find(s => s.name == filename)
   }
@@ -343,10 +352,10 @@ export default class SourceTools {
     }
   }
 
-  _collectAndTranspile(srcText, filename, callback) {
+  _collectAndTranspile(srcText, filename, callback, force) {
     if (this.isDestroyed) return
     this.pendingChanges[filename] = true
-    const compiled = this.isAlreadyTranspiled(filename);
+    const compiled = !force && this.isAlreadyTranspiled(filename);
     if (compiled) {
       callback && callback(compiled.code)
       return
@@ -376,7 +385,7 @@ export default class SourceTools {
           this.loadFromCache(imp.src, load, imp.name)
         }
         else {
-          this.collectScript(filename, output.code, cb)
+          this.collectScript(filename, output.code, cb, null, force)
           delete this.pendingChanges[filename]
         }
       }
@@ -474,7 +483,7 @@ export default class SourceTools {
         this.setError({reason: "Multiple candidates found for " + urlFinalPart, evidence: urlFinalPart, code: ERROR.MULTIPLE_SOURCES})
       }
       if (assets[0]) {
-        this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb)
+        this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb, true)
       }
       else {
         // TODO somewhere in callstack get line number and pass to this function - atm EditCode is guessing lines by evidence string
@@ -495,8 +504,7 @@ export default class SourceTools {
     const observer = cursor.observeChanges({
       changed: (id, changes) => {
         if (changes.content2 && changes.content2.src) {
-          this.removeTranspiled(urlFinalPart)
-          this._collectAndTranspile(changes.content2.src, urlFinalPart)
+          this._collectAndTranspile(changes.content2.src, urlFinalPart, null, true)
         }
       }
     })

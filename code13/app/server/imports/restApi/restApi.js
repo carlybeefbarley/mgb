@@ -533,7 +533,7 @@ No bundle yet. Please run the source file in the code to generate/refresh the bu
 <head>
 <meta charset="UTF-8" />
 <title>${asset.name}</title>
-<style>html, body{padding: 0; margin: 0}</style>
+<style>html, body{padding: 0; margin: 0; width: 100%; height: 100%}</style>
 </head>
 <body><script type="text/javascript">
 //<!--

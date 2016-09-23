@@ -980,7 +980,8 @@ export default class EditCode extends React.Component {
         }
         const newHeight =
           Math.max(
-            Math.min(this.iFrameWindow.contentWindow.document.body.offsetHeight + 5, 500),
+            // +4 the size of the iframe border (2 top / 2 bottom)
+            Math.min(this.iFrameWindow.contentWindow.document.body.offsetHeight + 4, 500),
             200
           )
 
@@ -1283,7 +1284,7 @@ export default class EditCode extends React.Component {
                 </a>
                 }
                 {
-                <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""} tabindex="0">
+                <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
                   <a className="ui mini labeled icon button"  onClick={this.handleFullScreen.bind(this, asset._id)}>
                     <i className={"external icon"}></i>Full
                   </a>

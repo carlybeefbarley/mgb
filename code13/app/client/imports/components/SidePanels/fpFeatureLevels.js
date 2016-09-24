@@ -47,7 +47,7 @@ export default fpFeatureLevels = React.createClass({
         title: 'See all Feature Level settings',
         text: `This area lists all your current Feature Level settings`,
         selector: '.mgbjrCurrentFeatureLevelsInFp',    // finds <input> element which is after element with mgbNavGadgetSlider class
-        position: 'bottom'
+        position: 'left'
       }      
     ],
     { replace: true } )

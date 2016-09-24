@@ -10,6 +10,12 @@ Stardust is integrated and seems to be working ok side-by-side with normal Seman
 * let @dgolds know if you observe any issues though
 
 
+Current Stardust issues
+=======================
+
+No POPUP Element (https://github.com/TechnologyAdvice/stardust/issues/193) 
+No MESSAGE Element
+
 Migration plan
 ==============
 

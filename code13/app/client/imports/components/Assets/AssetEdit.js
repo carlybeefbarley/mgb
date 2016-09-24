@@ -5,7 +5,6 @@ import EditMap from './EditMap/EditMap'
 import EditDoc from './EditDoc/EditDoc'
 import EditSound from './EditAudio/EditSound/EditSound'
 import EditMusic from './EditAudio/EditMusic/EditMusic'
-import EditMGBUI from './EditMGBUI/EditMGBUI'
 import EditUnknown from './EditUnknown'
 
 
@@ -15,8 +14,7 @@ const editElementsForKind = {
   'map':     EditMap,
   'doc':     EditDoc,
   'sound':   EditSound,
-  'music':   EditMusic,
-  '_mgbui':  EditMGBUI
+  'music':   EditMusic
 }
 
 export default AssetEdit = React.createClass({

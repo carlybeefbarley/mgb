@@ -160,15 +160,16 @@ export const AssetKinds = {
     requiresUserRole: null,
     description: "Game rules and play statistics"
   },
-  "_mgbui": {
-    name: "MGB UI",
-    selfPlural: true,
-    disable: true,      // Disabled 9/23/2016 by dgolds since we now have stardust!
-    longName: "MGB UI Mockup",
-    icon: "code",
-    requiresUserRole: roleSuperAdmin,    
-    description: "(MGB Dev Team Only) MGB UI Prototyping tool"
-  },
+  // PURGED FROM DB 9/24/2016
+  // "_mgbui": {
+  //   name: "MGB UI",
+  //   selfPlural: true,
+  //   disable: true,      // Disabled 9/23/2016 by dgolds since we now have stardust!
+  //   longName: "MGB UI Mockup",
+  //   icon: "code",
+  //   requiresUserRole: roleSuperAdmin,    
+  //   description: "(MGB Dev Team Only) MGB UI Prototyping tool"
+  // },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"

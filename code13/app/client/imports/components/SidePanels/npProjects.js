@@ -4,6 +4,8 @@ import QLink from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import { Menu, Header, Icon } from 'stardust'
 
+const _styleNoBg = {backgroundColor: "transparent"}
+
 const ProjectMenu = (props) => 
 {
   const { projects, ownedFlag, currUserId, navPanelIsOverlay } = props
@@ -29,7 +31,7 @@ const ProjectMenu = (props) =>
       </QLink>
     </Menu.Item>
   ))
-  return <Menu vertical inverted fluid style={{backgroundColor: "transparent"}}>{retval}</Menu>
+  return <Menu vertical inverted fluid style={_styleNoBg}>{retval}</Menu>
 }
 
 const _propTypes = {
@@ -45,47 +47,49 @@ const npProjects = (props) => {
   if (!currUser) return null
 
   return (
-    <Menu vertical inverted fluid style={{backgroundColor: "transparent"}}>
-      <div>
-        <Menu.Item key="authHdr">
-          <Header as='h3' icon='sitemap' content='Projects' inverted style={{textAlign: "center"}} />
-        </Menu.Item>
+    <Menu vertical inverted fluid style={_styleNoBg}>
+      <Menu.Item>
+        <Header as='h3' inverted textAlign='center' >
+          <Header.Content>
+            <Icon name='sitemap' />
+            Projects
+          </Header.Content>
+        </Header>  
+      </Menu.Item>
 
-        <QLink
-            to={`/u/${currUser.profile.name}/projects`} 
-            closeNavPanelOnClick={navPanelIsOverlay}
-            className="header item" 
-            title="Projects you are owner of">
-          <Icon name='sitemap' /> My Owned Projects
-        </QLink>
-        <ProjectMenu 
-            projects={currUserProjects} 
-            ownedFlag={true}
-            currUserId={currUser._id}
-            navPanelIsOverlay={navPanelIsOverlay} />
+      <QLink
+          to={`/u/${currUser.profile.name}/projects`} 
+          closeNavPanelOnClick={navPanelIsOverlay}
+          className="header item" 
+          title="Projects you are owner of">
+        <Icon name='sitemap' /> My Owned Projects
+      </QLink>
+      <ProjectMenu 
+          projects={currUserProjects} 
+          ownedFlag={true}
+          currUserId={currUser._id}
+          navPanelIsOverlay={navPanelIsOverlay} />
 
-        <QLink 
-            to={`/u/${currUser.profile.name}/projects/create`} 
-            closeNavPanelOnClick={navPanelIsOverlay}
-            className="item" 
-            title="Create New Project">
-          <Icon name='green sitemap' /> Create New Project
-        </QLink>
+      <QLink 
+          to={`/u/${currUser.profile.name}/projects/create`} 
+          closeNavPanelOnClick={navPanelIsOverlay}
+          className="item" 
+          title="Create New Project">
+        <Icon name='green sitemap' /> Create New Project
+      </QLink>
 
-        <QLink 
-            to={`/u/${currUser.profile.name}/projects`} 
-            closeNavPanelOnClick={navPanelIsOverlay}
-            className="header item" 
-            title="Projects you are a member of">
-          <Icon name='grey sitemap' /> Project Memberships
-        </QLink>
-        <ProjectMenu 
-            projects={currUserProjects} 
-            ownedFlag={false}
-            currUserId={currUser._id}
-            navPanelIsOverlay={navPanelIsOverlay} />
-
-      </div>
+      <QLink 
+          to={`/u/${currUser.profile.name}/projects`} 
+          closeNavPanelOnClick={navPanelIsOverlay}
+          className="header item" 
+          title="Projects you are a member of">
+        <Icon name='grey sitemap' /> Project Memberships
+      </QLink>
+      <ProjectMenu 
+          projects={currUserProjects} 
+          ownedFlag={false}
+          currUserId={currUser._id}
+          navPanelIsOverlay={navPanelIsOverlay} />
     </Menu>
   )
 }

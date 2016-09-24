@@ -30,6 +30,20 @@ Joyride Tour definitions
 1. It is STRONGLY encouraged to not have per-step styling in the react-joyride tours
    even though this is permitted
 
+Future work
+===========
+
+1. The INTENT is to have most joyrides defined as a new type of MGB asset!
+1. This will connect in with the upcoming Tutorials system (for that we will add
+   pause/resume joyrides since we want tutorials to be pausible. That will make the 
+   App.js joyride handler a bit more complex with stacked tours)
+1. We also plan to allow users to define joyrides to help explain MGB
+1. We also plan to use this asset so users can add tutorials in their games
+   - probably use something like jQuery joyride (https://github.com/zurb/joyride)
+     or wrap up something special like phaser and let it have Phaser-friendly references
+
+
+
 React Joyride CSS selector conventions in MGB
 =============================================
 

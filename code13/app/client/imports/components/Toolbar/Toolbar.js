@@ -374,10 +374,11 @@ export default class Toolbar extends React.Component {
 
   _renderButton(b, index) {
     const label = (b.label && (this.state.level <= 2 || this.state.level === b.level)) ? " " + b.label : ''
+    const joyrideId = "#mgbjr-" + this.props.name + "-" + b.name    // Auto-create an id for react-joyride purposes
 
     if (b.component) {
       const ElComponent = b.component
-      return <ElComponent label={label} key={index} />
+      return <ElComponent id={joyrideId} label={label} key={index} />
     }
 
     const title = this.state.level > 3 ? b.label : ''
@@ -391,9 +392,9 @@ export default class Toolbar extends React.Component {
     // button is new
     if (this.visibleButtons && this.visibleButtons.indexOf(b.name) === -1)
       className += " new"
-    
     return (
       <div className={className}
+           id={joyrideId}
            style={{position: "relative"}}
            ref={(button) => {this._addButton(button, index)}}
            onClick={this._handleClick.bind(this, b.name)}

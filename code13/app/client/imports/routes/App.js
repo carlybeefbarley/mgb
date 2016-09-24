@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import Joyride from 'react-joyride'
+
 import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
 
@@ -22,6 +24,8 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
+
+import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 let G_localSettings = new ReactiveDict()
 
 const getPagenameFromProps = function(props)
@@ -63,6 +67,16 @@ export default App = React.createClass({
     window.onkeyup = this.togglePanelsKeyHandler
   },
 
+
+  componentDidUpdate: function(prevProps, prevState) {
+    if (prevState.joyrideSteps.length ===0 && this.state.joyrideSteps.length > 0)
+    {
+      console.log("starting joyride tour. Wheeee!")
+      this.refs.joyride.start()
+    }
+  },
+
+
   componentWillReceiveProps: function(nextProps) {
     // We are using https://github.com/okgrow/analytics but it does not automatically log
     // react-router routes, so we need a specific call when the page changes
@@ -82,7 +96,11 @@ export default App = React.createClass({
       toastMsg: '',
       toastType: 'success',
       fNavPanelIsOverlay: true,    // Could make this inital value based on screen size, but that might be odd
-      activityHistoryLimit: 11
+      activityHistoryLimit: 11,
+
+      // For react-joyride
+      joyrideSteps: []
+      
     }
   },
 
@@ -185,6 +203,7 @@ export default App = React.createClass({
 
     return (
       <div >
+      
         <Helmet
           title="MGB2"
           titleTemplate="%s"
@@ -192,6 +211,12 @@ export default App = React.createClass({
               {"name": "description", "content": "MyGameBuilder v2"}
           ]}
         />
+
+        <Joyride 
+          ref="joyride" 
+          steps={this.state.joyrideSteps} 
+          callback={this.handleJoyrideCallback}
+          debug={false} />
 
         <div>
 
@@ -231,6 +256,7 @@ export default App = React.createClass({
 
 
             <FlexPanel
+              addJoyrideSteps={this.addJoyrideSteps}
               currUser={currUser}
               user={user}
               selectedViewTag={flexPanelQueryValue}
@@ -369,6 +395,34 @@ export default App = React.createClass({
 
   closeToast() {
     this.setState({ showToast: false, toastMsg: '' })
+  },
+
+// React-Joyride stuff (user tour support). See https://github.com/gilbarbara/react-joyride
+
+  addJoyrideSteps: function (steps, opts = {}) {
+    let joyride = this.refs.joyride
+
+    if (!Array.isArray(steps)) 
+      steps = [steps]
+
+    if (steps.length === 0 && !opts.replace)
+      return false
+
+    const parsedSteps = joyride.parseSteps(steps)
+
+    this.setState(function(currentState) {
+      currentState.joyrideSteps = opts.replace ? parsedSteps : currentState.joyrideSteps.concat(parsedSteps)
+      return currentState
+    })
+  },
+
+  addJoyrideTooltip(data) {
+    this.refs.joyride.addTooltip(data)
+  },
+
+  handleJoyrideCallback( func ) {
+    if (func.type === 'finished')
+      this.setState( {  joyrideSteps: [] })
   }
 
 })

@@ -9,6 +9,8 @@ const MSTATUS_FAILED = "failed"               // permanently failed to connect -
 const MSTATUS_WAITING = "waiting"             // failed to connect and waiting to try to reconnect (see .retryTime)
 const MSTATUS_OFFLINE = "offline"             // user has disconnected the connection
 
+// The is a React.createClass() so it's easy to use Meteor.status() reactively
+
 export default fpNetwork = React.createClass({
   mixins: [ReactMeteorData],
   

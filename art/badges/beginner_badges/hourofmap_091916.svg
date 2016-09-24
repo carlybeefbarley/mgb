@@ -5,8 +5,8 @@
 <style type="text/css">
 	.st0{fill:#FFFFFF;stroke:#1A1936;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st1{fill:#1A1936;}
-	.st2{fill:#1A1936;stroke:#584F9D;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st3{fill:none;stroke:#584F9D;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st2{fill:#1A1936;stroke:#FFFFFF;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st3{fill:none;stroke:#FFFFFF;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st4{fill:#584F9D;stroke:#1A1936;stroke-width:0.25;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st5{fill:#6F91CB;stroke:#1A1936;stroke-width:0.25;stroke-linejoin:round;stroke-miterlimit:10;}
 </style>

@@ -215,6 +215,10 @@ export default App = React.createClass({
         <Joyride 
           ref="joyride" 
           steps={this.state.joyrideSteps} 
+          showOverlay={true}
+          showSkipButton={true}
+          showStepsProgress={true}
+          type="continuous"
           callback={this.handleJoyrideCallback}
           debug={false} />
 

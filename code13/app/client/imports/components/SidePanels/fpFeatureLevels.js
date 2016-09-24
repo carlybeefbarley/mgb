@@ -40,10 +40,11 @@ export default fpFeatureLevels = React.createClass({
       {
         title: 'Feature Levels Slider',
         text: `Change feature levels by dragging the circular 'handle' of the slider left or right`,
-        selector: '.mgbNavGadgetSlider',
+        selector: '.mgbNavGadgetSlider + input',    // finds <input> element which is after element with mgbNavGadgetSlider class
         position: 'bottom'
       }      
-    ])
+    ],
+    { replace: true } )
   },
 
   componentWillUnmount() {

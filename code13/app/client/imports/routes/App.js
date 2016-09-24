@@ -419,7 +419,7 @@ export default App = React.createClass({
     if (!Array.isArray(steps)) 
       steps = [steps]
 
-    if (steps.length === 0 && !opts.replace)
+    if (!joyride || (steps.length === 0 && !opts.replace))
       return false
 
     const parsedSteps = joyride.parseSteps(steps)

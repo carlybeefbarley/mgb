@@ -1,100 +1,94 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
+import { Menu, Header, Icon } from 'stardust'
 
-export default npProjects = React.createClass({
+const ProjectMenu = (props) => 
+{
+  const { projects, ownedFlag, currUserId, navPanelIsOverlay } = props
+  const Empty = <Menu.Item content="(none)" />
+  if (!projects || projects.length === 0) return Empty
 
-  propTypes: {
-    currUser:           PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    currUserProjects:   PropTypes.array,              // Projects list for currently logged in user
-    user:               PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:         PropTypes.string.isRequired,  // Typically something like "200px".
-    navPanelIsOverlay:  PropTypes.bool.isRequired     // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
-  },
+  const wantedProjects = _.filter(projects, p => ( (p.ownerId === currUserId) === ownedFlag ))
+  const retval = wantedProjects.length === 0 ? Empty : wantedProjects.map( p => (
+    <Menu.Item key={p._id}>
+      <QLink 
+          to={`/u/${p.ownerName}/project/${p._id}`} 
+          altTo={`/u/${p.ownerName}/assets`} 
+          altQuery={{project:p.name}}
+          closeNavPanelOnClick={navPanelIsOverlay}
+          title="click for project page; alt-click for project Assets"
+          >
+        <WorkState 
+            workState={p.workState} 
+            popupPosition="bottom center"
+            showMicro={true}
+            canEdit={false}/>                  
+        &emsp;{ p.name }
+      </QLink>
+    </Menu.Item>
+  ))
+  return <Menu vertical inverted fluid style={{backgroundColor: "transparent"}}>{retval}</Menu>
+}
 
-  render: function () {
-    const { currUser, currUserProjects, navPanelIsOverlay } = this.props
+const _propTypes = {
+  currUser:           PropTypes.object,             // Currently Logged in user. Can be null/undefined
+  currUserProjects:   PropTypes.array,              // Projects list for currently logged in user
+  user:               PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
+  panelWidth:         PropTypes.string.isRequired,  // Typically something like "200px".
+  navPanelIsOverlay:  PropTypes.bool.isRequired     // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
+}
 
-    if (!currUser)
-      return null
+const npProjects = (props) => {
+  const { currUser, currUserProjects, navPanelIsOverlay } = props
+  if (!currUser) return null
 
-    return (
-      <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
-        <div>
-          <div className="ui item" key="authHdr">
-            <h3 className="ui inverted header" style={{textAlign: "center"}}>
-              <i className="sitemap icon" />
-              Projects
-            </h3>
-          </div>
+  return (
+    <Menu vertical inverted fluid style={{backgroundColor: "transparent"}}>
+      <div>
+        <Menu.Item key="authHdr">
+          <Header as='h3' icon='sitemap' content='Projects' inverted style={{textAlign: "center"}} />
+        </Menu.Item>
 
-          <QLink
-              to={`/u/${this.props.currUser.profile.name}/projects`} 
-              closeNavPanelOnClick={navPanelIsOverlay}
-              className="header item" 
-              title="Projects you are owner of">
-            <i className="sitemap icon" /> My Owned Projects
-          </QLink>
-          <div className="menu">
-            { this.renderProjectMenuItems(currUserProjects, true) }
-          </div>
+        <QLink
+            to={`/u/${currUser.profile.name}/projects`} 
+            closeNavPanelOnClick={navPanelIsOverlay}
+            className="header item" 
+            title="Projects you are owner of">
+          <Icon name='sitemap' /> My Owned Projects
+        </QLink>
+        <ProjectMenu 
+            projects={currUserProjects} 
+            ownedFlag={true}
+            currUserId={currUser._id}
+            navPanelIsOverlay={navPanelIsOverlay} />
 
-          <QLink 
-              to={`/u/${this.props.currUser.profile.name}/projects/create`} 
-              closeNavPanelOnClick={navPanelIsOverlay}
-              className="item" 
-              title="Create New Project">
-            <i className="green sitemap icon" /> Create New Project
-          </QLink>
+        <QLink 
+            to={`/u/${currUser.profile.name}/projects/create`} 
+            closeNavPanelOnClick={navPanelIsOverlay}
+            className="item" 
+            title="Create New Project">
+          <Icon name='green sitemap' /> Create New Project
+        </QLink>
 
-          <QLink 
-              to={`/u/${this.props.currUser.profile.name}/projects`} 
-              closeNavPanelOnClick={navPanelIsOverlay}
-              className="header item" 
-              title="Projects you are a member of">
-            <i className="grey sitemap icon" /> Project Memberships
-          </QLink>
-          <div className="menu">
-            { this.renderProjectMenuItems(currUserProjects, false) }
-          </div>
+        <QLink 
+            to={`/u/${currUser.profile.name}/projects`} 
+            closeNavPanelOnClick={navPanelIsOverlay}
+            className="header item" 
+            title="Projects you are a member of">
+          <Icon name='grey sitemap' /> Project Memberships
+        </QLink>
+        <ProjectMenu 
+            projects={currUserProjects} 
+            ownedFlag={false}
+            currUserId={currUser._id}
+            navPanelIsOverlay={navPanelIsOverlay} />
 
-        </div>
       </div>
-    )
-  },
+    </Menu>
+  )
+}
 
-  renderProjectMenuItems(projects, ownedFlag)
-  {
-    const Empty = <div className="item">(none)</div>
-    const { currUser, navPanelIsOverlay } = this.props
-
-    var count = 0
-    if (!projects || projects.length === 0)
-      return Empty
-
-    const retval = projects.map( (p) => {
-      const isOwner = (p.ownerId === currUser._id)
-      if (isOwner === ownedFlag)
-      {
-        count++
-        return  <QLink 
-                    to={`/u/${p.ownerName}/project/${p._id}`} 
-                    altTo={`/u/${p.ownerName}/assets`} 
-                    altQuery={{project:p.name}}
-                    closeNavPanelOnClick={navPanelIsOverlay}
-                    className="item" 
-                    title="click for project page; alt-click for project Assets"
-                    key={p._id}>
-                  <WorkState 
-                      workState={p.workState} 
-                      popupPosition="bottom center"
-                      showMicro={true}
-                      canEdit={false}/>                  
-                  &emsp;{ p.name }
-                </QLink>
-      }
-    })
-
-    return count > 0 ? retval : Empty
-  }
-})
+npProjects.propTypes = _propTypes
+export default npProjects

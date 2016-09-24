@@ -1,19 +1,18 @@
-import _ from 'lodash';
-import React, { Component, PropTypes } from 'react';
-import reactMixin from 'react-mixin';
-import QLink from '../QLink';
-import {Projects} from '/imports/schemas';
-import ProjectCard from '/client/imports/components/Projects/ProjectCard';
-import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET';
-import Spinner from '/client/imports/components/Nav/Spinner';
-import Helmet from 'react-helmet';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import reactMixin from 'react-mixin'
+import QLink from '../QLink'
+import { Projects } from '/imports/schemas'
+import ProjectCard from '/client/imports/components/Projects/ProjectCard'
+import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET'
+import Spinner from '/client/imports/components/Nav/Spinner'
+import Helmet from 'react-helmet'
 import UserListRoute from '../Users/List'
+import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
-import {logActivity} from '/imports/schemas/activity';
-import {snapshotActivity} from '/imports/schemas/activitySnapshots.js';
-
-// NOTE: UI mockups for this page are at https://v2.mygamebuilder.com/assetEdit/HGhkyyHtrwPxLTyfZ 
-
+import { logActivity } from '/imports/schemas/activity'
+import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
+import { Grid, Segment, Header, Button } from 'stardust'
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
@@ -24,22 +23,17 @@ export default ProjectOverview = React.createClass({
     currUser: PropTypes.object
   },
   
-  getInitialState: function() {
-    return {
-      showAddUserSearch: false      // True if user search box is to be shown
-    }
-  },
+  getInitialState: () => ({ showAddUserSearch: false }),   // True if user search box is to be shown
   
   getMeteorData: function() {
     let projectId = this.props.params.projectId
-    let handleForProject = Meteor.subscribe("projects.forProjectId", projectId);
+    let handleForProject = Meteor.subscribe("projects.forProjectId", projectId)
 
     return {
       project: Projects.findOne(projectId),
       loading: !handleForProject.ready()
-    };
+    }
   },
-
 
   canEdit: function() {
     return !this.data.loading &&
@@ -47,7 +41,6 @@ export default ProjectOverview = React.createClass({
            this.props.currUser && 
            this.data.project.ownerId === this.props.currUser._id
   },
-  
 
   render: function() {
     if (this.data.loading)
@@ -57,58 +50,45 @@ export default ProjectOverview = React.createClass({
     const canEdit = this.canEdit()
 
     if (!project)
-      return  <div className="ui container">
-                <br></br>
-                <div className="ui negative message">
-                  <div clasNames="header">
-                    No such project
-                  </div>
-                  <p>There is no project with this Id ({this.props.params.projectId})
-                  </p>
-                </div>
-              </div>
-
-    const canEd = this.canEdit();
+      return <ThingNotFound type="Project" />
     
     return (
-      <div className="ui padded grid">
+      <Grid padded>
         <Helmet
-          title="Project Overview"
+          title={`Project Overview: ${project.name}`}
           meta={[
-              {"name": "description", "content": "Projects"}
+              {"name": `Project Overview: ${project.name}`, "content": "Projects"}
           ]}
-        />        
+        />
 
-        <div className="six wide column" style={{minWidth: "250px"}}>
+        <Grid.Column width={6} style={{minWidth: "250px"}}>
           <ProjectCard 
-            project={project} 
-            owner={this.props.user}
-            canEdit={canEd}
-            handleFieldChanged={this.handleFieldChanged}
-            />
+              project={project} 
+              owner={this.props.user}
+              canEdit={canEdit}
+              handleFieldChanged={this.handleFieldChanged} />
             <QLink to={"/u/" + project.ownerName + "/assets"} query={{project:project.name}} className="ui button" >
               Project Assets
             </QLink>
             { this.renderRenameDeleteProject() } 
-        </div>
+        </Grid.Column>
         
-        <div className="eight wide column">
-          <h3 className="ui header">Project Members</h3>
-          <div className="ui basic segment">
+        <Grid.Column width={8}>
+          <Header as="h3" >Project Members</Header>
+          <Segment basic>
             Project Members may create, edit or delete assets in this project &nbsp;        
             <ProjectMembersGET 
                 project={this.data.project} 
                 enableRemoveButton={canEdit} 
                 handleRemove={this.handleRemoveMemberFromProject}
             />
-          </div>
-          { this.renderAddPeople() } 
-        </div>
+          </Segment>
+          { this.renderAddPeople() }
+        </Grid.Column>
                 
-      </div>
-    );
-  },  
-  
+      </Grid>
+    )
+  },
   
   // TODO - override 'Search Users" header level in UserListRoute
   // TODO - some better UI for Add People.
@@ -151,69 +131,43 @@ export default ProjectOverview = React.createClass({
     });
   },
   
-  
   // TODO - Activity - filter for project / user.  Maybe have a Project-related Activity Page
   
   renderRenameDeleteProject: function()
   {
-    const canEdit = this.canEdit()
-    if (!canEdit)
-      return null
+    if (!this.canEdit()) return null
     
-    return  (
-      <div className="ui secondary compact segment">
-        <div className="ui header">Manage Project</div>
-          <div  className="ui small button" onClick={ () => { alert("Not Yet Implemented")}} >
-            <i className="edit icon" />Rename     
-          </div>
-          <div  className="ui small button" onClick={ () => { alert("Not Yet Implemented")}} >
-            <i className="red trash icon"></i>Destroy    
-          </div>
-      </div>
+    return (
+      <Segment secondary compact>
+        <Header>Manage Project</Header>
+        <Button icon="edit" content="Rename" onClick={ () => { alert("Not Yet Implemented")}} />
+        <Button icon="red trash" content="Destroy" onClick={ () => { alert("Not Yet Implemented")}} />
+      </Segment>
     )
   },
 
-    
   renderAddPeople: function()
   {
-    const canEdit = this.canEdit()
-    if (!canEdit)
-      return null
+    if (!this.canEdit()) return null
       
-    const project = this.data.project;
+    const project = this.data.project
     const relevantUserIds = [ project.ownerId, ...project.memberIds]   
     const active = this.state.showAddUserSearch 
-    const showSearch = !active ? null : 
-      <UserListRoute  
-                  handleClickUser={this.handleClickUser}
-                  initialLimit={20}
-                  excludeUserIdsArray={relevantUserIds}
-                  renderVertical={true} 
-                  hideTitle={true}/>
     
-    return  <div className={`ui secondary ${active ? "" : "compact"} segment`}>
-              <div  className={"ui green labeled icon button" + (active ? " active" : "")}
-                    onClick={ () => { this.setState({showAddUserSearch: !active})}} >
-                <i className="add user icon"></i>
-                <span className="text">Add Members</span>        
-              </div>
-              { showSearch }              
-            </div>
-  },  
-  
-  
-  // TODO: Use this!
-  DORMANT__handleProjectNameChangeInteractive: function() {
-    let newName = this.refs.projectNameInput.value;
-
-    if (newName !== this.data.project.name) {
-      Meteor.call('Azzets.update', this.data.project._id, this.canEdit(), {name: newName}, (err, res) => {
-        if (err) {
-          this.props.showToast(err.reason, 'error')
-        }
-      });
-      
-      logActivity("project.rename",  `Rename to "${newName}" from `, null, this.data.project); 
-    }
+    return (
+      <Segment secondary compact={!active} >
+        <Button color="green" icon="add user" content="Add Members" active={active}
+              onClick={ () => { this.setState({showAddUserSearch: !active})}} />
+        { !active ? null : 
+            <UserListRoute  
+                handleClickUser={this.handleClickUser}
+                initialLimit={20}
+                excludeUserIdsArray={relevantUserIds}
+                renderVertical={true} 
+                hideTitle={true}/>
+         }              
+      </Segment>
+    )
   }
+  
 })

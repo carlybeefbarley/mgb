@@ -6,6 +6,7 @@
   mod(tern, tern, acorn.walk)
 })(function(infer, tern, walk) {
   "use strict"
+
   var WG_IMPORT_DEFAULT_FALLBACK = 80
 
   function connectModule(file, out) {

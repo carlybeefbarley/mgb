@@ -38,10 +38,13 @@ const npColumn1Width = "60px"
 
 export default App = React.createClass({
   mixins: [ReactMeteorData],
-  // static propTypes = {
-  //   params: PropTypes.object,
-  //   query: PropTypes.object
-  // }
+  propTypes: {
+    params:   PropTypes.object,
+    query:    PropTypes.object,
+    routes:   PropTypes.array,
+    location: PropTypes.object,
+    children: PropTypes.object
+  },
 
   childContextTypes: {
     urlLocation:        PropTypes.object,
@@ -380,6 +383,9 @@ export default App = React.createClass({
     browserHistory.push( {  ...loc,  query: newQ })
   },
 
+  //
+  // TOAST
+  //
 
   showToast(content, type) {
     this.setState({
@@ -397,7 +403,15 @@ export default App = React.createClass({
     this.setState({ showToast: false, toastMsg: '' })
   },
 
-// React-Joyride stuff (user tour support). See https://github.com/gilbarbara/react-joyride
+
+  //
+  // React-Joyride 
+  //
+
+  // This is the React-joyride (user tours) support
+  // See https://github.com/gilbarbara/react-joyride for background
+  // See /DeveloperDocs/ReactJoyrideTours.md for our rules/conventions 
+  //     for using it in our codebase
 
   addJoyrideSteps: function (steps, opts = {}) {
     let joyride = this.refs.joyride

@@ -75,8 +75,9 @@ RestApi.addRoute('asset/png/:user/:name', {authRequired: false}, {
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
-    // Return an empty image if there's no thumbnail yet. This from http://png-pixel.com/
-    var emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    // Return an empty image if there's no thumbnail yet. This is a transparent 1x1 GIF from https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
+    var emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" //1x1GIF
+    
     return {
       statusCode: 200,
       headers: {
@@ -90,7 +91,7 @@ RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
 RestApi.addRoute('asset/thumbnail/png/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
-    // Return an empty image if there's no thumbnail yet. This from http://png-pixel.com/
+    // Return an empty image if there's no thumbnail yet. This is a 1x1 green pixel from http://png-pixel.com/
     var emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
     return {
       statusCode: 200,

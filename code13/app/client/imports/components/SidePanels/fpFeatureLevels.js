@@ -33,17 +33,24 @@ export default fpFeatureLevels = React.createClass({
     this.props.addJoyrideSteps([
       {
         title: 'Feature Levels Slider',
-        text: 'This is the <em>Feature Levels Slider</em> area',
+        text: 'This is the <em>Feature Levels Slider</em> area. If you are on a page with adjustable Feature Levels, there will be a slider control here; Otherwise it will be blank',
         selector: '.mgbNavGadgetSlider',
         position: 'left'
       },
       {
         title: 'Feature Levels Slider',
-        text: `Change feature levels by dragging the circular 'handle' of the slider left or right`,
-        selector: '.mgbNavGadgetSlider',
+        text: `On pages with variable Feature Levels, you can adjust the current Feature Level for the current page's tools by dragging the circular 'handle' of the slider left or right`,
+        selector: '.mgbNavGadgetSlider + input',    // finds <input> element which is after element with mgbNavGadgetSlider class
+        position: 'bottom'
+      },
+      {
+        title: 'See all Feature Level settings',
+        text: `This area lists all your current Feature Level settings`,
+        selector: '.mgbjrCurrentFeatureLevelsInFp',    // finds <input> element which is after element with mgbNavGadgetSlider class
         position: 'bottom'
       }      
-    ])
+    ],
+    { replace: true } )
   },
 
   componentWillUnmount() {
@@ -106,8 +113,8 @@ export default fpFeatureLevels = React.createClass({
           On pages that support 'Feature Levels' a <i className="ui small options icon" /> slider will appear at the top of the page.
           <a onClick={this.showFeatureLevelsSlider}><small>(show)</small></a>
         </p>
-        <p>It is a setting that hides advanced features from new users so they may learn without feeling overwhelmed. Slide right to increase the Feature Level</p>
-        <p>Current Feature Levels:</p>
+        <p>It is a setting that hides advanced features from new users so they may learn without feeling overwhelmed.</p>
+        <p className="mgbjrCurrentFeatureLevelsInFp"><b>Current Feature Levels:</b></p>
         { _.map(expectedToolbarScopeNames,  name => makeSlider(name)) }
       </div>
     )

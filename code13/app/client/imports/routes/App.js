@@ -67,13 +67,9 @@ export default App = React.createClass({
     window.onkeyup = this.togglePanelsKeyHandler
   },
 
-
   componentDidUpdate: function(prevProps, prevState) {
     if (prevState.joyrideSteps.length ===0 && this.state.joyrideSteps.length > 0)
-    {
-      console.log("starting joyride tour. Wheeee!")
-      this.refs.joyride.start()
-    }
+      this.refs.joyride.start(true)
   },
 
 
@@ -215,6 +211,10 @@ export default App = React.createClass({
         <Joyride 
           ref="joyride" 
           steps={this.state.joyrideSteps} 
+          showOverlay={true}
+          showSkipButton={true}
+          showStepsProgress={true}
+          type="continuous"
           callback={this.handleJoyrideCallback}
           debug={false} />
 

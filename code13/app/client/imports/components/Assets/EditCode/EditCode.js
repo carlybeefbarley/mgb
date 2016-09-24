@@ -222,7 +222,7 @@ export default class EditCode extends React.Component {
       foldGutter: true,
       autoCloseBrackets: true,
       matchBrackets: true,
-      viewportMargin: 10,
+      viewportMargin: 2,
 
       /*hintOptions: {
        completeSingle: false    //    See https://codemirror.net/doc/manual.html -> completeSingle
@@ -306,11 +306,13 @@ export default class EditCode extends React.Component {
   }
   // update file name - to correctly report 'part of'
   updateDocName(){
-    if(this.codeMirror){
+
+    if(this.codeMirror && this.lastName !== this.props.asset.name){
       const doc = this.codeMirror.getDoc()
       if(this.ternServer && doc) {
         this.ternServer.delDoc(doc)
         this.ternServer.addDoc(this.props.asset.name, doc)
+        this.lastName = this.props.asset.name
       }
     }
   }
@@ -352,6 +354,12 @@ export default class EditCode extends React.Component {
     let newVal = nextProps.asset.content2.src
 
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
+      // user is typing - intensively working with document - don't update until it finishes
+      if(this.changeTimeout){
+        // also this could be good place to diff document wih eternal changes
+        console.log("Preventing update! User in action")
+        return
+      }
       this.codeMirror.setValue(newVal)
       this._currentCodemirrorValue = newVal       // This needs to be done here or we will loop around forever
       this.codeMirror.setCursor(currentCursor)    // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
@@ -489,24 +497,6 @@ export default class EditCode extends React.Component {
     //return // TODO make this user-selectable
     const editor = this.codeMirror
     const currentLineNumber = editor.getCursor().line + 1     // +1 since user code is 1...
-
-    // operation() is a way to prevent CodeMirror updates until the function completes
-    // However, it is still synchronous - this isn't an async callback
-    this.codeMirror.operation(() => {
-      if(!fSourceMayHaveChanged){
-        return
-      }
-      const val = editor.getValue()
-      this.runJSHintWorker(val);
-      if(this.tools){
-        this.tools.collectAndTranspile(val, this.props.asset.name, (sources) => {
-          // last is always this file
-          // debugger
-          //this.runJSHintWorker(sources[sources.length-1].code)
-        })
-      }
-
-    });
 
     const info = editor.getScrollInfo();
     const after = editor.charCoords({line: currentLineNumber, ch: 0}, "local").top;
@@ -754,14 +744,13 @@ export default class EditCode extends React.Component {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     let position = editor.getCursor()
-    var self = this
 
-    ternServer.request(editor, "definition", function (error, data) {
+    ternServer.request(editor, "definition", (error, data) => {
       if (error)
-        self.setState({atCursorDefRequestResponse: {"error": error}})
+        this.setState({atCursorDefRequestResponse: {"error": error}})
       else {
-        data.definitionText = (data.origin === "[doc]" && data.start) ? editor.getLine(data.start.line).trim() : null
-        self.setState({atCursorDefRequestResponse: {data}})
+        data.definitionText = (data.origin === this.props.asset.name && data.start) ? editor.getLine(data.start.line).trim() : null
+        this.setState({atCursorDefRequestResponse: {data}})
       }
     }, position)
   }
@@ -1141,9 +1130,32 @@ export default class EditCode extends React.Component {
 
   // Note that either c2 or thumnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
-    this.props.handleContentChange(c2, thumbnail, reason)
+    //props trigger forceUpdate - so delay changes a little bit - on very fast changes
+    if(this.changeTimeout){
+      // console.log("Timeout cleared")
+      window.clearTimeout(this.changeTimeout)
+    }
+    this.changeTimeout = window.setTimeout(() => {
+      console.log("Doing full update....")
+      this.props.handleContentChange(c2, thumbnail, reason)
+      this.doFullUpdateOnContentChange()
+      this.changeTimeout = null
+    }, 1000)
   }
 
+  // this is very heavy function - use with care
+  doFullUpdateOnContentChange(){
+
+    // operation() is a way to prevent CodeMirror updates until the function completes
+    // However, it is still synchronous - this isn't an async callback
+    this.codeMirror.operation(() => {
+      const val = this.codeMirror.getValue()
+      this.runJSHintWorker(val);
+      if(this.tools){
+        this.tools.collectAndTranspile(val, this.props.asset.name)
+      }
+    })
+  }
 
   gotoLineHandler(line) {
     let pos = {line: line - 1, ch: 0}

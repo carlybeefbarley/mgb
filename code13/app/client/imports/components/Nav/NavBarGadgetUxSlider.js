@@ -90,7 +90,7 @@ export default NavBarGadgetUxSlider = React.createClass({
 
     return (
       <div style={{ opacity: sliderConstants.disabledOpacity }}>
-        <i className="ui options icon mgbNavGadgetSlider" style={iconSty}/>
+        <i id="mgbjr-NavGadgetSliderIcon" className="ui options icon" style={iconSty}/>
         <input
           style={sliderStyle} 
           id={sliderConstants.sliderElementId}

@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
+import { Message, Button } from 'stardust'
 
 // Meteor conection status values from https://docs.meteor.com/api/connections.html
 const MSTATUS_CONNECTED = "connected"         // the connection is up and running
@@ -26,25 +27,25 @@ export default fpNetwork = React.createClass({
 
     return (
       <div>
-        <div className={`ui large ${st.connected ? "positive" : "negative"} message`}>
-          <div className="header">Network {st.status}</div>
+        <Message size="large" positive={st.connected} negative={!st.connected}>
+          <Message.Header>Network {st.status}</Message.Header>
             { st.retryCount > 0 &&
-              <ul className="list">
-                <li><small>Connection retries attempted: </small>{st.retryCount}</li>
+              <Message.List>
+                <Message.Item><small>Connection retries attempted: </small>{st.retryCount}</Message.Item>
                 { retryInSeconds > 0 &&
-                  <li><small>Retry Interval: </small>{retryInSeconds} <small>seconds</small></li>
+                  <Message.Item><small>Retry Interval: </small>{retryInSeconds} <small>seconds</small></Message.Item>
                 }
                 { (MSTATUS_FAILED === st.status) && 
-                  <li>Connection Failed reason: "{st.reason}"</li>
+                  <Message.Item>Connection Failed reason: "{st.reason}"</Message.Item>
                 }
-              </ul>
+              </Message.List>
             }
-          </div>
+          </Message>
           <br />
         { !st.connected &&
-          <a className="ui large primary button" onClick={() => Meteor.reconnect()}>
+          <Button size="large" primary onClick={() => Meteor.reconnect()}>
             Reconnect now
-          </a>
+          </Button>
         }
         <br />
         <br />

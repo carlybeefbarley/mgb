@@ -12,7 +12,8 @@ export default fpFeatureLevels = React.createClass({
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:             PropTypes.string.isRequired   // Typically something like "200px". 
+    panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px". 
+    addJoyrideSteps:        PropTypes.func.isRequired     // See react-joyride comments in App.js
   },
 
   contextTypes: {
@@ -28,6 +29,26 @@ export default fpFeatureLevels = React.createClass({
     setFeatureLevel(this.context.settings, makeLevelKey(name), newLevelVal)
   },
 
+  showFeatureLevelsSlider() {
+    this.props.addJoyrideSteps([
+      {
+        title: 'Feature Levels Slider',
+        text: 'This is the <em>Feature Levels Slider</em> area',
+        selector: '.mgbNavGadgetSlider',
+        position: 'left'
+      },
+      {
+        title: 'Feature Levels Slider',
+        text: `Change feature levels by dragging the circular 'handle' of the slider left or right`,
+        selector: '.mgbNavGadgetSlider',
+        position: 'bottom'
+      }      
+    ])
+  },
+
+  componentWillUnmount() {
+    this.props.addJoyrideSteps([], { replace: true } )
+  },
 
   setLevelFromEvent(name, event) {
     const parsedVal = parseInt(event.target.value, 10)
@@ -81,7 +102,10 @@ export default fpFeatureLevels = React.createClass({
 
     return (
       <div>
-        <p>On pages that support 'Feature Levels' a <i className="ui small options icon" /> slider will appear at the top of the page.</p>
+        <p>
+          On pages that support 'Feature Levels' a <i className="ui small options icon" /> slider will appear at the top of the page.
+          <a onClick={this.showFeatureLevelsSlider}><small>(show)</small></a>
+        </p>
         <p>It is a setting that hides advanced features from new users so they may learn without feeling overwhelmed. Slide right to increase the Feature Level</p>
         <p>Current Feature Levels:</p>
         { _.map(expectedToolbarScopeNames,  name => makeSlider(name)) }

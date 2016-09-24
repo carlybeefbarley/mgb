@@ -40,7 +40,8 @@ export default FlexPanel = React.createClass({
     handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for enabling/disabling FlexPanel view
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
     flexPanelWidth:         PropTypes.string.isRequired,  // Typically something like "200px".
-    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
+    isSuperAdmin:           PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
+    addJoyrideSteps:        PropTypes.func.isRequired     // See react-joyride comments in App.js
   },
 
 
@@ -107,7 +108,7 @@ export default FlexPanel = React.createClass({
       bottom: "0px",
       width: flexPanelWidth,
       backgroundColor: "rgba(0, 0, 0, 0.05)",
-      borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
+      borderLeft: "1px solid rgba(0, 0, 0, 0.1)"
     }
 
     const miniNavStyle = {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
@@ -120,7 +121,7 @@ export default FlexPanel = React.createClass({
       borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
       borderRadius: 0,
       marginBottom: 0,
-      backgroundColor: "none",
+      backgroundColor: "none"
     }
 
     const panelScrollContainerStyle = {
@@ -129,7 +130,7 @@ export default FlexPanel = React.createClass({
       bottom: "0px",
       right: "60px",
       width: "285px",
-      overflowY: "scroll",
+      overflowY: "scroll"
     }
 
     const panelInnerStyle = {
@@ -143,50 +144,51 @@ export default FlexPanel = React.createClass({
     const flexPanelIcon = flexPanelChoice.icon
     const ElementFP = (!this.props.isSuperAdmin && flexPanelChoice.superAdminOnly) ? null : flexPanelChoice.el
 
-    return  <div className="basic segment mgbFlexPanel" style={panelStyle}>
+    return  (
+      <div className="basic segment mgbFlexPanel" style={panelStyle}>
+        { flexPanelIsVisible &&
+          <div>
 
-              { flexPanelIsVisible &&
-                <div>
+            <div className="flex header">
+              <span className="title">
+                <i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
+              </span>
+            </div>
 
-                  <div className="flex header">
-                    <span className="title">
-                      <i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
-                    </span>
-                  </div>
-
-                  <div style={panelScrollContainerStyle}>
-                    <div style={panelInnerStyle}>
-                      { !ElementFP ? <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div> :
-                        <ElementFP  currUser={this.props.currUser}
-                                  user={this.props.user}
-                                  activity={this.props.activity}
-                                  panelWidth={this.props.flexPanelWidth}
-                                  isSuperAdmin={this.props.isSuperAdmin}
-                                  subNavParam={this.getSubNavParam()}
-                                  handleChangeSubNavParam={this.handleChangeSubNavParam}
-                                  />
-                      }
-                    </div>
-                  </div>
-
-                </div>
-              }
-              <div className="ui attached vertical icon menu" style={miniNavStyle}>
-                { flexPanelViews.map(v => {
-                  const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
-                  return (v.superAdminOnly && !this.props.isSuperAdmin) ? null :
-                    <div
-                      key={v.tag}
-                      className={active + " item"}
-                      title={v.name}
-                      onClick={this.fpViewSelect.bind(this, v.tag)}>
-                      <i className={v.icon + " large icon"}></i>
-                      <span>{v.name}</span>
-                    </div>
-                  })
+            <div style={panelScrollContainerStyle}>
+              <div style={panelInnerStyle}>
+                { !ElementFP ? <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div> :
+                  <ElementFP  currUser={this.props.currUser}
+                            user={this.props.user}
+                            activity={this.props.activity}
+                            panelWidth={this.props.flexPanelWidth}
+                            isSuperAdmin={this.props.isSuperAdmin}
+                            subNavParam={this.getSubNavParam()}
+                            handleChangeSubNavParam={this.handleChangeSubNavParam}
+                            addJoyrideSteps={this.props.addJoyrideSteps}
+                            />
                 }
               </div>
             </div>
+
+          </div>
+        }
+        <div className="ui attached vertical icon menu" style={miniNavStyle}>
+          { flexPanelViews.map(v => {
+            const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
+            return (v.superAdminOnly && !this.props.isSuperAdmin) ? null :
+              <div
+                key={v.tag}
+                className={active + " item"}
+                title={v.name}
+                onClick={this.fpViewSelect.bind(this, v.tag)}>
+                <i className={v.icon + " large icon"}></i>
+                <span>{v.name}</span>
+              </div>
+          })}
+        </div>
+      </div>
+    )
   }
 
 })

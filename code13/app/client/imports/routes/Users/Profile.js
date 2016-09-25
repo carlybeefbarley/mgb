@@ -3,6 +3,8 @@ import reactMixin from 'react-mixin'
 import Helmet from 'react-helmet'
 import moment from 'moment'
 
+import UserProjects from '/client/imports/components/Users/UserProjects'
+import UserHistory from '/client/imports/components/Users/UserHistory'
 import BadgeGrid from '/client/imports/components/Users/BadgeGrid'
 import SkillGrid from '/client/imports/components/Users/SkillGrid'
 import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'
@@ -15,10 +17,12 @@ import validate from '/imports/schemas/validate'
 
 import { Projects } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
-import { projectMakeSelector, getProjectAvatarUrl } from '/imports/schemas/projects'
+import { projectMakeSelector } from '/imports/schemas/projects'
 
-import NavRecentGET from '/client/imports/components/Nav/NavRecentGET'
 import QLink from '../QLink'
+import { Grid, Header, Image, Item, Icon } from 'stardust'
+
+const UserShowcase = () => ( null )    // TODO based on workState
 
 export default UserProfileRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -30,7 +34,6 @@ export default UserProfileRoute = React.createClass({
     ownsProfile: PropTypes.bool
   },
   
-  
   getMeteorData: function() {
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     const handleForProjects = Meteor.subscribe("projects.byUserId", userId)
@@ -41,7 +44,6 @@ export default UserProfileRoute = React.createClass({
       loading: userId && !handleForProjects.ready()
     }
   },
-  
   
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
@@ -61,18 +63,15 @@ export default UserProfileRoute = React.createClass({
     Meteor.call('User.updateProfile', this.props.user._id, changeObj, (error) => {
       if (error) 
         console.log("Could not update profile: ", error.reason)      
-    });
+    })
   },
-
 
   render: function() {
     const { user, ownsProfile } = this.props
-
-    if (!user)
-      return <ThingNotFound type="User" />
+    if (!user) return <ThingNotFound type="User" />
 
     return (
-      <div className="ui padded stackable grid">
+      <Grid padded stackable>
         <Helmet
           title={user.profile.name}
           meta={[
@@ -80,30 +79,25 @@ export default UserProfileRoute = React.createClass({
           ]}
         />
         
-        { this.renderUserInfo(user, ownsProfile, "ten wide column") }
+        { this.renderUserInfo(user, ownsProfile) }
         <BadgeGrid user={user} className="six wide column" />
-
-        { this.renderUserShowcase(user, "sixteen wide column") }
-
-        <ActivityHeatmap user={user} className="ten wide column" />        
-        { this.renderUserSkills(user, "six wide column" ) }
-
-        { this.renderUserProjects(user, "eight wide column" ) }
-        { this.renderUserHistory(user, "eight wide column") }
-        
-      </div>
-    );
+        <UserShowcase user={user} />
+        <ActivityHeatmap user={user} className="ten wide column" />
+        <SkillGrid user={user} className='six wide column' />
+        <UserProjects user={user} projects={this.data.projects} />
+        <UserHistory user={user} />
+      </Grid>
+    )
   },
 
-
-  renderUserInfo: function(user, ownsProfile, className) {
+  renderUserInfo: function(user, ownsProfile) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile
 
     return (
-      <div className={className}>
-        <div className="ui items">
-          <div className="item">
+      <Grid.Column width={8}>
+        <Item.Group>
+          <Item>
             
             <ImageShowOrChange
               className="image"
@@ -112,10 +106,10 @@ export default UserProfileRoute = React.createClass({
               canLinkToSrc={true}
               handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
 
-            <div className="content">          
+            <Item.Content>
 
-              <div className="header">{name}</div>
-              <div className="meta">
+              <Item.Header content={name} />
+              <Item.Meta>
                 <p>
                   <b title="This is the user's name on the old MGBv1 system. There is currently no verification of this claim">
                     MGB1 name:
@@ -129,9 +123,9 @@ export default UserProfileRoute = React.createClass({
                   isDisabled={editsDisabled}
                   />
                 </p>
-              </div>
+              </Item.Meta>
 
-              <div className="ui description">
+              <Item.Description>
                 <p>
                   <b title="About yourself">Bio:</b>&nbsp;
                   <InlineEdit
@@ -154,7 +148,7 @@ export default UserProfileRoute = React.createClass({
                     isDisabled={editsDisabled}
                     />
                 </p>
-              </div>  
+              </Item.Description>  
               { /*
                 mgb1name && false &&  // Currently not shown - doesn't have good place in layout
                 <a className="right floated mini image"  href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">
@@ -164,7 +158,7 @@ export default UserProfileRoute = React.createClass({
                 */
               }
 
-              <div className="ui extra">
+              <Item.Extra>
                 <QLink to={`/u/${name}/assets`}>
                   <div className="ui label">Assets</div>
                 </QLink>
@@ -172,12 +166,13 @@ export default UserProfileRoute = React.createClass({
                 <QLink to={`/u/${name}/projects`}>
                   <div className="ui label">Projects</div>
                 </QLink>
-              </div>
-            </div>
-          </div>
-        </div>
+              </Item.Extra>
+            </Item.Content>
+          </Item>
+        </Item.Group>
+
         <div title="User's 'title'">
-          <i className="quote left icon blue icon" />
+          <Icon name='left quote' color='blue' />
           <InlineEdit
             validate={validate.userTitle}
             activeClassName="editing"
@@ -185,94 +180,14 @@ export default UserProfileRoute = React.createClass({
             paramName="profile.title"
             change={this.handleProfileFieldChanged}
             isDisabled={editsDisabled} />
-            <i className="quote right icon blue" />
+          <Icon name='right quote' color='blue' />
         </div>
         <p>
-          <em style={{color: "#888"}}><i className="clock icon" />Joined {moment(user.createdAt).format('MMMM DD, YYYY')}</em>
+          <em style={{color: "#888"}}>
+            <Icon name='clock' />Joined {moment(user.createdAt).format('MMMM DD, YYYY')}
+          </em>
         </p>
-      </div>
-    )
-  },
-
-
-  renderUserShowcase: function(user, className) {
-    return ( null
-      // <div className="sixteen wide column">
-      //   renderUserShowcase
-      // </div>
-    )
-  },
-
-
-
-  renderUserSkills: function(user, className) {
-    return (
-      <SkillGrid user={user} className={className} />
-    )
-  },
-
-
-  renderUserProjects: function(user, className) {
-    const { projects } = this.data
-    return (
-      <div className="eight wide column">
-      <h2><QLink to={`/u/${user.profile.name}/projects`}>Owned Projects</QLink></h2>
-        { this.renderProjects(user, projects, true) }
-      <h2><QLink to={`/u/${user.profile.name}/projects`}>Member of</QLink></h2>
-        { this.renderProjects(user, projects, false) }
-      </div>
-    )
-  },
-
-
-  renderProjects(user, projects, ownedFlag)
-  {
-    const Empty = <p>No projects</p>
-
-    if (!projects)
-      return null
-      
-    if (projects.length === 0)
-      return Empty
-      
-    const retval = projects.map( (project) => {
-      const isOwner = (project.ownerId === this.props.user._id)
-      const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
-      const projImg = getProjectAvatarUrl(project)
-
-      return (isOwner !== ownedFlag) ? null : (
-        <div className="ui grid" key={project._id}>
-          <div className="four wide column">
-            <img className="ui fluid image" src={projImg} />
-          </div>
-          <div className="twelve wide column">
-            <h4 className="ui header">
-              <QLink to={`/u/${user.profile.name}/project/${project._id}`}>
-                {project.name}
-              </QLink> 
-              &emsp;<small>{isOwner ? "(owner)" : "(member)"}</small>
-            </h4>
-            <p title="(Plays counter not yet implemented)">{MemberStr}&emsp;<i className="play icon"></i>0,000 Plays</p>
-          </div>
-        </div>
-      )
-    })
-
-    return retval.length > 0 ? retval : Empty
-  },
-
-
-  renderUserHistory: function(user, className) {
-    return (
-      <div className={className}>
-      <h2><QLink to={`/u/${user.profile.name}/history`}>History</QLink></h2>
-        <NavRecentGET 
-          styledForNavPanel={false} 
-          currUser={this.props.user}
-          showUserActivities={true}
-        />
-      </div>
+      </Grid.Column>
     )
   }
-
 })

@@ -9,9 +9,9 @@ const _propTypes = {
 }
 
 const fakePeopleList = [ 
-  { img: 'http://semantic-ui.com/images/avatar/small/helen.jpg', name: 'azurehaze', badges: 9 },
-  { img: 'http://semantic-ui.com/images/avatar/small/daniel.jpg', name: 'azurehaze', badges: 7 },
-  { img: 'http://semantic-ui.com/images/avatar/small/christian.jpg', name: 'azurehaze', badges: 6 }
+  { img: '/api/asset/png/kvBq9PB987zuKiENQ', name: 'dgolds', badges: 9 },
+  { img: 'http://www.gravatar.com/avatar/747ac1809af200d4f8403cfe6a240c9e?s=50&d=mm', name: 'DaPerson', badges: 3 },
+  { img: 'http://semantic-ui.com/images/avatar/small/christian.jpg', name: 'Micah', badges: 6 }
 ]
 
 const HomeMeetFriendsColumn = () => (

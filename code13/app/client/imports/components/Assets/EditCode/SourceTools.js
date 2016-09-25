@@ -1,4 +1,4 @@
-let babelWorker;
+"use strict"
 import knownLibs from "./knownLibs.js"
 import { Azzets } from '/imports/schemas'
 // serving modules from...
@@ -11,39 +11,32 @@ const getModuleServer = (lib) => {
 
 // ajax requests cache - invalidate every few seconds
 // this will insanely speed up run
-const INVALIDATE_CACHE_TIMEOUT = 3 * 1000
-const SMALL_CHANGES_TIMEOUT = 1000 // force refresh other mgb assets - even if current isn't changed
-const UPDATE_DELAY = 15 * 1000
+const INVALIDATE_CACHE_TIMEOUT = 30 * 1000
+const UPDATE_DELAY = 0.5 * 1000
 
 // add only smalls libs to tern
 const MAX_ACCEPTABLE_SOURCE_SIZE = 1024 * 100 // 100 KB
-const tmpCache = {}
-// we don't want to ping 404 on CDNs all the time
-const cached404 = {}
-
 
 const ERROR = {
   SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
   MULTIPLE_SOURCES: "W-ST-002",
   UNREACHABLE_EXTERNAL_SOURCE: "W-ST-003",
-  RECURSION_DETECTED:  "W-ST-004"
+  RECURSION_DETECTED:  "E-ST-004"
 }
 
 
 export default class SourceTools {
+  static tmpCache = {}
+  static cached404 = {}
   constructor(ternServer, asset_id, owner) {
     // terminate old babel worker - just in case..
-    if (babelWorker) {
-      babelWorker.terminate()
-    }
-
 
     this.addedFilesAndDefs = {}
     this.subscriptions = {}
     window.mgb_tools = this
     this.asset_id = asset_id
     this.tern = ternServer
-    this.babelWorker = babelWorker = new Worker("/lib/BabelWorker.js")
+    this.babelWorker = new Worker("/lib/BabelWorker.js")
 
     this.collectedSources = []
     this.timeout = 0
@@ -75,6 +68,20 @@ export default class SourceTools {
   }
   // this will handle errors in the EditCode
 
+  set inProgress(val) {
+    this._inProgress = val
+  }
+  get inProgress() {
+    return this._inProgress
+  }
+  get isDestroyed() {
+    if (this._isDestroyed) {
+      console.log("destroyed!!!")
+    }
+    return this._isDestroyed
+  }
+
+
   onError(cb){
     this.errorCBs.push(cb)
   }
@@ -89,7 +96,7 @@ export default class SourceTools {
     this.errors[err.code] = err
     const errors = this.getErrors()
     this.errorCBs.forEach((c) => {
-      c(errors)
+      c(err)
     })
   }
 
@@ -140,12 +147,9 @@ export default class SourceTools {
       this.timeout = 0;
     }
 
-
-
     const prev = this._lastAction
-    // wait for previous action and transpile lazy - as full core refresh and reanalyze makes text cursor feel sluggish
     if (!force) {
-      if ((this.inProgress && !this._firstTime) || (prev.src === srcText || Date.now() - prev.time < SMALL_CHANGES_TIMEOUT)) {
+      if ((this.inProgress && !this._firstTime) || (prev.src === srcText)) {
         this.delayed = (force) => {
           // this may never be called if new sources will come in
           this.collectAndTranspile(srcText, filename, callback, force)
@@ -188,23 +192,6 @@ export default class SourceTools {
     })
   }
 
-
-
-  set inProgress(val) {
-    this._inProgress = val
-  }
-
-  get inProgress() {
-    return this._inProgress
-  }
-
-  get isDestroyed() {
-    if (this._isDestroyed) {
-      console.log("destroyed!!!")
-    }
-    return this._isDestroyed
-  }
-
   destroy() {
     this._isDestroyed = true
 
@@ -219,14 +206,16 @@ export default class SourceTools {
     this._hasSourceChanged = true
     // clean global cache
     // TODO: clean only changed files.. add some sort of meteor subscriber
-    for (let i in tmpCache) {
-      delete tmpCache[i]
+    for (let i in SourceTools.tmpCache) {
+      delete SourceTools.tmpCache[i]
     }
 
     // close all used subscriptions
     for (let i in this.subscriptions) {
       this.subscriptions[i].subscription.stop()
-      this.subscriptions[i].observer.stop()
+      if(this.subscriptions[i].observer){
+        this.subscriptions[i].observer.stop()
+      }
     }
     this.subscriptions = null
     this.errorCBs = null
@@ -254,8 +243,7 @@ export default class SourceTools {
       cb && cb()
       return;
     }
-    // remove use strict added by babel - as it may break code silently
-    code = code.replace(/use strict/gi, '')
+
     const lib = SourceTools.getKnowLib(name)
     const useGlobal = lib && lib.useGlobal
     this.collectSource({name, code, useGlobal, localName})
@@ -413,8 +401,11 @@ export default class SourceTools {
         return
       }
     }
+    //
     if(this.babelWorker.isBusy){
-      debugger
+      // debugger
+      // racing condition - usually happens when one is working on the main file and second on the file included by the main file..
+      // it should be safe to ignore direct request - as main file will pull in dependency in anyway
       return
     }
     // TODO: spawn extra workers?
@@ -513,6 +504,10 @@ export default class SourceTools {
           getSourceAndTranspile()
           this.subscriptions[url].observer = cursor.observeChanges({
             changed: (id, changes) => {
+              // we may end with older resource until next changes..
+              if(this.inProgress){
+                return
+              }
               // it gets called one extra time when asset.src arrives for the first time
               if (changes.content2 && changes.content2.src) {
                 this._collectAndTranspile(changes.content2.src, urlFinalPart, null, true)
@@ -554,7 +549,7 @@ export default class SourceTools {
     }
     return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])
   };`
-      for (var i in sources) {
+      for (let i in sources) {
         const key = sources[i].name.split("@").shift();
         if (sources[i].useGlobal) {
           allInOneBundle += "\n" + 'delete window.exports; delete window.module; '
@@ -577,7 +572,7 @@ export default class SourceTools {
 
       allInOneBundle += "\n" + "})(); "
 
-      // spawn new babel worker and create bundle in the background - as it can take few seconds to transpile
+      // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
       const worker = new Worker("/lib/BabelWorker.js")
       worker.onmessage = (e) => {
         cb(e.data.code)
@@ -647,16 +642,16 @@ export default class SourceTools {
   }
 
   static loadImport(url, cb, urlFinalPart = '') {
-    if (tmpCache[url]) {
+    if (SourceTools.tmpCache[url]) {
       // remove from stack to maintain order
       window.setTimeout(() => {
-        cb(tmpCache[url])
+        cb(SourceTools.tmpCache[url])
       }, 0)
       return
     }
-    if (cached404[url]) {
+    if (SourceTools.cached404[url]) {
       //console.error("Failed to load script: [" + url + "]", cached404[url])
-      cb("", {reason: "Failed to include external source: " + urlFinalPart + " ("+cached404[url]+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
+      cb("", {reason: "Failed to include external source: " + urlFinalPart + " ("+SourceTools.cached404[url]+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
       return;
     }
 
@@ -668,14 +663,14 @@ export default class SourceTools {
       }
       if (httpRequest.status !== 200) {
         //console.error("Failed to load script: [" + url + "]", httpRequest.status)
-        cached404[url] = httpRequest.status
+        SourceTools.cached404[url] = httpRequest.status
         cb("", {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
         return;
       }
       var src = httpRequest.responseText
-      tmpCache[url] = src
+      SourceTools.tmpCache[url] = src
       window.setTimeout(() => {
-        delete tmpCache[url]
+        delete SourceTools.tmpCache[url]
       }, INVALIDATE_CACHE_TIMEOUT)
       cb(src)
     }

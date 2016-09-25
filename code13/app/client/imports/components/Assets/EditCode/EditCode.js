@@ -1,3 +1,4 @@
+"use strict"
 var update = require('react-addons-update');
 
 import _ from 'lodash';
@@ -57,6 +58,9 @@ import MgbMagicCommentDescription from './tern/MgbMagicCommentDescription.js';
 import DebugASTview from './tern/DebugASTview.js';
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
+// we are delaying heavy jobs for this amount of time (in ms) .. e.g. when user types - there is no need to re-analyze all content on every key press
+// reasonable value would be equal to average user typing speed (chars / second) * 1000
+const CHANGES_DELAY_TIMEOUT = 750
 
 // Code asset - Data format:
 //
@@ -115,7 +119,6 @@ export default class EditCode extends React.Component {
 
   componentDidMount() {
     this.getElementReferences()
-
     const codeMirrorUpdateHints = this.codeMirrorUpdateHints
     // Debounce the codeMirrorUpdateHints() function
     this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
@@ -129,84 +132,7 @@ export default class EditCode extends React.Component {
     // Semantic-UI item setup (Accordion etc)
     $('.ui.accordion').accordion({exclusive: false, selector: {trigger: '.title .explicittrigger'}})
 
-    // Tern setup
-    var myTernConfig = {
-      // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
-      // TODO: find workaround and uncomment
-      useWorker: true,
-      defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
-      completionTip: function (curData) {
-        // we get called for the CURRENTLY highlighted entry in the autocomplete list. 
-        // We are provided fields like
-        //   name, type     ... pretty reliably
-        //   doc, url       ... sometimes (depending on dataset)
-        const doc = curData.doc ? curData.doc : '';
-        return doc + (doc ? "\n\n" + curData.type : "")
-      },
-      // TODO: is there a simple "meteor" way to get these files from node_modules???
-      workerDeps: [
-        "/lib/acorn/acorn.js",
-        "/lib/acorn/acorn_loose.js",
-        "/lib/acorn/walk.js",
-        "/lib/tern/lib/signal.js",
-        "/lib/tern/lib/tern.js",
-        "/lib/tern/lib/def.js",
-        "/lib/tern/lib/infer.js",
-        "/lib/tern/lib/comment.js",
-        "/lib/tern/plugin/modules.js",
-        "/lib/tern/plugin/es_modules.js",
-        "/lib/tern/plugin/doc_comment.js"
-        //"/lib/tern/plugin/lint.js"
-      ],
-      plugins: {
-        // modules: true, //we are injecting files directly - no need for additional module + it have
-        comment: true,
-        es_modules: true,
-        /*lint: {
-          rules:{
-            ES6Modules: {
-              severity: "none"
-            }
-          }
-        },*/
-        doc_comment: {
-          strong: true
-        }
-      },
-      workerScript: "/lib/TernWorker.js"
-      /*,
-      responseFilter: function (doc, query, request, error, data) {
-        // Woah - capture all the responses from the TernServer
-        console.log("REQ", request, "  DATA", data)
-        return data
-      }*/
-      // typeTip: function(..) this would be a function that creates a DOM element to render the typeTip
-    }
-
-    this.ternServer = new CodeMirror.TernServer(myTernConfig)
-    if (!this.ternServer.server.addDefs) {
-      this.ternServer.server.addDefs = (defs) => {
-        this.ternServer.worker.postMessage({
-          type: "addDefs",
-          defs: defs
-        })
-      }
-    }
-    // overwrite default function - so we can use replace
-    this.ternServer.server.addFile = (name, text, replace) => {
-      this.ternServer.worker.postMessage({type: "add", name, text, replace})
-    }
-
-
-
-    //this.ternServer.server.debug = true
-    this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
-    this.tools.onError(errors => {
-      this.showErrors(errors)
-    })
-
-    InstallMgbTernExtensions(tern);
-
+    this.startTernServer()
     // CodeMirror setup
     const textareaNode = this.refs.textarea
     let cmOpts = {
@@ -222,7 +148,7 @@ export default class EditCode extends React.Component {
       foldGutter: true,
       autoCloseBrackets: true,
       matchBrackets: true,
-      viewportMargin: 2,
+      viewportMargin: 10,
 
       /*hintOptions: {
        completeSingle: false    //    See https://codemirror.net/doc/manual.html -> completeSingle
@@ -274,6 +200,7 @@ export default class EditCode extends React.Component {
 
     this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
     this.updateDocName()
+    this.doFullUpdateOnContentChange()
 
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
     this.codeMirror.on("cursorActivity", this.codeMirrorOnCursorActivity.bind(this, false))
@@ -304,6 +231,81 @@ export default class EditCode extends React.Component {
 
     this.updateDocName()
   }
+  startTernServer(){
+    // Tern setup
+    var myTernConfig = {
+      // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
+      // TODO: find workaround and uncomment
+      useWorker: true,
+      defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
+      completionTip: function (curData) {
+        // we get called for the CURRENTLY highlighted entry in the autocomplete list.
+        // We are provided fields like
+        //   name, type     ... pretty reliably
+        //   doc, url       ... sometimes (depending on dataset)
+        const doc = curData.doc ? curData.doc : '';
+        return doc + (doc ? "\n\n" + curData.type : "")
+      },
+      // TODO: is there a simple "meteor" way to get these files from node_modules???
+      workerDeps: [
+        "/lib/acorn/acorn.js",
+        "/lib/acorn/acorn_loose.js",
+        "/lib/acorn/walk.js",
+        "/lib/tern/lib/signal.js",
+        "/lib/tern/lib/tern.js",
+        "/lib/tern/lib/def.js",
+        "/lib/tern/lib/infer.js",
+        "/lib/tern/lib/comment.js",
+        "/lib/tern/plugin/modules.js",
+        "/lib/tern/plugin/es_modules.js",
+        "/lib/tern/plugin/doc_comment.js"
+        //"/lib/tern/plugin/lint.js"
+      ],
+      plugins: {
+        // modules: true, //we are injecting files directly - no need for additional module + it have
+        comment: true,
+        es_modules: true,
+        /*lint: {
+         rules:{
+         ES6Modules: {
+         severity: "none"
+         }
+         }
+         },*/
+        doc_comment: {
+          strong: true
+        }
+      },
+      workerScript: "/lib/TernWorker.js"
+      /*,
+       responseFilter: function (doc, query, request, error, data) {
+       // Woah - capture all the responses from the TernServer
+       console.log("REQ", request, "  DATA", data)
+       return data
+       }*/
+      // typeTip: function(..) this would be a function that creates a DOM element to render the typeTip
+    }
+    this.ternServer = new CodeMirror.TernServer(myTernConfig)
+    if (!this.ternServer.server.addDefs) {
+      this.ternServer.server.addDefs = (defs) => {
+        this.ternServer.worker.postMessage({
+          type: "addDefs",
+          defs: defs
+        })
+      }
+    }
+    // overwrite default function - so we can use replace
+    this.ternServer.server.addFile = (name, text, replace) => {
+      this.ternServer.worker.postMessage({type: "add", name, text, replace})
+    }
+
+    this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
+    this.tools.onError(errors => {
+      this.showError(errors)
+    })
+
+    InstallMgbTernExtensions(tern);
+  }
   // update file name - to correctly report 'part of'
   updateDocName(){
 
@@ -326,14 +328,35 @@ export default class EditCode extends React.Component {
     $(window).off("resize", this.edResizeHandler)
     // TODO: Destroy CodeMirror editor instance?
 
+    this.terminateWorkers()
+
+    if(this.changeTimeout){
+      window.clearTimeout(this.changeTimeout)
+      this.changeTimeoutFn()
+    }
+  }
+
+  terminateWorkers(){
     this.jshintWorker && this.jshintWorker.terminate();
     this.jshintWorker = null;
 
     // this also will terminate worker (if in worker mode)
-    this.ternServer.destroy();
+    this.ternServer && this.ternServer.destroy();
     this.ternServer = null;
 
-    this.tools.destroy();
+    this.tools && this.tools.destroy();
+  }
+  // used only for debugging purposes
+  restartWorkers(){
+    // terminate all old workers
+    this.terminateWorkers()
+    // tern will start tool - and tools will start separate babel worker
+    this.startTernServer()
+
+    // jshint will start automatically on code changes
+
+    // update all tools to current state
+    this.doFullUpdateOnContentChange()
   }
 
   codeEditPassAndHint(cm) {
@@ -348,18 +371,17 @@ export default class EditCode extends React.Component {
     return CodeMirror.Pass       // Allow the typed character to be part of the document
   }
 
-
+  // this method is triggered very very often due to activity snapshot
   componentWillReceiveProps(nextProps) {
-    let currentCursor = this.codeMirror.getCursor()
-    let newVal = nextProps.asset.content2.src
-
+    const newVal = nextProps.asset.content2.src
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
       // user is typing - intensively working with document - don't update until it finishes
       if(this.changeTimeout){
-        // also this could be good place to diff document wih eternal changes
         console.log("Preventing update! User in action")
         return
       }
+      console.log("Setting src to: ", newVal.substr(0, 3))
+      let currentCursor = this.codeMirror.getCursor()
       this.codeMirror.setValue(newVal)
       this._currentCodemirrorValue = newVal       // This needs to be done here or we will loop around forever
       this.codeMirror.setCursor(currentCursor)    // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
@@ -504,7 +526,7 @@ export default class EditCode extends React.Component {
       editor.scrollTo(null, after - info.clientHeight + 3);
   }
 
-  runJSHintWorker(code){
+  runJSHintWorker(code, cb){
 
     // terminate old busy worker - as jshint can take a lot time on huge scripts
     if (this.jshintWorker && this.jshintWorker.isBusy) {
@@ -520,7 +542,9 @@ export default class EditCode extends React.Component {
         worker.isBusy = false;
         // merge arrays ???
         this.showErrors(e.data[0], true)
-        this.showErrors(this.tools.getErrors())
+        cb && cb(e.data[0])
+        // tools will inject error
+        // this.showErrors(this.tools.getErrors())
       }
     }
 
@@ -556,61 +580,62 @@ export default class EditCode extends React.Component {
       this.errorMessageCache = {}
     }
 
-    const msgs = this.errorMessageCache
     for (var i = 0; i < errors.length; ++i) {
-      const err = errors[i];
-      if (!err) continue;
+      this.showError(errors[i], clear)
+    }
+  }
+  showError(err, clear){
+    if (!err) return;
+    const msgs = this.errorMessageCache
+    // get line
+    if (!err.line || !clear) {
+      const doc = this.codeMirror.getValue().split("\n")
+      err.line = doc.findIndex(v => v.indexOf(err.evidence) > -1) + 1
+    }
+    const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div")
 
-      // get line
-      if (!err.line || !clear) {
-        const doc = this.codeMirror.getValue().split("\n")
-        err.line = doc.findIndex(v => v.indexOf(err.evidence) > -1) + 1
-      }
-      const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div")
-
-      if (!msgs[err.line]) {
-        msgs[err.line] = msg
-        msg.icon = msg.appendChild(document.createElement("div"))
-        if (err.code.substring(0, 1) == "W") {
-          msg.icon.className = "CodeMirror-lint-marker-warning"
-        }
-        else {
-          msg.icon.className = "CodeMirror-lint-marker-error"
-        }
-        msg.container = msg.appendChild(document.createElement("div"))
-        msg.container.className = "lint-error-text"
-
-      }
-      else if (!msg.multi) {
-        msg.multi = msg.icon.appendChild(document.createElement("div"))
-        msg.multi.className = "CodeMirror-lint-marker-multiple"
-      }
-
-      // override warning icon to Error
-      if (err.code.substring(0, 1) == "E") {
-        msg.icon.className = "CodeMirror-lint-marker-error"
-      }
-
-      const text = msg.container.appendChild(document.createElement("div"))
-      const ico = text.appendChild(document.createElement("div"))
+    if (!msgs[err.line]) {
+      msgs[err.line] = msg
+      msg.icon = msg.appendChild(document.createElement("div"))
       if (err.code.substring(0, 1) == "W") {
-        ico.className = "CodeMirror-lint-marker-warning"
+        msg.icon.className = "CodeMirror-lint-marker-warning"
       }
       else {
-        ico.className = "CodeMirror-lint-marker-error"
+        msg.icon.className = "CodeMirror-lint-marker-error"
       }
+      msg.container = msg.appendChild(document.createElement("div"))
+      msg.container.className = "lint-error-text"
 
-      text.appendChild(document.createTextNode(" " + err.reason))
-
-      msg.className = "lint-error"
-      this.codeMirror.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg)
-
-      /*
-        var evidence = msg.appendChild(document.createElement("span"));
-        evidence.className = "lint-error-text evidence";
-        evidence.appendChild(document.createTextNode(err.evidence));
-      */
     }
+    else if (!msg.multi) {
+      msg.multi = msg.icon.appendChild(document.createElement("div"))
+      msg.multi.className = "CodeMirror-lint-marker-multiple"
+    }
+
+    // override warning icon to Error
+    if (err.code.substring(0, 1) == "E") {
+      msg.icon.className = "CodeMirror-lint-marker-error"
+    }
+
+    const text = msg.container.appendChild(document.createElement("div"))
+    const ico = text.appendChild(document.createElement("div"))
+    if (err.code.substring(0, 1) == "W") {
+      ico.className = "CodeMirror-lint-marker-warning"
+    }
+    else {
+      ico.className = "CodeMirror-lint-marker-error"
+    }
+
+    text.appendChild(document.createTextNode(" " + err.reason))
+
+    msg.className = "lint-error"
+    this.codeMirror.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg)
+
+    /*
+     var evidence = msg.appendChild(document.createElement("span"));
+     evidence.className = "lint-error-text evidence";
+     evidence.appendChild(document.createTextNode(err.evidence));
+     */
   }
 
   srcUpdate_GetInfoForCurrentFunction() {
@@ -865,9 +890,7 @@ export default class EditCode extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextState._preventRenders === true)
-      return false
-    return true
+    return !nextState._preventRenders
   }
 
   codemirrorValueChanged(doc, change) {
@@ -1135,12 +1158,14 @@ export default class EditCode extends React.Component {
       // console.log("Timeout cleared")
       window.clearTimeout(this.changeTimeout)
     }
-    this.changeTimeout = window.setTimeout(() => {
+    this.changeTimeoutFn = () => {
       console.log("Doing full update....")
       this.props.handleContentChange(c2, thumbnail, reason)
       this.doFullUpdateOnContentChange()
       this.changeTimeout = null
-    }, 1000)
+    }
+
+    this.changeTimeout = window.setTimeout(this.changeTimeoutFn, CHANGES_DELAY_TIMEOUT)
   }
 
   // this is very heavy function - use with care
@@ -1150,10 +1175,16 @@ export default class EditCode extends React.Component {
     // However, it is still synchronous - this isn't an async callback
     this.codeMirror.operation(() => {
       const val = this.codeMirror.getValue()
-      this.runJSHintWorker(val);
-      if(this.tools){
-        this.tools.collectAndTranspile(val, this.props.asset.name)
-      }
+      this.runJSHintWorker(val, (errors) => {
+        // don't recompile on critical errors
+        const critical = errors.find(e => e.code.substr(0, 1) === "E")
+        if(!critical && this.tools){
+          // why val here is different?
+          const val2 = this.codeMirror.getValue()
+          this.tools.collectAndTranspile(val2, this.props.asset.name)
+        }
+      });
+
     })
   }
 

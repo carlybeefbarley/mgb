@@ -2,64 +2,40 @@ import React, { PropTypes, Component } from 'react'
 import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
 
+import { Grid, Header, List, Icon, Button } from 'stardust'
 import QLink from '/client/imports/routes/QLink'
 
 const _propTypes = {
   userId:   PropTypes.string       // Can be null/undefined. It is used to indicate if anyone is logged in
 }
 
-const _hdrSpaceBelowSty = {marginBottom: "1em"}
+const skillsList = [ 
+  { icon: 'code',        msg: 'Programming' },
+  { icon: 'paint brush', msg: 'Pixel art' },
+  { icon: 'music',       msg: 'Music & audio' },
+  { icon: 'idea',        msg: 'Game design' },
+  { icon: 'write',       msg: 'Story writing' },
+  { icon: 'area chart',  msg: 'Analytics' }
+]
 
 const HomeSkillsColumn = (props) => (
-  <div className="column">
-    <h2 style={_hdrSpaceBelowSty}>Grow your <em>real</em> skill tree</h2>
-    <div className="ui very relaxed list">
-      <div className="item">
-        <i className="code large icon" />
-        <div className="content">
-          <h3>Programming</h3>
-        </div>
-      </div>
-      <div className="item">
-        <i className="paint brush large icon" />
-        <div className="content">
-          <h3>Pixel art</h3>
-        </div>
-      </div>
-      <div className="item">
-        <i className="music large icon" />
-        <div className="content">
-          <h3>Music &amp; audio</h3>
-        </div>
-      </div>
-      <div className="item">
-        <i className="idea large icon" />
-        <div className="content">
-          <h3>Game design</h3>
-        </div>
-      </div>
-      <div className="item">
-        <i className="write large icon" />
-        <div className="content">
-          <h3>Story writing</h3>
-        </div>
-      </div>
-      <div className="item">
-        <i className="area chart large icon" />
-        <div className="content">
-          <h3>Analytics</h3>
-        </div>
-      </div>
-    </div>
+  <Grid.Column>
+    <Header as='h2' style={{ marginBottom: "1em" }}>Grow your <em>real</em> skill tree</Header>
+    <List className="very relaxed">
+      {
+        skillsList.map( (skill, idx) => (
+          <List.Item key={idx}>
+            <Icon name={skill.icon} size='large' />
+            <Header className="content" as='h3' >{skill.msg}</Header>
+          </List.Item>
+        ))
+      }
+    </List>
     <br />
     <QLink to={`/getstarted`}>
-    { props.userId ?
-      <button className="ui teal large button">Set skill goals</button>
-      :
-      <button className="ui teal large button">Build a game</button>
-    }
+      <Button color='teal' size='large' content={props.userId ? 'Set skill goals' : 'Build a game' } />
     </QLink>
-  </div>
+  </Grid.Column>
 )
 
 HomeSkillsColumn.propTypes = _propTypes

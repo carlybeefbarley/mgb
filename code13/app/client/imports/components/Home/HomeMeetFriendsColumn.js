@@ -2,44 +2,40 @@ import React, { PropTypes, Component } from 'react'
 import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
 
+import { Grid, Header, List, Icon, Image, Button } from 'stardust'
 import QLink from '/client/imports/routes/QLink'
 
 const _propTypes = {
 }
 
-const _hdrSpaceBelowSty = {marginBottom: "1em"}
+const fakePeopleList = [ 
+  { img: 'http://semantic-ui.com/images/avatar/small/helen.jpg', name: 'azurehaze', badges: 9 },
+  { img: 'http://semantic-ui.com/images/avatar/small/daniel.jpg', name: 'azurehaze', badges: 7 },
+  { img: 'http://semantic-ui.com/images/avatar/small/christian.jpg', name: 'azurehaze', badges: 6 }
+]
 
 const HomeMeetFriendsColumn = () => (
-  <div className="column">
-    <h2 style={_hdrSpaceBelowSty}>Meet creative friends</h2>
-    <div className="ui very relaxed list">
-      <div className="item">
-        <img className="ui image avatar middle aligned" style={{ height: 60, width: 60 }} src="http://semantic-ui.com/images/avatar/small/helen.jpg" />
-        <div className="content middle aligned" style={{ marginLeft: '1em' }}>
-          <h3>azurehaze</h3>
-          <p><i className="trophy icon" />10 badges</p>
-        </div>
-      </div>
-      <div className="item">
-        <img className="ui image avatar middle aligned" style={{ height: 60, width: 60 }} src="http://semantic-ui.com/images/avatar/small/daniel.jpg" />
-        <div className="content middle aligned" style={{ marginLeft: '1em' }}>
-          <h3>bossmaker</h3>
-          <p><i className="trophy icon" />9 badges</p>
-        </div>
-      </div>
-      <div className="item">
-        <img className="ui image avatar middle aligned" style={{ height: 60, width: 60 }} src="http://semantic-ui.com/images/avatar/small/christian.jpg" />
-        <div className="tiny content middle aligned" style={{ marginLeft: '1em' }}>
-          <h3>uggy</h3>
-          <p><i className="trophy icon" />6 badges</p>
-        </div>
-      </div>
-    </div>
+  <Grid.Column>
+    <Header as='h2' style={{ marginBottom: '1em' }}>Meet creative friends</Header>
+    <List className="very relaxed">
+      {
+        fakePeopleList.map( (person, idx) => (
+          <List.Item key={idx}>
+    
+            <Image avatar verticalAlign='middle' style={{ height: 60, width: 60 }} src={person.img} />
+            <div className="content middle aligned" style={{ marginLeft: '1em' }}>
+              <Header as='h3' content={person.name} />
+              <p><Icon name='trophy' />{person.badges} badges</p>
+            </div>
+          </List.Item>
+        ))
+      }
+    </List>
     <br />
     <QLink to={`/users`}>
-      <button className="ui black large button">See more creators</button>
+      <Button color='black' size='large' content='See more creators' />
     </QLink>
-  </div>
+  </Grid.Column>
 )
 
 HomeMeetFriendsColumn.propTypes = _propTypes

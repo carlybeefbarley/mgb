@@ -3,23 +3,21 @@ import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
 import ProjectsBeingMadeGET from '/client/imports/components/Projects/ProjectsBeingMadeGET'
 
+import { Grid, Header, Button } from 'stardust'
 import QLink from '/client/imports/routes/QLink'
 
 const _propTypes = {
 }
 
-const _hdrSpaceBelowSty = {marginBottom: "1em"}
-
-
 const HomeProjectsBeingMadeColumn = () => (
-  <div className="column">
-    <h2 style={_hdrSpaceBelowSty}>Watch games being made</h2>
+  <Grid.Column>
+    <Header as='h2' style={{ marginBottom: '1em' }}>Watch games being made</Header>
     <ProjectsBeingMadeGET numEntries={4} chosenClassName="ui very relaxed list" />
     <br />
     <QLink to={`/assets`}>
-      <button className="ui black large button">See more games</button>
+      <Button color='black' size='large' content='See more games' />
     </QLink>
-  </div>
+  </Grid.Column>
 )
 
 HomeProjectsBeingMadeColumn.propTypes = _propTypes

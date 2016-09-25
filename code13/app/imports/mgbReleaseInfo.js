@@ -14,6 +14,56 @@
 export default mgbReleaseInfo = {
   'releases': [
 
+
+    {
+      'timestamp': 'Sun Sep 25 2016 13:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1559'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.tours',
+          'type': 'feature',
+          'changeName': 'Tours capability',
+          'changeSummary': 'We are using a component called react-joyride to provide a way to explain features of MGB. In future, we intend to allow you to use this in games/apps created within MGB...',
+          'otherUrls': [ { txt: 'react-joyride on github', href: 'https://github.com/gilbarbara/react-joyride' } ]
+        },
+        {
+          'featureTag': 'nav.flexpanel.featurelevels',
+          'type': 'improvement',
+          'changeName': 'Feature Levels FlexPanel has a tour',
+          'changeSummary': 'The Feature Levels FlexPanel has a new feature - using the new "tours" capability: if you click the (show) link, it will start a brief tour to explain how those work',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'nav.infra.stardust',
+          'type': 'improvement',
+          'changeName': '(internals) Stardust UI library',
+          'changeSummary': 'We have been using a CSS framework called "Semantic UI" for several months now for building the overall MGB UI. In this release we have started using a ReactJS wrapper for that library called "stardust". You should not notice much difference, but inside our own source code, MGB is much nicer for us to use and enhance because of Stardust. This will also help with our intent to allow you to extend MGB *yourself* in future - we intend to allow you to add extra MGB features & tools that you develop (or the community has developed) inside MGB to extend MGB. Woah!',
+          'otherUrls': [ 
+            { txt: 'Stardust simple example', href: '/u/dgolds/asset/vEF8o5yrrb9in2NsA' },
+            { txt: 'Stardust ', href: 'http://technologyadvice.github.io/stardust/' },
+            { txt: 'Semantic UI', href: 'http://semantic-ui.com/' }
+          ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Edit - quality improvements',
+          'changeSummary': 'This release includes more stability, performance and compatibility improvements for Code Edit/import/build. There are still some ways the MGB Code Edit is causing browser to crash when editing/building complex projects, and we are working through fixing all these cases',
+          'otherUrls': []
+        }
+      ]
+    },
+
     {
       'timestamp': 'Fri Sep 22 2016 13:00:00 GMT-0700 (PDT)',
 

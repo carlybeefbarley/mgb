@@ -291,6 +291,22 @@ export default App = React.createClass({
                 }
               </div>
             </div>
+
+            { (fNavPanelIsOverlay && showNavPanel) &&   // Overlay to catch clicks when Overlay NavPanel is up.
+              <div 
+                  onClick={ () => this.handleNavPanelToggle() } 
+                  style={ { 
+                    position: "fixed",
+                    zIndex: 200,
+                    top:      "0px",
+                    bottom:   "0px",
+                    left:     navPanelWidth,
+                    right:    flexPanelWidth,
+                    backgroundColor: "rgba(0,0,0,0.2)",
+                    overflow: "scroll",
+                    marginBottom: "0px"} } />
+            }
+            
           </div>
       </div>
     )

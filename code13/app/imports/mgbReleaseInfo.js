@@ -16,12 +16,12 @@ export default mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Sun Sep 25 2016 13:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun Sep 25 2016 14:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1559'
+        'iteration': '1560'
       },
 
       'releaseManagement': {
@@ -59,6 +59,13 @@ export default mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Code Edit - quality improvements',
           'changeSummary': 'This release includes more stability, performance and compatibility improvements for Code Edit/import/build. There are still some ways the MGB Code Edit is causing browser to crash when editing/building complex projects, and we are working through fixing all these cases',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'nav.navPanel',
+          'type': 'improvement',
+          'changeName': 'Improved NavPanel auto-hide',
+          'changeSummary': 'NavPanel auto-hide is also triggered now by a click in the central area of the window',
           'otherUrls': []
         }
       ]

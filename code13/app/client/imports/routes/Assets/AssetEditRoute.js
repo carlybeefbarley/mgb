@@ -20,7 +20,7 @@ import { ActivitySnapshots, Activity } from '/imports/schemas'
 
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
-const FLUSH_TIMER_INTERVAL_MS = 5000    // Milliseconds between timed flush attempts
+const FLUSH_TIMER_INTERVAL_MS = 6000    // Milliseconds between timed flush attempts
 
 const fAllowSuperAdminToEditAnything = false // PUT IN SERVER POLICY
 
@@ -174,7 +174,7 @@ export default AssetEditRoute = React.createClass({
           if (asset.ownerId === cup[currUserProjectIdx].ownerId
            && apn[assetProjectIdx] === cup[currUserProjectIdx].name)
           {
-            console.log(`CanEdit=true because asset "${asset.name}" is in project "${apn[assetProjectIdx]}" and user ${currUser.profile.name} is a member of Project "${asset.dn_ownerName}.${cup[currUserProjectIdx].name}"`)
+            //console.log(`CanEdit=true because asset "${asset.name}" is in project "${apn[assetProjectIdx]}" and user ${currUser.profile.name} is a member of Project "${asset.dn_ownerName}.${cup[currUserProjectIdx].name}"`)
             return true
           }
         }

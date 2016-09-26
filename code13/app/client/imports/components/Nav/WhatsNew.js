@@ -25,7 +25,7 @@ export default WhatsNew = React.createClass({
     const iconEl = <i className={hilite + " announcement icon"}></i>
 
     if (this.props.asHidingLink)
-      return laterNewsAvailable && 
+      return !laterNewsAvailable ? null : 
         <QLink  to="/whatsnew" 
                 title="Announcements of new features/fixes to MGBv2" 
                 className="fitted item" 

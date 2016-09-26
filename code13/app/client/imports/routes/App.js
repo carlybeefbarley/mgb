@@ -120,7 +120,7 @@ export default App = React.createClass({
     const projectSelector = projectMakeSelector(currUserId)
 
     return {
-      currUser: currUser,                           // Currently Logged in user. Putting it here makes it reactive
+      currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
       currUserProjects: Projects.find(projectSelector).fetch(),
       user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
       activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
@@ -133,6 +133,7 @@ export default App = React.createClass({
   },
 
   configureTrackJs() {
+    // TODO: Make reactive for login/logout
     // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
     const doTrack = () => {
       const ver = mgbReleaseInfo.releases[0].id
@@ -149,14 +150,10 @@ export default App = React.createClass({
   },
 
   render() {
-
-    if (this.data.loading)
-      return <Spinner />
-
     this.configureTrackJs()
 
     const { fNavPanelIsOverlay, showToast, toastMsg, toastType } = this.state
-    const { currUser, user, currUserProjects } = this.data
+    const { loading, currUser, user, currUserProjects } = this.data
     const { query } = this.props.location
 
     // The NavPanel (left), NavBar (top) and FlexPanel (right) are fixed/absolute positioned so we need to account for that
@@ -222,7 +219,6 @@ export default App = React.createClass({
           debug={false} />
 
         <div>
-
             <NavPanel
               currUser={currUser}
               currUserProjects={currUserProjects}
@@ -279,7 +275,7 @@ export default App = React.createClass({
                   <Toast content={toastMsg} type={toastType} />
                 }
                 {
-                  this.props.children && React.cloneElement(this.props.children, {
+                  !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
                     user: user,
                     currUser: currUser,

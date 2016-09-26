@@ -24,19 +24,20 @@ export default NavBarBreadcrumb = React.createClass({
     const sep = <i className="mini right chevron icon"></i>
     const assetId = params && params.assetId
     const projectId = params && params.projectId
+    const usernameToShow = user ? user.profile.name : params.username
 
     return (
       <div className="ui large breadcrumb">
         <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
 
-        { user && sep }
-        { user && <QLink className="section" to={`/u/${user.profile.name}`}>{user.profile.name}&nbsp;</QLink> }
+        { usernameToShow && sep }
+        { usernameToShow && <QLink className="section" to={`/u/${usernameToShow}`}>{usernameToShow}&nbsp;</QLink> }
 
-        { user && assetId && sep }
-        { user && assetId && <QLink className="section" to={`/u/${user.profile.name}/assets`}>Assets&nbsp;</QLink> }
+        { usernameToShow && assetId && sep }
+        { usernameToShow && assetId && <QLink className="section" to={`/u/${usernameToShow}/assets`}>Assets&nbsp;</QLink> }
 
-        { user && projectId && sep }
-        { user && projectId && <QLink className="section" to={`/u/${user.profile.name}/projects`}>Projects&nbsp;</QLink> }
+        { usernameToShow && projectId && sep }
+        { usernameToShow && projectId && <QLink className="section" to={`/u/${usernameToShow}/projects`}>Projects&nbsp;</QLink> }
 
         { name && sep }
         { name && <span>{name}&nbsp;</span> }

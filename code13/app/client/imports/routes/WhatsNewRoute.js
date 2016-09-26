@@ -3,11 +3,12 @@ import QLink from './QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import moment from 'moment'
+import { Segment, Container, Header, List, Item, Grid, Icon } from 'stardust'
 
 export default WhatsNewRoute = React.createClass({
 
   propTypes: {
-    currUser: PropTypes.object,                 // Can be null (if user is not logged in)
+    currUser: PropTypes.object          // Can be null (if user is not logged in)
   },
   
   /** React callback - before render() is called */
@@ -35,16 +36,13 @@ export default WhatsNewRoute = React.createClass({
         if (error)
           console.log("Could not update profile with What's New timestamp")      
       })      
-      
     }
-  },
-  
+  },  
   
   latestRelTimestamp: function()
   {
     return mgbReleaseInfo.releases[0].timestamp
   },
-  
 
   handleReleaseClicked: function (releaseIdx)
   {
@@ -52,44 +50,41 @@ export default WhatsNewRoute = React.createClass({
   },
 
   headerMessage: (
-    <div className="ui raised padded segment">
-      <div className="ui header">My Game Builder v2 is ALPHA and in active development</div>
-      <div className="ui meta">
-        <p>
-          You are very welcome to use this new MyGameBuilder site and give us feedback 
-          using the <i className="chat icon" />chat panel on the right hand side of the screen
-        </p>
-        <ul>
-          <li>The Sounds, Music, Graphic, Map and Code Asset types are quite stable and can be used safely</li>
-          <li>iPad/Tablet usage is quirky/buggy at present (we are working on it)</li>
-          <li>For best results now, use Google's Chrome browser on Windows/Mac/Linux.</li>
-        </ul>
-        <p title="However, if you want to help us get the word out when we are ready, message us in Chat!">
-          Please do NOT post this v2.mygamebuilder.com link to news sites like 
-          Facebook/ProductHunt/Reddit/SlashDot/HackerNews etc. - we aren't ready for prime time yet!
-        </p>
-        <p>
-          See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
-        </p>
-      </div>
-    </div>
+    <Segment raised padded>
+      <Header>My Game Builder v2 is ALPHA and in active development</Header>
+      <p>
+        You are very welcome to use this new MyGameBuilder site and give us feedback 
+        using the <i className="chat icon" />chat panel on the right hand side of the screen
+      </p>
+      <List className='bulleted'>
+        <List.Item>The Sounds, Music, Graphic, Map and Code Asset types are quite stable and can be used safely</List.Item>
+        <List.Item>iPad/Tablet usage is quirky/buggy at present (we are working on it)</List.Item>
+        <List.Item>For best results now, use Google's Chrome browser on Windows/Mac/Linux.</List.Item>
+      </List>
+      <p title="However, if you want to help us get the word out when we are ready, message us in Chat!">
+        Please do NOT post this v2.mygamebuilder.com link to news sites like 
+        Facebook/ProductHunt/Reddit/SlashDot/HackerNews etc. - we aren't ready for prime time yet!
+      </p>
+      <p>
+        See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
+      </p>
+    </Segment>
   ),
 
   render: function() {
     return (
       <div>
-        <div className="ui basic segment">
-          <div className="ui container">
-            <h2 className="ui header"><i className="announcement icon" />What's New</h2>
+        <Segment basic>
+          <Container>
+            <Header as='h2'><Icon name='announcement' />What's New</Header>
             { this.headerMessage }
             { this.renderNews() }
-          </div>
-        </div>
+          </Container>
+        </Segment>
         <Footer />
       </div>
     )
   },
-
 
   // Some sub-functions to render various bits of this control. 
   // They are called (directly, or indirectly) by render() above
@@ -103,24 +98,23 @@ export default WhatsNewRoute = React.createClass({
     const ago = moment(new Date(rel.timestamp)).fromNow() 
 
     return (
-      <div className="ui padded two column relaxed equal height divided grid">
-        <div className="column">
-          <h4 className="ui header">MGBv2 updates</h4>
+      <Grid columns={2} padded relaxed divided className='equal height'>
+        <Grid.Column>
+          <Header as='h4' content='MGBv2 updates' />
           { this.renderNewsMgbVersionsColumn() }
-        </div>
-        <div className="column">
-          <h4 className="ui header">
+        </Grid.Column>
+        <Grid.Column>
+          <Header as='h4'>
             Changes in v{rel.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + rel.id.iteration}</i>&emsp;{ago}</small>
-          </h4>
+          </Header>
           { this.renderNewsRelChangesColumn() }
-        </div>
-      </div>
+        </Grid.Column>
+      </Grid>
     )
   },
-  
-  
+    
   /** ct is a string from mgbReleaseInfo.releases[].changes[].type */
-  getIconForChangeType: function(ct) {
+  getIconNameForChangeType: function(ct) {
     const iconNames = 
       { 
         "feature":     "green plus",
@@ -129,56 +123,66 @@ export default WhatsNewRoute = React.createClass({
         "removed":     "red remove" 
       }
 
-    return <i className={"ui icon " + iconNames[ct]}></i>
+    return iconNames[ct]
   },
-
 
   /** This is the left column. Uses React's state.releaseIdx */
   renderNewsMgbVersionsColumn: function() {
     const rels = mgbReleaseInfo.releases
     const activeRelIdx = this.state.releaseIdx
-    const gry = {color: "#888"}
-    const blk = {color: "#000"}
 
-    return  (
-      <div className="ui list">
+    return (
+      <Item.Group link >
         { rels.map( (r, idx) =>  {
-          const sty = (activeRelIdx === idx) ? blk : gry
-          const ago = moment(new Date(r.timestamp)).fromNow() 
+          const sty = { 
+            backgroundColor: `rgba(0,0,0, ${activeRelIdx === idx ? 0.08 : 0})`,
+            padding: '6px'
+          }
+          const ago = moment(new Date(r.timestamp)).fromNow()
           const state = r.id.state === 'alpha' ? 'α' : (r.id.state + "#")
           return (
-            <div className="item" key={r.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
-              <div className="content">
-                v{r.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + r.id.iteration}</i></small>
-                <div className="right floated meta"><small>{ago}</small></div>
-              </div>
-              <div className="meta">
-                { r.changes.map( (c,idx) => (<span key={idx}>&emsp;{ this.getIconForChangeType(c.type) }&nbsp;{ c.changeName }<br /></span>) )  }
-                <br />
-              </div>
-            </div>
+            <Item key={r.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
+              <Item.Content>
+                <Item.Header>
+                  v{r.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + r.id.iteration}</i></small>
+                </Item.Header>
+                <Item.Meta>
+                  {ago}
+                </Item.Meta>
+                <Item.Description>
+                  { r.changes.map( (c,idx) => (
+                    <span key={idx}>
+                      &emsp;
+                      <Icon name={ this.getIconNameForChangeType(c.type) } />
+                      &nbsp;{ c.changeName }
+                      <br />
+                    </span>
+                    ) )  }
+                  <br />
+                </Item.Description>
+              </Item.Content>
+            </Item>
           )
         })
         }
-      </div>
+      </Item.Group>
     )
   },
-  
   
   /** This is the right column. Uses React's state.releaseIdx */
   renderNewsRelChangesColumn: function() {
     const relIdx = this.state.releaseIdx
     const rel = mgbReleaseInfo.releases[relIdx]
     
-    return  (
-      <div className="ui icon items">
+    return (
+      <Item.Group icon>
         { rel.changes.map( (c) => {
           return (
-            <div className="ui icon item" key={c.changeName} >
-              { this.getIconForChangeType(c.type) }
-              <div className="content">
-                <div className="header"><small>{c.changeName}</small></div>
-                <div className="meta">
+            <Item key={c.changeName} >
+              <Icon size='large' name={ this.getIconNameForChangeType(c.type) } />&emsp;
+              <Item.Content>
+                <Item.Header><small>{c.changeName}</small></Item.Header>
+                <Item.Meta>
                   <p>{ c.changeSummary }</p>
                   { c.otherUrls && c.otherUrls.length && c.otherUrls.length > 0 ?  
                     (
@@ -188,13 +192,13 @@ export default WhatsNewRoute = React.createClass({
                     </ul>
                     ) : null
                   }
-                </div>
-              </div>
-            </div>
+                </Item.Meta>
+              </Item.Content>
+            </Item>
           )
         })
         }
-      </div>
+      </Item.Group>
     )
   }
 })

@@ -40,28 +40,27 @@ export default UserProjectList = React.createClass({
   },
   
   render: function() {
-    let projects = this.data.projects
     if (this.data.loading) return <Spinner />
 
-    const ownerName = this.props.user.profile.name
+    const projects = this.data.projects
+    const { user, currUser } = this.props
+    const ownerName = user.profile.name
 
     return (
       <Segment basic>
 
         <Helmet
-          title="User Project List"
-          meta={[
-              {"name": "description", "content": "Projects"}
-          ]}
+          title={`${ownerName} Project List`}
+          meta={[ {"name": "Projects list", "content": "Projects"} ]}
         />        
 
-        <Header as='h2'>Projects owned by {ownerName}</Header>          
-        <CreateProjectLinkButton currUser={this.props.currUser} />
+        <Header as='h2'>Projects owned by {ownerName}</Header>
+        <CreateProjectLinkButton currUser={currUser} />
         <p />
         { this.renderProjectsAsCards(projects, true) }
         <br />
         <Divider />
-        <Header as='h2'>Projects {ownerName} is a member of</Header>                  
+        <Header as='h2'>Projects {ownerName} is a member of</Header>
         { this.renderProjectsAsCards(projects, false) }
 
       </Segment>
@@ -77,15 +76,17 @@ export default UserProjectList = React.createClass({
       
     const retval = (
       <div className="ui link cards">
-        { projects.map( (project) => {
+        { projects.map( project => {
           const isOwner = (project.ownerId === this.props.user._id)
           if (isOwner === ownedFlag) 
           {
             count++
-            return <ProjectCard 
-                      project={project} 
-                      owner={ownedFlag ? this.props.user : project.ownerName}
-                      key={project._id} />
+            return (
+              <ProjectCard 
+                  project={project} 
+                  owner={ownedFlag ? this.props.user : project.ownerName}
+                  key={project._id} />
+            )
           }
         } ) }
       </div>

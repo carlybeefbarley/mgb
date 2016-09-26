@@ -150,11 +150,14 @@ export default App = React.createClass({
   },
 
   render() {
-    this.configureTrackJs()
 
     const { fNavPanelIsOverlay, showToast, toastMsg, toastType } = this.state
     const { loading, currUser, user, currUserProjects } = this.data
     const { query } = this.props.location
+
+    if (!loading)
+      this.configureTrackJs()
+
 
     // The NavPanel (left), NavBar (top) and FlexPanel (right) are fixed/absolute positioned so we need to account for that
 

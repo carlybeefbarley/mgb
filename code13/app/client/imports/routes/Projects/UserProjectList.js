@@ -1,19 +1,15 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import Helmet from 'react-helmet';
-import reactMixin from 'react-mixin';
-import Spinner from '/client/imports/components/Nav/Spinner';
+import React, { PropTypes } from 'react'
+import Helmet from 'react-helmet'
+import reactMixin from 'react-mixin'
+import Spinner from '/client/imports/components/Nav/Spinner'
 
-import { Projects } from '/imports/schemas';
-import { projectMakeSelector } from '/imports/schemas/projects';
-import { logActivity } from '/imports/schemas/activity';
+import { Projects } from '/imports/schemas'
+import { projectMakeSelector } from '/imports/schemas/projects'
+import { logActivity } from '/imports/schemas/activity'
 
-import ProjectCard from '/client/imports/components/Projects/ProjectCard';
-
-import CreateProjectLinkButton from '/client/imports/components/Projects/NewProject/CreateProjectLinkButton';
-
-
-// NOTE: UI mockups for this page are at https://v2.mygamebuilder.com/assetEdit/Ev2AWBDywffWTtJRc# 
+import ProjectCard from '/client/imports/components/Projects/ProjectCard'
+import CreateProjectLinkButton from '/client/imports/components/Projects/NewProject/CreateProjectLinkButton'
+import { Segment, Header, Divider } from 'stardust'
 
 export default UserProjectList = React.createClass({
   mixins: [ReactMeteorData],
@@ -24,7 +20,6 @@ export default UserProjectList = React.createClass({
     currUser: PropTypes.object            // Currently Logged in user. Can be null
   },
   
-  
   getMeteorData: function() {
     const userId = this.props.user._id
     const handleForProjects = Meteor.subscribe("projects.byUserId", userId)
@@ -33,9 +28,8 @@ export default UserProjectList = React.createClass({
     return {
       projects: Projects.find(projectSelector).fetch(),
       loading: !handleForProjects.ready()
-    };
+    }
   },
-
 
   /** Return true if logged on user._id is currUser._id and the projects have been loaded */
   canEdit: function() {
@@ -45,21 +39,14 @@ export default UserProjectList = React.createClass({
            this.data.projects
   },
   
-
   render: function() {
-    // Projects provided via getMeteorData()
     let projects = this.data.projects
-    if (this.data.loading)
-      return <Spinner />
+    if (this.data.loading) return <Spinner />
 
     const ownerName = this.props.user.profile.name
 
-    // For some reason this isn't working as 'hidden divider' TODO - find out why
-    const hiddenDivider = <div className="ui divider" style={{borderStyle: "none"}}></div>
-
-    
     return (
-      <div className="ui basic segment">
+      <Segment basic>
 
         <Helmet
           title="User Project List"
@@ -68,21 +55,18 @@ export default UserProjectList = React.createClass({
           ]}
         />        
 
-        <h2 className="ui header">Projects owned by {ownerName}</h2>          
+        <Header as='h2'>Projects owned by {ownerName}</Header>          
         <CreateProjectLinkButton currUser={this.props.currUser} />
-
-        { hiddenDivider }
-
+        <p />
         { this.renderProjectsAsCards(projects, true) }
-
-        <div className="ui divider"></div>
-        <h2 className="ui header">Projects {ownerName} is a member of</h2>          
+        <br />
+        <Divider />
+        <Header as='h2'>Projects {ownerName} is a member of</Header>                  
         { this.renderProjectsAsCards(projects, false) }
 
-      </div>
-    );
+      </Segment>
+    )
   },
-  
   
   renderProjectsAsCards(projects, ownedFlag)
   {
@@ -91,23 +75,22 @@ export default UserProjectList = React.createClass({
     if (!projects || projects.length === 0)
       return Empty
       
-    const retval =   
-        <div className="ui link cards">
-          { projects.map( (project) => {
-            const isOwner = (project.ownerId === this.props.user._id)
-            if (isOwner === ownedFlag) 
-            {
-              count++
-              return <ProjectCard 
-                        project={project} 
-                        owner={this.props.user}
-                        key={project._id} />
-            }
-          } ) }
-        </div>
+    const retval = (
+      <div className="ui link cards">
+        { projects.map( (project) => {
+          const isOwner = (project.ownerId === this.props.user._id)
+          if (isOwner === ownedFlag) 
+          {
+            count++
+            return <ProjectCard 
+                      project={project} 
+                      owner={this.props.user}
+                      key={project._id} />
+          }
+        } ) }
+      </div>
+    )
 
     return count > 0 ? retval : Empty
   }
-
-  
 })

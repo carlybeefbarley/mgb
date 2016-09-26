@@ -14,12 +14,12 @@
 export default mgbReleaseInfo = {
   'releases': [
     {
-      'timestamp': 'Mon Sep 26 2016 11:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Mon Sep 26 2016 16:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1577'
+        'iteration': '1583'
       },
 
       'releaseManagement': {
@@ -39,6 +39,13 @@ export default mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Feature Levels FlexPanel has a tour',
           'changeSummary': 'The Feature Levels FlexPanel has a new feature - using the new "tours" capability: if you click the (show) link, it will start a brief tour to explain how those work',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'asset.edit',
+          'type': 'improvement',
+          'changeName': 'Control Deleted and Done status while editing Asset',
+          'changeSummary': 'TThre are two new buttons in the Asset Edit Header. A blue/grey checkmark icon sets/shows the Done status; A red/grey trashcan sets/show the Deleted status',
           'otherUrls': []
         },
         {
@@ -63,7 +70,7 @@ export default mgbReleaseInfo = {
           'featureTag': 'asset.code',
           'type': 'improvement',
           'changeName': 'Code Edit - quality improvements',
-          'changeSummary': 'This release includes more stability, performance and compatibility improvements for Code Edit/import/build. There are still some ways the MGB Code Edit is causing browser to crash when editing/building complex projects, and we are working through fixing all these cases',
+          'changeSummary': 'This release includes more stability, performance and compatibility improvements for Code Edit/import/build. There are still some ways the MGB Code Edit is causing browser to crash when editing/building complex projects, and we are working through fixing all these cases. Also fixed bug where autocomplete happens in comments',
           'otherUrls': []
         },
         {

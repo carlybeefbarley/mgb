@@ -23,9 +23,13 @@ const SomeProjects = props => {
         <Grid.Column width={12}>
           <Header as='h4'>
             <QLink to={`/u/${user.profile.name}/project/${project._id}`}>
-              {project.name}
+              {project.name}&emsp;
             </QLink> 
-            &emsp;<small>{isOwner ? "(owner)" : "(member)"}</small>
+            {
+              isOwner ? 
+              <small>(owner)</small> : 
+              <small><QLink to={`/u/${project.ownerName}`}>@{project.ownerName}</QLink></small>
+            }
           </Header>
           <p title="(Plays counter not yet implemented)">
             {MemberStr}&emsp;<Icon name='play' />0,000 Plays

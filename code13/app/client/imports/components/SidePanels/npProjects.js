@@ -27,7 +27,14 @@ const ProjectMenu = (props) =>
             popupPosition="bottom center"
             showMicro={true}
             canEdit={false}/>                  
-        &emsp;{ p.name }
+        &emsp;{ p.name } 
+        { !ownedFlag && 
+            <small>&emsp;
+              <QLink closeNavPanelOnClick={navPanelIsOverlay} to={`/u/${p.ownerName}`}>
+                @{p.ownerName}
+              </QLink>
+            </small> 
+        }
       </QLink>
     </Menu.Item>
   ))

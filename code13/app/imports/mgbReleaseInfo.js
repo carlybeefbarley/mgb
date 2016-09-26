@@ -19,7 +19,7 @@ export default mgbReleaseInfo = {
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1583'
+        'iteration': '1584'
       },
 
       'releaseManagement': {
@@ -45,7 +45,7 @@ export default mgbReleaseInfo = {
           'featureTag': 'asset.edit',
           'type': 'improvement',
           'changeName': 'Control Deleted and Done status while editing Asset',
-          'changeSummary': 'TThre are two new buttons in the Asset Edit Header. A blue/grey checkmark icon sets/shows the Done status; A red/grey trashcan sets/show the Deleted status',
+          'changeSummary': 'There are two new buttons in the Asset Edit Header. A blue/grey checkmark icon sets/shows the Done status; A red/grey trashcan sets/show the Deleted status',
           'otherUrls': []
         },
         {

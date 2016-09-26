@@ -13,15 +13,13 @@
 
 export default mgbReleaseInfo = {
   'releases': [
-
-
     {
-      'timestamp': 'Sun Sep 25 2016 14:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun Sep 25 2016 21:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1560'
+        'iteration': '1568'
       },
 
       'releaseManagement': {
@@ -41,6 +39,13 @@ export default mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Feature Levels FlexPanel has a tour',
           'changeSummary': 'The Feature Levels FlexPanel has a new feature - using the new "tours" capability: if you click the (show) link, it will start a brief tour to explain how those work',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'projects.delete',
+          'type': 'feature',
+          'changeName': 'Projects may now be deleted',
+          'changeSummary': 'Empty projects may now be deleted by the project owner. They must have no members and no assets (including deleted assets)',
           'otherUrls': []
         },
         {
@@ -67,7 +72,21 @@ export default mgbReleaseInfo = {
           'changeName': 'Improved NavPanel auto-hide',
           'changeSummary': 'NavPanel auto-hide is also triggered now by a click in the central area of the window',
           'otherUrls': []
-        }
+        },
+        {
+          'featureTag': 'nav.navPanel.projects',
+          'type': 'improvement',
+          'changeName': 'Projects NavPanel shows owner link',
+          'changeSummary': 'There is now a clickable @owner link in the Projects navPanel (and also in the Profile Page projets list actually)',
+          'otherUrls': []
+        },
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'No page flicker when changing user contexts',
+          'changeSummary': 'The App page is drawn more intelligently so switching /u/username contexts no longer causes screen flickers',
+          'otherUrls': []
+        }        
       ]
     },
 

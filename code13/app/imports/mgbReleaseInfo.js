@@ -14,12 +14,12 @@
 export default mgbReleaseInfo = {
   'releases': [
     {
-      'timestamp': 'Sun Sep 25 2016 21:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Mon Sep 26 2016 11:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1568'
+        'iteration': '1577'
       },
 
       'releaseManagement': {
@@ -70,7 +70,7 @@ export default mgbReleaseInfo = {
           'featureTag': 'nav.navPanel',
           'type': 'improvement',
           'changeName': 'Improved NavPanel auto-hide',
-          'changeSummary': 'NavPanel auto-hide is also triggered now by a click in the central area of the window',
+          'changeSummary': 'NavPanel auto-hide is also triggered now by a click in the central area of the window. Also shift-click of a NavPanel selection icon will disable auto-hide, \'shifting\' the content area to the right.',
           'otherUrls': []
         },
         {

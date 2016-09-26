@@ -31,7 +31,10 @@ const ProjectMenu = (props) =>
       </QLink>
       { !ownedFlag && 
           <small>&emsp;
-            <QLink closeNavPanelOnClick={navPanelIsOverlay} to={`/u/${p.ownerName}`}>
+            <QLink 
+              closeNavPanelOnClick={navPanelIsOverlay} 
+              to={`/u/${p.ownerName}`}
+              altTo={`/u/${p.ownerName}/projects`} >
               @{p.ownerName}
             </QLink>
           </small> 

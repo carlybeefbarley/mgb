@@ -28,7 +28,7 @@ const SomeProjects = props => {
             {
               isOwner ? 
               <small>(owner)</small> : 
-              <small><QLink to={`/u/${project.ownerName}`}>@{project.ownerName}</QLink></small>
+              <small><QLink to={`/u/${project.ownerName}`} altTo={`/u/${project.ownerName}/projects`}>@{project.ownerName}</QLink></small>
             }
           </Header>
           <p title="(Plays counter not yet implemented)">

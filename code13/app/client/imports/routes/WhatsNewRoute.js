@@ -150,15 +150,12 @@ export default WhatsNewRoute = React.createClass({
                   {ago}
                 </Item.Meta>
                 <Item.Description>
-                  { r.changes.map( (c,idx) => (
-                    <span key={idx}>
-                      &emsp;
-                      <Icon name={ this.getIconNameForChangeType(c.type) } />
-                      &nbsp;{ c.changeName }
-                      <br />
-                    </span>
-                    ) )  }
-                  <br />
+                  <List>
+                    { r.changes.map( (c,idx) => (
+                      <List.Item key={idx} icon={ this.getIconNameForChangeType(c.type)} description={c.changeName} />
+                      ) )  }
+                    <br />
+                  </List>
                 </Item.Description>
               </Item.Content>
             </Item>

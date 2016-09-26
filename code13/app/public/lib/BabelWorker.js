@@ -40,6 +40,7 @@ onmessage = function (e) {
   }
   // this is really heavy task
   trans.code = trans.code.replace(/['"]use strict['"]/gi, '')
-  //var tokens = trans && trans.ast ? JSON.parse(JSON.stringify(trans.ast.tokens)) : null
+
+
   postMessage({data: trans.metadata, code: trans.code, error: trans.error, astTokens: null})
 };

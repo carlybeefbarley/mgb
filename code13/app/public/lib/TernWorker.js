@@ -1,8 +1,10 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
-// declare global: tern, server
+// maximal node depth while scanning for AST tree
+var MAX_DEPTH = 5;
 
+// declare global: tern, server
 var server;
 
 this.onmessage = function(e) {
@@ -41,6 +43,8 @@ this.onmessage = function(e) {
       return c(data.err, data.text);
     case "getFiles":
       return postMessage(server.fileMap)
+    case "getNodeTree":
+      return getNodeTree(data.file)
     default: throw new Error("Unknown message type: " + data.type);
   }
 };
@@ -61,6 +65,113 @@ function startServer(defs, plugins, scripts) {
     plugins: plugins
   });
 }
+
+// here we are making config for CodeFlower from ast. http://www.redotheweb.com/CodeFlower/
+function getNodeTree(filename, ret){
+  ret = ret || {
+    name: filename,
+    children: []
+  };
+  var ast = this.server.fileMap[filename].ast;
+  ast.body.forEach(function(node){
+    parseNode(node, ret.children)
+  })
+  return ret
+}
+function parseNode(node, buffer, depth){
+  depth = depth || 0
+  if(depth > MAX_DEPTH){
+    return
+  }
+  var tmp;
+  if(node.type == "ImportDeclaration"){
+    var filename = node.source.value;
+    if(!this.server.fileMap[filename]){
+      filename = filename.substr(2);
+      // this is external file.... check defs???
+      if(!this.server.fileMap[filename]){
+        buffer.push({
+          name: node.source.value,
+          size: 100
+        });
+        return;
+      }
+    }
+    buffer.push(getNodeTree(filename))
+    return;
+  }
+
+  if(node.type == "VariableDeclaration"){
+    depth++
+    node.declarations.forEach(function(node){
+      parseNode(node, buffer, depth)
+    })
+    return;
+  }
+
+  if(node.type == "VariableDeclarator"){
+    tmp = {
+      name: node.id.name,
+      children: []
+    }
+    buffer.push(tmp)
+    if(node.init.properties){
+      depth++;
+      node.init.properties.forEach(function(node){
+        parseNode(node, tmp.children, depth);
+      })
+    }
+    return;
+  }
+
+  if(node.type == "Property"){
+    tmp = {
+      name: node.key.name,
+      children: []
+    }
+    buffer.push(tmp)
+    if(node.value.type == "FunctionExpression"){
+      tmp.name += "(";
+      node.value.params.forEach(function(param){
+        tmp.name += param.name + ","
+      });
+      tmp.name += tmp.name.substring(0, tmp.name - 1) + ")"
+      return;
+    }
+    if(node.value.type == "ObjectExpression"){
+      depth++;
+      node.value.properties.forEach(function(node){
+        parseNode(node, tmp.children, depth);
+      })
+      return;
+    }
+    if(node.value.type == "Literal"){
+
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var console = {
   log: function(v) { postMessage({type: "debug", message: v}); },

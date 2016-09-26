@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import Layer from './Layer.js';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import Layer from './Layer.js'
 
 // TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
@@ -23,6 +23,12 @@ export default class SpriteLayers extends React.Component {
       copyFrameID: null,
       copyLayerID: null
     }
+  }
+
+  componentWillUnmount() 
+  {
+    // Stop any playAnimation() cycles. However, we CANNOT use this.setState() in this callback!
+    this.cancelNextAnimationTimeout()
   }
 
     /************************** FRAMES ******************************/
@@ -140,19 +146,30 @@ export default class SpriteLayers extends React.Component {
 
     /************************** ANIMATIONS ******************************/
 
+
+  cancelNextAnimationTimeout() {
+    if (this._playAnimationTimeoutId)
+    {
+      clearTimeout(this._playAnimationTimeoutId)
+      this._playAnimationTimeoutId = null
+    }
+  }
+
   togglePlayAnimation() {
     let isPlaying = !this.state.isPlaying
     this.setState({ isPlaying: isPlaying })
 
     if (isPlaying)
       this.playAnimation(this.props.EditGraphic.state.selectedFrameIdx)
+    else 
+      this.cancelNextAnimationTimeout()
   }
 
   playAnimation(frameID) {
     this.selectFrame(frameID)
     let nextFrameID = (frameID+1) % this.props.content2.frameNames.length
     let self = this
-    setTimeout(function() {
+    this._playAnimationTimeoutId = setTimeout(function() {
       if (self.state.isPlaying) 
         self.playAnimation(nextFrameID)
     }, Math.round(1000/this.props.content2.fps))

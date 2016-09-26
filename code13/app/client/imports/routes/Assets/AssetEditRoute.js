@@ -14,6 +14,7 @@ import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDe
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
 import WorkState from '/client/imports/components/Controls/WorkState'
+import DeletedState from '/client/imports/components/Controls/DeletedState'
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
@@ -245,6 +246,12 @@ export default AssetEditRoute = React.createClass({
              * */ }
           <AssetUrlGenerator asset={asset} />
           &emsp;
+          <DeletedState 
+            isDeleted={asset.isDeleted} 
+            showMicro={true}
+            canEdit={canEd}
+            handleChange={this.handleDeletedStateChange}/>
+
           <WorkState 
             workState={asset.workState} 
             showMicro={true}
@@ -431,6 +438,23 @@ export default AssetEditRoute = React.createClass({
           this.props.showToast(err.reason, 'error')
       })
       logActivity("asset.workState",  `WorkState changed from ${oldState} to "${newWorkState}"`, null, this.data.asset)
+    }
+  },
+
+
+// This should not conflict with the deferred changes since those don't change these fields :)
+  handleDeletedStateChange: function(newIsDeleted) {
+    const { asset } = this.data
+    
+    if (asset && asset.isDeleted !== newIsDeleted) {
+      Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isDeleted: newIsDeleted}, (err, res) => {
+        if (err)
+          this.props.showToast(err.reason, 'error')
+      })
+      if (newIsDeleted)
+        logActivity("asset.delete",  "Delete asset", null, asset)
+      else
+        logActivity("asset.undelete",  "Undelete asset", null, asset) 
     }
   },
 

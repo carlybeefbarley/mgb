@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import React from 'react';
+import React from 'react'
 
 export default class AssetShowStableSelector extends React.Component {
   // propTypes:{
@@ -29,17 +28,16 @@ export default class AssetShowStableSelector extends React.Component {
   render() {
     let active = this.props.showStableFlag === "1"
     return (
-            <a className={"assetShowStablePopup ui " + (active ? "green button" : "button")} 
-                data-value="showStable"
-                onClick={this.handleChangeFlagClick.bind(this)}
-                data-position="bottom center"
-                data-title="Show/hide unstable assets"
-                data-content={ active ? 
-                                        "Click here to show both 'stable' and 'unstable' assets" 
-                                      : "Click here to only show stable assets"}>
-              <i className="checkmark icon"></i>
-            </a>
-    );
+      <a className={"assetShowStablePopup ui " + (active ? "blue button" : "button")} 
+          data-value="showStable"
+          onClick={this.handleChangeFlagClick.bind(this)}
+          data-position="bottom center"
+          data-title="Show/hide unstable assets"
+          data-content={ active ? 
+                                  "Click here to show both 'stable' and 'unstable' assets" 
+                                : "Click here to only show stable assets"}>
+        <i className="checkmark icon"></i>
+      </a>
+    )
   }
-
 }

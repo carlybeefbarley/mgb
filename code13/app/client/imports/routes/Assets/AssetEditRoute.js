@@ -15,6 +15,7 @@ import AssetActivityDetail from '/client/imports/components/Assets/AssetActivity
 import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import DeletedState from '/client/imports/components/Controls/DeletedState'
+import StableState from '/client/imports/components/Controls/StableState'
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
@@ -244,14 +245,18 @@ export default AssetEditRoute = React.createClass({
           { /* We use this.props.params.assetId since it is available sooner than the asset 
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }
-          <AssetUrlGenerator asset={asset} />
-          &emsp;
+          <AssetUrlGenerator showBordered={true} asset={asset} />
+          <StableState 
+            isStable={asset.isCompleted} 
+            showMicro={true}
+            canEdit={canEd}
+            handleChange={this.handleStableStateChange}/>
           <DeletedState 
             isDeleted={asset.isDeleted} 
             showMicro={true}
             canEdit={canEd}
             handleChange={this.handleDeletedStateChange}/>
-
+          &emsp;
           <WorkState 
             workState={asset.workState} 
             showMicro={true}
@@ -441,7 +446,6 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-
 // This should not conflict with the deferred changes since those don't change these fields :)
   handleDeletedStateChange: function(newIsDeleted) {
     const { asset } = this.data
@@ -455,6 +459,35 @@ export default AssetEditRoute = React.createClass({
         logActivity("asset.delete",  "Delete asset", null, asset)
       else
         logActivity("asset.undelete",  "Undelete asset", null, asset) 
+    }
+  },
+
+  handleCompletedClick() {
+    let newIsCompletedStatus = !this.props.asset.isCompleted
+    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: newIsCompletedStatus}, (err, res) => {
+      if (err) {
+        this.props.showToast(err.reason, 'error')
+      }
+    });
+    
+    if (newIsCompletedStatus)
+      logActivity("asset.stable",  "Mark asset as stable", null, this.props.asset);
+    else
+      logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset); 
+  },
+
+  handleStableStateChange: function(newIsCompleted) {
+    const { asset } = this.data
+    
+    if (asset && asset.isCompleted !== newIsCompleted) {
+      Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isCompleted: newIsCompleted}, (err, res) => {
+        if (err)
+          this.props.showToast(err.reason, 'error')
+      })
+      if (newIsCompleted)
+        logActivity("asset.stable",  "Marked asset as done", null, asset)
+      else
+        logActivity("asset.unstable",  "Marked asset as not done", null, asset)
     }
   },
 

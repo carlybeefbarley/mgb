@@ -14,13 +14,10 @@ const DeletedState = (props) => {
   const { isDeleted, canEdit, handleChange } = props
 
   return (
-    <span> 
-      <Icon
-          title={isDeleted ? 'This asset has been delete. Click to Undelete it' : 'Click to delete this asset. It\'s ok, you can undelete it again if you need to'}
-          onClick={() => { canEdit && handleChange && handleChange(!isDeleted) }} 
-          name={isDeleted ? 'inverted bordered red trash' : 'bordered trash outline'} />
-      &emsp;
-    </span>
+    <Icon
+        title={isDeleted ? 'This asset has been deleted. Click to Undelete it' : 'Click to delete this asset. It\'s ok, you can undelete it again if you need to'}
+        onClick={() => { canEdit && handleChange && handleChange(!isDeleted) }} 
+        name={isDeleted ? 'inverted bordered red trash' : 'bordered trash outline'} />
   )
 }
 

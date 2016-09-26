@@ -993,27 +993,28 @@ export default class EditCode extends React.Component {
   setAstThumbnail(){
     this.tools.getAST((list) => {
       /*
-      list will contain objects with the following structure : {
-       name,
-       code,
-       ast, // tern ast - can be empty e.g. for phaser - as phaser uses defs file
-       tokens // tokens exported from babel ast ( there is no easy way to extract full babel ast from worker )
-      }
+        list will contain objects with the following structure :
+        {
+          name,
+          code,
+          ast, // tern ast - can be empty e.g. for phaser - as phaser uses defs file
+          tokens // tokens exported from babel ast ( there is no easy way to extract full babel ast from worker )
+        }
       */
 
-
-
-      console.log(list)
       const canvas = document.createElement("canvas")
       const ctx = canvas.getContext("2d")
-      canvas.width = 150
+      ctx.font = '16px courier'
+      canvas.width = 250
       canvas.height = 150
+      ctx.fillStyle = 'rgba(153,204,153,0.2)'
+      ctx.fillRect(0,0,250,150)
+      ctx.fillStyle = 'black'
       for(let i=0; i<list.length; i++){
-        ctx.fillText(list[i].name, i*12, (i + 1)*12, 150 - i*12)
+        ctx.fillText(list[i].name, 6+(i*12), (i + 1)*16, 244 - i*12)
       }
       this.props.asset.thumbnail = canvas.toDataURL('image/png')
       this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
-
     })
   }
 

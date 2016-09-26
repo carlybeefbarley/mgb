@@ -13,7 +13,6 @@ import SourceTools from './SourceTools.js'
 
 // import tlint from 'tern-lint'
 
-
 // **GLOBAL*** Tern JS - See comment below...   
 import scoped_tern from "tern";
 window.tern = scoped_tern;   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
@@ -53,10 +52,15 @@ import ExpressionDescription from './tern/ExpressionDescription.js';
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js';
 import TokenDescription from './tern/TokenDescription.js';
 
-import MgbMagicCommentDescription from './tern/MgbMagicCommentDescription.js';
-
 import DebugASTview from './tern/DebugASTview.js';
 let showDebugAST = false    // Handy thing while doing TERN dev work
+
+
+// NOTE, if we deliver phaser.min.js from another domain, then it will 
+// limit the error handler's knowledge of that code - see 'Notes' on
+// https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror    
+//   BAD:  return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
+
 
 // we are delaying heavy jobs for this amount of time (in ms) .. e.g. when user types - there is no need to re-analyze all content on every key press
 // reasonable value would be equal to average user typing speed (chars / second) * 1000
@@ -96,11 +100,7 @@ export default class EditCode extends React.Component {
       functionArgPos: -1,
       atCursorTypeRequestResponse: {},
       atCursorRefRequestResponse: {},
-      atCursorDefRequestResponse: {},
-
-      defaultPhaserVersionNNN: "2.4.6",       // TODO make this a prop or system constant
-      mgbopt_game_engine: null,               // Determined anywhere in the file
-      currentLineDeterminesGameEngine: null   // Determined by current line/selection
+      atCursorDefRequestResponse: {}
     }
 
     this.hintWidgets = []
@@ -780,18 +780,6 @@ export default class EditCode extends React.Component {
     }, position)
   }
 
-
-  srcUpdate_getMgbOpts() {
-    // We must check the entire source code file because it is used in the indicator in the Run Code accordion
-    let src = this.props.asset.content2.src
-    let gameEngineJsToLoad = this.detectGameEngine(src)
-    this.setState({mgbopt_game_engine: gameEngineJsToLoad})
-
-    // We also check just the current line so we can make it clear that the current line is setting an MGBopt
-    let thisLine = this.codeMirror.getLine(this.codeMirror.getCursor().line);
-    this.setState({currentLineDeterminesGameEngine: this.detectGameEngine(thisLine, true)})
-  }
-
   // srcUpdate_getProperties()
   // {
   /// This doesn't seem super useful. It's just an array of completion strings, no extra data
@@ -877,7 +865,6 @@ export default class EditCode extends React.Component {
       this.srcUpdate_GetRelevantTypeInfo()
       this.srcUpdate_GetRefs()
       this.srcUpdate_GetDef()
-      this.srcUpdate_getMgbOpts()
 
       this.srcUpdate_getMemberParent()
 
@@ -916,26 +903,6 @@ export default class EditCode extends React.Component {
     this.iFrameWindow = document.getElementById("iFrame1")
   }
 
-
-  detectGameEngine(src, returnRawVersionNNNwithoutDefault = false) {
-    let phaserVerNNN = this.state.defaultPhaserVersionNNN
-    let versionArray = src && src.match(/^\/\/\MGBOPT_phaser_version\s*=\s*([\.\d]+)/)
-    if (versionArray && versionArray.length > 1) {
-      phaserVerNNN = versionArray[1]
-      if (returnRawVersionNNNwithoutDefault)
-        return phaserVerNNN;
-    }
-    else {
-      if (returnRawVersionNNNwithoutDefault)
-        return null
-    }
-
-    // NOTE, if we deliver phaser.min.js from another domain, then it will 
-    // limit the error handler's knowledge of that code - see 'Notes' on
-    // https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror    
-    //   BAD:  return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
-    return "/phaser/" + phaserVerNNN + "/phaser.min.js"
-  }
 
 
   _consoleClearAllMessages() {
@@ -1064,7 +1031,6 @@ export default class EditCode extends React.Component {
 
     const { asset } = this.props
 
-    //const gameEngineJsToLoad = this.detectGameEngine(src)
     this.setState({isPlaying: true})
 
     this.tools.collectSources((collectedSources) => {
@@ -1262,13 +1228,6 @@ export default class EditCode extends React.Component {
                 <TokenDescription
                   currentToken={this.state.currentToken}/>
 
-                <MgbMagicCommentDescription
-                  currentLineDeterminesGameEngine={this.state.currentLineDeterminesGameEngine}
-                  mgbopt_game_engine={this.state.mgbopt_game_engine}
-                  expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}
-                  defaultPhaserVersionNNN={this.state.defaultPhaserVersionNNN}
-                  />
-
                 <FunctionDescription
                   functionHelp={this.state.functionHelp}
                   functionArgPos={this.state.functionArgPos}
@@ -1369,11 +1328,6 @@ export default class EditCode extends React.Component {
                   sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
                   src="/codeEditSandbox.html">
                 </iframe>
-                { this.state.mgbopt_game_engine &&
-                <a className="ui item">
-                  <small>Using engine {this.state.mgbopt_game_engine}</small>
-                </a>
-                }
                 <ConsoleMessageViewer
                   messages={this.state.consoleMessages}
                   gotoLinehandler={this.gotoLineHandler.bind(this)}/>

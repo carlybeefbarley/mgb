@@ -28,14 +28,14 @@ const ProjectMenu = (props) =>
             showMicro={true}
             canEdit={false}/>                  
         &emsp;{ p.name } 
-        { !ownedFlag && 
-            <small>&emsp;
-              <QLink closeNavPanelOnClick={navPanelIsOverlay} to={`/u/${p.ownerName}`}>
-                @{p.ownerName}
-              </QLink>
-            </small> 
-        }
       </QLink>
+      { !ownedFlag && 
+          <small>&emsp;
+            <QLink closeNavPanelOnClick={navPanelIsOverlay} to={`/u/${p.ownerName}`}>
+              @{p.ownerName}
+            </QLink>
+          </small> 
+      }
     </Menu.Item>
   ))
   return <Menu vertical inverted fluid style={_styleNoBg}>{retval}</Menu>

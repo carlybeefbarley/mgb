@@ -57,7 +57,7 @@ const RenderOneActivity = (props) => {
       <Feed.Content>
 
         <Feed.Summary>
-          <Feed.User>
+          <Feed.User as='div'>
             <QLink to={"/u/" + byUserName}>{ byUserName }</QLink>
           </Feed.User>
           <Feed.Date>{ago}</Feed.Date>

@@ -46,7 +46,7 @@ export default ProjectCard = React.createClass({
     return (
        <div className="ui bordered card" key={project._id}>
 
-        <QLink className="image" to={linkTo}>
+        <QLink className="image" to={linkTo} elOverride='div'>
           <ImageShowOrChange
             className="image"
             imageSrc={projectAvatarImageUrl}

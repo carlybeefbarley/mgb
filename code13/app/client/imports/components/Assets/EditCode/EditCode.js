@@ -166,7 +166,7 @@ export default class EditCode extends React.Component {
           return this.codeEditPassAndHint(cm)
         },
         "Ctrl-Space": (cm) => {
-          return this.ternServer.complete(cm);
+          return this.codeEditShowHint(cm)
         },
         "Ctrl-I": (cm) => {
           this.ternServer.showType(cm);
@@ -358,11 +358,18 @@ export default class EditCode extends React.Component {
     // update all tools to current state
     this.doFullUpdateOnContentChange()
   }
-
+  codeEditShowHint(cm){
+    if(this.props.canEdit && this.state.currentToken.type !== "comment")
+      return this.ternServer.complete(cm);
+    return CodeMirror.Pass
+  }
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
       setTimeout(() => {
-        this.ternServer.complete(cm);
+        // FIX: #109
+        if(this.state.currentToken.type !== "comment"){
+          this.ternServer.complete(cm);
+        }
       }, 1000)      // Pop up a helper after a second
 // this.ternServer.getHint(cm, function (hint) 
 // {

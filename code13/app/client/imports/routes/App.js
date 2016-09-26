@@ -355,13 +355,16 @@ export default App = React.createClass({
   },
 
 
-  handleNavPanelChange: function(newFpView)
+  handleNavPanelChange: function(newFpView, fForceNavPanelIsNotOverlay)
   {
     const qp = urlMaker.queryParams("app_navPanel")
 
     const queryModifier = {[qp]: newFpView}
     const loc = this.props.location
     const newQ = {...loc.query, ...queryModifier }
+    
+    if (fForceNavPanelIsNotOverlay)
+      this.setState( { "fNavPanelIsOverlay": false })
     browserHistory.push( {  ...loc,  query: newQ })
   },
 

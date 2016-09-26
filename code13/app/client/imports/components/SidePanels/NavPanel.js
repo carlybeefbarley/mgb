@@ -90,7 +90,13 @@ export default NavPanel = React.createClass({
     urlLocation: React.PropTypes.object
   },
 
-  npViewSelect(npViewTag, fGoDirect)
+  // 
+  /**
+   * @param {String} npViewTag
+   * @param {Boolean} fGoDirect - If true, go directly to the default URL for this NavPanel
+   * @param {Boolean} fLockNavPanel - If true, request the navPanel to be locked (disable auto-hide / navPanelIsOverlay)
+   */
+  npViewSelect(npViewTag, fGoDirect, fLockNavPanel)
   {
     if (fGoDirect)
     {
@@ -105,7 +111,7 @@ export default NavPanel = React.createClass({
       if (npViewTag === this.props.selectedViewTag)
         this.props.handleNavPanelChange(urlMaker.disableQueryParamPrefix + npViewTag)
       else
-        this.props.handleNavPanelChange(npViewTag)
+        this.props.handleNavPanelChange(npViewTag, fLockNavPanel)
     }
   },
 
@@ -168,7 +174,7 @@ export default NavPanel = React.createClass({
                 className={actv + "item"}
                 title={v.name}
                 style={miniNavItemStyle}
-                onClick={(e) => { this.npViewSelect(v.tag, e.altKey)}}>
+                onClick={(e) => { this.npViewSelect(v.tag, e.altKey, e.shiftKey)}}>
                 <i className={v.icon + actv + " big icon"} />
                 <span>{v.name}</span>
               </div>

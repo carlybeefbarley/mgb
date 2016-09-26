@@ -12,7 +12,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
 import { logActivity } from '/imports/schemas/activity'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { Grid, Segment, Header, Button } from 'stardust'
+import { Grid, Segment, Message, Icon, Header, Button } from 'stardust'
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
@@ -23,7 +23,11 @@ export default ProjectOverview = React.createClass({
     currUser: PropTypes.object
   },
   
-  getInitialState: () => ({ showAddUserSearch: false }),   // True if user search box is to be shown
+  getInitialState: () => ({ 
+    showAddUserSearch: false,       // True if user search box is to be shown
+    isDeletePending:   false,       // True if a delete project operation is pending
+    isDeleteComplete:  false        // True if a delete project operation succeeded.
+  }),   
   
   getMeteorData: function() {
     let projectId = this.props.params.projectId
@@ -46,8 +50,29 @@ export default ProjectOverview = React.createClass({
     if (this.data.loading)
       return <Spinner />
           
+    const { currUser } = this.props
     const project = this.data.project     // One Project provided via getMeteorData()
     const canEdit = this.canEdit()
+
+    if (!project && this.state.isDeleteComplete)
+      return (
+        <Segment basic padded>
+          <Message warning>
+            <Icon name='warning' />
+            You successfully deleted this empty project. You monster.
+            { currUser && 
+              <p>
+                <QLink to={"/u/" + currUser.profile.name + "/projects"}>
+                  Go to your Projects List..
+                </QLink>
+              </p>
+            }
+          </Message>
+        </Segment>
+      )
+
+    if (project && this.state.isDeleteComplete)
+      return <p>What the heck? It's still here? Err, refresh page maybe!?</p>
 
     if (!project)
       return <ThingNotFound type="Project" />
@@ -85,7 +110,6 @@ export default ProjectOverview = React.createClass({
           </Segment>
           { this.renderAddPeople() }
         </Grid.Column>
-                
       </Grid>
     )
   },
@@ -94,6 +118,12 @@ export default ProjectOverview = React.createClass({
   // TODO - some better UI for Add People.
   handleClickUser: function(userId, userName)
   {
+    if (this.state.isDeletePending)
+    {
+      alert("Delete is still pending...")
+      return
+    }
+
     var project = this.data.project
     var newData = { memberIds: _.union(project.memberIds, [userId])}   
     Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
@@ -106,6 +136,12 @@ export default ProjectOverview = React.createClass({
   },
   
   handleRemoveMemberFromProject: function (userId, userName) {
+    if (this.state.isDeletePending)
+    {
+      alert("Delete is still pending...")
+      return
+    }
+
     var project = this.data.project
     var newData = { memberIds: _.without(project.memberIds, userId)}   
 
@@ -128,7 +164,28 @@ export default ProjectOverview = React.createClass({
     Meteor.call('Projects.update', project._id, this.canEdit(), changeObj, (error) => {
       if (error) 
         console.log("Could not update project: ", error.reason)      
-    });
+    })
+  },
+
+  handleDeleteProject: function()
+  {
+    var { name, _id } = this.data.project
+    this.setState( { isDeletePending: true } )
+
+    Meteor.call('Projects.deleteProjectId', _id, this.canEdit(), (error, result ) => {
+
+      if (error)
+      {
+        alert(`Could not delete Project '${name}: ${error.reason}`)
+        this.setState( { isDeletePending: false } )
+      }
+      else
+      {
+        // alert(`Deleted ${result} Project: '${name}'`)  We have a nice UI for this instead now using state & activityLog...
+        logActivity("project.destroy",  `Destroyed empty project ${name}`)    
+        this.setState( { isDeletePending: false, isDeleteComplete: true } )
+      }
+    })
   },
   
   // TODO - Activity - filter for project / user.  Maybe have a Project-related Activity Page
@@ -136,12 +193,30 @@ export default ProjectOverview = React.createClass({
   renderRenameDeleteProject: function()
   {
     if (!this.canEdit()) return null
-    
+    const { isDeleteComplete, isDeletePending } = this.state
+
     return (
       <Segment secondary compact>
         <Header>Manage Project</Header>
-        <Button icon="edit" content="Rename" onClick={ () => { alert("Not Yet Implemented")}} />
-        <Button icon="red trash" content="Destroy" onClick={ () => { alert("Not Yet Implemented")}} />
+        <Button 
+            icon="edit" 
+            content="Rename" 
+            disabled={isDeleteComplete || isDeletePending} 
+            onClick={ () => { alert("Not Yet Implemented")}} />
+        <Button 
+            icon="red trash" 
+            disabled={isDeleteComplete || isDeletePending} 
+            content="Delete" 
+            onClick={ () => { this.handleDeleteProject() } } />
+        { isDeletePending && 
+          <Message icon>
+            <Icon name='circle notched' loading />
+            <Message.Content>
+              <Message.Header>Deleting this project</Message.Header>
+              Please wait while we make sure it's really deleted...
+            </Message.Content>
+          </Message>        
+        }
       </Segment>
     )
   },
@@ -156,10 +231,15 @@ export default ProjectOverview = React.createClass({
     
     return (
       <Segment secondary compact={!active} >
-        <Button color="green" icon="add user" content="Add Members" active={active}
-              onClick={ () => { this.setState({showAddUserSearch: !active})}} />
+        <Button 
+            color="green" 
+            icon="add user" 
+            content="Add Members" 
+            disabled={this.state.isDeletePending}
+            active={active}
+            onClick={ () => { this.setState({showAddUserSearch: !active})}} />
         { !active ? null : 
-            <UserListRoute  
+            <UserListRoute 
                 handleClickUser={this.handleClickUser}
                 initialLimit={20}
                 excludeUserIdsArray={relevantUserIds}

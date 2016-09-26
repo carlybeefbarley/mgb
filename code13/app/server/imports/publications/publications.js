@@ -81,7 +81,7 @@ Azzets._ensureIndex({"isDeleted": 1, "ownerId": 1, "kind": 1, "updatedAt": -1})
 
 /** 
  * Can see all assets, but does NOT include the big 'content2' field 
- * @param userId can be undefined or -1 .. indicating don't dilter by user if
+ * @param userId can be undefined or -1 .. indicating don't filter by user if
  * @param selectedAssetKinds is an array of AssetKindsKeys strings
  * @param nameSearch is going to be stuffed inside a RegEx, so needs to be clean
  *    TODO: cleanse the nameSearch RegExp
@@ -90,7 +90,7 @@ Meteor.publish('assets.public', function(
                                     userId, 
                                     selectedAssetKinds, 
                                     nameSearch, 
-                                    projectName=null, 
+                                    projectName=null,   // BUGBUG: Need to also have projectOwner!!! OMG
                                     showDeleted=false, 
                                     showStable=false, 
                                     assetSortType,    // one of the keys of assetSorters
@@ -99,7 +99,7 @@ Meteor.publish('assets.public', function(
   let selector = assetMakeSelector(userId, 
                       selectedAssetKinds, 
                       nameSearch, 
-                      projectName, 
+                      projectName,    // BUGBUG: Need to also have projectOwner!!! OMG
                       showDeleted, 
                       showStable)
   let assetSorter = assetSortType ? assetSorters[assetSortType] : assetSorters["edited"]

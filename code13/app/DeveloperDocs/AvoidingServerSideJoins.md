@@ -17,11 +17,14 @@ Denormalized data
    self-erasing-tail log-type data records, so we can reconsider this later in our design work. 
 
 
-Server-side joins
-=================
+Server-side "joins" in our codebase
+===================================
 
 1. canUserEditAsset - depends on project membership. See the very long comment 
    in schemas/projects.js that describes this system. The key is that the client will provide 
    hints to the let the server discover an answer quickly.. O(1), BUT the server is not reliant 
    on the client's veracity :)  moreover if the client tries to 'DDoS' by a bad hint, 
    it will have it's writes rejected.
+
+1. projects.js - in Meteor.call("Projects.deleteProjectId"). Not a join, but a 2nd query
+   to see if there are assets in the project.

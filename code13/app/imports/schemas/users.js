@@ -28,7 +28,7 @@ const schema = {
     images: optional([String]),
     isDeleted: optional(Boolean),        // soft delete flag, so we can have an undelete easily
 //    invites: optional([]),             // DEPRECATED
-    projectNames: optional([String])     // An array of strings  
+    projectNames: optional([String])     // An array of strings  DEPRECATED, IGNORE+DELETE
   },
   permissions: {                         // TODO: Actually this is modelled as an array of team/??/perm stuff. Look at fixtures for the super-admin example. Needs cleaning up.
     roles: optional([String])            // See in App.js for 'super-admin' handling 

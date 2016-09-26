@@ -53,8 +53,9 @@ export const ActivityTypes = {
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },
   "asset.undelete":    { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
   
-  "project.create": { icon: "green sitemap",       pri: 3,  description: "Create project" },
+  "project.create": { icon: "green sitemap", pri: 3,  description: "Create project" },
   "project.addMember": { icon: "sitemap",    pri: 4,  description: "Add Member to project" },
+  "project.destroy": { icon: "red sitemap",  pri: 4,  description: "Destroyed Empty project" },
   "project.removeMember": { icon: "sitemap", pri: 4,  description: "Remove Member from project" },
      
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items

@@ -1413,7 +1413,7 @@ export default class EditCode extends React.Component {
                   </a>
                     { this.state.astFlowerReady && this.props.canEdit &&
                     <a className="ui mini left pointing label write" onClick={() => {this.saveAstThumbnail( () => {} )}}
-                       title="Update Bundle"
+                       title="Save as thumbnail"
                       >
                       <i className="write icon"></i>
                     </a>

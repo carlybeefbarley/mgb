@@ -117,6 +117,7 @@ function parseNode(node, buffer, depth, colorId, prefix, options){
         colorId = genColorId(filename)
         tmp = {
           name: prefix + name,
+          displayName: name,
           children: [],
           depth,
           colorId
@@ -137,7 +138,8 @@ function parseNode(node, buffer, depth, colorId, prefix, options){
             }
             Object.keys(defs[key]).forEach(function(key){
               tmp.children.push({
-                name: key,
+                name: prefix + key,
+                displayName: key,
                 children: [],
                 depth,
                 colorId
@@ -173,6 +175,7 @@ function parseNode(node, buffer, depth, colorId, prefix, options){
     uniqueNames[node.id.name] = true
     tmp = {
       name: prefix + node.id.name,
+      displayName: node.id.name,
       children: [],
       depth, colorId
     }
@@ -191,6 +194,7 @@ function parseNode(node, buffer, depth, colorId, prefix, options){
     uniqueNames[node.key.name] = true
     tmp = {
       name: prefix + node.key.name,
+      displayName: node.key.name,
       children: [],
       depth, colorId
     }
@@ -245,6 +249,7 @@ function parseNode(node, buffer, depth, colorId, prefix, options){
     uniqueNames[node.id.name] = true
     tmp = {
       name: prefix + node.id.name,
+      displayName: node.id.name,
       children: [],
       depth, colorId
     }
@@ -259,6 +264,7 @@ function parseNode(node, buffer, depth, colorId, prefix, options){
     uniqueNames[node.key.name] = true
     tmp = {
       name: prefix + node.key.name,
+      displayName: node.key.name,
       children: [],
       depth, colorId
     }

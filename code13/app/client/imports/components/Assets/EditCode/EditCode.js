@@ -1084,12 +1084,14 @@ export default class EditCode extends React.Component {
       })
     })
   }
-  drawAstFlowerLocal(){
+  drawAstFlowerForThumbnail(){
     this.ternServer.server.getAstFlowerTree({
         local: true
       }, (tree) => {
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150);
+      const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
+        showNames: false
+      });
       flower.update(tree)
       this.setState({
         astFlowerReady: true
@@ -1101,7 +1103,9 @@ export default class EditCode extends React.Component {
 
     }, (tree) => {
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150);
+      const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
+        showNames: true
+      });
       flower.update(tree)
       this.setState({
         astFlowerReady: true
@@ -1440,13 +1444,13 @@ export default class EditCode extends React.Component {
 
                 { this.state.astReady &&
                 <span className={(this.state.astFlowerReady && this.props.canEdit) ? "ui button labeled" : ""}>
-                  <a className="ui mini labeled icon button"  onClick={this.drawAstFlowerLocal.bind(this, asset._id)}
-                     title="This will make abstract image of your code">Asset
+                  <a className="ui mini labeled icon button"  onClick={this.drawAstFlowerForThumbnail.bind(this, asset._id)}
+                     title="This will make abstract image of your code">For Thumb
                     <i className="write square icon"></i>
                   </a>
                   <a className="ui mini labeled icon button"  onClick={this.drawAstFlowerFull.bind(this, asset._id)}
                      title="This will make abstract image of your code">
-                    <i className="write square icon"></i>Imports
+                    <i className="write square icon"></i>Full
                   </a>
                     { this.state.astFlowerReady && this.props.canEdit &&
                     <a className="ui mini left pointing label write" onClick={() => {this.saveAstThumbnail( () => {} )}}

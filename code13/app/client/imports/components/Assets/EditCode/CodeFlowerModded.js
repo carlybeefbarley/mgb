@@ -19,10 +19,11 @@ window.mgb_flower_config = {
   link_at_same_level: -50
 }
 
-export default CodeFlower = function (selector, w, h) {
+export default CodeFlower = function (selector, w, h, options) {
   this.w = w;
   this.h = h;
   this.aspect = this.w / 200
+  this.options = options;
 
   d3.select(selector).selectAll("svg").remove();
 
@@ -103,8 +104,8 @@ CodeFlower.prototype.getNodeSize = function (d) {
 
   size = Math.min(Math.max(defaultSize, size), maxSize)
   // scale to width
-  if (size >= maxSize * 0.5) {
-    d.text = d.name
+  if (size >= maxSize * 0.5 && this.options.showNames) {
+    d.text = d.displayName
   }
   // size *= this.aspect
   d.size = size
@@ -284,7 +285,7 @@ CodeFlower.prototype.click = function (d) {
 CodeFlower.prototype.mouseover = function (d) {
   this.text.node = d;
   this.text.attr('transform', 'translate(' + d.x + ',' + (d.y ) + ')')
-    .text(d.name)
+    .text(d.displayName)
     .style('display', null);
 };
 

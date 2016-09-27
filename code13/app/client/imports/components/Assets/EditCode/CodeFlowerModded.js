@@ -4,9 +4,25 @@
 import "./CodeFlower.css"
 import d3 from "d3"
 
+window.mgb_flower_config = {
+  // this will make other nodes to float away from main node
+  mainCharge: -2000,
+  // this will make nodes distract from each other
+  charge: -80,
+  // this allows fine tune nodes with many children
+  chargePerChild: 0.1,
+  // default link length
+  link: 8,
+  // fine tune link per child
+  linkPerChild: 0.1,
+  // first level children goes under this link - it allows to pull closer children from same file
+  link_at_same_level: -150
+}
+
 export default CodeFlower = function (selector, w, h) {
   this.w = w;
   this.h = h;
+  this.aspect = this.w / 200
 
   d3.select(selector).selectAll("svg").remove();
 
@@ -22,26 +38,75 @@ export default CodeFlower = function (selector, w, h) {
 
   this.force = d3.layout.force()
     .on("tick", this.tick.bind(this))
-    .charge(function (d) {
-      return -100
+    // if charge is positive all nodes tries to move to the middle
+    // if charge is negative nodes tries to separate as much as link allows
+    .charge((d) => {
+      // main node - make all nodes to run away from it
+      if(d.depth === 0){
+        return window.mgb_flower_config.mainCharge
+      }
+      return !d.children ? window.mgb_flower_config.charge : d.children.length * window.mgb_flower_config.chargePerChild + window.mgb_flower_config.charge
     })
-    .linkDistance( (d) => {
-      return (this.getNodeSize(d.target) + this.getNodeSize(d.source)) * 2
-      //return d.target._children ? 80 : 50;
+    // length of link - charge will modify this value
+    .linkDistance((d) => {
+      // let s1 = this.getNodeSize(d.target)
+      // let s2 = this.getNodeSize(d.source)
+      /*if(d.target.children && d.target.children.length){
+       s1 = d.target.children.length
+       }
+       if(d.source.children && d.source.children.length){
+       s2 = d.source.children.length
+       }*/
+
+      const s1 = !d.source.children ? window.mgb_flower_config.link :  (d.source.children.length * window.mgb_flower_config.linkPerChild) + window.mgb_flower_config.link
+      const s2 = !d.target.children ? window.mgb_flower_config.link :  (d.target.children.length * window.mgb_flower_config.linkPerChild) + window.mgb_flower_config.link
+
+      let ret = s1 + s2
+      if( (d.source.depth === 0 || d.target.depth === 0) && d.source.colorId == d.target.colorId){
+        ret = window.mgb_flower_config.link_at_same_level
+      }
+
+      return ret
+      //return ( s1 + s2 ) * 2
+      //return (d.target._children ? 10 : Math.min(Math.max(d.target.children.length, 5), 20)) * this.aspect;
     })
-    .size([h, w]);
+    .size([w, h]);
 };
 CodeFlower.prototype.getNodeSize = function (d) {
-  const defaultSize = 2
-  const maxSize = 20
+  const defaultSize = 2 * this.aspect
+  const maxSize = 10 * this.aspect
 
-  if( !d._size ){
+  if (!d._size) {
     d._size = d.size
   }
-  let size = d._size || (d.children ? (d.children.length + 1) : (d._children.length) * 2)
-  size = Math.min(Math.max(defaultSize, size), 20)
+  let size;
+  // collapsed
+  if (d._children && d._children.length) {
+    size = d._children.length * 2
+  }
+  else {
+    size = d._size || (d.children ? (d.children.length + 1) : defaultSize)
+  }
+  size = Math.min(Math.max(defaultSize, size * 0.3), maxSize)
+
+  // make bigger 1st level nodes
+  if(d.depth < 2 && size < maxSize*0.5){
+    size = maxSize*0.5
+  }
+
+  // let size = d._size || (d.children ? (defaultSize) : (d._children.length) * 2)
+  // collapsed node
+  /*if(d._children && d._children.length){
+   size = d._children.length * 2
+   }*/
+
+
+  size = Math.min(Math.max(defaultSize, size), maxSize)
   // scale to width
-  size *= this.w / 200
+  if (size >= maxSize * 0.5) {
+    d.text = d.name
+  }
+  // size *= this.aspect
   d.size = size
   return size
 }
@@ -55,9 +120,8 @@ CodeFlower.prototype.update = function (json) {
 
   var nodes = this.flatten(this.json);
   var links = d3.layout.tree().links(nodes);
-  var total = nodes.length || 1;
 
-  // remove existing text (will readd it afterwards to be sure( _it's) on top)
+  // remove all nodes - as there are some glitched in refreshing
   this.svg.selectAll("*").remove();
 
   // Restart the force layout
@@ -89,7 +153,7 @@ CodeFlower.prototype.update = function (json) {
     .attr("y2", function (d) {
       return d.target.y;
     })
-    .attr("style", function(){
+    .attr("style", function () {
       return 'fill: none; stroke: #9ecae1; stroke-width: 1.5px;'
     })
   ;
@@ -110,7 +174,7 @@ CodeFlower.prototype.update = function (json) {
     .attr("r", (d) => {
       return this.getNodeSize(d) || 1;
     })
-    .style("stroke","#000")
+    .style("stroke", "#000")
     .style("stroke-width", ".5px");
 
   let downMove;
@@ -134,23 +198,26 @@ CodeFlower.prototype.update = function (json) {
     .on("mouseout", this.mouseout.bind(this));
 
   group.append('svg:circle')
-        .attr("class", "node")
-        .classed('directory', function (d) {
-          return (d._children || d.children) ? 1 : 0;
-        })
-        .attr("r", (d) =>  {
-          return this.getNodeSize(d) || 1;
-        })
-        .style("fill", function color(d) {
-          return "hsl(" + parseInt(360 / total * d.id, 10) + ",90%,70%)";
-        });
+    .attr("class", "node")
+    .classed('directory', function (d) {
+      return (d._children || d.children) ? 1 : 0;
+    })
+    .attr("r", (d) => {
+      return this.getNodeSize(d) || 1;
+    })
+    .style("fill", function color(d) {
+      let light = Math.min(30 + d.depth * 5, 100);
+      light = parseInt(light * (1 + ( 0.2 - Math.random() * 0.4) ), 10);
+
+      return "hsl(" + (d.colorId * 5 % 360) + ",90%," + (light) + "%)";
+    });
 
 
   group.append('svg:text')
     .attr('class', 'nodename')
     .attr('text-anchor', 'middle')
     .text((d) => {
-      return d.name
+      return d.text
     })
     .style('font-size', (d) => {
       let size = this.getNodeSize(d)
@@ -181,9 +248,10 @@ CodeFlower.prototype.flatten = function (root) {
 
   function recurse(node) {
     if (node.children) {
-      node.size = node.children.reduce(function (p, v) {
+      let size = node.children.reduce(function (p, v) {
         return p + recurse(v);
       }, 0);
+      node.size = node.size || size
     }
     if (!node.id) node.id = ++i;
     nodes.push(node);
@@ -195,7 +263,9 @@ CodeFlower.prototype.flatten = function (root) {
 };
 
 CodeFlower.prototype.click = function (d) {
-  if(this.mousemoved){
+  console.log(d)
+  if (this.mousemoved) {
+    d.fixed = 1
     return
   }
   // Toggle children on click.
@@ -207,6 +277,7 @@ CodeFlower.prototype.click = function (d) {
     d.children = d._children;
     d._children = null;
   }
+  d.fixed = 0
   this.update();
 };
 
@@ -243,7 +314,7 @@ CodeFlower.prototype.tick = function () {
     return "translate(" + Math.max(s, Math.min(w - s, d.x)) + "," + Math.max(s, Math.min(h - s, d.y)) + ")";
   });
 
-  if( this.text.node && this.text.node.x !== void(0) ){
+  if (this.text.node && this.text.node.x !== void(0)) {
     this.text.attr('transform', 'translate(' + this.text.node.x + ',' + (this.text.node.y ) + ')')
   }
 };

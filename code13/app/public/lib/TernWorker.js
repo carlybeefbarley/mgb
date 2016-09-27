@@ -45,7 +45,7 @@ this.onmessage = function(e) {
       return postMessage(server.fileMap)
     case "getAstFlowerTree":
       uniqueNames = {}
-      return postMessage(getAstFlowerTree(data.filename))
+      return postMessage(getAstFlowerTree(data.filename, null, null, true))
     default: throw new Error("Unknown message type: " + data.type);
   }
 };
@@ -69,18 +69,28 @@ function startServer(defs, plugins, scripts) {
 
 // here we are making config for CodeFlower from ast. http://www.redotheweb.com/CodeFlower/
 var uniqueNames = {}
-function getAstFlowerTree(filename, ret){
+function getAstFlowerTree(filename, ret, colorId, mainFile){
   ret = ret || {
     name: filename,
-    children: []
+    size: mainFile ? 100 : 1,
+    children: [],
+    depth: 0
   };
   var ast = this.server.fileMap[filename].ast;
+
+  // reate id from string - later used for nice color
+  if(!colorId){
+    colorId = genColorId(filename)
+  }
+  ret.colorId = colorId;
+
+
   ast.body.forEach(function(node){
-    parseNode(node, ret.children)
+    parseNode(node, ret.children, 1, colorId)
   })
   return ret
 }
-function parseNode(node, buffer, depth){
+function parseNode(node, buffer, depth, colorId){
   depth = depth || 0
   if(depth > MAX_DEPTH){
     return
@@ -88,24 +98,26 @@ function parseNode(node, buffer, depth){
   var increaseDepthAndScanNodes = function(nodes, buffer){
     depth++;
     nodes.forEach(function(node){
-      parseNode(node, buffer, depth);
+      parseNode(node, buffer, depth, colorId);
     })
   };
 
   var tmp;
   if(node.type === "ImportDeclaration"){
     var filename = node.source.value;
-    var spec = node.specifiers && node.specifiers[0] ? node.specifiers[0].local : null;
+    var spec = (node.specifiers && node.specifiers[0]) ? node.specifiers[0] : null;
     var name = spec  && spec.local ? spec.local.name : filename
     if(!server.fileMap[filename]){
       filename = filename.substr(2);
       // this is external file.... check defs???
       if(!server.fileMap[filename]){
         if(uniqueNames[node.source.value]) return
+        colorId = genColorId(filename)
         tmp = {
-          size: 100, // make external libs large
           name: name,
-          children: []
+          children: [],
+          depth,
+          colorId
         }
         buffer.push(tmp);
         var defs = server.defs.find(function(d){
@@ -113,6 +125,7 @@ function parseNode(node, buffer, depth){
         })
         // scan only first level...
         if(defs){
+          depth++;
           Object.keys(defs).forEach(function(key){
             if( key.length > 1 && (key.substr(0, 1) === "!" || key.substr(0, 1) === "_") ){
               return;
@@ -120,16 +133,23 @@ function parseNode(node, buffer, depth){
             Object.keys(defs[key]).forEach(function(key){
               tmp.children.push({
                 name: key,
-                children: []
+                children: [],
+                depth,
+                colorId
               })
             })
           })
+        }
+        else{
+          tmp.size = 100 // make unknown external libs huge ( as they will be larger that max size in the sourceTools )
         }
         uniqueNames[node.source.value] = true
         return;
       }
     }
     var tree = getAstFlowerTree(filename)
+    tree.name = name
+    tree.depth = depth
     buffer.push(tree)
     return;
   }
@@ -141,10 +161,12 @@ function parseNode(node, buffer, depth){
 
   if(node.type === "VariableDeclarator"){
     if(uniqueNames[node.id.name]) return
+    depth--;
     uniqueNames[node.id.name] = true
     tmp = {
       name: node.id.name,
-      children: []
+      children: [],
+      depth, colorId
     }
     buffer.push(tmp)
     if(node.init && node.init.properties){
@@ -158,7 +180,8 @@ function parseNode(node, buffer, depth){
     uniqueNames[node.key.name] = true
     tmp = {
       name: node.key.name,
-      children: []
+      children: [],
+      depth, colorId
     }
     buffer.push(tmp)
     if(node.value.type === "FunctionExpression"){
@@ -182,6 +205,7 @@ function parseNode(node, buffer, depth){
   }
 
   if(node.type === "ObjectExpression"){
+    depth--
     increaseDepthAndScanNodes(node.properties, buffer)
     return;
   }
@@ -189,28 +213,19 @@ function parseNode(node, buffer, depth){
   if(node.type === "ExportDefaultDeclaration"){
     if(node.declaration.type === "AssignmentExpression"){
       //increaseDepthAndScanNodes(node.declaration.right, tmp.children)
-      parseNode(node.declaration.right, buffer, ++depth);
+      parseNode(node.declaration.right, buffer, ++depth, colorId);
       return;
     }
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function genColorId(filename){
+  var tot = 0
+  for(var i=0; i<filename.length; i++){
+    tot += filename.charCodeAt(i) * i
+  }
+  return tot
+}
 
 
 

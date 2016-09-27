@@ -1081,7 +1081,8 @@ export default class EditCode extends React.Component {
     const ctx = canvas.getContext("2d")
     canvas.width = 250
     canvas.height = 150
-
+    ctx.fillStyle = 'rgba(153,204,153,0.2)'
+    ctx.fillRect(0,0,250,150)
 
     this.refs.codeflower.firstChild.setAttribute("xmlns","http://www.w3.org/2000/svg")
     const data = this.refs.codeflower.innerHTML;
@@ -1406,7 +1407,7 @@ export default class EditCode extends React.Component {
                 }
 
                 { this.state.astReady &&
-                  <span className={(this.props.canEdit) ? "ui button labeled" : ""}>
+                <span className={(this.state.astFlowerReady && this.props.canEdit) ? "ui button labeled" : ""}>
                   <a className="ui mini labeled icon button"  onClick={this.drawAstFlower.bind(this, asset._id)}
                      title="This will make abstract image of your code">
                     <i className="write square icon"></i>Draw AST
@@ -1420,8 +1421,7 @@ export default class EditCode extends React.Component {
                     }
                 </span>
                 }
-                {/*
-                {this.props.canEdit && this.state.astReady &&
+                {/* this.props.canEdit && this.state.astReady &&
                 <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
                    title="This will make abstract image of your code">
                   <i className={"write square icon"}></i>Draw AST

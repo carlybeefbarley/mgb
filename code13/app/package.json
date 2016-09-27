@@ -4,9 +4,7 @@
   "description": "My Game Builder",
   "main": "app.js",
   "dependencies": {
-    "codemirror": "~5.17.0",
     "acorn": "~4.0.0",
-    "tern": "~0.20.0",
     "audiobuffer-to-wav": "^1.0.0",
     "aws-sdk": "^2.4.10",
     "babel-plugin-transform-class-properties": "^6.11.5",
@@ -14,6 +12,8 @@
     "bcrypt": "^0.8.7",
     "blueimp-md5": "^2.3.0",
     "bufferutil": "^1.2.1",
+    "codemirror": "~5.17.0",
+    "d3": "^3.5.17",
     "data-uri-to-buffer": "0.0.4",
     "deep-extend": "^0.4.1",
     "draft-js": "^0.8.1",
@@ -59,6 +59,7 @@
     "redux-thunk": "^2.1.0",
     "selenium-webdriver": "^3.0.0-beta-2",
     "stardust": "^0.46.1",
+    "tern": "~0.20.0",
     "utf-8-validate": "^1.2.1",
     "xml2js": "^0.4.17"
   },

@@ -10,7 +10,7 @@ import { js_beautify } from 'js-beautify';
 import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
 import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
-
+import CodeFlower from './CodeFlowerModded.js'
 // import tlint from 'tern-lint'
 
 // **GLOBAL*** Tern JS - See comment below...   
@@ -297,6 +297,14 @@ export default class EditCode extends React.Component {
     // overwrite default function - so we can use replace
     this.ternServer.server.addFile = (name, text, replace) => {
       this.ternServer.worker.postMessage({type: "add", name, text, replace})
+    }
+    this.ternServer.server.getAstFlowerTree = (callback, filename = this.props.asset.name) => {
+      const getAstFlowerTree = (e) => {
+        this.ternServer.worker.removeEventListener("message", getAstFlowerTree)
+        callback(e.data)
+      }
+      this.ternServer.worker.addEventListener("message", getAstFlowerTree)
+      this.ternServer.worker.postMessage({type: "getNodeTree", filename})
     }
 
     this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
@@ -991,7 +999,7 @@ export default class EditCode extends React.Component {
   }
 
   setAstThumbnail(){
-    this.tools.getAST((list) => {
+    /*this.tools.getAST((list) => {
       /*
         list will contain objects with the following structure :
         {
@@ -1002,8 +1010,13 @@ export default class EditCode extends React.Component {
         }
       */
 
-      const canvas = document.createElement("canvas")
-      const ctx = canvas.getContext("2d")
+    const canvas = document.createElement("canvas")
+    const ctx = canvas.getContext("2d")
+    canvas.width = 250
+    canvas.height = 150
+
+    /*
+
       ctx.font = '16px courier'
       canvas.width = 250
       canvas.height = 150
@@ -1015,7 +1028,41 @@ export default class EditCode extends React.Component {
       }
       this.props.asset.thumbnail = canvas.toDataURL('image/png')
       this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
-    })
+    })*/
+
+    this.ternServer.server.getAstFlowerTree((tree) => {
+      //console.log(JSON.stringify(tree, null, "  "));
+
+      const w = $(this.refs.codeflower).width()
+      const flower = new CodeFlower("#codeflower", w, w / canvas.width * 150);
+
+      flower.update(tree)
+
+      // wait for animations...
+      window.setTimeout(() => {
+        // TODO: move this to codeFlowe.. flower.toImage(callback)
+        this.refs.codeflower.firstChild.setAttribute("xmlns","http://www.w3.org/2000/svg")
+
+        const data = this.refs.codeflower.innerHTML;
+
+        const DOMURL = window.URL || window.webkitURL || window;
+
+        const img = new Image();
+        const svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+        const url = DOMURL.createObjectURL(svg);
+
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+          this.props.asset.thumbnail = canvas.toDataURL('image/png')
+          this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
+
+          DOMURL.revokeObjectURL(url);
+        }
+        img.src = url;
+      }, 1000);
+    });
+
+
   }
 
   postToIFrame(cmd, data) {
@@ -1155,7 +1202,11 @@ export default class EditCode extends React.Component {
         if(!critical && this.tools){
           // why val here is different?
           const val2 = this.codeMirror.getValue()
-          this.tools.collectAndTranspile(val2, this.props.asset.name)
+          this.tools.collectAndTranspile(val2, this.props.asset.name, () => {
+            this.setState({
+              astReady: true
+            })
+          })
         }
       });
 
@@ -1317,13 +1368,13 @@ export default class EditCode extends React.Component {
                   <i className={"write square icon"}></i>Set thumbnail
                 </a>
                 }
-                {this.props.canEdit &&
+                {this.props.canEdit && this.state.astReady &&
                 <a className={"ui right floated mini icon button"} onClick={this.setAstThumbnail.bind(this)}
                    title="This will make abstract image of your code">
                   <i className={"write square icon"}></i>Set AST Thumbnail
                 </a>
                 }
-
+                <div id="codeflower" ref="codeflower"></div>
               </div>
               }
               { !docEmpty &&

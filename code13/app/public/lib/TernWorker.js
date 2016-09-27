@@ -44,7 +44,7 @@ this.onmessage = function(e) {
     case "getFiles":
       return postMessage(server.fileMap)
     case "getNodeTree":
-      return getNodeTree(data.file)
+      return postMessage(getNodeTree(data.filename))
     default: throw new Error("Unknown message type: " + data.type);
   }
 };
@@ -69,6 +69,7 @@ function startServer(defs, plugins, scripts) {
 // here we are making config for CodeFlower from ast. http://www.redotheweb.com/CodeFlower/
 function getNodeTree(filename, ret){
   ret = ret || {
+    size: 1,
     name: filename,
     children: []
   };
@@ -76,6 +77,7 @@ function getNodeTree(filename, ret){
   ast.body.forEach(function(node){
     parseNode(node, ret.children)
   })
+  ret.size = ret.children.length;
   return ret
 }
 function parseNode(node, buffer, depth){
@@ -83,70 +85,90 @@ function parseNode(node, buffer, depth){
   if(depth > MAX_DEPTH){
     return
   }
+  var increaseDepthAndScanNodes = function(nodes, buffer){
+    depth++;
+    nodes.forEach(function(node){
+      parseNode(node, buffer, depth);
+    })
+  };
+
   var tmp;
-  if(node.type == "ImportDeclaration"){
+  if(node.type === "ImportDeclaration"){
     var filename = node.source.value;
     if(!this.server.fileMap[filename]){
       filename = filename.substr(2);
       // this is external file.... check defs???
       if(!this.server.fileMap[filename]){
         buffer.push({
-          name: node.source.value,
-          size: 100
+          size: 100,
+          name: node.source.value
         });
         return;
       }
     }
-    buffer.push(getNodeTree(filename))
+    const tree = getNodeTree(filename)
+    tree.size = 1
+    buffer.push(tree)
     return;
   }
 
-  if(node.type == "VariableDeclaration"){
-    depth++
-    node.declarations.forEach(function(node){
-      parseNode(node, buffer, depth)
-    })
+  if(node.type === "VariableDeclaration"){
+    increaseDepthAndScanNodes(node.declarations, buffer)
     return;
   }
 
-  if(node.type == "VariableDeclarator"){
+  if(node.type === "VariableDeclarator"){
     tmp = {
+      size: 1,
       name: node.id.name,
       children: []
     }
     buffer.push(tmp)
     if(node.init.properties){
-      depth++;
-      node.init.properties.forEach(function(node){
-        parseNode(node, tmp.children, depth);
-      })
+      increaseDepthAndScanNodes(node.init.properties, tmp.children)
     }
+    tmp.size += tmp.children.length
     return;
   }
 
-  if(node.type == "Property"){
+  if(node.type === "Property"){
     tmp = {
+      size: 1,
       name: node.key.name,
       children: []
     }
     buffer.push(tmp)
-    if(node.value.type == "FunctionExpression"){
+    if(node.value.type === "FunctionExpression"){
       tmp.name += "(";
-      node.value.params.forEach(function(param){
-        tmp.name += param.name + ","
-      });
-      tmp.name += tmp.name.substring(0, tmp.name - 1) + ")"
+      if(node.value.params.length) {
+        node.value.params.forEach(function (param) {
+          tmp.name += " " + param.name + " ,";
+        });
+        tmp.name = tmp.name.substring(0, tmp.name.length - 1);
+      }
+      tmp.name += ")";
       return;
     }
-    if(node.value.type == "ObjectExpression"){
-      depth++;
-      node.value.properties.forEach(function(node){
-        parseNode(node, tmp.children, depth);
-      })
+    if(node.value.type === "ObjectExpression"){
+      increaseDepthAndScanNodes(node.value.properties, tmp.children)
       return;
     }
-    if(node.value.type == "Literal"){
+    if(node.value.type === "Literal"){
 
+    }
+    tmp.size += tmp.children.length
+  }
+
+  if(node.type === "ObjectExpression"){
+    increaseDepthAndScanNodes(node.properties, buffer)
+    return;
+  }
+
+  if(node.type === "ExportDefaultDeclaration"){
+    if(node.declaration.type === "AssignmentExpression"){
+      //increaseDepthAndScanNodes(node.declaration.right, tmp.children)
+      parseNode(node.declaration.right, buffer, ++depth);
+      return;
     }
   }
 }

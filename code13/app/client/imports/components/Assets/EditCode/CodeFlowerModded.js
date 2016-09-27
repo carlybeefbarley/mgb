@@ -3,12 +3,6 @@
 //window.d3 = d3;
 import "./CodeFlower.css"
 import d3 from "d3"
-const getNodeSize = (d) => {
-  const size = (d.children ? 3.5 * (d.children.length + 1) : (d._children.length) * 7)
-  d.size = size
-  return size
-}
-
 
 export default CodeFlower = function (selector, w, h) {
   this.w = w;
@@ -31,13 +25,26 @@ export default CodeFlower = function (selector, w, h) {
     .charge(function (d) {
       return d._children ? -d.size : -40;
     })
-    .linkDistance(function (d) {
-      return (getNodeSize(d.target) + getNodeSize(d.source)) * 2
-      return d.target._children ? 80 : 50;
+    .linkDistance( (d) => {
+      return (this.getNodeSize(d.target) + this.getNodeSize(d.source)) * 2
+      //return d.target._children ? 80 : 50;
     })
     .size([h, w]);
 };
+CodeFlower.prototype.getNodeSize = function (d) {
+  const defaultSize = 2
+  const maxSize = 20
 
+  if( !d._size ){
+    d._size = d.size
+  }
+  let size = d._size || (d.children ? (d.children.length + 1) : (d._children.length) * 2)
+  size = Math.min(Math.max(defaultSize, size), 20)
+  // scale to width
+  size *= this.w / 200
+  d.size = size
+  return size
+}
 CodeFlower.prototype.update = function (json) {
   if (json) this.json = json;
 
@@ -55,7 +62,7 @@ CodeFlower.prototype.update = function (json) {
 
   // Restart the force layout
   this.force
-    .gravity(Math.atan(total / 50) / Math.PI * 0.4)
+    //.gravity(Math.atan(total / 50) / Math.PI * 0.4)
     .nodes(nodes)
     .links(links)
     .start();
@@ -100,16 +107,28 @@ CodeFlower.prototype.update = function (json) {
     });
 
   this.node.transition()
-    .attr("r", function (d) {
-      return getNodeSize(d) || 1;
+    .attr("r", (d) => {
+      return this.getNodeSize(d) || 1;
     });
 
+  let downMove;
   // Enter any new nodes
   const group = this.node.enter()
     .append('svg:g')
     .call(this.force.drag)
     .on("click", this.click.bind(this))
     .on("mouseover", this.mouseover.bind(this))
+    .on("mousedown", () => {
+      downMove = (e) => {
+        this.mousemoved = true
+      };
+      this.mousemoved = false
+      window.addEventListener("mousemove", downMove)
+
+    })
+    .on("mouseup", () => {
+      window.removeEventListener("mousemove", downMove)
+    })
     .on("mouseout", this.mouseout.bind(this));
 
   group.append('svg:circle')
@@ -117,8 +136,8 @@ CodeFlower.prototype.update = function (json) {
         .classed('directory', function (d) {
           return (d._children || d.children) ? 1 : 0;
         })
-        .attr("r", function (d) {
-          return getNodeSize(d) || 1;
+        .attr("r", (d) =>  {
+          return this.getNodeSize(d) || 1;
         })
         .style("fill", function color(d) {
           return "hsl(" + parseInt(360 / total * d.id, 10) + ",90%,70%)";
@@ -132,9 +151,10 @@ CodeFlower.prototype.update = function (json) {
       return d.name
     })
     .style('font-size', (d) => {
-      let size = getNodeSize(d)
+      let size = this.getNodeSize(d)
       return Math.max(Math.min(size, 16), 8) + "px"
-    });
+    })
+    .style('font-family', "'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif");
 
   /*
 
@@ -148,7 +168,8 @@ CodeFlower.prototype.update = function (json) {
     .attr('class', 'nodetext')
     .attr('dy', 0)
     .attr('dx', 0)
-    .attr('text-anchor', 'middle');
+    .attr('text-anchor', 'middle')
+    .attr('pointer-events', 'none');
 
   return this;
 };
@@ -172,6 +193,9 @@ CodeFlower.prototype.flatten = function (root) {
 };
 
 CodeFlower.prototype.click = function (d) {
+  if(this.mousemoved){
+    return
+  }
   // Toggle children on click.
   if (d.children) {
     d._children = d.children;
@@ -185,12 +209,14 @@ CodeFlower.prototype.click = function (d) {
 };
 
 CodeFlower.prototype.mouseover = function (d) {
-  this.text.attr('transform', 'translate(' + d.x + ',' + (d.y - 5 - getNodeSize(d)) + ')')
+  this.text.node = d;
+  this.text.attr('transform', 'translate(' + d.x + ',' + (d.y ) + ')')
     .text(d.name)
     .style('display', null);
 };
 
 CodeFlower.prototype.mouseout = function (d) {
+  this.mousemoved = false
   this.text.style('display', 'none');
 };
 
@@ -211,8 +237,13 @@ CodeFlower.prototype.tick = function () {
     });
 
   this.node.attr("transform", function (d) {
-    return "translate(" + Math.max(5, Math.min(w - 5, d.x)) + "," + Math.max(5, Math.min(h - 5, d.y)) + ")";
+    const s = d.size
+    return "translate(" + Math.max(s, Math.min(w - s, d.x)) + "," + Math.max(s, Math.min(h - s, d.y)) + ")";
   });
+
+  if(this.text.node){
+    this.text.attr('transform', 'translate(' + this.text.node.x + ',' + (this.text.node.y ) + ')')
+  }
 };
 
 CodeFlower.prototype.cleanup = function () {

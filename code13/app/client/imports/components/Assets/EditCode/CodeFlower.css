@@ -21,10 +21,14 @@ svg:hover .nodename{
     font-size: 8px;
     opacity: 0.5;
 }
-g:hover .nodename{
+svg:hover .nodetext{
     font-size: 16px !important;
     opacity: 1;
-    z-index: 5;
+    display: block !important;
+}
+g:hover .nodename{
+    pointer-events: none;
+    display: none;
 }
 .nodetext{
     display: none;

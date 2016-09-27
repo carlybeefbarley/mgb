@@ -43,8 +43,9 @@ this.onmessage = function(e) {
       return c(data.err, data.text);
     case "getFiles":
       return postMessage(server.fileMap)
-    case "getNodeTree":
-      return postMessage(getNodeTree(data.filename))
+    case "getAstFlowerTree":
+      uniqueNames = {}
+      return postMessage(getAstFlowerTree(data.filename))
     default: throw new Error("Unknown message type: " + data.type);
   }
 };
@@ -67,9 +68,9 @@ function startServer(defs, plugins, scripts) {
 }
 
 // here we are making config for CodeFlower from ast. http://www.redotheweb.com/CodeFlower/
-function getNodeTree(filename, ret){
+var uniqueNames = {}
+function getAstFlowerTree(filename, ret){
   ret = ret || {
-    size: 1,
     name: filename,
     children: []
   };
@@ -77,7 +78,6 @@ function getNodeTree(filename, ret){
   ast.body.forEach(function(node){
     parseNode(node, ret.children)
   })
-  ret.size = ret.children.length;
   return ret
 }
 function parseNode(node, buffer, depth){
@@ -95,19 +95,39 @@ function parseNode(node, buffer, depth){
   var tmp;
   if(node.type === "ImportDeclaration"){
     var filename = node.source.value;
-    if(!this.server.fileMap[filename]){
+    if(!server.fileMap[filename]){
       filename = filename.substr(2);
       // this is external file.... check defs???
-      if(!this.server.fileMap[filename]){
-        buffer.push({
-          size: 100,
-          name: node.source.value
-        });
+      if(!server.fileMap[filename]){
+        if(uniqueNames[node.source.value]) return
+        tmp = {
+          size: 100, // make external libs large
+          name: node.source.value,
+          children: []
+        }
+        buffer.push(tmp);
+        var defs = server.defs.find(function(d){
+          return d['!name'] == node.source.value
+        })
+        // scan only first level...
+        if(defs){
+          Object.keys(defs).forEach(function(key){
+            if(key.substr(0, 1) === "!" || key.substr(0, 1) === "_"){
+              return;
+            }
+            Object.keys(defs[key]).forEach(function(key){
+              tmp.children.push({
+                name: key,
+                children: []
+              })
+            })
+          })
+        }
+        uniqueNames[node.source.value] = true
         return;
       }
     }
-    const tree = getNodeTree(filename)
-    tree.size = 1
+    var tree = getAstFlowerTree(filename)
     buffer.push(tree)
     return;
   }
@@ -118,22 +138,23 @@ function parseNode(node, buffer, depth){
   }
 
   if(node.type === "VariableDeclarator"){
+    if(uniqueNames[node.id.name]) return
+    uniqueNames[node.id.name] = true
     tmp = {
-      size: 1,
       name: node.id.name,
       children: []
     }
     buffer.push(tmp)
-    if(node.init.properties){
+    if(node.init && node.init.properties){
       increaseDepthAndScanNodes(node.init.properties, tmp.children)
     }
-    tmp.size += tmp.children.length
     return;
   }
 
   if(node.type === "Property"){
+    if(uniqueNames[node.key.name]) return
+    uniqueNames[node.key.name] = true
     tmp = {
-      size: 1,
       name: node.key.name,
       children: []
     }
@@ -156,7 +177,6 @@ function parseNode(node, buffer, depth){
     if(node.value.type === "Literal"){
 
     }
-    tmp.size += tmp.children.length
   }
 
   if(node.type === "ObjectExpression"){

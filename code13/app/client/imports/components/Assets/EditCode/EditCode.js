@@ -304,7 +304,7 @@ export default class EditCode extends React.Component {
         callback(e.data)
       }
       this.ternServer.worker.addEventListener("message", getAstFlowerTree)
-      this.ternServer.worker.postMessage({type: "getNodeTree", filename})
+      this.ternServer.worker.postMessage({type: "getAstFlowerTree", filename})
     }
 
     this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)

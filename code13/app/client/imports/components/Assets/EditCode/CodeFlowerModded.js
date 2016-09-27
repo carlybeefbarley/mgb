@@ -16,7 +16,7 @@ window.mgb_flower_config = {
   // fine tune link per child
   linkPerChild: 0.1,
   // first level children goes under this link - it allows to pull closer children from same file
-  link_at_same_level: -150
+  link_at_same_level: -50
 }
 
 export default CodeFlower = function (selector, w, h) {

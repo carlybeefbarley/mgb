@@ -298,13 +298,20 @@ export default class EditCode extends React.Component {
     this.ternServer.server.addFile = (name, text, replace) => {
       this.ternServer.worker.postMessage({type: "add", name, text, replace})
     }
-    this.ternServer.server.getAstFlowerTree = (callback, filename = this.props.asset.name) => {
+    this.ternServer.server.getAstFlowerTree = (options, callback, filename = this.props.asset.name) => {
+      if(!options.filename){
+        options.filename = filename
+      }
       const getAstFlowerTree = (e) => {
         this.ternServer.worker.removeEventListener("message", getAstFlowerTree)
         callback(e.data)
       }
       this.ternServer.worker.addEventListener("message", getAstFlowerTree)
-      this.ternServer.worker.postMessage({type: "getAstFlowerTree", filename})
+      this.ternServer.worker.postMessage({
+        type: "getAstFlowerTree",
+        filename: options.filename,
+        local: options.local
+      })
     }
 
     this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
@@ -1030,7 +1037,9 @@ export default class EditCode extends React.Component {
       this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
     })*/
 
-    this.ternServer.server.getAstFlowerTree((tree) => {
+    this.ternServer.server.getAstFlowerTree({
+        local: false
+      }, (tree) => {
       //console.log(JSON.stringify(tree, null, "  "));
 
       const w = $(this.refs.codeflower).width()
@@ -1075,7 +1084,30 @@ export default class EditCode extends React.Component {
       })
     })
   }
+  drawAstFlowerLocal(){
+    this.ternServer.server.getAstFlowerTree({
+        local: true
+      }, (tree) => {
+      const w = $(this.refs.codeflower).width()
+      const flower = new CodeFlower("#codeflower", w, w / 250 * 150);
+      flower.update(tree)
+      this.setState({
+        astFlowerReady: true
+      })
+    })
+  }
+  drawAstFlowerFull(){
+    this.ternServer.server.getAstFlowerTree({
 
+    }, (tree) => {
+      const w = $(this.refs.codeflower).width()
+      const flower = new CodeFlower("#codeflower", w, w / 250 * 150);
+      flower.update(tree)
+      this.setState({
+        astFlowerReady: true
+      })
+    })
+  }
   saveAstThumbnail(){
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
@@ -1408,9 +1440,13 @@ export default class EditCode extends React.Component {
 
                 { this.state.astReady &&
                 <span className={(this.state.astFlowerReady && this.props.canEdit) ? "ui button labeled" : ""}>
-                  <a className="ui mini labeled icon button"  onClick={this.drawAstFlower.bind(this, asset._id)}
+                  <a className="ui mini labeled icon button"  onClick={this.drawAstFlowerLocal.bind(this, asset._id)}
+                     title="This will make abstract image of your code">Asset
+                    <i className="write square icon"></i>
+                  </a>
+                  <a className="ui mini labeled icon button"  onClick={this.drawAstFlowerFull.bind(this, asset._id)}
                      title="This will make abstract image of your code">
-                    <i className="write square icon"></i>Draw AST
+                    <i className="write square icon"></i>Imports
                   </a>
                     { this.state.astFlowerReady && this.props.canEdit &&
                     <a className="ui mini left pointing label write" onClick={() => {this.saveAstThumbnail( () => {} )}}

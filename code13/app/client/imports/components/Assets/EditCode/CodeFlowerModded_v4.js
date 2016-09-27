@@ -1,8 +1,8 @@
-// import d3 from "d3"
 //import d3 from "d3";
-//window.d3 = d3;
+// attempt to upgrade d3 - if you want to test it - add: <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.js"></script> to app.html head
+const d3 = window.d3;
 import "./CodeFlower.css"
-import d3 from "d3"
+//import d3 from "d3"
 
 export default CodeFlower = function (selector, w, h) {
   this.w = w;
@@ -20,16 +20,17 @@ export default CodeFlower = function (selector, w, h) {
     .attr('width', w)
     .attr('height', h);
 
-  this.force = d3.layout.force()
+  this.force = d3.forceSimulation()
     .on("tick", this.tick.bind(this))
-    .charge(function (d) {
+    /*.charge(function (d) {
       return -100
-    })
-    .linkDistance( (d) => {
+    })*/
+    .force("center", d3.forceCenter(w / 2, h / 2))
+    /*.linkDistance( (d) => {
       return (this.getNodeSize(d.target) + this.getNodeSize(d.source)) * 2
       //return d.target._children ? 80 : 50;
-    })
-    .size([h, w]);
+    })*/
+    //.size([h, w]);
 };
 CodeFlower.prototype.getNodeSize = function (d) {
   const defaultSize = 2
@@ -54,7 +55,10 @@ CodeFlower.prototype.update = function (json) {
   this.json.y = this.h / 2;
 
   var nodes = this.flatten(this.json);
-  var links = d3.layout.tree().links(nodes);
+  //var links = d3.tree()(json);
+  var hierarchy = d3.hierarchy(this.json);
+  var links = hierarchy.links()
+
   var total = nodes.length || 1;
 
   // remove existing text (will readd it afterwards to be sure( _it's) on top)
@@ -63,9 +67,8 @@ CodeFlower.prototype.update = function (json) {
   // Restart the force layout
   this.force
     //.gravity(Math.atan(total / 50) / Math.PI * 0.4)
-    .nodes(nodes)
-    .links(links)
-    .start();
+    .nodes(hierarchy)
+    //.start();
 
   // Update the links
   this.link = this.svg.selectAll("line.link")
@@ -115,9 +118,20 @@ CodeFlower.prototype.update = function (json) {
 
   let downMove;
   // Enter any new nodes
+  function dragged(d) {
+    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+  }
+
+  function dragended(d) {
+    d3.select(this).classed("active", false);
+  }
   const group = this.node.enter()
     .append('svg:g')
-    .call(this.force.drag)
+    //.call(this.force.drag)
+    .call(d3.drag()
+      .on("drag", dragged)
+      .on("end", dragended)
+    )
     .on("click", this.click.bind(this))
     .on("mouseover", this.mouseover.bind(this))
     .on("mousedown", () => {

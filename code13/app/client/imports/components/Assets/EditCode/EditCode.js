@@ -1061,8 +1061,44 @@ export default class EditCode extends React.Component {
         img.src = url;
       }, 1000);
     });
+  }
+
+  drawAstFlower(){
+    this.ternServer.server.getAstFlowerTree((tree) => {
+      //console.log(JSON.stringify(tree, null, "  "));
+
+      const w = $(this.refs.codeflower).width()
+      const flower = new CodeFlower("#codeflower", w, w / 250 * 150);
+      flower.update(tree)
+      this.setState({
+        astFlowerReady: true
+      })
+    })
+  }
+
+  saveAstThumbnail(){
+    const canvas = document.createElement("canvas")
+    const ctx = canvas.getContext("2d")
+    canvas.width = 250
+    canvas.height = 150
 
 
+    this.refs.codeflower.firstChild.setAttribute("xmlns","http://www.w3.org/2000/svg")
+    const data = this.refs.codeflower.innerHTML;
+    const DOMURL = window.URL || window.webkitURL || window;
+
+    const img = new Image();
+    const svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+    const url = DOMURL.createObjectURL(svg);
+
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+      this.props.asset.thumbnail = canvas.toDataURL('image/png')
+      this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
+
+      DOMURL.revokeObjectURL(url);
+    }
+    img.src = url;
   }
 
   postToIFrame(cmd, data) {
@@ -1368,12 +1404,29 @@ export default class EditCode extends React.Component {
                   <i className={"write square icon"}></i>Set thumbnail
                 </a>
                 }
-                {this.props.canEdit && this.state.astReady &&
-                <a className={"ui right floated mini icon button"} onClick={this.setAstThumbnail.bind(this)}
-                   title="This will make abstract image of your code">
-                  <i className={"write square icon"}></i>Set AST Thumbnail
-                </a>
+
+                { this.state.astReady &&
+                  <span className={(this.props.canEdit) ? "ui button labeled" : ""}>
+                  <a className="ui mini labeled icon button"  onClick={this.drawAstFlower.bind(this, asset._id)}
+                     title="This will make abstract image of your code">
+                    <i className="write square icon"></i>Draw AST
+                  </a>
+                    { this.state.astFlowerReady && this.props.canEdit &&
+                    <a className="ui mini left pointing label write" onClick={() => {this.saveAstThumbnail( () => {} )}}
+                       title="Update Bundle"
+                      >
+                      <i className="write icon"></i>
+                    </a>
+                    }
+                </span>
                 }
+                {/*
+                {this.props.canEdit && this.state.astReady &&
+                <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
+                   title="This will make abstract image of your code">
+                  <i className={"write square icon"}></i>Draw AST
+                </a>
+                */}
                 <div id="codeflower" ref="codeflower"></div>
               </div>
               }

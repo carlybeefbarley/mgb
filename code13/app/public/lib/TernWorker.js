@@ -95,6 +95,8 @@ function parseNode(node, buffer, depth){
   var tmp;
   if(node.type === "ImportDeclaration"){
     var filename = node.source.value;
+    var spec = node.specifiers && node.specifiers[0] ? node.specifiers[0].local : null;
+    var name = spec  && spec.local ? spec.local.name : filename
     if(!server.fileMap[filename]){
       filename = filename.substr(2);
       // this is external file.... check defs???
@@ -102,7 +104,7 @@ function parseNode(node, buffer, depth){
         if(uniqueNames[node.source.value]) return
         tmp = {
           size: 100, // make external libs large
-          name: node.source.value,
+          name: name,
           children: []
         }
         buffer.push(tmp);
@@ -112,7 +114,7 @@ function parseNode(node, buffer, depth){
         // scan only first level...
         if(defs){
           Object.keys(defs).forEach(function(key){
-            if(key.substr(0, 1) === "!" || key.substr(0, 1) === "_"){
+            if( key.length > 1 && (key.substr(0, 1) === "!" || key.substr(0, 1) === "_") ){
               return;
             }
             Object.keys(defs[key]).forEach(function(key){

@@ -23,11 +23,11 @@ class ExportController extends Component {
 
     launchExportModal = () => {
         const content = <ExportModal actions={{
-            disableModal: this.props.actions.disableModal,
+            // disableModal: this.props.actions.disableModal,
             saveMIDI: this.saveMIDI,
             saveWAV: this.saveWAV,
         }} />
-        this.props.actions.enableModal({ content, isCloseable: true, title: 'Export Riff' });
+        // this.props.actions.enableModal({ content, isCloseable: true, title: 'Export Riff' });
     }
 
     render = () => (

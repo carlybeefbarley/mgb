@@ -21,10 +21,10 @@ export default class InstrumentList extends Component {
 
     launchSettings = instrument => {
         const content = <InstrumentSettingsPane instrument={instrument} actions={{
-            disableModal: this.props.actions.disableModal,
+            // disableModal: this.props.actions.disableModal,
             updateInstrumentPitch: this.props.actions.updateInstrumentPitch,
         }} />
-        this.props.actions.enableModal({ content, isCloseable: true, title: `${ instrument.description || instrument.id } Settings` });
+        // this.props.actions.enableModal({ content, isCloseable: true, title: `${ instrument.description || instrument.id } Settings` });
     }
 
     render = () => {
@@ -89,6 +89,6 @@ const InstrumentSettingsPane = ({ instrument, actions }) => (
         <div className="u-mb1">
             <PitchController pitch={instrument.pitch} id={instrument.id} actions={{ updateInstrumentPitch: actions.updateInstrumentPitch }} />
         </div>
-        <button className="button-primary button-primary--small button-primary--positive" onClick={ actions.disableModal } >Continue</button>
+        {/* <button className="button-primary button-primary--small button-primary--positive" onClick={ actions.disableModal } >Continue</button> */}
     </div>
 );

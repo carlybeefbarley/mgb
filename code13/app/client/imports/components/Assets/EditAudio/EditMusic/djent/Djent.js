@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import BeatsController from './components/BeatsController';
 import Expandable from './components/Expandable';
-import ExportController from './components/ExportController';
+// import ExportController from './components/ExportController';
 import InstrumentList from './components/InstrumentList';
 import Panel from './components/Panel';
 import Spinner from './components/Spinner';
@@ -13,7 +13,7 @@ import BPMController from './components/BPMController';
 import BPMTapper from './components/BPMTapper';
 import SoundController from './components/SoundController';
 import Visualiser from './components/Visualiser';
-import Modal from './components/Modal';
+// import Modal from './components/Modal';
 
 import presets from './utils/presets';
 import { getActiveSoundsFromHitTypes } from './utils/instruments';
@@ -74,6 +74,8 @@ export default class Djent extends Component {
         this.actions.updateFadeIn = this.updateFadeIn.bind(this)
         this.actions.toggleSettings = this.toggleSettings.bind(this)
 
+        this.actions.enableModal = this.enableModal.bind(this)
+        this.actions.disableModal = this.disableModal.bind(this)
     }
 
 
@@ -279,6 +281,14 @@ export default class Djent extends Component {
         }, 300)
     }
 
+    enableModal(){
+      
+    }
+
+    disableModal(){
+      
+    }
+
     // -------------- actions ----------------------
 
 
@@ -290,7 +300,7 @@ export default class Djent extends Component {
 
         return (
             <section>
-                <Modal />
+                {/* <Modal /> */}
                 <div>
                     <div>
                         <div>

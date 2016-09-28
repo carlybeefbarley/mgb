@@ -181,9 +181,9 @@ class SoundController extends Component {
 
         // Set up volume and fades
         currentSrc.connect(this.currentGainNode);
-        this.currentGainNode.gain.value = 0;
+        this.currentGainNode.gain.value = 1;
         this.currentGainNode.connect(this.audioContext.destination);
-        this.currentGainNode = fadeIn(this.currentGainNode, (this.props.fadeIn ? 5000 : 0));
+        // this.currentGainNode = fadeIn(this.currentGainNode, (this.props.fadeIn ? 5000 : 0));
 
         loop(currentSrc, this.props.isLooping);
         this.props.actions.updateIsPlaying(true);

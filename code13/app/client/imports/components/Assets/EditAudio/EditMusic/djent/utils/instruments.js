@@ -9,7 +9,7 @@ import {
     repeatArray,
 } from './tools';
 
-import { playSound } from './audio';
+// import { playSound } from './audio';
 
 const getInstrumentsSequences = ({ instruments, sequences, totalBeats, usePredefinedSettings }) =>
 

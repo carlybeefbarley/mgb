@@ -1,43 +1,25 @@
-import React from 'react'
+import React, { Proptypes } from 'react'
+import { Icon, Button } from 'stardust'
 
-export default class AssetShowStableSelector extends React.Component {
-  // propTypes:{
-  //   showStableFlag: React.PropTypes.string,           // "1"" or "0". If "1", show only stable assets
-  //   handleChangeFlag: React.PropTypes.func            // params = newShowStableFlag
-  //   }
+export default AssetShowStableSelector = props => {
+  const { showStableFlag, handleChangeFlag } = props
+  const active = showStableFlag === "1"
 
-  constructor(props) {
-    super(props);
-  }
-  
-  // React Callback: componentDidMount()
-  componentDidMount() {
-    $(".assetShowStablePopup").popup()
-  }
+  return (
+    <Button 
+        color={ active ? 'blue' : null } 
+        onClick={() => handleChangeFlag( active ? "0" : "1" ) }
+        data-delay='250'
+        data-position='bottom left'
+        data-tooltip={ active ? 
+                          "Currently showing ONLY 'Complete' assets. Click here to ALSO show 'Incomplete' assets" 
+                        : "Currently showing 'Complete' AND 'Incomplete' assets. Click here to ONLY show 'Complete' assets"}>
+      <Icon name='lock' />
+    </Button>
+  )
+}
 
-  componentWillUnmount() {
-    $(".assetShowStablePopup").popup('destroy')
-  }
-
-  handleChangeFlagClick()
-  {
-    // Flip between "0" and "1"
-    return this.props.handleChangeFlag( this.props.showStableFlag === "1" ? "0" : "1" )
-  }
-
-  render() {
-    let active = this.props.showStableFlag === "1"
-    return (
-      <a className={"assetShowStablePopup ui " + (active ? "blue button" : "button")} 
-          data-value="showStable"
-          onClick={this.handleChangeFlagClick.bind(this)}
-          data-position="bottom center"
-          data-title="Show/hide unstable assets"
-          data-content={ active ? 
-                                  "Click here to show both 'stable' and 'unstable' assets" 
-                                : "Click here to only show stable assets"}>
-        <i className="checkmark icon"></i>
-      </a>
-    )
-  }
+AssetShowStableSelector.propTypes = {
+  showStableFlag: React.PropTypes.string,           // "1"" or "0". If "1", show only stable assets
+  handleChangeFlag: React.PropTypes.func            // params = newShowStableFlag.. should be "1" or "0"
 }

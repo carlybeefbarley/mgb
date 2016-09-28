@@ -4,9 +4,14 @@ import { Link } from 'react-router'
 import { Azzets, Projects } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import AssetList from '/client/imports/components/Assets/AssetList'
-import { AssetKindKeys, assetMakeSelector, safeAssetKindStringSepChar } from '/imports/schemas/assets'
-import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
+
 import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSelector.js'
+import { AssetKindKeys, assetMakeSelector, safeAssetKindStringSepChar } from '/imports/schemas/assets'
+
+import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
+import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
+
+import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 
 export default fpAssets = React.createClass({
   mixins: [ReactMeteorData],
@@ -20,6 +25,7 @@ export default fpAssets = React.createClass({
 
   getInitialState: () => ( { 
     searchName: "", 
+    view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation.  
     kindsActive: AssetKindKeys.join(safeAssetKindStringSepChar),
     project: null 
   } ),
@@ -120,7 +126,7 @@ export default fpAssets = React.createClass({
   render: function () {
     const { assets, userProjects, loading } = this.data       // list of assets provided via getMeteorData()
     const { user, currUser } = this.props
-    const { kindsActive, searchName, project } = this.state
+    const { view, kindsActive, searchName, project } = this.state
 
     return (
       <div>
@@ -154,17 +160,20 @@ export default fpAssets = React.createClass({
                 showCompact={true} 
                 kindsActive={kindsActive} 
                 handleToggleKindCallback={this.handleToggleKind} />
+            <AssetListChooseView 
+                sty={{marginTop: '8px', marginLeft: '0.5em'}}
+                chosenView={view} 
+                handleChangeViewClick={(newView) => this.setState( { view: newView} ) } />                
           </div>
-          
 
         </div>
         <br></br>
         { loading ? <Spinner /> : 
           <AssetList
               allowDrag={true}
+              renderView={view}
               assets={assets} 
-              currUser={currUser}
-              renderType="short" />
+              currUser={currUser} />
         }
       </div>
     )

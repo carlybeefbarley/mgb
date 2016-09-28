@@ -64,7 +64,7 @@ export default AssetKindsSelector =  React.createClass({
           data-title="All"
           data-content="Click to show all asset kinds">
         <i className="asterisk icon"></i>
-        { showCompact ? <span> All&nbsp;</span> : <span>{allActive ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>} All</span> }
+        { showCompact ? <small> All&nbsp;</small> : <span>{allActive ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>} All</span> }
       </a>
     )
 

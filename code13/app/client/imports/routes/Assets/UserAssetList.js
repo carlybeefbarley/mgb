@@ -8,26 +8,29 @@ import { logActivity } from '/imports/schemas/activity'
 
 import AssetList from '/client/imports/components/Assets/AssetList'
 import CreateAssetLinkButton from '/client/imports/components/Assets/NewAsset/CreateAssetLinkButton'
-import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSelector.js'
-import AssetShowDeletedSelector from '/client/imports/components/Assets/AssetShowDeletedSelector.js'
-import AssetShowStableSelector from '/client/imports/components/Assets/AssetShowStableSelector.js'
+import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSelector'
+import AssetShowDeletedSelector from '/client/imports/components/Assets/AssetShowDeletedSelector'
+import AssetShowStableSelector from '/client/imports/components/Assets/AssetShowStableSelector'
 import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
+import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
+import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 
 import { utilPushTo } from '../QLink'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
-import UserItem from '/client/imports/components/Users/UserItem.js'
+import UserItem from '/client/imports/components/Users/UserItem'
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = { 
-  project: null,        // Null string means match all
-  searchName: "",       // Empty string means match all (more convenient than null for input box)
-  sort: "edited",       // Should be one of the keys of assetSorters{}
-  showDeleted: "0",     // Should be "0" or "1"  -- as a string
-  showStable: "0",      // Should be "0" or "1"  -- as a string
-  kinds: ""             // Asset kinds. Empty means 'match all valid, non-disabled assets'
+  project: null,                // Null string means match all
+  view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
+  searchName: "",               // Empty string means match all (more convenient than null for input box)
+  sort: "edited",               // Should be one of the keys of assetSorters{}
+  showDeleted: "0",             // Should be "0" or "1"  -- as a string
+  showStable: "0",              // Should be "0" or "1"  -- as a string
+  kinds: ""                     // Asset kinds. Empty means 'match all valid, non-disabled assets'
 }
 
 export default UserAssetListRoute = React.createClass({
@@ -60,7 +63,10 @@ export default UserAssetListRoute = React.createClass({
     // query.sort
     if (assetSorters.hasOwnProperty(q.sort))
       newQ.sort = q.sort
-    
+
+    if (assetViewChoices.hasOwnProperty(q.view))
+      newQ.view = q.view
+
     // query.project
     if (q.project)
       newQ.project = q.project
@@ -208,6 +214,11 @@ export default UserAssetListRoute = React.createClass({
     this._updateLocationQuery( {sort: newSort})
   },
 
+  handleChangeViewClick(newView)
+  {
+    this._updateLocationQuery( {view: newView})
+  },
+
   handleSearchGo()
   {
     // TODO - disallow/escape search string
@@ -262,7 +273,7 @@ export default UserAssetListRoute = React.createClass({
     let assets = this.data.assets       // list of assets provided via getMeteorData()
     let projects = this.data.projects   // can be null due to empty or still loading, or public-assets
 
-    const { user, ownsProfile, location } = this.props
+    const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ""
     const qN = this.queryNormalized(location.query)
 
@@ -336,6 +347,10 @@ export default UserAssetListRoute = React.createClass({
           <div className="ui row">
             <CreateAssetLinkButton />
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
+            <AssetListChooseView 
+                sty={{ float: 'right', marginRight: '12px'}}
+                chosenView={qN.view} 
+                handleChangeViewClick={this.handleChangeViewClick} />
           </div>
           
           { hiddenDivider }
@@ -349,7 +364,8 @@ export default UserAssetListRoute = React.createClass({
                 <AssetList 
                   allowDrag={true}
                   assets={assets} 
-                  currUser={this.props.currUser} 
+                  renderView={qN.view}
+                  currUser={currUser} 
                   ownersProjects={projects}  />
             }
           </div>

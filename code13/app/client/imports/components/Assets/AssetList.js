@@ -1,38 +1,30 @@
 import React, { PropTypes } from 'react'
 import AssetCard from './AssetCard.js'
 
-export default  AssetList = React.createClass({
-  propTypes: {
-    assets: PropTypes.array.isRequired,
-    ownersProjects: PropTypes.array,        // Project array for Asset Owner - only makes sense if the assets all belong to same user (and should only be set by caller in this case). If provided, pass to AssetCard
-    currUser: PropTypes.object,             // currently Logged In user (not always provided)
-    canEdit: PropTypes.bool,                // Can be false
-    renderType: PropTypes.string,           // One of null/undefined  OR  "short"
-    allowDrag: PropTypes.bool.isRequired        // True if drag is allowed
-
-  },
-
-  render: function() {
-    let assetCards = this.props.assets.map((asset) => {
-      return (
+export default AssetList = props => (
+  <div className="ui cards">
+    {
+      props.assets.map((asset) => (
         <AssetCard
-          canEdit={this.props.currUser && asset.ownerId === this.props.currUser._id}
-          currUser={this.props.currUser}
+          canEdit={props.currUser && asset.ownerId === props.currUser._id}
+          currUser={props.currUser}
           asset={asset}
-          ownersProjects={this.props.ownersProjects}
+          ownersProjects={props.ownersProjects}
           key={asset._id}
           showEditButton={true}
-          showToast={this.props.showToast} 
-          renderType={this.props.renderType}
-          allowDrag={this.props.allowDrag}
-          />
-      )
-    })
+          showToast={props.showToast}
+          renderView={props.renderView}
+          allowDrag={props.allowDrag} />
+      ))
+    }
+  </div>
+)
 
-    return (
-      <div className="ui cards">
-        {assetCards}
-      </div>
-    )
-  }
-})
+AssetList.propTypes = {
+  assets: PropTypes.array.isRequired,
+  ownersProjects: PropTypes.array,        // Project array for Asset Owner - only makes sense if the assets all belong to same user (and should only be set by caller in this case). If provided, pass to AssetCard
+  currUser: PropTypes.object,             // currently Logged In user (not always provided)
+  canEdit: PropTypes.bool,                // Can be false
+  renderView: PropTypes.string,           // One of null/undefined  OR  one of the keys of AssetCard.assetViewChoices
+  allowDrag: PropTypes.bool.isRequired    // True if drag is allowed
+}

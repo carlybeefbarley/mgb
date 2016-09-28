@@ -102,11 +102,13 @@ const renderInstrumentSoundsAtTempo = (instruments, totalBeats, bpmMultiplier, a
             const pitchAmount       = instrument.pitch || 0;
             const instrumentSound    = instrument.buffers[instrument.hitTypes[i]];
             const instrumentBuffer   = instrumentSound.getChannelData(0)
+            const instrumentBuffer2   = instrumentSound.getChannelData(1)
             // const startTime          = offlineCtx.currentTime + (time * bpmMultiplier);
             const startTime          = (time * bpmMultiplier);
             const duration           = instrument.ringout ? instrumentSound.duration : ((1 / instrument.sequence[i].beat) * bpmMultiplier);
 
             sumBuffers(instrumentBuffer, startTime, duration, instrument.sequence[i].volume, pitchAmount, bufferData)
+            sumBuffers(instrumentBuffer2, startTime, duration, instrument.sequence[i].volume, pitchAmount, bufferData)
         })
     })
 

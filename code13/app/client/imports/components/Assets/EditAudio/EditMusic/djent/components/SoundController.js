@@ -162,7 +162,7 @@ class SoundController extends Component {
                 setTimeout(() => {
                     // console.log(self.audioContext.state)
                     if(self.audioContext.state == "suspended"){
-                        console.log('stop audio')
+                        // console.log('stop audio')
                         self.stopEvent()
                     }
                 }, 100)

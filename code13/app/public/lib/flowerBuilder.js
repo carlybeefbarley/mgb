@@ -109,10 +109,10 @@ var flowerBuilder = {
     var collected = [];
     while(n.object){
       if(n.property.name){
-        collected.push(n.property.name)
+        collected.push(n.property)
       }
       if(n.object.name) {
-        collected.push(n.object.name)
+        collected.push(n.object)
       }
       n = n.object
     }
@@ -126,7 +126,7 @@ var flowerBuilder = {
     // usually we will need to create only prototype for function.. but it will support deeper nesting also
     while(collected.length){
       var p = collected.pop()
-      name += p;
+      name += p.name;
 
       par = this.getParentByName(name, buffer)
       if(par){
@@ -145,11 +145,11 @@ var flowerBuilder = {
 
       tmp = {
         name: name,
-        displayName: p,
+        displayName: p.name,
         children: [],
         depth: ++d,
         colorId: colorId,
-        start: node.start,
+        start: p.end,
         end: node.end
       };
       if(this.config.local){
@@ -262,7 +262,7 @@ var flowerBuilder = {
       children: [],
       depth: depth,
       colorId: colorId,
-      start: node.start,
+      start: node.id.end,
       end: node.end
     };
     if(this.config.local){
@@ -299,7 +299,7 @@ var flowerBuilder = {
       children: [],
       depth: depth,
       colorId: colorId,
-      start: node.start,
+      start: node.key.end,
       end: node.end
     }
     if(this.config.local){
@@ -433,7 +433,7 @@ var flowerBuilder = {
       children: [],
       depth: depth,
       colorId: colorId,
-      start: node.start,
+      start: left.end,
       end: node.end
     }
     if(this.config.local){

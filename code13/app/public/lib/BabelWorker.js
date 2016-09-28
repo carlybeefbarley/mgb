@@ -22,7 +22,7 @@ onmessage = function (e) {
 
   var trans
   try {
-    trans = Babel.transform(srcText, options);
+    trans = Babel.transform(srcText , options);
   }
     // TODO: what to do if babel fails to transform code?
   catch (e) {

@@ -137,7 +137,7 @@ var flowerBuilder = {
         continue
       }
 
-      if(p === "prototype" && ppar){
+      if(p.name === "prototype" && ppar){
         if(this.config.local) {
           ppar.color = COLORS.class
         }

@@ -395,7 +395,19 @@ var flowerBuilder = {
     if(node.key.name === "constructor"){
       if(node.value && node.value.body && node.value.body.body){
         // buffer as constructor nodes will be at same level as constructor
-        this.scanNodes(node.value.body.body, buffer, ++depth, colorId, prefix + "." + node.key.name)
+        var nodes = node.value.body.body
+        for(var i=0; i<nodes.length; i++) {
+          var n = nodes[i]
+          if(n.type == "VariableDeclaration"){
+            // these are local variables....
+            this.parseNode(nodes[i], tmp.children, depth, colorId, prefix + "." + node.key.name)
+          }
+          else{
+            // these are members of class
+            this.parseNode(nodes[i], buffer, depth, colorId, prefix + "." + node.key.name)
+          }
+        }
+        //this.scanNodes(node.value.body.body, buffer, ++depth, colorId, prefix + "." + node.key.name)
       }
     }
     if(this.config.local){

@@ -1092,6 +1092,9 @@ export default class EditCode extends React.Component {
       const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
         showNames: false,
         onclick: (node) => {
+          // make node stay in place
+          node.fixed = true;
+
           //console.log("node callback: ", node)
           const cm = this.codeMirror
           let char = 0

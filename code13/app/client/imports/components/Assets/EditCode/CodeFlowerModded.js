@@ -21,9 +21,9 @@ window.mgb_flower_config = {
 */
 
 window.mgb_flower_config = {
-  "mainCharge": -300,
-  "charge": -500,
-  "chargePerChild": -20,
+  "mainCharge": -500,
+  "charge": -200,
+  "chargePerChild": -200,
   "link": 10,
   "linkPerChild": 5,
   "link_at_same_level": 0

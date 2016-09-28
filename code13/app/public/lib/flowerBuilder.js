@@ -388,7 +388,7 @@ var flowerBuilder = {
       children: [],
       depth: depth,
       colorId: colorId,
-      start: node.start,
+      start: node.key.end,
       end: node.end
     }
     // special case

@@ -156,7 +156,16 @@ class SoundController extends Component {
                 // console.log('buffer is generated!', buffer)
 
                 this.updateUI(newState);
+
                 self.setState({ isGenerating: false })
+                // for mobile devices where user input should be triggered
+                setTimeout(() => {
+                    // console.log(self.audioContext.state)
+                    if(self.audioContext.state == "suspended"){
+                        console.log('stop audio')
+                        self.stopEvent()
+                    }
+                }, 100)
                 return {buffer, instruments};
             });
     }

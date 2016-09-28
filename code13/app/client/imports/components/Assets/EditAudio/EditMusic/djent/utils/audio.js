@@ -205,7 +205,7 @@ const getPitchPlaybackRatio = (pitchAmount) => {
 }
 
 const playSound = (context, buffer, time, duration, volume, pitchAmount = 0) => {
-    console.log(context, buffer, time, duration, volume, pitchAmount)
+    // console.log(context, buffer, time, duration, volume, pitchAmount)
     if (!buffer) return;
 
     const source = context.createBufferSource();

@@ -18,7 +18,7 @@ const SomeProjects = props => {
     return (isOwner !== ownedFlag) ? null : (
       <Grid key={project._id}>
         <Grid.Column width={4}>
-          <Image fluid src={projImg} />
+          <Image fluid src={projImg} className='mgb-pixelated'/>
         </Grid.Column>
         <Grid.Column width={12}>
           <Header as='h4'>

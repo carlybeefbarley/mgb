@@ -70,7 +70,8 @@ const getActiveSoundsFromHitTypes = (hitTypes) =>
 
 const renderInstrumentSoundsAtTempo = (instruments, totalBeats, bpmMultiplier) => {
     const timeLength = totalBeats * bpmMultiplier;
-    const offlineCtx = new OfflineAudioContext(2, 44100 * timeLength, 44100);
+    // const offlineCtx = new OfflineAudioContext(2, 44100 * timeLength, 44100);
+    const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(2, 44100 * timeLength, 44100);
 
     instruments.forEach((instrument) => {
         let startTimes = [];

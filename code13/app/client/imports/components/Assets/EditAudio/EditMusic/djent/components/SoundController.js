@@ -165,7 +165,7 @@ class SoundController extends Component {
 
     playEvent = (currentBuffer) => {
         if (!currentBuffer || this.state.error) return;
-        if (!this.audioContext) this.audioContext = new AudioContext();
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
         this.currentGainNode = this.audioContext.createGain();
 
         const currentSrc = currentBuffer ? play(this.audioContext, currentBuffer) : null;

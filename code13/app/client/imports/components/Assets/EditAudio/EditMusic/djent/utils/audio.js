@@ -1,3 +1,5 @@
+import AudioConverter from '../../../lib/AudioConverter.js'
+
 const bufferCache = {};
 const BufferLoader = (context) => {
     let newInstrumentPack = [];
@@ -25,17 +27,26 @@ const BufferLoader = (context) => {
                 // Load buffer asynchronously
                 const request = new XMLHttpRequest();
                 request.open("GET", url, true);
-                request.responseType = "arraybuffer";
+                // request.responseType = "arraybuffer";
+                request.responseType = "blob";
+
+                console.log(url)
 
                 request.onload = () => {
                     // Asynchronously decode the audio file data in request.response
-                    context.decodeAudioData(
-                        request.response,
-                        (buffer) => {
-                            if (!buffer) {
-                                alert('error decoding file data: ' + url);
-                                return;
-                            }
+                    // console.log(request.response)
+                    const converter = new AudioConverter(context)
+
+                    // const dataUri = window.URL.createObjectURL(request.response)
+                    // console.log(dataUri)
+                    // converter.dataUriToBuffer(dataUri, (buffer) => {
+                    //     console.log(buffer)
+                    // }, true)
+
+                    converter.blobToDataURL(request.response, (dataUri) => {
+                        // console.log(dataUri)
+                        converter.dataUriToBuffer(dataUri, (buffer) => {
+                            console.log(buffer)
                             newInstrument.buffers[sound.id] = buffer;
                             bufferCache[url] = buffer;
                             newInstrumentPack[index] = newInstrument;
@@ -43,11 +54,112 @@ const BufferLoader = (context) => {
                             if(bufferCount === bufferAmount) {
                                 res();
                             }
-                        },
-                        (error) => {
-                            rej(error);
-                        }
-                    );
+                        }, true)
+                    })
+
+                    // context.decodeAudioData(
+                    //     request.response,
+                    //     (buffer) => {
+                    //         if (!buffer) {
+                    //             alert('error decoding file data: ' + url);
+                    //             return;
+                    //         }
+                    //         newInstrument.buffers[sound.id] = buffer;
+                    //         bufferCache[url] = buffer;
+                    //         newInstrumentPack[index] = newInstrument;
+                    //         bufferCount++;
+                    //         if(bufferCount === bufferAmount) {
+                    //             res();
+                    //         }
+                    //     },
+                    //     (error) => {
+                    //         rej(error);
+                    //         alert('decode audio error')
+                    //     }
+                    // );
+
+
+
+                    // context.decodeAudioData(
+                    //     request.response,
+                    //     (buffer) => {
+                    //         if (!buffer) {
+                    //             alert('error decoding file data: ' + url);
+                    //             return;
+                    //         }
+                    //         newInstrument.buffers[sound.id] = buffer;
+                    //         bufferCache[url] = buffer;
+                    //         newInstrumentPack[index] = newInstrument;
+                    //         bufferCount++;
+                    //         if(bufferCount === bufferAmount) {
+                    //             res();
+                    //         }
+                    //     },
+                    //     (error) => {
+                    //         rej(error);
+                    //         alert('decode audio error')
+                    //     }
+                    // );
+
+
+
+
+
+
+
+                    // function syncStream(node){ // should be done by api itself. and hopefully will.
+                    //     var buf8 = new Uint8Array(node.buf); 
+                    //     buf8.indexOf = Array.prototype.indexOf;
+                    //     var i=node.sync, b=buf8;
+                    //     while(1) {
+                    //         node.retry++;
+                    //         i=b.indexOf(0xFF,i); if(i==-1 || (b[i+1] & 0xE0 == 0xE0 )) break;
+                    //         i++;
+                    //     }
+                    //     if(i!=-1) {
+                    //         var tmp=node.buf.slice(i); //carefull there it returns copy
+                    //         delete(node.buf); node.buf=null;
+                    //         node.buf=tmp;
+                    //         node.sync=i;
+                    //         return true;
+                    //     }
+                    //     return false;
+                    // }
+
+                    // function decode(node) {
+                    //     try{
+                    //         context.decodeAudioData(node.buf,
+                    //         function(buffer){
+                    //             node.source  = context.createBufferSource();
+                    //             node.source.connect(context.destination);
+                    //             node.source.buffer=buffer; 
+                    //             // node.source.noteOn(0);
+
+                    //             newInstrument.buffers[sound.id] = buffer;
+                    //             bufferCache[url] = buffer;
+                    //             newInstrumentPack[index] = newInstrument;
+                    //             bufferCount++;
+                    //             if(bufferCount === bufferAmount) {
+                    //                 res();
+                    //             }
+
+                    //         },
+                    //         function(){ // only on error attempt to sync on frame boundary
+                    //             if(syncStream(node)) decode(node);
+                    //         });
+                    //     } catch(e) {
+                    //         alert('decode exception',e.message);
+                    //     }
+                    // }
+
+                    // let node = {}
+                    // node.buf = request.response
+                    // node.sync = 0
+                    // node.retry = 0 
+                    // decode(node)
+
+
+
                 }
 
                 request.onerror = (error) => {

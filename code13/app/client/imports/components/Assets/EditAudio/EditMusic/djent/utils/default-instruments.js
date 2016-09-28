@@ -455,7 +455,7 @@ const defaultInstruments = [
             {
                 id: 'k',
                 description: 'Basic kick',
-                path: '/audio/metalSamples/mastered/kick.ogg',
+                path: '/audio/metalSamples/mastered/kick.mp3',
                 enabled: true,
                 midi: {
                     pitch: [ kickMidiNote ],
@@ -470,7 +470,7 @@ const defaultInstruments = [
             {
                 id: 's',
                 description: 'Basic snare',
-                path: '/audio/metalSamples/mastered/snare.ogg',
+                path: '/audio/metalSamples/mastered/snare.mp3',
                 enabled: true,
                 midi: {
                     pitch: [ snareMidiNote ],
@@ -523,7 +523,7 @@ const defaultInstruments = [
             {
                 id: 'china-left',
                 description: 'China left',
-                path: '/audio/metalSamples/mastered/china-left.ogg',
+                path: '/audio/metalSamples/mastered/china-left.mp3',
                 enabled: true,
                 category: 'China',
                 midi: {

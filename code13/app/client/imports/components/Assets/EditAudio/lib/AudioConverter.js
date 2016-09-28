@@ -3,18 +3,24 @@ import lamejs from '../lib/lame.all.js'
 let AudioConverter = function(audioCtx){
 	this.audioCtx = audioCtx
 
-	this.dataUriToBuffer = function(dataUri, callback){
-		let reader = new FileReader()
+  this.dataUriToBuffer = function(dataUri, callback, respAudioBufferObject){
+    let blob = this.dataURItoBlob(dataUri)
+    this.blobToBuffer(blob, callback, respAudioBufferObject)
+  }
+
+  this.blobToBuffer = function(blob, callback, respAudioBufferObject){
+    let reader = new FileReader()
     reader.onload = (e) => {
       let audioData = e.target.result
       this.audioCtx.decodeAudioData(audioData, (audioBuffer) => {
       	var channelData = audioBuffer.getChannelData(0)	// reads only mono
-        callback(channelData)
+        respAudioBufferObject ? callback(audioBuffer) : callback(channelData)
+      }, (error) => {
+      	console.warn("decode audio error", error)
       })
     }
-    let blob = this.dataURItoBlob(dataUri)
     reader.readAsArrayBuffer(blob)
-	}
+  }
 
 	// datUri will be mp3
 	this.bufferToDataUri = function(buffer, callback){
@@ -37,6 +43,12 @@ let AudioConverter = function(audioCtx){
 	  var blob = new Blob([ab], {type: mimeString});
 	  return blob;
 	}
+
+  this.blobToDataURL = function(blob, callback) {
+    var reader = new FileReader()
+    reader.onload = function(e) {callback(e.target.result)}
+    reader.readAsDataURL(blob)
+  }
 
 	this.float32ToInt16 = function(float32){
 		let samples = new Int16Array(float32.length);

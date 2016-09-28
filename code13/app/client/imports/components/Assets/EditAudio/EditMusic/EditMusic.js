@@ -144,9 +144,9 @@ export default class EditMusic extends React.Component {
 
   stopPopupAudio () {
     // console.log("stop popup audio")  
-    this.refs.importMusic.stopMusic()
-    this.refs.generateMusic.stop()
-    this.refs.generate8bit.stop()
+    if(this.refs.importMusic) this.refs.importMusic.stopMusic()
+    if(this.refs.generateMusic) this.refs.generateMusic.stop()
+    if(this.refs.generate8bit) this.refs.generate8bit.stop()
   }
 
   openStockPopup () {

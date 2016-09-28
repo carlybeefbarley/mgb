@@ -485,7 +485,7 @@ const defaultInstruments = [
             {
                 id: 'h',
                 description: 'Basic hihat',
-                path: '/audio/metalSamples/mastered/hihat.ogg',
+                path: '/audio/metalSamples/mastered/hihat.mp3',
                 enabled: false,
                 midi: {
                     pitch: [ hihatMidiNote ],
@@ -501,7 +501,7 @@ const defaultInstruments = [
             {
                 id: 'crash-left',
                 description: 'Crash left',
-                path: '/audio/metalSamples/mastered/crash-left.ogg',
+                path: '/audio/metalSamples/mastered/crash-left.mp3',
                 enabled: false,
                 category: 'Crash',
                 midi: {
@@ -512,7 +512,7 @@ const defaultInstruments = [
             {
                 id: 'crash-right',
                 description: 'Crash right',
-                path: '/audio/metalSamples/mastered/crash-right.ogg',
+                path: '/audio/metalSamples/mastered/crash-right.mp3',
                 enabled: false,
                 category: 'Crash',
                 midi: {

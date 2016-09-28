@@ -238,8 +238,8 @@ class SoundController extends Component {
     }
 
     updateInstrumentsAndPlay = (buffer, instruments) => {
-        this.playEvent(buffer);
         this.props.actions.updateCustomPresetInstruments(instruments);
+        this.playEvent(buffer);
     }
 
     importWav(){

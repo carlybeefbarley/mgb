@@ -12,18 +12,19 @@
         },
         "sourceType": "module"
     },
+    "globals": {
+        "Meteor": false,
+        "$": false,
+    },
     "plugins": [
         "react"
     ],
     "rules": {
-        "indent": [
-            "error",
-            4
-        ],
         "linebreak-style": [
             "error",
             "unix"
         ],
+        "react/jsx-uses-vars": 2,
         "indent": [
           "error",
           2

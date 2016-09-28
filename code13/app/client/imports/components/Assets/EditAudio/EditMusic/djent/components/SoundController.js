@@ -61,7 +61,8 @@ const generateNewBuffer = ({ bpm, beats, allowedLengths, hitChance, instruments,
     const grooveTotalBeatsProduct = grooveTotalBeats.beats * grooveTotalBeats.bars;
     const totalBeatsProduct       = totalBeats.beats * totalBeats.bars;
     const sequences               = getSequences(grooveTotalBeatsProduct, convertAllowedLengthsToArray(allowedLengths), hitChance);
-    return generateRiff({ bpm, totalBeatsProduct, allowedLengths, sequences, instruments, usePredefinedSettings })
+    let riff = generateRiff({ bpm, totalBeatsProduct, allowedLengths, sequences, instruments, usePredefinedSettings })
+    return riff
 }
 
 const play             = (audioContext, buffer) => playSound(audioContext, buffer, audioContext.currentTime, buffer.duration, 1);
@@ -148,6 +149,8 @@ class SoundController extends Component {
             .then(({ buffer, instruments }) => {
                 const newState = { isLoading: false, error: '' };
                 if (!buffer) newState.error = 'Error!'
+
+                console.log('buffer is generated!', buffer)
 
                 this.updateUI(newState);
                 self.setState({ isGenerating: false })

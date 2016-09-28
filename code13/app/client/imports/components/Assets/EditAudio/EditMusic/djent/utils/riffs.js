@@ -21,12 +21,11 @@ const generateRiff = ({ bpm, totalBeatsProduct, allowedLengths, sequences, instr
     const context        = new (window.AudioContext || window.webkitAudioContext)()
     const instrumentPack = getInstrumentsSequences({ sequences, instruments, usePredefinedSettings, totalBeats: totalBeatsProduct });
 
-    console.log(instrumentPack)
-
     return loadInstrumentBuffers(context, instrumentPack)
         .then((instrumentPack) => { 
-            console.log(instrumentPack)
-            return initiateInstruments({ context, instrumentPack, totalBeatsProduct, bpmMultiplier, usePredefinedSettings }) })
+            let initiatedInstruments = initiateInstruments({ context, instrumentPack, totalBeatsProduct, bpmMultiplier, usePredefinedSettings })
+            return initiatedInstruments 
+        })
         .then(({ buffer, instruments }) => {
             if (context.close) context.close();
             return Promise.resolve({ buffer, instruments })
@@ -42,11 +41,7 @@ const initiateInstruments = ({ context, instrumentPack, totalBeatsProduct, bpmMu
         generateInstrumentHitTypes
     )(instrument, usePredefinedSettings);
 
-    console.log(instrumentPack)
-
     const instruments = instrumentPack.map(createSoundMaps)
-
-    console.log(instruments)
 
     return renderInstrumentSoundsAtTempo(instruments, totalBeatsProduct, bpmMultiplier)
         .then(buffer => Promise.resolve({ buffer, instruments }));

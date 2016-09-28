@@ -365,7 +365,7 @@ var flowerBuilder = {
       children: [],
       depth: depth,
       colorId: colorId,
-      start: node.start,
+      start: node.id.end,
       end: node.end
     }
     if(this.config.local){

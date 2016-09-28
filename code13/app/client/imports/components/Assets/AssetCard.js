@@ -183,7 +183,7 @@ export default AssetCard = React.createClass({
                 showMicro={true}
                 canEdit={false}/>
             </div>
-            { (asset.text && asset.text !== "") && 
+            { viewOpts.showMeta && (asset.text && asset.text !== "") && 
               <div className="meta" style={{ "color": 'black'}}  onClick={this.handleEditClick} title="Asset Description">
                 <small>{asset.text}</small>
               </div>

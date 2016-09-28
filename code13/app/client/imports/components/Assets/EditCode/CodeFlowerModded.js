@@ -3,7 +3,7 @@
 //window.d3 = d3;
 import "./CodeFlower.css"
 import d3 from "d3"
-
+/*
 window.mgb_flower_config = {
   // this will make other nodes to float away from main node
   mainCharge: -2000,
@@ -18,11 +18,21 @@ window.mgb_flower_config = {
   // first level children goes under this link - it allows to pull closer children from same file
   link_at_same_level: -50
 }
+*/
 
+window.mgb_flower_config = {
+  "mainCharge": -300,
+  "charge": -500,
+  "chargePerChild": -20,
+  "link": 10,
+  "linkPerChild": 5,
+  "link_at_same_level": 0
+}
 export default CodeFlower = function (selector, w, h, options) {
   this.w = w;
   this.h = h;
-  this.aspect = this.w / 200
+  // test has 600px
+  this.aspect = this.w / 600
   this.options = options;
 
   d3.select(selector).selectAll("svg").remove();
@@ -44,9 +54,9 @@ export default CodeFlower = function (selector, w, h, options) {
     .charge((d) => {
       // main node - make all nodes to run away from it
       if(d.depth === 0){
-        return window.mgb_flower_config.mainCharge
+        return window.mgb_flower_config.mainCharge * this.aspect
       }
-      return !d.children ? window.mgb_flower_config.charge : d.children.length * window.mgb_flower_config.chargePerChild + window.mgb_flower_config.charge
+      return !d.children ? window.mgb_flower_config.charge * this.aspect : d.children.length * window.mgb_flower_config.chargePerChild * this.aspect + window.mgb_flower_config.charge * this.aspect
     })
     // length of link - charge will modify this value
     .linkDistance((d) => {
@@ -59,12 +69,12 @@ export default CodeFlower = function (selector, w, h, options) {
        s2 = d.source.children.length
        }*/
 
-      const s1 = !d.source.children ? window.mgb_flower_config.link :  (d.source.children.length * window.mgb_flower_config.linkPerChild) + window.mgb_flower_config.link
-      const s2 = !d.target.children ? window.mgb_flower_config.link :  (d.target.children.length * window.mgb_flower_config.linkPerChild) + window.mgb_flower_config.link
+      const s1 = !d.source.children ? window.mgb_flower_config.link * this.aspect :  (d.source.children.length * window.mgb_flower_config.linkPerChild * this.aspect) + window.mgb_flower_config.link * this.aspect
+      const s2 = !d.target.children ? window.mgb_flower_config.link * this.aspect :  (d.target.children.length * window.mgb_flower_config.linkPerChild * this.aspect) + window.mgb_flower_config.link * this.aspect
 
       let ret = s1 + s2
       if( (d.source.depth === 0 || d.target.depth === 0) && d.source.colorId == d.target.colorId){
-        ret = window.mgb_flower_config.link_at_same_level
+        ret = window.mgb_flower_config.link_at_same_level * this.aspect
       }
 
       return ret
@@ -74,11 +84,11 @@ export default CodeFlower = function (selector, w, h, options) {
     .size([w, h]);
 };
 CodeFlower.prototype.getNodeSize = function (d) {
-  const defaultSize = 2 * this.aspect
-  const maxSize = 10 * this.aspect
+  const defaultSize = 7 * this.aspect
+  const maxSize = 27 * this.aspect
 
   if (!d._size) {
-    d._size = d.size
+    d._size = d.size * this.aspect
   }
   let size;
   // collapsed
@@ -207,6 +217,10 @@ CodeFlower.prototype.update = function (json) {
       return this.getNodeSize(d) || 1;
     })
     .style("fill", function color(d) {
+      if(d.color){
+        return d.color
+      }
+
       let light = Math.min(30 + d.depth * 5, 100);
       light = parseInt(light * (1 + ( 0.2 - Math.random() * 0.4) ), 10);
 
@@ -264,11 +278,16 @@ CodeFlower.prototype.flatten = function (root) {
 };
 
 CodeFlower.prototype.click = function (d) {
-  console.log(d)
+  //console.log(d)
   if (this.mousemoved) {
     d.fixed = 1
     return
   }
+  if(this.options.onclick){
+    this.options.onclick(d)
+    return;
+  }
+
   // Toggle children on click.
   if (d.children) {
     d._children = d.children;

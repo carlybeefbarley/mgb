@@ -399,7 +399,7 @@ export default class EditCode extends React.Component {
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
       // user is typing - intensively working with document - don't update until it finishes
       if(this.changeTimeout){
-        console.log("Preventing update! User in action")
+        // console.log("Preventing update! User in action")
         return
       }
       console.log("Setting src to: ", newVal.substr(0, 3))
@@ -1090,7 +1090,35 @@ export default class EditCode extends React.Component {
       }, (tree) => {
       const w = $(this.refs.codeflower).width()
       const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
-        showNames: false
+        showNames: false,
+        onclick: (node) => {
+          //console.log("node callback: ", node)
+          const cm = this.codeMirror
+          let char = 0
+          const pos = {
+            ch: 0,
+            line: 0
+          }
+          if(!node.start){
+            cm.setCursor(pos)
+            cm.focus()
+            return
+          }
+          // we need to get line ch from char position
+          let found = false;
+          cm.eachLine((line) => {
+            if(found) return
+            if(node.start >= char && node.start < char + line.text.length){
+              pos.ch = node.start - char
+              found = true
+              return
+            }
+            pos.line++
+            char += (line.text.length + 1)
+          })
+          cm.setCursor(pos)
+          cm.focus()
+        }
       });
       flower.update(tree)
       this.setState({
@@ -1441,37 +1469,10 @@ export default class EditCode extends React.Component {
                   <i className={"write square icon"}></i>Set thumbnail
                 </a>
                 }
-
-                { this.state.astReady &&
-                <span className={(this.state.astFlowerReady && this.props.canEdit) ? "ui button labeled" : ""}>
-                  <a className="ui mini labeled icon button"  onClick={this.drawAstFlowerForThumbnail.bind(this, asset._id)}
-                     title="This will make abstract image of your code">For Thumb
-                    <i className="write square icon"></i>
-                  </a>
-                  <a className="ui mini labeled icon button"  onClick={this.drawAstFlowerFull.bind(this, asset._id)}
-                     title="This will make abstract image of your code">
-                    <i className="write square icon"></i>Full
-                  </a>
-                    { this.state.astFlowerReady && this.props.canEdit &&
-                    <a className="ui mini left pointing label write" onClick={() => {this.saveAstThumbnail( () => {} )}}
-                       title="Save as thumbnail"
-                      >
-                      <i className="write icon"></i>
-                    </a>
-                    }
-                </span>
-                }
-                {/* this.props.canEdit && this.state.astReady &&
-                <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
-                   title="This will make abstract image of your code">
-                  <i className={"write square icon"}></i>Draw AST
-                </a>
-                */}
-                <div id="codeflower" ref="codeflower"></div>
               </div>
               }
               { !docEmpty &&
-                // Code run/stop (body)                  
+                // Code run/stop (body)
               <div className="content">
                 <iframe
                   key={ this.state.gameRenderIterationKey }
@@ -1485,10 +1486,44 @@ export default class EditCode extends React.Component {
                   gotoLinehandler={this.gotoLineHandler.bind(this)}/>
               </div>
               }
-
-            </div>
+              { this.state.astReady &&
+              <div className="title">
+                <span className="explicittrigger">
+                    <i className="dropdown icon"></i>
+                    AST&nbsp;&nbsp;
+                </span>
+                <span className={(this.state.astFlowerReady && this.props.canEdit) ? "ui button labeled" : ""}
+                  style={{float: "right", marginTop: "-6px", position: "relative"}}>
+                  <a className="ui mini labeled icon button"
+                     onClick={this.drawAstFlowerForThumbnail.bind(this, asset._id)}
+                     title="This will make abstract image of your code">For Thumb
+                    <i className="write square icon"></i>
+                  </a>
+                  <a className="ui mini labeled icon button" onClick={this.drawAstFlowerFull.bind(this, asset._id)}
+                     title="This will make abstract image of your code">
+                    <i className="write square icon"></i>All Symbols
+                  </a>
+                  { this.state.astFlowerReady && this.props.canEdit &&
+                  <a className="ui mini left pointing label write" onClick={() => {this.saveAstThumbnail( () => {} )}}
+                     title="Save as thumbnail"
+                    >
+                    <i className="write icon"></i>
+                  </a>
+                  }
+                </span>
+              </div>
+              }
+                <div className="content active">
+                  {/* this.props.canEdit && this.state.astReady &&
+                   <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
+                   title="This will make abstract image of your code">
+                   <i className={"write square icon"}></i>Draw AST
+                   </a>
+                   */}
+                  <div id="codeflower" ref="codeflower"></div>
+                </div>
+              </div>
           </div>
-
         </div>
       </div>
     );

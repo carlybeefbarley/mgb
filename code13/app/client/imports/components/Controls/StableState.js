@@ -15,9 +15,9 @@ const StableState = (props) => {
 
   return (
     <Icon
-        title={isStable ? 'This Asset has been marked \'Done\' and is protected against edits. Click to allow edits again' : 'Click to marked this asset as \'Done\' so it is protected against accidetal edits. It\'s ok, you can clear the \'Done\' marker later if you need to'}
+        title={isStable ? 'This Asset has been marked \'Complete\' and is protected against edits. Click to allow edits again' : 'Click to mark this asset as \'Complete\' so it can be protected against accidental edits. It\'s ok, you can clear the \'Complete\' marker later if you change your mind'}
         onClick={() => { canEdit && handleChange && handleChange(!isStable) }} 
-        name={isStable ? 'inverted bordered blue checkmark' : 'bordered checkmark'} />
+        name={isStable ? 'inverted bordered blue lock' : 'bordered unlock'} />
   )
 }
 

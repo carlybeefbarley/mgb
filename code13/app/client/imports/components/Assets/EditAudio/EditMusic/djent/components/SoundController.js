@@ -61,7 +61,8 @@ const generateNewBuffer = ({ bpm, beats, allowedLengths, hitChance, instruments,
     const grooveTotalBeatsProduct = grooveTotalBeats.beats * grooveTotalBeats.bars;
     const totalBeatsProduct       = totalBeats.beats * totalBeats.bars;
     const sequences               = getSequences(grooveTotalBeatsProduct, convertAllowedLengthsToArray(allowedLengths), hitChance);
-    let riff = generateRiff({ bpm, totalBeatsProduct, allowedLengths, sequences, instruments, usePredefinedSettings })
+    if(!this.audioContext) this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    let riff = generateRiff({ bpm, totalBeatsProduct, allowedLengths, sequences, instruments, usePredefinedSettings }, this.audioContext)
     return riff
 }
 
@@ -135,6 +136,8 @@ class SoundController extends Component {
         this.setState({ isGenerating: true })
         const { bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings } = this.props;
 
+        if(!this.audioContext) this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+
         // console.log('bpm', bpm)
         // console.log(bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings)
 
@@ -150,7 +153,7 @@ class SoundController extends Component {
                 const newState = { isLoading: false, error: '' };
                 if (!buffer) newState.error = 'Error!'
 
-                console.log('buffer is generated!', buffer)
+                // console.log('buffer is generated!', buffer)
 
                 this.updateUI(newState);
                 self.setState({ isGenerating: false })
@@ -168,7 +171,7 @@ class SoundController extends Component {
 
     playEvent = (currentBuffer) => {
         if (!currentBuffer || this.state.error) return;
-        this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+        if(!this.audioContext) this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
         this.currentGainNode = this.audioContext.createGain();
 
         const currentSrc = currentBuffer ? play(this.audioContext, currentBuffer) : null;

@@ -30,7 +30,7 @@ const BufferLoader = (context) => {
                 // request.responseType = "arraybuffer";
                 request.responseType = "blob";
 
-                console.log(url)
+                // console.log(url)
 
                 request.onload = () => {
                     // Asynchronously decode the audio file data in request.response
@@ -46,7 +46,7 @@ const BufferLoader = (context) => {
                     converter.blobToDataURL(request.response, (dataUri) => {
                         // console.log(dataUri)
                         converter.dataUriToBuffer(dataUri, (buffer) => {
-                            console.log(buffer)
+                            // console.log(buffer)
                             newInstrument.buffers[sound.id] = buffer;
                             bufferCache[url] = buffer;
                             newInstrumentPack[index] = newInstrument;

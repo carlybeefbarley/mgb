@@ -68,7 +68,7 @@ const getActiveSoundsFromHitTypes = (hitTypes) =>
         }, [])
         .map(hit => ({ id: hit, enabled: true }));
 
-const renderInstrumentSoundsAtTempo = (instruments, totalBeats, bpmMultiplier) => {
+const renderInstrumentSoundsAtTempo = (instruments, totalBeats, bpmMultiplier, audioCtx) => {
     const timeLength = totalBeats * bpmMultiplier;
     // const offlineCtx = new OfflineAudioContext(2, 44100 * timeLength, 44100);
     // const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(2, 44100 * timeLength, 44100);
@@ -92,7 +92,7 @@ const renderInstrumentSoundsAtTempo = (instruments, totalBeats, bpmMultiplier) =
     // })
 
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)()
     const buffer = audioCtx.createBuffer(1, 44100 * timeLength, 44100)
     const bufferData = buffer.getChannelData(0)
     instruments.forEach((instrument) => {
@@ -102,16 +102,15 @@ const renderInstrumentSoundsAtTempo = (instruments, totalBeats, bpmMultiplier) =
             const pitchAmount       = instrument.pitch || 0;
             const instrumentSound    = instrument.buffers[instrument.hitTypes[i]];
             const instrumentBuffer   = instrumentSound.getChannelData(0)
-            const startTime          = offlineCtx.currentTime + (time * bpmMultiplier);
+            // const startTime          = offlineCtx.currentTime + (time * bpmMultiplier);
+            const startTime          = (time * bpmMultiplier);
             const duration           = instrument.ringout ? instrumentSound.duration : ((1 / instrument.sequence[i].beat) * bpmMultiplier);
 
-            // console.log(instrumentBuffer, startTime, duration, instrument.sequence[i].volume, pitchAmount)
             sumBuffers(instrumentBuffer, startTime, duration, instrument.sequence[i].volume, pitchAmount, bufferData)
         })
     })
 
     normalizeBuffer(bufferData)
-    console.log(bufferData)
 
     return new Promise((res, rej) => {
         res(buffer)

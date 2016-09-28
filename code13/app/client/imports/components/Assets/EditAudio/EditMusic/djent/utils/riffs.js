@@ -15,10 +15,10 @@ import {
     compose,
 } from './tools';
 
-const generateRiff = ({ bpm, totalBeatsProduct, allowedLengths, sequences, instruments, usePredefinedSettings }) => {
+const generateRiff = ({ bpm, totalBeatsProduct, allowedLengths, sequences, instruments, usePredefinedSettings}, context) => {
     // console.log(sequences, instruments)
     const bpmMultiplier  = 60 / bpm;
-    const context        = new (window.AudioContext || window.webkitAudioContext)()
+    // const context        = new (window.AudioContext || window.webkitAudioContext)()
     const instrumentPack = getInstrumentsSequences({ sequences, instruments, usePredefinedSettings, totalBeats: totalBeatsProduct });
 
     return loadInstrumentBuffers(context, instrumentPack)
@@ -27,7 +27,7 @@ const generateRiff = ({ bpm, totalBeatsProduct, allowedLengths, sequences, instr
             return initiatedInstruments 
         })
         .then(({ buffer, instruments }) => {
-            if (context.close) context.close();
+            // if (context.close) context.close();
             return Promise.resolve({ buffer, instruments })
         })
         .catch(e => { (console.error || console.log).call(console, e); });
@@ -43,7 +43,7 @@ const initiateInstruments = ({ context, instrumentPack, totalBeatsProduct, bpmMu
 
     const instruments = instrumentPack.map(createSoundMaps)
 
-    return renderInstrumentSoundsAtTempo(instruments, totalBeatsProduct, bpmMultiplier)
+    return renderInstrumentSoundsAtTempo(instruments, totalBeatsProduct, bpmMultiplier, context)
         .then(buffer => Promise.resolve({ buffer, instruments }));
 }
 

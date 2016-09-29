@@ -1,7 +1,6 @@
 // import d3 from "d3"
 //import d3 from "d3";
 //window.d3 = d3;
-import "./CodeFlower.css"
 import d3 from "d3"
 /*
 window.mgb_flower_config = {
@@ -134,6 +133,8 @@ CodeFlower.prototype.update = function (json) {
 
   // remove all nodes - as there are some glitched in refreshing
   this.svg.selectAll("*").remove();
+  this.svg.append("style").text(this.getCss())
+
 
   // Restart the force layout
   this.force
@@ -343,3 +344,55 @@ CodeFlower.prototype.cleanup = function () {
   this.update([]);
   this.force.stop();
 };
+
+CodeFlower.prototype.getCss = function(){ return `
+#flower text, #flower circle {
+    transition-duration: 0.2s;
+}
+
+circle.node {
+    cursor: pointer;
+    stroke: #000;
+    stroke-width: .5px;
+}
+
+circle.node.directory {
+    stroke: #9ecae1;
+    stroke-width: 2px;
+}
+
+circle.node.collapsed {
+    stroke: #555;
+}
+
+svg:hover .nodename{
+    font-size: 8px;
+    opacity: 0.5;
+}
+svg:hover .nodetext{
+    font-size: 16px !important;
+    opacity: 1;
+    display: block !important;
+}
+g:hover .nodename{
+    pointer-events: none;
+    display: none;
+}
+.nodetext{
+    display: none;
+}
+.nodetext, .nodename {
+    font-size: 10px;
+    fill: #252929;
+    font-weight: bold;
+    text-shadow: 0 0 0.2em white;
+}
+
+line.link {
+    fill: none;
+    stroke: #9ecae1;
+    stroke-width: 1.5px;
+}
+
+`
+}

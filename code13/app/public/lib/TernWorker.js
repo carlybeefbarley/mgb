@@ -44,7 +44,7 @@ this.onmessage = function(e) {
     case "getFiles":
       return postMessage(server.fileMap)
     case "getAstFlowerTree":
-      return postMessage(flowerBuilder.genTree(data, server))
+      return postMessage({type: "flower", data: flowerBuilder.genTree(data, server)})
     default: throw new Error("Unknown message type: " + data.type);
   }
 };
@@ -66,9 +66,9 @@ function startServer(defs, plugins, scripts) {
   });
 }
 
-
+/*
 var console = {
   log: function(v) { postMessage({type: "debug", message: v}); },
   error: function(v) { postMessage({type: "debug", message: v}); }
-};
+};*/
 

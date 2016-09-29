@@ -417,6 +417,27 @@ var flowerBuilder = {
     tmp.displayName += this.makeFunctionName(node.value.params)
   },
 
+  FunctionDeclaration: function(node, buffer, depth, colorId, prefix){
+    // node.id.name - class Name
+    var name = prefix + '.' + node.id.name
+    if(this.uniqueNames[name]) return
+    this.uniqueNames[name] = true
+    var tmp = {
+      name: name,
+      displayName: node.id.name,
+      children: [],
+      depth: depth,
+      colorId: colorId,
+      start: node.id.end,
+      end: node.end
+    }
+    // special case
+    if(this.config.local){
+      tmp.color = COLORS.function
+    }
+    buffer.push(tmp)
+    tmp.displayName += this.makeFunctionName(node.params)
+  },
   ExpressionStatement: function(node, buffer, depth, colorId, prefix){
     var left = node.expression.left
     var right = node.expression.right

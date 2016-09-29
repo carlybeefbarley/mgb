@@ -303,8 +303,11 @@ export default class EditCode extends React.Component {
         options.filename = filename
       }
       const getAstFlowerTree = (e) => {
+        if(e.data.type != "flower"){
+          return
+        }
         this.ternServer.worker.removeEventListener("message", getAstFlowerTree)
-        callback(e.data)
+        callback(e.data.data)
       }
       this.ternServer.worker.addEventListener("message", getAstFlowerTree)
       this.ternServer.worker.postMessage({

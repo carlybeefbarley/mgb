@@ -87,6 +87,7 @@ console.log(`
   MGBv2 server running ${Meteor.release}
   Meteor.isProduction: ${Meteor.isProduction}
   Meteor.isDevelopment: ${Meteor.isDevelopment}
+  Meteor.absoluteUrl: ${Meteor.absoluteUrl('')}
   Entry point: main_server.js
   `
 )

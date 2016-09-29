@@ -24,8 +24,7 @@ const companyNameInc = 'MyCodeBuilder, Inc.'
 const companyAddress = '4557 11th Ave NE, Seattle, WA, 98105'
 
 
-
-// Unsure why, but stardust Table isn't working so...'
+// Unsure why, but stardust Table isn't working so...
 const Table =  props => <table className='ui two column celled table'>{props.children }</table>
 Table.Header = props => <thead>{props.children}</thead>
 Table.HeaderCell = props => <th>{props.children}</th>
@@ -36,21 +35,26 @@ Table.Body   = props => <tbody>{props.children}</tbody>
 Table.Data   = props => <td>{props.children}</td>
 
 
+const LegalTableHeader = () => (
+  <Table.Header>
+    <Table.Row>
+      <Table.HeaderCellL>
+        Official legally binding terms
+      </Table.HeaderCellL>
+      <Table.HeaderCellR>
+        In plain English
+      </Table.HeaderCellR>
+    </Table.Row>
+  </Table.Header>
+)
+
+
 export default TermsOfService = () => ( 
   <Container>
     <Header>Terms of Service</Header>
 
     <Table>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCellL>
-            Official legally binding stuff
-          </Table.HeaderCellL>
-          <Table.HeaderCellR>
-            Plain English
-          </Table.HeaderCellR>
-        </Table.Row>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -82,14 +86,7 @@ export default TermsOfService = () => (
       Your Account
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -122,14 +119,7 @@ export default TermsOfService = () => (
       Our License to You
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -160,14 +150,7 @@ export default TermsOfService = () => (
       Your License to Us
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -262,14 +245,7 @@ export default TermsOfService = () => (
       Your Responsibilities
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -384,14 +360,7 @@ export default TermsOfService = () => (
       As a condition to your use of the {thisSiteName_Site}, you agree not to:
     </p>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -562,14 +531,7 @@ export default TermsOfService = () => (
 
     <Header as='h3'>Feedback</Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -594,14 +556,7 @@ export default TermsOfService = () => (
       Payment, Refunds, Upgrading and Downgrading
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -660,14 +615,7 @@ export default TermsOfService = () => (
       Violation of these Terms of Service
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -695,14 +643,7 @@ export default TermsOfService = () => (
       Cancellation and Termination
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -769,14 +710,7 @@ export default TermsOfService = () => (
       Modifications to the {thisSiteName_Site} and Prices
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -830,14 +764,7 @@ export default TermsOfService = () => (
       Copyright and Content Ownership
     </Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -866,16 +793,7 @@ export default TermsOfService = () => (
       Notification of Claims of Infringement
     </Header>
     <Table>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCellL>
-            Official legally binding stuff
-          </Table.HeaderCellL>
-          <Table.HeaderCellR>
-            Plain English
-          </Table.HeaderCellR>
-        </Table.Row>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -921,16 +839,7 @@ export default TermsOfService = () => (
 
     <Header as='h3'>Disclaimer of Warranties</Header>
     <Table>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCellL>
-            Official legally binding stuff
-          </Table.HeaderCellL>
-          <Table.HeaderCellR>
-            Plain English
-          </Table.HeaderCellR>
-        </Table.Row>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -996,14 +905,7 @@ export default TermsOfService = () => (
 
     <Header as='h3'>Limitation of Liability</Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -1072,14 +974,7 @@ export default TermsOfService = () => (
 
     <Header as='h3'>Indemnification</Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>
@@ -1111,14 +1006,7 @@ export default TermsOfService = () => (
 
     <Header as='h3'>General</Header>
     <Table>
-      <Table.Header>
-        <Table.HeaderCellL>
-          Official legally binding stuff
-        </Table.HeaderCellL>
-        <Table.HeaderCellR>
-          Plain English
-        </Table.HeaderCellR>
-      </Table.Header>
+      <LegalTableHeader />
       <Table.Body>
         <Table.Row>
           <Table.Data>

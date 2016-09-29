@@ -89,7 +89,7 @@ var flowerBuilder = {
   getObjectName: function(node){
     var n = node;
     var ret = "";
-    while(n.object){
+    while(n && n.object){
 
       if(n.property.name){
         return n.property.name
@@ -204,7 +204,7 @@ var flowerBuilder = {
           children: [],
           depth: depth,
           colorId: colorId,
-          start: node.start,
+          start: spec ? spec.end : node.source.start,
           end: node.end
         }
         buffer.push(tmp);
@@ -441,7 +441,10 @@ var flowerBuilder = {
   ExpressionStatement: function(node, buffer, depth, colorId, prefix){
     var left = node.expression.left
     var right = node.expression.right
-
+    // TODO: this is the case where node.expression == "NewExpression" - e.g. new Phaser.Game(...)
+    if(!left && !right){
+      return;
+    }
     var parent;
     var displayName = this.getObjectName(left)
 
@@ -454,14 +457,15 @@ var flowerBuilder = {
       children: [],
       depth: depth,
       colorId: colorId,
-      start: left.end,
+      start: (left && left.end) ? left.end : node.start,
       end: node.end
     }
     if(this.config.local){
       tmp.color = COLORS.member
     }
-    parent = this.makeAdditionalObjects(left, buffer, depth, colorId, prefix)
-
+    if(left) {
+      parent = this.makeAdditionalObjects(left, buffer, depth, colorId, prefix)
+    }
 
     if(right.type === "FunctionExpression"){
       if(this.config.local){

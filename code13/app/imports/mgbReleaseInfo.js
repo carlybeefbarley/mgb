@@ -13,6 +13,52 @@
 
 export default mgbReleaseInfo = {
   'releases': [
+
+    {
+      'timestamp': 'Thu Sep 29 2016 10:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1617'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.assets',
+          'type': 'feature',
+          'changeName': 'Asset Card View sizes',
+          'changeSummary': 'Asset views can now have variable levels of detail. Extra Small (XS) shows just the thumbnail. Medium (M) shows metadata. Extra Large (XL) shows the most information and provides action buttons. These can be selected using a dropdown in the main Assets List.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.flexpanel.assets',
+          'type': 'feature',
+          'changeName': 'Assets FlexPanel - select Asset Kinds & View sizes',
+          'changeSummary': 'The Assets Flex Panel now also allows you to select which Asset kinds to show, and which view sizes to show them as.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': 'CodeFlowers',
+          'changeSummary': `Edit Code can now display 'CodeFlowers' - a visual way to see the complexity of your source code, and also it's imports. These can be viewed/explored, and also can be saved as a thumbnail for the Asset`,
+          'otherUrls': [ { txt: 'CodeFlower was developed by Francois Zaninotto', href: 'https://github.com/fzaninotto/CodeFlower' } ]
+        }//,
+        // {
+        //   'featureTag': 'asset.music',
+        //   'type': 'feature',
+        //   'changeName': 'iOS fixes for Music',
+        //   'changeSummary': ` Music generation is more reliable on Safari and Chrome browsers on iOS. There are a lot of weird issues with WebAudio on iOS, please let us know of any issues you find.`,
+        //   'otherUrls': [ ]
+        // },
+      ]
+    },
+
     {
       'timestamp': 'Mon Sep 26 2016 16:00:00 GMT-0700 (PDT)',
 

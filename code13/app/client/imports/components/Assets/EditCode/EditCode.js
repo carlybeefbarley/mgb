@@ -1052,7 +1052,7 @@ export default class EditCode extends React.Component {
 
       // wait for animations...
       window.setTimeout(() => {
-        // TODO: move this to codeFlowe.. flower.toImage(callback)
+        // TODO: move this to codeFlower.. flower.toImage(callback)
         this.refs.codeflower.firstChild.setAttribute("xmlns","http://www.w3.org/2000/svg")
 
         const data = this.refs.codeflower.innerHTML;
@@ -1381,143 +1381,144 @@ export default class EditCode extends React.Component {
 
               { !docEmpty &&
                 // Current Line/Selection helper (header)
-              <div className="active title">
-                <span className="explicittrigger">
-                  <i className="dropdown icon"></i>
-                  Current line/selection code help
+                <div className="active title">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />Code Mentor
                   </span>
-              </div>
+                </div>
               }
               { !docEmpty &&
                 // Current Line/Selection helper (body)
-              <div className="active content">
-                <TokenDescription
-                  currentToken={this.state.currentToken}/>
+                <div className="active content">
+                  <TokenDescription
+                    currentToken={this.state.currentToken}/>
 
-                <FunctionDescription
-                  functionHelp={this.state.functionHelp}
-                  functionArgPos={this.state.functionArgPos}
-                  functionTypeInfo={this.state.functionTypeInfo}
-                  helpDocJsonMethodInfo={this.state.helpDocJsonMethodInfo}/>
+                  <FunctionDescription
+                    functionHelp={this.state.functionHelp}
+                    functionArgPos={this.state.functionArgPos}
+                    functionTypeInfo={this.state.functionTypeInfo}
+                    helpDocJsonMethodInfo={this.state.helpDocJsonMethodInfo}/>
 
-                <ExpressionDescription
-                  expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
+                  <ExpressionDescription
+                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
 
-                <RefsAndDefDescription
-                  refsInfo={this.state.atCursorRefRequestResponse.data}
-                  defInfo={this.state.atCursorDefRequestResponse.data}
-                  expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
+                  <RefsAndDefDescription
+                    refsInfo={this.state.atCursorRefRequestResponse.data}
+                    defInfo={this.state.atCursorDefRequestResponse.data}
+                    expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
 
-                { this.renderDebugAST() }
+                  { this.renderDebugAST() }
 
-                { previewIdThings && previewIdThings.length > 0 &&
-                <div className="ui divided selection list">
-                  {previewIdThings}
+                  { previewIdThings && previewIdThings.length > 0 &&
+                  <div className="ui divided selection list">
+                    {previewIdThings}
+                  </div>
+                  }
                 </div>
-                }
-              </div>
               }
 
               { docEmpty &&
                 // Clean sheet helper!          
-              <div className="active title">
-                  <span className="explicittrigger">
-                    <i className="dropdown icon"></i>
-                    Clean Sheet helper
+                <div className="active title">
+                    <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                      <i className='dropdown icon' />Code Starter
                     </span>
-              </div>
+                </div>
               }
               { docEmpty &&
-              <div className="active content">
-                If you like, you can click one of the following buttons to paste some useful template code into your
-                empty file
-                <div className="ui divided selection list">
-                  {templateCodeChoices}
+                <div className="active content">
+                  An Empty Page! If you like, you can click one of the following buttons to paste some useful template code into your
+                  empty file
+                  <div className="ui divided selection list">
+                    {templateCodeChoices}
+                  </div>
+                  ...or, if you think you know what you are doing, just start hacking away!
                 </div>
-                ...or, if you think you know what you are doing, just start hacking away!
-              </div>
               }
 
               { !docEmpty &&
                 // Code run/stop (header)                  
-              <div className="title">
-                  <span className="explicittrigger">
-                    <i className="dropdown icon"></i>
-                    Run Code&nbsp;&nbsp;
+                <div className="title">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />Code Runner
+                  </span>
+                  
+                  <span style={{float: "right", marginTop: "-6px", position: "relative"}}>
+
+                    { isPlaying && this.props.canEdit && 
+                      <a className={"ui tiny icon button"} onClick={this.handleScreenshotIFrame.bind(this)}
+                        title='This will set the Asset preview Thumbnail image to be a screenshot of the first <canvas> element in the page, *IF* your code has created one...'>
+                        <i className='save icon' />
+                      </a>
+                    }
+                    { !isPlaying &&
+                      <a  className='ui tiny icon button' 
+                          title='Click here to start the program running'
+                          onClick={this.handleRun.bind(this)}>
+                        <i className='play icon' />&emsp;Run
+                      </a>
+                    }
+                    { isPlaying &&
+                      <a  className='ui tiny icon button' 
+                          title='Click here to stop the running program'
+                          onClick={this.handleStop.bind(this)}>
+                        <i className={"stop icon"}></i>&emsp;Stop
+                      </a>
+                    }
+                    <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
+                      <a  className='ui tiny icon button' 
+                          title='Click here to start running your program in a different browser tab'
+                          onClick={this.handleFullScreen.bind(this, asset._id)}>
+                        <i className='external icon' />&emsp;Full&nbsp;
+                      </a>
+                      { (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit &&
+                        <a className="ui tiny left pointing label reload" onClick={() => {this.createBundle( () => {} )}}
+                          title="Update Bundle">
+                          <i className={'refresh icon ' + (this.state.creatingBundle ? ' loading' : '')} />
+                        </a>
+                      }
                     </span>
-                { !isPlaying &&
-                <a className={"ui mini labeled icon button"} onClick={this.handleRun.bind(this)}>
-                  <i className={"play icon"}></i>Run
-                </a>
-                }
-                { isPlaying &&
-                <a className={"ui mini labeled icon button"} onClick={this.handleStop.bind(this)}>
-                  <i className={"stop icon"}></i>Stop
-                </a>
-                }
-                {
-                <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
-                  <a className="ui mini labeled icon button"  onClick={this.handleFullScreen.bind(this, asset._id)}>
-                    <i className={"external icon"}></i>Full
-                  </a>
-                  { (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit &&
-                    <a className="ui mini left pointing label reload" onClick={() => {this.createBundle( () => {} )}}
-                      title="Update Bundle"
-                      >
-                      <i className={this.state.creatingBundle ? "refresh icon animate rotate" : "refresh icon "}></i>
-                    </a>
-                  }
-                </span>
-                }
-                { isPlaying && this.props.canEdit && 
-                <a className={"ui right floated mini icon button"} onClick={this.handleScreenshotIFrame.bind(this)}
-                   title="This will make a screenshot of the CANVAS element in the page">
-                  <i className={"write square icon"}></i>Set thumbnail
-                </a>
-                }
-              </div>
+                  </span>
+                </div>
               }
               { !docEmpty &&
                 // Code run/stop (body)
-              <div className="content">
-                <iframe
-                  key={ this.state.gameRenderIterationKey }
-                  id="iFrame1"
-                  width="100%" height="400"
-                  sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
-                  src="/codeEditSandbox.html">
-                </iframe>
-                <ConsoleMessageViewer
-                  messages={this.state.consoleMessages}
-                  gotoLinehandler={this.gotoLineHandler.bind(this)}/>
-              </div>
+                <div className="content">
+                  <iframe
+                    key={ this.state.gameRenderIterationKey }
+                    id="iFrame1"
+                    width="100%" height="400"
+                    sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
+                    src="/codeEditSandbox.html">
+                  </iframe>
+                  <ConsoleMessageViewer
+                    messages={this.state.consoleMessages}
+                    gotoLinehandler={this.gotoLineHandler.bind(this)}/>
+                </div>
               }
               { this.state.astReady &&
-              <div className="title">
-                <span className="explicittrigger">
-                    <i className="dropdown icon"></i>
-                    AST&nbsp;&nbsp;
-                </span>
-                <span className={(this.state.astFlowerReady && this.props.canEdit) ? "ui button labeled" : ""}
-                  style={{float: "right", marginTop: "-6px", position: "relative"}}>
-                  <a className="ui mini labeled icon button"
-                     onClick={this.drawAstFlowerForThumbnail.bind(this, asset._id)}
-                     title="This will make abstract image of your code">For Thumb
-                    <i className="write square icon"></i>
-                  </a>
-                  <a className="ui mini labeled icon button" onClick={this.drawAstFlowerFull.bind(this, asset._id)}
-                     title="This will make abstract image of your code">
-                    <i className="write square icon"></i>All Symbols
-                  </a>
-                  { this.state.astFlowerReady && this.props.canEdit &&
-                  <a className="ui mini left pointing label write" onClick={() => {this.saveAstThumbnail( () => {} )}}
-                     title="Save as thumbnail"
-                    >
-                    <i className="write icon"></i>
-                  </a>
-                  }
-                </span>
-              </div>
+                <div className="title">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />CodeFlower
+                  </span>
+                  <span style={{float: "right", marginTop: "-6px", position: "relative"}}>
+                    { this.state.astFlowerReady && this.props.canEdit &&
+                    <a className="ui tiny icon button" onClick={() => {this.saveAstThumbnail( () => {} )}}
+                      title="Save the currently displayed CodeFlower as the Code Asset preview 'thumbnail' image for this asset">
+                      <i className='save icon' />
+                    </a>
+                    }
+                    <a className="ui tiny icon button"
+                      onClick={this.drawAstFlowerForThumbnail.bind(this, asset._id)}
+                      title='Generate an abstract CodeFlower image based on the structure of your source code'>
+                      <i className='empire icon' />&emsp;Simple
+                    </a>&nbsp;
+                    <a className="ui tiny icon button" onClick={this.drawAstFlowerFull.bind(this, asset._id)}
+                      title="Generate a more detailed CodeFlower image based on the structure of your source code">
+                      <i className='first order icon' />&emsp;Detailed
+                    </a>&nbsp;
+                  </span>
+                </div>
               }
                 <div className="content active">
                   {/* this.props.canEdit && this.state.astReady &&

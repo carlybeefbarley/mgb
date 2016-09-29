@@ -1,7 +1,6 @@
-import _ from 'lodash'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route, Link, NotFoundRoute, browserHistory } from 'react-router'
+import { Router, Route, NotFoundRoute, browserHistory } from 'react-router'
 
 import App from './App'
 import Home from './Home'
@@ -15,6 +14,7 @@ import urlMaker from './urlMaker'
 import WhatsNewRoute from './WhatsNewRoute'
 import Roadmap from './Roadmap'
 
+import TermsOfService from '/client/imports/legal/TermsOfService'
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -82,6 +82,8 @@ Meteor.startup(function () {
 
         <Route path="user/:id/skilltree" component={Users.SkillTreePage} name="Skill Tree" />
         <Route path="u/:username/skilltree" component={Users.SkillTreePage} name="Skill Tree" />
+
+        <Route path='/legal/tos' component={TermsOfService} name='Terms Of Service' />
 
         <Route path="*" component={NotFoundPage} name="Page Not Found"/>
       </Route>

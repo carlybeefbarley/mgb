@@ -15,6 +15,7 @@ import WhatsNewRoute from './WhatsNewRoute'
 import Roadmap from './Roadmap'
 
 import TermsOfService from '/client/imports/legal/TermsOfService'
+import Privacy from '/client/imports/legal/Privacy'
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -84,6 +85,7 @@ Meteor.startup(function () {
         <Route path="u/:username/skilltree" component={Users.SkillTreePage} name="Skill Tree" />
 
         <Route path='/legal/tos' component={TermsOfService} name='Terms Of Service' />
+        <Route path='/legal/privacy' component={Privacy} name='Privacy Policy' />
 
         <Route path="*" component={NotFoundPage} name="Page Not Found"/>
       </Route>

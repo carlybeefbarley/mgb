@@ -23,9 +23,14 @@ window.mgb_flower_config = {
   "mainCharge": -500,
   "charge": -200,
   "chargePerChild": -200,
+  "chargeDistance": 100,
   "link": 10,
+  "linkStrength": 1,
   "linkPerChild": 5,
-  "link_at_same_level": 0
+  "link_at_same_level": 0,
+  "friction": 0.9,
+  "theta": 0.8,
+  "gravity": 0.1
 }
 export default CodeFlower = function (selector, w, h, options) {
   this.w = w;
@@ -48,14 +53,19 @@ export default CodeFlower = function (selector, w, h, options) {
 
   this.force = d3.layout.force()
     .on("tick", this.tick.bind(this))
-    // if charge is positive all nodes tries to move to the middle
-    // if charge is negative nodes tries to separate as much as link allows
     .charge((d) => {
       // main node - make all nodes to run away from it
       if(d.depth === 0){
         return window.mgb_flower_config.mainCharge * this.aspect
       }
       return !d.children ? window.mgb_flower_config.charge * this.aspect : d.children.length * window.mgb_flower_config.chargePerChild * this.aspect + window.mgb_flower_config.charge * this.aspect
+    })
+    .chargeDistance(window.mgb_flower_config.chargeDistance * this.aspect)
+    .gravity(window.mgb_flower_config.gravity)
+    .friction(window.mgb_flower_config.friction)
+    .theta(window.mgb_flower_config.friction)
+    .linkStrength((d) => {
+      return window.mgb_flower_config.linkStrength
     })
     // length of link - charge will modify this value
     .linkDistance((d) => {
@@ -68,7 +78,7 @@ export default CodeFlower = function (selector, w, h, options) {
        s2 = d.source.children.length
        }*/
 
-      const s1 = !d.source.children ? window.mgb_flower_config.link * this.aspect :  (d.source.children.length * window.mgb_flower_config.linkPerChild * this.aspect) + window.mgb_flower_config.link * this.aspect
+      const s1 = 0;//!d.source.children ? window.mgb_flower_config.link * this.aspect :  (d.source.children.length * window.mgb_flower_config.linkPerChild * this.aspect) + window.mgb_flower_config.link * this.aspect
       const s2 = !d.target.children ? window.mgb_flower_config.link * this.aspect :  (d.target.children.length * window.mgb_flower_config.linkPerChild * this.aspect) + window.mgb_flower_config.link * this.aspect
 
       let ret = s1 + s2
@@ -288,7 +298,7 @@ CodeFlower.prototype.click = function (d) {
     this.options.onclick(d)
     return;
   }
-
+  console.log(d)
   // Toggle children on click.
   if (d.children) {
     d._children = d.children;

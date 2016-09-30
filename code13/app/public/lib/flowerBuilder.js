@@ -57,9 +57,9 @@ var flowerBuilder = {
   },
 
   genColorId: function(filename){
-    var tot = 0
+    var tot = Math.round(Math.random()*10)
     for(var i=0; i<filename.length; i++){
-      tot += filename.charCodeAt(i) * i
+      tot += (filename.charCodeAt(i) * i) % 360
     }
     return tot
   },
@@ -197,7 +197,7 @@ var flowerBuilder = {
       // this is external file.... check defs???
       if(!this.server.fileMap[filename] || this.config.local){
         if(this.uniqueNames[node.source.value]) return
-        var colorId = this.genColorId(filename)
+        colorId = this.genColorId(filename)
         var tmp = {
           name: prefix + name,
           displayName: name,

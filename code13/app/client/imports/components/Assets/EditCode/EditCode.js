@@ -266,11 +266,11 @@ export default class EditCode extends React.Component {
         comment: true,
         es_modules: true,
         /*lint: {
-         rules:{
-         ES6Modules: {
-         severity: "none"
-         }
-         }
+           rules:{
+             ES6Modules: {
+              severity: "none"
+             }
+           }
          },*/
         doc_comment: {
           strong: true
@@ -381,14 +381,23 @@ export default class EditCode extends React.Component {
       return this.ternServer.complete(cm);
     return CodeMirror.Pass
   }
+
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
-      setTimeout(() => {
-        // FIX: #109
-        if(this.state.currentToken.type !== "comment"){
-          this.ternServer.complete(cm);
-        }
-      }, 1000)      // Pop up a helper after a second
+      if (this.acTimeout) {
+        window.clearTimeout(this.acTimeout);
+        this.acTimeout = 0;
+      }
+    this.acTimeout = setTimeout(() => {
+      if (this.changeTimeout) {
+        console.log("skipping ac... ")
+        return
+      }
+      // skip ac in the comments and when user is typing
+      if (this.state.currentToken.type !== "comment") {
+        this.ternServer.complete(cm);
+      }
+    }, 1000)      // Pop up a helper after a second
 // this.ternServer.getHint(cm, function (hint) 
 // {
 // console.log("HINT",hint)

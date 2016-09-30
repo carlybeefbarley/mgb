@@ -30,6 +30,19 @@ var schema = {
   name: String,       // Asset's name
   kind: String,       // Asset's kind (image, map, etc)
   text: String,       // A description field
+
+  // License information. See TermsOfService.js for description of what a missing license means
+  assetLicense: String,    // A license that covers this asset. Ideally this will be one of the well-know license tags we define in assetLicenses.js.
+
+
+// Data for cloning. This may all be missing/null:
+  clonedFromAssetId: String,        // An MGB Asset ID that we cloned this from
+  clonedFromAssetVer: String,       // Version of the Asset ID that we cloned this from
+  clonedFromAssetDate: String,      // Version of the Asset that we cloned this from (not yet implementable)
+  clonedFromOwnerId: String,        // The UsserId whowe cloned this from
+  clonedFromOwnerName: String,      // An asset id that we cloned this from
+  clonedFromExternalSource: String,
+
   workState: String,  // A value matching a key from workStates.js
   content: String,    // depends on asset type
   content2: Object,   // THIS IS NOT IN PREVIEW SUBSCRIPTIONS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field such as 'content'

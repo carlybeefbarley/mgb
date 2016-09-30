@@ -84,8 +84,8 @@ Meteor.startup(function () {
         <Route path="user/:id/skilltree" component={Users.SkillTreePage} name="Skill Tree" />
         <Route path="u/:username/skilltree" component={Users.SkillTreePage} name="Skill Tree" />
 
-        <Route path='/legal/tos' component={TermsOfService} name='Terms Of Service' />
-        <Route path='/legal/privacy' component={Privacy} name='Privacy Policy' />
+        <Route path='/legal/tosDRAFT' component={TermsOfService} name='Terms Of Service' />
+        <Route path='/legal/privacyDRAFT' component={Privacy} name='Privacy Policy' />
 
         <Route path="*" component={NotFoundPage} name="Page Not Found"/>
       </Route>

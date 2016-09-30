@@ -33,7 +33,7 @@ const LegalTableHeader = () => (
         Official legally binding terms
       </Table.HeaderCellL>
       <Table.HeaderCellR>
-        Summary
+        Summary <small>(not legal advice)</small>
       </Table.HeaderCellR>
     </Table.Row>
   </Table.Header>

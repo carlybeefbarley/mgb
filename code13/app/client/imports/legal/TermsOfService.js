@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import { Container, Header } from 'stardust'
 import Footer from '/client/imports/components/Footer/Footer'
 
@@ -47,7 +47,7 @@ const LegalTableHeader = () => (
         Official legally binding terms
       </Table.HeaderCellL>
       <Table.HeaderCellR>
-        Summary
+        Summary <small>(not legal advice)</small>
       </Table.HeaderCellR>
     </Table.Row>
   </Table.Header>
@@ -65,7 +65,7 @@ const LegalSection = (props) => (
     </Table>
   </div>
 )
-const DBAJ = () => ( <span>Don't be anooying or malicious</span> )  // Don't be a jerk'
+const DBAJ = () => ( <span>Don't be annoying or malicious</span> )  // Don't be a jerk'
 
 export default TermsOfService = () => ( 
   <div>
@@ -111,8 +111,7 @@ export default TermsOfService = () => (
             {thisSiteName_Site} (the “<strong>Content</strong>”)
             and activity that occurs under your Account (even when Content is posted by
             others who have access to your Account). Any information submitted by you shall
-            be subject to {companyName}
-            <a href="{privacyUrl}">Privacy Policy</a>. One person or
+            be subject to {companyName} <a href="{privacyUrl}">Privacy Policy</a>. One person or
             legal entity may not maintain more than one Account. Accounts registered by
             “bots” or other automated methods are not permitted.
           </Table.Data>
@@ -163,8 +162,7 @@ export default TermsOfService = () => (
             unlicensed.
           </Table.Data>
           <Table.Data>
-            Public {assetTerm}s you build on {thisSiteName} are
-            {licenseMitLink}, meaning other
+            Public {assetTerm}s you build on {thisSiteName} are {licenseMitLink}d, meaning other
             people are free to use it for whatever they like as long as that is also MIT
             licensed. Don't put anything on {thisSiteName} where that wouldn't be OK. Private {assetTerm}s
             are un-licensed so that you may apply your own license and retain direct ownership.<br/>

@@ -7,6 +7,7 @@ import { Azzets } from '/imports/schemas'
 import { roleSuperAdmin } from '/imports/schemas/roles'
 import { check, Match } from 'meteor/check'
 import { defaultWorkStateName } from '/imports/Enums/workStates'
+import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
 var schema = {
   _id: String,
@@ -35,13 +36,13 @@ var schema = {
   assetLicense: String,    // A license that covers this asset. Ideally this will be one of the well-know license tags we define in assetLicenses.js.
 
 
-// Data for cloning. This may all be missing/null:
-  clonedFromAssetId: String,        // An MGB Asset ID that we cloned this from
-  clonedFromAssetVer: String,       // Version of the Asset ID that we cloned this from
-  clonedFromAssetDate: String,      // Version of the Asset that we cloned this from (not yet implementable)
-  clonedFromOwnerId: String,        // The UsserId whowe cloned this from
-  clonedFromOwnerName: String,      // An asset id that we cloned this from
-  clonedFromExternalSource: String,
+// Intended future Data for cloning. These may all be missing/null:
+  // clonedFromAssetId: String,        // An MGB Asset ID that we cloned this from
+  // clonedFromAssetVer: String,       // Version of the Asset ID that we cloned this from
+  // clonedFromAssetDate: String,      // Version of the Asset that we cloned this from (not yet implementable)
+  // clonedFromOwnerId: String,        // The UsserId whowe cloned this from
+  // clonedFromOwnerName: String,      // An asset id that we cloned this from
+  // clonedFromExternalSource: String,
 
   workState: String,  // A value matching a key from workStates.js
   content: String,    // depends on asset type
@@ -292,6 +293,7 @@ Meteor.methods({
     if (!data.projectNames)
       data.projectNames = []
     data.thumbnail = data.thumbnail || ""
+    data.assetLicense = data.assetLicense || defaultAssetLicense
     data.isUnconfirmedSave = this.isSimulation
     // TODO: this will get moved
     data.content2 = data.content2 || {}
@@ -334,6 +336,7 @@ Meteor.methods({
       kind: optional(schema.kind),
       text: optional(schema.text),
       workState: optional(schema.workState),
+      assetLicense: optional(schema.assetLicense),
       content: optional(schema.content),
       content2: optional(schema.content2),
       thumbnail: optional(schema.thumbnail),

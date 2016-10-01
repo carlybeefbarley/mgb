@@ -50,6 +50,7 @@ export const ActivityTypes = {
 
   "asset.rename":      { icon: "write",            pri: 11,  description: "Rename asset" },  
   "asset.delete":      { icon: "red trash",        pri: 12,  description: "Delete asset" },
+  "asset.license":     { icon: "law",              pri: 11,  description: "License asset" },
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },
   "asset.undelete":    { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
   

@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import moment from 'moment'
-import Plural from '/client/imports/helpers/Plural'
 
 const SESSION_MAGIC_TEXT = "BY_SESSION:" 
 const _getCurrUserIdentifier = (currUser) => (currUser ? currUser._id : SESSION_MAGIC_TEXT + Meteor.default_connection._lastSessionId)
@@ -41,8 +40,9 @@ export default AssetHistoryDetail = React.createClass({
     let highlightClass = numRecentOtherEdits > 0 ? "black" : "grey"
     
     return (
-      <div className={`ui simple dropdown small basic ${highlightClass} pointing below label item`}>
-        <i className="icon lightning"></i>{Plural.numStr(changesCount, 'Change')}
+      <div 
+          className={`ui simple dropdown small basic ${highlightClass} pointing below label item`}>
+        <i className='icon lightning' />{changesCount}
         <div className="menu">
         { changes }
         </div>

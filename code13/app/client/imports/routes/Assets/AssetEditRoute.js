@@ -9,18 +9,21 @@ import Helmet from 'react-helmet'
 
 import { Azzets } from '/imports/schemas'
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
-import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
-import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
-import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
-import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
-import WorkState from '/client/imports/components/Controls/WorkState'
-import DeletedState from '/client/imports/components/Controls/DeletedState'
-import StableState from '/client/imports/components/Controls/StableState'
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
+import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
+import WorkState from '/client/imports/components/Controls/WorkState'
+import StableState from '/client/imports/components/Controls/StableState'
+import AssetLicense from '/client/imports/components/Controls/AssetLicense'
+import DeletedState from '/client/imports/components/Controls/DeletedState'
+import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
+import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
+import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
+import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
+
 
 const FLUSH_TIMER_INTERVAL_MS = 6000    // Milliseconds between timed flush attempts
 
@@ -82,8 +85,6 @@ export default AssetEditRoute = React.createClass({
   contextTypes: {
     urlLocation: React.PropTypes.object
   },
-
-
 
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId
   // TODO: Make this QLink-smart so it preserves queries
@@ -256,6 +257,11 @@ export default AssetEditRoute = React.createClass({
             showMicro={true}
             canEdit={canEd}
             handleChange={this.handleDeletedStateChange}/>
+          <AssetLicense 
+            license={asset.assetLicense} 
+            showMicro={true}
+            canEdit={canEd}
+            handleChange={this.handleLicenseChange}/>
           &emsp;
           <WorkState 
             workState={asset.workState} 
@@ -267,12 +273,12 @@ export default AssetEditRoute = React.createClass({
             assetId={params.assetId} 
             currUser={currUser}
             activitySnapshots={this.data.activitySnapshots} />
-          &emsp;
+          &nbsp;
           <AssetHistoryDetail 
             assetId={params.assetId} 
             currUser={currUser}
             assetActivity={this.data.assetActivity} />
-          &emsp;
+          &nbsp;
           <ProjectMembershipEditorV2 
             canEdit={canEd}
             asset={asset}
@@ -311,7 +317,7 @@ export default AssetEditRoute = React.createClass({
 
     if (this.m_deferredSaveObj)
     {
-      const d = this.m_deferredSaveObj
+      // const d = this.m_deferredSaveObj
       // too loud =) console.log("Replacing deferred save: ", d.assetId, asset._id, (new Date()) - d.timeOfLastChange)
     }
     this.m_deferredSaveObj = {
@@ -432,6 +438,18 @@ export default AssetEditRoute = React.createClass({
     //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use 
     //            the most recent passive activity 
     
+  },
+
+// This should not conflict with the deferred changes since those don't change these fields :)
+  handleLicenseChange: function(newLicense) {
+    const oldLicense = this.data.asset.assetLicense
+    if (newLicense !== oldLicense) {
+      Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), { assetLicense: newLicense}, (err, res) => {
+        if (err)
+          this.props.showToast(err.reason, 'error')
+      })
+      logActivity("asset.license",  `License changed from ${oldLicense || defaultAssetLicense} to "${newLicense}"`, null, this.data.asset)
+    }
   },
 
 // This should not conflict with the deferred changes since those don't change these fields :)

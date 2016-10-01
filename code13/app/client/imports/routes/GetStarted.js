@@ -28,9 +28,9 @@ const descStyle = {
 
 const skillAreaItems = [
   { mascot: 'alien',    icon: 'code',        content: 'Programming',   desc: 'Code using JavaScript and game engines like Phaser' },
-  { mascot: 'penguin',  icon: 'paint brush', content: 'Pixel art',     desc: 'Create animated sprites, spritesheets and tilemaps for games.' },
+  { mascot: 'penguin',  icon: 'paint brush', content: 'Pixel art',     desc: 'Create animated sprites, spritesheets and tilemaps for games' },
   { mascot: 'samurai',  icon: 'music',       content: 'Music & audio', desc: 'Bring engagement and mood to games through music and sound' },
-  { mascot: 'slimy',    icon: 'idea',        content: 'Game design',   desc: 'Design game levels, try different gameplay mechanics and balance your games' },
+  { mascot: 'slimy',    icon: 'idea',        content: 'Game design',   desc: 'Design levels, balance gameplay mechanics and try new ones' },
   { mascot: 'vampire',  icon: 'write',       content: 'Story writing', desc: 'Bring game stories to life through plot, character, narrative and dialog' },
   { mascot: 'shark',    icon: 'area chart',  content: 'Analytics',     desc: 'Data beats opinions: analyze actual game usage and use it to improve' } 
 ]

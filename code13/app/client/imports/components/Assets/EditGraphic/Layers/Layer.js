@@ -100,7 +100,9 @@ export default class Layer extends React.Component {
           	<form className={"ui input " + (this.state.editName ? "visible" : "hidden")} ><input ref="nameInput" type="text" /></form>          
           </td>
           <td>
-            <div className="ui simple dropdown">
+            <div className="ui dropdown"
+              ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
+              >
               <i className="icon setting"></i>
               <div className="menu">
                 <div onClick={this.moveLayerUp.bind(this)}

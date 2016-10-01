@@ -39,9 +39,9 @@ export default fpSuperAdmin = React.createClass({
                 <li className="complete">Load an image</li>
                 <li className="active">Create a sprite</li>
               </ol>
-              <button className="ui button">
-                <i className="code icon" />
-                View documentation
+              <button className="ui active yellow button">
+                <i className="student icon"></i>
+                Show me
               </button>
             </div>
           </div>

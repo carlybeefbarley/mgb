@@ -304,3 +304,10 @@ body.dragging .accept-drop:hover{
 {
   width: calc(100% - 2em);
 }
+
+/* narrower containers */
+.ui.container.slim
+{
+  max-width: 1090px !important;
+  padding: 0 75px;
+}

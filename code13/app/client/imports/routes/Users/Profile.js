@@ -20,7 +20,7 @@ import { logActivity } from '/imports/schemas/activity'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import QLink from '../QLink'
-import { Grid, Header, Image, Item, Icon } from 'stardust'
+import { Container, Grid, Header, Image, Item, Icon } from 'stardust'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -71,22 +71,24 @@ export default UserProfileRoute = React.createClass({
     if (!user) return <ThingNotFound type="User" />
 
     return (
-      <Grid padded stackable>
-        <Helmet
-          title={user.profile.name}
-          meta={[
-              {"name": "description", "content": user.profile.name + "\'s profile"}
-          ]}
-        />
-        
-        { this.renderUserInfo(user, ownsProfile) }
-        <BadgeGrid user={user} className="six wide column" />
-        <UserShowcase user={user} />
-        <ActivityHeatmap user={user} className="ten wide column" />
-        <SkillGrid user={user} className='six wide column' />
-        <UserProjects user={user} projects={this.data.projects} />
-        <UserHistory user={user} />
-      </Grid>
+      <Container className="slim">
+        <Grid padded stackable>
+          <Helmet
+            title={user.profile.name}
+            meta={[
+                {"name": "description", "content": user.profile.name + "\'s profile"}
+            ]}
+          />
+          
+          { this.renderUserInfo(user, ownsProfile) }
+          <BadgeGrid user={user} className="five wide column" />
+          <UserShowcase user={user} />
+          <ActivityHeatmap user={user} className="ten wide column" />
+          <SkillGrid user={user} className='six wide column' />
+          <UserProjects user={user} projects={this.data.projects} />
+          <UserHistory user={user} />
+        </Grid>
+      </Container>
     )
   },
 
@@ -95,7 +97,7 @@ export default UserProfileRoute = React.createClass({
     const editsDisabled = !ownsProfile
 
     return (
-      <Grid.Column width={8}>
+      <Grid.Column width={11}>
         <Item.Group>
           <Item>
             

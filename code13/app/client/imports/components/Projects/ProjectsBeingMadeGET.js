@@ -29,17 +29,29 @@ export default ProjectsBeingMadeGET = React.createClass({
     const { chosenClassName } = this.props
     const { loading, projects } = this.data
 
+    const titleWrapperStyle = {
+      width: '100%',
+      position: 'relative',
+      paddingLeft: '75px',
+      left: '-60px',
+    }
+    const titleStyle = {
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    }
+
     if (loading) return <Spinner />
 
     return (
       <div className={chosenClassName}>
       {
-        !projects.length ? "(none)" : 
+        !projects.length ? "(none)" :
           projects.map( (p,idx) => (
-            <QLink key={idx} className="link item" to={`/u/${p.ownerName}/project/${p._id}`}>
-              <img className="ui small middle aligned image" style={{ width: 100 }} src={getProjectAvatarUrl(p)} />
-              <div className="content middle aligned" style={{ marginLeft: '1em' }}>
-                <h3><small>{p.name}</small></h3>
+            <QLink key={idx} className="link item" style={{ whiteSpace: 'nowrap' }} to={`/u/${p.ownerName}/project/${p._id}`}>
+              <img className="ui small middle aligned image" style={{ maxHeight: 60, maxWidth: 60 }} src={getProjectAvatarUrl(p)} />
+              <div className="content middle aligned" style={titleWrapperStyle}>
+                <h3 className="ui header" style={titleStyle}>{p.name}</h3>
                 <p><i className="play icon" />00,000 Plays</p>
               </div>
             </QLink>

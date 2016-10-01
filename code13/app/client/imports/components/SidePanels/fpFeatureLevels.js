@@ -12,7 +12,7 @@ export default fpFeatureLevels = React.createClass({
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px". 
+    panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px".
     addJoyrideSteps:        PropTypes.func.isRequired     // See react-joyride comments in App.js
   },
 
@@ -48,7 +48,7 @@ export default fpFeatureLevels = React.createClass({
         text: `This area lists all your current Feature Level settings`,
         selector: '#mgbjr-CurrentFeatureLevelsInFp',    // finds <input> element which is after element with mgbNavGadgetSlider class
         position: 'left'
-      }      
+      }
     ],
     { replace: true } )
   },
@@ -78,7 +78,7 @@ export default fpFeatureLevels = React.createClass({
       marginRight: "10px",
       marginLeft: "2px",
       width: "3em",
-      backgroundColor: "rgba(0,0,0,0)" 
+      backgroundColor: "rgba(0,0,0,0)"
     }
 
 
@@ -87,21 +87,21 @@ export default fpFeatureLevels = React.createClass({
       return (
         <p key={name}>
           <i className="ui options icon" />
-          {name} @ 
+          {name} @
           <NumberInput
-            style={numStyle} 
+            style={numStyle}
             dottedBorderStyle={true}
             className="ui small input"
             value={this.getLevelValFromSettings(name) || 1}
             onValidChange={(num) => this.setLevelFromNum(name, num)}
-            min={1} 
+            min={1}
             max={maxVal} /> of {maxVal}
           <input
-            style={sliderStyle} 
+            style={sliderStyle}
             type="range"
             value={this.getLevelValFromSettings(name) || 1}
             onChange={(e) => this.setLevelFromEvent(name, e)}
-            min={1} 
+            min={1}
             max={maxVal} />
         </p>
       )
@@ -111,12 +111,15 @@ export default fpFeatureLevels = React.createClass({
       <div>
         <p>
           On pages that support 'Feature Levels' a <i className="ui small options icon" /> slider will appear at the top of the page.
-          <a onClick={this.showFeatureLevelsSlider}><small>(show)</small></a>
         </p>
+        <button onClick={this.showFeatureLevelsSlider} className="ui active yellow button" style={{ marginBottom: '1em' }}>
+          <i className="student icon"></i>
+          Show me
+        </button>
         <p>It is a setting that hides advanced features from new users so they may learn without feeling overwhelmed.</p>
         <p id="mgbjr-CurrentFeatureLevelsInFp"><b>Current Feature Levels:</b></p>
         { _.map(expectedToolbarScopeNames,  name => makeSlider(name)) }
       </div>
     )
-  }  
+  }
 })

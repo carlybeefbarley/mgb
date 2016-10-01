@@ -17,9 +17,14 @@ const ProjectMembershipSummary = (props) => {
     <span>
     {
       _.map(projectsTable, (p,idx) => (
-        <span key={idx} style={{color: getColorNameForProjectAccess(p)}}>
+        <QLink 
+            to={`/u/${asset.dn_ownerName}/assets`}
+            query={{project:p.projectName}}
+            altTo={`/u/${asset.dn_ownerName}/projects`}
+            key={idx} 
+            style={{color: getColorNameForProjectAccess(p)}}>
           { p.projectName + (idx === projectsTable.length-1 ? "" : ", ") }
-        </span>
+        </QLink>
       ))
     }
     </span>
@@ -89,7 +94,9 @@ const ProjectMembershipPopup = (props) => {
     const makeRow = (p, idx) => {
       choices.push (
         <QLink 
-            to={`/u/${asset.dn_ownerName}/projects`}
+            to={`/u/${asset.dn_ownerName}/assets`}
+            query={{project:p.name}}
+            altTo={`/u/${asset.dn_ownerName}/projects`}
             className={"ui fluid "+ getColorNameForProjectAccess(p) + " label"} 
             style={labelSty}
             title={ getMsgForProjectAccess(p) }

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
+import { Icon, Header, List, Label } from 'stardust'
 const _propTypes = {
   license:        PropTypes.string,                 // Can be null - which will be defaultAssetLicense
   popupPosition:  PropTypes.string,
@@ -36,36 +37,36 @@ const AssetLicense = (props) => {
       <div className={`ui label`}
           title={ canEdit ? null : assetLicenses[actualLicense].name }
           ref={ (c) => { _initPopup(c, popupPosition, canEdit); this._popupInitiator = c } }>
-        <i className='ui law icon' /><small>{ actualLicense }</small>
+        <Icon name='law' /><small>{ actualLicense }</small>
       </div>
 
       { props.canEdit &&
         <div className="ui popup" style={{fontSize: '16px'}}>
           { showMicro &&
-            <div className="ui left aligned header"><small>License for this Asset</small></div>
+            <Header textAlign='left'><small>License for this Asset</small></Header>
           }
-          <div className="ui left aligned selection list">
+          <List className="left aligned selection">
           {
             _.map(_.keys(assetLicenses), key => (
-                <div
+                <List.Item
                     key={key}
                     style={labelSty}
-                    className={`ui item left aligned fluid ${(key === actualLicense) ? "active" : ""}`}
+                    className={`left aligned fluid ${(key === actualLicense) ? "active" : ""}`}
                     onClick={e => {
                       e.preventDefault()
                       $(this._popupInitiator).popup('hide')
                       canEdit && handleChange && handleChange(key)
                     }}>
-                  <div className={`ui label`} >
-                    <i className='ui law icon' /><small>{ key }</small>
-                  </div>
+                  <Label>
+                    <Icon name='law' /><small>{ key }</small>
+                  </Label>
                   &nbsp;&nbsp;
                   <small>{ assetLicenses[key].name }</small>
-                </div>
+                </List.Item>
               )
             )
           }
-          </div>
+          </List>
         </div>
       }
     </span>

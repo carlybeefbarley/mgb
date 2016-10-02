@@ -155,6 +155,7 @@ export default class EditGraphic extends React.Component {
     //TODO: add only to canvas?
     window.addEventListener("paste", this.onpaste, false)
 
+    // TODO inspect. without this color picker hide doesn't work
     document.querySelector('#root').addEventListener("click", () => {} )
   }
 

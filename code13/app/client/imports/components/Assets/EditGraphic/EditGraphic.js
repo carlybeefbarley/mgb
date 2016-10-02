@@ -7,6 +7,7 @@ import Tools from './GraphicTools'
 
 import SpriteLayers from './Layers/SpriteLayers.js'
 import GraphicImport from './GraphicImport/GraphicImport.js'
+import CanvasGrid from './CanvasGrid.js'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
@@ -55,6 +56,7 @@ export default class EditGraphic extends React.Component {
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
     this.zoomLevels = [1, 2, 4, 6, 8, 10, 12, 14, 16]
+    this.gridImg = null
 
     this.state = {
       editScale:        4,        // Zoom scale of the Edit Canvas
@@ -152,6 +154,9 @@ export default class EditGraphic extends React.Component {
 
     //TODO: add only to canvas?
     window.addEventListener("paste", this.onpaste, false)
+
+    // TODO inspect. without this color picker hide doesn't work
+    document.querySelector('#root').addEventListener("click", () => {} )
   }
 
   componentWillUnmount() {
@@ -351,6 +356,8 @@ export default class EditGraphic extends React.Component {
         this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h)
       }
     }
+
+    this.drawGrid()
   }
 
   forceDraw ()
@@ -1364,6 +1371,22 @@ export default class EditGraphic extends React.Component {
     return { actions, config }
   }
 
+  setGrid(img){
+    this.gridImg = img
+  }
+
+  drawGrid(img) {
+    const zoom = this.state.editScale
+    if (zoom >= 8 && this.gridImg){
+      const c2 = this.props.asset.content2
+      for(let col=0; col<c2.width; col++){
+        for(let row=0; row<c2.height; row++){
+          this.editCtx.drawImage(this.gridImg, zoom*col, zoom*row)
+        }
+      }
+    }
+  }
+
 
   // React Callback: render()
   // See http://semantic-ui.com to understand the classNames we are using.
@@ -1377,12 +1400,6 @@ export default class EditGraphic extends React.Component {
     const { actions, config } = this.generateToolbarActions()
 
     let imgEditorSty = {}
-    if (zoom >= 8)
-    {
-      // Following two lines are for the gridlines
-      imgEditorSty.backgroundSize =  `${zoom}px ${zoom}px`,
-      imgEditorSty.backgroundImage = `repeating-linear-gradient(0deg, #888, #888 1px, transparent 1px, transparent ${zoom}px),repeating-linear-gradient(-90deg, #888, #888 1px, transparent 1px, transparent ${zoom}px`
-    }
     if (this.state.toolChosen)
       imgEditorSty.cursor = this.state.toolChosen.editCursor
 
@@ -1473,6 +1490,10 @@ export default class EditGraphic extends React.Component {
                         onDrop={this.handleDropPreview.bind(this,-1)}>
               </canvas>
               {/*** <canvas id="tilesetCanvas"></canvas> ***/}
+              <CanvasGrid
+                scale={this.state.editScale}
+                setGrid={this.setGrid.bind(this)}
+              />
             </div>
           </div>
 

@@ -154,6 +154,8 @@ export default class EditGraphic extends React.Component {
 
     //TODO: add only to canvas?
     window.addEventListener("paste", this.onpaste, false)
+
+    document.querySelector('#root').addEventListener("click", () => {} )
   }
 
   componentWillUnmount() {

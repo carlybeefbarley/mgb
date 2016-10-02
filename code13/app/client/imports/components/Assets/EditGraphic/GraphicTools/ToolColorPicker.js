@@ -24,7 +24,8 @@ class ColorPicker extends React.Component {
       popup: '.mgbColorPickerWidget.popup',
       position: 'right center',
       lastResort: 'right center',               // forces it to always show: https://github.com/Semantic-Org/Semantic-UI/issues/3004
-      hoverable: true
+      hoverable: true,
+      hideOnScroll: true
     })
   }
 

@@ -31,15 +31,12 @@ export default class CanvasGrid extends React.Component {
     setTimeout( () => this.drawGrid(), 0)
 
     return (
-      <div>
-        helloo
-        <canvas 
-          ref="gridCanvas" 
-          
-          width={this.props.scale} 
-          height={this.props.scale}>
-        </canvas>
-      </div>
+      <canvas 
+        ref="gridCanvas" 
+        style={{display:"none"}}
+        width={this.props.scale} 
+        height={this.props.scale}>
+      </canvas>
     )
   }
 

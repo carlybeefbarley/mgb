@@ -128,6 +128,15 @@ export default class Channel extends React.Component {
     // console.log(delay, startTime)
     this.source.start(this.props.audioCtx.currentTime + delay, startTime) // delay, startTime
     this.props.audioCtx.suspend()
+
+    // setTimeout( () => {
+    // if((this.source.playbackState === this.source.PLAYING_STATE || this.source.playbackState === this.source.FINISHED_STATE)) {
+    //         // console.log("source unlocked")
+    //         } else {
+    //             console.warn("audio source LOCKED", this.source)
+    //             // this.source.start(0, 0)
+    //         }
+    //     }, 0)
   }
 
   clearAudio () {

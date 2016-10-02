@@ -181,6 +181,7 @@ export default class EditMusic extends React.Component {
     this.songTime = 0
     this.updateCursor()
     this.callChildren('initAudio', [this.songTime])
+    this.audioCtx.suspend()
   }
 
   setAudioTime (newTime) {

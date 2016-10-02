@@ -202,6 +202,15 @@ class SoundController extends Component {
             this.renewalTimeout = setTimeout(this.generateAndQueue, renewalTimeoutTime);
         }
 
+        setTimeout(function() {
+        if((currentSrc.playbackState === currentSrc.PLAYING_STATE || currentSrc.playbackState === currentSrc.FINISHED_STATE)) {
+            // console.log("source unlocked")
+            } else {
+                console.warn("audio source LOCKED")
+                // currentSrc.start(0, 0)
+            }
+        }, 0)
+
         currentSrc.addEventListener('ended', this.onEnded);
     }
 

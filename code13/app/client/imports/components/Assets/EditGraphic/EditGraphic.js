@@ -1253,6 +1253,7 @@ export default class EditGraphic extends React.Component {
     this.handleSave("Import tileset", true)
     let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
     $(importPopup).modal('hide')
+    this.setState({ editScale: this.getDefaultScale() })
     // $('.ui.modal').modal('hide');
   }
 

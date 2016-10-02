@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
 import { AssetKinds } from '/imports/schemas/assets'
 import AssetCreateSelectKind from './AssetCreateSelectKind'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
@@ -10,6 +11,10 @@ export default AssetCreateNew = React.createClass({
     handleCreateAssetClick: PropTypes.func.isRequired,        // Callback function to create the asset, and is expected to navigate to the new page. Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
     currUser:               PropTypes.object,                 // currently logged in user (if any)
     currUserProjects:       PropTypes.array
+  },
+
+  componentDidMount() {
+    ReactDOM.findDOMNode(this.refs.inputAssetName).focus()
   },
 
   getDefaultProps: function () {
@@ -74,7 +79,9 @@ export default AssetCreateNew = React.createClass({
           <h4 className="ui header">1. Enter Asset Name</h4>
           <div className="ui items">
             <div className={"ui fluid input" + (isAssetNameValid ? "" : " error")}>
-              <input className="fluid" type="text" value={this.state.newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={this.props.placeholderName} ref={inp => (inp && inp.focus())}></input>
+              <input className="fluid" type="text" value={this.state.newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={this.props.placeholderName} 
+                ref="inputAssetName"
+              ></input>
             </div>
           </div>
         </div>
@@ -112,6 +119,7 @@ export default AssetCreateNew = React.createClass({
   handleSelectAssetKindClick: function(assetKindKey)
   {
     this.setState( { selectedKind: assetKindKey})
+    // this.blurInput()
   },
 
   handleCreateAssetClick: function()
@@ -124,5 +132,16 @@ export default AssetCreateNew = React.createClass({
       selectedProject ? selectedProject.name : null,
       selectedProject ? selectedProject.ownerId : null,
       selectedProject ? selectedProject.ownerName : null)
-  }
+    // this.blurInput()
+  },
+
+  blurInput: function(){
+    // for ipad hide keyboard
+    document.activeElement.blur()
+    $('input').blur()
+    ReactDOM.findDOMNode(this.refs.inputAssetName).blur()
+
+    //  ref={inp => (inp && inp.focus())}   // previous input ref
+  },
+
 })

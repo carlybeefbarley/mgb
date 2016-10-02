@@ -59,7 +59,7 @@ export default class EditGraphic extends React.Component {
     this.gridImg = null
 
     this.state = {
-      editScale:        4,        // Zoom scale of the Edit Canvas
+      editScale:        this.getDefaultScale(),        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
       selectedLayerIdx: 0,
       selectedColors:   {
@@ -220,6 +220,18 @@ export default class EditGraphic extends React.Component {
         animations: []
       }
     }
+  }
+
+  getDefaultScale () {
+    const c2 = this.props.asset.content2
+    const wRatio = (screen.width *0.9) / c2.width
+    const hRatio = (screen.height * 0.5) / c2.height
+    let scale = wRatio < hRatio ? Math.floor(wRatio) : Math.floor(hRatio)
+    if(scale > 4) scale = 4
+    else if(scale < 1) scale = 1
+    else if(scale == 3) scale = 2
+
+    return scale
   }
 
 

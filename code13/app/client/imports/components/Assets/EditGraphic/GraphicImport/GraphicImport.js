@@ -182,6 +182,10 @@ export default class GraphicImport extends React.Component {
     return cols * rows
   }
 
+  setOneFrame () {
+    this.setState({ tileWidth: this.state.imgWidth, tileHeight: this.state.imgHeight })
+  }
+
   // Do the actual import
   performImport() {
     let tmpCanvas = document.createElement("canvas")
@@ -272,6 +276,10 @@ export default class GraphicImport extends React.Component {
             
             <div onClick={this.performImport.bind(this)} className="ui small labeled icon button" title={`Import ${framesYielded} (${tileWidth}px x ${tileHeight}px) frames`} style={buttonSty}>
               <i className="icon small save"></i>Perform import
+            </div>
+
+            <div onClick={this.setOneFrame.bind(this)} className="ui small labeled icon button" title={`Set to one frame (${tileWidth}px x ${tileHeight}px)`} style={buttonSty}>
+              <i className="icon small expand"></i>One frame
             </div>
 
             <div onClick={this.clearAll.bind(this)} className="ui small labeled icon button" title="Cancel this import and choose a different image to import instead" style={buttonSty}>

@@ -15,7 +15,7 @@ import NumberInput from '/client/imports/components/Controls/NumberInput'
 
 
 // Some constants we will use
-const MAX_BITMAP_WIDTH = 1024
+const MAX_BITMAP_WIDTH = 1500
 const MAX_BITMAP_HEIGHT = 1024
 const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it generally
 

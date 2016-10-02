@@ -15,6 +15,58 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Sun Oct 2 2016 09:20:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1647'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.assets.license',
+          'type': 'feature',
+          'changeName': 'Asset License',
+          'changeSummary': 'The Asset Edit view now shows the license of the asset, and also allows the Asset owner (or a member of a Project containing the asset) to change the license. License changes are tracked in the activity log',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.profile.badges',
+          'type': 'improvement',
+          'changeName': 'Updated Profile badges',
+          'changeSummary': 'Profile badges are being updated to the newer art style. The first few have been enabled in this release',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.asset.project',
+          'type': 'improvement',
+          'changeName': 'Link to get from Asset Edit to Project',
+          'changeSummary': 'The Project labels in the Asset Editor are now clickable - they link to that projects\' Asset link. Also alt-click will go to the list of projects for the project owner ',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.music',
+          'type': 'bugfix',
+          'changeName': 'iOS fixes for Music',
+          'changeSummary': ` Music generation is more reliable on Safari and Chrome browsers on iOS. There are a lot of weird issues with WebAudio on iOS, please let us know of any issues you find.`,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'bugfix',
+          'changeName': 'iOS fixes for Graphic Editor',
+          'changeSummary': `Fixed various popup/keyboard issues on iPad/iPhone.`,
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Thu Sep 29 2016 10:00:00 GMT-0700 (PDT)',
 
       'id': {
@@ -48,14 +100,7 @@ export default mgbReleaseInfo = {
           'changeName': 'CodeFlowers',
           'changeSummary': `Edit Code can now display 'CodeFlowers' - a visual way to see the complexity of your source code, and also it's imports. These can be viewed/explored, and also can be saved as a thumbnail for the Asset`,
           'otherUrls': [ { txt: 'CodeFlower was developed by Francois Zaninotto', href: 'https://github.com/fzaninotto/CodeFlower' } ]
-        }//,
-        // {
-        //   'featureTag': 'asset.music',
-        //   'type': 'feature',
-        //   'changeName': 'iOS fixes for Music',
-        //   'changeSummary': ` Music generation is more reliable on Safari and Chrome browsers on iOS. There are a lot of weird issues with WebAudio on iOS, please let us know of any issues you find.`,
-        //   'otherUrls': [ ]
-        // },
+        }
       ]
     },
 

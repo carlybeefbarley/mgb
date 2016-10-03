@@ -389,6 +389,7 @@ export default class EditGraphic extends React.Component {
       this.frameCtxArray[0].drawImage(img, 0, 0)
     }
     this.editCtx.drawImage(this.frameCanvasArray[0], 0, 0)
+    console.log('---force draw')
   }
 
   drawSelectRect(selectRect) {
@@ -1063,7 +1064,11 @@ export default class EditGraphic extends React.Component {
     }
 
     // thumbnail
-    if(this.frameCanvasArray && this.frameCanvasArray[0]) asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')
+    if(this.thumbCanvas) {
+      asset.thumbnail = this.thumbCanvas.toDataURL('image/png')
+      this.thumbCanvas = null
+    }
+    else if(this.frameCanvasArray && this.frameCanvasArray[0]) asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')
 
     this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }
@@ -1232,8 +1237,9 @@ export default class EditGraphic extends React.Component {
 
  
   // This is passed to the <GraphicImport> Control so the tiles can be imported
-  importTileset(tileWidth, tileHeight, imgDataArr) { 
+  importTileset(tileWidth, tileHeight, imgDataArr, thumbCanvas) { 
     let c2 = this.props.asset.content2
+    this.thumbCanvas = thumbCanvas
 
     c2.width = tileWidth
     c2.height = tileHeight
@@ -1249,6 +1255,7 @@ export default class EditGraphic extends React.Component {
     }
     c2.layerParams = [ {name: "Layer 1", isHidden: false, isLocked: false} ]
     c2.animations = []
+    
 
     this.handleSave("Import tileset", true)
     let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)

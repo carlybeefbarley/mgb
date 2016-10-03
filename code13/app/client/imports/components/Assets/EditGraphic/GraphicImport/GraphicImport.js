@@ -193,6 +193,7 @@ export default class GraphicImport extends React.Component {
     tmpCanvas.height = this.canvas.height
     let tmpCtx = tmpCanvas.getContext('2d')
     tmpCtx.drawImage(this.loadedImg, 0, 0)
+    let thumbCanvas = null
 
     let imgDataArr = []
 
@@ -209,11 +210,12 @@ export default class GraphicImport extends React.Component {
         let ctx = canvas.getContext('2d')
         ctx.putImageData(imgData, 0, 0)
         imgDataArr.push( canvas.toDataURL('image/png') )
+        if(row == 0 && col == 0) thumbCanvas = canvas
         importedSoFar++
       }
     }
 
-    this.props.importTileset(this.state.tileWidth, this.state.tileHeight, imgDataArr)    // TODO: Check that this sets W,H correctly
+    this.props.importTileset(this.state.tileWidth, this.state.tileHeight, imgDataArr, thumbCanvas)    // TODO: Check that this sets W,H correctly
   }
 
 

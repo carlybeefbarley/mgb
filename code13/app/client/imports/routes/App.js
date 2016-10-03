@@ -158,8 +158,12 @@ export default App = React.createClass({
     if (!loading)
       this.configureTrackJs()
 
-
     // The NavPanel (left), NavBar (top) and FlexPanel (right) are fixed/absolute positioned so we need to account for that
+
+    // ProjectScopeLock is an optional 2nd row of the NavBar. It is used to show the height of the 
+    const projectScopeLockValue = query[urlMaker.queryParams("app_projectScopeLock")]
+    const showProjectScopeLock = !!projectScopeLockValue
+    const navBarHeight = showProjectScopeLock ? '80px' : '40px'
 
     // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
@@ -175,7 +179,7 @@ export default App = React.createClass({
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
       position: "fixed",
-      top:      "40px",
+      top:      navBarHeight,
       bottom:   "0px",
       left:     navPanelReservedWidth,
       right:    flexPanelWidth,
@@ -254,6 +258,7 @@ export default App = React.createClass({
               navPanelWidth={navPanelReservedWidth}
               navPanelIsVisible={showNavPanel}
               conserveSpace={conserveSpace}
+              projectScopeLock={projectScopeLockValue}
               />
 
 

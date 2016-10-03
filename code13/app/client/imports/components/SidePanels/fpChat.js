@@ -1,22 +1,22 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import QLink from '/client/imports/routes/QLink';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import QLink from '/client/imports/routes/QLink'
 
-import reactMixin from 'react-mixin';
-import { Chats } from '/imports/schemas';
+import reactMixin from 'react-mixin'
+import { Chats } from '/imports/schemas'
 import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '/imports/schemas/chats';
-import moment from 'moment';
+import moment from 'moment'
 
 const initialMessageLimit = 5
 const additionalMessageIncrement = 15
 
 // This is a little more complicated than it should be because Semantic UI has some peculiarities with the 
-// 'dropdown' control. In order to hve it so pretty, they take some liberties with the <option> element.
+// 'dropdown' control. In order to have it so pretty, they take some liberties with the <option> element.
 // The result for us is that we can't set it in render() directly. We have to set it in componentDidMount()/
 // componentDidUpdate() and then we also have to explicitly squash any idemponent changes creating loops.
 // 
-// So.. this is ok while I understand it, but if it gets any more complex it may be worth looking at a less
-// 'special' ui control than dropdown
+// So.. this is ok whilst I understand it, but if it gets any more complex it may be worth looking at a less
+// 'special' ui control than 'ui dropdown'
 
 export default fpChat = React.createClass({
   mixins: [ReactMeteorData],
@@ -36,18 +36,15 @@ export default fpChat = React.createClass({
     return channelKey || "GENERAL"
   },
 
-
   _calculateActiveChannelName: function() {    
     return ChatChannels[this._calculateActiveChannelKey()].name
   },
-
 
   getInitialState: function() {
     return {
       pastMessageLimit: initialMessageLimit
     }
   },
-
 
   getMeteorData: function() {
     const chatChannel = ChatChannels[this._calculateActiveChannelKey()]
@@ -60,7 +57,6 @@ export default fpChat = React.createClass({
     }
   },
 
-
   changeChannel: function(selectedChannelName)
   {
     // Magic and important squishing of idempotent changes below. See comment at start of file for some context on this.
@@ -71,7 +67,6 @@ export default fpChat = React.createClass({
     }
   },
 
-
   componentDidMount: function() {
     const $dropDown = $(".fpChatDropDown")
 
@@ -81,9 +76,8 @@ export default fpChat = React.createClass({
     // Callback to handle changes in channel Name. This is overactive because of the 'set exactly' 
     // operations, hence the squishing in this.changeChannel()
     $dropDown.dropdown( {  onChange: selectedChannelName => this.changeChannel(selectedChannelName) })
-    this.latestMessage = null;
+    this.latestMessage = null
   },
-
 
   componentDidUpdate: function(prevProps) {
     if (this.state.pastMessageLimit <= initialMessageLimit)
@@ -96,26 +90,26 @@ export default fpChat = React.createClass({
   },
 
   // show notification with latest message if chat window is closed
-  getLatestMessage: function(){
+  getLatestMessage: function() {
     // TODO: get msg
-    const msg = null;
-    if(this.latestMessage != msg){
-      this.latestMessage = msg;
-      this.showNotification(msg);
+    const msg = null
+    if (this.latestMessage != msg) {
+      this.latestMessage = msg
+      this.showNotification(msg)
     }
   },
 
-  showNotification: function(msg){
+  showNotification: function(msg) {
     Notification.requestPermission().then((result) => {
       const n = new Notification(msg.toChannelName, {
         body: msg.byUserName + " says:\n" + msg.message
       })
       // focus window and close notification
       n.onclick = (e) => {
-        window.focus();
-        n.close();
+        window.focus()
+        n.close()
       }
-    });
+    })
   },
 
   doSendMessage: function() {    
@@ -158,7 +152,6 @@ export default fpChat = React.createClass({
             </a>
   },
 
-
   doGetMoreMessages() {
     const newMessageLimit = Math.min(chatParams.maxClientChatHistory, this.state.pastMessageLimit + additionalMessageIncrement)
     this.setState({ pastMessageLimit: newMessageLimit} )
@@ -169,20 +162,21 @@ export default fpChat = React.createClass({
     const to = `/u/${c.byUserName}`
 
     const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
-    return  <div className="comment" key={c._id}>
-              <QLink to={to} className="avatar">
-                <img src={`/api/user/${c.byUserId}/avatar`}></img>
-              </QLink>
-              <div className="content">
-                <QLink to={to} className="author">{c.byUserName}</QLink>
-                <div className="metadata">
-                  <span className="date" title={absTime}>{ago}</span>
-                </div>
-                <div className="text">{c.message}&nbsp;</div>
-              </div>
-            </div>
+    return (
+      <div className="comment" key={c._id}>
+        <QLink to={to} className="avatar">
+          <img src={`/api/user/${c.byUserId}/avatar`}></img>
+        </QLink>
+        <div className="content">
+          <QLink to={to} className="author">{c.byUserName}</QLink>
+          <div className="metadata">
+            <span className="date" title={absTime}>{ago}</span>
+          </div>
+          <div className="text">{c.message}&nbsp;</div>
+        </div>
+      </div>
+    )
   },
-
 
   render: function () {    
 
@@ -192,43 +186,44 @@ export default fpChat = React.createClass({
     const canSend = currUserCanSend(this.props.currUser, channelKey)
     var disabler = cls => ( (canSend ? "" : "disabled ") + cls)
 
-    return  <div>
-              <div className="ui fluid tiny search selection dropdown fpChatDropDown">
-                <input type="hidden" name="channels" value={channelName}></input>
-                <i className="dropdown icon"></i>
-                <div className="default text">All Channels</div>
-                <div className="menu">
-                  {
-                    ChatChannels.sortedKeys.map( k => { 
-                      const chan = ChatChannels[k]
-                      return !chan ? null : 
-                        <div className="item" 
-                             title={chan.description} 
-                             key={k}
-                             data-value={chan.name} >
-                          <i className={chan.icon + " icon"}></i>{chan.name}
-                        </div>                      
-                    })
-                  }
-                </div>
-              </div>
-              
-              
-              <div className="ui small comments">
-              { this.renderGetMoreMessages() }
-              { this.data.chats && this.data.chats.map( c => (this.renderMessage(c))) }
-              </div>
+    return  (
+      <div>
+        <div className="ui fluid tiny search selection dropdown fpChatDropDown">
+          <input type="hidden" name="channels" value={channelName}></input>
+          <i className="dropdown icon"></i>
+          <div className="default text">All Channels</div>
+          <div className="menu">
+            {
+              ChatChannels.sortedKeys.map( k => { 
+                const chan = ChatChannels[k]
+                return !chan ? null : 
+                  <div className="item" 
+                        title={chan.description} 
+                        key={k}
+                        data-value={chan.name} >
+                    <i className={chan.icon + " icon"}></i>{chan.name}
+                  </div>                      
+              })
+            }
+          </div>
+        </div>
+        
+        <div className="ui small comments">
+        { this.renderGetMoreMessages() }
+        { this.data.chats && this.data.chats.map( c => (this.renderMessage(c))) }
+        </div>
 
-              <form className="ui small form">
-                <div className={disabler("field")}>
-                  <textarea rows="3" placeholder="your message..." ref="theMessage" maxLength={chatParams.maxChatMessageTextLen}></textarea>
-                </div>
-                <div className={disabler("ui blue right floated labeled submit icon button")} ref="sendChatMessage" onClick={this.doSendMessage}>
-                  <i className="chat icon"></i> Send Message
-                </div>
-              </form>
+        <form className="ui small form">
+          <div className={disabler("field")}>
+            <textarea rows="3" placeholder="your message..." ref="theMessage" maxLength={chatParams.maxChatMessageTextLen}></textarea>
+          </div>
+          <div className={disabler("ui blue right floated labeled submit icon button")} ref="sendChatMessage" onClick={this.doSendMessage}>
+            <i className="chat icon"></i> Send Message
+          </div>
+        </form>
 
-             <p ref="bottomOfMessageDiv">&nbsp;</p> 
-            </div>
+        <p ref="bottomOfMessageDiv">&nbsp;</p> 
+      </div>
+    )
   }  
 })

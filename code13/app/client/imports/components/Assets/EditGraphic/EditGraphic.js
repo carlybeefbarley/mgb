@@ -1067,12 +1067,7 @@ export default class EditGraphic extends React.Component {
       c2.rows = tilesetInfo.rows
     }
 
-    // thumbnail
-    if(this.thumbCanvas) {
-      asset.thumbnail = this.thumbCanvas.toDataURL('image/png')
-      this.thumbCanvas = null
-    }
-    else if(this.frameCanvasArray && this.frameCanvasArray[0]) asset.thumbnail = this.frameCanvasArray[0].toDataURL('image/png')
+    this.setThumbnail(asset)
 
     this.saveChangedContent2(c2, asset.thumbnail, changeText, allowBackwash)
   }
@@ -1110,6 +1105,37 @@ export default class EditGraphic extends React.Component {
     //console.log("Backwash marker = " + recentMarker)
     this.props.handleContentChange(c2, thumbnail, changeText)
     this.doSnapshotActivity()
+  }
+
+  setThumbnail (asset) {
+    let origCanvas
+    if(this.thumbCanvas) {
+      // origCanvas = this.thumbCanvas.toDataURL('image/png')
+      origCanvas = this.thumbCanvas
+      this.thumbCanvas = null
+    }
+    else if(this.frameCanvasArray && this.frameCanvasArray[0]){
+      // origCanvas = this.frameCanvasArray[0].toDataURL('image/png')
+      origCanvas = this.frameCanvasArray[0]
+    }
+
+    if(origCanvas){
+      const tmpCanvas = document.createElement("canvas")
+      const tmpCtx = tmpCanvas.getContext('2d')
+      tmpCanvas.width = 290
+      tmpCanvas.height = 150
+      const wRatio = tmpCanvas.width / origCanvas.width
+      const hRatio = tmpCanvas.height / origCanvas.height
+      let ratio = wRatio < hRatio ? wRatio : hRatio
+      if(wRatio >= 1 && hRatio >= 1) ratio = 1
+      const width = origCanvas.width * ratio
+      const height = origCanvas.height * ratio
+      const x = (tmpCanvas.width - width) / 2
+      const y = (tmpCanvas.height - height) / 2
+
+      tmpCtx.drawImage(origCanvas, x, y, width, height)
+      asset.thumbnail = tmpCanvas.toDataURL('image/png')
+    }
   }
 
   /// Drag & Drop of image files over preview and editor

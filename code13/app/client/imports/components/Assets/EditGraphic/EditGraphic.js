@@ -18,6 +18,8 @@ import NumberInput from '/client/imports/components/Controls/NumberInput'
 const MAX_BITMAP_WIDTH = 1500
 const MAX_BITMAP_HEIGHT = 1024
 const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it generally
+const DEFAULT_GRAPHIC_WIDTH = 64
+const DEFAULT_GRAPHIC_HEIGHT = 32
 
 
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
@@ -210,8 +212,8 @@ export default class EditGraphic extends React.Component {
     let asset = this.props.asset
     if (!asset.hasOwnProperty("content2") || !asset.content2.hasOwnProperty('width')) {
       asset.content2 = {
-        width: 64,
-        height: 32,
+        width: DEFAULT_GRAPHIC_WIDTH,
+        height: DEFAULT_GRAPHIC_HEIGHT,
         fps: 10,
         layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
         frameNames: ["Frame 1"],
@@ -224,8 +226,10 @@ export default class EditGraphic extends React.Component {
 
   getDefaultScale () {
     const c2 = this.props.asset.content2
-    const wRatio = (screen.width *0.9) / c2.width
-    const hRatio = (screen.height * 0.5) / c2.height
+    const width = c2.width || DEFAULT_GRAPHIC_WIDTH
+    const height = c2.height || DEFAULT_GRAPHIC_HEIGHT
+    const wRatio = (screen.width *0.9) / width
+    const hRatio = (screen.height * 0.5) / height
     let scale = wRatio < hRatio ? Math.floor(wRatio) : Math.floor(hRatio)
     if(scale > 4) scale = 4
     else if(scale < 1) scale = 1

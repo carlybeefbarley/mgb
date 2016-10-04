@@ -46,6 +46,7 @@ import cm_tern_doc_comment from "tern/plugin/doc_comment";
 
 import InstallMgbTernExtensions from './tern/MgbTernExtensions.js';
 import "codemirror/addon/tern/tern";
+import "codemirror/addon/comment/comment";
 
 import FunctionDescription from './tern/FunctionDescription.js';
 import ExpressionDescription from './tern/ExpressionDescription.js';
@@ -191,6 +192,9 @@ export default class EditCode extends React.Component {
         },
         "Ctrl-O": (cm) => {
           cm.foldCode(cm.getCursor());
+        },
+        "Ctrl-/": (cm) => {
+          cm.execCommand("toggleComment")
         }
       },
       //lint: true,   // TODO - use eslint instead? Something like jssc?

@@ -120,6 +120,13 @@ export const keysDB = [
     pcKey: 'Ctrl-Q',
     command: 'editor.text.foldToggle',
     description: 'Open/close fold at current line'
+  },
+
+  {
+    macKey: 'Ctrl-/',
+    pcKey: 'Ctrl-/',
+    command: 'editor.text.commentToggle',
+    description: 'Toggle comment at selected line(s)'
   }
 
 ]

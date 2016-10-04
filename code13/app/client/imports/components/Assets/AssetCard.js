@@ -11,11 +11,11 @@ import WorkState from '/client/imports/components/Controls/WorkState'
 // TODO: Toast/error is a mess
 
 export const assetViewChoices =  { 
-  "xs": { icon: '', showFooter: false, showMeta: false,  showExtra: false, showHdr: false },
-  "s":  { icon: '', showFooter: false, showMeta: false,  showExtra: false, showHdr: true  },
-  "m":  { icon: '', showFooter: false, showMeta: false,  showExtra: true,  showHdr: true  },
-  "l":  { icon: '', showFooter: false, showMeta: true,   showExtra: true,  showHdr: true  },
-  "xl": { icon: '', showFooter: true,  showMeta: true,   showExtra: true,  showHdr: true  }
+  "xs": { icon: '', showFooter: false, showMeta: false, showExtra: false, showHdr: true,  showImg: false },
+  "s":  { icon: '', showFooter: false, showMeta: false, showExtra: false, showHdr: true,  showImg: true  },
+  "m":  { icon: '', showFooter: false, showMeta: false, showExtra: true,  showHdr: true,  showImg: true  },
+  "l":  { icon: '', showFooter: false, showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  },
+  "xl": { icon: '', showFooter: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  }
 }
 
 export const defaultAssetViewChoice = 'm'
@@ -49,18 +49,21 @@ export default AssetCard = React.createClass({
   {
     this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
     this.previewCtx = this.previewCanvas.getContext('2d')
-    this.loadThumbnail(this.props.asset)
+    this.loadThumbnail()
   },
 
   componentDidUpdate()
   {
-    this.loadThumbnail(this.props.asset)
+    this.loadThumbnail()
   },
   
-  loadThumbnail(asset)
+  loadThumbnail()
   {
-    if (asset.hasOwnProperty("thumbnail"))
-      this.loadPreviewFromDataURI(asset.thumbnail)
+    const { renderView, asset } = this.props
+    const viewOpts = assetViewChoices[renderView]
+
+    if (viewOpts.showImg && asset.hasOwnProperty("thumbnail"))
+      this.loadPreviewFromDataURI(asset.thumbnail)      
   },
   
   loadPreviewFromDataURI(dataURI)
@@ -123,6 +126,7 @@ export default AssetCard = React.createClass({
     const ago = moment(asset.updatedAt).fromNow()      // TODO: Make reactive
     const ownerName = asset.dn_ownerName
     
+    const veryCompactButtonStyle = { paddingLeft: '0.25em', paddingRight: '0.25em' }
     // Project Membership editor
     
     const chosenProjectNamesArray = asset.projectNames || []
@@ -141,9 +145,12 @@ export default AssetCard = React.createClass({
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
-      <div key={asset._id} className="ui card" style={ { minWidth: "200px"} }>
+      <div key={asset._id} className="ui card" style={ { minWidth: '200px', marginTop: '0.25em', marginBottom: '0.25em' } }>
       
-        <div className="ui centered image" onClick={this.handleEditClick}>
+        <div 
+            className="ui centered image" 
+            onClick={this.handleEditClick}
+            style={ viewOpts.showImg ? {} : {display: 'none'} }>
           <canvas 
             className="mgb-pixelated"
             ref="thumbnailCanvas" 
@@ -157,15 +164,18 @@ export default AssetCard = React.createClass({
 
         { viewOpts.showHdr && 
           <div className="content">
-            <i className="right floated star icon"></i>
-            <div className="header" style={{ "color": asset.name ? 'black' : '#888'}}  onClick={this.handleEditClick} title="Asset Name">
-              <small>{asset.name || "(untitled)"}&nbsp;</small>
+            <i className={'right floated ' + assetKindIcon + ' icon'} />
+            <a  className="header" 
+                style={{ "color": asset.name ? 'black' : '#888'}}  
+                onClick={this.handleEditClick} 
+                title="Asset Name">
+              <small>{asset.name || "(untitled)"}</small>&nbsp;
               <WorkState 
                 workState={asset.workState} 
                 popupPosition="bottom center"
                 showMicro={true}
                 canEdit={false}/>
-            </div>
+            </a>
             { viewOpts.showMeta && (asset.text && asset.text !== "") && 
               <div className="meta" style={{ "color": 'black'}}  onClick={this.handleEditClick} title="Asset Description">
                 <small>{asset.text}</small>
@@ -206,17 +216,20 @@ export default AssetCard = React.createClass({
           <div className="ui three small bottom attached icon buttons">
             <QLink 
                   to={`/u/${asset.dn_ownerName}/asset/${asset._id}`} 
+                  style={veryCompactButtonStyle}
                   className={(showEditButton ? "" : "disabled ") + "ui green compact button"} 
                   onClick={this.handleEditClick}>
               <i className="ui edit icon"></i>
               <small>&nbsp;Edit</small>
             </QLink>
             <div className={(canEdit ? "" : "disabled ") + "ui " + (asset.isCompleted ? 'blue' : 'grey') + " compact button"} 
+                  style={veryCompactButtonStyle}
                   onClick={this.handleCompletedClick} >
               <i className={ asset.isCompleted ? "ui lock icon" : "ui unlock icon"}></i>
               <small>&nbsp;{asset.isCompleted ? 'Complete' : 'Incomplete'}</small>
             </div>
             <div className={(canEdit? "" : "disabled ") + "ui red compact button"}
+                  style={veryCompactButtonStyle}
                   onClick={this.handleDeleteClick}>
               {asset.isDeleted ? null : <i className="ui trash icon"></i>}
               <small>&nbsp;{asset.isDeleted ? "Undelete" : "Delete" }</small>

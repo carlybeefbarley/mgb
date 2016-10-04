@@ -136,7 +136,8 @@ window.onload = function() {
       mgbCmd: "mgbConsoleMsg",
       consoleFn: 'windowOnerror',
       timestamp: new Date(),
-      line: lineNumber
+      line: lineNumber,
+      url: url
     }, "*");
     if (window.originalWindowOnerror)
       return window.originalWindowOnerror(message, url, lineNumber);

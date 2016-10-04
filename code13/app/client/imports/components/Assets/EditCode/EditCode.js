@@ -1329,10 +1329,11 @@ export default class EditCode extends React.Component {
     })
   }
 
-  gotoLineHandler(line) {
+  gotoLineHandler(line, file) {
     let pos = {line: line - 1, ch: 0}
     this.codeMirror.scrollIntoView(pos, 100)  //100 pixels margin
     this.codeMirror.setCursor(pos)
+
   }
 
   /** This is useful when working with Tern stuff..

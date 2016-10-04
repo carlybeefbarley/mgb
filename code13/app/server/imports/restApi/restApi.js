@@ -43,7 +43,8 @@ RestApi.addRoute('asset/png/:id', {authRequired: false}, {
       return {
         statusCode: 200,
         headers: {
-          'Content-Type': 'image/png'
+          'Content-Type': 'image/png',
+          // 'cache-control': 'private, must-revalidate, max-age: 30'
         },
         body: dataUriToBuffer(asset.content2.frameData[frame][0])
       }
@@ -426,7 +427,7 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
         statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
         headers: {
           'Location': user.profile.avatar,
-          'cache-control': 'max-age=30'
+          // 'cache-control': 'max-age=30'
           // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
         },
         body: {}

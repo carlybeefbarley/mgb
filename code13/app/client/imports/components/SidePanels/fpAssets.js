@@ -50,7 +50,7 @@ export default fpAssets = React.createClass({
       false,                // Show Only Deleted
       false,                // Show only Stable
       undefined,            // Use default sort order
-      15                    // Limit
+      20                    // Limit
     )
     const assetSorter = { updatedAt: -1 }
     let assetSelector = assetMakeSelector(

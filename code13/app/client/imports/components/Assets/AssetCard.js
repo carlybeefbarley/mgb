@@ -6,7 +6,6 @@ import { AssetKinds } from '/imports/schemas/assets'
 import moment from 'moment'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectMembershipEditor from './ProjectMembershipEditor'
-import AssetUrlGenerator from './AssetUrlGenerator.js'
 import WorkState from '/client/imports/components/Controls/WorkState'
 
 // TODO: Toast/error is a mess
@@ -46,13 +45,6 @@ export default AssetCard = React.createClass({
     }
   },
   
-  getInitialState: function () {
-    return {
-      discoveredImageWidth: undefined,     // If we don't have the full asset with .content2 then we only know the width after we've loaded the thumbnail
-      discoveredImageHeight: undefined    // If we don't have the full asset with .content2 then we only know the width after we've loaded the thumbnail      
-    }
-  },
-
   componentDidMount()
   {
     this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
@@ -60,7 +52,7 @@ export default AssetCard = React.createClass({
     this.loadThumbnail(this.props.asset)
   },
 
-  componentDidUpdate(prevProps, prevState)
+  componentDidUpdate()
   {
     this.loadThumbnail(this.props.asset)
   },
@@ -85,11 +77,10 @@ export default AssetCard = React.createClass({
         {          
           this.previewCanvas.width = _img.width
           this.previewCanvas.height = _img.height
-          this.setState( { discoveredImageWidth: _img.width, discoveredImageHeight: _img.height} )
         }
         _ctx.clearRect(0 , 0, _img.width, _img.height)
         _ctx.drawImage(_img,0,0)  // needs to be done in onload...
-        // TODO - there may be an event leak of _img. to see this, comment out the width check guards on setState()
+        // TODO - there may be an event leak of _img?
       }
     }
     else
@@ -129,15 +120,7 @@ export default AssetCard = React.createClass({
 
     const iw = c2.hasOwnProperty("width") ? c2.width : 64
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
-    const pw = this.state.discoveredImageWidth || iw 
-    const ph = this.state.discoveredImageHeight || ih
-    let info2 = " "
-    switch (asset.kind)
-    {
-    case "graphic":
-      info2 = `Size: ${pw} x ${ph} pixels`
-    }
-    const ago = moment(asset.updatedAt).fromNow()                      // TODO: Make reactive
+    const ago = moment(asset.updatedAt).fromNow()      // TODO: Make reactive
     const ownerName = asset.dn_ownerName
     
     // Project Membership editor
@@ -191,12 +174,6 @@ export default AssetCard = React.createClass({
           
             { asset.isDeleted &&            
               <div className="ui massive red corner label"><span style={{fontSize: "10px", paddingLeft: "10px"}}>DELETED</span></div>
-            }
-
-            { info2 && viewOpts.showMeta &&
-              <div className="meta">
-                <small>{info2}</small>
-              </div>
             }
 
             { viewOpts.showMeta && 

@@ -18,7 +18,7 @@ export const assetViewChoices =  {
   "xl": { icon: '', showFooter: true,  showMeta: true,   showExtra: true,  showHdr: true  }
 }
 
-export const defaultAssetViewChoice = 'l'
+export const defaultAssetViewChoice = 'm'
 
 export default AssetCard = React.createClass({
 

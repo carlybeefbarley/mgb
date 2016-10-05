@@ -64,7 +64,6 @@ const UAKerr = "Unknown Asset Kind"     // An error message string used a few pl
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 
 export const AssetKinds = {
-  //  "search":  { name: "Search",  disable: true,  longName: "Search query",    icon: "find", description: "Saved search query" },
   "palette": {
     name: "Palette",
     selfPlural: false,
@@ -79,16 +78,16 @@ export const AssetKinds = {
     selfPlural: false,
     disable: false,
     longName: "Graphic",
-    icon: "file image outline",
+    icon: "image",
     requiresUserRole: null,
     description: "Images, Sprites, tiles, animations, backgrounds etc"
-  },
+  },  
   "map": {
     name: "Map",
     selfPlural: false,
     disable: false,
     longName: "Game Level Map",
-    icon: "marker",
+    icon: "map outline",
     requiresUserRole: null,    
     description: "Map/Level used in a game"
   },
@@ -106,7 +105,7 @@ export const AssetKinds = {
     selfPlural: true,
     disable: false,
     longName: "Code Script",
-    icon: "puzzle",
+    icon: "code ",
     requiresUserRole: null,    
     description: "Source code script"
   },

@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react'
-import EditGraphic from './EditGraphic/EditGraphic'
-import EditCode from './EditCode/EditCode'
 import EditMap from './EditMap/EditMap'
 import EditDoc from './EditDoc/EditDoc'
-import EditSound from './EditAudio/EditSound/EditSound'
+import EditCode from './EditCode/EditCode'
+import EditGame from './EditGame/EditGame'
 import EditMusic from './EditAudio/EditMusic/EditMusic'
+import EditSound from './EditAudio/EditSound/EditSound'
+import EditGraphic from './EditGraphic/EditGraphic'
 import EditUnknown from './EditUnknown'
 
 
@@ -14,7 +15,8 @@ const editElementsForKind = {
   'map':     EditMap,
   'doc':     EditDoc,
   'sound':   EditSound,
-  'music':   EditMusic
+  'music':   EditMusic,
+  'game':    EditGame
 }
 
 export default AssetEdit = React.createClass({

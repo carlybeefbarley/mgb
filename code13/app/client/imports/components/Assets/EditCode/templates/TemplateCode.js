@@ -4,35 +4,39 @@ export const templateCode = [
     description: "Empty functions for preload(), create() and render()",
     code: `// Start to make a Phaser game.
 import 'phaser@2.4.6'
-var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
+const game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
+  preload: preload,
+  create: create,
+  update: update,
+  render: render
+})
 
 // In a Phaser game, this is needed to enable screenshots if using WebGL renderer (because of Phaser.AUTO)
-game.preserveDrawingBuffer = true;
-
+game.preserveDrawingBuffer = true
 
 function preload() {
 
-    game.load.crossOrigin = 'anonymous';
+  game.load.crossOrigin = 'anonymous'
 
-    // example of how to load and name an asset to use in code
-    game.load.image('playerThing','/api/asset/png/2ojWGXPXC99A7eDP7');
-    
+  // Example of how to load and name an asset to use in code. 
+  // You can drag assets from the right hand Assets panel towards 
+  // this code area to generate these kinds of api/url links:
+  game.load.image('playerThing', '/api/asset/png/2ojWGXPXC99A7eDP7')
+
 }
-var player;
+let player
 
 function create() {
-    game.stage.backgroundColor = 'rgba(68, 136, 170, 0.5)';
-
-    player = game.add.sprite(100, 200, 'playerThing');
+  game.stage.backgroundColor = 'rgba(68, 136, 170, 0.5)'
+  player = game.add.sprite(100, 200, 'playerThing')
 }
 
-function update () {
+function update() {
 
 }
 
-function render() 
-{
-  
+function render() {
+
 }`
   },
   
@@ -43,7 +47,7 @@ function render()
 import 'phaser'
 // Create the Phaser Game. 
 // 
-var game = new Phaser.Game(
+const game = new Phaser.Game(
    "100", // Phaser.Game uses this number in quotes to mean % of screen width
    window.innerHeight - 40, // another way to automatically calculate size (height) 
    Phaser.AUTO, // Automatically choose the fastest renderer type for this browser
@@ -56,54 +60,55 @@ var game = new Phaser.Game(
      update: update,   // The update function is called update (it is defined below)
      render: render    // the render function is called render (it is defined below)
     }
-); // end of new Phaser.Game() construction
+) // end of new Phaser.Game() construction
 
-var player; // Declare this variable for the player so we can reference it in our functions
+let player // Declare this variable for the player so we can reference it in our functions
 
 // In a Phaser game, this is needed to enable screenshots if using WebGL renderer (because of Phaser.AUTO)
-game.preserveDrawingBuffer = true;
-
+game.preserveDrawingBuffer = true
 
 // Next, we should actually define the functions we just told Phaser about...
 
 // preload is for preloading/downloading assets we need for our game, like graphics
 function preload() {
-    game.load.crossOrigin = 'anonymous';
+    game.load.crossOrigin = 'anonymous'
 
     // example of how to load and name an MGB asset to use in code
-    game.load.image('playerThing','/api/asset/png/2ojWGXPXC99A7eDP7');    
+    // You can drag assets from the right hand Assets panel towards 
+    // this code area to generate these kinds of api/url links:
+    game.load.image('playerThing','/api/asset/png/2ojWGXPXC99A7eDP7')
 }
 
 // This function is called after the preload() work has downloaded stuff we need
 function create() {
-    game.stage.backgroundColor = 'rgba(68, 136, 170, 0.5)';
+    game.stage.backgroundColor = 'rgba(68, 136, 170, 0.5)'
 
-    player = game.add.sprite(100, 200, 'playerThing');
-    game.physics.arcade.enable(player);
+    player = game.add.sprite(100, 200, 'playerThing')
+    game.physics.arcade.enable(player)
 
-    player.body.collideWorldBounds = true;
-    player.body.gravity.y = 500;
+    player.body.collideWorldBounds = true
+    player.body.gravity.y = 500
 
-    cursors = game.input.keyboard.createCursorKeys();
-    jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    cursors = game.input.keyboard.createCursorKeys()
+    jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 }
 
 // This function will be called multiple times per second when the game
 // is running
 function update () {
-    player.body.velocity.x = 0;
+    player.body.velocity.x = 0
 
     if (cursors.left.isDown)
-        player.body.velocity.x = -250;
+        player.body.velocity.x = -250
     else if (cursors.right.isDown)
-        player.body.velocity.x = 250;
+        player.body.velocity.x = 250
 
     if (jumpButton.isDown && (player.body.onFloor() || player.body.touching.down))
-      player.body.velocity.y = -400;
+      player.body.velocity.y = -400
   
     // Allow the player to jump if they are touching the ground.
     if (cursors.up.isDown && (player.body.onFloor() || player.body.touching.down))
-        player.body.velocity.y = -350;
+        player.body.velocity.y = -350
 }
 
 function render() 

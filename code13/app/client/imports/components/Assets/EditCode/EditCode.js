@@ -3,6 +3,10 @@ var update = require('react-addons-update');
 
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+
+
+
 import moment from 'moment';
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js';
 import { templateCode } from './templates/TemplateCode.js';
@@ -207,8 +211,9 @@ export default class EditCode extends React.Component {
     this.doFullUpdateOnContentChange()
 
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
-    this.codeMirror.on("cursorActivity", this.codeMirrorOnCursorActivity.bind(this, false))
-
+    this.codeMirror.on('cursorActivity', this.codeMirrorOnCursorActivity.bind(this, false))
+    this.codeMirror.on('dragover', this.handleDragOver.bind(this));
+    this.codeMirror.on('drop', this.handleDropAsset.bind(this));
 
     this._currentCodemirrorValue = this.props.asset.content2.src || '';
 
@@ -484,6 +489,56 @@ export default class EditCode extends React.Component {
     $('head').append(`<style id="${customCSSid}">.cm-comment { opacity: ${alpha / 100} }</style>`);
   }
 
+  // Drag and Drop of Asset onto code area
+
+  handleDragOver(cm, event) {
+    if (this.props.canEdit)
+      DragNDropHelper.preventDefault(event)
+  }
+
+  handleDropAsset(cm, event) {
+    if (this.props.canEdit)
+    {
+      const draggedAsset = DragNDropHelper.getAssetFromEvent(event)
+      let url = null
+      let code = null
+      if (draggedAsset)
+      {
+        switch (draggedAsset.kind) {
+        case 'graphic':
+            url = `/api/asset/png/${draggedAsset._id}`
+            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}:\n     game.load.image( '${url}' )'`
+            break
+        case 'map':
+            url = `/api/asset/map/${draggedAsset._id}`
+            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}:\n     game.load.tilemap( '${url}' )'`
+            break
+        case 'sound':
+        case 'music':
+            url = `asset/${draggedAsset.kind}/${draggedAsset._id}/${draggedAsset.kind}.mp3`
+            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}:\n     game.load.audio( '${url}' )'`
+            break
+        case 'code':
+            if (this.props.asset.dn_ownerName === draggedAsset.dn_ownerName)
+              url = `./${draggedAsset.name}`
+            else 
+              url = `./${draggedAsset.dn_ownerName}:${draggedAsset.name}`
+            code = `import '${url}'`
+            break
+        default:
+          code = draggedAsset._id
+        }
+      }
+
+      if (code)
+      {
+        event.preventDefault()
+        this.codeMirror.replaceSelection( '\n' + code + '\n')
+      }
+    }
+    else
+      event.preventDefault()  // ReadOnly
+  }
 
   // Alt-Shift Mousewheel will change the editor font Size
   handleMouseWheel(event) {

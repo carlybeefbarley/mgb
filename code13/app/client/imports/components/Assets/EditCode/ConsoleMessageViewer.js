@@ -4,8 +4,9 @@ import moment from 'moment';
 
 export default ConsoleMessageViewer = React.createClass({
   propTypes: {
-    messages: PropTypes.array, // of { mgbCmd: , data: }
-    gotoLinehandler: PropTypes.func
+    messages:             PropTypes.array, // of { mgbCmd: , data: }
+    gotoLinehandler:      PropTypes.func,
+    clearConsoleHandler:  PropTypes.func,
   },
 
   cleanupMessage(argArray)
@@ -56,12 +57,18 @@ export default ConsoleMessageViewer = React.createClass({
   },
 
   render: function() {
-    if (!this.props.messages)
+    const { messages, clearConsoleHandler } = this.props
+    if (!messages)
       return null
 
     return (
         <div className="ui grey segment" style={{backgroundColor: "rgba(0,0,0,0.03)", maxHeight: "200px", overflow: "scroll"}}>
-          <div className="header">Latest Console output from program</div>
+          <div className="header">
+            Latest Console output from program
+            { messages.length > 0 && clearConsoleHandler &&
+              <i style={{float: 'right'}} className='ui trash outline icon' title='clear console' onClick={clearConsoleHandler} />  
+            }
+          </div> 
           { this.smartRender() }
         </div>
       )

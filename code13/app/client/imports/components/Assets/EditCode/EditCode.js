@@ -1562,7 +1562,8 @@ export default class EditCode extends React.Component {
                   </iframe>
                   <ConsoleMessageViewer
                     messages={this.state.consoleMessages}
-                    gotoLinehandler={this.gotoLineHandler.bind(this)}/>
+                    gotoLinehandler={this.gotoLineHandler.bind(this)}
+                    clearConsoleHandler={this._consoleClearAllMessages.bind(this) }/>
                 </div>
               }
               { this.state.astReady &&

@@ -170,11 +170,13 @@ export default AssetCard = React.createClass({
                 onClick={this.handleEditClick} 
                 title="Asset Name">
               <small>{asset.name || "(untitled)"}</small>&nbsp;
-              <WorkState 
-                workState={asset.workState} 
-                popupPosition="bottom center"
-                showMicro={true}
-                canEdit={false}/>
+              { viewOpts.showMeta &&
+                <WorkState 
+                  workState={asset.workState} 
+                  popupPosition="bottom center"
+                  showMicro={true}
+                  canEdit={false}/>
+              }
             </a>
             { viewOpts.showMeta && (asset.text && asset.text !== "") && 
               <div className="meta" style={{ "color": 'black'}}  onClick={this.handleEditClick} title="Asset Description">

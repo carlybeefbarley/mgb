@@ -27,25 +27,25 @@ export default CodeFlower = function (selector, w, h, options) {
     .charge((d) => {
       // main node - make all nodes to run away from it
       if(d.depth === 0){
-        return window.config.mainCharge * this.aspect
+        return config.mainCharge * this.aspect
       }
-      return !d.children ? window.config.charge * this.aspect : d.children.length * window.config.chargePerChild * this.aspect + window.config.charge * this.aspect
+      return !d.children ? config.charge * this.aspect : d.children.length * config.chargePerChild * this.aspect + config.charge * this.aspect
     })
-    .chargeDistance(window.config.chargeDistance * this.aspect)
-    .gravity(window.config.gravity)
-    .friction(window.config.friction)
-    .theta(window.config.friction)
+    .chargeDistance(config.chargeDistance * this.aspect)
+    .gravity(config.gravity)
+    .friction(config.friction)
+    .theta(config.friction)
     .linkStrength((d) => {
-      return window.config.linkStrength
+      return config.linkStrength
     })
     // length of link - charge will modify this value
     .linkDistance((d) => {
-      const s1 = 0;//!d.source.children ? window.config.link * this.aspect :  (d.source.children.length * window.config.linkPerChild * this.aspect) + window.config.link * this.aspect
-      const s2 = !d.target.children ? window.config.link * this.aspect :  (d.target.children.length * window.config.linkPerChild * this.aspect) + window.config.link * this.aspect
+      const s1 = 0;//!d.source.children ? config.link * this.aspect :  (d.source.children.length * config.linkPerChild * this.aspect) + config.link * this.aspect
+      const s2 = !d.target.children ? config.link * this.aspect :  (d.target.children.length * config.linkPerChild * this.aspect) + config.link * this.aspect
 
       let ret = s1 + s2
       if( (d.source.depth === 0 || d.target.depth === 0) && d.source.colorId == d.target.colorId){
-        ret = window.config.link_at_same_level * this.aspect
+        ret = config.link_at_same_level * this.aspect
       }
       return ret
     })

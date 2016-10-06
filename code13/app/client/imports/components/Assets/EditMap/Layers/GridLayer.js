@@ -42,9 +42,15 @@ export default class GridLayer extends React.Component {
   /* endof lifecycle functions */
   adjustCanvas () {
     const canvas = this.refs.canvas
-    const $el = $(canvas.parentElement)
-    canvas.width = $el.width()
-    canvas.height = $el.height()
+    //const $el = $(canvas.parentElement)
+
+    const w = canvas.parentElement.offsetWidth
+    const h = canvas.parentElement.offsetHeight
+
+    canvas.width = w
+    canvas.height = h
+    //this.ctx.clearRect(0,0,this.refs.canvas.width, this.refs.canvas.height)
+    this.alignToActiveLayer()
   }
 
   alignToActiveLayer () {
@@ -65,12 +71,14 @@ export default class GridLayer extends React.Component {
       this.refs.layer.style['z-index'] = activeLayer.refs.layer.style['z-index']
     }
   }
+
   draw () {
     this.adjustCanvas()
     if (this.props.map.options.showGrid) {
       this.drawGrid()
     }
   }
+
   drawGrid () {
 
     // this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
@@ -84,11 +92,15 @@ export default class GridLayer extends React.Component {
     const offsetX = camera.x % data.tilewidth * camera.zoom
     const offsetY = camera.y % data.tileheight * camera.zoom
 
+    console.log("WIDTH:", this.ctx.canvas.width)
+
     // vertical lines
     let i = 0
     const width = Math.ceil(this.ctx.canvas.width / data.tilewidth)
     let tmp = 0
-    for (; i <= width / camera.zoom; i++) {
+    let tot = Math.ceil(width / camera.zoom);
+
+    for (; i <= tot; i++) {
       tmp = i * data.tilewidth * camera.zoom + 0.5 + offsetX
       this.ctx.moveTo(tmp, -data.tileheight + offsetY)
       this.ctx.lineTo(tmp, this.ctx.canvas.height)
@@ -99,7 +111,8 @@ export default class GridLayer extends React.Component {
     // horizontal lines
     i = 0
     const height = Math.ceil(this.ctx.canvas.height / data.tileheight)
-    for (; i <= height / camera.zoom; i++) {
+    tot = Math.ceil(height / camera.zoom);
+    for (; i <= tot; i++) {
       tmp = i * data.tileheight * camera.zoom + 0.5 + offsetY
       this.ctx.moveTo(-data.tilewidth + offsetX, tmp)
       this.ctx.lineTo(this.ctx.canvas.width, tmp)

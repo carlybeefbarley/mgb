@@ -26,9 +26,32 @@ const descStyle = {
   lineHeight: "1.5em"
 }
 
+
 const getStartedItems = [
-  { mascot: 'game_shop', icon: 'game',        content: 'Make/Mod a Game',      link: '/getstarted/games',    desc: 'Tutorials show you how to make or modify some basic game types' },
-  { mascot: 'shark',     icon: 'university',  content: 'Practice new Skills',  link: '/getstarted/skills',   desc: 'Learn a new skill' }
+  {
+    mascot: 'game_shop',
+    icon: 'game',
+    content: 'Make/Mod a Game',
+    link: '/getstarted/games',
+    query: null,
+    desc: 'Our tutorials show you how to make or modify some basic game types'
+  }, 
+  {
+    mascot: 'shark',
+    icon: 'university',
+    content: 'Practice new Skills',
+    link: '/getstarted/skills',
+    query: null,
+    desc: 'Learn using skills-focussed tutorials for coding, art, level design, etc'
+  },
+  {
+    mascot: 'team',
+    icon: 'help',
+    content: 'Ask for help',
+    link: '/getstarted',
+    query: { _fp: 'chat.mgb-help' },
+    desc: 'Ask and we shall answer'
+  }
 ]
 
 const GetStartedRoute = () => (
@@ -48,7 +71,7 @@ const GetStartedRoute = () => (
         <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
             { getStartedItems.map( (area, idx) => (
-                <QLink key={idx} className="card" style={cardStyle} to={area.link}>
+                <QLink key={idx} className="card" style={cardStyle} to={area.link} query={area.query}>
                   <Card.Content>
                     <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>

@@ -1,37 +1,8 @@
-// import d3 from "d3"
-//import d3 from "d3";
 //window.d3 = d3;
 import d3 from "d3"
-/*
-window.mgb_flower_config = {
-  // this will make other nodes to float away from main node
-  mainCharge: -2000,
-  // this will make nodes distract from each other
-  charge: -80,
-  // this allows fine tune nodes with many children
-  chargePerChild: 0.1,
-  // default link length
-  link: 8,
-  // fine tune link per child
-  linkPerChild: 0.1,
-  // first level children goes under this link - it allows to pull closer children from same file
-  link_at_same_level: -50
-}
-*/
+import SpecialGlobals from '/client/imports/SpecialGlobals.js'
+const config = SpecialGlobals.codeFlower
 
-window.mgb_flower_config = {
-  "mainCharge": -500,
-  "charge": -200,
-  "chargePerChild": -200,
-  "chargeDistance": 100,
-  "link": 10,
-  "linkStrength": 1,
-  "linkPerChild": 5,
-  "link_at_same_level": 0,
-  "friction": 0.9,
-  "theta": 0.8,
-  "gravity": 0.1
-}
 export default CodeFlower = function (selector, w, h, options) {
   this.w = w;
   this.h = h;
@@ -56,39 +27,27 @@ export default CodeFlower = function (selector, w, h, options) {
     .charge((d) => {
       // main node - make all nodes to run away from it
       if(d.depth === 0){
-        return window.mgb_flower_config.mainCharge * this.aspect
+        return window.config.mainCharge * this.aspect
       }
-      return !d.children ? window.mgb_flower_config.charge * this.aspect : d.children.length * window.mgb_flower_config.chargePerChild * this.aspect + window.mgb_flower_config.charge * this.aspect
+      return !d.children ? window.config.charge * this.aspect : d.children.length * window.config.chargePerChild * this.aspect + window.config.charge * this.aspect
     })
-    .chargeDistance(window.mgb_flower_config.chargeDistance * this.aspect)
-    .gravity(window.mgb_flower_config.gravity)
-    .friction(window.mgb_flower_config.friction)
-    .theta(window.mgb_flower_config.friction)
+    .chargeDistance(window.config.chargeDistance * this.aspect)
+    .gravity(window.config.gravity)
+    .friction(window.config.friction)
+    .theta(window.config.friction)
     .linkStrength((d) => {
-      return window.mgb_flower_config.linkStrength
+      return window.config.linkStrength
     })
     // length of link - charge will modify this value
     .linkDistance((d) => {
-      // let s1 = this.getNodeSize(d.target)
-      // let s2 = this.getNodeSize(d.source)
-      /*if(d.target.children && d.target.children.length){
-       s1 = d.target.children.length
-       }
-       if(d.source.children && d.source.children.length){
-       s2 = d.source.children.length
-       }*/
-
-      const s1 = 0;//!d.source.children ? window.mgb_flower_config.link * this.aspect :  (d.source.children.length * window.mgb_flower_config.linkPerChild * this.aspect) + window.mgb_flower_config.link * this.aspect
-      const s2 = !d.target.children ? window.mgb_flower_config.link * this.aspect :  (d.target.children.length * window.mgb_flower_config.linkPerChild * this.aspect) + window.mgb_flower_config.link * this.aspect
+      const s1 = 0;//!d.source.children ? window.config.link * this.aspect :  (d.source.children.length * window.config.linkPerChild * this.aspect) + window.config.link * this.aspect
+      const s2 = !d.target.children ? window.config.link * this.aspect :  (d.target.children.length * window.config.linkPerChild * this.aspect) + window.config.link * this.aspect
 
       let ret = s1 + s2
       if( (d.source.depth === 0 || d.target.depth === 0) && d.source.colorId == d.target.colorId){
-        ret = window.mgb_flower_config.link_at_same_level * this.aspect
+        ret = window.config.link_at_same_level * this.aspect
       }
-
       return ret
-      //return ( s1 + s2 ) * 2
-      //return (d.target._children ? 10 : Math.min(Math.max(d.target.children.length, 5), 20)) * this.aspect;
     })
     .size([w, h]);
 };
@@ -250,10 +209,6 @@ CodeFlower.prototype.update = function (json) {
       return Math.max(Math.min(size, 16), 8) + "px"
     })
     .style('font-family', "'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif");
-
-  /*
-
-   */
 
   // Exit any old nodes
   this.node.exit().remove();

@@ -104,6 +104,10 @@ export default class EditMusic extends React.Component {
     }
   }
 
+  componentWillUnmount () {
+    this.stopMusic()
+  }
+
   // checks if all channel are loaded and sets flag to true. After that each newly added channel is automatically merged
   mountChannel () {
     if (this.areChannelsMounted) {
@@ -248,7 +252,7 @@ export default class EditMusic extends React.Component {
         if (this.state.isLoop) this.togglePlayMusic()
       }
       this.updateCursor()
-      this.refs.previewComponent.update(this.songTime)
+      if(this.refs.previewComponent) this.refs.previewComponent.update(this.songTime)
     }
   }
 

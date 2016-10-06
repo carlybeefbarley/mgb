@@ -38,8 +38,8 @@ const GetStartedGamesRoute = () => (
       <Grid.Row >
         <Grid.Column>
           <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            What would you like to try?
-            <em className="sub header">There's a lot to learn</em>
+            What kind of game shall we build?
+            <em className="sub header">Learn the basics of these game types, and how to add features</em>
           </Header>
         </Grid.Column>
       </Grid.Row>

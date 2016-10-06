@@ -43,7 +43,7 @@ const GetStartedSkillsRoute = () => (
         <Grid.Column>
           <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
             What would you like to try?
-            <em className="sub header">There's a lot to learn</em>
+            <em className="sub header">Game Builders have many kinds of skills</em>
           </Header>
         </Grid.Column>
       </Grid.Row>

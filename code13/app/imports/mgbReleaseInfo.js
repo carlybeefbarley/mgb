@@ -1,7 +1,5 @@
 // This is the data structure that drives the WhatsNew.js control for MGB2
 
-// TODO - support a way to have this on a static site. Concept: http://blog.trello.com/category/new-stuff/ 
-
 // Note on some values:
 //    mgbReleaseInfo.releases[].changes[].type
 //            feature:      New Feature
@@ -13,6 +11,44 @@
 
 export default mgbReleaseInfo = {
   'releases': [
+
+    {
+      'timestamp': 'Wed Oct 5 2016 21:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1673'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.asset',
+          'type': 'improvement',
+          'changeName': 'Assets list include no-image XS option',
+          'changeSummary': 'Extra Small (XS) Asset views are now just text; no graphic',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Graphic Editor Improvements',
+          'changeSummary': `Graphic Editor Improvements: Smarter scaling; correctly sized thumbnails; single-frame import is much simpler`,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Editor improvements',
+          'changeSummary': `Edit Code gets some little tweaks. You can drag assets from the FlexPanel to the code area and we generate some probably useful code and links to help you load that asset. Also, the buttons have been cleaned up some more, and you can also clear the console if it has become spammy.`,
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Sun Oct 2 2016 09:20:00 GMT-0700 (PDT)',

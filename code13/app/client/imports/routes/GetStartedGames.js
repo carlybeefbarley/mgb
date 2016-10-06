@@ -26,20 +26,20 @@ const descStyle = {
   lineHeight: "1.5em"
 }
 
-const getStartedItems = [
-  { mascot: 'game_shop', icon: 'game',        content: 'Make/Mod a Game',      link: '/getstarted/games',    desc: 'Tutorials show you how to make or modify some basic game types' },
-  { mascot: 'shark',     icon: 'university',  content: 'Practice new Skills',  link: '/getstarted/skills',   desc: 'Learn a new skill' }
+const gameItems = [
+  { mascot: 'game_runner',    icon: 'game',    content: 'Runner',   desc: 'Simple infinite runner game' },
+  { mascot: 'game_shop',  icon: 'game',    content: 'Digger',   desc: 'Simple mining and crafting game...' }
 ]
 
-const GetStartedRoute = () => (
+const GetStartedGamesRoute = () => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
     <Grid stackable style={{marginTop: '3.5em'}} title={_notReallyWorkingYet}>
 
       <Grid.Row >
         <Grid.Column>
           <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            How do you want to learn?
-            <em className="sub header">Let's do it your way</em>
+            What would you like to try?
+            <em className="sub header">There's a lot to learn</em>
           </Header>
         </Grid.Column>
       </Grid.Row>
@@ -47,8 +47,14 @@ const GetStartedRoute = () => (
       <Grid.Row>
         <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
-            { getStartedItems.map( (area, idx) => (
-                <QLink key={idx} className="card" style={cardStyle} to={area.link}>
+            { gameItems.map( (area, idx) => (
+                <QLink 
+                    key={idx} 
+                    className="card" 
+                    style={cardStyle} 
+                    onClick={(e) => { alert("Not Yet Implemented"); e.preventDefault() }}
+                    to={`/getstarted/skills/NOT_YET_IMPLEMENTED`}>
+
                   <Card.Content>
                     <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
@@ -64,4 +70,4 @@ const GetStartedRoute = () => (
   </Segment>
 )
 
-export default GetStartedRoute
+export default GetStartedGamesRoute

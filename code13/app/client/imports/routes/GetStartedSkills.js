@@ -26,20 +26,24 @@ const descStyle = {
   lineHeight: "1.5em"
 }
 
-const getStartedItems = [
-  { mascot: 'game_shop', icon: 'game',        content: 'Make/Mod a Game',      link: '/getstarted/games',    desc: 'Tutorials show you how to make or modify some basic game types' },
-  { mascot: 'shark',     icon: 'university',  content: 'Practice new Skills',  link: '/getstarted/skills',   desc: 'Learn a new skill' }
+const skillAreaItems = [
+  { mascot: 'alien',    icon: 'code',        content: 'Programming',   desc: 'Code using JavaScript and game engines like Phaser' },
+  { mascot: 'penguin',  icon: 'paint brush', content: 'Pixel art',     desc: 'Create animated sprites, spritesheets and tilemaps for games' },
+  { mascot: 'samurai',  icon: 'music',       content: 'Music & audio', desc: 'Bring engagement and mood to games through music and sound' },
+  { mascot: 'slimy',    icon: 'idea',        content: 'Game design',   desc: 'Design levels, balance gameplay mechanics and try new ones' },
+  { mascot: 'vampire',  icon: 'write',       content: 'Story writing', desc: 'Bring game stories to life through plot, character, narrative and dialog' },
+  { mascot: 'shark',    icon: 'area chart',  content: 'Analytics',     desc: 'Data beats opinions: analyze actual game usage and use it to improve' } 
 ]
 
-const GetStartedRoute = () => (
+const GetStartedSkillsRoute = () => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
     <Grid stackable style={{marginTop: '3.5em'}} title={_notReallyWorkingYet}>
 
       <Grid.Row >
         <Grid.Column>
           <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            How do you want to learn?
-            <em className="sub header">Let's do it your way</em>
+            What would you like to try?
+            <em className="sub header">There's a lot to learn</em>
           </Header>
         </Grid.Column>
       </Grid.Row>
@@ -47,8 +51,13 @@ const GetStartedRoute = () => (
       <Grid.Row>
         <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
-            { getStartedItems.map( (area, idx) => (
-                <QLink key={idx} className="card" style={cardStyle} to={area.link}>
+            { skillAreaItems.map( (area, idx) => (
+                <QLink 
+                    key={idx} 
+                    className="card" 
+                    style={cardStyle} 
+                    onClick={(e) => { alert("Not Yet Implemented"); e.preventDefault() }}
+                    to={`/getstarted/skills/NOT_YET_IMPLEMENTED`}>
                   <Card.Content>
                     <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
@@ -64,4 +73,4 @@ const GetStartedRoute = () => (
   </Segment>
 )
 
-export default GetStartedRoute
+export default GetStartedSkillsRoute

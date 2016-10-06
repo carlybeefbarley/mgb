@@ -5,6 +5,8 @@ import { Router, Route, NotFoundRoute, browserHistory } from 'react-router'
 import App from './App'
 import Home from './Home'
 import GetStarted from './GetStarted'
+import GetStartedSkills from './GetStartedSkills'
+import GetStartedGames from './GetStartedGames'
 import Users from './Users'
 import Azzets from './Assets'
 import Projects from './Projects'
@@ -44,6 +46,8 @@ Meteor.startup(function () {
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
         <Route path="/getstarted" component={GetStarted} />
+        <Route path="/getstarted/skills" component={GetStartedSkills} />
+        <Route path="/getstarted/games" component={GetStartedGames} />
 
         <Route path="join" component={Users.Join} name="Sign up" />
         <Route path="signin" component={Users.SignIn} name="Sign In" />

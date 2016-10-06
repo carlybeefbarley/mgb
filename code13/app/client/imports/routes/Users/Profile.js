@@ -83,8 +83,12 @@ export default UserProfileRoute = React.createClass({
           { this.renderUserInfo(user, ownsProfile) }
           <BadgeGrid user={user} className="five wide column" />
           <UserShowcase user={user} />
-          <ActivityHeatmap user={user} className="ten wide column" />
-          <SkillGrid user={user} className='six wide column' />
+          { false && 
+            <ActivityHeatmap user={user} className="ten wide column" />
+          }
+          { false && 
+            <SkillGrid user={user} className='six wide column' />
+          }
           <UserProjects user={user} projects={this.data.projects} />
           <UserHistory user={user} />
         </Grid>

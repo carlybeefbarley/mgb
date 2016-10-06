@@ -91,9 +91,7 @@ export default class GridLayer extends React.Component {
 
     const offsetX = camera.x % data.tilewidth * camera.zoom
     const offsetY = camera.y % data.tileheight * camera.zoom
-
-    console.log("WIDTH:", this.ctx.canvas.width)
-
+    
     // vertical lines
     let i = 0
     const width = Math.ceil(this.ctx.canvas.width / data.tilewidth)

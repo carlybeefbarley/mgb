@@ -531,6 +531,7 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.highlightSelected()
   }
+
   drawTile (obj) {
     const gid = obj.gid & (~(FLIPPED_HORIZONTALLY_FLAG |
       FLIPPED_VERTICALLY_FLAG |
@@ -545,7 +546,7 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     let tileId = pal.gid - (pal.ts.firstgid)
-    const tileInfo = pal.ts.tiles[tileId]
+    const tileInfo = pal.ts.tiles ? pal.ts.tiles[tileId] : null
     // TODO: this repeats from TileMapLayer - clean up and create separate function get_GID or similar
     if (tileInfo) {
       if (tileInfo.animation) {

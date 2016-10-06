@@ -271,6 +271,8 @@ CodeFlower.prototype.update = function (json) {
 
 CodeFlower.prototype.flatten = function (root) {
   var nodes = [], i = 0;
+  var w = this.w;
+  var h = this.h;
 
   function recurse(node) {
     if (node.children) {
@@ -280,6 +282,11 @@ CodeFlower.prototype.flatten = function (root) {
       node.size = node.size || size
     }
     if (!node.id) node.id = ++i;
+    if (node.x === void(0) && node.y === void(0)) {
+      node.x = (node.id & 0x0f0f0f0f) % w
+      node.y = (node.id & 0xf0f0f0f0) % h
+      // node.fixed = true - prevents nodes from moving
+    }
     nodes.push(node);
     return node.size;
   }

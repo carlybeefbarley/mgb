@@ -6,6 +6,8 @@ const COLORS = {
   class: "orange"
 }
 
+const MAX = 0xffffffff
+
 var flowerBuilder = {
   uniqueNames: null,
   maxDepth: 10,
@@ -23,7 +25,8 @@ var flowerBuilder = {
       displayName: filename,
       size: isMainFile ? 100 : 1,
       children: [],
-      depth: 0
+      depth: 0,
+      id: this.genId(filename)
     };
 
     // create id from string - later used for nice color
@@ -59,11 +62,18 @@ var flowerBuilder = {
   genColorId: function(filename){
     var tot = Math.round(Math.random()*10)
     for(var i=0; i<filename.length; i++){
-      tot += (filename.charCodeAt(i) * i) % 360
+      tot += ( (filename.charCodeAt(i) * i) % MAX )
     }
     return tot
   },
-
+  // improve this.. make use of namespace.. e.g. : my.lib.run - rotate lib around my and run around lib etc
+  genId: function(name){
+    var tot = 0
+    for(var i=0; i<name.length; i++){
+      tot += ( (name.charCodeAt(i) * i) % MAX )
+    }
+    return tot
+  },
   makeFunctionName: function( params){
     var ret = "("
     if(params.length) {
@@ -150,7 +160,8 @@ var flowerBuilder = {
         depth: ++d,
         colorId: colorId,
         start: p.end,
-        end: node.end
+        end: node.end,
+        id: this.genId(name)
       };
       if(this.config.local){
         tmp.color = COLORS.member
@@ -205,7 +216,8 @@ var flowerBuilder = {
           depth: depth,
           colorId: colorId,
           start: spec ? spec.end : node.source.start,
-          end: node.end
+          end: node.end,
+          id: this.genId(prefix + name)
         }
         buffer.push(tmp);
         if(this.config.local){
@@ -227,7 +239,8 @@ var flowerBuilder = {
                 displayName: key,
                 children: [],
                 depth: depth,
-                colorId: colorId
+                colorId: colorId,
+                id: this.genId(prefix + name)
               })
             })
           })
@@ -263,7 +276,8 @@ var flowerBuilder = {
       depth: depth,
       colorId: colorId,
       start: node.id.end,
-      end: node.end
+      end: node.end,
+      id: this.genId(prefix + name)
     };
     if(this.config.local){
       tmp.color = COLORS.member
@@ -300,7 +314,8 @@ var flowerBuilder = {
       depth: depth,
       colorId: colorId,
       start: node.key.end,
-      end: node.end
+      end: node.end,
+      id: this.genId(prefix + name)
     }
     if(this.config.local){
       tmp.color = COLORS.member
@@ -366,7 +381,8 @@ var flowerBuilder = {
       depth: depth,
       colorId: colorId,
       start: node.id.end,
-      end: node.end
+      end: node.end,
+      id: this.genId(prefix + name)
     }
     if(this.config.local){
       tmp.color = COLORS.class
@@ -389,7 +405,8 @@ var flowerBuilder = {
       depth: depth,
       colorId: colorId,
       start: node.key.end,
-      end: node.end
+      end: node.end,
+      id: this.genId(prefix + name)
     }
     // special case
     if(node.key.name === "constructor"){
@@ -429,7 +446,8 @@ var flowerBuilder = {
       depth: depth,
       colorId: colorId,
       start: node.id.end,
-      end: node.end
+      end: node.end,
+      id: this.genId(prefix + name)
     }
     // special case
     if(this.config.local){
@@ -458,7 +476,8 @@ var flowerBuilder = {
       depth: depth,
       colorId: colorId,
       start: (left && left.end) ? left.end : node.start,
-      end: node.end
+      end: node.end,
+      id: this.genId(prefix + name)
     }
     if(this.config.local){
       tmp.color = COLORS.member

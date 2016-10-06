@@ -13,6 +13,30 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Thu Oct 6 2016 11:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1683'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.getstarted',
+          'type': 'improvement',
+          'changeName': 'Get Started now has two paths - games and skills',
+          'changeSummary': 'Get Started now has two paths - games and skills. Also we now make it clear that these tutorials haven\'t actually been implemented yet.. instead of just linking to the create-asset pages :)',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Wed Oct 5 2016 21:30:00 GMT-0700 (PDT)',
 
       'id': {

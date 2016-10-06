@@ -1,7 +1,5 @@
 import React, { PropTypes } from 'react'
 
-import style from './FlexPanel.css'
-
 export default fpSuperAdmin = React.createClass({
 
   propTypes: {

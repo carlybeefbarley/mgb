@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import React, { PropTypes } from 'react'
 
 import style from './FlexPanel.css'
 
@@ -12,7 +11,6 @@ export default fpSuperAdmin = React.createClass({
   },
 
   render: function () {
-    const linkLi = (txt, url) => (<li><a target="_blank" href={url}>{txt}</a></li>)
 
     return (
       <div>
@@ -72,12 +70,5 @@ export default fpSuperAdmin = React.createClass({
         <button className="ui button large fluid"><i className="refresh icon" />Get more tasks</button>
       </div>
     )
-  },
-
-
-  getFlipsideUrl() {
-    const l = window.location
-    const newHost = l.host.startsWith("localhost") ? "https://v2.mygamebuilder.com" : "http://localhost:3000"
-    return `${newHost}${l.pathname}${l.search}`
   }
 })

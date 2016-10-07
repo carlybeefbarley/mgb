@@ -63,7 +63,7 @@ export default class TileSet extends React.Component {
   /* helpers */
   adjustCanvas () {
     const map = this.props.info.content.map
-    const ts = map.map.tilesets[map.activeTileset]
+    const ts = map.data.tilesets[map.activeTileset]
     const canvas = this.refs.canvas
 
     if (ts) {
@@ -222,7 +222,7 @@ export default class TileSet extends React.Component {
   }
   highlightTile (e, force = false) {
     const map = this.props.info.content.map
-    const ts = map.map.tilesets[map.activeTileset]
+    const ts = map.data.tilesets[map.activeTileset]
     if (!ts) {
       return
     }
@@ -385,7 +385,7 @@ export default class TileSet extends React.Component {
   }
   render () {
     const map = this.props.info.content.map
-    const tss = map.map.tilesets
+    const tss = map.data.tilesets
     if (!tss.length) {
       return this.renderEmpty()
     }

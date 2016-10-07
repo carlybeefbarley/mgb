@@ -38,10 +38,10 @@ export default class MapArea extends React.Component {
       set: (property, value) => {
         property = this.removeDots(property)
         images[property] = value
-        if (!this.map.images) {
-          this.map.images = {}
+        if (!this.data.images) {
+          this.data.images = {}
         }
-        this.map.images[property] = TileHelper.normalizePath(value.src)
+        this.data.images[property] = TileHelper.normalizePath(value.src)
         return true
       },
       get: (property) => {
@@ -123,8 +123,6 @@ export default class MapArea extends React.Component {
     this.buildMap();
 
     $(this.refs.mapElement).addClass('map-filled')
-    this.fullUpdate()
-    // this.resetCamera()
 
     window.addEventListener('mousemove', this.globalMouseMove, false)
     window.addEventListener('mouseup', this.globalMouseUp, false)
@@ -148,6 +146,7 @@ export default class MapArea extends React.Component {
       .done((data) => {
         //console.log(data)
         this.data = data
+        this.fullUpdate()
       })
 
 
@@ -319,11 +318,11 @@ export default class MapArea extends React.Component {
     const xml = parser.parseFromString(xmlString, 'text/xml')
     alert('Sorry: TMX import is not implemented... yet\nTry JSON')
 
-    this.map = this.xmlToJson(xml)
+    this.data = this.xmlToJson(xml)
   }
   handleFileByExt_json (name, buffer) {
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
-    this.map = JSON.parse(jsonString)
+    this.data = JSON.parse(jsonString)
     this.updateImages()
   }
   // TODO: move api links to external resource?
@@ -433,7 +432,7 @@ export default class MapArea extends React.Component {
       })
   }
   updateImages (cb) {
-    const map = this.map
+    const map = this.data
     // map has not loaded
     if (!map || !map.tilesets) {
       return

@@ -405,7 +405,7 @@ export default class MapArea extends React.Component {
     this.loadingImages.push(nameWithExt)
     const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
     $.get(`/api/asset/png/${this.props.parent.getUser()}/${name}`)
-      .success((id) => {
+      .done((id) => {
         const img = new Image()
         img.onload = () => {
           this.images.set(nameWithExt, img)
@@ -414,7 +414,7 @@ export default class MapArea extends React.Component {
         }
         img.src = `/api/asset/png/${id}`
       })
-      .error(() => {
+      .fail(() => {
         this.missingImages.push(nameWithExt)
         this.loadingImages.splice(this.loadingImages.indexOf(nameWithExt), 1)
         this.updateImages()

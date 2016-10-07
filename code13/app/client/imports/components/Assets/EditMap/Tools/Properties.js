@@ -20,7 +20,9 @@ export default class Properties extends React.Component {
       this.settings.layer.update(this.map.data.layers[this.map.activeLayer])
       this.settings.tileset.update(this.map.data.tilesets[this.map.activeTileset])
       if (this.activeObject) {
-        this.settings.object.update(this.activeObject)
+        const o = this.activeObject.orig ? this.activeObject.orig : this.activeObject
+        this.updateObject(o)
+        this.settings.object.update(o)
       }
     }
   // $(this.refs.holder).find("select").dropdown()
@@ -36,11 +38,49 @@ export default class Properties extends React.Component {
     }
     return null
   }
+  updateObject(obj){
+    if(!obj){
+      return
+    }
+    const o = obj.orig ? obj.orig : obj;
+    // Otito.selfTest()
+    if (!o.mgb_properties) {
+      o.mgb_properties = []
+      if(o.properties){
+        for(let i in o.properties){
+          o.mgb_properties.push({
+            name: i,
+            value: o.properties[i]
+          })
+        }
+      }
+    }
+    if (!o.properties) {
+      o.properties = {}
+    }
+    else{
+      for(let i in o.properties){
+        if(!o.mgb_properties.find(n => n.name === i)){
+          console.log("deleted key:", i)
+          delete o.properties[i]
+        }
+      }
+    }
 
+    var p = o.mgb_properties;
+
+    for (let i = 0; i < p.length; i++) {
+      o.properties[p[i].name] = p[i].value
+    }
+
+
+
+    return o
+  }
   runOnReady () {
     this.settings = {}
-    // Otito.selfTest()
-
+    this.updateObject(this.activeObject)
+    var that = this;
     this.settings.object = new Otito(this.activeObject, {
       Object: {
         _type: Otito.type.folder,
@@ -74,14 +114,31 @@ export default class Properties extends React.Component {
           rotation: {
             _type: Otito.type.number
           },
-          properties: {
+          mgb_properties: {
+            /*get head(){
+              debugger;
+              return "Properties"
+            },
+            set head(x){
+              debugger;
+            },*/
+            head: "Properties",
             _type: Otito.type.array,
+            onchange: function(){
+              console.log("change!!!")
+            },
             array: {
               name: {
-                _type: Otito.type.text
+                _type: Otito.type.text,
+                onchange: function(input, otito){
+                  that.updateObject(otito.parent.object)
+                }
               },
               value: {
-                _type: Otito.type.text
+                _type: Otito.type.text,
+                onchange: function(input, otito){
+                  that.updateObject(otito.parent.object)
+                }
               }
             }
           }
@@ -89,6 +146,7 @@ export default class Properties extends React.Component {
       }
     }, () => {
       this.map.redraw()
+      this.map.save("Updating Object properties")
     })
     this.settings.object.append(this.refs.object)
 
@@ -129,6 +187,7 @@ export default class Properties extends React.Component {
       }
     }, (...args) => {
       this.map.forceUpdate()
+      this.map.save("Updating map settings")
     // this.settings.update(this.map.data)
     })
     this.settings.map.append(this.refs.map)
@@ -190,6 +249,7 @@ export default class Properties extends React.Component {
     }, () => {
       this.map.addLayerTool()
       this.map.redraw()
+      this.map.save("Updating layer settings")
     })
     this.settings.layer.append(this.refs.layer)
 
@@ -243,6 +303,7 @@ export default class Properties extends React.Component {
       this.map.updateImages(() => {
         // this.map.addTilesetTool()
         // this.map.redraw()
+        this.map.save("Updating tileset settings")
       })
     })
     this.settings.tileset.append(this.refs.tileset)

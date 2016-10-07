@@ -120,14 +120,11 @@ body.dragging .accept-drop:hover{
 .compact .title {
   position: relative;
 }
-.compact a.delete{
+.compact .delete{
   display: block;
-  width: 12px;
-  height: 12px;
-  background-color: red;
   position: absolute;
-  right: 0;
-  top: 0;
+  right: -8px;
+  top: -2px;
 }
 .ui.styled.accordion .compact .accordion div.label {
   padding: 0;

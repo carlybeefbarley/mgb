@@ -44,7 +44,7 @@ Otito.options = {
 
   inputWrapperClassName: "ui input fluid",
 
-  removeLinkClassName: "delete",
+  removeLinkClassName: "delete remove icon",
   
   headlessClassName: "headless"
 };
@@ -144,7 +144,7 @@ Otito.prototype = {
     var submeta, key;
     for(var i=0; i<keys.length; i++){
       key = keys[i];
-      if(key == "_type" || key == "_make"){
+      if(key == "_type" || key == "_make" || key == "head"){
         break;
       }
       if(key.substring(0, 2) == "__"){
@@ -413,7 +413,7 @@ Otito.prototype = {
   },
   _createDelete: function(oldDel, meta, key){
     var that = this;
-    var del = oldDel || document.createElement("a");
+    var del = oldDel || document.createElement("i");
     del.index = key;
     del.className = this.options.removeLinkClassName;
     del.onclick = function(){

@@ -103,7 +103,7 @@ RestApi.addRoute('mgb1/actor/:account/:project/:name', {authRequired: false}, {
 })
 
 
-// MGBv1 MAP
+// MGBv1 MAP - this preserves the original structure. 
 // eg http://localhost:3000/api/mgb1/map/.acey53/Club%20Penguin%20Agents%20Under%20Attack/HQ
 
 RestApi.addRoute('mgb1/map/:account/:project/:name', {authRequired: false}, {
@@ -129,7 +129,7 @@ RestApi.addRoute('mgb1/map/:account/:project/:name', {authRequired: false}, {
 
     // At this point, the required data should be in response.Body and response.Metadata
 
-    // response.Body needs a lot of processing from the strange MGBv1 formats (Adobe Flex made me do it...)
+    // response.Body needs a LOT of processing from the strange MGBv1 formats (Adobe Flex made me do it, honest...)
     var jsonData = {}   // This is where we will put the result
     var byteArray = new Uint8Array(response.Body)
     var data2 = pako.inflate(byteArray)
@@ -162,12 +162,17 @@ RestApi.addRoute('mgb1/map/:account/:project/:name', {authRequired: false}, {
    
     jsonData.metadata = response.Metadata
 
+    // Strip out unneeded items
+    delete jsonData.metadata['tilename']
+    delete jsonData.metadata['content-type']
+    delete jsonData.metadata['acl']
+    delete jsonData.metadata['blobencoding']
+    
     return {
-      statusCode: 200,    // just for now...
+      statusCode: 200,
       body: jsonData,
       headers: {
         'Content-Type': 'application/json'
-        // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200 
       }
     }
   }

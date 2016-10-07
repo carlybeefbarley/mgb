@@ -668,6 +668,9 @@ export default class TileMapLayer extends AbstractLayer {
   }
   /* end of events */
 
+  insertTile(id, gid){
+    this.options.data[id] = gid
+  }
 }
 
 /* !!! this - in this scope is instance of tilemap layer (above) */
@@ -685,7 +688,8 @@ edit[EditModes.fill] = function (e, up) {
     this.map.saveForUndo('Fill tilemap')
     let temp = this.map.tmpSelection
     for (let i = 0; i < temp.length; i++) {
-      this.options.data[temp[i].id] = temp[i].gid
+      this.insertTile(temp[i].id, temp[i].gid)
+      //this.options.data[temp[i].id] = temp[i].gid
     }
 
     for (let i = 0; i < this.map.selection.length; i++) {
@@ -798,7 +802,8 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     if (this.map.selection.length > 0) {
       if (this.map.selection.indexOfId(pos.id) > -1) {
         saveUndo && this.map.saveForUndo('Add Random Tile')
-        this.options.data[pos.id] = ts.gid
+        //this.options.data[pos.id] = ts.gid
+        this.insertTile(pos.id, ts.gid);
       }
     }else {
       // updating same tile - safe to skip
@@ -828,7 +833,9 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
         return
       }
       saveUndo && this.map.saveForUndo('Update Tile No: ' + pos.id)
-      this.options.data[pos.id] = ts.gid
+
+      this.insertTile(pos.id, ts.gid);
+      //this.options.data[pos.id] = ts.gid
     }
     this.map.redrawGrid()
     this.drawTiles()
@@ -882,7 +889,8 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       return
     }
 
-    this.options.data[tpos.id] = ts.gid
+    this.insertTile(tpos.id, ts.gid)
+    //this.options.data[tpos.id] = ts.gid
   }
   this.map.redrawGrid()
   this.drawTiles()

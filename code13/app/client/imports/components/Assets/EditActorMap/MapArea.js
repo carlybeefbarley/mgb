@@ -2,6 +2,8 @@ import _ from 'lodash'
 import React from 'react'
 
 import TileMapLayer from './Layers/TileMapLayer.js'
+import ActorLayer from './Layers/ActorLayer.js'
+import EventLayer from './Layers/EventLayer.js'
 import ImageLayer from './Layers/ImageLayer.js'
 import ObjectLayer from './Layers/ObjectLayer.js'
 import GridLayer from './Layers/GridLayer.js'
@@ -13,6 +15,7 @@ import ObjectList from './Tools/ObjectList.js'
 
 import MapToolbar from './Tools/MapToolbar.js'
 import TileHelper from './Helpers/TileHelper.js'
+import ActorHelper from './Helpers/ActorHelper.js'
 import ObjectHelper from './Helpers/ObjectHelper.js'
 
 import TileCollection from './Tools/TileCollection.js'
@@ -134,20 +137,23 @@ export default class MapArea extends React.Component {
   }
   buildMap(){
     // http://localhost:3000/api/mgb1/map2/hooliganza/project1/Crab%20Invasion
-    const base = 'http://localhost:3000/api/mgb1/map2';
+    const base = 'http://localhost:3000/api/mgb1/map';
 
     const parts = this.props.asset.name.split(".");
 
-    const map_name = parts.pop();
-    const project_name = parts.pop();
-    const user_name = parts.pop();
+    const names = {
+      map: parts.pop(),
+      project: parts.pop(),
+      user: parts.pop()
+    }
 
-    const link = `${base}/${user_name}/${project_name}/${map_name}`
+    const link = `${base}/${names.user}/${names.project}/${names.map}`
     $.get(link)
       .done((data) => {
-        //console.log(data)
-        this.data = data
-        this.fullUpdate()
+        ActorHelper.v1_to_v2(data, names, (md) => {
+          this.data = md;
+          this.fullUpdate()
+        })
       })
 
 
@@ -192,12 +198,16 @@ export default class MapArea extends React.Component {
   }
 
   set data (val) {
+    console.log("SET Data:", val)
     // get layer first as later data won't match until full react sync
     const l = this.getActiveLayer()
     this.activeAsset.content2 = val
     l && l.clearCache && l.clearCache()
   }
   get data () {
+    return this.activeAsset.content2
+
+
     if (this.activeAsset && !this.activeAsset.content2.width) {
       this.activeAsset.content2 = TileHelper.genNewMap()
     }
@@ -416,7 +426,8 @@ export default class MapArea extends React.Component {
   getImage (nameWithExt) {
     this.loadingImages.push(nameWithExt)
     const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
-    $.get(`/api/asset/png/${this.props.parent.getUser()}/${name}`)
+    const src = nameWithExt.indexOf("/") === 0 ? nameWithExt : `/api/asset/png/${this.props.parent.getUser()}/${name}`
+    $.get(src)
       .done((id) => {
         const img = new Image()
         img.onload = () => {
@@ -964,7 +975,9 @@ export default class MapArea extends React.Component {
     else if (type == LayerTypes.object) {
       ls = TileHelper.genObjectLayer('Object Layer ' + (lss.length + 1))
     }
-
+    else if (type == LayerTypes.object) {
+      ls = TileHelper.genObjectLayer('Object Layer ' + (lss.length + 1))
+    }
     lss.push(ls)
     map.forceUpdate()
     return ls
@@ -1095,6 +1108,22 @@ export default class MapArea extends React.Component {
                         map={this}
                         anotherUsableKey={i}
                         active={this.activeLayer == i} />)
+        }
+        else if (data.layers[i].type == LayerTypes.actor) {
+          layers.push(<ActorLayer
+            data={data.layers[i]}
+            key={i}
+            map={this}
+            anotherUsableKey={i}
+            active={this.activeLayer == i} />)
+        }
+        else if (data.layers[i].type == LayerTypes.event) {
+          layers.push(<EventLayer
+            data={data.layers[i]}
+            key={i}
+            map={this}
+            anotherUsableKey={i}
+            active={this.activeLayer == i} />)
         }
       }
       layers.push(

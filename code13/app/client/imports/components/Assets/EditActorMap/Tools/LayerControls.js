@@ -124,10 +124,10 @@ export default class LayerControls extends React.Component {
     </button>
     )
 
-    // TODO: ask David to get nice highlight layer icon - atm - paste was closest I could find
     return (
       <div className='ui mini' style={{ position: 'relative', top: '-10px' }}>
         <div className='ui icon buttons mini' title='New Layer'>
+        {/*
           <div className='ui dropdown button'>
             <i className='add icon'></i>
             <div className='menu'>
@@ -142,16 +142,12 @@ export default class LayerControls extends React.Component {
               </div>
             </div>
           </div>
+          */}
           <button className={highlightClassName} onClick={this.highlightActiveLayerToggle.bind(this)} title='Highlight Active layer'>
             <i className='paste icon'></i>
           </button>
-          {/* moved to Map Tools
-                                                                                                                                                                                                                                                                                                                                          <button className={showGridClassName}
-                                                                                                                                                                                                                                                                                                                                                  onClick={this.showGridToggle.bind(this)}
-                                                                                                                                                                                                                                                                                                                                                  title="Show Grid"
-                                                                                                                                                                                                                                                                                                                                            ><i className="grid layout icon"></i>
-                                                                                                                                                                                                                                                                                                                                          </button> */}
         </div>
+        {/*
         <div className='ui icon buttons mini'>
           {rise}
           {lower}
@@ -161,6 +157,7 @@ export default class LayerControls extends React.Component {
             <i className='remove icon'></i>
           </button>
         </div>
+        */}
       </div>
     )
   }

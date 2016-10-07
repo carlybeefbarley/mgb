@@ -17,7 +17,7 @@ export default class MapToolbar extends React.Component {
   }
   play (){
     this.props.map.setState({
-      isPlaying: true
+      isPlaying: !this.props.map.state.isPlaying
     })
   }
   resetCamera () {

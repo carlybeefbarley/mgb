@@ -81,7 +81,16 @@ export const AssetKinds = {
     icon: "image",
     requiresUserRole: null,
     description: "Images, Sprites, tiles, animations, backgrounds etc"
-  },  
+  },
+  "actor": {
+    name: "actor",
+    selfPlural: false,
+    disable: false,
+    longName: "Actor",
+    icon: "actor child",
+    requiresUserRole: null,
+    description: "Mgb v1 actors"
+  },
   "actormap": {
     name: "actorMap",
     selfPlural: false,

@@ -16,7 +16,7 @@ const _generateUrlOptions = asset =>
     retval.push( { "msg":"as standalone .html bundle", "url":"/api/asset/code/bundle/"+asset._id } )
     break
   case 'map':
-    retval.push( { "msg":"as JSON map", "url":"/api/asset/json/"+asset._id })
+    retval.push( { "msg":"as JSON map", "url":"/api/asset/map/"+asset._id })
     break
   case 'sound':
     retval.push( { "msg":"as sound.mp3", "url":"/api/asset/sound/"+asset._id+"/sound.mp3" })

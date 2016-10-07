@@ -1066,6 +1066,8 @@ export default class EditGraphic extends React.Component {
       c2.cols = tilesetInfo.cols
       c2.rows = tilesetInfo.rows
     }
+    else
+      console.log('Did not create tileset')
 
     this.setThumbnail(asset)
 

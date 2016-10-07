@@ -12,13 +12,12 @@ import '/imports/schemas/settings.js'
 import { createInitialSettings } from '/imports/schemas/settings-server.js'
 
 // Import rules and publications
-import '/imports/schemas/denyRules.js'
+import '/imports/schemas/denyRules'
 import '/server/imports/publications/publications'
 
-import './EmailTemplates.js'
-import './CreateUser.js'
-
-import '/server/imports/restApi/restApi.js'
+import './EmailTemplates'
+import './CreateUser'
+import '/server/imports/restApi'
 
 // Create fixtures on first time app is launched (useful for dev/test)
 import { createUsers } from './fixtures.js'

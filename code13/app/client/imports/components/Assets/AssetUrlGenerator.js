@@ -7,6 +7,9 @@ const _generateUrlOptions = asset =>
   switch (asset.kind) {
   case 'graphic':
     retval.push( { "msg":"as PNG", "url":"/api/asset/png/"+asset._id } )
+    retval.push( { "msg":"as PNG (specify frame)", "url":"/api/asset/png/"+asset._id+"?frame=0" } )
+    retval.push( { "msg":"as Tileset", "url":"/api/asset/tileset/"+asset._id } )
+    retval.push( { "msg":"as Tileset-info", "url":"/api/asset/tileset-info/"+asset._id } )
     break
   case 'code':
     retval.push( { "msg":"as source code", "url":"/api/asset/code/"+asset._id } )
@@ -24,6 +27,8 @@ const _generateUrlOptions = asset =>
   default:
     break
   }
+  retval.push( { "msg":"as thumbnail PNG", "url":"/api/asset/thumbnail/png/"+asset._id } )
+  
   return retval
 }
 

@@ -91,6 +91,15 @@ export const AssetKinds = {
     requiresUserRole: null,    
     description: "Map/Level used in a game"
   },
+  "mgb_v1_map": {
+    name: "MGB1 map - use: user:map",
+    selfPlural: false,
+    disable: false,
+    longName: "Game Level Map - with actions",
+    icon: "map outline",
+    requiresUserRole: null,
+    description: "Map/Level used in a game"
+  },
   "physics": {
     name: "Physics",
     selfPlural: true,

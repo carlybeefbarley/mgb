@@ -92,13 +92,13 @@ export const AssetKinds = {
     description: "Map/Level used in a game"
   },
   "mgb_v1_map": {
-    name: "MGB1 map - use: user:map",
+    name: "MGB1_map",
     selfPlural: false,
     disable: false,
     longName: "Game Level Map - with actions",
-    icon: "map outline",
+    icon: "map",
     requiresUserRole: null,
-    description: "Map/Level used in a game"
+    description: "MGB_v1 Map/Level used in a game"
   },
   "physics": {
     name: "Physics",

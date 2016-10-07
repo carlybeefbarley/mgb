@@ -6,6 +6,11 @@ import { doImportMaps } from './mgb1ImportMaps'
 
 // This should only be in server code
 
+import AWS from 'aws-sdk'
+const aws_s3_region = 'us-east-1'       // US-East-1 is the 'global' site for S3
+AWS.config.update({accessKeyId: '104QCDA4V07YPPSVBKG2', secretAccessKey: 'QB65XLlJzlQ4w8ifWhkhv/a48ayihIS9k8v7CSPn'});
+
+
 const _importParamsSchema = {
 
   mgb1Username:           String,     // Must exist
@@ -21,7 +26,28 @@ const _importParamsSchema = {
 
 Meteor.methods({
   'job.import.mgb1.project': function( importParams ) {
-    const thisUser = this.user()
+    let thisUser = this.user && this.user()
+
+    // MAGIC TEST HACK   ##insecure##
+    //  meteor shell  
+    //  > Meteor.call('job.import.mgb1.project', 42)    
+    //
+    if (importParams === 42)
+    {
+      importParams = {
+        mgb1Username:           'foo',
+        mgb1Projectname:        'project1',
+        mgb2Username:           'dgolds',
+        mgb2ExistingProjectName:'junk',
+        mgb2assetNamePrefix:    'junk.',
+        excludeTiles:           false,
+        excludeActors:          true,
+        excludeMaps:            true,
+        isDryRun:               true
+      }
+      thisUser = { profile: { name: 'dgolds' } }
+    }
+
 
     // Param validations - these must throw Meteor.Error on failures
     _checkAllParams(importParams, thisUser)
@@ -34,15 +60,18 @@ Meteor.methods({
       mgb1AssetsFailedToConvert:  []    // Array of { name: string, reason: string}.. For name, use Mgb1 Asset names - [type]/name.. eg. 'map/my map 1'
     }
 
+
+    let s3 = new AWS.S3({region: aws_s3_region, maxRetries: 3})
+
     // From now on AVOID THROWING. Instead use retValAccumulator.mgb1AssetsFailedToConvert
     if (!importParams.excludeTiles)
-      doImportTiles(retValAccumulator)
+      doImportTiles(s3, retValAccumulator)
 
     if (!importParams.excludeTiles)
-      doImportActors(retValAccumulator)
+      doImportActors(s3, retValAccumulator)
 
     if (!importParams.excludeTiles)
-      doImportMaps(retValAccumulator)
+      doImportMaps(s3, retValAccumulator)
     
     return retValAccumulator
   }

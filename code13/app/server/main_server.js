@@ -18,6 +18,8 @@ import '/server/imports/publications/publications'
 import './EmailTemplates'
 import './CreateUser'
 import '/server/imports/restApi'
+import '/server/imports/jobs/mgb1Importer'
+
 
 // Create fixtures on first time app is launched (useful for dev/test)
 import { createUsers } from './fixtures.js'

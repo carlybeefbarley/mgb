@@ -33,6 +33,7 @@ export default class MapArea extends React.Component {
     this.startTime = Date.now()
     // expose map for debugging purposes - access in console
     window.mgb_map = this;
+    this.state = {};
 
     this.images = {
       set: (property, value) => {
@@ -1125,6 +1126,7 @@ export default class MapArea extends React.Component {
         <MapToolbar map={this} ref='tools' />
         {notification}
         {this.renderMap()}
+        {this.state.isPlaying && <MapPlayer map={this} />}
         <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
       </div>
     )

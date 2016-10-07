@@ -15,7 +15,11 @@ export default class MapToolbar extends React.Component {
     // force to update thumbnail
     this.props.map.save('Save Map', true)
   }
-
+  play (){
+    this.props.map.setState({
+      isPlaying: true
+    })
+  }
   resetCamera () {
     this.props.map.resetCamera()
   }
@@ -127,6 +131,13 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Save the map (auto save is ON)',
           level: 1,
           shortcut: 'Ctrl+S' // Is it OK to override browsers save page?
+        },
+        {
+          name: 'play',
+          label: 'Play',
+          tooltip: 'Play this map',
+          level: 1,
+          shortcut: 'Ctrl+P' // Is it OK to override browsers save page?
         },
         {
           name: 'separator'

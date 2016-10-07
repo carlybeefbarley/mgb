@@ -82,23 +82,23 @@ export const AssetKinds = {
     requiresUserRole: null,
     description: "Images, Sprites, tiles, animations, backgrounds etc"
   },  
+  "actormap": {
+    name: "actorMap",
+    selfPlural: false,
+    disable: false,
+    longName: "Map using Actors - makes games without coding",
+    icon: "map",
+    requiresUserRole: null,
+    description: "MGB_v1 Map/Level used in a game"
+  },
   "map": {
     name: "Map",
     selfPlural: false,
     disable: false,
-    longName: "Game Level Map",
+    longName: "Game Level Map (TMX style for game coding)",
     icon: "map outline",
-    requiresUserRole: null,    
-    description: "Map/Level used in a game"
-  },
-  "mgb_v1_map": {
-    name: "MGB1_map",
-    selfPlural: false,
-    disable: false,
-    longName: "Game Level Map - with actions",
-    icon: "map",
     requiresUserRole: null,
-    description: "MGB_v1 Map/Level used in a game"
+    description: "Map/Level used in a game"
   },
   "physics": {
     name: "Physics",

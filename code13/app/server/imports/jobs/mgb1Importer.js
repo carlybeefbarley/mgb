@@ -1,5 +1,8 @@
 import { Meteor } from 'meteor/meteor'
 import { check } from 'meteor/check'
+import { doImportTiles } from './mgb1ImportTiles'
+import { doImportActors } from './mgb1ImportActors'
+import { doImportMaps } from './mgb1ImportMaps'
 
 // This should only be in server code
 
@@ -33,13 +36,13 @@ Meteor.methods({
 
     // From now on AVOID THROWING. Instead use retValAccumulator.mgb1AssetsFailedToConvert
     if (!importParams.excludeTiles)
-      _doImportTiles(retValAccumulator)
+      doImportTiles(retValAccumulator)
 
     if (!importParams.excludeTiles)
-      _doImportActors(retValAccumulator)
+      doImportActors(retValAccumulator)
 
     if (!importParams.excludeTiles)
-      _doImportMaps(retValAccumulator)
+      doImportMaps(retValAccumulator)
     
     return retValAccumulator
   }
@@ -83,25 +86,4 @@ const _checkImportingAtLeastOneAssetType = params => {
 const checkAssetNamePrefix = params => {
   if (params.mgb2assetNamePrefix.length < 1)
     throw new Meteor.Error(500, "mgb2assetNamePrefix required")
-}
-
-
-// The Actual importers. 
-//  These know that params have been pre-validated
-//  These can ignore excludeTiles & excludeActors & excludeMaps flags 
-//  They should avoid throwing Meteor.Error()
-//  See definition of retValAccumulator in the
-//    'job.import.mgb1.project' Meteor RPC
-
-
-const _doImportTiles = retValAccumulator => {
-  // TODO
-}
-
-const _doImportActors = retValAccumulator => {
-  // TODO
-}
-
-const _doImportMaps = retValAccumulator => {
-  // TODO
 }

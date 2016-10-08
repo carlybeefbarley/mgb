@@ -293,11 +293,11 @@ Meteor.methods({
     }
 
     const now = new Date()
-    data.createdAt = now
+    data.createdAt = data.createdAt || now    // -- useful for asset import from MGB1
     data.updatedAt = now
     data.workState = defaultWorkStateName
-    data.content = ""                                 // This is stale. Can be removed one day
-    data.text = ""                                    // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
+    data.content = ''                                // This is stale. Can be removed one day
+    data.text = data.text || ''                      // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
     if (!data.projectNames)
       data.projectNames = []
     data.thumbnail = data.thumbnail || ""

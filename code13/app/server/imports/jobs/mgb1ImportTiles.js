@@ -10,52 +10,66 @@
 
 //  Avoid throwing Meteor.Error()
 
-const BUCKET = 'JGI_test1'
 
-const _getAssetNames = (s3, mgb1Username, mgb1Projectname, kindStr) => {
+const getContent = (s3, s3Key) => {
+  const getObjectSync = Meteor.wrapAsync(s3.getObject, s3)
 
-  // This will use 
-  //   https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
-
-  const opParams = {
-    Bucket: BUCKET,
-    //ContinuationToken: 'STRING_VALUE',
-    EncodingType: 'url',
-    MaxKeys: 100,   // 1000 is the S3 max per batch
-    Prefix: `${mgb1Username}/${mgb1Projectname}/${kindStr}/`
+  const modKey = s3Key.replace(/\+/g, ' ')
+  var response = {}, savedError = {}
+  try {
+    response = getObjectSync({Bucket: 'JGI_test1', Key: modKey})
   }
-
-  const prefixLen = opParams.Prefix.length
-  var listObjectsV2Sync = Meteor.wrapAsync(s3.listObjectsV2, s3)
-  var response = {}
-  var assetKeys = []
-
-  do
+  catch (err)
   {
-    try {
-      response = listObjectsV2Sync( opParams )
-    }
-    catch (err)
-    {
-      console.dir('MGB1 _getAssetNames  error: ', err)
-      return null
-    }
-    assetKeys = assetKeys.concat(_.map(response.Contents, c => c.Key.slice(prefixLen)))
-    if (response.IsTruncated)
-    {
-      opParams.ContinuationToken = response.NextContinuationToken
-      console.log(`Getting more S3key batches for ${opParams.Prefix}.. ${assetKeys.length} so far`)
-    }
-  } while (response && response.IsTruncated)
-
-  return assetKeys
+    savedError = err
+    console.log(`MGB1 getContent( ${s3Key} ) error: `, err)
+  }
+  return response
 }
 
 
-export const doImportTiles = (s3, rva) => {
-  const params = rva.importParams
-  const tilePaths = _getAssetNames(s3, params.mgb1Username, params.mgb1Projectname, 'tile')
+export const doImportTiles = (s3, rva, tileNames, keyPrefix ) => {
 
-  console.log(`${tilePaths.length} results...`)
-  console.dir(tilePaths)
+  const { mgb2ExistingProjectName, mgb2assetNamePrefix  } = rva.importParams
+  console.log(`Preparing to import ${tileNames.length} MGB1 tiles into MGB2`)
+
+  _.each(tileNames, tName => {
+
+    const content = getContent(s3, keyPrefix+tName)
+    const body = content.Body   // a Buffer
+    const pngAsDataUri = 'data:image/png;base64,' + body.toString('base64')
+    // check content.Metadata exists
+
+    const c2 = {
+      width:        parseInt(content.Metadata.width,  10),
+      height:       parseInt(content.Metadata.height, 10),
+      fps:          10,
+      layerParams:  [ { name: 'Layer 1', isHidden: false, isLocked: false } ],
+      frameNames:   [ 'Frame 1' ],
+      frameData:    [ [ pngAsDataUri ] ],
+      spriteData:   [ pngAsDataUri ],
+      animations:   [ ],
+
+      // Tileset info
+      tileset:      pngAsDataUri,
+      cols:         1,
+      rows:         1
+    }
+
+    const newGraphicAsset = {
+      createdAt:      content.LastModified ? new Date(content.LastModified) : undefined,
+      projectNames:   [ mgb2ExistingProjectName ],
+      name:           (mgb2assetNamePrefix + tName).replace(/\+/g, ' '),
+      kind:           'graphic',
+      text:           `Imported from MGB1 (${(keyPrefix + tName).replace(/\+/g, ' ')}) ${content.Metadata.comment}`,
+      thumbnail:      pngAsDataUri,
+      content2:       c2,
+      isCompleted:    false,     // This supports the 'is stable' flag
+      isDeleted:      false,     // This is a soft 'marked-as-deleted' indicator
+      isPrivate:      false
+    }
+
+    Meteor.call('Azzets.create', newGraphicAsset)
+
+  })
 }

@@ -38,7 +38,7 @@ Meteor.methods({
         mgb1Username:           'foo',
         mgb1Projectname:        'project1',
         mgb2Username:           'dgolds',
-        mgb2ExistingProjectName:'junk',
+        mgb2ExistingProjectName:'Junk',
         mgb2assetNamePrefix:    'junk.',
         excludeTiles:           false,
         excludeActors:          true,
@@ -47,12 +47,15 @@ Meteor.methods({
       }
       thisUser = { profile: { name: 'dgolds' } }
     }
-
+    //// END HACK /////
 
     // Param validations - these must throw Meteor.Error on failures
     _checkAllParams(importParams, thisUser)
 
-    // This data will be used for the return value info
+    // Ok, not completely crazy, so unblock other equests for this client since it may take a while.. 
+    this.unblock()
+
+    // The following data will be used for the return value info
     const retValAccumulator = {
       importParams:               importParams,
       assetIdsAdded:              [],   // Mgb2 Asset ids - those where the prior asset name did not exist (including isDeleted=true and isDeleted=false)
@@ -60,22 +63,69 @@ Meteor.methods({
       mgb1AssetsFailedToConvert:  []    // Array of { name: string, reason: string}.. For name, use Mgb1 Asset names - [type]/name.. eg. 'map/my map 1'
     }
 
-
     let s3 = new AWS.S3({region: aws_s3_region, maxRetries: 3})
 
     // From now on AVOID THROWING. Instead use retValAccumulator.mgb1AssetsFailedToConvert
-    if (!importParams.excludeTiles)
-      doImportTiles(s3, retValAccumulator)
+
+    const getS3KeyPrefix = kind => `${importParams.mgb1Username}/${importParams.mgb1Projectname}/${kind}/`
 
     if (!importParams.excludeTiles)
-      doImportActors(s3, retValAccumulator)
+    {
+      const kp = getS3KeyPrefix('tile')
+      doImportTiles(s3, retValAccumulator, _getAssetNames(s3, kp), kp)
+    }
 
-    if (!importParams.excludeTiles)
-      doImportMaps(s3, retValAccumulator)
+    // if (!importParams.excludeActors)
+    //   doImportActors(s3, retValAccumulator, getAssetNamesForKind('tile'))   
+
+    // if (!importParams.excludeMaps)
+    //   doImportMaps(s3, retValAccumulator, getAssetNamesForKind('map')) 
     
     return retValAccumulator
   }
 })
+
+
+// Asset key lister
+
+const _getAssetNames = (s3, keyPrefix) => {
+
+  // This will use 
+  //   https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
+
+  const opParams = {
+    Bucket: 'JGI_test1',
+    //ContinuationToken: 'STRING_VALUE',
+    EncodingType: 'url',
+    MaxKeys: 100,   // 1000 is the S3 max per batch. Chose 100 so fast, but still tests looping/continuation
+    Prefix: keyPrefix
+  }
+
+  const prefixLen = opParams.Prefix.length
+  var listObjectsV2Sync = Meteor.wrapAsync(s3.listObjectsV2, s3)
+  var response = {}
+  var assetKeys = []
+
+  do
+  {
+    try {
+      response = listObjectsV2Sync( opParams )
+    }
+    catch (err)
+    {
+      console.dir('MGB1 _getAssetNames  error: ', err)
+      return null
+    }
+    assetKeys = assetKeys.concat(_.map(response.Contents, c => c.Key.slice(prefixLen)))
+    if (response.IsTruncated)
+    {
+      opParams.ContinuationToken = response.NextContinuationToken
+      console.log(`Getting more S3key batches for ${opParams.Prefix}.. ${assetKeys.length} so far`)
+    }
+  } while (response && response.IsTruncated)
+
+  return assetKeys
+}
 
 
 // Validations - TRUST NO ONE

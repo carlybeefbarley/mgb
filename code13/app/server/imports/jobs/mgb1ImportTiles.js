@@ -11,65 +11,44 @@
 //  Avoid throwing Meteor.Error()
 
 
-const getContent = (s3, s3Key) => {
-  const getObjectSync = Meteor.wrapAsync(s3.getObject, s3)
+export const doImportTile = (content, rva, fullS3Name, assetName ) => {
 
-  const modKey = s3Key.replace(/\+/g, ' ')
-  var response = {}, savedError = {}
-  try {
-    response = getObjectSync({Bucket: 'JGI_test1', Key: modKey})
+  const { mgb2ExistingProjectName, mgb2assetNamePrefix, isDryRun  } = rva.importParams
+  const { Body, Metadata, LastModified } = content   // Body is of type Buffer
+  const pngAsDataUri = 'data:image/png;base64,' + Body.toString('base64')
+  // check content.Metadata exists
+
+  const c2 = {
+    width:        parseInt(Metadata.width,  10),
+    height:       parseInt(Metadata.height, 10),
+    fps:          10,
+    layerParams:  [ { name: 'Layer 1', isHidden: false, isLocked: false } ],
+    frameNames:   [ 'Frame 1' ],
+    frameData:    [ [ pngAsDataUri ] ],
+    spriteData:   [ pngAsDataUri ],
+    animations:   [ ],
+
+    // Tileset info
+    tileset:      pngAsDataUri,
+    cols:         1,
+    rows:         1
   }
-  catch (err)
-  {
-    savedError = err
-    console.log(`MGB1 getContent( ${s3Key} ) error: `, err)
+
+  const newAsset = {
+    createdAt:      LastModified ? new Date(LastModified) : undefined,
+    projectNames:   [ mgb2ExistingProjectName ],
+    name:           mgb2assetNamePrefix + assetName,
+    kind:           'graphic',
+    text:           `Imported from MGB1 (${fullS3Name}) ${Metadata.comment}`,
+    thumbnail:      pngAsDataUri,
+    content2:       c2,
+    isCompleted:    false,     // This supports the 'is stable' flag
+    isDeleted:      false,     // This is a soft 'marked-as-deleted' indicator
+    isPrivate:      false
   }
-  return response
-}
 
+  console.log(newAsset)
 
-export const doImportTiles = (s3, rva, tileNames, keyPrefix ) => {
-
-  const { mgb2ExistingProjectName, mgb2assetNamePrefix  } = rva.importParams
-  console.log(`Preparing to import ${tileNames.length} MGB1 tiles into MGB2`)
-
-  _.each(tileNames, tName => {
-
-    const content = getContent(s3, keyPrefix+tName)
-    const body = content.Body   // a Buffer
-    const pngAsDataUri = 'data:image/png;base64,' + body.toString('base64')
-    // check content.Metadata exists
-
-    const c2 = {
-      width:        parseInt(content.Metadata.width,  10),
-      height:       parseInt(content.Metadata.height, 10),
-      fps:          10,
-      layerParams:  [ { name: 'Layer 1', isHidden: false, isLocked: false } ],
-      frameNames:   [ 'Frame 1' ],
-      frameData:    [ [ pngAsDataUri ] ],
-      spriteData:   [ pngAsDataUri ],
-      animations:   [ ],
-
-      // Tileset info
-      tileset:      pngAsDataUri,
-      cols:         1,
-      rows:         1
-    }
-
-    const newGraphicAsset = {
-      createdAt:      content.LastModified ? new Date(content.LastModified) : undefined,
-      projectNames:   [ mgb2ExistingProjectName ],
-      name:           (mgb2assetNamePrefix + tName).replace(/\+/g, ' '),
-      kind:           'graphic',
-      text:           `Imported from MGB1 (${(keyPrefix + tName).replace(/\+/g, ' ')}) ${content.Metadata.comment}`,
-      thumbnail:      pngAsDataUri,
-      content2:       c2,
-      isCompleted:    false,     // This supports the 'is stable' flag
-      isDeleted:      false,     // This is a soft 'marked-as-deleted' indicator
-      isPrivate:      false
-    }
-
-    Meteor.call('Azzets.create', newGraphicAsset)
-
-  })
+  if (!isDryRun)
+    Meteor.call('Azzets.create', newAsset)
 }

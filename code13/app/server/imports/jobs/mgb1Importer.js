@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor'
 import { check } from 'meteor/check'
-import { doImportTiles } from './mgb1ImportTiles'
-import { doImportActors } from './mgb1ImportActors'
-import { doImportMaps } from './mgb1ImportMaps'
+import { doImportTile } from './mgb1ImportTiles'
+import { doImportActor } from './mgb1ImportActors'
+import { doImportMap } from './mgb1ImportMaps'
 
 // This should only be in server code
 
@@ -30,19 +30,19 @@ Meteor.methods({
 
     // MAGIC TEST HACK   ##insecure##
     //  meteor shell  
-    //  > Meteor.call('job.import.mgb1.project', 42)    
+    //  > Meteor.call('job.import.mgb1.project', 42)
     //
     if (importParams === 42)
     {
       importParams = {
         mgb1Username:           'foo',
-        mgb1Projectname:        'project1',
+        mgb1Projectname:        'mechanics demos',
         mgb2Username:           'dgolds',
-        mgb2ExistingProjectName:'Junk',
-        mgb2assetNamePrefix:    'junk.',
-        excludeTiles:           false,
+        mgb2ExistingProjectName:'Game Mechanics demo',
+        mgb2assetNamePrefix:    'mechanix.',
+        excludeTiles:           true,
         excludeActors:          true,
-        excludeMaps:            true,
+        excludeMaps:            false,
         isDryRun:               true
       }
       thisUser = { profile: { name: 'dgolds' } }
@@ -67,26 +67,52 @@ Meteor.methods({
 
     // From now on AVOID THROWING. Instead use retValAccumulator.mgb1AssetsFailedToConvert
 
-    const getS3KeyPrefix = kind => `${importParams.mgb1Username}/${importParams.mgb1Projectname}/${kind}/`
-
-    if (!importParams.excludeTiles)
-    {
-      const kp = getS3KeyPrefix('tile')
-      doImportTiles(s3, retValAccumulator, _getAssetNames(s3, kp), kp)
+    const doImport = (mgb1Kind, importFunction) => {
+      const kp = `${importParams.mgb1Username}/${importParams.mgb1Projectname}/${mgb1Kind}/`
+      const assetNames = _getAssetNames(s3, kp)
+      console.log(`Preparing to ${importParams.isDryRun ? 'DRYRUN ' : ''} import ${assetNames.length} MGB1 ${mgb1Kind}s into MGB2`)
+      _.each(assetNames, aName => {
+        const fullS3Name = (kp+aName).replace(/\+/g, ' ')
+        const assetName = aName.replace(/\+/g, ' ')
+        const content = getContent(s3, fullS3Name)
+        importFunction(content, retValAccumulator, fullS3Name, assetName)
+        //TODO-> update retValAccumulator 
+      })
     }
 
-    // if (!importParams.excludeActors)
-    //   doImportActors(s3, retValAccumulator, getAssetNamesForKind('tile'))   
+    if (!importParams.excludeTiles)
+      doImport( 'tile', doImportTile)
 
-    // if (!importParams.excludeMaps)
-    //   doImportMaps(s3, retValAccumulator, getAssetNamesForKind('map')) 
+    if (!importParams.excludeActors)
+      doImport( 'actor', doImportActor)
+
+    if (!importParams.excludeMaps)
+      doImport( 'map', doImportMap)
     
     return retValAccumulator
   }
 })
 
 
-// Asset key lister
+// get an S3 object. expects any + characters to have been replaced with +
+const getContent = (s3, s3Key) => {
+  const getObjectSync = Meteor.wrapAsync(s3.getObject, s3)
+
+  var response = {}, savedError = {}
+  try {
+    response = getObjectSync({Bucket: 'JGI_test1', Key: s3Key})
+  }
+  catch (err)
+  {
+    savedError = err
+    console.log(`MGB1 getContent( ${s3Key} ) error: `, err)
+  }
+  return response
+}
+
+
+// Asset key lister. Note that spaces in names are returned as '+'. 
+// Stupid S3
 
 const _getAssetNames = (s3, keyPrefix) => {
 

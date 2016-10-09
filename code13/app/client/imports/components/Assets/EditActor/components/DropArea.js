@@ -24,9 +24,11 @@ export default class DropArea extends React.Component{
       // meteor subscriptions onReady might not get called - somehow buggish behavior
       // keep looping until we get an asset (:doh)
       // TODO: there MUST be better way
+      let count = 0
       const onReady = () => {
         const a = this.getAsset()
-        if(!a){
+        count++;
+        if(!a && count < 100){
           console.log("KEEP LOOKING FOR:", owner, name)
           window.setTimeout( onReady, 1000)
         }
@@ -41,9 +43,7 @@ export default class DropArea extends React.Component{
     }
   }
   componentWillUnmount(){
-    console.log("Stopping subscriptions...")
     this.subscription && this.subscription.stop()
-
   }
   handleDrop(e){
     const asset = DragNDropHelper.getAssetFromEvent(e)
@@ -83,7 +83,7 @@ export default class DropArea extends React.Component{
     if(this.props.value){
       const parts = this.props.value.split(":");
       const name = parts.pop();
-      const owner = parts.pop();
+      const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
 
       this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name);
       const aa =  Azzets.find({dn_ownerName: owner, name: name}).fetch()

@@ -4,6 +4,9 @@ import SmallDD from './components/SmallDD.js'
 
 export default class BaseForm extends React.Component {
 
+  componentDiDMount(){
+
+  }
   options(name, key, options, props){
     const val = this.data[key];
     if(!val){
@@ -25,11 +28,18 @@ export default class BaseForm extends React.Component {
     return (
       <div className="inline fields">
         <label>{name}</label>
-        <div class="ui toggle checkbox">
-          <input type="checkbox" name={key} tabindex="0" class="hidden" onChange={(val) => {
+        <div className="ui toggle checkbox" ref={(b) => {$(b).checkbox()}} onClick={() => {
+          const val = this.refs.checkbox.checked ? "1" : "0"
+          this.data[key] = val
+          console.log("change", val)
+          this.props.onchange && this.props.onchange()
+
+        }}>
+          <input type="checkbox" name={key} tabIndex="0" className="hidden" ref="checkbox" checked={parseInt(this.data[key], 10) } onChange={(val) => {
             this.data[key] = val
+            console.log("change", val)
             this.props.onchange && this.props.onchange()
-          }}/>
+          }} />
         </div>
       </div>
     )

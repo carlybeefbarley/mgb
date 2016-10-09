@@ -19,7 +19,8 @@ export default class Tabs extends React.Component{
       }
       else{
         tabs.push(<div className="ui button" key={i}  onClick={this.selectTab.bind(this, i)}>{this.props.tabs[i].tab}</div>)
-        content.push(<div className="ui content hidden" key={i}>{this.props.tabs[i].content}</div>)
+        // this makes selecting tab quicker - but make all sluggish on changes
+        // content.push(<div className="ui content hidden" key={i}>{this.props.tabs[i].content}</div>)
       }
     }
 

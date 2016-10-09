@@ -53,14 +53,28 @@ const actorTypes = [
 
 export default class All extends BaseForm {
   get data(){
-    return this.props.asset.content2.databag.all
+    return this.props.asset.content2.databag.allchar
   }
 
   render() {
     return (
       <div className="ui form">
         {this.text("Movement speed", 'movementSpeed', "number")}
-        {this.bool("Can Move Up", 'upYN')}
+        {this.bool("Can Move Up \u2191", 'upYN')}
+        {this.bool("Can Move Down \u2193", 'downYN')}
+        {this.bool("Can Move Left \u2190", 'leftYN')}
+        {this.bool("Can Move Right \u2192", 'rightYN')}
+
+        {this.dropArea("Actor For Shots", 'shotActor', "actor")}
+
+        {this.text("Touch Damage Against Players", 'touchDamageToPlayerNum', "number")}
+        {this.text("Touch Damage Against NPCS", 'touchDamageToNPCorItemNum', "number")}
+        {this.text("Touch Damage Attack chance", 'touchDamageAttackChance', "number")}
+
+
+
+
+
         {/*
 movementSpeed: movementSpeedNum
 canMoveUp: upYN

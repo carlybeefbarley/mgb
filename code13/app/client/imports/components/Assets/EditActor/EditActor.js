@@ -64,7 +64,7 @@ export default class EditActor extends React.Component {
     // fix blank asset..
     if(!this.props.asset.content2.databag) {
       debugger;
-      console.log("FIXIN broken asset...")
+      console.log("FIXIN broken or new asset... there will be modal form instead this message :) ")
       this.props.asset.content2 = {
         animationTable: [],
         databag: {

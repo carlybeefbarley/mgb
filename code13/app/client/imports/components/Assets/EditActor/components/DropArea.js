@@ -135,7 +135,7 @@ export default class DropArea extends React.Component{
         onDrop={this.handleDrop.bind(this)}
         >
 
-        {!asset && !this.state.badAsset ? (this.props.value || "Drop Asset here!") :
+        {!asset && !this.state.badAsset ? (this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :
           <i className="floated right ui icon remove" onClick={()=>{
               this.setState({asset: null, badAsset: null })
               this.saveChanges()

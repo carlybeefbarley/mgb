@@ -64,33 +64,28 @@ export default class All extends BaseForm {
         {this.bool("Can Move Down \u2193", 'downYN')}
         {this.bool("Can Move Left \u2190", 'leftYN')}
         {this.bool("Can Move Right \u2192", 'rightYN')}
-
+        <hr />
         {this.dropArea("Actor For Shots", 'shotActor', "actor")}
-
+        <hr />
         {this.text("Touch Damage Against Players", 'touchDamageToPlayerNum', "number")}
         {this.text("Touch Damage Against NPCS", 'touchDamageToNPCorItemNum', "number")}
         {this.text("Touch Damage Attack chance", 'touchDamageAttackChance', "number")}
 
+        {this.options("Touch Damage Cases", 'touchDamageCases', [
+          {text: "When overlapping target", value: "0"},
+          {text: "When facing target", value: "1"},
+          {text: "When adjacent to target", value: "2"},
+        ])}
+        <hr />
 
+        {this.text("Melee Damage Against Player", 'meleeDamageToPlayerNum', "number")}
+        {this.text("Melee Damage Against Npc", 'meleeDamageToNPCorItemNum', "number")}
+        {this.text("Melee Repeat Delay", 'meleeRepeatDelay', "number")}
 
+        {this.dropArea("Sound Effect Melee", 'soundWhenMelee', "sound")}
 
 
         {/*
-movementSpeed: movementSpeedNum
-canMoveUp: upYN
-canMoveDown: downYN
-canMoveLeft: leftYN
-canMoveRight: rightYN
-.....
-ActorForShots: shotActor
-TouchDamageAgainstPlayers: touchDamageToPlayerNum
-TouchDamageAgainstNPCS: touchDamageToNPCorItemNum
-TouchDamageAttackChance: touchDamageAttackChance
-TouchDamageCases: touchDamageCases
-MeleeDamageAgainstPlayer: meleeDamageToPlayerNum
-MeleeDamageAgainstNpc: meleeDamageToNPCorItemNum
-SoundEffectMelee: soundWhenMelee
-MeleeRepeatDelay: meleeRepeatDelay
 
         {this.options("Actor Type", 'actorType', actorTypes)}
         {this.text("Description", 'description')}

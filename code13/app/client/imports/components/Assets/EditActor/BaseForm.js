@@ -14,7 +14,7 @@ export default class BaseForm extends React.Component {
     }
 
     return (
-      <div className="inline fields">
+      <div className="inline fields" title={props && props.title}>
         <label>{name}</label>
         <SmallDD options={options} onchange={(val) => {
           this.data[key] = val
@@ -49,7 +49,7 @@ export default class BaseForm extends React.Component {
   }
   text(name, key, type, props){
     return (
-      <div className="inline fields">
+      <div className="inline fields" title={props && props.title}>
         <label>{name}</label>
         <input  {...props} placeholder={name} type={type == void(0) ? "text" : type} value={this.data[key]} onChange={(e) => {
           const val = e.target.value
@@ -69,9 +69,9 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-  textArea(name, key){
+  textArea(name, key, props){
     return (
-      <div className="inline fields">
+      <div className="inline fields" title={props && props.title}>
         <label>{name}</label>
         <textarea rows="3" onChange={(e) => {
             const val = e.target.value
@@ -83,10 +83,9 @@ export default class BaseForm extends React.Component {
   }
   dropArea(name, key, kind, props, cb){
     return (
-      <div className="inline fields">
+      <div className="inline fields" title={props && props.title}>
         <label>{name}</label>
         <DropArea kind={kind} {...props} value={this.data[key]} asset={this.props.asset} onChange={(val, asset) => {
-          console.log("dropped:", val)
           this.data[key] = val
           this.props.onchange && this.props.onchange()
           cb && cb(asset)

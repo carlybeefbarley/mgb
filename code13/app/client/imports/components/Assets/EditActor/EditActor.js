@@ -9,6 +9,7 @@ import FormsAll from './Forms/All'
 import Animations from './Forms/Animations'
 import CharacterBehavior from './Forms/CharacterBehavior'
 import NPCBehavior from './Forms/NPCBehavior'
+import ItemBehavior from './Forms/ItemBehavior'
 
 export default class EditActor extends React.Component {
   constructor (...props) {
@@ -61,6 +62,12 @@ export default class EditActor extends React.Component {
       {
         tab: "NPC Behavior",
         content: <NPCBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
+          this.handleSave(null, d, "Updating thumbnail")
+        }}/>
+      },
+      {
+        tab: "Item Behavior",
+        content: <ItemBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       }

@@ -106,7 +106,7 @@ export default class DropArea extends React.Component{
     return (
       <div>
         {asset.thumbnail && <img style={{maxHeight: "50px", transform}} src={asset.thumbnail}/> }
-        <div>{asset.name} ({this.props.value})</div>
+        <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div>
       </div>
     )
   }

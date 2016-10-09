@@ -124,8 +124,10 @@ export default class MapArea extends React.Component {
   }
 
   componentDidMount () {
+
     this.buildMap();
 
+    this.data = TileHelper.genNewMap()
     $(this.refs.mapElement).addClass('map-filled')
 
     window.addEventListener('mousemove', this.globalMouseMove, false)
@@ -135,9 +137,10 @@ export default class MapArea extends React.Component {
 
     document.body.addEventListener('mousedown', this.globalIEScroll)
   }
+
   buildMap(){
     // http://localhost:3000/api/mgb1/map2/hooliganza/project1/Crab%20Invasion
-    const base = 'http://localhost:3000/api/mgb1/map';
+    /*const base = 'http://localhost:3000/api/mgb1/map';
 
     const parts = this.props.asset.name.split(".");
 
@@ -154,8 +157,15 @@ export default class MapArea extends React.Component {
           this.data = md;
           this.fullUpdate()
         })
-      })
-
+      })*/
+    const names = {
+      map: this.props.asset.name,
+      user: this.props.asset.dn_ownerName
+    }
+    ActorHelper.v1_to_v2(this.data, names, (md) => {
+      this.data = md;
+      this.fullUpdate()
+    })
 
   }
   /*shouldComponentUpdate(){
@@ -702,6 +712,9 @@ export default class MapArea extends React.Component {
 
   }
   adjustPreview () {
+    if(!this.data.layers) {
+      this.data.layers = []
+    }
     let z = 0
     let tot = 0
     this.data.layers.forEach((lay, i) => {
@@ -957,6 +970,9 @@ export default class MapArea extends React.Component {
     return l
   }
   getActiveLayer () {
+    if(!this.data.layers){
+      return null
+    }
     return this.getLayer(this.data.layers[this.activeLayer], this.activeLayer)
   }
 

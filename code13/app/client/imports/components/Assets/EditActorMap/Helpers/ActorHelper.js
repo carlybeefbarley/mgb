@@ -9,7 +9,7 @@ const TILES_IN_ACTIONS = 2;
 
 export default {
   v1_to_v2: function(data, names, cb){
-
+    debugger;
     const dd = TileHelper.genNewMap()
     dd.height = parseInt(data.metadata.height, 10)
     dd. width = parseInt(data.metadata.width, 10)
@@ -120,6 +120,7 @@ export default {
       cb(dd)
     })
   },
+
   loadActors: function(actorMap, names, images, cb){
     const actors = Object.keys(actorMap);
     let loaded = 0
@@ -134,11 +135,17 @@ export default {
 
   },
   loadActor: function(name, map, nr, images, names, cb){
-    $.get(`/api/mgb1/actor/${names.user}/${names.project}/${name}`).done((d) => {
-      const src = `/api/mgb1/tile/${names.user}/${names.project}/${d.metadata.tilename}`;
-      console.log(d);
-      map[name].firstgid = nr
 
+    //http://localhost:3000/api/asset/actor/dgolds/mechanix2.wall
+
+
+    $.get(`/api/asset/actor/${names.user}/${name}`).done((d) => {
+
+      const src = `/api/asset/png/${names.user}/${d.databag.all.defaultGraphicName}`
+      console.log(d);
+
+
+      map[name].firstgid = nr
       map[name].actor = d;
       map[name].image = src;
       var img = new Image();

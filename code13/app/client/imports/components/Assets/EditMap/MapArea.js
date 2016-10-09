@@ -404,7 +404,7 @@ export default class MapArea extends React.Component {
   getImage (nameWithExt) {
     this.loadingImages.push(nameWithExt)
     const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
-    $.get(`/api/asset/png/${this.props.parent.getUser()}/${name}`)
+    $.get(`/api/asset/id/${this.props.parent.getUser()}/${name}`)
       .done((id) => {
         const img = new Image()
         img.onload = () => {

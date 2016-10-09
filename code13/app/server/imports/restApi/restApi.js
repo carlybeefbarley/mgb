@@ -8,9 +8,7 @@ export var RestApi = new Restivus({
 })
 
 
-// The rest of this file deals with tiles and maps. 
-
-
+// The rest of this file deals with tiles and maps.
 RestApi.addRoute('asset/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id);
@@ -44,9 +42,34 @@ RestApi.addRoute('asset/png/:id', {authRequired: false}, {
     }
   }
 });
-
 // MapEditor tries this while guessing image from imported map
 RestApi.addRoute('asset/png/:user/:name', {authRequired: false}, {
+  get: function () {
+    var asset = Azzets.findOne({
+      kind: "graphic",
+      name: this.urlParams.name,
+      dn_ownerName: this.urlParams.user,
+      isDeleted: false
+    });
+    if (asset)
+    {
+      const frame = 0;
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'image/png',
+        },
+        body: dataUriToBuffer(asset.content2.frameData[frame][0])
+      }
+    }
+    else {
+      // without body returns 200 and json: {statusCode: 404}
+      return {statusCode: 404, body:{}};
+    }
+  }
+});
+// MapEditor tries this while guessing image from imported map
+RestApi.addRoute('asset/id/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false});
     if (asset)
@@ -202,6 +225,30 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
 RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id);
+    if (!asset || !asset.content2 || !asset.content2.tileset) {
+      return {
+        statusCode: 404,
+        body: {} // body required to correctly set 404 header
+      }
+    }
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'image/png'
+      },
+      // TODO: cache
+      body: dataUriToBuffer(asset.content2.tileset)
+    }
+  }
+})
+RestApi.addRoute('asset/tileset/:user/:name', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne({
+      name: this.urlParams.name,
+      dn_ownerName: this.urlParams.user,
+      isDeleted: false
+    })
+
     if (!asset || !asset.content2 || !asset.content2.tileset) {
       return {
         statusCode: 404,

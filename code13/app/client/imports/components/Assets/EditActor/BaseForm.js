@@ -7,14 +7,14 @@ export default class BaseForm extends React.Component {
   componentDiDMount(){
 
   }
-  options(name, key, options, props){
+  options(name, key, options, props = {}){
     const val = this.data[key];
     if(val === void(0)){
       console.warn("value not defined for:", name + '[' + key + ']')
     }
 
     return (
-      <div className="inline fields" title={props && props.title}>
+      <div className={"inline fields" + (props.disabled ? " disabled": "") } title={props && props.title}>
         <label>{name}</label>
         <SmallDD options={options} onchange={(val) => {
           this.data[key] = val
@@ -24,10 +24,10 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-  bool(name, key){
+  bool(name, key, props = {}){
     let checked = !!parseInt(this.data[key], 10)
     return (
-      <div className="inline fields">
+      <div className={"inline fields" + (props.disabled ? " disabled": "") }>
         <label>{name}</label>
         <div className="ui toggle checkbox" ref={(b) => {$(b).checkbox()}} onClick={() => {
           checked = !checked
@@ -47,9 +47,9 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-  text(name, key, type, props){
+  text(name, key, type, props = {}){
     return (
-      <div className="inline fields" title={props && props.title}>
+      <div className={"inline fields" + (props.disabled ? " disabled": "") } title={props && props.title}>
         <label>{name}</label>
         <input  {...props} placeholder={name} type={type == void(0) ? "text" : type} value={this.data[key]} onChange={(e) => {
           const val = e.target.value
@@ -69,9 +69,9 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-  textArea(name, key, props){
+  textArea(name, key, props = {}){
     return (
-      <div className="inline fields" title={props && props.title}>
+      <div className={"inline fields" + (props.disabled ? " disabled": "") } title={props && props.title}>
         <label>{name}</label>
         <textarea rows="3" onChange={(e) => {
             const val = e.target.value
@@ -81,9 +81,10 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-  dropArea(name, key, kind, props, cb){
+  dropArea(name, key, kind, props , cb = null){
+    props = props || {}
     return (
-      <div className="inline fields" title={props && props.title}>
+      <div className={"inline fields" + (props.disabled ? " disabled": "") } title={props && props.title}>
         <label>{name}</label>
         <DropArea kind={kind} {...props} value={this.data[key]} asset={this.props.asset} onChange={(val, asset) => {
           this.data[key] = val

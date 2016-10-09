@@ -37,6 +37,7 @@ export default class ItemBehavior extends BaseForm {
   showInventoryOptions(){
     return (
       <div>
+        <hr />
         {this.text("Equipment slot", "inventoryEquipSlot", "text", {
           title: "Enter a string such as 'weapon' or 'right hand'. The player can only equip one item of any 'slot' at a time"
         })}
@@ -95,7 +96,7 @@ export default class ItemBehavior extends BaseForm {
           min: -10,
           max: 10
         })}
-
+        <hr />
       </div>
     )
   }
@@ -114,13 +115,8 @@ export default class ItemBehavior extends BaseForm {
           min: -1000,
           max: 1000
         })}
-        {this.bool("Win an extra life when used", 'gainExtraLifeYN')}
+        {/*this.bool("Win an extra life when used", 'gainExtraLifeYN')*/}
         {this.text("Score (or lose points) when used", 'gainOrLosePointsNum', "number")}
-        {this.text("Increase Max Health", 'healOrHarmWhenUsedNum', "number", {
-          title: "Enter the number of points of extra max health this item gives.",
-          min: -1000,
-          max: 1000
-        })}
         {this.bool("Win this level when used", 'winLevelYN')}
         {this.options("Gain a power when used", 'gainPowerType', [
           {text: "No power", value: "0"},
@@ -185,13 +181,14 @@ export default class ItemBehavior extends BaseForm {
           })
         }
 
-        {(this.data.itemActivationType == "1" ||
-          this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum == "1") &&
+        {/* hmm - not used?
+        (this.data.itemActivationType == "1" ||
+          this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum > 0) &&
             this.bool("Sliding block can squish players?", 'squishPlayerYN')
-        }
+        */}
 
         {(this.data.itemActivationType == "1" ||
-          this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum == "1") &&
+          this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum > 0) &&
             this.bool("Sliding block can squish NPCs?", 'squishNPCYN', {
               title: "If you want sliding bocks to be able to kill enemy NPCs, then select 'yes' here."
             })
@@ -216,7 +213,7 @@ export default class ItemBehavior extends BaseForm {
           })
         }
 
-        {this.data.inventoryEquippableYN == "1" && this.showInventoryOptions()}
+        {this.data.itemActivationType == "4" && this.data.inventoryEquippableYN == "1" && this.showInventoryOptions()}
 
 
         {(this.data.itemActivationType == "4" || this.data.itemActivationType == "5"
@@ -224,8 +221,8 @@ export default class ItemBehavior extends BaseForm {
           this.showPickableOptions()
         }
 
-        {this.data.inventoryEquippableYN == "8" && this.showPushingOptions()}
-        {this.data.inventoryEquippableYN == "9" && this.showFloorDamageOptions()}
+        {this.data.itemActivationType == "8" && this.showPushingOptions()}
+        {this.data.itemActivationType == "9" && this.showFloorDamageOptions()}
       </div>
     )
   }

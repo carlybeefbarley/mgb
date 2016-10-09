@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import EditMap from './EditMap/EditMap'
 import EditActorMap from './EditActorMap/EditMap'
+import EditActor from './EditActor/EditActor'
 import EditDoc from './EditDoc/EditDoc'
 import EditCode from './EditCode/EditCode'
 import EditGame from './EditGame/EditGame'
@@ -15,6 +16,7 @@ const editElementsForKind = {
   'code':    EditCode,
   'map':     EditMap,
   'actormap':     EditActorMap,
+  'actor':     EditActor,
   'doc':     EditDoc,
   'sound':   EditSound,
   'music':   EditMusic,

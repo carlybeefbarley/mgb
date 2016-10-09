@@ -43,14 +43,6 @@ import BaseForm from '../BaseForm.js'
 import DropArea from '../components/DropArea.js'
 import SmallDD from '../components/SmallDD.js'
 
-
-const actorTypes = [
-  {text: 'Player', value: "0"},
-  {text: 'Non-Player Character (NPC)', value: "1"},
-  {text: 'Item, Wall or Scenery', value: "2"},
-  {text: 'Shot', value: "3"}
-]
-
 export default class All extends BaseForm {
   get data(){
     return this.props.asset.content2.databag.allchar

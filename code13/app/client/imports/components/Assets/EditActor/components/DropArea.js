@@ -72,7 +72,7 @@ export default class DropArea extends React.Component{
   }
 
   saveChanges(){
-    const name = this.state.asset ? this.state.asset.dn_ownerName + ":" + this.state.asset.name : '(unnamed)'
+    const name = this.state.asset ? this.state.asset.dn_ownerName + ":" + this.state.asset.name : ''
     this.props.onChange && this.props.onChange(name, this.state.asset)
   }
 
@@ -137,8 +137,13 @@ export default class DropArea extends React.Component{
 
         {!asset && !this.state.badAsset ? (this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :
           <i className="floated right ui icon remove" onClick={()=>{
-              this.setState({asset: null, badAsset: null })
-              this.saveChanges()
+              this.props.value = ""
+              this.setState(
+                {asset: null, badAsset: null }, () => {
+                  this.props.value = ""
+                  this.saveChanges()
+                }
+              )
             }}
             style={{
               position: "absolute",

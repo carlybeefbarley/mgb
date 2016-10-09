@@ -9,8 +9,8 @@ export default class BaseForm extends React.Component {
   }
   options(name, key, options, props){
     const val = this.data[key];
-    if(!val){
-      debugger;
+    if(val === void(0)){
+      console.warn("value not defined for:", name + '[' + key + ']')
     }
 
     return (
@@ -25,17 +25,20 @@ export default class BaseForm extends React.Component {
     )
   }
   bool(name, key){
+    let checked = !!parseInt(this.data[key], 10)
     return (
       <div className="inline fields">
         <label>{name}</label>
         <div className="ui toggle checkbox" ref={(b) => {$(b).checkbox()}} onClick={() => {
-          const val = this.refs.checkbox.checked ? "1" : "0"
+          checked = !checked
+
+          const val = checked ? "1" : "0"
           this.data[key] = val
           console.log("change", val)
           this.props.onchange && this.props.onchange()
 
         }}>
-          <input type="checkbox" name={key} tabIndex="0" className="hidden" ref="checkbox" checked={parseInt(this.data[key], 10) } onChange={(val) => {
+          <input type="checkbox" name={key} tabIndex="0" className="hidden" ref="checkbox" checked={checked} onChange={(val) => {
             this.data[key] = val
             console.log("change", val)
             this.props.onchange && this.props.onchange()
@@ -66,7 +69,18 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-
+  textArea(name, key){
+    return (
+      <div className="inline fields">
+        <label>{name}</label>
+        <textarea rows="3" onChange={(e) => {
+            const val = e.target.value
+            this.data[key] = val
+            this.props.onchange && this.props.onchange()
+        } }>{this.data[key]}</textarea>
+      </div>
+    )
+  }
   dropArea(name, key, kind, props, cb){
     return (
       <div className="inline fields">

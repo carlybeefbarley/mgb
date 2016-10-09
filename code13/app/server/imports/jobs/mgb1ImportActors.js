@@ -14,6 +14,12 @@ import xml2js from 'xml2js'
 
 //  Avoid throwing Meteor.Error()
 
+
+// The main change we do is 
+//  move  MGB1 asset's Metadata.tilename 
+//    to  MGB2 asset's content2.databag.all.defaultGraphicName
+
+
 export const doImportActor = (content, rva, fullS3Name, assetName ) => {
   const { mgb2ExistingProjectName, mgb2assetNamePrefix, isDryRun } = rva.importParams
   const { Body, Metadata, LastModified } = content   // Body is of type Buffer
@@ -42,6 +48,7 @@ export const doImportActor = (content, rva, fullS3Name, assetName ) => {
   )
 
   _prefixAllAssetNames(jsonData, mgb2assetNamePrefix)
+  jsonData.actor.databag.all.defaultGraphicName = mgb2assetNamePrefix + Metadata.tilename
 
   const newAsset = {
     createdAt:      LastModified ? new Date(LastModified) : undefined,
@@ -49,7 +56,7 @@ export const doImportActor = (content, rva, fullS3Name, assetName ) => {
     name:           mgb2assetNamePrefix + assetName,
     kind:           'actor',
     text:           `Imported from MGB1 (${fullS3Name}) ${Metadata.comment}`,
-    thumbnail:      null, //pngAsDataUri,
+    thumbnail:      Metadata._tileDataUri,
     content2:       jsonData.actor,
     isCompleted:    false,     // This supports the 'is stable' flag
     isDeleted:      false,     // This is a soft 'marked-as-deleted' indicator
@@ -58,6 +65,7 @@ export const doImportActor = (content, rva, fullS3Name, assetName ) => {
 
   console.log('------ ' + assetName + ' ------')
   console.log(jsonData.actor.databag)
+  console.log(newAsset)
 
   if (!isDryRun)
     Meteor.call('Azzets.create', newAsset)

@@ -54,7 +54,7 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
     name:           mgb2assetNamePrefix + assetName,
     kind:           'actormap',
     text:           `Imported from MGB1 (${fullS3Name}) ${Metadata.comment}`,
-    thumbnail:      null, //pngAsDataUri,
+    thumbnail:      null,
     content2:       jsonData,
     isCompleted:    false,     // This supports the 'is stable' flag
     isDeleted:      false,     // This is a soft 'marked-as-deleted' indicator

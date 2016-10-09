@@ -41,9 +41,9 @@ Meteor.methods({
         mgb2ExistingProjectName:'Game Mechanics demo',
         mgb2assetNamePrefix:    'mechanix.',
         excludeTiles:           true,
-        excludeActors:          true,
-        excludeMaps:            false,
-        isDryRun:               true
+        excludeActors:          false,
+        excludeMaps:            true,
+        isDryRun:               false
       }
       thisUser = { profile: { name: 'dgolds' } }
     }
@@ -52,7 +52,7 @@ Meteor.methods({
     // Param validations - these must throw Meteor.Error on failures
     _checkAllParams(importParams, thisUser)
 
-    // Ok, not completely crazy, so unblock other equests for this client since it may take a while.. 
+    // Ok, not completely crazy, so unblock other requests for this client since it may take a while.. 
     this.unblock()
 
     // The following data will be used for the return value info
@@ -75,6 +75,18 @@ Meteor.methods({
         const fullS3Name = (kp+aName).replace(/\+/g, ' ')
         const assetName = aName.replace(/\+/g, ' ')
         const content = getContent(s3, fullS3Name)
+        content.Metadata._tileDataUri = ''
+        if (mgb1Kind === 'actor')
+        {
+          const tileS3KeyPrefix = `${importParams.mgb1Username}/${importParams.mgb1Projectname}/tile/`
+          let tileResponse = getContent(s3, tileS3KeyPrefix+content.Metadata.tilename)
+          if (tileResponse && tileResponse.Body)
+          {
+            const pngAsDataUri = 'data:image/png;base64,' + tileResponse.Body.toString('base64')
+            content.Metadata._tileDataUri = pngAsDataUri
+          }
+        }
+          
         importFunction(content, retValAccumulator, fullS3Name, assetName)
         //TODO-> update retValAccumulator 
       })

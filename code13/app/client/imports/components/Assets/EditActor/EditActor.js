@@ -7,6 +7,7 @@ import Tabs from './Tabs.js'
 
 import FormsAll from './Forms/All'
 import Animations from './Forms/Animations'
+import CharacterBehavior from './Forms/CharacterBehavior'
 
 export default class EditActor extends React.Component {
   constructor (...props) {
@@ -49,18 +50,24 @@ export default class EditActor extends React.Component {
       {
         tab: "Animations",
         content: <Animations asset={this.props.asset} onchange={this.handleSave.bind(this)}  />
+      },
+      {
+        tab: "Character Behavior",
+        content: <CharacterBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
+          this.handleSave(null, d, "Updating thumbnail")
+        }}/>
       }
     ]
   }
 
   fixAsset(){
     // fix blank asset..
-    if(!this.props.asset.content2.dataBag) {
+    if(!this.props.asset.content2.databag) {
       debugger;
       console.log("FIXIN broken asset...")
       this.props.asset.content2 = {
         animationTable: [],
-        dataBag: {
+        databag: {
           all: {},
           allChar: {},
           item: {},

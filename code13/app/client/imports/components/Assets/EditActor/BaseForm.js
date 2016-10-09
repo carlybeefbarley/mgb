@@ -21,7 +21,19 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-
+  bool(name, key){
+    return (
+      <div className="inline fields">
+        <label>{name}</label>
+        <div class="ui toggle checkbox">
+          <input type="checkbox" name={key} tabindex="0" class="hidden" onChange={(val) => {
+            this.data[key] = val
+            this.props.onchange && this.props.onchange()
+          }}/>
+        </div>
+      </div>
+    )
+  }
   text(name, key, type, props){
     return (
       <div className="inline fields">

@@ -53,30 +53,30 @@ const actorTypes = [
 
 export default class All extends BaseForm {
   get data(){
-    return this.props.asset.content2.dataBag.all
+    return this.props.asset.content2.databag.all
   }
 
   render() {
-    {this.text("Initial Heath", 'initialHealthNum', "number", {min: "0"} )}
     return (
       <div className="ui form">
-
-        /*
-movementSpeed:
-canMoveUp:
-canMoveDown:
-canMoveLeft:
-canMoveRight:
-ActorForShots:
-TouchDamageAgainstPlayers
-TouchDamageAgainstNPCS
-TouchDamageAttackChance
-TouchDamageCases
-MeleeDamageAgainstPlayer
-MeleeDamageAgainstNpc
-SoundEffectMelee
-MeleeRepeatDelay
-         */
+        {this.text("Movement speed", 'movementSpeed', "number")}
+        {this.bool("Can Move Up", 'upYN')}
+        {/*
+movementSpeed: movementSpeedNum
+canMoveUp: upYN
+canMoveDown: downYN
+canMoveLeft: leftYN
+canMoveRight: rightYN
+.....
+ActorForShots: shotActor
+TouchDamageAgainstPlayers: touchDamageToPlayerNum
+TouchDamageAgainstNPCS: touchDamageToNPCorItemNum
+TouchDamageAttackChance: touchDamageAttackChance
+TouchDamageCases: touchDamageCases
+MeleeDamageAgainstPlayer: meleeDamageToPlayerNum
+MeleeDamageAgainstNpc: meleeDamageToNPCorItemNum
+SoundEffectMelee: soundWhenMelee
+MeleeRepeatDelay: meleeRepeatDelay
 
         {this.options("Actor Type", 'actorType', actorTypes)}
         {this.text("Description", 'description')}
@@ -88,6 +88,7 @@ MeleeRepeatDelay
         {this.dropArea("Sound When Killed", 'soundWhenKilled', "sound")}
 
         {this.dropArea("Graphics", "graphic", "graphic")}
+        */}
       </div>
     )
   }

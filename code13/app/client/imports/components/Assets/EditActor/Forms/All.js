@@ -17,7 +17,7 @@ const actorTypes = [
 export default class All extends BaseForm {
 
   get data(){
-    return this.props.asset.content2.dataBag.all
+    return this.props.asset.content2.databag.all
   }
 
   render() {

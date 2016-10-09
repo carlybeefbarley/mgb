@@ -1,21 +1,21 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import React, { PropTypes } from 'react'
 
-export default class EditUnknown extends React.Component {
+const EditUnknown = props => (
+  <div className="ui segment inverted">
+    <h3>Edit {props.asset.kind} '{props.asset.name}'</h3>
+    <p>
+      <a className="ui red label">
+        Editor for Asset type '{props.asset.kind}' is not yet implemented.
+      </a>
+    </p>
+    <p>
+      If you are seeing this, there's probably some cool new Asset type being tested by the devs! Oooh!
+    </p>
+  </div>
+)
 
-  // static PropTypes = {
-  //   asset: PropTypes.object
-  // }
-
-  render() {
-
-    let asset = this.props.asset;
-
-    return (
-      <div className="ui segment inverted">
-        <p>Edit {asset.kind} '{asset.name}'</p>
-        <a className="ui red label">Editor for Asset type '{this.props.asset.kind}' is not yet implemented</a>
-      </div>
-  );
-  }
+EditUnknown.propTypes = {
+  asset: PropTypes.object
 }
+
+export default EditUnknown

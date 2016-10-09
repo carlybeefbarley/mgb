@@ -206,7 +206,7 @@ export default class EditGraphic extends React.Component {
 
   }
 
-// TODO: DGOLDS to clean this up
+// TODO: DGOLDS to clean this up -- combine with mgb1ImportTiles etc
   initDefaultContent2() 
   {
     let asset = this.props.asset

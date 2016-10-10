@@ -16,7 +16,7 @@
   min-height: 500px;
   transform-style: preserve-3d;
 }
-.map-filled.highlight-active-layer .no-events:not(.grid-layer){
+.highlight-active-layer .no-events:not(.grid-layer){
   opacity: 0.5;
 }
 

@@ -78,7 +78,8 @@ export default class MapArea extends React.Component {
     // x/y are angles not pixels
     this.preview = {
       x: 5,
-      y: 15
+      y: 15,
+      sep: 20
     }
 
     this.layers = []
@@ -752,7 +753,7 @@ export default class MapArea extends React.Component {
 
       l.refs.layer.style.transform = 'perspective(2000px) rotateX(' + this.preview.x + 'deg) ' +
         'rotateY(' + this.preview.y + 'deg) rotateZ(0deg) ' +
-        'translateZ(-' + ((tot - z) * 20 + 300) + 'px)'
+        'translateZ(-' + ((tot - z) * tr.sep + 300) + 'px)'
       const ay = Math.abs(tr.y)
       const ax = Math.abs(tr.x)
 
@@ -796,6 +797,13 @@ export default class MapArea extends React.Component {
   }
   handleOnWheel (e) {
     e.preventDefault()
+    if(e.altKey){
+      this.preview.sep += e.deltaY < 0 ? 1 : -1
+      this.adjustPreview()
+      return;
+    }
+
+
     const step = 0.1
     if (e.deltaY < 0) {
       this.zoomCamera(this.camera.zoom + step, e)

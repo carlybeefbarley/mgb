@@ -1367,54 +1367,54 @@ package com.mgb.controls
 			activeActors.length = 0
 		}
 
-	    // Play ball!
-	    public function playGame():Boolean		// returns true if the game successfully started
-	    {
-	    	// The game really happens with things moving on Layer "layerActive". Other layers don't move
-			setGameStatusString("Starting game")
-			clearGameStatusString2()
-			pauseGame = false
-			hideNpcMessage()
-			respawnMemory = new Array()
-			cancelAllSpawnedActorsForAutoRespawn()
-			initialMap = new MgbMap()					// Save this in case we load another while playing
-			initialMap.loadPieceFromPiece(mapPiece)		// Save this in case we load another while playing
+	  //   // Play ball!
+	  //   public function playGame():Boolean		// returns true if the game successfully started
+	  //   {
+	  //   	// The game really happens with things moving on Layer "layerActive". Other layers don't move
+		// 	setGameStatusString("Starting game")
+		// 	clearGameStatusString2()
+		// 	pauseGame = false
+		// 	hideNpcMessage()
+		// 	respawnMemory = new Array()
+		// 	cancelAllSpawnedActorsForAutoRespawn()
+		// 	initialMap = new MgbMap()					// Save this in case we load another while playing
+		// 	initialMap.loadPieceFromPiece(mapPiece)		// Save this in case we load another while playing
 			
-			var num_players:int = playPrepareActiveLayer(mapPiece)
-			if (0 == num_players)
-	    	{
-	    		Alert.show(setGameStatusString("No player defined for this map"))
-	    		return false
-	    	}
-			if (num_players > 1)
-	    	{
-	    		Alert.show(setGameStatusString("A map can only have one player on it; this map has "+num_players+" player actors on the map"))
-	    		return false
-	    	}
+		// 	var num_players:int = playPrepareActiveLayer(mapPiece)
+		// 	if (0 == num_players)
+	  //   	{
+	  //   		Alert.show(setGameStatusString("No player defined for this map"))
+	  //   		return false
+	  //   	}
+		// 	if (num_players > 1)
+	  //   	{
+	  //   		Alert.show(setGameStatusString("A map can only have one player on it; this map has "+num_players+" player actors on the map"))
+	  //   		return false
+	  //   	}
 						
-			playPrepareBackgroundLayer()
+		// 	playPrepareBackgroundLayer()
 			
-			// Set up and start Game events
-			transitionStateWaitingForActorLoadRequests = false
-			transitionInProgress = false
-	    	G_tweenCount = 0;
-	    	enablePlayerControls()
-        	addEventListener( "enterFrame", onTickGameDo )
-	    	G_gameOver = false
-	    	var now:Date = new Date()
-	    	G_gameStartedAtMS = now.getTime()
+		// 	// Set up and start Game events
+		// 	transitionStateWaitingForActorLoadRequests = false
+		// 	transitionInProgress = false
+	  //   	G_tweenCount = 0;
+	  //   	enablePlayerControls()
+    //     	addEventListener( "enterFrame", onTickGameDo )
+	  //   	G_gameOver = false
+	  //   	var now:Date = new Date()
+	  //   	G_gameStartedAtMS = now.getTime()
 	    	
-	    	//initialise inventory
-	    	inventory = new Inventory()
+	  //   	//initialise inventory
+	  //   	inventory = new Inventory()
 	    	
-	    	if (!mgbSession.alertOnceAboutKeys)
-	    	{
-		    	var playerActor:MgbActor = MgbActor(actorCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, activeActors[AA_player_idx].ACidx))
-		    	showNpcMessage({message:"Use the arrow keys to move/push and 'Enter' to shoot (if allowed)", leftActor:playerActor})
-		    	mgbSession.alertOnceAboutKeys = true
-		    }
-	    	return true
-		}
+	  //   	if (!mgbSession.alertOnceAboutKeys)
+	  //   	{
+		//     	var playerActor:MgbActor = MgbActor(actorCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, activeActors[AA_player_idx].ACidx))
+		//     	showNpcMessage({message:"Use the arrow keys to move/push and 'Enter' to shoot (if allowed)", leftActor:playerActor})
+		//     	mgbSession.alertOnceAboutKeys = true
+		//     }
+	  //   	return true
+		// }
 
 
 		private static var transitionInProgress:Boolean = false

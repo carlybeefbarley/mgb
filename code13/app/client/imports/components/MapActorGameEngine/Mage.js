@@ -14,9 +14,27 @@ import { Segment } from 'semantic-ui-react'
 
 const Preloader = props => <Segment inverted>Preloading {props.msg}</Segment>
 const MapLoadFailed = props => <Segment color='red' inverted>{props.err}</Segment>
-const _mkMapUri = (ownerName, mapName) =>  `/api/asset/map/${ownerName}/${mapName}`
-const _mkActorUri = (ownerName, actorName) =>  `/api/asset/full/${ownerName}/${actorName}`
-const _mkGraphicUri = (ownerName, actorName) =>  `/api/asset/full/${ownerName}/${actorName}`
+
+const _resolveOwner = (implicitOwnerName, assetName) => {
+  const parts = assetName.split(':')
+  const isImplicit = (parts.length === 1 || parts[0].includes('/'))
+  return {
+    ownerName: isImplicit ? implicitOwnerName : parts[0],
+    assetName: isImplicit ? assetName : assetName.slice(parts[0].length + 1)
+  }
+}
+const _mkMapUri = (ownerName, assetName) => { 
+  const p = _resolveOwner(ownerName, assetName)
+  return `/api/asset/map/${p.ownerName}/${p.assetName}`
+}
+const _mkActorUri = (ownerName, assetName) =>  {
+  const p = _resolveOwner(ownerName, assetName)
+  return `/api/asset/full/${p.ownerName}/${p.assetName}`
+}
+const _mkGraphicUri = (ownerName, assetName) => {
+  const p = _resolveOwner(ownerName, assetName)
+  return `/api/asset/full/${p.ownerName}/${p.assetName}`
+} 
 
 let _tweenCount = 0
 
@@ -133,7 +151,7 @@ export default class Mage extends React.Component {
       [actor.databag.all.defaultGraphicName],           // TODO: warn if this is blank
       _.map(actor.animationTable, r => r.tileName)
       // any other Tiles mentioned in databags?  I don't think so..
-     ), n => n!=='')
+     ), n => (n && n!==''))
 
     this._loadRequiredGraphics(desiredGraphicNames)
 

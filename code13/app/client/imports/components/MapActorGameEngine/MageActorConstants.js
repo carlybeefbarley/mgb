@@ -123,7 +123,7 @@ export const MgbActor = {
       tilename = actorPiece.databag.all.defaultGraphicName
     else
     {
-      tilename = actorPiece.animationTable[animationTableIndex].tilename
+      tilename = actorPiece.animationTable[animationTableIndex].tileName
       if (tilename == null || tilename == "")
         tilename = actorPiece.databag.all.defaultGraphicName
     }

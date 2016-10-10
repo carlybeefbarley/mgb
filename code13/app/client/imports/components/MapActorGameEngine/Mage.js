@@ -223,7 +223,6 @@ export default class Mage extends React.Component {
 
     return (
       <div>
-        { mapData.maxLayers }
         <MageGameCanvas ref={(c) => this.mageRef(c) } cellsWide={mapData.metadata.width} cellsHigh={mapData.metadata.height}/>
       </div>
     )

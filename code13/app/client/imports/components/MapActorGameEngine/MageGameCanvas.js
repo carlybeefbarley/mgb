@@ -36,7 +36,7 @@ export default class MageGameCanvas extends React.Component {
     for (let y = startY; y < endY; y++) {
       for (let x = startX; x < endX; x++) {
         const actorName = ml[this.cell(x, y)]
-        if (actorName) {
+        if (actorName && actorName != '') {
           const px = ((x - startX) * 32) //- pixelShiftLeftX
           const py = ((y - startY) * 32) //- pixelShiftUpY
           var actor = actorData[actorName].content2

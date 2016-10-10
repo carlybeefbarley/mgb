@@ -70,7 +70,7 @@ body.dragging .accept-drop:hover{
 
 /* 3d preview */
 .tilemap-wrapper{
-  perspective: 2000px;
+  /*perspective: 2000px; - this make cursor position bugous on chrome */
   -webkit-user-select: none;
   cursor: default;
 }

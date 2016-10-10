@@ -37,9 +37,9 @@ export default class EditMap extends React.Component {
     this.props.handleContentChange(newC2, ''); // TODO: Thumbnail is second param
   }
 
-  handleSave (reason, thumbnail) {
+  handleSave (data, reason, thumbnail) {
     // TODO: convert uploaded images to assets
-    this.props.handleContentChange(this.refs.mapArea.data, thumbnail, reason)
+    this.props.handleContentChange(data, thumbnail, reason)
   }
 
   render () {

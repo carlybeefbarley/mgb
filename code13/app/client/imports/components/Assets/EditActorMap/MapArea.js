@@ -318,9 +318,9 @@ export default class MapArea extends React.Component {
     }
     this.savedData = newData
 
-    // make sure thumbnail are nice - all layers has been drawn
+    // make sure thumbnail is nice - all layers has been drawn
     window.requestAnimationFrame(() => {
-      this.props.parent.handleSave(reason, this.generatePreview())
+      this.props.parent.handleSave(ActorHelper.v2_to_v1(this.data) , reason, this.generatePreview())
     })
   }
   copyData (data) {
@@ -536,9 +536,11 @@ export default class MapArea extends React.Component {
   addPropertiesTool () {
     this.addTool('Properties', 'Properties', {map: this}, Properties, true)
   }
-  addObjectTool () {
+
+
+  /*addObjectTool () {
     this.addTool('Objects', 'Object List', {map: this}, ObjectList, true)
-  }
+  }*/
   /*
    * TODO: move tools to the EditMap.js
    * MapArea should not handle tools
@@ -734,13 +736,15 @@ export default class MapArea extends React.Component {
         l.refs.layer.style.transform = ''
         return
       }
-      const tr = this.preview
-      if (Math.abs(tr.x) >= 360) {tr.x = 0;}
-      if (Math.abs(tr.y) >= 360) {tr.y = 0;}
 
-      l.refs.layer.style.transform = 'perspective(8000px) rotateX(' + this.preview.x + 'deg) ' +
+      const tr = this.preview
+      tr.x = tr.x % 360;
+      tr.y = tr.y % 360;
+
+
+      l.refs.layer.style.transform = 'perspective(2000px) rotateX(' + this.preview.x + 'deg) ' +
         'rotateY(' + this.preview.y + 'deg) rotateZ(0deg) ' +
-        'translateZ(-' + ((tot - z) * 50 + 300) + 'px)'
+        'translateZ(-' + ((tot - z) * 20 + 300) + 'px)'
       const ay = Math.abs(tr.y)
       const ax = Math.abs(tr.x)
 
@@ -917,7 +921,7 @@ export default class MapArea extends React.Component {
     this.addLayerTool()
     this.addTilesetTool()
     this.addPropertiesTool()
-    this.addObjectTool()
+    //this.addObjectTool()
   }
 
   redraw () {

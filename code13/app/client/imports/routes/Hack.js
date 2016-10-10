@@ -28,7 +28,7 @@ const Hack = props =>
     <Segment basic padded>
       <Mage 
           ownerName={user.profile.name}
-          startMapName={params.map || 'mechanix2.Rock and Door'}
+          startMapName={params.map || 'mechanix2.Start Game Demos'}
           isPaused={false}
           fetchAssetByUri={ uri => _fetchAssetByUri(uri) }
       />

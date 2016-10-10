@@ -320,6 +320,14 @@ export default class MapArea extends React.Component {
 
     // make sure thumbnail is nice - all layers has been drawn
     window.requestAnimationFrame(() => {
+      let wmax = this.data.width, hmax = this.data.height;
+      this.data.layers.forEach(l => {
+        wmax = Math.max(wmax, l.width)
+        hmax = Math.max(hmax, l.height)
+      })
+      this.data.width = wmax;
+      this.data.height = hmax;
+
       this.props.parent.handleSave(ActorHelper.v2_to_v1(this.data) , reason, this.generatePreview())
     })
   }

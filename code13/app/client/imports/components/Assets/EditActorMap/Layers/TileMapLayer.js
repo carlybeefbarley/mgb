@@ -59,7 +59,13 @@ export default class TileMapLayer extends AbstractLayer {
 
   /* endof lifecycle functions */
 
-  increaseSizeToTop (pos) {
+  increaseSizeToTop(pos){
+    this.map.layers.forEach(l => {
+      l._increaseSizeToTop(pos)
+    })
+  }
+  _increaseSizeToTop (pos) {
+
     for (let i = 0; i < this.options.width; i++) {
       this.options.data.unshift(0)
     }
@@ -71,7 +77,12 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
 
-  increaseSizeToRight (pos) {
+  increaseSizeToRight(pos){
+    this.map.layers.forEach(l => {
+      l._increaseSizeToRight(pos)
+    })
+  }
+  _increaseSizeToRight (pos) {
     // one step at the time..
     // this method will be called more - if necessary
     // reverse as first splice will resize array
@@ -85,7 +96,13 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
 
-  increaseSizeToBottom (pos) {
+  increaseSizeToBottom(pos){
+    this.map.layers.forEach(l => {
+      l._increaseSizeToBottom(pos)
+    })
+  }
+
+  _increaseSizeToBottom (pos) {
     for (let i = 0; i < this.options.width; i++) {
       this.options.data.push(0)
     }
@@ -96,7 +113,12 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
 
-  increaseSizeToLeft (pos) {
+  increaseSizeToLeft(pos){
+    this.map.layers.forEach(l => {
+      l._increaseSizeToLeft(pos)
+    })
+  }
+  _increaseSizeToLeft (pos) {
     this.options.x -= this.map.data.tilewidth
     // reverse as first splice will resize array
     for (let i = this.options.height - 1; i > -1; i--) {

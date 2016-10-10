@@ -247,7 +247,7 @@ export default class Properties extends React.Component {
         }
       }
     }, () => {
-      this.map.addLayerTool()
+      //this.map.addLayerTool()
       this.map.redraw()
       this.map.save("Updating layer settings")
     })
@@ -302,7 +302,7 @@ export default class Properties extends React.Component {
     }, () => {
       this.map.updateImages(() => {
         // this.map.addTilesetTool()
-        // this.map.redraw()
+        this.map.redraw()
         this.map.save("Updating tileset settings")
       })
     })

@@ -77,7 +77,14 @@ export default class DropArea extends React.Component{
   }
 
   saveChanges(){
-    const name = this.state.asset ? this.state.asset.dn_ownerName + ":" + this.state.asset.name : ''
+    let name = this.state.asset ? this.state.asset.dn_ownerName + ":" + this.state.asset.name : ''
+
+    if(name){
+      if(this.props.asset.dn_ownerName === this.state.asset.dn_ownerName){
+        name = this.state.asset.name
+      }
+    }
+
     this.props.onChange && this.props.onChange(name, this.state.asset)
   }
 

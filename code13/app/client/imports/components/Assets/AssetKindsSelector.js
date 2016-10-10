@@ -23,7 +23,7 @@ export default AssetKindsSelector =  React.createClass({
   render: function() {
     const { showCompact, kindsActive } = this.props
     const popPosition = showCompact ? 'bottom right' : 'right center'
-    const baseSty = showCompact ? { padding: '4px 6px 4px 8px'} : {}
+    const baseSty = showCompact ? { padding: '3px 5px 3px 7px'} : {}
 
     // Split kinds string into array for convenience
     const kindsArray = kindsActive.split(safeAssetKindStringSepChar)
@@ -64,7 +64,7 @@ export default AssetKindsSelector =  React.createClass({
           data-title="All"
           data-content="Click to show all asset kinds">
         <i className="asterisk icon"></i>
-        { showCompact ? <small> All&nbsp;</small> : <span>{allActive ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>} All</span> }
+        { showCompact ? '' : <span>{allActive ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>} All</span> }
       </a>
     )
 

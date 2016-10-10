@@ -39,10 +39,10 @@ Meteor.methods({
         mgb1Projectname:        'mechanics demos',
         mgb2Username:           'dgolds',
         mgb2ExistingProjectName:'Game Mechanics demo',
-        mgb2assetNamePrefix:    'mechanix.',
-        excludeTiles:           true,
+        mgb2assetNamePrefix:    'mechanix2.',
+        excludeTiles:           false,
         excludeActors:          false,
-        excludeMaps:            true,
+        excludeMaps:            false,
         isDryRun:               false
       }
       thisUser = { profile: { name: 'dgolds' } }

@@ -18,7 +18,7 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
   const { Body, Metadata, LastModified } = content   // Body is of type Buffer
 
   // content.Body needs a LOT of processing from the strange MGBv1 formats (Adobe Flex made me do it, honest...)
-  var jsonData = {}   // This is where we will put the result
+  var jsonData = {}   // This is where we will put the result.. it will become asset.content2
   var byteArray = new Uint8Array(Body)
   var data2 = pako.inflate(byteArray)
   var b = new Buffer(data2)
@@ -46,6 +46,11 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
       else
         jsonData.mapLayer[layer].push("")
     }
+  }
+
+  jsonData.metadata = {
+    width: parseInt(Metadata.width, 10),
+    height: parseInt(Metadata.height, 10)
   }
 
   const newAsset = {

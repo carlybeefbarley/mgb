@@ -600,13 +600,6 @@ package com.mgb.controls
 		//
 		// Map initialize, destroy, zoom, load, and save
 		//
-
-		protected function cell(x:int, y:int, returnMinusOneIfOutOfBounds:Boolean = false):int
-		{
-			if (returnMinusOneIfOutOfBounds && y > mapPiece.height || x > mapPiece.width || y < 0 || x < 0)
-				return -1
-			return y*mapPiece.width + x;						// Arranged in rows
-		}
 		
 		private function calculateRenderWidth(capByMapSize:Boolean = false):int
 		{
@@ -762,22 +755,22 @@ package com.mgb.controls
 											{
 												var animationTableIndex:int = getAnimationIndex(ap2, -1, -1, G_tweenCount)
 												var newTileName:String = getAnimationTileFromIndex(ap2, animationTableIndex)
-												effect = getAnimationEffectFromIndex(ap2, animationTableIndex)
-												var t:MgbTile = newTileName ? MgbTile(tileCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, newTileName)) : null
-												if (t)
-												{
-													var b:BitmapData = t.bitmapDataVariant(effect)
-													if (b)
-													{
-														if (layerAlphas[layer] == 1.0 || gameEngineMode != GameEngine.GE_EDIT)
-															view.frameBuffer.copyPixels(b, new Rectangle(0, 0, b.width, b.height), p, null, null, true)
-														else
-														{
-															ct = new ColorTransform(1.0, 1.0, 1.0, layerAlphas[layer])
-															matrix = new Matrix(1.0, 0.0, 0.0, 1.0, p.x, p.y)
-															view.frameBuffer.draw(b, matrix, ct, "normal", null, false)
-														}
-													}
+												// effect = getAnimationEffectFromIndex(ap2, animationTableIndex)
+												// var t:MgbTile = newTileName ? MgbTile(tileCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, newTileName)) : null
+												// if (t)
+												// {
+												// 	var b:BitmapData = t.bitmapDataVariant(effect)
+												// 	if ()
+												// 	{
+												// 		if (layerAlphas[layer] == 1.0 || gameEngineMode != GameEngine.GE_EDIT)
+												// 			view.frameBuffer.copyPixels(b, new Rectangle(0, 0, b.width, b.height), p, null, null, true)
+												// 		else
+												// 		{
+												// 			ct = new ColorTransform(1.0, 1.0, 1.0, layerAlphas[layer])
+												// 			matrix = new Matrix(1.0, 0.0, 0.0, 1.0, p.x, p.y)
+												// 			view.frameBuffer.draw(b, matrix, ct, "normal", null, false)
+												// 		}
+												// 	}
 												}
 											}
 											else
@@ -2462,117 +2455,117 @@ package com.mgb.controls
 			}
 	    }
 
-		private function isAnimationTableIndexValid(actorPiece:MgbActor, animationTableIndex:int):Boolean		// i.e. non-empty and correctly formed 
-		{
-			var ate:Object = actorPiece.animationTable[animationTableIndex]		// Animation Table Entry
-			return ((ate.effect != "no effect" && ate.effect != "") || (ate.tilename != ""))
-		}
+		// private function isAnimationTableIndexValid(actorPiece:MgbActor, animationTableIndex:int):Boolean		// i.e. non-empty and correctly formed 
+		// {
+		// 	var ate:Object = actorPiece.animationTable[animationTableIndex]		// Animation Table Entry
+		// 	return ((ate.effect != "no effect" && ate.effect != "") || (ate.tilename != ""))
+		// }
 
-		private function getAnimationIndex(	actorPiece:MgbActor, 
-											currentStepStyle:int, 					// -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing
-											priorStepStyle:int, 
-											tweenCount:int, 
-											meleeStep:int = -1):int				// If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
-		{
-			var frame:int = tweenCount % 5									// Normal move animations have 5 steps
-			var frame_Stationary:int = (G_tweenSinceMapStarted / 2) % 16	// # Stationary animations have 16 steps
-			var animationTableIndex:int = -1							// This will be used to work out which animation tile to use, and will become teh return value from this method
-			var effectiveStepStyle:int = (currentStepStyle == -1) ? priorStepStyle : currentStepStyle;		// This will be the most valid (i.e. not -1) of current/prior stepstyle
+		// private function getAnimationIndex(	actorPiece:MgbActor, 
+		// 									currentStepStyle:int, 					// -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing
+		// 									priorStepStyle:int, 
+		// 									tweenCount:int, 
+		// 									meleeStep:int = -1):int				// If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
+		// {
+		// 	var frame:int = tweenCount % 5									// Normal move animations have 5 steps
+		// 	var frame_Stationary:int = (G_tweenSinceMapStarted / 2) % 16	// # Stationary animations have 16 steps
+		// 	var animationTableIndex:int = -1							// This will be used to work out which animation tile to use, and will become teh return value from this method
+		// 	var effectiveStepStyle:int = (currentStepStyle == -1) ? priorStepStyle : currentStepStyle;		// This will be the most valid (i.e. not -1) of current/prior stepstyle
 
-			if (meleeStep == ActiveActor.MELEESTEP_NOT_IN_MELEE)
-			{
-				// This isn't a meleestep, so use a direction-based tile choice
-				switch (currentStepStyle)
-				{
-					case 0:	// North
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH + frame
-						break
-					case 1: // East 
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST + frame
-						break
-					case 2:	// South
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH + frame
-						break
-					case 3:	// West
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST + frame
-						break
-					case -1: // stationary
-						switch (priorStepStyle)
-						{
-							case -1: // stationary
-								animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_SOUTH + frame_Stationary
-								break
-							case 0:	// North
-								animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_NORTH + frame_Stationary
-								break
-							case 1: // East 
-								animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_EAST + frame_Stationary
-								break
-							case 2:	// South
-								animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_SOUTH + frame_Stationary
-								break
-							case 3:	// West
-								animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_WEST + frame_Stationary
-								break 
-						}
+		// 	if (meleeStep == ActiveActor.MELEESTEP_NOT_IN_MELEE)
+		// 	{
+		// 		// This isn't a meleestep, so use a direction-based tile choice
+		// 		switch (currentStepStyle)
+		// 		{
+		// 			case 0:	// North
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH + frame
+		// 				break
+		// 			case 1: // East 
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST + frame
+		// 				break
+		// 			case 2:	// South
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH + frame
+		// 				break
+		// 			case 3:	// West
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST + frame
+		// 				break
+		// 			case -1: // stationary
+		// 				switch (priorStepStyle)
+		// 				{
+		// 					case -1: // stationary
+		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_SOUTH + frame_Stationary
+		// 						break
+		// 					case 0:	// North
+		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_NORTH + frame_Stationary
+		// 						break
+		// 					case 1: // East 
+		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_EAST + frame_Stationary
+		// 						break
+		// 					case 2:	// South
+		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_SOUTH + frame_Stationary
+		// 						break
+		// 					case 3:	// West
+		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_WEST + frame_Stationary
+		// 						break 
+		// 				}
 		
-						if (!isAnimationTableIndexValid(actorPiece, animationTableIndex))
-							animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary				// Hmm, nothing there. Let's try the default (non-directional) stationary animations
+		// 				if (!isAnimationTableIndexValid(actorPiece, animationTableIndex))
+		// 					animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary				// Hmm, nothing there. Let's try the default (non-directional) stationary animations
 						
-						if (!isAnimationTableIndexValid(actorPiece, animationTableIndex))
-							animationTableIndex = -1			// We give up. Just use the default, nothing better has been specified.
+		// 				if (!isAnimationTableIndexValid(actorPiece, animationTableIndex))
+		// 					animationTableIndex = -1			// We give up. Just use the default, nothing better has been specified.
 						
-						break
-				}
-			}
-			else
-			{
-				// If in melee, see if a melee animation is available
-				switch (effectiveStepStyle)
-				{
-					case -1: // stationary
-						// This is tricky. Let's take a WAG and try North!
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_NORTH + meleeStep
-						break
-					case 0:	// North
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_NORTH + meleeStep
-						break
-					case 1: // East 
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_EAST + meleeStep
-						break
-					case 2:	// South
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_SOUTH + meleeStep
-						break
-					case 3:	// West
-						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_WEST + meleeStep
-						break
-				}
-				// Now, is there actually an animation here? If not, then revert back
-				if (actorPiece.animationTable[animationTableIndex].tilename == null || actorPiece.animationTable[animationTableIndex].tilename == "")
-					animationTableIndex = -1 
-			}
-			return animationTableIndex
-		}
+		// 				break
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		// If in melee, see if a melee animation is available
+		// 		switch (effectiveStepStyle)
+		// 		{
+		// 			case -1: // stationary
+		// 				// This is tricky. Let's take a WAG and try North!
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_NORTH + meleeStep
+		// 				break
+		// 			case 0:	// North
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_NORTH + meleeStep
+		// 				break
+		// 			case 1: // East 
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_EAST + meleeStep
+		// 				break
+		// 			case 2:	// South
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_SOUTH + meleeStep
+		// 				break
+		// 			case 3:	// West
+		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_WEST + meleeStep
+		// 				break
+		// 		}
+		// 		// Now, is there actually an animation here? If not, then revert back
+		// 		if (actorPiece.animationTable[animationTableIndex].tilename == null || actorPiece.animationTable[animationTableIndex].tilename == "")
+		// 			animationTableIndex = -1 
+		// 	}
+		// 	return animationTableIndex
+		// }
 		
-		private function getAnimationEffectFromIndex(actorPiece:MgbActor, animationTableIndex:int):String
-		{
-			return animationTableIndex == -1 ? "no effect" : actorPiece.animationTable[animationTableIndex].effect
-		}
+		// private function getAnimationEffectFromIndex(actorPiece:MgbActor, animationTableIndex:int):String
+		// {
+		// 	return animationTableIndex == -1 ? "no effect" : actorPiece.animationTable[animationTableIndex].effect
+		// }
 
-		private function getAnimationTileFromIndex(actorPiece:MgbActor, animationTableIndex:int):String
-		{
-			if (animationTableIndex == -1)
-			{
-				var tilename:String = actorPiece.tilename
-			}
-			else
-			{
-				tilename = actorPiece.animationTable[animationTableIndex].tilename
-				if (tilename == null || tilename == "")
-					tilename = actorPiece.tilename
-			}
-			return tilename ? tilename :  ""		// Null -> ""
-		}
+		// private function getAnimationTileFromIndex(actorPiece:MgbActor, animationTableIndex:int):String
+		// {
+		// 	if (animationTableIndex == -1)
+		// 	{
+		// 		var tilename:String = actorPiece.tilename
+		// 	}
+		// 	else
+		// 	{
+		// 		tilename = actorPiece.animationTable[animationTableIndex].tilename
+		// 		if (tilename == null || tilename == "")
+		// 			tilename = actorPiece.tilename
+		// 	}
+		// 	return tilename ? tilename :  ""		// Null -> ""
+		// }
 
 		private function chooseActiveActorDisplayTile(AA:int):void
 		{
@@ -3533,81 +3526,6 @@ class MapItem
 	public var tilePiece:MgbTile;				// Pointer to the current tilePiece - these will typically reside in tileCache
 }
 
-class ActiveActor
-{
-	public var creationCause:String						// CREATION_BY_MAP or CREATION_BY_SPAWN 
-	public var ACidx:String								// Index of this actor in the actorCache cache - the index is the name
-	public var health:int								// Current health
-	public var maxHealth:int							// Current Maximum health
-	public var renderX:int								// Render this at pixel X (not tile X)
-	public var renderY:int								// Render this at pixel Y (not tile Y)
-	public var renderBD:BitmapData						// Render this BitmapData
-	public var cellSpanX:int							// How many cells does this actor span (width)?
-	public var cellSpanY:int							// How many cells does this actor span (height)?
-	
-	// Some caches of key actor properties - so we don't have to go into the actorXML so often (for speed)
-	public var type:int									// One of MgbActor.alActorType 
-	public var moveSpeed:Number							// From actorXML.databag.allchar.movementSpeedNum. However, also defined as 1 for a sliding block while isSliding = true
-
-	// Basic positioning info		
-	public var startx:int,  		starty:int			// Where this piece starts from. 	Units are in tiles, not pixels
-	public var x:int, 				y:int				// Where the actor was.				Units are in tiles, not pixels
-	public var xMovePerTween:int, 	yMovePerTween:int
-	public var fromx:int, 			fromy:int			// Where the actor is moving to
-	public var renderOffsetCellsX:int				   	// Temporary Position/size adjustments (Melee for example uses this)
-	public var renderOffsetCellsY:int					// Temporary Position/size adjustments (Melee for example uses this)
-	public var renderOffsetCellsWidth:int			   	// Temporary Position/size adjustments (Melee for example uses this)
-	public var renderOffsetCellsHeight:int				// Temporary position/size adjustments (Melee for example uses this)
-	
-	// Melee state
-	public var meleeStep:int							// -1 for not in melee; 0..7 for in-melee
-	public var turnsBeforeMeleeReady:int				// 0 for 'ready now'. Decremented after every non-melee turn for this actor 
-	
-	//conditions info
-	public var appearIf:int
-	// Auto-move info
-	public var stepStyle:int							// Movement style. 0..3 = N, S, E, W
-	public var stepCount:int							// Counter - # of steps taken using this movement style. 0 means no steps taken; need to choose
-	public var isSliding:Boolean						// Used for items that are sliding - this includes sliding blocks and shots
-	public var wasStopped:Boolean						// Used for handling ice
-	
-	// Respawn tracking
-	public var respawnId:String							// A string used to identify this actor instance across map reloads - for example using a string based on {map}/original_x/original_y
-	public var birthTweenCount:int						// The G_tweenCount when the item was spawned
-	
-	// Shot tracking - shots
-	public var isAShot:Boolean							// Only true for Shots
-	public var actorWhoFiredShot:int					// Which actor fired this shot (metric valid for shots)
-	public var shotRange:int							// metric valid for Shots - comes from shooter's "actorXML.databag.allchar.shotRangeNum"
-	// Shot tracking - shooters
-	public var maxActiveShots:int						// Maximum number of shots that can be active on map at once (metric valid for things that shoot)
-	public var currentActiveShots:int					// Current number of Active shots on map (metric valid for things that shoot)
-	public var shotDamageToNPC:int
-	public var shotDamageToPlayer:int
-	// Dead or dying (explosions etc)
-	public var alive:Boolean							// true if alive; false if dead or dying
-	public var dyingAnimationFrameCount:int				// 0 mean no animation of dying; >0 means at frame N of that 'dying' animation
-	
-	// Active powers
-	public var activePowerUntilTweenCount:int			// 0 means no active power
-	public var activePower:int							// One of the MgbActor.alGainPower powers. 
-
-	// Player-related info (this could be kept out of the class, but I've kept it here for simplicity and consistency, and it helps if we later support multi-user)
-	public var score:int
-	public var extraLives:int							// in addition to the one currently in use
-	public var winLevel:Boolean							// True when user reaches some special goal/marker etc
-	
-	public static const CREATION_BY_SPAWN:String = "spawned"
-	public static const CREATION_BY_MAP:String = "mapped"
-	
-	public static const MELEESTEP_NOT_IN_MELEE:int = -1
-	
-	
-	public function inMelee():Boolean
-	{
-		return meleeStep != MELEESTEP_NOT_IN_MELEE
-	}
-}
 
 class ActorCollision
 {

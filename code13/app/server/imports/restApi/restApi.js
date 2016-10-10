@@ -9,41 +9,55 @@ export var RestApi = new Restivus({
 
 
 // The rest of this file deals with tiles and maps.
-RestApi.addRoute('asset/:id', {authRequired: false}, {
+
+RestApi.addRoute('asset/:id', { authRequired: false }, {
   get: function () {
-    var asset = Azzets.findOne(this.urlParams.id);
-    return asset ? asset : {};
+    var asset = Azzets.findOne(this.urlParams.id)
+    return asset ? asset : {}
   }
-});
+})
+
+
+RestApi.addRoute('asset/full/:user/:name', { authRequired: false }, {
+  get: function () {
+    var asset = Azzets.findOne({ name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false })
+    return asset ? asset : { statusCode: 404, body: {} }
+  }
+})
+
+
+RestApi.addRoute('asset/json/:id', {authRequired: false}, {
+  get: function () {
+    var asset = Azzets.findOne(this.urlParams.id)
+    return asset ? JSON.parse(asset.content2.src) : { statusCode: 404, body: {} }
+  }
+})
+
 
 
 // TODO: Maybe make this asset/graphic ? Look also at AssetUrlGenerator and generateUrlOptions()
-RestApi.addRoute('asset/png/:id', {authRequired: false}, {
+RestApi.addRoute('asset/png/:id', { authRequired: false }, {
   get: function () {
-    var asset = Azzets.findOne(this.urlParams.id);
-// TODO: Handle case where the frameData has not yet been created
+    var asset = Azzets.findOne(this.urlParams.id)
     if (asset)
     {
-        // is there more elegent way? e.g. asset/png/:id/:frame?
-      const frame = this.queryParams.frame || 0;
+      const frame = this.queryParams.frame || 0
       return {
         statusCode: 200,
         headers: {
-          'Content-Type': 'image/png',
+          'Content-Type': 'image/png'
           // 'cache-control': 'private, must-revalidate, max-age: 30'
         },
-        body: dataUriToBuffer(asset.content2.frameData[frame][0])
+        body: dataUriToBuffer(asset.content2.frameData[frame][0])   // TODO: Handle case where the frameData has not yet been created
       }
     }
-    else {
-      return {
-        statusCode: 404
-      }
-    }
+    else 
+      return { statusCode: 404 }
   }
-});
+})
+
 // MapEditor tries this while guessing image from imported map
-RestApi.addRoute('asset/png/:user/:name', {authRequired: false}, {
+RestApi.addRoute('asset/png/:user/:name', { authRequired: false }, {
   get: function () {
     var asset = Azzets.findOne({
       kind: "graphic",
@@ -81,7 +95,7 @@ RestApi.addRoute('asset/id/:user/:name', {authRequired: false}, {
       return {statusCode: 404, body:{}};
     }
   }
-});
+})
 
 // Get any kind of asset's Thumbnail *as* a PNG
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
@@ -145,21 +159,6 @@ RestApi.addRoute('asset/map/:user/:name', {authRequired: false}, {
     else {
       return {
         statusCode: 404
-      }
-    }
-  }
-});
-
-RestApi.addRoute('asset/json/:id', {authRequired: false}, {
-  get: function () {
-    var asset = Azzets.findOne(this.urlParams.id);
-    if (asset)
-    {
-      return JSON.parse(asset.content2.src);    // MAKE SURE THIS MATCHES WHAT WE ACTUALLY STORE (ie. object vs string)
-    }
-    else {
-      return {
-        statusCode: 404                
       }
     }
   }

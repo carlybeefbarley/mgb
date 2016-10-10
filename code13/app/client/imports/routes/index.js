@@ -19,6 +19,9 @@ import Roadmap from './Roadmap'
 import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
 
+
+import Hack from './Hack'
+
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
 // Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md
@@ -41,6 +44,9 @@ Meteor.startup(function () {
   const router =
     <Router  history={browserHistory}>
       <Route component={App}>
+
+        <Route path='/u/:username/hack' component={Hack} name='DG HACK PAGE' />
+      
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />

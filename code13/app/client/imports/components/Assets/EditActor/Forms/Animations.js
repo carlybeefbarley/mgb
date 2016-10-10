@@ -183,6 +183,7 @@ export default class Animations extends React.Component {
   }
 
   changeGraphic(index, val){
+    this.data[index].tileName = val;
     this.props.onchange && this.props.onchange()
   }
   changeEffect(index, val){

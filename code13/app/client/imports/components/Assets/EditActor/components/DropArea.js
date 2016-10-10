@@ -28,8 +28,11 @@ export default class DropArea extends React.Component{
       const onReady = () => {
         const a = this.getAsset()
         count++;
+        // TODO: react devs assume that isMounted is antipattern.. need to redo all this onReady magic
+        if(!this.isMounted()){
+          return;
+        }
         if(!a && count < 100){
-          console.log("KEEP LOOKING FOR:", owner, name)
           window.setTimeout( onReady, 1000)
         }
         else{

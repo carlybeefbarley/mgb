@@ -97,7 +97,7 @@ export default class EditActor extends React.Component {
         animationTable: [],
         databag: {
           all: {},
-          allChar: {},
+          allchar: {},
           item: {},
           itemOrNPC: {},
           npc: {},

@@ -43,9 +43,14 @@ import BaseForm from '../BaseForm.js'
 import DropArea from '../components/DropArea.js'
 import SmallDD from '../components/SmallDD.js'
 
-export default class All extends BaseForm {
+export default class CharacterBehavior extends BaseForm {
   get data(){
-    return this.props.asset.content2.databag.allChar
+    // fix bad things.. temporary
+    if(this.props.asset.content2.databag.allChar){
+      this.props.asset.content2.databag.allchar = this.props.asset.content2.databag.allChar;
+      delete this.props.asset.content2.databag.allChar
+    }
+    return this.props.asset.content2.databag.allchar
   }
 
   render() {

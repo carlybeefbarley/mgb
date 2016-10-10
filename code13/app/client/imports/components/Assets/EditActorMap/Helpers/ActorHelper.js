@@ -15,8 +15,8 @@ export default {
       mapLayer: [],
       maxLayers: 4,
       metadata: {
-        width: 19,
-        height: 2,
+        width: data.width,
+        height: data.height,
       }
     };
 

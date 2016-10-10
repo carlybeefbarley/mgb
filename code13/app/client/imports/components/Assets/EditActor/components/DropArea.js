@@ -6,6 +6,7 @@ import { Azzets } from '/imports/schemas'
 export default class DropArea extends React.Component{
   state = {text:""}
   componentDidMount(){
+    this.isUnmounted = false;
     if(this.props.value){
       console.log("starting subscriptions...")
       const parts = this.props.value.split(":")
@@ -29,7 +30,7 @@ export default class DropArea extends React.Component{
         const a = this.getAsset()
         count++;
         // TODO: react devs assume that isMounted is antipattern.. need to redo all this onReady magic
-        if(!this.isMounted()){
+        if(!this.isUnmounted){
           return;
         }
         if(!a && count < 100){
@@ -46,6 +47,7 @@ export default class DropArea extends React.Component{
     }
   }
   componentWillUnmount(){
+    this.isUnmounted = true;
     this.subscription && this.subscription.stop()
   }
   handleDrop(e){

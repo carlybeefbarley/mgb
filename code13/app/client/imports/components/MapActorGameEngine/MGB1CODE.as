@@ -12,66 +12,13 @@ package com.mgb.controls
 	
 	public class GameEngineTwo extends UIComponent
 	{
-		// This is GameEngineTwo's base class - it supports the 'play' mode and the basics of rendering the maps
-			
-		// Map data. This is used to hold, load & save the map.
-		protected var   mapPiece:MgbMap = new MgbMap()			// This is the active map
-		private   var   initialMap:MgbMap = null;				// This is a copy of the initial map that is stored for safety when a game is being played. At the end of the game, the initial map is restored again
-		[Bindable] protected var mgbSession:MgbSession = MgbSession.getInstance();
-
-
-		// The view that represents the map Blitter. This is a bitmap that fits the size of the container "this" provides.
-		// the 'view' is drawn by redrawMap(). The size of 'this' is defined by the size of the mapPiece object we are representing,
-		// and the view bitmap is placed so it's 0,0 is the top-left of the viewable window - i.e. accounting for the scroll position
-		// Note that 
-		//		1. We also trap scroll events so that we know when to redraw.
-		//		2. We are careful to have no other bitmaps in this object - that makes the blitter much slower since the flash player has to do alpha 
-		//		   calculations for display rendering
-		protected var view:MgbBlitter
-		
-		protected var layerAlphas:Array = new Array();		// Array of Number, each representing the alpha level for viewing the layer in edit mode
-		
-		// Game Engine state
-		[Bindable] public var   gameEngineMode:String;					// GameEngine.GE_EDIT etc
-		
-		// Pending load operations
-		protected var actorLoadsPending:int = 0;				// TODO: This could do with a little tightening up. it works for play, not great for edit.
-		protected var actorLoadsFailed:int = 0;				// TODO: This could do with a little tightening up. it works for play, not great for edit.
-		
 		// Background blockages map
 		private var backgroundBlockageMap:BlockageMap = new BlockageMap;
 		
-		// Zoom tracking
-		[Bindable] public var   zoomLevel:Number = 1;				// Variable - initial zoom level		TODO: Add getters/setters; public getter, protected setter
-		protected const maxZoomLevel:Number = 2;
-		protected const minZoomLevel:Number = 0.5;
-		[Bindable] public var   showGridFlag:Boolean = true;		// TODO: Add getters/setters; public getter, protected setter
-		
-		// resize
-		protected var resizeFromX:int = -1;					// Measured in cells.  -1 means undefined
-		protected var resizeFromY:int = -1;					// Measured in cells.  -1 means undefined
-        protected var resizeAdd:Boolean = false;
-        protected var resizeRemove:Boolean = false;
-		protected var resizeColumns:Boolean = false;
-		protected var resizeRows:Boolean = false;
-		protected var resizeDirectionHintOffset:int = 0;
-
-		// shortcut for actorCache, tileCache
-		protected var actorCache:PieceCache = MgbCaches.getInstance().actorCache
-		protected var tileCache:PieceCache  = MgbCaches.getInstance().tileCache
-
 		// Timed redraw state
 		private var redrawEventsSet:Boolean = false
 		private var needToRedrawMap:Boolean = false
 		
-		// Npc Dialog system - active message from game engine - to render in ui
-		private var npcDialog:NpcDialog = null;
-		private var pauseGame:Boolean = false;
-		private var npcDialogActor:ActiveActor = null;
-		
-		// inventory/equip display
-		[Bindable] private var inventoryDialog:InventoryDialog = null;
-		private var inventory:Inventory = null;
 		
 		// Background music
 		private var backgroundMusicSound:Sound;
@@ -530,10 +477,10 @@ package com.mgb.controls
 			MgbGlobalEventer.getInstance().addEventListener(PieceChangedEvent.CHANGE, processPieceChange)
 		}
 		
-		public function tagCheck(suffix:String):void
-		{
-			ActiveTutorial.getInstance().tutorialTagCheck("mapmaker_"+suffix)
-		}
+		// public function tagCheck(suffix:String):void
+		// {
+		// 	// ActiveTutorial.getInstance().tutorialTagCheck("mapmaker_"+suffix)
+		// }
 		
 		private function processPieceChange(event:PieceChangedEvent):void		// Called when a piece is saved
    		{
@@ -558,36 +505,7 @@ package com.mgb.controls
 			MgbGlobalEventer.getInstance().addEventListener(MgbSession.EVENT_MGB_PROJECT_CHANGED, processProjectChange)
 		}
 
-		private function processProjectChange(event:Event):void		// Called when MgbSession.activeProject changes - including logout case
-   		{
-			trace("GameEngineTwo::processProjectChange() -> "+mgbSession.activeProject)
-			// Stop playing
-			stopGameIfPlaying()
-			// Clear the map
-			newMap()
-   		}
-		
-		override protected function measure():void
-		{
-			// This is the function that makes the scroll bars work correctly in the container that holds us.
-			super.measure()
-			
-			var extra:int = GameEngine.GE_EDIT == gameEngineMode ? 1 : 0	// Add a pixel to size (for grid edge) if in edit mode
-			measuredHeight = (zoomLevel * computeMapPixelHeight()) + extra
-			measuredMinHeight = measuredHeight
-			measuredWidth = (zoomLevel * computeMapPixelWidth()) + extra
-			measuredMinWidth = measuredWidth
 
-			redrawMap()
-		}
-
-		private function resizeEvent(event:ResizeEvent):void
-		{
-			fixDialogSizes()
-			pleaseRedrawMapSoon()
-		}
-
-	
 		private function redrawEvent(event:Event):void
 		{
 			pleaseRedrawMapSoon()
@@ -784,11 +702,9 @@ package com.mgb.controls
 						}
 					}
 				}
-				redrawResizeIndicatorOnMap(view.frameBuffer, hScroll, vScroll, startX, startY, pixelShiftLeftX, pixelShiftUpY)
-				redrawGridOnMap(view.frameBuffer, hScroll, vScroll)
 				
-//	   			if (GameEngine.GE_PLAY == gameEngineMode && true == G_gameOver)
-//					drawMessageOnGame(view.frameBuffer, pixelShiftLeftX, pixelShiftUpY, "G A M E   O V E R")
+//	   			if (true == G_gameOver)
+//					  drawMessageOnGame(view.frameBuffer, pixelShiftLeftX, pixelShiftUpY, "G A M E   O V E R")
 				redrawAddGameStatusString2(view.frameBuffer, pixelShiftLeftX, pixelShiftUpY, renderWidth)
 				
 				view.x = Number(hScroll) * zoomLevel
@@ -867,110 +783,6 @@ package com.mgb.controls
 			}
 		}
 		
-
-		protected function redrawResizeIndicatorOnMap(gbd:BitmapData, hScroll:int, vScroll:int, startX:int, startY:int, pixelShiftLeftX:int, pixelShiftUpY:int):void
-		{
-			if (gameEngineMode == GameEngine.GE_EDIT && resizeFromX != -1 && resizeFromY != -1)
-			{
-				// Draw the resize intent mask
-				var resizeColor:int = 0x800000FF	// Blue if undecided to add/remove
-				if (resizeAdd) 
-					resizeColor = 0x8000FF00		// Green for Add
-				if (resizeRemove) 
-					resizeColor = 0x80FF0000		// Red for Remove
-				if (resizeColumns)					// Display the resize indicator as the whole Column.
-					gbd.fillRect(new Rectangle(	(((resizeFromX - startX) * MgbSystem.tileMinWidth) - pixelShiftLeftX) + 1 + resizeDirectionHintOffset, 1, 
-														MgbSystem.tileMinWidth - 2, gbd.height - 2), resizeColor)
-				else if (resizeRows)				// Display the resize indicator as the whole Row.
-					gbd.fillRect(new Rectangle(	 1, (((resizeFromY - startY) * MgbSystem.tileMinHeight) - pixelShiftUpY) + 1 + resizeDirectionHintOffset, 
-														 gbd.width - 2,	MgbSystem.tileMinHeight -2), resizeColor)
-				// Always display the resize indicator as a single cell.
-				gbd.fillRect(new Rectangle(	(((resizeFromX - startX) * MgbSystem.tileMinWidth) - pixelShiftLeftX) + 1 + resizeDirectionHintOffset, 
-											(((resizeFromY - startY) * MgbSystem.tileMinHeight) - pixelShiftUpY) + 1 + resizeDirectionHintOffset, 
-											MgbSystem.tileMinWidth - 2, MgbSystem.tileMinHeight - 2 ), resizeColor || 0xFF000000);	// darker :)
-			}
-		}
-
-		protected function redrawGridOnMap(gbd:BitmapData, oX:int, oY:int):void		// oX = offset X left; oY = offset Y up
-		{
-			if (gbd && zoomLevel >=0.5)
-			{
-				var w:int = (mapPiece.width * MgbSystem.tileMinWidth) - oX
-				var h:int = (mapPiece.height * MgbSystem.tileMinHeight) - oY
-				var thick:int = zoomLevel >= 1 ? 1 : 2
-				
-				if (showGrid())
-				{			
-					for (var x:int = 0; x<= w; x+=MgbSystem.tileMinWidth)			// Vertical bars of grid. Note we also draw the x=w column
-						gbd.fillRect(new Rectangle(x-(oX % MgbSystem.tileMinWidth), 0, thick, h+1), 0xf0000000)
-					for (var y:int = 0; y<=h ; y+=MgbSystem.tileMinHeight)			// Horizontal bars of grid. Note we also draw the y=h row
-						gbd.fillRect(new Rectangle(0, y-(oY % MgbSystem.tileMinHeight), w+1, thick), 0xf0000000)
-				}
-				// Draw the final boundaries
-				gbd.fillRect(new Rectangle(w, 0, 1, h+1), 0xf0000000)		// End column
-				gbd.fillRect(new Rectangle(0, h, w+1, 1), 0xf0000000)		// End row
-			}
-		}
-
-		public function newMap(width:int = MgbSystem.newMapDefaultWidth, height:int = MgbSystem.newMapDefaultHeight):void
-		{
-			initialMap = null
-			mapPiece.mapInitialize(width, height)
-			mapPiece.userName = mgbSession.userName
-			mapPiece.projectName = mgbSession.activeProject
-			prepareMapEditResoures()
-		}
-
-		private function applyZoomLevel():void
-		{
-			if (view)
-				view.scaleX = view.scaleY = zoomLevel
-			invalidateSize()
-			// redrawMap() - will be triggered by measure() that is trigered by invalidateSize()
-		}
-		
-        public function next_zoomLevel(chosenZoom:Number = -1):void
-        {
-        	if (-1 == chosenZoom)
-				zoomLevel *=2;
-			else
-				zoomLevel = chosenZoom
-				
-			if (zoomLevel > maxZoomLevel)
-				zoomLevel = minZoomLevel;
-				
-			applyZoomLevel()
-        }
-		
-		private function showGrid():Boolean
-		{
-			return (GameEngine.GE_EDIT == gameEngineMode && true==showGridFlag);
-		}
-
-		public function toggleGrid():void
-		{
-			showGridFlag = !showGridFlag;
-			pleaseRedrawMapSoon()
-		}
-		
-		//
-		// Load/save support
-		//
-		public function loadMapUsingDialog():void
-		{
-			stopGameIfPlaying()
-			tagCheck("load")
-            mapPiece.loadUsingDialog(mgbSession.userName, mgbSession.activeProject, this.parent, loadMapResult)
-            actorLoadsPending = 0		// For this map...
- 		}
- 		
-		public function loadMapByName(userName:String, projectName:String, mapName:String):void
-		{
-			
-			this.setGameStatusString("Loading game '"+mapName+"'... Please wait...")
-			mapPiece.loadByName(userName, projectName, mapName, loadMapResult)
-			tagCheck("load_from_doubleclick")
-		}
 		
 		// This gets the name of the INITIAL MAP - if the game is multi-map, this always
 		// returns the name of the map where the game play started
@@ -988,12 +800,6 @@ package com.mgb.controls
 	    	prepareMapEditResoures()
 			scrollMapToSeePlayer(0, 0)
 	    }
-	    
-   		private function prepareMapEditResoures():void
-		{
-			redrawMap()
-			applyZoomLevel()
-		}
 
 		//
 		// Event setup and teardown
@@ -1053,63 +859,7 @@ package com.mgb.controls
 		// drops that shoot etc
 		//
 		
-		// Returns index of this actor in the Actor Cache array, loads it if necessary, including its main tile
-		private function loadActorByName(actorName:String):String
-		{
-			var ap:MgbActor = MgbActor(actorCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, actorName))
-			if (null == ap)
-			{
-				// Not in cache, so load it
-		        actorLoadsPending++
-				actorCache.getPiece(mapPiece.userName, mapPiece.projectName, actorName, getActorResultHandler)
-			}
-			else if (ap.tilename != null)
-			{
-				var t:MgbTile = MgbTile(tileCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, ap.tilename))
-				if (t == null || t.loadFailed)
-				{
-					// We had the actor, but not the tile - so load the tile
-			        actorLoadsPending++
-					getActorResultHandler(ap)
-				}
-			}
-			return actorName
-		}
 		
-		// Called when actorCache.getActor() returns the loaded MgbActor response
-		public function getActorResultHandler(ap:MgbActor):void
-	    {
-	    	// TODO: Include actorLoadsFailed case
-			if (ap.tilename == null || ap.tilename == "")
-				MgbLogger.getInstance().logGameBug("Actor '" + ap.name + "' does not have a tile - cannot use this. Please connect the actor to a tile", true)
-			else
-			{
-				if (!mgbSession.userLoggedIn || ap.userName != mgbSession.userName || ap.projectName != ap.projectName)
-					actorLoadsPending--				// User logged out while we were loading the game. Abort tile loads
-				else
-				{				
-					// Load in main tile - and get a callback - note that we will reload tiles that couldn't be loaded last time
-			  		tileCache.getPiece(ap.userName, ap.projectName, ap.tilename, getTileHandler, false, false, true)
-		
-		    		// Load in all the animations we might need. We won't ask for a callback for these
-	    			for (var j:int = 0; j < ap.animationTable.length; j++)
-		    			tileCache.getPiece(ap.userName, ap.projectName, ap.animationTable[j].tilename, null, false, false, true)	    			// FIXME: Also call tilePiece.clearVariants() for main and animated tiles in game
-		  		}
-    		}
-	    }
-	    
-	    private function getTileHandler(tile:MgbTile):void
-	    {
-	       	actorLoadsPending--
-    	    pleaseRedrawMapSoon()
-    		if (0 == actorLoadsPending && 0 == actorLoadsFailed)
-		    	notifyThatGameIsReadyToPlay()
-		    else if (0 != actorLoadsFailed)
-				setGameStatusString("Failed to load "+actorLoadsFailed+" actors in this map. They may have been deleted")
-			else
-   				setGameStatusString("Loading game... "+actorLoadsPending+" actors still to be loaded")
-	    }
-
 		private function notifyThatGameIsReadyToPlay():void
 		{
 			setGameStatusString("Ready")
@@ -1209,51 +959,37 @@ package com.mgb.controls
 		    		case Keyboard.LEFT:
 		    			if (pp.actorXML.databag.allchar.leftYN)
 					    	G_player_action_left = newstate
-					    mgbSession.activityPerHeartbeat++
 			    		break
 		    		case Keyboard.RIGHT:
 		    			if (pp.actorXML.databag.allchar.rightYN)
 			    			G_player_action_right = newstate
-					    mgbSession.activityPerHeartbeat++
 			    		break
 		    		case Keyboard.UP:
 		    			if (pp.actorXML.databag.allchar.upYN)
 			    			G_player_action_up = newstate
-					    mgbSession.activityPerHeartbeat++
 			    		break
 		    		case Keyboard.DOWN:
 		    			if (pp.actorXML.databag.allchar.downYN)
 			    			G_player_action_down = newstate
-					    mgbSession.activityPerHeartbeat++
 			    		break
 		    		case Keyboard.SPACE:
 		    			if (pp.actorXML.databag.allchar.pushYN)
 			    			G_player_action_push = newstate
-					    mgbSession.activityPerHeartbeat++
 			    		break
 		    		case Keyboard.END:		// Melee
 		    		case 77:	//Keyboard.M:		// Melee
 //		    			if (pp.actorXML.databag.allchar.meleeYN)
 			    			G_player_action_melee = newstate
-					    mgbSession.activityPerHeartbeat++
 			    		break
 		    		case Keyboard.CONTROL:
 		    			if (pauseGame && newstate)
 			    			hideNpcMessage()				// unpause
 			    		else if (!pauseGame && newstate)	// "key down" event
 			    			doPauseGame()
-					    mgbSession.activityPerHeartbeat++
 			    		break
-/*		    		case Keyboard.???:
-		    			if (pp.actorXML.databag.allchar.jumpYN)
-			    			G_player_action_jump = newstate
-					    mgbSession.activityPerHeartbeat++
-			    		break
-*/
 		    		case Keyboard.ENTER:
 		    			if (pp.actorXML.databag.allchar.shotRateNum)
 			    			G_player_action_shoot = newstate
-					    mgbSession.activityPerHeartbeat++
 			    		break		    		
 		    	}
 		    }
@@ -2455,117 +2191,6 @@ package com.mgb.controls
 			}
 	    }
 
-		// private function isAnimationTableIndexValid(actorPiece:MgbActor, animationTableIndex:int):Boolean		// i.e. non-empty and correctly formed 
-		// {
-		// 	var ate:Object = actorPiece.animationTable[animationTableIndex]		// Animation Table Entry
-		// 	return ((ate.effect != "no effect" && ate.effect != "") || (ate.tilename != ""))
-		// }
-
-		// private function getAnimationIndex(	actorPiece:MgbActor, 
-		// 									currentStepStyle:int, 					// -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing
-		// 									priorStepStyle:int, 
-		// 									tweenCount:int, 
-		// 									meleeStep:int = -1):int				// If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
-		// {
-		// 	var frame:int = tweenCount % 5									// Normal move animations have 5 steps
-		// 	var frame_Stationary:int = (G_tweenSinceMapStarted / 2) % 16	// # Stationary animations have 16 steps
-		// 	var animationTableIndex:int = -1							// This will be used to work out which animation tile to use, and will become teh return value from this method
-		// 	var effectiveStepStyle:int = (currentStepStyle == -1) ? priorStepStyle : currentStepStyle;		// This will be the most valid (i.e. not -1) of current/prior stepstyle
-
-		// 	if (meleeStep == ActiveActor.MELEESTEP_NOT_IN_MELEE)
-		// 	{
-		// 		// This isn't a meleestep, so use a direction-based tile choice
-		// 		switch (currentStepStyle)
-		// 		{
-		// 			case 0:	// North
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH + frame
-		// 				break
-		// 			case 1: // East 
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST + frame
-		// 				break
-		// 			case 2:	// South
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH + frame
-		// 				break
-		// 			case 3:	// West
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST + frame
-		// 				break
-		// 			case -1: // stationary
-		// 				switch (priorStepStyle)
-		// 				{
-		// 					case -1: // stationary
-		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_SOUTH + frame_Stationary
-		// 						break
-		// 					case 0:	// North
-		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_NORTH + frame_Stationary
-		// 						break
-		// 					case 1: // East 
-		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_EAST + frame_Stationary
-		// 						break
-		// 					case 2:	// South
-		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_SOUTH + frame_Stationary
-		// 						break
-		// 					case 3:	// West
-		// 						animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_WEST + frame_Stationary
-		// 						break 
-		// 				}
-		
-		// 				if (!isAnimationTableIndexValid(actorPiece, animationTableIndex))
-		// 					animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary				// Hmm, nothing there. Let's try the default (non-directional) stationary animations
-						
-		// 				if (!isAnimationTableIndexValid(actorPiece, animationTableIndex))
-		// 					animationTableIndex = -1			// We give up. Just use the default, nothing better has been specified.
-						
-		// 				break
-		// 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		// If in melee, see if a melee animation is available
-		// 		switch (effectiveStepStyle)
-		// 		{
-		// 			case -1: // stationary
-		// 				// This is tricky. Let's take a WAG and try North!
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_NORTH + meleeStep
-		// 				break
-		// 			case 0:	// North
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_NORTH + meleeStep
-		// 				break
-		// 			case 1: // East 
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_EAST + meleeStep
-		// 				break
-		// 			case 2:	// South
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_SOUTH + meleeStep
-		// 				break
-		// 			case 3:	// West
-		// 				animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_WEST + meleeStep
-		// 				break
-		// 		}
-		// 		// Now, is there actually an animation here? If not, then revert back
-		// 		if (actorPiece.animationTable[animationTableIndex].tilename == null || actorPiece.animationTable[animationTableIndex].tilename == "")
-		// 			animationTableIndex = -1 
-		// 	}
-		// 	return animationTableIndex
-		// }
-		
-		// private function getAnimationEffectFromIndex(actorPiece:MgbActor, animationTableIndex:int):String
-		// {
-		// 	return animationTableIndex == -1 ? "no effect" : actorPiece.animationTable[animationTableIndex].effect
-		// }
-
-		// private function getAnimationTileFromIndex(actorPiece:MgbActor, animationTableIndex:int):String
-		// {
-		// 	if (animationTableIndex == -1)
-		// 	{
-		// 		var tilename:String = actorPiece.tilename
-		// 	}
-		// 	else
-		// 	{
-		// 		tilename = actorPiece.animationTable[animationTableIndex].tilename
-		// 		if (tilename == null || tilename == "")
-		// 			tilename = actorPiece.tilename
-		// 	}
-		// 	return tilename ? tilename :  ""		// Null -> ""
-		// }
 
 		private function chooseActiveActorDisplayTile(AA:int):void
 		{

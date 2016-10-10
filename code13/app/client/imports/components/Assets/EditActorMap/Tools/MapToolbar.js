@@ -4,7 +4,7 @@ import React from 'react'
 import EditModes from './EditModes'
 import LayerTypes from './LayerTypes.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
-
+import ActorHelper from '../Helpers/ActorHelper.js'
 export default class MapToolbar extends React.Component {
 
   preview () {
@@ -16,9 +16,10 @@ export default class MapToolbar extends React.Component {
     this.props.map.save('Save Map', true)
   }
   play (){
-    this.props.map.setState({
+    ActorHelper.v2_to_v1(this.props.map.data);
+    /*this.props.map.setState({
       isPlaying: !this.props.map.state.isPlaying
-    })
+    })*/
   }
   resetCamera () {
     this.props.map.resetCamera()

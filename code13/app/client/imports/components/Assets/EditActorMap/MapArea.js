@@ -8,7 +8,7 @@ import ImageLayer from './Layers/ImageLayer.js'
 import ObjectLayer from './Layers/ObjectLayer.js'
 import GridLayer from './Layers/GridLayer.js'
 
-import TileSet from './Tools/TileSet.js'
+import Actor from './Tools/Actor.js'
 import Layers from './Tools/Layers.js'
 import Properties from './Tools/Properties.js'
 import ObjectList from './Tools/ObjectList.js'
@@ -531,7 +531,7 @@ export default class MapArea extends React.Component {
     this.addTool('Layers', 'Layers', {map: this}, Layers)
   }
   addTilesetTool () {
-    this.addTool('Tileset', 'Tilesets', {map: this}, TileSet)
+    this.addTool('Actor', 'Actors', {map: this}, Actor)
   }
   addPropertiesTool () {
     this.addTool('Properties', 'Properties', {map: this}, Properties, true)

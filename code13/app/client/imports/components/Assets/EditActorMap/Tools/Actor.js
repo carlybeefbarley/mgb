@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import React from 'react'
 import TileHelper from '../Helpers/TileHelper.js'
-import TilesetControls from './TilesetControls.js'
+import ActorControls from './ActorControls.js'
 import SelectedTile from './SelectedTile.js'
 import TileCollection from './TileCollection.js'
 
@@ -11,7 +11,7 @@ import LayerTypes from './LayerTypes.js'
 import EditModes from './EditModes.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 
-export default class TileSet extends React.Component {
+export default class Actor extends React.Component {
   /* lifecycle functions */
   constructor (...args) {
     super(...args)
@@ -266,17 +266,64 @@ export default class TileSet extends React.Component {
     if (!asset) {
       return
     }
+    if(asset.kind != "actor"){
+      alert("TD: Only actors are supported in the actor map")
+      return;
+    }
+    console.log("Dropped asset", asset);
+
+    const tileset = {
+      columns: 1,
+      firstgid: 0,
+      image: '',
+      imageheight: 0,
+      imagewidth: 0,
+      margin: 0,
+      name: name,
+      spacing: 0,
+      tilecount: 1,
+      tileheight: 0,
+      tilewidth: 0
+    }
+
+    return;
+    const src = `/api/asset/actor/${names.user}/${name}`;
+    $.get().done((d) => {
+
+      const src = `/api/asset/png/${names.user}/${d.databag.all.defaultGraphicName}`
+      console.log(d);
+
+
+      map[name].firstgid = nr
+      map[name].actor = d;
+      map[name].image = src;
+      var img = new Image();
+      img.onload = function(){
+        map[name].imagewidth = img.width;
+        map[name].imageheight = img.height;
+        images[TileHelper.normalizePath(src)] = src
+        cb()
+      };
+      img.src = src
+
+    })
+
+
+    return;
 
     const infolink = '/api/asset/tileset-info/' + asset._id
     $.get(infolink, (data) => {
       this.refs.controls.updateTilesetFromData(data)
     })
   }
+
   onDropChangeTilesetImage (e) {
-    e.preventDefault()
-    e.stopPropagation()
+    const asset = DragNDropHelper.getAssetFromEvent(e)
+    console.log("Dropped asset", asset);
+    return;
+    /*
     const dataStr = e.dataTransfer.getData('text')
-    let asset, data
+    let asset, data;
     if (dataStr) {
       data = JSON.parse(dataStr)
     }
@@ -299,6 +346,8 @@ export default class TileSet extends React.Component {
 
       map.fullUpdate()
     })
+
+  */
   }
 
   onMouseDown (e) {
@@ -366,7 +415,7 @@ export default class TileSet extends React.Component {
         data-drop-text='Drop asset here to create TileSet'
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
-        <TilesetControls tileset={this} ref='controls' />
+        <ActorControls tileset={this} ref='controls' />
         {!tileset ? <span>Drop Graphic (from side panel) here to create new tileset</span> : ''}
         <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
           <canvas

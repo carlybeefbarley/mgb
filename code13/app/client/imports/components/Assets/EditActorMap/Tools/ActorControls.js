@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import React from 'react'
 import TileHelper from '../Helpers/TileHelper.js'
-export default class TilesetControls extends React.Component {
+export default class ActorControls extends React.Component {
 
   addImageFromInput (e) {
     // enter key
@@ -124,16 +124,13 @@ export default class TilesetControls extends React.Component {
     tss.splice(active, 1)
     map.fullUpdate()
   }
-
+  get active(){
+    return this.props.tileset.props.info.content.map.activeTileset
+  }
   render () {
     return (
       <div className='ui mini'>
         <div className='ui icon buttons mini' style={{ position: 'relative', top: '-10px' }}>
-          <input
-            type='text'
-            onKeyUp={this.addImageFromInput.bind(this)}
-            ref='input'
-            style={{ fontSize: '15px' }} />
           {/*
           <button className="ui floated icon button">
              <i className="add icon"></i>
@@ -146,11 +143,14 @@ export default class TilesetControls extends React.Component {
            </button>
              */}
         </div>
-        <div className='ui icon buttons right floated mini' title='Remove Active Tileset' style={{ position: 'relative', top: '-10px' }}>
+        {this.active > 0 &&
+        <div className='ui icon buttons right floated mini' title='Remove Active Tileset'
+             style={{ position: 'relative', top: '-10px' }}>
           <button className='ui icon button' onClick={this.removeTileset.bind(this)}>
             <i className='remove icon'></i>
           </button>
         </div>
+        }
       </div>
     )
   }

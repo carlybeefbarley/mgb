@@ -8,8 +8,45 @@ import TileHelper from './TileHelper.js'
 const TILES_IN_ACTIONS = 2;
 
 export default {
+  v2_to_v1: function(data){
+    console.log("data",data);
+
+    const d = {
+      mapLayer: [],
+      maxLayers: 4,
+      metadata: {
+        width: 19,
+        height: 2,
+      }
+    };
+
+    const getActorName = (tileId, pos) => {
+      if(!tileId){
+        return ''
+      }
+      // action tiles
+      if(tileId < TILES_IN_ACTIONS){
+        return data.mgb_event_tiles[pos]
+      }
+      const ts = tileId - TILES_IN_ACTIONS;
+      
+      return data.tilesets[ts].name;
+
+    }
+    for(let i=0; i<data.layers.length; i++){
+      for(let j=0; j<data.layers[i].data.length; j++){
+        let ld = data.layers[i].data[j];
+        if(!d.mapLayer[i]){
+          d.mapLayer[i] = []
+        }
+        d.mapLayer[i][j] = getActorName(ld, j)
+      }
+    }
+
+    console.log("RUN with this data:", d)
+    return d
+  },
   v1_to_v2: function(data, names, cb){
-    debugger;
     const dd = TileHelper.genNewMap()
     dd.height = parseInt(data.metadata.height, 10)
     dd. width = parseInt(data.metadata.width, 10)

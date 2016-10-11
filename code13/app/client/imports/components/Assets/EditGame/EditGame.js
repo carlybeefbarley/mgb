@@ -1,6 +1,6 @@
 
 import React, { PropTypes } from 'react'
-import { Segment, Header, Item, Checkbox } from 'stardust'
+import { Segment, Header, Item, Checkbox } from 'semantic-ui-react'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 
 export default class EditGame extends React.Component 

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { Container, Header } from 'stardust'
+import { Container, Header } from 'semantic-ui-react'
 import Footer from '/client/imports/components/Footer/Footer'
 
 const lastUpdateDate = 'Last Update: September 29, 2016'

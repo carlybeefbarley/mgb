@@ -20,7 +20,7 @@ import { logActivity } from '/imports/schemas/activity'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import QLink from '../QLink'
-import { Container, Grid, Header, Image, Item, Icon } from 'stardust'
+import { Container, Grid, Header, Image, Item, Icon } from 'semantic-ui-react'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 

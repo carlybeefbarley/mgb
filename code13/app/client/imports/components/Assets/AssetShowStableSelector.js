@@ -1,5 +1,5 @@
 import React, { Proptypes } from 'react'
-import { Icon, Button } from 'stardust'
+import { Icon, Button } from 'semantic-ui-react'
 
 export default AssetShowStableSelector = props => {
   const { showStableFlag, handleChangeFlag } = props

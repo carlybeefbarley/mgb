@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { Grid, Header } from 'stardust'
+import { Grid, Header } from 'semantic-ui-react'
 import NavRecentGET from '/client/imports/components/Nav/NavRecentGET'
 import QLink from '/client/imports/routes/QLink'
 

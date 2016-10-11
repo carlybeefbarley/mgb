@@ -3,7 +3,7 @@ import QLink from './QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import moment from 'moment'
-import { Segment, Container, Header, List, Item, Grid, Icon } from 'stardust'
+import { Segment, Container, Header, List, Item, Grid, Icon } from 'semantic-ui-react'
 
 export default WhatsNewRoute = React.createClass({
 

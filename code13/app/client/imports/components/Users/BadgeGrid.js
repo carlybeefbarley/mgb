@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import Badge, { getAllBadgesForUser } from '/client/imports/components/Controls/Badge/Badge'
-import { Grid, Header, Label } from 'stardust'
+import { Grid, Header, Label } from 'semantic-ui-react'
 
 const BadgeN = props => (
   <Grid.Column>

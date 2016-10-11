@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
-import { Menu, Header, Icon } from 'stardust'
+import { Menu, Header, Icon } from 'semantic-ui-react'
 
 const _styleNoBg = {backgroundColor: "transparent"}
 

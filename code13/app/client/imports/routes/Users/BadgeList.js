@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import Badge, { getAllBadgesForUser } from '/client/imports/components/Controls/Badge/Badge'
-import { Segment } from 'stardust'
+import { Segment } from 'semantic-ui-react'
 
 const BadgeListRoute = props => {
   const { user } = props

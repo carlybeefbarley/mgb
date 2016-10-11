@@ -5,7 +5,7 @@ import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import { getProjectAvatarUrl } from '/imports/schemas/projects'
-import { Card, Icon, Header } from 'stardust'
+import { Card, Icon, Header } from 'semantic-ui-react'
 
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.

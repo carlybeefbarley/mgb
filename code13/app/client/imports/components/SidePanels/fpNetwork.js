@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
-import { Message, Button } from 'stardust'
+import { Message, Button } from 'semantic-ui-react'
 
 // Meteor conection status values from https://docs.meteor.com/api/connections.html
 const MSTATUS_CONNECTED = "connected"         // the connection is up and running

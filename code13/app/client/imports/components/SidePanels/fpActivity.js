@@ -3,7 +3,7 @@ import QLink from '/client/imports/routes/QLink'
 import { ActivityTypes } from '/imports/schemas/activity.js'
 import { AssetKinds } from '/imports/schemas/assets'
 import moment from 'moment'
-import { Feed, Icon } from 'stardust'
+import { Feed, Icon } from 'semantic-ui-react'
 
 const _propTypes = {
   activity:    PropTypes.array.isRequired  // An activity Stream passed down from the App and passed on to interested components

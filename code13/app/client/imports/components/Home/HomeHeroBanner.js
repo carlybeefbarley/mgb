@@ -2,7 +2,7 @@ import React, { PropTypes, Component } from 'react'
 import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
 
-import { Segment, Grid, Header, List, Icon, Image, Button } from 'stardust'
+import { Segment, Grid, Header, List, Icon, Image, Button } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
 

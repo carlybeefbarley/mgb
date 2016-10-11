@@ -12,7 +12,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
 import { logActivity } from '/imports/schemas/activity'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { Grid, Segment, Message, Icon, Header, Button } from 'stardust'
+import { Grid, Segment, Message, Icon, Header, Button } from 'semantic-ui-react'
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { Grid, Header, Image, Icon } from 'stardust'
+import { Grid, Header, Image, Icon } from 'semantic-ui-react'
 import { getProjectAvatarUrl } from '/imports/schemas/projects'
 import QLink from '/client/imports/routes/QLink'
 

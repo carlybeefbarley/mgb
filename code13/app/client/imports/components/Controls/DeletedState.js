@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { Icon } from 'stardust'
+import { Icon } from 'semantic-ui-react'
 
 // Note that this is a Stateless function:
 //   See https://facebook.github.io/react/docs/reusable-components.html

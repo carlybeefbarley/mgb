@@ -1,5 +1,5 @@
 import React from 'react'
-import { Header, List } from 'stardust'
+import { Header, List } from 'semantic-ui-react'
 
 const _getFlipsideUrl = () => {
   const l = window.location

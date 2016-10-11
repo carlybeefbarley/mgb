@@ -9,7 +9,7 @@ import { logActivity } from '/imports/schemas/activity'
 
 import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import CreateProjectLinkButton from '/client/imports/components/Projects/NewProject/CreateProjectLinkButton'
-import { Segment, Header, Divider } from 'stardust'
+import { Segment, Header, Divider } from 'semantic-ui-react'
 
 export default UserProjectList = React.createClass({
   mixins: [ReactMeteorData],

@@ -18,9 +18,9 @@ export default class MageGameCanvas extends React.Component {
   loadActorByName(actorName) 
   {
     console.log(`actor not preloaded: ${actorName}`)
-    debugger
+    debugger //
     // TODO - ask for this to be loaded? or say it isn't there.
-  }
+  } 
 
   _drawLayer(mapData, actorData, tileData, layerIdx, tweenCount) {
     const _ctx = this._ctx

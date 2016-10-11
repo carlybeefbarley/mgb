@@ -78,7 +78,6 @@ export default class Mage extends React.Component {
     _.each(desiredGraphicNames, aName => {
       if (!_.includes(pendingGraphicLoads, aName) && !_.includes(loadedGraphics, aName))
       {
-        console.log('Load Graphic: ' + aName)
         pendingGraphicLoads.push(aName)
         fetchAssetByUri(_mkGraphicUri(ownerName, aName))
           .then(  data => this._graphicLoadResult(aName, true, JSON.parse(data)) )
@@ -88,19 +87,15 @@ export default class Mage extends React.Component {
     this.setState( { pendingGraphicLoads } )    // and maybe isPreloading? use a _mkIisPreloadingFn 
   }
 
-
   _graphicLoadResult(aName, isSuccess, data) {
     const { loadedGraphics, failedGraphics } = this.state
     const pendingGraphicLoads = _.pull(this.state.pendingGraphicLoads, aName)
     if (isSuccess)
     {
-      console.log('Loaded graphic: ', aName)
       _.remove(failedGraphics, aName)
       loadedGraphics[aName] = data
       loadedGraphics[aName]._image = new Image()
-      loadedGraphics[aName]._image.onload = (e) => {
-        console.log('loaded ImageData for '+aName)
-      }
+      loadedGraphics[aName]._image.onload = (e) => { console.log('loaded ImageData for '+aName, e) }
       loadedGraphics[aName]._image.src = data.content2.frameData[0]
     }
     else
@@ -117,7 +112,6 @@ export default class Mage extends React.Component {
     _.each(desiredActorNames, aName => {
       if (!_.includes(pendingActorLoads, aName) && !_.includes(loadedActors, aName))
       {
-        console.log('Load Actor: ' + aName)
         pendingActorLoads.push(aName)
         fetchAssetByUri(_mkActorUri(ownerName, aName))
           .then(  data => this._actorLoadResult(aName, true, JSON.parse(data)) )
@@ -132,7 +126,6 @@ export default class Mage extends React.Component {
     const pendingActorLoads = _.pull(this.state.pendingActorLoads, aName)
     if (isSuccess)
     {
-      console.log('Loaded actor: ', aName)
       _.remove(failedActors, aName)
       loadedActors[aName] = data
       this._loadRequiredAssetsForActor(data.content2)
@@ -180,7 +173,6 @@ export default class Mage extends React.Component {
 
   _startMapLoaded(mapData) { 
     const actorNames = _.filter(_.union(mapData.mapLayer[0], mapData.mapLayer[1], mapData.mapLayer[2]), a => (a && a!==''))
-    console.log('Actors to load = ', actorNames.join(','))
     if (actorNames.length)
     {
       this.setState( { mapData } )
@@ -205,12 +197,8 @@ export default class Mage extends React.Component {
     this.callDoBlit()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount() { 
     this._mounted = false
-  }
-
-  mageRef(c) {
-    this._mageCanvas = c
   }
 
   render() {
@@ -223,7 +211,10 @@ export default class Mage extends React.Component {
 
     return (
       <div>
-        <MageGameCanvas ref={(c) => this.mageRef(c) } cellsWide={mapData.metadata.width} cellsHigh={mapData.metadata.height}/>
+        <MageGameCanvas 
+            ref={c => {this._mageCanvas = c} } 
+            cellsWide={mapData.metadata.width} 
+            cellsHigh={mapData.metadata.height}/>
       </div>
     )
   }
@@ -235,3 +226,5 @@ Mage.propTypes = {
   isPaused:         PropTypes.bool.isRequired,        // If true, game is paused... doh
   fetchAssetByUri:  PropTypes.func.isRequired         // A function that can asynchronously load an asset by (assetid). returns a Promise
 }
+
+// TODO: showNpcMessage({message:"Use the arrow keys to move/push and 'Enter' to shoot (if allowed)", leftActor:playerActor})

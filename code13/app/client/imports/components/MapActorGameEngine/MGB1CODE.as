@@ -1012,139 +1012,6 @@ package com.mgb.controls
 			}
 		}
 
-		// playPrepareActiveLayer - called when a game starts on a map - create individual bitmaps for the active elements
-		// 
-		// Effects:
-		//  1. Erase and hide the current 'activeLayer' bitmap
-		//	2. For each item on the active Layer in the specified map, 
-		//		Create a new (global to this GE1 class) activeActors[] array entry (and implicitly update array.length)
-		//		Create a bitmap, associate it with the BitmapData from the applicable actorCache.tilePiece
-		//  	Add that bitmap to the display list
-		//  3. Move layerForeground to be at the front (z-order) of the screen
-		// Return value is the # of player items on the specified map
-		// @@ todo - make sure the player is in a deterministic slot - either first or last - to make behavior more consistent
-		private function playPrepareActiveLayer(map:MgbMap, skipCreatingPlayers:Boolean = false):int
-		{
-			var missingActors:int = 0
-			var num_players:int
-	    	var layer:int = MgbMap.layerActive
-	    	activeActors = new Array()
-	    	
-			// Instantiate instances of the Actors using the map data
-   			for (var y:int = 0; y<mapPiece.height; y++)
-   			{
-				for (var x:int = 0; x < mapPiece.width; x++)
-				{
-					var actorName:String = mapPiece.mapLayerActors[layer][cell(x, y)]
-					if (null != actorName)
-					{
-						var ap:MgbActor = MgbActor(actorCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, actorName))
-						if (null != ap)
-						{
-							var thisAAidx:int = activeActors.length
-							var at:int = ap.actorXML.databag.all.actorType
-							
-							if (skipCreatingPlayers == true && at == MgbActor.alActorType_Player)
-								continue;
-
-							var respawnId:String = mapPiece.name + "/" + x + "/" +y				// This is the only place I do this format, so no need for a function yet for it
-							if (at != MgbActor.alActorType_Player && respawnMemory[respawnId])
-							{
-								// Aha.. there's a respawn behavior on this, and we've got to something we've remembered about it
-								continue;		// This is something we've decided will not respawn once killed/removed
-								
-								// what about items that can be picked up? 
-							}
-								
-							var aa:ActiveActor = new ActiveActor
-							aa.creationCause = ActiveActor.CREATION_BY_MAP
-							aa.respawnId = respawnId
-							aa.birthTweenCount = G_tweenCount
-							aa.meleeStep = ActiveActor.MELEESTEP_NOT_IN_MELEE
-
-							preLoadPotentialSpawns(ap)
-								
-							// Now create activeActors for the required actors on this map
-							switch (at)
-							{
-								case MgbActor.alActorType_Shot:
-									MgbLogger.getInstance().logGameBug("Actor "+actorName+" is a shot - it shouldn't be placed directly on the map. Ignoring...")
-									// ignore shots
-									break;
-								case MgbActor.alActorType_NPC:
-								case MgbActor.alActorType_Player:
-									aa.moveSpeed = Number(ap.actorXML.databag.allchar.movementSpeedNum)
-									// no 'break' here: falling through to next clause on purpose...
-								case MgbActor.alActorType_Item:
-									var tp:MgbTile = MgbTile(tileCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, ap.tilename))
-									if (!tp)
-									{
-										MgbLogger.getInstance().logGameBug("Actor '"+ap.name+"' does not have a valid tile and will not be in the game", false)
-										missingActors++
-									}
-									else
-									{
-										if (tp.loadFailed)
-										{
-											///The issue is we don't have a clear place to reload failed pieces systematically. How/when to do this. 
-											// Design decision: Do on-demand in application? Play game? Reasonable case - focus on this. 
-											actorLoadsPending++
-											getActorResultHandler(ap)		// this uses getPiece, so it will reload
-										}
-										aa.wasStopped = false
-										aa.startx = x
-										aa.x = x
-										aa.fromx = x
-										aa.type = at
-										aa.starty = y
-										aa.fromy = y
-										aa.y = y
-										aa.health = ap.actorXML.databag.all.initialHealthNum
-										aa.maxHealth = ap.actorXML.databag.all.initialMaxHealthNum
-										aa.appearIf = ap.actorXML.databag.itemOrNPC.appearIf ? ap.actorXML.databag.itemOrNPC.appearIf : MgbActor.alAppearDisappear_NoCondition
-										aa.ACidx = actorName
-										aa.renderBD = tp.bitmapData
-										aa.renderX = x * MgbSystem.tileMinWidth
-										aa.renderY = y * MgbSystem.tileMinHeight
-										aa.cellSpanX = (tp.width  + (MgbSystem.tileMinWidth  - 1))/ MgbSystem.tileMinWidth		// Round up
-										aa.cellSpanY = (tp.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
-										var spawnShot:String = ap.actorXML.databag.allchar.shotActor
-										aa.maxActiveShots = (spawnShot == null || spawnShot == "") ? 0 : int(ap.actorXML.databag.allchar.shotRateNum)
-										aa.alive = true;
-										if (aa.moveSpeed == 0)
-											activeActors.unshift(aa)			// non-movers at the front of the array
-										else
-											activeActors.push(aa)				// movers at the end of the array. This makes sure they are in front visually, that's all
-									}
-									break;
-								default:
-									throw new Error("Unknown Actor type "+at);
-							}
-						}
-					}
-				}
-   			}
-   			
-   			// Next, look for items that were spawned before, but had been selected to drop persistently on the map
-   			respawnRequiredActorsForMap()
-   			
-   			
-   			// Now find the player
-   			for (var AA:int = 0; AA < activeActors.length; AA++)
-   			{
-	  			if (MgbActor.alActorType_Player == activeActors[AA].type)
-				{
-					// This is the player, so make a note...
-					AA_player_idx = AA
-					num_players++
-				}
-   			}
-   			
-   			if (missingActors)
-   				MgbLogger.getInstance().logGameBug(missingActors+" actors did not have valid tiles and so are not in the game. Check the Log for details", true)
-   			
-			return num_players;
-		}
 		
 		private function respawnRequiredActorsForMap():void
 		{
@@ -1192,90 +1059,6 @@ package com.mgb.controls
 			respawnMemoryAutoRespawningActors = new Array							// BUGBUG - Array, so will not work with names like 'map' , Should be object
 		}
 		
-		private function playPrepareBackgroundLayer():void
-		{
-			backgroundBlockageMap.reset(mapPiece.width, mapPiece.height)
-   			for (var y:int = 0; y<mapPiece.height; y++)
-   			{
-				for (var x:int = 0; x < mapPiece.width; x++)
-				{
-					var cellToCheck:int = cell(x,y)		// put this in a var to eliminate multiple lookups.
-					var ACidx:String = mapPiece.mapLayerActors[MgbMap.layerBackground][cellToCheck]
-					if (null != ACidx)
-		 			{
-						var ap:MgbActor = MgbActor(actorCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, ACidx))
-						if (null != ap)
-						{
-							var at:int = ap.actorXML.databag.all.actorType
-							if (at == MgbActor.alActorType_Item)
-							{
-								// Now, we need to work out how big this thing is. We learn this from the tile
-								var tp:MgbTile = MgbTile(tileCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, ap.tilename))
-								if (!tp)
-									trace("playPrepareBackgroundLayer() can't measure background actor '"+ap.name+"' - unknown tile '"+ap.tilename+"'. Assuming 1x1.")
-
-								var width:int = tp ? (tp.width / MgbSystem.tileMinWidth) : 1 
-								var height:int =  tp ? (tp.height / MgbSystem.tileMinHeight) : 1
-								var itemAct:int = ap.actorXML.databag.item.itemActivationType
-								
-								// OK, now mark the appropriate number of spaces as blocked
-								if (itemAct == MgbActor.alItemActivationType_BlocksPlayer || itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
-									backgroundBlockageMap.blockEntity(x, y, BlockageMap.ENTITY_PLAYER, width, height)
-								if (itemAct == MgbActor.alItemActivationType_BlocksNPC || itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
-									backgroundBlockageMap.blockEntity(x, y, BlockageMap.ENTITY_NPC, width, height)
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		private function playCleanupBackgroundLayer():void
-		{
-			this.backgroundBlockageMap.reset(1, 1)
-		}
-		
-		private function preLoadPotentialSpawns(ap:MgbActor):void
-		{
-			// Pre-load actors that can be spawned - typically shots & drops - but no need to create activeActors for them yet
-			var spawn:String = ap.actorXML.databag.itemOrNPC.dropsObjectWhenKilledName
-			if (spawn && "" != spawn)
- 				loadActorByName(spawn)
-
-			spawn = ap.actorXML.databag.itemOrNPC.dropsObjectWhenKilledName2
-			if (spawn && "" != spawn)
- 				loadActorByName(spawn)
-
-			spawn = ap.actorXML.databag.itemOrNPC.dropsObjectRandomlyName
-			if (spawn && "" != spawn)
- 				loadActorByName(spawn)
-
-
- 			spawn = ap.actorXML.databag.allchar.shotActor
-			if (spawn && spawn != "")
-				loadActorByName(spawn)
-				
-			spawn = ap.actorXML.databag.npc.dropsObjectOnChoice1
-			if (spawn && spawn != "")
-				loadActorByName(spawn)
-				
-			spawn = ap.actorXML.databag.npc.dropsObjectOnChoice2
-			if (spawn && spawn != "")
-				loadActorByName(spawn)
-				
-			spawn = ap.actorXML.databag.npc.dropsObjectOnChoice3
-			if (spawn && spawn != "")
-				loadActorByName(spawn)
-
-			spawn = ap.actorXML.databag.item.equippedNewShotActor
-			if (spawn && spawn != "")		// TODO:  AND ap.actorXML.databag.item.itemActivationType.alItemActivationType_PlayerPicksUpUsesLater && inventoryEquippableYN == 1 ///equipeffects
-				loadActorByName(spawn)
-				
-			spawn = ap.actorXML.databag.item.equippedNewActorGraphics
-			if (spawn && spawn != "")		// TODO:  AND ap.actorXML.databag.item.itemActivationType.alItemActivationType_PlayerPicksUpUsesLater && inventoryEquippableYN == 1 ///equipeffects
-				loadActorByName(spawn)
-				
-		}
 		
 		// These will always be added to the active layer, at the front of the draw list (since redraw's blitter uses the "painters algorithm"). 
 		// Callers should set G_tic = null to invalidate the collision detection cache.   TODO: Recycle the actors (shots)
@@ -1367,84 +1150,15 @@ package com.mgb.controls
 			activeActors.length = 0
 		}
 
-	  //   // Play ball!
-	  //   public function playGame():Boolean		// returns true if the game successfully started
-	  //   {
-	  //   	// The game really happens with things moving on Layer "layerActive". Other layers don't move
-		// 	setGameStatusString("Starting game")
-		// 	clearGameStatusString2()
-		// 	pauseGame = false
-		// 	hideNpcMessage()
-		// 	respawnMemory = new Array()
-		// 	cancelAllSpawnedActorsForAutoRespawn()
-		// 	initialMap = new MgbMap()					// Save this in case we load another while playing
-		// 	initialMap.loadPieceFromPiece(mapPiece)		// Save this in case we load another while playing
-			
-		// 	var num_players:int = playPrepareActiveLayer(mapPiece)
-		// 	if (0 == num_players)
-	  //   	{
-	  //   		Alert.show(setGameStatusString("No player defined for this map"))
-	  //   		return false
-	  //   	}
-		// 	if (num_players > 1)
-	  //   	{
-	  //   		Alert.show(setGameStatusString("A map can only have one player on it; this map has "+num_players+" player actors on the map"))
-	  //   		return false
-	  //   	}
-						
-		// 	playPrepareBackgroundLayer()
-			
-		// 	// Set up and start Game events
-		// 	transitionStateWaitingForActorLoadRequests = false
-		// 	transitionInProgress = false
-	  //   	G_tweenCount = 0;
-	  //   	enablePlayerControls()
-    //     	addEventListener( "enterFrame", onTickGameDo )
-	  //   	G_gameOver = false
-	  //   	var now:Date = new Date()
-	  //   	G_gameStartedAtMS = now.getTime()
-	    	
-	  //   	//initialise inventory
-	  //   	inventory = new Inventory()
-	    	
-	  //   	if (!mgbSession.alertOnceAboutKeys)
-	  //   	{
-		//     	var playerActor:MgbActor = MgbActor(actorCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, activeActors[AA_player_idx].ACidx))
-		//     	showNpcMessage({message:"Use the arrow keys to move/push and 'Enter' to shoot (if allowed)", leftActor:playerActor})
-		//     	mgbSession.alertOnceAboutKeys = true
-		//     }
-	  //   	return true
-		// }
 
 
-		private static var transitionInProgress:Boolean = false
-		private static var transitionNewX:int
-		private static var transitionNewY:int
-		private static var transitionPlayerAA:ActiveActor
-		private static var transitionStateWaitingForActorLoadRequests:Boolean = false
+		// private static var transitionInProgress:Boolean = false
+		// private static var transitionNewX:int
+		// private static var transitionNewY:int
+		// private static var transitionPlayerAA:ActiveActor
+		// private static var transitionStateWaitingForActorLoadRequests:Boolean = false
 
 
-		private function preloadThisMap():void
-		{
-			actorLoadsPending = 0	// TODO -  Hmm, be nice to have something more robust..
-			var userName:String = mapPiece.userName
-			var project:String = mapPiece.projectName
-			for (var layer:int = 0; layer<MgbMap.layerVisibleActorsCount; layer++)
-			{
-				var maxCell:int = mapPiece.width * mapPiece.height
-				for (var cell:int = 0; cell < maxCell; cell++)
-				{
-					var actorName:String = mapPiece.mapLayerActors[layer][cell]
-					if (actorName != null && MgbActor(actorCache.getPieceIfCached(userName, project, actorName)) == null)
-						loadActorByName(actorName)
-				}
-			}
-			if (actorLoadsPending == 0)
-			{
-				// Cool, it was all cached!
-				notifyThatGameIsReadyToPlay()
-			}
-		}
 
 		private function transitionToNewMap(userName:String, projectName:String, newmapname:String, newX:int, newY:int):void
 		{
@@ -1458,18 +1172,6 @@ package com.mgb.controls
 			transitionInProgress = true
 		}
 		
-	    private function loadMapDuringGameResult(event:Event):void 
-	    {
-	    	// FIXME: error cases???
-	    	preloadResourcesNeededForMap()
-		}
-		
-		private function preloadResourcesNeededForMap():void
-		{
-			actorLoadsPending = 0	// TODO -  Hmm, be nice to have something more robust..
-			preloadThisMap()
-			transitionStateWaitingForActorLoadRequests = false	
-		}
 		
 		// Called on 'Tick' by game loop if transitioning to new map
 		private function transitionTick():void

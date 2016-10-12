@@ -1,7 +1,15 @@
 
 import ActiveActor from './MageActiveActorClass'
 
-export const MgbActor = {
+export default MgbActor = {
+
+
+
+//..for .alActorType_Shot etc
+// alAppearDisappear_NoCondition
+// alActorType_Player
+
+
   ANIMATION_INDEX_BASE_FACE_NORTH:              0,
   ANIMATION_INDEX_BASE_FACE_EAST:               5,
   ANIMATION_INDEX_BASE_FACE_SOUTH:              10,

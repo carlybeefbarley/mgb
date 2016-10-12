@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { MgbActor } from './MageActorConstants'
+import MgbActor from './MageMgbActor'
 
 // MapActorGameEngine GameCanvas
 // This handles just rendering the current game frame based on data available to it...
@@ -72,7 +72,6 @@ export default class MageGameCanvas extends React.Component {
     this._canvas = c
     this._ctx = c ? c.getContext('2d') : null // Try alpha = false? 
   }
-
 
   render() {
     const { cellsWide, cellsHigh } = this.props

@@ -1,0 +1,337 @@
+
+import MgbActor from './MageMgbActor'
+import BlockageMap from './MageBlockageMap'
+
+// Movement (and Melee)
+
+// need to handle gameActions
+export default MagePlayGameMovement = {
+
+  calculateNewPlayerPosition: function(stepStyleOverride)
+  {
+    const { activeActors, AA_player_idx } = this
+    debugger // G_player_action
+    var plyr = activeActors[AA_player_idx]
+    
+    if (G_player_action_melee)
+      this.startMeleeIfAllowed(plyr, true)
+    
+    if (!plyr.inMelee())
+    {
+      // These actions can only be happen if the player is *not* in the middle of melee. 
+      // TODO: Should we queue up the keyboard input anyway?
+
+      if (G_player_action_shoot && this.actorCanShoot(AA_player_idx))
+      {
+        this.actorCreateShot(AA_player_idx)
+        G_player_action_shoot = false
+      }
+
+      if ((stepStyleOverride == 0 || (stepStyleOverride == -1 && G_player_action_up)) && plyr.y < mapPiece.height)
+      {
+        plyr.y--
+        plyr.stepStyle = 0
+      }	
+      if ((stepStyleOverride == 2 || (stepStyleOverride == -1 && G_player_action_down)) && plyr.y >= 0)
+      {
+        plyr.y++
+        plyr.stepStyle = 2
+      }
+      if ((stepStyleOverride == 3 || (stepStyleOverride == -1 && G_player_action_left)) && plyr.x >= 0)
+      {
+        plyr.x--
+        plyr.stepStyle = 3
+      }	
+      if ((stepStyleOverride == 1 || (stepStyleOverride == -1 && G_player_action_right)) && plyr.x < mapPiece.width)
+      {
+        plyr.x++;
+        plyr.stepStyle = 1
+      }
+    }
+  },
+  
+  
+  // AAi is the index into activeActors[] for this enemy/item
+  // stepStyleOverride is -1 for no override, or 0..3 for an override		// TODO
+  calculateNewEnemyPosition: function(AAi, stepStyleOverride = -1)
+  {
+    const { actors, activeActors, AA_player_idx } = this
+
+    var enemyAA = activeActors[AAi]
+    var enemy = actors[enemyAA.ACidx]
+    
+    if (enemyAA.isSliding)
+    {
+      if (enemyAA.isAShot && enemyAA.stepCount > enemyAA.shotRange)
+        this.destroyShot(enemyAA)
+      else if (!enemyAA.isAShot && enemyAA.stepCount > parseInt(enemy.content2.databag.item.pushToSlideNum))
+        this.playStopItemSliding(enemyAA)
+      else
+      {
+        switch (enemyAA.stepStyle)
+        {
+        case 0: 	enemyAA.y--;	break;			// North
+        case 1: 	enemyAA.x++;	break;			// East
+        case 2: 	enemyAA.y++;	break;			// South 			
+        case 3: 	enemyAA.x--;	break;			// West
+        }
+        enemyAA.stepCount++;
+      }
+    }
+    else if (stepStyleOverride != -1)
+    {
+      enemyAA.stepStyle = stepStyleOverride
+      switch (enemyAA.stepStyle)
+      {
+      case 0: 	enemyAA.y--;	break;			// North
+      case 1: 	enemyAA.x++;	break;			// East
+      case 2: 	enemyAA.y++;	break;			// South 			
+      case 3: 	enemyAA.x--;	break;			// West
+      }
+      enemyAA.stepCount++;
+    }
+    else if (enemyAA.moveSpeed > 0 || (enemyAA.moveSpeed < 1 && Math.random() < enemyAA.moveSpeed))
+    {
+      var t = parseInt(enemy.content2.databag.npc.movementType)
+      var aggroRange = parseInt(enemy.content2.databag.npc.aggroRange)
+      var tilesFromPlayerSquared = Math.pow(enemyAA.x - activeActors[AA_player_idx].x, 2) + Math.pow(enemyAA.y - activeActors[AA_player_idx].y, 2) 
+      
+      if (aggroRange)
+      {
+        // This will become either alMovementType_Random or alMovementType_ToPlayer - depending on proximity. Range check using pythogras' theorem 
+        if (tilesFromPlayerSquared < Math.pow(aggroRange, 2))
+          t = MgbActor.alMovementType_ToPlayer
+      }
+
+      switch (t)
+      {
+      case MgbActor.alMovementType_None:
+        break;
+      case MgbActor.alMovementType_Random:
+        if (0 == enemyAA.stepCount || Math.random() < 0.1)
+          enemyAA.stepStyle = Math.floor(Math.random() * 4);								// Choose a direction
+        switch (enemyAA.stepStyle)
+        {
+        case 0: 	enemyAA.y--;	break;			// North
+        case 1: 	enemyAA.x++;	break;			// East
+        case 2: 	enemyAA.y++;	break;			// South 			
+        case 3: 	enemyAA.x--;	break;			// West
+        }
+        enemyAA.stepCount++;
+        break;
+      case MgbActor.alMovementType_ToPlayer:
+        if (enemyAA.x < activeActors[AA_player_idx].x)
+        {
+          enemyAA.x++
+          enemyAA.stepStyle = 1
+        }
+        else if (enemyAA.x > activeActors[AA_player_idx].x)
+        {
+          enemyAA.x--
+          enemyAA.stepStyle = 3
+        }
+        else 
+        {
+          if (enemyAA.y < activeActors[AA_player_idx].y)
+          {
+            enemyAA.y++
+            enemyAA.stepStyle = 2
+          }	
+          else if (enemyAA.y > activeActors[AA_player_idx].y)
+          {
+            enemyAA.y--
+            enemyAA.stepStyle = 0
+          }
+        }
+        break
+      case MgbActor.alMovementType_FromPlayer:
+        if (enemyAA.x < activeActors[AA_player_idx].x)
+        {
+          enemyAA.x--
+          enemyAA.stepStyle = 1
+        }
+        else if (enemyAA.x > activeActors[AA_player_idx].x)
+        {
+          enemyAA.x++
+          enemyAA.stepStyle = 3
+        }
+        else 
+        {
+          if (enemyAA.y < activeActors[AA_player_idx].y)
+          {
+            enemyAA.y--
+            enemyAA.stepStyle = 2
+          }
+          else if (enemyAA.y > activeActors[AA_player_idx].y)
+          {
+            enemyAA.y++
+            enemyAA.stepStyle = 0
+          }
+        }
+        break
+      default: 
+        throw new Error("Unknown Actor MovementType in "+enemy.name);
+      }
+      
+      if (tilesFromPlayerSquared < 36)		// 36 = 6^2 - hardcoded but reasonable :)
+      {
+        var meleeDamage1 = parseInt(enemy.content2.databag.allchar.meleeDamageToPlayerNum)
+        var meleeDamage2 = parseInt(enemy.content2.databag.allchar.meleeDamageToNPCorItemNum)
+        if (meleeDamage1 > 0 || meleeDamage2 > 0)
+          this.startMeleeIfAllowed(enemyAA, false)
+      }
+      
+      if (this.actorCanShoot(AAi))
+      {
+        t = parseInt(enemy.content2.databag.npc.shotAccuracyType)
+        var shotStepStyle
+        if (t == MgbActor.alShotAccuracy_random || t == MgbActor.alShotAccuracy_poor)
+          shotStepStyle = parseInt(Math.random() * 4)
+        else // alShotAccuracy_good or alShotAccuracy_great
+        {
+          if ((enemyAA.x - activeActors[AA_player_idx].x) < -1)
+            shotStepStyle = 1
+          else if ((enemyAA.x - activeActors[AA_player_idx].x) > 1)
+            shotStepStyle = 3
+          else 
+          {
+            if ((enemyAA.y - activeActors[AA_player_idx].y) < -1)
+              shotStepStyle = 2
+            else if ((enemyAA.y - activeActors[AA_player_idx].y) > 1)
+              shotStepStyle = 0
+          }
+        }
+        this.actorCreateShot(AAi, shotStepStyle)
+      }
+    }
+    // TODO: Needs to be much smarter, also need to handle speed > 1			
+  },
+
+
+  startMeleeIfAllowed(actor, isPlayer)	// actor is ActiveActor. return true if started ok
+  {
+    const { actors, inventory } = this
+    if (!actor.inMelee() && actor.turnsBeforeMeleeReady == 0)
+    {	
+      var ms = null
+      actor.meleeStep = 0
+      var ap = actors[actor.ACidx]
+      if (isPlayer)
+        ms = inventory.equipmentMeleeSoundOverride
+      MgbActor.playCannedSound(MgbActor.isSoundNonNull(ms) ? ms : ap.actorXML.databag.allchar.soundWhenMelee)				
+      return true
+    }		
+    return false
+  },
+  
+  // Each layer is handled specially as follows:
+  // 1. layerBackground is just held in the mapPiece.mapLayerActors[layerBackground] array of cells
+  // 2. layerActive is held in the activeActors array
+  // 3. layerForeground isn't checked - by convention it's just for visual effect
+  // Note that if the actor is the player and the obstruction is a pushable item, then we say not-obstructed.. 
+  //		...the tweening moves will resolve what action should occur
+  checkIfActorObstructed: function(AAidxToCheck, checkActives = false)
+  {
+    const { actors, activeActors, AA_player_idx, map, backgroundBlockageMap, G_tic } = this
+    var obstructed = false
+    var aa = activeActors[AAidxToCheck]			// This is the actor that wants to move
+    var aa_p = actors[aa.ACidx]             // this is it's actor piece
+    var cX = aa.cellSpanX + aa.x
+    var cY = aa.cellSpanY + aa.y
+    var mW = map.width
+    var mH = map.height
+
+    for (var x = aa.x; x < cX && x < mW && obstructed == false; x++)
+    {
+      for (var y = aa.y; y < cY && y < mH && obstructed == false; y++)
+      {
+        var cellToCheck = this.cell(x,y)		// put this in a var to eliminate multiple lookups.
+
+        // 1. Check the background layer. These don't change so we can work out behavior by the generic actorCache[] properties
+        if (backgroundBlockageMap.isEntityBlocked(x, y, (AA_player_idx == AAidxToCheck ? BlockageMap.ENTITY_PLAYER : BlockageMap.ENTITY_NPC)))
+          obstructed = true 
+/*****				var ACidx:String = mapPiece.mapLayerActors[MgbMap.layerBackground][cellToCheck]
+        if (null != ACidx)
+        {
+          var ap:MgbActor = MgbActor(actorCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, ACidx))
+          if (null != ap)
+          {
+            var itemAct = ap.content2.databag.item.itemActivationType
+            if (AA_player_idx == AAidxToCheck)
+            {
+              // Does this thing obstruct a player?
+              if (itemAct == MgbActor.alItemActivationType_BlocksPlayer || itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
+                obstructed = true
+            }
+            else
+            {
+              // Does this thing obstruct an enemy?
+              if (itemAct == MgbActor.alItemActivationType_BlocksNPC || itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
+                obstructed = true
+            }
+          }
+        }
+****/
+        // 2. Check the activeActors. To do this we take advantage of the G_tic table
+        if (checkActives && !obstructed)
+        {
+          if (null == G_tic)
+            this.generateTicTable()					// Positions have changed enough that we have to update the tic table
+          if (G_tic[cellToCheck] && G_tic[cellToCheck].length > 0)
+          {
+            for (var i = 0; i < G_tic[cellToCheck].length && !obstructed; i++)
+            {
+              var AAInCell = G_tic[cellToCheck][i]
+              var ACidx = activeActors[AAInCell].ACidx
+              var ap = actors[ACidx]
+              if (activeActors[AAInCell].alive && AAInCell != AAidxToCheck)
+              {
+                var itemAct = ap.content2.databag.item.itemActivationType
+                if (AA_player_idx == AAidxToCheck)
+                {
+                  // Does this thing obstruct a player? (Slidable blocks aren't obstructions...)
+                  if (	(itemAct == MgbActor.alItemActivationType_BlocksPlayer || 
+                        itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
+                      && (!(ap.content2.databag.all.actorType == MgbActor.alActorType_NPC && 
+                          ap.content2.databag.itemOrNPC.destroyableYN == 1 &&
+                          aa_p.content2.databag.allchar.touchDamageToNPCorItemNum > 0
+                          ))
+                      && (ap.content2.databag.all.actorType != MgbActor.alActorType_Item || 
+                        0 == ap.content2.databag.item.pushToSlideNum)
+                    )
+                    obstructed = true
+                }
+                else
+                {
+                  // Does this thing obstruct an enemy?
+                  if (parseInt(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_Shot &&
+                      (parseInt(ap.content2.databag.all.actorType) == MgbActor.alActorType_Player ||
+                      parseInt(ap.content2.databag.all.actorType) == MgbActor.alActorType_NPC))
+                  {
+                    // enemies & players don't block bullets :)  - they get handled in the collision code
+                  } else if (parseInt(ap.content2.databag.all.actorType) == MgbActor.alActorType_Shot &&
+                      (parseInt(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_Player ||
+                      parseInt(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_NPC))
+                  {
+                    // again, enemies & players don't block bullets - just checking with the order switched
+                  } else if (AA_player_idx == AAInCell)
+                  {
+                    // NPC is trying to occupy the same space as the player... is this OK?
+                    if (parseInt(aa_p.content2.databag.npc.canOccupyPlayerSpaceYN) == 1)
+                      obstructed = false
+                    else
+                      obstructed = true
+                  } else if (itemAct == MgbActor.alItemActivationType_BlocksNPC || itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
+                    obstructed = true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    return obstructed
+  }
+
+}

@@ -77,26 +77,27 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
   // fixup Layer[3] which is an eventLayer with a few kinds of thing
   //   See https://github.com/dgolds/MGB-Flex-source-code/search?utf8=%E2%9C%93&q=CommandEngine.encode
   const eventLayer = newAsset.content2.mapLayer[3]
-    _.each(eventLayer, (cmdStr, idx) => {
-      if (cmdStr)
-      {
-        const [ cmd, params ] = cmdStr.split(': ')
-        const p2 = params.split(',').sort()
-        switch (cmd) {          
-        case 'jump':
-          // example: "jump: mapname=XXXXXXXXX,y=N,x=N"
-          var [cmdMapname, mapname] =p2[0].trim().split('=')
-          p2[0] = cmdMapname + '=' +  'FOOBAR.' + mapname
-          break
-        case 'music':
-          // example: "music: source=SONGNAME,loops=NNNNNN"
-          var [cmdSongname, songname] =p2[1].trim().split('=')
-          p2[1] = cmdSongname + '=' +  '[builtin]:' + songname
-          break
-        }
-        eventLayer[idx] = cmd + ': ' + p2.join(',')
+  
+  _.each(eventLayer, (cmdStr, idx) => {
+    if (cmdStr)
+    {
+      const [ cmd, params ] = cmdStr.split(': ')
+      const p2 = params.split(',').sort()
+      switch (cmd) {          
+      case 'jump':
+        // example: "jump: mapname=XXXXXXXXX,y=N,x=N"
+        var [cmdMapname, mapname] =p2[0].trim().split('=')
+        p2[0] = cmdMapname + '=' + mgb2assetNamePrefix + mapname
+        break
+      case 'music':
+        // example: "music: source=SONGNAME,loops=NNNNNN"
+        var [cmdSongname, songname] =p2[1].trim().split('=')
+        p2[1] = cmdSongname + '=' +  '[builtin]:' + songname
+        break
       }
-    })
+      eventLayer[idx] = cmd + ': ' + p2.join(',')
+    }
+  })
 
 
   console.log('------ ' + assetName + ' ------')  

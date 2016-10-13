@@ -2,7 +2,7 @@
 // Quick lookup map to set/check if cells are blocked for any reason
 
 
-export class BlockageMap
+export default class BlockageMap
 {
 	reset(w, h)
 	{
@@ -12,7 +12,7 @@ export class BlockageMap
 	}
 
   constructor() {
-		// Does nothing. Caller shoudl use reset() instead to prepare for use
+		// Does nothing. Caller should use reset() instead to prepare for use
   }
 	
   // static public consts...

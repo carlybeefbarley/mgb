@@ -30,20 +30,14 @@ export default MagePlayGameActiveLayers = {
     this.activeActors = []
 
     // Instantiate instances of the Actors using the map data
-    for (var y = 0; y < map.height; y++)
-    {
-      for (var x = 0; x < map.width; x++)
-      {
-        var actorName = map.mapLayerActors[layer][this.cell(x, y)]
-        if (null != actorName)
-        {
+    for (var y = 0; y < map.metadata.height; y++) {
+      for (var x = 0; x < map.metadata.width; x++) {
+        var actorName = map.mapLayer[layer][this.cell(x, y)]
+        if (null != actorName) {
           var ap = this.actors[actorName]
-          if (ap)
-          {
-            var thisAAidx = this.activeActors.length
-debugger //  ? thisAAidx ?     
+          if (ap) {
             const databag = ap.content2.databag
-            var at = databag.all.actorType
+            var at = parseInt(databag.all.actorType)
             
             if (skipCreatingPlayers == true && at == MgbActor.alActorType_Player)
               continue
@@ -74,7 +68,7 @@ debugger //  ? thisAAidx ?
               aa.moveSpeed = Number(databag.allchar.movementSpeedNum)
               // no 'break' here: falling through to next clause on purpose...
             case MgbActor.alActorType_Item:
-              var tp = this.graphics[ap.tilename]
+              var tp = this.graphics[databag.all.defaultGraphicName]
               if (!tp)
               {
                 this.logGameBug("Actor '"+ap.name+"' does not have a valid tile and will not be in the game", false)
@@ -101,11 +95,11 @@ debugger //  ? thisAAidx ?
                 aa.maxHealth = databag.all.initialMaxHealthNum
                 aa.appearIf = databag.itemOrNPC.appearIf ? databag.itemOrNPC.appearIf : MgbActor.alAppearDisappear_NoCondition
                 aa.ACidx = actorName
-                aa.renderBD = tp.bitmapData
+                aa._image = tp._image
                 aa.renderX = x * MgbSystem.tileMinWidth
                 aa.renderY = y * MgbSystem.tileMinHeight
-                aa.cellSpanX = (tp.width  + (MgbSystem.tileMinWidth  - 1))/ MgbSystem.tileMinWidth		// Round up
-                aa.cellSpanY = (tp.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
+                aa.cellSpanX = (tp.content2.width  + (MgbSystem.tileMinWidth  - 1))/ MgbSystem.tileMinWidth		// Round up
+                aa.cellSpanY = (tp.content2.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
                 var spawnShot = databag.allchar.shotActor
                 aa.maxActiveShots = (spawnShot == null || spawnShot == "") ? 0 : parseInt(databag.allchar.shotRateNum)
                 aa.alive = true
@@ -157,9 +151,8 @@ debugger //  ? thisAAidx ?
 
   respawnRequiredActorsForMap: function() {
     // See the complementary code in playSpawnNewActor()
+    if (this.respawnMemoryAutoRespawningActors[this.map.name]) {
 debugger  // step through first time
-    if (null != this.respawnMemoryAutoRespawningActors[this.map.name])
-    {
       var a = this.respawnMemoryAutoRespawningActors[this.map.name]		
       for (var i in a)
       {
@@ -176,11 +169,11 @@ debugger  // step through first time
   playSpawnNewActor: function(actorName, x, y, recycle = false, dropPersists = false, respawnId=null)
   {
     // Put within bounds
-    x = _.clamp(0, this.map.width-1)
-    y = _.clamp(0, this.map.height-1)
+    x = _.clamp(0, this.map.metadata.width-1)
+    y = _.clamp(0, this.map.metadata.height-1)
     
     // Spawn?
-    var thisAAidx = this.activeActors.length
+    let thisAAidx = this.activeActors.length
     if (recycle)
     {
       // We want to look for a dead item to reuse. NOTE - don't re-use items that have conditions - they may just be dormant
@@ -195,13 +188,13 @@ debugger  // step through first time
         }
       }
     }
-    var ap = this.actors[actorName]
+    const ap = this.actors[actorName]
     if (!ap || !ap.content2)
     {
       this.logGameBug("Can't spawn an actor that hasn't been pre-loaded: " + actorName)
       return -1
     }
-    var at = ap.content2.databag.all.actorType
+    const at = ap.content2.databag.all.actorType
     if (MgbActor.alActorType_Player == at)
     {
       this.logGameBug("Can't spawn additional players")
@@ -209,7 +202,7 @@ debugger  // step through first time
     }
     else
     {
-      var aa = new ActiveActor
+      let aa = new ActiveActor()
       aa.meleeStep = ActiveActor.MELEESTEP_NOT_IN_MELEE
       aa.creationCause = ActiveActor.CREATION_BY_SPAWN
       if (at === MgbActor.alActorType_NPC)
@@ -221,18 +214,18 @@ debugger  // step through first time
       aa.health = ap.content2.databag.all.initialHealthNum
       aa.maxHealth = ap.content2.databag.all.initialMaxHealthNum
       aa.ACidx = actorName
-      var tp = this.graphics[ap.tilename]
+      var tp = this.graphics[ap.content2.databag.all.defaultGraphicName]
       if (!tp)
       {
-        this.logGameBug("Can't find graphic " + ap.tilename)
+        this.logGameBug("Can't find graphic " + ap.content2.databag.all.defaultGraphicName)
         return -1
       }
-      aa.renderBD = tp._image
+      aa._image = tp._image
       aa.appearIf = MgbActor.alAppearDisappear_NoCondition			// Shots can't have conditions
       aa.renderX = x * MgbSystem.tileMinWidth
       aa.renderY = y * MgbSystem.tileMinHeight
-      aa.cellSpanX = (tp.width  + (MgbSystem.tileMinWidth  - 1))/ MgbSystem.tileMinWidth		// Round up
-      aa.cellSpanY = (tp.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
+      aa.cellSpanX = (tp.content2.width  + (MgbSystem.tileMinWidth  - 1))/ MgbSystem.tileMinWidth		// Round up
+      aa.cellSpanY = (tp.content2.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
       
       var spawnShot = ap.content2.databag.allchar.shotActor
       aa.maxActiveShots = (!spawnShot || spawnShot === '') ? 0 : parseInt(ap.content2.databag.allchar.shotRateNum)

@@ -1,13 +1,121 @@
 
 import ActiveActor from './MageActiveActorClass'
 
-export default MgbActor = {
+const MgbActor = {
+
+  alNpcDialogFinalAction:             ["Disappears", "Stays", "Repeat Question"],
+  alNpcDialogFinalAction_disappear:   0,
+  alNpcDialogFinalAction_stay:        1,
+  alNpcDialogFinalAction_repeat:      2,
+
+  alActorType:              ["Player", "Non-Player Character (NPC)", "Item, wall or scenery", "Shot"],
+  alActorTypeShort:         ["Player", "NPC", "Item", "Shot"],
+  alActorType_Player:       0,
+  alActorType_NPC:          1,
+  alActorType_Item:         2,
+  alActorType_Shot:         3,
+
+  alNpcTakeTypes:           ["Take", "Require"],
+  alNpcTakeType_Take:       0,
+  alNpcTakeType_Require:    1,
+
+  alAppearDisappear:              ["No condition", "Disappear", "Appear"],
+  alAppearDisappear_NoCondition:  0,
+  alAppearDisappear_Disappear:    1,
+  alAppearDisappear_Appear:       2,
+
+  alShotRate: ["Cannot Shoot", "Shoot rarely", "One shot at at time", "Many shots at a time"],
+
+  alRespawnOptions:           ["Respawn on map reload", "Never respawn"],
+  alRespawnOption_MapReload:  0,
+  alRespawnOption_Never:      1,
+
+  isSoundNonNull: function(s) { return s && s != "" && s != "none" },			// these are all types of 'nul' sound
+
+  alCannedSoundsList: [
+    "none",
+    "Arrow1",	"Arrow2", 
+    "Beep1", 	"Beep2", 	"Beep3",	"Beep4",
+    "Bounce1", 	"Bounce2",	"Bounce3",	
+    "Burp1",	"Burp2",
+    "Chime1",
+    "Chomp1",	"Chomp2",
+    "Gasp1",	"Gasp2",
+    "Laser1",	"Laser2",	"Laser3",
+    "Money1",	"Money2",	"Money3",	"Money4",
+    "Scream1",	"Scream2",	"Scream3",	"Scream4",
+    "Shot1",	"Shot2",	"Shot3",	"Shot4",	"Shot5",	"Shot6",	"Shot7",	"Shot8",
+    "Siren1",	"Siren2",
+    "Slurp1",	"Slurp2",	"Slurp3",
+    "Melee1",	"Melee2",	"Melee3",	"Melee4",	"Melee5",	"Melee6"
+  ],
 
 
+  alMovementType:             [ "No automatic movement", 
+                                "Moves randomly", 
+                                "Moves towards player", 
+                                "Moves away from player" ],
+  alMovementType_None:        0,
+  alMovementType_Random:      1,
+  alMovementType_ToPlayer:    2,
+  alMovementType_FromPlayer:  3,
+  
+  alTouchDamageCases: [
+    "When overlapping target", 
+    "When facing target", 
+    "When adjacent to target" 
+  ],
 
-//..for .alActorType_Shot etc
-// alAppearDisappear_NoCondition
-// alActorType_Player
+  alTouchDamageCases_WhenOverlapped:        0,
+  alTouchDamageCases_WhenFacingAndAdjacent: 1,
+  alTouchDamageCases_WhenAdjacent:          2,
+  
+  alItemActivation: [
+    "inactive", 
+    "Blocks Player", "Blocks NPC", "Blocks Player+NPC", 
+    "Player picks up, uses later", 
+    "Player picks up, uses immediately", 
+    "Player uses, but leaves item", 
+    "Player shoots item to use it",
+    "Pushes actors in a direction",
+    "Floor that causes damage"
+  ],
+  alItemActivationType_Inactive:                0,
+  alItemActivationType_BlocksPlayer:            1,
+  alItemActivationType_BlocksNPC:               2,
+  alItemActivationType_BlocksPlayerAndNPC:      3,
+  alItemActivationType_PlayerPicksUpUsesLater:  4,
+  alItemActivationType_PlayerPicksUpUsesNow:    5,
+  alItemActivationType_PlayerUsesAndLeavesItem: 6,
+  alItemActivationType_PlayerShootsItemToUse:   7,
+  alItemActivationType_PushesActors:            8,
+  alItemActivationType_CausesDamage:            9,
+
+  alVisualEffect: [
+    "none", 
+    "glow", 
+    "fade-out", 
+    "explode"
+  ],
+        
+  alItemPushesActorType: ["Up", "Right", "Down", "Left", "Onwards", "Backwards", "Random"],
+  alItemPushesActorType_up:        0,
+  alItemPushesActorType_right:     1,
+  alItemPushesActorType_down:      2,
+  alItemPushesActorType_left:      3,
+  alItemPushesActorType_onwards:   4,
+  alItemPushesActorType_backwards: 5,
+  alItemPushesActorType_random:    6,
+
+  alShotAccuracy: ["Random shot","Poor shot", "Good shot", "Great Shot" ],
+  alShotAccuracy_random:  0,
+  alShotAccuracy_poor:    1,
+  alShotAccuracy_good:    2,
+  alShotAccuracy_great:   3,
+
+  alGainPower: ["No power","Cannot be harmed"],
+  alGainPowerType_None:         0,
+  alGainPowerType_Invulnerable: 1,
 
 
   ANIMATION_INDEX_BASE_FACE_NORTH:              0,
@@ -23,7 +131,6 @@ export default MgbActor = {
   ANIMATION_INDEX_BASE_STATIONARY_EAST:         84,		// 16 of these
   ANIMATION_INDEX_BASE_STATIONARY_SOUTH:        100,	// 16 of these
   ANIMATION_INDEX_BASE_STATIONARY_WEST:         116,	// 16 of these
-
 
   getAnimationIndex: function(	
     actorPiece, 
@@ -112,7 +219,6 @@ export default MgbActor = {
     return animationTableIndex
   },
 
-
   isAnimationTableIndexValid: function(actorPiece, animationTableIndex)		// i.e. non-empty and correctly formed 
   {
     var ate = actorPiece.animationTable[animationTableIndex]		// Animation Table Entry
@@ -138,3 +244,6 @@ export default MgbActor = {
     return tilename ? tilename :  ""		// Null -> ""
   }
 }
+
+
+export default MgbActor

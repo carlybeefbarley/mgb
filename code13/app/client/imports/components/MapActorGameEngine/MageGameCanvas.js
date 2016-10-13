@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react'
+
+import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
 
 // MapActorGameEngine GameCanvas
@@ -18,20 +20,16 @@ export default class MageGameCanvas extends React.Component {
   loadActorByName(actorName) 
   {
     console.log(`actor not preloaded: ${actorName}`)
-    debugger //
-    // TODO - ask for this to be loaded? or say it isn't there.
+debugger // TODO - ask for this to be loaded? or say it isn't there.
   } 
 
-  _drawLayer(mapData, actorData, tileData, layerIdx, tweenCount) {
-    const _ctx = this._ctx
+  _drawPassiveLayer(map, actors, tileData, layerIdx, tweenCount) {
+    const { _ctx } = this
     const startY = 0
-    const endY = 111                          // FIXME
+    const endY = map.metadata.height
     const startX = 0
-    const endX = 111                          // FIXME
-    
-    const ml = mapData.mapLayer[layerIdx]
-    // const getAnimationTileFromIndex = (,) =>  FIXME
-    // const getAnimationEffectFromIndex = (,) = FIXME
+    const endX = map.metadata.width    
+    const ml = map.mapLayer[layerIdx]
 
     for (let y = startY; y < endY; y++) {
       for (let x = startX; x < endX; x++) {
@@ -39,7 +37,7 @@ export default class MageGameCanvas extends React.Component {
         if (actorName && actorName != '') {
           const px = ((x - startX) * 32) //- pixelShiftLeftX
           const py = ((y - startY) * 32) //- pixelShiftUpY
-          var actor = actorData[actorName].content2
+          var actor = actors[actorName].content2
           if (actor) {
             const animationTableIndex = MgbActor.getAnimationIndex(actor, -1, -1, tweenCount)
             const newTileName = MgbActor.getAnimationTileFromIndex(actor, animationTableIndex)
@@ -57,15 +55,44 @@ export default class MageGameCanvas extends React.Component {
     }
   }
 
-  doBlit(mapData, actorData, tileData, tweenCount) {
+  // Render from ActiveActors[] array
+  _drawActiveLayer(map, actorData, tileData, activeActors, tweenCount) {
+    const { _ctx } = this
+
+const hScroll = 0
+const vScroll = 0
+const renderWidth  = map.metadata.width  * MgbSystem.tileMinWidth
+const renderHeight = map.metadata.height * MgbSystem.tileMinHeight
+
+    var aalen = activeActors.length
+    for (let AAi = 0; AAi < aalen; AAi++) {
+      const aa = activeActors[AAi]
+      if (aa && aa.alive && aa._image) {
+        // Potentially needs to be rendered.. if on-screen
+        let x = aa.renderX - hScroll
+        let y = aa.renderY - vScroll
+        // Apply any position adjustments (Melee for example uses this)
+        x += (aa.renderOffsetCellsX * MgbSystem.tileMinWidth)
+        y += (aa.renderOffsetCellsY * MgbSystem.tileMinHeight)
+        if ( x + MgbSystem.tileMaxWidth >= 0 && x <= renderWidth 
+              && y + MgbSystem.tileMaxHeight >= 0 && y <= renderHeight)
+          _ctx.drawImage(aa._image, x, y)
+      }
+    }
+  }
+
+  doBlit(mapData, actorData, tileData, activeActors, tweenCount) {
     const ctx = this._ctx
     if (!ctx) return
 
     ctx.fillStyle = '#ffffff'
     ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
-    for (let layerIdx = 0; layerIdx < 3; layerIdx++) {
-      this._drawLayer(mapData, actorData, tileData, layerIdx, tweenCount)
-    }
+    this._drawPassiveLayer(mapData, actorData, tileData, 0, tweenCount)
+    if (activeActors && activeActors.length>0)
+      this._drawActiveLayer( mapData, actorData, tileData, activeActors, tweenCount)
+    else
+      this._drawPassiveLayer(mapData, actorData, tileData, 1, tweenCount)
+    this._drawPassiveLayer(mapData, actorData, tileData, 2, tweenCount)
   }
 
   prepCanvas(c) {

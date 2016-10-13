@@ -501,7 +501,7 @@ package com.mgb.controls
 			   			for (var AAi:int = 0; AAi < aalen; AAi++)
 			   			{
 			   				var aa:ActiveActor = activeActors[AAi]
-			   				if (aa.alive && aa.renderBD)
+			   				if (aa.alive && aa._image)
 			   				{
 			   					// Potentially needs to be rendered.. if on-screen
 			   					x = aa.renderX - hScroll
@@ -519,11 +519,11 @@ package com.mgb.controls
 			   						p.y = y
 			   						try
 			   						{
-										view.frameBuffer.copyPixels(aa.renderBD, new Rectangle(0, 0, aa.renderBD.width, aa.renderBD.height), p, null, null, true)
+										view.frameBuffer.copyPixels(aa._image, new Rectangle(0, 0, aa._image.width, aa._image.height), p, null, null, true)
 			   						}
    							    	catch (err:Error)
    							    	{
-   							    		trace("renderBD not ready for actor '"+aa.ACidx+"'")
+   							    		trace("_image not ready for actor '"+aa.ACidx+"'")
    							    	}
 			   					}
 			   				}
@@ -699,7 +699,7 @@ package com.mgb.controls
 				var newTilePiece:MgbTile = MgbTile(tileCache.getPiece(mapPiece.userName, mapPiece.projectName, newTileName))
 
 				if (newTilePiece && newTilePiece.loadPending == false && newTilePiece.bitmapData)
-					activeActors[AA].renderBD = newTilePiece.bitmapDataVariant(effect)
+					activeActors[AA]._image = newTilePiece.bitmapDataVariant(effect)
 			}
 // 		}
 

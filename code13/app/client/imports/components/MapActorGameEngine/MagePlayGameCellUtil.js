@@ -1,9 +1,9 @@
 
 export default MagePlayGameCellUtil = {
   cell(x, y) {
-    if (x > this.map.width || y > this.map.height)
+    if (x > this.map.metadata.width || y > this.map.metadata.height)
       throw new Error("Invalid coordinates for map")
-    return y*this.map.width + x		// Arranged in rows
+    return y*this.map.metadata.width + x		// Arranged in rows
   },
 
   /**

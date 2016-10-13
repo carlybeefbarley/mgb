@@ -9,11 +9,11 @@ export default MagePlayGameMovement = {
 
   calculateNewPlayerPosition: function(stepStyleOverride)
   {
-    const { activeActors, AA_player_idx } = this
-    debugger // G_player_action
+    const { activeActors, AA_player_idx, G_player_action, map } = this
+debugger // G_player_action
     var plyr = activeActors[AA_player_idx]
     
-    if (G_player_action_melee)
+    if (G_player_action.melee)
       this.startMeleeIfAllowed(plyr, true)
     
     if (!plyr.inMelee())
@@ -21,28 +21,30 @@ export default MagePlayGameMovement = {
       // These actions can only be happen if the player is *not* in the middle of melee. 
       // TODO: Should we queue up the keyboard input anyway?
 
-      if (G_player_action_shoot && this.actorCanShoot(AA_player_idx))
+      if (G_player_action.shoot && this.actorCanShoot(AA_player_idx))
       {
         this.actorCreateShot(AA_player_idx)
-        G_player_action_shoot = false
+        G_player_action.shoot = false
       }
+debugger // map.metadata      
 
-      if ((stepStyleOverride == 0 || (stepStyleOverride == -1 && G_player_action_up)) && plyr.y < mapPiece.height)
+      if ((stepStyleOverride == 0 || (stepStyleOverride == -1 && G_player_action.up)) && plyr.y < map.metadata.height)
       {
         plyr.y--
         plyr.stepStyle = 0
       }	
-      if ((stepStyleOverride == 2 || (stepStyleOverride == -1 && G_player_action_down)) && plyr.y >= 0)
+      if ((stepStyleOverride == 2 || (stepStyleOverride == -1 && G_player_action.down)) && plyr.y >= 0)
       {
         plyr.y++
         plyr.stepStyle = 2
       }
-      if ((stepStyleOverride == 3 || (stepStyleOverride == -1 && G_player_action_left)) && plyr.x >= 0)
+      if ((stepStyleOverride == 3 || (stepStyleOverride == -1 && G_player_action.left)) && plyr.x >= 0)
       {
         plyr.x--
         plyr.stepStyle = 3
       }	
-      if ((stepStyleOverride == 1 || (stepStyleOverride == -1 && G_player_action_right)) && plyr.x < mapPiece.width)
+debugger // map.metadata      
+      if ((stepStyleOverride == 1 || (stepStyleOverride == -1 && G_player_action.right)) && plyr.x < map.metadata.width)
       {
         plyr.x++;
         plyr.stepStyle = 1
@@ -225,7 +227,7 @@ export default MagePlayGameMovement = {
   },
   
   // Each layer is handled specially as follows:
-  // 1. layerBackground is just held in the mapPiece.mapLayerActors[layerBackground] array of cells
+  // 1. layerBackground is just held in the map.mapLayer[layerBackground] array of cells
   // 2. layerActive is held in the activeActors array
   // 3. layerForeground isn't checked - by convention it's just for visual effect
   // Note that if the actor is the player and the obstruction is a pushable item, then we say not-obstructed.. 
@@ -238,8 +240,8 @@ export default MagePlayGameMovement = {
     var aa_p = actors[aa.ACidx]             // this is it's actor piece
     var cX = aa.cellSpanX + aa.x
     var cY = aa.cellSpanY + aa.y
-    var mW = map.width
-    var mH = map.height
+    var mW = map.metadata.width
+    var mH = map.metadata.height
 
     for (var x = aa.x; x < cX && x < mW && obstructed == false; x++)
     {
@@ -250,7 +252,7 @@ export default MagePlayGameMovement = {
         // 1. Check the background layer. These don't change so we can work out behavior by the generic actorCache[] properties
         if (backgroundBlockageMap.isEntityBlocked(x, y, (AA_player_idx == AAidxToCheck ? BlockageMap.ENTITY_PLAYER : BlockageMap.ENTITY_NPC)))
           obstructed = true 
-/*****				var ACidx:String = mapPiece.mapLayerActors[MgbMap.layerBackground][cellToCheck]
+/*****				var ACidx:String = map.mapLayer[MgbMap.layerBackground][cellToCheck]
         if (null != ACidx)
         {
           var ap:MgbActor = MgbActor(actorCache.getPieceIfCached(mapPiece.userName, mapPiece.projectName, ACidx))

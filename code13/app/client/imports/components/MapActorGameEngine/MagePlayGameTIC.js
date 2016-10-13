@@ -29,8 +29,8 @@ export default MagePlayGameTIC = {
     
     var aa = activeActors[AAidx]
 
-    var mW = map.width
-    var mH = map.height
+    var mW = map.metadata.width
+    var mH = map.metadata.height
     var cX = aa.cellSpanX
     var cY = aa.cellSpanY
     

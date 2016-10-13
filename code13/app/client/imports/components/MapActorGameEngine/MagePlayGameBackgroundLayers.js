@@ -4,43 +4,34 @@
 
 // This is the code that is primarily focussed on the BACKGROUND Layers.
 
+import BlockageMap from './MageBlockageMap'
 import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
 import MgbMap from './MageMgbMap'
-
-import BlockageMap from './MageBlockageMap'
-
 
 export default MagePlayGameBackgroundLayers = {
 
   playPrepareBackgroundLayer: function()
   {
     const { backgroundBlockageMap } = this
-    backgroundBlockageMap.reset(this.map.width, this.map.height)
-    for (var y = 0; y< this.map.height; y++)
-    {
-      for (var x = 0; x < this.map.width; x++)
-      {
+    backgroundBlockageMap.reset(this.map.metadata.width, this.map.metadata.height)
+    for (var y = 0; y< this.map.metadata.height; y++) {
+      for (var x = 0; x < this.map.metadata.width; x++) {
         const cellToCheck = this.cell(x,y)
-        const ACidx = this.map.mapLayerActors[MgbMap.layerBackground][cellToCheck]
-        if (ACidx)
-        {
-debugger  // next line seems odd.. id or name?
-          var ap = this.actors[ACidx]
-
-          if (ap)
-          {
-            var at = ap.content2.databag.all.actorType
-            if (at == MgbActor.alActorType_Item)
-            {
+        const ACidx = this.map.mapLayer[MgbMap.layerBackground][cellToCheck]
+        if (ACidx) {
+          const ap = this.actors[ACidx]
+          if (ap) {
+            var at = parseInt(ap.content2.databag.all.actorType)
+            if (at == MgbActor.alActorType_Item) {
               // Now, we need to work out how big this thing is. We learn this from the tile
-              var tp = this.graphics[ap.tilename]
+              var tp = this.graphics[ap.content2.databag.all.defaultGraphicName]
               if (!tp)
-                this.logGameBug("playPrepareBackgroundLayer() can't measure background actor '"+ap.name+"' - unknown tile '"+ap.tilename+"'. Assuming 1x1.")
+                this.logGameBug("playPrepareBackgroundLayer() can't measure background actor '"+ap.name+"' - unknown tile '"+ap.content2.databag.all.defaultGraphicName+"'. Assuming 1x1.")
 
-              var width = tp ? Math.floor(tp.width / MgbSystem.tileMinWidth) : 1 
-              var height =  tp ? Math.floor(tp.height / MgbSystem.tileMinHeight) : 1
-              var itemAct = ap.content2.databag.item.itemActivationType
+              var width = tp ? Math.floor(tp.content2.width / MgbSystem.tileMinWidth) : 1 
+              var height =  tp ? Math.floor(tp.content2.height / MgbSystem.tileMinHeight) : 1
+              var itemAct = parseInt(ap.content2.databag.item.itemActivationType)
               
               // OK, now mark the appropriate number of spaces as blocked
               if (itemAct == MgbActor.alItemActivationType_BlocksPlayer || itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
@@ -51,12 +42,12 @@ debugger  // next line seems odd.. id or name?
           }
         }
       }
-  	}
+    }   
   },
   
   playCleanupBackgroundLayer: function()
   {
-  	this.backgroundBlockageMap.reset(1, 1)
+    this.backgroundBlockageMap.reset(1, 1)
   }
 
 }

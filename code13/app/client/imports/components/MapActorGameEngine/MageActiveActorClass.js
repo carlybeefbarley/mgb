@@ -8,7 +8,7 @@ export default class ActiveActor
 	maxHealth = 0							// Current Maximum health
 	renderX = 0								// Render this at pixel X (not tile X)
 	renderY = 0								// Render this at pixel Y (not tile Y)
-	renderBD:BitmapData						// Render this BitmapData
+	_image = null						// This shoudl be of type Image
 	cellSpanX = 0							// How many cells does this actor span (width)?
 	cellSpanY = 0							// How many cells does this actor span (height)?
 	

@@ -45,18 +45,19 @@ export default MagePlayGameCollision = {
                 // Note - calculating now in PIXELS...
                 var x1 = a1.renderX + (a1.renderOffsetCellsX * MgbSystem.tileMinWidth)
                 var y1 = a1.renderY + (a1.renderOffsetCellsY * MgbSystem.tileMinHeight)
-                var w1 = (a1.renderBD.width - 1) + (a1.renderOffsetCellsWidth * MgbSystem.tileMinWidth)
-                var h1 = (a1.renderBD.height - 1) + (a1.renderOffsetCellsHeight * MgbSystem.tileMinHeight)
+debugger // check _image.width
+                var w1 = (a1._image.width - 1) + (a1.renderOffsetCellsWidth * MgbSystem.tileMinWidth)
+                var h1 = (a1._image.height - 1) + (a1.renderOffsetCellsHeight * MgbSystem.tileMinHeight)
 
                 var x2 = a2.renderX + (a2.renderOffsetCellsX * MgbSystem.tileMinWidth)
-                var w2 = (a2.renderBD.width - 1) + (a2.renderOffsetCellsWidth * MgbSystem.tileMinWidth)
+                var w2 = (a2._image.width - 1) + (a2.renderOffsetCellsWidth * MgbSystem.tileMinWidth)
                 if ((x1 >= x2 && x1 < x2+w2) || (x2 >= x1 && x2 < x1+w1)) {
                   var y2 = a2.renderY + (a2.renderOffsetCellsY * MgbSystem.tileMinHeight)
-                  var h2 = (a2.renderBD.height - 1) + (a2.renderOffsetCellsHeight * MgbSystem.tileMinHeight) 
+                  var h2 = (a2._image.height - 1) + (a2.renderOffsetCellsHeight * MgbSystem.tileMinHeight) 
                   if ((y1 >= y2 && y1 < y2+h2) ||	(y2 >= y1 && y2 < y1+h1))  {
                     // OK, now let's look really closely..
 debugger
-                    if (a1.renderBD.hitTest(new Point (x1, y1), 0xF0, a2.renderBD, new Point (x2, y2), 0xF0))
+                    if (a1._image.hitTest(new Point (x1, y1), 0xF0, a2._image, new Point (x2, y2), 0xF0))
                     {
                       if (AA2 == AA_player_idx)
                         hits.push(new ActorCollision(AA2, AA1))		// Player is always first item in a collision pair

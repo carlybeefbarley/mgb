@@ -61,7 +61,7 @@ export default MagePlayGameShoot = {
           return
         }
       }
-      if (shot.y < 0 || shot.x < 0 || shot.x > map.width -1 || shot.y > map.height -1)
+      if (shot.y < 0 || shot.x < 0 || shot.x > map.metadata.width -1 || shot.y > map.metadata.height -1)
       {
         // Not a valid new space, so the shot is spent
         this.destroyShot(shot)
@@ -92,7 +92,7 @@ export default MagePlayGameShoot = {
       this.logBug("destroyShot called on an actor which is not a shot")
     shot.alive = false
     shot.dyingAnimationFrameCount = 0
-    shot.renderBD = null
+    shot._image = null
     if (shot.actorWhoFiredShot != -1)
       activeActors[shot.actorWhoFiredShot].currentActiveShots--		// FIXME: Small issue here: What if the actor had since died and been respawned - fix by new code when actor dies - set all it's shots to be unowned (shot.actorWhoFiredShot = -1)
   }

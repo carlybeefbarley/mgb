@@ -31,7 +31,7 @@ export default MagePlayGameSliding = {
     aai.isSliding = true
     aai.moveSpeed = 1				// Special case - see note in class definition
     this.calculateNewEnemyPosition(AA_item_idx)
-    if (aai.y < 0 || aai.x < 0 || aai.x >= map.width || aai.y >= map.height || this.checkIfActorObstructed(AA_item_idx, true))
+    if (aai.y < 0 || aai.x < 0 || aai.x >= map.metadata.width || aai.y >= map.metadata.height || this.checkIfActorObstructed(AA_item_idx, true))
     {
       // Not a valid new space; revert to staying in place
       aai.x = aai.fromx

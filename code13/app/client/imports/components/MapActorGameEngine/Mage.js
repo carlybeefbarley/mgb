@@ -1,7 +1,9 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import MageGameCanvas from './MageGameCanvas'
-import { Segment } from 'semantic-ui-react'
+import MagePlayGame from './MagePlayGame'
+
+import { Segment, Button } from 'semantic-ui-react'
 
 // MapActorGameEngine (MAGE)
 
@@ -36,7 +38,6 @@ const _mkGraphicUri = (ownerName, assetName) => {
   return `/api/asset/full/${p.ownerName}/${p.assetName}`
 } 
 
-let _tweenCount = 0
 
 // Naughty but nice for now.
 const _HACK = self => window.DG = self
@@ -44,6 +45,12 @@ const _HACK = self => window.DG = self
 export default class Mage extends React.Component {
   constructor(props) {
     super(props)
+    // Non-react state
+    this._tweenCount = 0          // Tweencount for game loops
+    this._mageCanvas = null       // MageGameCanvas ref
+    this._gamePlayer = null       // Will be an instance of MagePlayGame class
+
+    // React state
     this.state = {
       isPreloading:       'map',   // Null if not preloading. String if preloading. Supercedes all other state
       mapLoadError:       null,    // Can be a string
@@ -62,10 +69,31 @@ export default class Mage extends React.Component {
     return `${this.props.ownerName}.${this.props.startMapName}`
   }
 
-  callDoBlit() 
+  handlePlay()
+  {
+    if (!this._mageCanvas)
+      return
+
+    this._game = new MagePlayGame()
+    this._game.startGame(
+      this.state.mapData, 
+      this.state.loadedActors, 
+      this.state.loadedGraphics, 
+      console.log, 
+      console.log,
+      window)
+
+  }
+
+  callDoBlit()
   {
     if (this._mageCanvas && !this.props.isPaused)
-      this._mageCanvas.doBlit(this.state.mapData, this.state.loadedActors, this.state.loadedGraphics, _tweenCount++) 
+      this._mageCanvas.doBlit(
+        this.state.mapData, 
+        this.state.loadedActors, 
+        this.state.loadedGraphics, 
+        this._game ? this._game.activeActors : null,
+        this._tweenCount++) 
     if (this._mounted)
       window.requestAnimationFrame( () => this.callDoBlit() )
   }
@@ -211,6 +239,8 @@ export default class Mage extends React.Component {
 
     return (
       <div>
+      <Button icon='play' content='play' onClick={() => this.handlePlay()} />
+      <br />
         <MageGameCanvas 
             ref={c => {this._mageCanvas = c} } 
             cellsWide={mapData.metadata.width} 

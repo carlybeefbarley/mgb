@@ -5,6 +5,7 @@ import _ from 'lodash'
 import MagePlayGameTIC from './MagePlayGameTIC'
 import MagePlayGameItem from './MagePlayGameItem'
 import MagePlayGameShoot from './MagePlayGameShoot'
+import MagePlayGameInput from './MagePlayGameInput'
 import MagePlayGameDamage from './MagePlayGameDamage'
 import MagePlayGameCellUtil from './MagePlayGameCellUtil'
 import MagePlayGameMovement from './MagePlayGameMovement'
@@ -13,11 +14,12 @@ import MagePlayGameActiveLayers from './MagePlayGameActiveLayers'
 import MagePlayGameBackgroundLayers from './MagePlayGameBackgroundLayers'
 
 // These imports are stand alone classes
-import BlockageMap from './MageBlockageMap'
 import ActiveActor from './MageActiveActorClass'
+import BlockageMap from './MageBlockageMap'
+import Inventory from './MagePlayGameInventory'
+import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
 import MgbMap from './MageMgbMap'
-import MgbSystem from './MageMgbSystem'
 
 /* Replacers
   pauseGame             ->    this.isPaused
@@ -49,15 +51,16 @@ export default class MagePlayGame
     // This has been a hard class to make smaller, so I'm just putting some of the code
     // in other files and I'm connecting them here so it isn't one huge source file.
     // This is sort of a cheap 'partial class' mechanism for javacript classes
-    _.extendOwn(this, MagePlayGameTIC)
-    _.extendOwn(this, MagePlayGameItem)
-    _.extendOwn(this, MagePlayGameShoot)
-    _.extendOwn(this, MagePlayGameDamage)
-    _.extendOwn(this, MagePlayGameCellUtil)
-    _.extendOwn(this, MagePlayGameMovement)
-    _.extendOwn(this, MagePlayGameCollision)
-    _.extendOwn(this, MagePlayGameActiveLayers)
-    _.extendOwn(this, MagePlayGameBackgroundLayers)
+    _.assign(this, MagePlayGameTIC)
+    _.assign(this, MagePlayGameItem)
+    _.assign(this, MagePlayGameShoot)
+    _.assign(this, MagePlayGameInput)
+    _.assign(this, MagePlayGameDamage)
+    _.assign(this, MagePlayGameCellUtil)
+    _.assign(this, MagePlayGameMovement)
+    _.assign(this, MagePlayGameCollision)
+    _.assign(this, MagePlayGameActiveLayers)
+    _.assign(this, MagePlayGameBackgroundLayers)
 
   }
 
@@ -96,12 +99,11 @@ export default class MagePlayGame
     
     this.G_tic = null         // Things In Cells .. a simple way to do collision detection
 
-debugger
     this.backgroundBlockageMap = new BlockageMap()
     this.inventory = new Inventory()
   }
 
-  startGame(map, actors, graphics, setGameStatusFn, showNpcMessageFn) { 
+  startGame(map, actors, graphics, setGameStatusFn, showNpcMessageFn, keyCaptureElement) { 
     this.map = map
     this.actors = actors
     this.graphics = graphics
@@ -109,7 +111,6 @@ debugger
     this.showNpcMessageFn = showNpcMessageFn
 
     this.resetGameState()
-
 
     this.setGameStatusFn(0, 'Starting game')
     this.setGameStatusFn(1)
@@ -121,8 +122,9 @@ debugger
     this.playPrepareBackgroundLayer()
 
     // Set up and start Game events
-    this.enablePlayerControls()
+    this.enablePlayerControls(keyCaptureElement)
   }
+
   logGameBug(msg) { console.error(msg) }
 
 
@@ -156,7 +158,7 @@ debugger
       // Check for player collision with an event square. These only check against the player's top-left 32x32 pixel 'head'
       const plyr = this.activeActors[this.AA_player_idx]
       const plyrCell = this.cell(plyr.x, plyr.y)
-      var eventString = this.map.mapLayerActors[MgbMap.layerEvents][plyrCell]
+      var eventString = this.map.mapLayer[MgbMap.layerEvents][plyrCell]
       if (eventString && eventString != '') {
         var o = MgbSystem.parseEventCommand(eventString)
         if (o.command === "jump") {
@@ -195,7 +197,7 @@ debugger
             for (var pushY = 0; pushY < actor.cellSpanY; pushY++) {
               var cellIndex = this.cell(actor.x + pushX, actor.y + pushY, true)
               if (cellIndex >= 0) {
-                var floorActorName = this.map.mapLayerActors[MgbMap.layerBackground][cellIndex]
+                var floorActorName = this.map.mapLayer[MgbMap.layerBackground][cellIndex]
                 floorActor = (floorActorName && floorActorName != '') ? this.actors[floorActorName]: null
                 if (floorActor && floorActor.content2 &&
                   floorActor.content2.databag.all.actorType == MgbActor.alActorType_Item &&
@@ -240,7 +242,7 @@ debugger
             this.calculateNewEnemyPosition(AA, stepStyleOverride)			// Note this can cause actor.alive -> 0
           // Calculate pre-collisions (obstructions)
           if (actor.alive == true &&
-            (this.checkIfActorObstructed(AA, true) || actor.y < 0 || actor.x < 0 || (actor.x + actor.cellSpanX) > this.map.width || (actor.y + actor.cellSpanY) > this.map.height)) {
+            (this.checkIfActorObstructed(AA, true) || actor.y < 0 || actor.x < 0 || (actor.x + actor.cellSpanX) > this.map.metadata.width || (actor.y + actor.cellSpanY) > this.map.metadata.height)) {
             // Not a valid new space; revert to staying in place
             var cellToCheck = this.cell(actor.x, actor.y)		// put this in a var to eliminate multiple lookups.
             actor.x = actor.fromx
@@ -413,7 +415,7 @@ debugger
             // Player gets bounty
             this.activeActors[this.AA_player_idx].score += parseInt(ap.content2.databag.itemOrNPC.scoreOrLosePointsWhenKilledByPlayerNum)
             // Get rid of the bitmap
-            this.activeActors[AA].renderBD = null					// TODO, nice explosion/fade/usage animations
+            this.activeActors[AA]._image = null					// TODO, nice explosion/fade/usage animations
 
             switch (this.activeActors[AA].creationCause) {
             case ActiveActor.CREATION_BY_MAP:

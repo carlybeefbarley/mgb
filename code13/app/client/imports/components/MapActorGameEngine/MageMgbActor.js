@@ -213,7 +213,8 @@ const MgbActor = {
         break
       }
       // Now, is there actually an animation here? If not, then revert back
-      if (actorPiece.animationTable[animationTableIndex].tilename == null || actorPiece.animationTable[animationTableIndex].tilename == "")
+      const animTableEntry = actorPiece.animationTable[animationTableIndex]
+      if (!animTableEntry || animTableEntry.tilename === null || animTableEntry.tilename === '')
         animationTableIndex = -1 
     }
     return animationTableIndex

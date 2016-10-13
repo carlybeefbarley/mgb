@@ -98,10 +98,10 @@ export default MagePlayGameActiveLayers = {
                 aa._image = tp._image
                 aa.renderX = x * MgbSystem.tileMinWidth
                 aa.renderY = y * MgbSystem.tileMinHeight
-                aa.cellSpanX = (tp.content2.width  + (MgbSystem.tileMinWidth  - 1))/ MgbSystem.tileMinWidth		// Round up
-                aa.cellSpanY = (tp.content2.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
+                aa.cellSpanX = Math.ceil(tp.content2.width / MgbSystem.tileMinWidth)	    // Round up
+                aa.cellSpanY = Math.ceil(tp.content2.height / MgbSystem.tileMinHeight)		// Round up
                 var spawnShot = databag.allchar.shotActor
-                aa.maxActiveShots = (spawnShot == null || spawnShot == "") ? 0 : parseInt(databag.allchar.shotRateNum)
+                aa.maxActiveShots = (!spawnShot || spawnShot === '') ? 0 : parseInt(databag.allchar.shotRateNum)
                 aa.alive = true
                 if (aa.moveSpeed == 0)
                   this.activeActors.unshift(aa)			// non-movers at the front of the array
@@ -282,7 +282,7 @@ debugger  // step through first time
             var p = this.findAdjacentFreeCellForDrop(AA, ActiveActor(activeActors[AA]).stepStyle, true)
             if (p) {
               this.playSpawnNewActor(this.loadActorByName(spawn), p.x, p.y)
-              this.G_tic = null	// Important, need to invalidate the collision detection cache.
+              this.clearTicTable()	// Important, need to invalidate the collision detection cache.
             }
           } 
         }

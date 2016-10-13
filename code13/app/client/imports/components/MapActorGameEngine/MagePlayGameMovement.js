@@ -10,7 +10,6 @@ export default MagePlayGameMovement = {
   calculateNewPlayerPosition: function(stepStyleOverride)
   {
     const { activeActors, AA_player_idx, G_player_action, map } = this
-debugger // G_player_action
     var plyr = activeActors[AA_player_idx]
     
     if (G_player_action.melee)
@@ -26,8 +25,6 @@ debugger // G_player_action
         this.actorCreateShot(AA_player_idx)
         G_player_action.shoot = false
       }
-debugger // map.metadata      
-
       if ((stepStyleOverride == 0 || (stepStyleOverride == -1 && G_player_action.up)) && plyr.y < map.metadata.height)
       {
         plyr.y--
@@ -43,7 +40,6 @@ debugger // map.metadata
         plyr.x--
         plyr.stepStyle = 3
       }	
-debugger // map.metadata      
       if ((stepStyleOverride == 1 || (stepStyleOverride == -1 && G_player_action.right)) && plyr.x < map.metadata.width)
       {
         plyr.x++;
@@ -234,7 +230,7 @@ debugger // map.metadata
   //		...the tweening moves will resolve what action should occur
   checkIfActorObstructed: function(AAidxToCheck, checkActives = false)
   {
-    const { actors, activeActors, AA_player_idx, map, backgroundBlockageMap, G_tic } = this
+    const { actors, activeActors, AA_player_idx, map, backgroundBlockageMap } = this
     var obstructed = false
     var aa = activeActors[AAidxToCheck]			// This is the actor that wants to move
     var aa_p = actors[aa.ACidx]             // this is it's actor piece
@@ -277,13 +273,13 @@ debugger // map.metadata
         // 2. Check the activeActors. To do this we take advantage of the G_tic table
         if (checkActives && !obstructed)
         {
-          if (null == G_tic)
+          if (!this.G_tic)
             this.generateTicTable()					// Positions have changed enough that we have to update the tic table
-          if (G_tic[cellToCheck] && G_tic[cellToCheck].length > 0)
+          if (this.G_tic[cellToCheck] && this.G_tic[cellToCheck].length > 0)
           {
-            for (var i = 0; i < G_tic[cellToCheck].length && !obstructed; i++)
+            for (var i = 0; i < this.G_tic[cellToCheck].length && !obstructed; i++)
             {
-              var AAInCell = G_tic[cellToCheck][i]
+              var AAInCell = this.G_tic[cellToCheck][i]
               var ACidx = activeActors[AAInCell].ACidx
               var ap = actors[ACidx]
               if (activeActors[AAInCell].alive && AAInCell != AAidxToCheck)

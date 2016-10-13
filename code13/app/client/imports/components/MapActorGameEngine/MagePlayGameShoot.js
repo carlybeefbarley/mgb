@@ -76,7 +76,7 @@ export default MagePlayGameShoot = {
       shot.shotDamageToPlayer = ap.actorXML.databag.allchar.shotDamageToPlayerNum
 //		        shot.xMovePerTween = (shot.x - shot.fromx) * (mapPiece.actorWidth / (G_tweensPerTurn - (G_tweenCount-1)));
 //	    	    shot.yMovePerTween = (shot.y - shot.fromy) * (mapPiece.actorHeight / (G_tweensPerTurn - (G_tweenCount-1)));
-      this.G_tic = null			// Important, need to invalidate the collision detection cache. TODO Potentially just update the cells we know have changed - i.e. aai.x,aai.y
+      this.clearTicTable()		// Important, need to invalidate the collision detection cache. TODO Potentially just update the cells we know have changed - i.e. aai.x,aai.y
       var shotSound = ap.actorXML.databag.allchar.soundWhenShooting
       if (aa_idx == AA_player_idx && inventory.equipmentShotSoundOverride)
         shotSound = inventory.equipmentShotSoundOverride

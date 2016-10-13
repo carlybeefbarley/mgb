@@ -2,11 +2,13 @@ import _ from 'lodash'
 
 // These imports are actually class extensions for the MagePlayGame class
 
+import MagePlayGameNpc from './MagePlayGameNpc'
 import MagePlayGameTIC from './MagePlayGameTIC'
 import MagePlayGameItem from './MagePlayGameItem'
 import MagePlayGameShoot from './MagePlayGameShoot'
 import MagePlayGameInput from './MagePlayGameInput'
 import MagePlayGameDamage from './MagePlayGameDamage'
+import MagePlayGameDisplay from './MagePlayGameDisplay'
 import MagePlayGameCellUtil from './MagePlayGameCellUtil'
 import MagePlayGameMovement from './MagePlayGameMovement'
 import MagePlayGameCollision from './MagePlayGameCollision'
@@ -51,11 +53,13 @@ export default class MagePlayGame
     // This has been a hard class to make smaller, so I'm just putting some of the code
     // in other files and I'm connecting them here so it isn't one huge source file.
     // This is sort of a cheap 'partial class' mechanism for javacript classes
+    _.assign(this, MagePlayGameNpc)
     _.assign(this, MagePlayGameTIC)
     _.assign(this, MagePlayGameItem)
     _.assign(this, MagePlayGameShoot)
     _.assign(this, MagePlayGameInput)
     _.assign(this, MagePlayGameDamage)
+    _.assign(this, MagePlayGameDisplay)
     _.assign(this, MagePlayGameCellUtil)
     _.assign(this, MagePlayGameMovement)
     _.assign(this, MagePlayGameCollision)
@@ -96,8 +100,9 @@ export default class MagePlayGame
     this.G_HSPdelta = 0		                      	// Scroll change per tween (horizontal)
     this.G_tweenSinceMapStarted = 0       	      // Current tween count in this map - used for timing end of powers etc
 
-    
-    this.G_tic = null         // Things In Cells .. a simple way to do collision detection
+
+    this.deferredAsk_aa = null                    // ActiveActor to use for the NPC dialog
+    this.deferredAsk_ap = null                    // The actor data to use for the NPC dialog
 
     this.backgroundBlockageMap = new BlockageMap()
     this.inventory = new Inventory()
@@ -141,10 +146,7 @@ export default class MagePlayGame
       return
 
     if (true) // TODO - make this once per second
-    {
-      debugger
       this.checkForGeneratedActorsThisSecond()
-    }
 
     // Now for the real actions
     if (0 == this.G_tweenCount) {
@@ -155,11 +157,13 @@ export default class MagePlayGame
       // This is the first tween this turn - decide what to do this turn. 
       // The remaining tweens for this turn will just animate what we decide now
 
-      // Check for player collision with an event square. These only check against the player's top-left 32x32 pixel 'head'
+      // Check for player collision with an event square. 
+      // These only check against the player's top-left 32x32 pixel 'head'
       const plyr = this.activeActors[this.AA_player_idx]
       const plyrCell = this.cell(plyr.x, plyr.y)
       var eventString = this.map.mapLayer[MgbMap.layerEvents][plyrCell]
       if (eventString && eventString != '') {
+debugger        
         var o = MgbSystem.parseEventCommand(eventString)
         if (o.command === "jump") {
           console.trace("event: " + eventString)
@@ -174,7 +178,9 @@ export default class MagePlayGame
         }
       }
 
-      this.G_tic = null		// Important, need to invalidate the collision detection cache. In theory we could only do this if at least one thing moved, but that's unlikely so not worth the grief...
+      // Important, need to invalidate the collision detection cache. 
+      // In theory we could only do this if at least one thing moved, but that's unlikely so not worth the effort
+      this.clearTicTable()
 
       this.checkForTouchDamageAtStartOfTween()
 
@@ -479,12 +485,11 @@ export default class MagePlayGame
     timeStr += (secondsPlayed % 60 < 10 ? "0" : "") + (secondsPlayed % 60)
 
     let mhs = this.activeActors[this.AA_player_idx].maxHealth == 0 ? "" : ("/" + this.activeActors[this.AA_player_idx].maxHealth)
-    this.setGameStatusString(0, //"Lives: "+activeActors[this.AA_player_idx].extraLives   +
+    this.setGameStatusFn(0, //"Lives: "+activeActors[this.AA_player_idx].extraLives   +
       "Health " + this.activeActors[this.AA_player_idx].health + mhs +
       "     Score " + this.activeActors[this.AA_player_idx].score + ps +
       "     Time " + timeStr)
 
-    this.pleaseRedrawMapSoon()			// In theory we could save CPU by not calling this always, as soon as any actor is animated, there's no perf benefit - so not worth the added complexity
     if (this.G_gameOver) {
       debugger//  this needs work
       // var gee = new GameEngineEvent(GameEngineEvent.COMPLETED,
@@ -507,11 +512,10 @@ export default class MagePlayGame
     }
   }
 
-//--------HERE-WHEN-STOPPPED-------
 
-
-// Need to get list of submethods from above code
-
-
+  scrollMapToSeePlayer()
+  {
+    // TODO
+  }
 
 }

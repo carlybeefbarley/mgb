@@ -88,12 +88,16 @@ export default class Mage extends React.Component {
   callDoBlit()
   {
     if (this._mageCanvas && !this.props.isPaused)
+    {
+      if (this._game)
+        this._game.onTickGameDo()
       this._mageCanvas.doBlit(
         this.state.mapData, 
         this.state.loadedActors, 
         this.state.loadedGraphics, 
         this._game ? this._game.activeActors : null,
-        this._tweenCount++) 
+        this._tweenCount++)
+    }
     if (this._mounted)
       window.requestAnimationFrame( () => this.callDoBlit() )
   }

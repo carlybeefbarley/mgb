@@ -20,10 +20,11 @@ export default MagePlayGameCollision = {
   
   playFindAACollisions()
   {
-    const { G_tic, activeActors, AA_player_idx } = this
-    var hits = new Array()
-    if (null == G_tic)
+    if (!this.G_tic)
       this.generateTicTable()					// Positions have changed enough that we have to update the tic table
+    const { G_tic, activeActors, AA_player_idx } = this
+
+    var hits = []
 
     // Now, check the cells for collisions
     var i = 0, j = 0;

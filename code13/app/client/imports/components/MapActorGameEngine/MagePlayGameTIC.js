@@ -11,7 +11,8 @@ export default MagePlayGameTIC = {
   generateTicTable: function()		// FIXME - needs to sort into larger cells - maybe MgbSystem.tileMax{Width/Height}
   {
     const { activeActors } = this
-
+    this.clearTicTable()
+    
     // Pigeon sort them into cells
     const len = activeActors.length			// Taking this out of the 'for' statement speeds things up a little
     for (let AA1 = 0; AA1 < len; AA1++) {
@@ -40,10 +41,8 @@ export default MagePlayGameTIC = {
     cY += aa.renderOffsetCellsHeight
     
     // Loop is to account for cellSpanX,Y
-    for (var x1 = 0 ; x1 < cX && ((x + x1) < mW); x1++)
-    {
-      for (var y1 = 0 ; y1 < cY && ((y + y1) < mH); y1++)
-      {
+    for (var x1 = 0 ; x1 < cX && ((x + x1) < mW); x1++) {
+      for (var y1 = 0 ; y1 < cY && ((y + y1) < mH); y1++) {
         if (x+x1 >=0 && y+y1 >=0)		// Check if cell is in bounds. Note that we don't need to check for the bottom/right edges since that bound is covered by the the loop guards.
         {
           var cell = x + x1 + ((y + y1) * mW)

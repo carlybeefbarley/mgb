@@ -53,7 +53,7 @@ export default MagePlayGameSliding = {
       // The space is available. Convert intended move into per-tween amounts and move
       aai.xMovePerTween = (aai.x - aai.fromx) * (MgbSystem.tileMinWidth / (G_tweensPerTurn - (G_tweenCount-1)))
       aai.yMovePerTween = (aai.y - aai.fromy) * (MgbSystem.tileMinHeight / (G_tweensPerTurn - (G_tweenCount-1)))
-      this.G_tic = null			// Important, need to invalidate the collision detection cache. TODO Potentially just update the cells we know have changed - i.e. aai.x,aai.y
+      this.clearTicTable()		// Important, need to invalidate the collision detection cache. TODO Potentially just update the cells we know have changed - i.e. aai.x,aai.y
     }
   },
 

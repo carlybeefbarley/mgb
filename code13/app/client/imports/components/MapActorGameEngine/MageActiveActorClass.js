@@ -47,7 +47,7 @@ export default class ActiveActor
 	birthTweenCount = 0						// The G_tweenCount when the item was spawned
 	
 	// Shot tracking - shots
-	isAShot:Boolean							  // Only true for Shots
+	isAShot = false							  // Only true for Shots
 	actorWhoFiredShot = 0					// Which actor fired this shot (metric valid for shots)
 	shotRange = 0							    // metric valid for Shots - comes from shooter's "actorXML.databag.allchar.shotRangeNum"
 	// Shot tracking - shooters
@@ -68,12 +68,13 @@ export default class ActiveActor
 	extraLives = 0							// in addition to the one currently in use
 	winLevel = false							// True when user reaches some special goal/marker etc
 	
-	static CREATION_BY_SPAWN = "spawned"
-	static CREATION_BY_MAP = "mapped"
-	static MELEESTEP_NOT_IN_MELEE = -1
+	// static consts
+	CREATION_BY_SPAWN = "spawned"
+	CREATION_BY_MAP = "mapped"
+	MELEESTEP_NOT_IN_MELEE = -1
 	
 	inMelee()
 	{
-		return meleeStep != MELEESTEP_NOT_IN_MELEE
+		return this.meleeStep !== undefined && this.meleeStep != this.MELEESTEP_NOT_IN_MELEE
 	}
 }

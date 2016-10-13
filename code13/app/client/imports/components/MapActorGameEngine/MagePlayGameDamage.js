@@ -7,10 +7,8 @@ import MgbActor from './MageMgbActor'
 export default MagePlayGameDamage = {
   checkForTouchDamageAtStartOfTween: function() 
   {
-    this.G_tic = null
-    const { actors, activeActors, G_tic, AA_player_idx } = this
     this.generateTicTable()
-
+    const { actors, activeActors, G_tic, AA_player_idx } = this
     // Calculate moves (watch out for obstructions)
     for (var AA = 0; AA < activeActors.length; AA++)
     {

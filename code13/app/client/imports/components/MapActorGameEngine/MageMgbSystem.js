@@ -1,4 +1,4 @@
-
+import _ from 'lodash'
 // Constants/functions related to the overall MGB MapActor Game Engine
 
 export default MgbSystem = {
@@ -8,7 +8,14 @@ export default MgbSystem = {
   tileMaxHeight: 128,
 
   parseEventCommand: function (str) {
-debugger// TODO
+    const [ cmd, params ] = str.split(': ')
+    const p2 = params.split(',').sort()
+    let result = { command: cmd }
+    _.each(p2, p => { 
+      const [k, v] = p.trim().split('=')
+      result[k] = v
+    })
+    return result
   }
 
 }

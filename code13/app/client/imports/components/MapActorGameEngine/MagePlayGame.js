@@ -133,8 +133,30 @@ export default class MagePlayGame
   logGameBug(msg) { console.error(msg) }
 
 
-
-///////// MONSTER GAME LOOP OMG REFACTOR THIS!!!!
+  /**
+   * transitionToNewMap()
+   * 
+   * @param {String} userName
+   * @param {String} projectName
+   * @param {String} newmapname
+   * @param {int} newX
+   * @param {int} newY
+   * 
+   * @memberOf MagePlayGame
+   */
+  transitionToNewMap(userName, projectName, newmapname, newX, newY)
+  {
+    this.transitionPlayerAA = this.activeActors[this.AA_player_idx]
+    this.playCleanupActiveLayer()
+    this.playCleanupBackgroundLayer()
+debugger
+    LOADMAP(userName, newmapname, loadMapDuringGameResult)     // TODO
+    this.transitionNewX = newX
+    this.transitionNewY = newY
+    this.transitionStateWaitingForActorLoadRequests = true
+    this.transitionInProgress = true
+  }
+  
 
   onTickGameDo() {
     if (this.isTransitionInProgress) {      // transition to new map
@@ -163,11 +185,10 @@ export default class MagePlayGame
       const plyrCell = this.cell(plyr.x, plyr.y)
       var eventString = this.map.mapLayer[MgbMap.layerEvents][plyrCell]
       if (eventString && eventString != '') {
-debugger        
         var o = MgbSystem.parseEventCommand(eventString)
         if (o.command === "jump") {
           console.trace("event: " + eventString)
-          this.transitionToNewMap(this.map.userName, this.map.projectName, o.mapname, o.x, o.y)
+          this.transitionToNewMap(this.map.userName, this.map.projectName, o.mapname, parseInt(o.x), parseInt(o.y))
           return
         }
         else if (o.command == "music") {

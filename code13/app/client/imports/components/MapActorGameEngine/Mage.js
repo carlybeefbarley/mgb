@@ -31,11 +31,11 @@ const _mkMapUri = (ownerName, assetName) => {
 }
 const _mkActorUri = (ownerName, assetName) =>  {
   const p = _resolveOwner(ownerName, assetName)
-  return `/api/asset/full/${p.ownerName}/${p.assetName}`
+  return `/api/asset/fullactor/${p.ownerName}/${p.assetName}`
 }
 const _mkGraphicUri = (ownerName, assetName) => {
   const p = _resolveOwner(ownerName, assetName)
-  return `/api/asset/full/${p.ownerName}/${p.assetName}`
+  return `/api/asset/fullgraphic/${p.ownerName}/${p.assetName}`
 } 
 
 

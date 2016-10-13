@@ -132,6 +132,10 @@ const MgbActor = {
   ANIMATION_INDEX_BASE_STATIONARY_SOUTH:        100,	// 16 of these
   ANIMATION_INDEX_BASE_STATIONARY_WEST:         116,	// 16 of these
 
+  playCannedSound: function(soundName) {
+    console.log("TODO: Play sound: " + soundName)
+  },
+
   getAnimationIndex: function(	
     actorPiece, 
     currentStepStyle, 					// -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing

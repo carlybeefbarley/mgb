@@ -12,9 +12,9 @@ export default class ActiveActor
 	cellSpanX = 0							// How many cells does this actor span (width)?
 	cellSpanY = 0							// How many cells does this actor span (height)?
 	
-	// Some caches of key actor properties - so we don't have to go into the actorXML so often (for speed)
+	// Some caches of key actor properties - so we don't have to go into the content2 so often (for speed)
 	type = 0									// One of MgbActor.alActorType 
-	moveSpeed:Number							// From actorXML.databag.allchar.movementSpeedNum. However, also defined as 1 for a sliding block while isSliding = true
+	moveSpeed:Number							// From content2.databag.allchar.movementSpeedNum. However, also defined as 1 for a sliding block while isSliding = true
 
 	// Basic positioning info		
 	startx = 0			// Where this piece starts from. 	Units are in tiles, not pixels
@@ -49,7 +49,7 @@ export default class ActiveActor
 	// Shot tracking - shots
 	isAShot = false							  // Only true for Shots
 	actorWhoFiredShot = 0					// Which actor fired this shot (metric valid for shots)
-	shotRange = 0							    // metric valid for Shots - comes from shooter's "actorXML.databag.allchar.shotRangeNum"
+	shotRange = 0							    // metric valid for Shots - comes from shooter's "content2.databag.allchar.shotRangeNum"
 	// Shot tracking - shooters
 	maxActiveShots = 0						// Maximum number of shots that can be active on map at once (metric valid for things that shoot)
 	currentActiveShots = 0			  // Current number of Active shots on map (metric valid for things that shoot)

@@ -249,7 +249,6 @@ export default class Mage extends React.Component {
   }
 
   _transitionToNextMap(nextMapName) {
-debugger // FIX FOOBAR BY HAND
     this._transitioningToMapName = nextMapName
 
     const { fetchAssetByUri, ownerName } = this.props

@@ -25,8 +25,11 @@ export default MagePlayGameSliding = {
     else if (dx < 0 && dy == 0)
       aai.stepStyle = 3		// W
     else
-      throw new Error("Unknown direction type ("+dx+","+dy+") in playPushItemToStartSliding()")
-        
+    {
+      // Do nothing for diagonals ("Unknown direction type ("+dx+","+dy+") in playPushItemToStartSliding()")
+      return
+    }
+
     // 2. Move the block
     aai.isSliding = true
     aai.moveSpeed = 1				// Special case - see note in class definition

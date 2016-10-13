@@ -29,7 +29,7 @@ Meteor.methods({
     let thisUser = this.user && this.user()
 
     // MAGIC TEST HACK   ##insecure##
-    //  meteor shell  
+    //  Client browser.. JS console..  
     //  > Meteor.call('job.import.mgb1.project', 42)
     //
     if (importParams === 42)
@@ -39,7 +39,7 @@ Meteor.methods({
         mgb1Projectname:        'mechanics demos',
         mgb2Username:           'dgolds',
         mgb2ExistingProjectName:'Game Mechanics demo',
-        mgb2assetNamePrefix:    'mechanix2.',
+        mgb2assetNamePrefix:    'mechanix3.',
         excludeTiles:           false,
         excludeActors:          false,
         excludeMaps:            false,

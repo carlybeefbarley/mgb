@@ -216,7 +216,7 @@ export default MagePlayGameMovement = {
       var ap = actors[actor.ACidx]
       if (isPlayer)
         ms = inventory.equipmentMeleeSoundOverride
-      MgbActor.playCannedSound(MgbActor.isSoundNonNull(ms) ? ms : ap.actorXML.databag.allchar.soundWhenMelee)				
+      MgbActor.playCannedSound(MgbActor.isSoundNonNull(ms) ? ms : ap.content2.databag.allchar.soundWhenMelee)				
       return true
     }		
     return false

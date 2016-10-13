@@ -130,7 +130,7 @@ export default MagePlayGameCollision = {
       var aa1 = activeActors[aa1_idx]
       var ap1 = actors[activeActors[hits[hidx].AA1].ACidx]
       
-      var t1 = aa1.type;
+      var t1 = aa1.type
       var aa2_idx = hits[hidx].AA2
       var aa2 = activeActors[aa2_idx]
       var ap2 = actors[activeActors[hits[hidx].AA2].ACidx]

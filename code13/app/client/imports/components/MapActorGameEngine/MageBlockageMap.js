@@ -29,13 +29,10 @@ export default class BlockageMap
 	
 	blockEntity(x, y, entityIndex, w = 1, h = 1)
 	{
-		for (var i = 0; i < w; i++)
-		{
-			for (var j = 0; j < h; j++)
-			{
-				if (x+i < width && y+j < height)
-				{
-//					console.trace("block "+(x+i)+","+(y+j)+" to "+entityIndex)
+		for (var i = 0; i < w; i++) {
+			for (var j = 0; j < h; j++) {
+				if (x+i < this.width && y+j < this.height) {
+  				console.log("block "+(x+i)+","+(y+j)+" to "+entityIndex)
 					var c = this.offsetforCell(x+i, y+j)
 					var v = this.cells[c]
 					this.cells[c] = (v | (1 << entityIndex))

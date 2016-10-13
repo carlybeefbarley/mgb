@@ -191,7 +191,7 @@ debugger  // step through first time
       this.logGameBug("Can't spawn an actor that hasn't been pre-loaded: " + actorName)
       return -1
     }
-    const at = ap.content2.databag.all.actorType
+    const at = parseInt(ap.content2.databag.all.actorType)
     if (MgbActor.alActorType_Player == at)
     {
       this.logGameBug("Can't spawn additional players")

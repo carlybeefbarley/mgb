@@ -118,6 +118,18 @@ export default class MagePlayGame
     // TODO
   }
 
+  // This is a bit weird It returns the NAME not the actor. TODO - rename for clarity
+  loadActorByName(actorName) 
+  {
+    const result = this.actors[actorName]
+    if (!result)
+    {
+      console.log(`actor was not preloaded: ${actorName}`)
+      debugger    // I think we are preloading all actors, but this is here to confirm
+    }
+    return actorName
+  } 
+
   onTickGameDo() {
     if (this.isTransitionInProgress) {      // transition to new map
       this.transitionTick()

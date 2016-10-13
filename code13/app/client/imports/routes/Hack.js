@@ -25,7 +25,7 @@ const Hack = props =>
   const { params, user, currUser } = props
 
   // const mapName = params.map || 'mechanix2.Classic Three Block Puzzle'
-  const mapName = params.map || 'mechanix2.Start Game Demos'
+  const mapName = params.map || 'mechanix3.Start Game Demos'
 
   return (
     <Segment basic padded>

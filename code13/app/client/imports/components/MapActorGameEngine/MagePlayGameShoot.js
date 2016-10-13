@@ -18,7 +18,7 @@ export default MagePlayGameShoot = {
     const { actors, activeActors, AA_player_idx, inventory, map } = this
     var actor = activeActors[aa_idx]
     var ap = actors[actor.ACidx]
-    var spawn = ap ? ap.actorXML.databag.allchar.shotActor : null
+    var spawn = ap ? ap.content2.databag.allchar.shotActor : null
 
     if (aa_idx == AA_player_idx && inventory.equipmentShotActorOverride)
       spawn = inventory.equipmentShotActorOverride
@@ -47,7 +47,7 @@ export default MagePlayGameShoot = {
       shot.moveSpeed = 1				// Special case - see note in class definition
       actor.currentActiveShots++
       shot.actorWhoFiredShot = aa_idx
-      shot.shotRange = parseInt(ap.actorXML.databag.allchar.shotRangeNum)
+      shot.shotRange = parseInt(ap.content2.databag.allchar.shotRangeNum)
       if (aa_idx == AA_player_idx)
         shot.shotRange += inventory.equipmentShotRangeBonus
       
@@ -68,16 +68,16 @@ export default MagePlayGameShoot = {
         return
       }
         // The space is available. Convert intended move into per-tween amounts and move
-      shot.shotDamageToNPC = ap.actorXML.databag.allchar.shotDamageToNPCorItemNum
+      shot.shotDamageToNPC = parseInt(ap.content2.databag.allchar.shotDamageToNPCorItemNum)
         
       if (aa_idx == AA_player_idx)
         shot.shotDamageToNPC += inventory.equipmentShotDamageBonus
         
-      shot.shotDamageToPlayer = ap.actorXML.databag.allchar.shotDamageToPlayerNum
+      shot.shotDamageToPlayer = parseInt(ap.content2.databag.allchar.shotDamageToPlayerNum)
 //		        shot.xMovePerTween = (shot.x - shot.fromx) * (mapPiece.actorWidth / (G_tweensPerTurn - (G_tweenCount-1)));
 //	    	    shot.yMovePerTween = (shot.y - shot.fromy) * (mapPiece.actorHeight / (G_tweensPerTurn - (G_tweenCount-1)));
       this.clearTicTable()		// Important, need to invalidate the collision detection cache. TODO Potentially just update the cells we know have changed - i.e. aai.x,aai.y
-      var shotSound = ap.actorXML.databag.allchar.soundWhenShooting
+      var shotSound = ap.content2.databag.allchar.soundWhenShooting
       if (aa_idx == AA_player_idx && inventory.equipmentShotSoundOverride)
         shotSound = inventory.equipmentShotSoundOverride
       MgbActor.playCannedSound(shotSound)

@@ -24,11 +24,14 @@ const Hack = props =>
 {
   const { params, user, currUser } = props
 
+  // const mapName = params.map || 'mechanix2.Classic Three Block Puzzle'
+  const mapName = params.map || 'mechanix2.Start Game Demos'
+
   return (
     <Segment basic padded>
       <Mage 
           ownerName={user.profile.name}
-          startMapName={params.map || 'mechanix2.Classic Three Block Puzzle'}
+          startMapName={params.map || mapName}
           isPaused={false}
           fetchAssetByUri={ uri => _fetchAssetByUri(uri) }
       />

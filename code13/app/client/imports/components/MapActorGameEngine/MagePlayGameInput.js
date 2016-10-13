@@ -29,8 +29,8 @@ export default MagePlayGameInput = {
   
   playHandleKeyEvents(k)    // k is a keyboard event
   {
-    const { actors, activeActors, AA_player_idx, isGamePaused, G_gameOver, transitionInProgress } = this
-    if (!G_gameOver && !transitionInProgress)
+    const { actors, activeActors, AA_player_idx, isGamePaused, G_gameOver, isTransitionInProgress } = this
+    if (!G_gameOver && !isTransitionInProgress)
     {
       var newstate = (k.type === 'keydown')
       var pp = actors[activeActors[AA_player_idx].ACidx]

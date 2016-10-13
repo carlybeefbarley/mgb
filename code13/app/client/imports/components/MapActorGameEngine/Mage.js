@@ -46,18 +46,25 @@ export default class Mage extends React.Component {
   constructor(props) {
     super(props)
     // Non-react state
-    this._tweenCount = 0          // Tweencount for game loops
-    this._mageCanvas = null       // MageGameCanvas ref
-    this._gamePlayer = null       // Will be an instance of MagePlayGame class
+    this._tweenCount = 0                // Tweencount for game loops
+    this._mageCanvas = null             // MageGameCanvas ref
+    this._gamePlayer = null             // Will be an instance of MagePlayGame class
+    this._transitioningToMapName = null
 
     // React state
     this.state = {
       isPreloading:       'map',   // Null if not preloading. String if preloading. Supercedes all other state
       mapLoadError:       null,    // Can be a string
-      mapData:            null,    // Should be an asset of kind 'actormap'.. not 'map'
+      activeMap:          null,    // Should be an asset of kind='actormap'.. not kind='map'
+
+      pendingMapLoads:    [],      // contains list of unique actorMap Names that have pending loads
+      loadedMaps:         {},      // The loaded actor Data. Contains map of actorMapName -> actorMap
+      failedMaps:         {},      // actorMaps that failed to load. Content is the error data
+
       pendingActorLoads:  [],      // contains list of unique actorNames that have pending loads
       loadedActors:       {},      // The loaded actor Data. Contains map of actorname -> actor
       failedActors:       {},      // Actors that failed to load. Content is the error data
+
       pendingGraphicLoads:[],      // contains list of unique Graphics Names that have pending loads
       loadedGraphics:     {},      // The loaded Graphics Data. Contains map of actorname -> actor
       failedGraphics:     {}       // Graphics that failed to load. Content is the error data
@@ -76,27 +83,38 @@ export default class Mage extends React.Component {
 
     this._game = new MagePlayGame()
     this._game.startGame(
-      this.state.mapData, 
+      this.state.activeMap, 
       this.state.loadedActors, 
       this.state.loadedGraphics, 
+      newMapName => this._transitionToNextMap(newMapName),
       console.log, 
       console.log,
       window)
-
   }
 
   callDoBlit()
   {
     if (this._mageCanvas && !this.props.isPaused)
     {
-      if (this._game)
+      if (this._game) {
+        const pendingLoads = this._countPendingLoads()
+        if (this._transitioningToMapName && !pendingLoads)
+        {
+          const newMapData = this.state.loadedMaps[this._transitioningToMapName]
+          this._game.transitionResourcesHaveLoaded(newMapData)
+          this._transitioningToMapName = null
+          this._tweenCount = 0
+        }
         this._game.onTickGameDo()
-      this._mageCanvas.doBlit(
-        this.state.mapData, 
-        this.state.loadedActors, 
-        this.state.loadedGraphics, 
-        this._game ? this._game.activeActors : null,
-        this._tweenCount++)
+      }
+      if (!this._transitioningToMapName) {
+        this._mageCanvas.doBlit(
+          this.state.activeMap, 
+          this.state.loadedActors, 
+          this.state.loadedGraphics, 
+          this._game ? this._game.activeActors : null,
+          this._tweenCount++)
+      }
     }
     if (this._mounted)
       window.requestAnimationFrame( () => this.callDoBlit() )
@@ -203,11 +221,15 @@ export default class Mage extends React.Component {
     this.loadRequiredActors(desiredActorNames)
   }
 
-  _startMapLoaded(mapData) { 
-    const actorNames = _.filter(_.union(mapData.mapLayer[0], mapData.mapLayer[1], mapData.mapLayer[2]), a => (a && a!==''))
+  _countPendingLoads() { 
+    return this.state.pendingActorLoads.length + this.state.pendingMapLoads.length + this.state.pendingGraphicLoads.length
+  }
+
+  _startMapLoaded(activeMap) { 
+    const actorNames = _.filter(_.union(activeMap.mapLayer[0], activeMap.mapLayer[1], activeMap.mapLayer[2]), a => (a && a!==''))
     if (actorNames.length)
     {
-      this.setState( { mapData } )
+      this.setState( { activeMap } )
       this.loadRequiredActors(actorNames)
     }
     else
@@ -219,13 +241,50 @@ export default class Mage extends React.Component {
     this.setState( { isPreloading: null, mapLoadError: `Could not load map '${this._mkFriendlyMapName()}'` } )
   }
 
-
-  componentDidMount() {
+  _loadStartMap() {
     const { ownerName, startMapName, fetchAssetByUri } = this.props
     fetchAssetByUri(_mkMapUri(ownerName, startMapName))
       .then( data => this._startMapLoaded(JSON.parse(data)))
       .catch( data => this._startMapLoadFailed(data) )
+  }
+
+  _transitionToNextMap(nextMapName) {
+debugger // FIX FOOBAR BY HAND
+    this._transitioningToMapName = nextMapName
+
+    const { fetchAssetByUri, ownerName } = this.props
+    const { pendingMapLoads, loadedMaps } = this.state
+    if (!_.includes(pendingMapLoads, nextMapName) && !_.includes(loadedMaps, nextMapName))
+    {
+      pendingMapLoads.push(nextMapName)
+      fetchAssetByUri(_mkMapUri(ownerName, nextMapName))
+        .then(  data => this._transitionMapLoadResult(nextMapName, true, JSON.parse(data)) )
+        .catch( data => this._transitionMapLoadResult(nextMapName, false, data) )
+    }
+    this.setState( { pendingMapLoads } )    // and maybe isPreloading? use a _mkIisPreloadingFn 
+  }
+
+  _transitionMapLoadResult(nextMapName, isSuccess, data) {
+    const { loadedMaps, failedMaps } = this.state
+    const pendingMapLoads = _.pull(this.state.pendingMapLoads, nextMapName)
+    if (isSuccess)
+    {
+      _.remove(failedMaps, nextMapName)
+      loadedMaps[nextMapName] = data
+      this._startMapLoaded(data)
+    }
+    else 
+    {
+      failedMaps[nextMapName] = data
+debugger  // TODO - stop game, no map.
+    }
+    const newIsPreloadingValue = pendingMapLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
+    this.setState( { pendingMapLoads, loadedMaps, failedMaps, isPreloading: newIsPreloadingValue } )    
+  }
+
+  componentDidMount() {
     this._mounted = true
+    this._loadStartMap()
     this.callDoBlit()
   }
 
@@ -234,7 +293,7 @@ export default class Mage extends React.Component {
   }
 
   render() {
-    const { isPreloading, mapLoadError, mapData } = this.state
+    const { isPreloading, mapLoadError, activeMap } = this.state
     if (isPreloading)
       return <Preloader msg={isPreloading} />
 
@@ -245,10 +304,10 @@ export default class Mage extends React.Component {
       <div>
       <Button icon='play' content='play' onClick={() => this.handlePlay()} />
       <br />
-        <MageGameCanvas 
+        <MageGameCanvas
             ref={c => {this._mageCanvas = c} } 
-            cellsWide={mapData.metadata.width} 
-            cellsHigh={mapData.metadata.height}/>
+            cellsWide={ activeMap.metadata.width }
+            cellsHigh={ activeMap.metadata.height }/>
       </div>
     )
   }

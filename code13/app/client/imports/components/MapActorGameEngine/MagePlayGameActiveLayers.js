@@ -119,7 +119,7 @@ export default MagePlayGameActiveLayers = {
     
     // Next, look for items that were spawned before, but had been selected to drop persistently on the map
     this.respawnRequiredActorsForMap()
-        
+    
     // Now find the player
     for (var AA = 0; AA < this.activeActors.length; AA++)
     {
@@ -134,11 +134,8 @@ export default MagePlayGameActiveLayers = {
     if (missingActors)
       this.logGameBug(missingActors+" actors did not have valid tiles and so are not in the game. Check the Log for details", true)
 
-    if (!num_players)
-      throw new Error("No player defined for this map")
-
-    if (num_players > 2)
-      throw new Error("A map can only have one player on it; this map has "+num_players+" player actors on the map")
+    if (num_players !==1 && !skipCreatingPlayers)
+      throw new Error("A starting map must have exactly one Player Actor on it. However, this map has "+num_players+" Player Actors on the map")
   },
 
   // playCleanupActiveLayer - called when a game ends on a map - undo what playPrepareActiveLayer did

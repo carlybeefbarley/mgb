@@ -9,9 +9,11 @@ import MagePlayGameShoot from './MagePlayGameShoot'
 import MagePlayGameInput from './MagePlayGameInput'
 import MagePlayGameDamage from './MagePlayGameDamage'
 import MagePlayGameDisplay from './MagePlayGameDisplay'
+import MagePlayGameSliding from './MagePlayGameSliding'
 import MagePlayGameCellUtil from './MagePlayGameCellUtil'
 import MagePlayGameMovement from './MagePlayGameMovement'
 import MagePlayGameCollision from './MagePlayGameCollision'
+import MagePlayGameTransition from './MagePlayGameTransition'
 import MagePlayGameActiveLayers from './MagePlayGameActiveLayers'
 import MagePlayGameBackgroundLayers from './MagePlayGameBackgroundLayers'
 
@@ -31,28 +33,15 @@ import MgbMap from './MageMgbMap'
   G_gameOver            ->    this.gameOver
 */
 
-
-// get rid of this...
-// class ActorCollision
-// {
-//   constructor(a1, a2)
-//   {
-// 		this.AA1 = a1    // Index of Actor#1 involved in collision
-//     this.AA2 = a2    // Index of Actor#2 involved in collision
-//   }
-// }
-
-
 // This will uses exceptions
 
 export default class MagePlayGame
 {
 
   constructor() {
-
-    // This has been a hard class to make smaller, so I'm just putting some of the code
+    // This has been a hard class to break into clean sub-classes, so I'm just putting some of the code
     // in other files and I'm connecting them here so it isn't one huge source file.
-    // This is sort of a cheap 'partial class' mechanism for javacript classes
+    // This is sort of a cheap 'partial class' mechanism for javascript classes
     _.assign(this, MagePlayGameNpc)
     _.assign(this, MagePlayGameTIC)
     _.assign(this, MagePlayGameItem)
@@ -60,22 +49,13 @@ export default class MagePlayGame
     _.assign(this, MagePlayGameInput)
     _.assign(this, MagePlayGameDamage)
     _.assign(this, MagePlayGameDisplay)
+    _.assign(this, MagePlayGameSliding)
     _.assign(this, MagePlayGameCellUtil)
     _.assign(this, MagePlayGameMovement)
     _.assign(this, MagePlayGameCollision)
+    _.assign(this, MagePlayGameTransition)
     _.assign(this, MagePlayGameActiveLayers)
     _.assign(this, MagePlayGameBackgroundLayers)
-
-  }
-
-  resetTransitionState() {
-  debugger
-    // TODO - for handling map transitioning
-		// private static var transitionInProgress:Boolean = false
-		// private static var transitionNewX:int
-		// private static var transitionNewY:int
-		// private static var transitionPlayerAA:ActiveActor
-		// private static var transitionStateWaitingForActorLoadRequests:Boolean = false
   }
 
   resetGameState() {
@@ -100,7 +80,6 @@ export default class MagePlayGame
     this.G_HSPdelta = 0		                      	// Scroll change per tween (horizontal)
     this.G_tweenSinceMapStarted = 0       	      // Current tween count in this map - used for timing end of powers etc
 
-
     this.deferredAsk_aa = null                    // ActiveActor to use for the NPC dialog
     this.deferredAsk_ap = null                    // The actor data to use for the NPC dialog
 
@@ -108,12 +87,13 @@ export default class MagePlayGame
     this.inventory = new Inventory()
   }
 
-  startGame(map, actors, graphics, setGameStatusFn, showNpcMessageFn, keyCaptureElement) { 
+  startGame(map, actors, graphics, transitionToNextMapFn, setGameStatusFn, showNpcMessageFn, keyCaptureElement) { 
     this.map = map
     this.actors = actors
     this.graphics = graphics
     this.setGameStatusFn = setGameStatusFn
     this.showNpcMessageFn = showNpcMessageFn
+    this.transitionToNextMapFn = transitionToNextMapFn
 
     this.resetGameState()
 
@@ -130,40 +110,20 @@ export default class MagePlayGame
     this.enablePlayerControls(keyCaptureElement)
   }
 
-  logGameBug(msg) { console.error(msg) }
-
-
-  /**
-   * transitionToNewMap()
-   * 
-   * @param {String} userName
-   * @param {String} projectName
-   * @param {String} newmapname
-   * @param {int} newX
-   * @param {int} newY
-   * 
-   * @memberOf MagePlayGame
-   */
-  transitionToNewMap(userName, projectName, newmapname, newX, newY)
-  {
-    this.transitionPlayerAA = this.activeActors[this.AA_player_idx]
-    this.playCleanupActiveLayer()
-    this.playCleanupBackgroundLayer()
-debugger
-    LOADMAP(userName, newmapname, loadMapDuringGameResult)     // TODO
-    this.transitionNewX = newX
-    this.transitionNewY = newY
-    this.transitionStateWaitingForActorLoadRequests = true
-    this.transitionInProgress = true
+  logGameBug(msg) { 
+    console.error(msg) 
   }
-  
+
+  scrollMapToSeePlayer() {
+    // TODO
+  }
 
   onTickGameDo() {
     if (this.isTransitionInProgress) {      // transition to new map
-      debugger  
       this.transitionTick()
       return
     }
+
     if (this.isPaused)
       return
 

@@ -409,64 +409,6 @@ package com.mgb.controls
 			return initialMap ? initialMap.name : mapPiece.name
 		}
 
-		private function transitionToNewMap(userName:String, projectName:String, newmapname:String, newX:int, newY:int):void
-		{
-			transitionPlayerAA = activeActors[AA_player_idx]
-			playCleanupActiveLayer()
-			playCleanupBackgroundLayer()
-			mapPiece.loadByName(userName, projectName, newmapname, loadMapDuringGameResult)
-			transitionNewX = newX
-			transitionNewY = newY
-			transitionStateWaitingForActorLoadRequests = true
-			transitionInProgress = true
-		}
-		
-		// Called on 'Tick' by game loop if transitioning to new map
-		private function transitionTick():void
-		{
-			if (transitionStateWaitingForActorLoadRequests || actorLoadsPending > 0)
-			{
-				trace("transitionTick: "+actorLoadsPending+" actor loads still Pending")
-				if (view.alpha > 0.1)
-					view.alpha -= 0.1
-			}
-			else
-			{
-				if (view.alpha < 1.0)
-				{
-					// Fade it in - looks nice
-					view.alpha += 0.1
-					if (view.alpha > 1.0)
-						view.alpha = 1.0
-					return
-				}
-				// Fade-in done.. We're ready to play!
-				playPrepareActiveLayer(mapPiece, true)
-				playPrepareBackgroundLayer()
-	
-		    	transitionPlayerAA.x = transitionNewX
-		    	transitionPlayerAA.fromx = transitionNewX
-		    	transitionPlayerAA.y = transitionNewY
-		    	transitionPlayerAA.fromy = transitionNewY
-				transitionPlayerAA.renderX = transitionPlayerAA.fromx * MgbSystem.tileMinWidth
-				transitionPlayerAA.renderY = transitionPlayerAA.fromy * MgbSystem.tileMinHeight
-	
-		    	transitionPlayerAA.currentActiveShots = 0
-	
-				AA_player_idx = activeActors.length
-				activeActors[AA_player_idx] = transitionPlayerAA
-		    	
-				scrollMapToSeePlayer()
-	
-				G_tic = null
-				G_tweenCount = 0
-				applyZoomLevel()		// measure and redraw
-				transitionInProgress = false
-				clearPlayerKeys()
-			}
-		}
-
-
 // 		private function endGame():void
 // 		{
 // 			stopMusic()

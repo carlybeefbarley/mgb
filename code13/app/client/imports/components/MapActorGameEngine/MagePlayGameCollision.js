@@ -3,6 +3,15 @@ import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
 
 
+class ActorCollision
+{
+  constructor(a1, a2)
+  {
+    this.AA1 = a1    // Index of Actor#1 involved in collision
+    this.AA2 = a2    // Index of Actor#2 involved in collision
+  }
+}
+
 export default MagePlayGameCollision = {
 
     
@@ -46,7 +55,6 @@ export default MagePlayGameCollision = {
                 // Note - calculating now in PIXELS...
                 var x1 = a1.renderX + (a1.renderOffsetCellsX * MgbSystem.tileMinWidth)
                 var y1 = a1.renderY + (a1.renderOffsetCellsY * MgbSystem.tileMinHeight)
-debugger // check _image.width
                 var w1 = (a1._image.width - 1) + (a1.renderOffsetCellsWidth * MgbSystem.tileMinWidth)
                 var h1 = (a1._image.height - 1) + (a1.renderOffsetCellsHeight * MgbSystem.tileMinHeight)
 
@@ -57,8 +65,7 @@ debugger // check _image.width
                   var h2 = (a2._image.height - 1) + (a2.renderOffsetCellsHeight * MgbSystem.tileMinHeight) 
                   if ((y1 >= y2 && y1 < y2+h2) ||	(y2 >= y1 && y2 < y1+h1))  {
                     // OK, now let's look really closely..
-debugger
-                    if (a1._image.hitTest(new Point (x1, y1), 0xF0, a2._image, new Point (x2, y2), 0xF0))
+                    if (this.pixelLevelHitTest(a1._image, x1, y1, a2._image, x2, y2))
                     {
                       if (AA2 == AA_player_idx)
                         hits.push(new ActorCollision(AA2, AA1))		// Player is always first item in a collision pair
@@ -77,7 +84,7 @@ debugger
     // hits could have dupes in it; we have to check
     if (hits.length > 1)
     {
-      hits.sort(this.sortOnChoice)
+      hits.sort( (a,b) => this.sortOnChoice(a, b) )     // TODO - find cheaper way to do this? Array.sort seems to bind
       var hits2 = new Array()
       hits2[0] = hits[0]
       for (i = 1; i < hits.length; i++)
@@ -88,6 +95,14 @@ debugger
       hits = hits2
     }
     return hits
+  },
+
+  pixelLevelHitTest(image1, x1, y1, image2, x2, y2)
+  {
+    // In the original ActionScript 3.0 implementation, this used the BitmapData.hitTest() function as follows
+    //  if (a1._image.hitTest(new Point (x1, y1), 0xF0, a2._image, new Point (x2, y2), 0xF0))
+    return true
+    // TODO
   },
 
   sortOnChoice(a, b) // a and b are ActorCollision object

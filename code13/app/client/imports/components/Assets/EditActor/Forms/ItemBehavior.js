@@ -1,8 +1,8 @@
 import React from 'react'
-import BaseForm from '../BaseForm.js'
+import BaseForm from '../../../Controls/BaseForm.js'
 
-import DropArea from '../components/DropArea.js'
-import SmallDD from '../components/SmallDD.js'
+import DropArea from '../../../Controls/DropArea.js'
+import SmallDD from '../../../Controls/SmallDD.js'
 /*
  {this.text("Movement speed", 'movementSpeed', "number")}
  {this.bool("Can Move Up \u2191", 'upYN')}

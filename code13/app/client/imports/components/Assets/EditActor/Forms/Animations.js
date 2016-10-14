@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Button, Checkbox, Form, Input, Message, Radio, Select, TextArea, Table } from 'semantic-ui-react'
 
-import SmallDD from '../components/SmallDD'
-import DropArea from '../components/DropArea.js'
+import DropArea from '../../../Controls/DropArea.js'
+import SmallDD from '../../../Controls/SmallDD.js'
 
 const effects = [
   {text: "no effect", value: "no effect"},

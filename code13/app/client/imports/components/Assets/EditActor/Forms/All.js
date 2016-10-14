@@ -1,10 +1,10 @@
 import React from 'react'
 
-import BaseForm from '../BaseForm.js'
+import BaseForm from '../../../Controls/BaseForm.js'
 import { Button, Checkbox, Form, Input, Message, Radio, Select, TextArea } from 'semantic-ui-react'
 
-import DropArea from '../components/DropArea.js'
-import SmallDD from '../components/SmallDD.js'
+import DropArea from '../../../Controls/DropArea.js'
+import SmallDD from '../../../Controls/SmallDD.js'
 
 
 const actorTypes = [

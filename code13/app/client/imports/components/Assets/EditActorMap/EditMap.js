@@ -4,11 +4,22 @@ import MapArea from './MapArea.js'
 import InfoTool from './Tools/InfoTool.js'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 
+import PlayForm from "./modals/PlayForm.js"
+import MusicForm from "./modals/MusicForm.js"
+
 export default class EditMap extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       tools: {}
+    }
+    this.jumpData = {
+      map: '',
+      x: 0,
+      y: 0
+    }
+    this.musicData = {
+      music: ''
     }
   }
 
@@ -41,7 +52,49 @@ export default class EditMap extends React.Component {
     // TODO: convert uploaded images to assets
     this.props.handleContentChange(data, thumbnail, reason)
   }
+  // action can be jump or music
+  showModal(action, cb){
 
+    //this.setState({modal: cb})
+    $(this.refs[action]).modal(
+      {
+        size: "small",
+        detachable: false,
+        context: this.refs.container,
+        onApprove: () => {
+          console.log("Approve", this[action+"Data"])
+          cb(this[action+"Data"])
+        }
+      }).modal("show")
+  }
+  renderPlayModal(){
+    return (
+      <div className="ui modal" ref="jump" style={{position: "absolute"}}>
+        <div className="header">Header</div>
+        <div className="content">
+          <PlayForm asset={this.jumpData} onchange={(v) => {this.setState({event: this.jumpData})}}/>
+        </div>
+        <div className="actions">
+          <div className="ui approve button">Approve</div>
+          <div className="ui cancel button">Cancel</div>
+        </div>
+      </div>
+    )
+  }
+  renderMusicModal(){
+    return (
+      <div className="ui modal" ref="music" style={{position: "absolute"}}>
+        <div className="header">Header</div>
+        <div className="content">
+          <MusicForm asset={this.musicData} onchange={(v) => {this.setState({event: this.musicData})}}/>
+        </div>
+        <div className="actions">
+          <div className="ui approve button">Approve</div>
+          <div className="ui cancel button">Cancel</div>
+        </div>
+      </div>
+    )
+  }
   render () {
     if (!this.props.asset) {
       return null
@@ -57,14 +110,18 @@ export default class EditMap extends React.Component {
     })
 
     return (
-      <div className='ui grid'>
-        <div className='ten wide column'>
-          <MapArea asset={asset} parent={this} ref='mapArea'>
-            {asset}
-          </MapArea>
-        </div>
-        <div className='six wide column'>
-          {tools}
+      <div ref="container">
+        {this.renderPlayModal()}
+        {this.renderMusicModal()}
+        <div className='ui grid'>
+          <div className='ten wide column'>
+            <MapArea asset={asset} parent={this} ref='mapArea'>
+              {asset}
+            </MapArea>
+          </div>
+          <div className='six wide column'>
+            {tools}
+          </div>
         </div>
       </div>
     )

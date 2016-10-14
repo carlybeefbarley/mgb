@@ -251,7 +251,7 @@ export default class Properties extends React.Component {
       this.map.redraw()
       this.map.save("Updating layer settings")
     })
-    this.settings.layer.append(this.refs.layer)
+    //this.settings.layer.append(this.refs.layer)
 
     this.settings.tileset = new Otito(this.map.data.tilesets[this.map.activeTileset], {
       Tileset: {
@@ -306,7 +306,8 @@ export default class Properties extends React.Component {
         this.map.save("Updating tileset settings")
       })
     })
-    this.settings.tileset.append(this.refs.tileset)
+    //this.settings.tileset.append(this.refs.tileset)
+
     $(this.refs.holder).find('select').dropdown()
     window.settings = this.settings
   }

@@ -5,9 +5,13 @@
   tile => image
   */
 import TileHelper from './TileHelper.js'
-const TILES_IN_ACTIONS = 2;
+// 0 - jump
+// 1 - music
+const ACTION_IMAGE = '/api/asset/tileset/AymKGyM9grSAo3yjp';
+const EVENT_LAYER = 3
 
 export default {
+  TILES_IN_ACTIONS: 2,
   v2_to_v1: function(data){
     console.log("data",data);
 
@@ -25,10 +29,10 @@ export default {
         return ''
       }
       // action tiles
-      if(tileId < TILES_IN_ACTIONS){
-        return data.mgb_event_tiles[pos]
+      if(tileId <= this.TILES_IN_ACTIONS){
+        return data.layers[EVENT_LAYER].mgb_events[pos]
       }
-      const ts = tileId - TILES_IN_ACTIONS;
+      const ts = tileId - this.TILES_IN_ACTIONS;
       
       return data.tilesets[ts].name;
 
@@ -47,10 +51,13 @@ export default {
     return d
   },
   v1_to_v2: function(data, names, cb){
+    if(!data.metadata){
+      setTimeout(() => {
+        cb(this.createEmptyMap())
+      }, 0);
+      return;
+    }
     const dd = TileHelper.genNewMap()
-    dd.height = parseInt(data.metadata.height, 10)
-    dd. width = parseInt(data.metadata.width, 10)
-
     dd.images = {}
     dd.layers = []
     dd.tilesets.push({
@@ -61,14 +68,19 @@ export default {
       imagewidth: 64,
       margin: 0,
       spacing: 0,
-      tilecount: TILES_IN_ACTIONS,
+      tilecount: this.TILES_IN_ACTIONS,
       tileheight: 32,
       tilewidth: 32
     })
-    dd.images['/api/asset/tileset/AymKGyM9grSAo3yjp'] = '/api/asset/tileset/AymKGyM9grSAo3yjp';
+    dd.images[ACTION_IMAGE] = ACTION_IMAGE;
     dd.mgb_event_tiles = {}
-    const actorMap = {};
 
+
+
+    dd.height = parseInt(data.metadata.height, 10)
+    dd.width = parseInt(data.metadata.width, 10)
+
+    const actorMap = {};
     // last is action layer
     for(let i=0; i<data.mapLayer.length - 1; i++){
       for(let j=0; j<data.mapLayer[i].length; j++) {
@@ -100,7 +112,7 @@ export default {
       })
 
       for(let i=0; i<data.mapLayer.length - 1; i++){
-        let name = i == 0 ? "Background" : i == 1 ? "Active" : i === 2 ? "Foreground" : "Event";
+        let name = i === 0 ? "Background" : i === 1 ? "Active" : i === 2 ? "Foreground" : "Events";
         let layer = {
           name,
           visible: true,
@@ -132,25 +144,26 @@ export default {
         height: parseInt(data.metadata.height, 10),
         width: parseInt(data.metadata.width, 10),
         draworder: "topdown",
-        mgb_tiledrawdirection: "rightdown",
         type: "mgb1-event-layer",
         x: 0,
-        y: 0
+        y: 0,
+        mgb_tiledrawdirection: "rightdown",
+        mgb_events: []
       };
-      for(let j=0; j<data.mapLayer[3].length; j++) {
-        let name = data.mapLayer[3][j]
+      for(let j=0; j<data.mapLayer[EVENT_LAYER].length; j++) {
+        let name = data.mapLayer[EVENT_LAYER][j]
         if(name) {
           console.log("NAME:", name, j)
           /*
            jump (teleport)
            music
            */
-          dd.mgb_event_tiles[j] = name;
-
+          layer.mgb_events.push(name)
           layer.data.push(this.eventNameToTile(name))
         }
         else{
           layer.data.push(0)
+          layer.mgb_events.push('')
         }
       }
       dd.layers.push(layer)
@@ -158,11 +171,88 @@ export default {
     })
   },
 
+  createEmptyMap(){
+    const dd = TileHelper.genNewMap()
+    dd.images = {
+      [ACTION_IMAGE]: ACTION_IMAGE
+    }
+
+    dd.layers = [
+      {
+        name: "Background",
+        visible: true,
+        data: [0,0,0,0],
+        height: 2,
+        width: 2,
+        draworder: "topdown",
+        mgb_tiledrawdirection: "rightdown",
+        type: "mgb1-actor-layer",
+        x: 0,
+        y: 0
+      },
+      {
+        name: "Active",
+        visible: true,
+        data: [0,0,0,0],
+        height: 2,
+        width: 2,
+        draworder: "topdown",
+        mgb_tiledrawdirection: "rightdown",
+        type: "mgb1-actor-layer",
+        x: 0,
+        y: 0
+      },
+      {
+        name: "Foreground",
+        visible: true,
+        data: [0,0,0,0],
+        height: 2,
+        width: 2,
+        draworder: "topdown",
+        mgb_tiledrawdirection: "rightdown",
+        type: "mgb1-actor-layer",
+        x: 0,
+        y: 0
+      },
+      {
+        name: "Events",
+        visible: true,
+        data: [0,0,0,0],
+        mgb_events: ['','','',''],
+        height: 2,
+        width: 2,
+        draworder: "topdown",
+        mgb_tiledrawdirection: "rightdown",
+        type: "mgb1-event-layer",
+        x: 0,
+        y: 0
+      }
+    ]
+    dd.tilesets.push({
+      name: "Actions",
+      firstgid: 1,
+      image: '/api/asset/tileset/AymKGyM9grSAo3yjp',
+      imageheight: 32,
+      imagewidth: 64,
+      margin: 0,
+      spacing: 0,
+      tilecount: this.TILES_IN_ACTIONS,
+      tileheight: 32,
+      tilewidth: 32,
+    })
+    dd.mgb_event_tiles = {}
+    return dd;
+  },
+
   loadActors: function(actorMap, names, images, cb){
     const actors = Object.keys(actorMap);
+    if(actors.length === 0){
+      cb()
+      return;
+    }
     let loaded = 0
     for(let i=0; i<actors.length; i++){
-      this.loadActor(actors[i], actorMap, i + 1 + TILES_IN_ACTIONS, images, names, () => {
+      this.loadActor(actors[i], actorMap, i + 1 + this.TILES_IN_ACTIONS, images, names, () => {
         loaded++;
         if(loaded === actors.length){
           cb()
@@ -172,10 +262,6 @@ export default {
 
   },
   loadActor: function(name, map, nr, images, names, cb){
-
-    //http://localhost:3000/api/asset/actor/dgolds/mechanix2.wall
-
-
     $.get(`/api/asset/actor/${names.user}/${name}`).done((d) => {
 
       const src = `/api/asset/png/${names.user}/${d.databag.all.defaultGraphicName}`
@@ -196,6 +282,7 @@ export default {
 
     })
   },
+
   eventNameToTile: function(name){
     if(name.indexOf("jump") === 0){
       return 1;

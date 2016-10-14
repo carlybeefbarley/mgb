@@ -115,7 +115,9 @@ export default class MapToolbar extends React.Component {
     this.props.map.options.showGrid = !this.props.map.options.showGrid
     this.props.map.forceUpdate()
   }
-
+  resetMap(){
+    this.props.map.resetMap()
+  }
   render () {
     // older maps don't have default mode
     if (!this.props.map.options.mode) {
@@ -348,8 +350,18 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Mirror tile',
           shortcut: 'X',
           level: 23
+        },
+        {
+          name: 'separator'
+        },
+        {
+          name: 'resetMap',
+          icon: 'reset',
+          label: 'Reset',
+          tooltip: 'Reset',
+          shortcut: 'Alt+R',
+          level: 23
         }
-
       ]
     }
 

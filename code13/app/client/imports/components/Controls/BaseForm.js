@@ -1,6 +1,6 @@
 import React from 'react'
-import DropArea from './components/DropArea.js'
-import SmallDD from './components/SmallDD.js'
+import DropArea from './DropArea.js'
+import SmallDD from './SmallDD.js'
 
 export default class BaseForm extends React.Component {
 

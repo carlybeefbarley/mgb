@@ -28,6 +28,9 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import Plural from '/client/imports/helpers/Plural.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
+import DropArea from '../../Controls/DropArea.js'
+import SmallDD from '../../Controls/SmallDD.js'
+
 export default class MapArea extends React.Component {
 
   constructor (props) {
@@ -126,9 +129,11 @@ export default class MapArea extends React.Component {
 
   componentDidMount () {
 
-    this.buildMap();
+    this.buildMap()
 
-    this.data = TileHelper.genNewMap()
+    if(!this.data){
+      this.data = TileHelper.genNewMap()
+    }
     $(this.refs.mapElement).addClass('map-filled')
 
     window.addEventListener('mousemove', this.globalMouseMove, false)
@@ -139,9 +144,9 @@ export default class MapArea extends React.Component {
     document.body.addEventListener('mousedown', this.globalIEScroll)
   }
 
-  buildMap(){
+  importMap(){
     // http://localhost:3000/api/mgb1/map2/hooliganza/project1/Crab%20Invasion
-    /*const base = 'http://localhost:3000/api/mgb1/map';
+    const base = 'http://localhost:3000/api/mgb1/map';
 
     const parts = this.props.asset.name.split(".");
 
@@ -158,7 +163,10 @@ export default class MapArea extends React.Component {
           this.data = md;
           this.fullUpdate()
         })
-      })*/
+      })
+  }
+
+  buildMap(){
     const names = {
       map: this.props.asset.name,
       user: this.props.asset.dn_ownerName
@@ -167,7 +175,14 @@ export default class MapArea extends React.Component {
       this.data = md;
       this.fullUpdate()
     })
-
+  }
+  resetMap(){
+    const names = {
+      map: this.props.asset.name,
+      user: this.props.asset.dn_ownerName
+    }
+    this.data = ActorHelper.createEmptyMap()
+    this.fullUpdate()
   }
   /*shouldComponentUpdate(){
    return false
@@ -545,7 +560,17 @@ export default class MapArea extends React.Component {
   addPropertiesTool () {
     this.addTool('Properties', 'Properties', {map: this}, Properties, true)
   }
+  setActiveLayer(id){
+    let l = this.getActiveLayer()
+    l && l.deactivate()
 
+    this.activeLayer = id
+
+    l = this.getActiveLayer()
+    l && l.activate()
+
+    this.update()
+  }
 
   /*addObjectTool () {
     this.addTool('Objects', 'Object List', {map: this}, ObjectList, true)
@@ -768,7 +793,7 @@ export default class MapArea extends React.Component {
       z++
     })
 
-    this.refs.grid.alignToActiveLayer()
+    this.refs.grid && this.refs.grid.alignToActiveLayer()
   }
   /* endof camera stuff */
 
@@ -1175,6 +1200,13 @@ export default class MapArea extends React.Component {
     }
   }
 
+  // this bubbles up
+  showModal(action, cb){
+    this.props.parent.showModal(action, (val) => {
+      cb(val)
+      this.update()
+    })
+  }
   render () {
     let notification = ''
     if (this.data.width * this.data.height > 100000) {

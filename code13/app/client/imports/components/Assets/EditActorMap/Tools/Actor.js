@@ -1,7 +1,10 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
+
 import TileHelper from '../Helpers/TileHelper.js'
+import ActorHelper from '../Helpers/ActorHelper.js'
+
 import ActorControls from './ActorControls.js'
 import SelectedTile from './SelectedTile.js'
 import TileCollection from './TileCollection.js'
@@ -99,6 +102,15 @@ export default class Actor extends React.Component {
         return
       }
     }
+    if(this.prevTile.gid <= ActorHelper.TILES_IN_ACTIONS){
+      if(map.activeLayer != 3) {
+        map.setActiveLayer(3)
+        this.selectTile(e, clear)
+        return;
+      }
+    }
+
+
     const l = map.getActiveLayer()
     l && l.resetRotation && l.resetRotation()
     map.collection.pushOrRemove(new SelectedTile(this.prevTile))

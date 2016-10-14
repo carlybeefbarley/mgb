@@ -356,7 +356,7 @@ var flowerBuilder = {
   },*/
 
   ObjectExpression: function(node, buffer, depth, colorId, prefix) {
-    this.scanNodes(node, buffer, depth, colorId, prefix)
+    this.scanNodes(node.properties || node, buffer, depth, colorId, prefix)
   },
 
   ExportDefaultDeclaration: function(node, buffer, depth, colorId, prefix) {

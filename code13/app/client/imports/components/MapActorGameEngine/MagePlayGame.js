@@ -306,7 +306,8 @@ export default class MagePlayGame
                     if (this.activeActors[AAInCell].alive && AAInCell != AA && (this.activeActors[AAInCell].type == MgbActor.alActorType_NPC || this.activeActors[AAInCell].type == MgbActor.alActorType_Player)) {
                       if (actor.isAShot) {
                         if (AAInCell == this.AA_player_idx) {
-                          if (!(this.activeActors[AAInCell].activePowerUntilTweenCount >= this.G_tweenSinceMapStarted &&
+                          const now = (new Date()).getTime()
+                          if (!(this.activeActors[AAInCell].activePowerUntilGetTime >= now &&
                             MgbActor.alGainPowerType_Invulnerable == this.activeActors[AAInCell].activePower))
                             damage = actor.shotDamageToPlayer
                         }
@@ -463,7 +464,8 @@ export default class MagePlayGame
     this.G_tweenCount = (this.G_tweenCount + 1) % (this.G_tweensPerTurn + 1)
     this.G_tweenSinceMapStarted++
     let ps = ''
-    if (this.activeActors[this.AA_player_idx].activePower && this.activeActors[this.AA_player_idx].activePowerUntilTweenCount >= this.G_tweenSinceMapStarted)
+    const nowMS = (new Date()).getTime()
+    if (this.activeActors[this.AA_player_idx].activePower && this.activeActors[this.AA_player_idx].activePowerUntilGetTime >= nowMS)
       ps = "  Active Power = " + MgbActor.alGainPower[this.activeActors[this.AA_player_idx].activePower]
 
     // TODO - just use moment.js ? 

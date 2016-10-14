@@ -60,7 +60,7 @@ export default class ActiveActor
 	dyingAnimationFrameCount = 0	// 0 mean no animation of dying; >0 means at frame N of that 'dying' animation
 	
 	// Active powers
-	activePowerUntilTweenCount = 0			// 0 means no active power
+	activePowerUntilGetTime = 0			// 0 means no active power
 	activePower = 0							// One of the MgbActor.alGainPower powers. 
 
 	// Player-related info (this could be kept out of the class, but I've kept it here for simplicity and consistency, and it helps if we later support multi-user)

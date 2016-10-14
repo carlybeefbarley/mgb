@@ -28,7 +28,6 @@ export default MagePlayGameShoot = {
       this.logGameBug("Shot not defined for actor '"+ap.name+"'")
       return
     }
-
     // Spawn the shot. We need to make sure we don't shoot ourself :)
     var aa_shot_idx = this.playSpawnNewActor(this.loadActorByName(spawn), 
                 actor.x + (actor.cellSpanX > 2 ? 1 : 0), 

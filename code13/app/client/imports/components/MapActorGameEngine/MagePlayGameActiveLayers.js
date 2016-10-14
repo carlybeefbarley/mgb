@@ -166,8 +166,8 @@ debugger  // step through first time
   playSpawnNewActor: function(actorName, x, y, recycle = false, dropPersists = false, respawnId=null)
   {
     // Put within bounds
-    x = _.clamp(0, this.map.metadata.width-1)
-    y = _.clamp(0, this.map.metadata.height-1)
+    x = _.clamp(x, 0, this.map.metadata.width-1)
+    y = _.clamp(y, 0, this.map.metadata.height-1)
     
     // Spawn?
     let thisAAidx = this.activeActors.length

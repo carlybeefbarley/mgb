@@ -1,6 +1,5 @@
 
 
-
 import MgbActor from './MageMgbActor'
 
 
@@ -70,7 +69,10 @@ export default MagePlayGameDamage = {
       if (actorIdx == AA_player_idx)
         damage = this.reduceDamageByPlayerArmor(damage)
       if (activeActors[actorIdx].alive == false ||
-          (MgbActor.alGainPowerType_Invulnerable == activeActors[actorIdx].activePower && activeActors[actorIdx].activePowerUntilTweenCount >= G_tweenSinceMapStarted))
+          (MgbActor.alGainPowerType_Invulnerable == activeActors[actorIdx].activePower && 
+           activeActors[actorIdx].activePowerUntilGetTime >= (new Date()).getTime()     //TODO - check why this used to be G_tweenSinceMapStarted
+          )
+         )
         damage = 0
       if (ap.content2.databag.itemOrNPC.destroyableYN != 1)
         damage = 0

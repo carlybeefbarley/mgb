@@ -51,10 +51,11 @@ export default MagePlayGameItem = {
       activeActors[AA_player_idx].activePower = power
       var powersecs = parseInt(itemAP.content2.databag.item.gainPowerSecondsNum)
 debugger  // need to change how power timer works
+      var nowMS = (new Date()).getTime()
       if (0 == powersecs)
-        activeActors[AA_player_idx].activePowerUntilTweenCount = int.MAX_VALUE
+        activeActors[AA_player_idx].activePowerUntilGetTime = nowMS * 10    // 10 times 1970-to-now :)
       else
-        activeActors[AA_player_idx].activePowerUntilTweenCount = G_tweenSinceMapStarted + (stage.frameRate * powersecs)
+        activeActors[AA_player_idx].activePowerUntilGetTime = nowMS + powersecs * 1000  //1000ms=1s
     }
   }
 

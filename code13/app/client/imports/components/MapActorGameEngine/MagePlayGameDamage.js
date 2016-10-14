@@ -13,9 +13,9 @@ export default MagePlayGameDamage = {
     {
       const actor = activeActors[AA]
       const ap = actors[actor.ACidx]
-      const touchDamageToNpcOrItem = parseInt(ap.content2.databag.allchar.touchDamageToNPCorItemNum)
-      const touchDamageToPlayer = parseInt(ap.content2.databag.allchar.touchDamageToPlayerNum)
-      const touchDamageCase = parseInt(ap.content2.databag.allchar.touchDamageCases)
+      const touchDamageToNpcOrItem = this.intFromActorParam(ap.content2.databag.allchar.touchDamageToNPCorItemNum)
+      const touchDamageToPlayer = this.intFromActorParam(ap.content2.databag.allchar.touchDamageToPlayerNum)
+      const touchDamageCase = this.intFromActorParam(ap.content2.databag.allchar.touchDamageCases)
       
       if (touchDamageCase != MgbActor.alTouchDamageCases_WhenOverlapped && 
           actor.alive == true && 
@@ -47,8 +47,8 @@ export default MagePlayGameDamage = {
               const ACidx = activeActors[AAInCell].ACidx
               const hitThing_ap = actors[ACidx]
               const touchDamageToApply = (AAInCell == AA_player_idx) ? touchDamageToPlayer : touchDamageToNpcOrItem
-              if (AAInCell != AA && 0 == parseInt(hitThing_ap.content2.databag.item.pushToSlideNum))		// Can't do touch damage to self or sliding blocks
-                this.applyDamageToActor(AAInCell, hitThing_ap, touchDamageToApply, parseInt(ap.content2.databag.allchar.touchDamageAttackChance))
+              if (AAInCell != AA && 0 == this.intFromActorParam(hitThing_ap.content2.databag.item.pushToSlideNum))		// Can't do touch damage to self or sliding blocks
+                this.applyDamageToActor(AAInCell, hitThing_ap, touchDamageToApply, this.intFromActorParam(ap.content2.databag.allchar.touchDamageAttackChance))
             }
           }
         }

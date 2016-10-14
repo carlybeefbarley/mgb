@@ -46,7 +46,7 @@ export default MagePlayGameShoot = {
       shot.moveSpeed = 1				// Special case - see note in class definition
       actor.currentActiveShots++
       shot.actorWhoFiredShot = aa_idx
-      shot.shotRange = parseInt(ap.content2.databag.allchar.shotRangeNum)
+      shot.shotRange = this.intFromActorParam(ap.content2.databag.allchar.shotRangeNum)
       if (aa_idx == AA_player_idx)
         shot.shotRange += inventory.equipmentShotRangeBonus
       
@@ -67,12 +67,12 @@ export default MagePlayGameShoot = {
         return
       }
         // The space is available. Convert intended move into per-tween amounts and move
-      shot.shotDamageToNPC = parseInt(ap.content2.databag.allchar.shotDamageToNPCorItemNum)
+      shot.shotDamageToNPC = this.intFromActorParam(ap.content2.databag.allchar.shotDamageToNPCorItemNum)
         
       if (aa_idx == AA_player_idx)
         shot.shotDamageToNPC += inventory.equipmentShotDamageBonus
         
-      shot.shotDamageToPlayer = parseInt(ap.content2.databag.allchar.shotDamageToPlayerNum)
+      shot.shotDamageToPlayer = this.intFromActorParam(ap.content2.databag.allchar.shotDamageToPlayerNum)
 //		        shot.xMovePerTween = (shot.x - shot.fromx) * (mapPiece.actorWidth / (G_tweensPerTurn - (G_tweenCount-1)));
 //	    	    shot.yMovePerTween = (shot.y - shot.fromy) * (mapPiece.actorHeight / (G_tweensPerTurn - (G_tweenCount-1)));
       this.clearTicTable()		// Important, need to invalidate the collision detection cache. TODO Potentially just update the cells we know have changed - i.e. aai.x,aai.y

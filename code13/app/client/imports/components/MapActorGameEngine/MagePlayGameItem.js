@@ -13,7 +13,7 @@ export default MagePlayGameItem = {
   useItemActorOnPlayer(itemAP)  	// This just handles the effects on the player, not the resulting effects (visuals, messages, destruction etc) on the item
   {
     const { actors, activeActors, AA_player_idx, G_tweenSinceMapStarted } = this
-    var increasesMaxHealth = parseInt(itemAP.content2.databag.item.increasesMaxHealthNum)
+    var increasesMaxHealth = this.intFromActorParam(itemAP.content2.databag.item.increasesMaxHealthNum)
     if (increasesMaxHealth && activeActors[AA_player_idx].maxHealth != 0)
     {
       activeActors[AA_player_idx].maxHealth += increasesMaxHealth
@@ -22,7 +22,7 @@ export default MagePlayGameItem = {
       // TODO: Player's content2.databag.all.visualEffectWhenHarmedType / content2.databag.all.visualEffectWhenHealedType
     }
     
-    var heal = parseInt(itemAP.content2.databag.item.healOrHarmWhenUsedNum)
+    var heal = this.intFromActorParam(itemAP.content2.databag.item.healOrHarmWhenUsedNum)
     if (heal)
     {
       activeActors[AA_player_idx].health += heal
@@ -30,26 +30,26 @@ export default MagePlayGameItem = {
       MgbActor.playCannedSound(heal > 0 ? ap.content2.databag.all.soundWhenHealed : ap.content2.databag.all.soundWhenHarmed)								// TODO: ap1.content2.databag.all.visualEffectWhenHarmedType  
       // TODO: Player's content2.databag.all.visualEffectWhenHarmedType / content2.databag.all.visualEffectWhenHealedType
     }
-    if (1 == parseInt(itemAP.content2.databag.item.gainExtraLifeYN))
+    if (1 == this.intFromActorParam(itemAP.content2.databag.item.gainExtraLifeYN))
     {
       activeActors[AA_player_idx].extraLives++
       // TODO: content2.databag.all.visualEffectWhenHealedType
     }
-    var points = parseInt(itemAP.content2.databag.item.gainOrLosePointsNum)
+    var points = this.intFromActorParam(itemAP.content2.databag.item.gainOrLosePointsNum)
     if (points)
     {
       activeActors[AA_player_idx].score += points
     }
-    if (1 == parseInt(itemAP.content2.databag.item.winLevelYN))
+    if (1 == this.intFromActorParam(itemAP.content2.databag.item.winLevelYN))
     {
       activeActors[AA_player_idx].winLevel = true
     }
-    var power = parseInt(itemAP.content2.databag.item.gainPowerType)
+    var power = this.intFromActorParam(itemAP.content2.databag.item.gainPowerType)
     if (power)
     {
       // Note, this just replaces any previous power; there is no accumulation of concurrent powers...
       activeActors[AA_player_idx].activePower = power
-      var powersecs = parseInt(itemAP.content2.databag.item.gainPowerSecondsNum)
+      var powersecs = this.intFromActorParam(itemAP.content2.databag.item.gainPowerSecondsNum)
 debugger  // need to change how power timer works
       var nowMS = (new Date()).getTime()
       if (0 == powersecs)

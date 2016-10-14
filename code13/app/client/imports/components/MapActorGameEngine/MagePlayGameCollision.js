@@ -147,15 +147,15 @@ export default MagePlayGameCollision = {
         case MgbActor.alActorType_NPC:
           // 1. Damage to player (aa1) from enemy (aa2)
           if (aa2.inMelee())
-            this.applyDamageToActor(aa1_idx, ap1, parseInt(ap2.content2.databag.allchar.meleeDamageToPlayerNum))
+            this.applyDamageToActor(aa1_idx, ap1, this.intFromActorParam(ap2.content2.databag.allchar.meleeDamageToPlayerNum))
           else
-            this.applyDamageToActor(aa1_idx, ap1, parseInt(ap2.content2.databag.allchar.touchDamageToPlayerNum), parseInt(ap2.content2.databag.allchar.touchDamageAttackChance))
+            this.applyDamageToActor(aa1_idx, ap1, this.intFromActorParam(ap2.content2.databag.allchar.touchDamageToPlayerNum), this.intFromActorParam(ap2.content2.databag.allchar.touchDamageAttackChance))
           // 2. Touch Damage to enemy (aa2) from player (aa1)
           if (aa1.inMelee())
             this.applyDamageToActor(aa2_idx, ap2,
-                  Math.max(0, parseInt(ap1.content2.databag.allchar.meleeDamageToNPCorItemNum) + inventory.equipmentMeleeDamageBonus))	// Can't be -ve damage, so use max(0, ...) 
+                  Math.max(0, this.intFromActorParam(ap1.content2.databag.allchar.meleeDamageToNPCorItemNum) + inventory.equipmentMeleeDamageBonus))	// Can't be -ve damage, so use max(0, ...) 
           else
-            this.applyDamageToActor(aa2_idx, ap2, parseInt(ap1.content2.databag.allchar.touchDamageToNPCorItemNum), parseInt(ap1.content2.databag.allchar.touchDamageAttackChance))
+            this.applyDamageToActor(aa2_idx, ap2, this.intFromActorParam(ap1.content2.databag.allchar.touchDamageToNPCorItemNum), this.intFromActorParam(ap1.content2.databag.allchar.touchDamageAttackChance))
           break
         case MgbActor.alActorType_Shot:
           // Shot damage to player from shot; destroy shot
@@ -171,7 +171,7 @@ export default MagePlayGameCollision = {
           var itemUtilised = false		// True if the item had some effect - so we can trigger events
           var itemConsumed = false		// True if the item has been consumed and must be removed from play
           var showUseText = false			// True if we should show the useText
-          var activation = parseInt(ap2.content2.databag.item.itemActivationType)
+          var activation = this.intFromActorParam(ap2.content2.databag.item.itemActivationType)
           switch (activation)				// Note that this switch only covers some of the cases, since only some are touch-based.
           {
           case MgbActor.alItemActivationType_PlayerPicksUpUsesNow:
@@ -193,7 +193,7 @@ debugger
             break
           case MgbActor.alItemActivationType_BlocksPlayer:
           case MgbActor.alItemActivationType_BlocksPlayerAndNPC:
-            if (parseInt(ap2.content2.databag.item.pushToSlideNum)> 0)
+            if (this.intFromActorParam(ap2.content2.databag.item.pushToSlideNum)> 0)
               this.playPushItemToStartSliding(hits[hidx].AA1, hits[hidx].AA2)
             break
           }
@@ -207,7 +207,7 @@ debugger
           else
           {
             if (ap1.content2.databag.allchar.touchDamageToNPCorItemNum && 0 == ap2.content2.databag.item.pushToSlideNum)
-              this.applyDamageToActor(aa2_idx, ap2, ap1.content2.databag.allchar.touchDamageToNPCorItemNum, parseInt(ap1.content2.databag.allchar.touchDamageAttackChance))
+              this.applyDamageToActor(aa2_idx, ap2, ap1.content2.databag.allchar.touchDamageToNPCorItemNum, this.intFromActorParam(ap1.content2.databag.allchar.touchDamageAttackChance))
           }
           // 3. Usage notification & after-effects
           if (itemConsumed)
@@ -256,7 +256,7 @@ debugger
           {
           case MgbActor.alActorType_NPC:
             // 1. Touch Damage from #1 to #2
-            this.applyDamageToActor(aa2_idx, ap2, parseInt(ap1.content2.databag.allchar.touchDamageToNPCorItemNum), parseInt(ap1.content2.databag.allchar.touchDamageAttackChance))
+            this.applyDamageToActor(aa2_idx, ap2, this.intFromActorParam(ap1.content2.databag.allchar.touchDamageToNPCorItemNum), this.intFromActorParam(ap1.content2.databag.allchar.touchDamageAttackChance))
             break
           case MgbActor.alActorType_Item:
           case MgbActor.alActorType_Shot:
@@ -275,7 +275,7 @@ debugger
               else
               {
                 // Sliding block
-                if (t2 == MgbActor.alActorType_NPC && 1 == parseInt(ap1.content2.databag.item.squishNPCYN))
+                if (t2 == MgbActor.alActorType_NPC && 1 == this.intFromActorParam(ap1.content2.databag.item.squishNPCYN))
                 {
                   aa2.health = 0
                   MgbActor.playCannedSound(ap2.content2.databag.all.soundWhenHarmed)
@@ -286,7 +286,7 @@ debugger
                   aa1.x = aa1.fromx;
                   aa1.y = aa1.fromy;
                   this.playStopItemSliding(aa1)
-                  if (t2 == MgbActor.alActorType_NPC && 0 == parseInt(ap1.content2.databag.item.squishNPCYN && aa2.x == aa1.x && aa2.y == aa1.y))
+                  if (t2 == MgbActor.alActorType_NPC && 0 == this.intFromActorParam(ap1.content2.databag.item.squishNPCYN && aa2.x == aa1.x && aa2.y == aa1.y))
                   {
                     // The NPC moves from position A to B, and sliding block (non-lethal type) moves from B to A. 
                     // We need to move the NPC back

@@ -37,7 +37,7 @@ export default MagePlayGameActiveLayers = {
           var ap = this.actors[actorName]
           if (ap) {
             const databag = ap.content2.databag
-            var at = parseInt(databag.all.actorType)
+            var at = this.intFromActorParam(databag.all.actorType)
             
             if (skipCreatingPlayers == true && at == MgbActor.alActorType_Player)
               continue
@@ -91,9 +91,10 @@ export default MagePlayGameActiveLayers = {
                 aa.starty = y
                 aa.fromy = y
                 aa.y = y
-                aa.health = databag.all.initialHealthNum
-                aa.maxHealth = databag.all.initialMaxHealthNum
-                aa.appearIf = databag.itemOrNPC.appearIf ? databag.itemOrNPC.appearIf : MgbActor.alAppearDisappear_NoCondition
+                aa.health = this.intFromActorParam(databag.all.initialHealthNum)
+                // 0 maxHealth means Unlimited maxHealth
+                aa.maxHealth = this.intFromActorParam(databag.all.initialMaxHealthNum)
+                aa.appearIf = databag.itemOrNPC.appearIf ? this.intFromActorParam(databag.itemOrNPC.appearIf) : MgbActor.alAppearDisappear_NoCondition
                 aa.ACidx = actorName
                 aa._image = tp._image
                 aa.renderX = x * MgbSystem.tileMinWidth
@@ -101,7 +102,7 @@ export default MagePlayGameActiveLayers = {
                 aa.cellSpanX = Math.ceil(tp.content2.width / MgbSystem.tileMinWidth)	    // Round up
                 aa.cellSpanY = Math.ceil(tp.content2.height / MgbSystem.tileMinHeight)		// Round up
                 var spawnShot = databag.allchar.shotActor
-                aa.maxActiveShots = (!spawnShot || spawnShot === '') ? 0 : parseInt(databag.allchar.shotRateNum)
+                aa.maxActiveShots = (!spawnShot || spawnShot === '') ? 0 : this.intFromActorParam(databag.allchar.shotRateNum)
                 aa.alive = true
                 if (aa.moveSpeed == 0)
                   this.activeActors.unshift(aa)			// non-movers at the front of the array
@@ -191,7 +192,7 @@ debugger  // step through first time
       this.logGameBug("Can't spawn an actor that hasn't been pre-loaded: " + actorName)
       return -1
     }
-    const at = parseInt(ap.content2.databag.all.actorType)
+    const at = this.intFromActorParam(ap.content2.databag.all.actorType)
     if (MgbActor.alActorType_Player == at)
     {
       this.logGameBug("Can't spawn additional players")
@@ -225,7 +226,7 @@ debugger  // step through first time
       aa.cellSpanY = (tp.content2.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
       
       var spawnShot = ap.content2.databag.allchar.shotActor
-      aa.maxActiveShots = (!spawnShot || spawnShot === '') ? 0 : parseInt(ap.content2.databag.allchar.shotRateNum)
+      aa.maxActiveShots = (!spawnShot || spawnShot === '') ? 0 : this.intFromActorParam(ap.content2.databag.allchar.shotRateNum)
       
       aa.alive = true
       aa.birthTweenCount = this.G_tweenCount
@@ -274,7 +275,7 @@ debugger  // step through first time
         var ap = this.actors[actor.ACidx]        
         var spawn = ap ? ap.content2.databag.itemOrNPC.dropsObjectRandomlyName : null
         if (spawn && spawn !="") {
-          var dropChancePct = parseInt(ap.content2.databag.itemOrNPC.dropsObjectRandomlyChance)
+          var dropChancePct = this.intFromActorParam(ap.content2.databag.itemOrNPC.dropsObjectRandomlyChance)
           if ((100 * Math.random()) < dropChancePct) {			
             var p = this.findAdjacentFreeCellForDrop(AA, ActiveActor(activeActors[AA]).stepStyle, true)
             if (p) {

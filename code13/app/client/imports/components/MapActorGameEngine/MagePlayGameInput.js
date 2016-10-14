@@ -42,28 +42,28 @@ export default MagePlayGameInput = {
           this.toggleInventory()
         break
       case 'ArrowLeft':
-        if (parseInt(pp.content2.databag.allchar.leftYN))
+        if (this.intFromActorParam(pp.content2.databag.allchar.leftYN))
           this.G_player_action.left = newstate
         break
       case 'ArrowRight':
-        if (parseInt(pp.content2.databag.allchar.rightYN))
+        if (this.intFromActorParam(pp.content2.databag.allchar.rightYN))
           this.G_player_action.right = newstate
         break
       case 'ArrowUp':
-        if (parseInt(pp.content2.databag.allchar.upYN))
+        if (this.intFromActorParam(pp.content2.databag.allchar.upYN))
           this.G_player_action.up = newstate
         break
       case 'ArrowDown':
-        if (parseInt(pp.content2.databag.allchar.downYN))
+        if (this.intFromActorParam(pp.content2.databag.allchar.downYN))
           this.G_player_action.down = newstate
         break
       case ' ':
-        if (parseInt(pp.content2.databag.allchar.pushYN))
+        if (this.intFromActorParam(pp.content2.databag.allchar.pushYN))
           this.G_player_action.push = newstate
         break
       case 'm':		// Melee
       case 'End':	
-        if (parseInt(pp.content2.databag.allchar.meleeYN))
+        if (this.intFromActorParam(pp.content2.databag.allchar.meleeYN))
           this.G_player_action.melee = newstate
         break
       case 'Control':
@@ -73,7 +73,7 @@ export default MagePlayGameInput = {
           this.doPauseGame()
         break
       case 'Enter':
-        if (parseInt(pp.content2.databag.allchar.shotRateNum))
+        if (this.intFromActorParam(pp.content2.databag.allchar.shotRateNum))
           this.G_player_action.shoot = newstate
         break		    		
       }

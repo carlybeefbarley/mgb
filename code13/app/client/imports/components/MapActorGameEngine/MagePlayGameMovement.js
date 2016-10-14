@@ -62,7 +62,7 @@ export default MagePlayGameMovement = {
     {
       if (enemyAA.isAShot && enemyAA.stepCount > enemyAA.shotRange)
         this.destroyShot(enemyAA)
-      else if (!enemyAA.isAShot && enemyAA.stepCount > parseInt(enemy.content2.databag.item.pushToSlideNum))
+      else if (!enemyAA.isAShot && enemyAA.stepCount > this.intFromActorParam(enemy.content2.databag.item.pushToSlideNum))
         this.playStopItemSliding(enemyAA)
       else
       {
@@ -90,8 +90,8 @@ export default MagePlayGameMovement = {
     }
     else if (enemyAA.moveSpeed > 0 || (enemyAA.moveSpeed < 1 && Math.random() < enemyAA.moveSpeed))
     {
-      var t = parseInt(enemy.content2.databag.npc.movementType)
-      var aggroRange = parseInt(enemy.content2.databag.npc.aggroRange)
+      var t = this.intFromActorParam(enemy.content2.databag.npc.movementType)
+      var aggroRange = this.intFromActorParam(enemy.content2.databag.npc.aggroRange)
       var tilesFromPlayerSquared = Math.pow(enemyAA.x - activeActors[AA_player_idx].x, 2) + Math.pow(enemyAA.y - activeActors[AA_player_idx].y, 2) 
       
       if (aggroRange)
@@ -173,18 +173,18 @@ export default MagePlayGameMovement = {
       
       if (tilesFromPlayerSquared < 36)		// 36 = 6^2 - hardcoded but reasonable :)
       {
-        var meleeDamage1 = parseInt(enemy.content2.databag.allchar.meleeDamageToPlayerNum)
-        var meleeDamage2 = parseInt(enemy.content2.databag.allchar.meleeDamageToNPCorItemNum)
+        var meleeDamage1 = this.intFromActorParam(enemy.content2.databag.allchar.meleeDamageToPlayerNum)
+        var meleeDamage2 = this.intFromActorParam(enemy.content2.databag.allchar.meleeDamageToNPCorItemNum)
         if (meleeDamage1 > 0 || meleeDamage2 > 0)
           this.startMeleeIfAllowed(enemyAA, false)
       }
       
       if (this.actorCanShoot(AAi))
       {
-        t = parseInt(enemy.content2.databag.npc.shotAccuracyType)
+        t = this.intFromActorParam(enemy.content2.databag.npc.shotAccuracyType)
         var shotStepStyle
         if (t == MgbActor.alShotAccuracy_random || t == MgbActor.alShotAccuracy_poor)
-          shotStepStyle = parseInt(Math.random() * 4)
+          shotStepStyle = this.intFromActorParam(Math.random() * 4)
         else // alShotAccuracy_good or alShotAccuracy_great
         {
           if ((enemyAA.x - activeActors[AA_player_idx].x) < -1)
@@ -302,20 +302,20 @@ export default MagePlayGameMovement = {
                 else
                 {
                   // Does this thing obstruct an enemy?
-                  if (parseInt(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_Shot &&
-                      (parseInt(ap.content2.databag.all.actorType) == MgbActor.alActorType_Player ||
-                      parseInt(ap.content2.databag.all.actorType) == MgbActor.alActorType_NPC))
+                  if (this.intFromActorParam(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_Shot &&
+                      (this.intFromActorParam(ap.content2.databag.all.actorType) == MgbActor.alActorType_Player ||
+                      this.intFromActorParam(ap.content2.databag.all.actorType) == MgbActor.alActorType_NPC))
                   {
                     // enemies & players don't block bullets :)  - they get handled in the collision code
-                  } else if (parseInt(ap.content2.databag.all.actorType) == MgbActor.alActorType_Shot &&
-                      (parseInt(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_Player ||
-                      parseInt(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_NPC))
+                  } else if (this.intFromActorParam(ap.content2.databag.all.actorType) == MgbActor.alActorType_Shot &&
+                      (this.intFromActorParam(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_Player ||
+                      this.intFromActorParam(aa_p.content2.databag.all.actorType) == MgbActor.alActorType_NPC))
                   {
                     // again, enemies & players don't block bullets - just checking with the order switched
                   } else if (AA_player_idx == AAInCell)
                   {
                     // NPC is trying to occupy the same space as the player... is this OK?
-                    if (parseInt(aa_p.content2.databag.npc.canOccupyPlayerSpaceYN) == 1)
+                    if (this.intFromActorParam(aa_p.content2.databag.npc.canOccupyPlayerSpaceYN) == 1)
                       obstructed = false
                     else
                       obstructed = true

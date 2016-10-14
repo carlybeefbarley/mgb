@@ -30,7 +30,7 @@ export default MagePlayGameNpc = {
     else
     {
       var msg = ap.content2.databag.npc.talkText
-      var fnt = MgbSystem.gameFonts[parseInt(ap.content2.databag.npc.talkTextFontIndex)]
+      var fnt = MgbSystem.gameFonts[this.intFromActorParam(ap.content2.databag.npc.talkTextFontIndex)]
       var c1 = ap.content2.databag.npc.responseChoice1
       var c2 = ap.content2.databag.npc.responseChoice2
       var c3 = ap.content2.databag.npc.responseChoice3

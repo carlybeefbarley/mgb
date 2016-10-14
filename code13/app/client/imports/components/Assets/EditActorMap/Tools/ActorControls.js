@@ -122,6 +122,9 @@ export default class ActorControls extends React.Component {
 
     map.activeTileset = 0
     tss.splice(active, 1)
+
+    // TODO: clean up map
+
     map.fullUpdate()
   }
   get active(){
@@ -144,7 +147,7 @@ export default class ActorControls extends React.Component {
              */}
         </div>
         {this.active > 0 &&
-        <div className='ui icon buttons right floated mini' title='Remove Active Tileset'
+        <div className='ui icon buttons right floated mini' title='Remove Actor'
              style={{ position: 'relative', top: '-10px' }}>
           <button className='ui icon button' onClick={this.removeTileset.bind(this)}>
             <i className='remove icon'></i>

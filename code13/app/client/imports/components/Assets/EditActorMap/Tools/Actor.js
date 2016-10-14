@@ -283,7 +283,7 @@ export default class Actor extends React.Component {
       return;
     }
     console.log("Dropped asset", asset);
-
+    const name = asset.dn_ownerName +":"+ asset.name
     const tileset = {
       columns: 1,
       firstgid: 0,
@@ -297,6 +297,17 @@ export default class Actor extends React.Component {
       tileheight: 0,
       tilewidth: 0
     }
+    // TODO: make clean load actor method
+    const nextId = ActorHelper.TILES_IN_ACTIONS + this.map.data.tilesets.length
+    const map = {
+      [name] : tileset
+    }
+    ActorHelper.loadActor(name, map, nextId, this.map.data.images, null, () => {
+      console.log("actor added!");
+      this.map.data.tilesets.push(tileset)
+      this.map.fullUpdate()
+    })
+
 
     return;
     const src = `/api/asset/actor/${names.user}/${name}`;
@@ -468,14 +479,18 @@ export default class Actor extends React.Component {
       )
     }
     /* TODO: save active tileset and use only that as active */
+    /*
+    update tileset props:
+     data-drop-text='Drop asset here to update tileset image'
+     onDragOver={DragNDropHelper.preventDefault}
+     onDrop={this.onDropChangeTilesetImage.bind(this)}
+     */
     return (
       <div className='mgbAccordionScroller tilesets'>
         <div className='ui fluid styled accordion'>
           <div
             className='active title accept-drop'
-            data-drop-text='Drop asset here to update tileset image'
-            onDragOver={DragNDropHelper.preventDefault}
-            onDrop={this.onDropChangeTilesetImage.bind(this)}>
+            >
             <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
             <div className='ui simple dropdown item' style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%' }}>
               <i className='dropdown icon'></i><span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight} style={{ 'textOverflow': 'ellipsis', 'maxWidth': '85%', float: 'right', 'overflow': 'hidden' }}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>

@@ -259,12 +259,18 @@ export default {
         }
       })
     }
-
   },
-  loadActor: function(name, map, nr, images, names, cb){
-    $.get(`/api/asset/actor/${names.user}/${name}`).done((d) => {
 
-      const src = `/api/asset/png/${names.user}/${d.databag.all.defaultGraphicName}`
+  // TODO: clean up
+  loadActor: function(name, map, nr, images, names, cb){
+    const parts = name.split(":")
+    const user = parts.length > 1 ? parts.shift() : names.user
+    const actorName = parts.length ? parts.pop() : name
+
+
+    $.get(`/api/asset/actor/${user}/${actorName}`).done((d) => {
+
+      const src = `/api/asset/png/${user}/${d.databag.all.defaultGraphicName}`
       console.log(d);
 
 
@@ -283,6 +289,9 @@ export default {
     })
   },
 
+  loadActorSimple: function(asset, map){
+
+  },
   eventNameToTile: function(name){
     if(name.indexOf("jump") === 0){
       return 1;

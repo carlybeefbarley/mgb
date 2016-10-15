@@ -105,13 +105,20 @@ export default class MagePlayGame
   }
   
 
-  startGame(map, actors, graphics, transitionToNextMapFn, setGameStatusFn, showNpcMessageFn, keyCaptureElement) { 
+  startGame(map, actors, graphics, 
+            transitionToNextMapFn, 
+            setGameStatusFn, 
+            showNpcMessageFn, 
+            toggleNpcDialogFn,
+            keyCaptureElement) 
+  { 
     this.map = map
     this.actors = actors
     this.graphics = graphics
     this.setGameStatusFn = setGameStatusFn
     this.showNpcMessageFn = showNpcMessageFn
     this.transitionToNextMapFn = transitionToNextMapFn
+    this.toggleNpcDialogFn = toggleNpcDialogFn
 
     this.resetGameState()
 
@@ -137,6 +144,14 @@ export default class MagePlayGame
 
   doPauseGame() {
     this.isPaused = true
+  }
+
+  toggleInventory()
+  {
+    const newViz = !this.showingInventoryDialog
+    this.showingInventoryDialog = newViz
+    this.toggleNpcDialogFn(newViz)
+    this.isPaused = newViz
   }
 
   // This is a bit weird It returns the NAME not the actor. TODO - rename for clarity

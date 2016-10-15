@@ -1,5 +1,5 @@
 
-
+import InventoryItem from './MageInventoryItem'
 import MgbActor from './MageMgbActor'
 
 
@@ -20,9 +20,7 @@ class EquipmentEffects
     this.meleeSound = null        // null or non-empty String
     this.meleeRepeatDelayModifier = 0
   }
-	
 }
-
 
 export default class Inventory {
 
@@ -45,20 +43,20 @@ export default class Inventory {
   get(name)
   {
     const oldFF = this._invAC.filterFunction
-    invAC._filterFunction = null			// make sure we see the full list
-    invAC._refresh()
+    this.invAC._filterFunction = null			// make sure we see the full list
+    this.invAC._refresh()
     
     var retval = null
 
-    for (var i = 0; i < invAC.length ; i++) {
-      if (invAC[i] && invAC[i].name == name) {
-        retval = invAC[i]
+    for (var i = 0; i < this.invAC.length ; i++) {
+      if (this.invAC[i] && this.invAC[i].name == name) {
+        retval = this.invAC[i]
         break
       }
     }
     
-    invAC._filterFunction = oldFF			// Restore the full list view
-    invAC._refresh()
+    this.invAC._filterFunction = oldFF			// Restore the full list view
+    this.invAC._refresh()
     return retval
   }
 
@@ -75,22 +73,22 @@ export default class Inventory {
   _getIdx(name)
   {
     const oldFF = this._invAC.filterFunction
-    invAC._filterFunction = null			// make sure we see the full list
-    invAC._refresh()
+    this.invAC._filterFunction = null			// make sure we see the full list
+    this.invAC._refresh()
 
     var retval = -1
 
-    for (var i = 0; i < invAC.length ; i++)
+    for (var i = 0; i < this.invAC.length ; i++)
     {
-      if (invAC[i] && invAC[i].name == name)
+      if (this.invAC[i] && this.invAC[i].name == name)
       {
         retval = i
         break
       }
     }
 
-    invAC._filterFunction = oldFF			// Restore the full list view
-    invAC._refresh()
+    this.invAC._filterFunction = oldFF			// Restore the full list view
+    this.invAC._refresh()
     return retval
   }
 
@@ -106,6 +104,7 @@ export default class Inventory {
    */
   add(item)
   {
+debugger    
     const found = this.get(item.name)
     if (found)
       found.count += item.count ? parseInt(item.count) : 0
@@ -147,13 +146,13 @@ export default class Inventory {
       // Do we need to worry about unequipping something else that was already equipped in this slot?
       if (state && (found.equipSlot || found.autoEquippable)) {
         // We should go through now and unequip any other items that were already equipped in this slot
-        let oldFF = invAC._filterFunction
-        invAC._filterFunction = null			// make sure we see the full list
-        invAC._refresh()
+        let oldFF = this.invAC._filterFunction
+        this.invAC._filterFunction = null			// make sure we see the full list
+        this.invAC._refresh()
         
-        for (var i = 0; i < invAC.length ; i++) {
-          if (invAC[i]) {
-            var maybeItemInSameSlot = invAC[i]
+        for (var i = 0; i < this.invAC.length ; i++) {
+          if (this.invAC[i]) {
+            var maybeItemInSameSlot = this.invAC[i]
             if (maybeItemInSameSlot.equipped == true && maybeItemInSameSlot.name != found.name) {
               if (found.autoEquippable) {
                 if (maybeItemInSameSlot.autoEquippable) {
@@ -170,9 +169,9 @@ export default class Inventory {
             }
           }
         }
-        invAC._filterFunction = oldFF			// Restore the full list view
+        this.invAC._filterFunction = oldFF			// Restore the full list view
       }
-      invAC._refresh()
+      this.invAC._refresh()
     }
     this.recalculateEquipmentEffects()
     
@@ -190,26 +189,26 @@ export default class Inventory {
    */
   removeByName(itemName, count)
   {
-    const oldFF = invAC._filterFunction
-    invAC._filterFunction = null			// make sure we see the full list
-    invAC._refresh()
+    const oldFF = this.invAC._filterFunction
+    this.invAC._filterFunction = null			// make sure we see the full list
+    this.invAC._refresh()
 
     var removed = false
-    const found = getIdx(itemName)
+    const found = this.getIdx(itemName)
     if (found != -1)
     {
 debugger
-      var heldItem = InventoryItem(invAC.getItemAt(found))
+      var heldItem = InventoryItem(this.invAC.getItemAt(found))
       if (count < heldItem.count)
         heldItem.count -= count
       else
-        invAC.removeItemAt(found)
+        this.invAC.removeItemAt(found)
       removed = true
     }
     this.recalculateEquipmentEffects()
 
-    invAC._filterFunction = oldFF			// Restore the full list view
-    invAC._refresh()
+    this.invAC._filterFunction = oldFF			// Restore the full list view
+    this.invAC._refresh()
     
     return removed
   }
@@ -239,7 +238,7 @@ debugger
    */
   recalculateEquipmentEffects()
   {
-    const { equipEffects } = this
+    const { equipEffects, invAC } = this
 
     equipEffects.shotActor = null
     equipEffects.shotSound = null
@@ -261,29 +260,29 @@ debugger
       if (invAC[i]) {
         var item = invAC[i]
         if (item.equipped) {	
-          var s = this.ifRealString(item.actor.actorXML.databag.item.equippedNewShotActor)
+          var s = this.ifRealString(item.actor.content2.databag.item.equippedNewShotActor)
           if (s && (equipEffects.shotActor == null || !autoEquippedItemProcessed))
             equipEffects.shotActor = s
               
-          s = this.ifRealString(item.actor.actorXML.databag.item.equippedNewShotSound)
+          s = this.ifRealString(item.actor.content2.databag.item.equippedNewShotSound)
           if (s && (equipEffects.shotSound == null || !autoEquippedItemProcessed))
             equipEffects.shotSound = s
             
-          s = this.ifRealString(item.actor.actorXML.databag.item.equippedNewActorGraphics)
+          s = this.ifRealString(item.actor.content2.databag.item.equippedNewActorGraphics)
           if (s && (equipEffects.newActorGraphics == null || !autoEquippedItemProcessed))
             equipEffects.newActorGraphics = s
 
-          equipEffects.shotDamageBonus += MgbActor.intFromActorParam(item.actor.actorXML.databag.item.equippedNewShotDamageBonusNum)
-          equipEffects.shotRateBonus += MgbActor.intFromActorParam(item.actor.actorXML.databag.item.equippedNewShotRateBonusNum)
-          equipEffects.shotRangeBonus+= MgbActor.intFromActorParam(item.actor.actorXML.databag.item.equippedNewShotRangeBonusNum)
-          equipEffects.armorEffect += MgbActor.intFromActorParam(item.actor.actorXML.databag.item.equippedArmorEffect)
+          equipEffects.shotDamageBonus += MgbActor.intFromActorParam(item.actor.content2.databag.item.equippedNewShotDamageBonusNum)
+          equipEffects.shotRateBonus += MgbActor.intFromActorParam(item.actor.content2.databag.item.equippedNewShotRateBonusNum)
+          equipEffects.shotRangeBonus+= MgbActor.intFromActorParam(item.actor.content2.databag.item.equippedNewShotRangeBonusNum)
+          equipEffects.armorEffect += MgbActor.intFromActorParam(item.actor.content2.databag.item.equippedArmorEffect)
           
           // Melee
-          equipEffects.meleeDamageBonus += MgbActor.intFromActorParam(item.actor.actorXML.databag.item.equippedNewMeleeDamageBonusNum)
-          s = ifRealString(item.actor.actorXML.databag.item.equippedNewMeleeSound)
+          equipEffects.meleeDamageBonus += MgbActor.intFromActorParam(item.actor.content2.databag.item.equippedNewMeleeDamageBonusNum)
+          s = this.ifRealString(item.actor.content2.databag.item.equippedNewMeleeSound)
           if (s && (equipEffects.meleeSound == null || !autoEquippedItemProcessed))
             equipEffects.meleeSound = s
-          equipEffects.meleeRepeatDelayModifier += MgbActor.intFromActorParam(item.actor.actorXML.databag.item.equippedNewMeleeRepeatDelayModifierNum) 
+          equipEffects.meleeRepeatDelayModifier += MgbActor.intFromActorParam(item.actor.content2.databag.item.equippedNewMeleeRepeatDelayModifierNum) 
 
           
           if (item.autoEquippable)

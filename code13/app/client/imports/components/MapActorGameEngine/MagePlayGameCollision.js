@@ -1,4 +1,6 @@
 
+
+import InventoryItem from './MageInventoryItem'
 import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
 
@@ -242,15 +244,15 @@ debugger
           // We'll do this twice - once for AA1's effects on AA2, then we'll flip AA1/AA2 and do it again
           if (iteration)			// 2nd time through, let's swap - note that these assignments are flipped on purpose
           {
-            aa1_idx = hits[hidx].AA2			//yes, this is right! we're flipping
+            aa1_idx = hits[hidx].AA2			  // Yes - this is right! we're flipping
             aa1 = activeActors[aa1_idx]
             ap1 = actors[activeActors[hits[hidx].AA2].ACidx]
-            t1 = aa1.type;			// Yes - since aa1 is set for this guy now
+            t1 = aa1.type             			// Yes - since aa1 is set for this guy now
             aa2_idx = hits[hidx].AA1
-            aa2 = activeActors[aa2_idx]			//yes, this is right! we're flipping
+            aa2 = activeActors[aa2_idx]			// Yes - this is right! we're flipping
             ap2 = actors[activeActors[hits[hidx].AA1].ACidx]
 
-            t2 = aa2.type;
+            t2 = aa2.type
           }
           switch (t1)
           {
@@ -283,8 +285,8 @@ debugger
                 }
                 else
                 {
-                  aa1.x = aa1.fromx;
-                  aa1.y = aa1.fromy;
+                  aa1.x = aa1.fromx
+                  aa1.y = aa1.fromy
                   this.playStopItemSliding(aa1)
                   if (t2 == MgbActor.alActorType_NPC && 0 == MgbActor.intFromActorParam(ap1.content2.databag.item.squishNPCYN && aa2.x == aa1.x && aa2.y == aa1.y))
                   {

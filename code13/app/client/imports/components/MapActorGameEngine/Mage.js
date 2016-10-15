@@ -56,7 +56,7 @@ export default class Mage extends React.Component {
     // React state
     this.state = {
       activeNpcDialog:        null,   // null or (see render() )
-      activeInventoryDialog:  null,
+      isInventoryShowing:     null,
       isPlaying:              false,   
       isPreloading:           'map',   // Null if not preloading. String if preloading. Supercedes all other state
       mapLoadError:           null,    // Can be a string
@@ -88,8 +88,12 @@ export default class Mage extends React.Component {
   }
 
 
-  handleShowNpcDialog(npcDialogData) {
+  handleShowNpcDialog(npcDialogData) {  // can be null (meaning hide)
     this.setState( { activeNpcDialog: npcDialogData } )
+  }
+
+  handleSetInventoryVisibility(newVisibility) {
+    this.setState( { isInventoryShowing: newVisibility } )
   }
 
   handlePlay()
@@ -105,6 +109,7 @@ export default class Mage extends React.Component {
       newMapName => this._transitionToNextMap(newMapName),
       (lineNum, txt) => this.handleSetGameStatus(lineNum, txt), 
       (npcDialogData) => this.handleShowNpcDialog(npcDialogData),
+      (newViz) => this.handleSetInventoryVisibility(newViz),
       window)
     this.setState( { isPlaying : true })
   }
@@ -327,7 +332,7 @@ debugger  // TODO - stop game, no map.
   }
 
   render() {
-    const { isPreloading, mapLoadError, activeMap, isPlaying, activeNpcDialog, activeInventoryDialog } = this.state
+    const { isPreloading, mapLoadError, activeMap, isPlaying, activeNpcDialog, isInventoryShowing } = this.state
     if (isPreloading)
       return <Preloader msg={isPreloading} />
 
@@ -356,7 +361,7 @@ debugger  // TODO - stop game, no map.
                 activeActor={activeNpcDialog.activeActor}
                 responseCallbackFn={choiceNum => { activeNpcDialog.responseCallbackFn(choiceNum) }} />
         }
-        { !!activeInventoryDialog && 
+        { !!isInventoryShowing && 
           <MageInventoryDialog />
         }
 

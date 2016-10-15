@@ -43,6 +43,7 @@ export default MagePlayGameInput = {
       {
       case 'Backspace':
       case 'Delete':
+      case 'i':
         if (newstate)
           this.toggleInventory()
         break

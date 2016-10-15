@@ -13,9 +13,9 @@ export default MagePlayGameDamage = {
     {
       const actor = activeActors[AA]
       const ap = actors[actor.ACidx]
-      const touchDamageToNpcOrItem = this.intFromActorParam(ap.content2.databag.allchar.touchDamageToNPCorItemNum)
-      const touchDamageToPlayer = this.intFromActorParam(ap.content2.databag.allchar.touchDamageToPlayerNum)
-      const touchDamageCase = this.intFromActorParam(ap.content2.databag.allchar.touchDamageCases)
+      const touchDamageToNpcOrItem = MgbActor.intFromActorParam(ap.content2.databag.allchar.touchDamageToNPCorItemNum)
+      const touchDamageToPlayer = MgbActor.intFromActorParam(ap.content2.databag.allchar.touchDamageToPlayerNum)
+      const touchDamageCase = MgbActor.intFromActorParam(ap.content2.databag.allchar.touchDamageCases)
       
       if (touchDamageCase != MgbActor.alTouchDamageCases_WhenOverlapped && 
           actor.alive == true && 
@@ -47,8 +47,8 @@ export default MagePlayGameDamage = {
               const ACidx = activeActors[AAInCell].ACidx
               const hitThing_ap = actors[ACidx]
               const touchDamageToApply = (AAInCell == AA_player_idx) ? touchDamageToPlayer : touchDamageToNpcOrItem
-              if (AAInCell != AA && 0 == this.intFromActorParam(hitThing_ap.content2.databag.item.pushToSlideNum))		// Can't do touch damage to self or sliding blocks
-                this.applyDamageToActor(AAInCell, hitThing_ap, touchDamageToApply, this.intFromActorParam(ap.content2.databag.allchar.touchDamageAttackChance))
+              if (AAInCell != AA && 0 == MgbActor.intFromActorParam(hitThing_ap.content2.databag.item.pushToSlideNum))		// Can't do touch damage to self or sliding blocks
+                this.applyDamageToActor(AAInCell, hitThing_ap, touchDamageToApply, MgbActor.intFromActorParam(ap.content2.databag.allchar.touchDamageAttackChance))
             }
           }
         }
@@ -74,7 +74,7 @@ export default MagePlayGameDamage = {
           )
          )
         damage = 0
-      if (ap.content2.databag.itemOrNPC.destroyableYN != 1)
+      if (MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.destroyableYN) != 1)
         damage = 0
     }
     if (damage)
@@ -89,7 +89,7 @@ export default MagePlayGameDamage = {
   reduceDamageByPlayerArmor: function(baseDamage)
   {
     const { inventory } = this
-    let result = (baseDamage * (100-inventory.equipmentArmorEffect)) / 100
+    let result = Math.floor( (baseDamage * (100-inventory.equipmentArmorEffect)) / 100 )
     if (result < 1 && baseDamage >=1)
       result = Math.random() < result ? 1 : 0   // we'll turn this into a % chance to get 1 damage
     return result > 0 ? result : 0			// Never return a -ve number

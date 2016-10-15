@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import MgbActor from './MageMgbActor'
 
 const _actions = 'up,down,left,right,shift,push,melee,shoot,jump,inventory,npcmessage'.split(',')
 
@@ -42,28 +43,28 @@ export default MagePlayGameInput = {
           this.toggleInventory()
         break
       case 'ArrowLeft':
-        if (this.intFromActorParam(pp.content2.databag.allchar.leftYN))
+        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.leftYN))
           this.G_player_action.left = newstate
         break
       case 'ArrowRight':
-        if (this.intFromActorParam(pp.content2.databag.allchar.rightYN))
+        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.rightYN))
           this.G_player_action.right = newstate
         break
       case 'ArrowUp':
-        if (this.intFromActorParam(pp.content2.databag.allchar.upYN))
+        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.upYN))
           this.G_player_action.up = newstate
         break
       case 'ArrowDown':
-        if (this.intFromActorParam(pp.content2.databag.allchar.downYN))
+        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.downYN))
           this.G_player_action.down = newstate
         break
       case ' ':
-        if (this.intFromActorParam(pp.content2.databag.allchar.pushYN))
+        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.pushYN))
           this.G_player_action.push = newstate
         break
       case 'm':		// Melee
       case 'End':	
-        if (this.intFromActorParam(pp.content2.databag.allchar.meleeYN))
+        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.meleeYN))
           this.G_player_action.melee = newstate
         break
       case 'Control':
@@ -73,7 +74,7 @@ export default MagePlayGameInput = {
           this.doPauseGame()
         break
       case 'Enter':
-        if (this.intFromActorParam(pp.content2.databag.allchar.shotRateNum))
+        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.shotRateNum))
           this.G_player_action.shoot = newstate
         break		    		
       }

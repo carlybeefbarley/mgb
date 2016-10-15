@@ -22,7 +22,7 @@ export default MagePlayGameBackgroundLayers = {
         if (ACidx) {
           const ap = this.actors[ACidx]
           if (ap) {
-            var at = this.intFromActorParam(ap.content2.databag.all.actorType)
+            var at = MgbActor.intFromActorParam(ap.content2.databag.all.actorType)
             if (at == MgbActor.alActorType_Item) {
               // Now, we need to work out how big this thing is. We learn this from the tile
               var tp = this.graphics[ap.content2.databag.all.defaultGraphicName]
@@ -31,7 +31,7 @@ export default MagePlayGameBackgroundLayers = {
 
               var width = tp ? Math.floor(tp.content2.width / MgbSystem.tileMinWidth) : 1 
               var height =  tp ? Math.floor(tp.content2.height / MgbSystem.tileMinHeight) : 1
-              var itemAct = this.intFromActorParam(ap.content2.databag.item.itemActivationType)
+              var itemAct = MgbActor.intFromActorParam(ap.content2.databag.item.itemActivationType)
               
               // OK, now mark the appropriate number of spaces as blocked
               if (itemAct == MgbActor.alItemActivationType_BlocksPlayer || itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)

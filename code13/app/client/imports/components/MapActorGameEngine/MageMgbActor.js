@@ -246,9 +246,25 @@ const MgbActor = {
       if (tilename == null || tilename == "")
         tilename = actorPiece.databag.all.defaultGraphicName
     }
-    return tilename ? tilename :  ""		// Null -> ""
-  }
-}
+    return tilename ? tilename :  ''		// Null -> ''
+  },
 
+  intFromActorParam: function (param) {
+    if (typeof param == 'number')
+      return Math.floor(param)
+    if (typeof param === 'undefined')
+      return 0    // http://help.adobe.com/en_US/ActionScript/3.0_ProgrammingAS3/WS5b3ccc516d4fbf351e63e3d118a9b90204-7f87.html
+    return parseInt(param, 10)
+  },
+
+  numberFromActorParam: function (param) {
+    if (typeof param == 'number')
+      return param
+    if (typeof param === 'undefined')
+      return 0    // http://help.adobe.com/en_US/ActionScript/3.0_ProgrammingAS3/WS5b3ccc516d4fbf351e63e3d118a9b90204-7f87.html
+    return Number(param)
+  }
+
+}
 
 export default MgbActor

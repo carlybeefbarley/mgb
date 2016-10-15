@@ -59,7 +59,7 @@ export default class MagePlayGame
   }
 
   resetGameState() {
-    this.gameStartedAtMS = (new Date()).getTime()
+    this.G_gameStartedAtMS = (new Date()).getTime()
     this.isPaused = false
     this.gameOver = false
 
@@ -160,7 +160,7 @@ export default class MagePlayGame
         var o = MgbSystem.parseEventCommand(eventString)
         if (o.command === "jump") {
           console.trace("event: " + eventString)
-          this.transitionToNewMap(this.map.userName, this.map.projectName, o.mapname, this.intFromActorParam(o.x), this.intFromActorParam(o.y))
+          this.transitionToNewMap(this.map.userName, this.map.projectName, o.mapname, MgbActor.intFromActorParam(o.x), MgbActor.intFromActorParam(o.y))
           return
         }
         else if (o.command == "music") {
@@ -199,21 +199,21 @@ export default class MagePlayGame
                 var floorActorName = this.map.mapLayer[MgbMap.layerBackground][cellIndex]
                 floorActor = (floorActorName && floorActorName != '') ? this.actors[floorActorName]: null
                 if (floorActor && floorActor.content2 &&
-                  floorActor.content2.databag.all.actorType == MgbActor.alActorType_Item &&
-                  (this.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_CausesDamage ||
-                    this.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_PushesActors))
+                  MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType) == MgbActor.alActorType_Item &&
+                  (MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_CausesDamage ||
+                    MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_PushesActors))
                   break
                 floorActor = null
               }
             }
           }
-          if (floorActor && this.intFromActorParam(floorActor.content2.databag.item.itemActivationType === MgbActor.alItemActivationType_PushesActors)) {
-            switch (this.intFromActorParam(floorActor.content2.databag.item.itemPushesActorType)) {
+          if (floorActor && MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType === MgbActor.alItemActivationType_PushesActors)) {
+            switch (MgbActor.intFromActorParam(floorActor.content2.databag.item.itemPushesActorType)) {
             case MgbActor.alItemPushesActorType_up:
             case MgbActor.alItemPushesActorType_right:
             case MgbActor.alItemPushesActorType_down:
             case MgbActor.alItemPushesActorType_left:
-              stepStyleOverride = this.intFromActorParam(floorActor.content2.databag.item.itemPushesActorType)
+              stepStyleOverride = MgbActor.intFromActorParam(floorActor.content2.databag.item.itemPushesActorType)
               break
 
             case MgbActor.alItemPushesActorType_onwards:
@@ -232,8 +232,8 @@ export default class MagePlayGame
               break
             }
           }
-          if (floorActor && this.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_CausesDamage)
-            this.applyDamageToActor(AA, aa_p, this.intFromActorParam(floorActor.content2.databag.item.healOrHarmWhenUsedNum))
+          if (floorActor && MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_CausesDamage)
+            this.applyDamageToActor(AA, aa_p, MgbActor.intFromActorParam(floorActor.content2.databag.item.healOrHarmWhenUsedNum))
 
           if (AA === this.AA_player_idx)
             this.calculateNewPlayerPosition(stepStyleOverride)
@@ -259,7 +259,7 @@ export default class MagePlayGame
                   var AAInCell = this.G_tic[cellToCheck][i]
                   var ACidx = this.activeActors[AAInCell].ACidx
                   var hitThing_ap = this.actors[ACidx]
-                  var activation = this.intFromActorParam(hitThing_ap.content2.databag.item.itemActivationType)
+                  var activation = MgbActor.intFromActorParam(hitThing_ap.content2.databag.item.itemActivationType)
 
                   if (this.activeActors[AAInCell].alive && AAInCell != AA) {
                     // It's alive & not 'me'... 	
@@ -275,7 +275,7 @@ export default class MagePlayGame
                         // yup, there's a key. Next question - does the player have it?
                         var keyItem = this.inventory.get(key)
                         if (keyItem) {
-                          var keyDestroyed = (1 == this.intFromActorParam(hitThing_ap.content2.databag.item.keyForThisDoorConsumedYN))
+                          var keyDestroyed = (1 == MgbActor.intFromActorParam(hitThing_ap.content2.databag.item.keyForThisDoorConsumedYN))
                           // Yup.. so let's do it!
                           this.setGameStatusString(1, keyDestroyed ?
                             ("You use your " + key + " to pass") :
@@ -293,7 +293,7 @@ export default class MagePlayGame
 
             if (actor.isSliding)				// Sliding block or shot
             {
-              if (1 == this.intFromActorParam(aa_p.content2.databag.item.squishNPCYN) || (actor.isAShot && (actor.shotDamageToNPC != 0 || actor.shotDamageToPlayer != 0))) {
+              if (1 == MgbActor.intFromActorParam(aa_p.content2.databag.item.squishNPCYN) || (actor.isAShot && (actor.shotDamageToNPC != 0 || actor.shotDamageToPlayer != 0))) {
                 // Check Squish effect
                 if (this.G_tic == null)
                   this.generateTicTable()
@@ -383,9 +383,9 @@ export default class MagePlayGame
           break		// do nothing
         case 7:		// Final Melee step
           this.activeActors[AA].meleeStep = ActiveActor.MELEESTEP_NOT_IN_MELEE		// End of Melee
-          this.activeActors[AA].turnsBeforeMeleeReady = ap.content2.databag.allchar.meleeRepeatDelay
+          this.activeActors[AA].turnsBeforeMeleeReady = MgbActor.intFromActorParam(ap.content2.databag.allchar.meleeRepeatDelay)
           if (AA == this.AA_player_idx && this.inventory.equipmentMeleeRepeatDelayModifier)
-            this.activeActors[AA].turnsBeforeMeleeReady += this.intFromActorParam(this.inventory.equipmentMeleeRepeatDelayModifier)
+            this.activeActors[AA].turnsBeforeMeleeReady += MgbActor.intFromActorParam(this.inventory.equipmentMeleeRepeatDelayModifier)
           if (this.activeActors[AA].turnsBeforeMeleeReady < 0)
             this.activeActors[AA].turnsBeforeMeleeReady = 0
           break
@@ -413,13 +413,13 @@ export default class MagePlayGame
             this.activeActors[AA].alive = false;
             this.activeActors[AA].dyingAnimationFrameCount = 1;			// TODO - need to distinguish usage from destruction
             // Player gets bounty
-            this.activeActors[this.AA_player_idx].score += this.intFromActorParam(ap.content2.databag.itemOrNPC.scoreOrLosePointsWhenKilledByPlayerNum)
+            this.activeActors[this.AA_player_idx].score += MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.scoreOrLosePointsWhenKilledByPlayerNum)
             // Get rid of the bitmap
             this.activeActors[AA]._image = null					// TODO, nice explosion/fade/usage animations
 
             switch (this.activeActors[AA].creationCause) {
             case ActiveActor.CREATION_BY_MAP:
-              if (this.intFromActorParam(ap.content2.databag.itemOrNPC.respawnOption) == MgbActor.alRespawnOption_Never && this.activeActors[AA].respawnId) {
+              if (MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.respawnOption) == MgbActor.alRespawnOption_Never && this.activeActors[AA].respawnId) {
                 // we need to know to persistently kill this piece based on it's original layer etc. 
                 // We remember it's final coordinates since some respawn options need to know this
                 this.respawnMemory[this.activeActors[AA].respawnId] = { x: this.activeActors[AA].x, y: this.activeActors[AA].y }
@@ -434,7 +434,7 @@ export default class MagePlayGame
             let drop1Happened = false
             let spawn = ap.content2.databag.itemOrNPC.dropsObjectWhenKilledName
             if (spawn && spawn !== '') {
-              let dropChancePct = ap.content2.databag.itemOrNPC.dropsObjectWhenKilledChance
+              let dropChancePct = MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.dropsObjectWhenKilledChance)
               if (dropChancePct === 0 || ((100 * Math.random()) < dropChancePct)) {
                 this.playSpawnNewActor(this.loadActorByName(spawn), this.activeActors[AA].x, this.activeActors[AA].y)
                 this.G_tic = null			// Important, need to invalidate the collision detection cache.
@@ -445,12 +445,12 @@ export default class MagePlayGame
             // There's a 2nd drop.. These may go in a direction away from the actor
             spawn = ap.content2.databag.itemOrNPC.dropsObjectWhenKilledName2
             if (spawn && spawn !== '') {
-              const dropChancePct = ap.content2.databag.itemOrNPC.dropsObjectWhenKilledChance2
+              const dropChancePct = MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.dropsObjectWhenKilledChance2)
               if (dropChancePct === 0 || ((100 * Math.random()) < dropChancePct)) {
                 // p is of type Point so has {x:, y:}
-                var p = drop1Happened ? this.findAdjacentFreeCellForDrop(AA, ActiveActor(this.activeActors[AA]).stepStyle) : new Point(this.activeActors[AA].x, this.activeActors[AA].y)
+                var p = drop1Happened ? this.findAdjacentFreeCellForDrop(AA, ActiveActor(this.activeActors[AA]).stepStyle) : { x: this.activeActors[AA].x, y:this.activeActors[AA].y}
                 this.playSpawnNewActor(this.loadActorByName(spawn), p.x, p.y)
-                this.G_tic = null			// Important, need to invalidate the collision detection cache.
+                this.clearTicTable()			// Important, need to invalidate the collision detection cache.
               }
             }
           }
@@ -469,8 +469,7 @@ export default class MagePlayGame
       ps = "  Active Power = " + MgbActor.alGainPower[this.activeActors[this.AA_player_idx].activePower]
 
     // TODO - just use moment.js ? 
-    let now = new Date()
-    let secondsPlayed = Math.floor(now.getTime() - this.G_gameStartedAtMS) / 1000
+    let secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000
     let minutesPlayed = Math.floor(secondsPlayed / 60)
     let hoursPlayed = Math.floor(minutesPlayed / 60)
     let timeStr = ''
@@ -507,13 +506,6 @@ export default class MagePlayGame
     }
   }
 
-  intFromActorParam(param) {
-    if (typeof param == 'number')
-      return Math.floor(param)
-    if (typeof param === 'undefined')
-      return 0    // http://help.adobe.com/en_US/ActionScript/3.0_ProgrammingAS3/WS5b3ccc516d4fbf351e63e3d118a9b90204-7f87.html
-    return parseInt(param, 10)
-  }
 
   scrollMapToSeePlayer()
   {

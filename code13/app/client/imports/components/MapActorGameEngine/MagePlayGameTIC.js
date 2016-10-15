@@ -5,13 +5,13 @@ export default MagePlayGameTIC = {
 
   clearTicTable: function()		// FIXME - needs to sort into larger cells - maybe MgbSystem.tileMax{Width/Height}
   {
-    this.G_tic = []
+    this.G_tic = null
   },
 
   generateTicTable: function()		// FIXME - needs to sort into larger cells - maybe MgbSystem.tileMax{Width/Height}
   {
     const { activeActors } = this
-    this.clearTicTable()
+    this.G_tic = []     // NOT the same as clearing it.. clearing means null
     
     // Pigeon sort them into cells
     const len = activeActors.length			// Taking this out of the 'for' statement speeds things up a little

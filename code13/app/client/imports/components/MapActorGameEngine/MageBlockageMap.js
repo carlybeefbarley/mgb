@@ -38,9 +38,10 @@ export default class BlockageMap
 	
   isEntityBlocked(x, y, entityIndex)
 	{
-    var c = this.offsetforCell(x, y)
-    var v = this.cells[c]
-    return (v & (1 << entityIndex)) !== 0
+    const c = this.offsetforCell(x, y)
+    const v = this.cells[c] || 0
+    const blocksWhat =  (v & (1 << entityIndex)) !== 0
+    return blocksWhat
   } 
 }
 

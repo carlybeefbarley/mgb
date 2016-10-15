@@ -81,12 +81,10 @@ export default class Mage extends React.Component {
     return `${this.props.ownerName}.${this.props.startMapName}`
   }
 
-
   handleSetGameStatus(lineNum, text) {
     const line = lineNum ? this._statusLine1 : this._statusLine0
     line.innerText = text || ''
   }
-
 
   handleShowNpcDialog(npcDialogData) {  // can be null (meaning hide)
     this.setState( { activeNpcDialog: npcDialogData } )
@@ -120,7 +118,12 @@ export default class Mage extends React.Component {
       return
 
     this._game.endGame()
-    this.setState( { isPlaying: false, activeMap: this.state.loadedMaps[this.props.startMapName] } )
+    this.setState( { 
+      isPlaying:          false, 
+      isInventoryShowing: false,
+      activeNpcDialog:    null,
+      activeMap:          this.state.loadedMaps[this.props.startMapName] 
+    } )
   }
 
   callDoBlit()

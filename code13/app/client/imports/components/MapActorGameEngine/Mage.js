@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import MageGameCanvas from './MageGameCanvas'
+import MageNpcDialog from './MageNpcDialog'
 import MagePlayGame from './MagePlayGame'
 
 import { Segment, Button } from 'semantic-ui-react'
@@ -53,6 +54,7 @@ export default class Mage extends React.Component {
 
     // React state
     this.state = {
+      activeNpcDialog:    null,   // null or (see render() )
       isPlaying:          false,   
       isPreloading:       'map',   // Null if not preloading. String if preloading. Supercedes all other state
       mapLoadError:       null,    // Can be a string
@@ -77,6 +79,17 @@ export default class Mage extends React.Component {
     return `${this.props.ownerName}.${this.props.startMapName}`
   }
 
+
+  handleSetGameStatus(lineNum, text) {
+    const line = lineNum ? this._statusLine1 : this._statusLine0
+    line.innerText = text || ''
+  }
+
+
+  handleShowNpcDialog(npcDialogData) {
+    this.setState( { activeNpcDialog: npcDialogData } )
+  }
+
   handlePlay()
   {
     if (!this._mageCanvas)
@@ -88,8 +101,8 @@ export default class Mage extends React.Component {
       this.state.loadedActors, 
       this.state.loadedGraphics, 
       newMapName => this._transitionToNextMap(newMapName),
-      console.log, 
-      console.log,
+      (lineNum, txt) => this.handleSetGameStatus(lineNum, txt), 
+      (npcDialogData) => this.handleShowNpcDialog(npcDialogData),
       window)
     this.setState( { isPlaying : true })
   }
@@ -312,7 +325,7 @@ debugger  // TODO - stop game, no map.
   }
 
   render() {
-    const { isPreloading, mapLoadError, activeMap, isPlaying } = this.state
+    const { isPreloading, mapLoadError, activeMap, isPlaying, activeNpcDialog } = this.state
     if (isPreloading)
       return <Preloader msg={isPreloading} />
 
@@ -321,13 +334,26 @@ debugger  // TODO - stop game, no map.
 
     return (
       <div>
-      <Button disabled={isPlaying}  icon='play' content='play' onClick={() => this.handlePlay()} />
-      <Button disabled={!isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()} />
-      <br />
+        <Button disabled={isPlaying}  icon='play' content='play' onClick={() => this.handlePlay()} />
+        <Button disabled={!isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()} />
+        <br />
+        <span ref={ c => { this._statusLine0 = c } }></span>
+        <br />
+        <span ref={ c => { this._statusLine1 = c } }></span>
+        <br />
         <MageGameCanvas
-            ref={c => {this._mageCanvas = c} } 
+            ref={c => { this._mageCanvas = c } } 
             cellsWide={ activeMap.metadata.width }
             cellsHigh={ activeMap.metadata.height }/>
+        { !!activeNpcDialog && 
+            <MageNpcDialog
+                ref={c => { this._npcDialog = c } }
+                message={activeNpcDialog.message}
+                choices={activeNpcDialog.choicesArray}
+                leftActor={activeNpcDialog.leftActor}
+                activeActor={activeNpcDialog.activeActor}
+                responseCallbackFn={choiceNum => { activeNpcDialog.responseCallbackFn(choiceNum) }} />
+        }
       </div>
     )
   }

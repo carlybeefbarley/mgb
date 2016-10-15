@@ -263,6 +263,14 @@ const MgbActor = {
     if (typeof param === 'undefined')
       return 0    // http://help.adobe.com/en_US/ActionScript/3.0_ProgrammingAS3/WS5b3ccc516d4fbf351e63e3d118a9b90204-7f87.html
     return Number(param)
+  },
+
+  stringFromActorParam: function (param) {
+    if (typeof param == 'string')
+      return param
+    if (typeof param === 'undefined')
+      return null    // http://help.adobe.com/en_US/ActionScript/3.0_ProgrammingAS3/WS5b3ccc516d4fbf351e63e3d118a9b90204-7f87.html
+    return param.toString()
   }
 
 }

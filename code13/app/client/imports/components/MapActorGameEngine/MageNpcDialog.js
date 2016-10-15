@@ -1,11 +1,36 @@
-import React, { PropTypes } from 'react'
+import _ from 'lodash'
+import React, { Component, PropTypes } from 'react'
+import { Segment, Header, Button, Icon } from 'semantic-ui-react'
 
 // MapActorGameEngine NPC Dialog
 // This will be used as a modal/popup, and is instantiated when the game needs it. 
 
-export default class MageNpcDialog {
+export default class MageNpcDialog extends Component {
 
   render () {
-    return <div>NPC DIALOG</div>
+    const { leftActor, message, choices, responseCallbackFn} = this.props
+    return (
+      <Segment>
+        <Header as='h3'>{ message }</Header>
+        <p>says '{leftActor.name}'</p>
+        { _.map(choices, (choice,idx) => ( choice && 
+            <p key={idx}>
+              <a onClick={() => responseCallbackFn(idx+1)}>
+                <Icon name='comment outline' />&emsp;{choice}, 
+              </a>
+            </p>
+            )
+          )
+        }
+        <Button content='ok?' onClick={() => responseCallbackFn(0)}/>
+      </Segment>
+    )
   }
+}
+
+MageNpcDialog.propTypes = {
+  message:            PropTypes.string,
+  choices:            PropTypes.array,
+  responseCallbackFn: PropTypes.func,
+  activeActor:        PropTypes.object
 }

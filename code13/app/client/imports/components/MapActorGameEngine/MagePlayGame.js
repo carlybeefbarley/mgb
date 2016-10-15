@@ -28,7 +28,6 @@ import MgbMap from './MageMgbMap'
 /* Replacers
   pauseGame             ->    this.isPaused
   setGameStatusString   ->    this.setGameStatusFn(0,
-  hideNpcMessage        ->    this.showNpcMessageFn(null)
   G_gameStartedAtMS     ->    this.gameStartedAtMS
   G_gameOver            ->    this.gameOver
 */
@@ -61,15 +60,17 @@ export default class MagePlayGame
   resetGameState() {
     this.G_gameStartedAtMS = (new Date()).getTime()
     this.isPaused = false
-    this.gameOver = false
+    this.G_gameOver = false
 
     this.respawnMemory = []         // See respawnId in the ActiveActors array
     this.activeActors = []
     this.AA_player_idx = undefined
+
     this.respawnMemoryAutoRespawningActors = {}
     this.respawnMemoryAutoRespawningActorsCurrentIndex = 1
+    this.cancelAllSpawnedActorsForAutoRespawn()
 
-    this.G_tic = []					// TIC == "Things In Cell". Note that we need the main move routine to reset this when x/ and fromx/y change
+    this.clearTicTable()					// TIC == "Things In Cell". Note that we need the main move routine to reset this when x/ and fromx/y change
 		
 		// Tweening state. Decisions about moves are made once per turn. A turn consists of multple 'tweens' that animate the turn.
     this.G_xMovePerTween = 0	                    // Player movement (horizontal) per tween this turn.
@@ -91,22 +92,16 @@ export default class MagePlayGame
   endGame()
   {
 //  this.stopMusic()
-    this.pauseGame = false
-//  this.hideNpcMessage()
+    this.hideNpcMessage()
 //  hideInventory()
+    this.resetGameState()
     this.disablePlayerControls()
     this.G_gameOver = true							// Actually one of the conditions that causes the game loop to call endGame, but let's be sure :)
-    this.clearTicTable()
     this.playCleanupActiveLayer()
     this.playCleanupBackgroundLayer()
-
-    this.initialMap = null							// No longer needed
     
     this.setGameStatusFn(0, "Game Over")
     this.setGameStatusFn(1)
-    this.activeActors = []  				// Delete references, save memory
-    this.respawnMemory = []					// Delete references, save memory
-    this.cancelAllSpawnedActorsForAutoRespawn()
   }
   
 
@@ -122,9 +117,8 @@ export default class MagePlayGame
 
     this.setGameStatusFn(0, 'Starting game')
     this.setGameStatusFn(1)
-    this.showNpcMessageFn(null)
+    this.hideNpcMessage()
 
-    this.cancelAllSpawnedActorsForAutoRespawn()
 			
     this.playPrepareActiveLayer(map)
     this.playPrepareBackgroundLayer()
@@ -139,6 +133,10 @@ export default class MagePlayGame
 
   scrollMapToSeePlayer() {
     // TODO
+  }
+
+  doPauseGame() {
+    this.isPaused = true
   }
 
   // This is a bit weird It returns the NAME not the actor. TODO - rename for clarity
@@ -156,7 +154,7 @@ export default class MagePlayGame
   onTickGameDo() {
     if (this.G_gameOver)
       return
-      
+
     if (this.isTransitionInProgress) {      // transition to new map
       this.transitionTick()
       return
@@ -491,15 +489,7 @@ export default class MagePlayGame
     if (this.activeActors[this.AA_player_idx].activePower && this.activeActors[this.AA_player_idx].activePowerUntilGetTime >= nowMS)
       ps = "  Active Power = " + MgbActor.alGainPower[this.activeActors[this.AA_player_idx].activePower]
 
-    // TODO - just use moment.js ? 
-    let secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000
-    let minutesPlayed = Math.floor(secondsPlayed / 60)
-    let hoursPlayed = Math.floor(minutesPlayed / 60)
-    let timeStr = ''
-    if (hoursPlayed)
-      timeStr += hoursPlayed + ":"
-    timeStr += (minutesPlayed % 60 < 10 ? "0" : "") + (minutesPlayed % 60) + "."
-    timeStr += (secondsPlayed % 60 < 10 ? "0" : "") + (secondsPlayed % 60)
+    const timeStr = this.timeStrSinceGameStarted()
 
     let mhs = this.activeActors[this.AA_player_idx].maxHealth == 0 ? "" : ("/" + this.activeActors[this.AA_player_idx].maxHealth)
     this.setGameStatusFn(0, //"Lives: "+activeActors[this.AA_player_idx].extraLives   +
@@ -520,7 +510,7 @@ export default class MagePlayGame
       }
       else {
         debugger // alert sucks 
-        // need to differentiate between game ended and game stopped ... alert("G A M E   O V E R\n", "They got you...")
+        alert("G A M E   O V E R\n", "They got you...")
         // gee.completedVictory = false		// Change just one parameter...
       }
       debugger // needs thinking about state management with parent obects
@@ -529,6 +519,18 @@ export default class MagePlayGame
     }
   }
 
+  timeStrSinceGameStarted() {
+    const nowMS = (new Date()).getTime()    
+    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000
+    const minutesPlayed = Math.floor(secondsPlayed / 60)
+    const hoursPlayed = Math.floor(minutesPlayed / 60)
+    let timeStr = ''
+    if (hoursPlayed)
+      timeStr += hoursPlayed + ":"
+    timeStr += (minutesPlayed % 60 < 10 ? "0" : "") + Math.floor(minutesPlayed % 60) + "."
+    timeStr += (secondsPlayed % 60 < 10 ? "0" : "") + Math.floor(secondsPlayed % 60)
+    return timeStr
+  }
 
   scrollMapToSeePlayer()
   {

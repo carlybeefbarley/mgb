@@ -14,6 +14,7 @@ export default MagePlayGameInput = {
   {
     this.G_player_action = {}
     this.clearPlayerKeys()
+    this.disablePlayerControls()  // Just in case enablePlayerControls() is being called twice
     this._boundKeyHandler = this.playHandleKeyEvents.bind(this)
     element.addEventListener('keydown', this._boundKeyHandler)
     element.addEventListener('keyup', this._boundKeyHandler)
@@ -22,15 +23,18 @@ export default MagePlayGameInput = {
 
   disablePlayerControls()
   {
-    this._eventsAttachedToElement.removeEventListener('keydown', this._boundKeyHandler)
-    this._eventsAttachedToElement.removeEventListener('keyup', this._boundKeyHandler)
-    this._boundKeyHandler = null
-    this._eventsAttachedToElement = null
+    if (this._eventsAttachedToElement)
+    {
+      this._eventsAttachedToElement.removeEventListener('keydown', this._boundKeyHandler)
+      this._eventsAttachedToElement.removeEventListener('keyup', this._boundKeyHandler)
+      this._boundKeyHandler = null
+      this._eventsAttachedToElement = null
+    }
   },
   
   playHandleKeyEvents(k)    // k is a keyboard event
   {
-    const { actors, activeActors, AA_player_idx, isGamePaused, G_gameOver, isTransitionInProgress } = this
+    const { actors, activeActors, AA_player_idx, isPaused, G_gameOver, isTransitionInProgress } = this
     if (!G_gameOver && !isTransitionInProgress)
     {
       var newstate = (k.type === 'keydown')
@@ -68,9 +72,9 @@ export default MagePlayGameInput = {
           this.G_player_action.melee = newstate
         break
       case 'Control':
-        if (isGamePaused && newstate)
+        if (isPaused && newstate)
           this.hideNpcMessage()				// unpause
-        else if (!isGamePaused && newstate)	// "key down" event
+        else if (!isPaused && newstate)	// "key down" event
           this.doPauseGame()
         break
       case 'Enter':

@@ -7,6 +7,8 @@ export default MgbSystem = {
   tileMaxWidth:  128,
   tileMaxHeight: 128,
 
+  gameFonts: [ "titlefont", "abscissa", "bradybunch", "geosanslight", "argorpriht", "ellianarellespath", "illegaledding" ],
+
   parseEventCommand: function (str) {
     const [ cmd, params ] = str.split(': ')
     const p2 = params.split(',').sort()

@@ -27,7 +27,7 @@ export default class BlockageMap
     for (var i = 0; i < w; i++) {
       for (var j = 0; j < h; j++) {
         if (x+i < this.width && y+j < this.height) {
-          console.log("block "+(x+i)+","+(y+j)+" to "+entityIndex)
+//        console.log("block "+(x+i)+","+(y+j)+" to "+entityIndex)
           var c = this.offsetforCell(x+i, y+j)
           var v = this.cells[c]
           this.cells[c] = (v | (1 << entityIndex))

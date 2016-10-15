@@ -53,6 +53,7 @@ export default class Mage extends React.Component {
 
     // React state
     this.state = {
+      isPlaying:          false,   
       isPreloading:       'map',   // Null if not preloading. String if preloading. Supercedes all other state
       mapLoadError:       null,    // Can be a string
       activeMap:          null,    // Should be an asset of kind='actormap'.. not kind='map'
@@ -90,6 +91,16 @@ export default class Mage extends React.Component {
       console.log, 
       console.log,
       window)
+    this.setState( { isPlaying : true })
+  }
+
+  handleStop()
+  {
+    if (!this._mageCanvas || !this._game)
+      return
+
+    this._game.endGame()
+    this.setState( { isPlaying: false, activeMap: this.state.loadedMaps[this.props.startMapName] } )
   }
 
   callDoBlit()
@@ -198,9 +209,9 @@ export default class Mage extends React.Component {
 
     this._loadRequiredGraphics(desiredGraphicNames)
 
-    // Load any referenced actors
+    // Add names of any referenced actors to list of desiredActors
     let desiredActorNames = []
-    const _fixup = ( bagName, paramsList ) => {
+    const _addReferencedActors = ( bagName, paramsList ) => {
       const paramsArray = paramsList.split(',')
       const bag = actor.databag[bagName]
       _.each(paramsArray, p => {
@@ -208,16 +219,16 @@ export default class Mage extends React.Component {
           desiredActorNames.push(bag[p])
       })
     }
-    _fixup('allchar',   'shotActor')
-    _fixup('item',      'equippedNewShotActor,equippedNewActorGraphics')
-    _fixup('npc',       'takesObjectOnChoice1,dropsObjectOnChoice1')
-    _fixup('npc',       'takesObjectOnChoice2,dropsObjectOnChoice2')
-    _fixup('npc',       'takesObjectOnChoice2,dropsObjectOnChoice3')
-    _fixup('itemOrNPC', 'dropsObjectWhenKilledName,dropsObjectWhenKilledName2')
-    _fixup('itemOrNPC', 'dropsObjectRandomlyName,conditionsActor')
-    _fixup('item',      'keyForThisDoor')
+    _addReferencedActors('allchar',   'shotActor')
+    _addReferencedActors('item',      'equippedNewShotActor,equippedNewActorGraphics')
+    _addReferencedActors('npc',       'takesObjectOnChoice1,dropsObjectOnChoice1')
+    _addReferencedActors('npc',       'takesObjectOnChoice2,dropsObjectOnChoice2')
+    _addReferencedActors('npc',       'takesObjectOnChoice2,dropsObjectOnChoice3')
+    _addReferencedActors('itemOrNPC', 'dropsObjectWhenKilledName,dropsObjectWhenKilledName2')
+    _addReferencedActors('itemOrNPC', 'dropsObjectRandomlyName,conditionsActor')
+    _addReferencedActors('item',      'keyForThisDoor')
 
-    desiredActorNames = _.uniq(desiredActorNames)  // dedupe
+    desiredActorNames = _.uniq(desiredActorNames)  // dedupe the list
     this.loadRequiredActors(desiredActorNames)
   }
 
@@ -226,10 +237,13 @@ export default class Mage extends React.Component {
   }
 
   _startMapLoaded(activeMap) { 
+    const { startMapName } = this.props    
+    if (!this.state.loadedMaps[startMapName])
+      this.state.loadedMaps[startMapName] = activeMap    // Store it for next time
     const actorNames = _.filter(_.union(activeMap.mapLayer[0], activeMap.mapLayer[1], activeMap.mapLayer[2]), a => (a && a!==''))
     if (actorNames.length)
     {
-      this.setState( { activeMap } )
+      this.setState( { activeMap, loadedMaps: this.state.loadedMaps } )
       this.loadRequiredActors(actorNames)
     }
     else
@@ -243,9 +257,15 @@ export default class Mage extends React.Component {
 
   _loadStartMap() {
     const { ownerName, startMapName, fetchAssetByUri } = this.props
-    fetchAssetByUri(_mkMapUri(ownerName, startMapName))
-      .then( data => this._startMapLoaded(JSON.parse(data)))
-      .catch( data => this._startMapLoadFailed(data) )
+    const mapData = this.state.loadedMaps[startMapName]
+    if (mapData)
+      this._startMapLoaded(mapData)
+    else
+    {
+      fetchAssetByUri(_mkMapUri(ownerName, startMapName))
+        .then( data => this._startMapLoaded(JSON.parse(data)))
+        .catch( data => this._startMapLoadFailed(data) )
+    }  
   }
 
   _transitionToNextMap(nextMapName) {
@@ -292,7 +312,7 @@ debugger  // TODO - stop game, no map.
   }
 
   render() {
-    const { isPreloading, mapLoadError, activeMap } = this.state
+    const { isPreloading, mapLoadError, activeMap, isPlaying } = this.state
     if (isPreloading)
       return <Preloader msg={isPreloading} />
 
@@ -301,7 +321,8 @@ debugger  // TODO - stop game, no map.
 
     return (
       <div>
-      <Button icon='play' content='play' onClick={() => this.handlePlay()} />
+      <Button disabled={isPlaying}  icon='play' content='play' onClick={() => this.handlePlay()} />
+      <Button disabled={!isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()} />
       <br />
         <MageGameCanvas
             ref={c => {this._mageCanvas = c} } 

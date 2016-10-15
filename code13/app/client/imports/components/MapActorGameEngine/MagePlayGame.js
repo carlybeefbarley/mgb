@@ -87,6 +87,29 @@ export default class MagePlayGame
     this.inventory = new Inventory()
   }
 
+
+  endGame()
+  {
+//  this.stopMusic()
+    this.pauseGame = false
+//  this.hideNpcMessage()
+//  hideInventory()
+    this.disablePlayerControls()
+    this.G_gameOver = true							// Actually one of the conditions that causes the game loop to call endGame, but let's be sure :)
+    this.clearTicTable()
+    this.playCleanupActiveLayer()
+    this.playCleanupBackgroundLayer()
+
+    this.initialMap = null							// No longer needed
+    
+    this.setGameStatusFn(0, "Game Over")
+    this.setGameStatusFn(1)
+    this.activeActors = []  				// Delete references, save memory
+    this.respawnMemory = []					// Delete references, save memory
+    this.cancelAllSpawnedActorsForAutoRespawn()
+  }
+  
+
   startGame(map, actors, graphics, transitionToNextMapFn, setGameStatusFn, showNpcMessageFn, keyCaptureElement) { 
     this.map = map
     this.actors = actors
@@ -131,6 +154,9 @@ export default class MagePlayGame
   } 
 
   onTickGameDo() {
+    if (this.G_gameOver)
+      return
+      
     if (this.isTransitionInProgress) {      // transition to new map
       this.transitionTick()
       return
@@ -396,13 +422,10 @@ export default class MagePlayGame
 
         switch (this.activeActors[AA].type) {
         case MgbActor.alActorType_Player:
-          if (this.activeActors[AA].health <= 0) {
-            // TODO: player's ...content2.databag.all.visualEffectWhenKilledType
-            this.G_gameOver = true
-          }
+          if (this.activeActors[AA].health <= 0)
+            this.G_gameOver = true    // TODO: player's ...content2.databag.all.visualEffectWhenKilledType
           else if (this.activeActors[AA].winLevel)
-            this.G_gameOver = true;
-
+            this.G_gameOver = true
           break
         case MgbActor.alActorType_NPC:
         case MgbActor.alActorType_Item:
@@ -497,7 +520,7 @@ export default class MagePlayGame
       }
       else {
         debugger // alert sucks 
-        alert("G A M E   O V E R\n", "They got you...")
+        // need to differentiate between game ended and game stopped ... alert("G A M E   O V E R\n", "They got you...")
         // gee.completedVictory = false		// Change just one parameter...
       }
       debugger // needs thinking about state management with parent obects

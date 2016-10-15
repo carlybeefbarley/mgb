@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import MageGameCanvas from './MageGameCanvas'
 import MageNpcDialog from './MageNpcDialog'
+import MageInventoryDialog from './MageInventoryDialog'
 import MagePlayGame from './MagePlayGame'
 
 import { Segment, Button } from 'semantic-ui-react'
@@ -54,23 +55,24 @@ export default class Mage extends React.Component {
 
     // React state
     this.state = {
-      activeNpcDialog:    null,   // null or (see render() )
-      isPlaying:          false,   
-      isPreloading:       'map',   // Null if not preloading. String if preloading. Supercedes all other state
-      mapLoadError:       null,    // Can be a string
-      activeMap:          null,    // Should be an asset of kind='actormap'.. not kind='map'
-
-      pendingMapLoads:    [],      // contains list of unique actorMap Names that have pending loads
-      loadedMaps:         {},      // The loaded actor Data. Contains map of actorMapName -> actorMap
-      failedMaps:         {},      // actorMaps that failed to load. Content is the error data
-
-      pendingActorLoads:  [],      // contains list of unique actorNames that have pending loads
-      loadedActors:       {},      // The loaded actor Data. Contains map of actorname -> actor
-      failedActors:       {},      // Actors that failed to load. Content is the error data
-
-      pendingGraphicLoads:[],      // contains list of unique Graphics Names that have pending loads
-      loadedGraphics:     {},      // The loaded Graphics Data. Contains map of actorname -> actor
-      failedGraphics:     {}       // Graphics that failed to load. Content is the error data
+      activeNpcDialog:        null,   // null or (see render() )
+      activeInventoryDialog:  null,
+      isPlaying:              false,   
+      isPreloading:           'map',   // Null if not preloading. String if preloading. Supercedes all other state
+      mapLoadError:           null,    // Can be a string
+      activeMap:              null,    // Should be an asset of kind='actormap'.. not kind='map'
+    
+      pendingMapLoads:        [],      // contains list of unique actorMap Names that have pending loads
+      loadedMaps:             {},      // The loaded actor Data. Contains map of actorMapName -> actorMap
+      failedMaps:             {},      // actorMaps that failed to load. Content is the error data
+    
+      pendingActorLoads:      [],      // contains list of unique actorNames that have pending loads
+      loadedActors:           {},      // The loaded actor Data. Contains map of actorname -> actor
+      failedActors:           {},      // Actors that failed to load. Content is the error data
+    
+      pendingGraphicLoads:    [],      // contains list of unique Graphics Names that have pending loads
+      loadedGraphics:         {},      // The loaded Graphics Data. Contains map of actorname -> actor
+      failedGraphics:         {}       // Graphics that failed to load. Content is the error data
     }
     _HACK(this)
   }
@@ -325,7 +327,7 @@ debugger  // TODO - stop game, no map.
   }
 
   render() {
-    const { isPreloading, mapLoadError, activeMap, isPlaying, activeNpcDialog } = this.state
+    const { isPreloading, mapLoadError, activeMap, isPlaying, activeNpcDialog, activeInventoryDialog } = this.state
     if (isPreloading)
       return <Preloader msg={isPreloading} />
 
@@ -354,6 +356,10 @@ debugger  // TODO - stop game, no map.
                 activeActor={activeNpcDialog.activeActor}
                 responseCallbackFn={choiceNum => { activeNpcDialog.responseCallbackFn(choiceNum) }} />
         }
+        { !!activeInventoryDialog && 
+          <MageInventoryDialog />
+        }
+
       </div>
     )
   }

@@ -277,7 +277,7 @@ debugger  // step through first time
         if (spawn && spawn !="") {
           var dropChancePct = MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.dropsObjectRandomlyChance)
           if ((100 * Math.random()) < dropChancePct) {			
-            var p = this.findAdjacentFreeCellForDrop(AA, ActiveActor(activeActors[AA]).stepStyle, true)
+            var p = this.findAdjacentFreeCellForDrop(AA, activeActors[AA].stepStyle, true)
             if (p) {
               this.playSpawnNewActor(this.loadActorByName(spawn), p.x, p.y)
               this.clearTicTable()	// Important, need to invalidate the collision detection cache.

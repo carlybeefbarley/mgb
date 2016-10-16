@@ -81,6 +81,10 @@ export default class Mage extends React.Component {
     return `${this.props.ownerName}.${this.props.startMapName}`
   }
 
+  handleInventoryAction(action, item) {
+    this._game && this._game.inventoryDialogActionHandler(action, item)
+  }
+
   handleSetGameStatus(lineNum, text) {
     const line = lineNum ? this._statusLine1 : this._statusLine0
     line.innerText = text || ''
@@ -92,6 +96,11 @@ export default class Mage extends React.Component {
 
   handleSetInventoryVisibility(newVisibility) {
     this.setState( { isInventoryShowing: newVisibility } )
+  }
+
+  handleForceInventoryUpdate() {
+    // This is a bit of a pain since the inventory object is in the _game object so can't be used as a prop.
+    this.forceUpdate()      // Simple, brutal, effective.
   }
 
   handlePlay()
@@ -108,6 +117,7 @@ export default class Mage extends React.Component {
       (lineNum, txt) => this.handleSetGameStatus(lineNum, txt), 
       (npcDialogData) => this.handleShowNpcDialog(npcDialogData),
       (newViz) => this.handleSetInventoryVisibility(newViz),
+      () => this.handleForceInventoryUpdate(),
       window)
     this.setState( { isPlaying : true })
   }
@@ -367,7 +377,8 @@ debugger  // TODO - stop game, no map.
         { !!isInventoryShowing && 
           <MageInventoryDialog
             inventory={this._game.inventory}
-            graphics={this.state.loadedGraphics} />
+            graphics={this.state.loadedGraphics}
+            itemActionFn={(action, item) => this.handleInventoryAction(action, item)} />
         }
 
       </div>

@@ -85,15 +85,14 @@ export default class MagePlayGame
     this.deferredAsk_ap = null                    // The actor data to use for the NPC dialog
 
     this.backgroundBlockageMap = new BlockageMap()
-    this.inventory = new Inventory()
+    this.inventory = new Inventory(this.handleForceInventoryUpdateFn)
   }
-
 
   endGame()
   {
 //  this.stopMusic()
     this.hideNpcMessage()
-//  hideInventory()
+    this.hideInventory()
     this.resetGameState()
     this.disablePlayerControls()
     this.G_gameOver = true							// Actually one of the conditions that causes the game loop to call endGame, but let's be sure :)
@@ -110,6 +109,7 @@ export default class MagePlayGame
             setGameStatusFn, 
             showNpcMessageFn, 
             toggleNpcDialogFn,
+            handleForceInventoryUpdateFn,
             keyCaptureElement) 
   { 
     this.map = map
@@ -119,6 +119,7 @@ export default class MagePlayGame
     this.showNpcMessageFn = showNpcMessageFn
     this.transitionToNextMapFn = transitionToNextMapFn
     this.toggleNpcDialogFn = toggleNpcDialogFn
+    this.handleForceInventoryUpdateFn = handleForceInventoryUpdateFn
 
     this.resetGameState()
 
@@ -149,6 +150,14 @@ export default class MagePlayGame
   toggleInventory()
   {
     const newViz = !this.showingInventoryDialog
+    this.showingInventoryDialog = newViz
+    this.toggleNpcDialogFn(newViz)
+    this.isPaused = newViz
+  }
+
+  hideInventory()
+  {
+    const newViz = false
     this.showingInventoryDialog = newViz
     this.toggleNpcDialogFn(newViz)
     this.isPaused = newViz
@@ -484,7 +493,8 @@ export default class MagePlayGame
               const dropChancePct = MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.dropsObjectWhenKilledChance2)
               if (dropChancePct === 0 || ((100 * Math.random()) < dropChancePct)) {
                 // p is of type Point so has {x:, y:}
-                var p = drop1Happened ? this.findAdjacentFreeCellForDrop(AA, ActiveActor(this.activeActors[AA]).stepStyle) : { x: this.activeActors[AA].x, y:this.activeActors[AA].y}
+debugger                
+                var p = drop1Happened ? this.findAdjacentFreeCellForDrop(AA, this.activeActors[AA].stepStyle) : { x: this.activeActors[AA].x, y:this.activeActors[AA].y}
                 this.playSpawnNewActor(this.loadActorByName(spawn), p.x, p.y)
                 this.clearTicTable()			// Important, need to invalidate the collision detection cache.
               }

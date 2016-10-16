@@ -1,7 +1,5 @@
-import _ from 'lodash'
 import InventoryItem from './MageInventoryItem'
 import MgbActor from './MageMgbActor'
-
 
 class EquipmentEffects
 {
@@ -22,12 +20,20 @@ class EquipmentEffects
   }
 }
 
+
 export default class Inventory {
 
-  constructor() {
-    this._equipEffects = new EquipmentEffects()
+  constructor(handleForceInventoryUpdateFn) {
+    this.equipEffects = new EquipmentEffects()
     this._invArray = []
     this.fullEquipmentEffectSummary = ''
+    this._handleForceInventoryUpdateFn = handleForceInventoryUpdateFn
+
+  }
+
+  _refreshInventoryUi()
+  {
+    this._handleForceInventoryUpdateFn()
   }
 
   /**
@@ -87,6 +93,7 @@ export default class Inventory {
           this.remove(unequipped, unequipped.count)
       }
     }
+    this._refreshInventoryUi()
   }
 
 
@@ -136,7 +143,8 @@ export default class Inventory {
         }
       }
     }
-    this.recalculateEquipmentEffects()
+    this._recalculateEquipmentEffects()
+    this._refreshInventoryUi()
     
     return returnedUnequippedItem
   }
@@ -153,18 +161,19 @@ export default class Inventory {
   removeByName(itemName, count)
   {
     var removed = false
-    const found = this.getIdx(itemName)
+    const found = this._getIdx(itemName)
     if (found !== -1)
     {
 debugger
-      var heldItem = InventoryItem(this._invArray[found])
+      var heldItem = this._invArray[found]
       if (count < heldItem.count)
         heldItem.count -= count
       else
         this._invArray[found] = null
       removed = true
     }
-    this.recalculateEquipmentEffects()
+    this._recalculateEquipmentEffects()
+    this._refreshInventoryUi()
     
     return removed
   }
@@ -191,7 +200,7 @@ debugger
    * 
    * @memberOf Inventory
    */
-  recalculateEquipmentEffects()
+  _recalculateEquipmentEffects()
   {
     const { equipEffects, _invArray } = this
 
@@ -249,7 +258,7 @@ debugger
   }
 	
     
-  update_fullEquipmentEffectSummary()
+  _update_fullEquipmentEffectSummary()
   {
     const { equipEffects } = this
 
@@ -280,53 +289,53 @@ debugger
 
   get equipmentShotActorOverride()
   {
-    return this._equipEffects.shotActor
+    return this.equipEffects.shotActor
   }
 
   get equipmentShotSoundOverride()
   {
-    return this._equipEffects.shotSound
+    return this.equipEffects.shotSound
   }
 
   get equipmentShotRateBonus()
   {
-    return this._equipEffects.shotRateBonus
+    return this.equipEffects.shotRateBonus
   }
 
   get equipmentShotRangeBonus()
   {
-    return this._equipEffects.shotRangeBonus
+    return this.equipEffects.shotRangeBonus
   }
   
   get equipmentShotDamageBonus()
   {
-    return this._equipEffects.shotDamageBonus
+    return this.equipEffects.shotDamageBonus
   }
   
   get equipmentNewActorGraphics()
   {
-    return this._equipEffects.newActorGraphics
+    return this.equipEffects.newActorGraphics
   }
 
   get equipmentArmorEffect()
   {
-    return this._equipEffects.armorEffect
+    return this.equipEffects.armorEffect
   }
   
   // Melee
   get equipmentMeleeDamageBonus()
   {
-    return this._equipEffects.meleeDamageBonus
+    return this.equipEffects.meleeDamageBonus
   }
   
   get equipmentMeleeSoundOverride()
   {
-    return this._equipEffects.meleeSound
+    return this.equipEffects.meleeSound
   }
 
   get equipmentMeleeRepeatDelayModifier()
   {
-    return this._equipEffects.meleeRepeatDelayModifier
+    return this.equipEffects.meleeRepeatDelayModifier
   }
 
 

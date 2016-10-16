@@ -1,6 +1,7 @@
 
+import MgbMap from './MageMgbMap'
 import MgbActor from './MageMgbActor'
-
+import ActiveActor from './MageActiveActorClass'
 
 export default MagePlayGameItem = {
   useItemOnPlayer(itemAA)
@@ -56,6 +57,146 @@ export default MagePlayGameItem = {
       else
         activeActors[AA_player_idx].activePowerUntilGetTime = nowMS + powersecs * 1000  //1000ms=1s
     }
+  },
+
+  inventoryDialogActionHandler(action, item)
+  {
+    if (!item) return
+    const { activeActors, AA_player_idx } = this
+    switch (action)
+    {
+    case 'DESTROY': 
+      this.inventory.remove(item)
+      break
+    case 'DROP': 
+      // Find an adjacent free space
+      var p = this.findAdjacentFreeCellForDrop(AA_player_idx, activeActors[AA_player_idx].stepStyle)
+      if (p)
+      {
+        this.playSpawnNewActor(item.actor.name, p.x, p.y, true, true)	// @@@@@@ CHANGE TO TRUE -- SO DROPS NOW PERSIST?
+        this.inventory.remove(item)
+      }
+      this.hideInventory()
+      break
+    case 'EQUIP':
+      this.inventory.equip(item, !item.equipped)
+      break
+    case 'USE':
+      this.useItemActorOnPlayer(item.actor)
+      this.inventory.remove(item)
+      this.hideInventory()	// This way the effect is immediate
+      break
+    }
+  },
+
+  /**
+   * 
+   * 
+   * @param {int} AAindexOfActorWhoIsDroppingAnItem
+   * @param {int} preferredDirection - As a 'stepstyle'
+   * @param {Boolean} [CheckActiveLayer=false] - Need to explicitly ask for the Active layer to be checked
+   * @returns {Point}
+   */
+  findAdjacentFreeCellForDrop(	
+    AAindexOfActorWhoIsDroppingAnItem, 
+    preferredDirection,	
+    CheckActiveLayer = false)	
+  {
+    const { activeActors } = this
+
+    var aa = activeActors[AAindexOfActorWhoIsDroppingAnItem]
+    var goodPoint = null
+
+    for (var d = 0; d < 4; d++)
+    {
+      var r = this._nextPoint(aa.x, aa.y, aa.cellSpanX, aa.cellSpanY, d)
+      if (false === this._isObstructedForThisDrop(r.x, r.y, CheckActiveLayer))
+      {
+        if (d == preferredDirection)
+          return r
+        else
+          goodPoint = r
+      }
+    }
+    return goodPoint	// can be null
+  },
+
+
+  /**
+   * 
+   * 
+   * @param {int} x
+   * @param {int} y
+   * @param {int} w
+   * @param {int} h
+   * @param {int} stepStyle
+   * @returns {Point}
+   */
+  _nextPoint(x, y, w, h, stepStyle) 	// TODO - - handle larger sizes for drops
+  {
+    var r = { x, y }
+    
+    switch (stepStyle)
+    {
+    case 0:
+      r.y--
+      break
+    case 1:
+      r.x+=w
+      break
+    case 2:
+      r.y+=h
+      break
+    case 3:
+      r.x--
+      break
+    }
+    return r
+  },
+
+
+  /**
+   * 
+   * 
+   * @param {int} x
+   * @param {int} y
+   * @param {Boolean} CheckActiveLayer
+   * @returns {Boolean}
+   */
+  _isObstructedForThisDrop(x, y, CheckActiveLayer)
+  {
+    const { map, actors, activeActors } = this
+    var obstructed = false		// until we prove otherwise
+    if (x < 0 || x >= map.width || y < 0 || y >= map.height)
+      return true			// doh!
+
+    var cellToCheck = this.cell(x,y)
+    var ACidx = map.mapLayer[MgbMap.layerBackground][cellToCheck]
+    // 1. Check the background layer. These don't change so we can work out behavior by the generic actorCache[] properties
+    if (ACidx)
+    {
+      var ap = actors[ACidx]
+      if (ap)
+      {
+        var itemAct = MgbActor.intFromActorParam(ap.content2.databag.item.itemActivationType)
+        if (itemAct == MgbActor.alItemActivationType_BlocksPlayer || itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
+          obstructed = true
+      }
+    }
+    
+    // 2. Check actives
+    
+    if (CheckActiveLayer && !obstructed)
+    {
+      for (var AA = 0; AA < activeActors.length && !obstructed; AA++)
+      {
+        var actor = activeActors[AA]
+        if (actor.alive && actor.x == x && actor.y == y)
+          obstructed = true
+      }
+    }
+
+    return obstructed
   }
 
 }

@@ -1,10 +1,8 @@
 import React, { PropTypes } from 'react'
-import { Menu, Segment, Header, Item } from 'semantic-ui-react'
+import { Menu, Segment, Header, Item, Label, Image } from 'semantic-ui-react'
 
 // MapActorGameEngine Inventory
 // This will be used as a modal/popup, and is instantiated when the game needs it. 
-
-
 
 const SelectedItem = () =>
 {
@@ -15,17 +13,15 @@ const SelectedItem = () =>
   )
 }
 
-
-
 export default class MageInventoryDialog extends React.Component {
 
-  state = { activeItem: 'Inventory' }
+  state = { activeTab: 'Inventory' }
 
-  handleItemClick = (e, { name } ) => this.setState({ activeItem: name })
-
+  handleItemClick = (e, { name } ) => this.setState({ activeTab: name })
 
   render () {
-    const { activeItem } = this.state
+    const { activeTab } = this.state
+    const { inventory, graphics } = this.props
 
     return (
       <Segment>
@@ -35,12 +31,20 @@ export default class MageInventoryDialog extends React.Component {
           <SelectedItem />
 
           <Menu attached='top' tabular>
-            <Menu.Item name='Inventory' active={activeItem === 'Inventory'} onClick={this.handleItemClick} />
-            <Menu.Item name='Equipped'  active={activeItem === 'Equipped'} onClick={this.handleItemClick} />
+            <Menu.Item name='Inventory' active={activeTab === 'Inventory'} onClick={this.handleItemClick} />
+            <Menu.Item name='Equipped'  active={activeTab === 'Equipped'} onClick={this.handleItemClick} />
           </Menu>
 
           <Segment attached='bottom'>
-            foobar {activeItem}
+            { _.map( inventory._invArray, (item, idx) => {
+              const imageSrc  = graphics[item.actor.content2.databag.all.defaultGraphicName].thumbnail
+              return (
+                <Label key={idx} >
+                  <Image src={imageSrc} /> {item.name}
+                </Label>
+              )
+            })
+            }
           </Segment>
 
         </Segment>

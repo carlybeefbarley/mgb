@@ -315,13 +315,13 @@ export default class Mage extends React.Component {
       loadedMaps[nextMapName] = data
       this._startMapLoaded(data)
     }
-    else 
+    else
     {
       failedMaps[nextMapName] = data
 debugger  // TODO - stop game, no map.
     }
     const newIsPreloadingValue = pendingMapLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
-    this.setState( { pendingMapLoads, loadedMaps, failedMaps, isPreloading: newIsPreloadingValue } )    
+    this.setState( { pendingMapLoads, loadedMaps, failedMaps, isPreloading: newIsPreloadingValue } )
   }
 
   componentDidMount() {
@@ -365,7 +365,9 @@ debugger  // TODO - stop game, no map.
                 responseCallbackFn={choiceNum => { activeNpcDialog.responseCallbackFn(choiceNum) }} />
         }
         { !!isInventoryShowing && 
-          <MageInventoryDialog />
+          <MageInventoryDialog
+            inventory={this._game.inventory}
+            graphics={this.state.loadedGraphics} />
         }
 
       </div>

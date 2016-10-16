@@ -8,7 +8,7 @@ import MgbActor from './MageMgbActor'
 //    1         in the equipped list, and 
 //    count-1   in the inventory list 
 
-export class InventoryItem
+export default class InventoryItem
 {
   /**
    * Creates an instance of InventoryItem.
@@ -31,7 +31,12 @@ export class InventoryItem
   {
     return this.actor ? this.actor.name : null
   }
-  
+
+  get image()
+  {
+    return this.actor ? this.actor._image : null
+  }
+
   // return description. If no description field, then use the actor name
   get description()
   {

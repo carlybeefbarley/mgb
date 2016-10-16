@@ -1,4 +1,4 @@
-
+import _ from 'lodash'
 import InventoryItem from './MageInventoryItem'
 import MgbActor from './MageMgbActor'
 
@@ -27,8 +27,6 @@ export default class Inventory {
   constructor() {
     this._equipEffects = new EquipmentEffects()
     this._invArray = []
-    
-    this.invAC = []  // Actually an ArrayCollection.. what's that? new ArrayCollection(invArray) 
     this.fullEquipmentEffectSummary = ''
   }
 
@@ -42,25 +40,12 @@ export default class Inventory {
    */
   get(name)
   {
-    const oldFF = this._invAC.filterFunction
-    this.invAC._filterFunction = null			// make sure we see the full list
-    this.invAC._refresh()
-    
-    var retval = null
-
-    for (var i = 0; i < this.invAC.length ; i++) {
-      if (this.invAC[i] && this.invAC[i].name == name) {
-        retval = this.invAC[i]
-        break
-      }
+    for (var i = 0; i < this._invArray.length ; i++) {
+      if (this._invArray[i] && this._invArray[i].name == name)
+        return this._invArray[i]
     }
-    
-    this.invAC._filterFunction = oldFF			// Restore the full list view
-    this.invAC._refresh()
-    return retval
+    return null
   }
-
-
 
   /**
    * 
@@ -72,28 +57,12 @@ export default class Inventory {
    */
   _getIdx(name)
   {
-    const oldFF = this._invAC.filterFunction
-    this.invAC._filterFunction = null			// make sure we see the full list
-    this.invAC._refresh()
-
-    var retval = -1
-
-    for (var i = 0; i < this.invAC.length ; i++)
-    {
-      if (this.invAC[i] && this.invAC[i].name == name)
-      {
-        retval = i
-        break
-      }
-    }
-
-    this.invAC._filterFunction = oldFF			// Restore the full list view
-    this.invAC._refresh()
-    return retval
+    for (var i = 0; i < this._invArray.length ; i++)
+      if (this._invArray[i] && this._invArray[i].name == name)
+        return i
+    return -1
   }
 
-
-  
   /**
    * add
    * 
@@ -104,13 +73,12 @@ export default class Inventory {
    */
   add(item)
   {
-debugger    
     const found = this.get(item.name)
     if (found)
       found.count += item.count ? parseInt(item.count) : 0
     else
     {
-      this.invAC.addItem(item)
+      this._invArray.push(item)   // should actually fill in gaps
       if (item.autoEquippable)
       {
         // Hmm, autoEquips!
@@ -146,13 +114,10 @@ debugger
       // Do we need to worry about unequipping something else that was already equipped in this slot?
       if (state && (found.equipSlot || found.autoEquippable)) {
         // We should go through now and unequip any other items that were already equipped in this slot
-        let oldFF = this.invAC._filterFunction
-        this.invAC._filterFunction = null			// make sure we see the full list
-        this.invAC._refresh()
         
-        for (var i = 0; i < this.invAC.length ; i++) {
-          if (this.invAC[i]) {
-            var maybeItemInSameSlot = this.invAC[i]
+        for (var i = 0; i < this._invArray.length ; i++) {
+          if (this._invArray[i]) {
+            var maybeItemInSameSlot = this._invArray[i]
             if (maybeItemInSameSlot.equipped == true && maybeItemInSameSlot.name != found.name) {
               if (found.autoEquippable) {
                 if (maybeItemInSameSlot.autoEquippable) {
@@ -161,7 +126,7 @@ debugger
                 }								
               }
               else if (found.equipSlot) {
-                if (maybeItemInSameSlot.equipSlot == found.equipSlot) {
+                if (maybeItemInSameSlot.equipSlot === found.equipSlot) {
                   maybeItemInSameSlot.equipped = false
                   returnedUnequippedItem = maybeItemInSameSlot
                 }
@@ -169,9 +134,7 @@ debugger
             }
           }
         }
-        this.invAC._filterFunction = oldFF			// Restore the full list view
       }
-      this.invAC._refresh()
     }
     this.recalculateEquipmentEffects()
     
@@ -189,30 +152,22 @@ debugger
    */
   removeByName(itemName, count)
   {
-    const oldFF = this.invAC._filterFunction
-    this.invAC._filterFunction = null			// make sure we see the full list
-    this.invAC._refresh()
-
     var removed = false
     const found = this.getIdx(itemName)
-    if (found != -1)
+    if (found !== -1)
     {
 debugger
-      var heldItem = InventoryItem(this.invAC.getItemAt(found))
+      var heldItem = InventoryItem(this._invArray[found])
       if (count < heldItem.count)
         heldItem.count -= count
       else
-        this.invAC.removeItemAt(found)
+        this._invArray[found] = null
       removed = true
     }
     this.recalculateEquipmentEffects()
-
-    this.invAC._filterFunction = oldFF			// Restore the full list view
-    this.invAC._refresh()
     
     return removed
   }
-
 
 
   /**
@@ -238,7 +193,7 @@ debugger
    */
   recalculateEquipmentEffects()
   {
-    const { equipEffects, invAC } = this
+    const { equipEffects, _invArray } = this
 
     equipEffects.shotActor = null
     equipEffects.shotSound = null
@@ -251,14 +206,10 @@ debugger
     equipEffects.meleeRepeatDelayModifier = 0
     equipEffects.meleeSound = null
     
-    const oldFF = invAC._filterFunction
-    invAC._filterFunction = null			// make sure we see the full list
-    invAC._refresh()
-    
     let autoEquippedItemProcessed = false
-    for (var i = 0; i < invAC.length ; i++) {
-      if (invAC[i]) {
-        var item = invAC[i]
+    for (var i = 0; i < _invArray.length ; i++) {
+      if (_invArray[i]) {
+        var item = _invArray[i]
         if (item.equipped) {	
           var s = this.ifRealString(item.actor.content2.databag.item.equippedNewShotActor)
           if (s && (equipEffects.shotActor == null || !autoEquippedItemProcessed))
@@ -293,9 +244,7 @@ debugger
     
     if (equipEffects.armorEffect > 100)
       equipEffects.armorEffect = 100		// It's a percentage
-      
-    invAC._filterFunction = oldFF			// Restore the full list view
-    invAC._refresh()
+
     this._update_fullEquipmentEffectSummary()
   }
 	

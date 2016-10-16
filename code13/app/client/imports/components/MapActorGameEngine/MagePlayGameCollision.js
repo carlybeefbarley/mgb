@@ -15,7 +15,6 @@ class ActorCollision
 }
 
 export default MagePlayGameCollision = {
-
     
   // Return value is a list of activeArray[] indexes that have ActorCollision items
   // Note that the array would include collision (A,B) but not (B,A)
@@ -188,7 +187,6 @@ export default MagePlayGameCollision = {
             // TODO: Need to put in some kind of hysterisys to stop continuous usage of items that remain in place...???
             break
           case MgbActor.alItemActivationType_PlayerPicksUpUsesLater:
-debugger
             inventory.add(new InventoryItem(actors[activeActors[hits[hidx].AA2].ACidx]))
             itemConsumed = true
             showUseText = true

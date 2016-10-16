@@ -71,6 +71,7 @@ export default MagePlayGameDisplay = {
 
   bitmapDataVariant(graphics, effect)
   {
-    return graphics._image
+    // TODO
+    return graphics._image    
   }
 }

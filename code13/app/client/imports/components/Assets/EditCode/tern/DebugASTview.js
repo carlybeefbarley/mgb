@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import React, { PropTypes } from 'react';
-import Inspector from 'react-inspector';
+//import Inspector from 'react-inspector'
 
 
 export default DebugASTview = React.createClass({
@@ -32,7 +31,11 @@ export default DebugASTview = React.createClass({
       <div className="ui green segment" style={{ backgroundColor: "rgba(0,255,0,0.03)" }}>
         { this.smartRender() }
         <br></br>
+        NOT ENABLED
+        { /*
         <Inspector name="TernStuff" expandLevel={2} data={this.props.atCursorMemberParentRequestResponse} />
+          */
+        }
       </div>
     )
   }

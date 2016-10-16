@@ -40,7 +40,6 @@
     "react-color": "^2.2.2",
     "react-dom": "^15.2.1",
     "react-helmet": "^3.1.0",
-    "react-inspector": "^1.1.0",
     "react-joyride": "^1.5.0",
     "react-mixin": "^3.0.5",
     "react-redux": "^4.4.5",
@@ -55,6 +54,8 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.37",
+    "babel-eslint": "^6.1.2",
     "eslint": "^3.1.1",
     "eslint-plugin-react": "^6.2.0"
   },

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Menu, Segment, Header, Item, Image, Button } from 'semantic-ui-react'
 
-// MapActorGameEngine Inventory
+// MapActorGameEngine Inventory Dialog
 // This will be used as a modal/popup, and is instantiated when the game needs it. 
 
 
@@ -62,7 +62,7 @@ const SelectedItem = props =>
 
 export default class MageInventoryDialog extends React.Component {
 
-  propTypes = {
+  static propTypes = {
     inventory:     PropTypes.array,
     graphics:      PropTypes.object,
     itemActionFn:  PropTypes.func

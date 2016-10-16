@@ -370,6 +370,7 @@ debugger  // TODO - stop game, no map.
                 ref={c => { this._npcDialog = c } }
                 message={activeNpcDialog.message}
                 choices={activeNpcDialog.choicesArray}
+                graphics={this.state.loadedGraphics}
                 leftActor={activeNpcDialog.leftActor}
                 activeActor={activeNpcDialog.activeActor}
                 responseCallbackFn={choiceNum => { activeNpcDialog.responseCallbackFn(choiceNum) }} />

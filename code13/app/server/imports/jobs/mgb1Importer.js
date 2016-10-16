@@ -34,12 +34,13 @@ Meteor.methods({
     //
     if (importParams === 42)
     {
+      console.log('The meaning of life!)')
       importParams = {
-        mgb1Username:           'foo',
-        mgb1Projectname:        'mechanics demos',
+        mgb1Username:           'nemopolymer',
+        mgb1Projectname:        'Chronicals Of Mr. guM',    //   'mechanics demos',
         mgb2Username:           'dgolds',
-        mgb2ExistingProjectName:'Game Mechanics demo',
-        mgb2assetNamePrefix:    'mechanix3.',
+        mgb2ExistingProjectName:'Chronicles Of Mr. guM',              //'Game Mechanics demo',
+        mgb2assetNamePrefix:    'mrGum.',
         excludeTiles:           false,
         excludeActors:          false,
         excludeMaps:            false,
@@ -70,9 +71,10 @@ Meteor.methods({
     const doImport = (mgb1Kind, importFunction) => {
       const kp = `${importParams.mgb1Username}/${importParams.mgb1Projectname}/${mgb1Kind}/`
       const assetNames = _getAssetNames(s3, kp)
-      console.log(`Preparing to ${importParams.isDryRun ? 'DRYRUN ' : ''} import ${assetNames.length} MGB1 ${mgb1Kind}s into MGB2`)
+      console.log(`Preparing to ${importParams.isDryRun ? 'DRYRUN' : ''} import ${assetNames.length} MGB1 ${mgb1Kind}s into MGB2`)
       _.each(assetNames, aName => {
         const fullS3Name = (kp+aName).replace(/\+/g, ' ')
+console.log(fullS3Name)
         const assetName = aName.replace(/\+/g, ' ')
         const content = getContent(s3, fullS3Name)
         content.Metadata._tileDataUri = ''

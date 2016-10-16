@@ -164,7 +164,6 @@ export default class Inventory {
     const found = this._getIdx(itemName)
     if (found !== -1)
     {
-debugger
       var heldItem = this._invArray[found]
       if (count < heldItem.count)
         heldItem.count -= count

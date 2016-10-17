@@ -4,6 +4,7 @@ import { Router, Route, NotFoundRoute, browserHistory } from 'react-router'
 
 import App from './App'
 import Home from './Home'
+import Import from './Import'
 import GetStarted from './GetStarted'
 import GetStartedSkills from './GetStartedSkills'
 import GetStartedGames from './GetStartedGames'
@@ -61,6 +62,8 @@ Meteor.startup(function () {
         <Route path="reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
 
         <Route path="users" component={Users.List} name="Search All Users" />
+
+        <Route path="u/:username/import" component={Import} />
 
         <Route path="user/:id" component={Users.Profile} name="User Profile"/>
         <Route path="u/:username" component={Users.Profile} name="User Profile"/>

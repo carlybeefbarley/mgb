@@ -191,7 +191,13 @@ export default class Mage extends React.Component {
       _.remove(failedGraphics, aName)
       loadedGraphics[aName] = data
       loadedGraphics[aName]._image = new Image()
-      loadedGraphics[aName]._image.onload = (e) => { console.log('loaded ImageData for '+aName, e) }
+      loadedGraphics[aName]._image.onload = (e, err) => { 
+        if (err) 
+        {
+          console.log('error loading ImageData for '+aName, err)
+          debugger
+        }
+      }
       loadedGraphics[aName]._image.src = data.content2.frameData[0]
     }
     else

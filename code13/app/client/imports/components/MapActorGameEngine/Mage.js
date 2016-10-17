@@ -165,9 +165,11 @@ export default class Mage extends React.Component {
   }
 
   // Load any actors that we don't already have in state.actors or pendingActorLoads
-  _loadRequiredGraphics(desiredGraphicNames)
+  _loadRequiredGraphics(desiredGraphicNames, oName)
   {
-    const { fetchAssetByUri, ownerName } = this.props
+    const { fetchAssetByUri} = this.props
+    const ownerName = oName ? oName : this.props.ownerName
+
     const { pendingGraphicLoads, loadedGraphics } = this.state
     _.each(desiredGraphicNames, aName => {
       if (!_.includes(pendingGraphicLoads, aName) && !_.includes(loadedGraphics, aName))
@@ -207,22 +209,24 @@ export default class Mage extends React.Component {
       if (!_.includes(pendingActorLoads, aName) && !_.includes(loadedActors, aName))
       {
         pendingActorLoads.push(aName)
+        const p = _resolveOwner(ownerName, aName)
+
         fetchAssetByUri(_mkActorUri(ownerName, aName))
-          .then(  data => this._actorLoadResult(aName, true, JSON.parse(data)) )
-          .catch( data => this._actorLoadResult(aName, false, data) )
+          .then(  data => this._actorLoadResult(aName, p.ownerName, true, JSON.parse(data)) )
+          .catch( data => this._actorLoadResult(aName, p.ownerName, false, data) )
       }
     })
     this.setState( { pendingActorLoads } )    // and maybe isPreloading? use a _mkIisPreloadingFn 
   }
 
-  _actorLoadResult(aName, isSuccess, data) {
+  _actorLoadResult(aName, oName, isSuccess, data) {
     const { loadedActors, failedActors } = this.state
     const pendingActorLoads = _.pull(this.state.pendingActorLoads, aName)
     if (isSuccess)
     {
       _.remove(failedActors, aName)
       loadedActors[aName] = data
-      this._loadRequiredAssetsForActor(data.content2)
+      this._loadRequiredAssetsForActor(data.content2, oName)
     }
     else
       failedActors[aName] = data
@@ -231,7 +235,7 @@ export default class Mage extends React.Component {
   }
 
   // An actor can also require other actors or tiles
-  _loadRequiredAssetsForActor(actor)
+  _loadRequiredAssetsForActor(actor, oName)
   {
     // Load any referenced graphics
     const desiredGraphicNames = _.filter(_.union(
@@ -240,7 +244,7 @@ export default class Mage extends React.Component {
       // any other Tiles mentioned in databags?  I don't think so..
      ), n => (n && n!==''))
 
-    this._loadRequiredGraphics(desiredGraphicNames)
+    this._loadRequiredGraphics(desiredGraphicNames, oName)
 
     // Add names of any referenced actors to list of desiredActors
     let desiredActorNames = []
@@ -262,7 +266,7 @@ export default class Mage extends React.Component {
     _addReferencedActors('item',      'keyForThisDoor')
 
     desiredActorNames = _.uniq(desiredActorNames)  // dedupe the list
-    this.loadRequiredActors(desiredActorNames)
+    this.loadRequiredActors(desiredActorNames, oName)
   }
 
   _countPendingLoads() { 

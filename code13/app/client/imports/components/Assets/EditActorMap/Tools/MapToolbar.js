@@ -16,10 +16,10 @@ export default class MapToolbar extends React.Component {
     this.props.map.save('Save Map', true)
   }
   play (){
-    ActorHelper.v2_to_v1(this.props.map.data);
-    /*this.props.map.setState({
+    //ActorHelper.v2_to_v1(this.props.map.data);
+    this.props.map.setState({
       isPlaying: !this.props.map.state.isPlaying
-    })*/
+    })
   }
   resetCamera () {
     this.props.map.resetCamera()

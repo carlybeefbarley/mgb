@@ -31,6 +31,9 @@ import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 import DropArea from '../../Controls/DropArea.js'
 import SmallDD from '../../Controls/SmallDD.js'
 
+import Mage from '/client/imports/components/MapActorGameEngine/Mage'
+
+
 export default class MapArea extends React.Component {
 
   constructor (props) {
@@ -799,7 +802,9 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove (e) {
-
+    if(this.state.isPlaying){
+      return
+    }
     // IE always reports button === 0
     // and yet: If the user presses a mouse button, use the button property to determine which button was pressed.
     // https://msdn.microsoft.com/en-us/library/ms536947(v=vs.85).aspx
@@ -816,11 +821,17 @@ export default class MapArea extends React.Component {
     this.refs.positionInfo.forceUpdate()
   }
   handleMouseUp (e) {
+    if(this.state.isPlaying){
+      return
+    }
     this.lastEvent = null
     this.refs.mapElement.style.transition = '0.3s'
     this.refs.positionInfo.forceUpdate()
   }
   handleOnWheel (e) {
+    if(this.state.isPlaying){
+      return
+    }
     e.preventDefault()
     if(e.altKey){
       this.preview.sep += e.deltaY < 0 ? 1 : -1
@@ -840,6 +851,9 @@ export default class MapArea extends React.Component {
     }
   }
   handleKeyUp (e) {
+    if(this.state.isPlaying){
+      return
+    }
     let update = false
     // don't steal events from inputs
     if (e.target.tagName == 'INPUT') {
@@ -1213,6 +1227,40 @@ export default class MapArea extends React.Component {
       notification = <div>
                        This map is larger than our recommended size - so editing may be slower than normal!
                      </div>
+    }
+    if(this.state.isPlaying){
+
+
+
+      return(
+        <div
+          className='tilemap-wrapper'
+          onDragOver={this.prepareForDrag.bind(this)}
+          onDrop={this.importFromDrop.bind(this)}
+          onWheel={this.handleOnWheel.bind(this)}>
+          <MapToolbar map={this} ref='tools' />
+          <Mage
+            ownerName={this.props.asset.dn_ownerName}
+            startMapName={this.props.asset.name}
+            isPaused={true}
+            fetchAssetByUri={ (uri) => {
+              return new Promise( function (resolve, reject) {
+                  var client = new XMLHttpRequest()
+                  client.open('GET', uri)
+                  client.send()
+                  client.onload = function () {
+                    if (this.status >= 200 && this.status < 300)
+                      resolve(this.response)  // Performs the function "resolve" when this.status is equal to 2xx
+                    else
+                      reject(this.statusText) // Performs the function "reject" when this.status is different than 2xx
+                  }
+                  client.onerror = function () { reject(this.statusText) }
+                }
+              )
+             }}
+            />
+        </div>
+      )
     }
     return (
       <div

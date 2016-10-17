@@ -270,8 +270,6 @@ export default class TileMapLayer extends AbstractLayer {
     this.isDirty = true
   }
   queueDrawTiles (timeout) {
-
-    // this might be heavier than redrawing - need to research how heavy is set/clear Timeout!!! + new fn
     if (this.nextDraw - Date.now() > timeout) {
       this.nextDraw = Date.now() + timeout
     }
@@ -343,6 +341,9 @@ export default class TileMapLayer extends AbstractLayer {
         pal = palette[tileId]
         if (pal) {
           this.drawTile(pal, pos, map.spacing)
+        }
+        else{
+          console.log("unable to locate palette")
         }
       }
     }

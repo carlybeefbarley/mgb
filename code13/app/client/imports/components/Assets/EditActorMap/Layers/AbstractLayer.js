@@ -99,7 +99,7 @@ export default class AbstractLayer extends React.Component {
       return
     }
     const canvas = this.refs.canvas
-    const b = this.camera
+    const b = this.map.camera
     if (canvas.width != b.width) {
       canvas.width = b.width
     }

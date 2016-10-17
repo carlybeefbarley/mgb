@@ -358,13 +358,13 @@ debugger  // TODO - stop game, no map.
 
     return (
       <div>
-        <Button disabled={isPlaying}  icon='play' content='play' onClick={() => this.handlePlay()} />
-        <Button disabled={!isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()} />
-        <br />
-        <span ref={ c => { this._statusLine0 = c } }></span>
-        <br />
-        <span ref={ c => { this._statusLine1 = c } }></span>
-        <br />
+        { !this.props.hideButtons &&
+          <div style={{marginBottom: "5px"}}>
+            <Button disabled={isPlaying} icon='play' content='play' onClick={() => this.handlePlay()}/>
+            <Button disabled={!isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()}/>
+          </div>
+        }
+
         <MageGameCanvas
             ref={c => { this._mageCanvas = c } } 
             cellsWide={ activeMap.metadata.width }
@@ -386,6 +386,10 @@ debugger  // TODO - stop game, no map.
             itemActionFn={(action, item) => this.handleInventoryAction(action, item)} />
         }
 
+        <span ref={ c => { this._statusLine0 = c } }></span>
+        <br />
+        <span ref={ c => { this._statusLine1 = c } }></span>
+        <br />
       </div>
     )
   }

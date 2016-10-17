@@ -1239,26 +1239,31 @@ export default class MapArea extends React.Component {
           onDrop={this.importFromDrop.bind(this)}
           onWheel={this.handleOnWheel.bind(this)}>
           <MapToolbar map={this} ref='tools' />
-          <Mage
-            ownerName={this.props.asset.dn_ownerName}
-            startMapName={this.props.asset.name}
-            isPaused={true}
-            fetchAssetByUri={ (uri) => {
-              return new Promise( function (resolve, reject) {
-                  var client = new XMLHttpRequest()
-                  client.open('GET', uri)
-                  client.send()
-                  client.onload = function () {
-                    if (this.status >= 200 && this.status < 300)
-                      resolve(this.response)  // Performs the function "resolve" when this.status is equal to 2xx
-                    else
-                      reject(this.statusText) // Performs the function "reject" when this.status is different than 2xx
+          <div
+            style={{margin: "10px 0px"}}>
+            
+            <Mage
+              ownerName={this.props.asset.dn_ownerName}
+              startMapName={this.props.asset.name}
+              isPaused={false}
+              hideButtons={true}
+              fetchAssetByUri={ (uri) => {
+                return new Promise( function (resolve, reject) {
+                    var client = new XMLHttpRequest()
+                    client.open('GET', uri)
+                    client.send()
+                    client.onload = function () {
+                      if (this.status >= 200 && this.status < 300)
+                        resolve(this.response)  // Performs the function "resolve" when this.status is equal to 2xx
+                      else
+                        reject(this.statusText) // Performs the function "reject" when this.status is different than 2xx
+                    }
+                    client.onerror = function () { reject(this.statusText) }
                   }
-                  client.onerror = function () { reject(this.statusText) }
-                }
-              )
-             }}
-            />
+                )
+               }}
+              />
+          </div>
         </div>
       )
     }

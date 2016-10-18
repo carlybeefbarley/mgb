@@ -1,4 +1,3 @@
-
 // Constants related to the Map aspects of the MGB MapActor Game Engine
 
 export default MgbMap = {
@@ -13,7 +12,3 @@ export default MgbMap = {
   mapMaxHeight:     200,
   mapMaxWidth:      200
 }
-
-
-//MgbMap.mapLayerActors -> map.content2.mapLayer[]
-

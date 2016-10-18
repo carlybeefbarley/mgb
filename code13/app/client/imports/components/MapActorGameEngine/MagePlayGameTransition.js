@@ -1,6 +1,7 @@
-
 import MgbSystem from './MageMgbSystem'
 
+// This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
+// This file contains the part of the class that is primarily focussed on transitioning between maps
 
 export default MagePlayGameTransition = {
 

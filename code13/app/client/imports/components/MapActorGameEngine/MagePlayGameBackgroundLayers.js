@@ -1,13 +1,10 @@
-
-
-// This code will be pulled into being part of the MagePlayGame class.
-
-// This is the code that is primarily focussed on the BACKGROUND Layers.
-
 import BlockageMap from './MageBlockageMap'
 import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
 import MgbMap from './MageMgbMap'
+
+// This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
+// This file contains the part of the class that is primarily focussed on the BACKGROUND Layers
 
 export default MagePlayGameBackgroundLayers = {
 
@@ -49,5 +46,4 @@ export default MagePlayGameBackgroundLayers = {
   {
     this.backgroundBlockageMap.reset(1, 1)
   }
-
 }

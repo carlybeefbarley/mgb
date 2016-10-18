@@ -1,7 +1,9 @@
-
 import MgbMap from './MageMgbMap'
 import MgbActor from './MageMgbActor'
 import ActiveActor from './MageActiveActorClass'
+
+// This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
+// This file contains the part of the class that is primarily focussed on Items and their behaviors
 
 export default MagePlayGameItem = {
   useItemOnPlayer(itemAA)
@@ -13,7 +15,7 @@ export default MagePlayGameItem = {
 
   useItemActorOnPlayer(itemAP)  	// This just handles the effects on the player, not the resulting effects (visuals, messages, destruction etc) on the item
   {
-    const { actors, activeActors, AA_player_idx, G_tweenSinceMapStarted } = this
+    const { actors, activeActors, AA_player_idx } = this
     var increasesMaxHealth = MgbActor.intFromActorParam(itemAP.content2.databag.item.increasesMaxHealthNum)
     if (increasesMaxHealth && activeActors[AA_player_idx].maxHealth != 0)
     {
@@ -121,7 +123,6 @@ export default MagePlayGameItem = {
     return goodPoint	// can be null
   },
 
-
   /**
    * 
    * 
@@ -153,7 +154,6 @@ export default MagePlayGameItem = {
     }
     return r
   },
-
 
   /**
    * 

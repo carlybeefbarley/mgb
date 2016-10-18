@@ -1,6 +1,3 @@
-
-
-
 import MgbActor from './MageMgbActor'
 
 // Note on equipping and counts: If an item is equipped 

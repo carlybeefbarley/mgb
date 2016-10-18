@@ -1,6 +1,7 @@
 import _ from 'lodash'
 
-// These imports are actually class extensions for the MagePlayGame class
+// These imports are actually class extensions for the MagePlayGame class. 
+// See notes in constructor()
 
 import MagePlayGameNpc from './MagePlayGameNpc'
 import MagePlayGameTIC from './MagePlayGameTIC'
@@ -25,14 +26,7 @@ import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
 import MgbMap from './MageMgbMap'
 
-/* Replacers
-  pauseGame             ->    this.isPaused
-  setGameStatusString   ->    this.setGameStatusFn(0,
-  G_gameStartedAtMS     ->    this.gameStartedAtMS
-  G_gameOver            ->    this.gameOver
-*/
-
-// This will uses exceptions
+// This class will uses exceptions
 
 export default class MagePlayGame
 {

@@ -1,6 +1,9 @@
 import _ from 'lodash'
 import MgbActor from './MageMgbActor'
 
+// This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
+// This file contains the part of the class that is primarily focussed on user input
+
 const _actions = 'up,down,left,right,shift,push,melee,shoot,jump,inventory,npcmessage'.split(',')
 
 export default MagePlayGameInput = {

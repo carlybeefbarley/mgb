@@ -1,6 +1,8 @@
-
 // Quick lookup map to set/check if cells are blocked for any reason
+// This is a static table built at map load time using the Background 
+// and foreground layers only
 
+// Dynamic blockages are handled with the ActiveActor code on the Active Layer
 
 export default class BlockageMap
 {

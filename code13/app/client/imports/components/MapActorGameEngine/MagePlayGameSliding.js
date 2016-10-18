@@ -1,8 +1,7 @@
-// This code will be pulled into being part of the MagePlayGame class.
-
-// This is the code that is primarily focussed on the Sliding behaviors
-
 import MgbSystem from './MageMgbSystem'
+
+// This code will be incoportaed by MagePlayGame.js so that it becomes part of the MagePlayGame class
+// This file contains the part of the class that is primarily focussed on the Sliding behaviors
 
 export default MagePlayGameSliding = {
 

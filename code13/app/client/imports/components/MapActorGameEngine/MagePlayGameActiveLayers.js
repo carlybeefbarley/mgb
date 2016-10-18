@@ -1,13 +1,11 @@
-// This code will be pulled into being part of the MagePlayGame class.
-
-// This is the code that is primarily focussed on the Active Layers.
-
 import _ from 'lodash'
-
 import MgbMap from './MageMgbMap'
 import MgbActor from './MageMgbActor'
 import MgbSystem from './MageMgbSystem'
 import ActiveActor from './MageActiveActorClass'
+
+// This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
+// This file contains the part of the class that is primarily focussed on the Active Layers.
 
 export default MagePlayGameActiveLayers = {
 

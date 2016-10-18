@@ -1,4 +1,7 @@
 
+// This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
+// This file contains the part of the class that is primarily focussed on cell-realted utilities
+
 export default MagePlayGameCellUtil = {
   cell(x, y) {
     if (x > this.map.metadata.width || y > this.map.metadata.height)

@@ -5,7 +5,6 @@ import { Menu, Segment, Header, Item, Image, Button } from 'semantic-ui-react'
 // MapActorGameEngine Inventory Dialog
 // This will be used as a modal/popup, and is instantiated when the game needs it. 
 
-
 const itemImgSrc = (item, loadedGraphics) => (
   item ? loadedGraphics[item.actor.content2.databag.all.defaultGraphicName].thumbnail : null
 )
@@ -58,7 +57,6 @@ const SelectedItem = props =>
     </Item.Group>
   )
 }
-
 
 export default class MageInventoryDialog extends React.Component {
 

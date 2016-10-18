@@ -73,7 +73,10 @@ export default MagePlayGameDisplay = {
 
   bitmapDataVariant(graphics, effect)
   {
-    // TODO
+    // This is actually done now at render time, not using different bitmaps
+    // It would probablybe faster to render using pre-effected bitmap/image
+    // but not doing that yet. TO do that, implement this function and build a 
+    // cache of effected images
     if (effect && effect !== '' && effect !== 'no effect')
     {
 //      console.log(`TODO: Apply effect ${effect} to ${graphics.name}`)

@@ -8,14 +8,12 @@ export default class DropArea extends React.Component{
   componentDidMount(){
     this.isUnmounted = false;
     if(this.props.value){
-      console.log("starting subscriptions...")
       const parts = this.props.value.split(":")
       const name = parts.pop();
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
 
       this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
         onReady: () => {
-          console.log("ON READY!!! wow")
           this.setState({asset: this.getAsset()})
         },
         onError: (e) => {
@@ -62,7 +60,7 @@ export default class DropArea extends React.Component{
       })
       return
     }
-    console.log("asset", asset)
+
     this.setState({asset: asset, badAsset: null}, () => {
       this.subscription && this.subscription.stop();
       this.subscription = Meteor.subscribe("assets.public.owner.name", asset.dn_ownerName, asset.name, {
@@ -70,9 +68,7 @@ export default class DropArea extends React.Component{
           this.forceUpdate()
         }
       })
-
       this.saveChanges()
-
     })
   }
 

@@ -2,3 +2,15 @@
     min-width: 30% !important;
     text-align: right !important;
 }
+.actor-template img{
+    float: left;
+    cursor: pointer;
+}
+.actor-template .column{
+    line-height: 16px;
+    display: flex !important;
+    align-items: center;
+}
+.actor-template span {
+    padding: 0 7px;
+}

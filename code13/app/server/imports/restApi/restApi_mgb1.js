@@ -63,7 +63,7 @@ RestApi.addRoute('mgb1/actor/:account/:project/:name', {authRequired: false}, {
         statusCode: 301,    // MOVED (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
         headers: {
           'Location': `/api/mgb1/tile/${this.urlParams.account}/${this.urlParams.project}/${response.Metadata.tilename}`
-          // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200 
+          // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
         },
         body: { }
       }
@@ -81,8 +81,8 @@ RestApi.addRoute('mgb1/actor/:account/:project/:name', {authRequired: false}, {
       strData = strData.substring(1);
     strData = strData.replace(/{{{/g, "<").replace(/}}}/g, ">");
 
-    var jsonData    
-    xml2js.parseString(strData, { explicitArray: false, async: false}, function (e, r) { 
+    var jsonData
+    xml2js.parseString(strData, { explicitArray: false, async: false}, function (e, r) {
       var animT = r.actor.animationTable
       r.actor.animationTable = animT.split("#")
       r.actor.animationTable = _.map(r.actor.animationTable, function (x) { var a= x.split("|"); return {action: a[0], tileName: a[1], effect: a[2]} })
@@ -96,12 +96,80 @@ RestApi.addRoute('mgb1/actor/:account/:project/:name', {authRequired: false}, {
       body: jsonData,
       headers: {
         'Content-Type': 'application/json'
-        // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200 
+        // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
       }
     }
   }
 })
 
+// TODO(stauzs): don't forget to remove this when actors are done
+RestApi.addRoute('mgb1/actor-for-diff/:account/:project/:name', {authRequired: false}, {
+  get: function () {
+    let s3Key = `${this.urlParams.account}/${this.urlParams.project}/actor/${this.urlParams.name}`
+    var s3 = new AWS.S3({region: aws_s3_region, maxRetries: 3})
+    var getObjectSync = Meteor.wrapAsync(s3.getObject, s3)
+    var response = {}, savedError = {}
+    try {
+      response = getObjectSync({Bucket: 'JGI_test1', Key: s3Key})
+    }
+    catch (err)
+    {
+      savedError = err    // We're gonna report everything as 404 really
+      console.dir('MGB1 actor import error: ', err)
+    }
+
+    if (savedError && savedError.code)
+      return {
+        statusCode: 404,
+        headers: { },
+        body: { }
+      }
+
+
+    if (this.queryParams.getTilePngRedirect)
+    {
+      return {
+        statusCode: 301,    // MOVED (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
+        headers: {
+          'Location': `/api/mgb1/tile/${this.urlParams.account}/${this.urlParams.project}/${response.Metadata.tilename}`
+          // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
+        },
+        body: { }
+      }
+    }
+
+
+    // At this point, the required data should be in response.Body and response.Metadata
+
+    // response.Body needs a lot of processing from the strange MGBv1 formats (Adobe Flex made me do it...)
+    var byteArray = new Uint8Array(response.Body)
+    var data2 = pako.inflate(byteArray)
+    var data3 = new Uint16Array(data2)
+    var strData = String.fromCharCode.apply(null, data3)
+    while (strData[0] !== "{" && strData.length > 0)
+      strData = strData.substring(1);
+    strData = strData.replace(/{{{/g, "<").replace(/}}}/g, ">");
+
+    var jsonData
+    xml2js.parseString(strData, { explicitArray: false, async: false}, function (e, r) {
+      var animT = r.actor.animationTable
+      r.actor.animationTable = animT.split("#")
+      r.actor.animationTable = _.map(r.actor.animationTable, function (x) { var a= x.split("|"); return {action: a[0], tileName: a[1], effect: a[2]} })
+      jsonData = r    // since we requested with async:false we know that this callback completes before we get to then next line of the outer scope
+    })
+
+    jsonData.metadata = response.Metadata
+
+    return {
+      statusCode: 200,    // just for now...
+      body: `diff(${JSON.stringify(jsonData.actor.databag)})`,
+      headers: {
+        'Content-Type': 'text/plain'
+        // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
+      }
+    }
+  }
+})
 
 // MGBv1 MAP - this preserves the original structure. 
 // eg http://localhost:3000/api/mgb1/map/.acey53/Club%20Penguin%20Agents%20Under%20Attack/HQ

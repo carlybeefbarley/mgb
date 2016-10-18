@@ -20,14 +20,48 @@ export default class MageGameCanvas extends React.Component {
   loadActorByName(actorName) 
   {
     console.log(`actor not preloaded: ${actorName}`)
-  } 
+  }
+
+  _drawActor(ctx, image, effect, x, y) {
+    ctx.save()
+    switch (effect)
+    {
+    case 'rotate90':
+      ctx.translate(x+image.width/2,y+image.height/2)
+      ctx.rotate(Math.PI/2)
+      ctx.drawImage(image, -image.width/2, -image.height/2)
+      break
+    case 'rotate180':
+      ctx.translate(x+image.width/2,y+image.height/2)
+      ctx.rotate(Math.PI)
+      ctx.drawImage(image, -image.width/2, -image.height/2)
+      break
+    case 'rotate270':
+      ctx.translate(x+image.width/2,y+image.height/2)
+      ctx.rotate(Math.PI * 1.5)
+      ctx.drawImage(image, -image.width/2, -image.height/2)
+      break
+    case 'no effect':
+      ctx.drawImage(image, x, y)
+      break
+    case 'flipX':
+      ctx.scale(-1, 1)
+      ctx.drawImage(image, -(x + image.width), y)
+      break
+    case 'flipY':
+      ctx.scale(1, -1)
+      ctx.drawImage(image, x,  -(y + image.height))
+      break
+    }
+    ctx.restore()
+  }
 
   _drawPassiveLayer(map, actors, tileData, layerIdx, tweenCount) {
     const { _ctx } = this
     const startY = 0
     const endY = map.metadata.height
     const startX = 0
-    const endX = map.metadata.width    
+    const endX = map.metadata.width
     const ml = map.mapLayer[layerIdx]
 
     for (let y = startY; y < endY; y++) {
@@ -42,11 +76,8 @@ export default class MageGameCanvas extends React.Component {
             const newTileName = MgbActor.getAnimationTileFromIndex(actor, animationTableIndex)
             const effect = MgbActor.getAnimationEffectFromIndex(actor, animationTableIndex)
             const t = newTileName ? tileData[newTileName] : null
-            if (t) {
-              // const b = GetbitmapDataVariant(t, effect)     // NEED TO MAKE THIS
-              // if (b)
-                _ctx.drawImage(t._image, px, py)
-            }
+            if (t)
+              this._drawActor(_ctx, t._image, effect, px, py)
           } else
             this.loadActorByName(actorName) // for next time around...
         }
@@ -58,10 +89,11 @@ export default class MageGameCanvas extends React.Component {
   _drawActiveLayer(map, actorData, tileData, activeActors, tweenCount) {
     const { _ctx } = this
 
-const hScroll = 0
-const vScroll = 0
-const renderWidth  = map.metadata.width  * MgbSystem.tileMinWidth
-const renderHeight = map.metadata.height * MgbSystem.tileMinHeight
+    // TODO - implement built-in scroll+crop system
+    const hScroll = 0
+    const vScroll = 0
+    const renderWidth  = map.metadata.width  * MgbSystem.tileMinWidth
+    const renderHeight = map.metadata.height * MgbSystem.tileMinHeight
 
     var aalen = activeActors.length
     for (let AAi = 0; AAi < aalen; AAi++) {
@@ -75,7 +107,7 @@ const renderHeight = map.metadata.height * MgbSystem.tileMinHeight
         y += (aa.renderOffsetCellsY * MgbSystem.tileMinHeight)
         if ( x + MgbSystem.tileMaxWidth >= 0 && x <= renderWidth 
               && y + MgbSystem.tileMaxHeight >= 0 && y <= renderHeight)
-          _ctx.drawImage(aa._image, x, y)
+          this._drawActor(_ctx, aa._image, aa._effect, x, y)
       }
     }
   }
@@ -111,5 +143,3 @@ const renderHeight = map.metadata.height * MgbSystem.tileMinHeight
     )
   }
 }
-
-

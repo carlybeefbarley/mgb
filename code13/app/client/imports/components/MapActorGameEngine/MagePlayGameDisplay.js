@@ -66,12 +66,19 @@ export default MagePlayGameDisplay = {
     {
       var newTilePiece = graphics[newTileName]
       activeActors[AA]._image = this.bitmapDataVariant(newTilePiece, effect)
+      activeActors[AA]._effect = effect
+      
     }
   },
 
   bitmapDataVariant(graphics, effect)
   {
     // TODO
-    return graphics._image    
+    if (effect && effect !== '' && effect !== 'no effect')
+    {
+//      console.log(`TODO: Apply effect ${effect} to ${graphics.name}`)
+//      debugger
+    }
+    return graphics._image
   }
 }

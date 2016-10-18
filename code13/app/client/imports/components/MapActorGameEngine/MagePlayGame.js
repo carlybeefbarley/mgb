@@ -24,6 +24,7 @@ import BlockageMap from './MageBlockageMap'
 import Inventory from './MagePlayGameInventory'
 import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
+import MgbMusic from './MageMgbMusic'
 import MgbMap from './MageMgbMap'
 
 // This class will uses exceptions
@@ -95,6 +96,7 @@ export default class MagePlayGame
     
     this.setGameStatusFn(0, "Game Over")
     this.setGameStatusFn(1)
+    MgbMusic.stopMusic()
   }
   
 
@@ -126,7 +128,7 @@ export default class MagePlayGame
     this.playPrepareBackgroundLayer()
 
     // Set up and start Game events
-    this.enablePlayerControls(keyCaptureElement)
+    this.enablePlayerControls(keyCaptureElement)    
   }
 
   logGameBug(msg) { 
@@ -157,7 +159,7 @@ export default class MagePlayGame
     this.isPaused = newViz
   }
 
-  // This is a bit weird It returns the NAME not the actor. TODO - rename for clarity
+  // This is a bit weird. It returns the NAME not the actor. TODO - rename for clarity
   loadActorByName(actorName) 
   {
     const result = this.actors[actorName]
@@ -201,15 +203,11 @@ export default class MagePlayGame
       if (eventString && eventString != '') {
         var o = MgbSystem.parseEventCommand(eventString)
         if (o.command === "jump") {
-          console.trace("event: " + eventString)
           this.transitionToNewMap(this.map.userName, this.map.projectName, o.mapname, MgbActor.intFromActorParam(o.x), MgbActor.intFromActorParam(o.y))
           return
         }
         else if (o.command == "music") {
-          if (MgbActor.isSoundNonNull(o.source))
-            this.playMusic(o.source)
-          else
-            this.stopMusic()
+          MgbMusic.playMusic(o.source)
         }
       }
 

@@ -63,7 +63,7 @@ const SelectedItem = props =>
 export default class MageInventoryDialog extends React.Component {
 
   static propTypes = {
-    inventory:     PropTypes.array,
+    inventory:     PropTypes.object,
     graphics:      PropTypes.object,
     itemActionFn:  PropTypes.func
   }

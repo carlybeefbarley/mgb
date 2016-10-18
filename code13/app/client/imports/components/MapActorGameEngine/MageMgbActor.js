@@ -132,8 +132,34 @@ const MgbActor = {
   ANIMATION_INDEX_BASE_STATIONARY_SOUTH:        100,	// 16 of these
   ANIMATION_INDEX_BASE_STATIONARY_WEST:         116,	// 16 of these
 
+
+  loadSounds: function(callback) {
+
+    if (!MgbActor._loadedSounds)
+    {
+      MgbActor._loadedSounds = {}
+      var names = this.alCannedSoundsList.slice(1)    // ignore first item
+      var n,name,
+          count  = names.length,
+          canplay = function() { if (--count === 0) { callback && callback(result)} };
+
+      for (n = 0 ; n < names.length ; n++) {
+        name = names[n];
+        MgbActor._loadedSounds[name] = document.createElement('audio');
+        MgbActor._loadedSounds[name].addEventListener('canplay', canplay, false);
+        MgbActor._loadedSounds[name].src = "/audio/builtinForActors/" + name + ".wav";
+      }
+    }
+  },
+
   playCannedSound: function(soundName) {
-    console.log("TODO: Play sound: " + soundName)
+    if (!MgbActor._loadedSounds)
+      MgbActor.loadSounds()
+    else if (soundName !== 'none')
+    {
+      const sound = MgbActor._loadedSounds[soundName]
+      sound && sound.play()
+    }
   },
 
   getAnimationIndex: function(	

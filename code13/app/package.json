@@ -48,7 +48,7 @@
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",
     "selenium-webdriver": "^3.0.0-beta-2",
-    "semantic-ui-react": "^0.54.3",
+    "semantic-ui-react": "^0.56.5",
     "tern": "~0.20.0",
     "utf-8-validate": "^1.2.1",
     "xml2js": "^0.4.17"

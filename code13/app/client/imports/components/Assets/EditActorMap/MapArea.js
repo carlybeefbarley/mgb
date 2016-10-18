@@ -1241,7 +1241,7 @@ export default class MapArea extends React.Component {
           <MapToolbar map={this} ref='tools' />
           <div
             style={{margin: "10px 0px"}}>
-            
+
             <Mage
               ownerName={this.props.asset.dn_ownerName}
               startMapName={this.props.asset.name}

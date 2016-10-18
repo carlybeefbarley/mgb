@@ -17,13 +17,13 @@ export default class Properties extends React.Component {
   componentDidUpdate () {
     if (this.settings) {
       this.settings.map.update(this.map.data)
-      this.settings.layer.update(this.map.data.layers[this.map.activeLayer])
-      this.settings.tileset.update(this.map.data.tilesets[this.map.activeTileset])
-      if (this.activeObject) {
+      //this.settings.layer.update(this.map.data.layers[this.map.activeLayer])
+      //this.settings.tileset.update(this.map.data.tilesets[this.map.activeTileset])
+      /*if (this.activeObject) {
         const o = this.activeObject.orig ? this.activeObject.orig : this.activeObject
         this.updateObject(o)
         this.settings.object.update(o)
-      }
+      }*/
     }
   // $(this.refs.holder).find("select").dropdown()
   }
@@ -81,74 +81,75 @@ export default class Properties extends React.Component {
     this.settings = {}
     this.updateObject(this.activeObject)
     var that = this;
-    this.settings.object = new Otito(this.activeObject, {
-      Object: {
-        _type: Otito.type.folder,
-        contentClassName: 'ui content two column stackable grid',
-        content: {
-          width: {
-            _type: Otito.type.number,
-            head: 'width',
-            min: 1
-          },
-          height: {
-            _type: Otito.type.number,
-            head: 'height',
-            min: 1
-          },
-          x: {
-            _type: Otito.type.number
-          },
-          y: {
-            _type: Otito.type.number
-          },
-          name: {
-            _type: Otito.type.string
-          },
-          type: {
-            _type: Otito.type.string
-          },
-          visible: {
-            _type: Otito.type.bool
-          },
-          rotation: {
-            _type: Otito.type.number
-          },
-          mgb_properties: {
-            /*get head(){
-              debugger;
-              return "Properties"
-            },
-            set head(x){
-              debugger;
-            },*/
-            head: "Properties",
-            _type: Otito.type.array,
-            onchange: function(){
-              console.log("change!!!")
-            },
-            array: {
-              name: {
-                _type: Otito.type.text,
-                onchange: function(input, otito){
-                  that.updateObject(otito.parent.object)
-                }
-              },
-              value: {
-                _type: Otito.type.text,
-                onchange: function(input, otito){
-                  that.updateObject(otito.parent.object)
-                }
-              }
-            }
-          }
-        }
-      }
-    }, () => {
-      this.map.redraw()
-      this.map.save("Updating Object properties")
-    })
-    this.settings.object.append(this.refs.object)
+
+    //this.settings.object = new Otito(this.activeObject, {
+    //  Object: {
+    //    _type: Otito.type.folder,
+    //    contentClassName: 'ui content two column stackable grid',
+    //    content: {
+    //      width: {
+    //        _type: Otito.type.number,
+    //        head: 'width',
+    //        min: 1
+    //      },
+    //      height: {
+    //        _type: Otito.type.number,
+    //        head: 'height',
+    //        min: 1
+    //      },
+    //      x: {
+    //        _type: Otito.type.number
+    //      },
+    //      y: {
+    //        _type: Otito.type.number
+    //      },
+    //      name: {
+    //        _type: Otito.type.string
+    //      },
+    //      type: {
+    //        _type: Otito.type.string
+    //      },
+    //      visible: {
+    //        _type: Otito.type.bool
+    //      },
+    //      rotation: {
+    //        _type: Otito.type.number
+    //      },
+    //      mgb_properties: {
+    //        /*get head(){
+    //          debugger;
+    //          return "Properties"
+    //        },
+    //        set head(x){
+    //          debugger;
+    //        },*/
+    //        head: "Properties",
+    //        _type: Otito.type.array,
+    //        onchange: function(){
+    //          console.log("change!!!")
+    //        },
+    //        array: {
+    //          name: {
+    //            _type: Otito.type.text,
+    //            onchange: function(input, otito){
+    //              that.updateObject(otito.parent.object)
+    //            }
+    //          },
+    //          value: {
+    //            _type: Otito.type.text,
+    //            onchange: function(input, otito){
+    //              that.updateObject(otito.parent.object)
+    //            }
+    //          }
+    //        }
+    //      }
+    //    }
+    //  }
+    //}, () => {
+    //  this.map.redraw()
+    //  this.map.save("Updating Object properties")
+    //})
+    //this.settings.object.append(this.refs.object)
 
     this.settings.map = new Otito(this.map.data, {
       Map: {
@@ -159,11 +160,17 @@ export default class Properties extends React.Component {
           width: {
             _type: Otito.type.number,
             head: 'width',
+            onchange: function(){
+              console.log("width changed!")
+            },
             min: 1
           },
           height: {
             _type: Otito.type.number,
             head: 'height',
+            onchange: function(){
+
+            },
             min: 1
           },
           tile: {
@@ -192,6 +199,7 @@ export default class Properties extends React.Component {
     })
     this.settings.map.append(this.refs.map)
 
+    /*
     this.settings.layer = new Otito(this.map.data.layers[this.map.activeLayer], {
       Layer: {
         _type: Otito.type.folder,
@@ -251,8 +259,9 @@ export default class Properties extends React.Component {
       this.map.redraw()
       this.map.save("Updating layer settings")
     })
+    */
     //this.settings.layer.append(this.refs.layer)
-
+    /*
     this.settings.tileset = new Otito(this.map.data.tilesets[this.map.activeTileset], {
       Tileset: {
         _type: 'folder',
@@ -306,6 +315,7 @@ export default class Properties extends React.Component {
         this.map.save("Updating tileset settings")
       })
     })
+    */
     //this.settings.tileset.append(this.refs.tileset)
 
     $(this.refs.holder).find('select').dropdown()

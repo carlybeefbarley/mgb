@@ -183,7 +183,7 @@ export default App = React.createClass({
       bottom:   "0px",
       left:     navPanelReservedWidth,
       right:    flexPanelWidth,
-      overflow: "scroll",
+      //overflow: "scroll", why is this here? - it add scrolling empty space (~100-200 px) in map editor - add exception based on Asset type?
       marginBottom: "0px"
     }
 

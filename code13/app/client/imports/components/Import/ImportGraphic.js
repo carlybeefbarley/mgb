@@ -19,7 +19,6 @@ export default class ImportGraphic extends React.Component {
       status: STATUS_EMPTY,     // STATUS_EMPTY or STATUS_DRAGGED_OVER or STATUS_UPLOADING or STATUS_UPLOADED 
     }
 
-    // this.tmpImages = []
   }
 
   onDragOver(event) {
@@ -69,14 +68,17 @@ export default class ImportGraphic extends React.Component {
   readFileUri (file, path) {
     const reader = new FileReader()
     reader.onload = (e) => {
-      console.log(e.target.result)
-      const fileName = (path+file.name)
-      console.log(fileName)
+      // console.log(e.target.result)
       const dataUri = e.target.result
-      // this.tmpImages[this.tmpImages.length] = new Image()
+      if(!dataUri.startsWith('data:image/')){
+        // file is not an image
+        return;
+      }
+      const fileName = (path+file.name).replace('/', '.')
       let tmpImg = new Image()
       tmpImg.onload = () => {
-        console.log(tmpImg.width, tmpImg.height)
+        // console.log(tmpImg.width, tmpImg.height)
+        this.saveGraphic(tmpImg, fileName)
       }
       tmpImg.src = dataUri
       // this.setState({ status: STATUS_UPLOADED })
@@ -84,7 +86,30 @@ export default class ImportGraphic extends React.Component {
     reader.readAsDataURL(file)
   }
 
-  saveGraphic(imgObject){
+  saveGraphic(imgObject, fileName){
+    const content2 = {
+      dataUri: imgObject.src,
+      width: imgObject.width,
+      height: imgObject.height,
+      layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
+      frameNames: ["Frame 1"],
+      frameData: [ [ imgObject.src ] ],
+      spriteData: [ imgObject.src ],
+      tileset: imgObject.src,
+      cols: 1,
+      rows: 1,
+      fps: 10,
+      animations: []
+    }
+
+    this.props.createAsset(
+      "graphic", 
+      fileName, 
+      null, // projectName
+      null, // projectOwnerId
+      null, // projectOwnerName
+      content2,
+    )
 
   }
 
@@ -103,4 +128,9 @@ export default class ImportGraphic extends React.Component {
       </div>
     )
   }
+}
+
+
+ImportGraphic.propTypes = {
+  createAsset: PropTypes.func.isRequired,
 }

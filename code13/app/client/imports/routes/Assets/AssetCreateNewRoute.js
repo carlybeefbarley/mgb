@@ -71,6 +71,8 @@ export default AssetCreateNewRoute = React.createClass({
       newAsset.ownerId = projectOwnerId
     }
 
+    console.log('newAsset', newAsset)
+
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
           alert("cannot create Asset because: " + error.reason)

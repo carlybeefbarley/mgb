@@ -316,7 +316,8 @@ export default class EditGraphic extends React.Component {
       return
     }
     let dataURI = c2.frameData[frameID][layerID];
-    if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+    // if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+    if (dataURI !== undefined && dataURI.startsWith("data:image/")) {
       var _img = new Image;
       _img.frameID = frameID   // hack so in onload() we know which frame is loaded
       _img.layerID = layerID   // hack so in onload() we know which layer is loaded

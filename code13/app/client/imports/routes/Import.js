@@ -21,7 +21,7 @@ export default ImportRoute = React.createClass({
     urlLocation: React.PropTypes.object
   },
 
-  createAsset: function(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName, content2) {
+  createAsset: function(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName, content2, thumbnail) {
     if (!this.props.currUser) {
       alert("You must be login to create a new Asset")
       return
@@ -31,7 +31,7 @@ export default ImportRoute = React.createClass({
       name: assetName,
       kind: assetKindKey,
       text: "",
-      thumbnail: "",
+      thumbnail: thumbnail || "",
       content2: content2,
       dn_ownerName: this.props.currUser.name,         // Will be replaced below if in another project
 
@@ -63,7 +63,7 @@ export default ImportRoute = React.createClass({
         <h1>Bulk Import</h1>
         <span style={{color:"red"}}>
         Import is not ready yet.<br/>
-        TODO: progress, thumbnails, prefix, project selection, asset selection
+        TODO: progress, license, status, prefix, project selection, asset selection
         </span>
         <ImportGraphic 
           createAsset={this.createAsset}

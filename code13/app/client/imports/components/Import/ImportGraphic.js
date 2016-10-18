@@ -116,6 +116,7 @@ export default class ImportGraphic extends React.Component {
       null, // projectOwnerId
       null, // projectOwnerName
       content2,
+      thumbnail,
     )
 
     const graphics = _.cloneDeep(this.state.graphics)

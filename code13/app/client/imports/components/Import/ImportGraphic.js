@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom'
 
 // import { Segment, Grid, Header, List, Icon, Image, Button } from 'semantic-ui-react'
 
+import UploadForm from './UploadForm.js'
+import UploadList from './UploadList.js'
+import sty from  './import.css'
 
 const STATUS_EMPTY = "empty"
 const STATUS_DRAGGED_OVER = "draggedOver"
@@ -17,6 +20,7 @@ export default class ImportGraphic extends React.Component {
 
     this.state = {
       status: STATUS_EMPTY,     // STATUS_EMPTY or STATUS_DRAGGED_OVER or STATUS_UPLOADING or STATUS_UPLOADED 
+      graphics: [],
     }
 
   }
@@ -99,33 +103,65 @@ export default class ImportGraphic extends React.Component {
       cols: 1,
       rows: 1,
       fps: 10,
-      animations: []
+      animations: [],
     }
 
-    this.props.createAsset(
-      "graphic", 
-      fileName, 
-      null, // projectName
-      null, // projectOwnerId
-      null, // projectOwnerName
-      content2,
-    )
+    const thumbnail = this.createThumbnail(imgObject) 
+    // console.log(thumbnail)
+
+    // this.props.createAsset(
+    //   "graphic", 
+    //   fileName, 
+    //   null, // projectName
+    //   null, // projectOwnerId
+    //   null, // projectOwnerName
+    //   content2,
+    // )
+
+    const graphics = _.cloneDeep(this.state.graphics)
+    graphics.push({
+      fileName: fileName,
+      content2: content2,
+      thumbnail: thumbnail,
+    })
+    this.setState({ graphics: graphics})
 
   }
 
+  createThumbnail(imgObject){
+    const tmpCanvas = document.createElement("canvas")
+    const tmpCtx = tmpCanvas.getContext('2d')
+    tmpCanvas.width = 290
+    tmpCanvas.height = 150
+    const wRatio = tmpCanvas.width / imgObject.width
+    const hRatio = tmpCanvas.height / imgObject.height
+    let ratio = wRatio < hRatio ? wRatio : hRatio
+    if(wRatio >= 1 && hRatio >= 1) ratio = 1
+    const width = imgObject.width * ratio
+    const height = imgObject.height * ratio
+    const x = (tmpCanvas.width - width) / 2
+    const y = (tmpCanvas.height - height) / 2
+
+    tmpCtx.drawImage(imgObject, x, y, width, height)
+    return tmpCanvas.toDataURL('image/png')
+  }
 
   render(){
     return (
-      
-      <div className={"a"} style={{backgroundColor:"#ccc"}}
-        onDragOver={this.onDragOver.bind(this)}
-        onDragLeave={this.onDragLeave.bind(this)}
-        onDrop={this.onDrop.bind(this)}>
-          <br/><br/><br/><br/><br/>
-          <h2>Drop folder here!</h2>
-          <p>You can folder with graphic assets like .jpg, .png</p>
-          <br/><br/><br/><br/><br/>
+      <div>
+        <UploadForm
+          isDragOver={this.state.status === STATUS_DRAGGED_OVER}
+          isHidden={this.state.satus === STATUS_UPLOADED}
+          onDragOver={this.onDragOver.bind(this)}
+          onDragLeave={this.onDragLeave.bind(this)}
+          onDrop={this.onDrop.bind(this)}
+        />
+        <UploadList
+          isHidden={this.state.satus !== STATUS_UPLOADED}
+          graphics={this.state.graphics}
+        />
       </div>
+      
     )
   }
 }

@@ -14,14 +14,17 @@ export default class UploadForm extends React.Component {
 
   render (){
     return (
-      <div className={"uploadForm " + (this.props.isDragOver ? "draggedOver" : "")}
-        onDragOver={this.onDragOver.bind(this)}
-        onDragLeave={this.onDragLeave.bind(this)}
-        onDrop={this.onDrop.bind(this)}>
-          <br/><br/><br/><br/><br/>
-          <h2>Drop folder here!</h2>
-          <p>You can drop folder with graphic assets like .jpg, .png</p>
-          <br/><br/><br/><br/><br/>
+      <div className={this.props.isHidden ? "hidden" : ""}>
+        {/* TODO inputs: projects, prefix */}
+        <div className={"uploadForm " + (this.props.isDragOver ? "draggedOver" : "")}
+          onDragOver={this.onDragOver.bind(this)}
+          onDragLeave={this.onDragLeave.bind(this)}
+          onDrop={this.onDrop.bind(this)}>
+            <br/><br/><br/><br/><br/>
+            <h2>Drop folder here!</h2>
+            <p>You can drop folder with graphic assets like .jpg, .png</p>
+            <br/><br/><br/><br/><br/>
+        </div>
       </div>
     )
   }

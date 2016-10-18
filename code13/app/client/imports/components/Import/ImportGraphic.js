@@ -109,14 +109,14 @@ export default class ImportGraphic extends React.Component {
     const thumbnail = this.createThumbnail(imgObject) 
     // console.log(thumbnail)
 
-    // this.props.createAsset(
-    //   "graphic", 
-    //   fileName, 
-    //   null, // projectName
-    //   null, // projectOwnerId
-    //   null, // projectOwnerName
-    //   content2,
-    // )
+    this.props.createAsset(
+      "graphic", 
+      fileName, 
+      null, // projectName
+      null, // projectOwnerId
+      null, // projectOwnerName
+      content2,
+    )
 
     const graphics = _.cloneDeep(this.state.graphics)
     graphics.push({
@@ -124,7 +124,8 @@ export default class ImportGraphic extends React.Component {
       content2: content2,
       thumbnail: thumbnail,
     })
-    this.setState({ graphics: graphics})
+    // TODO remake status so it shows also uploading status
+    this.setState({ graphics: graphics, status: STATUS_UPLOADED })
 
   }
 
@@ -151,13 +152,13 @@ export default class ImportGraphic extends React.Component {
       <div>
         <UploadForm
           isDragOver={this.state.status === STATUS_DRAGGED_OVER}
-          isHidden={this.state.satus === STATUS_UPLOADED}
+          isHidden={this.state.status === STATUS_UPLOADED}
           onDragOver={this.onDragOver.bind(this)}
           onDragLeave={this.onDragLeave.bind(this)}
           onDrop={this.onDrop.bind(this)}
         />
         <UploadList
-          isHidden={this.state.satus !== STATUS_UPLOADED}
+          isHidden={this.state.status !== STATUS_UPLOADED}
           graphics={this.state.graphics}
         />
       </div>

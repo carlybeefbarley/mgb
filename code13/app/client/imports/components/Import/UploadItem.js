@@ -9,9 +9,11 @@ import sty from  './import.css'
 export default class UploadItem extends React.Component {
 
   render (){
+    const graphic = this.props.graphic
     return (
       <div>
-        'ITEM'
+        <img src={graphic.thumbnail} />
+        {graphic.fileName} 
       </div>
     )
   }

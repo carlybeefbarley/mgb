@@ -11,11 +11,12 @@ export default class UploadList extends React.Component {
 
   render (){
     return (
-      <div>
+      <div className={this.props.isHidden ? "hidden" : ""}>
         {
           this.props.graphics.map((graphic) =>
             <UploadItem
-
+              key={graphic.fileName}
+              graphic={graphic}
             />
           )
         }

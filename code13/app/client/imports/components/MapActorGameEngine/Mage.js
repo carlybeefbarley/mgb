@@ -391,7 +391,7 @@ debugger  // TODO - stop game, no map.
             graphics={this.state.loadedGraphics}
             itemActionFn={(action, item) => this.handleInventoryAction(action, item)} />
         }
-
+        <br />
         <span ref={ c => { this._statusLine0 = c } }></span>
         <br />
         <span ref={ c => { this._statusLine1 = c } }></span>

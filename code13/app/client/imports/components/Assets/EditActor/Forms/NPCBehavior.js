@@ -24,7 +24,7 @@ export default class All extends BaseForm {
       <div>
         <div className="column">
           <div className="ui inline">
-            {this.text("Response Choise", responseChoice)}
+            {this.text("Response Option", responseChoice)}
             {this.data[responseChoice] &&
               this.dropArea("Drop", dropsObjectOnChoice, "actor")
             }
@@ -104,20 +104,24 @@ export default class All extends BaseForm {
         ], {
           title: "Font used for this message"
         })}
-        <hr />
-        <fieldset>
-          <legend>Response choice #1</legend>
-          {this.createResponses(1)}
-        </fieldset>
-        <fieldset>
-          <legend>Response choice #2</legend>
-          {this.createResponses(2)}
-        </fieldset>
-        <fieldset>
-          <legend>Response choice #3</legend>
-          {this.createResponses(3)}
-        </fieldset>
 
+        {this.data.talkText &&
+        <div>
+          <hr />
+          <fieldset>
+            <legend>Response option #1</legend>
+            {this.createResponses(1)}
+          </fieldset>
+          <fieldset>
+            <legend>Response option #2</legend>
+            {this.createResponses(2)}
+          </fieldset>
+          <fieldset>
+            <legend>Response option #3</legend>
+            {this.createResponses(3)}
+          </fieldset>
+        </div>
+        }
 
         {/*
 

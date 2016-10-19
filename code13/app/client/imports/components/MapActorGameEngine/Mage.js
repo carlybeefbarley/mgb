@@ -140,24 +140,35 @@ export default class Mage extends React.Component {
   {
     if (this._mageCanvas && !this.props.isPaused)
     {
-      if (this._game) {
-        const pendingLoads = this._countPendingLoads()
-        if (this._transitioningToMapName && !pendingLoads)
-        {
-          const newMapData = this.state.loadedMaps[this._transitioningToMapName]
-          this._game.transitionResourcesHaveLoaded(newMapData)
-          this._transitioningToMapName = null
-          this._tweenCount = 0
+      const pendingLoads = this._countPendingLoads()
+
+      if (!pendingLoads && this.state.activeMap && !this._game && this.props.hideButtons)
+        this.handlePlay() // Hide Buttons implies autoplay      
+
+      try
+      {
+        if (this._game) {
+          if (this._transitioningToMapName && !pendingLoads)
+          {
+            const newMapData = this.state.loadedMaps[this._transitioningToMapName]
+            this._game.transitionResourcesHaveLoaded(newMapData)
+            this._transitioningToMapName = null
+            this._tweenCount = 0
+          }
+          this._game.onTickGameDo()
         }
-        this._game.onTickGameDo()
+        if (!this._transitioningToMapName) {
+          this._mageCanvas.doBlit(
+            this.state.activeMap, 
+            this.state.loadedActors, 
+            this.state.loadedGraphics, 
+            this._game ? this._game.activeActors : null,
+            this._tweenCount++)
+        }
       }
-      if (!this._transitioningToMapName) {
-        this._mageCanvas.doBlit(
-          this.state.activeMap, 
-          this.state.loadedActors, 
-          this.state.loadedGraphics, 
-          this._game ? this._game.activeActors : null,
-          this._tweenCount++)
+      catch (e)
+      {
+        console.error('Caught exception in callDoBlit() for MapActor Game loop ', e)
       }
     }
     if (this._mounted)
@@ -236,7 +247,7 @@ export default class Mage extends React.Component {
     }
     else
       failedActors[aName] = data
-    const newIsPreloadingValue = pendingActorLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
+    const newIsPreloadingValue = this._countPendingLoads() > 0 ? 'actors' : null ///  TODO - handle pending tiles
     this.setState( { pendingActorLoads, loadedActors, failedActors, isPreloading: newIsPreloadingValue } )    
   }
 
@@ -347,11 +358,12 @@ debugger  // TODO - stop game, no map.
   componentDidMount() {
     this._mounted = true
     this._loadStartMap()
-    this.callDoBlit()
+    this.callDoBlit()           //  Starts the game+render loop
   }
 
   componentWillUnmount() { 
-    this._mounted = false
+    this.handleStop()           //  Clean up game engine state - particularly key handlers
+    this._mounted = false       //  This will implicitly stop the callDoBlit() game+render loop
   }
 
   render() {
@@ -405,7 +417,8 @@ Mage.propTypes = {
   ownerName:        PropTypes.string.isRequired,      // eg 'dgolds'
   startMapName:     PropTypes.string.isRequired,      // eg 'mechanix.start map'
   isPaused:         PropTypes.bool.isRequired,        // If true, game is paused... doh
-  fetchAssetByUri:  PropTypes.func.isRequired         // A function that can asynchronously load an asset by (assetid). returns a Promise
+  fetchAssetByUri:  PropTypes.func.isRequired,        // A function that can asynchronously load an asset by (assetid). returns a Promise
+  hideButtons:      PropTypes.bool                    // If true, then don't show the standard buttons. This implies autoplay..
 }
 
 // TODO: showNpcMessage({message:"Use the arrow keys to move/push and 'Enter' to shoot (if allowed)", leftActor:playerActor})

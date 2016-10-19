@@ -3,6 +3,8 @@ import BaseForm from '../../../Controls/BaseForm.js'
 
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
+
+import Options from '../../Common/ActorOptions.js'
 /*
  {this.text("Movement speed", 'movementSpeed', "number")}
  {this.bool("Can Move Up \u2191", 'upYN')}
@@ -160,18 +162,7 @@ export default class ItemBehavior extends BaseForm {
   render() {
     return (
       <div className="ui form">
-        {this.options("Item Activation", 'itemActivationType', [
-          {text: "Inactive", value: "0"},
-          {text: "Blocks Player", value: "1"},
-          {text: "Blocks NPC", value: "2"},
-          {text: "Blocks Player + NPC", value: "3"},
-          {text: "Player Picks up, uses later", value: "4"},
-          {text: "Player Picks up, uses immediately", value: "5"},
-          {text: "Player uses, but leaves the item", value: "6"},
-          {text: "Player shoots item to use it", value: "7"},
-          {text: "Pushes actors in a direction", value: "8"},
-          {text: "Floor that causes damage", value: "9"}
-        ])}
+        {this.options("Item Activation", 'itemActivationType', Options.itemActivationType)}
 
         {(this.data.itemActivationType == "1" ||
             this.data.itemActivationType == "3" ) &&

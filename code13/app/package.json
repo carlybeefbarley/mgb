@@ -16,15 +16,12 @@
     "d3": "^3.5.17",
     "data-uri-to-buffer": "0.0.4",
     "deep-extend": "^0.4.1",
-    "eslint": "^2.12.0",
     "history": "^3.0.0",
     "immutable": "^3.8.1",
-    "jimp": "^0.2.24",
     "js-beautify": "^1.6.3",
     "lodash": "^4.14.0",
     "lzutf8": "^0.3.5",
     "meteor-node-stubs": "^0.2.3",
-    "mocha": "^3.0.2",
     "moment": "^2.14.1",
     "pako": "^1.0.3",
     "react": "^15.2.1",
@@ -44,11 +41,7 @@
     "react-mixin": "^3.0.5",
     "react-redux": "^4.4.5",
     "react-router": "^2.6.0",
-    "redux": "^3.5.2",
-    "redux-logger": "^2.6.1",
-    "redux-thunk": "^2.1.0",
-    "selenium-webdriver": "^3.0.0-beta-2",
-    "semantic-ui-react": "^0.56.5",
+    "semantic-ui-react": "^0.54.3",
     "tern": "~0.20.0",
     "utf-8-validate": "^1.2.1",
     "xml2js": "^0.4.17"
@@ -57,7 +50,15 @@
     "@types/lodash": "^4.14.37",
     "babel-eslint": "^6.1.2",
     "eslint": "^3.1.1",
-    "eslint-plugin-react": "^6.2.0"
+    "eslint-plugin-react": "^6.2.0",
+    "mocha": "^3.0.2",
+    "selenium-webdriver": "^3.0.0-beta-2"
+  },
+  "oldDependencies": {
+    "jimp": "^0.2.24",
+    "redux": "^3.5.2",
+    "redux-logger": "^2.6.1",
+    "redux-thunk": "^2.1.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

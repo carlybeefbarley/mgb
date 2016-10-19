@@ -93,20 +93,20 @@ export default class All extends BaseForm {
         {this.textArea("Greeting when player meets", 'talkText', {
           title: "When the player walks into this character, show this text in a dialog. This ONLY works if the NPC is placed on the ACTIVE layer of the map"
         })}
-        {this.options("Font for message", 'talkTextFontIndex', [
-          {text: "titlefont", value: "0"},
-          {text: "abscissa", value: "1"},
-          {text: "bradybunch", value: "2"},
-          {text: "geosanlight", value: "3"},
-          {text: "argorpriht", value: "4"},
-          {text: "ellianarellespath", value: "5"},
-          {text: "illegaledding", value: "6"},
-        ], {
-          title: "Font used for this message"
-        })}
 
         {this.data.talkText &&
         <div>
+          {this.options("Font for message", 'talkTextFontIndex', [
+            {text: "titlefont", value: "0"},
+            {text: "abscissa", value: "1"},
+            {text: "bradybunch", value: "2"},
+            {text: "geosanlight", value: "3"},
+            {text: "argorpriht", value: "4"},
+            {text: "ellianarellespath", value: "5"},
+            {text: "illegaledding", value: "6"},
+          ], {
+            title: "Font used for this message"
+          })}
           <hr />
           <fieldset>
             <legend>Response option #1</legend>

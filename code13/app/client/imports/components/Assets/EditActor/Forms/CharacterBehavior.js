@@ -144,21 +144,6 @@ export default class CharacterBehavior extends BaseForm {
         })}
 
         {this.dropArea("Sound Effect Melee", 'soundWhenMelee', "sound")}
-
-
-        {/*
-
-        {this.options("Actor Type", 'actorType', actorTypes)}
-        {this.text("Description", 'description')}
-        {this.text("Initial Heath", 'initialHealthNum', "number", {min: "1"} )}
-        {this.text("Initial Max Health", 'initialMaxHealthNum', "number", {min: "1"} )}
-
-        {this.dropArea("Sound When Harmed", 'soundWhenHarmed', "sound")}
-        {this.dropArea("Sound When Healed", 'soundWhenHealed', "sound")}
-        {this.dropArea("Sound When Killed", 'soundWhenKilled', "sound")}
-
-        {this.dropArea("Graphics", "graphic", "graphic")}
-        */}
       </div>
     )
   }

@@ -1,10 +1,21 @@
 import React from 'react'
+Array.isArray = Array.isArray || (obj => obj instanceof Array)
 export default class SmallDD extends React.Component{
   state = {hasTriggered: false}
   render(){
     const items = []
+    let options;
+    if(Array.isArray(this.props.options)){
+      options = this.props.options
+    }
+    else{
+      options = [];
+      Object.keys(this.props.options).forEach((k) => {
+        options.push({text: k, value: this.props.options[k]})
+      })
+    }
     if(this.state.hasTriggered){
-      for(let i=0; i<this.props.options.length; i++){
+      for(let i=0; i<options.length; i++){
         items.push(
           <div className="item" onClick={
             (e) => {
@@ -13,10 +24,10 @@ export default class SmallDD extends React.Component{
 
              }
           }
-                        data-value={this.props.options[i].value == void(0) ? this.props.options[i].text : this.props.options[i].value}
+                        data-value={options[i].value == void(0) ? options[i].text : options[i].value}
                         key={i}
           >
-          {this.props.options[i].text}
+          {options[i].text}
         </div>)
       }
     }
@@ -34,7 +45,7 @@ export default class SmallDD extends React.Component{
 
         {this.props.value != void(0) ?
           <div className="text">{
-            this.props.options.find( o => o.value !== void(0) ? o.value == this.props.value : o.text == this.props.value).text
+            options.find( o => o.value !== void(0) ? o.value == this.props.value : o.text == this.props.value).text
           }</div> : <div className="default text">Select...</div>
         }
         <div className="menu" ref="menu">

@@ -4,6 +4,8 @@ import './EditActor.css'
 import getDefaultActor from './getDefaultActor.js'
 //import Forms from './Forms'
 import templates from './TemplateDiffs.js'
+import ActorValidator from '../Common/ActorValidator.js'
+
 
 var _diff = function(o2, o1 = edit_actor.props.asset.content2.databag){
   const ret = {}
@@ -83,8 +85,8 @@ export default class EditActor extends React.Component {
     this.doSnapshotActivity()
     //console.log(this.props.asset)
     //this.fixAsset()
-
   }
+
   // obsolete
   fixAsset() {
     // fix blank asset..
@@ -476,6 +478,7 @@ export default class EditActor extends React.Component {
     if(e.target.dataset.template){
       console.log("click on image!", e.target.dataset.template);
       this.loadTemplate(e.target.dataset.template)
+      this.handleSave("Initial Template selected")
     }
   }
   loadTemplate(tpl){
@@ -509,7 +512,13 @@ export default class EditActor extends React.Component {
     }
 
     return (
-      <div className='ui grid'>
+      <div className='ui grid edit-actor'>
+        <b>Layers:</b>
+
+        Background: {ActorValidator.isValidForBG(this.props.asset.content2.databag) ? "Yes" : "No"} &nbsp;
+        Active: {ActorValidator.isValidForActive(this.props.asset.content2.databag) ? "Yes" : "No"} &nbsp;
+        Foreground: {ActorValidator.isValidForFG(this.props.asset.content2.databag) ? "Yes" : "No"} &nbsp;
+
         <div className="ui modal" ref={this.handleModal.bind(this, showTemplate)} onClick={(e)=>{this.handleTemplateClick(e)}}>
           <div className="header">
             Choose the kind of actor you want to create, then modify the detailed choices in Actor Editor

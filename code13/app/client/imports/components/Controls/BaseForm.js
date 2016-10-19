@@ -77,7 +77,7 @@ export default class BaseForm extends React.Component {
             const val = e.target.value
             this.data[key] = val
             this.props.onchange && this.props.onchange()
-        } }>{this.data[key]}</textarea>
+        } } value={this.data[key]}></textarea>
       </div>
     )
   }

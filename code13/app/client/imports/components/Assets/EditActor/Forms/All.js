@@ -6,13 +6,7 @@ import { Button, Checkbox, Form, Input, Message, Radio, Select, TextArea } from 
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
 
-
-const actorTypes = [
-  {text: 'Player', value: "0"},
-  {text: 'Non-Player Character (NPC)', value: "1"},
-  {text: 'Item, Wall or Scenery', value: "2"},
-  {text: 'Shot', value: "3"}
-]
+import options from '../../Common/ActorOptions.js'
 
 export default class All extends BaseForm {
 
@@ -23,7 +17,7 @@ export default class All extends BaseForm {
   render() {
     return (
         <div className="ui form">
-          {this.options("Actor Type", 'actorType', actorTypes)}
+          {this.options("Actor Type", 'actorType', options.actorType)}
           {this.text("Description", 'description')}
           {this.text("Initial Heath", 'initialHealthNum', "number", {min: 1} )}
           {this.text("Initial Max Health", 'initialMaxHealthNum', "number", {

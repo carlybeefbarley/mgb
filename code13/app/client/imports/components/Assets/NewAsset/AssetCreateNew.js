@@ -36,12 +36,13 @@ export default AssetCreateNew = React.createClass({
   },
 
   render: function() {
+    const { newAssetName, selectedKind } = this.state
     const { currUser, currUserProjects } = this.props
-    const isAssetNameValid = validate.assetName(this.state.newAssetName)   // TODO - some checks for crazy characters
-    const isKindChosen = (this.state.selectedKind !== "")
+    const isAssetNameValid = validate.assetName(newAssetName) && newAssetName && newAssetName !== ''
+    const isKindChosen = selectedKind !== ''
     const isAssetReadyToCreate = isKindChosen && isAssetNameValid
-    const chosenKindStr = isKindChosen ? AssetKinds[this.state.selectedKind].name : "Asset"
-    const chosenNameStr = isAssetNameValid ? `"${this.state.newAssetName}"` : ""
+    const chosenKindStr = isKindChosen ? AssetKinds[selectedKind].name : "Asset"
+    const chosenNameStr = isAssetNameValid ? `"${newAssetName}"` : ""
     const isButtonDisabled = this.state.buttonActionPending || !isAssetReadyToCreate
     const createButtonClassName = "ui primary " + (isButtonDisabled ? " disabled " : " ") + "button"
     const createButtonTooltip = isAssetReadyToCreate ? "Click here to create your new Asset" : "You must choose a valid name and 'kind' for your new asset. You can rename it later if you wish, but you cannot change it's 'kind' later"
@@ -75,29 +76,30 @@ export default AssetCreateNew = React.createClass({
           </div>
         </div>
         
-        <div className="ui padded segment">
+        <div className="ui basic padded segment">
           <h4 className="ui header">1. Enter Asset Name</h4>
           <div className="ui items">
             <div className={"ui fluid input" + (isAssetNameValid ? "" : " error")}>
-              <input className="fluid" type="text" value={this.state.newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={this.props.placeholderName} 
+              <input className="fluid" type="text" value={newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={this.props.placeholderName} 
                 ref="inputAssetName"
               ></input>
             </div>
           </div>
         </div>
 
-        <div className="ui padded segment">
+        <div className="ui basic padded segment">
           <h4 className="ui header">2. Choose an Asset Kind</h4>        
           <AssetCreateSelectKind 
             currUser={currUser} 
-            selectedKind={this.state.selectedKind} 
+            selectedKind={selectedKind} 
             handleSelectAsset={this.handleSelectAssetKindClick} />
         </div>
 
-        <div className="ui padded segment">
+        <div className="ui basic padded segment">
           <h4 className="ui header">3. Optionally - place the new asset within a project</h4>        
           <ProjectSelector
               canEdit={false}
+              isUseCaseCreate={true}
               user={currUser}
               handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
               availableProjects={currUserProjects}

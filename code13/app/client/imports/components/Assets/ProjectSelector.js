@@ -7,6 +7,7 @@ import QLink from '/client/imports/routes/QLink'
 export default ProjectSelector = React.createClass({
   propTypes: {
     canEdit:              PropTypes.bool,
+    isUseCaseCreate:      PropTypes.bool,               // If yes, then say 'no project' instead of 'any project'
     user:                 PropTypes.object,             // User who we are selecting on behalf of. CAN BE NULL
     availableProjects:    PropTypes.array,              // Array of Projects for that user (owned & memberOf). See projects.js for schema. Can include owned or memberOf
     chosenProjectName:    PropTypes.string,             // null means 'all'    // TODO: Also ADD projectOWNER !!!!!!!!!!!!!
@@ -19,14 +20,15 @@ export default ProjectSelector = React.createClass({
 
   render: function() {
     const pName = this.props.chosenProjectName
-    const { user, canEdit, availableProjects, showProjectsUserIsMemberOf, ProjectListLinkUrl } = this.props
+    const { user, canEdit, availableProjects, showProjectsUserIsMemberOf, ProjectListLinkUrl, isUseCaseCreate } = this.props
     let ownedProjects = []
     let memberOfProjects = []
     const userName = user ? user.profile.name : "guest"
+    const anyOrAll = isUseCaseCreate ? 'No' : 'All'
 
     // Build the list of 'View Project' Menu choices of OWNED and MEMBER projects
     _.each(availableProjects, (project) => { 
-      const isActive = (project.name === pName)     // TODO: Also ADD projectOWNER !!!!!!!!!!!!!
+      const isActive = (project.name === pName)     // TODO: Also ADD projectOWNER !!!!!!!
       const isOwner = user && (project.ownerId === user._id)
       const entry = (
         <a  className={"ui item"+ (isActive ? " active" : "")} 
@@ -49,12 +51,12 @@ export default ProjectSelector = React.createClass({
       let isActive = (pName === null)
       ownedProjects.unshift(
         <a  className={"ui item"+ (isActive ? " active" : "")} 
-            title="An Asset placed in 'any project' is actually _not_ in a project, but will be shown in searches that include 'any project'"
+            title='Assets can optionally be placed in one or more projects, as long as the projects all have the same Owner'
             data-value="__all" 
             key="__all" 
             onClick={this.handleChangeSelectedProjectName.bind(this, null)}>
             { this.renderSelectionIcon(isActive ) }
-            (Any Project)
+            ({anyOrAll} Project)
         </a>)
       ownedProjects.unshift(
         <a  className="ui header"
@@ -78,8 +80,8 @@ export default ProjectSelector = React.createClass({
     // Create the   |  Within Project:  (ProjectSelect v)    |    UI        
 
     return (
-      <div className="ui simple dropdown item">        
-        <small >Within Project: {pName || "(Any Project)"} </small>
+      <div className="ui simple dropdown item">
+        <small >Within Project: {pName || `(${anyOrAll} Project)`} </small>
         <i className="dropdown icon"></i>
         <div className="ui right menu simple">
           { ownedProjects }

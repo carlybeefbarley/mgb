@@ -1,17 +1,30 @@
 import React, { PropTypes } from 'react'
 import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { doesUserHaveRole } from '/imports/schemas/roles'
+import { Button, Icon, Popup } from 'semantic-ui-react'
+
+
 
 export default AssetCreateSelectKind = React.createClass({
   propTypes: {
-    handleSelectAsset:    PropTypes.func.isRequired,        // Callback function to create the asset, and is expected to navigate to the new page. Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
-    currUser:             PropTypes.object,                // currently logged in user (if any)
+    handleSelectAsset:    PropTypes.func.isRequired,    // Callback function to create the asset, and is expected to navigate to the new page. 
+                                                        //   Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
+    currUser:             PropTypes.object,             // Currently logged in user (if any)
     selectedKind:         PropTypes.string
   },
 
+  getInitialState: () => ({ showMoreInfo: false}),
+
   render: function() {
     const { handleSelectAsset, currUser, selectedKind } = this.props
+    const { showMoreInfo } = this.state
     const activeAK = selectedKind ? AssetKinds[selectedKind] : null
+
+    const ExplanationToggler = (
+      <a onClick={ () => this.setState( { showMoreInfo: !showMoreInfo } ) }>
+        <small>{ showMoreInfo ? 'less...' : 'more...' }</small>
+      </a>
+    )
 
     return (
       <div>
@@ -28,14 +41,30 @@ export default AssetCreateSelectKind = React.createClass({
           }
 
           return (
-            <div className={`ui icon ${isActive && "positive"} button`} key={k} style={sty} onClick={ () => {handleSelectAsset(k)}}>
-              <i className={ak.icon + " large icon"}></i>
-              <p style={{ marginTop: "4px" }}>{ak.name}</p>
-            </div>
+            <Button icon positive={isActive} key={k} style={sty} onClick={ () => { handleSelectAsset(k)} }>
+              <Icon size='large' name={ak.icon} />
+              <p style={{ marginTop: "5px" }}>{ak.name}</p>
+            </Button>
           )
         })
       }
-      { activeAK && <p> { activeAK.description } </p> }
+
+      { activeAK && (
+        <div>
+          <p> 
+            { activeAK.description }&ensp;
+            { showMoreInfo || ExplanationToggler }           
+          </p>
+          { showMoreInfo &&  
+            <p>
+              <em>
+                { activeAK.explanation } &ensp; { ExplanationToggler } 
+              </em>
+            </p>
+          }
+        </div>
+      )}
+      
       </div>
     )
   }

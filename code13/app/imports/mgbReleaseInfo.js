@@ -13,6 +13,44 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Wed Oct 19 2016 16:40:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1808'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actor',
+          'type': 'feature',
+          'changeName': 'Code-Free Games - Actors for code-free game logic',
+          'changeSummary': 'Enable code-free games - Make games without coding.  Actors are a new Asset kind that allow common types of game logic to be easily attached to graphics in order to make a wide variety of games. Actors provide sets of rules you can modify in order to make the behaviors you want - player, NPC, item, bullet, trap, healthpack, etc. You define them using the Actor Editor, then place them on a special kind of map called an ActorMap (using the ActorMap Editor) in order to create complete games. The Actor semantics in this system are 100% compatible with games from http://mygamebuilder.com',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'feature',
+          'changeName': 'Code-Free Games - ActorMaps for Games and GameLevels',
+          'changeSummary': 'This is the second part of the \'Enable code-free games\' feature set - You can place Actors on background, middle and foreground layers of an ActorMap, and instantly play the game you are designing without needing to write any code. You can also link maps using the Effects layer of the ActorMap in order to make large multi-level games. The ActorMap semantics in this system are 100% compatible with games from http://mygamebuilder.com',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'import.MGBv1',
+          'type': 'feature',
+          'changeName': 'Code Free Games - ActorMaps for Games and GameLevels',          
+          'changeSummary': 'There is now a way to import games from MGBv1 (http://mygamebuilder.com) into ths new MGBv2 system. The import tool imports the MGBv1 Tiles as MGBv2 graphics, imports MGBv1 Actors as MGBv2 Actors, and imports MGBv1 maps as MGBv2 ActorMaps.  For now, the import-from-mgbv1 UI is *NOT* enabled on normal user accounts, so you will have to ask an Admin to import a project for you if you want to try this. The self-service import UI will be available once we\'ve tested some more imported games with this import process',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Thu Oct 6 2016 12:25:00 GMT-0700 (PDT)',
 
       'id': {

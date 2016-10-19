@@ -25,8 +25,8 @@ export default Roadmap = React.createClass({
           <li>(IN PROGRESS) Even more Code Editor code-assist features</li>
           <li>(IN PROGRESS) Tutorial and progression systems to help learn how to make games</li>
           <li>(IN PROGRESS) A new 'Game' asset will provide a way to promote games and track plays</li>
-          <li>MGBv1 asset migration (tiles, actors, maps)</li>
-          <li>MGBv1-style 'Actor' assets which enable game building without coding</li>
+          <li>(*COMPLETED*) MGBv1 asset migration (tiles, actors, maps)</li>
+          <li>(*COMPLETED*) MGBv1-style 'Actor' assets which enable game building without coding</li>
           <li>Chat improvements (notifications, DMs etc)</li>
         </ul>
         <h2>Features coming later in 2016</h2>

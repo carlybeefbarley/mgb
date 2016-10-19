@@ -51,8 +51,16 @@ export default class UploadForm extends React.Component {
 
   render (){
     return (
-      <div className={this.props.isHidden ? "hidden" : ""}>
-        Prefix <input type="text" />
+      <div className={this.props.isHidden ? "hidden" : ""}> 
+        
+        {/*
+        <div className="ui form">
+          <div className="field">
+            <label>Prefix</label>
+            <input type="text" />
+          </div>
+        </div>
+        */}
         
         <ProjectSelector
           canEdit={false}

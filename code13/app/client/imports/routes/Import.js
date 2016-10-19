@@ -33,6 +33,7 @@ export default ImportRoute = React.createClass({
       kind: assetKindKey,
       text: "",
       assetLicense: assetLicense,
+      // TODO check why workstate isn't saved. Data is passed right @guntis
       workState: workState,
       thumbnail: thumbnail || "",
       content2: content2,

@@ -36,9 +36,10 @@ export default class ImportGraphic extends React.Component {
     this.setState({ status: STATUS_EMPTY })
   }
 
-  onDrop(event) {
+  onDrop(event, project) {
     event.stopPropagation()
     event.preventDefault()
+    this.project = project
 
     const items = event.dataTransfer.items
     for (let i=0; i<items.length; i++) {
@@ -109,12 +110,16 @@ export default class ImportGraphic extends React.Component {
     const thumbnail = this.createThumbnail(imgObject) 
     // console.log(thumbnail)
 
+    const projectName = this.project ? this.project.name : null
+    const projectOwnerId = this.project ? this.project.ownerId : null
+    const projectOwnerName = this.project ? this.project.ownerName : null
+
     this.props.createAsset(
-      "graphic", 
-      fileName, 
-      null, // projectName
-      null, // projectOwnerId
-      null, // projectOwnerName
+      "graphic",
+      fileName,
+      projectName,
+      projectOwnerId,
+      projectOwnerName,
       content2,
       thumbnail,
     )
@@ -154,6 +159,8 @@ export default class ImportGraphic extends React.Component {
         <UploadForm
           isDragOver={this.state.status === STATUS_DRAGGED_OVER}
           isHidden={this.state.status === STATUS_UPLOADED}
+          currUser={this.props.currUser}
+          currUserProjects={this.props.currUserProjects}
           onDragOver={this.onDragOver.bind(this)}
           onDragLeave={this.onDragLeave.bind(this)}
           onDrop={this.onDrop.bind(this)}
@@ -170,5 +177,7 @@ export default class ImportGraphic extends React.Component {
 
 
 ImportGraphic.propTypes = {
+  currUser: PropTypes.object,
+  currUserProjects: PropTypes.array,
   createAsset: PropTypes.func.isRequired,
 }

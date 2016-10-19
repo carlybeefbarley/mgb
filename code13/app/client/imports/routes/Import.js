@@ -66,6 +66,8 @@ export default ImportRoute = React.createClass({
         TODO: progress, license, status, prefix, project selection, asset selection
         </span>
         <ImportGraphic 
+          currUser={this.props.currUser}
+          currUserProjects={this.props.currUserProjects}
           createAsset={this.createAsset}
         />
       </div>

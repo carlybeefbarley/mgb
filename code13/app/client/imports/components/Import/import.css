@@ -2,19 +2,14 @@
   display: none;
 }
 
-.uploadForm {
-  width: 80%;
-  margin: 0 auto;
+.importUploadForm {
+  margin: 0 30px;
+  /*margin: 0 auto;*/
   text-align: center;
   border: 5px dashed #999;
 
 }
-.uploadForm.draggedOver{
+.importUploadForm.draggedOver{
   border-color: green;
   background-color: #DFFAD4;
-}
-
-.uploadCanvas {
-  border-top: 1px solid black;
-  border-left: 1px solid black;
 }

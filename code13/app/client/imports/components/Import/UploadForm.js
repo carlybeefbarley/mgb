@@ -23,13 +23,14 @@ export default class UploadForm extends React.Component {
       selectedProject: null,
       assetLicense: defaultAssetLicense,
       workState: defaultWorkStateName,
+      prefix: "",
     }
   } 
 
   onDragOver(e){ this.props.onDragOver(e) }
   onDragLeave(e){ this.props.onDragLeave(e) }
   onDrop(e){ 
-    this.props.onDrop(e, this.state.selectedProject, this.state.assetLicense, this.state.workState) 
+    this.props.onDrop(e, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState) 
   }
 
   handleChangeSelectedProjectName (selectedProjName, selectedProj, selectedCompoundName) {
@@ -49,18 +50,28 @@ export default class UploadForm extends React.Component {
     }
   }
 
+  handlePrefixChange(e){
+    if(e.target.value != this.state.prefix){
+      this.setState({ prefix: e.target.value })
+    }
+  }
+
   render (){
     return (
       <div className={this.props.isHidden ? "hidden" : ""}> 
         
-        {/*
+      
         <div className="ui form">
           <div className="field">
             <label>Prefix</label>
-            <input type="text" />
+            <input 
+              type="text"
+              value={this.state.prefix} 
+              onChange={this.handlePrefixChange.bind(this)} 
+            />
           </div>
         </div>
-        */}
+      
         
         <ProjectSelector
           canEdit={false}

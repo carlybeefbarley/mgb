@@ -36,7 +36,7 @@ export default class ImportGraphic extends React.Component {
     this.setState({ status: STATUS_EMPTY })
   }
 
-  onDrop(event, project, assetLicense, workState) {
+  onDrop(event, prefix, project, assetLicense, workState) {
     event.stopPropagation()
     event.preventDefault()
 
@@ -59,7 +59,7 @@ export default class ImportGraphic extends React.Component {
       if (item.isFile) {
         item.file(function(file) {
           // console.log("File:", path + file.name)
-          self.readFileUri(file, path)
+          self.readFileUri(file, path, prefix)
         })
       } else if (item.isDirectory) {
         // Get folder contents
@@ -73,7 +73,7 @@ export default class ImportGraphic extends React.Component {
     }
   }
 
-  readFileUri (file, path) {
+  readFileUri (file, path, prefix) {
     const reader = new FileReader()
     reader.onload = (e) => {
       // console.log(e.target.result)
@@ -82,7 +82,7 @@ export default class ImportGraphic extends React.Component {
         // file is not an image
         return;
       }
-      const fileName = (path+file.name).replace('/', '.')
+      const fileName = (prefix+path+file.name).replace('/', '.')
       let tmpImg = new Image()
       tmpImg.onload = () => {
         // console.log(tmpImg.width, tmpImg.height)

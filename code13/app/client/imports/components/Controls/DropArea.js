@@ -28,7 +28,7 @@ export default class DropArea extends React.Component{
         const a = this.getAsset()
         count++;
         // TODO: react devs assume that isMounted is antipattern.. need to redo all this onReady magic
-        if(!this.isUnmounted){
+        if(this.isUnmounted){
           return;
         }
         if(!a && count < 100){

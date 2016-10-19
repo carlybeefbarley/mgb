@@ -5,7 +5,7 @@ import getDefaultActor from './getDefaultActor.js'
 //import Forms from './Forms'
 import templates from './TemplateDiffs.js'
 import ActorValidator from '../Common/ActorValidator.js'
-
+import options from '../Common/ActorOptions.js'
 
 var _diff = function(o2, o1 = edit_actor.props.asset.content2.databag){
   const ret = {}
@@ -103,6 +103,8 @@ export default class EditActor extends React.Component {
   }
 
   getTabs() {
+    const databag = this.props.asset.content2.databag
+
     return [
       {
         tab: "All",
@@ -116,30 +118,52 @@ export default class EditActor extends React.Component {
       },
       {
         tab: "Character Behavior",
+        disabled: (
+          databag.all.actorType == options.actorType['Item, Wall or Scenery']
+            || databag.all.actorType == options.actorType['Shot']
+        ),
         content: <CharacterBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
       {
         tab: "NPC Behavior",
+        disabled: (
+          databag.all.actorType == options.actorType['Player']
+            || databag.all.actorType == options.actorType['Item, Wall or Scenery']
+            || databag.all.actorType == options.actorType['Shot']
+        ),
         content: <NPCBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
       {
         tab: "Item Behavior",
+        disabled: (
+          databag.all.actorType == options.actorType['Player']
+            || databag.all.actorType == options.actorType['Non-Player Character (NPC)']
+            || databag.all.actorType == options.actorType['Shot']
+        ),
         content: <ItemBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
       {
         tab: "Destruction / Spawning",
+        disabled: (
+          databag.all.actorType == options.actorType['Player']
+          || databag.all.actorType == options.actorType['Shot']
+        ),
         content: <Spawning asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
       {
         tab: "Conditions",
+        disabled: (
+          databag.all.actorType == options.actorType['Player']
+          || databag.all.actorType == options.actorType['Shot']
+        ),
         content: <Conditions asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
@@ -515,9 +539,9 @@ export default class EditActor extends React.Component {
       <div className='ui grid edit-actor'>
         <b>Layers:</b>
 
-        Background: {ActorValidator.isValidForBG(this.props.asset.content2.databag) ? "Yes" : "No"} &nbsp;
-        Active: {ActorValidator.isValidForActive(this.props.asset.content2.databag) ? "Yes" : "No"} &nbsp;
-        Foreground: {ActorValidator.isValidForFG(this.props.asset.content2.databag) ? "Yes" : "No"} &nbsp;
+        Background: {ActorValidator.isValidForBG(this.props.asset.content2.databag) ? <strong>Yes</strong> : <em>No</em>} &nbsp;
+        Active: {ActorValidator.isValidForActive(this.props.asset.content2.databag) ? <strong>Yes</strong> : <em>No</em>} &nbsp;
+        Foreground: {ActorValidator.isValidForFG(this.props.asset.content2.databag) ? <strong>Yes</strong> : <em>No</em>} &nbsp;
 
         <div className="ui modal" ref={this.handleModal.bind(this, showTemplate)} onClick={(e)=>{this.handleTemplateClick(e)}}>
           <div className="header">

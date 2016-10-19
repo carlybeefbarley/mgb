@@ -172,24 +172,25 @@ export default class Properties extends React.Component {
 
             },
             min: 1
-          },
-          tile: {
-            _type: Otito.type.folder,
-            className: 'active',
-            contentClassName: 'ui content two column stackable grid',
-            content: {
-              tilewidth: {
-                _type: Otito.type.int,
-                head: 'width',
-                min: 1
-              },
-              tileheight: {
-                _type: Otito.type.int,
-                head: 'height',
-                min: 1
-              }
-            }
           }
+          // ,
+          // tile: {
+          //   _type: Otito.type.folder,
+          //   className: 'active',
+          //   contentClassName: 'ui content two column stackable grid',
+          //   content: {
+          //     tilewidth: {
+          //       _type: Otito.type.int,
+          //       head: 'width',
+          //       min: 1
+          //     },
+          //     tileheight: {
+          //       _type: Otito.type.int,
+          //       head: 'height',
+          //       min: 1
+          //     }
+          //   }
+          // }
         }
       }
     }, (...args) => {

@@ -143,7 +143,7 @@ export default class MapToolbar extends React.Component {
           label: 'Play',
           tooltip: 'Play this map',
           level: 1,
-          shortcut: 'Ctrl+P' // Is it OK to override browsers save page?
+          shortcut: 'Ctrl+P' // Is it OK to override browsers print page?
         },
         {
           name: 'separator'
@@ -212,25 +212,6 @@ export default class MapToolbar extends React.Component {
           shortcut: 'S'
         },
         {
-          name: 'toggleRandomMode',
-          icon: 'random',
-          active: this.props.map.options.randomMode,
-          disabled: this.props.map.state.isPlaying,
-          label: 'Random mode',
-          tooltip: 'Random Mode - picks one tile from the selection',
-          level: 11
-        },
-        {
-          name: 'terrain',
-          icon: 'world terrain',
-          active: this.props.map.options.mode == EditModes.terrain,
-          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.map.state.isPlaying),
-          label: 'Terrain Tool',
-          tooltip: 'Create advanced Terrains - not implemented :(',
-          level: 26,
-          shortcut: 'T'
-        },
-        {
           name: 'fill',
           icon: 'theme fill',
           label: 'Fill',
@@ -290,91 +271,6 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Clear selected tiles and/or objects',
           level: 4,
           disabled
-        },
-        {
-          name: 'separator'
-        },
-
-        {
-          name: 'drawRectangle',
-          active: this.props.map.options.mode == EditModes.drawRectangle,
-          icon: 'stop',
-          label: 'Rectangle',
-          tooltip: 'Draw Rectangle on the map',
-          disabled: (!layer || layer.kind != LayerTypes.object || this.props.map.state.isPlaying),
-          shortcut: 'Shift+R',
-          level: 17
-        },
-        {
-          name: 'drawEllipse',
-          active: this.props.map.options.mode == EditModes.drawEllipse,
-          icon: 'circle',
-          label: 'Ellipse',
-          tooltip: 'Draw Ellipse on the map',
-          disabled: (!layer || layer.kind != LayerTypes.object || this.props.map.state.isPlaying),
-          shortcut: 'Shift+E',
-          level: 18
-        },
-        {
-          name: 'drawShape',
-          active: this.props.map.options.mode == EditModes.drawShape,
-          icon: 'empire',
-          label: 'Shape',
-          tooltip: 'Draw Shape on the map',
-          disabled: (!layer || layer.kind != LayerTypes.object || this.props.map.state.isPlaying),
-          shortcut: 'Shift+S',
-          level: 19
-        },
-        {
-          name: 'togglePolygon',
-          icon: 'connectdevelop',
-          label: 'Polygon',
-          tooltip: 'Toggle between polygon and polyline',
-          disabled: (!layer || layer.kind != LayerTypes.object || this.props.map.state.isPlaying),
-          shortcut: 'Shift+P',
-          level: 20
-        },
-        {
-          name: 'separator'
-        },
-        {
-          name: 'rotateClockwise',
-          icon: 'share',
-          label: 'Rotate (CW)',
-          tooltip: 'Rotate Tile ClockWise',
-          shortcut: 'Z',
-          disabled,
-          level: 20
-        },
-        {
-          name: 'rotateCounterClockwise',
-          icon: 'reply',
-          label: 'Rotate (CCW)',
-          tooltip: 'Rotate Tile Counter ClockWise',
-          shortcut: 'Shift+Z',
-          disabled,
-          level: 22
-        },
-        {
-          name: 'flip',
-          icon: 'exchange',
-          label: 'Flip Tile',
-          tooltip: 'Mirror tile',
-          shortcut: 'X',
-          disabled,
-          level: 23
-        },
-        {
-          name: 'separator'
-        },
-        {
-          name: 'resetMap',
-          icon: 'reset',
-          label: 'Reset',
-          tooltip: 'Reset',
-          shortcut: 'Alt+R',
-          disabled,
-          level: 23
         }
       ]
     }

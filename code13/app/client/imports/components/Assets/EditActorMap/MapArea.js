@@ -1127,18 +1127,18 @@ export default class MapArea extends React.Component {
   }
 
   getInfo () {
-    const l = this.getActiveLayer()
+    const layer = this.getActiveLayer()
     let st = ''
     const col = this.collection.forEach((t) => {
-      st += ',' + t.gid
+      st += ', ' + t.gid
     })
-    st = st.substr(1)
-    let info = !l ? '' : l.getInfo()
+    st = st.substr(2)
+    let info = layer ? layer.getInfo() : ''
     info = info ? ': ' + info : ''
     return (
       <div>
         <div>
-          {!l ? '' : l.data.name + info}
+          { layer ? layer.data.name + ' Layer'+ info : '' }
         </div>
         <div>
           {Plural.numStr2(this.collection.length, 'Selected Tile')}

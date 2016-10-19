@@ -107,6 +107,7 @@ export default class EditMap extends React.Component {
       const Element = this.state.tools[tool].type || InfoTool
 
       tools.push(<Element asset={asset} info={this.state.tools[tool]} key={tool} />)
+      tools.push(<br key={tool+'spacer'}/>)
     })
 
     return (

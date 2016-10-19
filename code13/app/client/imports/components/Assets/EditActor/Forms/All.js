@@ -8,6 +8,8 @@ import SmallDD from '../../../Controls/SmallDD.js'
 
 import options from '../../Common/ActorOptions.js'
 
+import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
+
 export default class All extends BaseForm {
 
   get data(){
@@ -15,6 +17,17 @@ export default class All extends BaseForm {
   }
 
   render() {
+
+    if(!this.soundOptions){
+      this.soundOptions = []
+      const s = MgbActor.alCannedSoundsList
+      for(let i=0; i<s.length; i++){
+        this.soundOptions.push({
+          text: s[i],
+          value: s[i]
+        })
+      }
+    }
     return (
         <div className="ui form">
           {this.options("Actor Type", 'actorType', options.actorType)}
@@ -25,29 +38,21 @@ export default class All extends BaseForm {
             max: 10000,
             title: "This is the highest health the actor can have. the value 0 means there is no limit"
           } )}
-          {/*
-           <mx:FormItem label="Affected by gravity:" toolTip="{notYet}" visible="false" includeInLayout="false">
-           <mx:ComboBox dataProvider="{MgbActor.alNoYes}" selectedIndex="{actorPiece.actorXML.databag.all.gravityYN}" id="ui_all_gravityYN" editable="false"/>
-           </mx:FormItem>
 
-           <mx:FormItem label="Visual effect when harmed:" id="fi_all_harmEffect" toolTip="{notYet}" visible="false" includeInLayout="false">
-           <mx:ComboBox dataProvider="{MgbActor.alVisualEffect}" selectedIndex="{actorPiece.actorXML.databag.all.visualEffectWhenHarmedType}" id="ui_all_visualEffectWhenHarmedType" editable="false"/>
-           </mx:FormItem>
-
-           <mx:FormItem label="Visual effect when healed:" id="fi_all_healEffect" toolTip="{notYet}" visible="false" includeInLayout="false">
-           <mx:ComboBox dataProvider="{MgbActor.alVisualEffect}" selectedIndex="{actorPiece.actorXML.databag.all.visualEffectWhenHealedType}" id="ui_all_visualEffectWhenHealedType" editable="false"/>
-           </mx:FormItem>
-
-
-          */}
-
-
-          {this.dropArea("Sound When Harmed", 'soundWhenHarmed', "sound")}
-          {this.dropArea("Sound When Healed", 'soundWhenHealed', "sound")}
-          {this.dropArea("Sound When Killed", 'soundWhenKilled', "sound")}
+          {this.dropArea("Sound When Harmed", 'soundWhenHarmed', "sound" ,{
+            options: this.soundOptions
+          })}
+          {this.dropArea("Sound When Healed", 'soundWhenHealed', "sound", {
+            options: this.soundOptions
+          })}
+          {this.dropArea("Sound When Killed", 'soundWhenKilled', "sound", {
+            options: this.soundOptions
+          })}
 
           {this.dropArea("Graphic", "defaultGraphicName", "graphic", null, (asset) => {
-            this.props.saveThumbnail(asset.thumbnail)
+            if(asset && asset.thumbnail){
+              this.props.saveThumbnail(asset.thumbnail)
+            }
           })}
         </div>
     )

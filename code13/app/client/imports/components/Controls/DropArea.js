@@ -1,10 +1,14 @@
 import React from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import { Azzets } from '/imports/schemas'
+import SmallDD from './SmallDD.js'
 
-
-export default class DropArea extends React.Component{
+export default class DropArea extends React.Component {
   state = {text:""}
+  get data(){
+    return this.props.value
+  }
+
   componentDidMount(){
     this.isUnmounted = false;
     if(this.props.value){
@@ -14,6 +18,9 @@ export default class DropArea extends React.Component{
 
       this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
         onReady: () => {
+          if(this.isUnmounted){
+            return;
+          }
           this.setState({asset: this.getAsset()})
         },
         onError: (e) => {
@@ -133,6 +140,21 @@ export default class DropArea extends React.Component{
     return map[effect] || "none"
   }
 
+  renderOptions(){
+    const name = "Predefined Sound";
+    const options = this.props.options;
+    return (
+      <div className="inline fields">
+        <label>{name}</label>
+        <SmallDD options={options} onchange={(val) => {
+            this.props.value = val;
+            this.state.asset = null;
+            this.props.onChange && this.props.onChange(val)
+          }} value={this.props.value} />
+      </div>
+    )
+  }
+
   render(){
     const asset = this.getAsset()
     return (
@@ -162,6 +184,7 @@ export default class DropArea extends React.Component{
         }
         {this.state.badAsset && <b>Invalid asset kind: expected [{this.props.kind}] got: [{this.state.badAsset.kind}]</b>}
         {this.createAssetView()}
+        {this.props.options && this.renderOptions()}
       </div>
     )
   }

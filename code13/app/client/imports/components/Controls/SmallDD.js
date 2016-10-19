@@ -31,6 +31,7 @@ export default class SmallDD extends React.Component{
         </div>)
       }
     }
+    const active = options.find( o => o.value !== void(0) ? o.value == this.props.value : o.text == this.props.value)
     return (
       <div className="ui fluid selection dropdown"
            onMouseOver={ this.state.hasTriggered ? null : (e) => {
@@ -45,7 +46,7 @@ export default class SmallDD extends React.Component{
 
         {this.props.value != void(0) ?
           <div className="text">{
-            options.find( o => o.value !== void(0) ? o.value == this.props.value : o.text == this.props.value).text
+            active && active.text
           }</div> : <div className="default text">Select...</div>
         }
         <div className="menu" ref="menu">

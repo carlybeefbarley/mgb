@@ -53,7 +53,7 @@ export default class EditGraphic extends React.Component {
   constructor(props) {
     super(props)
 
-    // console.log(this.props.asset.content2)
+    // console.log(this.props.asset)
 
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 

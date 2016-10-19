@@ -21,7 +21,8 @@ export default ImportRoute = React.createClass({
     urlLocation: React.PropTypes.object
   },
 
-  createAsset: function(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName, content2, thumbnail) {
+  createAsset: function(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName, content2, thumbnail, assetLicense, workState) {
+    
     if (!this.props.currUser) {
       alert("You must be login to create a new Asset")
       return
@@ -31,6 +32,8 @@ export default ImportRoute = React.createClass({
       name: assetName,
       kind: assetKindKey,
       text: "",
+      assetLicense: assetLicense,
+      workState: workState,
       thumbnail: thumbnail || "",
       content2: content2,
       dn_ownerName: this.props.currUser.name,         // Will be replaced below if in another project
@@ -45,7 +48,7 @@ export default ImportRoute = React.createClass({
       newAsset.ownerId = projectOwnerId
     }
 
-    console.log('bulkImport', newAsset)
+    // console.log(newAsset)
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {

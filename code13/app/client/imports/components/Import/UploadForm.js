@@ -3,6 +3,11 @@ import React, { PropTypes, Component } from 'react'
 import ReactDOM from 'react-dom'
 
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
+import AssetLicense from '/client/imports/components/Controls/AssetLicense'
+import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
+import WorkState from '/client/imports/components/Controls/WorkState'
+import { defaultWorkStateName } from '/imports/Enums/workStates'
+
 
 // import { Segment, Grid, Header, List, Icon, Image, Button } from 'semantic-ui-react'
 
@@ -16,17 +21,32 @@ export default class UploadForm extends React.Component {
     this.state = {
       projectCompoundName: null,
       selectedProject: null,
+      assetLicense: defaultAssetLicense,
+      workState: defaultWorkStateName,
     }
-
   } 
 
   onDragOver(e){ this.props.onDragOver(e) }
   onDragLeave(e){ this.props.onDragLeave(e) }
-  onDrop(e){ this.props.onDrop(e, this.state.selectedProject) }
+  onDrop(e){ 
+    this.props.onDrop(e, this.state.selectedProject, this.state.assetLicense, this.state.workState) 
+  }
 
   handleChangeSelectedProjectName (selectedProjName, selectedProj, selectedCompoundName) {
     this.setState( { projectCompoundName: selectedCompoundName, selectedProject: selectedProj } )
     // console.log(selectedProjName, selectedProj, selectedCompoundName)
+  }
+
+  handleLicenseChange(newLicense) {
+    if(newLicense != this.state.assetLicense){
+      this.setState({ assetLicense: newLicense})
+    }
+  }
+
+  handleWorkStateChange(newWorkState){
+    if(newWorkState != this.state.workState){
+      this.setState({ workState: newWorkState })
+    }
   }
 
   render (){
@@ -42,6 +62,21 @@ export default class UploadForm extends React.Component {
           ProjectListLinkUrl={this.props.currUser && `/u/${this.props.currUser.profile.name}/projects`}
           showProjectsUserIsMemberOf={true}
           chosenProjectName={this.state.projectCompoundName} 
+        />
+
+        <AssetLicense 
+          license={this.state.assetLicense} 
+          showMicro={true}
+          canEdit={true}
+          handleChange={this.handleLicenseChange.bind(this)}
+        />
+
+        <WorkState 
+          workState={this.state.workState} 
+          popupPosition="bottom center"
+          showMicro={true}
+          canEdit={true}
+          handleChange={this.handleWorkStateChange.bind(this)}
         />
 
         {/* TODO inputs: projects, prefix, license, status */}

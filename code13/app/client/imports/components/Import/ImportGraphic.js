@@ -158,6 +158,10 @@ export default class ImportGraphic extends React.Component {
     return tmpCanvas.toDataURL('image/png')
   }
 
+  clearImport(){
+    this.setState({ graphics: [], status: STATUS_EMPTY })
+  }
+
   render(){
     return (
       <div>
@@ -173,6 +177,7 @@ export default class ImportGraphic extends React.Component {
         <UploadList
           isHidden={this.state.status !== STATUS_UPLOADED}
           graphics={this.state.graphics}
+          clearImport={this.clearImport.bind(this)}
         />
       </div>
       

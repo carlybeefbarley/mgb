@@ -7,6 +7,7 @@ import AssetLicense from '/client/imports/components/Controls/AssetLicense'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import { defaultWorkStateName } from '/imports/Enums/workStates'
+import StableState from '/client/imports/components/Controls/StableState'
 
 
 // import { Segment, Grid, Header, List, Icon, Image, Button } from 'semantic-ui-react'
@@ -24,13 +25,14 @@ export default class UploadForm extends React.Component {
       assetLicense: defaultAssetLicense,
       workState: defaultWorkStateName,
       prefix: "",
+      isCompleted: false,
     }
   } 
 
   onDragOver(e){ this.props.onDragOver(e) }
   onDragLeave(e){ this.props.onDragLeave(e) }
   onDrop(e){ 
-    this.props.onDrop(e, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState) 
+    this.props.onDrop(e, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState, this.state.isCompleted) 
   }
 
   handleChangeSelectedProjectName (selectedProjName, selectedProj, selectedCompoundName) {
@@ -56,10 +58,14 @@ export default class UploadForm extends React.Component {
     }
   }
 
+  handleStableStateChange(e){
+    this.setState({ isCompleted: !this.state.isCompleted})
+  }
+
   render (){
     const isWebkit = 'WebkitAppearance' in document.documentElement.style
     // console.log('isWebkit', isWebkit)
-    
+
     return (
       <div className={this.props.isHidden ? "hidden" : ""}> 
         
@@ -96,6 +102,15 @@ export default class UploadForm extends React.Component {
               chosenProjectName={this.state.projectCompoundName} 
             />
 
+            &nbsp;&nbsp;
+
+            <StableState 
+              isStable={this.state.isCompleted} 
+              showMicro={true}
+              canEdit={true}
+              handleChange={this.handleStableStateChange.bind(this)}
+            />
+            
             &nbsp;&nbsp;
 
             <AssetLicense 

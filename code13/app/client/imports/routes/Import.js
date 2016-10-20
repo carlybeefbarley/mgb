@@ -21,7 +21,7 @@ export default ImportRoute = React.createClass({
     urlLocation: React.PropTypes.object
   },
 
-  createAsset: function(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName, content2, thumbnail, assetLicense, workState) {
+  createAsset: function(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName, content2, thumbnail, assetLicense, workState, isCompleted) {
     
     if (!this.props.currUser) {
       alert("You must be login to create a new Asset")
@@ -39,7 +39,7 @@ export default ImportRoute = React.createClass({
       content2: content2,
       dn_ownerName: this.props.currUser.name,         // Will be replaced below if in another project
 
-      isCompleted: false,
+      isCompleted: isCompleted,
       isDeleted:   false,
       isPrivate:   false
     }

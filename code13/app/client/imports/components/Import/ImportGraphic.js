@@ -36,13 +36,14 @@ export default class ImportGraphic extends React.Component {
     this.setState({ status: STATUS_EMPTY })
   }
 
-  onDrop(event, prefix, project, assetLicense, workState) {
+  onDrop(event, prefix, project, assetLicense, workState, isCompleted) {
     event.stopPropagation()
     event.preventDefault()
 
     this.project = project
     this.assetLicense = assetLicense
     this.workState = workState
+    this.isCompleted = isCompleted
 
     const items = event.dataTransfer.items
     for (let i=0; i<items.length; i++) {
@@ -127,6 +128,7 @@ export default class ImportGraphic extends React.Component {
       thumbnail,
       this.assetLicense,
       this.workState,
+      this.isCompleted,
     )
 
     const graphics = _.cloneDeep(this.state.graphics)

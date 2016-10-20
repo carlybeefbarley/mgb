@@ -65,10 +65,6 @@ export default ImportRoute = React.createClass({
     return (
       <div>
         <h1>Bulk Import</h1>
-        <span style={{color:"red"}}>
-        Import is not ready yet.<br/>
-        TODO: progress, license, status, prefix, project selection, asset selection
-        </span>
         <ImportGraphic 
           currUser={this.props.currUser}
           currUserProjects={this.props.currUserProjects}

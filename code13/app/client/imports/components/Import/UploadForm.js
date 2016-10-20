@@ -60,43 +60,49 @@ export default class UploadForm extends React.Component {
     return (
       <div className={this.props.isHidden ? "hidden" : ""}> 
         
-      
-        <div className="ui form">
-          <div className="field">
-            <label>Prefix</label>
+        <div className="row" style={{padding:"10px 30px"}}>
+
+          <div className="ui input mini focus">
+            Prefix &nbsp;
             <input 
+              style={{padding:"2px 5px"}}
               type="text"
               value={this.state.prefix} 
               onChange={this.handlePrefixChange.bind(this)} 
             />
           </div>
+
+          &nbsp;&nbsp;
+          
+          <ProjectSelector
+            canEdit={false}
+            user={this.props.currUser}
+            handleChangeSelectedProjectName={this.handleChangeSelectedProjectName.bind(this)}
+            availableProjects={this.props.currUserProjects}
+            ProjectListLinkUrl={this.props.currUser && `/u/${this.props.currUser.profile.name}/projects`}
+            showProjectsUserIsMemberOf={true}
+            chosenProjectName={this.state.projectCompoundName} 
+          />
+
+          &nbsp;&nbsp;
+
+          <AssetLicense 
+            license={this.state.assetLicense} 
+            showMicro={true}
+            canEdit={true}
+            handleChange={this.handleLicenseChange.bind(this)}
+          />
+
+          &nbsp;&nbsp;
+
+          <WorkState 
+            workState={this.state.workState} 
+            popupPosition="bottom center"
+            showMicro={true}
+            canEdit={true}
+            handleChange={this.handleWorkStateChange.bind(this)}
+          />
         </div>
-      
-        
-        <ProjectSelector
-          canEdit={false}
-          user={this.props.currUser}
-          handleChangeSelectedProjectName={this.handleChangeSelectedProjectName.bind(this)}
-          availableProjects={this.props.currUserProjects}
-          ProjectListLinkUrl={this.props.currUser && `/u/${this.props.currUser.profile.name}/projects`}
-          showProjectsUserIsMemberOf={true}
-          chosenProjectName={this.state.projectCompoundName} 
-        />
-
-        <AssetLicense 
-          license={this.state.assetLicense} 
-          showMicro={true}
-          canEdit={true}
-          handleChange={this.handleLicenseChange.bind(this)}
-        />
-
-        <WorkState 
-          workState={this.state.workState} 
-          popupPosition="bottom center"
-          showMicro={true}
-          canEdit={true}
-          handleChange={this.handleWorkStateChange.bind(this)}
-        />
 
         {/* TODO inputs: projects, prefix, license, status */}
         <div className={"importUploadForm " + (this.props.isDragOver ? "draggedOver" : "")}

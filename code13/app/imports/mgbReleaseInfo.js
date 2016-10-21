@@ -13,6 +13,30 @@ export default mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Thu Oct 20 2016 23:20:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1818'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'user.signin',
+          'type': 'feature',
+          'changeName': 'Create account and Login ui improvements',
+          'changeSummary': 'The Login and Signup UI has been simplified and is now more robust on mobile devices. In addition, usernames are correctly checked for conflicts and invalid characters',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Wed Oct 19 2016 16:40:00 GMT-0700 (PDT)',
 
       'id': {
@@ -43,8 +67,8 @@ export default mgbReleaseInfo = {
         {
           'featureTag': 'import.MGBv1',
           'type': 'feature',
-          'changeName': 'Code Free Games - ActorMaps for Games and GameLevels',          
-          'changeSummary': 'There is now a way to import games from MGBv1 (http://mygamebuilder.com) into ths new MGBv2 system. The import tool imports the MGBv1 Tiles as MGBv2 graphics, imports MGBv1 Actors as MGBv2 Actors, and imports MGBv1 maps as MGBv2 ActorMaps.  For now, the import-from-mgbv1 UI is *NOT* enabled on normal user accounts, so you will have to ask an Admin to import a project for you if you want to try this. The self-service import UI will be available once we\'ve tested some more imported games with this import process',
+          'changeName': 'Code Free Games - Import MGBv1 games',          
+          'changeSummary': 'There is now a way to import games from MGBv1 (http://mygamebuilder.com) into this new MGBv2 system. The import tool imports the MGBv1 Tiles as MGBv2 graphics, imports MGBv1 Actors as MGBv2 Actors, and imports MGBv1 maps as MGBv2 ActorMaps.  For now, the import-from-mgbv1 UI is *NOT* enabled on normal user accounts, so you will have to ask an Admin to import an MGBv1 project for you if you want to try this. The self-service import UI will be available once we\'ve tested some more imported games with this import process',
           'otherUrls': [ ]
         }
       ]

@@ -39,7 +39,7 @@ const validate = {
   // These functions return null for ok, or a string with a reason why they fail
   passwordWithReason: function (text) {
     if (!text || text.length < 6)
-      return 'Password must be at least 6 digits'
+      return 'Your password must be at least 6 characters long'
     if (text.search(/[a-z]/i) < 0)
       return 'Your password must contain at least one letter'
     if (text.search(/[0-9]/) < 0)
@@ -54,6 +54,18 @@ const validate = {
     
     return null
   },
+  
+  usernameWithReason: function (value) {
+    if (value.search(/^[A-Za-z0-9_]+$/) < 0) 
+      return 'Only letters, digits and underscores are allowed in usernames'
+    if (value.length > 12) 
+      return 'Your username is too long. The maximum length is 12 characters'
+    if (value.length < 3 )
+      return 'Your username is too short. It must be at least 3 characters long'
+      
+    return null
+  }
+
 }
 
 export default validate

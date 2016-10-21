@@ -161,15 +161,15 @@ export default class Properties extends React.Component {
             _type: Otito.type.number,
             head: 'width',
             onchange: function(){
-              console.log("width changed!")
+              that.map.resize()
             },
             min: 1
           },
           height: {
             _type: Otito.type.number,
             head: 'height',
-            onchange: function(){
-
+            onchange: (...a) => {
+              that.map.resize()
             },
             min: 1
           }

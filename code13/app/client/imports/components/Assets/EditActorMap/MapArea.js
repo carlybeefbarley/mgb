@@ -227,6 +227,33 @@ export default class MapArea extends React.Component {
     return TileHelper.normalizePath(url).replace(/\./gi, '*')
   }
 
+  resize(){
+    console.log("RESIZE:", this.data.width +"x"+ this.data.height);
+    this.layers.forEach((l) => {
+      // insert extra tile at the end of the row
+      if(l.data.width > this.data.width){
+        // from last row to first
+        for(let i=l.data.data.length; i>-1; i-=l.data.width){
+          l.splice(i, 0, 0)
+        }
+      }
+      // remove extra tile from the end
+      else{
+
+      }
+
+
+      for(let i=this.data.width; i<l.data.data.length; i++){
+
+      }
+
+
+
+      // height is safe to trim
+      l.height = this.data.height
+      l.data.data.length = this.data.height * this.data.width
+    })
+  }
   set data (val) {
     console.log("SET Data:", val)
     // get layer first as later data won't match until full react sync

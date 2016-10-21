@@ -44,11 +44,13 @@ export default validator = {
         && databag.item.itemActivationType != options.itemActivationType['Pushes actors in a direction']
         && (
           !(
-            databag.item.itemActivationType == options.itemActivationType['Blocks NPC']
-            || databag.item.itemActivationType == options.itemActivationType['Blocks Player']
-            || databag.item.itemActivationType == options.itemActivationType['Blocks Player + NPC']
-          )
+            (
+              databag.item.itemActivationType == options.itemActivationType['Blocks NPC']
+              || databag.item.itemActivationType == options.itemActivationType['Blocks Player']
+              || databag.item.itemActivationType == options.itemActivationType['Blocks Player + NPC']
+            )
           && databag.item.pushToSlideNum == 0
+          )
         )
         && databag.item.itemActivationType != options.itemActivationType['Inactive']
       )

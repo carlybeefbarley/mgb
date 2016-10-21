@@ -37,6 +37,7 @@ export default MagePlayGameInput = {
   
   playHandleKeyEvents(k)    // k is a keyboard event
   {
+    k.preventDefault()
     const { actors, activeActors, AA_player_idx, isPaused, G_gameOver, isTransitionInProgress } = this
     if (!G_gameOver && !isTransitionInProgress)
     {

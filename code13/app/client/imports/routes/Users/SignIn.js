@@ -1,12 +1,8 @@
-import _ from 'lodash'
-import React, { Component } from 'react'
+import React from 'react'
 
 import { utilPushTo } from '../QLink'
 import { logActivity } from '/imports/schemas/activity'
 import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
-import validate from '/imports/schemas/validate'
-import InlineEdit from '/client/imports/components/Controls/InlineEdit'
-
 
 export default SignInRoute = React.createClass({
   
@@ -49,7 +45,7 @@ export default SignInRoute = React.createClass({
     this.setState( { isLoading: true, errorMsg: null } )
     e.preventDefault()
 
-    Meteor.loginWithPassword(email, password, error => {
+    Meteor.loginWithPassword(email.trim(), password, error => {
       if (error) 
         this.setState( { isLoading: false, errorMsg: error.reason } )
       else 

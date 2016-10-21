@@ -501,7 +501,7 @@ Otito.prototype = {
     var that = this;
     input.input.setValue(that._normalizeInput(meta, this.object[key]));
     input.input.otito = this;
-    input.input.onchange = input.input.oninput = function(e){
+    input.input.onchange = function(e){
       e.preventDefault();
       var val = this.value;
       if(this.type == "checkbox"){
@@ -520,6 +520,9 @@ Otito.prototype = {
         this.otito.callback(this.otito, this.otito.object);
       }
     };
+    if(!meta.needsConfirmation){
+      input.input.oninput = input.input.onchange;
+    }
     if(meta._className && input.className.indexOf(meta._className) == -1){
       input.className += " " + meta._className;
     }

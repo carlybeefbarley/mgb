@@ -151,6 +151,7 @@ export default class Properties extends React.Component {
     //})
     //this.settings.object.append(this.refs.object)
 
+    let reizeTM = 0;
     this.settings.map = new Otito(this.map.data, {
       Map: {
         _type: Otito.type.folder,
@@ -160,7 +161,11 @@ export default class Properties extends React.Component {
           width: {
             _type: Otito.type.number,
             head: 'width',
-            onchange: function(){
+            needsConfirmation: true,
+            onchange: function(input){
+              if(!input.value){
+                input.value = 1
+              }
               that.map.resize()
             },
             min: 1
@@ -168,7 +173,11 @@ export default class Properties extends React.Component {
           height: {
             _type: Otito.type.number,
             head: 'height',
-            onchange: (...a) => {
+            needsConfirmation: true,
+            onchange: (input) => {
+              if(!input.value){
+                input.value = 1
+              }
               that.map.resize()
             },
             min: 1

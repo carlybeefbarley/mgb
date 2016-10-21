@@ -270,7 +270,11 @@ export default {
 
     $.get(`/api/asset/actor/${user}/${actorName}`).done((d) => {
 
-      const src = `/api/asset/png/${user}/${d.databag.all.defaultGraphicName}`
+      const iparts = d.databag.all.defaultGraphicName.split(":");
+      const iuser = iparts.length > 1 ? iparts.shift() : user
+      const iname = iparts.pop()
+
+      const src = `/api/asset/png/${iuser}/${iname}`
       console.log(d);
 
 

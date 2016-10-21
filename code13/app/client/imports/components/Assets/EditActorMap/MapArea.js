@@ -227,31 +227,39 @@ export default class MapArea extends React.Component {
     return TileHelper.normalizePath(url).replace(/\./gi, '*')
   }
 
+  // TODO(stauzs): add 'insert/remove row/column' functionality
   resize(){
+    this.saveForUndo("Resize");
     console.log("RESIZE:", this.data.width +"x"+ this.data.height);
     this.layers.forEach((l) => {
       // insert extra tile at the end of the row
-      if(l.data.width > this.data.width){
+      if(l.data.width < this.data.width){
         // from last row to first
-        for(let i=l.data.data.length; i>-1; i-=l.data.width){
-          l.splice(i, 0, 0)
+        for (let i = l.data.height; i > 0; i--) {
+          for(let j=0; j<this.data.width-l.data.width; j++){
+            l.data.data.splice(i * l.data.width + j, 0, 0)
+          }
         }
       }
       // remove extra tile from the end
-      else{
+      else if(l.data.width > this.data.width){
+        for (let i = l.data.height; i > 0; i--) {
+          for(let j=0; j<l.data.width - this.data.width; j++){
+            const toSplice = i * l.data.width - j - 1
+            l.data.data.splice(toSplice, 1)
+          }
 
+        }
       }
+      l.data.width = this.data.width
 
-
-      for(let i=this.data.width; i<l.data.data.length; i++){
-
+      // insert extra tiles
+      for(let i=l.data.length; i<this.data.height * this.data.width; i++){
+        l.data[i] = 0
       }
-
-
-
-      // height is safe to trim
-      l.height = this.data.height
-      l.data.data.length = this.data.height * this.data.width
+      // remove overflow
+      l.data.length = this.data.height * this.data.width
+      l.data.height = this.data.height
     })
   }
   set data (val) {
@@ -367,14 +375,14 @@ export default class MapArea extends React.Component {
 
     // make sure thumbnail is nice - all layers has been drawn
     window.requestAnimationFrame(() => {
-      let wmax = this.data.width, hmax = this.data.height;
+      /*let wmax = this.data.width, hmax = this.data.height;
       this.data.layers.forEach(l => {
         wmax = Math.max(wmax, l.width)
         hmax = Math.max(hmax, l.height)
       })
       this.data.width = wmax;
       this.data.height = hmax;
-
+      */
       this.props.parent.handleSave(ActorHelper.v2_to_v1(this.data) , reason, this.generatePreview())
     })
   }

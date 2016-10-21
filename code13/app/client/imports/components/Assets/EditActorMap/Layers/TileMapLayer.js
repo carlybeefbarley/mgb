@@ -72,8 +72,8 @@ export default class TileMapLayer extends AbstractLayer {
     this.options.y -= this.map.data.tileheight
     this.options.height++
     // adjust map to biggest layer
-    if(this.map.options.height < this.options.height){
-      this.map.options.height = this.options.height
+    if(this.map.data.height < this.options.height){
+      this.map.data.height = this.options.height
     }
   }
 
@@ -91,8 +91,8 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.options.width++
     // adjust map to biggest layer
-    if(this.map.options.width < this.options.width){
-      this.map.options.width = this.options.width
+    if(this.map.data.width < this.options.width){
+      this.map.data.width = this.options.width
     }
   }
 
@@ -108,8 +108,8 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.options.height++
     // adjust map to biggest layer
-    if(this.map.options.height < this.options.height){
-      this.map.options.height = this.options.height
+    if(this.map.data.height < this.options.height){
+      this.map.data.height = this.options.height
     }
   }
 
@@ -126,8 +126,8 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.options.width++
     // adjust map to biggest layer
-    if(this.map.options.width < this.options.width){
-      this.map.options.width = this.options.width
+    if(this.map.data.width < this.options.width){
+      this.map.data.width = this.options.width
     }
   }
 
@@ -921,6 +921,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
 }
 edit[EditModes.eraser] = function (e, up) {
   if (!this.mouseDown && !up) {
+    this.drawTiles()
     return
   }
   const layer = this.options

@@ -14,6 +14,9 @@ import LayerTypes from './LayerTypes.js'
 import EditModes from './EditModes.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 
+import ActorValidator from '../../Common/ActorValidator.js'
+
+
 export default class Actor extends React.Component {
   /* lifecycle functions */
   constructor (...args) {
@@ -102,14 +105,6 @@ export default class Actor extends React.Component {
         return
       }
     }
-    if(this.prevTile.gid <= ActorHelper.TILES_IN_ACTIONS){
-      if(map.activeLayer != 3) {
-        map.setActiveLayer(3)
-        this.selectTile(e, clear)
-        return;
-      }
-    }
-
 
     const l = map.getActiveLayer()
     l && l.resetRotation && l.resetRotation()
@@ -434,7 +429,7 @@ export default class Actor extends React.Component {
   renderContent (tileset) {
     return (
       <div
-        className='active content tilesets accept-drop'
+        className='active tilesets accept-drop'
         data-drop-text='Drop asset here to create TileSet'
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
@@ -455,6 +450,16 @@ export default class Actor extends React.Component {
       </div>
     )
   }
+
+  renderValidLayerInfo(checks, ts, active){
+    const ret = []
+    for(let i in checks){
+      ret.push(<div key={i}>{active == i ? <strong>{i}</strong> : <span>{i}</span>}: {checks[i](ts) ? <strong>Yes</strong> : <em>No</em>}</div>)
+    }
+
+    return ret
+  }
+
   render () {
     const map = this.props.info.content.map
     const tss = map.data.tilesets
@@ -467,6 +472,7 @@ export default class Actor extends React.Component {
     if (!ts) {
       ts = tss[0]
     }
+
     const tilesets = []
     for (let i = 0; i < tss.length; i++) {
       let title = `${tss[i].name} ${tss[i].imagewidth}x${tss[i].imageheight}`
@@ -485,6 +491,18 @@ export default class Actor extends React.Component {
      onDragOver={DragNDropHelper.preventDefault}
      onDrop={this.onDropChangeTilesetImage.bind(this)}
      */
+
+    const layer = this.map.getActiveLayer()
+    if(!ts.actor){ts.actor = {}}
+    const checks = {
+      Background: ts => ActorValidator.isValidForBG(ts.actor.databag),
+      Active: ts => ActorValidator.isValidForActive(ts.actor.databag),
+      Foreground: ts => ActorValidator.isValidForFG(ts.actor.databag),
+      Events: ts => ts.firstgid <= ActorHelper.TILES_IN_ACTIONS
+    }
+
+    let isValidForLayer = checks[layer.data.name](ts)
+
     return (
       <div className='mgbAccordionScroller tilesets'>
         <div className='ui fluid styled accordion'>
@@ -502,7 +520,13 @@ export default class Actor extends React.Component {
               </div>
             </div>
           </div>
-          {this.renderContent(ts)}
+          <div className="content active actor-tileset-content">
+            {!isValidForLayer && <div className="actor-disabled-hint">
+              {ts.name} is not valid for selected layer <em>{layer.data.name}</em>
+              {this.renderValidLayerInfo(checks, ts, layer.data.name)}
+            </div>}
+            {this.renderContent(ts)}
+          </div>
         </div>
       </div>
     )

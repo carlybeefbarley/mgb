@@ -11,6 +11,9 @@ export default validator = {
       ) && databag.item.pushToSlideNum == 0
   },
   isValidForBG: (databag) => {
+    if(!databag){
+      return false
+    }
     const hasConditionalBehavior = validator.hasConditionalBehavior(databag)
     const hasKey = validator.hasKey(databag)
 
@@ -28,6 +31,9 @@ export default validator = {
       && databag.item.pushToSlideNum == 0
   },
   isValidForActive: (databag) => {
+    if(!databag){
+      return false
+    }
     return databag.all.actorType == options.actorType['Player']
       || databag.all.actorType == options.actorType['Non-Player Character (NPC)']
       || validator.hasConditionalBehavior(databag)
@@ -48,6 +54,9 @@ export default validator = {
       )
   },
   isValidForFG: (databag) => {
+    if(!databag){
+      return false
+    }
     return databag.all.actorType == options.actorType['Item, Wall or Scenery']
       && databag.item.itemActivationType == options.itemActivationType['Inactive']
   }

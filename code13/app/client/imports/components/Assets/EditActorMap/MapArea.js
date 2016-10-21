@@ -33,6 +33,7 @@ import SmallDD from '../../Controls/SmallDD.js'
 
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 
+import './EditMap.css'
 
 export default class MapArea extends React.Component {
 

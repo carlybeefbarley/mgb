@@ -11,6 +11,29 @@
 
 export default mgbReleaseInfo = {
   'releases': [
+    {
+      'timestamp': 'Sat Oct 22 2016 10:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1822'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'feature',
+          'changeName': 'Show Layer rules for Actors and ActorMaps',
+          'changeSummary': 'ActorMaps have specific layers for stationary objects - the background and foreground layers. In this release we have added hints that show the constraints for the selected Actor and ActorMap while editing.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Thu Oct 20 2016 23:20:00 GMT-0700 (PDT)',
@@ -29,7 +52,7 @@ export default mgbReleaseInfo = {
         {
           'featureTag': 'user.signin',
           'type': 'feature',
-          'changeName': 'Create account and Login ui improvements',
+          'changeName': 'Create account UI and Login UI improvements',
           'changeSummary': 'The Login and Signup UI has been simplified and is now more robust on mobile devices. In addition, usernames are correctly checked for conflicts and invalid characters',
           'otherUrls': [ ]
         }

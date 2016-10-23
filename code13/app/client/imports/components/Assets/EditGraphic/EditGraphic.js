@@ -67,7 +67,7 @@ export default class EditGraphic extends React.Component {
       selectedColors:   {
         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
         // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
-        fg:    { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
+        fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
       },
       toolActive: false,
       toolChosen: this.findToolByLabelString("Pen"),
@@ -136,7 +136,7 @@ export default class EditGraphic extends React.Component {
     }
     this.setStatusBarInfo()
 
-    this.handleColorChangeComplete('fg', { hex: "000080", rgb: {r: 0, g: 0, b:128, a: 1} } )
+    this.handleColorChangeComplete('fg', { rgb: {r: 0, g: 0, b:128, a: 1} } )
 
     // Touch and Mouse events for Edit Canvas
     this.editCanvas.addEventListener('touchmove',     this.handleTouchMove.bind(this))
@@ -878,16 +878,29 @@ export default class EditGraphic extends React.Component {
 
 // Color picker handling. This doesn't go through the normal tool api for now since
 // it isn't a drawing tool (and that's what the plugin api is focused on)
+// Also, there is some funny handling for invalid colors from react-color
 
   handleColorChangeComplete(colortype, chosenColor)
   {
+    if (!chosenColor.hex)
+      chosenColor.hex = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
+
+    if (chosenColor.hex.indexOf('NaN') === -1)
+    { 
+      // It is a valid color. Remember it - this is because react-color Color Picker returns screwy colors if it's container is hidden
+      this._recentValidColor = _.clone(chosenColor)
+    }
+    else
+    { 
+      // It is an invalid color. Ignore this result and use the last good color we had. or red if no last good color
+      chosenColor = this._recentValidColor ||  { hex: "#800000", rgb: { r: 128, g: 0, b:0, a: 1 } } 
+    }
     // See http://casesandberg.github.io/react-color/#api-onChangeComplete
     this.state.selectedColors[colortype] = chosenColor
     this.setState( { selectedColors: this.state.selectedColors } )      // Won't trigger redraw because React does shallow compare? Fast but not the 'react-way'
 
     // So we have to fix up UI stuff. This is a bit of a hack for perf. See statusBarInfo()
-    let colorCSSstring = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
-    $('.mgbColorPickerIcon.icon').css( { color: colorCSSstring})
+    $('.mgbColorPickerIcon.icon').css( { color: chosenColor.hex})
   }
 
 
@@ -902,9 +915,8 @@ export default class EditGraphic extends React.Component {
     // for new frame clears preview canvases and update edit canvas
     let c2 = this.props.asset.content2
     if (c2.frameData[frameIndex].length === 0) {
-      for (let i=0; i<this.previewCtxArray.length; i++) {
+      for (let i=0; i<this.previewCtxArray.length; i++)
         this.previewCtxArray[i].clearRect(0, 0, c2.width, c2.height)
-      }
       this.updateEditCanvasFromSelectedPreviewCanvas()
     }
   }

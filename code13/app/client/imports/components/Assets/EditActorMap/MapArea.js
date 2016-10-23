@@ -37,8 +37,8 @@ export default class MapArea extends React.Component {
     super(props)
     let images = {}
     this.startTime = Date.now()
-// expose map for debugging purposes - access in console
-window.mgb_map = this
+    // expose map for debugging purposes - access in console
+    window.mgb_map = this
     this.state = {}
 
     this.images = {
@@ -97,9 +97,11 @@ window.mgb_map = this
     this.redoSteps = []
 
     this.globalMouseMove = (...args) => {
-      this.handleMouseMove(...args);}
+      this.handleMouseMove(...args)
+    }
     this.globalMouseUp = (...args) => {
-      this.handleMouseUp(...args);}
+      this.handleMouseUp(...args)
+    }
     this.globalResize = () => {
       this.redraw()
     }
@@ -116,14 +118,6 @@ window.mgb_map = this
         return false
       }
     }
-
-    this._raf = () => {
-      this.drawLayers()
-      if (this._raf)
-        window.requestAnimationFrame(this._raf)
-    }
-    this._raf()
-
     this.activeAsset = this.props.asset
   }
 
@@ -141,6 +135,12 @@ window.mgb_map = this
     window.addEventListener('keyup', this.globalKeyUp, false)
 
     document.body.addEventListener('mousedown', this.globalIEScroll)
+
+    this._raf = () => {
+      this.drawLayers()
+      window.requestAnimationFrame(this._raf)
+    }
+    this._raf()
   }
 
   buildMap() {
@@ -179,6 +179,7 @@ window.mgb_map = this
     window.removeEventListener('mouseup', this.globalMouseUp)
     window.removeEventListener('resize', this.globalResize)
     window.removeEventListener('keyup', this.globalKeyUp)
+
     this._raf = null
   }
 
@@ -775,8 +776,7 @@ window.mgb_map = this
         this.zoomCamera(this.camera.zoom - step, e)
     }
   }
-
-
+  
   handleKeyUp (e) {
     if (this.state.isPlaying)
       return
@@ -870,8 +870,7 @@ window.mgb_map = this
   }
 
   /* update all except images */
-  update (cb = () => {
-    }) {
+  update (cb = () => {}) {
     this.addTools()
     this.redraw()
     this.redrawTilesets()
@@ -1126,26 +1125,19 @@ window.mgb_map = this
     })
   }
 
-  render() {
-    let notification = ''
-    if (this.data.width * this.data.height > 100000)
-      notification = <div>This map is larger than our recommended size - so editing may be slower than normal</div>
-
-    if (this.state.isPlaying) {
-      return (
-        <div
-            className='tilemap-wrapper'
-            onDragOver={this.prepareForDrag.bind(this)}
-            onDrop={this.importFromDrop.bind(this)}
-            onWheel={this.handleOnWheel.bind(this)}>
-          <MapToolbar map={this} ref='tools' />
-          <div style={{margin: "10px 0px"}}>
-            <Mage
-              ownerName={this.props.asset.dn_ownerName}
-              startMapName={this.props.asset.name}
-              isPaused={false}
-              hideButtons={true}
-              fetchAssetByUri={ (uri) => {
+  renderMage(){
+    return (
+      <div
+        className='tilemap-wrapper'
+        onWheel={this.handleOnWheel.bind(this)}>
+        <MapToolbar map={this} ref='tools' />
+        <div style={{margin: "10px 0px"}}>
+          <Mage
+            ownerName={this.props.asset.dn_ownerName}
+            startMapName={this.props.asset.name}
+            isPaused={false}
+            hideButtons={true}
+            fetchAssetByUri={ (uri) => {
                 return new Promise( function (resolve, reject) {
                   var client = new XMLHttpRequest()
                   client.open('GET', uri)
@@ -1159,17 +1151,27 @@ window.mgb_map = this
                   client.onerror = function () { reject(this.statusText) }
                 })
               }}
-              />
-          </div>
+            />
         </div>
-      )
+      </div>
+    )
+  }
+
+  render () {
+    let notification = ''
+    if (this.data.width * this.data.height > 100000) {
+      notification = <div>
+                       This map is larger than our recommended size - so editing may be slower than normal!
+                     </div>
+    }
+
+    if(this.state.isPlaying){
+      return this.renderMage()
     }
 
     return (
       <div
           className='tilemap-wrapper'
-          onDragOver={this.prepareForDrag.bind(this)}
-          onDrop={this.importFromDrop.bind(this)}
           onWheel={this.handleOnWheel.bind(this)}>
         <MapToolbar map={this} ref='tools' />
         { notification }

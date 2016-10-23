@@ -1,31 +1,31 @@
 import React from 'react'
-import TileMapLayer from './Layers/TileMapLayer.js'
-import ActorLayer from './Layers/ActorLayer.js'
-import EventLayer from './Layers/EventLayer.js'
-import ImageLayer from './Layers/ImageLayer.js'
-import ObjectLayer from './Layers/ObjectLayer.js'
-import GridLayer from './Layers/GridLayer.js'
+import TileMapLayer from './Layers/TileMapLayer'
+import ActorLayer from './Layers/ActorLayer'
+import EventLayer from './Layers/EventLayer'
+import ImageLayer from './Layers/ImageLayer'
+import ObjectLayer from './Layers/ObjectLayer'
+import GridLayer from './Layers/GridLayer'
 
-import Actor from './Tools/Actor.js'
-import Layers from './Tools/Layers.js'
-import Properties from './Tools/Properties.js'
+import Actor from './Tools/Actor'
+import Layers from './Tools/Layers'
+import Properties from './Tools/Properties'
 
-import MapToolbar from './Tools/MapToolbar.js'
-import TileHelper from './Helpers/TileHelper.js'
-import ActorHelper from './Helpers/ActorHelper.js'
+import MapToolbar from './Tools/MapToolbar'
+import TileHelper from './Helpers/TileHelper'
+import ActorHelper from './Helpers/ActorHelper'
 
-import TileCollection from './Tools/TileCollection.js'
-import EditModes from './Tools/EditModes.js'
-import LayerTypes from './Tools/LayerTypes.js'
-import PositionInfo from './Tools/PositionInfo.js'
-import Camera from './Camera.js'
+import TileCollection from './Tools/TileCollection'
+import EditModes from './Tools/EditModes'
+import LayerTypes from './Tools/LayerTypes'
+import PositionInfo from './Tools/PositionInfo'
+import Camera from './Camera'
 
-import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
-import Plural from '/client/imports/helpers/Plural.js'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+import Plural from '/client/imports/helpers/Plural'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 
-import DropArea from '../../Controls/DropArea.js'
-import SmallDD from '../../Controls/SmallDD.js'
+import DropArea from '../../Controls/DropArea'
+import SmallDD from '../../Controls/SmallDD'
 
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 
@@ -37,9 +37,9 @@ export default class MapArea extends React.Component {
     super(props)
     let images = {}
     this.startTime = Date.now()
-    // expose map for debugging purposes - access in console
-    window.mgb_map = this;
-    this.state = {};
+// expose map for debugging purposes - access in console
+window.mgb_map = this
+    this.state = {}
 
     this.images = {
       set: (property, value) => {
@@ -848,21 +848,6 @@ export default class MapArea extends React.Component {
       console.log('Ignoring drop of assets on actorMap')
       return
     }
-
-    const files = e.dataTransfer.files // FileList object.
-    // file has been dropped
-    if (files.length) {
-      Array.prototype.forEach.call(files, (file, i) => {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          const ext = file.name.split('.').pop().toLowerCase()
-          const method = 'handleFileByExt_' + ext
-          if (this[method])
-            this[method](file.name, e.target.result)
-        }
-        reader.readAsArrayBuffer(file)
-      })
-    }
   }
 
   prepareForDrag (e) {
@@ -883,6 +868,7 @@ export default class MapArea extends React.Component {
       this.update(cb)
     })
   }
+
   /* update all except images */
   update (cb = () => {
     }) {

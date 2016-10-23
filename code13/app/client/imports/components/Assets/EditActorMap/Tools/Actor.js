@@ -1,4 +1,5 @@
 'use strict'
+import _ from 'lodash'
 import React from 'react'
 
 import TileHelper from '../Helpers/TileHelper.js'
@@ -443,20 +444,15 @@ export default class Actor extends React.Component {
     )
   }
 
-  renderValidLayerInfo(checks, ts, active){
-    const ret = []
-    for (let i in checks)
-      ret.push(<div key={i}>{active == i ? <strong>{i}</strong> : <span>{i}</span>}: {checks[i](ts) ? <strong>Yes</strong> : <em>No</em>}</div>)
-
-    return ret
+  renderValidLayerInfo(checks, ts, active) {
+    return _.reverse(_.map(checks, (c,i) => (<div style={{ fontFamily: 'monospace', marginLeft: '2em' }} key={i}>{active == i ? <strong><i className='ui caret right icon' />{i}</strong> : <span><i className='ui icon' />{i}</span>}:&emsp;{c(ts) ? <strong>Valid</strong> : <small>Not valid</small>}</div>) ))
   }
 
   render () {
     const map = this.props.info.content.map
     const tss = map.data.tilesets
-    if (!tss.length) {
+    if (!tss.length)
       return this.renderEmpty()
-    }
 
     let ts = tss[map.activeTileset]
     // TODO: this should not happen - debug!
@@ -514,8 +510,8 @@ export default class Actor extends React.Component {
           </div>
           <div className="content active actor-tileset-content">
             {!isValidForLayer && <div className="actor-disabled-hint">
-              {ts.name} is not valid for selected layer <em>{layer.data.name}</em>
-              {this.renderValidLayerInfo(checks, ts, layer.data.name)}
+              <em>{ts.name}</em> is not valid for selected layer <em>{layer.data.name}</em>
+              <small>{this.renderValidLayerInfo(checks, ts, layer.data.name)}</small>
             </div>}
             {this.renderContent(ts)}
           </div>

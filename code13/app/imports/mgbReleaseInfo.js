@@ -12,12 +12,12 @@
 export default mgbReleaseInfo = {
   'releases': [
     {
-      'timestamp': 'Sat Oct 22 2016 10:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Sat Oct 22 2016 20:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1822'
+        'iteration': '1825'
       },
 
       'releaseManagement': {
@@ -31,7 +31,22 @@ export default mgbReleaseInfo = {
           'changeName': 'Show Layer rules for Actors and ActorMaps',
           'changeSummary': 'ActorMaps have specific layers for stationary objects - the background and foreground layers. In this release we have added hints that show the constraints for the selected Actor and ActorMap while editing.',
           'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'bugfix',
+          'changeName': 'Fixed broken color picker bug',
+          'changeSummary': 'Fixed bug where Right-clicking the mouse while the color picker was visible causes the color picker to no longer pick. Thanks to Supergirl for finding the bug',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'user.signin',
+          'type': 'feature',
+          'changeName': 'Cleanup of other login pages',
+          'changeSummary': 'All pages related to login/signup/password-reset have been cleaned up, and the terminology is now consistent',
+          'otherUrls': [ ]
         }
+        
       ]
     },
 

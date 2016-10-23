@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React from 'react'
 import LayerControls from './LayerControls.js'
 
@@ -8,15 +7,15 @@ export default class Layers extends React.Component {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
   }
+
   get map () {
     return this.props.info.content.map
   }
 
   handleClick (layerNum) {
     this.map.setActiveLayer(layerNum)
-
-  // this.forceUpdate()
   }
+
   showOrHideLayer (layer, visible, e) {
     e.preventDefault()
     e.stopPropagation()
@@ -38,8 +37,7 @@ export default class Layers extends React.Component {
     const active = this.map.activeLayer
     // layers goes from bottom to top - as first drawn layer will be last visible
     for (let i = data.layers.length - 1; i > -1; i--) {
-      let className = 'icon'
-      + (data.layers[i].visible ? ' unhide' : ' hide')
+      let className = 'icon' + (data.layers[i].visible ? ' unhide' : ' grey hide')
 
       layers.push(
         <div
@@ -49,11 +47,13 @@ export default class Layers extends React.Component {
           href='javascript:;'>
           <i className={className} onClick={this.showOrHideLayer.bind(this, i, data.layers[i].visible)}></i>
           <a href='javascript:;'>
-            {data.layers[i].name}
+            <i className={`ui ${i == active ? 'right caret' : ''} icon`} />
+            { data.layers[i].name }
           </a>
         </div>
       )
     }
+    
     return (
       <div className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
@@ -62,7 +62,7 @@ export default class Layers extends React.Component {
           </div>
           <div className='active content menu'>
             <LayerControls layer={this} />
-            {layers}
+            { layers }
           </div>
         </div>
       </div>

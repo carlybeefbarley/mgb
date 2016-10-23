@@ -144,7 +144,7 @@ export default class LayerControls extends React.Component {
           </div>
           */}
           <button className={highlightClassName} onClick={this.highlightActiveLayerToggle.bind(this)} title='Highlight Active layer'>
-            <i className='paste icon'></i>
+            <i className='idea icon' />&nbsp;Highlight active
           </button>
         </div>
         {/*

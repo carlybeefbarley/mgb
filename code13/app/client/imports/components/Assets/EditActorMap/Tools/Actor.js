@@ -22,9 +22,8 @@ export default class Actor extends React.Component {
     this.startingtilePos = null
 
     this.globalMouseMove = (e) => {
-      if (!this.mouseRightDown) {
+      if (!this.mouseRightDown) 
         return
-      }
       this.onMouseMove(e)
     }
     this.globalMouseUp = (e) => {
@@ -226,9 +225,9 @@ export default class Actor extends React.Component {
   highlightTile (e, force = false) {
     const map = this.props.info.content.map
     const ts = map.data.tilesets[map.activeTileset]
-    if (!ts) {
+    if (!ts)
       return
-    }
+
     const palette = map.gidCache
     const pos = this.getTilePosInfo(e)
 
@@ -429,17 +428,15 @@ export default class Actor extends React.Component {
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
         <ActorControls tileset={this} ref='controls' />
-        {!tileset ? <span>Drop Graphic (from side panel) here to create new tileset</span> : ''}
+        { !tileset ? <span>Drop Graphic (from side panel) here to create new tileset</span> : '' }
         <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
           <canvas
             ref='canvas'
             onMouseDown={this.onMouseDown.bind(this)}
             onMouseUp={this.onMouseUp.bind(this)}
-            onMouseMove={e => {
-                           this.onMouseMove(e.nativeEvent)}}
+            onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
             onMouseLeave={this.onMouseLeave.bind(this)}
-            onContextMenu={e => {
-                             e.preventDefault(); return false;}}>
+            onContextMenu={e => { e.preventDefault(); return false; } } >
           </canvas>
         </div>
       </div>

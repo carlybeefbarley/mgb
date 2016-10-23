@@ -85,16 +85,16 @@ export default npUser = React.createClass({
             </a>
           </div>
           :
-          // If signed out, show   | Sign-in, Join |  options inline
+          // If signed out, show   | Log In, Sign up |  options inline
           [
             <div className="ui item" key="authHdr">
               <h3 className="ui inverted header" style={{textAlign: "center"}}>
                 <i className="user icon" />
-                Login
+                Not Logged In
               </h3>
             </div>,
-            <QLink to="/signin" closeNavPanelOnClick={navPanelIsOverlay} className="item" key="login">Login</QLink>,
-            <QLink to="/join" closeNavPanelOnClick={navPanelIsOverlay} className="item" key="join">Join</QLink>
+            <QLink to="/login"  closeNavPanelOnClick={navPanelIsOverlay} className="item" key="login">Log In</QLink>,
+            <QLink to="/signup" closeNavPanelOnClick={navPanelIsOverlay} className="item" key="join">Sign Up</QLink>
           ]
         }
       </div>

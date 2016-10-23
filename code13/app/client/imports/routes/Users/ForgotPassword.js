@@ -1,79 +1,67 @@
-import _ from 'lodash';
-import React, { Component } from 'react';
-import {handleForms} from '/client/imports/components/Forms/FormDecorator';
-import UserForms from '/client/imports/components/Users/UserForms.js';
+import _ from 'lodash'
+import React from 'react'
+import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
+import validate from '/imports/schemas/validate'
 
-export default class ForgotPasswordRoute extends React.Component {
-  constructor() {
-    super();
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.listenForEnter = this.listenForEnter.bind(this);
-    this.state = {
-      errors: {},
-      values: {}
-    };
-  }
+const ErrMsg = props => { return props.text ? <Message error color='red' content={props.text} /> : null }
 
-  render() {
-    const inputsToUse = ["email"]
+export default ForgotPasswordRoute = React.createClass({
+
+  getInitialState: function() {    
+    return {
+      errors:     {},
+      isLoading:  false,
+      isComplete: false
+    }
+  },
+
+  render: function() {
+    const { isLoading, isComplete, errors } = this.state
+    const { currUser } = this.props
+
+    const innerRender = () => {
+      if (currUser)
+        return <Message error content='You are logged in already. Once you log out, you may request a password reset' />
+
+      if (isComplete)
+        return <Message success header='Password reset request successful' content='Please check your email inbox (and also junk folders) for the link to finish resetting your password' />
+
+      return (
+        <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
+          <Form.Input label='Enter your email to reset your password' name='email' placeholder='Email address' error={!!errors.email} />
+          <ErrMsg text={errors.email} />
+          <ErrMsg text={errors.result} />
+          <Form.Button>Submit</Form.Button>
+        </Form>
+      )
+    }
 
     return (
-      <div >
-        <h2>Recover your Password</h2>
-
-        <h6>Enter your email to reset your password</h6>
-
-        <UserForms
-          buttonText="Reset my Password"
-          inputsToUse={inputsToUse}
-          inputState={this.state}
-          handleChange={this.props.handleChange}
-          handleSubmit={this.handleSubmit} />
-      </div>
+      <Container text>
+      <br></br>
+        <Segment padded>
+          <Header as='h2'>Request a password reset</Header>
+          { innerRender() }
+        </Segment>
+      </Container>
     )
+  },
+
+  handleSubmit: function(event, formData) {
+    event.preventDefault()
+    const { email } = formData
+
+    const why = validate.emailWithReason(email)
+    this.setState( { errors: why ? { password: why } : {} } )
+    if (why)
+      return    // if errors showing don't submit
+
+    this.setState( { isLoading: true } )
+    Accounts.forgotPassword( { email }, error => {
+      if (error)
+        this.setState( { isLoading: false, errors: { result: error.reason || 'Server Error while requesting password-reset email for account' } } )
+      else
+        this.setState( { isLoading: false, errors: {}, isComplete: true } )
+    })
   }
-
-  componentDidMount() {
-    window.addEventListener('keydown', this.listenForEnter)
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.listenForEnter)
-  }
-
-
-  listenForEnter(e) {
-    e = e || window.event;
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      this.handleSubmit();
-    }
-  }
-
-  handleSubmit() {
-    let errors = this.state.errors
-    let values = this.state.values
-
-    const {email} = values;
-
-    //if errors showing don't submit
-    if (_.some(errors, function(str){ return str !== '' && str !== undefined; })) {
-      this.props.showToast('You have errors showing', 'error')
-      return false;
-    }
-    //if any values missing showing don't submit
-    if (Object.keys(values).length < 1) {
-      this.props.showToast('Please fill out all fields', 'error')
-      return false;
-    }
-
-    Accounts.forgotPassword({email: email}, (error) => {
-      if (error) {
-        this.props.showToast(error.reason, 'error')
-        return;
-      } else {
-        this.props.showToast('>Success!  Please check your inbox for the link to finish resetting your password.', 'success')
-      }
-    });
-  }
-}
+})

@@ -25,7 +25,7 @@ const navPanelViews = [
     name: "me",
     icon: "user",
     hdr: "User",
-    getDirectUrl: (uname) => (uname ? `/u/${uname}` : '/signin'),
+    getDirectUrl: (uname) => (uname ? `/u/${uname}` : '/login'),
     el: npUser,
     hideIfNoUser: false
   },

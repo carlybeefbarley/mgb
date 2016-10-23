@@ -1,12 +1,16 @@
 import _ from 'lodash'
 import React from 'react'
+import LoginLinks from './LoginLinks'
 import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
 import { utilPushTo } from '../QLink'
 import validate from '/imports/schemas/validate'
 import md5 from 'blueimp-md5'
 import { logActivity } from '/imports/schemas/activity'
 
-export default JoinRoute = React.createClass({
+
+const ErrMsg = props => { return props.text ? <Message error color='red' content={props.text} /> : null }
+
+export default SignupRoute = React.createClass({
 
   contextTypes: {
     urlLocation: React.PropTypes.object
@@ -21,22 +25,33 @@ export default JoinRoute = React.createClass({
 
   render: function() {
     const { isLoading, errors } = this.state
+    const { currUser } = this.props
+
+    const innerRender = () => {
+      if (currUser)
+        return <Message error content='You are logged in already!' />
+
+      return (
+        <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
+          <Form.Input label='Email Address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
+          <ErrMsg text={errors.email} />
+          <Form.Input label='Choose your username (used for your profile and messaging)' name='username' placeholder='User Name (short, no spaces)'  error={!!errors.username} />
+          <ErrMsg text={errors.username} />
+          <Form.Input label='Choose a Password for your new account' name='password' placeholder='Password' type='password'  error={!!errors.password} />
+          <ErrMsg text={errors.password} />
+          <ErrMsg text={errors.result} />
+          <Form.Button>Submit</Form.Button>
+        </Form>
+      )
+    }
 
     return (
       <Container text>
       <br></br>
         <Segment padded>
           <Header as='h2'>Create your account</Header>
-          <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
-            <Form.Input label='Email Address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
-            { errors.email && <Message error content={errors.email} /> }
-            <Form.Input label='Choose your username (used for your profile)' name='username' placeholder='User Name (short, no spaces)'  error={!!errors.username} />
-            { errors.username && <Message error content={errors.username} /> }
-            <Form.Input label='Password' name='password' placeholder='Password' type='password'  error={!!errors.password} />
-            { errors.password && <Message error content={errors.password} /> }
-            { errors.result && <Message error content={errors.result} /> }
-            <Form.Button>Submit</Form.Button>
-          </Form>
+          { innerRender() }
+          { !currUser && <LoginLinks showLogin={true} showForgot={true} /> }
         </Segment>
       </Container>
     )
@@ -58,7 +73,6 @@ export default JoinRoute = React.createClass({
       return
 
     this.setState( { isLoading: true } )
-
     Accounts.createUser({
       email:    email,
       username: username,     // Fixup mshell.sh code was:   _.each(Meteor.users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
@@ -68,12 +82,9 @@ export default JoinRoute = React.createClass({
         avatar: "http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=50&d=mm",  // actual image picked by user to display
         images: ["http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=50&d=mm"] // collection of images in users account
       }
-    }, (error, result) => {
+    }, error => {
       if (error)
-      {
-        debugger
         this.setState( { isLoading: false, errors: { result: error.reason || 'Server Error while creating account' } } )
-      }
       else 
       {
         logActivity("user.join",  `New user "${username}"`, null, null)

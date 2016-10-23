@@ -20,7 +20,6 @@ import Roadmap from './Roadmap'
 import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
 
-
 import Hack from './Hack'
 
 // To understand this file...
@@ -56,10 +55,10 @@ Meteor.startup(function () {
         <Route path="/getstarted/skills" component={GetStartedSkills} />
         <Route path="/getstarted/games" component={GetStartedGames} />
 
-        <Route path="join" component={Users.Join} name="Sign up" />
-        <Route path="signin" component={Users.SignIn} name="Sign In" />
-        <Route path="forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
-        <Route path="reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
+        <Route path="/signup" component={Users.SignupRoute} name="Sign up" />
+        <Route path="/login" component={Users.LoginRoute} name="Log In" />
+        <Route path="/forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
+        <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
 
         <Route path="users" component={Users.List} name="Search All Users" />
 

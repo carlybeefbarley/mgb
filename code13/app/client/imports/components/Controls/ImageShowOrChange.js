@@ -3,9 +3,9 @@ import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import QLink from '/client/imports/routes/QLink'
 
-const _getAssetIdFromUrl = url => url.startsWith("/api/asset/png") ? _.last(url.split("/")) : null
+const _getAssetIdFromUrl = url => (url && url.startsWith("/api/asset/png")) ? _.last(url.split("/")) : null
 
-const _importFromDrop= (event, handleChange) => {
+const _importFromDrop = (event, handleChange) => {
   const asset = DragNDropHelper.getAssetFromEvent(event)
   if (asset && asset.kind === 'graphic') {
     const imgUrl = `/api/asset/png/${asset._id}`
@@ -13,9 +13,10 @@ const _importFromDrop= (event, handleChange) => {
   }
 }
 
-export default ImageShowOrChange = props => {
+const ImageShowOrChange = props => {
   const { className, imageSrc, canEdit, canLinkToSrc, handleChange } = props
   const avatarAssetId = _getAssetIdFromUrl(imageSrc)
+  const imageSrcToUse = imageSrc || '/images/wireframe/image.png'
   
   const propsImgContainer = {
     title: canEdit && 'Drag an Image asset here to change the chosen image',
@@ -25,15 +26,17 @@ export default ImageShowOrChange = props => {
   }
   
   if (canLinkToSrc) 
-    propsImgContainer.to = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrc
+    propsImgContainer.to = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrcToUse
 
-  return React.createElement(canLinkToSrc ? QLink : 'div', propsImgContainer, <img className="ui fluid image mgb-pixelated" src={imageSrc} /> )
+  return React.createElement((canLinkToSrc && avatarAssetId) ? QLink : 'div', propsImgContainer, <img className="ui fluid image mgb-pixelated" src={imageSrcToUse} /> )
 }
 
-ImageShowOrChange._propTypes = {
+ImageShowOrChange.propTypes = {
   className:    PropTypes.string.isRequired,    // Classname for the outer div
-  imageSrc:     PropTypes.string.isRequired,    // A string which will be passed to img.src
+  imageSrc:     PropTypes.string,               // A string which will be passed to img.src. Can be null 
   canEdit:      PropTypes.bool.isRequired,      // True if this should be able to accept changes via Drag
   canLinkToSrc: PropTypes.bool.isRequired,      // True if this should be a QLink to the image (or image editor)
   handleChange: PropTypes.func.isRequired       // Function callback - takes (newUrlString, assetIdString) as params
 }
+
+export default ImageShowOrChange

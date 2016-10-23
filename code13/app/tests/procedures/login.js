@@ -9,7 +9,7 @@ const SeleniumHelper = require("../helpers/selenium.js")
 const buttons = {
   sidePanelLogin: '.mgbNavPanel .ui.inverted.icon.menu .item .user',
   sidePanelHistory: '.mgbNavPanel .ui.inverted.icon.menu .item .history',
-  login: 'a[href="/signin"]',
+  login: 'a[href="/login"]',
   submitLoginForm: '#root > div > div > div.noScrollbarDiv > div > div > div > div:nth-child(2) > button'
 }
 

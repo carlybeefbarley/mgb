@@ -1,13 +1,15 @@
-import _ from 'lodash';
-import React, { Component, PropTypes } from 'react';
-import { utilPushTo } from '../QLink';
-import {handleForms} from '/client/imports/components/Forms/FormDecorator';
-import UserForms from '/client/imports/components/Users/UserForms.js';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
+import { utilPushTo } from '/client/imports/routes/QLink'
+import validate from '/imports/schemas/validate'
+
+const ErrMsg = props => { return props.text ? <Message error color='red' content={props.text} /> : null }
 
 export default ResetPasswordRoute = React.createClass({
 
   propTypes: {
-     params: PropTypes.object
+    params: PropTypes.object
   },
 
   contextTypes: {
@@ -16,70 +18,61 @@ export default ResetPasswordRoute = React.createClass({
 
   getInitialState: function() {
     return {
-      errors: {},
-      values: {}
-    };
+      errors:     {},
+      isLoading:  false,
+      isComplete: false
+    }
   },
 
   render: function() {
-    const inputsToUse = ["password", "confirm"];
+    const { isLoading, isComplete, errors } = this.state
+
+    const innerRender = () => {
+      if (isComplete)
+        return <Message success header='Password reset successful' content='You have successfully reset your password and are now logged in' />
+
+      return (
+        <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
+          <Form.Input label='Enter your new password' name='password' placeholder='Password' type='password'  error={!!errors.password} />
+          <ErrMsg text={errors.password} />
+          <ErrMsg text={errors.result} />
+          <Form.Button>Submit</Form.Button>
+        </Form>
+      )
+    }
 
     return (
-      <div>
-        <h2>Reset your Password</h2>
-
-        <h6>Enter your new password</h6>
-
-        <UserForms
-          buttonText="Reset my Password"
-          inputsToUse={inputsToUse}
-          inputState={this.state}
-          handleChange={this.props.handleChange}
-          handleSubmit={this.handleSubmit}
-          token={this.props.params.token} />
-      </div>
+      <Container text>
+      <br></br>
+        <Segment padded>
+          <Header as='h2'>Reset your password</Header>
+          { innerRender() }
+        </Segment>
+      </Container>
     )
   },
 
-  componentDidMount: function() {
-    window.onkeydown = this.listenForEnter;
-  },
+  handleSubmit: function(event, formData) {
+    event.preventDefault()
+    const { password } = formData
 
-  listenForEnter: function(e) {
-    e = e || window.event;
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      this.handleSubmit();
-    }
-  },
+    const why = validate.passwordWithReason(password)
+    this.setState( { errors: why ? { password: why } : {} } )
+    if (why)
+      return    // if errors showing don't submit
 
-  handleSubmit: function() {
-    let errors = this.state.errors
-    let values = this.state.values
-
-    const {password, confirm} = values;
-
-    // if errors showing don't submit
-    if (_.some(errors, function(str){ return str !== '' && str !== undefined; })) {
-      this.props.showToast('You have errors showing', 'error')
-      return false;
-    }
-    //if any values missing showing don't submit
-    if (Object.keys(values).length < 2) {
-      this.props.showToast('Please fill out all fields', 'error')
-      return false;
-    }
-
-    Accounts.resetPassword(this.props.params.token, password, (error) => {
-      if (error) {
-        this.props.showToast('Could not reset password', 'error')
-        return;
-      } else {
-        this.props.showToast('Success! Your password has been reset.     Redirecting...', 'success')
-        window.setTimeout(() => {
-          utilPushTo(this.context.urlLocation.query, `/`);
-        }, 1500);
+    this.setState( { isLoading: true } )
+    Accounts.resetPassword(this.props.params.token, password, error => {
+      if (error) 
+        this.setState( { isLoading: false, errors: { result: error.reason  || 'Server Error while resetting password for account' } } )
+      else 
+      {
+        // This is going to cause an auto-login to happen very quickly, and that will also regenerate this React control, so we 
+        // Have to do some strange stuff now
+        alert("Password reset was successful")
+        utilPushTo(this.context.urlLocation.query, "/")
+        this.setState( { isLoading: false, errors: {}, isComplete: true } )
       }
-    });
+    })
   }
 })

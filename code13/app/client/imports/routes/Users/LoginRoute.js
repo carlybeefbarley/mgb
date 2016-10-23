@@ -1,10 +1,12 @@
 import React from 'react'
 
+import LoginLinks from './LoginLinks'
 import { utilPushTo } from '../QLink'
 import { logActivity } from '/imports/schemas/activity'
 import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
 
-export default SignInRoute = React.createClass({
+
+export default LoginRoute = React.createClass({
   
   getInitialState: function()
   {
@@ -20,30 +22,40 @@ export default SignInRoute = React.createClass({
 
   render: function() {
     const { isLoading, errorMsg } = this.state
+    const { currUser } = this.props
+
+    const innerRender = () => {
+      if (currUser)
+        return <Message error content='You are logged in already!' />
+
+      return (
+        <Form onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
+          <Form.Input label='email' name='email' placeholder='Email address' />
+          <Form.Input label='password' name='password' placeholder='Password' type='password'/>
+          <Message error
+            header='Error'
+            content={errorMsg} />
+          <Form.Button>Submit</Form.Button>
+        </Form>
+      ) 
+    }
 
     return (
       <Container text>
       <br></br>
         <Segment padded>
-          <Header as='h2'>Sign in</Header>
-          <Form onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
-            <Form.Input label='email' name='email' placeholder='Email address' />
-            <Form.Input label='password' name='password' placeholder='Password' type='password'/>
-            <Message error
-              header='Error'
-              content={errorMsg} />
-            <Form.Button>Submit</Form.Button>
-          </Form>
+          <Header as='h2'>Log In</Header>
+          { innerRender() }
+          { !currUser && <LoginLinks showLogin={true} showForgot={true} /> }
         </Segment>
       </Container>
     )
   },
 
-
   handleSubmit: function(e, formData) {
+    e.preventDefault()
     const { email, password } = formData
     this.setState( { isLoading: true, errorMsg: null } )
-    e.preventDefault()
 
     Meteor.loginWithPassword(email.trim(), password, error => {
       if (error) 

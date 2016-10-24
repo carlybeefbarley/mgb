@@ -94,7 +94,7 @@ export default class MapArea extends React.Component {
     // current update timestamp
     this.now = Date.now()
     // this is temporary member.. used to make full updates less frequently
-    //this.lastUpdate = 0
+    this.lastUpdate = 0
 
     this._camera = null
     this.ignoreUndo = 0
@@ -253,12 +253,12 @@ export default class MapArea extends React.Component {
     if (!this.activeAsset || !this.props.parent.props.canEdit) {
       this.activeAsset = props.asset
       // TODO(stauzs) increase build map speed - otherwise it causes inifinite loop
-      //if(Date.now() - this.lastUpdate > 5000){
+      if(Date.now() - this.lastUpdate > 5000){
         this.lastUpdate = Date.now()
         this.buildMap(() => {
-          this.forceUpdate()
+          this.update()
         })
-      //}
+      }
     }
   }
 

@@ -506,25 +506,25 @@ export default class EditCode extends React.Component {
       {
         switch (draggedAsset.kind) {
         case 'graphic':
-            url = `/api/asset/png/${draggedAsset._id}`
-            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}:\n     game.load.image( '${url}' )'`
-            break
+          url = `/api/asset/png/${draggedAsset._id}`
+          code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.image( '${draggedAsset.name}', '${url}' )`
+          break
         case 'map':
-            url = `/api/asset/map/${draggedAsset._id}`
-            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}:\n     game.load.tilemap( '${url}' )'`
-            break
+          url = `/api/asset/map/${draggedAsset._id}`
+          code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.tilemap( '${draggedAsset.name}', '${url}' )`
+          break
         case 'sound':
         case 'music':
-            url = `asset/${draggedAsset.kind}/${draggedAsset._id}/${draggedAsset.kind}.mp3`
-            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}:\n     game.load.audio( '${url}' )'`
-            break
+          url = `asset/${draggedAsset.kind}/${draggedAsset._id}/${draggedAsset.kind}.mp3`
+          code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.audio( '${draggedAsset.name}', '${url}' )`
+          break
         case 'code':
-            if (this.props.asset.dn_ownerName === draggedAsset.dn_ownerName)
-              url = `./${draggedAsset.name}`
-            else 
-              url = `./${draggedAsset.dn_ownerName}:${draggedAsset.name}`
-            code = `import '${url}'`
-            break
+          if (this.props.asset.dn_ownerName === draggedAsset.dn_ownerName)
+            url = `./${draggedAsset.name}`
+          else 
+            url = `./${draggedAsset.dn_ownerName}:${draggedAsset.name}`
+          code = `import '${url}'`
+          break
         default:
           code = draggedAsset._id
         }

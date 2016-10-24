@@ -320,7 +320,7 @@ export default class Actor extends React.Component {
       this.map.options.mode = EditModes.stamp
 
     // update active tool
-    this.map.refs.tools.forceUpdate()
+    this.map.refs.toolbar.forceUpdate()
 
     if (!e.ctrlKey)
       this.map.clearActiveSelection()

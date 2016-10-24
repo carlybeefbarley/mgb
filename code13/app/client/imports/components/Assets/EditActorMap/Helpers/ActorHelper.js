@@ -10,7 +10,7 @@ import TileHelper from './TileHelper.js'
 const ACTION_IMAGE = '/api/asset/tileset/AymKGyM9grSAo3yjp';
 const EVENT_LAYER = 3
 
-export default {
+export default ActorHelper = {
   TILES_IN_ACTIONS: 2,
   v2_to_v1: function(data){
     console.log("data",data);
@@ -260,13 +260,20 @@ export default {
       })
     }
   },
-
+  cache: {},
   // TODO: clean up
   loadActor: function(name, map, nr, images, names, cb){
     const parts = name.split(":")
     const user = parts.length > 1 ? parts.shift() : names.user
     const actorName = parts.length ? parts.pop() : name
+    const key = `${user}/${actorName}`
 
+    if(ActorHelper.cache[key]){
+      map[name] = ActorHelper.cache[key].map
+      images[TileHelper.normalizePath(ActorHelper.cache[key].image)] = ActorHelper.cache[key].image
+      cb()
+      return
+    }
 
     $.get(`/api/asset/actor/${user}/${actorName}`).done((d) => {
 
@@ -279,15 +286,20 @@ export default {
 
 
       map[name].firstgid = nr
-      map[name].actor = d;
-      map[name].image = src;
-      var img = new Image();
+      map[name].actor = d
+      map[name].image = src
+      var img = new Image()
       img.onload = function(){
-        map[name].imagewidth = img.width;
-        map[name].imageheight = img.height;
+        map[name].imagewidth = img.width
+        map[name].imageheight = img.height
         images[TileHelper.normalizePath(src)] = src
+
+        ActorHelper.cache[key] ={
+          map: map[name],
+          image: src
+        }
         cb()
-      };
+      }
       img.src = src
 
     })

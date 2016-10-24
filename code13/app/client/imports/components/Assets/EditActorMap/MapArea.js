@@ -90,8 +90,11 @@ export default class MapArea extends React.Component {
     this.tilesets = []
     // this.margin = 0
     this.spacing = 0
+
     // current update timestamp
     this.now = Date.now()
+    // this is temporary member.. used to make full updates less frequently
+    //this.lastUpdate = 0
 
     this._camera = null
     this.ignoreUndo = 0
@@ -193,6 +196,7 @@ export default class MapArea extends React.Component {
         window.requestAnimationFrame(this._raf)
       }
       this._raf()
+      this.fullUpdate()
     })
   }
 
@@ -204,9 +208,8 @@ export default class MapArea extends React.Component {
     }
     ActorHelper.v1_to_v2(this.props.asset.content2, names, (md) => {
       this._data = md
-      this.fullUpdate()
-      this.isLoading = false;
       cb && cb()
+      this.isLoading = false;
     })
   }
 
@@ -247,8 +250,16 @@ export default class MapArea extends React.Component {
   componentWillReceiveProps (props) {
     // console.log("New map data", props)
     // it's safe to update read only
-    if (!this.activeAsset || !this.props.parent.props.canEdit)
+    if (!this.activeAsset || !this.props.parent.props.canEdit) {
       this.activeAsset = props.asset
+      // TODO(stauzs) increase build map speed - otherwise it causes inifinite loop
+      //if(Date.now() - this.lastUpdate > 5000){
+        this.lastUpdate = Date.now()
+        this.buildMap(() => {
+          this.forceUpdate()
+        })
+      //}
+    }
   }
 
   forceUpdate (...args) {
@@ -768,6 +779,9 @@ export default class MapArea extends React.Component {
     e.preventDefault()
     if (e.altKey) {
       this.preview.sep += e.deltaY < 0 ? 1 : -1
+      if(this.preview.sep < 0){
+        this.preview.sep = 0
+      }
       this.adjustPreview()
       return
     }

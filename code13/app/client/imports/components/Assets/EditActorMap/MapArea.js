@@ -35,6 +35,8 @@ export default class MapArea extends React.Component {
 
   constructor (props) {
     super(props)
+    this.isLoading = true
+
     let images = {}
     this.startTime = Date.now()
     // expose map for debugging purposes - access in console
@@ -121,36 +123,90 @@ export default class MapArea extends React.Component {
     this.activeAsset = this.props.asset
   }
 
-  componentDidMount() {
-    this.buildMap()
-
-    if (!this.data)
-      this.data = TileHelper.genNewMap()
-    
-    $(this.refs.mapElement).addClass('map-filled')
-
-    window.addEventListener('mousemove', this.globalMouseMove, false)
-    window.addEventListener('mouseup', this.globalMouseUp, false)
-    window.addEventListener('resize', this.globalResize, false)
-    window.addEventListener('keyup', this.globalKeyUp, false)
-
-    document.body.addEventListener('mousedown', this.globalIEScroll)
-
-    this._raf = () => {
-      this.drawLayers()
-      window.requestAnimationFrame(this._raf)
-    }
-    this._raf()
+  set data(val) {
+    console.log("SET Data:", val)
+    // get layer first as later data won't match until full react sync
+    const l = this.getActiveLayer()
+    this.activeAsset.content2 = val
+    this._data = val;
+    l && l.clearCache && l.clearCache()
   }
 
-  buildMap() {
+  // temporary hack.. needs to be reviewed
+  get data () {
+    return this._data
+    //return this.activeAsset.content2
+  }
+
+  // store meta information about current map
+  // don't forget to strip meta when exporting it
+  get meta() {
+    if (!this.data.meta) {
+      this.data.meta = {
+        options: {
+          // empty maps aren't visible without grid
+          showGrid: 1,
+          camera: { _x: 0, _y: 0, _zoom: 1 },
+          preview: false,
+          mode: 'stamp',
+          randomMode: false
+        }
+      }
+    }
+    return this.data.meta
+  }
+
+  get camera() {
+    // prevent camera adjustments on asset update
+    if (this._camera)
+      return this._camera
+
+    this._camera = new Camera(this)
+    return this.meta.options.camera
+  }
+
+  get options() {
+    return this.meta.options
+  }
+
+  // palette is just more intuitive name
+  get palette() {
+    return this.gidCache
+  }
+
+  componentDidMount() {
+    this.buildMap(() => {
+      if (!this.data)
+        this.data = TileHelper.genNewMap()
+
+      $(this.refs.mapElement).addClass('map-filled')
+
+      window.addEventListener('mousemove', this.globalMouseMove, false)
+      window.addEventListener('mouseup', this.globalMouseUp, false)
+      window.addEventListener('resize', this.globalResize, false)
+      window.addEventListener('keyup', this.globalKeyUp, false)
+
+      document.body.addEventListener('mousedown', this.globalIEScroll)
+
+      this._raf = () => {
+        this.drawLayers()
+        window.requestAnimationFrame(this._raf)
+      }
+      this._raf()
+    })
+  }
+
+  buildMap(cb) {
+    this.isLoading = true;
     const names = {
       map: this.props.asset.name,
       user: this.props.asset.dn_ownerName
     }
-    ActorHelper.v1_to_v2(this.data, names, (md) => {
-      this.data = md
+    ActorHelper.v1_to_v2(this.props.asset.content2, names, (md) => {
+      this._data = md
       this.fullUpdate()
+      this.isLoading = false;
+      cb && cb()
     })
   }
 
@@ -166,10 +222,13 @@ export default class MapArea extends React.Component {
   componentWillUpdate () {
     // allow to roll back updated changes
     // this.saveForUndo()
+
     // console.error("will update")
   }
 
   componentDidUpdate () {
+    // we need to convert again v1 -> v2
+    // this.buildMap()
     this.redraw()
     this.adjustPreview()
   }
@@ -236,53 +295,6 @@ export default class MapArea extends React.Component {
     })
   }
 
-  set data(val) {
-    console.log("SET Data:", val)
-    // get layer first as later data won't match until full react sync
-    const l = this.getActiveLayer()
-    this.activeAsset.content2 = val
-    l && l.clearCache && l.clearCache()
-  }
-
-  get data () {
-    return this.activeAsset.content2
-  }
-
-  // store meta information about current map
-  // don't forget to strip meta when exporting it
-  get meta() {
-    if (!this.data.meta) {
-      this.data.meta = {
-        options: {
-          // empty maps aren't visible without grid
-          showGrid: 1,
-          camera: { _x: 0, _y: 0, _zoom: 1 },
-          preview: false,
-          mode: 'stamp',
-          randomMode: false
-        }
-      }
-    }
-    return this.data.meta
-  }
-
-  get camera() {
-    // prevent camera adjustments on asset update
-    if (this._camera)
-      return this._camera
-
-    this._camera = new Camera(this)
-    return this.meta.options.camera
-  }
-
-  get options() {
-    return this.meta.options
-  }
-
-  // palette is just more intuitive name
-  get palette() {
-    return this.gidCache
-  }
 
   // TMP - one undo step - just to prevent data loss
   saveForUndo(reason = '' , skipRedo = false) {
@@ -675,6 +687,9 @@ export default class MapArea extends React.Component {
   }
 
   adjustPreview () {
+    if(this.isLoading){
+      return
+    }
     if (!this.data.layers)
       this.data.layers = []
 
@@ -719,7 +734,7 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove (e) {
-    if (this.state.isPlaying)
+    if (this.state.isPlaying || this.isLoading)
       return
     
     // IE always reports button === 0
@@ -733,7 +748,7 @@ export default class MapArea extends React.Component {
       this.movePreview(e)
     else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4)
       this.moveCamera(e)
-    this.refs.positionInfo.forceUpdate()
+    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
   }
 
   handleMouseUp (e) {
@@ -1040,7 +1055,7 @@ export default class MapArea extends React.Component {
     const data = this.data
     const layers = []
     layers.length = 0
-    if (!data || !data.layers) 
+    if (!data || !data.layers || this.isLoading)
       return (<div className='map-empty' ref='mapElement' />)
     else {
       let i = 0
@@ -1144,6 +1159,18 @@ export default class MapArea extends React.Component {
   }
 
   render () {
+    if(this.isLoading){
+      return (<div className="noScrollbarDiv"
+                   style={{
+                   "position": "fixed",
+                   "top": "40px", "bottom": "0px", "left": "60px",
+                    "right": "345px", "overflow": "auto", "marginBottom": "0px"}}>
+                <div style={{"padding": "0px", "height": "auto"}}>
+                  <div className="ui basic segment" style={{"minHeight": "15em"}}>
+                    <div className="ui active inverted dimmer">
+                      <div className="ui text indeterminate loader">Loading
+                      </div></div><p></p></div></div></div>)
+    }
     let notification = ''
     if (this.data.width * this.data.height > 100000) {
       notification = <div>

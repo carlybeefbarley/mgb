@@ -378,7 +378,7 @@ export default class Actor extends React.Component {
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
         <ActorControls tileset={this} ref='controls' />
-        { !tileset ? <span>Drop Graphic (from side panel) here to create new tileset</span> : '' }
+        { !tileset ? <span>Drop Actor (from side panel) here to add it to map</span> : '' }
         <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
           <canvas
             ref='canvas'
@@ -416,7 +416,7 @@ export default class Actor extends React.Component {
   render () {
     const map = this.props.info.content.map
     const tss = map.data.tilesets
-    if (!tss.length)
+    if (!tss || !tss.length)
       return this.renderEmpty()
 
     let ts = tss[map.activeTileset]
@@ -463,12 +463,14 @@ export default class Actor extends React.Component {
             className='active title accept-drop'
             >
             <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
-            <div className='ui simple dropdown item' style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%' }}>
-              <i className='dropdown icon'></i><span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight} style={{ 'textOverflow': 'ellipsis', 'maxWidth': '85%', float: 'right', 'overflow': 'hidden' }}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
+            <div className='ui simple dropdown top right basic grey below label item'
+                 style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%', "minWidth": "50%", top: "-5px" }}>
+              <i className='dropdown icon'></i><span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight}
+                         style={{ 'textOverflow': 'ellipsis', 'maxWidth': '85%', float: 'right', 'overflow': 'hidden' }}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
               <div className='floating ui tiny green label'>
                 {tss.length}
               </div>
-              <div className='menu'>
+              <div className='menu' style={{"maxHeight": "295px", "overflow": "auto", "maxWidth": "50px"}}>
                 {tilesets}
               </div>
             </div>

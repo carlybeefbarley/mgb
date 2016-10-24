@@ -25,10 +25,9 @@ const _initPopup = (c, popupPosition, isHoverable) => (
 const AssetLicense = (props) => {
   const { license, popupPosition, showMicro, handleChange, canEdit } = props
   const labelSty = {
-    marginBottom: "4px",
-    textAlign: "left",
-    whiteSpace: "nowrap"
-  }
+    marginBottom:   '4px',
+    textAlign:      'left',
+    whiteSpace:     'nowrap'  }
 
   const actualLicense = (!license || license.length === 0) ? defaultAssetLicense : license
 
@@ -50,18 +49,27 @@ const AssetLicense = (props) => {
             _.map(_.keys(assetLicenses), key => (
                 <List.Item
                     key={key}
+                    title={assetLicenses[key].summary}
                     style={labelSty}
-                    className={`left aligned fluid ${(key === actualLicense) ? "active" : ""}`}
-                    onClick={e => {
-                      e.preventDefault()
-                      $(this._popupInitiator).popup('hide')
-                      canEdit && handleChange && handleChange(key)
-                    }}>
-                  <Label>
-                    <Icon name='law' /><small>{ key }</small>
-                  </Label>
-                  &nbsp;&nbsp;
-                  <small>{ assetLicenses[key].name }</small>
+                    className={`left aligned fluid ${(key === actualLicense) ? "active" : ""}`} >
+                  <List.Content floated='right'>
+                    <a href={assetLicenses[key].url} target='_blank'>
+                      <Icon name='external' style={{paddingTop: '0.25em'}} />
+                    </a>
+                  </List.Content>
+                  <List.Content 
+                      style={{paddingRight: '2em'}}
+                      onClick={e => {
+                        e.preventDefault()
+                        $(this._popupInitiator).popup('hide')
+                        canEdit && handleChange && handleChange(key)
+                      }}>
+                    <Label style={{width: '9em'}}>
+                      <Icon name='law' /><small>{ key }</small>
+                    </Label>
+                    &nbsp;&nbsp;
+                    <small>{ assetLicenses[key].name }</small>
+                  </List.Content>
                 </List.Item>
               )
             )

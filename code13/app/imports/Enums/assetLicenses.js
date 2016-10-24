@@ -32,7 +32,7 @@ export default assetLicenses =
   },
 
   'CC-BY-4.0': { 
-    name: `Creative Commons Attribution (CC BY)`,
+    name: `Creative Commons Attribution`,
     url:  _mkCcUrl('by/4.0'),
     img:  _mkCcButton('by/4.0/88x31.png'),
     tldrLegal: 'https://tldrlegal.com/license/creative-commons-attribution-4.0-international-(cc-by-4)',
@@ -40,7 +40,7 @@ export default assetLicenses =
   },
 
   'CC-BY-NC-4.0': { 
-    name: `Creative Commons Attribution-NonCommercial (CC BY-NC)`,
+    name: `Creative Commons Attribution-NonCommercial`,
     url:  _mkCcUrl('by-nc/4.0'),
     img:  _mkCcButton('by-nc/4.0/88x31.png'),
     tldrLegal: 'https://tldrlegal.com/license/creative-commons-attribution-noncommercial-4.0-international-(cc-by-nc-4.0)',

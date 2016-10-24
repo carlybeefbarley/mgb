@@ -595,6 +595,8 @@ export default class MapArea extends React.Component {
   }
   /* end of selection */
 
+
+  /* camera stuff */
   togglePreviewState () {
     /*this.refs.mapElement.style.transform = ""
      this.lastEvent = null
@@ -612,7 +614,6 @@ export default class MapArea extends React.Component {
     this.forceUpdate()
   }
 
-  /* camera stuff */
   resetCamera() {
     this.lastEvent = null
     this.camera.reset()
@@ -776,7 +777,7 @@ export default class MapArea extends React.Component {
         this.zoomCamera(this.camera.zoom - step, e)
     }
   }
-  
+
   handleKeyUp (e) {
     if (this.state.isPlaying)
       return

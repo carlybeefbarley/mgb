@@ -348,6 +348,8 @@ export default class MapArea extends React.Component {
   }
 
   save (reason = 'no reason' , force = false) {
+
+
     const newData = JSON.stringify(this.data)
     // skip equal map save
     if (!force && this.savedData == newData)

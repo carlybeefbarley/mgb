@@ -49,6 +49,10 @@ export default class EditMap extends React.Component {
   }
 
   handleSave (data, reason, thumbnail) {
+    if(!this.props.canEdit){
+      console.error("Read only map")
+      return
+    }
     // TODO: convert uploaded images to assets
     this.props.handleContentChange(data, thumbnail, reason)
   }

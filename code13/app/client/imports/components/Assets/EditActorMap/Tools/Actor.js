@@ -223,7 +223,7 @@ export default class Actor extends React.Component {
     }
   }
 
-  highlightTile (e, force = false) {
+  highlightTile (e) {
     const map = this.props.info.content.map
     const ts = map.data.tilesets[map.activeTileset]
     if (!ts)
@@ -233,28 +233,7 @@ export default class Actor extends React.Component {
     const pos = this.getTilePosInfo(e)
 
     if (this.prevTile) {
-      // TODO: optimize later - if needed.. currently redraw all
       this.drawTiles()
-    /*if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
-      return
-    }
-    if(force){
-      this.drawTiles()
-    }
-    else {
-      let pal = palette[this.prevTile.gid]
-      if (pal) {
-        if(ts.tiles && ts.tiles[this.prevTile.id])
-        const tsi = ts.tiles
-        this.drawTile(pal, this.prevTile, null, true)
-      }
-      else {
-        this.ctx.clearRect(
-          this.prevTile.x * ts.tilewidth + this.prevTile.x,
-          this.prevTile.y * ts.tileheight + this.prevTile.y,
-          ts.tilewidth, ts.tileheight)
-      }
-    }*/
     }
 
     this.ctx.fillStyle = 'rgba(0,0,255, 0.3)'
@@ -293,42 +272,12 @@ export default class Actor extends React.Component {
     const nextId = ActorHelper.TILES_IN_ACTIONS + this.map.data.tilesets.length
     const map = { [name] : tileset }
     ActorHelper.loadActor(name, map, nextId, this.map.data.images, null, () => {
-      console.log("actor added!")
       this.map.data.tilesets.push(tileset)
       this.map.fullUpdate()
     })
-
-    return
-    // TODO: Kill following dead code
-          // const src = `/api/asset/actor/${names.user}/${name}`;
-          // $.get().done((d) => {
-          //   const src = `/api/asset/png/${names.user}/${d.databag.all.defaultGraphicName}`
-          //   console.log(d);
-
-
-          //   map[name].firstgid = nr
-          //   map[name].actor = d;
-          //   map[name].image = src;
-          //   var img = new Image();
-          //   img.onload = function(){
-          //     map[name].imagewidth = img.width;
-          //     map[name].imageheight = img.height;
-          //     images[TileHelper.normalizePath(src)] = src
-          //     cb()
-          //   };
-          //   img.src = src
-
-          // })
-
-
-          // return;
-
-          // const infolink = '/api/asset/tileset-info/' + asset._id
-          // $.get(infolink, (data) => {
-          //   this.refs.controls.updateTilesetFromData(data)
-          // })
   }
 
+  // TODO: change actor - don't forget that 1st actor - is actions :)
   onDropChangeTilesetImage (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     console.log("Dropped asset", asset)
@@ -350,11 +299,9 @@ export default class Actor extends React.Component {
     $.get(infolink, (data) => {
       this.refs.controls.updateTilesetFromData(data, this.data)
 
-      //if(previousTileCount != this.data.tilecount){
-        console.log("Fixing tilesets")
-        TileHelper.fixTilesetGids(map.data)
-        map.save("Update Tileset")
-      //}
+      console.log("Fixing tilesets")
+      TileHelper.fixTilesetGids(map.data)
+      map.save("Update Tileset")
 
       map.fullUpdate()
     })
@@ -362,11 +309,13 @@ export default class Actor extends React.Component {
   }
 
   onMouseDown(e) {
+    // right button is used for scrolling
     if (e.button == 2) {
       this.mouseRightDown = true
       e.preventDefault()
       return false
     }
+
     if (this.map.options.mode != EditModes.fill && this.map.options.mode != EditModes.stamp)
       this.map.options.mode = EditModes.stamp
 
@@ -445,7 +394,23 @@ export default class Actor extends React.Component {
   }
 
   renderValidLayerInfo(checks, ts, active) {
-    return _.reverse(_.map(checks, (c,i) => (<div style={{ fontFamily: 'monospace', marginLeft: '2em' }} key={i}>{active == i ? <strong><i className='ui caret right icon' />{i}</strong> : <span><i className='ui icon' />{i}</span>}:&emsp;{c(ts) ? <strong>Valid</strong> : <small>Not valid</small>}</div>) ))
+    // how this differs from native [].reverse?
+    return _.reverse(
+      _.map(checks, (c, i) => {
+          const isValid = c(ts);
+          return(
+            <div style={{ fontFamily: 'monospace', marginLeft: '2em', cursor: (isValid ? "pointer" : "auto") }}
+                 key={i}
+                 onClick={isValid ? () => {this.map.setActiveLayerByName(i)} : null}>
+              {active == i ?
+                <strong><i className='ui caret right icon' />{i}</strong> : <span><i className='ui icon' />{i}</span>}
+                : &emsp;{isValid ?
+                  <strong>Valid</strong>
+                  : <small>Not valid</small>}
+            </div>
+          )
+        }
+      ))
   }
 
   render () {

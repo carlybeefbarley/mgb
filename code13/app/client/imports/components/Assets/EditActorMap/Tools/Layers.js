@@ -34,6 +34,10 @@ export default class Layers extends React.Component {
     let layers = []
 
     const data = this.map.data
+    // not loaded.. or something like that
+    if(!data.layers){
+      return <div></div>
+    }
     const active = this.map.activeLayer
     // layers goes from bottom to top - as first drawn layer will be last visible
     for (let i = data.layers.length - 1; i > -1; i--) {

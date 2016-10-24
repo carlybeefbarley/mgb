@@ -180,7 +180,8 @@ export default class MapArea extends React.Component {
     window.removeEventListener('resize', this.globalResize)
     window.removeEventListener('keyup', this.globalKeyUp)
 
-    this._raf = null
+    // next tick will stop raf loop
+    this._raf = () => {}
   }
 
   // TODO: handle here updates - atm disabled as updates move state in back in history
@@ -227,10 +228,10 @@ export default class MapArea extends React.Component {
       l.data.width = this.data.width
 
       // insert extra tiles
-      for (let i=l.data.length; i<this.data.height * this.data.width; i++)
-        l.data[i] = 0
+      for (let i=l.data.data.length; i<this.data.height * this.data.width; i++)
+        l.data.data[i] = 0
       // remove overflow
-      l.data.length = this.data.height * this.data.width
+      l.data.data.length = this.data.height * this.data.width
       l.data.height = this.data.height
     })
   }
@@ -244,10 +245,6 @@ export default class MapArea extends React.Component {
   }
 
   get data () {
-    return this.activeAsset.content2
-        // TODO - cleanup following code.
-    if (this.activeAsset && !this.activeAsset.content2.width) 
-      this.activeAsset.content2 = TileHelper.genNewMap()
     return this.activeAsset.content2
   }
 
@@ -300,7 +297,7 @@ export default class MapArea extends React.Component {
       this.redoSteps.length = 0
 
     this.undoSteps.push(toSave)
-    this.refs.tools.forceUpdate()
+    this.refs.toolbar.forceUpdate()
 
     // next action will change map.. remove from stack.. and we should get good save state
     if (!skipRedo) {
@@ -348,14 +345,6 @@ export default class MapArea extends React.Component {
 
     // make sure thumbnail is nice - all layers has been drawn
     window.requestAnimationFrame(() => {
-      /*let wmax = this.data.width, hmax = this.data.height;
-      this.data.layers.forEach(l => {
-        wmax = Math.max(wmax, l.width)
-        hmax = Math.max(hmax, l.height)
-      })
-      this.data.width = wmax;
-      this.data.height = hmax;
-      */
       this.props.parent.handleSave(ActorHelper.v2_to_v1(this.data) , reason, this.generatePreview())
     })
   }
@@ -511,7 +500,14 @@ export default class MapArea extends React.Component {
     l && l.activate()
     this.update()
   }
-
+  setActiveLayerByName(name){
+    for(let i=0; i<this.data.layers.length; i++){
+      if(this.data.layers[i].name === name){
+        this.setActiveLayer(i)
+        return;
+      }
+    }
+  }
   /*
    * TODO: move tools to the EditMap.js. MapArea should not handle tools
    */
@@ -598,16 +594,6 @@ export default class MapArea extends React.Component {
 
   /* camera stuff */
   togglePreviewState () {
-    /*this.refs.mapElement.style.transform = ""
-     this.lastEvent = null
-
-     // next state...
-     if(!this.options.preview){
-     $(this.refs.mapElement).addClass("preview")
-     }
-     else{
-     $(this.refs.mapElement).removeClass("preview")
-     }*/
     // this is not a synchronous function !!!
     this.options.preview = !this.options.preview
     this.adjustPreview()
@@ -807,7 +793,7 @@ export default class MapArea extends React.Component {
     case 13: // enter
       this.selectionToCollection()
       this.selection.clear()
-      this.refs.tools.enableMode(EditModes.stamp)
+      this.refs.toolbar.enableMode(EditModes.stamp)
       break
     /*case 90: // ctrl + z
       if (e.ctrlKey) {
@@ -826,7 +812,7 @@ export default class MapArea extends React.Component {
   }
 
   setMode (mode) {
-    this.refs.tools.enableMode(mode)
+    this.refs.toolbar.enableMode(mode)
   }
 
   importFromDrop (e) {
@@ -861,10 +847,12 @@ export default class MapArea extends React.Component {
   /* endof events */
 
   /* update stuff */
+  /* this is very slow - use with caution */
   fullUpdate (cb = () => {}) {
     this.gidCache = {}
     this.images.clearAll()
 
+    // this will regenerate all images
     this.generateImages(() => {
       this.update(cb)
     })
@@ -912,8 +900,6 @@ export default class MapArea extends React.Component {
   }
 
   updateTilesets () {
-    // do we have more than 1 tileset ?????
-    // TODO: atm we are using only 1 tileset tool..
     this.tilesets.forEach((tileset) => { tileset.selectTileset(this.activeTileset) })
   }
   /* endof update stuff */
@@ -1005,7 +991,6 @@ export default class MapArea extends React.Component {
     return true
   }
 
-  // TODO: keep aspect ratio
   // find out correct thumbnail size
   generatePreview() {
     const canvas = document.createElement('canvas')
@@ -1174,7 +1159,7 @@ export default class MapArea extends React.Component {
       <div
           className='tilemap-wrapper'
           onWheel={this.handleOnWheel.bind(this)}>
-        <MapToolbar map={this} ref='tools' />
+        <MapToolbar map={this} ref='toolbar' />
         { notification }
         { this.renderMap() }
         { this.state.isPlaying && <MapPlayer map={this} /> }

@@ -87,16 +87,6 @@ export default class EditActor extends React.Component {
     //this.fixAsset()
   }
 
-  // obsolete
-  fixAsset() {
-    // fix blank asset..
-    if (!this.props.asset.content2.databag) {
-      //debugger;
-      //console.log("FIXIN broken or new asset... there will be modal form instead this message :) ")
-      this.props.asset.content2 = getDefaultActor()
-    }
-  }
-
   handleSave(reason, thumbnail) {
     //console.log("Pretending... Saving....")
     this.props.handleContentChange(this.props.asset.content2, thumbnail, reason)
@@ -250,12 +240,12 @@ export default class EditActor extends React.Component {
           </div>
           <div className="row">
             <div className="eight wide column" style={{flexWrap: "wrap"}}>
-              <div>
+              <div className="eight wide column">
                 <img src="/images/newActor/newActor_ShotPlayer.png" data-template="alTemplatePlayer_Shoots" />
                 <span>A player who can shoot. This is a good start for action-style games. You will also need an actor for the 'shots'...</span>
               </div>
               <br />
-              <div>
+              <div className="eight wide column sub">
                 <img src="/images/newActor/newActor_shot.png" data-template="alTemplateShot" />
               < span>A projectile attack - arrow, bullet, fireball, etc. The  'shooting actor' has an option selecting which actor provides the shot graphics.</span>
               </div>
@@ -278,7 +268,7 @@ export default class EditActor extends React.Component {
               <img src="/images/newActor/newActor_ShotArmor.png" data-template="alTemplateProjectileWeapon" />
               <span>An item that enables the player to shoot. This could be a gun, a bow, a magic spell, a staff, a salt pot etc. You will also need an actor for the 'shots'..</span>
             </div>
-            <div className="eight wide column">
+            <div className="eight wide column" style={{"boxShadow": "none"}}>
               <img src="/images/newActor/newActor_item.png" data-template="alTemplateShotModifier" />
               <span>A Shot modifier can improve the range, rate, or damage of existing shot attacks. This might be represented as a ring, amulet, etc</span>
             </div>
@@ -289,7 +279,7 @@ export default class EditActor extends React.Component {
               <img src="/images/newActor/newActor_MeleeWeapon.png" data-template="alTemplateMeleeWeapon" />
               <span>A Melee weapon enables the player to melee attack. This could be a stick, a sword, a fish, a yoyo etc.. This is a more advanced feature since it requires many animations.</span>
             </div>
-            <div className="eight wide column">
+            <div className="eight wide column" style={{"boxShadow": "none"}}>
               <img src="/images/newActor/newActor_item.png" data-template="alTemplateMeleeWeaponModifier" />
               <span>A Melee modifier can improve the damage or speed of existing melee attacks. This might be represented as a ring, amulet, etc</span>
             </div>
@@ -373,12 +363,14 @@ export default class EditActor extends React.Component {
               <img src="/images/newActor/newActor_DamageFloor.png" data-template="alTemplateFriend" />
               <span>A damage-inflicting floor. It might be lava, acid, a spike etc</span>
             </div>
-            <div className="eight wide column">
-              <img src="/images/newActor/newActor_NorthPush.png" data-template="alTemplatePusher_North" />
-              <img src="/images/newActor/newActor_eastpush.png" data-template="alTemplatePusher_East" />
-              <img src="/images/newActor/newActor_SouthPush.png" data-template="alTemplatePusher_South" />
-              <img src="/images/newActor/newActor_WestPush.png" data-template="alTemplatePusher_West" />
-              <span>These floors push the player North, East, South and West respectively</span>
+            <div className="eight wide column" style={{height: "130px", position: "relative"}}>
+              <div className="directions">
+                <img src="/images/newActor/newActor_NorthPush.png" data-template="alTemplatePusher_North" className="north" />
+                <img src="/images/newActor/newActor_eastpush.png" data-template="alTemplatePusher_East" className="east" />
+                <img src="/images/newActor/newActor_SouthPush.png" data-template="alTemplatePusher_South" className="south" />
+                <img src="/images/newActor/newActor_WestPush.png" data-template="alTemplatePusher_West" className="west" />
+              </div>
+              <span className="has-directions">These floors push the player North, East, South and West respectively</span>
             </div>
           </div>
         </div>
@@ -547,7 +539,7 @@ export default class EditActor extends React.Component {
           <div className="header">
             Choose the kind of actor you want to create, then modify the detailed choices in Actor Editor
           </div>
-          <div className="content">
+          <div className="content edit-actor">
             <Tabs tabs={this.getTemplateTabs()}/>
           </div>
         </div>

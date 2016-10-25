@@ -46,9 +46,9 @@ export default class ImportMusic extends React.Component {
     event.stopPropagation()
     event.preventDefault()
 
-    let files = event.dataTransfer.files;
+    const files = event.dataTransfer.files;
     if(files.length > 0){
-      let file = files[0]
+      const file = files[0]
       const maxUpload = SpecialGlobals.assets.maxUploadSize
       const maxUploadMB = (maxUpload/1024/1024).toFixed(1)
       // console.log(file, maxUpload)

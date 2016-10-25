@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import GifParser from  './GifParser.js'
 import sty from  './graphicImport.css'
+import SpecialGlobals from '/client/imports/SpecialGlobals.js'
 
 const STATUS_EMPTY = "empty"
 const STATUS_DRAGGED_OVER = "draggedOver"
@@ -59,14 +60,23 @@ export default class GraphicImport extends React.Component {
     event.preventDefault()
 
     let self = this
-    let files = event.dataTransfer.files
+    const files = event.dataTransfer.files
     if (files.length > 0) {
+      const file = files[0]
+      const maxUpload = SpecialGlobals.assets.maxUploadSize
+      const maxUploadMB = (maxUpload/1024/1024).toFixed(1)
+      // console.log(file, maxUpload)
+      if(file.size > maxUpload){
+        alert("You can't upload a file more than "+maxUploadMB+" MB")
+        this.setState({ status: STATUS_EMPTY })
+        return
+      }
       var reader = new FileReader()
       reader.onload = (ev) => {
         let theUrl = ev.target.result
         let tmpImg = new Image()
         tmpImg.onload = function(e) { // image is uploaded to browser
-          self.setState({ status: STATUS_UPLOADED, importName: files[0].name})
+          self.setState({ status: STATUS_UPLOADED, importName: file.name})
           if (tmpImg.src.startsWith("data:image/gif;base64,"))
             self.gifLoaded(tmpImg)
           else 
@@ -74,7 +84,7 @@ export default class GraphicImport extends React.Component {
         }
         tmpImg.src = theUrl
       }
-      reader.readAsDataURL(files[0])
+      reader.readAsDataURL(file)
 			
     }
   }

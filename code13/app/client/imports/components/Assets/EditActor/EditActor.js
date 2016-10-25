@@ -519,21 +519,24 @@ export default class EditActor extends React.Component {
     this.forceUpdate()
   }
   render() {
-    if (!this.props.asset) {
+    const { asset } = this.props
+    if (!asset)
       return null
-    }
-    const showTemplate = !this.props.asset.content2.databag;
-    if (showTemplate) {
+    
+    const databag = asset.content2.databag
+    const showTemplate = !databag
+    
+    if (showTemplate)
       this.props.asset.content2 = getDefaultActor()
-    }
+
+    const LayerValid = ( {layerName, isValid } ) => (isValid ? <strong>{layerName}: Yes&emsp;</strong> : <em style={{color: 'grey'}}>{layerName}: No&emsp;</em>)
 
     return (
       <div className='ui grid edit-actor'>
-        <b>Layers:</b>
-
-        Background: {ActorValidator.isValidForBG(this.props.asset.content2.databag) ? <strong>Yes</strong> : <em>No</em>} &nbsp;
-        Active: {ActorValidator.isValidForActive(this.props.asset.content2.databag) ? <strong>Yes</strong> : <em>No</em>} &nbsp;
-        Foreground: {ActorValidator.isValidForFG(this.props.asset.content2.databag) ? <strong>Yes</strong> : <em>No</em>} &nbsp;
+        <b title='This Actor can work on the following Layers of an ActorMap'>ActorMap Layers:</b>
+        <LayerValid layerName='Background' isValid={ActorValidator.isValidForBG(databag)} />
+        <LayerValid layerName='Active'     isValid={ActorValidator.isValidForActive(databag)} />
+        <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
 
         <div className="ui modal" ref={this.handleModal.bind(this, showTemplate)} onClick={(e)=>{this.handleTemplateClick(e)}}>
           <div className="header">

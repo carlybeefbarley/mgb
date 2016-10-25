@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom'
 import sty from  './editMusic.css'
 import WaveSurfer from '../lib/WaveSurfer.js'
 import lamejs from '../lib/lame.all.js'
+import SpecialGlobals from '/client/imports/SpecialGlobals.js'
 
 export default class ImportMusic extends React.Component {
 
@@ -48,6 +49,14 @@ export default class ImportMusic extends React.Component {
     let files = event.dataTransfer.files;
     if(files.length > 0){
       let file = files[0]
+      const maxUpload = SpecialGlobals.assets.maxUploadSize
+      const maxUploadMB = (maxUpload/1024/1024).toFixed(1)
+      // console.log(file, maxUpload)
+      if(file.size > maxUpload){
+        alert("You can't upload a file more than "+maxUploadMB+" MB")
+        this.setState({ status: "empty" })
+        return
+      }
       if(file.type === "audio/wav"){
         this.loadWav(file)  // read as arraybuffer and encode to mp3
       } else {

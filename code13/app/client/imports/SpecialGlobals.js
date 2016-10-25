@@ -19,6 +19,10 @@ export default SpecialGlobals = {
     "friction": 0.9,
     "theta": 0.8,
     "gravity": 0.1
+  },
+
+  assets: {
+    "maxUploadSize": 1*1024*1024,   // 1 MB 
   }
 }
 

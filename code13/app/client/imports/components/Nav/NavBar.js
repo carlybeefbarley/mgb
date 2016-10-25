@@ -1,6 +1,5 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
-
+import SystemAlerts from './SystemAlerts'
 import NavBarBreadcrumb from './NavBarBreadcrumb'
 import NavBarGadget from './NavBarGadget'
 import WhatsNew from './WhatsNew'
@@ -13,10 +12,9 @@ import WhatsNew from './WhatsNew'
 // The NavBarGadget is primarily used for the Level slider that adjusts UX complexity
 // of any page from Beginner to Guru - hiding advanced options etc
 
-
 const _projectScopeLockRowStyle = {
   clear:        'both',
-  background:   '#155f66',
+//background:   '#155f66',
   background:   'radial-gradient(circle farthest-side at right bottom,#8cc4c4 8%, #155f66 70%, #232929)',
   color:        'white',
   paddingLeft:  '0.5em',
@@ -24,53 +22,39 @@ const _projectScopeLockRowStyle = {
   padding:      '0.3em'
 }
 
-const ProjectScopeBar = props =>
-{
-  const { projectScopeLock } = props
-  if (!projectScopeLock) return null
-  return (
+const ProjectScopeBar = ({ projectScopeLock }) => (
+  !projectScopeLock ? null : 
     <div style={_projectScopeLockRowStyle} >
       Project Scope Locked to: {projectScopeLock}
-    </div>
-  )
-}
-
-
-
+    </div> 
+)
 
 const _menuStyle = {
   border: "none",
   boxShadow: "none"
 }
 
-
-const NavBar = props => {
-  const { name, user, params, currUser, conserveSpace, projectScopeLock, navPanelWidth, flexPanelWidth } = props
-
-  const divStyle = {
+const NavBar = ({ name, user, params, currUser, conserveSpace, projectScopeLock, navPanelWidth, flexPanelWidth, sysvars }) => (
+  <div style={{
     position:   'fixed',
     top:        '0px',
     left:       navPanelWidth, 
     right:      flexPanelWidth, 
     margin:     '0px'
-  }
-
-  return (
-    <div style={divStyle}>
-      <div className="ui borderless menu" style={_menuStyle}>
-        <WhatsNew currUser={currUser} asHidingLink={true}/>
-        <div className="item">
-          <NavBarBreadcrumb conserveSpace={conserveSpace} name={name} user={user} params={params} />
-        </div>
-        <div className="right menu">
-          <NavBarGadget name={name} currUser={currUser}/>
-        </div>
+  }}>
+    <div className="ui borderless menu" style={_menuStyle}>
+      <SystemAlerts sysvars={sysvars}/>
+      <WhatsNew currUser={currUser} asHidingLink={true}/>
+      <div className="item">
+        <NavBarBreadcrumb conserveSpace={conserveSpace} name={name} user={user} params={params} />
       </div>
-      <ProjectScopeBar projectScopeLock={projectScopeLock} />
+      <div className="right menu">
+        <NavBarGadget name={name} currUser={currUser}/>
       </div>
-  )
-}
-
+    </div>
+    <ProjectScopeBar projectScopeLock={projectScopeLock} />
+    </div>
+)
 
 NavBar.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params

@@ -11,7 +11,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-import { Users, Activity, Projects, Settings } from '/imports/schemas'
+import { Users, Activity, Projects, Settings, Sysvars } from '/imports/schemas'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
@@ -75,7 +75,6 @@ export default App = React.createClass({
       this.refs.joyride.start(true)
   },
 
-
   componentWillReceiveProps: function(nextProps) {
     // We are using https://github.com/okgrow/analytics but it does not automatically log
     // react-router routes, so we need a specific call when the page changes
@@ -99,10 +98,8 @@ export default App = React.createClass({
 
       // For react-joyride
       joyrideSteps: []
-      
     }
   },
-
 
   getMeteorData() {
     const pathUserName = this.props.params.username      // This is the username (profile.name) on the url /u/xxxx/...
@@ -112,6 +109,8 @@ export default App = React.createClass({
     const handleForUser = pathUserName ?
                              Meteor.subscribe("user.byName", pathUserName)
                            : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
+    const handleForSysvars = Meteor.subscribe('sysvars')
+
     const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
     const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
     const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit)
@@ -121,13 +120,16 @@ export default App = React.createClass({
 
     return {
       currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
+
       currUserProjects: Projects.find(projectSelector).fetch(),
       user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
       activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
       settings: handleForSettings === null ? G_localSettings : Settings.findOne(currUserId),
-      loading:  !handleForUser.ready() ||
-                !handleActivity.ready() ||
-                !projectsReady ||
+      sysvars:  Sysvars.findOne(),
+      loading:  !handleForUser.ready()    ||
+                !handleForSysvars.ready() || 
+                !handleActivity.ready()   ||
+                !projectsReady            ||
                 !settingsReady
     }
   },
@@ -152,7 +154,7 @@ export default App = React.createClass({
   render() {
 
     const { fNavPanelIsOverlay, showToast, toastMsg, toastType } = this.state
-    const { loading, currUser, user, currUserProjects } = this.data
+    const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
 
     if (!loading)
@@ -259,6 +261,7 @@ export default App = React.createClass({
               navPanelIsVisible={showNavPanel}
               conserveSpace={conserveSpace}
               projectScopeLock={projectScopeLockValue}
+              sysvars={sysvars}
               />
 
 

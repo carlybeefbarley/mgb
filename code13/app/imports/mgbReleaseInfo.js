@@ -9,7 +9,8 @@
 
 // For iteration, I just simply use the number of commits (including this) at https://github.com/devlapse/mgb
 
-export default mgbReleaseInfo = {
+
+const mgbReleaseInfo = {
   'releases': [
     {
       'timestamp': 'Sat Oct 22 2016 20:30:00 GMT-0700 (PDT)',
@@ -2475,3 +2476,8 @@ export default mgbReleaseInfo = {
 
   ]
 }
+
+export const getReleaseVersionString = id => (`${id.ver} ${id.state} ${id.iteration}`)
+export const getCurrentReleaseVersionString = () => (getReleaseVersionString(mgbReleaseInfo.releases[0].id))
+
+export default mgbReleaseInfo

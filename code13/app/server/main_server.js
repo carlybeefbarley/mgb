@@ -1,14 +1,18 @@
 import { Users, Azzets } from '../imports/schemas'
 
 // Import all server-side schema stubs in order to register their Meteor.call() methods
-import '/imports/schemas/users.js'
-import '/imports/schemas/chats.js'
-import '/imports/schemas/assets.js'
-import '/imports/schemas/projects.js'
-import '/imports/schemas/activity.js'
-import '/imports/schemas/activitySnapshots.js'
-import '/imports/schemas/skills.js'
-import '/imports/schemas/settings.js'
+import '/imports/schemas/users'
+import '/imports/schemas/chats'
+import '/imports/schemas/assets'
+import '/imports/schemas/projects'
+import '/imports/schemas/activity'
+import '/imports/schemas/activitySnapshots'
+import '/imports/schemas/skills'
+import '/imports/schemas/settings'
+import '/imports/schemas/sysvars'
+
+import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
+
 import { createInitialSettings } from '/imports/schemas/settings-server.js'
 
 // Import rules and publications
@@ -88,6 +92,8 @@ console.log(`
   MGBv2 server running ${Meteor.release}
   Meteor.isProduction: ${Meteor.isProduction}
   Meteor.isDevelopment: ${Meteor.isDevelopment}
+  MgbRelease: ${getCurrentReleaseVersionString()}
+  
   Meteor.absoluteUrl: ${Meteor.absoluteUrl('')}
   Entry point: main_server.js
   `

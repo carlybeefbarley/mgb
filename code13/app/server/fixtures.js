@@ -1,27 +1,31 @@
 /* global Accounts */
-import { Users } from '/imports/schemas';
-import { roleSuperAdmin } from '/imports/schemas/roles';
+import { Users, Sysvars } from '/imports/schemas'
+import { roleSuperAdmin } from '/imports/schemas/roles'
 
 export function createUsers() {
-  console.log('Creating global admin user from fixtures.js');
-  const users = [{
-        name: 'SuperAdmin',
-        email: 'super@admin.com',
-        roles: roleSuperAdmin,
-        teamId: '!system',
-        teamName: '!system'
-      }];
+  console.log('Creating global admin user from fixtures.js')
+  const users = [
+    {
+      name: 'SuperAdmin',
+      email: 'super@admin.com',
+      roles: roleSuperAdmin,
+      teamId: '!system',
+      teamName: '!system'
+    }
+  ]
 
   _.each(users, function (user) {
     let id
 
     id = Accounts.createUser({
       email: user.email,
+      username: user.name,
       password: "apple1",     // TODO: make this something a bit safer
       profile: {
         name: user.name
       }
-    });
+    })
+
     Meteor.users.update(id, {
       $push: {
         permissions: [  // See roles.js
@@ -32,7 +36,9 @@ export function createUsers() {
           }
         ]
       }
-    });
-    console.log(id + ' Admin user created');
-  });
+    })
+    console.log(id + ' Admin user created')
+  })
+
+  // TODO: Something like Sysvars.insert( { deploymentName: 'prod00', deploymentVersion: 'TBD'})
 }

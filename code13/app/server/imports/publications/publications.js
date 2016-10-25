@@ -1,10 +1,11 @@
 // This file should be imported by the main_server.js file
 
-import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings } from '/imports/schemas'
+import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars } from '/imports/schemas'
 import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
 import { userSorters } from '/imports/schemas/users'
 import { projectMakeSelector, projectMakeFrontPageListSelector } from '/imports/schemas/projects'
 import { chatParams } from '/imports/schemas/chats'
+import { defaultDeploymentName } from '/imports/schemas/sysvars'
 
 //
 //    USERS
@@ -252,4 +253,12 @@ Meteor.publish('chats.userId', function(userId, toChannelName, limit=20) {
 // TODO: Make sure userId can't be faked on server. Allow/deny rules required...
 Meteor.publish('settings.userId', function(userId) {
   return Settings.find(userId)
+})
+
+//
+//    SYSVARS (will be keyed by deploymentName (in future))
+//
+
+Meteor.publish('sysvars', function() {
+  return Sysvars.find({ deploymentName: defaultDeploymentName })
 })

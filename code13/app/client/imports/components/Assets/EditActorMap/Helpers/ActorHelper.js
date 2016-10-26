@@ -4,7 +4,7 @@
   actor => tileset + additional info
   tile => image
   */
-import TileHelper from './TileHelper.js'
+import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
 // 0 - jump
 // 1 - music
 const ACTION_IMAGE = '/api/asset/tileset/AymKGyM9grSAo3yjp';
@@ -303,6 +303,13 @@ export default ActorHelper = {
       img.src = src
 
     })
+  },
+
+  checks: {
+      Background: ts => ActorValidator.isValidForBG(ts.actor.databag),
+      Active:     ts => ActorValidator.isValidForActive(ts.actor.databag),
+      Foreground: ts => ActorValidator.isValidForFG(ts.actor.databag),
+      Events:     ts => ts.firstgid <= ActorHelper.TILES_IN_ACTIONS
   },
 
   loadActorSimple: function(asset, map){

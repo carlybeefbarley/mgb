@@ -3,14 +3,14 @@ import _ from 'lodash'
 import React from 'react'
 
 import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
-import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
 
-import ActorControls from './ActorControls.js'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import EditModes from '../../Common/Map/Tools/EditModes.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import ActorValidator from '../../Common/ActorValidator.js'
 
+import ActorControls from './ActorControls.js'
+import ActorHelper from '../Helpers/ActorHelper.js'
 
 export default class ActorTool extends React.Component {
   /* lifecycle functions */
@@ -458,14 +458,8 @@ export default class ActorTool extends React.Component {
     if (!ts.actor)
       ts.actor = {}
 
-    const checks = {
-      Background: ts => ActorValidator.isValidForBG(ts.actor.databag),
-      Active:     ts => ActorValidator.isValidForActive(ts.actor.databag),
-      Foreground: ts => ActorValidator.isValidForFG(ts.actor.databag),
-      Events:     ts => ts.firstgid <= ActorHelper.TILES_IN_ACTIONS
-    }
 
-    let isValidForLayer = layer ? checks[layer.data.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
+    let isValidForLayer = layer ? ActorHelper.checks[layer.data.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
 
     return (
       <div className='mgbAccordionScroller tilesets'>

@@ -1,9 +1,9 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
-import EditModes from './EditModes'
-import LayerTypes from './LayerTypes.js'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import EditModes from '../../Common/Map/Tools/EditModes'
+import LayerTypes from '../../Common/Map/Tools/LayerTypes'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 
 export default class MapToolbar extends React.Component {
 
@@ -103,7 +103,7 @@ export default class MapToolbar extends React.Component {
   }
   flip () {
     const l = this.props.map.getActiveLayer()
-    if (!l || !l.rotate) {return;}
+    if (!l || !l.flip) {return;}
     l.flip()
   }
   showGridToggle () {
@@ -319,6 +319,7 @@ export default class MapToolbar extends React.Component {
           label: 'Rotate (CW)',
           tooltip: 'Rotate Tile ClockWise',
           shortcut: 'Z',
+          disabled: (!layer || layer.kind == LayerTypes.object),
           level: 20
         },
         {
@@ -327,6 +328,7 @@ export default class MapToolbar extends React.Component {
           label: 'Rotate (CCW)',
           tooltip: 'Rotate Tile Counter ClockWise',
           shortcut: 'Shift+Z',
+          disabled: (!layer || layer.kind == LayerTypes.object),
           level: 22
         },
         {
@@ -335,6 +337,7 @@ export default class MapToolbar extends React.Component {
           label: 'Flip Tile',
           tooltip: 'Mirror tile',
           shortcut: 'X',
+          disabled: (!layer || layer.kind == LayerTypes.object),
           level: 23
         }
 

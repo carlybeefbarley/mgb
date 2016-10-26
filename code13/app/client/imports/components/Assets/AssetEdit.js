@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import EditMap from './EditMap/EditMap'
-import EditActorMap from './EditActorMap/EditMap'
+import EditActorMap from './EditActorMap/EditActorMap'
 import EditActor from './EditActor/EditActor'
 import EditDoc from './EditDoc/EditDoc'
 import EditCode from './EditCode/EditCode'

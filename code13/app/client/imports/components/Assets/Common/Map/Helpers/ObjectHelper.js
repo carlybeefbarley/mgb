@@ -144,6 +144,20 @@ const ObjectHelper = {
     }
   },
 
+  createEmptyTileObject: (gid = 0, x = 0, y = 0, name = '(unnamed tile)') => {
+    return {
+      name,
+      x, y,
+      'gid': gid,
+      'height': 32,
+      'id': 0,
+      'rotation': 0,
+      'type': '',
+      'visible': true,
+      'width': 32
+    }
+  },
+
   createRectangle: (id, x, y, width = 1 , height = 1 , name = '(unnamed rectangle #' + id + ')') => {
     return {
       height,
@@ -177,8 +191,7 @@ const ObjectHelper = {
       'visible': true
     }
   },
-  createGraphic(nameWithExt, dataUrl, cb = () => {
-    }) {
+  createGraphic(nameWithExt, dataUrl, cb = () => {}) {
     name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
 
     const img = new Image()

@@ -214,6 +214,7 @@ Otito.prototype = {
           this._enableFolderToggle(f, meta);
           if(meta.open){
             f.body.classList.add(this.options.folderOpenClassName);
+            f.head && f.head.classList.add(this.options.folderOpenClassName)
           }
           continue;
         }

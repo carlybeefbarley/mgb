@@ -1,11 +1,13 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import MapArea from './MapArea.js'
-import InfoTool from './Tools/InfoTool.js'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 
-import PlayForm from "./modals/PlayForm.js"
-import MusicForm from "./modals/MusicForm.js"
+
+import MapArea from './ActorMap.js'
+import InfoTool from '../Common/Map/Tools/InfoTool.js'
+
+import PlayForm from "./Modals/PlayForm.js"
+import MusicForm from "./Modals/MusicForm.js"
 
 export default class EditMap extends React.Component {
   constructor (props) {

@@ -1,5 +1,7 @@
 'use strict'
 import LayerTypes from '../Tools/LayerTypes.js'
+import ObjectHelper from './ObjectHelper.js'
+
 
 export const FLIPPED_HORIZONTALLY_FLAG = 0x8
 export const FLIPPED_VERTICALLY_FLAG = 0x4
@@ -230,7 +232,7 @@ const TileHelper = {
       const layer = mapdata.layers[i]
       if(layer.type == LayerTypes.tile){
         for(let j=0; j<layer.data.length; j++){
-          const tile = layer.data[j]
+          const tile = layer.data[j] & 0xfffffff // last 28 bits (1 << 28) - 1
           if(tile && !gidCache[tile]){
             console.log("unknow tile:", tile)
             layer.data[j] = 0
@@ -239,9 +241,13 @@ const TileHelper = {
       }
       else if(layer.type == LayerTypes.object){
         for(let j=0; j<layer.objects.length; j++){
-          const tile = layer.objects[j]
-          if(!gidCache[tile.gid]){
-            layer.objects[j].gid = 0
+          const tile = layer.objects[j];
+          if(typeof(tile) !== "object"){
+            layer.objects[j] = ObjectHelper.createEmptyTileObject();
+          }
+          const gid = tile.gid & 0xfffffff // last 28 bits (1 << 28) - 1
+          if(gid && !gidCache[gid]){
+            tile.gid = 0
           }
         }
       }

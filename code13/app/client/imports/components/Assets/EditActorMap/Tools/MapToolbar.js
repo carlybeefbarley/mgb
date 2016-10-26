@@ -1,10 +1,10 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
-import EditModes from './EditModes'
-import LayerTypes from './LayerTypes.js'
+import EditModes from './../../Common/Map/Tools/EditModes'
+import LayerTypes from './../../Common/Map/Tools/LayerTypes.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
-import ActorHelper from '../Helpers/ActorHelper.js'
+import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
 export default class MapToolbar extends React.Component {
 
   preview () {

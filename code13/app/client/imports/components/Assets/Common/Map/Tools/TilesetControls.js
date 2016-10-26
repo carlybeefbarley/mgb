@@ -135,14 +135,14 @@ export default class TilesetControls extends React.Component {
             ref='input'
             style={{ fontSize: '15px' }} />
           {/*<button className="ui floated icon button">
-                                                                                                                                                       <i className="add icon"></i>
-                                                                                                                                                       </button>
-                                                                                                                                                       <button className="ui floated icon button">
-                                                                                                                                                       <i className="signal icon"></i>
-                                                                                                                                                       </button>
-                                                                                                                                                       <button className="ui floated icon button">
-                                                                                                                                                       <i className="shop icon"></i>
-                                                                                                                                                       </button>*/}
+           <i className="add icon"></i>
+           </button>
+           <button className="ui floated icon button">
+           <i className="signal icon"></i>
+           </button>
+           <button className="ui floated icon button">
+           <i className="shop icon"></i>
+           </button>*/}
         </div>
         <div className='ui icon buttons right floated mini' title='Remove Active Tileset' style={{ position: 'relative', top: '-10px' }}>
           <button className='ui icon button' onClick={this.removeTileset.bind(this)}>

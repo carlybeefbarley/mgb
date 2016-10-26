@@ -61,7 +61,7 @@ export default class TileMapLayer extends AbstractLayer {
 
   increaseSizeToTop(pos){
     this.map.layers.forEach(l => {
-      l._increaseSizeToTop(pos)
+      l._increaseSizeToTop && l._increaseSizeToTop(pos)
     })
   }
   _increaseSizeToTop (pos) {
@@ -79,7 +79,7 @@ export default class TileMapLayer extends AbstractLayer {
 
   increaseSizeToRight(pos){
     this.map.layers.forEach(l => {
-      l._increaseSizeToRight(pos)
+      l._increaseSizeToRight && l._increaseSizeToRight(pos)
     })
   }
   _increaseSizeToRight (pos) {
@@ -98,7 +98,7 @@ export default class TileMapLayer extends AbstractLayer {
 
   increaseSizeToBottom(pos){
     this.map.layers.forEach(l => {
-      l._increaseSizeToBottom(pos)
+      l._increaseSizeToBottom && l._increaseSizeToBottom(pos)
     })
   }
 
@@ -115,7 +115,7 @@ export default class TileMapLayer extends AbstractLayer {
 
   increaseSizeToLeft(pos){
     this.map.layers.forEach(l => {
-      l._increaseSizeToLeft(pos)
+      l._increaseSizeToLeft && l._increaseSizeToLeft(pos)
     })
   }
   _increaseSizeToLeft (pos) {
@@ -883,10 +883,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       }
     }
 
-    // updating same tile - safe to skip
-    if (this.options.data[tpos.id] == ts.gid) {
-      continue
-    }
+
     if (saveUndo) {
       this.map.saveForUndo('Update Tile')
       // save only once
@@ -913,6 +910,10 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       return
     }
 
+    // updating same tile - safe to skip
+    if (this.options.data[tpos.id] == ts.gid) {
+      continue
+    }
     this.insertTile(tpos.id, ts.gid)
     //this.options.data[tpos.id] = ts.gid
   }

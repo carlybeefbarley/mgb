@@ -80,13 +80,12 @@ export default class Properties extends React.Component {
     this.settings = {}
     this.updateObject(this.activeObject)
     var that = this
-
-    let reizeTM = 0
     this.settings.map = new Otito(this.map.data, {
       Map: {
         _type: Otito.type.folder,
-        contentClassName: 'ui content one column stackable grid',
-        title: 'Hello world!',
+        open: true,
+        contentClassName: 'ui content one column stackable grid active',
+        title: '',
         content: {
           width: {
             _type: Otito.type.number,
@@ -135,8 +134,6 @@ export default class Properties extends React.Component {
           </div>
           <div className='active content menu' ref='holder'>
             {object}
-            <div ref='tileset'></div>
-            <div ref='layer'></div>
             <div ref='map'></div>
           </div>
         </div>

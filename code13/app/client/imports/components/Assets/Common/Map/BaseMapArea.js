@@ -6,11 +6,11 @@ import ImageLayer from './Layers/ImageLayer'
 import ObjectLayer from './Layers/ObjectLayer'
 import GridLayer from './Layers/GridLayer'
 
-import Actor from './Tools/Actor'
 import Layers from './Tools/Layers'
 import Properties from './Tools/Properties'
+import TileSet from './Tools/TileSet'
 
-import MapToolbar from './Tools/MapToolbar'
+import MapToolbar from './../../EditActorMap/Tools/MapToolbar'
 import TileHelper from './Helpers/TileHelper'
 import ActorHelper from './Helpers/ActorHelper'
 
@@ -23,9 +23,6 @@ import Camera from './Camera'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Plural from '/client/imports/helpers/Plural'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
-
-import DropArea from '../../Controls/DropArea'
-import SmallDD from '../../Controls/SmallDD'
 
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 
@@ -127,18 +124,13 @@ export default class MapArea extends React.Component {
   }
 
   set data(val) {
-    console.log("SET Data:", val)
-    // get layer first as later data won't match until full react sync
     const l = this.getActiveLayer()
     this.activeAsset.content2 = val
-    this._data = val;
     l && l.clearCache && l.clearCache()
   }
 
-  // temporary hack.. needs to be reviewed
   get data () {
-    return this._data
-    //return this.activeAsset.content2
+    return this.activeAsset.content2
   }
 
   // store meta information about current map
@@ -172,78 +164,46 @@ export default class MapArea extends React.Component {
     return this.meta.options
   }
 
-  // palette is just more intuitive name
   get palette() {
     return this.gidCache
   }
 
   componentDidMount() {
-    this.buildMap(() => {
-      if (!this.data)
-        this.data = TileHelper.genNewMap()
-
-      $(this.refs.mapElement).addClass('map-filled')
-
-      window.addEventListener('mousemove', this.globalMouseMove, false)
-      window.addEventListener('mouseup', this.globalMouseUp, false)
-      window.addEventListener('resize', this.globalResize, false)
-      window.addEventListener('keyup', this.globalKeyUp, false)
-
-      document.body.addEventListener('mousedown', this.globalIEScroll)
-
-      this._raf = () => {
-        this.drawLayers()
-        window.requestAnimationFrame(this._raf)
-      }
-      this._raf()
-      this.fullUpdate()
-    })
+    this.startEventListeners()
   }
 
-  buildMap(cb) {
-    this.isLoading = true;
-    const names = {
-      map: this.props.asset.name,
-      user: this.props.asset.dn_ownerName
+  startEventListeners(){
+    window.addEventListener('mousemove', this.globalMouseMove, false)
+    window.addEventListener('mouseup', this.globalMouseUp, false)
+    window.addEventListener('resize', this.globalResize, false)
+    window.addEventListener('keyup', this.globalKeyUp, false)
+
+    document.body.addEventListener('mousedown', this.globalIEScroll)
+
+    this._raf = () => {
+      this.drawLayers()
+      window.requestAnimationFrame(this._raf)
     }
-    ActorHelper.v1_to_v2(this.props.asset.content2, names, (md) => {
-      this._data = md
-      cb && cb()
-      this.isLoading = false;
-    })
+    this._raf()
   }
-
-  resetMap() {
-    const names = {
-      map: this.props.asset.name,
-      user: this.props.asset.dn_ownerName
-    }
-    this.data = ActorHelper.createEmptyMap()
-    this.fullUpdate()
-  }
-
-  componentWillUpdate () {
-    // allow to roll back updated changes
-    // this.saveForUndo()
-
-    // console.error("will update")
-  }
-
-  componentDidUpdate () {
-    // we need to convert again v1 -> v2
-    // this.buildMap()
-    this.redraw()
-    this.adjustPreview()
-  }
-
-  componentWillUnmount () {
+  stopEventListeners(){
     window.removeEventListener('mousemove', this.globalMouseMove)
     window.removeEventListener('mouseup', this.globalMouseUp)
     window.removeEventListener('resize', this.globalResize)
     window.removeEventListener('keyup', this.globalKeyUp)
 
+    document.body.removeEventListener('mousedown', this.globalIEScroll)
     // next tick will stop raf loop
     this._raf = () => {}
+  }
+
+  componentDidUpdate () {
+    this.redraw()
+    this.adjustPreview()
+  }
+
+  componentWillUnmount () {
+    this.stopEventListeners()
   }
 
   // TODO: handle here updates - atm disabled as updates move state in back in history
@@ -252,13 +212,6 @@ export default class MapArea extends React.Component {
     // it's safe to update read only
     if (!this.activeAsset || !this.props.parent.props.canEdit) {
       this.activeAsset = props.asset
-      // TODO(stauzs) increase build map speed - otherwise it causes inifinite loop
-      if(Date.now() - this.lastUpdate > 5000){
-        this.lastUpdate = Date.now()
-        this.buildMap(() => {
-          this.update()
-        })
-      }
     }
   }
 
@@ -272,6 +225,75 @@ export default class MapArea extends React.Component {
   removeDots (url) {
     return TileHelper.normalizePath(url).replace(/\./gi, '*')
   }
+
+  /* import and conversion */
+  xmlToJson (xml) {
+    window.xml = xml
+  }
+  handleFileByExt_tmx (name, buffer) {
+    // https://github.com/inexorabletash/text-encoding
+    const xmlString = (new TextDecoder).decode(new Uint8Array(buffer))
+    //
+    const parser = new DOMParser()
+    const xml = parser.parseFromString(xmlString, 'text/xml')
+    alert('Sorry: TMX import is not implemented... yet\nTry JSON')
+
+    this.map = this.xmlToJson(xml)
+  }
+  handleFileByExt_json (name, buffer) {
+    const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
+    this.map = JSON.parse(jsonString)
+    this.updateImages()
+  }
+  // TODO: move api links to external resource?
+  handleFileByExt_png (nameWithExt, buffer) {
+    const blob = new Blob([buffer], {type: 'application/octet-binary'})
+    const src = URL.createObjectURL(blob)
+    this.createGraphicsAsset(nameWithExt, blob)
+    // this may seem too confusing if we pull out our asset instead of uploading users dropped asset
+    // TODO: check for duplicate names?
+    /*const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
+     // try to map image with user's asset
+     $.get(`/api/asset/png/${this.props.parent.getUser()}/${name}`)
+     .success((id) => {
+     const img = new Image()
+     img.onload = () => {
+     this.images.set(nameWithExt, img)
+     this.updateImages()
+     }
+     img.src = `/api/asset/png/${id}`
+     })
+     .error((d) => {
+     this.createGraphicsAsset(nameWithExt)
+     })
+     */
+  }
+  createGraphicsAsset (nameWithExt, src) {
+    const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
+    const img = new Image()
+    img.onload = () => {
+      // TODO: this is hackish hack - find out less hackish way!!!
+      // we should be able to create dataUrl from buffer or blob directly
+      const c = document.createElement('canvas')
+      c.ctx = c.getContext('2d')
+      c.width = img.width
+      c.height = img.height
+      c.ctx.drawImage(img, 0, 0)
+
+      ObjectHelper.createGraphic(name, c.toDataURL(), (newAsset) => {
+        const gim = new Image()
+        gim.onload = () => {
+          this.images.set(nameWithExt, gim)
+          this.updateImages()
+        }
+        gim.src = `/api/asset/png/${newAsset._id}`
+      })
+    }
+    img.src = src
+  }
+  /* endof import and conversion */
+
+
 
   // TODO(stauzs): add 'insert/remove row/column' functionality
   resize() {
@@ -359,8 +381,6 @@ export default class MapArea extends React.Component {
   }
 
   save (reason = 'no reason' , force = false) {
-
-
     const newData = JSON.stringify(this.data)
     // skip equal map save
     if (!force && this.savedData == newData)
@@ -370,7 +390,7 @@ export default class MapArea extends React.Component {
 
     // make sure thumbnail is nice - all layers has been drawn
     window.requestAnimationFrame(() => {
-      this.props.parent.handleSave(ActorHelper.v2_to_v1(this.data) , reason, this.generatePreview())
+      this.props.parent.handleSave(this.data, reason, this.generatePreview())
     })
   }
 
@@ -459,7 +479,7 @@ export default class MapArea extends React.Component {
       // this should be imported from mgb1
       ts.imagewidth = img.width
       ts.imageheight = img.height
-      
+
       if (!ts.tilewidth) {
         ts.tilewidth = img.width
         ts.tileheight = img.height
@@ -495,7 +515,7 @@ export default class MapArea extends React.Component {
       this.addTool('error', 'Errors', this.errors)
     else
       this.removeTool('error')
-  
+
     this.forceUpdate()
     this.updateTilesets()
     if (typeof cb === 'function') {
@@ -510,7 +530,7 @@ export default class MapArea extends React.Component {
   }
 
   addTilesetTool() {
-    this.addTool('Actor', 'Actors', {map: this}, Actor)
+    this.addTool('TileSets', 'TileSets', {map: this}, TileSet)
   }
 
   addPropertiesTool() {
@@ -529,24 +549,24 @@ export default class MapArea extends React.Component {
     for(let i=0; i<this.data.layers.length; i++){
       if(this.data.layers[i].name === name){
         this.setActiveLayer(i)
-        return;
+        return
       }
     }
   }
+
   /*
    * TODO: move tools to the EditMap.js. MapArea should not handle tools
    */
   addTool(id, title, content, type, collapsed = false) {
     let tools = this.props.parent.state.tools
     tools[id] = {
-      title, 
-      content, 
-      type, 
+      title,
+      content,
+      type,
       collapsed
     }
     this.props.parent.setState( { tools } )
   }
-
   removeTool (id) {
     let ptools = this.props.parent.state.tools
     delete ptools[id]
@@ -554,7 +574,11 @@ export default class MapArea extends React.Component {
       tools: ptools
     })
   }
-
+  addTools () {
+    this.addLayerTool()
+    this.addTilesetTool()
+    this.addPropertiesTool()
+  }
   updateTools () {
     this.props.parent.forceUpdate()
   }
@@ -567,29 +591,25 @@ export default class MapArea extends React.Component {
     if (index == -1)
       this.collection.push(gid)
   }
-
   removeFromActiveSelection (gid) {
     const index = this.collection.indexOf(gid)
     if (index > -1)
       this.collection.splice(index, 1)
   }
-
   clearActiveSelection () {
     this.collection.length = 0
+    this.updateTools()
   }
-
   swapOutSelection () {
     for (let i = 0; i < this.tmpSelection.length; i++)
       this.selection.pushUniquePos(this.tmpSelection[i])
     this.tmpSelection.clear()
   }
-
   removeFromSelection () {
     for (let i = 0; i < this.tmpSelection.length; i++)
       this.selection.removeByPos(this.tmpSelection[i])
     this.tmpSelection.clear()
   }
-
   // keep only matching form both selections
   keepDiffInSelection () {
     const tmp = new TileCollection()
@@ -749,7 +769,7 @@ export default class MapArea extends React.Component {
   handleMouseMove (e) {
     if (this.state.isPlaying || this.isLoading)
       return
-    
+
     // IE always reports button === 0
     // and yet: If the user presses a mouse button, use the button property to determine which button was pressed.
     // https://msdn.microsoft.com/en-us/library/ms536947(v=vs.85).aspx
@@ -757,7 +777,7 @@ export default class MapArea extends React.Component {
     // it seems that IE and chrome reports "buttons" correctly
     // console.log(e.buttons)
     // 1 - left; 2 - right; 4 - middle + combinations
-    if (this.options.preview && (e.buttons == 4)) 
+    if (this.options.preview && (e.buttons == 4))
       this.movePreview(e)
     else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4)
       this.moveCamera(e)
@@ -805,38 +825,38 @@ export default class MapArea extends React.Component {
       return
 
     switch (e.which) {
-    case 37: // left
-      this.camera.x += this.data.tilewidth * this.camera.zoom
-      update = true
-      break
-    case 38: // top
-      this.camera.y += this.data.tileheight * this.camera.zoom
-      update = true
-      break
-    case 39: // right
-      this.camera.x -= this.data.tilewidth * this.camera.zoom
-      update = true
-      break
-    case 40: // down
-      this.camera.y -= this.data.tileheight * this.camera.zoom
-      update = true
-      break
-    case 13: // enter
-      this.selectionToCollection()
-      this.selection.clear()
-      this.refs.toolbar.enableMode(EditModes.stamp)
-      break
-    /*case 90: // ctrl + z
-      if (e.ctrlKey) {
-        if (e.shiftKey) {
-          this.doRedo()
-        }
-        else {
-          this.doUndo()
-        }
-      }*/
+      case 37: // left
+        this.camera.x += this.data.tilewidth * this.camera.zoom
+        update = true
+        break
+      case 38: // top
+        this.camera.y += this.data.tileheight * this.camera.zoom
+        update = true
+        break
+      case 39: // right
+        this.camera.x -= this.data.tilewidth * this.camera.zoom
+        update = true
+        break
+      case 40: // down
+        this.camera.y -= this.data.tileheight * this.camera.zoom
+        update = true
+        break
+      case 13: // enter
+        this.selectionToCollection()
+        this.selection.clear()
+        this.refs.toolbar.enableMode(EditModes.stamp)
+        break
+      /*case 90: // ctrl + z
+       if (e.ctrlKey) {
+       if (e.shiftKey) {
+       this.doRedo()
+       }
+       else {
+       this.doUndo()
+       }
+       }*/
     }
-    if (e.ctrlKey) 
+    if (e.ctrlKey)
       console.log(e.which)
     if (update)
       this.redraw()
@@ -846,27 +866,6 @@ export default class MapArea extends React.Component {
     this.refs.toolbar.enableMode(mode)
   }
 
-  importFromDrop (e) {
-    if (!this.props.parent.props.canEdit) {
-      this.props.parent.props.editDeniedReminder()
-      return
-    }
-
-    const layer = this.getActiveLayer()
-    if (layer && layer.onDrop) {
-      // layer by it's own can handle drop
-      // e.g. image layer adds image
-      // true - layer did something with dropped stuff
-      if (layer.onDrop(e))
-        return
-    }
-    
-    const asset = DragNDropHelper.getAssetFromEvent(e)
-    if (asset) {
-      console.log('Ignoring drop of assets on actorMap')
-      return
-    }
-  }
 
   prepareForDrag (e) {
     e.stopPropagation()
@@ -897,11 +896,6 @@ export default class MapArea extends React.Component {
     cb()
   }
 
-  addTools () {
-    this.addLayerTool()
-    this.addTilesetTool()
-    this.addPropertiesTool()
-  }
 
   redraw () {
     this.redrawLayers()
@@ -974,7 +968,7 @@ export default class MapArea extends React.Component {
     map.forceUpdate()
     return ls
   }
-  
+
   activateLayer (id) {
     let l = this.getActiveLayer()
     l && l.deactivate()
@@ -1036,7 +1030,7 @@ export default class MapArea extends React.Component {
         return
 
       const layer = this.getLayer(ld)
-      if (!layer) 
+      if (!layer)
         continue
       const c = layer.refs.canvas
       ratio = canvas.width / c.width
@@ -1048,7 +1042,7 @@ export default class MapArea extends React.Component {
   getInfo() {
     const layer = this.getActiveLayer()
     let st = ''
-    const col = this.collection.forEach((t) => {
+    this.collection.forEach((t) => {
       st += ', ' + t.gid
     })
     st = st.substr(2)
@@ -1067,6 +1061,12 @@ export default class MapArea extends React.Component {
     )
   }
 
+  getNotification(){
+    return this.data.width * this.data.height > 100000 ? <div>
+      This map is larger than our recommended size - so editing may be slower than normal!
+    </div> : ''
+  }
+
   renderMap() {
     const data = this.data
     const layers = []
@@ -1080,27 +1080,27 @@ export default class MapArea extends React.Component {
           continue
         if (data.layers[i].type == LayerTypes.tile) {
           layers.push(<TileMapLayer
-                        data={data.layers[i]}
-                        key={i}
-                        anotherUsableKey={i}
-                        map={this}
-                        active={this.activeLayer == i} />)
+            data={data.layers[i]}
+            key={i}
+            anotherUsableKey={i}
+            map={this}
+            active={this.activeLayer == i} />)
         }
         else if (data.layers[i].type == LayerTypes.image) {
           layers.push(<ImageLayer
-                        data={data.layers[i]}
-                        key={i}
-                        map={this}
-                        anotherUsableKey={i}
-                        active={this.activeLayer == i} />)
+            data={data.layers[i]}
+            key={i}
+            map={this}
+            anotherUsableKey={i}
+            active={this.activeLayer == i} />)
         }
         else if (data.layers[i].type == LayerTypes.object) {
           layers.push(<ObjectLayer
-                        data={data.layers[i]}
-                        key={i}
-                        map={this}
-                        anotherUsableKey={i}
-                        active={this.activeLayer == i} />)
+            data={data.layers[i]}
+            key={i}
+            map={this}
+            anotherUsableKey={i}
+            active={this.activeLayer == i} />)
         }
         else if (data.layers[i].type == LayerTypes.actor) {
           layers.push(<ActorLayer
@@ -1124,90 +1124,13 @@ export default class MapArea extends React.Component {
       )
       // TODO: adjust canvas size
       return (
-        <div 
-            ref='mapElement' 
-            onContextMenu={e => { e.preventDefault(); return false;}} 
-            style={{ /*width: (640)+"px",*/ height: (640) + 'px', position: 'relative', margin: '10px 0' }}>
+        <div
+          ref='mapElement'
+          onContextMenu={e => { e.preventDefault(); return false;}}
+          style={{ /*width: (640)+"px",*/ height: (640) + 'px', position: 'relative', margin: '10px 0' }}>
           {layers}
         </div>
       )
     }
-  }
-
-  // this bubbles up
-  showModal(action, cb) {
-    this.props.parent.showModal(action, (val) => {
-      cb(val)
-      this.update()
-    })
-  }
-
-  renderMage(){
-    return (
-      <div
-        className='tilemap-wrapper'
-        onWheel={this.handleOnWheel.bind(this)}>
-        <MapToolbar map={this} ref='tools' />
-        <div style={{margin: "10px 0px"}}>
-          <Mage
-            ownerName={this.props.asset.dn_ownerName}
-            startMapName={this.props.asset.name}
-            isPaused={false}
-            hideButtons={true}
-            fetchAssetByUri={ (uri) => {
-                return new Promise( function (resolve, reject) {
-                  var client = new XMLHttpRequest()
-                  client.open('GET', uri)
-                  client.send()
-                  client.onload = function () {
-                    if (this.status >= 200 && this.status < 300)
-                      resolve(this.response)  // Performs the function "resolve" when this.status is equal to 2xx
-                    else
-                      reject(this.statusText) // Performs the function "reject" when this.status is different than 2xx
-                  }
-                  client.onerror = function () { reject(this.statusText) }
-                })
-              }}
-            />
-        </div>
-      </div>
-    )
-  }
-
-  render () {
-    if(this.isLoading){
-      return (<div className="noScrollbarDiv"
-                   style={{
-                   "position": "fixed",
-                   "top": "40px", "bottom": "0px", "left": "60px",
-                    "right": "345px", "overflow": "auto", "marginBottom": "0px"}}>
-                <div style={{"padding": "0px", "height": "auto"}}>
-                  <div className="ui basic segment" style={{"minHeight": "15em"}}>
-                    <div className="ui active inverted dimmer">
-                      <div className="ui text indeterminate loader">Loading
-                      </div></div><p></p></div></div></div>)
-    }
-    let notification = ''
-    if (this.data.width * this.data.height > 100000) {
-      notification = <div>
-                       This map is larger than our recommended size - so editing may be slower than normal!
-                     </div>
-    }
-
-    if(this.state.isPlaying){
-      return this.renderMage()
-    }
-
-    return (
-      <div
-          className='tilemap-wrapper'
-          onWheel={this.handleOnWheel.bind(this)}>
-        <MapToolbar map={this} ref='toolbar' />
-        { notification }
-        { this.renderMap() }
-        { this.state.isPlaying && <MapPlayer map={this} /> }
-        <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
-      </div>
-    )
   }
 }

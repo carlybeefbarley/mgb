@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import MapArea from './MapArea.js'
-import InfoTool from './Tools/InfoTool.js'
+import InfoTool from '../Common/Map/Tools/InfoTool.js'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 
 export default class EditMap extends React.Component {
@@ -37,9 +37,13 @@ export default class EditMap extends React.Component {
     this.props.handleContentChange(newC2, ''); // TODO: Thumbnail is second param
   }
 
-  handleSave (reason, thumbnail) {
+  handleSave (data, reason, thumbnail) {
+    if(!this.props.canEdit){
+      console.error("Read only map")
+      return
+    }
     // TODO: convert uploaded images to assets
-    this.props.handleContentChange(this.refs.mapArea.data, thumbnail, reason)
+    this.props.handleContentChange(data, thumbnail, reason)
   }
 
   render () {

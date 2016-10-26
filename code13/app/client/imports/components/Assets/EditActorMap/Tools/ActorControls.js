@@ -1,7 +1,7 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
-import TileHelper from '../Helpers/TileHelper.js'
+import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
 export default class ActorControls extends React.Component {
 
   addImageFromInput (e) {

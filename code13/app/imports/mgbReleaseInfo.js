@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Wed Oct 26 2016 12:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Wed Oct 26 2016 12:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1850'
+        'iteration': '1851'
       },
 
       'releaseManagement': {
@@ -52,7 +52,7 @@ const mgbReleaseInfo = {
           'featureTag': 'asset.actorMap',
           'type': 'improvement',
           'changeName': 'Imoprovements for Actors and ActorMaps',
-          'changeSummary': 'Events tool has been separated from Actors tool. Various fixes.',
+          'changeSummary': 'Events tool has been separated from Actors tool. Various fixes, notably Actor Movement speed can be > 0 now :).',
           'otherUrls': [ ]
         },
 

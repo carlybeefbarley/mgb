@@ -58,7 +58,7 @@ export default class CharacterBehavior extends BaseForm {
       <div className="ui form">
         {this.text("Movement speed", 'movementSpeedNum', "number", {
           min: 0,
-          max: 0,
+          max: 3,
           step: 0.5
         })}
         {this.bool("Can Move Up \u2191", 'upYN')}

@@ -276,7 +276,7 @@ export default class ActorTool extends React.Component {
     const nextId = ActorHelper.TILES_IN_ACTIONS + this.map.data.tilesets.length
     const map = { [name] : tileset }
     ActorHelper.loadActor(name, map, nextId, this.map.data.images, null, () => {
-      this.map.data.tilesets.push(tileset)
+      this.map.data.tilesets.push(map[name]) // if loaded from cache map loses reference to tileset
       this.map.fullUpdate()
     })
   }

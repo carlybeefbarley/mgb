@@ -344,6 +344,7 @@ export default class TileMapLayer extends AbstractLayer {
         }
         else{
           console.log("unable to locate palette")
+          return
         }
       }
     }

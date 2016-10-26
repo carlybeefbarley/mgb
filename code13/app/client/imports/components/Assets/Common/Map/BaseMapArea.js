@@ -238,11 +238,11 @@ export default class MapArea extends React.Component {
     const xml = parser.parseFromString(xmlString, 'text/xml')
     alert('Sorry: TMX import is not implemented... yet\nTry JSON')
 
-    this.map = this.xmlToJson(xml)
+    this.data = this.xmlToJson(xml)
   }
   handleFileByExt_json (name, buffer) {
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
-    this.map = JSON.parse(jsonString)
+    this.data = JSON.parse(jsonString)
     this.updateImages()
   }
   // TODO: move api links to external resource?

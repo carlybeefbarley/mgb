@@ -3,6 +3,11 @@ import React from 'react'
 
 import BaseMapArea from '../Common/Map/BaseMapArea.js'
 
+import TileMapLayer from '../Common/Map/Layers/TileMapLayer.js'
+import GridLayer from '../Common/Map/Layers/GridLayer.js'
+import ImageLayer from '../Common/Map/Layers/ImageLayer.js'
+import ObjectLayer from '../Common/Map/Layers/ObjectLayer.js'
+
 import TileSet from '../Common/Map/Tools/TileSet.js'
 import Layers from '../Common/Map/Tools/Layers.js'
 import Properties from '../Common/Map/Tools/Properties.js'
@@ -117,6 +122,55 @@ export default class MapArea extends BaseMapArea {
     }
   }
   /* endof events */
+  renderMap () {
+    const data = this.data
+    const layers = []
+    layers.length = 0
+    if (!data || !data.layers) {
+      return (<div className='map-empty' ref='mapElement' />)
+    }else {
+      let i = 0
+      for (; i < data.layers.length; i++) {
+        if (!data.layers[i].visible) {
+          continue
+        }
+        if (data.layers[i].type == LayerTypes.tile) {
+          layers.push(<TileMapLayer
+            data={data.layers[i]}
+            key={i}
+            anotherUsableKey={i}
+            map={this}
+            active={this.activeLayer == i} />)
+        }
+        else if (data.layers[i].type == LayerTypes.image) {
+          layers.push(<ImageLayer
+            data={data.layers[i]}
+            key={i}
+            map={this}
+            anotherUsableKey={i}
+            active={this.activeLayer == i} />)
+        }
+        else if (data.layers[i].type == LayerTypes.object) {
+          layers.push(<ObjectLayer
+            data={data.layers[i]}
+            key={i}
+            map={this}
+            anotherUsableKey={i}
+            active={this.activeLayer == i} />)
+        }
+      }
+      layers.push(
+        <GridLayer map={this} key={i} ref='grid' />
+      )
+      // TODO: adjust canvas size
+      return (
+        <div ref='mapElement' onContextMenu={e => {
+                                       e.preventDefault(); return false;}} style={{ /*width: (640)+"px",*/ height: (640) + 'px', position: 'relative', margin: '10px 0' }}>
+          {layers}
+        </div>
+      )
+    }
+  }
 
   render () {
     return (

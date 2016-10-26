@@ -22,6 +22,9 @@ const DEFAULT_GRAPHIC_WIDTH = 64
 const DEFAULT_GRAPHIC_HEIGHT = 32
 
 
+//TODO put these in a settings object
+const settings_ignoreMouseLeave = true
+
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
 //   1. Drawing on preview+Editor canvas
@@ -148,6 +151,7 @@ export default class EditGraphic extends React.Component {
     this.editCanvas.addEventListener('mousedown',     this.handleMouseDown.bind(this))
     this.editCanvas.addEventListener('mouseup',       this.handleMouseUp.bind(this))
     this.editCanvas.addEventListener('mouseleave',    this.handleMouseLeave.bind(this))
+    this.editCanvas.addEventListener('mouseenter',    this.handleMouseEnter.bind(this))
 
     // Tool button initializations
     this.activateToolPopups()    
@@ -770,13 +774,12 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-
   handleMouseLeave(event)
   {
     const { toolActive, toolChosen } = this.state
 
     this.setStatusBarInfo()
-    if (toolChosen !== null && toolActive === true) {
+    if (toolChosen !== null && toolActive === true && !settings_ignoreMouseLeave) {
       toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
       if (toolChosen.changesImage === true)
         this.handleSave(`Drawing`, false, false)
@@ -784,6 +787,17 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  handleMouseEnter(event)
+  {
+    const { toolActive, toolChosen } = this.state
+    this.setStatusBarInfo()
+    if (toolChosen !== null && toolActive === true && settings_ignoreMouseLeave && ((event.buttons & 1) === 0)) {
+      toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
+      if (toolChosen.changesImage === true)
+        this.handleSave(`Drawing`, false, false)
+      this.setState({ toolActive: false })
+    }
+  }
 
   handleResize(dw, dh, force = false)
   {

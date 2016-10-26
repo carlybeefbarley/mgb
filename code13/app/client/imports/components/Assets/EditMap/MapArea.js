@@ -9,7 +9,7 @@ import ImageLayer from '../Common/Map/Layers/ImageLayer.js'
 import ObjectLayer from '../Common/Map/Layers/ObjectLayer.js'
 
 import TileSet from '../Common/Map/Tools/TileSet.js'
-import Layers from '../Common/Map/Tools/Layers.js'
+import Layers from './Tools/Layers.js'
 import Properties from '../Common/Map/Tools/Properties.js'
 import ObjectList from '../Common/Map/Tools/ObjectList.js'
 

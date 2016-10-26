@@ -29,8 +29,10 @@ export const getImplicitBadgesForUser = function(user) {
 
 // QUICK HACK TO TEST BADGES
   if (_.includes('dgolds,stauzs,guntis'.split(','), user.profile.name))
-  {
     retval.push('guruCode')
+
+  if (_.includes('dgolds,stauzs,guntis,Supergirl,Micah'.split(','), user.profile.name))
+  {
     retval.push('hourOfDrawing')
     retval.push('tenHours')
   }
@@ -39,11 +41,8 @@ export const getImplicitBadgesForUser = function(user) {
     retval.push('guruMusic')
 
   if (_.includes('Micah'.split(','), user.profile.name))
-  {
     retval.push('guruArt')
-    retval.push('hourOfDrawing')
-    retval.push('tenHours')
-  }
+
   isUserSuperAdmin(user) && retval.push('mgbAdmin')
 //  user.profile.mgb1name && user.profile.mgb1name.length > 0 && retval.push("mgb1veteran")
 //  user.profile.avatar && user.profile.avatar.length > 0 && retval.push("hasAvatar")   // TODO: Fix this - it's wrong since we always do the gravatar hash

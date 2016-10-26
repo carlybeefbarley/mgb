@@ -2,15 +2,15 @@
 import _ from 'lodash'
 import React from 'react'
 
-import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
-
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import EditModes from '../../Common/Map/Tools/EditModes.js'
+import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
+import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
+
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import ActorValidator from '../../Common/ActorValidator.js'
 
 import ActorControls from './ActorControls.js'
-import ActorHelper from '../Helpers/ActorHelper.js'
 
 export default class ActorTool extends React.Component {
   /* lifecycle functions */
@@ -484,7 +484,7 @@ export default class ActorTool extends React.Component {
           <div className="content active actor-tileset-content">
             {!isValidForLayer && <div className="actor-disabled-hint">
               <em>{ts.name}</em> is not valid for selected layer <em>{layer.data.name}</em>
-              <small>{this.renderValidLayerInfo(checks, ts, layer.data.name)}</small>
+              <small>{this.renderValidLayerInfo(ActorHelper.checks, ts, layer.data.name)}</small>
             </div>}
             {this.renderContent(ts)}
           </div>

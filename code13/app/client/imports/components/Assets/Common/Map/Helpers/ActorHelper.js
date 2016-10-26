@@ -4,7 +4,8 @@
   actor => tileset + additional info
   tile => image
   */
-import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
+import TileHelper from './TileHelper.js'
+import ActorValidator from '../../ActorValidator.js'
 // 0 - jump
 // 1 - music
 const ACTION_IMAGE = '/api/asset/tileset/AymKGyM9grSAo3yjp';
@@ -306,10 +307,14 @@ export default ActorHelper = {
   },
 
   checks: {
-      Background: ts => ActorValidator.isValidForBG(ts.actor.databag),
-      Active:     ts => ActorValidator.isValidForActive(ts.actor.databag),
-      Foreground: ts => ActorValidator.isValidForFG(ts.actor.databag),
-      Events:     ts => ts.firstgid <= ActorHelper.TILES_IN_ACTIONS
+      Background: tileset => ActorValidator.isValidForBG(tileset.actor.databag),
+      Active:     tileset => ActorValidator.isValidForActive(tileset.actor.databag),
+      Foreground: tileset => ActorValidator.isValidForFG(tileset.actor.databag),
+      Events:     tileset => tileset.firstgid <= ActorHelper.TILES_IN_ACTIONS
+  },
+
+  getTilesetFromGid: (gid, tilesets) => {
+    return tilesets.find((ts) => ts.firstgid == gid )
   },
 
   loadActorSimple: function(asset, map){

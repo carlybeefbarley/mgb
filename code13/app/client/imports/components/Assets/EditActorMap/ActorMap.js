@@ -124,10 +124,21 @@ export default class MapArea extends BaseMapArea {
 
   setActiveLayer(id){
     super.setActiveLayer(id)
+    const l = this.getActiveLayer()
+
     // Events only for events layer...
     if(this.collection.length && this.collection[0].gid < ActorHelper.TILES_IN_ACTIONS){
-      const l = this.getActiveLayer()
       if(l && l.data.name != "Events"){
+        this.clearActiveSelection()
+      }
+    }
+
+    // clear selection also if selected tile is not valid
+    if(this.collection.length && this.collection[0].gid){
+      const tile = this.collection[0];
+      const ts = ActorHelper.getTilesetFromGid(tile.gid, this.data.tilesets)
+      // clean selection by default.. and if check fails
+      if(!ActorHelper.checks[l.data.name] || !ActorHelper.checks[l.data.name](ts)){
         this.clearActiveSelection()
       }
     }

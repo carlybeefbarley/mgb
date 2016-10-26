@@ -12,6 +12,54 @@
 
 const mgbReleaseInfo = {
   'releases': [
+
+    {
+      'timestamp': 'Wed Oct 26 2016 12:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1850'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.import',
+          'type': 'improvement',
+          'changeName': 'Added 1MB limit for imported Assets',
+          'changeSummary': 'An imported Asset must be less than 1MB now. If you have music files that are larger than this we suggest you resample them to a lower bitrate.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.deployment',
+          'type': 'feature',
+          'changeName': 'Deployment indicator',
+          'changeSummary': 'When a new update to MGB is being deployed, we show a spinning \'refresh\' icon to show that the page will be refreshed soon',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'Various UI improvements',
+          'changeSummary': 'Improved UI for License Selection, ActorMap Editor',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'improvement',
+          'changeName': 'Imoprovements for Actors and ActorMaps',
+          'changeSummary': 'Events tool has been separated from Actors tool. Various fixes.',
+          'otherUrls': [ ]
+        },
+
+      ]
+    },
+
+
     {
       'timestamp': 'Sat Oct 22 2016 20:30:00 GMT-0700 (PDT)',
 

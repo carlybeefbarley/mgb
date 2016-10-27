@@ -62,6 +62,7 @@ export default AssetPathDetail = React.createClass({
           }
           &nbsp;&nbsp;
           <QLink to={`/u/${ownerName}/assets`} query={{kinds: kind}}>
+            <i className={AssetKinds.getIconClass(kind)} />
             { AssetKinds.getName(kind) }
           </QLink>
           &nbsp;>&nbsp;

@@ -18,12 +18,11 @@ class EditGameForm extends BaseForm {
       <div className="ui form">
         {this.dropArea("Cover Graphic", "coverGraphic", "graphic", null, asset => {
           if (asset && asset.thumbnail)
-            this.props.handleSave(null, asset.thumbnail, "Updating thumbnail")
+            this.props.saveThumbnail(asset.thumbnail)
         })}
         { this.options("Game Type", 'gameType', gameTypes)}
         { this.data.gameType === 'codeGame' && this.dropArea("Starting Code", 'startCode', 'code' )}
         { this.data.gameType === 'actorMapGame' && this.dropArea("Starting ActorMap", 'startActorMap', 'actormap' )}
-
       </div>
     )
   }
@@ -38,7 +37,10 @@ export default class EditGame extends React.Component {
 
   render() {
     return (
-      <EditGameForm asset={this.props.asset} onchange={this.handleSave.bind(this)}/>
+      <EditGameForm 
+          asset={this.props.asset} 
+          onchange={this.handleSave.bind(this)} 
+          saveThumbnail={(d) => { this.props.handleContentChange(null, d, "Updating thumbnail") }} />
     )
   }
 }

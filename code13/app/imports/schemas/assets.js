@@ -85,7 +85,7 @@ export const AssetKinds = {
     explanation: 'A Graphic asset can be a simple image frame. It can also contain animations or TileMaps. Graphics can hold multiple animation frames, and can even be constructed using multiple layers for easier editing. Graphic Assets are used for all game art - game characters, backgrounds, map tiles etc'
   },
   "actor": {
-    name: "actor",
+    name: "Actor",
     selfPlural: false,
     disable: false,
     longName: "Actor",
@@ -95,7 +95,7 @@ export const AssetKinds = {
     explanation: 'Actors provide sets of rules you can modify in order to make the behaviors you want - player, NPC, item, bullet, trap, healthpack, etc. You define them using the Actor Editor, then place them on a special kind of map called an ActorMap (using the ActorMap Editor) in order to create complete games'
   },
   "actormap": {
-    name: "actorMap",
+    name: "ActorMap",
     selfPlural: false,
     disable: false,
     longName: "Map using Actors - makes games without coding",
@@ -197,7 +197,7 @@ export const AssetKinds = {
   "game": {
     name: "Game",
     selfPlural: false,
-    disable: true,
+    disable: false,
     longName: "Game definition",
     icon: "gamepad",
     requiresUserRole: null,

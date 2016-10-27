@@ -40,7 +40,7 @@ export default class EditGame extends React.Component {
       <EditGameForm 
           asset={this.props.asset} 
           onchange={this.handleSave.bind(this)} 
-          saveThumbnail={(d) => { this.props.handleContentChange(null, d, "Updating thumbnail") }} />
+          saveThumbnail={(d) => { this.props.handleContentChange(this.props.asset.content2, d, "Updating thumbnail") }} />
     )
   }
 }

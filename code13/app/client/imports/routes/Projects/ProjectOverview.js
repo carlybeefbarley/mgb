@@ -5,6 +5,7 @@ import QLink from '../QLink'
 import { Projects } from '/imports/schemas'
 import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET'
+import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import Helmet from 'react-helmet'
 import UserListRoute from '../Users/List'
@@ -99,6 +100,14 @@ export default ProjectOverview = React.createClass({
         </Grid.Column>
         
         <Grid.Column width={8}>
+          <Header as="h3" >Games in this Project</Header>
+          <Segment basic>
+            <GamesAvailableGET 
+                scopeToUserId={project.ownerId}
+                scopeToProjectName={project.name}
+                />
+          </Segment>
+          
           <Header as="h3" >Project Members</Header>
           <Segment basic>
             Project Members may create, edit or delete assets in this project &nbsp;        

@@ -1,54 +1,64 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
-import TileHelper from './../Helpers/TileHelper.js'
-import SelectedTile from './../Tools/SelectedTile.js'
-import EditModes from './../Tools/EditModes.js'
-import TileCollection from './../Tools/TileCollection.js'
-import LayerTypes from './../Tools/LayerTypes.js'
+import TileHelper from '../Helpers/TileHelper.js'
+import SelectedTile from '../Tools/SelectedTile.js'
+import EditModes from '../Tools/EditModes.js'
+import TileCollection from '../Tools/TileCollection.js'
+import LayerTypes from '../Tools/LayerTypes.js'
+
+import Camera from '../Camera.js'
 
 export default class AbstractLayer extends React.Component {
+  static propTypes = {
+    isActive: React.PropTypes.bool.isRequired,  // is this an active layer?
+    data: React.PropTypes.object.isRequired,    // layer data
+
+    camera: React.PropTypes.instanceOf(Camera).isRequired,
+
+    getEditMode: React.PropTypes.func.isRequired, // gets editing mode
+    setEditMode: React.PropTypes.func.isRequired, // sets editing mode
+  }
+
   /* lifecycle functions */
   constructor (...args) {
     super(...args)
+
     this.ctx = null
     this.mouseDown = false
 
+    this.isVisible = false
     this._mup = (e) => {
-      if (this.isActive()) {
+      if (this.props.isActive) {
         this.handleMouseUp(e)
       }
     }
     this._mov = (e) => {
-      if (this.isActive()) {
+      if (this.props.isActive) {
         this.handleMouseMove(e)
       }
     }
     this._kup = (e) => {
-      if (this.isActive()) {
+      if (this.props.isActive) {
         this._onKeyUp(e)
       }
     }
-
-    this.isVisible = false
   }
+
   componentDidMount () {
-    this.isVisible = true
     this.adjustCanvas()
     const canvas = this.refs.canvas
     this.ctx = canvas.getContext('2d')
+    this.isVisible = true
 
-    this.props.map.layers.push(this)
     window.addEventListener('mouseup', this._mup)
     window.addEventListener('keyup', this._kup)
     window.addEventListener('mousemove', this._mov)
   }
+
   componentWillUnmount () {
     this.isVisible = false
-    const index = this.props.map.layers.indexOf(this)
-    if (index > -1) {
-      this.props.map.layers.splice(index, 1)
-    }
+    
     window.removeEventListener('mouseup', this._mup)
     window.removeEventListener('keyup', this._kup)
     window.removeEventListener('mousemove', this._mov)
@@ -56,13 +66,13 @@ export default class AbstractLayer extends React.Component {
   // this layer has been selected
   activate () {
     if (this.activeMode) {
-      this.map.setMode(this.activeMode)
+      this.props.setEditMode(this.activeMode)
     }
   }
 
   // this layer has been deselected - called before another layer activate
   deactivate () {
-    this.activeMode = this.map.options.mode
+    this.activeMode = this.props.getEditMode()
   }
   /* endof lifecycle functions */
 
@@ -72,34 +82,27 @@ export default class AbstractLayer extends React.Component {
   get data () {
     return this.props.data
   }
-  get map () {
-    return this.props.map
-  }
 
   // this might get pretty slow and at some point there will be requirement for camera events
   get camera () {
+    return this.props.camera
+
+
     if (!this._camera) {
-      this._camera = Object.create(this.map.camera)
+      this._camera = Object.create(this.props.camera)
     }
-    this._camera.x = this.map.camera.x + this.options.x
-    this._camera.y = this.map.camera.y + this.options.y
-    this._camera.zoom = this.map.camera.zoom
+    this._camera.x = this.props.camera.x + this.options.x
+    this._camera.y = this.props.camera.y + this.options.y
+    this._camera.zoom = this.props.camera.zoom
     return this._camera
   }
   getInfo () {
     return 'Please set info! Override getInfo method@'+this.constructor.name;
   }
 
-  isActive () {
-    return this.options == this.map.data.layers[this.map.activeLayer]
-  }
-
   adjustCanvas () {
-    if (!this.map || !this.map.refs.mapElement) {
-      return
-    }
     const canvas = this.refs.canvas
-    const b = this.map.camera
+    const b = this.props.camera
     if (canvas.width != b.width) {
       canvas.width = b.width
     }
@@ -155,13 +158,13 @@ export default class AbstractLayer extends React.Component {
     }
   }
   _onKeyUp (e) {
-    if (this.isActive()) {
+    if (this.props.isActive) {
       this.onKeyUp && this.onKeyUp(e)
     }
   }
 
   render () {
-    return (<div ref='layer' className={this.isActive() ? 'tilemap-layer' : 'tilemap-layer no-events'} data-name={this.props.data.name}>
+    return (<div ref='layer' className={this.props.isActive ? 'tilemap-layer' : 'tilemap-layer no-events'} data-name={this.props.data.name}>
               <canvas
                 ref='canvas'
                 onMouseDown={this.handleMouseDown.bind(this)}

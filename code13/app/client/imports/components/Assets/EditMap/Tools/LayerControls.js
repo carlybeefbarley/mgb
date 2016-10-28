@@ -17,7 +17,7 @@ export default class LayerControls extends React.Component {
 
   get map () {
     const parent = this.props.layer
-    return parent.props.info.content.map
+    return parent.props.map
   }
   get options () {
     return this.map.meta.options
@@ -25,7 +25,7 @@ export default class LayerControls extends React.Component {
 
   addLayer (type) {
     const parent = this.props.layer
-    const map = parent.props.info.content.map
+    const map = parent.props.map
     const lss = map.data.layers
     map.saveForUndo('Add Layer')
 
@@ -49,7 +49,7 @@ export default class LayerControls extends React.Component {
 
   removeLayer () {
     const parent = this.props.layer
-    const map = parent.props.info.content.map
+    const map = parent.props.map
     const lss = map.data.layers
 
     map.saveForUndo('Remove Layer')
@@ -124,7 +124,7 @@ export default class LayerControls extends React.Component {
     </button>
     )
 
-    // TODO: ask David to get nice highlight layer icon - atm - paste was closest I could find
+    // TODO(dgolds): get nice highlight layer icon - atm - paste was closest I could find
     return (
       <div className='ui mini' style={{ position: 'relative', top: '-10px' }}>
         <div className='ui icon buttons mini' title='New Layer'>
@@ -145,12 +145,6 @@ export default class LayerControls extends React.Component {
           <button className={highlightClassName} onClick={this.highlightActiveLayerToggle.bind(this)} title='Highlight Active layer'>
             <i className='paste icon'></i>
           </button>
-          {/* moved to Map Tools
-                                                                                                                                                                                                                                                                                                                                          <button className={showGridClassName}
-                                                                                                                                                                                                                                                                                                                                                  onClick={this.showGridToggle.bind(this)}
-                                                                                                                                                                                                                                                                                                                                                  title="Show Grid"
-                                                                                                                                                                                                                                                                                                                                            ><i className="grid layout icon"></i>
-                                                                                                                                                                                                                                                                                                                                          </button> */}
         </div>
         <div className='ui icon buttons mini'>
           {rise}

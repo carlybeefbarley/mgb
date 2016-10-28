@@ -9,7 +9,7 @@ export default class Layers extends React.Component {
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
   }
   get map () {
-    return this.props.info.content.map
+    return this.props.map
   }
 
   handleClick (layerNum) {
@@ -40,10 +40,13 @@ export default class Layers extends React.Component {
   }
 
   render () {
+    if(!this.map){
+      return <div />
+    }
     let layers = []
 
     const data = this.map.data
-    const active = this.map.activeLayer
+    const active = this.map.state.activeLayer
     // layers goes from bottom to top - as first drawn layer will be last visible
     for (let i = data.layers.length - 1; i > -1; i--) {
       let className = 'icon'
@@ -66,7 +69,7 @@ export default class Layers extends React.Component {
       <div className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
+            <span className='explicittrigger'><i className='dropdown icon'></i> Layers</span>
           </div>
           <div className='active content menu'>
             <LayerControls layer={this} />

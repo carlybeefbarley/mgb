@@ -36,14 +36,14 @@ export default class TileSet extends React.Component {
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
 
     this.adjustCanvas()
-    this.props.info.content.map.tilesets.push(this)
+    this.props.map.tilesets.push(this)
     // racing condition!!!!
     // TODO: create global event handler with priorities
     window.addEventListener('mousemove', this.globalMouseMove, true)
     window.addEventListener('mouseup', this.globalMouseUp)
   }
   componentWillUnmount () {
-    const mapTilesets = this.props.info.content.map.tilesets
+    const mapTilesets = this.props.map.tilesets
     const index = mapTilesets.indexOf(this)
     if (index > -1) {
       mapTilesets.splice(mapTilesets.indexOf(this), 1)
@@ -52,7 +52,7 @@ export default class TileSet extends React.Component {
   /* endof lifecycle functions */
 
   get map () {
-    return this.props.info.content.map
+    return this.props.map
   }
   get data () {
     const map = this.map
@@ -62,7 +62,7 @@ export default class TileSet extends React.Component {
   }
   /* helpers */
   adjustCanvas () {
-    const map = this.props.info.content.map
+    const map = this.props.map
     const ts = map.data.tilesets[map.activeTileset]
     const canvas = this.refs.canvas
 
@@ -146,10 +146,9 @@ export default class TileSet extends React.Component {
     this.drawTiles()
   }
   selectTileset (tilesetNum) {
-    this.props.info.content.map.activeTileset = tilesetNum
+    this.props.map.activeTileset = tilesetNum
     this.adjustCanvas()
     this.drawTiles()
-    this.map.updateTools()
   }
   /* endof functionlity */
 
@@ -157,7 +156,7 @@ export default class TileSet extends React.Component {
   drawTiles () {
     this.prevTile = null
 
-    const map = this.props.info.content.map
+    const map = this.props.map
     // mas is not loaded
     if (!map.data) {
       return
@@ -197,7 +196,7 @@ export default class TileSet extends React.Component {
     if (clear) {
       this.ctx.clearRect(pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing), pal.w, pal.h)
     }
-    const map = this.props.info.content.map
+    const map = this.props.map
     const drawX = pos.x * (pal.ts.tilewidth + this.spacing)
     const drawY = pos.y * (pal.ts.tileheight + this.spacing)
     this.ctx.drawImage(pal.image,
@@ -221,7 +220,7 @@ export default class TileSet extends React.Component {
     }
   }
   highlightTile (e, force = false) {
-    const map = this.props.info.content.map
+    const map = this.props.map
     const ts = map.data.tilesets[map.activeTileset]
     if (!ts) {
       return
@@ -286,7 +285,7 @@ export default class TileSet extends React.Component {
     }
 
     const infolink = '/api/asset/tileset-info/' + data.asset._id
-    const map = this.props.info.content.map
+    const map = this.props.map
     const previousTileCount = this.data.tilecount;
     $.get(infolink, (data) => {
       this.refs.controls.updateTilesetFromData(data, this.data)
@@ -352,7 +351,7 @@ export default class TileSet extends React.Component {
       <div className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
+            <span className='explicittrigger'><i className='dropdown icon'></i> Tilesets</span>
           </div>
           {this.renderContent(false)}
         </div>
@@ -384,7 +383,10 @@ export default class TileSet extends React.Component {
     )
   }
   render () {
-    const map = this.props.info.content.map
+    if(!this.props.map){
+      return <div />
+    }
+    const map = this.props.map
     const tss = map.data.tilesets
     if (!tss.length) {
       return this.renderEmpty()
@@ -415,7 +417,7 @@ export default class TileSet extends React.Component {
             data-drop-text='Drop asset here to update tileset image'
             onDragOver={DragNDropHelper.preventDefault}
             onDrop={this.onDropChangeTilesetImage.bind(this)}>
-            <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
+            <span className='explicittrigger'><i className='dropdown icon'></i> Tilesets</span>
             <div className='ui simple dropdown top right basic grey below label item'
                  style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%', "minWidth": "50%", top: "-5px" }}>
               <i className='dropdown icon'></i>

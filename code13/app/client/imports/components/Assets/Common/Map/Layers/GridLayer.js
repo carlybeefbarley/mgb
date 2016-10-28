@@ -13,7 +13,7 @@ export default class GridLayer extends React.Component {
     this.ctx = canvas.getContext('2d')
     this.adjustCanvas()
     this.drawGrid()
-    this.alignToActiveLayer()
+    this.alignToLayer()
   }
   // align grid to active layer in preview mode
   shouldComponentUpdate () {
@@ -27,7 +27,7 @@ export default class GridLayer extends React.Component {
     }
     // remove this function from current stack - as layers are registering themselfes on DidMount
     setTimeout(() => {
-      this.alignToActiveLayer()
+      this.alignToLayer()
     }, 0)
 
     return false
@@ -50,25 +50,13 @@ export default class GridLayer extends React.Component {
     canvas.width = w
     canvas.height = h
     //this.ctx.clearRect(0,0,this.refs.canvas.width, this.refs.canvas.height)
-    this.alignToActiveLayer()
+    this.alignToLayer()
   }
 
-  alignToActiveLayer () {
-    const layerData = this.props.map.data.layers[this.props.map.activeLayer]
-    let index = 0
-    for (let i = 0; i < this.props.map.layers.length; i++) {
-      if (this.props.map.layers[i].props.data == layerData) {
-        index = i
-        break
-      }
-    }
-
-    const activeLayer = this.props.map.layers[index]
-    // why layer has no refs - just created and constructor isn't called???
-    if (activeLayer && activeLayer.refs.layer) {
-      // const style = getComputedStyle(activeLayer.refs.layer)
-      this.refs.layer.style['transform'] = activeLayer.refs.layer.style['transform']
-      this.refs.layer.style['z-index'] = activeLayer.refs.layer.style['z-index']
+  alignToLayer () {
+    if(this.props.layer) {
+      this.refs.layer.style['transform'] = this.props.layer.refs.layer.style['transform']
+      this.refs.layer.style['z-index'] = this.props.layer.refs.layer.style['z-index']
     }
   }
 
@@ -122,8 +110,8 @@ export default class GridLayer extends React.Component {
     this.ctx.stroke()
 
     let tilelayer = null, tw, th
-    if (data.layers.length && data.layers[this.props.map.activeLayer].type == 'tilelayer') {
-      tilelayer = data.layers[this.props.map.activeLayer]
+    if (this.props.layer && this.props.layer.data.type == 'tilelayer') {
+      tilelayer = this.props.layer.data
       tw = tilelayer.width; th = tilelayer.height
     }else {
       tw = data.width; th = data.height
@@ -162,7 +150,7 @@ export default class GridLayer extends React.Component {
               data-name='Grid'
               ref='layer'
               style={{zIndex: 2}}>
-              <canvas ref='canvas' style={{ width: '100%', height: '100%', display: 'block' }}>
+              <canvas ref='canvas' style={{ display: 'block' }}>
               </canvas>
             </div>)
   }

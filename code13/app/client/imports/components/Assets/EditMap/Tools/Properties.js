@@ -28,7 +28,7 @@ export default class Properties extends React.Component {
   // $(this.refs.holder).find("select").dropdown()
   }
   get map () {
-    return this.props.info.content.map
+    return this.props.map
   }
 
   get activeObject () {
@@ -247,7 +247,6 @@ export default class Properties extends React.Component {
         }
       }
     }, () => {
-      this.map.addLayerTool()
       this.map.redraw()
       this.map.save("Updating layer settings")
     })
@@ -312,12 +311,15 @@ export default class Properties extends React.Component {
   }
   handleClick (layerNum) {}
   render () {
+    if(!this.props.map){
+      return <div />
+    }
     const object = <div ref='object' style={{ display: this.activeObject ? 'block' : 'none' }}></div>
     return (
       <div className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
+            <span className='explicittrigger'><i className='dropdown icon'></i> Properties</span>
           </div>
           <div className='active content menu' ref='holder'>
             {object}

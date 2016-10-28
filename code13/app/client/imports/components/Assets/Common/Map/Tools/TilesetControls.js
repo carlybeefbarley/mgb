@@ -117,7 +117,7 @@ export default class TilesetControls extends React.Component {
   removeTileset () {
     const parent = this.props.tileset
     const map = parent.props.info.content.map
-    const tss = map.map.tilesets
+    const tss = map.data.tilesets
     const active = map.activeTileset
 
     map.activeTileset = 0

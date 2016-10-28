@@ -8,12 +8,27 @@ import TileCollection from './../Tools/TileCollection.js'
 import AbstractLayer from './AbstractLayer.js'
 import TileHelper from './../Helpers/TileHelper.js'
 
-const FLIPPED_HORIZONTALLY_FLAG = 0x80000000
-const FLIPPED_VERTICALLY_FLAG = 0x40000000
-const FLIPPED_DIAGONALLY_FLAG = 0x20000000
+import BaseMapArea from '../BaseMapArea.js'
 
 export default class TileMapLayer extends AbstractLayer {
   /* lifecycle functions */
+
+  static FLIPPED_HORIZONTALLY_FLAG = 0x80000000
+  static FLIPPED_VERTICALLY_FLAG = 0x80000000
+  static FLIPPED_DIAGONALLY_FLAG = 0x80000000
+
+  static propTypes = Object.assign({
+      // this need to be cleaned up
+      map: React.PropTypes.object.isRequired,
+
+      clearSelection: React.PropTypes.func.isRequired, // cleans map selection
+      clearTmpSelection: React.PropTypes.func.isRequired, // cleans temporary selection buffer
+    }, AbstractLayer.propTypes)
+
+  // TODO: get rid of map reference?
+  get map (){
+    return this.props.map
+  }
   constructor (...args) {
     super(...args)
     this.ctx = null
@@ -60,7 +75,7 @@ export default class TileMapLayer extends AbstractLayer {
   /* endof lifecycle functions */
 
   increaseSizeToTop(pos){
-    this.map.layers.forEach(l => {
+    this.props.layers.forEach(l => {
       l._increaseSizeToTop && l._increaseSizeToTop(pos)
     })
   }
@@ -69,7 +84,7 @@ export default class TileMapLayer extends AbstractLayer {
     for (let i = 0; i < this.options.width; i++) {
       this.options.data.unshift(0)
     }
-    this.options.y -= this.map.data.tileheight
+    this.options.y -= this.props.mapData.tileheight
     this.options.height++
     // adjust map to biggest layer
     if(this.map.data.height < this.options.height){
@@ -179,25 +194,25 @@ export default class TileMapLayer extends AbstractLayer {
 
   fixRotation (id) {
     if (this.ctrl.h == -1) {
-      this.options.data[id] |= FLIPPED_HORIZONTALLY_FLAG
+      this.options.data[id] |= TileMapLayer.FLIPPED_HORIZONTALLY_FLAG
     }
     if (this.ctrl.v == -1) {
-      this.options.data[id] |= FLIPPED_VERTICALLY_FLAG
+      this.options.data[id] |= TileMapLayer.FLIPPED_VERTICALLY_FLAG
     }
     if (this.ctrl.d) {
-      this.options.data[id] |= FLIPPED_DIAGONALLY_FLAG
+      this.options.data[id] |= TileMapLayer.FLIPPED_DIAGONALLY_FLAG
     }
   }
   tileWithRotation (id) {
     let ret = id
     if (this.ctrl.h == -1) {
-      ret |= FLIPPED_HORIZONTALLY_FLAG
+      ret |= TileMapLayer.FLIPPED_HORIZONTALLY_FLAG
     }
     if (this.ctrl.v == -1) {
-      ret |= FLIPPED_VERTICALLY_FLAG
+      ret |= TileMapLayer.FLIPPED_VERTICALLY_FLAG
     }
     if (this.ctrl.d) {
-      ret |= FLIPPED_DIAGONALLY_FLAG
+      ret |= TileMapLayer.FLIPPED_DIAGONALLY_FLAG
     }
     return ret
   }
@@ -330,13 +345,13 @@ export default class TileMapLayer extends AbstractLayer {
         }
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos)
 
-        tileId = d[i] & (~(FLIPPED_HORIZONTALLY_FLAG |
-          FLIPPED_VERTICALLY_FLAG |
-          FLIPPED_DIAGONALLY_FLAG))
+        tileId = d[i] & (~(TileMapLayer.FLIPPED_HORIZONTALLY_FLAG |
+          TileMapLayer.FLIPPED_VERTICALLY_FLAG |
+          TileMapLayer.FLIPPED_DIAGONALLY_FLAG))
 
-        this.drawInfo.h = (d[i] & FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-        this.drawInfo.v = (d[i] & FLIPPED_VERTICALLY_FLAG) ? -1 : 1
-        this.drawInfo.d = (d[i] & FLIPPED_DIAGONALLY_FLAG)
+        this.drawInfo.h = (d[i] & TileMapLayer.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
+        this.drawInfo.v = (d[i] & TileMapLayer.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
+        this.drawInfo.d = (d[i] & TileMapLayer.FLIPPED_DIAGONALLY_FLAG)
 
         pal = palette[tileId]
         if (pal) {
@@ -525,13 +540,14 @@ export default class TileMapLayer extends AbstractLayer {
         let gid = sel.gid
         // TODO: Feature: tiled rotates all selection also instead of tiles only
         /*if(map.collection.length > 1) {
-          this.drawInfo.h = (gid & FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-          this.drawInfo.v = (gid & FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1
-          this.drawInfo.d = (gid & FLIPPED_DIAGONALLY_FLAG  )
+          this.drawInfo.h = (gid & TileMapLayer.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
+          this.drawInfo.v = (gid & TileMapLayer.FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1
+          this.drawInfo.d = (gid & TileMapLayer.FLIPPED_DIAGONALLY_FLAG  )
         }*/
-        gid &= (~(FLIPPED_HORIZONTALLY_FLAG |
-          FLIPPED_VERTICALLY_FLAG |
-          FLIPPED_DIAGONALLY_FLAG))
+        gid &= (~(TileMapLayer.FLIPPED_HORIZONTALLY_FLAG |
+          TileMapLayer.FLIPPED_VERTICALLY_FLAG |
+          TileMapLayer.FLIPPED_DIAGONALLY_FLAG)
+        )
 
         pal = palette[gid]
         // draw tile image only when stamp mode is active
@@ -581,11 +597,11 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   drawSelection (tmp) {
-    if (!this.isActive()) {
+    if (!this.props.isActive) {
       return
     }
     const map = this.map
-    const ts = map.data.tilesets[map.activeTileset]
+    const ts = map.data.tilesets[map.state.activeTileset]
     const palette = map.palette
 
     let sel
@@ -596,15 +612,15 @@ export default class TileMapLayer extends AbstractLayer {
         continue
       }
 
-      let gid = sel.gid & (~(FLIPPED_HORIZONTALLY_FLAG |
-        FLIPPED_VERTICALLY_FLAG |
-        FLIPPED_DIAGONALLY_FLAG))
+      let gid = sel.gid & (~(TileMapLayer.FLIPPED_HORIZONTALLY_FLAG |
+        TileMapLayer.FLIPPED_VERTICALLY_FLAG |
+        TileMapLayer.FLIPPED_DIAGONALLY_FLAG))
 
       const pal = palette[gid]
       if (pal) {
-        this.drawInfo.h = (sel.gid & FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-        this.drawInfo.v = (sel.gid & FLIPPED_VERTICALLY_FLAG) ? -1 : 1
-        this.drawInfo.d = (sel.gid & FLIPPED_DIAGONALLY_FLAG)
+        this.drawInfo.h = (sel.gid & TileMapLayer.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
+        this.drawInfo.v = (sel.gid & TileMapLayer.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
+        this.drawInfo.d = (sel.gid & TileMapLayer.FLIPPED_DIAGONALLY_FLAG)
 
         this.ctx.globalAlpha = 0.5
         this.drawTile(pal, sel, map.spacing)
@@ -632,11 +648,11 @@ export default class TileMapLayer extends AbstractLayer {
     this.mouseDown = false
     if (e.target == this.refs.canvas) {
       this.lastEvent = nat
-      if (edit[this.map.options.mode]) {
+      if (edit[this.props.getEditMode()]) {
         if (!this.options.visible) {
           return
         }
-        edit[this.map.options.mode].call(this, nat, true)
+        edit[this.props.getEditMode()].call(this, nat, true)
       }else {
         edit.debug.call(this, nat, true)
       }
@@ -651,12 +667,12 @@ export default class TileMapLayer extends AbstractLayer {
     this.tilePosInfo = this.getTilePosInfo(e)
 
     this.isMouseOver = true
-    if (edit[this.map.options.mode]) {
+    if (edit[this.props.getEditMode()]) {
       // not visible
       if (!this.options.visible) {
         return
       }
-      edit[this.map.options.mode].call(this, nat)
+      edit[this.props.getEditMode()].call(this, nat)
     }else {
       edit.debug.call(this, nat)
     }
@@ -665,10 +681,10 @@ export default class TileMapLayer extends AbstractLayer {
     const nat = e.nativeEvent ? e.nativeEvent : e
     this.lastEvent = null;
     this.isMouseOver = false
-    this.map.tmpSelection.clear()
+    this.props.clearTmpSelection()
     //this.lastEvent = nat
     if (this.isDirtySelection) {
-      this.map.selection.clear()
+      this.props.clearSelection()
     }
 
     this.drawTiles()
@@ -679,7 +695,7 @@ export default class TileMapLayer extends AbstractLayer {
     /*if (w == 'X'.charCodeAt(0)) {
       this.flip()
     }*/
-    if (e.which == 46) {
+    /*if (e.which == 46) {
       if (this.map.selection.length) {
         this.map.saveForUndo('Delete selection')
       }
@@ -689,7 +705,7 @@ export default class TileMapLayer extends AbstractLayer {
       }
     }
     this.map.forceUpdate()
-    this.draw()
+    this.draw()*/
   }
   /* end of events */
 

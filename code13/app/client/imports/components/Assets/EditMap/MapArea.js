@@ -8,11 +8,6 @@ import GridLayer from '../Common/Map/Layers/GridLayer.js'
 import ImageLayer from '../Common/Map/Layers/ImageLayer.js'
 import ObjectLayer from '../Common/Map/Layers/ObjectLayer.js'
 
-import TileSet from '../Common/Map/Tools/TileSet.js'
-import Layers from './Tools/Layers.js'
-import Properties from '../Common/Map/Tools/Properties.js'
-import ObjectList from '../Common/Map/Tools/ObjectList.js'
-
 import TileHelper from '../Common/Map/Helpers/TileHelper.js'
 import ObjectHelper from '../Common/Map/Helpers/ObjectHelper.js'
 
@@ -49,34 +44,9 @@ export default class MapArea extends BaseMapArea {
   componentDidMount () {
     super.componentDidMount()
     this.fullUpdate(() => {
-      this.isLoading = false
+      this.setState({isLoading: false})
     })
   }
-
-  /*
-   * TODO: move tools to the EditMap.js
-   * MapArea should not handle tools
-   * */
-  addLayerTool () {
-    this.addTool('Layers', 'Layers', {map: this}, Layers)
-  }
-  addTileSetTool () {
-    this.addTool('Tileset', 'Tilesets', {map: this}, TileSet)
-  }
-  addPropertiesTool () {
-    this.addTool('Properties', 'Properties', {map: this}, Properties, true)
-  }
-  addObjectTool () {
-    this.addTool('Objects', 'Object List', {map: this}, ObjectList, true)
-  }
-
-  addTools () {
-    this.addLayerTool()
-    this.addTileSetTool()
-    this.addPropertiesTool()
-    this.addObjectTool()
-  }
-
 
   /* events */
   importFromDrop (e) {
@@ -121,58 +91,11 @@ export default class MapArea extends BaseMapArea {
       })
     }
   }
-  /* endof events */
-  renderMap () {
-    const data = this.data
-    const layers = []
-    layers.length = 0
-    if (!data || !data.layers) {
-      return (<div className='map-empty' ref='mapElement' />)
-    }else {
-      let i = 0
-      for (; i < data.layers.length; i++) {
-        if (!data.layers[i].visible) {
-          continue
-        }
-        if (data.layers[i].type == LayerTypes.tile) {
-          layers.push(<TileMapLayer
-            data={data.layers[i]}
-            key={i}
-            anotherUsableKey={i}
-            map={this}
-            active={this.activeLayer == i} />)
-        }
-        else if (data.layers[i].type == LayerTypes.image) {
-          layers.push(<ImageLayer
-            data={data.layers[i]}
-            key={i}
-            map={this}
-            anotherUsableKey={i}
-            active={this.activeLayer == i} />)
-        }
-        else if (data.layers[i].type == LayerTypes.object) {
-          layers.push(<ObjectLayer
-            data={data.layers[i]}
-            key={i}
-            map={this}
-            anotherUsableKey={i}
-            active={this.activeLayer == i} />)
-        }
-      }
-      layers.push(
-        <GridLayer map={this} key={i} ref='grid' />
-      )
-      // TODO: adjust canvas size
-      return (
-        <div ref='mapElement' onContextMenu={e => {
-                                       e.preventDefault(); return false;}} style={{ /*width: (640)+"px",*/ height: (640) + 'px', position: 'relative', margin: '10px 0' }}>
-          {layers}
-        </div>
-      )
-    }
-  }
 
   render () {
+    if(this.state.isLoading){
+      return this.renderLoading()
+    }
     return (
       <div
         className='tilemap-wrapper'

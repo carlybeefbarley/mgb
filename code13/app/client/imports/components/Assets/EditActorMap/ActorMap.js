@@ -26,7 +26,6 @@ export default class MapArea extends BaseMapArea {
 
   constructor (props) {
     super(props)
-    this.isLoading = true
   }
 
   set data(val){
@@ -66,7 +65,7 @@ export default class MapArea extends BaseMapArea {
   }
 
   buildMap(cb) {
-    this.isLoading = true;
+    this.setState({isLoading: true})
     const names = {
       map: this.props.asset.name,
       user: this.props.asset.dn_ownerName
@@ -74,7 +73,7 @@ export default class MapArea extends BaseMapArea {
     ActorHelper.v1_to_v2(this.props.asset.content2, names, (md) => {
       this._data = md
       cb && cb()
-      this.isLoading = false;
+      this.setState({isLoading: false})
     })
   }
 
@@ -194,17 +193,8 @@ export default class MapArea extends BaseMapArea {
   }
 
   render () {
-    if(this.isLoading){
-      return (<div className="noScrollbarDiv"
-                   style={{
-                   "position": "fixed",
-                   "top": "40px", "bottom": "0px", "left": "60px",
-                    "right": "345px", "overflow": "auto", "marginBottom": "0px"}}>
-                <div style={{"padding": "0px", "height": "auto"}}>
-                  <div className="ui basic segment" style={{"minHeight": "15em"}}>
-                    <div className="ui active inverted dimmer">
-                      <div className="ui text indeterminate loader">Loading</div>
-                    </div><p></p></div></div></div>)
+    if(this.state.isLoading){
+      return this.renderLoading()
     }
 
     if(this.state.isPlaying){

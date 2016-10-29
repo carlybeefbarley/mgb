@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react'
 import { Segment } from 'semantic-ui-react'
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
+import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
+
+// TODO - I will soon change this to play using the Game asset instead of the startname
 
 const _fetchAssetByUri = uri => {
   var promise = new Promise( function (resolve, reject) {
@@ -19,19 +22,22 @@ const _fetchAssetByUri = uri => {
 }
 
 
-
-const Hack = props => 
+const PlayActorGame = ( { params, user } ) => 
 {
-  const { params, user, currUser } = props
-
   // const mapName = params.map || 'mechanix2.Classic Three Block Puzzle'
-  const mapName = params.map ||   'mrGum.Bus Innards' //'mrGum.Bus Loop'   // 'mechanix3.Start Game Demos'
+  const _mapName = params.gamename
+
+  if (!_mapName || _mapName === '')
+    return <ThingNotFound type='ActorGame' id='""' />
+
+  const colonPlace = _mapName.search(':')
+  const [ ownerName, mapName ] = colonPlace == -1 ? [ user.profile.name, _mapName ] : [ _mapName.slice(0, colonPlace) , _mapName.slice(colonPlace+1)]
 
   return (
     <Segment basic padded>
       <Mage 
-          ownerName={user.profile.name}
-          startMapName={params.map || mapName}
+          ownerName={ownerName}
+          startMapName={mapName}
           isPaused={false}
           fetchAssetByUri={ uri => _fetchAssetByUri(uri) }
       />
@@ -39,9 +45,9 @@ const Hack = props =>
   )
 }
 
-Hack.propTypes = {
-  params: PropTypes.object,             // params.id is the USER id  OR  params.username is the username
-  user: PropTypes.object,               // This is the related user record. We list the projects for this user
-  currUser: PropTypes.object            // Currently Logged in user. Can be null
+PlayActorGame.propTypes = {
+  params: PropTypes.object,             // params.id is the USER id  OR  params.username is the username; patrams.gamename is the game starting map NAME.. It may have a colon for username:mapname
+  user: PropTypes.object                // This is the related user record. We list the projects for this user
 }
-export default Hack
+
+export default PlayActorGame

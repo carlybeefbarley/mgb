@@ -5,22 +5,23 @@ import { Router, Route, NotFoundRoute, browserHistory } from 'react-router'
 import App from './App'
 import Home from './Home'
 import Import from './Import'
+import PlayActorGame from './PlayActorGame'
 import GetStarted from './GetStarted'
 import GetStartedSkills from './GetStartedSkills'
 import GetStartedGames from './GetStartedGames'
+
 import Users from './Users'
 import Azzets from './Assets'
 import Projects from './Projects'
 
-import NotFoundPage from './NotFoundPage'
 import urlMaker from './urlMaker'
+import NotFoundPage from './NotFoundPage'
 import WhatsNewRoute from './WhatsNewRoute'
 import Roadmap from './Roadmap'
 
 import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
 
-import Hack from './Hack'
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -45,7 +46,7 @@ Meteor.startup(function () {
     <Router  history={browserHistory}>
       <Route component={App}>
 
-        <Route path='/u/:username/hack' component={Hack} name='DG HACK PAGE' />
+        <Route path='/u/:username/play/actorGame/:gamename' component={PlayActorGame} name='Play Game' />
       
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />

@@ -1,6 +1,6 @@
 import options from './ActorOptions.js'
 
-export default validator = {
+const validator = {
   hasConditionalBehavior: (databag) => {
     return databag.itemOrNPC.appearIf && databag.itemOrNPC.appearIf != options.appearIf['No condition'];
   },
@@ -63,3 +63,5 @@ export default validator = {
       && databag.item.itemActivationType == options.itemActivationType['Inactive']
   }
 }
+
+export default validator

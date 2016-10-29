@@ -2,64 +2,69 @@ import React from 'react'
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
 
+// This partial class uses the following React props..
+  // propTypes: {
+  //   onchange: PropTypes.func,       // onchange handler for field. NOT same as onChange!! Beware!
+  //   asset:    PropTypes.object      // an Asset - this is needed for the 
+  // }
+
+// For best visuals also define an alignment for the form labels.. for example a css with
+  // .edit-game .form .inline > label {
+  //     min-width: 30% !important;
+  //     text-align: right !important;
+  // }
+
+
 export default class BaseForm extends React.Component {
 
-  componentDiDMount(){
-
-  }
-  options(name, key, options, props = {}){
-    const val = this.data[key];
-    if(val === void(0)){
+  options( name, key, options, fieldOptions = {} ) {
+    const val = this.data[key]
+    if (val === void(0))
       console.warn("value not defined for:", name + '[' + key + ']')
-    }
 
     return (
-      <div className={"inline fields" + (props.disabled ? " disabled": "") } title={props && props.title}>
+      <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
         <SmallDD options={options} onchange={(val) => {
           this.data[key] = val
-
           this.props.onchange && this.props.onchange()
-        }} {...props} value={val} />
+        }} {...fieldOptions} value={val} />
       </div>
     )
   }
-  bool(name, key, props = {}){
-    let checked = !!parseInt(this.data[key], 10)
+
+  bool (name, key, fieldOptions = {} ) {
+    const checked = !!parseInt(this.data[key], 10)
     return (
-      <div className={"inline fields" + (props.disabled ? " disabled": "") }>
+      <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") }>
         <label>{name}</label>
         <div className="ui toggle checkbox" ref={(b) => {$(b).checkbox()}} onClick={() => {
-          checked = !checked
-
-          const val = checked ? "1" : "0"
+          const val = !checked ? "1" : "0"
           this.data[key] = val
-          console.log("change", val)
           this.props.onchange && this.props.onchange()
-
         }}>
           <input type="checkbox" name={key} tabIndex="0" className="hidden" ref="checkbox" checked={checked} onChange={(val) => {
             this.data[key] = val
-            console.log("change", val)
             this.props.onchange && this.props.onchange()
           }} />
         </div>
       </div>
     )
   }
-  text(name, key, type, props = {}){
+
+  text( name, key, type, fieldOptions = {} ) {
     return (
-      <div className={"inline fields" + (props.disabled ? " disabled": "") } title={props && props.title}>
+      <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
-        <input  {...props} placeholder={name} type={type == void(0) ? "text" : type} value={this.data[key]} onChange={(e) => {
+        <input {...fieldOptions} placeholder={name} type={type == void(0) ? "text" : type} value={this.data[key]} onChange={(e) => {
           const val = e.target.value
-          if(type == "number"){
-            if(props.min != void(0) && parseInt(val, 10) < props.min){
-              e.target.value = props.min
+          if (type == "number") {
+            if (fieldOptions.min != void(0) && parseInt(val, 10) < fieldOptions.min) {
+              e.target.value = fieldOptions.min
               return
             }
-            if(props.max != void(0) && parseInt(val, 10) > props.max){
-              e.target.value = props.max
+            if (fieldOptions.max != void(0) && parseInt(val, 10) > fieldOptions.max) {
+              e.target.value = fieldOptions.max
               return
             }
           }
@@ -69,9 +74,10 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-  textArea(name, key, props = {}){
+
+  textArea (name, key, fieldOptions = {} ) {
     return (
-      <div className={"inline fields" + (props.disabled ? " disabled": "") } title={props && props.title}>
+      <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
         <textarea rows="3" onChange={(e) => {
             const val = e.target.value
@@ -81,12 +87,13 @@ export default class BaseForm extends React.Component {
       </div>
     )
   }
-  dropArea(name, key, kind, props , cb = null){
-    props = props || {}
+
+  dropArea (name, key, kind, fieldOptions, cb = null) {
+    fieldOptions = fieldOptions || {}
     return (
-      <div className={"inline fields" + (props.disabled ? " disabled": "") } title={props && props.title}>
+      <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
-        <DropArea kind={kind} {...props} value={this.data[key]} asset={this.props.asset} onChange={(val, asset) => {
+        <DropArea kind={kind} {...fieldOptions} value={this.data[key]} asset={this.props.asset} onChange={(val, asset) => {
           this.data[key] = val
           this.props.onchange && this.props.onchange()
           cb && cb(asset)

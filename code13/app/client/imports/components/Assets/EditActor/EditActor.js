@@ -2,66 +2,20 @@ import React from 'react'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import './EditActor.css'
 import getDefaultActor from './getDefaultActor.js'
-//import Forms from './Forms'
+
 import templates from './TemplateDiffs.js'
+
 import ActorValidator from '../Common/ActorValidator.js'
-import options from '../Common/ActorOptions.js'
-
-var _diff = function(o2, o1 = edit_actor.props.asset.content2.databag){
-  const ret = {}
-  for(let i in o2){
-    if(o1[i] === void(0)){
-      continue;
-    }
-
-    if(typeof o1[i] === "object"){
-      const d = diff(o2[i], o1[i])
-      if(Object.keys(d).length > 0){
-        ret[i] = d;
-      }
-    }
-    else{
-      if(o1[i] != o2[i]){
-        ret[i] = o2[i]
-      }
-    }
-  }
-  return ret;
-}
-// this creates objects with o2 keys/vals that don't match o1
-window.diff = function(o2, o1 = edit_actor.props.asset.content2.databag){
-  const ret = {}
-  for(let i in o2){
-    if(o1[i] === void(0)){
-      continue;
-    }
-
-    if(typeof o1[i] === "object"){
-      const d = _diff(o2[i], o1[i])
-      if(Object.keys(d).length > 0){
-        ret[i] = d;
-      }
-    }
-    else{
-      if(o1[i] != o2[i]){
-        ret[i] = o2[i]
-      }
-    }
-  }
-  return JSON.stringify(ret);
-}
-
-
+import actorOptions from '../Common/ActorOptions.js'
 
 import Tabs from './Tabs.js'
-
 import FormsAll from './Forms/All'
+import Spawning from './Forms/Spawning'
 import Animations from './Forms/Animations'
-import CharacterBehavior from './Forms/CharacterBehavior'
+import Conditions from './Forms/Conditions'
 import NPCBehavior from './Forms/NPCBehavior'
 import ItemBehavior from './Forms/ItemBehavior'
-import Conditions from './Forms/Conditions'
-import Spawning from './Forms/Spawning'
+import CharacterBehavior from './Forms/CharacterBehavior'
 
 export default class EditActor extends React.Component {
   constructor(...props) {
@@ -71,6 +25,7 @@ export default class EditActor extends React.Component {
   }
 
   getUser() {
+    debugger  // is this used?
     return this.props.currUser.profile.name
   }
 
@@ -83,12 +38,9 @@ export default class EditActor extends React.Component {
 
   componentDidMount() {
     this.doSnapshotActivity()
-    //console.log(this.props.asset)
-    //this.fixAsset()
   }
 
   handleSave(reason, thumbnail) {
-    //console.log("Pretending... Saving....")
     this.props.handleContentChange(this.props.asset.content2, thumbnail, reason)
   }
 
@@ -109,8 +61,8 @@ export default class EditActor extends React.Component {
       {
         tab: "Character Behavior",
         disabled: (
-          databag.all.actorType == options.actorType['Item, Wall or Scenery']
-            || databag.all.actorType == options.actorType['Shot']
+          databag.all.actorType == actorOptions.actorType['Item, Wall or Scenery']
+            || databag.all.actorType == actorOptions.actorType['Shot']
         ),
         content: <CharacterBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
@@ -119,9 +71,9 @@ export default class EditActor extends React.Component {
       {
         tab: "NPC Behavior",
         disabled: (
-          databag.all.actorType == options.actorType['Player']
-            || databag.all.actorType == options.actorType['Item, Wall or Scenery']
-            || databag.all.actorType == options.actorType['Shot']
+          databag.all.actorType == actorOptions.actorType['Player']
+            || databag.all.actorType == actorOptions.actorType['Item, Wall or Scenery']
+            || databag.all.actorType == actorOptions.actorType['Shot']
         ),
         content: <NPCBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
@@ -130,9 +82,9 @@ export default class EditActor extends React.Component {
       {
         tab: "Item Behavior",
         disabled: (
-          databag.all.actorType == options.actorType['Player']
-            || databag.all.actorType == options.actorType['Non-Player Character (NPC)']
-            || databag.all.actorType == options.actorType['Shot']
+          databag.all.actorType == actorOptions.actorType['Player']
+            || databag.all.actorType == actorOptions.actorType['Non-Player Character (NPC)']
+            || databag.all.actorType == actorOptions.actorType['Shot']
         ),
         content: <ItemBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
@@ -141,8 +93,8 @@ export default class EditActor extends React.Component {
       {
         tab: "Destruction / Spawning",
         disabled: (
-          databag.all.actorType == options.actorType['Player']
-          || databag.all.actorType == options.actorType['Shot']
+          databag.all.actorType == actorOptions.actorType['Player']
+          || databag.all.actorType == actorOptions.actorType['Shot']
         ),
         content: <Spawning asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
@@ -151,8 +103,8 @@ export default class EditActor extends React.Component {
       {
         tab: "Conditions",
         disabled: (
-          databag.all.actorType == options.actorType['Player']
-          || databag.all.actorType == options.actorType['Shot']
+          databag.all.actorType == actorOptions.actorType['Player']
+          || databag.all.actorType == actorOptions.actorType['Shot']
         ),
         content: <Conditions asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
@@ -480,37 +432,34 @@ export default class EditActor extends React.Component {
     ]
   }
 
-
-  handleModal(show, v){
-    this.modal = v;
-    if(show){
-      $(v)
-        // technically we can allow to close - then user will end up with player template
-        .modal('setting', 'closable', false)
+  handleModal(show, v) {
+    this.modal = v
+    if (show) {
+      $(v)        
+        .modal('setting', 'closable', false)  // technically we can allow close - then user will end up with default player template
         .modal("show")
     }
   }
-  handleTemplateClick(e){
-    if(e.target.dataset.template){
-      console.log("click on image!", e.target.dataset.template);
+
+  handleTemplateClick(e) {
+    if (e.target.dataset.template) {
       this.loadTemplate(e.target.dataset.template)
       this.handleSave("Initial Template selected")
     }
   }
-  loadTemplate(tpl){
+
+  loadTemplate(tpl) {
     // force defaults
     this.props.asset.content2 = getDefaultActor()
 
     const t = templates[tpl]
     const d = this.props.asset.content2.databag
-    const merge = (a, b) => {
-      for(let i in a){
-        if(typeof b[i] == "object"){
-          merge(a[i], b[i]);
-        }
-        else{
-          b[i] = a[i]
-        }
+    const merge = (a, b) => {     // Is this different from things like _.merge or Object.Assign()
+      for (let i in a) {
+        if (typeof b[i] == "object") 
+          merge(a[i], b[i])
+        else
+          b[i] = a[i]        
       }
     }
 
@@ -518,6 +467,7 @@ export default class EditActor extends React.Component {
     $(this.modal).modal("hide")
     this.forceUpdate()
   }
+
   render() {
     const { asset } = this.props
     if (!asset)
@@ -551,3 +501,49 @@ export default class EditActor extends React.Component {
     )
   }
 }
+
+// This is for dev debugging from JS console.
+
+// var _diff = function(o2, o1 = edit_actor.props.asset.content2.databag){
+//   const ret = {}
+//   for(let i in o2){
+//     if(o1[i] === void(0)){
+//       continue;
+//     }
+
+//     if(typeof o1[i] === "object"){
+//       const d = diff(o2[i], o1[i])
+//       if(Object.keys(d).length > 0){
+//         ret[i] = d;
+//       }
+//     }
+//     else{
+//       if(o1[i] != o2[i]){
+//         ret[i] = o2[i]
+//       }
+//     }
+//   }
+//   return ret;
+// }
+// // this creates objects with o2 keys/vals that don't match o1
+// window.diff = function(o2, o1 = edit_actor.props.asset.content2.databag){
+//   const ret = {}
+//   for(let i in o2){
+//     if(o1[i] === void(0)){
+//       continue;
+//     }
+
+//     if(typeof o1[i] === "object"){
+//       const d = _diff(o2[i], o1[i])
+//       if(Object.keys(d).length > 0){
+//         ret[i] = d;
+//       }
+//     }
+//     else{
+//       if(o1[i] != o2[i]){
+//         ret[i] = o2[i]
+//       }
+//     }
+//   }
+//   return JSON.stringify(ret);
+// }

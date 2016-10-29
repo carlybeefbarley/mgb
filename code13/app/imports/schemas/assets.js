@@ -46,10 +46,22 @@ var schema = {
 
   workState: String,  // A value matching a key from workStates.js
   content: String,    // depends on asset type
-  content2: Object,   // THIS IS NOT IN PREVIEW SUBSCRIPTIONS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field such as 'content'
-  thumbnail: String,  // data-uri base 64 of thumbnail image (for example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
+  content2: Object,   // THIS IS NOT IN PREVIEW SUBSCRIPTIONS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field: metadata
+  thumbnail: String,  // Can be data-uri base 64 of thumbnail image (for example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==") OR a link to an external URL
 
-  isUnconfirmedSave: Boolean,   // This is Set on client as True (isSimulation). This is set on server as False (isSimulation)
+
+  // Metadata field wwas added 10/29/2016 so earlier objects do NOT have it.
+  // The 'metdata' field is intended for a SMALL subset of data that is important for good asset-preview (previews exclude 'content2').
+  // The fields are asset-kind-specific. Examples of metadata would be
+  //   graphic: framecounts, image sizes
+  //   game:    playCounts,  etc.
+  //   actor:   actorTypeIndex, 
+
+  metadata: Object,   
+
+  // The isUnconfirmedSave field is used to disambiguate pending vs saved data on the client.
+  // See https://www.discovermeteor.com/blog/advanced-latency-compensation/
+  isUnconfirmedSave: Boolean,   // This is set on client as True (isSimulation) and will have that value until the server responds with the authoritative data - This is set on server as False (isSimulation)
 
   // Various Asset flags
   isCompleted: Boolean,     // This supports the 'is stable' flag
@@ -323,6 +335,7 @@ Meteor.methods({
     if (!data.projectNames)
       data.projectNames = []
     data.thumbnail = data.thumbnail || ""
+    data.metadata = data.metadata || {}
     data.assetLicense = data.assetLicense || defaultAssetLicense
     data.isUnconfirmedSave = this.isSimulation
     // TODO: this will get moved
@@ -370,6 +383,7 @@ Meteor.methods({
       content: optional(schema.content),
       content2: optional(schema.content2),
       thumbnail: optional(schema.thumbnail),
+      metadata: optional(schema.metadata),
       isUnconfirmedSave: optional(schema.isUnconfirmedSave),
 
       isCompleted: optional(schema.isCompleted),

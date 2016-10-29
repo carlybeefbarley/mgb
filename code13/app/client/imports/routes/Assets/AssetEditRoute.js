@@ -24,10 +24,9 @@ import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDe
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
+const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
-const FLUSH_TIMER_INTERVAL_MS = 6000    // Milliseconds between timed flush attempts
-
-const fAllowSuperAdminToEditAnything = false // PUT IN SERVER POLICY
+const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
 
 // This AssetEditRoute serves the following objectives
 // 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset
@@ -73,15 +72,15 @@ export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,           // params.assetId is the ASSET id
-    user: PropTypes.object,
-    currUser: PropTypes.object,
-    currUserProjects: PropTypes.array,  // Both Owned and memberOf. Check ownerName / ownerId fields to know which
-    isSuperAdmin: PropTypes.bool,       
-    ownsProfile: PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
-    showToast: PropTypes.func           // For user feedback
+    params:           PropTypes.object,      // params.assetId is the ASSET id
+    user:             PropTypes.object,
+    currUser:         PropTypes.object,
+    currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
+    isSuperAdmin:     PropTypes.bool,       
+    ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
+    showToast:        PropTypes.func         // For user feedback
   },
-    
+
   contextTypes: {
     urlLocation: React.PropTypes.object
   },
@@ -294,6 +293,7 @@ export default AssetEditRoute = React.createClass({
             canEdit={canEd} 
             currUser={currUser}
             handleContentChange={this.deferContentChange}
+            handleMetadataChange={this.handleMetadataChange}
             editDeniedReminder={this.handleEditDeniedReminder}
             activitySnapshots={this.data.activitySnapshots} 
           />
@@ -310,10 +310,14 @@ export default AssetEditRoute = React.createClass({
   },
 
 
-  // See comment at top of file for format of m_deferredSaveObj
+  // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are slowest. 
+  // TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for now since we don't 
+  //       touch asset.metadata in this method
   deferContentChange(content2Object, thumbnail, changeText="content change")
   {
     const asset = this.data.asset   // TODO: Change interface so this gets passed in instead?
+
+    const old_deferredSaveObj = this.m_deferredSaveObj
 
     if (this.m_deferredSaveObj)
     {
@@ -322,17 +326,39 @@ export default AssetEditRoute = React.createClass({
     }
     this.m_deferredSaveObj = {
       assetId: asset._id,
-      content2Object: content2Object, 
-      thumbnail: thumbnail, 
       changeText: changeText,
       timeOfLastChange: new Date()
     }
-    this.forceUpdate()  // Yuck, but I have to, coz I can't put a deferral data structure in this.state
+    if (content2Object)
+      this.m_deferredSaveObj.content2Object = content2Object
+    if (thumbnail)
+      this.m_deferredSaveObj.thumbnail = thumbnail
+    
+    if (old_deferredSaveObj && old_deferredSaveObj.assetId === asset._id)
+    {
+      // Look for nuked fields
+
+      // 1. Thumbnail
+      if (old_deferredSaveObj.thumbnail && old_deferredSaveObj.thumbnail !== '' && !thumbnail)
+      {
+        console.log('deferContentChange: reinstating thumbnail for asset: ', old_deferredSaveObj.thumbnail)
+        this.m_deferredSaveObj.thumbnail = old_deferredSaveObj.thumbnail
+      }
+
+      // 2. content2Object
+      if (old_deferredSaveObj.content2Object && !content2Object)
+      {
+        console.log('deferContentChange: reinstating content2 for asset: ', old_deferredSaveObj.content2Object)
+        this.m_deferredSaveObj.content2Object = old_deferredSaveObj.content2Object
+      }
+    }
+
+    this.forceUpdate()  // YUCK, but I think I have to, coz I can't put a deferral data structure in this.state. TODO.. revisit this soon
   },
 
 
   // Note that can be called directly by the Sub-components. 
-  // Primary use case is user hits 'save now' button
+  // Primary use case is user hits 'save now' button, or 'play now'
   handleSaveNowRequest: function()
   {
     console.log("User request: Save deferred changes now")
@@ -407,7 +433,7 @@ export default AssetEditRoute = React.createClass({
       }
     })
     
-    logActivity("asset.edit", changeText, null, this.data.asset || { _id: assetId } ) 
+    logActivity("asset.edit", changeText, null, this.data.asset || { _id: assetId } )
   },
 
 
@@ -417,9 +443,18 @@ export default AssetEditRoute = React.createClass({
       Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {text: newText}, (err, res) => {
         if (err) 
           this.props.showToast(err.reason, 'error')
-      })      
+      })
       logActivity("asset.description",  `Update description to "${newText}"`, null, this.data.asset)
     }
+  },
+
+// This should not conflict with the deferred changes since those don't change these fields :)
+  handleMetadataChange: function(newMetadata) {
+    Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), { metadata: newMetadata }, (err, res) => {
+      if (err)
+        this.props.showToast(err.reason, 'error')
+    })
+    logActivity("asset.metadata",  `Update metadata of asset`, null, this.data.asset)
   },
 
 // This should not conflict with the deferred changes since those don't change these fields :)
@@ -527,10 +562,8 @@ export default AssetEditRoute = React.createClass({
       logActivity("asset.project",  `removed Asset from project '${pName}'`, null, asset)
     else
       logActivity("asset.project",  `Added Asset to project '${pName}'`, null, asset)
-  }  
-  
+  }
 })
-
 
 function _makeUpdateObj(content2Object, thumbnail) {
   let updateObj = {}

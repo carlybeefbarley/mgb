@@ -111,7 +111,7 @@ export default class DropArea extends React.Component {
     // TODO: render effect
     return (
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
-        {asset.thumbnail && <img style={{maxHeight: "50px", transform}} src={asset.thumbnail}/> }
+        {asset.thumbnail && <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={asset.thumbnail}/> }
         <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div>
       </QLink>
     )

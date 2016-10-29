@@ -19,7 +19,7 @@ export default ProjectsBeingMadeGET = React.createClass({
   getMeteorData: function() {
     const { scopeToUserId, scopeToProjectName } = this.props
 
-    const handleForAssets = Meteor.subscribe("assets.public", 
+    const handleForAssets = Meteor.subscribe("assets.public",       // ALSO NEED CONTENT2
                               scopeToUserId, 
                               ['game'], 
                               null, 
@@ -44,35 +44,8 @@ export default ProjectsBeingMadeGET = React.createClass({
   render: function() {
     const { loading, games } = this.data
 
-    const titleWrapperStyle = {
-      width: '100%',
-      position: 'relative',
-      paddingLeft: '75px',
-      left: '-60px',
-    }
-    const titleStyle = {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
-    }
-
     if (loading) return <Spinner />
 
-    return (
-      <div className='ui items'>
-      {
-        !games.length ? "(none)" :
-          games.map( (g,idx) => (
-            <QLink key={idx} className="link item" style={{ whiteSpace: 'nowrap' }} to={`/u/${g.dn_ownerName}/asset/${g._id}`}>
-              <img className="ui small middle aligned image" style={{ maxHeight: 60, maxWidth: 60 }} src={g.thumbnail} />
-              <div className="content middle aligned" style={titleWrapperStyle}>
-                <h3 className="ui header" style={titleStyle}>{g.name}</h3>
-                <p><i className="play icon" />00,000 Plays</p>
-              </div>
-            </QLink>
-          ))
-      }
-      </div>
-    )
+    return <GameItems games={games}/>
   }
 })

@@ -10,7 +10,7 @@ const gameTypes = {
 
 class EditGameForm extends BaseForm {
   get data() {
-    return this.props.asset.content2 || { gameType: 'codeGame', startCode: '', startActorMap: '', playCount: 0 }
+    return this.props.asset.metadata
   }
 
   render() {
@@ -40,21 +40,28 @@ export default class EditGame extends React.Component {
     activitySnapshots:    PropTypes.array               // can be null whilst loading
   }
 
-  handleSave(reason, thumbnail) {
-    this.props.handleContentChange(this.props.asset.content2, thumbnail, reason)
+  handleSave(reason) {
+    this.props.handleMetadataChange(this.props.asset.metadata)
   }
 
   render() {
+    const { asset, canEdit, handleContentChange } = this.props
+    if (!asset) 
+      return null
+
+    if (!asset.metadata)
+      asset.metadata = { gameType: 'codeGame', startCode: '', startActorMap: '', playCount: 0 }
+
     return (
       <div className='edit-game'>
         <div className='ui items'>
-          <GameItem game={this.props.asset} />
+          <GameItem game={asset} />
         </div>
         <EditGameForm 
-            asset={this.props.asset} 
-            canEdit={this.props.canEdit}
+            asset={asset} 
+            canEdit={canEdit}
             onchange={this.handleSave.bind(this)} 
-            saveThumbnail={(d) => { this.props.handleContentChange(this.props.asset.content2, d, "Updating thumbnail") }} />
+            saveThumbnail={(d) => { handleContentChange(null, d, "Updating thumbnail") }} />
       </div>
     )
   }

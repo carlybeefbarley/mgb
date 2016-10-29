@@ -4,18 +4,20 @@ import { Item, Button } from 'semantic-ui-react'
 
 export const GameItem = ( { game } ) => (
 	<Item>
-    <Item.Image style={{ maxHeight: 90, maxWidth: 90 }} src={game.thumbnail} />
+    <Item.Image className='mgb-pixelated' style={{ maxHeight: 90, maxWidth: 90 }} src={game.thumbnail} />
     <Item.Content>
       <Item.Header content={game.name} />
-      <Item.Description content={(game.content2.playCount || 0) + ' Plays'} />
+      <Item.Description content={((game.metadata && game.metadata.playCount) || 0) + ' Plays'} />
       <Item.Extra>
-      { game.content2.gameType === 'codeGame' && game.content2.startCode && game.content2.startCode !== '' && 
-        <QLink to={`/u/${game.dn_ownerName}/play/codeGame/${game.content2.startCode}`}><Button size='small' compact icon='play' content='Play' /></QLink>
+      { game.metadata && game.metadata.gameType === 'codeGame' && game.metadata.startCode && game.metadata.startCode !== '' && 
+        <QLink to={`/u/${game.dn_ownerName}/play/codeGame/${game.metadata.startCode}`}><Button size='small' compact icon='play' content='Play' /></QLink>
       }
-      { game.content2.gameType === 'actorGame' && game.content2.startActorMap && game.content2.startActorMap !== '' && 
-        <QLink to={`/u/${game.dn_ownerName}/play/actorGame/${game.content2.startActorMap}`}><Button size='small' compact icon='play' content='Play' /></QLink>
+      { game.metadata && game.metadata.gameType === 'actorGame' && game.metadata.startActorMap && game.metadata.startActorMap !== '' && 
+        <QLink to={`/u/${game.dn_ownerName}/play/actorGame/${game.metadata.startActorMap}`}><Button size='small' compact icon='play' content='Play' /></QLink>
       }
+      <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
         <Button size='small' compact icon='edit' active={false} content='Edit' />
+      </QLink>
       </Item.Extra>
     </Item.Content>
   </Item>
@@ -28,7 +30,7 @@ const GameItems = ( { games } ) => (
 )
 
 GameItems.propTypes = {
-  games:    PropTypes.object      // an array of game assets
+  games:    PropTypes.array      // an array of game assets
 }
 
 export default GameItems

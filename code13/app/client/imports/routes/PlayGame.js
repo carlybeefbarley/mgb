@@ -37,10 +37,21 @@ const PlayCodeGame = ( { _codeName, owner } ) =>
 
   return (
     <Segment basic padded>
-      <Message error header='PlayCodeGame is not yet implemented...' content={`${ownerName + ':' + codeName}.. play from source editor for now`}/>
+      <iframe
+        key={ 0 }
+        id="iFrame1"
+        width='100%' 
+        height='100%'
+        minWidth='800px'
+        minHeight='600px'
+        sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
+        src={`/api/asset/code/bundle/u/${ownerName}/${codeName}`}>
+      </iframe>
     </Segment>
   )
 }
+
+//         src='/api/asset/code/bundle/AXhwYgg93roEsLCBJ'>
 
 const PlayMageGame = ( { _mapName, owner } ) => 
 {

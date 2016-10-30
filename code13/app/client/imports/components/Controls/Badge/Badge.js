@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-const badgeList = {
+export const badgeList = {
 //mgb1veteran:      [ "v2/anvil.png",               'MGB1 Veteran' ],
   mgbAdmin:         [ "v2/beginner/anvil.png",      'MGB Admin' ],
 //hasAvatar:        [ "Has Avatar.png",             'Has an Avatar' ],
@@ -13,7 +13,7 @@ const badgeList = {
   hourOfDrawing:    [ 'v2/beginner/hourofdrawing.png', 'Hour+ of Drawing' ],
   hourOfSound:      [ 'v2/beginner/hourofsound.png', 'Hour+ of Sound Making' ],
 
-  tenHours  :      [ 'v2/beginner/tenhours.png',    'Ten Hours+ of Building' ],
+  tenHours  :       [ 'v2/beginner/tenhours.png',    'Ten Hours+ of Building' ],
 
   guruCode:         [ 'v2/guru/code.png',           'Official MGB Code Guru'],
   guruArt:          [ 'v2/guru/art.png',            'Official MGB Art Guru'],
@@ -65,7 +65,7 @@ const Badge = props =>
   const imgUrl = "/images/badges/" + badge[0]
   const title = badge[1]
   const size = forceSize ? ({ width: `${forceSize}px`, height: `${forceSize}px`}) : ({})
-  return <img style={{ maxWidth: '64px' }} src={imgUrl} title={title} {...size} />
+  return <img style={{ maxWidth: '64px', maxHeight: '64px' }} className='image' src={imgUrl} title={title} {...size} />
 }
 
 Badge.propTypes = {

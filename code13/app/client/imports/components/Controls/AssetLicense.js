@@ -33,7 +33,9 @@ const AssetLicense = (props) => {
 
   return (
     <span>
-      <div className={`ui label`}
+      <div 
+          className='ui basic label' 
+          style={{ borderRadius: '0px'}}
           title={ canEdit ? null : assetLicenses[actualLicense].name }
           ref={ (c) => { _initPopup(c, popupPosition, canEdit); this._popupInitiator = c } }>
         <Icon name='law' /><small>{ actualLicense }</small>
@@ -64,7 +66,7 @@ const AssetLicense = (props) => {
                         $(this._popupInitiator).popup('hide')
                         canEdit && handleChange && handleChange(key)
                       }}>
-                    <Label style={{width: '9em'}}>
+                    <Label basic={key !== actualLicense} color={(key === actualLicense) ? 'black' : null} style={{width: '9em'}}>
                       <Icon name='law' /><small>{ key }</small>
                     </Label>
                     &nbsp;&nbsp;

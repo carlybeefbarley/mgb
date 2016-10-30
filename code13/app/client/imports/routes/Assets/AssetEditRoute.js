@@ -245,6 +245,12 @@ export default AssetEditRoute = React.createClass({
           { /* We use this.props.params.assetId since it is available sooner than the asset 
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }
+          <WorkState 
+            workState={asset.workState} 
+            showMicro={true}
+            canEdit={canEd}
+            handleChange={this.handleWorkStateChange}/>
+          &ensp;
           <AssetUrlGenerator showBordered={true} asset={asset} />
           <StableState 
             isStable={asset.isCompleted} 
@@ -261,13 +267,6 @@ export default AssetEditRoute = React.createClass({
             showMicro={true}
             canEdit={canEd}
             handleChange={this.handleLicenseChange}/>
-          &emsp;
-          <WorkState 
-            workState={asset.workState} 
-            showMicro={true}
-            canEdit={canEd}
-            handleChange={this.handleWorkStateChange}/>
-          &emsp;
           <AssetActivityDetail
             assetId={params.assetId} 
             currUser={currUser}

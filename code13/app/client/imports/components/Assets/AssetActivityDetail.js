@@ -22,7 +22,7 @@ export default AssetActivityDetail = React.createClass({
       return null
       
     var currUserId = _getCurrUserIdentifier(currUser)
-    let othersActivities =  _.filter(activitySnapshots, a => currUserId !== a.byUserId)                            
+    const othersActivities =  _.filter(activitySnapshots, a => currUserId !== a.byUserId)                            
     let viewers = _.map(othersActivities, a => { 
       const ago = moment(a.timestamp).fromNow()                   // TODO: Make reactive
       const href = (a.byUserId.indexOf(SESSION_MAGIC_TEXT) !== 0) ? {href:`/u/${a.byUserName}`} : {}  // See http://stackoverflow.com/questions/29483741/rendering-a-with-optional-href-in-react-js
@@ -40,13 +40,17 @@ export default AssetActivityDetail = React.createClass({
     })
     
     const viewersCount = viewers.length   // Note this excludes ourselves
-    const pointingClass = viewersCount ? "black pointing below" : "grey" 
-    
+    const pointingClass = viewersCount ? 'pointing below' : '' 
+    const highlightClass = viewersCount ? 'black' : 'grey'
+
     return (
       <div 
           className={`ui simple dropdown small basic ${pointingClass} label item`} 
-          style={{marginBottom: "4px"}} >
-        <i className='unhide icon' />{viewersCount}
+          style={{marginBottom: '4px', borderRadius: '0px'}} >
+        <i className={`unhide ${highlightClass} icon`} />
+        <span style={{color: highlightClass}}>
+          {viewersCount}
+        </span>
         { viewers.length > 0 &&
           <div className="menu">
             { viewers }

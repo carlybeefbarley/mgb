@@ -13,12 +13,12 @@
 const mgbReleaseInfo = {
   'releases': [
     {
-      'timestamp': 'Sat Oct 29 2016 13:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Sat Oct 29 2016 23:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1876'
+        'iteration': '1881'
       },
 
       'releaseManagement': {
@@ -30,14 +30,14 @@ const mgbReleaseInfo = {
           'featureTag': 'asset.game',
           'type': 'feature',
           'changeName': 'New \'Game\' Asset',
-          'changeSummary': 'To make it easier to find how to start games, we have created a new kind of Asset - the \'Game Asset\'. This currently holds just some key data - name, cover image and starting Asset (which can be either Code or ActorMap). Game Assets are now shown also in the Project overview so you can quickly find the starting points for a game in a large project.  There is currently a rudimentary Game Player for ActorMap games, but a fuller play experience will be implemented soon. The Game Asset will also be used in future as an anchor for data like high scores, lobbies, game analytics, etc',
+          'changeSummary': 'To make it easier to find how to start games, we have created a new kind of Asset - the \'Game Asset\'. This currently holds just some key data - name, cover image and starting Asset (which can be either Code or ActorMap). Game Assets are now shown also in the Project overview so you can quickly find the starting points for a game in a large project.  There is currently a rudimentary Game Player for ActorMap and Code games, but a fuller play experience will be implemented soon. The Game Asset will also be used in future as an anchor for data like high scores, lobbies, game analytics, etc',
           'otherUrls': [ ]
         },
         {
           'featureTag': 'asset.edit',
           'type': 'bugfix',
           'changeName': 'Fixed occasional change loss when saving an asset',
-          'changeSummary': 'There was a timing condition that meant a thumbnail change could prevent an assets main data from being saved. This is now fixed. Also, the Activity Log will update every five minutes even if you are just doing the same activity (e.g edit a graphic). Previously the Activity Log would not update until you worked on a different activity/asset.',
+          'changeSummary': 'There was a timing condition that meant a thumbnail change could prevent an assets main data from being saved. This is now fixed. Also, the Activity Log will update every five minutes even if you are just doing the same activity (e.g edit a graphic). Previously the Activity Log would not update until you worked on a different activity/asset. Also, we did soem UI cleanup of the header -  using more consistent outlined buttons for the various Asset settings',
           'otherUrls': [ ]
         },
         {

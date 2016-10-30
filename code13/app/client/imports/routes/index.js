@@ -5,7 +5,7 @@ import { Router, Route, NotFoundRoute, browserHistory } from 'react-router'
 import App from './App'
 import Home from './Home'
 import Import from './Import'
-import PlayActorGame from './PlayActorGame'
+import PlayGame from './PlayGame'
 import GetStarted from './GetStarted'
 import GetStartedSkills from './GetStartedSkills'
 import GetStartedGames from './GetStartedGames'
@@ -46,7 +46,7 @@ Meteor.startup(function () {
     <Router  history={browserHistory}>
       <Route component={App}>
 
-        <Route path='/u/:username/play/actorGame/:gamename' component={PlayActorGame} name='Play Game' />
+        <Route path='/u/:username/play/:assetId' component={PlayGame} name='Play Game' />
       
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />

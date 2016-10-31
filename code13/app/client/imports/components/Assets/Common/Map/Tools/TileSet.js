@@ -244,49 +244,6 @@ export default class TileSet extends React.Component {
       this.props.updateTilesetFromData(data, this.tileset, true)
     })
   }
-  updateTilesetFromData (data, ref = null) {
-    const parent = this.props.tileset
-    const map = parent.props.info.content.map
-    let ts
-    // guess tile size
-    if (data.imagewidth == data.tilewidth) {
-      ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight)
-    }
-    // set known size
-    else {
-      ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight,
-        data.tilewidth, data.tileheight, data.name
-      )
-    }
-    ts.tiles = data.tiles
-    const tss = map.data.tilesets
-
-    if(!ref) {
-      tss.push(ts)
-    }
-    else{
-      for(let i in ts){
-        if(i == "firstgid"){
-          continue;
-        }
-        ref[i] = ts[i]
-      }
-      // sen name for tilesets with one image
-      if(data.name){
-        ref.name = data.name
-      }
-    }
-
-    const img = new Image()
-    img.onload = () => {
-      map.images.set(TileHelper.normalizePath(img.src), img)
-      map.updateImages()
-      if(!ref) {
-        parent.selectTileset(tss.length - 1)
-      }
-    }
-    img.src = data.image
-  }
 
   onMouseDown (e) {
     if (e.button == 2) {

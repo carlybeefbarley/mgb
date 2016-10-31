@@ -13,7 +13,7 @@ Flow:
       |      * reports changed data (with callback) to MapArea -> EditMap
       |      * shows grid
 
-    |-> LayerTool:
+    |-> LayerTool: DONE
     |    * allows switching between layers -> reports activeLayer to EditMap
     |    * shows / hides layer
       |-> LayerToolControl:
@@ -21,20 +21,21 @@ Flow:
       |   * orders layers
       |   * highlights active layer
 
-    |-> Tileset:
-    |    * allows to add new tilesets to images
+    |-> Tileset: DONE
+    |    * allows to add new tilesets from graphics
+    |    * allows to update tileset image from graphics
     |    * picks tiles (adds to selection) -> reports to EditMap
       |-> TilesetTools:
       |    * removes tileset
       |    * picks active tileset
 
     |-> Properties:
-    |    * edits map
-    |    * edits active layer
+    |    * edits map properties
+    |    * edits active layer properties
     |    * edits active tileset / object / properties..
     |    * allows to add arbitrary data to map objects/layer/tileset
 
-    |-> Errors - list with error
+    |-> Errors - list with errors
  */
 
 import _ from 'lodash'

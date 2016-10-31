@@ -22,8 +22,8 @@ export default class Layers extends React.Component {
   render () {
     const data = this.props.layers
     const active = this.props.activeLayer
+    const layers = []
 
-    let layers = []
     // layers goes from bottom to top - as first drawn layer will be last visible
     for (let i = data.length - 1; i > -1; i--) {
       let className = 'icon'
@@ -49,10 +49,7 @@ export default class Layers extends React.Component {
             <span className='explicittrigger'><i className='dropdown icon'></i> Layers</span>
           </div>
           <div className='active content menu'>
-            <LayerControls
-              {...this.props}
-              options={this.props.options}
-              />
+            <LayerControls {...this.props} />
             {layers}
           </div>
         </div>

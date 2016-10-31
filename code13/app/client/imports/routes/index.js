@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route, NotFoundRoute, browserHistory } from 'react-router'
+
+import { Router, Route, browserHistory } from 'react-router'
+import urlMaker from './urlMaker'
 
 import App from './App'
 import Home from './Home'
@@ -15,14 +17,13 @@ import Users from './Users'
 import Azzets from './Assets'
 import Projects from './Projects'
 
-import urlMaker from './urlMaker'
-import NotFoundPage from './NotFoundPage'
-import WhatsNewRoute from './WhatsNewRoute'
-import Roadmap from './Roadmap'
+import NotYetImplementedRoute from './Nav/NotYetImplementedRoute'
+import NotFoundRoute from './Nav/NotFoundRoute'
+import WhatsNewRoute from './Nav/WhatsNewRoute'
+import Roadmap from './Nav/RoadmapRoute'
 
 import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
-
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -39,12 +40,11 @@ import Privacy from '/client/imports/legal/Privacy'
 
 // LEGACY ROUTES (to be removed soon, once replacement routes seem stable)
 // 1) All /users/:id are legacy and shoudl be removed soon (superceded July 6 2016)
-// 2) The /assetEdit/:assetId route  is legacy - it  will redirect to user/:id/asset/:assetId once it gets the owner User id from the asset
-
+// 2) The /assetEdit/:assetId route is legacy - it will automatically redirect to user/:id/asset/:assetId once it gets the owner User._id from the Asset
 
 Meteor.startup(function () {
   const router =
-    <Router  history={browserHistory}>
+    <Router history={browserHistory}>
       <Route component={App}>
 
         <Route path='/u/:username/play/:assetId' component={PlayGame} name='Play Game' />
@@ -90,8 +90,8 @@ Meteor.startup(function () {
         <Route path="user/:id/history" component={Users.UserHistory} name="User's History" />
         <Route path="u/:username/history" component={Users.UserHistory} name="User's History" />
 
-        <Route path="user/:id/badges" component={Users.BadgeList} name="User's Badges" />
-        <Route path="u/:username/badges" component={Users.BadgeList} name="User's Badges" />
+        <Route path="user/:id/badges" component={Users.BadgeListRoute} name="User's Badges" />
+        <Route path="u/:username/badges" component={Users.BadgeListRoute} name="User's Badges" />
 
         <Route path="assets" component={Azzets.UserAssetList} name="Search All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
@@ -104,7 +104,8 @@ Meteor.startup(function () {
         <Route path='/legal/tosDRAFT' component={TermsOfService} name='Terms Of Service' />
         <Route path='/legal/privacyDRAFT' component={Privacy} name='Privacy Policy' />
 
-        <Route path="*" component={NotFoundPage} name="Page Not Found"/>
+        <Route path="/notyetimplemented/:featureName" component={NotYetImplementedRoute} name="Coming Soon!.."/>
+        <Route path="*" component={NotFoundRoute} name="Page Not Found"/>
       </Route>
     </Router>
 

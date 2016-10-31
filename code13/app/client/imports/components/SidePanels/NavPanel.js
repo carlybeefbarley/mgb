@@ -2,6 +2,9 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import npHome from './npHome'
 import npUser from './npUser'
+import npPlay from './npPlay'
+import npLearn from './npLearn'
+import npCreate from './npCreate'
 import npPeople from './npPeople'
 import npHistory from './npHistory'
 import npProjects from './npProjects'
@@ -16,7 +19,7 @@ const navPanelViews = [
     name: "home",
     icon: "home",
     hdr: "Home",
-    getDirectUrl: (uname) => ("/"),
+    getDirectUrl: () => ("/"),
     el: npHome,
     hideIfNoUser: false
   },
@@ -30,6 +33,32 @@ const navPanelViews = [
     hideIfNoUser: false
   },
   {
+    tag: "play",
+    name: "play",
+    icon: "play",
+    hdr: "Play",
+    getDirectUrl: () => (`/play`),
+    el: npPlay,
+    hideIfNoUser: false
+  },
+  {
+    tag: "learn",
+    name: "learn",
+    icon: "student",
+    hdr: "Learn",
+    getDirectUrl: () => (`/getstarted/games`),
+    el: npLearn,
+    hideIfNoUser: false
+  },
+  {
+    tag: "create",
+    name: "create",
+    icon: "pencil",
+    hdr: "Create",
+    getDirectUrl: () => (`/assets/create`),
+    el: npCreate,
+    hideIfNoUser: true
+  },  {
     tag: "projects",
     name: "projects",
     icon: "sitemap",
@@ -43,10 +72,11 @@ const navPanelViews = [
     name: "people",
     icon: "users",
     hdr: "People",
-    getDirectUrl: (uname) => (`/users`),
+    getDirectUrl: () => (`/users`),
     el: npPeople,
     hideIfNoUser: false
   },
+
   {
     tag: "history",
     name: "history",

@@ -12,12 +12,12 @@
 const mgbReleaseInfo = {
   'releases': [
     {
-      'timestamp': 'Sun Oct 30 2016 19:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun Oct 30 2016 23:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1891'
+        'iteration': '1893'
       },
 
       'releaseManagement': {

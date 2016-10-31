@@ -58,6 +58,10 @@ export default class ObjectLayer extends AbstractLayer {
     return this.data.objects[this._pickedObject]
   }
 
+  get map(){
+    return this.props.map;
+  }
+
   getInfo () {
     if (this.info > -1) {
       const o = this.data.objects[this.info]

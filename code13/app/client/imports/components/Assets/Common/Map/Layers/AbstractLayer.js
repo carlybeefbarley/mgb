@@ -58,7 +58,7 @@ export default class AbstractLayer extends React.Component {
 
   componentWillUnmount () {
     this.isVisible = false
-    
+
     window.removeEventListener('mouseup', this._mup)
     window.removeEventListener('keyup', this._kup)
     window.removeEventListener('mousemove', this._mov)
@@ -72,7 +72,7 @@ export default class AbstractLayer extends React.Component {
 
   // this layer has been deselected - called before another layer activate
   deactivate () {
-    this.activeMode = this.props.getEditMode()
+    //this.activeMode = this.props.getEditMode()
   }
   /* endof lifecycle functions */
 

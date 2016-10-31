@@ -1,26 +1,111 @@
+/*
+Flow:
+  EditMap - components:
+      * controls children and stores/passes state to children
+    |-> Toolbar
+         * misc tools - usually will change state of tools mentioned below
+
+    |-> MapArea:
+    |    * controls layers
+      |-> Layer:
+      |      * draws map layer
+      |      * allows to edit active layer - insert / remove tiles / objects
+      |      * reports changed data (with callback) to MapArea -> EditMap
+      |      * shows grid
+
+    |-> LayerTool:
+    |    * allows switching between layers -> reports activeLayer to EditMap
+    |    * shows / hides layer
+      |-> LayerToolControl:
+      |   * adds / removes layer
+      |   * orders layers
+      |   * highlights active layer
+
+    |-> Tileset:
+    |    * allows to add new tilesets to images
+    |    * picks tiles (adds to selection) -> reports to EditMap
+      |-> TilesetTools:
+      |    * removes tileset
+      |    * picks active tileset
+
+    |-> Properties:
+    |    * edits map
+    |    * edits active layer
+    |    * edits active tileset / object / properties..
+    |    * allows to add arbitrary data to map objects/layer/tileset
+
+    |-> Errors - list with error
+ */
+
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import MapArea from './MapArea.js'
+
 import InfoTool from '../Common/Map/Tools/InfoTool.js'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 
+import TileHelper from '../Common/Map/Helpers/TileHelper.js'
 import TileSet from '../Common/Map/Tools/TileSet.js'
 import ObjectList from '../Common/Map/Tools/ObjectList.js'
 
 import LayerTool from './Tools/Layers.js'
 import Properties from './Tools/Properties.js'
 
+import Cache from '../Common/Map/Helpers/TileCache.js'
+import EditModes from '../Common/Map/Tools/EditModes.js'
+
+import LayerTraits from '../Common/Map/Traits/LayerTraits.js'
+import TilesetTraits from '../Common/Map/Traits/TilesetTraits.js'
 
 export default class EditMap extends React.Component {
   static propTypes = {
-    asset: PropTypes.object,
-    currUser: PropTypes.object
+    asset: PropTypes.object,    // asset to be changed
+    currUser: PropTypes.object  // current user
   }
+
   constructor (props) {
     super(props)
     this.state = {
-      tools: {}
+      isLoading: true,
+      activeLayer: 0,
+      activeTileset: 0,
+      editMode: EditModes.stamp
     }
+
+    if(this.props.asset.content2){
+      // stores tiles and images
+      this.cache = new Cache(this.props.asset.content2, () => {
+        this.setState({isLoading:  false})
+      })
+      // set last edit mode ???
+      this.state.editMode = this.props.asset.content2.meta.mode
+    }
+
+    this.layerTraits = this.enableTrait(LayerTraits)
+    this.tilesetTraits = this.enableTrait(TilesetTraits)
+
+  }
+
+  componentDidMount () {
+    this.doSnapshotActivity()
+  }
+
+  componentWillReceiveProps(newp){
+    if(newp.asset.content2) {
+      this.setState({isLoading: true})
+      // or new Cache - if immutable is preferred - and need to force full cache update
+      this.cache.update(newp.asset.content2, () => {
+        this.setState({isLoading: false})
+      })
+    }
+  }
+
+  enableTrait(trait){
+    const out = {}
+    for (let i in trait){
+      out[i] = trait[i].bind(this)
+    }
+    return out
   }
 
   getUser () {
@@ -39,9 +124,6 @@ export default class EditMap extends React.Component {
     snapshotActivity(this.props.asset, passiveAction)
   }
 
-  componentDidMount () {
-    this.doSnapshotActivity()
-  }
 
   handleSave (data, reason, thumbnail) {
     if(!this.props.canEdit){
@@ -51,40 +133,65 @@ export default class EditMap extends React.Component {
     // TODO: convert uploaded images to assets
     this.props.handleContentChange(data, thumbnail, reason)
   }
+  quickSave(reason = "noReason", thumbnail = null){
+    return this.handleSave(this.props.asset.content2, reason, thumbnail)
+  }
+
+
+
+  showGridToggle(){
+    const meta = this.props.asset.content2.meta
+    meta.highlightActiveLayer = !meta.highlightActiveLayer
+  }
 
   render () {
-    if (!this.props.asset) {
+    if(!this.props.asset || this.state.isLoading){
       return null
     }
-
     const asset = this.props.asset
-    //let tools = []
-    // TODO: separate tools by type - and fallback to InfoTool
-   /* Object.keys(this.state.tools).forEach((tool) => {
-      const Element = this.state.tools[tool].type || InfoTool
+    // this is temporary hack - until all references to map will be cleared
+    if(!this.refs.map){
+      window.setTimeout(() => {
+        this.forceUpdate()
+      }, 100)
+    }
 
-      tools.push(<Element asset={asset} info={this.state.tools[tool]} key={tool} />)
-      tools.push(<br key={tool+'spacer'}/>)
-    })*/
-
-
-
+    const c2 = this.props.asset.content2
     return (
       <div className='ui grid'>
         <div className='ten wide column'>
-          <MapArea asset={asset} parent={this} ref='map'>
-            {asset}
-          </MapArea>
+          <MapArea
+            asset={asset}
+            parent={this}
+
+            cache={this.cache}
+            activeLayer={this.state.activeLayer}
+            highlightActiveLayer={c2.meta.highlightActiveLayer}
+            ref='map'></MapArea>
         </div>
         <div className='six wide column'>
+          <LayerTool
+            {...this.layerTraits}
+            layers={c2.layers}
+            options={c2.meta}
+            activeLayer={this.state.activeLayer}
+            />
+          <br />
+
+          <TileSet
+            {...this.tilesetTraits}
+            palette={this.cache.tiles}
+            tilesets={c2.tilesets}
+            activeTileset={this.state.activeTileset}
+            options={c2.meta}
+            />
+
           { this.refs.map &&
-            <div>
-              <LayerTool map={this.refs.map} />
-              <br />
-              <TileSet map={this.refs.map} />
-              <br />
-              <Properties map={this.refs.map} />
-            </div>
+          <div>
+
+            <br />
+            <Properties map={this.refs.map} />
+          </div>
           }
         </div>
       </div>

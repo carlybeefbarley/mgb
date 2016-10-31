@@ -45,7 +45,6 @@ export default class TileMapLayer extends AbstractLayer {
     // if dirty - needs to be cleaned....
 
     this.isDirtySelection = false
-    this.isDirty = true
     this.isMouseOver = false
     this.lastTimeout = 0
 
@@ -279,10 +278,10 @@ export default class TileMapLayer extends AbstractLayer {
   // large maps are still slow on movement..
   // dirty rectalngles (in our case dirty tiles :) are great for super fast map movement
   draw () {
-    this.isDirty = true
+    this.nextDraw = Date.now()
   }
   drawTiles () {
-    this.isDirty = true
+    this.draw()
   }
   queueDrawTiles (timeout) {
     if (this.nextDraw - Date.now() > timeout) {
@@ -291,7 +290,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   _draw (now) {
-    if (!(this.isDirty || this.nextDraw <= now) || !this.isVisible) {
+    if (!(this.nextDraw <= now) || !this.isVisible) {
       return
     }
     const ts = this.props.data
@@ -309,8 +308,6 @@ export default class TileMapLayer extends AbstractLayer {
       return
     }
 
-    // TODO: cleanup: isDIrty actually is same as next draw < Date.now() - unneeded flag
-    this.isDirty = false
     this.nextDraw = now + this.drawInterval
 
     const widthInTiles = Math.ceil((this.ctx.canvas.width / camera.zoom) / mapData.tilewidth)
@@ -359,7 +356,7 @@ export default class TileMapLayer extends AbstractLayer {
         }
         else{
           console.log("unable to locate palette")
-          return
+          continue
         }
       }
     }
@@ -375,6 +372,9 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawSelection(true)
   }
   drawTile (pal, pos, spacing = 0 , clear = false) {
+    if(!pal.image){
+      return
+    }
     // special tileset cases - currently only animation
     if (pal.ts.tiles) {
       let tileId = pal.gid - (pal.ts.firstgid)
@@ -514,7 +514,7 @@ export default class TileMapLayer extends AbstractLayer {
       sel = map.collection.random()
       if (sel) {
         pal = palette[sel.gid]
-        if (pal) {
+        if (pal && pal.image) {
           this.ctx.globalAlpha = 0.6
           this.drawTile(pal, pos, map.spacing)
           this.ctx.globalAlpha = 1
@@ -551,7 +551,7 @@ export default class TileMapLayer extends AbstractLayer {
 
         pal = palette[gid]
         // draw tile image only when stamp mode is active
-        if (pal && this.map.options.mode == EditModes.stamp) {
+        if (pal && pal.image && this.map.options.mode == EditModes.stamp) {
           this.drawTile(pal, tpos, map.spacing)
         }
         this.highlightTile(tpos, 'rgba(0,0,255,0.3)', ts)

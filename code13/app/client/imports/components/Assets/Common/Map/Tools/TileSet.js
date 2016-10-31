@@ -36,36 +36,28 @@ export default class TileSet extends React.Component {
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
 
     this.adjustCanvas()
-    this.props.map.tilesets.push(this)
-    // racing condition!!!!
     // TODO: create global event handler with priorities
-    window.addEventListener('mousemove', this.globalMouseMove, true)
+    window.addEventListener('mousemove', this.globalMouseMove)
     window.addEventListener('mouseup', this.globalMouseUp)
   }
   componentWillUnmount () {
-    const mapTilesets = this.props.map.tilesets
-    const index = mapTilesets.indexOf(this)
-    if (index > -1) {
-      mapTilesets.splice(mapTilesets.indexOf(this), 1)
-    }
+    window.removeEventListener('mousemove', this.globalMouseMove)
+    window.removeEventListener('mouseup', this.globalMouseUp)
+  }
+  componentDidUpdate(){
+    // re-render after update
+    this.adjustCanvas()
+    this.drawTiles()
   }
   /* endof lifecycle functions */
 
-  get map () {
-    return this.props.map
-  }
-  get data () {
-    const map = this.map
-    const tss = map.data.tilesets
-    const data = tss[map.activeTileset]
-    return data
+  get tileset () {
+    return this.props.tilesets[this.props.activeTileset]
   }
   /* helpers */
   adjustCanvas () {
-    const map = this.props.map
-    const ts = map.data.tilesets[map.activeTileset]
+    const ts = this.tileset
     const canvas = this.refs.canvas
-
     if (ts) {
       canvas.width = TileHelper.getTilesetWidth(ts)
       canvas.height = TileHelper.getTilesetHeight(ts)
@@ -77,8 +69,7 @@ export default class TileSet extends React.Component {
     this.ctx = canvas.getContext('2d')
   }
   getTilePosInfo (e) {
-    const map = this.map
-    const ts = map.data.tilesets[map.activeTileset]
+    const ts = this.tileset
     // image has not been loaded
     if (!ts) {
       return
@@ -90,8 +81,7 @@ export default class TileSet extends React.Component {
   /* endof helpers */
 
   /* functionality */
-  selectTile (e, clear) {
-    const map = this.map
+  selectTile (e) {
     if (!this.prevTile) {
       this.prevTile = this.getTilePosInfo(e)
       // failed to get prev tile.. e.g. click was out of bounds
@@ -99,22 +89,21 @@ export default class TileSet extends React.Component {
         return
       }
     }
-    const l = map.getActiveLayer()
-    l && l.resetRotation && l.resetRotation()
-    map.collection.pushOrRemove(new SelectedTile(this.prevTile))
+    this.props.selectTile(new SelectedTile(this.prevTile))
     this.highlightTile(e.nativeEvent, true)
   }
+
   selectRectangle (e) {
-    const map = this.map
-    const ts = map.data.tilesets[map.activeTileset]
+    const ts = this.tileset
     // new map!
     if (!ts) {
       return
     }
+
     const pos = this.getTilePosInfo(e)
 
     if (!e.ctrlKey) {
-      map.clearActiveSelection()
+      this.props.clearActiveSelection()
     }
 
     let startx, endx, starty, endy
@@ -138,42 +127,34 @@ export default class TileSet extends React.Component {
       for (let x = startx; x <= endx; x++) {
         pos.x = x
         pos.getGid(ts, this.spacing)
-        map.collection.pushUnique(new SelectedTile(pos))
+        this.props.pushUnique(new SelectedTile(pos))
       }
     }
-    const l = map.getActiveLayer()
-    l && l.resetRotation && l.resetRotation()
+
+    this.props.resetActiveLayer()
     this.drawTiles()
   }
+
   selectTileset (tilesetNum) {
-    this.props.map.activeTileset = tilesetNum
-    this.adjustCanvas()
-    this.drawTiles()
+    this.props.selectTileset(tilesetNum)
   }
   /* endof functionlity */
 
   /* drawing on canvas*/
   drawTiles () {
     this.prevTile = null
-
-    const map = this.props.map
-    // mas is not loaded
-    if (!map.data) {
-      return
-    }
-    const tss = map.data.tilesets
-    const ts = tss[map.activeTileset]
+    const tss = this.props.tilesets
+    const ts = tss[this.props.activeTileset]
     const ctx = this.ctx
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
     if (!ts) {
       return
     }
-    const palette = map.gidCache
-    const mapData = map.data
-
+    const palette = this.props.palette
     const pos = {x: 0, y: 0}
-    const spacing = map.spacing
+
+    const spacing = 1
 
     let gid = 0
     for (let i = 0; i < ts.tilecount; i++) {
@@ -181,7 +162,7 @@ export default class TileSet extends React.Component {
       TileHelper.getTilePosRel(i, Math.floor((ts.imagewidth + spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, pos)
       const pal = palette[gid]
       // missing image
-      if (!pal) {
+      if (!pal || !pal.image) {
         return
       }
       let tinfo = null
@@ -196,7 +177,6 @@ export default class TileSet extends React.Component {
     if (clear) {
       this.ctx.clearRect(pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing), pal.w, pal.h)
     }
-    const map = this.props.map
     const drawX = pos.x * (pal.ts.tilewidth + this.spacing)
     const drawY = pos.y * (pal.ts.tileheight + this.spacing)
     this.ctx.drawImage(pal.image,
@@ -212,45 +192,24 @@ export default class TileSet extends React.Component {
       // this.ctx.fillRect(drawX + pal.w*0.5, drawY + pal.h*0.5, pal.w *0.5, pal.h*0.5)
       this.ctx.fill()
     }
-    if (map.collection.indexOfGid(pal.gid) > -1) {
+
+    if (this.props.isTileSelected(pal.gid) > -1) {
       this.ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'
       this.ctx.fillRect(
         drawX, drawY, pal.w, pal.h
       )
     }
   }
-  highlightTile (e, force = false) {
-    const map = this.props.map
-    const ts = map.data.tilesets[map.activeTileset]
+  highlightTile (e) {
+    const ts = this.tileset
     if (!ts) {
       return
     }
-    const palette = map.gidCache
     const pos = this.getTilePosInfo(e)
 
     if (this.prevTile) {
-      // TODO: optimize later - if needed.. currently redraw all
+      // TODO(stauzs): optimize later - if needed at all.. currently redraw all
       this.drawTiles()
-    /*if(this.prevTile.x == pos.x && this.prevTile.y == pos.y && !force){
-      return
-    }
-    if(force){
-      this.drawTiles()
-    }
-    else {
-      let pal = palette[this.prevTile.gid]
-      if (pal) {
-        if(ts.tiles && ts.tiles[this.prevTile.id])
-        const tsi = ts.tiles
-        this.drawTile(pal, this.prevTile, null, true)
-      }
-      else {
-        this.ctx.clearRect(
-          this.prevTile.x * ts.tilewidth + this.prevTile.x,
-          this.prevTile.y * ts.tileheight + this.prevTile.y,
-          ts.tilewidth, ts.tileheight)
-      }
-    }*/
     }
 
     this.ctx.fillStyle = 'rgba(0,0,255, 0.3)'
@@ -268,36 +227,65 @@ export default class TileSet extends React.Component {
 
     const infolink = '/api/asset/tileset-info/' + asset._id
     $.get(infolink, (data) => {
-      this.refs.controls.updateTilesetFromData(data)
+      this.props.updateTilesetFromData(data)
     })
   }
+
   onDropChangeTilesetImage (e) {
     e.preventDefault()
     e.stopPropagation()
-    const dataStr = e.dataTransfer.getData('text')
-    let asset, data
-    if (dataStr) {
-      data = JSON.parse(dataStr)
-    }
-    asset = data.asset
+
+    const asset = DragNDropHelper.getAssetFromEvent(e)
     if (asset && asset.kind != 'graphic') {
       return
     }
-
-    const infolink = '/api/asset/tileset-info/' + data.asset._id
-    const map = this.props.map
-    const previousTileCount = this.data.tilecount;
+    const infolink = '/api/asset/tileset-info/' + asset._id
     $.get(infolink, (data) => {
-      this.refs.controls.updateTilesetFromData(data, this.data)
-
-      //if(previousTileCount != this.data.tilecount){
-        console.log("Fixing tilesets")
-        TileHelper.fixTilesetGids(map.data)
-        map.save("Update Tileset")
-      //}
-
-      map.fullUpdate()
+      this.props.updateTilesetFromData(data, this.tileset, true)
     })
+  }
+  updateTilesetFromData (data, ref = null) {
+    const parent = this.props.tileset
+    const map = parent.props.info.content.map
+    let ts
+    // guess tile size
+    if (data.imagewidth == data.tilewidth) {
+      ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight)
+    }
+    // set known size
+    else {
+      ts = TileHelper.genTileset(map.data, data.image, data.imagewidth, data.imageheight,
+        data.tilewidth, data.tileheight, data.name
+      )
+    }
+    ts.tiles = data.tiles
+    const tss = map.data.tilesets
+
+    if(!ref) {
+      tss.push(ts)
+    }
+    else{
+      for(let i in ts){
+        if(i == "firstgid"){
+          continue;
+        }
+        ref[i] = ts[i]
+      }
+      // sen name for tilesets with one image
+      if(data.name){
+        ref.name = data.name
+      }
+    }
+
+    const img = new Image()
+    img.onload = () => {
+      map.images.set(TileHelper.normalizePath(img.src), img)
+      map.updateImages()
+      if(!ref) {
+        parent.selectTileset(tss.length - 1)
+      }
+    }
+    img.src = data.image
   }
 
   onMouseDown (e) {
@@ -306,15 +294,14 @@ export default class TileSet extends React.Component {
       e.preventDefault()
       return false
     }
-    if (this.map.options.mode != EditModes.fill && this.map.options.mode != EditModes.stamp) {
-      this.map.options.mode = EditModes.stamp
+
+    if (this.props.options.mode != EditModes.fill
+            && this.props.options.mode != EditModes.stamp) {
+      this.props.setMode(EditModes.stamp)
     }
 
-    // update active tool
-    this.map.refs.toolbar.forceUpdate()
-
     if (!e.ctrlKey) {
-      this.map.clearActiveSelection()
+      this.props.clearActiveSelection()
     }
     this.mouseDown = true
     this.selectTile(e)
@@ -365,9 +352,12 @@ export default class TileSet extends React.Component {
         data-drop-text='Drop asset here to create TileSet'
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
-        <TilesetControls tileset={this} ref='controls' />
+        <TilesetControls
+          removeTileset={this.props.removeTileset}
+          ref='controls'
+          />
         {!tileset ? <span>Drop Graphic (from side panel) here to create new tileset</span> : ''}
-        <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
+        <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both', cursor: "default" }}>
           <canvas
             ref='canvas'
             onMouseDown={this.onMouseDown.bind(this)}
@@ -383,16 +373,12 @@ export default class TileSet extends React.Component {
     )
   }
   render () {
-    if(!this.props.map){
-      return <div />
-    }
-    const map = this.props.map
-    const tss = map.data.tilesets
+    const tss = this.props.tilesets
     if (!tss.length) {
       return this.renderEmpty()
     }
 
-    let ts = tss[map.activeTileset]
+    let ts = this.tileset
     // TODO: this should not happen - debug!
     if (!ts) {
       ts = tss[0]
@@ -421,8 +407,10 @@ export default class TileSet extends React.Component {
             <div className='ui simple dropdown top right basic grey below label item'
                  style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%', "minWidth": "50%", top: "-5px" }}>
               <i className='dropdown icon'></i>
-              <span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight}
-                    style={{ 'textOverflow': 'ellipsis', 'maxWidth': '85%', float: 'right', 'overflow': 'hidden' }}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
+              <span className='tileset-title'
+                    title={ts.imagewidth + 'x' + ts.imageheight}
+                    style={{ 'textOverflow': 'ellipsis', 'maxWidth': '85%', float: 'right', 'overflow': 'hidden' }}
+                >{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
               <div className='floating ui tiny green label'>
                 {tss.length}
               </div>

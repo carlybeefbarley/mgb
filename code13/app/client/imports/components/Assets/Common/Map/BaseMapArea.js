@@ -1,4 +1,5 @@
 import React from 'react'
+
 import TileMapLayer from './Layers/TileMapLayer'
 import ActorLayer from './Layers/ActorLayer'
 import EventLayer from './Layers/EventLayer'
@@ -6,8 +7,8 @@ import ImageLayer from './Layers/ImageLayer'
 import ObjectLayer from './Layers/ObjectLayer'
 import GridLayer from './Layers/GridLayer'
 
-
 import MapToolbar from './../../EditActorMap/Tools/MapToolbar'
+
 import TileHelper from './Helpers/TileHelper'
 import ActorHelper from './Helpers/ActorHelper'
 
@@ -33,7 +34,7 @@ export default class MapArea extends React.Component {
     window.mgb_map = this
 
     this.state = {
-      isLoading: true,
+      isLoading: false,
       isPlaying: false,
       errors: [],
       lastSaved: '',
@@ -43,9 +44,7 @@ export default class MapArea extends React.Component {
         y: 15,
         sep: 20
       },
-      activeLayer: 0,
-      activeTileset: 0,
-
+      activeTileset: 0
     }
 
     let images = {}
@@ -77,7 +76,7 @@ export default class MapArea extends React.Component {
 
     this.missingImages = []
     this.loadingImages = []
-    this.gidCache = {}
+    //this.gidCache = {}
 
     this.layers = []
     this.tilesets = []
@@ -123,14 +122,17 @@ export default class MapArea extends React.Component {
     this.activeAsset = this.props.asset
   }
 
+  get gidCache(){
+    return this.props.cache.tiles
+  }
+
   set activeLayer(v){
-    console.error("Debug this...")
     this.setState({activeLayer: v})
   }
 
   get activeLayer(){
     console.error("Debug this...")
-    return this.state.activeLayer
+    return this.props.activeLayer
   }
 
   set data(val) {
@@ -216,12 +218,9 @@ export default class MapArea extends React.Component {
     this.stopEventListeners()
   }
 
-  // TODO: handle here updates - atm disabled as updates move state in back in history
-  componentWillReceiveProps (props) {
-    // console.log("New map data", props)
-    // it's safe to update read only
-    if (!this.activeAsset || !this.props.parent.props.canEdit) {
-      this.activeAsset = props.asset
+  componentWillReceiveProps (newprops) {
+    if(this.props.activeLayer != newprops.activeLayer){
+      this.activateLayer(newprops.activeLayer)
     }
   }
 
@@ -253,7 +252,7 @@ export default class MapArea extends React.Component {
   handleFileByExt_json (name, buffer) {
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
     this.data = JSON.parse(jsonString)
-    this.updateImages()
+    //this.updateImages()
   }
   // TODO: move api links to external resource?
   handleFileByExt_png (nameWithExt, buffer) {
@@ -294,7 +293,7 @@ export default class MapArea extends React.Component {
         const gim = new Image()
         gim.onload = () => {
           this.images.set(nameWithExt, gim)
-          this.updateImages()
+          //this.updateImages()
         }
         gim.src = `/api/asset/png/${newAsset._id}`
       })
@@ -411,141 +410,13 @@ export default class MapArea extends React.Component {
     return JSON.stringify(data)
   }
 
-  generateImages (cb) {
-    // image layer has separate field for image
-    if (!this.data.images) {
-      this.data.images = {}
-    }
-    const imgs = this.data.images
 
-    for (let i = 0; i < this.data.layers.length; i++) {
-      if(!this.data.layers[i]){
-        this.data.layers.splice(i, 1)
-        i--; continue
-      }
-      if (this.data.layers[i].image)
-        this.data.images[this.data.layers[i].image] = this.data.layers[i].image
-    }
-
-    const keys = Object.keys(imgs)
-
-    if (!keys.length) {
-      if (typeof cb == 'function')
-        cb()
-      return false
-    }
-
-    let loaded = 0
-    keys.forEach((i, index) => {
-      const img = new Image
-      img.setAttribute('crossOrigin', 'anonymous')
-      img.onload = () => {
-        loaded++
-        this.images.set(i, img)
-        if (loaded == keys.length) {
-          this.updateImages(cb)
-        }
-      }
-      img.onerror = () => { console.error('Failed to load an image:', i) }
-      img.src = imgs[i]
-    })
-    return true
-  }
-
-  getImage(nameWithExt) {
-    this.loadingImages.push(nameWithExt)
-    const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
-    const src = nameWithExt.indexOf("/") === 0 ? nameWithExt : `/api/asset/png/${this.props.parent.getUser()}/${name}`
-    $.get(src)
-      .done((id) => {
-        const img = new Image()
-        img.onload = () => {
-          this.images.set(nameWithExt, img)
-          this.loadingImages.splice(this.loadingImages.indexOf(nameWithExt), 1)
-          //this.updateImages()
-        }
-        img.src = `/api/asset/png/${id}`
-      })
-      .fail(() => {
-        this.missingImages.push(nameWithExt)
-        this.loadingImages.splice(this.loadingImages.indexOf(nameWithExt), 1)
-        //this.updateImages()
-      })
-  }
-
-  updateImages(cb) {
-    const map = this.data
-    // map has not loaded
-    if (!map || !map.tilesets)
-      return
-
-    const errors = []
-    this.state.errors.length = 0
-
-    let index = 0
-    for (let ts of map.tilesets) {
-      const fgid = ts.firstgid
-      if (!this.images.get(ts.image)) {
-        if (this.loadingImages.indexOf(ts.image) > -1)
-          continue
-        else if (this.missingImages.indexOf(ts.image) > -1)
-          errors.push("missing: '" + ts.image + "'")
-        else
-          this.getImage(ts.image)
-        continue
-      }
-      const img = this.images.get(ts.image)
-      // this should be imported from mgb1
-      ts.imagewidth = img.width
-      ts.imageheight = img.height
-
-      if (!ts.tilewidth) {
-        ts.tilewidth = img.width
-        ts.tileheight = img.height
-        ts.width = 1
-        ts.height = 1
-      }
-      // update tileset to match new image / settings
-      const extraPixels = ts.imagewidth % ts.tilewidth
-      const columns = (ts.imagewidth - extraPixels) / ts.tilewidth
-      let rows = (ts.imageheight - (ts.imageheight % ts.tileheight)) / ts.tileheight
-      ts.tilecount = columns * rows
-      ts.columns = columns
-
-      let tot = ts.tilecount
-      let pos = {x: 0, y: 0}
-      for (let i = 0; i < tot; i++) {
-        TileHelper.getTilePosWithOffsets(i, Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos)
-        this.gidCache[fgid + i] = {
-          image: img,
-          index,
-          w: ts.tilewidth,
-          h: ts.tileheight,
-          x: pos.x,
-          y: pos.y,
-          ts: ts,
-          gid: fgid + i
-        }
-      }
-      index++
-    }
-
-    this.setState({errors})
-    //this.forceUpdate()
-    this.updateTilesets()
-    if (typeof cb === 'function') {
-      // clean up map - make sure gidCache is valid.. otherwise we will break all map
-      TileHelper.zeroOutUnreachableTiles(this.data, this.gidCache)
-      cb()
-    }
-  }
 
   setActiveLayer(id) {
     let l = this.getActiveLayer()
     l && l.deactivate()
     l = this.getActiveLayer()
     l && l.activate()
-    this.setState({activeLayer: id})
   }
   setActiveLayerByName(name){
     for(let i=0; i<this.data.layers.length; i++){
@@ -851,13 +722,13 @@ export default class MapArea extends React.Component {
   /* update stuff */
   /* this is very slow - use with caution */
   fullUpdate (cb = () => {}) {
-    this.gidCache = {}
+    //this.gidCache = {}
     this.images.clearAll()
 
     // this will regenerate all images
-    this.generateImages(() => {
+    /*this.generateImages(() => {
       this.update(cb)
-    })
+    })*/
   }
 
   /* update all except images */
@@ -913,11 +784,11 @@ export default class MapArea extends React.Component {
     return l
   }
 
-  getActiveLayer () {
+  getActiveLayer (id = this.props.activeLayer) {
     if (!this.data.layers)
       return null
 
-    return this.getLayer(this.data.layers[this.state.activeLayer], this.state.activeLayer)
+    return this.getLayer(this.data.layers[id], id)
   }
 
   addLayer (type) {
@@ -944,9 +815,7 @@ export default class MapArea extends React.Component {
     let l = this.getActiveLayer()
     l && l.deactivate()
 
-    this.state.activeLayer = id
-
-    l = this.getActiveLayer()
+    l = this.getActiveLayer(id)
     l && l.activate()
 
     this.update()
@@ -1067,7 +936,7 @@ export default class MapArea extends React.Component {
         console.log("Tilemaplayer", i)
         layers.push(<TileMapLayer
           data={data.layers[i]}
-          isActive={this.state.activeLayer == i}
+          isActive={this.props.activeLayer == i}
           camera={this.camera}
           getEditMode={() => this.options.mode}
           setEditMode={(mode) => {this.setMode(mode)}}
@@ -1078,45 +947,52 @@ export default class MapArea extends React.Component {
           key={i}
 
           map={this}
-
           ref={ this.addLayerRef.bind(this, i) }
           />)
       }
       else if (data.layers[i].type == LayerTypes.image) {
         layers.push(<ImageLayer
+          camera={this.camera}
+
           data={data.layers[i]}
           ref={this.addLayerRef.bind(this, i)}
           key={i}
           map={this}
-          isActive={this.state.activeLayer == i}/>)
+          isActive={this.props.activeLayer == i}/>)
       }
       else if (data.layers[i].type == LayerTypes.object) {
         layers.push(<ObjectLayer
+          camera={this.camera}
+
           data={data.layers[i]}
           ref={this.addLayerRef.bind(this, i)}
           key={i}
           map={this}
-          isActive={this.state.activeLayer == i}/>)
+          isActive={this.props.activeLayer == i}/>)
       }
       else if (data.layers[i].type == LayerTypes.actor) {
         layers.push(<ActorLayer
+          camera={this.camera}
+
           data={data.layers[i]}
           ref={this.addLayerRef.bind(this, i)}
           key={i}
           map={this}
-          isActive={this.state.activeLayer == i}/>)
+          isActive={this.props.activeLayer == i}/>)
       }
       else if (data.layers[i].type == LayerTypes.event) {
         layers.push(<EventLayer
+          camera={this.camera}
+
           data={data.layers[i]}
           ref={this.addLayerRef.bind(this, i)}
           key={i}
           map={this}
-          isActive={this.state.activeLayer == i}/>)
+          isActive={this.props.activeLayer == i}/>)
       }
     }
     layers.push(
-      <GridLayer map={this} key={data.layers.length} layer={this.layers[this.state.activeLayer]} ref='grid' />
+      <GridLayer map={this} key={data.layers.length} layer={this.layers[this.props.activeLayer]} ref='grid' />
     )
     // TODO: adjust canvas size
     return (
@@ -1129,3 +1005,46 @@ export default class MapArea extends React.Component {
     )
   }
 }
+
+/*
+  getImage(nameWithExt) {
+    this.loadingImages.push(nameWithExt)
+    const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
+    const src = nameWithExt.indexOf("/") === 0 ? nameWithExt : `/api/asset/png/${this.props.parent.getUser()}/${name}`
+    $.get(src)
+      .done((id) => {
+        const img = new Image()
+        img.onload = () => {
+          this.images.set(nameWithExt, img)
+          this.loadingImages.splice(this.loadingImages.indexOf(nameWithExt), 1)
+          //this.updateImages()
+        }
+        img.src = `/api/asset/png/${id}`
+      })
+      .fail(() => {
+        this.missingImages.push(nameWithExt)
+        this.loadingImages.splice(this.loadingImages.indexOf(nameWithExt), 1)
+        //this.updateImages()
+      })
+  }
+
+  fixTileset(ts){
+    ts.imagewidth = img.width
+    ts.imageheight = img.height
+
+    if (!ts.tilewidth) {
+      ts.tilewidth = img.width
+      ts.tileheight = img.height
+      ts.width = 1
+      ts.height = 1
+    }
+    // update tileset to match new image / settings
+    const extraPixels = ts.imagewidth % ts.tilewidth
+    const columns = (ts.imagewidth - extraPixels) / ts.tilewidth
+    let rows = (ts.imageheight - (ts.imageheight % ts.tileheight)) / ts.tileheight
+    ts.tilecount = columns * rows
+    ts.columns = columns
+
+    TileHelper.zeroOutUnreachableTiles(this.data, this.gidCache)
+  }
+ */

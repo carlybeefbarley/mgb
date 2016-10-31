@@ -47,68 +47,6 @@ export default class LayerControls extends React.Component {
     parent.forceUpdate()
   }
 
-  removeLayer () {
-    const parent = this.props.layer
-    const map = parent.props.info.content.map
-    const lss = map.data.layers
-
-    map.saveForUndo('Remove Layer')
-    lss.splice(map.activeLayer, 1)
-    if (map.activeLayer >= map.data.layers.length) {
-      map.activeLayer = map.data.layers.length - 1
-    }
-    parent.forceUpdate()
-    map.forceUpdate()
-  }
-
-  raiseLayer () {
-    const parent = this.props.layer
-    const map = this.map
-    map.saveForUndo('Raise Layer')
-
-    const lss = map.data.layers
-    const layer = lss.splice(map.activeLayer, 1)
-
-    map.activeLayer++
-    lss.splice(map.activeLayer, 0, layer[0])
-    parent.forceUpdate()
-    map.forceUpdate()
-  }
-
-  lowerLayer () {
-    const parent = this.props.layer
-    const map = this.map
-    map.saveForUndo('Lower Layer')
-
-    const lss = map.data.layers
-    const layer = lss.splice(map.activeLayer, 1)
-
-    map.activeLayer--
-    lss.splice(map.activeLayer, 0, layer[0])
-    parent.forceUpdate()
-    map.forceUpdate()
-  }
-
-  updateOptions () {
-    if (this.options.highlightActiveLayers) {
-      $(this.map.refs.mapElement).addClass('highlight-active-layer')
-    }else {
-      $(this.map.refs.mapElement).removeClass('highlight-active-layer')
-    }
-  }
-
-  highlightActiveLayerToggle () {
-    this.options.highlightActiveLayers = !this.options.highlightActiveLayers
-    this.updateOptions()
-    this.forceUpdate()
-  }
-
-  showGridToggle () {
-    this.options.showGrid = !this.options.showGrid
-    this.forceUpdate()
-    this.map.forceUpdate()
-  }
-
   render () {
     const highlightClassName = `ui floated icon button ${this.options.highlightActiveLayers ? 'primary' : ''}`
     const showGridClassName = `ui floated icon button ${this.options.showGrid ? 'primary' : ''}`

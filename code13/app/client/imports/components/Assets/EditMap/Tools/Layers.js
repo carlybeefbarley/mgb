@@ -8,49 +8,26 @@ export default class Layers extends React.Component {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
   }
-  get map () {
-    return this.props.map
-  }
 
   handleClick (layerNum) {
-    let l = this.map.getActiveLayer()
-    l && l.deactivate()
-
-    this.map.activeLayer = layerNum
-
-    l = this.map.getActiveLayer()
-    l && l.activate()
-
-    this.map.update()
-
-  // this.forceUpdate()
+    this.props.setActiveLayer(layerNum)
   }
-  showOrHideLayer (layer, visible, e) {
+  showOrHideLayer (layerId, wasVisible, e) {
     e.preventDefault()
     e.stopPropagation()
 
-    const mapData = this.map.data
-    mapData.layers[layer].visible = !visible
-
-    this.forceUpdate()
-
-    setTimeout(() => {
-      this.map.forceUpdate()
-    }, 0)
+    this.props.toggleLayerVisibilty(layerId, !wasVisible)
   }
 
   render () {
-    if(!this.map){
-      return <div />
-    }
-    let layers = []
+    const data = this.props.layers
+    const active = this.props.activeLayer
 
-    const data = this.map.data
-    const active = this.map.state.activeLayer
+    let layers = []
     // layers goes from bottom to top - as first drawn layer will be last visible
-    for (let i = data.layers.length - 1; i > -1; i--) {
+    for (let i = data.length - 1; i > -1; i--) {
       let className = 'icon'
-      + (data.layers[i].visible ? ' unhide' : ' hide')
+      + (data[i].visible ? ' unhide' : ' hide')
 
       layers.push(
         <div
@@ -58,9 +35,9 @@ export default class Layers extends React.Component {
           className={(i == active ? 'bold active' : 'item')}
           onClick={this.handleClick.bind(this, i)}
           href='javascript:;'>
-          <i className={className} onClick={this.showOrHideLayer.bind(this, i, data.layers[i].visible)}></i>
+          <i className={className} onClick={this.showOrHideLayer.bind(this, i, data[i].visible)}></i>
           <a href='javascript:;'>
-            {data.layers[i].name}
+            {data[i].name}
           </a>
         </div>
       )
@@ -72,7 +49,10 @@ export default class Layers extends React.Component {
             <span className='explicittrigger'><i className='dropdown icon'></i> Layers</span>
           </div>
           <div className='active content menu'>
-            <LayerControls layer={this} />
+            <LayerControls
+              {...this.props}
+              options={this.props.options}
+              />
             {layers}
           </div>
         </div>

@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import React from 'react';
+import React from 'react'
 
 export default class AssetShowDeletedSelector extends React.Component {
 //   propTypes:{
@@ -9,7 +8,7 @@ export default class AssetShowDeletedSelector extends React.Component {
 //     }
 
   constructor(props) {
-    super(props);
+    super(props)
   }
   
   // React Callback: componentDidMount()
@@ -31,7 +30,7 @@ export default class AssetShowDeletedSelector extends React.Component {
     let active = this.props.showDeletedFlag === "1"
 
     return (
-            <a className={"assetShowDeletedPopup ui " + (active ? "red button" : "button")} 
+            <a className={"assetShowDeletedPopup ui " + (active ? "red icon button" : "icon button")} 
                 data-value="showDeleted"
                 onClick={this.handleChangeFlagClick.bind(this)}
                 data-position="bottom center"
@@ -39,7 +38,6 @@ export default class AssetShowDeletedSelector extends React.Component {
                 data-content="Click here to show/hide assets that have been deleted">
               <i className="trash icon"></i>
             </a>
-    );
+    )
   }
-
 }

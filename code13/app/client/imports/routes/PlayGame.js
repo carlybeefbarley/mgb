@@ -40,10 +40,7 @@ const PlayCodeGame = ( { _codeName, owner } ) =>
       <iframe
         key={ 0 }
         id="iFrame1"
-        width='100%' 
-        height='100%'
-        minWidth='800px'
-        minHeight='600px'
+        style={{minWidth:'800px',minHeight:'600px'}}
         sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
         src={`/api/asset/code/bundle/u/${ownerName}/${codeName}`}>
       </iframe>

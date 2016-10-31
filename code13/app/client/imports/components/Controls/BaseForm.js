@@ -33,13 +33,17 @@ export default class BaseForm extends React.Component {
     )
   }
 
+  // fieldOptions:
+  //    .disabled:   disabled control
+  //    .boolIsTF:   if boolIsTF===true,  then these bools are represented as Boolean true and false;  
+  //                 if boolIsTF===false (or is undefined), then these bools are represented as '1' and '0'
   bool (name, key, fieldOptions = {} ) {
-    const checked = !!parseInt(this.data[key], 10)
+    const checked = fieldOptions.boolIsTF ? this.data[key] : !!parseInt(this.data[key], 10)
     return (
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") }>
         <label>{name}</label>
         <div className="ui toggle checkbox" ref={(b) => {$(b).checkbox()}} onClick={() => {
-          const val = !checked ? "1" : "0"
+          const val = fieldOptions.boolIsTF ? (!checked ? true : false) : (!checked ? '1' : '0')
           this.data[key] = val
           this.props.onchange && this.props.onchange()
         }}>

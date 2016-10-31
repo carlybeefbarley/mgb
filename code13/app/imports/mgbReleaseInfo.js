@@ -9,16 +9,15 @@
 
 // For iteration, I just simply use the number of commits (including this) at https://github.com/devlapse/mgb
 
-
 const mgbReleaseInfo = {
   'releases': [
     {
-      'timestamp': 'Sat Oct 29 2016 23:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun Oct 30 2016 19:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1881'
+        'iteration': '1891'
       },
 
       'releaseManagement': {
@@ -26,6 +25,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'nav.navpanel',
+          'type': 'improvement',
+          'changeName': 'NavPanel restructuring - Play/Learn/Create',
+          'changeSummary': 'We have restructured the NavPanel on the left of the window to support the upcoming deeper learning and play experiences. Prior to this change, the hierarchy was more focussed on just creation workflows. This sets us up for the Deeper playback and learning/skills systems that are coming NEXT',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'asset.game',
           'type': 'feature',

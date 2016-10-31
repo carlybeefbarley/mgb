@@ -537,9 +537,9 @@ export default AssetEditRoute = React.createClass({
           this.props.showToast(err.reason, 'error')
       })
       if (newIsCompleted)
-        logActivity("asset.stable",  "Marked asset as done", null, asset)
+        logActivity("asset.stable",  "Marked asset as complete", null, asset)
       else
-        logActivity("asset.unstable",  "Marked asset as not done", null, asset)
+        logActivity("asset.unstable",  "Marked asset as incomplete", null, asset)
     }
   },
 

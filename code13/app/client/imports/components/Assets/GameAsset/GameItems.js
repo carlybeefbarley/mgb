@@ -3,7 +3,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Item, Button } from 'semantic-ui-react'
 
 export const GameItem = ( { game } ) => (
-	<Item>
+	<Item className='animated bounceInLeft'>
     <Item.Image className='mgb-pixelated' style={{ maxHeight: 90, maxWidth: 90 }} src={game.thumbnail} />
     <Item.Content>
       <Item.Header content={game.name} />

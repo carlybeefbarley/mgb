@@ -16,7 +16,7 @@ const ProjectCard = props => {
   const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
 
   return (
-    <Card key={project._id}>
+    <Card key={project._id} className='animated fadeIn'>
 
       <QLink className="image" to={linkTo} elOverride='div'>
         <ImageShowOrChange

@@ -48,7 +48,7 @@ const AssetActivityDetail = ( { activitySnapshots, currUser } ) => {
 
 
   return (
-    <Popup wide='very' hoverable trigger={TriggerElement} size='tiny'>
+    <Popup wide='very' hoverable trigger={TriggerElement} size='tiny' className='animated fadeIn'>
       <Popup.Header>
         { viewersCount } recent viewers
       </Popup.Header>

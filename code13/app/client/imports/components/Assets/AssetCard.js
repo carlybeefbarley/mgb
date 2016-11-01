@@ -146,7 +146,7 @@ export default AssetCard = React.createClass({
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
-      <div key={asset._id} className="ui card" style={ { minWidth: '200px', marginTop: '0.25em', marginBottom: '0.25em' } }>
+      <div key={asset._id} className="ui card animated fadeIn" style={ { minWidth: '200px', marginTop: '0.25em', marginBottom: '0.25em' } }>
       
         <div 
             className="ui centered image" 

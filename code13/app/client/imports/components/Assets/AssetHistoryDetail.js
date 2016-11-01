@@ -41,7 +41,7 @@ const AssetHistoryDetail = ( { assetActivity, currUser } ) => {
   )
 
   return (
-    <Popup wide='very' hoverable trigger={TriggerElement} size='tiny'>
+    <Popup wide='very' hoverable trigger={TriggerElement} size='tiny' className='animated fadeIn'>
       <Popup.Header>
         { changesCount } changes
       </Popup.Header>

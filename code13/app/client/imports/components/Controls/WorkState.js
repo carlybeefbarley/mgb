@@ -39,12 +39,13 @@ const WorkState = (props) => {
 
   return (
     <span>
-      <div className={`workstate ui ${workStateColors[props.workState]} ${props.showMicro ? "circular " : ""} label`}
-          title={ props.canEdit ? null : description }
+      <div className={`workstate ui small ${workStateColors[props.workState]} ${props.showMicro ? 'circular ' : ''} label`}
+          title={ props.canEdit ? null : `Quality=${description}` }
           ref={ (c) => { _initPopup(c, props.popupPosition, props.canEdit); this._popupInitiator = c } }>
           <WorkStateIcon name={props.workState} />
         { !props.showMicro && description }
       </div>
+
       { props.canEdit &&
         <div className="ui popup" style={{fontSize: '16px'}}>
           { props.showMicro &&
@@ -56,7 +57,7 @@ const WorkState = (props) => {
                 <div
                   key={idx}
                   style={labelSty}
-                  className={`ui item left aligned fluid ${workStateColors[name]} ${(name == props.workState) ? "active" : ""}`}
+                  className={`ui item left aligned fluid ${workStateColors[name]} ${(name == props.workState) ? 'active' : ''}`}
                   onClick={(e) => {
                     e.preventDefault()
                     $(this._popupInitiator).popup('hide')

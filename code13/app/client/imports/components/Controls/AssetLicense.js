@@ -42,7 +42,7 @@ const AssetLicense = ( { license, popupPosition, handleChange, canEdit } ) => {
                 {assetLicenses[actualLicense].name}
               </a>
             </p>
-            <Label small color='black' >
+            <Label color='black' >
               <Icon name='law' /><small>{ actualLicense }</small>
             </Label>
             <p>

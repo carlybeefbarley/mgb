@@ -45,7 +45,7 @@ export default UserItem = React.createClass({
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui segment' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return ( 
-      <div className={segClass + ' animated bounceInRight'} onClick={this.handleClickUser} >
+      <div className={segClass} onClick={this.handleClickUser} >
         <div className="ui header large">{name}</div>
         <img src={avatar} className={`ui floated image ${imageSize}`} />
         { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }

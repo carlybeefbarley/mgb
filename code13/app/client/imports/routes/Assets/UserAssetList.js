@@ -21,6 +21,7 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
 import UserItem from '/client/imports/components/Users/UserItem'
+import { Message } from 'semantic-ui-react'
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = { 
@@ -270,11 +271,9 @@ export default UserAssetListRoute = React.createClass({
   },
 
   render() {
-    let assets = this.data.assets       // list of assets provided via getMeteorData()
-    let projects = this.data.projects   // can be null due to empty or still loading, or public-assets
-
+    const { assets, projects, loading } = this.data   // can be null due to empty or still loading, or public-assets
     const { currUser, user, ownsProfile, location } = this.props
-    const name = user ? user.profile.name : ""
+    const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)
 
     // For some reason this isn't working as 'hidden divider' TODO - find out why
@@ -356,9 +355,9 @@ export default UserAssetListRoute = React.createClass({
           { hiddenDivider }
 
           <div className="ui row">          
-            { !this.data.loading && qN.kinds==="" ? <div className="ui message"><div className="header">Select one or more Asset kinds to be shown here</div><p>This list is empty because you have not selected any of the available Asset kinds to view</p></div> : null}
-            { !this.data.loading && qN.kinds!==""  && assets.length === 0 ? <div className="ui message"><div className="header">No assets match your search</div><p>Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above</p></div> : null}
-            { this.data.loading ?
+            { !loading && qN.kinds === '' && <Message style={{marginTop: '8em'}} warning icon='help circle' header='Select one or more Asset kinds to be shown here' content='This list is empty because you have not selected any of the available Asset kinds to view' /> }
+            { !loading && qN.kinds !== '' && assets.length === 0 && <Message style={{marginTop: '8em'}} warning icon='help circle' header='No assets match your search' content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above" /> }
+            { loading ?
                 <div><Spinner /></div>
               :
                 <AssetList 

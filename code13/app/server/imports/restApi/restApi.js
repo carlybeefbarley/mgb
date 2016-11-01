@@ -7,7 +7,6 @@ export var RestApi = new Restivus({
   prettyJson: true
 })
 
-const cache = {}
 
 // The rest of this file deals with tiles and maps.
 
@@ -239,10 +238,6 @@ RestApi.addRoute('asset/tileset-info/:id', {authRequired: false}, {
 });
 RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
   get: function () {
-    const key = 'asset/tileset/' + this.urlParams.id
-    if(cache[key]){
-      return cache[key]
-    }
     const asset = Azzets.findOne(this.urlParams.id);
     if (!asset || !asset.content2 || !asset.content2.tileset) {
       return {
@@ -250,7 +245,7 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
         body: {} // body required to correctly set 404 header
       }
     }
-    const ret = {
+    return {
       statusCode: 200,
       headers: {
         'Content-Type': 'image/png'
@@ -258,10 +253,6 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
       // TODO: cache
       body: dataUriToBuffer(asset.content2.tileset)
     }
-    if(asset.isCompleted){
-      cache[key] = ret
-    }
-    return ret
   }
 })
 RestApi.addRoute('asset/tileset/:user/:name', {authRequired: false}, {

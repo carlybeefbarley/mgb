@@ -12,12 +12,12 @@
 const mgbReleaseInfo = {
   'releases': [
     {
-      'timestamp': 'Mon Oct 31 2016 20:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Tue Nov 1 2016 02:10:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1905'
+        'iteration': '1908'
       },
 
       'releaseManagement': {
@@ -59,7 +59,15 @@ const mgbReleaseInfo = {
           'changeName': 'Thumbnail size',
           'changeSummary': 'Thumbnails are smaller for small graphics assets (less then 290 px wide)',
           'otherUrls': [ ]
-        }
+        },
+        {
+          'featureTag': 'nav.ui',
+          'type': 'improvement',
+          'changeName': 'UI improvements',
+          'changeSummary': 'Added some animations for spinners, assets, project cards, user cards, game items etc. Also cleaned up the Asset Edit metadata buttons (license, workstate etc)',
+          'otherUrls': [ ]
+        },
+        
       ]
     },
 

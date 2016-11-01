@@ -175,7 +175,7 @@ export default WhatsNewRoute = React.createClass({
       <Item.Group icon>
         { rel.changes.map( (c) => {
           return (
-            <Item key={c.changeName} >
+            <Item key={c.changeName} className='animated fadeIn'>
               <Icon size='large' name={ this.getIconNameForChangeType(c.type) } />&emsp;
               <Item.Content>
                 <Item.Header><small>{c.changeName}</small></Item.Header>

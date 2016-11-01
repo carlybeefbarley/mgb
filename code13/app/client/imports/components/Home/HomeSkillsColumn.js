@@ -19,7 +19,7 @@ const skillsList = [
 ]
 
 const HomeSkillsColumn = (props) => (
-  <Grid.Column>
+  <Grid.Column className='animated fadeIn'>
     <Header as='h2' style={{ marginBottom: "1em" }}>Grow your <em>real</em> skill tree</Header>
     <List className="very relaxed">
       {

@@ -108,7 +108,7 @@ export default fpFeatureLevels = React.createClass({
     }
 
     return (
-      <div>
+      <div className='animated fadeIn'>
         <p>
           On pages that support 'Feature Levels' a <i className="ui small options icon" /> slider will appear at the top of the page.
         </p>
@@ -118,7 +118,7 @@ export default fpFeatureLevels = React.createClass({
         </button>
         <p>It is a setting that hides advanced features from new users so they may learn without feeling overwhelmed.</p>
         <p id="mgbjr-CurrentFeatureLevelsInFp"><b>Current Feature Levels:</b></p>
-        { _.map(expectedToolbarScopeNames,  name => makeSlider(name)) }
+        { _.map(expectedToolbarScopeNames, name => makeSlider(name)) }
       </div>
     )
   }

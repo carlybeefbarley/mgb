@@ -15,7 +15,7 @@ const fakePeopleList = [
 ]
 
 const HomeMeetFriendsColumn = () => (
-  <Grid.Column>
+  <Grid.Column className='animated fadeIn'>
     <Header as='h2' style={{ marginBottom: '1em' }}>Meet creative friends</Header>
     <List className="very relaxed">
       {

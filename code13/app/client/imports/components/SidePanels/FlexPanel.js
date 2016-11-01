@@ -147,7 +147,7 @@ export default FlexPanel = React.createClass({
     return  (
       <div className="basic segment mgbFlexPanel" style={panelStyle}>
         { flexPanelIsVisible &&
-          <div>
+          <div className='animated fadeInRight'>
 
             <div className="flex header">
               <span className="title">

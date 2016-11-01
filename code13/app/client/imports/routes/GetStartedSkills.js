@@ -54,7 +54,7 @@ const GetStartedSkillsRoute = () => (
             { skillAreaItems.map( (area, idx) => (
                 <QLink 
                     key={idx} 
-                    className="card" 
+                    className="card animated fadeIn" 
                     style={cardStyle} 
                     onClick={(e) => { alert("Not Yet Implemented"); e.preventDefault() }}
                     to={`/getstarted/skills/NOT_YET_IMPLEMENTED`}>

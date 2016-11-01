@@ -1538,13 +1538,6 @@ export default class EditGraphic extends React.Component {
 
 
             <span>&nbsp;&nbsp;</span>
-            <div className="ui small icon button hazPopup" onClick={this.handleSave.bind(this, "Manual save")}
-               data-content="Changes are continuously saved and updated to other viewers "
-               data-variation="tiny"
-               data-position="bottom center">
-              <i className="save icon"></i>
-            </div>
-            <span>&nbsp;&nbsp;</span>
             <div className="ui small button hazPopup"
                data-content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                data-variation="tiny"

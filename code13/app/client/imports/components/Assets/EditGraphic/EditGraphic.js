@@ -1542,7 +1542,7 @@ export default class EditGraphic extends React.Component {
                data-content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                data-variation="tiny"
                data-position="bottom center">
-              <i className="tasks icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
+              <i className="spinner icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
             </div>
           </div>
 

@@ -57,8 +57,18 @@ const navPanelViews = [
     hdr: "Create",
     getDirectUrl: () => (`/assets/create`),
     el: npCreate,
-    hideIfNoUser: true
-  },  {
+    hideIfNoUser: false
+  },  
+  {
+    tag: "meet",
+    name: "meet",
+    icon: "users",
+    hdr: "Meet",
+    getDirectUrl: () => (`/users`),
+    el: npPeople,
+    hideIfNoUser: false
+  },
+  {
     tag: "projects",
     name: "projects",
     icon: "sitemap",
@@ -67,16 +77,6 @@ const navPanelViews = [
     el: npProjects,
     hideIfNoUser: true
   },
-  {
-    tag: "people",
-    name: "people",
-    icon: "users",
-    hdr: "People",
-    getDirectUrl: () => (`/users`),
-    el: npPeople,
-    hideIfNoUser: false
-  },
-
   {
     tag: "history",
     name: "history",

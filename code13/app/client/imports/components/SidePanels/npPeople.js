@@ -16,7 +16,7 @@ export default npPeople = React.createClass({
         <div className="ui item" key="authHdr">
           <h3 className="ui inverted header" style={{textAlign: "center"}}>
             <i className="users icon" />
-            People
+            Meet
           </h3>
         </div>
         <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/users" className="item">

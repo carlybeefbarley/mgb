@@ -40,7 +40,7 @@ export const getImplicitBadgesForUser = function(user) {
   if (_.includes('dgolds,guntis'.split(','), user.profile.name))
     retval.push('guruMusic')
 
-  if (_.includes('Micah'.split(','), user.profile.name))
+  if (_.includes('Micah,Supergirl'.split(','), user.profile.name))
     retval.push('guruArt')
 
   isUserSuperAdmin(user) && retval.push('mgbAdmin')

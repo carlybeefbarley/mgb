@@ -246,14 +246,14 @@ export default class Toolbar extends React.Component {
         if (keyModifiers.hasOwnProperty(key))
           keyval |= keyModifiers[key]
         else
-          console.error(`Unknown key modifier [$(key)] in shortcut '$(shortcut)'`)
+          console.error(`Unknown key modifier [${key}] in shortcut '${shortcut}'`)
       }
       else if (key.length === 1)
         keyval |= key.toUpperCase().charCodeAt(0)
     }
     // TODO: check duplicate shortcuts?
     if (!this.props.actions[action]) {
-      console.trace(`Missing Toolbar action '$(action)' for shortcut'$(shortcut)'`)
+      console.trace(`Missing Toolbar action '${action}' for shortcut'${shortcut}'`)
       return
     }
     this.keyActions[keyval] = this.props.actions[action].bind(this.props.actions)

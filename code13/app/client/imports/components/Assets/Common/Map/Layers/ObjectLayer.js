@@ -471,7 +471,6 @@ export default class ObjectLayer extends AbstractLayer {
     Object.keys(this.shapeBoxes).forEach((k) => {
       delete this.shapeBoxes[k]
     })
-
     this.isDirty = true
   }
 

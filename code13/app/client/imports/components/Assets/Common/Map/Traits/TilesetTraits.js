@@ -41,7 +41,8 @@ export default {
     console.log("Active tileset:", id)
     this.setState({activeTileset: id})
   },
-  updateTilesetFromData: function(data, ref = null, fixGids){
+
+  updateTilesetFromData: function(data, ref = null, fixGids = false){
     const c2 = this.props.asset.content2
     let ts
     if (data.imagewidth == data.tilewidth) {

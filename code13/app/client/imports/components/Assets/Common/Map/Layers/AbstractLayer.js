@@ -114,6 +114,7 @@ export default class AbstractLayer extends React.Component {
   draw () {
     this.isDirty = true
   }
+  // abstract
   _draw (delta) {}
 
   /* events */

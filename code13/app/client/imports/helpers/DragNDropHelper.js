@@ -2,22 +2,24 @@
 
 const DragNDropHelper = {
   getAssetFromEvent: (e) => {
+    const data = DragNDropHelper.getDataFromEvent(e)
+    return data ? data.asset : null
+  },
+
+  getDataFromEvent: (e) => {
     e.preventDefault()
     const dataStr = e.dataTransfer.getData("text")
     if (!dataStr)
       return null
-    
-    let data
+
     try {
-      data = JSON.parse(dataStr);
+      return JSON.parse(dataStr);
     }
     catch (e) {
       /* json failed to parse */
       return null
     }
-    return data.asset
   },
-
   preventDefault: (e) => {
     e.stopPropagation()
     e.preventDefault()

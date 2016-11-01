@@ -1,28 +1,15 @@
 import React from 'react'
 
-import TileMapLayer from './Layers/TileMapLayer'
-import ActorLayer from './Layers/ActorLayer'
-import EventLayer from './Layers/EventLayer'
-import ImageLayer from './Layers/ImageLayer'
-import ObjectLayer from './Layers/ObjectLayer'
-import GridLayer from './Layers/GridLayer'
-
-import MapToolbar from './../../EditActorMap/Tools/MapToolbar'
-
-import TileHelper from './Helpers/TileHelper'
-import ActorHelper from './Helpers/ActorHelper'
+import TileHelper     from './Helpers/TileHelper'
 
 import TileCollection from './Tools/TileCollection'
-import EditModes from './Tools/EditModes'
-import LayerTypes from './Tools/LayerTypes'
-import PositionInfo from './Tools/PositionInfo'
-import Camera from './Camera'
+import EditModes      from './Tools/EditModes'
+import LayerTypes     from './Tools/LayerTypes'
+import GridLayer      from './Layers/GridLayer'
 
-import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
-import Plural from '/client/imports/helpers/Plural'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar'
+import Camera         from './Camera'
 
-import Mage from '/client/imports/components/MapActorGameEngine/Mage'
+import Plural         from '/client/imports/helpers/Plural'
 
 import './EditMap.css'
 
@@ -34,61 +21,16 @@ export default class MapArea extends React.Component {
     window.mgb_map = this
 
     this.state = {
-      isLoading: false,
       isPlaying: false,
-      errors: [],
-      lastSaved: '',
       // x/y are angles in degrees not pixels
       preview: {
         x: 5,
         y: 15,
         sep: 20
-      },
-      activeTileset: 0
-    }
-
-    let images = {}
-    this.images = {
-      set: (property, value) => {
-        property = this.removeDots(property)
-        images[property] = value
-        if (!this.data.images)
-          this.data.images = {}
-        this.data.images[property] = TileHelper.normalizePath(value.src)
-        return true
-      },
-      get: (property) => {
-        property = this.removeDots(property)
-        return images[property]
-      },
-      clear: (property) => {
-        property = this.removeDots(property)
-        delete images[property]
-      },
-      clearAll: () => {
-        images = {}
       }
     }
 
-
-    this.activeTileset = 0
-    this.spacing = 0
-
-    this.missingImages = []
-    this.loadingImages = []
-    //this.gidCache = {}
-
     this.layers = []
-    this.tilesets = []
-
-    // current update timestamp
-    this.now = Date.now()
-
-    this._camera = null
-    this.ignoreUndo = 0
-    this.undoSteps = []
-    this.redoSteps = []
-
 
     // here will be kept selections from tilesets
     this.collection = new TileCollection()
@@ -96,6 +38,8 @@ export default class MapArea extends React.Component {
     // any modifications will be limited to the selection if not empty
     this.selection = new TileCollection()
     this.tmpSelection = new TileCollection()
+
+    this.camera = new Camera(this)
 
     this.globalMouseMove = (...args) => {
       this.handleMouseMove(...args)
@@ -119,68 +63,27 @@ export default class MapArea extends React.Component {
         return false
       }
     }
-    this.activeAsset = this.props.asset
   }
 
-  get gidCache(){
-    return this.props.cache.tiles
-  }
-
-  set activeLayer(v){
-    this.setState({activeLayer: v})
-  }
-
-  get activeLayer(){
-    console.error("Debug this...")
-    return this.props.activeLayer
-  }
-
-  set data(val) {
-    const l = this.getActiveLayer()
-    this.activeAsset.content2 = val
-    l && l.clearCache && l.clearCache()
-  }
-
-  get data () {
-    return this.activeAsset.content2
-  }
-
-  // store meta information about current map
-  // don't forget to strip meta when exporting it
-  get meta() {
-    if (!this.data.meta) {
-      this.data.meta = {
-        options: {
-          // empty maps aren't visible without grid
-          showGrid: 1,
-          camera: { _x: 0, _y: 0, _zoom: 1 },
-          preview: false,
-          mode: 'stamp',
-          randomMode: false
-        }
-      }
-    }
-    return this.data.meta
-  }
-
-  get camera() {
-    // prevent camera adjustments on asset update
-    if (this._camera)
-      return this._camera
-
-    this._camera = new Camera(this)
-    return this._camera
-  }
-
-  get options() {
-    return this.meta.options
+  get options(){
+    return this.props.data.meta.options
   }
 
   get palette() {
-    return this.gidCache
+    return this.props.cache.tiles
   }
 
+  get activeLayer(){
+    return this.props.activeLayer
+  }
+
+  // abstract
+  set data(val) {}
+  // abstract
+  get data () {}
+
   componentDidMount() {
+    this.startTime = Date.now()
     this.startEventListeners()
   }
 
@@ -209,6 +112,12 @@ export default class MapArea extends React.Component {
     this._raf = () => {}
   }
 
+  componentWillReceiveProps (newprops) {
+    if(this.props.activeLayer != newprops.activeLayer){
+      this.activateLayer(newprops.activeLayer)
+    }
+  }
+
   componentDidUpdate () {
     this.redraw()
     this.adjustPreview()
@@ -216,23 +125,6 @@ export default class MapArea extends React.Component {
 
   componentWillUnmount () {
     this.stopEventListeners()
-  }
-
-  componentWillReceiveProps (newprops) {
-    if(this.props.activeLayer != newprops.activeLayer){
-      this.activateLayer(newprops.activeLayer)
-    }
-  }
-
-  forceUpdate (...args) {
-    // ignore undo for local updates
-    this.ignoreUndo++
-    super.forceUpdate(...args)
-    this.ignoreUndo--
-  }
-
-  removeDots (url) {
-    return TileHelper.normalizePath(url).replace(/\./gi, '*')
   }
 
   /* import and conversion */
@@ -257,25 +149,7 @@ export default class MapArea extends React.Component {
   // TODO: move api links to external resource?
   handleFileByExt_png (nameWithExt, buffer) {
     const blob = new Blob([buffer], {type: 'application/octet-binary'})
-    const src = URL.createObjectURL(blob)
     this.createGraphicsAsset(nameWithExt, blob)
-    // this may seem too confusing if we pull out our asset instead of uploading users dropped asset
-    // TODO: check for duplicate names?
-    /*const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
-     // try to map image with user's asset
-     $.get(`/api/asset/png/${this.props.parent.getUser()}/${name}`)
-     .success((id) => {
-     const img = new Image()
-     img.onload = () => {
-     this.images.set(nameWithExt, img)
-     this.updateImages()
-     }
-     img.src = `/api/asset/png/${id}`
-     })
-     .error((d) => {
-     this.createGraphicsAsset(nameWithExt)
-     })
-     */
   }
   createGraphicsAsset (nameWithExt, src) {
     const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
@@ -293,7 +167,6 @@ export default class MapArea extends React.Component {
         const gim = new Image()
         gim.onload = () => {
           this.images.set(nameWithExt, gim)
-          //this.updateImages()
         }
         gim.src = `/api/asset/png/${newAsset._id}`
       })
@@ -303,11 +176,9 @@ export default class MapArea extends React.Component {
   /* endof import and conversion */
 
 
-
   // TODO(stauzs): add 'insert/remove row/column' functionality
-  resize() {
+  resize () {
     this.saveForUndo("Resize")
-    console.log("RESIZE:", this.data.width +"x"+ this.data.height)
     this.layers.forEach((l) => {
       if(l.type != LayerTypes.tile || l.type != LayerTypes.actor){
         return;
@@ -340,43 +211,6 @@ export default class MapArea extends React.Component {
     })
   }
 
-
-  // TMP - one undo step - just to prevent data loss
-  saveForUndo(reason = '' , skipRedo = false) {
-    if (this.ignoreUndo)
-      return
-    const toSave = { data: this.copyData(this.data), reason }
-    // prevent double saving undo
-    if (this.undoSteps.length && this.undoSteps[this.undoSteps.length - 1].data == toSave.data)
-      return
-
-    if (!skipRedo)
-      this.redoSteps.length = 0
-
-    this.undoSteps.push(toSave)
-    this.refs.toolbar.forceUpdate()
-
-    // next action will change map.. remove from stack.. and we should get good save state
-    if (!skipRedo) {
-      window.setTimeout(() => {
-        this.save(reason)
-      }, 0)
-    }
-  }
-
-  doUndo () {
-    if (this.undoSteps.length) {
-      this.redoSteps.push(this.data)
-      this.data = JSON.parse(this.undoSteps.pop().data)
-
-      this.ignoreUndo++
-      this.update(() => {
-        this.ignoreUndo--
-        this.save('Undo')
-      })
-    }
-  }
-
   doRedo () {
     if (!this.redoSteps.length)
       return
@@ -399,23 +233,18 @@ export default class MapArea extends React.Component {
       return
 
     this.savedData = newData
-
     // make sure thumbnail is nice - all layers has been drawn
     window.requestAnimationFrame(() => {
-      this.props.parent.handleSave(this.data, reason, this.generatePreview())
+      this.props.handleSave(this.data, reason, this.generatePreview())
     })
   }
 
-  copyData = (data) => {
-    return JSON.stringify(data)
-  }
-
-
-
   setActiveLayer(id) {
+    console.log("Setting active layer..")
     let l = this.getActiveLayer()
     l && l.deactivate()
-    l = this.getActiveLayer()
+
+    l = this.getActiveLayer(id)
     l && l.activate()
   }
   setActiveLayerByName(name){
@@ -426,9 +255,8 @@ export default class MapArea extends React.Component {
       }
     }
   }
-  // tileset calls this method..
-  /* TODO: selection should be matrix - new class?*/
-  /* selection methods */
+
+  /* selection methods - these are used only by tilemap layers */
   addToActiveSelection (gid) {
     const index = this.collection.indexOf(gid)
     if (index == -1)
@@ -476,17 +304,22 @@ export default class MapArea extends React.Component {
     for (let i = 0; i < this.selection.length; i++)
       this.collection.push(this.selection[i])
   }
+
+  clearSelection(){
+    this.tmpSelection.clear()
+    this.selection.clear()
+    this.collection.clear()
+
+    const l = this.getActiveLayer()
+    if (!l || !l.clearSelection) {
+      return;
+    }
+    l.clearSelection(true)
+  }
   /* end of selection */
 
 
   /* camera stuff */
-  togglePreviewState () {
-    // this is not a synchronous function !!!
-    this.options.preview = !this.options.preview
-    this.adjustPreview()
-    this.forceUpdate()
-  }
-
   resetCamera() {
     this.lastEvent = null
     this.camera.reset()
@@ -687,7 +520,7 @@ export default class MapArea extends React.Component {
       case 13: // enter
         this.selectionToCollection()
         this.selection.clear()
-        this.refs.toolbar.enableMode(EditModes.stamp)
+        this.props.enableMode(EditModes.stamp)
         break
       /*case 90: // ctrl + z
        if (e.ctrlKey) {
@@ -705,11 +538,6 @@ export default class MapArea extends React.Component {
       this.redraw()
   }
 
-  setMode (mode) {
-    this.refs.toolbar.enableMode(mode)
-  }
-
-
   prepareForDrag (e) {
     e.stopPropagation()
     e.preventDefault()
@@ -717,27 +545,24 @@ export default class MapArea extends React.Component {
     // IE crashes
     // e.dataTransfer.dropEffect = 'copy'
   }
+
+  onImageLayerDrop (e, layer_data) {
+    const data = DragNDropHelper.getDataFromEvent(e)
+    if (!data || !data.asset || !data.asset.kind != 'graphic')
+      return false
+
+    layer_data.image = data.link
+    return true
+  }
   /* endof events */
 
   /* update stuff */
-  /* this is very slow - use with caution */
-  fullUpdate (cb = () => {}) {
-    //this.gidCache = {}
-    this.images.clearAll()
-
-    // this will regenerate all images
-    /*this.generateImages(() => {
-      this.update(cb)
-    })*/
-  }
 
   /* update all except images */
   update (cb = () => {}) {
     this.redraw()
-    this.redrawTilesets()
     cb()
   }
-
 
   redraw () {
     this.redrawLayers()
@@ -757,17 +582,9 @@ export default class MapArea extends React.Component {
 
   // RAF calls this function
   drawLayers () {
-    this.now = Date.now()
+    const now = Date.now()
     for (let i = 0; i < this.layers.length; i++)
-      this.layers[i]._draw(this.now)
-  }
-
-  redrawTilesets () {
-    this.tilesets.forEach((tileset) => { tileset.drawTiles() })
-  }
-
-  updateTilesets () {
-    this.tilesets.forEach((tileset) => { tileset.selectTileset(this.activeTileset) })
+      this.layers[i]._draw(now)
   }
   /* endof update stuff */
 
@@ -791,26 +608,6 @@ export default class MapArea extends React.Component {
     return this.getLayer(this.data.layers[id], id)
   }
 
-  addLayer (type) {
-    const map = this
-    const lss = map.data.layers
-    // TODO: check for duplicate names..
-    // TODO: get rid of strings
-    let ls
-    if (type == LayerTypes.tile)
-      ls = TileHelper.genLayer(map.data.width, map.data.height, 'Tile Layer ' + (lss.length + 1))
-    else if (type == LayerTypes.image)
-      ls = TileHelper.genImageLayer('Image Layer ' + (lss.length + 1))
-    else if (type == LayerTypes.object)
-      ls = TileHelper.genObjectLayer('Object Layer ' + (lss.length + 1))
-    else if (type == LayerTypes.object)
-      ls = TileHelper.genObjectLayer('Object Layer ' + (lss.length + 1))
-
-    lss.push(ls)
-    map.forceUpdate()
-    return ls
-  }
-
   activateLayer (id) {
     let l = this.getActiveLayer()
     l && l.deactivate()
@@ -819,30 +616,6 @@ export default class MapArea extends React.Component {
     l && l.activate()
 
     this.update()
-  }
-
-  // this is moved from Image layer - as React elements actually isn't created on <Element - probably only on first mount (?)
-  // TODO: figure out rect like way not to make superobjects like this one
-  onImageLayerDrop (e, layer_data) {
-    e.preventDefault()
-    e.stopPropagation()
-    const dataStr = e.dataTransfer.getData('text')
-    let asset, data
-    if (!dataStr)
-      return false
-
-    data = JSON.parse(dataStr)
-    if (!data || !data.asset)
-      return false
-
-    asset = data.asset
-
-    if (asset && asset.kind != 'graphic')
-      return false
-
-    layer_data.image = data.link
-    this.fullUpdate()
-    return true
   }
 
   // find out correct thumbnail size
@@ -868,6 +641,12 @@ export default class MapArea extends React.Component {
     return canvas.toDataURL()
   }
 
+
+  getLayers(){
+    return this.layers
+  }
+
+  // render related methods
   getInfo() {
     const layer = this.getActiveLayer()
     let st = ''
@@ -893,102 +672,63 @@ export default class MapArea extends React.Component {
   getNotification(){
     return this.data.width * this.data.height > 100000 ? <div>
       This map is larger than our recommended size - so editing may be slower than normal!
-    </div> : ''
-  }
-
-  renderLoading(){
-    return (
-      <div className="noScrollbarDiv"
-           style={{
-                   "position": "fixed",
-                   "top": "40px", "bottom": "0px", "left": "60px",
-                    "right": "345px", "overflow": "auto", "marginBottom": "0px"}}>
-        <div style={{"padding": "0px", "height": "auto"}}>
-          <div className="ui basic segment" style={{"minHeight": "15em"}}>
-            <div className="ui active inverted dimmer">
-              <div className="ui text indeterminate loader">Loading</div>
-            </div><p></p></div></div></div>)
+    </div> : null
   }
 
   addLayerRef(id, layer){
-    console.log(`Adding layer ref ${id}`, layer)
     if(layer){
       this.layers[id] = layer
-    }
-    else{
-      this.layers.splice(id, 1)
     }
   }
 
   renderMap() {
     const data = this.data
 
-    if (!data || !data.layers || this.state.isLoading)
+    if (!data || !data.layers)
       return (<div className='map-empty' ref='mapElement' />)
 
     const layers = []
 
-    console.log("rendering layers..")
     for (let i = 0; i < data.layers.length; i++) {
-      //if (!data.layers[i].visible)
-        //continue
-      if (data.layers[i].type == LayerTypes.tile) {
-        console.log("Tilemaplayer", i)
-        layers.push(<TileMapLayer
-          data={data.layers[i]}
-          isActive={this.props.activeLayer == i}
-          camera={this.camera}
-          getEditMode={() => this.options.mode}
-          setEditMode={(mode) => {this.setMode(mode)}}
+      const LayerComponent = LayerTypes.toComponent(data.layers[i].type)
+      if(LayerComponent) {
+        layers.push(
+          <LayerComponent
+            data={data.layers[i]}
+            mapData={data}
+            options={this.props.options}
+            // should it be forEachLayer(cb ? )
+            layers={this.getLayers.bind(this)}
 
-          clearTmpSelection={() => {this.tmpSelection.clear()}}
-          clearSelection={() => {this.selection.clear()}}
+            palette={this.palette}
+            isActive={this.props.activeLayer == i}
+            camera={this.camera}
+            startTime={this.startTime}
 
-          key={i}
+            getEditMode={() => this.props.getMode()}
+            setEditMode={(mode) => {this.props.setMode(mode)}}
 
-          map={this}
-          ref={ this.addLayerRef.bind(this, i) }
-          />)
-      }
-      else if (data.layers[i].type == LayerTypes.image) {
-        layers.push(<ImageLayer
-          camera={this.camera}
 
-          data={data.layers[i]}
-          ref={this.addLayerRef.bind(this, i)}
-          key={i}
-          map={this}
-          isActive={this.props.activeLayer == i}/>)
-      }
-      else if (data.layers[i].type == LayerTypes.object) {
-        layers.push(<ObjectLayer
-          camera={this.camera}
+            getSelection={() => {return this.selection}}
+            getTmpSelection={() => {return this.tmpSelection}}
+            getCollection={() => {return this.collection}}
 
-          data={data.layers[i]}
-          ref={this.addLayerRef.bind(this, i)}
-          key={i}
-          map={this}
-          isActive={this.props.activeLayer == i}/>)
-      }
-      else if (data.layers[i].type == LayerTypes.actor) {
-        layers.push(<ActorLayer
-          camera={this.camera}
+            clearTmpSelection={() => {this.tmpSelection.clear()}}
+            clearSelection={() => {this.selection.clear()}}
+            addFirstToSelection={(tile) => { if(!this.tmpSelection.length){this.tmpSelection.pushUniquePos(tile)}}}
+            pushUniquePos={(tile) => {this.tmpSelection.pushUniquePos(tile)}}
+            swapOutSelection={() => {this.swapOutSelection()}}
+            selectionToCollection={() => {this.selectionToCollection()}}
+            keepDiffInSelection={() => this.keepDiffInSelection()}
+            removeFromSelection={() => this.removeFromSelection()}
 
-          data={data.layers[i]}
-          ref={this.addLayerRef.bind(this, i)}
-          key={i}
-          map={this}
-          isActive={this.props.activeLayer == i}/>)
-      }
-      else if (data.layers[i].type == LayerTypes.event) {
-        layers.push(<EventLayer
-          camera={this.camera}
 
-          data={data.layers[i]}
-          ref={this.addLayerRef.bind(this, i)}
-          key={i}
-          map={this}
-          isActive={this.props.activeLayer == i}/>)
+            handleSave={this.props.handleSave}
+            saveForUndo={this.props.saveForUndo}
+
+            key={i}
+            ref={ this.addLayerRef.bind(this, i) }
+            />)
       }
     }
     layers.push(
@@ -999,52 +739,9 @@ export default class MapArea extends React.Component {
       <div
         ref='mapElement'
         onContextMenu={e => { e.preventDefault(); return false;}}
-        style={{ /*width: (640)+"px",*/ height: (640) + 'px', position: 'relative', margin: '10px 0' }}>
+        style={{ height: 640 + 'px', position: 'relative', margin: '10px 0' }}>
         {layers}
       </div>
     )
   }
 }
-
-/*
-  getImage(nameWithExt) {
-    this.loadingImages.push(nameWithExt)
-    const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
-    const src = nameWithExt.indexOf("/") === 0 ? nameWithExt : `/api/asset/png/${this.props.parent.getUser()}/${name}`
-    $.get(src)
-      .done((id) => {
-        const img = new Image()
-        img.onload = () => {
-          this.images.set(nameWithExt, img)
-          this.loadingImages.splice(this.loadingImages.indexOf(nameWithExt), 1)
-          //this.updateImages()
-        }
-        img.src = `/api/asset/png/${id}`
-      })
-      .fail(() => {
-        this.missingImages.push(nameWithExt)
-        this.loadingImages.splice(this.loadingImages.indexOf(nameWithExt), 1)
-        //this.updateImages()
-      })
-  }
-
-  fixTileset(ts){
-    ts.imagewidth = img.width
-    ts.imageheight = img.height
-
-    if (!ts.tilewidth) {
-      ts.tilewidth = img.width
-      ts.tileheight = img.height
-      ts.width = 1
-      ts.height = 1
-    }
-    // update tileset to match new image / settings
-    const extraPixels = ts.imagewidth % ts.tilewidth
-    const columns = (ts.imagewidth - extraPixels) / ts.tilewidth
-    let rows = (ts.imageheight - (ts.imageheight % ts.tileheight)) / ts.tileheight
-    ts.tilecount = columns * rows
-    ts.columns = columns
-
-    TileHelper.zeroOutUnreachableTiles(this.data, this.gidCache)
-  }
- */

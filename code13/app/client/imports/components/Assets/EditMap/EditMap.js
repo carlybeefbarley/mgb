@@ -43,6 +43,8 @@ import React, { PropTypes } from 'react'
 import MapArea from './MapArea.js'
 
 import InfoTool from '../Common/Map/Tools/InfoTool.js'
+import MapToolbar from './Tools/MapToolbar.js'
+
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 
 import TileHelper from '../Common/Map/Helpers/TileHelper.js'
@@ -57,6 +59,8 @@ import EditModes from '../Common/Map/Tools/EditModes.js'
 
 import LayerTraits from '../Common/Map/Traits/LayerTraits.js'
 import TilesetTraits from '../Common/Map/Traits/TilesetTraits.js'
+import MapTraits from '../Common/Map/Traits/MapTraits.js'
+import ToolbarTraits from '../Common/Map/Traits/ToolbarTraits.js'
 
 export default class EditMap extends React.Component {
   static propTypes = {
@@ -70,8 +74,16 @@ export default class EditMap extends React.Component {
       isLoading: true,
       activeLayer: 0,
       activeTileset: 0,
-      editMode: EditModes.stamp
+      editMode: EditModes.stamp,
+      randomMode: false,
+      showGrid: true,
+      preview: true,
+      undo: [],
+      redo: []
     }
+
+    this.lastSave = this.props.asset.content2
+    this.ignoreUndo = 0
 
     if(this.props.asset.content2){
       // stores tiles and images
@@ -79,12 +91,51 @@ export default class EditMap extends React.Component {
         this.setState({isLoading:  false})
       })
       // set last edit mode ???
-      this.state.editMode = this.props.asset.content2.meta.mode
+      this.state.editMode = this.options.mode
+      this.state.randomMode = this.options.randomMode
+      this.state.showGrid = this.options.showGrid
+    }
+    // new map???
+    else{
+      /*
+      c2 = TileHelper.
+      c2.meta = {
+        options: {
+          // empty maps aren't visible without grid
+          showGrid: 1,
+          camera: { _x: 0, _y: 0, _zoom: 1 },
+          preview: false,
+          mode: 'stamp',
+          randomMode: false
+        }
+      }
+       */
     }
 
     this.layerTraits = this.enableTrait(LayerTraits)
     this.tilesetTraits = this.enableTrait(TilesetTraits)
+    this.mapTraits = this.enableTrait(MapTraits)
+    this.toolbarTraits = this.enableTrait(ToolbarTraits)
+  }
 
+  get meta() {
+    return this.props.asset.content2.meta
+  }
+
+  get options() {
+    return this.meta.options
+  }
+
+  /* This stores a short-term record indicating this user is viewing this Map
+   * It provides the data for the 'just now' part of the history navigation and also
+   * the 'viewers' indicator. It helps users know other people are looking at some asset
+   * right now
+   */
+  doSnapshotActivity () {
+    let passiveAction = {
+      isMap: true // This could in future have info such as which layer is being edited, but not needed yet
+    }
+    snapshotActivity(this.props.asset, passiveAction)
   }
 
   componentDidMount () {
@@ -101,9 +152,9 @@ export default class EditMap extends React.Component {
     }
   }
 
-  enableTrait(trait){
+  enableTrait(trait) {
     const out = {}
-    for (let i in trait){
+    for (let i in trait) {
       out[i] = trait[i].bind(this)
     }
     return out
@@ -113,62 +164,100 @@ export default class EditMap extends React.Component {
     return this.props.currUser.profile.name
   }
 
-  /* This stores a short-term record indicating this user is viewing this Map
-   * It provides the data for the 'just now' part of the history navigation and also 
-   * the 'viewers' indicator. It helps users know other people are looking at some asset
-   * right now
-   */
-  doSnapshotActivity () {
-    let passiveAction = {
-      isMap: true // This could in future have info such as which layer is being edited, but not needed yet
-    }
-    snapshotActivity(this.props.asset, passiveAction)
+  saveForUndo(reason = '' , skipRedo = false) {
+    if (this.ignoreUndo)
+      return
+    const toSave = { data: this.copyData(this.props.asset.content2), reason }
+    const undo = this.state.undo;
+    // prevent double saving undo
+    if (undo.length && undo[undo.length - 1].data == toSave.data)
+      return
+
+    if (!skipRedo)
+      this.state.redo.length = 0
+
+    undo.push(toSave)
+    this.setState({undo})
+  }
+  doUndo () {
+    if (!this.state.undo.length)
+      return
+
+    const pop = this.state.undo.pop()
+    this.state.redo.push(pop)
+    this.handleSave(JSON.parse(pop.data), "Undo " + pop.reason, void(0), true)
+  }
+  doRedo () {
+    if (!this.state.redo.length)
+      return
+
+    const pop = this.state.redo.pop()
+    this.state.undo.push(pop)
+    this.handleSave(JSON.parse(pop.data), "Redo " + pop.reason, void(0), true)
   }
 
+  enableMode(mode){
+    // this seems a little bit strange - state and props have same variable
+    // probably state should hold only props.options ?
+    this.options.mode = mode
+    this.setState({editMode: mode})
+  }
 
-  handleSave (data, reason, thumbnail) {
+  handleSave (data, reason, thumbnail, skipUndo = false) {
     if(!this.props.canEdit){
-      console.error("Read only map")
+      this.props.editDeniedReminder()
       return
     }
+    if(!skipUndo && !_.isEqual(this.lastSave, data)){
+      this.saveForUndo(reason)
+    }
+
     // TODO: convert uploaded images to assets
     this.props.handleContentChange(data, thumbnail, reason)
   }
+
   quickSave(reason = "noReason", thumbnail = null){
     return this.handleSave(this.props.asset.content2, reason, thumbnail)
   }
 
-
-
-  showGridToggle(){
-    const meta = this.props.asset.content2.meta
-    meta.highlightActiveLayer = !meta.highlightActiveLayer
+  // probably copy of data would be better to hold .. or not research strings vs objects
+  // TODO(stauzs): research memory usage - strings vs JS objects
+  copyData = (data) => {
+    return JSON.stringify(data)
   }
 
   render () {
     if(!this.props.asset || this.state.isLoading){
       return null
     }
-    const asset = this.props.asset
+
     // this is temporary hack - until all references to map will be cleared
     if(!this.refs.map){
       window.setTimeout(() => {
         this.forceUpdate()
       }, 100)
     }
-
-    const c2 = this.props.asset.content2
+    const asset = this.props.asset
+    const c2 = asset.content2
     return (
       <div className='ui grid'>
         <div className='ten wide column'>
+          <MapToolbar
+            {...this.toolbarTraits}
+            options={this.options}
+            undoSteps={this.state.undo}
+            redoSteps={this.state.redo}
+          />
           <MapArea
-            asset={asset}
-            parent={this}
-
+            {...this.mapTraits}
             cache={this.cache}
             activeLayer={this.state.activeLayer}
             highlightActiveLayer={c2.meta.highlightActiveLayer}
-            ref='map'></MapArea>
+            canEdit={this.props.canEdit}
+            options={this.options}
+            data={c2}
+
+            ref='map' />
         </div>
         <div className='six wide column'>
           <LayerTool
@@ -182,9 +271,9 @@ export default class EditMap extends React.Component {
           <TileSet
             {...this.tilesetTraits}
             palette={this.cache.tiles}
-            tilesets={c2.tilesets}
             activeTileset={this.state.activeTileset}
-            options={c2.meta}
+            tilesets={c2.tilesets}
+            options={this.options}
             />
 
           { this.refs.map &&

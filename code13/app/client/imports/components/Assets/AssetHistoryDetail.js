@@ -4,7 +4,6 @@ import QLink from '/client/imports/routes/QLink'
 import moment from 'moment'
 import { Popup, Icon, Label } from 'semantic-ui-react'
 
-
 const SESSION_MAGIC_TEXT = "BY_SESSION:" 
 const _getCurrUserIdentifier = (currUser) => (currUser ? currUser._id : SESSION_MAGIC_TEXT + Meteor.default_connection._lastSessionId)
 
@@ -20,10 +19,9 @@ const AssetHistoryDetail = ( { assetActivity, currUser } ) => {
 
   const changes = _.map(assetActivity, a => { 
     const ago = moment(a.timestamp).fromNow()        // It's just a popup, so no need to make it reactive
-    const href = (a.byUserId.indexOf(SESSION_MAGIC_TEXT) !== 0) ? { href:`/u/${a.byUserName}` } : {}  // See http://stackoverflow.com/questions/29483741/rendering-a-with-optional-href-in-react-js
     
     return (
-      <p className="item" key={a._id} title={ago} {...href}>
+      <p key={a._id}>
         <QLink to={`/u/${a.byUserName}`}>{a.byUserName}</QLink>
         : <small>{a.description}</small> <small style={{color: '#c8c8c8'}}>&ensp;{ago}</small>
       </p>
@@ -45,7 +43,8 @@ const AssetHistoryDetail = ( { assetActivity, currUser } ) => {
   return (
     <Popup wide='very' hoverable trigger={TriggerElement} size='tiny'>
       <Popup.Header>
-        { changesCount } Changes</Popup.Header>
+        { changesCount } changes
+      </Popup.Header>
       <Popup.Content>
         { changes }
       </Popup.Content>

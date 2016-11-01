@@ -264,7 +264,6 @@ export default AssetEditRoute = React.createClass({
             handleChange={this.handleDeletedStateChange}/>
           <AssetLicense 
             license={asset.assetLicense} 
-            showMicro={true}
             canEdit={canEd}
             handleChange={this.handleLicenseChange}/>
           <AssetActivityDetail

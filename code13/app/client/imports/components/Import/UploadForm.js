@@ -115,7 +115,6 @@ export default class UploadForm extends React.Component {
 
             <AssetLicense 
               license={this.state.assetLicense} 
-              showMicro={true}
               canEdit={true}
               handleChange={this.handleLicenseChange.bind(this)}
             />

@@ -31,8 +31,10 @@ export default class MapArea extends BaseMapArea {
     if (asset) {
       // TODO: use enums for asset types
       if (asset.kind == 'graphic') {
-        const layer_data = this.addLayer(LayerTypes.image)
-        this.onImageLayerDrop(e, layer_data)
+        if(this.props.addLayer){
+          const layer_data = this.props.addLayer(LayerTypes.image)
+          this.onImageLayerDrop(e, layer_data)
+        }
       }
       return
     }

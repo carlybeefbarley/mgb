@@ -54,7 +54,7 @@ export default class GridLayer extends React.Component {
   }
 
   alignToLayer () {
-    if(this.props.layer) {
+    if(this.props.layer && this.props.layer.refs.layer) {
       this.refs.layer.style['transform'] = this.props.layer.refs.layer.style['transform']
       this.refs.layer.style['z-index'] = this.props.layer.refs.layer.style['z-index']
     }

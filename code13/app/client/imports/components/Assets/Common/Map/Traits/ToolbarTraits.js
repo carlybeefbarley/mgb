@@ -96,11 +96,11 @@ const TB = {
   },
 
   rotateClockwise: function(){
-    this.rotate(true)
+    TB.rotate.call(this, true)
   },
 
   rotateCounterClockwise: function(){
-    this.rotate(false)
+    TB.rotate.call(this, false)
   },
 
   rotate(cw) {

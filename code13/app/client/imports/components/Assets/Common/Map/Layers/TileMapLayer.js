@@ -63,7 +63,7 @@ export default class TileMapLayer extends AbstractLayer {
   /* endof lifecycle functions */
 
   increaseSizeToTop(pos){
-    this.props.layers.forEach(l => {
+    this.props.getLayers().forEach(l => {
       l._increaseSizeToTop && l._increaseSizeToTop(pos)
     })
   }
@@ -81,7 +81,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   increaseSizeToRight(pos){
-    this.props.layers.forEach(l => {
+    this.props.getLayers().forEach(l => {
       l._increaseSizeToRight && l._increaseSizeToRight(pos)
     })
   }
@@ -100,7 +100,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   increaseSizeToBottom(pos){
-    this.props.layers.forEach(l => {
+    this.props.getLayers().forEach(l => {
       l._increaseSizeToBottom && l._increaseSizeToBottom(pos)
     })
   }
@@ -117,7 +117,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   increaseSizeToLeft(pos){
-    this.props.layers.forEach(l => {
+    this.props.getLayers().forEach(l => {
       l._increaseSizeToLeft && l._increaseSizeToLeft(pos)
     })
   }

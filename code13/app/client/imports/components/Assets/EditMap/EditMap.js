@@ -250,6 +250,9 @@ export default class EditMap extends React.Component {
           />
           <MapArea
             {...this.mapTraits}
+            // this is nice UX shortcut - user don't need to create layer - and drop image
+            // it allows simply drop image on map
+            addLayer={this.layerTraits.addLayer}
             cache={this.cache}
             activeLayer={this.state.activeLayer}
             highlightActiveLayer={c2.meta.highlightActiveLayer}

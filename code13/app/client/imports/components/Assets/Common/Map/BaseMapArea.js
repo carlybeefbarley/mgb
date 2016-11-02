@@ -1,6 +1,7 @@
 import React from 'react'
 
 import TileHelper     from './Helpers/TileHelper'
+import DragNDropHelper from '../../../../helpers/DragNDropHelper'
 
 import TileCollection from './Tools/TileCollection'
 import EditModes      from './Tools/EditModes'
@@ -548,10 +549,11 @@ export default class MapArea extends React.Component {
 
   onImageLayerDrop (e, layer_data) {
     const data = DragNDropHelper.getDataFromEvent(e)
-    if (!data || !data.asset || !data.asset.kind != 'graphic')
+    if (!data || !data.asset || data.asset.kind !== 'graphic')
       return false
 
     layer_data.image = data.link
+    this.props.handleSave("Added Image: " + data.asset.name )
     return true
   }
   /* endof events */
@@ -697,7 +699,6 @@ export default class MapArea extends React.Component {
             data={data.layers[i]}
             mapData={data}
             options={this.props.options}
-            // should it be forEachLayer(cb ? )
             layers={this.getLayers.bind(this)}
 
             palette={this.palette}
@@ -721,7 +722,11 @@ export default class MapArea extends React.Component {
             selectionToCollection={() => {this.selectionToCollection()}}
             keepDiffInSelection={() => this.keepDiffInSelection()}
             removeFromSelection={() => this.removeFromSelection()}
+            onImageLayerDrop={(e, options) => this.onImageLayerDrop(e, options)}
+            getImage={src => this.props.cache.images[src]}
 
+            // object layer draws selection shapes on the grid - as it's always on top
+            getOverlay={() => this.refs.grid}
 
             handleSave={this.props.handleSave}
             saveForUndo={this.props.saveForUndo}

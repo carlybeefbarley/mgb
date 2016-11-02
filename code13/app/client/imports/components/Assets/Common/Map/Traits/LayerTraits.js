@@ -32,6 +32,7 @@ export default {
     lss.push(ls)
 
     this.quickSave("Added layer")
+    return ls
   },
 
   removeLayer: function(){

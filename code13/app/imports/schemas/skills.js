@@ -1,15 +1,12 @@
-import _ from 'lodash'
-import SkillNodes from '/imports/SkillNodes/SkillNodes.js'
-
-
+import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes.js'
 
 // are enums enough - or we need separate object for these?
 const UNKNOWN =       0
 const SELF_CLAIMED =  0b001
 const PEER_ASSERTED = 0b010
 const MGB_MEASURED =  0b100
-// temporary save in the ram
-// TODO: save in real DB
+
+// Currently just saved in RAM  .. TODO: save in real DB
 const uSkills = {}
 
 var getSkillsRecord = (userId) => {

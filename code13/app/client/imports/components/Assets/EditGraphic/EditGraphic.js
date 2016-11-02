@@ -1151,8 +1151,8 @@ export default class EditGraphic extends React.Component {
     if(origCanvas){
       const tmpCanvas = document.createElement("canvas")
       const tmpCtx = tmpCanvas.getContext('2d')
-      tmpCanvas.width = 290
-      tmpCanvas.height = 150
+      tmpCanvas.width = _.clamp(origCanvas.width, 32, 290)
+      tmpCanvas.height = _.clamp(origCanvas.height, 32, 150)
       const wRatio = tmpCanvas.width / origCanvas.width
       const hRatio = tmpCanvas.height / origCanvas.height
       let ratio = wRatio < hRatio ? wRatio : hRatio
@@ -1538,18 +1538,11 @@ export default class EditGraphic extends React.Component {
 
 
             <span>&nbsp;&nbsp;</span>
-            <div className="ui small icon button hazPopup" onClick={this.handleSave.bind(this, "Manual save")}
-               data-content="Changes are continuously saved and updated to other viewers "
-               data-variation="tiny"
-               data-position="bottom center">
-              <i className="save icon"></i>
-            </div>
-            <span>&nbsp;&nbsp;</span>
             <div className="ui small button hazPopup"
                data-content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                data-variation="tiny"
                data-position="bottom center">
-              <i className="tasks icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
+              <i className="spinner icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
             </div>
           </div>
 

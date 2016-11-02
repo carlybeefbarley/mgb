@@ -55,7 +55,7 @@ const getStartedItems = [
 ]
 
 const GetStartedRoute = () => (
-  <Segment basic padded className="slim" style={{margin: '0 auto'}}>
+  <Segment basic padded className='slim' style={{margin: '0 auto'}}>
     <Grid stackable style={{marginTop: '3.5em'}} title={_notReallyWorkingYet}>
 
       <Grid.Row >
@@ -71,7 +71,7 @@ const GetStartedRoute = () => (
         <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
             { getStartedItems.map( (area, idx) => (
-                <QLink key={idx} className="card" style={cardStyle} to={area.link} query={area.query}>
+                <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
                   <Card.Content>
                     <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>

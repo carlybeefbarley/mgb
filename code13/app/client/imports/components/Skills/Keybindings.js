@@ -22,7 +22,7 @@ export default KeyBindings = React.createClass({
   render: function () {
     const { commandContext } = this.props
     return (
-      <div className='ui divided selection list' title="This isn't really correct yet. Sorry!" >
+      <div className='ui divided selection list animated fadeIn' title="This isn't really correct yet. Sorry!" >
         Keys for context: { commandContext } 
         {this.makeList(commandContext)}
       </div>)

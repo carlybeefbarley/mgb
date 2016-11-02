@@ -1,42 +1,16 @@
 import React from 'react'
 import BaseForm from '../../../Controls/BaseForm.js'
-
-import DropArea from '../../../Controls/DropArea.js'
-import SmallDD from '../../../Controls/SmallDD.js'
-
-import Options from '../../Common/ActorOptions.js'
-/*
- {this.text("Movement speed", 'movementSpeed', "number")}
- {this.bool("Can Move Up \u2191", 'upYN')}
- {this.bool("Can Move Down \u2193", 'downYN')}
- {this.bool("Can Move Left \u2190", 'leftYN')}
- {this.bool("Can Move Right \u2192", 'rightYN')}
- <hr />
- {this.dropArea("Actor For Shots", 'shotActor', "actor")}
- <hr />
- {this.text("Touch Damage Against Players", 'touchDamageToPlayerNum', "number")}
- {this.text("Touch Damage Against NPCS", 'touchDamageToNPCorItemNum', "number")}
- {this.text("Touch Damage Attack chance", 'touchDamageAttackChance', "number")}
-
- {this.options("Touch Damage Cases", 'touchDamageCases', [
- {text: "When overlapping target", value: "0"},
- {text: "When facing target", value: "1"},
- {text: "When adjacent to target", value: "2"},
- ])}
- <hr />
-
- {this.text("Melee Damage Against Player", 'meleeDamageToPlayerNum', "number")}
- {this.text("Melee Damage Against Npc", 'meleeDamageToNPCorItemNum', "number")}
- {this.text("Melee Repeat Delay", 'meleeRepeatDelay', "number")}
-
- {this.dropArea("Sound Effect Melee", 'soundWhenMelee', "sound")}
- }*/
+import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
+import actorOptions from '../../Common/ActorOptions.js'
 
 export default class ItemBehavior extends BaseForm {
-  get data(){
+  get data() {
     return this.props.asset.content2.databag.item
   }
-  showInventoryOptions(){
+
+  showInventoryOptions() {
+    const soundOptions = MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) )
+
     return (
       <div>
         <hr />
@@ -61,6 +35,7 @@ export default class ItemBehavior extends BaseForm {
         })}
 
         {this.dropArea("New Shot sound", "equippedNewShotSound", "sound", {
+          options: soundOptions,
           title: "When equipped, use this as the shot sound"
         })}
 
@@ -91,7 +66,8 @@ export default class ItemBehavior extends BaseForm {
           max: 100
         })}
         {this.dropArea("New Melee sound", "equippedNewMeleeSound", "sound", {
-          title: "When equipped, use this as the shot sound"
+          options: soundOptions,
+          title: "When equipped, use this as the Melee sound"
         })}
         {this.text("Melee Repeat rate modifier", 'equippedNewMeleeDamageBonusNum', "number", {
           title: "This raises or lowers the Melee repeat rate of the character who has equipped the item. If the value is zero, there is no change to melee repeat rate. A positive number increases the delay, a negative number reduces the delay",
@@ -103,7 +79,7 @@ export default class ItemBehavior extends BaseForm {
     )
   }
 
-  showPickableOptions(){
+  showPickableOptions() {
     return (
       <div>
         {this.textArea("Display a message when picked up", 'useText')}
@@ -117,12 +93,12 @@ export default class ItemBehavior extends BaseForm {
           min: -1000,
           max: 1000
         })}
-        {/*this.bool("Win an extra life when used", 'gainExtraLifeYN')*/}
+        {/*this.bool("Gain an Extra Life when used", 'gainExtraLifeYN')  //  ENABLE THIS LINE ONCE WE IMPLEMENT LIVES */}
         {this.text("Score (or lose points) when used", 'gainOrLosePointsNum', "number")}
         {this.bool("Win this level when used", 'winLevelYN')}
         {this.options("Gain a power when used", 'gainPowerType', [
-          {text: "No power", value: "0"},
-          {text: "Cannot be harmed", value: "1"},
+          { text: "No power", value: "0"},
+          { text: "Cannot be harmed", value: "1"},
         ])}
         {this.data.gainPowerType == "1" &&
         this.text("Gain the power for", 'gainPowerSecondsNum', "number", {
@@ -133,36 +109,37 @@ export default class ItemBehavior extends BaseForm {
     )
   }
 
-  showPushingOptions(){
+  showPushingOptions() {
     return (
       <div>
         {this.options("Direction this item pushes other actors", 'itemPushesActorType', [
-          {text: "Up", value: "0"},
-          {text: "Right", value: "1"},
-          {text: "Down", value: "2"},
-          {text: "Left", value: "3"},
-          {text: "Onwards", value: "4"},
-          {text: "Backwards", value: "5"},
-          {text: "Random", value: "6"}
+          { text: "Up",        value: "0"},
+          { text: "Right",     value: "1"},
+          { text: "Down",      value: "2"},
+          { text: "Left",      value: "3"},
+          { text: "Onwards",   value: "4"},
+          { text: "Backwards", value: "5"},
+          { text: "Random",    value: "6"}
         ])}
         {this.text("Distance this item pushes other actors", 'itemPushesActorDistance', "number", {
           min: 1,
           max: 50
         })}
-
       </div>
     )
   }
-  showFloorDamageOptions(){
-    {this.text("Heal (or harm) when used", 'healOrHarmWhenUsedNum', "number", {
+
+  showFloorDamageOptions() {
+    { this.text("Heal (or harm) when used", 'healOrHarmWhenUsedNum', "number", {
       title: "Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points",
       max: 100
     })}
   }
+
   render() {
     return (
       <div className="ui form">
-        {this.options("Item Activation", 'itemActivationType', Options.itemActivationType)}
+        {this.options("Item Activation", 'itemActivationType', actorOptions.itemActivationType)}
 
         {(this.data.itemActivationType == "1" ||
             this.data.itemActivationType == "3" ) &&
@@ -181,7 +158,7 @@ export default class ItemBehavior extends BaseForm {
         {(this.data.itemActivationType == "1" ||
           this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum > 0) &&
             this.bool("Sliding block can squish NPCs?", 'squishNPCYN', {
-              title: "If you want sliding bocks to be able to kill enemy NPCs, then select 'yes' here."
+              title: "If you want sliding blocks to be able to kill enemy NPCs, then select 'yes' here."
             })
         }
 
@@ -194,7 +171,7 @@ export default class ItemBehavior extends BaseForm {
         {(this.data.itemActivationType == "1" ||
           this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum == "0") &&
             this.bool("Key is consumed when used", "keyForThisDoorConsumedYN", {
-              title: "Select Yes if the key is taken from the player when used"
+              title: "Select Yes if the 'key' is taken from the player when used"
             })
         }
 
@@ -205,7 +182,6 @@ export default class ItemBehavior extends BaseForm {
         }
 
         {this.data.itemActivationType == "4" && this.data.inventoryEquippableYN == "1" && this.showInventoryOptions()}
-
 
         {(this.data.itemActivationType == "4" || this.data.itemActivationType == "5"
           || this.data.itemActivationType == "6") &&

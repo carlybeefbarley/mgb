@@ -32,15 +32,15 @@ const ProjectMembershipSummary = (props) => {
 
   const inProjectClassName = (
     "ui small basic " + 
-    (asset.isDeleted ? "red " : "grey ") + 
-    (hasProjects ? "pointing below " : " ") + 
-    " label item"
+    (asset.isDeleted ? 'red ' : ' ') + 
+    (hasProjects ? 'pointing below ' : ' ') + 
+    ' label item'
   )
 
   const inProjectTitle = "Projects to which this asset belongs. "
 
   return (
-    <div className={inProjectClassName} title={inProjectTitle}>
+    <div className={inProjectClassName} title={inProjectTitle} style={{borderRadius: '0px'}}>
       <span>
         <i className="ui icon sitemap" />
         { (!hasProjects ? "(none)" : projectsTableAsJsx ) }

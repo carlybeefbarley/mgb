@@ -19,7 +19,7 @@ const ImageShowOrChange = props => {
   const imageSrcToUse = imageSrc || '/images/wireframe/image.png'
   
   const propsImgContainer = {
-    title: canEdit && 'Drag an Image asset here to change the chosen image',
+    title: canEdit ?  'Drag an Image asset here to change the chosen image' : '',
     className: className, 
     onDragOver: e => ( canEdit && DragNDropHelper.preventDefault(e) ),
     onDrop: e => ( canEdit && _importFromDrop(e, handleChange) )

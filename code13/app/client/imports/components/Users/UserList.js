@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import UserItem from './UserItem.js';
 
@@ -22,7 +21,7 @@ export default UserList = React.createClass({
     })
     
     return (
-      <div className="ui middle aligned divided relaxed animated list">
+      <div className="ui middle aligned divided relaxed animated list ">
         {users}
       </div>
     )

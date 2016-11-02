@@ -1,0 +1,4 @@
+.edit-game .form .inline > label {
+    min-width: 25% !important;
+    text-align: right !important;
+}

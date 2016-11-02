@@ -79,20 +79,18 @@ RestApi.addRoute('asset/code/:referrer/:owner/:name', {authRequired: false}, {
   }
 })
 
-RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
-  get: function () {
-    let content
-    const asset = Azzets.findOne(this.urlParams.id)
-    if (!asset)
-      return { statusCode: 404 }
-    const { bundle } = asset.content2
-    // reload page after 1 second - as bundle may be in the way to the server
-    const extraMessage = !!bundle ? "" : `
+const _makeBundle = asset => {
+  if (!asset)
+    return { statusCode: 404 }
+  
+  const { bundle } = asset.content2
+  // reload page after 1 second - as bundle may be on the way to the server
+  const extraMessage = !!bundle ? '' : `
 No bundle yet. Please run the source file in the code to generate/refresh the bundle
 <script>window.setTimeout(function(){window.location.reload()}, 1000)</script>
 `
     
-    content = `<!DOCTYPE html>
+  const content = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8" />
@@ -101,15 +99,29 @@ No bundle yet. Please run the source file in the code to generate/refresh the bu
 </head>
 <body><script type="text/javascript">
 //<!--
-${asset.content2.bundle}
+${bundle}
 //-->
 </script>${extraMessage}</body>
 </html>
 `
-    return {
-      statusCode: 200,
-      headers: {'Content-Type': "text/html", 'file-name': asset.name},
-      body: content
-    };
+  return {
+    statusCode: 200,
+    headers: {'Content-Type': "text/html", 'file-name': asset.name},
+    body: content
+  }
+}
+
+RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne(this.urlParams.id)
+    return _makeBundle(asset)
+  }
+})
+
+
+RestApi.addRoute('asset/code/bundle/u/:username/:codename', { authRequired: false }, {
+  get: function () {
+    const asset = Azzets.findOne( { dn_ownerName: this.urlParams.username, name: this.urlParams.codename } )
+    return _makeBundle(asset)
   }
 })

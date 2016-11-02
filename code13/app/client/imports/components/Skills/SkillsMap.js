@@ -1,11 +1,12 @@
 import React from 'react'
-import SkillNodes from '/imports/SkillNodes/SkillNodes.js'
+import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 export default class SkillTree extends React.Component {
   static propTypes = {
     user: React.PropTypes.object
   }
+
   constructor (...a) {
     super(...a)
     this.loadSkills()
@@ -15,11 +16,13 @@ export default class SkillTree extends React.Component {
     // TODO: make it work
     // Meteor.subscribe("user.skills", this.props.user._id)
   }
+
   // use setState instead?
   updateSkills () {
     this.countSkillTotals(SkillNodes, '', this.totals)
     this.forceUpdate()
   }
+
   loadSkills () {
     this.skills = {}
     // TODO: this should be in subscription?
@@ -29,6 +32,7 @@ export default class SkillTree extends React.Component {
       this.updateSkills()
     })
   }
+
   learnSkill (key) {
     Meteor.call("Skill.grant", key, (...a) => {
       console.log("Skill granted", ...a)
@@ -36,6 +40,7 @@ export default class SkillTree extends React.Component {
       this.updateSkills()
     })
   }
+
   // is it even possible?
   forgetSkill (key) {
     delete this.skills[key]
@@ -43,6 +48,7 @@ export default class SkillTree extends React.Component {
       this.updateSkills()
     })
   }
+
   // TODO: this looks ugly - hard to understand
   countSkillTotals (skillNodes, key, tot) {
     const ret = {
@@ -50,19 +56,17 @@ export default class SkillTree extends React.Component {
       has: 0
     }
     for (let i in skillNodes) {
-      if ((i + '').indexOf('$') === 0) {
+      if ((i + '').indexOf('$') === 0)
         continue
-      }
 
       const newKey = key ? key + '.' + i : i
       tot[newKey] = tot[newKey] || {total: 0, has: 0}
 
-
       // TODO: this check will break in the future
       if (skillNodes[i].$meta.isLeaf) {
-        if(!skillNodes[i].$meta.enabled){
+        if (!skillNodes[i].$meta.enabled)
           continue
-        }
+
         tot[newKey].total++
         ret.total++
         tot[newKey] = {
@@ -73,7 +77,7 @@ export default class SkillTree extends React.Component {
           tot[newKey].has++
           ret.has++
         }
-      }else {
+      } else {
         const tmp = this.countSkillTotals(skillNodes[i], newKey, tot)
         ret.total += tmp.total
         ret.has += tmp.has
@@ -85,16 +89,17 @@ export default class SkillTree extends React.Component {
     }
     return ret
   }
+
   // TODO: create separate component for that?
   renderSingleNode (node, key, path, disabled) {
     let color = this.skills[path] ? 'green' : 'red'
-    if (!node.$meta.enabled) {
+    if (!node.$meta.enabled)
       color = 'grey'
-    }
+
     let onClick
-    if(!disabled && node.$meta.enabled){
+    if (!disabled && node.$meta.enabled)
       onClick = this.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
-    }
+
     return (
       <div
         title={"requires:\n" + node.$meta.requires.join("\n") + " \n\nunlocks:\n" +  node.$meta.unlocks.join("\n")}
@@ -107,35 +112,31 @@ export default class SkillTree extends React.Component {
       </div>
     )
   }
+
   // move this to shared includes - as server also needs this check
-  hasRequirementsMet(meta, totals){
-    if(!meta.requires.length){
+  hasRequirementsMet(meta, totals) {
+    if (!meta.requires.length)
       return true
-    }
+
     let total = 0
     meta.requires.forEach((r) => {
-      if(!totals[r]){
+      if (!totals[r]) {
         console.log("failed to resolve requirement:", r)
         return
       }
-      if(totals[r].total === totals[r].has){
+      if (totals[r].total === totals[r].has)
         total++
-      }
     })
-    if(meta.requireOneOf){
-      return total > 0
-    }
-    else{
-      return total == meta.requires.length
-    }
+    return meta.requireOneOf ? (total > 0) : (total == meta.requires.length)
   }
+
   // TODO: create separate component for that?
   renderSkillNodesMid (skillNodes, key = '' , requires = []) {
     const nodes = []
     for (let i in skillNodes) {
-      if (i === "$meta") {
+      if (i === "$meta")
         continue
-      }
+
       // requires && console.log("requires")
       const newKey = key ? key + '.' + i : i
       let disabled = !this.hasRequirementsMet(skillNodes[i].$meta, this.totals)
@@ -155,30 +156,29 @@ export default class SkillTree extends React.Component {
             {this.renderSkillNodesMid(skillNodes[i], newKey, skillNodes[i].$meta.requires)}
           </div>
         )
-      }else {
+      } 
+      else
         nodes.push(this.renderSingleNode(skillNodes[i], i, newKey, disabled))
-      }
     }
     return nodes
   }
+
   renderParts (val, tot) {
     const parts = []
     const w = (100 / tot)
     const width = w + '%'
     // skip last
-    for (let i = 0; i < val - 1; i++) {
-      parts.push(
-        <div className='part' key={i} style={{ width: width, left: w * i + '%' }}></div>
-      )
-    }
+    for (let i = 0; i < val - 1; i++)
+      parts.push(<div className='part' key={i} style={{ width: width, left: w * i + '%' }}></div>)
     return parts
   }
+
   renderSkillNodesSmall (skillNodes) {
     const nodes = []
     for (let i in skillNodes) {
-      if (i === "$meta") {
+      if (i === "$meta")
         continue
-      }
+
       nodes.push(
         <div key={i} className='animate'>
           <div className='progress'>
@@ -193,37 +193,37 @@ export default class SkillTree extends React.Component {
   }
 
   renderSkillNodes (skillNodes) {
-    if (this.zoomLevel == 1) {
+    if (this.zoomLevel == 1)
       return this.renderSkillNodesSmall(skillNodes)
-    }
-    else if (this.zoomLevel == 2) {
+    else if (this.zoomLevel == 2)
       return this.renderSkillNodesMid(skillNodes)
-    }
   }
+
   render () {
     const config = {
       level: 2,
       buttons: [
         {
-          name: 'zoomin',
+          name:  'zoomin',
           label: 'Zoom In',
-          icon: 'zoom in',
+          icon:  'zoom in',
           tooltip: 'Open detailed skill view',
           disabled: this.zoomLevel != 1,
-          level: 1,
+          level:    1,
           shortcut: '1'
         },
         {
-          name: 'zoomout',
+          name:  'zoomout',
           label: 'Zoom Out',
-          icon: 'zoom in',
+          icon:  'zoom out',
           tooltip: 'Close detailed skill view',
           disabled: this.zoomLevel != 2,
-          level: 2,
+          level:    2,
           shortcut: '2'
         }
       ]
     }
+
     return (
       <div>
         <Toolbar name='SkillsMap' config={config} actions={this} />
@@ -240,6 +240,7 @@ export default class SkillTree extends React.Component {
       this.forceUpdate()
     }
   }
+
   zoomout () {
     if (this.zoomLevel > 1) {
       this.zoomLevel--

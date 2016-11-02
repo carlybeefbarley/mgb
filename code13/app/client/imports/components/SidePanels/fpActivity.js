@@ -30,7 +30,9 @@ const ActivityExtraDetail = (props) => {
         </Feed.Extra>
 
         <Feed.Extra images>
-          <img src={assetThumbnailUrl} style={{ width: "auto", maxWidth: "12em", maxHeight: "6em" }} />
+          <QLink to={linkTo}>
+            <img src={assetThumbnailUrl} style={{ width: "auto", maxWidth: "12em", maxHeight: "6em" }} />
+          </QLink>
         </Feed.Extra>
       </div>
     )

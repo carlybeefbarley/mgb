@@ -84,6 +84,8 @@ export default UserProjectList = React.createClass({
             return (
               <ProjectCard 
                   project={project} 
+                  canEdit={false}
+                  canLinkToSrc={false}
                   owner={ownedFlag ? this.props.user : project.ownerName}
                   key={project._id} />
             )

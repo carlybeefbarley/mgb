@@ -163,7 +163,7 @@ export default fpChat = React.createClass({
 
     const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
     return (
-      <div className="comment" key={c._id}>
+      <div className="comment animated fadeInRight" key={c._id}>
         <QLink to={to} className="avatar">
           <img src={`/api/user/${c.byUserId}/avatar`}></img>
         </QLink>

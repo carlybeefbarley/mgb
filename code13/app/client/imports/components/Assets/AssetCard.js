@@ -11,11 +11,11 @@ import WorkState from '/client/imports/components/Controls/WorkState'
 // TODO: Toast/error is a mess
 
 export const assetViewChoices =  { 
-  "xs": { icon: '', showFooter: false, showMeta: false, showExtra: false, showHdr: true,  showImg: false },
-  "s":  { icon: '', showFooter: false, showMeta: false, showExtra: false, showHdr: true,  showImg: true  },
-  "m":  { icon: '', showFooter: false, showMeta: false, showExtra: true,  showHdr: true,  showImg: true  },
-  "l":  { icon: '', showFooter: false, showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  },
-  "xl": { icon: '', showFooter: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  }
+  "xs": { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: false },
+  "s":  { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: true  },
+  "m":  { icon: '', showFooter: false, header: 'header', showWorkstate: true,  showMeta: false, showExtra: true,  showHdr: true,  showImg: true  },
+  "l":  { icon: '', showFooter: false, header: 'header', showWorkstate: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  },
+  "xl": { icon: '', showFooter: true,  header: 'header', showWorkstate: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  }
 }
 
 export const defaultAssetViewChoice = 'm'
@@ -23,14 +23,14 @@ export const defaultAssetViewChoice = 'm'
 export default AssetCard = React.createClass({
 
   propTypes: {
-    showFooter: PropTypes.bool,             // If false, hide the 4-button footer
-    asset: PropTypes.object,
-    ownersProjects: PropTypes.array,        // Project array for Asset Owner. Can be null. Can include ones they are a member of, so watch out!
-    currUser: PropTypes.object,             // currently Logged In user (not always provided)
-    canEdit: PropTypes.bool,                // Whether changes (like stable, delete etc) are allowed. Can be false
-    showEditButton: PropTypes.bool,         // Shall we *show* the Edit button
-    renderView: PropTypes.string,           // One of null/undefined  OR  one of the keys of AssetCard.assetViewChoices
-    allowDrag: PropTypes.bool.isRequired    // True if drag is allowed
+    showFooter:     PropTypes.bool,              // If false, hide the 4-button footer
+    asset:          PropTypes.object,
+    ownersProjects: PropTypes.array,             // Project array for Asset Owner. Can be null. Can include ones they are a member of, so watch out!
+    currUser:       PropTypes.object,            // currently Logged In user (not always provided)
+    canEdit:        PropTypes.bool,              // Whether changes (like stable, delete etc) are allowed. Can be false
+    showEditButton: PropTypes.bool,              // Shall we *show* the Edit button
+    renderView:     PropTypes.string,            // One of null/undefined  OR  one of the keys of AssetCard.assetViewChoices
+    allowDrag:      PropTypes.bool.isRequired    // True if drag is allowed
   },
 
   contextTypes: {
@@ -142,10 +142,11 @@ export default AssetCard = React.createClass({
           chosenProjectNames={chosenProjectNamesArray}
           handleChangeChosenProjectNames={this.handleChangeChosenProjectNames} />
     )
+    const shownAssetName = asset.name || '(untitled)'
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
-      <div key={asset._id} className="ui card" style={ { minWidth: '200px', marginTop: '0.25em', marginBottom: '0.25em' } }>
+      <div key={asset._id} className="ui card animated fadeIn" style={ { minWidth: '200px', marginTop: '0.25em', marginBottom: '0.25em' } }>
       
         <div 
             className="ui centered image" 
@@ -165,18 +166,21 @@ export default AssetCard = React.createClass({
         { viewOpts.showHdr && 
           <div className="content">
             <i className={'right floated ' + assetKindIcon + ' icon'} />
-            <a  className="header" 
+            <a  className={ viewOpts.header }
                 style={{ "color": asset.name ? 'black' : '#888'}}  
                 onClick={this.handleEditClick} 
-                title="Asset Name">
-              <small>{asset.name || "(untitled)"}</small>&nbsp;
-              { viewOpts.showMeta &&
-                <WorkState 
-                  workState={asset.workState} 
-                  popupPosition="bottom center"
-                  showMicro={true}
-                  canEdit={false}/>
-              }
+                title={ `Asset Name: '${shownAssetName}'` }>
+              <small>
+                {shownAssetName}
+                &nbsp;
+                { viewOpts.showWorkstate &&
+                  <WorkState 
+                    workState={asset.workState} 
+                    popupPosition="bottom center"
+                    showMicro={true}
+                    canEdit={false}/>
+                }
+              </small>
             </a>
             { viewOpts.showMeta && (asset.text && asset.text !== "") && 
               <div className="meta" style={{ "color": 'black'}}  onClick={this.handleEditClick} title="Asset Description">

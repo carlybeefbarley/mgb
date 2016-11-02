@@ -14,7 +14,6 @@ export default npUser = React.createClass({
     urlLocation: React.PropTypes.object
   },
 
-
   logout: function() {
     let userName = Meteor.user().profile.name
     logActivity("user.logout",  `Logging out "${userName}"`, null, null)
@@ -27,7 +26,6 @@ export default npUser = React.createClass({
     const { currUser, navPanelIsOverlay } = this.props
 
     return (
-      // TODO: use site.less for styling inverted menu
       <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
         { currUser ?
           <div>
@@ -46,38 +44,15 @@ export default npUser = React.createClass({
               <i className="user icon" /> My Profile
             </QLink>
 
-            <QLink 
-                to={`/u/${this.props.currUser.profile.name}/assets`} 
-                closeNavPanelOnClick={navPanelIsOverlay} 
-                className="item">
-              <i className="pencil icon" /> My Assets
-            </QLink>
             <div className="menu">
               <QLink 
-                  to={`/assets/create`} 
+                  to={`/u/${this.props.currUser.profile.name}/badges`} 
                   closeNavPanelOnClick={navPanelIsOverlay} 
-                  className="item" 
-                  title="Create New Asset">
-                <i className="green pencil icon" /> Create New Asset
+                  className="item">
+                <i className="user icon" /> My Badges
               </QLink>
             </div>
-
-            <QLink 
-                to={`/u/${this.props.currUser.profile.name}/projects`} 
-                closeNavPanelOnClick={navPanelIsOverlay} 
-                className="item">
-              <i className="sitemap icon" /> My Projects
-            </QLink>
-            <div className="menu">
-              <QLink 
-                  to={`/u/${this.props.currUser.profile.name}/projects/create`} 
-                  closeNavPanelOnClick={navPanelIsOverlay} 
-                  className="item" 
-                  title="Create New Project">
-                <i className="green sitemap icon" /> Create New Project
-              </QLink>
-            </div>
-
+            
             <div className="item"></div>
 
             <a href="#" onClick={this.logout} className="ui item">

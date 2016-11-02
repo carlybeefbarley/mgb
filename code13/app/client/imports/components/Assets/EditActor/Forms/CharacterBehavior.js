@@ -1,59 +1,22 @@
-/*
-movementSpeed:
-canMoveUp:
-canMoveDown:
-canMoveLeft:
-canMoveRight:
-ActorForShots:
-TouchDamageAgainstPlayers
-TouchDamageAgainstNPCS
-TouchDamageAttackChance
-TouchDamageCases
-MeleeDamageAgainstPlayer
-MeleeDamageAgainstNpc
-SoundEffectMelee
-MeleeRepeatDelay
-----------------------
- movementSpeedNum
- upYN
- downYN
- leftYN
- rightYN
- shotRateNum
- shotRangeNum
- soundWhenShooting
- shotActor
- pushYN
- jumpYN
- shotDamageToPlayerNum
- shotDamageToNPCorItemNum
- touchDamageToPlayerNum
- touchDamageToNPCorItemNum
- touchDamageAttackChance
- touchDamageCases
- meleeDamageToPlayerNum
- meleeDamageToNPCorItemNum
- soundWhenMelee
- meleeRepeatDelay
-
- */
 import React from 'react'
 import BaseForm from '../../../Controls/BaseForm.js'
-
-import DropArea from '../../../Controls/DropArea.js'
-import SmallDD from '../../../Controls/SmallDD.js'
+import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 
 export default class CharacterBehavior extends BaseForm {
-  get data(){
-    // fix bad things.. temporary
-    if(this.props.asset.content2.databag.allChar){
-      this.props.asset.content2.databag.allchar = this.props.asset.content2.databag.allChar;
-      delete this.props.asset.content2.databag.allChar
+  get data() {
+    const { asset } = this.props
+    if (asset.content2.databag.allChar) {
+      // fix case error from older assets... temporary because of typo in early version of this editor
+      asset.content2.databag.allchar = asset.content2.databag.allChar
+      delete asset.content2.databag.allChar
+      console.warn('Had to repair Actor allChar/allchar: Asset id#' + asset._id)
     }
-    return this.props.asset.content2.databag.allchar
+    return asset.content2.databag.allchar
   }
 
   render() {
+    const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: s, value: s } ) ) }
+
     return (
       <div className="ui form">
         {this.text("Movement speed", 'movementSpeedNum', "number", {
@@ -61,25 +24,15 @@ export default class CharacterBehavior extends BaseForm {
           max: 3,
           step: 0.5
         })}
-        {this.bool("Can Move Up \u2191", 'upYN')}
-        {this.bool("Can Move Down \u2193", 'downYN')}
-        {this.bool("Can Move Left \u2190", 'leftYN')}
-        {this.bool("Can Move Right \u2192", 'rightYN')}
-        {/*
-         <mx:FormItem label="Can Push pushable items:" id="fi_allchar_pushYN" visible="false" includeInLayout="false">
-         <mx:ComboBox dataProvider="{MgbActor.alNoYes}" selectedIndex="{actorPiece.actorXML.databag.allchar.pushYN}" id="ui_allchar_pushYN"/>
-         </mx:FormItem>
-
-         <mx:FormItem label="Can Jump:" id="fi_allchar_jumpYN" toolTip="{notYet}" visible="false" includeInLayout="false">
-         <mx:ComboBox dataProvider="{MgbActor.alNoYes}" selectedIndex="{actorPiece.actorXML.databag.allchar.jumpYN}" id="ui_allchar_jumpYN" editable="false"/>
-         </mx:FormItem>
-
-
-         */}
+        { this.bool("Can Move Up \u2191",    'upYN')}
+        { this.bool("Can Move Down \u2193",  'downYN')}
+        { this.bool("Can Move Left \u2190",  'leftYN')}
+        { this.bool("Can Move Right \u2192", 'rightYN')}
         <hr />
+
         {this.dropArea("Actor For Shots", 'shotActor', "actor")}
         {this.data.shotActor &&
-          this.dropArea("Sound Effect for Shots", 'soundWhenShooting', "sound")
+          this.dropArea("Sound Effect for Shots", 'soundWhenShooting', "sound", soundOptions)
         }
         {this.data.shotActor &&
           this.text("Shot Rate", 'shotRateNum', "number", {
@@ -121,9 +74,9 @@ export default class CharacterBehavior extends BaseForm {
         })}
 
         {this.options("Touch Damage Cases", 'touchDamageCases', [
-          {text: "When overlapping target", value: "0"},
-          {text: "When facing target", value: "1"},
-          {text: "When adjacent to target", value: "2"},
+          { text: "When overlapping target",   value: "0"},
+          { text: "When facing target",        value: "1"},
+          { text: "When adjacent to target",   value: "2"},
         ])}
         <hr />
 
@@ -143,7 +96,8 @@ export default class CharacterBehavior extends BaseForm {
           title: "Number of turns the character must wait before doing another melee attack. Note that a melee attack takes 2 turns."
         })}
 
-        {this.dropArea("Sound Effect Melee", 'soundWhenMelee', "sound")}
+        {this.dropArea("Sound Effect Melee", 'soundWhenMelee', "sound", soundOptions)}
+
       </div>
     )
   }

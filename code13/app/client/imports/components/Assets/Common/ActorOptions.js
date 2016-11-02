@@ -1,3 +1,5 @@
+
+// TODO: Make these in MageMgbActor.js
 export default {
   itemActivationType: {
     "Inactive": "0",
@@ -11,12 +13,14 @@ export default {
     "Pushes actors in a direction": "8",
     "Floor that causes damage": "9"
   },
+
   actorType: {
     'Player': "0",
     'Non-Player Character (NPC)': "1",
     'Item, Wall or Scenery': "2",
     'Shot': "3"
   },
+  
   appearIf: {
     "No condition": "0",
     "Disappear": "1",

@@ -23,7 +23,7 @@ export default AssetKindsSelector =  React.createClass({
   render: function() {
     const { showCompact, kindsActive } = this.props
     const popPosition = showCompact ? 'bottom right' : 'right center'
-    const baseSty = showCompact ? { padding: '3px 5px 3px 7px'} : {}
+    const baseSty = showCompact ? { padding: '3px 4px 3px 5px'} : {}
 
     // Split kinds string into array for convenience
     const kindsArray = kindsActive.split(safeAssetKindStringSepChar)
@@ -52,7 +52,7 @@ export default AssetKindsSelector =  React.createClass({
     })
 
     const allActive = (countActive === choices.length)
-    const allSty = allActive ? {} : { color: "#ccc"}
+    const allSty = allActive ? {} : { color: "#ccc" }
 
     choices.unshift(
       <a  className={"ui hazAkPopup " + (allActive ? "active item" : "item")}

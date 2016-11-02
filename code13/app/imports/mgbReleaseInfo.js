@@ -9,9 +9,67 @@
 
 // For iteration, I just simply use the number of commits (including this) at https://github.com/devlapse/mgb
 
-
 const mgbReleaseInfo = {
   'releases': [
+    {
+      'timestamp': 'Tue Nov 1 2016 02:10:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1908'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.navpanel',
+          'type': 'improvement',
+          'changeName': 'NavPanel restructuring - Play/Learn/Create',
+          'changeSummary': 'We have restructured the NavPanel on the left of the window to support the upcoming deeper learning and play experiences. Prior to this change, the hierarchy was more focussed on just creation workflows. This sets us up for the Deeper playback and learning/skills systems that are coming NEXT',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.game',
+          'type': 'feature',
+          'changeName': 'New \'Game\' Asset',
+          'changeSummary': 'To make it easier to find how to start games, we have created a new kind of Asset - the \'Game Asset\'. This currently holds just some key data - name, cover image and starting Asset (which can be either Code or ActorMap). Game Assets are now shown also in the Project overview so you can quickly find the starting points for a game in a large project.  There is currently a rudimentary Game Player for ActorMap and Code games, but a fuller play experience will be implemented soon. The Game Asset will also be used in future as an anchor for data like high scores, lobbies, game analytics, etc',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.edit',
+          'type': 'bugfix',
+          'changeName': 'Fixed occasional change loss when saving an asset',
+          'changeSummary': 'There was a timing condition that meant a thumbnail change could prevent an assets main data from being saved. This is now fixed. Also, the Activity Log will update every five minutes even if you are just doing the same activity (e.g edit a graphic). Previously the Activity Log would not update until you worked on a different activity/asset. Also, we did soem UI cleanup of the header -  using more consistent outlined buttons for the various Asset settings',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actor',
+          'type': 'improvement',
+          'changeName': 'Actor Editor improvements',
+          'changeSummary': 'Enabled Actor sounds to be edited more reliably, clarified some help text',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Thumbnail size',
+          'changeSummary': 'Thumbnails are smaller for small graphics assets (less then 290 px wide)',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.ui',
+          'type': 'improvement',
+          'changeName': 'UI improvements',
+          'changeSummary': 'Added some animations for spinners, assets, project cards, user cards, game items etc. Also cleaned up the Asset Edit metadata buttons (license, workstate etc)',
+          'otherUrls': [ ]
+        },
+        
+      ]
+    },
 
     {
       'timestamp': 'Wed Oct 26 2016 13:40:00 GMT-0700 (PDT)',
@@ -51,7 +109,7 @@ const mgbReleaseInfo = {
         {
           'featureTag': 'asset.actorMap',
           'type': 'improvement',
-          'changeName': 'Imoprovements for Actors and ActorMaps',
+          'changeName': 'Improvements for Actors and ActorMaps',
           'changeSummary': 'Events tool has been separated from Actors tool. Various fixes, notably Actor Movement speed can be > 0 now :).',
           'otherUrls': [ ]
         },

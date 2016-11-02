@@ -125,12 +125,14 @@ export default UserListRoute = React.createClass({
           <br></br>
         </div>
 
-        { this.data.loading ? <Spinner /> : 
-          <div className={segClass} >
-            <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem}/>
-            <button onClick={this.handleLoadMore} className="ui button">Load more</button>
-          </div> 
-        }     
+        <div className={segClass + ' animated bounceInRight'} >
+          { this.data.loading ? <Spinner /> : 
+            <div>
+              <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem}/>
+              <button onClick={this.handleLoadMore} className="ui button">Load more</button>
+            </div>
+          } 
+        </div>   
       </div>
     )
   },

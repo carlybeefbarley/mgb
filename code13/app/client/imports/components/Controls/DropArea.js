@@ -1,31 +1,33 @@
 import React from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
+import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
+
+// TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
-  state = {text:""}
-  get data(){
+  state = { text: '' }
+
+  get data() {
     return this.props.value
   }
 
-  componentDidMount(){
-    this.isUnmounted = false;
-    if(this.props.value){
+  componentDidMount() {
+    this.isUnmounted = false
+    
+    if (this.props.value) {
       const parts = this.props.value.split(":")
-      const name = parts.pop();
+      const name = parts.pop()
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
 
       this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
         onReady: () => {
-          if(this.isUnmounted){
-            return;
-          }
-          this.setState({asset: this.getAsset()})
+          if (this.isUnmounted)
+            return          
+          this.setState( { asset: this.getAsset() } )
         },
-        onError: (e) => {
-          console.log("Oops", e);
-        }
+        onError: (e) => { console.log("DropArea - subscription did not become ready", e) }
       })
       // meteor subscriptions onReady might not get called - somehow buggish behavior
       // keep looping until we get an asset (:doh)
@@ -33,103 +35,92 @@ export default class DropArea extends React.Component {
       let count = 0
       const onReady = () => {
         const a = this.getAsset()
-        count++;
+        count++
         // TODO: react devs assume that isMounted is antipattern.. need to redo all this onReady magic
-        if(this.isUnmounted){
-          return;
-        }
-        if(!a && count < 100){
+        if (this.isUnmounted)
+          return
+        
+        if (!a && count < 100)
           window.setTimeout( onReady, 1000)
-        }
-        else{
-          if(!this.state.asset){
-            this.setState({asset: a})
-          }
-        }
-      };
+        else if (!this.state.asset)
+          this.setState( { asset: a } )
+      }
       onReady()
-
     }
   }
-  componentWillUnmount(){
-    this.isUnmounted = true;
+
+  componentWillUnmount() {
+    this.isUnmounted = true
     this.subscription && this.subscription.stop()
   }
-  handleDrop(e){
+
+  handleDrop(e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     if (!asset) {
-      console.log("NO: asset")
-      return
-    }
-    if(asset.kind !== this.props.kind){
-      this.setState({badAsset: asset, asset: null}, () => {
-        this.saveChanges()
-      })
+      console.log("Drop - NO asset")
       return
     }
 
-    this.setState({asset: asset, badAsset: null}, () => {
-      this.subscription && this.subscription.stop();
+    if (asset.kind !== this.props.kind) {
+      this.setState( { badAsset: asset, asset: null }, () => { this.saveChanges() })
+      return
+    }
+
+    this.setState( { asset: asset, badAsset: null }, () => {
+      this.subscription && this.subscription.stop()
       this.subscription = Meteor.subscribe("assets.public.owner.name", asset.dn_ownerName, asset.name, {
-        onReady: () => {
-          this.forceUpdate()
-        }
+        onReady: () => { this.forceUpdate() }
       })
       this.saveChanges()
     })
   }
 
-  saveChanges(){
+  saveChanges() {
     let name = this.state.asset ? this.state.asset.dn_ownerName + ":" + this.state.asset.name : ''
 
-    if(name){
-      if(this.props.asset.dn_ownerName === this.state.asset.dn_ownerName){
-        name = this.state.asset.name
-      }
-    }
+    if (name && this.props.asset.dn_ownerName === this.state.asset.dn_ownerName)
+      name = this.state.asset.name
 
     this.props.onChange && this.props.onChange(name, this.state.asset)
   }
 
-  getAsset(){
-    if(this.state.asset){
-      return this.state.asset;
-    }
-    if(this.props.value){
-      const parts = this.props.value.split(":");
-      const name = parts.pop();
+  getAsset() {
+    if (this.state.asset)
+      return this.state.asset
+    
+    if (this.props.value) {
+      const parts = this.props.value.split(":")
+      const name = parts.pop()
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
 
-      this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name);
+      this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name)
       const aa =  Azzets.find({dn_ownerName: owner, name: name}).fetch()
 
-      if(aa && aa.length){
+      if (aa && aa.length)
         return aa[0]
-      }
     }
-    return null;
+    return null
   }
 
-  createAssetView(){
-
+  createAssetView() {
     const asset = this.state.asset || this.getAsset() || this.state.badAsset;
-    if(!asset){
+    if (!asset)
       return
-    }
-    const transform = this.getEffect(this.props.effect);
+    
+    const transform = this.getEffect(this.props.effect)
     // TODO: render effect
     return (
-      <div>
-        {asset.thumbnail && <img style={{maxHeight: "50px", transform}} src={asset.thumbnail}/> }
+      <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
+        {asset.thumbnail && <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={asset.thumbnail}/> }
         <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div>
-      </div>
+      </QLink>
     )
   }
 
-  getEffect(effect){
-    if(!effect){
+  getEffect(effect) {
+    if (!effect)
       return "none"
-    }
+    
     const map = {
       rotate90: "rotate(90deg)",
       rotate180: "rotate(180deg)",
@@ -140,22 +131,22 @@ export default class DropArea extends React.Component {
     return map[effect] || "none"
   }
 
-  renderOptions(){
-    const name = "Predefined Sound";
-    const options = this.props.options;
+  renderOptions() {
+    const name = "Predefined Sound"
+    const options = this.props.options
     return (
       <div className="inline fields">
         <label>{name}</label>
         <SmallDD options={options} onchange={(val) => {
-            this.props.value = val;
-            this.state.asset = null;
-            this.props.onChange && this.props.onChange(val)
-          }} value={this.props.value} />
+          this.props.value = val
+          this.state.asset = null
+          this.props.onChange && this.props.onChange(val)
+        }} value={this.props.value} />
       </div>
     )
   }
 
-  render(){
+  render() {
     const asset = this.getAsset()
     return (
       <div

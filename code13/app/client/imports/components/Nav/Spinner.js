@@ -25,7 +25,7 @@ export default class Spinner extends Component {
   render() {
     const hide = this.state.hiddenInitially
     return ( hide ? null :  
-      <div className="ui basic segment" style={{minHeight: "15em"}}>
+      <div className="ui basic segment animated fadeIn" style={{minHeight: "15em"}}>
         <div className={`ui ${hide ? "" : "active"} inverted dimmer`} >
           <div className="ui text indeterminate loader">Loading</div>
         </div>

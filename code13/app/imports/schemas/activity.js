@@ -1,9 +1,11 @@
 // Activity log for MGB users. This is a persistent log that we will keep many weeks of history for
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-import _ from 'lodash';
-import { Activity } from '/imports/schemas';
-import { check, Match } from 'meteor/check';
+import _ from 'lodash'
+import { Activity } from '/imports/schemas'
+import { check } from 'meteor/check'
+
+const _activityIntervalMs = 1000 * 60 * 5   /// 5 minute interval on the activity de-deplicator. TODO: Move to SpecialGlobals.js?
 
 var schema = {
   
@@ -44,13 +46,14 @@ export const ActivityTypes = {
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.edit":        { icon: "edit",             pri: 15,  description: "Edit asset" },
   "asset.description": { icon: "edit",             pri: 14,  description: "Change asset description" },
-  "asset.stable":      { icon: "green checkmark",  pri: 6,   description: "Asset marked stable" },
-  "asset.unstable":    { icon: "red checkmark",    pri: 6,   description: "Asset marked stable" },
+  "asset.metadata":    { icon: "edit",             pri: 16,  description: "Change asset metadata" },
+  "asset.stable":      { icon: "green checkmark",  pri: 6,   description: "Asset marked stable/complete" },
+  "asset.unstable":    { icon: "red checkmark",    pri: 6,   description: "Asset marked unstable/incomplete" },
   "asset.workState":   { icon: "orange checkmark", pri: 6,   description: "Asset workState changed" },
 
   "asset.rename":      { icon: "write",            pri: 11,  description: "Rename asset" },  
   "asset.delete":      { icon: "red trash",        pri: 12,  description: "Delete asset" },
-  "asset.license":     { icon: "law",              pri: 11,  description: "License asset" },
+  "asset.license":     { icon: "law",              pri: 11,  description: "Asset license changed" },
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },
   "asset.undelete":    { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
   
@@ -70,38 +73,36 @@ Meteor.methods({
 
   "Activity.log": function(data) {
     
-    if (!this.userId) throw new Meteor.Error(401, "Login required");
+    if (!this.userId) throw new Meteor.Error(401, "Login required")
 
-    data.timestamp = new Date();
-    data.byUserId = Meteor.userId();    // We re-assert it is correct on server in case client is hacked
+    data.timestamp = new Date()
+    data.byUserId = Meteor.userId()    // We re-assert it is correct on server in case client is hacked
     
     if (Meteor.isServer)
     {
       // TODO: Make sure user id info looks legit. Don't trust client
-      data.byIpAddress = this.connection.clientAddress;
-      data.byGeo = "";      // TODO
+      data.byIpAddress = this.connection.clientAddress
+      data.byGeo = ''      // TODO
       // data.byUserName    TODO: VALIDATE+FIX
       // data.byTeamName    TODO: VALIDATE+FIX
     }
     else
     {
-      data.byIpAddress = "";
-      data.byGeo = "";      
+      data.byIpAddress = ''
+      data.byGeo = '' 
     }
     
-    check(data, _.omit(schema, '_id'));
+    check(data, _.omit(schema, '_id'))
 
-    var docId = Activity.insert(data);
+    var docId = Activity.insert(data)
     if (Meteor.isServer)
-      console.log(`  [Activity.log]  #${docId}  ${data.activityType}  by: ${data.byUserName}   from: ${data.byIpAddress}`);
-    return docId;
+      console.log(`  [Activity.log]  #${docId}  ${data.activityType}  by: ${data.byUserName}   from: ${data.byIpAddress}`)
+    return docId
   }
   
-});
+})
 
-
-
-var priorLog;   // The prior activity that was logged - for de-dupe purposes
+var priorLog   // The prior activity that was logged - for simplistic de-dupe purposes
 
 // Helper function to invoke a logActivity function. If called from client it has a VERY 
 // limited co-allesce capability for duplicate activities
@@ -119,6 +120,8 @@ export function logActivity(activityType, description, thumbnail, asset) {
   var logData = {
     "activityType":         activityType, // One of the keys of the ActivityTypes object defined above
     "priority":             ActivityTypes.getPri(activityType),
+
+    "timestamp":            new Date(),             // We do it here also so it will be in the priorLog data
     
     "description":          description || "",  
     "thumbnail":            thumbnail || "",        // TODO - use this in future as a cheap versioning technique?
@@ -134,28 +137,23 @@ export function logActivity(activityType, description, thumbnail, asset) {
     toAssetId:              (asset && asset._id ? asset._id : ""),
     toAssetName:            (asset && asset.name ? asset.name : ""),
     toAssetKind:            (asset && asset.kind ? asset.kind : "")
-  };
+  }
 
-  let fSkipLog = false;
+  let fSkipLog = false
 
   if (priorLog && 
       priorLog.activityType === logData.activityType &&
-//    priorLog.description === logData.description &&         // This can be a bit noisy for edit.
+      logData.timestamp - priorLog.timestamp < _activityIntervalMs &&
+      //priorLog.description === logData.description &&  // This can be a bit noisy for edit.
       priorLog.toAssetId === logData.toAssetId)
-    fSkipLog = true;
+    fSkipLog = true
   
-  priorLog = logData;
+  if (!priorLog || !fSkipLog)
+    priorLog = logData  // Only do on skip or no-prior, otherwise the priorLog.timestamp will keep updating.
   
-  if (fSkipLog) {
-//    console.log("Activity is similar to prior logged activity, so not placing in ActivityDB");
-  }
-  else {
+  if (!fSkipLog)
     Meteor.call('Activity.log', logData, (err, res) => {
-      if (err) {
+      if (err)
         console.log("Could not log Activity: ", err.reason)
-      }       
-    })    
-  }
-
+    }) 
 }
-

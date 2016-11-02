@@ -203,11 +203,12 @@ var flowerBuilder = {
     var filename = node.source.value;
     var spec = (node.specifiers && node.specifiers[0]) ? node.specifiers[0] : null;
     var name = spec  && spec.local ? spec.local.name : filename
-    if(!server.fileMap[filename] || this.config.local){
+    if (!server.fileMap[filename] || this.config.local){
       filename = filename.substr(2);
       // this is external file.... check defs???
-      if(!this.server.fileMap[filename] || this.config.local){
-        if(this.uniqueNames[node.source.value]) return
+      if (!this.server.fileMap[filename] || this.config.local) {
+        if (this.uniqueNames[node.source.value]) 
+          return
         colorId = this.genColorId(filename)
         var tmp = {
           name: prefix + name,
@@ -220,19 +221,20 @@ var flowerBuilder = {
           id: this.genId(prefix + name)
         }
         buffer.push(tmp);
-        if(this.config.local){
+        if (this.config.local)
           return
-        }
-        var defs = this.server.defs.find(function(d){
+        
+        var defs = this.server.defs.find(function(d) {
           return d['!name'] == node.source.value
         })
         // scan only first level...
-        if(defs){
+        if (defs) {
           depth++;
-          Object.keys(defs).forEach(function(key){
-            if( key.length > 1 && (key.substr(0, 1) === "!" || key.substr(0, 1) === "_") ){
+          var self = this
+          Object.keys(defs).forEach(function(key) {
+            if (key.length > 1 && (key.substr(0, 1) === "!" || key.substr(0, 1) === "_") )
               return;
-            }
+            
             Object.keys(defs[key]).forEach(function(key){
               tmp.children.push({
                 name: prefix + key,
@@ -240,14 +242,14 @@ var flowerBuilder = {
                 children: [],
                 depth: depth,
                 colorId: colorId,
-                id: this.genId(prefix + name)
+                id: self.genId(prefix + name)
               })
             })
           })
         }
-        else{
+        else
           tmp.size = 100 // make unknown external libs huge ( as they will be larger than max size in the sourceTools )
-        }
+        
         this.uniqueNames[node.source.value] = true
         return;
       }

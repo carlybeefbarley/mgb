@@ -21,8 +21,26 @@ export default {
       basics: {
         statements: {
           let:        C.E,
-          const:      C.meta({requires: ".let"}, C.E),
-          var:        C.D
+          const:      C.meta( {requires: ".let" }, C.E),
+          var:        C.E,
+          'undefined':C.E,
+          'null':     C.E
+        },
+        functions: {
+          definition:  C.E,
+          return:      C.E
+          // For advanced... arguments, bin, apply, call, classes etc
+        },
+        types: {
+          'number':   C.E,
+          'string':   C.E,
+          'array':    C.E,
+          'object':   C.E,
+          'boolean':  C.E
+        },
+        booleans: {
+          'true':     C.E,
+          'false':    C.E
         },
         math: {
           $meta: {
@@ -35,16 +53,17 @@ export default {
             '/':      C.E
           },
           constants: {
-            PI:       C.E,
-            'NaN':    C.E
+            PI:         C.E,
+            'NaN':      C.E,
+            'Infinity': C.E
           },
           functions: {
-            abs:      C.meta({unlocks: ".round"}, C.E),
+            abs:      C.meta( {unlocks: ".round" }, C.E),
             round:    C.E,
             max:      C.E,
             min:      C.E,
-            random:   C.meta({requires: ".min,.max"}, C.E),
-            sqrt:     C.meta({requires: ".min,.max", requireOneOf: 1}, C.E),
+            random:   C.meta( {requires: ".min,.max" }, C.E),
+            sqrt:     C.meta( {requires: ".min,.max", requireOneOf: 1 }, C.E),
           }
         }
       },
@@ -71,6 +90,7 @@ export default {
         }
       },
     },
+
     clientfw: {
       $meta: {
         requires:   '.basics',
@@ -108,9 +128,10 @@ export default {
       }
     }
   },
-  c: {
+
+  elm: {
     $meta: {
-      name: 'C'
+      name: 'Elm'
     },
     basics: {
       statements: C.E

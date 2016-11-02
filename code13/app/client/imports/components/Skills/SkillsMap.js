@@ -120,7 +120,7 @@ export default class SkillTree extends React.Component {
 
     let total = 0
     meta.requires.forEach((r) => {
-      if(!totals[r]){
+      if (!totals[r]) {
         console.log("failed to resolve requirement:", r)
         return
       }
@@ -204,21 +204,21 @@ export default class SkillTree extends React.Component {
       level: 2,
       buttons: [
         {
-          name: 'zoomin',
+          name:  'zoomin',
           label: 'Zoom In',
-          icon: 'zoom in',
+          icon:  'zoom in',
           tooltip: 'Open detailed skill view',
           disabled: this.zoomLevel != 1,
-          level: 1,
+          level:    1,
           shortcut: '1'
         },
         {
-          name: 'zoomout',
+          name:  'zoomout',
           label: 'Zoom Out',
-          icon: 'zoom in',
+          icon:  'zoom out',
           tooltip: 'Close detailed skill view',
           disabled: this.zoomLevel != 2,
-          level: 2,
+          level:    2,
           shortcut: '2'
         }
       ]

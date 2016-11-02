@@ -159,16 +159,16 @@ const buildMap = (nodes, key = '') => {
 
 const resolveUnlocksAndRequires = () => {
   const map = SkillNodes.$meta.map
-  for(let i in map){
-    if(map[i].$meta.requires) {
-        map[i].$meta.requires.forEach((k) => {
-          if (!map[k])
-            console.error(`Cannot resolve 'require' for ${i}:`, k)
-          else
-            map[k].$meta.unlocks.push(i)
-        })
+  for (let i in map) {
+    if (map[i].$meta.requires) {
+      map[i].$meta.requires.forEach((k) => {
+        if (!map[k])
+          console.error(`Cannot resolve 'require' for ${i}:`, k)
+        else
+          map[k].$meta.unlocks.push(i)
+      })
     }
-    if(map[i].$meta.unlocks) {
+    if (map[i].$meta.unlocks) {
       map[i].$meta.unlocks.forEach((k) => {
         if (!map[k])
           console.error(`Cannot resolve 'require' for ${i}:`, k)

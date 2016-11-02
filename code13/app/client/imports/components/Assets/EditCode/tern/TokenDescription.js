@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React, {PropTypes} from 'react'
+import React, { PropTypes } from 'react'
 
 
 // TODO - embed/link to MDN docs using https://developer.mozilla.org/en-US/docs/MDN/Contribute/Tools/Document_parameters
@@ -11,9 +11,9 @@ import React, {PropTypes} from 'react'
 
 // Some external links that aren't part of the wider helpInfo list. I put them here for easier maintenance
 var xlinks = {
-  jsDoc: "http://usejsdoc.org/about-getting-started.html",
-  regexper: "https://regexper.com/#",                           // takes a URIencoded Regex as a # suffix
-  ecma6: "https://github.com/lukehoban/es6features#readme"
+  jsDoc:    'http://usejsdoc.org/about-getting-started.html',
+  regexper: 'https://regexper.com/#',                           // takes a URIencoded Regex as a # suffix
+  ecma6:    'https://github.com/lukehoban/es6features#readme'
 }
 
 let _GLOBAL_toggle_show = true
@@ -26,10 +26,16 @@ const noHelpTypes = [
 
 // For these Token types, use a special renderer, and don't use the normal HelpInfo structure
 const specialHelpTypes = {
-  "string-2": {renderFn: specialHandlerString2, betterTypeName: "Regular Expression"},
-  "comment": {renderFn: specialHandlerComment, betterTypeName: "comment"},
-  "def": {renderFn: specialHandlerDef, betterTypeName: "Definition"}
+  "string-2": { renderFn: specialHandlerString2, betterTypeName: "Regular Expression" },
+  "comment":  { renderFn: specialHandlerComment, betterTypeName: "comment" },
+  "def":      { renderFn: specialHandlerDef,     betterTypeName: "Definition" }
 }
+
+
+// Indexes into the SkillsNodes object defined in /imports/Skills/SkillsNodes/SkillNodes.js
+const _skl = 'code.js.lang.'
+const _skla = _skl+'advanced.'
+const _sklb = _skl+'basics.'
 
 
 const helpInfo = [
@@ -37,6 +43,7 @@ const helpInfo = [
   // this
   {
     tt: "keyword", ts: "this", origin: "ecma5",
+    skillNodes: _skla+'this',
     help: "this is a keyword, but acts like a special read-only variable which can be used inside functions to access 'relevant' information. In most cases, the value of 'this' is determined by how a function is called. It can't be set when it is called, and it may be different each time the function is called",
     advice: "Javascript is mostly a simple to learn language, but 'this' is the really quirky part that can confuse learners.",
     advice2: "It is well worth sitting down and reading the page on 'this' once a week/month until you really understand it!",
@@ -44,10 +51,10 @@ const helpInfo = [
   },
 
 
-
   // property
   {
     tt: "property", ts: null, origin: "ecma5",
+    skillNodes: _sklb+'types.object',
     help: "JavaScript is designed on a simple object-based paradigm. An object is a collection of properties, and a property is an association between a name (or key) and a value.",
     advice: "A property's value can be a function, in which case the property is known as a method",
     advice2: "Unassigned properties of an object are undefined (and not null).",
@@ -57,6 +64,7 @@ const helpInfo = [
   // number
   {
     tt: "number", ts: null, origin: "ecma5",
+    skillNodes: _sklb+'types.number',
     help: "A number represents a numeric value. Unlike other languages which have different types for supporting integers, floating point numbers etc; Javascript uses the single Number type for all kinds of numeric values",
     advice: "A Javascript Number can safely represent values as low as -(2^53 - 1) and as high as (2^53 - 1).",
     advice2: "There are some special values like Number.NaN. Number.NEGATIVE_INFINITY and Number.POSITIVE_INFINITY that are used in specific mathemtaical circumstances",
@@ -66,6 +74,7 @@ const helpInfo = [
   // string
   {
     tt: "string", ts: null, origin: "ecma5",
+    skillNodes: _sklb+'types.string',
     help: "A string is a sequence of characters. Strings have a special property .length which represents the number of characters in the string.",
     advice: "A string can be bounded by (starts & ends with) either a single quote ('), a double quote (\") or a backquote (`). The backquote variant is knows as a Template Literal. Each of those three ways to create string literals has some specific features.",
     url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
@@ -77,6 +86,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "function", origin: "ecma5",
+    skillNodes: _sklb+'functions.definition',
     help: "Defines a function - as a statement. or inside an expression",
     syntax: "function [optionalFunctionName]([param1[, param2[, ..., paramN]]]) { statements }",
     advice: "Note that functions can be defined using a statement or an operator (function expression)",
@@ -86,6 +96,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "return", origin: "ecma5",
+    skillNodes: _sklb+'functions.return',
     help: "ends function execution and (optionally) specifies a value to be returned to the function caller",
     advice: "A function can have multiple places where it can return a value. It is usually wiser to avoid having too many returns in a single function because it can make the code harder to understand. ",
     advice2: "If no return value is provided, this will cause the function will return the special value  undefined. A function will implicitly return undefined when it reaches the end of the code in the function",
@@ -97,6 +108,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "var", origin: "ecma5",
+    skillNodes: _sklb+'statements.var',
     help: "Defines a variable using global or function scope",
     advice: "Unlike other languages like C, Java or python, 'var' in JavaScript does not use 'block scope'. In future, the EcmaScript 6 keywords 'const' and 'let' will support block scope",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/var",
@@ -105,6 +117,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "const", origin: "ecma6",
+    skillNodes: _sklb+'statements.const',
     help: "defines a variable that is not intended to change",
     advice: "creates a read-only reference to a value. It does not mean the value it holds is immutable, just that the variable identifier cannot be reassigned.",
     advice2: "Note that const is block-scoped, like 'let'",
@@ -113,6 +126,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "let", origin: "ecma6",
+    skillNodes: _sklb+'statements.let',
     help: "declares a block scope local variable, optionally initializing it to a value.",
     advice: "The scope of 'let' is different to 'var' - 'var' defines a variable either globally, or locally to an entire function regardless of block scope",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/let"
@@ -123,24 +137,28 @@ const helpInfo = [
 
   {
     tt: "atom", ts: "Infinity", origin: "ecma5",
+    skillNodes: _sklb+'math.constants.Infinity',
     help: "The global Infinity property is a numeric value representing infinity. The value Infinity (positive infinity) is greater than any other number. This value behaves mathematically like infinity. For example, any positive number multiplied by Infinity is Infinity, anything divided by Infinity is 0, anything divided by 0 is Infinity",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Infinity"
   },
 
   {
     tt: "atom", ts: "NaN", origin: "ecma5",
+    skillNodes: _sklb+'math.constants.NaN',
     help: "NaN is a special property representing Not-A-Number. It is rather rare to use NaN in a program. It is the returned value when Math functions fail (Math.sqrt(-1)) or when a function trying to parse a number fails (parseInt(\"blabla\"))",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/NaN"
   },
 
   {
     tt: "atom", ts: "undefined", origin: "ecma5",
+    skillNodes: _sklb+'math.statements.undefined',
     help: "A variable that has not been assigned a value is of type undefined. A method or statement also returns undefined if the variable that is being evaluated does not have an assigned value. A function returns undefined if a value was not returned",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined"
   },
 
   {
     tt: "atom", ts: "null", origin: "ecma5",
+    skillNodes: _sklb+'math.statements.NaN',    
     help: "null is often used as a value when an object is expected but none is found/relevant",
     advice: "null has some surprising behaviors/bugs. For example (null == undefined) evaluates to true and (typeof null) evaluates to object",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/null"
@@ -148,16 +166,19 @@ const helpInfo = [
 
   {
     tt: "atom", ts: "true", origin: "ecma5",
+    skillNodes: _sklb+'booleans.true',
     help: "This is the special boolean value 'true'",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean"       // Not the best link?
   },
 
   {
     tt: "atom", ts: "false", origin: "ecma5",
+    skillNodes: _sklb+'booleans.false',
     help: "This is the special boolean value 'false'",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean"       // Not the best link?
   },
 
+  // TODO(@dgolds):  Continue with skillNodes: from here  
 
   // Class-related
 

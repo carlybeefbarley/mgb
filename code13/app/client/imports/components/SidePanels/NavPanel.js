@@ -212,7 +212,7 @@ export default NavPanel = React.createClass({
                 onClick={(e) => { this.npViewSelect(v.tag, e.altKey, e.shiftKey)}}>
                 <i className={v.icon + actv + " big icon"} />
                 { npFeatureLevel < _npFeatureLevelHideWords && 
-                  <span>{v.name}</span>
+                  <span style={{opacity: '0.3'}}>{v.name}</span>
                 }
               </div>
             )

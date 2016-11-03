@@ -68,37 +68,40 @@ export default fpFeatureLevels = React.createClass({
   },
 
   render: function () {
-    const sliderStyle =  {
-      marginTop: "10px",
-      marginRight: "2px",
-      marginLeft: "2px"
+ 
+    const numInputStyle = { 
+      marginTop:        '0.5em',
+      marginRight:      '0.4em',
+      marginLeft:       '3px',
+      marginBottom:     '0.4em',
+      width:            '2.75em',
+      backgroundColor:  'rgba(0,0,0,0)'
     }
 
-    const numStyle =  {
-      marginTop: "10px",
-      marginRight: "10px",
-      marginLeft: "2px",
-      width: "3em",
-      backgroundColor: "rgba(0,0,0,0)"
-    }
+    const sliderStyle = {
+      marginTop:        '0.4em',
+      marginRight:      '2px',
+      marginLeft:       '2.5em'
+    } 
 
-    const makeSlider = (name) => {
+    const makeSlider = name => {
       const maxVal = expectedToolbarScopeMaxValues[name] || 20
       return (
-        <p key={name}>
-          <i className="ui options icon" />
-          {name} @
+        <p key={name} style={{ marginLeft: '0.5em' }}>
+          <i className='ui options icon' />
+          &nbsp;{name} Level 
           <NumberInput
-            style={numStyle}
+            style={numInputStyle}
             dottedBorderStyle={true}
-            className="ui small input"
+            className='ui small input'
             value={this.getLevelValFromSettings(name) || 1}
             onValidChange={(num) => this.setLevelFromNum(name, num)}
             min={1}
-            max={maxVal} /> of {maxVal}
+            max={maxVal} />
+            <span style={{color: 'grey'}}>of {maxVal}</span>
           <input
             style={sliderStyle}
-            type="range"
+            type='range'
             value={this.getLevelValFromSettings(name) || 1}
             onChange={(e) => this.setLevelFromEvent(name, e)}
             min={1}
@@ -110,15 +113,18 @@ export default fpFeatureLevels = React.createClass({
     return (
       <div className='animated fadeIn'>
         <p>
-          Some tools have a <em>Feature Level</em> <i className="ui options icon" /> slider
+          Some tools have <em>Feature Level</em>&nbsp;<i className='ui options icon' /> sliders
+          <br />
+          Adjust these sliders to unlock features
         </p>
-        <button onClick={this.showFeatureLevelsSlider} className="ui active yellow button" style={{ marginBottom: '1em' }}>
-          <i className="student icon"></i>
+        <button onClick={this.showFeatureLevelsSlider} className='ui small active yellow button' style={{ marginBottom: '1em', marginLeft: '5em' }}>
+          <i className='student icon' />
           Show me
         </button>
-        <p>Move these sliders to enable cool stuff</p>
-        <p id="mgbjr-CurrentFeatureLevelsInFp"><h4>Current Feature Levels:</h4></p>
-        { _.map(expectedToolbarScopeNames, name => makeSlider(name)) }
+        <div className='ui segment'>
+          <h4 id='mgbjr-CurrentFeatureLevelsInFp'>Current Feature Levels:</h4>
+          { _.map(expectedToolbarScopeNames, name => makeSlider(name)) }
+        </div>
       </div>
     )
   }

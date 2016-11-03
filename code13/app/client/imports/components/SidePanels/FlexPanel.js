@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 
+import { getFeatureLevel } from '/imports/schemas/settings-client'
+
 import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'
 import fpActivity from './fpActivity'
@@ -15,22 +17,21 @@ import fpChat from './fpChat'
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const flexPanelViews = [
-  //{ tag: "chat",  name: "chat",  icon: "chat",    el: fpGoals },
-  { tag: "activity",  name: "activity", icon: "lightning",  hdr: "Activity",          el: fpActivity,      superAdminOnly: false },
-  { tag: "assets",    name: "assets",   icon: "pencil",     hdr: "Assets",            el: fpAssets,        superAdminOnly: false },
+  { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
+  { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false },
 
-// Users is pretty useless at present so hiding it
-//{ tag: "users",     name: "users",    icon: "users",      hdr: "Users",             el: fpUsers,         superAdminOnly: false },
-  { tag: "chat",      name: "chat",     icon: "chat",       hdr: "Chat",              el: fpChat,          superAdminOnly: false },
-  { tag: "features",  name: "options",  icon: "options",    hdr: "Feature Levels",    el: fpFeatureLevels, superAdminOnly: false },
+  { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false },
+  { tag: 'features',  lev: 1,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
 
-// Coming soon - an improved Projects panel as a FlexPanel.
-//{ tag: "projects",  name: "projects", icon: "sitemap",    hdr: "Projects",          el: fpProjects,      superAdminOnly: false },
+//{ tag: 'projects',  lev: 2,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
   
-  { tag: "keys",      name: "keys",     icon: "keyboard",   hdr: "Keyboard Shortcuts",el: fpKeyboard,      superAdminOnly: false },
-  { tag: "network",   name: "network",  icon: "signal",     hdr: "Network",           el: fpNetwork,       superAdminOnly: false },
-  { tag: "super",     name: "admin",    icon: "red bomb",   hdr: "SuperAdmin",        el: fpSuperAdmin,    superAdminOnly: true  }, // ALWAYS SuperAdmin
-  { tag: "goals",     name: "goals",    icon: "red student",hdr: "Goals",             el: fpGoals,         superAdminOnly: true  }  // SuperAdmin while being tested
+  { tag: 'network',   lev: 2,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
+  { tag: 'users',     lev: 3,  name: 'users',    icon: 'users',      hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
+  { tag: 'keys',      lev: 4,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
+
+  // SuperAdmin-only:
+  { tag: 'super',     lev: 1,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true  }, // ALWAYS SuperAdmin
+  { tag: 'goals',     lev: 3,  name: 'goals',    icon: 'red student',hdr: 'Goals',             el: fpGoals,         superAdminOnly: true  }  // SuperAdmin while being tested
 ]
 
 const defaultPanelViewIndex = 0
@@ -49,6 +50,10 @@ export default FlexPanel = React.createClass({
     flexPanelWidth:         PropTypes.string.isRequired,  // Typically something like "200px".
     isSuperAdmin:           PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
     addJoyrideSteps:        PropTypes.func.isRequired     // See react-joyride comments in App.js
+  },
+
+  contextTypes: {
+    settings:    PropTypes.object                         // Used so some panels can be hidden by user
   },
 
   statics: {
@@ -102,45 +107,45 @@ export default FlexPanel = React.createClass({
 
   render: function () {
     const { flexPanelWidth, flexPanelIsVisible } = this.props
+    const fpFeatureLevel = getFeatureLevel(this.context.settings, 'toolbar-level-FlexPanel') || 1
     const panelStyle = {
-      position: "fixed",
-      right: "0px",
-      top: "0px",
-      minHeight: "600px",
-      marginLeft: "0px",
-
-      bottom: "0px",
-      width: flexPanelWidth,
-      backgroundColor: "rgba(0, 0, 0, 0.05)",
-      borderLeft: "1px solid rgba(0, 0, 0, 0.1)"
+      position:     'fixed',
+      right:        '0px',
+      top:          '0px',
+      minHeight:    '600px',
+      marginLeft:   '0px',
+      bottom:       '0px',
+      width:        flexPanelWidth,
+      borderLeft:   '1px solid rgba(0, 0, 0, 0.1)',
+      backgroundColor: 'rgba(0, 0, 0, 0.05)'
     }
 
     const miniNavStyle = {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
-      position: "fixed",
-      top: "0px",
-      bottom: "0px",
-      right: "0px",
-      width: "61px",
-      border: "none",
-      borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
+      position:     'fixed',
+      top:          '0px',
+      bottom:       '0px',
+      right:        '0px',
+      width:        '61px',
+      border:       'none',
+      borderLeft:   '1px solid rgba(0, 0, 0, 0.1)',
       borderRadius: 0,
       marginBottom: 0,
-      backgroundColor: "none"
+      backgroundColor: 'none'
     }
 
     const panelScrollContainerStyle = {
-      position: "fixed",
-      top: "50px",                /// TODO calculate this
-      bottom: "0px",
-      right: "60px",
-      width: "285px",
-      overflowY: "scroll"
+      position:     'fixed',
+      top:          '50px',                /// TODO calculate this
+      bottom:       '0px',
+      right:        '60px',
+      width:        '285px',
+      overflowY:    'scroll'
     }
 
     const panelInnerStyle = {
-      padding: "10px",
-      paddingBottom: "24px",
-      height: "auto"
+      padding:      '10px',
+      paddingBottom: '24px',
+      height:       'auto'
     }
 
     const flexPanelChoice = this._getSelectedFlexPanelChoice()
@@ -182,7 +187,11 @@ export default FlexPanel = React.createClass({
         <div className="ui attached vertical icon menu" style={miniNavStyle}>
           { flexPanelViews.map(v => {
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
-            return (v.superAdminOnly && !this.props.isSuperAdmin) ? null :
+            if (v.lev > fpFeatureLevel)
+              return null
+            if (v.superAdminOnly && !this.props.isSuperAdmin) 
+              return null
+            return (
               <div
                 key={v.tag}
                 className={active + " item"}
@@ -191,10 +200,10 @@ export default FlexPanel = React.createClass({
                 <i className={v.icon + " large icon"}></i>
                 <span>{v.name}</span>
               </div>
+            )
           })}
         </div>
       </div>
     )
   }
-
 })

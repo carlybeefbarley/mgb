@@ -6,7 +6,7 @@ const npPlay = ( { currUser, navPanelIsOverlay} ) => (
   <div className="ui vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
     <Item>
       <Header as='h3' inverted style={{textAlign: "center"}}>
-        <Icon name='play' />
+        <Icon name='game' />
         Play
       </Header>
     </Item>

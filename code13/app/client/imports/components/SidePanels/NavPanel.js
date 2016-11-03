@@ -28,7 +28,7 @@ const navPanelViews = [
   {
     tag: "play",
     name: "play",
-    icon: "play",
+    icon: "game",
     hdr: "Play",
     getDirectUrl: () => (`/play`),
     el: npPlay,

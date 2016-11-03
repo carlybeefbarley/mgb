@@ -9,6 +9,9 @@ import npHistory from './npHistory'
 import npProjects from './npProjects'
 import urlMaker from '/client/imports/routes/urlMaker'
 import { utilPushTo } from '/client/imports/routes/QLink'
+import { getFeatureLevel } from '/imports/schemas/settings-client'
+
+const _npFeatureLevelHideWords = 4
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
@@ -20,7 +23,7 @@ const navPanelViews = [
     hdr: "Home",
     getDirectUrl: (uname) => (uname ? `/u/${uname}` : '/login'),
     el: npHome,
-    hideIfNoUser: false
+    hideIfNoUser: false,
   },
   {
     tag: "play",
@@ -66,7 +69,8 @@ const navPanelViews = [
     getDirectUrl: (uname) => (uname ? `/u/${uname}/projects` : '/u/!vault/projects'),
     el: npProjects,
     hideIfNoUser: true,
-    hideIfFewProjects: true
+    hideIfFewProjects: true,
+    showAtNavPanelFeatureLevel: 2    
   },
   {
     tag: "history",
@@ -76,7 +80,8 @@ const navPanelViews = [
     getDirectUrl: (uname) => (uname ? `/u/${uname}/assets` : '/assets'),
     el: npHistory,
     hideIfNoUser: true,
-    hideIfLittleHistory: true
+    hideIfLittleHistory: true,
+    showAtNavPanelFeatureLevel: 3
   },
   // { tag: "skills",    icon: "university", hdr: "Skills" }
 ]
@@ -109,7 +114,8 @@ export default NavPanel = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object
+    urlLocation: React.PropTypes.object,
+    settings:    PropTypes.object                         // Used so some panels can be hidden by user
   },
 
   // 
@@ -181,6 +187,7 @@ export default NavPanel = React.createClass({
     const navPanelChoice = _getNavPanelViewFromTag(selectedViewTag)
     const navPanelHdr = navPanelChoice.hdr
     const ElementNP = navPanelChoice.el    // Can be null
+    const npFeatureLevel = getFeatureLevel(this.context.settings, 'toolbar-level-NavPanel') || 2
 
     return (
       <div className="basic segment mgbNavPanel" style={panelStyle}>
@@ -191,17 +198,22 @@ export default NavPanel = React.createClass({
               return null
             if (v.hideIfFewProjects && currUser && (!currUserProjects || currUserProjects.length < 3))
               return null
+
+            if (v.showAtNavPanelFeatureLevel && npFeatureLevel < v.showAtNavPanelFeatureLevel)
+              return
               
             const actv = (v.tag === selectedViewTag) ? " active selected " : ""
             return (
               <div
                 key={v.tag}
-                className={actv + "item"}
+                className={actv + 'item animated fadeInLeft'}
                 title={v.name}
                 style={miniNavItemStyle}
                 onClick={(e) => { this.npViewSelect(v.tag, e.altKey, e.shiftKey)}}>
                 <i className={v.icon + actv + " big icon"} />
-                <span>{v.name}</span>
+                { npFeatureLevel < _npFeatureLevelHideWords && 
+                  <span>{v.name}</span>
+                }
               </div>
             )
           })}

@@ -35,9 +35,8 @@ export default npHome = React.createClass({
           </Header>
         </Item>
 
-        <div className="header item">My Game Builder</div>
+        <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/" className="header item">Home Page</QLink>
         <div className="menu">
-          <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/" className="item">Home Page</QLink>
           <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/whatsnew" className="item">
             What's New
             <WhatsNew currUser={currUser} />
@@ -48,7 +47,6 @@ export default npHome = React.createClass({
 
         { currUser ?
           [
-
             <Item.Header key='k1' className="header item">
               <Icon name='user' />
               <img className="ui centered avatar image" src={currUser.profile.avatar} />

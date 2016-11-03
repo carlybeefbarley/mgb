@@ -16,7 +16,7 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
           to={currUser ? `/u/${currUser.profile.name}/assets` : '/assets'}
           closeNavPanelOnClick={navPanelIsOverlay} 
           className="item">
-        <Icon name='pencil' /> My Assets
+        My Assets
       </QLink>
     }
     { currUser &&
@@ -44,7 +44,7 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
           to={`/u/${currUser.profile.name}/projects`} 
           closeNavPanelOnClick={navPanelIsOverlay} 
           className="item">
-        <Icon name='sitemap' /> My Projects
+        My Projects
       </QLink>
     }
     { currUser && 

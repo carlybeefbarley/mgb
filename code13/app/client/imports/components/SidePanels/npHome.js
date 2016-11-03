@@ -49,7 +49,6 @@ export default npHome = React.createClass({
         { currUser ?
           [
             <Item.Header key='k1' className="header item">
-              <Icon name='user' />
               <img className="ui centered avatar image" src={currUser.profile.avatar} />
               &emsp;{currUser.profile.name}
             </Item.Header>,
@@ -65,7 +64,7 @@ export default npHome = React.createClass({
                   to={`/u/${this.props.currUser.profile.name}/badges`} 
                   closeNavPanelOnClick={navPanelIsOverlay} 
                   className="item">
-                <i className="user icon" /> My Badges
+                My Badges
               </QLink>
               <div className='item'></div>
             </div>,

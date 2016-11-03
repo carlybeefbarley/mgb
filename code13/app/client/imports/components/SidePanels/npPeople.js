@@ -15,12 +15,12 @@ export default npPeople = React.createClass({
       <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
         <div className="ui item" key="authHdr">
           <h3 className="ui inverted header" style={{textAlign: "center"}}>
-            <i className="users icon" />
+            <i className="street view icon" />
             Meet
           </h3>
         </div>
         <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/users" className="item">
-          <i className="users icon" /> All Users
+          <i className="street view icon" /> All Users
         </QLink>
         <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/assets" className="item">
           <i className="pencil icon" /> All Assets

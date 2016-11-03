@@ -26,7 +26,7 @@ const flexPanelViews = [
 //{ tag: 'projects',  lev: 2,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
   
   { tag: 'network',   lev: 2,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
-  { tag: 'users',     lev: 3,  name: 'users',    icon: 'users',      hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
+  { tag: 'users',     lev: 3,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
   { tag: 'keys',      lev: 4,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
 
   // SuperAdmin-only:

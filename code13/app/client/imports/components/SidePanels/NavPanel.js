@@ -55,7 +55,7 @@ const navPanelViews = [
   {
     tag: "meet",
     name: "meet",
-    icon: "users",
+    icon: "street view",
     hdr: "Meet",
     getDirectUrl: () => (`/users`),
     el: npPeople,

@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
+import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 import { logActivity } from '/imports/schemas/activity'
 import { Header, Icon, Item } from 'semantic-ui-react'
 

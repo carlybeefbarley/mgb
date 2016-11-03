@@ -83,7 +83,7 @@ export default class NumberInput extends React.Component {
   render() {
     const { value, min, max, className, style, placeholder, dottedBorderStyle } = this.props
     const colorSty = this.state.internalValue != value ? { color: "orange" } : {}
-    const borderSty = dottedBorderStyle ? { borderStyle: "dotted", borderColor: "rgba(0,0,0,0.3)", backgroundColor: "rgba(255,255,255,0)" } : {}
+    const borderSty = dottedBorderStyle ? { borderStyle: "dotted", borderWidth: '1px', borderColor: "rgba(0,0,0,0.25)", backgroundColor: "rgba(255,255,255,0)" } : {}
     const newStyle = { ...style, ...colorSty, ...borderSty }
     return (
       <input 

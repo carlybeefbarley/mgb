@@ -11,55 +11,53 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
       </Header>
     </Item>
 
-    <div>
-      { currUser &&
+    { currUser &&
+      <QLink 
+          to={currUser ? `/u/${currUser.profile.name}/assets` : '/assets'}
+          closeNavPanelOnClick={navPanelIsOverlay} 
+          className="item">
+        <Icon name='pencil' /> My Assets
+      </QLink>
+    }
+    { currUser &&
+      <div className="menu">
         <QLink 
-            to={currUser ? `/u/${currUser.profile.name}/assets` : '/assets'}
-            closeNavPanelOnClick={navPanelIsOverlay} 
-            className="item">
-          <Icon name='pencil' /> My Assets
-        </QLink>
-      }
-      { currUser &&
-        <div className="menu">
-          <QLink 
-              to={`/assets/create`} 
-              closeNavPanelOnClick={navPanelIsOverlay} 
-              className="item" 
-              title="Create New Asset">
-            <Icon color='green' name='pencil' /> Create New Asset
-          </QLink>
-        </div>
-      }
-      { !currUser && 
-        <QLink 
-            to="/signup" 
-            style={{marginTop: '8em'}} 
+            to={`/assets/create`} 
             closeNavPanelOnClick={navPanelIsOverlay} 
             className="item" 
-            key="join">Sign Up and start Creating!
-        </QLink>  
-      }
-      { currUser && 
-        <QLink 
-            to={`/u/${currUser.profile.name}/projects`} 
-            closeNavPanelOnClick={navPanelIsOverlay} 
-            className="item">
-          <Icon name='sitemap' /> My Projects
+            title="Create New Asset">
+          <Icon color='green' name='pencil' /> Create New Asset
         </QLink>
-      }
-      { currUser && 
-        <div className="menu">
-          <QLink 
-              to={`/u/${currUser.profile.name}/projects/create`} 
-              closeNavPanelOnClick={navPanelIsOverlay} 
-              className="item" 
-              title="Create New Project">
-            <Icon color='green' name='sitemap' /> Create New Project
-          </QLink>
-        </div>
-      }
-    </div>
+      </div>
+    }
+    { !currUser && 
+      <QLink 
+          to="/signup" 
+          style={{marginTop: '8em'}} 
+          closeNavPanelOnClick={navPanelIsOverlay} 
+          className="item" 
+          key="join">Sign Up and start Creating!
+      </QLink>  
+    }
+    { currUser && 
+      <QLink 
+          to={`/u/${currUser.profile.name}/projects`} 
+          closeNavPanelOnClick={navPanelIsOverlay} 
+          className="item">
+        <Icon name='sitemap' /> My Projects
+      </QLink>
+    }
+    { currUser && 
+      <div className="menu">
+        <QLink 
+            to={`/u/${currUser.profile.name}/projects/create`} 
+            closeNavPanelOnClick={navPanelIsOverlay} 
+            className="item" 
+            title="Create New Project">
+          <Icon color='green' name='sitemap' /> Create New Project
+        </QLink>
+      </div>
+    }
   </div>
 )
 

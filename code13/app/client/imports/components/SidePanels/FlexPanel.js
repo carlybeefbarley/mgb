@@ -5,6 +5,7 @@ import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'
 import fpActivity from './fpActivity'
 import fpKeyboard from './fpKeyboard'
+import fpProjects from './fpProjects'
 import fpNetwork from './fpNetwork'
 import fpAssets from './fpAssets'
 import fpGoals from './fpGoals'
@@ -17,9 +18,15 @@ const flexPanelViews = [
   //{ tag: "chat",  name: "chat",  icon: "chat",    el: fpGoals },
   { tag: "activity",  name: "activity", icon: "lightning",  hdr: "Activity",          el: fpActivity,      superAdminOnly: false },
   { tag: "assets",    name: "assets",   icon: "pencil",     hdr: "Assets",            el: fpAssets,        superAdminOnly: false },
-  { tag: "users",     name: "users",    icon: "users",      hdr: "Users",             el: fpUsers,         superAdminOnly: false },
+
+// Users is pretty useless at present so hiding it
+//{ tag: "users",     name: "users",    icon: "users",      hdr: "Users",             el: fpUsers,         superAdminOnly: false },
   { tag: "chat",      name: "chat",     icon: "chat",       hdr: "Chat",              el: fpChat,          superAdminOnly: false },
   { tag: "features",  name: "options",  icon: "options",    hdr: "Feature Levels",    el: fpFeatureLevels, superAdminOnly: false },
+
+// Coming soon - an improved Projects panel as a FlexPanel.
+//{ tag: "projects",  name: "projects", icon: "sitemap",    hdr: "Projects",          el: fpProjects,      superAdminOnly: false },
+  
   { tag: "keys",      name: "keys",     icon: "keyboard",   hdr: "Keyboard Shortcuts",el: fpKeyboard,      superAdminOnly: false },
   { tag: "network",   name: "network",  icon: "signal",     hdr: "Network",           el: fpNetwork,       superAdminOnly: false },
   { tag: "super",     name: "admin",    icon: "red bomb",   hdr: "SuperAdmin",        el: fpSuperAdmin,    superAdminOnly: true  }, // ALWAYS SuperAdmin
@@ -28,11 +35,11 @@ const flexPanelViews = [
 
 const defaultPanelViewIndex = 0
 
-
 export default FlexPanel = React.createClass({
 
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
+    currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values (or validtagkeyhere.somesuffix)
     activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
@@ -44,11 +51,9 @@ export default FlexPanel = React.createClass({
     addJoyrideSteps:        PropTypes.func.isRequired     // See react-joyride comments in App.js
   },
 
-
   statics: {
     getDefaultPanelViewTag: function() { return flexPanelViews[defaultPanelViewIndex].tag }
   },
-
 
   _viewTagMatchesPropSelectedViewTag: function(viewTag)
   {
@@ -58,7 +63,6 @@ export default FlexPanel = React.createClass({
     const selectedViewTagParts = this.props.selectedViewTag.split(".")
     return selectedViewTagParts[0] === viewTag
   },
-
 
   _getSelectedFlexPanelChoice: function()
   {
@@ -158,15 +162,17 @@ export default FlexPanel = React.createClass({
             <div style={panelScrollContainerStyle}>
               <div style={panelInnerStyle}>
                 { !ElementFP ? <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div> :
-                  <ElementFP  currUser={this.props.currUser}
-                            user={this.props.user}
-                            activity={this.props.activity}
-                            panelWidth={this.props.flexPanelWidth}
-                            isSuperAdmin={this.props.isSuperAdmin}
-                            subNavParam={this.getSubNavParam()}
-                            handleChangeSubNavParam={this.handleChangeSubNavParam}
-                            addJoyrideSteps={this.props.addJoyrideSteps}
-                            />
+                  <ElementFP
+                      currUser={this.props.currUser}
+                      currUserProjects={this.props.currUserProjects}
+                      user={this.props.user}
+                      activity={this.props.activity}
+                      panelWidth={this.props.flexPanelWidth}
+                      isSuperAdmin={this.props.isSuperAdmin}
+                      subNavParam={this.getSubNavParam()}
+                      handleChangeSubNavParam={this.handleChangeSubNavParam}
+                      addJoyrideSteps={this.props.addJoyrideSteps}
+                      />
                 }
               </div>
             </div>

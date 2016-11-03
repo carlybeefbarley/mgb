@@ -213,7 +213,7 @@ export default App = React.createClass({
           title="MGB"
           titleTemplate="%s"
           meta={[
-              {"name": "description", "content": "MyGameBuilder v2"}
+              {"name": "My Game Builder", "content": "MyGameBuilder"}
           ]}
         />
 

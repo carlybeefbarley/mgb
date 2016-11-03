@@ -100,7 +100,7 @@ export default WhatsNewRoute = React.createClass({
     return (
       <Grid columns={2} padded relaxed divided className='equal height'>
         <Grid.Column>
-          <Header as='h4' content='MGBv2 updates' />
+          <Header as='h4' content='MGB updates' />
           { this.renderNewsMgbVersionsColumn() }
         </Grid.Column>
         <Grid.Column>

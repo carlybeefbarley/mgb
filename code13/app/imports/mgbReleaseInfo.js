@@ -11,6 +11,31 @@
 
 const mgbReleaseInfo = {
   'releases': [
+
+    {
+      'timestamp': 'Thu Nov 3 2016 06:10:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1930'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'Navigation cleanup',
+          'changeSummary': 'We now show fewer NavPanels and FlexPanels for new users. Extra ones can be enabled using a feature slider in the OPTIONS flexPanel. Also, icons and menus have been improved.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Tue Nov 1 2016 02:10:00 GMT-0700 (PDT)',
 

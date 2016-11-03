@@ -6,7 +6,7 @@ export const badgeList = {
 //mgb1veteran:      [ "v2/anvil.png",               'MGB1 Veteran' ],
   mgbAdmin:         [ "v2/beginner/anvil.png",      'MGB Admin' ],
 //hasAvatar:        [ "Has Avatar.png",             'Has an Avatar' ],
-  mgb2AlphaTester:  [ "v2/beginner/bugfinder.png",  "Found a good MGB2 bug / is Alpha Tester" ],
+  mgb2AlphaTester:  [ "v2/beginner/bugfinder.png",  "Found a good MGB bug / is Alpha Tester" ],
 
 //hourOfMap:        [ 'v2/beginner/hourofmap.png',  'Hour+ of Mapping' ],
 //hourOfCode:       [ 'v2/beginner/hourofcode.png', 'Hour+ of Coding' ],

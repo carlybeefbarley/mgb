@@ -210,7 +210,7 @@ export default App = React.createClass({
       <div >
       
         <Helmet
-          title="MGB2"
+          title="MGB"
           titleTemplate="%s"
           meta={[
               {"name": "description", "content": "MyGameBuilder v2"}

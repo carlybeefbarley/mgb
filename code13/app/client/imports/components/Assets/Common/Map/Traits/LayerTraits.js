@@ -8,13 +8,13 @@ export default {
   },
 
   toggleLayerVisibilty: function(id, isVisible){
-    const c2 = this.props.asset.content2
+    const c2 = this.state.content2
     c2.layers[id].visible = isVisible
     this.quickSave("ToggleLayerVisibility")
   },
 
   addLayer: function(type){
-    const c2 = this.props.asset.content2
+    const c2 = this.state.content2
     const lss = c2.layers
 
     // TODO: check for duplicate names..
@@ -36,7 +36,7 @@ export default {
   },
 
   removeLayer: function(){
-    const c2 = this.props.asset.content2
+    const c2 = this.state.content2
     const lss = c2.layers
     lss.splice(this.state.activeLayer, 1)
     if (this.state.activeLayer >= c2.layers.length) {
@@ -47,7 +47,7 @@ export default {
   },
 
   raiseLayer: function(){
-    const c2 = this.props.asset.content2
+    const c2 = this.state.content2
     const lss = c2.layers
     const layer = lss.splice(this.state.activeLayer, 1)
 
@@ -60,7 +60,7 @@ export default {
   },
 
   lowerLayer: function(){
-    const c2 = this.props.asset.content2
+    const c2 = this.state.content2
     const lss = c2.layers
     const layer = lss.splice(this.state.activeLayer, 1)
 
@@ -73,7 +73,7 @@ export default {
   },
 
   highlightActiveLayerToggle: function(){
-    const meta = this.props.asset.content2.meta
+    const meta = this.state.content2.meta
     meta.highlightActiveLayer = !meta.highlightActiveLayer
     this.quickSave('Highlight Active Layer')
   }

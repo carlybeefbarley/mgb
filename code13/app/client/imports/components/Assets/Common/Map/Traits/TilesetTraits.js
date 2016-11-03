@@ -29,7 +29,7 @@ export default {
 
   // TODO: add warning
   removeTileset: function(){
-    const c2 = this.props.asset.content2
+    const c2 = this.state.content2
     const justRemoved = c2.tilesets.splice(this.state.activeTileset, 1)
     this.cache.update()
     TileHelper.zeroOutUnreachableTiles(c2, this.cache.tiles)
@@ -43,7 +43,7 @@ export default {
   },
 
   updateTilesetFromData: function(data, ref = null, fixGids = false){
-    const c2 = this.props.asset.content2
+    const c2 = this.state.content2
     let ts
     if (data.imagewidth == data.tilewidth) {
       ts = TileHelper.genTileset(c2, data.image, data.imagewidth, data.imageheight)
@@ -83,5 +83,24 @@ export default {
     }
 
     this.quickSave("Added new tileset: " + data.name)
+  },
+
+
+  getActiveLayerData: function(){
+    return this.state.content2.layers[this.state.activeLayer]
+  },
+  addActor: function(ts){
+    this.state.content2.tilesets.push(ts)
+    this.quickSave("Added actor")
+  },
+  setActiveLayerByName: function(name){
+    const layers = this.state.content2.layers
+    for(let i=0; i<layers.length; i++){
+      if(layers[i].name == name){
+        this.setState({activeLayer: i})
+        return;
+      }
+    }
+
   }
 }

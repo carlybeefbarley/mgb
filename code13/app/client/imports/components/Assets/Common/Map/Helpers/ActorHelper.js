@@ -283,8 +283,6 @@ export default ActorHelper = {
       const iname = iparts.pop()
 
       const src = `/api/asset/png/${iuser}/${iname}`
-      console.log(d);
-
 
       map[name].firstgid = nr
       map[name].actor = d

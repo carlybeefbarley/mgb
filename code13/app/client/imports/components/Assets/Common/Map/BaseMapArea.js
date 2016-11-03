@@ -79,9 +79,13 @@ export default class MapArea extends React.Component {
   }
 
   // abstract
-  set data(val) {}
+  set data(val) {
+    console.error("Setting read only data")
+  }
   // abstract
-  get data () {}
+  get data () {
+    return this.props.data
+  }
 
   componentDidMount() {
     this.startTime = Date.now()

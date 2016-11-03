@@ -30,7 +30,7 @@ export default class Properties extends React.Component {
   }
 
   get map () {
-    return this.props.info.content.map
+    return this.props.map
   }
 
   get activeObject () {
@@ -130,7 +130,7 @@ export default class Properties extends React.Component {
       <div className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
+            <span className='explicittrigger'><i className='dropdown icon'></i> Properties</span>
           </div>
           <div className='active content menu' ref='holder'>
             {object}

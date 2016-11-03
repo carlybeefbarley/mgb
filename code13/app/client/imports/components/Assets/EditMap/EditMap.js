@@ -79,10 +79,11 @@ export default class EditMap extends React.Component {
       showGrid: true,
       preview: true,
       undo: [],
-      redo: []
+      redo: [],
+      content2: this.props.asset.content2
     }
 
-    this.lastSave = this.props.asset.content2
+    this.lastSave = this.state.content2
     this.ignoreUndo = 0
 
     if(this.props.asset.content2){
@@ -119,7 +120,7 @@ export default class EditMap extends React.Component {
   }
 
   get meta() {
-    return this.props.asset.content2.meta
+    return this.state.content2.meta
   }
 
   get options() {
@@ -167,7 +168,7 @@ export default class EditMap extends React.Component {
   saveForUndo(reason = '' , skipRedo = false) {
     if (this.ignoreUndo)
       return
-    const toSave = { data: this.copyData(this.props.asset.content2), reason }
+    const toSave = { data: this.copyData(this.state.content2), reason }
     const undo = this.state.undo;
     // prevent double saving undo
     if (undo.length && undo[undo.length - 1].data == toSave.data)
@@ -217,7 +218,7 @@ export default class EditMap extends React.Component {
   }
 
   quickSave(reason = "noReason", thumbnail = null){
-    return this.handleSave(this.props.asset.content2, reason, thumbnail)
+    return this.handleSave(this.state.content2, reason, thumbnail)
   }
 
   // probably copy of data would be better to hold .. or not research strings vs objects
@@ -227,7 +228,7 @@ export default class EditMap extends React.Component {
   }
 
   render () {
-    if(!this.props.asset || this.state.isLoading){
+    if(!this.state.content2 || this.state.isLoading){
       return null
     }
 
@@ -237,8 +238,7 @@ export default class EditMap extends React.Component {
         this.forceUpdate()
       }, 100)
     }
-    const asset = this.props.asset
-    const c2 = asset.content2
+    const c2 = this.state.content2
     return (
       <div className='ui grid'>
         <div className='ten wide column'>

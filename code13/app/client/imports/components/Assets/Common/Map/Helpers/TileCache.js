@@ -91,6 +91,8 @@ export default class TileCache {
       // TODO(stauzs): push errors - or load nice fallback image
     }
     img.src = src
-    // document.body.appendChild(img)
+    img.style.zIndex = 99999
+    img.style.position = "relative"
+    document.body.appendChild(img)
   }
 }

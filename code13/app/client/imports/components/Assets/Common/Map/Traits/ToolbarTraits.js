@@ -9,7 +9,7 @@ const TB = {
   },
 
   getActiveLayer: function(){
-    const c2 = this.props.asset.content2
+    const c2 = this.state.content2
     return c2.layers[this.state.activeLayer]
   },
 

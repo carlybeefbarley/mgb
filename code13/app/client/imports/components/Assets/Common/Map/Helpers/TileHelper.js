@@ -44,10 +44,17 @@ const TileHelper = {
   },
 
   getTilesetWidth: (tileset, spacing = 1) => {
+    tileset.tilewidth = tileset.tilewidth || 32
+    tileset.tileheight = tileset.tileheight || 32
+    tileset.columns = tileset.columns || 1
+
     return tileset.columns * (tileset.tilewidth + spacing)
   },
 
   getTilesetHeight: (tileset, spacing = 1) => {
+    tileset.tilewidth = tileset.tilewidth || 32
+    tileset.tileheight = tileset.tileheight || 32
+    tileset.columns = tileset.columns || 1
     return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight) - spacing
   },
   /* helpers */

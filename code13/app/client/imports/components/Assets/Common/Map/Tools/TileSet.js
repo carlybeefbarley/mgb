@@ -51,21 +51,34 @@ export default class TileSet extends React.Component {
   }
   /* endof lifecycle functions */
 
-  get tileset () {
+  get tileset(){
     return this.props.tilesets[this.props.activeTileset]
   }
+
+  get activeTileset(){
+    return this.props.activeTileset == 0 ? 1 : this.props.activeTileset
+  }
+
   /* helpers */
   adjustCanvas () {
+    console.log("Adjust canvas!")
     const ts = this.tileset
     const canvas = this.refs.canvas
+
     if (ts) {
-      canvas.width = TileHelper.getTilesetWidth(ts)
-      canvas.height = TileHelper.getTilesetHeight(ts)
-    }else {
+      const w = TileHelper.getTilesetWidth(ts)
+      const h = TileHelper.getTilesetHeight(ts)
+      if(canvas.width != w){
+        canvas.width = w
+      }
+      if(canvas.height != h){
+        canvas.height = h
+      }
+    }
+    else {
       canvas.width = 1
       canvas.height = 1
     }
-
     this.ctx = canvas.getContext('2d')
   }
   getTilePosInfo (e) {
@@ -142,6 +155,7 @@ export default class TileSet extends React.Component {
 
   /* drawing on canvas*/
   drawTiles () {
+    console.log("Drawing tiles")
     this.prevTile = null
     const tss = this.props.tilesets
     const ts = tss[this.props.activeTileset]
@@ -329,17 +343,11 @@ export default class TileSet extends React.Component {
       </div>
     )
   }
-  render () {
-    const tss = this.props.tilesets
-    if (!tss.length) {
-      return this.renderEmpty()
-    }
 
+  renderTileset(){
+    const tss = this.props.tilesets
     let ts = this.tileset
-    // TODO: this should not happen - debug!
-    if (!ts) {
-      ts = tss[0]
-    }
+
     const tilesets = []
     for (let i = 0; i < tss.length; i++) {
       let title = `${tss[i].name} ${tss[i].imagewidth}x${tss[i].imageheight}`
@@ -351,6 +359,14 @@ export default class TileSet extends React.Component {
           key={i}><span className='tileset-title'>{title}</span></a>
       )
     }
+    return tilesets
+  }
+  render () {
+    if (!this.props.tilesets.length) {
+      return this.renderEmpty()
+    }
+    const tilesets = this.renderTileset()
+    let ts = this.tileset
     /* TODO: save active tileset and use only that as active */
     return (
       <div className='mgbAccordionScroller tilesets'>
@@ -369,7 +385,7 @@ export default class TileSet extends React.Component {
                     style={{ 'textOverflow': 'ellipsis', 'maxWidth': '85%', float: 'right', 'overflow': 'hidden' }}
                 >{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
               <div className='floating ui tiny green label'>
-                {tss.length}
+                {this.props.tilesets.length}
               </div>
               <div className='menu' style={{"maxHeight": "295px", "overflow": "auto", "maxWidth": "50px"}}>
                 {tilesets}

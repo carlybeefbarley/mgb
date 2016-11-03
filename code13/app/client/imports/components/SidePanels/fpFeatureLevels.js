@@ -73,6 +73,7 @@ export default fpFeatureLevels = React.createClass({
       marginRight: "2px",
       marginLeft: "2px"
     }
+
     const numStyle =  {
       marginTop: "10px",
       marginRight: "10px",
@@ -80,7 +81,6 @@ export default fpFeatureLevels = React.createClass({
       width: "3em",
       backgroundColor: "rgba(0,0,0,0)"
     }
-
 
     const makeSlider = (name) => {
       const maxVal = expectedToolbarScopeMaxValues[name] || 20
@@ -110,14 +110,14 @@ export default fpFeatureLevels = React.createClass({
     return (
       <div className='animated fadeIn'>
         <p>
-          On pages that support 'Feature Levels' a <i className="ui small options icon" /> slider will appear at the top of the page.
+          Some tools have a <em>Feature Level</em> <i className="ui options icon" /> slider
         </p>
         <button onClick={this.showFeatureLevelsSlider} className="ui active yellow button" style={{ marginBottom: '1em' }}>
           <i className="student icon"></i>
           Show me
         </button>
-        <p>It is a setting that hides advanced features from new users so they may learn without feeling overwhelmed.</p>
-        <p id="mgbjr-CurrentFeatureLevelsInFp"><b>Current Feature Levels:</b></p>
+        <p>Move these sliders to enable cool stuff</p>
+        <p id="mgbjr-CurrentFeatureLevelsInFp"><h4>Current Feature Levels:</h4></p>
         { _.map(expectedToolbarScopeNames, name => makeSlider(name)) }
       </div>
     )

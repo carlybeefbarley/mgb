@@ -76,7 +76,7 @@ export default WhatsNewRoute = React.createClass({
       <div>
         <Segment basic>
           <Container>
-            <Header as='h2'><Icon name='announcement' />What's New</Header>
+            <Header as='h2'><Icon name='info circle' />What's New</Header>
             { this.headerMessage }
             { this.renderNews() }
           </Container>

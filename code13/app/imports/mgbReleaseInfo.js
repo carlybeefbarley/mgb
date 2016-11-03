@@ -18,7 +18,7 @@ const mgbReleaseInfo = {
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '1930'
+        'iteration': '1932'
       },
 
       'releaseManagement': {
@@ -30,7 +30,7 @@ const mgbReleaseInfo = {
           'featureTag': 'nav.layout',
           'type': 'improvement',
           'changeName': 'Navigation cleanup',
-          'changeSummary': 'We now show fewer NavPanels and FlexPanels for new users. Extra ones can be enabled using a feature slider in the OPTIONS flexPanel. Also, icons and menus have been improved.',
+          'changeSummary': 'We now show fewer NavPanels and FlexPanels for new users. Extra ones can be enabled using a feature slider in the OPTIONS flexPanel. Also, icons and menus have been improved, and some of the "v2" text replaced.',
           'otherUrls': [ ]
         }
       ]

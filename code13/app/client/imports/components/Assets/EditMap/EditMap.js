@@ -75,6 +75,7 @@ export default class EditMap extends React.Component {
       activeLayer: 0,
       activeTileset: 0,
       editMode: EditModes.stamp,
+      highlightActiveLayer: true,
       randomMode: false,
       showGrid: true,
       preview: true,

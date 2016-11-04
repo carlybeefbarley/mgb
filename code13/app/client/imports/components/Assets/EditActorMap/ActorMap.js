@@ -91,7 +91,11 @@ export default class MapArea extends BaseMapArea {
 
     return (
       <div
-          className='tilemap-wrapper'
+          className={
+            this.props.highlightActiveLayer
+              ? 'tilemap-wrapper highlight-active-layer'
+              : 'tilemap-wrapper'
+          }
           onWheel={this.handleOnWheel.bind(this)}
         >
         { this.getNotification() }

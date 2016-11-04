@@ -75,6 +75,9 @@ export default {
   highlightActiveLayerToggle: function(){
     const meta = this.state.content2.meta
     meta.highlightActiveLayer = !meta.highlightActiveLayer
-    this.quickSave('Highlight Active Layer')
+    this.setState({
+      content2: this.state.content2
+    })
+    //this.save('Highlight Active Layer')
   }
 }

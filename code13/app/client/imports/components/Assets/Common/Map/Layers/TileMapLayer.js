@@ -711,6 +711,10 @@ edit[EditModes.fill] = function (e, up) {
   const sel = this.props.getSelection()
   const col = this.props.getCollection()
 
+  if (e.type == 'mouseup') {
+    this.props.handleSave('Filling up')
+  }
+
   if (up) {
     this.props.saveForUndo('Fill tilemap')
     for (let i = 0; i < temp.length; i++) {
@@ -768,7 +772,11 @@ edit[EditModes.fill] = function (e, up) {
     if (this.props.options.randomMode) {
       ins.gid = col.random().gid
     }else {
-      ins.gid = datay[(temp[i].x + minx) % datay.length].gid
+      // non rect selection
+      const tmpTile = datay[(temp[i].x + minx) % datay.length]
+      if(tmpTile){
+        ins.gid = tmpTile.gid
+      }
     }
     if (ins.gid) {
       ins.getRawId(this.options.width)

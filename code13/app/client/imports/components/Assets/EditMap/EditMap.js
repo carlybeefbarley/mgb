@@ -133,7 +133,8 @@ export default class EditMap extends React.Component {
     this.state.content2 = TileHelper.genNewMap(10, 10)
     this.cache = new Cache(this.state.content2, () => {
       this.quickSave("New Map data")
-      this.setState({isLoading:  false})
+      // this is called in the construct - and callback will be instant
+      this.setState.isLoading = false
     })
   }
 

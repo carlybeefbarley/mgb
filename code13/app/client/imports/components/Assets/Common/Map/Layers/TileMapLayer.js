@@ -782,7 +782,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     saveUndo = false
   }
 
-  if (e.type == 'mouseup' && saveUndo) {
+  if (e.type == 'mouseup') {
     this.props.handleSave('Inserting Tiles')
   }
 

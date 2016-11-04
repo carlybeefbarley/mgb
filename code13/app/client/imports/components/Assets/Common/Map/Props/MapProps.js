@@ -3,7 +3,7 @@ import TileHelper from '../Helpers/TileHelper.js'
 
 export default {
   handleSave(reason){
-    this.quickSave(reason, this.refs.map.generatePreview())
+    this.quickSave(reason, false, this.refs.map.generatePreview())
   },
   saveForUndo(reason, skipRedo){
     this.saveForUndo(reason, skipRedo)

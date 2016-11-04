@@ -206,7 +206,7 @@ export default class MapArea extends React.Component {
       else if (l.width > this.data.width) {
         for (let i = l.height; i > 0; i--) {
           for (let j=0; j<l.width - this.data.width; j++) {
-            const toSplice = i * l.data.width - j - 1
+            const toSplice = i * l.width - j - 1
             l.data.splice(toSplice, 1)
           }
         }

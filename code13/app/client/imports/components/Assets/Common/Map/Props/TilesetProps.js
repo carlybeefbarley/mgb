@@ -1,4 +1,5 @@
 import TileHelper from '../Helpers/TileHelper.js'
+import EditModes from '../Tools/EditModes.js'
 
 export default {
   // tileset -> map proxy - don't need to change state
@@ -7,6 +8,10 @@ export default {
   },
   selectTile: function(tile){
     this.refs.map.collection.pushOrRemove(tile)
+    // it's annoying to pick stamp tool after picking tile
+    if([EditModes.stamp, EditModes.fill].indexOf(this.options.mode) === -1){
+      this.enableMode(EditModes.stamp)
+    }
   },
   pushUnique: function(tile){
     this.refs.map.collection.pushUnique(tile)
@@ -23,8 +28,6 @@ export default {
 
   setMode: function(mode){
     this.setState({activeMode: mode})
-    // update active tool
-    // this.map.refs.toolbar.forceUpdate()
   },
 
   // TODO: add warning
@@ -92,7 +95,11 @@ export default {
     return this.state.content2.layers[this.state.activeLayer]
   },
   addActor: function(ts){
+    // make sure we don't collide gids
+    ts.firstgid = Infinity // nothing is infinite
     this.state.content2.tilesets.push(ts)
+    // this function will change infinity to real GID
+    TileHelper.fixTilesetGids(this.state.content2)
     this.quickSave("Added actor")
   },
   setActiveLayerByName: function(name){

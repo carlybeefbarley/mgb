@@ -271,9 +271,10 @@ const TileHelper = {
         }
       }
     }
+    TileHelper.fixTilesetGids(mapdata)
   },
   fixTilesetGids: (mapdata) => {
-    let nextGid = 101
+    let nextGid = 1
     const changedTiles = {} // map with changed tiles
 
     for(let i=0; i<mapdata.tilesets.length; i++){
@@ -291,7 +292,7 @@ const TileHelper = {
 
     for(let i=0; i<mapdata.layers.length; i++){
       const layer = mapdata.layers[i]
-      if(layer.type == LayerTypes.tile){
+      if(LayerTypes.isTilemapLayer(layer.type)){
         for(let j=0; j<layer.data.length; j++){
           const tile = layer.data[j]
           if(changedTiles[tile]){

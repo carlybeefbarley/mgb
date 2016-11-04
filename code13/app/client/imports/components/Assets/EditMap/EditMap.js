@@ -266,8 +266,8 @@ export default class EditMap extends React.Component {
     this.props.handleContentChange(data, thumbnail, reason)
   }
 
-  quickSave(reason = "noReason", skipUndo = true){
-    return this.handleSave(this.state.content2, reason, null, skipUndo)
+  quickSave(reason = "noReason", skipUndo = true, thumbnail = null){
+    return this.handleSave(this.state.content2, reason, thumbnail, skipUndo)
   }
 
   // probably copy of data would be better to hold .. or not research strings vs objects

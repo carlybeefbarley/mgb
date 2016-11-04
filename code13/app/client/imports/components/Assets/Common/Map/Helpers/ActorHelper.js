@@ -6,13 +6,19 @@
   */
 import TileHelper from './TileHelper.js'
 import ActorValidator from '../../ActorValidator.js'
+import globals from '/client/imports/SpecialGlobals.js'
+
 // 0 - jump
 // 1 - music
-const ACTION_IMAGE = '/api/asset/tileset/AymKGyM9grSAo3yjp';
-const EVENT_LAYER = 3
+const ACTION_IMAGE = globals.actorMap.actionsImage
+const EVENT_LAYER = globals.actorMap.eventLayerId
+
+// in this context:
+// v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contains names
+// v2 - TMX format - layers contains tile global ids
 
 export default ActorHelper = {
-  TILES_IN_ACTIONS: 2,
+  TILES_IN_ACTIONS: globals.actorMap.actionsInImage,
   v2_to_v1: function(data){
     console.log("data",data);
 
@@ -37,11 +43,14 @@ export default ActorHelper = {
       if(tileId <= this.TILES_IN_ACTIONS){
         return data.layers[EVENT_LAYER].mgb_events[pos]
       }
-      const ts = tileId - this.TILES_IN_ACTIONS;
-      if(!data.tilesets[ts]){
+
+      // data tilesets is not orderer.. after user add / removed tiles ini the middle order gets screwed
+      const ts = ActorHelper.getTilesetFromGid(tileId, data.tilesets)
+      if(!ts){
+        console.error("Critical: Failed to locate tileset for gid:", tileId)
         return ''
       }
-      return data.tilesets[ts].name;
+      return ts.name;
 
     }
     for(let i=0; i<data.layers.length; i++){
@@ -67,18 +76,24 @@ export default ActorHelper = {
     const dd = TileHelper.genNewMap()
     dd.images = {}
     dd.layers = []
-    dd.tilesets.push({
-      name: "Actions",
-      firstgid: 1,
-      image: '/api/asset/tileset/AymKGyM9grSAo3yjp',
-      imageheight: 32,
-      imagewidth: 64,
-      margin: 0,
-      spacing: 0,
-      tilecount: this.TILES_IN_ACTIONS,
-      tileheight: 32,
-      tilewidth: 32
-    })
+    if(data.meta.tilesets){
+      dd.tilesets = data.meta.tilesets
+    }
+    else{
+      // brand new map
+      dd.tilesets.push({
+        name: "Actions",
+        firstgid: 1,
+        image: ACTION_IMAGE,
+        imageheight: 32,
+        imagewidth: 64,
+        margin: 0,
+        spacing: 0,
+        tilecount: this.TILES_IN_ACTIONS,
+        tileheight: 32,
+        tilewidth: 32
+      })
+    }
     dd.images[ACTION_IMAGE] = ACTION_IMAGE;
     dd.mgb_event_tiles = {}
 
@@ -114,8 +129,18 @@ export default ActorHelper = {
     this.loadActors(actorMap, names, dd.images, () => {
       console.log(actorMap)
       const keys = Object.keys(actorMap)
-      keys.forEach(function(n){
-        dd.tilesets.push(actorMap[n])
+
+      // we already have actor in the tilesets.. map it and update actor
+      keys.forEach((n) => {
+        dd.tilesets.forEach( (ts, index) => {
+          const actor = actorMap[n]
+          if(ts.name === n){
+            // set correct firstgid
+            actor.firstgid = ts.firstgid
+            // make sure actor is updated
+            dd.tilesets[index] = actor
+          }
+        })
       })
 
       for(let i=0; i<data.mapLayer.length - 1; i++){
@@ -175,12 +200,6 @@ export default ActorHelper = {
       }
       dd.layers.push(layer)
       if(data.meta){
-
-        /*editor: {
-            tilesets: data.tilesets,
-            options: data.meta.options
-        }*/
-
         dd.tilesets = data.meta.tilesets
         dd.meta.options = data.meta.options
       }
@@ -332,15 +351,15 @@ export default ActorHelper = {
   },
 
   getTilesetFromGid: (gid, tilesets) => {
+    // after adding and removing tilesets  - tileset ordering is messes up - don't rely that firstgid will be ordered in tilesets array
     for(let i=0; i<tilesets.length; i++){
-      if(tilesets[i].firstgid == gid){
+      const ts = tilesets[i]
+      if(gid >= ts.firstgid && gid < ts.firstgid + ts.tilecount ){
         return tilesets[i]
-      }
-      if(tilesets[i].firstgid > gid){
-        return tilesets[--i]
       }
     }
     console.error("Cannot find tileset for gid: ", gid)
+    return null
   },
 
   loadActorSimple: function(asset, map){

@@ -55,7 +55,7 @@ export default class ActorTool extends Tileset {
       tilewidth: 32
     }
     // TODO: make clean load actor method
-    const nextId = ActorHelper.TILES_IN_ACTIONS + this.props.tilesets.length
+    const nextId = Infinity
     const map = { [name] : tileset }
     ActorHelper.loadActor(name, map, nextId, {}, null, () => {
       //this.map.data.tilesets.push(map[name]) // if loaded from cache map loses

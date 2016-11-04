@@ -19,3 +19,6 @@
     min-height: 124px;
     position: relative;
 }
+.tilemap-wrapper.mode-eraser{
+    cursor: not-allowed;
+}

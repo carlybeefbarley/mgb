@@ -216,7 +216,10 @@ export default class EditActorMap extends EditMap {
             options={this.options}
             />
           <br />
-          <Properties {...this.propertiesProps} data={c2}/>
+          <Properties {...this.propertiesProps} data={{
+            width: c2.width,
+            height: c2.height
+          }}/>
         </div>
       </div>
     )

@@ -24,4 +24,13 @@ const LayerComponents = {
 LayerTypes.toComponent = function(type){
   return LayerComponents[type]
 }
+LayerTypes.isTilemapLayer = function(type){
+  switch(type){
+    case LayerTypes.tilelayer:
+    case LayerTypes.actor:
+    case LayerTypes.event:
+      return true
+  }
+  return false
+}
 export default LayerTypes

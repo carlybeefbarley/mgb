@@ -105,7 +105,7 @@ export default class MapToolbar extends React.Component {
           icon: 'theme fill',
           label: 'Fill',
           active: this.props.options.mode == EditModes.fill,
-          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.isPlaying),
+          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
           tooltip: 'Fill Map or Selection with selected tile(s)',
           level: 6,
           shortcut: 'F'
@@ -118,7 +118,7 @@ export default class MapToolbar extends React.Component {
           label: 'Eraser',
           active: this.props.options.mode == EditModes.eraser,
           tooltip: 'Delete tile - or use [Ctrl + click] to quickly access this tool',
-          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.isPlaying),
+          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
           level: 1,
           shortcut: 'E'
         },

@@ -42,6 +42,7 @@ export default class EditActorMap extends EditMap {
   constructor (props) {
     super(props)
     this.propertiesProps = this.enableTrait(PropertiesProps)
+    window.mgb_actor = this
   }
 
   setInitialStateFromContent(){
@@ -68,6 +69,15 @@ export default class EditActorMap extends EditMap {
   }
 
   componentWillReceiveProps(newp){
+    // ignore older assets
+    if(_.isEqual(this.lastSave, newp.asset.content2)){
+      console.log("Got old asset.. skipping update")
+      this.setState({isLoading: true})
+      this.cache && this.cache.isReady() && this.cache.update(this.state.content2, () => {
+        this.setState({isLoading: false})
+      })
+      return
+    }
     if(newp.asset.content2) {
       /*if(_.isEqual(this.props.asset, newp.asset)){
         // for some reason setState is required here... at least for the first time.. otherwise all canvas will end up half drawn
@@ -109,10 +119,12 @@ export default class EditActorMap extends EditMap {
     if(!skipUndo && !_.isEqual(this.lastSave, data)){
       this.saveForUndo(reason)
     }
-    this.lastSave = data
+
+    const toSave = ActorHelper.v2_to_v1(data)
+    this.lastSave = toSave
 
     // TODO: convert uploaded images to assets
-    this.props.handleContentChange(ActorHelper.v2_to_v1(data), thumbnail, reason)
+    this.props.handleContentChange(toSave, thumbnail, reason)
   }
 
   showModal = (action, cb) => {

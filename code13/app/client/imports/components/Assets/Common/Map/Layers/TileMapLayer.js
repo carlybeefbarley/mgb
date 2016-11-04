@@ -692,6 +692,8 @@ export default class TileMapLayer extends AbstractLayer {
 
   insertTile(id, gid){
     this.options.data[id] = gid
+    // this makes filling tiles slow - as full update will start on changes
+    // this.props.handleSave('Inserting Tiles')
   }
 }
 
@@ -916,23 +918,31 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   }
   this.drawTiles()
 }
+
+// Eraser is actually stamp with gid = 0 - could be reused
+// only stamp can resize map.. eraser shouldn't
 edit[EditModes.eraser] = function (e, up) {
   if (!this.mouseDown && !up) {
     this.drawTiles()
     return
   }
-  const layer = this.options
+
+  if (e.type == 'mouseup') {
+    this.props.handleSave('Inserting Tiles')
+  }
+
   const pos = this.getTilePosInfo(e)
   const sel = this.props.getSelection()
 
   if (sel.length > 0) {
     if (sel.indexOfId(pos.id) > -1) {
-      this.props.saveForUndo('Delete tile')
-      layer.data[pos.id] = 0
+      //this.props.saveForUndo('Delete tile')
+      this.insertTile(pos.id, 0)
     }
-  }else {
-    this.props.saveForUndo('Delete tile')
-    layer.data[pos.id] = 0
+  }
+  else {
+    //this.props.saveForUndo('Delete tile')
+    this.insertTile(pos.id, 0)
   }
   this.drawTiles()
 }

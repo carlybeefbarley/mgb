@@ -18,11 +18,7 @@ export default class MapArea extends React.Component {
 
   constructor (props) {
     super(props)
-    // expose map for debugging purposes - access in console
-    window.mgb_map = this
-
     this.state = {
-      isPlaying: false,
       // x/y are angles in degrees not pixels
       preview: {
         x: 5,
@@ -419,7 +415,7 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove (e) {
-    if (this.state.isPlaying || this.state.isLoading)
+    if (this.props.isPlaying || this.props.isLoading)
       return
 
     // IE always reports button === 0
@@ -437,7 +433,7 @@ export default class MapArea extends React.Component {
   }
 
   handleMouseUp (e) {
-    if (this.state.isPlaying)
+    if (this.props.isPlaying)
       return
     this.lastEvent = null
     this.refs.mapElement.style.transition = '0.3s'
@@ -445,7 +441,7 @@ export default class MapArea extends React.Component {
   }
 
   handleOnWheel (e) {
-    if (this.state.isPlaying)
+    if (this.props.isPlaying)
       return
 
     e.preventDefault()
@@ -468,7 +464,7 @@ export default class MapArea extends React.Component {
   }
 
   handleKeyUp (e) {
-    if (this.state.isPlaying)
+    if (this.props.isPlaying)
       return
 
     let update = false

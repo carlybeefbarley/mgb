@@ -82,11 +82,14 @@ export default class ActorTool extends Tileset {
         data-drop-text='Drop asset here to create TileSet'
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
-        <ActorControls
+
+        { !tileset
+          ? <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>Drop Actor (from side panel) here to add it to map</p>
+          : <ActorControls
           activeTileset={this.tilesetIndex}
           removeTileset={this.props.removeTileset}
           ref='controls' />
-        { !tileset ? <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>Drop Actor (from side panel) here to add it to map</p> : '' }
+        }
         <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
           <canvas
             ref='canvas'

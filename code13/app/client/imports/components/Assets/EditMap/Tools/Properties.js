@@ -16,34 +16,28 @@ export default class Properties extends React.Component {
   }
   componentDidUpdate () {
     if (this.settings) {
-      this.settings.map.update(this.map.data)
-      this.settings.layer.update(this.map.data.layers[this.map.activeLayer])
-      this.settings.tileset.update(this.map.data.tilesets[this.map.activeTileset])
+      this.settings.map.update(this.props.map)
+      this.settings.layer.update(this.props.layer)
+      this.settings.tileset.update(this.props.tileset)
       if (this.activeObject) {
-        const o = this.activeObject.orig ? this.activeObject.orig : this.activeObject
+        const o = this.activeObject.orig ? this.props.activeObject.orig : this.activeObject
         this.updateObject(o)
         this.settings.object.update(o)
       }
     }
-  // $(this.refs.holder).find("select").dropdown()
   }
   get map () {
     return this.props.map
   }
 
   get activeObject () {
-    const l = this.map.getActiveLayer()
-    if (l && l.pickedObject) {
-      return l.pickedObject
-    }
-    return null
+    return this.props.getActiveObject()
   }
   updateObject(obj){
     if(!obj){
       return
     }
     const o = obj.orig ? obj.orig : obj;
-    // Otito.selfTest()
     if (!o.mgb_properties) {
       o.mgb_properties = []
       if(o.properties){
@@ -68,19 +62,15 @@ export default class Properties extends React.Component {
     }
 
     var p = o.mgb_properties;
-
     for (let i = 0; i < p.length; i++) {
       o.properties[p[i].name] = p[i].value
     }
-
-
 
     return o
   }
   runOnReady () {
     this.settings = {}
     this.updateObject(this.activeObject)
-    var that = this;
     this.settings.object = new Otito(this.activeObject, {
       Object: {
         _type: Otito.type.folder,
@@ -124,20 +114,20 @@ export default class Properties extends React.Component {
             },*/
             head: "Properties",
             _type: Otito.type.array,
-            onchange: function(){
+            onchange: () => {
               console.log("change!!!")
             },
             array: {
               name: {
                 _type: Otito.type.text,
-                onchange: function(input, otito){
-                  that.updateObject(otito.parent.object)
+                onchange: (input, otito) => {
+                  this.updateObject(otito.parent.object)
                 }
               },
               value: {
                 _type: Otito.type.text,
-                onchange: function(input, otito){
-                  that.updateObject(otito.parent.object)
+                onchange: (input, otito) => {
+                  this.updateObject(otito.parent.object)
                 }
               }
             }
@@ -145,12 +135,11 @@ export default class Properties extends React.Component {
         }
       }
     }, () => {
-      this.map.redraw()
-      this.map.save("Updating Object properties")
+      this.props.updateObject(this.settings.object.object)
     })
     this.settings.object.append(this.refs.object)
 
-    this.settings.map = new Otito(this.map.data, {
+    this.settings.map = new Otito(this.props.map, {
       Map: {
         _type: Otito.type.folder,
         contentClassName: 'ui content two column stackable grid',
@@ -159,12 +148,24 @@ export default class Properties extends React.Component {
           width: {
             _type: Otito.type.number,
             head: 'width',
-            min: 1
+            min: 1,
+            needsConfirmation: true,
+            onchange: (input) => {
+              if (!input.value)
+                input.value = 1
+              this.props.resize(this.settings.map.object)
+            }
           },
           height: {
             _type: Otito.type.number,
             head: 'height',
-            min: 1
+            min: 1,
+            needsConfirmation: true,
+            onchange: (input) => {
+              if (!input.value)
+                input.value = 1
+              this.props.resize(this.settings.map.object)
+            }
           },
           tile: {
             _type: Otito.type.folder,
@@ -174,25 +175,35 @@ export default class Properties extends React.Component {
               tilewidth: {
                 _type: Otito.type.int,
                 head: 'width',
-                min: 1
+                min: 1,
+                needsConfirmation: true,
+                onchange: (input) => {
+                  if (!input.value)
+                    input.value = 1
+                  this.props.changeTileSize(this.settings.map.object)
+                }
               },
               tileheight: {
                 _type: Otito.type.int,
                 head: 'height',
-                min: 1
+                min: 1,
+                needsConfirmation: true,
+                onchange: (input) => {
+                  if (!input.value)
+                    input.value = 1
+                  this.props.changeTileSize(this.settings.map.object)
+                }
               }
             }
           }
         }
       }
     }, (...args) => {
-      this.map.forceUpdate()
-      this.map.save("Updating map settings")
-    // this.settings.update(this.map.data)
+      //this.props.updateMap(this.settings.map.object)
     })
     this.settings.map.append(this.refs.map)
 
-    this.settings.layer = new Otito(this.map.data.layers[this.map.activeLayer], {
+    this.settings.layer = new Otito(this.props.layer, {
       Layer: {
         _type: Otito.type.folder,
         contentClassName: 'ui content one column stackable grid',
@@ -247,12 +258,11 @@ export default class Properties extends React.Component {
         }
       }
     }, () => {
-      this.map.redraw()
-      this.map.save("Updating layer settings")
+      this.props.updateLayer(this.settings.layer.object)
     })
     this.settings.layer.append(this.refs.layer)
 
-    this.settings.tileset = new Otito(this.map.data.tilesets[this.map.activeTileset], {
+    this.settings.tileset = new Otito(this.props.tileset, {
       Tileset: {
         _type: 'folder',
         contentClassName: 'ui content',
@@ -299,21 +309,13 @@ export default class Properties extends React.Component {
         }
       }
     }, () => {
-      this.map.updateImages(() => {
-        // this.map.addTilesetTool()
-        // this.map.redraw()
-        this.map.save("Updating tileset settings")
-      })
+      this.props.updateTileset(this.settings.tileset.object)
     })
     this.settings.tileset.append(this.refs.tileset)
     $(this.refs.holder).find('select').dropdown()
-    window.settings = this.settings
   }
   handleClick (layerNum) {}
   render () {
-    if(!this.props.map){
-      return <div />
-    }
     const object = <div ref='object' style={{ display: this.activeObject ? 'block' : 'none' }}></div>
     return (
       <div className='mgbAccordionScroller'>

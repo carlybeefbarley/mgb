@@ -61,6 +61,7 @@ import LayerProps from '../Common/Map/Props/LayerProps.js'
 import TilesetProps from '../Common/Map/Props/TilesetProps.js'
 import MapProps from '../Common/Map/Props/MapProps.js'
 import ToolbarProps from '../Common/Map/Props/ToolbarProps.js'
+import PropertiesProps from '../Common/Map/Props/PropertiesProps.js'
 
 export default class EditMap extends React.Component {
   static propTypes = {
@@ -113,6 +114,7 @@ export default class EditMap extends React.Component {
     this.tilesetProps = this.enableTrait(TilesetProps)
     this.mapProps = this.enableTrait(MapProps)
     this.toolbarProps = this.enableTrait(ToolbarProps)
+    this.propertiesProps = this.enableTrait(PropertiesProps)
   }
 
   setInitialStateFromContent(){
@@ -256,11 +258,11 @@ export default class EditMap extends React.Component {
       this.props.editDeniedReminder()
       return
     }
+    // isn't it too late to save for undo?
     if(!skipUndo && !_.isEqual(this.lastSave, data)){
       this.saveForUndo(reason)
     }
 
-    // TODO: convert uploaded images to assets
     this.props.handleContentChange(data, thumbnail, reason)
   }
 
@@ -277,13 +279,6 @@ export default class EditMap extends React.Component {
   render () {
     if(!this.state.content2 || this.state.isLoading){
       return null
-    }
-
-    // this is temporary hack - until all references to map will be cleared
-    if(!this.refs.map){
-      window.setTimeout(() => {
-        this.forceUpdate()
-      }, 100)
     }
     const c2 = this.state.content2
     return (
@@ -325,14 +320,20 @@ export default class EditMap extends React.Component {
             tilesets={c2.tilesets}
             options={this.options}
             />
-
-          { this.refs.map &&
-          <div>
-
             <br />
-            <Properties map={this.refs.map} />
-          </div>
-          }
+            <Properties
+              {...this.propertiesProps}
+              data={this.state.content2}
+
+              map={{
+                width: c2.width,
+                height: c2.height,
+                tilewidth: c2.tilewidth,
+                tileheight: c2.tileheight
+              }}
+              tileset={c2.tilesets[this.state.activeTileset]}
+              layer={c2.layers[this.state.activeLayer]}
+              />
         </div>
       </div>
     )

@@ -18,6 +18,8 @@ export default class MapArea extends React.Component {
 
   constructor (props) {
     super(props)
+
+    window.mgb_map = this
     this.state = {
       // x/y are angles in degrees not pixels
       preview: {
@@ -189,7 +191,7 @@ export default class MapArea extends React.Component {
     this.data.height = newSize.height
     this.props.saveForUndo("Resize map")
     this.data.layers.forEach((l) => {
-      if(l.type != LayerTypes.tile && l.type != LayerTypes.actor){
+      if(!LayerTypes.isTilemapLayer(l.type)){
         return;
       }
       // insert extra tile at the end of the row
@@ -218,6 +220,8 @@ export default class MapArea extends React.Component {
       l.data.length = this.data.height * this.data.width
       l.height = this.data.height
     })
+
+    this.redraw()
   }
 
   setActiveLayer(id) {

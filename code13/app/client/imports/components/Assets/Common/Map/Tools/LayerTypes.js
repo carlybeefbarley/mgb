@@ -26,7 +26,7 @@ LayerTypes.toComponent = function(type){
 }
 LayerTypes.isTilemapLayer = function(type){
   switch(type){
-    case LayerTypes.tilelayer:
+    case LayerTypes.tile:
     case LayerTypes.actor:
     case LayerTypes.event:
       return true

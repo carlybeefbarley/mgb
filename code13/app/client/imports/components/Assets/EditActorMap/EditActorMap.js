@@ -17,7 +17,7 @@ import EventTool from './Tools/EventTool.js'
 import ObjectList from '../Common/Map/Tools/ObjectList.js'
 
 import LayerTool from '../Common/Map/Tools/Layers.js'
-import Properties from './Tools/Properties.js'
+import Properties from './Tools/ActorMapProperties.js'
 
 import Cache from './Helpers/ActorCache.js'
 import EditModes from '../Common/Map/Tools/EditModes.js'
@@ -37,12 +37,6 @@ export default class EditActorMap extends EditMap {
   static propTypes = {
     asset: PropTypes.object,    // asset to be changed
     currUser: PropTypes.object  // current user
-  }
-
-  constructor (props) {
-    super(props)
-    this.propertiesProps = this.enableTrait(PropertiesProps)
-    window.mgb_actor = this
   }
 
   setInitialStateFromContent(){
@@ -72,7 +66,6 @@ export default class EditActorMap extends EditMap {
     // ignore older assets
     if(_.isEqual(this.lastSave, newp.asset.content2)){
       console.log("Got old asset.. skipping update")
-      this.refs.map && this.refs.map.forceUpdate()
       this.setState({isLoading: true})
       this.cache && this.cache.isReady() && this.cache.update(this.state.content2, () => {
         this.setState({isLoading: false})
@@ -80,11 +73,6 @@ export default class EditActorMap extends EditMap {
       return
     }
     if(newp.asset.content2) {
-      /*if(_.isEqual(this.props.asset, newp.asset)){
-        // for some reason setState is required here... at least for the first time.. otherwise all canvas will end up half drawn
-        // TODO(stauzs): debug this
-        return false
-      }*/
       this.setState({isLoading: true})
       this.v1_to_v2(newp, (d) => {
         // or new Cache - if immutable is preferred - and need to force full cache update

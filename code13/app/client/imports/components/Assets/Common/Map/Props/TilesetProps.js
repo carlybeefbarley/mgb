@@ -28,14 +28,16 @@ export default {
   },
 
   // TODO: add warning
-  removeTileset: function(){
+  removeTileset: function(id = this.state.activeTileset){
     const c2 = this.state.content2
-    const justRemoved = c2.tilesets.splice(this.state.activeTileset, 1)
+    const justRemoved = c2.tilesets.splice(id, 1)
     this.cache.update()
+
+    this.state.activeTileset = this.state.activeTileset > 0 ? this.state.activeTileset -1 : 0
     TileHelper.zeroOutUnreachableTiles(c2, this.cache.tiles)
 
     this.quickSave("Removed Tileset: " + justRemoved[0].name)
-    this.setState({activeTileset: this.state.activeTileset > 0 ? this.state.activeTileset -1 : 0})
+    this.setState({activeTileset: this.state.activeTileset})
   },
   selectTileset: function(id){
     console.log("Active tileset:", id)

@@ -38,7 +38,9 @@ export default ActorHelper = {
         return data.layers[EVENT_LAYER].mgb_events[pos]
       }
       const ts = tileId - this.TILES_IN_ACTIONS;
-      
+      if(!data.tilesets[ts]){
+        return ''
+      }
       return data.tilesets[ts].name;
 
     }

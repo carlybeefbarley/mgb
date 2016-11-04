@@ -249,7 +249,7 @@ const TileHelper = {
 
     for(let i=0; i<mapdata.layers.length; i++){
       const layer = mapdata.layers[i]
-      if(layer.type == LayerTypes.tile){
+      if(LayerTypes.isTilemapLayer(layer.type)){
         for(let j=0; j<layer.data.length; j++){
           const tile = layer.data[j] & 0xfffffff // last 28 bits (1 << 28) - 1
           if(tile && !gidCache[tile]){

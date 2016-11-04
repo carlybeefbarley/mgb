@@ -127,6 +127,9 @@ export default class ActorTool extends Tileset {
     }
     const tilesets = this.renderTileset(1)
     const ts = this.tileset
+    if(!ts){
+      return this.renderEmpty()
+    }
     // actions don't have actor..
     if (!ts.actor)
       ts.actor = {}

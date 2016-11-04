@@ -67,26 +67,6 @@ export default class EditActorMap extends EditMap {
     })
   }
 
-  createNewMap(){
-
-  }
-
-  get meta() {
-    if(!this.state.content2.meta || !this.state.content2.meta.options){
-      this.state.content2.meta = {
-        options: {
-          // empty maps aren't visible without grid
-          showGrid: 1,
-          camera: { _x: 0, _y: 0, _zoom: 1 },
-          preview: false,
-          mode: 'stamp',
-          randomMode: false
-        }
-      }
-    }
-    return this.state.content2.meta
-  }
-
   componentWillReceiveProps(newp){
     if(newp.asset.content2) {
       /*if(_.isEqual(this.props.asset, newp.asset)){

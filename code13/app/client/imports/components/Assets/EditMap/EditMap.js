@@ -116,6 +116,10 @@ export default class EditMap extends React.Component {
   }
 
   setInitialStateFromContent(){
+    if(Object.keys(this.props.asset.content2).length == 0){
+      this.createNewMap()
+      return;
+    }
     this.cache = new Cache(this.props.asset.content2, () => {
       this.setState({isLoading:  false})
     })
@@ -126,13 +130,29 @@ export default class EditMap extends React.Component {
   }
 
   createNewMap(){
-
+    this.state.content2 = TileHelper.genNewMap(10, 10)
+    this.cache = new Cache(this.state.content2, () => {
+      this.quickSave("New Map data")
+      this.setState({isLoading:  false})
+    })
   }
 
   get meta() {
+    // make sure we have options object
+    if(!this.state.content2.meta || !this.state.content2.meta.options){
+      this.state.content2.meta = {
+        options: {
+          // empty maps aren't visible without grid
+          showGrid: 1,
+          camera: { _x: 0, _y: 0, _zoom: 1 },
+          preview: false,
+          mode: 'stamp',
+          randomMode: false
+        }
+      }
+    }
     return this.state.content2.meta
   }
-
   get options() {
     return this.meta.options
   }

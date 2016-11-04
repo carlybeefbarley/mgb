@@ -16,7 +16,10 @@ export default class TileCache {
 
   _onReady(){
     console.log("onReady")
-    this.onReady && this.onReady()
+    // remove from stack.. simulate async call - just in case we don't anything to load
+    this.onReady && window.setTimeout(() => {
+      this.onReady()
+    }, 0)
   }
   // TODO(stauzs): implement lazy cache - return old cache and in background update to new version - when ready - callback
   update(data = this.data, onReady = null){

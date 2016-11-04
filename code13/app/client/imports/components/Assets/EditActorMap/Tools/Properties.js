@@ -67,10 +67,10 @@ export default class Properties extends React.Component {
             _type: Otito.type.number,
             head: 'width',
             needsConfirmation: true,
-            onchange: function(input) {
+            onchange: (input) => {
               if (!input.value)
                 input.value = 1
-              that.props.resize()
+              this.props.resize(this.settings.map.object)
             },
             min: 1
           },
@@ -81,12 +81,14 @@ export default class Properties extends React.Component {
             onchange: (input) => {
               if (!input.value)
                 input.value = 1
-              that.props.resize()
+              this.props.resize(this.settings.map.object)
             },
             min: 1
           }
         }
       }
+    }, () => {
+      //this.props.resize(this.props.data)
     })
     this.settings.map.append(this.refs.map)
 

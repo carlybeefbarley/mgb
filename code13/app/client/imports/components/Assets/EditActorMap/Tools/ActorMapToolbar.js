@@ -32,7 +32,7 @@ export default class MapToolbar extends React.Component {
           label: 'Play',
           tooltip: 'Play this map',
           level: 1,
-          shortcut: 'ENTER' // Is it OK to override browsers print page?
+          shortcut: 'Ctrl+Enter'
         },
         {
           name: 'separator'

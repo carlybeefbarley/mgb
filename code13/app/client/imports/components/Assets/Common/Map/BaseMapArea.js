@@ -185,37 +185,39 @@ export default class MapArea extends React.Component {
 
 
   // TODO(stauzs): add 'insert/remove row/column' functionality
-  resize () {
+  resize (newSize = this.data) {
+    this.data.width = newSize.width
+    this.data.height = newSize.height
     this.props.saveForUndo("Resize map")
-    this.layers.forEach((l) => {
-      if(l.type != LayerTypes.tile || l.type != LayerTypes.actor){
+    this.data.layers.forEach((l) => {
+      if(l.type != LayerTypes.tile && l.type != LayerTypes.actor){
         return;
       }
       // insert extra tile at the end of the row
-      if (l.data.width < this.data.width) {
+      if (l.width < this.data.width) {
         // from last row to first
-        for (let i = l.data.height; i > 0; i--) {
-          for (let j=0; j<this.data.width-l.data.width; j++)
-            l.data.data.splice(i * l.data.width + j, 0, 0)
+        for (let i = l.height; i > 0; i--) {
+          for (let j=0; j<this.data.width-l.width; j++)
+            l.data.splice(i * l.width + j, 0, 0)
         }
       }
       // remove extra tile from the end
-      else if (l.data.width > this.data.width) {
-        for (let i = l.data.height; i > 0; i--) {
-          for (let j=0; j<l.data.width - this.data.width; j++) {
+      else if (l.width > this.data.width) {
+        for (let i = l.height; i > 0; i--) {
+          for (let j=0; j<l.width - this.data.width; j++) {
             const toSplice = i * l.data.width - j - 1
-            l.data.data.splice(toSplice, 1)
+            l.data.splice(toSplice, 1)
           }
         }
       }
-      l.data.width = this.data.width
+      l.width = this.data.width
 
       // insert extra tiles
-      for (let i=l.data.data.length; i<this.data.height * this.data.width; i++)
-        l.data.data[i] = 0
+      for (let i=l.data.length; i<this.data.height * this.data.width; i++)
+        l.data[i] = 0
       // remove overflow
-      l.data.data.length = this.data.height * this.data.width
-      l.data.height = this.data.height
+      l.data.length = this.data.height * this.data.width
+      l.height = this.data.height
     })
   }
 

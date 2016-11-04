@@ -5,7 +5,7 @@ export default {
       return l.pickedObject
     return null
   },
-  resize(){
-    this.refs.map.resize()
+  resize(data){
+    this.refs.map.resize(data)
   }
 }

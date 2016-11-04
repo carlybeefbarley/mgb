@@ -238,9 +238,24 @@ export default class Toolbar extends React.Component {
     // create unique index where
     // first 8 bits is keycode
     // 9th-12th bits are Ctrl/Shift/Alt/Meta - See keyModifiers.*
+
+
     let keyval = 0
+
+
     for (let i=0; i<keys.length; i++) {
       const key = keys[i].toUpperCase().trim()
+
+      // some special cases
+      switch(key){
+        case "SPACE":
+          keyval |= 32
+          continue
+        case "ENTER":
+          keyval |= 13
+          continue
+      }
+
       if (key.length > 1)
       {
         if (keyModifiers.hasOwnProperty(key))

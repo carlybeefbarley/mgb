@@ -21,10 +21,10 @@ export default class MapArea extends BaseMapArea {
     super(props)
   }
 
-  setActiveLayer(id){
-    super.setActiveLayer(id)
-    const l = this.getActiveLayer()
+  componentWillReceiveProps(p){
 
+    const l = this.getActiveLayer(p.activeLayer)
+    this.state.isPlaying = p.isPlaying
     // Events only for events layer...
     if(this.collection.length && this.collection[0].gid < ActorHelper.TILES_IN_ACTIONS){
       if(l && l.data.name != "Events"){
@@ -37,18 +37,10 @@ export default class MapArea extends BaseMapArea {
       const tile = this.collection[0];
       const ts = ActorHelper.getTilesetFromGid(tile.gid, this.data.tilesets)
       // clean selection by default.. and if check fails
-      if(!ActorHelper.checks[l.data.name] || !ActorHelper.checks[l.data.name](ts)){
+      if(!ts || !ActorHelper.checks[l.data.name] || !ActorHelper.checks[l.data.name](ts)){
         this.clearActiveSelection()
       }
     }
-  }
-
-  // this bubbles up
-  showModal(action, cb) {
-    this.props.parent.showModal(action, (val) => {
-      cb(val)
-      this.update()
-    })
   }
 
   // TODO(stauzs): clear cache

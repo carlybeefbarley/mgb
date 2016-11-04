@@ -15,10 +15,20 @@ import Tileset from '../../Common/Map/Tools/TileSet.js'
 
 
 export default class ActorTool extends Tileset {
-  constructor(...a){
-    super(...a)
-    window.debug_this = this
+  constructor(){
+    super()
+    this.tilesetIndex = 1
   }
+  get tileset(){
+    return this.props.tilesets[this.tilesetIndex]
+  }
+
+  componentWillReceiveProps(p){
+    if(p.activeTileset > 0){
+      this.tilesetIndex = p.activeTileset
+    }
+  }
+
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     if (!asset)
@@ -73,7 +83,8 @@ export default class ActorTool extends Tileset {
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
         <ActorControls
-          activeTileset={this.props.activeTileset}
+          activeTileset={this.tilesetIndex}
+          removeTileset={this.props.removeTileset}
           ref='controls' />
         { !tileset ? <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>Drop Actor (from side panel) here to add it to map</p> : '' }
         <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
@@ -114,7 +125,7 @@ export default class ActorTool extends Tileset {
     if (!this.props.tilesets.length) {
       return this.renderEmpty()
     }
-    const tilesets = this.renderTileset()
+    const tilesets = this.renderTileset(1)
     const ts = this.tileset
     // actions don't have actor..
     if (!ts.actor)

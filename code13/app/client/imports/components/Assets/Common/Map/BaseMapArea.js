@@ -121,6 +121,9 @@ export default class MapArea extends React.Component {
     if(this.props.activeLayer != newprops.activeLayer){
       this.activateLayer(newprops.activeLayer)
     }
+    if(this.props.data.meta.options.preview != newprops.data.meta.options.preview){
+      this.adjustPreview()
+    }
   }
 
   componentDidUpdate () {
@@ -183,7 +186,7 @@ export default class MapArea extends React.Component {
 
   // TODO(stauzs): add 'insert/remove row/column' functionality
   resize () {
-    this.saveForUndo("Resize")
+    this.props.saveForUndo("Resize map")
     this.layers.forEach((l) => {
       if(l.type != LayerTypes.tile || l.type != LayerTypes.actor){
         return;
@@ -213,34 +216,6 @@ export default class MapArea extends React.Component {
       // remove overflow
       l.data.data.length = this.data.height * this.data.width
       l.data.height = this.data.height
-    })
-  }
-
-  doRedo () {
-    if (!this.redoSteps.length)
-      return
-
-    const pop = this.redoSteps.pop()
-    this.saveForUndo(pop.reason, true)
-    this.data = pop
-
-    this.ignoreUndo++
-    this.update(() => {
-      this.ignoreUndo--
-      this.save('Undo')
-    })
-  }
-
-  save (reason = 'no reason' , force = false) {
-    const newData = JSON.stringify(this.data)
-    // skip equal map save
-    if (!force && this.savedData == newData)
-      return
-
-    this.savedData = newData
-    // make sure thumbnail is nice - all layers has been drawn
-    window.requestAnimationFrame(() => {
-      this.props.handleSave(this.data, reason, this.generatePreview())
     })
   }
 
@@ -303,13 +278,11 @@ export default class MapArea extends React.Component {
     for (let i = 0; i < this.selection.length; i++)
       this.tmpSelection.push(this.selection[i])
   }
-
   selectionToCollection () {
     this.collection.clear()
     for (let i = 0; i < this.selection.length; i++)
       this.collection.push(this.selection[i])
   }
-
   clearSelection(){
     this.tmpSelection.clear()
     this.selection.clear()
@@ -400,9 +373,6 @@ export default class MapArea extends React.Component {
   }
 
   adjustPreview () {
-    if(this.state.isLoading){
-      return
-    }
     if (!this.data.layers)
       this.data.layers = []
 
@@ -442,7 +412,6 @@ export default class MapArea extends React.Component {
       z++
     })
     this.refs.grid && this.refs.grid.alignToLayer()
-    //this.setState({preview: this.state.preview})
   }
   /* endof camera stuff */
 
@@ -525,7 +494,7 @@ export default class MapArea extends React.Component {
       case 13: // enter
         this.selectionToCollection()
         this.selection.clear()
-        this.props.enableMode(EditModes.stamp)
+        this.props.setMode(EditModes.stamp)
         break
       /*case 90: // ctrl + z
        if (e.ctrlKey) {
@@ -612,6 +581,12 @@ export default class MapArea extends React.Component {
       return null
 
     return this.getLayer(this.data.layers[id], id)
+  }
+
+  togglePreviewState () {
+    // this is not a synchronous function !!!
+    this.options.preview = !this.options.preview
+    this.adjustPreview()
   }
 
   activateLayer (id) {
@@ -703,7 +678,7 @@ export default class MapArea extends React.Component {
             data={data.layers[i]}
             mapData={data}
             options={this.props.options}
-            layers={this.getLayers.bind(this)}
+            getLayers={this.getLayers.bind(this)}
 
             palette={this.palette}
             isActive={this.props.activeLayer == i}
@@ -734,6 +709,8 @@ export default class MapArea extends React.Component {
 
             handleSave={this.props.handleSave}
             saveForUndo={this.props.saveForUndo}
+
+            showModal={this.props.showModal}
 
             key={i}
             ref={ this.addLayerRef.bind(this, i) }

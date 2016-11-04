@@ -49,6 +49,7 @@ export default class TileSet extends React.Component {
     this.adjustCanvas()
     this.drawTiles()
   }
+
   /* endof lifecycle functions */
 
   get tileset(){
@@ -155,10 +156,9 @@ export default class TileSet extends React.Component {
 
   /* drawing on canvas*/
   drawTiles () {
-    console.log("Drawing tiles")
     this.prevTile = null
     const tss = this.props.tilesets
-    const ts = tss[this.props.activeTileset]
+    const ts = this.tileset
     const ctx = this.ctx
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
@@ -344,12 +344,12 @@ export default class TileSet extends React.Component {
     )
   }
 
-  renderTileset(){
+  renderTileset(from = 0, to = this.props.tilesets.length){
     const tss = this.props.tilesets
     let ts = this.tileset
 
     const tilesets = []
-    for (let i = 0; i < tss.length; i++) {
+    for (let i = from; i < to; i++) {
       let title = `${tss[i].name} ${tss[i].imagewidth}x${tss[i].imageheight}`
       tilesets.push(
         <a

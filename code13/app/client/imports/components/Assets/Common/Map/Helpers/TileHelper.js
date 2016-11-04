@@ -46,7 +46,7 @@ const TileHelper = {
   getTilesetWidth: (tileset, spacing = 1) => {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
-    tileset.columns = tileset.columns || 1
+    tileset.columns = tileset.columns || tileset.imagewidth / tileset.tilewidth
 
     return tileset.columns * (tileset.tilewidth + spacing)
   },
@@ -54,7 +54,7 @@ const TileHelper = {
   getTilesetHeight: (tileset, spacing = 1) => {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
-    tileset.columns = tileset.columns || 1
+    tileset.columns = tileset.columns || tileset.imagewidth / tileset.tilewidth
     return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight) - spacing
   },
   /* helpers */
@@ -102,7 +102,9 @@ const TileHelper = {
       tilesets: [],
       tileheight,
       tilewidth,
-    layers}
+      meta: {},
+      layers
+    }
   },
 
   genLayer: (widthInTiles = 32 , heightInTiles = 32 , name = 'Layer') => {

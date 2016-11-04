@@ -22,6 +22,10 @@ export default ActorHelper = {
       metadata: {
         width: data.width,
         height: data.height,
+      },
+      meta: {
+        tilesets: data.tilesets,
+        options: data.meta.options
       }
     };
 
@@ -168,6 +172,16 @@ export default ActorHelper = {
         }
       }
       dd.layers.push(layer)
+      if(data.meta){
+
+        /*editor: {
+            tilesets: data.tilesets,
+            options: data.meta.options
+        }*/
+
+        dd.tilesets = data.meta.tilesets
+        dd.meta.options = data.meta.options
+      }
       cb(dd)
     })
   },
@@ -291,6 +305,10 @@ export default ActorHelper = {
       img.onload = function(){
         map[name].imagewidth = img.width
         map[name].imageheight = img.height
+        // TODO: adjust these when MAGE will support multiple frames per actor
+        map[name].tilewidth = img.width
+        map[name].tileheight = img.height
+
         images[TileHelper.normalizePath(src)] = src
 
         ActorHelper.cache[key] ={
@@ -312,7 +330,15 @@ export default ActorHelper = {
   },
 
   getTilesetFromGid: (gid, tilesets) => {
-    return tilesets.find((ts) => ts.firstgid == gid )
+    for(let i=0; i<tilesets.length; i++){
+      if(tilesets[i].firstgid == gid){
+        return tilesets[i]
+      }
+      if(tilesets[i].firstgid > gid){
+        return tilesets[--i]
+      }
+    }
+    console.error("Cannot find tileset for gid: ", gid)
   },
 
   loadActorSimple: function(asset, map){

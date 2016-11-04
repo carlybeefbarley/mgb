@@ -15,31 +15,6 @@ export default class Properties extends React.Component {
     this.runOnReady()
   }
 
-  componentDidUpdate () {
-    if (this.settings) {
-      this.settings.map.update(this.map.data)
-      //this.settings.layer.update(this.map.data.layers[this.map.activeLayer])
-      //this.settings.tileset.update(this.map.data.tilesets[this.map.activeTileset])
-      /*if (this.activeObject) {
-        const o = this.activeObject.orig ? this.activeObject.orig : this.activeObject
-        this.updateObject(o)
-        this.settings.object.update(o)
-      }*/
-    }
-  // $(this.refs.holder).find("select").dropdown()
-  }
-
-  get map () {
-    return this.props.map
-  }
-
-  get activeObject () {
-    const l = this.map.getActiveLayer()
-    if (l && l.pickedObject)
-      return l.pickedObject
-    return null
-  }
-
   updateObject(obj){
     if (!obj)
       return
@@ -78,9 +53,10 @@ export default class Properties extends React.Component {
   
   runOnReady () {
     this.settings = {}
-    this.updateObject(this.activeObject)
+    //this.updateObject(this.props.getActiveObject())
+
     var that = this
-    this.settings.map = new Otito(this.map.data, {
+    this.settings.map = new Otito(this.props.data, {
       Map: {
         _type: Otito.type.folder,
         open: true,
@@ -94,7 +70,7 @@ export default class Properties extends React.Component {
             onchange: function(input) {
               if (!input.value)
                 input.value = 1
-              that.map.resize()
+              that.props.resize()
             },
             min: 1
           },
@@ -105,16 +81,12 @@ export default class Properties extends React.Component {
             onchange: (input) => {
               if (!input.value)
                 input.value = 1
-              that.map.resize()
+              that.props.resize()
             },
             min: 1
           }
         }
       }
-    }, (...args) => {
-      this.map.forceUpdate()
-      this.map.save("Updating map settings")
-    // this.settings.update(this.map.data)
     })
     this.settings.map.append(this.refs.map)
 

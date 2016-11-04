@@ -83,10 +83,10 @@ export default class AbstractLayer extends React.Component {
     return this.props.data
   }
 
-  // this might get pretty slow and at some point there will be requirement for camera events
+  // camera sets correct offsets when rendering bounds etc
   get camera () {
-    return this.props.camera
 
+    //return this.props.camera
 
     if (!this._camera) {
       this._camera = Object.create(this.props.camera)

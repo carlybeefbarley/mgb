@@ -11,7 +11,12 @@ export default class TileCache {
     this.toLoad = 0;
     this.loaded = 0;
 
-    this.update(data, false, onReady)
+    this.update(data, onReady)
+  }
+
+  _onReady(){
+    console.log("onReady")
+    this.onReady && this.onReady()
   }
   // TODO(stauzs): implement lazy cache - return old cache and in background update to new version - when ready - callback
   update(data = this.data, onReady = null){
@@ -22,7 +27,7 @@ export default class TileCache {
 
     // this should trigger only if there is no loading images or all images come from cache
     if(this.toLoad == this.loaded){
-      this.onReady && this.onReady()
+      this._onReady()
     }
   }
 
@@ -56,8 +61,9 @@ export default class TileCache {
         TileHelper.getTilePosWithOffsets(j, Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos)
         const gid = ts.firstgid + j
 
-        this.tiles[gid] = {
+        const tileInfo = {
           gid,
+          // fix reference to image and size
           get image (){
             return self.images[ts.image]
           },
@@ -67,6 +73,8 @@ export default class TileCache {
           y: pos.y,
           ts: ts
         }
+
+        this.tiles[gid] = tileInfo
       }
     }
   }
@@ -82,7 +90,7 @@ export default class TileCache {
     img.onload = () => {
       this.loaded++
       if(this.toLoad == this.loaded){
-        this.onReady && this.onReady()
+        this._onReady()
       }
     }
     img.onerror = () => {
@@ -91,8 +99,11 @@ export default class TileCache {
       // TODO(stauzs): push errors - or load nice fallback image
     }
     img.src = src
+    /*
+    useful for debug
     img.style.zIndex = 99999
     img.style.position = "relative"
     document.body.appendChild(img)
+    */
   }
 }

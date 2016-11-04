@@ -8,6 +8,9 @@ const TB = {
     this.setState({preview: this.options.preview})
   },
 
+  play: function(){
+    this.setState({isPlaying: !this.state.isPlaying})
+  },
   getActiveLayer: function(){
     const c2 = this.state.content2
     return c2.layers[this.state.activeLayer]
@@ -27,11 +30,13 @@ const TB = {
   },
 
   preview: function(){
-    this.refs.map.togglePreviewState()
+    this.options.preview = !this.options.preview
+    this.setState({preview: this.options.preview})
   },
 
   resetCamera: function(){
     this.refs.map.resetCamera()
+    this.setState({preview: this.options.preview})
   },
 
   undo: function(){

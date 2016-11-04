@@ -57,10 +57,10 @@ import Properties from './Tools/Properties.js'
 import Cache from '../Common/Map/Helpers/TileCache.js'
 import EditModes from '../Common/Map/Tools/EditModes.js'
 
-import LayerTraits from '../Common/Map/Traits/LayerTraits.js'
-import TilesetTraits from '../Common/Map/Traits/TilesetTraits.js'
-import MapTraits from '../Common/Map/Traits/MapTraits.js'
-import ToolbarTraits from '../Common/Map/Traits/ToolbarTraits.js'
+import LayerProps from '../Common/Map/Props/LayerProps.js'
+import TilesetProps from '../Common/Map/Props/TilesetProps.js'
+import MapProps from '../Common/Map/Props/MapProps.js'
+import ToolbarProps from '../Common/Map/Props/ToolbarProps.js'
 
 export default class EditMap extends React.Component {
   static propTypes = {
@@ -88,16 +88,11 @@ export default class EditMap extends React.Component {
 
     if(this.props.asset.content2){
       // stores tiles and images
-      this.cache = new Cache(this.props.asset.content2, () => {
-        this.setState({isLoading:  false})
-      })
-      // set last edit mode ???
-      this.state.editMode = this.options.mode
-      this.state.randomMode = this.options.randomMode
-      this.state.showGrid = this.options.showGrid
+      this.setInitialStateFromContent()
     }
     // new map???
     else{
+      this.createNewMap()
       /*
       c2 = TileHelper.
       c2.meta = {
@@ -113,10 +108,24 @@ export default class EditMap extends React.Component {
        */
     }
 
-    this.layerTraits = this.enableTrait(LayerTraits)
-    this.tilesetTraits = this.enableTrait(TilesetTraits)
-    this.mapTraits = this.enableTrait(MapTraits)
-    this.toolbarTraits = this.enableTrait(ToolbarTraits)
+    this.layerProps = this.enableTrait(LayerProps)
+    this.tilesetProps = this.enableTrait(TilesetProps)
+    this.mapProps = this.enableTrait(MapProps)
+    this.toolbarProps = this.enableTrait(ToolbarProps)
+  }
+
+  setInitialStateFromContent(){
+    this.cache = new Cache(this.props.asset.content2, () => {
+      this.setState({isLoading:  false})
+    })
+    // set last edit mode ???
+    this.state.editMode = this.options.mode
+    this.state.randomMode = this.options.randomMode
+    this.state.showGrid = this.options.showGrid
+  }
+
+  createNewMap(){
+
   }
 
   get meta() {
@@ -243,16 +252,16 @@ export default class EditMap extends React.Component {
       <div className='ui grid'>
         <div className='ten wide column'>
           <MapToolbar
-            {...this.toolbarTraits}
+            {...this.toolbarProps}
             options={this.options}
             undoSteps={this.state.undo}
             redoSteps={this.state.redo}
           />
           <MapArea
-            {...this.mapTraits}
+            {...this.mapProps}
             // this is nice UX shortcut - user don't need to create layer - and drop image
             // it allows simply drop image on map
-            addLayer={this.layerTraits.addLayer}
+            addLayer={this.layerProps.addLayer}
             cache={this.cache}
             activeLayer={this.state.activeLayer}
             highlightActiveLayer={c2.meta.highlightActiveLayer}
@@ -264,7 +273,7 @@ export default class EditMap extends React.Component {
         </div>
         <div className='six wide column'>
           <LayerTool
-            {...this.layerTraits}
+            {...this.layerProps}
             layers={c2.layers}
             options={c2.meta}
             activeLayer={this.state.activeLayer}
@@ -272,7 +281,7 @@ export default class EditMap extends React.Component {
           <br />
 
           <TileSet
-            {...this.tilesetTraits}
+            {...this.tilesetProps}
             palette={this.cache.tiles}
             activeTileset={this.state.activeTileset}
             tilesets={c2.tilesets}

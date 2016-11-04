@@ -28,7 +28,7 @@ export default class Properties extends React.Component {
   // $(this.refs.holder).find("select").dropdown()
   }
   get map () {
-    return this.props.info.content.map
+    return this.props.map
   }
 
   get activeObject () {
@@ -146,7 +146,6 @@ export default class Properties extends React.Component {
       }
     }, () => {
       this.map.redraw()
-      this.map.save("Updating Object properties")
     })
     this.settings.object.append(this.refs.object)
 
@@ -186,9 +185,6 @@ export default class Properties extends React.Component {
         }
       }
     }, (...args) => {
-      this.map.forceUpdate()
-      this.map.save("Updating map settings")
-    // this.settings.update(this.map.data)
     })
     this.settings.map.append(this.refs.map)
 
@@ -247,9 +243,7 @@ export default class Properties extends React.Component {
         }
       }
     }, () => {
-      this.map.addLayerTool()
-      this.map.redraw()
-      this.map.save("Updating layer settings")
+
     })
     this.settings.layer.append(this.refs.layer)
 
@@ -300,11 +294,7 @@ export default class Properties extends React.Component {
         }
       }
     }, () => {
-      this.map.updateImages(() => {
-        // this.map.addTilesetTool()
-        // this.map.redraw()
-        this.map.save("Updating tileset settings")
-      })
+
     })
     this.settings.tileset.append(this.refs.tileset)
     $(this.refs.holder).find('select').dropdown()

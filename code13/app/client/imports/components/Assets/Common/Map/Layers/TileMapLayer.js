@@ -68,11 +68,10 @@ export default class TileMapLayer extends AbstractLayer {
     })
   }
   _increaseSizeToTop (pos) {
-
+    this.options.y -= this.props.mapData.tileheight
     for (let i = 0; i < this.options.width; i++) {
       this.options.data.unshift(0)
     }
-    this.options.y -= this.props.mapData.tileheight
     this.options.height++
     // adjust map to biggest layer
     if(this.props.mapData.height < this.options.height){
@@ -94,7 +93,7 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.options.width++
     // adjust map to biggest layer
-    if(this.props.mapdata.width < this.options.width){
+    if(this.props.mapData.width < this.options.width){
       this.props.mapData.width = this.options.width
     }
   }
@@ -783,7 +782,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     saveUndo = false
   }
 
-  if (e.type == 'mouseup') {
+  if (e.type == 'mouseup' && saveUndo) {
     this.props.handleSave('Inserting Tiles')
   }
 

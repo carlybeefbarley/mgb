@@ -8,7 +8,7 @@ export default class EventLayer extends TileMapLayer {
       "1": "jump",
       "2": "music" //"music: loops=10000,source=joco/Skullcrusher%20Mountain.mp3",
     }
-    this.map.showModal(actions[gid], (opts) => {
+    this.props.showModal(actions[gid], (opts) => {
       //this.options.
       this.options.data[id] = gid;
       if(gid == "1"){
@@ -20,7 +20,7 @@ export default class EventLayer extends TileMapLayer {
         }
         this.options.mgb_events[id] = `music: loops=10000,source=${opts.music}`
       }
-      this.map.save("Add action: "+ actions[gid]);
+      this.props.handleSave("Add action: "+ actions[gid]);
     })
     console.log("HERE!")
   }
@@ -41,11 +41,11 @@ export default class EventLayer extends TileMapLayer {
       this.options.data.unshift(0)
       this.options.mgb_events.unshift(0)
     }
-    this.options.y -= this.map.data.tileheight
+    this.options.y -= this.props.mapData.tileheight
     this.options.height++
     // adjust map to biggest layer
-    if(this.map.options.height < this.options.height){
-      this.map.options.height = this.options.height
+    if(this.props.mapData.height < this.options.height){
+      this.props.mapData.height = this.options.height
     }
   }
   _increaseSizeToRight (pos) {
@@ -58,8 +58,8 @@ export default class EventLayer extends TileMapLayer {
     }
     this.options.width++
     // adjust map to biggest layer
-    if(this.map.options.width < this.options.width){
-      this.map.options.width = this.options.width
+    if(this.props.mapData.width < this.options.width){
+      this.props.mapData.width = this.options.width
     }
   }
   _increaseSizeToBottom (pos) {
@@ -69,12 +69,12 @@ export default class EventLayer extends TileMapLayer {
     }
     this.options.height++
     // adjust map to biggest layer
-    if(this.map.options.height < this.options.height){
-      this.map.options.height = this.options.height
+    if(this.props.mapData.height < this.options.height){
+      this.props.mapData.height = this.options.height
     }
   }
   _increaseSizeToLeft (pos) {
-    this.options.x -= this.map.data.tilewidth
+    this.options.x -= this.props.mapData.tilewidth
     // reverse as first splice will resize array
     for (let i = this.options.height - 1; i > -1; i--) {
       this.options.data.splice(i * this.options.width, 0, 0)
@@ -82,8 +82,8 @@ export default class EventLayer extends TileMapLayer {
     }
     this.options.width++
     // adjust map to biggest layer
-    if(this.map.options.width < this.options.width){
-      this.map.options.width = this.options.width
+    if(this.props.mapData.width < this.options.width){
+      this.props.mapData.width = this.options.width
     }
   }
 

@@ -12,7 +12,8 @@ export default class MapToolbar extends React.Component {
     if (!this.props.options.mode) {
       this.props.options.mode = EditModes.stamp
     }
-
+    const disabled = this.props.isPlaying
+    
     const layer = this.props.getActiveLayer()
     const config = {
       level: 3,
@@ -22,7 +23,16 @@ export default class MapToolbar extends React.Component {
           label: 'Save',
           tooltip: 'Save the map (auto save is ON)',
           level: 1,
+          disabled,
           shortcut: 'Ctrl+S' // Is it OK to override browsers save page?
+        },
+        {
+          name: 'play',
+          icon: this.props.isPlaying ? 'stop' : 'play',
+          label: 'Play',
+          tooltip: 'Play this map',
+          level: 1,
+          shortcut: 'ENTER' // Is it OK to override browsers print page?
         },
         {
           name: 'separator'
@@ -31,7 +41,7 @@ export default class MapToolbar extends React.Component {
           name: 'undo',
           label: 'Undo',
           iconText: (this.props.undoSteps.length ? ' ' + this.props.undoSteps.length : ''),
-          disabled: !this.props.undoSteps.length,
+          disabled: !this.props.undoSteps.length || disabled,
           tooltip: 'Undo last action' + (_.last(this.props.undoSteps) ? ': ' + _.last(this.props.undoSteps).reason : ''),
           level: 2,
           shortcut: 'Ctrl+Z'
@@ -40,7 +50,7 @@ export default class MapToolbar extends React.Component {
           name: 'redo',
           icon: 'undo flip', // redo is flipped undo
           label: 'Redo',
-          disabled: !this.props.redoSteps.length,
+          disabled: !this.props.redoSteps.length || disabled,
           tooltip: 'Redo previous action',
           level: 2,
           shortcut: 'Ctrl+Shift+Z'
@@ -55,13 +65,15 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Toggle grid visibilty on / off',
           level: 3,
           active: this.props.options.showGrid,
-          shortcut: 'Alt+G'
+          shortcut: 'Alt+G',
+          disabled
         },
         {
           name: 'resetCamera',
           icon: 'crosshairs',
           label: 'Reset Camera',
           tooltip: 'Set Zoom to 100% and move map to 0,0 coordinates',
+          disabled,
           level: 6,
           shortcut: 'Ctrl+Alt+R'
         },
@@ -70,6 +82,7 @@ export default class MapToolbar extends React.Component {
           label: '3D View',
           icon: 'cube',
           active: this.props.options.preview,
+          disabled,
           tooltip: 'Separate and pivot map layers in 3D view. Use center-click+drag mouse to spin map',
           level: 9,
           shortcut: 'Ctrl+Alt+P'
@@ -81,35 +94,18 @@ export default class MapToolbar extends React.Component {
           name: 'stamp',
           icon: 'legal stamp',
           active: this.props.options.mode == EditModes.stamp,
+          disabled,
           label: 'Stamp',
           tooltip: 'Stamp tiles on the map',
           level: 1,
           shortcut: 'S'
         },
         {
-          name: 'toggleRandomMode',
-          icon: 'random',
-          active: this.props.options.randomMode,
-          label: 'Random mode',
-          tooltip: 'Random Mode - picks one tile from the selection',
-          level: 11
-        },
-        {
-          name: 'terrain',
-          icon: 'world terrain',
-          active: this.props.options.mode == EditModes.terrain,
-          disabled: (!layer || layer.type != LayerTypes.tile),
-          label: 'Terrain Tool',
-          tooltip: 'Create advanced Terrains - not implemented :(',
-          level: 26,
-          shortcut: 'T'
-        },
-        {
           name: 'fill',
           icon: 'theme fill',
           label: 'Fill',
           active: this.props.options.mode == EditModes.fill,
-          disabled: (!layer || layer.type != LayerTypes.tile),
+          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.isPlaying),
           tooltip: 'Fill Map or Selection with selected tile(s)',
           level: 6,
           shortcut: 'F'
@@ -122,7 +118,7 @@ export default class MapToolbar extends React.Component {
           label: 'Eraser',
           active: this.props.options.mode == EditModes.eraser,
           tooltip: 'Delete tile - or use [Ctrl + click] to quickly access this tool',
-          disabled: (!layer || layer.type != LayerTypes.tile),
+          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.isPlaying),
           level: 1,
           shortcut: 'E'
         },
@@ -134,6 +130,7 @@ export default class MapToolbar extends React.Component {
           icon: 'square outline rectangle',
           label: 'Select',
           active: this.props.options.mode == EditModes.rectangle,
+          disabled,
           tooltip: 'Rectangle Selection Tool',
           level: 3,
           shortcut: 'Ctrl + Shift + R'
@@ -144,7 +141,7 @@ export default class MapToolbar extends React.Component {
           active: this.props.options.mode == EditModes.wand,
           label: 'Magic Wand',
           tooltip: 'Magic Wand selection - select adjacent tiles with same ID',
-          disabled: (!layer || layer.type != LayerTypes.tile),
+          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.isPlaying),
           level: 12
         },
         {
@@ -153,7 +150,7 @@ export default class MapToolbar extends React.Component {
           icon: 'qrcode picker',
           label: 'Tile Picker',
           tooltip: 'Tile Picker - Select All tiles with same ID',
-          disabled: (!layer || layer.type != LayerTypes.tile),
+          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.isPlaying),
           level: 13
         },
         {
@@ -161,82 +158,9 @@ export default class MapToolbar extends React.Component {
           icon: 'ban',
           label: 'Clear Selection',
           tooltip: 'Clear selected tiles and/or objects',
-          level: 4
-        },
-        {
-          name: 'separator'
-        },
-
-        {
-          name: 'drawRectangle',
-          active: this.props.options.mode == EditModes.drawRectangle,
-          icon: 'stop',
-          label: 'Rectangle',
-          tooltip: 'Draw Rectangle on the map',
-          disabled: (!layer || layer.type != LayerTypes.object),
-          shortcut: 'Shift+R',
-          level: 17
-        },
-        {
-          name: 'drawEllipse',
-          active: this.props.options.mode == EditModes.drawEllipse,
-          icon: 'circle',
-          label: 'Ellipse',
-          tooltip: 'Draw Ellipse on the map',
-          disabled: (!layer || layer.type != LayerTypes.object),
-          shortcut: 'Shift+E',
-          level: 18
-        },
-        {
-          name: 'drawShape',
-          active: this.props.options.mode == EditModes.drawShape,
-          icon: 'empire',
-          label: 'Shape',
-          tooltip: 'Draw Shape on the map',
-          disabled: (!layer || layer.type != LayerTypes.object),
-          shortcut: 'Shift+S',
-          level: 19
-        },
-        {
-          name: 'togglePolygon',
-          icon: 'connectdevelop',
-          label: 'Polygon',
-          tooltip: 'Toggle between polygon and polyline',
-          disabled: (!layer || layer.type != LayerTypes.object),
-          shortcut: 'Shift+P',
-          level: 20
-        },
-        {
-          name: 'separator'
-        },
-        {
-          name: 'rotateClockwise',
-          icon: 'share',
-          label: 'Rotate (CW)',
-          tooltip: 'Rotate Tile ClockWise',
-          shortcut: 'Z',
-          disabled: (!layer || layer.type == LayerTypes.object),
-          level: 20
-        },
-        {
-          name: 'rotateCounterClockwise',
-          icon: 'reply',
-          label: 'Rotate (CCW)',
-          tooltip: 'Rotate Tile Counter ClockWise',
-          shortcut: 'Shift+Z',
-          disabled: (!layer || layer.type == LayerTypes.object),
-          level: 22
-        },
-        {
-          name: 'flip',
-          icon: 'exchange',
-          label: 'Flip Tile',
-          tooltip: 'Mirror tile',
-          shortcut: 'X',
-          disabled: (!layer || layer.type == LayerTypes.object),
-          level: 23
+          level: 4,
+          disabled
         }
-
       ]
     }
 

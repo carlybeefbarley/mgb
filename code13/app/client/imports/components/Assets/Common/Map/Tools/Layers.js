@@ -28,15 +28,17 @@ export default class Layers extends React.Component {
     for (let i = data.length - 1; i > -1; i--) {
       let className = 'icon'
       + (data[i].visible ? ' unhide' : ' hide')
-
+      // <i className={`ui ${i == active ? 'right caret' : ''} icon`} />
       layers.push(
         <div
           key={i}
           className={(i == active ? 'bold active' : 'item')}
           onClick={this.handleClick.bind(this, i)}
           href='javascript:;'>
-          <i className={className} onClick={this.showOrHideLayer.bind(this, i, data[i].visible)}></i>
+          <i className={className}
+             onClick={this.showOrHideLayer.bind(this, i, data[i].visible)}></i>
           <a href='javascript:;'>
+            <i className={`ui ${i == active ? 'right caret' : ''} icon`} />
             {data[i].name}
           </a>
         </div>

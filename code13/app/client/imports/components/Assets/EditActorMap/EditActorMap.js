@@ -72,6 +72,7 @@ export default class EditActorMap extends EditMap {
     // ignore older assets
     if(_.isEqual(this.lastSave, newp.asset.content2)){
       console.log("Got old asset.. skipping update")
+      this.refs.map && this.refs.map.forceUpdate()
       this.setState({isLoading: true})
       this.cache && this.cache.isReady() && this.cache.update(this.state.content2, () => {
         this.setState({isLoading: false})

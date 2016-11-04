@@ -86,6 +86,9 @@ export default class MapArea extends React.Component {
   componentDidMount() {
     this.startTime = Date.now()
     this.startEventListeners()
+
+    // did mount bubbles up - so we need to redraw layers now - as they need to know drawing area size - but cannot get on first mount
+    this.redraw()
   }
 
   startEventListeners(){

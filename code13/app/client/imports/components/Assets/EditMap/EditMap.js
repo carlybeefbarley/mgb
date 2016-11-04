@@ -236,7 +236,7 @@ export default class EditMap extends React.Component {
       data: this.copyData(this.state.content2),
       reason: pop.reason
     }
-    
+
     this.state.undo.push(toSave)
     const data = JSON.parse(pop.data)
     this.handleSave(data, "Redo " + pop.reason, void(0), true)

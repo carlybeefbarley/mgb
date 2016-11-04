@@ -81,6 +81,8 @@ export default class TileSet extends React.Component {
       canvas.height = 1
     }
     this.ctx = canvas.getContext('2d')
+    // make sure we have nice looking tiles
+    this.drawTiles()
   }
   getTilePosInfo (e) {
     const ts = this.tileset

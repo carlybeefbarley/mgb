@@ -112,13 +112,15 @@ export default class AbstractLayer extends React.Component {
     if (canvas.height != b.height) {
       canvas.height = b.height
     }
+    // make sure we have nice looking canvas on the first load
+    // this._draw(Date.now())
   }
 
   draw () {
     this.isDirty = true
   }
   // abstract
-  _draw (delta) {}
+  _draw (timestamp) {}
 
   /* events */
   handleMouseUp (e) {

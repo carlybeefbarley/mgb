@@ -3,6 +3,8 @@ import C from './CommonSkillNodes.js'
 
 // These will be inserted into {code: ___ }
 
+// The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
+
 export default {
   $meta: {
     name:           'Coding',

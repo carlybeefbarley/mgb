@@ -210,10 +210,10 @@ export default App = React.createClass({
       <div >
       
         <Helmet
-          title="MGB2"
+          title="MGB"
           titleTemplate="%s"
           meta={[
-              {"name": "description", "content": "MyGameBuilder v2"}
+              {"name": "My Game Builder", "content": "MyGameBuilder"}
           ]}
         />
 
@@ -268,6 +268,7 @@ export default App = React.createClass({
             <FlexPanel
               addJoyrideSteps={this.addJoyrideSteps}
               currUser={currUser}
+              currUserProjects={currUserProjects}
               user={user}
               selectedViewTag={flexPanelQueryValue}
               handleFlexPanelToggle={this.handleFlexPanelToggle}

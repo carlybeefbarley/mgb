@@ -6,20 +6,27 @@ const npPlay = ( { currUser, navPanelIsOverlay} ) => (
   <div className="ui vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
     <Item>
       <Header as='h3' inverted style={{textAlign: "center"}}>
-        <Icon name='play' />
+        <Icon name='game' />
         Play
       </Header>
     </Item>
 
-    <div className="header item">Play</div>
+    <div className="header item">Start a Game</div>
     <div className="menu">
-      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/games" className="item">Browse Games</QLink>
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/games" className="item">Search All Games</QLink>
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_featured" className="item">Featured Games</QLink>
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_new" className="item">New Games</QLink>
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_top" className="item">Top Games</QLink>
+      { 
+      // <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_favorite" className="item">Favorite Games</QLink>
+      // <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_friends" className="item">Friends Games</QLink>
+      }
     </div>
 
-    <div className="header item">Continue playing</div>
+    <div className="header item">Continue a Game</div>
     <div className="menu">
       <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/games" className="item">
-        (no in-progress games yet)
+        (no saved games yet)
       </QLink>
     </div>
   </div>

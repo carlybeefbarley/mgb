@@ -18,12 +18,16 @@ const sliderPcts = {
   tooltipSlowdown: 0.5
 }
 
-// Here is a list of *known* toolbar scope names. This is so that a ui (e.g fpUxLevels.js) can enumerate them all
+// Here is a list of *known* toolbar scope names & Max Values. 
+// This is so that some Settings-style (e.g fpUxLevels.js) can enumerate them all
+// and offer a global modification choice
 export const expectedToolbarScopeMaxValues = {
   EditGraphic: 10,
 //GraphicTools: 21,
   MapTools: 27,
   AudioTools: 25,
+  NavPanel: 4,
+  FlexPanel: 4,
 //SkillsMap: 23
 }
 
@@ -32,12 +36,12 @@ export const expectedToolbarScopeNames = _.keys(expectedToolbarScopeMaxValues)
 
 // Make Toolbar Level Key using a well-known prefix on the Toolbar name
 export function makeLevelKey(name) {
-  return "toolbar-level-" + name
+  return 'toolbar-level-' + name
 }
 
 // Make Toolbar Data Key using a well-known prefix on the Toolbar name
 export function makeTDataKey(name) {
-  return "toolbar-data-" + name
+  return 'toolbar-data-' + name
 }
 
 

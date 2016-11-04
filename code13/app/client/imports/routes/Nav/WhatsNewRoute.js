@@ -51,14 +51,14 @@ export default WhatsNewRoute = React.createClass({
 
   headerMessage: (
     <Segment raised padded>
-      <Header>My Game Builder v2 is ALPHA and in active development</Header>
+      <Header>My Game Builder is in Beta test and being actively developed</Header>
       <p>
         You are very welcome to use this new MyGameBuilder site and give us feedback 
         using the <i className="chat icon" />chat panel on the right hand side of the screen
       </p>
       <List className='bulleted'>
         <List.Item>The Sounds, Music, Graphic, Map and Code Asset types are quite stable and can be used safely</List.Item>
-        <List.Item>iPad/Tablet usage is quirky/buggy at present (we are working on it)</List.Item>
+        <List.Item>iPad/Tablet usage can be quirky/buggy at present (a few bugs left here)</List.Item>
         <List.Item>For best results now, use Google's Chrome browser on Windows/Mac/Linux.</List.Item>
       </List>
       <p title="However, if you want to help us get the word out when we are ready, message us in Chat!">
@@ -76,7 +76,7 @@ export default WhatsNewRoute = React.createClass({
       <div>
         <Segment basic>
           <Container>
-            <Header as='h2'><Icon name='announcement' />What's New</Header>
+            <Header as='h2'><Icon name='info circle' />What's New</Header>
             { this.headerMessage }
             { this.renderNews() }
           </Container>
@@ -100,7 +100,7 @@ export default WhatsNewRoute = React.createClass({
     return (
       <Grid columns={2} padded relaxed divided className='equal height'>
         <Grid.Column>
-          <Header as='h4' content='MGBv2 updates' />
+          <Header as='h4' content='MGB updates' />
           { this.renderNewsMgbVersionsColumn() }
         </Grid.Column>
         <Grid.Column>

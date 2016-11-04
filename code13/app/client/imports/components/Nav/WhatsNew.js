@@ -1,38 +1,32 @@
 import React, { PropTypes } from 'react'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
-import QLink from "/client/imports/routes/QLink"
+import QLink from '/client/imports/routes/QLink'
 
 // Would be nice to do something like http://thejoyofux.tumblr.com/post/85707480676/the-wolf-of-trello-presenting-rew-features-in-a
 
+const _latestRelTimestamp = mgbReleaseInfo.releases[0].timestamp
 
-export default WhatsNew = React.createClass({
+const WhatsNew = ( { currUser, asHidingLink } ) => {
+  const laterNewsAvailable = currUser && currUser.profile && currUser.profile.latestNewsTimestampSeen !== _latestRelTimestamp
+  const hilite = laterNewsAvailable ? 'orange' : ''
+  const iconEl = <i className={hilite + ' info circle icon'} />
 
-  propTypes: {
-    currUser:       PropTypes.object,                 // Can be null (if user is not logged in)
-    asHidingLink:   PropTypes.bool                    // If true then render as null or <Qlink> depending on last seen
-  },  
-  
-  latestRelTimestamp: function()
-  {
-    return mgbReleaseInfo.releases[0].timestamp
-  },
+  if (asHidingLink)
+    return !laterNewsAvailable ? null : 
+      <QLink 
+          to='/whatsnew' 
+          title='Announcements of new features/fixes to MGB' 
+          className='fitted item' 
+          style={ { paddingLeft: '14px', marginTop: '4px' } }>
+        <i className='orange large info circle icon' />
+      </QLink>
 
-  render: function() 
-  {
-    const u = this.props.currUser  
-    const laterNewsAvailable = u && u.profile && u.profile.latestNewsTimestampSeen !== this.latestRelTimestamp()
-    const hilite = laterNewsAvailable ? "yellow" : ""
-    const iconEl = <i className={hilite + " announcement icon"}></i>
+  return iconEl
+}
 
-    if (this.props.asHidingLink)
-      return !laterNewsAvailable ? null : 
-        <QLink  to="/whatsnew" 
-                title="Announcements of new features/fixes to MGBv2" 
-                className="fitted item" 
-                style={{paddingLeft: "16px", marginTop: "6px"}}>
-          <i className={"circular inverted yellow announcement icon"}></i>
-        </QLink>
+WhatsNew.propTypes = {
+  currUser:       PropTypes.object,                 // Can be null (if user is not logged in)
+  asHidingLink:   PropTypes.bool                    // If true then render as null or <Qlink> depending on last seen
+}
 
-    return iconEl
-  }
-})
+export default WhatsNew

@@ -6,6 +6,7 @@ import { AssetKinds } from '/imports/schemas/assets'
 import moment from 'moment'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectMembershipEditor from './ProjectMembershipEditor'
+import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import WorkState from '/client/imports/components/Controls/WorkState'
 
 // TODO: Toast/error is a mess
@@ -115,6 +116,7 @@ export default AssetCard = React.createClass({
       return null
       
     const { renderView, asset, showEditButton, canEdit, allowDrag, ownersProjects } = this.props
+    const actualLicense = (!asset.assetLicense || asset.assetLicense.length === 0) ? defaultAssetLicense : asset.assetLicense
     const assetKindIcon = AssetKinds.getIconClass(asset.kind)
     const assetKindDescription = AssetKinds.getDescription(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
@@ -220,14 +222,14 @@ export default AssetCard = React.createClass({
         
         { viewOpts.showFooter && 
           <div className="ui three small bottom attached icon buttons">
-            <QLink 
-                  to={`/u/${asset.dn_ownerName}/asset/${asset._id}`} 
-                  style={veryCompactButtonStyle}
-                  className={(showEditButton ? "" : "disabled ") + "ui green compact button"} 
-                  onClick={this.handleEditClick}>
-              <i className="ui edit icon"></i>
-              <small>&nbsp;Edit</small>
-            </QLink>
+            <a to={assetLicenses[actualLicense].url} target='_blank'
+                className='ui compact button'
+                style={veryCompactButtonStyle}
+                title={ assetLicenses[actualLicense].name }
+                >
+              <i className='ui law icon'/>
+              <small>&nbsp;{actualLicense}</small>
+            </a>
             <div className={(canEdit ? "" : "disabled ") + "ui " + (asset.isCompleted ? 'blue' : 'grey') + " compact button"} 
                   style={veryCompactButtonStyle}
                   onClick={this.handleCompletedClick} >
@@ -250,10 +252,9 @@ export default AssetCard = React.createClass({
   {
     newChosenProjectNamesArray.sort()
     Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {projectNames: newChosenProjectNamesArray}, (err, res) => {
-        if (err) {
-          this.props.showToast(err.reason, 'error')
-        }        
-      })
+      if (err)
+        this.props.showToast(err.reason, 'error')
+    })
       
     let projectsString = newChosenProjectNamesArray.join(", ")
     logActivity("asset.project",  `now in projects ${projectsString}`, null, this.props.asset);
@@ -262,9 +263,8 @@ export default AssetCard = React.createClass({
   handleDeleteClick() {
     let newIsDeletedState = !this.props.asset.isDeleted;
     Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isDeleted: newIsDeletedState}, (err, res) => {
-      if (err) {
+      if (err)
         this.props.showToast(err.reason, 'error')
-      }        
     })
     
     if (newIsDeletedState)
@@ -276,9 +276,8 @@ export default AssetCard = React.createClass({
   handleCompletedClick() {
     let newIsCompletedStatus = !this.props.asset.isCompleted
     Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: newIsCompletedStatus}, (err, res) => {
-      if (err) {
+      if (err)
         this.props.showToast(err.reason, 'error')
-      }
     })
     
     if (newIsCompletedStatus)

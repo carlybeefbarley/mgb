@@ -214,18 +214,34 @@ export default class EditMap extends React.Component {
   doUndo () {
     if (!this.state.undo.length)
       return
-
     const pop = this.state.undo.pop()
-    this.state.redo.push(pop)
-    this.handleSave(JSON.parse(pop.data), "Undo " + pop.reason, void(0), true)
+    // save current state
+    const toSave = {
+      data: this.copyData(this.state.content2),
+      reason: pop.reason
+    }
+
+    this.state.redo.push(toSave)
+    const data = JSON.parse(pop.data)
+    this.handleSave(data, "Undo " + pop.reason, void(0), true)
+    // we need to set state here because handle save callback will match with last save and nothing will get updated
+    this.setState({content2: data})
   }
   doRedo () {
     if (!this.state.redo.length)
       return
 
     const pop = this.state.redo.pop()
-    this.state.undo.push(pop)
-    this.handleSave(JSON.parse(pop.data), "Redo " + pop.reason, void(0), true)
+    const toSave = {
+      data: this.copyData(this.state.content2),
+      reason: pop.reason
+    }
+    
+    this.state.undo.push(toSave)
+    const data = JSON.parse(pop.data)
+    this.handleSave(data, "Redo " + pop.reason, void(0), true)
+    // same reason as undo...
+    this.setState({content2: data})
   }
 
   enableMode(mode){
@@ -248,8 +264,8 @@ export default class EditMap extends React.Component {
     this.props.handleContentChange(data, thumbnail, reason)
   }
 
-  quickSave(reason = "noReason", thumbnail = null){
-    return this.handleSave(this.state.content2, reason, thumbnail)
+  quickSave(reason = "noReason", skipUndo = true){
+    return this.handleSave(this.state.content2, reason, null, skipUndo)
   }
 
   // probably copy of data would be better to hold .. or not research strings vs objects

@@ -225,8 +225,14 @@ export default class EditMap extends React.Component {
 
     this.state.redo.push(toSave)
     const data = JSON.parse(pop.data)
+
+    // make sure cached GIDs matches actual gids
+    this.cache.update(data)
+
     this.handleSave(data, "Undo " + pop.reason, void(0), true)
     // we need to set state here because handle save callback will match with last save and nothing will get updated
+
+    this.state.content2 = data
     this.setState({content2: data})
   }
   doRedo () {
@@ -241,8 +247,13 @@ export default class EditMap extends React.Component {
 
     this.state.undo.push(toSave)
     const data = JSON.parse(pop.data)
+
+    // make sure cached GIDs matches actual gids
+    this.cache.update(data)
     this.handleSave(data, "Redo " + pop.reason, void(0), true)
     // same reason as undo...
+    
+    this.state.content2 = data
     this.setState({content2: data})
   }
 

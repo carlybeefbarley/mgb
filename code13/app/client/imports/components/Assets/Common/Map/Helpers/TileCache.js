@@ -23,6 +23,7 @@ export default class TileCache {
   }
   // TODO(stauzs): implement lazy cache - return old cache and in background update to new version - when ready - callback
   update(data = this.data, onReady = null){
+    this.data = data
     this.updateLayers(data)
     this.updateImages(data)
     this.updateTilesets(data)

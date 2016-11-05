@@ -34,7 +34,7 @@ export default {
   removeTileset: function(id = this.state.activeTileset){
     const c2 = this.state.content2
     const justRemoved = c2.tilesets.splice(id, 1)
-    this.cache.update()
+    this.cache.update(c2)
 
     this.state.activeTileset = this.state.activeTileset > 0 ? this.state.activeTileset -1 : 0
     TileHelper.zeroOutUnreachableTiles(c2, this.cache.tiles)

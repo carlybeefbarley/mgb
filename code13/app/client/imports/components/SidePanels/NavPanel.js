@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+
 import npHome from './npHome'
 import npPlay from './npPlay'
 import npLearn from './npLearn'
@@ -116,6 +118,11 @@ export default NavPanel = React.createClass({
   contextTypes: {
     urlLocation: React.PropTypes.object,
     settings:    PropTypes.object                         // Used so some panels can be hidden by user
+  },
+
+
+  componentDidMount: function() {
+    registerDebugGlobal( 'np', this, __filename, 'The global NavPanel instance')
   },
 
   // 

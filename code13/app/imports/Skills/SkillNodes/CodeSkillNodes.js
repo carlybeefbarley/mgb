@@ -84,7 +84,7 @@ export default {
         },
         this: {
           $meta: {
-            requires: '.basics',
+            requires: '..basics',
           },
           'closures':     C.E,
           'methods':      C.E,
@@ -95,7 +95,7 @@ export default {
 
     clientfw: {
       $meta: {
-        requires:   '.basics',
+        requires:   '.lang.basics',
         name:       'Javascript Client Frameworks',
         description:'Represents coding skills'
       },

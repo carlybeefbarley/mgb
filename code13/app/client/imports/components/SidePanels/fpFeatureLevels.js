@@ -44,6 +44,12 @@ export default fpFeatureLevels = React.createClass({
         position: 'bottom'
       },
       {
+        title: 'Create new asset',
+        text: `You can create a new asset here`,
+        selector: '#mgbjr-np-create-createNewAsset',    // finds <input> element which is after element with mgbNavGadgetSlider class
+        position: 'right'
+      },
+      {
         title: 'See all Feature Level settings',
         text: `This area lists all your current Feature Level settings`,
         selector: '#mgbjr-CurrentFeatureLevelsInFp',    // finds <input> element which is after element with mgbNavGadgetSlider class

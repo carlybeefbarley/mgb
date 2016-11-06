@@ -14,7 +14,8 @@ const defaultState = {
   showTooltip: false,
   xPos: -1000,
   yPos: -1000,
-  skipped: false
+  skipped: false,
+  stepIsWaiting: false 
 };
 
 const listeners = {
@@ -110,10 +111,21 @@ export default class Joyride extends React.Component {
     }
     window.addEventListener('resize', listeners.resize);
 
-    // listeners.handleTransience = () => {
+    listeners.handleTransience = () => {
+      if (this.state.stepIsWaiting) {
+        // Did it appear?
+        this.toggleTooltip(false, this.state.index, 'appear' )
+      }
+      else 
+      {
+        // Did it disappear?
+        const step = this.props.steps[this.state.index];
+        if (step && !document.querySelector(step.selector))
+          this.toggleTooltip(false, this.state.index, 'disappear' )
+      }
 
-    // }
-    // setInterval(listeners.handleTransience, 250)
+    }
+    setInterval(listeners.handleTransience, 250)
 
 
     if (keyboardNavigation && type === 'continuous') {
@@ -583,14 +595,23 @@ export default class Joyride extends React.Component {
 
     if (step && !document.querySelector(step.selector)) {
 
+      if (this.state.stepIsWaiting)
+        return
+      this.setState({
+        showTooltip: false,
+        index: newIndex,
+        play: false,
+        stepIsWaiting: true
+      });
+      return
 
-
-      console.warn('Target not mounted, skipping...', step, action); //eslint-disable-line no-console
-      newIndex += action === 'back' ? -1 : 1;
+//      console.warn('Target not mounted, skipping...', step, action); //eslint-disable-line no-console
+//      newIndex += action === 'back' ? -1 : 1;
     }
 
     this.setState({
-      play: steps[newIndex] ? this.state.play : false,
+      play: this.state.stepIsWaiting ? true : (steps[newIndex] ? this.state.play : false),
+      stepIsWaiting: false,      
       showTooltip: show,
       index: newIndex,
       position: undefined,

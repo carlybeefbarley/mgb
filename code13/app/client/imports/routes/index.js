@@ -25,6 +25,8 @@ import Roadmap from './Nav/RoadmapRoute'
 import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
 
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
 // Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md
@@ -109,6 +111,7 @@ Meteor.startup(function () {
       </Route>
     </Router>
 
+  registerDebugGlobal( 'router', router, __filename, 'TopLevel react-router instance')
   urlMaker.setKnownRoutes(router)
   ReactDOM.render(router, document.getElementById('root'))
 })

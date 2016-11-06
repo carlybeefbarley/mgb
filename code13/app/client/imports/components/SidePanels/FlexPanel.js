@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { getFeatureLevel } from '/imports/schemas/settings-client'
 
@@ -58,6 +59,11 @@ export default FlexPanel = React.createClass({
 
   statics: {
     getDefaultPanelViewTag: function() { return flexPanelViews[defaultPanelViewIndex].tag }
+  },
+
+
+  componentDidMount: function() {
+    registerDebugGlobal( 'fp', this, __filename, 'The global FlexPanel instance')
   },
 
   _viewTagMatchesPropSelectedViewTag: function(viewTag)
@@ -184,7 +190,7 @@ export default FlexPanel = React.createClass({
 
           </div>
         }
-        <div className="ui attached vertical icon menu" style={miniNavStyle}>
+        <div id='mgbjr-flexPanelIcons' className="ui attached vertical icon menu" style={miniNavStyle} >
           { flexPanelViews.map(v => {
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
             if (v.lev > fpFeatureLevel)
@@ -193,6 +199,7 @@ export default FlexPanel = React.createClass({
               return null
             return (
               <div
+                id={`mgbjr-flexPanelIcons-${v.tag}`}
                 key={v.tag}
                 className={active + " item"}
                 title={v.name}

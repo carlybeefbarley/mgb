@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import Joyride from 'react-joyride'
+
+import Joyride from '/client/imports/Joyride/Joyride'
+import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 
 import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
@@ -25,7 +27,6 @@ import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
 
-import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 let G_localSettings = new ReactiveDict()
 
 const getPagenameFromProps = function(props)

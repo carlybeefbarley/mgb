@@ -19,7 +19,7 @@ export default class Layers extends React.Component {
   }
 
   showOrHideObject (index) {
-
+    this.props.showOrHideObject(index)
   }
   handleClick (index) {
     this.props.setPickedObject(index)

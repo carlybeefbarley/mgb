@@ -459,7 +459,7 @@ export default class MapArea extends React.Component {
     // resize map to show content which is further - depending on angle
     if(this.preview.y > 0 && this.options.preview) {
       const inc = this.preview.y > maxAngle ? maxAngle : this.preview.y
-      const w = baseWidth + baseWidth * Math.sin(inc * Math.PI / 180)
+      const w = baseWidth / Math.cos(inc * Math.PI / 180)
       this.refs.mapElement.style.width = w + "px"
     }
     else{

@@ -12,7 +12,7 @@ import HandleCollection from './../MapObjects/HandleCollection.js'
 import Imitator from './../MapObjects/Imitator.js'
 import MultiImitator from './../MapObjects/MultiImitator.js'
 
-// TODO move these to some good place.. probably mapArea???
+import globals from '/client/imports/SpecialGlobals.js'
 
 const FLIPPED_HORIZONTALLY_FLAG = TileHelper.FLIPPED_HORIZONTALLY_FLAG
 const FLIPPED_VERTICALLY_FLAG = TileHelper.FLIPPED_VERTICALLY_FLAG
@@ -50,7 +50,6 @@ export default class ObjectLayer extends AbstractLayer {
     this.nextDraw = Date.now() + this.drawInterval
   }
 
-  // TODO: change this to abstract box.. and on change - change all elements inside this box
   get pickedObject () {
     if (this.shapeBoxes[this._pickedObject]) {
       return this.shapeBoxes[this._pickedObject]
@@ -77,7 +76,6 @@ export default class ObjectLayer extends AbstractLayer {
         return 'polygon'
       }
     }
-    // TODO: is there convenient way to separate rectangles and shapes??
     else if (o.ellipse) {
       if (o.width == o.height) {
         return 'circle'
@@ -188,7 +186,7 @@ export default class ObjectLayer extends AbstractLayer {
     }
     // show single selected object - most use cases will be here
     if (this.selection.length == 1) {
-      // TODO: figure out a way to get rid of these checks
+      // TODO(stauzs): figure out a way to get rid of these checks
       // maybe use Imitator like object for all shapes?
       let f = this.selection.first()
       if (f instanceof Imitator) {
@@ -200,7 +198,6 @@ export default class ObjectLayer extends AbstractLayer {
     return ret
   }
 
-  // TODO: clean up handle Event functions
   /* Events */
   handleMouseMove (ep) {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
@@ -223,8 +220,8 @@ export default class ObjectLayer extends AbstractLayer {
   }
   handleMouseDown (ep) {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
-    // TODO: fix - move camera and object at the same time
 
+    // TODO (stauzs): fix - move camera and object at the same time
     super.handleMouseDown(e)
     const prevHandle = this.handles.activeHandle
     this.handles.setActive(
@@ -279,7 +276,6 @@ export default class ObjectLayer extends AbstractLayer {
       return
     }
 
-    // todo Move functions to external file?
     const remove = () => {
       this.props.saveForUndo('Delete Object')
       if (this.pickedObject) {
@@ -305,7 +301,6 @@ export default class ObjectLayer extends AbstractLayer {
         miny = Math.min(data.y, miny)
       })
       this.copy.forEach((data) => {
-        // TODO: require lodash?
         const n = _.cloneDeep(data.obj)
         n.id = this.getMaxId()
         n.x = data.x + this.mouseInWorldX - minx
@@ -463,7 +458,6 @@ export default class ObjectLayer extends AbstractLayer {
   }
   _draw (now) {
     this.now = now
-    // TODO: draw check can be moved to the parent
     if (!(this.isDirty || this.nextDraw <= now)) {
       return
     }
@@ -477,9 +471,8 @@ export default class ObjectLayer extends AbstractLayer {
     this.nextDraw = now + this.drawInterval
 
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height)
-    // Don't loop through all objects.. use quadtree here some day
+    // TODO(stauzs): Don't loop through all objects.. use quadtree here some day
     // when we will support unlimited size streaming maps
-    // TODO: clean up ifs
     for (let i = 0; i < this.data.objects.length; i++) {
       let o = this.data.objects[i]
       if (!o.visible) {
@@ -506,7 +499,6 @@ export default class ObjectLayer extends AbstractLayer {
           this.drawPolyline(o.orig, true)
         }
       }
-      // TODO: is there convenient way to separate rectangles and shapes??
       else if (o.ellipse) {
         this.drawEllipse(o)
       }
@@ -550,9 +542,6 @@ export default class ObjectLayer extends AbstractLayer {
           if (tot >= relDelta) {
             if (anim.tileid != tileId) {
               let ngid = anim.tileid + pal.ts.firstgid
-              // TODO: this won't flip / rotate tile???
-              // is it possible to contain rotated tiles in the animation?
-              // or first tile contains info about transformations - in that case this is correct and tileLayer has incorrect version
               this.queueDraw(anim.duration - (tot - relDelta))
               pal = this.props.palette[ngid]
             }
@@ -581,8 +570,6 @@ export default class ObjectLayer extends AbstractLayer {
       y -= h
     }
 
-    // TODO: create custom transformation functions
-    // transform only once - and cache transformation
     this.ctx.save()
 
     this.ctx.translate(x, y + h)
@@ -693,7 +680,6 @@ export default class ObjectLayer extends AbstractLayer {
   }
   // this one is drawing on the grid layer - as overlay
   highlightSelected () {
-    // TODO: don't hide grid's layer ( never ever ) - rename to overlay???
     const grid = this.props.getOverlay()
     if(grid) {
       grid.draw()
@@ -839,8 +825,6 @@ edit[EditModes.drawShape] = function (e) {
       // are buttons FLAGS?
       if ((e.buttons & 0x2) == 0x2) {
         obj.polyline.pop()
-
-        // TODO: this is ugly - move to function??
         this.setPickedObject(obj, this.data.objects.length - 1)
 
         obj = null
@@ -910,7 +894,7 @@ edit[EditModes.stamp] = function (e) {
   this.highlightedObject.y = y
 }
 
-// TODO: rework this and clean up
+// TODO(stauzs): rework this and clean up
 let phase = 0; // 0 - selecting; 1 - moving
 edit[EditModes.rectangle] = function (e) {
   if ((e.buttons & 0x2) == 0x2) {
@@ -986,7 +970,6 @@ edit[EditModes.rectangle] = function (e) {
   if (this.mouseDown && phase == 1) {
     if (this.handles.activeHandle) {
       this.handles.moveActiveHandle(dx, dy, this.clonedObject)
-      // TODO: create some sort of replicator object who can convert global changes to local e.g. basic rectangle to shape
       let selected = this.selection.length < 2 ? this.pickedObject : this.selection
       if (e.ctrlKey) {
         if (this.handles.activeHandleType != 9) {
@@ -998,9 +981,8 @@ edit[EditModes.rectangle] = function (e) {
           }else {
           }
         }else {
-          // TODO: move to config rotation step?
           if (selected != this.selection) {
-            const newRotation = Math.round(this.clonedObject.rotation / 15) * 15
+            const newRotation = Math.round(this.clonedObject.rotation / globals.map.objectRotationStep) * globals.map.objectRotationStep
             this.rotateObject(newRotation, selected)
           }
         }
@@ -1009,7 +991,7 @@ edit[EditModes.rectangle] = function (e) {
           selected.height = this.clonedObject.height
           selected.width = this.clonedObject.width
 
-          // TODO: multiple rotated objects will be bogous
+          // TODO(stauzs): multiple rotated objects will be bogous
           if (selected != this.selection) {
             selected.x = this.clonedObject.x
             selected.y = this.clonedObject.y

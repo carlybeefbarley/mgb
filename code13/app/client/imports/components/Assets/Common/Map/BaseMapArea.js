@@ -784,7 +784,7 @@ export default class MapArea extends React.Component {
     layers.push(
       <GridLayer map={this} key={data.layers.length} layer={this.layers[this.props.activeLayer]} ref='grid' />
     )
-    // TODO: adjust canvas size
+    // TODO: adjust canvas height
     return (
       <div
         ref='mapElement'

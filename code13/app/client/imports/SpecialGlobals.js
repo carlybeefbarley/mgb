@@ -26,7 +26,8 @@ export default SpecialGlobals = {
   },
 
   map: {
-    "maxUndoSteps": 99
+    "maxUndoSteps": 99,
+    "objectRotationStep": 15
   },
   //these are used in the ActorHelper
   actorMap: {

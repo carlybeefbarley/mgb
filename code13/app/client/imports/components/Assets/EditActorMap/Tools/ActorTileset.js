@@ -34,6 +34,7 @@ export default class ActorTool extends Tileset {
     if (!asset)
       return
 
+    // TODO: create nice popup
     if (asset.kind != "actor") {
       alert("TD: Only actors are supported in the actor map")
       return
@@ -53,11 +54,9 @@ export default class ActorTool extends Tileset {
       tileheight: 32,
       tilewidth: 32
     }
-    // TODO: make clean load actor method
     const nextId = Infinity
     const map = { [name] : tileset }
     ActorHelper.loadActor(name, map, nextId, {}, null, () => {
-      //this.map.data.tilesets.push(map[name]) // if loaded from cache map loses
       this.props.addActor(map[name])
     })
   }

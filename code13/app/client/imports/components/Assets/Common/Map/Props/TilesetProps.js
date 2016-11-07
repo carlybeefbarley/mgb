@@ -20,7 +20,6 @@ export default {
     const l = this.refs.map.getActiveLayer()
     l && l.resetRotation && l.resetRotation()
   },
-  // TODO(stauzs): this seems a little bit awkward - but better that adding collection as props
   isTileSelected: function(gid){
     return this.refs.map.collection.indexOfGid(gid)
   },

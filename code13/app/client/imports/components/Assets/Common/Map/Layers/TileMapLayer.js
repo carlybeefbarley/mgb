@@ -16,6 +16,12 @@ export default class TileMapLayer extends AbstractLayer {
       clearTmpSelection: React.PropTypes.func.isRequired, // cleans temporary selection buffer
     }, AbstractLayer.propTypes)
 
+  static drawDirection = {
+    rightup: "rightup",
+    leftdown: "leftdown",
+    leftup: "leftup",
+    rightdown: "rightdown"
+  }
   constructor (...args) {
     super(...args)
     this.ctx = null
@@ -362,7 +368,6 @@ export default class TileMapLayer extends AbstractLayer {
       if (tileInfo) {
         if (tileInfo.animation) {
           const delta = this.now - this.props.startTime
-          // TODO: cache this!
           let tot = 0
           let anim
           /* e.g.
@@ -405,19 +410,16 @@ export default class TileMapLayer extends AbstractLayer {
       delete this.options.tiledrawdirection
     }
 
-    // TODO: move these strings somewhere outside
-    // tileStartDrawPosition changed to mgb_tiledrawdirection
-
-    if (this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== 'rightup') {
-      if (this.options.mgb_tiledrawdirection == 'leftdown') {
+    if (this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== TileMapLayer.drawDirection.rightup) {
+      if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.leftdown) {
         drawX -= (drawW - props.mapData.tilewidth * camera.zoom)
       }
-      else if (this.options.mgb_tiledrawdirection == 'leftup') {
+      else if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.leftup) {
         drawX -= (drawW - props.mapData.tilewidth * camera.zoom)
         drawY -= (drawH - props.mapData.tileheight * camera.zoom)
       }
       // default browser canvas - do nothing
-      else if (this.options.mgb_tiledrawdirection == 'rightdown') {
+      else if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.rightdown) {
       }
     }
     // default for tiled is: right up
@@ -472,7 +474,6 @@ export default class TileMapLayer extends AbstractLayer {
 
     TileHelper.getTileCoordsRel(e.offsetX / camera.zoom - camera.x, e.offsetY / camera.zoom - camera.y, props.mapData.tilewidth, props.mapData.tileheight, 0, pos)
 
-    // TODO: resize layer so we can push in new tiles
     if (pos.x >= layer.width) {
       pos.outOfBounds = true
     }
@@ -732,9 +733,10 @@ edit[EditModes.fill] = function (e, up) {
   if (!sel.length || this.isDirtySelection) {
     sel.clear()
     // fill with magic wand
+    // 1st time fill up tmp selection
     edit[EditModes.wand].call(this, e)
-    // TODO: this seems to be invalid - 3rd parameter is collection - not boolean
-    edit[EditModes.wand].call(this, e, true)
+    // 2nd time draws filled selection
+    edit[EditModes.wand].call(this, e, this.props.getTmpSelection())
     this.isDirtySelection = true
   }
 

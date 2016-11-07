@@ -21,7 +21,7 @@ export default {
     // TODO: get rid of strings
     let ls
     if (type == LayerTypes.tile) {
-      ls = TileHelper.genLayer(c2.width, c2.height, 'Tile Layer ' + (lss.length + 1))
+      ls = TileHelper.genLayer(c2.width, c2.height, Prefixes.tileLayer + (lss.length + 1))
     }
     else if (type == LayerTypes.image) {
       ls = TileHelper.genImageLayer('Image Layer ' + (lss.length + 1))

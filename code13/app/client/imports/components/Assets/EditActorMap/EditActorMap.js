@@ -111,7 +111,6 @@ export default class EditActorMap extends EditMap {
     const toSave = ActorHelper.v2_to_v1(data)
     this.lastSave = toSave
 
-    // TODO: convert uploaded images to assets
     this.props.handleContentChange(toSave, thumbnail, reason)
   }
 

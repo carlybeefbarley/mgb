@@ -1,5 +1,4 @@
 
-// TODO: Make these in MageMgbActor.js
 export default {
   itemActivationType: {
     "Inactive": "0",

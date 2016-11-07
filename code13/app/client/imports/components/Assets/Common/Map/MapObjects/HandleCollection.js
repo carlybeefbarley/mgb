@@ -15,7 +15,6 @@ class Handle {
   update (x, y) {
     this.x = x; this.y = y
   }
-  // TODO: move hover x/y out from draw ?
   draw (ctx, camera, active = false) {
     ctx.beginPath()
 
@@ -194,7 +193,6 @@ export default class HandleCollection {
     if (!udx && !udy) {
       return
     }
-    // TODO: split this function?
     switch (type) {
       case TOP_LEFT:
         this.moveActiveHandle(udx, udy, obj, TOP)

@@ -28,8 +28,6 @@ export default class Imitator {
   get visible () {
     return this.orig.visible
   }
-  // Proxy would be more useful here
-  // TODO: Research / if it's possible to extend Proxy (Proxy for IE???)
   set name (v) {
     this.orig.name = v
   }

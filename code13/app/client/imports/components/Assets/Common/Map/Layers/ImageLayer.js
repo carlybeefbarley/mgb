@@ -6,6 +6,10 @@ import LayerTypes from './../Tools/LayerTypes.js'
 
 export default class ImageLayer extends AbstractLayer {
   draw () {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+    if(!this.options.visible){
+      return
+    }
     if (!this.options.image) {
       return
     }
@@ -13,7 +17,7 @@ export default class ImageLayer extends AbstractLayer {
     if (!img) {
       return
     }
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
+
     // TODO: cut invisible parts
     this.ctx.drawImage(img,
       0, 0, img.width, img.height,

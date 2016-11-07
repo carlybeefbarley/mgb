@@ -463,10 +463,14 @@ export default class ObjectLayer extends AbstractLayer {
   _draw (now) {
     this.now = now
     // TODO: draw check can be moved to the parent
-    if (!(this.isDirty || this.nextDraw <= now) || !this.isVisible) {
+    if (!(this.isDirty || this.nextDraw <= now)) {
       return
     }
 
+    this.ctx.clearRect(0, 0, this.camera.width, this.camera.height)
+    if(!this.isVisible){
+      return
+    }
     this.isDirty = false
     // force refresh after a while
     this.nextDraw = now + this.drawInterval

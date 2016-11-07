@@ -276,7 +276,11 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   _draw (now) {
-    if (!(this.nextDraw <= now) || !this.isVisible) {
+    if (!(this.nextDraw <= now)) {
+      return
+    }
+    this.ctx.clearRect(0, 0, this.camera.width, this.camera.height)
+    if(!this.isVisible){
       return
     }
     this.now = now
@@ -286,8 +290,6 @@ export default class TileMapLayer extends AbstractLayer {
     const mapData = this.props.mapData
     const ctx = this.ctx
     const camera = this.camera
-
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
     const pos = {x: 0, y: 0}
     if (!d) {

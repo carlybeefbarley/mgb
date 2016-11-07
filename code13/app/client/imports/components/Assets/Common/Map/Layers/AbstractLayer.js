@@ -27,7 +27,6 @@ export default class AbstractLayer extends React.Component {
     this.ctx = null
     this.mouseDown = false
 
-    this.isVisible = false
     this._mup = (e) => {
       if (this.props.isActive) {
         this.handleMouseUp(e)
@@ -49,7 +48,6 @@ export default class AbstractLayer extends React.Component {
     this.adjustCanvas()
     const canvas = this.refs.canvas
     this.ctx = canvas.getContext('2d')
-    this.isVisible = true
 
     window.addEventListener('mouseup', this._mup)
     window.addEventListener('keyup', this._kup)
@@ -57,8 +55,6 @@ export default class AbstractLayer extends React.Component {
   }
 
   componentWillUnmount () {
-    this.isVisible = false
-
     window.removeEventListener('mouseup', this._mup)
     window.removeEventListener('keyup', this._kup)
     window.removeEventListener('mousemove', this._mov)
@@ -103,6 +99,10 @@ export default class AbstractLayer extends React.Component {
     this._camera.zoom = this.props.camera.zoom
     return this._camera
   }
+  get isVisible(){
+    return this.options.visible
+  }
+
   getInfo () {
     return 'Please set info! Override getInfo method@'+this.constructor.name;
   }

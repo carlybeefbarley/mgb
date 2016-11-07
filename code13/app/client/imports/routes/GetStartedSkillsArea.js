@@ -1,16 +1,11 @@
 import _ from 'lodash'
 import React from 'react'
 import styles from './home.css'
-import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
 import { Segment, Header, Image, Icon } from 'semantic-ui-react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
+import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-const _notReallyWorkingYet = "These don't do anything yet.. but soon will! sorry for the psych!"
-
-const cardStyle = {
-  color: "#2e2e2e"
-}
 
 const mascotStyle = {
   maxWidth: "8em",
@@ -28,10 +23,10 @@ const descStyle = {
   lineHeight: "1.5em"
 }
 
-
 const GetStartedSkillsAreaRoute = ( { params } ) => {    //props.params.skillarea
 
   const area = _.find(skillAreaItems, ['tag', params.skillarea] )
+  const skillNode = SkillNodes[params.skillarea]
   if (!area)
     return <ThingNotFound type='Skill area' id={params.skillarea} />
 
@@ -42,7 +37,9 @@ const GetStartedSkillsAreaRoute = ( { params } ) => {    //props.params.skillare
       <p style={descStyle}>{area.desc}.</p>
       <br />
       <p>Coming very soon...</p>
-      
+      <ul>
+        { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.description) ? v.$meta.description : k}</li>) ) }
+      </ul>
     </Segment>
   )
 }

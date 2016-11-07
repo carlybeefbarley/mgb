@@ -62,6 +62,7 @@ import TilesetProps from '../Common/Map/Props/TilesetProps.js'
 import MapProps from '../Common/Map/Props/MapProps.js'
 import ToolbarProps from '../Common/Map/Props/ToolbarProps.js'
 import PropertiesProps from '../Common/Map/Props/PropertiesProps.js'
+import ObjectListProps from '../Common/Map/Props/ObjectListProps.js'
 
 import SpecialGlobals from '/client/imports/SpecialGlobals.js'
 
@@ -77,11 +78,13 @@ export default class EditMap extends React.Component {
       isLoading: true,
       activeLayer: 0,
       activeTileset: 0,
+      activeObject: -1,
+
       editMode: EditModes.stamp,
       highlightActiveLayer: true,
       randomMode: false,
       showGrid: true,
-      preview: true
+      preview: false
     }
 
     // undo / redo buffers
@@ -105,6 +108,7 @@ export default class EditMap extends React.Component {
     this.mapProps = this.enableTrait(MapProps)
     this.toolbarProps = this.enableTrait(ToolbarProps)
     this.propertiesProps = this.enableTrait(PropertiesProps)
+    this.objectListProps = this.enableTrait(ObjectListProps)
   }
 
   setInitialStateFromContent(){
@@ -348,6 +352,13 @@ export default class EditMap extends React.Component {
                 tileheight: c2.tileheight
               }}
               tileset={c2.tilesets[this.state.activeTileset]}
+              layer={c2.layers[this.state.activeLayer]}
+              />
+            <br />
+            <ObjectList
+              {...this.objectListProps}
+              activeObject={this.state.activeObject}
+              data={this.mgb_content2}
               layer={c2.layers[this.state.activeLayer]}
               />
         </div>

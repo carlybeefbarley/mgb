@@ -5,11 +5,6 @@ import AbstractLayer from './AbstractLayer.js'
 import LayerTypes from './../Tools/LayerTypes.js'
 
 export default class ImageLayer extends AbstractLayer {
-  constructor (...args) {
-    super(...args)
-    this.kind = LayerTypes.image
-  }
-
   draw () {
     if (!this.options.image) {
       return

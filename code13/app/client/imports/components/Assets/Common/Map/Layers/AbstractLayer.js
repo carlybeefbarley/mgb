@@ -83,6 +83,13 @@ export default class AbstractLayer extends React.Component {
     return this.props.data
   }
 
+  get type(){
+    return this.data.type
+  }
+  // same as type - in assets we are using kind - so it might be more intuitive for other ppl
+  get kind(){
+    return this.data.type
+  }
   // camera sets correct offsets when rendering bounds etc
   get camera () {
 

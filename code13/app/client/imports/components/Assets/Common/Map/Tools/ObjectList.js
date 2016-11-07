@@ -10,61 +10,25 @@ export default class Layers extends React.Component {
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
   }
 
-  get map () {
-    return this.props.info.content.map
-  }
-
-  getLayer () {
-    const layer = this.map.getActiveLayer()
-    if (!layer || layer.kind != LayerTypes.object) {
-      return null
-    }
-    return layer
-  }
-
   raise () {
-    const parent = this.getLayer()
-    const map = this.map
-    map.saveForUndo('Raise object')
-
-    parent.raiseLowerObject()
-
-    this.forceUpdate()
-    parent.forceUpdate()
-    map.forceUpdate()
+    this.props.lowerOrRaiseObject()
   }
 
   lower () {
-    const parent = this.getLayer()
-    const map = this.map
-    map.saveForUndo('Lower object')
-
-    parent.raiseLowerObject(true)
-
-    this.forceUpdate()
-    parent.forceUpdate()
-    map.forceUpdate()
+    this.props.lowerOrRaiseObject(true)
   }
 
   showOrHideObject (index) {
-    const activeLayer = this.map.getActiveLayer()
-    const objects = activeLayer.data.objects
-    objects[index].visible = !objects[index].visible
+
   }
   handleClick (index) {
-    const l = this.getLayer()
-    if (!l) {
-      // TODO: redraw map / clear cache?
-      return
-    }
-    // TODO: create set/getActiveObject in the object layer
-    l.setPickedObjectSlow(index)
+    this.props.setPickedObject(index)
   }
   renderBlock (content = [] , active = 0) {
     let rise = '', lower = ''
-
-    if (content && content.length) {
-      const d = this.getLayer().data
+    const activeLayer = this.props.getActiveLayer()
+    if (activeLayer && content && content.length) {
+      const d = activeLayer.data
       const l = d.objects ? d.objects.length - 1 : 0
       rise = (
         <button className={active < l && active > -1 ? 'ui floated icon button' : 'ui floated icon button disabled'} onClick={this.raise.bind(this)} title='Raise Object'>
@@ -82,7 +46,7 @@ export default class Layers extends React.Component {
       <div className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> {this.props.info.title}</span>
+            <span className='explicittrigger'><i className='dropdown icon'></i> Objects </span>
           </div>
           <div className='active content menu'>
             <div className='ui mini' style={{ position: 'relative', top: '-10px' }}>
@@ -98,13 +62,13 @@ export default class Layers extends React.Component {
     )
   }
   render () {
-    const activeLayer = this.map.getActiveLayer()
-    if (!activeLayer || activeLayer.kind != LayerTypes.object) {
-      return this.renderBlock()
+    const activeLayer = this.props.getActiveLayer()
+    if (!activeLayer || activeLayer.type != LayerTypes.object) {
+      return null
     }
 
     // TODO: refactor - so I don't need to access "private" member
-    const active = activeLayer.getPickedObject()
+    const active = this.props.activeObject
     const objects = activeLayer.data.objects
     const toRender = []
 

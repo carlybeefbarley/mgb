@@ -13,5 +13,8 @@ export default {
   },
   setMode(mode){
     this.enableMode(mode)
+  },
+  setPickedObject(index){
+    this.setState({activeObject: index})
   }
 }

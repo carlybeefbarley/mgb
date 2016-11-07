@@ -194,7 +194,33 @@ export default class MapArea extends React.Component {
   }
   /* endof import and conversion */
 
+  lowerOrRaiseObject(lower){
+    const l = this.getActiveLayer()
+    if(l.type != LayerTypes.object){
+      return
+    }
+    const o = l.getPickedObject()
 
+    const layerData = l.data
+    if (o == -1) {
+      return
+    }
+    const rec = layerData.objects.splice(o, 1)
+    l.clearCache()
+
+    let newSelection
+    if (lower) {
+      newSelection = o - 1
+      layerData.objects.splice(newSelection, 0, rec[0])
+    }
+    else {
+      newSelection = o + 1
+      layerData.objects.splice(newSelection, 0, rec[0])
+    }
+    l.setPickedObjectSlow(newSelection)
+
+    this.props.setPickedObject(newSelection)
+  }
   // TODO(stauzs): add 'insert/remove row/column' functionality
   resize (newSize = this.data) {
     this.data.width = newSize.width
@@ -744,6 +770,8 @@ export default class MapArea extends React.Component {
             saveForUndo={this.props.saveForUndo}
 
             showModal={this.props.showModal}
+
+            setPickedObject={this.props.setPickedObject}
 
             key={i}
             ref={ this.addLayerRef.bind(this, i) }

@@ -141,7 +141,7 @@ export default class MapToolbar extends React.Component {
           active: this.props.options.mode == EditModes.wand,
           label: 'Magic Wand',
           tooltip: 'Magic Wand selection - select adjacent tiles with same ID',
-          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.isPlaying),
+          disabled: (!layer || layer.type != LayerTypes.tile || this.props.isPlaying),
           level: 12
         },
         {
@@ -150,7 +150,7 @@ export default class MapToolbar extends React.Component {
           icon: 'qrcode picker',
           label: 'Tile Picker',
           tooltip: 'Tile Picker - Select All tiles with same ID',
-          disabled: (!layer || layer.kind != LayerTypes.tile || this.props.isPlaying),
+          disabled: (!layer || layer.type != LayerTypes.tile || this.props.isPlaying),
           level: 13
         },
         {

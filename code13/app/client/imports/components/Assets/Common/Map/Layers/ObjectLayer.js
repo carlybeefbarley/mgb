@@ -21,7 +21,6 @@ const TO_DEGREES = (Math.PI / 180)
 export default class ObjectLayer extends AbstractLayer {
   constructor (...args) {
     super(...args)
-    this.kind = LayerTypes.object
     this.drawDebug = false
     this._pickedObject = -1
     this.info = null
@@ -87,9 +86,10 @@ export default class ObjectLayer extends AbstractLayer {
       return 'rectangle'
     }
   }
-  // TODO: isn't this confusing???
+
   setPickedObjectSlow (id) {
     this._pickedObject = id
+    this.props.setPickedObject(id)
   }
   getPickedObject () {
     return this._pickedObject
@@ -127,7 +127,7 @@ export default class ObjectLayer extends AbstractLayer {
   }
   pickObject (e) {
     const ret = this.queryObject(e)
-    this._pickedObject = ret
+    this.setPickedObjectSlow(ret)
     return ret
   }
 
@@ -165,7 +165,7 @@ export default class ObjectLayer extends AbstractLayer {
   }
 
   selectObject (obj) {
-    this._pickedObject = this.data.objects.indexOf(obj)
+    this.setPickedObjectSlow( this.data.objects.indexOf(obj) )
   }
   selectObjects (box) {
     let ret = 0
@@ -193,25 +193,10 @@ export default class ObjectLayer extends AbstractLayer {
       if (f instanceof Imitator) {
         f = f.orig
       }
-      this._pickedObject = this.data.objects.indexOf(f)
+      this.setPickedObjectSlow(this.data.objects.indexOf(f))
       this.selection.clear()
     }
     return ret
-  }
-
-  raiseLowerObject (lower = false) {
-    let o = this._pickedObject
-    if (o == -1) {
-      return
-    }
-    const rec = this.data.objects.splice(o, 1)
-    if (lower) {
-      this.data.objects.splice(o - 1, 0, rec[0])
-      this.setPickedObjectSlow(o - 1)
-    }else {
-      this.data.objects.splice(o + 1, 0, rec[0])
-      this.setPickedObjectSlow(o + 1)
-    }
   }
 
   // TODO: clean up handle Event functions
@@ -416,7 +401,7 @@ export default class ObjectLayer extends AbstractLayer {
     if (alsoSelectedObjects) {
       this.selection.clear()
     }
-    this._pickedObject = -1
+    this.setPickedObjectSlow(-1)
   }
 
   deleteObject (obj) {
@@ -448,7 +433,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.draw()
   }
   setPickedObject (obj, index) {
-    this._pickedObject = index
+    this.setPickedObjectSlow(index)
     // TODO: make this more automatic
     if (obj.polygon || obj.polyline) {
       if (this.shapeBoxes[index]) {
@@ -976,7 +961,7 @@ edit[EditModes.rectangle] = function (e) {
           this.startPosX = this.pickedObject.x
           this.startPosY = this.pickedObject.y
         }else {
-          this._pickedObject = -1
+          this.setPickedObjectSlow(-1)
           this.startPosX = this.selection.x
           this.startPosY = this.selection.y
         }

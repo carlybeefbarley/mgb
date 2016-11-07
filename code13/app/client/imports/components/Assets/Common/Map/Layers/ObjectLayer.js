@@ -520,7 +520,7 @@ export default class ObjectLayer extends AbstractLayer {
 
     const flipX = (obj.gid & FLIPPED_HORIZONTALLY_FLAG ? -1 : 1)
     const flipY = (obj.gid & FLIPPED_VERTICALLY_FLAG ? -1 : 1)
-    let pal = this.palette[gid]
+    let pal = this.props.palette[gid]
     // images might be not loaded
     if (!pal) {
       return
@@ -874,7 +874,7 @@ edit[EditModes.stamp] = function (e) {
     return
   }
   const tile = col[0]
-  const pal = this.palette[tile.gid]
+  const pal = this.props.palette[tile.gid]
   const tw = this.props.mapData.tilewidth
   const th = this.props.mapData.tileheight
   const cam = this.camera

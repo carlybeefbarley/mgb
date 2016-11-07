@@ -1,6 +1,9 @@
 import C from './CommonSkillNodes.js'
 import CodeSkillNodes from './CodeSkillNodes.js'
 
+// Note that the top level names here (code, art, audio etc) must correlated with the tag
+// of skillAreaItems as defined in SkillAreas.js
+
 const SkillNodes = {
   code:             CodeSkillNodes,
 

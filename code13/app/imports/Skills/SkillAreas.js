@@ -1,7 +1,7 @@
 
 
 
-// Note that the .tag names here (code, art, audio etc) must correlated with the top level properties
+// Note that the .tag names here (code, art, audio etc) must correlate with the top level properties
 // of SkillNodes as defined in SkillNodes.js
 
 export const skillAreaItems = [

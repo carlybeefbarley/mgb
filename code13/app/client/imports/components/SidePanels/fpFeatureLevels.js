@@ -31,36 +31,43 @@ export default fpFeatureLevels = React.createClass({
 
   showFeatureLevelsSlider() {
     this.props.addJoyrideSteps([
+      { 
+        title: 'The FlexPanel area',
+        text: 'This stack of icons on the right-hand side is called the <em>FlexPanel</em>',
+        selector: '#mgbjr-flexPanelIcons',
+        position: 'left',
+        preparePage: 'closeFlexPanel',
+        showStepOverlay: true
+      },
+      { 
+        title: 'An example flexPanel - Chat',
+        text: 'This icon will open/close the <em>Chat</em> FlexPanel',
+        selector: '#mgbjr-flexPanelIcons-chat',
+        position: 'left',
+        showStepOverlay: true
+      },
+      { 
+        title: 'An example flexPanel - Assets',
+        text: 'Try this one to see various assets...',
+        selector: '#mgbjr-flexPanelIcons-assets',
+        position: 'left',
+        showStepOverlay: false,
+        awaitCompletionTag: 'mgbjr-CT-flexPanel-assets-show'
+      },
       {
         title: 'Feature Levels Slider',
         text: 'This is the <em>Feature Levels Slider</em> area. If you are on a page with adjustable Feature Levels, there will be a slider control here; Otherwise it will be blank',
         selector: '#mgbjr-NavGadgetSliderIcon',
-        position: 'left'
-      },
-      {
-        title: 'Feature Levels Slider',
-        text: `On pages with variable Feature Levels, you can adjust the current Feature Level for the current page's tools by dragging the circular 'handle' of the slider left or right`,
-        selector: '#mgbjr-NavGadgetSliderIcon + input',    // finds <input> element which is after element with mgbNavGadgetSlider class
         position: 'bottom'
-      },
-      {
-        title: 'Create new asset',
-        text: `You can create a new asset here`,
-        selector: '#mgbjr-np-create-createNewAsset',    // finds <input> element which is after element with mgbNavGadgetSlider class
-        position: 'right'
       },
       {
         title: 'See all Feature Level settings',
         text: `This area lists all your current Feature Level settings`,
-        selector: '#mgbjr-CurrentFeatureLevelsInFp',    // finds <input> element which is after element with mgbNavGadgetSlider class
+        selector: '#mgbjr-CurrentFeatureLevelsInFp',  
         position: 'left'
       }
     ],
     { replace: true } )
-  },
-
-  componentWillUnmount() {
-    this.props.addJoyrideSteps([], { replace: true } )
   },
 
   setLevelFromEvent(name, event) {

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
 
 import fpFeatureLevels from './fpFeatureLevels'
@@ -158,6 +159,9 @@ export default FlexPanel = React.createClass({
     const flexPanelHdr = flexPanelChoice.hdr
     const flexPanelIcon = flexPanelChoice.icon
     const ElementFP = (!this.props.isSuperAdmin && flexPanelChoice.superAdminOnly) ? null : flexPanelChoice.el
+
+    if (flexPanelIsVisible && ElementFP !== null)
+      joyrideCompleteTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)
 
     return  (
       <div className="basic segment mgbFlexPanel" style={panelStyle}>

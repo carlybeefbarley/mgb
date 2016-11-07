@@ -11,9 +11,9 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-import _ from 'lodash';
-import { ActivitySnapshots } from '/imports/schemas';
-import { check, Match } from 'meteor/check';
+import _ from 'lodash'
+import { ActivitySnapshots } from '/imports/schemas'
+import { check, Match } from 'meteor/check'
 
 var schema = {
   
@@ -49,7 +49,7 @@ Meteor.methods({
     // TODO: Consider DDoS vectors here
 
     data.timestamp = new Date()
-    data.byGeo = ""                     // TODO
+    data.byGeo = ''                // TODO
     let actualUserId = Meteor.userId()
     if (actualUserId)
       data.byUserId = actualUserId
@@ -59,16 +59,14 @@ Meteor.methods({
     if (Meteor.isServer)
     {
       // TODO: Make sure user id info looks legit. Don't trust client
-      data.byIpAddress = this.connection.clientAddress;
+      data.byIpAddress = this.connection.clientAddress
       if (!actualUserId)
         data.byUserName = `<guest@${data.byIpAddress}>`
     }
     else
-    {
-      data.byIpAddress = "";
-    }
+      data.byIpAddress = ''
     
-    check(data, _.omit(schema, '_id'));
+    check(data, _.omit(schema, '_id'))
     
     // TODO: Handle byUserId being null. Could use client IP/SessionHash in those cases?
     // TODO: Handle case of multiple Windows for byUserId? Or just use most recent (do nothing)
@@ -83,40 +81,39 @@ Meteor.methods({
     return upsertResult
   }
   
-});
+})
 
 
 // Helper function to invoke a snapshotActivity function. 
-export function snapshotActivity(asset, passiveAction, url) { 
+const _snapshotActivity = (asset, passiveAction, url) => { 
 
   //console.trace("snapshot", passiveAction)
   let mUser = Meteor.user()
-  let username = mUser ? mUser.profile.name : "<guest>"
+  let username = mUser ? mUser.profile.name : '<guest>'
 
   var snapData = {
     // Identifiers for the user/team that initiated the activity
     byUserName:             username,           // TODO - server will also validate
-    byTeamName:             "",                 // TODO - server will also validate
+    byTeamName:             '',                 // TODO - server will also validate
 
     // Identifers for target of the activity
-    toProjectName:          (asset && asset.projectName ?  asset.projectName : ""), 
-    toOwnerName:            (asset && asset.dn_ownerName ?  asset.dn_ownerName : ""),
-    toOwnerId:              (asset && asset.ownerId ? asset.ownerId : ""),
-    toAssetId:              (asset && asset._id ? asset._id : ""),
-    toAssetName:            (asset && asset.name ? asset.name : ""),
-    toAssetKind:            (asset && asset.kind ? asset.kind : ""),
+    toProjectName:          (asset && asset.projectName ?  asset.projectName : ''), 
+    toOwnerName:            (asset && asset.dn_ownerName ?  asset.dn_ownerName : ''),
+    toOwnerId:              (asset && asset.ownerId ? asset.ownerId : ''),
+    toAssetId:              (asset && asset._id ? asset._id : ''),
+    toAssetName:            (asset && asset.name ? asset.name : ''),
+    toAssetKind:            (asset && asset.kind ? asset.kind : ''),
     
     passiveAction:          passiveAction,
     currentUrl:             url ? url : window.location.href
-  };
+  }
 
-//  console.trace(`  [ActivitySnapshot.setSnapshot]  by: ${snapData.byUserName}/${snapData.byUserId}  from: ${snapData.byIpAddress} with url ${snapData.currentUrl}`);
-
+//  console.trace(`  [ActivitySnapshot.setSnapshot]  by: ${snapData.byUserName}/${snapData.byUserId}  from: ${snapData.byIpAddress} with url ${snapData.currentUrl}`)
 
   Meteor.call('ActivitySnapshot.setSnapshot', snapData, (err, res) => {
-    if (err) {
+    if (err)
       console.log("Could not set ActivitySnapshot: ", err.reason)
-    }       
   })
-
 }
+
+export const snapshotActivity = _.debounce( _snapshotActivity, 1500, { maxWait: 5000 } )

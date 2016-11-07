@@ -3,8 +3,8 @@ import styles from './home.css'
 import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { skillAreaItems } from '/imports/Skills/SkillAreas'
 
-const _notReallyWorkingYet = "These don't do anything yet.. but soon will! sorry for the psych!"
 
 const cardStyle = {
   color: "#2e2e2e"
@@ -26,18 +26,10 @@ const descStyle = {
   lineHeight: "1.5em"
 }
 
-const skillAreaItems = [
-  { mascot: 'alien',    icon: 'code',        content: 'Programming',   desc: 'Code using JavaScript and game engines like Phaser' },
-  { mascot: 'penguin',  icon: 'paint brush', content: 'Pixel art',     desc: 'Create animated sprites, spritesheets and tilemaps for games' },
-  { mascot: 'samurai',  icon: 'music',       content: 'Music & audio', desc: 'Bring engagement and mood to games through music and sound' },
-  { mascot: 'slimy',    icon: 'idea',        content: 'Game design',   desc: 'Design levels, balance gameplay mechanics and try new ones' },
-  { mascot: 'wizard',   icon: 'book',        content: 'Story writing', desc: 'Bring game stories to life through plot, character, narrative and dialog' },
-  { mascot: 'shark',    icon: 'line chart',  content: 'Analytics',     desc: 'Data beats opinions: analyze actual game usage and use it to improve' } 
-]
 
 const GetStartedSkillsRoute = () => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
-    <Grid stackable style={{marginTop: '3.5em'}} title={_notReallyWorkingYet}>
+    <Grid stackable style={{marginTop: '3.5em'}}>
 
       <Grid.Row >
         <Grid.Column>
@@ -56,11 +48,10 @@ const GetStartedSkillsRoute = () => (
                     key={idx} 
                     className="card animated fadeIn" 
                     style={cardStyle} 
-                    onClick={(e) => { alert("Not Yet Implemented"); e.preventDefault() }}
-                    to={`/getstarted/skills/NOT_YET_IMPLEMENTED`}>
+                    to={`/getstarted/skills/area/${area.tag}`}>
                   <Card.Content>
                     <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
-                    <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+                    <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
                     <p style={descStyle}>{area.desc}.</p>
                   </Card.Content>
                 </QLink>

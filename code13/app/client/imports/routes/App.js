@@ -1,6 +1,9 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import Joyride from 'react-joyride'
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+
+import Joyride from '/client/imports/Joyride/Joyride'
+import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 
 import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
@@ -24,8 +27,6 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
-
-import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 let G_localSettings = new ReactiveDict()
 
 const getPagenameFromProps = function(props)
@@ -68,9 +69,11 @@ export default App = React.createClass({
 
   componentDidMount: function() {
     window.onkeyup = this.togglePanelsKeyHandler
+    registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
   },
 
   componentDidUpdate: function(prevProps, prevState) {
+
     if (prevState.joyrideSteps.length ===0 && this.state.joyrideSteps.length > 0)
       this.refs.joyride.start(true)
   },
@@ -220,11 +223,14 @@ export default App = React.createClass({
         <Joyride 
           ref="joyride" 
           steps={this.state.joyrideSteps} 
-          showOverlay={true}
+          showOverlay={false}
+          disableOverlay={false}
           showSkipButton={true}
+          tooltipOffset={0}
           showStepsProgress={true}
           type="continuous"
           callback={this.handleJoyrideCallback}
+          preparePageHandler={this.joyridePreparePageHandler}
           debug={false} />
 
         <div>
@@ -336,6 +342,16 @@ export default App = React.createClass({
     browserHistory.push( {  ...loc,  query: newQ })
   },
 
+  closeFlexPanel: function()
+  {
+    const loc = this.props.location
+    const qp = urlMaker.queryParams("app_flexPanel")
+    if (loc.query[qp])
+    {
+      const newQ = _.omit(loc.query, qp)
+      browserHistory.push( {  ...loc,  query: newQ })
+    }
+  },
 
   handleFlexPanelChange: function(newFpView)
   {
@@ -444,7 +460,7 @@ export default App = React.createClass({
     let joyride = this.refs.joyride
 
     if (!Array.isArray(steps)) 
-      steps = [steps]
+      steps = [steps] 
 
     if (!joyride || (steps.length === 0 && !opts.replace))
       return false
@@ -464,6 +480,30 @@ export default App = React.createClass({
   handleJoyrideCallback( func ) {
     if (func.type === 'finished')
       this.setState( {  joyrideSteps: [] })
-  }
+  },
 
+  // return null for no error, or a string with errors
+  joyridePreparePageHandler( actionsString ) {
+    const errors = []
+    if (!actionsString || actionsString === '')
+      return
+
+    actionsString.split(',').forEach( act => {
+      switch (act) {
+      case 'closeFlexPanel':
+        this.closeFlexPanel()
+        break
+
+      // case 'closeNavPanel':
+      //   this.closeNavPanel()
+      //   break
+        
+      default:
+        errors.push(`Action '${act} not recognized`)
+      }
+    } )
+
+    return errors.length === 0 ? null : errors.join('; ') + '.'
+  }
+ 
 })

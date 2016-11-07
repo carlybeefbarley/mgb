@@ -24,6 +24,7 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
         <QLink 
             to={`/assets/create`} 
             closeNavPanelOnClick={navPanelIsOverlay} 
+            id='mgbjr-np-create-createNewAsset'
             className="item" 
             title="Create New Asset">
           <Icon color='green' name='pencil' /> Create New Asset

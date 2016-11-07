@@ -11,6 +11,7 @@ import PlayGame from './PlayGame'
 import GetStarted from './GetStarted'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import GetStartedSkills from './GetStartedSkills'
+import GetStartedSkillsArea from './GetStartedSkillsArea'
 import GetStartedGames from './GetStartedGames'
 
 import Users from './Users'
@@ -24,6 +25,8 @@ import Roadmap from './Nav/RoadmapRoute'
 
 import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
+
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -55,6 +58,7 @@ Meteor.startup(function () {
 
         <Route path="/getstarted" component={GetStarted} />
         <Route path="/getstarted/skills" component={GetStartedSkills} />
+        <Route path="/getstarted/skills/area/:skillarea" component={GetStartedSkillsArea} />
         <Route path="/getstarted/games" component={GetStartedGames} />
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
@@ -109,6 +113,7 @@ Meteor.startup(function () {
       </Route>
     </Router>
 
+  registerDebugGlobal( 'router', router, __filename, 'TopLevel react-router instance')
   urlMaker.setKnownRoutes(router)
   ReactDOM.render(router, document.getElementById('root'))
 })

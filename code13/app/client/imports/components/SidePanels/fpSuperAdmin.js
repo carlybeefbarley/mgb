@@ -25,7 +25,9 @@ export default fpSuperAdmin = () => {
       <Header sub>Stock Assets Quicklinks</Header>
       <List className='bulleted'>
         { linkLi("Stock Assets spreadsheet", "https://docs.google.com/spreadsheets/d/1LMmh_dTbBS51Nus8zLfXNAusoiUodBcJSMFzJz1agsg/edit#gid=1512032697")}
-        { linkLi("'!vault/Stock Assets' view", "https://v2.mygamebuilder.com/u/!vault/assets?_np=user&project=Stock+Assets")}
+        { linkLi("'!vault/Stock Assets' view", "/u/!vault/assets?_np=user&project=Stock+Assets")}
+        { linkLi("'!vault/Tutorial Assets' view", "/u/!vault/assets?project=Tutorial+Data")}
+        
       </List>
 
       <Header sub>Deployment/Monitoring Quicklinks</Header>

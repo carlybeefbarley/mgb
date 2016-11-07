@@ -46,8 +46,30 @@ export default class MapArea extends BaseMapArea {
     }
   }
 
-  // TODO(stauzs): clear cache
+  // TODO(stauzs): make global caching - where component could subscribe to desired assets - and has cache cleaning mechanism if asset in interest has changed
   cache = {}
+  fetchAssetByUri = (uri, keepInCache = false) => {
+    return new Promise( (resolve, reject) => {
+      if(this.cache[uri]){
+        resolve(this.cache[uri]);
+      }
+      var client = new XMLHttpRequest()
+      client.open('GET', uri)
+      client.send()
+      client.onload = function () {
+        if (this.status >= 200 && this.status < 300){
+          if(keepInCache){
+            this.cache[uri] = this.response
+          }
+          resolve(this.response)  // Performs the function "resolve" when this.status is equal to 2xx
+        }
+        else
+          reject(this.statusText) // Performs the function "reject" when this.status is different than 2xx
+      }
+      client.onerror = function () { reject(this.statusText) }
+    })
+  }
+
   renderMage(){
     const self = this;
     return (
@@ -60,26 +82,7 @@ export default class MapArea extends BaseMapArea {
             startMapName={this.props.asset.name}
             isPaused={false}
             hideButtons={true}
-            fetchAssetByUri={ (uri) => {
-
-                return new Promise( function (resolve, reject) {
-                  if(self.cache[uri]){
-                    resolve(self.cache[uri]);
-                  }
-                  var client = new XMLHttpRequest()
-                  client.open('GET', uri)
-                  client.send()
-                  client.onload = function () {
-                    if (this.status >= 200 && this.status < 300){
-                      self.cache[uri] = this.response
-                      resolve(this.response)  // Performs the function "resolve" when this.status is equal to 2xx
-                    }
-                    else
-                      reject(this.statusText) // Performs the function "reject" when this.status is different than 2xx
-                  }
-                  client.onerror = function () { reject(this.statusText) }
-                })
-              }}
+            fetchAssetByUri={ this.fetchAssetByUri}
             />
         </div>
       </div>

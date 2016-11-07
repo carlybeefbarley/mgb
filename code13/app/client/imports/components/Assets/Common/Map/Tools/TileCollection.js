@@ -1,6 +1,5 @@
 'use strict'
 import SelectedTile from './SelectedTile.js'
-// TODO: add some sort of index - to quickly access tile by coords
 
 // for some reason babel don't want to extend Array.....
 export default class TileCollection {

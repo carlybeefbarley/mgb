@@ -37,16 +37,10 @@ export default class ImageLayer extends AbstractLayer {
   }
 
   render () {
-    // TODO - probably we can leave only canvas element here
     return (<div ref='layer' className={this.props.isActive ? 'tilemap-layer' : 'tilemap-layer no-events'} data-name={this.props.data.name}>
               <canvas
                 ref='canvas'
-                //onMouseMove={this.handleMouseMove.bind(this)}
-                //onMouseDown={this.handleMouseDown.bind(this)}
-                //onMouseLeave={this.onMouseLeave.bind(this)}
-                onDrop={this.onDrop.bind(this)}
-                style={{ /* width: "100%", height: "100%", display: 'block' */}}>
-              </canvas>
+                onDrop={this.onDrop.bind(this)}></canvas>
             </div>)
   }
 }

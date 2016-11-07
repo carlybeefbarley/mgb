@@ -32,14 +32,10 @@ Camera.prototype = {
     this._y = val
   },
   get movementX() {
-    const ret = this._lastx - this._x
-    // this._lastx = this._x
-    return ret
+    return this._lastx - this._x
   },
   get movementY() {
-    const ret = this._lasty - this._y
-    // this._lasty = this._y
-    return ret
+    return this._lasty - this._y
   },
   get width() {
     if (this.map.refs.mapElement)

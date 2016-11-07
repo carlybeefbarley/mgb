@@ -13,9 +13,10 @@ import Imitator from './../MapObjects/Imitator.js'
 import MultiImitator from './../MapObjects/MultiImitator.js'
 
 // TODO move these to some good place.. probably mapArea???
-const FLIPPED_HORIZONTALLY_FLAG = 0x80000000
-const FLIPPED_VERTICALLY_FLAG = 0x40000000
-const FLIPPED_DIAGONALLY_FLAG = 0x20000000
+
+const FLIPPED_HORIZONTALLY_FLAG = TileHelper.FLIPPED_HORIZONTALLY_FLAG
+const FLIPPED_VERTICALLY_FLAG = TileHelper.FLIPPED_VERTICALLY_FLAG
+const FLIPPED_DIAGONALLY_FLAG = TileHelper.FLIPPED_DIAGONALLY_FLAG
 const TO_DEGREES = (Math.PI / 180)
 
 export default class ObjectLayer extends AbstractLayer {

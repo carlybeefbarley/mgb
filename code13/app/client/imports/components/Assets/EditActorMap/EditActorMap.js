@@ -129,7 +129,7 @@ export default class EditActorMap extends EditMap {
   renderPlayModal(){
     return (
       <div className="ui modal" ref="jump" style={{position: "absolute"}}>
-        <div className="header">Header</div>
+        <div className="header">Add Jump Event</div>
         <div className="content">
           <PlayForm asset={this.state.jumpData} onchange={(v) => {this.setState({event: this.state.jumpData})}}/>
         </div>
@@ -144,7 +144,7 @@ export default class EditActorMap extends EditMap {
   renderMusicModal(){
     return (
       <div className="ui modal" ref="music" style={{position: "absolute"}}>
-        <div className="header">Header</div>
+        <div className="header">Add Music Event</div>
         <div className="content">
           <MusicForm asset={this.state.musicData} onchange={(v) => {this.setState({event: this.state.musicData})}}/>
         </div>

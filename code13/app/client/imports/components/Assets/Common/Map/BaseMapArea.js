@@ -44,7 +44,7 @@ export default class MapArea extends React.Component {
       this.handleMouseUp(...args)
     }
     this.globalResize = () => {
-      this.redraw()
+      this.adjustPreview()
     }
     this.globalKeyUp = (...args) => {
       this.handleKeyUp(...args)
@@ -412,6 +412,9 @@ export default class MapArea extends React.Component {
   }
 
   adjustPreview () {
+    if(this.state.isPlaying){
+      return
+    }
     if (!this.data.layers)
       this.data.layers = []
 

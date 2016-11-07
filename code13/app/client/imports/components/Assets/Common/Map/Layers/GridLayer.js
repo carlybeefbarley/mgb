@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
-import TileHelper from './../Helpers/TileHelper.js'
+import TileHelper from '../Helpers/TileHelper.js'
+import LayerTypes from '../Tools/LayerTypes.js'
+
 
 export default class GridLayer extends React.Component {
   /* lifecycle functions */
@@ -106,7 +108,7 @@ export default class GridLayer extends React.Component {
     this.ctx.stroke()
 
     let tilelayer = null, tw, th
-    if (this.props.layer && this.props.layer.data.type == 'tilelayer') {
+    if (this.props.layer && LayerTypes.isTilemapLayer(this.props.layer.type)) {
       tilelayer = this.props.layer.data
       tw = tilelayer.width; th = tilelayer.height
     }else {
@@ -140,14 +142,12 @@ export default class GridLayer extends React.Component {
   }
 
   render () {
-    // TODO - probably we can leave only canvas element here
     return (<div
               className='tilemap-layer no-events grid-layer'
               data-name='Grid'
               ref='layer'
               style={{zIndex: 2}}>
-              <canvas ref='canvas' style={{ display: 'block' }}>
-              </canvas>
+              <canvas ref='canvas' style={{ display: 'block' }}></canvas>
             </div>)
   }
 }

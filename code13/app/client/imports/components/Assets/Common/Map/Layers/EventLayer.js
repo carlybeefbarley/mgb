@@ -1,8 +1,8 @@
 'use strict'
 
-import TileMapLayer from './TileMapLayer.js'
+import ActorLayer from './ActorLayer.js'
 
-export default class EventLayer extends TileMapLayer {
+export default class EventLayer extends ActorLayer {
   insertTile(id, gid){
     // if id === 0 - remove tile
     if(gid === 0){

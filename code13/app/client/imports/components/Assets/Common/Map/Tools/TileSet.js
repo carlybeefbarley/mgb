@@ -36,7 +36,6 @@ export default class TileSet extends React.Component {
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
 
     this.adjustCanvas()
-    // TODO: create global event handler with priorities
     window.addEventListener('mousemove', this.globalMouseMove)
     window.addEventListener('mouseup', this.globalMouseUp)
   }
@@ -221,7 +220,6 @@ export default class TileSet extends React.Component {
     const pos = this.getTilePosInfo(e)
 
     if (this.prevTile) {
-      // TODO(stauzs): optimize later - if needed at all.. currently redraw all
       this.drawTiles()
     }
 
@@ -366,7 +364,6 @@ export default class TileSet extends React.Component {
     }
     const tilesets = this.renderTileset()
     let ts = this.tileset
-    /* TODO: save active tileset and use only that as active */
     return (
       <div className='mgbAccordionScroller tilesets'>
         <div className='ui fluid styled accordion'>

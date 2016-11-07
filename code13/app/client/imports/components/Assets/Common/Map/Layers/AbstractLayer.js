@@ -26,7 +26,7 @@ export default class AbstractLayer extends React.Component {
 
     this.ctx = null
     this.mouseDown = false
-
+    this._isVisible = false
     this._mup = (e) => {
       if (this.props.isActive) {
         this.handleMouseUp(e)
@@ -52,12 +52,16 @@ export default class AbstractLayer extends React.Component {
     window.addEventListener('mouseup', this._mup)
     window.addEventListener('keyup', this._kup)
     window.addEventListener('mousemove', this._mov)
+
+    this._isVisible = true
   }
 
   componentWillUnmount () {
     window.removeEventListener('mouseup', this._mup)
     window.removeEventListener('keyup', this._kup)
     window.removeEventListener('mousemove', this._mov)
+
+    this._isVisible = false
   }
   // this layer has been selected
   activate () {
@@ -88,9 +92,7 @@ export default class AbstractLayer extends React.Component {
   }
   // camera sets correct offsets when rendering bounds etc
   get camera () {
-
     //return this.props.camera
-
     if (!this._camera) {
       this._camera = Object.create(this.props.camera)
     }
@@ -100,11 +102,11 @@ export default class AbstractLayer extends React.Component {
     return this._camera
   }
   get isVisible(){
-    return this.options.visible
+    return this._isVisible && this.options.visible
   }
 
   getInfo () {
-    return 'Please set info! Override getInfo method@'+this.constructor.name;
+    return 'Please set info! Override getInfo@' + this.constructor.name;
   }
 
   adjustCanvas () {
@@ -119,8 +121,6 @@ export default class AbstractLayer extends React.Component {
     if (canvas.height != b.height) {
       canvas.height = b.height
     }
-    // make sure we have nice looking canvas on the first load
-    // this._draw(Date.now())
   }
 
   draw () {

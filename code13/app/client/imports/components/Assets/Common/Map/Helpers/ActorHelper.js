@@ -290,7 +290,6 @@ export default ActorHelper = {
     }
   },
   cache: {},
-  // TODO: clean up
   loadActor: function(name, map, nr, images, names, cb){
     const parts = name.split(":")
     const user = parts.length > 1 ? parts.shift() : names.user

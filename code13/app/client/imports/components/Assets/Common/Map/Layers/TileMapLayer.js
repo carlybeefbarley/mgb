@@ -11,12 +11,6 @@ import TileHelper from './../Helpers/TileHelper.js'
 import BaseMapArea from '../BaseMapArea.js'
 
 export default class TileMapLayer extends AbstractLayer {
-  /* lifecycle functions */
-
-  static FLIPPED_HORIZONTALLY_FLAG = 0x80000000
-  static FLIPPED_VERTICALLY_FLAG = 0x80000000
-  static FLIPPED_DIAGONALLY_FLAG = 0x80000000
-
   static propTypes = Object.assign({
       clearSelection: React.PropTypes.func.isRequired, // cleans map selection
       clearTmpSelection: React.PropTypes.func.isRequired, // cleans temporary selection buffer
@@ -181,25 +175,25 @@ export default class TileMapLayer extends AbstractLayer {
 
   fixRotation (id) {
     if (this.ctrl.h == -1) {
-      this.options.data[id] |= TileMapLayer.FLIPPED_HORIZONTALLY_FLAG
+      this.options.data[id] |= TileHelper.FLIPPED_HORIZONTALLY_FLAG
     }
     if (this.ctrl.v == -1) {
-      this.options.data[id] |= TileMapLayer.FLIPPED_VERTICALLY_FLAG
+      this.options.data[id] |= TileHelper.FLIPPED_VERTICALLY_FLAG
     }
     if (this.ctrl.d) {
-      this.options.data[id] |= TileMapLayer.FLIPPED_DIAGONALLY_FLAG
+      this.options.data[id] |= TileHelper.FLIPPED_DIAGONALLY_FLAG
     }
   }
   tileWithRotation (id) {
     let ret = id
     if (this.ctrl.h == -1) {
-      ret |= TileMapLayer.FLIPPED_HORIZONTALLY_FLAG
+      ret |= TileHelper.FLIPPED_HORIZONTALLY_FLAG
     }
     if (this.ctrl.v == -1) {
-      ret |= TileMapLayer.FLIPPED_VERTICALLY_FLAG
+      ret |= TileHelper.FLIPPED_VERTICALLY_FLAG
     }
     if (this.ctrl.d) {
-      ret |= TileMapLayer.FLIPPED_DIAGONALLY_FLAG
+      ret |= TileHelper.FLIPPED_DIAGONALLY_FLAG
     }
     return ret
   }
@@ -330,13 +324,13 @@ export default class TileMapLayer extends AbstractLayer {
         }
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos)
 
-        tileId = d[i] & (~(TileMapLayer.FLIPPED_HORIZONTALLY_FLAG |
+        tileId = d[i] & (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
           TileMapLayer.FLIPPED_VERTICALLY_FLAG |
           TileMapLayer.FLIPPED_DIAGONALLY_FLAG))
 
-        this.drawInfo.h = (d[i] & TileMapLayer.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-        this.drawInfo.v = (d[i] & TileMapLayer.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
-        this.drawInfo.d = (d[i] & TileMapLayer.FLIPPED_DIAGONALLY_FLAG)
+        this.drawInfo.h = (d[i] & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
+        this.drawInfo.v = (d[i] & TileHelper.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
+        this.drawInfo.d = (d[i] & TileHelper.FLIPPED_DIAGONALLY_FLAG)
 
         pal = palette[tileId]
         if (pal) {
@@ -526,11 +520,11 @@ export default class TileMapLayer extends AbstractLayer {
         let gid = sel.gid
         // TODO: Feature: tiled rotates all selection also instead of tiles only
         /*if(map.collection.length > 1) {
-          this.drawInfo.h = (gid & TileMapLayer.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-          this.drawInfo.v = (gid & TileMapLayer.FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1
-          this.drawInfo.d = (gid & TileMapLayer.FLIPPED_DIAGONALLY_FLAG  )
+          this.drawInfo.h = (gid & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
+          this.drawInfo.v = (gid & TileHelper.FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1
+          this.drawInfo.d = (gid & TileHelper.FLIPPED_DIAGONALLY_FLAG  )
         }*/
-        gid &= (~(TileMapLayer.FLIPPED_HORIZONTALLY_FLAG |
+        gid &= (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
           TileMapLayer.FLIPPED_VERTICALLY_FLAG |
           TileMapLayer.FLIPPED_DIAGONALLY_FLAG)
         )
@@ -594,15 +588,15 @@ export default class TileMapLayer extends AbstractLayer {
       if (!sel)
         continue
 
-      let gid = sel.gid & (~(TileMapLayer.FLIPPED_HORIZONTALLY_FLAG |
-        TileMapLayer.FLIPPED_VERTICALLY_FLAG |
-        TileMapLayer.FLIPPED_DIAGONALLY_FLAG))
+      let gid = sel.gid & (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
+        TileHelper.FLIPPED_VERTICALLY_FLAG |
+        TileHelper.FLIPPED_DIAGONALLY_FLAG))
 
       const pal = palette[gid]
       if (pal) {
-        this.drawInfo.h = (sel.gid & TileMapLayer.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-        this.drawInfo.v = (sel.gid & TileMapLayer.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
-        this.drawInfo.d = (sel.gid & TileMapLayer.FLIPPED_DIAGONALLY_FLAG)
+        this.drawInfo.h = (sel.gid & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
+        this.drawInfo.v = (sel.gid & TileHelper.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
+        this.drawInfo.d = (sel.gid & TileHelper.FLIPPED_DIAGONALLY_FLAG)
 
         this.ctx.globalAlpha = 0.5
         this.drawTile(pal, sel)

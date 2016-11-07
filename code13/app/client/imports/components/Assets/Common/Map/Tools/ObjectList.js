@@ -67,7 +67,6 @@ export default class Layers extends React.Component {
       return null
     }
 
-    // TODO: refactor - so I don't need to access "private" member
     const active = this.props.activeObject
     const objects = activeLayer.data.objects
     const toRender = []

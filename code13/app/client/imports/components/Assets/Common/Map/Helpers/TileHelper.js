@@ -2,11 +2,6 @@
 import LayerTypes from '../Tools/LayerTypes.js'
 import ObjectHelper from './ObjectHelper.js'
 
-
-export const FLIPPED_HORIZONTALLY_FLAG = 0x8
-export const FLIPPED_VERTICALLY_FLAG = 0x4
-export const FLIPPED_DIAGONALLY_FLAG = 0x2
-
 export const ROTATE = {
   '90': 0xA0,
   '180': 0xC0,
@@ -14,6 +9,10 @@ export const ROTATE = {
 }
 
 const TileHelper = {
+  FLIPPED_HORIZONTALLY_FLAG: 0x80000000,
+  FLIPPED_VERTICALLY_FLAG: 0x40000000,
+  FLIPPED_DIAGONALLY_FLAG: 0x20000000,
+
   // TODO: take in to account margins and paddings
   getTilePos: (id, widthInTiles, tilewidth, tileheight, ret = {x: 0, y: 0}) => {
     ret.x = (id % widthInTiles) * tilewidth
@@ -79,10 +78,10 @@ const TileHelper = {
     return ngid
   },
   flipTileX(gid) {
-    return gid | FLIPPED_VERTICALLY_FLAG
+    return gid | TileHelper.FLIPPED_VERTICALLY_FLAG
   },
   flipTileY(gid) {
-    return gid | FLIPPED_HORIZONTALLY_FLAG
+    return gid | TileHelper.FLIPPED_HORIZONTALLY_FLAG
   },
 
   /* generators */
@@ -188,13 +187,11 @@ const TileHelper = {
       const spacingColumns = columns - 1
       // all goes to margin
       if (extraPixels < spacingColumns) {
-        // TODO: divide margin with 2?
         margin = extraPixels
         spacing = 0
       }
       // all goes to spacing
       else if (extraPixels % spacingColumns == 0) {
-        // TODO: divide margin with 2?
         spacing = extraPixels / spacingColumns
         margin = 0
       }
@@ -203,7 +200,6 @@ const TileHelper = {
         margin = extraPixels % (columns + 1)
         spacing = margin
       }else {
-        // TODO: divide margin with 2?
         margin = extraPixels % spacingColumns
         spacing = (extraPixels - extraPixels % spacingColumns) / spacingColumns
       }

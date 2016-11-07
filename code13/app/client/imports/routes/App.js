@@ -27,9 +27,7 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
-
 let G_localSettings = new ReactiveDict()
-
 
 const getPagenameFromProps = function(props)
 {
@@ -233,7 +231,7 @@ export default App = React.createClass({
           type="continuous"
           callback={this.handleJoyrideCallback}
           preparePageHandler={this.joyridePreparePageHandler}
-          debug={true} />
+          debug={false} />
 
         <div>
             <NavPanel

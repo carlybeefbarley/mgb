@@ -11,6 +11,7 @@ import PlayGame from './PlayGame'
 import GetStarted from './GetStarted'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import GetStartedSkills from './GetStartedSkills'
+import GetStartedSkillsArea from './GetStartedSkillsArea'
 import GetStartedGames from './GetStartedGames'
 
 import Users from './Users'
@@ -57,6 +58,7 @@ Meteor.startup(function () {
 
         <Route path="/getstarted" component={GetStarted} />
         <Route path="/getstarted/skills" component={GetStartedSkills} />
+        <Route path="/getstarted/skills/area/:skillarea" component={GetStartedSkillsArea} />
         <Route path="/getstarted/games" component={GetStartedGames} />
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />

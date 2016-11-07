@@ -4,6 +4,11 @@ import TileMapLayer from './TileMapLayer.js'
 
 export default class EventLayer extends TileMapLayer {
   insertTile(id, gid){
+    // if id === 0 - remove tile
+    if(gid === 0){
+      this.options.data[id] = 0
+      return
+    }
     const actions = {
       "1": "jump",
       "2": "music" //"music: loops=10000,source=joco/Skullcrusher%20Mountain.mp3",
@@ -22,7 +27,6 @@ export default class EventLayer extends TileMapLayer {
       }
       this.props.handleSave("Add action: "+ actions[gid]);
     })
-    console.log("HERE!")
   }
 
   getInfo(){

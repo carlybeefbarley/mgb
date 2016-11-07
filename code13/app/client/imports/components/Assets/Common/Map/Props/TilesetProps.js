@@ -32,7 +32,7 @@ export default {
 
   // TODO: add warning
   removeTileset: function(id = this.state.activeTileset){
-    const c2 = this.state.content2
+    const c2 = this.mgb_content2
     const reason = "Removed Tileset: " + c2.tilesets[id].name
 
     this.saveForUndo(reason)
@@ -47,12 +47,11 @@ export default {
     this.setState({activeTileset: this.state.activeTileset})
   },
   selectTileset: function(id){
-    console.log("Active tileset:", id)
     this.setState({activeTileset: id})
   },
 
   updateTilesetFromData: function(data, ref = null, fixGids = false){
-    const c2 = this.state.content2
+    const c2 = this.mgb_content2
     let ts
     if (data.imagewidth == data.tilewidth) {
       ts = TileHelper.genTileset(c2, data.image, data.imagewidth, data.imageheight)
@@ -96,18 +95,18 @@ export default {
 
 
   getActiveLayerData: function(){
-    return this.state.content2.layers[this.state.activeLayer]
+    return this.mgb_content2.layers[this.state.activeLayer]
   },
   addActor: function(ts){
     // make sure we don't collide gids
     ts.firstgid = Infinity // nothing is infinite
-    this.state.content2.tilesets.push(ts)
+    this.mgb_content2.tilesets.push(ts)
     // this function will change infinity to real GID
-    TileHelper.fixTilesetGids(this.state.content2)
+    TileHelper.fixTilesetGids(this.mgb_content2)
     this.quickSave("Added actor")
   },
   setActiveLayerByName: function(name){
-    const layers = this.state.content2.layers
+    const layers = this.mgb_content2.layers
     for(let i=0; i<layers.length; i++){
       if(layers[i].name == name){
         this.setState({activeLayer: i})

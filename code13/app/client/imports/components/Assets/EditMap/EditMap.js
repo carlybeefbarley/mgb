@@ -63,6 +63,8 @@ import MapProps from '../Common/Map/Props/MapProps.js'
 import ToolbarProps from '../Common/Map/Props/ToolbarProps.js'
 import PropertiesProps from '../Common/Map/Props/PropertiesProps.js'
 
+import SpecialGlobals from '/client/imports/SpecialGlobals.js'
+
 export default class EditMap extends React.Component {
   static propTypes = {
     asset: PropTypes.object,    // asset to be changed
@@ -79,13 +81,12 @@ export default class EditMap extends React.Component {
       highlightActiveLayer: true,
       randomMode: false,
       showGrid: true,
-      preview: true,
-      undo: [],
-      redo: [],
-      content2: this.props.asset.content2
+      preview: true
     }
 
-    this.lastSave = this.state.content2
+    // undo / redo buffers
+    this.mgb_undo = []
+    this.mgb_redo = []
     this.ignoreUndo = 0
 
     if(this.props.asset.content2){
@@ -95,20 +96,9 @@ export default class EditMap extends React.Component {
     // new map???
     else{
       this.createNewMap()
-      /*
-      c2 = TileHelper.
-      c2.meta = {
-        options: {
-          // empty maps aren't visible without grid
-          showGrid: 1,
-          camera: { _x: 0, _y: 0, _zoom: 1 },
-          preview: false,
-          mode: 'stamp',
-          randomMode: false
-        }
-      }
-       */
     }
+
+    this.lastSave = this.mgb_content2
 
     this.layerProps = this.enableTrait(LayerProps)
     this.tilesetProps = this.enableTrait(TilesetProps)
@@ -125,15 +115,27 @@ export default class EditMap extends React.Component {
     this.cache = new Cache(this.props.asset.content2, () => {
       this.setState({isLoading:  false})
     })
-    // set last edit mode ???
+
+    /* HERE we will store temporary changes to map
+      some tools don't report changes instantly -
+      so it goes out of sync with with props,
+      but that allows to avoid heavy re-redering of all components..
+      in the UX is better.
+      e.g. while inserting multiple tiles.. or drawing multiple tiles with stamp tool - update will trigger only once - when users releases mouse
+      it's possible to use _.copyDeep - in case of some unexpected behavior,
+      but I haven't experienced strange behavior.. ref is much faster
+     */
+    this.mgb_content2 = this.props.asset.content2
+
+    // restore last edit mode ???
     this.state.editMode = this.options.mode
     this.state.randomMode = this.options.randomMode
     this.state.showGrid = this.options.showGrid
   }
 
   createNewMap(){
-    this.state.content2 = TileHelper.genNewMap(10, 10)
-    this.cache = new Cache(this.state.content2, () => {
+    this.mgb_content2 = TileHelper.genNewMap(10, 10)
+    this.cache = new Cache(this.mgb_content2, () => {
       this.quickSave("New Map data")
       // this is called in the construct - and callback will be instant
       this.setState.isLoading = false
@@ -142,8 +144,8 @@ export default class EditMap extends React.Component {
 
   get meta() {
     // make sure we have options object
-    if(!this.state.content2.meta || !this.state.content2.meta.options){
-      this.state.content2.meta = {
+    if(!this.mgb_content2.meta || !this.mgb_content2.meta.options){
+      this.mgb_content2.meta = {
         options: {
           // empty maps aren't visible without grid
           showGrid: 1,
@@ -154,7 +156,7 @@ export default class EditMap extends React.Component {
         }
       }
     }
-    return this.state.content2.meta
+    return this.mgb_content2.meta
   }
   get options() {
     return this.meta.options
@@ -201,29 +203,32 @@ export default class EditMap extends React.Component {
   saveForUndo(reason = '' , skipRedo = false) {
     if (this.ignoreUndo)
       return
-    const toSave = { data: this.copyData(this.state.content2), reason }
-    const undo = this.state.undo;
+    const toSave = { data: this.copyData(this.mgb_content2), reason }
+    const undo = this.mgb_undo;
     // prevent double saving undo
     if (undo.length && undo[undo.length - 1].data == toSave.data)
       return
 
     if (!skipRedo)
-      this.state.redo.length = 0
+      this.mgb_redo.length = 0
 
     undo.push(toSave)
+    if(undo.length > SpecialGlobals.map.maxUndoSteps){
+      undo.shift()
+    }
     this.setState({undo})
   }
   doUndo () {
-    if (!this.state.undo.length)
+    if (!this.mgb_undo.length)
       return
-    const pop = this.state.undo.pop()
+    const pop = this.mgb_undo.pop()
     // save current state
     const toSave = {
-      data: this.copyData(this.state.content2),
+      data: this.copyData(this.mgb_content2),
       reason: pop.reason
     }
 
-    this.state.redo.push(toSave)
+    this.mgb_redo.push(toSave)
     const data = JSON.parse(pop.data)
 
     // make sure cached GIDs matches actual gids
@@ -232,28 +237,28 @@ export default class EditMap extends React.Component {
     this.handleSave(data, "Undo " + pop.reason, void(0), true)
     // we need to set state here because handle save callback will match with last save and nothing will get updated
 
-    this.state.content2 = data
+    this.mgb_content2 = data
     this.setState({content2: data})
   }
   doRedo () {
-    if (!this.state.redo.length)
+    if (!this.mgb_redo.length)
       return
 
-    const pop = this.state.redo.pop()
+    const pop = this.mgb_redo.pop()
     const toSave = {
-      data: this.copyData(this.state.content2),
+      data: this.copyData(this.mgb_content2),
       reason: pop.reason
     }
 
-    this.state.undo.push(toSave)
+    this.mgb_undo.push(toSave)
     const data = JSON.parse(pop.data)
 
     // make sure cached GIDs matches actual gids
     this.cache.update(data)
     this.handleSave(data, "Redo " + pop.reason, void(0), true)
     // same reason as undo...
-    
-    this.state.content2 = data
+
+    this.mgb_content2 = data
     this.setState({content2: data})
   }
 
@@ -278,7 +283,7 @@ export default class EditMap extends React.Component {
   }
 
   quickSave(reason = "noReason", skipUndo = true, thumbnail = null){
-    return this.handleSave(this.state.content2, reason, thumbnail, skipUndo)
+    return this.handleSave(this.mgb_content2, reason, thumbnail, skipUndo)
   }
 
   // probably copy of data would be better to hold .. or not research strings vs objects
@@ -288,18 +293,18 @@ export default class EditMap extends React.Component {
   }
 
   render () {
-    if(!this.state.content2 || this.state.isLoading){
+    if(!this.mgb_content2 || this.state.isLoading){
       return null
     }
-    const c2 = this.state.content2
+    const c2 = this.mgb_content2
     return (
       <div className='ui grid'>
         <div className='ten wide column'>
           <MapToolbar
             {...this.toolbarProps}
             options={this.options}
-            undoSteps={this.state.undo}
-            redoSteps={this.state.redo}
+            undoSteps={this.mgb_undo}
+            redoSteps={this.mgb_redo}
           />
           <MapArea
             {...this.mapProps}
@@ -334,7 +339,7 @@ export default class EditMap extends React.Component {
             <br />
             <Properties
               {...this.propertiesProps}
-              data={this.state.content2}
+              data={this.mgb_content2}
 
               map={{
                 width: c2.width,

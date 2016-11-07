@@ -19,12 +19,15 @@ export default class MapArea extends BaseMapArea {
 
   constructor (props) {
     super(props)
+    this.state = {
+      isPlaying: false
+    }
   }
 
   componentWillReceiveProps(p){
 
     const l = this.getActiveLayer(p.activeLayer)
-    this.state.isPlaying = p.isPlaying
+    this.setState({isPlaying: p.isPlaying})
     // Events only for events layer...
     if(this.collection.length && this.collection[0].gid < ActorHelper.TILES_IN_ACTIONS){
       if(l && l.data.name != "Events"){

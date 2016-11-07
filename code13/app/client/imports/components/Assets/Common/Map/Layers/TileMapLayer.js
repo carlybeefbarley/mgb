@@ -340,10 +340,6 @@ export default class TileMapLayer extends AbstractLayer {
         if (pal) {
           this.drawTile(pal, pos)
         }
-        else{
-          console.log("unable to locate palette")
-          continue
-        }
       }
     }
 
@@ -936,7 +932,7 @@ edit[EditModes.eraser] = function (e, up) {
   }
 
   if (e.type == 'mouseup') {
-    this.props.handleSave('Inserting Tiles')
+    this.props.handleSave('Deleting Tile')
   }
 
   const pos = this.getTilePosInfo(e)

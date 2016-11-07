@@ -41,7 +41,7 @@ export default class EditActorMap extends EditMap {
 
   setInitialStateFromContent(){
     this.v1_to_v2(this.props, (mapData) => {
-      this.state.content2 = mapData
+      this.mgb_content2 = mapData
 
       this.state.editMode = this.options.mode
       this.state.randomMode = this.options.randomMode
@@ -56,7 +56,7 @@ export default class EditActorMap extends EditMap {
       }
 
       // stores tiles and images
-      this.cache = new Cache(this.state.content2, () => {
+      this.cache = new Cache(this.mgb_content2, () => {
         this.setState({isLoading:  false})
       })
     })
@@ -65,9 +65,8 @@ export default class EditActorMap extends EditMap {
   componentWillReceiveProps(newp){
     // ignore older assets
     if(_.isEqual(this.lastSave, newp.asset.content2)){
-      console.log("Got old asset.. skipping update")
       this.setState({isLoading: true})
-      this.cache && this.cache.isReady() && this.cache.update(this.state.content2, () => {
+      this.cache && this.cache.isReady() && this.cache.update(this.mgb_content2, () => {
         this.setState({isLoading: false})
       })
       return
@@ -76,7 +75,7 @@ export default class EditActorMap extends EditMap {
       this.setState({isLoading: true})
       this.v1_to_v2(newp, (d) => {
         // or new Cache - if immutable is preferred - and need to force full cache update
-        this.state.content2 = d;
+        this.mgb_content2 = d;
         if(this.cache && this.cache.isReady()) {
           this.cache && this.cache.isReady() && this.cache.update(d, () => {
             this.setState({isLoading: false})
@@ -122,7 +121,6 @@ export default class EditActorMap extends EditMap {
       detachable: false,
       context: this.refs.container,
       onApprove: () => {
-        console.log("Approve", this.state[action+"Data"])
         cb(this.state[action+"Data"])
       }
     }).modal("show")
@@ -160,11 +158,11 @@ export default class EditActorMap extends EditMap {
 
   render () {
     // this stuff is required for proper functionality
-    if(!this.state.content2 || this.state.isLoading || !this.cache){
+    if(!this.mgb_content2 || this.state.isLoading || !this.cache){
       return null
     }
 
-    const c2 = this.state.content2
+    const c2 = this.mgb_content2
     return (
       <div className='ui grid' ref="container">
         {this.renderPlayModal()}
@@ -174,8 +172,8 @@ export default class EditActorMap extends EditMap {
             {...this.toolbarProps}
             isPlaying={this.state.isPlaying}
             options={this.options}
-            undoSteps={this.state.undo}
-            redoSteps={this.state.redo}
+            undoSteps={this.mgb_undo}
+            redoSteps={this.mgb_redo}
           />
           <MapArea
             {...this.mapProps}

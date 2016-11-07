@@ -20,7 +20,8 @@ export default class Properties extends React.Component {
       this.settings.layer.update(this.props.layer)
       this.settings.tileset.update(this.props.tileset)
       if (this.activeObject) {
-        const o = this.activeObject.orig ? this.props.activeObject.orig : this.activeObject
+        // selection wraps some objects (shapes) .. but we need raw object data
+        const o = this.activeObject.orig ? this.activeObject.orig : this.activeObject
         this.updateObject(o)
         this.settings.object.update(o)
       }
@@ -55,7 +56,6 @@ export default class Properties extends React.Component {
     else{
       for(let i in o.properties){
         if(!o.mgb_properties.find(n => n.name === i)){
-          console.log("deleted key:", i)
           delete o.properties[i]
         }
       }
@@ -115,7 +115,7 @@ export default class Properties extends React.Component {
             head: "Properties",
             _type: Otito.type.array,
             onchange: () => {
-              console.log("change!!!")
+              //console.log("change!!!")
             },
             array: {
               name: {

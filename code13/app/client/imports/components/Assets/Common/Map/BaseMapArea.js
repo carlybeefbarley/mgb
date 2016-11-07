@@ -14,19 +14,16 @@ import Plural         from '/client/imports/helpers/Plural'
 
 import './EditMap.css'
 
+
 export default class MapArea extends React.Component {
 
   constructor (props) {
     super(props)
 
-    window.mgb_map = this
-    this.state = {
-      // x/y are angles in degrees not pixels
-      preview: {
-        x: 5,
-        y: 15,
-        sep: 20
-      }
+    this.preview = {
+      x: 5, // angle on x axis
+      y: 15, // angle on y axis
+      sep: 20 // layer seperation pixels
     }
 
     this.layers = []
@@ -61,6 +58,11 @@ export default class MapArea extends React.Component {
         e.preventDefault()
         return false
       }
+    }
+
+    this.gloabalCSSAnimation = () => {
+      console.log("DONE css")
+      this.adjustPreview()
     }
   }
 
@@ -114,10 +116,18 @@ export default class MapArea extends React.Component {
     window.removeEventListener('keyup', this.globalKeyUp)
 
     document.body.removeEventListener('mousedown', this.globalIEScroll)
+
     // next tick will stop raf loop
     this._raf = () => {}
   }
 
+  redrawOnAnimationEnd(){
+    const onEnd = () => {
+      this.redraw()
+      this.refs.mapElement.removeEventListener('transitionend', onEnd)
+    }
+    this.refs.mapElement.addEventListener('transitionend', onEnd)
+  }
   componentWillReceiveProps (newprops) {
     if(this.props.activeLayer != newprops.activeLayer){
       this.activateLayer(newprops.activeLayer)
@@ -225,7 +235,6 @@ export default class MapArea extends React.Component {
   }
 
   setActiveLayer(id) {
-    console.log("Setting active layer..")
     let l = this.getActiveLayer()
     l && l.deactivate()
 
@@ -313,10 +322,9 @@ export default class MapArea extends React.Component {
 
   resetPreview() {
 
-    this.state.preview.x = 5
-    this.state.preview.y = 15
-    // seems too far away
-    // this.refs.mapElement.style.transform = "rotatey(" + this.preview.y + "deg) rotatex(" + this.preview.x + "deg) scale(0.9)"
+    this.preview.x = 5
+    this.preview.y = 15
+
     this.adjustPreview()
   }
 
@@ -368,8 +376,8 @@ export default class MapArea extends React.Component {
       return
     }
 
-    this.state.preview.y += this.lastEvent.pageX - e.pageX
-    this.state.preview.x -= this.lastEvent.pageY - e.pageY
+    this.preview.y += this.lastEvent.pageX - e.pageX
+    this.preview.x -= this.lastEvent.pageY - e.pageY
 
     this.lastEvent.pageX = e.pageX
     this.lastEvent.pageY = e.pageY
@@ -380,6 +388,7 @@ export default class MapArea extends React.Component {
   adjustPreview () {
     if (!this.data.layers)
       this.data.layers = []
+
 
     let z = 0
     let tot = 0
@@ -398,12 +407,12 @@ export default class MapArea extends React.Component {
         return
       }
 
-      const tr = this.state.preview
+      const tr = this.preview
       tr.x = tr.x % 360
       tr.y = tr.y % 360
 
-      l.refs.layer.style.transform = 'perspective(2000px) rotateX(' + this.state.preview.x + 'deg) ' +
-        'rotateY(' + this.state.preview.y + 'deg) rotateZ(0deg) ' +
+      l.refs.layer.style.transform = 'perspective(2000px) rotateX(' + this.preview.x + 'deg) ' +
+        'rotateY(' + this.preview.y + 'deg) rotateZ(0deg) ' +
         'translateZ(-' + ((tot - z) * tr.sep + 300) + 'px)'
       const ay = Math.abs(tr.y)
       const ax = Math.abs(tr.x)
@@ -416,7 +425,26 @@ export default class MapArea extends React.Component {
         l.refs.layer.style.zIndex = i
       z++
     })
+
+
+
+    const baseWidth = this.refs.mapElement.parentElement.offsetWidth
+    const maxAngle = 60 // 90 will make map 2x width
+    // resize map to show content which is further - depending on angle
+    if(this.preview.y > 0 && this.options.preview) {
+      const inc = this.preview.y > maxAngle ? maxAngle : this.preview.y
+      const w = baseWidth + baseWidth * Math.sin(inc * Math.PI / 180)
+      this.refs.mapElement.style.width = w + "px"
+    }
+    else{
+      this.refs.mapElement.style.width = baseWidth + "px"
+    }
+
     this.refs.grid && this.refs.grid.alignToLayer()
+    this.redraw()
+
+    // we will need to redraw once more - after animations completes
+    this.redrawOnAnimationEnd()
   }
   /* endof camera stuff */
 
@@ -453,9 +481,9 @@ export default class MapArea extends React.Component {
 
     e.preventDefault()
     if (e.altKey) {
-      this.state.preview.sep += e.deltaY < 0 ? 1 : -1
-      if(this.state.preview.sep < 0){
-        this.state.preview.sep = 0
+      this.preview.sep += e.deltaY < 0 ? 1 : -1
+      if(this.preview.sep < 0){
+        this.preview.sep = 0
       }
       this.adjustPreview()
       return

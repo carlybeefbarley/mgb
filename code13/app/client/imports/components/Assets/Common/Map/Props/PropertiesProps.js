@@ -15,13 +15,13 @@ export default {
   updateTileset(data){
     const reason = "Changed Tileset properties"
     this.saveForUndo(reason)
-    this.state.content2.tilesets[this.state.activeTileset] = data
+    this.mgb_content2.tilesets[this.state.activeTileset] = data
     this.quickSave(reason)
   },
   updateLayer(data){
     const reason = "Changed Layer properties"
     this.saveForUndo(reason)
-    this.state.content2.layers[this.state.activeLayer] = data
+    this.mgb_content2.layers[this.state.activeLayer] = data
     this.quickSave(reason)
   },
   updateObject(data){

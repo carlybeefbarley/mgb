@@ -12,7 +12,7 @@ const TB = {
     this.setState({isPlaying: !this.state.isPlaying})
   },
   getActiveLayer: function(){
-    const c2 = this.state.content2
+    const c2 = this.mgb_content2
     return c2.layers[this.state.activeLayer]
   },
 

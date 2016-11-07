@@ -25,11 +25,7 @@ export default class GridLayer extends React.Component {
     if (!map.layers.length) {
       return false
     }
-    // remove this function from current stack - as layers are registering themselfes on DidMount
-    setTimeout(() => {
-      this.alignToLayer()
-    }, 0)
-
+    this.alignToLayer()
     return false
   }
   componentWillUnmount () {

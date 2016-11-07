@@ -30,7 +30,7 @@ export default class MapToolbar extends React.Component {
           name: 'play',
           icon: this.props.isPlaying ? 'stop' : 'play',
           label: 'Play',
-          tooltip: 'Play this map',
+          tooltip: this.props.isPlaying  ? 'Stop playing / Return to map editing' : 'Play this map',
           level: 1,
           shortcut: 'Ctrl+Enter'
         },

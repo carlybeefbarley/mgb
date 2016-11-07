@@ -39,7 +39,6 @@ export default class ActorTool extends Tileset {
       return
     }
 
-    console.log("Dropped asset", asset)
     const name = asset.dn_ownerName +":"+ asset.name
     const tileset = {
       columns: 1,

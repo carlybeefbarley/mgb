@@ -20,8 +20,6 @@ const EVENT_LAYER = globals.actorMap.eventLayerId
 export default ActorHelper = {
   TILES_IN_ACTIONS: globals.actorMap.actionsInImage,
   v2_to_v1: function(data){
-    console.log("data",data);
-
     const d = {
       mapLayer: [],
       maxLayers: 4,
@@ -63,14 +61,11 @@ export default ActorHelper = {
       }
     }
 
-    console.log("RUN with this data:", d)
     return d
   },
   v1_to_v2: function(data, names, cb){
     if(!data.metadata){
-      setTimeout(() => {
-        cb(this.createEmptyMap())
-      }, 0);
+      cb(this.createEmptyMap())
       return;
     }
     const dd = TileHelper.genNewMap()
@@ -127,7 +122,6 @@ export default ActorHelper = {
     }
 
     this.loadActors(actorMap, names, dd.images, () => {
-      console.log(actorMap)
       const keys = Object.keys(actorMap)
 
       // we already have actor in the tilesets.. map it and update actor
@@ -185,7 +179,6 @@ export default ActorHelper = {
       for(let j=0; j<data.mapLayer[EVENT_LAYER].length; j++) {
         let name = data.mapLayer[EVENT_LAYER][j]
         if(name) {
-          console.log("NAME:", name, j)
           /*
            jump (teleport)
            music
@@ -358,7 +351,6 @@ export default ActorHelper = {
         return tilesets[i]
       }
     }
-    console.error("Cannot find tileset for gid: ", gid)
     return null
   },
 

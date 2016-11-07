@@ -62,7 +62,6 @@ export default class TileSet extends React.Component {
 
   /* helpers */
   adjustCanvas () {
-    console.log("Adjust canvas!")
     const ts = this.tileset
     const canvas = this.refs.canvas
 
@@ -81,8 +80,6 @@ export default class TileSet extends React.Component {
       canvas.height = 1
     }
     this.ctx = canvas.getContext('2d')
-    // make sure we have nice looking tiles
-    this.drawTiles()
   }
   getTilePosInfo (e) {
     const ts = this.tileset

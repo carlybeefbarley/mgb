@@ -22,9 +22,12 @@ export default SpecialGlobals = {
   },
 
   assets: {
-    "maxUploadSize": 1*1024*1024,   // 1 MB 
+    "maxUploadSize": 1*1024*1024,   // 1 MB
   },
 
+  map: {
+    "maxUndoSteps": 99
+  },
   //these are used in the ActorHelper
   actorMap: {
     actionsImage: '/api/asset/tileset/AymKGyM9grSAo3yjp',

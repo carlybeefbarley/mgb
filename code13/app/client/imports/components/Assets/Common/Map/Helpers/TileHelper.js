@@ -253,7 +253,6 @@ const TileHelper = {
         for(let j=0; j<layer.data.length; j++){
           const tile = layer.data[j] & 0xfffffff // last 28 bits (1 << 28) - 1
           if(tile && !gidCache[tile]){
-            console.log("unknow tile:", tile)
             layer.data[j] = 0
           }
         }

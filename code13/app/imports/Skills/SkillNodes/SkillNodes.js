@@ -6,26 +6,134 @@ import CodeSkillNodes from './CodeSkillNodes.js'
 
 const SkillNodes = {
   code:             CodeSkillNodes,
-
+ 
   art: {
-    concept:        C.E,
     proportion:     C.E,
-    sketch:         C.E,
-    shading:        C.E,
-    coloring:       C.E,
-    animations:     C.E,
-    // unresolvable test
-    // unresolvable: C.meta({requires: "unresolvable.test"}, C.E)
+    process: {
+      'concept':        C.E,
+      'constraints':    C.E,
+      'sketch':         C.E,
+      'review':         C.E,
+      'coloring':       C.E
+    },
+    shading: {
+      'pillow shading':   C.E,
+      'dithering':        C.E,
+      'anti-aliasing':    C.E,
+      'reverse aa':       C.E,
+      'lines-and-curves': C.E,
+      'ambient lighting': C.E,
+      'transparency':     C.E,
+      'interlaces-scanlines': C.E,
+      'layers':           C.E
+    },
+    perspectives: {
+      'top-down':     C.E,
+      'side-view':    C.E,
+      isometric:      C.E
+      // @stanchion.. others?
+    },
+    'character-design': {
+      humanoids:		C.E,
+      animals:	  	C.E,
+      monsters:     C.E,
+      objects:			C.E	// i.e. cookies, burgers, etc
+    },
+    color: 
+    { 
+      'palettes':    C.E,
+      'color-temp':  C.E,
+    },
+    animations:      C.E
   },
 
   design: {
-    levels:         C.E,
-    goals:          C.E,
-    pacing:         C.E,
-    puzzles:        C.E,
-    bosses:         C.E,
-    loot:           C.E,
-    spawns:         C.E
+    'gameplay': {
+      'is it fun':          C.E,
+      'is it interesting':  C.E,
+      'is it challenging':  C.E,
+      'is it social':       C.E
+      // @stanchion.. more here pls?
+      //
+
+    },
+    
+    'the meta': {
+      'metagame':         C.E,
+      'win bonusses':     C.E,
+      'loss penalties':   C.E,
+      'ELO':              C.E,
+      'ranking':          C.E,
+      'matchmaking':      C.E
+    },
+    
+    'game-mechanics': {
+      'final-objectives': {
+        'win conditions':    C.E,
+        'infinite-play':     C.E,
+        'game loss':         C.E
+      },
+      
+      
+      health:	{
+        'initial health':    C.E,
+        'max health':        C.E,
+        'recovery rates':    C.E,
+        'healing':           C.E,
+        'max-health boost':  C.E,
+        'extra lives':       C.E
+      },
+        
+      combat: {
+        'melee':		    C.E,
+        'touch-damage': C.E,
+        'shots':        C.E,
+        'direct-damage':   C.E,
+        'splash-damage':   C.E,
+        'reflected-damage': C.E
+      },
+        
+      defense: {
+        'armor':           C.E,
+        'agility':         C.E,
+        'stealth':         C.E,
+        'invulnerability': C.E 
+      },
+      
+      modifiers: {
+        buffs:             C.E,
+        debuffs:           C.E
+      },
+       
+      puzzles: { 
+        sokoban:           C.E,
+        'required-item':   C.E
+        // @stanchion.. more here pls
+      },
+        
+      'in-game-rewards': {
+        loot:           C.E
+        // @stanchion.. more here pls
+        
+      }
+    },
+      
+    'level design': {
+      'pathing':      C.E,
+      'oclusion':     C.E,
+      'backtrack':    C.E,
+      'secrets':      C.E,
+      'bottlenecks':  C.E
+        // @stanchion.. more here pls.. what about 'big rooms' ? 
+      
+    },
+      
+    pacing: {
+      'progression':  C.E,
+      'grinding':     C.E,
+      'bosses':       C.E
+      // @stanchion.. others?        
+    }
   },
 
   audio: {
@@ -49,6 +157,28 @@ const SkillNodes = {
     playtesting:      C.E
   },
 
+  writing: {
+    character: {
+      roles: { 
+        protagonist:   C.E,
+        antagonist:    C.E,
+      },
+      relationships: {
+        mentor:        C.E        
+        // more
+      },
+      motivations: { 
+        survival:  C.E,
+      }
+    },
+    structures: {
+      "Hero's Journey": C.E
+    },
+    'narrative devices':   C.E,
+    "Narrator":       C.E,
+    
+  },
+  
   analytics: {
     metrics:          C.E,
     bouncerate:       C.E,
@@ -73,26 +203,10 @@ const SkillNodes = {
     ads:              C.E
   },
 
-
-  legal: {
-    ownership:        C.E,
-    copyright:        C.E,
-    license:          C.E,
-    'public domain':  C.E,
-    attribution:      C.E,
-    'fair use':       C.E,
-    derivitives:      C.E,
-    privacy:          C.E,
-    takedown:         C.E,
-    'cease & desist': C.E
-    
-  },
-
   $meta: {
     map: {}
   }
 }
-
 // injection test example
   // SkillNodes["code.js.basics.xxx"] = C.E
   // SkillNodes["code.js.basics.group"] = {

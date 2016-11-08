@@ -13,6 +13,55 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Mon Nov 7 2016 21:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '1984'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'bugfix',
+          'changeName': 'ActorMap Mega-bugfixing',
+          'changeSummary': 'We spent a few days squashing bugs in the ActorMap editor. It seems to be behaving well now. If you have any problems with it, let us know',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.joyride',
+          'type': 'improvement',
+          'changeName': 'Tutorial/step/tour system improvements',
+          'changeSummary': "There is still just one 'tour' / 'tutorial' (Click 'show me' on the options FlexPanel to see it), but the tour system itself now handles more complicated navigation and waiting for user actions. This should be enough now for us to implement a lot of the initial site tutorials. Yay",
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.skills',
+          'type': 'improvement',
+          'changeName': 'Skills system, next menu level',
+          'changeSummary': "The full list of skills areas is now shown, and there is the beginning of the skills explorer for each area. More soon. SKills, tutorials, tours and help will become cunningly connected soon!",
+          'otherUrls': [ 
+            { txt: 'Full skills list', href: '/getstarted/skills' },
+            { txt: 'Example skills area -  legal stuff', href: '/getstarted/skills/area/legal' },
+
+          ]
+        },
+        {
+          'featureTag': 'nav.activitysnapshots',
+          'type': 'improvement',
+          'changeName': 'Activity snapshot throttling',
+          'changeSummary': "The activity snaphots now fire after 1.5 seconds of inactivity, and at least every five seconds. Previously they could fire multiple times per second, impacting performance.",
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Thu Nov 3 2016 06:10:00 GMT-0700 (PDT)',
 
       'id': {

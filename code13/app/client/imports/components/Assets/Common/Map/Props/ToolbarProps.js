@@ -9,8 +9,11 @@ const TB = {
   },
 
   play: function(){
+    if (!this.state.isPlaying)
+      this.props.handleSaveNowRequest() 
     this.setState({isPlaying: !this.state.isPlaying})
   },
+  
   getActiveLayer: function(){
     const c2 = this.mgb_content2
     return c2.layers[this.state.activeLayer]
@@ -24,6 +27,7 @@ const TB = {
     // this is EditMap Scope
     this.enableMode(mode)
   },
+  
   toggleRandomMode: function(){
     this.options.randomMode = !this.options.randomMode
     this.setState({randomMode: this.options.randomMode})

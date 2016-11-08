@@ -31,7 +31,8 @@ export default AssetEdit = React.createClass({
     handleContentChange:  PropTypes.func,
     editDeniedReminder:   PropTypes.func,
     activitySnapshots:    PropTypes.array,              // can be null whilst loading
-    hasUnsentSaves:       PropTypes.bool                // True if saves are unsent. However, if sent, then return can be pending - see asset.isUnconfirmedSave
+    hasUnsentSaves:       PropTypes.bool,               // True if saves are unsent. However, if sent, then return can be pending - see asset.isUnconfirmedSave
+    handleSaveNowRequest: PropTypes.func                // Asset editor can do this to request a flush now. For example to play a game in the editor
   },  
 
   getEditorForAsset: function(asset) {

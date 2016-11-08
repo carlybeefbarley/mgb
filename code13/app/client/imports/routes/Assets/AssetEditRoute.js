@@ -295,6 +295,7 @@ export default AssetEditRoute = React.createClass({
             editDeniedReminder={this.handleEditDeniedReminder}
             activitySnapshots={this.data.activitySnapshots} 
             hasUnsentSaves={hasUnsentSaves}
+            handleSaveNowRequest={this.handleSaveNowRequest}
           />
         </div>
       </div>

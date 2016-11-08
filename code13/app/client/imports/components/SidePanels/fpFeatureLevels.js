@@ -31,12 +31,18 @@ export default fpFeatureLevels = React.createClass({
 
   showFeatureLevelsSlider() {
     this.props.addJoyrideSteps([
+      {
+        title: 'Feature Levels Slider',
+        text: 'This is the <em>Feature Levels Slider</em> area. If you are on a page with adjustable Feature Levels, there will be a slider control here; Otherwise it will be blank',
+        selector: '#mgbjr-NavGadgetSliderIcon',
+        preparePage: 'closeFlexPanel',
+        position: 'bottom'
+      },
       { 
         title: 'The FlexPanel area',
         text: 'This stack of icons on the right-hand side is called the <em>FlexPanel</em>',
         selector: '#mgbjr-flexPanelIcons',
         position: 'left',
-        preparePage: 'closeFlexPanel',
         showStepOverlay: true
       },
       { 
@@ -47,18 +53,19 @@ export default fpFeatureLevels = React.createClass({
         showStepOverlay: true
       },
       { 
-        title: 'An example flexPanel - Assets',
-        text: 'Try this one to see various assets...',
-        selector: '#mgbjr-flexPanelIcons-assets',
+        title: 'An example flexPanel - Feature Levels',
+        text: 'Try this one to see all your "feature level" settings...',
+        selector: '#mgbjr-flexPanelIcons-features',
         position: 'left',
         showStepOverlay: false,
-        awaitCompletionTag: 'mgbjr-CT-flexPanel-assets-show'
+        awaitCompletionTag: 'mgbjr-CT-flexPanel-features-show'
       },
-      {
-        title: 'Feature Levels Slider',
-        text: 'This is the <em>Feature Levels Slider</em> area. If you are on a page with adjustable Feature Levels, there will be a slider control here; Otherwise it will be blank',
-        selector: '#mgbjr-NavGadgetSliderIcon',
-        position: 'bottom'
+      { 
+        title: 'Well done!',
+        text: 'You can see it now...',
+        selector: '#mgbjr-flexPanelIcons',
+        position: 'left',
+        showStepOverlay: true
       },
       {
         title: 'See all Feature Level settings',

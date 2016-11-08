@@ -208,7 +208,7 @@ export default AssetEditRoute = React.createClass({
 
     const canEd = this.canCurrUserEditThisAsset()
     const currUserId = currUser ? currUser._id : null
-
+    const hasUnsentSaves = !!this.m_deferredSaveObj
     const chosenProjectNamesArray = asset.projectNames || [];
     const availableProjectNamesArray = 
         currUserProjects ? 
@@ -231,7 +231,7 @@ export default AssetEditRoute = React.createClass({
             isServerOnlineNow={this.data.isServerOnlineNow}
             canEdit={canEd}
             isUnconfirmedSave={asset.isUnconfirmedSave}
-            hasUnsentSaves={!!this.m_deferredSaveObj}
+            hasUnsentSaves={hasUnsentSaves}
             ownerName={asset.dn_ownerName}
             kind={asset.kind}
             name={asset.name}
@@ -294,6 +294,7 @@ export default AssetEditRoute = React.createClass({
             handleMetadataChange={this.handleMetadataChange}
             editDeniedReminder={this.handleEditDeniedReminder}
             activitySnapshots={this.data.activitySnapshots} 
+            hasUnsentSaves={hasUnsentSaves}
           />
         </div>
       </div>

@@ -1,16 +1,8 @@
 import React from 'react'
+
 import BaseMapArea from '../Common/Map/BaseMapArea.js'
-
-import TileHelper from '../Common/Map/Helpers/TileHelper'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper'
-
-import Plural from '/client/imports/helpers/Plural'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar'
-
 import PositionInfo from '../Common/Map/Tools/PositionInfo'
-import DropArea from '../../Controls/DropArea'
-import SmallDD from '../../Controls/SmallDD'
-
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 
 import './../Common/Map/EditMap.css'
@@ -70,16 +62,20 @@ export default class MapArea extends BaseMapArea {
     })
   }
 
-  renderMage(){
-    const self = this;
+  renderMage() {
+    const { asset, playDataIsReady } = this.props
+
+    if (!playDataIsReady)
+      return <p>Waiting for Cloud save to flush</p>
+
     return (
       <div
         className='tilemap-wrapper'
         onWheel={this.handleOnWheel.bind(this)}>
         <div style={{margin: "10px 0px"}}>
           <Mage
-            ownerName={this.props.asset.dn_ownerName}
-            startMapName={this.props.asset.name}
+            ownerName={asset.dn_ownerName}
+            startMapName={asset.name}
             isPaused={false}
             hideButtons={true}
             fetchAssetByUri={ this.fetchAssetByUri}
@@ -91,9 +87,8 @@ export default class MapArea extends BaseMapArea {
 
   render () {
 
-    if(this.state.isPlaying){
+    if (this.state.isPlaying)
       return this.renderMage()
-    }
 
     return (
       <div

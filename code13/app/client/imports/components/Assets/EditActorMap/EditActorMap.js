@@ -177,7 +177,7 @@ export default class EditActorMap extends EditMap {
           <MapArea
             {...this.mapProps}
             showModal={this.showModal}
-
+            playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
             isPlaying={this.state.isPlaying}
             cache={this.cache}
             activeLayer={this.state.activeLayer}

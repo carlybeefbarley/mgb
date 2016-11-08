@@ -11,8 +11,8 @@ export const skillAreaItems = [
   { tag: 'design',     mascot: 'slimy',      icon: 'idea',        title: 'Game design',   desc: 'Design levels, balance gameplay mechanics and try new ones' },
   { tag: 'story',      mascot: 'wizard',     icon: 'book',        title: 'Story writing', desc: 'Bring game stories to life through plot, character, narrative and dialog' },
   { tag: 'analytics',  mascot: 'shark',      icon: 'line chart',  title: 'Analytics',     desc: 'Data beats opinions: analyze actual game usage and use it to improve' },
-  { tag: 'community',  mascot: 'slimy2',     icon: 'umbrella',    title: 'Community',     desc: 'Games need players. Learn to organize, communicate and playtest with player communities' },
-  { tag: 'marketing',  mascot: 'game_runner',icon: 'flag outline',title: 'Marketing',     desc: 'Games need more players. Learn how to publicise your game and get people to play it' },
-  { tag: 'legal',      mascot: 'rpgGuy',     icon: 'law',         title: 'Legal',         desc: 'Protect your ideas and work. Learn about Ownership, Copyrights and Licenses' },
-  { tag: 'business',   mascot: 'game_shop',  icon: 'dollar',      title: 'Business',      desc: 'Make Money so you can make more games. Learn the best ways to make a good profit from your games' }
+  { tag: 'community',  mascot: 'slimy2',     icon: 'umbrella',    title: 'Community',     desc: 'Learn to organize, communicate and playtest with player communities' },
+  { tag: 'marketing',  mascot: 'game_runner',icon: 'flag outline',title: 'Marketing',     desc: 'Learn to publicise your game and get people to play it' },
+  { tag: 'legal',      mascot: 'rpgGuy',     icon: 'law',         title: 'Legal',         desc: 'Protect your ideas and work. Stay out of jail also. ' },
+  { tag: 'business',   mascot: 'game_shop',  icon: 'dollar',      title: 'Business',      desc: 'Learn the best ways to make a good profit from your games' }
 ]

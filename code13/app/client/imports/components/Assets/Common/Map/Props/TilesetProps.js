@@ -112,6 +112,8 @@ export default {
         return;
       }
     }
-
+  },
+  startLoading: function(){
+    this.setState({isLoading: true})
   }
 }

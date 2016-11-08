@@ -32,6 +32,7 @@ export default class ActorTool extends Tileset {
 
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
+    this.props.startLoading()
     if (!asset)
       return
 

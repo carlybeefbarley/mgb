@@ -22,3 +22,12 @@
 .tilemap-wrapper.mode-eraser{
     cursor: not-allowed;
 }
+.loading-notification{
+    position: absolute;
+    background-color: orange;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    border-radius: 7px;
+    padding: 2px 20px;
+}

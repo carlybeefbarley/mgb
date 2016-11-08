@@ -157,13 +157,15 @@ export default class EditActorMap extends EditMap {
 
   render () {
     // this stuff is required for proper functionality
-    if(!this.mgb_content2 || this.state.isLoading || !this.cache){
+    if(!this.mgb_content2 || !this.cache){
       return null
     }
+
 
     const c2 = this.mgb_content2
     return (
       <div className='ui grid' ref="container">
+        { this.state.isLoading && <div className="loading-notification">Working in background...</div> }
         {this.renderPlayModal()}
         {this.renderMusicModal()}
         <div className='ten wide column'>

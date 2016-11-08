@@ -1,5 +1,8 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+
 import MageGameCanvas from './MageGameCanvas'
 import MageNpcDialog from './MageNpcDialog'
 import MageInventoryDialog from './MageInventoryDialog'
@@ -41,12 +44,12 @@ const _mkGraphicUri = (ownerName, assetName) => {
 } 
 
 
-// Naughty but nice for now.
-const _HACK = self => window.DG = self
-
 export default class Mage extends React.Component {
   constructor(props) {
     super(props)
+
+    registerDebugGlobal( 'mage', this, __filename, 'The active MapActorGameEngine instance')
+    
     // Non-react state
     this._tweenCount = 0                // Tweencount for game loops
     this._mageCanvas = null             // MageGameCanvas ref
@@ -74,7 +77,6 @@ export default class Mage extends React.Component {
       loadedGraphics:         {},      // The loaded Graphics Data. Contains map of actorname -> actor
       failedGraphics:         {}       // Graphics that failed to load. Content is the error data
     }
-    _HACK(this)
   }
   
   _mkFriendlyMapName() {

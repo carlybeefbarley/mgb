@@ -297,12 +297,13 @@ export default class EditMap extends React.Component {
   }
 
   render () {
-    if(!this.mgb_content2 || this.state.isLoading){
+    if(!this.mgb_content2 || !this.cache){
       return null
     }
     const c2 = this.mgb_content2
     return (
       <div className='ui grid'>
+        { this.state.isLoading && <div className="loading-notification">Working in background...</div> }
         <div className='ten wide column'>
           <MapToolbar
             {...this.toolbarProps}

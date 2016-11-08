@@ -25,7 +25,9 @@ export default class MapArea extends React.Component {
       y: 15, // angle on y axis
       sep: 20 // layer seperation pixels
     }
-
+    this.state = {
+      isPlaying: false
+    }
     this.layers = []
 
     // here will be kept selections from tilesets

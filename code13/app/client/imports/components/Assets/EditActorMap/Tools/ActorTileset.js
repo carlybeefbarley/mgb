@@ -13,6 +13,7 @@ import ActorValidator from '../../Common/ActorValidator.js'
 import ActorControls from './ActorControls.js'
 import Tileset from '../../Common/Map/Tools/TileSet.js'
 
+const _dragHelpMsg = 'Drop Actor Assets here to use them in this ActorMap'
 
 export default class ActorTool extends Tileset {
   constructor(){
@@ -40,19 +41,26 @@ export default class ActorTool extends Tileset {
       return
     }
 
+
     const name = asset.dn_ownerName +":"+ asset.name
+    if (_.some(this.props.tilesets, { name: name } ) )
+    {
+      alert(`TD: This map already contains asset '${name}'`)
+      return
+    }
+
     const tileset = {
-      columns: 1,
-      firstgid: 0,
-      image: '',
-      imageheight: 0,
-      imagewidth: 0,
-      margin: 0,
-      name: name,
-      spacing: 0,
-      tilecount: 1,
-      tileheight: 32,
-      tilewidth: 32
+      columns:      1,
+      firstgid:     0,
+      image:        '',
+      imageheight:  0,
+      imagewidth:   0,
+      margin:       0,
+      name:         name,
+      spacing:      0,
+      tilecount:    1,
+      tileheight:   32,
+      tilewidth:    32
     }
     const nextId = Infinity
     const map = { [name] : tileset }
@@ -77,12 +85,12 @@ export default class ActorTool extends Tileset {
     return (
       <div
         className='active tilesets accept-drop'
-        data-drop-text='Drop asset here to create TileSet'
+        data-drop-text={_dragHelpMsg}
         onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}>
 
         { !tileset
-          ? <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>Drop Actor (from side panel) here to add it to map</p>
+          ? <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
           : <ActorControls
           activeTileset={this.tilesetIndex}
           removeTileset={this.props.removeTileset}

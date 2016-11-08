@@ -73,6 +73,21 @@ const SkillNodes = {
     ads:              C.E
   },
 
+
+  legal: {
+    ownership:        C.E,
+    copyright:        C.E,
+    license:          C.E,
+    'public domain':  C.E,
+    attribution:      C.E,
+    'fair use':       C.E,
+    derivitives:      C.E,
+    privacy:          C.E,
+    takedown:         C.E,
+    'cease & desist': C.E
+    
+  },
+
   $meta: {
     map: {}
   }

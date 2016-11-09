@@ -50,6 +50,9 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.now = 0 // _draw will set this timestamp
     this._mup = this.handleMouseUp.bind(this)
+
+    this.lastEvent = null // store here last mouse event for furtherRef
+    this.lastOffset = {x: 0, y: 0} // firefox loses offsets from event - so store repeately
   }
   componentDidMount (...args) {
     super.componentDidMount(...args)
@@ -457,7 +460,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   // drawTiles will call this
-  _highlightTiles (e = this.lastEvent) {
+  _highlightTiles (off = this.lastOffset) {
     const palette = this.props.palette
     const camera = this.camera
     const layer = this.options
@@ -472,7 +475,7 @@ export default class TileMapLayer extends AbstractLayer {
       outOfBounds: false
     }
 
-    TileHelper.getTileCoordsRel(e.offsetX / camera.zoom - camera.x, e.offsetY / camera.zoom - camera.y, props.mapData.tilewidth, props.mapData.tileheight, 0, pos)
+    TileHelper.getTileCoordsRel(off.x / camera.zoom - camera.x, off.y / camera.zoom - camera.y, props.mapData.tilewidth, props.mapData.tileheight, 0, pos)
 
     if (pos.x >= layer.width) {
       pos.outOfBounds = true
@@ -625,6 +628,8 @@ export default class TileMapLayer extends AbstractLayer {
     this.mouseDown = false
     if (e.target == this.refs.canvas) {
       this.lastEvent = nat
+      this.lastOffset.x = nat.offsetX;
+      this.lastOffset.y = nat.offsetY;
       if (edit[this.props.getEditMode()]) {
         if (!this.options.visible) {
           return
@@ -637,10 +642,12 @@ export default class TileMapLayer extends AbstractLayer {
   }
   handleMouseMove (e) {
     const nat = e.nativeEvent ? e.nativeEvent : e
-    this.lastEvent = nat
-    if (e.target !== this.refs.canvas) {
+    if (nat.target !== this.refs.canvas) {
       return
     }
+    this.lastEvent = nat
+    this.lastOffset.x = nat.offsetX;
+    this.lastOffset.y = nat.offsetY;
     this.tilePosInfo = this.getTilePosInfo(e)
 
     this.isMouseOver = true

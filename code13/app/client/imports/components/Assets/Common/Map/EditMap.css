@@ -31,3 +31,10 @@
     border-radius: 7px;
     padding: 2px 20px;
 }
+.tileset-title{
+    text-overflow: ellipsis;
+    max-width: 79%;
+    float: right;
+    overflow: hidden;
+    position: absolute;
+}

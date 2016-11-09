@@ -158,8 +158,7 @@ export default class ActorTool extends Tileset {
             <div className='ui simple dropdown top right basic grey below label item'
                  style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%', "minWidth": "50%", top: "-5px" }}>
               <i className='dropdown icon'></i>
-              <span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight}
-                    style={{ 'textOverflow': 'ellipsis', 'maxWidth': '85%', float: 'right', 'overflow': 'hidden' }}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
+              <span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
               <div className='floating ui tiny green label'>
                 {this.props.tilesets.length - 1}
               </div>

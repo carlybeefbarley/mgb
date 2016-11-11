@@ -1051,16 +1051,27 @@ export default class EditCode extends React.Component {
           return
         }
         this.iFrameWindow.contentWindow.document.body.style.overflow = "hidden"
-        const newHeight =
-          Math.max(
-            // +4 the size of the iframe border (2 top / 2 bottom)
-            Math.min(this.iFrameWindow.contentWindow.document.body.offsetHeight + 4, 500),
-            200
-          )
+        // const newHeight =
+        //   Math.max(
+        //     // +4 the size of the iframe border (2 top / 2 bottom)
+        //     Math.min(this.iFrameWindow.contentWindow.document.body.offsetHeight + 4, 500),
+        //     200
+        //   )
 
-        if (parseInt(this.iFrameWindow.getAttribute("height"), 10) == newHeight) {
+          // console.log('newHeight', newHeight)
+
+          const canvas = this.iFrameWindow.contentWindow.document.querySelector("#game")
+
+          const newWidth = canvas ? canvas.offsetWidth : 0
+          const newHeight = canvas ? canvas.offsetHeight : 0
+
+        if (parseInt(this.iFrameWindow.getAttribute("width")) == newWidth
+              && parseInt(this.iFrameWindow.getAttribute("height")) == newHeight
+          ) {
           return
         }
+        console.log(newWidth, newHeight)
+        this.iFrameWindow.setAttribute("width", newWidth + "")
         this.iFrameWindow.setAttribute("height", newHeight + "")
         // keep adjusting
         this.adjustIframe()
@@ -1553,6 +1564,7 @@ export default class EditCode extends React.Component {
               { !docEmpty &&
                 // Code run/stop (body)
                 <div className="content">
+                {/*******
                   <iframe
                     key={ this.state.gameRenderIterationKey }
                     id="iFrame1"
@@ -1560,6 +1572,7 @@ export default class EditCode extends React.Component {
                     sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
                     src="/codeEditSandbox.html">
                   </iframe>
+                ********/}
                   <ConsoleMessageViewer
                     messages={this.state.consoleMessages}
                     gotoLinehandler={this.gotoLineHandler.bind(this)}
@@ -1602,6 +1615,27 @@ export default class EditCode extends React.Component {
               </div>
           </div>
         </div>
+
+        <div style={{position:"absolute"
+        , zIndex: 100, bottom:"0px", backgroundColor:"white", opacity: 0.5
+        }}>
+          <div style={{height:"20px"}}>
+            <button className="ui mini right floated icon button">
+              <i className="minus icon"></i>
+            </button>
+            <button className="ui mini right floated icon button">
+              <i className="remove icon"></i>
+            </button>
+          </div>
+          <iframe
+            key={ this.state.gameRenderIterationKey }
+            id="iFrame1"
+            sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
+            src="/codeEditSandbox.html"
+            frameBorder="0">
+          </iframe>
+        </div>
+
       </div>
     );
   }

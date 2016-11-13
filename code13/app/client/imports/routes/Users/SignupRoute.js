@@ -73,7 +73,7 @@ export default SignupRoute = React.createClass({
       return
 
     this.setState( { isLoading: true } )
-    Accounts.createUser({
+    Accounts.createUser({     // Note that there is server-side validation in /server/CreateUser.js
       email:    email,
       username: username,     // Fixup mshell.sh code was:   _.each(Meteor.users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
       password: password,

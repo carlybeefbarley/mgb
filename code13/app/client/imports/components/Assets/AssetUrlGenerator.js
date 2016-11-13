@@ -12,8 +12,12 @@ const _generateUrlOptions = asset =>
     retval.push( { "msg":"as Tileset-info", "url":"/api/asset/tileset-info/"+asset._id } )
     break
   case 'code':
-    retval.push( { "msg":"as source code", "url":"/api/asset/code/"+asset._id } )
     retval.push( { "msg":"as standalone .html bundle", "url":"/api/asset/code/bundle/"+asset._id } )
+    // fall thru is ok
+  case 'tutorial':
+    retval.push( { "msg":"as raw source code (assetId)", "url":"/api/asset/code/"+asset._id } )
+    if (!asset.isDeleted && asset.name && asset.name !== '')
+      retval.push( { "msg":"as raw source code (user:name)", "url":"/api/asset/code/"+asset.dn_ownerName + ":" + asset.name } )
     break
   case 'map':
     retval.push( { "msg":"as JSON map", "url":"/api/asset/map/"+asset._id })

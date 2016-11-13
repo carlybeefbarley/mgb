@@ -1,50 +1,50 @@
 "use strict"
-var update = require('react-addons-update');
+var update = require('react-addons-update')
 
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import { addJoyrideSteps } from '/client/imports/routes/App'
 
-
-import moment from 'moment';
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js';
-import { templateCode } from './templates/TemplateCode.js';
-import { js_beautify } from 'js-beautify';
-import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js';
+import moment from 'moment'
+import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
+import { templateCode } from './templates/TemplateCode.js'
+import { js_beautify } from 'js-beautify'
+import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js'
 import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
 import CodeFlower from './CodeFlowerModded.js'
 // import tlint from 'tern-lint'
 
 // **GLOBAL*** Tern JS - See comment below...   
-import scoped_tern from "tern";
-window.tern = scoped_tern;   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
+import scoped_tern from "tern"
+window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
 
 
 // Tern 'definition files'
-// import "tern/lib/def";     // Do I need? since I'm doing it differently in next 2 lines...
-import Defs_ecma5 from "./tern/Defs/ecma5.json";
-import Defs_browser from './tern/Defs/browser.json';
+// import "tern/lib/def"     // Do I need? since I'm doing it differently in next 2 lines...
+import Defs_ecma5 from "./tern/Defs/ecma5.json"
+import Defs_browser from './tern/Defs/browser.json'
 
 // external libs moved to SourceTools -> KnownLibs
-// import Defs_phaser from "./tern/Defs/DefsPhaser";
-// import Defs_lodash from "./tern/Defs/DefsLodash";
-// import Defs_sample from "./tern/Defs/Sample.defs.json";
+// import Defs_phaser from "./tern/Defs/DefsPhaser"
+// import Defs_lodash from "./tern/Defs/DefsLodash"
+// import Defs_sample from "./tern/Defs/Sample.defs.json"
 
 
-import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js';
+import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js'
 
 /*
 moved to worker
-import cm_tern_lib_comment from "tern/lib/comment";
+import cm_tern_lib_comment from "tern/lib/comment"
 // es_modules depends on this
-import cm_tern_modules from "tern/plugin/modules";
+import cm_tern_modules from "tern/plugin/modules"
 // adds ES import support to tern
-import cm_tern_es_modules from "tern/plugin/es_modules";
+import cm_tern_es_modules from "tern/plugin/es_modules"
 // extract docs from comment
-import cm_tern_doc_comment from "tern/plugin/doc_comment";
+import cm_tern_doc_comment from "tern/plugin/doc_comment"
 */
 // ?  <script src="/tern/plugin/doc_comment.js"></script>
 
@@ -53,12 +53,12 @@ import InstallMgbTernExtensions from './tern/MgbTernExtensions.js'
 import "codemirror/addon/tern/tern"
 import "codemirror/addon/comment/comment"
 
-import FunctionDescription from './tern/FunctionDescription.js';
-import ExpressionDescription from './tern/ExpressionDescription.js';
-import RefsAndDefDescription from './tern/RefsAndDefDescription.js';
-import TokenDescription from './tern/TokenDescription.js';
+import FunctionDescription from './tern/FunctionDescription.js'
+import ExpressionDescription from './tern/ExpressionDescription.js'
+import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
+import TokenDescription from './tern/TokenDescription.js'
 
-import DebugASTview from './tern/DebugASTview.js';
+import DebugASTview from './tern/DebugASTview.js'
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
 
@@ -93,8 +93,8 @@ export default class EditCode extends React.Component {
   // }
 
   constructor(props) {
-    super(props);
-    this.fontSizeSettingIndex = undefined;
+    super(props)
+    this.fontSizeSettingIndex = undefined
     window.mgb_edit_code = this
     // save jshint reference - so we can kill it later
     this.jshintWorker = null
@@ -125,7 +125,7 @@ export default class EditCode extends React.Component {
   handleJsBeautify() {
     let newValue = js_beautify(this._currentCodemirrorValue, {indent_size: 2})
     this.codeMirror.setValue(newValue)
-    this._currentCodemirrorValue = newValue;
+    this._currentCodemirrorValue = newValue
     let newC2 = {src: newValue}
     this.handleContentChange(newC2, null, `Beautify code`)
   }
@@ -150,7 +150,7 @@ export default class EditCode extends React.Component {
     // CodeMirror setup
     const textareaNode = this.refs.textarea
     let cmOpts = {
-      mode: "jsx",
+      mode: (this.props.asset.kind === 'tutorial') ? 'json' : 'jsx',
       // change theme for read only?
       theme: "eclipse",
       styleActiveLine: true,
@@ -183,28 +183,28 @@ export default class EditCode extends React.Component {
           return this.codeEditShowHint(cm)
         },
         "Ctrl-I": (cm) => {
-          this.ternServer.showType(cm);
+          this.ternServer.showType(cm)
         },
         "Ctrl-D": (cm) => {
-          this.ternServer.showDocs(cm);
+          this.ternServer.showDocs(cm)
         },
         "Alt-J": (cm) => {
-          this.ternServer.jumpToDef(cm);
+          this.ternServer.jumpToDef(cm)
         },
         "Ctrl-B": (cm) => {
-          this.handleJsBeautify(cm);
+          this.handleJsBeautify(cm)
         },
         "Alt-,": (cm) => {
-          this.ternServer.jumpBack(cm);
+          this.ternServer.jumpBack(cm)
         },
         "Ctrl-Q": (cm) => {
-          this.ternServer.rename(cm);
+          this.ternServer.rename(cm)
         },
         "Ctrl-S": (cm) => {
-          this.ternServer.selectName(cm);
+          this.ternServer.selectName(cm)
         },
         "Ctrl-O": (cm) => {
-          cm.foldCode(cm.getCursor());
+          cm.foldCode(cm.getCursor())
         },
         "Ctrl-/": (cm) => {
           cm.execCommand("toggleComment")
@@ -221,35 +221,35 @@ export default class EditCode extends React.Component {
 
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
     this.codeMirror.on('cursorActivity', this.codeMirrorOnCursorActivity.bind(this, false))
-    this.codeMirror.on('dragover', this.handleDragOver.bind(this));
-    this.codeMirror.on('drop', this.handleDropAsset.bind(this));
+    this.codeMirror.on('dragover', this.handleDragOver.bind(this))
+    this.codeMirror.on('drop', this.handleDropAsset.bind(this))
 
-    this._currentCodemirrorValue = this.props.asset.content2.src || '';
+    this._currentCodemirrorValue = this.props.asset.content2.src || ''
 
     this.codeMirrorUpdateHintsChanged()
 
-    this.codeMirror.getWrapperElement().addEventListener('wheel', this.handleMouseWheel.bind(this));
+    this.codeMirror.getWrapperElement().addEventListener('wheel', this.handleMouseWheel.bind(this))
 
     this.codeMirror.setSize("100%", "500px")
 
     // Resize Handler - a bit complicated since we want to use to end of page
     // TODO: Fix this properly using flexbox/stretched so the content elements stretch to take remaining space.
     //       NOTE that the parent elements have the wrong heights because of a bunch of cascading h=100% styles. D'oh.
-    var ed = this.codeMirror;
+    var ed = this.codeMirror
     this.edResizeHandler = e => {
       let $sPane = $(".CodeMirror")
       let h = window.innerHeight - ( 16 + $sPane.offset().top )
       let hpx = h.toString() + "px"
       ed.setSize("100%", hpx)
-      $(".mgbAccordionScroller").css("max-height", hpx);
-      $(".mgbAccordionScroller").css("overflow-y", "scroll");
+      $(".mgbAccordionScroller").css("max-height", hpx)
+      $(".mgbAccordionScroller").css("overflow-y", "scroll")
     }
     $(window).on("resize", this.edResizeHandler)
-    this.edResizeHandler();
+    this.edResizeHandler()
 
     this.updateDocName()
   }
-  startTernServer(){
+  startTernServer() {
     // Tern setup
     var myTernConfig = {
       // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
@@ -261,7 +261,7 @@ export default class EditCode extends React.Component {
         // We are provided fields like
         //   name, type     ... pretty reliably
         //   doc, url       ... sometimes (depending on dataset)
-        const doc = curData.doc ? curData.doc : '';
+        const doc = curData.doc ? curData.doc : ''
         return doc + (doc ? "\n\n" + curData.type : "")
       },
       // TODO: is there a simple "meteor" way to get these files from node_modules???
@@ -317,11 +317,11 @@ export default class EditCode extends React.Component {
       this.ternServer.worker.postMessage({type: "add", name, text, replace})
     }
     this.ternServer.server.getAstFlowerTree = (options, callback, filename = this.props.asset.name) => {
-      if(!options.filename){
+      if (!options.filename) {
         options.filename = filename
       }
       const getAstFlowerTree = (e) => {
-        if(e.data.type != "flower"){
+        if (e.data.type != "flower") {
           return
         }
         this.ternServer.worker.removeEventListener("message", getAstFlowerTree)
@@ -340,14 +340,14 @@ export default class EditCode extends React.Component {
       this.showError(errors)
     })
 
-    InstallMgbTernExtensions(tern);
+    InstallMgbTernExtensions(tern)
   }
   // update file name - to correctly report 'part of'
-  updateDocName(){
+  updateDocName() {
 
-    if(this.codeMirror && this.lastName !== this.props.asset.name){
+    if (this.codeMirror && this.lastName !== this.props.asset.name) {
       const doc = this.codeMirror.getDoc()
-      if(this.ternServer && doc) {
+      if (this.ternServer && doc) {
         this.ternServer.delDoc(doc)
         this.ternServer.addDoc(this.props.asset.name, doc)
         this.lastName = this.props.asset.name
@@ -366,24 +366,24 @@ export default class EditCode extends React.Component {
 
     this.terminateWorkers()
 
-    if(this.changeTimeout){
+    if (this.changeTimeout) {
       window.clearTimeout(this.changeTimeout)
       this.changeTimeoutFn()
     }
   }
 
-  terminateWorkers(){
-    this.jshintWorker && this.jshintWorker.terminate();
-    this.jshintWorker = null;
+  terminateWorkers() {
+    this.jshintWorker && this.jshintWorker.terminate()
+    this.jshintWorker = null
 
     // this also will terminate worker (if in worker mode)
-    this.ternServer && this.ternServer.destroy();
-    this.ternServer = null;
+    this.ternServer && this.ternServer.destroy()
+    this.ternServer = null
 
-    this.tools && this.tools.destroy();
+    this.tools && this.tools.destroy()
   }
   // used only for debugging purposes
-  restartWorkers(){
+  restartWorkers() {
     // terminate all old workers
     this.terminateWorkers()
     // tern will start tool - and tools will start separate babel worker
@@ -394,17 +394,17 @@ export default class EditCode extends React.Component {
     // update all tools to current state
     this.doFullUpdateOnContentChange()
   }
-  codeEditShowHint(cm){
-    if(this.props.canEdit && this.state.currentToken.type !== "comment")
-      return this.ternServer.complete(cm);
+  codeEditShowHint(cm) {
+    if (this.props.canEdit && this.state.currentToken.type !== "comment")
+      return this.ternServer.complete(cm)
     return CodeMirror.Pass
   }
 
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
       if (this.acTimeout) {
-        window.clearTimeout(this.acTimeout);
-        this.acTimeout = 0;
+        window.clearTimeout(this.acTimeout)
+        this.acTimeout = 0
       }
     this.acTimeout = setTimeout(() => {
       if (this.changeTimeout) {
@@ -413,7 +413,7 @@ export default class EditCode extends React.Component {
       }
       // skip ac in the comments and when user is typing
       if (this.state.currentToken.type !== "comment") {
-        this.ternServer.complete(cm);
+        this.ternServer.complete(cm)
       }
     }, 1000)      // Pop up a helper after a second
 // this.ternServer.getHint(cm, function (hint) 
@@ -428,7 +428,7 @@ export default class EditCode extends React.Component {
     const newVal = nextProps.asset.content2.src
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
       // user is typing - intensively working with document - don't update until it finishes
-      if(this.changeTimeout){
+      if (this.changeTimeout) {
         // console.log("Preventing update! User in action")
         return
       }
@@ -455,7 +455,7 @@ export default class EditCode extends React.Component {
       {fontSize: '14px', lineHeight: '19px'},
       {fontSize: '15px', lineHeight: '19px'},
       {fontSize: '16px', lineHeight: '20px'}
-    ];
+    ]
     if (this.fontSizeSettingIndex === undefined)
       this.fontSizeSettingIndex = 9
 
@@ -474,7 +474,7 @@ export default class EditCode extends React.Component {
       var nfs = fontSizes[this.fontSizeSettingIndex]    // nfs:new font size
       editor.getWrapperElement().style["font-size"] = nfs.fontSize
       editor.getWrapperElement().style["line-height"] = nfs.lineHeight
-      editor.refresh();
+      editor.refresh()
     }
   }
 
@@ -495,7 +495,7 @@ export default class EditCode extends React.Component {
     let customCSSid = "idOfCustomMgbCSSforComments"
     let $sty = $(`#${customCSSid}`)
     $sty && $sty.remove()
-    $('head').append(`<style id="${customCSSid}">.cm-comment { opacity: ${alpha / 100} }</style>`);
+    $('head').append(`<style id="${customCSSid}">.cm-comment { opacity: ${alpha / 100} }</style>`)
   }
 
   // Drag and Drop of Asset onto code area
@@ -555,12 +555,12 @@ export default class EditCode extends React.Component {
     if (event.altKey === false)
       return
 
-    event.preventDefault();     // No default scroll behavior in the cases we handle (alt-)
+    event.preventDefault()     // No default scroll behavior in the cases we handle (alt-)
 
     // WheelDelta system is to handle MacOS that has frequent small deltas,
     // rather than windows wheels which typically have +/- 120
-    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta;
-    let wd = this.mgb_wheelDeltaAccumulator;    // shorthand
+    this.mgb_wheelDeltaAccumulator = (this.mgb_wheelDeltaAccumulator || 0) + event.wheelDelta
+    let wd = this.mgb_wheelDeltaAccumulator    // shorthand
 
     if (Math.abs(wd) > 60) {
       let delta = Math.sign(wd)
@@ -580,10 +580,10 @@ export default class EditCode extends React.Component {
     let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)|(load\.mgbMap)\s*\(\s*["'`]([A-Za-z0-9]+)["'`]\s*(,\s*["'`]\.\/([A-Za-z0-9\/]+)["'`])*\s*\)/g
     let matches = []
     let match
-    while (match = re.exec(lineText) ){
+    while (match = re.exec(lineText) ) {
       // single arg fn
-      if(match[3] === "load.mgbMap"){
-        if(match[5])// second arg
+      if (match[3] === "load.mgbMap") {
+        if (match[5])// second arg
           matches.push({id: match[6], kind: "map", refType: ""}) // :user/:name
         else
           matches.push({id: match[4], kind: "map", refType: "ID#"})
@@ -622,26 +622,26 @@ export default class EditCode extends React.Component {
     const editor = this.codeMirror
     const currentLineNumber = editor.getCursor().line + 1     // +1 since user code is 1...
 
-    const info = editor.getScrollInfo();
-    const after = editor.charCoords({line: currentLineNumber, ch: 0}, "local").top;
+    const info = editor.getScrollInfo()
+    const after = editor.charCoords({line: currentLineNumber, ch: 0}, "local").top
     if (info.top + info.clientHeight < after)
-      editor.scrollTo(null, after - info.clientHeight + 3);
+      editor.scrollTo(null, after - info.clientHeight + 3)
   }
 
-  runJSHintWorker(code, cb){
+  runJSHintWorker(code, cb) {
 
     // terminate old busy worker - as jshint can take a lot time on huge scripts
     if (this.jshintWorker && this.jshintWorker.isBusy) {
-      this.jshintWorker.terminate();
-      this.jshintWorker = null;
+      this.jshintWorker.terminate()
+      this.jshintWorker = null
     }
 
     if (!this.jshintWorker) {
       // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
-      const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js");
+      const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js")
 
       worker.onmessage = (e) => {
-        worker.isBusy = false;
+        worker.isBusy = false
         // merge arrays ???
         this.showErrors(e.data[0], true)
         cb && cb(e.data[0])
@@ -675,7 +675,7 @@ export default class EditCode extends React.Component {
     this.jshintWorker.postMessage([code, conf])
   }
 
-  showErrors(errors, clear){
+  showErrors(errors, clear) {
     // TODO: allow user to change error level? Warning / Error?
     if (clear) {
       this.codeMirror.clearGutter("CodeMirror-lint-markers")
@@ -686,8 +686,8 @@ export default class EditCode extends React.Component {
       this.showError(errors[i], clear)
     }
   }
-  showError(err, clear){
-    if (!err) return;
+  showError(err, clear) {
+    if (!err) return
     const msgs = this.errorMessageCache
     // get line
     if (!err.line || !clear) {
@@ -734,9 +734,9 @@ export default class EditCode extends React.Component {
     this.codeMirror.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg)
 
     /*
-     var evidence = msg.appendChild(document.createElement("span"));
-     evidence.className = "lint-error-text evidence";
-     evidence.appendChild(document.createTextNode(err.evidence));
+     var evidence = msg.appendChild(document.createElement("span"))
+     evidence.className = "lint-error-text evidence"
+     evidence.appendChild(document.createTextNode(err.evidence))
      */
   }
 
@@ -783,7 +783,7 @@ export default class EditCode extends React.Component {
     // )
     ternServer.updateArgHints(this.codeMirror)
 
-    var functionTypeInfo = null;
+    var functionTypeInfo = null
     const setState = (functionTypeInfo) => {
       if (functionTypeInfo) {
         JsonDocsFinder.getApiDocsAsync({
@@ -823,11 +823,11 @@ export default class EditCode extends React.Component {
         else {
           functionTypeInfo = data
         }
-        setState(functionTypeInfo);
+        setState(functionTypeInfo)
       }, currentCursorPos)     // TODO - We need CodeMirror 5.13.5 so this will work
     }
     else {
-      setState();
+      setState()
     }
 
   }
@@ -925,7 +925,7 @@ export default class EditCode extends React.Component {
 
   cm_updateActivityMarkers() {
     var ed = this.codeMirror
-    ed.clearGutter("mgb-cm-user-markers");
+    ed.clearGutter("mgb-cm-user-markers")
 
     let acts = this.props.activitySnapshots
     _.each(acts, act => {
@@ -985,8 +985,8 @@ export default class EditCode extends React.Component {
   codemirrorValueChanged(doc, change) {
     // Ignore SetValue so we don't bounce changes from server back up to server
     if (change.origin !== "setValue") {
-      const newValue = doc.getValue();
-      this._currentCodemirrorValue = newValue;
+      const newValue = doc.getValue()
+      this._currentCodemirrorValue = newValue
       let newC2 = {src: newValue}
       this.handleContentChange(newC2, null, "Edit code")
       this.codeMirrorUpdateHintsChanged(true)
@@ -1036,7 +1036,7 @@ export default class EditCode extends React.Component {
         return this._consoleAdd(data)
       },
       // In a Phaser game, this is needed to enable screenshots if using WebGL renderer
-      //   game.preserveDrawingBuffer = true;
+      //   game.preserveDrawingBuffer = true
       // OR use Phaser.CANVAS as the renderer
       mgbScreenshotCanvasResponse: function (data) {
         let asset = this.props.asset
@@ -1044,23 +1044,23 @@ export default class EditCode extends React.Component {
         this.handleContentChange(null, asset.thumbnail, "update thumbnail")
       },
 
-      mgbAdjustIframe: function(){
+      mgbAdjustIframe: function() {
         this.adjustIframe()
       }
     }
 
     // iframe can be closed, but still receive something
     if (this.iFrameWindow && source === this.iFrameWindow.contentWindow && data.hasOwnProperty("mgbCmd") && commands[data.mgbCmd]) {
-      commands[data.mgbCmd].call(this, data);
+      commands[data.mgbCmd].call(this, data)
     }
   }
 
   adjustIframe() {
-    if(this.state.isPlaying) {
+    if (this.state.isPlaying) {
 
       window.setTimeout(() => {
 
-        if(!this.state.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body){
+        if (!this.state.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body) {
           return
         }
         this.iFrameWindow.contentWindow.document.body.style.overflow = "hidden"
@@ -1089,7 +1089,7 @@ export default class EditCode extends React.Component {
       })
   }
 
-  setAstThumbnail(){
+  setAstThumbnail() {
     /*this.tools.getAST((list) => {
       /*
         list will contain objects with the following structure :
@@ -1114,7 +1114,7 @@ export default class EditCode extends React.Component {
       ctx.fillStyle = 'rgba(153,204,153,0.2)'
       ctx.fillRect(0,0,250,150)
       ctx.fillStyle = 'black'
-      for(let i=0; i<list.length; i++){
+      for(let i=0; i<list.length; i++) {
         ctx.fillText(list[i].name, 6+(i*12), (i + 1)*16, 244 - i*12)
       }
       this.props.asset.thumbnail = canvas.toDataURL('image/png')
@@ -1124,10 +1124,10 @@ export default class EditCode extends React.Component {
     this.ternServer.server.getAstFlowerTree({
         local: false
       }, (tree) => {
-      //console.log(JSON.stringify(tree, null, "  "));
+      //console.log(JSON.stringify(tree, null, "  "))
 
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / canvas.width * 150);
+      const flower = new CodeFlower("#codeflower", w, w / canvas.width * 150)
 
       flower.update(tree)
 
@@ -1136,39 +1136,39 @@ export default class EditCode extends React.Component {
         // TODO: move this to codeFlower.. flower.toImage(callback)
         this.refs.codeflower.firstChild.setAttribute("xmlns","http://www.w3.org/2000/svg")
 
-        const data = this.refs.codeflower.innerHTML;
+        const data = this.refs.codeflower.innerHTML
 
-        const DOMURL = window.URL || window.webkitURL || window;
+        const DOMURL = window.URL || window.webkitURL || window
 
-        const img = new Image();
-        const svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
-        const url = DOMURL.createObjectURL(svg);
+        const img = new Image()
+        const svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'})
+        const url = DOMURL.createObjectURL(svg)
 
         img.onload = () => {
-          ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height)
           this.props.asset.thumbnail = canvas.toDataURL('image/png')
           this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
 
-          DOMURL.revokeObjectURL(url);
+          DOMURL.revokeObjectURL(url)
         }
-        img.src = url;
-      }, 1000);
-    });
+        img.src = url
+      }, 1000)
+    })
   }
 
-  drawAstFlower(){
+  drawAstFlower() {
     this.ternServer.server.getAstFlowerTree((tree) => {
-      //console.log(JSON.stringify(tree, null, "  "));
+      //console.log(JSON.stringify(tree, null, "  "))
 
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150);
+      const flower = new CodeFlower("#codeflower", w, w / 250 * 150)
       flower.update(tree)
       this.setState({
         astFlowerReady: true
       })
     })
   }
-  drawAstFlowerForThumbnail(){
+  drawAstFlowerForThumbnail() {
     this.ternServer.server.getAstFlowerTree({
         local: true
       }, (tree) => {
@@ -1177,7 +1177,7 @@ export default class EditCode extends React.Component {
         showNames: false,
         onclick: (node) => {
           // make node stay in place
-          node.fixed = true;
+          node.fixed = true
 
           //console.log("node callback: ", node)
           const cm = this.codeMirror
@@ -1186,16 +1186,16 @@ export default class EditCode extends React.Component {
             ch: 0,
             line: 0
           }
-          if(!node.start){
+          if (!node.start) {
             cm.setCursor(pos)
             cm.focus()
             return
           }
           // we need to get line ch from char position
-          let found = false;
+          let found = false
           cm.eachLine((line) => {
-            if(found) return
-            if(node.start >= char && node.start < char + line.text.length){
+            if (found) return
+            if (node.start >= char && node.start < char + line.text.length) {
               pos.ch = node.start - char
               found = true
               return
@@ -1206,28 +1206,28 @@ export default class EditCode extends React.Component {
           cm.setCursor(pos)
           cm.focus()
         }
-      });
+      })
       flower.update(tree)
       this.setState({
         astFlowerReady: true
       })
     })
   }
-  drawAstFlowerFull(){
+  drawAstFlowerFull() {
     this.ternServer.server.getAstFlowerTree({
 
     }, (tree) => {
       const w = $(this.refs.codeflower).width()
       const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
         showNames: true
-      });
+      })
       flower.update(tree)
       this.setState({
         astFlowerReady: true
       })
     })
   }
-  saveAstThumbnail(){
+  saveAstThumbnail() {
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
     canvas.width = 250
@@ -1236,21 +1236,21 @@ export default class EditCode extends React.Component {
     ctx.fillRect(0,0,250,150)
 
     this.refs.codeflower.firstChild.setAttribute("xmlns","http://www.w3.org/2000/svg")
-    const data = this.refs.codeflower.innerHTML;
-    const DOMURL = window.URL || window.webkitURL || window;
+    const data = this.refs.codeflower.innerHTML
+    const DOMURL = window.URL || window.webkitURL || window
 
-    const img = new Image();
-    const svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
-    const url = DOMURL.createObjectURL(svg);
+    const img = new Image()
+    const svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'})
+    const url = DOMURL.createObjectURL(svg)
 
     img.onload = () => {
-      ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height)
       this.props.asset.thumbnail = canvas.toDataURL('image/png')
       this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
 
-      DOMURL.revokeObjectURL(url);
+      DOMURL.revokeObjectURL(url)
     }
-    img.src = url;
+    img.src = url
   }
 
   postToIFrame(cmd, data) {
@@ -1290,20 +1290,20 @@ export default class EditCode extends React.Component {
 
 
     // Make sure that it's really visible.. and also auto-close accordion above so there's space.
-    $('.ui.accordion').accordion('close', 0);
-    $('.ui.accordion').accordion('open', 1);
+    $('.ui.accordion').accordion('close', 0)
+    $('.ui.accordion').accordion('open', 1)
   }
 
 
   handleStop() {
     this.setState({
-      gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload(); ?
+      gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload() ?
       isPlaying: false
     })
     window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
   }
-  handleFullScreen(id){
-    if(this.props.canEdit) {
+  handleFullScreen(id) {
+    if (this.props.canEdit) {
       // for editors we could load also sandbox iframe.. but probably it's not the best idea - as dev would like to how looks bundled version also
       //
       const child = window.open('about:blank', "Bundle")
@@ -1311,7 +1311,7 @@ export default class EditCode extends React.Component {
 <h1>Creating bundle</h1>
 <p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>
     `)
-      if(!this.props.asset.bundle) {
+      if (!this.props.asset.bundle) {
         this.createBundle(() => {
           child.location = `/api/asset/code/bundle/${id}`
         })
@@ -1324,20 +1324,20 @@ export default class EditCode extends React.Component {
       window.open(`/api/asset/code/bundle/${id}`, "Bundle")
     }
   }
-  createBundle(cb){
-    if(this.state.creatingBundle){
+  createBundle(cb) {
+    if (this.state.creatingBundle) {
       console.log("creating bundle")
       cb && cb()
       return
     }
-    if(this.props.canEdit) {
+    if (this.props.canEdit) {
       this.setState({
         creatingBundle: true
       })
       this.tools.createBundle((bundle, notChanged) => {
         // if code contains errors - bundle will fail silently.. don't overwrite good version with empty
         // TODO: error reporting
-        if(bundle && !notChanged){
+        if (bundle && !notChanged) {
           const value = this.codeMirror.getValue()
           const newC2 = {src: value, bundle: bundle}
           this.handleContentChange(newC2, null, `Store code bundle`)
@@ -1355,7 +1355,7 @@ export default class EditCode extends React.Component {
   pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
     let newValue = item.code
     this.codeMirror.setValue(newValue)
-    this._currentCodemirrorValue = newValue;
+    this._currentCodemirrorValue = newValue
     let newC2 = {src: newValue}
     this.handleContentChange(newC2, null, `Template code: ${item.label}`)
   }
@@ -1363,7 +1363,7 @@ export default class EditCode extends React.Component {
   // Note that either c2 or thumnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
-    if(this.changeTimeout){
+    if (this.changeTimeout) {
       // console.log("Timeout cleared")
       window.clearTimeout(this.changeTimeout)
     }
@@ -1378,7 +1378,7 @@ export default class EditCode extends React.Component {
   }
 
   // this is very heavy function - use with care
-  doFullUpdateOnContentChange(){
+  doFullUpdateOnContentChange() {
 
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
@@ -1387,7 +1387,7 @@ export default class EditCode extends React.Component {
       this.runJSHintWorker(val, (errors) => {
         // don't recompile on critical errors
         const critical = errors.find(e => e.code.substr(0, 1) === "E")
-        if(!critical && this.tools){
+        if (!critical && this.tools) {
           // why val here is different?
           const val2 = this.codeMirror.getValue()
           this.tools.collectAndTranspile(val2, this.props.asset.name, () => {
@@ -1396,7 +1396,7 @@ export default class EditCode extends React.Component {
             })
           })
         }
-      });
+      })
 
     })
   }
@@ -1416,8 +1416,6 @@ export default class EditCode extends React.Component {
       return <DebugASTview atCursorMemberParentRequestResponse={this.state.atCursorMemberParentRequestResponse}/>
   }
 
-
-
   toolZoomIn() {
     this.doHandleFontSizeDelta(-1)
   }
@@ -1434,8 +1432,6 @@ export default class EditCode extends React.Component {
     this.doHandleCommentFadeDelta(-1)
   }
   
-  
-  
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
     this.setState( { infoPaneMode: (i+1) % _infoPaneModes.length } )
@@ -1443,7 +1439,7 @@ export default class EditCode extends React.Component {
 
   generateToolbarConfig() {
 
-    return {
+    const config = {
       level: 2,
 
       buttons: [
@@ -1451,7 +1447,7 @@ export default class EditCode extends React.Component {
           name:  'toolToggleInfoPane',
           label: 'Info Panels',
           icon:  'resize horizontal',
-          tooltip: 'Resize Info Pane;',
+          tooltip: 'Resize Info Pane',
           disabled: false,
           level:    1,
           shortcut: 'Ctrl+I'
@@ -1494,6 +1490,33 @@ export default class EditCode extends React.Component {
         }
       ]
     }
+
+    if (this.props.asset.kind === 'tutorial')
+      config.buttons.unshift( {
+        name:  'tryTutorial',
+        label: 'Try Tutorial',
+        icon:  'student',
+        tooltip: 'Try Tutorial',
+        disabled: false,
+        level:    1,
+        shortcut: 'Ctrl+T'
+      })
+    
+    return config
+  }
+
+  tryTutorial() {
+    let loadedSteps = null
+    try {
+      loadedSteps = JSON.parse(this._currentCodemirrorValue)
+    }
+    catch (err)
+    {
+      alert('JSON Parse error: ', err.toString())
+    }
+
+    if (loadedSteps)
+      addJoyrideSteps( loadedSteps.steps, { replace: true } )
   }
 
   render() {
@@ -1551,7 +1574,24 @@ export default class EditCode extends React.Component {
           <div className="mgbAccordionScroller">
             <div className="ui fluid styled accordion">
 
-              { !docEmpty &&
+              { !docEmpty && asset.kind === 'tutorial' && 
+                // Current Line/Selection helper (header)
+                <div className="active title">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />Tutorial Mentor
+                  </span>
+                </div>
+              }
+              { !docEmpty && asset.kind === 'tutorial' && 
+                // Current Line/Selection helper (body)
+                <div className="active content">
+                  <button className='ui small yellow button' onClick={this.tryTutorial.bind(this)}>
+                    <i className='student icon' />Try Tutorial
+                  </button>
+                </div>
+              }
+
+              { !docEmpty && asset.kind === 'code' && 
                 // Current Line/Selection helper (header)
                 <div className="active title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -1559,7 +1599,7 @@ export default class EditCode extends React.Component {
                   </span>
                 </div>
               }
-              { !docEmpty &&
+              { !docEmpty && asset.kind === 'code' && 
                 // Current Line/Selection helper (body)
                 <div className="active content">
                   <TokenDescription
@@ -1608,7 +1648,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
-              { !docEmpty &&
+              { !docEmpty && asset.kind === 'code' && 
                 // Code run/stop (header)                  
                 <div className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -1653,7 +1693,7 @@ export default class EditCode extends React.Component {
                   </span>
                 </div>
               }
-              { !docEmpty &&
+              { !docEmpty && asset.kind === 'code' && 
                 // Code run/stop (body)
                 <div className="content">
                   <iframe
@@ -1669,7 +1709,7 @@ export default class EditCode extends React.Component {
                     clearConsoleHandler={this._consoleClearAllMessages.bind(this) }/>
                 </div>
               }
-              { this.state.astReady &&
+              { this.state.astReady && asset.kind === 'code' && 
                 <div className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />CodeFlower
@@ -1706,8 +1746,8 @@ export default class EditCode extends React.Component {
           </div>
         </div>
         }
-        
+
       </div>
-    );
+    )
   }
 }

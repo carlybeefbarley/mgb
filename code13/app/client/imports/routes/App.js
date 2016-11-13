@@ -39,6 +39,13 @@ const getPagenameFromProps = function(props)
 
 const npColumn1Width = "60px"
 
+let _theAppInstance = null
+
+export const addJoyrideSteps = steps => { 
+  if (_theAppInstance) 
+    _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps) 
+}
+
 export default App = React.createClass({
   mixins: [ReactMeteorData],
   propTypes: {
@@ -70,8 +77,10 @@ export default App = React.createClass({
   },
 
   componentDidMount: function() {
+
     window.onkeyup = this.togglePanelsKeyHandler
     registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
+    _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -464,10 +473,27 @@ export default App = React.createClass({
     if (_.isString(steps))
     {
       // We interpret this as an asset id, e.g cDutAafswYtN5tmRi, and we expect some JSON..
-      const codeUrl = '/api/asset/code/' + steps
-      console.log(`Loading tutorial: '${steps}'`)
+      const codeUrl = '/api/asset/code/' + ( steps.startsWith(':') ? '!vault' + steps : steps)
+      console.log(`Loading tutorial: '${steps}' from ${codeUrl}`)
       fetchAssetByUri(codeUrl)
-        .then(  data => this.addJoyrideSteps(JSON.parse(data).steps, opts))
+        .then(  data => {
+          let loadedSteps = null
+          try {
+            loadedSteps = JSON.parse(data)
+          }
+          catch (err)
+          {
+            const msg = `Unable to parse JSON for tutorial at '${codeUrl}: ${err.toString()}`
+            alert(msg)
+            console.error(msg)
+            loadedSteps = null
+          }
+          if (loadedSteps)
+          {
+//            loadedSteps._loadedAs = steps // the original string we were given eg :tutorials.00example
+            this.addJoyrideSteps(loadedSteps.steps, opts)
+          }
+        })
         .catch( err => console.error(`Unable to start tutorial '${steps}': ${err.toString()}`) )
       return
     }

@@ -216,6 +216,16 @@ export const AssetKinds = {
     description: "Game rules, start location, and play statistics",
     explanation: 'The Game Asset lets you choose options for your game, and specify which ActorMap or Code Asset is the start of the game. Game Assets are also used to publish your game so others can find it, and to store play information such as play counts, analytics, high scores, game saves etc.'
   },
+  "tutorial": {
+    name: "Tutorial",
+    selfPlural: false,
+    disable: false,
+    longName: "Tutorial definition",
+    icon: "student",
+    requiresUserRole: null,
+    description: "Tutorial",
+    explanation: 'Tutorials in MGB are JSON files. You can see how the built-in tutorials work, or make your own to share'
+  },  
   // PURGED FROM DB 9/24/2016
   // "_mgbui": {
   //   name: "MGB UI",

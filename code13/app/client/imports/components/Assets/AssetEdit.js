@@ -13,6 +13,7 @@ import EditUnknown from './EditUnknown'
 
 const editElementsForKind = {
   'graphic':   EditGraphic,
+  'tutorial':  EditCode,
   'code':      EditCode,
   'map':       EditMap,
   'actormap':  EditActorMap,

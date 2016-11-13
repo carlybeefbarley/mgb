@@ -110,6 +110,9 @@ export default class Mage extends React.Component {
     if (!this._mageCanvas)
       return
 
+    if (this.props.playCountIncFn)
+      this.props.playCountIncFn()
+
     this._game = new MagePlayGame()
     this._game.startGame(
       this.state.activeMap, 
@@ -420,7 +423,8 @@ Mage.propTypes = {
   startMapName:     PropTypes.string.isRequired,      // eg 'mechanix.start map'
   isPaused:         PropTypes.bool.isRequired,        // If true, game is paused... doh
   fetchAssetByUri:  PropTypes.func.isRequired,        // A function that can asynchronously load an asset by (assetid). returns a Promise
-  hideButtons:      PropTypes.bool                    // If true, then don't show the standard buttons. This implies autoplay..
+  hideButtons:      PropTypes.bool,                   // If true, then don't show the standard buttons. This implies autoplay..
+  playCountIncFn:   PropTypes.func                    // If provided, call it back (no params) to increment the play count. The function will handle debounce and other stuff
 }
 
 // TODO: showNpcMessage({message:"Use the arrow keys to move/push and 'Enter' to shoot (if allowed)", leftActor:playerActor})

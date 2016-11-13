@@ -22,7 +22,7 @@ import '/server/imports/publications/publications'
 import './EmailTemplates'
 import './CreateUser'
 import '/server/imports/restApi'
-import '/server/imports/jobs/mgb1Importer'
+import '/server/imports/jobs'
 
 
 // Create fixtures on first time app is launched (useful for dev/test)
@@ -44,7 +44,6 @@ Meteor.startup(function () {
 
   if (Meteor.isProduction)
     Meteor.call('Slack.MGB.productionStartup')
-
 
   Accounts.onLogin(userHasLoggedIn)
   

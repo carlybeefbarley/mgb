@@ -2,25 +2,28 @@ import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
 
 
+
 // get code by id - tmp used for es6 import
 RestApi.addRoute('asset/code/:id', {authRequired: false}, {
   get: function () {
-    let content;
-    let asset = Azzets.findOne(this.urlParams.id)
-    if(!asset){
-      return {
-        statusCode: 404,
-        body: {} // body required to correctly show 404 not found header
-      }
-    }
-    content = asset.content2.src;
+    const id = this.urlParams.id
+    const idParts = id.split(':')
 
-    if(content) {
+    const asset = idParts.length === 2 ? 
+      Azzets.findOne( { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false } ) :  // owner:name
+      Azzets.findOne(this.urlParams.id)                                   // id (e.g cDutAafswYtN5tmRi)
+
+    if (!asset)
+      return { statusCode: 404, body: {} } // body required to correctly show 404 not found header
+    
+    const content = asset.content2.src
+
+    if (content) {
       return {
         statusCode: 200,
-        headers: {'Content-Type': "text/plain", 'file-name': asset.name},
+        headers: { 'Content-Type': "text/plain", 'file-name': asset.name },
         body: content
-      };
+      }
     }
     else {
       return {

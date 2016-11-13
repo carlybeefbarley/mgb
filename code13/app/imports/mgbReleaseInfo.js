@@ -13,12 +13,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Sun Nov 13 2016 00:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun Nov 13 2016 12:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2011'
+        'iteration': '2014'
       },
 
       'releaseManagement': {
@@ -26,6 +26,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'game.statistics',
+          'type': 'feature',
+          'changeName': 'GamePlays counter enabled',
+          'changeSummary': 'The Game Asset now counts plays when the game is played in the game browser (not in the actorMap/Code editors)',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'asset.tutorials',
           'type': 'feature',

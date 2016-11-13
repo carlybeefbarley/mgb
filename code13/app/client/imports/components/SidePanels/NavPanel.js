@@ -2,6 +2,10 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { getFeatureLevel } from '/imports/schemas/settings-client'
+import { utilPushTo } from '/client/imports/routes/QLink'
+
 import npHome from './npHome'
 import npPlay from './npPlay'
 import npLearn from './npLearn'
@@ -10,8 +14,6 @@ import npPeople from './npPeople'
 import npHistory from './npHistory'
 import npProjects from './npProjects'
 import urlMaker from '/client/imports/routes/urlMaker'
-import { utilPushTo } from '/client/imports/routes/QLink'
-import { getFeatureLevel } from '/imports/schemas/settings-client'
 
 const _npFeatureLevelHideWords = 4
 
@@ -196,8 +198,11 @@ export default NavPanel = React.createClass({
     const ElementNP = navPanelChoice.el    // Can be null
     const npFeatureLevel = getFeatureLevel(this.context.settings, 'toolbar-level-NavPanel') || 2
 
+    if (navPanelIsVisible && ElementNP !== null)
+      joyrideCompleteTag(`mgbjr-CT-navPanel-${navPanelChoice.tag}-show`)
+
     return (
-      <div className="basic segment mgbNavPanel" style={panelStyle}>
+      <div id='mgbjr-navPanelIcons' className="basic segment mgbNavPanel" style={panelStyle}>
 
         <div className="ui inverted attached vertical icon menu" style={miniNavStyle}>
           { navPanelViews.map(v => {
@@ -213,6 +218,7 @@ export default NavPanel = React.createClass({
             return (
               <div
                 key={v.tag}
+                id={`mgbjr-navPanelIcons-${v.tag}`}
                 className={actv + 'item animated fadeInLeft'}
                 title={v.name}
                 style={miniNavItemStyle}

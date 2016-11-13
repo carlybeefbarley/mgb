@@ -16,7 +16,7 @@ const keyModifiers = {
 const sliderPcts = {
   iconSizeBreak1:  0.25,
   iconSizeBreak2:  0.66,
-  tooltipSlowdown: 0.5
+  tooltipSlowdown: 0.95
 }
 
 // Here is a list of *known* toolbar scope names & Max Values. 

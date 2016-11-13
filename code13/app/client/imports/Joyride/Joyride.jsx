@@ -11,7 +11,7 @@ import Tooltip from './Tooltip'
 
 export const joyrideCompleteTag = tagString => {
   const event = new CustomEvent('mgbCompletionTag', { 'detail': tagString } )
-  window.dispatchEvent(event)
+  setTimeout(() => { window.dispatchEvent(event) }, 0) // Prevent setState during render if this was called due to render
 }
 
 const defaultState = {
@@ -429,12 +429,12 @@ export default class Joyride extends React.Component {
     let hasSteps
 
     if (state.showTooltip) {
-      if ([13, 27, 32, 38, 40].indexOf(intKey) > -1)
+      if ([13, 27, 38, 40].indexOf(intKey) > -1)
         e.preventDefault()
 
       if (intKey === 27)
         this.toggleTooltip(false, state.index + 1, 'esc')
-      else if ([13, 32].indexOf(intKey) > -1) {
+      else if ([13].indexOf(intKey) > -1) {
         hasSteps = Boolean(steps[state.index + 1]);
         this.toggleTooltip(hasSteps, state.index + 1, 'next');
       }
@@ -613,7 +613,7 @@ export default class Joyride extends React.Component {
       showTooltip: show,
       index: newIndex,
       position: undefined,
-      redraw: !show,
+      redraw: true, //!show,
       xPos: -1000,
       yPos: -1000
     }, () => {
@@ -706,7 +706,7 @@ export default class Joyride extends React.Component {
     const rect = target.getBoundingClientRect()
     let position = step.position;
 
-//    this.logger('joyride:calcPosition', ['step:', step, 'component:', component, 'rect:', rect])
+    this.logger('joyride:calcPosition', ['step:', step, 'component:', component, 'rect:', rect])
 
     if (/^left/.test(position) && rect.left - (component.width + tooltipOffset) < 0)
       position = 'top'

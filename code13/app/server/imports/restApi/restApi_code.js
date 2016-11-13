@@ -1,7 +1,7 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
 
-
+const _retval404 = { statusCode: 404, body: {} }   // body required to correctly show 404 not found header
 
 // get code by id - tmp used for es6 import
 RestApi.addRoute('asset/code/:id', {authRequired: false}, {
@@ -14,7 +14,7 @@ RestApi.addRoute('asset/code/:id', {authRequired: false}, {
       Azzets.findOne(this.urlParams.id)                                   // id (e.g cDutAafswYtN5tmRi)
 
     if (!asset)
-      return { statusCode: 404, body: {} } // body required to correctly show 404 not found header
+      return _retval404 
     
     const content = asset.content2.src
 
@@ -25,31 +25,26 @@ RestApi.addRoute('asset/code/:id', {authRequired: false}, {
         body: content
       }
     }
-    else {
-      return {
-        statusCode: 404,
-        body: {}
-      }
-    }
+    else
+      return _retval404
   }
 })
 
 // used in codeEdit - import X from '/codeName' - referrer is added automatically
 RestApi.addRoute('asset/code/:referrer/:name', {authRequired: false}, {
-  get: function(){
+  get: function() {
     const referrer = Azzets.findOne(this.urlParams.referrer);
     const asset = Azzets.findOne({owner: referrer.owner, name: this.urlParams.name})
-    if(asset) {
+    if (asset) {
       return {
         statusCode: 200,
         // filename header - idea is to tell e.g. ajax asset name
         headers: {'Content-Type': "text/plain", 'file-name': asset.name},
         body: asset.content2.src || "\n" // without new line API returns JSON
-      };
+      }
     }
-    else{
-      return {statusCode: 404,body: {}} // body required to correctly show 404 not found header}
-    }
+    else
+      return _retval404
   }
 })
 
@@ -69,22 +64,21 @@ RestApi.addRoute('asset/code/:referrer/:owner/:name', {authRequired: false}, {
 
     const asset = Azzets.findOne({dn_ownerName: this.urlParams.owner, name: this.urlParams.name})
 
-    if(asset) {
+    if (asset) {
       return {
         statusCode: 200,
         headers: {'Content-Type': "text/plain", 'file-name': asset.name},
         body: asset.content2.src
-      };
+      }
     }
-    else{
-      return {statusCode: 404}
-    }
+    else
+     return _retval404
   }
 })
 
 const _makeBundle = asset => {
   if (!asset)
-    return { statusCode: 404 }
+    return _retval404
   
   const { bundle } = asset.content2
   // reload page after 1 second - as bundle may be on the way to the server

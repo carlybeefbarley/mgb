@@ -281,36 +281,22 @@ export default class Joyride extends React.Component {
   parseSteps(steps) {
     const newSteps = []
     let tmpSteps = []
-    let el
 
     if (Array.isArray(steps)) {
       steps.forEach((s) => {
         if (s instanceof Object)
           tmpSteps.push(s)
-      });
+      })
     }
     else
       tmpSteps = [steps]
 
     tmpSteps.forEach((s) => {
-      if (s.selector.dataset && s.selector.dataset.reactid) {
-        s.selector = `[data-reactid="${s.selector.dataset.reactid}"]`;
-        console.warn('Deprecation warning: React 15.0 removed reactid. Update your code.'); //eslint-disable-line no-console
-      }
-      else if (s.selector.dataset) {
-        console.error('Unsupported error: React 15.0+ don\'t write reactid to the DOM anymore, please use a plain class in your step.', s); //eslint-disable-line no-console
-        if (s.selector.className) {
-          s.selector = `.${s.selector.className.replace(' ', '.')}`;
-        }
-      }
-
-      el = document.querySelector(s.selector);
-      s.position = s.position || 'top';
-      newSteps.push(s);
-
-      if (!el)
-        console.warn('joyride:parseSteps', 'Target not rendered. For best results only add steps after they are mounted.', s) //eslint-disable-line no-console
-    });
+      if (!s.selector)
+        s.selector = '#mgbjr-navPanelIcons-home'  // safe default
+      s.position = s.position || 'bottom'
+      newSteps.push(s)
+    })
 
     return newSteps;
   }
@@ -798,7 +784,16 @@ export default class Joyride extends React.Component {
       if (!state.tooltip) {
         if (['continuous', 'guided'].indexOf(type) > -1) {
 
-          if (currentStep.awaitCompletionTag)
+          if (currentStep.content && currentStep.content.type === 'code') {
+            const code = currentStep.content.content
+            if (!code)
+              console.error('missing content at step ', state.index)
+            else
+            {
+              buttons.primary = (<span onClick={(e) => { $(e.target).text('COMING SOON') } }>Insert Code</span>)
+            }
+          }
+          else if (currentStep.awaitCompletionTag)
             buttons.primary = (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)
           else
           {

@@ -41,9 +41,14 @@ const npColumn1Width = "60px"
 
 let _theAppInstance = null
 
-export const addJoyrideSteps = steps => { 
+export const addJoyrideSteps = (steps, opts) => { 
   if (_theAppInstance) 
-    _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps) 
+    _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts) 
+}
+
+export const joyrideDebugEnable = joyrideDebug => {
+  if (_theAppInstance) 
+    _theAppInstance.setState( { joyrideDebug } )
 }
 
 export default App = React.createClass({
@@ -111,7 +116,8 @@ export default App = React.createClass({
       activityHistoryLimit: 11,
 
       // For react-joyride
-      joyrideSteps: []
+      joyrideSteps: [],
+      joyrideDebug: false
     }
   },
 
@@ -167,7 +173,7 @@ export default App = React.createClass({
 
   render() {
 
-    const { fNavPanelIsOverlay, showToast, toastMsg, toastType } = this.state
+    const { fNavPanelIsOverlay, showToast, toastMsg, toastType, joyrideDebug } = this.state
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
 
@@ -242,7 +248,7 @@ export default App = React.createClass({
           type="continuous"
           callback={this.handleJoyrideCallback}
           preparePageHandler={this.joyridePreparePageHandler}
-          debug={false} />
+          debug={joyrideDebug} />
 
         <div>
             <NavPanel

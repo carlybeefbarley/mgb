@@ -118,7 +118,7 @@ export default class Joyride extends React.Component {
     listeners.mgbCompletionTag = (e) => { 
       const step = this.props.steps[this.state.index]
       
-      if (this._ctDebugSpew)  // enable using console if you want this noise:   m.jr._ctDebugSpew = true
+      if (this._ctDebugSpew || this.props.debug)  // enable using console if you want this noise:   m.jr._ctDebugSpew = true
         this.logger('joyride:listeners.mgbCompletionTag  received: ', ['e.detail', e.detail ], false, true)
       
       if (step && step.awaitCompletionTag && step.awaitCompletionTag === e.detail)
@@ -511,6 +511,13 @@ export default class Joyride extends React.Component {
       e.preventDefault()
       e.stopPropagation()
       const tooltip = document.querySelector('.joyride-tooltip')
+      if (dataType === 'next' && steps[state.index] && steps[state.index].code)
+      {
+        const code = steps[state.index].code
+        this.logger(`joyride:onClickTooltip: next-code`, ['step.code:', steps[state.index].code ] )
+        const event = new CustomEvent('mgbjr-stepAction-appendCode', { 'detail': code } )
+        window.dispatchEvent(event)
+      }
       if (dataType === 'next' && steps[state.index] && steps[state.index].awaitCompletionTag)
       {
         // a step.awaitCompletionTag property such as 
@@ -784,14 +791,8 @@ export default class Joyride extends React.Component {
       if (!state.tooltip) {
         if (['continuous', 'guided'].indexOf(type) > -1) {
 
-          if (currentStep.content && currentStep.content.type === 'code') {
-            const code = currentStep.content.content
-            if (!code)
-              console.error('missing content at step ', state.index)
-            else
-            {
-              buttons.primary = (<span onClick={(e) => { $(e.target).text('COMING SOON') } }>Insert Code</span>)
-            }
+          if (currentStep.code) {
+            buttons.primary = (<span>Insert Code</span>)
           }
           else if (currentStep.awaitCompletionTag)
             buttons.primary = (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)

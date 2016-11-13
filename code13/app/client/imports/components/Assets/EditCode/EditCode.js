@@ -6,7 +6,7 @@ import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
-import { addJoyrideSteps } from '/client/imports/routes/App'
+import { addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
 
 import moment from 'moment'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
@@ -73,9 +73,10 @@ let showDebugAST = false    // Handy thing while doing TERN dev work
 const CHANGES_DELAY_TIMEOUT = 750
 
 const _infoPaneModes = [
-  { col1: 'ten',     col2: 'six' },
-  { col1: 'sixteen', col2: null  },
-  { col1: 'six',     col2: 'ten' },
+  { col1: 'ten',     col2: 'six'   },
+  { col1: 'sixteen', col2:  null   },
+  { col1: 'six',     col2: 'ten'   },
+  { col1: 'eight',   col2: 'eight' },
 ]
 
 
@@ -132,6 +133,7 @@ export default class EditCode extends React.Component {
 
 
   componentDidMount() {
+    
     this.getElementReferences()
     const codeMirrorUpdateHints = this.codeMirrorUpdateHints
     // Debounce the codeMirrorUpdateHints() function
@@ -142,6 +144,22 @@ export default class EditCode extends React.Component {
       codeMirrorUpdateHints.call(this, true)
     }, 100, true)
 
+    this.listeners = {}
+    this.listeners.joyrideCodeAction = event => {
+
+      if (this.props.canEdit)
+      {
+        const newValue = this._currentCodemirrorValue + event.detail
+        this.codeMirror.setValue(newValue)
+        this._currentCodemirrorValue = newValue
+        let newC2 = { src: newValue }
+        this.handleContentChange(newC2, null, `Tutorial appended code`)
+      }
+      else
+        alert("You don't have write access to this code")
+    }
+
+    window.addEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
 
     // Semantic-UI item setup (Accordion etc)
     $('.ui.accordion').accordion({exclusive: false, selector: {trigger: '.title .explicittrigger'}})
@@ -362,6 +380,8 @@ export default class EditCode extends React.Component {
 
   componentWillUnmount() {
     $(window).off("resize", this.edResizeHandler)
+    window.removeEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
+
     // TODO: Destroy CodeMirror editor instance?
 
     this.terminateWorkers()
@@ -1497,7 +1517,15 @@ export default class EditCode extends React.Component {
     }
 
     if (loadedSteps)
+    {
+      joyrideDebugEnable(true)
       addJoyrideSteps( loadedSteps.steps, { replace: true } )
+    }
+  }
+
+  stopTutorial() {
+    joyrideDebugEnable(false)
+    addJoyrideSteps( [], { replace: true } )
   }
 
   render() {
@@ -1568,6 +1596,9 @@ export default class EditCode extends React.Component {
                 <div className="active content">
                   <button className='ui small yellow button' onClick={this.tryTutorial.bind(this)}>
                     <i className='student icon' />Try Tutorial
+                  </button>
+                  <button className='ui small yellow button' onClick={this.stopTutorial.bind(this)}>
+                    <i className='stop icon' />Stop Tutorial
                   </button>
 
                   { previewIdThings && previewIdThings.length > 0 &&

@@ -784,7 +784,7 @@ export default class EditCode extends React.Component {
     ternServer.updateArgHints(this.codeMirror)
 
     var functionTypeInfo = null
-    const setState = (functionTypeInfo) => {
+    const _setState = (functionTypeInfo) => {
       if (functionTypeInfo) {
         JsonDocsFinder.getApiDocsAsync({
             frameworkName: functionTypeInfo.origin,
@@ -814,24 +814,15 @@ export default class EditCode extends React.Component {
       }
     }
 
-
     if (argPos !== -1) {
       ternServer.request(editor, "type", function (error, data) {
-        if (error) {
-          functionTypeInfo = {"error": error}
-        }
-        else {
-          functionTypeInfo = data
-        }
-        setState(functionTypeInfo)
+        functionTypeInfo = error ? { error } : data
+        _setState(functionTypeInfo)
       }, currentCursorPos)     // TODO - We need CodeMirror 5.13.5 so this will work
     }
-    else {
-      setState()
-    }
-
+    else
+      _setState()
   }
-
 
   srcUpdate_GetRelevantTypeInfo() {
     let ternServer = this.ternServer
@@ -849,9 +840,7 @@ export default class EditCode extends React.Component {
       else
         self.setState({atCursorTypeRequestResponse: {data}})
     }, position)
-
   }
-
 
   srcUpdate_GetRefs() {
     let ternServer = this.ternServer
@@ -993,28 +982,19 @@ export default class EditCode extends React.Component {
     }
   }
 
-
   componentDidUpdate() {
     this.getElementReferences()
     this.cm_updateActivityMarkers()
     this.updateDocName()
   }
 
-
   getElementReferences() {
     this.iFrameWindow = document.getElementById("iFrame1")
   }
 
-
-
   _consoleClearAllMessages() {
     this.setState({consoleMessages: []})
   }
-
-
-
-
-
 
   _consoleAdd(data) {
     // Using immutability helpers as described on https://facebook.github.io/react/docs/update.html
@@ -1022,7 +1002,6 @@ export default class EditCode extends React.Component {
     this.setState({consoleMessages: newMessages})
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
   }
-
 
   _handle_iFrameMessageReceiver(event) {
     // Message receivers like this can receive a lot of crap from malicious windows
@@ -1122,8 +1101,8 @@ export default class EditCode extends React.Component {
     })*/
 
     this.ternServer.server.getAstFlowerTree({
-        local: false
-      }, (tree) => {
+      local: false
+    }, (tree) => {
       //console.log(JSON.stringify(tree, null, "  "))
 
       const w = $(this.refs.codeflower).width()
@@ -1168,6 +1147,7 @@ export default class EditCode extends React.Component {
       })
     })
   }
+
   drawAstFlowerForThumbnail() {
     this.ternServer.server.getAstFlowerTree({
         local: true
@@ -1213,6 +1193,7 @@ export default class EditCode extends React.Component {
       })
     })
   }
+
   drawAstFlowerFull() {
     this.ternServer.server.getAstFlowerTree({
 
@@ -1227,6 +1208,7 @@ export default class EditCode extends React.Component {
       })
     })
   }
+
   saveAstThumbnail() {
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
@@ -1263,7 +1245,6 @@ export default class EditCode extends React.Component {
   _postMessageToIFrame(messageObject) {
     this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
-
 
   /** Start the code running! */
   handleRun() {
@@ -1483,7 +1464,7 @@ export default class EditCode extends React.Component {
           name:  'toolCommentUnFade',
           label: 'UnFade Comments',
           icon:  'sticky note',
-          tooltip: 'UnFade comments so you can see them againt',
+          tooltip: 'UnFade comments so you can see them again',
           disabled: false,
           level:    3,
           shortcut: 'Ctrl+Alt+Shift+F'
@@ -1588,6 +1569,13 @@ export default class EditCode extends React.Component {
                   <button className='ui small yellow button' onClick={this.tryTutorial.bind(this)}>
                     <i className='student icon' />Try Tutorial
                   </button>
+
+                  { previewIdThings && previewIdThings.length > 0 &&
+                    <div className="ui divided selection list">
+                      {previewIdThings}
+                    </div>
+                  }
+                  
                 </div>
               }
 
@@ -1622,9 +1610,9 @@ export default class EditCode extends React.Component {
                   { this.renderDebugAST() }
 
                   { previewIdThings && previewIdThings.length > 0 &&
-                  <div className="ui divided selection list">
-                    {previewIdThings}
-                  </div>
+                    <div className="ui divided selection list">
+                      {previewIdThings}
+                    </div>
                   }
                 </div>
               }

@@ -119,7 +119,7 @@ export default class Joyride extends React.Component {
       const step = this.props.steps[this.state.index]
       
       if (this._ctDebugSpew)  // enable using console if you want this noise:   m.jr._ctDebugSpew = true
-        this.logger('joyride:listeners.mgbCompletionTag  received: ', ['e.detail', e.detail ])  
+        this.logger('joyride:listeners.mgbCompletionTag  received: ', ['e.detail', e.detail ], false, true)
       
       if (step && step.awaitCompletionTag && step.awaitCompletionTag === e.detail)
       {
@@ -369,11 +369,11 @@ export default class Joyride extends React.Component {
    * @param {string|Array} [msg]
    * @param {boolean} [warn]
    */
-  logger(type, msg, warn) {
-    const { debug } = this.props;
+  logger(type, msg, warn, forceShow = false) {
+    const { debug } = this.props
     const logger = warn ? console.warn || console.error : console.log; //eslint-disable-line no-console
 
-    if (debug) {
+    if (debug || forceShow) {
       console.log(`%c${type}`, 'color: #760bc5; font-weight: bold; font-size: 12px;'); //eslint-disable-line no-console
       if (msg)
         logger.apply(console, msg)

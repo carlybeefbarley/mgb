@@ -27,6 +27,8 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
+import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
+
 let G_localSettings = new ReactiveDict()
 
 const getPagenameFromProps = function(props)
@@ -458,6 +460,18 @@ export default App = React.createClass({
 
   addJoyrideSteps: function (steps, opts = {}) {
     let joyride = this.refs.joyride
+
+    if (_.isString(steps))
+    {
+      // We interpret this as an asset id, e.g cDutAafswYtN5tmRi, and we expect some JSON..
+      const codeUrl = '/api/asset/code/' + steps
+      console.log(`Loading tutorial: '${steps}'`)
+      fetchAssetByUri(codeUrl)
+        .then(  data => this.addJoyrideSteps(JSON.parse(data).steps, opts))
+        .catch( err => console.error(`Unable to start tutorial '${steps}': ${err.toString()}`) )
+      return
+    }
+
 
     if (!Array.isArray(steps)) 
       steps = [steps] 

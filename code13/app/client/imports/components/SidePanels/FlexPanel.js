@@ -50,8 +50,7 @@ export default FlexPanel = React.createClass({
     handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for enabling/disabling FlexPanel view
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
     flexPanelWidth:         PropTypes.string.isRequired,  // Typically something like "200px".
-    isSuperAdmin:           PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
-    addJoyrideSteps:        PropTypes.func.isRequired     // See react-joyride comments in App.js
+    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
   },
 
   contextTypes: {
@@ -186,7 +185,6 @@ export default FlexPanel = React.createClass({
                       isSuperAdmin={this.props.isSuperAdmin}
                       subNavParam={this.getSubNavParam()}
                       handleChangeSubNavParam={this.handleChangeSubNavParam}
-                      addJoyrideSteps={this.props.addJoyrideSteps}
                       />
                 }
               </div>

@@ -5,6 +5,7 @@ import { getFeatureLevel, setFeatureLevel } from '/imports/schemas/settings-clie
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
+import { addJoyrideSteps } from '/client/imports/routes/App'
 
 export default fpFeatureLevels = React.createClass({
   mixins: [ReactMeteorData],
@@ -12,8 +13,7 @@ export default fpFeatureLevels = React.createClass({
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px".
-    addJoyrideSteps:        PropTypes.func.isRequired     // See react-joyride comments in App.js
+    panelWidth:             PropTypes.string.isRequired   // Typically something like "200px".
   },
 
   contextTypes: {
@@ -30,7 +30,7 @@ export default fpFeatureLevels = React.createClass({
   },
 
   showFeatureLevelsSlider() {
-    this.props.addJoyrideSteps(':tutorials.site.settings.featureLevels', { replace: true } )
+    addJoyrideSteps(':tutorials.site.settings.featureLevels', { replace: true } )
   },
 
   setLevelFromEvent(name, event) {

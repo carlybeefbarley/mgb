@@ -24,6 +24,7 @@ const sliderPcts = {
 // and offer a global modification choice
 export const expectedToolbarScopeMaxValues = {
   EditGraphic: 10,
+  EditCode: 3,
 //GraphicTools: 21,
   MapTools: 27,
   AudioTools: 25,

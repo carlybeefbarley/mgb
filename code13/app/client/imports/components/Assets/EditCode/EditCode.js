@@ -5,6 +5,7 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
+import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 
 import moment from 'moment';
@@ -48,9 +49,9 @@ import cm_tern_doc_comment from "tern/plugin/doc_comment";
 // ?  <script src="/tern/plugin/doc_comment.js"></script>
 
 
-import InstallMgbTernExtensions from './tern/MgbTernExtensions.js';
-import "codemirror/addon/tern/tern";
-import "codemirror/addon/comment/comment";
+import InstallMgbTernExtensions from './tern/MgbTernExtensions.js'
+import "codemirror/addon/tern/tern"
+import "codemirror/addon/comment/comment"
 
 import FunctionDescription from './tern/FunctionDescription.js';
 import ExpressionDescription from './tern/ExpressionDescription.js';
@@ -70,6 +71,13 @@ let showDebugAST = false    // Handy thing while doing TERN dev work
 // we are delaying heavy jobs for this amount of time (in ms) .. e.g. when user types - there is no need to re-analyze all content on every key press
 // reasonable value would be equal to average user typing speed (chars / second) * 1000
 const CHANGES_DELAY_TIMEOUT = 750
+
+const _infoPaneModes = [
+  { col1: 'ten',     col2: 'six' },
+  { col1: 'sixteen', col2: null  },
+  { col1: 'six',     col2: 'ten' },
+]
+
 
 // Code asset - Data format:
 //
@@ -98,6 +106,7 @@ export default class EditCode extends React.Component {
       isPlaying: false,
       previewAssetIdsArray: [],        // Array of { id: assetIdString, kind: assetKindString } e.g. { id: "asdxzi87q", kind: "graphic" }
 
+      infoPaneMode: 0,                // See _infoPaneModes
       documentIsEmpty: true,          // until loaded
 
       // tern-related stuff:
@@ -1003,6 +1012,10 @@ export default class EditCode extends React.Component {
   }
 
 
+
+
+
+
   _consoleAdd(data) {
     // Using immutability helpers as described on https://facebook.github.io/react/docs/update.html
     let newMessages = update(this.state.consoleMessages, {$push: [data]}).slice(-10)
@@ -1404,6 +1417,85 @@ export default class EditCode extends React.Component {
   }
 
 
+
+  toolZoomIn() {
+    this.doHandleFontSizeDelta(-1)
+  }
+
+  toolZoomOut() {
+    this.doHandleFontSizeDelta(1)
+  }
+
+  toolCommentFade() {
+    this.doHandleCommentFadeDelta(1)
+  }
+
+  toolCommentUnFade() {
+    this.doHandleCommentFadeDelta(-1)
+  }
+  
+  
+  
+  toolToggleInfoPane() {
+    const i = this.state.infoPaneMode
+    this.setState( { infoPaneMode: (i+1) % _infoPaneModes.length } )
+  }
+
+  generateToolbarConfig() {
+
+    return {
+      level: 2,
+
+      buttons: [
+        {
+          name:  'toolToggleInfoPane',
+          label: 'Info Panels',
+          icon:  'resize horizontal',
+          tooltip: 'Resize Info Pane;',
+          disabled: false,
+          level:    1,
+          shortcut: 'Ctrl+I'
+        },
+        {
+          name:  'toolZoomIn',
+          label: 'Zoom In',
+          icon:  'zoom in',
+          tooltip: 'Larger text',
+          disabled: false,
+          level:    2,
+          shortcut: 'Ctrl+L'
+        },
+        {
+          name:  'toolZoomOut',
+          label: 'Zoom Out',
+          icon:  'zoom out',
+          tooltip: 'Smaller Text',
+          disabled: false,
+          level:    2,
+          shortcut: 'Ctrl+P'
+        },
+        {
+          name:  'toolCommentFade',
+          label: 'Fade Comments',
+          icon:  'sticky note outline',
+          tooltip: 'Fade Comments so you can focus on code',
+          disabled: false,
+          level:    3,
+          shortcut: 'Ctrl+Alt+F'
+        },
+        {
+          name:  'toolCommentUnFade',
+          label: 'UnFade Comments',
+          icon:  'sticky note',
+          tooltip: 'UnFade comments so you can see them againt',
+          disabled: false,
+          level:    3,
+          shortcut: 'Ctrl+Alt+Shift+F'
+        }
+      ]
+    }
+  }
+
   render() {
     if (!this.props.asset)
       return null
@@ -1424,6 +1516,10 @@ export default class EditCode extends React.Component {
       </a>
     })
 
+    const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
+
+    const tbConfig = this.generateToolbarConfig()
+
     let asset = this.props.asset
     let docEmpty = this.state.documentIsEmpty
     let isPlaying = this.state.isPlaying
@@ -1436,14 +1532,21 @@ export default class EditCode extends React.Component {
 
     return (
       <div className="ui grid">
-        <div className="ten wide column">
+        <div className={infoPaneOpts.col1 + ' wide column'}>
+
+
+          <div className="row" style={{marginBottom: "6px"}}>
+            {<Toolbar actions={this} config={tbConfig} name="EditCode" />}
+          </div>
+
             <textarea ref="textarea"
                       defaultValue={asset.content2.src}
                       autoComplete="off"
                       placeholder="Start typing code here..."/>
         </div>
 
-        <div className="six wide column">
+        { infoPaneOpts.col2 && 
+        <div className={infoPaneOpts.col2 + ' wide column'}>
 
           <div className="mgbAccordionScroller">
             <div className="ui fluid styled accordion">
@@ -1602,6 +1705,8 @@ export default class EditCode extends React.Component {
               </div>
           </div>
         </div>
+        }
+        
       </div>
     );
   }

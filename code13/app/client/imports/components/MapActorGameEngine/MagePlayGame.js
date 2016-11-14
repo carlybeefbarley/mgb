@@ -247,7 +247,7 @@ export default class MagePlayGame
               }
             }
           }
-          if (floorActor && MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType === MgbActor.alItemActivationType_PushesActors)) {
+          if (floorActor && MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) === MgbActor.alItemActivationType_PushesActors) {
             switch (MgbActor.intFromActorParam(floorActor.content2.databag.item.itemPushesActorType)) {
             case MgbActor.alItemPushesActorType_up:
             case MgbActor.alItemPushesActorType_right:

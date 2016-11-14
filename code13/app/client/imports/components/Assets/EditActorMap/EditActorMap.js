@@ -164,16 +164,19 @@ export default class EditActorMap extends EditMap {
     if (!this.mgb_content2 || !this.cache)
       return null
 
+    const { isLoading, isPlaying, activeLayer, activeTileset } = this.state
+
     const c2 = this.mgb_content2
     return (
       <div className='ui grid' ref="container">
-        { this.state.isLoading && <div className="loading-notification">Working in background...</div> }
+        { isLoading && <div className="loading-notification">Working in background...</div> }
         {this.renderPlayModal()}
         {this.renderMusicModal()}
-        <div className='ten wide column'>
+
+        <div className={ (isPlaying ? 'sixteen' : 'ten') + ' wide column'}>
           <MapToolbar
             {...this.toolbarProps}
-            isPlaying={this.state.isPlaying}
+            isPlaying={isPlaying}
             options={this.options}
             undoSteps={this.mgb_undo}
             redoSteps={this.mgb_redo}
@@ -182,9 +185,9 @@ export default class EditActorMap extends EditMap {
             {...this.mapProps}
             showModal={this.showModal}
             playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
-            isPlaying={this.state.isPlaying}
+            isPlaying={isPlaying}
             cache={this.cache}
-            activeLayer={this.state.activeLayer}
+            activeLayer={activeLayer}
             highlightActiveLayer={c2.meta.highlightActiveLayer}
             canEdit={this.props.canEdit}
             options={this.options}
@@ -193,18 +196,18 @@ export default class EditActorMap extends EditMap {
             asset={this.props.asset}
             ref='map' />
         </div>
-        <div className='six wide column'>
+        <div className={'six wide '+ (isPlaying ? 'hidden' : '') + ' column'}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
             options={c2.meta}
-            activeLayer={this.state.activeLayer}
+            activeLayer={activeLayer}
             />
           <br />
           <EventTool
             {...this.tilesetProps}
             palette={this.cache.tiles}
-            activeTileset={this.state.activeTileset}
+            activeTileset={activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
             />
@@ -212,7 +215,7 @@ export default class EditActorMap extends EditMap {
           <TileSet
             {...this.tilesetProps}
             palette={this.cache.tiles}
-            activeTileset={this.state.activeTileset}
+            activeTileset={activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
             />

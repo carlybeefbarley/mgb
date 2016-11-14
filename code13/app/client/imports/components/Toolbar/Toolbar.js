@@ -23,14 +23,14 @@ const sliderPcts = {
 // This is so that some Settings-style (e.g fpUxLevels.js) can enumerate them all
 // and offer a global modification choice
 export const expectedToolbarScopeMaxValues = {
-  EditGraphic: 10,
-  EditCode: 3,
-//GraphicTools: 21,
-  MapTools: 27,
-  AudioTools: 25,
-  NavPanel: 4,
-  FlexPanel: 4,
-//SkillsMap: 23
+  EditGraphic:   10,
+  EditCode:      4,
+//GraphicTools:  21,
+  MapTools:      27,
+  AudioTools:    25,
+  NavPanel:      4,
+  FlexPanel:     4,
+//SkillsMap:     23
 }
 
 export const expectedToolbarScopeNames = _.keys(expectedToolbarScopeMaxValues)

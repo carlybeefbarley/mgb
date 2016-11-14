@@ -9,7 +9,7 @@ export default class GameScreen extends React.Component {
 
     this.state = {
       isMinimized: false
-      , hidden: true
+      , isHidden: true
     }
     this.screenX = 0
     this.screenY = 0 // px from bottom
@@ -26,6 +26,7 @@ export default class GameScreen extends React.Component {
 
   handleMessage(event){
     // console.log('handle message', event)
+    
     // Message receivers like this can receive a lot of crap from malicious windows
     // debug tools etc, so we have to be careful to filter out what we actually care 
     // about
@@ -59,16 +60,18 @@ export default class GameScreen extends React.Component {
   }
 
   postMessage(messageObject){
+    // console.log(messageObject)
+    if(messageObject.mgbCommand == "startRun") this.setState({ isHidden: false })
     this.getReference()
     this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
 
   minimize(){
-    this.setState({ isMinimized: this.state.isMinimized })
+    this.setState({ isMinimized: !this.state.isMinimized })
   }
 
   close(){
-
+    this.props.handleStop()
   }
 
   adjustIframe() {
@@ -104,10 +107,11 @@ export default class GameScreen extends React.Component {
     return (
       <div style={{position:"absolute"
       , zIndex: 100, bottom:"0px", backgroundColor:"white"
+      , display: this.state.isHidden || !this.props.isPlaying ? "none" : "block"
       }}>
         <div style={{height:"20px"}}>
           <button className="ui mini right floated icon button"
-          onClick={this.minimize.bind(this)}
+          onClick={this.close.bind(this)}
           >
             <i className="remove icon"></i>
           </button>

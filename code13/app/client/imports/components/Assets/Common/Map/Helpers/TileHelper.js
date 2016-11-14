@@ -241,8 +241,9 @@ const TileHelper = {
       tilewidth
     }
   },
-  zeroOutUnreachableTiles: (mapdata, gidCache) => {
 
+  /* fixing something that is broken */
+  zeroOutUnreachableTiles: (mapdata, gidCache) => {
     for(let i=0; i<mapdata.layers.length; i++){
       const layer = mapdata.layers[i]
       if(LayerTypes.isTilemapLayer(layer.type)){
@@ -268,6 +269,7 @@ const TileHelper = {
     }
     TileHelper.fixTilesetGids(mapdata)
   },
+
   fixTilesetGids: (mapdata) => {
     let nextGid = 1
     const changedTiles = {} // map with changed tiles

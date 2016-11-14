@@ -70,6 +70,9 @@ export default ActorHelper = {
     const dd = TileHelper.genNewMap()
     dd.images = {}
     dd.layers = []
+
+
+    // delete data.meta - for testing purposes only
     if (data.meta && data.meta.tilesets)
       dd.tilesets = data.meta.tilesets
     else {
@@ -95,14 +98,21 @@ export default ActorHelper = {
     dd.width = parseInt(data.metadata.width, 10)
 
     const actorMap = {}
-    // last is action layer
+    // last is action layer ( or not anymore??? )
     for (let i=0; i<data.mapLayer.length - 1; i++) {
       for (let j=0; j<data.mapLayer[i].length; j++) {
         let name = data.mapLayer[i][j]
+        if(name.indexOf("jump") > -1 || name.indexOf("music") > -1){
+          console.error(`Action ${name} in the NON action layer`)
+          continue
+        }
         if (name && actorMap[name] === undefined) {
 
-          if (makeInitialTilesets)
-            dd.tilesets.push( { name, firstgid: dd.tilesets.length+1 } )
+          if (makeInitialTilesets) {
+            // actions tileset should be already pushed
+            // assume that we have only 1 image per tileset
+            dd.tilesets.push({name, firstgid: dd.tilesets.length + this.TILES_IN_ACTIONS }) //TileHelper.getNextGid(dd.tilesets[dd.tilesets.length - 1])})
+          }
           // will be filled later
           actorMap[name] = {
             columns: 1,
@@ -152,7 +162,7 @@ export default ActorHelper = {
         }
         for (let j=0; j<data.mapLayer[i].length; j++) {
           const name = data.mapLayer[i][j]
-          layer.data.push(name ? actorMap[name].firstgid : 0)
+          layer.data.push( ( name && actorMap[name] ) ? actorMap[name].firstgid : 0)
         }
         dd.layers.push(layer)
       }

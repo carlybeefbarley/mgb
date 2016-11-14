@@ -662,7 +662,12 @@ export default class MapArea extends React.Component {
 
     this.update()
   }
-
+  generatePreviewAndSaveIt(){
+    window.requestAnimationFrame(() => {
+      const preview = this.generatePreview()
+      this.props.handleSave(null, preview)
+    })
+  }
   // find out correct thumbnail size
   generatePreview() {
     const canvas = document.createElement('canvas')

@@ -132,7 +132,7 @@ export default class DropArea extends React.Component {
   }
 
   renderOptions() {
-    const name = "Predefined Sound"
+    const name = this.props.title || "Builtin samples"
     const options = this.props.options
     return (
       <div className="inline fields">

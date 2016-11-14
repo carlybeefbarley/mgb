@@ -111,6 +111,10 @@ export default class EditActorMap extends EditMap {
     const toSave = ActorHelper.v2_to_v1(data)
     this.lastSave = toSave
 
+    // make sure we always have nice looking thumbnail
+    if(!thumbnail && this.refs.map){
+      this.refs.map.generatePreviewAndSaveIt()
+    }
     this.props.handleContentChange(toSave, thumbnail, reason)
   }
 

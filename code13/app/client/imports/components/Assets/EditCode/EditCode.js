@@ -124,7 +124,6 @@ export default class EditCode extends React.Component {
 
 
   componentDidMount() {
-    // this.getElementReferences()
     const codeMirrorUpdateHints = this.codeMirrorUpdateHints
     // Debounce the codeMirrorUpdateHints() function
     this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
@@ -987,17 +986,9 @@ export default class EditCode extends React.Component {
 
 
   componentDidUpdate() {
-    // this.getElementReferences()
     this.cm_updateActivityMarkers()
     this.updateDocName()
   }
-
-
-  // getElementReferences() {
-  //   this.iFrameWindow = document.getElementById("iFrame1")
-  // }
-
-
 
   _consoleClearAllMessages() {
     this.setState({consoleMessages: []})
@@ -1014,72 +1005,7 @@ export default class EditCode extends React.Component {
 
   _handle_iFrameMessageReceiver(event) {
     this.refs.gameScreen.handleMessage(event)
-  //   // Message receivers like this can receive a lot of crap from malicious windows
-  //   // debug tools etc, so we have to be careful to filter out what we actually care 
-  //   // about
-  //   const source = event.source
-  //   const data = event.data
-
-  //   const commands = {
-  //     mgbConsoleMsg: function (data) {
-  //       return this._consoleAdd(data)
-  //     },
-  //     // In a Phaser game, this is needed to enable screenshots if using WebGL renderer
-  //     //   game.preserveDrawingBuffer = true;
-  //     // OR use Phaser.CANVAS as the renderer
-  //     mgbScreenshotCanvasResponse: function (data) {
-  //       let asset = this.props.asset
-  //       asset.thumbnail = data.pngDataUrl
-  //       this.handleContentChange(null, asset.thumbnail, "update thumbnail")
-  //     },
-
-  //     mgbAdjustIframe: function(){
-  //       this.adjustIframe()
-  //     }
-  //   }
-
-  //   // iframe can be closed, but still receive something
-  //   if (this.iFrameWindow && source === this.iFrameWindow.contentWindow && data.hasOwnProperty("mgbCmd") && commands[data.mgbCmd]) {
-  //     commands[data.mgbCmd].call(this, data);
-  //   }
   }
-
-  // adjustIframe() {
-  //   if(this.state.isPlaying) {
-
-  //     window.setTimeout(() => {
-
-  //       if(!this.state.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body){
-  //         return
-  //       }
-  //       this.iFrameWindow.contentWindow.document.body.style.overflow = "hidden"
-  //       // const newHeight =
-  //       //   Math.max(
-  //       //     // +4 the size of the iframe border (2 top / 2 bottom)
-  //       //     Math.min(this.iFrameWindow.contentWindow.document.body.offsetHeight + 4, 500),
-  //       //     200
-  //       //   )
-
-  //         // console.log('newHeight', newHeight)
-
-  //         const canvas = this.iFrameWindow.contentWindow.document.querySelector("#game")
-
-  //         const newWidth = canvas ? canvas.offsetWidth : 0
-  //         const newHeight = canvas ? canvas.offsetHeight : 0
-
-  //       if (parseInt(this.iFrameWindow.getAttribute("width")) == newWidth
-  //             && parseInt(this.iFrameWindow.getAttribute("height")) == newHeight
-  //         ) {
-  //         return
-  //       }
-  //       console.log(newWidth, newHeight)
-  //       this.iFrameWindow.setAttribute("width", newWidth + "")
-  //       this.iFrameWindow.setAttribute("height", newHeight + "")
-  //       // keep adjusting
-  //       this.adjustIframe()
-  //     }, 1000)
-  //   }
-  // }
 
   handleScreenshotIFrame() {
     if (this.state.isPlaying)
@@ -1624,6 +1550,7 @@ export default class EditCode extends React.Component {
           isPlaying = {this.state.isPlaying}
           consoleAdd = {this._consoleAdd.bind(this)}
           gameRenderIterationKey = {this.state.gameRenderIterationKey}
+          handleContentChange = {this.handleContentChange.bind(this)}
         />
 
       </div>

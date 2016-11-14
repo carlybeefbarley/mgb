@@ -20,13 +20,20 @@ export default class GameScreen extends React.Component {
     this.adjustIframe()
   }
 
+  componentDidUpdate(prevProps, prevState){
+    if(!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized){
+      this.minimize()
+    }
+  }
+
   getReference(){
     this.iFrameWindow = ReactDOM.findDOMNode(this.refs.iFrame1)
+    this.wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
   }
 
   handleMessage(event){
     // console.log('handle message', event)
-    
+
     // Message receivers like this can receive a lot of crap from malicious windows
     // debug tools etc, so we have to be careful to filter out what we actually care 
     // about
@@ -78,7 +85,6 @@ export default class GameScreen extends React.Component {
     if(this.props.isPlaying) {
 
       window.setTimeout(() => {
-
         if(!this.props.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body){
           return
         }
@@ -94,37 +100,41 @@ export default class GameScreen extends React.Component {
           ) {
           return
         }
-        console.log(newWidth, newHeight)
+        // console.log(newWidth, newHeight)
         this.iFrameWindow.setAttribute("width", newWidth + "")
         this.iFrameWindow.setAttribute("height", newHeight + "")
+        this.wrapper.style.width = newWidth + "px"
         // keep adjusting
         this.adjustIframe()
       }, 1000)
+
     }
   }
 
   render(){
     return (
-      <div style={{position:"absolute"
-      , zIndex: 100, bottom:"0px", backgroundColor:"white"
+      <div ref="wrapper" style={{position:"absolute"
+      , zIndex: 100, bottom:"0px", backgroundColor:"white", padding: 0
       , display: this.state.isHidden || !this.props.isPlaying ? "none" : "block"
       }}>
         <div style={{height:"20px"}}>
-          <button className="ui mini right floated icon button"
+          <button title="Close" className="ui mini right floated icon button"
           onClick={this.close.bind(this)}
           >
             <i className="remove icon"></i>
           </button>
           <button className="ui mini right floated icon button"
+          title={this.state.isMinimized ? "Maximize" : "Minimize"}
           onClick={this.minimize.bind(this)}
           >
             <i className={"icon " +(this.state.isMinimized ? "maximize" : "minus")}></i>
           </button>
-          <button className="ui mini right floated icon button">
+          <button title="Drag Window" className="ui mini right floated icon button">
             <i className="move icon"></i>
           </button>
         </div>
         <iframe
+          style={{ display: this.state.isMinimized ? "none" : "block" }}
           key={ this.props.gameRenderIterationKey }
           ref="iFrame1"
           sandbox='allow-modals allow-same-origin allow-scripts allow-popups'

@@ -2,5 +2,5 @@
 
 (
 rm -rf .meteor/local/bundler-cache/
-./go.sh
+./go.sh $@
 )

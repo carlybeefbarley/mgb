@@ -1387,7 +1387,9 @@ export default class EditCode extends React.Component {
   
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
-    this.setState( { infoPaneMode: (i+1) % _infoPaneModes.length } )
+    const newMode = (i+1) % _infoPaneModes.length 
+    // if(!_infoPaneModes[newMode].col2) this.handleStop()
+    this.setState( { infoPaneMode: newMode } )
   }
 
   generateToolbarConfig() {
@@ -1648,12 +1650,14 @@ export default class EditCode extends React.Component {
                         <i className={"stop icon"}></i>&emsp;Stop
                       </a>
                     }
-                    { /* isPlaying &&     // TODO(@shmikucis): fix corner cases (test popup after toolToggleInfoPane() has been invoked; etc)
+                    { /* 
+                      isPlaying &&
                       <a  className='ui tiny icon button' 
                           title='Click here to stop the running program'
                           onClick={this.handleGamePopup.bind(this)}>
                         <i className={"external icon"}></i>&emsp;Popup
-                      </a> */
+                      </a>
+                      */
                     }
                     <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
                       <a  className='ui tiny icon button' 
@@ -1687,6 +1691,7 @@ export default class EditCode extends React.Component {
                     ref="gameScreen"
                     isPopup = {this.state.isPopup}
                     isPlaying = {this.state.isPlaying}
+                    asset = {this.props.asset}
                     consoleAdd = {this._consoleAdd.bind(this)}
                     gameRenderIterationKey = {this.state.gameRenderIterationKey}
                     handleContentChange = {this.handleContentChange.bind(this)}

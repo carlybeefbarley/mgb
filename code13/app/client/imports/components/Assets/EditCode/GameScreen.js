@@ -23,6 +23,7 @@ export default class GameScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState){
+    this.getReference()
     if(!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized){
       this.minimize()
     }

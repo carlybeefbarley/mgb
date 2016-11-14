@@ -30,15 +30,6 @@ const navPanelViews = [
     hideIfNoUser: false,
   },
   {
-    tag: "play",
-    name: "play",
-    icon: "game",
-    hdr: "Play",
-    getDirectUrl: () => (`/play`),
-    el: npPlay,
-    hideIfNoUser: false
-  },
-  {
     tag: "learn",
     name: "learn",
     icon: "student",
@@ -56,6 +47,15 @@ const navPanelViews = [
     el: npCreate,
     hideIfNoUser: false
   },  
+  {
+    tag: "play",
+    name: "play",
+    icon: "game",
+    hdr: "Play",
+    getDirectUrl: () => (`/play`),
+    el: npPlay,
+    hideIfNoUser: false
+  },
   {
     tag: "meet",
     name: "meet",

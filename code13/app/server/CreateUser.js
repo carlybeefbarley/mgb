@@ -1,6 +1,16 @@
 import { Accounts } from 'meteor/accounts-base'
 import validate from '/imports/schemas/validate'
 
+// This is all server-only code
+
+Meteor.methods({
+
+  'AccountsHelp.userNameTaken': function(username) {
+    const u = Accounts.findUserByUsername(username)
+    return u ? u.username : null
+  }
+
+})
 
 Accounts.validateNewUser(function (user) {
 

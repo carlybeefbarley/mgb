@@ -414,9 +414,9 @@ export default class MapArea extends React.Component {
   }
 
   adjustPreview () {
-    if(this.state.isPlaying){
+    if (this.props.isPlaying)
       return
-    }
+    
     if (!this.data.layers)
       this.data.layers = []
 

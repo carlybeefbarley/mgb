@@ -2,7 +2,7 @@
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import MapArea from './ActorMap.js'
+import ActorMapArea from './ActorMap.js'
 
 import InfoTool from '../Common/Map/Tools/InfoTool.js'
 import MapToolbar from './Tools/ActorMapToolbar.js'
@@ -140,27 +140,29 @@ export default class EditActorMap extends EditMap {
     )
   }
 
-  renderMusicModal(){
+  renderMusicModal() {
     return (
       <div className="ui modal" ref="music" style={{position: "absolute"}}>
         <div className="header">Add Music Event</div>
         <div className="content">
-          <MusicForm asset={this.state.musicData} onchange={(v) => {this.setState({event: this.state.musicData})}}/>
+          <MusicForm asset={this.state.musicData} onchange={ () => {this.setState( { event: this.state.musicData } ) } }/>
         </div>
         <div className="actions">
-          <div className="ui approve button">Approve</div>
+          <div className="ui approve button">Confirm</div>
           <div className="ui cancel button">Cancel</div>
         </div>
       </div>
     )
   }
 
+  togglePlayState() { 
+    this.setState( { isPlaying: !this.state.isPlaying } )
+  }
+
   render () {
     // this stuff is required for proper functionality
-    if(!this.mgb_content2 || !this.cache){
+    if (!this.mgb_content2 || !this.cache)
       return null
-    }
-
 
     const c2 = this.mgb_content2
     return (
@@ -176,7 +178,7 @@ export default class EditActorMap extends EditMap {
             undoSteps={this.mgb_undo}
             redoSteps={this.mgb_redo}
           />
-          <MapArea
+          <ActorMapArea
             {...this.mapProps}
             showModal={this.showModal}
             playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}

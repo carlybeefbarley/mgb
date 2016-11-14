@@ -13,12 +13,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Sun Nov 13 2016 17:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun Nov 13 2016 23:50:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2019'
+        'iteration': '2022'
       },
 
       'releaseManagement': {
@@ -31,6 +31,13 @@ const mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Full-width actorMap play preview',
           'changeSummary': 'The ActorMap editor now allows full-width previews when playing the game/map in the level editor',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'bugfix',
+          'changeName': 'Better compat with MGBv1 maps',
+          'changeSummary': 'Fixed bug which prevented maps imported from MGBv1 from working',
           'otherUrls': [ ]
         },
         {

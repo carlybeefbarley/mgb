@@ -665,7 +665,7 @@ export default class MapArea extends React.Component {
   generatePreviewAndSaveIt(){
     window.requestAnimationFrame(() => {
       const preview = this.generatePreview()
-      this.props.handleSave(null, preview)
+      this.props.saveThumbnail(preview)
     })
   }
   // find out correct thumbnail size

@@ -943,6 +943,11 @@ edit[EditModes.eraser] = function (e, up) {
   const pos = this.getTilePosInfo(e)
   const sel = this.props.getSelection()
 
+  if (pos.x < 0 || pos.x > this.options.width - 1 || pos.y < 0 || pos.height > this.options.height - 1) {
+    console.log("Out of bounds...")
+    return
+  }
+
   if (sel.length > 0) {
     if (sel.indexOfId(pos.id) > -1) {
       //this.props.saveForUndo('Delete tile')

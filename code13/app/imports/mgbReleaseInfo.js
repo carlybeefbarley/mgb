@@ -10,7 +10,48 @@
 // For iteration, I just simply use the number of commits (including this) at https://github.com/devlapse/mgb
 
 const mgbReleaseInfo = {
+
+
   'releases': [
+
+
+    {
+      'timestamp': 'Mon Nov 14 2016 12:50:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2042'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'bugfix',
+          'changeName': 'Fixed some actorMap bugs',
+          'changeSummary': 'Fixed initial load of freshly-imported ActorMaps; fix bug preventing change to map size properties box on stamp outside of maps-size; fixed bug causing unexpected cell deletes when erasing outside of map bounds; add ability to select built-in music events. Thanks @jaketor and @Supergirl for finding some good bugs!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'game.actorMap',
+          'type': 'bugfix',
+          'changeName': 'Fixed slider/pusher bugs when playing actorMap games',
+          'changeSummary': 'Fixed slider/pusher bugs when playing actorMap games. Thanks @jaketor for reporting this bug!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'bugfix',
+          'changeName': 'Fixed code bundling bugs',
+          'changeSummary': 'Fixed bugs with code bundler that was preventing some browse -> play game cases',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Sun Nov 13 2016 23:50:00 GMT-0800 (PDT)',

@@ -1315,6 +1315,8 @@ export default class EditCode extends React.Component {
       this.props.handleContentChange(c2, thumbnail, reason)
       this.doFullUpdateOnContentChange()
       this.changeTimeout = null
+      // create bundle after save - be adwised that bundle takes up to 10 seconds to be generated
+      this.createBundle()
     }
 
     this.changeTimeout = window.setTimeout(this.changeTimeoutFn, CHANGES_DELAY_TIMEOUT)

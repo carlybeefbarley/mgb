@@ -139,11 +139,18 @@ const MgbMusic = {
 
     const music = MgbMusic._loadedMusic[musicSource]
     if (music)
-      music.play()
+        // cannnot encode music... let devs know about it, but don't break functionality
+        music.play().catch((e) => {
+          console.error(e)
+        })
     else
     {
       const canplay = function(e) {
-        e.target && e.target.play()
+        try {
+          e.target && e.target.play()
+        }catch(e){
+          console.error(e)
+        }
       }
 
       const newMusic = document.createElement('audio')

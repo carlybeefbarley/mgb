@@ -102,7 +102,8 @@ export default ActorHelper = {
     for (let i=0; i<data.mapLayer.length - 1; i++) {
       for (let j=0; j<data.mapLayer[i].length; j++) {
         let name = data.mapLayer[i][j]
-        if(name.indexOf("jump") > -1 || name.indexOf("music") > -1){
+        // make sure these is not conflicting with real actors - try to load anyway?
+        if(name.indexOf("jump:") > -1 || name.indexOf("music:") > -1){
           console.error(`Action ${name} in the NON action layer`)
           continue
         }

@@ -96,7 +96,7 @@ const _makeBundle = asset => {
   // reload page after 1 second - as bundle may be on the way to the server
   const extraMessage = !!bundle ? '' : `
 <h2>The distribution bundle for this game must be created</h2>
-You can then run/rebuild the source file in the <a href='/u/${asset.dn_ownerName}/asset/${asset._id}'>Code Editor</a> to generate the bundle
+You can then run/rebuild the source file in the <a href='/u/${asset.dn_ownerName}/asset/${asset._id}' target="_top" >Code Editor</a> to generate the bundle
 <script>window.setTimeout(function(){window.location.reload()}, 2000)</script>
 `
     

@@ -29,7 +29,7 @@ const PlayCodeGame = ( { gameId, _codeName, owner } ) =>
   _incrementPlayCount(gameId)
 
   const colonPlace = _codeName.search(':')
-  const [ ownerName, codeName ] = colonPlace == -1 ? [ owner.profile.name, _codeName ] : [ codeName.slice(0, colonPlace) , codeName.slice(colonPlace+1)]
+  const [ ownerName, codeName ] = colonPlace == -1 ? [ owner.profile.name, _codeName ] : [ _codeName.slice(0, colonPlace) , _codeName.slice(colonPlace+1)]
 
   return (
     <Segment basic padded>

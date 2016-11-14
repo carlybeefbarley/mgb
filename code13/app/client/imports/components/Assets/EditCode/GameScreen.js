@@ -105,6 +105,7 @@ export default class GameScreen extends React.Component {
           this.iFrameWindow.setAttribute("width", newWidth + "")
           this.iFrameWindow.setAttribute("height", newHeight + "")
           this.wrapper.style.width = newWidth + "px"
+          this.wrapper.style.height = newHeight + "px"
         }
         // keep adjusting
         this.adjustIframe()
@@ -138,8 +139,8 @@ export default class GameScreen extends React.Component {
         <iframe
           style={{
             display: this.state.isMinimized ? "none" : "block"
-            , width: window.innerWidth * 0.3
-            , height: window.innerHeight * 0.3
+            ,minWidth: window.innerWidth * 0.3
+            ,minHeight: window.innerHeight * 0.3
           }}
           key={ this.props.gameRenderIterationKey }
           ref="iFrame1"

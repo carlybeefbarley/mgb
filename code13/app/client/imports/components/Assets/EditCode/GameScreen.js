@@ -100,10 +100,12 @@ export default class GameScreen extends React.Component {
           ) {
           return
         }
-        // console.log(newWidth, newHeight)
-        this.iFrameWindow.setAttribute("width", newWidth + "")
-        this.iFrameWindow.setAttribute("height", newHeight + "")
-        this.wrapper.style.width = newWidth + "px"
+        if(newWidth && newHeight) {
+          // console.log(newWidth, newHeight)
+          this.iFrameWindow.setAttribute("width", newWidth + "")
+          this.iFrameWindow.setAttribute("height", newHeight + "")
+          this.wrapper.style.width = newWidth + "px"
+        }
         // keep adjusting
         this.adjustIframe()
       }, 1000)
@@ -134,7 +136,11 @@ export default class GameScreen extends React.Component {
           </button>
         </div>
         <iframe
-          style={{ display: this.state.isMinimized ? "none" : "block" }}
+          style={{
+            display: this.state.isMinimized ? "none" : "block"
+            , width: window.innerWidth * 0.3
+            , height: window.innerHeight * 0.3
+          }}
           key={ this.props.gameRenderIterationKey }
           ref="iFrame1"
           sandbox='allow-modals allow-same-origin allow-scripts allow-popups'

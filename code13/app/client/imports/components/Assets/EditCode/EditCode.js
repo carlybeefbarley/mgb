@@ -1648,12 +1648,12 @@ export default class EditCode extends React.Component {
                         <i className={"stop icon"}></i>&emsp;Stop
                       </a>
                     }
-                    { isPlaying &&
+                    { /* isPlaying &&     // TODO(@shmikucis): fix corner cases (test popup after toolToggleInfoPane() has been invoked; etc)
                       <a  className='ui tiny icon button' 
                           title='Click here to stop the running program'
                           onClick={this.handleGamePopup.bind(this)}>
                         <i className={"external icon"}></i>&emsp;Popup
-                      </a>
+                      </a> */
                     }
                     <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
                       <a  className='ui tiny icon button' 

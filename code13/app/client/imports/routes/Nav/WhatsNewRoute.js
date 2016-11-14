@@ -5,6 +5,17 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import moment from 'moment'
 import { Segment, Container, Header, List, Item, Grid, Icon } from 'semantic-ui-react'
 
+const _releaseStateSymbols = {
+  'alpha':  'α',
+  'beta':   'β'
+}
+
+const ReleaseId = ( { releaseId } ) => (
+  <span title={`${releaseId.state} #${releaseId.iteration}`}>
+    <i>Release {_releaseStateSymbols[releaseId.state]||releaseId.state}{releaseId.iteration}</i>
+  </span>
+)
+
 export default WhatsNewRoute = React.createClass({
 
   propTypes: {
@@ -94,7 +105,6 @@ export default WhatsNewRoute = React.createClass({
   renderNews: function() {
     const { releaseIdx } = this.state
     const rel = mgbReleaseInfo.releases[releaseIdx]
-    const state = rel.id.state === 'alpha' ? 'α' : (rel.id.state + "#")
     const ago = moment(new Date(rel.timestamp)).fromNow() 
 
     return (
@@ -105,7 +115,7 @@ export default WhatsNewRoute = React.createClass({
         </Grid.Column>
         <Grid.Column>
           <Header as='h4'>
-            Changes in v{rel.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + rel.id.iteration}</i>&emsp;{ago}</small>
+            Changes in v{rel.id.ver}&nbsp;&nbsp;&nbsp;<small><ReleaseId releaseId={rel.id}/>&emsp;{ago}</small>
           </Header>
           { this.renderNewsRelChangesColumn() }
         </Grid.Column>
@@ -139,12 +149,11 @@ export default WhatsNewRoute = React.createClass({
             padding: '6px'
           }
           const ago = moment(new Date(r.timestamp)).fromNow()
-          const state = r.id.state === 'alpha' ? 'α' : (r.id.state + "#")
           return (
             <Item key={r.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
               <Item.Content>
                 <Item.Header>
-                  v{r.id.ver}&nbsp;&nbsp;&nbsp;<small><i>{state + r.id.iteration}</i></small>
+                  v{r.id.ver}&nbsp;&nbsp;&nbsp;<small><ReleaseId releaseId={r.id}/></small>
                 </Item.Header>
                 <Item.Meta>
                   {ago}

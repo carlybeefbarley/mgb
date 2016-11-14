@@ -3,30 +3,42 @@ import { Azzets } from '/imports/schemas'
 
 const _retval404 = { statusCode: 404, body: {} }   // body required to correctly show 404 not found header
 
-// get code by id - tmp used for es6 import
-RestApi.addRoute('asset/code/:id', {authRequired: false}, {
-  get: function () {
-    const id = this.urlParams.id
-    const idParts = id.split(':')
 
-    const asset = idParts.length === 2 ? 
-      Azzets.findOne( { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false } ) :  // owner:name
-      Azzets.findOne(this.urlParams.id)                                   // id (e.g cDutAafswYtN5tmRi)
 
-    if (!asset)
-      return _retval404 
-    
-    const content = asset.content2.src
+function _doGet(kind, id){
+  const idParts = id.split(':')
 
-    if (content) {
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': "text/plain", 'file-name': asset.name },
-        body: content
-      }
+  const asset = idParts.length === 2 ? 
+    Azzets.findOne( { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false, kind: kind } ) :  // owner:name
+    Azzets.findOne(this.urlParams.id)                                   // id (e.g cDutAafswYtN5tmRi)
+
+  if (!asset)
+    return _retval404 
+  
+  const content = asset.content2.src
+
+  if (content) {
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': "text/plain", 'file-name': asset.name },
+      body: content
     }
-    else
-      return _retval404
+  }
+  else
+    return _retval404
+}
+
+
+// get tutorial by id - tmp used for es6 import
+RestApi.addRoute('asset/tutorial/:id', { authRequired: false }, {
+  get: function () {
+    return _doGet('tutorial', this.urlParams.id)
+  }
+})
+// get code by id - tmp used for es6 import
+RestApi.addRoute('asset/code/:id', { authRequired: false }, {
+  get: function () {
+    return _doGet('code', this.urlParams.id)
   }
 })
 

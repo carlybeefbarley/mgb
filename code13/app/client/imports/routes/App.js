@@ -478,7 +478,7 @@ export default App = React.createClass({
     if (_.isString(steps))
     {
       // We interpret this as an asset id, e.g cDutAafswYtN5tmRi, and we expect some JSON..
-      const codeUrl = '/api/asset/code/' + ( steps.startsWith(':') ? '!vault' + steps : steps)
+      const codeUrl = '/api/asset/tutorial/' + ( steps.startsWith(':') ? '!vault' + steps : steps)
       console.log(`Loading tutorial: '${steps}' from ${codeUrl}`)
       fetchAssetByUri(codeUrl)
         .then(  data => {

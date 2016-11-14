@@ -88,12 +88,25 @@ export default class GameScreen extends React.Component {
         if(!this.props.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body){
           return
         }
-        this.iFrameWindow.contentWindow.document.body.style.overflow = "hidden"
 
-          const gameDiv = this.iFrameWindow.contentWindow.document.querySelector("#game")
 
-          const newWidth = gameDiv ? gameDiv.offsetWidth : 0
-          const newHeight = gameDiv ? gameDiv.offsetHeight : 0
+
+        let gameDiv = this.iFrameWindow.contentWindow.document.querySelector("#game")
+        let newWidth = gameDiv ? gameDiv.offsetWidth : 0
+        let newHeight = gameDiv ? gameDiv.offsetHeight : 0
+
+        // adjust by body if cannot find gamediv - or it's not used
+        if(!gameDiv || gameDiv.offsetWidth === 0){
+          if(gameDiv){
+            gameDiv.style.display = "none"
+          }
+          gameDiv = this.iFrameWindow.contentWindow.document.body
+          newWidth = gameDiv ? gameDiv.scrollWidth : 0
+          newHeight = gameDiv ? gameDiv.scrollHeight : 0
+        }
+        else{
+          this.iFrameWindow.contentWindow.document.body.style.overflow = "hidden"
+        }
 
         if (parseInt(this.iFrameWindow.getAttribute("width")) == newWidth
               && parseInt(this.iFrameWindow.getAttribute("height")) == newHeight
@@ -120,7 +133,14 @@ export default class GameScreen extends React.Component {
       , zIndex: 100, bottom:"0px", backgroundColor:"white", padding: 0
       , display: this.state.isHidden || !this.props.isPlaying ? "none" : "block"
       }}>
-        <div style={{height:"20px"}}>
+        <div style={{
+            //height:"32px",
+            transform: "translateY(-100%)" // move up by full height}}
+            ,position: "absolute"
+            ,right: "0"
+            ,left: "0"
+            ,backgroundColor: "inherit"
+          }}>
           <button title="Close" className="ui mini right floated icon button"
           onClick={this.close.bind(this)}
           >

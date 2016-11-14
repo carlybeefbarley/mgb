@@ -414,9 +414,9 @@ export default class MapArea extends React.Component {
   }
 
   adjustPreview () {
-    if(this.state.isPlaying){
+    if (this.props.isPlaying)
       return
-    }
+    
     if (!this.data.layers)
       this.data.layers = []
 
@@ -662,7 +662,12 @@ export default class MapArea extends React.Component {
 
     this.update()
   }
-
+  generatePreviewAndSaveIt(){
+    window.requestAnimationFrame(() => {
+      const preview = this.generatePreview()
+      this.props.handleSave(null, preview)
+    })
+  }
   // find out correct thumbnail size
   generatePreview() {
     const canvas = document.createElement('canvas')

@@ -2,6 +2,9 @@ import LayerTypes from '../Tools/LayerTypes.js'
 import TileHelper from '../Helpers/TileHelper.js'
 
 export default {
+  saveThumbnail(thumbnail){
+    this.props.handleContentChange(null, thumbnail, "")
+  },
   handleSave(reason){
     this.quickSave(reason, false, this.refs.map.generatePreview())
   },

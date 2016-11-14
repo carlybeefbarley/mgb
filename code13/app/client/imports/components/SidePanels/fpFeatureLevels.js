@@ -5,6 +5,7 @@ import { getFeatureLevel, setFeatureLevel } from '/imports/schemas/settings-clie
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
+import { addJoyrideSteps } from '/client/imports/routes/App'
 
 export default fpFeatureLevels = React.createClass({
   mixins: [ReactMeteorData],
@@ -12,8 +13,7 @@ export default fpFeatureLevels = React.createClass({
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px".
-    addJoyrideSteps:        PropTypes.func.isRequired     // See react-joyride comments in App.js
+    panelWidth:             PropTypes.string.isRequired   // Typically something like "200px".
   },
 
   contextTypes: {
@@ -30,51 +30,7 @@ export default fpFeatureLevels = React.createClass({
   },
 
   showFeatureLevelsSlider() {
-    this.props.addJoyrideSteps([
-      {
-        title: 'Feature Levels Slider',
-        text: 'This is the <em>Feature Levels Slider</em> area. If you are on a page with adjustable Feature Levels, there will be a slider control here; Otherwise it will be blank',
-        selector: '#mgbjr-NavGadgetSliderIcon',
-        preparePage: 'closeFlexPanel',
-        position: 'bottom'
-      },
-      { 
-        title: 'The FlexPanel area',
-        text: 'This stack of icons on the right-hand side is called the <em>FlexPanel</em>',
-        selector: '#mgbjr-flexPanelIcons',
-        position: 'left',
-        showStepOverlay: true
-      },
-      { 
-        title: 'An example flexPanel - Chat',
-        text: 'This icon will open/close the <em>Chat</em> FlexPanel',
-        selector: '#mgbjr-flexPanelIcons-chat',
-        position: 'left',
-        showStepOverlay: true
-      },
-      { 
-        title: 'An example flexPanel - Feature Levels',
-        text: 'Try this one to see all your "feature level" settings...',
-        selector: '#mgbjr-flexPanelIcons-features',
-        position: 'left',
-        showStepOverlay: false,
-        awaitCompletionTag: 'mgbjr-CT-flexPanel-features-show'
-      },
-      { 
-        title: 'Well done!',
-        text: 'You can see it now...',
-        selector: '#mgbjr-flexPanelIcons',
-        position: 'left',
-        showStepOverlay: true
-      },
-      {
-        title: 'See all Feature Level settings',
-        text: `This area lists all your current Feature Level settings`,
-        selector: '#mgbjr-CurrentFeatureLevelsInFp',  
-        position: 'left'
-      }
-    ],
-    { replace: true } )
+    addJoyrideSteps(':tutorials.site.settings.featureLevels', { replace: true } )
   },
 
   setLevelFromEvent(name, event) {

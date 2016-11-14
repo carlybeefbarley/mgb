@@ -2,7 +2,7 @@
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import MapArea from './ActorMap.js'
+import ActorMapArea from './ActorMap.js'
 
 import InfoTool from '../Common/Map/Tools/InfoTool.js'
 import MapToolbar from './Tools/ActorMapToolbar.js'
@@ -111,6 +111,10 @@ export default class EditActorMap extends EditMap {
     const toSave = ActorHelper.v2_to_v1(data)
     this.lastSave = toSave
 
+    // make sure we always have nice looking thumbnail
+    if(!thumbnail && this.refs.map){
+      this.refs.map.generatePreviewAndSaveIt()
+    }
     this.props.handleContentChange(toSave, thumbnail, reason)
   }
 
@@ -140,49 +144,54 @@ export default class EditActorMap extends EditMap {
     )
   }
 
-  renderMusicModal(){
+  renderMusicModal() {
     return (
       <div className="ui modal" ref="music" style={{position: "absolute"}}>
         <div className="header">Add Music Event</div>
         <div className="content">
-          <MusicForm asset={this.state.musicData} onchange={(v) => {this.setState({event: this.state.musicData})}}/>
+          <MusicForm asset={this.state.musicData} onchange={ () => {this.setState( { event: this.state.musicData } ) } }/>
         </div>
         <div className="actions">
-          <div className="ui approve button">Approve</div>
+          <div className="ui approve button">Confirm</div>
           <div className="ui cancel button">Cancel</div>
         </div>
       </div>
     )
   }
 
+  togglePlayState() { 
+    this.setState( { isPlaying: !this.state.isPlaying } )
+  }
+
   render () {
     // this stuff is required for proper functionality
-    if(!this.mgb_content2 || !this.cache){
+    if (!this.mgb_content2 || !this.cache)
       return null
-    }
 
+    const { isLoading, isPlaying, activeLayer, activeTileset } = this.state
 
     const c2 = this.mgb_content2
     return (
       <div className='ui grid' ref="container">
-        { this.state.isLoading && <div className="loading-notification">Working in background...</div> }
+        { isLoading && <div className="loading-notification">Working in background...</div> }
         {this.renderPlayModal()}
         {this.renderMusicModal()}
-        <div className='ten wide column'>
+
+        <div className={ (isPlaying ? 'sixteen' : 'ten') + ' wide column'}>
           <MapToolbar
             {...this.toolbarProps}
-            isPlaying={this.state.isPlaying}
+            isPlaying={isPlaying}
             options={this.options}
             undoSteps={this.mgb_undo}
             redoSteps={this.mgb_redo}
           />
-          <MapArea
+          <ActorMapArea
             {...this.mapProps}
             showModal={this.showModal}
             playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
-            isPlaying={this.state.isPlaying}
+            isPlaying={isPlaying}
             cache={this.cache}
-            activeLayer={this.state.activeLayer}
+            activeLayer={activeLayer}
             highlightActiveLayer={c2.meta.highlightActiveLayer}
             canEdit={this.props.canEdit}
             options={this.options}
@@ -191,18 +200,18 @@ export default class EditActorMap extends EditMap {
             asset={this.props.asset}
             ref='map' />
         </div>
-        <div className='six wide column'>
+        <div className={'six wide '+ (isPlaying ? 'hidden' : '') + ' column'}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
             options={c2.meta}
-            activeLayer={this.state.activeLayer}
+            activeLayer={activeLayer}
             />
           <br />
           <EventTool
             {...this.tilesetProps}
             palette={this.cache.tiles}
-            activeTileset={this.state.activeTileset}
+            activeTileset={activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
             />
@@ -210,7 +219,7 @@ export default class EditActorMap extends EditMap {
           <TileSet
             {...this.tilesetProps}
             palette={this.cache.tiles}
-            activeTileset={this.state.activeTileset}
+            activeTileset={activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
             />

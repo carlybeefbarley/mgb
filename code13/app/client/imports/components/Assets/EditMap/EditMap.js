@@ -282,7 +282,10 @@ export default class EditMap extends React.Component {
     if(!skipUndo && !_.isEqual(this.lastSave, data)){
       this.saveForUndo(reason)
     }
+    // make sure we have thumbnail
+    if(!thumbnail){
 
+    }
     this.props.handleContentChange(data, thumbnail, reason)
   }
 

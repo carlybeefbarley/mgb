@@ -12,7 +12,7 @@ const _propTypes = {
 const ActivityExtraDetail = (props) => {
   const { act } = props
 
-  if (act.activityType.startsWith("asset.")) {
+  if (act.activityType.startsWith("asset.") || act.activityType.startsWith("game.")) {
     const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
     const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
     const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId

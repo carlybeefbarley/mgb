@@ -11,7 +11,7 @@ import Tooltip from './Tooltip'
 
 export const joyrideCompleteTag = tagString => {
   const event = new CustomEvent('mgbCompletionTag', { 'detail': tagString } )
-  window.dispatchEvent(event)
+  setTimeout(() => { window.dispatchEvent(event) }, 0) // Prevent setState during render if this was called due to render
 }
 
 const defaultState = {
@@ -118,8 +118,8 @@ export default class Joyride extends React.Component {
     listeners.mgbCompletionTag = (e) => { 
       const step = this.props.steps[this.state.index]
       
-      if (this._ctDebugSpew)  // enable using console if you want this noise:   m.jr._ctDebugSpew = true
-        this.logger('joyride:listeners.mgbCompletionTag  received: ', ['e.detail', e.detail ])  
+      if (this._ctDebugSpew || this.props.debug)  // enable using console if you want this noise:   m.jr._ctDebugSpew = true
+        this.logger('joyride:listeners.mgbCompletionTag  received: ', ['e.detail', e.detail ], false, true)
       
       if (step && step.awaitCompletionTag && step.awaitCompletionTag === e.detail)
       {
@@ -281,36 +281,22 @@ export default class Joyride extends React.Component {
   parseSteps(steps) {
     const newSteps = []
     let tmpSteps = []
-    let el
 
     if (Array.isArray(steps)) {
       steps.forEach((s) => {
         if (s instanceof Object)
           tmpSteps.push(s)
-      });
+      })
     }
     else
       tmpSteps = [steps]
 
     tmpSteps.forEach((s) => {
-      if (s.selector.dataset && s.selector.dataset.reactid) {
-        s.selector = `[data-reactid="${s.selector.dataset.reactid}"]`;
-        console.warn('Deprecation warning: React 15.0 removed reactid. Update your code.'); //eslint-disable-line no-console
-      }
-      else if (s.selector.dataset) {
-        console.error('Unsupported error: React 15.0+ don\'t write reactid to the DOM anymore, please use a plain class in your step.', s); //eslint-disable-line no-console
-        if (s.selector.className) {
-          s.selector = `.${s.selector.className.replace(' ', '.')}`;
-        }
-      }
-
-      el = document.querySelector(s.selector);
-      s.position = s.position || 'top';
-      newSteps.push(s);
-
-      if (!el)
-        console.warn('joyride:parseSteps', 'Target not rendered. For best results only add steps after they are mounted.', s) //eslint-disable-line no-console
-    });
+      if (!s.selector)
+        s.selector = '#mgbjr-navPanelIcons-home'  // safe default
+      s.position = s.position || 'bottom'
+      newSteps.push(s)
+    })
 
     return newSteps;
   }
@@ -369,11 +355,11 @@ export default class Joyride extends React.Component {
    * @param {string|Array} [msg]
    * @param {boolean} [warn]
    */
-  logger(type, msg, warn) {
-    const { debug } = this.props;
+  logger(type, msg, warn, forceShow = false) {
+    const { debug } = this.props
     const logger = warn ? console.warn || console.error : console.log; //eslint-disable-line no-console
 
-    if (debug) {
+    if (debug || forceShow) {
       console.log(`%c${type}`, 'color: #760bc5; font-weight: bold; font-size: 12px;'); //eslint-disable-line no-console
       if (msg)
         logger.apply(console, msg)
@@ -443,12 +429,12 @@ export default class Joyride extends React.Component {
     let hasSteps
 
     if (state.showTooltip) {
-      if ([13, 27, 32, 38, 40].indexOf(intKey) > -1)
+      if ([13, 27, 38, 40].indexOf(intKey) > -1)
         e.preventDefault()
 
       if (intKey === 27)
         this.toggleTooltip(false, state.index + 1, 'esc')
-      else if ([13, 32].indexOf(intKey) > -1) {
+      else if ([13].indexOf(intKey) > -1) {
         hasSteps = Boolean(steps[state.index + 1]);
         this.toggleTooltip(hasSteps, state.index + 1, 'next');
       }
@@ -525,6 +511,13 @@ export default class Joyride extends React.Component {
       e.preventDefault()
       e.stopPropagation()
       const tooltip = document.querySelector('.joyride-tooltip')
+      if (dataType === 'next' && steps[state.index] && steps[state.index].code)
+      {
+        const code = steps[state.index].code
+        this.logger(`joyride:onClickTooltip: next-code`, ['step.code:', steps[state.index].code ] )
+        const event = new CustomEvent('mgbjr-stepAction-appendCode', { 'detail': code } )
+        window.dispatchEvent(event)
+      }
       if (dataType === 'next' && steps[state.index] && steps[state.index].awaitCompletionTag)
       {
         // a step.awaitCompletionTag property such as 
@@ -620,7 +613,7 @@ export default class Joyride extends React.Component {
       showTooltip: show,
       index: newIndex,
       position: undefined,
-      redraw: !show,
+      redraw: true, //!show,
       xPos: -1000,
       yPos: -1000
     }, () => {
@@ -713,7 +706,7 @@ export default class Joyride extends React.Component {
     const rect = target.getBoundingClientRect()
     let position = step.position;
 
-//    this.logger('joyride:calcPosition', ['step:', step, 'component:', component, 'rect:', rect])
+    this.logger('joyride:calcPosition', ['step:', step, 'component:', component, 'rect:', rect])
 
     if (/^left/.test(position) && rect.left - (component.width + tooltipOffset) < 0)
       position = 'top'
@@ -798,7 +791,10 @@ export default class Joyride extends React.Component {
       if (!state.tooltip) {
         if (['continuous', 'guided'].indexOf(type) > -1) {
 
-          if (currentStep.awaitCompletionTag)
+          if (currentStep.code) {
+            buttons.primary = (<span>Insert Code</span>)
+          }
+          else if (currentStep.awaitCompletionTag)
             buttons.primary = (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)
           else
           {

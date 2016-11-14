@@ -13,6 +13,69 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Sun Nov 13 2016 23:50:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2022'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'improvement',
+          'changeName': 'Full-width actorMap play preview',
+          'changeSummary': 'The ActorMap editor now allows full-width previews when playing the game/map in the level editor',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'bugfix',
+          'changeName': 'Better compat with MGBv1 maps',
+          'changeSummary': 'Fixed bug which prevented maps imported from MGBv1 from working',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'game.statistics',
+          'type': 'feature',
+          'changeName': 'GamePlays counter enabled',
+          'changeSummary': 'The Game Asset now counts plays when the game is played in the game browser (not in the actorMap/Code editors)',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'feature',
+          'changeName': 'Tutorials Asset',
+          'changeSummary': 'The new tutorials system is getting very close now! We have added the new Asset type for defining a tutorial, and also a special debug mode for running tutorials with lots of event tracking (see the browser js console for this)',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Editor Toolbar',
+          'changeSummary': 'Code editor now has a toolbar which allows the Info panel to be resized or hidden, and also allow text size to be changed, and comments to be faded',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.skills',
+          'type': 'improvement',
+          'changeName': 'More skills',
+          'changeSummary': 'More of the skills areas are now shown.. take a look!',
+          'otherUrls': [ 
+            { txt: 'Full skills list', href: '/getstarted/skills' },
+            { txt: 'Example skills area - legal stuff', href: '/getstarted/skills/area/legal' }
+          ]
+        }
+      ]
+    },
+
+
+    {
       'timestamp': 'Mon Nov 7 2016 21:30:00 GMT-0700 (PDT)',
 
       'id': {
@@ -47,8 +110,7 @@ const mgbReleaseInfo = {
           'changeSummary': "The full list of skills areas is now shown, and there is the beginning of the skills explorer for each area. More soon. SKills, tutorials, tours and help will become cunningly connected soon!",
           'otherUrls': [ 
             { txt: 'Full skills list', href: '/getstarted/skills' },
-            { txt: 'Example skills area -  legal stuff', href: '/getstarted/skills/area/legal' },
-
+            { txt: 'Example skills area - legal stuff', href: '/getstarted/skills/area/legal' }
           ]
         },
         {

@@ -15,6 +15,10 @@ export default class Properties extends React.Component {
     this.runOnReady()
   }
 
+  componentWillReceiveProps(newp){
+    this.settings.map.update(newp.data)
+  }
+
   runOnReady () {
     this.settings = {}
     this.settings.map = new Otito(this.props.data, {
@@ -52,7 +56,6 @@ export default class Properties extends React.Component {
       //this.props.resize(this.props.data)
     })
     this.settings.map.append(this.refs.map)
-
     window.settings = this.settings
   }
 

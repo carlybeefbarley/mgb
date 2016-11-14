@@ -8,7 +8,7 @@ import md5 from 'blueimp-md5'
 import { logActivity } from '/imports/schemas/activity'
 
 
-const ErrMsg = props => { return props.text ? <Message error color='red' content={props.text} /> : null }
+const ErrMsg = props => { return props.text ? <Message color='red' content={props.text} /> : null }
 
 export default SignupRoute = React.createClass({
 
@@ -23,6 +23,17 @@ export default SignupRoute = React.createClass({
     }
   },
 
+  checkUserName: function (e) {
+    if (e && e.target.value && e.target.value.length > 2 )
+      Meteor.call('AccountsHelp.userNameTaken', e.target.value, (err,r) => { 
+        if (!err) {
+          const msg = r ? `Username '${r}' has already been taken` : null
+          const newErrState = Object.assign({}, this.state.errors, { username: msg } )
+          this.setState( { errors: newErrState } )
+        }
+      } )
+  },
+
   render: function() {
     const { isLoading, errors } = this.state
     const { currUser } = this.props
@@ -35,7 +46,7 @@ export default SignupRoute = React.createClass({
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
           <Form.Input label='Email Address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
           <ErrMsg text={errors.email} />
-          <Form.Input label='Choose your username (used for your profile and messaging)' name='username' placeholder='User Name (short, no spaces)'  error={!!errors.username} />
+          <Form.Input onBlur={this.checkUserName} label='Choose your username (used for login and profile)' name='username' placeholder='User Name (short, no spaces)'  error={!!errors.username} />
           <ErrMsg text={errors.username} />
           <Form.Input label='Choose a Password for your new account' name='password' placeholder='Password' type='password'  error={!!errors.password} />
           <ErrMsg text={errors.password} />
@@ -73,7 +84,7 @@ export default SignupRoute = React.createClass({
       return
 
     this.setState( { isLoading: true } )
-    Accounts.createUser({
+    Accounts.createUser({     // Note that there is server-side validation in /server/CreateUser.js
       email:    email,
       username: username,     // Fixup mshell.sh code was:   _.each(Meteor.users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
       password: password,

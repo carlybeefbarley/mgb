@@ -1,25 +1,21 @@
 import React from 'react'
 
-import BaseMapArea from '../Common/Map/BaseMapArea.js'
+import BaseMapArea from '../Common/Map/BaseMapArea'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper'
 import PositionInfo from '../Common/Map/Tools/PositionInfo'
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 
 import './../Common/Map/EditMap.css'
 
-export default class MapArea extends BaseMapArea {
+export default class ActorMapArea extends BaseMapArea {
 
   constructor (props) {
     super(props)
-    this.state = {
-      isPlaying: false
-    }
   }
 
   componentWillReceiveProps(p){
 
     const l = this.getActiveLayer(p.activeLayer)
-    this.setState({isPlaying: p.isPlaying})
     // Events only for events layer...
     if(this.collection.length && this.collection[0].gid < ActorHelper.TILES_IN_ACTIONS){
       if(l && l.data.name != "Events"){
@@ -40,7 +36,7 @@ export default class MapArea extends BaseMapArea {
 
   // TODO(stauzs): make global caching - where component could subscribe to desired assets - and has cache cleaning mechanism if asset in interest has changed
   cache = {}
-  fetchAssetByUri = (uri, keepInCache = false) => {
+  fetchAssetByUri = (uri, keepInCache = false) => {   // TODO - just import the one from '/client/imports/helpers/assetFetchers' ?
     return new Promise( (resolve, reject) => {
       if(this.cache[uri]){
         resolve(this.cache[uri]);
@@ -87,7 +83,7 @@ export default class MapArea extends BaseMapArea {
 
   render () {
 
-    if (this.state.isPlaying)
+    if (this.props.isPlaying)
       return this.renderMage()
 
     return (

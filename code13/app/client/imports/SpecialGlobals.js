@@ -34,6 +34,10 @@ export default SpecialGlobals = {
     actionsImage: '/api/asset/tileset/AymKGyM9grSAo3yjp',
     actionsInImage: 2, // atm - jump and music,
     eventLayerId: 3
+  },
+
+  gamePlay: {
+    playCountDebounceMs: 10 * 1000
   }
 }
 

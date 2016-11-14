@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor'
 import { check } from 'meteor/check'
-import { doImportTile } from './mgb1ImportTiles'
-import { doImportActor } from './mgb1ImportActors'
-import { doImportMap } from './mgb1ImportMaps'
+import { doImportTile } from './mgb1import/mgb1ImportTiles'
+import { doImportActor } from './mgb1import/mgb1ImportActors'
+import { doImportMap } from './mgb1import/mgb1ImportMaps'
 
 // This should only be in server code
 

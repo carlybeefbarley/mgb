@@ -54,6 +54,20 @@ Meteor.methods({
 })
 
 
+
+
+Meteor.methods({
+  "Slack.User.create": function(username, email) {
+
+    const userUrl=`https://v2.mygamebuilder.com/u/${username}`
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `MGBv2 @${username}`,
+      icon_emoji: ':smile:',
+      text: `Creating New user <${userUrl}|${username}> (${email})`
+    })
+  }
+})
+
 Meteor.methods({
   "Slack.Assets.create": function(username, kind, assetname, docId) {
 

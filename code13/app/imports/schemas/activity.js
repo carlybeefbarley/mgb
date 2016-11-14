@@ -37,11 +37,11 @@ var schema = {
 // Info on each type of activity, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const ActivityTypes = {
-  "user.join":    { icon: "green user",       pri:  5,  description: "User joined" },
-  "user.login":   { icon: "user",             pri:  9,  description: "User Logged In" },
-  "user.logout":  { icon: "grey user",        pri:  9,  description: "User Logged Out" },
-  "user.changeFocus":  { icon: "green alarm", pri:  9,  description: "User changed their focus" },
-  "user.clearFocus":   { icon: "grey alarm",  pri:  9,  description: "User cleared their focus" },
+  "user.join":         { icon: "green user",       pri:  5,  description: "User joined" },
+  "user.login":        { icon: "user",             pri:  9,  description: "User Logged In" },
+  "user.logout":       { icon: "grey user",        pri:  9,  description: "User Logged Out" },
+  "user.changeFocus":  { icon: "green alarm",      pri:  9,  description: "User changed their focus" },
+  "user.clearFocus":   { icon: "grey alarm",       pri:  9,  description: "User cleared their focus" },
 
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.edit":        { icon: "edit",             pri: 15,  description: "Edit asset" },
@@ -55,18 +55,20 @@ export const ActivityTypes = {
   "asset.delete":      { icon: "red trash",        pri: 12,  description: "Delete asset" },
   "asset.license":     { icon: "law",              pri: 11,  description: "Asset license changed" },
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },
-  "asset.undelete":    { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
+  "asset.undelete": { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
+
+  "game.play.start":   { icon: "green play",       pri: 17,  description: "Start game" },
+
+  "project.create":    { icon: "green sitemap",    pri: 3,   description: "Create project" },
+  "project.addMember": { icon: "sitemap",          pri: 4,   description: "Add Member to project" },
+  "project.destroy":   { icon: "red sitemap",      pri: 4,   description: "Destroyed Empty project" },
+  "project.removeMember": { icon: "sitemap",       pri: 4,   description: "Remove Member from project" },
   
-  "project.create": { icon: "green sitemap", pri: 3,  description: "Create project" },
-  "project.addMember": { icon: "sitemap",    pri: 4,  description: "Add Member to project" },
-  "project.destroy": { icon: "red sitemap",  pri: 4,  description: "Destroyed Empty project" },
-  "project.removeMember": { icon: "sitemap", pri: 4,  description: "Remove Member from project" },
-     
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
   getIconClass: function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : "warning sign") + " icon"},
   getPri: function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].pri : 0)},
   getDescription:  function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].description : "Unknown Activity type (" + key + ")")}
-};
+}
 
 
 Meteor.methods({
@@ -141,7 +143,7 @@ export function logActivity(activityType, description, thumbnail, asset) {
 
   let fSkipLog = false
 
-  if (priorLog && 
+  if (priorLog && !Meteor.isServer && 
       priorLog.activityType === logData.activityType &&
       logData.timestamp - priorLog.timestamp < _activityIntervalMs &&
       //priorLog.description === logData.description &&  // This can be a bit noisy for edit.

@@ -4,6 +4,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { utilMuteLevelSlider, utilActivateLevelSlider, utilAdvertizeSlider } from '/client/imports/components/Nav/NavBarGadgetUxSlider'
 import { getFeatureLevel, getToolbarData, setToolbarData } from '/imports/schemas/settings-client'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 const keyModifiers = {
   CTRL:  1 <<  8,
@@ -15,7 +16,7 @@ const keyModifiers = {
 const sliderPcts = {
   iconSizeBreak1:  0.25,
   iconSizeBreak2:  0.66,
-  tooltipSlowdown: 0.5
+  tooltipSlowdown: 0.95
 }
 
 // Here is a list of *known* toolbar scope names & Max Values. 
@@ -23,6 +24,7 @@ const sliderPcts = {
 // and offer a global modification choice
 export const expectedToolbarScopeMaxValues = {
   EditGraphic: 10,
+  EditCode: 3,
 //GraphicTools: 21,
   MapTools: 27,
   AudioTools: 25,
@@ -98,6 +100,11 @@ export default class Toolbar extends React.Component {
         if (!b || b.disabled)
           return
         e.preventDefault()
+        
+        const action = this.keyActions[keyval].action
+        joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-keypress`)
+        joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
+        
         this.keyActions[keyval](e)
       }
     }
@@ -372,9 +379,13 @@ export default class Toolbar extends React.Component {
       return
     
     if (this.props.actions[action])
+    {
+      joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-click`)
+      joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
       this.props.actions[action](e)
+    }
     else
-      console.error("Cannot find action for button:", action)    
+      console.error(`Cannot find action for button '${action}'`)    
   }
 
 

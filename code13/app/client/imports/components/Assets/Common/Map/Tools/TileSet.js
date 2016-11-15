@@ -21,27 +21,32 @@ export default class TileSet extends React.Component {
     this.mouseRightDown = false
     this.startingtilePos = null
 
-    this.globalMouseMove = (e) => {
-      if (!this.mouseRightDown) {
-        return
-      }
-      this.onMouseMove(e)
-    }
-    this.globalMouseUp = (e) => {
-      this.onMouseUp(e)
-    }
   }
   componentDidMount () {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
 
     this.adjustCanvas()
-    window.addEventListener('mousemove', this.globalMouseMove)
-    window.addEventListener('mouseup', this.globalMouseUp)
+    window.addEventListener('mousemove', this.onMouseMove)
+    window.addEventListener('touchmove', this.onMouseMove)
+
+    window.addEventListener('mouseup', this.onMouseUp)
+    window.addEventListener('touchend', this.onMouseUp)
+
+    if(this.refs.canvas){
+      this.refs.canvas.addEventListener("touchstart", this.onMouseDown)
+    }
   }
   componentWillUnmount () {
-    window.removeEventListener('mousemove', this.globalMouseMove)
-    window.removeEventListener('mouseup', this.globalMouseUp)
+    window.removeEventListener('mousemove', this.onMouseMove)
+    window.removeEventListener('touchmove', this.onMouseMove)
+
+    window.removeEventListener('mouseup', this.onMouseUp)
+    window.removeEventListener('touchend', this.onMouseUp)
+
+    if(this.refs.canvas){
+      this.refs.canvas.removeEventListener("touchstart", this.onMouseDown)
+    }
   }
   componentDidUpdate(){
     // re-render after update
@@ -102,7 +107,7 @@ export default class TileSet extends React.Component {
       }
     }
     this.props.selectTile(new SelectedTile(this.prevTile))
-    this.highlightTile(e.nativeEvent, true)
+    this.highlightTile(e, true)
   }
 
   selectRectangle (e) {
@@ -256,10 +261,11 @@ export default class TileSet extends React.Component {
     })
   }
 
-  onMouseDown (e) {
+  onMouseDown = (e) => {
+    e.preventDefault()
+
     if (e.button == 2) {
       this.mouseRightDown = true
-      e.preventDefault()
       return false
     }
 
@@ -275,11 +281,15 @@ export default class TileSet extends React.Component {
     this.selectTile(e)
     this.startingtilePos = new SelectedTile(this.prevTile)
   }
-  onMouseUp (e) {
+  onMouseUp = (e) => {
     this.mouseDown = false
     this.mouseRightDown = false
+    this.drawTiles()
   }
-  onMouseMove (e) {
+  onMouseMove = (e) => {
+    if(e.target != this.refs.canvas){
+      return
+    }
     if (this.mouseRightDown) {
       this.refs.layer.scrollLeft -= e.movementX
       this.refs.layer.scrollTop -= e.movementY
@@ -292,7 +302,7 @@ export default class TileSet extends React.Component {
     }
     this.highlightTile(e)
   }
-  onMouseLeave (e) {
+  onMouseLeave = (e) => {
     // remove highlighted tile
     this.drawTiles()
     this.prevTile = null
@@ -328,11 +338,8 @@ export default class TileSet extends React.Component {
         <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both', cursor: "default" }}>
           <canvas
             ref='canvas'
-            onMouseDown={this.onMouseDown.bind(this)}
-            onMouseUp={this.onMouseUp.bind(this)}
-            onMouseMove={e => {
-                           this.onMouseMove(e.nativeEvent)}}
-            onMouseLeave={this.onMouseLeave.bind(this)}
+            onMouseDown={this.onMouseDown}
+            onMouseLeave={this.onMouseLeave}
             onContextMenu={e => {
                              e.preventDefault(); return false;}}>
           </canvas>

@@ -178,28 +178,6 @@ export default class AbstractLayer extends React.Component {
     }
   }
 
-  getOffsetX(e){
-    if(e.offsetX !== void(0)){
-      return e.offsetX
-    }
-    if(e.touches){
-      const t = e.touches[0]
-      const box = e.target.getBoundingClientRect()
-      return t.pageX - box.left
-    }
-    return 0
-  }
-  getOffsetY(e){
-    if(e.offsetY !== void(0)){
-      return e.offsetY
-    }
-    if(e.touches){
-      const t = e.touches[0]
-      const box = e.target.getBoundingClientRect()
-      return t.pageY - box.top
-    }
-    return 0
-  }
   _onKeyUp (e) {
     if (this.props.isActive) {
       this.onKeyUp && this.onKeyUp(e)

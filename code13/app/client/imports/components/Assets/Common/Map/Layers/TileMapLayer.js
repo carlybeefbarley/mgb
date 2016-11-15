@@ -211,8 +211,8 @@ export default class TileMapLayer extends AbstractLayer {
     const pos = new TileSelection()
     const props = this.props
 
-    const ox = this.getOffsetX(e)
-    const oy = this.getOffsetY(e)
+    const ox = TileHelper.getOffsetX(e)
+    const oy = TileHelper.getOffsetY(e)
 
     pos.updateFromPos(
       (ox / this.camera.zoom - this.camera.x) ,
@@ -635,8 +635,8 @@ export default class TileMapLayer extends AbstractLayer {
       // touchend is not reporting coords
       if(nat.type !== "touchend"){
         this.lastEvent = nat
-        this.lastOffset.x = this.getOffsetX(nat);
-        this.lastOffset.y = this.getOffsetY(nat);
+        this.lastOffset.x = TileHelper.getOffsetX(nat);
+        this.lastOffset.y = TileHelper.getOffsetY(nat);
       }
 
       if (edit[this.props.getEditMode()]) {
@@ -655,8 +655,8 @@ export default class TileMapLayer extends AbstractLayer {
       return
     }
     this.lastEvent = nat
-    this.lastOffset.x = this.getOffsetX(nat);
-    this.lastOffset.y = this.getOffsetY(nat);
+    this.lastOffset.x = TileHelper.getOffsetX(nat);
+    this.lastOffset.y = TileHelper.getOffsetY(nat);
     this.tilePosInfo = this.getTilePosInfo(e)
 
     this.isMouseOver = true
@@ -1132,7 +1132,7 @@ edit[EditModes.picker] = function (e, up) {
     return
   }
   previousType = e.type
-  
+
   this.drawTiles()
   const sel = this.props.getSelection()
   if (up) {

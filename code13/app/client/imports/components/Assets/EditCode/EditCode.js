@@ -116,7 +116,10 @@ export default class EditCode extends React.Component {
       functionArgPos: -1,
       atCursorTypeRequestResponse: {},
       atCursorRefRequestResponse: {},
-      atCursorDefRequestResponse: {}
+      atCursorDefRequestResponse: {},
+
+      // handling game screen
+      isPopup: false
     }
 
     this.hintWidgets = []
@@ -1295,6 +1298,11 @@ export default class EditCode extends React.Component {
       cb && cb()
     }
   }
+
+  handleGamePopup(){
+    this.setState({ isPopup: !this.state.isPopup })
+  }
+
   pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
     let newValue = item.code
     this.codeMirror.setValue(newValue)
@@ -1379,7 +1387,9 @@ export default class EditCode extends React.Component {
   
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
-    this.setState( { infoPaneMode: (i+1) % _infoPaneModes.length } )
+    const newMode = (i+1) % _infoPaneModes.length 
+    // if(!_infoPaneModes[newMode].col2) this.handleStop()
+    this.setState( { infoPaneMode: newMode } )
   }
 
   generateToolbarConfig() {
@@ -1640,6 +1650,15 @@ export default class EditCode extends React.Component {
                         <i className={"stop icon"}></i>&emsp;Stop
                       </a>
                     }
+                    { /* 
+                      isPlaying &&
+                      <a  className='ui tiny icon button' 
+                          title='Click here to stop the running program'
+                          onClick={this.handleGamePopup.bind(this)}>
+                        <i className={"external icon"}></i>&emsp;Popup
+                      </a>
+                      */
+                    }
                     <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
                       <a  className='ui tiny icon button' 
                           title='Click here to start running your program in a different browser tab'
@@ -1668,6 +1687,17 @@ export default class EditCode extends React.Component {
                     src="/codeEditSandbox.html">
                   </iframe>
                 ********/}
+                  <GameScreen
+                    ref="gameScreen"
+                    isPopup = {this.state.isPopup}
+                    isPlaying = {this.state.isPlaying}
+                    asset = {this.props.asset}
+                    consoleAdd = {this._consoleAdd.bind(this)}
+                    gameRenderIterationKey = {this.state.gameRenderIterationKey}
+                    handleContentChange = {this.handleContentChange.bind(this)}
+                    handleStop = {this.handleStop.bind(this)}
+                  />
+
                   <ConsoleMessageViewer
                     messages={this.state.consoleMessages}
                     gotoLinehandler={this.gotoLineHandler.bind(this)}
@@ -1711,14 +1741,7 @@ export default class EditCode extends React.Component {
           </div>
         </div>
         }
-        <GameScreen
-          ref="gameScreen"
-          isPlaying = {this.state.isPlaying}
-          consoleAdd = {this._consoleAdd.bind(this)}
-          gameRenderIterationKey = {this.state.gameRenderIterationKey}
-          handleContentChange = {this.handleContentChange.bind(this)}
-          handleStop = {this.handleStop.bind(this)}
-        />
+        
       </div>
     )
   }

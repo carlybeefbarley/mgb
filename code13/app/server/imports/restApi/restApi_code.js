@@ -10,7 +10,7 @@ function _doGet(kind, id){
 
   const asset = idParts.length === 2 ? 
     Azzets.findOne( { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false, kind: kind } ) :  // owner:name
-    Azzets.findOne(this.urlParams.id)                                   // id (e.g cDutAafswYtN5tmRi)
+    Azzets.findOne(id)                                   // id (e.g cDutAafswYtN5tmRi)
 
   if (!asset)
     return _retval404 

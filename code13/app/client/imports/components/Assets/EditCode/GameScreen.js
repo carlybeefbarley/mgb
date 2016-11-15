@@ -2,6 +2,8 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
+import sty from  './editcode.css'
+
 export default class GameScreen extends React.Component {
 
   constructor(props) {
@@ -21,6 +23,7 @@ export default class GameScreen extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState){
+    this.getReference()
     if(!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized){
       this.minimize()
     }
@@ -129,33 +132,39 @@ export default class GameScreen extends React.Component {
 
   render(){
     return (
-      <div ref="wrapper" style={{position:"absolute"
-      , zIndex: 100, bottom:"0px", backgroundColor:"white", padding: 0
-      , display: this.state.isHidden || !this.props.isPlaying ? "none" : "block"
+      <div ref="wrapper" id="gameWrapper"
+        className={this.props.isPopup ? "popup" : "accordion"}
+        style={{ display: this.state.isHidden || !this.props.isPlaying ? "none" : "block"
       }}>
-        <div style={{
-            //height:"32px",
-            transform: "translateY(-100%)" // move up by full height}}
-            ,position: "absolute"
-            ,right: "0"
-            ,left: "0"
-            ,backgroundColor: "inherit"
-          }}>
-          <button title="Close" className="ui mini right floated icon button"
-          onClick={this.close.bind(this)}
-          >
-            <i className="remove icon"></i>
-          </button>
-          <button className="ui mini right floated icon button"
-          title={this.state.isMinimized ? "Maximize" : "Minimize"}
-          onClick={this.minimize.bind(this)}
-          >
-            <i className={"icon " +(this.state.isMinimized ? "maximize" : "minus")}></i>
-          </button>
-          <button title="Drag Window" className="ui mini right floated icon button">
-            <i className="move icon"></i>
-          </button>
-        </div>
+        {
+          this.props.isPopup &&
+          <div style={{
+              //height:"32px",
+              transform: "translateY(-100%)" // move up by full height}}
+              ,position: "absolute"
+              ,right: "0"
+              ,left: "0"
+              ,backgroundColor: "inherit"
+            }}>
+            <button title="Close" className="ui mini right floated icon button"
+            onClick={this.close.bind(this)}
+            >
+              <i className="remove icon"></i>
+            </button>
+            {/*
+            <button className="ui mini right floated icon button"
+            title={this.state.isMinimized ? "Maximize" : "Minimize"}
+            onClick={this.minimize.bind(this)}
+            >
+              <i className={"icon " +(this.state.isMinimized ? "maximize" : "minus")}></i>
+            </button>
+            
+            <button title="Drag Window" className="ui mini right floated icon button">
+              <i className="move icon"></i>
+            </button>
+          */}
+          </div>
+        }
         <iframe
           style={{
             display: this.state.isMinimized ? "none" : "block"

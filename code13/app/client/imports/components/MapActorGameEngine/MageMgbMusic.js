@@ -1,18 +1,107 @@
-import _ from 'lodash'
+
+// This is a simple Music Manager for Mage (actorMap) games
 
 const _musicUrlPrefix = "http://s3.amazonaws.com/apphost/game_music/"
 
+// We only let one music track play at a time.. this_currentlyPlaying is the one.. 
+// So that's why this thing is a global/singleton object instead of a class
+let _currentlyPlaying = null    // null, or the string which was the param to playMusic() which identifies the music
+
+// See MgbMusic.musicList[] for the special list of built-in tracks. 
+// These are referenced as `[builtin]:${name}` and musicUrlFromMusicFileName() knows
+// how to get from the full name (with the [builtin] prefix) to the URL (stored on S3 for now)
+
 const MgbMusic = {
-  musicUrlFromMusicFileName: name => _musicUrlPrefix + name,
+  musicUrlFromMusicFileName: name => {
+    if (!name || name === '') {
+      console.error('Empty/invalid music filename provided to musicUrlFromMusicFileName')
+      return ''
+    }
+
+    const safeName = name.replace(/^\[builtin\]:/, '')
+    return _musicUrlPrefix + safeName
+  },
   
-  /**
-   * 
-   * 
-   * @param {String} currentFileName  - This should be one of the entries from musicList 
-   * @param {String} currentStatus    - This will be a short string describing the plkayback status - no trailing space or punctuation in these strings
-   * @returns {String}                - Return a string that may be used for Human UI and should show attribution to copyright owners
-   */
-  generateMusicPlaybackSummary: ( currentFileName, currentStatus ) =>  currentStatus + " (" + currentFileName + ")",
+  _loadedMusic: {},       // This is a place we store/cache loaded music. // TODO: Consider memory implications - Consider just keeping N entries
+
+  // TODO: A preloader method..which is why there is a loadedMusic structure here for future use.
+
+  playMusic: function(musicSource) {
+    
+    if (musicSource && musicSource === _currentlyPlaying) {
+      // Too noisy...  console.log(`playMusic determined that '${musicSource}' is already playing, so no action required`)
+      return
+    }
+    
+    console.log(`playMusic requested: ${musicSource}`)
+
+    MgbMusic.stopMusic()  // First stop anything playing
+
+    if (!musicSource || musicSource === '' || musicSource === 'none')
+      return    // Our job is done :)
+
+    const music = MgbMusic._loadedMusic[musicSource]
+    if (music)
+    {
+      _currentlyPlaying = musicSource
+      music.play().catch((err) => {
+        // cannnot load music, or cannot handle this music encoding... let devs know about it, but don't break functionality
+        console.error('playMusic() Unable to play pre-loaded music: ', err)
+      })
+    }
+    else
+    {
+      const canplay = function(e) {
+        if (!e || !e.target)
+          return
+        const music = e.target
+
+        try {
+          // Only try to play it if it hasn't since been cancelled or superceded. Think async!
+          if (_currentlyPlaying && music === MgbMusic._loadedMusic[_currentlyPlaying])
+          {
+            console.log(`playMusic():canplay() Matched music as ${_currentlyPlaying} and is attempting to start it`)
+            e.target.play()
+          }
+        }
+        catch (err) {
+          console.error(`playMusic():canplay() Failed to play post-loaded music '${_currentlyPlaying}': `, err)
+        }
+        // now remove the handler, otherwise it will restart when it stops
+        e.target.removeEventListener('canplaythrough', canplay, false)  
+      }
+
+      const newMusic = document.createElement('audio')
+      MgbMusic._loadedMusic[musicSource] = newMusic
+      _currentlyPlaying = musicSource
+      newMusic.addEventListener('canplaythrough', canplay, false)
+      newMusic.src = MgbMusic.musicUrlFromMusicFileName(musicSource)
+    }
+  },
+
+  stopMusic: function()
+  {
+    if (!_currentlyPlaying)
+    {
+      console.log(`StopMusic requested - but there's nothing playing to stop`)
+      return
+    }
+
+
+    const music = MgbMusic._loadedMusic[_currentlyPlaying]
+    if (!music)
+    {
+      console.log(`StopMusic requested: _currentlyPlaying was ${_currentlyPlaying}, but for some reason it doesn't exist, so no media to stop`)
+      _currentlyPlaying = null
+      return
+    }
+
+    console.log(`StopMusic being enacted: _currentlyPlaying was ${_currentlyPlaying} and the media was at ${music.currentTime} when music.pause() is invoked`)
+    _currentlyPlaying = null
+    music.currentTime = 0
+    music.pause() 
+  },
+
 
   _soundSourceAttributionMessage:
     "Sound sources used here with permission:\n"+  
@@ -125,46 +214,7 @@ const MgbMusic = {
     "McLeod9/TheOriginalBlade.mp3",
     "McLeod9/ThePerfectBattle.mp3",
     "McLeod9/Wrecked.mp3"
-  ],
-
-  _loadedMusic: {},
-
-  // TODO: A preloader method..which is why there is a loadedMusic structure here for future use.
-
-  playMusic: function(musicSource) {
-    MgbMusic.stopMusic()  // First stop anything playing
-
-    if (!musicSource || musicSource === '' || musicSource === 'none')
-      return    // Our job is done :)
-
-    const music = MgbMusic._loadedMusic[musicSource]
-    if (music)
-        // cannnot encode music... let devs know about it, but don't break functionality
-        music.play().catch((e) => {
-          console.error(e)
-        })
-    else
-    {
-      const canplay = function(e) {
-        try {
-          e.target && e.target.play()
-        }catch(e){
-          console.error(e)
-        }
-      }
-
-      const newMusic = document.createElement('audio')
-      MgbMusic._loadedMusic[musicSource] = newMusic
-      newMusic.addEventListener('canplaythrough', canplay, false)
-      newMusic.src = MgbMusic.musicUrlFromMusicFileName(musicSource)
-    }
-  },
-
-  stopMusic: function()
-  {
-    _.each(MgbMusic._loadedMusic, (v) => {v.currentTime = 0; v.pause(); })
-  }
-
+  ]
 }
 
 export default MgbMusic

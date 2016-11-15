@@ -286,7 +286,7 @@ export default MagePlayGameCollision = {
                   aa1.x = aa1.fromx
                   aa1.y = aa1.fromy
                   this.playStopItemSliding(aa1)
-                  if (t2 == MgbActor.alActorType_NPC && 0 == MgbActor.intFromActorParam(ap1.content2.databag.item.squishNPCYN && aa2.x == aa1.x && aa2.y == aa1.y))
+                  if (t2 == MgbActor.alActorType_NPC && 0 == MgbActor.intFromActorParam(ap1.content2.databag.item.squishNPCYN) && aa2.x == aa1.x && aa2.y == aa1.y)
                   {
                     // The NPC moves from position A to B, and sliding block (non-lethal type) moves from B to A. 
                     // We need to move the NPC back

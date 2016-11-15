@@ -18,7 +18,7 @@ const _generateUrlOptions = asset =>
       retval.push( { "msg":"as raw source code (user:name)", "url":"/api/asset/code/"+asset.dn_ownerName + ":" + asset.name } )
     break
   case 'tutorial':
-    retval.push( { "msg":"as raw tuorial JSON (assetId)", "url":"/api/asset/tutorial/"+asset._id } )
+    retval.push( { "msg":"as raw tutorial JSON (assetId)", "url":"/api/asset/tutorial/"+asset._id } )
     if (!asset.isDeleted && asset.name && asset.name !== '')
       retval.push( { "msg":"as raw tutorial JSON (user:name)", "url":"/api/asset/tutorial/"+asset.dn_ownerName + ":" + asset.name } )
     break

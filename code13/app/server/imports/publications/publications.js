@@ -78,7 +78,7 @@ Azzets._ensureIndex({"isDeleted": 1, "name": 1, "kind": 1})
 Azzets._ensureIndex({"isDeleted": 1, "name": 1, "updatedAt": -1})
 Azzets._ensureIndex({"isDeleted": 1, "kind": 1, "updatedAt": -1})
 Azzets._ensureIndex({"isDeleted": 1, "ownerId": 1, "kind": 1, "updatedAt": -1})
-
+Azzets._ensureIndex({"isDeleted": 1, "dn_ownerName": 1, "name": 1, "kind": 1})
 
 /** 
  * Can see all assets, but does NOT include the big 'content2' field 
@@ -148,7 +148,7 @@ Meteor.publish('projects.frontPageList', function (limitCount=5) {
 
 Projects._ensureIndex({"updatedAt": -1})
 Projects._ensureIndex({"workState": -1})
-
+Projects._ensureIndex({"workState": 1, "updatedAt": -1})
 
 //
 //    ACTIVITY LOG
@@ -243,7 +243,6 @@ Meteor.publish('chats.userId', function(userId, toChannelName, limit=20) {
   let options = {limit: limit, sort: {createdAt: -1} }
   return Chats.find(selector, options)
 })
-
 
 //
 //    SETTINGS (keyed by user._id)

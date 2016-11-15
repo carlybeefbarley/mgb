@@ -3,24 +3,45 @@ import React, { PropTypes } from 'react'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
-import MageGameCanvas from './MageGameCanvas'
-import MageNpcDialog from './MageNpcDialog'
-import MageInventoryDialog from './MageInventoryDialog'
 import MagePlayGame from './MagePlayGame'
+import MageNpcDialog from './MageNpcDialog'
+import MageGameCanvas from './MageGameCanvas'
+import MageInventoryDialog from './MageInventoryDialog'
 
-import { Segment, Button } from 'semantic-ui-react'
+import { Message, Button } from 'semantic-ui-react'
+
+const _overlayStyle = { 
+  position:   'absolute', 
+  left:       '80px', 
+  right:      '80px', 
+  top:        '110px', 
+  minHeight:  '300px',
+  minWidth:   '400px',
+  maxWidth:   '600px',
+  opacity:    '0.9'
+}
+
 
 // MapActorGameEngine (MAGE)
 
 // This is the top-level React wrapper for the MapActorGameEngine
-// We actually USE react also to make it easier to render things
+
+// We do USE react also to make it easier to render things
 // like inventory UI etc. That would be miserable otherwise :)
 
-// The prop fetchAssetByUri is a supplied function that can obtain a specified asset. 
-//  It takes a single parameter, uri, and returns a Promise
+// We currently use SemanticUI's CSS (no JS) support via 'semantic-ui-react'
+// but may remove this later to make Embeds smaller
 
-const Preloader = props => <Segment inverted>Preloading {props.msg}</Segment>
-const MapLoadFailed = props => <Segment color='red' inverted>{props.err}</Segment>
+// The prop fetchAssetByUri is a supplied function that can obtain a specified asset. 
+//  It takes a single parameter, uri, and returns a Promise. An example implementation
+//  can be found in /client/imports/helpers/assetFetchers.js
+
+let _haveShownInstructionsOnceSinceStart = false      // We show this once per app load.
+
+
+const _compactMsgSty = { maxWidth: '500px' }  // Message icon cancels compact prop, so need a style
+const Preloader = ( { msg } ) => <Message style={_compactMsgSty} icon='circle notched loading' content={`Preloading ${msg}`} />
+const MapLoadFailed = ( { err } ) => <Message style={_compactMsgSty} icon='warning sign' error content={err} />
 
 const _resolveOwner = (implicitOwnerName, assetName) => {
   const parts = assetName.split(':')
@@ -32,7 +53,7 @@ const _resolveOwner = (implicitOwnerName, assetName) => {
 }
 const _mkMapUri = (ownerName, assetName) => { 
   const p = _resolveOwner(ownerName, assetName)
-  return `/api/asset/map/${p.ownerName}/${p.assetName}`
+  return `/api/asset/actormap/${p.ownerName}/${p.assetName}`
 }
 const _mkActorUri = (ownerName, assetName) =>  {
   const p = _resolveOwner(ownerName, assetName)
@@ -42,7 +63,6 @@ const _mkGraphicUri = (ownerName, assetName) => {
   const p = _resolveOwner(ownerName, assetName)
   return `/api/asset/fullgraphic/${p.ownerName}/${p.assetName}`
 } 
-
 
 export default class Mage extends React.Component {
   constructor(props) {
@@ -61,7 +81,7 @@ export default class Mage extends React.Component {
       activeNpcDialog:        null,   // null or (see render() )
       isInventoryShowing:     null,
       isPlaying:              false,   
-      isPreloading:           'map',   // Null if not preloading. String if preloading. Supercedes all other state
+      isPreloadingStr:        'map',   // Null if not preloading. String if preloading. Supercedes all other state
       mapLoadError:           null,    // Can be a string
       activeMap:              null,    // Should be an asset of kind='actormap'.. not kind='map'
     
@@ -105,6 +125,7 @@ export default class Mage extends React.Component {
     this.forceUpdate()      // Simple, brutal, effective.
   }
 
+  // If this fails to start, it will trigger a UI message which will later nuke this._mageCanvas by unmouting the canvas
   handlePlay()
   {
     if (!this._mageCanvas)
@@ -114,17 +135,28 @@ export default class Mage extends React.Component {
       this.props.playCountIncFn()
 
     this._game = new MagePlayGame()
-    this._game.startGame(
-      this.state.activeMap, 
-      this.state.loadedActors, 
-      this.state.loadedGraphics, 
-      newMapName => this._transitionToNextMap(newMapName),
-      (lineNum, txt) => this.handleSetGameStatus(lineNum, txt), 
-      (npcDialogData) => this.handleShowNpcDialog(npcDialogData),
-      (newViz) => this.handleSetInventoryVisibility(newViz),
-      () => this.handleForceInventoryUpdate(),
-      window)
-    this.setState( { isPlaying : true })
+    let startedOk = false
+
+    try {
+      this._game.startGame(
+        this.state.activeMap, 
+        this.state.loadedActors, 
+        this.state.loadedGraphics, 
+        newMapName => this._transitionToNextMap(newMapName),
+        (lineNum, txt) => this.handleSetGameStatus(lineNum, txt), 
+        (npcDialogData) => this.handleShowNpcDialog(npcDialogData),
+        (newViz) => this.handleSetInventoryVisibility(newViz),        // OOPS, I think this should be toggleNpcDialogFn
+        () => this.handleForceInventoryUpdate(),
+        window)
+      startedOk = true
+    }
+    catch (err) {
+      startedOk = false
+      this._game.endGame()
+      this.setState( { isPreloadingStr: null, mapLoadError: `Map '${this._mkFriendlyMapName()}' could not start: ${err.toString()}` } )
+    }
+    if (startedOk)
+      this.setState( { isPlaying : true } )
   }
 
   handleStop()
@@ -148,7 +180,7 @@ export default class Mage extends React.Component {
       const pendingLoads = this._countPendingLoads()
 
       if (!pendingLoads && this.state.activeMap && !this._game && this.props.hideButtons)
-        this.handlePlay() // Hide Buttons implies autoplay      
+        this.handlePlay() // Hide Buttons implies autoplay
 
       try
       {
@@ -162,7 +194,8 @@ export default class Mage extends React.Component {
           }
           this._game.onTickGameDo()
         }
-        if (!this._transitioningToMapName) {
+        // We have to check this._mageCanvas again because a failure to start the game will cause it
+        if (this._mageCanvas && !this._transitioningToMapName) {
           this._mageCanvas.doBlit(
             this.state.activeMap, 
             this.state.loadedActors, 
@@ -173,7 +206,7 @@ export default class Mage extends React.Component {
       }
       catch (e)
       {
-        console.error('Caught exception in callDoBlit() for MapActor Game loop ', e)
+        console.error('Caught exception in callDoBlit() for MapActor Game loop ', e) 
       }
     }
     if (this._mounted)
@@ -196,7 +229,7 @@ export default class Mage extends React.Component {
           .catch( data => this._graphicLoadResult(aName, false, data) )
       }
     })
-    this.setState( { pendingGraphicLoads } )    // and maybe isPreloading? use a _mkIisPreloadingFn 
+    this.setState( { pendingGraphicLoads } )    // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn 
   }
 
   _graphicLoadResult(aName, isSuccess, data) {
@@ -218,8 +251,8 @@ export default class Mage extends React.Component {
     }
     else
       failedGraphics[aName] = data
-    const newIsPreloadingValue = pendingGraphicLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
-    this.setState( { pendingGraphicLoads, loadedGraphics, failedGraphics, isPreloading: newIsPreloadingValue } )    
+    const newIsPreloadingStrValue = pendingGraphicLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
+    this.setState( { pendingGraphicLoads, loadedGraphics, failedGraphics, isPreloadingStr: newIsPreloadingStrValue } )    
   }
 
   // Load any actors that we don't already have in state.actors or pendingActorLoads
@@ -238,7 +271,7 @@ export default class Mage extends React.Component {
           .catch( data => this._actorLoadResult(aName, p.ownerName, false, data) )
       }
     })
-    this.setState( { pendingActorLoads } )    // and maybe isPreloading? use a _mkIisPreloadingFn 
+    this.setState( { pendingActorLoads } )    // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn 
   }
 
   _actorLoadResult(aName, oName, isSuccess, data) {
@@ -252,8 +285,8 @@ export default class Mage extends React.Component {
     }
     else
       failedActors[aName] = data
-    const newIsPreloadingValue = this._countPendingLoads() > 0 ? 'actors' : null ///  TODO - handle pending tiles
-    this.setState( { pendingActorLoads, loadedActors, failedActors, isPreloading: newIsPreloadingValue } )    
+    const newIsPreloadingStrValue = this._countPendingLoads() > 0 ? 'actors' : null ///  TODO - handle pending tiles
+    this.setState( { pendingActorLoads, loadedActors, failedActors, isPreloadingStr: newIsPreloadingStrValue } )    
   }
 
   // An actor can also require other actors or tiles
@@ -306,12 +339,12 @@ export default class Mage extends React.Component {
       this.loadRequiredActors(actorNames)
     }
     else
-      this.setState( { isPreloading: null, mapLoadError: `Map '${this._mkFriendlyMapName()}' contains no actors` } )
+      this.setState( { isPreloadingStr: null, mapLoadError: `Map '${this._mkFriendlyMapName()}' contains no actors` } )
   }
 
   _startMapLoadFailed(data) { 
     console.log(`MAPLOAD ERROR: '${data}'`)
-    this.setState( { isPreloading: null, mapLoadError: `Could not load map '${this._mkFriendlyMapName()}'` } )
+    this.setState( { isPreloadingStr: null, mapLoadError: `Could not load map '${this._mkFriendlyMapName()}'` } )
   }
 
   _loadStartMap() {
@@ -339,7 +372,7 @@ export default class Mage extends React.Component {
         .then(  data => this._transitionMapLoadResult(nextMapName, true, JSON.parse(data)) )
         .catch( data => this._transitionMapLoadResult(nextMapName, false, data) )
     }
-    this.setState( { pendingMapLoads } )    // and maybe isPreloading? use a _mkIisPreloadingFn 
+    this.setState( { pendingMapLoads } )    // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn 
   }
 
   _transitionMapLoadResult(nextMapName, isSuccess, data) {
@@ -356,8 +389,8 @@ export default class Mage extends React.Component {
       failedMaps[nextMapName] = data
 debugger  // TODO - stop game, no map.
     }
-    const newIsPreloadingValue = pendingMapLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
-    this.setState( { pendingMapLoads, loadedMaps, failedMaps, isPreloading: newIsPreloadingValue } )
+    const newIsPreloadingStrValue = pendingMapLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
+    this.setState( { pendingMapLoads, loadedMaps, failedMaps, isPreloadingStr: newIsPreloadingStrValue } )
   }
 
   componentDidMount() {
@@ -371,48 +404,79 @@ debugger  // TODO - stop game, no map.
     this._mounted = false       //  This will implicitly stop the callDoBlit() game+render loop
   }
 
-  render() {
-    const { isPreloading, mapLoadError, activeMap, isPlaying, activeNpcDialog, isInventoryShowing } = this.state
-    if (isPreloading)
-      return <Preloader msg={isPreloading} />
+  // This is for the shown-once help info
+  componentDidUpdate (prevProps, prevState) {
+    if (prevState.isPlaying === false && this.state.isPlaying === true && !!this._game)
+    {
+      if (_haveShownInstructionsOnceSinceStart !== true)
+      {
+        _haveShownInstructionsOnceSinceStart = true
+        this._game.doPauseGame()
+        this.handleShowNpcDialog( 
+          { 
+            message: "Keyboard instructions:  Use the arrow keys to move your character or push stuff...     To attack, use 'Enter' to shoot if you have a ranged weapon, or use 'M' for a melee attack if you have a melee weapon....    I is for Inventory...    Ctrl is Pause...    GLHF.\n", 
+            leftActor: null, // TODO - find the playerActor for this message
+            responseCallbackFn: () => { this.handleShowNpcDialog(null) ; this._game.isPaused = false }
+          }
+        )
+      }
+    }
+  }
+  
 
-    if (mapLoadError)
-      return <MapLoadFailed err={mapLoadError} />
+  render() {
+    const { isPreloadingStr, mapLoadError, activeMap, isPlaying, activeNpcDialog, isInventoryShowing } = this.state
+
+    const isAnOverlayShowing = !!activeNpcDialog || !!isInventoryShowing
+    const isGameShowing = !isPreloadingStr && !mapLoadError
+    const isPreloading = !!isPreloadingStr
 
     return (
       <div>
         { !this.props.hideButtons &&
-          <div style={{marginBottom: "5px"}}>
-            <Button disabled={isPlaying} icon='play' content='play' onClick={() => this.handlePlay()}/>
-            <Button disabled={!isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()}/>
+          <div style={ {marginBottom: '5px'} }>
+            <Button disabled={isPreloading ||  isPlaying} icon='play' content='play' onClick={() => this.handlePlay()}/>
+            <Button disabled={isPreloading || !isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()}/>
           </div>
         }
+        { isPreloading && <Preloader msg={isPreloadingStr} /> }
+        { mapLoadError && <MapLoadFailed err={mapLoadError} /> }
+        { isGameShowing &&
+          <div> 
+            <span ref={ c => { this._statusLine0 = c } }></span>
+            <br />
+            <span ref={ c => { this._statusLine1 = c } }></span>
+            <br />
+          
+            <MageGameCanvas
+                ref={c => { this._mageCanvas = c } } 
+                cellsWide={ activeMap.metadata.width }
+                cellsHigh={ activeMap.metadata.height }/>
 
-        <MageGameCanvas
-            ref={c => { this._mageCanvas = c } } 
-            cellsWide={ activeMap.metadata.width }
-            cellsHigh={ activeMap.metadata.height }/>
-        { !!activeNpcDialog && 
-            <MageNpcDialog
-                ref={c => { this._npcDialog = c } }
-                message={activeNpcDialog.message}
-                choices={activeNpcDialog.choicesArray}
-                graphics={this.state.loadedGraphics}
-                leftActor={activeNpcDialog.leftActor}
-                activeActor={activeNpcDialog.activeActor}
-                responseCallbackFn={choiceNum => { activeNpcDialog.responseCallbackFn(choiceNum) }} />
+            { isAnOverlayShowing && 
+              <div style={_overlayStyle}>
+
+                { !!activeNpcDialog && 
+                    <MageNpcDialog
+                        ref={c => { this._npcDialog = c } }
+                        message={activeNpcDialog.message}
+                        choices={activeNpcDialog.choicesArray}
+                        graphics={this.state.loadedGraphics}
+                        leftActor={activeNpcDialog.leftActor}
+                        activeActor={activeNpcDialog.activeActor}
+                        responseCallbackFn={choiceNum => { activeNpcDialog.responseCallbackFn(choiceNum) }} />
+                }
+
+                { !!isInventoryShowing && 
+                  <MageInventoryDialog
+                    inventory={this._game.inventory}
+                    graphics={this.state.loadedGraphics}
+                    itemActionFn={(action, item) => this.handleInventoryAction(action, item)} />
+                }
+              </div>
+            }
+          </div>
         }
-        { !!isInventoryShowing && 
-          <MageInventoryDialog
-            inventory={this._game.inventory}
-            graphics={this.state.loadedGraphics}
-            itemActionFn={(action, item) => this.handleInventoryAction(action, item)} />
-        }
-        <br />
-        <span ref={ c => { this._statusLine0 = c } }></span>
-        <br />
-        <span ref={ c => { this._statusLine1 = c } }></span>
-        <br />
       </div>
     )
   }
@@ -427,4 +491,3 @@ Mage.propTypes = {
   playCountIncFn:   PropTypes.func                    // If provided, call it back (no params) to increment the play count. The function will handle debounce and other stuff
 }
 
-// TODO: showNpcMessage({message:"Use the arrow keys to move/push and 'Enter' to shoot (if allowed)", leftActor:playerActor})

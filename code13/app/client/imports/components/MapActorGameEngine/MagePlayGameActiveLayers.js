@@ -140,8 +140,10 @@ export default MagePlayGameActiveLayers = {
   // playCleanupActiveLayer - called when a game ends on a map - undo what playPrepareActiveLayer did
   playCleanupActiveLayer: function()
   {
-    for (var AA = 0; AA < this.activeActors.length; AA++)
-      this.activeActors[AA] = null
+    if (this.activeActors) {
+      for (var AA = 0; AA < this.activeActors.length; AA++)
+        this.activeActors[AA] = null
+    }
     this.activeActors = []
   },
 

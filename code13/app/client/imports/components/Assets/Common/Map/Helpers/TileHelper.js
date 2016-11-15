@@ -45,15 +45,17 @@ const TileHelper = {
   getTilesetWidth: (tileset, spacing = 1) => {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
-    tileset.columns = tileset.columns || tileset.imagewidth / tileset.tilewidth
+    tileset.columns = tileset.imagewidth / tileset.tilewidth
 
-    return tileset.columns * (tileset.tilewidth + spacing)
+    return tileset.columns * (tileset.tilewidth + spacing)  - spacing
   },
 
   getTilesetHeight: (tileset, spacing = 1) => {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
-    tileset.columns = tileset.columns || tileset.imagewidth / tileset.tilewidth
+    tileset.columns = tileset.imagewidth / tileset.tilewidth
+    tileset.tilecount = tileset.columns * tileset.imageheight / tileset.tileheight
+
     return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight) - spacing
   },
   /* helpers */

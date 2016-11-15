@@ -294,7 +294,6 @@ export default class TileMapLayer extends AbstractLayer {
     const d = ts.data
     const palette = this.props.palette
     const mapData = this.props.mapData
-    const ctx = this.ctx
     const camera = this.camera
 
     const pos = {x: 0, y: 0}
@@ -337,15 +336,13 @@ export default class TileMapLayer extends AbstractLayer {
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos)
 
         tileId = d[i] & (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
-          TileMapLayer.FLIPPED_VERTICALLY_FLAG |
-          TileMapLayer.FLIPPED_DIAGONALLY_FLAG))
-
-        this.drawInfo.h = (d[i] & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-        this.drawInfo.v = (d[i] & TileHelper.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
-        this.drawInfo.d = (d[i] & TileHelper.FLIPPED_DIAGONALLY_FLAG)
-
+          TileHelper.FLIPPED_VERTICALLY_FLAG |
+          TileHelper.FLIPPED_DIAGONALLY_FLAG))
         pal = palette[tileId]
         if (pal) {
+          this.drawInfo.h = (d[i] & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
+          this.drawInfo.v = (d[i] & TileHelper.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
+          this.drawInfo.d = (d[i] & TileHelper.FLIPPED_DIAGONALLY_FLAG)
           this.drawTile(pal, pos)
         }
       }

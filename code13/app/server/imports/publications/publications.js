@@ -244,8 +244,6 @@ Meteor.publish('chats.userId', function(userId, toChannelName, limit=20) {
   return Chats.find(selector, options)
 })
 
-Chats._ensureIndex( )
-
 //
 //    SETTINGS (keyed by user._id)
 //

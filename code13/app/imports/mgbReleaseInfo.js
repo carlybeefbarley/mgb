@@ -16,11 +16,29 @@ const mgbReleaseInfo = {
 
 /* Pending changes -- accumulate here in comment until time to deploy
 
+
+*/
+
+
+    {
+      'timestamp': 'Mon Nov 14 2016 23:15:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2054'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
         {
           'featureTag': 'game.actorMap',
           'type': 'bugfix',
-          'changeName': 'Mage MGB1 music playback',
-          'changeSummary': 'Fixed initial load and playback race conditions with Music in actorMap game. Thanks @jaketor for finding the bugs',
+          'changeName': 'Mage game playback',
+          'changeSummary': 'Lots of fixes for actorMap game compat with MGBv1 - spawnrate, text crawl, overlayUI, Music Playback+stop.  Thanks @jaketor for finding the bugs in the player code. There are a few more fixes still to come',
           'otherUrls': [ ]
         },
         {
@@ -28,11 +46,11 @@ const mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Updated Roadmap',
           'changeSummary': 'Updated roadmap page with intended work for November 2016 and beyond',
-          'otherUrls': [ txt: 'Roadmap page',   href: '/roadmap']
+          'otherUrls': [ { txt: 'Roadmap page',   href: '/roadmap' } ]
         },
-
-*/
-
+      ]
+    },
+        
     {
       'timestamp': 'Mon Nov 14 2016 12:50:00 GMT-0800 (PDT)',
 

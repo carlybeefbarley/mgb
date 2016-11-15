@@ -540,6 +540,10 @@ export default class MapArea extends React.Component {
       this.refs.positionInfo.forceUpdate()
     }
   }
+  removeObject(){
+    const l = this.getActiveLayer()
+    l && l.removeObject && l.removeObject()
+  }
 
   handleOnWheel (e) {
     if (this.props.isPlaying)
@@ -595,15 +599,6 @@ export default class MapArea extends React.Component {
         this.selection.clear()
         this.props.setMode(EditModes.stamp)
         break
-      /*case 90: // ctrl + z
-       if (e.ctrlKey) {
-       if (e.shiftKey) {
-       this.doRedo()
-       }
-       else {
-       this.doUndo()
-       }
-       }*/
     }
     if (e.ctrlKey)
       console.log(e.which)

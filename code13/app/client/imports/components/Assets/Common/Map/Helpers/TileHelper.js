@@ -324,6 +324,9 @@ const TileHelper = {
     }
     if(e.touches){
       const t = e.touches[0]
+      if(!t){
+        return 0
+      }
       return t.clientX - box.left
     }
     return 0
@@ -338,6 +341,9 @@ const TileHelper = {
     }
     if(e.touches){
       const t = e.touches[0]
+      if(!t){
+        return 0
+      }
       return t.clientY - box.top
     }
     return 0

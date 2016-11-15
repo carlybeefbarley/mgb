@@ -25,7 +25,7 @@ export default class Layers extends React.Component {
     this.props.setPickedObject(index)
   }
   renderBlock (content = [] , active = 0) {
-    let rise = '', lower = ''
+    let rise = '', lower = '', remove = ''
     const activeLayer = this.props.getActiveLayer()
     if (activeLayer && content && content.length) {
       const d = activeLayer.data
@@ -38,6 +38,11 @@ export default class Layers extends React.Component {
       lower = (
         <button className={active > 0 && active > -1 ? 'ui floated icon button' : 'ui floated icon button disabled'} onClick={this.lower.bind(this)} title='Lower Object'>
           <i className='angle down icon'></i>
+        </button>
+      )
+      remove = (
+        <button className='ui floated icon button right' onClick={this.props.removeObject} title='Remove Selected Object(s)'>
+          <i className='delete icon'></i>
         </button>
       )
     }
@@ -53,6 +58,9 @@ export default class Layers extends React.Component {
               <div className='ui icon buttons mini'>
                 {rise}
                 {lower}
+              </div>
+              <div className='ui icon buttons mini' style={{ position: 'relative', float: "right"}}>
+                {remove}
               </div>
             </div>
             {content}

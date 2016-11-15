@@ -48,6 +48,9 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.drawInterval = 10000
     this.nextDraw = Date.now() + this.drawInterval
+
+    this.startPosX = 0
+    this.startPosY = 0
   }
 
   get pickedObject () {
@@ -132,8 +135,8 @@ export default class ObjectLayer extends AbstractLayer {
 
   queryObject (e) {
     let obj
-    const x = e.offsetX / this.camera.zoom - this.camera.x
-    const y = e.offsetY / this.camera.zoom - this.camera.y
+    const x = TileHelper.getOffsetX(e) / this.camera.zoom - this.camera.x
+    const y = TileHelper.getOffsetY(e) / this.camera.zoom - this.camera.y
 
     let ret = -1
     // reverse order last drawn - first pick
@@ -198,6 +201,22 @@ export default class ObjectLayer extends AbstractLayer {
     return ret
   }
 
+  removeObject(){
+    this.props.saveForUndo('Delete Object')
+    if (this.pickedObject) {
+      this.deleteObject(this.pickedObject.orig ? this.pickedObject.orig : this.pickedObject)
+    }
+    this.selection.forEach((o) => {
+      let x = o
+      if (o instanceof Imitator) {
+        x = o.orig
+      }
+      this.deleteObject(x)
+    })
+
+    this.clearSelection(true)
+    this.isDirty = true
+  }
   /* Events */
   handleMouseMove (ep) {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
@@ -246,9 +265,9 @@ export default class ObjectLayer extends AbstractLayer {
       edit[mode].call(this, e)
     }
 
-    if (e.button !== 0) {
+    // 0 - mouse; undefined - touch
+    if (e.button) {
       this.mouseDown = false
-      return
     }
   }
   handleMouseUp (ep) {
@@ -277,20 +296,7 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     const remove = () => {
-      this.props.saveForUndo('Delete Object')
-      if (this.pickedObject) {
-        this.deleteObject(this.pickedObject.orig ? this.pickedObject.orig : this.pickedObject)
-      }
-      this.selection.forEach((o) => {
-        let x = o
-        if (o instanceof Imitator) {
-          x = o.orig
-        }
-        this.deleteObject(x)
-      })
-
-      this.clearSelection(true)
-      this.isDirty = true
+      this.removeObject()
     }
     const paste = () => {
       this.props.saveForUndo('Paste')
@@ -714,7 +720,7 @@ export default class ObjectLayer extends AbstractLayer {
 let obj, endPoint, pointCache = {x: 0, y: 0}
 const edit = {}
 edit[EditModes.drawRectangle] = function (e) {
-  if (e.type == 'mousedown') {
+  if (e.type == 'mousedown' || e.type == 'touchstart') {
     if ((e.buttons & 0x2) == 0x2) {
       return
     }
@@ -729,7 +735,7 @@ edit[EditModes.drawRectangle] = function (e) {
   if (!obj) {
     return
   }
-  if (e.type == 'mouseup') {
+  if (e.type == 'mouseup' || e.type == 'touchstop') {
     this.setPickedObject(obj, this.data.objects.length - 1)
     obj = null
     return
@@ -901,15 +907,15 @@ edit[EditModes.rectangle] = function (e) {
     return
   }
 
-  let dx = (e.movementX / this.camera.zoom)
-  let dy = (e.movementY / this.camera.zoom)
+  let dx = (this.pointerMovementX / this.camera.zoom)
+  let dy = (this.pointerMovementY / this.camera.zoom)
 
   const nx = this.startPosX + this.movementX
   const ny = this.startPosY + this.movementY
 
   const tw = this.props.mapData.tilewidth
   const th = this.props.mapData.tileheight
-  if (e.type == 'mouseup') {
+  if (e.type == 'mouseup' || e.type == 'touchend') {
     if (obj && !this.handles.activeHandle) {
       let selCount = this.selectObjects(obj)
       if (selCount > 0) {
@@ -940,7 +946,7 @@ edit[EditModes.rectangle] = function (e) {
     this.updateClonedObject()
   }
 
-  if (e.type == 'mousedown') {
+  if (e.type == 'mousedown' || e.type == 'touchstart' ) {
     this.props.saveForUndo('Edit Object')
     if (!this.handles.activeHandle) {
       this.isDirty = true
@@ -1046,6 +1052,8 @@ edit[EditModes.rectangle] = function (e) {
   obj.width = Math.abs(this.movementX)
   obj.y = Math.min(y1, y2)
   obj.height = Math.abs(this.movementY)
+
+  // console.log(obj)
 
   let selCount = this.selectObjects(obj)
   if (selCount == 1 && this.pickedObject) {

@@ -69,8 +69,9 @@ export default class MageGameCanvas extends React.Component {
         if (actorName && actorName != '') {
           const px = ((x - startX) * 32) //- pixelShiftLeftX
           const py = ((y - startY) * 32) //- pixelShiftUpY
-          var actor = actors[actorName].content2
-          if (actor) {
+          var actorAsset = actors[actorName]
+          if (actorAsset) {
+            var actor = actorAsset.content2
             const animationTableIndex = MgbActor.getAnimationIndex(actor, -1, -1, tweenCount)
             const newTileName = MgbActor.getAnimationTileFromIndex(actor, animationTableIndex)
             const effect = MgbActor.getAnimationEffectFromIndex(actor, animationTableIndex)

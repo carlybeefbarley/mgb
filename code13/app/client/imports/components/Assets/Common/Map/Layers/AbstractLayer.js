@@ -50,16 +50,23 @@ export default class AbstractLayer extends React.Component {
     this.ctx = canvas.getContext('2d')
 
     window.addEventListener('mouseup', this._mup)
+    window.addEventListener('touchend', this._mup)
+
     window.addEventListener('keyup', this._kup)
+
     window.addEventListener('mousemove', this._mov)
+    window.addEventListener('touchmove', this._mov)
 
     this._isVisible = true
   }
 
   componentWillUnmount () {
     window.removeEventListener('mouseup', this._mup)
+    window.removeEventListener('touchstart', this._mup)
+
     window.removeEventListener('keyup', this._kup)
     window.removeEventListener('mousemove', this._mov)
+    window.removeEventListener('touchmove', this._mov)
 
     this._isVisible = false
   }
@@ -170,6 +177,29 @@ export default class AbstractLayer extends React.Component {
       this.movementY += (e.movementY / this.camera.zoom)
     }
   }
+
+  getOffsetX(e){
+    if(e.offsetX !== void(0)){
+      return e.offsetX
+    }
+    if(e.touches){
+      const t = e.touches[0]
+      const box = e.target.getBoundingClientRect()
+      return t.pageX - box.left
+    }
+    return 0
+  }
+  getOffsetY(e){
+    if(e.offsetY !== void(0)){
+      return e.offsetY
+    }
+    if(e.touches){
+      const t = e.touches[0]
+      const box = e.target.getBoundingClientRect()
+      return t.pageY - box.top
+    }
+    return 0
+  }
   _onKeyUp (e) {
     if (this.props.isActive) {
       this.onKeyUp && this.onKeyUp(e)
@@ -181,6 +211,7 @@ export default class AbstractLayer extends React.Component {
               <canvas
                 ref='canvas'
                 onMouseDown={this.handleMouseDown.bind(this)}
+                onTouchStart={this.handleMouseDown.bind(this)}
                 onMouseLeave={this.onMouseLeave.bind(this)}
                 style={{ display: 'block' }}>
               </canvas>

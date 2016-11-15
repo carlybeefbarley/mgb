@@ -9,6 +9,8 @@ import ProjectMembershipEditor from './ProjectMembershipEditor'
 import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import WorkState from '/client/imports/components/Controls/WorkState'
 
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+
 // TODO: Toast/error is a mess
 
 export const assetViewChoices =  { 
@@ -50,9 +52,15 @@ export default AssetCard = React.createClass({
   {
     this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
     this.previewCtx = this.previewCanvas.getContext('2d')
+
+    // this is here because React makes passive event listeners and it's not possible to prevent default from passive event listener
+    this.previewCanvas.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+
     this.loadThumbnail()
   },
-
+  componentWillUnmount(){
+    this.previewCanvas.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+  },
   componentDidUpdate()
   {
     this.loadThumbnail()
@@ -103,7 +111,7 @@ export default AssetCard = React.createClass({
     }))
 
     // IE needs this!!!
-    e.dataTransfer.effectAllowed = "copy"
+    // e.dataTransfer.effectAllowed = "copy"
     $(document.body).addClass("dragging")
   },
 

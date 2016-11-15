@@ -1,4 +1,5 @@
 "use strict";
+import dragAndDropSimulator from './dragAndDropSimulator.js'
 
 const DragNDropHelper = {
   getAssetFromEvent: (e) => {
@@ -24,6 +25,9 @@ const DragNDropHelper = {
     e.stopPropagation()
     e.preventDefault()
     e.dataTransfer.effectAllowed = 'copy'
+  },
+  startSyntheticDrag: (e) => {
+    dragAndDropSimulator.startDragOnTouch(e)
   }
 }
 

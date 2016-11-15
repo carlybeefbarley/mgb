@@ -50,7 +50,9 @@ const TB = {
   redo: function(){
     this.doRedo()
   },
-
+  view: function(){
+    TB.enableMode.call(this, EditModes.view)
+  },
   stamp: function(){
     TB.enableMode.call(this, EditModes.stamp)
   },
@@ -65,6 +67,8 @@ const TB = {
 
   eraser: function(){
     TB.enableMode.call(this, EditModes.eraser)
+    const activeLayer = this.refs.map.getActiveLayer()
+    activeLayer.deleteSelection && activeLayer.deleteSelection()
   },
 
   drawRectangle: function(){

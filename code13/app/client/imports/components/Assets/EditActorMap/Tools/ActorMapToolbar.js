@@ -91,6 +91,15 @@ export default class MapToolbar extends React.Component {
           name: 'separator'
         },
         {
+          name: 'view',
+          icon: 'mouse pointer',
+          active: this.props.options.mode == EditModes.view,
+          label: 'View',
+          tooltip: 'Allows to scroll map in the mobile mode',
+          level: 1,
+          shortcut: 'V'
+        },
+        {
           name: 'stamp',
           icon: 'legal stamp',
           active: this.props.options.mode == EditModes.stamp,

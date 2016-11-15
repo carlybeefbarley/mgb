@@ -1,6 +1,7 @@
 // keep as strings for easier debugging
 const EditModes = {
   // add something to map
+  view: 'view',
   stamp: 'stamp',
   terrain: 'terrain',
   fill: 'fill',

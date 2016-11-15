@@ -1531,8 +1531,8 @@ export default class EditCode extends React.Component {
                       placeholder="Start typing code here..."/>
         </div>
 
-        { infoPaneOpts.col2 && 
-        <div className={infoPaneOpts.col2 + ' wide column'}>
+        { 
+        <div className={infoPaneOpts.col2 + ' wide column'} style={{display: infoPaneOpts.col2 ? "block" : "none"}}>
 
           <div className="mgbAccordionScroller">
             <div className="ui fluid styled accordion">

@@ -276,6 +276,7 @@ export default class TileSet extends React.Component {
 
     if (!e.ctrlKey) {
       this.props.clearActiveSelection()
+      this.props.resetActiveLayer()
     }
     this.mouseDown = true
     this.selectTile(e)

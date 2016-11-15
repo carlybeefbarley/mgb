@@ -668,7 +668,6 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
   onMouseLeave (e) {
-    const nat = e.nativeEvent ? e.nativeEvent : e
     this.lastEvent = null;
     this.isMouseOver = false
     this.props.clearTmpSelection()

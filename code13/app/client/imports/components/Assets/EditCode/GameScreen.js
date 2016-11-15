@@ -121,7 +121,7 @@ export default class GameScreen extends React.Component {
           this.iFrameWindow.setAttribute("width", newWidth + "")
           this.iFrameWindow.setAttribute("height", newHeight + "")
           this.wrapper.style.width = newWidth + "px"
-          this.wrapper.style.height = newHeight + "px"
+          // this.wrapper.style.height = newHeight + "px"
         }
         // keep adjusting
         this.adjustIframe()
@@ -151,13 +151,15 @@ export default class GameScreen extends React.Component {
             >
               <i className="remove icon"></i>
             </button>
-            {/*
+            
             <button className="ui mini right floated icon button"
             title={this.state.isMinimized ? "Maximize" : "Minimize"}
             onClick={this.minimize.bind(this)}
             >
               <i className={"icon " +(this.state.isMinimized ? "maximize" : "minus")}></i>
             </button>
+
+            {/*
             
             <button title="Drag Window" className="ui mini right floated icon button">
               <i className="move icon"></i>

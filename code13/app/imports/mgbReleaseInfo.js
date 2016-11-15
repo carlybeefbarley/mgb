@@ -20,6 +20,38 @@ const mgbReleaseInfo = {
 */
 
     {
+      'timestamp': 'Tue Nov 15 2016 13:30:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2068'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        // also fixed code and maps/actor maps api that was broken (kinds, ids)
+        {
+          'featureTag': 'game.actorMap',
+          'type': 'bugfix',
+          'changeName': 'Bugfixed animation cycles for actorMap game',
+          'changeSummary': 'Fixes for stationary animation cycles (16 cycle animations) and to fix the blinking issues',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Edit now has a popout mode for the run-preview area',
+          'changeSummary': 'When running code in the Code Editor, you can now toggle the new Popout button to allow the run preview area to be moved around. This is helpfull for debug+run on smaller screens',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
       'timestamp': 'Tue Nov 15 2016 01:40:00 GMT-0800 (PDT)',
 
       'id': {

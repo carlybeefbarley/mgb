@@ -3,7 +3,7 @@ import QLink from '../QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import moment from 'moment'
-import { Segment, Container, Header, List, Item, Grid, Icon } from 'semantic-ui-react'
+import { Segment, Container, Header, List, Item, Grid, Icon, Message } from 'semantic-ui-react'
 
 const _releaseStateSymbols = {
   'alpha':  'α',
@@ -15,6 +15,9 @@ const ReleaseId = ( { releaseId } ) => (
     <i>Release {_releaseStateSymbols[releaseId.state]||releaseId.state}{releaseId.iteration}</i>
   </span>
 )
+
+
+const UserLink = ( { u } ) => (<QLink to={`/u/${u}`}>@{u}</QLink>)
 
 export default WhatsNewRoute = React.createClass({
 
@@ -45,7 +48,7 @@ export default WhatsNewRoute = React.createClass({
         "profile.latestNewsTimestampSeen": latestNewsTimestampSeen
       }, (error) => {
         if (error)
-          console.log("Could not update profile with What's New timestamp")      
+          console.error("Could not update profile with What's New timestamp")      
       })      
     }
   },  
@@ -62,20 +65,33 @@ export default WhatsNewRoute = React.createClass({
 
   headerMessage: (
     <Segment raised padded>
-      <Header>My Game Builder is in Beta test and being actively developed</Header>
+      <Header>
+        My Game Builder is in <em>Semi-Secret Beta</em> test...
+        <br />
+        <small>
+          ...actively developed by <UserLink u='dgolds'/>, <UserLink u='stauzs'/> and <UserLink u='guntis'/>
+        </small>
+      </Header>
       <p>
         You are very welcome to use this new MyGameBuilder site and give us feedback 
         using the <i className="chat icon" />chat panel on the right hand side of the screen
       </p>
       <List className='bulleted'>
-        <List.Item>The Sounds, Music, Graphic, Map and Code Asset types are quite stable and can be used safely</List.Item>
-        <List.Item>iPad/Tablet usage can be quirky/buggy at present (a few bugs left here)</List.Item>
-        <List.Item>For best results now, use Google's Chrome browser on Windows/Mac/Linux.</List.Item>
+        <List.Item>Touch-drag support for phones/tablets is <QLink to="/roadmap">coming soon</QLink>. However, Map editing is tricky on phones/tablets until that is implemented</List.Item>
+        <List.Item>We are testing with Chrome, Firefox and Safari, but for best results now, use <a href='https://www.google.com/chrome/'> Google's Chrome browser</a> on Windows/Mac/Linux.</List.Item>
       </List>
-      <p title="However, if you want to help us get the word out when we are ready, message us in Chat!">
-        Please do NOT post this v2.mygamebuilder.com link to news sites like 
-        Facebook/ProductHunt/Reddit/SlashDot/HackerNews etc. - we aren't ready for prime time yet!
-      </p>
+      <Message warning icon>
+        <Icon name='spy' />
+        <Message.Content>
+          <Message.Header>Shhh</Message.Header>
+          <p>
+            Please <em>do NOT</em> post our <a href='https://v2.mygamebuilder.com'>v2.mygamebuilder.com</a> link to public sites like Forums, Facebook, ProductHunt, Reddit, SlashDot, HackerNews etc <em>YET</em>. We aren't quite ready for big groups yet!
+          </p>
+          <p>
+            It's OK to directly ask a few buddies to try it though if you like, as long as they follow this rule.
+          </p>
+        </Message.Content>
+      </Message>        
       <p>
         See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
       </p>

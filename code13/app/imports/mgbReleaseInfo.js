@@ -14,6 +14,24 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+/* Pending changes -- accumulate here in comment until time to deploy
+
+        {
+          'featureTag': 'game.actorMap',
+          'type': 'bugfix',
+          'changeName': 'Mage MGB1 music playback',
+          'changeSummary': 'Fixed initial load and playback race conditions with Music in actorMap game. Thanks @jaketor for finding the bugs',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.roadmap',
+          'type': 'improvement',
+          'changeName': 'Updated Roadmap',
+          'changeSummary': 'Updated roadmap page with intended work for November 2016 and beyond',
+          'otherUrls': [ txt: 'Roadmap page',   href: '/roadmap']
+        },
+
+*/
 
     {
       'timestamp': 'Mon Nov 14 2016 12:50:00 GMT-0800 (PDT)',
@@ -91,7 +109,7 @@ const mgbReleaseInfo = {
         {
           'featureTag': 'asset.tutorials',
           'type': 'feature',
-          'changeName': 'Tutorials Asset',
+          'changeName': 'Tutorials Asset + Editor + DebugTracer',
           'changeSummary': 'The new tutorials system is getting very close now! We have added the new Asset type for defining a tutorial, and also a special debug mode for running tutorials with lots of event tracking (see the browser js console for this)',
           'otherUrls': [ ]
         },

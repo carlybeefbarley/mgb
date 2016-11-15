@@ -10,7 +10,7 @@ export default MagePlayGameDisplay = {
    */
   chooseActiveActorDisplayTile(AA)
   {
-    const { actors, activeActors, AA_player_idx, inventory, graphics, G_tweenCount } = this
+    const { actors, activeActors, AA_player_idx, inventory, graphics, G_tweenCount, G_tweenSinceMapStarted } = this
 
     // 1. Reset any render offsets
     activeActors[AA].renderOffsetCellsX = 0
@@ -31,7 +31,7 @@ export default MagePlayGameDisplay = {
       ap.content2, 
       (activeActors[AA].xMovePerTween == 0 && activeActors[AA].yMovePerTween == 0) ? -1 : activeActors[AA].stepStyle,
       activeActors[AA].stepStyle,  
-      G_tweenCount,
+      G_tweenSinceMapStarted,
       activeActors[AA].meleeStep)
     
     if (activeActors[AA].inMelee())
@@ -43,7 +43,7 @@ export default MagePlayGameDisplay = {
           ap.content2, 
           (activeActors[AA].xMovePerTween == 0 && activeActors[AA].yMovePerTween == 0) ? -1 : activeActors[AA].stepStyle,
           activeActors[AA].stepStyle,  
-          G_tweenCount)	// Note - Melee Step purposely omitted
+          G_tweenSinceMapStarted)	// Note - Melee Step purposely omitted
       }
       else
       {

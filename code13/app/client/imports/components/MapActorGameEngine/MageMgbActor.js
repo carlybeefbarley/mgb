@@ -404,7 +404,7 @@ const MgbActor = {
       }
       // Now, is there actually an animation here? If not, then revert back
       const animTableEntry = actorPiece.animationTable[animationTableIndex]
-      if (!animTableEntry || animTableEntry.tilename === null || animTableEntry.tilename === '')
+      if (!animTableEntry || animTableEntry.tileName === null || animTableEntry.tileName === '')
         animationTableIndex = -1 
     }
     return animationTableIndex
@@ -413,26 +413,37 @@ const MgbActor = {
   isAnimationTableIndexValid: function(actorPiece, animationTableIndex)		// i.e. non-empty and correctly formed 
   {
     var ate = actorPiece.animationTable[animationTableIndex]		// Animation Table Entry
-    return ate && ((ate.effect !== "no effect" && ate.effect !== '') || (ate.tilename !== ''))
+    return ate && ((ate.effect !== "no effect" && ate.effect !== '') || (ate.tileName !== ''))
   },
 
   getAnimationEffectFromIndex: function(actorPiece, animationTableIndex)
   {
-    return animationTableIndex == -1 ? "no effect" : actorPiece.animationTable[animationTableIndex].effect
+    // We define there
+    if (animationTableIndex == -1 )
+      return 'no effect'
+    const ate = actorPiece.animationTable[animationTableIndex]
+    if (!ate)
+      return 'no effect'
+
+    const retval = ate.effect
+    if (!retval || retval === '')
+      return 'no effect'
+
+    return retval
   },
 
   getAnimationTileFromIndex: function(actorPiece, animationTableIndex)
   {
-    let tilename
+    let tileName
     if (animationTableIndex == -1)
-      tilename = actorPiece.databag.all.defaultGraphicName
+      tileName = actorPiece.databag.all.defaultGraphicName
     else
     {
-      tilename = actorPiece.animationTable[animationTableIndex].tileName
-      if (tilename == null || tilename == "")
-        tilename = actorPiece.databag.all.defaultGraphicName
+      tileName = actorPiece.animationTable[animationTableIndex].tileName
+      if (tileName == null || tileName == "")
+        tileName = actorPiece.databag.all.defaultGraphicName
     }
-    return tilename ? tilename :  ''		// Null -> ''
+    return tileName ? tileName :  ''		// Null -> ''
   },
 
   intFromActorParam: function (param) {

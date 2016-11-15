@@ -19,14 +19,13 @@ const mgbReleaseInfo = {
 
 */
 
-
     {
-      'timestamp': 'Mon Nov 14 2016 23:15:00 GMT-0800 (PDT)',
+      'timestamp': 'Tue Nov 15 2016 00:15:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2054'
+        'iteration': '2056'
       },
 
       'releaseManagement': {
@@ -36,9 +35,9 @@ const mgbReleaseInfo = {
       'changes': [
         {
           'featureTag': 'game.actorMap',
-          'type': 'bugfix',
-          'changeName': 'Mage game playback',
-          'changeSummary': 'Lots of fixes for actorMap game compat with MGBv1 - spawnrate, text crawl, overlayUI, Music Playback+stop.  Thanks @jaketor for finding the bugs in the player code. There are a few more fixes still to come',
+          'type': 'improvement',
+          'changeName': 'Improved + bugfixed ActorMap Game player',
+          'changeSummary': 'Lots of fixes for ActorMap game compatibility with MGBv1 - spawnrate, touch damage, text crawl, overlayUI, Music Playback+stop. Also new UI to explain any gameStart exceptions (e.g. no players on map). Thanks @jaketor for finding the bugs in the player code. There are a few more fixes still to come (pause is weird, etc).',
           'otherUrls': [ ]
         },
         {

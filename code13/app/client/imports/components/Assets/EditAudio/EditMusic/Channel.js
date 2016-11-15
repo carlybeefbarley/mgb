@@ -270,7 +270,7 @@ export default class Channel extends React.Component {
   }
 
   onDrag (e) {
-    if(e.clientX == 0 && e.clientY == 0) return   // avoiding weid glitch when at the end of drag 0,0 coords returned
+    if(e.clientX == 0 && e.clientY == 0) return   // avoiding weird glitch when at the end of drag 0,0 coords returned
 
     // drag select
     if(this.props.isSelecting){

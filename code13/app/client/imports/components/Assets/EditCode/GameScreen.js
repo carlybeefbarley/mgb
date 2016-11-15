@@ -130,6 +130,36 @@ export default class GameScreen extends React.Component {
     }
   }
 
+  onDragStart (e) {
+    // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
+    // don't do this on mobile devices
+    // e.preventDefault()
+    if(e.dataTransfer){ 
+      let ghost = e.target.cloneNode(true)
+      ghost.style.display = "none"
+      e.dataTransfer.setDragImage(ghost, 0, 0)
+    }
+    if(e.touches && e.touches[0]) e = e.touches[0]
+    this.dragStartX = e.clientX
+    this.dragStartY = e.clientY
+  }
+
+  onDrag (e) {
+    e.preventDefault()
+    if(e.touches && e.touches[0]) e = e.touches[0]
+    if(e.clientX == 0 && e.clientY == 0) return   // avoiding weird glitch when at the end of drag 0,0 coords returned
+
+    this.screenX += this.dragStartX - e.clientX
+    this.screenY += this.dragStartY - e.clientY
+    this.dragStartX = e.clientX
+    this.dragStartY = e.clientY
+    this.wrapper.style.right = this.screenX + "px"
+    this.wrapper.style.bottom = this.screenY + "px"
+
+    // console.log(this.dragStartX, e.clientX, this.screenX)
+  }
+
+
   render(){
     return (
       <div ref="wrapper" id="gameWrapper"
@@ -146,6 +176,7 @@ export default class GameScreen extends React.Component {
               ,left: "0"
               ,backgroundColor: "inherit"
             }}>
+
             <button title="Close" className="ui mini right floated icon button"
             onClick={this.close.bind(this)}
             >
@@ -159,12 +190,18 @@ export default class GameScreen extends React.Component {
               <i className={"icon " +(this.state.isMinimized ? "maximize" : "minus")}></i>
             </button>
 
-            {/*
-            
-            <button title="Drag Window" className="ui mini right floated icon button">
+            <button 
+            title="Drag Window" 
+            className="ui mini right floated icon button"
+            draggable={true}
+            onDragStart={this.onDragStart.bind(this)}
+            onDrag={this.onDrag.bind(this)}
+            onTouchStart={this.onDragStart.bind(this)}
+            onTouchMove={this.onDrag.bind(this)}
+            >
               <i className="move icon"></i>
             </button>
-          */}
+
           </div>
         }
         <iframe

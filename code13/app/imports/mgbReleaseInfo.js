@@ -20,12 +20,12 @@ const mgbReleaseInfo = {
 */
 
     {
-      'timestamp': 'Tue Nov 15 2016 00:15:00 GMT-0800 (PDT)',
+      'timestamp': 'Tue Nov 15 2016 00:40:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2056'
+        'iteration': '2058'
       },
 
       'releaseManagement': {
@@ -33,6 +33,7 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        // also fixed code api that was broken.
         {
           'featureTag': 'game.actorMap',
           'type': 'improvement',

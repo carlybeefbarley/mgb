@@ -53,7 +53,7 @@ const _resolveOwner = (implicitOwnerName, assetName) => {
 }
 const _mkMapUri = (ownerName, assetName) => { 
   const p = _resolveOwner(ownerName, assetName)
-  return `/api/asset/map/${p.ownerName}/${p.assetName}`
+  return `/api/asset/actormap/${p.ownerName}/${p.assetName}`
 }
 const _mkActorUri = (ownerName, assetName) =>  {
   const p = _resolveOwner(ownerName, assetName)

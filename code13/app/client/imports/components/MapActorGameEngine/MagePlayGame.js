@@ -85,7 +85,6 @@ export default class MagePlayGame
 
   endGame()
   {
-//  this.stopMusic()
     this.hideNpcMessage()
     this.hideInventory()
     this.resetGameState()
@@ -183,8 +182,13 @@ export default class MagePlayGame
     if (this.isPaused)
       return
 
-    if (true) // TODO - make this once per second
+    const nowMS = (new Date()).getTime()
+    if (!this._timeInASecond || nowMS >= this._timeInASecond)
+    {
+      this._timeInASecond = nowMS + 1000
       this.checkForGeneratedActorsThisSecond()
+      console.log("TICK")
+    } 
 
     // Now for the real actions
     if (0 == this.G_tweenCount) {
@@ -346,8 +350,7 @@ export default class MagePlayGame
                     if (this.activeActors[AAInCell].alive && AAInCell != AA && (this.activeActors[AAInCell].type == MgbActor.alActorType_NPC || this.activeActors[AAInCell].type == MgbActor.alActorType_Player)) {
                       if (actor.isAShot) {
                         if (AAInCell == this.AA_player_idx) {
-                          const now = (new Date()).getTime()
-                          if (!(this.activeActors[AAInCell].activePowerUntilGetTime >= now &&
+                          if (!(this.activeActors[AAInCell].activePowerUntilGetTime >= nowMS &&
                             MgbActor.alGainPowerType_Invulnerable == this.activeActors[AAInCell].activePower))
                             damage = actor.shotDamageToPlayer
                         }
@@ -502,7 +505,6 @@ debugger
     this.G_tweenCount = (this.G_tweenCount + 1) % (this.G_tweensPerTurn + 1)
     this.G_tweenSinceMapStarted++
     let ps = ''
-    const nowMS = (new Date()).getTime()
     if (this.activeActors[this.AA_player_idx].activePower && this.activeActors[this.AA_player_idx].activePowerUntilGetTime >= nowMS)
       ps = "  Active Power = " + MgbActor.alGainPower[this.activeActors[this.AA_player_idx].activePower]
 

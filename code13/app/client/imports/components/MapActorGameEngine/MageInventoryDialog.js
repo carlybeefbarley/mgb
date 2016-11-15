@@ -16,8 +16,10 @@ const SelectedItem = props =>
     <Item.Group style={{height: '6.5em'}}>
       <Item>
 
-        { item && 
-          <Item.Image size='tiny' src={itemImgSrc(item, loadedGraphics)} style={{ width: 'auto', maxWidth:'10em' }} />
+        { item ? 
+          <Item.Image size='tiny' src={itemImgSrc(item, loadedGraphics)} style={{ width: 'auto', maxWidth: '10em' }} />
+          :
+          <p>(Nothing selected)</p>
         }
 
         { item && 
@@ -68,14 +70,16 @@ export default class MageInventoryDialog extends React.Component {
 
   state = { activeTab: 'Inventory', selectedInventory: -1, selectedEquipped: -1 }
 
-  handleItemClick = (e, { name } ) => this.setState({ activeTab: name })
+  handleItemClick = (e, { name } ) => this.setState( { activeTab: name } )
 
   render () {
     const { activeTab } = this.state
     const { inventory, graphics, itemActionFn } = this.props
     const selectionKey = 'selected'+activeTab
     const selectedIdx = this.state[selectionKey]
-    const itemsToShow = _.filter(inventory._invArray, item => (item && (item.equipped === (activeTab == 'Equipped'))))
+    const isInventory = activeTab === 'Inventory'
+    const isEquipment = activeTab === 'Equipped'
+    const itemsToShow = _.filter(inventory._invArray, item => (item && (item.equipped === isEquipment)))
 
     return (
       <Segment>
@@ -91,8 +95,8 @@ export default class MageInventoryDialog extends React.Component {
           <p>Equipment Effect: {inventory.fullEquipmentEffectSummary}</p>              
 
           <Menu attached='top' tabular>
-            <Menu.Item name='Inventory' active={activeTab === 'Inventory'} onClick={this.handleItemClick} />
-            <Menu.Item name='Equipped'  active={activeTab === 'Equipped'} onClick={this.handleItemClick} />
+            <Menu.Item name='Inventory' active={isInventory} onClick={this.handleItemClick} />
+            <Menu.Item name='Equipped'  active={isEquipment} onClick={this.handleItemClick} />
           </Menu>
 
           <Segment attached='bottom'>
@@ -104,6 +108,9 @@ export default class MageInventoryDialog extends React.Component {
                 src={itemImgSrc(item, graphics)} />
               )
             } 
+            { (!itemsToShow || itemsToShow.length === 0 ) &&
+              <p>{ isEquipment ? '(No items equipped)' : '(No unequipped items in inventory)' }</p>
+            }
           </Segment>
 
         </Segment>

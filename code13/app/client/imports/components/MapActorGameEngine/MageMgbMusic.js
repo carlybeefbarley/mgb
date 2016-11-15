@@ -3,8 +3,13 @@
 
 const _musicUrlPrefix = "http://s3.amazonaws.com/apphost/game_music/"
 
-// We only let one play at a time.. this is the one
-let _currentlyPlaying = null    // this or the string which was the param to playMusic()
+// We only let one music track play at a time.. this_currentlyPlaying is the one.. 
+// So that's why this thing is a global/singleton object instead of a class
+let _currentlyPlaying = null    // null, or the string which was the param to playMusic() which identifies the music
+
+// See MgbMusic.musicList[] for the special list of built-in tracks. 
+// These are referenced as `[builtin]:${name}` and musicUrlFromMusicFileName() knows
+// how to get from the full name (with the [builtin] prefix) to the URL (stored on S3 for now)
 
 const MgbMusic = {
   musicUrlFromMusicFileName: name => {
@@ -17,23 +22,19 @@ const MgbMusic = {
     return _musicUrlPrefix + safeName
   },
   
-  /**
-   * generateMusicPlaybackSummary
-   * 
-   * @param {String} currentFileName  - This should be one of the entries from musicList 
-   * @param {String} currentStatus    - This will be a short string describing the plkayback status - no trailing space or punctuation in these strings
-   * @returns {String}                - Return a string that may be used for Human UI and should show attribution to copyright owners
-   */
-  generateMusicPlaybackSummary: ( currentFileName, currentStatus ) =>  currentStatus + " (" + currentFileName + ")",
-
-
   _loadedMusic: {},       // This is a place we store/cache loaded music. // TODO: Consider memory implications - Consider just keeping N entries
 
   // TODO: A preloader method..which is why there is a loadedMusic structure here for future use.
 
   playMusic: function(musicSource) {
-    console.log(`playMusic requested: ${musicSource}`)
     
+    if (musicSource && musicSource === _currentlyPlaying) {
+      // Too noisy...  console.log(`playMusic determined that '${musicSource}' is already playing, so no action required`)
+      return
+    }
+    
+    console.log(`playMusic requested: ${musicSource}`)
+
     MgbMusic.stopMusic()  // First stop anything playing
 
     if (!musicSource || musicSource === '' || musicSource === 'none')

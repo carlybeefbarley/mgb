@@ -1650,14 +1650,13 @@ export default class EditCode extends React.Component {
                         <i className={"stop icon"}></i>&emsp;Stop
                       </a>
                     }
-                    { /* 
+                    { 
                       isPlaying &&
                       <a  className='ui tiny icon button' 
                           title='Click here to stop the running program'
                           onClick={this.handleGamePopup.bind(this)}>
                         <i className={"external icon"}></i>&emsp;Popup
                       </a>
-                      */
                     }
                     <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
                       <a  className='ui tiny icon button' 
@@ -1678,15 +1677,6 @@ export default class EditCode extends React.Component {
               { !docEmpty && asset.kind === 'code' && 
                 // Code run/stop (body)
                 <div className="content">
-                {/*******
-                  <iframe
-                    key={ this.state.gameRenderIterationKey }
-                    id="iFrame1"
-                    width="100%" height="400"
-                    sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
-                    src="/codeEditSandbox.html">
-                  </iframe>
-                ********/}
                   <GameScreen
                     ref="gameScreen"
                     isPopup = {this.state.isPopup}

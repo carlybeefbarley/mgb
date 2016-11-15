@@ -44,6 +44,7 @@ export default MagePlayGameBackgroundLayers = {
   
   playCleanupBackgroundLayer: function()
   {
-    this.backgroundBlockageMap.reset(1, 1)
+    if (this.backgroundBlockageMap)
+      this.backgroundBlockageMap.reset(1, 1)
   }
 }

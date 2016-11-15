@@ -125,6 +125,7 @@ export default class Mage extends React.Component {
     this.forceUpdate()      // Simple, brutal, effective.
   }
 
+  // If this fails to start, it will trigger a UI message which will later nuke this._mageCanvas by unmouting the canvas
   handlePlay()
   {
     if (!this._mageCanvas)
@@ -134,17 +135,28 @@ export default class Mage extends React.Component {
       this.props.playCountIncFn()
 
     this._game = new MagePlayGame()
-    this._game.startGame(
-      this.state.activeMap, 
-      this.state.loadedActors, 
-      this.state.loadedGraphics, 
-      newMapName => this._transitionToNextMap(newMapName),
-      (lineNum, txt) => this.handleSetGameStatus(lineNum, txt), 
-      (npcDialogData) => this.handleShowNpcDialog(npcDialogData),
-      (newViz) => this.handleSetInventoryVisibility(newViz),        // OOPS, I think this should be toggleNpcDialogFn
-      () => this.handleForceInventoryUpdate(),
-      window)
-    this.setState( { isPlaying : true })
+    let startedOk = false
+
+    try {
+      this._game.startGame(
+        this.state.activeMap, 
+        this.state.loadedActors, 
+        this.state.loadedGraphics, 
+        newMapName => this._transitionToNextMap(newMapName),
+        (lineNum, txt) => this.handleSetGameStatus(lineNum, txt), 
+        (npcDialogData) => this.handleShowNpcDialog(npcDialogData),
+        (newViz) => this.handleSetInventoryVisibility(newViz),        // OOPS, I think this should be toggleNpcDialogFn
+        () => this.handleForceInventoryUpdate(),
+        window)
+      startedOk = true
+    }
+    catch (err) {
+      startedOk = false
+      this._game.endGame()
+      this.setState( { isPreloadingStr: null, mapLoadError: `Map '${this._mkFriendlyMapName()}' could not start: ${err.toString()}` } )
+    }
+    if (startedOk)
+      this.setState( { isPlaying : true } )
   }
 
   handleStop()
@@ -168,7 +180,7 @@ export default class Mage extends React.Component {
       const pendingLoads = this._countPendingLoads()
 
       if (!pendingLoads && this.state.activeMap && !this._game && this.props.hideButtons)
-        this.handlePlay() // Hide Buttons implies autoplay      
+        this.handlePlay() // Hide Buttons implies autoplay
 
       try
       {
@@ -182,7 +194,8 @@ export default class Mage extends React.Component {
           }
           this._game.onTickGameDo()
         }
-        if (!this._transitioningToMapName) {
+        // We have to check this._mageCanvas again because a failure to start the game will cause it
+        if (this._mageCanvas && !this._transitioningToMapName) {
           this._mageCanvas.doBlit(
             this.state.activeMap, 
             this.state.loadedActors, 

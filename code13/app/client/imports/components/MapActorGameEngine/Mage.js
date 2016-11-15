@@ -22,7 +22,6 @@ const _overlayStyle = {
 }
 
 
-let _haveShownInstructionsOnceSinceStart = false      // We show this once per app load.
 // MapActorGameEngine (MAGE)
 
 // This is the top-level React wrapper for the MapActorGameEngine
@@ -37,7 +36,10 @@ let _haveShownInstructionsOnceSinceStart = false      // We show this once per a
 //  It takes a single parameter, uri, and returns a Promise. An example implementation
 //  can be found in /client/imports/helpers/assetFetchers.js
 
-const _compactMsgSty = { maxWidth: '500px' }  // Message icon cancels compact
+let _haveShownInstructionsOnceSinceStart = false      // We show this once per app load.
+
+
+const _compactMsgSty = { maxWidth: '500px' }  // Message icon cancels compact prop, so need a style
 const Preloader = ( { msg } ) => <Message style={_compactMsgSty} icon='circle notched loading' content={`Preloading ${msg}`} />
 const MapLoadFailed = ( { err } ) => <Message style={_compactMsgSty} icon='warning sign' error content={err} />
 
@@ -401,7 +403,7 @@ debugger  // TODO - stop game, no map.
           { 
             message: "Keyboard instructions:  Use the arrow keys to move your character or push stuff...     To attack, use 'Enter' to shoot if you have a ranged weapon, or use 'M' for a melee attack if you have a melee weapon....    I is for Inventory...    Ctrl is Pause...    GLHF.\n", 
             leftActor: null, // TODO - find the playerActor for this message
-            responseCallbackFn: () => { this._game.isPaused = false }
+            responseCallbackFn: () => { this.handleShowNpcDialog(null) ; this._game.isPaused = false }
           }
         )
       }

@@ -187,7 +187,6 @@ export default class MagePlayGame
     {
       this._timeInASecond = nowMS + 1000
       this.checkForGeneratedActorsThisSecond()
-      console.log("TICK")
     } 
 
     // Now for the real actions

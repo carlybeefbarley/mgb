@@ -20,6 +20,30 @@ const mgbReleaseInfo = {
 */
 
     {
+      'timestamp': 'Wed Nov 16 2016 00:50:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2076'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        // also fixed code and maps/actor maps api that was broken (kinds, ids)
+        {
+          'featureTag': 'nav.games',
+          'type': 'improvement',
+          'changeName': 'Game links in Nav Panel and profile',
+          'changeSummary': 'Added links to NavPanel menus and User profile. Added sorters for games, user\'s games, top games, etc to games browser. Improved home page games list',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+    {
       'timestamp': 'Tue Nov 15 2016 13:30:00 GMT-0800 (PDT)',
 
       'id': {

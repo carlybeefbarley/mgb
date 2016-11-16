@@ -217,9 +217,12 @@ export default class MapToolbar extends React.Component {
           level: 20
         },
         {
+          name: 'separator'
+        },
+        {
           name: 'toggleCtrlModifier',
           active: this.props.options.ctrlModifier,
-          icon: 'control',
+          icon: 'asterisk',
           label: 'Ctrl Modifier',
           tooltip: 'Ctrl key on mobile devices. allows to enable Snap To Grid',
           shortcut: 'Ctrl',

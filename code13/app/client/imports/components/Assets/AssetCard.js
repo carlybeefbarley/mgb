@@ -161,6 +161,7 @@ export default AssetCard = React.createClass({
         <div 
             className="ui centered image" 
             onClick={this.handleEditClick}
+            onTouchEnd={this.handleEditClick}
             style={ viewOpts.showImg ? {} : {display: 'none'} }>
           <canvas 
             className="mgb-pixelated"
@@ -170,7 +171,8 @@ export default AssetCard = React.createClass({
             style={{backgroundColor: '#ffffff', minHeight:"150px", maxHeight:"150px", maxWidth:"290px", width:"auto"}}
             draggable={allowDrag ? "true" : "false"}
             onDragStart={this.startDrag.bind(this, asset)}
-            onDragEnd={this.endDrag.bind(this, asset)} />
+            onDragEnd={this.endDrag.bind(this, asset)}
+            />
         </div>
 
         { viewOpts.showHdr && 

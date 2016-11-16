@@ -47,7 +47,7 @@ const TileHelper = {
     tileset.tileheight = tileset.tileheight || 32
     tileset.columns = tileset.imagewidth / tileset.tilewidth
 
-    return tileset.columns * (tileset.tilewidth + spacing)  - spacing
+    return tileset.columns * (tileset.tilewidth + spacing)
   },
 
   getTilesetHeight: (tileset, spacing = 1) => {

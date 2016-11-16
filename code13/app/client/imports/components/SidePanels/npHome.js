@@ -54,7 +54,7 @@ export default npHome = React.createClass({
             </Item.Header>,
             
             <div key='k2' className="menu">
-              <QLink key='k2'
+              <QLink
                   to={`/u/${this.props.currUser.profile.name}`} 
                   closeNavPanelOnClick={navPanelIsOverlay} 
                   className="item">
@@ -65,6 +65,18 @@ export default npHome = React.createClass({
                   closeNavPanelOnClick={navPanelIsOverlay} 
                   className="item">
                 My Badges
+              </QLink>
+              <QLink 
+                  to={`/u/${this.props.currUser.profile.name}/games`} 
+                  closeNavPanelOnClick={navPanelIsOverlay} 
+                  className="item">
+                <i className="game icon" /> My Games
+              </QLink>
+              <QLink 
+                  to={`/u/${this.props.currUser.profile.name}/projects`} 
+                  closeNavPanelOnClick={navPanelIsOverlay} 
+                  className="item">
+                <i className="sitemap icon" /> My Projects
               </QLink>
               <div className='item'></div>
             </div>,

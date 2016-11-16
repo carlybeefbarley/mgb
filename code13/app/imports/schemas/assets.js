@@ -312,6 +312,21 @@ export const assetSorters = {
   "kind":   { kind: 1 } 
 }
 
+export const gameSorters = { 
+  "edited": { updatedAt: -1}, 
+  "name":   { name: 1 }, 
+  "plays":  { 'metadata.playCount': -1 } 
+}
+
+// This is used by the publication. It's the merge of assetSorters, gameSorters, ...
+export const allSorters = { 
+  "edited": { updatedAt: -1}, 
+  "name":   { name: 1 }, 
+  "kind":   { kind: 1 },
+  "plays":  { 'metadata.playCount': -1 }  
+}
+
+
 Meteor.methods({
   "Azzets.create": function(data) {
     const username = Meteor.user().profile.name

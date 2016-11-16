@@ -1,7 +1,7 @@
 // This file should be imported by the main_server.js file
 
 import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars } from '/imports/schemas'
-import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
+import { assetMakeSelector, allSorters } from '/imports/schemas/assets'
 import { userSorters } from '/imports/schemas/users'
 import { projectMakeSelector, projectMakeFrontPageListSelector } from '/imports/schemas/projects'
 import { chatParams } from '/imports/schemas/chats'
@@ -94,7 +94,7 @@ Meteor.publish('assets.public', function(
                                     projectName=null,   // BUGBUG: Need to also have projectOwner!!! OMG
                                     showDeleted=false, 
                                     showStable=false, 
-                                    assetSortType,    // one of the keys of assetSorters
+                                    assetSortType,    // one of the keys of allSorters
                                     limitCount=50) 
 {
   let selector = assetMakeSelector(userId, 
@@ -103,7 +103,7 @@ Meteor.publish('assets.public', function(
                       projectName,    // BUGBUG: Need to also have projectOwner!!! OMG
                       showDeleted, 
                       showStable)
-  let assetSorter = assetSortType ? assetSorters[assetSortType] : assetSorters["edited"]
+  let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
   const findOpts = {
     fields: {content2: 0},
     sort:  assetSorter,

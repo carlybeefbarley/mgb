@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
-import Joyride from '/client/imports/Joyride/Joyride'
+import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 
 import { browserHistory } from 'react-router'
@@ -31,11 +31,9 @@ import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 
 let G_localSettings = new ReactiveDict()
 
-const getPagenameFromProps = function(props)
-{
   // This works because <App> is the first Route in /app/client/imports/routes
-  return props.routes[1].name
-}
+const getPagenameFromProps = props => props.routes[1].name
+const getPagepathFromProps = props => props.routes[1].path
 
 const npColumn1Width = "60px"
 
@@ -49,6 +47,7 @@ export const addJoyrideSteps = (steps, opts) => {
 export const joyrideDebugEnable = joyrideDebug => {
   if (_theAppInstance) 
     _theAppInstance.setState( { joyrideDebug } )
+  // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
 }
 
 export default App = React.createClass({
@@ -89,6 +88,9 @@ export default App = React.createClass({
   },
 
   componentDidUpdate: function(prevProps, prevState) {
+    const pagepath = getPagepathFromProps(this.props)
+    joyrideCompleteTag(`mgbjr-CT-app-router-path-${pagepath}`)                // e.g. /u/:username
+    joyrideCompleteTag(`mgbjr-CT-app-location-path-${this.props.location.pathname}`)    // e.g. /u/:dgolds   -- will exclude search/query params
 
     if (prevState.joyrideSteps.length ===0 && this.state.joyrideSteps.length > 0)
       this.refs.joyride.start(true)
@@ -99,7 +101,6 @@ export default App = React.createClass({
     // react-router routes, so we need a specific call when the page changes
 
     // analytics is from the Meteor package okgrow:analytics
-
     // See https://segment.com/docs/sources/website/analytics.js/#page for the analytics.page() params
     analytics.page(getPagenameFromProps(nextProps), {
       path: nextProps.location.pathname

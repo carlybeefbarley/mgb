@@ -10,8 +10,8 @@ export default ProjectsBeingMadeGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    numEntries: PropTypes.number.isRequired,
-    chosenClassName: PropTypes.string
+    numEntries:       PropTypes.number.isRequired,
+    chosenClassName:  PropTypes.string
   },
 
   getMeteorData: function() {
@@ -19,8 +19,9 @@ export default ProjectsBeingMadeGET = React.createClass({
 
     const handleForProjects = Meteor.subscribe('projects.frontPageList', numEntries)
     const projectSelector = projectMakeFrontPageListSelector()
+    const projectFindOptions =  { limit: numEntries, sort: { updatedAt: -1 } }
     return {
-      projects: Projects.find(projectSelector).fetch(),
+      projects: Projects.find(projectSelector, projectFindOptions).fetch(),
       loading: !handleForProjects.ready()
     }
   },
@@ -52,7 +53,7 @@ export default ProjectsBeingMadeGET = React.createClass({
               <img className="ui small middle aligned image" style={{ maxHeight: 60, maxWidth: 60 }} src={getProjectAvatarUrl(p)} />
               <div className="content middle aligned" style={titleWrapperStyle}>
                 <h3 className="ui header" style={titleStyle}>{p.name}</h3>
-                <p><i className="play icon" />00,000 Plays</p>
+                <p><i className="small play icon" />00,000 Plays</p>
               </div>
             </QLink>
           ))

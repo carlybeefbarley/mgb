@@ -165,13 +165,17 @@ export default UserProfileRoute = React.createClass({
               }
 
               <Item.Extra>
-                <QLink to={`/u/${name}/assets`}>
-                  <div className="ui label">Assets</div>
-                </QLink>
-                &nbsp;
-                <QLink to={`/u/${name}/projects`}>
-                  <div className="ui label">Projects</div>
-                </QLink>
+                <div className="ui small vertical buttons">
+                  <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
+                    <div className="ui small button">Assets</div>
+                  </QLink>
+                  <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
+                    <div className="ui small button">Projects</div>
+                  </QLink>
+                  <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
+                    <div className="ui small button">Games</div>
+                  </QLink>
+                </div>
               </Item.Extra>
             </Item.Content>
           </Item>

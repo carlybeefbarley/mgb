@@ -109,7 +109,7 @@ export default AssetCreateNew = React.createClass({
         </div>
 
         <div title={createButtonTooltip}>
-          <div className={createButtonClassName} onClick={this.handleCreateAssetClick} >
+          <div id="mgbjr-create-asset-button" className={createButtonClassName} onClick={this.handleCreateAssetClick} >
             4. Create {chosenKindStr} {chosenNameStr}
             <i className="right chevron icon"></i>
           </div>

@@ -65,7 +65,7 @@ export default class MapArea extends React.Component {
     this.globalIEScroll = (e) => {
       if (e.buttons == 4) {
         e.preventScrolling && e.preventScrolling()
-        e.stopPropagation()
+        // e.stopPropagation() - this will eat up all events
         e.preventDefault()
         return false
       }

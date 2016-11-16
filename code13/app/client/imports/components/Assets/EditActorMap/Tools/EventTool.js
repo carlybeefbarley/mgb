@@ -53,26 +53,6 @@ export default class ActorTool extends Tileset {
     )
   }
 
-  renderValidLayerInfo(checks, ts, active) {
-    // how this differs from native [].reverse?
-    return _.reverse(
-      _.map(checks, (c, i) => {
-          const isValid = c(ts);
-          return(
-            <div style={{ fontFamily: 'monospace', marginLeft: '2em', cursor: (isValid ? "pointer" : "auto") }}
-                 key={i}
-                 onClick={isValid ? () => {this.props.setActiveLayerByName(i)} : null}>
-              {active == i ?
-                <strong><i className='ui caret right icon' />{i}</strong> : <span><i className='ui icon' />{i}</span>}
-              : &emsp;{isValid ?
-              <strong>Valid</strong>
-              : <small>Not valid</small>}
-            </div>
-          )
-        }
-      ))
-  }
-
   render () {
     if (!this.props.tilesets.length) {
       return this.renderEmpty()

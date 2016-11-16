@@ -21,6 +21,7 @@ export default class TileSet extends React.Component {
     this.mouseRightDown = false
     this.startingtilePos = null
 
+    this.onMouseDown = this.onMouseDown.bind(this)
   }
   componentDidMount () {
     $('.ui.accordion')
@@ -261,7 +262,7 @@ export default class TileSet extends React.Component {
     })
   }
 
-  onMouseDown = (e) => {
+  onMouseDown(e){
     e.preventDefault()
 
     if (e.button == 2) {

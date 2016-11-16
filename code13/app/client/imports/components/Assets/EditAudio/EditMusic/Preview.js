@@ -80,13 +80,22 @@ export default class Preview extends React.Component {
 
   onDragStart(e){
     if(this.sliderWidth == 0) return  // no slider to draw
-    let ghost = e.target.cloneNode(true)
-    ghost.style.display = "none"
-    e.dataTransfer.setDragImage(ghost, 0, 0)
+
+    if (e.touches && e.touches[0])
+      e = e.touches[0]
+
+    if(e.dataTransfer){
+      let ghost = e.target.cloneNode(true)
+      ghost.style.display = "none"
+      e.dataTransfer.setDragImage(ghost, 0, 0)
+    }
     this.dragStartX = e.clientX
   }
 
   onDrag(e){
+    if (e.touches && e.touches[0])
+      e = e.touches[0]
+
     if(e.clientX == 0 && e.clientY == 0) return   // avoiding weid glitch when at the end of drag 0,0 coords returned
     const deltaX = e.clientX - this.dragStartX
     this.sliderX += deltaX
@@ -129,7 +138,11 @@ export default class Preview extends React.Component {
           draggable={true}
           onDragStart={this.onDragStart.bind(this)}
           onDrag={this.onDrag.bind(this)}
-          onDragEnd={this.onDragEnd.bind(this)}>
+          onDragEnd={this.onDragEnd.bind(this)}
+          onTouchStart={this.onDragStart.bind(this)}
+          onTouchMove={this.onDrag.bind(this)}
+          onTouchEnd={this.onDragEnd.bind(this)}
+          >
         </div>
         <canvas
           ref='thumbnailCanvas'

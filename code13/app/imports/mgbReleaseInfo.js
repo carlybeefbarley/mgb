@@ -19,6 +19,32 @@ const mgbReleaseInfo = {
 
 */
 
+
+    {
+      'timestamp': 'Wed Nov 16 2016 14:00:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2094'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          // Also fix for JSON in tutorials editor
+          'featureTag': 'nav.touch',
+          'type': 'improvement',
+          'changeName': 'Touch support for Map Editors',
+          'changeSummary': 'Added Touch support to enable Map/ActorMap editing with touch-only devices - touch-drag etc',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Wed Nov 16 2016 01:30:00 GMT-0800 (PDT)',
 
@@ -43,6 +69,8 @@ const mgbReleaseInfo = {
         }
       ]
     },
+
+
     {
       'timestamp': 'Tue Nov 15 2016 13:30:00 GMT-0800 (PDT)',
 

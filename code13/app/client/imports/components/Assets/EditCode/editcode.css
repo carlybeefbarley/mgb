@@ -4,9 +4,9 @@
 
 #gameWrapper.popup {
   position: absolute;
-  zIndex: 100; 
+  z-index: 10; 
   bottom: 0;
   right: 0;
-  backgroundColor: white; 
+  background-color: white; 
   padding: 0;
 }

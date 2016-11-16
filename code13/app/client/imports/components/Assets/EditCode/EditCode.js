@@ -1021,7 +1021,8 @@ export default class EditCode extends React.Component {
   }
 
   _handle_iFrameMessageReceiver(event) {
-    this.refs.gameScreen.handleMessage(event)
+    if (this.refs.gameScreen)   // TODO: This maybe a code smell that we (a) are getting a bunch more mesage noise than we expect (e.g. Meteor.immediate) and (b) that we should maybe register/deregister this handler more carefully
+      this.refs.gameScreen.handleMessage(event)
   }
 
   handleScreenshotIFrame() {
@@ -1299,8 +1300,8 @@ export default class EditCode extends React.Component {
     }
   }
 
-  handleGamePopup(){
-    this.setState({ isPopup: !this.state.isPopup })
+  handleGamePopup() {
+    this.setState( { isPopup: !this.state.isPopup } )
   }
 
   pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
@@ -1531,8 +1532,8 @@ export default class EditCode extends React.Component {
                       placeholder="Start typing code here..."/>
         </div>
 
-        { infoPaneOpts.col2 && 
-        <div className={infoPaneOpts.col2 + ' wide column'}>
+        { 
+        <div className={infoPaneOpts.col2 + ' wide column'} style={{display: infoPaneOpts.col2 ? "block" : "none"}}>
 
           <div className="mgbAccordionScroller">
             <div className="ui fluid styled accordion">
@@ -1650,14 +1651,13 @@ export default class EditCode extends React.Component {
                         <i className={"stop icon"}></i>&emsp;Stop
                       </a>
                     }
-                    { /* 
+                    { 
                       isPlaying &&
-                      <a  className='ui tiny icon button' 
-                          title='Click here to stop the running program'
+                      <a  className={`ui tiny ${this.state.isPopup ? 'active' : '' } icon button`}
+                          title='Popout the code-run area so it can be moved around the screen'
                           onClick={this.handleGamePopup.bind(this)}>
-                        <i className={"external icon"}></i>&emsp;Popup
+                        <i className={"external icon"}></i>&emsp;Popout
                       </a>
-                      */
                     }
                     <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
                       <a  className='ui tiny icon button' 
@@ -1678,15 +1678,6 @@ export default class EditCode extends React.Component {
               { !docEmpty && asset.kind === 'code' && 
                 // Code run/stop (body)
                 <div className="content">
-                {/*******
-                  <iframe
-                    key={ this.state.gameRenderIterationKey }
-                    id="iFrame1"
-                    width="100%" height="400"
-                    sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
-                    src="/codeEditSandbox.html">
-                  </iframe>
-                ********/}
                   <GameScreen
                     ref="gameScreen"
                     isPopup = {this.state.isPopup}

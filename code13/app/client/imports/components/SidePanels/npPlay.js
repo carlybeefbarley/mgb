@@ -13,10 +13,11 @@ const npPlay = ( { currUser, navPanelIsOverlay} ) => (
 
     <div className="header item">Start a Game</div>
     <div className="menu">
-      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/games" className="item">Search All Games</QLink>
-      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_featured" className="item">Featured Games</QLink>
-      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_new" className="item">New Games</QLink>
-      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_top" className="item">Top Games</QLink>
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/games" query={{ sort: 'edited' }} className="item">New Games</QLink>
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/games" query={{ sort: 'plays' }} className="item">Top Games</QLink>
+      { currUser && 
+        <QLink closeNavPanelOnClick={navPanelIsOverlay} to={`/u/${currUser.username}/games`} className="item">My Games</QLink>
+      }
       { 
       // <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_favorite" className="item">Favorite Games</QLink>
       // <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/notyetimplemented/games_friends" className="item">Friends Games</QLink>

@@ -8,7 +8,7 @@ import { Segment, Message } from 'semantic-ui-react'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 import { Azzets, Projects } from '/imports/schemas'
-import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
+import { assetMakeSelector, gameSorters } from '/imports/schemas/assets'
 import GameItems from '/client/imports/components/Assets/GameAsset/GameItems'
 import AssetShowStableSelector from '/client/imports/components/Assets/AssetShowStableSelector'
 import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
@@ -18,7 +18,7 @@ import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 const queryDefaults = { 
   project: null,                // Null string means match all
   searchName: '',               // Empty string means match all (more convenient than null for input box)
-  sort: 'edited',               // Should be one of the keys of assetSorters{}
+  sort: 'edited',               // Should be one of the keys of gameSorters{}
   showStable: '0'               // Should be '0' or '1'  -- as a string
 }
 
@@ -48,7 +48,7 @@ export default BrowseGamesRoute = React.createClass({
     let newQ = _.clone(queryDefaults)
     
     // Validate and apply values from location query
-    if (assetSorters.hasOwnProperty(q.sort))
+    if (gameSorters.hasOwnProperty(q.sort))
       newQ.sort = q.sort
     if (q.project)
       newQ.project = q.project
@@ -84,7 +84,7 @@ export default BrowseGamesRoute = React.createClass({
     const qN = this.queryNormalized(this.props.location.query)
     
     const handleForGames = Meteor.subscribe( "assets.public", userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1", qN.sort )
-    const gamesSorter = assetSorters[qN.sort]
+    const gamesSorter = gameSorters[qN.sort]
     const gamesSelector = assetMakeSelector(userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1")
     const handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null 
     const selectorForProjects = { '$or': [ { ownerId: userId }, { memberIds: { $in: [userId] } } ] }
@@ -143,7 +143,6 @@ export default BrowseGamesRoute = React.createClass({
           title='Browse Games'
           meta={[ { name: 'Browse stable games', content: 'List of Games'} ]}  />
 
-        <div className='ui row'>
           <div className="ui large header" style={{ float: 'left' }}>
             { user ? <span><a>{name}</a>'s Games</span> : 'Public Games' }
           </div>
@@ -171,10 +170,9 @@ export default BrowseGamesRoute = React.createClass({
                 showStableFlag={qN.showStable} 
                 handleChangeFlag={v => this._updateLocationQuery( { showStable: v } ) } />
           </div>
-        </div>
 
         { user && 
-          <div className="ui row">
+          <div style={{clear: 'both'}}>
             <ProjectSelector 
                 canEdit={ownsProfile}
                 user={user}

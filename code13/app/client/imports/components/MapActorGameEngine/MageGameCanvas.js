@@ -40,6 +40,10 @@ export default class MageGameCanvas extends React.Component {
       ctx.rotate(Math.PI * 1.5)
       ctx.drawImage(image, -image.width/2, -image.height/2)
       break
+    case undefined:
+      // Actually there is a valid case for this - page animation before activeLayer is set up
+      // console.log(`Unexpected draw-effect '${effect}' in _drawActor()`)
+      // break... so fallthru
     case 'no effect':
       ctx.drawImage(image, x, y)
       break
@@ -51,6 +55,8 @@ export default class MageGameCanvas extends React.Component {
       ctx.scale(1, -1)
       ctx.drawImage(image, x,  -(y + image.height))
       break
+    default:
+      console.error(`Unexpected draw-effect '${effect}' in _drawActor()`)
     }
     ctx.restore()
   }

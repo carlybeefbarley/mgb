@@ -143,7 +143,6 @@ export default BrowseGamesRoute = React.createClass({
           title='Browse Games'
           meta={[ { name: 'Browse stable games', content: 'List of Games'} ]}  />
 
-        <div className='ui row'>
           <div className="ui large header" style={{ float: 'left' }}>
             { user ? <span><a>{name}</a>'s Games</span> : 'Public Games' }
           </div>
@@ -171,10 +170,9 @@ export default BrowseGamesRoute = React.createClass({
                 showStableFlag={qN.showStable} 
                 handleChangeFlag={v => this._updateLocationQuery( { showStable: v } ) } />
           </div>
-        </div>
 
         { user && 
-          <div className="ui row">
+          <div style={{clear: 'both'}}>
             <ProjectSelector 
                 canEdit={ownsProfile}
                 user={user}

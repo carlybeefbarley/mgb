@@ -9,6 +9,8 @@ import ProjectMembershipEditor from './ProjectMembershipEditor'
 import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import WorkState from '/client/imports/components/Controls/WorkState'
 
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+
 // TODO: Toast/error is a mess
 
 export const assetViewChoices =  { 
@@ -50,9 +52,15 @@ export default AssetCard = React.createClass({
   {
     this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
     this.previewCtx = this.previewCanvas.getContext('2d')
+
+    // this is here because React makes passive event listeners and it's not possible to prevent default from passive event listener
+    this.previewCanvas.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+
     this.loadThumbnail()
   },
-
+  componentWillUnmount(){
+    this.previewCanvas.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+  },
   componentDidUpdate()
   {
     this.loadThumbnail()
@@ -103,7 +111,7 @@ export default AssetCard = React.createClass({
     }))
 
     // IE needs this!!!
-    e.dataTransfer.effectAllowed = "copy"
+    // e.dataTransfer.effectAllowed = "copy"
     $(document.body).addClass("dragging")
   },
 
@@ -153,6 +161,7 @@ export default AssetCard = React.createClass({
         <div 
             className="ui centered image" 
             onClick={this.handleEditClick}
+            onTouchEnd={this.handleEditClick}
             style={ viewOpts.showImg ? {} : {display: 'none'} }>
           <canvas 
             className="mgb-pixelated"
@@ -162,7 +171,8 @@ export default AssetCard = React.createClass({
             style={{backgroundColor: '#ffffff', minHeight:"150px", maxHeight:"150px", maxWidth:"290px", width:"auto"}}
             draggable={allowDrag ? "true" : "false"}
             onDragStart={this.startDrag.bind(this, asset)}
-            onDragEnd={this.endDrag.bind(this, asset)} />
+            onDragEnd={this.endDrag.bind(this, asset)}
+            />
         </div>
 
         { viewOpts.showHdr && 

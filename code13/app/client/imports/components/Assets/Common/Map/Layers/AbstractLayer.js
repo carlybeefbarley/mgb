@@ -50,16 +50,23 @@ export default class AbstractLayer extends React.Component {
     this.ctx = canvas.getContext('2d')
 
     window.addEventListener('mouseup', this._mup)
+    window.addEventListener('touchend', this._mup)
+
     window.addEventListener('keyup', this._kup)
+
     window.addEventListener('mousemove', this._mov)
+    window.addEventListener('touchmove', this._mov)
 
     this._isVisible = true
   }
 
   componentWillUnmount () {
     window.removeEventListener('mouseup', this._mup)
+    window.removeEventListener('touchstart', this._mup)
+
     window.removeEventListener('keyup', this._kup)
     window.removeEventListener('mousemove', this._mov)
+    window.removeEventListener('touchmove', this._mov)
 
     this._isVisible = false
   }
@@ -136,11 +143,20 @@ export default class AbstractLayer extends React.Component {
     this.movementX = 0
     this.movementY = 0
 
-    this.mouseX = e.offsetX
-    this.mouseY = e.offsetY
+    this.mouseX = TileHelper.getOffsetX(e)
+    this.mouseY = TileHelper.getOffsetY(e)
+
+    this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
+    this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
+
+    console.log(e.type, this.mouseInWorldX, this.mouseInWorldX)
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
+
+    this.pointerMovementX = 0
+    this.pointerMovementY = 0
+
   }
   handleMouseDown (e) {
     this.mouseDown = true
@@ -148,11 +164,19 @@ export default class AbstractLayer extends React.Component {
     this.movementX = 0
     this.movementY = 0
 
-    this.mouseX = e.offsetX
-    this.mouseY = e.offsetY
+    this.mouseX = TileHelper.getOffsetX(e)
+    this.mouseY = TileHelper.getOffsetY(e)
+
+    this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
+    this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
+
+    console.log(e.type, this.mouseInWorldX, this.mouseInWorldX)
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
+
+    this.pointerMovementX = 0
+    this.pointerMovementY = 0
 
     if (e.buttons == 4) {
       e.preventDefault()
@@ -161,19 +185,35 @@ export default class AbstractLayer extends React.Component {
     }
   }
   handleMouseMove (e) {
-    this.mouseY = e.offsetY
-    this.mouseX = e.offsetX
+    const ox = TileHelper.getOffsetX(e)
+    const oy = TileHelper.getOffsetY(e)
+
+
+    this.pointerMovementX = ox - this.mouseX
+    this.pointerMovementY = oy - this.mouseY
+
+    this.mouseX = ox
+    this.mouseY = oy
+
+
     this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
     this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
+
+    //console.log(this.mouseInWorldX, this.mouseInWorldX)
     if (this.mouseDown) {
-      this.movementX += (e.movementX / this.camera.zoom)
-      this.movementY += (e.movementY / this.camera.zoom)
+      this.movementX += (this.pointerMovementX / this.camera.zoom)
+      this.movementY += (this.pointerMovementY / this.camera.zoom)
     }
   }
+
   _onKeyUp (e) {
     if (this.props.isActive) {
       this.onKeyUp && this.onKeyUp(e)
     }
+  }
+
+  isCtrlKey(e){
+    return this.props.getCtrlModifier() || (e && e.ctrlKey)
   }
 
   render () {
@@ -181,6 +221,7 @@ export default class AbstractLayer extends React.Component {
               <canvas
                 ref='canvas'
                 onMouseDown={this.handleMouseDown.bind(this)}
+                onTouchStart={this.handleMouseDown.bind(this)}
                 onMouseLeave={this.onMouseLeave.bind(this)}
                 style={{ display: 'block' }}>
               </canvas>

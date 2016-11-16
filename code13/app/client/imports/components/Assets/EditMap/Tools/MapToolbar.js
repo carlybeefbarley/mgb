@@ -78,6 +78,15 @@ export default class MapToolbar extends React.Component {
           name: 'separator'
         },
         {
+          name: 'view',
+          icon: 'mouse pointer',
+          active: this.props.options.mode == EditModes.view,
+          label: 'View',
+          tooltip: 'Allows to scroll map in the mobile mode',
+          level: 1,
+          shortcut: 'V'
+        },
+        {
           name: 'stamp',
           icon: 'legal stamp',
           active: this.props.options.mode == EditModes.stamp,
@@ -90,6 +99,7 @@ export default class MapToolbar extends React.Component {
           name: 'toggleRandomMode',
           icon: 'random',
           active: this.props.options.randomMode,
+          disabled: !LayerTypes.isTilemapLayer(layer.type),
           label: 'Random mode',
           tooltip: 'Random Mode - picks one tile from the selection',
           level: 11
@@ -98,7 +108,7 @@ export default class MapToolbar extends React.Component {
           name: 'terrain',
           icon: 'world terrain',
           active: this.props.options.mode == EditModes.terrain,
-          disabled: (!layer || layer.type != LayerTypes.tile),
+          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type)),
           label: 'Terrain Tool',
           tooltip: 'Create advanced Terrains - not implemented :(',
           level: 26,
@@ -109,7 +119,7 @@ export default class MapToolbar extends React.Component {
           icon: 'theme fill',
           label: 'Fill',
           active: this.props.options.mode == EditModes.fill,
-          disabled: (!layer || layer.type != LayerTypes.tile),
+          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type)),
           tooltip: 'Fill Map or Selection with selected tile(s)',
           level: 6,
           shortcut: 'F'
@@ -204,6 +214,18 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Toggle between polygon and polyline',
           disabled: (!layer || layer.type != LayerTypes.object),
           shortcut: 'Shift+P',
+          level: 20
+        },
+        {
+          name: 'separator'
+        },
+        {
+          name: 'toggleCtrlModifier',
+          active: this.props.options.ctrlModifier,
+          icon: 'asterisk',
+          label: 'Ctrl Modifier',
+          tooltip: 'Ctrl key on mobile devices. allows to enable Snap To Grid',
+          shortcut: 'Ctrl',
           level: 20
         },
         {

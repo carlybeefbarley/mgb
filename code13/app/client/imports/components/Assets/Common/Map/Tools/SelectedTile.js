@@ -38,7 +38,7 @@ export default class SelectedTile {
     this.gid = prevTileSelection.gid
   }
   updateFromMouse (e, ts, spacing = 1) {
-    this.updateFromPos(e.offsetX, e.offsetY, ts.tilewidth, ts.tileheight, spacing)
+    this.updateFromPos(TileHelper.getOffsetX(e), TileHelper.getOffsetY(e), ts.tilewidth, ts.tileheight, spacing)
     this.gid = this.getGid(ts)
   }
   updateFromPos (x, y, tilewidth, tileheight, spacing = 1) {

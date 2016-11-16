@@ -211,9 +211,12 @@ export default class TileMapLayer extends AbstractLayer {
     const pos = new TileSelection()
     const props = this.props
 
+    const ox = TileHelper.getOffsetX(e)
+    const oy = TileHelper.getOffsetY(e)
+
     pos.updateFromPos(
-      (e.offsetX / this.camera.zoom - this.camera.x) ,
-      (e.offsetY / this.camera.zoom - this.camera.y) ,
+      (ox / this.camera.zoom - this.camera.x) ,
+      (oy / this.camera.zoom - this.camera.y) ,
       props.mapData.tilewidth, props.mapData.tileheight, 0
     )
     pos.getRawId(this.options.width)
@@ -291,7 +294,6 @@ export default class TileMapLayer extends AbstractLayer {
     const d = ts.data
     const palette = this.props.palette
     const mapData = this.props.mapData
-    const ctx = this.ctx
     const camera = this.camera
 
     const pos = {x: 0, y: 0}
@@ -334,15 +336,13 @@ export default class TileMapLayer extends AbstractLayer {
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos)
 
         tileId = d[i] & (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
-          TileMapLayer.FLIPPED_VERTICALLY_FLAG |
-          TileMapLayer.FLIPPED_DIAGONALLY_FLAG))
-
-        this.drawInfo.h = (d[i] & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-        this.drawInfo.v = (d[i] & TileHelper.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
-        this.drawInfo.d = (d[i] & TileHelper.FLIPPED_DIAGONALLY_FLAG)
-
+          TileHelper.FLIPPED_VERTICALLY_FLAG |
+          TileHelper.FLIPPED_DIAGONALLY_FLAG))
         pal = palette[tileId]
         if (pal) {
+          this.drawInfo.h = (d[i] & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
+          this.drawInfo.v = (d[i] & TileHelper.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
+          this.drawInfo.d = (d[i] & TileHelper.FLIPPED_DIAGONALLY_FLAG)
           this.drawTile(pal, pos)
         }
       }
@@ -612,7 +612,8 @@ export default class TileMapLayer extends AbstractLayer {
   }
   /* events */
   handleMouseDown (e) {
-    if (e.button == 0) {
+    // 0 - for mouse / undefined for touchstart
+    if (!e.button) {
       this.mouseDown = true
       // simulate 0 px movement
       this.handleMouseMove(e)
@@ -620,16 +621,21 @@ export default class TileMapLayer extends AbstractLayer {
   }
   // this should be triggered on window instead of main element
   handleMouseUp (e) {
-    if (e.button !== 0) {
+    // 0 - mouse / undefined - touch
+    if (e.button) {
       return
     }
     const nat = e.nativeEvent ? e.nativeEvent : e
 
     this.mouseDown = false
     if (e.target == this.refs.canvas) {
-      this.lastEvent = nat
-      this.lastOffset.x = nat.offsetX;
-      this.lastOffset.y = nat.offsetY;
+      // touchend is not reporting coords
+      if(nat.type !== "touchend"){
+        this.lastEvent = nat
+        this.lastOffset.x = TileHelper.getOffsetX(nat);
+        this.lastOffset.y = TileHelper.getOffsetY(nat);
+      }
+
       if (edit[this.props.getEditMode()]) {
         if (!this.options.visible) {
           return
@@ -646,8 +652,8 @@ export default class TileMapLayer extends AbstractLayer {
       return
     }
     this.lastEvent = nat
-    this.lastOffset.x = nat.offsetX;
-    this.lastOffset.y = nat.offsetY;
+    this.lastOffset.x = TileHelper.getOffsetX(nat);
+    this.lastOffset.y = TileHelper.getOffsetY(nat);
     this.tilePosInfo = this.getTilePosInfo(e)
 
     this.isMouseOver = true
@@ -662,7 +668,6 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
   onMouseLeave (e) {
-    const nat = e.nativeEvent ? e.nativeEvent : e
     this.lastEvent = null;
     this.isMouseOver = false
     this.props.clearTmpSelection()
@@ -678,13 +683,7 @@ export default class TileMapLayer extends AbstractLayer {
     const w = e.which
 
     if (w == 46) {
-      const sel = this.props.getSelection()
-      if (!sel.length)
-        return
-      for (let i = 0; i < sel.length; i++) {
-        this.data.data[sel[i].id] = 0
-      }
-      sel.clear()
+      this.deleteSelection()
     }
     this.draw()
   }
@@ -695,31 +694,36 @@ export default class TileMapLayer extends AbstractLayer {
     // this makes filling tiles slow - as full update will start on changes
     // this.props.handleSave('Inserting Tiles')
   }
+
+  deleteSelection(){
+    const sel = this.props.getSelection()
+    if (!sel.length)
+      return
+    for (let i = 0; i < sel.length; i++) {
+      this.data.data[sel[i].id] = 0
+    }
+    sel.clear()
+  }
 }
 
 /* !!! this - in this scope is instance of tilemap layer (above) */
 const edit = {
   debug: function (e, mouseUp) {
-    const pos = this.getTilePosInfo(e)
-    pos.gid = this.options.data[pos.id]
+    //const pos = this.getTilePosInfo(e)
+    //pos.gid = this.options.data[pos.id]
+    //console.log("EDIT MODE: debug")
   }
 }
 // ???
 edit[EditModes.fill] = function (e, up) {
-  const pos = this.getTilePosInfo(e)
   const temp = this.props.getTmpSelection()
   const sel = this.props.getSelection()
   const col = this.props.getCollection()
-
-  if (e.type == 'mouseup') {
-    this.props.handleSave('Filling up')
-  }
 
   if (up) {
     this.props.saveForUndo('Fill tilemap')
     for (let i = 0; i < temp.length; i++) {
       this.insertTile(temp[i].id, temp[i].gid)
-      //this.options.data[temp[i].id] = temp[i].gid
     }
     for (let i = 0; i < sel.length; i++) {
       sel[i].gid = this.options.data[sel[i].id]
@@ -728,6 +732,13 @@ edit[EditModes.fill] = function (e, up) {
     this.drawTiles()
     return
   }
+
+  if (e.type == 'mouseup' || e.type == 'touchend') {
+    //this.props.handleSave('Filling up')
+    return
+  }
+
+  const pos = this.getTilePosInfo(e)
 
   if (this.lastTilePos && this.lastTilePos.isEqual(pos)) {
     return
@@ -748,7 +759,6 @@ edit[EditModes.fill] = function (e, up) {
   }
 
   temp.clear()
-
 
   this.lastTilePos = pos
 
@@ -793,8 +803,9 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     saveUndo = false
   }
 
-  if (e.type == 'mouseup') {
+  if (e.type == 'mouseup' || e.type == 'touchend') {
     this.props.handleSave('Inserting Tiles')
+    return
   }
 
   if (e.shiftKey) {
@@ -936,8 +947,9 @@ edit[EditModes.eraser] = function (e, up) {
     return
   }
 
-  if (e.type == 'mouseup') {
+  if (e.type == 'mouseup' || e.type == 'touchend') {
     this.props.handleSave('Deleting Tile')
+    return
   }
 
   const pos = this.getTilePosInfo(e)
@@ -963,9 +975,7 @@ edit[EditModes.eraser] = function (e, up) {
 /* selections */
 edit[EditModes.rectangle] = function (e, mouseUp) {
   this.drawTiles()
-  const pos = this.getTilePosInfo(e)
-  pos.gid = this.options.data[pos.id]
-  if (mouseUp) {
+  if (mouseUp || e.type == 'touchend') {
     if (!e.shiftKey && !e.ctrlKey) {
       this.props.clearSelection()
     }
@@ -981,8 +991,13 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
     return
   }
 
+
+  const pos = this.getTilePosInfo(e)
+  pos.gid = this.options.data[pos.id]
+
+
   const tmp = this.props.getTmpSelection()
-  if (e.type == 'mousedown') {
+  if (e.type == 'mousedown' || e.type == 'touchstart') {
     this.startingTilePos = new TileSelection(pos)
     if (tmp.length) {
       this.selectRectangle(pos)
@@ -998,7 +1013,15 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
   this.lastTilePos = pos
   this.isDirtySelection = false
 }
+
+let previousType = ""
 edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection()) {
+  console.log("Wand.. action", e.type)
+  // avoid virtual mouse events
+  if(previousType == "touchend" && (e.type == "mousemove" || e.type == "mousedown" || e.type == "mouseup")){
+    return
+  }
+  previousType = e.type
   this.drawTiles()
   if (up) {
     if (!e.shiftKey) {
@@ -1100,6 +1123,12 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
   this.isDirtySelection = false
 }
 edit[EditModes.picker] = function (e, up) {
+  // avoid virtual mouse events
+  if(previousType == "touchend" && (e.type == "mousemove" || e.type == "mousedown" || e.type == "mouseup")){
+    return
+  }
+  previousType = e.type
+
   this.drawTiles()
   const sel = this.props.getSelection()
   if (up) {

@@ -29,5 +29,8 @@ export default {
       return
     }
     l.setPickedObjectSlow(index)
+  },
+  removeObject(){
+    this.refs.map.removeObject()
   }
 }

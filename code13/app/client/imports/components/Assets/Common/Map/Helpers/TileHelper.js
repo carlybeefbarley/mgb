@@ -45,7 +45,7 @@ const TileHelper = {
   getTilesetWidth: (tileset, spacing = 1) => {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
-    tileset.columns = tileset.columns || tileset.imagewidth / tileset.tilewidth
+    tileset.columns = tileset.imagewidth / tileset.tilewidth
 
     return tileset.columns * (tileset.tilewidth + spacing)
   },
@@ -53,7 +53,9 @@ const TileHelper = {
   getTilesetHeight: (tileset, spacing = 1) => {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
-    tileset.columns = tileset.columns || tileset.imagewidth / tileset.tilewidth
+    tileset.columns = tileset.imagewidth / tileset.tilewidth
+    tileset.tilecount = tileset.columns * tileset.imageheight / tileset.tileheight
+
     return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight) - spacing
   },
   /* helpers */
@@ -310,6 +312,41 @@ const TileHelper = {
 
   getNextGid: (ts) => {
     return ts.firstgid + (Math.floor(ts.tilecount/100) + 1) * 100
+  },
+
+  getOffsetX: (e) => {
+    if(e.offsetX !== void(0)){
+      return e.offsetX
+    }
+    const box = e.target.getBoundingClientRect()
+    if(e.clientX !== void(0)){
+      return e.clientX - box.left
+    }
+    if(e.touches){
+      const t = e.touches[0]
+      if(!t){
+        return 0
+      }
+      return t.clientX - box.left
+    }
+    return 0
+  },
+  getOffsetY: (e) => {
+    if(e.offsetY !== void(0)){
+      return e.offsetY
+    }
+    const box = e.target.getBoundingClientRect()
+    if(e.clientY !== void(0)){
+      return e.clientY - box.top
+    }
+    if(e.touches){
+      const t = e.touches[0]
+      if(!t){
+        return 0
+      }
+      return t.clientY - box.top
+    }
+    return 0
   }
 }
 export default TileHelper

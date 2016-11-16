@@ -30,6 +30,7 @@ export default class MapArea extends React.Component {
     }
     this.layers = []
 
+    this.isMouseDown = false
     // here will be kept selections from tilesets
     this.collection = new TileCollection()
 
@@ -43,7 +44,15 @@ export default class MapArea extends React.Component {
       this.handleMouseMove(...args)
     }
     this.globalMouseUp = (...args) => {
+      this.isMouseDown = false
       this.handleMouseUp(...args)
+    }
+    // probably it's better to add onEvent for down
+    this.globalMouseDown = (e, ...args) => {
+      if(e.target == this.refs.mapElement || (e.path && e.path.indexOf(this.refs.mapElement) > -1)){
+        this.isMouseDown = true
+      }
+      //this.handleMouseDown(...args)
     }
     this.globalResize = () => {
       this.adjustPreview()
@@ -99,9 +108,21 @@ export default class MapArea extends React.Component {
 
   startEventListeners(){
     window.addEventListener('mousemove', this.globalMouseMove, false)
+    window.addEventListener('touchmove', this.globalMouseMove, false)
+
     window.addEventListener('mouseup', this.globalMouseUp, false)
+    window.addEventListener('touchend', this.globalMouseUp, false)
+
+    window.addEventListener('mousedown', this.globalMouseDown, false)
+    window.addEventListener('touchstart', this.globalMouseDown, false)
+
     window.addEventListener('resize', this.globalResize, false)
     window.addEventListener('keyup', this.globalKeyUp, false)
+
+    this.touchMovePrevent = function(e){
+      e.preventDefault()
+    }
+    this.refs.mapElement.addEventListener("touchmove", this.touchMovePrevent )
 
     document.body.addEventListener('mousedown', this.globalIEScroll)
 
@@ -112,11 +133,13 @@ export default class MapArea extends React.Component {
     this._raf()
   }
   stopEventListeners(){
-    window.removeEventListener('mousemove', this.globalMouseMove)
-    window.removeEventListener('mouseup', this.globalMouseUp)
+    window.removeEventListener('pointermove', this.globalMouseMove)
+    //window.removeEventListener('touchmove', this.globalMouseMove)
+    window.removeEventListener('pointerup', this.globalMouseUp)
     window.removeEventListener('resize', this.globalResize)
     window.removeEventListener('keyup', this.globalKeyUp)
 
+    this.refs.mapElement.removeEventListener("touchmove", this.touchMovePrevent )
     document.body.removeEventListener('mousedown', this.globalIEScroll)
 
     // next tick will stop raf loop
@@ -357,17 +380,20 @@ export default class MapArea extends React.Component {
   }
 
   moveCamera (e) {
+    const px = e.pageX === void(0) ? e.touches[0].pageX : e.pageX
+    const py = e.pageY === void(0) ? e.touches[0].pageY : e.pageY
+
     if (!this.lastEvent) {
       this.lastEvent = {
-        pageX: e.pageX,
-        pageY: e.pageY
+        pageX: px,
+        pageY: py
       }
       return
     }
-    this.camera.x -= (this.lastEvent.pageX - e.pageX) / this.camera.zoom
-    this.camera.y -= (this.lastEvent.pageY - e.pageY) / this.camera.zoom
-    this.lastEvent.pageX = e.pageX
-    this.lastEvent.pageY = e.pageY
+    this.camera.x -= (this.lastEvent.pageX - px) / this.camera.zoom
+    this.camera.y -= (this.lastEvent.pageY - py) / this.camera.zoom
+    this.lastEvent.pageX = px
+    this.lastEvent.pageY = py
 
     this.redraw()
   }
@@ -481,8 +507,9 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove (e) {
-    if (this.props.isPlaying || this.props.isLoading)
+    if (this.props.isPlaying || this.props.isLoading || !this.isMouseDown)
       return
+
 
     // IE always reports button === 0
     // and yet: If the user presses a mouse button, use the button property to determine which button was pressed.
@@ -491,10 +518,16 @@ export default class MapArea extends React.Component {
     // it seems that IE and chrome reports "buttons" correctly
     // console.log(e.buttons)
     // 1 - left; 2 - right; 4 - middle + combinations
-    if (this.options.preview && (e.buttons == 4))
-      this.movePreview(e)
-    else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4)
+    // we will handle this => no buttons == touchmove event
+    const editMode = this.props.getMode()
+    if(e.buttons === void(0) && editMode === EditModes.view || (e.touches && e.touches.length > 1) ){
       this.moveCamera(e)
+    }
+    else if (this.options.preview && (e.buttons == 4))
+      this.movePreview(e)
+    else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4 || (e.buttons == 1 && editMode === EditModes.view)){
+      this.moveCamera(e)
+    }
     this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
   }
 
@@ -502,8 +535,14 @@ export default class MapArea extends React.Component {
     if (this.props.isPlaying)
       return
     this.lastEvent = null
-    this.refs.mapElement.style.transition = '0.3s'
-    this.refs.positionInfo.forceUpdate()
+    if(this.refs.mapElement){
+      this.refs.mapElement.style.transition = '0.3s'
+      this.refs.positionInfo.forceUpdate()
+    }
+  }
+  removeObject(){
+    const l = this.getActiveLayer()
+    l && l.removeObject && l.removeObject()
   }
 
   handleOnWheel (e) {
@@ -560,15 +599,6 @@ export default class MapArea extends React.Component {
         this.selection.clear()
         this.props.setMode(EditModes.stamp)
         break
-      /*case 90: // ctrl + z
-       if (e.ctrlKey) {
-       if (e.shiftKey) {
-       this.doRedo()
-       }
-       else {
-       this.doUndo()
-       }
-       }*/
     }
     if (e.ctrlKey)
       console.log(e.which)
@@ -744,6 +774,7 @@ export default class MapArea extends React.Component {
       if(LayerComponent) {
         layers.push(
           <LayerComponent
+            {...this.props}
             data={data.layers[i]}
             mapData={data}
             options={this.props.options}
@@ -756,7 +787,6 @@ export default class MapArea extends React.Component {
 
             getEditMode={() => this.props.getMode()}
             setEditMode={(mode) => {this.props.setMode(mode)}}
-
 
             getSelection={() => {return this.selection}}
             getTmpSelection={() => {return this.tmpSelection}}
@@ -776,12 +806,6 @@ export default class MapArea extends React.Component {
             // object layer draws selection shapes on the grid - as it's always on top
             getOverlay={() => this.refs.grid}
 
-            handleSave={this.props.handleSave}
-            saveForUndo={this.props.saveForUndo}
-
-            showModal={this.props.showModal}
-
-            setPickedObject={this.props.setPickedObject}
 
             key={i}
             ref={ this.addLayerRef.bind(this, i) }

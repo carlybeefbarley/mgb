@@ -32,7 +32,6 @@ export default class ActorTool extends Tileset {
 
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
-    this.props.startLoading()
     if (!asset)
       return
 
@@ -42,7 +41,6 @@ export default class ActorTool extends Tileset {
       return
     }
 
-
     const name = asset.dn_ownerName +":"+ asset.name
     if (_.some(this.props.tilesets, { name: name } ) )
     {
@@ -50,6 +48,7 @@ export default class ActorTool extends Tileset {
       return
     }
 
+    this.props.startLoading()
     const tileset = {
       columns:      1,
       firstgid:     0,

@@ -259,10 +259,15 @@ export default class Channel extends React.Component {
   }
 
   onDragStart (e) {
+    if (e.touches && e.touches[0])
+      e = e.touches[0]
+    
     // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
-    let ghost = e.target.cloneNode(true)
-    ghost.style.display = "none"
-    e.dataTransfer.setDragImage(ghost, 0, 0)
+    if(e.dataTransfer){
+      let ghost = e.target.cloneNode(true)
+      ghost.style.display = "none"
+      e.dataTransfer.setDragImage(ghost, 0, 0)
+    }
     if(this.props.isSelecting){
       this.clearSelect()
     }
@@ -270,6 +275,9 @@ export default class Channel extends React.Component {
   }
 
   onDrag (e) {
+    if (e.touches && e.touches[0])
+      e = e.touches[0]
+
     if(e.clientX == 0 && e.clientY == 0) return   // avoiding weird glitch when at the end of drag 0,0 coords returned
 
     // drag select
@@ -297,6 +305,9 @@ export default class Channel extends React.Component {
   }
 
   onDragEnd (e) {
+    if (e.touches && e.touches[0])
+      e = e.touches[0]
+    
     // selecting
     if(this.props.isSelecting){
       const viewOffsetX = this.viewOffset * this.props.pxPerSecond
@@ -502,6 +513,10 @@ export default class Channel extends React.Component {
             onDragStart={this.onDragStart.bind(this)}
             onDrag={this.onDrag.bind(this)}
             onDragEnd={this.onDragEnd.bind(this)}
+            onTouchStart={this.onDragStart.bind(this)}
+            onTouchMove={this.onDrag.bind(this)}
+            onTouchEnd={this.onDragEnd.bind(this)}
+
             onClick={this.onClick.bind(this)}
             width={this.props.viewWidth}
             height={this.props.canvasHeight}>

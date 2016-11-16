@@ -20,12 +20,12 @@ const mgbReleaseInfo = {
 */
 
     {
-      'timestamp': 'Wed Nov 16 2016 00:50:00 GMT-0800 (PDT)',
+      'timestamp': 'Wed Nov 16 2016 01:30:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2076'
+        'iteration': '2079'
       },
 
       'releaseManagement': {
@@ -33,7 +33,7 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
-        // also fixed code and maps/actor maps api that was broken (kinds, ids)
+        // also added the joyride support for nav - mgbjr-CT-app-router-path-... and mgbjr-CT-app-location-path-...
         {
           'featureTag': 'nav.games',
           'type': 'improvement',

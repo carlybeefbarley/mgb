@@ -146,13 +146,17 @@ export default class AbstractLayer extends React.Component {
     this.mouseX = TileHelper.getOffsetX(e)
     this.mouseY = TileHelper.getOffsetY(e)
 
-    console.log(e.type, this.mouseX, this.mouseY)
+    this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
+    this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
+
+    console.log(e.type, this.mouseInWorldX, this.mouseInWorldX)
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
 
     this.pointerMovementX = 0
     this.pointerMovementY = 0
+
   }
   handleMouseDown (e) {
     this.mouseDown = true
@@ -163,7 +167,10 @@ export default class AbstractLayer extends React.Component {
     this.mouseX = TileHelper.getOffsetX(e)
     this.mouseY = TileHelper.getOffsetY(e)
 
-    console.log(e.type, this.mouseX, this.mouseY)
+    this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
+    this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
+
+    console.log(e.type, this.mouseInWorldX, this.mouseInWorldX)
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
@@ -203,6 +210,10 @@ export default class AbstractLayer extends React.Component {
     if (this.props.isActive) {
       this.onKeyUp && this.onKeyUp(e)
     }
+  }
+
+  isCtrlKey(e){
+    return this.props.getCtrlModifier() || (e && e.ctrlKey)
   }
 
   render () {

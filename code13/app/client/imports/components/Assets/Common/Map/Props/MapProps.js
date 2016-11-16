@@ -12,12 +12,15 @@ export default {
     this.saveForUndo(reason, skipRedo)
   },
   getMode(){
-    return this.state.editMode
+    return this.options.mode
   },
   setMode(mode){
     this.enableMode(mode)
   },
   setPickedObject(index){
     this.setState({activeObject: index})
+  },
+  getCtrlModifier(){
+    return this.options.ctrlModifier
   }
 }

@@ -139,6 +139,11 @@ const TB = {
   showGridToggle: function(){
     this.options.showGrid = !this.options.showGrid
     this.setState({showGrid: this.options.showGrid})
+  },
+
+  toggleCtrlModifier: function(){
+    this.options.ctrlModifier = !this.options.ctrlModifier
+    this.setState({ctrlModifier: this.options.ctrlModifier})
   }
 }
 

@@ -271,6 +271,9 @@ export default class ObjectLayer extends AbstractLayer {
     }
   }
   handleMouseUp (ep) {
+    if(ep.target != this.refs.canvas){
+      return
+    }
     const e = ep.nativeEvent ? ep.nativeEvent : ep
     super.handleMouseUp(e)
     this.handles.unlock()
@@ -713,6 +716,7 @@ export default class ObjectLayer extends AbstractLayer {
       }
     }
   }
+
 /* END of DRAWING methods */
 }
 
@@ -737,6 +741,7 @@ edit[EditModes.drawRectangle] = function (e) {
   }
   if (e.type == 'mouseup' || e.type == 'touchstop') {
     this.setPickedObject(obj, this.data.objects.length - 1)
+    this.props.handleSave('Added rectangle')
     obj = null
     return
   }
@@ -755,7 +760,7 @@ edit[EditModes.drawRectangle] = function (e) {
   const tw = this.props.mapData.tilewidth
   const th = this.props.mapData.tileheight
 
-  if (e.ctrlKey) {
+  if (this.isCtrlKey(e)) {
     obj.x = Math.round(obj.x / tw) * tw
     obj.y = Math.round(obj.y / th) * th
     obj.width = Math.round(obj.width / tw) * tw
@@ -763,7 +768,7 @@ edit[EditModes.drawRectangle] = function (e) {
   }
 }
 edit[EditModes.drawEllipse] = function (e) {
-  if (e.type == 'mousedown') {
+  if (e.type == 'mousedown' || e.type == 'touchstart') {
     if ((e.buttons & 0x2) == 0x2) {
       return
     }
@@ -777,9 +782,10 @@ edit[EditModes.drawEllipse] = function (e) {
   if (!obj) {
     return
   }
-  if (e.type == 'mouseup') {
+  if (e.type == 'mouseup' || e.type == 'touchend') {
     this.setPickedObject(obj, this.data.objects.length - 1)
     obj = null
+    this.props.handleSave('Added ellipse')
     return
   }
 
@@ -794,24 +800,24 @@ edit[EditModes.drawEllipse] = function (e) {
   obj.y = Math.min(y1, y2)
   obj.height = Math.abs(this.movementY)
 
-  const tw = this.props.data.tilewidth
-  const th = this.props.data.tileheight
+  const tw = this.props.mapData.tilewidth
+  const th = this.props.mapData.tileheight
 
-  if (e.ctrlKey) {
+  if (this.isCtrlKey(e)) {
     obj.x = Math.round(obj.x / tw) * tw
     obj.y = Math.round(obj.y / th) * th
-    obj.width = Math.round(obj.width / tw) * tw
-    obj.height = Math.round(obj.height / th) * th
+    obj.width = Math.round(obj.width / tw) * tw || tw
+    obj.height = Math.round(obj.height / th) * th || th
   }
 }
 edit[EditModes.drawShape] = function (e) {
-  if (e.type == 'mousedown') {
+  if (e.type == 'mousedown' || e.type == 'touchstart') {
     if (!obj) {
       if ((e.buttons & 0x2) == 0x2) {
         return
       }
       obj = ObjectHelper.createPolyline(this.getMaxId(), this.pointerPosX, this.pointerPosY)
-      if (e.ctrlKey) {
+      if (this.isCtrlKey(e)) {
         const tw = this.props.mapData.tilewidth
         const th = this.props.mapData.tileheight
         obj.x = Math.round(obj.x / tw) * tw
@@ -852,12 +858,12 @@ edit[EditModes.drawShape] = function (e) {
   const tw = this.props.mapData.tilewidth
   const th = this.props.mapData.tileheight
 
-  endPoint.x += e.movementX / this.camera.zoom
-  endPoint.y += e.movementY / this.camera.zoom
-  pointCache.x += e.movementX / this.camera.zoom
-  pointCache.y += e.movementY / this.camera.zoom
+  endPoint.x += this.pointerMovementX / this.camera.zoom
+  endPoint.y += this.pointerMovementY / this.camera.zoom
+  pointCache.x += this.pointerMovementX / this.camera.zoom
+  pointCache.y += this.pointerMovementY / this.camera.zoom
 
-  if (e.ctrlKey) {
+  if (this.isCtrlKey(e)) {
     endPoint.x = Math.round(pointCache.x / tw) * tw
     endPoint.y = Math.round(pointCache.y / th) * th
   }
@@ -876,7 +882,7 @@ edit[EditModes.stamp] = function (e) {
   let x = e.offsetX / cam.zoom - cam.x
   let y = (e.offsetY + pal.h*cam.zoom) / cam.zoom - cam.y
 
-  if (!e.ctrlKey) {
+  if (!this.isCtrlKey(e)) {
     x = Math.floor(x / tw) * tw
     y = Math.floor(y / th) * th
   }
@@ -937,7 +943,7 @@ edit[EditModes.rectangle] = function (e) {
       obj = null
 
       this.draw()
-      this.props.handleSave('Edit Object')
+      //this.props.handleSave('Edit Object')
       return
     }
     if (e.which == 1) {
@@ -977,7 +983,7 @@ edit[EditModes.rectangle] = function (e) {
     if (this.handles.activeHandle) {
       this.handles.moveActiveHandle(dx, dy, this.clonedObject)
       let selected = this.selection.length < 2 ? this.pickedObject : this.selection
-      if (e.ctrlKey) {
+      if (this.isCtrlKey(e)) {
         if (this.handles.activeHandleType != 9) {
           selected.height = Math.round(this.clonedObject.height / th) * th
           selected.width = Math.round(this.clonedObject.width / tw) * tw
@@ -993,19 +999,21 @@ edit[EditModes.rectangle] = function (e) {
           }
         }
       }else {
-        if (this.handles.activeHandleType != 9) {
-          selected.height = this.clonedObject.height
-          selected.width = this.clonedObject.width
+        if(this.clonedObject) {
+          if (this.handles.activeHandleType != 9) {
+            selected.height = this.clonedObject.height
+            selected.width = this.clonedObject.width
 
-          // TODO(stauzs): multiple rotated objects will be bogous
-          if (selected != this.selection) {
-            selected.x = this.clonedObject.x
-            selected.y = this.clonedObject.y
-          }else {
-          }
-        }else {
-          if (selected != this.selection) {
-            this.rotateObject(this.clonedObject.rotation, selected)
+            // TODO(stauzs): multiple rotated objects will be bogous
+            if (selected != this.selection) {
+              selected.x = this.clonedObject.x
+              selected.y = this.clonedObject.y
+            } else {
+            }
+          } else {
+            if (selected != this.selection) {
+              this.rotateObject(this.clonedObject.rotation, selected)
+            }
           }
         }
       }
@@ -1017,7 +1025,7 @@ edit[EditModes.rectangle] = function (e) {
       this.selection.x = nx
       this.selection.y = ny
 
-      if (e.ctrlKey) {
+      if (this.isCtrlKey(e)) {
         this.selection.x = Math.round(this.selection.x / tw) * tw
         this.selection.y = Math.round(this.selection.y / th) * th
       }
@@ -1028,7 +1036,7 @@ edit[EditModes.rectangle] = function (e) {
       this.pickedObject.x = nx
       this.pickedObject.y = ny
 
-      if (e.ctrlKey) {
+      if (this.isCtrlKey(e)) {
         dx = this.pickedObject.orig ? this.pickedObject.minx % tw : 0
         dy = this.pickedObject.orig ? this.pickedObject.miny % th : 0
 

@@ -520,7 +520,7 @@ export default class MapArea extends React.Component {
     // 1 - left; 2 - right; 4 - middle + combinations
     // we will handle this => no buttons == touchmove event
     const editMode = this.props.getMode()
-    if(e.buttons === void(0) && editMode === EditModes.view){
+    if(e.buttons === void(0) && editMode === EditModes.view || (e.touches && e.touches.length > 1) ){
       this.moveCamera(e)
     }
     else if (this.options.preview && (e.buttons == 4))
@@ -774,6 +774,7 @@ export default class MapArea extends React.Component {
       if(LayerComponent) {
         layers.push(
           <LayerComponent
+            {...this.props}
             data={data.layers[i]}
             mapData={data}
             options={this.props.options}
@@ -786,7 +787,6 @@ export default class MapArea extends React.Component {
 
             getEditMode={() => this.props.getMode()}
             setEditMode={(mode) => {this.props.setMode(mode)}}
-
 
             getSelection={() => {return this.selection}}
             getTmpSelection={() => {return this.tmpSelection}}
@@ -806,12 +806,6 @@ export default class MapArea extends React.Component {
             // object layer draws selection shapes on the grid - as it's always on top
             getOverlay={() => this.refs.grid}
 
-            handleSave={this.props.handleSave}
-            saveForUndo={this.props.saveForUndo}
-
-            showModal={this.props.showModal}
-
-            setPickedObject={this.props.setPickedObject}
 
             key={i}
             ref={ this.addLayerRef.bind(this, i) }

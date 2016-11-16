@@ -13,6 +13,7 @@ export const joyrideCompleteTag = tagString => {
   if (!tagString.startsWith('mgbjr-CT-'))
     console.error(`Dev error: By convention, joyrideCompleteTag() params should start with "mgbjr-CT-".. Was called with an incorrect tag "${tagString}" instead..`)
   
+   // enable using console if you want this noise:   m.jr._ctDebugSpew = true
   const event = new CustomEvent('mgbCompletionTag', { 'detail': tagString } )
   setTimeout(() => { window.dispatchEvent(event) }, 0) // Prevent setState during render if this was called due to render
 }

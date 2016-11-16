@@ -21,12 +21,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Wed Nov 16 2016 14:00:00 GMT-0800 (PDT)',
+      'timestamp': 'Wed Nov 16 2016 15:30:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2094'
+        'iteration': '2097'
       },
 
       'releaseManagement': {
@@ -35,7 +35,7 @@ const mgbReleaseInfo = {
 
       'changes': [
         {
-          // Also fix for JSON in tutorials editor
+          // Also fix for JSON in tutorials editor and @stauzs' map bufixes
           'featureTag': 'nav.touch',
           'type': 'improvement',
           'changeName': 'Touch support for Map Editors',

@@ -169,8 +169,10 @@ export default class EditCode extends React.Component {
     this.startTernServer()
     // CodeMirror setup
     const textareaNode = this.refs.textarea
-    let cmOpts = {
-      mode: (this.props.asset.kind === 'tutorial') ? 'json' : 'jsx',
+    let codemirrorOptions = {
+      mode: (this.props.asset.kind === 'tutorial') ? 'application/json' : 'jsx',
+      //json: this.props.asset.kind === 'tutorial',
+
       // change theme for read only?
       theme: "eclipse",
       styleActiveLine: true,
@@ -235,7 +237,7 @@ export default class EditCode extends React.Component {
       highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
     }
 
-    this.codeMirror = CodeMirror.fromTextArea(textareaNode, cmOpts)
+    this.codeMirror = CodeMirror.fromTextArea(textareaNode, codemirrorOptions)
     this.updateDocName()
     this.doFullUpdateOnContentChange()
 
@@ -651,7 +653,9 @@ export default class EditCode extends React.Component {
   }
 
   runJSHintWorker(code, cb) {
-
+    if(this.props.asset.kind == "tutorial"){
+      return
+    }
     // terminate old busy worker - as jshint can take a lot time on huge scripts
     if (this.jshintWorker && this.jshintWorker.isBusy) {
       this.jshintWorker.terminate()

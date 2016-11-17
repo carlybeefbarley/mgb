@@ -430,7 +430,7 @@ export default class SourceTools {
       cb && cb('', '')
       return
     }
-    var url = SourceTools.resolveUrl(urlFinalPart, this.asset_id)
+    const url = SourceTools.resolveUrl(urlFinalPart, this.asset_id)
     if (!url) {
       cb && cb('', '')
       return
@@ -442,7 +442,6 @@ export default class SourceTools {
       /*SourceTools.loadImport(url, (src) => {
         this._collectAndTranspile(src, urlFinalPart, cb)
       })*/
-
       return
     }
     // load external file and cache - so we can skip loading next time

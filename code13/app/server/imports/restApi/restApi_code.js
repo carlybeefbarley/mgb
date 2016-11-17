@@ -3,7 +3,9 @@ import { Azzets } from '/imports/schemas'
 
 const _retval404 = { statusCode: 404, body: {} }   // body required to correctly show 404 not found header
 
-
+/* TODO: check urls containing referrer - it may be hard to cache (invalidate) them correctly..
+   probably easier is to change /:user/:name on the client side
+*/
 
 function _doGet(kind, id){
   const idParts = id.split(':')
@@ -42,7 +44,8 @@ RestApi.addRoute('asset/code/:id', { authRequired: false }, {
   }
 })
 
-// used in codeEdit - import X from '/codeName' - referrer is added automatically
+
+/* not used anymore */
 RestApi.addRoute('asset/code/:referrer/:name', {authRequired: false}, {
   get: function() {
     const referrer = Azzets.findOne(this.urlParams.referrer);

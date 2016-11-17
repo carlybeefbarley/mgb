@@ -28,3 +28,11 @@ RestApi.addRoute('asset/actor/:user/:name', {authRequired: false}, {
     }
   }
 })
+
+RestApi.addRoute('asset/fullactor/:user/:name', { authRequired: false }, {
+  get: function () {
+    var asset = Azzets.findOne({ name: this.urlParams.name, kind: 'actor', dn_ownerName: this.urlParams.user, isDeleted: false })
+    return asset ? asset : { statusCode: 404, body: {} }
+  }
+})
+

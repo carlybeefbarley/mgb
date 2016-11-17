@@ -97,7 +97,6 @@ export default class EditCode extends React.Component {
   constructor(props) {
     super(props)
     this.fontSizeSettingIndex = undefined
-    window.mgb_edit_code = this
     // save jshint reference - so we can kill it later
     this.jshintWorker = null
 
@@ -419,7 +418,8 @@ export default class EditCode extends React.Component {
     this.doFullUpdateOnContentChange()
   }
   codeEditShowHint(cm) {
-    if (this.props.canEdit && this.state.currentToken.type !== "comment")
+    // we could use specific keywords for tutorial
+    if (this.props.canEdit && this.state.currentToken.type !== "comment" && this.props.asset.type != "tutorial")
       return this.ternServer.complete(cm)
     return CodeMirror.Pass
   }
@@ -1276,6 +1276,9 @@ export default class EditCode extends React.Component {
     }
   }
   createBundle(cb) {
+    if(this.props.asset.kind == "tutorial"){
+      return
+    }
     if (this.state.creatingBundle) {
       console.log("creating bundle")
       cb && cb()

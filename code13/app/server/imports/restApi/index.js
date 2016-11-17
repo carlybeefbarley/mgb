@@ -8,9 +8,11 @@
 
 
 import '/server/imports/restApi/restApi.js'
-import '/server/imports/restApi/restApi_code.js'
-import '/server/imports/restApi/restApi_mgb1.js'
-import '/server/imports/restApi/restApi_sound.js'
-import '/server/imports/restApi/restApi_music.js'
-import '/server/imports/restApi/restApi_avatar.js'
 import '/server/imports/restApi/restApi_actor.js'
+import '/server/imports/restApi/restApi_avatar.js'
+import '/server/imports/restApi/restApi_code.js'
+import '/server/imports/restApi/restApi_common.js'
+import '/server/imports/restApi/restApi_graphic.js'
+import '/server/imports/restApi/restApi_mgb1.js'
+import '/server/imports/restApi/restApi_music.js'
+import '/server/imports/restApi/restApi_sound.js'

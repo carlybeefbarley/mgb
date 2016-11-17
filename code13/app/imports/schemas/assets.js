@@ -9,6 +9,8 @@ import { check, Match } from 'meteor/check'
 import { defaultWorkStateName } from '/imports/Enums/workStates'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
+import cache from '/imports/cache'
+
 var schema = {
   _id: String,
 
@@ -420,9 +422,13 @@ Meteor.methods({
     selector = { _id: docId }
     count = Azzets.update(selector, { $set: data } )
 
-    if (Meteor.isServer)      
+    if (Meteor.isServer) {
+      // can we omit this??? instead of update use findAndModify ?
+      const assetData = Azzets.findOne( docId, {fields: { name: 1, dn_ownerName: 1, kind: 1 }} )
+      // technically we could run this on client..
+      cache.invalidateAsset(assetData)
       console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`) // These fields might not be provided for updates
-    
+    }
     return count
   }
 })

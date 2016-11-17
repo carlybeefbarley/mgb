@@ -110,6 +110,13 @@ export default AssetCard = React.createClass({
       asset: asset
     }))
 
+    // allow to drop on graphics canvas
+    try{
+      e.dataTransfer.setData("mgb/image", asset.thumbnail)
+    }
+    // IE will throw an error here.. just ignore
+    catch(e){}
+
     // IE needs this!!!
     // e.dataTransfer.effectAllowed = "copy"
     $(document.body).addClass("dragging")

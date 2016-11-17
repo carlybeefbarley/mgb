@@ -167,7 +167,7 @@ export default AssetCard = React.createClass({
       
         <div 
             className="ui centered image" 
-            onClick={this.handleEditClick}
+            onMouseDown={this.handleEditClick}
             onTouchEnd={this.handleEditClick}
             style={ viewOpts.showImg ? {} : {display: 'none'} }>
           <canvas 
@@ -303,8 +303,13 @@ export default AssetCard = React.createClass({
       logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset); 
   },
 
-  handleEditClick() {
+  handleEditClick(e) {
+    console.log(e.buttons)
     const asset = this.props.asset
-    utilPushTo(this.context.urlLocation.query, "/u/" + asset.dn_ownerName + "/asset/" + asset._id)
+    const url = "/u/" + asset.dn_ownerName + "/asset/" + asset._id
+    if(e.buttons == 4)
+      window.open(url)
+    else
+      utilPushTo(this.context.urlLocation.query, url)
   }
 })

@@ -65,6 +65,15 @@ export default LoginRoute = React.createClass({
         var userName = Meteor.user().profile.name
         logActivity("user.login",  `Logging in "${userName}"`, null, null)
         utilPushTo(this.context.urlLocation.query, `/u/${userName}/assets`)
+
+        let email = null
+        if(Meteor.user().emails && Meteor.user().emails.length > 0)
+          email = Meteor.user().emails[0].address
+        analytics.identify(Meteor.user()._id, {
+          name: userName,
+          email: email
+        })
+        analytics.track('Logged in')
       }
     })
   }

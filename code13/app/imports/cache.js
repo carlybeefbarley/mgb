@@ -14,14 +14,14 @@ export default {
   routes: {
     common: (id, user, name) => {
       return [
-        `api/test`,
-        `asset/${id}`,
-        `asset/full/${user}/${name}`,
-        `asset/json/${id}`,
+        `test`,
+        /*`asset/${id}`,
+         `asset/full/${user}/${name}`,
+         `asset/json/${id}`,
 
-        `asset/thumbnail/png/${id}`,
-        `asset/thumbnail/png/${user}/${name}`,
-        `asset/id/${user}/${name}`
+         `asset/thumbnail/png/${id}`,
+         `asset/thumbnail/png/${user}/${name}`,
+         `asset/id/${user}/${name}`*/
       ]
     },
     graphic: (id, user, name) => {
@@ -52,11 +52,11 @@ export default {
     },
     code: (id, user, name) => {
       return [
-        `asset/code/${id}`,
-        `asset/code/${id}/${name}`,// this could break things
-        `asset/code/${id}/${user}/${name}`,
+        //`asset/code/${id}`,
+        //`asset/code/${id}/${name}`,// this could break things
+        //`asset/code/${id}/${user}/${name}`,
         `asset/code/bundle/${id}`,
-        `asset/code/bundle/u/${user}/${name}`
+        //`asset/code/bundle/u/${user}/${name}`
       ]
     },
     music: (id, user, name) => {
@@ -71,20 +71,36 @@ export default {
       ]
     }
   },
-  invalidateAsset: function(assetData){
+  invalidateAsset: function (assetData) {
     const id = assetData._id
     const user = assetData.dn_ownerName
     const name = assetData.name
 
     console.log(`Clearing cache for: ${user}:${name} (${id})`)
 
-    API_SERVERS.forEach( (server) => {
+    API_SERVERS.forEach((server) => {
       const forSource = url => {
-        Meteor.http.call("HEAD", server + url, {"nocache": "true"}, () => {
-          console.log("cleared:", server + url)
-          // dummy fn - to force Meteor use async version of the http request
+        const uri = server + "api/" + url
+
+        // TODO: find out why meteor call is not clrearing cache, but curl is clearing?
+        /*const exec = Npm.require('child_process').exec
+        const cmd = `curl -I -k -H "nocache: true" ${uri}`
+        exec(cmd, function (error, stdout, stderr) {
+          console.log("cleared:", uri, error, stdout, stderr)
+        })*/
+        
+        Meteor.http.call("HEAD", uri, {"nocache": "true", "user-agent": "curl/7.51.0"}, (error) => {
+          if (error) {
+            console.log("Failed to clear cache", uri, error)
+          }
+          else {
+            console.log("cleared:", uri)
+          }
         })
+
+
       }
+
       this.routes.common(id, user, name).forEach(forSource)
       this.routes[assetData.kind] && this.routes[assetData.kind](id, user, name).forEach(forSource)
     })

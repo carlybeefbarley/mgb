@@ -17,6 +17,8 @@ import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
 import CodeFlower from './CodeFlowerModded.js'
 import GameScreen from './GameScreen.js'
+import makeBundle from '/imports/helpers/codeBundle'
+
 // import tlint from 'tern-lint'
 
 // **GLOBAL*** Tern JS - See comment below...   
@@ -1256,21 +1258,19 @@ export default class EditCode extends React.Component {
   }
   handleFullScreen(id) {
     if (this.props.canEdit) {
-      // for editors we could load also sandbox iframe.. but probably it's not the best idea - as dev would like to how looks bundled version also
-      //
       const child = window.open('about:blank', "Bundle")
+      child.document.close()
       child.document.write(`
 <h1>Creating bundle</h1>
 <p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>
     `)
-      if (!this.props.asset.bundle) {
-        this.createBundle(() => {
-          child.location = `/api/asset/code/bundle/${id}`
-        })
-      }
-      else{
-        child.location = `/api/asset/code/bundle/${id}`
-      }
+      this.createBundle(() => {
+        // clear previous data
+        child.document.close()
+        // write bundle
+        child.document.write(makeBundle(this.props.asset))
+        child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
+      })
     }
     else{
       window.open(`/api/asset/code/bundle/${id}`, "Bundle")
@@ -1292,12 +1292,11 @@ export default class EditCode extends React.Component {
       this.tools.createBundle((bundle, notChanged) => {
         // if code contains errors - bundle will fail silently.. don't overwrite good version with empty
         // TODO: error reporting
-        if (bundle && !notChanged) {
-          const value = this.codeMirror.getValue()
-          const newC2 = {src: value, bundle: bundle}
-          // make sure we have bundle before every save
-          this.props.handleContentChange(newC2, null, `Store code bundle`)
-        }
+        const value = this.codeMirror.getValue()
+        const newC2 = {src: value, bundle: bundle}
+        // make sure we have bundle before every save
+        this.props.handleContentChange(newC2, null, `Store code bundle`)
+
         this.setState({
           creatingBundle: false
         })
@@ -1321,29 +1320,19 @@ export default class EditCode extends React.Component {
     this.handleContentChange(newC2, null, `Template code: ${item.label}`)
   }
 
-  // Note that either c2 or thumnail could be null/undefined.
+  // Note that either c2 or thumbnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
-    // save only thumbnail
-    if(!c2 && thumbnail){
-      this.props.handleContentChange(null, thumbnail, reason)
-      return
-    }
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {
       // console.log("Timeout cleared")
       window.clearTimeout(this.changeTimeout)
     }
-
     this.changeTimeoutFn = () => {
       console.log("Doing full update....")
-      this.createBundle(() => {
-        // create bundle will call this.props.handleContentChange
-        // this.props.handleContentChange(c2, thumbnail, reason)
-        this.doFullUpdateOnContentChange(() => {
-          this.tools.markAsUnchanged()
-        })
+      this.createBundle((notChanged) => {
+        // createBundle will automatically save
+        this.doFullUpdateOnContentChange()
         this.changeTimeout = null
-        // create bundle after save - be adwised that bundle takes up to 10 seconds to be generated
       })
     }
 
@@ -1351,7 +1340,7 @@ export default class EditCode extends React.Component {
   }
 
   // this is very heavy function - use with care
-  doFullUpdateOnContentChange(cb) {
+  doFullUpdateOnContentChange() {
 
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
@@ -1367,7 +1356,6 @@ export default class EditCode extends React.Component {
             this.setState({
               astReady: true
             })
-            cb && cb()
           })
         }
       })

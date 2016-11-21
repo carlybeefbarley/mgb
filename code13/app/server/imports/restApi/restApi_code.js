@@ -1,5 +1,7 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
+import makeBundle from '/imports/helpers/codeBundle'
+
 
 const _retval404 = { statusCode: 404, body: {} }   // body required to correctly show 404 not found header
 
@@ -30,6 +32,15 @@ function _doGet(kind, id){
     return _retval404
 }
 
+function _makeBundle(asset){
+  if (!asset)
+    return _retval404
+  return {
+    statusCode: 200,
+    headers: {'Content-Type': "text/html", 'file-name': asset.name},
+    body: makeBundle(asset)
+  }
+}
 
 // get tutorial by id - tmp used for es6 import
 RestApi.addRoute('asset/tutorial/:id', { authRequired: false }, {
@@ -91,46 +102,13 @@ RestApi.addRoute('asset/code/:referrer/:owner/:name', {authRequired: false}, {
   }
 })
 
-const _makeBundle = asset => {
-  if (!asset)
-    return _retval404
-  
-  const { bundle } = asset.content2
-  // reload page after 1 second - as bundle may be on the way to the server
-  const extraMessage = !!bundle ? '' : `
-<h2>The distribution bundle for this game must be created</h2>
-You can then run/rebuild the source file in the <a href='/u/${asset.dn_ownerName}/asset/${asset._id}' target="_top" >Code Editor</a> to generate the bundle
-<script>window.setTimeout(function(){window.location.reload()}, 2000)</script>
-`
-    
-  const content = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8" />
-<title>${asset.name}</title>
-<style>html, body{padding: 0; margin: 0; width: 100%; height: 100%}</style>
-</head>
-<body><script type="text/javascript">
-//<!--
-${bundle}
-//-->
-</script>${extraMessage}</body>
-</html>
-`
-  return {
-    statusCode: 200,
-    headers: {'Content-Type': "text/html", 'file-name': asset.name},
-    body: content
-  }
-}
-
 RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
+
     return _makeBundle(asset)
   }
 })
-
 
 RestApi.addRoute('asset/code/bundle/u/:username/:codename', { authRequired: false }, {
   get: function () {

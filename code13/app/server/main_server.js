@@ -24,6 +24,7 @@ import './CreateUser'
 import '/server/imports/restApi'
 import '/server/imports/jobs'
 
+import '/server/imports/rateLimiter'
 
 // Create fixtures on first time app is launched (useful for dev/test)
 import { createUsers } from './fixtures.js'
@@ -86,6 +87,7 @@ Meteor.startup(function () {
 // smoke test that these are present
 Npm.require;
 Assets;
+
 
 console.log(`
   MGBv2 server running ${Meteor.release}

@@ -1,0 +1,77 @@
+import { DDPRateLimiter } from 'meteor/ddp-rate-limiter'
+
+/*
+addRule({
+ type: Either "method" or "subscription"
+ name: The name of the method or subscription being called
+ userId: The user ID attempting the method or subscription
+ connectionId: A string representing the user's DDP connection
+ clientAddress: The IP address of the user
+})
+ */
+const getDefaultMethodSettings = name => {return {
+  rule: {
+    name,
+    type: "method",
+    connectionId: (con) => true // limit per connection
+  },
+  limit: 20, // 5 times
+  interval: 1000 // per 1000 ms
+}}
+const getDefaultSubscriptionSettings = name => {return {
+  rule: {
+    name,
+    type: "method",
+    connectionId: (con) => true // limit per connection
+  },
+  limit: 20, // 5 times
+  interval: 1000 // per 1000 ms
+}}
+const setRules = (rules) => {
+  for (let i in rules) {
+    const settings = rules[i](rules[i])
+    if (!settings)
+      continue
+    DDPRateLimiter.addRule(settings.rule, settings.limit, settings.interval)
+  }
+}
+
+// map[name: function] with all meteor methods
+// Meteor.default_server.method_handlers - this seems too unstable and breaks stuff - so we will collect all methods manually
+// replace getDefaultSettings with custom function - return false to ignore
+const methods = {
+  "Activity.log": getDefaultMethodSettings,
+  "ActivitySnapshot.setSnapshot": getDefaultMethodSettings,
+  "Azzets.create": getDefaultMethodSettings,
+  "Azzets.update": getDefaultMethodSettings,
+  "Chats.send": getDefaultMethodSettings,
+  "Projects.create": getDefaultMethodSettings,
+  "Projects.update": getDefaultMethodSettings,
+  "Settings.setFeatureLevel": getDefaultMethodSettings,
+  "Settings.setToolbarData": getDefaultMethodSettings,
+  "Skill.grant": getDefaultMethodSettings,
+  "Skill.forget": getDefaultMethodSettings,
+  "Skill.getForUser": getDefaultMethodSettings,
+  "User.storeProfileImage": getDefaultMethodSettings,
+  "User.setProfileImage": getDefaultMethodSettings,
+  "User.updateEmail": getDefaultMethodSettings,
+  "User.updateProfile": getDefaultMethodSettings,
+  'AccountsHelp.userNameTaken': getDefaultMethodSettings,
+  "Slack.Chats.send": getDefaultMethodSettings,
+  "Slack.User.create": getDefaultMethodSettings,
+  "Slack.Assets.create": getDefaultMethodSettings,
+  "Slack.Projects.create": getDefaultMethodSettings,
+  "Slack.MGB.productionStartup": getDefaultMethodSettings,
+  'job.gamePlayStats.playGame': getDefaultMethodSettings,
+  //'job.import.mgb1.project'
+}
+setRules(methods)
+
+// limit all subscriptions to reasonable count
+const knownSubscriptions = Meteor.default_server.publish_hanlers
+const subscriptions = {}
+for(let i in knownSubscriptions){
+  subscriptions[i] = getDefaultSubscriptionSettings(i)
+}
+
+setRules(subscriptions)

@@ -383,6 +383,9 @@ export default class Toolbar extends React.Component {
       joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-click`)
       joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
       this.props.actions[action](e)
+
+      // console.log(action, this.props.name, this.props)
+      analytics.track(action, {page: this.props.name})
     }
     else
       console.error(`Cannot find action for button '${action}'`)    

@@ -270,6 +270,8 @@ export const AssetKindKeys = _.filter(AssetKindKeysALL, (k) => {
   return (typeof(AssetKinds[k]) !== 'function' && AssetKinds[k].disable !== true) 
 })
 
+export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepChar).length === AssetKindKeys.length
+
 // All valid Asset kinds including disabled ones
 export const AssetKindKeysIncludingDisabled = _.filter(AssetKindKeysALL, (k) => {
   return (typeof(AssetKinds[k]) !== 'function') 

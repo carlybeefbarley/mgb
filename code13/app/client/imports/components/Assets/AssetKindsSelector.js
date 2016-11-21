@@ -27,13 +27,11 @@ export default AssetKindsSelector =  React.createClass({
 
     // Split kinds string into array for convenience
     const kindsArray = kindsActive.split(safeAssetKindStringSepChar)
-    var countActive = 0
 
     // Build the list of 'Create New Asset' Menu choices
     const choices = AssetKindKeys.map((k) => {
       // if k is in kindsActive then it is shown as active
       const active = _.includes(kindsArray, k)
-      if (active) countActive++
       const sty = active ? {} : { color: "#ccc"}
       const icon = active ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>
       return (
@@ -51,23 +49,6 @@ export default AssetKindsSelector =  React.createClass({
       )
     })
 
-    const allActive = (countActive === choices.length)
-    const allSty = allActive ? {} : { color: "#ccc" }
-
-    choices.unshift(
-      <a  className={"ui hazAkPopup " + (allActive ? "active item" : "item")}
-          data-value="__all"
-          key="__all"
-            style={ _.merge(allSty, baseSty) }
-          onClick={this.handleToggleKindClick.bind(this,"__all")}
-          data-position={popPosition}
-          data-title="All"
-          data-content="Click to show all asset kinds">
-        <i className="asterisk icon"></i>
-        { showCompact ? '' : <span>{allActive ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>} All</span> }
-      </a>
-    )
-
     return (
       <div className={`ui small ${showCompact ? 'compact' : 'secondary vertical'} menu`}>
         {choices}
@@ -78,6 +59,6 @@ export default AssetKindsSelector =  React.createClass({
   handleToggleKindClick(assetKindKey, event)
   {
     if (this.props.handleToggleKindCallback)
-      this.props.handleToggleKindCallback(assetKindKey, event.altKey);
+      this.props.handleToggleKindCallback(assetKindKey, event.altKey)
   }
 })

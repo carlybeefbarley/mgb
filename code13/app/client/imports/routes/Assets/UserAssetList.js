@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react'
 import reactMixin from 'react-mixin'
 
 import { Azzets, Projects } from '/imports/schemas'
-import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters } from '/imports/schemas/assets'
+import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters, isAssetKindsStringComplete } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
 
 import AssetList from '/client/imports/components/Assets/AssetList'
@@ -57,8 +57,7 @@ export default UserAssetListRoute = React.createClass({
   */
   queryNormalized: function(q) {
     // Start with defaults
-    let newQ = {...queryDefaults}
-    
+    let newQ = _.clone(queryDefaults)
     // Validate and apply values from location query
     
     // query.sort
@@ -119,10 +118,10 @@ export default UserAssetListRoute = React.createClass({
   */
   _updateLocationQuery(queryModifier) {
     let loc = this.props.location
-    let newQ = {...loc.query, ...queryModifier }
+    let newQ = Object.assign( {}, loc.query, queryModifier )
     newQ = this._stripQueryOfDefaults(newQ)
     // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
-    browserHistory.push( {  ...loc,  query: newQ })
+    browserHistory.push( Object.assign( {}, loc,  { query: newQ } ) )
   },
   
   /** 
@@ -275,6 +274,7 @@ export default UserAssetListRoute = React.createClass({
     const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)
+    const isAllKinds = isAssetKindsStringComplete(qN.kinds)
 
     // For some reason this isn't working as 'hidden divider' TODO - find out why
     const hiddenDivider = <div className="ui divider" style={{borderStyle: "none"}}></div>
@@ -328,7 +328,10 @@ export default UserAssetListRoute = React.createClass({
           { hiddenDivider }
 
           <div className="ui row">
-            Show asset kinds:
+            <span>
+              Show asset kinds:&emsp;
+              { isAllKinds || <small onClick={() => this.handleToggleKind('__all')}>(show all)</small> }
+            </span>
             <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
           </div>
           
@@ -340,7 +343,7 @@ export default UserAssetListRoute = React.createClass({
               <AssetShowDeletedSelector showDeletedFlag={qN.showDeleted} handleChangeFlag={this.handleChangeShowDeletedFlag} />
             </div>
           </div>
-        </div>        
+        </div>
 
         <div className="ui segment" style={{ minHeight: "600px"}}>        
           <div className="ui row">

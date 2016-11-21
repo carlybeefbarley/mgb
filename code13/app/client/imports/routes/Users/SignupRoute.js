@@ -100,6 +100,12 @@ export default SignupRoute = React.createClass({
       {
         logActivity("user.join",  `New user "${username}"`, null, null)
         utilPushTo(this.context.urlLocation.query, `/u/${Meteor.user().profile.name}`)
+        
+        analytics.identify(Meteor.user()._id, {
+          name: Meteor.user().profile.name,
+          email: Meteor.user().emails[0].address
+        })
+        analytics.track('Signed up')
       }
     })
   }

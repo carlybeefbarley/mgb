@@ -21,7 +21,7 @@ const getDefaultMethodSettings = name => {return {
 const getDefaultSubscriptionSettings = name => {return {
   rule: {
     name,
-    type: "method",
+    type: "subscription",
     connectionId: (con) => true // limit per connection
   },
   limit: 20, // 5 times

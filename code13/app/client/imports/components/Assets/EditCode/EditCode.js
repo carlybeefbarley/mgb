@@ -96,6 +96,7 @@ export default class EditCode extends React.Component {
 
   constructor(props) {
     super(props)
+    window.mgb_code = this
     this.fontSizeSettingIndex = undefined
     // save jshint reference - so we can kill it later
     this.jshintWorker = null
@@ -1294,7 +1295,8 @@ export default class EditCode extends React.Component {
         if (bundle && !notChanged) {
           const value = this.codeMirror.getValue()
           const newC2 = {src: value, bundle: bundle}
-          this.handleContentChange(newC2, null, `Store code bundle`)
+          // make sure we have bundle before every save
+          this.props.handleContentChange(newC2, null, `Store code bundle`)
         }
         this.setState({
           creatingBundle: false
@@ -1321,25 +1323,35 @@ export default class EditCode extends React.Component {
 
   // Note that either c2 or thumnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
+    // save only thumbnail
+    if(!c2 && thumbnail){
+      this.props.handleContentChange(null, thumbnail, reason)
+      return
+    }
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {
       // console.log("Timeout cleared")
       window.clearTimeout(this.changeTimeout)
     }
+
     this.changeTimeoutFn = () => {
       console.log("Doing full update....")
-      this.props.handleContentChange(c2, thumbnail, reason)
-      this.doFullUpdateOnContentChange()
-      this.changeTimeout = null
-      // create bundle after save - be adwised that bundle takes up to 10 seconds to be generated
-      this.createBundle()
+      this.createBundle(() => {
+        // create bundle will call this.props.handleContentChange
+        // this.props.handleContentChange(c2, thumbnail, reason)
+        this.doFullUpdateOnContentChange(() => {
+          this.tools.markAsUnchanged()
+        })
+        this.changeTimeout = null
+        // create bundle after save - be adwised that bundle takes up to 10 seconds to be generated
+      })
     }
 
     this.changeTimeout = window.setTimeout(this.changeTimeoutFn, CHANGES_DELAY_TIMEOUT)
   }
 
   // this is very heavy function - use with care
-  doFullUpdateOnContentChange() {
+  doFullUpdateOnContentChange(cb) {
 
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
@@ -1355,6 +1367,7 @@ export default class EditCode extends React.Component {
             this.setState({
               astReady: true
             })
+            cb && cb()
           })
         }
       })
@@ -1560,6 +1573,7 @@ export default class EditCode extends React.Component {
 
     return (
       <div className="ui grid">
+        { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
         <div className={infoPaneOpts.col1 + ' wide column'}>
 
 
@@ -1706,12 +1720,13 @@ export default class EditCode extends React.Component {
                           onClick={this.handleFullScreen.bind(this, asset._id)}>
                         <i className='external icon' />&emsp;Full&nbsp;
                       </a>
-                      { (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit &&
+                      {/*Moved to global notification - (this.tools.hasChanged()) - not used anymore - as we are creating bundle on every save - to make play game - better
+                      { this.state.creatingBundle && this.props.canEdit &&
                         <a className="ui tiny left pointing label reload" onClick={() => {this.createBundle( () => {} )}}
-                          title="Update Bundle">
+                          title="Updating Bundle">
                           <i className={'refresh icon ' + (this.state.creatingBundle ? ' loading' : '')} />
                         </a>
-                      }
+                      }*/}
                     </span>
                   </span>
                 </div>

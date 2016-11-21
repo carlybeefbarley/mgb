@@ -1328,6 +1328,10 @@ export default class EditCode extends React.Component {
 
   // Note that either c2 or thumbnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
+    if(!c2){
+      this.props.handleContentChange(null, thumbnail, reason)
+      return
+    }
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {
       // console.log("Timeout cleared")

@@ -44,7 +44,7 @@ const methods = {
   "ActivitySnapshot.setSnapshot": getDefaultMethodSettings,
   "Azzets.create": getDefaultMethodSettings,
   "Azzets.update": getDefaultMethodSettings,
-  "Chats.send": getDefaultMethodSettings,
+  "Chats.send": getDefaultMethodSettings, // TODO: add nice flooding message
   "Projects.create": getDefaultMethodSettings,
   "Projects.update": getDefaultMethodSettings,
   "Settings.setFeatureLevel": getDefaultMethodSettings,

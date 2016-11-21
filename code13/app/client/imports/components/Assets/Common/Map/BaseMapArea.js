@@ -43,17 +43,20 @@ export default class MapArea extends React.Component {
     this.globalMouseMove = (...args) => {
       this.handleMouseMove(...args)
     }
+
+    this.handleMouseDown = this.handleMouseDown.bind(this)
     this.globalMouseUp = (...args) => {
       this.isMouseDown = false
       this.handleMouseUp(...args)
     }
     // probably it's better to add onEvent for down
-    this.globalMouseDown = (e, ...args) => {
+    /*this.globalMouseDown = (e, ...args) => {
       if(e.target == this.refs.mapElement || (e.path && e.path.indexOf(this.refs.mapElement) > -1)){
         this.isMouseDown = true
       }
       //this.handleMouseDown(...args)
-    }
+    }*/
+
     this.globalResize = () => {
       this.adjustPreview()
     }
@@ -113,8 +116,8 @@ export default class MapArea extends React.Component {
     window.addEventListener('mouseup', this.globalMouseUp, false)
     window.addEventListener('touchend', this.globalMouseUp, false)
 
-    window.addEventListener('mousedown', this.globalMouseDown, false)
-    window.addEventListener('touchstart', this.globalMouseDown, false)
+    // window.addEventListener('mousedown', this.globalMouseDown, false)
+    // window.addEventListener('touchstart', this.globalMouseDown, false)
 
     window.addEventListener('resize', this.globalResize, false)
     window.addEventListener('keyup', this.globalKeyUp, false)
@@ -540,6 +543,9 @@ export default class MapArea extends React.Component {
       this.refs.positionInfo.forceUpdate()
     }
   }
+  handleMouseDown(){
+    this.isMouseDown = true
+  }
   removeObject(){
     const l = this.getActiveLayer()
     l && l.removeObject && l.removeObject()
@@ -820,6 +826,8 @@ export default class MapArea extends React.Component {
       <div
         ref='mapElement'
         onContextMenu={e => { e.preventDefault(); return false;}}
+        onMouseDown={this.handleMouseDown}
+        onTouchStart={this.handleMouseDown}
         style={{ height: 640 + 'px', position: 'relative', margin: '10px 0' }}>
         {layers}
       </div>

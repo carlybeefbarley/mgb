@@ -11,25 +11,6 @@
   pointer-events: none;
 }
 
-.map-filled, .map-empty{
-  transition: .3s;
-  min-height: 500px;
-  transform-style: preserve-3d;
-}
-.highlight-active-layer .no-events:not(.grid-layer){
-  opacity: 0.5;
-}
-
-.tilemap-layer{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  transition: inherit;
-  transform-origin: 50% 50% -200px;
-}
-.tileset{
-  position: relative;
-}
 .bold.active{
   font-weight: bold;
 }
@@ -69,16 +50,6 @@ body.dragging .accept-drop:after{
 }
 body.dragging .accept-drop:hover{
   background-color: rgba(255,255,255,0.9);
-}
-
-/* 3d preview */
-.tilemap-wrapper{
-  /*perspective: 2000px; - this make cursor position bugous on chrome */
-  -webkit-user-select: none;
-  cursor: default;
-}
-.map-filled.preview:active{
-  transition-duration: unset;
 }
 
 /* map editor properties */

@@ -1258,15 +1258,21 @@ export default class EditCode extends React.Component {
   }
   handleFullScreen(id) {
     if (this.props.canEdit) {
-      const child = window.open('about:blank', "Bundle")
+      let child = window.open('about:blank', "Bundle")
       child.document.close()
       child.document.write(`
 <h1>Creating bundle</h1>
 <p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>
     `)
       this.createBundle(() => {
-        // clear previous data
-        child.document.close()
+        // clear previous data - and everything else
+        if (!child.document) {
+          child = window.open('about:blank', "Bundle")
+        }
+        else {
+          child.document.location.reload()
+        }
+
         // write bundle
         child.document.write(makeBundle(this.props.asset))
         child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)

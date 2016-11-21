@@ -304,11 +304,11 @@ export default AssetCard = React.createClass({
   },
 
   handleEditClick(e) {
-    console.log(e.buttons)
     const asset = this.props.asset
     const url = "/u/" + asset.dn_ownerName + "/asset/" + asset._id
+    // middle click
     if(e.buttons == 4)
-      window.open(url)
+      window.open(url + (window.location.search ? window.location.search : ''))
     else
       utilPushTo(this.context.urlLocation.query, url)
   }

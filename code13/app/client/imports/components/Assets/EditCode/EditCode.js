@@ -1403,6 +1403,7 @@ export default class EditCode extends React.Component {
       level: 2,
 
       buttons: [
+        { name: 'separator' },
         {
           name:  'toolToggleInfoPane',
           label: 'Info Panels',
@@ -1452,15 +1453,48 @@ export default class EditCode extends React.Component {
     }
 
     if (this.props.asset.kind === 'tutorial')
+    {
       config.buttons.unshift( {
-        name:  'tryTutorial',
-        label: 'Try Tutorial',
-        icon:  'student',
-        tooltip: 'Try Tutorial',
+        name:     'stopTutorial',
+        label:    'Stop Tutorial',
+        icon:     'stop',
+        tooltip:  'Stop Tutorial',
+        disabled: false,
+        level:    1
+        // shortcut: 'Ctrl+T'
+      })
+      config.buttons.unshift( {
+        name:     'tryTutorial',
+        label:    'Try Tutorial',
+        icon:     'student',
+        tooltip:  'Try Tutorial',
         disabled: false,
         level:    1,
         shortcut: 'Ctrl+T'
       })
+    }
+    else
+    {
+      config.buttons.unshift( {
+        name:     'handleStop',
+        label:    'Stop Running',
+        icon:     'stop',
+        tooltip:  'Stop Running',
+        disabled: !this.state.isPlaying,
+        level:    1
+        // shortcut: 'Ctrl+T'
+      })
+      config.buttons.unshift( {
+        name:     'handleRun',
+        label:    'Run code',
+        icon:     'play',
+        tooltip:  'Run Code',
+        disabled: this.state.isPlaying,
+        level:    1
+        // shortcut: 'Ctrl+T'
+      })
+
+    }
     
     return config
   }

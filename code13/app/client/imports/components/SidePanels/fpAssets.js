@@ -6,7 +6,7 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import AssetList from '/client/imports/components/Assets/AssetList'
 
 import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSelector.js'
-import { AssetKindKeys, assetMakeSelector, safeAssetKindStringSepChar } from '/imports/schemas/assets'
+import { AssetKindKeys, assetMakeSelector, safeAssetKindStringSepChar, isAssetKindsStringComplete } from '/imports/schemas/assets'
 
 import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
 import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
@@ -127,6 +127,7 @@ export default fpAssets = React.createClass({
     const { assets, userProjects, loading } = this.data       // list of assets provided via getMeteorData()
     const { user, currUser } = this.props
     const { view, kindsActive, searchName, project } = this.state
+    const isAllKinds = isAssetKindsStringComplete(kindsActive)
 
     return (
       <div>
@@ -154,8 +155,11 @@ export default fpAssets = React.createClass({
             </button>
           </div>
 
-          <div className="ui row">
-            <small><span style={{paddingTop: '4px'}}>Show asset kinds:</span></small>
+          <div className="ui row" style={{marginTop: '6px'}}>
+            <small>
+              Show asset kinds:
+              { isAllKinds || <span style={{float: 'right'}} onClick={() => this.handleToggleKind('__all')}>(show all)</span> }
+            </small>
             <AssetKindsSelector 
                 showCompact={true} 
                 kindsActive={kindsActive} 

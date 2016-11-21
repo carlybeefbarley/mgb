@@ -8,6 +8,7 @@ const options = {
   prettyJson: true
 }
 
+// disable by default - as nobody except stauzs will actually test this
 export var RestApi = (Meteor.isDevelopment && false) ? new CachedRestivus(options) : new Restivus(options)
 
 // TODO: use enums instead of strings for asset kinds

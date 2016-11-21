@@ -1,27 +1,22 @@
-import React from 'react';
+import React, { PropTypes } from 'react'
 import { browser } from './utils';
 
 export default class JoyrideTooltip extends React.Component {
   static propTypes = {
-    animate: React.PropTypes.bool.isRequired,
-    buttons: React.PropTypes.object.isRequired,
-    cssPosition: React.PropTypes.string.isRequired,
-    disableOverlay: React.PropTypes.bool,
-    onClick: React.PropTypes.func.isRequired,
-    onRender: React.PropTypes.func.isRequired,
-    showOverlay: React.PropTypes.bool.isRequired,
-    standalone: React.PropTypes.bool,
-    step: React.PropTypes.object.isRequired,
-    type: React.PropTypes.string.isRequired,
-    xPos: React.PropTypes.oneOfType([
-      React.PropTypes.number,
-      React.PropTypes.string
-    ]).isRequired,
-    yPos: React.PropTypes.oneOfType([
-      React.PropTypes.number,
-      React.PropTypes.string
-    ]).isRequired
-  };
+    animate:      PropTypes.bool.isRequired,
+    buttons:      PropTypes.object.isRequired,
+    cssPosition:  PropTypes.string.isRequired,
+    disableOverlay: PropTypes.bool,
+    onClick:      PropTypes.func.isRequired,
+    onRender:     PropTypes.func.isRequired,
+    disableArrow: PropTypes.bool,
+    showOverlay:  PropTypes.bool.isRequired,
+    standalone:   PropTypes.bool,
+    step:         PropTypes.object.isRequired,
+    type:         PropTypes.string.isRequired,
+    xPos:         PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]).isRequired,
+    yPos:         PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]).isRequired
+  }
 
   static defaultProps = {
     buttons: {
@@ -126,18 +121,18 @@ export default class JoyrideTooltip extends React.Component {
     };
 
     styles.hole = {
-      top: Math.round((opts.rect.top - document.body.getBoundingClientRect().top) - 5),
-      left: Math.round(opts.rect.left - 5),
-      width: Math.round(opts.rect.width + 10),
+      top:    Math.round((opts.rect.top - document.body.getBoundingClientRect().top) - 5),
+      left:   Math.round(opts.rect.left - 5),
+      width:  Math.round(opts.rect.width + 10),
       height: Math.round(opts.rect.height + 10)
-    };
+    }
 
     styles.buttons = {
-      back: {},
-      close: {},
-      primary: {},
-      skip: {}
-    };
+      back:     {},
+      close:    {},
+      primary:  {},
+      skip:     {}
+    }
 
     /* Styling */
     if (stepStyles) {
@@ -145,13 +140,12 @@ export default class JoyrideTooltip extends React.Component {
         styles.arrow.backgroundImage = `url("${this.generateArrow({
           location: opts.positonBaseClass,
           color: stepStyles.backgroundColor
-        })}")`;
-        styles.tooltip.backgroundColor = stepStyles.backgroundColor;
+        })}")`
+        styles.tooltip.backgroundColor = stepStyles.backgroundColor
       }
 
-      if (stepStyles.borderRadius) {
-        styles.tooltip.borderRadius = stepStyles.borderRadius;
-      }
+      if (stepStyles.borderRadius)
+        styles.tooltip.borderRadius = stepStyles.borderRadius
 
       if (stepStyles.color) {
         styles.buttons.primary.color = stepStyles.color;
@@ -160,9 +154,8 @@ export default class JoyrideTooltip extends React.Component {
         styles.header.color = stepStyles.color;
         styles.tooltip.color = stepStyles.color;
 
-        if (stepStyles.mainColor && stepStyles.mainColor === stepStyles.color) {
-          styles.buttons.primary.color = stepStyles.backgroundColor;
-        }
+        if (stepStyles.mainColor && stepStyles.mainColor === stepStyles.color) 
+          styles.buttons.primary.color = stepStyles.backgroundColor
       }
 
       if (stepStyles.mainColor) {
@@ -171,33 +164,26 @@ export default class JoyrideTooltip extends React.Component {
         styles.header.borderColor = stepStyles.mainColor;
       }
 
-      if (stepStyles.textAlign) {
+      if (stepStyles.textAlign)
         styles.tooltip.textAlign = stepStyles.textAlign;
-      }
 
-      if (stepStyles.width) {
+      if (stepStyles.width)
         styles.tooltip.width = stepStyles.width;
-      }
 
-      if (stepStyles.back) {
+      if (stepStyles.back)
         styles.buttons.back = Object.assign({}, styles.buttons.back, stepStyles.back);
-      }
 
-      if (stepStyles.button) {
+      if (stepStyles.button)
         styles.buttons.primary = Object.assign({}, styles.buttons.primary, stepStyles.button);
-      }
 
-      if (stepStyles.close) {
+      if (stepStyles.close) 
         styles.buttons.close = Object.assign({}, styles.buttons.close, stepStyles.close);
-      }
 
-      if (stepStyles.skip) {
+      if (stepStyles.skip)
         styles.buttons.skip = Object.assign({}, styles.buttons.skip, stepStyles.skip);
-      }
 
-      if (stepStyles.hole) {
+      if (stepStyles.hole)
         styles.hole = Object.assign({}, stepStyles.hole, styles.hole);
-      }
     }
 
     return styles;
@@ -247,23 +233,21 @@ export default class JoyrideTooltip extends React.Component {
   }
 
   render() {
-    const { buttons, disableOverlay, onClick, showOverlay, step, type } = this.props;
+    const { buttons, disableOverlay, onClick, showOverlay, disableArrow, step, type } = this.props
+    const target = document.querySelector(step.selector)
 
-    const target = document.querySelector(step.selector);
+    if (!target)
+      return undefined
 
-    if (!target) {
-      return undefined;
-    }
-
-    const opts = this.setOpts();
-    const styles = this.setStyles(step.style, opts);
-    const output = {};
+    const opts = this.setOpts()
+    const styles = this.setStyles(step.style, opts)
+    const output = {}
 
     if (step.title) {
       output.header = (
         <div className="joyride-tooltip__header" style={styles.header}>
           {step.title}</div>
-      );
+      )
     }
 
     if (buttons.skip) {
@@ -276,14 +260,12 @@ export default class JoyrideTooltip extends React.Component {
         {buttons.skip}
       </a>);
     }
-    if (!step.text || typeof step.text === 'string') {
+    if (!step.text || typeof step.text === 'string')
       output.main = (<div className="joyride-tooltip__main" dangerouslySetInnerHTML={{ __html: step.text || '' }} />);
-    }
-    else {
+    else
       output.main = (<div className="joyride-tooltip__main">{step.text}</div>);
-    }
 
-    if (buttons.secondary) {
+    if (buttons.secondary)
       output.secondary = (<a
         href="#"
         className="joyride-tooltip__button joyride-tooltip__button--secondary"
@@ -291,18 +273,18 @@ export default class JoyrideTooltip extends React.Component {
         data-type="back"
         onClick={onClick}>
         {buttons.secondary}
-      </a>);
-    }
+      </a>)
 
-    if (step.event === 'hover') {
-      styles.buttons.close.opacity = 0;
-    }
+    if (step.event === 'hover')
+      styles.buttons.close.opacity = 0
 
     output.tooltipComponent = (
       <div className={opts.classes.join(' ')} style={styles.tooltip} data-target={step.selector}>
-        <div
-          className={`joyride-tooltip__triangle joyride-tooltip__triangle-${opts.positionClass}`}
-          style={styles.arrow} />
+        { disableArrow || 
+          <div
+            className={`joyride-tooltip__triangle joyride-tooltip__triangle-${opts.positionClass}`}
+            style={styles.arrow} />
+        }
         <a
           href="#"
           className={`joyride-tooltip__close${(output.header ? ' joyride-tooltip__close--header' : '')}`}
@@ -327,14 +309,11 @@ export default class JoyrideTooltip extends React.Component {
     );
 
     if (showOverlay) {
-      output.hole = (
-        <div className={`joyride-hole ${browser}`} style={styles.hole} />
-      );
+      output.hole = <div className={`joyride-hole ${browser}`} style={styles.hole} />
     }
 
-    if (!showOverlay) {
-      return output.tooltipComponent;
-    }
+    if (!showOverlay)
+      return output.tooltipComponent
 
     return (
       <div

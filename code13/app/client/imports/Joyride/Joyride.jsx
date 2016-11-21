@@ -710,12 +710,15 @@ export default class Joyride extends React.Component {
     const rect = target.getBoundingClientRect()
     let position = step.position;
 
-    this.logger('joyride:calcPosition', ['step:', step, 'component:', component, 'rect:', rect])
+    if (step.selector !== 'body')
+    {
+      this.logger('joyride:calcPosition', ['step:', step, 'component:', component, 'rect:', rect])
 
-    if (/^left/.test(position) && rect.left - (component.width + tooltipOffset) < 0)
-      position = 'top'
-    else if (/^right/.test(position) && (rect.left + rect.width + (component.width + tooltipOffset)) > body.width) 
-      position = 'bottom'
+      if (/^left/.test(position) && rect.left - (component.width + tooltipOffset) < 0)
+        position = 'top'
+      else if (/^right/.test(position) && (rect.left + rect.width + (component.width + tooltipOffset)) > body.width) 
+        position = 'bottom'
+    }
 
     return position
   }
@@ -795,9 +798,8 @@ export default class Joyride extends React.Component {
       if (!state.tooltip) {
         if (['continuous', 'guided'].indexOf(type) > -1) {
 
-          if (currentStep.code) {
-            buttons.primary = (<span>Insert Code</span>)
-          }
+          if (currentStep.code)
+            buttons.primary = (<span>Insert Code</span>)          
           else if (currentStep.awaitCompletionTag)
             buttons.primary = (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)
           else
@@ -825,18 +827,19 @@ export default class Joyride extends React.Component {
       }
 
       component = React.createElement(Tooltip, {
-        animate: state.xPos > -1 && !state.redraw,
+        animate:      state.xPos > -1 && !state.redraw,
+        step:         currentStep,
+        showOverlay:  shouldShowOverlay,
         buttons,
         cssPosition,
         disableOverlay,
-        showOverlay: shouldShowOverlay,
-        step: currentStep,
         standalone: Boolean(state.tooltip),
+        disableArrow: currentStep.selector === 'body',
         type,
-        xPos: state.xPos,
-        yPos: state.yPos,
-        onClick: this.onClickTooltip,
-        onRender: this.onRenderTooltip
+        xPos:         state.xPos,
+        yPos:         state.yPos,
+        onClick:      this.onClickTooltip,
+        onRender:     this.onRenderTooltip
       })
     }
     else

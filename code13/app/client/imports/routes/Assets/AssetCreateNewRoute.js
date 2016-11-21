@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import AssetCreateNew from '/client/imports/components/Assets/NewAsset/AssetCreateNew'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { logActivity } from '/imports/schemas/activity'
+
 import { utilPushTo } from '/client/imports/routes/QLink'
 
 export default AssetCreateNewRoute = React.createClass({
@@ -75,10 +77,11 @@ export default AssetCreateNewRoute = React.createClass({
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
-          alert("cannot create Asset because: " + error.reason)
+        alert("cannot create Asset because: " + error.reason)
       } else {
         newAsset._id = result             // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)
+        joyrideCompleteTag(`mgbjr-CT-asset-create-new-${newAsset.kind}`)
         // Now go to the new Asset
         utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/asset/${result}`)
       }

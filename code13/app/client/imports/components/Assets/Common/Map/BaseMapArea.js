@@ -23,7 +23,7 @@ export default class MapArea extends React.Component {
     this.preview = {
       x: 5, // angle on x axis
       y: 15, // angle on y axis
-      sep: 20 // layer seperation pixels
+      sep: 20 // layer separation pixels
     }
     this.state = {
       isPlaying: false
@@ -49,13 +49,6 @@ export default class MapArea extends React.Component {
       this.isMouseDown = false
       this.handleMouseUp(...args)
     }
-    // probably it's better to add onEvent for down
-    /*this.globalMouseDown = (e, ...args) => {
-      if(e.target == this.refs.mapElement || (e.path && e.path.indexOf(this.refs.mapElement) > -1)){
-        this.isMouseDown = true
-      }
-      //this.handleMouseDown(...args)
-    }*/
 
     this.globalResize = () => {
       this.adjustPreview()
@@ -75,7 +68,6 @@ export default class MapArea extends React.Component {
     }
 
     this.gloabalCSSAnimation = () => {
-      console.log("DONE css")
       this.adjustPreview()
     }
   }
@@ -104,8 +96,6 @@ export default class MapArea extends React.Component {
   componentDidMount() {
     this.startTime = Date.now()
     this.startEventListeners()
-
-    // did mount bubbles up - so we need to redraw layers now - as they need to know drawing area size - but cannot get on first mount
     this.redraw()
   }
 
@@ -115,9 +105,6 @@ export default class MapArea extends React.Component {
 
     window.addEventListener('mouseup', this.globalMouseUp, false)
     window.addEventListener('touchend', this.globalMouseUp, false)
-
-    // window.addEventListener('mousedown', this.globalMouseDown, false)
-    // window.addEventListener('touchstart', this.globalMouseDown, false)
 
     window.addEventListener('resize', this.globalResize, false)
     window.addEventListener('keyup', this.globalKeyUp, false)

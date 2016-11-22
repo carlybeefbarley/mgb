@@ -667,16 +667,7 @@ export default class EditCode extends React.Component {
 
     if (!this.jshintWorker) {
       // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
-      const worker = this.jshintWorker = new Worker("/lib/JSHintWorker.js")
-
-      worker.onmessage = (e) => {
-        worker.isBusy = false
-        // merge arrays ???
-        this.showErrors(e.data[0], true)
-        cb && cb(e.data[0])
-        // tools will inject error
-        // this.showErrors(this.tools.getErrors())
-      }
+      this.jshintWorker = new Worker("/lib/JSHintWorker.js")
     }
 
     const conf = {
@@ -701,6 +692,11 @@ export default class EditCode extends React.Component {
     }
 
     this.jshintWorker.isBusy = true
+    this.jshintWorker.onmessage = (e) => {
+      this.jshintWorker.isBusy = false
+      this.showErrors(e.data[0], true)
+      cb && cb(e.data[0])
+    }
     this.jshintWorker.postMessage([code, conf])
   }
 
@@ -1258,27 +1254,29 @@ export default class EditCode extends React.Component {
   }
   handleFullScreen(id) {
     if (this.props.canEdit) {
-      let child = window.open('about:blank', "Bundle")
+      // we need window.location - because push state will reload page otherwise
+      let child = window.open(window.location.origin + '/api/blank', "Bundle")
       child.document.close()
-      child.document.write(`
-<h1>Creating bundle</h1>
-<p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>
-    `)
+      child.document.write(
+`<h1>Creating bundle</h1>
+<p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>`
+      )
+      
       this.createBundle(() => {
         // clear previous data - and everything else
         if (!child.document) {
-          child = window.open('about:blank', "Bundle")
+          child = window.open(window.location.origin + '/api/blank', "Bundle")
         }
         else {
-          child.document.location.reload()
+          child.location.reload()
         }
 
         // write bundle
         child.document.write(makeBundle(this.props.asset))
-        child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
+        // child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
       })
     }
-    else{
+    else {
       window.open(`/api/asset/code/bundle/${id}`, "Bundle")
     }
   }
@@ -1287,7 +1285,7 @@ export default class EditCode extends React.Component {
       return
     }
     if (this.state.creatingBundle) {
-      console.log("creating bundle")
+      console.log("creating bundle - in progress")
       cb && cb()
       return
     }
@@ -1296,13 +1294,14 @@ export default class EditCode extends React.Component {
         creatingBundle: true
       })
       this.tools.createBundle((bundle, notChanged) => {
-        // if code contains errors - bundle will fail silently.. don't overwrite good version with empty
-        // TODO: error reporting
-        const value = this.codeMirror.getValue()
-        const newC2 = {src: value, bundle: bundle}
-        // make sure we have bundle before every save
-        this.props.handleContentChange(newC2, null, `Store code bundle`)
-
+        if(!notChanged){
+          const value = this.codeMirror.getValue()
+          const newC2 = {src: value, bundle: bundle}
+          // save this for later
+          this.props.asset.content2.bundle = bundle;
+          // make sure we have bundle before every save
+          this.props.handleContentChange(newC2, null, `Store code bundle`)
+        }
         this.setState({
           creatingBundle: false
         })
@@ -1338,11 +1337,13 @@ export default class EditCode extends React.Component {
       window.clearTimeout(this.changeTimeout)
     }
     this.changeTimeoutFn = () => {
+      if(this.props.asset.type === "tutorial"){
+        this.props.handleContentChange(c2, thumbnail, reason)
+        return
+      }
       console.log("Doing full update....")
-      this.createBundle((notChanged) => {
-        // createBundle will automatically save
-        this.doFullUpdateOnContentChange()
-        this.changeTimeout = null
+      this.doFullUpdateOnContentChange(() => {
+        this.createBundle()
       })
     }
 
@@ -1350,14 +1351,18 @@ export default class EditCode extends React.Component {
   }
 
   // this is very heavy function - use with care
-  doFullUpdateOnContentChange() {
-
+  doFullUpdateOnContentChange( cbX ) {
+    this._fullUpdateCallback = cbX
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
     this.codeMirror.operation(() => {
       const val = this.codeMirror.getValue()
       this.runJSHintWorker(val, (errors) => {
         // don't recompile on critical errors
+        // why we lose cbX value here????
+        if(!cbX){
+          cbX = this._fullUpdateCallback
+        }
         const critical = errors.find(e => e.code.substr(0, 1) === "E")
         if (!critical && this.tools) {
           // why val here is different?
@@ -1366,6 +1371,7 @@ export default class EditCode extends React.Component {
             this.setState({
               astReady: true
             })
+            cbX && cbX()
           })
         }
       })

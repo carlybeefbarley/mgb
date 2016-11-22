@@ -558,11 +558,11 @@ export default class SourceTools {
         }
         allInOneBundle += ";" + sources[i].code + "; "
         if (sources[i].useGlobal) {
-          allInOneBundle += 'imports["' + sources[i].name + '"] = true; '
+          allInOneBundle += "\n" + 'imports["' + sources[i].name + '"] = true; '
         }
         else {
           allInOneBundle +=
-            'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)';
+            "\n" + 'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)';
           if (sources[i].name) {
             allInOneBundle += "\n" + 'imports["' + sources[i].name + '"] = window.module.exports;'
           }

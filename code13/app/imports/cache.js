@@ -1,7 +1,7 @@
 const prefix = "/api/"
 
 const API_SERVERS = [
-  // probably it's better to fill up this array while caching APIS - so we will and up with all servers that accesses API
+  // probably it's better to fill up this array while caching APIS - so we will end up with all servers that accesses API
   Meteor.absoluteUrl()
 ]
 
@@ -89,7 +89,7 @@ export default {
           console.log("cleared:", uri, error, stdout, stderr)
         })*/
         
-        Meteor.http.call("HEAD", uri, {"nocache": "true", "user-agent": "curl/7.51.0"}, (error) => {
+        Meteor.http.call("HEAD", uri, {headers: {"nocache": "true", "user-agent": "curl/7.51.0"}}, (error) => {
           if (error) {
             console.log("Failed to clear cache", uri, error)
           }

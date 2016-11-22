@@ -245,6 +245,7 @@ export default App = React.createClass({
           disableOverlay={false}
           showSkipButton={true}
           tooltipOffset={0}
+          keyboardNavigation={false}
           showStepsProgress={true}
           type="continuous"
           callback={this.handleJoyrideCallback}

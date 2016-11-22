@@ -1254,30 +1254,37 @@ export default class EditCode extends React.Component {
   }
   handleFullScreen(id) {
     if (this.props.canEdit) {
-      // we need window.location - because push state will reload page otherwise
-      let child = window.open(window.location.origin + '/api/blank', "Bundle")
-      window.setTimeout(() => {
-        child.location.reload()
-        child.document.write(
-          `<h1>Creating bundle</h1>
+      // TODO(stauzs): research and make correct use of makeBundle + document.write - if possible - atm it only works for simple code - games with phaser don't work at all - probably related to body onload event or something like that
+      //
+      const urlToOpen = "about:blank"; //window.location.origin + '/api/blank' //- to work with pushState without reload
+      let child = window.open(urlToOpen, "Bundle")
+      child.document.write(
+        `<h1>Creating bundle</h1>
 <p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>`
-        )
-        child.document.close()
+      )
+      this.createBundle(() => {
+        // clear previous data - and everything else
+        if (!child.document) {
+          child = window.open(urlToOpen, "Bundle")
+        }
+        else {
+          // use this with pushState combo
+          // child.location.reload()
+        }
 
-        this.createBundle(() => {
-          // clear previous data - and everything else
-          if (!child.document) {
-            child = window.open(window.location.origin + '/api/blank', "Bundle")
-          }
+        // write bundle
+        // child.document.write(makeBundle(this.props.asset))
+        const delayReloadIfSaving = () => {
+          if(this.props.hasUnsentSaves || this.props.asset.isUnconfirmedSave)
+            window.setTimeout(delayReloadIfSaving, 100)
           else {
-            child.location.reload()
+            //child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
+            child.location = `/api/asset/code/bundle/${id}`
           }
+        }
 
-          // write bundle
-          child.document.write(makeBundle(this.props.asset))
-          // child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
-        })
-      }, 0)
+        delayReloadIfSaving()
+      })
 
     }
     else {

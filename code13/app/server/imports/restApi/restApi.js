@@ -29,10 +29,8 @@ RestApi.addRoute('blank', {authRequired: false}, {
   get: function(){
     return {
       statusCode: 200,
-      headers: {'Content-Type': "text/html"},
-      body: ""
+      body: {} // how to make html response?
     }
-
   }
 })
 

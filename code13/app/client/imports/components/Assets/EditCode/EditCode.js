@@ -435,7 +435,6 @@ export default class EditCode extends React.Component {
       }
     this.acTimeout = setTimeout(() => {
       if (this.changeTimeout) {
-        console.log("skipping ac... ")
         return
       }
       // skip ac in the comments and when user is typing
@@ -1071,7 +1070,6 @@ export default class EditCode extends React.Component {
     this.ternServer.server.getAstFlowerTree({
       local: false
     }, (tree) => {
-      //console.log(JSON.stringify(tree, null, "  "))
 
       const w = $(this.refs.codeflower).width()
       const flower = new CodeFlower("#codeflower", w, w / canvas.width * 150)
@@ -1105,7 +1103,6 @@ export default class EditCode extends React.Component {
 
   drawAstFlower() {
     this.ternServer.server.getAstFlowerTree((tree) => {
-      //console.log(JSON.stringify(tree, null, "  "))
 
       const w = $(this.refs.codeflower).width()
       const flower = new CodeFlower("#codeflower", w, w / 250 * 150)
@@ -1127,7 +1124,6 @@ export default class EditCode extends React.Component {
           // make node stay in place
           node.fixed = true
 
-          //console.log("node callback: ", node)
           const cm = this.codeMirror
           let char = 0
           const pos = {
@@ -1344,7 +1340,6 @@ export default class EditCode extends React.Component {
     }
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {
-      // console.log("Timeout cleared")
       window.clearTimeout(this.changeTimeout)
     }
     this.changeTimeoutFn = () => {
@@ -1352,7 +1347,6 @@ export default class EditCode extends React.Component {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
-      console.log("Doing full update....")
       this.doFullUpdateOnContentChange(() => {
         this.createBundle()
       })

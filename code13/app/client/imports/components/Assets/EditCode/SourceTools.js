@@ -180,7 +180,6 @@ export default class SourceTools {
       if (this.isDestroyed) return
       // force tern to update arg hint cache as we may have loaded new files / defs / docs
       callback && callback(this.collectedSources)
-      console.log("Collected")
       this.inProgress = false
     })
   }
@@ -318,7 +317,6 @@ export default class SourceTools {
     // wait for active job to complete
     if (this.inProgress) {
       setTimeout(() => {
-        console.log("waiting...")
         this.updateNow(cb)
       }, 1000)
       return;
@@ -334,10 +332,8 @@ export default class SourceTools {
       this.updateNow(cb);
     }
     // already on the latest version, yay!
-    else {
-      console.log("All OK - latest version")
+    else
       cb()
-    }
   }
 
   _collectAndTranspile(srcText, filename, callback, force) {

@@ -29,7 +29,8 @@ RestApi.addRoute('blank', {authRequired: false}, {
   get: function(){
     return {
       statusCode: 200,
-      body: ''
+      headers: {'Content-Type': "text/html"},
+      body: {}
     }
   }
 })

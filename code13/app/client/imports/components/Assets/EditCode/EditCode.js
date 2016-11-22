@@ -1256,25 +1256,29 @@ export default class EditCode extends React.Component {
     if (this.props.canEdit) {
       // we need window.location - because push state will reload page otherwise
       let child = window.open(window.location.origin + '/api/blank', "Bundle")
-      child.document.close()
-      child.document.write(
-`<h1>Creating bundle</h1>
+      window.setTimeout(() => {
+        child.location.reload()
+        child.document.write(
+          `<h1>Creating bundle</h1>
 <p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>`
-      )
-      
-      this.createBundle(() => {
-        // clear previous data - and everything else
-        if (!child.document) {
-          child = window.open(window.location.origin + '/api/blank', "Bundle")
-        }
-        else {
-          child.location.reload()
-        }
+        )
+        child.document.close()
 
-        // write bundle
-        child.document.write(makeBundle(this.props.asset))
-        // child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
-      })
+        this.createBundle(() => {
+          // clear previous data - and everything else
+          if (!child.document) {
+            child = window.open(window.location.origin + '/api/blank', "Bundle")
+          }
+          else {
+            //child.location.reload()
+          }
+
+          // write bundle
+          child.document.write(makeBundle(this.props.asset))
+          // child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
+        })
+      }, 0)
+
     }
     else {
       window.open(`/api/asset/code/bundle/${id}`, "Bundle")
@@ -1282,6 +1286,7 @@ export default class EditCode extends React.Component {
   }
   createBundle(cb) {
     if(this.props.asset.kind == "tutorial"){
+      cb && cb()
       return
     }
     if (this.state.creatingBundle) {
@@ -1337,10 +1342,6 @@ export default class EditCode extends React.Component {
       window.clearTimeout(this.changeTimeout)
     }
     this.changeTimeoutFn = () => {
-      if(this.props.asset.type === "tutorial"){
-        this.props.handleContentChange(c2, thumbnail, reason)
-        return
-      }
       console.log("Doing full update....")
       this.doFullUpdateOnContentChange(() => {
         this.createBundle()

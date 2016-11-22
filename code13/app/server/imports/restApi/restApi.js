@@ -30,8 +30,9 @@ RestApi.addRoute('blank', {authRequired: false}, {
     return {
       statusCode: 200,
       headers: {'Content-Type': "text/html"},
-      body: {}
+      body: ""
     }
+
   }
 })
 

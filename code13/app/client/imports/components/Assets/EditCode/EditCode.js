@@ -1270,7 +1270,7 @@ export default class EditCode extends React.Component {
             child = window.open(window.location.origin + '/api/blank', "Bundle")
           }
           else {
-            //child.location.reload()
+            child.location.reload()
           }
 
           // write bundle
@@ -1286,7 +1286,6 @@ export default class EditCode extends React.Component {
   }
   createBundle(cb) {
     if(this.props.asset.kind == "tutorial"){
-      cb && cb()
       return
     }
     if (this.state.creatingBundle) {
@@ -1342,6 +1341,10 @@ export default class EditCode extends React.Component {
       window.clearTimeout(this.changeTimeout)
     }
     this.changeTimeoutFn = () => {
+      if(this.props.asset.kind == "tutorial") {
+        this.props.handleContentChange(c2, thumbnail, reason)
+        return
+      }
       console.log("Doing full update....")
       this.doFullUpdateOnContentChange(() => {
         this.createBundle()

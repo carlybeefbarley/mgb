@@ -1363,21 +1363,20 @@ export default class EditCode extends React.Component {
     this.codeMirror.operation(() => {
       const val = this.codeMirror.getValue()
       this.runJSHintWorker(val, (errors) => {
-        // don't recompile on critical errors
-        // why we lose cbX value here????
         if(!cbX){
           cbX = this._fullUpdateCallback
         }
         const critical = errors.find(e => e.code.substr(0, 1) === "E")
         if (!critical && this.tools) {
-          // why val here is different?
-          const val2 = this.codeMirror.getValue()
-          this.tools.collectAndTranspile(val2, this.props.asset.name, () => {
+          this.tools.collectAndTranspile(val, this.props.asset.name, () => {
             this.setState({
               astReady: true
             })
             cbX && cbX()
           })
+        }
+        else{
+          cbX && cbX()
         }
       })
 

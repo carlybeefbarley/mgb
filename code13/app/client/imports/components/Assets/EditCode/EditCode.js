@@ -1356,27 +1356,23 @@ export default class EditCode extends React.Component {
   }
 
   // this is very heavy function - use with care
-  doFullUpdateOnContentChange( cbX ) {
-    this._fullUpdateCallback = cbX
+  doFullUpdateOnContentChange( cb ) {
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
     this.codeMirror.operation(() => {
       const val = this.codeMirror.getValue()
       this.runJSHintWorker(val, (errors) => {
-        if(!cbX){
-          cbX = this._fullUpdateCallback
-        }
         const critical = errors.find(e => e.code.substr(0, 1) === "E")
         if (!critical && this.tools) {
           this.tools.collectAndTranspile(val, this.props.asset.name, () => {
             this.setState({
               astReady: true
             })
-            cbX && cbX()
+            cb && cb()
           })
         }
         else{
-          cbX && cbX()
+          cb && cb()
         }
       })
 

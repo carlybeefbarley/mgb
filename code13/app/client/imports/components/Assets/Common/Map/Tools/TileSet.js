@@ -402,7 +402,10 @@ export default class TileSet extends React.Component {
       </div>
     )
   }
-  renderOpenListButton(){
+  renderOpenListButton(offset = 0){
+    if(this.props.tilesets.length < offset){
+      return null
+    }
     return <div className="showList" onClick={this.showTileListPopup}><i className='ui external icon'></i> </div>
   }
   render () {

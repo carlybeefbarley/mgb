@@ -169,7 +169,7 @@ export default AssetCard = React.createClass({
       
         <div 
             className="ui centered image" 
-            onMouseDown={this.handleEditClick}
+            onMouseUp={this.handleEditClick}
             onTouchEnd={this.handleEditClick}
             style={ viewOpts.showImg ? {} : {display: 'none'} }>
           <canvas 
@@ -308,8 +308,8 @@ export default AssetCard = React.createClass({
   handleEditClick(e) {
     const asset = this.props.asset
     const url = "/u/" + asset.dn_ownerName + "/asset/" + asset._id
-    // middle click
-    if(e.buttons == 4)
+    // middle click - mouseUp reports buttons == 0; button == 1
+    if(e.buttons == 4 || e.button == 1)
       window.open(url + (window.location.search ? window.location.search : ''))
     else
       utilPushTo(this.context.urlLocation.query, url)

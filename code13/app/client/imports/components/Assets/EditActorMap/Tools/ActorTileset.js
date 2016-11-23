@@ -166,7 +166,7 @@ export default class ActorTool extends Tileset {
                 {tilesets}
               </div>
             </div>
-            {this.renderOpenListButton()}
+            {this.renderOpenListButton(1)}
           </div>
           <div className="content active actor-tileset-content">
             {!isValidForLayer && <div className="actor-disabled-hint">

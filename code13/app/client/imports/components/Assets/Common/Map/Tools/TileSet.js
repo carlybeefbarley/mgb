@@ -50,6 +50,10 @@ export default class TileSet extends React.Component {
     if(this.refs.canvas){
       this.refs.canvas.removeEventListener("touchstart", this.onMouseDown)
     }
+
+    if(this.refs.modal){
+      $(this.refs.modal).remove()
+    }
   }
   componentDidUpdate(){
     // re-render after update

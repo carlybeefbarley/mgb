@@ -1304,8 +1304,6 @@ export default class EditCode extends React.Component {
         if(!notChanged){
           const value = this.codeMirror.getValue()
           const newC2 = {src: value, bundle: bundle}
-          // save this for later
-          this.props.asset.content2.bundle = bundle;
           // make sure we have bundle before every save
           this.props.handleContentChange(newC2, null, `Store code bundle`)
         }
@@ -1347,8 +1345,15 @@ export default class EditCode extends React.Component {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
-      this.doFullUpdateOnContentChange(() => {
-        this.createBundle()
+      this.doFullUpdateOnContentChange((errors) => {
+        // it's not possible to create useful bundle with errors in code - just save
+        if(errors){
+          this.props.handleContentChange(c2, thumbnail, reason)
+        }
+        else{
+          // createBundle is calling handleContentChange internally
+          this.createBundle()
+        }
       })
     }
 
@@ -1372,7 +1377,7 @@ export default class EditCode extends React.Component {
           })
         }
         else{
-          cb && cb()
+          cb && cb(errors)
         }
       })
 

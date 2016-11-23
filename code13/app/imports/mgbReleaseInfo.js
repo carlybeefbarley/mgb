@@ -23,12 +23,12 @@ const mgbReleaseInfo = {
 */
 
     {
-      'timestamp': 'Wed Nov 23 2016 11:10:00 GMT-0800 (PDT)',
+      'timestamp': 'Wed Nov 23 2016 13:30:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2133'
+        'iteration': '2136'
       },
 
       'releaseManagement': {
@@ -48,6 +48,13 @@ const mgbReleaseInfo = {
           'type': 'bugfix',
           'changeName': 'Bugfix for drag-graphic-to-actor',
           'changeSummary': '@Jaketor reported bug: "When it asks you to drag a graphic to use for the actor, you automatically end up in the editor for that graphic.".. this is now fixed',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'play.game',
+          'type': 'bugfix',
+          'changeName': 'Fixed shooting bug in actorMap games',
+          'changeSummary': 'Fixed actorMap bug where shots could collide with items below or to right of shooter.  Thanks (again) to @Jaketor for testing and reporting the bug',
           'otherUrls': [ ]
         },
         {

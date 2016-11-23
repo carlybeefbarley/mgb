@@ -66,7 +66,7 @@ const MageNpcDialog = ( { leftActor, message, choices, responseCallbackFn, graph
       { _.map(choices, (choice,idx) => (choice && 
           <div key={idx}>
             <Label onClick={() => responseCallbackFn(idx+1)}>
-              <Icon name='comment outline' />&ensp;{choice} 
+              {choice}
             </Label>
           </div>
           )

@@ -222,9 +222,11 @@ debugger  // step through first time
       aa.appearIf = MgbActor.alAppearDisappear_NoCondition			// Shots can't have conditions
       aa.renderX = x * MgbSystem.tileMinWidth
       aa.renderY = y * MgbSystem.tileMinHeight
-      aa.cellSpanX = (tp.content2.width  + (MgbSystem.tileMinWidth  - 1))/ MgbSystem.tileMinWidth		// Round up
-      aa.cellSpanY = (tp.content2.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
-      
+//    aa.cellSpanX = (tp.content2.width  + (MgbSystem.tileMinWidth  - 1))/ MgbSystem.tileMinWidth		// Round up
+//    aa.cellSpanY = (tp.content2.height + (MgbSystem.tileMinHeight - 1))/ MgbSystem.tileMinHeight		// Round up
+      aa.cellSpanX = Math.ceil(tp.content2.width / MgbSystem.tileMinWidth)	
+      aa.cellSpanY = Math.ceil(tp.content2.height / MgbSystem.tileMinHeight)		// Round up
+
       var spawnShot = ap.content2.databag.allchar.shotActor
       aa.maxActiveShots = (!spawnShot || spawnShot === '') ? 0 : MgbActor.intFromActorParam(ap.content2.databag.allchar.shotRateNum)
       

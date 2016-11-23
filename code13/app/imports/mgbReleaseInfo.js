@@ -26,6 +26,30 @@ const mgbReleaseInfo = {
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
+        'iteration': '2126'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': '',
+          'type': 'bugfix',
+          'changeName': 'Various bugfixes',
+          'changeSummary': 'Various bugfixes for Code Bundler, analytics, and tutorials',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Wed Nov 16 2016 15:30:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
         'iteration': '2097'
       },
 

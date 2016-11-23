@@ -13,6 +13,8 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
 // TODO: Toast/error is a mess
 
+// Note that middle-click mouse is a shortcut for open Asset in new browser Tab
+
 export const assetViewChoices =  { 
   "xs": { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: false },
   "s":  { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: true  },

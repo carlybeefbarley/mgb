@@ -7,7 +7,7 @@ import urlMaker from './urlMaker'
 import App from './App'
 import Home from './Home'
 import Import from './Import'
-import PlayGame from './PlayGame'
+import PlayGameRoute from './PlayGameRoute'
 import GetStarted from './GetStarted'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import GetStartedSkills from './GetStartedSkills'
@@ -50,7 +50,7 @@ Meteor.startup(function () {
     <Router history={browserHistory}>
       <Route component={App}>
 
-        <Route path='/u/:username/play/:assetId' component={PlayGame} name='Play Game' />
+        <Route path='/u/:username/play/:assetId' component={PlayGameRoute} name='Play Game' />
       
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />

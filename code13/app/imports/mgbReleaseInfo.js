@@ -16,6 +16,16 @@ const mgbReleaseInfo = {
 
 /* Pending changes -- accumulate here in comment until time to deploy
 
+      'changes': [
+        {
+          'featureTag': 'play.game',
+          'type': 'bugfix',
+          'changeName': 'Fixed play counter for Code Game',
+          'changeSummary': 'The play count for code Games now increments only once per play',
+          'otherUrls': [ ]
+        }
+      ]
+
 
 */
 

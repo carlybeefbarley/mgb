@@ -25,14 +25,7 @@ RestApi.addRoute('test', {authRequired: false}, {
     return {servers: cache.API_SERVERS, date: Date.now(), headers: this.request.headers}
   }
 })
-RestApi.addRoute('blank', {authRequired: false}, {
-  get: function(){
-    return {
-      statusCode: 200,
-      body: {} // how to make html response?
-    }
-  }
-})
+// just add empty static file for blank pages
 
 RestApi.addRoute('asset/map/:id', {authRequired: false}, {
   get: function () {

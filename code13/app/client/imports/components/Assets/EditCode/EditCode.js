@@ -98,7 +98,7 @@ export default class EditCode extends React.Component {
 
   constructor(props) {
     super(props)
-    window.mgb_code = this
+    // m._reg("code")
     this.fontSizeSettingIndex = undefined
     // save jshint reference - so we can kill it later
     this.jshintWorker = null

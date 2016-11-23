@@ -22,6 +22,8 @@ export default class TileSet extends React.Component {
     this.startingtilePos = null
 
     this.onMouseDown = this.onMouseDown.bind(this)
+    this.renderTileset = this.renderTileset.bind(this)
+    this.showTileListPopup = this.showTileListPopup.bind(this)
   }
   componentDidMount () {
     $('.ui.accordion')
@@ -350,31 +352,68 @@ export default class TileSet extends React.Component {
     )
   }
 
-  renderTileset(from = 0, to = this.props.tilesets.length){
+  genTilesetList(index, isActive, tileset){
+    const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
+    return (
+      <a
+        className={isActive ? 'item active' : 'item'}
+        href='javascript:;'
+        onClick={this.selectTileset.bind(this, index)}
+        key={index}><span className='tileset-title-list-item'>{title}</span></a>
+    )
+  }
+  genTilesetImage(index, isActive, tileset){
+    const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
+    return (
+      <div
+        title={title}
+        className={"tilesetPreview" + (isActive ? " active" : '')}
+        key={index}
+        onClick={() => {
+          $(this.refs.modal).modal("hide")
+          this.selectTileset(index)
+        }}
+        >
+        <img src={tileset.image}/>
+        <span className="tilesetPreviewTitle">{tileset.name}</span>
+      </div>
+    )
+  }
+  renderTileset(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList){
     const tss = this.props.tilesets
     let ts = this.tileset
-
     const tilesets = []
     for (let i = from; i < to; i++) {
-      let title = `${tss[i].name} ${tss[i].imagewidth}x${tss[i].imageheight}`
-      tilesets.push(
-        <a
-          className={tss[i] === ts ? 'item active' : 'item'}
-          href='javascript:;'
-          onClick={this.selectTileset.bind(this, i)}
-          key={i}><span className='tileset-title-list-item'>{title}</span></a>
-      )
+      tilesets.push( genTemplate.call(this, i, tss[i] === ts, tss[i]) )
     }
     return tilesets
+  }
+  showTileListPopup(){
+    $(this.refs.modal)
+      .modal("show")
+      .modal('setting', 'transition', 'vertical flip') // first time there is default animation
+  }
+  renderForModal(from = 0, to = this.props.tilesets.length){
+    return (
+      <div ref="modal" style={{display: "none"}} className="ui modal">
+        <div className="content tilesetPreviewModal">
+          {this.renderTileset(from, to, this.genTilesetImage)}
+        </div>
+      </div>
+    )
+  }
+  renderOpenListButton(){
+    return <div className="showList" onClick={this.showTileListPopup}><i className='ui external icon'></i> </div>
   }
   render () {
     if (!this.props.tilesets.length) {
       return this.renderEmpty()
     }
     const tilesets = this.renderTileset()
-    let ts = this.tileset
+    const ts = this.tileset
     return (
       <div className='mgbAccordionScroller tilesets'>
+        {this.renderForModal()}
         <div className='ui fluid styled accordion'>
           <div
             className='active title accept-drop'
@@ -396,6 +435,7 @@ export default class TileSet extends React.Component {
                 {tilesets}
               </div>
             </div>
+            {this.renderOpenListButton()}
           </div>
           {this.renderContent(ts)}
         </div>

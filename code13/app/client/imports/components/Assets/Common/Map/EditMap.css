@@ -64,3 +64,50 @@
     overflow: hidden;
     position: absolute;
 }
+.ui.modal > .content.tilesetPreviewModal{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.tilesets .showList{
+    float: right;
+    width: 25px;
+    height: 20px;
+    display: inline-block;
+}
+.tilesetPreview {
+    display: inline-block;
+    width: 96px;
+    height: 96px;
+    border: solid 1px;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    margin: 5px;
+    cursor: pointer;
+    transition: 0.1s;
+    top: 0;
+}
+.tilesetPreview:hover {
+    top: -3px;
+}
+.tilesetPreview img {
+    display: block;
+    margin: 10px auto;
+    max-width: 90%;
+}
+.tilesetPreview span.tilesetPreviewTitle {
+    display: block;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 3px 5px;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    height: 35px;
+    background-color: rgba(0,0,0,0.8);
+    line-height: 15px;
+    color: white;
+    word-wrap: break-word;
+}

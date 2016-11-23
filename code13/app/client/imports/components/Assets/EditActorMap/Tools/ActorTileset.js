@@ -149,6 +149,7 @@ export default class ActorTool extends Tileset {
 
     return (
       <div className='mgbAccordionScroller tilesets'>
+        {this.renderForModal(1)}
         <div className='ui fluid styled accordion'>
           <div
             className='active title accept-drop'
@@ -165,6 +166,7 @@ export default class ActorTool extends Tileset {
                 {tilesets}
               </div>
             </div>
+            {this.renderOpenListButton()}
           </div>
           <div className="content active actor-tileset-content">
             {!isValidForLayer && <div className="actor-disabled-hint">

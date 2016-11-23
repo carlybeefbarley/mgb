@@ -1260,7 +1260,7 @@ export default class EditCode extends React.Component {
       let child = window.open(urlToOpen, "Bundle")
       child.document.write(
         `<h1>Creating bundle</h1>
-<p>Please wait - in a few seconds in this window will be loaded latest version of your game</p>`
+<p>Please wait - the latest version of your game is being bundled and loaded</p>`
       )
       this.createBundle(() => {
         // clear previous data - and everything else

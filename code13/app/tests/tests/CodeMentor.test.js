@@ -15,5 +15,12 @@ module.exports = (getBrowser, path) => {
       require(path + "procedures/createCodeAsset.js")(browser)(done)
     })
 
+    it("Modifying Code", function(done){
+      require(path + "procedures/checkCodeMentor.js")(browser)(done)
+    })
+
+    it("Remove Code - clean up", function(done){
+      require(path + "procedures/deleteAsset.js")(browser)(done)
+    })
   })
 }

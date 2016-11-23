@@ -10,10 +10,8 @@ module.exports = (browser) => {
       return browser.wait(until.elementLocated(By.css(rule)), timeout)
     },
     exists: (rule, callback) => {
-      console.log("checking if exists")
       const p = browser.findElements(By.css(rule))
       p.then((found) => {
-        console.log("check - done")
         callback(null, !!found.length)
       })
       .catch((e) => {

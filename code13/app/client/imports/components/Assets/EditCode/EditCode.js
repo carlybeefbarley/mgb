@@ -1335,7 +1335,7 @@ export default class EditCode extends React.Component {
   // Note that either c2 or thumbnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
     if(!c2){
-      this.props.handleContentChange(null, thumbnail, reason)
+      this.props.handleContentChange(c2, thumbnail, reason)
       return
     }
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
@@ -1376,6 +1376,8 @@ export default class EditCode extends React.Component {
             this.setState({
               astReady: true
             })
+            // this will force to update mentor info - even if cursor wasn't moving
+            this.codeMirrorOnCursorActivity()
             cb && cb()
           })
         }

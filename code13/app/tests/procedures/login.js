@@ -29,7 +29,6 @@ module.exports = (browser) => {
 
     sel.exists(buttons.avatar, (e, found) => {
       if(found){
-        console.log("All clear! Already logged in")
         done && browser.call(done)
         return
       }

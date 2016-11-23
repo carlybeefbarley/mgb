@@ -17,21 +17,13 @@ const mgbReleaseInfo = {
 /* Pending changes -- accumulate here in comment until time to deploy
 
       'changes': [
-        {
-          'featureTag': 'play.game',
-          'type': 'bugfix',
-          'changeName': 'Fixed play counter for Code Game',
-          'changeSummary': 'The play count for code Games now increments only once per play',
-          'otherUrls': [ ]
-        }
       ]
 
 
 */
 
-
     {
-      'timestamp': 'Wed Nov 16 2016 15:30:00 GMT-0800 (PDT)',
+      'timestamp': 'Wed Nov 23 2016 11:10:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
@@ -45,6 +37,20 @@ const mgbReleaseInfo = {
 
       'changes': [
         {
+          'featureTag': 'asset.actorMap',
+          'type': 'improvement',
+          'changeName': 'Better Actor/Tileset picker',
+          'changeSummary': 'There is now also a popup button which allows a more graphical way to select which actor to place on the map',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'play.game',
+          'type': 'bugfix',
+          'changeName': 'Fixed play counter for Code Game',
+          'changeSummary': 'The play count for code Games now increments only once per play',
+          'otherUrls': [ ]
+        },
+        {
           'featureTag': '',
           'type': 'bugfix',
           'changeName': 'Various bugfixes',
@@ -53,6 +59,7 @@ const mgbReleaseInfo = {
         }
       ]
     },
+
 
     {
       'timestamp': 'Wed Nov 16 2016 15:30:00 GMT-0800 (PDT)',

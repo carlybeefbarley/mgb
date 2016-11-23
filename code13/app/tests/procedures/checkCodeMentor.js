@@ -30,8 +30,9 @@ Phaser.Game` );
     sel.css(el.phaserInfo)
 
 
-    // wait for save TODO: add better check instead of 7 seconds timeout
-    browser.sleep(7000) // 7 should be enough as delay is ~5 seconds by default
+    // wait for save
+    // TODO: add better check in helper instead of 7 seconds timeout
+    browser.sleep(7000 + 7000) // 7 to save + 7 for bundle
     done && browser.call(done)
   }
 }

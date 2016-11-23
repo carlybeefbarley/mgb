@@ -126,6 +126,8 @@ export default class EditCode extends React.Component {
 
     this.hintWidgets = []
     this.errorMessageCache = {}
+    // assume that new code will have errors - it will be reset on first error checking
+    this.hasErrors = true
   }
 
 
@@ -1369,6 +1371,7 @@ export default class EditCode extends React.Component {
       this.runJSHintWorker(val, (errors) => {
         const critical = errors.find(e => e.code.substr(0, 1) === "E")
         if (!critical && this.tools) {
+          this.hasErrors = false
           this.tools.collectAndTranspile(val, this.props.asset.name, () => {
             this.setState({
               astReady: true
@@ -1377,6 +1380,7 @@ export default class EditCode extends React.Component {
           })
         }
         else{
+          this.hasErrors = true
           cb && cb(errors)
         }
       })
@@ -1723,6 +1727,7 @@ export default class EditCode extends React.Component {
                         <i className={"external icon"}></i>&emsp;Popout
                       </a>
                     }
+                    { !this.hasErrors &&
                     <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
                       <a  className='ui tiny icon button' 
                           title='Click here to start running your program in a different browser tab'
@@ -1737,6 +1742,7 @@ export default class EditCode extends React.Component {
                         </a>
                       }*/}
                     </span>
+                    }
                   </span>
                 </div>
               }

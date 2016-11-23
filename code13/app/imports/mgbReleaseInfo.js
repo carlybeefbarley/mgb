@@ -28,7 +28,7 @@ const mgbReleaseInfo = {
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2126'
+        'iteration': '2133'
       },
 
       'releaseManagement': {
@@ -41,6 +41,13 @@ const mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Better Actor/Tileset picker',
           'changeSummary': 'There is now also a popup button which allows a more graphical way to select which actor to place on the map',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actor',
+          'type': 'bugfix',
+          'changeName': 'Bugfix for drag-graphic-to-actor',
+          'changeSummary': '@Jaketor reported bug: "When it asks you to drag a graphic to use for the actor, you automatically end up in the editor for that graphic.".. this is now fixed',
           'otherUrls': [ ]
         },
         {

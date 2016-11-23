@@ -47,9 +47,8 @@ export default class SourceTools {
     // here we will keep our transpiled files
     this.transpileCache = {}
     this.cachedBundle = ''
-
-    // set to true by default.. to wait for first action
-    this._inProgress = true
+    
+    this._inProgress = false
     this._firstTime = true
     this._hasSourceChanged = true
 

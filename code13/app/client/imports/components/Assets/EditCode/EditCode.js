@@ -1304,8 +1304,6 @@ export default class EditCode extends React.Component {
         if(!notChanged){
           const value = this.codeMirror.getValue()
           const newC2 = {src: value, bundle: bundle}
-          // save this for later
-          this.props.asset.content2.bundle = bundle;
           // make sure we have bundle before every save
           this.props.handleContentChange(newC2, null, `Store code bundle`)
         }
@@ -1347,8 +1345,15 @@ export default class EditCode extends React.Component {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
-      this.doFullUpdateOnContentChange(() => {
-        this.createBundle()
+      this.doFullUpdateOnContentChange((errors) => {
+        // it's not possible to create useful bundle with errors in code - just save
+        if(errors){
+          this.props.handleContentChange(c2, thumbnail, reason)
+        }
+        else{
+          // createBundle is calling handleContentChange internally
+          this.createBundle()
+        }
       })
     }
 
@@ -1356,28 +1361,23 @@ export default class EditCode extends React.Component {
   }
 
   // this is very heavy function - use with care
-  doFullUpdateOnContentChange( cbX ) {
-    this._fullUpdateCallback = cbX
+  doFullUpdateOnContentChange( cb ) {
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
     this.codeMirror.operation(() => {
       const val = this.codeMirror.getValue()
       this.runJSHintWorker(val, (errors) => {
-        // don't recompile on critical errors
-        // why we lose cbX value here????
-        if(!cbX){
-          cbX = this._fullUpdateCallback
-        }
         const critical = errors.find(e => e.code.substr(0, 1) === "E")
         if (!critical && this.tools) {
-          // why val here is different?
-          const val2 = this.codeMirror.getValue()
-          this.tools.collectAndTranspile(val2, this.props.asset.name, () => {
+          this.tools.collectAndTranspile(val, this.props.asset.name, () => {
             this.setState({
               astReady: true
             })
-            cbX && cbX()
+            cb && cb()
           })
+        }
+        else{
+          cb && cb(errors)
         }
       })
 

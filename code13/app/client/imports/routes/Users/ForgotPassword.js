@@ -28,7 +28,9 @@ export default ForgotPasswordRoute = React.createClass({
 
       return (
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
-          <Form.Input label='Enter your email to reset your password' name='email' placeholder='Email address' error={!!errors.email} />
+          <div className="ui input">
+            <input type="email" label='Enter your email to reset your password' name='email' placeholder='Email address' error={!!errors.email} required="true" />
+          </div>
           <ErrMsg text={errors.email} />
           <ErrMsg text={errors.result} />
           <Form.Button>Submit</Form.Button>

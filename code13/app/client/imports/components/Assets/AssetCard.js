@@ -171,7 +171,10 @@ export default AssetCard = React.createClass({
             className="ui centered image" 
             onMouseUp={this.handleEditClick}
             onTouchEnd={this.handleEditClick}
-            style={ viewOpts.showImg ? {} : {display: 'none'} }>
+            style={{
+              display: viewOpts.showImg ? 'initial' : 'none',
+              overflow: "hidden"
+              }}>
           <canvas 
             className="mgb-pixelated"
             ref="thumbnailCanvas" 

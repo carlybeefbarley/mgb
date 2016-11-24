@@ -6,8 +6,10 @@ const _generateUrlOptions = asset =>
   let retval = []
   switch (asset.kind) {
   case 'graphic':
-    retval.push( { "msg":"as PNG", "url":"/api/asset/png/"+asset._id } )
-    retval.push( { "msg":"as PNG (specify frame)", "url":"/api/asset/png/"+asset._id+"?frame=0" } )
+    retval.push( { "msg":"as PNG by ID", "url":"/api/asset/png/"+asset._id } )
+    retval.push( { "msg":"as PNG by ID and frame", "url":"/api/asset/png/"+asset._id+"?frame=0" } )
+    retval.push( { "msg":"as PNG by name", "url":"/api/asset/png/"+asset.dn_ownerName + "/" + asset.name } )
+    retval.push( { "msg":"as PNG by name and frame", "url":"/api/asset/png/"+asset.dn_ownerName + "/" + asset.name+"?frame=0" } )
     retval.push( { "msg":"as Tileset", "url":"/api/asset/tileset/"+asset._id } )
     retval.push( { "msg":"as Tileset-info", "url":"/api/asset/tileset-info/"+asset._id } )
     break

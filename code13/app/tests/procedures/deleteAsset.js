@@ -19,7 +19,7 @@ module.exports = (browser) => {
     sel.css(el.deleteButton).click()
     // wait for changes to be updated
     // TODO: create global helpers for checking save status - as it will be useful in many many cases
-    browser.sleep(1000)
+    browser.sleep(5000)
     done && browser.call(done)
   }
 }

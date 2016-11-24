@@ -1,9 +1,28 @@
 import ReactTestUtils from 'react-addons-test-utils'
+const DRAG_THRESHOLD = 10
 export default {
   // bind this event to touchstart DOM event
   startDragOnTouch: (e) => {
+    let sx = 0, sy = 0
+    if(e.touches.length){
+      sx = e.touches[0].clientX
+      sy = e.touches[0].clientY
+    }
 
-    const initialMove = () => {
+
+    const initialMove = (e) => {
+      let tx = 0, ty = 0
+      if(e.touches.length){
+        tx = e.touches[0].clientX
+        ty = e.touches[0].clientY
+      }
+
+      // ignore drag for some px threshold
+      if(Math.abs(sx - tx) < DRAG_THRESHOLD && Math.abs(sy - ty) < DRAG_THRESHOLD ){
+        e.preventDefault()
+        return
+      }
+
       e.target.removeEventListener("touchmove", initialMove)
 
       const initalEventData = {

@@ -21,7 +21,7 @@ export default {
     l && l.resetRotation && l.resetRotation()
   },
   isTileSelected: function(gid){
-    return this.refs.map.collection.indexOfGid(gid)
+    return this.refs.map ? this.refs.map.collection.indexOfGid(gid) : -1
   },
 
 

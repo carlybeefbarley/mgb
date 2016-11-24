@@ -44,7 +44,7 @@ export default SignupRoute = React.createClass({
 
       return (
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
-          <Form.Input label='Email Address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
+          <Form.Input type="email" label='Email Address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
           <ErrMsg text={errors.email} />
           <Form.Input onBlur={this.checkUserName} label='Choose your username (used for login and profile)' name='username' placeholder='User Name (short, no spaces)'  error={!!errors.username} />
           <ErrMsg text={errors.username} />

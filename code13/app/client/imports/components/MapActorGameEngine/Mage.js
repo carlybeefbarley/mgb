@@ -247,7 +247,8 @@ export default class Mage extends React.Component {
           debugger
         }
       }
-      loadedGraphics[aName]._image.src = data.content2.frameData[0]
+      // framedata contains frames for every layers spritedata contains merged layers
+      loadedGraphics[aName]._image.src = data.content2.spriteData[0]
     }
     else
       failedGraphics[aName] = data
@@ -256,17 +257,17 @@ export default class Mage extends React.Component {
   }
 
   // Load any actors that we don't already have in state.actors or pendingActorLoads
-  loadRequiredActors(desiredActorNames)
+  loadRequiredActors(desiredActorNames, actorOwnerName)
   {
-    const { fetchAssetByUri, ownerName } = this.props
+    const { fetchAssetByUri, mapOwnerName } = this.props
     const { pendingActorLoads, loadedActors } = this.state
     _.each(desiredActorNames, aName => {
       if (!_.includes(pendingActorLoads, aName) && !_.includes(loadedActors, aName))
       {
         pendingActorLoads.push(aName)
-        const p = _resolveOwner(ownerName, aName)
+        const p = _resolveOwner(actorOwnerName || mapOwnerName, aName)
 
-        fetchAssetByUri(_mkActorUri(ownerName, aName))
+        fetchAssetByUri(_mkActorUri(actorOwnerName || mapOwnerName, aName))
           .then(  data => this._actorLoadResult(aName, p.ownerName, true, JSON.parse(data)) )
           .catch( data => this._actorLoadResult(aName, p.ownerName, false, data) )
       }

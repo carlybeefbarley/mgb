@@ -30,7 +30,7 @@ export default LoginRoute = React.createClass({
 
       return (
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
-          <Form.Input label='email' name='email' placeholder='Email address' />
+          <Form.Input type="email" label='email' name='email' placeholder='Email address' />
           <Form.Input label='password' name='password' placeholder='Password' type='password'/>
           <Message error
             header='Error'

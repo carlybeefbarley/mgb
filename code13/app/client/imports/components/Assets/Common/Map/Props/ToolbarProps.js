@@ -51,6 +51,7 @@ const TB = {
     this.doRedo()
   },
   view: function(){
+    this.refs.map.clearSelection()
     TB.enableMode.call(this, EditModes.view)
   },
   stamp: function(){

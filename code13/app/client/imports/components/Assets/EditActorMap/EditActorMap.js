@@ -2,7 +2,7 @@
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import ActorMapArea from './ActorMap.js'
+import ActorMapArea from './ActorMapArea.js'
 
 import InfoTool from '../Common/Map/Tools/InfoTool.js'
 import MapToolbar from './Tools/ActorMapToolbar.js'

@@ -47,8 +47,7 @@ const methods = {
   "Chats.send": getDefaultMethodSettings, // TODO: add nice flooding message
   "Projects.create": getDefaultMethodSettings,
   "Projects.update": getDefaultMethodSettings,
-  "Settings.setFeatureLevel": getDefaultMethodSettings,
-  "Settings.setToolbarData": getDefaultMethodSettings,
+  "Settings.save": getDefaultMethodSettings,
   "Skill.grant": getDefaultMethodSettings,
   "Skill.forget": getDefaultMethodSettings,
   "Skill.getForUser": getDefaultMethodSettings,

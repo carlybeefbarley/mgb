@@ -38,8 +38,9 @@ export default SpecialGlobals = {
 
   gamePlay: {
     playCountDebounceMs: 10 * 1000
+  },
+
+  settings: {
+    settingsSaveDebounceMs: 5 * 1000
   }
 }
-
-// 
-

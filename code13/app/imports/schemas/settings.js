@@ -20,42 +20,23 @@ var schema = {
   prefs:     Object     // Format TBD
 }
 
-
 Meteor.methods({
 
-  /** Settings.setFeatureLevel
+  /** Settings.save
    */
-  "Settings.setFeatureLevel": function(featureKey, level) {
+  "Settings.save": function(data) {
     if (!this.userId) 
       throw new Meteor.Error(401, "Login required")
 
-    let data = { updatedAt: new Date() }
-    data["fLevels." + featureKey] = level
-    const count = Settings.update(this.userId, {$set: data})
+    data.updatedAt = new Date()
+    const count = Settings.update(this.userId, { $set: data } )
 
     if (Meteor.isServer)
-      console.log(`  [Settings.setFeatureLevel]  "${featureKey}=${level}"  #${count}  `)
-
-    return count
-  },
-
- /** Settings.setToolbarData
-   */
-  "Settings.setToolbarData": function(featureKey, tdata) {
-    if (!this.userId) 
-      throw new Meteor.Error(401, "Login required")
-
-    // TODO: Check TDATA is a string of some expected size range
-    // TODO: Check featureKey is a string of some expected range
-
-    let data = { updatedAt: new Date() }
-    data["toolbars." + featureKey] = tdata
-    const count = Settings.update(this.userId, {$set: data})
-    if (Meteor.isServer)
-      console.log(`  [Settings.setToolbarData]  "${featureKey}=${tdata}"  #${count}  `)
+      console.log(`  [Settings.save] userId=${this.userId}   Updated records = #${count}  `)
 
     return count
   }
+
 })
 
 

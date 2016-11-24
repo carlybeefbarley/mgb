@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
 
@@ -15,6 +16,9 @@ import fpAssets from './fpAssets'
 import fpGoals from './fpGoals'
 import fpUsers from './fpUsers'
 import fpChat from './fpChat'
+
+import reactMixin from 'react-mixin'
+import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
@@ -39,6 +43,7 @@ const flexPanelViews = [
 const defaultPanelViewIndex = 0
 
 export default FlexPanel = React.createClass({
+  mixins: [ReactMeteorData],
 
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -61,6 +66,10 @@ export default FlexPanel = React.createClass({
     getDefaultPanelViewTag: function() { return flexPanelViews[defaultPanelViewIndex].tag }
   },
 
+
+  getMeteorData: function() {
+    return { fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel'))}
+  },
 
   componentDidMount: function() {
     registerDebugGlobal( 'fp', this, __filename, 'The global FlexPanel instance')
@@ -113,7 +122,7 @@ export default FlexPanel = React.createClass({
 
   render: function () {
     const { flexPanelWidth, flexPanelIsVisible } = this.props
-    const fpFeatureLevel = getFeatureLevel(this.context.settings, 'toolbar-level-FlexPanel') || 1
+    const fpFeatureLevel = this.data.fpFeatureLevel  || 1
     const panelStyle = {
       position:     'fixed',
       right:        '0px',

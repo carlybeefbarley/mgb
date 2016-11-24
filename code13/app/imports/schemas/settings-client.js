@@ -1,46 +1,59 @@
 // Client-side only helper functions related to the settings table
 // See also ./settings.js for context
 
+import _ from 'lodash'
+import SpecialGlobals from '/client/imports/SpecialGlobals.js'
 
-export function getFeatureLevel(settingsObj, featureKey) {
+
+const _getSettingType = (settingsGroupName, settingsObj, subKey) => 
+{
   if (!settingsObj)
     return null
 
-  return settingsObj._id ? settingsObj.fLevels[featureKey] : settingsObj.get(featureKey)
+  const group = settingsObj.get(settingsGroupName)
+  return group ? group[subKey] : null
 }
 
 
-export function setFeatureLevel(settingsObj, featureKey, level) {
+const _setSettingType = (settingsGroupName, settingsObj, subKey, value) => 
+{
   if (!settingsObj)
     return
 
-  if (getFeatureLevel(settingsObj, featureKey) !== level)
+  // const group = settingsObj.get(settingsGroupName)
+  // return group ? group[subKey] : null
+
+  if (_getSettingType(settingsGroupName, settingsObj, subKey) !== value)
   {
-    if (settingsObj._id)
-      Meteor.call('Settings.setFeatureLevel', featureKey, level)
-    else
-      settingsObj.set(featureKey, level)    // ReactiveDict
-  }          
+    const group = settingsObj.get(settingsGroupName) || {}
+    group[subKey] = value
+    settingsObj.set(settingsGroupName, group)    // ReactiveDict
+    if (settingsObj.keys._id)
+      _debouncedSaveSettings(settingsObj)      
+  }
+}
+
+
+const _saveSettingsNow = (settingsObj) => { 
+  const asObj = _.omit(settingsObj.all(), [ '_id', 'updatedAt'])
+  Meteor.call('Settings.save', asObj) 
+}
+const _debouncedSaveSettings = _.debounce(_saveSettingsNow, SpecialGlobals.settings.settingsSaveDebounceMs)
+
+
+export function getFeatureLevel(settingsObj, featureKey) {
+  return _getSettingType('fLevels', settingsObj, featureKey)
+}
+
+export function setFeatureLevel(settingsObj, featureKey, level) {
+  _setSettingType('fLevels', settingsObj, featureKey, level)
 }
 
 
 export function getToolbarData(settingsObj, featureKey) {
-  if (!settingsObj)
-    return null
-  
-  if (settingsObj._id)
-    return settingsObj.toolbars[featureKey]
-  else
-    return settingsObj.get(featureKey)
+  return _getSettingType('toolbars', settingsObj, featureKey)
 }
 
-
 export function setToolbarData(settingsObj, featureKey, tdata) {
-  if (!settingsObj)
-    return
-  
-  if (settingsObj._id)
-      Meteor.call('Settings.setToolbarData', featureKey, tdata)
-    else
-      settingsObj.set(featureKey, tdata)    // ReactiveDict
+  _setSettingType('toolbars', settingsObj, featureKey, tdata)
 }

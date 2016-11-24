@@ -15,6 +15,10 @@ import npHistory from './npHistory'
 import npProjects from './npProjects'
 import urlMaker from '/client/imports/routes/urlMaker'
 
+import reactMixin from 'react-mixin'
+import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
+
+
 const _npFeatureLevelHideWords = 4
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
@@ -99,6 +103,7 @@ function _getNavPanelViewFromTag(npViewTag) {
 
 
 export default NavPanel = React.createClass({
+  mixins: [ReactMeteorData],
 
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -122,6 +127,9 @@ export default NavPanel = React.createClass({
     settings:    PropTypes.object                         // Used so some panels can be hidden by user
   },
 
+  getMeteorData: function() {
+    return { npFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('NavPanel'))}
+  },
 
   componentDidMount: function() {
     registerDebugGlobal( 'np', this, __filename, 'The global NavPanel instance')
@@ -196,7 +204,7 @@ export default NavPanel = React.createClass({
     const navPanelChoice = _getNavPanelViewFromTag(selectedViewTag)
     const navPanelHdr = navPanelChoice.hdr
     const ElementNP = navPanelChoice.el    // Can be null
-    const npFeatureLevel = getFeatureLevel(this.context.settings, 'toolbar-level-NavPanel') || 2
+    const npFeatureLevel = this.data.npFeatureLevel || 2
 
     if (navPanelIsVisible && ElementNP !== null)
       joyrideCompleteTag(`mgbjr-CT-navPanel-${navPanelChoice.tag}-show`)

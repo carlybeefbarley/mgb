@@ -113,7 +113,7 @@ export default App = React.createClass({
       showToast: false,
       toastMsg: '',
       toastType: 'success',
-      fNavPanelIsOverlay: true,    // Could make this inital value based on screen size, but that might be odd
+      fNavPanelIsOverlay: true,    // Could make this initial value based on screen size, but that might be odd
       activityHistoryLimit: 11,
 
       // For react-joyride
@@ -139,13 +139,20 @@ export default App = React.createClass({
     const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
     const projectSelector = projectMakeSelector(currUserId)
 
-    return {
+
+    if (handleForSettings && handleForSettings.ready())
+    {
+      // There is a very small race where local settings could get replaced if the settings are changed while the debounced save is happening.. but it's pretty small, so worry about that another day
+      G_localSettings.set(Settings.findOne(currUserId))
+    }
+
+    const retval = {
       currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
 
       currUserProjects: Projects.find(projectSelector).fetch(),
       user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
       activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
-      settings: handleForSettings === null ? G_localSettings : Settings.findOne(currUserId),
+      settings: G_localSettings,
       sysvars:  Sysvars.findOne(),
       loading:  !handleForUser.ready()    ||
                 !handleForSysvars.ready() || 
@@ -153,6 +160,7 @@ export default App = React.createClass({
                 !projectsReady            ||
                 !settingsReady
     }
+    return retval
   },
 
   configureTrackJs() {

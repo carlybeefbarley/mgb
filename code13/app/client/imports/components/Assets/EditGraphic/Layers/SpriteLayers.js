@@ -3,6 +3,8 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import Layer from './Layer.js'
 
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+
 // TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
 
@@ -29,6 +31,7 @@ export default class SpriteLayers extends React.Component {
   {
     // Stop any playAnimation() cycles. However, we CANNOT use this.setState() in this callback!
     this.cancelNextAnimationTimeout()
+
   }
 
     /************************** FRAMES ******************************/
@@ -445,15 +448,56 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Layer moved down', true)
   }    
 
+  handleSave(changeText="change graphic", dontSaveFrameData) {
+    this.props.handleSave(changeText, dontSaveFrameData)
+  }
+
+  hasPermission() {
+    return this.props.hasPermission()
+  }
+
+  registerPreviewCanvas(idx, element){
+    if(element && !element.hasRegisteredDragStart){
+      element.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+      element.hasRegisteredDragStart = true;
+    }
+  }
+  handleDragStart(frameId, e){
+    // allow to drop on graphics canvas
+    try {
+      e.dataTransfer.setData("mgb/image", this.props.getFrameData(frameId))
+    }
+      // IE will throw an error here.. just ignore
+    catch (e) {}
+    // IE needs this!!!
+    // e.dataTransfer.effectAllowed = "copy"
+    $(document.body).addClass("dragging")
+  }
+  handleDragStartForLayer(layerId, e){
+    // allow to drop on graphics canvas
+    try {
+      e.dataTransfer.setData("mgb/image", this.props.getLayerData(layerId))
+    }
+      // IE will throw an error here.. just ignore
+    catch (e) {}
+    // IE needs this!!!
+    // e.dataTransfer.effectAllowed = "copy"
+    $(document.body).addClass("dragging")
+  }
+  handleDragEnd = () => {
+    $(document.body).removeClass("dragging")
+  }
+
+
   renderLayers() {
     const c2 = this.props.content2
     return c2.layerParams.map((layer, idx) => (
-      <Layer 
+      <Layer
         key={idx}
         idx={idx}
         layer={layer}
         layerCount={c2.layerParams.length}
-        frameNames={c2.frameNames} 
+        frameNames={c2.frameNames}
         selectedFrame={this.props.EditGraphic.state.selectedFrameIdx}
         isSelected={this.props.EditGraphic.state.selectedLayerIdx === idx}
         width={c2.width}
@@ -469,16 +513,11 @@ export default class SpriteLayers extends React.Component {
         selectFrame={this.selectFrame.bind(this)}
         deleteLayer={this.deleteLayer.bind(this)}
         handleSave={this.handleSave.bind(this)}
-      />
+
+        handleDragStart={this.handleDragStartForLayer.bind(this)}
+        handleDragEnd={this.handleDragEnd}
+        />
     ))
-  }
-
-  handleSave(changeText="change graphic", dontSaveFrameData) {
-    this.props.handleSave(changeText, dontSaveFrameData)
-  }
-
-  hasPermission() {
-    return this.props.hasPermission()
   }
 
   render() { 
@@ -598,7 +637,7 @@ export default class SpriteLayers extends React.Component {
                   </a>
               </th>
               <th width="32px"></th>
-              {
+              { /* Tools drop down */
                 _.map(c2.frameNames, (frameName, idx) => { return (
                   <th key={"th_"+idx} width="32px" className="frameTH">
                     <div className="ui dropdown" 
@@ -677,11 +716,21 @@ export default class SpriteLayers extends React.Component {
               { // TODO: change from frameNames[] to frameData[] ? 
                 _.map(c2.frameNames, (frameName, idx) => { return (
                   <th key={"thCanvas_"+idx}>
-                    <div  className="ui image " 
-                          onClick={this.selectFrame.bind(this, idx)}     
+                    <div  className="ui image "
+                          // replace onClick wit mouseUp / touchEnd - to prevent conflict with mobile drag
+                          onMouseUp={this.selectFrame.bind(this, idx)}
+                          onTouchEnd={this.selectFrame.bind(this, idx)}
                           style={{"maxWidth": "256px", "maxHeight": "256px", "width": `${c2.width}px`, "display": "block", "margin": "0px auto", "overflow": "auto" }}
                           title={`Preview for combined visible layers of Frame #${idx+1}`}>
-                      <canvas width={c2.width} height={c2.height}></canvas>
+                      <canvas
+                        width={c2.width}
+                        height={c2.height}
+
+                        onDragStart={this.handleDragStart.bind(this, idx)}
+                        onDragEnd={this.handleDragEnd}
+                        ref={this.registerPreviewCanvas.bind(this, idx)}
+                        draggable="true"
+                        ></canvas>
                     </div>
                   </th>
                 )})
@@ -702,5 +751,13 @@ export default class SpriteLayers extends React.Component {
  
 SpriteLayers.propTypes = {
   content2: PropTypes.object.isRequired,
-  hasPermission: PropTypes.func.isRequired
+  hasPermission: PropTypes.func.isRequired,
+
+  getFrameData: PropTypes.func.isRequired, // used for drag and dopd frame on the main canvas
+  getLayerData: PropTypes.func.isRequired, // used for drag and drop layer on the main canvas
+
+  EditGraphic: PropTypes.object,
+  handleSave: PropTypes.func,
+  forceDraw: PropTypes.func,
+  forceUpdate: PropTypes.func,
 }

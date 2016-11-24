@@ -1618,9 +1618,13 @@ export default class EditGraphic extends React.Component {
             EditGraphic={this}
 
             hasPermission={this.hasPermission.bind(this)}
-            handleSave={this.handleSave.bind(this)}     
+            handleSave={this.handleSave.bind(this)}
             forceDraw={this.forceDraw.bind(this)}
-            forceUpdate={this.forceUpdate.bind(this)}   
+            forceUpdate={this.forceUpdate.bind(this)}
+            getFrameData={ frameId => this.frameCanvasArray[frameId].toDataURL('image/png') }
+            getLayerData={ layerId => {
+              return this.previewCanvasArray[layerId].toDataURL('image/png')
+            } }
           />
 
       </div>

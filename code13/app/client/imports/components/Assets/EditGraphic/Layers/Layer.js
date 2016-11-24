@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
 import sty from  '../editGraphic.css';
 
@@ -75,6 +76,13 @@ export default class Layer extends React.Component {
     this.props.deleteLayer(this.props.idx);
   }
 
+  // Note: it's not possible to extend arrow methods - works same-ish as this.registerPreviewCanvas.bind(this)
+  registerPreviewCanvas = (element) => {
+    if(element && !element.hasRegisteredDragStart){
+      element.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+      element.hasRegisteredDragStart = true;
+    }
+  }
 
   render() {
     return (
@@ -154,14 +162,20 @@ export default class Layer extends React.Component {
             })
           }
           <td className="layerCanvas">
-          	<div 
-          		className={"ui image " + (this.props.isCanvasLayersVisible ? "" : "hidden") }
-          		draggable="true" 
+            <div
+              className={"ui image " + (this.props.isCanvasLayersVisible ? "" : "hidden") }
               title={`Preview for Layer "${this.props.layer.name}" of Frame #${this.props.selectedFrame+1}`}
-          		/* onDragStart={this.handlePreviewDragStart.bind(this, this.props.idx)} */ 
-          		style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}>
-          			<canvas width={this.props.width} height={this.props.height}></canvas>
-        	</div>
+              /* onDragStart={this.handlePreviewDragStart.bind(this, this.props.idx)} */
+              style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}>
+              <canvas
+                width={this.props.width}
+                height={this.props.height}
+                ref={this.registerPreviewCanvas}
+                draggable="true"
+                onDragStart={this.props.handleDragStart.bind(this, this.props.idx)}
+                onDragEnd={this.props.handleDragEnd.bind(this)}
+                ></canvas>
+            </div>
           </td>
           <td>
             <i onClick={this.deleteLayer.bind(this)}
@@ -192,4 +206,7 @@ Layer.propTypes = {
   selectFrame: PropTypes.func.isRequired,
   deleteLayer: PropTypes.func.isRequired,
   handleSave: PropTypes.func.isRequired,
+
+  handleDragStart: PropTypes.func.isRequired,
+  handleDragEnd: PropTypes.func.isRequired,
 };

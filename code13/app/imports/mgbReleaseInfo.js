@@ -23,12 +23,12 @@ const mgbReleaseInfo = {
 */
 
     {
-      'timestamp': 'Wed Nov 23 2016 13:30:00 GMT-0800 (PDT)',
+      'timestamp': 'Thu Nov 24 2016 00:30:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2136'
+        'iteration': '2151'
       },
 
       'releaseManagement': {
@@ -51,6 +51,13 @@ const mgbReleaseInfo = {
           'otherUrls': [ ]
         },
         {
+          'featureTag': 'asset.graphic',
+          'type': 'bugfix',
+          'changeName': 'Added name-based urls to urlMaker control',
+          'changeSummary': 'The cloud/download icon in asset editors now includs the url formats for name-based URLs for images',
+          'otherUrls': [ ]
+        },
+        {
           'featureTag': 'play.game',
           'type': 'bugfix',
           'changeName': 'Fixed shooting bug in actorMap games',
@@ -68,7 +75,7 @@ const mgbReleaseInfo = {
           'featureTag': '',
           'type': 'bugfix',
           'changeName': 'Various bugfixes',
-          'changeSummary': 'Various bugfixes for Code Bundler, analytics, and tutorials',
+          'changeSummary': 'Various bugfixes for Code Bundler, analytics, and tutorials. Fixed delays with featureLevel sliders.',
           'otherUrls': [ ]
         }
       ]

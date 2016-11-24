@@ -292,7 +292,11 @@ export default class JoyrideTooltip extends React.Component {
           data-type="close"
           onClick={onClick}>×</a>
         {output.header}
-        {output.main}
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          {step.imageSrc && <img src={step.imageSrc} style={{height: '100%'}}/> }
+          {output.main}
+          {step.imageRightSrc && <img src={step.imageRightSrc} style={{height: '100%'}}/> }
+        </div>
         <div className="joyride-tooltip__footer">
           {output.skip}
           {output.secondary}

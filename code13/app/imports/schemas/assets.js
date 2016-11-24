@@ -373,7 +373,7 @@ Meteor.methods({
     // TODO: this will get moved
     data.content2 = data.content2 || {}
 
-    check(data, _.omit(schema, '_id'))
+    check(data, _.omit(schema, ['_id', 'forkChildren', 'forkParentChain']))
 
     let docId = Azzets.insert(data)
 

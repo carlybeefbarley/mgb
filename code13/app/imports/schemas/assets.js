@@ -51,6 +51,9 @@ var schema = {
   content2: Object,   // THIS IS NOT IN PREVIEW SUBSCRIPTIONS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field: metadata
   thumbnail: String,  // Can be data-uri base 64 of thumbnail image (for example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==") OR a link to an external URL
 
+  // Fork information
+  forkChildren:    Array,   // Array of peer direct children
+  forkParentChain: Array,   // Array of parent forks
 
   // Metadata field wwas added 10/29/2016 so earlier objects do NOT have it.
   // The 'metdata' field is intended for a SMALL subset of data that is important for good asset-preview (previews exclude 'content2').
@@ -344,7 +347,7 @@ Meteor.methods({
     if (this.userId !== data.ownerId)
     {
       if (!data.projectNames || data.projectNames.length === 0 || data.projectNames.length > 1 || data.projectNames[0] === "")
-        throw new Meteor.Error(401, "Must exactly one ProjectName when creating Asset in another User's context")
+        throw new Meteor.Error(401, "Must set exactly one ProjectName when creating Asset in another User's context")
 
       if (Meteor.isServer)
       {
@@ -433,4 +436,83 @@ Meteor.methods({
     }
     return count
   }
+
 })
+
+// Fork is server-side only
+
+if (Meteor.isServer)
+{
+  Meteor.methods({
+    "Azzets.fork": function (srcId, opts = {}) {
+      if (!this.userId)
+        throw new Meteor.Error(401, "Login required")                 // TODO: Better access check
+
+      check(srcId, String)
+
+      const srcAsset = Azzets.findOne(srcId)
+      if (!srcAsset)
+        throw new Meteor.Error(404, "Source Asset Not Found")
+
+      const now = new Date()
+      const dstAsset = _.omit( srcAsset, '_id' )
+      dstAsset.updatedAt = now
+      dstAsset.projectNames = []
+      dstAsset.name = dstAsset.name + ' (fork)'
+      if (!dstAsset.forkParentChain)
+        dstAsset.forkParentChain = []
+
+      dstAsset.forkParentChain.push( {
+        parentId:         srcId,
+        parentOwnerName:  srcAsset.dn_ownerName,
+        parentOwnerId:    srcAsset.ownerId,
+        parentAssetName:  srcAsset.name,
+        forkDate:         now
+      })
+
+      const username = Meteor.user().profile.name
+
+      if (opts.ownerId && opts.dn_ownerName) {
+        // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
+        // TODO: Validate these further. Provide 
+        dstAsset.ownerId = opts.ownerId
+        dstAsset.dn_ownerName = opts.dn_ownerName
+      }
+      else if (opts.ownerId || opts.dn_ownerName)
+        throw new Meteor.Error(500, "Must specify owner id and name together")
+      else {
+        // Use the caller's username & id
+        dstAsset.ownerId = this.userId                   // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
+        dstAsset.dn_ownerName = username
+      }
+
+      if (this.userId !== dstAsset.ownerId)
+      {
+        if (!opts.projectNames || opts.projectNames.length === 0 || opts.projectNames.length > 1 || opts.projectNames[0] === "")
+          throw new Meteor.Error(401, "Must set exactly one ProjectName when forking an Asset into another User's context")
+
+        if (Meteor.isServer)
+        {
+          console.log(`TODO #insecure# check that user '${username}' is really part of project '${dstAsset.projectNames[0]}' `)
+          // CHECK THEY REALLY CAN DO THIS.  
+          // Is this.userId in Project.memberList for   project.ownerName === data.ownerName && project.name === data.projectNames[0]
+          // ALSO CHECK that USERNAME AND USERID MATCH
+        } 
+      }
+
+
+      const newDocId = Azzets.insert(dstAsset)
+
+      if (Meteor.isServer)
+      {
+        console.log(`  [Azzets.fork]  "${dstAsset.name}"  #${newDocId}  Kind=${dstAsset.kind}  Owner=${username}`)
+        Meteor.call('Slack.Assets.create', username, dstAsset.kind, dstAsset.name, newDocId)
+      }
+
+      // TODO - update parent asset
+      Azzets.update( { _id: srcId }, { $push: { forkChildren: { assetId: newDocId, forkDate: now, forkedByUserId: this.userId, forkedByUserName: username }}})
+
+      return newDocId
+    }
+  })
+}

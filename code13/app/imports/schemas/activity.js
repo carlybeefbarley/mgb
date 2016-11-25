@@ -44,6 +44,8 @@ export const ActivityTypes = {
   "user.clearFocus":   { icon: "grey alarm",       pri:  9,  description: "User cleared their focus" },
 
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
+  "asset.fork.from":   { icon: "blue fork",        pri: 10,  description: "Forked new asset from this asset" },
+  "asset.fork.to":     { icon: "green fork",       pri: 10,  description: "Created new asset by forking existing asset" },
   "asset.edit":        { icon: "edit",             pri: 15,  description: "Edit asset" },
   "asset.description": { icon: "edit",             pri: 14,  description: "Change asset description" },
   "asset.metadata":    { icon: "edit",             pri: 16,  description: "Change asset metadata" },

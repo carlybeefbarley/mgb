@@ -20,6 +20,7 @@ import AssetLicense from '/client/imports/components/Controls/AssetLicense'
 import DeletedState from '/client/imports/components/Controls/DeletedState'
 import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
+import AssetForkGenerator from '/client/imports/components/Assets/AssetForkGenerator'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
@@ -134,7 +135,7 @@ export default AssetEditRoute = React.createClass({
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 
 
     let selector = { toAssetId: assetId }
-    let options = { sort: { timestamp: -1} }
+    let options = { sort: { timestamp: -1 } }
 
     return {
       asset: Azzets.findOne(assetId),
@@ -184,6 +185,19 @@ export default AssetEditRoute = React.createClass({
     }
 
     return false    // Nope, can't edit it bro
+  },
+
+
+  // This result object will come from Meteor.call("Azzets.fork")
+  forkResultCallback: function (error, result) {
+    const { showToast } = this.props
+    if (error)
+      showToast(`Unable to create a forked copy of this asset: '${error.toString()}'`, 'error')
+    else {
+      showToast(`Created a forked copy of this asset ok. New AssetId='${result.newAssetNoC2.name} (#${result.newId})`, 'success')
+      logActivity("asset.fork.from", "Forked new asset from this asset", null, this.data.asset )
+      logActivity("asset.fork.to", "Forked this new asset from another asset", null, result.newAssetNoC2 )
+    }
   },
 
   render: function() {
@@ -252,6 +266,9 @@ export default AssetEditRoute = React.createClass({
             handleChange={this.handleWorkStateChange}/>
           &ensp;
           <AssetUrlGenerator showBordered={true} asset={asset} />
+          { currUserId && 
+            <AssetForkGenerator showBordered={true} asset={asset} forkResultCallback={this.forkResultCallback} />
+          }
           <StableState 
             isStable={asset.isCompleted} 
             showMicro={true}

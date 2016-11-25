@@ -813,7 +813,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     saveUndo = false
   }
 
-  if (e.type == 'mouseup'){
+  if (e.type == 'mouseup' || e.type == 'touchend'){
     this.props.handleSave('Inserting Tiles')
     return
   }
@@ -955,9 +955,6 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   }
   this.drawTiles()
 
-  if(e.type == 'touchend') {
-    this.props.handleSave('Inserting Tiles')
-  }
 }
 
 // Eraser is actually stamp with gid = 0 - could be reused

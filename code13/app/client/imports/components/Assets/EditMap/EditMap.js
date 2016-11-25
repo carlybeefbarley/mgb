@@ -242,6 +242,8 @@ export default class EditMap extends React.Component {
     // we need to set state here because handle save callback will match with last save and nothing will get updated
 
     this.mgb_content2 = data
+    this.refs.map && this.refs.map.clearSelection()
+
     this.setState({content2: data})
   }
   doRedo () {
@@ -263,6 +265,8 @@ export default class EditMap extends React.Component {
     // same reason as undo...
 
     this.mgb_content2 = data
+    this.refs.map && this.refs.map.clearSelection()
+
     this.setState({content2: data})
   }
 

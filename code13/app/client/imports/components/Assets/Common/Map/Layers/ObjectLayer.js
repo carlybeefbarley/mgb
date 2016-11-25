@@ -215,6 +215,7 @@ export default class ObjectLayer extends AbstractLayer {
     })
 
     this.clearSelection(true)
+
     this.isDirty = true
   }
   /* Events */
@@ -407,6 +408,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.selection.clear()
     }
     this.setPickedObjectSlow(-1)
+    edit.clear.call(this)
   }
 
   deleteObject (obj) {
@@ -723,6 +725,17 @@ export default class ObjectLayer extends AbstractLayer {
 // TODO: move these to separate file
 let obj, endPoint, pointCache = {x: 0, y: 0}
 const edit = {}
+edit.clear = function(){
+  // this is for touch input - finalize shape drawing
+  if(obj && obj.polyline) {
+    //obj.polyline.pop()
+    this.setPickedObject(obj, this.data.objects.length - 1)
+    this.props.handleSave('Drawing lines')
+    obj = null
+    endPoint = null
+  }
+  this.draw()
+}
 edit[EditModes.drawRectangle] = function (e) {
   if (e.type == 'mousedown' || e.type == 'touchstart') {
     if ((e.buttons & 0x2) == 0x2) {
@@ -739,7 +752,7 @@ edit[EditModes.drawRectangle] = function (e) {
   if (!obj) {
     return
   }
-  if (e.type == 'mouseup' || e.type == 'touchstop') {
+  if (e.type == 'mouseup' || e.type == 'touchend') {
     this.setPickedObject(obj, this.data.objects.length - 1)
     this.props.handleSave('Added rectangle')
     obj = null
@@ -836,13 +849,7 @@ edit[EditModes.drawShape] = function (e) {
     }else {
       // are buttons FLAGS?
       if ((e.buttons & 0x2) == 0x2) {
-        obj.polyline.pop()
-        this.setPickedObject(obj, this.data.objects.length - 1)
-
-        obj = null
-        endPoint = null
-        this.draw()
-        this.props.handleSave('Drawing lines')
+        edit.clear.call(this)
         return
       }else {
         endPoint = {x: endPoint.x, y: endPoint.y}
@@ -882,7 +889,7 @@ edit[EditModes.stamp] = function (e) {
   let x = e.offsetX / cam.zoom - cam.x
   let y = (e.offsetY + pal.h*cam.zoom) / cam.zoom - cam.y
 
-  if (!this.isCtrlKey(e)) {
+  if (this.isCtrlKey(e)) {
     x = Math.floor(x / tw) * tw
     y = Math.floor(y / th) * th
   }
@@ -946,14 +953,14 @@ edit[EditModes.rectangle] = function (e) {
       //this.props.handleSave('Edit Object')
       return
     }
-    if (e.which == 1) {
-      this.props.handleSave('Edit Object')
-    }
+
+    phase && this.props.handleSave('Edit Object')
+
     this.updateClonedObject()
   }
 
   if (e.type == 'mousedown' || e.type == 'touchstart' ) {
-    this.props.saveForUndo('Edit Object')
+    phase && this.props.saveForUndo('Edit Object')
     if (!this.handles.activeHandle) {
       this.isDirty = true
       this.mouseDown = true

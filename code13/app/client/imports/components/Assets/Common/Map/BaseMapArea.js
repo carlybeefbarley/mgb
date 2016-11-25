@@ -14,6 +14,8 @@ import Plural         from '/client/imports/helpers/Plural'
 
 import './EditMap.css'
 
+const MAX_ZOOM = 10
+const MIN_ZOOM = 0.2
 
 export default class MapArea extends React.Component {
 
@@ -31,6 +33,9 @@ export default class MapArea extends React.Component {
     this.layers = []
 
     this.isMouseDown = false
+    // store touches to reference later
+    this.startTouches = []
+    this.startDistance = 0
     // here will be kept selections from tilesets
     this.collection = new TileCollection()
 
@@ -39,6 +44,8 @@ export default class MapArea extends React.Component {
     this.tmpSelection = new TileCollection()
 
     this.camera = new Camera(this)
+    this.initialZoom = this.camera.zoom
+
 
     this.globalMouseMove = (...args) => {
       this.handleMouseMove(...args)
@@ -112,6 +119,10 @@ export default class MapArea extends React.Component {
     this.touchMovePrevent = function(e){
       e.preventDefault()
     }
+
+    // clean up - just in case we failed to get ref in the last unmount ( user was playing map - and selected other asset )
+    this.refs.mapElement.removeEventListener("touchmove", this.touchMovePrevent )
+    // this is here to prevent scrolling with touch device - react event does not prevent scrolling on chrome
     this.refs.mapElement.addEventListener("touchmove", this.touchMovePrevent )
 
     document.body.addEventListener('mousedown', this.globalIEScroll)
@@ -129,7 +140,7 @@ export default class MapArea extends React.Component {
     window.removeEventListener('resize', this.globalResize)
     window.removeEventListener('keyup', this.globalKeyUp)
 
-    this.refs.mapElement.removeEventListener("touchmove", this.touchMovePrevent )
+    this.refs.mapElement && this.refs.mapElement.removeEventListener("touchmove", this.touchMovePrevent )
     document.body.removeEventListener('mousedown', this.globalIEScroll)
 
     // next tick will stop raf loop
@@ -370,6 +381,21 @@ export default class MapArea extends React.Component {
   }
 
   moveCamera (e) {
+    // special zoom case
+    if(e.touches && e.touches.length > 1){
+      // TODO: probably better would be interpolate between moving points and set distance according moving finger???
+      // for now zoom between fingers
+      const midx = (TileHelper.getOffsetX(e.touches[0]) + TileHelper.getOffsetX(e.touches[1])) * 0.5
+      const midy = (TileHelper.getOffsetY(e.touches[0]) + TileHelper.getOffsetY(e.touches[1])) * 0.5
+
+      // distance between changed points
+      const dist = this.getDistanceBetweenPoints(e.touches[0], e.touches[1])
+
+      // TODO (low pri): figure out how to zoom precise pixel per pixel :)
+      this.doCameraZoom( this.initialZoom - (this.startDistance - dist) / this.startDistance, midx, midy)
+      return
+    }
+
     const px = e.pageX === void(0) ? e.touches[0].pageX : e.pageX
     const py = e.pageY === void(0) ? e.touches[0].pageY : e.pageY
 
@@ -389,24 +415,43 @@ export default class MapArea extends React.Component {
   }
 
   zoomCamera (newZoom, e) {
+    let px = 0, py = 0
+
     if (e) {
+      px = TileHelper.getOffsetX(e)
+      py = TileHelper.getOffsetY(e)
+    }
+
+    this.doCameraZoom(newZoom, px, py)
+  }
+
+  doCameraZoom(newZoom, pivotX, pivotY){
+
+
+    const zoom = Math.max(Math.min(newZoom, MAX_ZOOM), MIN_ZOOM)
+
+
+    if(pivotX || pivotY){
       // .getBoundingClientRect(); returns width with transformations - that is not what is needed in this case
+
       const bounds = this.refs.mapElement
 
-      const ox = e.nativeEvent.offsetX / bounds.offsetWidth
-      const oy = e.nativeEvent.offsetY / bounds.offsetHeight
+      const ox = pivotX / bounds.offsetWidth
+      const oy = pivotY / bounds.offsetHeight
 
       const width = bounds.offsetWidth / this.camera.zoom
-      const newWidth = bounds.offsetWidth / newZoom
+      const newWidth = bounds.offsetWidth / zoom
 
       const height = bounds.offsetHeight / this.camera.zoom
-      const newHeight = bounds.offsetHeight / newZoom
+      const newHeight = bounds.offsetHeight / zoom
 
       this.camera.x -= (width - newWidth) * ox
       this.camera.y -= (height - newHeight) * oy
+
     }
 
-    this.camera.zoom = newZoom
+
+    this.camera.zoom = zoom
     this.redraw()
   }
 
@@ -493,6 +538,12 @@ export default class MapArea extends React.Component {
     // we will need to redraw once more - after animations completes
     this.redrawOnAnimationEnd()
   }
+
+  getDistanceBetweenPoints(p1, p2){
+    return Math.sqrt(
+      Math.pow(p2.clientX - p1.clientX, 2) + Math.pow(p2.clientY - p1.clientY, 2)
+    )
+  }
   /* endof camera stuff */
 
   /* events */
@@ -530,7 +581,20 @@ export default class MapArea extends React.Component {
       this.refs.positionInfo.forceUpdate()
     }
   }
-  handleMouseDown(){
+  handleMouseDown(e){
+    // prevent putting extra tiles on the map
+    if(e.touches){
+      this.startTouches.length = 0
+      for(let i=0; i<e.touches.length; i++){
+        const t = e.touches[i]
+        this.startTouches.push({clientX: t.clientX, clientY: t.clientY})
+      }
+      if(e.touches.length > 1){
+        this.startDistance = this.getDistanceBetweenPoints(this.startTouches[0], this.startTouches[1])
+        this.initialZoom = this.camera.zoom
+        this.props.setMode(EditModes.view)
+      }
+    }
     this.isMouseDown = true
   }
   removeObject(){

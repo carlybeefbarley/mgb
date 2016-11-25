@@ -612,6 +612,11 @@ export default class TileMapLayer extends AbstractLayer {
   }
   /* events */
   handleMouseDown (e) {
+    // multitouch handles mapArea - camera stuff
+    if(e.touches && e.touches.length > 1){
+      return
+    }
+
     // 0 - for mouse / undefined for touchstart
     if (!e.button) {
       this.mouseDown = true
@@ -651,6 +656,11 @@ export default class TileMapLayer extends AbstractLayer {
     if (nat.target !== this.refs.canvas) {
       return
     }
+    // multitouch handles mapArea - camera stuff
+    if(e.touches && e.touches.length > 1){
+      return
+    }
+
     this.lastEvent = nat
     this.lastOffset.x = TileHelper.getOffsetX(nat);
     this.lastOffset.y = TileHelper.getOffsetY(nat);
@@ -803,8 +813,13 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     saveUndo = false
   }
 
-  if (e.type == 'mouseup' || e.type == 'touchend') {
+  if (e.type == 'mouseup'){
     this.props.handleSave('Inserting Tiles')
+    return
+  }
+
+  // it can be multitouch
+  if(e.type == "touchstart"){
     return
   }
 
@@ -831,7 +846,9 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   }
   this.lastTilePos = pos
 
+  // collection contains picked tiles from tileset
   const col = this.props.getCollection()
+  // selection contains selected tiles with select tool
   const sel = this.props.getSelection()
 
   if (!col.length) {
@@ -937,6 +954,10 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     //this.options.data[tpos.id] = ts.gid
   }
   this.drawTiles()
+
+  if(e.type == 'touchend') {
+    this.props.handleSave('Inserting Tiles')
+  }
 }
 
 // Eraser is actually stamp with gid = 0 - could be reused

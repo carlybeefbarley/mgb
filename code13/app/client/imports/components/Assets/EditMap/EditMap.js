@@ -124,7 +124,7 @@ export default class EditMap extends React.Component {
       some tools don't report changes instantly -
       so it goes out of sync with with props,
       but that allows to avoid heavy re-redering of all components..
-      in the UX is better.
+      in the end UX is better.
       e.g. while inserting multiple tiles.. or drawing multiple tiles with stamp tool - update will trigger only once - when users releases mouse
       it's possible to use _.copyDeep - in case of some unexpected behavior,
       but I haven't experienced strange behavior.. ref is much faster
@@ -147,7 +147,7 @@ export default class EditMap extends React.Component {
   }
 
   get meta() {
-    // make sure we have options object
+    // make sure we have options object - older maps don't have it
     if(!this.mgb_content2.meta || !this.mgb_content2.meta.options){
       this.mgb_content2.meta = {
         options: {

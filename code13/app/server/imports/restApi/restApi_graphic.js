@@ -16,7 +16,7 @@ RestApi.addRoute('asset/png/:id', { authRequired: false }, {
           'Content-Type': 'image/png'
           // 'cache-control': 'private, must-revalidate, max-age: 30'
         },
-        body: dataUriToBuffer(asset.content2.frameData[frame][0])   // TODO: Handle case where the frameData has not yet been created
+        body: dataUriToBuffer(asset.content2.spriteData[frame])   // TODO: Handle case where the frameData has not yet been created
       }
     }
     else
@@ -40,7 +40,7 @@ RestApi.addRoute('asset/png/:user/:name', { authRequired: false }, {
         headers: {
           'Content-Type': 'image/png',
         },
-        body: dataUriToBuffer(asset.content2.frameData[frame][0])
+        body: dataUriToBuffer(asset.content2.spriteData[frame])
       }
     }
     else {

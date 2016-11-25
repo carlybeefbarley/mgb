@@ -74,8 +74,16 @@ export default class EditActorMap extends EditMap {
     if(newp.asset.content2) {
       this.setState({isLoading: true})
       this.v1_to_v2(newp, (d) => {
+        // store old options - otherwise tools will auto switch and will piss off user
+        if(this.mgb_content2 && this.mgb_content2.meta) {
+          const oldOptions = this.mgb_content2.meta.options
+          this.mgb_content2 = d
+          this.mgb_content2.meta.options = oldOptions
+        }
+        else{
+          this.mgb_content2 = d
+        }
         // or new Cache - if immutable is preferred - and need to force full cache update
-        this.mgb_content2 = d;
         if(this.cache && this.cache.isReady()) {
           this.cache && this.cache.isReady() && this.cache.update(d, () => {
             this.setState({isLoading: false})

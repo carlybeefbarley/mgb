@@ -59,6 +59,7 @@ Camera.prototype = {
   },
   get y() {return this._y},
   set zoom(val) {
+
     this.map.options.camera.zoom = val
     this._zoom = val
   },

@@ -512,7 +512,8 @@ if (Meteor.isServer)
       // TODO - update parent asset
       Azzets.update( { _id: srcId }, { $push: { forkChildren: { assetId: newDocId, forkDate: now, forkedByUserId: this.userId, forkedByUserName: username }}})
 
-      return newDocId
+      dstAsset._id = newDocId
+      return { newId: newDocId, newAssetNoC2: _.omit(dstAsset, 'content2') }
     }
   })
 }

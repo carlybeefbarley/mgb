@@ -22,6 +22,39 @@ const mgbReleaseInfo = {
 
 */
 
+
+    {
+      'timestamp': 'Sat Nov 26 2016 02:30:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2161'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'improvement',
+          'changeName': 'Improved touch support for map and actorMap editing',
+          'changeSummary': 'Now supporting multitouch gestures on the map edit surface',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.fork',
+          'type': 'feature',
+          'changeName': 'Assets can now be cloned (forked)',
+          'changeSummary': 'When editing an asset, there is now a fork icon in the edit header area. Click this to clone (fork) the existing asset to your account',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
     {
       'timestamp': 'Thu Nov 24 2016 00:30:00 GMT-0800 (PDT)',
 

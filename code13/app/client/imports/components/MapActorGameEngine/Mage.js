@@ -259,15 +259,15 @@ export default class Mage extends React.Component {
   // Load any actors that we don't already have in state.actors or pendingActorLoads
   loadRequiredActors(desiredActorNames, actorOwnerName)
   {
-    const { fetchAssetByUri, mapOwnerName } = this.props
+    const { fetchAssetByUri, ownerName } = this.props // ownerName is map owner name
     const { pendingActorLoads, loadedActors } = this.state
     _.each(desiredActorNames, aName => {
       if (!_.includes(pendingActorLoads, aName) && !_.includes(loadedActors, aName))
       {
         pendingActorLoads.push(aName)
-        const p = _resolveOwner(actorOwnerName || mapOwnerName, aName)
+        const p = _resolveOwner(actorOwnerName || ownerName, aName)
 
-        fetchAssetByUri(_mkActorUri(actorOwnerName || mapOwnerName, aName))
+        fetchAssetByUri(_mkActorUri(actorOwnerName || ownerName, aName))
           .then(  data => this._actorLoadResult(aName, p.ownerName, true, JSON.parse(data)) )
           .catch( data => this._actorLoadResult(aName, p.ownerName, false, data) )
       }

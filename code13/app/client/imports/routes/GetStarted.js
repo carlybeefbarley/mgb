@@ -37,7 +37,7 @@ const getStartedItems = [
     desc: 'Our tutorials show you how to make or modify some basic game types'
   }, 
   {
-    mascot: 'shark',
+    mascot: 'whale',
     icon: 'university',
     content: 'Practice new Skills',
     link: '/getstarted/skills',

@@ -25,6 +25,9 @@ const DragNDropHelper = {
     e.stopPropagation()
     e.preventDefault()
     e.dataTransfer.effectAllowed = 'copy'
+    // without this drop on FF won't work
+    e.dataTransfer.dropEffect = 'copy'
+    return false
   },
   startSyntheticDrag: (e) => {
     dragAndDropSimulator.startDragOnTouch(e)

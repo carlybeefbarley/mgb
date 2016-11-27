@@ -3,6 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import AbstractLayer from './AbstractLayer.js'
 import LayerTypes from './../Tools/LayerTypes.js'
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 
 export default class ImageLayer extends AbstractLayer {
   draw () {
@@ -40,7 +41,9 @@ export default class ImageLayer extends AbstractLayer {
     return (<div ref='layer' className={this.props.isActive ? 'tilemap-layer' : 'tilemap-layer no-events'} data-name={this.props.data.name}>
               <canvas
                 ref='canvas'
-                onDrop={this.onDrop.bind(this)}></canvas>
+                onDrop={this.onDrop.bind(this)}
+                onDragOver={DragNDropHelper.preventDefault}
+                ></canvas>
             </div>)
   }
 }

@@ -1,7 +1,7 @@
 /* this is sample test which only tries to log in user */
 module.exports = (getBrowser, path) => {
   let browser;
-  describe("Running code mentor tests", function(){
+  describe("Running code bundler tests", function(){
     before(function(){
       browser = getBrowser();
     })
@@ -11,15 +11,16 @@ module.exports = (getBrowser, path) => {
       login(done)
     })
 
-    it("Creating Code Asset", function(done){
-      require(path + "procedures/createAsset.js")(browser)("code", done)
+    it("Creating Graphic Asset", function(done){
+      require(path + "procedures/createAsset.js")(browser)("graphic", done)
     })
 
-    it("Modifying Code", function(done){
-      require(path + "procedures/checkCodeMentor.js")(browser)(done)
+    it("Drawing image", function(done){
+      require(path + "procedures/drawGraphic.js")(browser)(done)
     })
 
-    it("Remove Code - clean up", function(done){
+    // this should be called from edit asset page
+    it("Remove Graphic - clean up", function(done){
       require(path + "procedures/deleteAsset.js")(browser)(done)
     })
 

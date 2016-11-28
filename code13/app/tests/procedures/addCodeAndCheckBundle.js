@@ -41,7 +41,7 @@ div.setAttribute("id", "test-element")
             browser.close()
 
             browser.switchTo().window(currentWindow)
-            done && browser.call(done)
+            sel.done()
           })
       })
   }

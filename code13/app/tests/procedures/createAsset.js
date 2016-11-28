@@ -7,7 +7,7 @@ const el = {
   inputName: '.ui.basic.segment input',
   assetTypeButton: '#create-asset',
   createBtn: '#mgbjr-create-asset-button',
-  shouldAppear: 'a[href="/u/tester/assets?kinds=code"]',
+  shouldAppear: type => `a[href="/u/tester/assets?kinds=${type}"]`,
   cmLine: '.CodeMirror-activeline'
 }
 module.exports = (browser) => {
@@ -23,8 +23,8 @@ module.exports = (browser) => {
     sel.css(el.assetTypeButton + "-" + type).click()
     sel.css(el.createBtn).click()
 
-    sel.css(el.shouldAppear)
-    done && browser.call(done)
+    sel.css(el.shouldAppear(type))
+    sel.done(done)
   }
 }
 module.exports.assetType = {

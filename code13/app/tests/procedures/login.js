@@ -29,7 +29,7 @@ module.exports = (browser) => {
 
     sel.exists(buttons.avatar, (e, found) => {
       if(found){
-        done && browser.call(done)
+        sel.done(done)
         return
       }
       // and then login button
@@ -56,7 +56,7 @@ module.exports = (browser) => {
         }
         // close side panel
         sel.css(buttons.sidePanelLogin).click()
-        done && browser.call(done)
+        sel.done(done)
       })
     })
   }

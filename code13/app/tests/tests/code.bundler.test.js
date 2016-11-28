@@ -15,12 +15,16 @@ module.exports = (getBrowser, path) => {
       require(path + "procedures/createAsset.js")(browser)("code", done)
     })
 
-    it("Modifying Code", function(done){
-      require(path + "procedures/simpleCode.js")(browser)(done)
+    it("Modifying Code and checking bundle for modified code", function(done){
+      require(path + "procedures/addCodeAndCheckBundle.js")(browser)(done)
     })
 
-    it("Remove Code - clean up", function(done){
+    it("Remove Code and clean up", function(done){
       require(path + "procedures/deleteAsset.js")(browser)(done)
+    })
+
+    it("check for console errors", function(done){
+      require(path + "procedures/checkConsoleErrors.js")(browser)(done)
     })
   })
 }

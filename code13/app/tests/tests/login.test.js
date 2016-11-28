@@ -7,8 +7,11 @@ module.exports = (getBrowser, path) => {
     })
     // all action should be in the "it" block
     it("Logging in", function(done){
-      const login = require(path + "procedures/login.js")(browser)
-      login(done)
+      require(path + "procedures/login.js")(browser)(done)
+    })
+
+    it("check for console errors", function(done){
+      require(path + "procedures/checkConsoleErrors.js")(browser)(done)
     })
   })
 }

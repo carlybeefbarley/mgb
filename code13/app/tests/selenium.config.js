@@ -11,7 +11,7 @@ module.exports = {
   },
   tests: {
     // if this is filled - only those tests will be tested
-    only: ["code.bundler.test.js"],
+    only: ["graphic.test.js"],
     // add here some tests to skip
     skip: ["login.test.js"]
   }

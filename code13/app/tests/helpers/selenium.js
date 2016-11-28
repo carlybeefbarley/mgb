@@ -20,6 +20,24 @@ module.exports = (browser) => {
     },
     getUri: () => {
       browser.executeAsyncScript("")
+    },
+    done: (done) => {
+      try {
+        browser.manage().logs().get("browser")
+          .then(logs => {
+            const errors = logs.filter(l => l.message.indexOf('Uncaught') > -1)
+            if(errors.length){
+              throw new Error("Javascript errors encountered \n" + JSON.stringify(errors, null, "\t"))
+            }
+            done && browser.call(done)
+          })
+      }
+        // this will throw exception on IE
+      catch (e) {
+        done && browser.call(done)
+        return []
+      }
+
     }
   }
 }

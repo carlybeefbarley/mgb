@@ -163,6 +163,9 @@ export default class EditGraphic extends React.Component {
 
     // TODO inspect. without this color picker hide doesn't work
     document.querySelector('#root').addEventListener("click", () => {} )
+
+
+    this.refs.xxx.addEventListnerer("click", () => {})
   }
 
   componentWillUnmount() {

@@ -30,14 +30,11 @@ div.setAttribute("id", "test-element")
         browser.sleep(1000)
         browser.getAllWindowHandles()
           .then(handles => {
-            console.log(handles)
             // there should be open window
             if (handles.length < 2) {
               throw new Error("Failed to open new window for bundle")
             }
             const popup = handles.find(h => h != currentWindow)
-            console.log("Popup ID:", popup)
-
             // switch to popup and find created element and close after
             browser.switchTo().window(popup)
             sel.css("#test-element")

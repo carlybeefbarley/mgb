@@ -1558,6 +1558,7 @@ export default class EditGraphic extends React.Component {
                         width={zoom * c2.width}
                         height={zoom * c2.height}
                         className={"mgbEditGraphicSty_checkeredBackground mgbEditGraphicSty_thinBorder mgbEditGraphicSty_atZeroZero"}
+                        id="mgb_edit_graphic_main_canvas"
                         onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-1)}>
               </canvas>

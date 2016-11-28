@@ -109,7 +109,7 @@ export default class Layer extends React.Component {
           </td>
           <td>
             <div className="ui dropdown"
-              ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
+                 ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
               >
               <i className="icon setting"></i>
               <div className="menu">
@@ -156,7 +156,9 @@ export default class Layer extends React.Component {
               <td className="selectable" onClick={this.selectFrame.bind(this, frameID)}
                 key={this.props.idx+"_"+frameID}
                 title={isActiveCell ? `This is the current edit focus: Layer "${this.props.layer.name}" of Frame #${this.props.selectedFrame+1}`: "click here to edit this frame/layer"}
-                className={isActiveCell ? "highlight" : ""}>
+                className={isActiveCell ? "highlight" : ""}
+                id={"mgb_edit_graphics_frame_cell_" + frameID}
+                >
                 {isActiveCell ? <div style={{textAlign: "center"}}><i className="ui check icon" /></div> : null}
               </td>)  
             })

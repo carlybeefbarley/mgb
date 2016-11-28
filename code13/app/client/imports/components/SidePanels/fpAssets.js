@@ -143,7 +143,8 @@ export default fpAssets = React.createClass({
                 chosenProjectName={project} />
               : null }        
           <div className="ui small fluid action input">
-            <input  type="text" 
+            <input  type="text"
+                    id="mgb_search_asset"
                     placeholder="Search..." 
                     defaultValue={searchName} 
                     onChange={this.handleSearchNameBoxChanges}

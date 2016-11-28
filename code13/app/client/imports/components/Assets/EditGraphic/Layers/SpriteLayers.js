@@ -641,7 +641,9 @@ export default class SpriteLayers extends React.Component {
                 _.map(c2.frameNames, (frameName, idx) => { return (
                   <th key={"th_"+idx} width="32px" className="frameTH">
                     <div className="ui dropdown" 
-                        ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } } >
+                        ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
+                        id={"mgb_edit_graphics_frame_options_" + idx}
+                      >
                       {idx+1}
                       <div className="ui vertical menu">
                         <div className="header item">
@@ -699,7 +701,7 @@ export default class SpriteLayers extends React.Component {
               }
               <th>
                 <div className="row">
-                  <a className="ui small label" onClick={this.addFrame.bind(this)}>
+                  <a className="ui small label" id="mgb_edit_graphics_add_frame" onClick={this.addFrame.bind(this)}>
                     <i className="add circle icon"></i> Add Frame
                   </a>
                 </div>

@@ -407,7 +407,7 @@ export default class Toolbar extends React.Component {
 
   _renderButton(b, index) {
     const label = (b.label && (this.state.level <= 2 || this.state.level === b.level)) ? " " + b.label : ''
-    const joyrideId = "#mgbjr-" + this.props.name + "-" + b.name    // Auto-create an id for react-joyride purposes
+    const joyrideId = "mgbjr-" + this.props.name + "-" + b.name    // Auto-create an id for react-joyride purposes
 
     if (b.component) {
       const ElComponent = b.component

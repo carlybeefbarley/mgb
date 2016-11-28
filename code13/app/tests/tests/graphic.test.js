@@ -18,7 +18,7 @@ module.exports = (getBrowser, path) => {
     it("Drawing image", function(done){
       require(path + "procedures/drawGraphic.js")(browser)(done)
     })
-
+/*
     // this should be called from edit asset page
     it("Remove Graphic - clean up", function(done){
       require(path + "procedures/deleteAsset.js")(browser)(done)
@@ -26,6 +26,6 @@ module.exports = (getBrowser, path) => {
 
     it("check for console errors", function(done){
       require(path + "procedures/checkConsoleErrors.js")(browser)(done)
-    })
+    })*/
   })
 }

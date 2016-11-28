@@ -1,10 +1,12 @@
 const webdriver = require('selenium-webdriver')
+const Key = webdriver.Key
+
 const By = webdriver.By
 const until = webdriver.until
 // this is for easier css selectors
 // TODO: add xpath etc..
 module.exports = (browser) => {
-  return {
+  const sel = {
     css: (rule, timeout ) => {
       timeout = timeout == void(0) ? 10000 : timeout
       return browser.wait(until.elementLocated(By.css(rule)), timeout)
@@ -38,6 +40,27 @@ module.exports = (browser) => {
         return []
       }
 
+    },
+    // TODO (stauzs): move site specific actions to external file?
+    adjustLevelSlider(){
+      const slider = sel.css("#NavBarGadgetUxSlider")
+      browser.actions()
+        .mouseMove(slider, {x: 120, y: 1})
+        .click()
+        .perform()
+    },
+    openAssetsPanel(){
+      browser.getCurrentUrl()
+        .then((url) => {
+          if(url.indexOf("_fp=assets") == -1){
+            sel.css("#mgbjr-flexPanelIcons-assets").click()
+          }
+        })
+    },
+    findAsset(val){
+      sel.css("#mgb_search_asset").sendKeys(val, Key.ENTER)
+      return sel.css(".ui.card.animated.fadeIn canvas")
     }
   }
+  return sel
 }

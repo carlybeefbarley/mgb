@@ -3,7 +3,7 @@ const Key = webdriver.Key
 
 const SeleniumHelper = require("../helpers/selenium.js")
 const el = {
-  colorPicker: '#mgbjr-EditGraphic-eyedropperTool',
+  colorPicker: '#mgbjr-EditGraphic-colorPicker',
   colorPickerArea: "div.chrome-picker > div:nth-child(1) > div > div > div:nth-child(1)",
   colorSlider: "div.chrome-picker > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div",
   opacitySlider: "div.chrome-picker > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div"
@@ -21,7 +21,7 @@ module.exports = (browser) => {
       mouseUp(colorPicker).
       perform();
 
-    
+
 
     browser.sleep(60000)
     sel.done(done)

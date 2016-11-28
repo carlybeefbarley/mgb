@@ -40,6 +40,7 @@ class ColorPicker extends React.Component {
         className="ui button animate"
         style={{position: "relative"}}
         data-title={ToolColorPicker.label}
+        id={this.props.id}
         ><i className={ToolColorPicker.icon + " icon"}></i>
         {this.props.label}
       </div>)

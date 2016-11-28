@@ -1,6 +1,6 @@
 /* this is sample test which only tries to log in user */
 module.exports = (getBrowser, path) => {
-  var browser;
+  let browser;
   describe("Running code mentor tests", function(){
     before(function(){
       browser = getBrowser();
@@ -11,8 +11,8 @@ module.exports = (getBrowser, path) => {
       login(done)
     })
 
-    it("Creating Asset", function(done){
-      require(path + "procedures/createCodeAsset.js")(browser)(done)
+    it("Creating Code Asset", function(done){
+      require(path + "procedures/createAsset.js")(browser)("code", done)
     })
 
     it("Modifying Code", function(done){

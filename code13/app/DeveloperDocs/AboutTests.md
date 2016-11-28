@@ -12,12 +12,13 @@
 * helper/ - misc helpers for selenium-webdriver
 * Local server:
   * Follow instructions: https://github.com/SeleniumHQ/selenium/wiki/RemoteWebDriverServer
-  * download link: http://selenium-release.storage.googleapis.com/index.html - look for laterst standalone server
+  * download link: http://selenium-release.storage.googleapis.com/index.html - look for latest standalone server
 
 * How it works:
   * browserstack test will read all browsers from tests/browsers/ - it's possible to add only / skip (to the filename)- to test only necessary files
 test for each browser will run in parallel ( currently only from commandline _mocha_)
   * then script will loop thought tests/tests/ and execute every file ( skip / only also supported here ) - those tests are executed one by one - as they will be using same browser
   * added tests/selenium.config.js - to allow skip browsers/tests without renaming files
-* check login - as sample
+
+* Check tests/login.test.js - as an example
 

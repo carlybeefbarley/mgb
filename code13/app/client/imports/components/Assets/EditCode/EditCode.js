@@ -1731,7 +1731,7 @@ export default class EditCode extends React.Component {
                     }
                     { !this.hasErrors &&
                     <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
-                      <a  className='ui tiny icon button' 
+                      <a  className='ui tiny icon button full-screen'
                           title='Click here to start running your program in a different browser tab'
                           onClick={this.handleFullScreen.bind(this, asset._id)}>
                         <i className='external icon' />&emsp;Full&nbsp;

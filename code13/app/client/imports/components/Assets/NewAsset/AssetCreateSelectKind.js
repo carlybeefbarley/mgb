@@ -41,8 +41,8 @@ export default AssetCreateSelectKind = React.createClass({
           }
 
           return (
-            <Button icon positive={isActive} key={k} style={sty} onClick={ () => { handleSelectAsset(k)} }>
-              <Icon size='large' name={ak.icon} />
+            <Button icon positive={isActive} key={k} style={sty} id={"create-asset-" + k} onClick={ () => { handleSelectAsset(k)} }>
+              <Icon size='large' name={ak.icon}  />
               <p style={{ marginTop: "5px" }}>{ak.name}</p>
             </Button>
           )

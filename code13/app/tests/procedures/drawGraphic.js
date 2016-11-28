@@ -55,6 +55,18 @@ module.exports = (browser) => {
     browser.sleep(300)
   }
 
+  const removeFrame = (id) => {
+    const frameoptions = sel.css(el.getFrameOptionsSelector(3))
+    browser.actions()
+      .mouseMove(frameoptions)
+      .perform()
+
+    // wait until drop down appears
+    browser.sleep(1500)
+    sel.css(el.getFrameOptionsSelector(3) + " .remove.icon").click()
+    // wait for something: TODO: debug why timeout is needed here - react update?
+    browser.sleep(1000)
+  }
 
   // return function so procedure can be used directly as callback
   return (done) => {
@@ -110,30 +122,9 @@ module.exports = (browser) => {
     sel.css(el.addFrame).click()
 
     //TODO: fix this - atm it shows error - .remove.icon not visible - something with hover drop down remove last frames
-    const frameoptions = sel.css(el.getFrameOptionsSelector(3))
-    browser.actions()
-      .mouseMove(frameoptions)
-      .perform()
-      .then( () => {
-        frameoptions.findElement(By.css(".remove.icon")).click()
-      })
+    removeFrame(3)
+    removeFrame(3)
 
-
-    browser.sleep(10000)
-
-
-
-    /*  .then(showList => {
-      browser.actions()
-        .mouseOver(showList)
-      showList.click()
-      showList.findElement(By.css(".remove.icon")).click()
-
-      sel.css(el.getFrameOptionsSelector(3)).then(showList => {
-        showList.click()
-        showList.findElement(By.css(".remove.icon")).click()
-      })
-    })*/
 
     sel.done(done)
   }

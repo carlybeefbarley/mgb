@@ -75,7 +75,7 @@ module.exports = (browser) => {
       .perform()
 
     // red
-    pickColor(98)
+    pickColor(99)
     sel.css(el.fillTool).click()
     // fill green rect
     browser.actions()
@@ -101,36 +101,40 @@ module.exports = (browser) => {
     sel.openAssetsPanel()
 
     const asset = sel.findAsset("test.image.for.drop")
-    browser.sleep(5000)
 
-    // asset.findElement(By.tagName("canvas"))
-    //  .then( from => {
-    //    console.log("Drag and drop test!!!!")
-    //    browser.actions()
-    //      .mouseDown(asset)
-    //      .mouseMove(asset, {x: 1, y: 1})
-    //      .mouseMove(canvas)
-    //      .mouseUp()
-    //      .perform()
-    //  })
+    // is there selenium native way for react/HTML5 drag and drop???
+    browser.executeScript(`
+      return window.m.dnd.simulateDragAndDrop.apply(m.dnd, arguments);`, asset, canvas)
+
+    sel.css(el.addFrame).click()
+    sel.css(el.addFrame).click()
+
+    //TODO: fix this - atm it shows error - .remove.icon not visible - something with hover drop down remove last frames
+    const frameoptions = sel.css(el.getFrameOptionsSelector(3))
     browser.actions()
-      .mouseDown(asset)
-      .mouseMove(asset, {x: 1, y: 1})
-      .dragAndDrop(asset, canvas)
+      .mouseMove(frameoptions)
       .perform()
+      .then( () => {
+        frameoptions.findElement(By.css(".remove.icon")).click()
+      })
 
 
-    browser.sleep(100)
+    browser.sleep(10000)
 
-    sel.css(el.addFrame).click()
-    sel.css(el.addFrame).click()
-    browser.sleep(100)
 
-    // remove extra 3 frames
-    sel.css(el.getFrameOptionsSelector(3))
-    sel.css(el.getFrameOptionsSelector(3))
 
-    browser.sleep(100000)
+    /*  .then(showList => {
+      browser.actions()
+        .mouseOver(showList)
+      showList.click()
+      showList.findElement(By.css(".remove.icon")).click()
+
+      sel.css(el.getFrameOptionsSelector(3)).then(showList => {
+        showList.click()
+        showList.findElement(By.css(".remove.icon")).click()
+      })
+    })*/
+
     sel.done(done)
   }
 }

@@ -23,6 +23,12 @@ module.exports = (browser) => {
     getUri: () => {
       browser.executeAsyncScript("")
     },
+    showLogs: () => {
+      browser.manage().logs().get("browser")
+        .then(logs => {
+          console.log(logs)
+        })
+    },
     done: (done) => {
       try {
         browser.manage().logs().get("browser")

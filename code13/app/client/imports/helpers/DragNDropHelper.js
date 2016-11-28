@@ -1,5 +1,7 @@
 "use strict";
 import dragAndDropSimulator from './dragAndDropSimulator.js'
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+
 
 const DragNDropHelper = {
   getAssetFromEvent: (e) => {
@@ -31,7 +33,11 @@ const DragNDropHelper = {
   },
   startSyntheticDrag: (e) => {
     dragAndDropSimulator.startDragOnTouch(e)
-  }
+  },
+  simulateDragAndDrop: (src, target) => dragAndDropSimulator.simulateDragAndDrop(src, target)
 }
+
+// or should be expose this manually - as DnD tests will need this
+registerDebugGlobal( 'dnd', DragNDropHelper, __filename, 'Allows to simulate drag and drop events..')
 
 export default DragNDropHelper

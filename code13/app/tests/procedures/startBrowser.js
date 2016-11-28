@@ -6,8 +6,9 @@ const createBrowser = function(browserName, options){
   const browser = new webdriver.Builder().
     usingServer(caps.server).
     withCapabilities(capabilities).
-    build();
-  browser.get(caps.url);
+    build()
+  browser.get(caps.url)
+  browser.manage().window().maximize()
 
   const flow = browser.controlFlow()
   const scheduleClose = () => {

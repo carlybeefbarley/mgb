@@ -1,6 +1,37 @@
 import ReactTestUtils from 'react-addons-test-utils'
 const DRAG_THRESHOLD = 10
 export default {
+
+  simulateDragAndDrop: (src, target) => {
+    const initalEventData = {
+      dataTransfer: {
+        data: {},
+        setData: function (type, data) {
+          this.data[type] = data
+        },
+        getData: function (type) {
+          return this.data[type]
+        }
+      }
+    }
+
+    const srcElement = typeof src === "string" ? document.querySelector(src) : src
+    const targetElement = typeof target === "string" ? document.querySelector(target) : target
+
+    if(!srcElement)
+      throw new Error("Cannot locate source")
+
+    if(!targetElement)
+      throw new Error("Cannot locate target")
+
+    // srcElement.style.border = "solid 5px red"
+    // targetElement.style.border = "solid 5px blue"
+
+    ReactTestUtils.Simulate.dragStart(srcElement, initalEventData)
+    ReactTestUtils.Simulate.drop(targetElement, initalEventData)
+    ReactTestUtils.Simulate.dragEnd(srcElement, initalEventData)
+  },
+
   // bind this event to touchstart DOM event
   startDragOnTouch: (e) => {
     let sx = 0, sy = 0
@@ -8,8 +39,6 @@ export default {
       sx = e.touches[0].clientX
       sy = e.touches[0].clientY
     }
-
-
     const initialMove = (e) => {
       let tx = 0, ty = 0
       if(e.touches.length){

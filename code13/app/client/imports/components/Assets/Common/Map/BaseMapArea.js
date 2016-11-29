@@ -876,6 +876,7 @@ export default class MapArea extends React.Component {
     return (
       <div
         ref='mapElement'
+        id="mgb_map_area"
         onContextMenu={e => { e.preventDefault(); return false;}}
         onMouseDown={this.handleMouseDown}
         onTouchStart={this.handleMouseDown}

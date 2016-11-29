@@ -1,7 +1,3 @@
-const webdriver = require('selenium-webdriver');
-const Key = webdriver.Key
-const By = webdriver.By
-
 const SeleniumHelper = require("../helpers/selenium.js")
 const el = {
   colorPicker: '#mgbjr-EditGraphic-colorPicker',
@@ -16,12 +12,8 @@ const el = {
 }
 
 
-
-
 module.exports = (browser) => {
-
   const sel = SeleniumHelper(browser)
-
   const pickColor = (offset) => {
     // open color picker
     const colorPicker = sel.css(el.colorPicker)
@@ -38,9 +30,6 @@ module.exports = (browser) => {
     if(!pickArea){
       throw new Error("Cannot find pick area")
     }
-
-
-
     browser.actions()
       // x: 50 - approx green color
       .mouseMove(colorSlider, {x: Math.floor(offset/100 * 155), y: 5})
@@ -54,7 +43,6 @@ module.exports = (browser) => {
     colorPicker.click()
     browser.sleep(300)
   }
-
   const removeFrame = (id) => {
     const frameoptions = sel.css(el.getFrameOptionsSelector(3))
     browser.actions()
@@ -110,21 +98,26 @@ module.exports = (browser) => {
 
     sel.css(el.addFrame).click()
     sel.css(el.getFrameSelector(2)).click()
-    sel.openAssetsPanel()
 
     const asset = sel.findAsset("test.image.for.drop")
 
     // is there selenium native way for react/HTML5 drag and drop???
-    browser.executeScript(`
-      return window.m.dnd.simulateDragAndDrop.apply(m.dnd, arguments);`, asset, canvas)
+    sel.dragAndDrop(asset, canvas)
 
     sel.css(el.addFrame).click()
     sel.css(el.addFrame).click()
 
     //TODO: fix this - atm it shows error - .remove.icon not visible - something with hover drop down remove last frames
-    removeFrame(3)
+    removeFrame(4)
     removeFrame(3)
 
+    sel.waitUntilSaved()
+
+    browser.executeScript(`
+      return window.m.editGraphic.getImageData()`)
+      .then(pngData => {
+        sel.compareImages('graphics.thumbnail.pngdata.txt', pngData)
+      })
 
     sel.done(done)
   }

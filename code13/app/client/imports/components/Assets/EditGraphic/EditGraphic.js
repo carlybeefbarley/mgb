@@ -13,6 +13,8 @@ import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+
 
 // Some constants we will use
 const MAX_BITMAP_WIDTH = 1500
@@ -55,6 +57,7 @@ export default class EditGraphic extends React.Component {
 
   constructor(props) {
     super(props)
+    registerDebugGlobal( 'editGraphic', this, __filename, 'Active Instance of Graphic editor')
 
     // console.log(this.props.asset)
 
@@ -106,6 +109,9 @@ export default class EditGraphic extends React.Component {
 
   }
 
+  getImageData(){
+    return this.props.asset.thumbnail
+  }
 
   // Graphic asset - Data format:
   //

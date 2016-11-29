@@ -11,8 +11,8 @@ module.exports = {
   },
   tests: {
     // if this is filled - only those tests will be tested
-    only: ["graphic.test.js"],
+    only: ["map.simple.test.js"],
     // add here some tests to skip
-    skip: ["login.test.js"]
+    skip: ["login.test.js"] // skip login test as other tests logs in user anyway
   }
 }

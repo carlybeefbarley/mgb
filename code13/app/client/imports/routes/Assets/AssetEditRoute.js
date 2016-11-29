@@ -240,7 +240,7 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui eight wide column">
+        <div className="ui eight wide column" id="mgb_asset_panel_detail_container">
           <AssetPathDetail 
             isServerOnlineNow={this.data.isServerOnlineNow}
             canEdit={canEd}

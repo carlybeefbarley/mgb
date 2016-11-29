@@ -319,25 +319,16 @@ export default class TileSet extends React.Component {
   /* endof events */
 
   /* react dom */
-  renderEmpty () {
-    return (
-      <div className='mgbAccordionScroller'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Tilesets</span>
-          </div>
-          {this.renderContent(false)}
-        </div>
-      </div>
-    )
-  }
+
   renderContent (tileset) {
     return (
       <div
         className='active content tilesets accept-drop'
         data-drop-text='Drop asset here to create TileSet'
         onDrop={this.onDropOnLayer.bind(this)}
-        onDragOver={DragNDropHelper.preventDefault}>
+        onDragOver={DragNDropHelper.preventDefault}
+        id="mgb_map_tileset_drop_area"
+        >
         <TilesetControls
           removeTileset={this.props.removeTileset}
           ref='controls'
@@ -349,7 +340,10 @@ export default class TileSet extends React.Component {
             onMouseDown={this.onMouseDown}
             onMouseLeave={this.onMouseLeave}
             onContextMenu={e => {
-                             e.preventDefault(); return false;}}>
+                             e.preventDefault(); return false;}}
+            id="mgb_map_tileset_canvas"
+            className={!tileset ? "empty" : "" }
+            >
           </canvas>
         </div>
       </div>
@@ -412,6 +406,19 @@ export default class TileSet extends React.Component {
     }
     return <div className="showList" onClick={this.showTileListPopup}><i className='ui external icon'></i> </div>
   }
+  renderEmpty () {
+    return (
+      <div className='mgbAccordionScroller'>
+        <div className='ui fluid styled accordion'>
+          <div className='active title'>
+            <span className='explicittrigger'><i className='dropdown icon'></i> Tilesets</span>
+          </div>
+          {this.renderContent(false)}
+        </div>
+      </div>
+    )
+  }
+
   render () {
     if (!this.props.tilesets.length) {
       return this.renderEmpty()
@@ -426,7 +433,8 @@ export default class TileSet extends React.Component {
             className='active title accept-drop'
             data-drop-text='Drop asset here to update tileset image'
             onDragOver={DragNDropHelper.preventDefault}
-            onDrop={this.onDropChangeTilesetImage.bind(this)}>
+            onDrop={this.onDropChangeTilesetImage.bind(this)}
+            >
             <span className='explicittrigger'><i className='dropdown icon'></i> Tilesets</span>
             <div className='ui simple dropdown top right basic grey below label item'
                  style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%', "minWidth": "50%", top: "-5px" }}>

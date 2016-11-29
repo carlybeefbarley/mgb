@@ -24,15 +24,12 @@ Phaser.Game` );
      The Game object is the heart of your game,
      providing quick access to common functions and handling the boot process.
      */
-
-    // 5sec should be enough to load phaser and show info
-    browser.sleep(5000)
     sel.css(el.phaserInfo)
 
 
     // wait for save
     // TODO: add better check in helper instead of 7 seconds timeout
-    browser.sleep(7000 + 7000) // 7 to save + 7 for bundle
+    sel.waitUntilSaved()
     sel.done(done)
   }
 }

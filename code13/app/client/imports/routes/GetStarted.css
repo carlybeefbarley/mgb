@@ -9,6 +9,16 @@
   max-width: 940px !important;
 }
 
+.ui.segment.slim a
+{
+  color: #e88300;
+}
+
+.ui.segment.slim a:hover
+{
+  text-decoration: underline;
+}
+
 .hero
 {
 	position: relative;

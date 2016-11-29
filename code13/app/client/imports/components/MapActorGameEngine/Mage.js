@@ -415,7 +415,7 @@ debugger  // TODO - stop game, no map.
         this._game.doPauseGame()
         this.handleShowNpcDialog( 
           { 
-            message: "Keyboard instructions:  Use the arrow keys to move your character or push stuff...     To attack, use 'Enter' to shoot if you have a ranged weapon, or use 'M' for a melee attack if you have a melee weapon....    I is for Inventory...    Ctrl is Pause...    GLHF.\n", 
+            message: "Keyboard instructions:  Use WASD or arrow keys to move your player.   'Enter' is shoot.   'M' is for Melee attack.   I is for Inventory.    Ctrl is Pause.   GLHF.\n", 
             leftActor: null, // TODO - find the playerActor for this message
             responseCallbackFn: () => { this.handleShowNpcDialog(null) ; this._game.isPaused = false }
           }

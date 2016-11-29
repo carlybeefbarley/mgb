@@ -14,7 +14,6 @@ module.exports = (browser) => {
       const tx = id % widthInTiles
       const ty = Math.floor(id / widthInTiles)
       const pos = {x: (tx + 0.5) * tileWidth, y: (ty + 0.5) * tileHeight}
-      console.log("Selected tile: ", id, pos, "size:", size)
       browser.actions()
         .mouseMove(ts, pos)
         .click()
@@ -38,9 +37,9 @@ module.exports = (browser) => {
     sel.dragAndDrop(asset, tileset)
     // wait until tileset gets loaded
     sel.untilInvisible(el.tilesetCanvas + ".empty")
-    // these could be skipped - but tileset is not drawn yet
+    // these could be skipped - but tileset is not drawn yet - and user would wait until it appears
     sel.untilInvisible(".loading")
-    sel.waitUntilSaved()
+    // sel.waitUntilSaved() - user wouldn't wait 5 seconds to start putting tiles on the map
 
     for(let y=0; y<4; y++){
       for(let x =0; x<4; x++){
@@ -52,6 +51,12 @@ module.exports = (browser) => {
     }
 
     sel.waitUntilSaved()
+    browser.executeScript(`
+      return window.m.editMap.getImageData()`)
+      .then(pngData => {
+        sel.compareImages('simple.map.thumbnail.pngdata.txt', pngData)
+      })
+
     sel.done(done)
   }
 }

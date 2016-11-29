@@ -65,6 +65,8 @@ import PropertiesProps from '../Common/Map/Props/PropertiesProps.js'
 import ObjectListProps from '../Common/Map/Props/ObjectListProps.js'
 
 import SpecialGlobals from '/client/imports/SpecialGlobals.js'
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+
 
 export default class EditMap extends React.Component {
   static propTypes = {
@@ -74,6 +76,8 @@ export default class EditMap extends React.Component {
 
   constructor (props) {
     super(props)
+    registerDebugGlobal( 'editMap', this, __filename, 'Active Instance of Map editor')
+
     this.state = {
       isLoading: true,
       activeLayer: 0,
@@ -109,6 +113,10 @@ export default class EditMap extends React.Component {
     this.toolbarProps = this.enableTrait(ToolbarProps)
     this.propertiesProps = this.enableTrait(PropertiesProps)
     this.objectListProps = this.enableTrait(ObjectListProps)
+  }
+
+  getImageData(){
+    return this.props.asset.thumbnail
   }
 
   setInitialStateFromContent(){

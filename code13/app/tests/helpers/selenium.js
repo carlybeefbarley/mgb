@@ -87,11 +87,20 @@ module.exports = (browser) => {
 
     compareImages(filename, data){
       const fs = require("fs")
-      const savedImageData = fs.readFileSync(__dirname + `/../imagesToCompare/${filename}`)
-      if(savedImageData != data){
+      let savedImageData;
+      try {
+        savedImageData = fs.readFileSync(__dirname + `/../imagesToCompare/${filename}`)
+      }
+      // ignore first time error - if we don't have file
+      catch(e){
+        fs.writeFileSync(__dirname + `/../imagesToCompare/${filename}.tmp`, data)
+      }
+
+      if (savedImageData != data) {
         fs.writeFileSync(__dirname + `/../imagesToCompare/${filename}.tmp`, data)
         throw new Error("Saved thumbnail and created Image doesn't match!")
       }
+
     },
 
     dragAndDrop(from, to){

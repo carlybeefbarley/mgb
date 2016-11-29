@@ -52,18 +52,22 @@ export default MagePlayGameInput = {
           this.toggleInventory()
         break
       case 'ArrowLeft':
+      case 'a':
         if (MgbActor.intFromActorParam(pp.content2.databag.allchar.leftYN))
           this.G_player_action.left = newstate
         break
       case 'ArrowRight':
+      case 'd':   
         if (MgbActor.intFromActorParam(pp.content2.databag.allchar.rightYN))
           this.G_player_action.right = newstate
         break
       case 'ArrowUp':
+      case 'w':
         if (MgbActor.intFromActorParam(pp.content2.databag.allchar.upYN))
           this.G_player_action.up = newstate
         break
       case 'ArrowDown':
+      case 's':
         if (MgbActor.intFromActorParam(pp.content2.databag.allchar.downYN))
           this.G_player_action.down = newstate
         break

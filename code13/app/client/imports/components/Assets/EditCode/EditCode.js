@@ -176,7 +176,7 @@ export default class EditCode extends React.Component {
     let codemirrorOptions = {
       mode: (this.props.asset.kind === 'tutorial') ? 'application/json' : 'jsx',
       //json: this.props.asset.kind === 'tutorial',
-
+      inputStyle: "textarea", // contentEditable is another option - but input on tablet then sux
       // change theme for read only?
       theme: "eclipse",
       styleActiveLine: true,

@@ -88,7 +88,7 @@ export default WhatsNewRoute = React.createClass({
             Please <em>do NOT</em> post our <a href='https://v2.mygamebuilder.com'>v2.mygamebuilder.com</a> link to public sites like Forums, Facebook, ProductHunt, Reddit, SlashDot, HackerNews etc <em>YET</em>. We aren't quite ready for big groups yet!
           </p>
           <p>
-            It's OK to directly ask a few buddies to try it though if you like, as long as they follow this rule.
+            It's OK to directly ask some friends or family to try it though if you like, as long as they follow this rule.
           </p>
         </Message.Content>
       </Message>        

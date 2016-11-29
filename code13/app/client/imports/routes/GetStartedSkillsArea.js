@@ -36,7 +36,8 @@ const GetStartedSkillsAreaRoute = ( { params } ) => {    //props.params.skillare
       <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
       <p style={descStyle}>{area.desc}.</p>
       <br />
-      <p>Coming very soon...</p>
+      <Header as='h4' content="Skill tutorials are coming soon..." />
+      <p>The skills tutorials are being developed right now. Expect skills tutorials covering the following topics</p>
       <ul>
         { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.description) ? v.$meta.description : k}</li>) ) }
       </ul>

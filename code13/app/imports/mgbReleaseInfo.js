@@ -24,6 +24,37 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Mon Nov 28 2016 17:30:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2174'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.map',
+          'type': 'bugfix',
+          'changeName': 'Improved touch support for map and actorMap editing',
+          'changeSummary': 'Now supporting multitouch gestures on the map edit surface',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'New art',
+          'changeSummary': 'We have updated the art for mascots and the loading page "hero" image',
+          'otherUrls': [ ]
+        }        
+      ]
+    },
+
+    {
       'timestamp': 'Sat Nov 26 2016 02:30:00 GMT-0800 (PDT)',
 
       'id': {

@@ -1252,8 +1252,6 @@ export default class EditCode extends React.Component {
   }
   handleFullScreen(id) {
     if (this.props.canEdit) {
-      // TODO(stauzs): research and make correct use of makeBundle + document.write - if possible - atm it only works for simple code - games with phaser don't work at all - probably related to body onload event or something like that
-      //
       const urlToOpen = "about:blank"; //window.location.origin + '/api/blank' //- to work with pushState without reload
       let child = window.open(urlToOpen, "Bundle")
       child.document.write(
@@ -1265,13 +1263,6 @@ export default class EditCode extends React.Component {
         if (!child.document) {
           child = window.open(urlToOpen, "Bundle")
         }
-        else {
-          // use this with pushState combo
-          // child.location.reload()
-        }
-
-        // write bundle
-        // child.document.write(makeBundle(this.props.asset))
         const delayReloadIfSaving = () => {
           if(this.props.hasUnsentSaves || this.props.asset.isUnconfirmedSave)
             window.setTimeout(delayReloadIfSaving, 100)

@@ -441,7 +441,7 @@ debugger  // TODO - stop game, no map.
       <div>
         { this.state.showTouchControls && <TouchController />}
         { !this.props.hideButtons &&
-          <div style={ {marginBottom: '5px'} }>
+          <div style={ {marginBottom: '5px', zIndex: 1, position: "relative"} }>
             <Button disabled={isPreloading ||  isPlaying} icon='play' content='play' onClick={() => this.handlePlay()}/>
             <Button disabled={isPreloading || !isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()}/>
             { this.state.showTouchControls && <Button disabled={isPreloading} icon='game' content='Hide Screen Controller' onClick={() => this.handleTouchControls()}/> }

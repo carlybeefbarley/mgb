@@ -33,7 +33,7 @@ const HomeMeetFriendsColumn = () => (
     </List>
     <br />
     <QLink to={`/users`}>
-      <Button color='black' size='large' content='See more creators' />
+      <Button color='teal' size='large' content='See more creators' />
     </QLink>
   </Grid.Column>
 )

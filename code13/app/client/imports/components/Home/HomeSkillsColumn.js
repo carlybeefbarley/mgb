@@ -32,8 +32,8 @@ const HomeSkillsColumn = (props) => (
       }
     </List>
     <br />
-    <QLink to={`/getstarted`}>
-      <Button color='teal' size='large' content={props.userId ? 'Set skill goals' : 'Build a game' } />
+    <QLink to={`/getstarted/skills`}>
+      <Button color='teal' size='large' content='Set skill goals' />
     </QLink>
   </Grid.Column>
 )

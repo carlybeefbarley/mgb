@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import SFXR from '../lib/sfxr.js';
 import WaveSurfer from '../lib/WaveSurfer.js'
 import lamejs from '../lib/lame.all.js'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 SFXR.Params.prototype.query = function () {
   let result = "";
@@ -56,7 +57,8 @@ export default class CreateSound extends React.Component {
 		this.resetParams();
 	  this.PARAMS[fx]();
 	  this.setState({ paramsUpdated: new Date().getTime() })
-	  this.regenerateSound();
+	  this.regenerateSound()
+    joyrideCompleteTag('mgbjr-CT-editSound-createSound-'+fx+'-generate')
 	}
 
 	regenerateSound(){
@@ -110,9 +112,9 @@ export default class CreateSound extends React.Component {
 
 	render(){
 		let effects = 'pickupCoin,laserShoot,explosion,powerUp,hitHurt,jump,blipSelect,random,tone'.split(',');
-		let effectButtons = _.map(effects, (effect) => { 
+		let effectButtons = _.map(effects, (effect) => {
       return (
-      	<div key={"effect_"+effect}>
+      	<div id={"mgbjr-editSound-createSound-button-"+effect} key={"effect_"+effect}>
 	      	<button className="ui fluid button small" onClick={this.gen.bind(this, effect)}>
 					  {effect}
 					</button>
@@ -186,7 +188,7 @@ export default class CreateSound extends React.Component {
 						<button className="ui icon button massive" title="Play" onClick={this.regenerateSound.bind(this)}>
 						  <i className="play icon"></i>
 						</button>
-						<button className="ui icon button massive" title="Save sound" onClick={this.saveSound.bind(this)}>
+						<button id="mgbjr-editSound-createSound-save" className="ui icon button massive" title="Save sound" onClick={this.saveSound.bind(this)}>
 						  <i className="save icon"></i>
 						</button>
 						<button className="ui icon button massive" title="Reset sliders" onClick={this.resetSliders.bind(this)}>

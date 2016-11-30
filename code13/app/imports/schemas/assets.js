@@ -454,6 +454,9 @@ if (Meteor.isServer)
       if (!srcAsset)
         throw new Meteor.Error(404, "Source Asset Not Found")
 
+      const username = Meteor.user().profile.name
+      console.log(`  [Azzets.fork]  "${srcAsset.name}... Owner=${username}`)
+
       const now = new Date()
       const dstAsset = _.omit( srcAsset, '_id' )
       dstAsset.updatedAt = now
@@ -470,7 +473,6 @@ if (Meteor.isServer)
         forkDate:         now
       })
 
-      const username = Meteor.user().profile.name
 
       if (opts.ownerId && opts.dn_ownerName) {
         // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
@@ -491,24 +493,17 @@ if (Meteor.isServer)
         if (!opts.projectNames || opts.projectNames.length === 0 || opts.projectNames.length > 1 || opts.projectNames[0] === "")
           throw new Meteor.Error(401, "Must set exactly one ProjectName when forking an Asset into another User's context")
 
-        if (Meteor.isServer)
-        {
-          console.log(`TODO #insecure# check that user '${username}' is really part of project '${dstAsset.projectNames[0]}' `)
-          // CHECK THEY REALLY CAN DO THIS.  
-          // Is this.userId in Project.memberList for   project.ownerName === data.ownerName && project.name === data.projectNames[0]
-          // ALSO CHECK that USERNAME AND USERID MATCH
-        } 
+        console.log(`TODO #insecure# check that user '${username}' is really part of project '${dstAsset.projectNames[0]}' `)
+        // CHECK THEY REALLY CAN DO THIS.  
+        // Is this.userId in Project.memberList for   project.ownerName === data.ownerName && project.name === data.projectNames[0]
+        // ALSO CHECK that USERNAME AND USERID MATCH
       }
-
 
       const newDocId = Azzets.insert(dstAsset)
 
-      if (Meteor.isServer)
-      {
-        console.log(`  [Azzets.fork]  "${dstAsset.name}"  #${newDocId}  Kind=${dstAsset.kind}  Owner=${username}`)
-        Meteor.call('Slack.Assets.create', username, dstAsset.kind, dstAsset.name, newDocId)
-      }
-
+      console.log(`  [Azzets.fork]  "${dstAsset.name}"  #${newDocId}  Kind=${dstAsset.kind}  Owner=${username}`)
+      Meteor.call('Slack.Assets.create', username, dstAsset.kind, dstAsset.name, newDocId)
+ 
       // TODO - update parent asset
       Azzets.update( { _id: srcId }, { $push: { forkChildren: { assetId: newDocId, forkDate: now, forkedByUserId: this.userId, forkedByUserName: username }}})
 

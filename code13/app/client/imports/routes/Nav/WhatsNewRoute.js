@@ -77,7 +77,6 @@ export default WhatsNewRoute = React.createClass({
         using the <i className="chat icon" />chat panel on the right hand side of the screen
       </p>
       <List className='bulleted'>
-        <List.Item>Touch-drag support for phones/tablets is <QLink to="/roadmap">coming soon</QLink>. However, Map editing is tricky on phones/tablets until that is implemented</List.Item>
         <List.Item>We are testing with Chrome, Firefox and Safari, but for best results now, use <a href='https://www.google.com/chrome/'> Google's Chrome browser</a> on Windows/Mac/Linux.</List.Item>
       </List>
       <Message warning icon>

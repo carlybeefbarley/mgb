@@ -24,6 +24,46 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Tue Nov 29 2016 14:30:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2183'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'game.actorMap',
+          'type': 'improvement',
+          'changeName': 'ActorMap-based games now also support WASD',
+          'changeSummary': 'Now supporting multitouch gestures on the map edit surface',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.fork',
+          'type': 'improvement',
+          'changeName': 'Asset forking progress indicator',
+          'changeSummary': 'The UI now indicates when an asset fork is pending (icon shown orange, action clarified as pending)',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Improved code editor compatibility on Tablets',
+          'changeSummary': 'The code-editing UI (and also the tutorial maker) now have improved support for editing on tablet devices',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+
+    {
       'timestamp': 'Mon Nov 28 2016 17:30:00 GMT-0800 (PDT)',
 
       'id': {

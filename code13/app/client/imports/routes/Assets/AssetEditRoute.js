@@ -82,6 +82,12 @@ export default AssetEditRoute = React.createClass({
     showToast:        PropTypes.func         // For user feedback
   },
 
+  getInitialState: function () {
+    return {
+      isForkPending:  false
+    }
+  },
+
   contextTypes: {
     urlLocation: React.PropTypes.object
   },
@@ -120,7 +126,7 @@ export default AssetEditRoute = React.createClass({
       //console.log("Clearing TICK timer")
       Meteor.clearInterval(this.m_tickIntervalFunctionHandle)
       this.m_tickIntervalFunctionHandle = null
-      this._attemptToSendAnyDeferredChanges({ forceResend: true })
+      this._attemptToSendAnyDeferredChanges( { forceResend: true } )
     }
   },
 
@@ -188,9 +194,19 @@ export default AssetEditRoute = React.createClass({
   },
 
 
+  doForkAsset: function() {
+    if (!this.state.isForkPending) {
+      const { asset } = this.data
+      Meteor.call("Azzets.fork", asset._id, this.forkResultCallback)
+      this.setState( { isForkPending: true } )
+    }
+  },
+
+
   // This result object will come from Meteor.call("Azzets.fork")
   forkResultCallback: function (error, result) {
     const { showToast } = this.props
+    
     if (error)
       showToast(`Unable to create a forked copy of this asset: '${error.toString()}'`, 'error')
     else {
@@ -198,6 +214,8 @@ export default AssetEditRoute = React.createClass({
       logActivity("asset.fork.from", "Forked new asset from this asset", null, this.data.asset )
       logActivity("asset.fork.to", "Forked this new asset from another asset", null, result.newAssetNoC2 )
     }
+
+    this.setState( { isForkPending: false } )
   },
 
   render: function() {
@@ -205,6 +223,7 @@ export default AssetEditRoute = React.createClass({
       return <Spinner />
 
     const { params, currUser, currUserProjects } = this.props
+    const { isForkPending } = this.state
 
     let asset = Object.assign( {}, this.data.asset )        // One Asset provided via getMeteorData()
     if (!this.data.asset)
@@ -267,7 +286,7 @@ export default AssetEditRoute = React.createClass({
           &ensp;
           <AssetUrlGenerator showBordered={true} asset={asset} />
           { currUserId && 
-            <AssetForkGenerator showBordered={true} asset={asset} forkResultCallback={this.forkResultCallback} />
+            <AssetForkGenerator showBordered={true} asset={asset} doForkAsset={this.doForkAsset} isForkPending={isForkPending}/>
           }
           <StableState 
             isStable={asset.isCompleted} 

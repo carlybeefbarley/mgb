@@ -7,6 +7,7 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 import { addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import moment from 'moment'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
@@ -626,6 +627,9 @@ export default class EditCode extends React.Component {
   /** Just show the Clean Sheet helpers if there is no code */
   srcUpdate_CleanSheetCase() {
     this.setState({documentIsEmpty: this._currentCodemirrorValue.length === 0})
+    if(this._currentCodemirrorValue.length === 0){
+      joyrideCompleteTag('mgbjr-CT-EditCode-editor-clean')
+    }
   }
 
 
@@ -1321,6 +1325,8 @@ export default class EditCode extends React.Component {
     this._currentCodemirrorValue = newValue
     let newC2 = {src: newValue}
     this.handleContentChange(newC2, null, `Template code: ${item.label}`)
+    const label = item.label.replace(/ /g, '-')
+    joyrideCompleteTag('mgbjr-CT-EditCode-templates-'+label+'-invoke')
   }
 
   // Note that either c2 or thumbnail could be null/undefined.
@@ -1548,7 +1554,8 @@ export default class EditCode extends React.Component {
       return null
 
     const templateCodeChoices = templateCode.map(item => {
-      return <a className="item" key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
+      const label = item.label.replace(/ /g, '-')
+      return <a className="item" id={"mgbjr-EditCode-template-"+label} key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
         <div className="ui green horizontal label">{item.label}</div>
         {item.description}
       </a>

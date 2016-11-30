@@ -1,0 +1,79 @@
+#controller{
+    font-family: "Icons";
+    font-size: 93.5vw;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 0.374em;
+    max-height: 35vh;
+    user-select: none;
+    opacity: 0.4;
+}
+
+#controller .button {
+    position: absolute;
+    width: 0.15em;
+    height: 0.15em;
+    background-color: black;
+    opacity: 1;
+    border-radius: 0.05em;
+    cursor: pointer;
+}
+#controller .button span{
+    font-family: fantasy;
+    font-size: 0.1em;
+    -webkit-text-stroke: 5px blue;
+    font-weight: bold;
+    text-shadow: 3px 3px black;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    line-height: 1.1em;
+    left: 0.45em;
+    pointer-events: none;
+    color: white;
+}
+#controller .button.up{
+    top: -0.11em;
+    left: 0.21em;
+}
+#controller .button.up span{
+    margin: 0.05em 0.04em;
+}
+
+#controller .button.down{
+    top: 0.12em;
+    left: 0.21em;
+}
+#controller .button.down span{
+    margin: 0.05em 0.04em;
+}
+#controller .button.left{
+    top: 0.0051em;
+    left: 0.085em;
+}
+#controller .button.left span {
+    margin: 0.09em -0.23em;
+}
+#controller .button.right{
+    top: 0.0051em;
+    left: 0.3361em;
+}
+#controller .button.right span{
+    margin: 0.09em -0.2em;
+}
+#controller .button.shoot {
+    top: 0.0777em;
+    left: 0.639em;
+}
+#controller .button.shoot span{
+    margin: 0.21em 0.08em;
+}
+#controller .button.melee {
+    top: -0.0665em;
+    left: 0.783em;
+}
+#controller .button.melee span {
+    margin: 0.2em -0.07em;
+}

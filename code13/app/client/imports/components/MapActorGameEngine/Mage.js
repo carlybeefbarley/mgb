@@ -10,6 +10,8 @@ import MageInventoryDialog from './MageInventoryDialog'
 
 import { Message, Button } from 'semantic-ui-react'
 
+import TouchController from './TouchController'
+
 const _overlayStyle = { 
   position:   'absolute', 
   left:       '80px', 
@@ -423,7 +425,10 @@ debugger  // TODO - stop game, no map.
       }
     }
   }
-  
+
+  handleTouchControls(){
+    this.setState({showTouchControls: !this.state.showTouchControls})
+  }
 
   render() {
     const { isPreloadingStr, mapLoadError, activeMap, isPlaying, activeNpcDialog, isInventoryShowing } = this.state
@@ -434,14 +439,19 @@ debugger  // TODO - stop game, no map.
 
     return (
       <div>
+        { this.state.showTouchControls && <TouchController />}
         { !this.props.hideButtons &&
           <div style={ {marginBottom: '5px'} }>
             <Button disabled={isPreloading ||  isPlaying} icon='play' content='play' onClick={() => this.handlePlay()}/>
             <Button disabled={isPreloading || !isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()}/>
+            { this.state.showTouchControls && <Button disabled={isPreloading} icon='game' content='Hide Screen Controller' onClick={() => this.handleTouchControls()}/> }
+            { !this.state.showTouchControls && <Button disabled={isPreloading} icon='game' content='Show Screen Controller' onClick={() => this.handleTouchControls()}/> }
+
           </div>
         }
         { isPreloading && <Preloader msg={isPreloadingStr} /> }
         { mapLoadError && <MapLoadFailed err={mapLoadError} /> }
+
         { isGameShowing &&
           <div> 
             <span ref={ c => { this._statusLine0 = c } }></span>

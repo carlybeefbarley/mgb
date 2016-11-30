@@ -24,12 +24,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Tue Nov 29 2016 14:30:00 GMT-0800 (PDT)',
+      'timestamp': 'Tue Nov 29 2016 17:20:00 GMT-0800 (PDT)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2183'
+        'iteration': '2188'
       },
 
       'releaseManagement': {
@@ -38,10 +38,17 @@ const mgbReleaseInfo = {
 
       'changes': [
         {
-          'featureTag': 'game.actorMap',
+          'featureTag': 'asset.actorMap',
           'type': 'improvement',
           'changeName': 'ActorMap-based games now also support WASD',
           'changeSummary': 'Now supporting multitouch gestures on the map edit surface',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'game.actorMap',
+          'type': 'improvement',
+          'changeName': 'ActorMap-based games now also support touch devices',
+          'changeSummary': 'There is a new option to show/hide a touch controller overlay for playing actorMap games',
           'otherUrls': [ ]
         },
         {

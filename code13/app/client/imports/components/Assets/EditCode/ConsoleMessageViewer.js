@@ -62,7 +62,7 @@ export default ConsoleMessageViewer = React.createClass({
       return null
 
     return (
-        <div className="ui grey segment" style={{backgroundColor: "rgba(0,0,0,0.03)", maxHeight: "200px", overflow: "scroll", clear:"both"}}>
+        <div id="#mgbjr-EditCode-console" className="ui grey segment" style={{backgroundColor: "rgba(0,0,0,0.03)", maxHeight: "200px", overflow: "scroll", clear:"both"}}>
           <div className="header">
             Latest Console output from program
             { messages.length > 0 && clearConsoleHandler &&

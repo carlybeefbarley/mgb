@@ -1635,7 +1635,7 @@ export default class EditCode extends React.Component {
 
               { !docEmpty && asset.kind === 'code' && 
                 // Current Line/Selection helper (header)
-                <div className="active title">
+                <div id="mgbjr-EditCode-codeMentor" className="active title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Mentor
                   </span>
@@ -1767,7 +1767,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
               { this.state.astReady && asset.kind === 'code' && 
-                <div className="title">
+                <div id="mgbjr-EditCode-codeFlower" className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />CodeFlower
                   </span>

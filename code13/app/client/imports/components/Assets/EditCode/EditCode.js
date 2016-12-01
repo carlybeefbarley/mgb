@@ -1530,7 +1530,7 @@ export default class EditCode extends React.Component {
       })
       config.buttons.push( {
         name:  'toggleBundling',
-        label: 'Bundle code',
+        label: 'Auto Bundle code',
         icon:  'travel',
         tooltip: 'Before saving will merge all imports into single file',
         disabled: false,

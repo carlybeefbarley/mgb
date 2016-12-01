@@ -627,8 +627,6 @@ main = function(){
       }
 
       allInOneBundle += "\n" + "}})(); "
-      cb(allInOneBundle)
-      return
       // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
       const worker = new Worker("/lib/BabelWorker.js")
       worker.onmessage = (e) => {

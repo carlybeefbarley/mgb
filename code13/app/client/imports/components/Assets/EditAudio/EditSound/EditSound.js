@@ -7,6 +7,7 @@ import SoundStock from './SoundStock.js';
 import CreateSound from './CreateSound.js';
 import WaveSurfer from '../lib/WaveSurfer.js';
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 export default class EditSound extends React.Component {
 
@@ -75,6 +76,7 @@ export default class EditSound extends React.Component {
 		$(this.importSoundPopup).modal('hide')
 		$(this.createSoundPopup).modal('hide')
 		$(this.soundStockPopup).modal('hide')
+		joyrideCompleteTag('mgbjr-CT-editSound-sound-imported')
 	}
 
 	openImportPopup(){
@@ -86,7 +88,8 @@ export default class EditSound extends React.Component {
 	}
 
 	openCreateSoundPopup(){
-		$(this.createSoundPopup).modal('show');
+		$(this.createSoundPopup).modal('show')
+		joyrideCompleteTag('mgbjr-CT-editSound-createSound-invoke')
 	}
 
 	togglePlaySound(){
@@ -136,6 +139,7 @@ export default class EditSound extends React.Component {
 			{/*** button row ***/}
 					<div className="row">
 						<button className="ui small icon button"
+							id="mgbjr-EditSound-importSound"
 							title="Import sound from your computer"
 							onClick={this.openImportPopup.bind(this)}>
 						  <i className="add square icon"></i> Import
@@ -146,6 +150,7 @@ export default class EditSound extends React.Component {
 						  <i className="folder icon"></i> Stock [not ready]
 						</button>
 						<button className="ui small icon button"
+							id="mgbjr-EditSound-createSound"
 							title="Create sound with effect generator"
 							onClick={this.openCreateSoundPopup.bind(this)}>
 						  <i className="options icon"></i> Create
@@ -155,7 +160,10 @@ export default class EditSound extends React.Component {
 					<div className="content">
 						<div id="soundPlayer"></div>
 						<div className="row">
-							<button className="ui icon button small" onClick={this.togglePlaySound.bind(this)}>
+							<button 
+								id="mgbjr-EditSound-playSound"
+								className="ui icon button small" 
+								onClick={this.togglePlaySound.bind(this)}>
 							  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>
 							</button>
 							<button className="ui icon button small" onClick={this.stopSound.bind(this)}>

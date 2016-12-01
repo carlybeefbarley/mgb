@@ -23,6 +23,31 @@ const mgbReleaseInfo = {
 */
 
 
+
+    {
+      'timestamp': 'Wed Nov 30 2016 14:00:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2194'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'improvement',
+          'changeName': 'Additional ids and completion tags for tutorials',
+          'changeSummary': 'We added some ids and completion tags that can be used in tutorials',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Tue Nov 29 2016 17:20:00 GMT-0800 (PDT)',
 

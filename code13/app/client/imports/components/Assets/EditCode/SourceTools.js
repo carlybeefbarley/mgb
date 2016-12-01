@@ -71,6 +71,8 @@ export default class SourceTools {
   get inProgress() {
     return this._inProgress
   }
+
+  // TODO(stauzs): this is like typical Promise use case - refactor to promises
   get isDestroyed() {
     if (this._isDestroyed) {
       console.log("destroyed!!!")
@@ -232,23 +234,27 @@ export default class SourceTools {
     this.collectedSources.length = 0;
   }
 
-  collectScript(name, code, cb, localName = name, force = false) {
+  collectScript(name, source, cb, localName = name, force = false) {
     if (this.isDestroyed) return
     // skip transpiled and compiled and empty scripts
-    if (!name || !code || (!force && this.isAlreadyTranspiled(name)) ) {
+    if (!name || !source.code || (!force && this.isAlreadyTranspiled(name)) ) {
       cb && cb()
       return;
     }
 
     const lib = SourceTools.getKnowLib(name)
-    const useGlobal = lib && lib.useGlobal
-    this.collectSource({name, code, useGlobal, localName})
+    source.useGlobal = lib && lib.useGlobal
+    source.name = name
+    source.localName = localName
+    source.isExternalFile = SourceTools.isExternalFile(source.url)
+
+    this.collectSource(source)
     // MGB assets will have cache.. remote won't
-    if (this.transpileCache[name]) {
+    if (!source.isExternalFile) {
       this.addDefsOrFile(name, this.transpileCache[name].src, true)
     }
     else {
-      this.addDefsOrFile(name, code)
+      this.addDefsOrFile(name, source.code)
     }
 
     cb && cb()
@@ -366,7 +372,7 @@ export default class SourceTools {
           this.loadFromCache(imp.src, load, imp.name)
         }
         else {
-          this.collectScript(filename, output.code, cb, null, force)
+          this.collectScript(filename, {code: output.code, url: filename}, cb, null, force)
           delete this.pendingChanges[filename]
         }
       }
@@ -438,12 +444,12 @@ export default class SourceTools {
       return
     }
     // load external file and cache - so we can skip loading next time
-    SourceTools.loadImport(url, (src, error) => {
+    SourceTools.loadImport(url, (source, error) => {
       if(error){
         this.setError(error)
       }
-      this.cache[urlFinalPart] = src
-      this.collectScript(urlFinalPart, src, cb, localName)
+      this.cache[urlFinalPart] = source
+      this.collectScript(urlFinalPart, source, cb, localName)
     }, urlFinalPart)
   }
 
@@ -517,7 +523,132 @@ export default class SourceTools {
   hasChanged(){
     return this._hasSourceChanged
   }
-  createBundle(cb) {
+
+  // includes only local MGB code in the bundle - leave CDN untouched
+  createBundle(cb){
+    if (this.isDestroyed) return
+    if (!this._hasSourceChanged) {
+      cb(this.cachedBundle, true)
+      return
+    }
+    this.collectSources((sources) => {
+      // only phaser is global atm
+      const externalGlobal = []
+      const externalLocal = []
+      for (let i in sources) {
+        const source = sources[i]
+        if (source.isExternalFile) {
+          const partial = {url: source.url, localName: source.localName, name: source.name}
+          source.useGlobal
+            ? externalGlobal.push(partial)
+            : externalLocal.push(partial)
+        }
+      }
+
+      let allInOneBundle =
+`
+(function(){
+
+var imports = {};
+window.require = function(key){
+  if(imports[key] && imports[key] !== true) {
+    return imports[key];
+  }
+  console.log("guessing name:", key)
+  var name = key.split("@").shift()
+  if(imports[name] && imports[name] !== true) {
+    return imports[name]
+  }
+  name = name.split(":").pop();
+  if(imports[name] && imports[name] !== true) {
+    return imports[name]
+  }
+  return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])
+};
+
+var main;
+var globalLibs = JSON.parse('${JSON.stringify(externalGlobal)}')
+var localLibs = JSON.parse('${JSON.stringify(externalLocal)}')
+
+var loadScript = function(src, cb){
+  var s = document.createElement("script")
+  s.onload = function(){
+    window.setTimeout(cb, 0)
+  }
+  s.src = src
+  document.head.appendChild(s)
+}
+
+var loadLocalLibs = function(){
+  window.module = {exports: {}};window.exports = window.module.exports;
+  if(!localLibs.length){
+    window.setTimeout(main, 0)
+    return
+  }
+  var lib = localLibs.shift()
+  loadScript(lib.url, function(){
+    imports[lib.name] = window.module.exports
+    loadLocalLibs()
+  })
+}
+
+var loadGlobalLibs = function(){
+  if(!globalLibs.length){
+    window.setTimeout(loadLocalLibs, 0)
+    return
+  }
+  var lib = globalLibs.shift()
+  loadScript(lib.url, function(){
+    if(window[lib.name]){
+      imports[lib.name] = window[lib.name]
+    }
+    loadGlobalLibs()
+  })
+}
+loadGlobalLibs(globalLibs)
+
+main = function(){
+`
+
+      for (let i in sources) {
+        const source = sources[i]
+        if(source.isExternalFile){
+          continue
+        }
+
+        const key = source.name.split("@").shift();
+        allInOneBundle += "window.module = {exports: {}};window.exports = window.module.exports;\n" +
+          source.code + ";\n" +
+          'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)';
+
+        if (source.name) {
+          allInOneBundle += "\n" + 'imports["' + source.name + '"] = window.module.exports;'
+        }
+      }
+
+      allInOneBundle += "\n" + "}})(); "
+      cb(allInOneBundle)
+      return
+      // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
+      const worker = new Worker("/lib/BabelWorker.js")
+      worker.onmessage = (e) => {
+        cb(e.data.code)
+        worker.terminate()
+      }
+      worker.postMessage(["bundled_" + this.mainJS, allInOneBundle, {
+        compact: true,
+        minified: true,
+        comments: false,
+        ast: false,
+        retainLines: false
+      }])
+      this.cachedBundle = allInOneBundle
+      this._hasSourceChanged = false
+    })
+  }
+
+  // includes all files in the on big bundle file
+  createBundle_commonJS(cb) {
     if (this.isDestroyed) return
     if (!this._hasSourceChanged) {
       cb(this.cachedBundle, true)
@@ -650,7 +781,7 @@ export default class SourceTools {
     }
 
     // atm server will try to generate script
-    var httpRequest = new XMLHttpRequest();
+    const httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = () => {
       if (httpRequest.readyState !== XMLHttpRequest.DONE) {
         return;
@@ -658,15 +789,15 @@ export default class SourceTools {
       if (httpRequest.status !== 200) {
         //console.error("Failed to load script: [" + url + "]", httpRequest.status)
         SourceTools.cached404[url] = httpRequest.status
-        cb("", {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
+        cb({code: "", url}, {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
         return;
       }
-      var src = httpRequest.responseText
+      const src = httpRequest.responseText
       SourceTools.tmpCache[url] = src
       window.setTimeout(() => {
         delete SourceTools.tmpCache[url]
       }, INVALIDATE_CACHE_TIMEOUT)
-      cb(src)
+      cb({code: src, url})
     }
     httpRequest.open('GET', url, true);
     httpRequest.send(null);

@@ -1,6 +1,6 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
-import makeBundle from '/imports/helpers/codeBundle'
+import makeHtmlBundle from '/imports/helpers/codeBundle'
 
 
 const _retval404 = { statusCode: 404, body: {} }   // body required to correctly show 404 not found header
@@ -38,7 +38,7 @@ function _makeBundle(asset){
   return {
     statusCode: 200,
     headers: {'Content-Type': "text/html", 'file-name': asset.name},
-    body: makeBundle(asset)
+    body: makeHtmlBundle(asset)
   }
 }
 
@@ -56,11 +56,11 @@ RestApi.addRoute('asset/code/:id', { authRequired: false }, {
 })
 
 
-/* not used anymore */
-RestApi.addRoute('asset/code/:owner/:name/:referrer', {authRequired: false}, {
+/* was used in the editCode to locate scripts with deep nesting - not used anymore - but might be one day */
+/* RestApi.addRoute('asset/code/:owner/:name/:referrer', {authRequired: false}, {
   get: function() {
     const referrer = Azzets.findOne(this.urlParams.referrer);
-    const asset = Azzets.findOne({owner: referrer.owner, name: this.urlParams.name})
+    const asset = Azzets.findOne({owner: referrer.owner, name: this.urlParams.name, isDeleted: false})
     if (asset) {
       return {
         statusCode: 200,
@@ -73,23 +73,14 @@ RestApi.addRoute('asset/code/:owner/:name/:referrer', {authRequired: false}, {
       return _retval404
   }
 })
+*/
 
 // TODO: permission check ?
 // TODO: cleanup - make single function that requires assets ? DRY?
-// used in codeEdit - import X from '/owner/codeName' - referrer is added automatically
+// used in codeEdit - import X from '/owner/codeName'
 RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
   get: function(){
-
-    // referrer is not used here
-    /*
-    const owner = Users.findOne({"profile.name": this.urlParams.owner})
-    if(!owner){
-      return {statusCode: 404}
-    }
-    */
-
-    const asset = Azzets.findOne({dn_ownerName: this.urlParams.owner, name: this.urlParams.name})
-
+    const asset = Azzets.findOne({dn_ownerName: this.urlParams.owner, name: this.urlParams.name, isDeleted: false})
     if (asset) {
       return {
         statusCode: 200,
@@ -112,7 +103,7 @@ RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
 
 RestApi.addRoute('asset/code/bundle/u/:username/:codename', { authRequired: false }, {
   get: function () {
-    const asset = Azzets.findOne( { dn_ownerName: this.urlParams.username, name: this.urlParams.codename } )
+    const asset = Azzets.findOne( { dn_ownerName: this.urlParams.username, name: this.urlParams.codename, isDeleted: false } )
     return _makeBundle(asset)
   }
 })

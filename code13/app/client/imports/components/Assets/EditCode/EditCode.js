@@ -1287,7 +1287,7 @@ export default class EditCode extends React.Component {
       this.tools.createBundle((bundle, notChanged) => {
         if(!notChanged){
           const value = this.codeMirror.getValue()
-          const newC2 = {src: value, bundle: bundle}
+          const newC2 = {src: value, bundle: bundle, needsBundle: this.props.asset.content2.needsBundle}
           // make sure we have bundle before every save
           this.props.handleContentChange(newC2, null, `Store code bundle`)
         }
@@ -1322,12 +1322,13 @@ export default class EditCode extends React.Component {
       this.props.handleContentChange(c2, thumbnail, reason)
       return
     }
+    c2.needsBundle = this.props.asset.content2.needsBundle
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {
       window.clearTimeout(this.changeTimeout)
     }
     this.changeTimeoutFn = () => {
-      if(this.props.asset.kind == "tutorial") {
+      if(this.props.asset.kind == "tutorial" || !this.props.asset.content2.needsBundle) {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
@@ -1508,10 +1509,26 @@ export default class EditCode extends React.Component {
         level:    1
         // shortcut: 'Ctrl+T'
       })
+      config.buttons.push( {
+        name:  'toggleBundling',
+        label: 'Bundle code',
+        icon:  'travel',
+        tooltip: 'Before saving will merge all imports into single file',
+        disabled: false,
+        active: this.props.asset.content2.needsBundle,
+        level:    3,
+        shortcut: 'Ctrl+Alt+Shift+F'
+      })
 
     }
     
     return config
+  }
+
+  toggleBundling(){
+    this.props.asset.content2.needsBundle = !this.props.asset.content2.needsBundle
+    this.handleContentChange(this.props.asset.content2, null, "enableBundling")
+    this.setState({needsBundle: this.props.asset.content2.needsBundle})
   }
 
   tryTutorial() {

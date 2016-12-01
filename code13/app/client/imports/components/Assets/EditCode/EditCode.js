@@ -1341,12 +1341,12 @@ export default class EditCode extends React.Component {
         return
       }
       this.doFullUpdateOnContentChange((errors) => {
-        // it's not possible to create useful bundle with errors in code - just save
-        if(errors || !this.props.asset.content2.needsBundle){
+        // it's not possible to create useful bundle with errors in the code - just save
+        if(errors.length || !this.props.asset.content2.needsBundle){
           this.props.handleContentChange(c2, thumbnail, reason)
         }
         else{
-          // createBundle is calling handleContentChange internally
+          // createBundle is calling handleContentChangeAsync after completion
           this.createBundle()
         }
       })
@@ -1367,14 +1367,15 @@ export default class EditCode extends React.Component {
 
   }
   // this is very heavy function - use with care
+  // callback gets one argument - array with critical errors
   doFullUpdateOnContentChange( cb ) {
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
     this.codeMirror.operation(() => {
       const val = this.codeMirror.getValue()
       this.runJSHintWorker(val, (errors) => {
-        const critical = errors.find(e => e.code.substr(0, 1) === "E")
-        this.hasErrors = !critical
+        const critical = errors.filter(e => e.code.substr(0, 1) === "E")
+        this.hasErrors = !!critical.length
         if (this.tools) {
           this.tools.collectAndTranspile(val, this.props.asset.name, () => {
             this.setState({
@@ -1382,12 +1383,11 @@ export default class EditCode extends React.Component {
             })
             // this will force to update mentor info - even if cursor wasn't moving
             this.codeMirrorOnCursorActivity()
-            cb && cb(errors)
+            cb && cb(critical)
           })
         }
         else{
-          this.hasErrors = true
-          cb && cb(errors)
+          cb && cb(critical)
         }
       })
 

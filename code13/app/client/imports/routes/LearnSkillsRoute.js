@@ -29,7 +29,7 @@ const descStyle = {
 
 const LearnSkillsRoute = () => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
-    <Grid stackable style={{marginTop: '3.5em'}}>
+    <Grid stackable>
 
       <Grid.Row >
         <Grid.Column>

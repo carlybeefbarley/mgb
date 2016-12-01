@@ -4,8 +4,6 @@ import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
-const _notReallyWorkingYet = "These don't do anything yet.. but soon will! sorry for the psych!"
-
 const cardStyle = {
   color: "#2e2e2e"
 }
@@ -33,7 +31,7 @@ const gameItems = [
 
 const LearnGamesRoute = () => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
-    <Grid stackable style={{marginTop: '3.5em'}} title={_notReallyWorkingYet}>
+    <Grid stackable>
 
       <Grid.Row >
         <Grid.Column>

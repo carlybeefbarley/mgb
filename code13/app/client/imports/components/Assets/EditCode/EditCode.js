@@ -117,8 +117,6 @@ export default class EditCode extends React.Component {
     // assume that new code will have errors - it will be reset on first error checking
     this.hasErrors = true
 
-    this.preventRunUntilSourcesCollected = true
-
     // is this component is still active?
     this.isActive = true
   }
@@ -1223,25 +1221,14 @@ export default class EditCode extends React.Component {
 
     this.setState({isPlaying: true})
 
-
-    const doRun = () => {
-      // wait until code is collected for the first time - usually takes ~0-3 seconds after mount
-      if(this.preventRunUntilSourcesCollected){
-        window.setTimeout(doRun, 100)
-        return
-      }
-      this.tools.collectSources((collectedSources) => {
-        this._postMessageToIFrame({
-          mgbCommand: 'startRun',
-          sourcesToRun: collectedSources,
-          asset_id: asset._id,
-          filename: asset.name || ""
-        })
+    this.tools.collectSources((collectedSources) => {
+      this._postMessageToIFrame({
+        mgbCommand: 'startRun',
+        sourcesToRun: collectedSources,
+        asset_id: asset._id,
+        filename: asset.name || ""
       })
-    }
-    doRun()
-
-
+    })
 
 
     // Make sure that it's really visible.. and also auto-close accordion above so there's space.
@@ -1388,7 +1375,6 @@ export default class EditCode extends React.Component {
         this.hasErrors = !!critical.length
         if (this.tools) {
           this.tools.collectAndTranspile(val, this.props.asset.name, () => {
-            this.preventRunUntilSourcesCollected = false
             this.setState({
               astReady: true
             })

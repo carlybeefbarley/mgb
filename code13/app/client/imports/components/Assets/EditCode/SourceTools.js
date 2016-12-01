@@ -106,7 +106,6 @@ export default class SourceTools {
   }
   setError(err){
     this.errors[err.code] = err
-    const errors = this.getErrors()
     this.errorCBs.forEach((c) => {
       c(err)
     })
@@ -159,6 +158,13 @@ export default class SourceTools {
   // calls callback with collected sources
   collectSources(cb) {
     if (this.isDestroyed) return
+    // wait for first action...
+    if(this._firstTime){
+      window.setTimeout(() => {
+        this.collectSources(cb)
+      }, 100)
+      return
+    }
     // make sure we are collecting latest sources
     this.updateNow(() => {
       cb(this.collectedSources)

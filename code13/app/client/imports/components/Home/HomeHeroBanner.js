@@ -17,7 +17,7 @@ const HomeHeroBanner = (props) => (
       <Grid.Column>
         <Image size='small' floated='right' src="/images/mascots/team.png" style={{width: "480px"}} />
         <Header as='h1' size='huge' style={{fontSize: '3em', marginBottom: '0.5em'}}>
-          My Game Builder
+          <span style={{ whiteSpace: 'nowrap'}}>My Game Builder</span>
           <em className="sub header" style={{fontSize: '0.5em'}}>Make Games. Make Friends. Have Fun.</em>
         </Header>
       { props.userId ?

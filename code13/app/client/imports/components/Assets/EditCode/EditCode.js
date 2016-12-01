@@ -1536,7 +1536,7 @@ export default class EditCode extends React.Component {
         disabled: false,
         active: this.props.asset.content2.needsBundle,
         level:    3,
-        shortcut: 'Ctrl+Alt+Shift+F'
+        shortcut: 'Ctrl+Alt+Shift+B'
       })
 
     }

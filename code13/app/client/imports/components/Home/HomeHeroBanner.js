@@ -18,7 +18,7 @@ const HomeHeroBanner = (props) => (
         <Image size='small' floated='right' src="/images/mascots/team.png" style={{width: "480px"}} />
         <Header as='h1' size='huge' style={{fontSize: '3em', marginBottom: '0.5em'}}>
           My Game Builder
-          <em className="sub header" style={{fontSize: '0.5em'}}>The Online Game-builder</em>
+          <em className="sub header" style={{fontSize: '0.5em'}}>Make Games. Make Friends. Have Fun.</em>
         </Header>
       { props.userId ?
         <p style={{fontSize: '1.5em', maxWidth: '450px'}}>
@@ -37,7 +37,7 @@ const HomeHeroBanner = (props) => (
         </p>
         :
         <p style={{ fontSize: '1.5em', maxWidth: '450px' }}>
-          Creating a game is now an MMO:<br />Make, watch, chat and play games with friends so you learn together.
+          Learn coding, design, team and biz skills - by making original games with friends
           <br />
           <QLink to={`/getstarted`}>
             <Button color='teal' size='huge' style={{ marginTop: '1.5em' }} content='Get started' />

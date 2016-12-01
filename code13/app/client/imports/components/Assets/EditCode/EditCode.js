@@ -1795,7 +1795,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
               { this.state.astReady && asset.kind === 'code' && 
-                <div className="content active">
+                <div className='content'>
                   {/* this.props.canEdit && this.state.astReady &&
                    <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
                    title="This will make abstract image of your code">

@@ -25,6 +25,45 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Thu Dec 01 2016 01:20:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2205'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Hide Info Pane buttons for unexpanded sections',
+          'changeSummary': 'We now only show the buttons when the sections (run code, codeflower etc) are expanded.' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.learn',
+          'type': 'improvement',
+          'changeName': 'Updated structure, UI and URLs for Learn',
+          'changeSummary': 'We changed the learn pages to be on the /learn/ path instead of /getstarted.. and there\'s now a learn/getstarted/ page for basic site navigation and action. There is also now a breadcrumb navigator for the learn/skill pages. We also tweaked various parts of the home and learn page text and icons' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'bugfix',
+          'changeName': 'Bugfix for incomplete bundling',
+          'changeSummary': 'Fixed a bug where changing asset while background-bundling some code would cause the data in the subsequently loaded asset to get nuked (recoverable with ctrl-z). Fixed it. phew!',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
       'timestamp': 'Wed Nov 30 2016 14:00:00 GMT-0800 (PDT)',
 
       'id': {

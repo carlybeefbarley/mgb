@@ -1583,10 +1583,12 @@ export default class EditCode extends React.Component {
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
-      return <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}}>
-        <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
-        URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
-      </a>
+      return (
+        <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
+          <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
+          URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
+        </a>
+      )
     })
 
     const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]

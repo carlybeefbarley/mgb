@@ -26,45 +26,57 @@ const ERROR = {
 
 
 export default class SourceTools {
+  // here are sources loaded from CDN
   static tmpCache = {}
+  // here are sources which failed load from CDN - so we can avoid multiple calls to CDN
   static cached404 = {}
   constructor(ternServer, asset_id, owner) {
-
+    // map with collected files and definitions - so we can avoid tern server updates
     this.addedFilesAndDefs = {}
+    // meteor subscriptions - keep track - so we could unsubscribe
     this.subscriptions = {}
+    //
     this.asset_id = asset_id
     this.tern = ternServer
     this.babelWorker = new Worker("/lib/BabelWorker.js")
 
+    // all collected sources in the order of inclusion
     this.collectedSources = []
+    // store timeoutID = so wec clear it later
     this.timeout = 0
 
+    // asset owner is used to resolve imports without user prefix
     this.owner = owner
     // here will live external libraries
     this.cache = {}
     // here we will keep our transpiled files
     this.transpileCache = {}
+    // save cached bundle - so we can quickly return it - if code is not changed
     this.cachedBundle = ''
-    
-    this._inProgress = false
-    this._firstTime = true
-    this._hasSourceChanged = true
 
+    // internal state - shows that something is happening
+    this._inProgress = false
+    // switch which forces full code update on first run
+    this._firstTime = true
+    // to prevent unnecessary updates - this can be set from active asset - or from subscription
+    this._hasSourceChanged = true
+    // if this instance is destroyed no more updates or callbacks will be fired
     this._isDestroyed = false
 
-    this._lastAction = {
-      src: '',
-      time: 0
-    }
-    // store entry point filename
+    // caches last action - to prevent intensive updates in a case when external lib(s) is intensively updating and triggering updates
+    this._lastActionSrc = ''
+    // store entry point filename - usually will bet automatically set to asset name
     this.mainJS = "main.js"
 
+    // callback which gets executed if error has encountered
     this.errorCBs = []
+    // collected errors from last run
     this.errors = {}
+    // used to track recursive dependencies
     this.pendingChanges = {}
   }
-  // this will handle errors in the EditCode
 
+  // set/get for private variable
   set inProgress(val) {
     this._inProgress = val
   }
@@ -73,6 +85,7 @@ export default class SourceTools {
   }
 
   // TODO(stauzs): this is like typical Promise use case - refactor to promises
+  // getter for destroyed state - used to track/debug state and notify on destruction
   get isDestroyed() {
     if (this._isDestroyed) {
       console.log("destroyed!!!")
@@ -80,7 +93,7 @@ export default class SourceTools {
     return this._isDestroyed
   }
 
-
+  // error related methods - used in the edit code - to show nice errors - e.g. recursion
   onError(cb){
     this.errorCBs.push(cb)
   }
@@ -99,44 +112,7 @@ export default class SourceTools {
     })
   }
 
-  getAST(cb = () => {}){
-    const self = this;
-    this.collectSources((s) => {
-      const getFiles = (e) => {
-        // clean up
-        self.tern.worker.removeEventListener("message", getFiles)
-
-        const ternFiles = e.data;
-
-        const ret = []
-        s.forEach((sp) => {
-          // || strip ./ from local includes
-          const ternFile = ternFiles[sp.name] || ternFiles[sp.name.substr(2)]
-          let tokens = (self.transpileCache[sp.name] && self.transpileCache[sp.name].data) ? self.transpileCache[sp.name].data.astTokens : ''
-          if(ternFile){
-            ret.push({
-              name: sp.name,
-              code: sp.code,
-              ast: ternFile.ast,
-              tokens
-            })
-          }
-          else {
-            ret.push({
-              name: sp.name,
-              code: sp.code,
-              tokens
-            })
-          }
-
-        }, this)
-        cb(ret)
-      }
-      this.tern.worker.addEventListener("message", getFiles)
-      this.tern.worker.postMessage({type: "getFiles"})
-    })
-  }
-
+  // collects and transpiles ES6 imports - launches callback on completion
   collectAndTranspile(srcText, filename, callback, force = false) {
     // TODO: break instantly callback chain
     if (this.isDestroyed) return
@@ -146,9 +122,8 @@ export default class SourceTools {
       this.timeout = 0
     }
 
-    const prev = this._lastAction
     if (!force) {
-      if ((this.inProgress && !this._firstTime) || (prev.src === srcText)) {
+      if ((this.inProgress && !this._firstTime) || (this._lastActionSrc === srcText)) {
         this.delayed = (force) => {
           // this may never be called if new sources will come in
           this.collectAndTranspile(srcText, filename, callback, force)
@@ -164,8 +139,7 @@ export default class SourceTools {
     // clean up old errors
     this.errors = {}
 
-    this._lastAction.src = srcText
-    this._lastAction.time = Date.now()
+    this._lastActionSrc = srcText
 
     this._firstTime = false
     this.mainJS = filename
@@ -182,6 +156,7 @@ export default class SourceTools {
       this.inProgress = false
     })
   }
+  // calls callback with collected sources
   collectSources(cb) {
     if (this.isDestroyed) return
     // make sure we are collecting latest sources
@@ -189,7 +164,7 @@ export default class SourceTools {
       cb(this.collectedSources)
     })
   }
-
+  // clear all references / kill workers etc
   destroy() {
     this._isDestroyed = true
 
@@ -228,12 +203,10 @@ export default class SourceTools {
   // clean up old data
   cleanup(){
     this.removeTranspiled(this.mainJS)
-    /*for(let i=0; i<this.collectedSources.length; i++){
-      this.tern.server.delFile(this.collectedSources[i].name)
-    }*/
     this.collectedSources.length = 0;
   }
 
+  // collects info about script
   collectScript(name, source, cb, localName = name, force = false) {
     if (this.isDestroyed) return
     // skip transpiled and compiled and empty scripts
@@ -260,6 +233,7 @@ export default class SourceTools {
     cb && cb()
   }
 
+  // adds def of file to the tern server - so we can show autocomplete and other info from imported files
   addDefsOrFile(filename, code, replace = false) {
     if (this.isDestroyed) return
     // skip added defs and files
@@ -294,6 +268,7 @@ export default class SourceTools {
       }
     }
   }
+  // adds script to the collection - user has added import
   collectSource(source){
     const oldSource = this.isAlreadyTranspiled(source.name)
     if(oldSource){
@@ -304,10 +279,11 @@ export default class SourceTools {
     }
     this.collectedSources.push(source)
   }
+  // helper to check is script already is already transpiled - so we could skip unnecessary transpilations
   isAlreadyTranspiled(filename) {
     return this.collectedSources.find(s => s.name == filename)
   }
-
+  // removes script from collection - user has removed import
   removeTranspiled(filename) {
     const item = this.isAlreadyTranspiled(filename)
     if (item) {
@@ -315,6 +291,7 @@ export default class SourceTools {
     }
   }
 
+  // schedules update on the next update loop (also waits until previous task is done)
   updateNow(cb) {
     if (this.isDestroyed) return
     // wait for active job to complete
@@ -339,6 +316,7 @@ export default class SourceTools {
       cb()
   }
 
+  // real source collection and transformation method
   _collectAndTranspile(srcText, filename, callback, force) {
     if (this.isDestroyed) return
     this.pendingChanges[filename] = true
@@ -380,7 +358,7 @@ export default class SourceTools {
     })
 
   }
-
+  // transforms code from ES6 to ES5 + skips external libs
   transform(srcText, filename, cb) {
     if (this.isDestroyed) return
     let code = '';
@@ -389,7 +367,7 @@ export default class SourceTools {
     }
     this.transpile(filename, code, cb);
   }
-
+  // real transpilation is happening here
   transpile(filename, src, cb) {
     // this instance has been destroyed while doing some background work
     if (this.isDestroyed) return
@@ -420,6 +398,7 @@ export default class SourceTools {
   }
 
   // cb usually will be this@load
+  // wrapper around loadImport - to avoid extra ajax calls to CDN
   loadFromCache(urlFinalPart, cb, localName) {
     if (this.isDestroyed) return
 
@@ -453,6 +432,7 @@ export default class SourceTools {
     }, urlFinalPart)
   }
 
+  // loads and observes imported MGB code asset for changes
   loadAndObserveLocalFile(url, urlFinalPart, cb){
     const parts = url.split("/")
 
@@ -520,6 +500,7 @@ export default class SourceTools {
       })
     }
   }
+  // expose private variable - EditCode uses this
   hasChanged(){
     return this._hasSourceChanged
   }
@@ -713,10 +694,12 @@ main = function(){
     })
   }
 
+
   static isExternalFile(url) {
     return !(url.indexOf("http") !== 0 && url.indexOf("//") !== 0)
   }
 
+  // gets imported / exported sources from babel response
   static parseImport(babel) {
     let imp;
     const ret = [];
@@ -743,6 +726,7 @@ main = function(){
     return ret
   }
 
+  // resolves imported file to external (or mgb) link
   static resolveUrl(urlFinalPart, asset_id) {
     var lib = SourceTools.getKnowLib(urlFinalPart)
     if (lib) {
@@ -764,6 +748,7 @@ main = function(){
     return urlFinalPart
   }
 
+  // loads and caches import
   static loadImport(url, cb, urlFinalPart = '') {
     if (SourceTools.tmpCache[url]) {
       // remove from stack to maintain order
@@ -801,15 +786,13 @@ main = function(){
     httpRequest.send(null);
   }
 
+  // extracts short name from CDN link lib@ver.js => lib
   static getShortName(fullUrl) {
     var name = fullUrl.split("/").pop().split("@").shift().split(".").shift();
     return name;
   }
 
-  static canSkipTranspile(url) {
-    return url.substring(0, 1) === "/" || SourceTools.isExternalFile(url)
-  }
-
+  // check if we already have info about library - e.g. defs / cdn location etc
   static getKnowLib(urlFinalPart) {
     var parts = urlFinalPart.split("@")
     var name = parts[0]

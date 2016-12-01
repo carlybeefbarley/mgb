@@ -1382,6 +1382,7 @@ export default class EditCode extends React.Component {
               astReady: true
             })
             // this will force to update mentor info - even if cursor wasn't moving
+            // used in the case when we have pulled defs or new code in to tern server
             this.codeMirrorOnCursorActivity()
             cb && cb(critical)
           })

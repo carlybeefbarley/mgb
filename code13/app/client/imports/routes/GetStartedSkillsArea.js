@@ -33,7 +33,7 @@ const GetStartedSkillsAreaRoute = ( { params } ) => {    //props.params.skillare
   return (
     <Segment basic padded className="slim" style={{margin: '0 auto'}}>
       <Image className='animated bounceInLeft' floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
-      <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
+      <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.mascotName}'s {area.title} Quests</Header>
       <p style={descStyle}>{area.desc}.</p>
       <br />
       <Header as='h4' content="Skill tutorials are coming soon..." />

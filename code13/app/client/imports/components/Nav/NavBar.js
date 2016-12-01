@@ -34,7 +34,7 @@ const _menuStyle = {
   boxShadow: "none"
 }
 
-const NavBar = ({ name, user, params, currUser, conserveSpace, projectScopeLock, navPanelWidth, flexPanelWidth, sysvars }) => (
+const NavBar = ({ name, user, params, currUser, pathLocation, conserveSpace, projectScopeLock, navPanelWidth, flexPanelWidth, sysvars }) => (
   <div style={{
     position:   'fixed',
     top:        '0px',
@@ -46,7 +46,7 @@ const NavBar = ({ name, user, params, currUser, conserveSpace, projectScopeLock,
       <SystemAlerts sysvars={sysvars}/>
       <WhatsNew currUser={currUser} asHidingLink={true}/>
       <div className="item">
-        <NavBarBreadcrumb conserveSpace={conserveSpace} name={name} user={user} params={params} />
+        <NavBarBreadcrumb pathLocation={pathLocation} conserveSpace={conserveSpace} name={name} user={user} params={params} />
       </div>
       <div className="right menu">
         <NavBarGadget name={name} currUser={currUser}/>
@@ -60,6 +60,7 @@ NavBar.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
   currUser:           PropTypes.object,                 // Currently logged in user.. or null if not logged in.
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
+  pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
   navPanelWidth:      PropTypes.string.isRequired,      // Typically something like "60px". NavPanel is always visible, but width varies
   flexPanelWidth:     PropTypes.string.isRequired,      // Typically something like "200px".
   conserveSpace:      PropTypes.bool.isRequired,        // True if space should be used more conservatively               

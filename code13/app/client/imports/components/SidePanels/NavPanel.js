@@ -38,7 +38,7 @@ const navPanelViews = [
     name: "learn",
     icon: "student",
     hdr: "Learn",
-    getDirectUrl: () => (`/getstarted/games`),
+    getDirectUrl: () => (`/learn`),
     el: npLearn,
     hideIfNoUser: false
   },

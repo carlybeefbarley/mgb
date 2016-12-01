@@ -13,12 +13,12 @@ export default {
   js: {
     $meta: {
       name:         'Javascript',
-      description:  'Javascript Programming',
+      description:  'JavaScript Programming',
     },
     lang: {
       $meta: {
-        name:       'Javascript Language',
-        description:'The Javascript programming language'
+        name:       'JavaScript Language',
+        description:'The JavaScript programming language'
       },
       basics: {
         statements: {

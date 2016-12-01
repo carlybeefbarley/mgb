@@ -4,8 +4,6 @@ import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
-const _notReallyWorkingYet = "These don't do anything yet.. but soon will! sorry for the psych!"
-
 const cardStyle = {
   color: "#2e2e2e"
 }
@@ -29,34 +27,42 @@ const descStyle = {
 
 const getStartedItems = [
   {
+    mascot: 'MgbLogo',
+    icon: 'home',
+    content: 'Get Started',
+    link: '/learn/getstarted',
+    query: null,
+    desc: 'Learn to use this site - set up your profile, play a game, find friends, etc'
+  }, 
+  {
     mascot: 'game_shop',
     icon: 'game',
-    content: 'Make/Mod a Game',
-    link: '/getstarted/games',
+    content: 'Make/Mod Games',
+    link: '/learn/games',
     query: null,
-    desc: 'Our tutorials show you how to make or modify some basic game types'
+    desc: 'Learn to make and modify some classic game types'
   }, 
   {
     mascot: 'whale',
-    icon: 'university',
-    content: 'Practice new Skills',
-    link: '/getstarted/skills',
+    icon: 'student',
+    content: 'Learn new Skills',
+    link: '/learn/skills',
     query: null,
-    desc: 'Learn using skills-focussed tutorials for coding, art, level design, etc'
+    desc: 'Learn using skills-focused tutorials for coding, art, level design, etc'
   },
   {
     mascot: 'team',
     icon: 'help',
     content: 'Ask for help',
-    link: '/getstarted',
+    link: '/learn',
     query: { _fp: 'chat.mgb-help' },
     desc: 'Ask and we shall answer'
   }
 ]
 
-const GetStartedRoute = () => (
+const LearnRoute = () => (
   <Segment basic padded className='slim' style={{margin: '0 auto'}}>
-    <Grid stackable style={{marginTop: '3.5em'}} title={_notReallyWorkingYet}>
+    <Grid stackable style={{marginTop: '3.5em'}}>
 
       <Grid.Row >
         <Grid.Column>
@@ -87,4 +93,4 @@ const GetStartedRoute = () => (
   </Segment>
 )
 
-export default GetStartedRoute
+export default LearnRoute

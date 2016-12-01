@@ -426,8 +426,8 @@ const mgbReleaseInfo = {
           'changeName': 'More skills',
           'changeSummary': 'More of the skills areas are now shown.. take a look!',
           'otherUrls': [ 
-            { txt: 'Full skills list', href: '/getstarted/skills' },
-            { txt: 'Example skills area - legal stuff', href: '/getstarted/skills/area/legal' }
+            { txt: 'Full skills list', href: '/learn/skills' },
+            { txt: 'Example skills area - legal stuff', href: '/learn/skills/legal' }
           ]
         }
       ]
@@ -468,8 +468,8 @@ const mgbReleaseInfo = {
           'changeName': 'Skills system, next menu level',
           'changeSummary': "The full list of skills areas is now shown, and there is the beginning of the skills explorer for each area. More soon. SKills, tutorials, tours and help will become cunningly connected soon!",
           'otherUrls': [ 
-            { txt: 'Full skills list', href: '/getstarted/skills' },
-            { txt: 'Example skills area - legal stuff', href: '/getstarted/skills/area/legal' }
+            { txt: 'Full skills list', href: '/learn/skills' },
+            { txt: 'Example skills area - legal stuff', href: '/getstarted/skills/legal' }
           ]
         },
         {
@@ -524,7 +524,7 @@ const mgbReleaseInfo = {
           'featureTag': 'nav.navpanel',
           'type': 'improvement',
           'changeName': 'NavPanel restructuring - Play/Learn/Create',
-          'changeSummary': 'We have restructured the NavPanel on the left of the window to support the upcoming deeper learning and play experiences. Prior to this change, the hierarchy was more focussed on just creation workflows. This sets us up for the Deeper playback and learning/skills systems that are coming NEXT',
+          'changeSummary': 'We have restructured the NavPanel on the left of the window to support the upcoming deeper learning and play experiences. Prior to this change, the hierarchy was more focused on just creation workflows. This sets us up for the Deeper playback and learning/skills systems that are coming NEXT',
           'otherUrls': [ ]
         },
         {
@@ -729,7 +729,7 @@ const mgbReleaseInfo = {
 
       'changes': [
         {
-          'featureTag': 'nav.getstarted',
+          'featureTag': 'nav.learn',
           'type': 'improvement',
           'changeName': 'Get Started now has two paths - games and skills',
           'changeSummary': 'Get Started now has two paths - games and skills. Also we now make it clear that these tutorials haven\'t actually been implemented yet.. instead of just linking to the create-asset pages :)',

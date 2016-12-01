@@ -129,6 +129,9 @@ export default class EditCode extends React.Component {
     this.errorMessageCache = {}
     // assume that new code will have errors - it will be reset on first error checking
     this.hasErrors = true
+
+    // is this component is still active?
+    this.isActive = true
   }
 
 
@@ -275,6 +278,8 @@ export default class EditCode extends React.Component {
     this.edResizeHandler()
 
     this.updateDocName()
+
+    this.isActive = true
   }
   startTernServer() {
     // Tern setup
@@ -399,6 +404,7 @@ export default class EditCode extends React.Component {
       window.clearTimeout(this.changeTimeout)
       this.changeTimeoutFn()
     }
+    this.isActive = false
   }
 
   terminateWorkers() {
@@ -1302,11 +1308,13 @@ export default class EditCode extends React.Component {
           const value = this.codeMirror.getValue()
           const newC2 = {src: value, bundle: bundle}
           // make sure we have bundle before every save
-          this.props.handleContentChange(newC2, null, `Store code bundle`)
+          this.handleContentChangeAsync(newC2, null, `Store code bundle`)
         }
-        this.setState({
-          creatingBundle: false
-        })
+        if(this.isActive) {
+          this.setState({
+            creatingBundle: false
+          })
+        }
         cb && cb()
       })
     }
@@ -1358,7 +1366,18 @@ export default class EditCode extends React.Component {
 
     this.changeTimeout = window.setTimeout(this.changeTimeoutFn, CHANGES_DELAY_TIMEOUT)
   }
+  // this can be called even after component unmount.. or another asset has been loaded
+  // make sure we don't overwrite another source
+  handleContentChangeAsync(c2, thumbnail, reason) {
+    // is this safe to use it here?
+    if(this.isActive){
+      this.props.handleContentChange(c2, thumbnail, reason)
+    }
+    else{
+      console.log("Discarding bundle to prevent overwrite")
+    }
 
+  }
   // this is very heavy function - use with care
   doFullUpdateOnContentChange( cb ) {
     // operation() is a way to prevent CodeMirror updates until the function completes

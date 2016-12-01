@@ -1336,13 +1336,13 @@ export default class EditCode extends React.Component {
       window.clearTimeout(this.changeTimeout)
     }
     this.changeTimeoutFn = () => {
-      if(this.props.asset.kind == "tutorial" || !this.props.asset.content2.needsBundle) {
+      if(this.props.asset.kind == "tutorial") {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
       this.doFullUpdateOnContentChange((errors) => {
         // it's not possible to create useful bundle with errors in code - just save
-        if(errors){
+        if(errors || !this.props.asset.content2.needsBundle){
           this.props.handleContentChange(c2, thumbnail, reason)
         }
         else{

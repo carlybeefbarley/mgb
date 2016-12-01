@@ -29,11 +29,9 @@ export default class SourceTools {
   static tmpCache = {}
   static cached404 = {}
   constructor(ternServer, asset_id, owner) {
-    // terminate old babel worker - just in case..
 
     this.addedFilesAndDefs = {}
     this.subscriptions = {}
-    window.mgb_tools = this
     this.asset_id = asset_id
     this.tern = ternServer
     this.babelWorker = new Worker("/lib/BabelWorker.js")
@@ -143,7 +141,7 @@ export default class SourceTools {
     // clean previous pending call
     if (this.timeout) {
       window.clearTimeout(this.timeout)
-      this.timeout = 0;
+      this.timeout = 0
     }
 
     const prev = this._lastAction
@@ -545,13 +543,15 @@ export default class SourceTools {
   };`
       for (let i in sources) {
         const key = sources[i].name.split("@").shift();
+
         if (sources[i].useGlobal) {
           allInOneBundle += "\n" + 'delete window.exports; delete window.module; '
         }
         else {
           allInOneBundle += "\n" + 'window.module = {exports: {}};window.exports = window.module.exports; '
         }
-        allInOneBundle += ";" + sources[i].code + "; "
+        allInOneBundle += sources[i].code + "; "
+
         if (sources[i].useGlobal) {
           allInOneBundle += "\n" + 'imports["' + sources[i].name + '"] = true; '
         }

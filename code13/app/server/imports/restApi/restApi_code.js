@@ -57,7 +57,7 @@ RestApi.addRoute('asset/code/:id', { authRequired: false }, {
 
 
 /* not used anymore */
-RestApi.addRoute('asset/code/:referrer/:name', {authRequired: false}, {
+RestApi.addRoute('asset/code/:owner/:name/:referrer', {authRequired: false}, {
   get: function() {
     const referrer = Azzets.findOne(this.urlParams.referrer);
     const asset = Azzets.findOne({owner: referrer.owner, name: this.urlParams.name})
@@ -77,7 +77,7 @@ RestApi.addRoute('asset/code/:referrer/:name', {authRequired: false}, {
 // TODO: permission check ?
 // TODO: cleanup - make single function that requires assets ? DRY?
 // used in codeEdit - import X from '/owner/codeName' - referrer is added automatically
-RestApi.addRoute('asset/code/:referrer/:owner/:name', {authRequired: false}, {
+RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
   get: function(){
 
     // referrer is not used here

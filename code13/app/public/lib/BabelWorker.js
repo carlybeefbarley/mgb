@@ -13,8 +13,7 @@ onmessage = function (e) {
       compact: false,           // Default of "auto" fails on ReactImport
       presets: ['es2015', 'react'], // remove comments as they will break bundled code
       plugins: ['transform-class-properties'], // , "transform-es2015-modules-amd" - not working
-      retainLines: true,
-      ast: true
+      retainLines: true
     }
   if (!options.filename) {
     options.filename = filename
@@ -32,8 +31,7 @@ onmessage = function (e) {
       compact: false,           // Default of "auto" fails on ReactImport
       presets: ['es2015', 'react'],// remove comments as they will break bundled code
       plugins: ['transform-class-properties'],// , "transform-es2015-modules-amd" - not working
-      retainLines: true,
-      ast: true
+      retainLines: true
     });
     trans.code = `throw new Error('${e.message.split("\n").shift()}')`
     trans.error = {message: e.message, loc: e.loc}

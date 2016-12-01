@@ -38,7 +38,7 @@ const PlayCodeGame = ( { _codeName, owner, incrementPlayCountCb } ) =>
       key={ 0 }
       id="iFrame1"
       style={{ minWidth:'800px', minHeight:'600px', borderStyle: 'none' }}
-      sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
+      sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
       src={`/api/asset/code/bundle/u/${ownerName}/${codeName}`}>
     </iframe>
   )

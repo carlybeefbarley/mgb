@@ -32,26 +32,7 @@ window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some lega
 import Defs_ecma5 from "./tern/Defs/ecma5.json"
 import Defs_browser from './tern/Defs/browser.json'
 
-// external libs moved to SourceTools -> KnownLibs
-// import Defs_phaser from "./tern/Defs/DefsPhaser"
-// import Defs_lodash from "./tern/Defs/DefsLodash"
-// import Defs_sample from "./tern/Defs/Sample.defs.json"
-
-
 import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js'
-
-/*
-moved to worker
-import cm_tern_lib_comment from "tern/lib/comment"
-// es_modules depends on this
-import cm_tern_modules from "tern/plugin/modules"
-// adds ES import support to tern
-import cm_tern_es_modules from "tern/plugin/es_modules"
-// extract docs from comment
-import cm_tern_doc_comment from "tern/plugin/doc_comment"
-*/
-// ?  <script src="/tern/plugin/doc_comment.js"></script>
-
 
 import InstallMgbTernExtensions from './tern/MgbTernExtensions.js'
 import "codemirror/addon/tern/tern"
@@ -63,6 +44,10 @@ import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
 import TokenDescription from './tern/TokenDescription.js'
 
 import DebugASTview from './tern/DebugASTview.js'
+
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+
+
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
 
@@ -99,7 +84,9 @@ export default class EditCode extends React.Component {
 
   constructor(props) {
     super(props)
-    // m._reg("code")
+    registerDebugGlobal( 'editCode', this, __filename, 'Active Instance of Code editor')
+
+
     this.fontSizeSettingIndex = undefined
     // save jshint reference - so we can kill it later
     this.jshintWorker = null

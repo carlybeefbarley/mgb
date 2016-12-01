@@ -1374,15 +1374,15 @@ export default class EditCode extends React.Component {
       const val = this.codeMirror.getValue()
       this.runJSHintWorker(val, (errors) => {
         const critical = errors.find(e => e.code.substr(0, 1) === "E")
-        if (!critical && this.tools) {
-          this.hasErrors = false
+        this.hasErrors = !critical
+        if (this.tools) {
           this.tools.collectAndTranspile(val, this.props.asset.name, () => {
             this.setState({
               astReady: true
             })
             // this will force to update mentor info - even if cursor wasn't moving
             this.codeMirrorOnCursorActivity()
-            cb && cb()
+            cb && cb(errors)
           })
         }
         else{

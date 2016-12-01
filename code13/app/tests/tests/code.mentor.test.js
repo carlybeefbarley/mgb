@@ -22,9 +22,5 @@ module.exports = (getBrowser, path) => {
     it("Remove Code - clean up", function(done){
       require(path + "procedures/deleteAsset.js")(browser)(done)
     })
-
-    it("check for console errors", function(done){
-      require(path + "procedures/checkConsoleErrors.js")(browser)(done)
-    })
   })
 }

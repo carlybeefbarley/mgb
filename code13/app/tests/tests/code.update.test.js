@@ -1,7 +1,7 @@
 /* this is sample test which only tries to log in user */
 module.exports = (getBrowser, path) => {
   let browser;
-  describe("Running code bundler tests", function(){
+  describe("Running code update test", function(){
     before(function(){
       browser = getBrowser();
     })
@@ -16,7 +16,7 @@ module.exports = (getBrowser, path) => {
     })
 
     it("Modifying Code and checking bundle for modified code", function(done){
-      require(path + "procedures/addCodeAndCheckBundle.js")(browser)(done)
+      require(path + "procedures/code.update.response.js")(browser)(done)
     })
 
     it("Remove Code and clean up", function(done){

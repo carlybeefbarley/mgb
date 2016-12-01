@@ -1732,6 +1732,7 @@ export default class EditCode extends React.Component {
                     { !isPlaying &&
                       <a  className='ui tiny icon button' 
                           title='Click here to start the program running'
+                          id="mgb-EditCode-start-button"
                           onClick={this.handleRun.bind(this)}>
                         <i className='play icon' />&emsp;Run
                       </a>
@@ -1739,6 +1740,7 @@ export default class EditCode extends React.Component {
                     { isPlaying &&
                       <a  className='ui tiny icon button' 
                           title='Click here to stop the running program'
+                          id="mgb-EditCode-stop-button"
                           onClick={this.handleStop.bind(this)}>
                         <i className={"stop icon"}></i>&emsp;Stop
                       </a>

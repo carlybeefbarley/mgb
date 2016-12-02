@@ -8,20 +8,22 @@ import BusinessSkillNodes from './BusinessSkillNodes.js'
 import AnalyticsSkillNodes from './AnalyticsSkillNodes.js'
 import CommunitySkillNodes from './CommunitySkillNodes.js'
 import MarketingSkillNodes from './MarketingSkillNodes.js'
+import GetStartedSkillNodes from './GetStartedSkillNodes.js'
 
 // Note that the top level names here (code, art, audio etc) must correlate with the tag
 // of skillAreaItems as defined in SkillAreas.js
 
 const SkillNodes = {
-  art:       ArtSkillNodes,
-  code:      CodeSkillNodes,
-  audio:     AudioSkillNodes,
-  design:    DesignSkillNodes,
-  writing:   WritingSkillNodes,
-  business:  BusinessSkillNodes,
-  community: CommunitySkillNodes,
-  analytics: AnalyticsSkillNodes,
-  marketing: MarketingSkillNodes,
+  art:        ArtSkillNodes,
+  code:       CodeSkillNodes,
+  audio:      AudioSkillNodes,
+  design:     DesignSkillNodes,
+  writing:    WritingSkillNodes,
+  business:   BusinessSkillNodes,
+  community:  CommunitySkillNodes,
+  analytics:  AnalyticsSkillNodes,
+  marketing:  MarketingSkillNodes,
+  getStarted: GetStartedSkillNodes,
 
   $meta: {
     map: {}

@@ -1337,17 +1337,21 @@ export default class EditCode extends React.Component {
       // prevent asset changes to older one because of user activity forced update
       // sencond handle change will overwrite deferred save
       if(this.props.asset.kind == "tutorial") {
+        this.changeTimeout = 0
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
       this.doFullUpdateOnContentChange((errors) => {
         // it's not possible to create useful bundle with errors in the code - just save
         if(errors.length || !this.props.asset.content2.needsBundle){
+          this.changeTimeout = 0
           this.props.handleContentChange(c2, thumbnail, reason)
         }
         else{
           // createBundle is calling handleContentChangeAsync after completion
-          this.createBundle()
+          this.createBundle(() => {
+            this.changeTimeout = 0
+          })
         }
       })
     }

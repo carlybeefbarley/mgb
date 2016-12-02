@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import Layer from './Layer.js'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
@@ -68,6 +69,7 @@ export default class SpriteLayers extends React.Component {
     }
     this.handleSave('Insert frame', true)
     this.forceUpdate()    // Force react to update.. needed since we need render() to create new canvasses
+    joyrideCompleteTag('mgbjr-CT-editGraphic-insertFrameAfter-invoke')
   }
 
   copyFrame(frameID) {
@@ -533,8 +535,10 @@ export default class SpriteLayers extends React.Component {
           <div onClick={this.stepFrame.bind(this, false)} className={buttonDivClass}>
             <i className="icon backward"></i>
           </div>
-          <div onClick={this.togglePlayAnimation.bind(this)} 
-              className={buttonDivClass + (this.state.isPlaying ? " black" : "")}>
+          <div 
+            id="mgbjr-editGraphic-playButton"
+            onClick={this.togglePlayAnimation.bind(this)} 
+            className={buttonDivClass + (this.state.isPlaying ? " black" : "")}>
             <i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
           </div>
           <div onClick={this.stepFrame.bind(this, true)} className={buttonDivClass}>

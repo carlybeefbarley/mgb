@@ -34,7 +34,7 @@ RestApi.addRoute('asset/png/:user/:name', { authRequired: false }, {
     });
     if (asset)
     {
-      const frame = 0;
+      const frame = this.queryParams.frame || 0
       return {
         statusCode: 200,
         headers: {

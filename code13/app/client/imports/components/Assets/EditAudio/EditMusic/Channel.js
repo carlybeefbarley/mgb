@@ -482,7 +482,7 @@ export default class Channel extends React.Component {
     let channel = this.props.channel
     return (
       <div key={this.props.id} className='channelContainer'>
-        <div className='controls'>
+        <div className='controls chn'>
           {channel.title}
           <div>
             <input

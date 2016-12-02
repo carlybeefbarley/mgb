@@ -82,7 +82,8 @@ export default class EditGraphic extends React.Component {
       pasteCanvas: null     // if object cut or copied then {x, y, width, height, imgData}
     }
 
-    this.fixingOldAssets()
+    // TODO check if this can be deleted completely
+    // this.fixingOldAssets()
 
     this.onpaste = (e) => {
       "use strict";
@@ -1066,6 +1067,7 @@ export default class EditGraphic extends React.Component {
 
   handleSave(changeText="change graphic", dontSaveFrameData = false, allowBackwash = true)    // TODO(DGOLDS): Maybe _.throttle() this?
   {
+    console.log('save', changeText)
     if (!this.props.canEdit)
     {
       this.props.editDeniedReminder()

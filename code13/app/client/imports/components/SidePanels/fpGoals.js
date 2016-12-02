@@ -1,6 +1,10 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { skillAreaItems } from '/imports/Skills/SkillAreas'
+import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
+import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
-export default fpSuperAdmin = React.createClass({
+export default fpGoals = React.createClass({
 
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -9,15 +13,20 @@ export default fpSuperAdmin = React.createClass({
   },
 
   render: function () {
+    const skillarea = 'code'
+    const area = _.find(skillAreaItems, ['tag', skillarea] )
+    const skillNode = SkillNodes[skillarea]
+    if (!area)
+      return <ThingNotFound type='Skill area' id={skillarea} />
 
     return (
       <div>
         <h3 style={{marginTop: 0, marginBottom: 20}}>
-          Slimy's quests
+          {area.mascotName}'s Quests
           <div className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>19 / 114&nbsp;&nbsp;<i className="check circle icon" style={{marginRight: 0}} /></div>
         </h3>
         <p style={{fontSize: '1.25em'}}>
-          <img src="/images/mascots/slimy.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
+          <img src="/images/mascots/bigguy.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
           <span style={{position: 'relative', top: 0}}>Let's figure out how to show an animated sprite in Phaser!</span>
         </p>
         <div className="ui card complete" style={{opacity: 0.5}}>

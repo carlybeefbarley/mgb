@@ -25,6 +25,45 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Thu Dec 01 2016 01:20:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2205'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Hide Info Pane buttons for unexpanded sections',
+          'changeSummary': 'We now only show the buttons when the sections (run code, codeflower etc) are expanded.' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.learn',
+          'type': 'improvement',
+          'changeName': 'Updated structure, UI and URLs for Learn',
+          'changeSummary': 'We changed the learn pages to be on the /learn/ path instead of /getstarted.. and there\'s now a learn/getstarted/ page for basic site navigation and action. There is also now a breadcrumb navigator for the learn/skill pages. We also tweaked various parts of the home and learn page text and icons' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'bugfix',
+          'changeName': 'Bugfix for incomplete bundling',
+          'changeSummary': 'Fixed a bug where changing asset while background-bundling some code would cause the data in the subsequently loaded asset to get nuked (recoverable with ctrl-z). Fixed it. phew!',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
       'timestamp': 'Wed Nov 30 2016 14:00:00 GMT-0800 (PDT)',
 
       'id': {
@@ -426,8 +465,8 @@ const mgbReleaseInfo = {
           'changeName': 'More skills',
           'changeSummary': 'More of the skills areas are now shown.. take a look!',
           'otherUrls': [ 
-            { txt: 'Full skills list', href: '/getstarted/skills' },
-            { txt: 'Example skills area - legal stuff', href: '/getstarted/skills/area/legal' }
+            { txt: 'Full skills list', href: '/learn/skills' },
+            { txt: 'Example skills area - legal stuff', href: '/learn/skills/legal' }
           ]
         }
       ]
@@ -468,8 +507,8 @@ const mgbReleaseInfo = {
           'changeName': 'Skills system, next menu level',
           'changeSummary': "The full list of skills areas is now shown, and there is the beginning of the skills explorer for each area. More soon. SKills, tutorials, tours and help will become cunningly connected soon!",
           'otherUrls': [ 
-            { txt: 'Full skills list', href: '/getstarted/skills' },
-            { txt: 'Example skills area - legal stuff', href: '/getstarted/skills/area/legal' }
+            { txt: 'Full skills list', href: '/learn/skills' },
+            { txt: 'Example skills area - legal stuff', href: '/getstarted/skills/legal' }
           ]
         },
         {
@@ -524,7 +563,7 @@ const mgbReleaseInfo = {
           'featureTag': 'nav.navpanel',
           'type': 'improvement',
           'changeName': 'NavPanel restructuring - Play/Learn/Create',
-          'changeSummary': 'We have restructured the NavPanel on the left of the window to support the upcoming deeper learning and play experiences. Prior to this change, the hierarchy was more focussed on just creation workflows. This sets us up for the Deeper playback and learning/skills systems that are coming NEXT',
+          'changeSummary': 'We have restructured the NavPanel on the left of the window to support the upcoming deeper learning and play experiences. Prior to this change, the hierarchy was more focused on just creation workflows. This sets us up for the Deeper playback and learning/skills systems that are coming NEXT',
           'otherUrls': [ ]
         },
         {
@@ -729,7 +768,7 @@ const mgbReleaseInfo = {
 
       'changes': [
         {
-          'featureTag': 'nav.getstarted',
+          'featureTag': 'nav.learn',
           'type': 'improvement',
           'changeName': 'Get Started now has two paths - games and skills',
           'changeSummary': 'Get Started now has two paths - games and skills. Also we now make it clear that these tutorials haven\'t actually been implemented yet.. instead of just linking to the create-asset pages :)',

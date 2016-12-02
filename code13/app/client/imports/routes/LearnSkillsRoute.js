@@ -27,9 +27,9 @@ const descStyle = {
 }
 
 
-const GetStartedSkillsRoute = () => (
+const LearnSkillsRoute = () => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
-    <Grid stackable style={{marginTop: '3.5em'}}>
+    <Grid stackable>
 
       <Grid.Row >
         <Grid.Column>
@@ -48,7 +48,7 @@ const GetStartedSkillsRoute = () => (
                     key={idx} 
                     className="card animated fadeIn" 
                     style={cardStyle} 
-                    to={`/getstarted/skills/area/${area.tag}`}>
+                    to={`/learn/skills/${area.tag}`}>
                   <Card.Content>
                     <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
@@ -64,4 +64,4 @@ const GetStartedSkillsRoute = () => (
   </Segment>
 )
 
-export default GetStartedSkillsRoute
+export default LearnSkillsRoute

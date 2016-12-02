@@ -13,12 +13,12 @@ const npLearn = ( { currUser, navPanelIsOverlay} ) => (
 
     <div className="header item">Learn</div>
     <div className="menu">
-      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/getstarted" className="item">Learn to do cool stuff</QLink>
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/learn" className="item">Learn to do cool stuff</QLink>
     </div>
 
     <div className="header item">Active Tutorials</div>
     <div className="menu">
-      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/getstarted/skills" className="item">
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/learn/skills" className="item">
         <Icon color='green' name='student' />
         Start new Tutorial
       </QLink>

@@ -15,6 +15,7 @@ import lamejs from '../lib/lame.all.js'
 import AudioConverter from '../lib/AudioConverter.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 export default class EditMusic extends React.Component {
 
@@ -159,10 +160,13 @@ export default class EditMusic extends React.Component {
 
   openGeneratePopup () {
     $(this.generateMusicPopup).modal('show')
+    joyrideCompleteTag('mgbjr-CT-editMusic-generateMetal-invoke')
+
   }
 
   open8bitPopup () {
     $(this.generate8bitPopup).modal('show')
+    joyrideCompleteTag('mgbjr-CT-editMusic-generate8bit-invoke')
   }
 
   getFromStock (audioObject) {
@@ -539,10 +543,15 @@ export default class EditMusic extends React.Component {
         <div className='ui modal' ref='musicStockPopup'>
           <MusicStock importMusic={this.importMusic.bind(this)} />
         </div>
-        <div className='ui modal generateMusicPopup' ref='generateMusicPopup'>
+        <div className='ui modal generateMusicPopup' 
+          id="mgbjr-musicEditor-generateMetal-button"
+          ref='generateMusicPopup'>
           <GenerateMusic ref='generateMusic' importMusic={this.importMusic.bind(this)} />
         </div>
-        <div className='ui modal generate8bitPopup' ref='generate8bitPopup'  style={{minWidth:"860px"}}>
+        <div
+          id="mgbjr-musicEditor-generate8bit-button"
+          className='ui modal generate8bitPopup' 
+          ref='generate8bitPopup'  style={{minWidth:"860px"}}>
           <Generate8bit ref='generate8bit' importMusic={this.importMusic.bind(this)} />
         </div>
       </div>

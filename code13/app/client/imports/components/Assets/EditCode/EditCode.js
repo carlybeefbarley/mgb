@@ -1592,10 +1592,12 @@ export default class EditCode extends React.Component {
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
-      return <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}}>
-        <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
-        URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
-      </a>
+      return (
+        <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
+          <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
+          URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
+        </a>
+      )
     })
 
     const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
@@ -1724,8 +1726,13 @@ export default class EditCode extends React.Component {
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Runner
                   </span>
+                </div>
+              }
+              { !docEmpty && asset.kind === 'code' && 
+                // Code run/stop (body)
+                <div className="content">
                   
-                  <span style={{float: "right", marginTop: "-6px", position: "relative"}}>
+                  <span style={{float: "right", marginTop: "-28px", position: "relative"}}>
 
                     { isPlaying && this.props.canEdit && 
                       <a className={"ui tiny icon button"} onClick={this.handleScreenshotIFrame.bind(this)}
@@ -1773,12 +1780,7 @@ export default class EditCode extends React.Component {
                       }*/}
                     </span>
                     }
-                  </span>
-                </div>
-              }
-              { !docEmpty && asset.kind === 'code' && 
-                // Code run/stop (body)
-                <div className="content">
+                  </span>                
                   <GameScreen
                     ref="gameScreen"
                     isPopup = {this.state.isPopup}
@@ -1801,7 +1803,17 @@ export default class EditCode extends React.Component {
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />CodeFlower
                   </span>
-                  <span style={{float: "right", marginTop: "-6px", position: "relative"}}>
+                </div>
+              }
+              { this.state.astReady && asset.kind === 'code' && 
+                <div className='content'>
+                  {/* this.props.canEdit && this.state.astReady &&
+                   <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
+                   title="This will make abstract image of your code">
+                   <i className={"write square icon"}></i>Draw AST
+                   </a>
+                   */}
+                  <span style={{float: "right", marginTop: "-28px", position: "relative"}}>
                     { this.state.astFlowerReady && this.props.canEdit &&
                     <a className="ui tiny icon button" onClick={() => {this.saveAstThumbnail( () => {} )}}
                       title="Save the currently displayed CodeFlower as the Code Asset preview 'thumbnail' image for this asset">
@@ -1818,17 +1830,9 @@ export default class EditCode extends React.Component {
                       <i className='first order icon' />&emsp;Detailed
                     </a>&nbsp;
                   </span>
+                  <div id='codeflower' ref='codeflower' />
                 </div>
               }
-                <div className="content active">
-                  {/* this.props.canEdit && this.state.astReady &&
-                   <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
-                   title="This will make abstract image of your code">
-                   <i className={"write square icon"}></i>Draw AST
-                   </a>
-                   */}
-                  <div id="codeflower" ref="codeflower"></div>
-                </div>
               </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ import QLink from '/client/imports/routes/QLink'
 
 const _sep = <i className='mini right chevron icon' />
 
-const NavBarBreadcrumb = ( { name, user, params, conserveSpace } ) => {
+const NavBarBreadcrumb = ( { name, user, params, pathLocation, conserveSpace } ) => {
   
   const homeWord = conserveSpace ? 'MGB' : 'MyGameBuilder'
 
@@ -29,6 +29,11 @@ const NavBarBreadcrumb = ( { name, user, params, conserveSpace } ) => {
 
       { usernameToShow && projectId && _sep }
       { usernameToShow && projectId && <QLink className="section" to={`/u/${usernameToShow}/projects`}>Projects&nbsp;</QLink> }
+      
+      { pathLocation && pathLocation.startsWith('/learn/') && _sep }
+      { pathLocation && pathLocation.startsWith('/learn/') && <QLink className="section" to={`/learn`}>Learn&nbsp;</QLink> }
+      { pathLocation && pathLocation.startsWith('/learn/skills/') && _sep }
+      { pathLocation && pathLocation.startsWith('/learn/skills/') && <QLink className="section" to={`/learn/skills`}>Skills&nbsp;</QLink> }
 
       { name && _sep }
       { name && <span>{name}&nbsp;</span> }
@@ -40,6 +45,7 @@ NavBarBreadcrumb.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
+  pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
   conserveSpace:      PropTypes.bool.isRequired         // True if space should be used more conservatively               
 }
 

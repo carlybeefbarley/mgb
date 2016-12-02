@@ -15,7 +15,7 @@ export default Footer = () => (
       <div className="ui stackable grid">
         <div className="seven wide column">
           <h4 className="ui header" style={{fontSize: "1.15em"}}>Gain Skills</h4>
-          <p>Learn real world skills like Javscript and CSS, but without boring <em>'do this, do that'</em> lessons. Learn by making, learn from friends, pay it forward.</p>
+          <p>Learn real world skills like Javascript and software design, but without boring <em>'do this, do that'</em> lessons. Learn by making, learn from friends, pay it forward.</p>
         </div>
         <div className="three wide column">
           <h4 className="ui header" style={{fontSize: "1.15em"}}>Make Games</h4>

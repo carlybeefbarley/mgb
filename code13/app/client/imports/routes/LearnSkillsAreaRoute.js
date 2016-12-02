@@ -23,7 +23,7 @@ const descStyle = {
   lineHeight: "1.5em"
 }
 
-const GetStartedSkillsAreaRoute = ( { params } ) => {    //props.params.skillarea
+const LearnSkillsAreaRoute = ( { params } ) => {    //props.params.skillarea
 
   const area = _.find(skillAreaItems, ['tag', params.skillarea] )
   const skillNode = SkillNodes[params.skillarea]
@@ -33,11 +33,10 @@ const GetStartedSkillsAreaRoute = ( { params } ) => {    //props.params.skillare
   return (
     <Segment basic padded className="slim" style={{margin: '0 auto'}}>
       <Image className='animated bounceInLeft' floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
-      <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
+      <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.mascotName}'s {area.title} Quests</Header>
       <p style={descStyle}>{area.desc}.</p>
       <br />
-      <Header as='h4' content="Skill tutorials are coming soon..." />
-      <p>The skills tutorials are being developed right now. Expect skills tutorials covering the following topics</p>
+      <Header as='h4' content={`${area.title} Skill tutorials will be here soon!`} />
       <ul>
         { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.description) ? v.$meta.description : k}</li>) ) }
       </ul>
@@ -45,4 +44,4 @@ const GetStartedSkillsAreaRoute = ( { params } ) => {    //props.params.skillare
   )
 }
 
-export default GetStartedSkillsAreaRoute
+export default LearnSkillsAreaRoute

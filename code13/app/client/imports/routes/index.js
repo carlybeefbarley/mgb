@@ -8,11 +8,13 @@ import App from './App'
 import Home from './Home'
 import Import from './Import'
 import PlayGameRoute from './PlayGameRoute'
-import GetStarted from './GetStarted'
 import BrowseGamesRoute from './BrowseGamesRoute'
-import GetStartedSkills from './GetStartedSkills'
-import GetStartedSkillsArea from './GetStartedSkillsArea'
-import GetStartedGames from './GetStartedGames'
+
+import LearnRoute from './LearnRoute'
+import LearnGamesRoute from './LearnGamesRoute'
+import LearnSkillsRoute from './LearnSkillsRoute'
+import LearnSkillsAreaRoute from './LearnSkillsAreaRoute'
+import LearnGetStartedRoute from './LearnGetStartedRoute'
 
 import Users from './Users'
 import Azzets from './Assets'
@@ -56,10 +58,11 @@ Meteor.startup(function () {
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
-        <Route path="/getstarted" component={GetStarted} />
-        <Route path="/getstarted/skills" component={GetStartedSkills} />
-        <Route path="/getstarted/skills/area/:skillarea" component={GetStartedSkillsArea} />
-        <Route path="/getstarted/games" component={GetStartedGames} />
+        <Route path="/learn" component={LearnRoute} />
+        <Route path="/learn/skills" component={LearnSkillsRoute} />
+        <Route path="/learn/skills/:skillarea" component={LearnSkillsAreaRoute} />
+        <Route path="/learn/games" component={LearnGamesRoute} />
+        <Route path="/learn/getstarted" component={LearnGetStartedRoute} />
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
         <Route path="/u/:username/games" component={BrowseGamesRoute} name="Browse User's Games" />

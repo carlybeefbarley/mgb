@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react'
+import React, { PropTypes } from 'react'
 import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
 
@@ -18,7 +18,7 @@ const skillsList = [
   { icon: 'line chart',  msg: 'Analytics' }
 ]
 
-const HomeSkillsColumn = (props) => (
+const HomeSkillsColumn = () => (
   <Grid.Column className='animated fadeIn'>
     <Header as='h2' style={{ marginBottom: "1em" }}>Grow your <em>real</em> skill tree</Header>
     <List className="very relaxed">
@@ -32,7 +32,7 @@ const HomeSkillsColumn = (props) => (
       }
     </List>
     <br />
-    <QLink to={`/getstarted/skills`}>
+    <QLink to={`/learn/skills`}>
       <Button color='teal' size='large' content='Set skill goals' />
     </QLink>
   </Grid.Column>

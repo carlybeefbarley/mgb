@@ -90,7 +90,7 @@ export default App = React.createClass({
   componentDidUpdate: function(prevProps, prevState) {
     const pagepath = getPagepathFromProps(this.props)
     joyrideCompleteTag(`mgbjr-CT-app-router-path-${pagepath}`)                // e.g. /u/:username
-    joyrideCompleteTag(`mgbjr-CT-app-location-path-${this.props.location.pathname}`)    // e.g. /u/:dgolds   -- will exclude search/query params
+    joyrideCompleteTag(`mgbjr-CT-app-location-path-${this.props.location.pathname}`)    // e.g. /u/dgolds   -- will exclude search/query params
 
     if (prevState.joyrideSteps.length ===0 && this.state.joyrideSteps.length > 0)
       this.refs.joyride.start(true)
@@ -287,6 +287,7 @@ export default App = React.createClass({
             <NavBar
               currUser={currUser}
               user={user}
+              pathLocation={this.props.location.pathname}
               name={this.props.routes[1].name}
               params={this.props.params}
               flexPanelWidth={flexPanelWidth}

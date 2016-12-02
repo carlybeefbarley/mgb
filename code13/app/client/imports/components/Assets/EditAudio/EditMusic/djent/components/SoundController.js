@@ -297,7 +297,7 @@ class SoundController extends Component {
             <div>
                 { this.state.error ? <p className="txt-error">{ this.state.error }</p> : null }
                 <div className="row">
-                    <button 
+                    <button id="mgbjr-editMusic-generateMetal-generate-button"
                         className={"ui blue button " + (this.state.isGenerating ? "loading" : "")} 
                         onClick={() => this.generateEvent()}>
 
@@ -325,8 +325,10 @@ class SoundController extends Component {
                             onChange={() => this.props.actions.toggleSettings(!this.props.isExpanded)}
                         />
 
-                    <button className={"ui right floated button "+(!this.props.currentBuffer ? "disabled " : "")+(this.state.isConvertingWav ? "loading" : "")} title="Import" onClick={this.importWav.bind(this)}>
-                        <i className="add square icon"></i> Import
+                    <button 
+                       id="mgbjr-editMusic-generateMetal-import-button"
+                      className={"ui right floated button "+(!this.props.currentBuffer ? "disabled " : "")+(this.state.isConvertingWav ? "loading" : "")} title="Import" onClick={this.importWav.bind(this)}>
+                      <i className="add square icon"></i> Import
                     </button>
 
                 </div>

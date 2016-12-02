@@ -12,6 +12,7 @@ import CanvasGrid from './CanvasGrid.js'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
@@ -81,7 +82,8 @@ export default class EditGraphic extends React.Component {
       pasteCanvas: null     // if object cut or copied then {x, y, width, height, imgData}
     }
 
-    this.fixingOldAssets()
+    // TODO check if this can be deleted completely
+    // this.fixingOldAssets()
 
     this.onpaste = (e) => {
       "use strict";
@@ -1065,6 +1067,7 @@ export default class EditGraphic extends React.Component {
 
   handleSave(changeText="change graphic", dontSaveFrameData = false, allowBackwash = true)    // TODO(DGOLDS): Maybe _.throttle() this?
   {
+    console.log('save', changeText)
     if (!this.props.canEdit)
     {
       this.props.editDeniedReminder()
@@ -1512,7 +1515,7 @@ export default class EditGraphic extends React.Component {
             </div>
 
             <span>&nbsp;&nbsp;</span>
-            <div className="ui small labeled input">
+            <div className="ui small labeled input" id="mgbjr-editGraphic-changeHeightInput">
               <div className="ui small label" title="Canvas height">
                 h:
               </div>

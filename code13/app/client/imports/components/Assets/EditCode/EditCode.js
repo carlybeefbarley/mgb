@@ -447,6 +447,7 @@ export default class EditCode extends React.Component {
 
   // this method is triggered very very often due to activity snapshot
   componentWillReceiveProps(nextProps) {
+    console.log("new props:", nextProps.asset.content2)
     const newVal = nextProps.asset.content2.src
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
       // user is typing - intensively working with document - don't update until it finishes
@@ -991,7 +992,7 @@ export default class EditCode extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !nextState._preventRenders
+    return !(nextState._preventRenders || this.state.creatingBundle)
   }
 
   codemirrorValueChanged(doc, change) {
@@ -1290,7 +1291,7 @@ export default class EditCode extends React.Component {
       this.tools.createBundle((bundle, notChanged) => {
         if(!notChanged){
           const value = this.codeMirror.getValue()
-          const newC2 = {src: value, bundle: bundle, needsBundle: this.props.asset.content2.needsBundle}
+          const newC2 = {src: value, bundle: bundle, needsBundle: this.state.needsBundle}
           // make sure we have bundle before every save
           this.handleContentChangeAsync(newC2, null, `Store code bundle`)
         }
@@ -1333,6 +1334,8 @@ export default class EditCode extends React.Component {
       window.clearTimeout(this.changeTimeout)
     }
     this.changeTimeoutFn = () => {
+      // prevent asset changes to older one because of user activity forced update
+      // sencond handle change will overwrite deferred save
       if(this.props.asset.kind == "tutorial") {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
@@ -1382,7 +1385,7 @@ export default class EditCode extends React.Component {
             // used in the case when we have pulled defs or new code in to tern server
             this.codeMirrorOnCursorActivity()
             cb && cb(critical)
-          })
+          }, true)
         }
         else{
           cb && cb(critical)

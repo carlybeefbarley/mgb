@@ -447,7 +447,6 @@ export default class EditCode extends React.Component {
 
   // this method is triggered very very often due to activity snapshot
   componentWillReceiveProps(nextProps) {
-    console.log("new props:", nextProps.asset.content2)
     const newVal = nextProps.asset.content2.src
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
       // user is typing - intensively working with document - don't update until it finishes

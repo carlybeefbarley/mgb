@@ -145,6 +145,7 @@ export default class EditMusic extends React.Component {
     $(this.musicStockPopup).modal('hide')
     $(this.generateMusicPopup).modal('hide')
     $(this.generate8bitPopup).modal('hide')
+    joyrideCompleteTag('mgbjr-CT-editMusic-music-imported')
   }
 
   stopPopupAudio () {
@@ -460,10 +461,16 @@ export default class EditMusic extends React.Component {
                 <i className="folder icon"></i> Stock [not ready]
               </button>
             */}
-            <button className='ui small icon button' title='Generate music (Currently only creates Heavy Metal.. More music styles to follow :)' onClick={this.openGeneratePopup.bind(this)}>
+            <button 
+              id="mgbjr-musicEditor-generateMetal-button"
+              className='ui small icon button' title='Generate music (Currently only creates Heavy Metal.. More music styles to follow :)' 
+              onClick={this.openGeneratePopup.bind(this)}>
               <i className='options icon'></i> Generate metal music
             </button>
-            <button className='ui small icon button' title='Generate music (Currently only creates 8bit music.. More music styles to follow :)' onClick={this.open8bitPopup.bind(this)}>
+            <button 
+              id="mgbjr-musicEditor-generate8bit-button"
+              className='ui small icon button' title='Generate music (Currently only creates 8bit music.. More music styles to follow :)' 
+              onClick={this.open8bitPopup.bind(this)}>
               <i className='options icon'></i> Generate 8bit music
             </button>
 
@@ -544,12 +551,10 @@ export default class EditMusic extends React.Component {
           <MusicStock importMusic={this.importMusic.bind(this)} />
         </div>
         <div className='ui modal generateMusicPopup' 
-          id="mgbjr-musicEditor-generateMetal-button"
           ref='generateMusicPopup'>
           <GenerateMusic ref='generateMusic' importMusic={this.importMusic.bind(this)} />
         </div>
         <div
-          id="mgbjr-musicEditor-generate8bit-button"
           className='ui modal generate8bitPopup' 
           ref='generate8bitPopup'  style={{minWidth:"860px"}}>
           <Generate8bit ref='generate8bit' importMusic={this.importMusic.bind(this)} />

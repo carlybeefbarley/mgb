@@ -1,207 +1,27 @@
 import C from './CommonSkillNodes.js'
+import ArtSkillNodes from './ArtSkillNodes.js'
 import CodeSkillNodes from './CodeSkillNodes.js'
+import AudioSkillNodes from './AudioSkillNodes.js'
+import DesignSkillNodes from './DesignSkillNodes.js'
+import WritingSkillNodes from './WritingSkillNodes.js'
+import BusinessSkillNodes from './BusinessSkillNodes.js'
+import AnalyticsSkillNodes from './AnalyticsSkillNodes.js'
+import CommunitySkillNodes from './CommunitySkillNodes.js'
+import MarketingSkillNodes from './MarketingSkillNodes.js'
 
 // Note that the top level names here (code, art, audio etc) must correlate with the tag
 // of skillAreaItems as defined in SkillAreas.js
 
 const SkillNodes = {
-  code:             CodeSkillNodes,
- 
-  art: {
-    proportion:     C.E,
-    process: {
-      'concept':        C.E,
-      'constraints':    C.E,
-      'sketch':         C.E,
-      'review':         C.E,
-      'coloring':       C.E
-    },
-    shading: {
-      'pillow shading':   C.E,
-      'dithering':        C.E,
-      'anti-aliasing':    C.E,
-      'reverse aa':       C.E,
-      'lines-and-curves': C.E,
-      'ambient lighting': C.E,
-      'transparency':     C.E,
-      'interlaces-scanlines': C.E,
-      'layers':           C.E
-    },
-    perspectives: {
-      'top-down':     C.E,
-      'side-view':    C.E,
-      isometric:      C.E
-      // @stanchion.. others?
-    },
-    'character-design': {
-      humanoids:		C.E,
-      animals:	  	C.E,
-      monsters:     C.E,
-      objects:			C.E	// i.e. cookies, burgers, etc
-    },
-    color: 
-    { 
-      'palettes':    C.E,
-      'color-temp':  C.E,
-    },
-    animations:      C.E
-  },
-
-  design: {
-    'gameplay': {
-      'is it fun':          C.E,
-      'is it interesting':  C.E,
-      'is it challenging':  C.E,
-      'is it social':       C.E
-      // @stanchion.. more here pls?
-      //
-
-    },
-    
-    'the meta': {
-      'metagame':         C.E,
-      'win bonusses':     C.E,
-      'loss penalties':   C.E,
-      'ELO':              C.E,
-      'ranking':          C.E,
-      'matchmaking':      C.E
-    },
-    
-    'game-mechanics': {
-      'final-objectives': {
-        'win conditions':    C.E,
-        'infinite-play':     C.E,
-        'game loss':         C.E
-      },
-      
-      
-      health:	{
-        'initial health':    C.E,
-        'max health':        C.E,
-        'recovery rates':    C.E,
-        'healing':           C.E,
-        'max-health boost':  C.E,
-        'extra lives':       C.E
-      },
-        
-      combat: {
-        'melee':		    C.E,
-        'touch-damage': C.E,
-        'shots':        C.E,
-        'direct-damage':   C.E,
-        'splash-damage':   C.E,
-        'reflected-damage': C.E
-      },
-        
-      defense: {
-        'armor':           C.E,
-        'agility':         C.E,
-        'stealth':         C.E,
-        'invulnerability': C.E 
-      },
-      
-      modifiers: {
-        buffs:             C.E,
-        debuffs:           C.E
-      },
-       
-      puzzles: { 
-        sokoban:           C.E,
-        'required-item':   C.E
-        // @stanchion.. more here pls
-      },
-        
-      'in-game-rewards': {
-        loot:           C.E
-        // @stanchion.. more here pls
-        
-      }
-    },
-      
-    'level design': {
-      'pathing':      C.E,
-      'oclusion':     C.E,
-      'backtrack':    C.E,
-      'secrets':      C.E,
-      'bottlenecks':  C.E
-        // @stanchion.. more here pls.. what about 'big rooms' ? 
-      
-    },
-      
-    pacing: {
-      'progression':  C.E,
-      'grinding':     C.E,
-      'bosses':       C.E
-      // @stanchion.. others?        
-    }
-  },
-
-  audio: {
-    music: {
-      ambient:        C.E,
-      intense:        C.E,
-      loops:          C.E
-    },
-    fx: {
-      jsfxr:          C.E,
-      loops:          C.E
-    } 
-  },
-
-  community: {
-    betas:            C.E,
-    feedback:         C.E,
-    support:          C.E,
-    issues:           C.E,
-    trolls:           C.E,
-    playtesting:      C.E
-  },
-
-  writing: {
-    character: {
-      roles: { 
-        protagonist:   C.E,
-        antagonist:    C.E,
-      },
-      relationships: {
-        mentor:        C.E        
-        // more
-      },
-      motivations: { 
-        survival:  C.E,
-      }
-    },
-    structures: {
-      "Hero's Journey": C.E
-    },
-    'narrative devices':   C.E,
-    "Narrator":       C.E,
-    
-  },
-  
-  analytics: {
-    metrics:          C.E,
-    bouncerate:       C.E,
-    engagement:       C.E,
-    conversion:       C.E
-  },
-
-  marketing: {
-    customer:         C.E,
-    requirements:     C.E,
-    competitors:      C.E,
-    reach:            C.E,
-    growth:           C.E
-  },
-
-  business: {
-    monetization:     C.E,
-    freemium:         C.E,
-    upsell:           C.E,
-    consumables:      C.E,
-    subscriptions:    C.E,
-    ads:              C.E
-  },
+  art:       ArtSkillNodes,
+  code:      CodeSkillNodes,
+  audio:     AudioSkillNodes,
+  design:    DesignSkillNodes,
+  writing:   WritingSkillNodes,
+  business:  BusinessSkillNodes,
+  community: CommunitySkillNodes,
+  analytics: AnalyticsSkillNodes,
+  marketing: MarketingSkillNodes,
 
   $meta: {
     map: {}

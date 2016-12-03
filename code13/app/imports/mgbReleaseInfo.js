@@ -22,6 +22,36 @@ const mgbReleaseInfo = {
 
 */
 
+    {
+      'timestamp': 'Fri Dec 02 2016 20:00:00 GMT-0800 (PDT)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2205'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Asset Bundler speed',
+          'changeSummary': 'We do a lot of magic to gather all the imports for your code, transpile your code into earlier versions of javascript, and bundle it so it can run quickly on a variety of browsers. But now we do it faster and using much less network bandwidth :)',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'bugfix',
+          'changeName': 'Fixed api bug for graphics',
+          'changeSummary': 'Fixed a bug that prevented some older graphics files from being loaded via the api. This was affecting the sample "clean sheet" code examples.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
 
     {

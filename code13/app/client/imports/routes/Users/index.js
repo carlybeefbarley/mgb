@@ -6,7 +6,7 @@ import BadgeListRoute from './BadgeListRoute'
 import UserHistory from './UserHistory'
 import ResetPassword from './ResetPassword'
 import ForgotPassword from './ForgotPassword'
-import SkillTreePage from './SkillTreePage'
+import SkillTreeRoute from './SkillTreeRoute'
 
 export default {
   List,
@@ -17,5 +17,5 @@ export default {
   UserHistory,
   ResetPassword,
   ForgotPassword,
-  SkillTreePage
+  SkillTreeRoute
 }

@@ -14,7 +14,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-import { Users, Activity, Projects, Settings, Sysvars } from '/imports/schemas'
+import { Users, Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
@@ -61,15 +61,17 @@ export default App = React.createClass({
   },
 
   childContextTypes: {
-    urlLocation:        PropTypes.object,
-    settings:           PropTypes.object
+    urlLocation:  PropTypes.object,
+    settings:     PropTypes.object,
+    skills:       PropTypes.object
   },
 
   getChildContext() {
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
     return {
-      urlLocation:        this.props.location,
-      settings:           this.data.settings   // We pass Settings in context since it will be a huge pain to pass it throughout the component tree
+      urlLocation:  this.props.location,
+      settings:     this.data.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
+      skills:       this.data.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
     }
   },
 
@@ -132,13 +134,15 @@ export default App = React.createClass({
                            : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
     const handleForSysvars = Meteor.subscribe('sysvars')
 
+    const handleForSkills = currUserId ? Meteor.subscribe("skills.userId", currUserId) : null
+    const skillsReady = handleForSkills === null ? true : handleForSkills.ready()
+
     const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
     const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
     const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit)
     const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
     const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
     const projectSelector = projectMakeSelector(currUserId)
-
 
     if (handleForSettings && handleForSettings.ready())
     {
@@ -153,12 +157,14 @@ export default App = React.createClass({
       user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
       activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
       settings: G_localSettings,
+      skills:   currUser ? Skills.findOne(currUserId) : null,
       sysvars:  Sysvars.findOne(),
       loading:  !handleForUser.ready()    ||
                 !handleForSysvars.ready() || 
                 !handleActivity.ready()   ||
                 !projectsReady            ||
-                !settingsReady
+                !settingsReady            ||
+                !skillsReady
     }
     return retval
   },

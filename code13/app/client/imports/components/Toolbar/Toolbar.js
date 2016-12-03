@@ -30,7 +30,7 @@ export const expectedToolbarScopeMaxValues = {
   AudioTools:    25,
   NavPanel:      4,
   FlexPanel:     4,
-//SkillsMap:     23
+  SkillsMap:     4
 }
 
 export const expectedToolbarScopeNames = _.keys(expectedToolbarScopeMaxValues)

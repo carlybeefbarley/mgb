@@ -3,13 +3,14 @@ import React from 'react'
 
 import { Routes } from '/client/imports/routes'
 
-import '/imports/schemas/activity'
-import '/imports/schemas/activitySnapshots'
-import '/imports/schemas/assets'
 import '/imports/schemas/chats'
+import '/imports/schemas/users'
+import '/imports/schemas/assets'
+import '/imports/schemas/skills'
+import '/imports/schemas/activity'
 import '/imports/schemas/projects'
 import '/imports/schemas/settings'
-import '/imports/schemas/users'
+import '/imports/schemas/activitySnapshots'
 
 import { Tracker } from 'meteor/tracker'
 
@@ -18,11 +19,10 @@ if (Meteor.isDevelopment) {
   Tracker.Computation.prototype._recompute = function () {
     this._recomputing = true
     try {
-      if (this._needsRecompute()) {
-        this._compute();
-      }
+      if (this._needsRecompute())
+        this._compute()      
     } finally {
-      this._recomputing = false;
+      this._recomputing = false
     }
   }
 }

@@ -1,18 +1,19 @@
-import { Users, Azzets } from '../imports/schemas'
+import { Users } from '../imports/schemas'
 
 // Import all server-side schema stubs in order to register their Meteor.call() methods
 import '/imports/schemas/users'
 import '/imports/schemas/chats'
 import '/imports/schemas/assets'
+import '/imports/schemas/skills'
+import '/imports/schemas/sysvars'
 import '/imports/schemas/projects'
 import '/imports/schemas/activity'
-import '/imports/schemas/activitySnapshots'
-import '/imports/schemas/skills'
 import '/imports/schemas/settings'
-import '/imports/schemas/sysvars'
+import '/imports/schemas/activitySnapshots'
 
 import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
 
+import { createInitialSkills } from '/imports/schemas/skills-server.js'
 import { createInitialSettings } from '/imports/schemas/settings-server.js'
 
 // Import rules and publications
@@ -28,18 +29,18 @@ import '/server/imports/rateLimiter'
 
 // Create fixtures on first time app is launched (useful for dev/test)
 import { createUsers } from './fixtures.js'
+
 if (!Users.find().fetch().length) 
   createUsers()
-
 
 function userHasLoggedIn(loginInfo)
 {
   const u = loginInfo.user
   // loginInfo params.. see http://docs.meteor.com/api/accounts-multi.html#AccountsServer-validateLoginAttempt
   console.log(`Login: '${u.profile.name}' (${loginInfo.type})   uid:${u._id}   IP: ${loginInfo.connection.clientAddress}`)
+  createInitialSkills(u._id)
   createInitialSettings(u._id)
 }
-
 
 Meteor.startup(function () {
 

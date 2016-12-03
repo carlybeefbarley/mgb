@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes.js'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
@@ -9,7 +9,6 @@ export default class SkillTree extends React.Component {
 
   constructor (...a) {
     super(...a)
-    this.loadSkills()
     this.totals = {}
     this.zoomLevel = 1
     this.countSkillTotals(SkillNodes, '', this.totals)
@@ -22,28 +21,15 @@ export default class SkillTree extends React.Component {
     this.countSkillTotals(SkillNodes, '', this.totals)
     this.forceUpdate()
   }
-
-  loadSkills () {
-    this.skills = {}
-    // TODO: this should be in subscription?
-    Meteor.call("Skill.getForUser", this.props.user._id, (err, skills) => {
-      console.log("Skills:", skills)
-      this.skills = skills || {}
-      this.updateSkills()
-    })
-  }
-
   learnSkill (key) {
     Meteor.call("Skill.grant", key, (...a) => {
       console.log("Skill granted", ...a)
-      this.skills[key] = 1
       this.updateSkills()
     })
   }
 
   // is it even possible?
   forgetSkill (key) {
-    delete this.skills[key]
     Meteor.call("Skill.forget", key, () => {
       this.updateSkills()
     })
@@ -73,7 +59,7 @@ export default class SkillTree extends React.Component {
           total: 1,
           has: 0
         }
-        if (this.skills[newKey]) {
+        if (this.context.skills[newKey]) {
           tot[newKey].has++
           ret.has++
         }
@@ -92,13 +78,13 @@ export default class SkillTree extends React.Component {
 
   // TODO: create separate component for that?
   renderSingleNode (node, key, path, disabled) {
-    let color = this.skills[path] ? 'green' : 'red'
+    let color = this.context.skills[path] ? 'green' : 'red'
     if (!node.$meta.enabled)
       color = 'grey'
 
     let onClick
     if (!disabled && node.$meta.enabled)
-      onClick = this.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
+      onClick = this.context.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
 
     return (
       <div
@@ -247,4 +233,8 @@ export default class SkillTree extends React.Component {
       this.forceUpdate()
     }
   }
+}
+
+SkillTree.contextTypes = {
+  skills:    PropTypes.object
 }

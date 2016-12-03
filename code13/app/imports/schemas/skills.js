@@ -1,58 +1,71 @@
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes.js'
+import { Skills } from '/imports/schemas'
 
-// are enums enough - or we need separate object for these?
-const UNKNOWN =       0
-const SELF_CLAIMED =  0b001
-const PEER_ASSERTED = 0b010
-const MGB_MEASURED =  0b100
+var schema = {
+  // ID of skills objects in the Skills Collection. 
+  // THIS WILL BE EQUAL TO THE ID OF THE USER - simplest way to ensure and manage a 1:1 mapping of user:settings
+  _id:       String,
 
-// Currently just saved in RAM  .. TODO: save in real DB
-const uSkills = {}
-
-var getSkillsRecord = (userId) => {
-  if(!uSkills[userId]){
-    uSkills[userId] = {}
-  }
-  return uSkills[userId]
+  updatedAt: Date,      // Always handy to have this
 }
 
+// Basis for the skill - to what extent is this subjectively or objectively verified
+const SKILL_BASIS_SELF_CLAIMED =  'self'
+const SKILL_BASIS_PEER_ASSERTED = 'peer'
+const SKILL_BASIS_MGB_MEASURED =  'guru'
+
 Meteor.methods({
-  // TODO: check if active user is allowed to grant skill
-  // TODO(find out): do we need to store which user have asserted skill? or asserters count
-  "Skill.grant": function(key, userId = Meteor.userId(), origin = SELF_CLAIMED){
-    let rec = getSkillsRecord(userId)
-    console.log("skill granted:", uSkills)
-    if(!rec[key]){
-      rec[key] = UNKNOWN
-    }
-    rec[key] |= origin
-    return rec
+  "Skill.grant": function(dottedSkillKey, basis = SKILL_BASIS_SELF_CLAIMED) {
+    if (!this.userId) 
+      throw new Meteor.Error(401, "Login required")
+
+    if (basis !== SKILL_BASIS_SELF_CLAIMED) 
+      throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
+
+    const slashSeparatedSkillKey = dottedSkillKey.replace('.', '/')  // Keys can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
+
+    const count = Skills.update(this.userId, { 
+      $addToSet: { [slashSeparatedSkillKey]: basis },
+      $set:      { updatedAt: new Date() }
+    })
+
+    return count
+
   },
-  "Skill.forget": function(key, userId = Meteor.userId()){
-    const rec = getSkillsRecord(userId)
-    delete rec[key]
-  },
-  // TODO: publish this
-  "Skill.getForUser": function(userId = Meteor.userId()){
-    console.log("skills:", getSkillsRecord(userId), uSkills)
-    return getSkillsRecord(userId)
+
+  "Skill.forget": function(dottedSkillKey, basis = SKILL_BASIS_SELF_CLAIMED) {
+    if (!this.userId) 
+      throw new Meteor.Error(401, "Login required")
+
+    if (basis !== SKILL_BASIS_SELF_CLAIMED) 
+      throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
+
+    const slashSeparatedSkillKey = dottedSkillKey.replace('.', '/')  // Keys can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
+
+    const count = Skills.update(this.userId, { 
+      $pullAll:  { [slashSeparatedSkillKey]: basis },
+      $set:      { updatedAt: new Date() }
+    })
+
+    return count
   }
+
 })
 
 
-function hasSkill(skillKey)
+function hasSkill(dottedSkillKey)
 {
   return false
 }
 
 
-function grantSkill(skillKey)
+function grantSkill(dottedSkillKey)
 {
   // TODO: set it with a rounded timestamp so we know timeline and recency of this skill change
 }
 
 
-function getSkillStatus(skillKeyPrefix)
+function getSkillStatus(dottedSkillKeyPrefix)
 {
   
   // return array of skills for this prefix   foo.bar.
@@ -67,13 +80,13 @@ function getSkillStatus(skillKeyPrefix)
 }
 
 
-function getSkillPercentage(skillKeyPrefix, depth)
+function getSkillPercentage(dottedSkillKeyPrefix, depth)
 {
   // provide rollup of skills gained at various levels of the skillkey hierarchy
 }
 
 
-function getSkillStructure(skillKeyPrefix)
+function getSkillStructure(dottedSkillKeyPrefix)
 {
   
   // return some encoding of a hierarchy/sequence of skills.. 
@@ -100,6 +113,3 @@ function getSkillStructure(skillKeyPrefix)
 // ...
 // mgb.asset.code.js.fw.phaser.Game
 // mgb.asset.code.js.fw.phaser.Loader
-//
-
-

@@ -1,5 +1,6 @@
 import C from './CommonSkillNodes.js'
 
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 // These will be inserted into { marketing: ___ }
 

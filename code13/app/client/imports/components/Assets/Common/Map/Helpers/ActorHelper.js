@@ -4,21 +4,21 @@
   actor => tileset + additional info
   tile => image
   */
-import TileHelper from './TileHelper.js'
-import ActorValidator from '../../ActorValidator.js'
-import globals from '/client/imports/SpecialGlobals.js'
+import TileHelper from './TileHelper'
+import ActorValidator from '../../ActorValidator'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 // 0 - jump
 // 1 - music
-const ACTION_IMAGE = globals.actorMap.actionsImage
-const EVENT_LAYER = globals.actorMap.eventLayerId
+const ACTION_IMAGE = SpecialGlobals.actorMap.actionsImage
+const EVENT_LAYER = SpecialGlobals.actorMap.eventLayerId
 
 // in this context:
 // v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contains names
 // v2 - TMX format - layers contains tile global ids
 
 export default ActorHelper = {
-  TILES_IN_ACTIONS: globals.actorMap.actionsInImage,
+  TILES_IN_ACTIONS: SpecialGlobals.actorMap.actionsInImage,
   v2_to_v1: function(data){
     const d = {
       mapLayer: [],

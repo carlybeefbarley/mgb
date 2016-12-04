@@ -2,7 +2,7 @@
 // See also ./settings.js for context
 
 import _ from 'lodash'
-import SpecialGlobals from '/client/imports/SpecialGlobals.js'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 
 const _getSettingType = (settingsGroupName, settingsObj, subKey) => 

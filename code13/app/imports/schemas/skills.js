@@ -1,5 +1,7 @@
-import SkillNodes, { _makeSlashSeparatedSkillKey } from '/imports/Skills/SkillNodes/SkillNodes.js'
+import SkillNodes, { makeSlashSeparatedSkillKey } from '/imports/Skills/SkillNodes/SkillNodes.js'
 import { Skills } from '/imports/schemas'
+
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 var schema = {
   // ID of skills objects in the Skills Collection. 
@@ -23,7 +25,7 @@ Meteor.methods({
     if (basis !== SKILL_BASIS_SELF_CLAIMED) 
       throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
 
-    const slashSeparatedSkillKey = _makeSlashSeparatedSkillKey(dottedSkillKey)
+    const slashSeparatedSkillKey = makeSlashSeparatedSkillKey(dottedSkillKey)
 
     const count = Skills.update(this.userId, { 
       $addToSet: { [slashSeparatedSkillKey]: basis },
@@ -40,7 +42,7 @@ Meteor.methods({
     if (basis !== SKILL_BASIS_SELF_CLAIMED) 
       throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
 
-    const slashSeparatedSkillKey = _makeSlashSeparatedSkillKey(dottedSkillKey)
+    const slashSeparatedSkillKey = makeSlashSeparatedSkillKey(dottedSkillKey)
 
     const count = Skills.update(this.userId, { 
       $pullAll:  { [slashSeparatedSkillKey]: [ basis ] },
@@ -57,7 +59,7 @@ export const hasSkill = (skillsObj, dottedSkillKey) => {
   if (!skillsObj || !dottedSkillKey || dottedSkillKey === '')
     return false
     
-  const slashSeparatedSkillKey = _makeSlashSeparatedSkillKey(dottedSkillKey)
+  const slashSeparatedSkillKey = makeSlashSeparatedSkillKey(dottedSkillKey)
   const val = skillsObj[slashSeparatedSkillKey]
   return (val && val.length > 0)
 }

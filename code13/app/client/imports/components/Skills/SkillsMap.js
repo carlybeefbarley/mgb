@@ -4,6 +4,9 @@ import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 
 import { hasSkill } from '/imports/schemas/skills'
 
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
+
+
 export default class SkillTree extends React.Component {
   static propTypes = {
     user: React.PropTypes.object

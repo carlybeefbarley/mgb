@@ -1,4 +1,6 @@
 
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
+
 // Common Skill Node helpers
 
 // list of known / reserved keys:

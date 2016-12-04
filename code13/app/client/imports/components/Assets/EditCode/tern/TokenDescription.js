@@ -1,14 +1,16 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { hasSkill } from '/imports/schemas/skills'
-import { _isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
+import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
 
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 // TODO - embed/link to MDN docs using https://developer.mozilla.org/en-US/docs/MDN/Contribute/Tools/Document_parameters
 //    for example
 //    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators$toc#Equality_()
 //    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators?raw&macros&section=Equality_operators
 //    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators?raw&macros&section=Equality_()
+// Maybe do this in SkillNodes.js ? 
 
 
 // Some external links that aren't part of the wider helpInfo list. I put them here for easier maintenance
@@ -24,7 +26,7 @@ const noHelpTypes = [
 ]
 
 
-// Indexes into the SkillsNodes object defined in /imports/Skills/SkillsNodes/SkillNodes.js
+// Indexes into the SkillNodes object defined in /imports/Skills/SkillNodes/SkillNodes.js
 const _skl = 'code.js.lang.'
 const _skla = _skl+'advanced.'
 const _sklb = _skl+'basics.'
@@ -1065,7 +1067,7 @@ export default TokenDescription = React.createClass({
 
     const skillNodeKey = specialHandler ? specialHandler.skillNodes : 
                           (help ? (help.skillNodes || null) : null)
-    const showExpanded = _isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey)
+    const showExpanded = isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey)
 
     // TODO.. something useful with token.state?
 

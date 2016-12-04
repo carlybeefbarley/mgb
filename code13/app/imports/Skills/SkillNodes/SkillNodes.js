@@ -1,22 +1,113 @@
 import _ from 'lodash'
-import C from './CommonSkillNodes.js'
-import ArtSkillNodes from './ArtSkillNodes.js'
-import CodeSkillNodes from './CodeSkillNodes.js'
-import AudioSkillNodes from './AudioSkillNodes.js'
-import DesignSkillNodes from './DesignSkillNodes.js'
-import WritingSkillNodes from './WritingSkillNodes.js'
-import BusinessSkillNodes from './BusinessSkillNodes.js'
-import AnalyticsSkillNodes from './AnalyticsSkillNodes.js'
-import CommunitySkillNodes from './CommunitySkillNodes.js'
-import MarketingSkillNodes from './MarketingSkillNodes.js'
-import GetStartedSkillNodes from './GetStartedSkillNodes.js'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
-// Note that the top level names here (code, art, audio etc) must correlate with the tag
-// of skillAreaItems as defined in SkillAreas.js
+import C from './CommonSkillNodes'
+import ArtSkillNodes from './ArtSkillNodes'
+import CodeSkillNodes from './CodeSkillNodes'
+import AudioSkillNodes from './AudioSkillNodes'
+import DesignSkillNodes from './DesignSkillNodes'
+import WritingSkillNodes from './WritingSkillNodes'
+import BusinessSkillNodes from './BusinessSkillNodes'
+import AnalyticsSkillNodes from './AnalyticsSkillNodes'
+import CommunitySkillNodes from './CommunitySkillNodes'
+import MarketingSkillNodes from './MarketingSkillNodes'
+import GetStartedSkillNodes from './GetStartedSkillNodes'
 
-// Also, property keys must NOT contain a . or / character  (TODO: Implement a check for this)
+
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
+
+// A) THE SKILLS MODEL TRIFECTA... OVERVIEW
+//            ---> skills + tutorials + help <---
+//
+// In MGBv2, there is a UNIFIED data model for enumerating three related subsystems
+//   1) skills        -- The skills that a user has (or claims to have)
+//   2) tutorials     -- Our tutorials that support a user's learning in some area
+//   3) dynamic help  -- Systems like 'Code Mentor' in EditCode that provide context-sensitive help
+//
+// ..in order to support this, there is INTENTIONAL AND MANDATORY correlation between 
+// the namespace/keys of three seemingly separate data structures in MGBv2:
+//
+//   1a) skills.js     -- This supports the persistence of skills information to the Meteor/MongoDB.
+//                        ...Example key:   code/js/lang/basics/types/string (Note the / chars).
+//                        To convert dottedKeys to slashSeparated keys, use
+//                    >>    import { makeSlashSeparatedSkillKey } from '/imports/Skills/SkillNodes/SkillNodes'
+//
+//   1b) SkillNodes.js -- This (and the parts it combines from *SkillNodes.js) define the total 'learniverse' 
+//                        of all skills we understand and track in MGB
+//                        ...Example key: code.js.lang.basics.types.string
+//                        To check that some string (either a dotted path or a slashSeparatedPath) is a valid
+//                        *LEAF* skill (leaf skills are explained below), use 
+//                    >>    import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes'
+//
+//   1c) SkillAreas.js -- This defines the overall skillAreas (the top-level keys of SkillNodes.js)
+//                        and defines the skills that are listed and displayed in LearnSkillsAreaRoute.js and
+//                        LearnSkillsRoute.js
+// --
+//   2a) tutorials     -- This supports tutorials explaining the skill to the user. Note that tutorials are
+//        (MGB assets)    stored in JSON files as **MGB Game Assets** of kind 'tutorial' in the !vault account:
+//                        ...Example key (MGB Asset Name): !vault:tutorials.code.js.lang.basics.types.string.00
+//                           (The .00 suffix is there to support having multi-part tutorials for a given asset)
+//                        To generate a tutorial path from a skills path, use 
+//                    >>    import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
+//
+//   2b) SpecialGlobals.js   -- The '!vault:tutorials.' prefix is defined in /imports/SpecialGlobals.js to 
+//                              preserve my ADHD/OCD-sanity 
+// --
+//   3a) TokenDescription.js -- This is the help for Editing Javascript Code
+//                              This has a different (flat, token-based) key hierarchy, but maps back to skillNodes
+//                              via the 'help' object that is used in that sourcefile
+//                              ..Example:  help['string'].skillNodes = 'code.js.lang.basics.types.string'
+//
+//   3b) (TBD MORE)          -- There will probably similar things in future for other areas where we can 
+//                              automate help - for example Toolbars.js
+
+// B) MANDATORY CONSTRAINTS FOR THESE DATA MODELS
+//
+// The top level names in SkillsNode.js (and it's partial imports from the *SkillNodes.js files') 
+// (code, art, audio etc) and in fact the full paths MUST correlate with the tag of skillAreaItems 
+//  as defined in SkillAreas.js
+//
+// B0) For easy grepping, any files that have to be aware of these constriants must include the comment
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
+
+// B1) CRITICAL: Casually re-arranging the skillNodes hierarchy is a NO-NO because the skills 
+//     are persisted in MongoDB in the Skills table. 
+//     Moving/Deleting any skill in SkillNodes will require a matching change
+//     in ALL users' Skills table entries to represent the move (and then also 
+//     of course the other source code files mentioned in 1a/1b/2a/3a above)
+//
+// B2) The keys for skills, tutorials, and help MUST have the same paths 
+//     (though note that the separators unfortunately have to differ because of 
+//      constraints in stores and libraries in order to supported a dottedNested 
+//      syntax for nested objeects. But this is ok, as long as we are CAREFUL)
+//
+// B3), Property/Field keys MUST NOT contain any of the following characters:
+//  NO   .      - because we (and lodash and MongoDB) use these as a separator 
+//                for nesting fields for some syntaxes (eg. _.get() etc)
+//  NO   /      - because we convert any dottedPaths we use in memory to slash-separated 
+//                paths when storing in MongoDB/Meteor
+//  NO   ,      - because we use , as a separator when specifying multiple fields 
+//                sometimes (for example $meta.sequence)
+//
+//  YES  -      - if you really need a separator within a fieldname, the recommendation
+//                is the minus (-) character, but camelCasingIsPreferredInstead. KTHXBYE.
+
+// C) Expected future work on this model
+//
+// C1)  [ TODO(@dgolds/@stauzs): Implement a check the constraints described in B at runtime 
+//      or as a unit test, so we don't have a bad day when we mess up a constraint by accident. ]
+//
+// C2)  [ TODO(@dgolds): Implement multi-part tutorials for a skill area (as enabled in the
+//        makeTutorialAssetPathFromSkillPath() helper function )]
+//
+// C3)  [ TODO(@dgolds): Connect Toolbar.js into this model )]
+//
+// C4)  [ TODO(@dgolds): Connect KeyBindings.js into this model )]
 
 const SkillNodes = {
+  // NOTE THAT EACH OF THESE MUST HAVE A MATCHING ITEM IN SkillAreas.js if it is part of the
+  // general skills courses. There are some specific exceptions that have their own top-level UI
+  // and they are indicated below in a comment:
   art:        ArtSkillNodes,
   code:       CodeSkillNodes,
   audio:      AudioSkillNodes,
@@ -26,7 +117,7 @@ const SkillNodes = {
   community:  CommunitySkillNodes,
   analytics:  AnalyticsSkillNodes,
   marketing:  MarketingSkillNodes,
-  getStarted: GetStartedSkillNodes,
+  getStarted: GetStartedSkillNodes,     // Has specific client UI in LearnGetStartedRoute.js so NOT in skillsAreas.js
 
   $meta: {
     map: {}
@@ -142,12 +233,47 @@ resolveUnlocksAndRequires()
 export default SkillNodes
 
 // MongoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
-export const _makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')
-export const _makeDottedSkillKey = slashSeparatedSkillKey => slashSeparatedSkillKey.replace(/\//g, '.')
+export const makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')
+export const makeDottedSkillKey = slashSeparatedSkillKey => slashSeparatedSkillKey.replace(/\//g, '.')
 
-export const _isSkillKeyValid = skillPath => {
-  const dottedSkillKey = _makeDottedSkillKey(skillPath)
+export const isSkillKeyValid = skillPath => {
+  const dottedSkillKey = makeDottedSkillKey(skillPath)
   const node = _.get(SkillNodes, dottedSkillKey)
   return node && node.$meta && node.$meta.isLeaf === 1
 }
 
+
+// Note that this can return null for an invalid path request, in which case it will also console.error()
+//   skillPath can be either a slashSeparated or dottedPath.
+//   skillPath MUST be to a LEAF skill (ie.. not a container of skills)
+//   partNumber must be integer from 0..99 inclusive. Default value is 0 if not provided.
+
+export const makeTutorialAssetPathFromSkillPath = (skillPath, partNumber = 0) => {
+  if (!Number.isInteger(partNumber) || partNumber < 0 || partNumber > 99)
+  {
+    console.error(`makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) error: partNumber=${partNumber} is not valid, must be integer from 0 to 99.`)
+    return null
+  }
+
+  if (partNumber > 0)
+  {
+    // This is part of the namespace design for the SKILLS_MODEL_TRIFECTA, but isn't actually used yet.
+    // Let's make sure it doesn't get called and used by mistake before we are ready.
+    console.error(`PREMATURE! makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) is not expecting a partNumber > 0 YET. Are you from the future?`)
+    debugger    
+  }
+
+
+  if (!isSkillKeyValid(skillPath)) 
+  {
+    console.error(`makeTutorialAssetPathFromSkillPath(${skillPath}) error: isSkillKeyValid() failed validation`)
+    return null
+  }
+
+  const dottedSkillKey = makeDottedSkillKey(skillPath)
+  const partNumberPaddedStr = ('00'+partNumber).slice(-2)
+  const retVal = `${SpecialGlobals.skillsModelTrifecta.tutorialAssetNamePrefix}${dottedSkillKey}.${partNumberPaddedStr}`
+  console.log(`makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) => '${retVal}'`)
+
+  return retVal
+}

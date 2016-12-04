@@ -1,7 +1,8 @@
 import C from './CommonSkillNodes.js'
 
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-// These will be inserted into {code: ___ }
+// These will be inserted into { code: ___ }
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
@@ -18,7 +19,8 @@ export default {
     lang: {
       $meta: {
         name:       'JavaScript Language',
-        description:'The JavaScript programming language'
+        description:'The JavaScript programming language',
+        sequence:   'basics,advanced'
       },
       basics: {
         comments:     C.E,

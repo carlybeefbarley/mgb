@@ -12,7 +12,7 @@ import HandleCollection from './../MapObjects/HandleCollection.js'
 import Imitator from './../MapObjects/Imitator.js'
 import MultiImitator from './../MapObjects/MultiImitator.js'
 
-import globals from '/client/imports/SpecialGlobals.js'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const FLIPPED_HORIZONTALLY_FLAG = TileHelper.FLIPPED_HORIZONTALLY_FLAG
 const FLIPPED_VERTICALLY_FLAG = TileHelper.FLIPPED_VERTICALLY_FLAG
@@ -1001,7 +1001,7 @@ edit[EditModes.rectangle] = function (e) {
           }
         }else {
           if (selected != this.selection) {
-            const newRotation = Math.round(this.clonedObject.rotation / globals.map.objectRotationStep) * globals.map.objectRotationStep
+            const newRotation = Math.round(this.clonedObject.rotation / SpecialGlobals.map.objectRotationStep) * SpecialGlobals.map.objectRotationStep
             this.rotateObject(newRotation, selected)
           }
         }

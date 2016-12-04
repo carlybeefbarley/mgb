@@ -64,7 +64,7 @@ import ToolbarProps from '../Common/Map/Props/ToolbarProps.js'
 import PropertiesProps from '../Common/Map/Props/PropertiesProps.js'
 import ObjectListProps from '../Common/Map/Props/ObjectListProps.js'
 
-import SpecialGlobals from '/client/imports/SpecialGlobals.js'
+import SpecialGlobals from '/imports/SpecialGlobals'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 

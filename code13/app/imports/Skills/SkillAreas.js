@@ -1,8 +1,24 @@
 
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
+// Note that the .tag names here (code, art, audio etc) must correlate with 
+// the top level properties of SkillNodes as defined in SkillNodes.js.
 
-// Note that the .tag names here (code, art, audio etc) must correlate with the top level properties
-// of SkillNodes as defined in SkillNodes.js
+// HOWEVER.. 
+// YOU *MUST* READ THE GIANT COMMENT IN SkillNodes.js TO GROK 
+// THE INTERCONNETEDNESS OF THE skillAreas/skillNodes/tutorials/help DATA
+// STRUCTURES BEFORE MAKING ANY CHANGES. ALL CHNAGES SHOULD BE REVIEWED 
+// WITH @dgolds
+
+// TODO(@dgolds) - it may be better to move these to $meta data on the top-level 
+// objects in SkillNodes.js
+
+// Also.. It is permitted that some nodes in SkillNodes.js that do not exist here.. 
+// That is ok for SPEIAL CASES that have their OWN top-level UI for introducing 
+// and guiding the user through the skills paths. 
+// See SkillNodes.js (where SkillNodes is defined and exported) for the list of 
+// those specific exceptions 
+//   (for example SkillsNode['getStarted'] is handled by LearnGetStartedRoute.js)
 
 export const skillAreaItems = [
   { tag: 'code',       mascot: 'bigguy',     mascotName: 'Codo',    icon: 'code',        title: 'Programming',   desc: 'Code using JavaScript and game engines like Phaser' },

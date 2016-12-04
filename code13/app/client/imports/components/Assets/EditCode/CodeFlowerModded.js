@@ -1,6 +1,6 @@
 //window.d3 = d3;
 import d3 from "d3"
-import SpecialGlobals from '/client/imports/SpecialGlobals.js'
+import SpecialGlobals from '/imports/SpecialGlobals'
 const config = SpecialGlobals.codeFlower
 
 export default CodeFlower = function (selector, w, h, options) {

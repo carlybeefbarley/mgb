@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import GifParser from  './GifParser.js'
 import sty from  './graphicImport.css'
-import SpecialGlobals from '/client/imports/SpecialGlobals.js'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const STATUS_EMPTY = "empty"
 const STATUS_DRAGGED_OVER = "draggedOver"

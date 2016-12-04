@@ -13,12 +13,12 @@ import { Segment, Message, Header } from 'semantic-ui-react'
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
-import globals from '/client/imports/SpecialGlobals'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 
 const _incrementPlayCount = _.debounce(
   assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) }, 
-  globals.gamePlay.playCountDebounceMs, 
+  SpecialGlobals.gamePlay.playCountDebounceMs, 
   { leading: true } 
 )
 

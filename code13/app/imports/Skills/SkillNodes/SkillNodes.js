@@ -13,6 +13,8 @@ import GetStartedSkillNodes from './GetStartedSkillNodes.js'
 // Note that the top level names here (code, art, audio etc) must correlate with the tag
 // of skillAreaItems as defined in SkillAreas.js
 
+// Also, property keys must NOT contain a . or / character  (TODO: Implement a check for this)
+
 const SkillNodes = {
   art:        ArtSkillNodes,
   code:       CodeSkillNodes,

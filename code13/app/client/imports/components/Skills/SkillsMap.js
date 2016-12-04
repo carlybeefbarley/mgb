@@ -11,11 +11,11 @@ export default class SkillTree extends React.Component {
 
   constructor (...a) {
     super(...a)
+    this.state = {
+      zoomLevel:    1
+    }
     this.totals = {}
-    this.zoomLevel = 1
     this.countSkillTotals(SkillNodes, '', this.totals)
-    // TODO: make it work
-    // Meteor.subscribe("user.skills", this.props.user._id)
   }
 
   // use setState instead?
@@ -25,14 +25,14 @@ export default class SkillTree extends React.Component {
   }
   learnSkill (key) {
     Meteor.call("Skill.grant", key, (...a) => {
-      console.log("Skill granted", ...a)
+      console.log("Skill granted: ", key, ...a)
       this.updateSkills()
     })
   }
 
-  // is it even possible?
   forgetSkill (key) {
-    Meteor.call("Skill.forget", key, () => {
+    Meteor.call("Skill.forget", key, (...a) => {
+      console.log("Skill forgotten: ", key, ...a)
       this.updateSkills()
     })
   }
@@ -182,13 +182,15 @@ export default class SkillTree extends React.Component {
   }
 
   renderSkillNodes (skillNodes) {
-    if (this.zoomLevel == 1)
+    const { zoomLevel } = this.state
+    if (zoomLevel == 1)
       return this.renderSkillNodesSmall(skillNodes)
-    else if (this.zoomLevel == 2)
+    else if (zoomLevel == 2)
       return this.renderSkillNodesMid(skillNodes)
   }
 
   render () {
+    const { zoomLevel } = this.state
     const config = {
       level: 2,
       buttons: [
@@ -197,7 +199,7 @@ export default class SkillTree extends React.Component {
           label: 'Zoom In',
           icon:  'zoom in',
           tooltip: 'Open detailed skill view',
-          disabled: this.zoomLevel != 1,
+          disabled: zoomLevel != 1,
           level:    1,
           shortcut: '1'
         },
@@ -206,7 +208,7 @@ export default class SkillTree extends React.Component {
           label: 'Zoom Out',
           icon:  'zoom out',
           tooltip: 'Close detailed skill view',
-          disabled: this.zoomLevel != 2,
+          disabled: zoomLevel != 2,
           level:    2,
           shortcut: '2'
         }
@@ -224,17 +226,15 @@ export default class SkillTree extends React.Component {
   }
 
   zoomin () {
-    if (this.zoomLevel < 2) {
-      this.zoomLevel++
-      this.forceUpdate()
-    }
+    const { zoomLevel } = this.state
+    if (zoomLevel < 2)
+      this.setState( { zoomLevel: zoomLevel+1 } )
   }
 
   zoomout () {
-    if (this.zoomLevel > 1) {
-      this.zoomLevel--
-      this.forceUpdate()
-    }
+    const { zoomLevel } = this.state
+    if (zoomLevel > 1) 
+      this.setState( { zoomLevel: zoomLevel-1 } )
   }
 }
 

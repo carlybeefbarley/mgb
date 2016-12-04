@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react'
-import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes.js'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
+
+import { hasSkill } from '/imports/schemas/skills'
 
 export default class SkillTree extends React.Component {
   static propTypes = {
@@ -59,7 +61,7 @@ export default class SkillTree extends React.Component {
           total: 1,
           has: 0
         }
-        if (this.context.skills[newKey]) {
+        if (hasSkill(this.context.skills, newKey)) {
           tot[newKey].has++
           ret.has++
         }
@@ -69,6 +71,7 @@ export default class SkillTree extends React.Component {
         ret.has += tmp.has
       }
     }
+
     if (key) {
       tot[key].total = ret.total
       tot[key].has = ret.has
@@ -78,13 +81,13 @@ export default class SkillTree extends React.Component {
 
   // TODO: create separate component for that?
   renderSingleNode (node, key, path, disabled) {
-    let color = this.context.skills[path] ? 'green' : 'red'
+    let color = hasSkill(this.context.skills, path) ? 'green' : 'red'
     if (!node.$meta.enabled)
       color = 'grey'
 
     let onClick
     if (!disabled && node.$meta.enabled)
-      onClick = this.context.skills[path] ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
+      onClick = hasSkill(this.context.skills, path) ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
 
     return (
       <div

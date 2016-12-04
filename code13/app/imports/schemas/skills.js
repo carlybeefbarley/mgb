@@ -14,6 +14,9 @@ const SKILL_BASIS_SELF_CLAIMED =  'self'
 const SKILL_BASIS_PEER_ASSERTED = 'peer'
 const SKILL_BASIS_MGB_MEASURED =  'guru'
 
+// MobgoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
+const _makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace('.', '/')  
+
 Meteor.methods({
   "Skill.grant": function(dottedSkillKey, basis = SKILL_BASIS_SELF_CLAIMED) {
     if (!this.userId) 
@@ -22,7 +25,7 @@ Meteor.methods({
     if (basis !== SKILL_BASIS_SELF_CLAIMED) 
       throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
 
-    const slashSeparatedSkillKey = dottedSkillKey.replace('.', '/')  // Keys can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
+    const slashSeparatedSkillKey = _makeSlashSeparatedSkillKey(dottedSkillKey.replace('.', '/'))
 
     const count = Skills.update(this.userId, { 
       $addToSet: { [slashSeparatedSkillKey]: basis },
@@ -30,7 +33,6 @@ Meteor.methods({
     })
 
     return count
-
   },
 
   "Skill.forget": function(dottedSkillKey, basis = SKILL_BASIS_SELF_CLAIMED) {
@@ -40,10 +42,10 @@ Meteor.methods({
     if (basis !== SKILL_BASIS_SELF_CLAIMED) 
       throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
 
-    const slashSeparatedSkillKey = dottedSkillKey.replace('.', '/')  // Keys can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
+    const slashSeparatedSkillKey = _makeSlashSeparatedSkillKey(dottedSkillKey.replace('.', '/'))
 
     const count = Skills.update(this.userId, { 
-      $pullAll:  { [slashSeparatedSkillKey]: basis },
+      $pullAll:  { [slashSeparatedSkillKey]: [ basis ] },
       $set:      { updatedAt: new Date() }
     })
 
@@ -53,9 +55,13 @@ Meteor.methods({
 })
 
 
-function hasSkill(dottedSkillKey)
-{
-  return false
+export const hasSkill = (skillsObj, dottedSkillKey) => {
+  if (!skillsObj)
+    return false
+    
+  const slashSeparatedSkillKey = _makeSlashSeparatedSkillKey(dottedSkillKey.replace('.', '/'))
+  const val = skillsObj[slashSeparatedSkillKey]
+  return (val && val.length > 0)
 }
 
 

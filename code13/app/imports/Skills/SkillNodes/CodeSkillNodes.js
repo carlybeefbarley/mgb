@@ -21,6 +21,7 @@ export default {
         description:'The JavaScript programming language'
       },
       basics: {
+        comments:     C.E,
         statements: {
           let:        C.E,
           const:      C.meta( {requires: ".let" }, C.E),
@@ -70,6 +71,9 @@ export default {
         }
       },
       advanced: {
+        types: {
+          'regex':   C.E,
+        },        
         math: {
           $meta: {
             requires: '..basics.math',

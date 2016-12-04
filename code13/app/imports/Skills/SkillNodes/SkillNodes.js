@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import C from './CommonSkillNodes.js'
 import ArtSkillNodes from './ArtSkillNodes.js'
 import CodeSkillNodes from './CodeSkillNodes.js'
@@ -137,4 +138,16 @@ const resolveUnlocksAndRequires = () => {
 
 buildMap(SkillNodes)
 resolveUnlocksAndRequires()
+
 export default SkillNodes
+
+// MongoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
+export const _makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')
+export const _makeDottedSkillKey = slashSeparatedSkillKey => slashSeparatedSkillKey.replace(/\//g, '.')
+
+export const _isSkillKeyValid = skillPath => {
+  const dottedSkillKey = _makeDottedSkillKey(skillPath)
+  const node = _.get(SkillNodes, dottedSkillKey)
+  return node && node.$meta && node.$meta.isLeaf === 1
+}
+

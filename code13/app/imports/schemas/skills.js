@@ -1,4 +1,4 @@
-import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes.js'
+import SkillNodes, { _makeSlashSeparatedSkillKey } from '/imports/Skills/SkillNodes/SkillNodes.js'
 import { Skills } from '/imports/schemas'
 
 var schema = {
@@ -11,11 +11,9 @@ var schema = {
 
 // Basis for the skill - to what extent is this subjectively or objectively verified
 const SKILL_BASIS_SELF_CLAIMED =  'self'
-const SKILL_BASIS_PEER_ASSERTED = 'peer'
-const SKILL_BASIS_MGB_MEASURED =  'guru'
+const SKILL_BASIS_PEER_ASSERTED = 'peer'    // TODO in future - use some # of votes of 'respected peers' as basis for claim
+const SKILL_BASIS_MGB_MEASURED =  'guru'    // TODO in future - use some moderator/guru account as basis for claim
 
-// MobgoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
-const _makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')  
 
 Meteor.methods({
   "Skill.grant": function(dottedSkillKey, basis = SKILL_BASIS_SELF_CLAIMED) {
@@ -56,7 +54,7 @@ Meteor.methods({
 
 
 export const hasSkill = (skillsObj, dottedSkillKey) => {
-  if (!skillsObj)
+  if (!skillsObj || !dottedSkillKey || dottedSkillKey === '')
     return false
     
   const slashSeparatedSkillKey = _makeSlashSeparatedSkillKey(dottedSkillKey)

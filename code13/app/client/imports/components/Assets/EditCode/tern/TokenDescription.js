@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { hasSkill } from '/imports/schemas/skills'
+import { _isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
 
 
 // TODO - embed/link to MDN docs using https://developer.mozilla.org/en-US/docs/MDN/Contribute/Tools/Document_parameters
@@ -16,26 +18,23 @@ var xlinks = {
   ecma6:    'https://github.com/lukehoban/es6features#readme'
 }
 
-let _GLOBAL_toggle_show = true
-
 // For these Token types, render nothing at all
 const noHelpTypes = [
   // "variable"
 ]
 
 
-// For these Token types, use a special renderer, and don't use the normal HelpInfo structure
-const specialHelpTypes = {
-  "string-2": { renderFn: specialHandlerString2, betterTypeName: "Regular Expression" },
-  "comment":  { renderFn: specialHandlerComment, betterTypeName: "comment" },
-  "def":      { renderFn: specialHandlerDef,     betterTypeName: "Definition" }
-}
-
-
 // Indexes into the SkillsNodes object defined in /imports/Skills/SkillsNodes/SkillNodes.js
 const _skl = 'code.js.lang.'
 const _skla = _skl+'advanced.'
 const _sklb = _skl+'basics.'
+
+// For these Token types, use a special renderer, and don't use the normal HelpInfo structure
+const specialHelpTypes = {
+  "string-2": { renderFn: specialHandlerString2, skillNodes: _skla+'types.regex',  betterTypeName: "Regular Expression" },
+  "comment":  { renderFn: specialHandlerComment, skillNodes: _sklb+'comments',     betterTypeName: "comment" },
+  "def":      { renderFn: specialHandlerDef,     skillNodes: null,                 betterTypeName: "Definition" }
+}
 
 
 const helpInfo = [
@@ -344,7 +343,7 @@ const helpInfo = [
 ..or...
 for (x in obj)`,
     help: "If used in an expression, the in operator returns true if the specified property is in the specified object",
-    help: "If used in a for...in loop, the in operator describes that the for loop should iterate over the properties of the object",
+    help2: "If used in a for...in loop, the in operator describes that the for loop should iterate over the properties of the object",
     advice: "The in operator returns true for properties in the prototype chain",
     advice2: "If this isn't working how you expect, take a look at obj.hasOwnProperty(prop) instead",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/in",
@@ -976,7 +975,7 @@ function specialHandlerString2(rString) {
 }
 
 
-// Explain multi-line and single-line comments. Note that there is special code elsewhere for //MGBOPT_ stuff
+// Explain multi-line and single-line comments. 
 function specialHandlerComment(str) {
   let grn = { color: "green", fontWeight: "bold" }
   // explain single line
@@ -1031,14 +1030,24 @@ export default TokenDescription = React.createClass({
     currentToken: PropTypes.object
   },
 
-  getInitialState: () => ({ showExpanded: _GLOBAL_toggle_show}),
+  contextTypes: {
+    skills:    PropTypes.object
+  },
+
+  handleHideShowClick: function(skillNodeKey) {
+    if (!skillNodeKey)
+      return
+
+    if (hasSkill(this.context.skills, skillNodeKey))
+      Meteor.call("Skill.forget", skillNodeKey)
+    else
+      Meteor.call("Skill.grant", skillNodeKey)
+  },
 
   render: function () {
 
     if (!this.props.currentToken || !this.props.currentToken.type)
       return null
-
-    const { showExpanded } = this.state 
 
     let token = this.props.currentToken
     let ts = token.string.trim()
@@ -1054,6 +1063,10 @@ export default TokenDescription = React.createClass({
     let help = _.find(helpInfo, h => (h.tt === token.type && (h.ts === null || h.ts === ts)))
     let tokenTypeToDisplay = specialHandler ? specialHandler.betterTypeName : token.type
 
+    const skillNodeKey = specialHandler ? specialHandler.skillNodes : 
+                          (help ? (help.skillNodes || null) : null)
+    const showExpanded = _isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey)
+
     // TODO.. something useful with token.state?
 
     return (
@@ -1063,7 +1076,7 @@ export default TokenDescription = React.createClass({
           <code><b>&nbsp;&nbsp;{tsTrunc}</b></code></a>
         <a  className="ui purple right corner label" 
             title={`Click to ${ showExpanded ? "hide" : "show" } the explanation of this javascript language feature`}
-            onClick={() => { _GLOBAL_toggle_show = !_GLOBAL_toggle_show; this.setState( { showExpanded: _GLOBAL_toggle_show} ) }}>
+            onClick={() => this.handleHideShowClick(skillNodeKey)}>
           <i className={(showExpanded ? "" : "grey ")+ "help icon"}></i>
         </a>
         <p></p>

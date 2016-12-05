@@ -4,6 +4,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
+import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
@@ -20,7 +21,10 @@ export default class DropArea extends React.Component {
       const parts = this.props.value.split(":")
       const name = parts.pop()
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
-
+      // no need for subscription here
+      if(owner == "[builtin]"){
+        return
+      }
       this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
         onReady: () => {
           if (this.isUnmounted)

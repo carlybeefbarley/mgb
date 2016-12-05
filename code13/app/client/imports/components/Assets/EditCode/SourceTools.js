@@ -1,8 +1,8 @@
 "use strict"
 import knownLibs from "./knownLibs.js"
-import { Azzets } from '/imports/schemas'
-// serving modules from...
+import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
 
+// serving modules from...
 const getModuleServer = (lib) => {
   return 'https://cdn.jsdelivr.net/' + lib + '/latest/' + lib + ".js"
 }
@@ -192,9 +192,6 @@ export default class SourceTools {
     // close all used subscriptions
     for (let i in this.subscriptions) {
       this.subscriptions[i].subscription.stop()
-      if(this.subscriptions[i].observer){
-        this.subscriptions[i].observer.stop()
-      }
     }
     this.subscriptions = null
     this.errorCBs = null
@@ -440,25 +437,8 @@ export default class SourceTools {
 
   // loads and observes imported MGB code asset for changes
   loadAndObserveLocalFile(url, urlFinalPart, cb){
-    const parts = url.split("/")
 
-     // import './stauzs:asset_name'
-    const toInclude = parts.pop()
-    const sparts = toInclude.split(":")
-    const name = sparts.pop()
-    const owner = sparts.length > 0 ? sparts.pop() : this.owner
-
-    // import './stauzs/asset_name'
-    /*
-    const name = parts.pop()
-    const owner = parts.length == 6 ? parts.pop() : this.owner
-    */
-
-    const cursor = Azzets.find({dn_ownerName: owner, name: name})
-
-    const getSourceAndTranspile = () => {
-      const assets = cursor.fetch()
-
+    const getSourceAndTranspile = (err, assets) => {
       if(assets.length > 1){
         this.setError({reason: "Multiple candidates found for " + urlFinalPart, evidence: urlFinalPart, code: ERROR.MULTIPLE_SOURCES})
       }
@@ -466,45 +446,37 @@ export default class SourceTools {
         this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb, true)
       }
       else {
-        // TODO somewhere in callstack get line number and pass to this function - atm EditCode is guessing lines by evidence string
+        // TODO somewhere in the callstack get line number and pass to this function - atm EditCode is guessing lines by evidence string
         this.setError({reason: "Unable to locate: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.SOURCE_NOT_FOUND})
         cb("")
       }
     }
-
+    // asset resource identifier
+    const ari = urlFinalPart + '/' + urlFinalPart
     // already subscribed and observing
     // TODO: this can be skipped - but requires to check all edge cases - e.g. first time load / file removed and then added again etc
     // atm this seems pretty quick
-    if (this.subscriptions[url]) {
-      getSourceAndTranspile()
+    if (this.subscriptions[ari]) {
+      getSourceAndTranspile(null, this.subscriptions[ari].getAssets())
       return
     }
 
-    // from now on only observe asset and update tern on changes only
+    // import './stauzs:asset_name'
+    const parts = urlFinalPart.split("/").pop().split(":")
+    const name = parts.pop()
+    const owner = parts.length > 0 ? parts.pop() : this.owner
 
-    this.subscriptions[url] = {
-      subscription: Meteor.subscribe("assets.public.owner.name", owner, name, {
-        onReady: () => {
-          getSourceAndTranspile()
-          this.subscriptions[url].observer = cursor.observeChanges({
-            changed: (id, changes) => {
-              // we may end with older resource until next changes..
-              if(this.inProgress){
-                return
-              }
-              // it gets called one extra time when asset.src arrives for the first time
-              if (changes.content2 && changes.content2.src) {
-                this._collectAndTranspile(changes.content2.src, urlFinalPart, null, true)
-              }
-            }
-          })
-        },
-        onError: (...args) => {
-          console.log("Error:", name, ...args)
-          cb("")
-        }
-      })
-    }
+    // from now on only observe asset and update tern on changes only
+    this.subscriptions[ari] = fetchAndObserve(owner, name, getSourceAndTranspile, (id, changes) => {
+      // we may end with older resource until next changes..
+      if(this.inProgress){
+        return
+      }
+      // it gets called one extra time when asset.src arrives for the first time
+      if (changes.content2 && changes.content2.src) {
+        this._collectAndTranspile(changes.content2.src, urlFinalPart, null, true)
+      }
+    })
   }
   // expose private variable - EditCode uses this
   hasChanged(){
@@ -739,8 +711,9 @@ main = function(){
       return lib.src(lib.ver);
     }
     // import X from '/asset name' or import X from '/user/asset name'
-    if (urlFinalPart.indexOf("./") === 0 && urlFinalPart.indexOf("//") === -1) {
-      return '/api/asset/code/' + asset_id + urlFinalPart.substr(1)
+    if (urlFinalPart.startsWith("./")) {
+      // get local file by ID
+      return '/api/asset/code/' + asset_id
     }
     // import X from 'react' OR
     // import X from 'asset_id'

@@ -72,30 +72,38 @@ export default class EditActorMap extends EditMap {
       return
     }
     if(newp.asset.content2) {
-      this.setState({isLoading: true})
-      this.v1_to_v2(newp, (d) => {
-        // store old options - otherwise tools will auto switch and will piss off user
-        if(this.mgb_content2 && this.mgb_content2.meta) {
-          const oldOptions = this.mgb_content2.meta.options
-          this.mgb_content2 = d
-          this.mgb_content2.meta.options = oldOptions
-        }
-        else{
-          this.mgb_content2 = d
-        }
-        // or new Cache - if immutable is preferred - and need to force full cache update
-        if(this.cache && this.cache.isReady()) {
-          this.cache && this.cache.isReady() && this.cache.update(d, () => {
-            this.setState({isLoading: false})
-          })
-        }
-        else{
-          this.setState({isLoading: false})
-        }
-      })
+      this.updateMap(newp)
     }
   }
 
+  updateMap(props = this.props){
+    this.setState({isLoading: true})
+    this.v1_to_v2(props, (d) => {
+      // store old options - otherwise tools will auto switch and will piss off user
+      if(this.mgb_content2 && this.mgb_content2.meta) {
+        const oldOptions = this.mgb_content2.meta.options
+        this.mgb_content2 = d
+        this.mgb_content2.meta.options = oldOptions
+      }
+      else{
+        this.mgb_content2 = d
+      }
+      // or new Cache - if immutable is preferred - and need to force full cache update
+      if(this.cache && this.cache.isReady()) {
+        this.cache && this.cache.isReady() && this.cache.update(d, () => {
+          this.setState({isLoading: false})
+        })
+      }
+      else{
+        this.setState({isLoading: false})
+      }
+    })
+  }
+
+  componentWillUnmount(){
+    // ActorHelper.clearCache()
+    ActorHelper.cleanUp()
+  }
 
 
   v1_to_v2(props, cb){
@@ -103,7 +111,11 @@ export default class EditActorMap extends EditMap {
       map: props.asset.name,
       user: props.asset.dn_ownerName
     }
-    ActorHelper.v1_to_v2(props.asset.content2, names, cb)
+    ActorHelper.v1_to_v2(props.asset.content2, names, cb, (id, changes) => {
+      //console.log("changed:", changes)
+      this.saveForUndo("External actor change")
+      this.updateMap()
+    })
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {

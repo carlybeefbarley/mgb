@@ -10,8 +10,9 @@ import { hasSkill } from '/imports/schemas/skills'
 
 export default class SkillTree extends React.Component {
   static propTypes = {
-    user:       PropTypes.object,     // Can be null if user is not valid
-    userSkills: PropTypes.object,     // As defined in skills.js. Can be null if no user
+    user:         PropTypes.object,     // Can be null if user is not valid
+    userSkills:   PropTypes.object,     // As defined in skills.js. Can be null if no user
+    ownsProfile:  PropTypes.bool        // true IFF user is valid and asset owner is currently logged in user
   }
 
   constructor (...a) {
@@ -233,13 +234,13 @@ export default class SkillTree extends React.Component {
 
   zoomin () {
     const { zoomLevel } = this.state
-    if (zoomLevel < 2)
+    if (this.props.ownsProfile && zoomLevel < 2)
       this.setState( { zoomLevel: zoomLevel+1 } )
   }
 
   zoomout () {
     const { zoomLevel } = this.state
-    if (zoomLevel > 1) 
+    if (this.props.ownsProfile && zoomLevel > 1) 
       this.setState( { zoomLevel: zoomLevel-1 } )
   }
 }

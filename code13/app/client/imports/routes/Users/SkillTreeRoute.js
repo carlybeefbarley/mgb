@@ -49,7 +49,7 @@ export default SkillTreeRoute = React.createClass({
         <Helmet
             title="Skill Tree"
             meta={ [ {"name": "description", "content": "SkillTree"} ] } />
-        <SkillsMap user={user} userSkills={userSkills}/>
+        <SkillsMap user={user} userSkills={userSkills} ownsProfile={ownsProfile}/>
       </div>
     )
   }

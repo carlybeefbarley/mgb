@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
+import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
 import { hasSkill } from '/imports/schemas/skills'
 
@@ -9,7 +10,8 @@ import { hasSkill } from '/imports/schemas/skills'
 
 export default class SkillTree extends React.Component {
   static propTypes = {
-    user: React.PropTypes.object
+    user:       PropTypes.object,     // Can be null if user is not valid
+    userSkills: PropTypes.object,     // As defined in skills.js. Can be null if no user
   }
 
   constructor (...a) {
@@ -18,25 +20,17 @@ export default class SkillTree extends React.Component {
       zoomLevel:    1
     }
     this.totals = {}
-    this.countSkillTotals(SkillNodes, '', this.totals)
   }
 
-  // use setState instead?
-  updateSkills () {
-    this.countSkillTotals(SkillNodes, '', this.totals)
-    this.forceUpdate()
-  }
   learnSkill (key) {
     Meteor.call("Skill.grant", key, (...a) => {
       console.log("Skill granted: ", key, ...a)
-      this.updateSkills()
     })
   }
 
   forgetSkill (key) {
     Meteor.call("Skill.forget", key, (...a) => {
       console.log("Skill forgotten: ", key, ...a)
-      this.updateSkills()
     })
   }
 
@@ -64,7 +58,7 @@ export default class SkillTree extends React.Component {
           total: 1,
           has: 0
         }
-        if (hasSkill(this.context.skills, newKey)) {
+        if (hasSkill(this.props.userSkills, newKey)) {
           tot[newKey].has++
           ret.has++
         }
@@ -84,13 +78,13 @@ export default class SkillTree extends React.Component {
 
   // TODO: create separate component for that?
   renderSingleNode (node, key, path, disabled) {
-    let color = hasSkill(this.context.skills, path) ? 'green' : 'red'
+    let color = hasSkill(this.props.userSkills, path) ? 'green' : 'red'
     if (!node.$meta.enabled)
       color = 'grey'
 
     let onClick
     if (!disabled && node.$meta.enabled)
-      onClick = hasSkill(this.context.skills, path) ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
+      onClick = hasSkill(this.props.userSkills, path) ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
 
     return (
       <div
@@ -194,6 +188,15 @@ export default class SkillTree extends React.Component {
 
   render () {
     const { zoomLevel } = this.state
+    const { user, userSkills } = this.props
+    if (!user)
+      return <ThingNotFound type="User" />
+    if (!userSkills)
+      return <div className='ui warning message'>This user does not yet have any Skills stored in our database. But I'm sure they are awesome anyway</div>
+
+    this.countSkillTotals(SkillNodes, '', this.totals)
+
+
     const config = {
       level: 2,
       buttons: [
@@ -239,8 +242,4 @@ export default class SkillTree extends React.Component {
     if (zoomLevel > 1) 
       this.setState( { zoomLevel: zoomLevel-1 } )
   }
-}
-
-SkillTree.contextTypes = {
-  skills:    PropTypes.object
 }

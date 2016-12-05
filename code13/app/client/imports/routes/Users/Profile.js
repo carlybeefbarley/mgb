@@ -8,7 +8,6 @@ import UserHistory from '/client/imports/components/Users/UserHistory'
 import BadgeGrid from '/client/imports/components/Users/BadgeGrid'
 import SkillGrid from '/client/imports/components/Users/SkillGrid'
 import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'
-import SkillsMap from '/client/imports/components/Controls/SkillsMap/SkillsMap'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 

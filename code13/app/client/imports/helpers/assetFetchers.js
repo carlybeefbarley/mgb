@@ -1,54 +1,56 @@
 import { Azzets } from '/imports/schemas'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
-export const fetchAndObserve = (() => {
-  // TODO(stauzs):
-  //  * cache internally (requires refactoring in source Tools / ActorHelper)
-  //  * addCheck to subscribe/observe only once per resource ( meteor does this internally )
-  //  * make this function hybrid - ajax to get C2 and update on asset change
-  const cachedSubscribers = {}
+const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 
-  return (owner, name, onAssets, onChanges, oldSubscription = null) => {
-    const cursor = Azzets.find({dn_ownerName: owner, name: name})
-    // from now on only observe asset and update tern on changes only
+//  TODO:  make this function hybrid - ajax to get C2 and update on asset change
+// used by source tools and actor map
+export const fetchAndObserve = (owner, name, onAssets, onChanges, oldSubscription = null) => {
+  const cursor = Azzets.find({dn_ownerName: owner, name: name})
+  // from now on only observe asset and update tern on changes only
 
-    const subscription = oldSubscription || {
-        observer: null,
-        getAssets: () => cursor.fetch(),
-        subscription: null
+  const subscription = oldSubscription || {
+      observer: null,
+      getAssets: () => cursor.fetch(),
+      subscription: null
+    }
+
+  let onReadyCalled = false
+  subscription.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
+    onStop: () => {
+
+      subscription.observer && subscription.observer.stop()
+      // Something internally in the Meteor makes subscription to stop even before it's ready
+      // try again.. TODO: debug this further
+      !onReadyCalled && fetchAndObserve(owner, name, onAssets, onChanges, subscription)
+    },
+    onReady: () => {
+      onReadyCalled = true
+
+      if (ALLOW_OBSERVERS && onChanges) {
+        subscription.observer = cursor.observeChanges({
+          changed: (id, changes) => {
+            onChanges(id, changes)
+          }
+        })
       }
+      onAssets(null, cursor.fetch())
+    },
+    onError: (...args) => {
+      console.log("Error:", name, ...args)
+      onAssets(args)
+    }
+  })
 
-    let onReadyCalled = false
-    subscription.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
-      onStop: () => {
+  return subscription
+}
 
-        subscription.observer && subscription.observer.stop()
-        // Something internally in the Meteor makes subscription to stop even before it's ready
-        // try again.. TODO: debug this further
-        !onReadyCalled && fetchAndObserve(owner, name, onAssets, onChanges, subscription)
-      },
-      onReady: () => {
-        onReadyCalled = true
-
-        if (onChanges) {
-          subscription.observer = cursor.observeChanges({
-            changed: (id, changes) => {
-              onChanges(id, changes)
-            }
-          })
-        }
-        onAssets(null, cursor.fetch())
-      },
-      onError: (...args) => {
-        console.log("Error:", name, ...args)
-        onAssets(args)
-      }
-    })
-
-    return subscription
-  }
-})()
-
+// used by maps - to get notifications about image changes
 export const observe = (id, cb, oldSubscription = null) => {
+  // images in the map won't update
+  if (!ALLOW_OBSERVERS) {
+    return
+  }
   const cursor = Azzets.find(id)
   // from now on only observe asset and update tern on changes only
 

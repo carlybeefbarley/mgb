@@ -21,6 +21,9 @@ export default SpecialGlobals = {
     "gravity":        0.1
   },
 
+  // in a case that observers will turn out too sloe - we may change it to false - and then implement slow polling
+  allowObservers: true,
+
   assets: {
     "maxUploadSize":  1*1024*1024,   // 1 MB
   },

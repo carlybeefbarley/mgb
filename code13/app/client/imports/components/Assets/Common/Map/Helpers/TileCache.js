@@ -1,5 +1,7 @@
 // cache stores all loaded images and creates tile map for further reference
 import TileHelper from './TileHelper'
+import {observe} from "/client/imports/helpers/assetFetchers"
+
 
 export default class TileCache {
   constructor(data, onReady){
@@ -7,11 +9,19 @@ export default class TileCache {
     this.data = data
     this.images = {}
     this.tiles = {}
+    this.observers = {}
 
     this.toLoad = 0;
     this.loaded = 0;
 
     this.update(data, onReady)
+  }
+
+  cleanUp() {
+    for (let i in this.observers) {
+      this.observers[i].stop()
+    }
+    this.observers = null
   }
 
   _onReady(){
@@ -83,6 +93,36 @@ export default class TileCache {
   }
 
   _loadImage(src, force = false){
+    const id = src.split("/").pop()
+    // already observing changes
+    if(this.observers[id]){
+      return
+    }
+
+    const loadImage = () => {
+      const img = new Image()
+      this.images[src] = img
+      this.toLoad++
+      img.onload = () => {
+        this.loaded++
+        if(this.toLoad == this.loaded){
+          this._onReady()
+        }
+      }
+      img.onerror = () => {
+        img.onload()
+        delete this.images[src]
+        // TODO(stauzs): push errors - or load nice fallback image
+      }
+      img.src = src
+    }
+
+    this.observers[id] = observe(id, (changes) => {
+      loadImage()
+    })
+    loadImage()
+
+    return
     // image is loading or loaded
     if(!force && this.images[src] !== void(0)){
       return

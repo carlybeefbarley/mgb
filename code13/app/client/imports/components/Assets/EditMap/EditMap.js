@@ -200,6 +200,10 @@ export default class EditMap extends React.Component {
     }
   }
 
+  componentWillUnmount(){
+    this.cache && this.cache.cleanUp()
+  }
+
   enableTrait(trait) {
     const out = {}
     for (let i in trait) {

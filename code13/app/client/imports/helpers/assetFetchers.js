@@ -1,6 +1,6 @@
 import { Azzets } from '/imports/schemas'
 
-export const fetchAndObserve = ((owner, name, onAssets, onChanges) => {
+export const fetchAndObserve = (() => {
   // TODO(stauzs):
   //  * cache internally (requires refactoring in source Tools / ActorHelper)
   //  * addCheck to subscribe/observe only once per resource ( meteor does this internally )
@@ -12,17 +12,16 @@ export const fetchAndObserve = ((owner, name, onAssets, onChanges) => {
     // from now on only observe asset and update tern on changes only
 
     const subscription = oldSubscription || {
-      observer: null,
-      getAssets: () => cursor.fetch(),
-      subscription: null
-    }
+        observer: null,
+        getAssets: () => cursor.fetch(),
+        subscription: null
+      }
 
     let onReadyCalled = false
-    subscription.subscription =  Meteor.subscribe("assets.public.owner.name", owner, name, {
+    subscription.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
       onStop: () => {
-        console.log(`Stopped! assets.public.owner.name => ${owner}, ${name}`)
-        subscription.observer && subscription.observer.stop()
 
+        subscription.observer && subscription.observer.stop()
         // Something internally in the Meteor makes subscription to stop even before it's ready
         // try again.. TODO: debug this further
         !onReadyCalled && fetchAndObserve(owner, name, onAssets, onChanges, subscription)
@@ -30,7 +29,7 @@ export const fetchAndObserve = ((owner, name, onAssets, onChanges) => {
       onReady: () => {
         onReadyCalled = true
 
-        if(onChanges) {
+        if (onChanges) {
           subscription.observer = cursor.observeChanges({
             changed: (id, changes) => {
               onChanges(id, changes)
@@ -48,6 +47,41 @@ export const fetchAndObserve = ((owner, name, onAssets, onChanges) => {
     return subscription
   }
 })()
+
+export const observe = (id, cb, oldSubscription = null) => {
+  const cursor = Azzets.find(id)
+  // from now on only observe asset and update tern on changes only
+
+  const subscription = oldSubscription || {
+      observer: null,
+      getAssets: () => cursor.fetch(),
+      subscription: null
+    }
+
+  let onReadyCalled = false
+  subscription.subscription = Meteor.subscribe("assets.public.byId.withContent2", id, {
+    onStop: () => {
+
+      subscription.observer && subscription.observer.stop()
+      // Something internally in the Meteor makes subscription to stop even before it's ready
+      // try again.. TODO: debug this further
+      !onReadyCalled && observe(id, cb, subscription)
+    },
+    onReady: () => {
+      onReadyCalled = true
+      subscription.observer = cursor.observeChanges({
+        changed: (id, changes) => {
+          cb(id, changes)
+        }
+      })
+    },
+    onError: (...args) => {
+      console.log("Error:", name, ...args)
+    }
+  })
+
+  return subscription
+}
 
 export const fetchAssetByUri = uri => {
   var promise = new Promise(function (resolve, reject) {

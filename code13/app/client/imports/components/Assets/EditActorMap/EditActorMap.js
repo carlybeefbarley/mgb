@@ -102,6 +102,7 @@ export default class EditActorMap extends EditMap {
 
   componentWillUnmount(){
     // ActorHelper.clearCache()
+    super.componentWillUnmount()
     ActorHelper.cleanUp()
   }
 

@@ -19,7 +19,7 @@ export default class TileCache {
 
   cleanUp() {
     for (let i in this.observers) {
-      this.observers[i].stop()
+      this.observers[i].subscription.stop()
     }
     this.observers = null
   }

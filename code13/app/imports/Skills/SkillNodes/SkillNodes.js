@@ -234,7 +234,7 @@ export default SkillNodes
 
 // MongoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
 export const makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')
-export const makeDottedSkillKey = slashSeparatedSkillKey => slashSeparatedSkillKey.replace(/\//g, '.')
+export const makeDottedSkillKey = slashSeparatedSkillKey => (slashSeparatedSkillKey ? slashSeparatedSkillKey.replace(/\//g, '.') : null)
 
 export const isSkillKeyValid = skillPath => {
   const dottedSkillKey = makeDottedSkillKey(skillPath)

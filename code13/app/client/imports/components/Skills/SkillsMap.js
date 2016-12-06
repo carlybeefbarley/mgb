@@ -132,6 +132,15 @@ export default class SkillTree extends React.Component {
 
       // TODO: technically isLeaf can be replaced with keys check or similar
       if (!skillNodes[i].$meta.isLeaf) {
+        const areaName = (key === '') ? i : key
+        const area = _.find(skillAreaItems, ['tag', areaName] )
+        const color = area ? area.color : 'green'
+        const valueSty = { 
+          backgroundColor: color,
+          opacity:  0.3,
+          width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%'
+        }
+        
         nodes.push(
           <div
             key={i}
@@ -139,7 +148,7 @@ export default class SkillTree extends React.Component {
             className={disabled ? 'animate disabled' : 'animate'}
             data-requires={requires}>
             <div className='mgb-skillsmap-progress'>
-              <div className='mgb-skillsmap-value animate' style={{width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%'}}></div>
+              <div className='mgb-skillsmap-value animate' style={valueSty}></div>
               {i} ({newKey})
             </div>
             {this.renderSkillNodesMid(skillNodes[i], newKey, skillNodes[i].$meta.requires)}

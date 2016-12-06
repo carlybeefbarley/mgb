@@ -3,46 +3,21 @@
 // Basically - deny the client, and only use Methods.
 
 
-import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars } from '/imports/schemas'
+import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars, Skills } from '/imports/schemas'
 
-Azzets.deny({
-  insert() { return true; },
-  update() { return true; },
-  remove() { return true; }
-})
 
-Projects.deny({
-  insert() { return true; },
-  update() { return true; },
-  remove() { return true; }
-})
+const _doDenies = (collectionObjectsArray) => {
+  const deniedNames = []
+  _.each(collectionObjectsArray, c => {
+    deniedNames.push(c._name)
+    c.deny({
+      insert() { return true; },
+      update() { return true; },
+      remove() { return true; }
+    })
+  })
+  console.log(`Applied .deny rules to ${deniedNames.length} Collections: ${deniedNames.join(', ')}`)
+}
 
-Activity.deny({
-  insert() { return true; },
-  update() { return true; },
-  remove() { return true; }
-})
 
-ActivitySnapshots.deny({
-  insert() { return true; },
-  update() { return true; },
-  remove() { return true; }
-})
-
-Chats.deny({
-  insert() { return true; },
-  update() { return true; },
-  remove() { return true; }
-})
-
-Settings.deny({
-  insert() { return true; },
-  update() { return true; },
-  remove() { return true; }
-})
-
-Sysvars.deny({
-  insert() { return true; },
-  update() { return true; },
-  remove() { return true; }
-})
+_doDenies([ Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars, Skills ])

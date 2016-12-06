@@ -1,7 +1,9 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
+import { skillAreaItems } from '/imports/Skills/SkillAreas'
 
 import { hasSkill } from '/imports/schemas/skills'
 
@@ -166,12 +168,19 @@ export default class SkillTree extends React.Component {
       if (i === "$meta")
         continue
 
+      const area = _.find(skillAreaItems, ['tag', i] )
+      const color = area ? area.color : 'green'
+      const valueSty = { 
+        backgroundColor: color,
+        opacity:  0.3,
+        width: (this.totals[i].has / this.totals[i].total) * 100 + '%'
+      }
       nodes.push(
-        <div key={i} className='animate'>
+        <div key={ i } className='animate'>
           <div className='mgb-skillsmap-progress'>
-            {i}
-            <div className='mgb-skillsmap-value animate' style={{width: (this.totals[i].has / this.totals[i].total) * 100 + '%'}}></div>
-            {this.renderParts(this.totals[i].has, this.totals[i].total)}
+            { i }
+            <div className='mgb-skillsmap-value animate' style={valueSty}></div>
+            { this.renderParts(this.totals[i].has, this.totals[i].total) }
           </div>
         </div>
       )

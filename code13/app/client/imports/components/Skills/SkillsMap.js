@@ -137,7 +137,7 @@ export default class SkillTree extends React.Component {
             className={disabled ? 'animate disabled' : 'animate'}
             data-requires={requires}>
             <div className='mgb-skillsmap-progress'>
-              <div className='value animate' style={{width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%'}}></div>
+              <div className='mgb-skillsmap-value animate' style={{width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%'}}></div>
               {i} ({newKey})
             </div>
             {this.renderSkillNodesMid(skillNodes[i], newKey, skillNodes[i].$meta.requires)}

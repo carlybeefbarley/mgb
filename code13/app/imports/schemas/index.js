@@ -12,3 +12,8 @@ export const Projects = new Mongo.Collection('projects')
 export const Activity = new Mongo.Collection('activity')
 export const Settings = new Mongo.Collection('settings')
 export const ActivitySnapshots = new Mongo.Collection('activity_snapshots')
+
+// Checklist when adding a collection:
+// 1. Add it here
+// 2. Add it to the list of Denies in denyRules.js
+// 3. Consider any publications and indexes in publications.js

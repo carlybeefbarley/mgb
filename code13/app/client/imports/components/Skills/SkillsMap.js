@@ -136,7 +136,7 @@ export default class SkillTree extends React.Component {
             style={{ position: 'relative', backgroundColor: 'rgba(0,0,0,0.1)', margin: '5px', padding: '3px 5px', border: 'solid 1px', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.5)' }}
             className={disabled ? 'animate disabled' : 'animate'}
             data-requires={requires}>
-            <div className='progress'>
+            <div className='mgb-skillsmap-progress'>
               <div className='value animate' style={{width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%'}}></div>
               {i} ({newKey})
             </div>
@@ -156,7 +156,7 @@ export default class SkillTree extends React.Component {
     const width = w + '%'
     // skip last
     for (let i = 0; i < val - 1; i++)
-      parts.push(<div className='part' key={i} style={{ width: width, left: w * i + '%' }}></div>)
+      parts.push(<div className='mgb-skillsmap-part' key={i} style={{ width: width, left: w * i + '%' }}></div>)
     return parts
   }
 
@@ -168,9 +168,9 @@ export default class SkillTree extends React.Component {
 
       nodes.push(
         <div key={i} className='animate'>
-          <div className='progress'>
+          <div className='mgb-skillsmap-progress'>
             {i}
-            <div className='value animate' style={{width: (this.totals[i].has / this.totals[i].total) * 100 + '%'}}></div>
+            <div className='mgb-skillsmap-value animate' style={{width: (this.totals[i].has / this.totals[i].total) * 100 + '%'}}></div>
             {this.renderParts(this.totals[i].has, this.totals[i].total)}
           </div>
         </div>

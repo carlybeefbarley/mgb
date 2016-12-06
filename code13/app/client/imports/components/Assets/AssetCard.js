@@ -191,7 +191,10 @@ export default AssetCard = React.createClass({
           <div className="content">
             <i className={'right floated ' + assetKindIcon + ' icon'} />
             <a  className={ viewOpts.header }
-                style={{ "color": asset.name ? 'black' : '#888'}}  
+                style={{ "color": asset.name ? 'black' : '#888',
+                  overflow: "hidden",
+                  textOverflow: "ellipsis"
+                }}
                 onClick={this.handleEditClick} 
                 title={ `Asset Name: '${shownAssetName}'` }>
               <small>

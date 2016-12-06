@@ -119,6 +119,9 @@ export default class EditCode extends React.Component {
 
     // is this component is still active?
     this.isActive = true
+
+    // store last saved value to prevent unnecessary updates and fancy behavior
+    this.lastSavedValue = ""
   }
 
 
@@ -448,7 +451,7 @@ export default class EditCode extends React.Component {
   // this method is triggered very very often due to activity snapshot
   componentWillReceiveProps(nextProps) {
     const newVal = nextProps.asset.content2.src
-    if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal) {
+    if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal && this.lastSavedValue != newVal) {
       // user is typing - intensively working with document - don't update until it finishes
       if (this.changeTimeout) {
         // console.log("Preventing update! User in action")
@@ -1337,6 +1340,7 @@ export default class EditCode extends React.Component {
       // sencond handle change will overwrite deferred save
       if(this.props.asset.kind == "tutorial") {
         this.changeTimeout = 0
+        this.lastSavedValue = c2.src
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
@@ -1344,6 +1348,7 @@ export default class EditCode extends React.Component {
         // it's not possible to create useful bundle with errors in the code - just save
         if(errors.length || !this.props.asset.content2.needsBundle){
           this.changeTimeout = 0
+          this.lastSavedValue = c2.src
           this.props.handleContentChange(c2, thumbnail, reason)
         }
         else{
@@ -1362,6 +1367,7 @@ export default class EditCode extends React.Component {
   handleContentChangeAsync(c2, thumbnail, reason) {
     // is this safe to use it here?
     if(this.isActive){
+      this.lastSavedValue = c2.src
       this.props.handleContentChange(c2, thumbnail, reason)
     }
     else{

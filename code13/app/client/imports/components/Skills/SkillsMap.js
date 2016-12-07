@@ -12,9 +12,13 @@ import { hasSkill } from '/imports/schemas/skills'
 
 export default class SkillTree extends React.Component {
   static propTypes = {
-    user:         PropTypes.object,     // Can be null if user is not valid
-    userSkills:   PropTypes.object,     // As defined in skills.js. Can be null if no user
-    ownsProfile:  PropTypes.bool        // true IFF user is valid and asset owner is currently logged in user
+    user:           PropTypes.object,     // Can be null if user is not valid
+    userSkills:     PropTypes.object,     // As defined in skills.js. Can be null if no user
+    ownsProfile:    PropTypes.bool,       // true IFF user is valid and asset owner is currently logged in user
+    onlySkillArea:  PropTypes.string      // If non-null, then show no toolbars, and just show the top-level area specified (e..g a string that is a tag in skillsAreas.js)
+  }
+  static defaultProps = {
+    onlySkillArea:  null                  // Avoid undefined/null duality
   }
 
   constructor (...a) {
@@ -120,10 +124,13 @@ export default class SkillTree extends React.Component {
   }
 
   // TODO: create separate component for that?
-  renderSkillNodesMid (skillNodes, key = '' , requires = []) {
+  renderSkillNodesMid (skillNodes, onlySkillArea, key = '' , requires = []) {
     const nodes = []
     for (let i in skillNodes) {
       if (i === "$meta")
+        continue
+
+      if (key === '' && onlySkillArea !== null && i !== onlySkillArea)
         continue
 
       // requires && console.log("requires")
@@ -151,7 +158,7 @@ export default class SkillTree extends React.Component {
               <div className='mgb-skillsmap-value animate' style={valueSty}></div>
               {i} ({newKey})
             </div>
-            {this.renderSkillNodesMid(skillNodes[i], newKey, skillNodes[i].$meta.requires)}
+            {this.renderSkillNodesMid(skillNodes[i], onlySkillArea, newKey, skillNodes[i].$meta.requires)}
           </div>
         )
       } 
@@ -171,7 +178,7 @@ export default class SkillTree extends React.Component {
     return parts
   }
 
-  renderSkillNodesSmall (skillNodes) {
+  renderSkillNodesSmall (skillNodes, onlySkillArea) {
     const nodes = []
     for (let i in skillNodes) {
       if (i === "$meta")
@@ -184,37 +191,38 @@ export default class SkillTree extends React.Component {
         opacity:  0.3,
         width: (this.totals[i].has / this.totals[i].total) * 100 + '%'
       }
-      nodes.push(
-        <div key={ i } className='animate'>
-          <div className='mgb-skillsmap-progress'>
-            { i }
-            <div className='mgb-skillsmap-value animate' style={valueSty}></div>
-            { this.renderParts(this.totals[i].has, this.totals[i].total) }
+
+      if (!onlySkillArea || onlySkillArea === i)
+        nodes.push(
+          <div key={ i } className='animate'>
+            <div className='mgb-skillsmap-progress'>
+              { i }
+              <div className='mgb-skillsmap-value animate' style={valueSty}></div>
+              { this.renderParts(this.totals[i].has, this.totals[i].total) }
+            </div>
           </div>
-        </div>
-      )
+        )
     }
     return nodes
   }
 
-  renderSkillNodes (skillNodes) {
+  renderSkillNodes (skillNodes, onlySkillArea) {
     const { zoomLevel } = this.state
     if (zoomLevel == 1)
-      return this.renderSkillNodesSmall(skillNodes)
+      return this.renderSkillNodesSmall(skillNodes, onlySkillArea)
     else if (zoomLevel == 2)
-      return this.renderSkillNodesMid(skillNodes)
+      return this.renderSkillNodesMid(skillNodes, onlySkillArea)
   }
 
   render () {
     const { zoomLevel } = this.state
-    const { user, userSkills } = this.props
+    const { user, userSkills, onlySkillArea } = this.props
     if (!user)
       return <ThingNotFound type="User" />
     if (!userSkills)
       return <div className='ui warning message'>This user does not yet have any Skills stored in our database. But I'm sure they are awesome anyway</div>
 
     this.countSkillTotals(SkillNodes, '', this.totals)
-
 
     const config = {
       level: 2,
@@ -242,9 +250,9 @@ export default class SkillTree extends React.Component {
 
     return (
       <div>
-        <Toolbar name='SkillsMap' config={config} actions={this} />
+        { onlySkillArea === null && <Toolbar name='SkillsMap' config={config} actions={this} /> }
         <div style={{position: 'relative'}}>
-          {this.renderSkillNodes(SkillNodes)}
+          {this.renderSkillNodes(SkillNodes, onlySkillArea)}
         </div>
       </div>
     )

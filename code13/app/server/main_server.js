@@ -89,6 +89,7 @@ Meteor.startup(function () {
 Npm.require;
 Assets;
 
+Meteor.isProduction && process.env.CDN && WebAppInternals.setBundledJsCssPrefix(process.env.CDN)
 
 console.log(`
   MGBv2 server running ${Meteor.release}

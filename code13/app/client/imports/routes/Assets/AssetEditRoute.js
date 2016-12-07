@@ -25,6 +25,9 @@ import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDe
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
+import { getAssetWithContent2 } from '/client/imports/helpers/assetFetchers'
+
+
 const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
 const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
@@ -136,7 +139,14 @@ export default AssetEditRoute = React.createClass({
 
   getMeteorData: function() {
     let assetId = this.props.params.assetId
-    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", assetId)
+    let handleForAsset = getAssetWithContent2(assetId, () => {
+      this.forceUpdate()
+    })
+
+    if(this.m_deferredSaveObj){
+      handleForAsset.asset.content2 = this.m_deferredSaveObj.content2Object
+    }
+
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 
 
@@ -144,11 +154,11 @@ export default AssetEditRoute = React.createClass({
     let options = { sort: { timestamp: -1 } }
 
     return {
-      asset: Azzets.findOne(assetId),
+      get asset(){ return handleForAsset.asset },
       isServerOnlineNow: Meteor.status().connected,
       activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
       assetActivity: Activity.find(selector, options).fetch(),
-      loading: !handleForAsset.ready()    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
+      get loading(){ return !handleForAsset.isReady }    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
     }
   },
 

@@ -1,12 +1,19 @@
 import { RestApi } from './restApi'
 import { Azzets }  from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
-
+import { genetag, genAPIreturn } from '/imports/helpers/generators'
 
 RestApi.addRoute('asset/:id', { authRequired: false }, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
-    return asset ? asset : {}
+    return genAPIreturn(this, asset)
+  }
+})
+
+RestApi.addRoute('asset/content2/:id', { authRequired: false }, {
+  get: function () {
+    var asset = Azzets.findOne(this.urlParams.id, {content2: 1})
+    return genAPIreturn(this, asset ? asset.content2 : {}, asset)
   }
 })
 

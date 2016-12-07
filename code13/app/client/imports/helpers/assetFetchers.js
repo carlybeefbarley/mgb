@@ -1,5 +1,7 @@
 import { Azzets } from '/imports/schemas'
 import SpecialGlobals from '/imports/SpecialGlobals'
+import {genetag} from '/imports/helpers/generators'
+
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 
@@ -85,10 +87,11 @@ export const observe = (id, cb, oldSubscription = null) => {
   return subscription
 }
 
-export const fetchAssetByUri = uri => {
+export const fetchAssetByUri = (uri, etag = null) => {
   var promise = new Promise(function (resolve, reject) {
     var client = new XMLHttpRequest()
     client.open('GET', uri)
+    // etag && client.setRequestHeader("etag", etag)
     client.send()
     client.onload = function () {
       if (this.status >= 200 && this.status < 300)
@@ -103,3 +106,54 @@ export const fetchAssetByUri = uri => {
   return promise
 }
 
+
+const fetchedAssets = []
+export const getAssetWithContent2 = (id, onReady) => {
+  const c = fetchedAssets.find(a => a.id === id)
+  if (c) {
+    c.update()
+    return c
+  }
+
+  const ret = {
+    id: id,
+    asset: null,
+    isReady: false,
+    ready(){
+      return this.isReady
+    },
+    update(){
+      const c2 = this.asset.content2
+      const asset = Azzets.findOne(id)
+
+      const etag = genetag(asset)
+      if(etag == this.etag){
+        this.asset = asset
+        if(!this.asset.content2){
+          this.asset.content2 = c2
+        }
+        console.log("Skipping update!")
+        return
+      }
+
+      this.etag = etag
+      //this.isReady = false
+      fetchAssetByUri(this.asset.c2location || `/api/asset/content2/${id}`, etag)
+        .then((data) => {
+          this.asset = asset
+          ret.asset.content2 = JSON.parse(data)
+          ret.isReady = true
+          onReady && onReady()
+        })
+    }
+  }
+  fetchedAssets.push(ret)
+  Meteor.subscribe("assets.public.byId", id, {
+    onReady(){
+      ret.asset = Azzets.findOne(id)
+      ret.update()
+    }
+  })
+
+  return ret
+}

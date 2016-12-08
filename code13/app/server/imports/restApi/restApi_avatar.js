@@ -1,4 +1,5 @@
 import { RestApi } from './restApi'
+import { genAPIreturn } from '/imports/helpers/generators'
 
 // This lets the client easily get user avatar.. e.g http://localhost:3000/api/user/raMDZ9atjHABXu5KG/avatar
 RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
@@ -18,7 +19,7 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
     }
     else {
       return {
-        statusCode: 404                
+        statusCode: 404
       }
     }
   }

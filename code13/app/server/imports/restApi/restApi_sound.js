@@ -1,7 +1,7 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
-
+import { genAPIreturn } from '/imports/helpers/generators'
 
 // get sound by id
 RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {
@@ -9,28 +9,25 @@ RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {
     "use strict";
     let sound = Azzets.findOne(this.urlParams.id)
 
-    if(sound) {     
+    if(sound) {
       const regex = /^data:.+\/(.+);base64,(.*)$/;
       const matches = sound.content2.dataUri.substring(0, 100).match(regex)
       const extension = matches[1]
-      return {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'audio/'+extension
-        },
-        body: dataUriToBuffer(sound.content2.dataUri)
-      }
+      return genAPIreturn(this, asset, dataUriToBuffer(sound.content2.dataUri), {
+        'Content-Type': 'audio/'+extension
+      })
     }
     else
       return { statusCode: 404 }
   }
 })
 
+// TODO: add genAPIreturn(this, asset, data, headers)
 // get sound from stock by name/tag
 RestApi.addRoute('asset/sound/name/:name', {authRequired: false}, {
   get: function () {
     "use strict";
-    const ownerId = "fijoMML4CZzTAdHuf"   // guntis id for test purposes // TODO FIX
+    const ownerId = "fijoMML4CZzTAdHuf"   // guntis id for test purposes // TODO(guntis) FIX
     // let sound = Azzets.findOne(this.urlParams.id)
     let query = Azzets.find({kind:"sound", ownerId: ownerId, name: {'$regex': this.urlParams.name} })
 

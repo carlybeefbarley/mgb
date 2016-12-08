@@ -1,6 +1,7 @@
 import { Azzets } from '/imports/schemas'
 import CachedRestivus from '/server/imports/dev/CachedRestivus'
 import cache from '/imports/cache'
+import { genAPIreturn } from '/imports/helpers/generators'
 
 // Note that Restivus's default url prefix is /api
 const options = {
@@ -25,54 +26,35 @@ RestApi.addRoute('test', {authRequired: false}, {
     return {servers: cache.API_SERVERS, date: Date.now(), headers: this.request.headers}
   }
 })
-// just add empty static file for blank pages
 
 RestApi.addRoute('asset/map/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id);
-    if (asset){
+    if (asset) {
       // map editor stores some info in the meta - e.g. camera position / active tool etc
-      delete asset.content2.meta;
-      // TODO: content2 will be moved
-      return asset.content2;
+      delete asset.content2.meta
     }
-    else {
-      return {
-        statusCode: 404
-      }
-    }
+    return genAPIreturn(this, asset, asset ? asset.content2 : null)
   }
 });
 RestApi.addRoute('asset/map/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, kind: 'map', isDeleted: false})
-    if (asset){
+    if (asset) {
       // map editor stores some info in the meta - e.g. camera position / active tool etc
-      delete asset.content2.meta;
-      // TODO: content2 will be moved
-      return asset.content2;
+      delete asset.content2.meta
     }
-    else {
-      return {
-        statusCode: 404
-      }
-    }
+    return genAPIreturn(this, asset, asset ? asset.content2 : null)
   }
 });
 RestApi.addRoute('asset/actormap/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, kind: 'actormap', isDeleted: false})
-    if (asset){
+    if (asset) {
       // map editor stores some info in the meta - e.g. camera position / active tool etc
-      delete asset.content2.meta;
-      // TODO: content2 will be moved
-      return asset.content2;
+      delete asset.content2.meta
     }
-    else {
-      return {
-        statusCode: 404
-      }
-    }
+    return genAPIreturn(this, asset, asset ? asset.content2 : null)
   }
 });
 

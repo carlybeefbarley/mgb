@@ -5,7 +5,23 @@ export const genetag = (asset) => {
   return asset._id + asset.updatedAt.getTime().toString(36)
 }
 
-export const genAPIreturn = (api, val, asset = val) => {
+export const genAPIreturn = (api, asset, val = asset, headers = {}) => {
+  // default 404
+  if(!val){
+    return {
+      statusCode: 404,
+      body: {}
+    }
+  }
+
+  // some fallback mechanism
+  if(!asset){
+    return {
+      headers:  headers,
+      body: val
+    }
+  }
+
   const etag = genetag(asset)
   api.response.removeHeader("pragma")
   if(api.request.headers["if-none-match"] == etag){
@@ -14,15 +30,14 @@ export const genAPIreturn = (api, val, asset = val) => {
     })
     api.response.end()
     api.done()
-    console.log("NOT modified")
     return
   }
-  console.log("IS MODIFIED!")
+
   return {
-    headers: {
+    headers: Object.assign({
       etag: etag,
       "cache-control": "must-revalidate"
-    },
-    body: val || {}
+    }, headers),
+    body: val
   }
 }

@@ -1,6 +1,8 @@
 import { RestApi } from './restApi'
 import { Azzets }  from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
+import { genAPIreturn } from '/imports/helpers/generators'
+
 
 // TODO: Maybe make this asset/graphic ? Look also at AssetUrlGenerator and generateUrlOptions()
 
@@ -29,18 +31,10 @@ RestApi.addRoute('asset/png/:id', { authRequired: false }, {
       return _retval404
  
     const dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
+    return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, {
+      'Content-Type': "image/png"
+    })
 
-    if (dataUri)
-      return {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'image/png'
-          // 'cache-control': 'private, must-revalidate, max-age: 30'
-        },
-        body: dataUriToBuffer(dataUri) 
-      }
-    else
-      return _retval404   // There may be a better error code for frame not found?
   }
 })
 
@@ -56,24 +50,16 @@ RestApi.addRoute('asset/png/:user/:name', { authRequired: false }, {
       return _retval404
   
     const dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
-    if (dataUri)
-      return {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'image/png'
-          // 'cache-control': 'private, must-revalidate, max-age: 30'
-        },
-        body: dataUriToBuffer(dataUri)
-      }
-    else
-      return _retval404   // There may be a better error code for frame not found?
+    return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, {
+      'Content-Type': "image/png"
+    })
   }
 })
 
 RestApi.addRoute('asset/fullgraphic/:user/:name', { authRequired: false }, {
   get: function () {
     var asset = Azzets.findOne({ name: this.urlParams.name, kind: 'graphic', dn_ownerName: this.urlParams.user, isDeleted: false })
-    return asset ? asset : _retval404
+    return genAPIreturn(this, asset)
   }
 })
 
@@ -116,7 +102,7 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
       }
     })
 
-    return {
+    return genAPIreturn(this, asset, {
       image: "/api/asset/tileset/" + this.urlParams.id,
       // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
       //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
@@ -127,7 +113,7 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
       tileheight:  c2.height,
       tilewidth:   c2.width,
       tiles
-    }
+    })
   }
 })
 
@@ -145,14 +131,9 @@ RestApi.addRoute('asset/tileset/:id', { authRequired: false }, {
       dataUri = asset.content2.tileset
     }
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'image/png'
-        // TODO: cache
-      },
-      body: dataUriToBuffer(dataUri)
-    }
+    return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, {
+      'Content-Type': "image/png"
+    })
   }
 })
 
@@ -165,16 +146,8 @@ RestApi.addRoute('asset/tileset/:user/:name', { authRequired: false }, {
       kind:         "graphic"
     })
 
-    if (!asset || !asset.content2 || !asset.content2.tileset)
-      return _retval404
-    
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'image/png'
-        // TODO: cache
-      },
-      body: dataUriToBuffer(asset.content2.tileset)
-    }
+    return genAPIreturn(this, asset, (asset && asset.content2 && asset.content2.tileset) ? dataUriToBuffer(asset.content2.tileset) : null, {
+      'Content-Type': "image/png"
+    })
   }
 })

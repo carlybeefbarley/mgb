@@ -1,7 +1,7 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
 import makeHtmlBundle from '/imports/helpers/codeBundle'
-
+import { genAPIreturn } from '/imports/helpers/generators'
 
 const _retval404 = { statusCode: 404, body: {} }   // body required to correctly show 404 not found header
 
@@ -12,34 +12,26 @@ const _retval404 = { statusCode: 404, body: {} }   // body required to correctly
 function _doGet(kind, id){
   const idParts = id.split(':')
 
-  const asset = idParts.length === 2 ? 
-    Azzets.findOne( { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false, kind: kind } ) :  // owner:name
-    Azzets.findOne(id)                                   // id (e.g cDutAafswYtN5tmRi)
+  const asset = idParts.length === 2
+    ? Azzets.findOne( { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false, kind: kind } ) // owner:name
+    : Azzets.findOne(id)                                   // id (e.g cDutAafswYtN5tmRi)
 
   if (!asset)
     return _retval404 
   
   const content = asset.content2.src
-
-  if (content) {
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': "text/plain", 'file-name': asset.name },
-      body: content
-    }
-  }
-  else
-    return _retval404
+  return genAPIreturn(this, asset, content ? content : null, {
+    'Content-Type': "text/plain",
+    'file-name': asset.name
+  })
 }
 
 function _makeBundle(asset){
-  if (!asset)
-    return _retval404
-  return {
-    statusCode: 200,
-    headers: {'Content-Type': "text/html", 'file-name': asset.name},
-    body: makeHtmlBundle(asset)
-  }
+
+  return genAPIreturn(this, asset, asset ? makeHtmlBundle(asset) : null, {
+    'Content-Type': "text/html",
+    'file-name': asset.name
+  })
 }
 
 // get tutorial by id - tmp used for es6 import
@@ -81,22 +73,16 @@ RestApi.addRoute('asset/code/:id', { authRequired: false }, {
 RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
   get: function(){
     const asset = Azzets.findOne({dn_ownerName: this.urlParams.owner, name: this.urlParams.name, isDeleted: false})
-    if (asset) {
-      return {
-        statusCode: 200,
-        headers: {'Content-Type': "text/plain", 'file-name': asset.name},
-        body: asset.content2.src
-      }
-    }
-    else
-     return _retval404
+    return genAPIreturn(this, asset, asset ? asset.content2.src : null, {
+      'Content-Type': "text/plain",
+      'file-name': asset.name
+    })
   }
 })
 
 RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
-
     return _makeBundle(asset)
   }
 })

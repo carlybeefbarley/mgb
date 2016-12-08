@@ -123,11 +123,35 @@ export const getAssetWithContent2 = (id, onReady) => {
       return this.isReady
     },
     updateAsset(){
-      this.asset = Azzets.findOne(this.asset._id)
-      // actually etag is not correct here
-      // as there is small difference in timestamps
-      // saved minimongo data and fetched new differs approx ~ 10ms
-      this.etag = genetag(this.asset)
+      let c2 = this.asset.content2
+      const asset = Azzets.findOne(this.asset._id)
+      if(asset){
+        this.asset = asset
+        this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
+        c2 = this.asset.content2
+
+        this.etag = genetag(this.asset)
+        this.update()
+      }
+
+      // we still need latest asset fromDB
+      Meteor.subscribe("assets.public.byId", id, {
+        onReady: () => {
+          const asset = Azzets.findOne(this.asset._id)
+          if(!asset){
+            return
+          }
+          this.asset = asset
+          this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
+          // actually etag is not correct here
+          // as there is small difference in timestamps
+          // saved minimongo data and fetched new differs approx ~ 10ms
+          this.etag = genetag(this.asset)
+          this.update()
+        }
+      })
+
+
     },
     update(){
 
@@ -141,9 +165,7 @@ export const getAssetWithContent2 = (id, onReady) => {
       const etag = genetag(asset)
       if (etag == this.etag) {
         this.asset = asset
-        if (!this.asset.content2) {
-          this.asset.content2 = c2
-        }
+        this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
         console.log("Skipping update!")
         return
       }
@@ -154,12 +176,13 @@ export const getAssetWithContent2 = (id, onReady) => {
         .then((data) => {
           const c2 = JSON.parse(data)
           const oldC2 = this.asset.content2
-          ret.isReady = true
+          this.isReady = true
 
           if (!_.isEqual(c2, oldC2)) {
             this.asset = asset
-            ret.asset.content2 = c2
+            this.asset.content2 = c2
 
+            console.log("DOING full update")
             onReady && onReady()
           }
           else{

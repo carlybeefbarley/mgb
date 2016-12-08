@@ -32,6 +32,9 @@ export default {
   // TODO: add warning
   removeTileset: function(id = this.state.activeTileset){
     const c2 = this.mgb_content2
+    if(!c2.tilesets.length){
+      return
+    }
     const reason = "Removed Tileset: " + c2.tilesets[id].name
 
     this.saveForUndo(reason)

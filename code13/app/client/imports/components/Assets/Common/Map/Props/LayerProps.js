@@ -1,6 +1,10 @@
 import LayerTypes from '../Tools/LayerTypes.js'
 import TileHelper from '../Helpers/TileHelper.js'
-
+const Prefixes = {
+  tileLayer: "Tile Layer ",
+  imageLayer: "Image Layer ",
+  objectLayer: "Object Layer "
+}
 export default {
 
   setActiveLayer: function(id){
@@ -18,16 +22,15 @@ export default {
     const lss = c2.layers
 
     // TODO: check for duplicate names..
-    // TODO: get rid of strings
     let ls
     if (type == LayerTypes.tile) {
       ls = TileHelper.genLayer(c2.width, c2.height, Prefixes.tileLayer + (lss.length + 1))
     }
     else if (type == LayerTypes.image) {
-      ls = TileHelper.genImageLayer('Image Layer ' + (lss.length + 1))
+      ls = TileHelper.genImageLayer(Prefixes.imageLayer + (lss.length + 1))
     }
     else if (type == LayerTypes.object) {
-      ls = TileHelper.genObjectLayer('Object Layer ' + (lss.length + 1))
+      ls = TileHelper.genObjectLayer(Prefixes.objectLayer + (lss.length + 1))
     }
     lss.push(ls)
 

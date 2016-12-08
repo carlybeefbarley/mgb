@@ -67,7 +67,9 @@ export default class MapArea extends BaseMapArea {
         }
         onDragOver={this.prepareForDrag.bind(this)}
         onDrop={this.importFromDrop.bind(this)}
-        onWheel={this.handleOnWheel.bind(this)}>
+        onWheel={this.handleOnWheel.bind(this)}
+        onMouseMove={() => {this.refs.positionInfo && this.refs.positionInfo.forceUpdate() }}
+        >
         {this.getNotification()}
         {this.renderMap()}
         <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />

@@ -134,8 +134,16 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
 RestApi.addRoute('asset/tileset/:id', { authRequired: false }, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
-    if (!asset || !asset.content2 || !asset.content2.tileset)
+    if (!asset || !asset.content2)
       return _retval404
+
+    let dataUri
+    if(!asset.content2.tileset){
+      dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
+    }
+    else{
+      dataUri = asset.content2.tileset
+    }
 
     return {
       statusCode: 200,
@@ -143,7 +151,7 @@ RestApi.addRoute('asset/tileset/:id', { authRequired: false }, {
         'Content-Type': 'image/png'
         // TODO: cache
       },
-      body: dataUriToBuffer(asset.content2.tileset)
+      body: dataUriToBuffer(dataUri)
     }
   }
 })

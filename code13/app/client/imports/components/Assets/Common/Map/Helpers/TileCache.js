@@ -25,7 +25,7 @@ export default class TileCache {
   }
 
   _onReady(){
-    this.onReady && this.onReady()
+    this.onReady && window.setTimeout(() => {this.onReady()}, 0)
   }
 
   // TODO(stauzs): implement lazy cache - return old cache and in background update to new version - when ready - callback
@@ -57,9 +57,13 @@ export default class TileCache {
 
   updateImages(data){
     const images = data.images;
+    if(!images){
+      return
+    }
     for(let i=0; i<images.length; i++){
       this._loadImage(images[i])
     }
+
   }
 
   updateTilesets(data){
@@ -69,6 +73,7 @@ export default class TileCache {
     this.tiles = {}
     for(let i=0; i<tss.length; i++){
       const ts = tss[i]
+
       this._loadImage(ts.image)
       for (let j = 0; j < ts.tilecount; j++) {
         TileHelper.getTilePosWithOffsets(j, Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos)
@@ -95,7 +100,7 @@ export default class TileCache {
   _loadImage(src, force = false){
     const id = src.split("/").pop()
     // already observing changes
-    if(this.observers[id]){
+    if(this.observers[src]){
       return
     }
 
@@ -110,14 +115,27 @@ export default class TileCache {
         }
       }
       img.onerror = () => {
-        img.onload()
-        delete this.images[src]
+        // try to fix image
+        if(!src.startsWith("./") && !src.startsWith("/")){
+          const name = src.substr(0, src.lastIndexOf('.')) || src
+          src = `/api/asset/png/${Meteor.user().username}/${name}`
+          img.src = src
+          img.onerror = () => {
+            delete this.images[src]
+            img.onload()
+          }
+        }
+        else{
+          delete
+          img.onload()
+        }
+
         // TODO(stauzs): push errors - or load nice fallback image
       }
       img.src = src
     }
 
-    this.observers[id] = observe(id, (changes) => {
+    this.observers[src] = observe(id, (changes) => {
       loadImage()
     })
     loadImage()

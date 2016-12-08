@@ -309,7 +309,7 @@ export default class EditMap extends React.Component {
     }
     // make sure we have thumbnail
     if(!thumbnail){
-
+      this.refs.map.generatePreviewAndSaveIt()
     }
     this.props.handleContentChange(data, thumbnail, reason)
   }

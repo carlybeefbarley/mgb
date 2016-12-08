@@ -73,15 +73,8 @@ export default class TileCache {
     this.tiles = {}
     for(let i=0; i<tss.length; i++){
       const ts = tss[i]
-      // try to fix image
-      let src = ts.image
-      if(!src.startsWith("./") && !src.startsWith("/")){
-        const name = src.substr(0, src.lastIndexOf('.')) || src
-        src = `/api/asset/png/${Meteor.user().username}/${name}`
-      }
 
-      ts.image = src
-      this._loadImage(src)
+      this._loadImage(ts.image)
       for (let j = 0; j < ts.tilecount; j++) {
         TileHelper.getTilePosWithOffsets(j, Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos)
         const gid = ts.firstgid + j
@@ -122,8 +115,21 @@ export default class TileCache {
         }
       }
       img.onerror = () => {
-        delete this.images[src]
-        img.onload()
+        // try to fix image
+        if(!src.startsWith("./") && !src.startsWith("/")){
+          const name = src.substr(0, src.lastIndexOf('.')) || src
+          src = `/api/asset/png/${Meteor.user().username}/${name}`
+          img.src = src
+          img.onerror = () => {
+            delete this.images[src]
+            img.onload()
+          }
+        }
+        else{
+          delete
+          img.onload()
+        }
+
         // TODO(stauzs): push errors - or load nice fallback image
       }
       img.src = src

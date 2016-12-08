@@ -150,7 +150,16 @@ export default class EditMap extends React.Component {
     this.cache = new Cache(this.mgb_content2, () => {
       this.quickSave("New Map data")
       // this is called in the construct - and callback will be instant
-      this.setState.isLoading = false
+      this.setState({isLoading: false})
+    })
+  }
+
+  updateMapData(data = this.mgb_content2, reason = "Imported map"){
+    this.mgb_content2 = data
+    this.cache.update(this.mgb_content2, () => {
+      this.quickSave(reason)
+      // this is called in the construct - and callback will be instant
+      this.setState({isLoading: false})
     })
   }
 

@@ -1,6 +1,8 @@
 import React from 'react'
 
 import TileHelper     from './Helpers/TileHelper'
+import ObjectHelper from './Helpers/ObjectHelper.js'
+
 import DragNDropHelper from '../../../../helpers/DragNDropHelper'
 
 import TileCollection from './Tools/TileCollection'
@@ -11,6 +13,8 @@ import GridLayer      from './Layers/GridLayer'
 import Camera         from './Camera'
 
 import Plural         from '/client/imports/helpers/Plural'
+
+
 
 import './EditMap.css'
 
@@ -188,13 +192,18 @@ export default class MapArea extends React.Component {
   }
   handleFileByExt_json (name, buffer) {
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
-    this.data = JSON.parse(jsonString)
+    const newData = JSON.parse(jsonString)
+
+
+
+    this.props.updateMapData(newData)
+
     //this.updateImages()
   }
   // TODO: move api links to external resource?
   handleFileByExt_png (nameWithExt, buffer) {
-    const blob = new Blob([buffer], {type: 'application/octet-binary'})
-    this.createGraphicsAsset(nameWithExt, blob)
+    const blob = new Blob([buffer], {type: "image/png"})
+    this.createGraphicsAsset(nameWithExt, URL.createObjectURL(blob))
   }
   createGraphicsAsset (nameWithExt, src) {
     const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
@@ -209,11 +218,13 @@ export default class MapArea extends React.Component {
       c.ctx.drawImage(img, 0, 0)
 
       ObjectHelper.createGraphic(name, c.toDataURL(), (newAsset) => {
-        const gim = new Image()
+        this.props.addImage(`/api/asset/png/${newAsset._id}`)
+
+        /*const gim = new Image()
         gim.onload = () => {
           this.images.set(nameWithExt, gim)
         }
-        gim.src = `/api/asset/png/${newAsset._id}`
+        gim.src = */
       })
     }
     img.src = src

@@ -22,5 +22,15 @@ export default {
   },
   getCtrlModifier(){
     return this.options.ctrlModifier
+  },
+  updateMapData(data){
+    this.updateMapData(data)
+  },
+  addImage(img){
+    if(!this.mgb_content2.images){
+      this.mgb_content2.images = []
+    }
+    this.mgb_content2.images.push(img)
+    this.updateMapData(this.mgb_content2)
   }
 }

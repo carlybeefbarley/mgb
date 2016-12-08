@@ -25,7 +25,7 @@ export default class TileCache {
   }
 
   _onReady(){
-    this.onReady && this.onReady()
+    this.onReady && window.setTimeout(() => {this.onReady()}, 0)
   }
 
   // TODO(stauzs): implement lazy cache - return old cache and in background update to new version - when ready - callback
@@ -57,6 +57,9 @@ export default class TileCache {
 
   updateImages(data){
     const images = data.images;
+    if(!images){
+      return
+    }
     for(let i=0; i<images.length; i++){
       this._loadImage(images[i])
     }
@@ -70,7 +73,15 @@ export default class TileCache {
     this.tiles = {}
     for(let i=0; i<tss.length; i++){
       const ts = tss[i]
-      this._loadImage(ts.image)
+      // try to fix image
+      let src = ts.image
+      if(!src.startsWith("./") && !src.startsWith("/")){
+        const name = src.substr(0, src.lastIndexOf('.')) || src
+        src = `/api/asset/png/${Meteor.user().username}/${name}`
+      }
+
+      ts.image = src
+      this._loadImage(src)
       for (let j = 0; j < ts.tilecount; j++) {
         TileHelper.getTilePosWithOffsets(j, Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos)
         const gid = ts.firstgid + j
@@ -94,6 +105,10 @@ export default class TileCache {
   }
 
   _loadImage(src, force = false){
+
+
+
+
     const id = src.split("/").pop()
     // already observing changes
     if(this.observers[src]){

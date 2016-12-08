@@ -259,7 +259,7 @@ export default class TileSet extends React.Component {
     e.stopPropagation()
 
     const asset = DragNDropHelper.getAssetFromEvent(e)
-    if (asset && asset.kind != 'graphic') {
+    if (!asset || asset.kind != 'graphic') {
       return
     }
     const infolink = '/api/asset/tileset-info/' + asset._id
@@ -331,6 +331,7 @@ export default class TileSet extends React.Component {
         >
         <TilesetControls
           removeTileset={this.props.removeTileset}
+          tileset={tileset}
           ref='controls'
           />
         {!tileset ? <span>Drop Graphic (from side panel) here to create new tileset</span> : ''}

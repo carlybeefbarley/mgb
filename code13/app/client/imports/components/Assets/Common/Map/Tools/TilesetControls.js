@@ -11,11 +11,13 @@ export default class TilesetControls extends React.Component {
       <div className='ui mini'>
         <div className='ui icon buttons mini' style={{ position: 'relative', top: '-10px' }}>
         </div>
-        <div className='ui icon buttons right floated mini' title='Remove Active Tileset' style={{ position: 'relative', top: '-10px' }}>
+        {this.props.tileset && <div className='ui icon buttons right floated mini' title='Remove Active Tileset'
+                                    style={{ position: 'relative', top: '-10px' }}>
           <button className='ui icon button' onClick={this.removeTileset}>
             <i className='remove icon'></i>
           </button>
         </div>
+        }
       </div>
     )
   }

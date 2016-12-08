@@ -335,12 +335,12 @@ export default ActorHelper = {
       return
     }
     ActorHelper.isLoading[key] = 1
-    ActorHelper.subscriptions[key] = fetchAndObserve(user, actorName, (error, actors) => {
+    ActorHelper.subscriptions[key] = fetchAndObserve(user, actorName, "actor", (error, actors) => {
       if(!actors.length){
         throw new Error(`Failed to locate an actor ${user}:${actorName}`)
       }
       if(actors.length > 1){
-        throw new Error(`Multiple actor has been located for: ${user}:${actorName}`)
+        console.error(`Multiple actor has been located for: ${user}:${actorName}`)
       }
       const actor = actors[0].content2
       if(!actor){

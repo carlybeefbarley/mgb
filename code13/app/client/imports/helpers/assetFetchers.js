@@ -7,7 +7,7 @@ const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 
 //  TODO:  make this function hybrid - ajax to get C2 and update on asset change
 // used by source tools and actor map
-export const fetchAndObserve = (owner, name, onAssets, onChanges, oldSubscription = null) => {
+export const fetchAndObserve = (owner, name, kind, onAssets, onChanges, oldSubscription = null) => {
   const cursor = Azzets.find({dn_ownerName: owner, name: name})
   // from now on only observe asset and update tern on changes only
 
@@ -18,7 +18,7 @@ export const fetchAndObserve = (owner, name, onAssets, onChanges, oldSubscriptio
     }
 
   let onReadyCalled = false
-  subscription.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
+  subscription.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, kind, {
     onStop: () => {
 
       subscription.observer && subscription.observer.stop()
@@ -122,14 +122,26 @@ export const getAssetWithContent2 = (id, onReady) => {
     ready(){
       return this.isReady
     },
+    updateAsset(){
+      this.asset = Azzets.findOne(this.asset._id)
+      // actually etag is not correct here
+      // as there is small difference in timestamps
+      // saved minimongo data and fetched new differs approx ~ 10ms
+      this.etag = genetag(this.asset)
+    },
     update(){
-      const c2 = this.asset.content2
+
+      const c2 = this.asset && this.asset.content2
       const asset = Azzets.findOne(id)
 
+      if(!asset){
+        return
+      }
+
       const etag = genetag(asset)
-      if(etag == this.etag){
+      if (etag == this.etag) {
         this.asset = asset
-        if(!this.asset.content2){
+        if (!this.asset.content2) {
           this.asset.content2 = c2
         }
         console.log("Skipping update!")
@@ -138,12 +150,21 @@ export const getAssetWithContent2 = (id, onReady) => {
 
       this.etag = etag
       //this.isReady = false
-      fetchAssetByUri(this.asset.c2location || `/api/asset/content2/${id}`, etag)
+      fetchAssetByUri(asset.c2location || `/api/asset/content2/${id}`, etag)
         .then((data) => {
-          this.asset = asset
-          ret.asset.content2 = JSON.parse(data)
+          const c2 = JSON.parse(data)
+          const oldC2 = this.asset.content2
           ret.isReady = true
-          onReady && onReady()
+
+          if (!_.isEqual(c2, oldC2)) {
+            this.asset = asset
+            ret.asset.content2 = c2
+
+            onReady && onReady()
+          }
+          else{
+            console.log("Sources are equal.. preventing update!")
+          }
         })
     }
   }

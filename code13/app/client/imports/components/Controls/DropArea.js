@@ -72,7 +72,7 @@ export default class DropArea extends React.Component {
 
     this.setState( { asset: asset, badAsset: null }, () => {
       this.subscription && this.subscription.stop()
-      this.subscription = Meteor.subscribe("assets.public.owner.name", asset.dn_ownerName, asset.name, {
+      this.subscription = Meteor.subscribe("assets.public.owner.name", asset.dn_ownerName, asset.name, asset.kind, {
         onReady: () => { this.forceUpdate() }
       })
       this.saveChanges()

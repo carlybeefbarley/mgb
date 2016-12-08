@@ -140,12 +140,9 @@ export default AssetEditRoute = React.createClass({
   getMeteorData: function() {
     let assetId = this.props.params.assetId
     let handleForAsset = getAssetWithContent2(assetId, () => {
-      this.forceUpdate()
+      // while ticking - send changes :) (this is - isMounted check actually)
+      this.m_tickIntervalFunctionHandle && this.forceUpdate()
     })
-
-    if(this.m_deferredSaveObj){
-      handleForAsset.asset.content2 = this.m_deferredSaveObj.content2Object
-    }
 
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 
@@ -155,9 +152,12 @@ export default AssetEditRoute = React.createClass({
 
     return {
       get asset(){ return handleForAsset.asset },
+      update(v){handleForAsset.updateAsset() },
+
       isServerOnlineNow: Meteor.status().connected,
       activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
       assetActivity: Activity.find(selector, options).fetch(),
+
       get loading(){ return !handleForAsset.isReady }    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
     }
   },
@@ -478,7 +478,8 @@ export default AssetEditRoute = React.createClass({
         // We will rely on the tick() to send any future pending saves
       }
     })
-    
+
+    this.data.update()
     logActivity("asset.edit", changeText, null, this.data.asset || { _id: assetId } )
   },
 

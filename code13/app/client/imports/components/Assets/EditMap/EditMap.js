@@ -197,6 +197,9 @@ export default class EditMap extends React.Component {
       this.cache.update(newp.asset.content2, () => {
         this.setState({isLoading: false})
       })
+      if(!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave){
+        this.mgb_content2 = newp.asset.content2
+      }
     }
   }
 

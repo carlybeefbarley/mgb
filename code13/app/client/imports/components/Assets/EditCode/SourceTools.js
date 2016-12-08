@@ -467,7 +467,7 @@ export default class SourceTools {
     const owner = parts.length > 0 ? parts.pop() : this.owner
 
     // from now on only observe asset and update tern on changes only
-    this.subscriptions[ari] = fetchAndObserve(owner, name, getSourceAndTranspile, (id, changes) => {
+    this.subscriptions[ari] = fetchAndObserve(owner, name, "code", getSourceAndTranspile, (id, changes) => {
       // we may end with older resource until next changes..
       if(this.inProgress){
         return

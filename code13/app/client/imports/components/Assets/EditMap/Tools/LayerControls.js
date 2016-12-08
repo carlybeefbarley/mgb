@@ -65,9 +65,10 @@ export default class LayerControls extends React.Component {
           {lower}
         </div>
         <div className='ui icon buttons right floated mini' title='Remove Active Layer'>
-          <button className='ui icon button' onClick={this.props.removeLayer}>
+          {this.props.layers.length && <button className='ui icon button' onClick={this.props.removeLayer}>
             <i className='remove icon'></i>
           </button>
+          }
         </div>
       </div>
     )

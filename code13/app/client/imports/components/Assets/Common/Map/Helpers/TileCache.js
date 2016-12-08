@@ -60,6 +60,7 @@ export default class TileCache {
     for(let i=0; i<images.length; i++){
       this._loadImage(images[i])
     }
+
   }
 
   updateTilesets(data){
@@ -95,7 +96,7 @@ export default class TileCache {
   _loadImage(src, force = false){
     const id = src.split("/").pop()
     // already observing changes
-    if(this.observers[id]){
+    if(this.observers[src]){
       return
     }
 
@@ -117,7 +118,7 @@ export default class TileCache {
       img.src = src
     }
 
-    this.observers[id] = observe(id, (changes) => {
+    this.observers[src] = observe(id, (changes) => {
       loadImage()
     })
     loadImage()

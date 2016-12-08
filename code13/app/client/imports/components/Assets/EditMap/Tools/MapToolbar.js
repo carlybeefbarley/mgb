@@ -99,7 +99,7 @@ export default class MapToolbar extends React.Component {
           name: 'toggleRandomMode',
           icon: 'random',
           active: this.props.options.randomMode,
-          disabled: !LayerTypes.isTilemapLayer(layer.type),
+          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type)),
           label: 'Random mode',
           tooltip: 'Random Mode - picks one tile from the selection',
           level: 11

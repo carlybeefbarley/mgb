@@ -113,7 +113,7 @@ Meteor.publish('assets.public', function(
 })
 
 
-// Return one asset data only. This is a good subscription for AssetEditRoute
+// Return one asset info only.
 Meteor.publish('assets.public.byId', function(assetId) {
   return Azzets.find(assetId, {fields: {content2: 0}})
 })

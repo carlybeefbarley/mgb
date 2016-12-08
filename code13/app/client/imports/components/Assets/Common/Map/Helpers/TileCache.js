@@ -105,10 +105,6 @@ export default class TileCache {
   }
 
   _loadImage(src, force = false){
-
-
-
-
     const id = src.split("/").pop()
     // already observing changes
     if(this.observers[src]){
@@ -126,8 +122,8 @@ export default class TileCache {
         }
       }
       img.onerror = () => {
-        img.onload()
         delete this.images[src]
+        img.onload()
         // TODO(stauzs): push errors - or load nice fallback image
       }
       img.src = src

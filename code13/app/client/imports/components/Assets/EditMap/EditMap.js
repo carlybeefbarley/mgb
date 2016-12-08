@@ -308,7 +308,7 @@ export default class EditMap extends React.Component {
       this.saveForUndo(reason)
     }
     // make sure we have thumbnail
-    if(!thumbnail){
+    if(!thumbnail && this.refs.map){
       this.refs.map.generatePreviewAndSaveIt()
     }
     this.props.handleContentChange(data, thumbnail, reason)

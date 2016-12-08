@@ -1,11 +1,12 @@
 import _ from 'lodash'
-import React from 'react'
+import React, { PropTypes } from 'react'
 import styles from './home.css'
 import getStartedStyle from './GetStarted.css'
 import { Segment, Header, Image, Icon } from 'semantic-ui-react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -25,7 +26,7 @@ const descStyle = {
   lineHeight: "1.5em"
 }
 
-const LearnSkillsAreaRoute = ( { params } ) => {    //props.params.skillarea
+const LearnSkillsAreaRoute = ( { currUser, params }, context ) => {    //props.params.skillarea
 
   const area = _.find(skillAreaItems, ['tag', params.skillarea] )
   const skillNode = SkillNodes[params.skillarea]
@@ -42,8 +43,15 @@ const LearnSkillsAreaRoute = ( { params } ) => {    //props.params.skillarea
       <ul>
         { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.description) ? v.$meta.description : k}</li>) ) }
       </ul>
+      { currUser && 
+        <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag}/>
+      }
     </Segment>
   )
+}
+
+LearnSkillsAreaRoute.contextTypes = {
+  skills:       PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
 }
 
 export default LearnSkillsAreaRoute

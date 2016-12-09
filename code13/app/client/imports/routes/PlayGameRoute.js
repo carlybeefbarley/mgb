@@ -65,7 +65,7 @@ const PlayMageGame = ( { _mapName, owner, incrementPlayCountCb } ) =>
   )
 }
 
-const PlayGame = ( { game, user } ) => {
+const PlayGame = ( { game, user, incrementPlayCountCb } ) => {
   if (!game.metadata)
     return <Message warning content='This Game Asset does not contain a game definition. Someone should edit it and fix that' />
 
@@ -73,11 +73,11 @@ const PlayGame = ( { game, user } ) => {
   case 'codeGame':
     if (!game.metadata.startCode || game.metadata.startCode === '')
       return <Message warning content='This Game Asset does not contain a link to the starting actorMap. Someone should edit it and fix that' />
-    return <PlayCodeGame _codeName={game.metadata.startCode} owner={user} />
+    return <PlayCodeGame _codeName={game.metadata.startCode} owner={user} incrementPlayCountCb={incrementPlayCountCb}/>
   case 'actorGame':
     if (!game.metadata.startActorMap || game.metadata.startActorMap === '')
       return <Message warning content='This Game Asset does not contain a link to the starting Game Code file. Someone should edit it and fix that' />
-    return <PlayMageGame _mapName={game.metadata.startActorMap} owner={user} />
+    return <PlayMageGame _mapName={game.metadata.startActorMap} owner={user} incrementPlayCountCb={incrementPlayCountCb}/>
   default:
     return <Message warning content='This Game Asset does not contain a game type definition. Someone should edit it and fix that' />
   }

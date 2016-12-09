@@ -115,11 +115,16 @@ export default class JoyrideTooltip extends React.Component {
       hole: {},
       tooltip: {
         position: cssPosition === 'fixed' ? 'fixed' : 'absolute',
-        top: Math.round(yPos),
+        top: Math.round(yPos-(16)),
         left: Math.round(xPos)
       }
     };
 
+    if (opts.positonBaseClass === 'left' || opts.positonBaseClass === 'right')
+      styles.tooltip.top -= opts.rect.height/2
+    if (styles.tooltip.top < 16)
+      styles.tooltip.top = 16
+  
     styles.hole = {
       top:    Math.round((opts.rect.top - document.body.getBoundingClientRect().top) - 5),
       left:   Math.round(opts.rect.left - 5),

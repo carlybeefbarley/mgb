@@ -18,9 +18,47 @@ const mgbReleaseInfo = {
 
       'changes': [
       ]
-
+Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
+    {
+      'timestamp': 'Fri Dec 09 2016 12:41:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2274'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'GetStarted / Tutorials / Skills',
+          'changeSummary': 'We are nearly finished with the database and ui flows to support the upcoming skills/tutorials/help systems. There are still some in-progress pages, but you can see at least one of the end-to-end flows from getStarted with the profilePage tutorial. Lots more coming very soon.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'bugfix',
+          'changeName': 'Fixed api bug for graphics',
+          'changeSummary': 'Fixed a bug that prevented some older graphics files from being loaded via the api. This was affecting the sample "clean sheet" code examples.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'bugfix',
+          'changeName': 'Fixed more bugs related to actorMaps',
+          'changeSummary': 'Fixed bugs caused by having multiple kinds of assets with the same name.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
 
     {
       'timestamp': 'Fri Dec 02 2016 20:00:00 GMT-0800 (PDT)',

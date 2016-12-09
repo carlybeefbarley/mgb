@@ -1,7 +1,7 @@
 // cache stores all loaded images and creates tile map for further reference
 import TileHelper from './TileHelper'
 import {observe} from "/client/imports/helpers/assetFetchers"
-
+import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
 
 export default class TileCache {
   constructor(data, onReady){
@@ -135,7 +135,21 @@ export default class TileCache {
       img.src = src
     }
 
-    this.observers[src] = observe(id, (changes) => {
+    let toObserve = id
+    if(src.startsWith("/api/asset/png/")){
+      const fpart = src.split("/")
+      // user / name
+      if(fpart.length == 6){
+        toObserve = {
+          name: fpart.pop(),
+          dn_ownerName: fpart.pop(),
+          isDeleted: false,
+          kind: AssetKind.graphic
+        }
+      }
+    }
+
+    this.observers[src] = observe(toObserve, (changes) => {
       loadImage()
     })
     loadImage()

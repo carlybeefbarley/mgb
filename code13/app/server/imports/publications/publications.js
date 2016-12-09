@@ -113,6 +113,12 @@ Meteor.publish('assets.public', function(
 })
 
 
+// Observe assets only - add limit??
+Meteor.publish('assets.public.bySelector', function(selector) {
+  // we only need updateAt and id here, but client won't be able to select without rest fields
+  // is there a better way to avoid junk data transfer?
+  return Azzets.find(selector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1}})
+})
 
 // Return one asset. This is a good subscription for AssetEditRoute
 Meteor.publish('assets.public.byId.withContent2', function(assetId) {
@@ -122,7 +128,11 @@ Meteor.publish('assets.public.byId.withContent2', function(assetId) {
 Meteor.publish('assets.public.owner.name', function(owner, name) {
   console.log("subscribe to: assets.public.owner.name", owner, name)
   // oops findOne is not working here
-  return Azzets.find({dn_ownerName: owner, name: name})
+  return Azzets.find({
+    dn_ownerName: owner,
+    name: name,
+    isDeleted: false
+  })
 })
 
 //

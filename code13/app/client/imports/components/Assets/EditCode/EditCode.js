@@ -12,6 +12,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import moment from 'moment'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import { templateCode } from './templates/TemplateCode.js'
+import { templateTutorial } from './templates/TemplateTutorial.js'
 import { js_beautify } from 'js-beautify'
 import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js'
 import ConsoleMessageViewer from './ConsoleMessageViewer.js'
@@ -1583,15 +1584,20 @@ export default class EditCode extends React.Component {
   }
 
   render() {
-    if (!this.props.asset)
+    const asset = this.props.asset
+
+    if (!asset)
       return null
 
-    const templateCodeChoices = templateCode.map(item => {
+    const templateKind = asset.kind === 'tutorial' ? templateTutorial : templateCode
+    const templateCodeChoices = templateKind.map(item => {
       const label = item.label.replace(/ /g, '-')
-      return <a className="item" id={"mgbjr-EditCode-template-"+label} key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
-        <div className="ui green horizontal label">{item.label}</div>
-        {item.description}
-      </a>
+      return (
+        <a className="item" id={"mgbjr-EditCode-template-"+label} key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
+          <div className="ui green horizontal label">{item.label}</div>
+          {item.description}
+        </a>
+      )
     })
 
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
@@ -1609,7 +1615,6 @@ export default class EditCode extends React.Component {
 
     const tbConfig = this.generateToolbarConfig()
 
-    let asset = this.props.asset
     let docEmpty = this.state.documentIsEmpty
     let isPlaying = this.state.isPlaying
 

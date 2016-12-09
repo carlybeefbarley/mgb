@@ -9,7 +9,6 @@ import QLink from "/client/imports/routes/QLink"
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-
 const _stopTutorial = () => addJoyrideSteps( [], { replace: true } )
 
 const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum } ) => (
@@ -19,7 +18,7 @@ const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurren
         { /* <i className="right floated code icon" /> */ }
         <div className="header">{joyrideSteps[0].heading || joyrideSkillPathTutorial || "Current Tutorial..."}</div>
         <ol className="ui list">
-          { joyrideSteps.map( (s, idx) => <li className={ idx >= joyrideCurrentStepNum ? 'active' : 'complete'}>{s.title || `Step ${idx}`}</li> ) }
+          { joyrideSteps.map( (s, idx) => <li key={idx} className={ idx >= joyrideCurrentStepNum ? 'active' : 'complete'}>{s.title || `Step ${idx}`}</li> ) }
         </ol>
       </div>
       <div className="extra content">

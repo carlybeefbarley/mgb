@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import styles from './home.css'
 import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+
 
 const cardStyle = {
   color: "#2e2e2e"
@@ -25,13 +27,14 @@ const descStyle = {
 }
 
 
-const getStartedItems = [
+const learnTopLevelItems = [
   {
     mascot: 'MgbLogo',
     icon: 'home',
     content: 'Get Started',
     link: '/learn/getstarted',
     query: null,
+    skillnodeTopLevelTag: 'getStarted',
     desc: 'Learn to use this site - set up your profile, play a game, find friends, etc'
   }, 
   {
@@ -48,6 +51,7 @@ const getStartedItems = [
     content: 'Learn new Skills',
     link: '/learn/skills',
     query: null,
+    skillnodeTopLevelTag: '',    
     desc: 'Learn using skills-focused tutorials for coding, art, level design, etc'
   },
   {
@@ -60,7 +64,7 @@ const getStartedItems = [
   }
 ]
 
-const LearnRoute = () => (
+const LearnRoute = ( { currUser, params }, context ) => (
   <Segment basic padded className='slim' style={{margin: '0 auto'}}>
     <Grid stackable>
 
@@ -76,12 +80,21 @@ const LearnRoute = () => (
       <Grid.Row>
         <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
-            { getStartedItems.map( (area, idx) => (
+            { learnTopLevelItems.map( (area, idx) => (
                 <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
                   <Card.Content>
                     <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
                     <p style={descStyle}>{area.desc}.</p>
+                    { currUser && ('string' == (typeof area.skillnodeTopLevelTag)) && 
+                      <SkillsMap 
+                        user={currUser} 
+                        userSkills={context.skills} 
+                        ownsProfile={true} 
+                        onlySkillArea={area.skillnodeTopLevelTag}
+                        initialZoomLevel={area.skillnodeTopLevelTag === '' ? 0 : 1}/>
+                    }
+                    
                   </Card.Content>
                 </QLink>
               ))
@@ -92,5 +105,9 @@ const LearnRoute = () => (
     </Grid>
   </Segment>
 )
+
+LearnRoute.contextTypes = {
+  skills:       PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
+}
 
 export default LearnRoute

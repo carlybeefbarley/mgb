@@ -10,12 +10,14 @@ export default {
   $meta: {
     name:           'Get Started',
     description:    'Represents basic MGB usage skills - set up your profile, play a game, find friends, etc',
+    sequence:       'profile,chat,play,assetsBasics,projects,learn'
   },
   
   profile: {
     $meta: {
       name:           'Profile',
-      description:    'Learn to set up your profile',
+      description:    'Add avatars and other info to your profile',
+      sequence:       'profilePage,badges,avatar,mgb1Name,bio,description,focus,history'
     },
     profilePage:      C.E,
     badges:           C.E,
@@ -24,7 +26,6 @@ export default {
     bio:              C.E,
     description:      C.E,
     focus:            C.E,
-    projects:         C.E,
     history:          C.E
   },
 
@@ -32,6 +33,7 @@ export default {
     $meta: {
       name:           'Chat',
       description:    'Learn to use chat and say Hi',
+      sequence:       'chatFlexPanel,chatChannels,chatRandomSayHi'
     },
     chatFlexPanel:    C.E,
     chatChannels:     C.E,
@@ -41,7 +43,8 @@ export default {
   play: {
     $meta: {
       name:           'Play',
-      description:    'Learn to find and play games',
+      description:    'Find games you can play here',
+      sequence:       'findGames,searchGames,completeGames,gameAssets'
     },
     findGames:        C.E,
     searchGames:      C.E,
@@ -49,42 +52,50 @@ export default {
     gameAssets:       C.E
   },
 
-  assets: {
+  assetsBasics: {
     $meta: {
-      name:           'Assets',
-      description:    'Learn to find, create and work with game Assets',
+      name:           'Assets (basics)',
+      description:    'Find, create and work with Game Assets',
+      sequence:       'createAssets,findAssets,searchAssets,kinds,deleteAsset'
     },
+    createAssets:     C.E,
     findAssets:       C.E,
     searchAssets:     C.E,
-    createAssets:     C.E,
     kinds:            C.E,
-    deleteAssets:     C.E,
-    qualityLevel:     C.E,
-    complete:         C.E,
-    forking:          C.E,
-    licensing:        C.E,
-    viewers:          C.E,
-    changes:          C.E
+    deleteAsset:      C.E
   },
 
   projects: {
     $meta: {
       name:           'Projects',
-      description:    'Learn to make Projects and Teams',
+      description:    'Set up Projects and Teams',
     },
     createProject:         C.E,
     createAssetInProject:  C.E,
     changeProjectForAsset: C.E,
     projectAvatar:         C.E,
     projectMembers:        C.E,
-    projectPrefix:         C.E,
+    projectPrefix:         C.E
+  },
 
+  assetsAdvanced: {
+    $meta: {
+      name:           'Assets (advanced)',
+      description:    'Fancy tricks with Game Assets',
+      sequence:       'viewers,changes,qualityLevel,completedFlag,forking,licensing'
+    },
+    viewers:          C.E,
+    changes:          C.E,
+    qualityLevel:     C.E,
+    completedFlag:    C.E,
+    forking:          C.E,
+    licensing:        C.E
   },
 
   learn: {
     $meta: {
       name:           'Learn',
-      description:    'Learn the next ways to Learn',
+      description:    'Find more ways to Learn',
     },
     skills:              C.E,
     games:               C.E,

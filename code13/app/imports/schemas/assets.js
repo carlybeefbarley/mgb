@@ -268,9 +268,15 @@ export const AssetKinds = {
 export const safeAssetKindStringSepChar = "-"
 export const AssetKindKeysALL = Object.keys(AssetKinds)  // For convenience. This gets ALL keys (including functions and disabled)
 
+// map {actor:"actor"} - to avoid direct strings
+export const AssetKindEnum = {}
 // All valid Asset kinds that are enabled for all users
 export const AssetKindKeys = _.filter(AssetKindKeysALL, (k) => {
-  return (typeof(AssetKinds[k]) !== 'function' && AssetKinds[k].disable !== true) 
+  const shouldFilter = (typeof(AssetKinds[k]) !== 'function' && AssetKinds[k].disable !== true)
+  if(shouldFilter){
+    AssetKindEnum[k] = k
+  }
+  return shouldFilter
 })
 
 export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepChar).length === AssetKindKeys.length
@@ -431,7 +437,8 @@ Meteor.methods({
       // can we omit this??? instead of update use findAndModify ?
       const assetData = Azzets.findOne( docId, {fields: { name: 1, dn_ownerName: 1, kind: 1 }} )
       // technically we could run this on client..
-      cache.invalidateAsset(assetData)
+      // disable cache invalidation atm
+      // cache.invalidateAsset(assetData)
       console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`) // These fields might not be provided for updates
     }
     return count

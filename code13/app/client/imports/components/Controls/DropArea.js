@@ -72,6 +72,9 @@ export default class DropArea extends React.Component {
 
     this.setState( { asset: asset, badAsset: null }, () => {
       this.subscription && this.subscription.stop()
+      if(asset.dn_ownerName == "[builtin]"){
+        return
+      }
       this.subscription = Meteor.subscribe("assets.public.owner.name", asset.dn_ownerName, asset.name, asset.kind, {
         onReady: () => { this.forceUpdate() }
       })
@@ -96,7 +99,9 @@ export default class DropArea extends React.Component {
       const parts = this.props.value.split(":")
       const name = parts.pop()
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
-
+      if(owner == "[builtin]"){
+        return
+      }
       this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name)
       const aa =  Azzets.find({dn_ownerName: owner, name: name}).fetch()
 

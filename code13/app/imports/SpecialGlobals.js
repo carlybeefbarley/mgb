@@ -48,8 +48,9 @@ export default SpecialGlobals = {
     settingsSaveDebounceMs: 5 * 1000
   },
 
-  skillsModelTrifecta: {
-    tutorialAssetNamePrefix: '!vault:tutorials.'    // See SkillNodes.js to understand this since it is related to the SKILLS_MODEL_TRIFECTA
+  skillsModelTrifecta: {  // See SkillNodes.js to understand these values related to the SKILLS_MODEL_TRIFECTA
+    tutorialAccount:         '!vault', 
+    tutorialAssetNamePrefix: 'tutorials.'
   }
 
 }

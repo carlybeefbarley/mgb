@@ -8,9 +8,14 @@ const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 //  TODO:  make this function hybrid - ajax to get C2 and update on asset change
 // used by source tools and actor map
 export const fetchAndObserve = (owner, name, kind, onAssets, onChanges, oldSubscription = null) => {
-  const cursor = Azzets.find({dn_ownerName: owner, name: name})
-  // from now on only observe asset and update tern on changes only
+  const sel = {dn_ownerName: owner, name: name, isDeleted: false}
+  // kind is not always known
+  if(kind)
+    sel.kind = kind
 
+
+  const cursor = Azzets.find(sel)
+  // from now on only observe asset and update asset on changes only
   const subscription = oldSubscription || {
       observer: null,
       getAssets: () => cursor.fetch(),
@@ -48,12 +53,12 @@ export const fetchAndObserve = (owner, name, kind, onAssets, onChanges, oldSubsc
 }
 
 // used by maps - to get notifications about image changes
-export const observe = (id, cb, oldSubscription = null) => {
+export const observe = (selector, cb, oldSubscription = null) => {
   // images in the map won't update
   if (!ALLOW_OBSERVERS) {
     return
   }
-  const cursor = Azzets.find(id)
+  const cursor = Azzets.find(selector)
   // from now on only observe asset and update tern on changes only
 
   const subscription = oldSubscription || {
@@ -63,13 +68,13 @@ export const observe = (id, cb, oldSubscription = null) => {
     }
 
   let onReadyCalled = false
-  subscription.subscription = Meteor.subscribe("assets.public.byId.withContent2", id, {
+  subscription.subscription = Meteor.subscribe("assets.public.bySelector", selector, {
     onStop: () => {
 
       subscription.observer && subscription.observer.stop()
       // Something internally in the Meteor makes subscription to stop even before it's ready
       // try again.. TODO: debug this further
-      !onReadyCalled && observe(id, cb, subscription)
+      !onReadyCalled && observe(selector, cb, subscription)
     },
     onReady: () => {
       onReadyCalled = true
@@ -83,15 +88,13 @@ export const observe = (id, cb, oldSubscription = null) => {
       console.log("Error:", name, ...args)
     }
   })
-
   return subscription
 }
 
-export const fetchAssetByUri = (uri, etag = null) => {
+export const fetchAssetByUri = uri => {
   var promise = new Promise(function (resolve, reject) {
     var client = new XMLHttpRequest()
     client.open('GET', uri)
-    // etag && client.setRequestHeader("etag", etag)
     client.send()
     client.onload = function () {
       if (this.status >= 200 && this.status < 300)

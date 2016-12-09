@@ -1,6 +1,7 @@
 "use strict"
 import knownLibs from "./knownLibs.js"
 import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
+import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
 
 // serving modules from...
 const getModuleServer = (lib) => {
@@ -467,7 +468,7 @@ export default class SourceTools {
     const owner = parts.length > 0 ? parts.pop() : this.owner
 
     // from now on only observe asset and update tern on changes only
-    this.subscriptions[ari] = fetchAndObserve(owner, name, "code", getSourceAndTranspile, (id, changes) => {
+    this.subscriptions[ari] = fetchAndObserve(owner, name, AssetKind.code, getSourceAndTranspile, (id, changes) => {
       // we may end with older resource until next changes..
       if(this.inProgress){
         return

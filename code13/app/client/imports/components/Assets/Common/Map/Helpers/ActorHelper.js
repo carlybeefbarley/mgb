@@ -7,8 +7,9 @@
 import TileHelper from './TileHelper'
 import ActorValidator from '../../ActorValidator'
 import SpecialGlobals from '/imports/SpecialGlobals'
+import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
 
-import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
+import {fetchAndObserve, observe} from "/client/imports/helpers/assetFetchers"
 
 // 0 - jump
 // 1 - music
@@ -335,53 +336,17 @@ export default ActorHelper = {
       return
     }
     ActorHelper.isLoading[key] = 1
-    ActorHelper.subscriptions[key] = fetchAndObserve(user, actorName, "actor", (error, actors) => {
-      if(!actors.length){
-        throw new Error(`Failed to locate an actor ${user}:${actorName}`)
-      }
-      if(actors.length > 1){
-        console.error(`Multiple actor has been located for: ${user}:${actorName}`)
-      }
-      const actor = actors[0].content2
-      if(!actor){
-        throw new Error("Unable to locate actor...")
-      }
-
-      const iparts = actor.databag.all.defaultGraphicName.split(":");
-      const iuser = iparts.length > 1 ? iparts.shift() : user
-      const iname = iparts.pop()
-
-      const src = `/api/asset/png/${iuser}/${iname}`
-
-      map[name].firstgid = nr
-      map[name].actor = actor
-      map[name].image = src
-      var img = new Image()
-      img.onload = function(){
-        map[name].imagewidth = img.width
-        map[name].imageheight = img.height
-        // TODO: adjust these when MAGE will support multiple frames per actor
-        map[name].tilewidth = img.width
-        map[name].tileheight = img.height
-
-        images[TileHelper.normalizePath(src)] = src
-
-        ActorHelper.cache[key] = {
-          map: map[name],
-          image: src
-        }
-        delete ActorHelper.isLoading[key]
-        cb()
-      }
-      img.src = src
-
-
-    }, (...a) => {
-      ActorHelper.clearCache(key)
-      onChange(...a)
-    })
-    /*
+    
     $.get(`/api/asset/actor/${user}/${actorName}`).done((d) => {
+      ActorHelper.subscriptions[key] = observe({
+        dn_ownerName: user,
+        name: actorName,
+        isDeleted: false,
+        kind: AssetKind.actor
+      }, (...a) => {
+        ActorHelper.clearCache(key)
+        onChange(...a)
+      })
 
 
       const iparts = d.databag.all.defaultGraphicName.split(":");
@@ -412,7 +377,7 @@ export default ActorHelper = {
         cb()
       }
       img.src = src
-    })*/
+    })
   },
 
   checks: {

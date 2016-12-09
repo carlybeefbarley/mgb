@@ -23,21 +23,22 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const flexPanelViews = [
+  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false  },
+
   { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
   { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false },
 
   { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false },
-  { tag: 'features',  lev: 1,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
+  { tag: 'features',  lev: 2,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
 
 //{ tag: 'projects',  lev: 2,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
   
-  { tag: 'network',   lev: 2,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
-  { tag: 'users',     lev: 3,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
+  { tag: 'network',   lev: 3,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
+  { tag: 'users',     lev: 4,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
   { tag: 'keys',      lev: 4,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
 
   // SuperAdmin-only:
-  { tag: 'super',     lev: 1,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true  }, // ALWAYS SuperAdmin
-  { tag: 'goals',     lev: 3,  name: 'goals',    icon: 'red student',hdr: 'Goals',             el: fpGoals,         superAdminOnly: true  }  // SuperAdmin while being tested
+  { tag: 'super',     lev: 1,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true  } // ALWAYS SuperAdmin
 ]
 
 const defaultPanelViewIndex = 0
@@ -49,6 +50,9 @@ export default FlexPanel = React.createClass({
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
+    joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
+    joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
+    joyrideCurrentStepNum:  PropTypes.number,             // Step number (IFF joyrideSteps is not an empty array)
     selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values (or validtagkeyhere.somesuffix)
     activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible:     PropTypes.bool.isRequired,
@@ -121,7 +125,7 @@ export default FlexPanel = React.createClass({
 
 
   render: function () {
-    const { flexPanelWidth, flexPanelIsVisible } = this.props
+    const { flexPanelWidth, flexPanelIsVisible, joyrideSteps } = this.props
     const fpFeatureLevel = this.data.fpFeatureLevel  || 1
     const panelStyle = {
       position:     'fixed',
@@ -189,6 +193,9 @@ export default FlexPanel = React.createClass({
                       currUser={this.props.currUser}
                       currUserProjects={this.props.currUserProjects}
                       user={this.props.user}
+                      joyrideSteps={this.props.joyrideSteps}
+                      joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
+                      joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
                       activity={this.props.activity}
                       panelWidth={this.props.flexPanelWidth}
                       isSuperAdmin={this.props.isSuperAdmin}
@@ -208,11 +215,13 @@ export default FlexPanel = React.createClass({
               return null
             if (v.superAdminOnly && !this.props.isSuperAdmin) 
               return null
+            const specialSty = (v.tag === 'goals' && joyrideSteps && joyrideSteps.length > 0) ? { backgroundColor: '#eaae00'} : {}
             return (
               <div
                 id={`mgbjr-flexPanelIcons-${v.tag}`}
                 key={v.tag}
-                className={active + " item"}
+                style={specialSty}
+                className={active +  " item"}
                 title={v.name}
                 onClick={this.fpViewSelect.bind(this, v.tag)}>
                 <i className={v.icon + " large icon"}></i>

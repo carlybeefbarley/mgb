@@ -22,12 +22,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
     {
-      'timestamp': 'Fri Dec 09 2016 13:50:00 GMT-0800 (PST)',
+      'timestamp': 'Fri Dec 09 2016 14:50:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2280'
+        'iteration': '2284'
       },
 
       'releaseManagement': {
@@ -39,7 +39,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'featureTag': 'nav.tutorials',
           'type': 'improvement',
           'changeName': 'GetStarted / Tutorials / Skills',
-          'changeSummary': 'We are nearly finished with the database and ui flows to support the upcoming skills/tutorials/help systems. There are still some in-progress pages, but you can see at least one of the end-to-end flows from getStarted with the profilePage tutorial. Lots more coming very soon.',
+          'changeSummary': 'We are nearly finished with the database and ui flows to support the upcoming skills/tutorials/help systems. There are still some in-progress pages, but you can see at least one of the end-to-end flows from getStarted with the profilePage tutorial. Also added templates to the Tutorial editor. Lots more coming very soon.',
           'otherUrls': [ ]
         },
         {

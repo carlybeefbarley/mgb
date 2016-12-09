@@ -29,7 +29,7 @@ export const fetchAndObserve = (owner, name, kind, onAssets, onChanges, oldSubsc
       subscription.observer && subscription.observer.stop()
       // Something internally in the Meteor makes subscription to stop even before it's ready
       // try again.. TODO: debug this further
-      !onReadyCalled && fetchAndObserve(owner, name, onAssets, onChanges, subscription)
+      !onReadyCalled && fetchAndObserve(owner, name, kind, onAssets, onChanges, subscription)
     },
     onReady: () => {
       onReadyCalled = true

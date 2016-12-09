@@ -142,8 +142,8 @@ RestApi.addRoute('asset/tileset/:user/:name', { authRequired: false }, {
     const asset = Azzets.findOne({
       name:         this.urlParams.name,
       dn_ownerName: this.urlParams.user,
-      isDeleted:    false,
-      kind:         "graphic"
+      kind:         "graphic",
+      isDeleted:    false
     })
 
     return genAPIreturn(this, asset, (asset && asset.content2 && asset.content2.tileset) ? dataUriToBuffer(asset.content2.tileset) : null, {

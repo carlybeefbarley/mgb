@@ -104,12 +104,12 @@ export default class TileCache {
       return
     }
 
-    const loadImage = () => {
+    const loadImage = (preventCache) => {
       const img = new Image()
-      this.images[src] = img
       this.toLoad++
       img.onload = () => {
         this.loaded++
+        this.images[src] = img
         if(this.toLoad == this.loaded){
           this._onReady()
         }
@@ -119,20 +119,19 @@ export default class TileCache {
         if(!src.startsWith("./") && !src.startsWith("/")){
           const name = src.substr(0, src.lastIndexOf('.')) || src
           src = `/api/asset/png/${Meteor.user().username}/${name}`
-          img.src = src
           img.onerror = () => {
             delete this.images[src]
             img.onload()
           }
+          img.src = src
         }
         else{
-          delete
           img.onload()
         }
 
         // TODO(stauzs): push errors - or load nice fallback image
       }
-      img.src = src
+      img.src = src + (preventCache ? '?' + preventCache : '')
     }
 
     let toObserve = id
@@ -149,8 +148,9 @@ export default class TileCache {
       }
     }
 
-    this.observers[src] = observe(toObserve, (changes) => {
-      loadImage()
+    this.observers[src] = observe(toObserve, (id, changes) => {
+      // prevent cache - as browser will ignore etag in this case
+      loadImage(changes.updatedAt.getTime())
     })
     loadImage()
 

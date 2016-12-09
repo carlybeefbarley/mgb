@@ -9,7 +9,7 @@ import ActorValidator from '../../ActorValidator'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
 
-import {fetchAndObserve, observe} from "/client/imports/helpers/assetFetchers"
+import {observe} from "/client/imports/helpers/assetFetchers"
 
 // 0 - jump
 // 1 - music

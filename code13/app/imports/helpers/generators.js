@@ -26,6 +26,7 @@ export const genAPIreturn = (api, asset, val = asset, headers = {}) => {
   api.response.removeHeader("pragma")
   if(api.request.headers["if-none-match"] == etag){
     api.response.writeHead(304, {
+      etag: etag,
       "cache-control": "must-revalidate"
     })
     api.response.end()

@@ -17,15 +17,15 @@ export default {
     $meta: {
       name:           'Profile',
       description:    'Add avatars and other info to your profile',
-      sequence:       'profilePage,badges,avatar,mgb1Name,bio,description,focus,history'
+      sequence:       'profilePage,avatar,badges,bio,description,focus,mgb1Name,history'
     },
     profilePage:      C.E,
-    badges:           C.E,
     avatar:           C.E,
-    mgb1Name:         C.E,
+    badges:           C.E,
     bio:              C.E,
     description:      C.E,
     focus:            C.E,
+    mgb1Name:         C.E,
     history:          C.E
   },
 

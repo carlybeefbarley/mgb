@@ -57,7 +57,9 @@ const LearnSkillsRoute = ( { currUser }, context ) => (
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
                     <p style={descStyle}>{area.desc}.</p>
                     { currUser && 
-                      <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag}/>
+                      <div style={{clear: 'both'}}>
+                        <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag} />
+                      </div>
                     }
 
                   </Card.Content>

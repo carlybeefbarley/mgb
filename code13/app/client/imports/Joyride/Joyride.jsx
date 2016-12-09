@@ -624,7 +624,7 @@ export default class Joyride extends React.Component {
       const lastIndex = action === 'back' ? newIndex + 1 : newIndex - 1;
 
       if (action && steps[lastIndex] && (typeof callback === 'function'))
-        callback( { action, type: 'step:after', step: steps[lastIndex] } )
+        callback( { action, type: 'step:after', step: steps[lastIndex], newIndex } )
 
       if (steps.length && !steps[newIndex]) {
         if (typeof completeCallback === 'function')

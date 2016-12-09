@@ -56,6 +56,7 @@ export default npHome = React.createClass({
             <div key='k2' className="menu">
               <QLink
                   to={`/u/${this.props.currUser.profile.name}`} 
+                  id='mgbjr-np-home-myProfile'
                   closeNavPanelOnClick={navPanelIsOverlay} 
                   className="item">
                 <i className="user icon" /> My Profile

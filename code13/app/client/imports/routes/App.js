@@ -5,6 +5,9 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 
+import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
+
+
 import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
 
@@ -43,6 +46,12 @@ export const addJoyrideSteps = (steps, opts) => {
   if (_theAppInstance) 
     _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts) 
 }
+
+export const startSkillPathTutorial = (skillPath) => { 
+  if (_theAppInstance) 
+    _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath) 
+}
+
 
 export const joyrideDebugEnable = joyrideDebug => {
   if (_theAppInstance) 
@@ -120,6 +129,8 @@ export default App = React.createClass({
 
       // For react-joyride
       joyrideSteps: [],
+      joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial
+      joyrideCurrentStepNum: 0,            // integer with cuurent step number (valid IFF there are steps defined)
       joyrideDebug: false
     }
   },
@@ -306,6 +317,9 @@ export default App = React.createClass({
 
 
             <FlexPanel
+              joyrideSteps={this.state.joyrideSteps} 
+              joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
+              joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
               currUser={currUser}
               currUserProjects={currUserProjects}
               user={user}
@@ -480,9 +494,16 @@ export default App = React.createClass({
   },
 
 
+  startSkillPathTutorial(skillPath)
+  {
+    const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)
+    this.addJoyrideSteps(tutPath, { replace: true, skillPath: skillPath } )
+  },
+
   //
   // React-Joyride 
   //
+
 
   // This is the React-joyride (user tours) support
   // See https://github.com/gilbarbara/react-joyride for background
@@ -512,11 +533,12 @@ export default App = React.createClass({
           }
           if (loadedSteps)
           {
-//            loadedSteps._loadedAs = steps // the original string we were given eg :tutorials.00example
             this.addJoyrideSteps(loadedSteps.steps, opts)
           }
         })
-        .catch( err => console.error(`Unable to start tutorial '${steps}': ${err.toString()}`) )
+        .catch( err => {
+          alert(`Unable to start tutorial '${steps}': ${err.toString()}`) 
+        } )
       return
     }
 
@@ -531,6 +553,9 @@ export default App = React.createClass({
 
     this.setState(function(currentState) {
       currentState.joyrideSteps = opts.replace ? parsedSteps : currentState.joyrideSteps.concat(parsedSteps)
+      currentState.joyrideSkillPathTutorial = opts.skillPath || null
+      if (opts.replace)
+        currentState.joyrideCurrentStepNum = 0
       return currentState
     })
   },
@@ -540,8 +565,14 @@ export default App = React.createClass({
   },
 
   handleJoyrideCallback( func ) {
-    if (func.type === 'finished')
-      this.setState( {  joyrideSteps: [] })
+    if (func.type === 'finished') {
+      if (this.state.joyrideSkillPathTutorial && func.skipped === false)
+        console.log(" Completed: ", this.state.joyrideSkillPathTutorial)
+      this.setState( {  joyrideSteps: [], joyrideSkillPathTutorial: null, joyrideCurrentStepNum: 0 }) 
+    } else if (func.type === 'step:after')
+    {
+      this.setState( { joyrideCurrentStepNum: func.newIndex } )
+    }
   },
 
   // return null for no error, or a string with errors

@@ -3,26 +3,55 @@ import React, { PropTypes } from 'react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-
+import { Progress } from 'semantic-ui-react'
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
+
+
+
+const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum } ) => (
+  (!joyrideSteps || !joyrideSteps.length) ? null : (
+    <div className="ui card course">
+      <div className="content">
+        { /* <i className="right floated code icon" /> */ }
+        <div className="header">{joyrideSteps[0].heading || joyrideSkillPathTutorial || "Current Tutorial..."}</div>
+        <ol className="ui list">
+          { joyrideSteps.map( (s, idx) => <li className={ idx >= joyrideCurrentStepNum ? 'active' : 'complete'}>{s.title || `Step ${idx}`}</li> ) }
+        </ol>
+      </div>
+      <div className="extra content">
+        <Progress progress={false} size='small' color='green' value={1+joyrideCurrentStepNum} total={joyrideSteps.length} style={{marginBottom: 0}} />
+        <a>stop</a>&emsp;<a>restart</a>
+      </div>
+    </div>
+  )
+)
+
 
 export default fpGoals = React.createClass({
 
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:             PropTypes.string.isRequired   // Typically something like "200px".
+    panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px".
+    joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
+    joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
+    joyrideCurrentStepNum:  PropTypes.number              // Step number (IFF joyrideSteps is not an empty array)
   },
 
   render: function () {
     const skillarea = 'code'
     const area = _.find(skillAreaItems, ['tag', skillarea] )
     const skillNode = SkillNodes[skillarea]
+
     if (!area)
       return <ThingNotFound type='Skill area' id={skillarea} />
 
     return (
       <div>
+        <JoyrideSummary 
+            joyrideSteps={this.props.joyrideSteps} 
+            joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
+            joyrideCurrentStepNum={this.props.joyrideCurrentStepNum} />
         <h3 style={{marginTop: 0, marginBottom: 20}}>
           {area.mascotName}'s Quests
           <div className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>19 / 114&nbsp;&nbsp;<i className="check circle icon" style={{marginRight: 0}} /></div>

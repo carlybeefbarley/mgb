@@ -272,8 +272,26 @@ export const makeTutorialAssetPathFromSkillPath = (skillPath, partNumber = 0) =>
 
   const dottedSkillKey = makeDottedSkillKey(skillPath)
   const partNumberPaddedStr = ('00'+partNumber).slice(-2)
-  const retVal = `${SpecialGlobals.skillsModelTrifecta.tutorialAssetNamePrefix}${dottedSkillKey}.${partNumberPaddedStr}`
+  const retVal = `${SpecialGlobals.skillsModelTrifecta.tutorialAccount}:${SpecialGlobals.skillsModelTrifecta.tutorialAssetNamePrefix}${dottedSkillKey}.${partNumberPaddedStr}`
   console.log(`makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) => '${retVal}'`)
 
   return retVal
+}
+
+export const makeTutorialsFindSelector = dottedSkillKey => 
+{
+  if (!dottedSkillKey)
+    return null
+
+  const fullKeyPrefix = SpecialGlobals.skillsModelTrifecta.tutorialAssetNamePrefix + dottedSkillKey
+  // replace . with \.
+  const escapedKey = fullKeyPrefix.replace(/\./g, '\\.')
+  const regexToBuild = `^${escapedKey}\.[0-9][0-9]$`
+  const reg = new RegExp(regexToBuild, 'i')
+  return {
+    kind:         'tutorial',
+    name:         { $regex: reg },
+    isDeleted:    false,
+    dn_ownerName: SpecialGlobals.skillsModelTrifecta.tutorialAccount
+  }
 }

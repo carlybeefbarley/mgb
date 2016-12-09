@@ -5,41 +5,33 @@ import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 
-import { hasSkill } from '/imports/schemas/skills'
+import { hasSkill, learnSkill, forgetSkill } from '/imports/schemas/skills'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 
 export default class SkillTree extends React.Component {
   static propTypes = {
-    user:           PropTypes.object,     // Can be null if user is not valid
-    userSkills:     PropTypes.object,     // As defined in skills.js. Can be null if no user
-    ownsProfile:    PropTypes.bool,       // true IFF user is valid and asset owner is currently logged in user
-    onlySkillArea:  PropTypes.string      // If non-null, then show no toolbars, and just show the top-level area specified (e..g a string that is a tag in skillsAreas.js)
+    user:             PropTypes.object,     // Can be null if user is not valid
+    userSkills:       PropTypes.object,     // As defined in skills.js. Can be null if no user
+    ownsProfile:      PropTypes.bool,       // true IFF user is valid and asset owner is currently logged in user
+    onlySkillArea:    PropTypes.string,     // If non-null, then show no toolbars, and just show the top-level area specified (e..g a string that is a tag in skillsAreas.js)
+    initialZoomLevel: PropTypes.number
   }
+
   static defaultProps = {
-    onlySkillArea:  null                  // Avoid undefined/null duality
+    onlySkillArea:    null,                 // Avoid undefined/null duality
+    initialZoomLevel: 1
   }
 
   constructor (...a) {
     super(...a)
     this.state = {
-      zoomLevel:    1
+      zoomLevel:    this.props.initialZoomLevel
     }
     this.totals = {}
   }
 
-  learnSkill (key) {
-    Meteor.call("Skill.grant", key, (...a) => {
-      console.log("Skill granted: ", key, ...a)
-    })
-  }
-
-  forgetSkill (key) {
-    Meteor.call("Skill.forget", key, (...a) => {
-      console.log("Skill forgotten: ", key, ...a)
-    })
-  }
 
   // TODO: this looks ugly - hard to understand
   countSkillTotals (skillNodes, key, tot) {
@@ -85,22 +77,23 @@ export default class SkillTree extends React.Component {
 
   // TODO: create separate component for that?
   renderSingleNode (node, key, path, disabled) {
-    let color = hasSkill(this.props.userSkills, path) ? 'green' : 'red'
+    const hasIt = hasSkill(this.props.userSkills, path)
+    let color = hasIt ? 'green' : 'red'
     if (!node.$meta.enabled)
       color = 'grey'
 
-    let onClick
+    let onClickFn
     if (!disabled && node.$meta.enabled)
-      onClick = hasSkill(this.props.userSkills, path) ? this.forgetSkill.bind(this, path) : this.learnSkill.bind(this, path)
-
+      onClickFn = hasIt ? forgetSkill : learnSkill
+    const iconName = hasIt ? 'checkmark box' : 'square outline'
     return (
       <div
         title={"requires:\n" + node.$meta.requires.join("\n") + " \n\nunlocks:\n" +  node.$meta.unlocks.join("\n")}
         key={path}
         style={{ backgroundColor: color, margin: '5px', border: 'solid 1px', display: 'inline-block', padding: '4px' }}
         className={(!node.$meta.enabled || disabled) ? 'ui semi-transparent button' : 'ui button'}
-        onClick={onClick}>
-        <i className='icon settings big'></i>
+        onClick={() => onClickFn(path)}>
+        <i className={'icon ' + iconName + ' large'}></i>
         {key}
       </div>
     )
@@ -147,11 +140,20 @@ export default class SkillTree extends React.Component {
           opacity:  0.3,
           width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%'
         }
+
+        const boxSty = { 
+          position:         'relative', 
+          backgroundColor:  'rgba(0,0,0,0.1)', 
+          margin:           '5px', 
+          padding:          '3px 5px', 
+          border:           'solid 1px', 
+          boxShadow:        'inset 1px 1px 2px rgba(0,0,0,0.5)' 
+        }
         
         nodes.push(
           <div
             key={i}
-            style={{ position: 'relative', backgroundColor: 'rgba(0,0,0,0.1)', margin: '5px', padding: '3px 5px', border: 'solid 1px', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.5)' }}
+            style={boxSty}
             className={disabled ? 'animate disabled' : 'animate'}
             data-requires={requires}>
             <div className='mgb-skillsmap-progress'>
@@ -196,7 +198,7 @@ export default class SkillTree extends React.Component {
         nodes.push(
           <div key={ i } className='animate'>
             <div className='mgb-skillsmap-progress'>
-              { i }
+              { skillNodes[i].$meta.name || i }
               <div className='mgb-skillsmap-value animate' style={valueSty}></div>
               { this.renderParts(this.totals[i].has, this.totals[i].total) }
             </div>
@@ -206,12 +208,56 @@ export default class SkillTree extends React.Component {
     return nodes
   }
 
+  renderSkillNodesOneLine (skillNodes) {
+    const nodes = []
+
+    let idx = 0
+    let numNodes = Object.keys(skillNodes).length - 1   // -1 for $meta
+
+    for (let i in skillNodes) {
+      if (i === "$meta")
+        continue
+      const area = _.find(skillAreaItems, ['tag', i] )
+      const color = area ? area.color : 'green'
+      const valueSty = { 
+        backgroundColor: color,
+        opacity:  0.3,
+        width: (this.totals[i].has / this.totals[i].total) * 100 + '%'
+      }
+
+      const areaSty = {
+        width: (100/numNodes) + '%',
+        left:  (idx*(100/numNodes)) + '%',
+        position: 'absolute'
+      }
+      idx++
+
+      nodes.push(
+        <div key={ i } className='animate' style={areaSty}>
+          <div className='mgb-skillsmap-progress'>
+            <span className='mgb-show-on-parent-div-hover' style={{whiteSpace: 'nowrap'}}>
+              { skillNodes[i].$meta.name || i }
+            </span>
+            <div className='mgb-skillsmap-value animate' style={valueSty}></div>
+            { this.renderParts(this.totals[i].has, this.totals[i].total) }
+          </div>
+        </div>
+      )
+    }
+    nodes.push(<div key="_filler">&nbsp;</div>)
+    return nodes
+  }
+
   renderSkillNodes (skillNodes, onlySkillArea) {
-    const { zoomLevel } = this.state
-    if (zoomLevel == 1)
+    switch (this.state.zoomLevel)
+    {
+    case 0: 
+      return this.renderSkillNodesOneLine(skillNodes, onlySkillArea)
+    case 1: 
       return this.renderSkillNodesSmall(skillNodes, onlySkillArea)
-    else if (zoomLevel == 2)
+    case 2: 
       return this.renderSkillNodesMid(skillNodes, onlySkillArea)
+    }
   }
 
   render () {
@@ -228,23 +274,23 @@ export default class SkillTree extends React.Component {
       level: 2,
       buttons: [
         {
-          name:  'zoomin',
-          label: 'Zoom In',
-          icon:  'zoom in',
-          tooltip: 'Open detailed skill view',
-          disabled: zoomLevel != 1,
-          level:    1,
-          shortcut: '1'
-        },
-        {
           name:  'zoomout',
           label: 'Zoom Out',
           icon:  'zoom out',
-          tooltip: 'Close detailed skill view',
-          disabled: zoomLevel != 2,
-          level:    2,
-          shortcut: '2'
-        }
+          tooltip: 'Show less detail',
+          disabled: zoomLevel <= 0,
+          level:    1,
+          shortcut: '-'
+        },
+        {
+          name:  'zoomin',
+          label: 'Zoom In',
+          icon:  'zoom in',
+          tooltip: 'Show more detail',
+          disabled: zoomLevel >= 2,
+          level:    1,
+          shortcut: '+'
+        },
       ]
     }
 
@@ -266,7 +312,7 @@ export default class SkillTree extends React.Component {
 
   zoomout () {
     const { zoomLevel } = this.state
-    if (this.props.ownsProfile && zoomLevel > 1) 
+    if (this.props.ownsProfile && zoomLevel > 0) 
       this.setState( { zoomLevel: zoomLevel-1 } )
   }
 }

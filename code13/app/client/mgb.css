@@ -237,6 +237,15 @@ body.dragging .accept-drop:hover{
   display: block;
 }
 
+.mgb-show-on-parent-div-hover { 
+  opacity: 0;
+}
+
+div:hover > .mgb-show-on-parent-div-hover { 
+  opacity: 1;
+}
+
+
 .mgb-skillsmap-progress{
   position: relative;
   border: solid 1px;

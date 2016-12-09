@@ -117,7 +117,6 @@ export function getSkillNodeStatus(userObj, skillsObj, dottedSkillNodeKey)
     learnedSkills,
     todoSkills  
   }
-console.dir(retval)
   return retval
 }
 

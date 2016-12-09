@@ -22,12 +22,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
     {
-      'timestamp': 'Fri Dec 09 2016 12:41:00 GMT-0800 (PST)',
+      'timestamp': 'Fri Dec 09 2016 13:50:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2278'
+        'iteration': '2280'
       },
 
       'releaseManagement': {
@@ -53,7 +53,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'featureTag': 'asset.actorMap',
           'type': 'bugfix',
           'changeName': 'Fixed more bugs related to actorMaps',
-          'changeSummary': 'Fixed bugs caused by having multiple kinds of assets with the same name.',
+          'changeSummary': 'Fixed bugs caused by having multiple kinds of assets with the same name. Also fixed playcounter',
           'otherUrls': [ ]
         }
       ]

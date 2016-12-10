@@ -29,7 +29,7 @@ export const expectedToolbarScopeMaxValues = {
   MapTools:      27,
   AudioTools:    25,
   NavPanel:      4,
-  FlexPanel:     4,
+  FlexPanel:     5,
   SkillsMap:     4
 }
 

@@ -31,3 +31,13 @@ var schema = {
   Sysvars.update( { deploymentName: thisDeploymentName }, { $set: { deploymentVersion: thisRel} } )
 
 */
+
+if (Meteor.isServer)
+{
+  Meteor.MGB_UPDATE_SYSVARS_FOR_DEPLOY = () => {
+    var Sysvars=require('/imports/schemas').Sysvars
+    var thisRel=require('/imports/mgbReleaseInfo').getCurrentReleaseVersionString()
+    var thisDeploymentName = require('/imports/schemas/sysvars').defaultDeploymentName  
+    Sysvars.update( { deploymentName: thisDeploymentName }, { $set: { deploymentVersion: thisRel} } )     
+  }
+}

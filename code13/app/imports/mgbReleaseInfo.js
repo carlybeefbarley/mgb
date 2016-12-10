@@ -21,6 +21,47 @@ const mgbReleaseInfo = {
 Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
+
+
+
+    {
+      'timestamp': 'Sat Dec 10 2016 15:00:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2290'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'flexpanel.network',
+          'type': 'feature',
+          'changeName': 'Network/Server outage indicator',
+          'changeSummary': 'If the client loses connection to the network/servers then a \'Network\' FlexPanel is shown with red highlighting to alert the user to the issue.',
+          'otherUrls': [ ]
+        },            
+        {
+          'featureTag': 'nav.chat',
+          'type': 'improvement',
+          'changeName': 'Public chat noted on Activity feed',
+          'changeSummary': 'Activity on Public Chat channels is noted in the Activity feed.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'flexpanel.projects',
+          'type': 'feature',
+          'changeName': 'Projects FlexPanel',
+          'changeSummary': 'Added a FlexPanel for Projects - very similar to the NavPanel one for now, but it may get smarter soon...',
+          'otherUrls': [ ]
+        }        
+      ]
+    },
+
     {
       'timestamp': 'Fri Dec 09 2016 14:50:00 GMT-0800 (PST)',
 

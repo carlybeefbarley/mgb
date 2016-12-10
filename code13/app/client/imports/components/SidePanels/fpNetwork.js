@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { Message, Button } from 'semantic-ui-react'
 
 // Meteor conection status values from https://docs.meteor.com/api/connections.html
-export const mStatus = {
+const mStatus = {
   CONNECTED:   'connected',       // the connection is up and running
   CONNECTING:  'connecting',      // disconnected and trying to open a new connection
   FAILED:      'failed',          // permanently failed to connect -  see .reason

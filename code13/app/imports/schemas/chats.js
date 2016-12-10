@@ -3,12 +3,11 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-import _ from 'lodash';
-import { Chats } from '/imports/schemas';
-import { check, Match } from 'meteor/check';
+import _ from 'lodash'
+import { Chats } from '/imports/schemas'
+import { check, Match } from 'meteor/check'
 
-const optional = Match.Optional     // Note that Optional does not permit null
-
+const optional = Match.Optional     // Note that Optional does NOT permit null!
 
 var schema = {
   _id: String,              // ID of this chat message
@@ -93,6 +92,7 @@ export const ChatChannels = {
   //   subscopes:    {}
   // },
  
+  // This one is a future AWESOME plan :)
   // ASSET: { 
   //   name:         "asset",
   //   icon:         "write",
@@ -127,7 +127,8 @@ export const ChatChannels = {
     "LOOKINGFORGROUP", 
     "RANDOM"
     // "CHATTESTCHANNEL"
-  ]
+  ],
+  defaultChannelKey: "GENERAL"
 }
 
 export const chatParams = {
@@ -153,13 +154,13 @@ export function currUserCanSend(currUser, channelKey) {
     return false          // No posters record -> no sends allowed (fail securely)
   switch (validPoster)
   {
-    case ChatPosters.SUPERADMIN:
-      return _userIsSuperAdmin(currUser)
-    case ChatPosters.ACTIVEUSER:
-      return !!currUser
-    default:
-      console.trace("Unknown Permission requirement message posting: ", validPoster)
-      return false
+  case ChatPosters.SUPERADMIN:
+    return _userIsSuperAdmin(currUser)
+  case ChatPosters.ACTIVEUSER:
+    return !!currUser
+  default:
+    console.trace("Unknown Permission requirement message posting: ", validPoster)
+    return false
   }
 }
 

@@ -31,7 +31,10 @@ var schema = {
   toOwnerId: String,      // Owner's user ID (Added June 8th 2016)
   toAssetId: String,      // The asset that was changed - or "" if not an asset
   toAssetName: String,    // Asset's name (duplicated here for speed)
-  toAssetKind: String     // Asset's kind (image, map, etc)
+  toAssetKind: String,    // Asset's kind (image, map, etc)
+
+  // Others - may not be on all records:
+  toChatChannelKey: String,  // Chat Channel KEY (no # prefix, using a KEY from ChatChannels - e.g. GENERAL). Added 12/10/2016
 };
 
 // Info on each type of activity, as the UI cares about it
@@ -42,6 +45,7 @@ export const ActivityTypes = {
   "user.logout":       { icon: "grey user",        pri:  9,  description: "User Logged Out" },
   "user.changeFocus":  { icon: "green alarm",      pri:  9,  description: "User changed their focus" },
   "user.clearFocus":   { icon: "grey alarm",       pri:  9,  description: "User cleared their focus" },
+  "user.message":      { icon: "green chat",       pri:  9,  description: "User sent a public message" }, // Should also include toChatChannelKey
 
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.fork.from":   { icon: "blue fork",        pri: 10,  description: "Forked new asset from this asset" },
@@ -72,12 +76,12 @@ export const ActivityTypes = {
   getDescription:  function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].description : "Unknown Activity type (" + key + ")")}
 }
 
-
 Meteor.methods({
 
   "Activity.log": function(data) {
     
-    if (!this.userId) throw new Meteor.Error(401, "Login required")
+    if (!this.userId) 
+      throw new Meteor.Error(401, "Login required")
 
     data.timestamp = new Date()
     data.byUserId = Meteor.userId()    // We re-assert it is correct on server in case client is hacked
@@ -109,8 +113,9 @@ Meteor.methods({
 var priorLog   // The prior activity that was logged - for simplistic de-dupe purposes
 
 // Helper function to invoke a logActivity function. If called from client it has a VERY 
-// limited co-allesce capability for duplicate activities
-export function logActivity(activityType, description, thumbnail, asset) {
+// limited co-allesce capability for duplicate activities.
+// Support otherData fields are { toChatChannelKey }
+export function logActivity(activityType, description, thumbnail, asset, otherData = {}) {
  
   const user = Meteor.user()
 
@@ -140,8 +145,10 @@ export function logActivity(activityType, description, thumbnail, asset) {
     toOwnerId:              (asset && asset.ownerId ? asset.ownerId : ""),    
     toAssetId:              (asset && asset._id ? asset._id : ""),
     toAssetName:            (asset && asset.name ? asset.name : ""),
-    toAssetKind:            (asset && asset.kind ? asset.kind : "")
+    toAssetKind:            (asset && asset.kind ? asset.kind : "")    
   }
+  if (otherData.toChatChannelKey)
+    logData.toChatChannelKey = otherData.toChatChannelKey
 
   let fSkipLog = false
 

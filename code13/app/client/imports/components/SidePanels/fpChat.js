@@ -1,10 +1,11 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 
 import reactMixin from 'react-mixin'
 import { Chats } from '/imports/schemas'
 import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '/imports/schemas/chats';
+import { logActivity } from '/imports/schemas/activity'
+
 import moment from 'moment'
 
 const initialMessageLimit = 5
@@ -30,10 +31,16 @@ export default fpChat = React.createClass({
     handleChangeSubNavParam:  PropTypes.func.isRequired     // Call this back with the SubNav string (queryParam ?fp=___.subnavStr) to change it
   },
 
+  // returns the current channelName WITHOUT THE HASH prefix. It can also return "" for default
+  _getRawChannelName: function() { 
+    return this.props.subNavParam              // This is something like mgb-announce.. i.e a valid ChatChannels[something].name
+  },
+
+
   _calculateActiveChannelKey: function() {    
-    const channelName = this.props.subNavParam              // This is something like mgb-announce.. i.e a valid ChatChannels[something].name
+    const channelName = this._getRawChannelName()
     const channelKey = getChannelKeyFromName(channelName)   // So this should be something like 'MGBBUGS'.. i.e. a key into ChatChannels{}
-    return channelKey || "GENERAL"
+    return channelKey || ChatChannels.defaultChannelKey
   },
 
   _calculateActiveChannelName: function() {    
@@ -89,6 +96,7 @@ export default fpChat = React.createClass({
       $dropDown.dropdown( 'set exactly', this._calculateActiveChannelName() )  // See notes above to see how we avoid infite loops on this
   },
 
+// DEAD CODE!?
   // show notification with latest message if chat window is closed
   getLatestMessage: function() {
     // TODO: get msg
@@ -117,11 +125,17 @@ export default fpChat = React.createClass({
     if (!msg || msg.length < 1)
       return
 
-    ChatSendMessage(this._calculateActiveChannelKey(), msg, (error, result) => {
+    const friendlyChannelName = this._calculateActiveChannelName()
+    const channelKey = this._calculateActiveChannelKey()
+    // TODO: Set pending?
+    ChatSendMessage(channelKey, msg, (error, result) => {
       if (error) 
-        alert("cannot send message because: " + error.reason)
+        alert("Cannot send message because: " + error.reason)
       else
-        this.refs.theMessage.value = ""
+      {
+        this.refs.theMessage.value = ''
+        logActivity("user.message",  `Sent a message on #${friendlyChannelName}`, null, null, { toChatChannelKey:  channelKey})
+      }
     })
   },
 

@@ -3,7 +3,7 @@
 
 import _ from 'lodash'
 import { Activity } from '/imports/schemas'
-import { check } from 'meteor/check'
+import { check, Match } from 'meteor/check'
 
 const _activityIntervalMs = 1000 * 60 * 5   /// 5 minute interval on the activity de-deplicator. TODO: Move to SpecialGlobals.js?
 
@@ -34,8 +34,8 @@ var schema = {
   toAssetKind: String,    // Asset's kind (image, map, etc)
 
   // Others - may not be on all records:
-  toChatChannelKey: String,  // Chat Channel KEY (no # prefix, using a KEY from ChatChannels - e.g. GENERAL). Added 12/10/2016
-};
+  toChatChannelKey: Match.Optional(String),  // Chat Channel KEY (no # prefix, using a KEY from ChatChannels - e.g. GENERAL). Added 12/10/2016
+}
 
 // Info on each type of activity, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
@@ -76,6 +76,7 @@ export const ActivityTypes = {
   getDescription:  function (key) { return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].description : "Unknown Activity type (" + key + ")")}
 }
 
+
 Meteor.methods({
 
   "Activity.log": function(data) {
@@ -97,7 +98,7 @@ Meteor.methods({
     else
     {
       data.byIpAddress = ''
-      data.byGeo = '' 
+      data.byGeo = ''
     }
     
     check(data, _.omit(schema, '_id'))

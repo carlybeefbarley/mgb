@@ -22,6 +22,7 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
+
 const flexPanelViews = [
   { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
 
@@ -43,6 +44,8 @@ const flexPanelViews = [
 ]
 
 const defaultPanelViewIndex = 0
+const DEFAULT_FLEXPANEL_FEATURELEVEL = 1
+
 
 export default FlexPanel = React.createClass({
   mixins: [ReactMeteorData],
@@ -71,6 +74,11 @@ export default FlexPanel = React.createClass({
     getDefaultPanelViewTag: function() { return flexPanelViews[defaultPanelViewIndex].tag }
   },
 
+  getInitialState: function() {
+    return {
+      wiggleActivity: false
+    }
+  },
 
   getMeteorData: function() {
     return { 
@@ -81,6 +89,19 @@ export default FlexPanel = React.createClass({
 
   componentDidMount: function() {
     registerDebugGlobal( 'fp', this, __filename, 'The global FlexPanel instance')
+  },
+
+  componentWillReceiveProps (nextProps) {
+    const a1 = this.props.activity
+    const a2 = nextProps.activity
+    if (a1 && a1.length > 0 && a2 && a2.length > 0)
+    {
+      if (a1[0]._id !== a2[0]._id && this.state.wiggleActivity === false)
+      {
+        this.setState( { wiggleActivity: true } )
+        window.setTimeout(() => { this.setState( { wiggleActivity: false } ) }, 5*1000)
+      }
+    }
   },
 
   _viewTagMatchesPropSelectedViewTag: function(viewTag)
@@ -112,19 +133,19 @@ export default FlexPanel = React.createClass({
 
   handleChangeSubNavParam: function(newSubNavParamStr)
   {
-    const P = this.props
-    const selectedViewTagParts = this.props.selectedViewTag.split(".")
+    const { handleFlexPanelChange, selectedViewTag } = this.props
+    const selectedViewTagParts = selectedViewTag.split(".")
     const newFullViewTag = selectedViewTagParts[0] + "." + newSubNavParamStr
-    P.handleFlexPanelChange(newFullViewTag)
+    handleFlexPanelChange(newFullViewTag)
   },
 
   fpViewSelect(fpViewTag)
   {
-    const P = this.props
-    if (P.flexPanelIsVisible && this._viewTagMatchesPropSelectedViewTag(fpViewTag))
-      P.handleFlexPanelToggle()
+    const { handleFlexPanelToggle, flexPanelIsVisible, handleFlexPanelChange } = this.props
+    if (flexPanelIsVisible && this._viewTagMatchesPropSelectedViewTag(fpViewTag))
+      handleFlexPanelToggle()
     else
-      P.handleFlexPanelChange(fpViewTag)
+      handleFlexPanelChange(fpViewTag)
   },
 
   getFpButtonSpecialStyleForTag: function(tag) {
@@ -137,7 +158,16 @@ export default FlexPanel = React.createClass({
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return { backgroundColor: 'rgba(255,0,0,0.2)' }
 
-    return {}
+    return {}       // wiggleActivity is done as a class, so it's not in this function. See render()
+  },
+
+  getFpButtonSpecialClassForTag: function(tag) {
+    const { wiggleActivity } = this.state
+
+    if (tag === 'activity' && wiggleActivity)
+      return ' green animated swing '
+      
+    return ''
   },
 
   getFpButtonAutoShowForTag: function(tag) {
@@ -151,7 +181,8 @@ export default FlexPanel = React.createClass({
 
   render: function () {
     const { flexPanelWidth, flexPanelIsVisible } = this.props
-    const fpFeatureLevel = this.data.fpFeatureLevel  || 1
+
+    const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
     const panelStyle = {
       position:     'fixed',
       right:        '0px',
@@ -243,6 +274,7 @@ export default FlexPanel = React.createClass({
               return null
 
             const specialSty = this.getFpButtonSpecialStyleForTag(v.tag)
+            const specialClass = this.getFpButtonSpecialClassForTag(v.tag)
             
             return (
               <div
@@ -252,7 +284,7 @@ export default FlexPanel = React.createClass({
                 className={active +  " item"}
                 title={v.name}
                 onClick={this.fpViewSelect.bind(this, v.tag)}>
-                <i className={v.icon + " large icon"}></i>
+                <i className={v.icon + specialClass + " large icon"}></i>
                 <span>{v.name}</span>
               </div>
             )

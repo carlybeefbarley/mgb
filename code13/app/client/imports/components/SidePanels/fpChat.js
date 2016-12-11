@@ -99,6 +99,7 @@ export default fpChat = React.createClass({
 // DEAD CODE!?
   // show notification with latest message if chat window is closed
   getLatestMessage: function() {
+debugger   // DEAD CODE?
     // TODO: get msg
     const msg = null
     if (this.latestMessage != msg) {
@@ -108,6 +109,7 @@ export default fpChat = React.createClass({
   },
 
   showNotification: function(msg) {
+debugger   // DEAD CODE?
     Notification.requestPermission().then((result) => {
       const n = new Notification(msg.toChannelName, {
         body: msg.byUserName + " says:\n" + msg.message

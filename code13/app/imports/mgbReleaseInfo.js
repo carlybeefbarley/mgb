@@ -25,12 +25,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Sat Dec 10 2016 16:20:00 GMT-0800 (PST)',
+      'timestamp': 'Sat Dec 10 2016 20:30:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2293'
+        'iteration': '2296'
       },
 
       'releaseManagement': {
@@ -58,7 +58,14 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'changeName': 'Projects FlexPanel',
           'changeSummary': 'Added a FlexPanel for Projects - very similar to the NavPanel one for now, but it may get smarter soon...',
           'otherUrls': [ ]
-        }        
+        },
+        {
+          'featureTag': 'flexpanel.activity',
+          'type': 'feature',
+          'changeName': 'Activity indicator',
+          'changeSummary': 'The Activity FlexPanel indicator flickers green when there is new activity.',
+          'otherUrls': [ ]
+        },            
       ]
     },
 

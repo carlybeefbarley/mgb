@@ -157,7 +157,9 @@ export default App = React.createClass({
 
     if (handleForSettings && handleForSettings.ready())
     {
-      // There is a very small race where local settings could get replaced if the settings are changed while the debounced save is happening.. but it's pretty small, so worry about that another day
+      // There is a very small race where local settings could get replaced 
+      // if the settings are changed while the debounced save is happening.. 
+      // but it's pretty small, so worry about that another day
       G_localSettings.set(Settings.findOne(currUserId))
     }
 

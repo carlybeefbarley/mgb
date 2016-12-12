@@ -106,7 +106,7 @@ export default SignupRoute = React.createClass({
           email: Meteor.user().emails[0].address
         })
         analytics.track('Signed up')
-        analytics.page('signup')
+        analytics.page('/signup')
       }
     })
   }

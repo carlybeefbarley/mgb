@@ -160,6 +160,7 @@ export default class EditGraphic extends React.Component {
     this.editCanvas.addEventListener('mouseup',       this.handleMouseUp.bind(this))
     this.editCanvas.addEventListener('mouseleave',    this.handleMouseLeave.bind(this))
     this.editCanvas.addEventListener('mouseenter',    this.handleMouseEnter.bind(this))
+    this.editCanvas.addEventListener('contextmenu',   this.handleContextMenu.bind(this))
 
     // Tool button initializations
     this.activateToolPopups()    
@@ -723,6 +724,13 @@ export default class EditGraphic extends React.Component {
       return
     }
 
+    // console.log(event.which)
+    if(event.which && event.which == 3){
+      const moveTool = this.findToolByLabelString('Move')
+      this.state.toolChosen = moveTool
+      event.preventDefault()
+    }
+
     if (this.state.toolChosen === null) {
       this.setStatusBarWarning("Choose a drawing tool such as Pen")
       return
@@ -745,6 +753,11 @@ export default class EditGraphic extends React.Component {
 
     if (this.state.toolChosen.supportsDrag === false && this.state.toolChosen.changesImage === true)
       this.handleSave(`Drawing`, false, false)   // This is a one-shot tool, so save its results now
+  }
+
+  handleContextMenu(event){
+    // console.log('handle context menu')
+    event.preventDefault()
   }
 
 

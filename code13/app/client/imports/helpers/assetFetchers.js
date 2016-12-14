@@ -117,7 +117,10 @@ export const getAssetWithContent2 = (id, onReady) => {
     c.update()
     return c
   }
-
+  // keep only 10 assets in memory
+  if(fetchedAssets.length > 10){
+    fetchedAssets.shift()
+  }
   const ret = {
     id: id,
     asset: null,
@@ -157,10 +160,8 @@ export const getAssetWithContent2 = (id, onReady) => {
 
     },
     update(){
-
       const c2 = this.asset && this.asset.content2
       const asset = Azzets.findOne(id)
-
       if(!asset){
         return
       }
@@ -169,10 +170,8 @@ export const getAssetWithContent2 = (id, onReady) => {
       if (etag == this.etag) {
         this.asset = asset
         this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
-        console.log("Skipping update!")
         return
       }
-
       this.etag = etag
       //this.isReady = false
       fetchAssetByUri(asset.c2location || `/api/asset/content2/${id}`, etag)

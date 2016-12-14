@@ -28,13 +28,11 @@ const noHelpTypes = [
 
 // Indexes into the SkillNodes object defined in /imports/Skills/SkillNodes/SkillNodes.js
 const _skl = 'code.js.lang.'
-const _skla = _skl+'advanced.'
-const _sklb = _skl+'basics.'
 
 // For these Token types, use a special renderer, and don't use the normal HelpInfo structure
 const specialHelpTypes = {
-  "string-2": { renderFn: specialHandlerString2, skillNodes: _skla+'types.regex',  betterTypeName: "Regular Expression" },
-  "comment":  { renderFn: specialHandlerComment, skillNodes: _sklb+'comments',     betterTypeName: "comment" },
+  "string-2": { renderFn: specialHandlerString2, skillNodes: _skl+'types.regex',  betterTypeName: "Regular Expression" },
+  "comment":  { renderFn: specialHandlerComment, skillNodes: _skl+'comments',     betterTypeName: "comment" },
   "def":      { renderFn: specialHandlerDef,     skillNodes: null,                 betterTypeName: "Definition" }
 }
 
@@ -44,7 +42,7 @@ const helpInfo = [
   // this
   {
     tt: "keyword", ts: "this", origin: "ecma5",
-    skillNodes: _skla+'this',
+    skillNodes: _skl+'this',
     help: "this is a keyword, but acts like a special read-only variable which can be used inside functions to access 'relevant' information. In most cases, the value of 'this' is determined by how a function is called. It can't be set when it is called, and it may be different each time the function is called",
     advice: "Javascript is mostly a simple to learn language, but 'this' is the really quirky part that can confuse learners.",
     advice2: "It is well worth sitting down and reading the page on 'this' once a week/month until you really understand it!",
@@ -55,7 +53,7 @@ const helpInfo = [
   // property
   {
     tt: "property", ts: null, origin: "ecma5",
-    skillNodes: _sklb+'types.object',
+    skillNodes: _skl+'types.object',
     help: "JavaScript is designed on a simple object-based paradigm. An object is a collection of properties, and a property is an association between a name (or key) and a value.",
     advice: "A property's value can be a function, in which case the property is known as a method",
     advice2: "Unassigned properties of an object are undefined (and not null).",
@@ -65,7 +63,7 @@ const helpInfo = [
   // number
   {
     tt: "number", ts: null, origin: "ecma5",
-    skillNodes: _sklb+'types.number',
+    skillNodes: _skl+'types.number',
     help: "A number represents a numeric value. Unlike other languages which have different types for supporting integers, floating point numbers etc; Javascript uses the single Number type for all kinds of numeric values",
     advice: "A Javascript Number can safely represent values as low as -(2^53 - 1) and as high as (2^53 - 1).",
     advice2: "There are some special values like Number.NaN. Number.NEGATIVE_INFINITY and Number.POSITIVE_INFINITY that are used in specific mathemtaical circumstances",
@@ -75,7 +73,7 @@ const helpInfo = [
   // string
   {
     tt: "string", ts: null, origin: "ecma5",
-    skillNodes: _sklb+'types.string',
+    skillNodes: _skl+'types.string',
     help: "A string is a sequence of characters. Strings have a special property .length which represents the number of characters in the string.",
     advice: "A string can be bounded by (starts & ends with) either a single quote ('), a double quote (\") or a backquote (`). The backquote variant is knows as a Template Literal. Each of those three ways to create string literals has some specific features.",
     url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
@@ -87,7 +85,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "function", origin: "ecma5",
-    skillNodes: _sklb+'functions.definition',
+    skillNodes: _skl+'functions.definition',
     help: "Defines a function - as a statement. or inside an expression",
     syntax: "function [optionalFunctionName]([param1[, param2[, ..., paramN]]]) { statements }",
     advice: "Note that functions can be defined using a statement or an operator (function expression)",
@@ -97,7 +95,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "return", origin: "ecma5",
-    skillNodes: _sklb+'functions.return',
+    skillNodes: _skl+'functions.return',
     help: "ends function execution and (optionally) specifies a value to be returned to the function caller",
     advice: "A function can have multiple places where it can return a value. It is usually wiser to avoid having too many returns in a single function because it can make the code harder to understand. ",
     advice2: "If no return value is provided, this will cause the function will return the special value  undefined. A function will implicitly return undefined when it reaches the end of the code in the function",
@@ -109,7 +107,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "var", origin: "ecma5",
-    skillNodes: _sklb+'statements.var',
+    skillNodes: _skl+'statements.var',
     help: "Defines a variable using global or function scope",
     advice: "Unlike other languages like C, Java or python, 'var' in JavaScript does not use 'block scope'. In future, the EcmaScript 6 keywords 'const' and 'let' will support block scope",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/var",
@@ -118,7 +116,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "const", origin: "ecma6",
-    skillNodes: _sklb+'statements.const',
+    skillNodes: _skl+'statements.const',
     help: "defines a variable that is not intended to change",
     advice: "creates a read-only reference to a value. It does not mean the value it holds is immutable, just that the variable identifier cannot be reassigned.",
     advice2: "Note that const is block-scoped, like 'let'",
@@ -127,7 +125,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "let", origin: "ecma6",
-    skillNodes: _sklb+'statements.let',
+    skillNodes: _skl+'statements.let',
     help: "declares a block scope local variable, optionally initializing it to a value.",
     advice: "The scope of 'let' is different to 'var' - 'var' defines a variable either globally, or locally to an entire function regardless of block scope",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/let"
@@ -138,28 +136,28 @@ const helpInfo = [
 
   {
     tt: "atom", ts: "Infinity", origin: "ecma5",
-    skillNodes: _sklb+'math.constants.Infinity',
+    skillNodes: _skl+'math.constants.Infinity',
     help: "The global Infinity property is a numeric value representing infinity. The value Infinity (positive infinity) is greater than any other number. This value behaves mathematically like infinity. For example, any positive number multiplied by Infinity is Infinity, anything divided by Infinity is 0, anything divided by 0 is Infinity",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Infinity"
   },
 
   {
     tt: "atom", ts: "NaN", origin: "ecma5",
-    skillNodes: _sklb+'math.constants.NaN',
+    skillNodes: _skl+'math.constants.NaN',
     help: "NaN is a special property representing Not-A-Number. It is rather rare to use NaN in a program. It is the returned value when Math functions fail (Math.sqrt(-1)) or when a function trying to parse a number fails (parseInt(\"blabla\"))",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/NaN"
   },
 
   {
     tt: "atom", ts: "undefined", origin: "ecma5",
-    skillNodes: _sklb+'math.statements.undefined',
+    skillNodes: _skl+'math.statements.undefined',
     help: "A variable that has not been assigned a value is of type undefined. A method or statement also returns undefined if the variable that is being evaluated does not have an assigned value. A function returns undefined if a value was not returned",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined"
   },
 
   {
     tt: "atom", ts: "null", origin: "ecma5",
-    skillNodes: _sklb+'math.statements.NaN',    
+    skillNodes: _skl+'math.statements.NaN',    
     help: "null is often used as a value when an object is expected but none is found/relevant",
     advice: "null has some surprising behaviors/bugs. For example (null == undefined) evaluates to true and (typeof null) evaluates to object",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/null"
@@ -167,32 +165,33 @@ const helpInfo = [
 
   {
     tt: "atom", ts: "true", origin: "ecma5",
-    skillNodes: _sklb+'booleans.true',
+    skillNodes: _skl+'booleans.true',
     help: "This is the special boolean value 'true'",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean"       // Not the best link?
   },
 
   {
     tt: "atom", ts: "false", origin: "ecma5",
-    skillNodes: _sklb+'booleans.false',
+    skillNodes: _skl+'booleans.false',
     help: "This is the special boolean value 'false'",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean"       // Not the best link?
   },
-
-  // TODO(@dgolds):  Continue with skillNodes: from here  
 
   // Class-related
 
   {
     tt: "keyword", ts: "class", origin: "ecma6",
+    skillNodes: _skl+'classes.class',
     help: "A class is a way to collect related functions and properties for an object type together, and make it easy to create instances of that class, and create new classes that inherit capabilities from a parent class",
     advice: "JavaScript classes use prototype-based inheritance. This is subtly different than how classes work in languages like C++, python and Java",
-    url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/class",
-    url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/class"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes",
+    url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/class",
+    url3: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/class"
   },
 
   {
     tt: "keyword", ts: "super", origin: "ecma6",
+    skillNodes: _skl+'classes.super',
     help: "The super keyword is used to call functions on an object's parent",
     advice: "When used in a constructor, the super keyword appears alone and must be used before the this keyword can be used",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/super"
@@ -200,6 +199,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "new", origin: "ecma5",
+    skillNodes: _skl+'classes.new',
     help: "The new operator creates an instance of an object that has a constructor function",
     advice: "The object being new'ed can be a user-defined object type or of one of the built-in object types that has a constructor function",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/new"
@@ -210,19 +210,23 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "yield", origin: "ecma6",
+    skillNodes: _skl+'generators.yield',
     syntax: "[optionalReturnValue] = yield [expression]",
     help: "The yield keyword is used to pause and resume a generator function",
-    url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/yield"
+    url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/yield",
+    url2: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*"
   },
 
   {
     tt: "meta", ts: "...", origin: "ecma6",
+    skillNodes: _skl+'operator.spread',
     help: "The spread operator allows an expression to be expanded in places where multiple arguments (for function calls) or multiple elements (for array literals) are expected.",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_operator"
   },
 
   {
     tt: "operator", ts: "=>", origin: "ecma6",
+    skillNodes: _skl+'functions.arrow-functions',
     help: "An arrow function expression has a shorter syntax compared to function expressions and lexically binds the 'this' value (does not bind its own 'this', arguments, super, or new.target).",
     help2: "Arrow functions are always anonymous (i.e. they cannot have a name)",
     advice: "=> is sometime confused with >= (greater-than-or-equal)",
@@ -232,6 +236,7 @@ const helpInfo = [
 
   {
     tt: "variable-2", ts: "arguments", origin: "ecma5",
+    skillNodes: _skl+'functions.arguments-object',
     help: "The arguments object is an Array-like object corresponding to the arguments passed to a function",
     help2: "The arguments object is a local variable available within all functions",
     advice2: "This object contains an entry for each argument passed to the function, the first entry's index starting at 0",
@@ -239,22 +244,23 @@ const helpInfo = [
     url2: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function"
   },
 
-
   // ++ and --
 
   {
     tt: "operator", ts: "++", origin: "ecma5",
+    skillNodes: _skl+'operators.plusplus',
     help: "The increment operator increments (adds one to) its operand and returns a value",
     advice: "If used postfix, with operator after operand (for example, x++), then it returns the value before incrementing",
-    advice: "If used prefix with operator before operand (for example, ++x), then it returns the value after incrementing",
+    advice2: "If used prefix with operator before operand (for example, ++x), then it returns the value after incrementing",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Increment"
   },
 
   {
     tt: "operator", ts: "--", origin: "ecma5",
+    skillNodes: _skl+'operators.minusminus',
     help: "The decrement operator decrements (subtracts one from) its operand and returns a value",
     advice: "If used postfix, with operator after operand (for example, x--), then it returns the value before decrementing",
-    advice: "If used prefix with operator before operand (for example, --x), then it returns the value after decrementing",
+    advice2: "If used prefix with operator before operand (for example, --x), then it returns the value after decrementing",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Decrement"
   },
 
@@ -263,9 +269,10 @@ const helpInfo = [
 
   {
     tt: "operator", ts: "+", origin: "ecma5",
+    skillNodes: _skl+'operators.plus',
     help: "With two numeric operands, (for example x + y) the addition operator produces the sum of numeric operands",
     help2: "With two string operands (for example \"Mrs \" + familyName) it will concatenate (join) two strings",
-    advice2: "String + Number and Number + string are both treated as string concatenation",
+    advice: "String + Number and Number + string are both treated as string concatenation",
     advice2: "Watch out! Boolean + number is treated as addition, but String + boolean is treated as concatenation!",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Addition",
     url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Unary_plus"
@@ -273,6 +280,7 @@ const helpInfo = [
 
   {
     tt: "operator", ts: "-", origin: "ecma5",
+    skillNodes: _skl+'operators.minus',
     help: "The subtraction operator subtracts the two operands, producing their difference",
     help2: "Both operands must be numbers, otherwise the result will be NaN (special Javascript for 'Not a Number')",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Subtraction",
@@ -281,6 +289,7 @@ const helpInfo = [
 
   {
     tt: "operator", ts: "*", origin: "ecma5",
+    skillNodes: _skl+'operators.asterisk',
     help: "The multiplication operator multiplies the two operands, producing their 'mathematical product'",
     help2: "Both operands must be numbers, otherwise the result will be NaN (special Javascript for 'Not a Number')",
     advice: "Multiplying with Infinity is interesting:  Infinity * 0  === NaN  and Infinity * Infinity === Infinity",
@@ -289,6 +298,7 @@ const helpInfo = [
 
   {
     tt: "operator", ts: "/", origin: "ecma5",
+    skillNodes: _skl+'operators.slash',
     help: "The division operator provides the result of dividing the left-hand operand by the right-hand operand",
     help2: "Put more mathematically, / produces the quotient of its operands where the left operand is the dividend and the right operand is the divisor",
     advice: "Division can result in Infinity or -Infinity as a result. For example 2.0 / -0.0 === -Infinity in JavaScript",
@@ -298,6 +308,7 @@ const helpInfo = [
 
   {
     tt: "operator", ts: "%", origin: "ecma5",
+    skillNodes: _skl+'operators.percent',
     help: "Remainder (%)",
     help2: "The remainder operator returns the remainder left over when one operand is divided by a second operand",
     advice: "Note that remainder is NOT the same as mathematical modulo operation..  a modulo operator result would take the sign of the divisor, not the dividend.",
@@ -309,12 +320,14 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "typeof", origin: "ecma5",
+    skillNodes: _skl+'operators.typeof',
     help: "The typeof operator returns a string indicating the type of the unevaluated operand",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/typeof"
   },
 
   {
     tt: "keyword", ts: "instanceof", origin: "ecma5",
+    skillNodes: _skl+'operators.instanceof',
     help: "The instanceof operator tests whether an object has in its prototype chain the prototype property of a constructor",
     advice: "There can be some funky behaviors using instanceof across multiple contexts (frames, windows etc).",
     advice2: "Read the API docs linked below if things are behaving strangely",
@@ -324,6 +337,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "void", origin: "ecma5",
+    skillNodes: _skl+'operators.void',
     help: "The void operator evaluates the given expression and then returns undefined",
     advice: "void allows inserting expressions that produce side effects into places where an expression that evaluates to undefined is desired",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/void"
@@ -331,6 +345,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "delete", origin: "ecma5",
+    skillNodes: _skl+'operators.delete',
     help: "The delete operator removes a property from an object",
     help2: "delete is only effective on an object's properties. It has no effect on variable or function names",
     advice: "Unlike other languages such as Java or Python, the Javascript delete operator has nothing to do with directly freeing memory. it only does so indirectly via breaking references)",
@@ -341,6 +356,8 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "in", origin: "ecma5",
+    skillNodes: _skl+'operators.in',   // TODO: can we contextually disambigaute cases?
+    
     syntax: `property in objectName
 ..or...
 for (x in obj)`,
@@ -354,10 +371,11 @@ for (x in obj)`,
   },
 
 
-  // The conditional/ternary operator   ? :
-
+  // The conditional/ternary operator   ? :  (TODO :why is there a keyword _AND_ operator tokentype?)
+  // TODO: What about ":" .. i.e. the ternary operand separator
   {
     tt: "keyword", ts: "?", origin: "ecma5",
+    skillNodes: _skl+'operators.questionmark',  // Operator? or for this context. keyword?
     syntax: "conditionToTest ? expressionEvaluatedIfTrue : expressionEvaluatedIfFalse",
     help: "If conditionToTest is true, the operator returns the value of expressionEvaluatedIfTrue; otherwise, it returns the value of expressionEvaluatedIfFalse",
     help2: "This operator is frequently used as a shortcut for the if statement",
@@ -367,6 +385,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "?", origin: "ecma5",
+    skillNodes: _skl+'operators.questionmark',
     syntax: "conditionToTest ? expressionEvaluatedIfTrue : expressionEvaluatedIfFalse",
     help: "If conditionToTest is true, the operator returns the value of expressionEvaluatedIfTrue; otherwise, it returns the value of expressionEvaluatedIfFalse",
     help2: "This operator is frequently used as a shortcut for the if statement",
@@ -375,10 +394,11 @@ for (x in obj)`,
   },
 
   // The comma operator   ,
-  // NOTE THAT codemirror can't really get this token at present so don't worry too much
+  // TODO: NOTE THAT codemirror can't really get this token at present so don't worry too much
 
   {
     tt: "operator", ts: ",", origin: "ecma5",
+    skillNodes: _skl+'operators.comma',
     syntax: "expr1, expr2, expr3...",
     help: "The comma operator evaluates each of its operands (from left to right) and returns the value of the last operand",
     advice2: "The comma character is used in other contexts as a separator (arrays, objects), and as part of the for loop syntax",
@@ -386,11 +406,13 @@ for (x in obj)`,
     url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/for"
   },
 
-
   // Bitwise operators  ~ & | ^ << >> >>>
+
+
 
   {
     tt: "operator", ts: "~", origin: "ecma5",
+    skillNodes: _skl+'operators.tilde-bitwise-not',
     help: "~ is Bitwise NOT",
     help2: "This operation performs the NOT operator on each bit. NOT myVal yields the inverted value (a.k.a. one's complement) of myVal",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_NOT",
@@ -399,6 +421,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "&", origin: "ecma5",
+    skillNodes: _skl+'operators.ampersand-bitwise-and',
     help: "& is Bitwise AND",
     help2: "This operation performs the AND operation on each pair of bits. a AND b yields 1 only if both a and b are 1",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#(Bitwise_AND)",
@@ -407,6 +430,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "|", origin: "ecma5",
+    skillNodes: _skl+'operators.pipe-bitwise-or',
     help: "| is Bitwise OR",
     help2: "This operation performs the OR operation on each pair of bits. a OR b yields 1 if either a or b is 1",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#(Bitwise_OR)",
@@ -415,6 +439,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "^", origin: "ecma5",
+    skillNodes: _skl+'operators.caret-bitwise-xor',
     help: "^ is Bitwise XOR.   This is NOT THE POWER OPERATOR, for that use Math.pow()",
     help2: "This operation performs the XOR operation on each pair of bits. a XOR b yields 1 if a and b are different",
     advice: "In Javascript, 4^4 === 0",
@@ -425,6 +450,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "<<", origin: "ecma5",
+    skillNodes: _skl+'operators.lessless-bitwise-shift-left',
     help: "<< is the Left shift operator. This operator shifts the first operand the specified number of bits to the left. Excess bits shifted off to the left are discarded. Zero bits are shifted in from the right",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#<<_(Left_shift)",
     url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators"
@@ -432,6 +458,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: ">>", origin: "ecma5",
+    skillNodes: _skl+'operators.greatergreater-bitwise-shift-right',
     help: ">> is Sign-propagating right shift. This operator shifts the first operand the specified number of bits to the right. Excess bits shifted off to the right are discarded",
     help2: "Copies of the leftmost bit are shifted in from the left. Since the new leftmost bit has the same value as the previous leftmost bit, the sign bit (the leftmost bit) does not change. Hence the name 'sign-propagating'",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#>>_(Sign-propagating_right_shift)",
@@ -440,6 +467,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: ">>>", origin: "ecma5",
+    skillNodes: _skl+'operators.greatergreatergreater-bitwise-zero-fill-shift-right',
     help: ">>> is Zero-fill right shift",
     help2: "This operator shifts the first operand the specified number of bits to the right. Excess bits shifted off to the right are discarded. Zero bits are shifted in from the left. The sign bit becomes 0, so the result is always non-negative.",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#>>>_(Zero-fill_right_shift))",
@@ -451,6 +479,8 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "!", origin: "ecma5",
+    skillNodes: _skl+'operators.bang-logical-not',
+
     help: "This is the logical operator 'NOT' which acts on an expression that follows it. It converts true to false, and false to true. For example !false === true",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_NOT",
     url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean"
@@ -458,6 +488,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "&&", origin: "ecma5",
+    skillNodes: _skl+'operators.ampersandampersand-logical-and',
     help: "Logical 'AND': returns true if both the left hand AND right side are true. Note that the right-hand side is only evaluated if the left hand side is true",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_AND_()",
     url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean"
@@ -465,6 +496,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "||", origin: "ecma5",
+    skillNodes: _skl+'operators.pipepipe-logical-or',
     help: "Logical 'or': returns true if either the left hand OR right side are true. Note that the right-hand side is only evaluated if the left hand side is false",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_OR_()",
     url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean"
@@ -473,8 +505,10 @@ for (x in obj)`,
 
   // Assignment operators
 
+
   {
     tt: "operator", ts: "=", origin: "ecma5",
+    skillNodes: _skl+'operators.equals-assignment',
     help: "The Assignment operator '=' assigns the value on the right to the variable or property on the left",
     advice: "When assigning arrays or objects to values, it does not create a copy, = just adds a new reference to the existing object/array",
     advice2: "Chaining the assignment operator is possible in order to assign a single value to multiple variables. for example x = y = 2",
@@ -483,6 +517,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "+=", origin: "ecma5",
+    skillNodes: _skl+'operators.plusequals-addition-assignment',
     syntax: "valueToBeChanged += valueToBeAddedOrConcatenated",
     help: "The addition assignment operator adds the value of the right operand to a variable and assigns the result to the variable",
     help2: "Depending on whether the operands are numbers or strings, the operation might be mathematical addition or string concatenation (joining)",
@@ -493,6 +528,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "-=", origin: "ecma5",
+    skillNodes: _skl+'operators.minusequals-subtraction-assignment',
     syntax: "valueToBeChanged -= valueToBeSubtracted",
     help: "The subtraction assignment operator subtracts the value of the right operand from a variable and assigns the result to the variable",
     help2: "Both operands should be numbers, otherwise the result will be NaN (Not a Number)",
@@ -503,6 +539,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "*=", origin: "ecma5",
+    skillNodes: _skl+'operators.asteriskequals-multiplication-assignment',
     syntax: "valueToBeChanged *= valueToBeMultipliedBy",
     help: "The multiplication assignment operator multiplies a variable by the value of the right operand and assigns the result to the variable",
     help2: "Both operands should be numbers, otherwise the result will be NaN (Not a Number)",
@@ -514,6 +551,7 @@ for (x in obj)`,
   {
     tt: "operator", ts: "/=", origin: "ecma5",
     syntax: "valueToBeChanged /= valueToBeDividedBy",
+    skillNodes: _skl+'operators.slashequals-division-assignment',
     help: "The division assignment operator divides a variable by the value of the right operand and assigns the result to the variable",
     help2: "Both operands should be numbers, otherwise the result will be NaN (Not a Number)",
     advice: "Assignment operations return the assigned value, so it is possible chain them such as x/=y/=z, but you would be pretty crazy to do this",
@@ -524,15 +562,16 @@ for (x in obj)`,
   {
     tt: "operator", ts: "%=", origin: "ecma5",
     syntax: "valueToBeChanged %= valueToBeRemainderedBy",
+    skillNodes: _skl+'operators.percentequals-remainder-assignment',
     help: "The remainder assignment operator divides a variable by the value of the right operand and assigns the REMAINDER to the variable",
     help2: "Both operands should be numbers, otherwise the result will be NaN (Not a Number)",
     advice: "Assignment operations return the assigned value, so it is possible chain them such as x%=y%=z, but you would be pretty crazy to do this",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Assignment_Operators#Remainder_assignment",
     url2: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Remainder"
   },
-
   {
     tt: "operator", ts: "<<=", origin: "ecma5",
+    skillNodes: _skl+'operators.',
     syntax: "valueToBeChanged <<= bitsToBeLeftShiftedBy",
     help: "The left shift assignment operator moves the specified amount of bits to the left and assigns the result to the variable",
     advice: "Assignment operations return the assigned value, so it is possible chain them such as x<<=y<<=z, but you would be pretty crazy to do this",
@@ -542,6 +581,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: ">>=", origin: "ecma5",
+    skillNodes: _skl+'operators.',
     syntax: "valueToBeChanged >>= bitsToBeRightShiftedBy",
     help: "The right shift assignment operator moves the specified amount of bits to the right and assigns the result to the variable",
     help2: "This is a sign-propagating right shift: This operator shifts the first operand the specified number of bits to the right. Excess bits shifted off to the right are discarded. Copies of the leftmost bit are shifted in from the left",
@@ -552,6 +592,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: ">>>=", origin: "ecma5",
+    skillNodes: _skl+'operators.',
     syntax: "valueToBeChanged >>>= bitsToBeRightShiftedBy",
     help: "The unsigned right shift assignment operator moves the specified amount of bits to the right and assigns the result to the variable",
     help2: "This is a zero-fill right shift: This operator shifts the first operand the specified number of bits to the right. Excess bits shifted off to the right are discarded. Zero bits are shifted in from the left. The sign bit becomes 0, so the result is always non-negative",
@@ -562,6 +603,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "&=", origin: "ecma5",
+    skillNodes: _skl+'operators.',
     syntax: "valueToBeChanged &= bitsToBeAndedWith",
     help: "The bitwise AND assignment operator uses the binary representation of both operands, does a bitwise AND operation on them and assigns the result to the variable",
     advice: "Assignment operations return the assigned value, so it is possible chain them such as x&=y&=z, but you would be completely crazy to do this",
@@ -572,6 +614,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "^=", origin: "ecma5",
+    skillNodes: _skl+'operators.',
     syntax: "valueToBeChanged ^= bitsToBeXoredWith",
     help: "The bitwise XOR assignment operator uses the binary representation of both operands, does a bitwise XOR operation on them and assigns the result to the variable",
     advice: "Assignment operations return the assigned value, so it is possible chain them such as x^=y^=z, but you would be completely crazy to do this",
@@ -582,6 +625,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "|=", origin: "ecma5",
+    skillNodes: _skl+'operators.',
     syntax: "valueToBeChanged |= bitsToBeOredWith",
     help: "The bitwise OR assignment operator uses the binary representation of both operands, does a bitwise OR operation on them and assigns the result to the variable",
     advice: "Assignment operations return the assigned value, so it is possible chain them such as x|=y|=z, but you would be very crazy to do this",
@@ -594,6 +638,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "==", origin: "ecma5",
+    skillNodes: _skl+'operators.equality',
     help: "The equality operator converts the left and right values if they are not of the same type, then applies strict comparison. If both operands are objects, then JavaScript compares internal references which are equal when operands refer to the same object in memory.",
     advice: "It is safer to use === unless you REALLY understand why == is more correct in your particular case",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Equality"
@@ -601,6 +646,7 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "!=", origin: "ecma5",
+    skillNodes: _skl+'operators.inequality',
     help: "The Inequality operator returns true if the left and right values are not equal: they must be of the same type and the contents must match",
     advice: "It is safer to use !== unless you REALLY understand why != is more correct in your particular case",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Identity_strict_equality_()"
@@ -608,12 +654,14 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "===", origin: "ecma5",
+    skillNodes: _skl+'operators.identity-equality',
     help: "The IDENTITY equality operator returns true if the left and right values are strictly equal: they must be of the same type and the contents must match",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Identity_strict_equality_()"
   },
 
   {
     tt: "operator", ts: "!==", origin: "ecma5",
+    skillNodes: _skl+'operators.identity-inequality',
     help: "The NON-IDENTITY operator returns true if the left and right values are not of the same type and/or are not equal",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Non-identity_strict_inequality_(!)"
   },
@@ -622,33 +670,38 @@ for (x in obj)`,
 
   {
     tt: "operator", ts: "<", origin: "ecma5",
+    skillNodes: _skl+'operators.less-than',
     help: "return true if left hand value is less than right hand value",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Less_than_operator"
   },
 
   {
     tt: "operator", ts: "<=", origin: "ecma5",
+    skillNodes: _skl+'operators.less-than-or-equal',
     help: "return true if left hand value is less than or equal to the right hand value",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Less_than_or_equal_operator"
   },
 
   {
     tt: "operator", ts: ">=", origin: "ecma5",
+    skillNodes: _skl+'operators.greater-than-or-equal',
     help: "return true if left hand value is greater than or equal to the right hand value",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Greater_than_or_equal_operator"
   },
 
   {
     tt: "operator", ts: ">", origin: "ecma5",
+    skillNodes: _skl+'operators.greater-than',
     help: "return true if left hand value is greater than right hand value",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Greater_than_operator"
   },
 
-
+//////////////////  // TODO(@dgolds):  Continue with skillNodes: from here
   // Control flow    if..else    switch..case    while ()   do...while()   break    continue
 
   {
     tt: "keyword", ts: "if", origin: "ecma5",
+    skillNodes: _skl+'control-flow.if',
     syntax: "if (condition) statementIfTrue [else optionalStatementIfFalse]",
     help: "The if statement executes a statement if a specified condition is true",
     help2: "If the condition is false, another statement can be executed",
@@ -656,6 +709,7 @@ for (x in obj)`,
   },
   {
     tt: "keyword", ts: "else", origin: "ecma5",
+    skillNodes: _skl+'control-flow.else',
     syntax: "if (condition) statementIfTrue [else optionalStatementIfFalse]",
     help: "The if statement executes a statement if a specified condition is true",
     help2: "If the condition is false, another statement can be executed using 'else'",
@@ -664,6 +718,7 @@ for (x in obj)`,
 
   {
     tt: "keyword", ts: "switch", origin: "ecma5",
+    skillNodes: _skl+'control-flow.switch',
     syntax: `switch (expression) {
   case value1:
     // Statements executed when the result of 
@@ -692,6 +747,7 @@ for (x in obj)`,
 
   { // THIS IS A DUPE OF SWITCH
     tt: "keyword", ts: "case", origin: "ecma5",
+    skillNodes: _skl+'control-flow.case',
     syntax: `switch (expression) {
   case value1:
     // Statements executed when the result of 
@@ -720,14 +776,16 @@ for (x in obj)`,
 
   {
     tt: "keyword", ts: "label", origin: "ecma5",
+    skillNodes: _skl+'control-flow.label',
     help: "label can be used with break or continue statements.",
     help2: "This provides a control flow a bit like a 'goto' but it is not exactly the same",
-    advice: "Avoid using labels if you can - they can lead to messy code unless you are an expert coder",
+    advice: "Avoid using labels if you can - they can lead to messy code unless you are an expert coder doing this for some very good reason",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/label"
   },
 
   {
     tt: "keyword", ts: "continue", origin: "ecma5",
+    skillNodes: _skl+'control-flow.continue',
     help: "Continue is a way to skip to the end of the current loop and go around again",
     help2: "The continue statement terminates execution of the statements in the current iteration of the current or labeled loop, and continues execution of the loop with the next iteration",
     advice: "Continue is most commonly used in \"while\" and \"for\" loops",
@@ -737,6 +795,7 @@ for (x in obj)`,
 
   {
     tt: "keyword", ts: "break", origin: "ecma5",
+    skillNodes: _skl+'control-flow.break',
     help: "Break is most commonly used to prematurely break out of a \"switch\" statement or a \"for\" loop",
     help2: "The break statement terminates the current loop, switch, or label statement and transfers program control to the statement following the terminated statement.",
     advice: "Break is most commonly used in \"switch\" statements, but can be used in \"while\" and \"for\" loops",
@@ -746,6 +805,7 @@ for (x in obj)`,
 
   {
     tt: "keyword", ts: "while", origin: "ecma5",
+    skillNodes: _skl+'control-flow.while',
     syntax: `while (condition) {
   statement
 }`,
@@ -759,6 +819,7 @@ for (x in obj)`,
 
   {
     tt: "keyword", ts: "do", origin: "ecma5",
+    skillNodes: _skl+'control-flow.do-while',
     syntax: `do
    statement
 while (condition);`,
@@ -771,7 +832,8 @@ while (condition);`,
   },
 
   {
-    tt: "keyword", ts: "for", origin: "ecma5",      // Note that we have covered   in   above since it has dual contexts
+    tt: "keyword", ts: "for", origin: "ecma5",      // Note that we have covered   'in'   above since it has dual contexts
+    skillNodes: _skl+'control-flow.for',
     help: "\"for\" loops are a convenient way to loop through sequences and objects. There are a few forms:",
     syntax: `for (variable in object) {...
 }
@@ -788,6 +850,7 @@ for ([initialization]; [condition]; [final-expression])
 
   {
     tt: "keyword", ts: "of", origin: "ecma6",
+    skillNodes: _skl+'control-flow.of',
     syntax: `for (variable of iterable) {
   statement
 }`,
@@ -801,6 +864,7 @@ for ([initialization]; [condition]; [final-expression])
 
   {
     tt: "keyword", ts: "debugger", origin: "ecma5",
+    skillNodes: _skl+'exceptions.debugger',
     syntax: "debugger;",
     help: "The \"debugger\" statement invokes any available debugging functionality, such as setting a breakpoint",
     advice: "If no debugging functionality is available, this statement has no effect",
@@ -809,6 +873,7 @@ for ([initialization]; [condition]; [final-expression])
 
   {
     tt: "keyword", ts: "throw", origin: "ecma5",
+    skillNodes: _skl+'exceptions.throw',
     syntax: "throw expressionToThrow;",
     help: "The \"throw\" statement throws a user-defined exception",
     help2: "Execution of the current function will stop (the statements after throw won't be executed), and control will be passed to the first \"catch\" block in the call stack",
@@ -820,6 +885,7 @@ for ([initialization]; [condition]; [final-expression])
 
   {
     tt: "keyword", ts: "try", origin: "ecma5",
+    skillNodes: _skl+'exceptions.try',
     syntax: `try {
    try_statements
 }
@@ -842,6 +908,7 @@ for ([initialization]; [condition]; [final-expression])
 
   { // is a dupe of TRY above
     tt: "keyword", ts: "catch", origin: "ecma5",
+    skillNodes: _skl+'exceptions.catch',
     syntax: `try {
    try_statements
 }
@@ -864,6 +931,7 @@ for ([initialization]; [condition]; [final-expression])
 
   { // is a dupe of TRY and CATCH above
     tt: "keyword", ts: "finally", origin: "ecma5",
+    skillNodes: _skl+'exceptions.finally',
     syntax: `try {
    try_statements
 }
@@ -888,6 +956,7 @@ for ([initialization]; [condition]; [final-expression])
 
   {
     tt: "keyword", ts: "import", origin: "ecma6",
+    skillNodes: _skl+'modules.import',
     help: "The import statement is used to import functions, objects or primitives that have been exported from an external module, another script, etc.",
     syntax: `import defaultMember from "module-name";
 import * as name from "module-name";
@@ -903,6 +972,7 @@ import "module-name";`,
 
   {
     tt: "keyword", ts: "export", origin: "ecma6",
+    skillNodes: _skl+'modules.export',
     help: "The export statement is used to export functions, objects or primitives from a given file (or module)",
     syntax: `export { name1, name2, …, nameN };
 export { variable1 as name1, variable2 as name2, …, nameN };
@@ -920,8 +990,10 @@ export { import1 as name1, import2 as name2, …, nameN } from …;`,
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/export"
   },
 
+// TODO: disambiguate case...default from export...default 
   {
     tt: "keyword", ts: "default", origin: "ecma5",
+    skillNodes: _skl+'modules.default',  // and also control-flow.case-default?
     help: "The default keyword can be used in two situations in JavaScript: within a switch statement, or with an export statement",
     advice: "When used in \"switch\", it is executed when none of the other \"case\" values match the value of the expression",
     advice2: "When used in a ES6 \"export\" statement, it defines default value to be exported from the module",
@@ -935,6 +1007,7 @@ export { import1 as name1, import2 as name2, …, nameN } from …;`,
   // set  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set
   // extends https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends
   // static  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/static
+  // others?
 
 
 ] // end helpInfo
@@ -1043,7 +1116,7 @@ export default TokenDescription = React.createClass({
     if (hasSkill(this.context.skills, skillNodeKey))
       Meteor.call("Skill.forget", skillNodeKey)
     else
-      Meteor.call("Skill.grant", skillNodeKey)
+      Meteor.call("Skill.learn", skillNodeKey)
   },
 
   render: function () {
@@ -1067,8 +1140,15 @@ export default TokenDescription = React.createClass({
 
     const skillNodeKey = specialHandler ? specialHandler.skillNodes : 
                           (help ? (help.skillNodes || null) : null)
-    const showExpanded = isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey)
+    let showExpanded = !skillNodeKey || (isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey))
 
+if (token.type != 'variable' && token.type != 'def' && 
+  (!skillNodeKey || !isSkillKeyValid(skillNodeKey)) 
+)
+{
+  console.log(`TokenDescription database has no SkillNode for TT:${token.type} TS:${tsTrunc}`)
+  showExpanded = true
+}
     // TODO.. something useful with token.state?
 
     return (
@@ -1079,7 +1159,7 @@ export default TokenDescription = React.createClass({
         <a  className="ui purple right corner label" 
             title={`Click to ${ showExpanded ? "hide" : "show" } the explanation of this javascript language feature`}
             onClick={() => this.handleHideShowClick(skillNodeKey)}>
-          <i className={(showExpanded ? "" : "grey ")+ "help icon"}></i>
+          <i className={(!showExpanded ? "add circle " : "minus circle ")+ " icon"}></i>
         </a>
         <p></p>
 

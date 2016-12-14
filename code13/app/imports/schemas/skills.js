@@ -82,8 +82,8 @@ export const hasSkill = (skillsObj, dottedSkillKey) => {
 
 export const learnSkill = dottedSkillKey => {
   Meteor.call("Skill.learn", dottedSkillKey, (err, result) => {
-      console.log("Skill learned: ", dottedSkillKey, err, result)
-    })
+    console.log("Skill learned: ", dottedSkillKey, err, result)
+  })
   // TODO: set it with a rounded timestamp so we know timeline and recency of this skill change
 }
 
@@ -94,6 +94,13 @@ export const forgetSkill = dottedSkillKey => {
   })
 }
 
+export function countCurrentUserSkills(skillsObj)
+{
+  if (!skillsObj)
+    return null
+
+  return _.size(_.filter(_.keys(SkillNodes.$meta.map), s => hasSkill(skillsObj, s)))
+}
 
 export function getSkillNodeStatus(userObj, skillsObj, dottedSkillNodeKey)
 {
@@ -146,11 +153,8 @@ export function getLeafSkillStatus(skillsObj, dottedSkillLeafKey)
   //    anointed - a deity of our site has vouched that I have this skill
 }
 
-
-
 function getSkillStatus(dottedSkillKeyPrefix)
 {
-  
   // return array of skills for this prefix   foo.bar.
   // entries contain (skillKey, currentStatus, firstGranted, validationLevel, ...)
   

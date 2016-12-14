@@ -4,7 +4,7 @@ import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Progress, Icon } from 'semantic-ui-react'
-import { addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
+import { addJoyrideSteps } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]

@@ -112,11 +112,8 @@ Meteor.publish('assets.public', function(
   return Azzets.find(selector, findOpts )
 })
 
-
 // Observe assets only - add limit??
 Meteor.publish('assets.public.bySelector', function(selector) {
-  // we only need updateAt and id here, but client won't be able to select without rest fields
-  // is there a better way to avoid junk data transfer?
   return Azzets.find(selector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1}})
 })
 // Return one asset info only.
@@ -128,13 +125,8 @@ Meteor.publish('assets.public.byId', function(assetId) {
 Meteor.publish('assets.public.byId.withContent2', function(assetId) {
   return Azzets.find(assetId)
 })
-// TODO: this repeats from - API - clean up api and this
 Meteor.publish('assets.public.owner.name', function(owner, name, kind) {
-  console.log("subscribe to: assets.public.owner.name", owner, name, kind)
-  const sel = {dn_ownerName: owner, name: name}
-  if(kind){
-    sel.kind = kind
-  }
+  const sel = {dn_ownerName: owner, name: name, kind: kind}
   return Azzets.find(sel)
 })
 

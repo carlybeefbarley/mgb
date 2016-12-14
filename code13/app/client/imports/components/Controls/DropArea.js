@@ -8,6 +8,7 @@ import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
+
   state = { text: '' }
 
   get data() {
@@ -25,37 +26,37 @@ export default class DropArea extends React.Component {
       if(owner == "[builtin]"){
         return
       }
-      this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
-        onReady: () => {
-          if (this.isUnmounted)
-            return          
-          this.setState( { asset: this.getAsset() } )
-        },
-        onError: (e) => { console.log("DropArea - subscription did not become ready", e) }
-      })
-      // meteor subscriptions onReady might not get called - somehow buggish behavior
-      // keep looping until we get an asset (:doh)
-      // TODO: there MUST be better way
-      let count = 0
-      const onReady = () => {
-        const a = this.getAsset()
-        count++
-        // TODO: react devs assume that isMounted is antipattern.. need to redo all this onReady magic
-        if (this.isUnmounted)
-          return
-        
-        if (!a && count < 100)
-          window.setTimeout( onReady, 1000)
-        else if (!this.state.asset)
-          this.setState( { asset: a } )
-      }
-      onReady()
+
+      this.startSubscription(owner, name)
     }
   }
 
   componentWillUnmount() {
     this.isUnmounted = true
     this.subscription && this.subscription.stop()
+  }
+
+  startSubscription(owner, name, kind = this.props.kind){
+    // stop old subscription
+    this.subscription && this.subscription.stop()
+
+    let hasReadyCalled = false
+    this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, kind, {
+      onStop: () => {
+        // repeat subscription if it has been stopped too early
+        if(!hasReadyCalled && this.isUnmounted){
+          this.startSubscription(owner, name)
+        }
+      },
+      onReady: () => {
+        hasReadyCalled = true
+        // we are stopping subscription on unmount - is this still gets triggered
+        if (this.isUnmounted)
+          return
+        this.setState( { asset: this.getAsset() } )
+      },
+      onError: (e) => { console.log("DropArea - subscription did not become ready", e) }
+    })
   }
 
   handleDrop(e) {
@@ -75,9 +76,7 @@ export default class DropArea extends React.Component {
       if(asset.dn_ownerName == "[builtin]"){
         return
       }
-      this.subscription = Meteor.subscribe("assets.public.owner.name", asset.dn_ownerName, asset.name, asset.kind, {
-        onReady: () => { this.forceUpdate() }
-      })
+      this.startSubscription(asset.dn_ownerName, asset.name, asset.kind)
       this.saveChanges()
     })
   }
@@ -102,7 +101,7 @@ export default class DropArea extends React.Component {
       if(owner == "[builtin]"){
         return
       }
-      this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name)
+      this.startSubscription(owner, name)
       const aa =  Azzets.find({dn_ownerName: owner, name: name}).fetch()
 
       if (aa && aa.length)

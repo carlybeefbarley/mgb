@@ -5,7 +5,7 @@ import {genetag} from '/imports/helpers/generators'
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 
-//  TODO:  make this function hybrid - ajax to get C2 and update on asset change
+// getAssetWithContent2
 // used by source tools and actor map
 export const fetchAndObserve = (owner, name, kind, onAssets, onChanges, oldSubscription = null) => {
   const sel = {dn_ownerName: owner, name: name, isDeleted: false}

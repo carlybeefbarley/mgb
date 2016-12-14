@@ -10,7 +10,12 @@ import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
 export default class DropArea extends React.Component {
 
   state = { text: '' }
-
+  static PropTypes = {
+    kind: PropTypes.string.required, // asset kind which will accept this drop area
+    value: PropTypes.string, // previously saved value
+    asset: PropTypes.object, // asset assigned to this dropArea
+    onChange: PropTypes.function // callback
+ }
   get data() {
     return this.props.value
   }

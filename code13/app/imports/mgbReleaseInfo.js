@@ -22,7 +22,36 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
 
+    {
+      'timestamp': 'Wed Dec 14 2016 00:34:23 GMT-0800 (PST)',
 
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2305'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'flexpanel.skills',
+          'type': 'feature',
+          'changeName': 'Skills flexPanel',
+          'changeSummary': 'There is a new FlexPanel that shows a summary skill map for the logged in user. It is hidden for new users but can be enabled using the feature levels (options) flex panel.',
+          'otherUrls': [ ]
+        },            
+        {
+          'featureTag': 'skills.code',
+          'type': 'improvement',
+          'changeName': 'Coding Skills Maps',
+          'changeSummary': 'Coding skills have been significantly extended and the CodeMentor (purple box part) in EditCode now is linked to the skills system. Hiding help for a javscript token you understand (e.g. \'function\') now implies and registers you as having self-certified that you have that skill. More sophisticated kinds of skills certification will come later, but this now shows the end-to-end of tutorials, skills and help. Yay! Now we just need to build out the next 500 tutorials :)',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Sat Dec 10 2016 20:30:00 GMT-0800 (PST)',

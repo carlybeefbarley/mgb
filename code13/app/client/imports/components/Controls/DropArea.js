@@ -4,8 +4,6 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
-import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
-
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
 

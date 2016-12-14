@@ -113,18 +113,25 @@ Meteor.publish('assets.public', function(
 })
 
 // Observe assets only - add limit??
-Meteor.publish('assets.public.bySelector', function(selector) {
-  return Azzets.find(selector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1}})
+// https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
+Meteor.publish('assets.public.partial.bySelector', function(selector) {
+  const cursor = Azzets.find(selector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1}})
+  // publish to another client Collection - as partial data will ruin Azzets collection on the client side
+  // I know - this is ugly, but seems that there is no better solution
+  Mongo.Collection._publishCursor(cursor, this, 'PartialAzzets')
+  this.ready()
 })
+
 // Return one asset info only.
 Meteor.publish('assets.public.byId', function(assetId) {
   return Azzets.find(assetId, {fields: {content2: 0}})
 })
 
 // Return one asset. This is a good subscription for AssetEditRoute
-Meteor.publish('assets.public.byId.withContent2', function(assetId) {
+// Removed - as c2 is fetched and cached via ajax / cdn combo
+/*Meteor.publish('assets.public.byId.withContent2', function(assetId) {
   return Azzets.find(assetId)
-})
+})*/
 Meteor.publish('assets.public.owner.name', function(owner, name, kind) {
   const sel = {dn_ownerName: owner, name: name, kind: kind}
   return Azzets.find(sel)

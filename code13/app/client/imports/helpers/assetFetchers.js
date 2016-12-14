@@ -2,6 +2,8 @@ import { Azzets } from '/imports/schemas'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import {genetag} from '/imports/helpers/generators'
 
+// here client will store partially fetched Azzets
+const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 
@@ -58,7 +60,7 @@ export const observe = (selector, onReady, onChange = onReady, oldSubscription =
   if (!ALLOW_OBSERVERS) {
     return
   }
-  const cursor = Azzets.find(selector)
+  const cursor = PartialAzzets.find(selector)
   // from now on only observe asset and update tern on changes only
 
   const subscription = oldSubscription || {
@@ -68,7 +70,7 @@ export const observe = (selector, onReady, onChange = onReady, oldSubscription =
     }
 
   let onReadyCalled = false
-  subscription.subscription = Meteor.subscribe("assets.public.bySelector", selector, {
+  subscription.subscription = Meteor.subscribe("assets.public.partial.bySelector", selector, {
     onStop: () => {
 
       subscription.observer && subscription.observer.stop()

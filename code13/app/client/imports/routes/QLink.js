@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import { Link, browserHistory } from 'react-router';
-import urlMaker from './urlMaker';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import { Link, browserHistory } from 'react-router'
+import urlMaker from './urlMaker'
 
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
 
@@ -98,7 +98,7 @@ export default QLink = React.createClass({
       return      // Browser needs to handle this. It's beyond our scope. (TODO ideally we could still monkey patch the query?)
 
     // resolve any modifiers to select altTo/AltQuery etc
-    const modifiedTo = (event.altKey && p.altTo) ? p.altTo : p.to
+    const modifiedTo = ( (event.altKey && p.altTo) ? p.altTo : p.to ) || window.location.pathname
     const modifiedQuery = (event.altKey && p.altTo) ? p.altQuery : p.query
     // Todo AltHash if needed
 
@@ -129,8 +129,8 @@ export default QLink = React.createClass({
       newText = "_Users"
       break
     default:
-      console.trace(`Unknown case for QLink nav="${p.nav}"`)      
-      break;
+      console.error(`Unknown case for QLink nav="${p.nav}"`)      
+      break
     }
 
     return React.createElement(

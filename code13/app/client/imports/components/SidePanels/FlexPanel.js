@@ -2,7 +2,6 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
-
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
 
@@ -13,6 +12,7 @@ import fpKeyboard from './fpKeyboard'
 import fpProjects from './fpProjects'
 import fpNetwork from './fpNetwork'
 import fpAssets from './fpAssets'
+import fpSkills from './fpSkills'
 import fpGoals from './fpGoals'
 import fpUsers from './fpUsers'
 import fpChat from './fpChat'
@@ -22,26 +22,31 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
-const flexPanelViews = [
-  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false  },
 
+const flexPanelViews = [
   { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
+
+  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false  },
   { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false },
 
   { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false },
-  { tag: 'features',  lev: 2,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
+  { tag: 'features',  lev: 1,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
 
-//{ tag: 'projects',  lev: 2,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
+  { tag: 'skills',     lev: 2,  name: 'skills',  icon: 'plus circle',    hdr: 'Skills',           el: fpSkills,        superAdminOnly: false  },
+
   
+  { tag: 'users',     lev: 3,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
   { tag: 'network',   lev: 3,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
-  { tag: 'users',     lev: 4,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
   { tag: 'keys',      lev: 4,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
+  { tag: 'projects',  lev: 5,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
 
   // SuperAdmin-only:
   { tag: 'super',     lev: 1,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true  } // ALWAYS SuperAdmin
 ]
 
 const defaultPanelViewIndex = 0
+const DEFAULT_FLEXPANEL_FEATURELEVEL = 1
+
 
 export default FlexPanel = React.createClass({
   mixins: [ReactMeteorData],
@@ -70,13 +75,34 @@ export default FlexPanel = React.createClass({
     getDefaultPanelViewTag: function() { return flexPanelViews[defaultPanelViewIndex].tag }
   },
 
+  getInitialState: function() {
+    return {
+      wiggleActivity: false
+    }
+  },
 
   getMeteorData: function() {
-    return { fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel'))}
+    return { 
+      fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel')),
+      meteorStatus:   Meteor.status() 
+    }
   },
 
   componentDidMount: function() {
     registerDebugGlobal( 'fp', this, __filename, 'The global FlexPanel instance')
+  },
+
+  componentWillReceiveProps (nextProps) {
+    const a1 = this.props.activity
+    const a2 = nextProps.activity
+    if (a1 && a1.length > 0 && a2 && a2.length > 0)
+    {
+      if (a1[0]._id !== a2[0]._id && this.state.wiggleActivity === false)
+      {
+        this.setState( { wiggleActivity: true } )
+        window.setTimeout(() => { this.setState( { wiggleActivity: false } ) }, 5*1000)
+      }
+    }
   },
 
   _viewTagMatchesPropSelectedViewTag: function(viewTag)
@@ -108,25 +134,56 @@ export default FlexPanel = React.createClass({
 
   handleChangeSubNavParam: function(newSubNavParamStr)
   {
-    const P = this.props
-    const selectedViewTagParts = this.props.selectedViewTag.split(".")
+    const { handleFlexPanelChange, selectedViewTag } = this.props
+    const selectedViewTagParts = selectedViewTag.split(".")
     const newFullViewTag = selectedViewTagParts[0] + "." + newSubNavParamStr
-    P.handleFlexPanelChange(newFullViewTag)
+    handleFlexPanelChange(newFullViewTag)
   },
 
   fpViewSelect(fpViewTag)
   {
-    const P = this.props
-    if (P.flexPanelIsVisible && this._viewTagMatchesPropSelectedViewTag(fpViewTag))
-      P.handleFlexPanelToggle()
+    const { handleFlexPanelToggle, flexPanelIsVisible, handleFlexPanelChange } = this.props
+    if (flexPanelIsVisible && this._viewTagMatchesPropSelectedViewTag(fpViewTag))
+      handleFlexPanelToggle()
     else
-      P.handleFlexPanelChange(fpViewTag)
+      handleFlexPanelChange(fpViewTag)
   },
 
+  getFpButtonSpecialStyleForTag: function(tag) {
+    const { joyrideSteps } = this.props
+    const { meteorStatus } = this.data
+    
+    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
+      return { backgroundColor: 'rgba(234,174,0,0.5)' }
+
+    if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
+      return { backgroundColor: 'rgba(255,0,0,0.2)' }
+
+    return {}       // wiggleActivity is done as a class, so it's not in this function. See render()
+  },
+
+  getFpButtonSpecialClassForTag: function(tag) {
+    const { wiggleActivity } = this.state
+
+    if (tag === 'activity' && wiggleActivity)
+      return ' green animated swing '
+      
+    return ''
+  },
+
+  getFpButtonAutoShowForTag: function(tag) {
+    const { meteorStatus } = this.data
+    
+    if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
+      return true
+
+    return false
+  },
 
   render: function () {
-    const { flexPanelWidth, flexPanelIsVisible, joyrideSteps } = this.props
-    const fpFeatureLevel = this.data.fpFeatureLevel  || 1
+    const { flexPanelWidth, flexPanelIsVisible } = this.props
+
+    const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
     const panelStyle = {
       position:     'fixed',
       right:        '0px',
@@ -193,6 +250,7 @@ export default FlexPanel = React.createClass({
                       currUser={this.props.currUser}
                       currUserProjects={this.props.currUserProjects}
                       user={this.props.user}
+                      meteorStatus={this.data.meteorStatus}
                       joyrideSteps={this.props.joyrideSteps}
                       joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
                       joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
@@ -211,11 +269,14 @@ export default FlexPanel = React.createClass({
         <div id='mgbjr-flexPanelIcons' className="ui attached vertical icon menu" style={miniNavStyle} >
           { flexPanelViews.map(v => {
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
-            if (v.lev > fpFeatureLevel)
+            if (v.lev > fpFeatureLevel && this.getFpButtonAutoShowForTag(v.tag) !== true)
               return null
             if (v.superAdminOnly && !this.props.isSuperAdmin) 
               return null
-            const specialSty = (v.tag === 'goals' && joyrideSteps && joyrideSteps.length > 0) ? { backgroundColor: '#eaae00'} : {}
+
+            const specialSty = this.getFpButtonSpecialStyleForTag(v.tag)
+            const specialClass = this.getFpButtonSpecialClassForTag(v.tag)
+            
             return (
               <div
                 id={`mgbjr-flexPanelIcons-${v.tag}`}
@@ -224,7 +285,7 @@ export default FlexPanel = React.createClass({
                 className={active +  " item"}
                 title={v.name}
                 onClick={this.fpViewSelect.bind(this, v.tag)}>
-                <i className={v.icon + " large icon"}></i>
+                <i className={v.icon + specialClass + " large icon"}></i>
                 <span>{v.name}</span>
               </div>
             )

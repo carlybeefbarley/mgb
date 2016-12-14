@@ -32,9 +32,9 @@ Meteor.methods({
     //  Client browser.. JS console..  
     //  > Meteor.call('job.import.mgb1.project', 42)
     //
-    // if (importParams === 42)
-    // {
-    //   console.log('The meaning of life!)')
+      // if (importParams === 42)
+      // {
+      //   console.log('The meaning of life!)')
     //   importParams = {
     //     mgb1Username:           'nemopolymer',
     //     mgb1Projectname:        'Chronicals Of Mr. guM',    //   'mechanics demos',
@@ -47,7 +47,19 @@ Meteor.methods({
     //     isDryRun:               false
     //   }
     //   thisUser = { profile: { name: 'dgolds' } }
-    // }
+      //   importParams = {
+      //     mgb1Username:           'azurehaze',
+      //     mgb1Projectname:        'Galactic Combat',    //   'mechanics demos',
+      //     mgb2Username:           'dgolds',
+      //     mgb2ExistingProjectName:'Galactic Combat',    //   'Game Mechanics demo',
+      //     mgb2assetNamePrefix:    'galco.',
+      //     excludeTiles:           false,
+      //     excludeActors:          false,
+      //     excludeMaps:            false,
+      //     isDryRun:               false
+      //   }
+      //   thisUser = { profile: { name: 'dgolds' } }
+      // }
     //// END HACK /////
 
     // Param validations - these must throw Meteor.Error on failures

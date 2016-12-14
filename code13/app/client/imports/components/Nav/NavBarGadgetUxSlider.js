@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import QLink from '/client/imports/routes/QLink'
+
 import { getFeatureLevel, setFeatureLevel } from '/imports/schemas/settings-client'
 import { expectedToolbarScopeNames, makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import reactMixin from 'react-mixin'
@@ -90,7 +92,9 @@ export default NavBarGadgetUxSlider = React.createClass({
 
     return (
       <div style={{ opacity: sliderConstants.disabledOpacity }}>
-        <i id="mgbjr-NavGadgetSliderIcon" className="ui options icon" style={iconSty}/>
+        <QLink query={{_fp: 'features'}}>
+          <i id="mgbjr-NavGadgetSliderIcon" className="ui options icon" style={iconSty}/>
+        </QLink>
         <input
           style={sliderStyle} 
           id={sliderConstants.sliderElementId}

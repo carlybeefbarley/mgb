@@ -1,7 +1,11 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { ActivityTypes } from '/imports/schemas/activity.js'
+
 import { AssetKinds } from '/imports/schemas/assets'
+import { ChatChannels } from '/imports/schemas/chats'
+
 import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
 
@@ -9,8 +13,19 @@ const _propTypes = {
   activity:    PropTypes.array.isRequired  // An activity Stream passed down from the App and passed on to interested components
 }
 
-const ActivityExtraDetail = (props) => {
-  const { act } = props
+const ActivityExtraDetail = ( { act} ) => {
+
+  if (_.isString(act.toChatChannelKey) && act.toChatChannelKey.length > 0) {
+    const chName = ChatChannels[act.toChatChannelKey].name
+    return (      
+      <Feed.Extra text>
+        <Icon name='chat' />
+        <QLink  query={{_fp: `chat.${chName}`}}>
+          #{chName}
+        </QLink>
+      </Feed.Extra>
+    )
+  }
 
   if (act.activityType.startsWith("asset.") || act.activityType.startsWith("game.")) {
     const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)

@@ -487,7 +487,6 @@ export default class MagePlayGame
               const dropChancePct = MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.dropsObjectWhenKilledChance2)
               if (dropChancePct === 0 || ((100 * Math.random()) < dropChancePct)) {
                 // p is of type Point so has {x:, y:}
-debugger                
                 var p = drop1Happened ? this.findAdjacentFreeCellForDrop(AA, this.activeActors[AA].stepStyle) : { x: this.activeActors[AA].x, y:this.activeActors[AA].y}
                 this.playSpawnNewActor(this.loadActorByName(spawn), p.x, p.y)
                 this.clearTicTable()			// Important, need to invalidate the collision detection cache.

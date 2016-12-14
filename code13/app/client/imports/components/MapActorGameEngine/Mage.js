@@ -223,7 +223,7 @@ export default class Mage extends React.Component {
 
     const { pendingGraphicLoads, loadedGraphics } = this.state
     _.each(desiredGraphicNames, aName => {
-      if (!_.includes(pendingGraphicLoads, aName) && !_.includes(loadedGraphics, aName))
+      if (!_.has(pendingGraphicLoads, aName) && !_.has(loadedGraphics, aName))
       {
         pendingGraphicLoads.push(aName)
         fetchAssetByUri(_mkGraphicUri(ownerName, aName))
@@ -264,7 +264,7 @@ export default class Mage extends React.Component {
     const { fetchAssetByUri, ownerName } = this.props // ownerName is map owner name
     const { pendingActorLoads, loadedActors } = this.state
     _.each(desiredActorNames, aName => {
-      if (!_.includes(pendingActorLoads, aName) && !_.includes(loadedActors, aName))
+      if (!_.has(pendingActorLoads, aName) && !_.has(loadedActors, aName))
       {
         pendingActorLoads.push(aName)
         const p = _resolveOwner(actorOwnerName || ownerName, aName)
@@ -368,7 +368,7 @@ export default class Mage extends React.Component {
 
     const { fetchAssetByUri, ownerName } = this.props
     const { pendingMapLoads, loadedMaps } = this.state
-    if (!_.includes(pendingMapLoads, nextMapName) && !_.includes(loadedMaps, nextMapName))
+    if (!_.has(pendingMapLoads, nextMapName) && !_.has(loadedMaps, nextMapName))
     {
       pendingMapLoads.push(nextMapName)
       fetchAssetByUri(_mkMapUri(ownerName, nextMapName))

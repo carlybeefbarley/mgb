@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
-import { Menu, Header, Icon } from 'semantic-ui-react'
+import { Menu, Header, Icon, Message } from 'semantic-ui-react'
 
 const ProjectMenu = (props) => 
 {
@@ -47,41 +47,48 @@ const _propTypes = {
   panelWidth:         PropTypes.string.isRequired   // Typically something like "200px".
 }
 
-const fpProjects = (props) => {
-  const { currUser, currUserProjects } = props
-  if (!currUser) return null
+const fpProjects = ( { currUser, currUserProjects } ) => {
+  if (!currUser) 
+    return <Message content="Not Logged in - no projects to show" />
 
   return (
-    <div className='animated fadeIn ui fluid vertical menu'>
-      <QLink
-          to={`/u/${currUser.profile.name}/projects`} 
-          className="header item" 
-          title="Projects you are owner of">
-        <Icon name='sitemap' /> My Owned Projects
-      </QLink>
+    <div className='animated fadeIn '>
+      <div className='ui fluid vertical menu'>
+        <QLink 
+            to={`/u/${currUser.profile.name}/projects/create`} 
+            className="item" 
+            title="Create New Project">
+          <Icon name='green sitemap' /> Create New Project
+        </QLink>
+      </div>
+  
+      <div className='ui fluid vertical menu'>
+        <QLink
+            to={`/u/${currUser.profile.name}/projects`} 
+            className="header item" 
+            title="Projects you are owner of">
+          <Icon name='sitemap' /> My Owned Projects
+        </QLink>
 
-      <ProjectMenu 
-          projects={currUserProjects} 
-          ownedFlag={true}
-          currUserId={currUser._id}/>
+        <ProjectMenu 
+            projects={currUserProjects} 
+            ownedFlag={true}
+            currUserId={currUser._id}/>
 
-      <QLink 
-          to={`/u/${currUser.profile.name}/projects/create`} 
-          className="item" 
-          title="Create New Project">
-        <Icon name='green sitemap' /> Create New Project
-      </QLink>
-
-      <QLink 
-          to={`/u/${currUser.profile.name}/projects`} 
-          className="header item" 
-          title="Projects you are a member of">
-        <Icon name='grey sitemap' /> Project Memberships
-      </QLink>
-      <ProjectMenu 
-          projects={currUserProjects} 
-          ownedFlag={false}
-          currUserId={currUser._id} />
+      </div>
+  
+      <div className='ui fluid vertical menu'>
+        <QLink 
+            to={`/u/${currUser.profile.name}/projects`} 
+            className="header item" 
+            title="Projects you are a member of">
+          <Icon name='grey sitemap' /> Project Memberships
+        </QLink>
+        <ProjectMenu 
+            projects={currUserProjects} 
+            ownedFlag={false}
+            currUserId={currUser._id} />
+      </div>
     </div>
   )
 }

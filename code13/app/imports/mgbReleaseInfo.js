@@ -18,9 +18,124 @@ const mgbReleaseInfo = {
 
       'changes': [
       ]
-
+Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
+
+    {
+      'timestamp': 'Wed Dec 14 2016 00:34:23 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2305'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'flexpanel.skills',
+          'type': 'feature',
+          'changeName': 'Skills flexPanel',
+          'changeSummary': 'There is a new FlexPanel that shows a summary skill map for the logged in user. It is hidden for new users but can be enabled using the feature levels (options) flex panel.',
+          'otherUrls': [ ]
+        },            
+        {
+          'featureTag': 'skills.code',
+          'type': 'improvement',
+          'changeName': 'Coding Skills Maps',
+          'changeSummary': 'Coding skills have been significantly extended and the CodeMentor (purple box part) in EditCode now is linked to the skills system. Hiding help for a javscript token you understand (e.g. \'function\') now implies and registers you as having self-certified that you have that skill. More sophisticated kinds of skills certification will come later, but this now shows the end-to-end of tutorials, skills and help. Yay! Now we just need to build out the next 500 tutorials :)',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Sat Dec 10 2016 20:30:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2296'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'flexpanel.network',
+          'type': 'feature',
+          'changeName': 'Network/Server outage indicator',
+          'changeSummary': 'If the client loses connection to the network/servers then a \'Network\' FlexPanel is shown with red highlighting to alert the user to the issue.',
+          'otherUrls': [ ]
+        },            
+        {
+          'featureTag': 'nav.chat',
+          'type': 'improvement',
+          'changeName': 'Public chat noted on Activity feed',
+          'changeSummary': 'Activity on Public Chat channels is noted in the Activity feed.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'flexpanel.projects',
+          'type': 'feature',
+          'changeName': 'Projects FlexPanel',
+          'changeSummary': 'Added a FlexPanel for Projects - very similar to the NavPanel one for now, but it may get smarter soon...',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'flexpanel.activity',
+          'type': 'feature',
+          'changeName': 'Activity indicator',
+          'changeSummary': 'The Activity FlexPanel indicator flickers green when there is new activity.',
+          'otherUrls': [ ]
+        },            
+      ]
+    },
+
+    {
+      'timestamp': 'Fri Dec 09 2016 14:50:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2284'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'GetStarted / Tutorials / Skills',
+          'changeSummary': 'We are nearly finished with the database and ui flows to support the upcoming skills/tutorials/help systems. There are still some in-progress pages, but you can see at least one of the end-to-end flows from getStarted with the profilePage tutorial. Also added templates to the Tutorial editor. Lots more coming very soon.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'bugfix',
+          'changeName': 'Fixed api bug for graphics',
+          'changeSummary': 'Fixed a bug that prevented some older graphics files from being loaded via the api. This was affecting the sample "clean sheet" code examples.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'bugfix',
+          'changeName': 'Fixed more bugs related to actorMaps',
+          'changeSummary': 'Fixed bugs caused by having multiple kinds of assets with the same name. Also fixed playcounter',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
 
     {
       'timestamp': 'Fri Dec 02 2016 20:00:00 GMT-0800 (PDT)',

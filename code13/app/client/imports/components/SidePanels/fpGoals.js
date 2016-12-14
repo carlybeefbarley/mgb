@@ -3,10 +3,13 @@ import React, { PropTypes } from 'react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Progress } from 'semantic-ui-react'
+import { Progress, Icon } from 'semantic-ui-react'
+import { addJoyrideSteps } from '/client/imports/routes/App'
+import QLink from "/client/imports/routes/QLink"
+
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-
+const _stopTutorial = () => addJoyrideSteps( [], { replace: true } )
 
 const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum } ) => (
   (!joyrideSteps || !joyrideSteps.length) ? null : (
@@ -15,12 +18,12 @@ const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurren
         { /* <i className="right floated code icon" /> */ }
         <div className="header">{joyrideSteps[0].heading || joyrideSkillPathTutorial || "Current Tutorial..."}</div>
         <ol className="ui list">
-          { joyrideSteps.map( (s, idx) => <li className={ idx >= joyrideCurrentStepNum ? 'active' : 'complete'}>{s.title || `Step ${idx}`}</li> ) }
+          { joyrideSteps.map( (s, idx) => <li key={idx} className={ idx >= joyrideCurrentStepNum ? 'active' : 'complete'}>{s.title || `Step ${idx}`}</li> ) }
         </ol>
       </div>
       <div className="extra content">
         <Progress progress={false} size='small' color='green' value={1+joyrideCurrentStepNum} total={joyrideSteps.length} style={{marginBottom: 0}} />
-        <a>stop</a>&emsp;<a>restart</a>
+        <a style={{float: 'right'}} onClick={_stopTutorial}>Stop Tutorial</a>
       </div>
     </div>
   )
@@ -39,7 +42,7 @@ export default fpGoals = React.createClass({
   },
 
   render: function () {
-    const skillarea = 'code'
+    const skillarea = 'code'    // temp hack
     const area = _.find(skillAreaItems, ['tag', skillarea] )
     const skillNode = SkillNodes[skillarea]
 
@@ -48,65 +51,78 @@ export default fpGoals = React.createClass({
 
     return (
       <div>
+        <h3 style={{marginTop: 0, marginBottom: 20}}>
+          {area.mascotName}'s Quests
+          <div className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>0 / 114&nbsp;&nbsp;<i className="check circle icon" style={{marginRight: 0}} /></div>
+        </h3>
+        <p style={{fontSize: '1.25em'}}>
+          <img src="/images/mascots/bigguy.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
+          <span style={{position: 'relative', top: 0}}>Your Learning quests</span>
+        </p>
         <JoyrideSummary 
             joyrideSteps={this.props.joyrideSteps} 
             joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
             joyrideCurrentStepNum={this.props.joyrideCurrentStepNum} />
-        <h3 style={{marginTop: 0, marginBottom: 20}}>
-          {area.mascotName}'s Quests
-          <div className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>19 / 114&nbsp;&nbsp;<i className="check circle icon" style={{marginRight: 0}} /></div>
-        </h3>
-        <p style={{fontSize: '1.25em'}}>
-          <img src="/images/mascots/bigguy.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
-          <span style={{position: 'relative', top: 0}}>Let's figure out how to show an animated sprite in Phaser!</span>
-        </p>
-        <div className="ui card complete" style={{opacity: 0.5}}>
-          <div className="content">
-            <i className="green right floated checkmark icon" />
-            <div className="header" style={{marginBottom: 0}}>Load an image</div>
-          </div>
-        </div>
-        <div className="ui card course">
-          <div className="content">
-            <i className="right floated code icon" />
-            <div className="header">Display an image</div>
-            <div className="description">
-              <ol className="ui list">
-                <li className="complete">Load an image</li>
-                <li className="active">Create a sprite</li>
-              </ol>
-              <button className="ui active yellow button">
-                <i className="student icon"></i>
-                Show me
-              </button>
-            </div>
-          </div>
-          <div className="extra content">
-            <div className="ui tiny green progress" data-percent={50} style={{marginBottom: 0}}>
-              <div className="bar" />
-            </div>
-          </div>
-        </div>
-        <div className="ui link card">
-          <div className="content">
-            <i className="right floated paint brush icon" />
-            <div className="header">Draw an animated sprite</div>
-          </div>
-        </div>
-        <div className="ui link card">
-          <div className="content">
-            <i className="right floated code icon" />
-            <div className="header">Load an animated sprite</div>
-          </div>
-        </div>
-        <div className="ui link card">
-          <div className="content">
-            <i className="right floated paint brush icon" />
-            <div className="header">Draw an animated sprite</div>
-          </div>
-        </div>
-        <button className="ui button large fluid"><i className="refresh icon" />Get more tasks</button>
+
+        <QLink to='/learn'>
+          <button className="ui button large fluid"><Icon name='refresh' />Get more tasks</button>
+        </QLink>
       </div>
     )
   }
 })
+
+
+        // <h3 style={{marginTop: 0, marginBottom: 20}}>
+        //   {area.mascotName}'s Quests
+        //   <div className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>19 / 114&nbsp;&nbsp;<i className="check circle icon" style={{marginRight: 0}} /></div>
+        // </h3>
+        // <p style={{fontSize: '1.25em'}}>
+        //   <img src="/images/mascots/bigguy.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
+        //   <span style={{position: 'relative', top: 0}}>Let's figure out how to show an animated sprite in Phaser!</span>
+        // </p>
+        // <div className="ui card complete" style={{opacity: 0.5}}>
+        //   <div className="content">
+        //     <i className="green right floated checkmark icon" />
+        //     <div className="header" style={{marginBottom: 0}}>Load an image</div>
+        //   </div>
+        // </div>
+        // <div className="ui card course">
+        //   <div className="content">
+        //     <i className="right floated code icon" />
+        //     <div className="header">Display an image</div>
+        //     <div className="description">
+        //       <ol className="ui list">
+        //         <li className="complete">Load an image</li>
+        //         <li className="active">Create a sprite</li>
+        //       </ol>
+        //       <button className="ui active yellow button">
+        //         <i className="student icon"></i>
+        //         Show me
+        //       </button>
+        //     </div>
+        //   </div>
+        //   <div className="extra content">
+        //     <div className="ui tiny green progress" data-percent={50} style={{marginBottom: 0}}>
+        //       <div className="bar" />
+        //     </div>
+        //   </div>
+        // </div>
+        // <div className="ui link card">
+        //   <div className="content">
+        //     <i className="right floated paint brush icon" />
+        //     <div className="header">Draw an animated sprite</div>
+        //   </div>
+        // </div>
+        // <div className="ui link card">
+        //   <div className="content">
+        //     <i className="right floated code icon" />
+        //     <div className="header">Load an animated sprite</div>
+        //   </div>
+        // </div>
+        // <div className="ui link card">
+        //   <div className="content">
+        //     <i className="right floated paint brush icon" />
+        //     <div className="header">Draw an animated sprite</div>
+        //   </div>
+        // </div>

@@ -71,6 +71,7 @@ export default LoginRoute = React.createClass({
           email: Meteor.user().emails[0].address
         })
         analytics.track('Logged in')
+        analytics.page('/login')
       }
     })
   }

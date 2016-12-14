@@ -193,7 +193,7 @@ const buildMap = (nodes, key = '') => {
 
     if (!node.$meta)
       node.$meta = {}
-
+  
     node.$meta.key = nextKey
     SkillNodes.$meta.map[nextKey] = node
 
@@ -230,7 +230,11 @@ const resolveUnlocksAndRequires = () => {
 buildMap(SkillNodes)
 resolveUnlocksAndRequires()
 
+
 export default SkillNodes
+
+export const maxSkillsCount = Object.keys(SkillNodes.$meta.map).length
+console.log('maxSkillsCount = ', maxSkillsCount)
 
 // MongoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
 export const makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')
@@ -241,7 +245,6 @@ export const isSkillKeyValid = skillPath => {
   const node = _.get(SkillNodes, dottedSkillKey)
   return node && node.$meta && node.$meta.isLeaf === 1
 }
-
 
 // Note that this can return null for an invalid path request, in which case it will also console.error()
 //   skillPath can be either a slashSeparated or dottedPath.

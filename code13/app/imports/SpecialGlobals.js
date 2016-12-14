@@ -45,7 +45,7 @@ export default SpecialGlobals = {
   },
 
   settings: {
-    settingsSaveDebounceMs: 5 * 1000
+    settingsSaveDebounceMs: 300           // Should be small - less than a second, because there is a race when page nav happens because of getMeteorData() in App.js 
   },
 
   skillsModelTrifecta: {  // See SkillNodes.js to understand these values related to the SKILLS_MODEL_TRIFECTA

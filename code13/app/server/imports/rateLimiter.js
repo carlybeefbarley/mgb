@@ -48,7 +48,7 @@ const methods = {
   "Projects.create": getDefaultMethodSettings,
   "Projects.update": getDefaultMethodSettings,
   "Settings.save": getDefaultMethodSettings,
-  "Skill.grant": getDefaultMethodSettings,
+  "Skill.learn": getDefaultMethodSettings,
   "Skill.forget": getDefaultMethodSettings,
   "Skill.getForUser": getDefaultMethodSettings,
   "User.storeProfileImage": getDefaultMethodSettings,
@@ -67,6 +67,7 @@ const methods = {
 setRules(methods)
 
 // limit all subscriptions to reasonable count
+// LOOKS LIKE A TYPO BUG HERE.. hanler.. @stauzs!?
 const knownSubscriptions = Meteor.default_server.publish_hanlers
 const subscriptions = {}
 for(let i in knownSubscriptions){

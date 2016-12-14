@@ -4,7 +4,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Skills } from '/imports/schemas'
 
 import Helmet from 'react-helmet'
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 
 
 export default SkillTreeRoute = React.createClass({

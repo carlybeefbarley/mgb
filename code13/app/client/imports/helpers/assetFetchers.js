@@ -53,7 +53,7 @@ export const fetchAndObserve = (owner, name, kind, onAssets, onChanges, oldSubsc
 }
 
 // used by maps - to get notifications about image changes
-export const observe = (selector, cb, oldSubscription = null) => {
+export const observe = (selector, onReady, onChange = onReady, oldSubscription = null) => {
   // images in the map won't update
   if (!ALLOW_OBSERVERS) {
     return
@@ -74,15 +74,16 @@ export const observe = (selector, cb, oldSubscription = null) => {
       subscription.observer && subscription.observer.stop()
       // Something internally in the Meteor makes subscription to stop even before it's ready
       // try again.. TODO: debug this further
-      !onReadyCalled && observe(selector, cb, subscription)
+      !onReadyCalled && observe.apply(null, arguments)
     },
     onReady: () => {
       onReadyCalled = true
       subscription.observer = cursor.observeChanges({
         changed: (id, changes) => {
-          cb(id, changes)
+          onChange(id, changes)
         }
       })
+      onReady()
     },
     onError: (...args) => {
       console.log("Error:", name, ...args)
@@ -92,23 +93,78 @@ export const observe = (selector, cb, oldSubscription = null) => {
 }
 
 export const fetchAssetByUri = uri => {
-  var promise = new Promise(function (resolve, reject) {
-    var client = new XMLHttpRequest()
-    client.open('GET', uri)
-    client.send()
-    client.onload = function () {
-      if (this.status >= 200 && this.status < 300)
-        resolve(this.response)  // Performs the function "resolve" when this.status is equal to 2xx
-      else
-        reject(this.statusText) // Performs the function "reject" when this.status is different than 2xx
-    }
-    client.onerror = function () {
-      reject(this.statusText)
-    }
+  return new Promise(function (resolve, reject) {
+    mgbAjax(uri, (err, content) => {
+      err ? reject(err) : resolve(content)
+    })
   })
-  return promise
 }
 
+const ajaxCache = []
+const getFromCache = (uri, etag) => {
+  return ajaxCache.find(c => {return c.etag == etag && c.uri == uri})
+}
+
+const addToCache = (uri, etag, response) => {
+  const cached = getFromCache(uri, etag)
+  if(cached){
+    cached.response = response
+    cached.updated = Date.now()
+  }
+  else{
+    ajaxCache.push({
+      uri, etag, response, updated: Date.now()
+    })
+    ajaxCache.sort((a, b) => {
+      a.updated < b.updated
+    })
+    if(ajaxCache.length > 20)
+      ajaxCache.shift()
+  }
+}
+const removeFromCache = uri => {
+  const index = ajaxCache.findIndex(c => c.uri === uri)
+  if(index > -1){
+    ajaxCache.splice(index, 1)
+  }
+}
+// this function will try to make the best of etag
+// asset param is optional - without it this function will work as normal ajax
+// cached resources should save 100-1000 ms per request (depends on headers roundtrip)
+
+export const mgbAjax = (uri, callback, asset) => {
+  const etag = asset ? genetag(asset) : null
+  if(etag){
+    const cached = getFromCache(uri, etag)
+    if(cached){
+      // remove from stack to maintain async behaviour
+      setTimeout(() => {
+        callback(null, cached.response)
+      }, 0)
+      return
+    }
+  }
+  else{
+    removeFromCache(uri)
+  }
+  const client = new XMLHttpRequest()
+  client.open('GET', uri)
+  client.send()
+  client.onload = function () {
+    // ajax will return 200 even for 304 Not Modified
+    if (this.status >= 200 && this.status < 300) {
+      if(etag && this.getResponseHeader("etag")){
+        addToCache(uri, etag, this.response)
+      }
+      callback(null, this.response)
+    }
+    else
+      callback(this.statusText)
+  }
+  client.onerror = function (e) {
+    callback(e, this.statusText)
+  }
+}
 
 const fetchedAssets = []
 export const getAssetWithContent2 = (id, onReady) => {
@@ -126,63 +182,63 @@ export const getAssetWithContent2 = (id, onReady) => {
     asset: null,
     isReady: false,
     ready(){
-      return this.isReady
+      return ret.isReady
     },
     updateAsset(){
-      let c2 = this.asset.content2
-      const asset = Azzets.findOne(this.asset._id)
+      let c2 = ret.asset.content2
+      const asset = Azzets.findOne(ret.asset._id)
       if(asset){
-        this.asset = asset
-        this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
-        c2 = this.asset.content2
+        ret.asset = asset
+        ret.asset.content2 = ret.asset.content2 ? ret.asset.content2 : c2
+        c2 = ret.asset.content2
 
-        this.etag = genetag(this.asset)
-        this.update()
+        ret.etag = genetag(ret.asset)
+        ret.update()
       }
 
       // we still need latest asset fromDB
       Meteor.subscribe("assets.public.byId", id, {
         onReady: () => {
-          const asset = Azzets.findOne(this.asset._id)
+          const asset = Azzets.findOne(ret.asset._id)
           if(!asset){
             return
           }
-          this.asset = asset
-          this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
+          ret.asset = asset
+          ret.asset.content2 = ret.asset.content2 ? ret.asset.content2 : c2
           // actually etag is not correct here
           // as there is small difference in timestamps
           // saved minimongo data and fetched new differs approx ~ 10ms
-          this.etag = genetag(this.asset)
-          this.update()
+          ret.etag = genetag(ret.asset)
+          ret.update()
         }
       })
 
 
     },
     update(){
-      const c2 = this.asset && this.asset.content2
+      const c2 = ret.asset && ret.asset.content2
       const asset = Azzets.findOne(id)
       if(!asset){
         return
       }
 
       const etag = genetag(asset)
-      if (etag == this.etag) {
-        this.asset = asset
-        this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
+      if (etag == ret.etag) {
+        ret.asset = asset
+        ret.asset.content2 = ret.asset.content2 ? ret.asset.content2 : c2
         return
       }
-      this.etag = etag
-      //this.isReady = false
+      ret.etag = etag
+      //ret.isReady = false
       fetchAssetByUri(asset.c2location || `/api/asset/content2/${id}`, etag)
         .then((data) => {
           const c2 = JSON.parse(data)
-          const oldC2 = this.asset.content2
-          this.isReady = true
+          const oldC2 = ret.asset.content2
+          ret.isReady = true
 
           if (!_.isEqual(c2, oldC2)) {
-            this.asset = asset
-            this.asset.content2 = c2
+            ret.asset = asset
+            ret.asset.content2 = c2
 
             console.log("DOING full update")
             onReady && onReady()

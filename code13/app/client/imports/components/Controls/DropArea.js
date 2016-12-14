@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
@@ -49,7 +49,7 @@ export default class DropArea extends React.Component {
     this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, kind, {
       onStop: () => {
         // repeat subscription if it has been stopped too early
-        if(!hasReadyCalled && this.isUnmounted){
+        if(!hasReadyCalled && !this.isUnmounted){
           this.startSubscription(owner, name)
         }
       },

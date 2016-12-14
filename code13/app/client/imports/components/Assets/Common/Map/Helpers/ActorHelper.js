@@ -7,7 +7,7 @@
 import TileHelper from './TileHelper'
 import ActorValidator from '../../ActorValidator'
 import SpecialGlobals from '/imports/SpecialGlobals'
-import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
+import {AssetKindEnum} from '/imports/schemas/assets'
 
 import {observe} from "/client/imports/helpers/assetFetchers"
 
@@ -342,7 +342,7 @@ export default ActorHelper = {
         dn_ownerName: user,
         name: actorName,
         isDeleted: false,
-        kind: AssetKind.actor
+        kind: AssetKindEnum.actor
       }, (...a) => {
         ActorHelper.clearCache(key)
         onChange(...a)

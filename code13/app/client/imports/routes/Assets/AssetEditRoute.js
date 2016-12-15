@@ -112,7 +112,7 @@ export default AssetEditRoute = React.createClass({
       this._attemptToSendAnyDeferredChanges() 
     } , FLUSH_TIMER_INTERVAL_MS )
 
-    this.getActivitySnapshot = () => this.data.activitySnapshots
+    this.getActivitySnapshots = () => this.data.activitySnapshots
   },
 
 
@@ -341,7 +341,7 @@ export default AssetEditRoute = React.createClass({
             handleContentChange={this.deferContentChange}
             handleMetadataChange={this.handleMetadataChange}
             editDeniedReminder={this.handleEditDeniedReminder}
-            getActivitySnapshots={this.data.getActivitySnapshots}
+            getActivitySnapshots={this.getActivitySnapshots}
             hasUnsentSaves={hasUnsentSaves}
             handleSaveNowRequest={this.handleSaveNowRequest}
           />

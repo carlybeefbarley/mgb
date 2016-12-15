@@ -297,8 +297,8 @@ export default class Joyride extends React.Component {
 
     tmpSteps.forEach((s) => {
       if (!s.selector)
-        s.selector = '#mgbjr-navPanelIcons-home'  // safe default
-      s.position = s.position || 'bottom'
+        s.selector = 'body'  // safe default
+      s.position = s.position || ( s.selector === 'body' ? 'top' : 'bottom')
       newSteps.push(s)
     })
 

@@ -297,8 +297,8 @@ export default class Joyride extends React.Component {
 
     tmpSteps.forEach((s) => {
       if (!s.selector)
-        s.selector = '#mgbjr-navPanelIcons-home'  // safe default
-      s.position = s.position || 'bottom'
+        s.selector = 'body'  // safe default
+      s.position = s.position || ( s.selector === 'body' ? 'top' : 'bottom')
       newSteps.push(s)
     })
 
@@ -801,7 +801,7 @@ export default class Joyride extends React.Component {
           if (currentStep.code)
             buttons.primary = (<span>Insert Code</span>)          
           else if (currentStep.awaitCompletionTag)
-            buttons.primary = (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)
+            buttons.primary = null // (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)
           else
           {
             buttons.primary = locale.last

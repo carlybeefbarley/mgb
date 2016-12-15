@@ -22,6 +22,38 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
 
+
+    {
+      'timestamp': 'Wed Dec 14 2016 17:00:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2310'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'tutorials.defaults',
+          'type': 'improvement',
+          'changeName': 'Tutorial defaultss',
+          'changeSummary': 'Changed default settings for some tutorial fields (selector, position) so tutorials will typcially be less verbose to write.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': 'Edit code font size',
+          'changeSummary': 'Slightly reduced default font size; changed icons for font size change.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Wed Dec 14 2016 00:34:23 GMT-0800 (PST)',
 
@@ -42,7 +74,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'changeName': 'Skills flexPanel',
           'changeSummary': 'There is a new FlexPanel that shows a summary skill map for the logged in user. It is hidden for new users but can be enabled using the feature levels (options) flex panel.',
           'otherUrls': [ ]
-        },            
+        },
         {
           'featureTag': 'skills.code',
           'type': 'improvement',

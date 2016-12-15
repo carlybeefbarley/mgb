@@ -305,14 +305,16 @@ export default class JoyrideTooltip extends React.Component {
         <div className="joyride-tooltip__footer">
           {output.skip}
           {output.secondary}
-          <a
-            href="#"
-            className="joyride-tooltip__button joyride-tooltip__button--primary"
-            style={styles.buttons.primary}
-            data-type={['single', 'casual'].indexOf(type) > -1 ? 'close' : 'next'}
-            onClick={onClick}>
-            {buttons.primary}
-          </a>
+          { buttons.primary && 
+            <a
+              href="#"
+              className="joyride-tooltip__button joyride-tooltip__button--primary"
+              style={styles.buttons.primary}
+              data-type={['single', 'casual'].indexOf(type) > -1 ? 'close' : 'next'}
+              onClick={onClick}>
+              {buttons.primary}
+            </a>
+          }
         </div>
       </div>
     );

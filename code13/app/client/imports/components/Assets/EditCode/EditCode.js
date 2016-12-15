@@ -127,7 +127,7 @@ export default class EditCode extends React.Component {
 
 
   handleJsBeautify() {
-    let newValue = js_beautify(this._currentCodemirrorValue, {indent_size: 2})
+    let newValue = js_beautify(this._currentCodemirrorValue, { indent_size: 2 })
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue
     let newC2 = {src: newValue}
@@ -233,7 +233,7 @@ export default class EditCode extends React.Component {
       },
       //lint: true,   // TODO - use eslint instead? Something like jssc?
       autofocus: true,
-      highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
+      highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true }
     }
 
     this.codeMirror = CodeMirror.fromTextArea(textareaNode, codemirrorOptions)
@@ -267,11 +267,13 @@ export default class EditCode extends React.Component {
     }
     $(window).on("resize", this.edResizeHandler)
     this.edResizeHandler()
-
     this.updateDocName()
+    this.doHandleFontSizeDelta(0, { force: true } ) 
 
     this.isActive = true
   }
+
+
   startTernServer() {
     // Tern setup
     var myTernConfig = {
@@ -467,7 +469,9 @@ export default class EditCode extends React.Component {
   }
 
 
-  doHandleFontSizeDelta(delta) {   // delta should be -1 or +1
+
+  // opts can be    force = true ... force a font change even if delta =0 
+  doHandleFontSizeDelta(delta, opts = {} ) {   // delta should be -1 or +1
     const fontSizes = [
       {fontSize: '8.5px', lineHeight: '10px'},    //  0
       {fontSize: '9px',   lineHeight: '11px'},    //  1
@@ -482,6 +486,7 @@ export default class EditCode extends React.Component {
       {fontSize: '15px',  lineHeight: '19px'},    // 10
       {fontSize: '16px',  lineHeight: '20px'}     // 11
     ]
+
     if (this.fontSizeSettingIndex === undefined)
       this.fontSizeSettingIndex = 8
 
@@ -494,7 +499,7 @@ export default class EditCode extends React.Component {
     else if (delta < 0 && this.fontSizeSettingIndex < fontSizes.length - 1)
       validDelta = 1
 
-    if (Math.abs(validDelta) !== 0)   // Watch out for stupid -0 and NaN
+    if (Math.abs(validDelta) !== 0 || opts.force)   // Watch out for stupid -0 and NaN
     {
       this.fontSizeSettingIndex += validDelta
       var nfs = fontSizes[this.fontSizeSettingIndex]    // nfs:new font size

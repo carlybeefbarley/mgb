@@ -459,17 +459,9 @@ export default class ObjectLayer extends AbstractLayer {
   }
 
   /* DRAWING methods */
-  queueDraw (timeout) {
-    if (this.nextDraw - this.props.now > timeout) {
-      this.nextDraw = this.props.now + timeout
-    }
-  }
-  draw () {
-    this.isDirty = true
-  }
   _draw (now) {
     this.now = now
-    if (!(this.isDirty || this.nextDraw <= now)) {
+    if (!(this.nextDraw <= now)) {
       return
     }
 
@@ -530,37 +522,14 @@ export default class ObjectLayer extends AbstractLayer {
     const flipY = (obj.gid & FLIPPED_VERTICALLY_FLAG ? -1 : 1)
     let pal = this.props.palette[gid]
     // images might be not loaded
-    if (!pal) {
+    if (!pal || !pal.image) {
       return
     }
 
-    let tileId = pal.gid - (pal.ts.firstgid)
-    const tileInfo = pal.ts.tiles ? pal.ts.tiles[tileId] : null
-    // TODO: this repeats from TileMapLayer - clean up and create separate function get_GID or similar
-    if (tileInfo) {
-      if (tileInfo.animation) {
-        const delta = this.now - this.props.startTime
-        let tot = 0
-        let anim
-        for (let i = 0; i < tileInfo.animation.length; i++) {
-          tot += tileInfo.animation[i].duration
-        }
-        const relDelta = delta % tot
-        tot = 0
-        for (let i = 0; i < tileInfo.animation.length; i++) {
-          anim = tileInfo.animation[i]
-          tot += anim.duration
-          if (tot >= relDelta) {
-            if (anim.tileid != tileId) {
-              let ngid = anim.tileid + pal.ts.firstgid
-              this.queueDraw(anim.duration - (tot - relDelta))
-              pal = this.props.palette[ngid]
-            }
-            break
-          }
-        }
-        this.queueDraw(anim.duration - (tot - relDelta))
-      }
+    const anInfo = TileHelper.getAnimationTile(pal, this.props.palette)
+    if(anInfo){
+      pal = anInfo.pal
+      anInfo.nextUpdate && this.queueDraw(anInfo.nextUpdate)
     }
 
     const cam = this.camera

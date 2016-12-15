@@ -130,9 +130,15 @@ export default class AbstractLayer extends React.Component {
     }
   }
 
-  draw () {
-    this.isDirty = true
+  queueDraw (timeout) {
+    if (this.nextDraw - Date.now() > timeout) {
+      this.nextDraw = Date.now() + timeout
+    }
   }
+  draw () {
+    this.nextDraw = Date.now()
+  }
+
   // abstract
   _draw (timestamp) {}
 

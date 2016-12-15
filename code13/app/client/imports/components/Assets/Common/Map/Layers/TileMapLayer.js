@@ -275,7 +275,7 @@ export default class TileMapLayer extends AbstractLayer {
   drawTiles () {
     this.draw()
   }
-  queueDrawTiles (timeout) {
+  queueDraw (timeout) {
     if (this.nextDraw - Date.now() > timeout) {
       this.nextDraw = Date.now() + timeout
     }
@@ -358,6 +358,7 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawSelection()
     this.drawSelection(true)
   }
+
   drawTile (pal, pos, spacing = 0 , clear = false) {
     if(!pal.image){
       return
@@ -365,39 +366,10 @@ export default class TileMapLayer extends AbstractLayer {
     const props = this.props
 
     // special tileset cases - currently only animation
-    if (pal.ts.tiles) {
-      let tileId = pal.gid - (pal.ts.firstgid)
-      const tileInfo = pal.ts.tiles[tileId]
-      if (tileInfo) {
-        if (tileInfo.animation) {
-          const delta = this.now - this.props.startTime
-          let tot = 0
-          let anim
-          /* e.g.
-           duration: 200
-           tileid: 11
-           */
-          for (let i = 0; i < tileInfo.animation.length; i++) {
-            tot += tileInfo.animation[i].duration
-          }
-          const relDelta = delta % tot
-          tot = 0
-          for (let i = 0; i < tileInfo.animation.length; i++) {
-            anim = tileInfo.animation[i]
-            tot += anim.duration
-            if (tot >= relDelta) {
-              if (anim.tileid != tileId) {
-                let gid = anim.tileid + pal.ts.firstgid
-                this.queueDrawTiles(anim.duration - (tot - relDelta))
-                pal = props.palette[gid]
-                break
-              }
-              break
-            }
-          }
-          this.queueDrawTiles(anim.duration - (tot - relDelta))
-        }
-      }
+    const anInfo = TileHelper.getAnimationTile(pal, this.props.palette)
+    if(anInfo){
+      pal = anInfo.pal
+      anInfo.nextUpdate && this.queueDraw(anInfo.nextUpdate)
     }
     const camera = this.camera
 

@@ -13,6 +13,52 @@ const TileHelper = {
   FLIPPED_VERTICALLY_FLAG: 0x40000000,
   FLIPPED_DIAGONALLY_FLAG: 0x20000000,
 
+  getAnimationTile: (pal, palette) => {
+    if (!pal.ts.tiles) {
+      return false
+    }
+
+    let tileId = pal.gid - (pal.ts.firstgid)
+    const tileInfo = pal.ts.tiles[tileId]
+    if (!tileInfo || !tileInfo.animation) {
+      return false
+    }
+
+    const retval = {
+      pal: pal,
+      nextUpdate: 0
+    }
+    const delta = Date.now()
+    let tot = 0
+    let anim
+    /* e.g.
+     duration: 200
+     tileid: 11
+     */
+    for (let i = 0; i < tileInfo.animation.length; i++) {
+      tot += tileInfo.animation[i].duration
+    }
+    const relDelta = delta % tot
+    tot = 0
+    for (let i = 0; i < tileInfo.animation.length; i++) {
+      anim = tileInfo.animation[i]
+      tot += anim.duration
+      if (tot >= relDelta) {
+        if (anim.tileid != tileId) {
+          let gid = anim.tileid + pal.ts.firstgid
+          retval.nextUpdate = anim.duration - (tot - relDelta)
+          retval.pal = palette[gid]
+          break
+        }
+        break
+      }
+    }
+    if(!retval.nextUpdate){
+      retval.nextUpdate = anim.duration - (tot - relDelta)
+    }
+    return retval
+    //this.queueDrawTiles(anim.duration - (tot - relDelta))
+  },
   // TODO: take in to account margins and paddings
   getTilePos: (id, widthInTiles, tilewidth, tileheight, ret = {x: 0, y: 0}) => {
     ret.x = (id % widthInTiles) * tilewidth

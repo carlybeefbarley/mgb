@@ -1485,7 +1485,7 @@ export default class EditCode extends React.Component {
         {
           name:  'toolCommentFade',
           label: 'Fade Comments',
-          icon:  'sticky note outline',
+          icon:  'grey sticky note',
           tooltip: 'Fade Comments so you can focus on code',
           disabled: false,
           level:    3,
@@ -1499,6 +1499,15 @@ export default class EditCode extends React.Component {
           disabled: false,
           level:    3,
           shortcut: 'Ctrl+Alt+Shift+F'
+        },
+        {
+          name:  'handleJsBeautify',
+          label: 'Beautify Code',
+          icon:  'leaf',
+          tooltip: 'Beautify: Auto-format your code',
+          disabled: false,
+          level:    3,
+          shortcut: 'Ctrl+B'
         }
       ]
     }
@@ -1524,7 +1533,7 @@ export default class EditCode extends React.Component {
         shortcut: 'Ctrl+T'
       })
     }
-    else
+    else    // code...
     {
       config.buttons.unshift( {
         name:     'handleStop',

@@ -6,6 +6,8 @@ import {genetag} from '/imports/helpers/generators'
 const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
+const MAX_ASSET_CACHE_LENGTH = 500
+
 
 // used by maps - to get notifications about image changes
 export const observe = (selector, onReady, onChange = onReady, oldSubscription = null) => {
@@ -47,19 +49,19 @@ export const observe = (selector, onReady, onChange = onReady, oldSubscription =
   return subscription
 }
 
-export const fetchAssetByUri = uri => {
+export const fetchAssetByUri = (uri, allowCache) => {
   return new Promise(function (resolve, reject) {
     mgbAjax(uri, (err, content) => {
       err ? reject(err) : resolve(content)
-    })
+    }, null, allowCache)
   })
 }
 
 
-const MAX_ASSET_CACHE_LENGTH = 100
+
 const ajaxCache = []
-const getFromCache = (uri, etag) => {
-  return ajaxCache.find(c => {return c.etag == etag && c.uri == uri})
+const getFromCache = (uri, etag = null) => {
+  return ajaxCache.find(c => {return (c.uri == uri && (etag ? c.etag == etag : true)) })
 }
 
 const addToCache = (uri, etag, response) => {
@@ -87,12 +89,22 @@ const removeFromCache = uri => {
 // asset param is optional - without it this function will work as normal ajax
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
 
-export const mgbAjax = (uri, callback, asset) => {
-  const etag = asset ? genetag(asset) : null
+export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
+  if(pullFromCache === true){
+    const cached = getFromCache(uri)
+    if(cached){
+      // remove from stack to maintain async behaviour
+      setTimeout(() => {
+        console.log("From cache")
+        callback(null, cached.response)
+      }, 0)
+      return
+    }
+  }
+  const etag = typeof asset === "object" ? genetag(asset) : null
   if(etag){
     const cached = getFromCache(uri, etag)
     if(cached){
-      console.log("From cache:", uri)
       // remove from stack to maintain async behaviour
       setTimeout(() => {
         callback(null, cached.response)

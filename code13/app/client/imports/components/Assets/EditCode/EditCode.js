@@ -949,7 +949,7 @@ export default class EditCode extends React.Component {
     var ed = this.codeMirror
     ed.clearGutter("mgb-cm-user-markers")
 
-    let acts = this.props.activitySnapshots
+    let acts = this.props.getActivitySnapshots()
     _.each(acts, act => {
       var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
       if (currUserId !== act.byUserId) {

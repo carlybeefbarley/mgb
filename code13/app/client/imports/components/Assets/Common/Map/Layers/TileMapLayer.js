@@ -887,7 +887,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       }
       if (pos.x > this.options.width - 1) {
         this.increaseSizeToRight(pos)
-        edit[EditModes.stamp].call(this, e, up, false)
+        edit[EditModes.stamp].call(this, e, true, false)
         return
       }
       if (pos.y > this.options.height - 1) {
@@ -937,7 +937,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     }
     if (tpos.x > this.options.width - 1) {
       this.increaseSizeToRight(tpos)
-      edit[EditModes.stamp].call(this, e, up, false)
+      edit[EditModes.stamp].call(this, e, true, false)
       return
     }
     if (tpos.y > this.options.height - 1) {

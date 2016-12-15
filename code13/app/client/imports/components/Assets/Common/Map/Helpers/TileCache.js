@@ -1,6 +1,6 @@
 // cache stores all loaded images and creates tile map for further reference
 import TileHelper from './TileHelper'
-import {observe} from "/client/imports/helpers/assetFetchers"
+import {observe} from '/client/imports/helpers/assetFetchers'
 import {AssetKindEnum} from '/imports/schemas/assets'
 
 export default class TileCache {

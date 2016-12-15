@@ -71,6 +71,6 @@ setRules(methods)
 const knownSubscriptions = Meteor.default_server.publish_handlers
 const subscriptions = {}
 for(let i in knownSubscriptions){
-  subscriptions[i] = getDefaultSubscriptionSettings.bind(i)
+  subscriptions[i] = getDefaultSubscriptionSettings
 }
 setRules(subscriptions)

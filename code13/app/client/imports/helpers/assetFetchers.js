@@ -7,85 +7,38 @@ const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 
-// getAssetWithContent2
-// used by source tools and actor map
-export const fetchAndObserve = (owner, name, kind, onAssets, onChanges, oldSubscription = null) => {
-  const sel = {dn_ownerName: owner, name: name, isDeleted: false}
-  // kind is not always known
-  if(kind)
-    sel.kind = kind
-
-
-  const cursor = Azzets.find(sel)
-  // from now on only observe asset and update asset on changes only
-  const subscription = oldSubscription || {
-      observer: null,
-      getAssets: () => cursor.fetch(),
-      subscription: null
-    }
-
-  let onReadyCalled = false
-  subscription.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, kind, {
-    onStop: () => {
-
-      subscription.observer && subscription.observer.stop()
-      // Something internally in the Meteor makes subscription to stop even before it's ready
-      // try again.. TODO: debug this further
-      !onReadyCalled && fetchAndObserve(owner, name, kind, onAssets, onChanges, subscription)
-    },
-    onReady: () => {
-      onReadyCalled = true
-
-      if (ALLOW_OBSERVERS && onChanges) {
-        subscription.observer = cursor.observeChanges({
-          changed: (id, changes) => {
-            onChanges(id, changes)
-          }
-        })
-      }
-      onAssets(null, cursor.fetch())
-    },
-    onError: (...args) => {
-      console.log("Error:", name, ...args)
-      onAssets(args)
-    }
-  })
-
-  return subscription
-}
-
 // used by maps - to get notifications about image changes
 export const observe = (selector, onReady, onChange = onReady, oldSubscription = null) => {
   // images in the map won't update
-  if (!ALLOW_OBSERVERS) {
-    return
-  }
   const cursor = PartialAzzets.find(selector)
   // from now on only observe asset and update tern on changes only
-
+  let onReadyCalled = false
   const subscription = oldSubscription || {
       observer: null,
       getAssets: () => cursor.fetch(),
-      subscription: null
+      subscription: null,
+      ready: () => onReadyCalled
     }
 
-  let onReadyCalled = false
+
   subscription.subscription = Meteor.subscribe("assets.public.partial.bySelector", selector, {
     onStop: () => {
 
       subscription.observer && subscription.observer.stop()
       // Something internally in the Meteor makes subscription to stop even before it's ready
       // try again.. TODO: debug this further
-      !onReadyCalled && observe.apply(null, arguments)
+      !onReadyCalled && observe(selector, onReady, onChange, subscription)
     },
     onReady: () => {
       onReadyCalled = true
-      subscription.observer = cursor.observeChanges({
-        changed: (id, changes) => {
-          onChange(id, changes)
-        }
-      })
-      onReady()
+      if (ALLOW_OBSERVERS) {
+        subscription.observer = cursor.observeChanges({
+          changed: (id, changes) => {
+            onChange(id, changes)
+          }
+        })
+      }
+      onReady && onReady()
     },
     onError: (...args) => {
       console.log("Error:", name, ...args)
@@ -102,6 +55,8 @@ export const fetchAssetByUri = uri => {
   })
 }
 
+
+const MAX_ASSET_CACHE_LENGTH = 100
 const ajaxCache = []
 const getFromCache = (uri, etag) => {
   return ajaxCache.find(c => {return c.etag == etag && c.uri == uri})
@@ -117,10 +72,8 @@ const addToCache = (uri, etag, response) => {
     ajaxCache.push({
       uri, etag, response, updated: Date.now()
     })
-    ajaxCache.sort((a, b) => {
-      a.updated < b.updated
-    })
-    if(ajaxCache.length > 20)
+    ajaxCache.sort((a, b) => a.updated < b.updated)
+    if(ajaxCache.length > MAX_ASSET_CACHE_LENGTH)
       ajaxCache.shift()
   }
 }
@@ -139,6 +92,7 @@ export const mgbAjax = (uri, callback, asset) => {
   if(etag){
     const cached = getFromCache(uri, etag)
     if(cached){
+      console.log("From cache:", uri)
       // remove from stack to maintain async behaviour
       setTimeout(() => {
         callback(null, cached.response)
@@ -214,8 +168,6 @@ export const getAssetWithContent2 = (id, onReady) => {
           ret.update()
         }
       })
-
-
     },
     update(){
       const c2 = ret.asset && ret.asset.content2
@@ -232,8 +184,7 @@ export const getAssetWithContent2 = (id, onReady) => {
       }
       ret.etag = etag
       //ret.isReady = false
-      fetchAssetByUri(asset.c2location || `/api/asset/content2/${id}`, etag)
-        .then((data) => {
+      mgbAjax(asset.c2location || `/api/asset/content2/${id}`, (err, data) => {
           const c2 = JSON.parse(data)
           const oldC2 = ret.asset.content2
           ret.isReady = true
@@ -248,7 +199,7 @@ export const getAssetWithContent2 = (id, onReady) => {
           else{
             console.log("Sources are equal.. preventing update!")
           }
-        })
+        }, asset)
     }
   }
   fetchedAssets.push(ret)

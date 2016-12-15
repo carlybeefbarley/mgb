@@ -200,7 +200,8 @@ export default class EditMap extends React.Component {
   }
 
   componentWillReceiveProps(newp){
-    if(newp.asset.content2) {
+    // sometimes we are getting empty c2 on new maps
+    if(newp.asset.content2 && Object.keys(newp.asset.content2).length ) {
       this.setState({isLoading: true})
       // or new Cache - if immutable is preferred - and need to force full cache update
       this.cache.update(newp.asset.content2, () => {
@@ -307,9 +308,9 @@ export default class EditMap extends React.Component {
       return
     }
     // isn't it too late to save for undo?
-    if(!skipUndo && !_.isEqual(this.lastSave, data)){
+    /*if(!skipUndo && !_.isEqual(this.lastSave, data)){
       this.saveForUndo(reason)
-    }
+    }*/
     // make sure we have thumbnail
     if(!thumbnail && this.refs.map){
       this.refs.map.generatePreviewAndSaveIt()

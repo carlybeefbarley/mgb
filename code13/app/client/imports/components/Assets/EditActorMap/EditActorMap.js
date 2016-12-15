@@ -1,5 +1,3 @@
-
-
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ActorMapArea from './ActorMapArea.js'
@@ -61,10 +59,15 @@ export default class EditActorMap extends EditMap {
       })
     })
   }
+  createNewMap(){
 
+  }
   componentWillReceiveProps(newp){
-    // ignore older assets
-    if(_.isEqual(this.lastSave, newp.asset.content2)){
+    if(!newp.asset.content2){
+      return
+    }
+    // ignore older assets - and ignore empty content2 (debug - why sometimes we get empty c2)
+    if(_.isEqual(this.lastSave, newp.asset.content2) || !Object.keys(newp.asset.content2).length ){
       this.setState({isLoading: true})
       this.cache && this.cache.isReady() && this.cache.update(this.mgb_content2, () => {
         this.setState({isLoading: false})

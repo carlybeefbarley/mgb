@@ -137,10 +137,10 @@ Meteor.publish('assets.public.owner.name', function(owner, name, kind) {
   return Azzets.find(sel)
 })
 
+
 //
 //    PROJECTS
 //
-
 
 // Return one project. This is a good subscription for ProjectOverviewRoute
 Meteor.publish('projects.forProjectId', function(projectId) {

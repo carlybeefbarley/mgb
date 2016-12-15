@@ -148,7 +148,7 @@ export default class TileCache {
       }
     }
 
-    this.observers[src] = observe(toObserve, (id, changes) => {
+    this.observers[src] = observe(toObserve, null, (id, changes) => {
       // prevent cache - as browser will ignore etag in this case
       loadImage(changes.updatedAt.getTime())
     })

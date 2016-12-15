@@ -34,8 +34,14 @@ export default AssetEdit = React.createClass({
     activitySnapshots:    PropTypes.array,              // can be null whilst loading
     hasUnsentSaves:       PropTypes.bool,               // True if saves are unsent. However, if sent, then return can be pending - see asset.isUnconfirmedSave
     handleSaveNowRequest: PropTypes.func                // Asset editor can do this to request a flush now. For example to play a game in the editor
-  },  
+  },
 
+  // sometimes in the AssetEditRoute getMeteorData is calling forceUpdate without any real reason
+  shouldComponentUpdate: function(nextProps, nextState){
+    const retVal = !(_.isEqual(this.props.asset.content2, nextProps.asset.content2) && _.isEqual(this.state, nextState))
+    retVal ? console.log("ComponentWill Update!") : console.log("Skipping Edit Update")
+    return retVal
+  },
   getEditorForAsset: function(asset) {
     const Element = editElementsForKind[asset.kind] || EditUnknown
     return <Element {...this.props}/>   

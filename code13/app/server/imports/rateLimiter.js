@@ -15,7 +15,7 @@ const getDefaultMethodSettings = name => {return {
     type: "method",
     connectionId: (con) => true // limit per connection
   },
-  limit: 20, // 5 times
+  limit: 100, // 5 times
   interval: 1000 // per 1000 ms
 }}
 const getDefaultSubscriptionSettings = name => {return {
@@ -24,7 +24,7 @@ const getDefaultSubscriptionSettings = name => {return {
     type: "subscription",
     connectionId: (con) => true // limit per connection
   },
-  limit: 20, // 5 times
+  limit: 100, // 5 times
   interval: 1000 // per 1000 ms
 }}
 const setRules = (rules) => {
@@ -68,10 +68,9 @@ setRules(methods)
 
 // limit all subscriptions to reasonable count
 // LOOKS LIKE A TYPO BUG HERE.. hanler.. @stauzs!?
-const knownSubscriptions = Meteor.default_server.publish_hanlers
+const knownSubscriptions = Meteor.default_server.publish_handlers
 const subscriptions = {}
 for(let i in knownSubscriptions){
-  subscriptions[i] = getDefaultSubscriptionSettings(i)
+  subscriptions[i] = getDefaultSubscriptionSettings.bind(i)
 }
-
 setRules(subscriptions)

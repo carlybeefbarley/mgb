@@ -2,7 +2,12 @@ import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
 import { genAPIreturn } from '/imports/helpers/generators'
 
-// get music by id
+RestApi.addRoute('asset/actor/:id', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne(this.urlParams.id)
+    return genAPIreturn(this, asset, asset ? asset.content2 : null)
+  }
+})
 RestApi.addRoute('asset/actor/:user/:name', {authRequired: false}, {
   get: function () {
     const asset = Azzets.findOne({

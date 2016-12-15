@@ -102,14 +102,15 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
       }
     })
 
+    const tilecount = c2.frameData ? c2.frameData.length : 1
     return genAPIreturn(this, asset, {
       image: "/api/asset/tileset/" + this.urlParams.id,
       // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
       //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
       name:        asset.name,
       imageheight: c2.rows ? c2.rows*c2.height : c2.height,
-      imagewidth:  c2.cols ? c2.cols*c2.width : c2.width * c2.frameData.length,
-      tilecount:   c2.frameData.length,
+      imagewidth:  c2.cols ? c2.cols*c2.width : c2.width * tilecount,
+      tilecount:   tilecount,
       tileheight:  c2.height,
       tilewidth:   c2.width,
       tiles

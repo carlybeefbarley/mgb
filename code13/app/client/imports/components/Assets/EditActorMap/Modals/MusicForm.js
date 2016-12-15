@@ -8,6 +8,9 @@ export default class ModalForm extends BaseForm {
     return this.props.asset
   }
   render(){
+    if(!this.data){
+      return null
+    }
     const musicOptions = {
       options: MgbMusic.musicList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ),
       title: "Predefined music"

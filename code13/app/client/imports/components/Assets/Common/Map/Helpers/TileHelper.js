@@ -13,7 +13,7 @@ const TileHelper = {
   FLIPPED_VERTICALLY_FLAG: 0x40000000,
   FLIPPED_DIAGONALLY_FLAG: 0x20000000,
 
-  getAnimationTile: (pal, palette) => {
+  getAnimationTile: (pal, palette, now = Date.now()) => {
     if (!pal.ts.tiles) {
       return false
     }
@@ -28,7 +28,7 @@ const TileHelper = {
       pal: pal,
       nextUpdate: 0
     }
-    const delta = Date.now()
+    const delta = now
     let tot = 0
     let anim
     /* e.g.
@@ -46,16 +46,16 @@ const TileHelper = {
       if (tot >= relDelta) {
         if (anim.tileid != tileId) {
           let gid = anim.tileid + pal.ts.firstgid
-          retval.nextUpdate = anim.duration - (tot - relDelta)
+          retval.nextUpdate = tot - relDelta
           retval.pal = palette[gid]
           break
         }
         break
       }
     }
-    if(!retval.nextUpdate){
+    /*if(!retval.nextUpdate){
       retval.nextUpdate = anim.duration - (tot - relDelta)
-    }
+    }*/
     return retval
     //this.queueDrawTiles(anim.duration - (tot - relDelta))
   },

@@ -179,9 +179,9 @@ export default class EditGraphic extends React.Component {
   }
 
 
-  componentWillReceiveProps(p){
+  /*componentWillReceiveProps(p){
     console.log("New Props:", p)
-  }
+  }*/
 
   // there are some missing params for old assets being added here
   fixingOldAssets() {

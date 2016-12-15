@@ -270,26 +270,22 @@ export default class TileMapLayer extends AbstractLayer {
   // large maps are still slow on movement..
   // dirty rectalngles (in our case dirty tiles :) are great for super fast map movement
   draw () {
-    this.nextDraw = Date.now()
+    this.nextDraw = this.now
   }
   drawTiles () {
     this.draw()
   }
-  queueDraw (timeout) {
-    if (this.nextDraw - Date.now() > timeout) {
-      this.nextDraw = Date.now() + timeout
-    }
-  }
 
-  _draw (now) {
-    if (!(this.nextDraw <= now)) {
+  _draw (now, force = false) {
+    this.now = now
+    if ( !force && this.nextDraw > now ) {
       return
     }
+
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height)
     if(!this.isVisible){
       return
     }
-    this.now = now
     const ts = this.props.data
     const d = ts.data
     const palette = this.props.palette
@@ -301,7 +297,7 @@ export default class TileMapLayer extends AbstractLayer {
       return
     }
 
-    this.nextDraw = now + this.drawInterval
+    this.queueDraw(this.drawInterval)
 
     const widthInTiles = Math.ceil((this.ctx.canvas.width / camera.zoom) / mapData.tilewidth)
     const heightInTiles = Math.ceil((this.ctx.canvas.height / camera.zoom) / mapData.tileheight)
@@ -369,7 +365,7 @@ export default class TileMapLayer extends AbstractLayer {
     const anInfo = TileHelper.getAnimationTile(pal, this.props.palette)
     if(anInfo){
       pal = anInfo.pal
-      anInfo.nextUpdate && this.queueDraw(anInfo.nextUpdate)
+      this.queueDraw(anInfo.nextUpdate)
     }
     const camera = this.camera
 

@@ -559,7 +559,12 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove (e) {
-    if (this.props.isPlaying || this.props.isLoading || !this.isMouseDown)
+    if(this.props.isPlaying || this.props.isLoading){
+      return
+    }
+
+    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
+    if (!this.isMouseDown)
       return
 
 
@@ -580,7 +585,7 @@ export default class MapArea extends React.Component {
     else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4 || (e.buttons == 1 && editMode === EditModes.view)){
       this.moveCamera(e)
     }
-    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
+
   }
 
   handleMouseUp (e) {
@@ -721,7 +726,7 @@ export default class MapArea extends React.Component {
   drawLayers () {
     const now = Date.now()
     for (let i = 0; i < this.layers.length; i++)
-      this.layers[i]._draw(now)
+      this.layers[i]._draw(Date.now(), i == this.props.activeLayer)
   }
   /* endof update stuff */
 

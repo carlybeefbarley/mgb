@@ -66,13 +66,15 @@ export default AssetEdit = React.createClass({
   },
 
   // sometimes in the AssetEditRoute getMeteorData is calling forceUpdate without any real reason - there were activity snapshots
-  /*shouldComponentUpdate: function(nextProps, nextState){
-    console.log(diff(this.props, nextProps))
+  shouldComponentUpdate: function(nextProps, nextState){
+    const d = diff(this.props, nextProps)
+    console.log(d)
+    return Object.keys(d).length > 0
 
     const retVal = !(_.isEqual(this.props.asset.content2, nextProps.asset.content2))
     retVal ? console.log("ComponentWill Update!") : console.log("Skipping Edit Update")
     return retVal
-  },*/
+  },
   getEditorForAsset: function(asset) {
     const Element = editElementsForKind[asset.kind] || EditUnknown
     return <Element {...this.props}/>   

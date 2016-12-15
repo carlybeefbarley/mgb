@@ -459,9 +459,9 @@ export default class ObjectLayer extends AbstractLayer {
   }
 
   /* DRAWING methods */
-  _draw (now) {
+  _draw (now, force = false) {
     this.now = now
-    if (!(this.nextDraw <= now)) {
+    if ( !force && this.nextDraw > now ) {
       return
     }
 
@@ -469,9 +469,8 @@ export default class ObjectLayer extends AbstractLayer {
     if(!this.isVisible){
       return
     }
-    this.isDirty = false
     // force refresh after a while
-    this.nextDraw = now + this.drawInterval
+    this.queueDraw(this.drawInterval)
 
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height)
     // TODO(stauzs): Don't loop through all objects.. use quadtree here some day
@@ -526,10 +525,10 @@ export default class ObjectLayer extends AbstractLayer {
       return
     }
 
-    const anInfo = TileHelper.getAnimationTile(pal, this.props.palette)
+    const anInfo = TileHelper.getAnimationTile(pal, this.props.palette, this.now)
     if(anInfo){
       pal = anInfo.pal
-      anInfo.nextUpdate && this.queueDraw(anInfo.nextUpdate)
+      this.queueDraw(anInfo.nextUpdate)
     }
 
     const cam = this.camera

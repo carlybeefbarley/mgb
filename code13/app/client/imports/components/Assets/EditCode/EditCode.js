@@ -469,21 +469,21 @@ export default class EditCode extends React.Component {
 
   doHandleFontSizeDelta(delta) {   // delta should be -1 or +1
     const fontSizes = [
-      {fontSize: '8.5px', lineHeight: '10px'},
-      {fontSize: '9px', lineHeight: '11px'},
-      {fontSize: '9px', lineHeight: '12px'},
-      {fontSize: '10px', lineHeight: '12px'},
-      {fontSize: '10px', lineHeight: '13px'},
-      {fontSize: '10px', lineHeight: '14px'},
-      {fontSize: '11px', lineHeight: '15px'},
-      {fontSize: '12px', lineHeight: '16px'},
-      {fontSize: '13px', lineHeight: '17px'},
-      {fontSize: '14px', lineHeight: '19px'},
-      {fontSize: '15px', lineHeight: '19px'},
-      {fontSize: '16px', lineHeight: '20px'}
+      {fontSize: '8.5px', lineHeight: '10px'},    //  0
+      {fontSize: '9px',   lineHeight: '11px'},    //  1
+      {fontSize: '9px',   lineHeight: '12px'},    //  2
+      {fontSize: '10px',  lineHeight: '12px'},    //  3
+      {fontSize: '10px',  lineHeight: '13px'},    //  4
+      {fontSize: '10px',  lineHeight: '14px'},    //  5
+      {fontSize: '11px',  lineHeight: '15px'},    //  6
+      {fontSize: '12px',  lineHeight: '16px'},    //  7
+      {fontSize: '13px',  lineHeight: '17px'},    //  8
+      {fontSize: '14px',  lineHeight: '19px'},    //  9
+      {fontSize: '15px',  lineHeight: '19px'},    // 10
+      {fontSize: '16px',  lineHeight: '20px'}     // 11
     ]
     if (this.fontSizeSettingIndex === undefined)
-      this.fontSizeSettingIndex = 9
+      this.fontSizeSettingIndex = 8
 
     // Changing font size - http://codemirror.977696.n3.nabble.com/Changing-font-quot-on-the-go-quot-td4026016.html 
     let editor = this.codeMirror
@@ -1460,22 +1460,22 @@ export default class EditCode extends React.Component {
           shortcut: 'Ctrl+I'
         },
         {
-          name:  'toolZoomIn',
-          label: 'Zoom In',
-          icon:  'zoom in',
-          tooltip: 'Larger text',
-          disabled: false,
-          level:    2,
-          shortcut: 'Ctrl+L'
-        },
-        {
           name:  'toolZoomOut',
-          label: 'Zoom Out',
-          icon:  'zoom out',
+          label: 'Small Font',
+          icon:  'font',
           tooltip: 'Smaller Text',
           disabled: false,
           level:    2,
           shortcut: 'Ctrl+P'
+        },
+        {
+          name:  'toolZoomIn',
+          label: 'Large font',
+          icon:  'large font',
+          tooltip: 'Larger text',
+          disabled: false,
+          level:    2,
+          shortcut: 'Ctrl+L'
         },
         {
           name:  'toolCommentFade',

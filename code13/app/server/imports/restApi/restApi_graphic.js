@@ -82,28 +82,29 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
       tiles:       Object
       tilewidth:   64
      */
-    const c2 = asset.content2
-    const tiles = {}
-    c2.animations && c2.animations.forEach((anim) => {
-      const animation = []
-      const duration = (1000 / anim.fps)  // round?
-      anim.frames.forEach((frame) => {
-        animation.push({
-          duration,
-          tileid: frame
+    return genAPIreturn(this, asset, () => {
+      const tilecount = c2.frameData ? c2.frameData.length : 1
+      const c2 = asset.content2
+      const tiles = {}
+      c2.animations && c2.animations.forEach((anim) => {
+        const animation = []
+        const duration = (1000 / anim.fps)  // round?
+        anim.frames.forEach((frame) => {
+          animation.push({
+            duration,
+            tileid: frame
+          })
         })
-      })
-      tiles[anim.frames[0]] = {
-        animation,
-        mgb_animation_info: {
-          name: anim.name,
-          fps: anim.fps
+        tiles[anim.frames[0]] = {
+          animation,
+          mgb_animation_info: {
+            name: anim.name,
+            fps: anim.fps
+          }
         }
-      }
-    })
+      })
 
-    const tilecount = c2.frameData ? c2.frameData.length : 1
-    return genAPIreturn(this, asset, {
+      return {
       image: "/api/asset/tileset/" + this.urlParams.id,
       // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
       //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
@@ -114,27 +115,30 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
       tileheight:  c2.height,
       tilewidth:   c2.width,
       tiles
-    })
+    }})
   }
 })
 
 RestApi.addRoute('asset/tileset/:id', { authRequired: false }, {
   get: function () {
-    const asset = Azzets.findOne(this.urlParams.id)
-    if (!asset || !asset.content2)
-      return _retval404
+    return genAPIreturn(this, asset, () => {
+        const asset = Azzets.findOne(this.urlParams.id)
+        if (!asset || !asset.content2)
+          return _retval404
 
-    let dataUri
-    if(!asset.content2.tileset){
-      dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
-    }
-    else{
-      dataUri = asset.content2.tileset
-    }
-
-    return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, {
-      'Content-Type': "image/png"
-    })
+        let dataUri
+        if(!asset.content2.tileset){
+          dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
+        }
+        else{
+          dataUri = asset.content2.tileset
+        }
+        return dataUri ? dataUriToBuffer(dataUri) : null
+      },
+      {
+        'Content-Type': "image/png"
+      }
+    )
   }
 })
 
@@ -147,7 +151,7 @@ RestApi.addRoute('asset/tileset/:user/:name', { authRequired: false }, {
       isDeleted:    false
     })
 
-    return genAPIreturn(this, asset, (asset && asset.content2 && asset.content2.tileset) ? dataUriToBuffer(asset.content2.tileset) : null, {
+    return genAPIreturn(this, asset, () => (asset && asset.content2 && asset.content2.tileset) ? dataUriToBuffer(asset.content2.tileset) : null, {
       'Content-Type': "image/png"
     })
   }

@@ -28,7 +28,7 @@ RestApi.addRoute('asset/json/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
     const src = asset.content2.src ? asset.content2.src : asset.content2
-    return genAPIreturn(this, asset, asset ? JSON.parse(src) : null)
+    return genAPIreturn(this, asset, () => asset ? JSON.parse(src) : null)
   }
 })
 
@@ -54,7 +54,7 @@ const emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALA
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
-    return genAPIreturn(this, asset, dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel ), {
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel ), {
       'Content-Type': 'image/png'
     })
   }
@@ -62,7 +62,7 @@ RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
 RestApi.addRoute('asset/thumbnail/png/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
-    return genAPIreturn(this, asset, dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel ), {
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel ), {
       'Content-Type': 'image/png'
     })
   }

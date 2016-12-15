@@ -20,15 +20,15 @@ function _doGet(kind, id){
     return _retval404 
   
   const content = asset.content2.src
-  return genAPIreturn(this, asset, content ? content : null, {
+  return genAPIreturn(this, asset, content, {
     'Content-Type': "text/plain",
     'file-name': asset.name
   })
 }
 
-function _makeBundle(asset){
+function _makeBundle(api, asset){
 
-  return genAPIreturn(this, asset, asset ? makeHtmlBundle(asset) : null, {
+  return genAPIreturn(api, asset, () => asset ? makeHtmlBundle(asset) : null, {
     'Content-Type': "text/html",
     'file-name': asset.name
   })
@@ -83,13 +83,13 @@ RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
 RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
-    return _makeBundle(asset)
+    return _makeBundle(this, asset)
   }
 })
 
 RestApi.addRoute('asset/code/bundle/u/:username/:codename', { authRequired: false }, {
   get: function () {
     const asset = Azzets.findOne( { dn_ownerName: this.urlParams.username, name: this.urlParams.codename, isDeleted: false } )
-    return _makeBundle(asset)
+    return _makeBundle(this, asset)
   }
 })

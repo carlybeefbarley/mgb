@@ -18,7 +18,7 @@ export const genAPIreturn = (api, asset, val = asset, headers = {}) => {
   if(!asset){
     return {
       headers:  headers,
-      body: val
+      body: typeof val == "function" ? val() : val
     }
   }
 
@@ -39,6 +39,6 @@ export const genAPIreturn = (api, asset, val = asset, headers = {}) => {
       etag: etag,
       "cache-control": "must-revalidate"
     }, headers),
-    body: val
+    body: typeof val == "function" ? val() : val
   }
 }

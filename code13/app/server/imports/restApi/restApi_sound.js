@@ -7,13 +7,13 @@ import { genAPIreturn } from '/imports/helpers/generators'
 RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {
   get: function () {
     "use strict";
-    let sound = Azzets.findOne(this.urlParams.id)
+    let asset = Azzets.findOne(this.urlParams.id)
 
-    if(sound) {
+    if(asset) {
       const regex = /^data:.+\/(.+);base64,(.*)$/;
-      const matches = sound.content2.dataUri.substring(0, 100).match(regex)
+      const matches = asset.content2.dataUri.substring(0, 100).match(regex)
       const extension = matches[1]
-      return genAPIreturn(this, asset, dataUriToBuffer(sound.content2.dataUri), {
+      return genAPIreturn(this, asset, () => {dataUriToBuffer(asset.content2.dataUri)}, {
         'Content-Type': 'audio/'+extension
       })
     }

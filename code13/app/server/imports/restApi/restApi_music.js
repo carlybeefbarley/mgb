@@ -14,7 +14,7 @@ RestApi.addRoute('asset/music/:id/music.mp3', {authRequired: false}, {
       const matches = asset.content2.dataUri.substring(0, 100).match(regex)
       const extension = matches[1]
 
-      return genAPIreturn(this, asset, dataUriToBuffer(asset.content2.dataUri), {
+      return genAPIreturn(this, asset, () => dataUriToBuffer(asset.content2.dataUri), {
         'Content-Type': 'audio/'+extension
       })
     }

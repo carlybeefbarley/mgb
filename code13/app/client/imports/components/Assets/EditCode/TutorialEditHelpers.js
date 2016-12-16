@@ -1,5 +1,35 @@
+import _ from 'lodash' 
 import React, { PropTypes } from 'react'
-import { Message } from 'semantic-ui-react'
+import { Segment, Message } from 'semantic-ui-react'
+
+
+
+const TutSummary = props => {
+  const pj = props.parsedTutorialData
+
+  if (pj.errorHintString)
+    return <Message warning content={`JSON Parse error: ${pj.errorHintString}`} />
+
+  if (!pj.data)
+    return <Message info content='Empty Tutorial'/>
+
+  if (!_.isArray(pj.data.steps))
+    return <Message warning content='No steps: [] array defined'/>
+
+  if (pj.data.steps.length === 0)
+    return <Message warning content='steps: [] array must have at least one step'/>
+
+  return (
+    <Segment basic>
+      <Message success content='JSON Parses OK' /> 
+      Tutorial has { pj.data.steps.length } steps:
+      <ol>
+      { _.map(pj.data.steps, (s,idx) => <li key={idx}>{s.title || '(Missing title: field in step)'}</li>) }
+      </ol>
+    </Segment>
+  )
+}
+
 
 const TutorialMentor = ( { tryTutorial, stopTutorial, parsedTutorialData } ) => (
   <div>
@@ -10,12 +40,7 @@ const TutorialMentor = ( { tryTutorial, stopTutorial, parsedTutorialData } ) => 
       <i className='stop icon' />Stop Tutorial
     </button>
     <br />
-    { parsedTutorialData.data && 
-      <Message success content='JSON Parses OK' /> 
-    }
-    { parsedTutorialData.errorHintString && 
-      <Message warning content={`JSON Parse error: ${parsedTutorialData.errorHintString}`} />
-    }
+    <TutSummary parsedTutorialData={parsedTutorialData} />
   </div>
 )
 

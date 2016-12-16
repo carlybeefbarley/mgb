@@ -1,23 +1,22 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { browserHistory } from 'react-router'
+import Helmet from "react-helmet"
+import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
+
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
+import { hasSkill, learnSkill } from '/imports/schemas/skills'
 
-
-import { browserHistory } from 'react-router'
-import Helmet from "react-helmet"
-
-import reactMixin from 'react-mixin'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
-
+import { Users, Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-import { Users, Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
@@ -479,27 +478,31 @@ export default App = React.createClass({
   // TOAST
   //
 
-  showToast(content, type) {
+  showToast(content, type = 'success') {
     this.setState({
       showToast: true,
-      //toastMsg content is string that accepts HTML
-      toastMsg: content,
-      //String: 'error' or 'success'
-      toastType: type
+      toastMsg: content,    // toastMsg content is string that accepts HTML
+      toastType: type       // type is a string: 'error' or 'success'
     })
     window.setTimeout(() => { this.closeToast() }, 2500)
   },
-
 
   closeToast() {
     this.setState({ showToast: false, toastMsg: '' })
   },
 
-
   startSkillPathTutorial(skillPath)
   {
     const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)
     this.addJoyrideSteps(tutPath, { replace: true, skillPath: skillPath } )
+  },
+
+  handleCompletedSkillTutorial(tutorialSkillPath) {
+    console.log( 'Completed a Skill Tutorial: ', tutorialSkillPath )
+    if (!hasSkill( tutorialSkillPath )) {
+      this.showToast( 'Tutorial Completed, Skill gained :' + tutorialSkillPath )
+      learnSkill( tutorialSkillPath )
+    }
   },
 
   //
@@ -569,7 +572,7 @@ export default App = React.createClass({
   handleJoyrideCallback( func ) {
     if (func.type === 'finished') {
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
-        console.log(" Completed: ", this.state.joyrideSkillPathTutorial)
+        this.handleCompletedSkillTutorial( this.state.joyrideSkillPathTutorial )
       this.setState( {  joyrideSteps: [], joyrideSkillPathTutorial: null, joyrideCurrentStepNum: 0 }) 
     } else if (func.type === 'step:after')
     {

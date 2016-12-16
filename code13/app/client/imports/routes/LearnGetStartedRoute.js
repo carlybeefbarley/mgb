@@ -17,12 +17,6 @@ const cardStyle = {
   color: "#2e2e2e"
 }
 
-const mascotStyle = {
-  maxWidth: "8em",
-  paddingRight: "0.5em",
-  marginBottom: "0"
-}
-
 const gsSkills = SkillNodes.getStarted
 
 const gsItems = [
@@ -72,6 +66,7 @@ const StartDefaultNextTutorial = ( { currUser, userSkills } ) => (
 const OfferNextTutorial = ( { skillPath } ) => (
   <button 
     onClick={() => startSkillPathTutorial(skillPath) }
+    title={`Start skill tutorial for ${skillPath}`}
     className="ui active yellow right floated small button mgb-show-on-parent-div-hover">
     <Icon name='student' />
     Show Me

@@ -1569,7 +1569,7 @@ export default class EditCode extends React.Component {
     return config
   }
 
-  toggleBundling(){
+  toggleBundling() {
     this.props.asset.content2.needsBundle = !this.props.asset.content2.needsBundle
     this.handleContentChange(this.props.asset.content2, null, "enableBundling")
     this.setState({needsBundle: this.props.asset.content2.needsBundle})
@@ -1577,12 +1577,26 @@ export default class EditCode extends React.Component {
 
   tryTutorial() {
     let loadedSteps = null
+    let errorHintString = null
     try {
       loadedSteps = JSON.parse(this._currentCodemirrorValue)
     }
     catch (err)
     {
-      alert('JSON Parse error: ', err.toString())
+      alert('JSON Parse error: '+ err.toString())
+      errorHintString = err.toString()
+    }
+
+    if (errorHintString)
+    {
+      const extractedNum = errorHintString.replace(/\D/g, '')
+      if (extractedNum && extractedNum.length > 0)
+      {
+        const charIdxErrorGuess = parseInt(extractedNum, 10)
+        const editor = this.codeMirror
+        editor.setCursor(editor.posFromIndex(charIdxErrorGuess))
+        editor.focus()
+      }
     }
 
     if (loadedSteps)

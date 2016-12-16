@@ -1445,9 +1445,10 @@ export default class EditGraphic extends React.Component {
 
     const actions = {}
     const config = {
-      // default level
-      level: 1,
-      // vertical: true,
+      // level: 1,       // default level -- This is now in expectedToolbars.getDefaultLevel
+      
+      // vertical: true, // Nope, we want to have horizontal for now
+     
       buttons: []
     }
 

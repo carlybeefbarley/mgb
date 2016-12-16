@@ -16,7 +16,7 @@ export default class MapToolbar extends React.Component {
     
     const layer = this.props.getActiveLayer()
     const config = {
-      level: 3,
+//      level: 3,  -- This is now in expectedToolbars.getDefaultLevel
       buttons: [
         {
           name: 'save',

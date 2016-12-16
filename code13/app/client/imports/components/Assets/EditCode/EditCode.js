@@ -127,7 +127,7 @@ export default class EditCode extends React.Component {
 
 
   handleJsBeautify() {
-    let newValue = js_beautify(this._currentCodemirrorValue, { indent_size: 2 })
+    let newValue = js_beautify(this._currentCodemirrorValue, { indent_size: 2, brace_style: 'expand' })
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue
     let newC2 = {src: newValue}
@@ -1451,7 +1451,7 @@ export default class EditCode extends React.Component {
   generateToolbarConfig() {
 
     const config = {
-      level: 2,
+      // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
 
       buttons: [
         { name: 'separator' },

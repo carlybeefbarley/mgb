@@ -4,6 +4,8 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
+import { expectedToolbars,  } from '/client/imports/components/Toolbar/Toolbar'
+
 
 import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'
@@ -22,31 +24,29 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
-
 const flexPanelViews = [
   { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
-
   { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false  },
   { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false },
-
   { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false },
   { tag: 'features',  lev: 1,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
 
-  { tag: 'skills',     lev: 2,  name: 'skills',  icon: 'plus circle',    hdr: 'Skills',           el: fpSkills,        superAdminOnly: false  },
-
+  { tag: 'skills',    lev: 2,  name: 'skills',  icon: 'plus circle', hdr: 'Skills',            el: fpSkills,        superAdminOnly: false  },
   
   { tag: 'users',     lev: 3,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
-  { tag: 'network',   lev: 3,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
-  { tag: 'keys',      lev: 4,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
-  { tag: 'projects',  lev: 5,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
+  
+  { tag: 'network',   lev: 4,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
+
+  { tag: 'keys',      lev: 5,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
+
+  { tag: 'projects',  lev: 6,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
 
   // SuperAdmin-only:
   { tag: 'super',     lev: 1,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true  } // ALWAYS SuperAdmin
 ]
 
 const defaultPanelViewIndex = 0
-const DEFAULT_FLEXPANEL_FEATURELEVEL = 1
-
+const DEFAULT_FLEXPANEL_FEATURELEVEL = expectedToolbars.getDefaultLevel('FlexPanel')
 
 export default FlexPanel = React.createClass({
   mixins: [ReactMeteorData],

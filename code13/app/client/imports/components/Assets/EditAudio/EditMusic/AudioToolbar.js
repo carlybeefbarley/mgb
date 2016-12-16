@@ -1,34 +1,33 @@
-import _ from 'lodash'
 import React from 'react'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 export default class AudioToolbar extends React.Component {
 
-  constructor (props){
+  constructor (props) {
     super(props)
   }
 
-  addChannel(){
+  addChannel() {
     this.props.addChannel()
   }
 
-  togglePlay(){
+  togglePlay() {
     this.props.togglePlayMusic()
   }
 
-  stopAudio(){
+  stopAudio() {
     this.props.stopMusic()
   }
 
-  toggleLoop(){
+  toggleLoop() {
     this.props.toggleLoop()
   }
 
-  zoomIn(){
+  zoomIn() {
     this.props.zoom(true)
   }
 
-  zoomOut(){
+  zoomOut() {
     this.props.zoom(false)
   }
 
@@ -58,7 +57,7 @@ export default class AudioToolbar extends React.Component {
 
   render () {
     const config = {
-      level: 3,
+//      level: 3,  -- This is now in expectedToolbars.getDefaultLevel
       buttons: [
         {
           name: 'addChannel',

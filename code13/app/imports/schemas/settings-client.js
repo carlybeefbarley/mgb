@@ -4,7 +4,11 @@
 import _ from 'lodash'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
+// Do not chnage these strings - they are keys into the Settings for feature groups
+const _GROUP_FEATURELEVELS = 'fLevels'
+const _GROUP_TOOLBARS      = 'toolbars'
 
+// This can return null if there is no settings object, OR if there is no key defined yet
 const _getSettingType = (settingsGroupName, settingsObj, subKey) => 
 {
   if (!settingsObj)
@@ -14,6 +18,11 @@ const _getSettingType = (settingsGroupName, settingsObj, subKey) =>
   return group ? group[subKey] : null
 }
 
+const _saveSettingsNow = (settingsObj) => { 
+  const asObj = _.omit(settingsObj.all(), [ '_id', 'updatedAt'])
+  Meteor.call('Settings.save', asObj) 
+}
+const _debouncedSaveSettings = _.debounce(_saveSettingsNow, SpecialGlobals.settings.settingsSaveDebounceMs)
 
 const _setSettingType = (settingsGroupName, settingsObj, subKey, value) => 
 {
@@ -33,27 +42,34 @@ const _setSettingType = (settingsGroupName, settingsObj, subKey, value) =>
   }
 }
 
+const _resetSettingsGroup = (settingsGroupName, settingsObj) => {
+  if (!settingsObj)
+    return
 
-const _saveSettingsNow = (settingsObj) => { 
-  const asObj = _.omit(settingsObj.all(), [ '_id', 'updatedAt'])
-  Meteor.call('Settings.save', asObj) 
+  console.log(`Resetting Settings Group '${settingsGroupName}' to empty object for current User `)
+  settingsObj.set(settingsGroupName, {})
+  if (settingsObj.keys._id)
+    _saveSettingsNow(settingsObj)
 }
-const _debouncedSaveSettings = _.debounce(_saveSettingsNow, SpecialGlobals.settings.settingsSaveDebounceMs)
 
-
+// EXPORTS
+// This can return null if there is no settings object, OR if there is no key defined yet
 export function getFeatureLevel(settingsObj, featureKey) {
-  return _getSettingType('fLevels', settingsObj, featureKey)
+  return _getSettingType(_GROUP_FEATURELEVELS, settingsObj, featureKey)
 }
 
 export function setFeatureLevel(settingsObj, featureKey, level) {
-  _setSettingType('fLevels', settingsObj, featureKey, level)
+  _setSettingType(_GROUP_FEATURELEVELS, settingsObj, featureKey, level)
 }
 
+export function resetAllFeatureLevelsToDefaults(settingsObj) {
+  _resetSettingsGroup(_GROUP_FEATURELEVELS, settingsObj)
+}
 
 export function getToolbarData(settingsObj, featureKey) {
-  return _getSettingType('toolbars', settingsObj, featureKey)
+  return _getSettingType(_GROUP_TOOLBARS, settingsObj, featureKey)
 }
 
 export function setToolbarData(settingsObj, featureKey, tdata) {
-  _setSettingType('toolbars', settingsObj, featureKey, tdata)
+  _setSettingType(_GROUP_TOOLBARS, settingsObj, featureKey, tdata)
 }

@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 
 import { getFeatureLevel, setFeatureLevel } from '/imports/schemas/settings-client'
-import { expectedToolbarScopeNames, makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
+import { expectedToolbars, makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
@@ -41,8 +41,8 @@ export default NavBarGadgetUxSlider = React.createClass({
   },
 
   getMeteorData: function() {
-    const allLevels = _.map(expectedToolbarScopeNames, name => (this.getLevelVal(name) ) )
-    return { levels: allLevels }
+    const allLevels = _.map(expectedToolbars.scopeNames, name => (this.getLevelVal(name) ) )
+    return { levels: allLevels }   // This data isn't used, but because we referenced it in getMeteorData, there will be a forceUpdate() when settings change 
   },
 
 
@@ -62,9 +62,12 @@ export default NavBarGadgetUxSlider = React.createClass({
     const levelSliderEl = document.getElementById(sliderConstants.sliderElementId)
 
     let levelVal = 0
+
     if (levelSliderEl && levelSliderEl._levelKey)
-      levelVal = getFeatureLevel(this.context.settings, levelSliderEl._levelKey) 
-    //console.log("GADGET_getLevel",  (levelSliderEl && levelSliderEl._levelKey ? levelSliderEl._levelKey : "???"), levelVal)
+    {
+      const defaultLevel = expectedToolbars.getDefaultLevel(levelSliderEl._levelName)
+      levelVal = getFeatureLevel(this.context.settings, levelSliderEl._levelKey) || defaultLevel
+    }
     return levelVal
   },
 
@@ -121,7 +124,7 @@ export function utilMuteLevelSlider(levelSliderEl) {
 }
 
 
-export function utilActivateLevelSlider(maxLevel, levelKey, level) {
+export function utilActivateLevelSlider(maxLevel, levelKey, levelName, level) {
   const levelSliderEl = document.getElementById(sliderConstants.sliderElementId)
 
   if (!levelSliderEl) 
@@ -129,6 +132,7 @@ export function utilActivateLevelSlider(maxLevel, levelKey, level) {
   else
   {
     levelSliderEl._levelKey = levelKey
+    levelSliderEl._levelName = levelName
     levelSliderEl.disabled = false
     levelSliderEl.parentElement.style.opacity = 1
     levelSliderEl.setAttribute("title", `Change Feature Level for ${levelKey} tools`)

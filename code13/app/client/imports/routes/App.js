@@ -128,8 +128,9 @@ export default App = React.createClass({
 
       // For react-joyride
       joyrideSteps: [],
-      joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial
+      joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
       joyrideCurrentStepNum: 0,            // integer with cuurent step number (valid IFF there are steps defined)
+      joyrideOriginatingAssetId: null,     // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
       joyrideDebug: false
     }
   },
@@ -321,6 +322,7 @@ export default App = React.createClass({
               joyrideSteps={this.state.joyrideSteps} 
               joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
               joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
+              joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
               currUser={currUser}
               currUserProjects={currUserProjects}
               user={user}
@@ -488,7 +490,7 @@ export default App = React.createClass({
   },
 
   closeToast() {
-    this.setState({ showToast: false, toastMsg: '' })
+    this.setState( { showToast: false, toastMsg: '' } )
   },
 
   startSkillPathTutorial(skillPath)
@@ -515,6 +517,10 @@ export default App = React.createClass({
   // See /DeveloperDocs/ReactJoyrideTours.md for our rules/conventions 
   //     for using it in our codebase
 
+  // addJoyrideSteps()
+  //   opts.skillPath  -- used by startSkillPathTutorial()
+  //   opts.replace    -- if true, then replace current tutorial
+  //   opts.origAssetId    -- If set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
   addJoyrideSteps: function (steps, opts = {}) {
     let joyride = this.refs.joyride
 
@@ -561,6 +567,9 @@ export default App = React.createClass({
       currentState.joyrideSkillPathTutorial = opts.skillPath || null
       if (opts.replace)
         currentState.joyrideCurrentStepNum = 0
+      if (opts.origAssetId)
+        currentState.joyrideOriginatingAssetId = opts.origAssetId  // Just to enable a nice edit Tutorial button in fpGoals
+      
       return currentState
     })
   },
@@ -573,7 +582,14 @@ export default App = React.createClass({
     if (func.type === 'finished') {
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
         this.handleCompletedSkillTutorial( this.state.joyrideSkillPathTutorial )
-      this.setState( {  joyrideSteps: [], joyrideSkillPathTutorial: null, joyrideCurrentStepNum: 0 }) 
+      this.setState(
+        { 
+          joyrideSteps: [], 
+          joyrideSkillPathTutorial: null, 
+          joyrideCurrentStepNum: 0,
+          joyrideOriginatingAssetId: null
+        }
+      ) 
     } else if (func.type === 'step:after')
     {
       this.setState( { joyrideCurrentStepNum: func.newIndex } )

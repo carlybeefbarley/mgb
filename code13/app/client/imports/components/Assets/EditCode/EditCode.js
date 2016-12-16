@@ -1602,7 +1602,8 @@ export default class EditCode extends React.Component {
     if (loadedSteps)
     {
       joyrideDebugEnable(true)
-      addJoyrideSteps( loadedSteps.steps, { replace: true } )
+      addJoyrideSteps( loadedSteps.steps, { replace: true, origAssetId: { ownerName: this.props.asset.dn_ownerName, id: this.props.asset._id } } )
+      //was addJoyrideSteps( loadedSteps.steps, { replace: true, origAssetId: this.props.asset._id } )
     }
   }
 

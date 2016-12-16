@@ -11,7 +11,7 @@ import QLink from "/client/imports/routes/QLink"
 
 const _stopTutorial = () => addJoyrideSteps( [], { replace: true } )
 
-const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum } ) => (
+const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum, joyrideOriginatingAssetId } ) => (
   (!joyrideSteps || !joyrideSteps.length) ? null : (
     <div className="ui card course">
       <div className="content">
@@ -22,7 +22,10 @@ const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurren
         </ol>
       </div>
       <div className="extra content">
-        <Progress progress={false} size='small' color='green' value={1+joyrideCurrentStepNum} total={joyrideSteps.length} style={{marginBottom: 0}} />
+        <Progress size='small' color='green' percent={Math.round((100*(1+joyrideCurrentStepNum)) / (joyrideSteps.length) )} style={{marginBottom: '0.256em'}} />
+        { joyrideOriginatingAssetId && 
+          <QLink to={`/u/${joyrideOriginatingAssetId.ownerName}/asset/${joyrideOriginatingAssetId.id}`} style={{float: 'left'}} >Edit Tutorial</QLink>
+        }
         <a style={{float: 'right'}} onClick={_stopTutorial}>Stop Tutorial</a>
       </div>
     </div>
@@ -38,6 +41,7 @@ export default fpGoals = React.createClass({
     panelWidth:             PropTypes.string.isRequired,  // Typically something like "200px".
     joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
     joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
+    joyrideOriginatingAssetId: PropTypes.object,          // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
     joyrideCurrentStepNum:  PropTypes.number              // Step number (IFF joyrideSteps is not an empty array)
   },
 
@@ -62,8 +66,8 @@ export default fpGoals = React.createClass({
         <JoyrideSummary 
             joyrideSteps={this.props.joyrideSteps} 
             joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
-            joyrideCurrentStepNum={this.props.joyrideCurrentStepNum} />
-
+            joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
+            joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId} />
         <QLink to='/learn'>
           <button className="ui button large fluid"><Icon name='refresh' />Get more tasks</button>
         </QLink>

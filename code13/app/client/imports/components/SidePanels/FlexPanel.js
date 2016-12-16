@@ -58,6 +58,7 @@ export default FlexPanel = React.createClass({
     joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
     joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
     joyrideCurrentStepNum:  PropTypes.number,             // Step number (IFF joyrideSteps is not an empty array)
+    joyrideOriginatingAssetId: PropTypes.object,          // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
     selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values (or validtagkeyhere.somesuffix)
     activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible:     PropTypes.bool.isRequired,
@@ -253,6 +254,7 @@ export default FlexPanel = React.createClass({
                       meteorStatus={this.data.meteorStatus}
                       joyrideSteps={this.props.joyrideSteps}
                       joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
+                      joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}
                       joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
                       activity={this.props.activity}
                       panelWidth={this.props.flexPanelWidth}

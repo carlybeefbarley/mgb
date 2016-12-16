@@ -24,6 +24,44 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
+      'timestamp': 'Fri Dec 16 2016 00:10:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2316'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'learn.skills',
+          'type': 'feature',
+          'changeName': 'Tutorial progression for Get Started',
+          'changeSummary': 'Tutorials initiated from core skills paths (the /learn pages) now register as skills upon completion and enable the next tutorial to be started. To test this, try the "Get Started" pages.. the first two profile tutorials work this way',
+          'otherUrls': [ { txt: 'Get Started',   href: '/learn/getStarted' } ]
+        },
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial Editor improvements',
+          'changeSummary': 'If a Tutorial JSON file has parsing errors, the Tutorial Editor now moves the cursor near to the area with the failure. Also, the Goals FlexPanel has an easy "Edit Tutorial" for tutorials being tested from the Tutorial Editor. There is also now a "Beautify Code" button (a leaf icon, because nature is beautiful).',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.features',
+          'type': 'feature',
+          'changeName': 'Options Flex Panel (Feature Levels)',
+          'changeSummary': 'Various UI tweaks for Feature Levels. Also added a "reset" button to reset featureLevels to default. Useful for tutorial testing...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Wed Dec 14 2016 17:00:00 GMT-0800 (PST)',
 
       'id': {
@@ -40,7 +78,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
         {
           'featureTag': 'tutorials.defaults',
           'type': 'improvement',
-          'changeName': 'Tutorial defaultss',
+          'changeName': 'Tutorial defaults',
           'changeSummary': 'Changed default settings for some tutorial fields (selector, position) so tutorials will typcially be less verbose to write.',
           'otherUrls': [ ]
         },

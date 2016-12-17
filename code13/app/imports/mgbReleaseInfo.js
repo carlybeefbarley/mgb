@@ -24,6 +24,30 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
+      'timestamp': 'Sat Dec 17 2016 00:45:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2321'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial Editor macros and summaries',
+          'changeSummary': 'The Tutorial editor now provides error information on the Tutorials, and also supports various macros',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Fri Dec 16 2016 00:10:00 GMT-0800 (PST)',
 
       'id': {

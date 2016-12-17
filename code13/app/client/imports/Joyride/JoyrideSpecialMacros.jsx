@@ -5,20 +5,50 @@ const _looksLikeMacroKey = key => (_.isString(key) && key.length > 2 && key.sear
 const _fullStepField = null
 
 
-// e.g. _mkNp( 'learn', 'student' )
+/* These enable Tutorial steps to be written using macros:   e.g. 
+
+  {
+    "steps": [
+      "%flexPanel%",
+      "%fp-goals%",
+    ...
+  }
+
+*/
+
+// Helper which makes a NavPanel Macro: e.g. _mkNp( 'learn', 'student' )
 const _mkNp = ( npname, icon ) => (
   {
-    field: null,
+    field: _fullStepField,
     key: _wrapKey(`np-${npname}`),
     desc: `Step for finding the ${_.upperFirst(npname)} NavPanel`,
     newVal:
     {
-      "title": `Navigation panel -> ${_.upperFirst(npname)}`,
+      "title": `The '${_.upperFirst(npname)}' Navigation panel`,
       "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(npname)} button here`,
       "selector": `#mgbjr-navPanelIcons-${npname}`,
       "showStepOverlay": false,
       "awaitCompletionTag": `mgbjr-CT-navPanel-${npname}-show`,
       "position": "right",
+      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+    }
+  }
+)
+
+// Helper which makes a FlexPanel Macro: e.g. _mkNp( 'learn', 'student' )
+const _mkFp = ( fpname, icon ) => (
+  {
+    field: _fullStepField,
+    key: _wrapKey(`fp-${fpname}`),
+    desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
+    newVal:
+    {
+      "title": `The '${_.upperFirst(fpname)}' Flex panel`,
+      "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here`,
+      "selector": `#mgbjr-flexPanelIcons-${fpname}`,
+      "showStepOverlay": false,
+      "awaitCompletionTag": `mgbjr-CT-flexPanel-${fpname}-show`,
+      "position": "left",
       "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
     }
   }
@@ -40,16 +70,57 @@ const macros = [
   },
 
   // Field == null means this is to replace an entire step
+
+  {
+    field: _fullStepField,
+    key: _wrapKey('flexPanel'),
+    desc: `Step for finding the FlexPanel`,
+    newVal:
+    {
+      "title": `The FlexPanel area`,
+      "text": `This stack of icons on the right-hand side is called the <em>FlexPanel</em>. These panels have useful context while you are working on other assets`,
+      "selector": "#mgbjr-flexPanelIcons",
+      "showStepOverlay": true,
+      "position": "left",
+      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+    }
+  },
+
+  {
+    field: _fullStepField,
+    key: _wrapKey('navPanel'),
+    desc: `Step for finding the NavPanel`,
+    newVal:
+    {
+      "title": `The NavPanel area`,
+      "text": `This stack of icons on the left-hand side is called the <em>NavPanel</em>. These Navigation Panels are useful for navigating the site`,
+      "selector": "#mgbjr-navPanelIcons",
+      "showStepOverlay": true,
+      "position": "right",
+      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+    }
+  },
+
   _mkNp( 'home',     'home'         ),
   _mkNp( 'learn',    'student'      ),
   _mkNp( 'create',   'pencil'       ),
   _mkNp( 'play',     'game'         ),
   _mkNp( 'meet',     'street view'  ),
   _mkNp( 'projects', 'sitemap'      ),
-  _mkNp( 'history',  'history'      )
+  _mkNp( 'history',  'history'      ),
+
+  _mkFp( 'activity', 'lightning'    ),
+  _mkFp( 'goals',    'student'      ),
+  _mkFp( 'asssets',  'pencil'       ),
+  _mkFp( 'chat',     'chat'         ),
+  _mkFp( 'options',  'options'      ),
+  _mkFp( 'skills',   'plus circle'  ),
+  _mkFp( 'users',    'street view'  ),
+  _mkFp( 'network',  'signal'       ),
+  _mkFp( 'keys',     'keyboard'     )
 ]
 
-// This returns { newStep{}, notFoundMacros[] }  .. and never returns null, or a differnt shape
+// This returns { newStep{}, notFoundMacros[] }  .. and never returns null, nor a different shape
 export const transformStep = step =>
 {
   const notFoundMacros = []

@@ -1,6 +1,8 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import { transformStep } from './JoyrideSpecialMacros'
 import scroll from 'scroll'
 import autobind from 'react-autobind'
 import nested from 'nested-property'
@@ -17,6 +19,38 @@ export const joyrideCompleteTag = tagString => {
   const event = new CustomEvent('mgbCompletionTag', { 'detail': tagString } )
   setTimeout(() => { window.dispatchEvent(event) }, 0) // Prevent setState during render if this was called due to render
 }
+
+ // Version that also provides { newSteps, errors } where errors is an array of { key: propertyName, val: UnrecognizedMacro}
+export const parseStepsWithMacroResults = steps => {
+  const newSteps = []
+  const errors = []
+  let tmpSteps = []
+
+  if (_.isArray(steps)) {
+    steps.forEach((s, idx) => {
+      if (_.isObject(s) || _.isString(s)) {
+        const s2 = transformStep(s)   // This gives us  { newStep{}, notFoundMacros[] }
+        if (s2.notFoundMacros.length > 0) {
+          console.log(`Step #${idx} contained unknown macros: `,s2.notFoundMacros)
+          errors[idx] = s2.notFoundMacros
+        }
+        tmpSteps.push(s2.newStep)
+      }
+    })
+  }
+  else
+    tmpSteps = [steps]
+
+  tmpSteps.forEach((s) => {
+    if (!s.selector)
+      s.selector = 'body'  // safe default
+    s.position = s.position || ( s.selector === 'body' ? 'top' : 'bottom')
+    newSteps.push(s)
+  })
+
+  return { newSteps, errors }
+}
+
 
 const defaultState = {
   index:          0,
@@ -264,16 +298,16 @@ export default class Joyride extends React.Component {
    * @returns {{index: (number|*), percentageComplete: number, step: (object|null)}}
    */
   getProgress() {
-    const state = this.state;
-    const { steps } = this.props;
+    const state = this.state
+    const { steps } = this.props
 
-    this.logger('joyride:getProgress', ['steps:', steps]);
+    this.logger('joyride:getProgress', ['steps:', steps])
 
     return {
       index: state.index,
       percentageComplete: parseFloat(((state.index / steps.length) * 100).toFixed(2).replace('.00', '')),
       step: steps[state.index]
-    };
+    }
   }
 
   /**
@@ -283,27 +317,9 @@ export default class Joyride extends React.Component {
    * @returns {Array}
    */
   parseSteps(steps) {
-    const newSteps = []
-    let tmpSteps = []
-
-    if (Array.isArray(steps)) {
-      steps.forEach((s) => {
-        if (s instanceof Object)
-          tmpSteps.push(s)
-      })
-    }
-    else
-      tmpSteps = [steps]
-
-    tmpSteps.forEach((s) => {
-      if (!s.selector)
-        s.selector = 'body'  // safe default
-      s.position = s.position || ( s.selector === 'body' ? 'top' : 'bottom')
-      newSteps.push(s)
-    })
-
-    return newSteps;
+    return parseStepsWithMacroResults(steps).newSteps
   }
+
 
   /**
    * Add Tooltip events

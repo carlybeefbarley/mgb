@@ -1,8 +1,28 @@
 import _ from 'lodash' 
 import React, { PropTypes } from 'react'
 import { Segment, Message } from 'semantic-ui-react'
+import { parseStepsWithMacroResults } from '/client/imports/Joyride/Joyride'
 
+const blueSty = { color: 'blue' }
+const redSty =  { color: 'red' }
 
+const StepSummary = ( { rawStep, parsedStep, stepErrors } ) => 
+{
+  // <li key={idx}>{s.title || '(Missing title: field in step)'}</li>
+  return (
+    <li >
+      { _.isString(rawStep) && <span style={blueSty}>{rawStep} </span>}
+      {rawStep.title || parsedStep.title || (_.isString(parsedStep) ? <span style={redSty}>Unknown Macro</span> : '(Missing title: field in step)')}
+      { (stepErrors && stepErrors.length > 0) ?
+        <ul>
+          { _.map(stepErrors, (e, idx) => <pre key={idx} style={redSty}>{e.key} : {e.val}</pre> ) }
+        </ul>
+        :
+        <br />
+      }
+    </li>
+  )
+}
 
 const TutSummary = props => {
   const pj = props.parsedTutorialData
@@ -19,12 +39,14 @@ const TutSummary = props => {
   if (pj.data.steps.length === 0)
     return <Message warning content='steps: [] array must have at least one step'/>
 
+  const steps2 = parseStepsWithMacroResults(pj.data.steps)
+
   return (
     <Segment basic>
       <Message success content='JSON Parses OK' /> 
       Tutorial has { pj.data.steps.length } steps:
       <ol>
-      { _.map(pj.data.steps, (s,idx) => <li key={idx}>{s.title || '(Missing title: field in step)'}</li>) }
+      { _.map(pj.data.steps, (s,idx) => <StepSummary key={idx} rawStep={s} parsedStep={steps2.newSteps[idx]} stepErrors={steps2.errors[idx]} />) }
       </ol>
     </Segment>
   )

@@ -151,12 +151,8 @@ export default FlexPanel = React.createClass({
   },
 
   getFpButtonSpecialStyleForTag: function(tag) {
-    const { joyrideSteps } = this.props
     const { meteorStatus } = this.data
     
-    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
-      return { backgroundColor: 'rgba(234,174,0,0.5)' }
-
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return { backgroundColor: 'rgba(255,0,0,0.2)' }
 
@@ -164,11 +160,15 @@ export default FlexPanel = React.createClass({
   },
 
   getFpButtonSpecialClassForTag: function(tag) {
+    const { joyrideSteps } = this.props
     const { wiggleActivity } = this.state
 
     if (tag === 'activity' && wiggleActivity)
       return ' green animated swing '
-      
+
+    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
+      return ' green animated swing '
+
     return ''
   },
 

@@ -1,9 +1,14 @@
 import _ from 'lodash'
 
+// This code is used by the Joyride/Tutorial systems to make it easier to write tutorials.
+//
+//   transformStep() expands macros in a 'step' that is part of a Joyride step
+//   stepKeyOptionsForDropdown[] contains stepMacroNames (and descriptions) for use in a Dropdown etc
+
+
 const _wrapKey = key => `%${key}%`
 const _looksLikeMacroKey = key => (_.isString(key) && key.length > 2 && key.search(/^%.*%$/) !== -1)
-const _fullStepField = null
-
+const _fullStepField = null     // This is returned in notFoundMacros[].field results for a step macro
 
 /* These enable Tutorial steps to be written using macros:   e.g. 
 
@@ -16,11 +21,11 @@ const _fullStepField = null
 
 */
 
-// Helper which makes a NavPanel Macro: e.g. _mkNp( 'learn', 'student' )
+// Helper which makes a NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
 const _mkNp = ( npname, icon ) => (
   {
-    field: _fullStepField,
     key: _wrapKey(`np-${npname}`),
+    hint: `${_.upperFirst(npname)} NavPanel`,
     desc: `Step for finding the ${_.upperFirst(npname)} NavPanel`,
     newVal:
     {
@@ -35,11 +40,11 @@ const _mkNp = ( npname, icon ) => (
   }
 )
 
-// Helper which makes a FlexPanel Macro: e.g. _mkNp( 'learn', 'student' )
+// Helper which makes a FlexPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
 const _mkFp = ( fpname, icon ) => (
   {
-    field: _fullStepField,
     key: _wrapKey(`fp-${fpname}`),
+    hint: `${_.upperFirst(fpname)} FlexPanel`,
     desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
     newVal:
     {
@@ -54,10 +59,11 @@ const _mkFp = ( fpname, icon ) => (
   }
 )
 
+// Helper which makes a Create New Asset <Kind> stepMacro: e.g. _mkCreateAsset( 'music' )
 const _mkCreateAsset = kind => (
   {
-    field: _fullStepField,
     key: _wrapKey(`create-asset-${kind}`),
+    hint: `${_.upperCase(kind)} asset created`,
     desc: `Step for awaiting creation of a ${_.upperCase(kind)} Asset`,
     newVal:
     {
@@ -71,42 +77,12 @@ const _mkCreateAsset = kind => (
   }
 )
 
-const macros = [
 
-  // field == someFieldName means this is a macros for fields WITHIN a step.. e.g ."style"
+const stepMacros = [
   {
-    field: 'style',
-    key: _wrapKey('inverted'),
-    desc: "An inverted style for emphasis",
-    newVal:
-    {
-      "backgroundColor": "rgba(0, 0, 0, 0.8)",
-      "color": "#fff",
-      "mainColor": "#ff4456",
-      "skip": { "color": "#ff4456" },
-      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
-    }
-  },
-
-  {
-    field: 'style',
-    key: _wrapKey('green'),
-    desc: "An very green style for success",
-    newVal:
-    {
-      "backgroundColor": "rgba(0, 96, 0, 1)",
-      "color": "#fff",
-      "mainColor": "#fbbd08",
-      "skip": { "color": "#f04" },
-      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
-    }
-  },
-  // field == null means this is to replace an entire step  
-
-  {
-    field: _fullStepField,
     key: _wrapKey('complete'),
-    desc: `Tutorial completed`,
+    hint: `Tutorial completed`,
+    desc: `Tutorial completed, explain how to start next`,
     newVal:
     {
       "title": `Great! You completed the tutorial`,
@@ -118,8 +94,8 @@ const macros = [
   },
 
   {
-    field: _fullStepField,
     key: _wrapKey('MOCK'),
+    hint: `Mock/placeholder step`,
     desc: `A Mock step that is handy as a placeholder when making a tutorial`,
     newVal:
     {
@@ -132,8 +108,8 @@ const macros = [
   },
   
   {
-    field: _fullStepField,
     key: _wrapKey('flexPanel'),
+    hint: `Find FlexPanel`,
     desc: `Step for finding the FlexPanel`,
     newVal:
     {
@@ -147,8 +123,8 @@ const macros = [
   },
 
   {
-    field: _fullStepField,
     key: _wrapKey('navPanel'),
+    hint: `Find NavPanel`,
     desc: `Step for finding the NavPanel`,
     newVal:
     {
@@ -162,8 +138,8 @@ const macros = [
   },
 
   {
-    field: _fullStepField,
     key: _wrapKey('np-home-myProfile'),
+    hint: `np-home>MyProfile`,
     desc: `Step for clicking the 'My Profile' Button from np-home`,
     newVal:
     {
@@ -174,9 +150,10 @@ const macros = [
       "position": "right"
     }
   },
+
   {
-    field: _fullStepField,
     key: _wrapKey('create-new-asset'),
+    hint: `np-create>CreateNewAsset`,
     desc: `Step for Create New Asset. Prior step should be %np-create%`,
     newVal:
     {
@@ -218,6 +195,42 @@ const macros = [
 
 ]
 
+
+const propertyMacros = [
+
+  // field == someFieldName means this is a macros for fields (properties) WITHIN a step.. e.g ."style"
+  {
+    field: 'style',
+    key: _wrapKey('inverted'),
+    desc: "An inverted style for emphasis",
+    newVal:
+    {
+      "backgroundColor": "rgba(0, 0, 0, 0.8)",
+      "color": "#fff",
+      "mainColor": "#ff4456",
+      "skip": { "color": "#ff4456" },
+      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+    }
+  },
+
+  {
+    field: 'style',
+    key: _wrapKey('green'),
+    desc: "An very green style for success",
+    newVal:
+    {
+      "backgroundColor": "rgba(0, 96, 0, 1)",
+      "color": "#fff",
+      "mainColor": "#fbbd08",
+      "skip": { "color": "#f04" },
+      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+    }
+  },
+  // field == null means this is to replace an entire step  
+
+
+]
+
 // This returns { newStep{}, notFoundMacros[] }  .. and never returns null, nor a different shape
 export const transformStep = step =>
 {
@@ -225,21 +238,22 @@ export const transformStep = step =>
 
   if (_.isString(step))
   {
-    const m = _.find(macros, { field: _fullStepField, key: step } )
-    if (m)
-      step = m.newVal
-    else
+    const m = _.find(stepMacros, { key: step } )
+    if (!m)
       return { 
         newStep: step, 
-        notFoundMacros: { key: _fullStepField, val: step } 
+        notFoundMacros: { key: _fullStepField, val: step }  //return key=null for  
       }
+    step = m.newVal
+    // Now continue processing the step so we can allow the pre-defined steps to use field macros
   }
   
   const newStep = _.mapValues(step, (v, k) =>
   {
     if (!_looksLikeMacroKey(v))
       return v
-    const m = _.find(macros, { field: k, key: v } )
+
+    const m = _.find( propertyMacros, { field: k, key: v } )
     if (m)
       return m.newVal
 
@@ -250,9 +264,11 @@ export const transformStep = step =>
 }
 
 
+// Munge the stepMacros list to expose what would be interesting for a semanticUI <Dropdown options={}/> control
+// e.g. Array of { text: text_to_show_user_on_left, description: extra_but_faded_info_for_user, value: %key% } objects
+export const stepKeyOptionsForDropdown = _.map( stepMacros, s => ( { text: s.key, description: s.hint, value: s.key } ) )
 
 /* Example uses:
-
 
     const s1 = {
       style: '%inverted%',

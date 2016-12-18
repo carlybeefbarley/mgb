@@ -137,6 +137,9 @@ export default class EditCode extends React.Component {
     this.handleContentChange(newC2, null, `Beautify code`)
   }
 
+  warnNoWriteAccess() {
+    alert("You don't have write access to this code")
+  }
 
   componentDidMount() {
     const codeMirrorUpdateHints = this.codeMirrorUpdateHints
@@ -160,7 +163,7 @@ export default class EditCode extends React.Component {
         this.handleContentChange(newC2, null, `Tutorial appended code`)
       }
       else
-        alert("You don't have write access to this code")
+        this.warnNoWriteAccess()
     }
 
     window.addEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
@@ -1572,8 +1575,7 @@ export default class EditCode extends React.Component {
         shortcut: 'Ctrl+Alt+Shift+B'
       })
 
-    }
-    
+    }    
     return config
   }
 
@@ -1581,6 +1583,18 @@ export default class EditCode extends React.Component {
     this.props.asset.content2.needsBundle = !this.props.asset.content2.needsBundle
     this.handleContentChange(this.props.asset.content2, null, "enableBundling")
     this.setState({needsBundle: this.props.asset.content2.needsBundle})
+  }
+
+  insertTextAtCursor(text) {
+    if (!this.props.canEdit)
+    {
+      this.warnNoWriteAccess()
+      return      
+    }
+    const editor = this.codeMirror
+    var doc = editor.getDoc()
+    var cursor = doc.getCursor()
+    doc.replaceRange(text, cursor)
   }
 
   tryTutorial() {
@@ -1615,7 +1629,7 @@ export default class EditCode extends React.Component {
   }
 
   render() {
-    const asset = this.props.asset
+    const { asset, canEdit } = this.props
 
     if (!asset)
       return null
@@ -1660,7 +1674,6 @@ export default class EditCode extends React.Component {
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
         <div className={infoPaneOpts.col1 + ' wide column'}>
 
-
           <div className="row" style={{marginBottom: "6px"}}>
             {<Toolbar actions={this} config={tbConfig} name="EditCode" />}
           </div>
@@ -1690,7 +1703,8 @@ export default class EditCode extends React.Component {
                   <TutorialMentor 
                       tryTutorial={() => this.tryTutorial()} 
                       stopTutorial={() => this.stopTutorial()}  
-                      parsedTutorialData={this.state.parsedTutorialData} />
+                      parsedTutorialData={this.state.parsedTutorialData} 
+                      insertCodeCallback={ canEdit ? (newCodeStr => this.insertTextAtCursor(newCodeStr) ) : null }/>
                   { previewIdThings && previewIdThings.length > 0 &&
                     <div className="ui divided selection list">
                       {previewIdThings}

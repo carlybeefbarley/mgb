@@ -438,13 +438,12 @@ export default class EditCode extends React.Component {
         this.acTimeout = 0
       }
     this.acTimeout = setTimeout(() => {
-      if (this.changeTimeout) {
+      if (this.changeTimeout)
         return
-      }
+      
       // skip ac in the comments and when user is typing
-      if (this.state.currentToken.type !== "comment") {
+      if (this.state.currentToken && this.state.currentToken.type !== "comment")
         this.ternServer.complete(cm)
-      }
     }, 1000)      // Pop up a helper after a second
 // this.ternServer.getHint(cm, function (hint) 
 // {

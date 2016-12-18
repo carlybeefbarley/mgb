@@ -1,3 +1,4 @@
+import _ from 'lodash' 
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
 import Helmet from 'react-helmet'
@@ -19,7 +20,9 @@ import { logActivity } from '/imports/schemas/activity'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import QLink from '../QLink'
-import { Container, Grid, Header, Image, Item, Icon } from 'semantic-ui-react'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+
+import { Container, Grid, Item, Icon } from 'semantic-ui-react'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -61,7 +64,12 @@ export default UserProfileRoute = React.createClass({
     }
     Meteor.call('User.updateProfile', this.props.user._id, changeObj, (error) => {
       if (error) 
-        console.log("Could not update profile: ", error.reason)      
+        console.log("Could not update profile: ", error.reason)
+      else 
+      {
+       // Go through all the keys, log completion tags for each
+        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))     
+      }
     })
   },
 

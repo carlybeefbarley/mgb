@@ -24,12 +24,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Sat Dec 17 2016 21:45:00 GMT-0800 (PST)',
+      'timestamp': 'Sat Dec 17 2016 22:15:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2325'
+        'iteration': '2327'
       },
 
       'releaseManagement': {
@@ -42,6 +42,13 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'type': 'improvement',
           'changeName': 'Tutorial Editor - macros and helpers',
           'changeSummary': 'The Tutorial editor now provides error information on the Tutorials, and also supports various macros for steps or step properties. Steps also now have an optional TODO: property which is helpful for Tutorial authors',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'flexpanel.goals',
+          'type': 'improvement',
+          'changeName': 'Goals FlexPanel - Start next tutorial',
+          'changeSummary': "The 'goals' FlexPanel now has a 'Start next tutorial' button",
           'otherUrls': [ ]
         }
       ]

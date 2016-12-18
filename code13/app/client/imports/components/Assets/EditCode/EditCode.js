@@ -1491,24 +1491,6 @@ export default class EditCode extends React.Component {
           shortcut: 'Ctrl+L'
         },
         {
-          name:  'toolCommentFade',
-          label: 'Fade Comments',
-          icon:  'grey sticky note',
-          tooltip: 'Fade Comments so you can focus on code',
-          disabled: false,
-          level:    3,
-          shortcut: 'Ctrl+Alt+F'
-        },
-        {
-          name:  'toolCommentUnFade',
-          label: 'UnFade Comments',
-          icon:  'sticky note',
-          tooltip: 'UnFade comments so you can see them again',
-          disabled: false,
-          level:    3,
-          shortcut: 'Ctrl+Alt+Shift+F'
-        },
-        {
           name:  'handleJsBeautify',
           label: 'Beautify Code',
           icon:  'leaf',
@@ -1560,6 +1542,24 @@ export default class EditCode extends React.Component {
         disabled: this.state.isPlaying,
         level:    1
         // shortcut: 'Ctrl+T'
+      })
+      config.buttons.push( {
+        name:  'toolCommentFade',
+        label: 'Fade Comments',
+        icon:  'grey sticky note',
+        tooltip: 'Fade Comments so you can focus on code',
+        disabled: false,
+        level:    3,
+        shortcut: 'Ctrl+Alt+F'
+      })
+      config.buttons.push( {
+        name:  'toolCommentUnFade',
+        label: 'UnFade Comments',
+        icon:  'sticky note',
+        tooltip: 'UnFade comments so you can see them again',
+        disabled: false,
+        level:    3,
+        shortcut: 'Ctrl+Alt+Shift+F'
       })
       config.buttons.push( {
         name:  'toggleBundling',

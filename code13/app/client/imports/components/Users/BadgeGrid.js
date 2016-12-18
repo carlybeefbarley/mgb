@@ -8,19 +8,23 @@ const BadgeN = props => (
   </Grid.Column>
 )
 
-const BadgeGrid = props => {
-  const { user, className } = props
-  if (!user) return null
+const BadgeGrid = ( { user, className } ) => {
+  if (!user) 
+    return null
   
   const badgesPageUrl = `/u/${user.profile.name}/badges`
   const uBadges = getAllBadgesForUser(user)
 
   return (
     <div className={className}>
-      <QLink to={badgesPageUrl}>
-        <Header as='h2'>Badges</Header>
-      </QLink>
-      <Grid columns='equal'>
+
+      <Header as='h2' id='#mgbjr-profile-badges-header'>
+        <QLink to={badgesPageUrl}>
+          Badges
+        </QLink>
+      </Header>
+    
+      <Grid columns='equal' id='#mgbjr-profile-badges-area'>
         <Grid.Row>
           <BadgeN badge={uBadges[0]} />
           <BadgeN badge={uBadges[1]} />

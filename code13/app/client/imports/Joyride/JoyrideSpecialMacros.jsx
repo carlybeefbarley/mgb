@@ -163,6 +163,19 @@ const macros = [
 
   {
     field: _fullStepField,
+    key: _wrapKey('np-home-myProfile'),
+    desc: `Step for clicking the 'My Profile' Button from np-home`,
+    newVal:
+    {
+      "title": "My Profile",
+      "text": "Click on the &ensp;<div class='ui label'>My Profile&emsp;<i class='grey user icon'></i></div>&ensp; option",
+      "selector": "#mgbjr-np-home-myProfile",
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username",
+      "position": "right"
+    }
+  },
+  {
+    field: _fullStepField,
     key: _wrapKey('create-new-asset'),
     desc: `Step for Create New Asset. Prior step should be %np-create%`,
     newVal:

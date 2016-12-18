@@ -6,6 +6,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Progress, Icon } from 'semantic-ui-react'
 import { addJoyrideSteps } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
+import { StartDefaultNextTutorial } from '/client/imports/routes/LearnGetStartedRoute'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -45,10 +46,18 @@ export default fpGoals = React.createClass({
     joyrideCurrentStepNum:  PropTypes.number              // Step number (IFF joyrideSteps is not an empty array)
   },
 
+  contextTypes: {
+    skills:       PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
+  },
+
+
   render: function () {
     const skillarea = 'code'    // temp hack
     const area = _.find(skillAreaItems, ['tag', skillarea] )
     const skillNode = SkillNodes[skillarea]
+
+    const { currUser, joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum, joyrideOriginatingAssetId } = this.props
+    const { skills } = this.context
 
     if (!area)
       return <ThingNotFound type='Skill area' id={skillarea} />
@@ -63,11 +72,14 @@ export default fpGoals = React.createClass({
           <img src="/images/mascots/bigguy.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
           <span style={{position: 'relative', top: 0}}>Your Learning quests</span>
         </p>
+        { (!joyrideSteps || joyrideSteps.length === 0) && 
+          <StartDefaultNextTutorial currUser={currUser} userSkills={skills}  />
+        }
         <JoyrideSummary 
-            joyrideSteps={this.props.joyrideSteps} 
-            joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
-            joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
-            joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId} />
+            joyrideSteps={joyrideSteps} 
+            joyrideSkillPathTutorial={joyrideSkillPathTutorial}
+            joyrideCurrentStepNum={joyrideCurrentStepNum}
+            joyrideOriginatingAssetId={joyrideOriginatingAssetId} />
         <QLink to='/learn'>
           <button className="ui button large fluid"><Icon name='refresh' />Get more tasks</button>
         </QLink>

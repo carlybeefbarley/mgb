@@ -29,6 +29,7 @@ const gsItems = [
   { node: gsSkills.learn,           mascot: 'MgbLogo'         }
 ]
 
+// This is the   1 / n    box at the top-right of each skill box
 const ProgressLabel = ( { subSkillsComplete, subSkillTotal } ) => (
   <span className="ui label large right floated" style={{float: 'right', opacity: '0.75', backgroundColor: subSkillsComplete >= subSkillTotal ? 'lightgreen' : null}}>
     {subSkillsComplete} / {subSkillTotal}&nbsp;&nbsp;
@@ -51,7 +52,7 @@ const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
     startSkillPathTutorial(skillPath)
 }
 
-const StartDefaultNextTutorial = ( { currUser, userSkills } ) => (
+export const StartDefaultNextTutorial = ( { currUser, userSkills } ) => (
   currUser && (
     <button 
         className="ui active yellow right floated button" 

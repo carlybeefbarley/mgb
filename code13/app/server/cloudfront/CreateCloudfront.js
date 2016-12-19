@@ -70,7 +70,7 @@ const createDistribution = (callback) => {
   const params = {
     DistributionConfig: {
       /* required */
-      CallerReference: 'mgb-'+ORIGIN_DOMAIN_NAME, /* required - A unique value (for example, a date-time stamp) that ensures that the request can't be replayed */
+      CallerReference: 'mgb-' + ORIGIN_DOMAIN_NAME, /* required - A unique value (for example, a date-time stamp) that ensures that the request can't be replayed */
       Comment: 'mgb cloudfront distribution', /* required */
       DefaultCacheBehavior: {
         /* required */
@@ -103,8 +103,9 @@ const createDistribution = (callback) => {
           Items: [/* more items */]
         },
         ViewerProtocolPolicy: 'allow-all', /* allow http and https */ /* allow-all | https-only | redirect-to-https', /* required */
+        /* only get HEAD makes sense here - as rest goes through WS */
         AllowedMethods: {
-          Items: [/* required - only get HEAD makes sense here - as rest goes though WS*/
+          Items: [/* required */
             //'GET | HEAD | POST | PUT | PATCH | OPTIONS | DELETE',
             /* more items */
             'GET',

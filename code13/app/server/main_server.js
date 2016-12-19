@@ -1,4 +1,4 @@
-import {CDN_DOMAIN_NAME} from './cloudfront/CreateCloudfront.js'
+import './cloudfront/CreateCloudfront.js'
 
 import { Users } from '../imports/schemas'
 

@@ -1,14 +1,13 @@
 import AWS from 'aws-sdk'
+// this is @stauzs personal account
 import config from './config.json'
 
 // TODO: is it possible to get this from current running instance?
+// Change this for testing purposes
 const ORIGIN_DOMAIN_NAME = 'v2.mygamebuilder.com'
 
 // these will be filled at runtime
 let CLOUDFRONT_DOMAIN_NAME = ''
-
-// TODO: fix Meteor magic
-// AWS.config.loadFromPath('./config.json')
 
 AWS.config.update(config)
 
@@ -71,7 +70,7 @@ const createDistribution = (callback) => {
   const params = {
     DistributionConfig: {
       /* required */
-      CallerReference: 'mgb', /* required - A unique value (for example, a date-time stamp) that ensures that the request can't be replayed */
+      CallerReference: 'mgb-'+ORIGIN_DOMAIN_NAME, /* required - A unique value (for example, a date-time stamp) that ensures that the request can't be replayed */
       Comment: 'mgb cloudfront distribution', /* required */
       DefaultCacheBehavior: {
         /* required */
@@ -265,8 +264,6 @@ getDistribution((err, cloudfrontDistribution) => {
 
 Meteor.methods({
   "CDN.domain": function() {
-    return ''//CLOUDFRONT_DOMAIN_NAME
+    return CLOUDFRONT_DOMAIN_NAME
   }
 });
-
-export {CLOUDFRONT_DOMAIN_NAME}

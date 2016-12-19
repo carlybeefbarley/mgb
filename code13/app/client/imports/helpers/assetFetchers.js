@@ -8,6 +8,7 @@ const PartialAzzets = new Meteor.Collection('PartialAzzets')
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 const MAX_ASSET_CACHE_LENGTH = 500
 let CDN_DOMAIN = ""
+
 Meteor.call("CDN.domain", (err, cdnDomain) => {
   CDN_DOMAIN = cdnDomain
 })
@@ -119,8 +120,9 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
     removeFromCache(uri)
   }
   const client = new XMLHttpRequest()
-
+  let usingCDN = false
   if(CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//"){
+    usingCDN = true
     const cdnUri = `//${CDN_DOMAIN}${uri}`
     client.open('GET', cdnUri)
   }
@@ -128,6 +130,7 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
     client.open('GET', uri)
   }
 
+  // client.setRequestHeader("Access-Control-Allow-Origin", "*")
   client.send()
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified
@@ -137,13 +140,27 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
       }
       callback(null, this.response)
     }
-    else
+    else{
+      // try link without CDN
+      if(usingCDN){
+        console.log("CDN failed - trying local uri")
+        mgbAjax(window.location.origin + uri, callback, asset, pullFromCache)
+        return
+      }
       callback(this.statusText)
+    }
   }
   client.onerror = function (e) {
+    if(usingCDN){
+      console.log("CDN failed - trying local uri")
+      mgbAjax(window.location.origin + uri, callback, asset, pullFromCache)
+      return
+    }
     callback(e, this.statusText)
   }
 }
+window.mgbAjax = mgbAjax
+
 
 const fetchedAssets = []
 export const getAssetWithContent2 = (id, onReady) => {
@@ -208,20 +225,20 @@ export const getAssetWithContent2 = (id, onReady) => {
       ret.etag = etag
       //ret.isReady = false
       mgbAjax(asset.c2location || `/api/asset/content2/${id}`, (err, data) => {
-          const c2 = JSON.parse(data)
-          const oldC2 = ret.asset.content2
-          ret.isReady = true
+        const c2 = JSON.parse(data)
+        const oldC2 = ret.asset.content2
+        ret.isReady = true
 
-          if (!_.isEqual(c2, oldC2)) {
-            ret.asset = asset
-            ret.asset.content2 = c2
+        if (!_.isEqual(c2, oldC2)) {
+          ret.asset = asset
+          ret.asset.content2 = c2
 
-            console.log("DOING full update")
-            onReady && onReady()
-          }
-          else{
-            console.log("Sources are equal.. preventing update!")
-          }
+          console.log("DOING full update")
+          onReady && onReady()
+        }
+        else{
+          console.log("Sources are equal.. preventing update!")
+        }
         }, asset)
     }
   }

@@ -4,8 +4,8 @@ import {observe, mgbAjax} from "/client/imports/helpers/assetFetchers"
 import {AssetKindEnum} from '/imports/schemas/assets'
 
 // serving modules from...
-const getModuleServer = (lib) => {
-  return 'https://cdn.jsdelivr.net/' + lib + '/latest/' + lib + ".js"
+const getModuleServer = (lib, version = "latest") => {
+  return `https://cdn.jsdelivr.net/${lib}/${latest}/${lib}.js`
 }
 
 
@@ -732,6 +732,10 @@ main = function(){
     // import X from 'asset_id'
     if (!SourceTools.isExternalFile(urlFinalPart)) {
       // try CDN
+      const parts = urlFinalPart.split("@")
+      if(parts.length > 1){
+        return getModuleServer(parts[0], parts[1])
+      }
       return getModuleServer(urlFinalPart)
       //return MODULE_SERVER + urlFinalPart
     }

@@ -1,11 +1,12 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { expectedToolbarScopeNames, expectedToolbarScopeMaxValues, makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
-import { getFeatureLevel, setFeatureLevel } from '/imports/schemas/settings-client'
+import { expectedToolbars, makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
+import { getFeatureLevel, setFeatureLevel, resetAllFeatureLevelsToDefaults } from '/imports/schemas/settings-client'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 import { addJoyrideSteps } from '/client/imports/routes/App'
+import { Icon } from 'semantic-ui-react'
 
 export default fpFeatureLevels = React.createClass({
   mixins: [ReactMeteorData],
@@ -21,8 +22,8 @@ export default fpFeatureLevels = React.createClass({
   },
 
   getMeteorData: function() {
-    const foo = _.map(expectedToolbarScopeNames, name => (this.getLevelValFromSettings(name) ) )
-    return { levels: foo }
+    const foo = _.map(expectedToolbars.scopeNames, name => (this.getLevelValFromSettings(name) ) )
+    return { levels: foo }  // This data isn't used, but because we referenced it in getMeteorData, there will be a forceUpdate() when settings change 
   },
 
   setLevelFromNum(name, newLevelVal) {
@@ -43,6 +44,10 @@ export default fpFeatureLevels = React.createClass({
     return getFeatureLevel(this.context.settings, makeLevelKey(name))
   },
 
+  resetToDefaults() { 
+    resetAllFeatureLevelsToDefaults(this.context.settings)
+  },
+
   render: function () {
  
     const numInputStyle = { 
@@ -55,43 +60,58 @@ export default fpFeatureLevels = React.createClass({
     }
 
     const sliderStyle = {
-      marginTop:        '0.4em',
+      marginTop:        '0.3em',
       marginRight:      '2px',
-      marginLeft:       '2.5em'
+      marginLeft:       '2px'
     } 
 
     const makeSlider = name => {
-      const maxVal = expectedToolbarScopeMaxValues[name] || 20
+      const maxVal = expectedToolbars.getMaxLevel(name)
+      const defaultLevel = expectedToolbars.getDefaultLevel(name)
+      const actualLevel = this.getLevelValFromSettings(name) || defaultLevel 
+      const friendlyName = expectedToolbars.getFriendlyName(name)
       return (
-        <p key={name} style={{ marginLeft: '0.5em' }}>
-          <i className='ui options icon' />
-          &nbsp;{name} Level 
-          <NumberInput
-            style={numInputStyle}
-            dottedBorderStyle={true}
-            className='ui small input'
-            value={this.getLevelValFromSettings(name) || 1}
-            onValidChange={(num) => this.setLevelFromNum(name, num)}
-            min={1}
-            max={maxVal} />
-            <span style={{color: 'grey'}}>of {maxVal}</span>
-          <input
-            style={sliderStyle}
-            type='range'
-            value={this.getLevelValFromSettings(name) || 1}
-            onChange={(e) => this.setLevelFromEvent(name, e)}
-            min={1}
-            max={maxVal} />
-        </p>
+        <div key={name} style={{ marginLeft: '0.25em',marginRight: '1em',  marginBottom: '2em' }}>
+          <Icon style={{ float: 'right', marginTop: '0.15em' }} size='big' name={expectedToolbars.getIconName(name)} />
+          <div style={{ marginLeft: '1em' }}>
+            {friendlyName}
+            <br />
+            <small> 
+              <span style={{color: 'grey'}}>Level </span>
+              <NumberInput
+                  style={numInputStyle}
+                  dottedBorderStyle={true}
+                  className='ui small input'
+                  value={ actualLevel }
+                  onValidChange={(num) => this.setLevelFromNum(name, num)}
+                  min={1}
+                  max={maxVal} />
+                <span title={`Default level is ${defaultLevel}`} style={{color: 'grey'}}>of {maxVal}</span>
+              </small>
+            <br />
+            <span>
+              <small>1&emsp;</small>
+              <input
+                  style={sliderStyle}
+                  type='range'
+                  value={ actualLevel }
+                  onChange={(e) => this.setLevelFromEvent(name, e)}
+                  min={1}
+                  max={maxVal} />
+              <small>&emsp;{maxVal}</small>
+            </span>
+          </div>
+        </div>
       )
     }
 
     return (
       <div className='animated fadeIn'>
         <p>
-          Some tools have <em>Feature Level</em>&nbsp;<i className='ui options icon' /> sliders
-          <br />
-          Adjust these sliders to unlock features
+          Some tools have <em>Feature Level</em>&ensp;<Icon name='options'/> sliders.
+        </p>
+        <p>
+          Slide them to reveal advanced features
         </p>
         <button onClick={this.showFeatureLevelsSlider} className='ui small active yellow button' style={{ marginBottom: '1em', marginLeft: '5em' }}>
           <i className='student icon' />
@@ -99,7 +119,8 @@ export default fpFeatureLevels = React.createClass({
         </button>
         <div className='ui segment'>
           <h4 id='mgbjr-CurrentFeatureLevelsInFp'>Current Feature Levels:</h4>
-          { _.map(expectedToolbarScopeNames, name => makeSlider(name)) }
+          { _.map(expectedToolbars.scopeNames, name => makeSlider(name)) }
+          <button onClick={this.resetToDefaults} className='ui right floated mini active yellow button'>Reset to defaults</button>
         </div>
       </div>
     )

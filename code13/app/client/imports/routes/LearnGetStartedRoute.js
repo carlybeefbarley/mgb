@@ -17,12 +17,6 @@ const cardStyle = {
   color: "#2e2e2e"
 }
 
-const mascotStyle = {
-  maxWidth: "8em",
-  paddingRight: "0.5em",
-  marginBottom: "0"
-}
-
 const gsSkills = SkillNodes.getStarted
 
 const gsItems = [
@@ -35,6 +29,7 @@ const gsItems = [
   { node: gsSkills.learn,           mascot: 'MgbLogo'         }
 ]
 
+// This is the   1 / n    box at the top-right of each skill box
 const ProgressLabel = ( { subSkillsComplete, subSkillTotal } ) => (
   <span className="ui label large right floated" style={{float: 'right', opacity: '0.75', backgroundColor: subSkillsComplete >= subSkillTotal ? 'lightgreen' : null}}>
     {subSkillsComplete} / {subSkillTotal}&nbsp;&nbsp;
@@ -57,7 +52,7 @@ const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
     startSkillPathTutorial(skillPath)
 }
 
-const StartDefaultNextTutorial = ( { currUser, userSkills } ) => (
+export const StartDefaultNextTutorial = ( { currUser, userSkills } ) => (
   currUser && (
     <button 
         className="ui active yellow right floated button" 
@@ -72,6 +67,7 @@ const StartDefaultNextTutorial = ( { currUser, userSkills } ) => (
 const OfferNextTutorial = ( { skillPath } ) => (
   <button 
     onClick={() => startSkillPathTutorial(skillPath) }
+    title={`Start skill tutorial for ${skillPath}`}
     className="ui active yellow right floated small button mgb-show-on-parent-div-hover">
     <Icon name='student' />
     Show Me

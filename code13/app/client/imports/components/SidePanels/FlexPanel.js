@@ -4,6 +4,8 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
+import { expectedToolbars,  } from '/client/imports/components/Toolbar/Toolbar'
+
 
 import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'
@@ -22,31 +24,29 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
-
 const flexPanelViews = [
   { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
-
   { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false  },
   { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false },
-
   { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false },
   { tag: 'features',  lev: 1,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
 
-  { tag: 'skills',     lev: 2,  name: 'skills',  icon: 'plus circle',    hdr: 'Skills',           el: fpSkills,        superAdminOnly: false  },
-
+  { tag: 'skills',    lev: 2,  name: 'skills',  icon: 'plus circle', hdr: 'Skills',            el: fpSkills,        superAdminOnly: false  },
   
   { tag: 'users',     lev: 3,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
-  { tag: 'network',   lev: 3,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
-  { tag: 'keys',      lev: 4,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
-  { tag: 'projects',  lev: 5,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
+  
+  { tag: 'network',   lev: 4,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
+
+  { tag: 'keys',      lev: 5,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
+
+  { tag: 'projects',  lev: 6,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
 
   // SuperAdmin-only:
   { tag: 'super',     lev: 1,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true  } // ALWAYS SuperAdmin
 ]
 
 const defaultPanelViewIndex = 0
-const DEFAULT_FLEXPANEL_FEATURELEVEL = 1
-
+const DEFAULT_FLEXPANEL_FEATURELEVEL = expectedToolbars.getDefaultLevel('FlexPanel')
 
 export default FlexPanel = React.createClass({
   mixins: [ReactMeteorData],
@@ -58,6 +58,7 @@ export default FlexPanel = React.createClass({
     joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
     joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
     joyrideCurrentStepNum:  PropTypes.number,             // Step number (IFF joyrideSteps is not an empty array)
+    joyrideOriginatingAssetId: PropTypes.object,          // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
     selectedViewTag:        PropTypes.string,             // One of the flexPanelViews.tags values (or validtagkeyhere.somesuffix)
     activity:               PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible:     PropTypes.bool.isRequired,
@@ -150,12 +151,8 @@ export default FlexPanel = React.createClass({
   },
 
   getFpButtonSpecialStyleForTag: function(tag) {
-    const { joyrideSteps } = this.props
     const { meteorStatus } = this.data
     
-    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
-      return { backgroundColor: 'rgba(234,174,0,0.5)' }
-
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return { backgroundColor: 'rgba(255,0,0,0.2)' }
 
@@ -163,11 +160,15 @@ export default FlexPanel = React.createClass({
   },
 
   getFpButtonSpecialClassForTag: function(tag) {
+    const { joyrideSteps } = this.props
     const { wiggleActivity } = this.state
 
     if (tag === 'activity' && wiggleActivity)
       return ' green animated swing '
-      
+
+    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
+      return ' green animated swing '
+
     return ''
   },
 
@@ -253,6 +254,7 @@ export default FlexPanel = React.createClass({
                       meteorStatus={this.data.meteorStatus}
                       joyrideSteps={this.props.joyrideSteps}
                       joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
+                      joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}
                       joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
                       activity={this.props.activity}
                       panelWidth={this.props.flexPanelWidth}

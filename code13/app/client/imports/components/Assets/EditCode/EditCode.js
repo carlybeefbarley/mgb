@@ -4,6 +4,7 @@ var update = require('react-addons-update')
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+import TutorialMentor from './TutorialEditHelpers'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 import { addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
@@ -87,7 +88,6 @@ export default class EditCode extends React.Component {
     super(props)
     registerDebugGlobal( 'editCode', this, __filename, 'Active Instance of Code editor')
 
-
     this.fontSizeSettingIndex = undefined
     // save jshint reference - so we can kill it later
     this.jshintWorker = null
@@ -109,6 +109,9 @@ export default class EditCode extends React.Component {
       atCursorRefRequestResponse: {},
       atCursorDefRequestResponse: {},
 
+      // Only for Tutorial Assets
+      parsedTutorialData: null,   // null for not valid, or an object set by srcUpdate_AnalyzeTutorial()
+
       // handling game screen
       isPopup: false
     }
@@ -127,13 +130,16 @@ export default class EditCode extends React.Component {
 
 
   handleJsBeautify() {
-    let newValue = js_beautify(this._currentCodemirrorValue, { indent_size: 2 })
+    let newValue = js_beautify(this._currentCodemirrorValue, { indent_size: 2, brace_style: 'expand' })
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue
     let newC2 = {src: newValue}
     this.handleContentChange(newC2, null, `Beautify code`)
   }
 
+  warnNoWriteAccess() {
+    alert("You don't have write access to this code")
+  }
 
   componentDidMount() {
     const codeMirrorUpdateHints = this.codeMirrorUpdateHints
@@ -157,7 +163,7 @@ export default class EditCode extends React.Component {
         this.handleContentChange(newC2, null, `Tutorial appended code`)
       }
       else
-        alert("You don't have write access to this code")
+        this.warnNoWriteAccess()
     }
 
     window.addEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
@@ -346,9 +352,8 @@ export default class EditCode extends React.Component {
         options.filename = filename
       }
       const getAstFlowerTree = (e) => {
-        if (e.data.type != "flower") {
+        if (e.data.type != "flower")
           return
-        }
         this.ternServer.worker.removeEventListener("message", getAstFlowerTree)
         callback(e.data.data)
       }
@@ -436,13 +441,12 @@ export default class EditCode extends React.Component {
         this.acTimeout = 0
       }
     this.acTimeout = setTimeout(() => {
-      if (this.changeTimeout) {
+      if (this.changeTimeout)
         return
-      }
+      
       // skip ac in the comments and when user is typing
-      if (this.state.currentToken.type !== "comment") {
+      if (this.state.currentToken && this.state.currentToken.type !== "comment")
         this.ternServer.complete(cm)
-      }
     }, 1000)      // Pop up a helper after a second
 // this.ternServer.getHint(cm, function (hint) 
 // {
@@ -468,8 +472,6 @@ export default class EditCode extends React.Component {
       this.doFullUpdateOnContentChange()
     }
   }
-
-
 
   // opts can be    force = true ... force a font change even if delta =0 
   doHandleFontSizeDelta(delta, opts = {} ) {   // delta should be -1 or +1
@@ -620,9 +622,8 @@ export default class EditCode extends React.Component {
         else
           matches.push({id: match[4], kind: "map", refType: "ID#"})
       }
-      else {
+      else
         matches.push({id: match[2], kind: match[1], refType: ""}) // :user/:name
-      }
     }
     return _.uniqBy(matches, 'id')
   }
@@ -635,6 +636,10 @@ export default class EditCode extends React.Component {
     }
   }
 
+  srcUpdate_AnalyzeTutorial() {
+    const pj = TutorialMentor.parseJson(this._currentCodemirrorValue)
+    this.setState( { parsedTutorialData: pj } )
+  }
 
   /** Look for any MGB asset strings in current line or selection */
   srcUpdate_LookForMgbAssets() {
@@ -664,9 +669,9 @@ export default class EditCode extends React.Component {
   }
 
   runJSHintWorker(code, cb) {
-    if(this.props.asset.kind == "tutorial"){
+    if (this.props.asset.kind === "tutorial")
       return
-    }
+    
     // terminate old busy worker - as jshint can take a lot time on huge scripts
     if (this.jshintWorker && this.jshintWorker.isBusy) {
       this.jshintWorker.terminate()
@@ -715,10 +720,10 @@ export default class EditCode extends React.Component {
       this.errorMessageCache = {}
     }
 
-    for (var i = 0; i < errors.length; ++i) {
+    for (var i = 0; i < errors.length; ++i)
       this.showError(errors[i], clear)
-    }
   }
+
   showError(err, clear) {
     if (!err) return
     const msgs = this.errorMessageCache
@@ -969,13 +974,14 @@ export default class EditCode extends React.Component {
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {
     // Update the activity snapshot if the code line has changed
     // TODO: Batch this so it only fires when line# is changed
-    let editor = this.codeMirror
-    let position = editor.getCursor()
-    let passiveAction = {
+    const editor = this.codeMirror
+    const position = editor.getCursor()
+    const { asset } = this.props
+    const passiveAction = {
       position: position
     }
-    snapshotActivity(this.props.asset, passiveAction)
-
+    snapshotActivity(asset, passiveAction)
+    
 
     this.setState({_preventRenders: true})
 
@@ -985,13 +991,18 @@ export default class EditCode extends React.Component {
       this.srcUpdate_CleanSheetCase()
       this.srcUpdate_LookForMgbAssets()
       this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
-      this.srcUpdate_GetInfoForCurrentFunction()
-      this.srcUpdate_GetRelevantTypeInfo()
-      this.srcUpdate_GetRefs()
-      this.srcUpdate_GetDef()
-
-      this.srcUpdate_getMemberParent()
-
+      if (asset.kind === 'code')
+      {
+        this.srcUpdate_GetInfoForCurrentFunction()
+        this.srcUpdate_GetRelevantTypeInfo()
+        this.srcUpdate_GetRefs()
+        this.srcUpdate_GetDef()
+        this.srcUpdate_getMemberParent()
+      }
+      if (asset.kind === 'tutorial')
+      {
+        this.srcUpdate_AnalyzeTutorial()
+      }
       // TODO:  See atInterestingExpression() and findContext() which are 
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
     }
@@ -1452,7 +1463,7 @@ export default class EditCode extends React.Component {
   generateToolbarConfig() {
 
     const config = {
-      level: 2,
+      // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
 
       buttons: [
         { name: 'separator' },
@@ -1482,24 +1493,6 @@ export default class EditCode extends React.Component {
           disabled: false,
           level:    2,
           shortcut: 'Ctrl+L'
-        },
-        {
-          name:  'toolCommentFade',
-          label: 'Fade Comments',
-          icon:  'grey sticky note',
-          tooltip: 'Fade Comments so you can focus on code',
-          disabled: false,
-          level:    3,
-          shortcut: 'Ctrl+Alt+F'
-        },
-        {
-          name:  'toolCommentUnFade',
-          label: 'UnFade Comments',
-          icon:  'sticky note',
-          tooltip: 'UnFade comments so you can see them again',
-          disabled: false,
-          level:    3,
-          shortcut: 'Ctrl+Alt+Shift+F'
         },
         {
           name:  'handleJsBeautify',
@@ -1555,6 +1548,24 @@ export default class EditCode extends React.Component {
         // shortcut: 'Ctrl+T'
       })
       config.buttons.push( {
+        name:  'toolCommentFade',
+        label: 'Fade Comments',
+        icon:  'grey sticky note',
+        tooltip: 'Fade Comments so you can focus on code',
+        disabled: false,
+        level:    3,
+        shortcut: 'Ctrl+Alt+F'
+      })
+      config.buttons.push( {
+        name:  'toolCommentUnFade',
+        label: 'UnFade Comments',
+        icon:  'sticky note',
+        tooltip: 'UnFade comments so you can see them again',
+        disabled: false,
+        level:    3,
+        shortcut: 'Ctrl+Alt+Shift+F'
+      })
+      config.buttons.push( {
         name:  'toggleBundling',
         label: 'Auto Bundle code',
         icon:  'travel',
@@ -1565,31 +1576,51 @@ export default class EditCode extends React.Component {
         shortcut: 'Ctrl+Alt+Shift+B'
       })
 
-    }
-    
+    }    
     return config
   }
 
-  toggleBundling(){
+  toggleBundling() {
     this.props.asset.content2.needsBundle = !this.props.asset.content2.needsBundle
     this.handleContentChange(this.props.asset.content2, null, "enableBundling")
     this.setState({needsBundle: this.props.asset.content2.needsBundle})
   }
 
-  tryTutorial() {
-    let loadedSteps = null
-    try {
-      loadedSteps = JSON.parse(this._currentCodemirrorValue)
-    }
-    catch (err)
+  insertTextAtCursor(text) {
+    if (!this.props.canEdit)
     {
-      alert('JSON Parse error: ', err.toString())
+      this.warnNoWriteAccess()
+      return      
+    }
+    const editor = this.codeMirror
+    var doc = editor.getDoc()
+    var cursor = doc.getCursor()
+    doc.replaceRange(text, cursor)
+  }
+
+  tryTutorial() {
+    const pj = TutorialMentor.parseJson(this._currentCodemirrorValue)
+
+    if (pj.errorHintString)
+    {
+      alert('JSON Parse error: ' + pj.errorHintString)
+      if ( pj.errorCharIdx >=0 )
+      {
+        const editor = this.codeMirror
+        editor.setCursor(editor.posFromIndex(pj.errorCharIdx))
+        editor.focus()
+      }
     }
 
-    if (loadedSteps)
+    if (pj.data)
     {
-      joyrideDebugEnable(true)
-      addJoyrideSteps( loadedSteps.steps, { replace: true } )
+      if (!_.has(pj.data, 'steps'))
+        alert("Tutorials must have a steps: [] array value")
+      else
+      {
+        joyrideDebugEnable(true)
+        addJoyrideSteps( pj.data.steps, { replace: true, origAssetId: { ownerName: this.props.asset.dn_ownerName, id: this.props.asset._id } } )
+      }
     }
   }
 
@@ -1599,7 +1630,7 @@ export default class EditCode extends React.Component {
   }
 
   render() {
-    const asset = this.props.asset
+    const { asset, canEdit } = this.props
 
     if (!asset)
       return null
@@ -1644,7 +1675,6 @@ export default class EditCode extends React.Component {
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
         <div className={infoPaneOpts.col1 + ' wide column'}>
 
-
           <div className="row" style={{marginBottom: "6px"}}>
             {<Toolbar actions={this} config={tbConfig} name="EditCode" />}
           </div>
@@ -1669,22 +1699,18 @@ export default class EditCode extends React.Component {
                   </span>
                 </div>
               }
-              { !docEmpty && asset.kind === 'tutorial' && 
-                // Current Line/Selection helper (body)
+              { !docEmpty && asset.kind === 'tutorial' &&     // TUTORIAL Current Line/Selection helper (body)               
                 <div className="active content">
-                  <button className='ui small yellow button' onClick={this.tryTutorial.bind(this)}>
-                    <i className='student icon' />Try Tutorial
-                  </button>
-                  <button className='ui small yellow button' onClick={this.stopTutorial.bind(this)}>
-                    <i className='stop icon' />Stop Tutorial
-                  </button>
-
+                  <TutorialMentor 
+                      tryTutorial={() => this.tryTutorial()} 
+                      stopTutorial={() => this.stopTutorial()}  
+                      parsedTutorialData={this.state.parsedTutorialData} 
+                      insertCodeCallback={ canEdit ? (newCodeStr => this.insertTextAtCursor(newCodeStr) ) : null }/>
                   { previewIdThings && previewIdThings.length > 0 &&
                     <div className="ui divided selection list">
                       {previewIdThings}
                     </div>
                   }
-                  
                 </div>
               }
 

@@ -1,23 +1,22 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { browserHistory } from 'react-router'
+import Helmet from "react-helmet"
+import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
+
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
+import { hasSkill, learnSkill } from '/imports/schemas/skills'
 
-
-import { browserHistory } from 'react-router'
-import Helmet from "react-helmet"
-
-import reactMixin from 'react-mixin'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
-
+import { Users, Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-import { Users, Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
@@ -129,8 +128,9 @@ export default App = React.createClass({
 
       // For react-joyride
       joyrideSteps: [],
-      joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial
+      joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
       joyrideCurrentStepNum: 0,            // integer with cuurent step number (valid IFF there are steps defined)
+      joyrideOriginatingAssetId: null,     // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
       joyrideDebug: false
     }
   },
@@ -322,6 +322,7 @@ export default App = React.createClass({
               joyrideSteps={this.state.joyrideSteps} 
               joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
               joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
+              joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
               currUser={currUser}
               currUserProjects={currUserProjects}
               user={user}
@@ -479,27 +480,31 @@ export default App = React.createClass({
   // TOAST
   //
 
-  showToast(content, type) {
+  showToast(content, type = 'success') {
     this.setState({
       showToast: true,
-      //toastMsg content is string that accepts HTML
-      toastMsg: content,
-      //String: 'error' or 'success'
-      toastType: type
+      toastMsg: content,    // toastMsg content is string that accepts HTML
+      toastType: type       // type is a string: 'error' or 'success'
     })
     window.setTimeout(() => { this.closeToast() }, 2500)
   },
 
-
   closeToast() {
-    this.setState({ showToast: false, toastMsg: '' })
+    this.setState( { showToast: false, toastMsg: '' } )
   },
-
 
   startSkillPathTutorial(skillPath)
   {
     const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)
     this.addJoyrideSteps(tutPath, { replace: true, skillPath: skillPath } )
+  },
+
+  handleCompletedSkillTutorial(tutorialSkillPath) {
+    console.log( 'Completed a Skill Tutorial: ', tutorialSkillPath )
+    if (!hasSkill( tutorialSkillPath )) {
+      this.showToast( 'Tutorial Completed, Skill gained :' + tutorialSkillPath )
+      learnSkill( tutorialSkillPath )
+    }
   },
 
   //
@@ -512,6 +517,10 @@ export default App = React.createClass({
   // See /DeveloperDocs/ReactJoyrideTours.md for our rules/conventions 
   //     for using it in our codebase
 
+  // addJoyrideSteps()
+  //   opts.skillPath  -- used by startSkillPathTutorial()
+  //   opts.replace    -- if true, then replace current tutorial
+  //   opts.origAssetId    -- If set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
   addJoyrideSteps: function (steps, opts = {}) {
     let joyride = this.refs.joyride
 
@@ -558,6 +567,9 @@ export default App = React.createClass({
       currentState.joyrideSkillPathTutorial = opts.skillPath || null
       if (opts.replace)
         currentState.joyrideCurrentStepNum = 0
+      if (opts.origAssetId)
+        currentState.joyrideOriginatingAssetId = opts.origAssetId  // Just to enable a nice edit Tutorial button in fpGoals
+      
       return currentState
     })
   },
@@ -569,8 +581,15 @@ export default App = React.createClass({
   handleJoyrideCallback( func ) {
     if (func.type === 'finished') {
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
-        console.log(" Completed: ", this.state.joyrideSkillPathTutorial)
-      this.setState( {  joyrideSteps: [], joyrideSkillPathTutorial: null, joyrideCurrentStepNum: 0 }) 
+        this.handleCompletedSkillTutorial( this.state.joyrideSkillPathTutorial )
+      this.setState(
+        { 
+          joyrideSteps: [], 
+          joyrideSkillPathTutorial: null, 
+          joyrideCurrentStepNum: 0,
+          joyrideOriginatingAssetId: null
+        }
+      ) 
     } else if (func.type === 'step:after')
     {
       this.setState( { joyrideCurrentStepNum: func.newIndex } )

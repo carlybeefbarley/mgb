@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom'
 import { utilMuteLevelSlider, utilActivateLevelSlider, utilAdvertizeSlider } from '/client/imports/components/Nav/NavBarGadgetUxSlider'
 import { getFeatureLevel, getToolbarData, setToolbarData } from '/imports/schemas/settings-client'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { AssetKinds } from '/imports/schemas/assets'
 
 const keyModifiers = {
   CTRL:  1 <<  8,
@@ -19,21 +20,68 @@ const sliderPcts = {
   tooltipSlowdown: 0.95
 }
 
-// Here is a list of *known* toolbar scope names & Max Values. 
+// Here is a list of *known* toolbar scope names & Max Values, default values etc. 
 // This is so that some Settings-style (e.g fpUxLevels.js) can enumerate them all
 // and offer a global modification choice
-export const expectedToolbarScopeMaxValues = {
-  EditGraphic:   10,
-  EditCode:      4,
-//GraphicTools:  21,
-  MapTools:      27,
-  AudioTools:    25,
-  NavPanel:      4,
-  FlexPanel:     5,
-  SkillsMap:     4
+
+// Values for unknown toolbars...
+const _defaultTbMaxLevel = 25
+const _defaultTbDefaultLevel = 1
+const _defaultTbIconName = 'red help circle'
+
+//TODO: replace props.config.level
+
+
+export const expectedToolbars = {
+  NavPanel:      { friendlyName: 'Navigation Panel',     max:  4,   default: 1,  icon: 'pointing left'                    },  // Not really toolbars, but I wanted the same fpLevel stuff
+  FlexPanel:     { friendlyName: 'Flex Panel',           max:  6,   default: 1,  icon: 'pointing right'                   },  // Not really toolbars, but I wanted the same fpLevel stuff
+
+  EditGraphic:   { friendlyName: 'Graphic Editor',       max: 10,   default: 1,  icon: AssetKinds.getIconClass('graphic') },
+  EditCode:      { friendlyName: 'Code/Tutorial Editor', max:  4,   default: 2,  icon: AssetKinds.getIconClass('code')    },
+//GraphicTools:  { friendlyName: '', max: 10,   default: 1,  icon: AssetKinds.getIconClass('graphic') },
+  MapTools:      { friendlyName: 'Map/ActorMap Editor',  max: 27,   default: 3,  icon: AssetKinds.getIconClass('map')     },
+  AudioTools:    { friendlyName: 'Sound/Music Editor',   max: 25,   default: 3,  icon: AssetKinds.getIconClass('sound')   },
+
+  SkillsMap:     { friendlyName: 'Skills Viewer',        max:  4,   default: 2,  icon: 'student'                          },
 }
 
-export const expectedToolbarScopeNames = _.keys(expectedToolbarScopeMaxValues)
+// We do this before adding functions so that the function names don't pollute the keys :)
+expectedToolbars.scopeNames = _.keys(expectedToolbars)
+
+// get Max Value for feature level
+expectedToolbars.getMaxLevel = toolbarName => 
+{
+  const tb = expectedToolbars[toolbarName]
+  if (!tb)
+    console.error(`Unexpected getMaxLevel call for toolbarName='${toolbarName}' requested. Returning default=${_defaultTbMaxLevel}`)
+  return tb ? tb.max : _defaultTbMaxLevel
+}
+
+// get default Value for feature level
+expectedToolbars.getDefaultLevel = toolbarName => 
+{
+  const tb = expectedToolbars[toolbarName]
+  if (!tb)
+    console.error(`Unexpected getDefaultLevel call for toolbarName='${toolbarName}' requested. Returning default=${_defaultTbDefaultLevel}`)
+  return tb ? tb.default : _defaultTbDefaultLevel
+}
+
+expectedToolbars.getIconName = toolbarName => 
+{
+  const tb = expectedToolbars[toolbarName]
+  if (!tb)
+    console.error(`Unexpected getIconName call for toolbarName='${toolbarName}' requested. Returning default='${_defaultTbIconName}'`)
+  return tb ? tb.icon : _defaultTbIconName
+}
+
+expectedToolbars.getFriendlyName = toolbarName => 
+{
+  const tb = expectedToolbars[toolbarName]
+  if (!tb)
+    console.error(`Unexpected getFriendlyName call for toolbarName='${toolbarName}' requested. Returning default='[${toolbarName}]'`)
+  return tb ? tb.friendlyName : `[${toolbarName}]`
+}
+
 
 
 // Make Toolbar Level Key using a well-known prefix on the Toolbar name
@@ -53,12 +101,13 @@ export default class Toolbar extends React.Component {
     this.keyActions = {}
     this.buttons = []
 
-    // separate these - and allow some toolbars to share level???
+    // Level Slider values.. 
     this.lsDataKey = makeTDataKey(this.props.name)
-    this.lsLevelKey = makeLevelKey(this.props.levelName || this.props.name)
+    this.lsActiveFeatureLevelName = this.props.levelName || this.props.name
+    this.lsLevelKey = makeLevelKey(this.lsActiveFeatureLevelName)
 
-    if (!_.includes(expectedToolbarScopeNames, this.props.name))
-      console.trace(`Unexpected Toolbar name "${this.props.name}" in Toolbar.js. Devs should add new ones to expectedToolbarScopeNames"`)
+    if (!_.includes(expectedToolbars.scopeNames, this.props.name))
+      console.trace(`Unexpected Toolbar name "${this.props.name}" in Toolbar.js. Devs should add new ones to expectedToolbars.scopeNames"`)
 
     this._activeButton = null
     this.startPos = null
@@ -115,12 +164,10 @@ export default class Toolbar extends React.Component {
     this.loadState()
   }
 
-
   _calcTooltipShowDelay() 
   {
     return this.state.level <= (sliderPcts.tooltipSlowdown * this.maxLevel) ? 300 : 700
   }
-
 
   set activeButton(v) {
     if (v) {
@@ -137,16 +184,17 @@ export default class Toolbar extends React.Component {
     this._activeButton = v
   }
 
-
   get activeButton() {
     return this._activeButton
   }
 
-
   getFeatureLevelNow() {
-    return getFeatureLevel(this.context.settings, this.lsLevelKey) || this.props.config.level 
-  }
+    const defaultLevel = expectedToolbars.getDefaultLevel(this.lsActiveFeatureLevelName) 
+    if (this.props.config.level && defaultLevel)
+      console.error(` Dead prop detected -- props.config.level has been replaced by expectedToolbars.getDefaultLevel() for toolbarName='${this.lsActiveFeatureLevelName}'`)
 
+    return getFeatureLevel(this.context.settings, this.lsLevelKey) || defaultLevel
+  }
 
   /* Lifecycle functions */
   componentDidMount() {
@@ -217,7 +265,6 @@ export default class Toolbar extends React.Component {
     }, 0)
   }
 
-
   getRow(mb, b) {
     const totRows = Math.round(mb.height / b.height)
     if (totRows === 0)
@@ -228,7 +275,6 @@ export default class Toolbar extends React.Component {
     return mb.width * row
   }
 
-
   getKeyval(e) {
     let keyval = e.which
     e.metaKey  &&  (keyval |= keyModifiers.META)
@@ -238,11 +284,9 @@ export default class Toolbar extends React.Component {
     return keyval
   }
 
-
   getButtonFromAction(action) {
     return _.find(this.data.buttons, (o) => { return o.name == action })
   }
-
 
   registerShortcut(shortcut, action) {
     const keys = shortcut.split("+")
@@ -250,21 +294,19 @@ export default class Toolbar extends React.Component {
     // first 8 bits is keycode
     // 9th-12th bits are Ctrl/Shift/Alt/Meta - See keyModifiers.*
 
-
     let keyval = 0
-
 
     for (let i=0; i<keys.length; i++) {
       const key = keys[i].toUpperCase().trim()
 
       // some special cases
-      switch(key){
-        case "SPACE":
-          keyval |= 32
-          continue
-        case "ENTER":
-          keyval |= 13
-          continue
+      switch (key) {
+      case "SPACE":
+        keyval |= 32
+        continue
+      case "ENTER":
+        keyval |= 13
+        continue
       }
 
       if (key.length > 1)
@@ -286,7 +328,6 @@ export default class Toolbar extends React.Component {
     this.keyActions[keyval].action = action
   }
 
-
   // Return 'tiny', 'small' or 'medium' based on the slider config
   determineButtonSize() {
     if (this.state.level <= sliderPcts.iconSizeBreak1 * this.maxLevel)
@@ -295,7 +336,6 @@ export default class Toolbar extends React.Component {
       return "small"
     return "tiny"
   }
-
 
   render() {
     const size = this.determineButtonSize()
@@ -373,7 +413,6 @@ export default class Toolbar extends React.Component {
     this.buttons[index] = b
   }
 
-
   _handleClick(action, e) {
     if (this.hasMoved || this.activeButton === this._extractButton(e.target) )
       return
@@ -391,7 +430,6 @@ export default class Toolbar extends React.Component {
       console.error(`Cannot find action for button '${action}'`)    
   }
 
-
   _extractButton(el) {
     let b = el
     if (this.buttons.indexOf(b) == -1) {
@@ -403,7 +441,6 @@ export default class Toolbar extends React.Component {
     }
     return b
   }
-
 
   _renderButton(b, index) {
     const label = (b.label && (this.state.level <= 2 || this.state.level === b.level)) ? " " + b.label : ''
@@ -447,8 +484,13 @@ export default class Toolbar extends React.Component {
   // Note that this relies on the slider created by /client/imports/components/Nav/NavBarGadgetUxSlider.js
   _addLevelSlider() {
     // The 1+ is so the last tool will not have it's label shown
-    this.maxLevel = 1 + _.maxBy(this.props.config.buttons, 'level').level
-    return utilActivateLevelSlider(this.maxLevel, this.lsLevelKey, this.state.level)
+    this.maxLevel = 1 + _.maxBy(this.props.config.buttons, 'level').level  
+    if (expectedToolbars.getMaxLevel(this.lsActiveFeatureLevelName) !== this.maxLevel) {
+      // TODO: replace this calculated maxLevel with expectedToolbars.getMaxLevel()
+      // .. but for now, at least alert of discrepancies. a known one is ActorMap (which should be separated from Map)
+      console.log(`_addLevelSlider() noticed that getMaxLevel(${this.lsActiveFeatureLevelName}) != ${this.maxLevel}. That should get looked at`)
+    }
+    return utilActivateLevelSlider(this.maxLevel, this.lsLevelKey, this.lsActiveFeatureLevelName, this.state.level)
   }
 
   /* Button sorting */
@@ -460,7 +502,6 @@ export default class Toolbar extends React.Component {
     this.startPos = { x: e.pageX, y: e.pageY }
     this.activeButton = b
   }
-
 
   _moveButton(e) {
     if (!this.activeButton)
@@ -502,7 +543,6 @@ export default class Toolbar extends React.Component {
         ab.style.left = (rect.left < box.left && + this.getRow(mainBox, rect) == row) ? -box.width + "px" : 0
     }
   }
-
 
   _moveButtonStop(e) {
     if (!this.activeButton)
@@ -621,9 +661,10 @@ export default class Toolbar extends React.Component {
 }
 
 Toolbar.propTypes = {
-  name: PropTypes.string.isRequired, // Name of this toolbar instance. Should be one of toolbarScopeNames
-  config: PropTypes.object.isRequired, // Config.. { buttons: {}, vertical: bool }
-  levelName: PropTypes.string // Use this if you want to share active level with other toolbars - default = name
+  name:      PropTypes.string.isRequired, // Name of this toolbar instance. Should be one of expectedToolbars.scopeNames
+  config:    PropTypes.object.isRequired, // Config.. { buttons: {}, vertical: bool }
+  levelName: PropTypes.string,            // Use this if you want to share active level with other toolbars - default = name
+  level:     PropTypes.number             // Default level if not specified in the user settings
 }
 
 Toolbar.contextTypes = {

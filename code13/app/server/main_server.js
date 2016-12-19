@@ -1,3 +1,5 @@
+import {CDN_DOMAIN_NAME} from './cloudfront/CreateCloudfront.js'
+
 import { Users } from '../imports/schemas'
 
 // Import all server-side schema stubs in order to register their Meteor.call() methods
@@ -88,8 +90,6 @@ Meteor.startup(function () {
 // smoke test that these are present
 Npm.require;
 Assets;
-
-Meteor.isProduction && process.env.CDN && WebAppInternals.setBundledJsCssPrefix(process.env.CDN)
 
 console.log(`
   MGBv2 server running ${Meteor.release}

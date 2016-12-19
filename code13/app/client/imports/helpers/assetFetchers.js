@@ -7,7 +7,10 @@ const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 const MAX_ASSET_CACHE_LENGTH = 500
-
+let CDN_DOMAIN = ""
+Meteor.call("CDN.domain", (err, cdnDomain) => {
+  CDN_DOMAIN = cdnDomain
+})
 
 // used by maps - to get notifications about image changes
 export const observe = (selector, onReady, onChange = onReady, oldSubscription = null) => {
@@ -116,7 +119,15 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
     removeFromCache(uri)
   }
   const client = new XMLHttpRequest()
-  client.open('GET', uri)
+
+  if(CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//"){
+    const cdnUri = `//${CDN_DOMAIN}${uri}`
+    client.open('GET', cdnUri)
+  }
+  else{
+    client.open('GET', uri)
+  }
+
   client.send()
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified

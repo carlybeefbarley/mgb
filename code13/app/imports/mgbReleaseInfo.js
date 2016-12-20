@@ -24,12 +24,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Sun Dec 18 2016 14:30:00 GMT-0800 (PST)',
+      'timestamp': 'Tue Dec 20 2016 00:30:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2334'
+        'iteration': '2341'
       },
 
       'releaseManagement': {
@@ -41,7 +41,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'featureTag': 'asset.tutorials',
           'type': 'improvement',
           'changeName': 'Tutorial Editor - macros and helpers',
-          'changeSummary': 'The Tutorial Editor now provides error information on Tutorials while they are being edited. It also supports various macros for steps or step properties. A new DropDown UI lists the built-in stepMacro names and can also insert them in your code. Tutorial steps also now have an optional TODO: property which is helpful for Tutorial authors while they are developing and testing their tutorials',
+          'changeSummary': 'The Tutorial Editor now provides error information on Tutorials while they are being edited. It also supports various macros for steps or step properties. A new DropDown UI lists the built-in stepMacro names and can also insert them in your code. Tutorial steps also now have an optional TODO: property which is helpful for Tutorial authors while they are developing and testing their tutorials. There is also special support for a login tutorial at !vault:tutorials._special.signup, and for badge awards',
           'otherUrls': [ ]
         },
         {

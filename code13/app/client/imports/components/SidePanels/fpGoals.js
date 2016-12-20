@@ -4,13 +4,11 @@ import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Progress, Icon } from 'semantic-ui-react'
-import { addJoyrideSteps } from '/client/imports/routes/App'
+import { stopCurrentTutorial } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
 import { StartDefaultNextTutorial } from '/client/imports/routes/LearnGetStartedRoute'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
-
-const _stopTutorial = () => addJoyrideSteps( [], { replace: true } )
 
 const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum, joyrideOriginatingAssetId } ) => (
   (!joyrideSteps || !joyrideSteps.length) ? null : (
@@ -27,7 +25,7 @@ const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurren
         { joyrideOriginatingAssetId && 
           <QLink to={`/u/${joyrideOriginatingAssetId.ownerName}/asset/${joyrideOriginatingAssetId.id}`} style={{float: 'left'}} >Edit Tutorial</QLink>
         }
-        <a style={{float: 'right'}} onClick={_stopTutorial}>Stop Tutorial</a>
+        <a style={{float: 'right'}} onClick={stopCurrentTutorial}>Stop Tutorial</a>
       </div>
     </div>
   )

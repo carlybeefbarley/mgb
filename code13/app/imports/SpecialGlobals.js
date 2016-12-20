@@ -50,7 +50,9 @@ export default SpecialGlobals = {
 
   skillsModelTrifecta: {  // See SkillNodes.js to understand these values related to the SKILLS_MODEL_TRIFECTA
     tutorialAccount:         '!vault', 
-    tutorialAssetNamePrefix: 'tutorials.'
+    tutorialAssetNamePrefix: 'tutorials.',
+
+    signupTutorialName:       'tutorials._special.signup'
   }
 
 }

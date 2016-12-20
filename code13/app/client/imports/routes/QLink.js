@@ -141,10 +141,18 @@ export default QLink = React.createClass({
   
 })
 
-/** This is a replacement for browserHistory.push() */
-export function utilPushTo(existingQuery, newTo)
+/** utilPushTo()
+ * 
+ * This is a replacement for browserHistory.push() 
+ * 
+ * @export
+ * @param {any} existingQuery
+ * @param {string} newTo
+ * @param {any} [extraQueryParams={}]
+ */
+export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
 {
   const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)
-  const location = createLocationDescriptor(newTo, { query: appScopedQuery })
+  const location = createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
   browserHistory.push(location)
 }

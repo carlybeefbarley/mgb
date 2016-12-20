@@ -6,6 +6,7 @@ import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
@@ -41,6 +42,11 @@ const npColumn1Width = "60px"
 
 let _theAppInstance = null
 
+export const stopCurrentTutorial = () => {
+  if (_theAppInstance) 
+    _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true } ) 
+  
+}
 export const addJoyrideSteps = (steps, opts) => { 
   if (_theAppInstance) 
     _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts) 
@@ -49,6 +55,12 @@ export const addJoyrideSteps = (steps, opts) => {
 export const startSkillPathTutorial = (skillPath) => { 
   if (_theAppInstance) 
     _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath) 
+}
+
+export const startSignUpTutorial = () => {
+  if (_theAppInstance) 
+    _theAppInstance.startSignUpTutorial.call(_theAppInstance) 
+  
 }
 
 
@@ -493,6 +505,17 @@ export default App = React.createClass({
     this.setState( { showToast: false, toastMsg: '' } )
   },
 
+  startSignUpTutorial() 
+  {
+    if (this.currUser)
+    {
+      console.error('startSignUpTutorial() but user is already loggedin')
+      return
+    }
+    const tutPath = ':' + SpecialGlobals.skillsModelTrifecta.signupTutorialName
+    this.addJoyrideSteps(tutPath, { replace: true } )
+  },
+
   startSkillPathTutorial(skillPath)
   {
     const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)
@@ -606,6 +629,15 @@ export default App = React.createClass({
       switch (act) {
       case 'closeFlexPanel':
         this.closeFlexPanel()
+        break
+
+      case 'refreshBadgeStatus':
+        Meteor.call('User.refreshBadgeStatus', (err, result) => {
+          if (err)
+            console.log(err)
+          else
+            console.log(`${result} Additional badges awarded`)
+        })
         break
 
       // case 'closeNavPanel':

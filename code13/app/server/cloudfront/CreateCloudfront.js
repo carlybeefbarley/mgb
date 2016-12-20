@@ -1,10 +1,30 @@
 import AWS from 'aws-sdk'
 // this is @stauzs personal account
 import config from './config.json'
+import { WebApp } from 'meteor/webapp'
 
 // debug
-WebAppInternals.setBundledJsCssPrefix("http://d3lu47gtxj7cqp.cloudfront.net")
+// WebAppInternals.setBundledJsCssPrefix("http://d3lu47gtxj7cqp.cloudfront.net")
 // WebAppInternals.setBundledJsCssPrefix("http://127.0.0.1:3000")
+
+
+
+// TODO: is it possible to get this from current running instance?
+// Change this for testing purposes
+const ORIGIN_DOMAIN_NAME = 'mightyfingers.com'
+
+// this will be filled at runtime
+let CLOUDFRONT_DOMAIN_NAME = ''
+
+Meteor.methods({
+  "CDN.domain": function() {
+    return CLOUDFRONT_DOMAIN_NAME
+  }
+})
+
+WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
+  return "//" + CLOUDFRONT_DOMAIN_NAME + "/" +uri
+})
 
 // CORS fix
 // get meteor-core's connect-implementation
@@ -15,7 +35,6 @@ const allowedOrigins = [
   'https://v2.mygamebuilder.com'
 ]
 WebApp.rawConnectHandlers.use(function (req, res, next) {
-  console.log("ORIGIN:", req.headers.origin)
   const index = allowedOrigins.indexOf(req.headers.origin)
   if(index > -1){
     res.setHeader('access-control-allow-origin', allowedOrigins[index]);
@@ -23,13 +42,6 @@ WebApp.rawConnectHandlers.use(function (req, res, next) {
   return next();
 });
 // End of CORS FIX
-
-// TODO: is it possible to get this from current running instance?
-// Change this for testing purposes
-const ORIGIN_DOMAIN_NAME = 'mightyfingers.com'
-
-// these will be filled at runtime
-let CLOUDFRONT_DOMAIN_NAME = ''
 
 AWS.config.update(config)
 
@@ -287,9 +299,3 @@ getDistribution((err, cloudfrontDistribution) => {
   console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
 })
 
-
-Meteor.methods({
-  "CDN.domain": function() {
-    return CLOUDFRONT_DOMAIN_NAME
-  }
-});

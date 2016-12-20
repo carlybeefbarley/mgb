@@ -202,7 +202,7 @@ export default {
 
     clientfw: {
       $meta: {
-        requires:   '.lang.basics',
+//        requires:   '.lang.basics',
         name:       'Javascript Client Frameworks',
         description:'Client frameworks are libararies of functions that help with writing code that will run in a browser. They include game libraries'
       },

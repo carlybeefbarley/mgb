@@ -2,9 +2,31 @@ import AWS from 'aws-sdk'
 // this is @stauzs personal account
 import config from './config.json'
 
+// debug
+WebAppInternals.setBundledJsCssPrefix("http://d3lu47gtxj7cqp.cloudfront.net")
+// WebAppInternals.setBundledJsCssPrefix("http://127.0.0.1:3000")
+
+// CORS fix
+// get meteor-core's connect-implementation
+const allowedOrigins = [
+  'http://mightyfingers.com:8080',
+  'http://localhost:3000',
+  'http://v2.mygamebuilder.com',
+  'https://v2.mygamebuilder.com'
+]
+WebApp.rawConnectHandlers.use(function (req, res, next) {
+  console.log("ORIGIN:", req.headers.origin)
+  const index = allowedOrigins.indexOf(req.headers.origin)
+  if(index > -1){
+    res.setHeader('access-control-allow-origin', allowedOrigins[index]);
+  }
+  return next();
+});
+// End of CORS FIX
+
 // TODO: is it possible to get this from current running instance?
 // Change this for testing purposes
-const ORIGIN_DOMAIN_NAME = 'v2.mygamebuilder.com'
+const ORIGIN_DOMAIN_NAME = 'mightyfingers.com'
 
 // these will be filled at runtime
 let CLOUDFRONT_DOMAIN_NAME = ''
@@ -47,20 +69,20 @@ const getDistribution = (callback) => {
 }
 
 const setCDNPrams = (cloudfrontDistribution) => {
-  CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
-
   if(cloudfrontDistribution.Status != "Deployed"){
     cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id}, function(err, data) {
       if (err){
         console.log(err, err.stack)
       }
       else{
+        CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
         // Meteor don't like this - hardcode CDN?
         // WebAppInternals.setBundledJsCssPrefix(CLOUDFRONT_DOMAIN_NAME)
       }
     })
   }
   else{
+    CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
     // Meteor don't like this - hardcode CDN?
     // WebAppInternals.setBundledJsCssPrefix(CLOUDFRONT_DOMAIN_NAME)
   }
@@ -103,21 +125,23 @@ const createDistribution = (callback) => {
           Items: [/* more items */]
         },
         ViewerProtocolPolicy: 'allow-all', /* allow http and https */ /* allow-all | https-only | redirect-to-https', /* required */
-        /* only get HEAD makes sense here - as rest goes through WS */
+        /* only GTE HEAD makes sense here - as rest goes through WS - OPTIONS is required for CORS headers (only semantic fonts requires this atm)*/
         AllowedMethods: {
           Items: [/* required */
             //'GET | HEAD | POST | PUT | PATCH | OPTIONS | DELETE',
             /* more items */
             'GET',
-            'HEAD'
+            'HEAD',
+            'OPTIONS'
           ],
-          Quantity: 2, /* required */
+          Quantity: 3, /* required */
           CachedMethods: {
             Items: [/* required */
               // 'GET | HEAD | POST | PUT | PATCH | OPTIONS | DELETE',
               /* more items */
               'GET',
-              'HEAD'
+              'HEAD',
+              'OPTIONS'
             ],
             Quantity: 2 /* required */
           }
@@ -161,7 +185,7 @@ const createDistribution = (callback) => {
 
             //!!! this is not working with port 80
             CustomOriginConfig: {
-              HTTPPort: 80, // required
+              HTTPPort: 8080, // required
               HTTPSPort: 443, // required
               OriginProtocolPolicy: 'http-only', // 'http-only | match-viewer | https-only', /* required
               OriginSslProtocols: {
@@ -254,6 +278,7 @@ getDistribution((err, cloudfrontDistribution) => {
         console.error(err)
         return
       }
+      console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
       setCDNPrams(data)
     })
     return

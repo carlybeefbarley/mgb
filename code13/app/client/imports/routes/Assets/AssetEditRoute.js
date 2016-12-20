@@ -86,6 +86,7 @@ export default AssetEditRoute = React.createClass({
   },
 
   getInitialState: function () {
+    this.getActivitySnapshots = () => this.data.activitySnapshots
     return {
       isForkPending:  false
     }
@@ -111,10 +112,7 @@ export default AssetEditRoute = React.createClass({
       //console.log("TICK")
       this._attemptToSendAnyDeferredChanges() 
     } , FLUSH_TIMER_INTERVAL_MS )
-
-    this.getActivitySnapshots = () => this.data.activitySnapshots
   },
-
 
   componentWillReceiveProps(nextProps)
   {

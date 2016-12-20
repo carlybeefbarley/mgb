@@ -29,7 +29,7 @@ const validate = {
   },
 
   assetName: function(text) {
-    return validate.lengthCap(text, 64)
+    return validate.lengthCap(text, 64) && -1 === text.search(/[\#\:\?]/)
   },
 
   assetDescription: function(text) {

@@ -123,14 +123,12 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
   let usingCDN = false
   if(CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//"){
     usingCDN = true
-    const cdnUri = `//${CDN_DOMAIN}${uri}`
+    const cdnUri = `//${CDN_DOMAIN}${uri}${etag ? "?"+etag : ''}`
     client.open('GET', cdnUri)
   }
   else{
     client.open('GET', uri)
   }
-
-  // client.setRequestHeader("Access-Control-Allow-Origin", "*")
   client.send()
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified
@@ -225,6 +223,9 @@ export const getAssetWithContent2 = (id, onReady) => {
       ret.etag = etag
       //ret.isReady = false
       mgbAjax(asset.c2location || `/api/asset/content2/${id}`, (err, data) => {
+        if(err){
+          return
+        }
         const c2 = JSON.parse(data)
         const oldC2 = ret.asset.content2
         ret.isReady = true
@@ -239,7 +240,7 @@ export const getAssetWithContent2 = (id, onReady) => {
         else{
           console.log("Sources are equal.. preventing update!")
         }
-        }, asset)
+      }, asset)
     }
   }
   fetchedAssets.push(ret)

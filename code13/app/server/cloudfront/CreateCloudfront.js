@@ -23,7 +23,10 @@ Meteor.methods({
 })
 
 WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
-  return "//" + CLOUDFRONT_DOMAIN_NAME + "/" +uri
+  if(CLOUDFRONT_DOMAIN_NAME){
+    return "//" + CLOUDFRONT_DOMAIN_NAME + uri
+  }
+  return uri
 })
 
 // CORS fix
@@ -39,6 +42,7 @@ WebApp.rawConnectHandlers.use(function (req, res, next) {
   if(index > -1){
     res.setHeader('access-control-allow-origin', allowedOrigins[index]);
   }
+  res.setHeader('access-control-expose-headers', 'etag');
   return next();
 });
 // End of CORS FIX

@@ -631,6 +631,15 @@ export default App = React.createClass({
         this.closeFlexPanel()
         break
 
+      case 'refreshBadgeStatus':
+        Meteor.call('User.refreshBadgeStatus', (err, result) => {
+          if (err)
+            console.log(err)
+          else
+            console.log(`${result} Additional badges awarded`)
+        })
+        break
+
       // case 'closeNavPanel':
       //   this.closeNavPanel()
       //   break

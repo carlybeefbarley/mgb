@@ -11,7 +11,7 @@ import { defaultDeploymentName } from '/imports/schemas/sysvars'
 //    USERS
 //
 
-const fieldsUserPublic = { username: 1, profile: 1, permissions: 1, createdAt: 1 }
+const fieldsUserPublic = { username: 1, profile: 1, permissions: 1, createdAt: 1, badges: 1 }
 
 Meteor.users._ensureIndex({"profile.name": 1})
 Meteor.users._ensureIndex({"createdAt": 1})

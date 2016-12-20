@@ -191,7 +191,24 @@ const stepMacros = [
   _mkCreateAsset( 'sound'    ),
   _mkCreateAsset( 'music'    ),
   _mkCreateAsset( 'game'     ),
-  _mkCreateAsset( 'tutorial' )
+  _mkCreateAsset( 'tutorial' ),
+
+  // This is a special/sneaky one that is used in some tutorials to award a badge. The actual award is done server side based on some criteria
+  {
+    key: _wrapKey('refreshBadgeStatus'),
+    hint: `Refresh Badge Status`,
+    desc: `Tells the server to check now to see if recent user actions should be rewarded with a badge`,
+    newVal:
+    {
+      "preparePage": 'refreshBadgeStatus',
+      "title": "Waving magic wand...",
+      "text": "See your new Badge?",
+      "style": '%inverted%',
+      "position": "top-left"
+    },
+  },
+
+
 
 ]
 

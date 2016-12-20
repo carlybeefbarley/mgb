@@ -1,8 +1,10 @@
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
-import { Users } from '/imports/schemas'
+import _ from 'lodash'
+import { Users, Skills } from '/imports/schemas'
 import { Match, check } from 'meteor/check' 
+import { hasSkill } from './skills'
 
 const optional = Match.Optional
 let count                                // TODO: IDK why I put this out here. Come back and move it into methods once I'm sure there wasn't some meteor-magic here.
@@ -29,6 +31,7 @@ const schema = {
 //    invites: optional([]),             // DEPRECATED
     projectNames: optional([String])     // An array of strings  DEPRECATED, IGNORE+DELETE
   },
+  badges: optional([]),
   permissions: {                         // TODO: Actually this is modelled as an array of team/??/perm stuff. Look at fixtures for the super-admin example. Needs cleaning up.
     roles: optional([String])            // See in App.js for 'super-admin' handling 
   }
@@ -117,6 +120,52 @@ Meteor.methods({
   }
 })
 
+
+if (Meteor.isServer)
+{
+  Meteor.methods({
+    "User.refreshBadgeStatus": function( ) {
+     console.log(" in User.refreshBadgeStatus()")
+      if (!this.userId)
+        return 0
+
+      let newBadgesCount = 0
+      
+      // 1. Skill-based awards
+      let skills = Skills.findOne(this.userId)
+      let user = Meteor.user()
+      if (hasSkill(skills, 'getStarted.profile.profilePage' && 'getStarted.profile.avatar'))
+      {
+        const newBadgeName = 'hasAvatar'
+        console.log(`User meets requirements for BADGE '${newBadgeName}'`)
+        if (!_.has(user.badges, newBadgeName))
+        {
+          console.log("Does not have badge, so awarding it!")
+          user.profile.badges
+          const count = Meteor.users.update(
+            this.userId, 
+            {
+              $addToSet: { 'badges': newBadgeName },
+              $set:      { updatedAt: new Date() }
+            }
+          )
+          console.log("update ret count = ", count)
+          if (count === 1) //Note that this will be the case at least because of the $set updatedAt
+          {
+            newBadgesCount++
+          }
+        }
+      }
+
+
+      // TODO: more...
+
+
+      // OK, return the count of additional badges
+      return newBadgesCount
+    }
+  })
+}
 
 // helper functions
 export function isSameUser(user1, user2)

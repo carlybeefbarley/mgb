@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react'
-import Badge, { getAllBadgesForUser } from '/client/imports/components/Controls/Badge/Badge'
+import Badge from '/client/imports/components/Controls/Badge/Badge'
+import { getAllBadgesForUser } from '/imports/schemas/badges'
+
 import { Grid, Header, Label } from 'semantic-ui-react'
 
 const BadgeN = props => (
   <Grid.Column>
-    <Badge name={props.badge || "blank"} />
+    <Badge name={props.badge || '_blankBadge'} />
   </Grid.Column>
 )
 

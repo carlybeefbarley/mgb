@@ -1,20 +1,24 @@
 import { Users } from '../imports/schemas'
 
+import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
+
 // Import all server-side schema stubs in order to register their Meteor.call() methods
 import '/imports/schemas/users'
 import '/imports/schemas/chats'
 import '/imports/schemas/assets'
-import '/imports/schemas/skills'
 import '/imports/schemas/sysvars'
 import '/imports/schemas/projects'
 import '/imports/schemas/activity'
-import '/imports/schemas/settings'
 import '/imports/schemas/activitySnapshots'
 
-import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
-
-import { createInitialSkills } from '/imports/schemas/skills-server.js'
+import '/imports/schemas/settings'
 import { createInitialSettings } from '/imports/schemas/settings-server.js'
+
+import '/imports/schemas/skills'
+import { createInitialSkills } from '/imports/schemas/skills-server.js'
+
+import '/imports/schemas/badges'
+import '/imports/schemas/badges-server'
 
 // Import rules and publications
 import '/imports/schemas/denyRules'

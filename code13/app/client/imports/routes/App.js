@@ -493,6 +493,7 @@ export default App = React.createClass({
   //
 
   showToast(content, type = 'success') {
+    console.log(`Showing (${type}) Toast Message: '${content}'`)
     this.setState({
       showToast: true,
       toastMsg: content,    // toastMsg content is string that accepts HTML
@@ -525,7 +526,7 @@ export default App = React.createClass({
   handleCompletedSkillTutorial(tutorialSkillPath) {
     console.log( 'Completed a Skill Tutorial: ', tutorialSkillPath )
     if (!hasSkill( tutorialSkillPath )) {
-      this.showToast( 'Tutorial Completed, Skill gained :' + tutorialSkillPath )
+      this.showToast( `Tutorial Completed, Skill '${tutorialSkillPath}' gained` )
       learnSkill( tutorialSkillPath )
     }
   },
@@ -634,9 +635,14 @@ export default App = React.createClass({
       case 'refreshBadgeStatus':
         Meteor.call('User.refreshBadgeStatus', (err, result) => {
           if (err)
-            console.log(err)
+            console.log('User.refreshBadgeStatus error', err)
           else
-            console.log(`${result} Additional badges awarded`)
+          {
+            if (!result || result.length === 0)
+              console.log(`No New badges awarded`)
+            else
+              this.showToast(`New badges awarded: ${result.join(', ')} `)
+          }
         })
         break
 

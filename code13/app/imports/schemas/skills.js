@@ -70,7 +70,12 @@ if (Meteor.isServer)
   })
 
 
-// SkillsObj is the user's skill context - a record from the Skills collection
+/** hasSkill() returns true iff the user skill object provided has the requested skill
+ * @export
+ * @param {any} skillsObj - a user's skill context - a record from the Skills collection
+ * @param {string} dottedSkillKey - a dottedSkillsKey e.g. getStarted.profile.profilePage
+ * @returns {boolean} true iff the user skill object provided has all requested skills
+ */
 export const hasSkill = (skillsObj, dottedSkillKey) => {
   if (!skillsObj || !dottedSkillKey || dottedSkillKey === '')
     return false
@@ -79,6 +84,21 @@ export const hasSkill = (skillsObj, dottedSkillKey) => {
   const val = skillsObj[slashSeparatedSkillKey]
   return (val && val.length > 0)
 }
+
+/** hasMultipleSkills() returns true iff the user skill object provided has all requested skills
+ * @export
+ * @param {any} skillsObj - a user's skill context - a record from the Skills collection
+ * @param {array} dottedSkillKeysArray - array of dottedSkillsKeys
+ * @returns {boolean} true iff the user skill object provided has all requested skills
+ */
+export const hasMultipleSkills = (skillsObj, dottedSkillKeysArray) => {
+  if (!skillsObj || !dottedSkillKeysArray || dottedSkillKeysArray.length === 0)
+    return false
+
+  return _.every(dottedSkillKeysArray, sk => hasSkill(skillsObj, sk))
+}
+
+
 
 export const learnSkill = dottedSkillKey => {
   Meteor.call("Skill.learn", dottedSkillKey, (err, result) => {
@@ -94,6 +114,13 @@ export const forgetSkill = dottedSkillKey => {
   })
 }
 
+/**
+ * Count a User's Total number of Skills
+ * 
+ * @export
+ * @param {any} skillsObj
+ * @returns {Number}
+ */
 export function countCurrentUserSkills(skillsObj)
 {
   if (!skillsObj)
@@ -134,8 +161,6 @@ export function getLeafSkillStatus(skillsObj, dottedSkillLeafKey)
   // TODO: is dottedSkillLeafKey a valid key AND a LEAF
 
   // TODO: is skillsObj valid?
-
-
 
   const retval = {
 
@@ -194,9 +219,9 @@ function getSkillStructure(dottedSkillKeyPrefix)
 // examples of skillKeys
 
 
-// mgb.asset.code.js.statements._for
-// mgb.asset.code.js.statements._var
-// mgb.asset.code.js.statements._let
-// ...
-// mgb.asset.code.js.fw.phaser.Game
-// mgb.asset.code.js.fw.phaser.Loader
+// code.js.statements._for
+// code.js.statements._var
+// code.js.statements._let
+// 
+// code.js.fw.phaser.Game
+// code.js.fw.phaser.Loader

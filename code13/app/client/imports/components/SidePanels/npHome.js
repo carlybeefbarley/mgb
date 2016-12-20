@@ -63,6 +63,7 @@ export default npHome = React.createClass({
               </QLink>
               <QLink 
                   to={`/u/${this.props.currUser.profile.name}/badges`} 
+                  id='mgbjr-np-home-myBadges'
                   closeNavPanelOnClick={navPanelIsOverlay} 
                   className="item">
                 My Badges
@@ -70,12 +71,14 @@ export default npHome = React.createClass({
               <QLink 
                   to={`/u/${this.props.currUser.profile.name}/games`} 
                   closeNavPanelOnClick={navPanelIsOverlay} 
+                  id='mgbjr-np-home-myGames'
                   className="item">
                 <i className="game icon" /> My Games
               </QLink>
               <QLink 
                   to={`/u/${this.props.currUser.profile.name}/projects`} 
                   closeNavPanelOnClick={navPanelIsOverlay} 
+                  id='mgbjr-np-home-myProjects'                  
                   className="item">
                 <i className="sitemap icon" /> My Projects
               </QLink>
@@ -89,8 +92,22 @@ export default npHome = React.createClass({
           :
           // If signed out, show   | Log In, Sign up |  options inline
           [
-            <QLink to="/login"  closeNavPanelOnClick={navPanelIsOverlay} className="item" key="login">Log In</QLink>,
-            <QLink to="/signup" closeNavPanelOnClick={navPanelIsOverlay} className="item" key="join">Sign Up</QLink>
+            <QLink 
+                to="/login"  
+                closeNavPanelOnClick={navPanelIsOverlay} 
+                id='mgbjr-np-home-login'
+                className="item" 
+                key="login">
+              Log In
+            </QLink>,
+            <QLink 
+                to="/signup" 
+                closeNavPanelOnClick={navPanelIsOverlay} 
+                id='mgbjr-np-home-signup'
+                className="item" 
+                key="join">
+              Sign Up
+            </QLink>
           ]
         }
       </div>

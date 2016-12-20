@@ -7,17 +7,36 @@ import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus } from '/imports/schemas/skills'
-import { startSkillPathTutorial } from '/client/imports/routes/App'
+import { startSkillPathTutorial, startSignUpTutorial } from '/client/imports/routes/App'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 // TODO: Put in the nice hover card animation (like QLink had)
 
-const cardStyle = {
-  color: "#2e2e2e"
+const cardStyles = {
+  card:    { color: '#2e2e2e' },
+  content: { borderTop: 'none' },
+  para:    { fontSize: '1.25em' },
+  mascot:  { maxWidth: '70px', float: 'left', marginRight: '15px' },
+  desc:    { position: 'relative', top: 0 },
+  button:  { margin: '0.5em 0px 0.5em 0.5em' }
 }
 
-const gsSkills = SkillNodes.getStarted
+
+const gsSkills = SkillNodes.getStarted    // shorthand
+
+const _loginMascot = 'flyingcat' // no .png suffix required
+const _loginDesc = { anon: 'You must be logged in to use these tutorials', auth: 'You are logged in so your progress will be recorded in your Skills' }
+const OfferLoginTutorial = () => (
+  <button 
+      className="ui active yellow right floated button" 
+      style={cardStyles.button}
+      onClick={() => { startSignUpTutorial() } }>
+  <Icon name='student' />
+  Log In or Sign Up
+</button>
+
+)
 
 const gsItems = [
   { node: gsSkills.profile,         mascot: 'arcade_player'   },
@@ -53,13 +72,13 @@ const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
 }
 
 export const StartDefaultNextTutorial = ( { currUser, userSkills } ) => (
-  currUser && (
+  !currUser ? <OfferLoginTutorial /> : (
     <button 
         className="ui active yellow right floated button" 
-        style={{margin: '0.5em'}}
+        style={cardStyles.button}
         onClick={() => {_handleStartDefaultNextTutorial(currUser, userSkills)} }>
       <Icon name='student' />
-      Start next tutorial
+      Start next...
     </button>
   )
 )
@@ -98,24 +117,43 @@ const LearnGetStartedRoute = ( { currUser }, context ) => (
       <Grid.Row>
         <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
+            { /* Add a pseudo-card for login/signup */ }
+                <div 
+                    className={ (currUser ? 'disabled ' : '') + 'card link animated fadeIn' }
+                    style={cardStyles.card} >
+
+                  <Card.Content style={cardStyles.content}>
+                    <Card.Header as='h2'>
+                      Log In / Sign Up
+                      <ProgressLabel subSkillsComplete={currUser ? 1 : 0} subSkillTotal={1} />
+                    </Card.Header>
+
+                    <p style={cardStyles.para}>
+                      <img src={`/images/mascots/${_loginMascot}.png`} style={cardStyles.mascot} />
+                      <span style={cardStyles.desc}>{_loginDesc[currUser ? 'auth' : 'anon']}.</span>
+                    </p>
+                    { !currUser ?  <OfferLoginTutorial /> : <i style={{ float: 'right'}} className='ui big green checkmark box icon' /> }
+                  </Card.Content>
+                </div>            
+            
             { gsItems.map( (area, idx) => {
               const { name, description, key } = area.node.$meta
               const skillStatus = getSkillNodeStatus(currUser, context.skills, key)
               return (
                 <div 
                     key={idx} 
-                    className="card link animated fadeIn" 
-                    style={cardStyle} >
+                    className={ (currUser ? '' : 'disabled ') + 'card link animated fadeIn' }
+                    style={cardStyles.card} >
 
-                  <Card.Content style={{borderTop: 'none'}}>
+                  <Card.Content style={cardStyles.content}>
                     <Card.Header as='h2'>
                       {name}
                       <ProgressLabel subSkillsComplete={skillStatus.learnedSkills.length} subSkillTotal={skillStatus.childSkills.length} />
                     </Card.Header>
 
-                    <p style={{fontSize: '1.25em'}}>
-                      <img src={`/images/mascots/${area.mascot}.png`} style={{maxWidth: 70, float: 'left', marginRight: 15}} />
-                      <span style={{position: 'relative', top: 0}}>{description}.</span>
+                    <p style={cardStyles.para}>
+                      <img src={`/images/mascots/${area.mascot}.png`} style={cardStyles.mascot} />
+                      <span style={cardStyles.desc}>{description}.</span>
                      </p>
                      { skillStatus.todoSkills.length > 0 && 
                        <OfferNextTutorial skillPath={key + '.' + skillStatus.todoSkills[0]} />

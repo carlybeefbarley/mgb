@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { stopCurrentTutorial } from '/client/imports/routes/App'
+
 import LoginLinks from './LoginLinks'
 import { utilPushTo } from '../QLink'
 import { logActivity } from '/imports/schemas/activity'
@@ -64,7 +66,8 @@ export default LoginRoute = React.createClass({
       {
         var userName = Meteor.user().profile.name
         logActivity("user.login",  `Logging in "${userName}"`, null, null)
-        utilPushTo(this.context.urlLocation.query, `/u/${userName}/assets`)
+        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
+        utilPushTo(this.context.urlLocation.query, `/u/${userName}`, { _fp: 'goals'})
 
         analytics.identify(Meteor.user()._id, {
           name: userName,

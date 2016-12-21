@@ -22,7 +22,7 @@ import { projectMakeSelector } from '/imports/schemas/projects'
 import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-import { Container, Segment, Header, Grid, Item, Icon } from 'semantic-ui-react'
+import { Container, Segment, Header, Button, Grid, Item, Icon } from 'semantic-ui-react'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -93,7 +93,7 @@ export default UserProfileRoute = React.createClass({
           { false && 
             <ActivityHeatmap user={user} className="eight wide column" />
           }
-          <Grid.Column width={8} id="mgbjr-user-profile-skills">
+          <Grid.Column width={8} id="mgbjr-profile-skills">
             <Segment>
               <Header as='h2'>
                 <QLink to={`/u/${user.profile.name}/skilltree`}>
@@ -116,12 +116,13 @@ export default UserProfileRoute = React.createClass({
     const editsDisabled = !ownsProfile
 
     return (
-      <Grid.Column width={8} id="mgbjr-user-profile-bioDiv">
+      <Grid.Column width={8} id="mgbjr-profile-bioDiv">
         <Segment>
           <Item.Group>
             <Item>
               
               <ImageShowOrChange
+                id='mgbjr-profile-avatar'
                 className="image"
                 imageSrc={avatar}
                 canEdit={ownsProfile}
@@ -137,6 +138,7 @@ export default UserProfileRoute = React.createClass({
                       MGB1 name:
                     </b>&nbsp;
                   <InlineEdit
+                    id='mgbjr-profile-mgb1name-edit'
                     validate={validate.mgb1name}
                     activeClassName="editing"
                     text={mgb1name || "(not provided)"}
@@ -151,6 +153,7 @@ export default UserProfileRoute = React.createClass({
                   <p>
                     <b title="About yourself">Bio:</b>&nbsp;
                     <InlineEdit
+                      id='mgbjr-profile-userBio-edit'
                       validate={validate.userBio}
                       activeClassName="editing"
                       text={bio || "(no description)"}
@@ -162,6 +165,7 @@ export default UserProfileRoute = React.createClass({
                   <p>
                   <b title="What you are working on right now. This will also show in the top bar as a reminder!">Focus:</b>&nbsp;
                     <InlineEdit
+                      id='mgbjr-profile-focusMsg-edit'
                       validate={validate.userFocusMsg}
                       activeClassName="editing"
                       text={focusMsg || "(no current focus)"}
@@ -181,17 +185,17 @@ export default UserProfileRoute = React.createClass({
                 }
 
                 <Item.Extra>
-                  <div className="ui small vertical buttons">
+                  <Button.Group size='small' vertical>
                     <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
-                      <div className="ui small button">Assets</div>
+                      <Button size='small' icon='pencil' content='Assets' />
                     </QLink>
                     <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
-                      <div className="ui small button">Projects</div>
+                      <Button size='small' icon='sitemap' content='Projects' />
                     </QLink>
                     <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
-                      <div className="ui small button">Games</div>
+                      <Button size='small' icon='game' content='Games' />
                     </QLink>
-                  </div>
+                  </Button.Group>
                 </Item.Extra>
               </Item.Content>
             </Item>
@@ -200,6 +204,7 @@ export default UserProfileRoute = React.createClass({
           <div title="User's 'title'">
             <Icon name='left quote' color='blue' />
             <InlineEdit
+              id='mgbjr-profile-userTitle-edit'
               validate={validate.userTitle}
               activeClassName="editing"
               text={title || "(no title)"}

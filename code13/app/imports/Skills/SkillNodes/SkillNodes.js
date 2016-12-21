@@ -5,6 +5,7 @@ import C from './CommonSkillNodes'
 import ArtSkillNodes from './ArtSkillNodes'
 import CodeSkillNodes from './CodeSkillNodes'
 import AudioSkillNodes from './AudioSkillNodes'
+import LegalSkillNodes from './LegalSkillNodes'
 import DesignSkillNodes from './DesignSkillNodes'
 import WritingSkillNodes from './WritingSkillNodes'
 import BusinessSkillNodes from './BusinessSkillNodes'
@@ -111,12 +112,13 @@ const SkillNodes = {
   getStarted: GetStartedSkillNodes,     // Has specific client UI in LearnGetStartedRoute.js so NOT in skillsAreas.js
   code:       CodeSkillNodes,
   art:        ArtSkillNodes,
-  audio:      AudioSkillNodes,
   design:     DesignSkillNodes,
-  writing:    WritingSkillNodes,
-  community:  CommunitySkillNodes,
+  audio:      AudioSkillNodes,
   analytics:  AnalyticsSkillNodes,
+  writing:    WritingSkillNodes,
   marketing:  MarketingSkillNodes,
+  community:  CommunitySkillNodes,
+  legal:      LegalSkillNodes,
   business:   BusinessSkillNodes,
 
   $meta: {

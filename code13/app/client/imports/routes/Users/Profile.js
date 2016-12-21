@@ -93,7 +93,7 @@ export default UserProfileRoute = React.createClass({
           { false && 
             <ActivityHeatmap user={user} className="eight wide column" />
           }
-          <Grid.Column width={8}>
+          <Grid.Column width={8} id="mgbjr-profile-bioDiv">
             <Segment>
               <Header as='h2'>
                 <QLink to={`/u/${user.profile.name}/skilltree`}>

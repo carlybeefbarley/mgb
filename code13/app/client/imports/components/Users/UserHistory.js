@@ -5,7 +5,7 @@ import QLink from '/client/imports/routes/QLink'
 
 const UserHistory = props => (
   <Grid.Column width={8}>
-    <Segment>
+    <Segment id="mgbjr-user-history">
     
       <Header as='h2'><QLink to={`/u/${props.user.profile.name}/history`}>History</QLink></Header>
       <NavRecentGET 

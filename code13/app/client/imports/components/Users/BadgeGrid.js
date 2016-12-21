@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react'
-import Badge, { getAllBadgesForUser } from '/client/imports/components/Controls/Badge/Badge'
-import { Grid, Header, Label } from 'semantic-ui-react'
+import Badge from '/client/imports/components/Controls/Badge/Badge'
+import { getAllBadgesForUser } from '/imports/schemas/badges'
+
+import { Grid, Segment, Header, Label } from 'semantic-ui-react'
 
 const BadgeN = props => (
-  <Grid.Column>
-    <Badge name={props.badge || "blank"} />
+  <Grid.Column textAlign='center'>
+    <Badge name={props.badge || '_blankBadge'} />
   </Grid.Column>
 )
 
@@ -17,34 +19,37 @@ const BadgeGrid = ( { user, className } ) => {
 
   return (
     <div className={className}>
+      <Segment>
 
-      <Header as='h2' id='#mgbjr-profile-badges-header'>
-        <QLink to={badgesPageUrl}>
-          Badges
-        </QLink>
-      </Header>
-    
-      <Grid columns='equal' id='#mgbjr-profile-badges-area'>
-        <Grid.Row>
-          <BadgeN badge={uBadges[0]} />
-          <BadgeN badge={uBadges[1]} />
-          <BadgeN badge={uBadges[2]} />
-        </Grid.Row>
-        <Grid.Row>
-          <BadgeN badge={uBadges[3]} />
-          <BadgeN badge={uBadges[4]} />
-          <BadgeN badge={uBadges[5]} />
-        </Grid.Row>
-        <Grid.Row>
-          <BadgeN badge={uBadges[6]} />
-          <BadgeN badge={uBadges[7]} />
-          <Grid.Column>
-            <QLink to={badgesPageUrl}>
-              <Label content='more' />
-            </QLink>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+        <Header as='h2' id='#mgbjr-profile-badges-header'>
+          <QLink to={badgesPageUrl}>
+            Badges
+          </QLink>
+        </Header>
+      
+        <Grid columns='equal' id='#mgbjr-profile-badges-area'>
+          <Grid.Row>
+            <BadgeN badge={uBadges[0]} />
+            <BadgeN badge={uBadges[1]} />
+            <BadgeN badge={uBadges[2]} />
+          </Grid.Row>
+          <Grid.Row>
+            <BadgeN badge={uBadges[3]} />
+            <BadgeN badge={uBadges[4]} />
+            <BadgeN badge={uBadges[5]} />
+          </Grid.Row>
+          <Grid.Row>
+            <BadgeN badge={uBadges[6]} />
+            <BadgeN badge={uBadges[7]} />
+            <Grid.Column>
+              <QLink to={badgesPageUrl}>
+                <Label content='more' />
+              </QLink>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+
+      </Segment>
     </div>
   )
 }

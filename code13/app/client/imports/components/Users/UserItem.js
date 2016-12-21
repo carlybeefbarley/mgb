@@ -1,8 +1,8 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import moment from 'moment'
 import { utilPushTo } from '/client/imports/routes/QLink'
-import Badge, { getAllBadgesForUser } from '/client/imports/components/Controls/Badge/Badge'
+import Badge from '/client/imports/components/Controls/Badge/Badge'
+import { getAllBadgesForUser } from '/imports/schemas/badges'
 
 
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
@@ -41,7 +41,7 @@ export default UserItem = React.createClass({
     const imageSize = narrowItem ? "mini" : "tiny"
     const titleSpan = <span><i className="quote left icon blue"></i>{title || "(no title)"}&nbsp;<i className="quote right icon blue"></i></span>
     const badgesForUser = getAllBadgesForUser(user)
-    const getBadgeN = idx => (<Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : "blank"} />)
+    const getBadgeN = idx => (<Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : "_blankBadge"} />)
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui segment' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return ( 

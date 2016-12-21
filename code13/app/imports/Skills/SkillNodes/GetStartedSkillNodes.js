@@ -100,6 +100,5 @@ export default {
     skills:              C.E,
     games:               C.E,
     ask:                 C.E
-  },
-
+  }
 }

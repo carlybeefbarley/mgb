@@ -7,11 +7,11 @@ import moment from 'moment'
 import UserProjects from '/client/imports/components/Users/UserProjects'
 import UserHistory from '/client/imports/components/Users/UserHistory'
 import BadgeGrid from '/client/imports/components/Users/BadgeGrid'
-import SkillGrid from '/client/imports/components/Users/SkillGrid'
+import UserGamesRoute from '/client/imports/routes/Users/UserGamesRoute'
+import SkillTreeRoute from '/client/imports/routes/Users/SkillTreeRoute'
 import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
-
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
 
@@ -22,7 +22,7 @@ import { projectMakeSelector } from '/imports/schemas/projects'
 import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-import { Container, Grid, Item, Icon } from 'semantic-ui-react'
+import { Container, Segment, Header, Grid, Item, Icon } from 'semantic-ui-react'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -78,8 +78,8 @@ export default UserProfileRoute = React.createClass({
     if (!user) return <ThingNotFound type="User" />
 
     return (
-      <Container className="slim">
-        <Grid padded stackable>
+      <Container className='slim' style={{minWidth: '400px'}}>
+        <Grid padded stackable stretched>
           <Helmet
             title={user.profile.name}
             meta={[
@@ -88,16 +88,24 @@ export default UserProfileRoute = React.createClass({
           />
           
           { this.renderUserInfo(user, ownsProfile) }
-          <BadgeGrid user={user} className="five wide column" />
+          <BadgeGrid user={user} className="eight wide column" />
           <UserShowcase user={user} />
           { false && 
-            <ActivityHeatmap user={user} className="ten wide column" />
+            <ActivityHeatmap user={user} className="eight wide column" />
           }
-          { false && 
-            <SkillGrid user={user} className='six wide column' />
-          }
-          <UserProjects user={user} projects={this.data.projects} />
+          <Grid.Column width={8}>
+            <Segment>
+              <Header as='h2'>
+                <QLink to={`/u/${user.profile.name}/skilltree`}>
+                  Skills
+                </QLink> 
+              </Header>        
+              <SkillTreeRoute user={user} ownsProfile={ownsProfile} />
+            </Segment>
+          </Grid.Column>
           <UserHistory user={user} />
+          <UserGamesRoute user={user} />
+          <UserProjects user={user} projects={this.data.projects} />
         </Grid>
       </Container>
     )
@@ -108,102 +116,104 @@ export default UserProfileRoute = React.createClass({
     const editsDisabled = !ownsProfile
 
     return (
-      <Grid.Column width={11}>
-        <Item.Group>
-          <Item>
-            
-            <ImageShowOrChange
-              className="image"
-              imageSrc={avatar}
-              canEdit={ownsProfile}
-              canLinkToSrc={true}
-              handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
+      <Grid.Column width={8}>
+        <Segment>
+          <Item.Group>
+            <Item>
+              
+              <ImageShowOrChange
+                className="image"
+                imageSrc={avatar}
+                canEdit={ownsProfile}
+                canLinkToSrc={true}
+                handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
 
-            <Item.Content>
+              <Item.Content>
 
-              <Item.Header content={name} />
-              <Item.Meta>
-                <p>
-                  <b title="This is the user's name on the old MGBv1 system. There is currently no verification of this claim">
-                    MGB1 name:
-                  </b>&nbsp;
-                <InlineEdit
-                  validate={validate.mgb1name}
-                  activeClassName="editing"
-                  text={mgb1name || "(not provided)"}
-                  paramName="profile.mgb1name"
-                  change={this.handleProfileFieldChanged}
-                  isDisabled={editsDisabled}
-                  />
-                </p>
-              </Item.Meta>
-
-              <Item.Description>
-                <p>
-                  <b title="About yourself">Bio:</b>&nbsp;
+                <Item.Header content={name} />
+                <Item.Meta>
+                  <p>
+                    <b title="This is the user's name on the old MGBv1 system. There is currently no verification of this claim">
+                      MGB1 name:
+                    </b>&nbsp;
                   <InlineEdit
-                    validate={validate.userBio}
+                    validate={validate.mgb1name}
                     activeClassName="editing"
-                    text={bio || "(no description)"}
-                    paramName="profile.bio"
+                    text={mgb1name || "(not provided)"}
+                    paramName="profile.mgb1name"
                     change={this.handleProfileFieldChanged}
                     isDisabled={editsDisabled}
                     />
-                </p>
-                <p>
-                <b title="What you are working on right now. This will also show in the top bar as a reminder!">Focus:</b>&nbsp;
-                  <InlineEdit
-                    validate={validate.userFocusMsg}
-                    activeClassName="editing"
-                    text={focusMsg || "(no current focus)"}
-                    paramName="profile.focusMsg"
-                    change={this.handleProfileFieldChanged}
-                    isDisabled={editsDisabled}
-                    />
-                </p>
-              </Item.Description>  
-              { /*
-                mgb1name && false &&  // Currently not shown - doesn't have good place in layout
-                <a className="right floated mini image"  href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">
-                  <img  style={{ maxWidth: "64px", maxHeight: "64px" }}
-                        ref={ (c) => { if (c) c.src=`https://s3.amazonaws.com/JGI_test1/${mgb1name}/project1/tile/avatar` } } />
-                </a>
-                */
-              }
+                  </p>
+                </Item.Meta>
 
-              <Item.Extra>
-                <div className="ui small vertical buttons">
-                  <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
-                    <div className="ui small button">Assets</div>
-                  </QLink>
-                  <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
-                    <div className="ui small button">Projects</div>
-                  </QLink>
-                  <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
-                    <div className="ui small button">Games</div>
-                  </QLink>
-                </div>
-              </Item.Extra>
-            </Item.Content>
-          </Item>
-        </Item.Group>
+                <Item.Description>
+                  <p>
+                    <b title="About yourself">Bio:</b>&nbsp;
+                    <InlineEdit
+                      validate={validate.userBio}
+                      activeClassName="editing"
+                      text={bio || "(no description)"}
+                      paramName="profile.bio"
+                      change={this.handleProfileFieldChanged}
+                      isDisabled={editsDisabled}
+                      />
+                  </p>
+                  <p>
+                  <b title="What you are working on right now. This will also show in the top bar as a reminder!">Focus:</b>&nbsp;
+                    <InlineEdit
+                      validate={validate.userFocusMsg}
+                      activeClassName="editing"
+                      text={focusMsg || "(no current focus)"}
+                      paramName="profile.focusMsg"
+                      change={this.handleProfileFieldChanged}
+                      isDisabled={editsDisabled}
+                      />
+                  </p>
+                </Item.Description>  
+                { /*
+                  mgb1name && false &&  // Currently not shown - doesn't have good place in layout
+                  <a className="right floated mini image"  href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">
+                    <img  style={{ maxWidth: "64px", maxHeight: "64px" }}
+                          ref={ (c) => { if (c) c.src=`https://s3.amazonaws.com/JGI_test1/${mgb1name}/project1/tile/avatar` } } />
+                  </a>
+                  */
+                }
 
-        <div title="User's 'title'">
-          <Icon name='left quote' color='blue' />
-          <InlineEdit
-            validate={validate.userTitle}
-            activeClassName="editing"
-            text={title || "(no title)"}
-            paramName="profile.title"
-            change={this.handleProfileFieldChanged}
-            isDisabled={editsDisabled} />
-          <Icon name='right quote' color='blue' />
-        </div>
-        <p>
-          <em style={{color: "#888"}}>
-            <Icon name='clock' />Joined {moment(user.createdAt).format('MMMM DD, YYYY')}
-          </em>
-        </p>
+                <Item.Extra>
+                  <div className="ui small vertical buttons">
+                    <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
+                      <div className="ui small button">Assets</div>
+                    </QLink>
+                    <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
+                      <div className="ui small button">Projects</div>
+                    </QLink>
+                    <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
+                      <div className="ui small button">Games</div>
+                    </QLink>
+                  </div>
+                </Item.Extra>
+              </Item.Content>
+            </Item>
+          </Item.Group>
+
+          <div title="User's 'title'">
+            <Icon name='left quote' color='blue' />
+            <InlineEdit
+              validate={validate.userTitle}
+              activeClassName="editing"
+              text={title || "(no title)"}
+              paramName="profile.title"
+              change={this.handleProfileFieldChanged}
+              isDisabled={editsDisabled} />
+            <Icon name='right quote' color='blue' />
+          </div>
+          <p>
+            <em style={{color: "#888"}}>
+              <Icon name='clock' />Joined {moment(user.createdAt).format('MMMM DD, YYYY')}
+            </em>
+          </p>
+        </Segment>
       </Grid.Column>
     )
   }

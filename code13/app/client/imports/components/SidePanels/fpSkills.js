@@ -23,7 +23,6 @@ export default fpSkills = React.createClass({
     const { currUser } = this.props
     const { skills } = this.context
   
-
     if (!currUser)
       return <Message warning content="You must be logged in to see your skills status" />
 

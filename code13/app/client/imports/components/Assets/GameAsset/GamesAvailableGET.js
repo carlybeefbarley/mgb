@@ -8,7 +8,7 @@ import GameItems from './GameItems'
 import { Azzets } from '/imports/schemas'
 import { projectMakeFrontPageListSelector, getProjectAvatarUrl } from '/imports/schemas/projects'
 
-export default ProjectsBeingMadeGET = React.createClass({
+export default GamesAvailableGet = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -43,9 +43,6 @@ export default ProjectsBeingMadeGET = React.createClass({
 
   render: function() {
     const { loading, games } = this.data
-
-    if (loading) return <Spinner />
-
-    return <GameItems games={games}/>
+    return loading ? <Spinner /> :  <GameItems games={games}/>
   }
 })

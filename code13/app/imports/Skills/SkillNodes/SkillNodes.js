@@ -5,6 +5,7 @@ import C from './CommonSkillNodes'
 import ArtSkillNodes from './ArtSkillNodes'
 import CodeSkillNodes from './CodeSkillNodes'
 import AudioSkillNodes from './AudioSkillNodes'
+import LegalSkillNodes from './LegalSkillNodes'
 import DesignSkillNodes from './DesignSkillNodes'
 import WritingSkillNodes from './WritingSkillNodes'
 import BusinessSkillNodes from './BusinessSkillNodes'
@@ -108,16 +109,17 @@ const SkillNodes = {
   // NOTE THAT EACH OF THESE MUST HAVE A MATCHING ITEM IN SkillAreas.js if it is part of the
   // general skills courses. There are some specific exceptions that have their own top-level UI
   // and they are indicated below in a comment:
-  art:        ArtSkillNodes,
-  code:       CodeSkillNodes,
-  audio:      AudioSkillNodes,
-  design:     DesignSkillNodes,
-  writing:    WritingSkillNodes,
-  business:   BusinessSkillNodes,
-  community:  CommunitySkillNodes,
-  analytics:  AnalyticsSkillNodes,
-  marketing:  MarketingSkillNodes,
   getStarted: GetStartedSkillNodes,     // Has specific client UI in LearnGetStartedRoute.js so NOT in skillsAreas.js
+  code:       CodeSkillNodes,
+  art:        ArtSkillNodes,
+  design:     DesignSkillNodes,
+  audio:      AudioSkillNodes,
+  analytics:  AnalyticsSkillNodes,
+  writing:    WritingSkillNodes,
+  marketing:  MarketingSkillNodes,
+  community:  CommunitySkillNodes,
+  legal:      LegalSkillNodes,
+  business:   BusinessSkillNodes,
 
   $meta: {
     map: {}

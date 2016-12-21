@@ -24,12 +24,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Tue Dec 20 2016 00:30:00 GMT-0800 (PST)',
+      'timestamp': 'Tue Dec 20 2016 21:00:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2341'
+        'iteration': '2348'
       },
 
       'releaseManagement': {
@@ -50,6 +50,13 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'changeName': 'Goals FlexPanel - Start next tutorial',
           'changeSummary': "The 'goals' FlexPanel now has a 'Start next tutorial' button",
           'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'learn.skills',
+          'type': 'improvement',
+          'changeName': 'Skills cleanup',
+          'changeSummary': 'The skills taxonomy has been cleaned up and the sequence now matches the learn sequence',
+          'otherUrls': [ { txt: 'Get Started',   href: '/learn/getStarted' } ]
         }
       ]
     },

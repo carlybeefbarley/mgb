@@ -11,8 +11,9 @@ export default SkillTreeRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    user:         PropTypes.object,
-    ownsProfile:  PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
+    user:             PropTypes.object,
+    ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
+    isTopLevelRoute:  PropTypes.bool         // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
   },
 
   contextTypes: {
@@ -40,7 +41,7 @@ export default SkillTreeRoute = React.createClass({
 
 
   render: function() {
-    const { user, ownsProfile } = this.props
+    const { user, ownsProfile, isTopLevelRoute } = this.props
 
     const userSkills = ownsProfile ? this.context.skills : this.data.skills
 
@@ -49,7 +50,7 @@ export default SkillTreeRoute = React.createClass({
         <Helmet
             title="Skill Tree"
             meta={ [ {"name": "description", "content": "SkillTree"} ] } />
-        <SkillsMap user={user} userSkills={userSkills} ownsProfile={ownsProfile}/>
+        <SkillsMap user={user} userSkills={userSkills} ownsProfile={ownsProfile} hideToolbars={!isTopLevelRoute}/>
       </div>
     )
   }

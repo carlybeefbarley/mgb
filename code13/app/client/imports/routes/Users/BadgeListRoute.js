@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
-import Badge, { getAllBadgesForUser, badgeList } from '/client/imports/components/Controls/Badge/Badge'
+import Badge from '/client/imports/components/Controls/Badge/Badge'
+import { badgeList, getAllBadgesForUser } from '/imports/schemas/badges'
 import { Segment, Item } from 'semantic-ui-react'
 
 const makeBadgeFromVal = val => {
   const badge = badgeList[val] 
   return (
-    <Item>
+    <Item key={val}>
       <Item.Image as={Badge} name={val} key={val} />
       <Item.Content>
         <Item.Header content={(badge ? badge[1] : val) + ' Badge' } />
@@ -15,8 +16,7 @@ const makeBadgeFromVal = val => {
   )
 }
 
-const BadgeListRoute = props => {
-  const { user } = props
+const BadgeListRoute = ( { user } ) => {
   if (!user) 
     return null
 

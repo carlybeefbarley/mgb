@@ -31,9 +31,10 @@ const SomeProjects = props => {
               <small><QLink to={`/u/${project.ownerName}`} altTo={`/u/${project.ownerName}/projects`}>@{project.ownerName}</QLink></small>
             }
           </Header>
-          <p title="(Plays counter not yet implemented)">
+{ /*      <p title="(Plays counter not yet implemented)">
             {MemberStr}&emsp;<Icon name='play' />0,000 Plays
           </p>
+*/ }
         </Grid.Column>
       </Grid>
     )

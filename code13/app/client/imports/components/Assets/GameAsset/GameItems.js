@@ -26,6 +26,8 @@ export const GameItem = ( { game } ) => (
 
 const GameItems = ( { games } ) => (
   <Item.Group divided>
+    { (!games || games.length === 0) &&
+      <p>No matching games</p>}
     { games.map( g => <GameItem game={g} key={g._id} /> ) }
   </Item.Group>
 )

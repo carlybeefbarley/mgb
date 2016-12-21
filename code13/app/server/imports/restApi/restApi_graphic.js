@@ -79,9 +79,10 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
       tiles:       Object
       tilewidth:   64
      */
+
     return genAPIreturn(this, asset, () => {
-      const tilecount = c2.frameData ? c2.frameData.length : 1
       const c2 = asset.content2
+      const tilecount = c2.frameData ? c2.frameData.length : 1
       const tiles = {}
       c2.animations && c2.animations.forEach((anim) => {
         const animation = []

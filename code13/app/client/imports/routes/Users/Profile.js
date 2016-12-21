@@ -93,7 +93,7 @@ export default UserProfileRoute = React.createClass({
           { false && 
             <ActivityHeatmap user={user} className="eight wide column" />
           }
-          <Grid.Column width={8} id="mgbjr-profile-skills">
+          <Grid.Column width={8} id="mgbjr-user-profile-skills">
             <Segment>
               <Header as='h2'>
                 <QLink to={`/u/${user.profile.name}/skilltree`}>
@@ -116,7 +116,7 @@ export default UserProfileRoute = React.createClass({
     const editsDisabled = !ownsProfile
 
     return (
-      <Grid.Column width={8} id="mgbjr-profile-bioDiv">
+      <Grid.Column width={8} id="mgbjr-user-profile-bioDiv">
         <Segment>
           <Item.Group>
             <Item>

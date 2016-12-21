@@ -24,12 +24,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Tue Dec 20 2016 21:00:00 GMT-0800 (PST)',
+      'timestamp': 'Wed Dec 21 2016 11:00:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2348'
+        'iteration': '2360'
       },
 
       'releaseManagement': {
@@ -55,7 +55,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'featureTag': 'learn.skills',
           'type': 'improvement',
           'changeName': 'Skills cleanup',
-          'changeSummary': 'The skills taxonomy has been cleaned up and the sequence now matches the learn sequence',
+          'changeSummary': 'The skills taxonomy has been cleaned up and the sequence now matches the learn sequence. The Skills FlexPanel now is toolbar-less which is cleaner and prevents some confusion. There is now click-to-expand on skill area headings',
           'otherUrls': [ { txt: 'Get Started',   href: '/learn/getStarted' } ]
         }
       ]

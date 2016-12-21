@@ -44,7 +44,8 @@ export default fpSkills = React.createClass({
         </p>
         
         <div style={{clear: 'both'}}>
-          <SkillsMap user={currUser} userSkills={skills} ownsProfile={true}/>
+          { /* Essential to hide the toolbars otherwise there can be conflicts for the toolsgizmo */ }
+          <SkillsMap user={currUser} userSkills={skills} ownsProfile={true} hideToolbars={true}/>
         </div>
 
         <QLink to='/learn/skills' style={{clear: 'both'}}>

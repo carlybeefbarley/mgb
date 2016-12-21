@@ -10,7 +10,9 @@ const options = {
 }
 
 // disable by default - as nobody except stauzs will actually test this
-export var RestApi = (Meteor.isDevelopment && false) ? new CachedRestivus(options) : new Restivus(options)
+export const RestApi = (Meteor.isDevelopment && false) ? new CachedRestivus(options) : new Restivus(options)
+// Return an empty image if there's no thumbnail yet. This is a transparent 1x1 GIF from https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
+export const emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" //1x1GIF
 
 // TODO: use enums instead of strings for asset kinds
 

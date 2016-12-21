@@ -1,4 +1,4 @@
-import { RestApi } from './restApi'
+import { RestApi, emptyPixel } from './restApi'
 import { Azzets }  from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/imports/helpers/generators'
@@ -11,7 +11,7 @@ const _retval404 = { statusCode: 404, body: {} }   // body required to correctly
 // Handle case where the spriteData has not yet been created
 const _getAssetFrameDataUri = (asset, frame = 0) => {
   if (!asset)
-    return null
+    return emptyPixel
   const c2 = asset.content2
 
   if (c2 && c2.spriteData && c2.spriteData[frame])
@@ -21,15 +21,12 @@ const _getAssetFrameDataUri = (asset, frame = 0) => {
     return c2.frameData[frame][0]
   
   console.error(`api/asset/png/${asset._id} has no frameData or spriteDate for frame #${frame}`)
-  return null
+  return emptyPixel
 }
 
 RestApi.addRoute('asset/png/:id', { authRequired: false }, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
-    if (!asset)
-      return _retval404
- 
     const dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
     return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, {
       'Content-Type': "image/png"
@@ -121,8 +118,8 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
 
 RestApi.addRoute('asset/tileset/:id', { authRequired: false }, {
   get: function () {
+    const asset = Azzets.findOne(this.urlParams.id)
     return genAPIreturn(this, asset, () => {
-        const asset = Azzets.findOne(this.urlParams.id)
         if (!asset || !asset.content2)
           return _retval404
 

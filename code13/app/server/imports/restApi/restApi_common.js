@@ -1,4 +1,4 @@
-import { RestApi } from './restApi'
+import { RestApi, emptyPixel } from './restApi'
 import { Azzets }  from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/imports/helpers/generators'
@@ -48,8 +48,6 @@ RestApi.addRoute('asset/id/:user/:name', {authRequired: false}, {
   }
 })
 
-// Return an empty image if there's no thumbnail yet. This is a transparent 1x1 GIF from https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
-const emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" //1x1GIF
 // Get any kind of asset's Thumbnail *as* a PNG
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
   get: function () {

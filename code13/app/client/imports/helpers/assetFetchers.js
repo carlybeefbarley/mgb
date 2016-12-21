@@ -10,7 +10,8 @@ const MAX_ASSET_CACHE_LENGTH = 500
 let CDN_DOMAIN = ""
 
 Meteor.call("CDN.domain", (err, cdnDomain) => {
-  CDN_DOMAIN = cdnDomain
+  if(!err)
+    CDN_DOMAIN = cdnDomain
 })
 
 // used by maps - to get notifications about image changes
@@ -93,7 +94,7 @@ const removeFromCache = uri => {
 // asset param is optional - without it this function will work as normal ajax
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
 
-export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
+export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOpen = null) => {
   if(pullFromCache === true){
     const cached = getFromCache(uri)
     if(cached){
@@ -105,7 +106,7 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
       return
     }
   }
-  const etag = typeof asset === "object" ? genetag(asset) : null
+  const etag = (asset && typeof asset === "object") ? genetag(asset) : null
   if(etag){
     const cached = getFromCache(uri, etag)
     if(cached){
@@ -129,6 +130,9 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
   else{
     client.open('GET', uri)
   }
+  if(onRequestOpen){
+    onRequestOpen(client)
+  }
   client.send()
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified
@@ -136,7 +140,7 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
       if(etag && this.getResponseHeader("etag")){
         addToCache(uri, etag, this.response)
       }
-      callback(null, this.response)
+      callback(null, this.response, client)
     }
     else{
       // try link without CDN
@@ -157,8 +161,6 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false) => {
     callback(e, this.statusText)
   }
 }
-window.mgbAjax = mgbAjax
-
 
 const fetchedAssets = []
 export const getAssetWithContent2 = (id, onReady) => {
@@ -230,7 +232,7 @@ export const getAssetWithContent2 = (id, onReady) => {
         const oldC2 = ret.asset.content2
         ret.isReady = true
 
-        if (!_.isEqual(c2, oldC2)) {
+        if (!_.isEqual(c2, oldC2) || !_.isEqual(asset, ret.asset)) {
           ret.asset = asset
           ret.asset.content2 = c2
 

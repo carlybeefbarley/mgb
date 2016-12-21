@@ -362,7 +362,8 @@ export default App = React.createClass({
                     currUserProjects: currUserProjects,
                     ownsProfile: ownsProfile,
                     isSuperAdmin: isSuperAdmin,
-                    showToast: this.showToast
+                    showToast: this.showToast,
+                    isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
                   })
                 }
               </div>

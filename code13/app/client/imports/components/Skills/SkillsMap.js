@@ -16,7 +16,8 @@ export default class SkillTree extends React.Component {
     userSkills:       PropTypes.object,     // As defined in skills.js. Can be null if no user
     ownsProfile:      PropTypes.bool,       // true IFF user is valid and asset owner is currently logged in user
     onlySkillArea:    PropTypes.string,     // If non-null, then show no toolbars, and just show the top-level area specified (e..g a string that is a tag in skillsAreas.js)
-    initialZoomLevel: PropTypes.number
+    initialZoomLevel: PropTypes.number,
+    hideToolbars:     PropTypes.bool         // If true turn off toolbars
   }
 
   static defaultProps = {
@@ -262,7 +263,7 @@ export default class SkillTree extends React.Component {
 
   render () {
     const { zoomLevel } = this.state
-    const { user, userSkills, onlySkillArea } = this.props
+    const { user, userSkills, onlySkillArea, hideToolbars } = this.props
     if (!user)
       return <ThingNotFound type="User" />
     if (!userSkills)
@@ -296,7 +297,7 @@ export default class SkillTree extends React.Component {
 
     return (
       <div>
-        { onlySkillArea === null && <Toolbar name='SkillsMap' config={config} actions={this} /> }
+        { ( onlySkillArea === null && !hideToolbars) && <Toolbar name='SkillsMap' config={config} actions={this} /> }
         <div style={{position: 'relative'}}>
           {this.renderSkillNodes(SkillNodes, onlySkillArea)}
         </div>

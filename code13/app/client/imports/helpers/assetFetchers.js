@@ -232,10 +232,19 @@ export const getAssetWithContent2 = (id, onReady) => {
         const oldC2 = ret.asset.content2
         ret.isReady = true
 
-        if (!_.isEqual(c2, oldC2) || !_.isEqual(asset, ret.asset)) {
+        let needUpdate = false
+        if (!_.isEqual(c2, oldC2)){
           ret.asset = asset
           ret.asset.content2 = c2
+          needUpdate = true
+        }
+        else if(!_.isEqual(asset, ret.asset)) {
+          ret.asset = asset
+          ret.asset.content2 = oldC2
+          needUpdate = true
+        }
 
+        if(needUpdate){
           console.log("DOING full update")
           onReady && onReady()
         }

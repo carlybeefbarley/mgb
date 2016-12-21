@@ -470,6 +470,8 @@ export default class Channel extends React.Component {
     this.props.channel.volume = parseFloat(e.target.value)
     this.props.handleSave('Volume change')
     this.gainNode.gain.value = this.props.channel.volume
+    // as we are setting volume directly to props - update will be skipped - so keep internal volume state
+    this.setState({volume: this.props.channel.volume})
   // console.log(parseFloat(e.target.value))
   }
 

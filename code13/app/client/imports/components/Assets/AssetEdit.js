@@ -29,7 +29,7 @@ function flatten(source, flattened = {}, keySoFar = '') {
   function getNextKey(key) {
     return `${keySoFar}${keySoFar ? pathDelimiter : ''}${key}`
   }
-  if (typeof source === 'object') {
+  if (typeof source === 'object' ) {
     for (const key in source) {
       flatten(source[key], flattened, getNextKey(key))
     }
@@ -67,13 +67,12 @@ export default AssetEdit = React.createClass({
 
   // sometimes in the AssetEditRoute getMeteorData is calling forceUpdate without any real reason - there were activity snapshots
   shouldComponentUpdate: function(nextProps, nextState){
-    const d = diff(this.props, nextProps)
-    console.log(d)
-    return Object.keys(d).length > 0
-
-    const retVal = !(_.isEqual(this.props.asset.content2, nextProps.asset.content2))
-    retVal ? console.log("ComponentWill Update!") : console.log("Skipping Edit Update")
-    return retVal
+    const pd = diff(this.props, nextProps)
+    if(Object.keys(pd).length > 0){
+      console.log("props", pd)
+      return true
+    }
+    return false
   },
   getEditorForAsset: function(asset) {
     const Element = editElementsForKind[asset.kind] || EditUnknown

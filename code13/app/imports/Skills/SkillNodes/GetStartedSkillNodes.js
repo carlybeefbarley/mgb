@@ -23,10 +23,11 @@ export default {
     avatar:           C.E,
     badges:           C.E,
     bio:              C.E,
-    description:      C.E,
-    focus:            C.E,
-    mgb1Name:         C.E,
-    history:          C.E
+    quickTour:        C.E
+    // description:      C.E,
+    // focus:            C.E,
+    // mgb1Name:         C.E,
+    // history:          C.E
   },
 
   chat: {

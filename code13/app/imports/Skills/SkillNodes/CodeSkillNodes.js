@@ -1,5 +1,7 @@
 import C from './CommonSkillNodes'
 
+import CodePhaserSkillNodes from './CodePhaserSkillNodes'
+
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 // These will be inserted into { code: ___ }
@@ -200,41 +202,28 @@ export default {
       },      
     },
 
-    clientfw: {
+    phaser: CodePhaserSkillNodes,
+    
+    react: {
       $meta: {
-//        requires:   '.lang.basics',
-        name:       'Javascript Client Frameworks',
-        description:'Client frameworks are libararies of functions that help with writing code that will run in a browser. They include game libraries'
+        name:       'ReactJS',
+        description:'reactJS App Development Framework'
       },
-      phaser: {
-        $meta: {
-          name:       'PhaserJS',
-          description:'PhaserJS Game Development Framework'
-        },
-        Game:       C.En(1),
-        Loader:     C.En(1)
+      jsx:        C.En(1),
+      stateless:  C.En(1),    // TODO: Requires fatArrow
+      components: C.En(1),
+      props:      C.En(1),
+      state:      C.En(1)
+    },
+    jquery: {
+      $meta: {
+        //requires: 'DOM',
+        name:       'jQuery',
+        description:'jQuery DOM manipulation framework'
       },
-      react: {
-        $meta: {
-          name:       'ReactJS',
-          description:'reactJS App Development Framework'
-        },
-        jsx:        C.En(1),
-        stateless:  C.En(1),    // TODO: Requires fatArrow
-        components: C.En(1),
-        props:      C.En(1),
-        state:      C.En(1)
-      },
-      jquery: {
-        $meta: {
-          //requires: 'DOM',
-          name:       'jQuery',
-          description:'jQuery DOM manipulation framework'
-        },
-        selectors:  C.En(1),
-        animations: C.En(1),
-        plugins:    C.En(1)
-      }
+      selectors:  C.En(1),
+      animations: C.En(1),
+      plugins:    C.En(1)
     }
   },
 

@@ -28,7 +28,8 @@ export default class SkillTree extends React.Component {
   constructor (...a) {
     super(...a)
     this.state = {
-      zoomLevel:    this.props.initialZoomLevel
+      zoomLevel:    this.props.initialZoomLevel,
+      skillAreaOverride: null
     }
     this.totals = {}
   }
@@ -139,7 +140,8 @@ export default class SkillTree extends React.Component {
         const valueSty = { 
           backgroundColor: color,
           opacity:  0.3,
-          width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%'
+          width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%',
+          pointerEvents: 'none'
         }
 
         const boxSty = { 
@@ -159,7 +161,10 @@ export default class SkillTree extends React.Component {
             data-requires={requires}>
             <div className='mgb-skillsmap-progress'>
               <div className='mgb-skillsmap-value animate' style={valueSty}></div>
-              {i} ({newKey})
+              <div onClick={() => { if (key === '') this.setState( { zoomLevel: 1, skillAreaOverride: null } ) } }>
+                { (key === '') && <i className='minus circle icon' /> }
+                {skillNodes[i].$meta.name || i} ({newKey})
+              </div>
             </div>
             {this.renderSkillNodesMid(skillNodes[i], onlySkillArea, newKey, skillNodes[i].$meta.requires)}
           </div>
@@ -181,8 +186,9 @@ export default class SkillTree extends React.Component {
     return parts
   }
 
+  /** This shows one line per skill area */
   renderSkillNodesSmall (skillNodes, onlySkillArea) {
-    const nodes = []
+    let nodes = []
     for (let i in skillNodes) {
       if (i === "$meta")
         continue
@@ -197,7 +203,11 @@ export default class SkillTree extends React.Component {
 
       if (!onlySkillArea || onlySkillArea === i)
         nodes.push(
-          <div key={ i } className='animate'>
+          <div 
+              key={ 'hdr'+i } 
+              className='animate'
+              onClick={() => { this.setState( { zoomLevel: 2, skillAreaOverride: i } ) } }
+              >
             <div className='mgb-skillsmap-progress'>
               { skillNodes[i].$meta.name || i }
               <div className='mgb-skillsmap-value animate' style={valueSty}></div>
@@ -209,6 +219,7 @@ export default class SkillTree extends React.Component {
     return nodes
   }
 
+  // this renders all skills on a single line. Kinda too small really
   renderSkillNodesOneLine (skillNodes) {
     const nodes = []
 
@@ -262,7 +273,7 @@ export default class SkillTree extends React.Component {
   }
 
   render () {
-    const { zoomLevel } = this.state
+    const { zoomLevel, skillAreaOverride } = this.state
     const { user, userSkills, onlySkillArea, hideToolbars } = this.props
     if (!user)
       return <ThingNotFound type="User" />
@@ -299,7 +310,7 @@ export default class SkillTree extends React.Component {
       <div>
         { ( onlySkillArea === null && !hideToolbars) && <Toolbar name='SkillsMap' config={config} actions={this} /> }
         <div style={{position: 'relative'}}>
-          {this.renderSkillNodes(SkillNodes, onlySkillArea)}
+          {this.renderSkillNodes(SkillNodes, skillAreaOverride || onlySkillArea)}
         </div>
       </div>
     )
@@ -308,12 +319,12 @@ export default class SkillTree extends React.Component {
   zoomin () {
     const { zoomLevel } = this.state
     if (this.props.ownsProfile && zoomLevel < 2)
-      this.setState( { zoomLevel: zoomLevel+1 } )
+      this.setState( { zoomLevel: zoomLevel+1, skillAreaOverride: null } )
   }
 
   zoomout () {
     const { zoomLevel } = this.state
     if (this.props.ownsProfile && zoomLevel > 0) 
-      this.setState( { zoomLevel: zoomLevel-1 } )
+      this.setState( { zoomLevel: zoomLevel-1, skillAreaOverride: null } )
   }
 }

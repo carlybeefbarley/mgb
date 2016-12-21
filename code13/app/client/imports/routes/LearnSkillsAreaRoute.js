@@ -41,7 +41,7 @@ const LearnSkillsAreaRoute = ( { currUser, params }, context ) => {    //props.p
       <br />
       <Header as='h4' content={`${area.title} Skill tutorials will be here soon!`} />
       <ul>
-        { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.description) ? v.$meta.description : k}</li>) ) }
+        { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.name) ? v.$meta.name : k}</li>) ) }
       </ul>
       { currUser && 
         <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag}/>

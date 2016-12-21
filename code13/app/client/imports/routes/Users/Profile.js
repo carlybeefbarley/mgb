@@ -116,7 +116,7 @@ export default UserProfileRoute = React.createClass({
     const editsDisabled = !ownsProfile
 
     return (
-      <Grid.Column width={8}>
+      <Grid.Column width={8} id="mgbjr-profile-bioDiv">
         <Segment>
           <Item.Group>
             <Item>

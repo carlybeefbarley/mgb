@@ -21,6 +21,7 @@ import SourceTools from './SourceTools.js'
 import CodeFlower from './CodeFlowerModded.js'
 import GameScreen from './GameScreen.js'
 import makeBundle from '/imports/helpers/codeBundle'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // import tlint from 'tern-lint'
 

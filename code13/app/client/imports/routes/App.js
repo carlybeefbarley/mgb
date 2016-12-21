@@ -208,7 +208,7 @@ export default App = React.createClass({
     if (window.trackJs)
       doTrack()
     else
-      $.getScript("/lib/tracker.js", doTrack)   // fallback to local version because of AdBlocks etc
+      $.getScript(makeCDNLink("/lib/tracker.js"), doTrack)   // fallback to local version because of AdBlocks etc
   },
 
   render() {

@@ -3,19 +3,13 @@ import AWS from 'aws-sdk'
 import config from './config.json'
 import { WebApp } from 'meteor/webapp'
 
-// debug
-// WebAppInternals.setBundledJsCssPrefix("http://d3lu47gtxj7cqp.cloudfront.net")
-// WebAppInternals.setBundledJsCssPrefix("http://127.0.0.1:3000")
-
-
-
-// TODO: is it possible to get this from current running instance?
 // Change this for testing purposes
 const ORIGIN_DOMAIN_NAME = 'mightyfingers.com'
 
 // this will be filled at runtime
 let CLOUDFRONT_DOMAIN_NAME = ''
 
+// client at first load will try to get this - so it can use it for ajax requests
 Meteor.methods({
   "CDN.domain": function() {
     return CLOUDFRONT_DOMAIN_NAME
@@ -40,10 +34,10 @@ const allowedOrigins = [
 WebApp.rawConnectHandlers.use(function (req, res, next) {
   const index = allowedOrigins.indexOf(req.headers.origin)
   if(index > -1){
-    res.setHeader('access-control-allow-origin', allowedOrigins[index]);
+    res.setHeader('access-control-allow-origin', allowedOrigins[index])
   }
-  res.setHeader('access-control-expose-headers', 'etag');
-  return next();
+  res.setHeader('access-control-expose-headers', 'etag')
+  return next()
 });
 // End of CORS FIX
 

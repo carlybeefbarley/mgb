@@ -106,6 +106,7 @@ export default class EditMusic extends React.Component {
   }
 
   componentWillUnmount () {
+    this._raf = () => {}
     this.stopMusic()
   }
 

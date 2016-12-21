@@ -14,6 +14,14 @@ Meteor.call("CDN.domain", (err, cdnDomain) => {
     CDN_DOMAIN = cdnDomain
 })
 
+export const makeCDNLink = (uri, etag = null) => {
+  const hash = etag ? etag : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
+  if(CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//"){
+    return `//${CDN_DOMAIN}${uri}?${hash}`
+  }
+  return uri
+}
+
 // used by maps - to get notifications about image changes
 export const observe = (selector, onReady, onChange = onReady, oldSubscription = null) => {
   // images in the map won't update
@@ -121,15 +129,10 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOp
     removeFromCache(uri)
   }
   const client = new XMLHttpRequest()
-  let usingCDN = false
-  if(CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//"){
-    usingCDN = true
-    const cdnUri = `//${CDN_DOMAIN}${uri}${etag ? "?"+etag : ''}`
-    client.open('GET', cdnUri)
-  }
-  else{
-    client.open('GET', uri)
-  }
+  const cdnLink = makeCDNLink(uri, etag)
+  const usingCDN = uri == cdnLink
+  client.open('GET', cdnLink)
+
   if(onRequestOpen){
     onRequestOpen(client)
   }
@@ -229,7 +232,7 @@ export const getAssetWithContent2 = (id, onReady) => {
           return
         }
         const c2 = JSON.parse(data)
-        const oldC2 = ret.asset.content2
+        const oldC2 = ret.asset ? ret.asset.content2 : null
         ret.isReady = true
 
         let needUpdate = false

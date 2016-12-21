@@ -1,6 +1,6 @@
 "use strict"
 import knownLibs from "./knownLibs.js"
-import {observe, mgbAjax} from "/client/imports/helpers/assetFetchers"
+import {observe, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
 import {AssetKindEnum} from '/imports/schemas/assets'
 
 // serving modules from...

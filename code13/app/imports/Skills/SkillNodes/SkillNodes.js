@@ -108,16 +108,16 @@ const SkillNodes = {
   // NOTE THAT EACH OF THESE MUST HAVE A MATCHING ITEM IN SkillAreas.js if it is part of the
   // general skills courses. There are some specific exceptions that have their own top-level UI
   // and they are indicated below in a comment:
-  art:        ArtSkillNodes,
+  getStarted: GetStartedSkillNodes,     // Has specific client UI in LearnGetStartedRoute.js so NOT in skillsAreas.js
   code:       CodeSkillNodes,
+  art:        ArtSkillNodes,
   audio:      AudioSkillNodes,
   design:     DesignSkillNodes,
   writing:    WritingSkillNodes,
-  business:   BusinessSkillNodes,
   community:  CommunitySkillNodes,
   analytics:  AnalyticsSkillNodes,
   marketing:  MarketingSkillNodes,
-  getStarted: GetStartedSkillNodes,     // Has specific client UI in LearnGetStartedRoute.js so NOT in skillsAreas.js
+  business:   BusinessSkillNodes,
 
   $meta: {
     map: {}

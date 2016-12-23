@@ -17,7 +17,7 @@ export default {
     $meta: {
       name:           'Profile',
       description:    'Add avatars and other info to your profile',
-      sequence:       'profilePage,avatar,badges,bio,description,focus,mgb1Name,history'
+      sequence:       'profilePage,avatar,badges,bio,quickTour'
     },
     profilePage:      C.E,
     avatar:           C.E,

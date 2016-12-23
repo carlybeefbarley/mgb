@@ -194,7 +194,7 @@ export default FlexPanel = React.createClass({
       bottom:       '0px',
       width:        flexPanelWidth,
       borderLeft:   '1px solid rgba(0, 0, 0, 0.1)',
-      backgroundColor: 'rgba(0, 0, 0, 0.05)'
+      backgroundColor: 'rgba(242, 242, 242, 1)'   //making this non-opaque solves the overlap issues on very narrow screens
     }
 
     const miniNavStyle = {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel

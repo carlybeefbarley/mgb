@@ -152,7 +152,7 @@ export default class TileCache {
       // prevent cache - as browser will ignore etag in this case
       loadImage(changes.updatedAt.getTime())
     })
-    loadImage()
+    loadImage(Date.now())
 
     return
     // image is loading or loaded

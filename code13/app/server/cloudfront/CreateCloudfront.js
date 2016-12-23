@@ -12,11 +12,13 @@ let CLOUDFRONT_DOMAIN_NAME = ''
 // client at first load will try to get this - so it can use it for ajax requests
 Meteor.methods({
   "CDN.domain": function() {
-    return CLOUDFRONT_DOMAIN_NAME
+    return ''//CLOUDFRONT_DOMAIN_NAME
   }
 })
 
 WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
+  return uri
+
   if(CLOUDFRONT_DOMAIN_NAME){
     return "//" + CLOUDFRONT_DOMAIN_NAME + uri
   }

@@ -5,7 +5,7 @@ import {AssetKindEnum} from '/imports/schemas/assets'
 
 // serving modules from...
 const getModuleServer = (lib, version = "latest") => {
-  return `https://cdn.jsdelivr.net/${lib}/${latest}/${lib}.js`
+  return `https://cdn.jsdelivr.net/${lib}/${version}/${lib}.js`
 }
 
 

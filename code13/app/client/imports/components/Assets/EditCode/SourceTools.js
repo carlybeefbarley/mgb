@@ -712,8 +712,7 @@ main = function(){
       return lib.src(lib.ver);
     }
     // import X from '/asset name' or import X from '/user/asset name'
-    if (urlFinalPart.startsWith("./")) {
-      // get local file by ID
+    if (urlFinalPart.indexOf("./") === 0 || (urlFinalPart.indexOf("./") && urlFinalPart.indexOf("//") === -1) ) {
       return '/api/asset/code/' + asset_id
     }
     // import X from 'react' OR

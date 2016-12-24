@@ -260,8 +260,8 @@ window.onload = function() {
           }
           else{
             // first for babel includes (with default support) another one for commonJS includes
-            imports[key] = window.exports === window.module.exports ? window.exports : window.module.exports
-            imports[localKey] = imports[key]
+            imports[source.name] = window.exports === window.module.exports ? window.exports : window.module.exports
+            // imports[localKey] = imports[key]
             // allow access by local name
             if (source.localName) {
               imports[source.localName] = imports[key]

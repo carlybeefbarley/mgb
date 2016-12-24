@@ -4,8 +4,15 @@ import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
 import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
 
 // serving modules from...
-const getModuleServer = (lib) => {
-  return 'https://cdn.jsdelivr.net/' + lib + '/latest/' + lib + ".js"
+const getModuleServer = (lib, version = 'latest') => {
+  const parts = lib.split("@")
+  if(parts.length === 1){
+    return `https://cdn.jsdelivr.net/${lib}/${version}/${lib}.min.js`
+  }
+  else{
+    const name = parts[0]
+    return `https://cdn.jsdelivr.net/${name}/${parts[1]}/${name}.min.js`
+  }
 }
 
 
@@ -712,8 +719,11 @@ main = function(){
       return lib.src(lib.ver);
     }
     // import X from '/asset name' or import X from '/user/asset name'
-    if (urlFinalPart.indexOf("./") === 0 || (urlFinalPart.indexOf("/") && urlFinalPart.indexOf("//") === -1) ) {
+    if (urlFinalPart.startsWith("./") ) {
       return '/api/asset/code/' + asset_id
+    }
+    if(urlFinalPart.startsWith("/") && urlFinalPart.indexOf("//") === -1){
+      return '/api/asset/code' + urlFinalPart
     }
     // import X from 'react' OR
     // import X from 'asset_id'

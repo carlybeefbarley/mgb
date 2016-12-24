@@ -22,7 +22,31 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
 
+    {
+      'timestamp': 'Fri Dec 23 2016 11:50:00 GMT-0800 (PST)',
 
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2363'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'bugfix',
+          'changeName': 'Tutorial bugfix - nebale progression in Profile tutorials',
+          'changeSummary': 'Fixed a silly bug that was preventing profile tutorials advancing.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+        
     {
       'timestamp': 'Wed Dec 21 2016 11:00:00 GMT-0800 (PST)',
 

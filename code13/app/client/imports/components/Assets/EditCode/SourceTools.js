@@ -4,8 +4,15 @@ import {observe, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetche
 import {AssetKindEnum} from '/imports/schemas/assets'
 
 // serving modules from...
-const getModuleServer = (lib, version = "latest") => {
-  return `https://cdn.jsdelivr.net/${lib}/${version}/${lib}.js`
+const getModuleServer = (lib, version = 'latest') => {
+  const parts = lib.split("@")
+  if(parts.length === 1){
+    return `https://cdn.jsdelivr.net/${lib}/${version}/${lib}.min.js`
+  }
+  else{
+    const name = parts[0]
+    return `https://cdn.jsdelivr.net/${name}/${parts[1]}/${name}.min.js`
+  }
 }
 
 
@@ -724,18 +731,16 @@ main = function(){
       return lib.src(lib.ver);
     }
     // import X from '/asset name' or import X from '/user/asset name'
-    if (urlFinalPart.startsWith("./")) {
-      // get local file by ID
+    if (urlFinalPart.startsWith("./") ) {
       return '/api/asset/code/' + asset_id
+    }
+    if(urlFinalPart.startsWith("/") && urlFinalPart.indexOf("//") === -1){
+      return '/api/asset/code' + urlFinalPart
     }
     // import X from 'react' OR
     // import X from 'asset_id'
     if (!SourceTools.isExternalFile(urlFinalPart)) {
       // try CDN
-      const parts = urlFinalPart.split("@")
-      if(parts.length > 1){
-        return getModuleServer(parts[0], parts[1])
-      }
       return getModuleServer(urlFinalPart)
       //return MODULE_SERVER + urlFinalPart
     }

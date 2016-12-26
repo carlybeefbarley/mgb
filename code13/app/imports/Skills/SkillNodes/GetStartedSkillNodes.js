@@ -24,10 +24,6 @@ export default {
     badges:           C.E,
     bio:              C.E,
     quickTour:        C.E
-    // description:      C.E,
-    // focus:            C.E,
-    // mgb1Name:         C.E,
-    // history:          C.E
   },
 
   chat: {
@@ -36,9 +32,11 @@ export default {
       description:    'Learn to use chat and say Hi',
       sequence:       'chatFlexPanel,chatChannels,chatRandomSayHi'
     },
-    chatFlexPanel:    C.E,
-    chatChannels:     C.E,
-    chatRandomSayHi:  C.E
+    chatFlexPanel:    C.E,  // Public chat - show flexPanels, change channel, say Hi on Random 
+    chatAtMention:    C.E,  // Not yet implemented as a feature.. this will just say coming soon
+    privateChat:      C.E,  // Not yet implemented as a feature.. this will just say coming soon
+    projectChat:      C.E,  // Not yet implemented as a feature.. this will just say coming soon
+    assetChat:        C.E   // Not yet implemented as a feature.. this will just say coming soon
   },
 
   play: {

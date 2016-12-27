@@ -4,6 +4,9 @@
 import _ from 'lodash'
 import { Activity } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
+import { isSameUserId } from '/imports/schemas/users'
+
 
 const _activityIntervalMs = 1000 * 60 * 5   /// 5 minute interval on the activity de-deplicator. TODO: Move to SpecialGlobals.js?
 
@@ -107,8 +110,29 @@ Meteor.methods({
     if (Meteor.isServer)
       console.log(`  [Activity.log]  #${docId}  ${data.activityType}  by: ${data.byUserName}   from: ${data.byIpAddress}`)
     return docId
+  },
+
+  "Activity.delete": function(activityId) {
+    
+    if (!this.userId) 
+      throw new Meteor.Error(401, "Login required")
+
+    check(activityId, String)
+
+    const act = Activity.findOne( { _id: activityId } )
+    if (!act)
+      throw new Meteor.Error(404, "Activity Id does not exist")
+
+    if (!(isSameUserId(act.byUserId, this.userId) || isUserSuperAdmin(Meteor.user()) ) )
+      throw new Meteor.Error(401, "Access not permitted")
+
+    const nRemoved = Activity.remove( { _id: activityId } )
+
+    if (Meteor.isServer)
+      console.log(`  [Activity.delete]  #${activityId}  by: ${act.byUserName}`)
+    
+    return nRemoved
   }
-  
 })
 
 var priorLog   // The prior activity that was logged - for simplistic de-dupe purposes
@@ -168,4 +192,8 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
       if (err)
         console.log("Could not log Activity: ", err.reason)
     }) 
+}
+
+export function deleteActivityRecord(activityId) {
+  Meteor.call( "Activity.delete", activityId )
 }

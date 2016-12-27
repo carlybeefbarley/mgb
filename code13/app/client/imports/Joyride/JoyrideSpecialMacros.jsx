@@ -171,6 +171,48 @@ const stepMacros = [
   },
 
   {
+    key: _wrapKey('np-play-popularGames'),
+    hint: `np-play>PopularGames`,
+    desc: `Step for clicking the 'Popular Games' Button from np-play`,
+    newVal:
+    {
+      "title": "Popular Games",
+      "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been played most frequently",
+      "selector": "#mgbjr-np-play-popularGames",
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
+      "position": "right"
+    }
+  },
+ 
+  {
+    key: _wrapKey('np-play-updatedGames'),
+    hint: `np-play>UpdatedGames`,
+    desc: `Step for clicking the 'Updated Games' Button from np-play`,
+    newVal:
+    {
+      "title": "Updated Games",
+      "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been updated recently",
+      "selector": "#mgbjr-np-play-updatedGames",
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
+      "position": "right"
+    }
+  },
+
+  {
+    key: _wrapKey('np-play-gamesImade'),
+    hint: `np-play>gamesImade`,
+    desc: `Step for clicking the 'Games I made' Button from np-play`,
+    newVal:
+    {
+      "title": "Games I made",
+      "text": "Click on the &ensp;<div class='ui label'>Games I made</div>&ensp; option now to see Games that you made",
+      "selector": "#mgbjr-np-play-gamesImade",
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-/u/:username/games",
+      "position": "right"
+    }
+  },
+ 
+  {
     key: _wrapKey('create-new-asset'),
     hint: `np-create>CreateNewAsset`,
     desc: `Step for Create New Asset. Prior step should be %np-create%`,
@@ -272,9 +314,20 @@ const propertyMacros = [
       "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
     }
   },
-  // field == null means this is to replace an entire step  
 
-
+  {
+    field: 'style',
+    key: _wrapKey('under-construction'),
+    desc: "An alert style for stuff that does not yet actually exist",
+    newVal:
+    {
+      "backgroundColor": "rgba(255, 128, 128, 0.95)",
+      "color": "#fff",
+      "mainColor": "#ff4456",
+      "skip": { "color": "#ff4456" },
+      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+    }
+  }
 ]
 
 // This returns { newStep{}, notFoundMacros[] }  .. and never returns null, nor a different shape

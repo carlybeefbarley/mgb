@@ -374,8 +374,11 @@ export default class Mage extends React.Component {
       fetchAssetByUri(_mkMapUri(ownerName, nextMapName))
         .then(  data => this._transitionMapLoadResult(nextMapName, true, JSON.parse(data)) )
         .catch( data => this._transitionMapLoadResult(nextMapName, false, data) )
+      this.setState( { pendingMapLoads } )    // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn 
     }
-    this.setState( { pendingMapLoads } )    // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn 
+    else
+      this._startMapLoaded(loadedMaps[nextMapName])
+
   }
 
   _transitionMapLoadResult(nextMapName, isSuccess, data) {

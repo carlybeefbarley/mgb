@@ -23,6 +23,10 @@ export default SpecialGlobals = {
 
   // in a case that observers will turn out too sloe - we may change it to false - and then implement slow polling
   allowObservers: true,
+  editCode: {
+    maxFileSizeForAST: 100 * 1024, // 100 KB
+    typingSpeed: 750 //ms - this will prevent all updates for X time after keypress - improves fast typing UX (feels more responsive)
+  },
 
   assets: {
     "maxUploadSize":  1*1024*1024,   // 1 MB

@@ -50,6 +50,7 @@ import DebugASTview from './tern/DebugASTview.js'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
@@ -62,7 +63,7 @@ let showDebugAST = false    // Handy thing while doing TERN dev work
 
 // we are delaying heavy jobs for this amount of time (in ms) .. e.g. when user types - there is no need to re-analyze all content on every key press
 // reasonable value would be equal to average user typing speed (chars / second) * 1000
-const CHANGES_DELAY_TIMEOUT = 750
+const CHANGES_DELAY_TIMEOUT = SpecialGlobals.editCode.typingSpeed
 
 const _infoPaneModes = [
   { col1: 'ten',     col2: 'six'   },

@@ -2,6 +2,7 @@
 import knownLibs from "./knownLibs.js"
 import {observe, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
 import {AssetKindEnum} from '/imports/schemas/assets'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 // serving modules from...
 const getModuleServer = (lib, version = 'latest') => {
@@ -15,15 +16,14 @@ const getModuleServer = (lib, version = 'latest') => {
   }
 }
 
+// CDN ajax requests cache lifetime
+const INVALIDATE_CACHE_TIMEOUT = 60 * 60 * 1000
 
-
-// ajax requests cache - invalidate every few seconds
-// this will insanely speed up run
-const INVALIDATE_CACHE_TIMEOUT = 30 * 1000
-const UPDATE_DELAY = 0.5 * 1000
+// delay between re-checking sources
+const UPDATE_DELAY = 0.5 * 1000 // 500ms
 
 // add only smalls libs to tern
-const MAX_ACCEPTABLE_SOURCE_SIZE = 1024 * 100 // 100 KB
+const MAX_ACCEPTABLE_SOURCE_SIZE = SpecialGlobals.editCode.maxFileSizeForAST // 1024 * 100 // 100 KB
 
 const ERROR = {
   SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)

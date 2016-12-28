@@ -15,6 +15,7 @@ import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import { getAssetWithContent2 } from '/client/imports/helpers/assetFetchers'
 
 const _incrementPlayCount = _.debounce(
   assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) }, 
@@ -94,11 +95,13 @@ export default PlayGameRoute = React.createClass({
 
   getMeteorData: function() {
     let assetId = this.props.params.assetId
-    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", assetId)
-
+    let handleForAsset = getAssetWithContent2(assetId, () => {
+      // while ticking - send changes :) (this is - isMounted check actually)
+      this.isMounted && this.forceUpdate()
+    })
     return {
-      asset:    Azzets.findOne(assetId),
-      loading:  !handleForAsset.ready()
+      get asset(){ return handleForAsset.asset },
+      get loading(){ return !handleForAsset.isReady }
     }
   },
 
@@ -119,7 +122,13 @@ export default PlayGameRoute = React.createClass({
   },
 
   componentDidMount: function () {
+    this.isMounted = true
     this.checkForImplicitIncrementPlayCount()
+
+  },
+
+  componentWillUnmount: function () {
+    this.isMounted = false
   },
 
   componentDidUpdate () {

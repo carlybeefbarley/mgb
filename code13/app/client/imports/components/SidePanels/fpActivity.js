@@ -1,16 +1,19 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
-import { ActivityTypes } from '/imports/schemas/activity.js'
+import { ActivityTypes, deleteActivityRecord } from '/imports/schemas/activity.js'
 
 import { AssetKinds } from '/imports/schemas/assets'
 import { ChatChannels } from '/imports/schemas/chats'
+import { isSameUserId } from '/imports/schemas/users'
 
 import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
 
 const _propTypes = {
-  activity:    PropTypes.array.isRequired  // An activity Stream passed down from the App and passed on to interested components
+  currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
+  activity:     PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested components
+  isSuperAdmin: PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
 }
 
 const ActivityExtraDetail = ( { act} ) => {
@@ -56,8 +59,19 @@ const ActivityExtraDetail = ( { act} ) => {
   return null
 }
 
-const RenderOneActivity = (props) => {
-  const { act } = props
+const _doDeleteActivity = activityId => deleteActivityRecord( activityId )
+
+
+const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
+  ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) && 
+    <span className='mgb-show-on-parent-div-hover' onClick={() => _doDeleteActivity(act._id)}>
+      &nbsp;
+      <Icon name='red circular link delete'/>
+    </span>
+)
+
+
+const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
   const { byUserName, byUserId } = act
   const ago = moment(act.timestamp).fromNow()   // TODO: Make reactive
   const iconClass = ActivityTypes.getIconClass(act.activityType)  
@@ -78,6 +92,7 @@ const RenderOneActivity = (props) => {
             <QLink to={"/u/" + byUserName}>{ byUserName }</QLink>
           </Feed.User>
           <Feed.Date>{ago}</Feed.Date>
+          <DeleteActivity act={act} currUser={currUser}  isSuperAdmin={isSuperAdmin} />
         </Feed.Summary>
 
         <Feed.Meta>
@@ -91,9 +106,9 @@ const RenderOneActivity = (props) => {
   )
 }
 
-const fpActivity = (props) => (
+const fpActivity = ( { activity, currUser, isSuperAdmin } ) => (
   <Feed size="small">
-    { props.activity.map((act) => ( <RenderOneActivity act={act} key={act._id} /> ) ) }
+    { activity.map((act) => ( <RenderOneActivity act={act} key={act._id} currUser={currUser} isSuperAdmin={isSuperAdmin} /> ) ) }
   </Feed>
 )
  

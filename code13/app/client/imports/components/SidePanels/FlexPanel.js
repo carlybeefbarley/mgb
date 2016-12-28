@@ -234,7 +234,7 @@ export default FlexPanel = React.createClass({
       joyrideCompleteTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)
 
     return  (
-      <div className="basic segment mgbFlexPanel" style={panelStyle}>
+      <div className="basic segment mgbFlexPanel" style={panelStyle} id='mgbjr-flexPanelArea'>
         { flexPanelIsVisible &&
           <div className='animated fadeInRight' style={{animationFillMode: "none"} /*animation fill mode breaks flex panel on ff and mobile chrome (samsung) */ }>
 

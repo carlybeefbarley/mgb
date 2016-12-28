@@ -4,7 +4,9 @@ import QLink from '/client/imports/routes/QLink'
 import reactMixin from 'react-mixin'
 import { Chats } from '/imports/schemas'
 import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '/imports/schemas/chats';
+
 import { logActivity } from '/imports/schemas/activity'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import moment from 'moment'
 
@@ -71,6 +73,7 @@ export default fpChat = React.createClass({
     {
       this.setState( { pastMessageLimit: initialMessageLimit })
       this.props.handleChangeSubNavParam(selectedChannelName)
+      joyrideCompleteTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
     }
   },
 
@@ -129,6 +132,9 @@ debugger   // DEAD CODE?
 
     const friendlyChannelName = this._calculateActiveChannelName()
     const channelKey = this._calculateActiveChannelKey()
+    joyrideCompleteTag(`mgbjr-CT-fp-chat-send-message`)
+    joyrideCompleteTag(`mgbjr-CT-fp-chat-send-message-on-${friendlyChannelName}`)
+    
     // TODO: Set pending?
     ChatSendMessage(channelKey, msg, (error, result) => {
       if (error) 
@@ -144,6 +150,7 @@ debugger   // DEAD CODE?
   renderGetMoreMessages() {
     const { chats } = this.data
     const maxH = chatParams.maxClientChatHistory
+    const elementId='mgbjr-fp-chat-channel-get-earlier-messages'
     if (this.data.loading)
       return <p>loading...</p>
 
@@ -151,18 +158,18 @@ debugger   // DEAD CODE?
       return null
 
     if (chats.length < this.state.pastMessageLimit)
-      return <div className="ui horizontal divider tiny header"
+      return <div id={elementId} className="ui horizontal divider tiny header"
                 title={`There are no earlier messages in this channel`}>
                   (start of topic)
               </div>
 
     if (chats.length >= maxH)
-      return <div className="ui horizontal divider tiny header"
+      return <div id={elementId} className="ui horizontal divider tiny header"
                 title={`You may only go back ${maxH} messages`}>
                   (history limit reached)
               </div>
 
-    return <a title={`Currently showing most recent ${chats.length} messages. Click here to get up to ${additionalMessageIncrement} earlier messages`}
+    return <a id={elementId} title={`Currently showing most recent ${chats.length} messages. Click here to get up to ${additionalMessageIncrement} earlier messages`}
               onClick={this.doGetMoreMessages}>
                 Get earlier messages..
             </a>
@@ -204,7 +211,7 @@ debugger   // DEAD CODE?
 
     return  (
       <div>
-        <div className="ui fluid tiny search selection dropdown fpChatDropDown">
+        <div className="ui fluid tiny search selection dropdown fpChatDropDown" id='mgbjr-fp-chat-channelDropdown'>
           <input type="hidden" name="channels" value={channelName}></input>
           <i className="dropdown icon"></i>
           <div className="default text">All Channels</div>
@@ -224,13 +231,14 @@ debugger   // DEAD CODE?
           </div>
         </div>
         
-        <div className="ui small comments">
+        <div className="ui small comments" >
         { this.renderGetMoreMessages() }
         { this.data.chats && this.data.chats.map( c => (this.renderMessage(c))) }
+        <span id='mgbjr-fp-chat-channel-messages' />
         </div>
 
         <form className="ui small form">
-          <div className={disabler("field")}>
+          <div className={disabler("field")} id='mgbjr-fp-chat-messageInput'>
             <textarea rows="3" placeholder="your message..." ref="theMessage" maxLength={chatParams.maxChatMessageTextLen}></textarea>
           </div>
           <div className={disabler("ui blue right floated labeled submit icon button")} ref="sendChatMessage" onClick={this.doSendMessage}>

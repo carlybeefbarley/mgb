@@ -2,7 +2,7 @@ export const templateTutorial = [
   
   { label: "Simple Tutorial",
     description: "Simple Tutorial with just 4 basic steps",
-    code: `{{
+    code: `{
   "steps": [
     {
       "heading": "Your Profile Page",

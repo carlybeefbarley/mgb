@@ -24,32 +24,30 @@ export default {
     badges:           C.E,
     bio:              C.E,
     quickTour:        C.E
-    // description:      C.E,
-    // focus:            C.E,
-    // mgb1Name:         C.E,
-    // history:          C.E
   },
 
   chat: {
     $meta: {
       name:           'Chat',
       description:    'Learn to use chat and say Hi',
-      sequence:       'chatFlexPanel,chatChannels,chatRandomSayHi'
+      sequence:       'chatFlexPanel,chatAtMention,privateChat,projectChat,assetChat'
     },
-    chatFlexPanel:    C.E,
-    chatChannels:     C.E,
-    chatRandomSayHi:  C.E
+    chatFlexPanel:    C.E,  // Public chat - show flexPanels, change channel, say Hi on Random 
+    chatAtMention:    C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
+    privateChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
+    projectChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
+    assetChat:        C.E   // Not yet implemented as a feature.. this will just say 'coming soon'
   },
 
   play: {
     $meta: {
       name:           'Play',
       description:    'Find games you can play here',
-      sequence:       'findGames,searchGames,completeGames,gameAssets'
+      sequence:       'playOneGame,gamesImade,continueAgame,gameAssets'
     },
-    findGames:        C.E,
-    searchGames:      C.E,
-    completeGames:    C.E,
+    playOneGame:      C.E,
+    gamesImade:       C.E,
+    continueAgame:    C.E,  // this will just say 'coming soon'
     gameAssets:       C.E
   },
 
@@ -73,9 +71,10 @@ export default {
     },
     createProject:         C.E,
     createAssetInProject:  C.E,
-    changeProjectForAsset: C.E,
     projectAvatar:         C.E,
     projectMembers:        C.E,
+    changeProjectForAsset: C.E,
+    projectsCanOverlap:    C.E,
     projectPrefix:         C.E
   },
 

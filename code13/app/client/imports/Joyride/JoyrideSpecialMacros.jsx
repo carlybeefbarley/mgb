@@ -40,7 +40,7 @@ const _mkNp = ( npname, icon ) => (
   }
 )
 
-// Helper which makes a FlexPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
+// Helper which makes a FlexPanel stepMacro: e.g. _mkNp( 'learn', 'student' ) is %fp-learn%
 const _mkFp = ( fpname, icon ) => (
   {
     key: _wrapKey(`fp-${fpname}`),
@@ -50,6 +50,25 @@ const _mkFp = ( fpname, icon ) => (
     {
       "title": `The '${_.upperFirst(fpname)}' Flex panel`,
       "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here`,
+      "selector": `#mgbjr-flexPanelIcons-${fpname}`,
+      "showStepOverlay": false,
+      "awaitCompletionTag": `mgbjr-CT-flexPanel-${fpname}-show`,
+      "position": "left",
+      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+    }
+  }
+)
+
+// Helper which makes a FlexPanel Descrine stepMacro: e.g. _mkNp( 'learn', 'student', 'some text' ) is %fp-learn-describe%
+const _mkFpDescribe = ( fpname, icon, describeText ) => (
+  {
+    key: _wrapKey(`fp-${fpname}-describe`),
+    hint: `${_.upperFirst(fpname)} FlexPanel`,
+    desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
+    newVal:
+    {
+      "title": `The '${_.upperFirst(fpname)}' Flex panel`,
+      "text": `${describeText}. <br></br>Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here to show this Panel`,
       "selector": `#mgbjr-flexPanelIcons-${fpname}`,
       "showStepOverlay": false,
       "awaitCompletionTag": `mgbjr-CT-flexPanel-${fpname}-show`,
@@ -152,6 +171,48 @@ const stepMacros = [
   },
 
   {
+    key: _wrapKey('np-play-popularGames'),
+    hint: `np-play>PopularGames`,
+    desc: `Step for clicking the 'Popular Games' Button from np-play`,
+    newVal:
+    {
+      "title": "Popular Games",
+      "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been played most frequently",
+      "selector": "#mgbjr-np-play-popularGames",
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
+      "position": "right"
+    }
+  },
+ 
+  {
+    key: _wrapKey('np-play-updatedGames'),
+    hint: `np-play>UpdatedGames`,
+    desc: `Step for clicking the 'Updated Games' Button from np-play`,
+    newVal:
+    {
+      "title": "Updated Games",
+      "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been updated recently",
+      "selector": "#mgbjr-np-play-updatedGames",
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
+      "position": "right"
+    }
+  },
+
+  {
+    key: _wrapKey('np-play-gamesImade'),
+    hint: `np-play>gamesImade`,
+    desc: `Step for clicking the 'Games I made' Button from np-play`,
+    newVal:
+    {
+      "title": "Games I made",
+      "text": "Click on the &ensp;<div class='ui label'>Games I made</div>&ensp; option now to see Games that you made",
+      "selector": "#mgbjr-np-play-gamesImade",
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-/u/:username/games",
+      "position": "right"
+    }
+  },
+ 
+  {
     key: _wrapKey('create-new-asset'),
     hint: `np-create>CreateNewAsset`,
     desc: `Step for Create New Asset. Prior step should be %np-create%`,
@@ -182,6 +243,16 @@ const stepMacros = [
   _mkFp( 'users',    'street view'  ),
   _mkFp( 'network',  'signal'       ),
   _mkFp( 'keys',     'keyboard'     ),
+
+  _mkFpDescribe( 'activity', 'lightning',   'This activity feed lets you see what people are working on'   ),
+  _mkFpDescribe( 'goals',    'student',     'You can track, start/stop or resume your tutorials from here' ),
+  _mkFpDescribe( 'assets',   'pencil',      'This lets you find assets, load them, or drag them into other assets - for example dragging a Graphic to a Map' ),
+  _mkFpDescribe( 'chat',     'chat',        'This lets you chat with other users of the site' ),
+  _mkFpDescribe( 'options',  'options',     'This lets you enable advanced fetures that are initially hidden for new users' ),
+  _mkFpDescribe( 'skills',   'plus circle', 'This lets you track your learning skills'),
+  _mkFpDescribe( 'users',    'street view', 'This is a quick way to search for other users. It doesn\'t do much yet...' ),
+  _mkFpDescribe( 'network',  'signal',      'If you lose network or server connectivity, this provides some info and a way to force a reconnect'),
+  _mkFpDescribe( 'keys',     'keyboard',    'This doesn\'t really work yet, but it will be a way to learn and modify keyboard shortcuts' ),
 
   _mkCreateAsset( 'graphic'  ),
   _mkCreateAsset( 'actor'    ),
@@ -243,9 +314,20 @@ const propertyMacros = [
       "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
     }
   },
-  // field == null means this is to replace an entire step  
 
-
+  {
+    field: 'style',
+    key: _wrapKey('under-construction'),
+    desc: "An alert style for stuff that does not yet actually exist",
+    newVal:
+    {
+      "backgroundColor": "rgba(255, 128, 128, 0.95)",
+      "color": "#fff",
+      "mainColor": "#ff4456",
+      "skip": { "color": "#ff4456" },
+      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+    }
+  }
 ]
 
 // This returns { newStep{}, notFoundMacros[] }  .. and never returns null, nor a different shape

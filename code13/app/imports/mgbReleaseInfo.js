@@ -23,12 +23,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
     {
-      'timestamp': 'Fri Dec 23 2016 11:50:00 GMT-0800 (PST)',
+      'timestamp': 'Mon Dec 26 2016 16:00:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2363'
+        'iteration': '2378'
       },
 
       'releaseManagement': {
@@ -38,9 +38,26 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
       'changes': [
         {
           'featureTag': 'asset.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial improvements',
+          'changeSummary': 'Enabled tutorial selectors for Chat and Play tutorials. Fixed a silly bug that was preventing profile tutorials advancing. Fixed bug with getStarted link after signup',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
           'type': 'bugfix',
-          'changeName': 'Tutorial bugfix - nebale progression in Profile tutorials',
-          'changeSummary': 'Fixed a silly bug that was preventing profile tutorials advancing.',
+          'changeName': 'Ecmascript 6 module import',
+          'changeSummary': 'Fixed some cases with import syntax. See the linked example below for details.',
+          'otherUrls': [ 
+            { txt: 'example-import', href: 'https://v2.mygamebuilder.com/u/stauzs/asset/hwqvbn8fyk729sKLE' },
+            { txt: 'example-export', href: 'https://v2.mygamebuilder.com/u/stauzs/asset/WB28T8dcTQXZEh43j' }
+          ]
+        },
+        {
+          'featureTag': 'nav.play',
+          'type': 'bugfix',
+          'changeName': 'Fixed player for 2nd run of actorMap games',
+          'changeSummary': 'Fixed a bug that required a page refresh when playing actorMap games in the game player. ',
           'otherUrls': [ ]
         }
       ]

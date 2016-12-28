@@ -102,7 +102,7 @@ export default SignupRoute = React.createClass({
       {
         logActivity("user.join",  `New user "${username}"`, null, null)
         stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial        
-        utilPushTo(this.context.urlLocation.query, `/u/learn/getstarted`, { _fp: 'goals'})
+        utilPushTo(this.context.urlLocation.query, `/learn/getstarted`, { _fp: 'goals'})
         
         analytics.identify(Meteor.user()._id, {
           name: Meteor.user().profile.name,

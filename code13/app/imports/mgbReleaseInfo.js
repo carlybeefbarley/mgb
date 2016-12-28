@@ -23,6 +23,37 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
     {
+      'timestamp': 'Wed Dec 28 2016 11:30:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2386'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.music',
+          'type': 'bugfix',
+          'changeName': 'Firefox bugfix for Music Asset',
+          'changeSummary': 'Fixed Firefox-browser-related bug on music generation',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.activity',
+          'type': 'feature',
+          'changeName': 'Users can now remove their activity-items from the activity log',
+          'changeSummary': 'In the Activity FlexPanel, hover over an activity you caused - a red X will show. You can click the X to remove the activity item from the public history if you feel ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Mon Dec 26 2016 16:00:00 GMT-0800 (PST)',
 
       'id': {

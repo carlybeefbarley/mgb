@@ -249,7 +249,7 @@ div:hover > .mgb-show-on-parent-div-hover {
 .mgb-skillsmap-progress{
   position: relative;
   border: solid 1px;
-  margin: 2px;
+  margin: 0px;  /* was 2px */
   padding: 2px 5px;
   border-radius: 3px;
 }

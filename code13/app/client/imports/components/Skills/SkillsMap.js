@@ -80,7 +80,7 @@ export default class SkillTree extends React.Component {
   // TODO: create separate component for that?
   renderSingleNode (node, key, path, disabled) {
     const hasIt = hasSkill(this.props.userSkills, path)
-    let color = hasIt ? 'green' : 'red'
+    let color = hasIt ? 'green' : 'grey'
     if (!node.$meta.enabled)
       color = 'grey'
 
@@ -93,10 +93,10 @@ export default class SkillTree extends React.Component {
         title={"requires:\n" + node.$meta.requires.join("\n") + " \n\nunlocks:\n" +  node.$meta.unlocks.join("\n")}
         key={path}
         style={{ backgroundColor: color, margin: '5px', border: 'solid 1px', display: 'inline-block', padding: '4px' }}
-        className={(!node.$meta.enabled || disabled) ? 'ui semi-transparent button' : 'ui button'}
+        className={(!node.$meta.enabled || disabled) ? 'ui small semi-transparent button' : 'ui button'}
         onClick={() => onClickFn(path)}>
         <i className={'icon ' + iconName + ' large'}></i>
-        {key}
+        {key}  <small>L{node.$meta.level || 1}</small>
       </div>
     )
   }
@@ -147,10 +147,13 @@ export default class SkillTree extends React.Component {
         const boxSty = { 
           position:         'relative', 
           backgroundColor:  'rgba(0,0,0,0.1)', 
-          margin:           '5px', 
-          padding:          '3px 5px', 
-          border:           'solid 1px', 
+          margin:           (key === '') ? 'none' : '8px', 
+          padding:          '0px', 
+          border:           'none', // was solid 1px', 
           boxShadow:        'inset 1px 1px 2px rgba(0,0,0,0.5)' 
+          // padding:          '3px 5px', 
+          // border:           'solid 1px', 
+          // boxShadow:        'inset 1px 1px 2px rgba(0,0,0,0.5)' 
         }
         
         nodes.push(
@@ -161,6 +164,7 @@ export default class SkillTree extends React.Component {
             data-requires={requires}>
             <div className='mgb-skillsmap-progress'>
               <div className='mgb-skillsmap-value animate' style={valueSty}></div>
+              { this.renderParts(this.totals[newKey].has, this.totals[newKey].total) }
               <div onClick={() => { if (key === '') this.setState( { zoomLevel: 1, skillAreaOverride: null } ) } }>
                 { (key === '') && <i className='minus circle icon' /> }
                 {skillNodes[i].$meta.name || i} ({newKey})
@@ -182,7 +186,7 @@ export default class SkillTree extends React.Component {
     const width = w + '%'
     // skip last
     for (let i = 0; i < val - 1; i++)
-      parts.push(<div className='mgb-skillsmap-part' key={i} style={{ width: width, left: w * i + '%' }}></div>)
+      parts.push(<div className='mgb-skillsmap-part' key={i} style={{ pointerEvents: 'none', width: width, left: w * i + '%' }}></div>)
     return parts
   }
 
@@ -208,7 +212,7 @@ export default class SkillTree extends React.Component {
               className='animate'
               onClick={() => { this.setState( { zoomLevel: 2, skillAreaOverride: i } ) } }
               >
-            <div className='mgb-skillsmap-progress'>
+            <div className='mgb-skillsmap-progress' style={{margin: '0px 0px 4px 0px'}}>
               { skillNodes[i].$meta.name || i }
               <div className='mgb-skillsmap-value animate' style={valueSty}></div>
               { this.renderParts(this.totals[i].has, this.totals[i].total) }

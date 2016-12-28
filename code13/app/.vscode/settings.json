@@ -1,4 +1,11 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "typescript.check.workspaceVersion": false
+  "typescript.check.workspaceVersion": false,
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/tmp": true,
+    ".meteor/**": true
+  }
 }

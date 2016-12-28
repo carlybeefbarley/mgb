@@ -19,10 +19,10 @@ export default npPeople = React.createClass({
             Meet
           </h3>
         </div>
-        <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/users" className="item">
+        <QLink id="mgbjr-np-meet-allUsers" closeNavPanelOnClick={navPanelIsOverlay} to="/users" className="item">
           <i className="street view icon" /> All Users
         </QLink>
-        <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/assets" className="item">
+        <QLink id="mgbjr-np-meet-allAssets" closeNavPanelOnClick={navPanelIsOverlay} to="/assets" className="item">
           <i className="pencil icon" /> All Assets
         </QLink>
       </div>

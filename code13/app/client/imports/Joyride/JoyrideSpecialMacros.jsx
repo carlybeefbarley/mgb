@@ -213,6 +213,20 @@ const stepMacros = [
   },
  
   {
+    key: _wrapKey('np-meet-allAssets'),
+    hint: `np-meet>allAssets`,
+    desc: `Step for clicking the 'All Assets' Button from np-meet`,
+    newVal:
+    {
+      "title": "Browse All Assets - across all users",
+      "text": "Click on the &ensp;<div class='ui label'>All Assets&emsp;<i class='pencil icon'></i></div>&ensp; option now to see Assets being made by you and other users",
+      "selector": "#mgbjr-np-meet-allAssets",
+      "awaitCompletionTag": "mgbjr-CT-app-location-path-/assets",
+      "position": "right"
+    }
+  },
+ 
+  {
     key: _wrapKey('create-new-asset'),
     hint: `np-create>CreateNewAsset`,
     desc: `Step for Create New Asset. Prior step should be %np-create%`,

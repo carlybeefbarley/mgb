@@ -43,25 +43,25 @@ export default {
     $meta: {
       name:           'Play',
       description:    'Find games you can play here',
-      sequence:       'playOneGame,gamesImade,continueAgame,gameAssets'
+      sequence:       'playOneGame,gamesImade,continueAgame'
     },
     playOneGame:      C.E,
     gamesImade:       C.E,
-    continueAgame:    C.E,  // this will just say 'coming soon'
-    gameAssets:       C.E
+    continueAgame:    C.E   // Not yet implemented as a feature.. this will just say 'coming soon' for now
   },
 
   assetsBasics: {
     $meta: {
       name:           'Assets (basics)',
       description:    'Find, create and work with Game Assets',
-      sequence:       'createAssets,findAssets,searchAssets,kinds,deleteAsset'
+      sequence:       'findAssets,createAssets,assetKinds,deleteAsset,searchAssets,gameAsset'
     },
-    createAssets:     C.E,
     findAssets:       C.E,
+    createAssets:     C.E,
+    assetKinds:       C.E,
+    deleteAsset:      C.E,
     searchAssets:     C.E,
-    kinds:            C.E,
-    deleteAsset:      C.E
+    gameAsset:        C.E
   },
 
   projects: {

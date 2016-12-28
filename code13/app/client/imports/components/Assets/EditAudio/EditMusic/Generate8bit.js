@@ -17,6 +17,9 @@ export default class Generate8bit extends React.Component {
 		this.maxval = 32767
   	this.audio = null
 
+		this.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+
+
   	this.state = {
   		canvasWidth: 860,
   		canvasHeight: 480,
@@ -251,7 +254,7 @@ export default class Generate8bit extends React.Component {
 				<div style={{width:"150px", float:"left", marginRight:"20px"}}>
 					<div>
 						<div title="Beats per minute"><b>BPM</b></div>
-	    			<input type="range" value={this.state.bpm} min="30" max="240" 
+	    			<input type="range" value={this.state.bpm} min={this.isFirefox ? "60" : "30"} max="240" 
 		    			onChange={this.changeBPM.bind(this)} 
 		    			/>
 	    		</div>

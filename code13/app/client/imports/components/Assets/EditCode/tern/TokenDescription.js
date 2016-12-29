@@ -13,11 +13,16 @@ import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
 // Maybe do this in SkillNodes.js ? 
 
 
+// TODO: I could improve Object properties.. any property right now
+//       implies the object skill  .. That could be better
+
 // Some external links that aren't part of the wider helpInfo list. I put them here for easier maintenance
 var xlinks = {
   jsDoc:    'http://usejsdoc.org/about-getting-started.html',
   regexper: 'https://regexper.com/#',                           // takes a URIencoded Regex as a # suffix
-  ecma6:    'https://github.com/lukehoban/es6features#readme'
+  ecma6:    'https://github.com/lukehoban/es6features#readme',
+  mdnLet:   'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let',
+  mdnVar:   'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/var',
 }
 
 // For these Token types, render nothing at all
@@ -31,11 +36,16 @@ const _skl = 'code.js.lang.'
 
 // For these Token types, use a special renderer, and don't use the normal HelpInfo structure
 const specialHelpTypes = {
-  "string-2": { renderFn: specialHandlerString2, skillNodes: _skl+'types.regex',  betterTypeName: "Regular Expression" },
-  "comment":  { renderFn: specialHandlerComment, skillNodes: _skl+'comments',     betterTypeName: "comment" },
-  "def":      { renderFn: specialHandlerDef,     skillNodes: null,                 betterTypeName: "Definition" }
+  "variable":   { renderFn: specialHandlerGlobalVariable, skillNodes: _skl+'scope.global',  betterTypeName: "Global Variable" },
+  "variable-2": { renderFn: specialHandlerLocalVariable, skillNodes: _skl+'scope.local',   betterTypeName: "Local Variable" },
+    // Note that there is TODO for scope.local-execution (i.e. var) and scope.local-block (i.e. let/const)
+
+  "string-2":   { renderFn: specialHandlerString2,        skillNodes: _skl+'types.regex',   betterTypeName: "Regular Expression" },
+  "comment":    { renderFn: specialHandlerComment,        skillNodes: _skl+'comments',      betterTypeName: "comment" },
+  "def":        { renderFn: specialHandlerDef,            skillNodes: null,                 betterTypeName: "Definition" }
 }
 
+// TODO: TokenType='variable-2' is LOCAL and TokenType='variable' is global. 
 
 const helpInfo = [
 
@@ -85,7 +95,7 @@ const helpInfo = [
 
   {
     tt: "keyword", ts: "function", origin: "ecma5",
-    skillNodes: _skl+'functions.definition',
+    skillNodes: _skl+'functions.function',
     help: "Defines a function - as a statement. or inside an expression",
     syntax: "function [optionalFunctionName]([param1[, param2[, ..., paramN]]]) { statements }",
     advice: "Note that functions can be defined using a statement or an operator (function expression)",
@@ -1088,6 +1098,57 @@ function specialHandlerDef(str) {
 }
 
 
+// This is a GLOBAL variable.  TokenType='variable'.  See https://github.com/codemirror/CodeMirror/issues/4284
+// Maybe we can do more with this in future?
+function specialHandlerGlobalVariable(str) {
+  return (
+    <div>
+      <p>
+        This is a use of the variable <strong><code>{str}</code></strong> which appears to be a <strong>GLOBAL</strong> variable
+      </p>
+      <p>
+        <small>
+          ...(or maybe the developer may intend for it to be LOCAL, but may not yet have defined/declared it in a LOCAL scope for this usage)
+        </small>
+      </p>
+    </div>
+  )
+}
+
+
+// This is a LOCAL variable.. TokenType='variable-2'. See https://github.com/codemirror/CodeMirror/issues/4284
+// Maybe we can do more with this in future?
+function specialHandlerLocalVariable(str) {
+  const statementSty = { color: "#7F0055", fontWeight: "bold" }
+
+  // TODO - constructor() https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor
+  return (
+
+    <div>
+      <p>This is a use of the variable <strong><code>{str}</code></strong> which appears to be a <strong>LOCAL</strong> variable</p>
+      <small>
+        <p>
+          The original version of Javascript before <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a> only had a single kind 
+          of <strong>local</strong> variable scope system. This is known as <strong>Execution Scope</strong> and is the scope used for variables defined 
+          using the <code style={statementSty}>var</code> keyword.
+        </p>
+        <p>
+          As of 2015, the <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a> version of JavaScript
+          added an <strong>additional local</strong> variable scope system. This new local scope system is known 
+          as <strong>Block Scope</strong> and is the scope used for variables defined 
+          using the <code style={statementSty}>let</code> and <code style={statementSty}>const</code> keywords.
+        </p>
+        <p>
+          See <a href={xlinks.mdnLet} target="_blank">let</a> for details on <strong>Block Scope</strong>.<br></br>
+          See <a href={xlinks.mdnVar} target="_blank">var</a> for details on <strong>Execution Scope</strong>.
+        </p>
+      </small>
+    </div>
+  )
+}
+
+
+
 // helper function - generates a <a> link using the fragment after the last /
 function urlLink(urlString) {
   if (urlString === undefined || urlString === null || urlString.length === 0)
@@ -1142,7 +1203,8 @@ export default TokenDescription = React.createClass({
                           (help ? (help.skillNodes || null) : null)
     let showExpanded = !skillNodeKey || (isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey))
 
-if (token.type != 'variable' && token.type != 'def' && 
+// Special cases that won't involve a skillNode lookup
+if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def' && 
   (!skillNodeKey || !isSkillKeyValid(skillNodeKey)) 
 )
 {

@@ -48,7 +48,7 @@ export default {
     }
   },
 
-  En: function(level = 0) {
+  En: function(level = 0) {  // Note that 0 will be turned into 1.. the levels go from 1 to 4
     _validateLevel(level)
     return {
       $meta: {

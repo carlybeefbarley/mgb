@@ -42,6 +42,18 @@ const npColumn1Width = "60px"
 
 let _theAppInstance = null
 
+
+// This is for making the Completion Tag thing work so it edge triggers only when pages are actually navigated to (rather than every update). 
+// QLink.js calls this. There may be a better way to do this, but this isn't too terribly factored so is OKish
+// and it gets the job done. 
+export const clearPriorPathsForJoyrideCompletionTags = () => {
+  if (_theAppInstance) 
+  {
+    _theAppInstance._priorLocationPath = null
+    _theAppInstance._priorRouterPath = null
+  }
+}
+
 export const stopCurrentTutorial = () => {
   if (_theAppInstance) 
     _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true } ) 
@@ -103,17 +115,27 @@ export default App = React.createClass({
   },
 
   componentDidMount: function() {
-
     window.onkeyup = this.togglePanelsKeyHandler
     registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
     _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
   },
 
+
   componentDidUpdate: function(prevProps, prevState) {
     const pagepath = getPagepathFromProps(this.props)
-    joyrideCompleteTag(`mgbjr-CT-app-router-path-${pagepath}`)                // e.g. /u/:username
-    joyrideCompleteTag(`mgbjr-CT-app-location-path-${this.props.location.pathname}`)    // e.g. /u/dgolds   -- will exclude search/query params
 
+    // Fire Completion Tags for the Joyride/Tutorial system. Make sure we only fire when the path has changed, not on every page update
+    const newRouterPath = `mgbjr-CT-app-router-path-${pagepath}`                           // e.g. /u/:username
+    if (newRouterPath !== this._priorRouterPath)
+      joyrideCompleteTag(newRouterPath)
+    this._priorRouterPath = newRouterPath
+
+    const newLocationPath = `mgbjr-CT-app-location-path-${this.props.location.pathname}`   // e.g. /u/dgolds   -- will exclude search/query params
+    if (newLocationPath !== this._priorLocationPath)
+      joyrideCompleteTag(newLocationPath)
+    this._priorLocationPath = newLocationPath
+
+    // Handle transition from empty to non-empty joyride and start the joyride/tutorial
     if (prevState.joyrideSteps.length ===0 && this.state.joyrideSteps.length > 0)
       this.refs.joyride.start(true)
   },
@@ -280,7 +302,7 @@ export default App = React.createClass({
         <Joyride 
           ref="joyride" 
           steps={this.state.joyrideSteps} 
-          showOverlay={false}
+          showOverlay={true}
           disableOverlay={false}
           showSkipButton={true}
           tooltipOffset={0}
@@ -442,6 +464,16 @@ export default App = React.createClass({
     browserHistory.push( {  ...loc,  query: newQ })
   },
 
+  closeNavPanel: function()
+  {
+    const loc = this.props.location
+    const qp = urlMaker.queryParams("app_navPanel")
+    if (loc.query[qp])
+    {
+      const newQ = _.omit(loc.query, qp)
+      browserHistory.push( {  ...loc,  query: newQ })
+    }
+  },
 
   handleNavPanelChange: function(newFpView, fForceNavPanelIsNotOverlay)
   {
@@ -633,6 +665,11 @@ export default App = React.createClass({
         this.closeFlexPanel()
         break
 
+      case 'closeNavPanel':
+        this.closeNavPanel()
+        break
+
+
       case 'refreshBadgeStatus':
         Meteor.call('User.refreshBadgeStatus', (err, result) => {
           if (err)
@@ -646,10 +683,6 @@ export default App = React.createClass({
           }
         })
         break
-
-      // case 'closeNavPanel':
-      //   this.closeNavPanel()
-      //   break
         
       default:
         errors.push(`Action '${act} not recognized`)

@@ -361,7 +361,7 @@ export default class TileMapLayer extends AbstractLayer {
     }
     // don't use default values as babel will generate code which v8 fails to optimize
     spacing = spacing || 0
-    
+
     const props = this.props
 
     // special tileset cases - currently only animation

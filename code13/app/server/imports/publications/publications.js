@@ -114,8 +114,10 @@ Meteor.publish('assets.public', function(
 
 // Observe assets only - add limit??
 // https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
+// selector can be id or user:asset/kind combo
 Meteor.publish('assets.public.partial.bySelector', function(selector) {
-  const cursor = Azzets.find(selector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1}})
+  const cleanSelector = typeof selector === "object" ? {dn_ownerName: selector.dn_ownerName, kind: selector.kind, name: selector.name } : selector
+  const cursor = Azzets.find(cleanSelector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1}})
   // publish to another client Collection - as partial data will ruin Azzets collection on the client side
   // I know - this is ugly, but seems that there is no better solution
   Mongo.Collection._publishCursor(cursor, this, 'PartialAzzets')

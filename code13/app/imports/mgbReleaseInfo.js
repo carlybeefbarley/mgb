@@ -23,12 +23,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
     {
-      'timestamp': 'Wed Dec 28 2016 19:30:00 GMT-0800 (PST)',
+      'timestamp': 'Wed Dec 28 2016 21:20:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2390'
+        'iteration': '2392'
       },
 
       'releaseManagement': {
@@ -55,6 +55,13 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'type': 'improvement',
           'changeName': 'Tutorial improvements',
           'changeSummary': 'The items to be clicked are now MUCH more prominently indicated. The tooltip+arrow positioning is now more accurate on most browsers. There are still issues to be fixed related to scrolling.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'CodeMentor is a bit smarter',
+          'changeSummary': 'CodeMentor and the Skills system are now smarter about <code>function. while, var, let, const</code>. This is good!',
           'otherUrls': [ ]
         },
       ]

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Link, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
-
+import { clearPriorPathsForJoyrideCompletionTags } from '/client/imports/routes/App'
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
 
 function isLeftClickEvent(event) {
@@ -107,7 +107,11 @@ export default QLink = React.createClass({
 
     // TODO: Decode p.nav to p.to here also.. or use something else
     const location = createLocationDescriptor(modifiedTo, { query: combinedQuery, hash: p.hash, state: p.state })
-    this.context.router.push(location);
+
+    // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
+    clearPriorPathsForJoyrideCompletionTags()
+
+    this.context.router.push(location)
     event.preventDefault()    // Stop Link.handleClick from doing anything further
   },
 
@@ -154,5 +158,9 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
 {
   const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)
   const location = createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
+
+  // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
+  clearPriorPathsForJoyrideCompletionTags()
+
   browserHistory.push(location)
 }

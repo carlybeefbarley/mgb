@@ -32,7 +32,7 @@ const _mkNp = ( npname, icon ) => (
       "title": `The '${_.upperFirst(npname)}' Navigation panel`,
       "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(npname)} button here`,
       "selector": `#mgbjr-navPanelIcons-${npname}`,
-      "showStepOverlay": false,
+      "showStepOverlay": true,
       "awaitCompletionTag": `mgbjr-CT-navPanel-${npname}-show`,
       "position": "right",
       "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
@@ -51,7 +51,7 @@ const _mkFp = ( fpname, icon ) => (
       "title": `The '${_.upperFirst(fpname)}' Flex panel`,
       "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here`,
       "selector": `#mgbjr-flexPanelIcons-${fpname}`,
-      "showStepOverlay": false,
+      "showStepOverlay": true,
       "awaitCompletionTag": `mgbjr-CT-flexPanel-${fpname}-show`,
       "position": "left",
       "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
@@ -70,7 +70,7 @@ const _mkFpDescribe = ( fpname, icon, describeText ) => (
       "title": `The '${_.upperFirst(fpname)}' Flex panel`,
       "text": `${describeText}. <br></br>Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here to show this Panel`,
       "selector": `#mgbjr-flexPanelIcons-${fpname}`,
-      "showStepOverlay": false,
+      "showStepOverlay": true,
       "awaitCompletionTag": `mgbjr-CT-flexPanel-${fpname}-show`,
       "position": "left",
       "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
@@ -90,6 +90,7 @@ const _mkCreateAsset = kind => (
       "text": `First, type in a name for the asset above... 
       for example '<span style='color: red'>my avatar</span>'.<br></br>Second.. Select the ${_.upperCase(kind)} asset kind above.<br></br>Third... Click on the 'Create Asset' button to the left here`,
       "selector": "#mgbjr-create-asset-button",
+      "showStepOverlay": true,
       "awaitCompletionTag": `mgbjr-CT-asset-create-new-${kind}`,
       "position": "right"
     }
@@ -107,6 +108,7 @@ const stepMacros = [
       "title": `Great! You completed the tutorial`,
       "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
       "selector": "#mgbjr-flexPanelIcons-goals",
+      "showStepOverlay": true,
       "position": "left",
       "style": "%green%"    // Note that full Step Macros can still use per-field macros :)
     }
@@ -121,6 +123,7 @@ const stepMacros = [
       "title": `MOCK STEP. Placeholder - Does nothing`,
       "text": `Lorem ipsum hocus pocus testing 1 2 3 Ground Control To Major Tom. Kthxbye`,
       "selector": "body",
+      "showStepOverlay": false,
       "position": "top",
       "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
     }
@@ -165,6 +168,7 @@ const stepMacros = [
       "title": "My Profile",
       "text": "Click on the &ensp;<div class='ui label'>My Profile&emsp;<i class='grey user icon'></i></div>&ensp; option",
       "selector": "#mgbjr-np-home-myProfile",
+      "showStepOverlay": true,
       "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username",
       "position": "right"
     }
@@ -179,6 +183,7 @@ const stepMacros = [
       "title": "Popular Games",
       "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been played most frequently",
       "selector": "#mgbjr-np-play-popularGames",
+      "showStepOverlay": true,
       "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
       "position": "right"
     }
@@ -193,6 +198,7 @@ const stepMacros = [
       "title": "Updated Games",
       "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been updated recently",
       "selector": "#mgbjr-np-play-updatedGames",
+      "showStepOverlay": true,
       "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
       "position": "right"
     }
@@ -207,6 +213,7 @@ const stepMacros = [
       "title": "Games I made",
       "text": "Click on the &ensp;<div class='ui label'>Games I made</div>&ensp; option now to see Games that you made",
       "selector": "#mgbjr-np-play-gamesImade",
+      "showStepOverlay": true,
       "awaitCompletionTag": "mgbjr-CT-app-router-path-/u/:username/games",
       "position": "right"
     }
@@ -221,6 +228,7 @@ const stepMacros = [
       "title": "Browse All Assets - across all users",
       "text": "Click on the &ensp;<div class='ui label'>All Assets&emsp;<i class='pencil icon'></i></div>&ensp; option now to see Assets being made by you and other users",
       "selector": "#mgbjr-np-meet-allAssets",
+      "showStepOverlay": true,
       "awaitCompletionTag": "mgbjr-CT-app-location-path-/assets",
       "position": "right"
     }
@@ -235,6 +243,7 @@ const stepMacros = [
       "title": "Great. Now choose 'Create New Asset'",
       "text": "Click on the&ensp;<div class='ui label'>Create New Asset&emsp;<i class='green pencil icon'></i></div>&ensp;option",
       "selector": "#mgbjr-np-create-createNewAsset",
+      "showStepOverlay": true,
       "awaitCompletionTag": "mgbjr-CT-app-location-path-/assets/create",
       "position": "right"
     },
@@ -339,7 +348,7 @@ const propertyMacros = [
       "color": "#fff",
       "mainColor": "#ff4456",
       "skip": { "color": "#ff4456" },
-      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+      "hole": { "backgroundColor": "RGBA(23, 23, 23, 0.5)" }
     }
   }
 ]

@@ -96,7 +96,7 @@ export default class SkillTree extends React.Component {
         className={(!node.$meta.enabled || disabled) ? 'ui small semi-transparent button' : 'ui button'}
         onClick={() => onClickFn(path)}>
         <i className={'icon ' + iconName + ' large'}></i>
-        {key}  <small>L{node.$meta.level || 1}</small>
+        {key}  <small className='mgb-show-on-parent-div-hover' style={{color: 'white'}} title="Each individual skill is assigned a Level-of-difficulty group.. L1=beginner up to L4=guru">L{node.$meta.level || 1}</small>
       </div>
     )
   }

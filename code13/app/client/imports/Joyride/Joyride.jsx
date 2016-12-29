@@ -528,6 +528,16 @@ export default class Joyride extends React.Component {
     const dataType = el.dataset.type
 
     if (el.className.indexOf('joyride-') === 0) {
+      if (dataType === 'next' && steps[state.index] && steps[state.index].awaitCompletionTag)
+      {
+        // a step.awaitCompletionTag property such as 
+        //      awaitCompletionTag: 'mgbjr-CT-flexPanelIcons-assets-show'
+        // will disable Next, and instead wait for the real action to ocurr. 
+        this.logger(`joyride:onClickTooltip: next-awaitCompletionTag`, ['step.awaitCompletionTag:', steps[state.index].awaitCompletionTag ] )
+        return 
+        // Note that we don't call   e.preventDefault() ;  e.stopPropagation() since we want to pass the clicks on to what might do the task requested
+        // However.. this is all a bit odd.. React SyntheticEvents don't propagate in the same way as browser's native events...
+      }
       e.preventDefault()
       e.stopPropagation()
       const tooltip = document.querySelector('.joyride-tooltip')
@@ -537,14 +547,6 @@ export default class Joyride extends React.Component {
         this.logger(`joyride:onClickTooltip: next-code`, ['step.code:', steps[state.index].code ] )
         const event = new CustomEvent('mgbjr-stepAction-appendCode', { 'detail': code } )
         window.dispatchEvent(event)
-      }
-      if (dataType === 'next' && steps[state.index] && steps[state.index].awaitCompletionTag)
-      {
-        // a step.awaitCompletionTag property such as 
-        //      awaitCompletionTag: 'mgbjr-CT-flexPanelIcons-assets-show'
-        // will disable Next, and instead wait for the real action to ocurr. 
-        this.logger(`joyride:onClickTooltip: next-awaitCompletionTag`, ['step.awaitCompletionTag:', steps[state.index].awaitCompletionTag ] )
-        return 
       }
       let newIndex = state.index + (dataType === 'back' ? -1 : 1)
 

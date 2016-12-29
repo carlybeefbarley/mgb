@@ -355,10 +355,13 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawSelection(true)
   }
 
-  drawTile (pal, pos, spacing = 0 , clear = false) {
+  drawTile (pal, pos, spacing, clear) {
     if(!pal.image){
       return
     }
+    // don't use default values as babel will generate code which v8 fails to optimize
+    spacing = spacing || 0
+    
     const props = this.props
 
     // special tileset cases - currently only animation

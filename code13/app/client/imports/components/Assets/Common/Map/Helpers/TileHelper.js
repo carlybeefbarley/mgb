@@ -13,7 +13,13 @@ const TileHelper = {
   FLIPPED_VERTICALLY_FLAG: 0x40000000,
   FLIPPED_DIAGONALLY_FLAG: 0x20000000,
 
-  getAnimationTile: (pal, palette, now = Date.now()) => {
+  animTileInfoRetVal: {
+    pal: null,
+    nextUpdate: 0
+  },
+  getAnimationTile: (pal, palette, now) => {
+    // babel causes deopt for default values (arguments / splice combo)
+    now = now || Date.now()
     if (!pal.ts.tiles) {
       return false
     }
@@ -24,10 +30,10 @@ const TileHelper = {
       return false
     }
 
-    const retval = {
-      pal: pal,
-      nextUpdate: 0
-    }
+    const retval = TileHelper.animTileInfoRetVal
+    retval.pal = pal
+    retval.nextUpdate = 10000
+
     const delta = now
     let tot = 0
     let anim

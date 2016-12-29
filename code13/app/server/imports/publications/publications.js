@@ -129,9 +129,12 @@ Meteor.publish('assets.public.byId', function(assetId) {
 
 // Return one asset. This is a good subscription for AssetEditRoute
 // Removed - as c2 is fetched and cached via ajax / cdn combo
-/*Meteor.publish('assets.public.byId.withContent2', function(assetId) {
-  return Azzets.find(assetId)
-})*/
+Meteor.publish('assets.public.byId.withContent2', function(assetId) {
+  console.error("FIX THIS: assets.public.byId.withContent2 has been removed")
+  return null
+})
+
+
 Meteor.publish('assets.public.owner.name', function(owner, name, kind) {
   const sel = {dn_ownerName: owner, name: name, kind: kind}
   return Azzets.find(sel)

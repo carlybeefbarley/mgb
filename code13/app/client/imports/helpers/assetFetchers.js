@@ -229,6 +229,7 @@ export const getAssetWithContent2 = (id, onReady) => {
       //ret.isReady = false
       mgbAjax(asset.c2location || `/api/asset/content2/${id}`, (err, data) => {
         if(err){
+          console.log("Failed to retrieve c2 for asset with id: ", id)
           return
         }
         const c2 = JSON.parse(data)

@@ -32,17 +32,27 @@ export default {
 
       'statements': {
         'var':        C.En(0),
-        'let':        C.En(1),
-        'const':      C.meta( {requires: ".let" }, C.En(1)),
+        'let':        C.En(2),
+        'const':      C.meta( {requires: ".let" }, C.En(2)),
         'undefined':  C.En(0),
         'null':       C.En(0)
+      },
+
+      'scope': {
+        'global':          C.En(0),    // acorn/tern have TokenType='variable'
+        'local':           C.En(0),    // acorn/tern have TokenType='variable-2' but it doesn't seem to distinguish block scope from execution scope
+          // Per MDN..https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/var
+          // for  var   " The scope of a variable declared with var is its current execution context, which is either the enclosing function or, for variables declared outside any function, global."
+          // for  whereas const or let have block scope
+        'local-execution': C.En(2),      // for  var   " The scope of a variable declared with var is its current execution context, which is either the enclosing function or, for variables declared outside any function, global."
+        'local-block':     C.En(2),      // for  const/let        
       },
 
       "functions": {
         "function":          C.En(0),
         "return":            C.En(0),
-        "arrow-functions":   C.En(1),
-        "arguments-object":  C.En(1),     // i.e. the array-like object... https://developer.mozilla.org/docs/Web/JavaScript/Reference/Functions/arguments
+        "arrow-functions":   C.En(2),
+        "arguments-object":  C.En(2),     // i.e. the array-like object... https://developer.mozilla.org/docs/Web/JavaScript/Reference/Functions/arguments
       },
 
       types: {
@@ -51,7 +61,7 @@ export default {
         'string':   C.En(0),
         'array':    C.En(0),
         'object':   C.En(0),
-        'regex':    C.En(1)
+        'regex':    C.En(2)
       },
 
       "control-flow": {  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling
@@ -65,6 +75,7 @@ export default {
         "continue": C.En(0),
         "for":      C.En(0),
         "of":       C.En(0),    // in the context of  'for': https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/for...of
+        "while":    C.En(0),
         "do":       C.En(0),
         "do-while": C.En(0)
       },
@@ -82,25 +93,25 @@ export default {
         'slashequals-division-assignment':          C.En(2),  //  /=
         'percentequals-remainder-assignment':       C.En(3),  //  %=
 
-        'plus':                    C.En(0),      //  +
-        'minus':                   C.En(0),      //  -   Note that there is a-b and the unary -x
-        'asterisk':                C.En(0),      //  *
-        'slash':                   C.En(0),      //  /
-        'percent':                 C.En(1),      //  %   (remainder)
+        'plus':                    C.En(1),      //  +
+        'minus':                   C.En(1),      //  -   Note that there is a-b and the unary -x
+        'asterisk':                C.En(1),      //  *
+        'slash':                   C.En(1),      //  /
+        'percent':                 C.En(2),      //  %   (remainder)
 
-        'plusplus':                C.En(0),      //  ++  Note that there are both pre- and post- versions
-        'minusminus':              C.En(0),      //  --  Note that there are both pre- and post- versions
+        'plusplus':                C.En(2),      //  ++  Note that there are both pre- and post- versions
+        'minusminus':              C.En(2),      //  --  Note that there are both pre- and post- versions
         
         'delete':                  C.En(2),      //  delete       https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/delete
         'typeof':                  C.En(2),      //  typeof
         'instanceof':              C.En(2),      //  instanceof
         'void':                    C.En(3),      //  void         https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/void
 
-        'in':                      C.En(2),      //  in           TODO - handle the variants.. for..in     and     x in y    see..  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/in, https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty , url3: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/for...in
-        "spread":                  C.En(2),      //  ...          ES6  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_operator
+        'in':                      C.En(3),      //  in           TODO - handle the variants.. for..in     and     x in y    see..  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/in, https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty , url3: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/for...in
+        "spread":                  C.En(3),      //  ...          ES6  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_operator
 
-        'questionmark':            C.En(1),      //  ?            Ternary ? operator
-        'colon':                   C.En(1),      //  :            Ternary : operand separator
+        'questionmark':            C.En(2),      //  ?            Ternary ? operator
+        'colon':                   C.En(2),      //  :            Ternary : operand separator
         
         'comma':                   C.En(1),      //  ,            Various uses - array/object separator, expression sequence, declaration sequence etc
         
@@ -112,19 +123,19 @@ export default {
         'greatergreater-bitwise-shift-right': C.En(4),    //  >>
         'greatergreatergreater-bitwise-zero-fill-shift-right': C.En(4),  // >>>
         
-        'bang-logical-not':        C.En(1),      //  !
-        'ampersandampersand-logical-and': C.En(1),// &&
-        'pipepipe-logical-or':     C.En(1),      //  ||
+        'bang-logical-not':        C.En(2),      //  !
+        'ampersandampersand-logical-and': C.En(2),// &&
+        'pipepipe-logical-or':     C.En(2),      //  ||
 
-        'equality':                C.En(0),      //  ==
-        'inequality':              C.En(0),      //  !=
-        'identity-equality':       C.En(0),      //  ===
-        'identity-inequality':     C.En(0),      //  !==
+        'equality':                C.En(1),      //  ==
+        'inequality':              C.En(1),      //  !=
+        'identity-equality':       C.En(1),      //  ===
+        'identity-inequality':     C.En(1),      //  !==
         
-        'less-than':               C.En(0),      //  <
-        'less-than-or-equal':      C.En(0),      //  <=
-        'greater-than':            C.En(0),      //  >
-        'greater-than-or-equal':   C.En(0)       //  >=
+        'less-than':               C.En(1),      //  <
+        'less-than-or-equal':      C.En(1),      //  <=
+        'greater-than':            C.En(1),      //  >
+        'greater-than-or-equal':   C.En(1)       //  >=
       },
 
       math: {
@@ -133,7 +144,7 @@ export default {
         },
         constants: {
           'PI':         C.En(1),
-          'NaN':        C.En(1),
+          'NaN':        C.En(2),
           'Infinity':   C.En(2),
           'E':          C.En(3),
           'LN2':        C.En(3),
@@ -155,10 +166,10 @@ export default {
       },
       
       "classes": {  // ES6
-        "new":         C.En(1),     // ES5 and ES6
-        "class":       C.En(1),
-        "constructor": C.En(1),     // ES5 and ES6
-        "extends":     C.En(2),
+        "new":         C.En(2),     // ES5 and ES6
+        "class":       C.En(2),
+        "constructor": C.En(2),     // ES5 and ES6
+        "extends":     C.En(3),
         "super":       C.En(2)
       },
 
@@ -166,7 +177,7 @@ export default {
         'import':      C.En(1),
         'from':        C.En(1),     // note it can be used in import and export
         'as':          C.En(1),
-        'asterisk':    C.En(1),     // e.g import defaultMember, * as name from "module-name";
+        'asterisk':    C.En(2),     // e.g import defaultMember, * as name from "module-name";
         "export":      C.En(1),
         "default":     C.En(1)      // TODO: export default.. test disambigaution with case
       },

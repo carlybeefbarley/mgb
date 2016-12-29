@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillCountsLabel from '/client/imports/components/Skills/SkillCountsLabel'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Progress, Icon } from 'semantic-ui-react'
 import { stopCurrentTutorial } from '/client/imports/routes/App'
@@ -64,7 +65,7 @@ export default fpGoals = React.createClass({
       <div>
         <h3 style={{marginTop: 0, marginBottom: 20}}>
           {area.mascotName}'s Quests
-          <div className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>0 / 114&nbsp;&nbsp;<i className="check circle icon" style={{marginRight: 0}} /></div>
+          <SkillCountsLabel skills={skills} />
         </h3>
         <p style={{fontSize: '1.25em'}}>
           <img src="/images/mascots/bigguy.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />

@@ -1,10 +1,9 @@
 import React, { PropTypes } from 'react'
 import { Message, Icon } from 'semantic-ui-react'
-import { maxSkillsCount } from '/imports/Skills/SkillNodes/SkillNodes'
 
 import QLink from "/client/imports/routes/QLink"
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
-import { countCurrentUserSkills } from '/imports/schemas/skills'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
+import SkillCountsLabel from '/client/imports/components/Skills/SkillCountsLabel'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -26,15 +25,13 @@ export default fpSkills = React.createClass({
     if (!currUser)
       return <Message warning content="You must be logged in to see your skills status" />
 
-    const mySkillCount = countCurrentUserSkills(skills)
-
     return (
       <div>
         <h3 style={{marginTop: 0, marginBottom: 20}}>
           {currUser.username}'s Skills
-          <div className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>{mySkillCount} / {maxSkillsCount}&nbsp;&nbsp;<i className="minus circle icon" style={{marginRight: 0}} /></div>
+          <SkillCountsLabel skills={skills} />
         </h3>
-        <p >
+        <p>
           <img src="/images/mascots/whale.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
           <QLink to={`/u/${currUser.username}/skilltree`} style={{clear: 'both'}} style={{fontSize: '1.25em'}}>
             <span style={{position: 'relative', top: 0}}>My Skills</span>

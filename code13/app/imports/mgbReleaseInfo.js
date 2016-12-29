@@ -23,12 +23,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
     {
-      'timestamp': 'Wed Dec 28 2016 11:50:00 GMT-0800 (PST)',
+      'timestamp': 'Wed Dec 28 2016 19:30:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2388'
+        'iteration': '2390'
       },
 
       'releaseManagement': {
@@ -49,7 +49,14 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'changeName': 'Users can now remove their activity-items from the activity log',
           'changeSummary': 'In the Activity FlexPanel, hover over an activity you caused - a red X will show. You can click the X to remove the activity item from the public history if you feel ',
           'otherUrls': [ ]
-        }
+        },
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial improvements',
+          'changeSummary': 'The items to be clicked are now MUCH more prominently indicated. The tooltip+arrow positioning is now more accurate on most browsers. There are still issues to be fixed related to scrolling.',
+          'otherUrls': [ ]
+        },
       ]
     },
 

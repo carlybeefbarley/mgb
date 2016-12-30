@@ -259,7 +259,7 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui eight wide column" id="mgb_asset_panel_detail_container">
+        <div className="ui eight wide column" id="mgbjr-asset-edit-header-left">
           <AssetPathDetail 
             isServerOnlineNow={this.data.isServerOnlineNow}
             canEdit={canEd}
@@ -274,7 +274,7 @@ export default AssetEditRoute = React.createClass({
             handleSaveNowRequest={this.handleSaveNowRequest} />
         </div>
         
-        <div className="ui eight wide right aligned column" >
+        <div className="ui eight wide right aligned column" id="mgbjr-asset-edit-header-right">
           { /* We use this.props.params.assetId since it is available sooner than the asset 
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }

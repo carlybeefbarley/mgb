@@ -13,6 +13,8 @@ import { startSkillPathTutorial, startSignUpTutorial } from '/client/imports/rou
 
 // TODO: Put in the nice hover card animation (like QLink had)
 
+const BigCheckMark = () => ( <i style={{ float: 'right'}} className='ui big green checkmark box icon' />)
+
 const cardStyles = {
   card:    { color: '#2e2e2e' },
   content: { borderTop: 'none' },
@@ -89,7 +91,7 @@ const OfferNextTutorial = ( { skillPath } ) => (
     title={`Start skill tutorial for ${skillPath}`}
     className="ui active yellow right floated small button mgb-show-on-parent-div-hover">
     <Icon name='student' />
-    Show Me
+    Start next...
   </button>
 )
 
@@ -132,7 +134,7 @@ const LearnGetStartedRoute = ( { currUser }, context ) => (
                       <img src={`/images/mascots/${_loginMascot}.png`} style={cardStyles.mascot} />
                       <span style={cardStyles.desc}>{_loginDesc[currUser ? 'auth' : 'anon']}.</span>
                     </p>
-                    { !currUser ?  <OfferLoginTutorial /> : <i style={{ float: 'right'}} className='ui big green checkmark box icon' /> }
+                    { !currUser ?  <OfferLoginTutorial /> : <BigCheckMark /> }
                   </Card.Content>
                 </div>            
             
@@ -155,8 +157,8 @@ const LearnGetStartedRoute = ( { currUser }, context ) => (
                       <img src={`/images/mascots/${area.mascot}.png`} style={cardStyles.mascot} />
                       <span style={cardStyles.desc}>{description}.</span>
                      </p>
-                     { skillStatus.todoSkills.length > 0 && 
-                       <OfferNextTutorial skillPath={key + '.' + skillStatus.todoSkills[0]} />
+                     { skillStatus.todoSkills.length > 0 ?
+                       <OfferNextTutorial skillPath={key + '.' + skillStatus.todoSkills[0]} /> : <BigCheckMark />
                      }
                   </Card.Content>
                 </div>

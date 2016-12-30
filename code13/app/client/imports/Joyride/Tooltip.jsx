@@ -98,14 +98,14 @@ export default class JoyrideTooltip extends React.Component {
       hole:     {},
       tooltip:  {
         position: cssPosition === 'fixed' ? 'fixed' : 'absolute',
-        top: Math.round(yPos-8+(_.clamp(opts.rect.height/2, 8, Math.min(64, opts.rect.height*0.8) ) ) ),    // TODO: Work out how to make this adjust correctly. It seems off sometimes
+        top: Math.round(yPos-8),    // Note that this gets adjusted later - see styles.tooltip.top
         left: Math.round(xPos),
         pointerEvents: 'auto'
       }
     }
 
     if (opts.positonBaseClass === 'left' || opts.positonBaseClass === 'right')
-      styles.tooltip.top -= opts.rect.height/2
+      styles.tooltip.top += _.clamp((opts.rect.height/2 - 32), 0, Math.min(64, opts.rect.height*0.8) )
 
     if (styles.tooltip.top < 16)
       styles.tooltip.top = 16

@@ -59,8 +59,12 @@ export default {
     findAssets:       C.E,
     createAssets:     C.E,
     assetProperties:  C.E,
-    searchAssets:     C.E
+    searchAssets:     C.E    // HERE<<<<<<<<<<<<<<<<<<<<<<
   },
+
+// TODO - probably a very trivial non-code game
+
+// TODO - probably a very trivial code game
 
   projects: {
     $meta: {

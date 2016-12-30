@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react'
 import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { doesUserHaveRole } from '/imports/schemas/roles'
-import { Button, Icon, Popup } from 'semantic-ui-react'
+import { Button, Icon } from 'semantic-ui-react'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 
 export default AssetCreateSelectKind = React.createClass({
@@ -21,16 +22,23 @@ export default AssetCreateSelectKind = React.createClass({
     const activeAK = selectedKind ? AssetKinds[selectedKind] : null
 
     const ExplanationToggler = (
-      <a onClick={ () => this.setState( { showMoreInfo: !showMoreInfo } ) }>
-        <small>{ showMoreInfo ? 'less...' : 'more...' }</small>
+      <a  id='mgbjr-create-asset-morelesskindinfo' 
+          onClick={ () => {
+            this.setState( { showMoreInfo: !showMoreInfo } )
+            joyrideCompleteTag(`mgbjr-CT-create-asset-kindinfo-${showMoreInfo ? 'less' : 'more'}`)
+          }}>
+        <small>
+          { showMoreInfo ? 'less...' : 'more...' }
+        </small>
       </a>
     )
 
     return (
-      <div>
+      <div id='mgbjr-create-asset-select-kinds'>
         { AssetKindKeys.map((k) => {
           const ak = AssetKinds[k]
           const isActive = (k === selectedKind)
+          const elemId=`mgbjr-create-asset-select-kind-${k}`
           let sty = { width: "6em", marginBottom: "4px" }
           if (ak.requiresUserRole)
           {
@@ -41,7 +49,15 @@ export default AssetCreateSelectKind = React.createClass({
           }
 
           return (
-            <Button icon positive={isActive} key={k} style={sty} id={"create-asset-" + k} onClick={ () => { handleSelectAsset(k)} }>
+            <Button icon 
+                id={elemId}
+                positive={isActive}
+                key={k} 
+                style={sty} 
+                onClick={ () => { 
+                  joyrideCompleteTag(`mgbjr-CT-create-asset-select-kind-${k}`)
+                  handleSelectAsset(k)
+                } }>
               <Icon size='large' name={ak.icon}  />
               <p style={{ marginTop: "5px" }}>{ak.name}</p>
             </Button>

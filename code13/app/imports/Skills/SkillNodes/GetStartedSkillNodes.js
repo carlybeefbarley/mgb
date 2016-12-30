@@ -54,14 +54,12 @@ export default {
     $meta: {
       name:           'Assets (basics)',
       description:    'Find, create and work with Game Assets',
-      sequence:       'findAssets,createAssets,assetKinds,deleteAsset,searchAssets,gameAsset'
+      sequence:       'findAssets,createAssets,assetProperties,searchAssets'
     },
     findAssets:       C.E,
     createAssets:     C.E,
-    assetKinds:       C.E,
-    deleteAsset:      C.E,
-    searchAssets:     C.E,
-    gameAsset:        C.E
+    assetProperties:  C.E,
+    searchAssets:     C.E
   },
 
   projects: {

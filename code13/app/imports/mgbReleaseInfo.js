@@ -23,12 +23,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
     {
-      'timestamp': 'Fri Dec 30 2016 12:10:00 GMT-0800 (PST)',
+      'timestamp': 'Fri Dec 30 2016 13:20:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2399'
+        'iteration': '2401'
       },
 
       'releaseManagement': {
@@ -40,7 +40,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'featureTag': 'asset.tutorials',
           'type': 'improvement',
           'changeName': 'Tutorial improvements',
-          'changeSummary': 'Even more tags and positioning fixes for tutorials',
+          'changeSummary': 'Even more tags and positioning fixes for tutorials. We are about halfway through writing the GettingStarted tutorials now, but these ones have been relatively time-consuming to implemenent compared to the upcoming ones. The speed of tutorial development is increasing as we have now added most of the required features to the tutorial system. We hope you find these useful!',
           'otherUrls': [ ]
         }
       ]

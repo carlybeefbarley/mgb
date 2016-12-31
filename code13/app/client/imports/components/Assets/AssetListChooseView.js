@@ -9,6 +9,7 @@ export default AssetListChooseView = props => {
   // Create the       | View  v |     Dropdown UI
   return (
     <div 
+        id='mgbjr-asset-search-viewFormatChooser'
         className="ui small simple dropdown item" 
         style={_.merge({color: 'grey'}, sty)} 
         title="View Assets as..">

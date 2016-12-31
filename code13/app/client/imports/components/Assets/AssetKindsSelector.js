@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar } from '/imports/schemas/assets'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // UI Component to render menus to allow asset types to be selected
 
@@ -58,6 +59,9 @@ export default AssetKindsSelector =  React.createClass({
 
   handleToggleKindClick(assetKindKey, event)
   {
+    // fyi - this is a pretty simple/stateless completion tag - it's not tracking Select/unselect/multiselect.
+    joyrideCompleteTag(`mgbjr-CT-asset-search-kind-select-clicked-${assetKindKey}`)
+
     if (this.props.handleToggleKindCallback)
       this.props.handleToggleKindCallback(assetKindKey, event.altKey)
   }

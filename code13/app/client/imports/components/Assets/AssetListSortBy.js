@@ -4,6 +4,7 @@ const _choiceOptions = "edited,name,kind".split(",")
 
 const AssetListSortBy = ( { chosenSortBy, handleChangeSortByClick } ) => (
   <div 
+      id='mgbjr-asset-search-orderChooser'
       className="ui small simple dropdown item" 
       style={{float: "right", color: "grey"}} 
       title="Sort Assets By..">

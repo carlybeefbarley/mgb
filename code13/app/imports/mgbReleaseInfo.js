@@ -23,12 +23,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
     {
-      'timestamp': 'Fri Dec 30 2016 20:50:00 GMT-0800 (PST)',
+      'timestamp': 'Sat Dec 31 2016 09:40:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2404'
+        'iteration': '2406'
       },
 
       'releaseManagement': {
@@ -42,7 +42,15 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'changeName': 'Tutorial improvements',
           'changeSummary': 'Even more tags and positioning fixes for tutorials. We are about halfway through writing the GettingStarted tutorials now, but these ones have been relatively time-consuming to implemenent compared to the upcoming ones. The speed of tutorial development is increasing as we have now added most of the required features to the tutorial system. We hope you find these useful!',
           'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'learn.getStarted',
+          'type': 'improvement',
+          'changeName': 'GetStarted',
+          'changeSummary': 'The Get Started page now has some nicer counters. Also the counters are now more accurate',
+          'otherUrls': [ ]
         }
+        
       ]
     },
 

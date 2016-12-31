@@ -235,8 +235,24 @@ resolveUnlocksAndRequires()
 
 export default SkillNodes
 
+/** ssss */
 export const maxSkillsCount = Object.keys(SkillNodes.$meta.map).length
 console.log('maxSkillsCount = ', maxSkillsCount)
+
+
+/**
+ * Count (fixed) max-available totals achieved Skills. 
+ * Note that there is a handy pre-computed export maxSkillsCount for all skills
+ * The counterpart for a User's number of actual achieved Skills is countCurrentUserSkills() in skills.js
+ * 
+ * @export
+ * @param {string} [dotttedSkillPrefix=null] Optional prefix in dotted form.. e.g. getStarted.
+ * @returns {Number}
+ */
+export function countMaxUserSkills(dotttedSkillPrefix = null)
+{
+  return _.size(_.filter(_.keys(SkillNodes.$meta.map), s => (dotttedSkillPrefix === null || s.startsWith(dotttedSkillPrefix))))
+}
 
 // MongoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
 export const makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')

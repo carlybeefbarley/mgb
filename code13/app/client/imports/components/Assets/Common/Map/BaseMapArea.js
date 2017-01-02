@@ -726,7 +726,7 @@ export default class MapArea extends React.Component {
   drawLayers () {
     const now = Date.now()
     for (let i = 0; i < this.layers.length; i++)
-      this.layers[i]._draw(Date.now(), i == this.props.activeLayer)
+      this.layers[i]._draw(now)
   }
   /* endof update stuff */
 

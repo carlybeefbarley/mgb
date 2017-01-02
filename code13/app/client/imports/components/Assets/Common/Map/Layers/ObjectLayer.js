@@ -525,7 +525,7 @@ export default class ObjectLayer extends AbstractLayer {
       return
     }
 
-    const anInfo = TileHelper.getAnimationTile(pal, this.props.palette, this.now)
+    const anInfo = TileHelper.getAnimationTileInfo(pal, this.props.palette, this.now)
     if(anInfo){
       pal = anInfo.pal
       this.queueDraw(anInfo.nextUpdate)

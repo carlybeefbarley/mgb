@@ -8,6 +8,7 @@ export const ROTATE = {
   '270': 0x60
 }
 
+const ANIMATION_UPDATE_DEFAULT_INTERVAL = 10000
 const TileHelper = {
   FLIPPED_HORIZONTALLY_FLAG: 0x80000000,
   FLIPPED_VERTICALLY_FLAG: 0x40000000,
@@ -17,22 +18,22 @@ const TileHelper = {
     pal: null,
     nextUpdate: 0
   },
-  getAnimationTile: (pal, palette, now) => {
+  getAnimationTileInfo: (pal, palette, now) => {
     // babel causes deopt for default values (arguments / splice combo)
     now = now || Date.now()
     if (!pal.ts.tiles) {
-      return false
+      return null
     }
 
     let tileId = pal.gid - (pal.ts.firstgid)
     const tileInfo = pal.ts.tiles[tileId]
     if (!tileInfo || !tileInfo.animation) {
-      return false
+      return null
     }
 
     const retval = TileHelper.animTileInfoRetVal
     retval.pal = pal
-    retval.nextUpdate = 10000
+    retval.nextUpdate = ANIMATION_UPDATE_DEFAULT_INTERVAL
 
     const delta = now
     let tot = 0
@@ -59,9 +60,9 @@ const TileHelper = {
         break
       }
     }
-    /*if(!retval.nextUpdate){
-      retval.nextUpdate = anim.duration - (tot - relDelta)
-    }*/
+    if(retval.nextUpdate === ANIMATION_UPDATE_DEFAULT_INTERVAL){
+      retval.nextUpdate = tot - relDelta
+    }
     return retval
     //this.queueDrawTiles(anim.duration - (tot - relDelta))
   },

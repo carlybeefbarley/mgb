@@ -276,7 +276,7 @@ export default class TileMapLayer extends AbstractLayer {
     this.draw()
   }
 
-  _draw (now, force = false) {
+  _draw (now, force) {
     this.now = now
     if ( !force && this.nextDraw > now ) {
       return
@@ -303,14 +303,12 @@ export default class TileMapLayer extends AbstractLayer {
     const heightInTiles = Math.ceil((this.ctx.canvas.height / camera.zoom) / mapData.tileheight)
 
     let skipy = Math.floor(-camera.y / mapData.tileheight)
-    // at least for now
-    if (skipy < 0) {skipy = 0;}
-    let endy = skipy + heightInTiles * 2
+    let endy = skipy + heightInTiles + 1 // +1 as last line of tiles
     endy = Math.min(endy, this.options.height)
     // endy += 1
 
     let skipx = Math.floor(-camera.x / mapData.tilewidth)
-    let endx = skipx + widthInTiles * 2
+    let endx = skipx + widthInTiles + 1
     endx = Math.min(endx, this.options.width)
     // endx += 1
 
@@ -326,7 +324,7 @@ export default class TileMapLayer extends AbstractLayer {
       for (let x = skipx; x < endx; x++) {
         i = x + y * this.options.width
         // skip empty tiles
-        if (!d[i]) {
+        if (i<0 || !d[i]) {
           continue
         }
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos)
@@ -365,7 +363,7 @@ export default class TileMapLayer extends AbstractLayer {
     const props = this.props
 
     // special tileset cases - currently only animation
-    const anInfo = TileHelper.getAnimationTile(pal, this.props.palette)
+    const anInfo = TileHelper.getAnimationTileInfo(pal, this.props.palette)
     if(anInfo){
       pal = anInfo.pal
       this.queueDraw(anInfo.nextUpdate)

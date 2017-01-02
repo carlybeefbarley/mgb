@@ -291,35 +291,35 @@ export default class TileMapLayer extends AbstractLayer {
     const palette = this.props.palette
     const mapData = this.props.mapData
     const camera = this.camera
-
-    const pos = {x: 0, y: 0}
     if (!d) {
       return
     }
+
 
     this.queueDraw(this.drawInterval)
 
     const widthInTiles = Math.ceil((this.ctx.canvas.width / camera.zoom) / mapData.tilewidth)
     const heightInTiles = Math.ceil((this.ctx.canvas.height / camera.zoom) / mapData.tileheight)
 
-    let skipy = Math.floor(-camera.y / mapData.tileheight)
+    let skipy = Math.floor(-camera.y / mapData.tileheight) // debug + 2
     let endy = skipy + heightInTiles + 1 // +1 as last line of tiles
     endy = Math.min(endy, this.options.height)
-    // endy += 1
 
-    let skipx = Math.floor(-camera.x / mapData.tilewidth)
+    let skipx = Math.floor(-camera.x / mapData.tilewidth) // debug + 2
     let endx = skipx + widthInTiles + 1
     endx = Math.min(endx, this.options.width)
-    // endx += 1
 
     // loop through large tiles
     skipx -= widthInTiles
     skipy -= heightInTiles
 
-    if (skipx < 0) {skipx = 0;}
-    if (skipy < 0) {skipy = 0;}
+    // map starts with 0, 0 - pointless to check negative indices
+    if (skipx < 0) {skipx = 0}
+    if (skipy < 0) {skipy = 0}
 
     let i = 0, tileId, pal
+    const pos = {x: 0, y: 0}
+
     for (let y = skipy; y < endy; y++) {
       for (let x = skipx; x < endx; x++) {
         i = x + y * this.options.width
@@ -328,7 +328,6 @@ export default class TileMapLayer extends AbstractLayer {
           continue
         }
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos)
-
         tileId = d[i] & (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
           TileHelper.FLIPPED_VERTICALLY_FLAG |
           TileHelper.FLIPPED_DIAGONALLY_FLAG))
@@ -357,7 +356,7 @@ export default class TileMapLayer extends AbstractLayer {
     if(!pal.image){
       return
     }
-    // don't use default values as babel will generate code which v8 fails to optimize
+    // don't use default values as babel will generate code which v8 fails to optimize (bail out) (arguments.split...)
     spacing = spacing || 0
 
     const props = this.props
@@ -376,12 +375,6 @@ export default class TileMapLayer extends AbstractLayer {
     let drawW = pal.w * camera.zoom
     let drawH = pal.h * camera.zoom
 
-    // TODO: remove this at some point!!!
-    if (this.options.tiledrawdirection) {
-      this.options.mgb_tiledrawdirection = this.options.tiledrawdirection
-      delete this.options.tiledrawdirection
-    }
-
     if (this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== TileMapLayer.drawDirection.rightup) {
       if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.leftdown) {
         drawX -= (drawW - props.mapData.tilewidth * camera.zoom)
@@ -399,33 +392,77 @@ export default class TileMapLayer extends AbstractLayer {
       drawY -= (drawH - props.mapData.tileheight * camera.zoom)
     }
 
+    // console.log(drawX, drawY)
     if (clear) {
+      // are we still using this
+      console.log("Clear requested")
       this.ctx.clearRect(
         drawX, drawY,
-        props.mapData.tilewidth * camera.zoom,
-        props.mapData.tileheight * camera.zoom
+        pal.w, pal.h
       )
     }
-    this.ctx.save()
-    const tx = drawX + drawW * 0.5
-    const ty = drawY + drawH * 0.5
-    this.ctx.translate(tx, ty)
 
-    if (this.drawInfo.d) {
-      // there should be more elegant way to rotate / flip tile
-      this.ctx.rotate(-Math.PI * 0.5 * this.drawInfo.h * this.drawInfo.v)
-      this.ctx.scale(this.drawInfo.h * -1, this.drawInfo.v)
-    }else {
-      this.ctx.scale(this.drawInfo.h, this.drawInfo.v)
+    const needTransform = this.drawInfo.d || this.drawInfo.h !== this.drawInfo.v !== 1
+    // apply offsets as drawing out of bounds greatly reduces performance
+    let ox = 0, oy = 0, ow = 0, oh = 0
+
+    if(needTransform) {
+      // TODO: apply matrix directly???
+      this.ctx.save()
+      const tx = drawX + drawW * 0.5
+      const ty = drawY + drawH * 0.5
+
+      this.ctx.translate(tx, ty)
+
+      if (this.drawInfo.d) {
+        // there should be more elegant way to rotate / flip tile
+        this.ctx.rotate(-Math.PI * 0.5 * this.drawInfo.h * this.drawInfo.v)
+        this.ctx.scale(this.drawInfo.h * -1, this.drawInfo.v)
+      }
+      else {
+        this.ctx.scale(this.drawInfo.h, this.drawInfo.v)
+      }
+      this.ctx.translate(-tx, -ty)
+    }
+    // TODO: find correct offsets for transformed tiles
+    // atm only non-transformed tiles will benefit of this optimisation
+    else{
+      // '+' instead of '-' as drawX is negative (--)
+      if(drawX < 0){
+        drawW += drawX
+        if(drawW < 0){
+          if(needTransform)
+            this.ctx.restore()
+          return
+        }
+        ox -= drawX
+        ow += drawX
+
+        drawX = 0
+      }
+
+      if(drawY < 0){
+        drawH += drawY
+        if(drawH < 0){
+          if(needTransform)
+            this.ctx.restore()
+          return
+        }
+        oy -= drawY
+        oh += drawY
+
+        drawY = 0
+      }
     }
 
-    this.ctx.translate(-tx, -ty)
     this.ctx.drawImage(pal.image,
-      pal.x, pal.y, pal.w , pal.h ,
+      pal.x + ox, pal.y + oy, pal.w + ow, pal.h + oh,
       drawX, drawY,
       drawW, drawH
     )
-    this.ctx.restore()
+
+    if(needTransform)
+      this.ctx.restore()
   }
 
   // drawTiles will call this

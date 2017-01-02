@@ -461,7 +461,7 @@ export default class EditCode extends React.Component {
   componentWillReceiveProps(nextProps) {
     const newVal = nextProps.asset.content2.src
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal && this.lastSavedValue != newVal) {
-      // user is typing - intensively working with document - don't update until it finishes
+      // user is typing - intensively working with document - don't update until it finishes ( update will trigger automatically on finish )
       if (this.changeTimeout) {
         // console.log("Preventing update! User in action")
         return

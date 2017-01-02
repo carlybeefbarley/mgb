@@ -469,6 +469,9 @@ export default class EditCode extends React.Component {
       this.codeMirror.setValue(newVal)
       this._currentCodemirrorValue = newVal       // This needs to be done here or we will loop around forever
       this.codeMirror.setCursor(currentCursor)    // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
+
+      // update source tools related files
+      this.doFullUpdateOnContentChange()
     }
   }
 

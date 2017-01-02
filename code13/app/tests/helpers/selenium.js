@@ -82,7 +82,7 @@ module.exports = (browser) => {
     },
 
     waitUntilSaved(){
-      sel.untilInvisible("#mgb_asset_panel_detail_container .orange")
+      sel.untilInvisible("#mgbjr-asset-edit-header-left .orange")
     },
 
     compareImages(filename, data){

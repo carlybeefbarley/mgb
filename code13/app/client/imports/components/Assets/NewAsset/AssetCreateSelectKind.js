@@ -22,12 +22,12 @@ export default AssetCreateSelectKind = React.createClass({
     const activeAK = selectedKind ? AssetKinds[selectedKind] : null
 
     const ExplanationToggler = (
-      <a  id='mgbjr-create-asset-morelesskindinfo' 
+      <a 
           onClick={ () => {
             this.setState( { showMoreInfo: !showMoreInfo } )
             joyrideCompleteTag(`mgbjr-CT-create-asset-kindinfo-${showMoreInfo ? 'less' : 'more'}`)
           }}>
-        <small>
+        <small id='mgbjr-create-asset-morelesskindinfo'>
           { showMoreInfo ? 'less...' : 'more...' }
         </small>
       </a>

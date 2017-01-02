@@ -56,24 +56,22 @@ export default AssetCreateNewRoute = React.createClass({
     }
 
     let newAsset = {
-      name: assetName,
-      kind: assetKindKey,
-      text: "",
-      thumbnail: "",
-      content2: {},
+      name:         assetName,
+      kind:         assetKindKey,
+      text:         "",
+      thumbnail:    "",
+      content2:     {},
       dn_ownerName: this.props.currUser.name,         // Will be replaced below if in another project
 
-      isCompleted: false,
-      isDeleted:   false,
-      isPrivate:   false
+      isCompleted:  false,
+      isDeleted:    false,
+      isPrivate:    false
     }
     if (projectName && projectName !== "") {
       newAsset.projectNames = [projectName]
       newAsset.dn_ownerName = projectOwnerName
       newAsset.ownerId = projectOwnerId
     }
-
-    console.log('newAsset', newAsset)
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
@@ -83,7 +81,7 @@ export default AssetCreateNewRoute = React.createClass({
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)
         joyrideCompleteTag(`mgbjr-CT-asset-create-new-${newAsset.kind}`)
         // Now go to the new Asset
-        utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/asset/${result}`)
+        utilPushTo(this.context.urlLocation.query, `/u/${newAsset.dn_ownerNam}/asset/${result}`)
       }
     })
   }

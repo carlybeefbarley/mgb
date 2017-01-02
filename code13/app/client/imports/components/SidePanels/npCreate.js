@@ -13,7 +13,8 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
 
     { currUser &&
       <QLink 
-          to={currUser ? `/u/${currUser.profile.name}/assets` : '/assets'}
+          id='mgbjr-np-create-myAssets-hdr'
+          to={`/u/${currUser.profile.name}/assets`}
           closeNavPanelOnClick={navPanelIsOverlay} 
           className="item">
         My Assets
@@ -22,9 +23,17 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
     { currUser &&
       <div className="menu">
         <QLink 
+            id='mgbjr-np-create-myAssets'
+            to={`/u/${currUser.profile.name}/assets`}
+            closeNavPanelOnClick={navPanelIsOverlay} 
+            className="item" 
+            title="List my Assets">
+          <Icon name='pencil' /> List My Assets
+        </QLink>
+        <QLink 
+            id='mgbjr-np-create-createNewAsset'
             to={`/assets/create`} 
             closeNavPanelOnClick={navPanelIsOverlay} 
-            id='mgbjr-np-create-createNewAsset'
             className="item" 
             title="Create New Asset">
           <Icon color='green' name='pencil' /> Create New Asset

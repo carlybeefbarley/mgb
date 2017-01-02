@@ -5,6 +5,7 @@ import reactMixin from 'react-mixin'
 import { Azzets, Projects } from '/imports/schemas'
 import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters, isAssetKindsStringComplete } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import AssetList from '/client/imports/components/Assets/AssetList'
 import CreateAssetLinkButton from '/client/imports/components/Assets/NewAsset/CreateAssetLinkButton'
@@ -315,7 +316,7 @@ export default UserAssetListRoute = React.createClass({
              
           { hiddenDivider }
           
-          <div className="ui row">
+          <div id='mgbjr-asset-search-searchStringInput' className="ui row">
             <div className="ui action input">
               <input  type="text" 
                       placeholder="Search..." 
@@ -334,7 +335,16 @@ export default UserAssetListRoute = React.createClass({
           <div className="ui row">
             <span>
               Show asset kinds:&emsp;
-              { isAllKinds || <small onClick={() => this.handleToggleKind('__all')}>(show all)</small> }
+              { isAllKinds || (
+                <small 
+                    id='mgbjr-asset-search-kind-select-allKinds' 
+                    onClick={() => {
+                      joyrideCompleteTag('mgbjr-CT-asset-search-kind-select-allKinds')
+                      this.handleToggleKind('__all')
+                    }}>
+                  (show all)
+                </small>
+              )}
             </span>
             <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
           </div>

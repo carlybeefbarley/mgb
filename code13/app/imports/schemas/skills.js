@@ -115,18 +115,20 @@ export const forgetSkill = dottedSkillKey => {
 }
 
 /**
- * Count a User's Total number of Skills
+ * Count a User's Total number of actual achieved Skills. 
+ * The counterpart for (fixed) max-available totals is countMaxUserSkills() in SkillNodes.js
  * 
  * @export
  * @param {any} skillsObj
+ * @param {string} [dotttedSkillPrefix=null] Optional prefix in dotted form.. e.g. getStarted.
  * @returns {Number}
  */
-export function countCurrentUserSkills(skillsObj)
+export function countCurrentUserSkills(skillsObj, dotttedSkillPrefix = null)
 {
   if (!skillsObj)
     return null
 
-  return _.size(_.filter(_.keys(SkillNodes.$meta.map), s => hasSkill(skillsObj, s)))
+  return _.size(_.filter(_.keys(SkillNodes.$meta.map), s => ((dotttedSkillPrefix === null || s.startsWith(dotttedSkillPrefix)) && hasSkill(skillsObj, s))) )
 }
 
 export function getSkillNodeStatus(userObj, skillsObj, dottedSkillNodeKey)
@@ -136,10 +138,7 @@ export function getSkillNodeStatus(userObj, skillsObj, dottedSkillNodeKey)
 
   // TODO: is skillsObj valid?
   //  ...
-  
-  // TODO: Check for in-progress tutorials on userObj
-  //  ...
-  
+    
   const node = _.get(SkillNodes, dottedSkillNodeKey)
   // If we have a skills sequence in the $meta, then use that (in that order)
   const childSkills = node.$meta.sequence ? node.$meta.sequence.split(',') :  _.without(Object.keys(node), '$meta')

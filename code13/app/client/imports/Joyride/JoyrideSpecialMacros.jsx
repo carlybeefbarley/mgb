@@ -249,6 +249,23 @@ const stepMacros = [
     },
   },
 
+
+  {
+    key: _wrapKey('np-create-myAssets'),
+    hint: `np-create>myAssets`,
+    desc: `Step for List My Assets. Prior step should be %np-create%`,
+    newVal:
+    {
+      "title": "Great. Now choose 'My Assets'",
+      "text": "Click on the&ensp;<div class='ui label'>List My Assets&emsp;<i class='pencil icon'></i></div>&ensp;option",
+      "selector": "#mgbjr-np-create-myAssets",
+      "showStepOverlay": true,
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/assets",
+      "position": "right"
+    },
+  },
+
+
   _mkNp( 'home',     'home'         ),
   _mkNp( 'learn',    'student'      ),
   _mkNp( 'create',   'pencil'       ),

@@ -35,18 +35,20 @@ export default ProjectCreateNew = React.createClass({
     
     return (
       <div>
-        <p><em>Projects</em> are a way to group a set of related assets, and allow other people to also edit those assets directly:</p>
-        <ol>
-          <li>Projects can be used as kind of 'tag' to search for assets, chats etc that are part of the project</li>
-          <li>You can let other users be members of your projects. This allows them to also edit assets which are part of that project</li>
-        </ol>
-        <p>
-          Note that a single asset can be in multiple projects, so you can create a project for just the parts of a game that you want to collaborate on. 
-          A project is kind of like a 'tag' for your assets, but that tag can also grant write access to those assets.
-        </p>
-        <p></p>
+        <div id='mgbjr-project-create-new-explanation' className='ui raised segment'>
+          <p><strong>Projects</strong> are a way to conveniently group a set of related Assets, <strong>and</strong> also optionally allow others to edit those Assets:</p>
+          <ol>
+            <li><strong>Projects</strong> can be used as kind of 'tag' to search for Assets are part of the Project</li>
+            <li>You can let other users be <em>members</em> of a <strong>Project</strong> you own. This allows them to edit assets which are part of that Project</li>
+          </ol>
+          <p>
+            Note that <strong>a single Asset can be in multiple projects</strong>, so you can create a Project for just the parts of a game that you want to collaborate on. 
+            Think of a Project as being like a 'tag' for your Assets, but that tag can also let Project Members edit those Assets. 
+            This 'loose' Project model makes it easy to collaborate on parts of a game, or to share common assets between games.
+          </p>
+        </div>
 
-        <div className="ui padded segment">
+        <div className="ui padded segment" id='mgbjr-project-create-new-input-name' >
           <h4 className="ui header">Enter a name for your new Project</h4>
           <div className="ui items">
             <div className={"ui fluid input" + (isProjectNameValid ? "" : " error")}>
@@ -56,7 +58,7 @@ export default ProjectCreateNew = React.createClass({
         </div>
 
         <div title={createButtonTooltip}>
-          <div className={createButtonClassName} onClick={this.handleCreateProjectClick} >
+          <div className={createButtonClassName} onClick={this.handleCreateProjectClick} id="mgbjr-create-new-project-button" >
             Create New Project {chosenNameStr}
             <i className="right chevron icon"></i>
           </div>

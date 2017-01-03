@@ -9,7 +9,7 @@ const _retval404 = { statusCode: 404, body: {} }   // body required to correctly
    probably easier is to change /:user/:name on the client side
 */
 
-function _doGet(kind, id){
+function _doGet(apiInstance, kind, id){
   const idParts = id.split(':')
 
   const asset = idParts.length === 2
@@ -20,7 +20,7 @@ function _doGet(kind, id){
     return _retval404 
   
   const content = asset.content2.src
-  return genAPIreturn(this, asset, content, {
+  return genAPIreturn(apiInstance, asset, content, {
     'Content-Type': "text/plain",
     'file-name': asset.name
   })
@@ -37,13 +37,13 @@ function _makeBundle(api, asset){
 // get tutorial by id - tmp used for es6 import
 RestApi.addRoute('asset/tutorial/:id', { authRequired: false }, {
   get: function () {
-    return _doGet('tutorial', this.urlParams.id)
+    return _doGet(this, 'tutorial', this.urlParams.id)
   }
 })
 // get code by id - tmp used for es6 import
 RestApi.addRoute('asset/code/:id', { authRequired: false }, {
   get: function () {
-    return _doGet('code', this.urlParams.id)
+    return _doGet(this, 'code', this.urlParams.id)
   }
 })
 

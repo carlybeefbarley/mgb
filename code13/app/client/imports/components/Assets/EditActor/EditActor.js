@@ -21,7 +21,7 @@ export default class EditActor extends React.Component {
   constructor(...props) {
     super(...props)
     this.state = {}
-    window.edit_actor = this
+    this.isModalVisible = false
   }
 
   getUser() {
@@ -38,6 +38,9 @@ export default class EditActor extends React.Component {
 
   componentDidMount() {
     this.doSnapshotActivity()
+  }
+  componentWillUnmount(){
+    $(this.modal).modal("destroy")
   }
 
   handleSave(reason, thumbnail) {
@@ -434,10 +437,19 @@ export default class EditActor extends React.Component {
 
   handleModal(show, v) {
     this.modal = v
-    if (show) {
-      $(v)        
+    if (show && !this.isModalVisible) {
+      $(v)
+        .modal({
+          onHide: () => {
+            this.isModalVisible = false
+          },
+          onShow: () => {
+            this.isModalVisible = true
+          }
+        })
         .modal('setting', 'closable', false)  // technically we can allow close - then user will end up with default player template
-        .modal("show")
+        .modal('show')
+
     }
   }
 

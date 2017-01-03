@@ -309,13 +309,20 @@ export default class TileMapLayer extends AbstractLayer {
     let endx = skipx + widthInTiles + 1
     endx = Math.min(endx, this.options.width)
 
-    // loop through large tiles
+    // loop through large tiles - <-x-> bigger than real map (draw tile will figure out if tile really needs to be drawn
     skipx -= widthInTiles
     skipy -= heightInTiles
+
+    endx += widthInTiles
+    endy += heightInTiles
+
 
     // map starts with 0, 0 - pointless to check negative indices
     if (skipx < 0) {skipx = 0}
     if (skipy < 0) {skipy = 0}
+    if (endx > widthInTiles){ endx = widthInTiles}
+    if (endy > heightInTiles){ endy = heightInTiles}
+
 
     let i = 0, tileId, pal
     const pos = {x: 0, y: 0}

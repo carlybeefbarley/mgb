@@ -178,7 +178,7 @@ export default class MapArea extends React.Component {
 
   /* import and conversion */
   xmlToJson (xml) {
-    window.xml = xml
+    // window.xml = xml
   }
   handleFileByExt_tmx (name, buffer) {
     // https://github.com/inexorabletash/text-encoding
@@ -193,11 +193,7 @@ export default class MapArea extends React.Component {
   handleFileByExt_json (name, buffer) {
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
     const newData = JSON.parse(jsonString)
-
-
-
     this.props.updateMapData(newData)
-
     //this.updateImages()
   }
   // TODO: move api links to external resource?
@@ -417,8 +413,14 @@ export default class MapArea extends React.Component {
       }
       return
     }
+
     this.camera.x -= (this.lastEvent.pageX - px) / this.camera.zoom
     this.camera.y -= (this.lastEvent.pageY - py) / this.camera.zoom
+    /*
+    if(e.ctrlKey){
+      this.camera.x = Math.round(this.camera.x / this.data.tilewidth) * this.data.tilewidth
+      this.camera.y = Math.round(this.camera.y / this.data.tileheight) * this.data.tileheight
+    }*/
     this.lastEvent.pageX = px
     this.lastEvent.pageY = py
 

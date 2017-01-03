@@ -420,7 +420,6 @@ export default class ObjectLayer extends AbstractLayer {
       delete this.shapeBoxes[index]
       this.data.objects.splice(index, 1)
       this.clearCache()
-      this.isDirty = true
     }
   }
   rotateObject (rotation, object = this.pickedObject) {
@@ -429,18 +428,32 @@ export default class ObjectLayer extends AbstractLayer {
     this.draw()
   }
   toggleFill () {
-    if (this.pickedObject && this.pickedObject.orig) {
-      this.props.saveForUndo('Toggle Object fill')
-      if (this.pickedObject.orig.polyline) {
-        this.pickedObject.orig.polygon = this.pickedObject.orig.polyline
-        delete this.pickedObject.orig.polyline
+    this.props.saveForUndo('Toggle shape fill')
+
+    //selection.selection
+    for(let i=0; i<this.selection.selection.length; i++) {
+      this._toggleFill(this.selection.selection[i])
+    }
+
+    if(this.pickedObject){
+      this._toggleFill(this.pickedObject)
+    }
+    
+    this.props.handleSave('Toggle shape fill')
+    this.draw()
+  }
+  _toggleFill(obj){
+    if (obj && obj.orig) {
+      if (obj.orig.polyline) {
+        obj.orig.polygon = obj.orig.polyline
+        delete obj.orig.polyline
+
       }
-      else if (this.pickedObject.orig.polygon) {
-        this.pickedObject.orig.polyline = this.pickedObject.orig.polygon
-        delete this.pickedObject.orig.polygon
+      else if (obj.orig.polygon) {
+        obj.orig.polyline = obj.orig.polygon
+        delete obj.orig.polygon
       }
     }
-    this.draw()
   }
   setPickedObject (obj, index) {
     this.setPickedObjectSlow(index)

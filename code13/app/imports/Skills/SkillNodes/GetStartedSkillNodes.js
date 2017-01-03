@@ -59,7 +59,7 @@ export default {
     findAssets:       C.E,
     createAssets:     C.E,
     assetProperties:  C.E,
-    searchAssets:     C.E    // HERE<<<<<<<<<<<<<<<<<<<<<<
+    searchAssets:     C.E
   },
 
 // TODO - probably a very trivial non-code game

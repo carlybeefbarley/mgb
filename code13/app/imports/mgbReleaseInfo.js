@@ -23,6 +23,37 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
     {
+      'timestamp': 'Mon Jan 02 2017 18:30:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2410'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial improvements',
+          'changeSummary': 'Added "Create New Project" tutorial',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'bugfix',
+          'changeName': 'Running code that another user just edited',
+          'changeSummary': 'Fixed bug with Code Runner in Edit Code - it wasn\'t rebuilding the runnable version of the code if an edit came in from another user',
+          'otherUrls': [ ]
+        }
+        
+      ]
+    },
+    {
       'timestamp': 'Sat Dec 31 2016 09:40:00 GMT-0800 (PST)',
 
       'id': {

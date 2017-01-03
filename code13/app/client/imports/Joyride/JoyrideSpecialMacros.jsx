@@ -249,18 +249,32 @@ const stepMacros = [
     },
   },
 
-
   {
     key: _wrapKey('np-create-myAssets'),
     hint: `np-create>myAssets`,
     desc: `Step for List My Assets. Prior step should be %np-create%`,
     newVal:
     {
-      "title": "Great. Now choose 'My Assets'",
+      "title": "Great. Now choose 'List My Assets'",
       "text": "Click on the&ensp;<div class='ui label'>List My Assets&emsp;<i class='pencil icon'></i></div>&ensp;option",
       "selector": "#mgbjr-np-create-myAssets",
       "showStepOverlay": true,
       "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/assets",
+      "position": "right"
+    },
+  },
+
+  {
+    key: _wrapKey('np-create-project'),
+    hint: `np-create>Project`,
+    desc: `Step for 'Create Project'. Prior step should be %np-create%`,
+    newVal:
+    {
+      "title": "Great. Now choose 'Create New Project'",
+      "text": "Click on the&ensp;<div class='ui label'>Create New Project&emsp;<i class='green sitemap icon'></i></div>&ensp;option",
+      "selector": "#mgbjr-np-create-project",
+      "showStepOverlay": true,
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/projects/create",
       "position": "right"
     },
   },
@@ -344,7 +358,7 @@ const propertyMacros = [
   {
     field: 'style',
     key: _wrapKey('green'),
-    desc: "An very green style for success",
+    desc: "A very green style for success",
     newVal:
     {
       "backgroundColor": "rgba(0, 96, 0, 1)",

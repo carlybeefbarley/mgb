@@ -44,8 +44,6 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.lineWidth = 3
 
-    this.isDirty = true
-
     this.drawInterval = 10000
     this.nextDraw = Date.now() + this.drawInterval
 
@@ -216,7 +214,7 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.clearSelection(true)
 
-    this.isDirty = true
+    this.draw()
   }
   /* Events */
   handleMouseMove (ep) {
@@ -288,7 +286,6 @@ export default class ObjectLayer extends AbstractLayer {
     }
   }
   onMouseLeave () {
-    this.isDirty = true
     if (this.highlightedObject) {
       this.deleteObject(this.highlightedObject)
       this.highlightedObject = null
@@ -304,6 +301,7 @@ export default class ObjectLayer extends AbstractLayer {
     const remove = () => {
       this.removeObject()
     }
+
     const paste = () => {
       this.props.saveForUndo('Paste')
       let minx = Infinity
@@ -323,9 +321,10 @@ export default class ObjectLayer extends AbstractLayer {
         this.selectObject(n)
 
         this.clearCache()
-        this.isDirty = true
       })
+      this.draw()
     }
+
     const copy = () => {
       this.copy.length = 0
       const saveCopy = (obj) => {
@@ -392,7 +391,7 @@ export default class ObjectLayer extends AbstractLayer {
         obj.orig.y
       )
     }
-    else if (true) {
+    else if (true) { /// ???
       this.handles.update(
         obj.x,
         obj.y,
@@ -438,7 +437,7 @@ export default class ObjectLayer extends AbstractLayer {
     if(this.pickedObject){
       this._toggleFill(this.pickedObject)
     }
-    
+
     this.props.handleSave('Toggle shape fill')
     this.draw()
   }
@@ -940,7 +939,7 @@ edit[EditModes.rectangle] = function (e) {
   if (e.type == 'mousedown' || e.type == 'touchstart' ) {
     phase && this.props.saveForUndo('Edit Object')
     if (!this.handles.activeHandle) {
-      this.isDirty = true
+      this.draw()
       this.mouseDown = true
       if (this.pickObject(e) > -1) {
         if (!this.selection.length) {

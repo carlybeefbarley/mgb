@@ -224,8 +224,6 @@ export default class ObjectLayer extends AbstractLayer {
     super.handleMouseMove(e)
 
     this.info = this.queryObject(e)
-    this.isDirty = true
-
     if (!this.mouseDown && e.target == this.refs.canvas) {
       this.handles.setActive(
         (this.mouseX / this.camera.zoom - this.camera.x),
@@ -236,6 +234,7 @@ export default class ObjectLayer extends AbstractLayer {
     const mode = this.props.getEditMode()
     if (edit[mode]) {
       edit[mode].call(this, e)
+      this.draw()
     }
   }
   handleMouseDown (ep) {
@@ -264,6 +263,7 @@ export default class ObjectLayer extends AbstractLayer {
     const mode = this.props.getEditMode()
     if (edit[mode]) {
       edit[mode].call(this, e)
+      this.draw()
     }
 
     // 0 - mouse; undefined - touch
@@ -283,6 +283,8 @@ export default class ObjectLayer extends AbstractLayer {
     const mode = this.props.getEditMode()
     if (edit[mode]) {
       edit[mode].call(this, e)
+      // force re-draw
+      this.draw()
     }
   }
   onMouseLeave () {
@@ -409,6 +411,7 @@ export default class ObjectLayer extends AbstractLayer {
     }
     this.setPickedObjectSlow(-1)
     edit.clear.call(this)
+    this.draw()
   }
 
   deleteObject (obj) {
@@ -449,13 +452,15 @@ export default class ObjectLayer extends AbstractLayer {
         this.shapeBoxes[index] = new Imitator(obj)
       }
     }
+
+    this.draw()
     this.highlightSelected()
   }
   clearCache () {
     Object.keys(this.shapeBoxes).forEach((k) => {
       delete this.shapeBoxes[k]
     })
-    this.isDirty = true
+    this.draw()
   }
 
   /* DRAWING methods */
@@ -702,7 +707,6 @@ edit.clear = function(){
     obj = null
     endPoint = null
   }
-  this.draw()
 }
 edit[EditModes.drawRectangle] = function (e) {
   if (e.type == 'mousedown' || e.type == 'touchstart') {
@@ -714,7 +718,6 @@ edit[EditModes.drawRectangle] = function (e) {
     this.clearCache()
     this.props.saveForUndo('Draw Rectangle')
     this.data.objects.push(obj)
-    this.draw()
     return
   }
   if (!obj) {
@@ -757,7 +760,6 @@ edit[EditModes.drawEllipse] = function (e) {
     this.clearCache()
     this.props.saveForUndo('Draw Ellipse')
     this.data.objects.push(obj)
-    this.draw()
     return
   }
   if (!obj) {
@@ -812,7 +814,6 @@ edit[EditModes.drawShape] = function (e) {
       pointCache.x = 0
       pointCache.y = 0
       obj.polyline.push(endPoint)
-      this.draw()
       return
     }else {
       // are buttons FLAGS?
@@ -914,11 +915,7 @@ edit[EditModes.rectangle] = function (e) {
       // invalidate
       this.selectionBox.width = 0
       this.selectionBox.height = 0
-
       obj = null
-
-      this.draw()
-      //this.props.handleSave('Edit Object')
       return
     }
 

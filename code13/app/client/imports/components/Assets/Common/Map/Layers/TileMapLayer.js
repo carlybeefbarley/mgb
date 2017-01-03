@@ -653,12 +653,13 @@ export default class TileMapLayer extends AbstractLayer {
         this.lastOffset.x = TileHelper.getOffsetX(nat);
         this.lastOffset.y = TileHelper.getOffsetY(nat);
       }
+      if (!this.options.visible) {
+        return
+      }
 
       if (edit[this.props.getEditMode()]) {
-        if (!this.options.visible) {
-          return
-        }
         edit[this.props.getEditMode()].call(this, nat, true)
+        this.draw()
       }else {
         edit.debug.call(this, nat, true)
       }
@@ -675,17 +676,19 @@ export default class TileMapLayer extends AbstractLayer {
     }
 
     this.lastEvent = nat
-    this.lastOffset.x = TileHelper.getOffsetX(nat);
-    this.lastOffset.y = TileHelper.getOffsetY(nat);
+    this.lastOffset.x = TileHelper.getOffsetX(nat)
+    this.lastOffset.y = TileHelper.getOffsetY(nat)
     this.tilePosInfo = this.getTilePosInfo(e)
-
     this.isMouseOver = true
+
+    // not visible
+    if (!this.options.visible) {
+      return
+    }
+
     if (edit[this.props.getEditMode()]) {
-      // not visible
-      if (!this.options.visible) {
-        return
-      }
       edit[this.props.getEditMode()].call(this, nat)
+      this.draw()
     }else {
       edit.debug.call(this, nat)
     }
@@ -752,7 +755,6 @@ edit[EditModes.fill] = function (e, up) {
       sel[i].gid = this.options.data[sel[i].id]
     }
     temp.clear()
-    this.drawTiles()
     return
   }
 
@@ -819,7 +821,6 @@ edit[EditModes.fill] = function (e, up) {
       }
     }
   }
-  this.drawTiles()
 }
 edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   if (e.type != 'mousedown') {
@@ -844,12 +845,10 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     }else {
       edit[EditModes.rectangle].call(this, e, up)
     }
-    this.drawTiles()
     return
   }
   if (e.ctrlKey) {
     edit[EditModes.eraser].call(this, e, up)
-    this.drawTiles()
     return
   }
   // nothing from tileset is selected
@@ -869,7 +868,6 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   }
 
   if (!this.mouseDown && !up) {
-    this.drawTiles(e)
     return
   }
 
@@ -914,7 +912,6 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       this.insertTile(pos.id, ts.gid);
       //this.options.data[pos.id] = ts.gid
     }
-    this.drawTiles()
     return
   }
 
@@ -966,15 +963,12 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     this.insertTile(tpos.id, ts.gid)
     //this.options.data[tpos.id] = ts.gid
   }
-  this.drawTiles()
-
 }
 
 // Eraser is actually stamp with gid = 0 - could be reused
 // only stamp can resize map.. eraser shouldn't
 edit[EditModes.eraser] = function (e, up) {
   if (!this.mouseDown && !up) {
-    this.drawTiles()
     return
   }
 
@@ -1001,11 +995,9 @@ edit[EditModes.eraser] = function (e, up) {
     //this.props.saveForUndo('Delete tile')
     this.insertTile(pos.id, 0)
   }
-  this.drawTiles()
 }
 /* selections */
 edit[EditModes.rectangle] = function (e, mouseUp) {
-  this.drawTiles()
   if (mouseUp || e.type == 'touchend') {
     if (!e.shiftKey && !e.ctrlKey) {
       this.props.clearSelection()
@@ -1018,7 +1010,6 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
     }else {
       this.props.swapOutSelection()
     }
-    this.drawTiles()
     return
   }
 
@@ -1035,7 +1026,6 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
     }else {
       tmp.clear()
     }
-    this.drawTiles()
   }
   else if (this.mouseDown) {
     tmp.clear()
@@ -1053,13 +1043,11 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
     return
   }
   previousType = e.type
-  this.drawTiles()
   if (up) {
     if (!e.shiftKey) {
       this.props.clearSelection()
     }
     this.props.swapOutSelection()
-    this.drawTiles()
     return
   }
 
@@ -1082,7 +1070,6 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
     while(buff.length){
       collection.pushUniquePos(buff.pop())
     }
-    this.drawTiles()
   }
   const isUnique = (p) => {
     for (let i = 0; i < buff.length; i++) {
@@ -1159,8 +1146,6 @@ edit[EditModes.picker] = function (e, up) {
     return
   }
   previousType = e.type
-
-  this.drawTiles()
   const sel = this.props.getSelection()
   if (up) {
     if (!e.shiftKey && !e.ctrlKey) {
@@ -1174,7 +1159,6 @@ edit[EditModes.picker] = function (e, up) {
     }else {
       this.props.swapOutSelection()
     }
-    this.drawTiles()
     return
   }
   const pos = this.getTilePosInfo(e)
@@ -1193,6 +1177,5 @@ edit[EditModes.picker] = function (e, up) {
       temp.push(new TileSelection(tmp))
     }
   }
-  this.drawTiles()
   this.isDirtySelection = false
 }

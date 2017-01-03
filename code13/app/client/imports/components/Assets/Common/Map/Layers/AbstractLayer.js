@@ -134,9 +134,12 @@ export default class AbstractLayer extends React.Component {
     if (this.nextDraw <= this.now || this.nextDraw > this.now + timeout) {
       this.nextDraw = this.now + timeout
     }
+    if(this.isDirtySelection){
+      this.nextDraw = 0
+    }
   }
   draw () {
-    this.nextDraw = this.now
+    this.nextDraw = 0
   }
 
   // abstract

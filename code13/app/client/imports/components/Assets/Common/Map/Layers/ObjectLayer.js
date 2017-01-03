@@ -1033,8 +1033,6 @@ edit[EditModes.rectangle] = function (e) {
   obj.y = Math.min(y1, y2)
   obj.height = Math.abs(this.movementY)
 
-  // console.log(obj)
-
   let selCount = this.selectObjects(obj)
   if (selCount == 1 && this.pickedObject) {
     this.startPosX = this.pickedObject.x

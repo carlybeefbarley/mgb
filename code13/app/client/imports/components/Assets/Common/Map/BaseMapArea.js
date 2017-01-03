@@ -573,7 +573,6 @@ export default class MapArea extends React.Component {
     // https://msdn.microsoft.com/en-us/library/ms536947(v=vs.85).aspx
 
     // it seems that IE and chrome reports "buttons" correctly
-    // console.log(e.buttons)
     // 1 - left; 2 - right; 4 - middle + combinations
     // we will handle this => no buttons == touchmove event
     const editMode = this.props.getMode()

@@ -158,8 +158,6 @@ export default class AbstractLayer extends React.Component {
     this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
     this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
 
-    console.log(e.type, this.mouseInWorldX, this.mouseInWorldX)
-
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
 
@@ -178,8 +176,6 @@ export default class AbstractLayer extends React.Component {
 
     this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
     this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
-
-    console.log(e.type, this.mouseInWorldX, this.mouseInWorldX)
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
@@ -208,7 +204,6 @@ export default class AbstractLayer extends React.Component {
     this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
     this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
 
-    //console.log(this.mouseInWorldX, this.mouseInWorldX)
     if (this.mouseDown) {
       this.movementX += (this.pointerMovementX / this.camera.zoom)
       this.movementY += (this.pointerMovementY / this.camera.zoom)

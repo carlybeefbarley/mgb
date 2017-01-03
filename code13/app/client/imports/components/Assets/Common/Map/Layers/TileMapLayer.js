@@ -399,10 +399,9 @@ export default class TileMapLayer extends AbstractLayer {
       drawY -= (drawH - props.mapData.tileheight * camera.zoom)
     }
 
-    // console.log(drawX, drawY)
     if (clear) {
       // are we still using this
-      console.log("Clear requested")
+      console.trace("Clear requested")
       this.ctx.clearRect(
         drawX, drawY,
         pal.w, pal.h
@@ -737,7 +736,6 @@ const edit = {
   debug: function (e, mouseUp) {
     //const pos = this.getTilePosInfo(e)
     //pos.gid = this.options.data[pos.id]
-    //console.log("EDIT MODE: debug")
   }
 }
 // ???
@@ -981,7 +979,6 @@ edit[EditModes.eraser] = function (e, up) {
   const sel = this.props.getSelection()
 
   if (pos.x < 0 || pos.x > this.options.width - 1 || pos.y < 0 || pos.height > this.options.height - 1) {
-    console.log("Out of bounds...")
     return
   }
 
@@ -1037,7 +1034,6 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
 
 let previousType = ""
 edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection()) {
-  console.log("Wand.. action", e.type)
   // avoid virtual mouse events
   if(previousType == "touchend" && (e.type == "mousemove" || e.type == "mousedown" || e.type == "mouseup")){
     return

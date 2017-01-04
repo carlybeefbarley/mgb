@@ -429,7 +429,10 @@ export default class EditCode extends React.Component {
   }
   codeEditShowHint(cm) {
     // we could use specific keywords for tutorial
-    if (this.props.canEdit && this.state.currentToken.type !== "comment" && this.props.asset.type != "tutorial")
+    if(this.props.asset.kind === "tutorial"){
+      return TutorialMentor.showHint(cm, CodeMirror)
+    }
+    else if (this.props.canEdit && this.state.currentToken && this.state.currentToken.type !== "comment")
       return this.ternServer.complete(cm)
     return CodeMirror.Pass
   }
@@ -443,10 +446,7 @@ export default class EditCode extends React.Component {
     this.acTimeout = setTimeout(() => {
       if (this.changeTimeout)
         return
-      
-      // skip ac in the comments and when user is typing
-      if (this.state.currentToken && this.state.currentToken.type !== "comment")
-        this.ternServer.complete(cm)
+      this.codeEditShowHint(cm)
     }, 1000)      // Pop up a helper after a second
 // this.ternServer.getHint(cm, function (hint) 
 // {

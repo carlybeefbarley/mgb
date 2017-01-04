@@ -421,6 +421,10 @@ export const transformStep = step =>
 // e.g. Array of { text: text_to_show_user_on_left, description: extra_but_faded_info_for_user, value: %key% } objects
 export const stepKeyOptionsForDropdown = _.map( stepMacros, s => ( { text: s.key, description: s.hint, value: s.key } ) )
 
+export const autocompleteOptions = _.map(stepMacros, s => ({
+  desc: s.desc,
+  text: s.key
+}))
 /* Example uses:
 
     const s1 = {

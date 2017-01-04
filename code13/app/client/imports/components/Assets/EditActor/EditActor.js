@@ -40,7 +40,7 @@ export default class EditActor extends React.Component {
     this.doSnapshotActivity()
   }
   componentWillUnmount(){
-    $(this.modal).modal("destroy")
+    $(this.modal).modal("hide")
   }
 
   handleSave(reason, thumbnail) {

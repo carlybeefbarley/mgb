@@ -182,6 +182,9 @@ TutorialMentor.showHint = (cm, CodeMirror) => {
       const to = Object.assign({}, from)
       to.ch = token.end - 1 // keep quote
 
+      list.sort((a, b) => {
+        return a.text < b.text ? -1 : 1
+      })
       const hints = {
         list, from, to,
         // completeSingle seems that is not working ?

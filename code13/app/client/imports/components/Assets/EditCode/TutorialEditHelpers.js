@@ -184,30 +184,30 @@ TutorialMentor.showHint = (cm, CodeMirror) => {
 
       const hints = {
         list, from, to,
-        completeSingle: false,
-        select: function (completion, el) {
-          console.log("Selected:", completion, el)
-        }
+        // completeSingle seems that is not working ?
+        completeSingle: false
       }
 
-      CodeMirror.on(hints, "select", (c, e) => {
-        console.log("Select event:", c, e)
+      CodeMirror.on(hints, "select", (completion, element) => {
         // remove old tooltip
         removeTooltip()
 
         tooltip = createTooltip()
-        tooltip.innerHTML = c.desc
+        tooltip.innerHTML = completion.desc
         // li < ul < body - by default
-        e.parentNode.parentNode.appendChild(tooltip)
-        const box = e.getBoundingClientRect()
-        const ulbox = e.parentNode.getBoundingClientRect()
+        element.parentNode.parentNode.appendChild(tooltip)
+        const box = element.getBoundingClientRect()
+        const ulbox = element.parentNode.getBoundingClientRect()
 
         tooltip.style.left = ulbox.left + ulbox.width + "px"
         tooltip.style.top = box.top + "px"
 
       })
-      CodeMirror.on(hints, "close", (c, e) => {
+      CodeMirror.on(hints, "close", () => {
         removeTooltip()
+        // cleanup
+        CodeMirror.off(hints, "close")
+        CodeMirror.off(hints, "select")
       })
       return hints
     }

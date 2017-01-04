@@ -221,7 +221,7 @@ const TileHelper = {
     let path = TileHelper.normalizePath(imagepath)
 
     const extraPixels = imagewidth % tilewidth
-    const columns = (imagewidth - extraPixels) / tilewidth
+    let columns = (imagewidth - extraPixels) / tilewidth
     let rows = (imageheight - (imageheight % tileheight)) / tileheight
 
     if (margin != -1) {
@@ -234,34 +234,44 @@ const TileHelper = {
 
     // guess spacing and margin - should give wow! effect to users :)
     if (autoGuess) {
-      if (!extraPixels) {
+      if(imagewidth <= tilewidth){
         spacing = 0
         margin = 0
+        rows = 1
+        columns = 1
+        tilewidth = imagewidth
+        tileheight = imageheight
       }
-      // assume that margin and spacing tends to be equal
-      const spacingColumns = columns - 1
-      // all goes to margin
-      if (extraPixels < spacingColumns) {
-        margin = extraPixels
-        spacing = 0
-      }
-      // all goes to spacing
-      else if (extraPixels % spacingColumns == 0) {
-        spacing = extraPixels / spacingColumns
-        margin = 0
-      }
-      // very common case when all sides of tile has equal white space
-      else if (extraPixels % (columns + 1) == 0) {
-        margin = extraPixels % (columns + 1)
-        spacing = margin
-      }else {
-        margin = extraPixels % spacingColumns
-        spacing = (extraPixels - extraPixels % spacingColumns) / spacingColumns
-      }
+      else {
+        if (!extraPixels) {
+          spacing = 0
+          margin = 0
+        }
+        // assume that margin and spacing tends to be equal
+        const spacingColumns = columns - 1
+        // all goes to margin
+        if (extraPixels < spacingColumns) {
+          margin = extraPixels
+          spacing = 0
+        }
+        // all goes to spacing
+        else if (extraPixels % spacingColumns == 0) {
+          spacing = extraPixels / spacingColumns
+          margin = 0
+        }
+        // very common case when all sides of tile has equal white space
+        else if (extraPixels % (columns + 1) == 0) {
+          margin = extraPixels % (columns + 1)
+          spacing = margin
+        } else {
+          margin = extraPixels % spacingColumns
+          spacing = (extraPixels - extraPixels % spacingColumns) / spacingColumns
+        }
 
-      // adjust rows - as we have added margin and spacing
-      while(margin + (tileheight + spacing) * rows - spacing > imageheight && rows){
-        rows--
+        // adjust rows - as we have added margin and spacing
+        while (margin + (tileheight + spacing) * rows - spacing > imageheight && rows) {
+          rows--
+        }
       }
     }
 

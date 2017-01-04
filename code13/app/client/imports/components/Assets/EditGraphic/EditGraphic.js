@@ -89,16 +89,19 @@ export default class EditGraphic extends React.Component {
       "use strict";
       var items = e.clipboardData.items;
       if (items) {
+        let isImagePasted = false
         //access data directly
         for (var i = 0; i < items.length; i++) {
           if (items[i].type.indexOf("image") !== -1) {
             //image
+            isImagePasted = true
             var blob = items[i].getAsFile();
             var source = URL.createObjectURL(blob)
             this.pasteImage(source);
           }
         }
-        e.preventDefault()
+        if(isImagePasted)
+          e.preventDefault()
       }
     }
 

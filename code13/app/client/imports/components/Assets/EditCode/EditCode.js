@@ -560,7 +560,7 @@ export default class EditCode extends React.Component {
           break
         case 'sound':
         case 'music':
-          url = `asset/${draggedAsset.kind}/${draggedAsset._id}/${draggedAsset.kind}.mp3`
+          url = `/api/asset/${draggedAsset.kind}/${draggedAsset._id}/${draggedAsset.kind}.mp3`
           code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.audio( '${draggedAsset.name}', '${url}' )`
           break
         case 'code':

@@ -615,7 +615,6 @@ export default class Toolbar extends React.Component {
       return
     }
 
-    this.hasMoved = true
     // TODO: make browser compatible
     const active = this.activeButton
 
@@ -631,11 +630,11 @@ export default class Toolbar extends React.Component {
       const index = parseInt(active.dataset.index, 10)
       const b = data.splice(index, 1)
       if (mostLeft)
-        data.splice(parseInt(mostLeft.dataset.index, 10), 0, b[0])      
+        data.splice(parseInt(mostLeft.dataset.index, 10), 0, b[0])
       else if (mostRight)
-        data.splice(parseInt(mostRight.dataset.index, 10), 0, b[0])      
+        data.splice(parseInt(mostRight.dataset.index, 10), 0, b[0])
       else if (mostBottom)
-        data.splice(parseInt(mostBottom.dataset.index, 10), 0, b[0])    
+        data.splice(parseInt(mostBottom.dataset.index, 10), 0, b[0])
       else if (mostTop)
         data.splice(parseInt(mostTop.dataset.index, 10), 0, b[0])
 
@@ -656,6 +655,13 @@ export default class Toolbar extends React.Component {
 
     this.activeButton.addEventListener("transitionend", sort)
     this.activeButton = null
+
+    // prevent release / mouseDown conflict
+    this.hasMoved = true
+    // remove from current stack
+    window.setTimeout(() => {
+      this.hasMoved = false
+    }, 0)
   }
   /* End of Button sorting */
 }

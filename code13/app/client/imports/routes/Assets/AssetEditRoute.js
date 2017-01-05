@@ -377,14 +377,14 @@ export default AssetEditRoute = React.createClass({
       // 1. Thumbnail
       if (old_deferredSaveObj.thumbnail && old_deferredSaveObj.thumbnail !== '' && !thumbnail)
       {
-        console.log('deferContentChange: reinstating thumbnail for asset: ', old_deferredSaveObj.thumbnail)
+        // console.log('deferContentChange: reinstating thumbnail for asset: ', old_deferredSaveObj.thumbnail)
         this.m_deferredSaveObj.thumbnail = old_deferredSaveObj.thumbnail
       }
 
       // 2. content2Object
       if (old_deferredSaveObj.content2Object && !content2Object)
       {
-        console.log('deferContentChange: reinstating content2 for asset: ', old_deferredSaveObj.content2Object)
+        // console.log('deferContentChange: reinstating content2 for asset: ', old_deferredSaveObj.content2Object)
         this.m_deferredSaveObj.content2Object = old_deferredSaveObj.content2Object
       }
     }

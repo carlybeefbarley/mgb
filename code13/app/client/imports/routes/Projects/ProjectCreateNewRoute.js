@@ -10,11 +10,10 @@ import { utilPushTo } from '/client/imports/routes/QLink';
 export default ProjectCreateNewRoute = React.createClass({
 
   propTypes: {
-    params: PropTypes.object,       // .id (LEGACY /user/:id routes), or .username (current /u/:username routes)
-    user: PropTypes.object,         // Maybe absent if route is /assets
-    currUser: PropTypes.object,     // Currently Logged in user
-    ownsProfile: PropTypes.bool,
-    location: PropTypes.object      // We get this from react-router
+    user:             PropTypes.object,         // Maybe absent if route is /assets
+    currUser:         PropTypes.object,         // Currently Logged in user
+    currUserProjects: PropTypes.array,          // Projects list for currently logged in user
+    ownsProfile:      PropTypes.bool
   },
 
 
@@ -34,13 +33,15 @@ export default ProjectCreateNewRoute = React.createClass({
         />
 
         <ProjectCreateNew 
-          handleCreateProjectClick={this.handleCreateProjectClickFromComponent}
-          currUser={this.props.currUser}
-          />
+            handleCreateProjectClick={this.handleCreateProjectClickFromComponent}
+            currUser={this.props.currUser}
+            currUserProjects={this.props.currUserProjects}
+            />
       </div>
     )
   },
 
+  
 
   handleCreateProjectClickFromComponent: function(pName)
   {

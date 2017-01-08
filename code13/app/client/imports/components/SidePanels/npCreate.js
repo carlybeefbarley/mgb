@@ -51,11 +51,23 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
     }
     { currUser && 
       <QLink 
+          id='mgbjr-np-my-projects-hdr'
           to={`/u/${currUser.profile.name}/projects`} 
           closeNavPanelOnClick={navPanelIsOverlay} 
           className="item">
         My Projects
       </QLink>
+    }
+    { currUser && 
+      <div className="menu">
+        <QLink 
+            id='mgbjr-np-create-list-my-projects'
+            to={`/u/${currUser.profile.name}/projects`} 
+            closeNavPanelOnClick={navPanelIsOverlay} 
+            className="item">
+          <Icon name='sitemap' /> List My Projects
+        </QLink>
+      </div>    
     }
     { currUser && 
       <div className="menu">

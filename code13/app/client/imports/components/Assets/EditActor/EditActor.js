@@ -443,7 +443,9 @@ export default class EditActor extends React.Component {
 
   handleTemplateClick(e) {
     if (e.target.dataset.template) {
-      this.loadTemplate(e.target.dataset.template)
+      const templateName = e.target.dataset.template
+      this.loadTemplate(templateName)
+      this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))
       this.handleSave("Initial Template selected")
     }
   }

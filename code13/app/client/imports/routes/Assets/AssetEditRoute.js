@@ -328,6 +328,7 @@ export default AssetEditRoute = React.createClass({
             currUser={currUser}
             handleContentChange={this.deferContentChange}
             handleMetadataChange={this.handleMetadataChange}
+            handleDescriptionChange={this.handleAssetDescriptionChange}
             editDeniedReminder={this.handleEditDeniedReminder}
             activitySnapshots={this.data.activitySnapshots} 
             hasUnsentSaves={hasUnsentSaves}

@@ -162,10 +162,6 @@ export default class Joyride extends React.Component {
       if (step && step.awaitCompletionTag && step.awaitCompletionTag === e.detail)
       {
         this.logger('joyride:listeners.mgbCompletionTag - match and advance', ['awaitCompletionTag', step.awaitCompletionTag ])
-        // if ('mgbjr-CT-app-location-path-/assets/create' == step.awaitCompletionTag)
-        // {
-        //   debugger
-        // }
         this.toggleTooltip(true, this.state.index+1, 'next')
       }
     }
@@ -619,9 +615,6 @@ export default class Joyride extends React.Component {
     }
 
     if (step && !document.querySelector(step.selector)) {
-
-      // if (this.state.stepIsWaiting)
-      //   return
 
       this.setState({
         showTooltip: false,

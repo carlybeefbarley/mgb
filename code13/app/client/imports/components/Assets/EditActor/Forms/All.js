@@ -13,15 +13,24 @@ export default class All extends BaseForm {
   render() {
     const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ) }
 
+    // Handle limiting InitialHealth < initialMaxHealthNum
+    let initHealthConfig = { min: 1 }
+    if (this.data.initialMaxHealthNum)
+    {  
+      const max = parseInt(this.data.initialMaxHealthNum, 10)
+      if (max > 0)
+        initHealthConfig.max = max
+    }
+
     return (
         <div className="ui form">
           {this.options("Actor Type", 'actorType', actorOptions.actorType)}
           {this.text("Description", 'description')}
-          {this.text("Initial Heath", 'initialHealthNum', "number", {min: 1} )}
+          {this.text("Initial Heath", 'initialHealthNum', "number", initHealthConfig )}
           {this.text("Initial Max Health", 'initialMaxHealthNum', "number", {
             min: 0,
             max: 10000,
-            title: "This is the highest health the actor can have. the value 0 means there is no limit"
+            title: "This is the highest health the actor can have. The value 0 means there is no limit"
           } )}
 
           {this.dropArea("Sound When Harmed", 'soundWhenHarmed', "sound", soundOptions)}

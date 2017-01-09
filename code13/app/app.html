@@ -18,8 +18,17 @@
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
   <!-- this is fallback if ad blocker blocks analytics -->
-  <script type="text/javascript">Package = typeof(Package) === "undefined" ? {} : Package; Package['okgrow:analytics'] = {
-    analytics: {page: function(){}, track: function(){}, identify: function(){}}}</script>
+  <script type="text/javascript">
+    Package = typeof(Package) === "undefined" ? {} : Package; Package['okgrow:analytics'] = {
+      analytics: {page: function(){}, track: function(){}, identify: function(){}}
+    };
+    Number.isInteger = Number.isInteger || function(value) {
+      return typeof value === "number" &&
+          isFinite(value) &&
+          Math.floor(value) === value;
+    };
+
+  </script>
 </head>
 
 <body>

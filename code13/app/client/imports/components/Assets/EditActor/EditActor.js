@@ -17,6 +17,8 @@ import NPCBehavior from './Forms/NPCBehavior'
 import ItemBehavior from './Forms/ItemBehavior'
 import CharacterBehavior from './Forms/CharacterBehavior'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+
 export default class EditActor extends React.Component {
   constructor(...props) {
     super(...props)
@@ -123,51 +125,51 @@ export default class EditActor extends React.Component {
         content: <div className="actor-template ui internally celled grid">
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_player.png" data-template="alTemplatePlayer" />
+              <img id="mgbjr-create-actor-player" src="/images/newActor/newActor_player.png" data-template="alTemplatePlayer" />
               <span>The player's character</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_enemy.png" data-template="alTemplateEnemy" />
+              <img id="mgbjr-create-actor-enemy" src="/images/newActor/newActor_enemy.png" data-template="alTemplateEnemy" />
               <span>Enemies and bosses</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_friend.png" data-template="alTemplateFriend" />
+              <img id="mgbjr-create-actor-friend" src="/images/newActor/newActor_friend.png" data-template="alTemplateFriend" />
               <span>Friendly characters who help the player</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_shot.png"  data-template="alTemplateShot" />
+              <img id="mgbjr-create-actor-shot" src="/images/newActor/newActor_shot.png"  data-template="alTemplateShot" />
               <span>A projectile attack - arrow, fireball, etc"</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_ice.png" data-template="alTemplateIce" />
+              <img id="mgbjr-create-actor-ice" src="/images/newActor/newActor_ice.png" data-template="alTemplateIce" />
               <span>A floor tile. Actors who step onto this tile will keep on moving past it</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_floor.png" data-template="alTemplateFloor" />
+              <img id="mgbjr-create-actor-floor" src="/images/newActor/newActor_floor.png" data-template="alTemplateFloor" />
               <span>A floor tile. Decorative, but has no effect</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_wall.png" data-template="alTemplateWall" />
+              <img id="mgbjr-create-actor-wall" src="/images/newActor/newActor_wall.png" data-template="alTemplateWall" />
               <span>A wall. Blocks a player or enemy</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_item.png" data-template="alTemplateItem" />
+              <img id="mgbjr-create-actor-item" src="/images/newActor/newActor_item.png" data-template="alTemplateItem" />
               <span>An item that has some effect</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_slider.png" data-template="alTemplateSlidingBlock" />
+              <img id="mgbjr-create-actor-slider" src="/images/newActor/newActor_slider.png" data-template="alTemplateSlidingBlock" />
               <span>A solid block that can be pushed to make it slide some distance</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_foreground.png" data-template="alTemplateFloor" />
+              <img id="mgbjr-create-actor-foreground" src="/images/newActor/newActor_foreground.png" data-template="alTemplateFloor" />
               <span>A foreground tile - used on the foreground map layer. Decorative, but has no effect</span>
             </div>
           </div>
@@ -175,7 +177,7 @@ export default class EditActor extends React.Component {
       },
       {
         tab: "Player",
-        content: <div className="actor-template ui internally celled grid">
+        content: <div id="mgbjr-create-actor-tab-player" className="actor-template ui internally celled grid">
               <span style={{padding: "10px 15px"}}>
               Player characters can have touch, shoot and/or melee -type attacks.<br />
               A player might initially have no way to shoot or attack, but pick up items that provide these abilities.<br />
@@ -214,7 +216,7 @@ export default class EditActor extends React.Component {
       },
       {
         tab: "Equipment",
-        content: <div className="actor-template ui internally celled grid">
+        content: <div id="mgbjr-create-actor-tab-equipment" className="actor-template ui internally celled grid">
           <span style={{padding: "10px 15px"}}>
               The player can pick up and then Equip certain items in order to gain or improve abilities...
           </span>
@@ -251,7 +253,7 @@ export default class EditActor extends React.Component {
       },
       {
         tab: "Enemies",
-        content: <div className="actor-template ui internally celled grid">
+        content: <div id="mgbjr-create-actor-tab-enemies" className="actor-template ui internally celled grid">
           <span style={{padding: "10px 15px"}}>
               Enemies are a kind of 'Non Player Character' actor that can move, shoot, melee (attack) and do touch damage to the player.<br />They can be more complex and spawn/drop items when killed. Enemies cannot use items.
           </span>
@@ -289,7 +291,7 @@ export default class EditActor extends React.Component {
       },
       {
         tab: "Floors & Pushers",
-        content: <div className="actor-template ui internally celled grid">
+        content: <div id="mgbjr-create-actor-tab-floors" className="actor-template ui internally celled grid">
           <span style={{padding: "10px 15px"}}>
               'Floor' actors are typically decorative tiles that are placed on the background layer of a map. However, there are special kinds of floor that push actors in certain directions when the actor stands on that floor...
           </span>
@@ -332,7 +334,7 @@ export default class EditActor extends React.Component {
       },
       {
         tab: "Walls & Blocks",
-        content: <div className="actor-template ui internally celled grid">
+        content: <div id="mgbjr-create-actor-tab-walls" className="actor-template ui internally celled grid">
           <span style={{padding: "10px 15px"}}>
             'Wall' actors are placed on the background layer of a map and can stop NPCs and/or players from passing through. There are also 'blocks' which are like walls, except they are placed on the active layer and can be pushed by the player
           </span>
@@ -379,7 +381,7 @@ export default class EditActor extends React.Component {
       },
       {
         tab: "Items",
-        content: <div className="actor-template ui internally celled grid">
+        content: <div id="mgbjr-create-actor-tab-item" className="actor-template ui internally celled grid">
           <span style={{padding: "10px 15px"}}>
             Items can be instantly used when encountered, or picked up and used/equipped later.
           </span>
@@ -457,6 +459,7 @@ export default class EditActor extends React.Component {
     if (e.target.dataset.template) {
       this.loadTemplate(e.target.dataset.template)
       this.handleSave("Initial Template selected")
+
     }
   }
 
@@ -500,7 +503,13 @@ export default class EditActor extends React.Component {
         <LayerValid layerName='Active'     isValid={ActorValidator.isValidForActive(databag)} />
         <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
 
-        <div className="ui modal" ref={this.handleModal.bind(this, showTemplate)} onClick={(e)=>{this.handleTemplateClick(e)}}>
+        <div 
+          className="ui modal" 
+          ref={this.handleModal.bind(this, showTemplate)} 
+          onClick={(e)=>{ 
+            this.handleTemplateClick(e) 
+            joyrideCompleteTag(`mgbjr-CT-create-actor-selectTemplate`)
+          }}>
           <div className="header">
             Choose the kind of actor you want to create, then modify the detailed choices in Actor Editor
           </div>

@@ -131,7 +131,7 @@ export default fpAssets = React.createClass({
 
     return (
       <div>
-        <div>
+        <div id="mgbjr-flexPanel-assets-search">
           { (user && userProjects) ? 
             <ProjectSelector
                 key="fpProjectSelector" // don't conflict with asset project selector

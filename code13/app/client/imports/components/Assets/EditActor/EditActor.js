@@ -16,17 +16,14 @@ import Conditions from './Forms/Conditions'
 import NPCBehavior from './Forms/NPCBehavior'
 import ItemBehavior from './Forms/ItemBehavior'
 import CharacterBehavior from './Forms/CharacterBehavior'
+import { Modal } from 'semantic-ui-react'
+
 
 export default class EditActor extends React.Component {
   constructor(...props) {
     super(...props)
     this.state = {}
     this.isModalVisible = false
-  }
-
-  getUser() {
-    debugger  // is this used?
-    return this.props.currUser.profile.name
   }
 
   doSnapshotActivity() {
@@ -39,16 +36,12 @@ export default class EditActor extends React.Component {
   componentDidMount() {
     this.doSnapshotActivity()
   }
-  componentWillUnmount(){
-    $(this.modal).modal("hide")
-  }
 
   handleSave(reason, thumbnail) {
     this.props.handleContentChange(this.props.asset.content2, thumbnail, reason)
   }
 
-  getTabs() {
-    const databag = this.props.asset.content2.databag
+  getTabs(databag) {
 
     return [
       {
@@ -435,27 +428,11 @@ export default class EditActor extends React.Component {
     ]
   }
 
-  handleModal(show, v) {
-    this.modal = v
-    if (show && !this.isModalVisible) {
-      $(v)
-        .modal({
-          onHide: () => {
-            this.isModalVisible = false
-          },
-          onShow: () => {
-            this.isModalVisible = true
-          }
-        })
-        .modal('setting', 'closable', false)  // technically we can allow close - then user will end up with default player template
-        .modal('show')
-
-    }
-  }
-
   handleTemplateClick(e) {
     if (e.target.dataset.template) {
-      this.loadTemplate(e.target.dataset.template)
+      const templateName = e.target.dataset.template
+      this.loadTemplate(templateName)
+      this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))      
       this.handleSave("Initial Template selected")
     }
   }
@@ -476,7 +453,6 @@ export default class EditActor extends React.Component {
     }
 
     merge(t, d)
-    $(this.modal).modal("hide")
     this.forceUpdate()
   }
 
@@ -488,9 +464,6 @@ export default class EditActor extends React.Component {
     const databag = asset.content2.databag
     const showTemplate = !databag
     
-    if (showTemplate)
-      this.props.asset.content2 = getDefaultActor()
-
     const LayerValid = ( {layerName, isValid } ) => (isValid ? <strong>{layerName}: Yes&emsp;</strong> : <em style={{color: 'grey'}}>{layerName}: No&emsp;</em>)
 
     return (
@@ -500,62 +473,20 @@ export default class EditActor extends React.Component {
         <LayerValid layerName='Active'     isValid={ActorValidator.isValidForActive(databag)} />
         <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
 
-        <div className="ui modal" ref={this.handleModal.bind(this, showTemplate)} onClick={(e)=>{this.handleTemplateClick(e)}}>
-          <div className="header">
-            Choose the kind of actor you want to create, then modify the detailed choices in Actor Editor
-          </div>
-          <div className="content edit-actor">
-            <Tabs tabs={this.getTemplateTabs()}/>
-          </div>
-        </div>
-        <Tabs tabs={this.getTabs()}/>
+        { showTemplate && 
+          <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false}onClick={(e)=>{this.handleTemplateClick(e)}}>
+            <Modal.Header>
+              Choose the style of Actor you want to create, then modify the detailed choices in the Actor Editor
+            </Modal.Header>
+            <Modal.Content className="edit-actor">
+              <Tabs tabs={this.getTemplateTabs()}/>
+            </Modal.Content>
+          </Modal>
+        }
+        { !showTemplate &&
+          <Tabs tabs={this.getTabs(databag)}/>
+        }
       </div>
     )
   }
 }
-
-// This is for dev debugging from JS console.
-
-// var _diff = function(o2, o1 = edit_actor.props.asset.content2.databag){
-//   const ret = {}
-//   for(let i in o2){
-//     if(o1[i] === void(0)){
-//       continue;
-//     }
-
-//     if(typeof o1[i] === "object"){
-//       const d = diff(o2[i], o1[i])
-//       if(Object.keys(d).length > 0){
-//         ret[i] = d;
-//       }
-//     }
-//     else{
-//       if(o1[i] != o2[i]){
-//         ret[i] = o2[i]
-//       }
-//     }
-//   }
-//   return ret;
-// }
-// // this creates objects with o2 keys/vals that don't match o1
-// window.diff = function(o2, o1 = edit_actor.props.asset.content2.databag){
-//   const ret = {}
-//   for(let i in o2){
-//     if(o1[i] === void(0)){
-//       continue;
-//     }
-
-//     if(typeof o1[i] === "object"){
-//       const d = _diff(o2[i], o1[i])
-//       if(Object.keys(d).length > 0){
-//         ret[i] = d;
-//       }
-//     }
-//     else{
-//       if(o1[i] != o2[i]){
-//         ret[i] = o2[i]
-//       }
-//     }
-//   }
-//   return JSON.stringify(ret);
-// }

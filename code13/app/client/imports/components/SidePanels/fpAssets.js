@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
 import { Link } from 'react-router'
@@ -17,17 +18,18 @@ export default fpAssets = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    currUser:       PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    user:           PropTypes.object,             // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
-    activity:       PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
-    panelWidth:     PropTypes.string.isRequired   // Typically something like "200px". 
+    currUser:         PropTypes.object,             // Currently Logged in user. Can be null/undefined
+    user:             PropTypes.object,             // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
+    currUserProjects: PropTypes.array,              // Projects list for currently logged in user
+    activity:         PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
+    panelWidth:       PropTypes.string.isRequired   // Typically something like "200px". 
   },
 
   getInitialState: () => ( { 
-    searchName: "", 
-    view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation.  
-    kindsActive: AssetKindKeys.join(safeAssetKindStringSepChar),
-    project: null 
+    searchName:   '', 
+    view:         defaultAssetViewChoice, // Large. See assetViewChoices for explanation.  
+    kindsActive:  AssetKindKeys.join(safeAssetKindStringSepChar),
+    project:      null    // This will be a project OBJECT,not just a string. See projects.js 
   } ),
 
   /** 
@@ -37,16 +39,22 @@ export default fpAssets = React.createClass({
   getMeteorData: function() {
     // Much of this is copied from UserAssetList - repeats.. needs cleanup
 
-    const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
-    const nameSearch = this.state.searchName
-    const kindsArray = this.state.kindsActive === "" ? null : this.state.kindsActive.split(safeAssetKindStringSepChar)
+    const { user, currUser, currUserProjects } = this.props
+    const { searchName, kindsActive, project } = this.state
+    const currUserId = currUser ? currUser._id : null
+    const userId = (user && user._id) ? user._id : null
+    const isPageShowingCurrUser = (currUserId === userId) && userId !== null
+    const kindsArray = kindsActive === "" ? null : kindsActive.split(safeAssetKindStringSepChar)
+
+    const qOwnerId = project ? project.ownerId : null
+    const qProjectName = project ? project.name : null
 
     const handleForAssets = Meteor.subscribe(
       "assets.public", 
-      null,                 // userId (null = all)
+      qOwnerId,           // userId (null = all)
       kindsArray,
-      nameSearch,
-      this.state.project,   // Project
+      searchName,
+      qProjectName,         // Project Name
       false,                // Show Only Deleted
       false,                // Show only Stable
       undefined,            // Use default sort order
@@ -54,13 +62,14 @@ export default fpAssets = React.createClass({
     )
     const assetSorter = { updatedAt: -1 }
     let assetSelector = assetMakeSelector(
-      null, 
+      qOwnerId, 
       kindsArray, 
-      nameSearch,
-      this.state.project
+      searchName,
+      qProjectName
     )  // TODO: Bit of a gap here... username.projectname
 
-    const handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null 
+    // Load projects if it's not the current user
+    const handleForProjects = (userId && !isPageShowingCurrUser) ? Meteor.subscribe("projects.byUserId", userId) : null 
     const selectorForProjects = {
       "$or": [
         { ownerId: userId },
@@ -70,7 +79,7 @@ export default fpAssets = React.createClass({
 
     return {
       assets: Azzets.find(assetSelector, {sort: assetSorter}).fetch(),          // Note that the subscription we used excludes the content2 field which can get quite large
-      userProjects: userId ? Projects.find(selectorForProjects).fetch() : null, // Can be null
+      userProjects: userId ? Projects.find(selectorForProjects).fetch() : currUserProjects, // Can be null
       loading: !handleForAssets.ready() || ( handleForProjects !== null && !handleForProjects.ready())
     }
   },
@@ -97,8 +106,8 @@ export default fpAssets = React.createClass({
     if (e.which === 13) $(this.refs.searchGoButton).click()
   },
 
-  handleChangeSelectedProjectName(name){
-    this.setState( { project: name } )
+  handleChangeSelectedProjectName(pName, projObj, compoundProjName){
+    this.setState( { project: projObj } )
   },
 
   // This is the callback from AssetsKindSelector
@@ -128,20 +137,23 @@ export default fpAssets = React.createClass({
     const { user, currUser } = this.props
     const { view, kindsActive, searchName, project } = this.state
     const isAllKinds = isAssetKindsStringComplete(kindsActive)
-
+    const effectiveUser = user || currUser
+    
     return (
       <div>
         <div>
-          { (user && userProjects) ? 
-            <ProjectSelector
-                key="fpProjectSelector" // don't conflict with asset project selector
-                canEdit={false}
-                user={user}
-                handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
-                availableProjects={userProjects}
-                ProjectListLinkUrl={"/u/" + user.profile.name + "/projects"}
-                chosenProjectName={project} />
-              : null }        
+          { ((effectiveUser && userProjects) ? 
+              <ProjectSelector
+                  key="fpProjectSelector" // don't conflict with asset project selector
+                  canEdit={false}
+                  user={effectiveUser}
+                  handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+                  availableProjects={userProjects}
+                  ProjectListLinkUrl={"/u/" + effectiveUser.profile.name + "/projects"}
+                  showProjectsUserIsMemberOf={true}
+                  chosenProjectName={project && project.name} />
+              : null )
+          }   
           <div className="ui small fluid action input">
             <input  type="text"
                     id="mgb_search_asset"

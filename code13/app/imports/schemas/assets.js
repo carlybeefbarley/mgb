@@ -287,6 +287,16 @@ export const AssetKindKeysIncludingDisabled = _.filter(AssetKindKeysALL, (k) => 
 })
 
 /** This is intended for use by publications.js and any Meteor.subscribe calls
+ *  assetMakeSelector
+ * 
+ * @export
+ * @param {string} userId
+ * @param {Array} selectedAssetKinds
+ * @param {string} nameSearch
+ * @param {string} [projectName=null]
+ * @param {boolean} [showDeleted=false]
+ * @param {boolean} [showStable=false]
+ * @returns
  */
 export function assetMakeSelector(
                       userId, 

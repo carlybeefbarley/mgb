@@ -8,6 +8,8 @@ import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelK
 import { logActivity } from '/imports/schemas/activity'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
 import moment from 'moment'
 
 const initialMessageLimit = 5
@@ -188,7 +190,7 @@ debugger   // DEAD CODE?
     return (
       <div className="comment animated fadeInRight" key={c._id}>
         <QLink to={to} className="avatar">
-          <img src={`/api/user/${c.byUserId}/avatar`}></img>
+          <img src={makeCDNLink(`/api/user/${c.byUserId}/avatar`)}></img>
         </QLink>
         <div className="content">
           <QLink to={to} className="author">{c.byUserName}</QLink>

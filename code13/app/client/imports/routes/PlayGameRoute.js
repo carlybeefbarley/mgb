@@ -15,7 +15,7 @@ import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-import { getAssetWithContent2 } from '/client/imports/helpers/assetFetchers'
+import { getAssetWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const _incrementPlayCount = _.debounce(
   assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) }, 
@@ -33,14 +33,14 @@ const PlayCodeGame = ( { _codeName, owner, incrementPlayCountCb } ) =>
 
   const colonPlace = _codeName.search(':')
   const [ ownerName, codeName ] = colonPlace == -1 ? [ owner.profile.name, _codeName ] : [ _codeName.slice(0, colonPlace) , _codeName.slice(colonPlace+1)]
-
+  // is it safe to use cdn here?
   return (
     <iframe
       key={ 0 }
       id="iFrame1"
       style={{ minWidth:'800px', minHeight:'600px', borderStyle: 'none' }}
       sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
-      src={`/api/asset/code/bundle/u/${ownerName}/${codeName}`}>
+      src={makeCDNLink(`/api/asset/code/bundle/u/${ownerName}/${codeName}`)}>
     </iframe>
   )
 }

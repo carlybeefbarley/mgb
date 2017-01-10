@@ -1,13 +1,16 @@
 import React from 'react'
+import {makeCDNLink} from '/client/imports/helpers/assetFetchers'
 
 export default class Thumbnail extends React.Component {
-  defaultProps = {
+  propTypes = {
     id: React.PropTypes.string.required,
     className: React.PropTypes.string,
     style: React.PropTypes.string
   }
 
+
   render(){
-    return <img className={this.props.className} style={this.props.style} src={`/api/asset/thumbnail/png/${this.props.id}`}></img>
+    const expires = this.props.expires || 3600
+    return <img className={this.props.className} style={this.props.style} src={makeCDNLink(`/api/asset/cached-thumbnail/png/${this.props.id}/${expires}`)}></img>
   }
 }

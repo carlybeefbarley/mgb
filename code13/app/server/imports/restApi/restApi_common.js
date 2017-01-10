@@ -57,6 +57,17 @@ RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
     })
   }
 })
+RestApi.addRoute('asset/cached-thumbnail/png/:expires/:id', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne(this.urlParams.id)
+    const expires = this.urlParams.expires || 3600
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
+      'Content-Type': 'image/png',
+      'Cache-Control': `public, max-age=${expires}`,
+
+    })
+  }
+})
 RestApi.addRoute('asset/thumbnail/png/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})

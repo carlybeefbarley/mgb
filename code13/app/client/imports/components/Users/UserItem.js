@@ -44,6 +44,7 @@ export default UserItem = React.createClass({
     const getBadgeN = idx => (<Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : "_blankBadge"} />)
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui segment' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
+    // avatar here comes directly from mgb server - as we need it to be up to date always (mgb server will still handle etag - if not changed)
     return ( 
       <div className={segClass} onClick={this.handleClickUser} >
         <div className="ui header large">{name}</div>

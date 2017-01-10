@@ -9,6 +9,8 @@ import { isSameUserId } from '/imports/schemas/users'
 
 import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const _propTypes = {
   currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -33,7 +35,6 @@ const ActivityExtraDetail = ( { act} ) => {
   if (act.activityType.startsWith("asset.") || act.activityType.startsWith("game.")) {
     const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
     const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
-    const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
     const linkTo = act.toOwnerId ? 
               `/u/${act.toOwnerName}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
               `/assetEdit/${act.toAssetId}`                       // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
@@ -49,14 +50,12 @@ const ActivityExtraDetail = ( { act} ) => {
 
         <Feed.Extra images>
           <QLink to={linkTo}>
-            <img src={assetThumbnailUrl} style={{ width: "auto", maxWidth: "12em", maxHeight: "6em" }} />
+            <Thumbnail id={act.toAssetId} style={{ width: "auto", maxWidth: "12em", maxHeight: "6em" }} />
           </QLink>
         </Feed.Extra>
       </div>
     )
   }
-
-  return null
 }
 
 const _doDeleteActivity = activityId => deleteActivityRecord( activityId )
@@ -81,7 +80,7 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
       
       <Feed.Label>
         <QLink to={"/u/" + byUserName}>
-          <img src={`/api/user/${byUserId}/avatar`}></img>
+          <img src={makeCDNLink(`/api/user/${byUserId}/avatar`)}></img>
         </QLink>
       </Feed.Label>
 

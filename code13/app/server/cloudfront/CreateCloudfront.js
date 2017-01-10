@@ -4,7 +4,7 @@ import config from './config.json'
 import { WebApp } from 'meteor/webapp'
 
 // Change this for testing purposes
-const ORIGIN_DOMAIN_NAME = 'mightyfingers.com'
+const ORIGIN_DOMAIN_NAME = 'mightyfingers.com' // v2.mygamebuilder.com
 
 // this will be filled at runtime
 let CLOUDFRONT_DOMAIN_NAME = ''
@@ -39,6 +39,14 @@ WebApp.rawConnectHandlers.use(function (req, res, next) {
     res.setHeader('access-control-allow-origin', allowedOrigins[index])
   }
   res.setHeader('access-control-expose-headers', 'etag')
+  /*if(
+    req._parsedUrl.path.startsWith("/badges") ||
+    req._parsedUrl.path.startsWith("/audio") ||
+    req._parsedUrl.path.startsWith("/images") ||
+    req._parsedUrl.path.startsWith("/lib")
+  ){
+    res.setHeader('cache-control', 'public, max-age=3600');
+  }*/
   return next()
 });
 // End of CORS FIX

@@ -7,11 +7,11 @@ export const genetag = (asset) => {
 }
 
 // this will return only not-modified header if browser already has resource in the cache (based on etag)
-// it's good idea to pass val as function so heavy value calculations can be omitted
+// it's good idea to pass body as function so heavy value calculations can be omitted if asset is not changed
 // e.g. transforming musing byteArray to base64 string
-export const genAPIreturn = (api, asset, val = asset, headers = {}) => {
+export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // default 404
-  if(!val){
+  if(!body){
     return {
       statusCode: 404,
       body: {}
@@ -22,7 +22,7 @@ export const genAPIreturn = (api, asset, val = asset, headers = {}) => {
   if(!asset){
     return {
       headers:  headers,
-      body: typeof val == "function" ? val() : val
+      body: typeof body == "function" ? body() : body
     }
   }
 
@@ -30,6 +30,7 @@ export const genAPIreturn = (api, asset, val = asset, headers = {}) => {
   // pragma: no-store header will force cloudfront to skip cache totally
   // so remove it
   api.response.removeHeader("pragma")
+
   // check if client already have cached resource
   if(api.request.headers["if-none-match"] == etag){
     api.response.writeHead(304, {
@@ -47,6 +48,6 @@ export const genAPIreturn = (api, asset, val = asset, headers = {}) => {
       etag: etag,
       "cache-control": "must-revalidate"
     }, headers),
-    body: typeof val == "function" ? val() : val
+    body: typeof body == "function" ? body() : body
   }
 }

@@ -1,6 +1,4 @@
 import { Azzets } from '/imports/schemas'
-// import CachedRestivus from '/server/imports/dev/CachedRestivus' - used to test
-// import cache from '/imports/cache'
 import { genAPIreturn } from '/imports/helpers/generators'
 
 // Note that Restivus's default url prefix is /api
@@ -9,7 +7,6 @@ const options = {
   prettyJson: true
 }
 
-// To test NGINX cache - export const RestApi = new CachedRestivus(options)
 export const RestApi = new Restivus(options)
 
 // Return an empty image if there's no thumbnail yet. This is a transparent 1x1 GIF from https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/

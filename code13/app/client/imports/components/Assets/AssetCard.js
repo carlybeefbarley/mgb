@@ -11,6 +11,7 @@ import WorkState from '/client/imports/components/Controls/WorkState'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 // TODO: Toast/error is a mess
 
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
@@ -101,7 +102,6 @@ export default AssetCard = React.createClass({
       console.error("Unrecognized graphic data URI")
   },
 
-  // probably we could set global map<asset._id> Asset and escape stringifying;
   startDrag(asset, e) {
     const url  = `/api/asset/png/${asset._id}`
     console.log("Start dragging Asset  url=", url)
@@ -238,7 +238,7 @@ export default AssetCard = React.createClass({
             </span>                           
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
-                <img className="ui avatar image" src={`/api/user/${asset.ownerId}/avatar`}>
+                <img className="ui avatar image" src={makeCDNLink(`/api/user/${asset.ownerId}/avatar`)}>
                 </img> {ownerName ? ownerName : `#${asset.ownerId}`}
               </div>
             </QLink>

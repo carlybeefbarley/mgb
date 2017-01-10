@@ -1,8 +1,10 @@
 import { Azzets } from '/imports/schemas'
 import SpecialGlobals from '/imports/SpecialGlobals'
-import {genetag} from '/imports/helpers/generators'
+import { genetag } from '/imports/helpers/generators'
+import { getProjectAvatarUrl as getProjectAvatarUrlBasic } from '/imports/schemas/projects'
 
 // here client will store partially fetched Azzets
+// PartialAssets because meteor atm cannot merge assets recursively - https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
 const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
@@ -18,14 +20,20 @@ Meteor.startup(() => {
 })
 
 // will convert local link e.g. /api/asset to //xxx.cloufront.com/api/asset?hash
-export const makeCDNLink = (uri, etag = null) => {
+export const makeCDNLink = (uri, etagOrHash = null) => {
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
-  const hash = etag ? etag : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
+  const hash = etagOrHash ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
   if(CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//"){
     return `//${CDN_DOMAIN}${uri}?${hash}`
   }
   return uri
 }
+
+// project avatar url prefixed with CDN host
+export const getProjectAvatarUrl = (p) => (
+  makeCDNLink(getProjectAvatarUrlBasic(p))
+)
+
 
 // used by maps - to get notifications about image changes
 export const observe = (selector, onReady, onChange = onReady, oldSubscription = null) => {
@@ -86,14 +94,14 @@ const addToCache = (uri, etag, response) => {
   const cached = getFromCache(uri, etag)
   if(cached){
     cached.response = response
-    cached.updated = Date.now()
+    cached.lastAccessed = Date.now()
   }
   else{
     // check
     ajaxCache.push({
-      uri, etag, response, updated: Date.now()
+      uri, etag, response, lastAccessed: Date.now()
     })
-    ajaxCache.sort((a, b) => a.updated < b.updated)
+    ajaxCache.sort((a, b) => a.lastAccessed < b.lastAccessed)
     if(ajaxCache.length > MAX_ASSET_CACHE_LENGTH)
       ajaxCache.shift()
   }

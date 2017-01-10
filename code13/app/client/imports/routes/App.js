@@ -244,10 +244,16 @@ export default App = React.createClass({
 
     // The NavPanel (left), NavBar (top) and FlexPanel (right) are fixed/absolute positioned so we need to account for that
 
-    // ProjectScopeLock is an optional 2nd row of the NavBar. It is used to show the height of the 
+    // ProjectScopeLock is an optional 2nd row of the NavBar.
     const projectScopeLockValue = query[urlMaker.queryParams("app_projectScopeLock")]
     const showProjectScopeLock = !!projectScopeLockValue
-    const navBarHeight = showProjectScopeLock ? '80px' : '40px'
+
+    // TODO: Expose this in settings somehow
+    const fFixedTopNavBar = false
+
+    const navBarReservedHeightInPixels = 40
+    const projectScopeLockHeightInPixels = showProjectScopeLock ? 40 : 0
+    const navBarAreaHeightStr = (navBarReservedHeightInPixels + projectScopeLockHeightInPixels) + "px"
 
     // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
@@ -262,12 +268,12 @@ export default App = React.createClass({
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
-      position: "fixed",
-      top:      navBarHeight,
-      bottom:   "0px",
-      left:     navPanelReservedWidth,
-      right:    flexPanelWidth,
-      overflow: "auto",
+      position:     "fixed",
+      top:          fFixedTopNavBar ? navBarAreaHeightStr : "0px",
+      bottom:       "0px",
+      left:         navPanelReservedWidth,
+      right:        flexPanelWidth,
+      overflow:     "auto",
       marginBottom: "0px"
     }
 
@@ -287,6 +293,23 @@ export default App = React.createClass({
     // Most things can be done reactively or with CSS, but this is useful for some extra cases
     // This is probably not a long term solution - but is helpful for now
     const conserveSpace = showNavPanel && showFlexPanel && !fNavPanelIsOverlay
+
+    const navbar = (
+      <NavBar
+        currUser={currUser}
+        user={user}
+        pathLocation={this.props.location.pathname}
+        fFixedTopNavBar={fFixedTopNavBar}
+        name={this.props.routes[1].name}
+        params={this.props.params}
+        flexPanelWidth={flexPanelWidth}
+        navPanelWidth={navPanelReservedWidth}
+        navPanelIsVisible={showNavPanel}
+        conserveSpace={conserveSpace}
+        projectScopeLock={projectScopeLockValue}
+        sysvars={sysvars}
+        />    
+    )
 
     return (
       <div >
@@ -337,20 +360,7 @@ export default App = React.createClass({
                 style={{position: "fixed", bottom: "8px", left: npColumn1Width, zIndex: 200}} />
             }
 
-            <NavBar
-              currUser={currUser}
-              user={user}
-              pathLocation={this.props.location.pathname}
-              name={this.props.routes[1].name}
-              params={this.props.params}
-              flexPanelWidth={flexPanelWidth}
-              navPanelWidth={navPanelReservedWidth}
-              navPanelIsVisible={showNavPanel}
-              conserveSpace={conserveSpace}
-              projectScopeLock={projectScopeLockValue}
-              sysvars={sysvars}
-              />
-
+            { fFixedTopNavBar && navbar }
 
             <FlexPanel
               joyrideSteps={this.state.joyrideSteps} 
@@ -373,6 +383,8 @@ export default App = React.createClass({
               style={mainPanelOuterDivSty}
               className={conserveSpace ? "conserveSpace noScrollbarDiv" : "noScrollbarDiv"}>
               <div style={mainPanelInnerDivSty}>
+                { !fFixedTopNavBar && navbar }
+
                 { showToast &&
                   <Toast content={toastMsg} type={toastType} />
                 }

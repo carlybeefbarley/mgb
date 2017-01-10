@@ -34,13 +34,14 @@ const _menuStyle = {
   boxShadow: "none"
 }
 
-const NavBar = ({ name, user, params, currUser, pathLocation, conserveSpace, projectScopeLock, navPanelWidth, flexPanelWidth, sysvars }) => (
+const NavBar = ({ name, user, params, currUser, pathLocation, conserveSpace, projectScopeLock, navPanelWidth, flexPanelWidth, fFixedTopNavBar, sysvars }) => (
   <div style={{
-    position:   'fixed',
-    top:        '0px',
+    position:   fFixedTopNavBar ? 'fixed' : 'static',
+    top:        fFixedTopNavBar ? '0px' : undefined,
     left:       navPanelWidth, 
     right:      flexPanelWidth, 
-    margin:     '0px'
+    margin:     '0px',
+    maxHeight:  projectScopeLock ?  '80px' : '32px'
   }}>
     <div className="ui borderless menu" style={_menuStyle}>
       <SystemAlerts sysvars={sysvars}/>
@@ -53,7 +54,7 @@ const NavBar = ({ name, user, params, currUser, pathLocation, conserveSpace, pro
       </div>
     </div>
     <ProjectScopeBar projectScopeLock={projectScopeLock} />
-    </div>
+  </div>
 )
 
 NavBar.propTypes = {

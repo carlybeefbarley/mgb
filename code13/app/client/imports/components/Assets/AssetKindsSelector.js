@@ -43,7 +43,8 @@ export default AssetKindsSelector =  React.createClass({
             onClick={this.handleToggleKindClick.bind(this,k)}
             data-position={popPosition}
             data-title={AssetKinds[k].name}
-            data-content={`Click to show only ${AssetKinds[k].name} assets. Alt-click to multi-select ${AssetKinds[k].name} which asset kinds to show`}>
+            data-content={`Click to show only ${AssetKinds[k].name} assets. Alt-click to multi-select ${AssetKinds[k].name} which asset kinds to show`}
+            id={`mgbjr-flexPanel-assets-${AssetKinds[k].name.toLowerCase()}`}>
           <i className={AssetKinds[k].icon + " icon"} />
           { !showCompact && <span>{icon} {AssetKinds[k].name}</span> }
         </a>

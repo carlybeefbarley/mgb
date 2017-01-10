@@ -5,6 +5,7 @@ import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
 import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
@@ -162,7 +163,10 @@ export default class DropArea extends React.Component {
         style={{width: "100%"}}
         className={'ui message accept-drop message' + (asset ? " positive" : "") + (this.state.badAsset ? " negative" : "")}
         onDragOver={DragNDropHelper.preventDefault}
-        onDrop={this.handleDrop.bind(this)}
+        onDrop={ () => {
+          this.handleDrop.bind(this)
+          joyrideCompleteTag(`mgbjr-CT-dropArea-drop`)
+        }}
         >
 
         {!asset && !this.state.badAsset ? (this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :

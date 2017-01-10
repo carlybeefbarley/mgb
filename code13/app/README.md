@@ -8,9 +8,9 @@ Pre-requisites
 
 1. Install Meteor from https://www.meteor.com/install    At time of writing, this is Meteor 1.4
 
-1. In this directory (code13/app)   run     npm install
+1. AS ADMINISTRATOR, run      npm install --global --production windows-build-tools
 
-1. Also, AS ADMINISTRATOR, run      npm install --global --production windows-build-tools
+1. In this directory (code13/app)   run     npm install
 
 1. Check that it is working with a blank local database by running in this directory:     meteor
 

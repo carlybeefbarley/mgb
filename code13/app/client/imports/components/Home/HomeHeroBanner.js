@@ -37,6 +37,9 @@ const HomeHeroBanner = ( { userId, username } ) => (
           <QLink to={`/learn/getstarted`}>
             <Button color='teal' size='huge' style={{ marginTop: '1.5em' }} content='Get started' />
           </QLink>
+          <QLink to={`/signup`}>
+            <Button color='yellow' size='huge' style={{ marginTop: '1.5em', marginLeft: '0.5em' }} content='Sign me up' />
+          </QLink>
         </p>
       }
       </Grid.Column>

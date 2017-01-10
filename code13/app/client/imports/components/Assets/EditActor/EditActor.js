@@ -125,51 +125,51 @@ export default class EditActor extends React.Component {
         content: <div className="actor-template ui internally celled grid">
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-player" src="/images/newActor/newActor_player.png" data-template="alTemplatePlayer" />
+              <img id="mgbjr-create-actor-player" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-player`) } src="/images/newActor/newActor_player.png" data-template="alTemplatePlayer" />
               <span>The player's character</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-enemy" src="/images/newActor/newActor_enemy.png" data-template="alTemplateEnemy" />
+              <img id="mgbjr-create-actor-enemy" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-enemy`) } src="/images/newActor/newActor_enemy.png" data-template="alTemplateEnemy" />
               <span>Enemies and bosses</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-friend" src="/images/newActor/newActor_friend.png" data-template="alTemplateFriend" />
+              <img id="mgbjr-create-actor-friend" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-friend`) } src="/images/newActor/newActor_friend.png" data-template="alTemplateFriend" />
               <span>Friendly characters who help the player</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-shot" src="/images/newActor/newActor_shot.png"  data-template="alTemplateShot" />
+              <img id="mgbjr-create-actor-shot" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-shot`) } src="/images/newActor/newActor_shot.png"  data-template="alTemplateShot" />
               <span>A projectile attack - arrow, fireball, etc"</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-ice" src="/images/newActor/newActor_ice.png" data-template="alTemplateIce" />
+              <img id="mgbjr-create-actor-ice" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-ice`) } src="/images/newActor/newActor_ice.png" data-template="alTemplateIce" />
               <span>A floor tile. Actors who step onto this tile will keep on moving past it</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-floor" src="/images/newActor/newActor_floor.png" data-template="alTemplateFloor" />
+              <img id="mgbjr-create-actor-floor" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-floor`) } src="/images/newActor/newActor_floor.png" data-template="alTemplateFloor" />
               <span>A floor tile. Decorative, but has no effect</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-wall" src="/images/newActor/newActor_wall.png" data-template="alTemplateWall" />
+              <img id="mgbjr-create-actor-wall" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-wall`) } src="/images/newActor/newActor_wall.png" data-template="alTemplateWall" />
               <span>A wall. Blocks a player or enemy</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-item" src="/images/newActor/newActor_item.png" data-template="alTemplateItem" />
+              <img id="mgbjr-create-actor-item" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-item`) } src="/images/newActor/newActor_item.png" data-template="alTemplateItem" />
               <span>An item that has some effect</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-slider" src="/images/newActor/newActor_slider.png" data-template="alTemplateSlidingBlock" />
+              <img id="mgbjr-create-actor-slider" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-slider`) } src="/images/newActor/newActor_slider.png" data-template="alTemplateSlidingBlock" />
               <span>A solid block that can be pushed to make it slide some distance</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-foreground" src="/images/newActor/newActor_foreground.png" data-template="alTemplateFloor" />
+              <img id="mgbjr-create-actor-foreground" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-foreground`) } src="/images/newActor/newActor_foreground.png" data-template="alTemplateFloor" />
               <span>A foreground tile - used on the foreground map layer. Decorative, but has no effect</span>
             </div>
           </div>
@@ -499,16 +499,18 @@ export default class EditActor extends React.Component {
     return (
       <div className='ui grid edit-actor'>
         <b title='This Actor can work on the following Layers of an ActorMap'>ActorMap Layers:</b>
-        <LayerValid layerName='Background' isValid={ActorValidator.isValidForBG(databag)} />
-        <LayerValid layerName='Active'     isValid={ActorValidator.isValidForActive(databag)} />
-        <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
+        <div id="mgbjr-edit-actor-layerValid">
+          <LayerValid layerName='Background' isValid={ActorValidator.isValidForBG(databag)} />
+          <LayerValid layerName='Active'     isValid={ActorValidator.isValidForActive(databag)} />
+          <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
+        </div>
 
         <div 
           className="ui modal" 
           ref={this.handleModal.bind(this, showTemplate)} 
           onClick={(e)=>{ 
             this.handleTemplateClick(e) 
-            joyrideCompleteTag(`mgbjr-CT-create-actor-selectTemplate`)
+            //joyrideCompleteTag(`mgbjr-CT-create-actor-selectTemplate`) CT for when any Actor template is selected
           }}>
           <div className="header">
             Choose the kind of actor you want to create, then modify the detailed choices in Actor Editor

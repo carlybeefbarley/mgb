@@ -19,6 +19,7 @@ export default class CharacterBehavior extends BaseForm {
 
     return (
       <div className="ui form">
+      <div id="mgbjr-edit-actor-test">
         {this.text("Movement speed", 'movementSpeedNum', "number", {
           min: 0,
           max: 3,
@@ -28,6 +29,7 @@ export default class CharacterBehavior extends BaseForm {
         { this.bool("Can Move Down \u2193",  'downYN')}
         { this.bool("Can Move Left \u2190",  'leftYN')}
         { this.bool("Can Move Right \u2192", 'rightYN')}
+      </div>
         <hr />
 
         {this.dropArea("Actor For Shots", 'shotActor', "actor")}

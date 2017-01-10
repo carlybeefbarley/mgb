@@ -6,7 +6,7 @@ import {Activity, ActivitySnapshots} from '/imports/schemas'
 import { AssetKinds } from '/imports/schemas/assets'
 import { ActivityTypes } from '/imports/schemas/activity.js'
 import moment from 'moment'
-
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -110,7 +110,7 @@ export default NavRecentGET = React.createClass({
         const assetKindCap = capitalizeFirstLetter(a.toAssetKind)
         const assetNameTruncated = (this.props.styledForNavPanel && a.toAssetName && a.toAssetName.length > 19) ? a.toAssetName.substring(0, 19) + "..." : a.toAssetName
         const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
-        const dataHtml = `<div><p>${assetKindCap}: ${a.toAssetName}</p><small><p>${ago}</p></small><img style="max-width: 240px;" src="${assetThumbnailUrl}" /><small><p>Owner: ${a.toOwnerName}</p></small></div>`
+        const dataHtml = `<div><p>${assetKindCap}: ${a.toAssetName}</p><small><p>${ago}</p></small><Thumbnail style="max-width: 240px;" id={a.toAssetId} /><small><p>Owner: ${a.toOwnerName}</p></small></div>`
         // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now in those cases
         const linkTo = a.toOwnerId ?
                         `/u/${a.toOwnerName}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016

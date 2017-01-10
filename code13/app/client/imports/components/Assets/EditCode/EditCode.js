@@ -23,6 +23,7 @@ import GameScreen from './GameScreen.js'
 import makeBundle from '/imports/helpers/codeBundle'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 // import tlint from 'tern-lint'
 
 // **GLOBAL*** Tern JS - See comment below...   
@@ -1654,7 +1655,7 @@ export default class EditCode extends React.Component {
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
       return (
         <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
-          <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
+          <Thumbnail className="ui right spaced medium image" id={assetInfo.id} />
           URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
         </a>
       )

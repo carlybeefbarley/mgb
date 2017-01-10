@@ -9,7 +9,7 @@ import { check, Match } from 'meteor/check'
 import { defaultWorkStateName } from '/imports/Enums/workStates'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
-import cache from '/imports/cache'
+// import cache from '/imports/cache' // used for NGINX caching - see /imports/helpers/generators for API caching
 
 var schema = {
   _id: String,

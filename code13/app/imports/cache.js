@@ -1,3 +1,6 @@
+// this file is for NGINX caching and invalidation - not used ATM
+// (it can be used with Cloudfront also, but not used due to high costs of invalidation)
+
 const prefix = "/api/"
 
 const API_SERVERS = [
@@ -97,8 +100,6 @@ export default {
             console.log("cleared:", uri)
           }
         })
-
-
       }
 
       this.routes.common(id, user, name).forEach(forSource)

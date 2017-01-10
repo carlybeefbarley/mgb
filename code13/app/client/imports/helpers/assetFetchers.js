@@ -7,14 +7,19 @@ const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers
 const MAX_ASSET_CACHE_LENGTH = 500
-let CDN_DOMAIN = ""
 
-Meteor.call("CDN.domain", (err, cdnDomain) => {
-  if(!err)
-    CDN_DOMAIN = cdnDomain
+// CDN_DOMAIN will be set at startup
+let CDN_DOMAIN = ""
+Meteor.startup(() => {
+  Meteor.call("CDN.domain", (err, cdnDomain) => {
+    if(!err)
+      CDN_DOMAIN = cdnDomain
+  })
 })
 
+// will convert local link e.g. /api/asset to //xxx.cloufront.com/api/asset?hash
 export const makeCDNLink = (uri, etag = null) => {
+  // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
   const hash = etag ? etag : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
   if(CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//"){
     return `//${CDN_DOMAIN}${uri}?${hash}`
@@ -84,6 +89,7 @@ const addToCache = (uri, etag, response) => {
     cached.updated = Date.now()
   }
   else{
+    // check
     ajaxCache.push({
       uri, etag, response, updated: Date.now()
     })
@@ -166,6 +172,7 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOp
 }
 
 const fetchedAssets = []
+// this will return asset wrapped in the
 export const getAssetWithContent2 = (id, onReady) => {
   const c = fetchedAssets.find(a => a.id === id)
   if (c) {
@@ -181,18 +188,18 @@ export const getAssetWithContent2 = (id, onReady) => {
     asset: null,
     isReady: false,
     ready(){
-      return ret.isReady
+      return this.isReady
     },
-    updateAsset(){
+    updateAsset: function(){
       let c2 = ret.asset.content2
-      const asset = Azzets.findOne(ret.asset._id)
+      const asset = Azzets.findOne(this.asset._id)
       if(asset){
-        ret.asset = asset
-        ret.asset.content2 = ret.asset.content2 ? ret.asset.content2 : c2
-        c2 = ret.asset.content2
+        this.asset = asset
+        this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
+        c2 = this.asset.content2
 
-        ret.etag = genetag(ret.asset)
-        ret.update()
+        this.etag = genetag(this.asset)
+        this.update()
       }
 
       // we still need latest asset fromDB
@@ -202,30 +209,30 @@ export const getAssetWithContent2 = (id, onReady) => {
           if(!asset){
             return
           }
-          ret.asset = asset
-          ret.asset.content2 = ret.asset.content2 ? ret.asset.content2 : c2
+          this.asset = asset
+          this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
           // actually etag is not correct here
           // as there is small difference in timestamps
           // saved minimongo data and fetched new differs approx ~ 10ms
-          ret.etag = genetag(ret.asset)
-          ret.update()
+          this.etag = genetag(this.asset)
+          this.update()
         }
       })
     },
-    update(){
-      const c2 = ret.asset && ret.asset.content2
+    update: function(){
       const asset = Azzets.findOne(id)
       if(!asset){
         return
       }
 
+      const c2 = this.asset && this.asset.content2
       const etag = genetag(asset)
-      if (etag == ret.etag) {
-        ret.asset = asset
-        ret.asset.content2 = ret.asset.content2 ? ret.asset.content2 : c2
+      if (etag == this.etag) {
+        this.asset = asset
+        this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
         return
       }
-      ret.etag = etag
+      this.etag = etag
       //ret.isReady = false
       mgbAjax(asset.c2location || `/api/asset/content2/${id}`, (err, data) => {
         if(err){
@@ -233,18 +240,18 @@ export const getAssetWithContent2 = (id, onReady) => {
           return
         }
         const c2 = JSON.parse(data)
-        const oldC2 = ret.asset ? ret.asset.content2 : null
-        ret.isReady = true
+        const oldC2 = ret.asset ? this.asset.content2 : null
+        this.isReady = true
 
         let needUpdate = false
         if (!_.isEqual(c2, oldC2)){
-          ret.asset = asset
-          ret.asset.content2 = c2
+          this.asset = asset
+          this.asset.content2 = c2
           needUpdate = true
         }
-        else if(!_.isEqual(asset, ret.asset)) {
-          ret.asset = asset
-          ret.asset.content2 = oldC2
+        else if(!_.isEqual(asset, this.asset)) {
+          this.asset = asset
+          this.asset.content2 = oldC2
           needUpdate = true
         }
 

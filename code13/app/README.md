@@ -24,3 +24,6 @@ In go.sh
 then run it from Powershell as...
 
   sh go.sh
+
+  (if this doesn't work, try installing Github Desktop from https://desktop.github.com/, then 
+  use the 'GIT Shell' Windwos 'Program' it installs)

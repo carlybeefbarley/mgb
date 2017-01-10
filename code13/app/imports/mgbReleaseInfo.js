@@ -24,6 +24,52 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
+      'timestamp': 'Tue Jan 10 2017 10:20:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2438'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.flexpanel.assset',
+          'type': 'improvement',
+          'changeName': 'Asset FlexPanel - Project Selector improvements',
+          'changeSummary': 'The Project Selector in the Asset FlexPanel has been improved to be more responsive and to provide clearer indication of which project is being viewed',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.navbar',
+          'type': 'improvement',
+          'changeName': 'NavBar now scrolls with page',
+          'changeSummary': 'The Top Navbar is no longer fixed in place; it now scrolls with the main part of the page. This may become an optional feature in future depending on feedback.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.actor',
+          'type': 'bugfix',
+          'changeName': 'Actor Editor - Fixed double-popup bug',
+          'changeSummary': 'Fixed bug when creating an Actor Asset. The problem was that the template-select popup appeared twice',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.home',
+          'type': 'improvement',
+          'changeName': 'Signup page discoverability',
+          'changeSummary': 'Signup page is now easier for new visitors to find',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
       'timestamp': 'Sun Jan 08 2017 12:10:00 GMT-0800 (PST)',
 
       'id': {

@@ -41,7 +41,7 @@ const NavBar = ({ name, user, params, currUser, pathLocation, conserveSpace, pro
     left:       navPanelWidth, 
     right:      flexPanelWidth, 
     margin:     '0px',
-    maxHeight:  projectScopeLock ?  '80px' : '32px'
+    maxHeight:  projectScopeLock ?  '80px' : '38px'
   }}>
     <div className="ui borderless menu" style={_menuStyle}>
       <SystemAlerts sysvars={sysvars}/>

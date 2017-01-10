@@ -279,6 +279,21 @@ const stepMacros = [
     },
   },
 
+  {
+    key: _wrapKey('np-create-list-my-projects'),
+    hint: `np-create>ListMyProjects`,
+    desc: `Step for 'List My Projects'. Prior step should be %np-create%`,
+    newVal:
+    {
+      "title": "Great. Now choose 'List My Projects'",
+      "text": "Click on the&ensp;<div class='ui label'>List My Projects&emsp;<i class='sitemap icon'></i></div>&ensp;option",
+      "selector": "#mgbjr-np-create-list-my-projects",
+      "showStepOverlay": true,
+      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/projects",
+      "position": "right"
+    },
+  },
+
 
   _mkNp( 'home',     'home'         ),
   _mkNp( 'learn',    'student'      ),
@@ -421,6 +436,10 @@ export const transformStep = step =>
 // e.g. Array of { text: text_to_show_user_on_left, description: extra_but_faded_info_for_user, value: %key% } objects
 export const stepKeyOptionsForDropdown = _.map( stepMacros, s => ( { text: s.key, description: s.hint, value: s.key } ) )
 
+export const autocompleteOptions = _.map(stepMacros, s => ({
+  desc: s.desc,
+  text: s.key
+}))
 /* Example uses:
 
     const s1 = {

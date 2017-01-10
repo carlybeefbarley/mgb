@@ -79,6 +79,7 @@ export default AssetCreateNewRoute = React.createClass({
       } else {
         newAsset._id = result             // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)
+        joyrideCompleteTag(`mgbjr-CT-asset-create-new`)
         joyrideCompleteTag(`mgbjr-CT-asset-create-new-${newAsset.kind}`)
         // Now go to the new Asset
         utilPushTo(this.context.urlLocation.query, `/u/${newAsset.dn_ownerNam}/asset/${result}`)

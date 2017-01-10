@@ -34,7 +34,7 @@ const HomeHeroBanner = ( { userId, username } ) => (
         <p style={{ fontSize: '1.5em', maxWidth: '450px' }}>
           Learn coding, design, team and biz skills - by making original games with friends
           <br />
-          <QLink to={`/learn`}>
+          <QLink to={`/learn/getstarted`}>
             <Button color='teal' size='huge' style={{ marginTop: '1.5em' }} content='Get started' />
           </QLink>
         </p>

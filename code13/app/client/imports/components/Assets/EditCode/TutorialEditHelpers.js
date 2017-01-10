@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { Header, Button, Segment, Message, Icon, List, Label, Dropdown } from 'semantic-ui-react'
 import { parseStepsWithMacroResults } from '/client/imports/Joyride/Joyride'
 
-import { stepKeyOptionsForDropdown } from '/client/imports/Joyride/JoyrideSpecialMacros'
+import { stepKeyOptionsForDropdown, autocompleteOptions } from '/client/imports/Joyride/JoyrideSpecialMacros'
 
 const isMacroStepSty = { color: 'green' }
 const errorSty =       { color: 'red'   }
@@ -149,4 +149,71 @@ TutorialMentor.parseJson = ( json ) =>
 
 
 
+TutorialMentor.showHint = (cm, CodeMirror) => {
+  /* text: description: value */
+  let tooltip = null
+  // TODO: optimize - reuse tooltip
+  const createTooltip = () => {
+    const node = document.createElement("div")
+    // same class as for JS tooltips
+    node.className = "CodeMirror-Tern-tooltip CodeMirror-Tern-hint-doc"
+    return node
+  }
+  const removeTooltip = () => {
+    if(tooltip){
+      tooltip.parentNode.removeChild(tooltip)
+    }
+  }
+
+  return cm.showHint({
+    hint: () => {
+      const token = cm.getTokenAt(cm.getCursor())
+      if (token.type != "string") {
+        return null
+      }
+      // strip quotes
+      const keyword = token.string.substring(1, token.string.length - 1)
+      const list = autocompleteOptions.filter(a => {
+        return !keyword || a.text.startsWith(keyword)
+      })
+      const from = Object.assign({}, cm.getCursor())
+      from.ch = token.start + 1 // keep quote
+
+      const to = Object.assign({}, from)
+      to.ch = token.end - 1 // keep quote
+
+      list.sort((a, b) => {
+        return a.text < b.text ? -1 : 1
+      })
+      const hints = {
+        list, from, to,
+        // completeSingle seems that is not working ?
+        completeSingle: false
+      }
+
+      CodeMirror.on(hints, "select", (completion, element) => {
+        // remove old tooltip
+        removeTooltip()
+
+        tooltip = createTooltip()
+        tooltip.innerHTML = completion.desc
+        // li < ul < body - by default
+        element.parentNode.parentNode.appendChild(tooltip)
+        const box = element.getBoundingClientRect()
+        const ulbox = element.parentNode.getBoundingClientRect()
+
+        tooltip.style.left = ulbox.left + ulbox.width + "px"
+        tooltip.style.top = box.top + "px"
+
+      })
+      CodeMirror.on(hints, "close", () => {
+        removeTooltip()
+        // cleanup
+        CodeMirror.off(hints, "close")
+        CodeMirror.off(hints, "select")
+      })
+      return hints
+    }
+  })
+}
 export default TutorialMentor

@@ -8,6 +8,7 @@ import ProjectMembersGET from '/client/imports/components/Projects/ProjectMember
 import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import Helmet from 'react-helmet'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import UserListRoute from '../Users/List'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
@@ -172,7 +173,12 @@ export default ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, this.canEdit(), changeObj, (error) => {
       if (error) 
-        console.log("Could not update project: ", error.reason)      
+        console.log("Could not update project: ", error.reason)
+      else 
+      {
+       // Go through all the keys, log completion tags for each
+        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-project-set-field-${k}`))     
+      }
     })
   },
 
@@ -191,7 +197,7 @@ export default ProjectOverview = React.createClass({
       else
       {
         // alert(`Deleted ${result} Project: '${name}'`)  We have a nice UI for this instead now using state & activityLog...
-        logActivity("project.destroy",  `Destroyed empty project ${name}`)    
+        logActivity("project.destroy",  `Destroyed empty project ${name}`)
         this.setState( { isDeletePending: false, isDeleteComplete: true } )
       }
     })

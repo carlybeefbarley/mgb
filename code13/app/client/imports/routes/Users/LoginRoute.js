@@ -48,7 +48,7 @@ export default LoginRoute = React.createClass({
         <Segment padded>
           <Header as='h2'>Log In</Header>
           { innerRender() }
-          { !currUser && <LoginLinks showLogin={true} showForgot={true} /> }
+          { !currUser && <LoginLinks showSignup={true} showForgot={true} /> }
         </Segment>
       </Container>
     )

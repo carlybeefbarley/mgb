@@ -22,6 +22,46 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
 
+
+    {
+      'timestamp': 'Sun Jan 08 2017 12:10:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2424'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial Editor - Step Autocomplete',
+          'changeSummary': 'Added ctrl-SPACE to autocomplete a special Step macro in the Tutorial Editor. For example, type "%np- then press ctrl-SPACE to see an autocomplete list',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.toolbars',
+          'type': 'bugfix',
+          'changeName': 'Fixed bug where Toolbar buttons sometimes got stuck',
+          'changeSummary': 'Ya. Fixed that bug real good.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial Editor - Extra tags for new tutorials',
+          'changeSummary': 'Added selectors and completionTags to support more of the Project-oriented tutorials.',
+          'otherUrls': [ ]
+        },
+        
+      ]
+    },
+
     {
       'timestamp': 'Mon Jan 02 2017 18:30:00 GMT-0800 (PST)',
 
@@ -53,6 +93,8 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
         
       ]
     },
+
+
     {
       'timestamp': 'Sat Dec 31 2016 09:40:00 GMT-0800 (PST)',
 

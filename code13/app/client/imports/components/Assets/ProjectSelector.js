@@ -24,11 +24,18 @@ export default ProjectSelector = React.createClass({
     let ownedProjects = []
     let memberOfProjects = []
     const userName = user ? user.profile.name : "guest"
-    const anyOrAll = isUseCaseCreate ? 'No' : 'All'
+    const anyOrAll = isUseCaseCreate ? 'No Project' : 'All Projects'
+    let activeProjectObject = null
 
     // Build the list of 'View Project' Menu choices of OWNED and MEMBER projects
     _.each(availableProjects, (project) => { 
-      const isActive = (project.name === pName)     // TODO: Also ADD projectOWNER !!!!!!!
+      const isActive = (project.name === pName) 
+      if (isActive) {
+        if (activeProjectObject) {
+          console.error('BUG: ProjectSelector() DOES NOT YET HANDLE ProjectName collisions. Doh ')    // TODO!!! Update interface to handle userId
+        }
+        activeProjectObject = project
+      }
       const isOwner = user && (project.ownerId === user._id)
       const entry = (
         <a  className={"ui item"+ (isActive ? " active" : "")} 
@@ -48,7 +55,7 @@ export default ProjectSelector = React.createClass({
     // Add '(Any Project) if there are 1 or more projects Owned by this user
     if (ownedProjects.length > 0)
     {
-      let isActive = (pName === null)
+      const isActive = (pName === null)
       ownedProjects.unshift(
         <a  className={"ui item"+ (isActive ? " active" : "")} 
             title='Assets can optionally be placed in one or more projects, as long as the projects all have the same Owner'
@@ -56,7 +63,7 @@ export default ProjectSelector = React.createClass({
             key="__all" 
             onClick={this.handleChangeSelectedProjectName.bind(this, null)}>
             { this.renderSelectionIcon(isActive ) }
-            ({anyOrAll} Project)
+            ({anyOrAll})
         </a>)
       ownedProjects.unshift(
         <a  className="ui header"
@@ -77,11 +84,12 @@ export default ProjectSelector = React.createClass({
         </a>
       )
 
-    // Create the   |  Within Project:  (ProjectSelect v)    |    UI        
+    // Create the   |  In Project:  (ProjectSelect v)    |    UI        
 
+    const pNameToShow = activeProjectObject ? this.makeCompoundProjectName(activeProjectObject.ownerName, activeProjectObject.name) : pName
     return (
       <div className="ui simple dropdown item">
-        <small >Within Project: {pName || `(${anyOrAll} Project)`} </small>
+        <small>In Project: {pNameToShow || `(${anyOrAll})`}</small>
         <i className="dropdown icon"></i>
         <div className="ui right menu simple">
           { ownedProjects }
@@ -102,6 +110,6 @@ export default ProjectSelector = React.createClass({
     if (proj)
       this.props.handleChangeSelectedProjectName( proj.name, proj, this.makeCompoundProjectName(proj.ownerName, proj.name) )
     else
-      this.props.handleChangeSelectedProjectName( null, null, "" )
+      this.props.handleChangeSelectedProjectName( null, null, '' )
   }
 })

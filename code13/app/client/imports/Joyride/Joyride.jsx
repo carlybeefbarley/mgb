@@ -616,9 +616,6 @@ export default class Joyride extends React.Component {
 
     if (step && !document.querySelector(step.selector)) {
 
-      if (this.state.stepIsWaiting)
-        return
-
       this.setState({
         showTooltip: false,
         index: newIndex,

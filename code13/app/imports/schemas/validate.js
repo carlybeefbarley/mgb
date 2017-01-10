@@ -28,6 +28,10 @@ const validate = {
     return validate.lengthCap(text, 64)
   },
 
+  projectName: function (text) {
+    return validate.lengthCap(text, 64) && -1 === text.search(/[\#\:\?]/)
+  },
+
   assetName: function(text) {
     return validate.lengthCap(text, 64) && -1 === text.search(/[\#\:\?]/)
   },

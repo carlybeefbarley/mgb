@@ -1,4 +1,7 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import validate from '/imports/schemas/validate'
+import { Message, Icon } from 'semantic-ui-react'
 
 // The Create Project link is always in context of a user since only a user can create a project in their account. 
 
@@ -6,7 +9,8 @@ export default ProjectCreateNew = React.createClass({
   propTypes: {
     placeholderName:          PropTypes.string.isRequired,      // Note that a default is provided below 
     handleCreateProjectClick: PropTypes.func.isRequired,        // Callback function to create the project, and is expected to navigate to the new page. Params are (projectKindKey, newProjectNameString). The newProjectNameString can be ""
-    currUser:                 PropTypes.object                  // currently logged in user (if any)
+    currUser:                 PropTypes.object,                 // currently logged in user (if any)
+    currUserProjects:         PropTypes.array                   // Projects list for currently logged in user
   },
 
 
@@ -23,16 +27,32 @@ export default ProjectCreateNew = React.createClass({
     }
   },
 
+  /**
+   * 
+   * 
+   * @param {any} pName
+   * @returns {Boolean} 
+   */
+  isProjectNameInUseByCurrUser: function(pName) {
+    const { currUser } = this.props
+    if (!currUser)
+      return false
+      
+    const cuid = this.props.currUser._id
+    const exists = _.some(this.props.currUserProjects, p => ( p.ownerId === cuid && _.upperCase(p.name) === _.upperCase(pName) ) )
+    return exists
+  },
 
   render: function() {
     const { currUser } = this.props
-    const isProjectNameValid = (this.state.newProjectName !== "")   // TODO - some checks for crazy characters
+    const newPname = this.state.newProjectName
+    const inUse = this.isProjectNameInUseByCurrUser(newPname)
+    const isProjectNameValid = (!inUse && validate.projectName(newPname) && newPname !== "")  
     const isProjectReadyToCreate = isProjectNameValid
-    const chosenNameStr = isProjectNameValid ? `"${this.state.newProjectName}"` : ""
+    const chosenNameStr = isProjectNameValid ? `"${newPname}"` : ""
     const isButtonDisabled = this.state.buttonActionPending || !isProjectReadyToCreate
     const createButtonClassName = "ui primary" + (isButtonDisabled ? " disabled " : " ") + "button"
     const createButtonTooltip = isProjectReadyToCreate ? "Click here to create your new Project" : "You must choose a valid name for your new project. There is no 'project rename' capability yet, so try to pick a name you like :)"
-    
     return (
       <div>
         <div id='mgbjr-project-create-new-explanation' className='ui raised segment'>
@@ -48,21 +68,37 @@ export default ProjectCreateNew = React.createClass({
           </p>
         </div>
 
-        <div className="ui padded segment" id='mgbjr-project-create-new-input-name' >
-          <h4 className="ui header">Enter a name for your new Project</h4>
-          <div className="ui items">
-            <div className={"ui fluid input" + (isProjectNameValid ? "" : " error")}>
-              <input className="fluid" type="text" value={this.state.newProjectName} onChange={(e) => this.setState({ newProjectName: e.target.value})} placeholder={this.props.placeholderName} ref={inp => (inp && inp.focus())}></input>
+        { currUser && 
+          <div className="ui padded segment" id='mgbjr-project-create-new-input-name' >
+            <h4 className="ui header">Enter a name for your new Project</h4>
+            <div className="ui items">
+              <div className={"ui fluid input" + (isProjectNameValid ? "" : " error")}>
+                <input 
+                    className="fluid" 
+                    type="text" 
+                    value={newPname} 
+                    onChange={(e) => this.setState({ newProjectName: e.target.value})} 
+                    placeholder={this.props.placeholderName} 
+                    ref={inp => (inp && inp.focus())}>
+                </input>
+              </div>
+            </div>
+            { inUse && <p><Icon name="warning sign"/>&emsp;You already own a Project with that Name</p> }
+          </div>
+        }
+
+        { currUser && 
+          <div title={createButtonTooltip}>
+            <div className={createButtonClassName} onClick={this.handleCreateProjectClick} id="mgbjr-create-new-project-button" >
+              Create New Project {chosenNameStr}
+              <i className="right chevron icon"></i>
             </div>
           </div>
-        </div>
+        }
 
-        <div title={createButtonTooltip}>
-          <div className={createButtonClassName} onClick={this.handleCreateProjectClick} id="mgbjr-create-new-project-button" >
-            Create New Project {chosenNameStr}
-            <i className="right chevron icon"></i>
-          </div>
-        </div>
+        { !currUser && 
+          <Message icon='warning sign' warning content='You must be logged in to create a Project'/>
+        }
 
       </div>
     )
@@ -71,7 +107,8 @@ export default ProjectCreateNew = React.createClass({
 
   handleCreateProjectClick: function()
   {
-    this.setState( { buttonActionPending: true})
+
+    this.setState( { buttonActionPending: true} )
     this.props.handleCreateProjectClick(this.state.newProjectName)
   }
 

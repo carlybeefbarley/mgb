@@ -42,7 +42,7 @@ const BufferLoader = (context) => {
                     }
                   }, true)
                 })
-              }, null, false, (request) => {
+              }, null, (request) => {
                 request.responseType = "blob";
               })
 

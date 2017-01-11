@@ -52,6 +52,8 @@ export const observe = (selector, onReady, onChange = onReady, cachedObservable 
       observable.observer && observable.observer.stop()
       // Something internally in the Meteor makes subscription to stop even before it's ready
       // try again.. TODO: debug this further
+      // this is caused by subscriptions called in ReactGetMeteorData - as they automatically gets closed
+      // another fix is to remove from stack Meteor.subscribe
       !onReadyCalled && observe(selector, onReady, onChange, observable)
     },
     onReady: () => {
@@ -71,12 +73,13 @@ export const observe = (selector, onReady, onChange = onReady, cachedObservable 
   })
   return observable
 }
+
 // will fetch asset by uri via ajax - returns Promise
-export const fetchAssetByUri = (uri, allowCache) => {
+export const fetchAssetByUri = (uri) => {
   return new Promise(function (resolve, reject) {
     mgbAjax(uri, (err, content) => {
       err ? reject(err) : resolve(content)
-    }, null, allowCache)
+    }, null)
   })
 }
 
@@ -109,22 +112,11 @@ const removeFromCache = uri => {
     ajaxCache.splice(index, 1)
   }
 }
+
 // this function will try to make the best of etag
 // asset param is optional - without it this function will work as normal ajax
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
-
-export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOpen = null) => {
-  if (pullFromCache === true) {
-    const cached = getFromCache(uri)
-    if (cached) {
-      // remove from stack to maintain async behaviour
-      setTimeout(() => {
-        console.log("From cache")
-        callback(null, cached.response)
-      }, 0)
-      return
-    }
-  }
+export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
   if (etag) {
     const cached = getFromCache(uri, etag)
@@ -176,7 +168,7 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOp
   }
 }
 
-// this class fetched and updates asset and its content2
+// this class fetches and updates asset and its content2
 
 class AssetHandler {
   constructor(assetId, onChange) {

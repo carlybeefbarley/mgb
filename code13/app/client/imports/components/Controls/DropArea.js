@@ -4,7 +4,8 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
-import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
+// TODO: use observe from assetFetchers instead of custom observer
+// import { observe } from "/client/imports/helpers/assetFetchers"
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.

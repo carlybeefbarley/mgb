@@ -297,7 +297,7 @@ if(true || Meteor.isProduction) {
     }
     else {
       CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
-      Meteor.call("Slack.Cloudfront.notification", `Cloudfront distrinution is Ready @ ${CLOUDFRONT_DOMAIN_NAME}`)
+      Meteor.call("Slack.Cloudfront.notification", `Cloudfront distribution is Ready @ ${CLOUDFRONT_DOMAIN_NAME}`)
     }
   })
 
@@ -307,7 +307,6 @@ if(true || Meteor.isProduction) {
 
   Meteor.startup( () => {
     getDistribution((err, cloudfrontDistribution) => {
-      console.log("HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
       if (err) {
         console.error(`Failed to LOAD distribution with error: ${err}`, err)
         // this should show only once

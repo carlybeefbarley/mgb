@@ -13,8 +13,9 @@ import C from './CommonSkillNodes'
 
 export default {
   $meta: {
-    name:       'PhaserJS',
-    description:'PhaserJS Game Development Framework'
+    name:           'PhaserJS',
+    description:    'PhaserJS Game Development Framework',
+    assetExamples:  [ '!vault:phaser.groups.addSprite'] // Not used yet. Example for discussion
   },
   Game:       C.En(1),
   Loader:     C.En(1)

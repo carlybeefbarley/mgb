@@ -47,13 +47,13 @@ export default class EditActor extends React.Component {
     return [
       {
         tab: "All",
-        content: <FormsAll asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
+        content: <FormsAll asset={this.props.asset} onChange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
       {
         tab: "Animations",
-        content: <Animations asset={this.props.asset} onchange={this.handleSave.bind(this)}/>
+        content: <Animations asset={this.props.asset} onChange={this.handleSave.bind(this)}/>
       },
       {
         tab: "Character Behavior",
@@ -61,7 +61,7 @@ export default class EditActor extends React.Component {
           databag.all.actorType == actorOptions.actorType['Item, Wall or Scenery']
             || databag.all.actorType == actorOptions.actorType['Shot']
         ),
-        content: <CharacterBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
+        content: <CharacterBehavior asset={this.props.asset} onChange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
@@ -72,7 +72,7 @@ export default class EditActor extends React.Component {
             || databag.all.actorType == actorOptions.actorType['Item, Wall or Scenery']
             || databag.all.actorType == actorOptions.actorType['Shot']
         ),
-        content: <NPCBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
+        content: <NPCBehavior asset={this.props.asset} onChange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
@@ -83,7 +83,7 @@ export default class EditActor extends React.Component {
             || databag.all.actorType == actorOptions.actorType['Non-Player Character (NPC)']
             || databag.all.actorType == actorOptions.actorType['Shot']
         ),
-        content: <ItemBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
+        content: <ItemBehavior asset={this.props.asset} onChange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
@@ -93,7 +93,7 @@ export default class EditActor extends React.Component {
           databag.all.actorType == actorOptions.actorType['Player']
           || databag.all.actorType == actorOptions.actorType['Shot']
         ),
-        content: <Spawning asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
+        content: <Spawning asset={this.props.asset} onChange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       },
@@ -103,7 +103,7 @@ export default class EditActor extends React.Component {
           databag.all.actorType == actorOptions.actorType['Player']
           || databag.all.actorType == actorOptions.actorType['Shot']
         ),
-        content: <Conditions asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
+        content: <Conditions asset={this.props.asset} onChange={this.handleSave.bind(this)} saveThumbnail={(d) => {
           this.handleSave(null, d, "Updating thumbnail")
         }}/>
       }

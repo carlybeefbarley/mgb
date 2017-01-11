@@ -127,6 +127,7 @@ export default PlayGameRoute = React.createClass({
   componentWillUnmount: function () {
     if(this.assetHandler){
       this.assetHandler.stop()
+      this.assetHandler = null
     }
   },
 

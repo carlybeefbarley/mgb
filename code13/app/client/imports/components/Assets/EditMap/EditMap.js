@@ -148,6 +148,10 @@ export default class EditMap extends React.Component {
   createNewMap(){
     this.mgb_content2 = TileHelper.genNewMap(10, 10)
     this.cache = new Cache(this.mgb_content2, () => {
+      // unmounted during cache fetching
+      if(!this.cache){
+        return
+      }
       this.quickSave("New Map data")
       // this is called in the construct - and callback will be instant
       this.setState({isLoading: false})
@@ -215,6 +219,7 @@ export default class EditMap extends React.Component {
 
   componentWillUnmount(){
     this.cache && this.cache.cleanUp()
+    this.cache = null
   }
 
   enableTrait(trait) {

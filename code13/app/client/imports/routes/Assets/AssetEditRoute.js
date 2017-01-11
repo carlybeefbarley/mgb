@@ -134,9 +134,9 @@ export default AssetEditRoute = React.createClass({
       this._attemptToSendAnyDeferredChanges( { forceResend: true } )
     }
 
-    console.log("UnMounted")
-    // stop handles subscription
+    // stop subscription handler
     this.assetHandler.stop()
+    this.assetHandler = null
   },
 
   componentDidUpdate() {

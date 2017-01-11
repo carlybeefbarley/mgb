@@ -49,15 +49,15 @@ export const observe = (selector, onReady, onChange = onReady, cachedObservable 
     }
   observable.subscription = Meteor.subscribe("assets.public.partial.bySelector", selector, {
     onStop: () => {
-      subscription.observer && subscription.observer.stop()
+      observable.observer && observable.observer.stop()
       // Something internally in the Meteor makes subscription to stop even before it's ready
       // try again.. TODO: debug this further
-      !onReadyCalled && observe(selector, onReady, onChange, subscription)
+      !onReadyCalled && observe(selector, onReady, onChange, observable)
     },
     onReady: () => {
       onReadyCalled = true
       if (ALLOW_OBSERVERS) {
-        subscription.observer = cursor.observeChanges({
+        observable.observer = cursor.observeChanges({
           changed: (id, changes) => {
             onChange(id, changes)
           }
@@ -230,13 +230,15 @@ class AssetHandler {
         this.asset.content2 = updateObj ? updateObj.content2 : (this.asset.content2 ? this.asset.content2 : oldC2)
         this.etag = genetag(this.asset)
       }
-
-
-      this.updateContent2(updateObj)
     }
 
+    // user that has modified asset will have updateObj
     if (updateObj) {
       this.asset.content2 = updateObj.content2
+    }
+    // viewer won't
+    else{
+      this.updateContent2(updateObj)
     }
 
     if(this.subscription){

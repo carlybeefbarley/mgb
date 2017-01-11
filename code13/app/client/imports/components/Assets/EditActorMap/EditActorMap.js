@@ -55,7 +55,8 @@ export default class EditActorMap extends EditMap {
 
       // stores tiles and images
       this.cache = new Cache(this.mgb_content2, () => {
-        this.setState({isLoading:  false})
+        // is cache still present?
+        this.cache && this.setState({isLoading:  false})
       })
     })
   }

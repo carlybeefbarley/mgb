@@ -5,12 +5,14 @@ export default class Thumbnail extends React.Component {
   static propTypes = {
     id: React.PropTypes.string.isRequired,
     className: React.PropTypes.string,
-    style: React.PropTypes.object
+    style: React.PropTypes.object,
+    expires: React.PropTypes.number // expire time seconds
   }
 
-
   render(){
-    const expires = this.props.expires || 3600
-    return <img className={this.props.className} style={this.props.style} src={makeCDNLink(`/api/asset/cached-thumbnail/png/${this.props.id}/${expires}`)}></img>
+    const expires = typeof this.props.expires === "undefined" ? 3600 : this.props.expires
+    const now = Date.now()
+    const nextUpdate = now - (now % (expires * 1000))
+    return <img className={this.props.className} style={this.props.style} src={makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${this.props.id}`, nextUpdate)}></img>
   }
 }

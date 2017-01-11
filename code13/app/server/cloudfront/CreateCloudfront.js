@@ -9,11 +9,14 @@ import AWS from 'aws-sdk'
 import config from './config.json'
 import { WebApp } from 'meteor/webapp'
 
-if(Meteor.isProduction) {
+import '/server/slackIntegration'
+
+// remove true after debugging is done
+if(true || Meteor.isProduction) {
 // Config
   const ORIGIN_DOMAIN_NAME = 'mightyfingers.com' // v2.mygamebuilder.com
   const HTTP_PORT = 80
-  const HTTPS_POST = 443
+  const HTTPS_PORT = 443
   const params = {
     DistributionConfig: {
       /* required */
@@ -241,9 +244,9 @@ if(Meteor.isProduction) {
   });
 // End of CORS FIX
 
-
-  const cloudfront = new AWS.CloudFront({apiVersion: '2016-11-25'})
   AWS.config.update(config)
+  const cloudfront = new AWS.CloudFront({apiVersion: '2016-11-25'})
+
 
 // find distribution based on origin domain name
   const getDistribution = (callback) => {
@@ -278,7 +281,7 @@ if(Meteor.isProduction) {
     });
   }
 
-  const setCDNPrams = (cloudfrontDistribution) => {
+  const setCDNPrams = Meteor.bindEnvironment((cloudfrontDistribution) => {
     if (cloudfrontDistribution.Status != "Deployed") {
       Meteor.call("Slack.Cloudfront.notification", `Waiting for cloudfront distribution to be ready: ${CLOUDFRONT_DOMAIN_NAME} \n this may take a while (up to 30minutes`)
       cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id}, function (err, data) {
@@ -294,33 +297,36 @@ if(Meteor.isProduction) {
     }
     else {
       CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
-      Meteor.call("Slack.Cloudfront.notification", `Cloudfront distrinution is Ready: ${err}`)
+      Meteor.call("Slack.Cloudfront.notification", `Cloudfront distrinution is Ready @ ${CLOUDFRONT_DOMAIN_NAME}`)
     }
-  }
+  })
 
   const createDistribution = (callback) => {
     cloudfront.createDistribution(params, callback)
   }
 
-  getDistribution((err, cloudfrontDistribution) => {
-    if (err) {
-      console.error(err)
-      // this should show only once
-      Meteor.call("Slack.Cloudfront.notification", `Failed to LOAD distribution with error: ${err} \n Trying to create new Distribution`)
-      createDistribution((err, data) => {
-        if (err) {
-          Meteor.call("Slack.Cloudfront.notification", `Failed to CREATE distribution with error: ${err}`, true)
-          console.error(err)
-          return
-        }
-        console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
-        Meteor.call("Slack.Cloudfront.notification", `Cloudfront distribution has been successfully set up: ${CLOUDFRONT_DOMAIN_NAME}`)
-        setCDNPrams(data)
-      })
-      return
-    }
-    setCDNPrams(cloudfrontDistribution)
-    console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
+  Meteor.startup( () => {
+    getDistribution((err, cloudfrontDistribution) => {
+      console.log("HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      if (err) {
+        console.error(`Failed to LOAD distribution with error: ${err}`, err)
+        // this should show only once
+        Meteor.call("Slack.Cloudfront.notification", `Failed to LOAD distribution with error: ${err} \n Trying to create new Distribution`)
+        createDistribution((err, data) => {
+          if (err) {
+            Meteor.call("Slack.Cloudfront.notification", `Failed to CREATE distribution with error: ${err}`, true)
+            console.error(`Failed to CREATE distribution with error`, err)
+            return
+          }
+          console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
+          Meteor.call("Slack.Cloudfront.notification", `Cloudfront distribution has been successfully set up: ${CLOUDFRONT_DOMAIN_NAME}`)
+          setCDNPrams(data)
+        })
+        return
+      }
+      setCDNPrams(cloudfrontDistribution)
+      console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
+    })
   })
 
 }

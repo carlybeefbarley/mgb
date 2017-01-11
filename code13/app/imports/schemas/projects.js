@@ -346,9 +346,9 @@ export const getMsgForProjectAccess = (pte) => (
 )
 
 
-export const getProjectAvatarUrl = (p) => (
+export const getProjectAvatarUrl = (p, expires = 3600) => (
   (p.avatarAssetId.length && p.avatarAssetId.length && p.avatarAssetId.length > 0)
-  ? `/api/asset/cached-thumbnail/png/3600/${p.avatarAssetId}`
+  ? `/api/asset/cached-thumbnail/png/${expires}/${p.avatarAssetId}`
   : "/images/wireframe/image.png"
 ) 
 

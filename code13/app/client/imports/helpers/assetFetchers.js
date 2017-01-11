@@ -30,8 +30,8 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
 }
 
 // project avatar url prefixed with CDN host
-export const getProjectAvatarUrl = (p) => (
-  makeCDNLink(getProjectAvatarUrlBasic(p))
+export const getProjectAvatarUrl = (p, expires = 60) => (
+  makeCDNLink(getProjectAvatarUrlBasic(p, expires))
 )
 
 

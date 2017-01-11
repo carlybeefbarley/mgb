@@ -1655,7 +1655,7 @@ export default class EditCode extends React.Component {
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
       return (
         <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
-          <Thumbnail className="ui right spaced medium image" id={assetInfo.id} />
+          <Thumbnail className="ui right spaced medium image" id={assetInfo.id} expires={60} />
           URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
         </a>
       )

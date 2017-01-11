@@ -24,6 +24,30 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
+      'timestamp': 'Wed Jan 11 2017 15:00:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2454'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'GetStarted Tutorials for non-Code games',
+          'changeSummary': 'Added tag support in the system for the GettingStarted Tutorials for ActorMap-based games - these enable quite complex RPG/action games to be built without any code. ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Tue Jan 10 2017 10:20:00 GMT-0800 (PST)',
 
       'id': {

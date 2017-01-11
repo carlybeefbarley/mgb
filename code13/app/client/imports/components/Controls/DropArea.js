@@ -152,7 +152,7 @@ export default class DropArea extends React.Component {
     return (
       <div className="inline fields">
         <label>{name}</label>
-        <SmallDD options={options} onchange={(val) => {
+        <SmallDD options={options} onChange={(val) => {
           this.props.value = val
           this.state.asset = null
           this.props.onChange && this.props.onChange(val)

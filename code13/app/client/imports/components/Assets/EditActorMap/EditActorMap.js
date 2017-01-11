@@ -159,7 +159,7 @@ export default class EditActorMap extends EditMap {
       <div className="ui modal" ref="jump" style={{position: "absolute"}}>
         <div className="header">Add Jump Event</div>
         <div className="content">
-          <PlayForm asset={this.state.jumpData} onchange={(v) => {this.setState({event: this.state.jumpData})}}/>
+          <PlayForm asset={this.state.jumpData} onChange={(v) => {this.setState({event: this.state.jumpData})}}/>
         </div>
         <div className="actions">
           <div className="ui approve button">Approve</div>
@@ -174,7 +174,7 @@ export default class EditActorMap extends EditMap {
       <div className="ui modal" ref="music" style={{position: "absolute"}}>
         <div className="header">Add Music Event</div>
         <div className="content">
-          <MusicForm asset={this.state.musicData} onchange={ () => {this.setState( { event: this.state.musicData } ) } }/>
+          <MusicForm asset={this.state.musicData} onChange={ () => {this.setState( { event: this.state.musicData } ) } }/>
         </div>
         <div className="actions">
           <div className="ui approve button">Confirm</div>

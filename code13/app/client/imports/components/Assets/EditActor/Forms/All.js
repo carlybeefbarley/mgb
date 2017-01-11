@@ -24,7 +24,7 @@ export default class All extends BaseForm {
     }
 
     return (
-    <div id="mgbjr-edit-actor-actorType" onchange={() => joyrideCompleteTag(`mgbjr-CT-edit-actor-${actorOptions.actorType}`)} className="ui form">
+    <div id="mgbjr-edit-actor-actorType" onChange={() => joyrideCompleteTag(`mgbjr-CT-edit-actor-${actorOptions.actorType}`)} className="ui form">
           {this.options("Actor Type", 'actorType', actorOptions.actorType)}
           {this.text("Description", 'description')}
           {this.text("Initial Heath", 'initialHealthNum', "number", initHealthConfig )}

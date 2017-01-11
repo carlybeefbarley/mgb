@@ -24,13 +24,13 @@ export default class Animations extends React.Component {
 
   changeGraphic(index, val) {
     this.data[index].tileName = val
-    this.props.onchange && this.props.onchange()
+    this.props.onChange && this.props.onChange()
   }
 
   changeEffect(index, val) {
     this.data[index].effect = val
     this.forceUpdate()
-    this.props.onchange && this.props.onchange()
+    this.props.onChange && this.props.onChange()
   }
 
   render() {
@@ -49,7 +49,7 @@ export default class Animations extends React.Component {
             <DropArea kind="graphic" value={this.data[i].tileName} effect={this.data[i].effect} asset={this.props.asset} onChange={this.changeGraphic.bind(this, i)}/>
           </Table.Cell>
           <Table.Cell>
-            <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onchange={this.changeEffect.bind(this, i)} />
+            <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
           </Table.Cell>
         </Table.Row>
       )

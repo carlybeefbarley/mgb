@@ -20,7 +20,7 @@ export default class SmallDD extends React.Component{
           <div className="item" onClick={
             (e) => {
                   console.log(e.target.dataset.value);
-                  this.props.onchange && this.props.onchange(e.target.dataset.value)
+                  this.props.onChange && this.props.onChange(e.target.dataset.value)
 
              }
           }

@@ -3,6 +3,7 @@ import React from 'react'
 import BaseForm from '../../../Controls/BaseForm.js'
 import actorOptions from '../../Common/ActorOptions.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 export default class All extends BaseForm {
 
@@ -23,7 +24,7 @@ export default class All extends BaseForm {
     }
 
     return (
-        <div className="ui form">
+    <div id="mgbjr-edit-actor-actorType" onchange={() => joyrideCompleteTag(`mgbjr-CT-edit-actor-${actorOptions.actorType}`)} className="ui form">
           {this.options("Actor Type", 'actorType', actorOptions.actorType)}
           {this.text("Description", 'description')}
           {this.text("Initial Heath", 'initialHealthNum', "number", initHealthConfig )}

@@ -1,6 +1,8 @@
 import React from 'react'
 import BaseForm from '../../../Controls/BaseForm.js'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+
 export default class All extends BaseForm {
   get data() {
     return this.props.asset.content2.databag.npc
@@ -62,34 +64,44 @@ export default class All extends BaseForm {
   render() {
     return (
       <div className="ui form">
-        {this.options("Movement Type", 'movementType', [
-          { text: "No automatic movement",  value: "0" },
-          { text: "Moves randomly",         value: "1" },
-          { text: "Moves towards player",   value: "2" },
-          { text: "Moves away from player", value: "3" },
-        ], {
-          title: "Select the way the NPC will move"
-        })}
+        <span id="mgbjr-edit-actor-tab-NPCBehavior-movement">
+          {this.options("Movement Type", 'movementType', [
+            { text: "No automatic movement",  value: "0" },
+            { text: "Moves randomly",         value: "1" },
+            { text: "Moves towards player",   value: "2" },
+            { text: "Moves away from player", value: "3" },
+          ], {
+            title: "Select the way the NPC will move"
+          })}
+        </span>
+        <span id="mgbjr-edit-actor-tab-NPCBehavior-aggro">
         {this.data.movementType != "2" && this.text("Aggro range", 'aggroRange', "number", {
           title: "If the NPC is with this many tiles of the player, then the NPC will move towards the player"
         })}
-        {this.bool("NPC can occupy player's space", 'canOccupyPlayerSpaceYN')}
+        </span>
+        <span id="mgbjr-edit-actor-tab-NPCBehavior-occupySpace">
+          {this.bool("NPC can occupy player's space", 'canOccupyPlayerSpaceYN')}
+        </span>
+        <span id="mgbjr-edit-actor-tab-NPCBehavior-shot">
         {this.options("Automatic shot accuracy", 'shotAccuracyType', [
           { text: "Random shot", value: "0" },
           { text: "Poor shot",   value: "1" },
           { text: "Good shot",   value: "2" },
           { text: "Great shot",  value: "3" },
         ])}
+        </span>
         <hr />
+        <div id="mgbjr-edit-actor-tab-NPCBehavior-dialogue">
+          {this.props.asset.content2.databag.itemOrNPC.destroyableYN &&
+            <span style={{color: "red"}}>Note: Players can't talk to NPCs that they can do 'touch damage' to</span>
+          }
 
-        {this.props.asset.content2.databag.itemOrNPC.destroyableYN &&
-          <span style={{color: "red"}}>Note: Players can't talk to NPCs that they can do 'touch damage' to</span>
-        }
-
-        {this.textArea("Greeting when player meets", 'talkText', {
-          title: "When the player walks into this character, show this text in a dialog. This ONLY works if the NPC is placed on the ACTIVE layer of the map"
-        })}
-
+          <span onChange={ () => joyrideCompleteTag(`mgbjr-CT-edit-actor-tab-NPCBehavior-dialogue`)} >
+            {this.textArea("Greeting when player meets", 'talkText', {
+              title: "When the player walks into this character, show this text in a dialog. This ONLY works if the NPC is placed on the ACTIVE layer of the map",
+            })}
+          </span>
+        
         {this.data.talkText &&
         <div>
           {this.options("Font for message", 'talkTextFontIndex', [
@@ -104,7 +116,7 @@ export default class All extends BaseForm {
             title: "Font used for this message"
           })}
           <hr />
-          <fieldset>
+          <fieldset id="mgbjr-edit-actor-tab-NPCBehavior-dialogue-option1">
             <legend>Response option #1</legend>
             {this.createResponses(1)}
           </fieldset>
@@ -118,7 +130,7 @@ export default class All extends BaseForm {
           </fieldset>
         </div>
         }
-
+        </div>
       </div>
     )
   }

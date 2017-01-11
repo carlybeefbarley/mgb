@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+
 export default class Tabs extends React.Component{
   constructor() {
     super()
@@ -20,9 +22,18 @@ export default class Tabs extends React.Component{
           content.push(<div className="ui content" key={i}>{tabs[i].content}</div>)
       }
       else {
-        tabsJsx.push(<div className='ui item' key={i}
-                       style={{color: disabled ? "gray" : "black", cursor: disabled ? "auto": "pointer"}}
-                       onClick={ () => this.setState( { activeTab: i } )}>{tabs[i].tab}</div>)
+        const id=`mgbjr-edit-actor-tab-${tabs[i].tab.replace(/[^A-Z0-9]/ig, "")}` // #mgbjr-edit-actor-tab-(tab name with whitespace & special chars removed, capitalization preserved)
+        tabsJsx.push(<div 
+                        id={id} 
+                        className='ui item' 
+                        key={i}
+                        style={{color: disabled ? "gray" : "black", cursor: disabled ? "auto": "pointer"}}
+                        onClick={ () => {
+                          joyrideCompleteTag(`mgbjr-CT-edit-actor-tab-${tabs[i].tab.replace(/[^A-Z0-9]/ig, "")}`)
+                          this.setState( { activeTab: i } )
+                        }}>
+                          {tabs[i].tab}
+                    </div>)
         // this makes selecting tab quicker - but also will make all content sluggish on changes
         // content.push(<div className="ui content hidden" key={i}>{tabs[i].content}</div>)
       }

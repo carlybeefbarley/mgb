@@ -61,7 +61,7 @@ export default class Properties extends React.Component {
 
   render () {
     return (
-      <div className='mgbAccordionScroller'>
+      <div  id="mgbjr-MapTools-properties" className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
             <span className='explicittrigger'><i className='dropdown icon'></i> Properties</span>

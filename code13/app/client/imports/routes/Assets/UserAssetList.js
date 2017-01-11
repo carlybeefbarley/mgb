@@ -303,7 +303,7 @@ export default UserAssetListRoute = React.createClass({
             </div>
           </div>  
                     
-          <div className="ui row">
+          <div id="mgbjr-asset-search-projectSelector" className="ui row">
             { user ? <ProjectSelector 
                       canEdit={ownsProfile}
                       user={user}

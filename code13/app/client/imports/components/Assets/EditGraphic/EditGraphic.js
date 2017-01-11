@@ -1546,7 +1546,7 @@ export default class EditGraphic extends React.Component {
                 h:
               </div>
               <NumberInput
-                className="ui small input"
+                className="ui small input"P
                 min={1}
                 max={MAX_BITMAP_HEIGHT}
                 style={{width: "6em"}}
@@ -1558,6 +1558,7 @@ export default class EditGraphic extends React.Component {
 
             <span>&nbsp;&nbsp;</span> 
             <div className="ui small button miniPadding hazPopup"
+              id="mgbjr-editGraphic-changeCanvasZoom"
               data-content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
               data-variation="tiny"
               data-position="bottom center">

@@ -4,10 +4,13 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
+import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
-
   state = { text: '' }
+  
   static PropTypes = {
     kind: PropTypes.string.required, // asset kind which will accept this drop area
     value: PropTypes.string, // previously saved value
@@ -161,10 +164,14 @@ export default class DropArea extends React.Component {
     const asset = this.getAsset()
     return (
       <div
+        id={`mgbjr-dropArea-${this.props.kind}`}
         style={{width: "100%"}}
         className={'ui message accept-drop message' + (asset ? " positive" : "") + (this.state.badAsset ? " negative" : "")}
         onDragOver={DragNDropHelper.preventDefault}
-        onDrop={this.handleDrop.bind(this)}
+        onDrop={ (e) => {
+          joyrideCompleteTag(`mgbjr-CT-dropArea-${this.props.kind}`)
+          this.handleDrop(e)
+        }}
         >
 
         {!asset && !this.state.badAsset ? (this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :

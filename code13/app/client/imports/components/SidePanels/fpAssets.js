@@ -141,7 +141,7 @@ export default fpAssets = React.createClass({
     
     return (
       <div>
-        <div>
+        <div id="mgbjr-flexPanel-assets-search">
           { ((effectiveUser && userProjects) ? 
               <ProjectSelector
                   key="fpProjectSelector" // don't conflict with asset project selector
@@ -154,6 +154,7 @@ export default fpAssets = React.createClass({
                   chosenProjectName={project && project.name} />
               : null )
           }   
+
           <div className="ui small fluid action input">
             <input  type="text"
                     id="mgb_search_asset"

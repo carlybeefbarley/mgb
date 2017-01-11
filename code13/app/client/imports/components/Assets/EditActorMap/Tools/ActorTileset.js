@@ -13,6 +13,8 @@ import ActorValidator from '../../Common/ActorValidator.js'
 import ActorControls from './ActorControls.js'
 import Tileset from '../../Common/Map/Tools/TileSet.js'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+
 const _dragHelpMsg = 'Drop Actor Assets here to use them in this ActorMap'
 
 export default class ActorTool extends Tileset {
@@ -32,6 +34,7 @@ export default class ActorTool extends Tileset {
 
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
+    joyrideCompleteTag(`mgbjr-CT-MapTools-actors-drop`)
     if (!asset)
       return
 
@@ -71,7 +74,7 @@ export default class ActorTool extends Tileset {
 
   renderEmpty () {
     return (
-      <div className='mgbAccordionScroller'>
+      <div id="mgbjr-MapTools-actors" className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
             <span className='explicittrigger'><i className='dropdown icon'></i> Actors</span>

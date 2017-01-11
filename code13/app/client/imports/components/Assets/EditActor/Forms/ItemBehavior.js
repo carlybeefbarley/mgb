@@ -139,7 +139,9 @@ export default class ItemBehavior extends BaseForm {
   render() {
     return (
       <div className="ui form">
-        {this.options("Item Activation", 'itemActivationType', actorOptions.itemActivationType)}
+        <div id="mgbjr-edit-actor-tab-ItemBehavior-activation">
+          {this.options("Item Activation", 'itemActivationType', actorOptions.itemActivationType)}
+        </div>
 
         {(this.data.itemActivationType == "1" ||
             this.data.itemActivationType == "3" ) &&

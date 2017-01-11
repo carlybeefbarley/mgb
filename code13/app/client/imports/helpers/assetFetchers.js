@@ -14,7 +14,7 @@ const MAX_ASSET_CACHE_LENGTH = 500
 let CDN_DOMAIN = ""
 Meteor.startup(() => {
   Meteor.call("CDN.domain", (err, cdnDomain) => {
-    if(!err)
+    if (!err)
       CDN_DOMAIN = cdnDomain
   })
 })
@@ -23,7 +23,7 @@ Meteor.startup(() => {
 export const makeCDNLink = (uri, etagOrHash = null) => {
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
   const hash = etagOrHash ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
-  if(CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//"){
+  if (CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//") {
     return `//${CDN_DOMAIN}${uri}?${hash}`
   }
   return uri
@@ -36,22 +36,19 @@ export const getProjectAvatarUrl = (p) => (
 
 
 // used by maps - to get notifications about image changes
-export const observe = (selector, onReady, onChange = onReady, oldSubscription = null) => {
+export const observe = (selector, onReady, onChange = onReady, cachedObservable = null) => {
   // images in the map won't update
   const cursor = PartialAzzets.find(selector)
   // from now on only observe asset and update tern on changes only
   let onReadyCalled = false
-  const subscription = oldSubscription || {
+  const observable = cachedObservable || {
       observer: null,
       getAssets: () => cursor.fetch(),
       subscription: null,
       ready: () => onReadyCalled
     }
-
-
-  subscription.subscription = Meteor.subscribe("assets.public.partial.bySelector", selector, {
+  observable.subscription = Meteor.subscribe("assets.public.partial.bySelector", selector, {
     onStop: () => {
-
       subscription.observer && subscription.observer.stop()
       // Something internally in the Meteor makes subscription to stop even before it's ready
       // try again.. TODO: debug this further
@@ -72,9 +69,9 @@ export const observe = (selector, onReady, onChange = onReady, oldSubscription =
       console.log("Error:", name, ...args)
     }
   })
-  return subscription
+  return observable
 }
-
+// will fetch asset by uri via ajax - returns Promise
 export const fetchAssetByUri = (uri, allowCache) => {
   return new Promise(function (resolve, reject) {
     mgbAjax(uri, (err, content) => {
@@ -83,32 +80,32 @@ export const fetchAssetByUri = (uri, allowCache) => {
   })
 }
 
-
-
+// simple cache of ajax requests
 const ajaxCache = []
 const getFromCache = (uri, etag = null) => {
-  return ajaxCache.find(c => {return (c.uri == uri && (etag ? c.etag == etag : true)) })
+  return ajaxCache.find(c => {
+    return (c.uri == uri && (etag ? c.etag == etag : true))
+  })
 }
-
 const addToCache = (uri, etag, response) => {
   const cached = getFromCache(uri, etag)
-  if(cached){
+  if (cached) {
     cached.response = response
     cached.lastAccessed = Date.now()
   }
-  else{
+  else {
     // check
     ajaxCache.push({
       uri, etag, response, lastAccessed: Date.now()
     })
     ajaxCache.sort((a, b) => a.lastAccessed < b.lastAccessed)
-    if(ajaxCache.length > MAX_ASSET_CACHE_LENGTH)
+    if (ajaxCache.length > MAX_ASSET_CACHE_LENGTH)
       ajaxCache.shift()
   }
 }
 const removeFromCache = uri => {
   const index = ajaxCache.findIndex(c => c.uri === uri)
-  if(index > -1){
+  if (index > -1) {
     ajaxCache.splice(index, 1)
   }
 }
@@ -117,9 +114,9 @@ const removeFromCache = uri => {
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
 
 export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOpen = null) => {
-  if(pullFromCache === true){
+  if (pullFromCache === true) {
     const cached = getFromCache(uri)
-    if(cached){
+    if (cached) {
       // remove from stack to maintain async behaviour
       setTimeout(() => {
         console.log("From cache")
@@ -129,9 +126,9 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOp
     }
   }
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
-  if(etag){
+  if (etag) {
     const cached = getFromCache(uri, etag)
-    if(cached){
+    if (cached) {
       // remove from stack to maintain async behaviour
       setTimeout(() => {
         callback(null, cached.response)
@@ -139,7 +136,7 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOp
       return
     }
   }
-  else{
+  else {
     removeFromCache(uri)
   }
   const client = new XMLHttpRequest()
@@ -147,21 +144,21 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOp
   const usingCDN = uri == cdnLink
   client.open('GET', cdnLink)
 
-  if(onRequestOpen){
+  if (onRequestOpen) {
     onRequestOpen(client)
   }
   client.send()
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified
     if (this.status >= 200 && this.status < 300) {
-      if(etag && this.getResponseHeader("etag")){
+      if (etag && this.getResponseHeader("etag")) {
         addToCache(uri, etag, this.response)
       }
       callback(null, this.response, client)
     }
-    else{
+    else {
       // try link without CDN
-      if(usingCDN){
+      if (usingCDN) {
         console.log("CDN failed - trying local uri")
         mgbAjax(window.location.origin + uri, callback, asset, pullFromCache)
         return
@@ -170,7 +167,7 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOp
     }
   }
   client.onerror = function (e) {
-    if(usingCDN){
+    if (usingCDN) {
       console.log("CDN failed - trying local uri")
       mgbAjax(window.location.origin + uri, callback, asset, pullFromCache)
       return
@@ -179,107 +176,172 @@ export const mgbAjax = (uri, callback, asset, pullFromCache = false, onRequestOp
   }
 }
 
-const fetchedAssets = []
-// this will return asset wrapped in the
-export const getAssetWithContent2 = (id, onReady) => {
-  const c = fetchedAssets.find(a => a.id === id)
-  if (c) {
-    c.update()
-    return c
-  }
-  // keep only 10 assets in memory
-  if(fetchedAssets.length > 10){
-    fetchedAssets.shift()
-  }
-  const ret = {
-    id: id,
-    asset: null,
-    isReady: false,
-    ready(){
-      return this.isReady
-    },
-    updateAsset: function(){
-      let c2 = ret.asset.content2
-      const asset = Azzets.findOne(this.asset._id)
-      if(asset){
-        this.asset = asset
-        this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
-        c2 = this.asset.content2
+// this class fetched and updates asset and its content2
 
-        this.etag = genetag(this.asset)
-        this.update()
-      }
+class AssetHandler {
+  constructor(assetId, onChange) {
+    this.id = assetId
+    this.onChange = onChange
 
-      // we still need latest asset fromDB
-      Meteor.subscribe("assets.public.byId", id, {
-        onReady: () => {
-          const asset = Azzets.findOne(ret.asset._id)
-          if(!asset){
-            return
+    this.asset = null
+    this.isReady = false
+    this.update()
+  }
+
+  ready() {
+    return this.isReady
+  }
+
+  update(onChange = null, updateObj = null) {
+    if (onChange) {
+      this.onChange = onChange
+    }
+
+    const asset = Azzets.findOne(this.id)
+    // save previous content2
+    let oldC2 = this.asset ? this.asset.content2 : null
+
+    // check if we can skip subscription and further ajax call for c2
+    if (asset) {
+      if (this.asset) {
+        const etag = genetag(asset)
+        if (this.etag == etag) {
+          // here we can silently update content2 without requesting new c2 from DB
+          if (updateObj) {
+            this.asset.content2 = updateObj.content2
+            this.onChange && this.onChange()
           }
-          this.asset = asset
-          this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
-          // actually etag is not correct here
-          // as there is small difference in timestamps
-          // saved minimongo data and fetched new differs approx ~ 10ms
-          this.etag = genetag(this.asset)
-          this.update()
-        }
-      })
-    },
-    update: function(){
-      const asset = Azzets.findOne(id)
-      if(!asset){
-        return
-      }
-
-      const c2 = this.asset && this.asset.content2
-      const etag = genetag(asset)
-      if (etag == this.etag) {
-        this.asset = asset
-        this.asset.content2 = this.asset.content2 ? this.asset.content2 : c2
-        return
-      }
-      this.etag = etag
-      //ret.isReady = false
-      mgbAjax(asset.c2location || `/api/asset/content2/${id}`, (err, data) => {
-        if(err){
-          console.log("Failed to retrieve c2 for asset with id: ", id)
           return
         }
-        const c2 = JSON.parse(data)
-        const oldC2 = ret.asset ? this.asset.content2 : null
-        this.isReady = true
+        // set reference to new asset
+        this.asset = asset
+      }
 
-        let needUpdate = false
-        if (!_.isEqual(c2, oldC2)){
-          this.asset = asset
-          this.asset.content2 = c2
-          needUpdate = true
-        }
-        else if(!_.isEqual(asset, this.asset)) {
-          this.asset = asset
-          this.asset.content2 = oldC2
-          needUpdate = true
-        }
+      // update content2 if there is one
+      if (this.asset) {
+        this.asset.content2 = updateObj ? updateObj.content2 : (this.asset.content2 ? this.asset.content2 : oldC2)
+        this.etag = genetag(this.asset)
+      }
 
-        if(needUpdate){
-          console.log("DOING full update")
-          onReady && onReady()
-        }
-        else{
-          console.log("Sources are equal.. preventing update!")
-        }
-      }, asset)
+
+      this.updateContent2(updateObj)
     }
+
+    if (updateObj) {
+      this.asset.content2 = updateObj.content2
+    }
+
+    if(this.subscription){
+      this._onReady(updateObj)
+    }
+    else{
+      // without timeout subscription will end automatically right after it starts (ReactMeteorData.getMeteorData is responsible for that),
+      // but we want to keep subscription active as long as user is checking out asset
+      // NOTE: we are calling onready only after ajax also has been loaded -
+      // also without timeout getMeteorData will start infinite subscribe / unsubscribe loop - this is very very bad
+      // getMeteorData is calling forceUpdate internally and it's called before render
+      window.setTimeout(() => {
+        // we still need latest asset fromDB
+        this.subscription = Meteor.subscribe("assets.public.byId", this.id, {
+          // onReady is called multiple times
+          onReady: () => {
+            this._onReady(updateObj)
+          },
+          // onStop is called multiple times and then immediately is fired onReady again
+          onStop: () => {
+            console.log("Stopped sub for", this.id)
+            this.subscription = null
+          }
+        })
+      }, 0)
+    }
+
   }
-  fetchedAssets.push(ret)
-  Meteor.subscribe("assets.public.byId", id, {
-    onReady(){
-      ret.asset = Azzets.findOne(id)
-      ret.update()
-    }
-  })
 
-  return ret
+  updateContent2(updateObj) {
+    const asset = Azzets.findOne(this.id)
+    if (!asset) {
+      return
+    }
+
+    if (updateObj) {
+      this.asset.content2 = updateObj.content2
+      this.onChange && this.onChange()
+      return
+    }
+
+    mgbAjax(asset.c2location || `/api/asset/content2/${this.id}`, (err, data) => {
+      if (err) {
+        console.log("Failed to retrieve c2 for asset with id: ", this.id)
+        return
+      }
+      const c2 = JSON.parse(data)
+      const oldC2 = this.asset ? this.asset.content2 : null
+      this.isReady = true
+
+      let needUpdate = false
+      if (!oldC2 || !_.isEqual(c2, oldC2)) {
+        this.asset = asset
+        this.asset.content2 = c2
+        needUpdate = true
+      }
+      else if (!_.isEqual(asset, this.asset)) {
+        this.asset = asset
+        this.asset.content2 = oldC2
+        needUpdate = true
+      }
+
+      if (needUpdate) {
+        console.log("DOING full update")
+        this.onChange && this.onChange()
+      }
+      else {
+        console.log("Sources are equal.. preventing update!")
+      }
+    }, asset)
+  }
+
+  _onReady(updateObj){
+    // save previous content2
+    let oldC2 = this.asset ? this.asset.content2 : null
+    const asset = Azzets.findOne(this.id)
+    if (!asset) {
+      return
+    }
+
+    if (this.asset) {
+      const etag = genetag(asset)
+      if (this.etag == etag) {
+        return
+      }
+    }
+
+    this.asset = asset
+    this.asset.content2 = updateObj ? updateObj.content2 : oldC2
+    // actually etag is not correct here
+    // as there is small difference in timestamps
+    // saved minimongo data and fetched new differs approx ~ 10ms
+    this.etag = genetag(this.asset)
+    this.updateContent2(updateObj)
+  }
+}
+
+const cachedAssetHandlers = []
+// this will return AssedHandler
+// used in the AssetEditRoute -> getMeteorData
+export const getAssetWithContent2 = (id, onChange) => {
+  let handler = cachedAssetHandlers.find(a => a.id === id)
+  if (handler) {
+    handler.update(onChange)
+    return handler
+  }
+  // keep only 10 assets in memory
+  if (cachedAssetHandlers.length > 10) {
+    handler = cachedAssetHandlers.shift()
+    handler.subscription.stop()
+  }
+
+  handler = new AssetHandler(id, onChange)
+  cachedAssetHandlers.push(handler)
+  return handler
 }

@@ -21,18 +21,18 @@ const getDefaultMethodSettings = name => {return {
 const getDefaultSubscriptionSettings = name => {return {
   rule: {
     name,
-    type: "subscription",
-    connectionId: (con) => true // limit per connection
+    type: "subscription"
   },
-  limit: 100, // 5 times
+  limit: 1, // 5 times
   interval: 1000 // per 1000 ms
 }}
 const setRules = (rules) => {
   for (let i in rules) {
-    const settings = rules[i](rules[i])
+    const settings = rules[i](i)
     if (!settings)
       continue
     DDPRateLimiter.addRule(settings.rule, settings.limit, settings.interval)
+    console.log("Rule added", `${settings.rule.name}(${settings.rule.type})`)
   }
 }
 

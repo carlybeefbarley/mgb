@@ -151,14 +151,20 @@ export default AssetEditRoute = React.createClass({
     let options = { sort: { timestamp: -1 } }
 
     return {
-      get asset(){ return handleForAsset.asset },
-      update(v){handleForAsset.updateAsset() },
+      get asset(){
+        return handleForAsset.asset
+      },
+      update(updateObj){
+        handleForAsset.update(null, updateObj)
+      },
 
       isServerOnlineNow: Meteor.status().connected,
       activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
       assetActivity: Activity.find(selector, options).fetch(),
 
-      get loading(){ return !handleForAsset.isReady }    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
+      get loading(){
+        return !handleForAsset.isReady
+      }    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
     }
   },
 
@@ -480,7 +486,7 @@ export default AssetEditRoute = React.createClass({
       }
     })
 
-    this.data.update()
+    this.data.update(updateObj)
     logActivity("asset.edit", changeText, null, this.data.asset || { _id: assetId } )
   },
 

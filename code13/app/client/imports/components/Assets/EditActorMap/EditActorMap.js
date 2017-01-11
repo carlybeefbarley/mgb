@@ -94,8 +94,8 @@ export default class EditActorMap extends EditMap {
       }
       // or new Cache - if immutable is preferred - and need to force full cache update
       if(this.cache && this.cache.isReady()) {
-        this.cache && this.cache.isReady() && this.cache.update(d, () => {
-          this.setState({isLoading: false})
+        this.cache.update(d, () => {
+          this.cache && this.setState({isLoading: false})
         })
       }
       else{

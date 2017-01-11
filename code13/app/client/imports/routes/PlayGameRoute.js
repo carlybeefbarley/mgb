@@ -95,13 +95,12 @@ export default PlayGameRoute = React.createClass({
 
   getMeteorData: function() {
     let assetId = this.props.params.assetId
-    let handleForAsset = getAssetWithContent2(assetId, () => {
-      // while ticking - send changes :) (this is - isMounted check actually)
-      this.isMounted && this.forceUpdate()
+    const assetHandler = this.assetHandler = getAssetWithContent2(assetId, () => {
+      this.assetHandler && this.forceUpdate()
     })
     return {
-      get asset(){ return handleForAsset.asset },
-      get loading(){ return !handleForAsset.isReady }
+      get asset(){ return assetHandler.asset },
+      get loading(){ return !assetHandler.isReady }
     }
   },
 
@@ -122,13 +121,13 @@ export default PlayGameRoute = React.createClass({
   },
 
   componentDidMount: function () {
-    this.isMounted = true
     this.checkForImplicitIncrementPlayCount()
-
   },
 
   componentWillUnmount: function () {
-    this.isMounted = false
+    if(this.assetHandler){
+      this.assetHandler.stop()
+    }
   },
 
   componentDidUpdate () {

@@ -188,8 +188,16 @@ class AssetHandler {
     this.update()
   }
 
+  stop(){
+    if(this.subscription){
+      this.subscription.stop()
+    }
+  }
   ready() {
     return this.isReady
+  }
+  get loading(){
+    return !this.isReady
   }
 
   update(onChange = null, updateObj = null) {
@@ -337,10 +345,10 @@ export const getAssetWithContent2 = (id, onChange) => {
   }
   // keep only 10 assets in memory
   if (cachedAssetHandlers.length > 10) {
+    console.log("Stopped")
     handler = cachedAssetHandlers.shift()
-    handler.subscription.stop()
+    handler.stop()
   }
-
   handler = new AssetHandler(id, onChange)
   cachedAssetHandlers.push(handler)
   return handler

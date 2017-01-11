@@ -107,6 +107,8 @@ export default AssetEditRoute = React.createClass({
     this.checkForRedirect()
     this.m_deferredSaveObj = null
 
+    console.log("Mounted")
+
     //console.log("Preparing TICK Timer")
     this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => { 
       //console.log("TICK")
@@ -131,6 +133,10 @@ export default AssetEditRoute = React.createClass({
       this.m_tickIntervalFunctionHandle = null
       this._attemptToSendAnyDeferredChanges( { forceResend: true } )
     }
+
+    console.log("UnMounted")
+    // stop handles subscription
+    this.assetHandler.stop()
   },
 
   componentDidUpdate() {
@@ -139,9 +145,8 @@ export default AssetEditRoute = React.createClass({
 
   getMeteorData: function() {
     let assetId = this.props.params.assetId
-    let handleForAsset = getAssetWithContent2(assetId, () => {
-      // while ticking - send changes :) (this is - isMounted check actually)
-      this.m_tickIntervalFunctionHandle && this.forceUpdate()
+    const assetHandler = this.assetHandler = getAssetWithContent2(assetId, () => {
+      this.assetHandler && this.forceUpdate()
     })
 
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
@@ -152,10 +157,11 @@ export default AssetEditRoute = React.createClass({
 
     return {
       get asset(){
-        return handleForAsset.asset
+        return assetHandler.asset
       },
+      // this will allow asset c2 update without extra ajax call
       update(updateObj){
-        handleForAsset.update(null, updateObj)
+        assetHandler.update(null, updateObj)
       },
 
       isServerOnlineNow: Meteor.status().connected,
@@ -163,7 +169,7 @@ export default AssetEditRoute = React.createClass({
       assetActivity: Activity.find(selector, options).fetch(),
 
       get loading(){
-        return !handleForAsset.isReady
+        return !assetHandler.isReady
       }    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
     }
   },

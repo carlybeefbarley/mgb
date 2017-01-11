@@ -23,7 +23,7 @@ const getDefaultSubscriptionSettings = name => {return {
     name,
     type: "subscription"
   },
-  limit: 1, // 5 times
+  limit: 100, // 5 times
   interval: 1000 // per 1000 ms
 }}
 const setRules = (rules) => {

@@ -46,11 +46,13 @@ const gsSkills = SkillNodes[_gsSkillNodeName]    // shorthand
 const gsItems = [
   { node: gsSkills.profile,         mascot: 'arcade_player'   },
   { node: gsSkills.chat,            mascot: 'slimy2'          },
-  { node: gsSkills.play,            mascot: 'game_shop'       },
+  { node: gsSkills.play,            mascot: 'whale'           },
   { node: gsSkills.assetsBasics,    mascot: 'ideaguy'         },
   { node: gsSkills.projects,        mascot: 'team'            },
-  { node: gsSkills.assetsAdvanced,  mascot: 'ideaguy'         },
-  { node: gsSkills.learn,           mascot: 'MgbLogo'         }
+  { node: gsSkills.nonCodeGame,     mascot: 'duck'            },
+  { node: gsSkills.codeGame,        mascot: 'bigguy'          }
+  // { node: gsSkills.assetsAdvanced,  mascot: 'ideaguy'      },
+  // { node: gsSkills.learn,           mascot: 'MgbLogo'      }
 ]
 
 // This is the   1 / n    box at the top-right of each skill box

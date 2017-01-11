@@ -62,10 +62,6 @@ export default {
     searchAssets:     C.E
   },
 
-// TODO - probably a very trivial non-code game
-
-// TODO - probably a very trivial code game
-
   projects: {
     $meta: {
       name:           'Projects',
@@ -74,33 +70,66 @@ export default {
     createProject:         C.E,
     createAssetInProject:  C.E,
     projectAvatar:         C.E,
-    projectMembers:        C.E,
-    changeProjectForAsset: C.E,
-    projectsCanOverlap:    C.E,
-    projectPrefix:         C.E
+    // projectMembers:        C.E,
+    // changeProjectForAsset: C.E,
+    // projectsCanOverlap:    C.E,
+    // projectPrefix:         C.E
   },
 
-  assetsAdvanced: {
+  nonCodeGame: {
     $meta: {
-      name:           'Assets (advanced)',
-      description:    'Fancy tricks with Game Assets',
-      sequence:       'viewers,changes,qualityLevel,completedFlag,forking,licensing'
+      name:           'Simple non-code game',
+      description:    'A simple game using Actors instead of Code',
+      sequence:       'createGraphic,createActor,createPlayer,createNPC,createObjects,createShot,createActorMap,addingAnEnemy'
     },
-    viewers:          C.E,
-    changes:          C.E,
-    qualityLevel:     C.E,
-    completedFlag:    C.E,
-    forking:          C.E,
-    licensing:        C.E
+    createGraphic:   C.E,
+    createActor:     C.E,
+    createPlayer:    C.E,
+    createNPC:       C.E,
+    createObjects:   C.E,
+    createShot:      C.E,
+    createActorMap:  C.E,
+    addingAnEnemy:   C.E  
+//  learnMore:       C.E  
   },
 
-  learn: {
+  codeGame: {
     $meta: {
-      name:           'Learn',
-      description:    'Find more ways to Learn',
+      name:           'Simple code-based game',
+      description:    'A simple game written in JavaScript',
+      sequence:       'createCode,starterTemplate,runGame,stopGame,codeMentor'
     },
-    skills:              C.E,
-    games:               C.E,
-    ask:                 C.E
-  }
+    createCode:      C.E,
+    starterTemplate: C.E,
+    runGame:         C.E,
+    stopGame:        C.E,
+    codeMentor:      C.E
+  },
+
+  
+  // These probably should not be in GetStarted
+
+  // assetsAdvanced: {
+  //   $meta: {
+  //     name:           'Assets (advanced)',
+  //     description:    'Fancy tricks with Game Assets',
+  //     sequence:       'viewers,changes,qualityLevel,completedFlag,forking,licensing'
+  //   },
+  //   viewers:          C.E,
+  //   changes:          C.E,
+  //   qualityLevel:     C.E,
+  //   completedFlag:    C.E,
+  //   forking:          C.E,
+  //   licensing:        C.E
+  // },
+
+  // learn: {
+  //   $meta: {
+  //     name:           'Learn',
+  //     description:    'Find more ways to Learn',
+  //   },
+  //   skills:              C.E,
+  //   games:               C.E,
+  //   ask:                 C.E
+  // }
 }

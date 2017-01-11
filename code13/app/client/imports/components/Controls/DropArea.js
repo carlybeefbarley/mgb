@@ -160,12 +160,12 @@ export default class DropArea extends React.Component {
     const asset = this.getAsset()
     return (
       <div
+        id={`mgbjr-dropArea-${this.props.kind}`}
         style={{width: "100%"}}
         className={'ui message accept-drop message' + (asset ? " positive" : "") + (this.state.badAsset ? " negative" : "")}
         onDragOver={DragNDropHelper.preventDefault}
         onDrop={ () => {
           this.handleDrop.bind(this)
-          joyrideCompleteTag(`mgbjr-CT-dropArea-drop`)
         }}
         >
 

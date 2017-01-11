@@ -56,6 +56,8 @@ const ActivityExtraDetail = ( { act} ) => {
       </div>
     )
   }
+  
+  return null
 }
 
 const _doDeleteActivity = activityId => deleteActivityRecord( activityId )

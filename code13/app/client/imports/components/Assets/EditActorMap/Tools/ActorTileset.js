@@ -148,7 +148,7 @@ export default class ActorTool extends Tileset {
     let isValidForLayer = layer ? ActorHelper.checks[layer.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
 
     return (
-      <div className='mgbAccordionScroller tilesets'>
+      <div id="mgbjr-accordion-actors" className='mgbAccordionScroller tilesets'>
         {this.renderForModal(1)}
         <div className='ui fluid styled accordion'>
           <div

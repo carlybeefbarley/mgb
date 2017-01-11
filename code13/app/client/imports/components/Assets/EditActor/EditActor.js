@@ -18,7 +18,6 @@ import ItemBehavior from './Forms/ItemBehavior'
 import CharacterBehavior from './Forms/CharacterBehavior'
 import { Modal } from 'semantic-ui-react'
 
-
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 export default class EditActor extends React.Component {
@@ -122,13 +121,13 @@ export default class EditActor extends React.Component {
               <span>The player's character</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-enemy" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-enemy`) } src="/images/newActor/newActor_enemy.png" data-template="alTemplateEnemy" />
+              <img id="mgbjr-create-actor-enemy" className="mgbjr-create-actor-NPC" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src="/images/newActor/newActor_enemy.png" data-template="alTemplateEnemy" />
               <span>Enemies and bosses</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-friend" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-friend`) } src="/images/newActor/newActor_friend.png" data-template="alTemplateFriend" />
+              <img id="mgbjr-create-actor-friend" className="mgbjr-create-actor-NPC" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src="/images/newActor/newActor_friend.png" data-template="alTemplateFriend" />
               <span>Friendly characters who help the player</span>
             </div>
             <div className="eight wide column">
@@ -436,7 +435,7 @@ export default class EditActor extends React.Component {
       this.loadTemplate(templateName)
       this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))      
       this.handleSave("Initial Template selected")
-
+      joyrideCompleteTag(`mgbjr-CT-create-actor-any`)
     }
   }
 

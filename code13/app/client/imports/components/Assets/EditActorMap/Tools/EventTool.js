@@ -63,7 +63,7 @@ export default class ActorTool extends Tileset {
       ts.actor = {}
 
     return (
-      <div className='mgbAccordionScroller tilesets'>
+      <div id="mgbjr-accordion-events" className='mgbAccordionScroller tilesets'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
             <span className='explicittrigger'><i className='dropdown icon'></i> Events </span>

@@ -45,7 +45,7 @@ export default class Layers extends React.Component {
       )
     }
     return (
-      <div className='mgbAccordionScroller'>
+      <div id="mgbjr-accordion-layers" className='mgbAccordionScroller'>
         <div className='ui fluid styled accordion'>
           <div className='active title'>
             <span className='explicittrigger'><i className='dropdown icon'></i> Layers</span>

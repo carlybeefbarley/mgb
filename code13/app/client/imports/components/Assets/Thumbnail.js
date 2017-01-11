@@ -2,10 +2,10 @@ import React from 'react'
 import {makeCDNLink} from '/client/imports/helpers/assetFetchers'
 
 export default class Thumbnail extends React.Component {
-  propTypes = {
-    id: React.PropTypes.string.required,
+  static propTypes = {
+    id: React.PropTypes.string.isRequired,
     className: React.PropTypes.string,
-    style: React.PropTypes.string
+    style: React.PropTypes.object
   }
 
 

@@ -1,114 +1,19 @@
+/*
+  This script will automatically set up cloud front distribution for ORIGIN_DOMAIN_NAME
+  At first it will try to reuse previously created distribution for ORIGIN_DOMAIN_NAME
+  Change AWS auth keys in the ./config.json
+  Check server_main.js - to enable this script for production
+ */
 import AWS from 'aws-sdk'
 // this is @stauzs personal account
 import config from './config.json'
 import { WebApp } from 'meteor/webapp'
 
-// Change this for testing purposes
-const ORIGIN_DOMAIN_NAME = 'mightyfingers.com' // v2.mygamebuilder.com
-
-// this will be filled at runtime
-let CLOUDFRONT_DOMAIN_NAME = ''
-
-// client at first load will try to get this - so it can use it for ajax requests
-Meteor.methods({
-  "CDN.domain": function() {
-    return CLOUDFRONT_DOMAIN_NAME
-  }
-})
-
-WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
-  //return uri
-
-  if(CLOUDFRONT_DOMAIN_NAME){
-    return "//" + CLOUDFRONT_DOMAIN_NAME + uri
-  }
-  return uri
-})
-
-// CORS fix
-// get meteor-core's connect-implementation
-const allowedOrigins = [
-  'http://mightyfingers.com:8080',
-  'http://localhost:3000',
-  'http://v2.mygamebuilder.com',
-  'https://v2.mygamebuilder.com'
-]
-WebApp.rawConnectHandlers.use(function (req, res, next) {
-  const index = allowedOrigins.indexOf(req.headers.origin)
-  if(index > -1){
-    res.setHeader('access-control-allow-origin', allowedOrigins[index])
-  }
-  res.setHeader('access-control-expose-headers', 'etag')
-  /*if(
-    req._parsedUrl.path.startsWith("/badges") ||
-    req._parsedUrl.path.startsWith("/audio") ||
-    req._parsedUrl.path.startsWith("/images") ||
-    req._parsedUrl.path.startsWith("/lib")
-  ){
-    res.setHeader('cache-control', 'public, max-age=3600');
-  }*/
-  return next()
-});
-// End of CORS FIX
-
-AWS.config.update(config)
-
-const cloudfront = new AWS.CloudFront({apiVersion: '2016-11-25'})
-
-// find distribution based on origin domain name
-const getDistribution = (callback) => {
-  const params = {
-    // Marker: 'STRING_VALUE',
-    // MaxItems: 'STRING_VALUE'
-  }
-  cloudfront.listDistributions(params, function(err, data) {
-    if (err) {
-      console.error(err)
-      // WHAT TO DO NOW ?
-      callback(err)
-      console.log("failed to locate distribution", err, err.stack)
-      return
-    }
-    const items = data.DistributionList.Items
-    for(let i=0; i<items.length; i++){
-      const origins = items[i].Origins
-      if(!origins || !origins.Items.length){
-        continue
-      }
-      const oItems = origins.Items
-      for(let j=0; j<oItems.length; j++){
-        const oItem = oItems[j]
-        if(oItem.Id == ORIGIN_DOMAIN_NAME){
-          callback(null, items[i])
-          return
-        }
-      }
-    }
-    callback(new Error("Failed to locate cloudfront distribution"), null)
-  });
-}
-
-const setCDNPrams = (cloudfrontDistribution) => {
-  if(cloudfrontDistribution.Status != "Deployed"){
-    cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id}, function(err, data) {
-      if (err){
-        console.log(err, err.stack)
-      }
-      else{
-        CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
-        // Meteor don't like this - hardcode CDN?
-        // WebAppInternals.setBundledJsCssPrefix(CLOUDFRONT_DOMAIN_NAME)
-      }
-    })
-  }
-  else{
-    CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
-    // Meteor don't like this - hardcode CDN?
-    // WebAppInternals.setBundledJsCssPrefix(CLOUDFRONT_DOMAIN_NAME)
-  }
-}
-
-const createDistribution = (callback) => {
+if(Meteor.isProduction) {
+// Config
+  const ORIGIN_DOMAIN_NAME = 'mightyfingers.com' // v2.mygamebuilder.com
+  const HTTP_PORT = 80
+  const HTTPS_POST = 443
   const params = {
     DistributionConfig: {
       /* required */
@@ -205,8 +110,8 @@ const createDistribution = (callback) => {
 
             //!!! this is not working with port 80
             CustomOriginConfig: {
-              HTTPPort: 8080, // required
-              HTTPSPort: 443, // required
+              HTTPPort: HTTP_PORT, // required
+              HTTPSPort: HTTPS_PORT, // required
               OriginProtocolPolicy: 'http-only', // 'http-only | match-viewer | https-only', /* required
               OriginSslProtocols: {
                 // TODO: set up SSL
@@ -287,23 +192,135 @@ const createDistribution = (callback) => {
       // WebACLId: 'STRING_VALUE'
     }
   }
-  cloudfront.createDistribution(params, callback)
-}
+// this will be filled at runtime - after script will get assigned domain name (xxxxx.cloudfront.com)
+  let CLOUDFRONT_DOMAIN_NAME = ''
 
-getDistribution((err, cloudfrontDistribution) => {
-  if(err) {
-    console.error(err)
-    createDistribution((err, data) => {
-      if (err){
+
+// client at first load will try to get CLOUDFRONT_DOMAIN_NAME - so it can use it for ajax requests
+  Meteor.methods({
+    "CDN.domain": function () {
+      return CLOUDFRONT_DOMAIN_NAME
+    }
+  })
+
+// this will make meteor files to be loaded from CDN
+  WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
+    if (CLOUDFRONT_DOMAIN_NAME) {
+      return "//" + CLOUDFRONT_DOMAIN_NAME + uri
+    }
+    return uri
+  })
+
+// CORS fix
+  const allowedOrigins = [
+    'http://mightyfingers.com:8080',
+    'http://localhost:3000',
+    'http://v2.mygamebuilder.com',
+    'https://v2.mygamebuilder.com'
+  ]
+  WebApp.rawConnectHandlers.use(function (req, res, next) {
+    const index = allowedOrigins.indexOf(req.headers.origin)
+    if (index > -1) {
+      res.setHeader('access-control-allow-origin', allowedOrigins[index])
+
+      // or allow for all domains
+      // res.setHeader('access-control-allow-origin', '*')
+    }
+    res.setHeader('access-control-expose-headers', 'etag')
+    /*
+     // cache static files for 1 hour?
+     if(
+     req._parsedUrl.path.startsWith("/badges") ||
+     req._parsedUrl.path.startsWith("/audio") ||
+     req._parsedUrl.path.startsWith("/images") ||
+     req._parsedUrl.path.startsWith("/lib")
+     ){
+     res.setHeader('cache-control', 'public, max-age=3600');
+     }*/
+    return next()
+  });
+// End of CORS FIX
+
+
+  const cloudfront = new AWS.CloudFront({apiVersion: '2016-11-25'})
+  AWS.config.update(config)
+
+// find distribution based on origin domain name
+  const getDistribution = (callback) => {
+    const params = {
+      // Marker: 'STRING_VALUE',
+      // MaxItems: 'STRING_VALUE'
+    }
+    cloudfront.listDistributions(params, function (err, data) {
+      if (err) {
         console.error(err)
+        // WHAT TO DO NOW ?
+        callback(err)
+        console.log("failed to locate distribution", err, err.stack)
         return
       }
-      console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
-      setCDNPrams(data)
-    })
-    return
+      const items = data.DistributionList.Items
+      for (let i = 0; i < items.length; i++) {
+        const origins = items[i].Origins
+        if (!origins || !origins.Items.length) {
+          continue
+        }
+        const oItems = origins.Items
+        for (let j = 0; j < oItems.length; j++) {
+          const oItem = oItems[j]
+          if (oItem.Id == ORIGIN_DOMAIN_NAME) {
+            callback(null, items[i])
+            return
+          }
+        }
+      }
+      callback(new Error("Failed to locate distribution"), null)
+    });
   }
-  setCDNPrams(cloudfrontDistribution)
-  console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
-})
 
+  const setCDNPrams = (cloudfrontDistribution) => {
+    if (cloudfrontDistribution.Status != "Deployed") {
+      Meteor.call("Slack.Cloudfront.notification", `Waiting for cloudfront distribution to be ready: ${CLOUDFRONT_DOMAIN_NAME} \n this may take a while (up to 30minutes`)
+      cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id}, function (err, data) {
+        if (err) {
+          console.log(err, err.stack)
+          Meteor.call("Slack.Cloudfront.notification", `Distribution didn't become ready. Error: ${err}`, true)
+        }
+        else {
+          CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
+          Meteor.call("Slack.Cloudfront.notification", `Distribution deployed and ready to serve: ${CLOUDFRONT_DOMAIN_NAME}`)
+        }
+      })
+    }
+    else {
+      CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
+      Meteor.call("Slack.Cloudfront.notification", `Cloudfront distrinution is Ready: ${err}`)
+    }
+  }
+
+  const createDistribution = (callback) => {
+    cloudfront.createDistribution(params, callback)
+  }
+
+  getDistribution((err, cloudfrontDistribution) => {
+    if (err) {
+      console.error(err)
+      // this should show only once
+      Meteor.call("Slack.Cloudfront.notification", `Failed to LOAD distribution with error: ${err} \n Trying to create new Distribution`)
+      createDistribution((err, data) => {
+        if (err) {
+          Meteor.call("Slack.Cloudfront.notification", `Failed to CREATE distribution with error: ${err}`, true)
+          console.error(err)
+          return
+        }
+        console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
+        Meteor.call("Slack.Cloudfront.notification", `Cloudfront distribution has been successfully set up: ${CLOUDFRONT_DOMAIN_NAME}`)
+        setCDNPrams(data)
+      })
+      return
+    }
+    setCDNPrams(cloudfrontDistribution)
+    console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
+  })
+
+}

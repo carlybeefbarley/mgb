@@ -96,6 +96,16 @@ Meteor.methods({
 })
 
 Meteor.methods({
+  "Slack.Cloudfront.notification": function(message, isBad){
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `MGBv2 Cloudfront bot`,
+      icon_emoji: isBad ? ':cyclone:' : ':cloud:',
+      text: message
+    })
+  }
+})
+
+Meteor.methods({
   "Slack.MGB.productionStartup": function() {
     const mgbVer = `Iteration ${mgbReleaseInfo.releases[0].id.iteration}`
     const configDumpMsg=!os ? "(no OS object)" : `

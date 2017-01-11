@@ -345,7 +345,6 @@ export const getAssetWithContent2 = (id, onChange) => {
   }
   // keep only 10 assets in memory
   if (cachedAssetHandlers.length > 10) {
-    console.log("Stopped")
     handler = cachedAssetHandlers.shift()
     handler.stop()
   }

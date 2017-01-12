@@ -344,6 +344,10 @@ export default AssetEditRoute = React.createClass({
   {
     // This is a style on the Edit/view tag in render()
     $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
+    if (this.props.currUser)
+      showToast("You do not have permission to edit this Asset", 'error')
+    else  
+      showToast("You must create an account if you wish to edit Assets", 'error')
   },
 
 
@@ -554,7 +558,7 @@ export default AssetEditRoute = React.createClass({
 
   handleCompletedClick() {
     let newIsCompletedStatus = !this.props.asset.isCompleted
-    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: newIsCompletedStatus}, (err, res) => {
+    Meteor.call('Azzets.update', this.props.asset._id, this.canCurrUserEditThisAsset(), {isCompleted: newIsCompletedStatus}, (err, res) => {
       if (err) {
         showToast(err.reason, 'error')
       }

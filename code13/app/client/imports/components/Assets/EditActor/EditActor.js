@@ -1,5 +1,9 @@
+import _ from 'lodash'
 import React from 'react'
+import { Modal } from 'semantic-ui-react'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
+
 import './EditActor.css'
 import getDefaultActor from './getDefaultActor.js'
 
@@ -8,7 +12,7 @@ import templates from './TemplateDiffs.js'
 import ActorValidator from '../Common/ActorValidator.js'
 import actorOptions from '../Common/ActorOptions.js'
 
-import Tabs from './Tabs.js'
+import Tabs from './Tabs'
 import FormsAll from './Forms/All'
 import Spawning from './Forms/Spawning'
 import Animations from './Forms/Animations'
@@ -16,9 +20,7 @@ import Conditions from './Forms/Conditions'
 import NPCBehavior from './Forms/NPCBehavior'
 import ItemBehavior from './Forms/ItemBehavior'
 import CharacterBehavior from './Forms/CharacterBehavior'
-import { Modal } from 'semantic-ui-react'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 export default class EditActor extends React.Component {
   constructor(...props) {
@@ -43,69 +45,45 @@ export default class EditActor extends React.Component {
   }
 
   getTabs(databag) {
-
+    const _makeContent = Element => (
+      <Element 
+          asset={this.props.asset} 
+          onchange={this.handleSave.bind(this)} 
+          saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }/>
+    )
+    const _mkDisabled = actorTypesArray => _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])
     return [
-      {
-        tab: "All",
-        content: <FormsAll asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
-          this.handleSave(null, d, "Updating thumbnail")
-        }}/>
+      { 
+        tab: "All",         
+        content: _makeContent(FormsAll)   
       },
-      {
-        tab: "Animations",
-        content: <Animations asset={this.props.asset} onchange={this.handleSave.bind(this)}/>
-      },
-      {
-        tab: "Character Behavior",
-        disabled: (
-          databag.all.actorType == actorOptions.actorType['Item, Wall or Scenery']
-            || databag.all.actorType == actorOptions.actorType['Shot']
-        ),
-        content: <CharacterBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
-          this.handleSave(null, d, "Updating thumbnail")
-        }}/>
+      { 
+        tab: "Animations",  
+        content: _makeContent(Animations) },
+      { 
+        tab: "Character Behavior", 
+        disabled: _mkDisabled( ['Item, Wall or Scenery', 'Shot'] ),
+        content: _makeContent(CharacterBehavior)
       },
       {
         tab: "NPC Behavior",
-        disabled: (
-          databag.all.actorType == actorOptions.actorType['Player']
-            || databag.all.actorType == actorOptions.actorType['Item, Wall or Scenery']
-            || databag.all.actorType == actorOptions.actorType['Shot']
-        ),
-        content: <NPCBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
-          this.handleSave(null, d, "Updating thumbnail")
-        }}/>
+        disabled: _mkDisabled( ['Player', 'Item, Wall or Scenery', 'Shot'] ),
+        content: _makeContent(NPCBehavior) 
       },
       {
         tab: "Item Behavior",
-        disabled: (
-          databag.all.actorType == actorOptions.actorType['Player']
-            || databag.all.actorType == actorOptions.actorType['Non-Player Character (NPC)']
-            || databag.all.actorType == actorOptions.actorType['Shot']
-        ),
-        content: <ItemBehavior asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
-          this.handleSave(null, d, "Updating thumbnail")
-        }}/>
+        disabled: _mkDisabled( ['Player', 'Non-Player Character (NPC)', 'Shot'] ),
+        content: _makeContent(ItemBehavior)
       },
       {
         tab: "Destruction / Spawning",
-        disabled: (
-          databag.all.actorType == actorOptions.actorType['Player']
-          || databag.all.actorType == actorOptions.actorType['Shot']
-        ),
-        content: <Spawning asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
-          this.handleSave(null, d, "Updating thumbnail")
-        }}/>
+        disabled: _mkDisabled( ['Player', 'Shot'] ),
+        content: _makeContent(Spawning)
       },
       {
         tab: "Conditions",
-        disabled: (
-          databag.all.actorType == actorOptions.actorType['Player']
-          || databag.all.actorType == actorOptions.actorType['Shot']
-        ),
-        content: <Conditions asset={this.props.asset} onchange={this.handleSave.bind(this)} saveThumbnail={(d) => {
-          this.handleSave(null, d, "Updating thumbnail")
-        }}/>
+        disabled: _mkDisabled( ['Player', 'Shot'] ),
+        content: _makeContent(Conditions)
       }
     ]
   }

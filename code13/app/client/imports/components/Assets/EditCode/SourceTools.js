@@ -586,10 +586,14 @@ main = function(){
         const key = source.name.split("@").shift();
         allInOneBundle += "window.module = {exports: {}};window.exports = window.module.exports;\n" +
           source.code + ";\n" +
-          'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)';
+          'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)'
+
+        if(source.localName){
+          allInOneBundle += "\n" + 'imports["' + source.localName + '"] = imports["' + key + '"];'
+        }
 
         if (source.name) {
-          allInOneBundle += "\n" + 'imports["' + source.name + '"] = window.module.exports;'
+          allInOneBundle += "\n" + 'imports["' + source.name + '"] = imports["' + key + '"];'
         }
       }
 

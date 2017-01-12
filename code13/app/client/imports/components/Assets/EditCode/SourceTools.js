@@ -505,7 +505,8 @@ export default class SourceTools {
       for (let i in sources) {
         const source = sources[i]
         if (source.isExternalFile) {
-          const partial = {url: source.url, localName: source.localName, name: source.name}
+          const localKey = source.url.split("/").pop().split(".").shift()
+          const partial = {url: source.url, localName: source.localName, name: source.name, localKey: localKey}
           source.useGlobal
             ? externalGlobal.push(partial)
             : externalLocal.push(partial)
@@ -555,6 +556,7 @@ var loadLocalLibs = function(){
   var lib = localLibs.shift()
   loadScript(lib.url, function(){
     imports[lib.name] = window.module.exports
+    imports[lib.localKey] = imports[lib.name]
     loadLocalLibs()
   })
 }
@@ -611,6 +613,8 @@ main = function(){
         ast: false,
         retainLines: false
       }])
+      
+      //cb(allInOneBundle)
       this.cachedBundle = allInOneBundle
       this._hasSourceChanged = false
     })

@@ -4,7 +4,8 @@ import { showToast } from '/client/imports/routes/App'
 
 import reactMixin from 'react-mixin'
 import { Chats } from '/imports/schemas'
-import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '/imports/schemas/chats';
+import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '/imports/schemas/chats'
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
 import { logActivity } from '/imports/schemas/activity'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -21,6 +22,26 @@ const additionalMessageIncrement = 15
 // 
 // So.. this is ok whilst I understand it, but if it gets any more complex it may be worth looking at a less
 // 'special' ui control than 'ui dropdown'
+
+
+// Some magic for encoding and expanding asset links that are dragged in.
+const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asset.name}❯`      // See https://en.wikipedia.org/wiki/Dingbat#Unicode ❮  U276E , U276F  ❯
+
+const ChatMessage = ( { msg } ) => { 
+  
+  let msg2 = ''
+  msg2 = msg.replace(/❮[^❯]*❯/g, function (e) { 
+    const e2 = e.split(':')
+    if (e2.length !== 3) 
+      return e
+    const userName=e2[0].slice(1) 
+    const assetId=e2[1]
+    const assetName=e2[2].slice(0,-1)
+    return `<a href='/u/${userName}/asset/${assetId}'>${userName}:${assetName}</a>`
+  })
+  return <span dangerouslySetInnerHTML={{ __html: msg2}} /> 
+}
+
 
 export default fpChat = React.createClass({
   mixins: [ReactMeteorData],
@@ -196,10 +217,21 @@ debugger   // DEAD CODE?
           <div className="metadata">
             <span className="date" title={absTime}>{ago}</span>
           </div>
-          <div className="text">{c.message}&nbsp;</div>
+          <div className="text"><ChatMessage msg={c.message}/></div>
         </div>
       </div>
     )
+  },
+
+  
+  
+  onDropChatMsg: function (e) { 
+    const asset = DragNDropHelper.getAssetFromEvent(e)
+    if (!asset) {
+      console.log("Drop - NO asset")
+      return
+    }
+    this.refs.theMessage.value += _encodeAssetInMsg(asset)
   },
 
   render: function () {    
@@ -240,7 +272,14 @@ debugger   // DEAD CODE?
 
         <form className="ui small form">
           <div className={disabler("field")} id='mgbjr-fp-chat-messageInput'>
-            <textarea rows="3" placeholder="your message..." ref="theMessage" maxLength={chatParams.maxChatMessageTextLen}></textarea>
+            <textarea 
+                rows="3" 
+                placeholder="your message..." 
+                ref="theMessage" 
+                maxLength={chatParams.maxChatMessageTextLen} 
+                onDragOver={DragNDropHelper.preventDefault}
+                onDrop={this.onDropChatMsg}>
+            </textarea>
           </div>
           <div className={disabler("ui blue right floated labeled submit icon button")} ref="sendChatMessage" onClick={this.doSendMessage}>
             <i className="chat icon"></i> Send Message

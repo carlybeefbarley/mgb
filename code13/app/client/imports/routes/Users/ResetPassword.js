@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { showToast } from '/client/imports/routes/App'
+
 import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import validate from '/imports/schemas/validate'
@@ -69,7 +71,7 @@ export default ResetPasswordRoute = React.createClass({
       {
         // This is going to cause an auto-login to happen very quickly, and that will also regenerate this React control, so we 
         // Have to do some strange stuff now
-        alert("Password reset was successful")
+        showToast("Password reset was successful", 'success')
         utilPushTo(this.context.urlLocation.query, "/")
         this.setState( { isLoading: false, errors: {}, isComplete: true } )
       }

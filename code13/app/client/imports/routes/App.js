@@ -21,7 +21,6 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
-import Toast from '/client/imports/components/Nav/Toast'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
@@ -29,6 +28,11 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
+
+// https://www.npmjs.com/package/react-notifications
+import { NotificationContainer, NotificationManager } from 'react-notifications'
+// Note css is in /client/notifications.css
+// Note - also, we copied the fonts this requires to public/fonts/notification.*
 
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 
@@ -41,7 +45,6 @@ const getPagepathFromProps = props => props.routes[1].path
 const npColumn1Width = "60px"
 
 let _theAppInstance = null
-
 
 // This is for making the Completion Tag thing work so it edge triggers only when pages are actually navigated to (rather than every update). 
 // QLink.js calls this. There may be a better way to do this, but this isn't too terribly factored so is OKish
@@ -75,6 +78,18 @@ export const startSignUpTutorial = () => {
   
 }
 
+const _toastTypes = {
+  error:    { funcName: 'error',   hdr: 'Error',   delay: 5000 },
+  warning:  { funcName: 'warning', hdr: 'Warning', delay: 4000 },
+  info:     { funcName: 'info',    hdr: 'Info',    delay: 4000 },
+  success:  { funcName: 'success', hdr: 'Success', delay: 4000 }
+}
+
+export const showToast = (content, type = 'success') => { 
+  //console.log(`Showing (${type}) Toast Message: '${content}'`)
+  const useType = _toastTypes[type] || _toastTypes['success']
+  NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+}
 
 export const joyrideDebugEnable = joyrideDebug => {
   if (_theAppInstance) 
@@ -154,9 +169,6 @@ export default App = React.createClass({
   getInitialState: function() {
     return {
       initialLoad: true,
-      showToast: false,
-      toastMsg: '',
-      toastType: 'success',
       fNavPanelIsOverlay: true,    // Could make this initial value based on screen size, but that might be odd
       activityHistoryLimit: 11,
 
@@ -235,7 +247,7 @@ export default App = React.createClass({
 
   render() {
 
-    const { fNavPanelIsOverlay, showToast, toastMsg, toastType, joyrideDebug } = this.state
+    const { fNavPanelIsOverlay, joyrideDebug } = this.state
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
 
@@ -384,10 +396,6 @@ export default App = React.createClass({
               className={conserveSpace ? "conserveSpace noScrollbarDiv" : "noScrollbarDiv"}>
               <div style={mainPanelInnerDivSty}>
                 { !fFixedTopNavBar && navbar }
-
-                { showToast &&
-                  <Toast content={toastMsg} type={toastType} />
-                }
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
@@ -396,7 +404,6 @@ export default App = React.createClass({
                     currUserProjects: currUserProjects,
                     ownsProfile: ownsProfile,
                     isSuperAdmin: isSuperAdmin,
-                    showToast: this.showToast,
                     isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
                   })
                 }
@@ -419,6 +426,7 @@ export default App = React.createClass({
             }
             
           </div>
+          <NotificationContainer/>
       </div>
     )
   },
@@ -537,20 +545,6 @@ export default App = React.createClass({
   // TOAST
   //
 
-  showToast(content, type = 'success') {
-    console.log(`Showing (${type}) Toast Message: '${content}'`)
-    this.setState({
-      showToast: true,
-      toastMsg: content,    // toastMsg content is string that accepts HTML
-      toastType: type       // type is a string: 'error' or 'success'
-    })
-    window.setTimeout(() => { this.closeToast() }, 2500)
-  },
-
-  closeToast() {
-    this.setState( { showToast: false, toastMsg: '' } )
-  },
-
   startSignUpTutorial() 
   {
     if (this.currUser)
@@ -571,7 +565,7 @@ export default App = React.createClass({
   handleCompletedSkillTutorial(tutorialSkillPath) {
     console.log( 'Completed a Skill Tutorial: ', tutorialSkillPath )
     if (!hasSkill( tutorialSkillPath )) {
-      this.showToast( `Tutorial Completed, Skill '${tutorialSkillPath}' gained` )
+      showToast( `Tutorial Completed, Skill '${tutorialSkillPath}' gained` )
       learnSkill( tutorialSkillPath )
     }
   },
@@ -607,7 +601,7 @@ export default App = React.createClass({
           catch (err)
           {
             const msg = `Unable to parse JSON for tutorial at '${codeUrl}: ${err.toString()}`
-            alert(msg)
+            showToast(msg, 'error')
             console.error(msg)
             loadedSteps = null
           }
@@ -617,7 +611,7 @@ export default App = React.createClass({
           }
         })
         .catch( err => {
-          alert(`Unable to start tutorial '${steps}': ${err.toString()}`) 
+          showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error') 
         } )
       return
     }
@@ -691,7 +685,7 @@ export default App = React.createClass({
             if (!result || result.length === 0)
               console.log(`No New badges awarded`)
             else
-              this.showToast(`New badges awarded: ${result.join(', ')} `)
+              showToast(`New badges awarded: ${result.join(', ')} `)
           }
         })
         break

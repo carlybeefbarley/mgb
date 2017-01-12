@@ -3,7 +3,7 @@
 // this is required for babel - as it uses window as global
 this.window = this
 importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.js")
-// importScripts("/lib/babel-standalone.js")
+//importScripts("/lib/babel-standalone.js")
 
 onmessage = function (e) {
   var filename = e.data[0]

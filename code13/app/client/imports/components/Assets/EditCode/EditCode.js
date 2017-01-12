@@ -7,7 +7,7 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
-import { addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
+import { showToast, addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import moment from 'moment'
@@ -141,7 +141,7 @@ export default class EditCode extends React.Component {
   }
 
   warnNoWriteAccess() {
-    alert("You don't have write access to this code")
+    showToast("You don't have write access to this Asset", 'error')
   }
 
   componentDidMount() {
@@ -691,8 +691,8 @@ export default class EditCode extends React.Component {
       browser: true,
       esversion: 6,
       asi: true,
-      //globalstrict: true,
-      strict: "implied",
+      // globalstrict: true,
+      // strict: "implied",
       undef: true,
       unused: true,
       loopfunc: true,
@@ -1607,7 +1607,7 @@ export default class EditCode extends React.Component {
 
     if (pj.errorHintString)
     {
-      alert('JSON Parse error: ' + pj.errorHintString)
+      showToast('JSON Parse error: ' + pj.errorHintString, 'error')
       if ( pj.errorCharIdx >=0 )
       {
         const editor = this.codeMirror
@@ -1619,7 +1619,7 @@ export default class EditCode extends React.Component {
     if (pj.data)
     {
       if (!_.has(pj.data, 'steps'))
-        alert("Tutorials must have a steps: [] array value")
+        showToast("Tutorials must have a steps: [] array value", 'error')
       else
       {
         joyrideDebugEnable(true)

@@ -14,6 +14,8 @@ import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
+import { showToast } from '/client/imports/routes/App'
+
 import WorkState from '/client/imports/components/Controls/WorkState'
 import StableState from '/client/imports/components/Controls/StableState'
 import AssetLicense from '/client/imports/components/Controls/AssetLicense'
@@ -81,8 +83,7 @@ export default AssetEditRoute = React.createClass({
     currUser:         PropTypes.object,
     currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
     isSuperAdmin:     PropTypes.bool,       
-    ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
-    showToast:        PropTypes.func         // For user feedback
+    ownsProfile:      PropTypes.bool         // true IFF user is valid and asset owner is currently logged in user
   },
 
   getInitialState: function () {
@@ -226,13 +227,12 @@ export default AssetEditRoute = React.createClass({
 
 
   // This result object will come from Meteor.call("Azzets.fork")
-  forkResultCallback: function (error, result) {
-    const { showToast } = this.props
-    
+  forkResultCallback: function (error, result) {    
     if (error)
       showToast(`Unable to create a forked copy of this asset: '${error.toString()}'`, 'error')
     else {
-      showToast(`Created a forked copy of this asset ok. New AssetId='${result.newAssetNoC2.name} (#${result.newId})`, 'success')
+      showToast(`Created a forked copy of this asset`, 'success')
+      // TODO: Could open window etc for New AssetId='${result.newAssetNoC2.name} (#${result.newId})
       logActivity("asset.fork.from", "Forked new asset from this asset", null, this.data.asset )
       logActivity("asset.fork.to", "Forked this new asset from another asset", null, result.newAssetNoC2 )
     }
@@ -366,6 +366,10 @@ export default AssetEditRoute = React.createClass({
   {
     // This is a style on the Edit/view tag in render()
     $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
+    if (this.props.currUser)
+      showToast("You do not have permission to edit this Asset", 'error')
+    else  
+      showToast("You must create an account if you wish to edit Assets", 'error')
   },
 
 
@@ -502,7 +506,7 @@ export default AssetEditRoute = React.createClass({
     if (newText !== this.data.asset.text) {
       Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {text: newText}, (err, res) => {
         if (err) 
-          this.props.showToast(err.reason, 'error')
+          showToast(err.reason, 'error')
       })
       logActivity("asset.description",  `Update description to "${newText}"`, null, this.data.asset)
     }
@@ -512,7 +516,7 @@ export default AssetEditRoute = React.createClass({
   handleMetadataChange: function(newMetadata) {
     Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), { metadata: newMetadata }, (err, res) => {
       if (err)
-        this.props.showToast(err.reason, 'error')
+        showToast(err.reason, 'error')
     })
     logActivity("asset.metadata",  `Update metadata of asset`, null, this.data.asset)
   },
@@ -522,7 +526,7 @@ export default AssetEditRoute = React.createClass({
     if (newName !== this.data.asset.name) {
       Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {name: newName}, (err, res) => {
         if (err)
-          this.props.showToast(err.reason, 'error')
+          showToast(err.reason, 'error')
       })      
       logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset)
     }
@@ -541,7 +545,7 @@ export default AssetEditRoute = React.createClass({
     if (newLicense !== oldLicense) {
       Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), { assetLicense: newLicense}, (err, res) => {
         if (err)
-          this.props.showToast(err.reason, 'error')
+          showToast(err.reason, 'error')
       })
       logActivity("asset.license",  `License changed from ${oldLicense || defaultAssetLicense} to "${newLicense}"`, null, this.data.asset)
     }
@@ -553,7 +557,7 @@ export default AssetEditRoute = React.createClass({
     if (newWorkState !== oldState) {
       Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {workState: newWorkState}, (err, res) => {
         if (err)
-          this.props.showToast(err.reason, 'error')
+          showToast(err.reason, 'error')
       })
       logActivity("asset.workState",  `WorkState changed from ${oldState} to "${newWorkState}"`, null, this.data.asset)
     }
@@ -566,7 +570,7 @@ export default AssetEditRoute = React.createClass({
     if (asset && asset.isDeleted !== newIsDeleted) {
       Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isDeleted: newIsDeleted}, (err, res) => {
         if (err)
-          this.props.showToast(err.reason, 'error')
+          showToast(err.reason, 'error')
       })
       if (newIsDeleted)
         logActivity("asset.delete",  "Delete asset", null, asset)
@@ -577,9 +581,9 @@ export default AssetEditRoute = React.createClass({
 
   handleCompletedClick() {
     let newIsCompletedStatus = !this.props.asset.isCompleted
-    Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: newIsCompletedStatus}, (err, res) => {
+    Meteor.call('Azzets.update', this.props.asset._id, this.canCurrUserEditThisAsset(), {isCompleted: newIsCompletedStatus}, (err, res) => {
       if (err) {
-        this.props.showToast(err.reason, 'error')
+        showToast(err.reason, 'error')
       }
     });
     
@@ -595,7 +599,7 @@ export default AssetEditRoute = React.createClass({
     if (asset && asset.isCompleted !== newIsCompleted) {
       Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isCompleted: newIsCompleted}, (err, res) => {
         if (err)
-          this.props.showToast(err.reason, 'error')
+          showToast(err.reason, 'error')
       })
       if (newIsCompleted)
         logActivity("asset.stable",  "Marked asset as complete", null, asset)
@@ -615,7 +619,7 @@ export default AssetEditRoute = React.createClass({
 
     Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), {projectNames: newChosenProjectNamesArray}, (err, res) => {
       if (err)
-        this.props.showToast(err.reason, 'error')
+        showToast(err.reason, 'error')
     })
     
     if (inList)

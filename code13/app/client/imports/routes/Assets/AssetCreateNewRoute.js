@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { showToast } from '/client/imports/routes/App'
 import Helmet from 'react-helmet'
 import AssetCreateNew from '/client/imports/components/Assets/NewAsset/AssetCreateNew'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -51,7 +52,7 @@ export default AssetCreateNewRoute = React.createClass({
    */
   handleCreateAssetClickFromComponent(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) {
     if (!this.props.currUser) {
-      alert("You must be login to create a new Asset")
+      showToast("You must be logged-in to create a new Asset", 'error')
       return
     }
 
@@ -75,7 +76,7 @@ export default AssetCreateNewRoute = React.createClass({
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
-        alert("cannot create Asset because: " + error.reason)
+        showToast("Failed to create new Asset because: " + error.reason, 'error')
       } else {
         newAsset._id = result             // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)

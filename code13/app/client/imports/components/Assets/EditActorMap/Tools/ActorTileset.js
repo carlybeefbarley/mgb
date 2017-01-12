@@ -2,6 +2,8 @@
 import _ from 'lodash'
 import React from 'react'
 
+import { showToast } from '/client/imports/routes/App'
+
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import EditModes from '../../Common/Map/Tools/EditModes.js'
 import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
@@ -39,15 +41,15 @@ export default class ActorTool extends Tileset {
       return
 
     // TODO: create nice popup
-    if (asset.kind != "actor") {
-      alert("TD: Only actors are supported in the actor map")
+    if (asset.kind !== "actor") {
+      showToast("TD: Only Actors are supported in ActorMap ", 'warning')
       return
     }
 
     const name = asset.dn_ownerName +":"+ asset.name
     if (_.some(this.props.tilesets, { name: name } ) )
     {
-      alert(`TD: This map already contains asset '${name}'`)
+      showToast(`TD: This Map already contains Asset '${name}'`, 'warning')
       return
     }
 

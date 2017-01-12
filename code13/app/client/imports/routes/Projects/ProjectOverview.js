@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { showToast } from '/client/imports/routes/App'
 import reactMixin from 'react-mixin'
 import QLink from '../QLink'
 import { Projects } from '/imports/schemas'
@@ -130,7 +131,7 @@ export default ProjectOverview = React.createClass({
   {
     if (this.state.isDeletePending)
     {
-      alert("Delete is still pending...")
+      showToast("Delete is still pending. Please wait..", 'warning')
       return
     }
 
@@ -138,7 +139,7 @@ export default ProjectOverview = React.createClass({
     var newData = { memberIds: _.union(project.memberIds, [userId])}   
     Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
       if (error) {
-         console.log(`Could not add member ${userName} to project ${project.name}`)
+        console.log(`Could not add member ${userName} to project ${project.name}`)
       } else {
         logActivity("project.addMember",  `Add Member ${userName} to project ${project.name}`);
       }
@@ -148,7 +149,7 @@ export default ProjectOverview = React.createClass({
   handleRemoveMemberFromProject: function (userId, userName) {
     if (this.state.isDeletePending)
     {
-      alert("Delete is still pending...")
+      showToast("Delete is still pending. Please wait..", 'warning')
       return
     }
 
@@ -157,7 +158,7 @@ export default ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
       if (error) {
-         console.log(`Could not remove member ${userName} from project ${project.name}`)
+        console.log(`Could not remove member ${userName} from project ${project.name}`)
       } else {
         logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
       }
@@ -191,12 +192,11 @@ export default ProjectOverview = React.createClass({
 
       if (error)
       {
-        alert(`Could not delete Project '${name}: ${error.reason}`)
+        showToast(`Could not delete Project '${name}: ${error.reason}`, 'error')
         this.setState( { isDeletePending: false } )
       }
       else
       {
-        // alert(`Deleted ${result} Project: '${name}'`)  We have a nice UI for this instead now using state & activityLog...
         logActivity("project.destroy",  `Destroyed empty project ${name}`)
         this.setState( { isDeletePending: false, isDeleteComplete: true } )
       }
@@ -217,7 +217,7 @@ export default ProjectOverview = React.createClass({
             icon="edit" 
             content="Rename" 
             disabled={isDeleteComplete || isDeletePending} 
-            onClick={ () => { alert("Not Yet Implemented")}} />
+            onClick={ () => { showToast("Rename Project has not yet been implemented.. ", 'warning')}} />
         <Button 
             icon="red trash" 
             disabled={isDeleteComplete || isDeletePending} 

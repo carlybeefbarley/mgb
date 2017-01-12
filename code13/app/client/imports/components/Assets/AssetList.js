@@ -12,7 +12,6 @@ export default AssetList = props => (
           ownersProjects={props.ownersProjects}
           key={asset._id}
           showEditButton={true}
-          showToast={props.showToast}
           renderView={props.renderView}
           allowDrag={props.allowDrag} />
       ))

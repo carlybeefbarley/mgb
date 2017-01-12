@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
+import { showToast } from '/client/imports/routes/App'
 
 import sty from  './editMusic.css'
 import WaveSurfer from '../lib/WaveSurfer.js'
@@ -51,12 +52,12 @@ export default class ImportMusic extends React.Component {
       const maxUpload = SpecialGlobals.assets.maxUploadSize
       const maxUploadMB = (maxUpload/1024/1024).toFixed(1)
       // console.log(file, maxUpload)
-      if(file.size > maxUpload){
-        alert("You can't upload a file more than "+maxUploadMB+" MB")
+      if (file.size > maxUpload) {
+        showToast("You can't upload a file more than "+maxUploadMB+" MB", 'error')
         this.setState({ status: "empty" })
         return
       }
-      if(file.type === "audio/wav"){
+      if (file.type === "audio/wav") {
         this.loadWav(file)  // read as arraybuffer and encode to mp3
       } else {
         this.loadEncoded(file)  // read as dataUrl

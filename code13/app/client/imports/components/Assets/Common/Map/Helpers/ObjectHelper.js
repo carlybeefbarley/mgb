@@ -1,6 +1,7 @@
 'use strict'
 import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
+import { showToast } from '/client/imports/routes/App'
 
 const TO_RADIANS = (Math.PI / 180)
 const TO_DEGREES = 1 / TO_RADIANS
@@ -223,7 +224,7 @@ const ObjectHelper = {
 
       Meteor.call('Azzets.create', newAsset, (error, result) => {
         if (error) {
-          alert('cannot create asset because: ' + error.reason)
+          showToast('cannot create asset because: ' + error.reason, 'error')
         } else {
           newAsset._id = result // So activity log will work
           logActivity('asset.create', `Create ${assetKindKey}`, null, newAsset)

@@ -6,7 +6,7 @@ this.window = this
 importScripts('/lib/babel-standalone.js', '/lib/jshint.min.js')
 
 
-onmessage = function(e) {
+onmessage = function (e) {
   var str = e.data[0]
   var code;
   var trans;
@@ -20,8 +20,8 @@ onmessage = function(e) {
     })
     code = trans.code
   }
-  // TODO: what to do if babel fails to transform code?
-  catch(e){
+    // TODO: what to do if babel fails to transform code?
+  catch (e) {
     var f = new Array(e.loc.line - 1);
     f.fill("\n");
     code = f.join("") + str.substring(e.pos);
@@ -39,8 +39,16 @@ onmessage = function(e) {
 
   var conf = e.data[1]
   JSHINT(code, conf)
-  var errors = [JSHINT.errors]
-  babelError && JSHINT.errors.push(babelError)
+  var errors = []
+  var err
+  for (var i = 0; i < JSHINT.errors.length; i++) {
+    err = JSHINT.errors[i]
+    if (!err) {
+      continue
+    }
+    errors.push({line: err.line, code: err.code, reason: err.reason})
+  }
+  babelError && errors.push(babelError)
 
-  postMessage(errors)
+  postMessage([errors])
 };

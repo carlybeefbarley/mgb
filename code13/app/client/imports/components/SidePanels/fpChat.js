@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
+import { showToast } from '/client/imports/routes/App'
 
 import reactMixin from 'react-mixin'
 import { Chats } from '/imports/schemas'
@@ -138,7 +139,7 @@ debugger   // DEAD CODE?
     // TODO: Set pending?
     ChatSendMessage(channelKey, msg, (error, result) => {
       if (error) 
-        alert("Cannot send message because: " + error.reason)
+        showToast("Cannot send message because: " + error.reason, 'error')
       else
       {
         this.refs.theMessage.value = ''

@@ -30,8 +30,8 @@ import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
 // https://www.npmjs.com/package/react-notifications
-import 'react-notifications/lib/notifications.css'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
+// Note css is in /client/notifications.css
 // Note - also, we copied the fonts this requires to public/fonts/notification.*
 
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
@@ -601,7 +601,7 @@ export default App = React.createClass({
           catch (err)
           {
             const msg = `Unable to parse JSON for tutorial at '${codeUrl}: ${err.toString()}`
-            alert(msg)
+            showToast(msg, 'error')
             console.error(msg)
             loadedSteps = null
           }
@@ -611,7 +611,7 @@ export default App = React.createClass({
           }
         })
         .catch( err => {
-          alert(`Unable to start tutorial '${steps}': ${err.toString()}`) 
+          showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error') 
         } )
       return
     }

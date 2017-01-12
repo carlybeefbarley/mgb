@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { showToast } from '/client/imports/routes/App'
 import ReactDOM from 'react-dom'
 import GifParser from  './GifParser.js'
 import sty from  './graphicImport.css'
@@ -67,7 +68,7 @@ export default class GraphicImport extends React.Component {
       const maxUploadMB = (maxUpload/1024/1024).toFixed(1)
       // console.log(file, maxUpload)
       if(file.size > maxUpload){
-        alert("You can't upload a file more than "+maxUploadMB+" MB")
+        showToast("You can't upload a file more than "+maxUploadMB+" MB", 'error')
         this.setState({ status: STATUS_EMPTY })
         return
       }

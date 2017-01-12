@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react'
+import { showToast } from '/client/imports/routes/App'
 
 import { logActivity } from '/imports/schemas/activity'
 import { utilPushTo } from '/client/imports/routes/QLink'
@@ -24,7 +25,7 @@ export default ImportRoute = React.createClass({
   createAsset: function(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName, content2, thumbnail, assetLicense, workState, isCompleted) {
     
     if (!this.props.currUser) {
-      alert("You must be login to create a new Asset")
+      showToast("You must be logged-in to create a new Asset", 'error')
       return
     }
 
@@ -53,7 +54,7 @@ export default ImportRoute = React.createClass({
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
-          alert("cannot create Asset because: " + error.reason)
+        showToast("cannot create Asset because: " + error.reason, 'error')
       } else {
         newAsset._id = result             // So activity log will work
         logActivity("asset.create",  `Bulk import ${assetKindKey}`, null, newAsset)

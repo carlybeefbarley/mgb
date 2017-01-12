@@ -1,4 +1,6 @@
 import React from 'react'
+import { showToast } from '/client/imports/routes/App'
+
 import styles from './home.css'
 import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
@@ -50,7 +52,7 @@ const LearnGamesRoute = () => (
                     key={idx} 
                     className="card animated fadeIn" 
                     style={cardStyle} 
-                    onClick={(e) => { alert("Not Yet Implemented"); e.preventDefault() }}
+                    onClick={(e) => { showToast("Not Yet Implemented.. But it will be ready very SOON!", 'warning'); e.preventDefault() }}
                     to={`/learn/skills/NOT_YET_IMPLEMENTED`}>
 
                   <Card.Content>

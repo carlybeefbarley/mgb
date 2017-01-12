@@ -8,6 +8,7 @@ import { logActivity } from '/imports/schemas/activity'
 import ProjectMembershipEditor from './ProjectMembershipEditor'
 import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import WorkState from '/client/imports/components/Controls/WorkState'
+import { showToast } from '/client/imports/routes/App'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
@@ -278,7 +279,7 @@ export default AssetCard = React.createClass({
     newChosenProjectNamesArray.sort()
     Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {projectNames: newChosenProjectNamesArray}, (err, res) => {
       if (err)
-        this.props.showToast(err.reason, 'error')
+        showToast(err.reason, 'error')
     })
       
     let projectsString = newChosenProjectNamesArray.join(", ")
@@ -289,7 +290,7 @@ export default AssetCard = React.createClass({
     let newIsDeletedState = !this.props.asset.isDeleted;
     Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isDeleted: newIsDeletedState}, (err, res) => {
       if (err)
-        this.props.showToast(err.reason, 'error')
+        showToast(err.reason, 'error')
     })
     
     if (newIsDeletedState)
@@ -302,7 +303,7 @@ export default AssetCard = React.createClass({
     let newIsCompletedStatus = !this.props.asset.isCompleted
     Meteor.call('Azzets.update', this.props.asset._id, this.props.canEdit, {isCompleted: newIsCompletedStatus}, (err, res) => {
       if (err)
-        this.props.showToast(err.reason, 'error')
+        showToast(err.reason, 'error')
     })
     
     if (newIsCompletedStatus)

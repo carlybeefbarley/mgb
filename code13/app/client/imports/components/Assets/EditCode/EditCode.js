@@ -690,7 +690,7 @@ export default class EditCode extends React.Component {
       esversion: 6,
       asi: true,
       // globalstrict: true,
-      strict: "implied",
+      // strict: "implied",
       undef: true,
       unused: true,
       loopfunc: true,

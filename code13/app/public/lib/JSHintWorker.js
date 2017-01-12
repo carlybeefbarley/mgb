@@ -1,9 +1,9 @@
 // this is required for babel - as it uses window as global
 this.window = this
-//importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.js")
-//importScripts("https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.1/jshint.min.js")
+importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.js")
+importScripts("https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.4/jshint.min.js")
 
-importScripts('/lib/babel-standalone.js', '/lib/jshint.min.js')
+//importScripts('/lib/babel-standalone.js', '/lib/jshint.min.js')
 
 
 onmessage = function (e) {

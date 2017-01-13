@@ -783,8 +783,9 @@ export default class EditCode extends React.Component {
   srcUpdate_GetInfoForCurrentFunction() {
     let ternServer = this.ternServer
     let editor = this.codeMirror
-
-
+    if(!ternServer || !editor){
+      return
+    }
     let currentCursorPos = editor.getCursor()
     // we need to force internal tern cache to clean up - move cursor to 0,0 and then back
     // TODO: (stauzs) debug this in free time
@@ -821,7 +822,7 @@ export default class EditCode extends React.Component {
     //  arg1, // comment about arg1
     //  arg2
     // )
-    ternServer.updateArgHints(this.codeMirror)
+    ternServer && ternServer.updateArgHints(this.codeMirror)
 
     var functionTypeInfo = null
     const _setState = (functionTypeInfo) => {
@@ -867,6 +868,9 @@ export default class EditCode extends React.Component {
   srcUpdate_GetRelevantTypeInfo() {
     let ternServer = this.ternServer
     let editor = this.codeMirror
+    if(!ternServer || !editor){
+      return
+    }
     let position = editor.getCursor()
     var self = this
     let query = {
@@ -885,6 +889,9 @@ export default class EditCode extends React.Component {
   srcUpdate_GetRefs() {
     let ternServer = this.ternServer
     let editor = this.codeMirror
+    if(!ternServer || !editor){
+      return
+    }
     let position = editor.getCursor()
     var self = this
 
@@ -899,6 +906,9 @@ export default class EditCode extends React.Component {
   srcUpdate_GetDef() {
     let ternServer = this.ternServer
     let editor = this.codeMirror
+    if(!ternServer || !editor){
+      return
+    }
     let position = editor.getCursor()
 
     ternServer.request(editor, "definition", (error, data) => {
@@ -936,6 +946,9 @@ export default class EditCode extends React.Component {
     if (showDebugAST) {
       let ternServer = this.ternServer
       let editor = this.codeMirror
+      if(!ternServer || !editor){
+        return
+      }
       let position = editor.getCursor()
       var self = this
 
@@ -976,6 +989,9 @@ export default class EditCode extends React.Component {
   codeMirrorUpdateHints(fSourceMayHaveChanged = false) {
     // Update the activity snapshot if the code line has changed
     // TODO: Batch this so it only fires when line# is changed
+    if(!this.isActive){
+      return
+    }
     const editor = this.codeMirror
     const position = editor.getCursor()
     const { asset } = this.props
@@ -1774,8 +1790,8 @@ export default class EditCode extends React.Component {
               }
 
               { !docEmpty && asset.kind === 'code' && 
-                // Code run/stop (header)                  
-                <div className="title">
+                // Code run/stop (header)
+                <div className="title" id="mgbjr-EditCode-codeRunner">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Runner
                   </span>

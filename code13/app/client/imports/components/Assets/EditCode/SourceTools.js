@@ -506,7 +506,7 @@ export default class SourceTools {
         const source = sources[i]
         if (source.isExternalFile) {
           const localKey = source.url.split("/").pop().split(".").shift()
-          const partial = {url: source.url, localName: source.localName, name: source.name, localKey: localKey}
+          const partial = {url: source.url, localName: source.localName, name: source.name, localKey: localKey, key: source.key}
           source.useGlobal
             ? externalGlobal.push(partial)
             : externalLocal.push(partial)
@@ -555,8 +555,17 @@ var loadLocalLibs = function(){
   }
   var lib = localLibs.shift()
   loadScript(lib.url, function(){
-    imports[lib.name] = window.module.exports
-    imports[lib.localKey] = imports[lib.name]
+            if(!imports[lib.key])
+              imports[lib.key] = window.exports === window.module.exports ? window.exports : window.module.exports
+
+            if(!imports[lib.localKey])
+              imports[lib.localKey] = window.exports === window.module.exports ? window.exports : window.module.exports
+
+            if (lib.localName && !imports[lib.localName])
+              imports[lib.localName] = window.exports === window.module.exports ? window.exports : window.module.exports
+
+            if (lib.name && !imports[lib.name])
+              imports[lib.name] = window.exports === window.module.exports ? window.exports : window.module.exports
     loadLocalLibs()
   })
 }
@@ -578,7 +587,7 @@ loadGlobalLibs(globalLibs)
 
 main = function(){
 `
-
+      const imports = {}
       for (let i in sources) {
         const source = sources[i]
         if(source.isExternalFile){
@@ -586,22 +595,28 @@ main = function(){
         }
 
         const key = source.name.split("@").shift();
+        const localKeyWithExt = key.split("/").pop()
+        const localKey = localKeyWithExt.split(".").shift().split(":").pop()
+
         allInOneBundle += "window.module = {exports: {}};window.exports = window.module.exports;\n" +
-          source.code + ";\n" +
-          'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)'
+          source.code + ";\n"
 
-        if(source.localName){
-          allInOneBundle += "\n" + 'imports["' + source.localName + '"] = imports["' + key + '"];'
-        }
+        if(!imports[key])
+          allInOneBundle += "\n" + 'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
 
-        if (source.name) {
-          allInOneBundle += "\n" + 'imports["' + source.name + '"] = imports["' + key + '"];'
-        }
+        if(!imports[localKey])
+          allInOneBundle += "\n" + 'imports["' + localKey + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        if (source.localName && !imports[source.localName])
+          allInOneBundle += "\n" + 'imports["' + source.localName + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        if (source.name && !imports[source.name])
+          allInOneBundle += "\n" + 'imports["' + source.name + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
       }
 
       allInOneBundle += "\n" + "}})(); "
       // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
-      const worker = new Worker("/lib/BabelWorker.js")
+      /*const worker = new Worker("/lib/BabelWorker.js")
       worker.onmessage = (e) => {
         cb(e.data.code)
         worker.terminate()
@@ -612,9 +627,9 @@ main = function(){
         comments: false,
         ast: false,
         retainLines: false
-      }])
+      }])*/
 
-      //cb(allInOneBundle)
+      cb(allInOneBundle)
       this.cachedBundle = allInOneBundle
       this._hasSourceChanged = false
     })

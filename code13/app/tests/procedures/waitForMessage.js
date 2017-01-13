@@ -2,7 +2,7 @@ const webdriver = require('selenium-webdriver');
 const until = webdriver.until
 
 const error = () => {
-  throw new Error("Failed to get Success message")
+  throw new Error("Failed to get message")
 }
 module.exports = (browser) => {
   return (expectedMessage, done) => {

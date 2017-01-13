@@ -2,10 +2,9 @@ const webdriver = require('selenium-webdriver');
 const Key = webdriver.Key
 
 const SeleniumHelper = require("../helpers/selenium.js")
-const SuccessHandle = require("./waitForMessage.js")
+const MessageHandler = require("./waitForMessage.js")
 
 const el = {
-  phaserInfo: '.ui.orange.left.ribbon.label',
   codeTextArea: '.CodeMirror textarea',
   fullScreenButton: '.button.full-screen',
   start: "#mgb-EditCode-start-button",
@@ -18,7 +17,7 @@ module.exports = (browser) => {
   // return function so procedure can be used directly as callback
   return (done) => {
     const sel = SeleniumHelper(browser)
-    const onSuccess = SuccessHandle(browser)
+    const onMessage = MessageHandler(browser)
     // wait for React root element
     sel.css("#root")
 
@@ -31,7 +30,7 @@ module.exports = (browser) => {
     browser.sleep(1000)
     sel.css(el.start).click()
 
-    onSuccess("Success", () => {
+    onMessage("Success", () => {
       sel.done(done)
     })
   }

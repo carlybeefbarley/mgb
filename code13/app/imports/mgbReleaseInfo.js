@@ -24,6 +24,44 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
+      'timestamp': 'Thu Jan 12 2017 21:00:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2471'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.alerts',
+          'type': 'improvement',
+          'changeName': 'Error alerts are prettier and toasty',
+          'changeSummary': 'Error and success alerts are now rendered as Animated \'toasts\' at the top-right of the screen. There are a couple of ugly alert boxes remaining for the non-code game Engine, but they will be replaced soon with proper end-game UI' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.flexpanel.chat',
+          'type': 'improvement',
+          'changeName': 'Assets as chat links',
+          'changeSummary': 'You can now drag assets from the main asset Browser pages into chat. They look a bit weird until you push send, but they work. We will improve these further soon.' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'assets.code',
+          'type': 'bugfix',
+          'changeName': 'More fixes for obscure code scenarios',
+          'changeSummary': 'Some of the js1k code samples were driving JSHINT crazy... for good reasons!  We now cope ok even if JSHINT is driven into the realms of madness by the shoggoths of js1k code. Also fixed more corner cases related to React, and name conflicts in multiple imports',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Wed Jan 11 2017 15:00:00 GMT-0800 (PST)',
 
       'id': {

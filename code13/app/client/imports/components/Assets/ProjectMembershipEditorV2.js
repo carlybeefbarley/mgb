@@ -101,7 +101,7 @@ const ProjectMembershipPopup = (props) => {
             style={labelSty}
             title={ getMsgForProjectAccess(p) }
             data-value={p.projectName} 
-            key={"NotMyProj"+idx} >
+            key={(p.isCurrUserProjectMember ? "MemberOf" : "NotMyProj")+idx} >
             <i className="ui sitemap icon" />
             '{p.projectName}'
             <div className="detail">

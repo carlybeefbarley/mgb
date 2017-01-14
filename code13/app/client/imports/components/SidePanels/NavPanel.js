@@ -242,7 +242,7 @@ export default NavPanel = React.createClass({
                   :
                   <i className={v.icon + actv + " big icon"} />
                 }
-                { npFeatureLevel < _npFeatureLevelHideWords && 
+                { (npFeatureLevel < _npFeatureLevelHideWords && !showAvatarInsteadOfIcon) && 
                   <span style={{opacity: '0.3'}}>{v.name}</span>
                 }
               </div>

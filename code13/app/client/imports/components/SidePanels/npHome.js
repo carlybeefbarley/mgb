@@ -28,7 +28,7 @@ export default npHome = React.createClass({
     const { currUser, navPanelIsOverlay } = this.props
 
     return (
-      <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
+      <div className="ui large vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
 
         <Item>
           <Header as='h3' inverted style={{textAlign: "center"}}>
@@ -66,7 +66,7 @@ export default npHome = React.createClass({
                   id='mgbjr-np-home-myBadges'
                   closeNavPanelOnClick={navPanelIsOverlay} 
                   className="item">
-                My Badges
+                <i className="trophy icon" /> My Badges
               </QLink>
               <QLink 
                   to={`/u/${this.props.currUser.profile.name}/games`} 
@@ -81,6 +81,19 @@ export default npHome = React.createClass({
                   id='mgbjr-np-home-myProjects'                  
                   className="item">
                 <i className="sitemap icon" /> My Projects
+              </QLink>
+              <QLink 
+                  closeNavPanelOnClick={navPanelIsOverlay} 
+                  to={`/u/${currUser.username}/skilltree`} className="item"
+                  id='mgbjr-np-home-mySkills'>
+                <Icon name='plus circle' /> My Skills
+              </QLink>
+              <QLink 
+                  closeNavPanelOnClick={navPanelIsOverlay} 
+                  query={{"_fp": 'features'}}  
+                  className="item"
+                  id='mgbjr-np-home-settings'>
+                <Icon name='options' /> Settings
               </QLink>
               <div className='item'></div>
             </div>,

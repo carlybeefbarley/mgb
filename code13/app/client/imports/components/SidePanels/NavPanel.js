@@ -200,12 +200,17 @@ export default NavPanel = React.createClass({
     const miniNavItemStyle = {
       borderRadius: "0px"           // Otherwise active first-item / last-item is rounded
     }
+    const miniNavAvatarItemStyle = {
+      borderRadius:  "0px",          // Otherwise active first-item / last-item is rounded
+      paddingTop:    "8px",
+      paddingBottom: "8px"
+    }
 
     const navPanelChoice = _getNavPanelViewFromTag(selectedViewTag)
     const navPanelHdr = navPanelChoice.hdr
     const ElementNP = navPanelChoice.el    // Can be null
     const npFeatureLevel = this.data.npFeatureLevel || 2
-
+    const hasAvatar = (currUser && currUser.profile && currUser.profile.avatar)
     if (navPanelIsVisible && ElementNP !== null)
       joyrideCompleteTag(`mgbjr-CT-navPanel-${navPanelChoice.tag}-show`)
 
@@ -223,15 +228,20 @@ export default NavPanel = React.createClass({
               return
               
             const actv = (v.tag === selectedViewTag) ? " active selected " : ""
+            const showAvatarInsteadOfIcon =  (v.tag === 'home' && hasAvatar)
             return (
               <div
                 key={v.tag}
                 id={`mgbjr-navPanelIcons-${v.tag}`}
                 className={actv + 'item animated fadeInLeft'}
                 title={v.name}
-                style={miniNavItemStyle}
+                style={showAvatarInsteadOfIcon ? miniNavAvatarItemStyle : miniNavItemStyle}
                 onClick={(e) => { this.npViewSelect(v.tag, e.altKey, e.shiftKey)}}>
-                <i className={v.icon + actv + " big icon"} />
+                { showAvatarInsteadOfIcon ? 
+                  <img className="ui centered avatar image" style={{ width: '3em', height: '3em'}} src={currUser.profile.avatar} />
+                  :
+                  <i className={v.icon + actv + " big icon"} />
+                }
                 { npFeatureLevel < _npFeatureLevelHideWords && 
                   <span style={{opacity: '0.3'}}>{v.name}</span>
                 }

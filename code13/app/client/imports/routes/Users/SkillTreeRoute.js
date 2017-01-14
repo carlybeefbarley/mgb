@@ -50,6 +50,21 @@ export default SkillTreeRoute = React.createClass({
         <Helmet
             title="Skill Tree"
             meta={ [ {"name": "description", "content": "SkillTree"} ] } />
+        { isTopLevelRoute && 
+          <div className='ui segment'>
+            <p>
+              The Skill Bars below represent your progress on learning certain Skills. 
+              Skills will automatically advance as you complete tutorials, exercise certain skills, and as you code with CodeMentor. 
+              You can expand each Skill Bar to see the details of your skill progress in that area, and even manually change your status for each Skill.
+            </p>
+            <p>
+              This system allows MGB to present appropriate help and tutorials to you based on your level, and for you to track your progress in these Skill areas. 
+            </p>
+            <p>
+              <small><em>(Note: expanded-UI for this feature is incomplete - and kind of ugly... It will be completed in January)</em></small>
+            </p>
+          </div>
+        }
         <SkillsMap user={user} userSkills={userSkills} ownsProfile={ownsProfile} hideToolbars={!isTopLevelRoute}/>
       </div>
     )

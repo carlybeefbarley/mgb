@@ -198,43 +198,53 @@ export default class EditActorMap extends EditMap {
         {this.renderPlayModal()}
         {this.renderMusicModal()}
 
-        <div className={ (isPlaying ? 'sixteen' : 'ten') + ' wide column'}>
-          <MapToolbar
-            {...this.toolbarProps}
-            isPlaying={isPlaying}
-            options={this.options}
-            undoSteps={this.mgb_undo}
-            redoSteps={this.mgb_redo}
-          />
-          <ActorMapArea
-            {...this.mapProps}
-            showModal={this.showModal}
-            playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
-            isPlaying={isPlaying}
-            cache={this.cache}
-            activeLayer={activeLayer}
-            highlightActiveLayer={c2.meta.highlightActiveLayer}
-            canEdit={this.props.canEdit}
-            options={this.options}
-            data={c2}
-
-            asset={this.props.asset}
-            ref='map' />
+        <div className={ (isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
+          <div style={{float: 'left'}}>
+            <MapToolbar
+              {...this.toolbarProps}
+              isPlaying={isPlaying}
+              options={this.options}
+              undoSteps={this.mgb_undo}
+              redoSteps={this.mgb_redo}
+            />
+          </div>
+          <div style={{float: 'left'}}>
+            <EventTool
+              {...this.tilesetProps}
+              palette={this.cache.tiles}
+              activeTileset={activeTileset}
+              tilesets={c2.tilesets}
+              options={this.options}
+              />
+          </div>
+          <div style={{float: 'left'}}>
+            <Properties {...this.propertiesProps} data={{
+              width: c2.width,
+              height: c2.height
+            }}/>
+          </div>
+          <div style={{clear: 'both', overflow:'hidden'}}>
+            <ActorMapArea
+              {...this.mapProps}
+              showModal={this.showModal}
+              playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
+              isPlaying={isPlaying}
+              cache={this.cache}
+              activeLayer={activeLayer}
+              highlightActiveLayer={c2.meta.highlightActiveLayer}
+              canEdit={this.props.canEdit}
+              options={this.options}
+              data={c2}
+              asset={this.props.asset}
+              ref='map' />
+            </div>
         </div>
-        <div className={'six wide '+ (isPlaying ? 'hidden' : '') + ' column'}>
+        <div className={'three wide '+ (isPlaying ? 'hidden' : '') + ' column'}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
             options={c2.meta}
             activeLayer={activeLayer}
-            />
-          <br />
-          <EventTool
-            {...this.tilesetProps}
-            palette={this.cache.tiles}
-            activeTileset={activeTileset}
-            tilesets={c2.tilesets}
-            options={this.options}
             />
           <br />
           <TileSet
@@ -244,11 +254,6 @@ export default class EditActorMap extends EditMap {
             tilesets={c2.tilesets}
             options={this.options}
             />
-          <br />
-          <Properties {...this.propertiesProps} data={{
-            width: c2.width,
-            height: c2.height
-          }}/>
         </div>
       </div>
     )

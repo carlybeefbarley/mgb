@@ -1,6 +1,7 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
+import { Dropdown } from 'semantic-ui-react'
 
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import EditModes from '../../Common/Map/Tools/EditModes.js'
@@ -25,31 +26,17 @@ export default class ActorTool extends Tileset {
     this.props.setActiveLayerByName("Events")
   }
   renderEmpty () {
-    return (
-      <div className='mgbAccordionScroller'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Actors</span>
-          </div>
-          { this.renderContent(false) }
-        </div>
-      </div>
-    )
   }
   renderContent () {
     return (
-      <div className='active tilesets'>
-        <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
-          <canvas
-            ref='canvas'
-            onMouseDown={this.onMouseDown.bind(this)}
-            onMouseUp={this.onMouseUp.bind(this)}
-            onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
-            onMouseLeave={this.onMouseLeave.bind(this)}
-            onContextMenu={e => { e.preventDefault(); return false; } } >
-          </canvas>
-        </div>
-      </div>
+      <canvas
+        ref='canvas'
+        onMouseDown={this.onMouseDown.bind(this)}
+        onMouseUp={this.onMouseUp.bind(this)}
+        onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
+        onMouseLeave={this.onMouseLeave.bind(this)}
+        onContextMenu={e => { e.preventDefault(); return false; } } >
+      </canvas>
     )
   }
 
@@ -63,16 +50,11 @@ export default class ActorTool extends Tileset {
       ts.actor = {}
 
     return (
-      <div id="mgbjr-MapTools-events" className='mgbAccordionScroller tilesets'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Events </span>
-          </div>
-          <div className="content active" style={{height: "52px"}}>
-            {this.renderContent(this.tileset)}
-          </div>
-        </div>
-      </div>
+      <Dropdown floating labeled button text="Events" id="mgbjr-MapTools-events" className='tilesets icon'>
+        <Dropdown.Menu>
+          {this.renderContent(this.tileset)}
+        </Dropdown.Menu>
+      </Dropdown>
     )
   }
 }

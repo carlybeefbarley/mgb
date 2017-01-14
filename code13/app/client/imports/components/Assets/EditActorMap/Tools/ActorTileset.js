@@ -1,6 +1,7 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
+import { Label, Segment } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
 
@@ -88,11 +89,7 @@ export default class ActorTool extends Tileset {
   }
   renderContent (tileset) {
     return (
-      <div
-        className='active tilesets accept-drop'
-        data-drop-text={_dragHelpMsg}
-        onDrop={this.onDropOnLayer.bind(this)}
-        onDragOver={DragNDropHelper.preventDefault}>
+      <div>
 
         { !tileset
           ? <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
@@ -153,35 +150,33 @@ export default class ActorTool extends Tileset {
     let isValidForLayer = layer ? ActorHelper.checks[layer.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
 
     return (
-      <div className='mgbAccordionScroller tilesets'>
-        {this.renderForModal(1)}
-        <div className='ui fluid styled accordion'>
-          <div
-            className='active title accept-drop'
-            >
-            <span className='explicittrigger'><i className='dropdown icon'></i> Actors</span>
+      <Segment id="mgbjr-MapTools-actors" className='tilesets' style={{ 'height': 100+'%' }}>
+        <Label attached='top'>Actors {this.renderOpenListButton(1)} {this.renderForModal(1)}</Label>
+          <div 
+            className='active title accept-drop'       
+            data-drop-text={_dragHelpMsg}
+            onDrop={this.onDropOnLayer.bind(this)}
+            onDragOver={DragNDropHelper.preventDefault}
+            style={{"minHeight": "75px"}}>
             <div className='ui simple dropdown top right basic grey below label item'
-                 style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%', "minWidth": "50%", top: "-5px" }}>
+                style={{'whiteSpace': 'nowrap', "width": "100%"}}>
               <i className='dropdown icon'></i>
               <span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
               <div className='floating ui tiny green label'>
                 {this.props.tilesets.length - 1}
               </div>
-              <div className='menu' style={{"maxHeight": "295px", "overflow": "auto", "maxWidth": "50px"}}>
+              <div className='menu' style={{"maxHeight": "295px", "overflow": "auto", "width": "100%"}}>
                 {tilesets}
               </div>
             </div>
-            {this.renderOpenListButton(1)}
           </div>
           <div className="content active actor-tileset-content">
-            {!isValidForLayer && <div className="actor-disabled-hint">
-              <em>{ts.name}</em> is not valid for selected layer <em>{layer.name}</em>
-              <small>{this.renderValidLayerInfo(ActorHelper.checks, ts, layer.name)}</small>
+            {!isValidForLayer || <div>
+              {this.tilesets.map((ts) => this.renderContent(ts))}
             </div>}
-            {this.renderContent(ts)}
           </div>
-        </div>
-      </div>
+      </Segment>
+
     )
   }
 }

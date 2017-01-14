@@ -1,12 +1,11 @@
 import _ from 'lodash'
 import React from 'react'
+import { Label, Segment } from 'semantic-ui-react'
 import LayerControls from './LayerControls.js'
 
 export default class Layers extends React.Component {
 
   componentDidMount () {
-    $('.ui.accordion')
-      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
   }
 
   handleClick (layerNum) {
@@ -45,17 +44,11 @@ export default class Layers extends React.Component {
       )
     }
     return (
-      <div id="mgbjr-MapTools-layers" className='mgbAccordionScroller'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Layers</span>
-          </div>
-          <div className='active content menu'>
-            <LayerControls {...this.props} />
-            {layers}
-          </div>
-        </div>
-      </div>
+      <Segment id="mgbjr-MapTools-layers">
+        <Label attached='top'>Layers</Label>
+          <LayerControls {...this.props} />
+          {layers}
+      </Segment>
     )
   }
 }

@@ -3,7 +3,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Header, Icon, Item } from 'semantic-ui-react'
 
 const npCreate = ( { currUser, navPanelIsOverlay} ) => (
-  <div className="ui vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
+  <div className="ui large vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
     <Item>
       <Header as='h3' inverted style={{textAlign: "center"}}>
         <Icon name='pencil' />
@@ -16,7 +16,7 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
           id='mgbjr-np-create-myAssets-hdr'
           to={`/u/${currUser.profile.name}/assets`}
           closeNavPanelOnClick={navPanelIsOverlay} 
-          className="item">
+          className="header item">
         My Assets
       </QLink>
     }
@@ -46,7 +46,7 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
           style={{marginTop: '8em'}} 
           closeNavPanelOnClick={navPanelIsOverlay} 
           className="item" 
-          key="join">Sign Up and start Creating!
+          key="join">Sign Up to Create
       </QLink>  
     }
     { currUser && 
@@ -54,7 +54,7 @@ const npCreate = ( { currUser, navPanelIsOverlay} ) => (
           id='mgbjr-np-my-projects-hdr'
           to={`/u/${currUser.profile.name}/projects`} 
           closeNavPanelOnClick={navPanelIsOverlay} 
-          className="item">
+          className="header item">
         My Projects
       </QLink>
     }

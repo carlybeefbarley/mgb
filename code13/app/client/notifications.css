@@ -15,8 +15,8 @@
     top: 0;
     right: 0;
     z-index: 999999;
-    width: 320px;
-    padding: 0 15px;
+    width: 380px;
+    padding: 0 55px;
     max-height: calc(100% - 30px);
     overflow-x: hidden;
     overflow-y: auto

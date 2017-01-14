@@ -24,6 +24,31 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
+      'timestamp': 'Fri Jan 13 2017 18:00:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2474'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.flexpanel',
+          'type': 'improvement',
+          'changeName': 'NavPanel and FlexPanel cleanup',
+          'changeSummary': 'New Users now only see 3 FlexPanel menus: Goals, Assets and Chat.  The other Flexpanels are now only shown at higher "FeatureLevels" for the FlexPanel UI setting. This hides "options" by default. The Options FlexPanel is now reachable from the Home NavPanel "settings" menu option; the Skills page is now reachable from the Home and Learn NavPanels. Finally, if the user is logged in and has an avatar, that is shown instead of the Home Icon in the NavPanel icon list. Overall, the intent is to make the initial UI less daunting for a new user' ,
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+
+    {
       'timestamp': 'Thu Jan 12 2017 21:00:00 GMT-0800 (PST)',
 
       'id': {

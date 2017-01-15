@@ -85,7 +85,7 @@ const npProjects = (props) => {
           closeNavPanelOnClick={navPanelIsOverlay}
           className="item" 
           title="Create New Project">
-        <Icon name='green sitemap' /> Create New Project
+        <Icon color='green' name='sitemap' /> Create New Project
       </QLink>
 
       <QLink 
@@ -93,7 +93,7 @@ const npProjects = (props) => {
           closeNavPanelOnClick={navPanelIsOverlay}
           className="header item" 
           title="Projects you are a member of">
-        <Icon name='grey sitemap' /> Project Memberships
+        <Icon color='grey' name='sitemap' /> Project Memberships
       </QLink>
       <ProjectMenu 
           projects={currUserProjects} 

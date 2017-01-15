@@ -43,7 +43,7 @@ export const AssetKinds = {
     selfPlural: false,
     disable: false,
     longName: "Actor",
-    icon: "actor child",
+    icon: "child",
     color: "teal",
     requiresUserRole: null,
     description: "Actors define Game behaviors without you having to write any code.",

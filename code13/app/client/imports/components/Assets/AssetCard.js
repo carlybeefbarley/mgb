@@ -138,6 +138,7 @@ export default AssetCard = React.createClass({
     const assetKindIcon = AssetKinds.getIconClass(asset.kind)
     const assetKindDescription = AssetKinds.getDescription(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
+    const assetKindColor = AssetKinds.getColor(asset.kind)
     const c2 = asset.content2 || { width:64, height:64 }
     const viewOpts = assetViewChoices[renderView]
 
@@ -166,7 +167,10 @@ export default AssetCard = React.createClass({
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
-      <div key={asset._id} className="ui card animated fadeIn" style={ { minWidth: '200px', marginTop: '0.25em', marginBottom: '0.25em' } }>
+      <div 
+          key={asset._id} 
+          className={"ui " + assetKindColor + " card animated fadeIn"}
+          style={ { minWidth: '200px', marginTop: '0.25em', marginBottom: '0.25em' } }>
       
         <div 
             className="ui centered image" 
@@ -190,7 +194,7 @@ export default AssetCard = React.createClass({
 
         { viewOpts.showHdr && 
           <div className="content">
-            <i className={'right floated ' + assetKindIcon + ' icon'} />
+            <i className={'right floated ' + assetKindColor + ' ' + assetKindIcon + ' icon'} />
             <a  className={ viewOpts.header }
                 style={{ "color": asset.name ? 'black' : '#888',
                   overflow: "hidden",
@@ -233,8 +237,8 @@ export default AssetCard = React.createClass({
         
         { viewOpts.showExtra && 
           <div className="extra content">
-            <span className="left floated icon label" title={assetKindDescription}>
-              <i className={"large " + assetKindIcon}></i>
+            <span style={{color: assetKindColor}} className={"left floated " + assetKindColor + " icon label"} title={assetKindDescription}>
+              <i className={"large " + assetKindColor + ' ' + assetKindIcon}></i>
               { assetKindName }
             </span>                           
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">

@@ -21,8 +21,8 @@
 //   (for example SkillsNode['getStarted'] is handled by LearnGetStartedRoute.js)
 
 export const skillAreaItems = [
-  { tag: 'code',       color: '#b01020', mascot: 'bigguy',     mascotName: 'Codo',    icon: 'code',        title: 'Programming',   desc: 'Code using JavaScript and game engines like Phaser' },
-  { tag: 'art',        color: '#b0b020', mascot: 'penguin',    mascotName: 'Pixguin', icon: 'paint brush', title: 'Pixel art',     desc: 'Create animated sprites, spritesheets and tilemaps for games' },
+  { tag: 'code',       color: 'green',   mascot: 'bigguy',     mascotName: 'Codo',    icon: 'code',        title: 'Programming',   desc: 'Code using JavaScript and game engines like Phaser' },
+  { tag: 'art',        color: 'orange',  mascot: 'penguin',    mascotName: 'Pixguin', icon: 'paint brush', title: 'Pixel art',     desc: 'Create animated sprites, spritesheets and tilemaps for games' },
   { tag: 'design',     color: '#b010b0', mascot: 'ideaguy',    mascotName: 'Desi',    icon: 'idea',        title: 'Game design',   desc: 'Design levels, balance gameplay mechanics and keep it fun' },
   { tag: 'audio',      color: '#b08080', mascot: 'flyingcat',  mascotName: 'Mewse',   icon: 'music',       title: 'Music & audio', desc: 'Bring engagement and mood to games through music and sound' },
   { tag: 'analytics',  color: '#b02050', mascot: 'whale',      mascotName: 'Hammer',  icon: 'line chart',  title: 'Analytics',     desc: 'Data beats opinions: analyze player activity and improve all the things' },

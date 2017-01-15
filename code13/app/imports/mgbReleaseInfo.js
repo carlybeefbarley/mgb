@@ -24,12 +24,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Fri Jan 13 2017 18:00:00 GMT-0800 (PST)',
+      'timestamp': 'Sat Jan 14 2017 16:15:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2474'
+        'iteration': '2480'
       },
 
       'releaseManagement': {
@@ -44,7 +44,20 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'changeSummary': 'New Users now only see 3 FlexPanel menus: Goals, Assets and Chat.  The other Flexpanels are now only shown at higher "FeatureLevels" for the FlexPanel UI setting. This hides "options" by default. The Options FlexPanel is now reachable from the Home NavPanel "settings" menu option; the Skills page is now reachable from the Home and Learn NavPanels. Finally, if the user is logged in and has an avatar, that is shown instead of the Home Icon in the NavPanel icon list. Overall, the intent is to make the initial UI less daunting for a new user' ,
           'otherUrls': [ ]
         },
-      ]
+        {
+          'featureTag': 'nav.assets',
+          'type': 'improvement',
+          'changeName': 'Color-keyed the different asset kinds',
+          'changeSummary': 'To make it easier when working with different Asset Kinds, each now has a color used in icons and buttons to make it easier to see at a glance what kind of Asset it refers to. We may add a way for users to optionally disable this later depending on user feedback' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'skills.chat',
+          'type': 'improvement',
+          'changeName': 'Simplified Chat tutorials',
+          'changeSummary': 'Condensed the placeholder tutorials for coming-soon chat features and shortened the text' ,
+          'otherUrls': [ ]
+        },      ]
     },
 
 

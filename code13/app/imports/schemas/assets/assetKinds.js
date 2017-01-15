@@ -181,6 +181,9 @@ export const AssetKinds = {
   getIconClass: function(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"
   },
+  getIconName: function(key) {
+    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign")
+  },
   getColor: function(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].color : "pink")
   },

@@ -53,7 +53,6 @@ export default ProjectsBeingMadeGET = React.createClass({
               <img className="ui small middle aligned image" style={{ maxHeight: 60, maxWidth: 60 }} src={getProjectAvatarUrl(p)} />
               <div className="content middle aligned" style={titleWrapperStyle}>
                 <h3 className="ui header" style={titleStyle}>{p.name}</h3>
-                <p><i className="small play icon" />00,000 Plays</p>
               </div>
             </QLink>
           ))

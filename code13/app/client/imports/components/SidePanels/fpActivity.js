@@ -32,6 +32,7 @@ const ActivityExtraDetail = ( { act} ) => {
 
   if (act.activityType.startsWith("asset.") || act.activityType.startsWith("game.")) {
     const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
+    const assetKindColor = AssetKinds.getColor(act.toAssetKind)
     const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
     const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
     const linkTo = act.toOwnerId ? 
@@ -41,7 +42,7 @@ const ActivityExtraDetail = ( { act} ) => {
     return (
       <div>
         <Feed.Extra text>
-          <Icon name={assetKindIconClassName} />
+          <Icon color={assetKindColor} name={assetKindIconClassName} />
           <QLink to={linkTo}>
             { act.toOwnerId === act.byUserId ? assetName : `${assetName}@${act.toOwnerName}` }
           </QLink>

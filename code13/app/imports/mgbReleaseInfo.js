@@ -17,6 +17,14 @@ const mgbReleaseInfo = {
 /* Pending changes -- accumulate here in comment until time to deploy
 
       'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'UI minor fixes',
+          'changeSummary': 'Fixed some minor console warnings, some broken links, some confusing text etc. In addition, the edit UIs now hide some non-actionable buttons for guest users (delete etc). Notably, the 'other viewers' button now only shows if there are other active viewers.  Also updated to latest Semantic-UI-React library (0.64)' ,
+          'otherUrls': [ ]
+        },
+        
       ]
 Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 

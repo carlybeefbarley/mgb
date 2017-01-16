@@ -186,7 +186,7 @@ export default FlexPanel = React.createClass({
   },
 
   render: function () {
-    const { flexPanelWidth, flexPanelIsVisible } = this.props
+    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle } = this.props
 
     const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
     const panelStyle = {
@@ -245,6 +245,9 @@ export default FlexPanel = React.createClass({
             <div className="flex header">
               <span className="title">
                 <i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
+              </span>
+              <span style={{"float": "right", padding: "3px"}} onClick={handleFlexPanelToggle}>
+                <i className="ui grey small close icon"/>
               </span>
             </div>
 

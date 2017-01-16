@@ -17,11 +17,95 @@ const mgbReleaseInfo = {
 /* Pending changes -- accumulate here in comment until time to deploy
 
       'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'UI minor fixes',
+          'changeSummary': 'Fixed some minor console warnings, some broken links, some confusing text etc. In addition, the edit UIs now hide some non-actionable buttons for guest users (delete etc). Notably, the 'other viewers' button now only shows if there are other active viewers.  Also updated to latest Semantic-UI-React library (0.64)' ,
+          'otherUrls': [ ]
+        },
+        
       ]
 Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
 
+
+    {
+      'timestamp': 'Sat Jan 14 2017 16:15:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2480'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.flexpanel',
+          'type': 'improvement',
+          'changeName': 'NavPanel and FlexPanel cleanup',
+          'changeSummary': 'New Users now only see 3 FlexPanel menus: Goals, Assets and Chat.  The other Flexpanels are now only shown at higher "FeatureLevels" for the FlexPanel UI setting. This hides "options" by default. The Options FlexPanel is now reachable from the Home NavPanel "settings" menu option; the Skills page is now reachable from the Home and Learn NavPanels. Finally, if the user is logged in and has an avatar, that is shown instead of the Home Icon in the NavPanel icon list. Overall, the intent is to make the initial UI less daunting for a new user' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.assets',
+          'type': 'improvement',
+          'changeName': 'Color-keyed the different asset kinds',
+          'changeSummary': 'To make it easier when working with different Asset Kinds, each now has a color used in icons and buttons to make it easier to see at a glance what kind of Asset it refers to. We may add a way for users to optionally disable this later depending on user feedback' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'skills.chat',
+          'type': 'improvement',
+          'changeName': 'Simplified Chat tutorials',
+          'changeSummary': 'Condensed the placeholder tutorials for coming-soon chat features and shortened the text' ,
+          'otherUrls': [ ]
+        },      ]
+    },
+
+
+    {
+      'timestamp': 'Thu Jan 12 2017 21:00:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2471'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.alerts',
+          'type': 'improvement',
+          'changeName': 'Error alerts are prettier and toasty',
+          'changeSummary': 'Error and success alerts are now rendered as Animated \'toasts\' at the top-right of the screen. There are a couple of ugly alert boxes remaining for the non-code game Engine, but they will be replaced soon with proper end-game UI' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.flexpanel.chat',
+          'type': 'improvement',
+          'changeName': 'Assets as chat links',
+          'changeSummary': 'You can now drag assets from the main asset Browser pages into chat. They look a bit weird until you push send, but they work. We will improve these further soon.' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'assets.code',
+          'type': 'bugfix',
+          'changeName': 'More fixes for obscure code scenarios',
+          'changeSummary': 'Some of the js1k code samples were driving JSHINT crazy... for good reasons!  We now cope ok even if JSHINT is driven into the realms of madness by the shoggoths of js1k code. Also fixed more corner cases related to React, and name conflicts in multiple imports',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Wed Jan 11 2017 15:00:00 GMT-0800 (PST)',

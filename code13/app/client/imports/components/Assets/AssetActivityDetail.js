@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import moment from 'moment'
 import { Popup, Icon, Label } from 'semantic-ui-react'
 
-// This is the VIEWERS ui that shows other active viewers
+// This is the VIEWERS ui that shows other active viewers using the activitySnapshots DB
 
 const SESSION_MAGIC_TEXT = "BY_SESSION:" 
 const _getCurrUserIdentifier = (currUser) => (currUser ? currUser._id : SESSION_MAGIC_TEXT + Meteor.default_connection._lastSessionId)
@@ -33,6 +33,9 @@ const AssetActivityDetail = ( { activitySnapshots, currUser } ) => {
   })
   
   const viewersCount = viewers.length   // Note this excludes ourselves
+
+  if (0 === viewersCount)
+    return null
   const pointing = viewersCount ? 'below' : false
   const highlightClass = viewersCount ? 'blue' : 'grey'
 

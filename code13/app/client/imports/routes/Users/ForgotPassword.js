@@ -49,7 +49,7 @@ export default ForgotPasswordRoute = React.createClass({
 
   handleSubmit: function(event, formData) {
     event.preventDefault()
-    const { email } = formData
+    const { email } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
 
     const why = validate.emailWithReason(email)
     this.setState( { errors: why ? { password: why } : {} } )

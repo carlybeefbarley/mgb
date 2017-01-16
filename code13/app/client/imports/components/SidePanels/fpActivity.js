@@ -33,7 +33,8 @@ const ActivityExtraDetail = ( { act} ) => {
   }
 
   if (act.activityType.startsWith("asset.") || act.activityType.startsWith("game.")) {
-    const assetKindIconClassName = AssetKinds.getIconClass(act.toAssetKind)
+    const assetKindIconName = AssetKinds.getIconName(act.toAssetKind)
+    const assetKindColor = AssetKinds.getColor(act.toAssetKind)
     const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
     const linkTo = act.toOwnerId ? 
               `/u/${act.toOwnerName}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
@@ -42,7 +43,7 @@ const ActivityExtraDetail = ( { act} ) => {
     return (
       <div>
         <Feed.Extra text>
-          <Icon name={assetKindIconClassName} />
+          <Icon color={assetKindColor} name={assetKindIconName} />
           <QLink to={linkTo}>
             { act.toOwnerId === act.byUserId ? assetName : `${assetName}@${act.toOwnerName}` }
           </QLink>
@@ -67,7 +68,7 @@ const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
   ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) && 
     <span className='mgb-show-on-parent-div-hover' onClick={() => _doDeleteActivity(act._id)}>
       &nbsp;
-      <Icon name='red circular link delete'/>
+      <Icon color='red' circular link name='delete'/>
     </span>
 )
 
@@ -97,7 +98,7 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
         </Feed.Summary>
 
         <Feed.Meta>
-          <Icon name={iconClass} />&nbsp;{act.description}
+          <i name={iconClass} />&nbsp;{act.description}
         </Feed.Meta>
 
         <ActivityExtraDetail act={act} />

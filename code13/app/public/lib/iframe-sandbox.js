@@ -259,13 +259,21 @@ window.onload = function() {
             imports[key] = true
           }
           else{
+            // source.name === key
+
+            //e.g.:  import localKey from 'key'
             // first for babel includes (with default support) another one for commonJS includes
-            imports[source.name] = window.exports === window.module.exports ? window.exports : window.module.exports
-            // imports[localKey] = imports[key]
-            // allow access by local name
-            if (source.localName) {
-              imports[source.localName] = imports[key]
-            }
+            if(!imports[key])
+              imports[key] = window.exports === window.module.exports ? window.exports : window.module.exports
+
+            if(!imports[localKey])
+              imports[localKey] = window.exports === window.module.exports ? window.exports : window.module.exports
+
+            if (source.localName && !imports[source.localName])
+              imports[source.localName] = window.exports === window.module.exports ? window.exports : window.module.exports
+
+            if (source.name && !imports[source.name])
+              imports[source.name] = window.exports === window.module.exports ? window.exports : window.module.exports
           }
         }
         else{

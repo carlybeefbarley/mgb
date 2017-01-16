@@ -26,9 +26,6 @@ Phaser.Game` );
      */
     sel.css(el.phaserInfo)
 
-
-    // wait for save
-    // TODO: add better check in helper instead of 7 seconds timeout
     sel.waitUntilSaved()
     sel.done(done)
   }

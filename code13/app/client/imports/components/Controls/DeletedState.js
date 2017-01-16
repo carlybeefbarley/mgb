@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react'
-import { Icon } from 'semantic-ui-react'
 
 // Note that this is a Stateless function:
 //   See https://facebook.github.io/react/docs/reusable-components.html
@@ -10,14 +9,30 @@ const _propTypes = {
   canEdit:        PropTypes.bool              // If false, then don't allow popup/change
 }
 
+
+const _makeTitle = (isDeleted, canEdit) =>
+{
+  if (isDeleted && canEdit)
+    return 'This asset has been deleted (moved to the \'Trash\'). Click to Undelete it. Deleted Assets are automatically purged from the system after a while' 
+  if (isDeleted)
+    return 'This Asset has been marked \'Complete\' (moved to the \'Trash\') by it\'s owner'
+  if (canEdit)
+    return 'Click to delete this asset. It\'s ok, you can undelete it again if you need to'
+  return null
+}
+
+
 const DeletedState = (props) => {
   const { isDeleted, canEdit, handleChange } = props
 
+  if (!isDeleted && !canEdit)
+    return null
+
   return (
-    <Icon
+    <i
         title={isDeleted ? 'This asset has been deleted. Click to Undelete it' : 'Click to delete this asset. It\'s ok, you can undelete it again if you need to'}
         onClick={() => { canEdit && handleChange && handleChange(!isDeleted) }} 
-        name={isDeleted ? 'inverted bordered red trash' : 'bordered trash outline'} />
+        className={isDeleted ? 'inverted bordered red trash icon' : 'bordered trash outline icon'} />
   )
 }
 

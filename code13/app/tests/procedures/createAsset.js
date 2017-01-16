@@ -3,12 +3,13 @@ const Key = webdriver.Key
 
 const SeleniumHelper = require("../helpers/selenium.js")
 const el = {
-  newAsset: '[to="/assets/create"]',
+  newAsset: '#mgbjr-np-create-createNewAsset',
   inputName: '.ui.basic.segment input',
-  assetTypeButton: '#create-asset',
+  assetTypeButton: '#mgbjr-create-asset-select-kind-',
   createBtn: '#mgbjr-create-asset-button',
   shouldAppear: type => `a[href="/u/tester/assets?kinds=${type}"]`,
-  cmLine: '.CodeMirror-activeline'
+  cmLine: '.CodeMirror-activeline',
+  navPanelCreate: '#mgbjr-navPanelIcons-create'
 }
 module.exports = (browser) => {
   const sel = SeleniumHelper(browser)
@@ -18,9 +19,14 @@ module.exports = (browser) => {
     // wait for React root element
     sel.css("#root")
 
+    // open nav panel
+    sel.css(el.navPanelCreate).click()
+
+
     sel.css(el.newAsset).click()
     sel.css(el.inputName).sendKeys('test.junk.' + type)
-    sel.css(el.assetTypeButton + "-" + type).click()
+
+    sel.css(el.assetTypeButton + type).click()
     sel.css(el.createBtn).click()
 
     sel.css(el.shouldAppear(type))

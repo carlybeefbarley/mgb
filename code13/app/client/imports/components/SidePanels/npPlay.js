@@ -3,7 +3,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Header, Icon, Item } from 'semantic-ui-react'
 
 const npPlay = ( { currUser, navPanelIsOverlay} ) => (
-  <div className="ui vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
+  <div className="ui large vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
     <Item>
       <Header as='h3' inverted style={{textAlign: "center"}}>
         <Icon name='game' />

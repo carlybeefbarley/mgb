@@ -51,8 +51,9 @@ export default AssetCreateSelectKind = React.createClass({
           return (
             <Button icon 
                 id={elemId}
-                positive={isActive}
+                basic={!isActive}
                 key={k} 
+                color={ak.color}
                 style={sty} 
                 onClick={ () => { 
                   joyrideCompleteTag(`mgbjr-CT-create-asset-select-kind-${k}`)

@@ -204,7 +204,9 @@ export default class GameScreen extends React.Component {
             ref="iFrame1"
             sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
             src="/codeEditSandbox.html"
-            frameBorder="0">
+            frameBorder="0"
+            id="mgbjr-EditCode-sandbox-iframe"
+            >
         </iframe>
       </div>
     )

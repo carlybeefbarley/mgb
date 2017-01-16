@@ -14,11 +14,11 @@ export default NotFoundRoute = ( { currUser } ) => (
         <Divider clearing />
         { currUser ?
           <QLink to={`/u/${currUser.profile.name}/assets`}>
-            <Button size='huge' primary content='Keep Going' icon='right arrow icon' />
+            <Button size='huge' primary content='Keep Going' icon='right arrow' />
           </QLink>
           : 
-          <QLink to='/assets'>
-            <Button size='huge' primary content='Get Started' icon='right arrow icon' />
+          <QLink to='/learn/getStarted'>
+            <Button size='huge' primary content='Get Started' icon='right arrow' />
           </QLink>
         }
       </Container>

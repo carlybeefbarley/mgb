@@ -56,7 +56,7 @@ export default LoginRoute = React.createClass({
 
   handleSubmit: function(e, formData) {
     e.preventDefault()
-    const { email, password } = formData
+    const { email, password } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
     this.setState( { isLoading: true, errorMsg: null } )
 
     Meteor.loginWithPassword(email.trim(), password, error => {

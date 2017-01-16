@@ -3,7 +3,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Header, Icon, Item } from 'semantic-ui-react'
 
 const npLearn = ( { currUser, navPanelIsOverlay} ) => (
-  <div className="ui vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
+  <div className="ui large vertical attached inverted fluid menu" style={{backgroundColor: "transparent"}}>
     <Item>
       <Header as='h3' inverted style={{textAlign: "center"}}>
         <Icon name='student' />
@@ -11,30 +11,37 @@ const npLearn = ( { currUser, navPanelIsOverlay} ) => (
       </Header>
     </Item>
 
-    <div className="header item">Learn</div>
-
+    <div className="header item">Tutorials</div>
     <div className="menu">
-      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/learn" className="item">
-        <Icon color='orange' name='map signs' />
-        Learning paths
-      </QLink>
-
       <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/learn/getStarted" className="item">
         <Icon color='yellow' name='rocket' />
         Get Started
       </QLink>
-
       <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/learn/games" className="item">
         <Icon name='game' />
         Make/Mod games
       </QLink>
-
       <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/learn/skills" className="item">
         <Icon color='green' name='student' />
         Learn skills
       </QLink>
-
+      <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/learn" className="item">
+        <Icon color='orange' name='map signs' />
+        All Learning paths
+      </QLink>
     </div>
+
+    { currUser && 
+      <div className="header item">Skills</div>
+    }
+    { currUser && 
+      <div className="menu">
+        <QLink closeNavPanelOnClick={navPanelIsOverlay} to={`/u/${currUser.username}/skilltree`} className="item">
+          <Icon name='plus circle' />
+          My Skills
+        </QLink>
+      </div>
+    }
 
   </div>
 )

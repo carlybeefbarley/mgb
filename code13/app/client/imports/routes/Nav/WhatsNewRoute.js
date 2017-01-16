@@ -16,6 +16,14 @@ const ReleaseId = ( { releaseId } ) => (
   </span>
 )
 
+const _icons = { 
+  "feature":      { color: 'green', name: 'plus'   },
+  "improvement":  { color: 'grey',  name: 'plus'   },
+  "bugfix":       { color: 'red',   name: 'bug'    }, 
+  "removed":      { color: 'red',   name: 'remove' }
+}
+const _getIconForChangeType = (ct,size) => <Icon size={size} color={_icons[ct].color} name={_icons[ct].name} />
+
 
 const UserLink = ( { u } ) => (<QLink to={`/u/${u}`}>@{u}</QLink>)
 
@@ -138,18 +146,6 @@ export default WhatsNewRoute = React.createClass({
     )
   },
     
-  /** ct is a string from mgbReleaseInfo.releases[].changes[].type */
-  getIconNameForChangeType: function(ct) {
-    const iconNames = 
-      { 
-        "feature":     "green plus",
-        "improvement": "grey plus",
-        "bugfix":      "red bug", 
-        "removed":     "red remove" 
-      }
-
-    return iconNames[ct]
-  },
 
   /** This is the left column. Uses React's state.releaseIdx */
   renderNewsMgbVersionsColumn: function() {
@@ -176,7 +172,7 @@ export default WhatsNewRoute = React.createClass({
                 <Item.Description>
                   <List>
                     { r.changes.map( (c,idx) => (
-                      <List.Item key={idx} icon={ this.getIconNameForChangeType(c.type)} description={c.changeName} />
+                      <List.Item key={idx} icon={ _getIconForChangeType(c.type) } description={c.changeName} />
                       ) )  }
                     <br />
                   </List>
@@ -200,7 +196,7 @@ export default WhatsNewRoute = React.createClass({
         { rel.changes.map( (c) => {
           return (
             <Item key={c.changeName} className='animated fadeIn'>
-              <Icon size='large' name={ this.getIconNameForChangeType(c.type) } />&emsp;
+              { _getIconForChangeType(c.type, 'large') }&emsp;
               <Item.Content>
                 <Item.Header><small>{c.changeName}</small></Item.Header>
                 <Item.Meta>

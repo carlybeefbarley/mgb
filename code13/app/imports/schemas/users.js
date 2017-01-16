@@ -113,7 +113,8 @@ Meteor.methods({
 
     count = Meteor.users.update(docId, {$set: data})
 
-    console.log("[User.updateProfile]", count, docId)
+    if (Meteor.isServer)
+      console.log("[User.updateProfile]", count, docId)
     return count
   }
 })

@@ -36,13 +36,13 @@ export const expectedToolbars = {
   NavPanel:      { friendlyName: 'Navigation Panel',     max:  4,   default: 1,  icon: 'pointing left'                    },  // Not really toolbars, but I wanted the same fpLevel stuff
   FlexPanel:     { friendlyName: 'Flex Panel',           max:  8,   default: 1,  icon: 'pointing right'                   },  // Not really toolbars, but I wanted the same fpLevel stuff
 
-  EditGraphic:   { friendlyName: 'Graphic Editor',       max: 10,   default: 1,  icon: AssetKinds.getIconClass('graphic') },
-  EditCode:      { friendlyName: 'Code/Tutorial Editor', max:  4,   default: 2,  icon: AssetKinds.getIconClass('code')    },
-//GraphicTools:  { friendlyName: '', max: 10,   default: 1,  icon: AssetKinds.getIconClass('graphic') },
-  MapTools:      { friendlyName: 'Map/ActorMap Editor',  max: 27,   default: 3,  icon: AssetKinds.getIconClass('map')     },
-  AudioTools:    { friendlyName: 'Sound/Music Editor',   max: 25,   default: 3,  icon: AssetKinds.getIconClass('sound')   },
+  EditGraphic:   { friendlyName: 'Graphic Editor',       max: 10,   default: 1,  icon: AssetKinds.getIconName('graphic') },
+  EditCode:      { friendlyName: 'Code/Tutorial Editor', max:  4,   default: 2,  icon: AssetKinds.getIconName('code')    },
+//GraphicTools:  { friendlyName: '', max: 10,   default: 1,  icon: AssetKinds.getIconName('graphic') },
+  MapTools:      { friendlyName: 'Map/ActorMap Editor',  max: 27,   default: 3,  icon: AssetKinds.getIconName('map')     },
+  AudioTools:    { friendlyName: 'Sound/Music Editor',   max: 25,   default: 3,  icon: AssetKinds.getIconName('sound')   },
 
-  SkillsMap:     { friendlyName: 'Skills Viewer',        max:  4,   default: 2,  icon: 'student'                          },
+  SkillsMap:     { friendlyName: 'Skills Viewer',        max:  4,   default: 2,  icon: 'plus circle'                          },
 }
 
 // We do this before adding functions so that the function names don't pollute the keys :)

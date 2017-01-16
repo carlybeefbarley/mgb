@@ -43,7 +43,7 @@ export const AssetKinds = {
     selfPlural: false,
     disable: false,
     longName: "Actor",
-    icon: "actor child",
+    icon: "child",
     color: "teal",
     requiresUserRole: null,
     description: "Actors define Game behaviors without you having to write any code.",
@@ -180,6 +180,9 @@ export const AssetKinds = {
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
   getIconClass: function(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"
+  },
+  getIconName: function(key) {
+    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign")
   },
   getColor: function(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].color : "pink")

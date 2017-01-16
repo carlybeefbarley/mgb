@@ -258,8 +258,6 @@ export function countMaxUserSkills(dotttedSkillPrefix = null)
 
 
 export const maxSkillsCount = countMaxUserSkills()
-console.log('maxSkillsCount = ', maxSkillsCount)
-
 
 // MongoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
 export const makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')

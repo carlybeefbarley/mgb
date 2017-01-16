@@ -25,6 +25,8 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const flexPanelViews = [
+  { tag: 'activity',  lev: 4,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
+
   { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false  },
   { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false },
   { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false },
@@ -33,7 +35,7 @@ const flexPanelViews = [
 
   { tag: 'features',  lev: 3,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
 
-  { tag: 'activity',  lev: 4,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
+ // activity makes most sens at top if enabled?
   
   { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
   
@@ -184,7 +186,7 @@ export default FlexPanel = React.createClass({
   },
 
   render: function () {
-    const { flexPanelWidth, flexPanelIsVisible } = this.props
+    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle } = this.props
 
     const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
     const panelStyle = {
@@ -243,6 +245,9 @@ export default FlexPanel = React.createClass({
             <div className="flex header">
               <span className="title">
                 <i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
+              </span>
+              <span style={{"float": "right", padding: "3px"}} onClick={handleFlexPanelToggle}>
+                <i className="ui grey small close icon"/>
               </span>
             </div>
 

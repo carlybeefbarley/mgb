@@ -33,7 +33,7 @@ export default {
       sequence:       'chatFlexPanel,chatAtMention,privateChat,projectChat,assetChat'
     },
     chatFlexPanel:    C.E,  // Public chat - show flexPanels, change channel, say Hi on Random 
-//  chatAtMention:    C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
+    chatAtMention:    C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
 //  privateChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
 //  projectChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
     assetChat:        C.E   // Not yet implemented as a feature.. this will just say 'coming soon'

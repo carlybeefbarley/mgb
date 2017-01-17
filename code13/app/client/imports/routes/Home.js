@@ -21,7 +21,7 @@ const HomeRoute = props => {
   return (
     <div>
       <div className="hero">
-        <div className="ui container slim">
+        <div className="ui container">
           <HomeHeroBanner username={username} userId={userId} />
         </div>
       </div>

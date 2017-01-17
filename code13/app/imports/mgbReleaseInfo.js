@@ -28,12 +28,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Mon Jan 16 2017 23:00:00 GMT-0800 (PST)',
+      'timestamp': 'Tue Jan 17 2017 10:20:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2502'
+        'iteration': '2508'
       },
 
       'releaseManagement': {
@@ -42,10 +42,24 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
       'changes': [
         {
+          'featureTag': 'nav.signup',
+          'type': 'bugfix',
+          'changeName': 'Fixed Signup page',
+          'changeSummary': 'The new UI framework had a breaking change and I had disabled a basic test case (Signup). Fixed now!. ',
+          'otherUrls': [ ]
+        },
+        {
           'featureTag': 'nav.flexpanel.chat',
           'type': 'improvement',
           'changeName': 'Chat FlexPanel remembers prior channel',
           'changeSummary': 'It used to go to General when re-opened. Now it opens to the recently used channel unless overriden by the URL',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.badges',
+          'type': 'improvement',
+          'changeName': 'New Badge Art',
+          'changeSummary': 'New badge style - should be easier to see at smaller sizes',
           'otherUrls': [ ]
         },
       ]

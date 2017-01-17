@@ -70,9 +70,10 @@ export default SignupRoute = React.createClass({
     )
   },
 
-  handleSubmit: function(event, formData) {
+  handleSubmit: function(event, outerFormData) {
+    const formData = outerFormData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
     event.preventDefault()
-    const { email, username, password } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
+    const { email, username, password } = formData  
     const errs = {}
 
     _.each('email,username,password'.split(','), k => {

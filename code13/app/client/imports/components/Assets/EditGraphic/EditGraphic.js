@@ -1537,7 +1537,7 @@ export default class EditGraphic extends React.Component {
                 h:
               </div>
               <NumberInput
-                className="ui small input"P
+                className="ui small input"
                 min={1}
                 max={MAX_BITMAP_HEIGHT}
                 style={{width: "6em"}}

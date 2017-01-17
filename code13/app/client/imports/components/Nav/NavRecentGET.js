@@ -106,6 +106,7 @@ export default NavRecentGET = React.createClass({
       {
         // We only add Asset activities so far - not profile views etc
         const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind)
+        const assetKindColor = AssetKinds.getColor(a.toAssetKind)
         const assetActivityIconClass = isSnapshot ? "grey unhide icon" : ActivityTypes.getIconClass(a.activityType)
         const assetKindCap = capitalizeFirstLetter(a.toAssetKind)
         const assetNameTruncated = (this.props.styledForNavPanel && a.toAssetName && a.toAssetName.length > 19) ? a.toAssetName.substring(0, 19) + "..." : a.toAssetName
@@ -124,7 +125,7 @@ export default NavRecentGET = React.createClass({
               data-html={dataHtml} 
               data-position="right center" >
             <span>
-              <i className={assetKindIconClassName}></i>{assetNameTruncated || "(unnamed)"}
+              <i className={assetKindColor + ' ' + assetKindIconClassName} />{assetNameTruncated || "(unnamed)"}
             </span>
             <i className={assetActivityIconClass}></i>
           </QLink>

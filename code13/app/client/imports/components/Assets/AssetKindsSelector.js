@@ -33,10 +33,10 @@ export default AssetKindsSelector =  React.createClass({
     const choices = AssetKindKeys.map((k) => {
       // if k is in kindsActive then it is shown as active
       const active = _.includes(kindsArray, k)
-      const sty = active ? {} : { color: "#ccc"}
-      const icon = active ? <i className="ui checkmark box icon"></i> : <i className="ui square outline icon"></i>
+      const sty = active ? {} : { color: "#bbb"}
+      const icon = active ? <i className="ui checkmark box icon" /> : <i className="ui square outline icon"></i>
       return (
-        <a  className={"ui hazAkPopup " + (active ? "active item" : "item")}
+        <a  className={"ui hazAkPopup " + (active ? "active " + AssetKinds[k].color + " item" : "item")}
             data-value={k}
             key={k}
             style={ _.merge(sty, baseSty) }
@@ -45,7 +45,7 @@ export default AssetKindsSelector =  React.createClass({
             data-title={AssetKinds[k].name}
             data-content={`Click to show only ${AssetKinds[k].name} assets. Alt-click to multi-select ${AssetKinds[k].name} which asset kinds to show`}
             id={`mgbjr-flexPanel-assets-${AssetKinds[k].name.toLowerCase()}`}>
-          <i className={AssetKinds[k].icon + " icon"} />
+          <i className={AssetKinds[k].color + ' ' + AssetKinds[k].icon + " icon"} />
           { !showCompact && <span>{icon} {AssetKinds[k].name}</span> }
         </a>
       )

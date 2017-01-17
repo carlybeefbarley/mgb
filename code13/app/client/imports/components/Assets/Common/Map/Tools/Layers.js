@@ -44,7 +44,7 @@ export default class Layers extends React.Component {
       )
     }
     return (
-      <Segment id="mgbjr-MapTools-layers">
+      <Segment id="mgbjr-MapTools-layers" style={{"margin":0}}>
         <Label attached='top'>Layers</Label>
           <LayerControls {...this.props} />
           {layers}

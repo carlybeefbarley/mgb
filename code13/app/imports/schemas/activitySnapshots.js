@@ -54,7 +54,10 @@ Meteor.methods({
     if (actualUserId)
       data.byUserId = actualUserId
     else
-      data.byUserId = "BY_SESSION:" + (Meteor.isServer ? this.connection.id : Meteor.default_connection._lastSessionId)
+    {
+      return  // As of Jan 2016, no activity snapshots for guest users - it is bad for load and privacy
+      //data.byUserId = "BY_SESSION:" + (Meteor.isServer ? this.connection.id : Meteor.default_connection._lastSessionId)
+    }
    
     if (Meteor.isServer)
     {

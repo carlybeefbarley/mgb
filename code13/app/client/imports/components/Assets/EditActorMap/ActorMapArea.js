@@ -1,4 +1,5 @@
 import React from 'react'
+import { Segment } from 'semantic-ui-react'
 
 import BaseMapArea from '../Common/Map/BaseMapArea'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper'
@@ -97,7 +98,9 @@ export default class ActorMapArea extends BaseMapArea {
         >
         { this.getNotification() }
         { this.renderMap() }
-        <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
+        <Segment inverted secondary>
+          <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
+        </Segment>
       </div>
     )
   }

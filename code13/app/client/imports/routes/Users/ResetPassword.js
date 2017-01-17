@@ -56,7 +56,7 @@ export default ResetPasswordRoute = React.createClass({
 
   handleSubmit: function(event, formData) {
     event.preventDefault()
-    const { password } = formData
+    const { password } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
 
     const why = validate.passwordWithReason(password)
     this.setState( { errors: why ? { password: why } : {} } )

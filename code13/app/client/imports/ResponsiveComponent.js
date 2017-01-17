@@ -45,13 +45,13 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
         var minWidth = ruleValue.minWidth || 0
         var maxWidth = ruleValue.maxWidth || 99999
 
-        if ( (ruleValue.minWidth || ruleValue.maxWidth) && (newWidth > minWidth && newWidth < maxWidth) )
+        if ( (ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth) )
           activeRules.push(ruleName)            
         
         var minHeight = ruleValue.minHeight || 0
         var maxHeight = ruleValue.maxHeight || 99999
 
-        if ( ( ruleValue.minHeight || ruleValue.maxHeight) && (newHeight > minHeight && newHeight < maxHeight) )
+        if ( ( ruleValue.minHeight || ruleValue.maxHeight) && (newHeight >= minHeight && newHeight <= maxHeight) )
           activeRules.push(ruleName)              
       })
 
@@ -131,8 +131,8 @@ HomeRoute.responsiveRules = {  // Note that this could also be a function that r
     //  the inner Components's respActiveRules property (array) will contain 
     //  this string.  Also, the wrapper div will gain the className rrc-small 
     //  The rrc- prefix stands for ResponsiveRuleClass- so it is easier to debug
-    minWidth: 0,
-    maxWidth: 500
+    minWidth: 0,      // Values are in pixels, and ranges are inclusive. minWidth=0 is default
+    maxWidth: 500     // maxWidth=99999 is default 
   },
   'medium': {
     minWidth: 400,

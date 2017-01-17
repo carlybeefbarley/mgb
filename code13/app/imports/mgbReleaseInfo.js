@@ -18,11 +18,6 @@ const mgbReleaseInfo = {
 
       'changes': [
         {
-          'featureTag': 'nav.layout',
-          'type': 'improvement',
-          'changeName': 'UI minor fixes',
-          'changeSummary': 'Fixed some minor console warnings, some broken links, some confusing text etc. In addition, the edit UIs now hide some non-actionable buttons for guest users (delete etc). Notably, the 'other viewers' button now only shows if there are other active viewers.  Also updated to latest Semantic-UI-React library (0.64)' ,
-          'otherUrls': [ ]
         },
         
       ]
@@ -31,13 +26,14 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
 
+
     {
-      'timestamp': 'Sat Jan 14 2017 16:15:00 GMT-0800 (PST)',
+      'timestamp': 'Mon Jan 16 2017 23:00:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2480'
+        'iteration': '2502'
       },
 
       'releaseManagement': {
@@ -45,6 +41,37 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
       },
 
       'changes': [
+        {
+          'featureTag': 'nav.flexpanel.chat',
+          'type': 'improvement',
+          'changeName': 'Chat FlexPanel remembers prior channel',
+          'changeSummary': 'It used to go to General when re-opened. Now it opens to the recently used channel unless overriden by the URL',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
+      'timestamp': 'Sun Jan 15 2017 23:50:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2498'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'UI minor fixes',
+          'changeSummary': 'Fixed some minor console warnings, some broken links, some confusing text etc. Added x close affordance to FlexPanel Header. In addition, the edit UIs now hide some non-actionable buttons for guest users (delete etc). Notably, the \'other viewers\' button now only shows if there are other active viewers.  Also updated to latest Semantic-UI-React library (0.64)',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'nav.flexpanel',
           'type': 'improvement',

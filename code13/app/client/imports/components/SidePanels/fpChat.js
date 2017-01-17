@@ -44,6 +44,7 @@ const ChatMessage = ( { msg } ) => {
   return <span dangerouslySetInnerHTML={{ __html: msg2}} /> 
 }
 
+let _recentChannelKey = null
 
 export default fpChat = React.createClass({
   mixins: [ReactMeteorData],
@@ -66,7 +67,9 @@ export default fpChat = React.createClass({
   _calculateActiveChannelKey: function() {    
     const channelName = this._getRawChannelName()
     const channelKey = getChannelKeyFromName(channelName)   // So this should be something like 'MGBBUGS'.. i.e. a key into ChatChannels{}
-    return channelKey || ChatChannels.defaultChannelKey
+    if (channelKey)
+      _recentChannelKey = channelKey
+    return channelKey || _recentChannelKey || ChatChannels.defaultChannelKey
   },
 
   _calculateActiveChannelName: function() {    

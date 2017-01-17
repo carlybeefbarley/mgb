@@ -16,6 +16,7 @@
     "d3": "^3.5.17",
     "data-uri-to-buffer": "0.0.4",
     "deep-extend": "^0.4.1",
+    "element-resize-detector": "^1.1.10",
     "history": "^3.0.0",
     "immutable": "^3.8.1",
     "js-beautify": "^1.6.3",

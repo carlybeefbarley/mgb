@@ -1,8 +1,8 @@
 /*
-  This script will automatically set up cloud front distribution for ORIGIN_DOMAIN_NAME
-  At first it will try to reuse previously created distribution for ORIGIN_DOMAIN_NAME
-  Change AWS auth keys in the ./config.json
-  Check server_main.js - to enable this script for production
+ This script will automatically set up cloud front distribution for ORIGIN_DOMAIN_NAME
+ At first it will try to reuse previously created distribution for ORIGIN_DOMAIN_NAME
+ Change AWS auth keys in the ./config.json
+ Check server_main.js - to enable this script for production
  */
 import AWS from 'aws-sdk'
 // this is @stauzs personal account
@@ -12,12 +12,13 @@ import '/server/slackIntegration'
 
 let CLOUDFRONT_DOMAIN_NAME = ''
 
+// probably we should separate this export
 export const getCDNDomain = function () {
   return CLOUDFRONT_DOMAIN_NAME
 }
 
-// remove true after debugging is done
-if(true || Meteor.isProduction) {
+export const setUpCloudfront = function () {
+
 // Config
   const ORIGIN_DOMAIN_NAME = 'mightyfingers.com' // v2.mygamebuilder.com
   const HTTP_PORT = 80
@@ -306,7 +307,7 @@ if(true || Meteor.isProduction) {
     cloudfront.createDistribution(params, callback)
   }
 
-  Meteor.startup( () => {
+  Meteor.startup(() => {
     getDistribution((err, cloudfrontDistribution) => {
       if (err) {
         console.error(`Failed to LOAD distribution with error: ${err}`, err)

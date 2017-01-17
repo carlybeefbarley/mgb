@@ -1,4 +1,4 @@
-import './cloudfront/CreateCloudfront.js'
+import {setUpCloudfront} from './cloudfront/CreateCloudfront.js'
 
 import { Users } from '../imports/schemas'
 
@@ -35,6 +35,11 @@ import '/server/imports/rateLimiter'
 
 // Create fixtures on first time app is launched (useful for dev/test)
 import { createUsers } from './fixtures.js'
+
+// remove true after debugging is done
+if (true || Meteor.isProduction) {
+  setUpCloudfront()
+}
 
 if (!Users.find().fetch().length) 
   createUsers()

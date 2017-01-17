@@ -1,6 +1,10 @@
 
 MGB client -> Cloudfront -> MGB server -> (set cache headers?) -> Cloudfront cache -> client side caching (if possible)
 
+cloudfront then caches required resources and distributes to clients without triggering MGB server
+
+MGB client <-> Cloudfront
+
 * atm client side caching is enabled for static resources (except badges and other files in the public folder - discuss) - and for thumbnails - with custom cache hash and timestamp
 * api (asset) caching is enabled in the cloudfront - but disabled on the client side - it can be easily enabled in the ( see: server/imports/helpers/generators.js: 50 - discuss - seems that it's safe to enable client side caching (needs more testing)')
 

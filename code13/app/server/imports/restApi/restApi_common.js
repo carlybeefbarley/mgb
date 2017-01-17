@@ -63,7 +63,7 @@ RestApi.addRoute('asset/cached-thumbnail/png/:expires/:id', {authRequired: false
     const expires = this.urlParams.expires || 3600
     return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
       'Content-Type': 'image/png',
-      'Cache-Control': `public, max-age=${expires}`,
+      'Cache-Control': `public, max-age=${expires}`
 
     })
   }

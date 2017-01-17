@@ -54,7 +54,8 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   return {
     headers: Object.assign({
       etag: etag,
-      "cache-control": "must-revalidate"
+      "cache-control": "must-revalidate",
+      'Cache-Control': `public, max-age=3600`// 1h
     }, headers),
     body: typeof body == "function" ? body() : body
   }

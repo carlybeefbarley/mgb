@@ -25,8 +25,10 @@ export default class ActorTool extends Tileset {
     super.onMouseDown(e)
     this.props.setActiveLayerByName("Events")
   }
+
   renderEmpty () {
   }
+
   renderContent () {
     return (
       <canvas
@@ -50,7 +52,7 @@ export default class ActorTool extends Tileset {
       ts.actor = {}
 
     return (
-      <Dropdown floating labeled button text="Events" id="mgbjr-MapTools-events" className='tilesets icon'>
+      <Dropdown floating labeled button text="Events" id="mgbjr-MapTools-events" className='tilesets icon small ui button'>
         <Dropdown.Menu>
           {this.renderContent(this.tileset)}
         </Dropdown.Menu>

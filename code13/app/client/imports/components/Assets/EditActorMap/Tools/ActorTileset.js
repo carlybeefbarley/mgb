@@ -1,7 +1,7 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
-import { Label, Segment } from 'semantic-ui-react'
+import { Label, Segment, Grid } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
 
@@ -25,6 +25,7 @@ export default class ActorTool extends Tileset {
     super()
     this.tilesetIndex = 1
   }
+  
   get tileset(){
     return this.props.tilesets[this.tilesetIndex]
   }
@@ -56,7 +57,7 @@ export default class ActorTool extends Tileset {
 
     this.props.startLoading()
     const tileset = {
-      columns:      1,
+      columns:      3,
       firstgid:     0,
       image:        '',
       imageheight:  0,
@@ -64,7 +65,7 @@ export default class ActorTool extends Tileset {
       margin:       0,
       name:         name,
       spacing:      0,
-      tilecount:    1,
+      tilecount:    30,
       tileheight:   32,
       tilewidth:    32
     }
@@ -77,37 +78,50 @@ export default class ActorTool extends Tileset {
 
   renderEmpty () {
     return (
-      <div id="mgbjr-MapTools-actors" className='mgbAccordionScroller'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Actors</span>
-          </div>
+       <Segment id="mgbjr-MapTools-actors" className='tilesets' style={{'height': '100%', 'margin':0 }}>
+        <Label attached='top'>Actors </Label>
+        <div className="content active actor-tileset-content">
           { this.renderContent(false) }
         </div>
-      </div>
+      </Segment>
     )
   }
-  renderContent (tileset) {
-    return (
-      <div>
 
-        { !tileset
-          ? <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
-          : <ActorControls
-          activeTileset={this.tilesetIndex}
-          removeTileset={this.props.removeTileset}
-          ref='controls' />
-        }
-        <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
-          <canvas
-            ref='canvas'
-            onMouseDown={this.onMouseDown.bind(this)}
-            onMouseUp={this.onMouseUp.bind(this)}
-            onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
-            onMouseLeave={this.onMouseLeave.bind(this)}
-            onContextMenu={e => { e.preventDefault(); return false; } } >
-          </canvas>
-        </div>
+  renderContent (tilesets) {
+    let ts 
+    let canvas 
+    
+    tilesets.map((tileset, i) => {
+       !tileset
+        ? 
+        ts = <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}></p>
+        : 
+        ts = <ActorControls
+              activeTileset={this.tilesetIndex}
+              removeTileset={this.props.removeTileset}
+              ref='controls' />
+
+        canvas = <div key={this.tilesetIndex} className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
+                    <canvas
+                      ref='canvas'
+                      onMouseDown={this.onMouseDown.bind(this)}
+                      onMouseUp={this.onMouseUp.bind(this)}
+                      onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
+                      onMouseLeave={this.onMouseLeave.bind(this)}
+                      onContextMenu={e => { e.preventDefault(); return false; } } >
+                    </canvas>
+                  </div>
+    })
+    
+    return (
+      <div 
+            className='active tilesets accept-drop'
+            data-drop-text={_dragHelpMsg}
+            onDrop={this.onDropOnLayer.bind(this)}
+            onDragOver={DragNDropHelper.preventDefault}
+            style={{"minHeight": "95px", "marginTop": "5px"}} >
+        {ts}
+        {canvas}
       </div>
     )
   }
@@ -150,33 +164,14 @@ export default class ActorTool extends Tileset {
     let isValidForLayer = layer ? ActorHelper.checks[layer.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
 
     return (
-      <Segment id="mgbjr-MapTools-actors" className='tilesets' style={{ 'height': 100+'%' }}>
+      <Segment id="mgbjr-MapTools-actors" className='tilesets' style={{boxSizing: 'inherit', display: 'block', height: '100%', margin: 0}}>
         <Label attached='top'>Actors {this.renderOpenListButton(1)} {this.renderForModal(1)}</Label>
-          <div 
-            className='active title accept-drop'       
-            data-drop-text={_dragHelpMsg}
-            onDrop={this.onDropOnLayer.bind(this)}
-            onDragOver={DragNDropHelper.preventDefault}
-            style={{"minHeight": "75px"}}>
-            <div className='ui simple dropdown top right basic grey below label item'
-                style={{'whiteSpace': 'nowrap', "width": "100%"}}>
-              <i className='dropdown icon'></i>
-              <span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
-              <div className='floating ui tiny green label'>
-                {this.props.tilesets.length - 1}
-              </div>
-              <div className='menu' style={{"maxHeight": "295px", "overflow": "auto", "width": "100%"}}>
-                {tilesets}
-              </div>
-            </div>
-          </div>
           <div className="content active actor-tileset-content">
-            {!isValidForLayer || <div>
-              {this.tilesets.map((ts) => this.renderContent(ts))}
-            </div>}
+            {isValidForLayer && 
+                this.renderContent(tilesets)
+            }
           </div>
       </Segment>
-
     )
   }
 }

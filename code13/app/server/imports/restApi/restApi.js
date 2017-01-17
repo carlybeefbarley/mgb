@@ -1,5 +1,5 @@
 import { Azzets } from '/imports/schemas'
-import { genAPIreturn } from '/imports/helpers/generators'
+import { genAPIreturn } from '/server/imports/helpers/generators'
 
 // Note that Restivus's default url prefix is /api
 const options = {

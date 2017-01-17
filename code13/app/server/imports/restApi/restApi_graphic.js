@@ -1,7 +1,7 @@
 import { RestApi, emptyPixel } from './restApi'
 import { Azzets }  from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
-import { genAPIreturn } from '/imports/helpers/generators'
+import { genAPIreturn } from '/server/imports/helpers/generators'
 
 
 // TODO: Maybe make this asset/graphic ? Look also at AssetUrlGenerator and generateUrlOptions()

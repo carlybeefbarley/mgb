@@ -470,6 +470,7 @@ export default class EditCode extends React.Component {
       console.log("Setting src to: ", newVal.substr(0, 3))
       let currentCursor = this.codeMirror.getCursor()
       this.codeMirror.setValue(newVal)
+      this.setState({needsBundle: nextProps.asset.content2.needsBundle})
       this._currentCodemirrorValue = newVal       // This needs to be done here or we will loop around forever
       this.codeMirror.setCursor(currentCursor)    // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
       // force update source tools related files
@@ -1331,7 +1332,7 @@ export default class EditCode extends React.Component {
       this.tools.createBundle((bundle, notChanged) => {
         if(!notChanged){
           const value = this.codeMirror.getValue()
-          const newC2 = {src: value, bundle: bundle, needsBundle: this.state.needsBundle}
+          const newC2 = {src: value, bundle: bundle, needsBundle: this.props.asset.content2.needsBundle}
           // make sure we have bundle before every save
           this.handleContentChangeAsync(newC2, null, `Store code bundle`)
         }
@@ -1522,6 +1523,15 @@ export default class EditCode extends React.Component {
           disabled: false,
           level:    3,
           shortcut: 'Ctrl+B'
+        },
+        {
+          name:  'foldAll',
+          label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
+          icon:  this.mgb_code_folded ? 'expand' : 'compress',
+          tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
+          disabled: false,
+          level:    3,
+          shortcut: 'Ctrl+Alt+f'
         }
       ]
     }
@@ -1598,6 +1608,21 @@ export default class EditCode extends React.Component {
 
     }    
     return config
+  }
+
+  foldAll(){
+    const cm = this.codeMirror
+
+    cm.operation(() => {
+      for (var l = cm.firstLine(); l <= cm.lastLine(); ++l)
+        cm.foldCode({line: l, ch: 0}, null, this.mgb_code_folded ? 'unfold' : 'fold')
+
+      this.mgb_code_folded = !this.mgb_code_folded
+      this.setState({
+        mgb_code_folded: this.mgb_code_folded
+      })
+    })
+
   }
 
   toggleBundling() {

@@ -1,7 +1,7 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
-import { genAPIreturn } from '/imports/helpers/generators'
+import { genAPIreturn } from '/server/imports/helpers/generators'
 
 // get sound by id
 RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {

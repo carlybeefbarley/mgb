@@ -5,11 +5,17 @@
   Check server_main.js - to enable this script for production
  */
 import AWS from 'aws-sdk'
+console.log("importing AWS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 // this is @stauzs personal account
 import config from './config.json'
 import { WebApp } from 'meteor/webapp'
-
 import '/server/slackIntegration'
+
+let CLOUDFRONT_DOMAIN_NAME = ''
+
+export const getCDNDomain = function () {
+  return CLOUDFRONT_DOMAIN_NAME
+}
 
 // remove true after debugging is done
 if(true || Meteor.isProduction) {
@@ -196,14 +202,10 @@ if(true || Meteor.isProduction) {
     }
   }
 // this will be filled at runtime - after script will get assigned domain name (xxxxx.cloudfront.com)
-  let CLOUDFRONT_DOMAIN_NAME = ''
-
 
 // client at first load will try to get CLOUDFRONT_DOMAIN_NAME - so it can use it for ajax requests
   Meteor.methods({
-    "CDN.domain": function () {
-      return CLOUDFRONT_DOMAIN_NAME
-    }
+    "CDN.domain": getCDNDomain
   })
 
 // this will make meteor files to be loaded from CDN

@@ -1,7 +1,7 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
 import makeHtmlBundle from '/imports/helpers/codeBundle'
-import { genAPIreturn } from '/imports/helpers/generators'
+import { genAPIreturn, assetToCdn } from '/server/imports/helpers/generators'
 
 const _retval404 = { statusCode: 404, body: {} }   // body required to correctly show 404 not found header
 
@@ -82,8 +82,14 @@ RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
 
 RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
   get: function () {
-    const asset = Azzets.findOne(this.urlParams.id)
+    const asset = Azzets.findOne(this.urlParams.id, {fields: {updatedAt: 1}})
     return _makeBundle(this, asset)
+  }
+})
+RestApi.addRoute('asset/code/bundle/cdn/:id', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne(this.urlParams.id)
+    return assetToCdn(this, asset, '/api/asset/code/bundle/' + this.urlParams.id)
   }
 })
 
@@ -91,5 +97,14 @@ RestApi.addRoute('asset/code/bundle/u/:username/:codename', { authRequired: fals
   get: function () {
     const asset = Azzets.findOne( { dn_ownerName: this.urlParams.username, name: this.urlParams.codename, isDeleted: false } )
     return _makeBundle(this, asset)
+  }
+})
+
+RestApi.addRoute('asset/code/bundle/cdn/u/:username/:codename', { authRequired: false }, {
+  get: function () {
+    const asset = Azzets.findOne( { dn_ownerName: this.urlParams.username, name: this.urlParams.codename, isDeleted: false }, {
+      fields: {updatedAt: 1}
+    } )
+    return assetToCdn(this, asset, `/api/asset/code/bundle/u/${this.urlParams.username}/${this.urlParams.codename}`)
   }
 })

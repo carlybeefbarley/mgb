@@ -1,6 +1,6 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
-import { genAPIreturn } from '/imports/helpers/generators'
+import { genAPIreturn } from '/server/imports/helpers/generators'
 
 RestApi.addRoute('asset/map/:id', {authRequired: false}, {
   get: function () {

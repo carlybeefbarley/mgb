@@ -43,6 +43,8 @@ export const expectedToolbars = {
   AudioTools:    { friendlyName: 'Sound/Music Editor',   max: 25,   default: 3,  icon: AssetKinds.getIconName('sound')   },
 
   SkillsMap:     { friendlyName: 'Skills Viewer',        max:  4,   default: 2,  icon: 'plus circle'                          },
+
+  PlayCodeGame:  { friendlyName: 'Play Code Game Controls', max:  1,default: 1,  icon: 'game' }
 }
 
 // We do this before adding functions so that the function names don't pollute the keys :)
@@ -53,7 +55,7 @@ expectedToolbars.getMaxLevel = toolbarName =>
 {
   const tb = expectedToolbars[toolbarName]
   if (!tb)
-    console.error(`Unexpected getMaxLevel call for toolbarName='${toolbarName}' requested. Returning default=${_defaultTbMaxLevel}`)
+    console.error(`Unexpected getMaxLevel call for toolbarName='${toolbarName}' requested. Returning default=${_defaultTbMaxLevel}. Forgot to add your toolbar to the expectedToolbars?`)
   return tb ? tb.max : _defaultTbMaxLevel
 }
 
@@ -62,7 +64,7 @@ expectedToolbars.getDefaultLevel = toolbarName =>
 {
   const tb = expectedToolbars[toolbarName]
   if (!tb)
-    console.error(`Unexpected getDefaultLevel call for toolbarName='${toolbarName}' requested. Returning default=${_defaultTbDefaultLevel}`)
+    console.error(`Unexpected getDefaultLevel call for toolbarName='${toolbarName}' requested. Returning default=${_defaultTbDefaultLevel}. Forgot to add your toolbar to the expectedToolbars?`)
   return tb ? tb.default : _defaultTbDefaultLevel
 }
 
@@ -70,7 +72,7 @@ expectedToolbars.getIconName = toolbarName =>
 {
   const tb = expectedToolbars[toolbarName]
   if (!tb)
-    console.error(`Unexpected getIconName call for toolbarName='${toolbarName}' requested. Returning default='${_defaultTbIconName}'`)
+    console.error(`Unexpected getIconName call for toolbarName='${toolbarName}' requested. Returning default='${_defaultTbIconName}'. Forgot to add your toolbar to the expectedToolbars?`)
   return tb ? tb.icon : _defaultTbIconName
 }
 
@@ -78,7 +80,7 @@ expectedToolbars.getFriendlyName = toolbarName =>
 {
   const tb = expectedToolbars[toolbarName]
   if (!tb)
-    console.error(`Unexpected getFriendlyName call for toolbarName='${toolbarName}' requested. Returning default='[${toolbarName}]'`)
+    console.error(`Unexpected getFriendlyName call for toolbarName='${toolbarName}' requested. Returning default='[${toolbarName}]'. Forgot to add your toolbar to the expectedToolbars?`)
   return tb ? tb.friendlyName : `[${toolbarName}]`
 }
 
@@ -384,12 +386,13 @@ export default class Toolbar extends React.Component {
             </div>
           }
         </div>
-
+        {!this.props.noReset &&
         <div className="ui button right floated mini reset" style={{marginRight: "4px", paddingLeft: "4px"}}
              onClick={this.reset.bind(this)}
              title="Reset Toolbar - Any Tool buttons you had drag-rearranged will be moved back to their original locations">
           <i className="level down reset icon"></i>
         </div>
+        }
       </div>
     )
   }

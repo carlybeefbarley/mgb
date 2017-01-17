@@ -5,7 +5,6 @@
   Check server_main.js - to enable this script for production
  */
 import AWS from 'aws-sdk'
-console.log("importing AWS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 // this is @stauzs personal account
 import config from './config.json'
 import { WebApp } from 'meteor/webapp'

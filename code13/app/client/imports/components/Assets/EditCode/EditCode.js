@@ -1525,7 +1525,7 @@ export default class EditCode extends React.Component {
           shortcut: 'Ctrl+B'
         },
         {
-          name:  'foldAll',
+          name:  'toggleFold',
           label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
           icon:  this.mgb_code_folded ? 'expand' : 'compress',
           tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
@@ -1610,7 +1610,7 @@ export default class EditCode extends React.Component {
     return config
   }
 
-  foldAll(){
+  toggleFold(){
     const cm = this.codeMirror
 
     cm.operation(() => {

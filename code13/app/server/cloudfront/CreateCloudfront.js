@@ -28,7 +28,7 @@ export const setUpCloudfront = function () {
   })
 
 // Config
-  const ORIGIN_DOMAIN_NAME = 'mightyfingers.com' // v2.mygamebuilder.com
+  const ORIGIN_DOMAIN_NAME = 'test.mygamebuilder.com' // v2.mygamebuilder.com
   const HTTP_PORT = 80
   const HTTPS_PORT = 443
   const params = {
@@ -218,6 +218,7 @@ export const setUpCloudfront = function () {
 
 // CORS fix
   const allowedOrigins = [
+    'http://test.mygamebuilder.com',
     'http://mightyfingers.com:8080',
     'http://localhost:3000',
     'http://v2.mygamebuilder.com',

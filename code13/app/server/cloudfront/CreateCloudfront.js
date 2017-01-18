@@ -317,7 +317,7 @@ export const setUpCloudfront = function () {
         console.error(`Failed to LOAD distribution with error: ${err}`, err)
         // this should show only once
         Meteor.call("Slack.Cloudfront.notification", `Failed to LOAD distribution with error: ${err} \n Trying to create new Distribution`)
-        createDistribution((err, data) => {
+        createDistribution(Meteor.bindEnvironment((err, data) => {
           if (err) {
             Meteor.call("Slack.Cloudfront.notification", `Failed to CREATE distribution with error: ${err}`, true)
             console.error(`Failed to CREATE distribution with error`, err)
@@ -326,10 +326,10 @@ export const setUpCloudfront = function () {
           console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
           Meteor.call("Slack.Cloudfront.notification", `Cloudfront distribution has been successfully set up: ${CLOUDFRONT_DOMAIN_NAME}`)
           setCDNPrams(data)
-        })
+        }))
         return
       }
-      setCDNPrams(cloudfrontDistribution)
+      setCDNPrams(Meteor.bindEnvironment(cloudfrontDistribution))
       console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
     })
   })

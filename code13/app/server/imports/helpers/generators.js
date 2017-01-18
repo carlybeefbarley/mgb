@@ -57,7 +57,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // return full response with etag
   return {
     headers: api.queryParams.hash ? Object.assign({
-      hash: etag,
+      etag: etag,
       "cache-control": "public, max-age=3600"
     }, headers) : headers,
     body: typeof body == "function" ? body() : body

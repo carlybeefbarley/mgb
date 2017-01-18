@@ -17,6 +17,16 @@ export const getCDNDomain = function () {
   return CLOUDFRONT_DOMAIN_NAME
 }
 
+// TODO(stauzs): debug - why this is now working when is executed from setUpCloudFront function?
+// this will make meteor files to be loaded from CDN
+WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
+  console.log("GET internal: CLOUDFRONT_DOMAIN_NAME:", CLOUDFRONT_DOMAIN_NAME)
+  if (CLOUDFRONT_DOMAIN_NAME) {
+    return "//" + CLOUDFRONT_DOMAIN_NAME + uri
+  }
+  return uri
+})
+
 export const setUpCloudfront = function () {
 
 // Config
@@ -208,13 +218,7 @@ export const setUpCloudfront = function () {
     "CDN.domain": getCDNDomain
   })
 
-// this will make meteor files to be loaded from CDN
-  WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
-    if (CLOUDFRONT_DOMAIN_NAME) {
-      return "//" + CLOUDFRONT_DOMAIN_NAME + uri
-    }
-    return uri
-  })
+
 
 // CORS fix
   const allowedOrigins = [

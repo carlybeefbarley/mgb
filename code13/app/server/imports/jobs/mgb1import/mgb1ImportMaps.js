@@ -61,6 +61,8 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
     text:           `Imported from MGB1 (${fullS3Name}) ${Metadata.comment}`,
     thumbnail:      null,
     content2:       jsonData,
+    workState:      'working',
+    assetLicense:   'CC-BY-NC-4.0',
     isCompleted:    false,     // This supports the 'is stable' flag
     isDeleted:      false,     // This is a soft 'marked-as-deleted' indicator
     isPrivate:      false

@@ -11,8 +11,13 @@ export default class Thumbnail extends React.Component {
 
   render(){
     const expires = typeof this.props.expires === "undefined" ? 3600 : this.props.expires
-    const now = Date.now()
-    const nextUpdate = now - (now % (expires * 1000))
-    return <img className={this.props.className} style={this.props.style} src={makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${this.props.id}`, nextUpdate)}></img>
+    return <img className={this.props.className} style={this.props.style} src={Thumbnail.getLink(this.props.id, expires)}></img>
   }
+}
+
+Thumbnail.getLink = (assetId, expires) => {
+  // we need server time here !!!!
+  const now = Date.now()
+  const nextUpdate = now - (now % (expires * 1000))
+  return makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${assetId}`, nextUpdate)
 }

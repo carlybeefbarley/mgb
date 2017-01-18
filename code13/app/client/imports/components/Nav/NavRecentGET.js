@@ -110,7 +110,8 @@ export default NavRecentGET = React.createClass({
         const assetActivityIconClass = isSnapshot ? "grey unhide icon" : ActivityTypes.getIconClass(a.activityType)
         const assetKindCap = capitalizeFirstLetter(a.toAssetKind)
         const assetNameTruncated = (this.props.styledForNavPanel && a.toAssetName && a.toAssetName.length > 19) ? a.toAssetName.substring(0, 19) + "..." : a.toAssetName
-        const dataHtml = `<div><p>${assetKindCap}: ${a.toAssetName}</p><small><p>${ago}</p></small><Thumbnail style="max-width: 240px;" id={a.toAssetId}  expires={60}/><small><p>Owner: ${a.toOwnerName}</p></small></div>`
+        const assetThumbnailUrl = Thumbnail.getLink(a.toAssetId, 60)
+        const dataHtml = `<div><p>${assetKindCap}: ${a.toAssetName}</p><small><p>${ago}</p></small><img style="max-width: 240px;" src="${assetThumbnailUrl}" /><small><p>Owner: ${a.toOwnerName}</p></small></div>`
         // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now in those cases
         const linkTo = a.toOwnerId ?
                         `/u/${a.toOwnerName}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016

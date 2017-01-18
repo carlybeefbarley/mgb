@@ -17,17 +17,15 @@ export const getCDNDomain = function () {
   return CLOUDFRONT_DOMAIN_NAME
 }
 
-// TODO(stauzs): debug - why this is now working when is executed from setUpCloudFront function?
-// this will make meteor files to be loaded from CDN
-WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
-  console.log("GET internal: CLOUDFRONT_DOMAIN_NAME:", CLOUDFRONT_DOMAIN_NAME)
-  if (CLOUDFRONT_DOMAIN_NAME) {
-    return "//" + CLOUDFRONT_DOMAIN_NAME + uri
-  }
-  return uri
-})
-
 export const setUpCloudfront = function () {
+  // TODO(stauzs): debug - why this is now working (sometimes) when is executed from setUpCloudFront function?
+  // this will make meteor files to be loaded from CDN
+  WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
+    if (CLOUDFRONT_DOMAIN_NAME) {
+      return "//" + CLOUDFRONT_DOMAIN_NAME + uri
+    }
+    return uri
+  })
 
 // Config
   const ORIGIN_DOMAIN_NAME = 'mightyfingers.com' // v2.mygamebuilder.com
@@ -218,8 +216,6 @@ export const setUpCloudfront = function () {
     "CDN.domain": getCDNDomain
   })
 
-
-
 // CORS fix
   const allowedOrigins = [
     'http://mightyfingers.com:8080',
@@ -244,7 +240,7 @@ export const setUpCloudfront = function () {
        req._parsedUrl.path.startsWith("/images") ||
        req._parsedUrl.path.startsWith("/lib")
      ){
-     res.setHeader('cache-control', 'public, max-age=3600');
+     res.setHeader('cache-control', 'public, max-age=3600, s-maxage=3600');
      }
     return next()
   });

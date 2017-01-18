@@ -82,7 +82,7 @@ RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
 
 RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
   get: function () {
-    const asset = Azzets.findOne(this.urlParams.id, {fields: {updatedAt: 1}})
+    const asset = Azzets.findOne(this.urlParams.id)
     return _makeBundle(this, asset)
   }
 })

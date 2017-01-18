@@ -19,7 +19,7 @@ export const assetToCdn = (api, asset, uri) => {
 // e.g. transforming musing byteArray to base64 string
 export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // default 404
-  if(!body){
+  if (!body) {
     return {
       statusCode: 404,
       body: {}
@@ -27,9 +27,9 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   }
 
   // some fallback mechanism
-  if(!asset){
+  if (!asset) {
     return {
-      headers:  headers,
+      headers: headers,
       body: typeof body == "function" ? body() : body
     }
   }
@@ -37,18 +37,22 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   const etag = genetag(asset)
   // pragma: no-store header will force cloudfront to skip cache totally
   // so remove it
-  if(api.queryParams.hash){
+  if (api.queryParams.hash) {
     api.response.removeHeader("pragma")
   }
 
   // check if client already have cached resource
-  if(api.request.headers["if-none-match"] == etag){
-    if(api.queryParams.hash) {
-      api.response.writeHead(304, api.queryParams.hash ? Object.assign({
-        etag: etag,
-        "cache-control": "public, max-age=3600"
-      }, headers) : headers)
-    }
+  if (api.request.headers["if-none-match"] == etag) {
+    api.response.writeHead(304, api.queryParams.hash
+      ? Object.assign({
+          etag: etag,
+          "cache-control": "public, max-age=60, s-maxage=60"
+        }, headers)
+
+      // no etag here - as we won't be able to invalidate it without hash
+      : headers
+    )
+
     api.response.end()
     api.done()
     return
@@ -56,10 +60,13 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
 
   // return full response with etag
   return {
-    headers: api.queryParams.hash ? Object.assign({
-      etag: etag,
-      "cache-control": "public, max-age=3600"
-    }, headers) : headers,
+    headers: api.queryParams.hash
+      ? Object.assign({
+        etag: etag,
+        "cache-control": "public, max-age=3600"
+      }, headers)
+      // no etag here - as we won't be able to invalidate it without hash
+      : headers,
     body: typeof body == "function" ? body() : body
   }
 }

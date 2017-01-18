@@ -32,21 +32,26 @@ Meteor.methods({
     //  Client browser.. JS console..  
     //  > Meteor.call('job.import.mgb1.project', 42)
     //
-      // if (importParams === 42)
-      // {
-      //   console.log('The meaning of life!)')
-    //   importParams = {
-    //     mgb1Username:           'nemopolymer',
-    //     mgb1Projectname:        'Chronicals Of Mr. guM',    //   'mechanics demos',
-    //     mgb2Username:           'dgolds',
-    //     mgb2ExistingProjectName:'Chronicles Of Mr. guM',              //'Game Mechanics demo',
-    //     mgb2assetNamePrefix:    'mrGum.',
-    //     excludeTiles:           false,
-    //     excludeActors:          false,
-    //     excludeMaps:            false,
-    //     isDryRun:               false
-    //   }
-    //   thisUser = { profile: { name: 'dgolds' } }
+
+/* for import of Two Cities project
+    if (importParams === 42)
+    {
+      console.log('The meaning of life!)')
+      importParams = {
+        mgb1Username:           'drblakeman',
+        mgb1Projectname:        'Two Cities Bother and Wise',              //   'mechanics demos',
+        mgb2Username:           'dgolds',
+        mgb2ExistingProjectName:'Two Cities Bother and Wise',              //'Game Mechanics demo',
+        mgb2assetNamePrefix:    'two.',
+        excludeTiles:           false,
+        excludeActors:          true,
+        excludeMaps:            true,
+        isDryRun:               false
+      }
+    }
+    thisUser = { profile: { name: 'dgolds' } }
+      
+*/      
       //   importParams = {
       //     mgb1Username:           'azurehaze',
       //     mgb1Projectname:        'Galactic Combat',    //   'mechanics demos',
@@ -184,6 +189,7 @@ const _getAssetNames = (s3, keyPrefix) => {
 
 const _checkAllParams = (importParams, thisUser) =>
 {
+console.log("a")
   check(importParams, _importParamsSchema)
   checkAssetNamePrefix(importParams)
   _checkUserRights(importParams, thisUser)

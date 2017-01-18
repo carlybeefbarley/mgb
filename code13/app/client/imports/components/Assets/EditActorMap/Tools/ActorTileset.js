@@ -1,7 +1,7 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
-import { Label, Segment, Grid } from 'semantic-ui-react'
+import { Label, Segment, Grid, Button, Icon } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
 
@@ -57,7 +57,7 @@ export default class ActorTool extends Tileset {
 
     this.props.startLoading()
     const tileset = {
-      columns:      3,
+      columns:      1,
       firstgid:     0,
       image:        '',
       imageheight:  0,
@@ -65,7 +65,7 @@ export default class ActorTool extends Tileset {
       margin:       0,
       name:         name,
       spacing:      0,
-      tilecount:    30,
+      tilecount:    1,
       tileheight:   32,
       tilewidth:    32
     }
@@ -74,6 +74,40 @@ export default class ActorTool extends Tileset {
     ActorHelper.loadActor(name, map, nextId, {}, null, () => {
       this.props.addActor(map[name])
     })
+  }
+
+  genActorImage(index, isActive, tileset){
+    const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
+    return (
+      <div
+        title={title}
+        className={"tilesetPreview" + (isActive ? " active" : '')}
+        key={index}
+        onClick={(tileset) => {
+          const selectedTile = new SelectedTile()
+          selectedTile.getGid(tileset)
+          this.props.selectTile(selectedTile)
+        }}
+        >
+        <img src={tileset.image}/>
+        <span className="tilesetPreviewTitle">{tileset.name}</span>
+      </div>
+    )
+  }
+  
+  /*
+  renderActors(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList){
+    const tss = this.props.tilesets
+    let ts = this.tileset
+    const tilesets = []
+    const layer = this.props.getActiveLayerData()
+    let isValidForLayer = layer ? ActorHelper.checks[layer.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
+    
+    for (let i = from; i < to; i++) {
+      if (isValidForLayer)
+        tilesets.push( genTemplate.call(this, i, tss[i] === ts, tss[i]) )
+    }
+    return tilesets
   }
 
   renderEmpty () {
@@ -86,42 +120,40 @@ export default class ActorTool extends Tileset {
       </Segment>
     )
   }
-
+  */
+  
   renderContent (tilesets) {
-    let ts 
-    let canvas 
-    
-    tilesets.map((tileset, i) => {
-       !tileset
-        ? 
-        ts = <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}></p>
-        : 
-        ts = <ActorControls
-              activeTileset={this.tilesetIndex}
-              removeTileset={this.props.removeTileset}
-              ref='controls' />
-
-        canvas = <div key={this.tilesetIndex} className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
-                    <canvas
-                      ref='canvas'
-                      onMouseDown={this.onMouseDown.bind(this)}
-                      onMouseUp={this.onMouseUp.bind(this)}
-                      onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
-                      onMouseLeave={this.onMouseLeave.bind(this)}
-                      onContextMenu={e => { e.preventDefault(); return false; } } >
-                    </canvas>
-                  </div>
-    })
-    
     return (
-      <div 
-            className='active tilesets accept-drop'
-            data-drop-text={_dragHelpMsg}
-            onDrop={this.onDropOnLayer.bind(this)}
-            onDragOver={DragNDropHelper.preventDefault}
-            style={{"minHeight": "95px", "marginTop": "5px"}} >
-        {ts}
-        {canvas}
+      <div>
+        <div
+          className='active tilesets accept-drop'
+          data-drop-text={_dragHelpMsg}
+          onDrop={this.onDropOnLayer.bind(this)}
+          onDragOver={DragNDropHelper.preventDefault}/>
+        {
+          !tilesets 
+          ? 
+          <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
+          : 
+          <div>
+            <Button icon 
+              onClick={this.props.removeTileset(this.props.activeTileset)}
+              style={{float:'right'}}>
+              <Icon name='trash' />
+            </Button>
+  
+            {
+              /*
+              this.renderActors(1, tilesets.length, this.genActorImage).length > 0 
+              ? 
+              this.renderActors(1, tilesets.length, this.genActorImage)
+              :
+              <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
+              */
+              this.renderForModal(1)
+            }
+          </div>
+        }
       </div>
     )
   }
@@ -150,26 +182,12 @@ export default class ActorTool extends Tileset {
     if (!this.props.tilesets.length) {
       return this.renderEmpty()
     }
-    const tilesets = this.renderTileset(1)
-    const ts = this.tileset
-    if(!ts){
-      return this.renderEmpty()
-    }
-    // actions don't have actor..
-    if (!ts.actor)
-      ts.actor = {}
-
-    const layer = this.props.getActiveLayerData()
-
-    let isValidForLayer = layer ? ActorHelper.checks[layer.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
 
     return (
       <Segment id="mgbjr-MapTools-actors" className='tilesets' style={{boxSizing: 'inherit', display: 'block', height: '100%', margin: 0}}>
         <Label attached='top'>Actors {this.renderOpenListButton(1)} {this.renderForModal(1)}</Label>
           <div className="content active actor-tileset-content">
-            {isValidForLayer && 
-                this.renderContent(tilesets)
-            }
+            { this.renderContent(this.props.tilesets) }
           </div>
       </Segment>
     )

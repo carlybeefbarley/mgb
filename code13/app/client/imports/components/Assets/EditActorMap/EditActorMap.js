@@ -198,7 +198,7 @@ export default class EditActorMap extends EditMap {
         {this.renderPlayModal()}
         {this.renderMusicModal()}
 
-        <div className={ (isPlaying ? 'sixteen' : 'fourteen') + ' wide column'}>
+        <div className={ (isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
           <div style={{float: 'left'}}>
             <MapToolbar
               {...this.toolbarProps}
@@ -209,19 +209,21 @@ export default class EditActorMap extends EditMap {
             />
           </div>
           <div style={{float: 'left'}}>
-            <Properties {...this.propertiesProps} data={{
-              width: c2.width,
-              height: c2.height
-            }}/>
-          </div>
-          <div style={{float: 'left', 'marginLeft': '5px'}}>
-            <EventTool
-              {...this.tilesetProps}
-              palette={this.cache.tiles}
-              activeTileset={activeTileset}
-              tilesets={c2.tilesets}
-              options={this.options}
-              />
+            <div style={{float: 'left'}}>
+              <Properties {...this.propertiesProps} data={{
+                width: c2.width,
+                height: c2.height
+              }}/>
+            </div>
+            <div style={{float: 'left', 'marginLeft': '5px'}}>
+              <EventTool
+                {...this.tilesetProps}
+                palette={this.cache.tiles}
+                activeTileset={activeTileset}
+                tilesets={c2.tilesets}
+                options={this.options}
+                />
+            </div>
           </div>
           <div style={{clear: 'both', overflow:'hidden'}}>
             <ActorMapArea
@@ -239,7 +241,7 @@ export default class EditActorMap extends EditMap {
               ref='map' />
             </div>
         </div>
-        <div className={'two wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column'}}>
+        <div className={'three wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}

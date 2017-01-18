@@ -1,5 +1,5 @@
 import React from 'react'
-import {makeCDNLink} from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, makeExpireLink } from '/client/imports/helpers/assetFetchers'
 
 export default class Thumbnail extends React.Component {
   static propTypes = {
@@ -9,15 +9,11 @@ export default class Thumbnail extends React.Component {
     expires: React.PropTypes.number // expire time seconds
   }
 
-  render(){
+  render() {
     const expires = typeof this.props.expires === "undefined" ? 3600 : this.props.expires
-    return <img className={this.props.className} style={this.props.style} src={Thumbnail.getLink(this.props.id, expires)}></img>
+    return <img className={this.props.className} style={this.props.style}
+                src={Thumbnail.getLink(this.props.id, expires)}></img>
   }
 }
 
-Thumbnail.getLink = (assetId, expires) => {
-  // we need server time here !!!!
-  const now = Date.now()
-  const nextUpdate = now - (now % (expires * 1000))
-  return makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${assetId}`, nextUpdate)
-}
+Thumbnail.getLink = makeExpireLink

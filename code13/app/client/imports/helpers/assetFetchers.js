@@ -22,16 +22,28 @@ Meteor.startup(() => {
 // will convert local link e.g. /api/asset to //xxx.cloufront.com/api/asset?hash
 export const makeCDNLink = (uri, etagOrHash = null) => {
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
-  const hash = etagOrHash ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
+  const hash = etagOrHash != null ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
+  // const now = Date.now()
+  // const nextUpdate = now - (now % (60 * 1000)) // by default keep 1 minute in cache
+  // const hash = etagOrHash ? etagOrHash :  nextUpdate
+
   if (CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//") {
-    return `//${CDN_DOMAIN}${uri}?etag=${hash}`
+    return `//${CDN_DOMAIN}${uri}?hash=${hash}`
   }
   return uri
 }
 
+export const makeExpireLink = (assetId, expires) => {
+  // we need server time here !!!!
+  const now = Date.now()
+  const nextUpdate = now - (now % (expires * 1000))
+  return makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${assetId}`, nextUpdate)
+}
+
 // project avatar url prefixed with CDN host
 export const getProjectAvatarUrl = (p, expires = 60) => (
-  makeCDNLink(getProjectAvatarUrlBasic(p, expires))
+  // etag here is hardcoded - because we will receive asset which will stay very short period of time (1-60) minutes
+  makeCDNLink(getProjectAvatarUrlBasic(p, expires), 'mgb')
 )
 
 

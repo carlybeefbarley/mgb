@@ -37,27 +37,27 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   const etag = genetag(asset)
   // pragma: no-store header will force cloudfront to skip cache totally
   // so remove it
-  if(api.queryParams.etag){
+  if(api.queryParams.hash){
     api.response.removeHeader("pragma")
   }
 
   // check if client already have cached resource
   if(api.request.headers["if-none-match"] == etag){
-    if(api.queryParams.etag) {
-      api.response.writeHead(304, {
+    if(api.queryParams.hash) {
+      api.response.writeHead(304, api.queryParams.hash ? Object.assign({
         etag: etag,
         "cache-control": "public, max-age=3600"
-      })
+      }, headers) : headers)
     }
     api.response.end()
     api.done()
     return
   }
-  
+
   // return full response with etag
   return {
-    headers: api.queryParams.etag ? Object.assign({
-      etag: etag,
+    headers: api.queryParams.hash ? Object.assign({
+      hash: etag,
       "cache-control": "public, max-age=3600"
     }, headers) : headers,
     body: typeof body == "function" ? body() : body

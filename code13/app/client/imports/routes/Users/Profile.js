@@ -115,6 +115,7 @@ export default UserProfileRoute = React.createClass({
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile
 
+
     return (
       <Grid.Column width={8} id="mgbjr-profile-bioDiv">
         <Segment>

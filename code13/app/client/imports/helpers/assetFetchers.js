@@ -24,7 +24,7 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
   const hash = etagOrHash ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
   if (CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//") {
-    return `//${CDN_DOMAIN}${uri}?${hash}`
+    return `//${CDN_DOMAIN}${uri}?etag=${hash}`
   }
   return uri
 }

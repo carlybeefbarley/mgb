@@ -4,6 +4,8 @@ import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 import { logActivity } from '/imports/schemas/activity'
 import { Header, Icon, Item } from 'semantic-ui-react'
 
+
+
 export default npHome = React.createClass({
 
   propTypes: {

@@ -7,7 +7,7 @@ export const assetToCdn = (api, asset, uri) => {
   return {
     statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
     headers: {
-      'Location': '//' + getCDNDomain() + uri + "/?" + genetag(asset)
+      'Location': '//' + getCDNDomain() + uri + "/?etag=" + genetag(asset)
       // 'cache-control': 'max-age=30'
       // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
     },
@@ -43,21 +43,23 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
 
   // check if client already have cached resource
   if(api.request.headers["if-none-match"] == etag){
-    api.response.writeHead(304, {
-      etag: etag,
-      "cache-control": api.queryParams.etag ? "public, max-age=3600" : "must-revalidate, no-cache"
-    })
+    if(api.queryParams.etag) {
+      api.response.writeHead(304, {
+        etag: etag,
+        "cache-control": "public, max-age=3600"
+      })
+    }
     api.response.end()
     api.done()
     return
   }
-
+  
   // return full response with etag
   return {
-    headers: Object.assign({
+    headers: api.queryParams.etag ? Object.assign({
       etag: etag,
-      "cache-control": api.queryParams.etag ? "public, max-age=3600" : "must-revalidate, no-cache"
-    }, headers),
+      "cache-control": "public, max-age=3600"
+    }, headers) : headers,
     body: typeof body == "function" ? body() : body
   }
 }

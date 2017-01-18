@@ -232,16 +232,16 @@ export const setUpCloudfront = function () {
       // res.setHeader('access-control-allow-origin', '*')
     }
     res.setHeader('access-control-expose-headers', 'etag')
-    /*
-     // cache static files for 1 hour?
+
+     // cache static files for 1 hour - after meteor update they will be invalidated before cache expires
      if(
-     req._parsedUrl.path.startsWith("/badges") ||
-     req._parsedUrl.path.startsWith("/audio") ||
-     req._parsedUrl.path.startsWith("/images") ||
-     req._parsedUrl.path.startsWith("/lib")
+       req._parsedUrl.path.startsWith("/badges") ||
+       req._parsedUrl.path.startsWith("/audio") ||
+       req._parsedUrl.path.startsWith("/images") ||
+       req._parsedUrl.path.startsWith("/lib")
      ){
      res.setHeader('cache-control', 'public, max-age=3600');
-     }*/
+     }
     return next()
   });
 // End of CORS FIX

@@ -43,7 +43,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   if(api.request.headers["if-none-match"] == etag){
     api.response.writeHead(304, {
       etag: etag,
-      "cache-control": "must-revalidate"
+      "cache-control": "public, max-age=3600"
     })
     api.response.end()
     api.done()
@@ -54,8 +54,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   return {
     headers: Object.assign({
       etag: etag,
-      "cache-control": "must-revalidate",
-      'Cache-Control': `public, max-age=3600`// 1h
+      "cache-control": "public, max-age=3600"
     }, headers),
     body: typeof body == "function" ? body() : body
   }

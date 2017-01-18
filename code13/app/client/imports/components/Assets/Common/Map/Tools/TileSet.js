@@ -358,7 +358,7 @@ export default class TileSet extends React.Component {
       <a
         className={isActive ? 'item active' : 'item'}
         href='javascript:;'
-        onClick={this.selectTileset.bind(this, index)}
+        onClick={this.selectTileset.bind(this, index, tileset)}
         key={index}><span className='tileset-title-list-item'>{title}</span></a>
     )
   }

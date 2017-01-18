@@ -14,6 +14,7 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
         width:        0,
         height:       0,
         activeRules:  [],
+        respData:     {},
         debounced:    true
       }
 
@@ -24,38 +25,40 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
 
     handleResize() {
       const wrapper = this.wrapper
+      const { activeRules, respData } = this.matchRules(wrapper.clientWidth, wrapper.clientHeight)
       this.setState({ 
         loaded:        true, 
         debounced:     false, 
         width:         wrapper.clientWidth, 
         height:        wrapper.clientHeight, 
-        activeRules:   this.matchRules(wrapper.clientWidth, wrapper.clientHeight) 
+        activeRules,
+        respData
       })
       this.debounce()
     }
 
     matchRules(newWidth, newHeight) {
       const rr = Component.responsiveRules  // Can be undefined/null, function returning object, or object
-      if (!rr)
-        return []
-      var responsiveRules = _.isFunction(rr) ? rr() : rr
+      const responsiveRules = _.isFunction(rr) ? rr() : rr
       var activeRules = []
+      var respData = {}
 
       _.forOwn(responsiveRules, (ruleValue, ruleName) => {
         var minWidth = ruleValue.minWidth || 0
         var maxWidth = ruleValue.maxWidth || 99999
-
-        if ( (ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth) )
-          activeRules.push(ruleName)            
-        
         var minHeight = ruleValue.minHeight || 0
         var maxHeight = ruleValue.maxHeight || 99999
 
-        if ( ( ruleValue.minHeight || ruleValue.maxHeight) && (newHeight >= minHeight && newHeight <= maxHeight) )
-          activeRules.push(ruleName)              
+        if ( (ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth) 
+          || ( ruleValue.minHeight || ruleValue.maxHeight) && (newHeight >= minHeight && newHeight <= maxHeight) )
+        {
+          activeRules.push(ruleName)
+          if (_.isPlainObject(ruleValue.respData))
+            Object.assign(respData, ruleValue.respData)
+        }
       })
 
-      return activeRules
+      return { activeRules, respData }
     }
 
     componentDidMount() {
@@ -81,7 +84,7 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
     }
 
     render() {
-      const { width, height, activeRules, loaded } = this.state
+      const { width, height, activeRules, respData, loaded } = this.state
       const classNames = _.join(_.map(activeRules, rn => (_ResponsiveRulesClassPrefix+rn)), ' ')
       const styles = {
         wrapper:   { height: '100%', position: 'relative' },
@@ -102,6 +105,8 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
                   respWidth={ width }
                   respHeight={ height }
                   respActiveRules={ activeRules }
+                  respData={ respData }
+                  respDebug={ <div>Width: {width}px    activeRules: [ { activeRules && activeRules.join(',') } ]  respData: { JSON.stringify(respData) }</div> }
                   respIsRuleActive={ this.isRuleActive }/>
             }
           </div>
@@ -136,7 +141,8 @@ HomeRoute.responsiveRules = {  // Note that this could also be a function that r
   },
   'medium': {
     minWidth: 400,
-    maxWidth: 700
+    maxWidth: 700,
+    respData: { columns: 1 }  // Optional. If present, and if the rule matches, this will be merged into respData. ORDER IS NOT GUARANTEED
   },
   'large': {
     minWidth: 700

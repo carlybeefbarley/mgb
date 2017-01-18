@@ -87,7 +87,7 @@ export const setUpCloudfront = function () {
               'HEAD',
               'OPTIONS'
             ],
-            Quantity: 2 /* required */
+            Quantity: 3 /* required */
           }
         },
         Compress: false, /* meteor will compress response by default - is it possible to turn off compression on meteor??? */
@@ -237,15 +237,15 @@ export const setUpCloudfront = function () {
     }
     res.setHeader('access-control-expose-headers', 'etag')
 
-     // cache static files for 1 hour - after meteor update they will be invalidated before cache expires
-     if(
-       req._parsedUrl.path.startsWith("/badges") ||
-       req._parsedUrl.path.startsWith("/audio") ||
-       req._parsedUrl.path.startsWith("/images") ||
-       req._parsedUrl.path.startsWith("/lib")
-     ){
-     res.setHeader('cache-control', 'public, max-age=3600, s-maxage=3600');
-     }
+    // cache static files for 1 hour - after meteor update they will be invalidated before cache expires
+    if (
+      req._parsedUrl.path.startsWith("/badges") ||
+      req._parsedUrl.path.startsWith("/audio") ||
+      req._parsedUrl.path.startsWith("/images") ||
+      req._parsedUrl.path.startsWith("/lib")
+    ) {
+      res.setHeader('cache-control', 'public, max-age=3600, s-maxage=3600');
+    }
     return next()
   });
 // End of CORS FIX
@@ -287,9 +287,9 @@ export const setUpCloudfront = function () {
     });
   }
 
-  const setCDNPrams = Meteor.bindEnvironment((cloudfrontDistribution) => {
+  const setCDNPrams = (cloudfrontDistribution) => {
     if (cloudfrontDistribution.Status != "Deployed") {
-      Meteor.call("Slack.Cloudfront.notification", `Waiting for cloudfront distribution to be ready: ${CLOUDFRONT_DOMAIN_NAME} \n this may take a while (up to 30minutes`)
+      Meteor.call("Slack.Cloudfront.notification", `Waiting for cloudfront distribution to be ready. \n this may take a while (up to 30minutes)`)
       cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id}, function (err, data) {
         if (err) {
           console.log(err, err.stack)
@@ -305,18 +305,18 @@ export const setUpCloudfront = function () {
       CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
       Meteor.call("Slack.Cloudfront.notification", `Cloudfront distribution is Ready @ ${CLOUDFRONT_DOMAIN_NAME}`)
     }
-  })
-
-  const createDistribution = (callback) => {
-    cloudfront.createDistribution(params, callback)
   }
 
+  const createDistribution = Meteor.bindEnvironment((callback) => {
+    cloudfront.createDistribution(params, callback)
+  })
+
   Meteor.startup(() => {
-    getDistribution((err, cloudfrontDistribution) => {
+    getDistribution(Meteor.bindEnvironment((err, cloudfrontDistribution) => {
       if (err) {
         console.error(`Failed to LOAD distribution with error: ${err}`, err)
-        // this should show only once
         Meteor.call("Slack.Cloudfront.notification", `Failed to LOAD distribution with error: ${err} \n Trying to create new Distribution`)
+
         createDistribution(Meteor.bindEnvironment((err, data) => {
           if (err) {
             Meteor.call("Slack.Cloudfront.notification", `Failed to CREATE distribution with error: ${err}`, true)
@@ -329,9 +329,9 @@ export const setUpCloudfront = function () {
         }))
         return
       }
-      setCDNPrams(Meteor.bindEnvironment(cloudfrontDistribution))
+      setCDNPrams(cloudfrontDistribution)
       console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
-    })
+    }))
   })
 
 }

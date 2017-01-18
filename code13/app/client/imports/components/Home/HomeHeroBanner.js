@@ -7,14 +7,13 @@ import { Segment, Grid, Header, Image, Button } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
 
-const HomeHeroBanner = ( { userId, username, respActiveRules, respIsRuleActive, respWidth } ) => {
+const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
   const isSmall = respIsRuleActive('small')
   if (respIsRuleActive('impossible'))
     return <Header as='h1' size='large' style={{fontSize: '1em', margin: '0.75em 0em 0.75em 0em'}} content='MGB'/>
 
   return (
     <Segment basic className="slim" style={{ minWidth: '200px', margin: '0 auto', paddingTop: '2.5em', paddingBottom: '4em' }}>
-      Width: {respWidth}px  [ { respActiveRules && respActiveRules.join(',') } ]
       <Grid.Row>
         <Grid.Column>
           <Image size='small' floated='right' src="/images/mascots/team.png" style={{width: "480px"}} />

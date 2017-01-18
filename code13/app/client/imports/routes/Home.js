@@ -15,14 +15,13 @@ const _propTypes = {
   currUser:   PropTypes.object      // Can be null/undefined
 }
 
-const HomeRoute = ( { currUser, respData, respDebug, respIsRuleActive  } ) => {
+const HomeRoute = ( { currUser, respData, respIsRuleActive  } ) => {
   const username = currUser ? currUser.profile.name : "guest"
   const userId = currUser ? currUser._id : null
   const columns = respData.columns || 3
 
   return (
     <div>
-      {respDebug}
       <div className="hero">
         <div className="ui container">
           <HomeHeroBanner username={username} userId={userId} />

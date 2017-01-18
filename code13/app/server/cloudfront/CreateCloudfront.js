@@ -28,13 +28,15 @@ export const setUpCloudfront = function () {
   })
 
 // Config
+  // TODO(stauzs): move these to ENV
   const ORIGIN_DOMAIN_NAME = 'test.mygamebuilder.com' // v2.mygamebuilder.com
-  const HTTP_PORT = 80
+  const ORIGIN_ID = Meteor.isProduction ? 'test.mygamebuilder.com' : 'test.mygamebuilder.com-dev'
+  const HTTP_PORT = Meteor.isProduction ? 80 : 3000
   const HTTPS_PORT = 443
   const params = {
     DistributionConfig: {
       /* required */
-      CallerReference: 'mgb-' + ORIGIN_DOMAIN_NAME, /* required - A unique value (for example, a date-time stamp) that ensures that the request can't be replayed */
+      CallerReference: 'mgb-' + ORIGIN_ID, /* required - A unique value (for example, a date-time stamp) that ensures that the request can't be replayed */
       Comment: 'mgb cloudfront distribution', /* required */
       DefaultCacheBehavior: {
         /* required */
@@ -59,7 +61,7 @@ export const setUpCloudfront = function () {
           }
         },
         MinTTL: 0, /* required */
-        TargetOriginId: ORIGIN_DOMAIN_NAME, /* required */
+        TargetOriginId: ORIGIN_ID, /* required */
         TrustedSigners: {
           /* required */
           Enabled: false, /* required - are we going to use ssl */
@@ -113,7 +115,7 @@ export const setUpCloudfront = function () {
         Items: [
           {
             DomainName: ORIGIN_DOMAIN_NAME, /* required */
-            Id: ORIGIN_DOMAIN_NAME, /* required */
+            Id: ORIGIN_ID, /* required */
             CustomHeaders: {
               Quantity: 0, /* required */
               Items: [
@@ -219,6 +221,7 @@ export const setUpCloudfront = function () {
 // CORS fix
   const allowedOrigins = [
     'http://test.mygamebuilder.com',
+    'http://test.mygamebuilder.com:3000',
     'http://mightyfingers.com:8080',
     'http://localhost:3000',
     'http://v2.mygamebuilder.com',
@@ -274,7 +277,7 @@ export const setUpCloudfront = function () {
         const oItems = origins.Items
         for (let j = 0; j < oItems.length; j++) {
           const oItem = oItems[j]
-          if (oItem.Id == ORIGIN_DOMAIN_NAME) {
+          if (oItem.Id == ORIGIN_ID) {
             callback(null, items[i])
             return
           }

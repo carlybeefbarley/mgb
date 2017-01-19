@@ -35,9 +35,10 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
 
 export const makeExpireLink = (assetId, expires) => {
   // we need server time here !!!!
-  const now = Date.now()
-  const nextUpdate = now - (now % (expires * 1000))
-  return makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${assetId}`, nextUpdate)
+  // time removed - as cloudfront will respect s-maxage directive - set by MGB server
+  //const now = Date.now()
+  //const nextUpdate = now - (now % (expires * 1000))
+  return makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${assetId}`)
 }
 
 // project avatar url prefixed with CDN host

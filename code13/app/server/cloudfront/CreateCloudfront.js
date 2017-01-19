@@ -290,7 +290,7 @@ export const setUpCloudfront = function () {
   const setCDNPrams = (cloudfrontDistribution) => {
     if (cloudfrontDistribution.Status != "Deployed") {
       Meteor.call("Slack.Cloudfront.notification", `Waiting for cloudfront distribution to be ready. \n this may take a while (up to 30minutes)`)
-      cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id}, function (err, data) {
+      cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id},  Meteor.bindEnvironment((err, data) => {
         if (err) {
           console.log(err, err.stack)
           Meteor.call("Slack.Cloudfront.notification", `Distribution didn't become ready. Error: ${err}`, true)
@@ -299,7 +299,7 @@ export const setUpCloudfront = function () {
           CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
           Meteor.call("Slack.Cloudfront.notification", `Distribution deployed and ready to serve: ${CLOUDFRONT_DOMAIN_NAME}`)
         }
-      })
+      }))
     }
     else {
       CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
@@ -330,7 +330,6 @@ export const setUpCloudfront = function () {
         return
       }
       setCDNPrams(cloudfrontDistribution)
-      console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
     }))
   })
 

@@ -4,6 +4,7 @@ import { genetag } from '/imports/helpers/generators'
 import { getProjectAvatarUrl as getProjectAvatarUrlBasic } from '/imports/schemas/projects'
 
 
+
 // here client will store partially fetched Azzets
 // PartialAssets because meteor atm cannot merge assets recursively - https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
 const PartialAzzets = new Meteor.Collection('PartialAzzets')

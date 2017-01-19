@@ -19,7 +19,10 @@ export const getCDNDomain = function () {
 
 export const setUpCloudfront = function () {
 
-
+  // on the test server run with production flag?
+  if( !Meteor.isProduction ){
+    return
+  }
 // Config
   // TODO(stauzs): move these to ENV
   const ORIGIN_DOMAIN_NAME = 'test.mygamebuilder.com' // v2.mygamebuilder.com

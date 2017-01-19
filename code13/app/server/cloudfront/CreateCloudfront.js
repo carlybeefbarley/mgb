@@ -284,12 +284,28 @@ export const setUpCloudfront = function () {
     // TODO(stauzs): debug - why this is now working (sometimes) when is executed from setUpCloudFront function?
     // return of this method gets cached somewhere?????
     // this will make meteor files to be loaded from CDN
-    WebAppInternals.setBundledJsCssUrlRewriteHook((uri) => {
+    const rwHook = (uri) => {
       if (CLOUDFRONT_DOMAIN_NAME) {
         return "//" + CLOUDFRONT_DOMAIN_NAME + uri
       }
       return uri
+    }
+    WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook)
+
+    /*
+    debugging rewrite hook
+    let i=0
+    const hh = (uri) => {
+      return uri + "?" + i
+    }
+    Meteor.setInterval(() => {
+      console.log("HOOK:", i)
+      ++i
+      if(!(i % 1000)){
+        WebAppInternals.setBundledJsCssUrlRewriteHook(hh)
+      }
     })
+    return;*/
 
     if (cloudfrontDistribution.Status != "Deployed") {
       Meteor.call("Slack.Cloudfront.notification", `Waiting for cloudfront distribution to be ready. \n this may take a while (up to 30minutes)`)
@@ -301,12 +317,16 @@ export const setUpCloudfront = function () {
         else {
           CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
           Meteor.call("Slack.Cloudfront.notification", `Distribution deployed and ready to serve: ${CLOUDFRONT_DOMAIN_NAME}`)
+          // we need to set this 2nd time - as meteor has some sort of caching / delay system for ssetBundledJsCssUrlRewriteHook
+          WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook)
         }
       }))
     }
     else {
       CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
       Meteor.call("Slack.Cloudfront.notification", `Cloudfront distribution is Ready @ ${CLOUDFRONT_DOMAIN_NAME}`)
+      // we need to set this 2nd time - as meteor has some sort of caching / delay system for setBundledJsCssUrlRewriteHook
+      WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook)
     }
   }
 

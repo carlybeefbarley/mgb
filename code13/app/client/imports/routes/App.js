@@ -29,6 +29,8 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
 // https://www.npmjs.com/package/react-notifications
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 // Note css is in /client/notifications.css

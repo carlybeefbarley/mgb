@@ -308,6 +308,12 @@ if (Meteor.isServer)
         forkDate:         now
       })
 
+      if (dstAsset.kind === 'game')
+      {
+        // Special handling
+        if (dstAsset.metadata)
+          dstAsset.metadata.playCount = 0
+      }
 
       if (opts.ownerId && opts.dn_ownerName) {
         // We allow the caller to set this: Main scenario is 'Create As Member Of Project'

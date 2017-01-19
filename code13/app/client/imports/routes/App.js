@@ -21,7 +21,6 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { projectMakeSelector } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
-import Spinner from '/client/imports/components/Nav/Spinner'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
@@ -97,7 +96,7 @@ export const joyrideDebugEnable = joyrideDebug => {
   // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
 }
 
-export default App = React.createClass({
+const App = React.createClass({
   mixins: [ReactMeteorData],
   propTypes: {
     params:   PropTypes.object,
@@ -246,10 +245,14 @@ export default App = React.createClass({
   },
 
   render() {
+    const { respData } = this.props
+    const { joyrideDebug } = this.state
+    const fNavPanelIsOverlay = this.state.fNavPanelIsOverlay || (respData.npForceAsOverlay === true)
 
-    const { fNavPanelIsOverlay, joyrideDebug } = this.state
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
+
+
 
     if (!loading)
       this.configureTrackJs()
@@ -273,20 +276,21 @@ export default App = React.createClass({
     const navPanelWidth = showNavPanel ? "268px" : npColumn1Width     // Available width to render
     const navPanelReservedWidth = fNavPanelIsOverlay ? npColumn1Width : navPanelWidth    // Space main page area cannot use
 
-    // The Flex Panel is for communications and common quick searches in a right hand margin (TBD what it is for mobile)
+    // The Flex Panel is for communications and common quick searches in a right hand margin (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
-    const flexPanelWidth = showFlexPanel ? "345px" : "60px"    // The 225px width works well with default vertical menu size and padding=8px
+    const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? "345px" : "285px"
+    const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth    // The 285px width works well with default vertical menu size and padding=8px
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
       position:     "fixed",
       top:          fFixedTopNavBar ? navBarAreaHeightStr : "0px",
-      bottom:       "0px",
+      bottom:       respData.fpReservedFooterHeight,
       left:         navPanelReservedWidth,
       right:        flexPanelWidth,
-      overflow:     "auto",
-      marginBottom: "0px"
+      marginBottom: "0px",
+      overflow: "scroll"
     }
 
     const mainPanelInnerDivSty = {
@@ -333,7 +337,6 @@ export default App = React.createClass({
               {"name": "My Game Builder", "content": "MyGameBuilder"}
           ]}
         />
-
         <Joyride 
           ref="joyride" 
           steps={this.state.joyrideSteps} 
@@ -352,6 +355,7 @@ export default App = React.createClass({
             <NavPanel
               currUser={currUser}
               currUserProjects={currUserProjects}
+              fpReservedFooterHeight={respData.fpReservedFooterHeight}
               user={user}
               selectedViewTag={navPanelQueryValue}
               handleNavPanelToggle={this.handleNavPanelToggle}
@@ -362,19 +366,20 @@ export default App = React.createClass({
               navPanelIsOverlay={fNavPanelIsOverlay}
             />
 
-            { showNavPanel && 
+            { (showNavPanel && !respData.npForceAsOverlay) && 
               <i 
                 title={!fNavPanelIsOverlay ? 
                    `The Navigation Panel is locked, so it will not auto-hide when used. Clicking this icon will unlock it and enable auto-hide`
-                 : `The Navigation Panel is unlocked, so it auto-hides when used. Clicking this icon will lock it and disable auto-hide` }
+                 : `The Navigation Panel is unlocked, so it auto-hides when used. If the window is wide enough, clicking this icon will lock it and disable auto-hide` }
                 className={`ui grey ${fNavPanelIsOverlay ? "unlock":"lock"} icon`} 
                 onClick={() => this.setState( { "fNavPanelIsOverlay": !fNavPanelIsOverlay } ) }
-                style={{position: "fixed", bottom: "8px", left: npColumn1Width, zIndex: 200}} />
+                style={{position: "fixed", marginBottom: "8px", bottom: respData.fpReservedFooterHeight, left: npColumn1Width, zIndex: 200}} />
             }
 
             { fFixedTopNavBar && navbar }
 
             <FlexPanel
+              fpIsFooter={!!respData.footerTabMajorNav}
               joyrideSteps={this.state.joyrideSteps} 
               joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
               joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
@@ -699,3 +704,32 @@ export default App = React.createClass({
   }
  
 })
+
+App.responsiveRules = {
+  'portraitPhoneUI': {
+    maxWidth: 420,
+    respData: { 
+      footerTabMajorNav: true,        // |__| flexPanel as footer
+      fpReservedFooterHeight:      '60px',
+      fpReservedRightSidebarWidth: '0px'
+    }
+  },
+  'npForceAsOverlay': {
+    minWidth: 0,
+    maxWidth: 900,
+    respData: {
+      npForceAsOverlay: true
+    }
+  },
+  'desktopUI': {
+    minWidth: 421,
+    respData: { 
+      footerTabMajorNav: false,        //  flexPanel as right sidebar =|
+      fpReservedFooterHeight:       '0px',
+      fpReservedRightSidebarWidth:  '60px'
+    }
+  }
+}
+
+import ResponsiveComponent from '/client/imports/ResponsiveComponent'
+export default ResponsiveComponent(App)

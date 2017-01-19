@@ -1,8 +1,10 @@
-import React, { PropTypes, Component } from 'react'
+import React, { PropTypes } from 'react'
 import styles from './home.css'
 import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
+import ResponsiveComponent from '/client/imports/ResponsiveComponent'
 
+import { Grid } from 'semantic-ui-react'
 import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 import HomeSkillsColumn from '/client/imports/components/Home/HomeSkillsColumn'
 import HomeProjectsBeingMadeColumn from '/client/imports/components/Home/HomeProjectsBeingMadeColumn'
@@ -13,10 +15,10 @@ const _propTypes = {
   currUser:   PropTypes.object      // Can be null/undefined
 }
 
-const HomeRoute = props => {
-  const { currUser } = props
+const HomeRoute = ( { currUser, respData, respIsRuleActive  } ) => {
   const username = currUser ? currUser.profile.name : "guest"
   const userId = currUser ? currUser._id : null
+  const columns = respData.columns || 3
 
   return (
     <div>
@@ -25,21 +27,44 @@ const HomeRoute = props => {
           <HomeHeroBanner username={username} userId={userId} />
         </div>
       </div>
-      <div className="ui container slim" style={{paddingTop: "2.5em", paddingBottom: "2em"}}>
-        <div className="ui padded grid stackable">
-          <div className="equal width row">
-            <div className="ui stackable three column grid">
-              <HomeSkillsColumn userId={userId}/>
-              <HomeProjectsBeingMadeColumn />
-              <HomeMeetFriendsColumn />
-            </div>
-          </div>
+      { !respIsRuleActive('noColumns') && 
+        <div className="ui container" style={{paddingTop: "2.5em", paddingBottom: "2em"}}>
+          <Grid padded>
+            <Grid.Row>
+              <Grid columns={columns}>
+                <HomeSkillsColumn userId={userId}/>
+                <HomeProjectsBeingMadeColumn />
+                <HomeMeetFriendsColumn />
+              </Grid>
+            </Grid.Row>
+          </Grid>
         </div>
-      </div>
+      }
       <Footer />
     </div>
   )
 }
 
 HomeRoute.propTypes = _propTypes
-export default HomeRoute
+HomeRoute.responsiveRules = {  // Note that this could also be a function that returns this kind of object
+  'noColumns': {
+    minWidth: 0,
+    maxWidth: 250,
+    respData: { columns: -1 }
+  },
+  'oneColumn': {
+    minWidth: 251,
+    maxWidth: 650,
+    respData: { columns: 1 }
+  },
+  'TwoColumn': {  
+    minWidth: 651,
+    maxWidth: 850,
+    respData: { columns: 2 }
+  },
+  'ThreeColumn': {
+    minWidth: 851,
+    respData: { columns: 3 }
+  }
+}
+export default ResponsiveComponent(HomeRoute)

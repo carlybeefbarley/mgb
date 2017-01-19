@@ -346,8 +346,6 @@ export const setUpCloudfront = function () {
             console.error(`Failed to CREATE distribution with error`, err)
             return
           }
-          console.log("CLOUDFRONT SET UP:", "DOMAIN:" + CLOUDFRONT_DOMAIN_NAME)
-          Meteor.call("Slack.Cloudfront.notification", `Cloudfront distribution has been successfully set up: ${CLOUDFRONT_DOMAIN_NAME}`)
           setCDNPrams(data)
         }))
         return

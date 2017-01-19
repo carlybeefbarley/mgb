@@ -40,6 +40,7 @@ const NavBar = ({ name, user, params, currUser, pathLocation, conserveSpace, pro
     top:        fFixedTopNavBar ? '0px' : undefined,
     left:       navPanelWidth, 
     right:      flexPanelWidth, 
+    overflow:   'hidden',
     margin:     '0px',
     maxHeight:  projectScopeLock ?  '80px' : '38px'
   }}>

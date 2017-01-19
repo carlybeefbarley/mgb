@@ -56,6 +56,7 @@ export default FlexPanel = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
+    fpIsFooter:             PropTypes.bool.isRequired,    // If true, then flexPanel is fixed page footer
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
@@ -186,10 +187,24 @@ export default FlexPanel = React.createClass({
   },
 
   render: function () {
-    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle } = this.props
+    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle, fpIsFooter } = this.props
 
     const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
-    const panelStyle = {
+    const panelStyle = fpIsFooter ? 
+    {
+      position:     'fixed',
+      top:          flexPanelIsVisible ? '0px' : undefined,
+      bottom:       '61px',
+      width:        flexPanelWidth,
+      right:        '0px',
+      border:       'none',
+      borderRadius: 0,
+      marginBottom: 0,
+      backgroundColor: 'rgba(242, 242, 242, 1)',
+      zIndex:       90    // Temp Hack
+    }
+    :
+    {
       position:     'fixed',
       right:        '0px',
       top:          '0px',
@@ -201,7 +216,24 @@ export default FlexPanel = React.createClass({
       backgroundColor: 'rgba(242, 242, 242, 1)'   //making this non-opaque solves the overlap issues on very narrow screens
     }
 
-    const miniNavStyle = {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
+    const miniNavClassNames = fpIsFooter ? 'ui horizontal six item icon fluid menu' : 'ui attached vertical icon menu' 
+    const miniNavStyle = fpIsFooter ? 
+    {
+      position:     'fixed',
+      bottom:       '0px',
+      left:         '0px',
+      right:        '0px',
+      height:       '61px',
+      border:       'none',
+      borderTop:   '1px solid rgba(0, 0, 0, 0.1)',
+      borderRadius: 0,
+      marginBottom: 0,
+      backgroundColor: 'none',
+      zIndex:       300     // Temp Hack
+      
+    } 
+    :
+    {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
       position:     'fixed',
       top:          '0px',
       bottom:       '0px',
@@ -217,22 +249,33 @@ export default FlexPanel = React.createClass({
     const panelScrollContainerStyle = {
       position:     'fixed',
       top:          '50px',                /// TODO calculate this
-      bottom:       '0px',
-      right:        '60px',
+      bottom:       fpIsFooter ? '60px' : '0px',
+      right:        fpIsFooter ? '0px'  : '60px',
       width:        '285px',
-      overflowY:    'scroll'
+      overflowY:    'scroll',
+      zIndex:       301     // Temp Hack
+
     }
 
     const panelInnerStyle = {
       padding:      '10px',
       paddingBottom: '24px',
-      height:       'auto'
+      height:       'auto',
+      zIndex:       302     // Temp Hack
+    }
+
+    const flexHeaderStyle = {
+      float: 'right',
+      marginRight: fpIsFooter ? '0px' : '60px',
+      width:        '285px',
+      zIndex:       301     // Temp Hack
     }
 
     const flexPanelChoice = this._getSelectedFlexPanelChoice()
     const flexPanelHdr = flexPanelChoice.hdr
     const flexPanelIcon = flexPanelChoice.icon
     const ElementFP = (!this.props.isSuperAdmin && flexPanelChoice.superAdminOnly) ? null : flexPanelChoice.el
+
 
     if (flexPanelIsVisible && ElementFP !== null)
       joyrideCompleteTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)
@@ -242,7 +285,7 @@ export default FlexPanel = React.createClass({
         { flexPanelIsVisible &&
           <div className='animated fadeInRight' style={{animationFillMode: "none"} /*animation fill mode breaks flex panel on ff and mobile chrome (samsung) */ }>
 
-            <div className="flex header">
+            <div className="flex header" style={flexHeaderStyle}>
               <span className="title">
                 <i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
               </span>
@@ -275,12 +318,14 @@ export default FlexPanel = React.createClass({
 
           </div>
         }
-        <div id='mgbjr-flexPanelIcons' className="ui attached vertical icon menu" style={miniNavStyle} >
+        <div id='mgbjr-flexPanelIcons' className={miniNavClassNames} style={miniNavStyle} >
           { flexPanelViews.map(v => {
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
             if (v.lev > fpFeatureLevel && this.getFpButtonAutoShowForTag(v.tag) !== true)
               return null
             if (v.superAdminOnly && !this.props.isSuperAdmin) 
+              return null
+            if (fpIsFooter && v.lev > 4)
               return null
 
             const specialSty = this.getFpButtonSpecialStyleForTag(v.tag)
@@ -295,7 +340,7 @@ export default FlexPanel = React.createClass({
                 title={v.name}
                 onClick={this.fpViewSelect.bind(this, v.tag)}>
                 <i className={v.icon + specialClass + " large icon"}></i>
-                <span>{v.name}</span>
+                { fpIsFooter ? null : <span>{v.name}</span> }
               </div>
             )
           })}

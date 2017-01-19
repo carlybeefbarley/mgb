@@ -143,14 +143,11 @@ export default class ActorTool extends Tileset {
             </Button>
   
             {
-              /*
               this.renderActors(1, tilesets.length, this.genActorImage).length > 0 
               ? 
               this.renderActors(1, tilesets.length, this.genActorImage)
               :
               <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
-              */
-              this.renderForModal(1)
             }
           </div>
         }
@@ -193,3 +190,4 @@ export default class ActorTool extends Tileset {
     )
   }
 }
+      if (isValidForLayer)

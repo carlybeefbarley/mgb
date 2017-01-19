@@ -15,7 +15,7 @@ import ActorControls from './ActorControls.js'
 import Tileset from '../../Common/Map/Tools/TileSet.js'
 
 
-export default class ActorTool extends Tileset {
+export default class EventTool extends Tileset {
 
   get tileset(){
     return this.props.tilesets[0]
@@ -27,6 +27,11 @@ export default class ActorTool extends Tileset {
   }
 
   renderEmpty () {
+    <Dropdown floating labeled button text="Events" id="mgbjr-MapTools-events" className='tilesets icon small ui button'>
+      <Dropdown.Menu>
+        {this.renderContent(false)}
+      </Dropdown.Menu>
+    </Dropdown>
   }
 
   renderContent () {

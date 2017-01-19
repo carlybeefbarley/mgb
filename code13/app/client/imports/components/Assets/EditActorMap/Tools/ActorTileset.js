@@ -1,13 +1,16 @@
 'use strict'
 import _ from 'lodash'
 import React from 'react'
+import ReactDOM from 'react-dom'
 import { Label, Segment, Grid, Button, Icon } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
 
-import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
-import EditModes from '../../Common/Map/Tools/EditModes.js'
 import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
+import TilesetControls from '../../Common/Map/Tools/TilesetControls.js'
+import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
+import TileCollection from '../../Common/Map/Tools/TileCollection.js'
+import EditModes from '../../Common/Map/Tools/EditModes.js'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
@@ -20,14 +23,54 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 const _dragHelpMsg = 'Drop Actor Assets here to use them in this ActorMap'
 
-export default class ActorTool extends Tileset {
-  constructor(){
-    super()
+export default class ActorTileset extends React.Component  {
+  constructor(...args){
+    super(...args)
+    this.prevTile = null
+    this.spacing = 1
+    this.mouseDown = false
+    this.mouseRightDown = false
+    this.startingtilePos = null
+
+    this.onMouseDown = this.onMouseDown.bind(this)
+    this.renderTileset = this.renderTileset.bind(this)
+    this.showTileListPopup = this.showTileListPopup.bind(this)
     this.tilesetIndex = 1
   }
   
-  get tileset(){
-    return this.props.tilesets[this.tilesetIndex]
+  componentDidMount () {
+    this.adjustCanvas()
+    window.addEventListener('mousemove', this.onMouseMove)
+    window.addEventListener('touchmove', this.onMouseMove)
+
+    window.addEventListener('mouseup', this.onMouseUp)
+    window.addEventListener('touchend', this.onMouseUp)
+
+    if(this.refs.canvas){
+      this.refs.canvas.addEventListener("touchstart", this.onMouseDown)
+    }
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('mousemove', this.onMouseMove)
+    window.removeEventListener('touchmove', this.onMouseMove)
+
+    window.removeEventListener('mouseup', this.onMouseUp)
+    window.removeEventListener('touchend', this.onMouseUp)
+
+    if(this.refs.canvas){
+      this.refs.canvas.removeEventListener("touchstart", this.onMouseDown)
+    }
+
+    if(this.refs.modal){
+      $(this.refs.modal).remove()
+    }
+  }
+
+  componentDidUpdate(){
+    // re-render after update
+    this.adjustCanvas()
+    this.drawTiles()
   }
 
   componentWillReceiveProps(p){
@@ -36,7 +79,191 @@ export default class ActorTool extends Tileset {
     }
   }
 
-  onDropOnLayer (e) {
+  /* endof lifecycle functions */
+
+  get tileset(){
+    return this.props.tilesets[this.tilesetIndex]
+  }
+
+  get activeTileset(){
+    return this.props.activeTileset == 0 ? 1 : this.props.activeTileset
+  }
+
+  /* helpers */
+  adjustCanvas () {
+
+    const tilesets = this.props.tilesets
+    const canvas = ReactDOM.findDOMNode(this.refs.canvas)
+
+    tilesets.map( ts => {
+      if (ts && canvas) {
+        const w = TileHelper.getTilesetWidth(ts)
+        const h = TileHelper.getTilesetHeight(ts)
+        if(canvas.width != w){
+          canvas.width = w
+        }
+        if(canvas.height != h){
+          canvas.height = h
+        }
+              this.ctx = canvas.getContext('2d')
+      }
+    })
+  }
+  
+  getTilePosInfo (e) {
+    const ts = this.tileset
+    // image has not been loaded
+    if (!ts) {
+      return
+    }
+    const pos = new SelectedTile()
+    pos.updateFromMouse(e, ts, this.spacing)
+    return pos
+  }
+  /* endof helpers */
+
+   /* functionality */
+  selectTile (e) {
+    if (!this.prevTile) {
+      this.prevTile = this.getTilePosInfo(e)
+      // failed to get prev tile.. e.g. click was out of bounds
+      if (!this.prevTile) {
+        return
+      }
+    }
+    this.props.selectTile(new SelectedTile(this.prevTile))
+    this.highlightTile(e, true)
+  }
+
+  selectRectangle (e) {
+    const ts = this.tileset
+    // new map!
+    if (!ts) {
+      return
+    }
+
+    const pos = this.getTilePosInfo(e)
+
+    if (!e.ctrlKey) {
+      this.props.clearActiveSelection()
+    }
+
+    let startx, endx, starty, endy
+    if (this.startingtilePos.x < pos.x) {
+      startx = this.startingtilePos.x
+      endx = pos.x
+    }else {
+      startx = pos.x
+      endx = this.startingtilePos.x
+    }
+    if (this.startingtilePos.y < pos.y) {
+      starty = this.startingtilePos.y
+      endy = pos.y
+    }else {
+      starty = pos.y
+      endy = this.startingtilePos.y
+    }
+
+    for (let y = starty; y <= endy; y++) {
+      pos.y = y
+      for (let x = startx; x <= endx; x++) {
+        pos.x = x
+        pos.getGid(ts, this.spacing)
+        this.props.pushUnique(new SelectedTile(pos))
+      }
+    }
+
+    this.props.resetActiveLayer()
+    this.drawTiles()
+  }
+
+  selectTileset (tilesetNum) {
+    this.props.selectTileset(tilesetNum)
+  }
+  /* endof functionlity */
+
+  /* drawing on Canvas*/
+  drawTiles () {
+    this.prevTile = null
+    const tss = this.props.tilesets
+    const ts = this.tileset
+    const ctx = this.ctx
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
+    if (!ts) {
+      return
+    }
+    const palette = this.props.palette
+    const pos = {x: 0, y: 0}
+
+    const spacing = 1
+
+    let gid = 0
+    for (let i = 0; i < ts.tilecount; i++) {
+      gid = ts.firstgid + i
+      TileHelper.getTilePosRel(i, Math.floor((ts.imagewidth + spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, pos)
+      const pal = palette[gid]
+      // missing image
+      if (!pal || !pal.image) {
+        return
+      }
+      let tinfo = null
+      if (ts.tiles && ts.tiles[i]) {
+        tinfo = ts.tiles[i]
+      }
+
+      this.drawTile(pal, pos, tinfo)
+    }
+  }
+  
+  drawTile (pal, pos, info, clear = false) {
+    if (clear) {
+      this.ctx.clearRect(pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing), pal.w, pal.h)
+    }
+    const drawX = pos.x * (pal.ts.tilewidth + this.spacing)
+    const drawY = pos.y * (pal.ts.tileheight + this.spacing)
+    this.ctx.drawImage(pal.image,
+      pal.x, pal.y, pal.w, pal.h,
+      drawX, drawY, pal.w, pal.h
+    )
+
+    if (info && info.animation) {
+      this.ctx.fillStyle = 'rgba(255, 0, 0, 1)'
+      // TODO: add nice animation icon
+      this.ctx.beginPath()
+      this.ctx.arc(drawX + pal.w - 10, drawY + pal.h - 10, 10 , 0, Math.PI * 2)
+      // this.ctx.fillRect(drawX + pal.w*0.5, drawY + pal.h*0.5, pal.w *0.5, pal.h*0.5)
+      this.ctx.fill()
+    }
+
+    if (this.props.isTileSelected(pal.gid) > -1) {
+      this.ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'
+      this.ctx.fillRect(
+        drawX, drawY, pal.w, pal.h
+      )
+    }
+  }
+
+  highlightTile (e) {
+    const ts = this.tileset
+    if (!ts) {
+      return
+    }
+    const pos = this.getTilePosInfo(e)
+
+    if (this.prevTile) {
+      this.drawTiles()
+    }
+
+    this.ctx.fillStyle = 'rgba(0,0,255, 0.3)'
+    this.ctx.fillRect(pos.x * ts.tilewidth + pos.x, pos.y * ts.tileheight + pos.y, ts.tilewidth, ts.tileheight)
+    this.prevTile = pos
+  }
+  /* endof drawing on Canvas */
+
+
+  /* events */
+ onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     joyrideCompleteTag(`mgbjr-CT-MapTools-actors-drop`)
     if (!asset)
@@ -76,40 +303,106 @@ export default class ActorTool extends Tileset {
     })
   }
 
-  genActorImage(index, isActive, tileset){
-    const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
-    return (
-      <div
-        title={title}
-        className={"tilesetPreview" + (isActive ? " active" : '')}
-        key={index}
-        onClick={(tileset) => {
-          const selectedTile = new SelectedTile()
-          selectedTile.getGid(tileset)
-          this.props.selectTile(selectedTile)
-        }}
-        >
-        <img src={tileset.image}/>
-        <span className="tilesetPreviewTitle">{tileset.name}</span>
-      </div>
-    )
+  onDropChangeTilesetImage (e) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const asset = DragNDropHelper.getAssetFromEvent(e)
+    if (!asset || asset.kind != 'graphic') {
+      return
+    }
+    const infolink = '/api/asset/tileset-info/' + asset._id
+    $.get(infolink, (data) => {
+      this.props.updateTilesetFromData(data, this.tileset, true)
+    })
   }
-  
-  /*
-  renderActors(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList){
+
+  onMouseDown(e){
+    e.preventDefault()
+
+    if (e.button == 2) {
+      this.mouseRightDown = true
+      return false
+    }
+
+    if (this.props.options.mode != EditModes.fill
+            && this.props.options.mode != EditModes.stamp) {
+      this.props.setMode(EditModes.stamp)
+    }
+
+    if (!e.ctrlKey) {
+      this.props.clearActiveSelection()
+      this.props.resetActiveLayer()
+    }
+    this.mouseDown = true
+    this.selectTile(e)
+    this.startingtilePos = new SelectedTile(this.prevTile)
+  }
+
+  onMouseUp = (e) => {
+    this.mouseDown = false
+    this.mouseRightDown = false
+    this.drawTiles()
+  }
+
+  onMouseMove = (e) => {
+    if(e.target != this.refs.canvas){
+      return
+    }
+    if (this.mouseRightDown) {
+      this.refs.layer.scrollLeft -= e.movementX
+      this.refs.layer.scrollTop -= e.movementY
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    }
+    if (this.mouseDown) {
+      this.selectRectangle(e)
+    }
+    this.highlightTile(e)
+  }
+
+  onMouseLeave = (e) => {
+    // remove highlighted tile
+    this.drawTiles()
+    this.prevTile = null
+    this.mouseDown = false
+  }
+  /* endof events */
+
+   renderTileset(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList){
     const tss = this.props.tilesets
     let ts = this.tileset
     const tilesets = []
-    const layer = this.props.getActiveLayerData()
-    let isValidForLayer = layer ? ActorHelper.checks[layer.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
-    
     for (let i = from; i < to; i++) {
-      if (isValidForLayer)
-        tilesets.push( genTemplate.call(this, i, tss[i] === ts, tss[i]) )
+      tilesets.push( genTemplate.call(this, i, tss[i] === ts, tss[i]) )
     }
     return tilesets
   }
 
+  showTileListPopup(){
+    $(this.refs.modal)
+      .modal("show")
+      .modal('setting', 'transition', 'vertical flip') // first time there is default animation
+  }
+
+  renderForModal(from = 0, to = this.props.tilesets.length){
+    return (
+      <div ref="modal" style={{display: "none"}} className="ui modal">
+        <div className="content tilesetPreviewModal">
+          {this.renderTileset(from, to, this.genTilesetImage)}
+        </div>
+      </div>
+    )
+  }
+
+  renderOpenListButton(offset = 0){
+    if(this.props.tilesets.length < offset){
+      return null
+    }
+    return <div className="showList" onClick={this.showTileListPopup}><i className='ui external icon'></i> </div>
+  }
+  
   renderEmpty () {
     return (
        <Segment id="mgbjr-MapTools-actors" className='tilesets' style={{'height': '100%', 'margin':0 }}>
@@ -120,16 +413,13 @@ export default class ActorTool extends Tileset {
       </Segment>
     )
   }
-  */
   
   renderContent (tilesets) {
     return (
-      <div>
-        <div
-          className='active tilesets accept-drop'
-          data-drop-text={_dragHelpMsg}
-          onDrop={this.onDropOnLayer.bind(this)}
-          onDragOver={DragNDropHelper.preventDefault}/>
+      <div
+        className='active tilesets accept-drop'
+        onDrop={this.onDropOnLayer.bind(this)}
+        onDragOver={DragNDropHelper.preventDefault}>
         {
           !tilesets 
           ? 
@@ -143,14 +433,16 @@ export default class ActorTool extends Tileset {
             </Button>
   
             {
-              /*
-              this.renderActors(1, tilesets.length, this.genActorImage).length > 0 
-              ? 
-              this.renderActors(1, tilesets.length, this.genActorImage)
-              :
-              <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
-              */
-              this.renderForModal(1)
+              tilesets.map((ts, i) => 
+                <canvas
+                  key={i}
+                  ref={canvas => this.canvas = canvas}
+                  onMouseDown={this.onMouseDown.bind(this)}
+                  onMouseUp={this.onMouseUp.bind(this)}
+                  onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
+                  onMouseLeave={this.onMouseLeave.bind(this)}
+                  onContextMenu={e => { e.preventDefault(); return false; } } >
+                </canvas>)
             }
           </div>
         }
@@ -182,12 +474,17 @@ export default class ActorTool extends Tileset {
     if (!this.props.tilesets.length) {
       return this.renderEmpty()
     }
+    const tilesets = this.renderTileset(1)
+    const ts = this.tileset
+    if(!ts){
+      return this.renderEmpty()
+    }
 
     return (
       <Segment id="mgbjr-MapTools-actors" className='tilesets' style={{boxSizing: 'inherit', display: 'block', height: '100%', margin: 0}}>
         <Label attached='top'>Actors {this.renderOpenListButton(1)} {this.renderForModal(1)}</Label>
           <div className="content active actor-tileset-content">
-            { this.renderContent(this.props.tilesets) }
+            { this.renderContent(tilesets) }
           </div>
       </Segment>
     )

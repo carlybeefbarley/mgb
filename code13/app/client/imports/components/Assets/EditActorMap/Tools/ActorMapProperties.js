@@ -3,7 +3,7 @@ import React from 'react'
 
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 
-export default class Properties extends React.Component {
+export default class ActorMapProperties extends React.Component {
   constructor (...args) {
     super(...args)
   }

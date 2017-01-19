@@ -198,31 +198,33 @@ export default class EditActorMap extends EditMap {
         {this.renderPlayModal()}
         {this.renderMusicModal()}
 
-        <div className={ (isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
-          <div style={{float: 'left'}}>
-            <MapToolbar
-              {...this.toolbarProps}
-              isPlaying={isPlaying}
-              options={this.options}
-              undoSteps={this.mgb_undo}
-              redoSteps={this.mgb_redo}
-            />
-          </div>
-          <div style={{float: 'left'}}>
+        <div className={ (isPlaying ? 'sixteen' : 'fourteen') + ' wide column'}>
+          <div style={{display: 'flex', width: '100%', alignItems: 'center'}}>
             <div style={{float: 'left'}}>
-              <Properties {...this.propertiesProps} data={{
-                width: c2.width,
-                height: c2.height
-              }}/>
-            </div>
-            <div style={{float: 'left', 'marginLeft': '5px'}}>
-              <EventTool
-                {...this.tilesetProps}
-                palette={this.cache.tiles}
-                activeTileset={activeTileset}
-                tilesets={c2.tilesets}
+              <MapToolbar
+                {...this.toolbarProps}
+                isPlaying={isPlaying}
                 options={this.options}
-                />
+                undoSteps={this.mgb_undo}
+                redoSteps={this.mgb_redo}
+              />
+            </div>
+            <div style={{float: 'right'}}>
+              <div style={{float: 'left', marginLeft: '5px'}}>
+                <Properties {...this.propertiesProps} data={{
+                  width: c2.width,
+                  height: c2.height
+                }}/>
+              </div>
+              <div style={{float: 'left', marginLeft: '5px'}}>
+                <EventTool
+                  {...this.tilesetProps}
+                  palette={this.cache.tiles}
+                  activeTileset={activeTileset}
+                  tilesets={c2.tilesets}
+                  options={this.options}
+                  />
+              </div>
             </div>
           </div>
           <div style={{clear: 'both', overflow:'hidden'}}>
@@ -241,7 +243,7 @@ export default class EditActorMap extends EditMap {
               ref='map' />
             </div>
         </div>
-        <div className={'three wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column'}}>
+        <div className={'two wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}

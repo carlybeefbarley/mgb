@@ -25,6 +25,7 @@ export default class TileSet extends React.Component {
     this.renderTileset = this.renderTileset.bind(this)
     this.showTileListPopup = this.showTileListPopup.bind(this)
   }
+  
   componentDidMount () {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
@@ -40,6 +41,7 @@ export default class TileSet extends React.Component {
       this.refs.canvas.addEventListener("touchstart", this.onMouseDown)
     }
   }
+
   componentWillUnmount () {
     window.removeEventListener('mousemove', this.onMouseMove)
     window.removeEventListener('touchmove', this.onMouseMove)
@@ -55,6 +57,7 @@ export default class TileSet extends React.Component {
       $(this.refs.modal).remove()
     }
   }
+  
   componentDidUpdate(){
     // re-render after update
     this.adjustCanvas()

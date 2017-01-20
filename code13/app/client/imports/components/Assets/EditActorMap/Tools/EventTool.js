@@ -27,11 +27,13 @@ export default class EventTool extends Tileset {
   }
 
   renderEmpty () {
-    <Dropdown floating labeled button text="Events" id="mgbjr-MapTools-events" className='tilesets icon small ui button'>
-      <Dropdown.Menu>
-        {this.renderContent(false)}
-      </Dropdown.Menu>
-    </Dropdown>
+    return (
+      <Dropdown floating labeled button text="Events" id="mgbjr-MapTools-events" className='tilesets icon small ui button'>
+        <Dropdown.Menu>
+          {this.renderContent()}
+        </Dropdown.Menu>
+      </Dropdown>
+    )
   }
 
   renderContent () {
@@ -59,7 +61,7 @@ export default class EventTool extends Tileset {
     return (
       <Dropdown floating labeled button text="Events" id="mgbjr-MapTools-events" className='tilesets icon small ui button'>
         <Dropdown.Menu>
-          {this.renderContent(this.tileset)}
+          { this.renderContent() }
         </Dropdown.Menu>
       </Dropdown>
     )

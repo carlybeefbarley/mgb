@@ -198,7 +198,7 @@ export default class EditActorMap extends EditMap {
         {this.renderPlayModal()}
         {this.renderMusicModal()}
 
-        <div className={ (isPlaying ? 'sixteen' : 'fourteen') + ' wide column'}>
+        <div className={ (isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
           <div style={{display: 'flex', width: '100%', alignItems: 'center'}}>
             <div style={{float: 'left'}}>
               <MapToolbar
@@ -243,7 +243,7 @@ export default class EditActorMap extends EditMap {
               ref='map' />
             </div>
         </div>
-        <div className={'two wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column'}}>
+        <div className={'three wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}

@@ -48,7 +48,7 @@ export default class EditActor extends React.Component {
     const _makeContent = Element => (
       <Element 
           asset={this.props.asset} 
-          onchange={this.handleSave.bind(this)} 
+          onChange={this.handleSave.bind(this)} 
           saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }/>
     )
     const _mkDisabled = actorTypesArray => _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])
@@ -456,7 +456,7 @@ export default class EditActor extends React.Component {
         </div>
 
         { showTemplate && 
-          <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false}>
+          <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false} onClick={(e)=>{this.handleTemplateClick(e)}}>
             <Modal.Header>
               Choose the style of Actor you want to create, then modify the detailed choices in the Actor Editor
             </Modal.Header>

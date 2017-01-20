@@ -243,7 +243,7 @@ const App = React.createClass({
     if (window.trackJs)
       doTrack()
     else
-      $.getScript(makeCDNLink("/lib/tracker.js"), doTrack)   // fallback to local version because of AdBlocks etc
+      $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
   },
 
   render() {

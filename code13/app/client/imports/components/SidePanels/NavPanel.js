@@ -108,6 +108,7 @@ export default NavPanel = React.createClass({
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
+    fpReservedFooterHeight: PropTypes.string.isRequired,  // Something like 0px or 60px typically
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     selectedViewTag:        PropTypes.string,             // One of the navPanelViews.tags values
     navPanelIsVisible:      PropTypes.bool.isRequired,
@@ -162,12 +163,12 @@ export default NavPanel = React.createClass({
 
 
   render: function () {
-    const { user, currUser, navPanelWidth, navPanelIsOverlay, selectedViewTag, navPanelIsVisible, currUserProjects } = this.props
+    const { user, currUser, navPanelWidth, navPanelIsOverlay, selectedViewTag, navPanelIsVisible, currUserProjects, fpReservedFooterHeight } = this.props
     const panelStyle = {    // This is the overall NavPanel with either just the first column (just icons, always shown), or 1st and 2nd columns
       position: "fixed",
       left: "0px",
       top: "0px",
-      bottom: "0px",
+      bottom: fpReservedFooterHeight, //61?
       width: navPanelWidth,
       backgroundColor: `rgba(50, 60, 60, ${navPanelIsOverlay ? 0.85 : 1})`,
       zIndex: 100
@@ -176,25 +177,26 @@ export default NavPanel = React.createClass({
     const miniNavStyle = {  // This is the First column of the NavPanel (just icons, always shown). It is logically nested within the outer panel
       position: "fixed",
       top: "0px",
-      bottom: "0px",
+      bottom: fpReservedFooterHeight, // 61?
       left: "0px",
       width: "61px",
       borderRadius: 0,
       marginRight: "0px",
       marginBottom: "0px",
-      backgroundColor: "rgba(50, 60, 60, 1)"
+      backgroundColor: "rgba(50, 60, 60, 1)",
+      overflowY:    "scroll"
     }
 
     const panelScrollContainerStyle = {
-      position: "absolute",
-      left: "60px",
-      right: "0px",
-      top: "0px",
-      bottom: "0px",
-      paddingTop: "8px",
-      paddingLeft: "1px",
+      position:     "absolute",
+      left:         "60px",
+      right:        "0px",
+      top:          "0px",
+      bottom:       "0px",
+      paddingTop:   "8px",
+      paddingLeft:  "1px",
       backgroundColor: `rgba(40, 50, 50, ${navPanelIsOverlay ? 0.85 : 1})`,       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
-      overflowY: "crop"
+      overflowY:    "scroll"
     }
 
     const miniNavItemStyle = {

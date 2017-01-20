@@ -49,6 +49,7 @@ export default AssetCreateNew = React.createClass({
     
     return (
       <div>
+      { /*}
         <div className="ui fluid small ordered evenly divided steps">
           <div className={(isAssetNameValid ? "completed " : "active ") + "step"}>
             <div className="content">
@@ -75,6 +76,8 @@ export default AssetCreateNew = React.createClass({
             </div>
           </div>
         </div>
+      */ 
+    }
         
         <div className="ui basic padded segment">
           <h4 className="ui header">1. Enter Asset Name</h4>

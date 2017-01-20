@@ -23,13 +23,17 @@ Meteor.startup(() => {
 
 // will convert local link e.g. /api/asset to //xxx.cloufront.com/api/asset?hash
 export const makeCDNLink = (uri, etagOrHash = null) => {
+
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
   const hash = etagOrHash != null ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
   // const now = Date.now()
   // const nextUpdate = now - (now % (60 * 1000)) // by default keep 1 minute in cache
   // const hash = etagOrHash ? etagOrHash :  nextUpdate
 
-  if (CDN_DOMAIN && uri.startsWith("/") && uri.substr(0, 2) != "//") {
+  if (uri.startsWith("/") && uri.substr(0, 2) != "//") {
+    if (!CDN_DOMAIN) {
+      return uri + "?cdnPassed"
+    }
     return `//${CDN_DOMAIN}${uri}?hash=${hash}`
   }
   return uri
@@ -57,11 +61,11 @@ export const observe = (selector, onReady, onChange = onReady, cachedObservable 
   // from now on only observe asset and update tern on changes only
   let onReadyCalled = false
   const observable = cachedObservable || {
-      observer: null,
-      getAssets: () => cursor.fetch(),
-      subscription: null,
-      ready: () => onReadyCalled
-    }
+    observer: null,
+    getAssets: () => cursor.fetch(),
+    subscription: null,
+    ready: () => onReadyCalled
+  }
   observable.subscription = Meteor.subscribe("assets.public.partial.bySelector", selector, {
     onStop: () => {
       observable.observer && observable.observer.stop()
@@ -195,15 +199,15 @@ class AssetHandler {
     this.update()
   }
 
-  stop(){
-    if(this.subscription){
+  stop() {
+    if (this.subscription) {
       this.subscription.stop()
     }
   }
   ready() {
     return this.isReady
   }
-  get loading(){
+  get loading() {
     return !this.isReady
   }
 
@@ -244,14 +248,14 @@ class AssetHandler {
       this.asset.content2 = updateObj.content2
     }
     // viewer won't
-    else{
+    else {
       this.updateContent2(updateObj)
     }
 
-    if(this.subscription){
+    if (this.subscription) {
       this._onReady(updateObj)
     }
-    else{
+    else {
       // without timeout subscription will end automatically right after it starts (ReactMeteorData.getMeteorData is responsible for that),
       // but we want to keep subscription active as long as user is checking out asset
       // NOTE: we are calling onready only after ajax also has been loaded -
@@ -318,7 +322,7 @@ class AssetHandler {
     }, asset)
   }
 
-  _onReady(updateObj){
+  _onReady(updateObj) {
     // save previous content2
     let oldC2 = this.asset ? this.asset.content2 : null
     const asset = Azzets.findOne(this.id)

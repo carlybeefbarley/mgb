@@ -138,6 +138,7 @@ export default class GridLayer extends React.Component {
       this.ctx.setLineDash([])
     }
     this.ctx.strokeStyle = 'red'
+    this.ctx.lineWidth = 2
     this.ctx.stroke()
   }
 

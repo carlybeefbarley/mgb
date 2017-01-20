@@ -9,6 +9,7 @@ import TileCollection from './Tools/TileCollection'
 import EditModes      from './Tools/EditModes'
 import LayerTypes     from './Tools/LayerTypes'
 import GridLayer      from './Layers/GridLayer'
+import MaskLayer      from './Layers/MaskLayer'
 
 import Camera         from './Camera'
 
@@ -706,6 +707,7 @@ export default class MapArea extends React.Component {
   redraw () {
     this.redrawLayers()
     this.redrawGrid()
+    this.redrawMask()
   }
 
   redrawGrid () {
@@ -717,6 +719,10 @@ export default class MapArea extends React.Component {
       layer.adjustCanvas()
       layer.draw()
     })
+  }
+
+  redrawMask () {
+    this.refs.mask && this.refs.mask.draw()
   }
 
   // RAF calls this function
@@ -895,6 +901,7 @@ export default class MapArea extends React.Component {
         onTouchStart={this.handleMouseDown}
         style={{ height: 640 + 'px', position: 'relative', margin: '10px 0' }}>
         {layers}
+        <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref='mask' />
       </div>
     )
   }

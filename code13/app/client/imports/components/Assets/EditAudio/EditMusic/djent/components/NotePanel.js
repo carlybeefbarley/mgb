@@ -3,6 +3,8 @@ import deepEqual from 'deep-equal';
 
 import { capitalize } from '../utils/tools';
 
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers.js'
+
 class NotePanel extends Component {
     onLengthAmountChange = (event, value) => {
         const { id, amount } = this.props.length;
@@ -39,7 +41,7 @@ class NotePanel extends Component {
         return (
             <div style={{color:"white"}}>
                 <div style={{ height:"65px" }}>
-                    <img src={`/images/notes/${length.name}.svg`} alt={noteName} title={noteName} style={{position:"relative", left:"50%", transform:"translateX(-50%)", top:"10px" }} />
+                    <img src={makeCDNLink(`/images/notes/${length.name}.svg`)} alt={noteName} title={noteName} style={{position:"relative", left:"50%", transform:"translateX(-50%)", top:"10px" }} />
                 </div>
                 <div style={{textAlign:"center"}}>
                     <span title="Chance" style={{display:"inline-block"}}>{percentage}% &nbsp;</span>

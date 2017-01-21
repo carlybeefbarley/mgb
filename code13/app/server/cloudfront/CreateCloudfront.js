@@ -231,7 +231,7 @@ export const setUpCloudfront = function () {
     const domain = req.headers.origin.split("//").pop()
     const origin = allowedOrigins.find( o => o.startsWith(domain))
     if (index > -1) {
-      res.setHeader('access-control-allow-origin', allowedOrigins[index])
+      res.setHeader('access-control-allow-origin', origin)
 
       // or allow for all domains
       // res.setHeader('access-control-allow-origin', '*')

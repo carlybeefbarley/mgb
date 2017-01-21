@@ -216,28 +216,19 @@ export const setUpCloudfront = function () {
 
 // CORS fix
   const allowedOrigins = [
-    'test.mygamebuilder.com',
-    'test.mygamebuilder.com:3000',
-
-    'mightyfingers.com:8080',
-
-    'localhost',
-    'localhost:3000',
-
-    'v2.mygamebuilder.com'
+    'http://test.mygamebuilder.com',
+    'https://test.mygamebuilder.com',
+    'http://test.mygamebuilder.com:3000',
+    'http://mightyfingers.com:8080',
+    'http://localhost:3000',
+    'http://v2.mygamebuilder.com',
+    'https://v2.mygamebuilder.com'
   ]
-
   WebApp.rawConnectHandlers.use(function (req, res, next) {
-    if(req.headers.origin){
-      const domain = req.headers.origin.split("//").pop()
-      const origin = allowedOrigins.find( o => o.startsWith(domain))
-      if (origin) {
-        res.setHeader('access-control-allow-origin', origin)
-    }
+    res.setHeader('access-control-allow-origin', allowedOrigins.join(" "))
     // or allow for all domains
     // res.setHeader('access-control-allow-origin', '*')
 
-    }
     res.setHeader('access-control-expose-headers', 'etag')
 
     // cache static files for 1 hour - after meteor update they will be invalidated before cache expires

@@ -216,15 +216,20 @@ export const setUpCloudfront = function () {
 
 // CORS fix
   const allowedOrigins = [
-    'http://test.mygamebuilder.com',
-    'http://test.mygamebuilder.com:3000',
-    'http://mightyfingers.com:8080',
-    'http://localhost:3000',
-    'http://v2.mygamebuilder.com',
-    'https://v2.mygamebuilder.com'
+    'test.mygamebuilder.com',
+    'test.mygamebuilder.com:3000',
+
+    'mightyfingers.com:8080',
+
+    'localhost',
+    'localhost:3000',
+
+    'v2.mygamebuilder.com'
   ]
+
   WebApp.rawConnectHandlers.use(function (req, res, next) {
-    const index = allowedOrigins.indexOf(req.headers.origin)
+    const domain = req.headers.origin.split("//").pop()
+    const origin = allowedOrigins.find( o => o.startsWith(domain))
     if (index > -1) {
       res.setHeader('access-control-allow-origin', allowedOrigins[index])
 

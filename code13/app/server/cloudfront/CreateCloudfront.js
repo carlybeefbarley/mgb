@@ -234,8 +234,9 @@ export const setUpCloudfront = function () {
       if (index > -1) {
         res.setHeader('access-control-allow-origin', origin)
     }
-      // or allow for all domains
-      // res.setHeader('access-control-allow-origin', '*')
+    // or allow for all domains
+    // res.setHeader('access-control-allow-origin', '*')
+      
     }
     res.setHeader('access-control-expose-headers', 'etag')
 

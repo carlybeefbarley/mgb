@@ -231,12 +231,12 @@ export const setUpCloudfront = function () {
     if(req.headers.origin){
       const domain = req.headers.origin.split("//").pop()
       const origin = allowedOrigins.find( o => o.startsWith(domain))
-      if (index > -1) {
+      if (origin) {
         res.setHeader('access-control-allow-origin', origin)
     }
     // or allow for all domains
     // res.setHeader('access-control-allow-origin', '*')
-      
+
     }
     res.setHeader('access-control-expose-headers', 'etag')
 

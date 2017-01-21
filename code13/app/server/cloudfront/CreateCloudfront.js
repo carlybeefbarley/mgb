@@ -228,11 +228,12 @@ export const setUpCloudfront = function () {
   ]
 
   WebApp.rawConnectHandlers.use(function (req, res, next) {
-    const domain = req.headers.origin.split("//").pop()
-    const origin = allowedOrigins.find( o => o.startsWith(domain))
-    if (index > -1) {
-      res.setHeader('access-control-allow-origin', origin)
-
+    if(req.headers.origin){
+      const domain = req.headers.origin.split("//").pop()
+      const origin = allowedOrigins.find( o => o.startsWith(domain))
+      if (index > -1) {
+        res.setHeader('access-control-allow-origin', origin)
+    }
       // or allow for all domains
       // res.setHeader('access-control-allow-origin', '*')
     }

@@ -127,7 +127,7 @@ export const setUpCloudfront = function () {
             CustomOriginConfig: {
               HTTPPort: HTTP_PORT, // required
               HTTPSPort: HTTPS_PORT, // required
-              OriginProtocolPolicy: 'http-only', // 'http-only | match-viewer | https-only', /* required
+              OriginProtocolPolicy: 'match-viewer', // 'http-only | match-viewer | https-only', /* required
               OriginSslProtocols: {
                 // TODO: set up SSL
                 Items: [ // required

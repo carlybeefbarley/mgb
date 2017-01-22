@@ -184,7 +184,7 @@ export default NavPanel = React.createClass({
       marginRight: "0px",
       marginBottom: "0px",
       backgroundColor: "rgba(50, 60, 60, 1)",
-      overflowY:    "scroll"
+      overflowY:    "auto"
     }
 
     const panelScrollContainerStyle = {
@@ -196,7 +196,7 @@ export default NavPanel = React.createClass({
       paddingTop:   "8px",
       paddingLeft:  "1px",
       backgroundColor: `rgba(40, 50, 50, ${navPanelIsOverlay ? 0.85 : 1})`,       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
-      overflowY:    "scroll"
+      overflowY:    "auto"
     }
 
     const miniNavItemStyle = {

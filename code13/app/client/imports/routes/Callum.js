@@ -1,87 +1,72 @@
-import React, { Component } from 'react'
-import SwipeableViews from 'react-swipeable-views';
-import { Sidebar, Segment, Button, Menu, Image, Icon, Header } from 'semantic-ui-react'
-const styles = {
-  slide: {
-    padding: 15,
-    minHeight: 100,
-    color: '#fff',
-  },
-  slide1: {
-    background: '#FEA900',
-  },
-  slide2: {
-    background: '#B3DC4A',
-  },
-  slide3: {
-    background: '#6AC0FF',
-  },
-};
+import React from 'react'
+import { Grid, Image, Icon } from 'semantic-ui-react'
 
+const GridExamplePadded = () => (
+  <div>
+  
 
+    <Grid columns={3} padded>
+    <Grid.Row>
+      <Grid.Column>
+        <Icon circular inverted name='user' size='huge' />
+      </Grid.Column>
+      <Grid.Column>
+        <Icon circular inverted name='bullhorn' size='huge' />
+      </Grid.Column>
+       <Grid.Column>
+        <Icon circular inverted name='map' size='huge' />
+      </Grid.Column>
+        </Grid.Row>
 
+         <Grid.Row>
+      <Grid.Column>
+         <Icon circular inverted name='users' size='huge' />
+      </Grid.Column>
+      <Grid.Column>
+         <Icon circular inverted name='feed' size='huge' />
+      </Grid.Column>
+       <Grid.Column>
+        <Icon circular inverted name='exclamation' size='huge' />
+      </Grid.Column>
+        </Grid.Row>
 
-class SidebarBottomOverlay extends Component {
-  state = { visible: true,
-     index: 1
-   }
+           <Grid.Row>
+      <Grid.Column>
+         <Icon circular inverted name='star' size='huge' />
+      </Grid.Column>
+      <Grid.Column>
+         <Icon circular inverted name='folder' size='huge' />
+      </Grid.Column>
+       <Grid.Column>
+        <Icon circular inverted name='winner' size='huge' />
+      </Grid.Column>
+        </Grid.Row>
 
-handleChangeTabs = (value) => () => {
-    this.setState({
-      index: value,
-    });
-  };
+        <Grid.Row>
+      <Grid.Column>
+         <Icon circular inverted name='mail outline' size='huge' />
+      </Grid.Column>
+      <Grid.Column>
+         <Icon circular inverted name='bell outline' size='huge' />
+      </Grid.Column>
+       <Grid.Column>
+        <Icon circular inverted name='graduation' size='huge' />
+      </Grid.Column>
+        </Grid.Row>
 
-  handleChangeIndex = (index) => {
-    this.setState({
-      index,
-    });
-  };
+             <Grid.Row>
+      <Grid.Column>
+         <Icon circular inverted name='question' size='huge' />
+      </Grid.Column>
+      <Grid.Column>
+         <Icon circular inverted name='setting' size='huge' />
+      </Grid.Column>
+       <Grid.Column>
+        <Icon circular inverted name='log out' size='huge' />
+      </Grid.Column>
+        </Grid.Row>
+    </Grid>
+  </div>
+)
 
-  toggleVisibility = () => this.setState({ visible: !this.state.visible })
-
-  render() {
-    const { visible, index } = this.state
-    return (
-      <div>
-
-     <SwipeableViews index={index} onChangeIndex={this.handleChangeIndex}>
-    <div style={Object.assign({}, styles.slide, styles.slide1)}>
-      slide n°1
-    </div>
-    <div style={Object.assign({}, styles.slide, styles.slide2)}>
-      slide n°2
-    </div>
-    <div style={Object.assign({}, styles.slide, styles.slide3)}>
-      slide n°3
-    </div>
-  </SwipeableViews>
-        <Button onClick={this.toggleVisibility}>Toggle Visibility</Button>
-        <Sidebar.Pushable as={Segment}>
-          <Sidebar as={Menu} animation='overlay' direction='bottom' visible={visible} inverted>
-            <Menu.Item name='home'onClick={this.handleChangeTabs(0)}>
-              <Icon name='home' />
-              Home
-            </Menu.Item>
-            <Menu.Item name='gamepad'onClick={this.handleChangeTabs(1)}>
-              <Icon name='gamepad' />
-              Games
-            </Menu.Item>
-            <Menu.Item name='camera'>
-              <Icon name='camera' />
-              Channels
-            </Menu.Item>
-          </Sidebar>
-          <Sidebar.Pusher>
-            <Segment basic>
-              <Header as='h3'>Application Content</Header>
-              <Image src='http://semantic-ui.com/images/wireframe/paragraph.png' />
-            </Segment>
-          </Sidebar.Pusher>
-        </Sidebar.Pushable>
-      </div>
-    )
-  }
-}
-
-export default SidebarBottomOverlay
+export default GridExamplePadded

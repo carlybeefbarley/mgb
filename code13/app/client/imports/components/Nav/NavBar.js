@@ -34,29 +34,35 @@ const _menuStyle = {
   boxShadow: "none"
 }
 
-const NavBar = ({ name, user, params, currUser, pathLocation, conserveSpace, projectScopeLock, navPanelWidth, flexPanelWidth, fFixedTopNavBar, sysvars }) => (
-  <div style={{
-    position:   fFixedTopNavBar ? 'fixed' : 'static',
-    top:        fFixedTopNavBar ? '0px' : undefined,
-    left:       navPanelWidth, 
-    right:      flexPanelWidth, 
-    overflow:   'hidden',
-    margin:     '0px',
-    maxHeight:  projectScopeLock ?  '80px' : '38px'
-  }}>
-    <div className="ui borderless menu" style={_menuStyle}>
-      <SystemAlerts sysvars={sysvars}/>
-      <WhatsNew currUser={currUser} asHidingLink={true}/>
-      <div className="item">
-        <NavBarBreadcrumb pathLocation={pathLocation} conserveSpace={conserveSpace} name={name} user={user} params={params} />
+const NavBar = ({ name, user, params, currUser, pathLocation, conserveSpace, projectScopeLock, navPanelWidth, flexPanelWidth, fFixedTopNavBar, sysvars }) => {
+
+  if (pathLocation === '/' && !fFixedTopNavBar && !projectScopeLock)
+    return null
+
+  return (
+    <div style={{
+      position:   fFixedTopNavBar ? 'fixed' : 'static',
+      top:        fFixedTopNavBar ? '0px' : undefined,
+      left:       navPanelWidth, 
+      right:      flexPanelWidth, 
+      overflow:   'hidden',
+      margin:     '0px',
+      maxHeight:  projectScopeLock ?  '80px' : '38px'
+    }}>
+      <div className="ui borderless menu" style={_menuStyle}>
+        <SystemAlerts sysvars={sysvars}/>
+        <WhatsNew currUser={currUser} asHidingLink={true}/>
+        <div className="item">
+          <NavBarBreadcrumb pathLocation={pathLocation} conserveSpace={conserveSpace} name={name} user={user} params={params} />
+        </div>
+        <div className="right menu">
+          <NavBarGadget name={name} currUser={currUser}/>
+        </div>
       </div>
-      <div className="right menu">
-        <NavBarGadget name={name} currUser={currUser}/>
-      </div>
+      <ProjectScopeBar projectScopeLock={projectScopeLock} />
     </div>
-    <ProjectScopeBar projectScopeLock={projectScopeLock} />
-  </div>
-)
+  )
+}
 
 NavBar.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params

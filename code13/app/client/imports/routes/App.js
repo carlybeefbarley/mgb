@@ -41,8 +41,6 @@ let G_localSettings = new ReactiveDict()
 const getPagenameFromProps = props => props.routes[1].name
 const getPagepathFromProps = props => props.routes[1].path
 
-const npColumn1Width = "60px"
-
 let _theAppInstance = null
 
 // This is for making the Completion Tag thing work so it edge triggers only when pages are actually navigated to (rather than every update). 
@@ -77,6 +75,19 @@ export const startSignUpTutorial = () => {
   
 }
 
+const px = someNumber => (`${someNumber}px`)
+
+// NavPanel numbers
+const npColumn1WidthInPixels = 60             // The Column of Icons
+const npColumn2WidthInPixels = 208            // The (optional) Column of Menus
+
+// NavBar numbers
+const navBarReservedHeightInPixels = 40
+
+// FlexPanel numbers
+const fpIconColumnWidthInPixels = 60          // The Column of Icons
+const fpFlexPanelContentWidthInPixels = 285   // The cool stuff
+
 const _toastTypes = {
   error:    { funcName: 'error',   hdr: 'Error',   delay: 5000 },
   warning:  { funcName: 'warning', hdr: 'Warning', delay: 4000 },
@@ -85,7 +96,6 @@ const _toastTypes = {
 }
 
 export const showToast = (content, type = 'success') => { 
-  //console.log(`Showing (${type}) Toast Message: '${content}'`)
   const useType = _toastTypes[type] || _toastTypes['success']
   NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
 }
@@ -266,35 +276,34 @@ const App = React.createClass({
     // TODO: Expose this in settings somehow
     const fFixedTopNavBar = false
 
-    const navBarReservedHeightInPixels = 40
     const projectScopeLockHeightInPixels = showProjectScopeLock ? 40 : 0
-    const navBarAreaHeightStr = (navBarReservedHeightInPixels + projectScopeLockHeightInPixels) + "px"
+    const navBarAreaHeightInPixels = navBarReservedHeightInPixels + projectScopeLockHeightInPixels
 
     // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
     const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
-    const navPanelWidth = showNavPanel ? "268px" : npColumn1Width     // Available width to render
-    const navPanelReservedWidth = fNavPanelIsOverlay ? npColumn1Width : navPanelWidth    // Space main page area cannot use
+    const navPanelWidth = showNavPanel ? px(npColumn1WidthInPixels+npColumn2WidthInPixels) : px(npColumn1WidthInPixels)     // Available width to render
+    const navPanelReservedWidth = fNavPanelIsOverlay ? px(npColumn1WidthInPixels) : navPanelWidth    // Space main page area cannot use
 
     // The Flex Panel is for communications and common quick searches in a right hand margin (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
-    const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? "345px" : "285px"
-    const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth    // The 285px width works well with default vertical menu size and padding=8px
+    const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels) : px(fpFlexPanelContentWidthInPixels)
+    const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
       position:     "fixed",
-      top:          fFixedTopNavBar ? navBarAreaHeightStr : "0px",
+      top:          px(fFixedTopNavBar ? navBarAreaHeightInPixels : 0),
       bottom:       respData.fpReservedFooterHeight,
       left:         navPanelReservedWidth,
       right:        flexPanelWidth,
-      marginBottom: "0px",
-      overflow: "scroll"
+      marginBottom: '0px',
+      overflow:     "scroll"
     }
 
     const mainPanelInnerDivSty = {
-      padding:       "0px",
+      padding:       '0px',
       height:        "auto"
     }
 
@@ -373,7 +382,7 @@ const App = React.createClass({
                  : `The Navigation Panel is unlocked, so it auto-hides when used. If the window is wide enough, clicking this icon will lock it and disable auto-hide` }
                 className={`ui grey ${fNavPanelIsOverlay ? "unlock":"lock"} icon`} 
                 onClick={() => this.setState( { "fNavPanelIsOverlay": !fNavPanelIsOverlay } ) }
-                style={{position: "fixed", marginBottom: "8px", bottom: respData.fpReservedFooterHeight, left: npColumn1Width, zIndex: 200}} />
+                style={{position: "fixed", marginBottom: "8px", bottom: respData.fpReservedFooterHeight, left: px(npColumn1WidthInPixels), zIndex: 200}} />
             }
 
             { fFixedTopNavBar && navbar }
@@ -420,7 +429,7 @@ const App = React.createClass({
                   onClick={ () => this.handleNavPanelToggle() } 
                   style={ { 
                     position: "fixed",
-                    zIndex: 200,
+                    zIndex:   200,
                     top:      "0px",
                     bottom:   "0px",
                     left:     navPanelWidth,
@@ -726,7 +735,7 @@ App.responsiveRules = {
     respData: { 
       footerTabMajorNav: false,        //  flexPanel as right sidebar =|
       fpReservedFooterHeight:       '0px',
-      fpReservedRightSidebarWidth:  '60px'
+      fpReservedRightSidebarWidth:  px(fpIconColumnWidthInPixels)
     }
   }
 }

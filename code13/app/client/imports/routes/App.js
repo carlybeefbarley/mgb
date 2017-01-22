@@ -8,7 +8,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride' 
 import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
 
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'

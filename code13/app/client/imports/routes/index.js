@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
+import Callum from './Callum' 
 import { Router, Route, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
 
@@ -50,10 +50,11 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 Meteor.startup(function () {
   const router =
     <Router history={browserHistory}>
+          <Route path="/callum" component={Callum} />
+
       <Route component={App}>
 
         <Route path='/u/:username/play/:assetId' component={PlayGameRoute} name='Play Game' />
-      
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />

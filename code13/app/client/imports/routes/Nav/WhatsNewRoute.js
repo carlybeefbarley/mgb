@@ -77,7 +77,7 @@ export default WhatsNewRoute = React.createClass({
         My Game Builder is in <em>Semi-Secret Beta</em> test...
         <br />
         <small>
-          ...actively developed by <UserLink u='dgolds'/>, <UserLink u='stauzs'/> and <UserLink u='guntis'/>
+          ...actively developed by <UserLink u='dgolds'/>, <UserLink u='stauzs'/>, <UserLink u='guntis'/> and <UserLink u='Bouhm'/>
         </small>
       </Header>
       <p>

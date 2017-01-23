@@ -26,7 +26,8 @@ export default class ActorTileset extends React.Component {
   genTilesetImage(index, isActive, tileset){
     const title = `${tileset.name.split(':')[1]} (${tileset.imagewidth}x${tileset.imageheight})`
     const imgRatio = tileset.imageheight / tileset.imagewidth
-   
+    const width = tileset.imagewidth <= 64 ? 64 : 80
+
     return (
       <Grid.Column
         title={title}
@@ -43,19 +44,21 @@ export default class ActorTileset extends React.Component {
           minWidth: '80px', 
           width: 'calc(50% - 2em)', 
           margin: '1em', 
+          padding: 0,
+          paddingTop: 'auto',
           borderRadius: '.28571429rem', 
           border: 'none',
-          boxShadow: '0 1px 3px 0 #D4D4D5, 0 0 0 1px #D4D4D5'
+          boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
         }}
         >
         <img
           className="mgb-pixelated"
           src={tileset.image} 
-          width='64'
-          height={imgRatio * 64}
-          style={{margin: '0 auto', verticalAlign: 'middle'}}
+          width={width}
+          height={imgRatio * width}
+          style={{verticalAlign: 'middle'}}
         />
-        <Label attached='bottom' style={{backgroundColor: '#303030', color: 'white', opacity: 0.7, textAlign: 'center'}}>
+        <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white', textAlign: 'center'}}>
           {
             tileset.name.split(':')[1].length > 8
             ?
@@ -130,7 +133,7 @@ export default class ActorTileset extends React.Component {
 
     // Dummy div for left-justified two-column grid that resizes and centers when switched to single column for smaller widths
     if (count % 2 !== 0) 
-      tilesets.push(<Grid.Column key={count} style={{height: 0, minWidth: '80px', width: 'calc(50% - 2em)', margin: '0 1em 0 1em'}} />)
+      tilesets.push(<Grid.Column key={-1} style={{height: 0, minWidth: '80px', width: 'calc(50% - 2em)', margin: '0 1em 0 1em'}} />)
 
     return tilesets
   }

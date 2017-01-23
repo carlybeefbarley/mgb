@@ -88,7 +88,7 @@ export default class MaskLayer extends React.Component {
     // Clear mask in active map area
     this.ctx.clearRect(startx, starty, tw * data.tilewidth * camera.zoom, th * data.tilewidth * camera.zoom)
 
-    // Outline of active map should persist even when grid is off
+    // Outline of active map should persist when grid is off
     this.ctx.beginPath()
 
     const endx = 0.5 + (camera.x + tilelayer.x + tw * data.tilewidth) * camera.zoom

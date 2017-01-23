@@ -25,6 +25,9 @@ export const setUpCloudfront = function () {
   if (!Meteor.isProduction) {
     return
   }
+
+  // TODO(stauzs): make it automatic
+  const needsUpddate = false
 // Config
   // TODO(stauzs): move these to ENV
   const ORIGIN_DOMAIN_NAME = 'test.mygamebuilder.com' // v2.mygamebuilder.com
@@ -230,6 +233,8 @@ export const setUpCloudfront = function () {
     const isFont = req._parsedUrl.path.endsWith("woff2") || req._parsedUrl.path.endsWith("woff") || req._parsedUrl.path.endsWith("ttf")
     if(isFont){
       res.setHeader('access-control-allow-origin', '*')
+      const maxAge = 5 * 60
+      res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
     }
     else {
       const index = req.headers.origin ? allowedOrigins.indexOf(req.headers.origin) : allowedOrigins.indexOf(req.headers.host)
@@ -290,6 +295,11 @@ export const setUpCloudfront = function () {
         for (let j = 0; j < oItems.length; j++) {
           const oItem = oItems[j]
           if (oItem.Id == ORIGIN_ID) {
+            if(!needsUpddate){
+              callback(null, items[i])
+              return
+            }
+
             cloudfront.getDistributionConfig({Id: items[i].Id}, Meteor.bindEnvironment(function (err, data) {
 
               const newParams = _.merge({Id: items[i].Id}, data, params)

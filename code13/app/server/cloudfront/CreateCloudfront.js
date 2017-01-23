@@ -20,7 +20,7 @@ export const getCDNDomain = function () {
 export const setUpCloudfront = function () {
 
   // on the test server run with production flag?
-  if( !Meteor.isProduction ){
+  if (!Meteor.isProduction) {
     return
   }
 // Config
@@ -245,7 +245,7 @@ export const setUpCloudfront = function () {
       req._parsedUrl.path.startsWith("/images") ||
       req._parsedUrl.path.startsWith("/lib")
     ) {
-      const maxAge = 5*60
+      const maxAge = 5 * 60
       res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
 
     }
@@ -282,17 +282,18 @@ export const setUpCloudfront = function () {
         for (let j = 0; j < oItems.length; j++) {
           const oItem = oItems[j]
           if (oItem.Id == ORIGIN_ID) {
-            cloudfront.updateDistribution(Object.assign({Id: items.Id}, params), (err, data) => {
-              if(err){
-                console.log("failed to update distribution", err, err.stack)
-                Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Failed to update distribution: ${err}`)
-              }
-              else{
-                Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Distribution updated`)
-              }
-              callback(null, items[i])
-            })
-
+            cloudfront.updateDistribution(
+              Object.assign({Id: items.Id}, params),
+              Meteor.bindEnvironment(function (err, data) {
+                if (err) {
+                  console.log("failed to update distribution", err, err.stack)
+                  Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Failed to update distribution: ${err}`)
+                }
+                else {
+                  Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Distribution updated`)
+                }
+                callback(null, items[i])
+              }))
             return
           }
         }
@@ -313,7 +314,7 @@ export const setUpCloudfront = function () {
 
     if (cloudfrontDistribution.Status != "Deployed") {
       Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Waiting for cloudfront distribution to be ready. \n this may take a while (up to 30minutes)`)
-      cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id},  Meteor.bindEnvironment((err, data) => {
+      cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id}, Meteor.bindEnvironment((err, data) => {
         if (err) {
           console.log(err, err.stack)
           Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Distribution didn't become ready. Error: ${err}`, true)

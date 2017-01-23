@@ -495,8 +495,9 @@ export default AssetEditRoute = React.createClass({
         // We will rely on the tick() to send any future pending saves
       }
     })
-
-    this.data.update(updateObj)
+    if(content2Object){
+      this.data.update(updateObj)
+    }
     logActivity("asset.edit", changeText, null, this.data.asset || { _id: assetId } )
   },
 

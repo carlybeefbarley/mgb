@@ -38,7 +38,7 @@ export const setUpCloudfront = function () {
     DistributionConfig: {
       /* required */
       CallerReference: 'mgb-' + ORIGIN_ID, /* required - A unique value (for example, a date-time stamp) that ensures that the request can't be replayed */
-      Comment: 'mgb cloudfront distribution', /* required */
+      Comment: ORIGIN_ID, /* required */
       DefaultCacheBehavior: {
         /* required */
         ForwardedValues: {
@@ -69,7 +69,10 @@ export const setUpCloudfront = function () {
           Quantity: 0, /* required */
           Items: [/* more items */]
         },
-        ViewerProtocolPolicy: 'allow-all', /* allow http and https */ /* allow-all | https-only | redirect-to-https', /* required */
+        // there is no point to force cloudfront to connect to https site - as resource still will be cached and won't work for http / https separately
+        // also https have some really strange behavior - and SOMETIMES returns 502 error (probably related to internal CF certificates and some config related to certificates)
+        // + http is faster
+        ViewerProtocolPolicy: 'http-only', //'allow-all', /* allow http and https */ /* allow-all | https-only | redirect-to-https', /* required */
         /* only GTE HEAD makes sense here - as rest goes through WS - OPTIONS is required for CORS headers (only semantic fonts requires this atm)*/
         AllowedMethods: {
           Items: [/* required */

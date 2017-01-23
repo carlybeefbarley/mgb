@@ -10,6 +10,8 @@ import config from './config.json'
 import { WebApp } from 'meteor/webapp'
 import '/server/slackIntegration'
 
+import _ from 'lodash'
+
 let CLOUDFRONT_DOMAIN_NAME = ''
 
 // probably we should separate this export
@@ -20,9 +22,9 @@ export const getCDNDomain = function () {
 export const setUpCloudfront = function () {
 
   // on the test server run with production flag?
-  if (!Meteor.isProduction) {
-    return
-  }
+  /*if (!Meteor.isProduction) {
+   return
+   }*/
 // Config
   // TODO(stauzs): move these to ENV
   const ORIGIN_DOMAIN_NAME = 'test.mygamebuilder.com' // v2.mygamebuilder.com
@@ -263,7 +265,8 @@ export const setUpCloudfront = function () {
       // Marker: 'STRING_VALUE',
       // MaxItems: 'STRING_VALUE'
     }
-    cloudfront.listDistributions(distributionQuery, function (err, data) {
+    cloudfront.listDistributions(distributionQuery, Meteor.bindEnvironment(function (err, data) {
+
       if (err) {
         console.error(err)
         // WHAT TO DO NOW ?
@@ -282,24 +285,32 @@ export const setUpCloudfront = function () {
         for (let j = 0; j < oItems.length; j++) {
           const oItem = oItems[j]
           if (oItem.Id == ORIGIN_ID) {
-            cloudfront.updateDistribution(
-              Object.assign({Id: items.Id}, params),
-              Meteor.bindEnvironment(function (err, data) {
-                if (err) {
-                  console.log("failed to update distribution", err, err.stack)
-                  Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Failed to update distribution: ${err}`)
-                }
-                else {
-                  Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Distribution updated`)
-                }
-                callback(null, items[i])
-              }))
+            cloudfront.getDistributionConfig({Id: items[i].Id}, Meteor.bindEnvironment(function (err, data) {
+              console.log("DATA:", data)
+              const newParams = _.merge({Id: items[i].Id}, data, params)
+              newParams.IfMatch = data.ETag
+              delete newParams.ETag
+
+              cloudfront.updateDistribution(newParams,
+                Meteor.bindEnvironment(function (err, data) {
+                  if (err) {
+                    console.log("failed to update distribution", err, err.stack)
+                    Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Failed to update distribution: ${err}`)
+                  }
+                  else {
+                    Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Distribution updated`)
+                  }
+                  callback(null, items[i])
+                })
+              )
+            }));
+
             return
           }
         }
       }
       callback(new Error("Failed to locate distribution"), null)
-    });
+    }));
   }
 
   const setCDNPrams = (cloudfrontDistribution) => {

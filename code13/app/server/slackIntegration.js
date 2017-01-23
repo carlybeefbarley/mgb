@@ -97,7 +97,7 @@ Meteor.methods({
 
 Meteor.methods({
   "Slack.Cloudfront.notification": function(message, isBad){
-    if(true || Meteor.isProduction) {
+    if(Meteor.isProduction) {
       slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
         username: `MGBv2 Cloudfront bot`,
         icon_emoji: isBad ? ':cyclone:' : ':cloud:',

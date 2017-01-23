@@ -1,5 +1,5 @@
 import React from 'react'
-import { Label, Segment, Button, Icon, Grid } from 'semantic-ui-react'
+import { Label, Segment, Grid } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
@@ -16,7 +16,6 @@ export default class ActorTileset extends React.Component {
   }
 
   renderActors(from = 0, to = this.props.tilesets.length){
-    
     return (
         <Grid stackable doubling columns='equal' style={{width: '100%', margin: 0}}>
           {this.renderTileset(from, to, this.genTilesetImage)}
@@ -27,12 +26,11 @@ export default class ActorTileset extends React.Component {
   genTilesetImage(index, isActive, tileset){
     const title = `${tileset.name.split(':')[1]} (${tileset.imagewidth}x${tileset.imageheight})`
     const imgRatio = tileset.imageheight / tileset.imagewidth
-    // If not using flexbox justify-content (single column will not center)
-    // const style = {minWidth: '64px', width: 'calc(50% - 1em)', position: 'relative', flexDirection: 'column', margin: '0.5em'}
+   
     return (
       <Grid.Column
         title={title}
-        className={"centered tilesetPreview" + (isActive ? " active" : '')}
+        className={"tilesetPreview" + (isActive ? " active" : '')}
         key={index}
         onClick={() => {
           this.props.selectTile
@@ -41,17 +39,22 @@ export default class ActorTileset extends React.Component {
           this.props.selectTile(selectedTile)
           console.log(selectedTile)
         }}
-        style={{minWidth: '64px', width: 'calc(50% - 2em)', margin: '1em'}}
+        style={{
+          minWidth: '80px', 
+          width: 'calc(50% - 2em)', 
+          margin: '1em', 
+          borderRadius: '.28571429rem', 
+          border: 'none',
+          boxShadow: '0 1px 3px 0 #D4D4D5, 0 0 0 1px #D4D4D5'
+        }}
         >
-        {
-          <img
-            className="mgb-pixelated"
-            src={tileset.image} 
-            width='64'
-            height={imgRatio * 64}
-            style={{verticalAlign: 'middle'}}
-          />
-        }
+        <img
+          className="mgb-pixelated"
+          src={tileset.image} 
+          width='64'
+          height={imgRatio * 64}
+          style={{margin: '0 auto', verticalAlign: 'middle'}}
+        />
         <Label attached='bottom' style={{backgroundColor: '#303030', color: 'white', opacity: 0.7, textAlign: 'center'}}>
           {
             tileset.name.split(':')[1].length > 8
@@ -64,7 +67,7 @@ export default class ActorTileset extends React.Component {
               <span style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1]}</span>
             )
             :
-            <span>{tileset.name.split(':')[1]}</span> 
+            <p>{tileset.name.split(':')[1]}</p> 
           }
         </Label>
       </Grid.Column >
@@ -116,17 +119,18 @@ export default class ActorTileset extends React.Component {
     let ts = this.tileset
     const tilesets = []
     const layer = this.props.getActiveLayerData()
-    const count = 0
+    let count = 0
 
     for (let i = from; i < to; i++) {
       let isValidForLayer = layer ? ActorHelper.checks[layer.name](tss[i]) : true
       if (isValidForLayer)
-        count++
         tilesets.push( genTemplate.call(this, i, tss[i] === ts, tss[i]) )
+        count++
     }
-    // Dummy div for left-justified responsive grid
-    if (to % 2 !== 0) 
-      tilesets.push(<Grid.Column style={{minWidth: '64px', width: 'calc(50% - 2em)', margin: '1em'}} />)
+
+    // Dummy div for left-justified two-column grid that resizes and centers when switched to single column for smaller widths
+    if (count % 2 !== 0) 
+      tilesets.push(<Grid.Column key={count} style={{height: 0, minWidth: '80px', width: 'calc(50% - 2em)', margin: '0 1em 0 1em'}} />)
 
     return tilesets
   }
@@ -152,7 +156,7 @@ export default class ActorTileset extends React.Component {
               data-drop-text='Drop asset here to create TileSet'
               onDrop={this.onDropOnLayer.bind(this)}
               onDragOver={DragNDropHelper.preventDefault}
-              style={{maxHeight: '100%', maxWidth: '100%', padding: 'auto', overflowY: 'scroll'}}
+              style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
               >
               {this.renderActors(1)}
             </div>

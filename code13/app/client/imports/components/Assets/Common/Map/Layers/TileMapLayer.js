@@ -224,7 +224,7 @@ export default class TileMapLayer extends AbstractLayer {
     return pos
   }
   getInfo () {
-    return JSON.stringify(this.tilePosInfo)
+    return this.tilePosInfo
   }
 
   selectRectangle (pos) {

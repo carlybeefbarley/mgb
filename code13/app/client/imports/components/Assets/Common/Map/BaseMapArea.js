@@ -803,7 +803,7 @@ export default class MapArea extends React.Component {
   }
 
   // render related methods
-  getInfo() {
+ getInfo() {
     const layer = this.getActiveLayer()
     let st = ''
     this.collection.forEach((t) => {
@@ -811,7 +811,18 @@ export default class MapArea extends React.Component {
     })
     st = st.substr(2)
     let info = layer ? layer.getInfo() : ''
-    info = info ? ': ' + info : ''
+    info = 
+      info 
+      ? 
+      (
+        info.gid 
+        ?
+        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id + ', gid: ' + info.gid 
+        :
+        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id 
+      )
+      : 
+      ''
     return (
       <div>
         <div>
@@ -824,6 +835,7 @@ export default class MapArea extends React.Component {
       </div>
     )
   }
+
 
   getNotification(){
     return this.data.width * this.data.height > 100000 ? <div>

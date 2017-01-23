@@ -106,40 +106,6 @@ export default class GridLayer extends React.Component {
 
     this.ctx.strokeStyle = 'black'
     this.ctx.stroke()
-
-    let tilelayer = null, tw, th
-    if (this.props.layer && LayerTypes.isTilemapLayer(this.props.layer.type)) {
-      tilelayer = this.props.layer.data
-      tw = tilelayer.width; th = tilelayer.height
-    }else {
-      tw = data.width; th = data.height
-      tilelayer = {x: 0, y: 0}
-    }
-
-    this.ctx.beginPath()
-
-    const startx = 0.5 + (camera.x + tilelayer.x) * camera.zoom
-    const endx = 0.5 + (camera.x + tilelayer.x + tw * data.tilewidth) * camera.zoom
-
-    const starty = 0.5 + (camera.y + tilelayer.y) * camera.zoom
-    const endy = 0.5 + (camera.y + tilelayer.y + th * data.tileheight) * camera.zoom
-
-    this.ctx.moveTo(startx, Math.min(starty, camera.y * camera.zoom))
-    this.ctx.lineTo(startx, Math.min(this.ctx.canvas.height, endy))
-    this.ctx.moveTo(endx, Math.min(starty, camera.y * camera.zoom))
-    this.ctx.lineTo(endx, Math.min(this.ctx.canvas.height, endy))
-
-    this.ctx.moveTo(Math.min(startx, camera.x * camera.zoom), starty)
-    this.ctx.lineTo(Math.min(endx, this.ctx.canvas.width), starty)
-    this.ctx.moveTo(Math.min(startx, camera.x * camera.zoom), endy)
-    this.ctx.lineTo(Math.min(endx, this.ctx.canvas.width), endy)
-
-    if (this.ctx.setLineDash) {
-      this.ctx.setLineDash([])
-    }
-    this.ctx.strokeStyle = 'red'
-    this.ctx.lineWidth = 2
-    this.ctx.stroke()
   }
 
   render () {

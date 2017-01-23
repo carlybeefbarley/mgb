@@ -1,5 +1,5 @@
 import React from 'react'
-import { Label, Segment, Grid, Button, Icon } from 'semantic-ui-react'
+import { Label, Segment, Button, Icon, Grid } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
@@ -16,40 +16,58 @@ export default class ActorTileset extends React.Component {
   }
 
   renderActors(from = 0, to = this.props.tilesets.length){
+    
     return (
-      <div className="ui">
-      {/*
-        <Button icon 
-          onClick={this.props.removeTileset(this.props.activeTileset)}
-          style={{float:'right', margin:'0'}}>
-          <Icon name='trash' />
-        </Button>
-      */}
-        <div 
-        className="content tilesetPreviewModal" 
-        style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>
+        <Grid stackable doubling columns='equal' style={{width: '100%', margin: 0}}>
           {this.renderTileset(from, to, this.genTilesetImage)}
-        </div>
-      </div>
+        </Grid>
     )
   }
   
   genTilesetImage(index, isActive, tileset){
-    const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
+    const title = `${tileset.name.split(':')[1]} (${tileset.imagewidth}x${tileset.imageheight})`
+    const imgRatio = tileset.imageheight / tileset.imagewidth
+    // If not using flexbox justify-content (single column will not center)
+    // const style = {minWidth: '64px', width: 'calc(50% - 1em)', position: 'relative', flexDirection: 'column', margin: '0.5em'}
     return (
-      <div
+      <Grid.Column
         title={title}
-        className={"tilesetPreview" + (isActive ? " active" : '')}
+        className={"centered tilesetPreview" + (isActive ? " active" : '')}
         key={index}
         onClick={() => {
+          this.props.selectTile
           const selectedTile = new SelectedTile()
           selectedTile.getGid(tileset)
           this.props.selectTile(selectedTile)
+          console.log(selectedTile)
         }}
+        style={{minWidth: '64px', width: 'calc(50% - 2em)', margin: '1em'}}
         >
-        <img src={tileset.image}/>
-        <span className="tilesetPreviewTitle" style={{float:'left', clear:'left'}}>{tileset.name.split(':')[1]}</span>
-      </div>
+        {
+          <img
+            className="mgb-pixelated"
+            src={tileset.image} 
+            width='64'
+            height={imgRatio * 64}
+            style={{verticalAlign: 'middle'}}
+          />
+        }
+        <Label attached='bottom' style={{backgroundColor: '#303030', color: 'white', opacity: 0.7, textAlign: 'center'}}>
+          {
+            tileset.name.split(':')[1].length > 8
+            ?
+            (
+              tileset.name.split(':')[1].length > 12
+              ?
+              <span style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1].slice(0, -2) + '..'}</span>
+              :
+              <span style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1]}</span>
+            )
+            :
+            <span>{tileset.name.split(':')[1]}</span> 
+          }
+        </Label>
+      </Grid.Column >
     )
   }
 
@@ -98,19 +116,24 @@ export default class ActorTileset extends React.Component {
     let ts = this.tileset
     const tilesets = []
     const layer = this.props.getActiveLayerData()
+    const count = 0
 
     for (let i = from; i < to; i++) {
       let isValidForLayer = layer ? ActorHelper.checks[layer.name](tss[i]) : true
       if (isValidForLayer)
+        count++
         tilesets.push( genTemplate.call(this, i, tss[i] === ts, tss[i]) )
     }
+    // Dummy div for left-justified responsive grid
+    if (to % 2 !== 0) 
+      tilesets.push(<Grid.Column style={{minWidth: '64px', width: 'calc(50% - 2em)', margin: '1em'}} />)
 
     return tilesets
   }
 
   render(){
     return (
-      <Segment id="mgbjr-MapTools-actors" style={{boxSizing: 'inherit', display: 'block', height: '100%', margin: 0}}>
+      <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', height: '100%'}}>
         <Label attached='top'>Actors For {this.props.getActiveLayerData().name} Layer </Label>
           {
             !this.props.tilesets.length 
@@ -128,8 +151,10 @@ export default class ActorTileset extends React.Component {
               className='active content tilesets accept-drop'
               data-drop-text='Drop asset here to create TileSet'
               onDrop={this.onDropOnLayer.bind(this)}
-              onDragOver={DragNDropHelper.preventDefault}>
-                {this.renderActors(1)}
+              onDragOver={DragNDropHelper.preventDefault}
+              style={{maxHeight: '100%', maxWidth: '100%', padding: 'auto', overflowY: 'scroll'}}
+              >
+              {this.renderActors(1)}
             </div>
             )
           }

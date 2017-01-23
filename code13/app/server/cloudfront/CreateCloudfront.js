@@ -282,7 +282,7 @@ export const setUpCloudfront = function () {
         for (let j = 0; j < oItems.length; j++) {
           const oItem = oItems[j]
           if (oItem.Id == ORIGIN_ID) {
-            cloudfront.updateDistribution(params, (err, data) => {
+            cloudfront.updateDistribution(Object.assign({Id: items.Id}, params), (err, data) => {
               if(err){
                 console.log("failed to update distribution", err, err.stack)
                 Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Failed to update distribution: ${err}`)

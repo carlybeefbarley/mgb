@@ -6,6 +6,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { logActivity } from '/imports/schemas/activity'
 
 import { utilPushTo } from '/client/imports/routes/QLink'
+import { Segment, Header } from 'semantic-ui-react'
 
 export default AssetCreateNewRoute = React.createClass({
 
@@ -24,7 +25,7 @@ export default AssetCreateNewRoute = React.createClass({
 
   render: function() {
     return (
-      <div className="ui basic segment">
+      <Segment basic>
         <Helmet
           title="Create New Asset"
           meta={[
@@ -32,12 +33,14 @@ export default AssetCreateNewRoute = React.createClass({
           ]}
         />
 
+        <Header as='h2' content='Create New Asset'/>
+
         <AssetCreateNew 
           handleCreateAssetClick={this.handleCreateAssetClickFromComponent}
           currUser={this.props.currUser}
           currUserProjects={this.props.currUserProjects}
           />
-      </div>
+      </Segment>
     )
   },
 

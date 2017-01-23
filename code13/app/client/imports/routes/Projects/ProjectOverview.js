@@ -219,7 +219,7 @@ export default ProjectOverview = React.createClass({
             disabled={isDeleteComplete || isDeletePending} 
             onClick={ () => { showToast("Rename Project has not yet been implemented.. ", 'warning')}} />
         <Button 
-            icon="red trash" 
+            icon={<Icon color='red' name='trash'/>}
             disabled={isDeleteComplete || isDeletePending} 
             content="Delete" 
             onClick={ () => { this.handleDeleteProject() } } />

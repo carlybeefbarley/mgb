@@ -20,7 +20,6 @@ export default NavRecentGET = React.createClass({
   propTypes: {
     currUser:            PropTypes.object,           // Currently Logged in user. Can be null/undefined
     styledForNavPanel:   PropTypes.bool.isRequired,  // True if we want the NavPanel style (inverted etc)
-    navPanelIsOverlay:   PropTypes.bool,             // If true, we must close NavPanel when links are clicked.. we do this with a QLink option    
     showUserActivities:  PropTypes.bool.isRequired
   },
 
@@ -78,9 +77,6 @@ export default NavRecentGET = React.createClass({
     mergedArray = _.uniqBy(mergedArray, 'toAssetId')    // Remove later duplicate assetIds
     let retval = { justNow: [], today: [], older: []}
 
-    const { navPanelIsOverlay } = this.props
-
-
     _.each(mergedArray, a => {
       const isSnapshot = a.hasOwnProperty("currentUrl")
       const mTime = moment(a.timestamp)
@@ -92,7 +88,6 @@ export default NavRecentGET = React.createClass({
         item = (
           <QLink 
               to={`/u/${a.byUserName}`} 
-              closeNavPanelOnClick={navPanelIsOverlay}
               className="ui item" 
               key={a._id}  
               data-html={basicDataHtml} 
@@ -119,7 +114,6 @@ export default NavRecentGET = React.createClass({
         item = (
           <QLink 
               to={linkTo} 
-              closeNavPanelOnClick={navPanelIsOverlay}
               className="ui item hazRecentPopup"  
               key={a._id}  
               data-html={dataHtml} 
@@ -135,7 +129,6 @@ export default NavRecentGET = React.createClass({
         item = (
           <QLink 
               to={`/u/${a.byUserName}/projects`} 
-              closeNavPanelOnClick={navPanelIsOverlay}
               className="ui item" 
               key={a._id}  
               data-html={basicDataHtml} 

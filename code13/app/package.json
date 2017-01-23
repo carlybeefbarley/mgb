@@ -46,6 +46,7 @@
     "react-notifications": "^1.3.0",
     "react-redux": "^4.4.5",
     "react-router": "^2.6.0",
+    "react-swipeable-views": "~0.10.3",
     "request": "^2.75.0",
     "scroll": "^2.0.0",
     "semantic-ui-react": "~0.64.0",

@@ -102,7 +102,7 @@ export default UserListRoute = React.createClass({
                           ? _.filter(this.data.users, u => { return !_.includes(excludeUserIdsArray, u._id) })
                           : this.data.users
  
-    const containerClassName = renderVertical ? "" : "ui horizontal segments"
+    const containerClassName = renderVertical ? "" : "ui segments"
     const searchSegmentStyle = renderVertical ? {} : {  minWidth:"220px", maxWidth:"220px" }   // TODO(@dgolds): Move magic number to special globals or pass down?
     const narrowItem = !!renderVertical
     const segClass = renderVertical ? "" : "ui basic segment"
@@ -125,7 +125,7 @@ export default UserListRoute = React.createClass({
           <br></br>
         </div>
 
-        <div className={segClass + ' animated bounceInRight'} >
+        <div className={segClass} >
           { this.data.loading ? <Spinner /> : 
             <div>
               <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem}/>

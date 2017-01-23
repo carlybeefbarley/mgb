@@ -55,7 +55,6 @@ export default QLink = React.createClass({
     activeClassName:      PropTypes.string,
 //  onlyActiveOnIndex:    PropTypes.bool.isRequired,
     onClick:              PropTypes.func,
-    closeNavPanelOnClick: PropTypes.bool,   // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
     target:               PropTypes.string,
     elOverride:           PropTypes.string  // eg "div"
   },
@@ -83,8 +82,7 @@ export default QLink = React.createClass({
   handleClick: function (event) {
     const p = this.props
 
-    const excludedSymbolName = p.closeNavPanelOnClick ? "app_navPanel" : null
-    const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query, excludedSymbolName)
+    const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
 
     if (p.onClick) 
       p.onClick(event)    // Call the click handler we were given. Note that it has the option to preventDefault()
@@ -118,11 +116,10 @@ export default QLink = React.createClass({
   render: function () {
     const p = this.props
     const chosenEl = p.elOverride ? p.elOverride : Link
-    const pClean = _.omit(p, ["elOverride" , "closeNavPanelOnClick", "altTo", "altQuery"])
+    const pClean = _.omit(p, ["elOverride", "altTo", "altQuery"])
 
     if (!p.nav)
       return React.createElement(chosenEl, Object.assign({}, pClean, { onClick: this.handleClick }))
-
 
     // Now try the             <QLink nav="users" className="item"></QLink> variant
 

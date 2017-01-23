@@ -277,17 +277,6 @@ div:hover > .mgb-show-on-parent-div-hover {
   opacity: 0.5;
 }
 
-/* make semantic-ui cards stack when we need to conserve space */
-.conserveSpace .ui.stackable.cards
-{
-  display: block;
-}
-
-.conserveSpace .ui.stackable.cards > .card
-{
-  width: calc(100% - 2em);
-}
-
 /* narrower containers */
 .ui.container.slim
 {

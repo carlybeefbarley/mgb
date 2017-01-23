@@ -225,10 +225,12 @@ export const setUpCloudfront = function () {
     'https://v2.mygamebuilder.com'
   ]
   WebApp.rawConnectHandlers.use(function (req, res, next) {
-    res.setHeader('access-control-allow-origin', allowedOrigins.join(" "))
+    const index = allowedOrigins.indexOf(req.headers.origin)
+    if (index > -1) {
+      res.setHeader('access-control-allow-origin', allowedOrigins[index])
+    }
     // or allow for all domains
     // res.setHeader('access-control-allow-origin', '*')
-
     res.setHeader('access-control-expose-headers', 'etag')
 
     // cache static files for 1 hour - after meteor update they will be invalidated before cache expires
@@ -238,7 +240,8 @@ export const setUpCloudfront = function () {
       req._parsedUrl.path.startsWith("/images") ||
       req._parsedUrl.path.startsWith("/lib")
     ) {
-      res.setHeader('cache-control', 'public, max-age=3600, s-maxage=3600');
+      const maxAge = 5*60
+      res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`);
     }
     return next()
   });

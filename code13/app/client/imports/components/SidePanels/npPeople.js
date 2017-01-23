@@ -1,31 +1,22 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import QLink from '/client/imports/routes/QLink'
+import { Icon } from 'semantic-ui-react'
 
-export default npPeople = React.createClass({
+const npPeople = () => (
+  <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
+    <div className="ui item" key="authHdr">
+      <h3 className="ui inverted header" style={{textAlign: "center"}}>
+        <Icon name='street view' />
+        Meet
+      </h3>
+    </div>
+    <QLink id="mgbjr-np-meet-allUsers" to="/users" className="item">
+      <Icon name='street view' /> All Users
+    </QLink>
+    <QLink id="mgbjr-np-meet-allAssets" to="/assets" className="item">
+      <Icon name='pencil' /> All Assets
+    </QLink>
+  </div>
+)
 
-  propTypes: {
-    navPanelIsOverlay:  PropTypes.bool.isRequired     // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
-  },
-
-  render: function () {
-    const { navPanelIsOverlay } = this.props
-    
-    return (
-      // TODO: use site.less for styling inverted menu
-      <div className="ui vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
-        <div className="ui item" key="authHdr">
-          <h3 className="ui inverted header" style={{textAlign: "center"}}>
-            <i className="street view icon" />
-            Meet
-          </h3>
-        </div>
-        <QLink id="mgbjr-np-meet-allUsers" closeNavPanelOnClick={navPanelIsOverlay} to="/users" className="item">
-          <i className="street view icon" /> All Users
-        </QLink>
-        <QLink id="mgbjr-np-meet-allAssets" closeNavPanelOnClick={navPanelIsOverlay} to="/assets" className="item">
-          <i className="pencil icon" /> All Assets
-        </QLink>
-      </div>
-    )
-  }
-})
+export default npPeople

@@ -9,9 +9,9 @@ import QLink from '/client/imports/routes/QLink'
 
 const _sep = <i className='mini right chevron icon' />
 
-const NavBarBreadcrumb = ( { name, user, params, pathLocation, conserveSpace } ) => {
+const NavBarBreadcrumb = ( { name, user, params, pathLocation } ) => {
   
-  const homeWord = conserveSpace ? 'MGB' : 'MyGameBuilder'
+  const homeWord = 'MyGameBuilder'
 
   const assetId = params && params.assetId
   const projectId = params && params.projectId
@@ -45,8 +45,7 @@ NavBarBreadcrumb.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
-  pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
-  conserveSpace:      PropTypes.bool.isRequired         // True if space should be used more conservatively               
+  pathLocation:       PropTypes.string                  // basically windows.location.pathname, but via this.props.location.pathname from App.js
 }
 
 export default NavBarBreadcrumb

@@ -79,7 +79,6 @@ const px = someNumber => (`${someNumber}px`)
 
 // NavPanel numbers
 const npColumn1WidthInPixels = 60             // The Column of Icons
-const npColumn2WidthInPixels = 208            // The (optional) Column of Menus
 
 // NavBar numbers
 const navBarReservedHeightInPixels = 40
@@ -131,15 +130,7 @@ const App = React.createClass({
     }
   },
 
-  togglePanelsKeyHandler: function(e) {
-    e = e || window.event
-    if (e.key === 'Escape' || e.keyCode === 27) {
-      this.handleDualPaneToggle()
-    }
-  },
-
   componentDidMount: function() {
-    window.onkeyup = this.togglePanelsKeyHandler
     registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
     _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
   },
@@ -178,7 +169,6 @@ const App = React.createClass({
   getInitialState: function() {
     return {
       initialLoad: true,
-      fNavPanelIsOverlay: true,    // Could make this initial value based on screen size, but that might be odd
       activityHistoryLimit: 11,
 
       // For react-joyride
@@ -257,12 +247,9 @@ const App = React.createClass({
   render() {
     const { respData } = this.props
     const { joyrideDebug } = this.state
-    const fNavPanelIsOverlay = this.state.fNavPanelIsOverlay || (respData.npForceAsOverlay === true)
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
-
-
 
     if (!loading)
       this.configureTrackJs()
@@ -280,10 +267,7 @@ const App = React.createClass({
     const navBarAreaHeightInPixels = navBarReservedHeightInPixels + projectScopeLockHeightInPixels
 
     // The Nav Panel is on the left and is primarily navigation-oriented
-    const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
-    const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
-    const navPanelWidth = showNavPanel ? px(npColumn1WidthInPixels+npColumn2WidthInPixels) : px(npColumn1WidthInPixels)     // Available width to render
-    const navPanelReservedWidth = fNavPanelIsOverlay ? px(npColumn1WidthInPixels) : navPanelWidth    // Space main page area cannot use
+    const navPanelReservedWidth = px(npColumn1WidthInPixels)     // Reserved width to render perma-column of Nav icons
 
     // The Flex Panel is for communications and common quick searches in a right hand margin (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
@@ -313,12 +297,6 @@ const App = React.createClass({
     const isSuperAdmin = isUserSuperAdmin(currUser)
     const ownsProfile = isSameUser(currUser, user)
 
-    // This is a flag used for some mid-column elements (NavBar and Maybe page) to hint they should be
-    // space conservative because the Nav and Flex panels are both being displayed.
-    // Most things can be done reactively or with CSS, but this is useful for some extra cases
-    // This is probably not a long term solution - but is helpful for now
-    const conserveSpace = showNavPanel && showFlexPanel && !fNavPanelIsOverlay
-
     const navbar = (
       <NavBar
         currUser={currUser}
@@ -329,8 +307,6 @@ const App = React.createClass({
         params={this.props.params}
         flexPanelWidth={flexPanelWidth}
         navPanelWidth={navPanelReservedWidth}
-        navPanelIsVisible={showNavPanel}
-        conserveSpace={conserveSpace}
         projectScopeLock={projectScopeLockValue}
         sysvars={sysvars}
         />    
@@ -365,26 +341,8 @@ const App = React.createClass({
               currUser={currUser}
               currUserProjects={currUserProjects}
               fpReservedFooterHeight={respData.fpReservedFooterHeight}
-              user={user}
-              selectedViewTag={navPanelQueryValue}
-              handleNavPanelToggle={this.handleNavPanelToggle}
-              handleNavPanelChange={this.handleNavPanelChange}
-              handleNavPanelClose={this.closeNavPanel}
-              navPanelWidth={navPanelWidth}
-              navPanelIsVisible={showNavPanel}
-              isSuperAdmin={isSuperAdmin}
-              navPanelIsOverlay={fNavPanelIsOverlay}
+              navPanelWidth={navPanelReservedWidth}
             />
-
-            { (showNavPanel && !respData.npForceAsOverlay) && 
-              <i 
-                title={!fNavPanelIsOverlay ? 
-                   `The Navigation Panel is locked, so it will not auto-hide when used. Clicking this icon will unlock it and enable auto-hide`
-                 : `The Navigation Panel is unlocked, so it auto-hides when used. If the window is wide enough, clicking this icon will lock it and disable auto-hide` }
-                className={`ui grey ${fNavPanelIsOverlay ? "unlock":"lock"} icon`} 
-                onClick={() => this.setState( { "fNavPanelIsOverlay": !fNavPanelIsOverlay } ) }
-                style={{position: "fixed", marginBottom: "8px", bottom: respData.fpReservedFooterHeight, left: px(npColumn1WidthInPixels), zIndex: 200}} />
-            }
 
             { fFixedTopNavBar && navbar }
 
@@ -406,9 +364,7 @@ const App = React.createClass({
               isSuperAdmin={isSuperAdmin}
               />
 
-            <div
-              style={mainPanelOuterDivSty}
-              className={conserveSpace ? "conserveSpace noScrollbarDiv" : "noScrollbarDiv"}>
+            <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
               <div style={mainPanelInnerDivSty}>
                 { !fFixedTopNavBar && navbar }
                 {
@@ -424,21 +380,6 @@ const App = React.createClass({
                 }
               </div>
             </div>
-
-            { (fNavPanelIsOverlay && showNavPanel) &&   // Overlay to catch clicks when Overlay NavPanel is up.
-              <div 
-                  onMouseEnter={ () => this.closeNavPanel() } 
-                  style={ { 
-                    position: "fixed",
-                    zIndex:   200,
-                    top:      "0px",
-                    bottom:   "0px",
-                    left:     navPanelWidth,
-                    right:    flexPanelWidth,
-                    backgroundColor: "rgba(0,0,0,0.05)",
-                    overflow: "auto",
-                    marginBottom: "0px"} } />
-            }
             
           </div>
           <NotificationContainer/>
@@ -483,79 +424,6 @@ const App = React.createClass({
     browserHistory.push( {  ...loc,  query: newQ })
   },
 
-
-  /**
-   * This will show/hide the Nav Panel
-   */
-  handleNavPanelToggle: function()
-  {
-    const loc = this.props.location
-    const qp = urlMaker.queryParams("app_navPanel")
-    let newQ
-    if (loc.query[qp])
-      newQ = _.omit(loc.query, qp)
-    else
-      newQ = {...loc.query, [qp]:FlexPanel.getDefaultPanelViewTag()}
-    browserHistory.push( {  ...loc,  query: newQ })
-  },
-
-  closeNavPanel: function()
-  {
-    const loc = this.props.location
-    const qp = urlMaker.queryParams("app_navPanel")
-    if (loc.query[qp])
-    {
-      const newQ = _.omit(loc.query, qp)
-      browserHistory.push( {  ...loc,  query: newQ })
-    }
-  },
-
-  handleNavPanelChange: function(newFpView, fForceNavPanelIsNotOverlay)
-  {
-    const qp = urlMaker.queryParams("app_navPanel")
-
-    const queryModifier = {[qp]: newFpView}
-    const loc = this.props.location
-    const newQ = {...loc.query, ...queryModifier }
-    
-    if (fForceNavPanelIsNotOverlay)
-      this.setState( { "fNavPanelIsOverlay": false })
-    browserHistory.push( {  ...loc,  query: newQ })
-  },
-
-  /**
-   * This hides/shows both Nav and FlexPanels. Press ESC for this
-   * Note that it takes a lot of care to preserve deep url state, but also discard url query params that are defaults
-   */
-  handleDualPaneToggle: function()
-  {
-    const loc = this.props.location
-    const qpNp = urlMaker.queryParams("app_navPanel")    // Query Param for NavPanel (e.g "_np")
-    const qpFp = urlMaker.queryParams("app_flexPanel")   // Query Param for FlexPanel (e.g "_fp")
-    const qvNp = loc.query[qpNp]                         // Query Value for NavPanel
-    const qvFp = loc.query[qpFp]                         // Query Value for FlexPanel
-    const aPanelIsVisible = urlMaker.isQueryEnabled(qvNp) || urlMaker.isQueryEnabled(qvFp)
-
-    let newQ
-    if (aPanelIsVisible)
-    {
-      const new_qvNp = urlMaker.disableQuery(qvNp, NavPanel.getDefaultPanelViewTag())
-      const new_qvFp = urlMaker.disableQuery(qvFp, FlexPanel.getDefaultPanelViewTag())
-      newQ = { ..._.omit(loc.query, [qpNp, qpFp]) }
-      if (new_qvNp) newQ[qpNp] = new_qvNp
-      if (new_qvFp) newQ[qpFp] = new_qvFp
-    }
-    else
-    {
-      newQ = {
-        ...loc.query,
-        [qpNp]:urlMaker.enableQuery(qvNp, NavPanel.getDefaultPanelViewTag() ),
-        [qpFp]:urlMaker.enableQuery(qvFp, FlexPanel.getDefaultPanelViewTag() )
-      }
-    }
-    browserHistory.push( {  ...loc,  query: newQ })
-  },
-
   //
   // TOAST
   //
@@ -564,7 +432,7 @@ const App = React.createClass({
   {
     if (this.currUser)
     {
-      console.error('startSignUpTutorial() but user is already loggedin')
+      console.error('startSignUpTutorial() but user is already logged-in')
       return
     }
     const tutPath = ':' + SpecialGlobals.skillsModelTrifecta.signupTutorialName
@@ -687,7 +555,7 @@ const App = React.createClass({
         break
 
       case 'closeNavPanel':
-        this.closeNavPanel()
+        console.error("closeNavPanel preparePage action is no longer needed/supported. Tutorial should be simplified")
         break
 
 
@@ -722,13 +590,6 @@ App.responsiveRules = {
       footerTabMajorNav: true,        // |__| flexPanel as footer
       fpReservedFooterHeight:      '60px',
       fpReservedRightSidebarWidth: '0px'
-    }
-  },
-  'npForceAsOverlay': {
-    minWidth: 0,
-    maxWidth: 900,
-    respData: {
-      npForceAsOverlay: true
     }
   },
   'desktopUI': {

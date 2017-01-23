@@ -42,7 +42,7 @@ export default {
   play: {
     $meta: {
       name:           'Play',
-      description:    'Find games you can play here',
+      description:    'Find games to play here',
       sequence:       'playOneGame,gamesImade,continueAgame'
     },
     playOneGame:      C.E,

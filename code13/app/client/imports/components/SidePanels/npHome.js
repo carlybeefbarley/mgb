@@ -8,7 +8,6 @@ export default npHome = React.createClass({
 
   propTypes: {
     currUser:           PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    user:               PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     panelWidth:         PropTypes.string.isRequired   // Typically something like "200px".
   },
 
@@ -25,7 +24,7 @@ export default npHome = React.createClass({
   },
 
   render: function () {
-    const { currUser, navPanelIsOverlay } = this.props
+    const { currUser } = this.props
 
     return (
       <div className="ui large vertical inverted fluid menu" style={{backgroundColor: "transparent"}}>
@@ -36,92 +35,92 @@ export default npHome = React.createClass({
           </Header>
         </Item>
 
-        <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/" className="header item">Home Page</QLink>
+        <QLink to="/" className="header item">Home Page</QLink>
         <div className="menu">
-          <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/whatsnew" className="item">
+          <QLink to="/whatsnew" className="item">
             What's New
             <WhatsNew currUser={currUser} />
           </QLink>
-          <QLink closeNavPanelOnClick={navPanelIsOverlay} to="/roadmap" className="item">Roadmap</QLink>
+          <QLink to="/roadmap" className="item">Roadmap</QLink>
           <div className='item'></div>
         </div>
 
         { currUser ?
-          [
-            <Item.Header key='k1' className="header item">
-              <img className="ui centered avatar image" src={currUser.profile.avatar} />
-              &emsp;{currUser.profile.name}
-            </Item.Header>,
-            
-            <div key='k2' className="menu">
-              <QLink
-                  to={`/u/${this.props.currUser.profile.name}`} 
-                  id='mgbjr-np-home-myProfile'
-                  closeNavPanelOnClick={navPanelIsOverlay} 
-                  className="item">
-                <i className="user icon" /> My Profile
-              </QLink>
-              <QLink 
-                  to={`/u/${this.props.currUser.profile.name}/badges`} 
-                  id='mgbjr-np-home-myBadges'
-                  closeNavPanelOnClick={navPanelIsOverlay} 
-                  className="item">
-                <i className="trophy icon" /> My Badges
-              </QLink>
-              <QLink 
-                  to={`/u/${this.props.currUser.profile.name}/games`} 
-                  closeNavPanelOnClick={navPanelIsOverlay} 
-                  id='mgbjr-np-home-myGames'
-                  className="item">
-                <i className="game icon" /> My Games
-              </QLink>
-              <QLink 
-                  to={`/u/${this.props.currUser.profile.name}/projects`} 
-                  closeNavPanelOnClick={navPanelIsOverlay} 
-                  id='mgbjr-np-home-myProjects'                  
-                  className="item">
-                <i className="sitemap icon" /> My Projects
-              </QLink>
-              <QLink 
-                  closeNavPanelOnClick={navPanelIsOverlay} 
-                  to={`/u/${currUser.username}/skilltree`} className="item"
-                  id='mgbjr-np-home-mySkills'>
-                <Icon name='plus circle' /> My Skills
-              </QLink>
-              <QLink 
-                  closeNavPanelOnClick={navPanelIsOverlay} 
-                  query={{"_fp": 'features'}}  
-                  className="item"
-                  id='mgbjr-np-home-settings'>
-                <Icon name='options' /> Settings
-              </QLink>
-              <div className='item'></div>
-            </div>,
-            
-            <a key='k3' href="#" onClick={this.logout} className="item">
-              <i className="sign out icon" /> Logout
-            </a>
-          ]
+        [
+          <Item.Header key='k1' className="header item">
+            <img className="ui centered avatar image" src={currUser.profile.avatar} />
+            &emsp;{currUser.profile.name}
+          </Item.Header>,
+          
+          <div key='k2' className="menu">
+            <QLink
+                to={`/u/${this.props.currUser.profile.name}`} 
+                id='mgbjr-np-home-myProfile'
+                
+                className="item">
+              <i className="user icon" /> My Profile
+            </QLink>
+            <QLink 
+                to={`/u/${this.props.currUser.profile.name}/badges`} 
+                id='mgbjr-np-home-myBadges'
+                
+                className="item">
+              <i className="trophy icon" /> My Badges
+            </QLink>
+            <QLink 
+                to={`/u/${this.props.currUser.profile.name}/games`} 
+                
+                id='mgbjr-np-home-myGames'
+                className="item">
+              <i className="game icon" /> My Games
+            </QLink>
+            <QLink 
+                to={`/u/${this.props.currUser.profile.name}/projects`} 
+                
+                id='mgbjr-np-home-myProjects'                  
+                className="item">
+              <i className="sitemap icon" /> My Projects
+            </QLink>
+            <QLink 
+                
+                to={`/u/${currUser.username}/skilltree`} className="item"
+                id='mgbjr-np-home-mySkills'>
+              <Icon name='plus circle' /> My Skills
+            </QLink>
+            <QLink 
+                
+                query={{"_fp": 'features'}}  
+                className="item"
+                id='mgbjr-np-home-settings'>
+              <Icon name='options' /> Settings
+            </QLink>
+            <div className='item'></div>
+          </div>,
+          
+          <a key='k3' href="#" onClick={this.logout} className="item">
+            <i className="sign out icon" /> Logout
+          </a>
+        ]
           :
           // If signed out, show   | Log In, Sign up |  options inline
-          [
-            <QLink 
-                to="/login"  
-                closeNavPanelOnClick={navPanelIsOverlay} 
-                id='mgbjr-np-home-login'
-                className="item" 
-                key="login">
-              Log In
-            </QLink>,
-            <QLink 
-                to="/signup" 
-                closeNavPanelOnClick={navPanelIsOverlay} 
-                id='mgbjr-np-home-signup'
-                className="item" 
-                key="join">
-              Sign Up
-            </QLink>
-          ]
+        [
+          <QLink 
+              to="/login"  
+              
+              id='mgbjr-np-home-login'
+              className="item" 
+              key="login">
+            Log In
+          </QLink>,
+          <QLink 
+              to="/signup" 
+              
+              id='mgbjr-np-home-signup'
+              className="item" 
+              key="join">
+            Sign Up
+          </QLink>
+        ]
         }
       </div>
     )

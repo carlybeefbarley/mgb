@@ -19,7 +19,7 @@ import reactMixin from 'react-mixin'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 
-const _npFeatureLevelHideWords = 4
+const _npFeatureLevelHideWords = 4  // At this NavPanel featureLevel (or greater), don't show the words for the icons
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
@@ -108,16 +108,16 @@ export default NavPanel = React.createClass({
   propTypes: {
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
-    fpReservedFooterHeight: PropTypes.string.isRequired,  // Something like 0px or 60px typically
-    user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    selectedViewTag:        PropTypes.string,             // One of the navPanelViews.tags values
-    navPanelIsVisible:      PropTypes.bool.isRequired,
-    handleNavPanelToggle:   PropTypes.func.isRequired,    // Callback for enabling/disabling NavPanel view
-    handleNavPanelChange:   PropTypes.func.isRequired,    // Callback to change pane - records it in URL
-    navPanelWidth:          PropTypes.string.isRequired,  // Typically something like "200px".
-    navPanelIsOverlay:      PropTypes.bool.isRequired,    // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
-    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
+    navPanelWidth:          PropTypes.string,             // e.g. '60px'.. Width of reserved space
+    fpReservedFooterHeight: PropTypes.string.isRequired   // Something like 0px or 60px typically
   },
+
+  getInitialState: function() {
+    return {
+      selectedViewTag: null               // One of the navPanelViews.tags values
+    }
+  },
+
 
   statics: {
     getDefaultPanelViewTag: function() { return navPanelViews[defaultPanelViewIndex].tag }
@@ -140,9 +140,8 @@ export default NavPanel = React.createClass({
   /**
    * @param {String} npViewTag
    * @param {Boolean} fGoDirect - If true, go directly to the default URL for this NavPanel
-   * @param {Boolean} fLockNavPanel - If true, request the navPanel to be locked (disable auto-hide / navPanelIsOverlay)
    */
-  npViewSelect(npViewTag, fGoDirect, fLockNavPanel)
+  npViewSelect(npViewTag, fGoDirect)
   {
     if (fGoDirect)
     {
@@ -150,27 +149,31 @@ export default NavPanel = React.createClass({
       const navPanelChoice = _getNavPanelViewFromTag(npViewTag)
       const newUrl = navPanelChoice.getDirectUrl(this.props.currUser ? this.props.currUser.profile.name : null)
       if (newUrl)
+      {
+        this.handleNavPanelClose()
         utilPushTo(this.context.urlLocation.query, newUrl)
+      }
     }
     else
-    {
-      if (npViewTag === this.props.selectedViewTag)
-        this.props.handleNavPanelChange(urlMaker.disableQueryParamPrefix + npViewTag)
-      else
-        this.props.handleNavPanelChange(npViewTag, fLockNavPanel)
-    }
+      this.setState( { selectedViewTag: npViewTag })
+  },
+
+  handleNavPanelClose() {
+    this.setState( { selectedViewTag: null })
   },
 
 
   render: function () {
-    const { user, currUser, navPanelWidth, navPanelIsOverlay, selectedViewTag, navPanelIsVisible, currUserProjects, fpReservedFooterHeight } = this.props
+    const { currUser, navPanelWidth, currUserProjects, fpReservedFooterHeight } = this.props
+    const { selectedViewTag } = this.state
     const panelStyle = {    // This is the overall NavPanel with either just the first column (just icons, always shown), or 1st and 2nd columns
       position: "fixed",
       left: "0px",
       top: "0px",
       bottom: fpReservedFooterHeight, //61?
-      width: navPanelWidth,
-      backgroundColor: `rgba(50, 60, 60, ${navPanelIsOverlay ? 0.85 : 1})`,
+      width: selectedViewTag ? '261px' : navPanelWidth,
+      backgroundColor: `rgba(50, 60, 60, 1)`,
+      overflowX: 'visible',
       zIndex: 100
     }
 
@@ -184,7 +187,7 @@ export default NavPanel = React.createClass({
       marginRight: "0px",
       marginBottom: "0px",
       backgroundColor: "rgba(50, 60, 60, 1)",
-      overflowY:    "scroll"
+      overflowY:    "auto"
     }
 
     const panelScrollContainerStyle = {
@@ -195,8 +198,8 @@ export default NavPanel = React.createClass({
       bottom:       "0px",
       paddingTop:   "8px",
       paddingLeft:  "1px",
-      backgroundColor: `rgba(40, 50, 50, ${navPanelIsOverlay ? 0.85 : 1})`,       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
-      overflowY:    "scroll"
+      backgroundColor: `rgba(40, 50, 50, 1)`,       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
+      overflowY:    "auto"
     }
 
     const miniNavItemStyle = {
@@ -213,11 +216,14 @@ export default NavPanel = React.createClass({
     const ElementNP = navPanelChoice.el    // Can be null
     const npFeatureLevel = this.data.npFeatureLevel || 2
     const hasAvatar = (currUser && currUser.profile && currUser.profile.avatar)
-    if (navPanelIsVisible && ElementNP !== null)
+    if (selectedViewTag && ElementNP !== null)
       joyrideCompleteTag(`mgbjr-CT-navPanel-${navPanelChoice.tag}-show`)
 
     return (
-      <div id='mgbjr-navPanelIcons' className="basic segment mgbNavPanel" style={panelStyle}>
+      <div  id='mgbjr-navPanelIcons' 
+            className="basic segment mgbNavPanel" 
+            style={panelStyle}
+            onMouseLeave={ () => this.handleNavPanelClose() } >
 
         <div className="ui inverted attached vertical icon menu" style={miniNavStyle}>
           { navPanelViews.map(v => {
@@ -238,7 +244,8 @@ export default NavPanel = React.createClass({
                 className={actv + 'item animated fadeInLeft'}
                 title={v.name}
                 style={showAvatarInsteadOfIcon ? miniNavAvatarItemStyle : miniNavItemStyle}
-                onClick={(e) => { this.npViewSelect(v.tag, e.altKey, e.shiftKey)}}>
+                onMouseEnter={() => { this.npViewSelect(v.tag, false)}}
+                onClick={() => { this.npViewSelect(v.tag, true)}}>
                 { showAvatarInsteadOfIcon ? 
                   <img className="ui centered avatar image" style={{ width: '3em', height: '3em'}} src={currUser.profile.avatar} />
                   :
@@ -252,14 +259,12 @@ export default NavPanel = React.createClass({
           })}
         </div>
 
-        { navPanelIsVisible &&
+        { selectedViewTag &&
           <div style={panelScrollContainerStyle}>
             { !ElementNP ? <div className="ui fluid label">TODO: {navPanelHdr} navPanel</div> :
               <ElementNP
                 currUser={currUser}
                 currUserProjects={currUserProjects}
-                user={user}
-                navPanelIsOverlay={navPanelIsOverlay}
                 panelWidth={navPanelWidth} />
             }
           </div>

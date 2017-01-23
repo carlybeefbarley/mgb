@@ -99,7 +99,7 @@ export default AssetCreateNew = React.createClass({
         </div>
 
         <div className="ui basic padded segment">
-          <h4 className="ui header">3. Optionally - place the new asset within a project</h4>        
+          <h4 className="ui header">3. Optionally - place the new Asset into a Project</h4>        
           <ProjectSelector
               canEdit={false}
               isUseCaseCreate={true}

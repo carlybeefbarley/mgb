@@ -18,7 +18,7 @@ import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 const queryDefaults = { 
   project: null,                // Null string means match all
   searchName: '',               // Empty string means match all (more convenient than null for input box)
-  sort: 'edited',               // Should be one of the keys of gameSorters{}
+  sort: 'plays',                // Should be one of the keys of gameSorters{}
   showStable: '0'               // Should be '0' or '1'  -- as a string
 }
 

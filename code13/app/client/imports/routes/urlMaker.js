@@ -21,8 +21,7 @@ let _appRouter = undefined
 var _queryParamMap = {
   // APP queryGroup queries are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
   "_psl": { qGroup: "APP",  symbolName: "app_projectScopeLock" },  
-  "_fp":  { qGroup: "APP",  symbolName: "app_flexPanel"        },
-  "_np":  { qGroup: "APP",  symbolName: "app_navPanel"         }
+  "_fp":  { qGroup: "APP",  symbolName: "app_flexPanel"        }
 }
 
 const urlMaker = {

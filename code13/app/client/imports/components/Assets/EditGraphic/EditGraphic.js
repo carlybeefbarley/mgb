@@ -79,7 +79,8 @@ export default class EditGraphic extends React.Component {
       toolActive: false,
       toolChosen: this.findToolByLabelString("Pen"),
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
-      pasteCanvas: null     // if object cut or copied then {x, y, width, height, imgData}
+      pasteCanvas: null,     // if object cut or copied then {x, y, width, height, imgData}
+      scrollMode: "Normal"
     }
 
     // TODO check if this can be deleted completely
@@ -695,7 +696,7 @@ export default class EditGraphic extends React.Component {
   handleMouseWheel(event)
   {
     // We only handle alt/shift/ctrl-key. Anything else is system behavior (scrolling etc)
-    if (event.altKey === false && event.shiftKey === false && event.ctrlKey === false)
+    if (event.altKey === false && event.shiftKey === false && event.ctrlKey === false && this.state.scrollMode == "Normal")
       return
 
     event.preventDefault()      // No default scroll behavior in these cases
@@ -704,7 +705,7 @@ export default class EditGraphic extends React.Component {
     if (Math.abs(wd) >= 1) {
       // if paste tool then use ctrl/alt/shift for resizing, rotating, flipping
       if (this.state.toolChosen !== null && this.state.toolChosen.label === "Paste")
-        this.state.toolChosen.handleMouseWheel(this.collateDrawingToolEnv(event), wd)
+        this.state.toolChosen.handleMouseWheel(this.collateDrawingToolEnv(event), wd, this.state.scrollMode)
       else {
         // TODO maybe change keys so they are not the same as paste tool
         // zooming canvas and changing frames
@@ -1501,6 +1502,10 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  setScrollMode(mode){
+    this.setState({ scrollMode: mode})
+  }
+
 
   // React Callback: render()
   // See http://semantic-ui.com to understand the classNames we are using.
@@ -1516,6 +1521,8 @@ export default class EditGraphic extends React.Component {
     let imgEditorSty = {}
     if (this.state.toolChosen)
       imgEditorSty.cursor = this.state.toolChosen.editCursor
+
+    const scrollModes = ["Normal", "Rotate", "Scale", "Flip"]
 
     // Make element
     return (
@@ -1584,6 +1591,25 @@ export default class EditGraphic extends React.Component {
 
           <div className="row" style={{marginBottom: "6px"}}>
             {<Toolbar actions={actions} config={config} name="EditGraphic" />}
+          </div>
+
+          <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "hidden")}>
+          <div className="inline fields">
+            <label>Scroll modes</label>
+            {
+              scrollModes.map( (mode) => (
+                <div key={mode} className="field">
+                <div className="ui radio checkbox" >
+                  <input type="radio" name={mode} 
+                  checked={mode == this.state.scrollMode ? "checked" : ""} 
+                  onChange={this.setScrollMode.bind(this, mode)} />
+                  <label>{mode}</label>
+                </div>
+                </div>
+                
+              ))
+            }
+          </div>
           </div>
 
 

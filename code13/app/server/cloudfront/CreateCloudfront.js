@@ -227,33 +227,33 @@ export const setUpCloudfront = function () {
     'https://v2.mygamebuilder.com'
   ]
   WebApp.rawConnectHandlers.use(function (req, res, next) {
-    const index = req.headers.origin ? allowedOrigins.indexOf(req.headers.origin) : allowedOrigins.indexOf(req.headers.host)
-    if (index > -1) {
-      res.setHeader('access-control-allow-origin', allowedOrigins[index])
-      // If the server specifies an origin host rather than "*",
-      // then it must also include Origin in the Vary response header
-      // to indicate to clients that server responses will differ
-      // based on the value of the Origin request header.
-      res.setHeader('vary', 'origin')
+    const isFont = req._parsedUrl.path.endsWith("woff2") || req._parsedUrl.path.endsWith("woff") || req._parsedUrl.path.endsWith("ttf")
+    if(isFont){
+      res.setHeader('access-control-allow-origin', '*')
     }
-    // or allow for all domains
-    // res.setHeader('access-control-allow-origin', '*')
-    res.setHeader('access-control-expose-headers', 'etag')
+    else {
+      const index = req.headers.origin ? allowedOrigins.indexOf(req.headers.origin) : allowedOrigins.indexOf(req.headers.host)
+      if (index > -1) {
+        res.setHeader('access-control-allow-origin', allowedOrigins[index])
+        // If the server specifies an origin host rather than "*",
+        // then it must also include Origin in the Vary response header
+        // to indicate to clients that server responses will differ
+        // based on the value of the Origin request header.
+        res.setHeader('vary', 'origin')
+      }
+      // or allow for all domains
+      // res.setHeader('access-control-allow-origin', '*')
+      res.setHeader('access-control-expose-headers', 'etag')
 
-    // cache static files for 1 hour - after meteor update they will be invalidated before cache expires
-    if (
-      req._parsedUrl.path.startsWith("/badges") ||
-      req._parsedUrl.path.startsWith("/audio") ||
-      req._parsedUrl.path.startsWith("/images") ||
-      req._parsedUrl.path.startsWith("/lib")
-    ) {
-      const maxAge = 5 * 60
-      res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
-
-      if(req._parsedUrl.path.endsWith("woff2") || req._parsedUrl.path.endsWith("woff") || req._parsedUrl.path.endsWith("ttf")){
-        // set header for fonts
-        // TODO(stauzs): req.headers.origin is missing for fonts via https???
-        res.setHeader('access-control-allow-origin', '*')
+      // cache static files for 1 hour - after meteor update they will be invalidated before cache expires
+      if (
+        req._parsedUrl.path.startsWith("/badges") ||
+        req._parsedUrl.path.startsWith("/audio") ||
+        req._parsedUrl.path.startsWith("/images") ||
+        req._parsedUrl.path.startsWith("/lib")
+      ) {
+        const maxAge = 5 * 60
+        res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
       }
     }
     return next()

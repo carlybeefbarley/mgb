@@ -22,9 +22,9 @@ export const getCDNDomain = function () {
 export const setUpCloudfront = function () {
 
   // on the test server run with production flag?
-  /*if (!Meteor.isProduction) {
-   return
-   }*/
+  if (!Meteor.isProduction) {
+    return
+  }
 // Config
   // TODO(stauzs): move these to ENV
   const ORIGIN_DOMAIN_NAME = 'test.mygamebuilder.com' // v2.mygamebuilder.com
@@ -250,6 +250,11 @@ export const setUpCloudfront = function () {
       const maxAge = 5 * 60
       res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
 
+      if(req._parsedUrl.path.endsWith("woff2") || req._parsedUrl.path.endsWith("woff") || req._parsedUrl.path.endsWith("ttf")){
+        // set header for fonts
+        // TODO(stauzs): req.headers.origin is missing for fonts via https???
+        res.setHeader('access-control-allow-origin', '*')
+      }
     }
     return next()
   });

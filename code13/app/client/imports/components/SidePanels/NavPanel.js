@@ -113,6 +113,7 @@ export default NavPanel = React.createClass({
     selectedViewTag:        PropTypes.string,             // One of the navPanelViews.tags values
     navPanelIsVisible:      PropTypes.bool.isRequired,
     handleNavPanelToggle:   PropTypes.func.isRequired,    // Callback for enabling/disabling NavPanel view
+    handleNavPanelClose:    PropTypes.func.isRequired,    // Callback for hiding NavPanel view
     handleNavPanelChange:   PropTypes.func.isRequired,    // Callback to change pane - records it in URL
     navPanelWidth:          PropTypes.string.isRequired,  // Typically something like "200px".
     navPanelIsOverlay:      PropTypes.bool.isRequired,    // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
@@ -150,7 +151,7 @@ export default NavPanel = React.createClass({
       const navPanelChoice = _getNavPanelViewFromTag(npViewTag)
       const newUrl = navPanelChoice.getDirectUrl(this.props.currUser ? this.props.currUser.profile.name : null)
       if (newUrl)
-        utilPushTo(this.context.urlLocation.query, newUrl)
+        utilPushTo(_.omit(this.context.urlLocation.query, '_np'), newUrl)
     }
     else
     {
@@ -163,7 +164,7 @@ export default NavPanel = React.createClass({
 
 
   render: function () {
-    const { user, currUser, navPanelWidth, navPanelIsOverlay, selectedViewTag, navPanelIsVisible, currUserProjects, fpReservedFooterHeight } = this.props
+    const { user, currUser, navPanelWidth, navPanelIsOverlay, selectedViewTag, navPanelIsVisible, currUserProjects, fpReservedFooterHeight, handleNavPanelClose } = this.props
     const panelStyle = {    // This is the overall NavPanel with either just the first column (just icons, always shown), or 1st and 2nd columns
       position: "fixed",
       left: "0px",
@@ -217,7 +218,10 @@ export default NavPanel = React.createClass({
       joyrideCompleteTag(`mgbjr-CT-navPanel-${navPanelChoice.tag}-show`)
 
     return (
-      <div id='mgbjr-navPanelIcons' className="basic segment mgbNavPanel" style={panelStyle}>
+      <div  id='mgbjr-navPanelIcons' 
+            className="basic segment mgbNavPanel" 
+            style={panelStyle}
+            onMouseLeave={ () => handleNavPanelClose() } >
 
         <div className="ui inverted attached vertical icon menu" style={miniNavStyle}>
           { navPanelViews.map(v => {
@@ -238,7 +242,8 @@ export default NavPanel = React.createClass({
                 className={actv + 'item animated fadeInLeft'}
                 title={v.name}
                 style={showAvatarInsteadOfIcon ? miniNavAvatarItemStyle : miniNavItemStyle}
-                onClick={(e) => { this.npViewSelect(v.tag, e.altKey, e.shiftKey)}}>
+                onMouseEnter={(e) => { this.npViewSelect(v.tag, false /*e.altKey*/, false /*e.shiftKey*/)}}
+                onClick={(e) =>  { this.npViewSelect(v.tag, true /*e.altKey*/, e.shiftKey)}}>
                 { showAvatarInsteadOfIcon ? 
                   <img className="ui centered avatar image" style={{ width: '3em', height: '3em'}} src={currUser.profile.avatar} />
                   :

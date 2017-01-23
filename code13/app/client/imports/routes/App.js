@@ -369,6 +369,7 @@ const App = React.createClass({
               selectedViewTag={navPanelQueryValue}
               handleNavPanelToggle={this.handleNavPanelToggle}
               handleNavPanelChange={this.handleNavPanelChange}
+              handleNavPanelClose={this.closeNavPanel}
               navPanelWidth={navPanelWidth}
               navPanelIsVisible={showNavPanel}
               isSuperAdmin={isSuperAdmin}
@@ -426,7 +427,7 @@ const App = React.createClass({
 
             { (fNavPanelIsOverlay && showNavPanel) &&   // Overlay to catch clicks when Overlay NavPanel is up.
               <div 
-                  onClick={ () => this.handleNavPanelToggle() } 
+                  onMouseEnter={ () => this.closeNavPanel() } 
                   style={ { 
                     position: "fixed",
                     zIndex:   200,
@@ -434,8 +435,8 @@ const App = React.createClass({
                     bottom:   "0px",
                     left:     navPanelWidth,
                     right:    flexPanelWidth,
-                    backgroundColor: "rgba(0,0,0,0.2)",
-                    overflow: "scroll",
+                    backgroundColor: "rgba(0,0,0,0.05)",
+                    overflow: "auto",
                     marginBottom: "0px"} } />
             }
             

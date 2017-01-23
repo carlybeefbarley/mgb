@@ -259,11 +259,11 @@ export const setUpCloudfront = function () {
 
 // find distribution based on origin domain name
   const getDistribution = (callback) => {
-    const params = {
+    const distributionQuery = {
       // Marker: 'STRING_VALUE',
       // MaxItems: 'STRING_VALUE'
     }
-    cloudfront.listDistributions(params, function (err, data) {
+    cloudfront.listDistributions(distributionQuery, function (err, data) {
       if (err) {
         console.error(err)
         // WHAT TO DO NOW ?
@@ -271,6 +271,7 @@ export const setUpCloudfront = function () {
         console.log("failed to locate distribution", err, err.stack)
         return
       }
+
       const items = data.DistributionList.Items
       for (let i = 0; i < items.length; i++) {
         const origins = items[i].Origins
@@ -281,7 +282,17 @@ export const setUpCloudfront = function () {
         for (let j = 0; j < oItems.length; j++) {
           const oItem = oItems[j]
           if (oItem.Id == ORIGIN_ID) {
-            callback(null, items[i])
+            cloudfront.updateDistribution(params, (err, data) => {
+              if(err){
+                console.log("failed to update distribution", err, err.stack)
+                Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Failed to update distribution: ${err}`)
+              }
+              else{
+                Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Distribution updated`)
+              }
+              callback(null, items[i])
+            })
+
             return
           }
         }
@@ -291,8 +302,6 @@ export const setUpCloudfront = function () {
   }
 
   const setCDNPrams = (cloudfrontDistribution) => {
-    // TODO(stauzs): debug - why this is now working (sometimes) when is executed from setUpCloudFront function?
-    // return of this method gets cached somewhere?????
     // this will make meteor files to be loaded from CDN
     const rwHook = (uri) => {
       if (CLOUDFRONT_DOMAIN_NAME) {
@@ -301,21 +310,6 @@ export const setUpCloudfront = function () {
       return uri
     }
     WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook)
-
-    /*
-    debugging rewrite hook
-    let i=0
-    const hh = (uri) => {
-      return uri + "?" + i
-    }
-    Meteor.setInterval(() => {
-      console.log("HOOK:", i)
-      ++i
-      if(!(i % 1000)){
-        WebAppInternals.setBundledJsCssUrlRewriteHook(hh)
-      }
-    })
-    return;*/
 
     if (cloudfrontDistribution.Status != "Deployed") {
       Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Waiting for cloudfront distribution to be ready. \n this may take a while (up to 30minutes)`)

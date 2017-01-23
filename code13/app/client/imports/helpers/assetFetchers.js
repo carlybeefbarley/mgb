@@ -210,6 +210,23 @@ class AssetHandler {
   get loading() {
     return !this.isReady
   }
+  updateAsset(onChange = null){
+
+    this.onChange = onChange
+    const asset = Azzets.findOne(this.id)
+    // save previous content2
+    let oldC2 = this.asset ? this.asset.content2 : null
+    asset.content2 = oldC2
+
+
+    const etag = genetag(asset)
+    if (this.etag !== etag && !asset.content2) {
+      console.log("UDPATE C2???")
+      this.etag = etag
+    }
+
+    this.asset = asset
+  }
 
   update(onChange = null, updateObj = null) {
     if (onChange) {
@@ -227,6 +244,7 @@ class AssetHandler {
         if (this.etag == etag) {
           // here we can silently update content2 without requesting new c2 from DB
           if (updateObj) {
+            this.c2UpdatedAt = new Date()
             this.asset.content2 = updateObj.content2
             this.onChange && this.onChange()
           }
@@ -245,6 +263,7 @@ class AssetHandler {
 
     // user that has modified asset will have updateObj
     if (updateObj) {
+      this.c2UpdatedAt = new Date()
       this.asset.content2 = updateObj.content2
     }
     // viewer won't
@@ -286,6 +305,7 @@ class AssetHandler {
     }
 
     if (updateObj) {
+      this.c2UpdatedAt = new Date()
       this.asset.content2 = updateObj.content2
       this.onChange && this.onChange()
       return
@@ -319,6 +339,7 @@ class AssetHandler {
       else {
         console.log("Sources are equal.. preventing update!")
       }
+      this.c2UpdatedAt = new Date()
     }, asset)
   }
 
@@ -350,10 +371,16 @@ class AssetHandler {
 const cachedAssetHandlers = []
 // this will return AssedHandler
 // used in the AssetEditRoute -> getMeteorData
-export const getAssetWithContent2 = (id, onChange) => {
+// it's possible to pass cached c2 - to skip xhr request
+export const getAssetWithContent2 = (id, onChange, forceUpdate) => {
   let handler = cachedAssetHandlers.find(a => a.id === id)
   if (handler) {
-    handler.update(onChange)
+    if(!forceUpdate){
+      handler.update(onChange)
+    }
+    else{
+      handler.updateAsset(onChange)
+    }
     return handler
   }
   // keep only 10 assets in memory

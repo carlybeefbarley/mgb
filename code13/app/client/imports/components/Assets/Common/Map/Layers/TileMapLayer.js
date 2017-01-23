@@ -965,13 +965,18 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
 
 // Eraser is actually stamp with gid = 0 - could be reused
 // only stamp can resize map.. eraser shouldn't
-edit[EditModes.eraser] = function (e, up) {
+edit[EditModes.eraser] = function (e, up, saveUndo = true) {
   if (!this.mouseDown && !up) {
     return
   }
 
   if (e.type == 'mouseup' || e.type == 'touchend') {
     this.props.handleSave('Deleting Tile')
+    return
+  }
+
+  if (e.type == 'mousedown' || e.type == 'touchstart') {
+    this.props.saveForUndo('Removing Tiles')
     return
   }
 

@@ -203,7 +203,15 @@ export default class EditMap extends React.Component {
     this.doSnapshotActivity()
   }
 
+  shouldComponentUpdate() {
+    return !this.preventUpdates
+  }
+
   componentWillReceiveProps(newp){
+    // new props will come in after we will save just edited data - throw away data this time
+    if(this.preventUpdates){
+      return
+    }
     // sometimes we are getting empty c2 on new maps
     if(newp.asset.content2 && Object.keys(newp.asset.content2).length ) {
       this.setState({isLoading: true})
@@ -212,7 +220,15 @@ export default class EditMap extends React.Component {
         this.setState({isLoading: false})
       })
       if(!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave){
-        this.mgb_content2 = newp.asset.content2
+        if(this.props.canEdit){
+          const oldMeta = this.mgb_content2.meta
+          this.mgb_content2 = newp.asset.content2
+          // don't update active tool / camera position etc - because it's annoying
+          this.mgb_content2.meta = oldMeta
+        }
+        else{
+          this.mgb_content2 = newp.asset.content2
+        }
       }
     }
   }
@@ -235,6 +251,8 @@ export default class EditMap extends React.Component {
   }
 
   saveForUndo(reason = '' , skipRedo = false) {
+    // this will prevent update between editing step and next save
+    this.preventUpdates = true
     if (this.ignoreUndo)
       return
     const toSave = { data: this.copyData(this.mgb_content2), reason }
@@ -308,6 +326,7 @@ export default class EditMap extends React.Component {
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
+    this.preventUpdates = false
     if(!this.props.canEdit){
       this.props.editDeniedReminder()
       return

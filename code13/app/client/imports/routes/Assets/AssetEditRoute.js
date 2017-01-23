@@ -148,7 +148,7 @@ export default AssetEditRoute = React.createClass({
     let assetId = this.props.params.assetId
     const assetHandler = this.assetHandler = getAssetWithContent2(assetId, () => {
       this.assetHandler && this.forceUpdate()
-    })
+    }, !!this.m_deferredSaveObj)
 
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 

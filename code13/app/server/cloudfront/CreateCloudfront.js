@@ -228,6 +228,11 @@ export const setUpCloudfront = function () {
     const index = allowedOrigins.indexOf(req.headers.origin)
     if (index > -1) {
       res.setHeader('access-control-allow-origin', allowedOrigins[index])
+      // If the server specifies an origin host rather than "*",
+      // then it must also include Origin in the Vary response header
+      // to indicate to clients that server responses will differ
+      // based on the value of the Origin request header.
+      res.setHeader('vary', 'origin')
     }
     // or allow for all domains
     // res.setHeader('access-control-allow-origin', '*')
@@ -241,7 +246,8 @@ export const setUpCloudfront = function () {
       req._parsedUrl.path.startsWith("/lib")
     ) {
       const maxAge = 5*60
-      res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`);
+      res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
+
     }
     return next()
   });

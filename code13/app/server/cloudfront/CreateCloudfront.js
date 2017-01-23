@@ -227,7 +227,7 @@ export const setUpCloudfront = function () {
     'https://v2.mygamebuilder.com'
   ]
   WebApp.rawConnectHandlers.use(function (req, res, next) {
-    const index = allowedOrigins.indexOf(req.headers.origin)
+    const index = req.headers.origin ? allowedOrigins.indexOf(req.headers.origin) : allowedOrigins.indexOf(req.headers.host)
     if (index > -1) {
       res.setHeader('access-control-allow-origin', allowedOrigins[index])
       // If the server specifies an origin host rather than "*",
@@ -286,7 +286,7 @@ export const setUpCloudfront = function () {
           const oItem = oItems[j]
           if (oItem.Id == ORIGIN_ID) {
             cloudfront.getDistributionConfig({Id: items[i].Id}, Meteor.bindEnvironment(function (err, data) {
-              console.log("DATA:", data)
+
               const newParams = _.merge({Id: items[i].Id}, data, params)
               newParams.IfMatch = data.ETag
               delete newParams.ETag

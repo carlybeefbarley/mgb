@@ -30,7 +30,7 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
   // const nextUpdate = now - (now % (60 * 1000)) // by default keep 1 minute in cache
   // const hash = etagOrHash ? etagOrHash :  nextUpdate
 
-  if (uri.startsWith("/") && uri.substr(0, 2) != "//") {
+  if (uri.startsWith("/") && !uri.startsWith("//")) {
     if (!CDN_DOMAIN) {
       return uri + "?cdnPassed"
     }

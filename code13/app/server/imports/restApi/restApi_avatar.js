@@ -1,7 +1,7 @@
 import { RestApi } from './restApi'
 
 // This lets the client easily get user avatar.. e.g http://localhost:3000/api/user/raMDZ9atjHABXu5KG/avatar
-RestApi.addRoute('user/:id/avatar/:expires', {authRequired: false}, {
+RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
   get: function () {
     var user = Meteor.users.findOne(this.urlParams.id)
     if (user && user.profile.avatar)

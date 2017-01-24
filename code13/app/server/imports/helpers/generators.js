@@ -3,6 +3,7 @@ import { genetag } from '/imports/helpers/generators'
 import { getCDNDomain } from '../../cloudfront/CreateCloudfront.js'
 export { genetag }
 
+const DEFAULT_MAX_AGE = 600 // 10 minutes - probably we can increase this
 export const assetToCdn = (api, asset, uri) => {
   return {
     statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
@@ -25,7 +26,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
       body: {}
     }
   }
-
+  const maxAge = !api.queryParams.expires ? DEFAULT_MAX_AGE : api.queryParams.expires
   // some fallback mechanism
   if (!asset) {
     return {
@@ -46,7 +47,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
     api.response.writeHead(304, api.queryParams.hash
       ? Object.assign({
           etag: etag,
-          "cache-control": "public, max-age=60, s-maxage=60"
+          "cache-control": `public, max-age=${maxAge}, s-maxage=${maxAge}`
         }, headers)
 
       // no etag here - as we won't be able to invalidate it without hash
@@ -63,7 +64,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
     headers: api.queryParams.hash
       ? Object.assign({
         etag: etag,
-        "cache-control": "public, max-age=3600"
+        "cache-control": `public, max-age=${maxAge}, s-maxage=${maxAge}`
       }, headers)
       // no etag here - as we won't be able to invalidate it without hash
       : headers,

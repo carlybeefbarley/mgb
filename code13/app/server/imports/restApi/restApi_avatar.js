@@ -33,10 +33,11 @@ RestApi.addRoute('user/:id/avatar/:expires', {authRequired: false}, {
       let avatarLink;
       const expires = parseInt(this.urlParams.expires, 10)
       // is local link?
-      if(user.profile.avatar.startsWith("/") && !user.profile.avatar.startsWith("//") && expires && !isNaN(expires)){
+      if(user.profile.avatar.startsWith("/") && !user.profile.avatar.startsWith("//") && expires && !isNaN(expires)) {
         const now = Date.now()
         const nextUpdate = now - (now % (expires * 1000))
-        avatarLink = user.profile.avatar + '?hash=' + nextUpdate
+        // this will force cache on our api
+        avatarLink = user.profile.avatar + `?hash=${nextUpdate}&expires=${expires}`
       }
       else{
         avatarLink = user.profile.avatar

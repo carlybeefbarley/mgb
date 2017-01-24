@@ -7,6 +7,7 @@ import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -35,7 +36,7 @@ const LearnSkillsAreaRoute = ( { currUser, params }, context ) => {    //props.p
 
   return (
     <Segment basic padded className="slim" style={{margin: '0 auto'}}>
-      <Image className='animated bounceInLeft' floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
+      <Image className='animated bounceInLeft' floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
       <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.mascotName}'s {area.title} Quests</Header>
       <p style={descStyle}>{area.desc}.</p>
       <br />

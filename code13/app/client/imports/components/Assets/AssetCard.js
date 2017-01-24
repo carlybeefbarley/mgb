@@ -243,7 +243,7 @@ export default AssetCard = React.createClass({
             </span>                           
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
-                <img className="ui avatar image" src={`/api/user/${asset.ownerId}/avatar`}>
+                <img className="ui avatar image" src={makeCDNLink(`/api/user/${asset.ownerId}/avatar`)}>
                 </img> {ownerName ? ownerName : `#${asset.ownerId}`}
               </div>
             </QLink>

@@ -35,6 +35,7 @@ RestApi.addRoute('user/:id/avatar/:expires', {authRequired: false}, {
       // is local link?
       if(user.profile.avatar.startsWith("/") && !user.profile.avatar.startsWith("//") && expires && !isNaN(expires)) {
         const now = Date.now()
+        // this will be timestamp rounded to seconds
         const nextUpdate = now - (now % (expires * 1000))
         // this will force cache on our api
         avatarLink = user.profile.avatar + `?hash=${nextUpdate}&expires=${expires}`
@@ -43,12 +44,12 @@ RestApi.addRoute('user/:id/avatar/:expires', {authRequired: false}, {
         avatarLink = user.profile.avatar
       }
 
-
+      const maxAge = expires && !isNaN(expires) ? expires : 0
       return {
         statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
         headers: {
           'Location': avatarLink,
-          'cache-control': 'public, max-age=60, s-maxage=60'
+          'cache-control': `public, max-age=${maxAge}, s-maxage=${maxAge}`
           // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
         },
         body: {}

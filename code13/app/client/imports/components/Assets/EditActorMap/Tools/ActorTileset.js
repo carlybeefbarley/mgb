@@ -1,10 +1,11 @@
 import React from 'react'
-import { Label, Segment, Grid } from 'semantic-ui-react'
+import { Label, Segment, Grid, Icon } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
+import ActorControls from './ActorControls.js'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import _ from 'lodash'
 
@@ -15,67 +16,20 @@ export default class ActorTileset extends React.Component {
     return this.props.tilesets[this.props.activeTileset]
   }
 
-  renderActors(from = 0, to = this.props.tilesets.length){
-    return (
-        <Grid stackable doubling columns='equal' style={{width: '100%', margin: 0}}>
-          {this.renderTileset(from, to, this.genTilesetImage)}
-        </Grid>
-    )
+  componentWillUpdate() {
   }
-  
-  genTilesetImage(index, isActive, tileset){
-    const title = `${tileset.name.split(':')[1]} (${tileset.imagewidth}x${tileset.imageheight})`
-    const imgRatio = tileset.imageheight / tileset.imagewidth
-    const width = tileset.imagewidth <= 64 ? 64 : 80
 
-    return (
-      <Grid.Column
-        title={title}
-        className={"tilesetPreview" + (isActive ? " active" : '')}
-        key={index}
-        onClick={() => {
-          this.props.selectTile
-          const selectedTile = new SelectedTile()
-          selectedTile.getGid(tileset)
-          this.props.selectTile(selectedTile)
-          console.log(selectedTile)
-        }}
-        style={{
-          minWidth: '80px', 
-          width: 'calc(50% - 2em)', 
-          margin: '1em', 
-          padding: 0,
-          paddingTop: 'auto',
-          borderRadius: '.28571429rem', 
-          border: 'none',
-          boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
-        }}
-        >
-        <img
-          className="mgb-pixelated"
-          src={tileset.image} 
-          width={width}
-          height={imgRatio * width}
-          style={{verticalAlign: 'middle'}}
-        />
-        <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white', textAlign: 'center'}}>
-          {
-            tileset.name.split(':')[1].length > 8
-            ?
-            (
-              tileset.name.split(':')[1].length > 12
-              ?
-              <span style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1].slice(0, -2) + '..'}</span>
-              :
-              <span style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1]}</span>
-            )
-            :
-            <p>{tileset.name.split(':')[1]}</p> 
-          }
-        </Label>
-      </Grid.Column >
-    )
+  selectTileset(index, tileset) {
+    this.props.clearActiveSelection()
+    this.props.selectTileset(index)
+    const selectedTile = new SelectedTile()
+    selectedTile.getGid(tileset)
+    this.props.selectTile(selectedTile)
   }
+
+  removeTileset = () => {
+    this.props.removeTileset(this.props.activeTileset)
+  } 
 
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
@@ -117,6 +71,67 @@ export default class ActorTileset extends React.Component {
     })
   }
 
+ // Render functions for Actors
+  renderActors(from = 0, to = this.props.tilesets.length){
+    return (
+        <Grid columns='equal' style={{width: '100%', margin: 0}}>
+          {this.renderTileset(from, to, this.genTilesetImage)}
+        </Grid>
+    )
+  }
+
+  genTilesetImage(index, isActive, tileset){
+    const title = `${tileset.name.split(':')[1]} (${tileset.imagewidth}x${tileset.imageheight})`
+    const imgRatio = tileset.imageheight / tileset.imagewidth
+    const width = tileset.imagewidth <= 64 ? 64 : 80
+
+    return (
+      <Grid.Column
+        title={title}
+        className={"tilesetPreview" + (index === this.props.activeTileset ? " active" : '')}
+        key={index}
+        onClick={() => {
+          this.selectTileset(index, tileset)
+        }}
+
+        style={{
+          minWidth: '80px', 
+          width: 'calc(50% - 2em)', 
+          margin: '1em', 
+          padding: 0,
+          paddingTop: 'auto',
+          borderRadius: '.28571429rem', 
+          border: 'none',
+          boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
+        }}
+        >
+        <img
+          className="mgb-pixelated"
+          src={tileset.image} 
+          width={width}
+          height={imgRatio * width}
+          style={{verticalAlign: 'middle'}}
+        />
+        <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.75)', color: 'white', textAlign: 'center', padding: 0, verticalAlign: 'middle', maxHeight: '1.5em'}}>
+          {
+            tileset.name.split(':')[1].length > 8
+            ?
+            (
+              tileset.name.split(':')[1].length > 12
+              ?
+              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1].slice(0, -2) + '..'}</p>
+              :
+              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1]}</p>
+            )
+            :
+            <p>{tileset.name.split(':')[1]}</p> 
+          }
+        </Label>
+      </Grid.Column >
+
+    )
+  }
+
   renderTileset(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList){
     const tss = this.props.tilesets
     let ts = this.tileset
@@ -139,32 +154,42 @@ export default class ActorTileset extends React.Component {
   }
 
   render(){
+    const label = this.props.getActiveLayerData().name === 'Events' ? 'Actors' : `Actors For ${this.props.getActiveLayerData().name} Layer`
+
     return (
       <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', height: '100%'}}>
-        <Label attached='top'>Actors For {this.props.getActiveLayerData().name} Layer </Label>
-          {
-            !this.props.tilesets.length 
-            ?
-            <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
-            :
-            (
-            this.props.getActiveLayerData().name === "Events"
-            ?
-            <div className="actor-disabled-hint">
-               <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>You cannot use Actors in the Events layer. Use the Events Tool instead.</p>
-            </div>
-            :
-            <div
-              className='active content tilesets accept-drop'
-              data-drop-text='Drop asset here to create TileSet'
-              onDrop={this.onDropOnLayer.bind(this)}
-              onDragOver={DragNDropHelper.preventDefault}
-              style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
-              >
-              {this.renderActors(1)}
-            </div>
-            )
-          }
+        <Label attached='top'>
+          {label}
+          <Icon 
+              size='large' 
+              name='trash' 
+              onClick={this.removeTileset}
+              style={{position: 'absolute', top: '5px', right: '-5px', cursor: 'pointer'}}
+          />
+        </Label>
+        {
+          !this.props.tilesets.length 
+          ?
+          <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
+          :
+          (
+          this.props.getActiveLayerData().name === "Events"
+          ?
+          <div className="actor-disabled-hint" style={{width: '100%', height: '100%', opacity: 1, backgroundColor: '#e8e8e8'}}>
+            <p className="title active" style={{color: 'black', borderTop: "none", paddingTop: 0}}>You cannot use Actors in the Events layer. Use the Events Tool instead.</p>
+          </div>
+          :
+          <div
+            className='active content tilesets accept-drop'
+            data-drop-text='Drop asset here to create TileSet'
+            onDrop={this.onDropOnLayer.bind(this)}
+            onDragOver={DragNDropHelper.preventDefault}
+            style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
+            >
+            {this.renderActors(1)}
+          </div>
+          )
+        }
       </Segment>
     )
   }

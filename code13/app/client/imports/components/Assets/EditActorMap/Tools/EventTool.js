@@ -26,16 +26,6 @@ export default class EventTool extends Tileset {
     this.props.setActiveLayerByName("Events")
   }
 
-  renderEmpty () {
-    return (
-      <Dropdown floating labeled button text="Events" id="mgbjr-MapTools-events" className='tilesets icon small ui button'>
-        <Dropdown.Menu>
-          {this.renderContent()}
-        </Dropdown.Menu>
-      </Dropdown>
-    )
-  }
-
   renderContent () {
     return (
       <canvas
@@ -50,9 +40,6 @@ export default class EventTool extends Tileset {
   }
 
   render () {
-    if (!this.props.tilesets.length) {
-      return this.renderEmpty()
-    }
     const ts = this.tileset
     // actions don't have actor..
     if (!ts.actor)

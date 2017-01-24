@@ -3,13 +3,13 @@ import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import QLink from '/client/imports/routes/QLink'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
-import Thumbnail from '/client/imports/components/Assets/Thumbnail.js'
+
 const _getAssetIdFromUrl = url => (url && url.startsWith("/api/asset/png")) ? _.last(url.split("/")) : null
 
 const _importFromDrop = (event, handleChange) => {
   const asset = DragNDropHelper.getAssetFromEvent(event)
   if (asset && asset.kind === 'graphic') {
-    const imgUrl = Thumbnail.getLink(asset._id, 60)
+    const imgUrl = makeCDNLink(`/api/asset/png/${asset._id}`)
     handleChange(imgUrl, asset._id)
   }
 }

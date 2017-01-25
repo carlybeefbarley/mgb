@@ -212,10 +212,17 @@ debugger   // DEAD CODE?
     const to = `/u/${c.byUserName}`
 
     const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
+    const currUser = Meteor.user()
+
     return (
       <div className="comment animated fadeInRight" key={c._id}>
         <QLink to={to} className="avatar">
-          <img src={makeCDNLink(`/api/user/${c.byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
+          {currUser._id == c.byUserId &&
+            <img src={makeCDNLink(`currUser.profile.avatar`)}></img>
+          }
+          {currUser._id != c.byUserId &&
+            <img src={makeCDNLink(`/api/user/${c.byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
+          }
         </QLink>
         <div className="content">
           <QLink to={to} className="author">{c.byUserName}</QLink>

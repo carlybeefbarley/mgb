@@ -78,12 +78,19 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
   const ago = moment(act.timestamp).fromNow()   // TODO: Make reactive
   const iconClass = ActivityTypes.getIconClass(act.activityType)  
 
+  const currUser = Meteor.user()
+
   return (
     <Feed.Event style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
       
       <Feed.Label>
         <QLink to={"/u/" + byUserName}>
-          <img src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
+          {currUser._id == byUserId &&
+            <img src={makeCDNLink(`currUser.profile.avatar`)}></img>
+          }
+          {currUser._id != byUserId &&
+            <img src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
+          }
         </QLink>
       </Feed.Label>
 

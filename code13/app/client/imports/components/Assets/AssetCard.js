@@ -164,6 +164,7 @@ export default AssetCard = React.createClass({
           handleChangeChosenProjectNames={this.handleChangeChosenProjectNames} />
     )
     const shownAssetName = asset.name || '(untitled)'
+    const currUser = Meteor.user()
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
@@ -243,8 +244,13 @@ export default AssetCard = React.createClass({
             </span>                           
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
-                <img className="ui avatar image" src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/60`, makeExpireTimestamp(60))}>
-                </img> {ownerName ? ownerName : `#${asset.ownerId}`}
+                {currUser._id == byUserId &&
+                  <img className="ui avatar image" src={makeCDNLink(`currUser.profile.avatar`)}></img>
+                }
+                {currUser._id != byUserId &&
+                  <img className="ui avatar image" src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
+                }
+                {ownerName ? ownerName : `#${asset.ownerId}`}
               </div>
             </QLink>
           </div>

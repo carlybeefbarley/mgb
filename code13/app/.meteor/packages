@@ -25,8 +25,8 @@ service-configuration@1.0.11
 react-meteor-data
 flemay:less-autoprefixer
 babel-runtime@1.0.1
-meteorhacks:kadira
-meteorhacks:kadira-profiler
+# meteorhacks:kadira
+# meteorhacks:kadira-profiler
 random@1.0.10
 okgrow:analytics
 reactive-dict@1.1.8

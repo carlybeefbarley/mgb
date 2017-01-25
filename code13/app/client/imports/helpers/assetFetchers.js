@@ -41,14 +41,13 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
 
 export const makeExpireThumbnailLink = (assetId, expires) => {
   // we need server time here !!!!
-  // time removed - as cloudfront will respect s-maxage directive - set by MGB server
-  //const now = Date.now()
-  //const nextUpdate = now - (now % (expires * 1000))
-  return makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${assetId}`)
+  return makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${assetId}`, makeExpireTimestamp(expires))
 }
 
 // use this to allow client NOT pull resources every time
 export const makeExpireTimestamp = (expires) => {
+  // we need server time here !!!!
+  
   const now = Date.now()
   // this will be timestamp rounded to seconds
   return now - (now % (expires * 1000))

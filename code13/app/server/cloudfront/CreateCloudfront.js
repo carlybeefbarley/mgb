@@ -5,7 +5,6 @@
  Check server_main.js - to enable this script for production
  */
 import AWS from 'aws-sdk'
-// this is @stauzs personal account
 import config from './config.json'
 import { WebApp } from 'meteor/webapp'
 import '/server/slackIntegration'
@@ -26,7 +25,8 @@ export const setUpCloudfront = function () {
     return
   }
 
-  // TODO(stauzs): make it automatic
+  // TODO(stauzs): make it automatic - AWS won't check if config has been really changed - so we need to do it manually
+  // don't set this to true unless you know what you are doing
   const needsUpddate = false
 // Config
   // TODO(stauzs): move these to ENV

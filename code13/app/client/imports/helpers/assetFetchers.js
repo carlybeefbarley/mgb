@@ -46,8 +46,7 @@ export const makeExpireThumbnailLink = (assetId, expires) => {
 
 // use this to allow client NOT pull resources every time
 export const makeExpireTimestamp = (expires) => {
-  // we need server time here !!!!
-  
+  // we need server time here - this will work only for !!!!
   const now = Date.now()
   // this will be timestamp rounded to seconds
   return now - (now % (expires * 1000))

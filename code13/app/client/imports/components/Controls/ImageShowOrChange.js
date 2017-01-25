@@ -9,7 +9,7 @@ const _getAssetIdFromUrl = url => (url && url.startsWith("/api/asset/png")) ? _.
 const _importFromDrop = (event, handleChange) => {
   const asset = DragNDropHelper.getAssetFromEvent(event)
   if (asset && asset.kind === 'graphic') {
-    const imgUrl = makeCDNLink(`/api/asset/png/${asset._id}`, Date.now())
+    const imgUrl = `/api/asset/png/${asset._id}?hash=${Date.now()}`
     handleChange(imgUrl, asset._id)
   }
 }

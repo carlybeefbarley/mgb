@@ -26,15 +26,16 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
       body: {}
     }
   }
-  const maxAge = !api.queryParams.expires ? DEFAULT_MAX_AGE : api.queryParams.expires
-  // some fallback mechanism
   if (!asset) {
     return {
       headers: headers,
       body: typeof body == "function" ? body() : body
     }
   }
+  // some fallback mechanism
+  const maxAge = !api.queryParams.expires ? DEFAULT_MAX_AGE : api.queryParams.expires
 
+  const cacheHeader = `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`
   const etag = genetag(asset)
   // pragma: no-store header will force cloudfront to skip cache totally
   // so remove it
@@ -47,7 +48,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
     api.response.writeHead(304, api.queryParams.hash
       ? Object.assign({
           etag: etag,
-          "cache-control": `public, max-age=${maxAge}, s-maxage=${maxAge}`
+          "cache-control": cacheHeader
         }, headers)
 
       // no etag here - as we won't be able to invalidate it without hash
@@ -64,7 +65,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
     headers: api.queryParams.hash
       ? Object.assign({
         etag: etag,
-        "cache-control": `public, max-age=${maxAge}, s-maxage=${maxAge}`
+        "cache-control": cacheHeader
       }, headers)
       // no etag here - as we won't be able to invalidate it without hash
       : headers,

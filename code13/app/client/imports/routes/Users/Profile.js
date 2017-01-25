@@ -68,7 +68,7 @@ export default UserProfileRoute = React.createClass({
       else 
       {
        // Go through all the keys, log completion tags for each
-        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))     
+        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))
       }
     })
   },

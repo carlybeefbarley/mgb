@@ -54,7 +54,6 @@ export default AssetCard = React.createClass({
   
   componentDidMount()
   {
-    this.dateMounted = Date.now()
     this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
     this.previewCtx = this.previewCanvas.getContext('2d')
 
@@ -244,7 +243,7 @@ export default AssetCard = React.createClass({
             </span>                           
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
-                <img className="ui avatar image" src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/30`, this.dateMounted)}>
+                <img className="ui avatar image" src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/60`, makeExpireTimestamp(60))}>
                 </img> {ownerName ? ownerName : `#${asset.ownerId}`}
               </div>
             </QLink>

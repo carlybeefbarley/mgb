@@ -10,7 +10,7 @@ import { isSameUserId } from '/imports/schemas/users'
 import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 const _propTypes = {
   currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -83,7 +83,7 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
       
       <Feed.Label>
         <QLink to={"/u/" + byUserName}>
-          <img src={makeCDNLink(`/api/user/${byUserId}/avatar/60`)}></img>
+          <img src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
         </QLink>
       </Feed.Label>
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeCDNLink, makeExpireLink } from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers'
 
 export default class Thumbnail extends React.Component {
   static propTypes = {
@@ -16,4 +16,4 @@ export default class Thumbnail extends React.Component {
   }
 }
 
-Thumbnail.getLink = makeExpireLink
+Thumbnail.getLink = makeExpireThumbnailLink

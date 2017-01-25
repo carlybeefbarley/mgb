@@ -6,11 +6,13 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
     var user = Meteor.users.findOne(this.urlParams.id)
     if (user && user.profile.avatar)
     {
+      const maxAge = 30
       return {
         statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
         headers: {
-          'Location': user.profile.avatar
-          // caching here will break redirects
+          'Location': user.profile.avatar,
+          'cache-control': `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`
+          // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
         },
         body: {}
       }
@@ -47,9 +49,9 @@ RestApi.addRoute('user/:id/avatar/:expires', {authRequired: false}, {
       return {
         statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
         headers: {
-          'Location': avatarLink
-          // caching here will break redirects
-          //'cache-control': `public, max-age=${maxAge}, s-maxage=${maxAge}`
+          'Location': avatarLink,
+          'cache-control': `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`
+          // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
         },
         body: {}
       }

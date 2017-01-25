@@ -32,7 +32,7 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
 
   if (uri.startsWith("/") && !uri.startsWith("//")) {
     if (!CDN_DOMAIN) {
-      return uri + "?cdnPassed"
+      return uri + `?hash=${hash}`
     }
     return `//${CDN_DOMAIN}${uri}?hash=${hash}`
   }

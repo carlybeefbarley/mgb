@@ -1,9 +1,14 @@
-/* this file will contain server specific generators - see also /imports/helpers/generators */
+// This helper is related to asset caching.
+// This file will contain server specific generators. 
+// See also /imports/helpers/generators for the client ETAG 
+//          generator 'genetag' (which we also import and export from this module)
 import { genetag } from '/imports/helpers/generators'
-import { getCDNDomain } from '../../cloudfront/CreateCloudfront.js'
+import { getCDNDomain } from '../../cloudfront/CreateCloudfront'
 export { genetag }
 
-const DEFAULT_MAX_AGE = 600 // 10 minutes - probably we can increase this
+const DEFAULT_MAX_AGE = 600 // This cache MAX_AGE config param is for dynamic requests (10 minutes) - probably we can increase this. This is not for static assets
+
+
 export const assetToCdn = (api, asset, uri) => {
   return {
     statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
@@ -15,9 +20,10 @@ export const assetToCdn = (api, asset, uri) => {
     body: {}
   }
 }
+
 // this will return only not-modified header if browser already has resource in the cache (based on etag)
-// it's good idea to pass body as function so heavy value calculations can be omitted if asset is not changed
-// e.g. transforming musing byteArray to base64 string
+// It's good idea to pass body as function so heavy value calculations can be omitted if asset is not changed
+// e.g. transforming music using byteArray to base64 string
 export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // default 404
   if (!body) {
@@ -29,7 +35,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   if (!asset) {
     return {
       headers: headers,
-      body: typeof body == "function" ? body() : body
+      body: (typeof body == "function") ? body() : body
     }
   }
   // some fallback mechanism
@@ -39,17 +45,16 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   const etag = genetag(asset)
   // pragma: no-store header will force cloudfront to skip cache totally
   // so remove it
-  if (api.queryParams.hash) {
+  if (api.queryParams.hash)
     api.response.removeHeader("pragma")
-  }
-
+  
   // check if client already have cached resource
   if (api.request.headers["if-none-match"] == etag) {
     api.response.writeHead(304, api.queryParams.hash
       ? Object.assign({
-          etag: etag,
-          "cache-control": cacheHeader
-        }, headers)
+        "etag": etag,
+        "cache-control": cacheHeader
+      }, headers)
 
       // no etag here - as we won't be able to invalidate it without hash
       : headers
@@ -69,6 +74,6 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
       }, headers)
       // no etag here - as we won't be able to invalidate it without hash
       : headers,
-    body: typeof body == "function" ? body() : body
+    body: (typeof body == "function") ? body() : body
   }
 }

@@ -12,7 +12,7 @@ import { showToast } from '/client/imports/routes/App'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 // TODO: Toast/error is a mess
 
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab

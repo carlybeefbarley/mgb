@@ -30,8 +30,8 @@ export const setUpCloudfront = function () {
   const needsUpddate = false
 // Config
   // TODO(stauzs): move these to ENV
-  const ORIGIN_DOMAIN_NAME = 'test.mygamebuilder.com' // v2.mygamebuilder.com
-  const ORIGIN_ID = Meteor.isProduction ? 'test.mygamebuilder.com' : 'test.mygamebuilder.com-dev'
+  const ORIGIN_DOMAIN_NAME = process.env.ORIGIN_DOMAIN_NAME ? process.env.ORIGIN_DOMAIN_NAME : 'test.mygamebuilder.com' // v2.mygamebuilder.com
+  const ORIGIN_ID = process.env.ORIGIN_ID ? process.env.ORIGIN_ID : (Meteor.isProduction ? 'test.mygamebuilder.com' : 'test.mygamebuilder.com-dev')
   const HTTP_PORT = Meteor.isProduction ? 80 : 3000
   const HTTPS_PORT = 443
   const params = {

@@ -58,6 +58,7 @@ export const setUpCloudFront = function () {
   const ORIGIN_ID = process.env.ORIGIN_ID || (Meteor.isProduction ? DEFAULT_CUSTOMER_FACING_MGB_ORIGIN_ID : DEFAULT_ISDEVELOPMENT_MGB_CLOUDFRONT_ORIGIN_ID)
   const HTTP_PORT = Meteor.isProduction ? 80 : 3000
   const HTTPS_PORT = 443
+  // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html
   const params = { // AWS CloudFront Params. Comments are from their docs 
     DistributionConfig: {
       /* required */
@@ -77,8 +78,8 @@ export const setUpCloudFront = function () {
           },
           QueryString: true, /* required - this will affect update to new sources - e.g. meteor uses hash=xxxxxx */
           Headers: {
-            Quantity: 0, /* required - send all headers to origin ?? or none */
-            Items: []
+            Quantity: 1, /* required - send all headers to origin ?? or none */
+            Items: ["Origin"]
           },
           QueryStringCacheKeys: {
             Quantity: 0, /* required */

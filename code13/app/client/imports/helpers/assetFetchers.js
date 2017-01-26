@@ -28,8 +28,20 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
   const hash = etagOrHash != null ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
 
-  if (uri.startsWith("/") && !uri.startsWith("//"))
-    return CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
+
+  const base = __meteor_runtime_config__.ROOT_URL
+
+  if (uri.startsWith("/") && !uri.startsWith("//")){
+    if(CDN_DOMAIN){
+      return `//${CDN_DOMAIN}${uri}?hash=${hash}`
+    }
+    else{
+      if(__meteor_runtime_config__.ROOT_URL != document.location.origin){
+        return `${__meteor_runtime_config__.ROOT_URL}${uri}?hash=${hash}`
+      }
+    }
+    const ret = CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
+  }
 
   return uri
 }
@@ -137,6 +149,9 @@ const removeFromCache = uri => {
 // asset param is optional - without it this function will work as normal ajax
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
 export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
+  if(__meteor_runtime_config__.ROOT_URL != document.location.origin && uri.startsWith('/') && !uri.startsWith('//')){
+    return mgbAjax(__meteor_runtime_config__.ROOT_URL+uri, callback, asset, onRequestOpen)
+  }
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
   if (etag) {
     const cached = getFromCache(uri, etag)

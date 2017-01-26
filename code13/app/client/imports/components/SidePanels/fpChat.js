@@ -218,7 +218,7 @@ debugger   // DEAD CODE?
       <div className="comment animated fadeInRight" key={c._id}>
         <QLink to={to} className="avatar">
           {currUser._id == c.byUserId &&
-            <img src={makeCDNLink(`currUser.profile.avatar`)}></img>
+            <img src={makeCDNLink(currUser.profile.avatar)}></img>
           }
           {currUser._id != c.byUserId &&
             <img src={makeCDNLink(`/api/user/${c.byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>

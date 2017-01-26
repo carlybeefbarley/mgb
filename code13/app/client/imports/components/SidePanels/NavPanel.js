@@ -5,26 +5,17 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
 import { utilPushTo } from '/client/imports/routes/QLink'
+import QLink from '/client/imports/routes/QLink'
 
-import { Icon, Menu, Segment, Image } from 'semantic-ui-react'
-// import npHome from './npHome'
-// import npPlay from './npPlay'
-// import NpLearn from './npLearn'
-// import npCreate from './npCreate'
-// import npPeople from './npPeople'
+import { Menu, Image, Dropdown, Button } from 'semantic-ui-react'
 import NavPanelItem from './NavPanelItem'
-// import npHistory from './npHistory'
-// import npProjects from './npProjects'
 // import urlMaker from '/client/imports/routes/urlMaker'
 import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 
-// import reactMixin from 'react-mixin'
+import reactMixin from 'react-mixin'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
-// const _npFeatureLevelHideWords = 4  // At this NavPanel featureLevel (or greater), don't show the words for the icons
-
-// import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 export default NavPanel = React.createClass({
   mixins: [ReactMeteorData],
@@ -32,7 +23,7 @@ export default NavPanel = React.createClass({
   propTypes: {
     currUser: PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects: PropTypes.array,              // Projects list for currently logged in user
-    navPanelWidth: PropTypes.string,             // e.g. '60px'.. Width of reserved space
+    navPanelWidth: PropTypes.number,                // Width of the whole page area
     fpReservedFooterHeight: PropTypes.string.isRequired,  // Something like 0px or 60px typically
     fpReservedRightSidebarWidth: PropTypes.string.isRequired   // Something like 0px or 60px typically
   },
@@ -58,10 +49,6 @@ export default NavPanel = React.createClass({
         getDirectUrl: () => '/learn',
         hideIfNoUser: false,
         menu: _.compact([
-          {
-            subcomponent: 'Header',
-            content: 'Tutorials'
-          },
           {
             subcomponent: 'Item',
             to: '/learn/getStarted',
@@ -102,7 +89,7 @@ export default NavPanel = React.createClass({
         getDirectUrl: () => '/assets/create',
         hideIfNoUser: false,
         menu: !currUser ? [
-            // logged out menu
+            // logged-out menu
             {
               subcomponent: 'Item',
               to: '/signup',
@@ -111,14 +98,7 @@ export default NavPanel = React.createClass({
               content: 'Sign Up to Create',
             },
           ] : [
-            // logged in menu
-            {
-              subcomponent: 'Header',
-              id: 'mgbjr-np-create-myAssets-hdr',
-              to: `/u/${currUser.profile.name}/assets`,
-              content: 'My Assets',
-            },
-
+            // logged-in menu
             {
               subcomponent: 'Item',
               id: 'mgbjr-np-create-myAssets',
@@ -132,19 +112,8 @@ export default NavPanel = React.createClass({
               id: 'mgbjr-np-create-createNewAsset',
               to: `/assets/create`,
               title: 'Create New Asset',
-              icon: (
-                <Icon.Group>
-                  <Icon name='pencil' />
-                  <Icon corner name='add' />
-                </Icon.Group>
-              ),
+              icon: { name: 'pencil', color: 'green' },
               content: 'Create New Asset',
-            },
-            {
-              subcomponent: 'Header',
-              id: 'mgbjr-np-my-projects-hdr',
-              to: `/u/${currUser.profile.name}/projects`,
-              content: 'My Projects',
             },
 
             {
@@ -171,10 +140,11 @@ export default NavPanel = React.createClass({
         getDirectUrl: () => '/games',
         hideIfNoUser: false,
         menu: [
-          { subcomponent: 'Header', content: 'Start a Game' },
+          // { subcomponent: 'Header', content: 'Start a Game' },
           {
             subcomponent: 'Item',
             id: 'mgbjr-np-play-popularGames',
+            icon: { name: 'game', color: 'blue' },
             to: '/games',
             query: { sort: 'plays' },
             content: 'Popular Games',
@@ -182,15 +152,16 @@ export default NavPanel = React.createClass({
           {
             subcomponent: 'Item',
             id: 'mgbjr-np-play-updatedGames',
+            icon: { name: 'game', color: 'green' },
             to: '/games',
             query: { sort: 'edited' },
             content: 'Updated Games',
-          },
-          {
-            subcomponent: 'Item',
-            to: '/games',
-            content: '(no saved games yet)',
           }
+          // {
+          //   subcomponent: 'Item',
+          //   to: '/games',
+          //   content: '(no saved games yet)',
+          // }
         ]
       },
       {
@@ -201,7 +172,7 @@ export default NavPanel = React.createClass({
         getDirectUrl: () => '/users',
         hideIfNoUser: false,
         menu: [
-          { subcomponent: 'Header', icon: 'street view' },
+          // { subcomponent: 'Header', content: 'Meet' },
           {
             subcomponent: 'Item',
             id: 'mgbjr-np-meet-allUsers',
@@ -249,84 +220,64 @@ export default NavPanel = React.createClass({
         hdr: 'Home',
         getDirectUrl: (uname) => uname ? `/u/${uname}` : '/login',
         hideIfNoUser: false,
-        menu: [
-          // always present items
+        menu: (!currUser ? 
+        [
+          // logged out menu
+          {
+            to: '/login',
+            id: 'mgbjr-np-home-login',
+            subcomponent: 'Item',
+            content: 'Log In',
+          },
+          {
+            to: '/signup',
+            id: 'mgbjr-np-home-signup',
+            subcomponent: 'Item',
+            content: 'Sign Up',
+          },
+        ] : 
+        [
+          // logged in menu
           {
             subcomponent: 'Header',
-            content: 'Home Page',
-            to: '/',
-          },
-          {
-            to: '/whatsnew',
-            subcomponent: 'Item',
-            content: (
-              <div>
-                What's New
-                <WhatsNew currUser={currUser} />
-              </div>
-            ),
+            content: this.props.currUser.profile.name
           },
           {
             subcomponent: 'Item',
-            to: '/roadmap',
-            content: 'Roadmap',
+            to: `/u/${this.props.currUser.profile.name}/badges`,
+            id: 'mgbjr-np-home-myBadges',
+            icon: 'trophy',
+            content: 'My Badges',
           },
           {
-            subcomponent: 'Divider',
+            subcomponent: 'Item',
+            to: `/u/${this.props.currUser.profile.name}/games`,
+            id: 'mgbjr-np-home-myGames',
+            icon: 'game',
+            content: 'My Games',
           },
-        ].concat(!currUser ? [
-            // logged out menu
-            {
-              to: '/login',
-              id: 'mgbjr-np-home-login',
-              subcomponent: 'Item',
-              content: 'Log In',
-            },
-            {
-              to: '/signup',
-              id: 'mgbjr-np-home-signup',
-              subcomponent: 'Item',
-              content: 'Sign Up',
-            },
-          ] : [
-            // logged in menu
-            {
-              subcomponent: 'Item',
-              to: `/u/${this.props.currUser.profile.name}/badges`,
-              id: 'mgbjr-np-home-myBadges',
-              icon: 'trophy',
-              content: 'My Badges',
-            },
-            {
-              subcomponent: 'Item',
-              to: `/u/${this.props.currUser.profile.name}/games`,
-              id: 'mgbjr-np-home-myGames',
-              icon: 'game',
-              content: 'My Games',
-            },
-            {
-              subcomponent: 'Item',
-              to: `/u/${this.props.currUser.profile.name}/projects`,
-              id: 'mgbjr-np-home-myProjects',
-              icon: 'sitemap',
-              content: 'My Projects',
-            },
-            {
-              subcomponent: 'Item',
-              to: `/u/${currUser.username}/skilltree`,
-              id: 'mgbjr-np-home-mySkills',
-              icon: 'plus circle',
-              content: 'My Skills',
-            },
-            {
-              subcomponent: 'Item',
-              query: { '_fp': 'features' },
-              id: 'mgbjr-np-home-settings',
-              icon: 'options',
-              content: 'Settings',
-            }
-          ]
-        )
+          {
+            subcomponent: 'Item',
+            to: `/u/${this.props.currUser.profile.name}/projects`,
+            id: 'mgbjr-np-home-myProjects',
+            icon: 'sitemap',
+            content: 'My Projects',
+          },
+          {
+            subcomponent: 'Item',
+            to: `/u/${currUser.username}/skilltree`,
+            id: 'mgbjr-np-home-mySkills',
+            icon: 'plus circle',
+            content: 'My Skills',
+          },
+          {
+            subcomponent: 'Item',
+            query: { '_fp': 'features' },
+            id: 'mgbjr-np-home-settings',
+            icon: 'options',
+            content: 'Settings',
+          }
+        ])
       }
     ]
   },
@@ -345,12 +296,8 @@ export default NavPanel = React.createClass({
   // },
 
   render() {
-    const { currUser, currUserProjects, fpReservedRightSidebarWidth } = this.props
-
-    const menuStyle = {
-      width: window.outerWidth - parseInt(fpReservedRightSidebarWidth),
-    }
-
+    const { currUser, currUserProjects } = this.props
+    const menuStyle = { borderRadius: 0, marginBottom: 0 }
     const npFeatureLevel = this.data.npFeatureLevel || 2
 
     // TODO: wire joyride into new NavPanelItem experience
@@ -377,28 +324,49 @@ export default NavPanel = React.createClass({
       .map(v => <NavPanelItem key={v.name} hdr={v.hdr} menu={v.menu} />)
 
     return (
-      <Menu fixed='top' inverted style={menuStyle}>
+      <Menu inverted style={menuStyle}>
         {/* The brand */}
-        <Menu.Item href='/' style={{ padding: 0 }}>
-          <img src='/images/logo-inverted-puzzle-joystick.png' style={{ width: 130 }} />
-        </Menu.Item>
-
+          <Dropdown item simple trigger={(
+            <Menu.Item color='black' style={{ padding: '0px 8px' }}>
+              <QLink to='/'>
+                <img src='/images/logo-inverted-puzzle-joystick.png' style={{ width: 130 }} />
+              </QLink>
+            </Menu.Item>
+          )} icon={null}>
+          <Dropdown.Menu>
+            <Dropdown.Item>
+              <div>
+                <QLink to='/whatsnew'>
+                  What's New&emsp;
+                  <WhatsNew currUser={currUser} />
+                </QLink>
+              </div>
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <div>
+                <QLink to='/roadmap'>
+                  Roadmap
+                </QLink>
+              </div>
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        
         {/* items */}
         { navPanelItems}
 
         {/* The user menu */}
-        {currUser && (
-          <Menu.Menu position='right'>
-            {currUser ? (
-                <NavPanelItem
-                  hdr={<Image centered avatar src={_.get(currUser, 'profile.avatar', 'http://placehold.it/50')} />}
-                  menu={_.get(_.find(allNavPanels, { name: 'home' }), 'menu')}
-                />
-              ) : (
-                <Button content='Login' /> // TODO: wire up login
-              )}
-          </Menu.Menu>
-        )}
+        <Menu.Menu position='right'>
+          {currUser ? (
+            <NavPanelItem
+              hdr={<Image centered avatar src={_.get(currUser, 'profile.avatar', 'http://placehold.it/50')} />}
+              menu={_.get(_.find(allNavPanels, { name: 'home' }), 'menu')}
+              style={{ padding: '4px 8px'}}
+            />
+          ) : (
+            <Button content='Login' /> // TODO: wire up login
+          )}
+        </Menu.Menu>
       </Menu>
     )
   }

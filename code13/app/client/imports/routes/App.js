@@ -80,7 +80,7 @@ export const startSignUpTutorial = () => {
 const px = someNumber => (`${someNumber}px`)
 
 // NavPanel numbers
-const npColumn1WidthInPixels = 60             // The Column of Icons
+const npColumn1WidthInPixels = 0             // The Column of Icons (was 60). Now 0 for testing top-nav ui
 
 // NavBar numbers
 const navBarReservedHeightInPixels = 40
@@ -247,7 +247,7 @@ const App = React.createClass({
   },
 
   render() {
-    const { respData } = this.props
+    const { respData, respWidth } = this.props
     const { joyrideDebug } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
@@ -339,13 +339,6 @@ const App = React.createClass({
           debug={joyrideDebug} />
 
         <div>
-            <NavPanel
-              currUser={currUser}
-              currUserProjects={currUserProjects}
-              fpReservedFooterHeight={respData.fpReservedFooterHeight}
-              fpReservedRightSidebarWidth={respData.fpReservedRightSidebarWidth}
-              navPanelWidth={navPanelReservedWidth}
-            />
 
             { fFixedTopNavBar && navbar }
 
@@ -369,6 +362,14 @@ const App = React.createClass({
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
               <div style={mainPanelInnerDivSty}>
+                <NavPanel
+                  currUser={currUser}
+                  currUserProjects={currUserProjects}
+                  fpReservedFooterHeight={respData.fpReservedFooterHeight}
+                  fpReservedRightSidebarWidth={flexPanelWidth}
+                  navPanelWidth={respWidth}
+                />
+              
                 { !fFixedTopNavBar && navbar }
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {

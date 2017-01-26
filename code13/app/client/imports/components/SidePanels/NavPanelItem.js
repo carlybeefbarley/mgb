@@ -3,8 +3,8 @@ import QLink from '/client/imports/routes/QLink'
 import { Dropdown } from 'semantic-ui-react'
 import _ from 'lodash'
 
-const NavPanelItem = ({ hdr, menu }) => (
-  <Dropdown item simple trigger={hdr} icon={null}>
+const NavPanelItem = ({ hdr, menu, style }) => (
+  <Dropdown item simple trigger={hdr} icon={null} style={style}>
     <Dropdown.Menu>
       {_.map(menu, ({ subcomponent, ...subcomponentProps }) => {
         return React.createElement(Dropdown[subcomponent], {
@@ -26,7 +26,7 @@ NavPanelItem.propTypes = {
       PropTypes.node,
       PropTypes.object,
     ]),
-    content: PropTypes.string,
+    content: PropTypes.oneOfType([PropTypes.string,PropTypes.node])
   })),
 }
 

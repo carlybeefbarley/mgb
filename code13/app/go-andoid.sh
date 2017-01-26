@@ -6,7 +6,9 @@ export MONGO_OPLOG_URL=mongodb://oplog-reader:tiNmhsp1@ds021730-a0.mlab.com:2173
 export VELOCITY_DEBUG=1 
 export VELOCITY_DEBUG_MIRROR=1 
 export METEOR_PROFILE=1
-export CDN=http://d1asx9hahfq3ui.cloudfront.net
 echo Bundler cache size is now `du -s -h .meteor/local/bundler-cache/`
+rm -rf .meteor/local/bundler-cache/
+# remove old app - meteor don't update this for some reason
+rm -rf .meteor/local/cordova-build/www/application/
 meteor run android-device -p 0.0.0.0:3000 $@
 )

@@ -108,8 +108,6 @@ export default AssetEditRoute = React.createClass({
     this.checkForRedirect()
     this.m_deferredSaveObj = null
 
-    console.log("Mounted")
-
     //console.log("Preparing TICK Timer")
     this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => { 
       //console.log("TICK")
@@ -157,11 +155,11 @@ export default AssetEditRoute = React.createClass({
     let options = { sort: { timestamp: -1 } }
 
     return {
-      get asset(){
+      get asset() {
         return assetHandler.asset
       },
       // this will allow asset c2 update without extra ajax call
-      update(updateObj){
+      update(updateObj) {
         assetHandler.update(null, updateObj)
       },
 
@@ -169,9 +167,9 @@ export default AssetEditRoute = React.createClass({
       activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
       assetActivity: Activity.find(selector, options).fetch(),
 
-      get loading(){
+      get loading() {
         return !assetHandler.isReady
-      }    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
+      }    // Child components must be aware that 'activitySnapshots' and 'assetActivity' may still be loading. But we don't wait for them
     }
   },
 

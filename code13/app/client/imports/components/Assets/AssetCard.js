@@ -244,10 +244,10 @@ export default AssetCard = React.createClass({
             </span>                           
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
-                {currUser._id == asset.ownerId &&
+                {currUser && currUser._id == asset.ownerId &&
                   <img className="ui avatar image" src={makeCDNLink(currUser.profile.avatar)}></img>
                 }
-                {currUser._id != asset.ownerId &&
+                {(!currUser || currUser._id != asset.ownerId) &&
                   <img className="ui avatar image" src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/60`, makeExpireTimestamp(60))}></img>
                 }
                 {ownerName ? ownerName : `#${asset.ownerId}`}

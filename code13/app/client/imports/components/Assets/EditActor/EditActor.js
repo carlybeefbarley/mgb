@@ -50,7 +50,7 @@ export default class EditActor extends React.Component {
     const _makeContent = Element => (
       <Element 
           asset={this.props.asset} 
-          onchange={this.handleSave.bind(this)} 
+          onChange={this.handleSave.bind(this)}
           saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }/>
     )
     const _mkDisabled = actorTypesArray => _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])

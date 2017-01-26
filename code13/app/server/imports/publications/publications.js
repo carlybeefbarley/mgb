@@ -112,14 +112,20 @@ Meteor.publish('assets.public', function(
   return Azzets.find(selector, findOpts )
 })
 
-// Observe assets only - add limit??
+// Observe assets only - 
+//   TODO: add limit count?
+//   TODO: Add to DDP Rate Limiter list?
 // https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
-// selector can be id or user:asset/kind combo
+// selector can be an   id STRING  _or_ an object containing {.dn_OwnerName, .kind, .name }
 Meteor.publish('assets.public.partial.bySelector', function(selector) {
   const cleanSelector = typeof selector === "object" ? {dn_ownerName: selector.dn_ownerName, kind: selector.kind, name: selector.name } : selector
+
+  // TODO(@stauzs) Should server look for deleted assets? What about asset editors?
   const cursor = Azzets.find(cleanSelector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1}})
-  // publish to another client Collection - as partial data will ruin Azzets collection on the client side
-  // I know - this is ugly, but seems that there is no better solution
+  // Publish to another client Collection - as partial data will interfere with the
+  //   Azzets collection on the client side (Meteor miniMongo)
+  //   (@stauzs) I know - this is ugly, but seems that there is no better solution
+  //   TODO(@dgolds): Research and review to see if there was a better way.
   Mongo.Collection._publishCursor(cursor, this, 'PartialAzzets')
   this.ready()
 })
@@ -132,7 +138,7 @@ Meteor.publish('assets.public.byId', function(assetId) {
 // Return one asset. This is a good subscription for AssetEditRoute
 // Removed - as c2 is fetched and cached via ajax / cdn combo
 Meteor.publish('assets.public.byId.withContent2', function(assetId) {
-  console.error("FIX THIS: assets.public.byId.withContent2 has been removed")
+  console.error("DEPRECATED: assets.public.byId.withContent2 has been removed. How is this even being invoked!?")
   return null
 })
 

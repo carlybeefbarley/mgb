@@ -1,6 +1,8 @@
 {
   "galaxy.meteor.com": {
     "env": {
+      "ORIGIN_DOMAIN_NAME": "v2.mygamebuilder.com",
+      "ORIGIN_ID":          "v2.mygamebuilder.com",
       "MONGO_URL": "mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730",
       "MONGO_OPLOG_URL": "mongodb://oplog-reader:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/local?replicaSet=rs-ds021730&authSource=admin"
     }

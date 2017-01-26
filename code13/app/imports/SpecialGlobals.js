@@ -21,7 +21,7 @@ export default SpecialGlobals = {
     "gravity":        0.1
   },
 
-  // in a case that observers will turn out too sloe - we may change it to false - and then implement slow polling
+  // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling
   allowObservers: true,
   editCode: {
     maxFileSizeForAST: 100 * 1024, // 100 KB

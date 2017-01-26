@@ -42,6 +42,31 @@ export default NavPanel = React.createClass({
 
     return [
       {
+        tag: 'home',
+        name: 'home',
+        icon: 'home',
+        hdr: 'Home',
+        getDirectUrl: (uname) => uname ? `/u/${uname}` : '/login',
+        hideIfNoUser: false,
+        menu: [
+          {
+            subcomponent: 'Item',
+            to: '/whatsnew',
+            content: (
+              <div>
+                What's New&emsp;
+                <WhatsNew currUser={currUser} />
+              </div>
+            ),
+          },
+          {
+            subcomponent: 'Item',
+            to: '/roadmap',
+            content: 'Roadmap',
+          }
+        ]
+      },
+      {
         tag: "learn",
         name: "learn",
         icon: "student",
@@ -93,7 +118,6 @@ export default NavPanel = React.createClass({
             {
               subcomponent: 'Item',
               to: '/signup',
-              style: { marginTop: '8em' },
               key: 'join',
               content: 'Sign Up to Create',
             },
@@ -189,35 +213,11 @@ export default NavPanel = React.createClass({
           },
         ],
       },
-      // SKIP: this is going to flex panel
-      // {
-      //   tag: 'projects',
-      //   name: 'projects',
-      //   icon: 'sitemap',
-      //   hdr: 'Projects',
-      //   getDirectUrl: (uname) => uname ? `/u/${uname}/projects` : '/u/!vault/projects',
-      //   el: npProjects,
-      //   hideIfNoUser: true,
-      //   hideIfFewProjects: true,
-      //   showAtNavPanelFeatureLevel: 2
-      // },
-      // SKIP: this is going to flex panel
-      // {
-      //   tag: 'history',
-      //   name: 'history',
-      //   icon: 'history',
-      //   hdr: 'History',
-      //   getDirectUrl: (uname) => uname ? `/u/${uname}/assets` : '/assets',
-      //   el: npHistory,
-      //   hideIfNoUser: true,
-      //   hideIfLittleHistory: true,
-      //   showAtNavPanelFeatureLevel: 3
-      // },
       {
-        tag: 'home',
-        name: 'home',
-        icon: 'home',
-        hdr: 'Home',
+        tag: 'user',
+        name: 'user',
+        icon: 'user',
+        hdr: 'Login',
         getDirectUrl: (uname) => uname ? `/u/${uname}` : '/login',
         hideIfNoUser: false,
         menu: (!currUser ? 
@@ -225,13 +225,13 @@ export default NavPanel = React.createClass({
           // logged out menu
           {
             to: '/login',
-            id: 'mgbjr-np-home-login',
+            id: 'mgbjr-np-user-login',
             subcomponent: 'Item',
             content: 'Log In',
           },
           {
             to: '/signup',
-            id: 'mgbjr-np-home-signup',
+            id: 'mgbjr-np-user-signup',
             subcomponent: 'Item',
             content: 'Sign Up',
           },
@@ -245,35 +245,35 @@ export default NavPanel = React.createClass({
           {
             subcomponent: 'Item',
             to: `/u/${this.props.currUser.profile.name}/badges`,
-            id: 'mgbjr-np-home-myBadges',
+            id: 'mgbjr-np-user-myBadges',
             icon: 'trophy',
             content: 'My Badges',
           },
           {
             subcomponent: 'Item',
             to: `/u/${this.props.currUser.profile.name}/games`,
-            id: 'mgbjr-np-home-myGames',
+            id: 'mgbjr-np-user-myGames',
             icon: 'game',
             content: 'My Games',
           },
           {
             subcomponent: 'Item',
             to: `/u/${this.props.currUser.profile.name}/projects`,
-            id: 'mgbjr-np-home-myProjects',
+            id: 'mgbjr-np-user-myProjects',
             icon: 'sitemap',
             content: 'My Projects',
           },
           {
             subcomponent: 'Item',
             to: `/u/${currUser.username}/skilltree`,
-            id: 'mgbjr-np-home-mySkills',
+            id: 'mgbjr-np-user-mySkills',
             icon: 'plus circle',
             content: 'My Skills',
           },
           {
             subcomponent: 'Item',
             query: { '_fp': 'features' },
-            id: 'mgbjr-np-home-settings',
+            id: 'mgbjr-np-user-settings',
             icon: 'options',
             content: 'Settings',
           }
@@ -316,8 +316,8 @@ export default NavPanel = React.createClass({
         if (v.showAtNavPanelFeatureLevel && npFeatureLevel < v.showAtNavPanelFeatureLevel)
           return false
 
-        if (v.name === 'home')
-          return false // this goes in the `right menu`
+        if (v.name === 'user' || v.name === 'home')
+          return false // these are handled specially
 
         return true
       })
@@ -326,32 +326,18 @@ export default NavPanel = React.createClass({
     return (
       <Menu inverted style={menuStyle}>
         {/* The brand */}
-          <Dropdown item simple trigger={(
+          <NavPanelItem
+            hdr={(
             <Menu.Item color='black' style={{ padding: '0px 8px' }}>
               <QLink to='/'>
                 <img src='/images/logo-inverted-puzzle-joystick.png' style={{ width: 130 }} />
               </QLink>
             </Menu.Item>
-          )} icon={null}>
-          <Dropdown.Menu>
-            <Dropdown.Item>
-              <div>
-                <QLink to='/whatsnew'>
-                  What's New&emsp;
-                  <WhatsNew currUser={currUser} />
-                </QLink>
-              </div>
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <div>
-                <QLink to='/roadmap'>
-                  Roadmap
-                </QLink>
-              </div>
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        
+          )}
+            menu={_.get(_.find(allNavPanels, { name: 'home' }), 'menu')}
+            style={{ padding: '0px 8px'}} />
+
+
         {/* items */}
         { navPanelItems}
 
@@ -360,7 +346,7 @@ export default NavPanel = React.createClass({
           {currUser ? (
             <NavPanelItem
               hdr={<Image centered avatar src={_.get(currUser, 'profile.avatar', 'http://placehold.it/50')} />}
-              menu={_.get(_.find(allNavPanels, { name: 'home' }), 'menu')}
+              menu={_.get(_.find(allNavPanels, { name: 'user' }), 'menu')}
               style={{ padding: '4px 8px'}}
             />
           ) : (

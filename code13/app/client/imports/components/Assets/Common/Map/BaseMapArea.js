@@ -836,7 +836,6 @@ export default class MapArea extends React.Component {
     )
   }
 
-
   getNotification(){
     return this.data.width * this.data.height > 100000 ? <div>
       This map is larger than our recommended size - so editing may be slower than normal!
@@ -911,6 +910,7 @@ export default class MapArea extends React.Component {
         onContextMenu={e => { e.preventDefault(); return false;}}
         onMouseDown={this.handleMouseDown}
         onTouchStart={this.handleMouseDown}
+        onKeyPressCapture={e => {if (e.keyCode === 27) {this.clearActiveSelection; this.clearSelection }}}
         style={{ height: 640 + 'px', position: 'relative', margin: '10px 0' }}>
         {layers}
         <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref='mask' />

@@ -59,6 +59,10 @@ export default class ActorMapArea extends BaseMapArea {
     })
   }
 
+  showInfo() {
+
+  }
+
   renderMage() {
     const { asset, playDataIsReady } = this.props
 
@@ -98,7 +102,7 @@ export default class ActorMapArea extends BaseMapArea {
         >
         { this.getNotification() }
         { this.renderMap() }
-        <Segment inverted secondary>
+        <Segment className='inspect-info' style={{display: 'none'}} inverted secondary>
           <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
         </Segment>
       </div>

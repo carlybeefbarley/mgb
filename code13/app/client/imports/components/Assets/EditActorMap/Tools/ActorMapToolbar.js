@@ -150,7 +150,7 @@ export default class MapToolbar extends React.Component {
           icon: 'wizard',
           active: this.props.options.mode == EditModes.wand,
           label: 'Magic Wand',
-          tooltip: 'Magic Wand selection - select adjacent tiles with same ID',
+          tooltip: 'Magic Wand selection - Select adjacent tiles with same ID',
           disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
           level: 12
         },
@@ -159,7 +159,7 @@ export default class MapToolbar extends React.Component {
           active: this.props.options.mode == EditModes.picker,
           icon: 'qrcode picker',
           label: 'Tile Picker',
-          tooltip: 'Tile Picker - Select All tiles with same ID',
+          tooltip: 'Tile Picker - Select all tiles with same ID',
           disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
           level: 13
         },
@@ -170,7 +170,17 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Clear selected tiles and/or objects',
           level: 4,
           disabled
+        },
+        {
+          name: 'inspect',
+          active: this.props.options.mode == EditModes.inspect,
+          icon: 'search',
+          label: 'Inspect',
+          tooltip: 'Inspect tool - Get information of Actors on the hovered tile',
+          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
+          level: 7
         }
+
       ]
     }
 

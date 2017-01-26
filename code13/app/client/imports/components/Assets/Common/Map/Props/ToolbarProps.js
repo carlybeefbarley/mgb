@@ -100,6 +100,11 @@ const TB = {
     this.refs.map.clearSelection()
   },
 
+  inspect: function(){
+    TB.enableMode.call(this, EditModes.inspect)
+
+  },
+
   togglePolygon: function(){
     const l = this.refs.map.getActiveLayer()
     if (!l || !l.toggleFill) {

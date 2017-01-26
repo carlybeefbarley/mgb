@@ -5,7 +5,6 @@ import { showToast } from '/client/imports/routes/App'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
-import ActorControls from './ActorControls.js'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import _ from 'lodash'
 
@@ -16,19 +15,18 @@ export default class ActorTileset extends React.Component {
     return this.props.tilesets[this.props.activeTileset]
   }
 
-  componentWillUpdate() {
-  }
-
   selectTileset(index, tileset) {
     this.props.clearActiveSelection()
-    this.props.selectTileset(index)
     const selectedTile = new SelectedTile()
-    selectedTile.getGid(tileset)
+    const gid = selectedTile.getGid(tileset)
     this.props.selectTile(selectedTile)
+    this.props.selectTileset(index)
   }
 
   removeTileset = () => {
+    if (!this.props.activeTileset || this.props.activeTileset.firstgid < 100) { return } // Don't remove Events
     this.props.removeTileset(this.props.activeTileset)
+    this.props.clearActiveSelection() 
   } 
 
   onDropOnLayer (e) {
@@ -71,6 +69,17 @@ export default class ActorTileset extends React.Component {
     })
   }
 
+  getTilePosInfo (e) {
+    const ts = this.tileset
+    // image has not been loaded
+    if (!ts) {
+      return
+    }
+    const pos = new SelectedTile()
+    pos.updateFromMouse(e, ts, this.spacing)
+    return pos
+  }
+
  // Render functions for Actors
   renderActors(from = 0, to = this.props.tilesets.length){
     return (
@@ -88,7 +97,7 @@ export default class ActorTileset extends React.Component {
     return (
       <Grid.Column
         title={title}
-        className={"tilesetPreview" + (index === this.props.activeTileset ? " active" : '')}
+        className={"tilesetPreview" + ( isActive ? " selectedTileset" : '')}
         key={index}
         onClick={() => {
           this.selectTileset(index, tileset)
@@ -103,6 +112,7 @@ export default class ActorTileset extends React.Component {
           borderRadius: '.28571429rem', 
           border: 'none',
           boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
+          opacity: 0.7
         }}
         >
         <img
@@ -136,19 +146,19 @@ export default class ActorTileset extends React.Component {
     const tss = this.props.tilesets
     let ts = this.tileset
     const tilesets = []
-    const layer = this.props.getActiveLayerData()
     let count = 0
 
     for (let i = from; i < to; i++) {
-      let isValidForLayer = layer ? ActorHelper.checks[layer.name](tss[i]) : true
-      if (isValidForLayer)
+      if (ActorHelper.checks[this.props.getActiveLayerData().name](tss[i])) {
         tilesets.push( genTemplate.call(this, i, tss[i] === ts, tss[i]) )
         count++
+      }
     }
 
     // Dummy div for left-justified two-column grid that resizes and centers when switched to single column for smaller widths
-    if (count % 2 !== 0) 
+    if (count % 2 !== 0) {
       tilesets.push(<Grid.Column key={-1} style={{height: 0, minWidth: '80px', width: 'calc(50% - 2em)', margin: '0 1em 0 1em'}} />)
+    }
 
     return tilesets
   }
@@ -160,12 +170,15 @@ export default class ActorTileset extends React.Component {
       <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', height: '100%'}}>
         <Label attached='top'>
           {label}
+          {
+          this.props.getActiveLayerData().name !== "Events" && (this.props.tilesets && this.props.tilesets.length > 1) &&
           <Icon 
               size='large' 
               name='trash' 
               onClick={this.removeTileset}
               style={{position: 'absolute', top: '5px', right: '-5px', cursor: 'pointer'}}
           />
+          }
         </Label>
         {
           !this.props.tilesets.length 
@@ -175,8 +188,7 @@ export default class ActorTileset extends React.Component {
           (
           this.props.getActiveLayerData().name === "Events"
           ?
-          <div className="actor-disabled-hint" style={{width: '100%', height: '100%', opacity: 1, backgroundColor: '#e8e8e8'}}>
-            <p className="title active" style={{color: 'black', borderTop: "none", paddingTop: 0}}>You cannot use Actors in the Events layer. Use the Events Tool instead.</p>
+          <div >
           </div>
           :
           <div
@@ -186,7 +198,7 @@ export default class ActorTileset extends React.Component {
             onDragOver={DragNDropHelper.preventDefault}
             style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
             >
-            {this.renderActors(1)}
+            {this.renderActors()}
           </div>
           )
         }

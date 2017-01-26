@@ -220,7 +220,7 @@ debugger   // DEAD CODE?
           {currUser && currUser._id == c.byUserId &&
             <img src={makeCDNLink(currUser.profile.avatar)}></img>
           }
-          {(!currUser || currUser._id != asset.ownerId) &&
+          {(!currUser || currUser._id != c.byUserId) &&
             <img src={makeCDNLink(`/api/user/${c.byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
           }
         </QLink>

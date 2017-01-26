@@ -247,7 +247,7 @@ export default AssetCard = React.createClass({
                 {currUser && currUser._id == asset.ownerId &&
                   <img className="ui avatar image" src={makeCDNLink(currUser.profile.avatar)}></img>
                 }
-                {!currUser || currUser._id != asset.ownerId &&
+                {(!currUser || currUser._id != asset.ownerId) &&
                   <img className="ui avatar image" src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/60`, makeExpireTimestamp(60))}></img>
                 }
                 {ownerName ? ownerName : `#${asset.ownerId}`}

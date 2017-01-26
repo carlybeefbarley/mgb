@@ -270,12 +270,13 @@ const App = React.createClass({
 
     // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelReservedWidth = px(npColumn1WidthInPixels)     // Reserved width to render perma-column of Nav icons
-
     // The Flex Panel is for communications and common quick searches in a right hand margin (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
     const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels) : px(fpFlexPanelContentWidthInPixels)
     const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
+
+    const navPanelAvailableWidth = respWidth-parseInt(flexPanelWidth)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
@@ -365,9 +366,8 @@ const App = React.createClass({
                 <NavPanel
                   currUser={currUser}
                   currUserProjects={currUserProjects}
-                  fpReservedFooterHeight={respData.fpReservedFooterHeight}
                   fpReservedRightSidebarWidth={flexPanelWidth}
-                  navPanelWidth={respWidth}
+                  navPanelAvailableWidth={navPanelAvailableWidth}
                 />
               
                 { !fFixedTopNavBar && navbar }

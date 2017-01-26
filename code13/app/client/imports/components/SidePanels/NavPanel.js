@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Menu, Image, Header } from 'semantic-ui-react'
+import { Menu, Image, Header, Icon } from 'semantic-ui-react'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
@@ -15,8 +15,7 @@ export default NavPanel = React.createClass({
   propTypes: {
     currUser: PropTypes.object,                           // Currently Logged in user. Can be null/undefined
     currUserProjects: PropTypes.array,                    // Projects list for currently logged in user
-    navPanelWidth: PropTypes.number,                      // Width of the whole page area
-    fpReservedFooterHeight: PropTypes.string.isRequired,  // Something like 0px or 60px typically
+    navPanelAvailableWidth: PropTypes.number,             // Width of the page area available for NavPanel menu
     fpReservedRightSidebarWidth: PropTypes.string.isRequired   // Something like 0px or 60px typically
   },
 
@@ -208,7 +207,7 @@ export default NavPanel = React.createClass({
           // logged in menu
           {
             subcomponent: 'Header',
-            content: <Header>{uname}</Header>
+            content: <Header style={{paddingLeft: '1.2em'}}>{uname}</Header>
           },
           {
             subcomponent: 'Item',
@@ -252,8 +251,9 @@ export default NavPanel = React.createClass({
 
 
   render() {
-    const { currUser } = this.props
+    const { currUser, navPanelAvailableWidth } = this.props
     const menuStyle = { borderRadius: 0, marginBottom: 0 }
+    const useIcons = navPanelAvailableWidth < 500  // px
 
     // TODO: wire joyride into new NavPanelItem experience
     // if (selectedViewTag && ElementNP !== null)
@@ -263,7 +263,7 @@ export default NavPanel = React.createClass({
 
     const navPanelItems = allNavPanels
       .filter(v => (v.name !== 'user'))
-      .map(v => <NavPanelItem key={v.name} hdr={v.hdr} menu={v.menu} to={v.to}/>)
+      .map(v => <NavPanelItem key={v.name} hdr={useIcons ?  <Icon size='large' name={v.icon}/> : v.hdr} menu={v.menu} to={v.to}/>)
 
     return (
       <Menu inverted style={menuStyle}>

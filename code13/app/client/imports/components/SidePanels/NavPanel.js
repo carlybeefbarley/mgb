@@ -39,6 +39,7 @@ export default NavPanel = React.createClass({
 
   getNavPanels() {
     const { currUser }  = this.props
+    const uname = currUser ? currUser.username : null
 
     return [
       {
@@ -46,7 +47,7 @@ export default NavPanel = React.createClass({
         name: 'home',
         icon: 'home',
         hdr: 'Home',
-        getDirectUrl: (uname) => uname ? `/u/${uname}` : '/login',
+        to: '/',
         hideIfNoUser: false,
         menu: [
           {
@@ -71,7 +72,7 @@ export default NavPanel = React.createClass({
         name: "learn",
         icon: "student",
         hdr: "Learn",
-        getDirectUrl: () => '/learn',
+        to: '/learn',
         hideIfNoUser: false,
         menu: _.compact([
           {
@@ -111,7 +112,7 @@ export default NavPanel = React.createClass({
         name: 'create',
         icon: 'pencil',
         hdr: 'Create',
-        getDirectUrl: () => '/assets/create',
+        to: '/assets/create',
         hideIfNoUser: false,
         menu: !currUser ? [
             // logged-out menu
@@ -161,10 +162,9 @@ export default NavPanel = React.createClass({
         name: 'play',
         icon: 'game',
         hdr: 'Play',
-        getDirectUrl: () => '/games',
+        to: '/games',
         hideIfNoUser: false,
         menu: [
-          // { subcomponent: 'Header', content: 'Start a Game' },
           {
             subcomponent: 'Item',
             id: 'mgbjr-np-play-popularGames',
@@ -181,11 +181,6 @@ export default NavPanel = React.createClass({
             query: { sort: 'edited' },
             content: 'Updated Games',
           }
-          // {
-          //   subcomponent: 'Item',
-          //   to: '/games',
-          //   content: '(no saved games yet)',
-          // }
         ]
       },
       {
@@ -193,7 +188,7 @@ export default NavPanel = React.createClass({
         name: 'meet',
         icon: 'street view',
         hdr: 'Meet',
-        getDirectUrl: () => '/users',
+        to: '/users',
         hideIfNoUser: false,
         menu: [
           // { subcomponent: 'Header', content: 'Meet' },
@@ -218,7 +213,7 @@ export default NavPanel = React.createClass({
         name: 'user',
         icon: 'user',
         hdr: 'Login',
-        getDirectUrl: (uname) => uname ? `/u/${uname}` : '/login',
+        to: uname ? `/u/${uname}` : '/login',
         hideIfNoUser: false,
         menu: (!currUser ? 
         [
@@ -321,7 +316,7 @@ export default NavPanel = React.createClass({
 
         return true
       })
-      .map(v => <NavPanelItem key={v.name} hdr={v.hdr} menu={v.menu} />)
+      .map(v => <NavPanelItem key={v.name} hdr={v.hdr} menu={v.menu} to={v.to}/>)
 
     return (
       <Menu inverted style={menuStyle}>
@@ -329,12 +324,11 @@ export default NavPanel = React.createClass({
           <NavPanelItem
             hdr={(
             <Menu.Item color='black' style={{ padding: '0px 8px' }}>
-              <QLink to='/'>
-                <img src='/images/logo-inverted-puzzle-joystick.png' style={{ width: 130 }} />
-              </QLink>
+              <img src='/images/logo-inverted-puzzle-joystick.png' style={{ width: 130 }} />
             </Menu.Item>
           )}
             menu={_.get(_.find(allNavPanels, { name: 'home' }), 'menu')}
+            to={_.get(_.find(allNavPanels, { name: 'home' }), 'to')}
             style={{ padding: '0px 8px'}} />
 
 
@@ -347,6 +341,7 @@ export default NavPanel = React.createClass({
             <NavPanelItem
               hdr={<Image centered avatar src={_.get(currUser, 'profile.avatar', 'http://placehold.it/50')} />}
               menu={_.get(_.find(allNavPanels, { name: 'user' }), 'menu')}
+              to={_.get(_.find(allNavPanels, { name: 'user' }), 'to')}
               style={{ padding: '4px 8px'}}
             />
           ) : (

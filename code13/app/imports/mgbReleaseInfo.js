@@ -28,6 +28,30 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
+      'timestamp': 'Wed Jan 25 2017 16:45:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2531-scale'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'core.scalability',
+          'type': 'feature',
+          'changeName': 'Caching and CDN distribution',
+          'changeSummary': '@stauzs is making it all go fast. Wheeee',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Tue Jan 17 2017 10:20:00 GMT-0800 (PST)',
 
       'id': {

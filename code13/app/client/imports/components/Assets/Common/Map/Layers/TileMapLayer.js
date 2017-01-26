@@ -270,71 +270,71 @@ export default class TileMapLayer extends AbstractLayer {
   // large maps are still slow on movement..
   // dirty rectalngles (in our case dirty tiles :) are great for super fast map movement
   draw () {
-    this.nextDraw = Date.now()
+    this.nextDraw = this.now
   }
   drawTiles () {
     this.draw()
   }
-  queueDrawTiles (timeout) {
-    if (this.nextDraw - Date.now() > timeout) {
-      this.nextDraw = Date.now() + timeout
-    }
-  }
 
-  _draw (now) {
-    if (!(this.nextDraw <= now)) {
+  _draw (now, force) {
+    this.now = now
+    if ( !force && this.nextDraw > now ) {
       return
     }
+
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height)
     if(!this.isVisible){
       return
     }
-    this.now = now
     const ts = this.props.data
     const d = ts.data
     const palette = this.props.palette
     const mapData = this.props.mapData
     const camera = this.camera
-
-    const pos = {x: 0, y: 0}
     if (!d) {
       return
     }
 
-    this.nextDraw = now + this.drawInterval
+
+    this.queueDraw(this.drawInterval)
 
     const widthInTiles = Math.ceil((this.ctx.canvas.width / camera.zoom) / mapData.tilewidth)
     const heightInTiles = Math.ceil((this.ctx.canvas.height / camera.zoom) / mapData.tileheight)
 
-    let skipy = Math.floor(-camera.y / mapData.tileheight)
-    // at least for now
-    if (skipy < 0) {skipy = 0;}
-    let endy = skipy + heightInTiles * 2
+    let skipy = Math.floor(-camera.y / mapData.tileheight) // debug + 2
+    let endy = skipy + heightInTiles + 1 // +1 as last line of tiles
     endy = Math.min(endy, this.options.height)
-    // endy += 1
 
-    let skipx = Math.floor(-camera.x / mapData.tilewidth)
-    let endx = skipx + widthInTiles * 2
+    let skipx = Math.floor(-camera.x / mapData.tilewidth) // debug + 2
+    let endx = skipx + widthInTiles + 1
     endx = Math.min(endx, this.options.width)
-    // endx += 1
 
-    // loop through large tiles
+    // loop through large tiles - <-x-> bigger than real map (draw tile will figure out if tile really needs to be drawn
     skipx -= widthInTiles
     skipy -= heightInTiles
 
-    if (skipx < 0) {skipx = 0;}
-    if (skipy < 0) {skipy = 0;}
+    endx += widthInTiles
+    endy += heightInTiles
+
+
+    // map starts with 0, 0 - pointless to check negative indices
+    if (skipx < 0) {skipx = 0}
+    if (skipy < 0) {skipy = 0}
+    if (endx > widthInTiles){ endx = widthInTiles}
+    if (endy > heightInTiles){ endy = heightInTiles}
+
 
     let i = 0, tileId, pal
+    const pos = {x: 0, y: 0}
+
     for (let y = skipy; y < endy; y++) {
       for (let x = skipx; x < endx; x++) {
         i = x + y * this.options.width
         // skip empty tiles
-        if (!d[i]) {
+        if (i<0 || !d[i]) {
           continue
         }
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos)
-
         tileId = d[i] & (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
           TileHelper.FLIPPED_VERTICALLY_FLAG |
           TileHelper.FLIPPED_DIAGONALLY_FLAG))
@@ -358,46 +358,21 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawSelection()
     this.drawSelection(true)
   }
-  drawTile (pal, pos, spacing = 0 , clear = false) {
+
+  drawTile (pal, pos, spacing, clear) {
     if(!pal.image){
       return
     }
+    // don't use default values as babel will generate code which v8 fails to optimize (bail out) (arguments.split...)
+    spacing = spacing || 0
+
     const props = this.props
 
     // special tileset cases - currently only animation
-    if (pal.ts.tiles) {
-      let tileId = pal.gid - (pal.ts.firstgid)
-      const tileInfo = pal.ts.tiles[tileId]
-      if (tileInfo) {
-        if (tileInfo.animation) {
-          const delta = this.now - this.props.startTime
-          let tot = 0
-          let anim
-          /* e.g.
-           duration: 200
-           tileid: 11
-           */
-          for (let i = 0; i < tileInfo.animation.length; i++) {
-            tot += tileInfo.animation[i].duration
-          }
-          const relDelta = delta % tot
-          tot = 0
-          for (let i = 0; i < tileInfo.animation.length; i++) {
-            anim = tileInfo.animation[i]
-            tot += anim.duration
-            if (tot >= relDelta) {
-              if (anim.tileid != tileId) {
-                let gid = anim.tileid + pal.ts.firstgid
-                this.queueDrawTiles(anim.duration - (tot - relDelta))
-                pal = props.palette[gid]
-                break
-              }
-              break
-            }
-          }
-          this.queueDrawTiles(anim.duration - (tot - relDelta))
-        }
-      }
+    const anInfo = TileHelper.getAnimationTileInfo(pal, this.props.palette)
+    if(anInfo){
+      pal = anInfo.pal
+      this.queueDraw(anInfo.nextUpdate)
     }
     const camera = this.camera
 
@@ -406,12 +381,6 @@ export default class TileMapLayer extends AbstractLayer {
 
     let drawW = pal.w * camera.zoom
     let drawH = pal.h * camera.zoom
-
-    // TODO: remove this at some point!!!
-    if (this.options.tiledrawdirection) {
-      this.options.mgb_tiledrawdirection = this.options.tiledrawdirection
-      delete this.options.tiledrawdirection
-    }
 
     if (this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== TileMapLayer.drawDirection.rightup) {
       if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.leftdown) {
@@ -431,32 +400,75 @@ export default class TileMapLayer extends AbstractLayer {
     }
 
     if (clear) {
+      // are we still using this
+      console.trace("Clear requested")
       this.ctx.clearRect(
         drawX, drawY,
-        props.mapData.tilewidth * camera.zoom,
-        props.mapData.tileheight * camera.zoom
+        pal.w, pal.h
       )
     }
-    this.ctx.save()
-    const tx = drawX + drawW * 0.5
-    const ty = drawY + drawH * 0.5
-    this.ctx.translate(tx, ty)
 
-    if (this.drawInfo.d) {
-      // there should be more elegant way to rotate / flip tile
-      this.ctx.rotate(-Math.PI * 0.5 * this.drawInfo.h * this.drawInfo.v)
-      this.ctx.scale(this.drawInfo.h * -1, this.drawInfo.v)
-    }else {
-      this.ctx.scale(this.drawInfo.h, this.drawInfo.v)
+    const needTransform = this.drawInfo.d || this.drawInfo.h !== this.drawInfo.v !== 1
+    // apply offsets as drawing out of bounds greatly reduces performance
+    let ox = 0, oy = 0, ow = 0, oh = 0
+
+    if(needTransform) {
+      // TODO: apply matrix directly???
+      this.ctx.save()
+      const tx = drawX + drawW * 0.5
+      const ty = drawY + drawH * 0.5
+
+      this.ctx.translate(tx, ty)
+
+      if (this.drawInfo.d) {
+        // there should be more elegant way to rotate / flip tile
+        this.ctx.rotate(-Math.PI * 0.5 * this.drawInfo.h * this.drawInfo.v)
+        this.ctx.scale(this.drawInfo.h * -1, this.drawInfo.v)
+      }
+      else {
+        this.ctx.scale(this.drawInfo.h, this.drawInfo.v)
+      }
+      this.ctx.translate(-tx, -ty)
+    }
+    // TODO: find correct offsets for transformed tiles
+    // atm only non-transformed tiles will benefit of this optimisation
+    else{
+      // '+' instead of '-' as drawX is negative (--)
+      if(drawX < 0){
+        drawW += drawX
+        if(drawW < 0){
+          if(needTransform)
+            this.ctx.restore()
+          return
+        }
+        ox -= drawX
+        ow += drawX
+
+        drawX = 0
+      }
+
+      if(drawY < 0){
+        drawH += drawY
+        if(drawH < 0){
+          if(needTransform)
+            this.ctx.restore()
+          return
+        }
+        oy -= drawY
+        oh += drawY
+
+        drawY = 0
+      }
     }
 
-    this.ctx.translate(-tx, -ty)
     this.ctx.drawImage(pal.image,
-      pal.x, pal.y, pal.w , pal.h ,
+      pal.x + ox, pal.y + oy, pal.w + ow, pal.h + oh,
       drawX, drawY,
       drawW, drawH
     )
-    this.ctx.restore()
+
+    if(needTransform)
+      this.ctx.restore()
   }
 
   // drawTiles will call this
@@ -640,12 +652,13 @@ export default class TileMapLayer extends AbstractLayer {
         this.lastOffset.x = TileHelper.getOffsetX(nat);
         this.lastOffset.y = TileHelper.getOffsetY(nat);
       }
+      if (!this.options.visible) {
+        return
+      }
 
       if (edit[this.props.getEditMode()]) {
-        if (!this.options.visible) {
-          return
-        }
         edit[this.props.getEditMode()].call(this, nat, true)
+        this.draw()
       }else {
         edit.debug.call(this, nat, true)
       }
@@ -662,17 +675,19 @@ export default class TileMapLayer extends AbstractLayer {
     }
 
     this.lastEvent = nat
-    this.lastOffset.x = TileHelper.getOffsetX(nat);
-    this.lastOffset.y = TileHelper.getOffsetY(nat);
+    this.lastOffset.x = TileHelper.getOffsetX(nat)
+    this.lastOffset.y = TileHelper.getOffsetY(nat)
     this.tilePosInfo = this.getTilePosInfo(e)
-
     this.isMouseOver = true
+
+    // not visible
+    if (!this.options.visible) {
+      return
+    }
+
     if (edit[this.props.getEditMode()]) {
-      // not visible
-      if (!this.options.visible) {
-        return
-      }
       edit[this.props.getEditMode()].call(this, nat)
+      this.draw()
     }else {
       edit.debug.call(this, nat)
     }
@@ -721,7 +736,6 @@ const edit = {
   debug: function (e, mouseUp) {
     //const pos = this.getTilePosInfo(e)
     //pos.gid = this.options.data[pos.id]
-    //console.log("EDIT MODE: debug")
   }
 }
 // ???
@@ -739,7 +753,6 @@ edit[EditModes.fill] = function (e, up) {
       sel[i].gid = this.options.data[sel[i].id]
     }
     temp.clear()
-    this.drawTiles()
     return
   }
 
@@ -806,7 +819,6 @@ edit[EditModes.fill] = function (e, up) {
       }
     }
   }
-  this.drawTiles()
 }
 edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   if (e.type != 'mousedown') {
@@ -831,12 +843,10 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     }else {
       edit[EditModes.rectangle].call(this, e, up)
     }
-    this.drawTiles()
     return
   }
   if (e.ctrlKey) {
     edit[EditModes.eraser].call(this, e, up)
-    this.drawTiles()
     return
   }
   // nothing from tileset is selected
@@ -856,7 +866,6 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   }
 
   if (!this.mouseDown && !up) {
-    this.drawTiles(e)
     return
   }
 
@@ -887,7 +896,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       }
       if (pos.x > this.options.width - 1) {
         this.increaseSizeToRight(pos)
-        edit[EditModes.stamp].call(this, e, up, false)
+        edit[EditModes.stamp].call(this, e, true, false)
         return
       }
       if (pos.y > this.options.height - 1) {
@@ -901,7 +910,6 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       this.insertTile(pos.id, ts.gid);
       //this.options.data[pos.id] = ts.gid
     }
-    this.drawTiles()
     return
   }
 
@@ -937,7 +945,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     }
     if (tpos.x > this.options.width - 1) {
       this.increaseSizeToRight(tpos)
-      edit[EditModes.stamp].call(this, e, up, false)
+      edit[EditModes.stamp].call(this, e, true, false)
       return
     }
     if (tpos.y > this.options.height - 1) {
@@ -953,15 +961,12 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     this.insertTile(tpos.id, ts.gid)
     //this.options.data[tpos.id] = ts.gid
   }
-  this.drawTiles()
-
 }
 
 // Eraser is actually stamp with gid = 0 - could be reused
 // only stamp can resize map.. eraser shouldn't
-edit[EditModes.eraser] = function (e, up) {
+edit[EditModes.eraser] = function (e, up, saveUndo = true) {
   if (!this.mouseDown && !up) {
-    this.drawTiles()
     return
   }
 
@@ -970,11 +975,15 @@ edit[EditModes.eraser] = function (e, up) {
     return
   }
 
+  if (e.type == 'mousedown' || e.type == 'touchstart') {
+    this.props.saveForUndo('Removing Tiles')
+    return
+  }
+
   const pos = this.getTilePosInfo(e)
   const sel = this.props.getSelection()
 
   if (pos.x < 0 || pos.x > this.options.width - 1 || pos.y < 0 || pos.height > this.options.height - 1) {
-    console.log("Out of bounds...")
     return
   }
 
@@ -988,11 +997,9 @@ edit[EditModes.eraser] = function (e, up) {
     //this.props.saveForUndo('Delete tile')
     this.insertTile(pos.id, 0)
   }
-  this.drawTiles()
 }
 /* selections */
 edit[EditModes.rectangle] = function (e, mouseUp) {
-  this.drawTiles()
   if (mouseUp || e.type == 'touchend') {
     if (!e.shiftKey && !e.ctrlKey) {
       this.props.clearSelection()
@@ -1005,7 +1012,6 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
     }else {
       this.props.swapOutSelection()
     }
-    this.drawTiles()
     return
   }
 
@@ -1022,7 +1028,6 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
     }else {
       tmp.clear()
     }
-    this.drawTiles()
   }
   else if (this.mouseDown) {
     tmp.clear()
@@ -1034,19 +1039,16 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
 
 let previousType = ""
 edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection()) {
-  console.log("Wand.. action", e.type)
   // avoid virtual mouse events
   if(previousType == "touchend" && (e.type == "mousemove" || e.type == "mousedown" || e.type == "mouseup")){
     return
   }
   previousType = e.type
-  this.drawTiles()
   if (up) {
     if (!e.shiftKey) {
       this.props.clearSelection()
     }
     this.props.swapOutSelection()
-    this.drawTiles()
     return
   }
 
@@ -1069,7 +1071,6 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
     while(buff.length){
       collection.pushUniquePos(buff.pop())
     }
-    this.drawTiles()
   }
   const isUnique = (p) => {
     for (let i = 0; i < buff.length; i++) {
@@ -1146,8 +1147,6 @@ edit[EditModes.picker] = function (e, up) {
     return
   }
   previousType = e.type
-
-  this.drawTiles()
   const sel = this.props.getSelection()
   if (up) {
     if (!e.shiftKey && !e.ctrlKey) {
@@ -1161,7 +1160,6 @@ edit[EditModes.picker] = function (e, up) {
     }else {
       this.props.swapOutSelection()
     }
-    this.drawTiles()
     return
   }
   const pos = this.getTilePosInfo(e)
@@ -1180,6 +1178,5 @@ edit[EditModes.picker] = function (e, up) {
       temp.push(new TileSelection(tmp))
     }
   }
-  this.drawTiles()
   this.isDirtySelection = false
 }

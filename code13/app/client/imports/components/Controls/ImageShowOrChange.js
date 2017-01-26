@@ -2,13 +2,14 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import QLink from '/client/imports/routes/QLink'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const _getAssetIdFromUrl = url => (url && url.startsWith("/api/asset/png")) ? _.last(url.split("/")) : null
 
 const _importFromDrop = (event, handleChange) => {
   const asset = DragNDropHelper.getAssetFromEvent(event)
   if (asset && asset.kind === 'graphic') {
-    const imgUrl = `/api/asset/png/${asset._id}`
+    const imgUrl = `/api/asset/png/${asset._id}?hash=${Date.now()}`
     handleChange(imgUrl, asset._id)
   }
 }
@@ -16,7 +17,7 @@ const _importFromDrop = (event, handleChange) => {
 const ImageShowOrChange = props => {
   const { className, imageSrc, canEdit, canLinkToSrc, handleChange } = props
   const avatarAssetId = _getAssetIdFromUrl(imageSrc)
-  const imageSrcToUse = imageSrc || '/images/wireframe/image.png'
+  const imageSrcToUse = imageSrc || makeCDNLink('/images/wireframe/image.png')
   
   const propsImgContainer = {
     title: canEdit ?  'Drag an Image asset here to change the chosen image' : '',

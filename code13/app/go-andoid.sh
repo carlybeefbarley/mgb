@@ -8,5 +8,5 @@ export VELOCITY_DEBUG_MIRROR=1
 export METEOR_PROFILE=1
 export CDN=http://d1asx9hahfq3ui.cloudfront.net
 echo Bundler cache size is now `du -s -h .meteor/local/bundler-cache/`
-meteor -p 0.0.0.0:3000 $@
+meteor run android-device -p 0.0.0.0:3000 $@
 )

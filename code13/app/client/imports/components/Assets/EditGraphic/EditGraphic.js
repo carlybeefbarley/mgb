@@ -182,6 +182,11 @@ export default class EditGraphic extends React.Component {
     window.removeEventListener("paste", this.onpaste)
   }
 
+
+  /*componentWillReceiveProps(p){
+    console.log("New Props:", p)
+  }*/
+
   // there are some missing params for old assets being added here
   fixingOldAssets() {
     let autoFix = false
@@ -1155,8 +1160,12 @@ export default class EditGraphic extends React.Component {
 
   saveChangedContent2(c2, thumbnail, changeText, allowBackwash = false)
   {
+    // this will prevent small sync gap between parent and component:
+    // noticeable: undo -> draw a line ( part of the line will be truncated )
+    this.props.asset.content2 = c2
+
     recentMarker = allowBackwash ? null : "_graphic_" + Random.id()   // http://docs.meteor.com/packages/random.html
-    c2.changeMarker = recentMarker      
+    c2.changeMarker = recentMarker
     //console.log("Backwash marker = " + recentMarker)
     this.props.handleContentChange(c2, thumbnail, changeText)
     this.doSnapshotActivity()

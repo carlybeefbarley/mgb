@@ -27,6 +27,9 @@ import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDe
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
+import { getAssetWithContent2 } from '/client/imports/helpers/assetFetchers'
+
+
 const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
 const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
@@ -84,6 +87,7 @@ export default AssetEditRoute = React.createClass({
   },
 
   getInitialState: function () {
+    this.getActivitySnapshots = () => this.data.activitySnapshots
     return {
       isForkPending:  false
     }
@@ -111,7 +115,6 @@ export default AssetEditRoute = React.createClass({
     } , FLUSH_TIMER_INTERVAL_MS )
   },
 
-
   componentWillReceiveProps(nextProps)
   {
     if (nextProps.params.assetId !== this.props.params.assetId)
@@ -129,6 +132,10 @@ export default AssetEditRoute = React.createClass({
       this.m_tickIntervalFunctionHandle = null
       this._attemptToSendAnyDeferredChanges( { forceResend: true } )
     }
+
+    // stop subscription handler
+    this.assetHandler.stop()
+    this.assetHandler = null
   },
 
   componentDidUpdate() {
@@ -137,7 +144,10 @@ export default AssetEditRoute = React.createClass({
 
   getMeteorData: function() {
     let assetId = this.props.params.assetId
-    let handleForAsset = Meteor.subscribe("assets.public.byId.withContent2", assetId)
+    const assetHandler = this.assetHandler = getAssetWithContent2(assetId, () => {
+      this.assetHandler && this.forceUpdate()
+    }, !!this.m_deferredSaveObj)
+
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 
 
@@ -145,11 +155,21 @@ export default AssetEditRoute = React.createClass({
     let options = { sort: { timestamp: -1 } }
 
     return {
-      asset: Azzets.findOne(assetId),
+      get asset() {
+        return assetHandler.asset
+      },
+      // this will allow asset c2 update without extra ajax call
+      update(updateObj) {
+        assetHandler.update(null, updateObj)
+      },
+
       isServerOnlineNow: Meteor.status().connected,
       activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
       assetActivity: Activity.find(selector, options).fetch(),
-      loading: !handleForAsset.ready()    // Be aware that 'activitySnapshots' and 'assetActivity' may still be loading
+
+      get loading() {
+        return !assetHandler.isReady
+      }    // Child components must be aware that 'activitySnapshots' and 'assetActivity' may still be loading. But we don't wait for them
     }
   },
 
@@ -305,7 +325,7 @@ export default AssetEditRoute = React.createClass({
           <AssetActivityDetail
             assetId={params.assetId} 
             currUser={currUser}
-            activitySnapshots={this.data.activitySnapshots} />
+            activitySnapshots={this.activitySnapshots} />
           &nbsp;
           <AssetHistoryDetail 
             assetId={params.assetId} 
@@ -330,7 +350,7 @@ export default AssetEditRoute = React.createClass({
             handleMetadataChange={this.handleMetadataChange}
             handleDescriptionChange={this.handleAssetDescriptionChange}
             editDeniedReminder={this.handleEditDeniedReminder}
-            activitySnapshots={this.data.activitySnapshots} 
+            getActivitySnapshots={this.getActivitySnapshots}
             hasUnsentSaves={hasUnsentSaves}
             handleSaveNowRequest={this.handleSaveNowRequest}
           />
@@ -473,7 +493,9 @@ export default AssetEditRoute = React.createClass({
         // We will rely on the tick() to send any future pending saves
       }
     })
-    
+    if(content2Object){
+      this.data.update(updateObj)
+    }
     logActivity("asset.edit", changeText, null, this.data.asset || { _id: assetId } )
   },
 

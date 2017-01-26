@@ -8,6 +8,7 @@ import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus, countCurrentUserSkills } from '/imports/schemas/skills'
 import { startSkillPathTutorial, startSignUpTutorial } from '/client/imports/routes/App'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -144,7 +145,7 @@ const LearnGetStartedRoute = ( { currUser }, context ) => {
                       </Card.Header>
 
                       <p style={cardStyles.para}>
-                        <img src={`/images/mascots/${_loginMascot}.png`} style={cardStyles.mascot} />
+                        <img src={makeCDNLink(`/images/mascots/${_loginMascot}.png`)} style={cardStyles.mascot} />
                         <span style={cardStyles.desc}>{_loginDesc[currUser ? 'auth' : 'anon']}.</span>
                       </p>
                       { !currUser ?  <OfferLoginTutorial /> : <BigCheckMark /> }
@@ -169,7 +170,7 @@ const LearnGetStartedRoute = ( { currUser }, context ) => {
                       </Card.Header>
 
                       <p style={cardStyles.para}>
-                        <img src={`/images/mascots/${area.mascot}.png`} style={cardStyles.mascot} />
+                        <img src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} style={cardStyles.mascot} />
                         <span style={cardStyles.desc}>{description}.</span>
                       </p>
                       { isCompleted ? <BigCheckMark /> : 

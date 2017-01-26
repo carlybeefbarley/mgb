@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import sty from  './editcode.css'
+
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
+import './editcode.css'
 
 export default class GameScreen extends React.Component {
 
@@ -160,8 +163,7 @@ export default class GameScreen extends React.Component {
           style={{ display: (this.state.isHidden || !this.props.isPlaying) ? "none" : "block" }}>
         { this.props.isPopup &&
           <div style={{
-            //height:"32px",
-            transform:        "translateY(-100%)", // move up by full height}}
+            transform:        "translateY(-100%)",
             position:         "absolute",
             right:            "0",
             left:             "0",
@@ -203,7 +205,7 @@ export default class GameScreen extends React.Component {
             key={ this.props.gameRenderIterationKey }
             ref="iFrame1"
             sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
-            src="/codeEditSandbox.html"
+            src={makeCDNLink('/codeEditSandbox.html')}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"
             >

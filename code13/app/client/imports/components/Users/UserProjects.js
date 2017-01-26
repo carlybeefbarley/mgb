@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { Grid, Header, Image, Icon } from 'semantic-ui-react'
-import { getProjectAvatarUrl } from '/imports/schemas/projects'
+import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
 
 const SomeProjects = props => {

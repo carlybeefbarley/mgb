@@ -3,7 +3,7 @@ import moment from 'moment'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import Badge from '/client/imports/components/Controls/Badge/Badge'
 import { getAllBadgesForUser } from '/imports/schemas/badges'
-
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
 // See http://v2.mygamebuilder.com/assetEdit/2Bot4CwduQRfRWBi6 for an example
@@ -44,10 +44,11 @@ export default UserItem = React.createClass({
     const getBadgeN = idx => (<Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : "_blankBadge"} />)
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui segment' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
+    // avatar here comes directly from mgb server - as we need it to be up to date always (mgb server will still handle etag - if not changed)
     return ( 
       <div className={segClass} onClick={this.handleClickUser} >
         <div className="ui header large">{name}</div>
-        <img src={avatar} className={`ui floated image ${imageSize}`} />
+        <img src={makeCDNLink(avatar)} className={`ui floated image ${imageSize}`} />
         { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
         <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
         {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)} 

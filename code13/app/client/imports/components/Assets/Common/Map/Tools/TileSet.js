@@ -10,6 +10,7 @@ import LayerTypes from './LayerTypes.js'
 
 import EditModes from './EditModes.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
+import {AssetKindEnum} from '/imports/schemas/assets'
 
 export default class TileSet extends React.Component {
   /* lifecycle functions */
@@ -244,7 +245,7 @@ export default class TileSet extends React.Component {
   /* events */
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
-    if (!asset) {
+    if (!asset || asset.kind != AssetKindEnum.graphic) {
       return
     }
 
@@ -357,7 +358,7 @@ export default class TileSet extends React.Component {
       <a
         className={isActive ? 'item active' : 'item'}
         href='javascript:;'
-        onClick={this.selectTileset.bind(this, index)}
+        onClick={this.selectTileset.bind(this, index, tileset)}
         key={index}><span className='tileset-title-list-item'>{title}</span></a>
     )
   }

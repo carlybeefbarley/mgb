@@ -117,7 +117,7 @@ export default class HandleCollection {
   }
 
   debug () {
-    console.log(this.x, this.y, this.width, this.height)
+    // console.log(this.x, this.y, this.width, this.height)
   }
   lock () {
     this.isLocked = true

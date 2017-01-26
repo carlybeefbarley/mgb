@@ -5,6 +5,7 @@ import styles from './home.css'
 import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const cardStyle = {
   color: "#2e2e2e"
@@ -56,7 +57,7 @@ const LearnGamesRoute = () => (
                     to={`/learn/skills/NOT_YET_IMPLEMENTED`}>
 
                   <Card.Content>
-                    <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
+                    <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
                     <p style={descStyle}>{area.desc}.</p>
                   </Card.Content>

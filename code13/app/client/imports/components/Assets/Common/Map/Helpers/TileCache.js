@@ -1,10 +1,10 @@
 // cache stores all loaded images and creates tile map for further reference
 import TileHelper from './TileHelper'
-import {observe} from "/client/imports/helpers/assetFetchers"
-import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
+import { observe, makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { AssetKindEnum } from '/imports/schemas/assets'
 
 export default class TileCache {
-  constructor(data, onReady){
+  constructor(data, onReady) {
     // store data for forced updates ( e.g. if external image has been changed)
     this.data = data
     this.images = {}
@@ -24,12 +24,12 @@ export default class TileCache {
     this.observers = null
   }
 
-  _onReady(){
-    this.onReady && window.setTimeout(() => {this.onReady()}, 0)
+  _onReady() {
+    this.onReady && window.setTimeout(() => { this.onReady() }, 0)
   }
 
   // TODO(stauzs): implement lazy cache - return old cache and in background update to new version - when ready - callback
-  update(data = this.data, onReady = null){
+  update(data = this.data, onReady = null) {
     this.data = data
     // always overwrite onReady with latest function - to avoid race conditions
     this.onReady = onReady
@@ -39,39 +39,39 @@ export default class TileCache {
     this.updateTilesets(data)
 
     // this should trigger only if there is no loading images or all images come from cache
-    if(this.toLoad == this.loaded){
+    if (this.toLoad == this.loaded) {
       this._onReady()
     }
   }
 
   // check for images appended directly on layer
   // TODO(stauzs): check also for tiles - TMX allows to append image to tile directly
-  updateLayers(data){
+  updateLayers(data) {
     const layers = data.layers;
-    for(let i=0; i<layers.length; i++){
-      if(layers[i].image){
+    for (let i = 0; i < layers.length; i++) {
+      if (layers[i].image) {
         this._loadImage(layers[i].image)
       }
     }
   }
 
-  updateImages(data){
+  updateImages(data) {
     const images = data.images;
-    if(!images){
+    if (!images) {
       return
     }
-    for(let i=0; i<images.length; i++){
+    for (let i = 0; i < images.length; i++) {
       this._loadImage(images[i])
     }
 
   }
 
-  updateTilesets(data){
+  updateTilesets(data) {
     const tss = data.tilesets
-    const pos = {x: 0, y: 0}
+    const pos = { x: 0, y: 0 }
     const self = this
     this.tiles = {}
-    for(let i=0; i<tss.length; i++){
+    for (let i = 0; i < tss.length; i++) {
       const ts = tss[i]
 
       this._loadImage(ts.image)
@@ -82,7 +82,7 @@ export default class TileCache {
         const tileInfo = {
           gid,
           // fix reference to image and size
-          get image (){
+          get image() {
             return self.images[ts.image]
           },
           w: ts.tilewidth,
@@ -97,66 +97,66 @@ export default class TileCache {
     }
   }
 
-  _loadImage(src, force = false){
+  _loadImage(src, force = false) {
     const id = src.split("/").pop()
     // already observing changes
-    if(this.observers[src]){
+    if (this.observers[src]) {
       return
     }
 
-    const loadImage = () => {
+    const loadImage = (preventCache) => {
       const img = new Image()
-      this.images[src] = img
       this.toLoad++
       img.onload = () => {
         this.loaded++
-        if(this.toLoad == this.loaded){
+        this.images[src] = img
+        if (this.toLoad == this.loaded) {
           this._onReady()
         }
       }
       img.onerror = () => {
         // try to fix image
-        if(!src.startsWith("./") && !src.startsWith("/")){
+        if (!src.startsWith("./") && !src.startsWith("/")) {
           const name = src.substr(0, src.lastIndexOf('.')) || src
           src = `/api/asset/png/${Meteor.user().username}/${name}`
-          img.src = src
           img.onerror = () => {
             delete this.images[src]
             img.onload()
           }
+          img.src = makeCDNLink(`/api/asset/png/${Meteor.user().username}/${name}`)
         }
-        else{
-          delete
+        else {
           img.onload()
         }
 
         // TODO(stauzs): push errors - or load nice fallback image
       }
-      img.src = src
+      img.src = src + (preventCache ? '?' + preventCache : '')
     }
 
     let toObserve = id
-    if(src.startsWith("/api/asset/png/")){
+    if (src.startsWith("/api/asset/png/")) {
       const fpart = src.split("/")
       // user / name
-      if(fpart.length == 6){
+      if (fpart.length == 6) {
         toObserve = {
           name: fpart.pop(),
           dn_ownerName: fpart.pop(),
           isDeleted: false,
-          kind: AssetKind.graphic
+          kind: AssetKindEnum.graphic
         }
       }
     }
 
-    this.observers[src] = observe(toObserve, (changes) => {
-      loadImage()
+    this.observers[src] = observe(toObserve, null, (id, changes) => {
+      // prevent cache - as browser will ignore etag in this case
+      loadImage(changes.updatedAt.getTime())
     })
-    loadImage()
+    loadImage(Date.now())
 
     return
     // image is loading or loaded
-    if(!force && this.images[src] !== void(0)){
+    if (!force && this.images[src] !== void (0)) {
       return
     }
     const img = new Image()
@@ -164,7 +164,7 @@ export default class TileCache {
     this.toLoad++
     img.onload = () => {
       this.loaded++
-      if(this.toLoad == this.loaded){
+      if (this.toLoad == this.loaded) {
         this._onReady()
       }
     }

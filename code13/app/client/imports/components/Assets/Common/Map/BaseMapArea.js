@@ -180,7 +180,7 @@ export default class MapArea extends React.Component {
 
   /* import and conversion */
   xmlToJson (xml) {
-    window.xml = xml
+    // window.xml = xml
   }
   handleFileByExt_tmx (name, buffer) {
     // https://github.com/inexorabletash/text-encoding
@@ -195,11 +195,7 @@ export default class MapArea extends React.Component {
   handleFileByExt_json (name, buffer) {
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
     const newData = JSON.parse(jsonString)
-
-
-
     this.props.updateMapData(newData)
-
     //this.updateImages()
   }
   // TODO: move api links to external resource?
@@ -419,8 +415,14 @@ export default class MapArea extends React.Component {
       }
       return
     }
+
     this.camera.x -= (this.lastEvent.pageX - px) / this.camera.zoom
     this.camera.y -= (this.lastEvent.pageY - py) / this.camera.zoom
+    /*
+    if(e.ctrlKey){
+      this.camera.x = Math.round(this.camera.x / this.data.tilewidth) * this.data.tilewidth
+      this.camera.y = Math.round(this.camera.y / this.data.tileheight) * this.data.tileheight
+    }*/
     this.lastEvent.pageX = px
     this.lastEvent.pageY = py
 
@@ -561,7 +563,12 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove (e) {
-    if (this.props.isPlaying || this.props.isLoading || !this.isMouseDown)
+    if(this.props.isPlaying || this.props.isLoading){
+      return
+    }
+
+    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
+    if (!this.isMouseDown)
       return
 
 
@@ -570,7 +577,6 @@ export default class MapArea extends React.Component {
     // https://msdn.microsoft.com/en-us/library/ms536947(v=vs.85).aspx
 
     // it seems that IE and chrome reports "buttons" correctly
-    // console.log(e.buttons)
     // 1 - left; 2 - right; 4 - middle + combinations
     // we will handle this => no buttons == touchmove event
     const editMode = this.props.getMode()
@@ -582,7 +588,7 @@ export default class MapArea extends React.Component {
     else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4 || (e.buttons == 1 && editMode === EditModes.view)){
       this.moveCamera(e)
     }
-    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
+
   }
 
   handleMouseUp (e) {

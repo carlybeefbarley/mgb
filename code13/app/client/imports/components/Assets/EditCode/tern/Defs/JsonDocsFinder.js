@@ -1,4 +1,4 @@
-
+import {mgbAjax} from '/client/imports/helpers/assetFetchers'
 
 
 export default JsonDocsFinder = {
@@ -54,6 +54,17 @@ export default JsonDocsFinder = {
 
     request._urlLoadedFromCache = false;
 
+    mgbAjax(request._urlString, (err, dataStr) => {
+      if(err){
+        console.error(err)
+        this._processApiDocRequest(request, null, callbackFn)
+        return
+      }
+      this._jsonDocCache[request._urlString] = JSON.parse(dataStr)
+      this._processApiDocRequest(request, this._jsonDocCache[request._urlString], callbackFn)   // Callback is async in this case
+    })
+
+    return
     let jqXHR = $.ajax({
       url: request._urlString,
       type: 'get',

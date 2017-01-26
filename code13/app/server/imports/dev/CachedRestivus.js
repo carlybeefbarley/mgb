@@ -1,4 +1,4 @@
-// this will simulate API caching on production machine
+// this will simulate API caching on as it would be on NGINX production machine
 // usage: $ curl -k -H "nocache: true"  http://localhost:3000/api/test - to manually invalidate cache
 // !!! not suitable for production - only for testing purposes
 import cache from '/imports/cache'

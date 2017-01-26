@@ -1,3 +1,5 @@
+import {setUpCloudFront} from './cloudfront/CreateCloudfront.js'
+
 import { Users } from '../imports/schemas'
 
 import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
@@ -33,6 +35,11 @@ import '/server/imports/rateLimiter'
 
 // Create fixtures on first time app is launched (useful for dev/test)
 import { createUsers } from './fixtures.js'
+
+// remove true after debugging is done
+if (true || Meteor.isProduction) {
+  setUpCloudFront()
+}
 
 if (!Users.find().fetch().length) 
   createUsers()
@@ -92,7 +99,6 @@ Meteor.startup(function () {
 // smoke test that these are present
 Npm.require;
 Assets;
-
 
 console.log(`
   MGBv2 server running ${Meteor.release}

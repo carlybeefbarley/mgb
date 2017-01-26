@@ -25,9 +25,9 @@ export default class BaseForm extends React.Component {
     return (
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
-        <SmallDD options={options} onchange={(val) => {
+        <SmallDD options={options} onChange={(val) => {
           this.data[key] = val
-          this.props.onchange && this.props.onchange()
+          this.props.onChange && this.props.onChange()
         }} {...fieldOptions} value={val} />
       </div>
     )
@@ -45,11 +45,11 @@ export default class BaseForm extends React.Component {
         <div className="ui toggle checkbox" ref={(b) => {$(b).checkbox()}} onClick={() => {
           const val = fieldOptions.boolIsTF ? (!checked ? true : false) : (!checked ? '1' : '0')
           this.data[key] = val
-          this.props.onchange && this.props.onchange()
+          this.props.onChange && this.props.onChange()
         }}>
           <input type="checkbox" name={key} tabIndex="0" className="hidden" ref="checkbox" checked={checked} onChange={(val) => {
             this.data[key] = val
-            this.props.onchange && this.props.onchange()
+            this.props.onChange && this.props.onChange()
           }} />
         </div>
       </div>
@@ -73,7 +73,7 @@ export default class BaseForm extends React.Component {
             }
           }
           this.data[key] = val
-          this.props.onchange && this.props.onchange()
+          this.props.onChange && this.props.onChange()
         }}/>
       </div>
     )
@@ -86,7 +86,7 @@ export default class BaseForm extends React.Component {
         <textarea rows="3" onChange={(e) => {
             const val = e.target.value
             this.data[key] = val
-            this.props.onchange && this.props.onchange()
+            this.props.onChange && this.props.onChange()
         } } value={this.data[key]}></textarea>
       </div>
     )
@@ -99,7 +99,7 @@ export default class BaseForm extends React.Component {
         <label>{name}</label>
         <DropArea kind={kind} {...fieldOptions} value={this.data[key]} asset={this.props.asset} onChange={(val, asset) => {
           this.data[key] = val
-          this.props.onchange && this.props.onchange()
+          this.props.onChange && this.props.onChange()
           cb && cb(asset)
         }}/>
       </div>

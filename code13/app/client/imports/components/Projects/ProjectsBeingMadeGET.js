@@ -4,7 +4,8 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import QLink from '/client/imports/routes/QLink'
 
 import { Projects } from '/imports/schemas'
-import { projectMakeFrontPageListSelector, getProjectAvatarUrl } from '/imports/schemas/projects'
+import { projectMakeFrontPageListSelector } from '/imports/schemas/projects'
+import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
 
 export default ProjectsBeingMadeGET = React.createClass({
   mixins: [ReactMeteorData],

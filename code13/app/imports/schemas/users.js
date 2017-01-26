@@ -110,7 +110,6 @@ Meteor.methods({
       "profile.projectNames": optional(schema.profile.projectNames),
       "profile.latestNewsTimestampSeen": optional(schema.profile.latestNewsTimestampSeen)
     });
-
     count = Meteor.users.update(docId, {$set: data})
 
     if (Meteor.isServer)

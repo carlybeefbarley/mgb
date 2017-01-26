@@ -6,6 +6,9 @@ export default class ModalForm extends BaseForm {
     return this.props.asset
   }
   render(){
+    if(!this.data){
+      return null
+    }
     return(
       <div>
         {this.dropArea("Map", "map", "actormap")}

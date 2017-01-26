@@ -1,3 +1,6 @@
+// this is test of an idea - to create one subscription for all known actors - it's much faster for large read only maps,
+// but slower on actor addition / deletion
+
 // MGBv1 to TMX like format conversion.. straight forward
 /*
   layer <actors> => layer <tiles>
@@ -290,17 +293,124 @@ export default ActorHelper = {
       cb()
       return
     }
-    let loaded = 0
+
+    // we already know all actors
+    /*if(this.observer && this.hasAllActorsLoaded){
+      this.observeAndLoad(cb, actorMap, images, onChange)
+      return
+    }*/
+
+    this.subSel = []
     for(let i=0; i<actors.length; i++){
-      this.loadActor(actors[i], actorMap, i + 1 + this.TILES_IN_ACTIONS, images, names, () => {
-        loaded++;
-        if(loaded === actors.length){
-          cb()
-        }
-      }, onChange)
+      this.loadActor(actors[i], actorMap, i + 1 + this.TILES_IN_ACTIONS, images, names)
     }
+    this.observeAndLoad(cb, actorMap, images, onChange)
   },
+  loadActor: function(name, map, nr, images, names) {
+    const parts = name.split(":")
+    const user = parts.length > 1 ? parts.shift() : names.user
+    const actorName = parts.length ? parts.pop() : name
+    const key = `${user}/${actorName}`
+
+    map[name].firstgid = nr
+
+    ActorHelper.subSel.push({
+      dn_ownerName: user,
+      name: actorName,
+      isDeleted: false,
+      kind: AssetKindEnum.actor
+    })
+
+  },
+  observeAndLoad: function(cb, map, images, onChange){
+    if(!ActorHelper.subSel.length){
+      cb()
+      return
+    }
+
+
+    if(ActorHelper.observer){
+      ActorHelper.observer.subscription.stop()
+
+      /*if( ActorHelper.hasAllActorsLoaded ){
+        const sub = ActorHelper.observer
+        const actors = sub.getAssets()
+        actors.forEach(asset => {
+          let name = asset.name
+          if(!map[name]){
+            name = `${asset.dn_ownerName}:${asset.name}`
+          }
+          const cached = ActorHelper.cache[asset._id]
+          map[name] = cached.map
+          images[cached.image] = cached.image
+        })
+        cb()
+      }
+      else{*/
+      //  setTimeout(() => {
+      //    ActorHelper.observeAndLoad(cb, map, images, onChange)
+      //  }, 1000)
+      //}
+      //return
+    }
+
+    const sub = ActorHelper.observer = observe({$or: ActorHelper.subSel}, () => {
+      const assets = sub.getAssets()
+      let toLoad = assets.length
+      assets.forEach(asset => {
+        mgbAjax(`/api/asset/actor/${asset._id}`, (err, dataStr) => {
+          let name = asset.name
+          if(!map[name]){
+            name = `${asset.dn_ownerName}:${asset.name}`
+          }
+          if(ActorHelper.cache[asset._id]){
+            const cached = ActorHelper.cache[asset._id]
+            map[name] = cached.map
+            images[cached.image] = cached.image
+
+            ActorHelper.hasAllActorsLoaded = !(--toLoad)
+            !toLoad && cb()
+            return
+          }
+
+          const d = JSON.parse(dataStr)
+          const iparts = d.databag.all.defaultGraphicName.split(":")
+          const iuser = iparts.length > 1 ? iparts.shift() : asset.dn_ownerName
+          const iname = iparts.pop()
+          const src = `/api/asset/png/${iuser}/${iname}`
+
+          // TODO: is it possible to have stauzs:actorName and actorName at the same time???
+
+          map[name].actor = d
+          map[name].image = src
+          var img = new Image()
+          img.onload = function(){
+            map[name].imagewidth = img.width
+            map[name].imageheight = img.height
+            // TODO: adjust these when MAGE will support multiple frames per actor
+            map[name].tilewidth = img.width
+            map[name].tileheight = img.height
+
+            images[TileHelper.normalizePath(src)] = src
+
+            ActorHelper.cache[asset._id] ={
+              map: map[name],
+              image: src
+            }
+            ActorHelper.hasAllActorsLoaded = !(--toLoad)
+            !toLoad && cb()
+          }
+          img.src = src
+        }, asset)
+      })
+    }, (id, changes) => {
+      ActorHelper.clearCache(id)
+      onChange(id, changes)
+    })
+  },
+
   isLoading: {},
+  hasAllActorsLoaded: false,
   cache: {},
   clearCache: (key) => {
     if(key == void(0))
@@ -308,15 +418,18 @@ export default ActorHelper = {
     else
       delete ActorHelper.cache[key]
   },
-  subscriptions: {},
-  cleanUp: () => {
-    for (let i in ActorHelper.subscriptions) {
-      ActorHelper.subscriptions[i].subscription.stop()
-    }
-    ActorHelper.subscriptions = {}
+
+  observer: null,
+  subSel: [],
+  cleanUp: function(){
+    ActorHelper.observer.subscription.stop()
+    ActorHelper.observer = null
     ActorHelper.clearCache()
+    ActorHelper.subSel = []
+    ActorHelper.hasAllActorsLoaded = false
   },
-  loadActor: function(name, map, nr, images, names, cb, onChange) {
+
+  _loadActor: function(name, map, nr, images, names, cb, onChange) {
     const parts = name.split(":")
     const user = parts.length > 1 ? parts.shift() : names.user
     const actorName = parts.length ? parts.pop() : name
@@ -331,73 +444,66 @@ export default ActorHelper = {
     }
 
     if (ActorHelper.cache[key]) {
-      const cached = ActorHelper.cache[key]
-      map[name] = cached.map
-      images[TileHelper.normalizePath(cached.image)] = cached.image
+      map[name] = ActorHelper.cache[key].map
+      images[TileHelper.normalizePath(ActorHelper.cache[key].image)] = ActorHelper.cache[key].image
       cb()
       return
     }
     ActorHelper.isLoading[key] = 1
-
-    let asset = ActorHelper.subscriptions[key] ? ActorHelper.subscriptions[key].getAssets()[0] : null
-
-    mgbAjax(`/api/asset/actor/${user}/${actorName}`, (err, dataStr) => {
-      const d = JSON.parse(dataStr)
-      const iparts = d.databag.all.defaultGraphicName.split(":");
-      const iuser = iparts.length > 1 ? iparts.shift() : user
-      const iname = iparts.pop()
-
-      const src = `/api/asset/png/${iuser}/${iname}`
-
-      map[name].firstgid = nr
-      map[name].actor = d
-      map[name].image = src
-      var img = new Image()
-      img.onload = function(){
-        delete ActorHelper.isLoading[key]
-        map[name].imagewidth = img.width
-        map[name].imageheight = img.height
-        // TODO: adjust these when MAGE will support multiple frames per actor
-        map[name].tilewidth = img.width
-        map[name].tileheight = img.height
-
-        images[TileHelper.normalizePath(src)] = src
-
-        ActorHelper.cache[key] ={
-          map: map[name],
-          image: src
+    ActorHelper.subscriptions[key] = observe({
+        dn_ownerName: user,
+        name: actorName,
+        isDeleted: false,
+        kind: AssetKindEnum.actor
+      },
+      () => {
+        const assets = ActorHelper.subscriptions[key].getAssets()
+        if(!assets.length){
+          console.error("Cannot find asset: ", key)
+          return
         }
-        ActorHelper.subscriptions[key] = observe({
-            dn_ownerName: user,
-            name: actorName,
-            isDeleted: false,
-            kind: AssetKindEnum.actor
-          },
-          () => {
-            // clean up has been called before subscription become ready
-            if(!ActorHelper.subscriptions[key]){
-              return
-            }
-            const assets = ActorHelper.subscriptions[key].getAssets()
-            if(!assets.length){
-              console.error("Cannot find asset: ", key)
-              return
-            }
-            if(assets.length > 1){
-              console.error("Multiple assets found: ", key)
-            }
-            const asset = assets[0]
-          },
-          (...a) => {
-            ActorHelper.clearCache(key)
-            onChange(...a)
-          }
-        )
-        cb()
-      }
-      img.src = src
-    }, asset)
+        if(assets.length > 1){
+          console.error("Multiple assets found: ", key)
+        }
+        const asset = assets[0]
 
+        mgbAjax(`/api/asset/actor/${user}/${actorName}`, (err, dataStr) => {
+          const d = JSON.parse(dataStr)
+          const iparts = d.databag.all.defaultGraphicName.split(":");
+          const iuser = iparts.length > 1 ? iparts.shift() : user
+          const iname = iparts.pop()
+
+          const src = `/api/asset/png/${iuser}/${iname}`
+
+          map[name].firstgid = nr
+          map[name].actor = d
+          map[name].image = src
+          var img = new Image()
+          img.onload = function(){
+
+            delete ActorHelper.isLoading[key]
+            map[name].imagewidth = img.width
+            map[name].imageheight = img.height
+            // TODO: adjust these when MAGE will support multiple frames per actor
+            map[name].tilewidth = img.width
+            map[name].tileheight = img.height
+
+            images[TileHelper.normalizePath(src)] = src
+
+            ActorHelper.cache[key] ={
+              map: map[name],
+              image: src
+            }
+            cb()
+          }
+          img.src = src
+        }, asset)
+      },
+      (...a) => {
+        ActorHelper.clearCache(key)
+        onChange(...a)
+      }
+    )
 
 
 

@@ -4,6 +4,8 @@ import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 import { logActivity } from '/imports/schemas/activity'
 import { Header, Icon, Item } from 'semantic-ui-react'
 
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+//
 export default npHome = React.createClass({
 
   propTypes: {
@@ -48,7 +50,7 @@ export default npHome = React.createClass({
         { currUser ?
         [
           <Item.Header key='k1' className="header item">
-            <img className="ui centered avatar image" src={currUser.profile.avatar} />
+            <img className="ui centered avatar image" src={makeCDNLink(currUser.profile.avatar)} />
             &emsp;{currUser.profile.name}
           </Item.Header>,
           

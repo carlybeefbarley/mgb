@@ -20,7 +20,7 @@ if (Meteor.isDevelopment) {
     this._recomputing = true
     try {
       if (this._needsRecompute())
-        this._compute()      
+        this._compute()
     } finally {
       this._recomputing = false
     }

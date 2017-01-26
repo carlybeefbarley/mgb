@@ -1,7 +1,8 @@
 "use strict"
 import knownLibs from "./knownLibs.js"
-import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
-import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
+import {observe, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
+import {AssetKindEnum} from '/imports/schemas/assets'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 // serving modules from...
 const getModuleServer = (lib, version = 'latest') => {
@@ -15,15 +16,14 @@ const getModuleServer = (lib, version = 'latest') => {
   }
 }
 
+// CDN ajax requests cache lifetime
+const INVALIDATE_CACHE_TIMEOUT = 60 * 60 * 1000
 
-
-// ajax requests cache - invalidate every few seconds
-// this will insanely speed up run
-const INVALIDATE_CACHE_TIMEOUT = 30 * 1000
-const UPDATE_DELAY = 0.5 * 1000
+// delay between re-checking sources
+const UPDATE_DELAY = 0.5 * 1000 // 500ms
 
 // add only smalls libs to tern
-const MAX_ACCEPTABLE_SOURCE_SIZE = 1024 * 100 // 100 KB
+const MAX_ACCEPTABLE_SOURCE_SIZE = SpecialGlobals.editCode.maxFileSizeForAST // 1024 * 100 // 100 KB
 
 const ERROR = {
   SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
@@ -445,13 +445,27 @@ export default class SourceTools {
 
   // loads and observes imported MGB code asset for changes
   loadAndObserveLocalFile(url, urlFinalPart, cb){
+    //console.log("Local file:", url)
+    // import './stauzs:asset_name'
+    const parts = urlFinalPart.split("/").pop().split(":")
+    const name = parts.pop()
+    const owner = parts.length > 0 ? parts.pop() : this.owner
+    const assetUrl = `/api/asset/code/${owner}/${name}`
 
     const getSourceAndTranspile = (err, assets) => {
       if(assets.length > 1){
         this.setError({reason: "Multiple candidates found for " + urlFinalPart, evidence: urlFinalPart, code: ERROR.MULTIPLE_SOURCES})
       }
-      if (assets[0]) {
-        this._collectAndTranspile(assets[0].content2.src, urlFinalPart, cb, true)
+      const asset = assets[0]
+      if (asset) {
+        mgbAjax(assetUrl, (err, content) => {
+            if(err){
+              this.setError({reason: "Unable to load: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.SOURCE_NOT_FOUND})
+              return
+            }
+            this._collectAndTranspile(content, urlFinalPart, cb, true)
+          }, asset
+        )
       }
       else {
         // TODO somewhere in the callstack get line number and pass to this function - atm EditCode is guessing lines by evidence string
@@ -460,31 +474,29 @@ export default class SourceTools {
       }
     }
     // asset resource identifier
-    const ari = urlFinalPart + '/' + urlFinalPart
+    const ari = url + '/' + urlFinalPart
     // already subscribed and observing
     // TODO: this can be skipped - but requires to check all edge cases - e.g. first time load / file removed and then added again etc
     // atm this seems pretty quick
+
     if (this.subscriptions[ari]) {
       getSourceAndTranspile(null, this.subscriptions[ari].getAssets())
       return
     }
 
-    // import './stauzs:asset_name'
-    const parts = urlFinalPart.split("/").pop().split(":")
-    const name = parts.pop()
-    const owner = parts.length > 0 ? parts.pop() : this.owner
-
-    // from now on only observe asset and update tern on changes only
-    this.subscriptions[ari] = fetchAndObserve(owner, name, AssetKind.code, getSourceAndTranspile, (id, changes) => {
-      // we may end with older resource until next changes..
+    const onReady = () => {
+      getSourceAndTranspile(null, this.subscriptions[ari].getAssets())
+    }
+    // on Change we should check if there is already something happening.. as it can be called at any time
+    const onChange = () => {
       if(this.inProgress){
         return
       }
-      // it gets called one extra time when asset.src arrives for the first time
-      if (changes.content2 && changes.content2.src) {
-        this._collectAndTranspile(changes.content2.src, urlFinalPart, null, true)
-      }
-    })
+      getSourceAndTranspile(null, this.subscriptions[ari].getAssets())
+    }
+
+    // from now on only observe asset and update tern on changes only
+    this.subscriptions[ari] = observe({dn_ownerName: owner, name: name, kind: AssetKindEnum.code}, onReady, onChange)
   }
   // expose private variable - EditCode uses this
   hasChanged(){
@@ -635,7 +647,7 @@ main = function(){
     })
   }
 
-  // includes all files in the on big bundle file
+  // includes all files in the on big bundle file - not used atm
   createBundle_commonJS(cb) {
     if (this.isDestroyed) return
     if (!this._hasSourceChanged) {
@@ -775,27 +787,19 @@ main = function(){
       return;
     }
 
-    // atm server will try to generate script
-    const httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = () => {
-      if (httpRequest.readyState !== XMLHttpRequest.DONE) {
-        return;
-      }
-      if (httpRequest.status !== 200) {
-        //console.error("Failed to load script: [" + url + "]", httpRequest.status)
+    mgbAjax(url, (err, src) => {
+      if(err){
         SourceTools.cached404[url] = httpRequest.status
         cb({code: "", url}, {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
-        return;
       }
-      const src = httpRequest.responseText
-      SourceTools.tmpCache[url] = src
-      window.setTimeout(() => {
-        delete SourceTools.tmpCache[url]
-      }, INVALIDATE_CACHE_TIMEOUT)
-      cb({code: src, url})
-    }
-    httpRequest.open('GET', url, true);
-    httpRequest.send(null);
+      else{
+        SourceTools.tmpCache[url] = src
+        window.setTimeout(() => {
+          delete SourceTools.tmpCache[url]
+        }, INVALIDATE_CACHE_TIMEOUT)
+        cb({code: src, url})
+      }
+    })
   }
 
   // extracts short name from CDN link lib@ver.js => lib

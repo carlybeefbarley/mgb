@@ -21,7 +21,9 @@ import SourceTools from './SourceTools.js'
 import CodeFlower from './CodeFlowerModded.js'
 import GameScreen from './GameScreen.js'
 import makeBundle from '/imports/helpers/codeBundle'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 // import tlint from 'tern-lint'
 
 // **GLOBAL*** Tern JS - See comment below...   
@@ -49,6 +51,7 @@ import DebugASTview from './tern/DebugASTview.js'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
@@ -61,7 +64,7 @@ let showDebugAST = false    // Handy thing while doing TERN dev work
 
 // we are delaying heavy jobs for this amount of time (in ms) .. e.g. when user types - there is no need to re-analyze all content on every key press
 // reasonable value would be equal to average user typing speed (chars / second) * 1000
-const CHANGES_DELAY_TIMEOUT = 750
+const CHANGES_DELAY_TIMEOUT = SpecialGlobals.editCode.typingSpeed
 
 const _infoPaneModes = [
   { col1: 'ten',     col2: 'six'   },
@@ -459,7 +462,7 @@ export default class EditCode extends React.Component {
   componentWillReceiveProps(nextProps) {
     const newVal = nextProps.asset.content2.src
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal && this.lastSavedValue != newVal) {
-      // user is typing - intensively working with document - don't update until it finishes
+      // user is typing - intensively working with document - don't update until it finishes ( update will trigger automatically on finish )
       if (this.changeTimeout) {
         // console.log("Preventing update! User in action")
         return
@@ -467,10 +470,10 @@ export default class EditCode extends React.Component {
       console.log("Setting src to: ", newVal.substr(0, 3))
       let currentCursor = this.codeMirror.getCursor()
       this.codeMirror.setValue(newVal)
+      this.setState({needsBundle: nextProps.asset.content2.needsBundle})
       this._currentCodemirrorValue = newVal       // This needs to be done here or we will loop around forever
       this.codeMirror.setCursor(currentCursor)    // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
-
-      // update source tools related files
+      // force update source tools related files
       this.doFullUpdateOnContentChange()
     }
   }
@@ -969,7 +972,7 @@ export default class EditCode extends React.Component {
     var ed = this.codeMirror
     ed.clearGutter("mgb-cm-user-markers")
 
-    let acts = this.props.activitySnapshots
+    let acts = this.props.getActivitySnapshots()
     _.each(acts, act => {
       var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
       if (currUserId !== act.byUserId) {
@@ -1329,7 +1332,7 @@ export default class EditCode extends React.Component {
       this.tools.createBundle((bundle, notChanged) => {
         if(!notChanged){
           const value = this.codeMirror.getValue()
-          const newC2 = {src: value, bundle: bundle, needsBundle: this.state.needsBundle}
+          const newC2 = {src: value, bundle: bundle, needsBundle: this.props.asset.content2.needsBundle}
           // make sure we have bundle before every save
           this.handleContentChangeAsync(newC2, null, `Store code bundle`)
         }
@@ -1520,6 +1523,15 @@ export default class EditCode extends React.Component {
           disabled: false,
           level:    3,
           shortcut: 'Ctrl+B'
+        },
+        {
+          name:  'toggleFold',
+          label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
+          icon:  this.mgb_code_folded ? 'expand' : 'compress',
+          tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
+          disabled: false,
+          level:    3,
+          shortcut: 'Ctrl+Alt+f'
         }
       ]
     }
@@ -1598,6 +1610,21 @@ export default class EditCode extends React.Component {
     return config
   }
 
+  toggleFold(){
+    const cm = this.codeMirror
+
+    cm.operation(() => {
+      for (var l = cm.firstLine(); l <= cm.lastLine(); ++l)
+        cm.foldCode({line: l, ch: 0}, null, this.mgb_code_folded ? 'unfold' : 'fold')
+
+      this.mgb_code_folded = !this.mgb_code_folded
+      this.setState({
+        mgb_code_folded: this.mgb_code_folded
+      })
+    })
+
+  }
+
   toggleBundling() {
     this.props.asset.content2.needsBundle = !this.props.asset.content2.needsBundle
     this.handleContentChange(this.props.asset.content2, null, "enableBundling")
@@ -1669,7 +1696,7 @@ export default class EditCode extends React.Component {
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
       return (
         <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
-          <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
+          <Thumbnail className="ui right spaced medium image" id={assetInfo.id} expires={60} />
           URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
         </a>
       )

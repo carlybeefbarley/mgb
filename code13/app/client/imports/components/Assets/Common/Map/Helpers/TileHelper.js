@@ -8,11 +8,64 @@ export const ROTATE = {
   '270': 0x60
 }
 
+const ANIMATION_UPDATE_DEFAULT_INTERVAL = 10000
 const TileHelper = {
   FLIPPED_HORIZONTALLY_FLAG: 0x80000000,
   FLIPPED_VERTICALLY_FLAG: 0x40000000,
   FLIPPED_DIAGONALLY_FLAG: 0x20000000,
 
+  animTileInfoRetVal: {
+    pal: null,
+    nextUpdate: 0
+  },
+  getAnimationTileInfo: (pal, palette, now) => {
+    // babel causes deopt for default values (arguments / splice combo)
+    now = now || Date.now()
+    if (!pal.ts.tiles) {
+      return null
+    }
+
+    let tileId = pal.gid - (pal.ts.firstgid)
+    const tileInfo = pal.ts.tiles[tileId]
+    if (!tileInfo || !tileInfo.animation) {
+      return null
+    }
+
+    const retval = TileHelper.animTileInfoRetVal
+    retval.pal = pal
+    retval.nextUpdate = ANIMATION_UPDATE_DEFAULT_INTERVAL
+
+    const delta = now
+    let tot = 0
+    let anim
+    /* e.g.
+     duration: 200
+     tileid: 11
+     */
+    for (let i = 0; i < tileInfo.animation.length; i++) {
+      tot += tileInfo.animation[i].duration
+    }
+    const relDelta = delta % tot
+    tot = 0
+    for (let i = 0; i < tileInfo.animation.length; i++) {
+      anim = tileInfo.animation[i]
+      tot += anim.duration
+      if (tot >= relDelta) {
+        if (anim.tileid != tileId) {
+          let gid = anim.tileid + pal.ts.firstgid
+          retval.nextUpdate = tot - relDelta
+          retval.pal = palette[gid]
+          break
+        }
+        break
+      }
+    }
+    if(retval.nextUpdate === ANIMATION_UPDATE_DEFAULT_INTERVAL){
+      retval.nextUpdate = tot - relDelta
+    }
+    return retval
+    //this.queueDrawTiles(anim.duration - (tot - relDelta))
+  },
   // TODO: take in to account margins and paddings
   getTilePos: (id, widthInTiles, tilewidth, tileheight, ret = {x: 0, y: 0}) => {
     ret.x = (id % widthInTiles) * tilewidth
@@ -168,7 +221,7 @@ const TileHelper = {
     let path = TileHelper.normalizePath(imagepath)
 
     const extraPixels = imagewidth % tilewidth
-    const columns = (imagewidth - extraPixels) / tilewidth
+    let columns = (imagewidth - extraPixels) / tilewidth
     let rows = (imageheight - (imageheight % tileheight)) / tileheight
 
     if (margin != -1) {
@@ -181,34 +234,44 @@ const TileHelper = {
 
     // guess spacing and margin - should give wow! effect to users :)
     if (autoGuess) {
-      if (!extraPixels) {
+      if(imagewidth <= tilewidth){
         spacing = 0
         margin = 0
+        rows = 1
+        columns = 1
+        tilewidth = imagewidth
+        tileheight = imageheight
       }
-      // assume that margin and spacing tends to be equal
-      const spacingColumns = columns - 1
-      // all goes to margin
-      if (extraPixels < spacingColumns) {
-        margin = extraPixels
-        spacing = 0
-      }
-      // all goes to spacing
-      else if (extraPixels % spacingColumns == 0) {
-        spacing = extraPixels / spacingColumns
-        margin = 0
-      }
-      // very common case when all sides of tile has equal white space
-      else if (extraPixels % (columns + 1) == 0) {
-        margin = extraPixels % (columns + 1)
-        spacing = margin
-      }else {
-        margin = extraPixels % spacingColumns
-        spacing = (extraPixels - extraPixels % spacingColumns) / spacingColumns
-      }
+      else {
+        if (!extraPixels) {
+          spacing = 0
+          margin = 0
+        }
+        // assume that margin and spacing tends to be equal
+        const spacingColumns = columns - 1
+        // all goes to margin
+        if (extraPixels < spacingColumns) {
+          margin = extraPixels
+          spacing = 0
+        }
+        // all goes to spacing
+        else if (extraPixels % spacingColumns == 0) {
+          spacing = extraPixels / spacingColumns
+          margin = 0
+        }
+        // very common case when all sides of tile has equal white space
+        else if (extraPixels % (columns + 1) == 0) {
+          margin = extraPixels % (columns + 1)
+          spacing = margin
+        } else {
+          margin = extraPixels % spacingColumns
+          spacing = (extraPixels - extraPixels % spacingColumns) / spacingColumns
+        }
 
-      // adjust rows - as we have added margin and spacing
-      while(margin + (tileheight + spacing) * rows - spacing > imageheight && rows){
-        rows--
+        // adjust rows - as we have added margin and spacing
+        while (margin + (tileheight + spacing) * rows - spacing > imageheight && rows) {
+          rows--
+        }
       }
     }
 

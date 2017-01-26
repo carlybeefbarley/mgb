@@ -28,6 +28,8 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
 // https://www.npmjs.com/package/react-notifications
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 // Note css is in /client/notifications.css
@@ -241,7 +243,7 @@ const App = React.createClass({
     if (window.trackJs)
       doTrack()
     else
-      $.getScript("/lib/tracker.js", doTrack)   // fallback to local version because of AdBlocks etc
+      $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
   },
 
   render() {

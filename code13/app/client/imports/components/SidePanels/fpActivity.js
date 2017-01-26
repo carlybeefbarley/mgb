@@ -9,6 +9,8 @@ import { isSameUserId } from '/imports/schemas/users'
 
 import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 const _propTypes = {
   currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -34,7 +36,6 @@ const ActivityExtraDetail = ( { act} ) => {
     const assetKindIconName = AssetKinds.getIconName(act.toAssetKind)
     const assetKindColor = AssetKinds.getColor(act.toAssetKind)
     const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
-    const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
     const linkTo = act.toOwnerId ? 
               `/u/${act.toOwnerName}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
               `/assetEdit/${act.toAssetId}`                       // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
@@ -50,13 +51,13 @@ const ActivityExtraDetail = ( { act} ) => {
 
         <Feed.Extra images>
           <QLink to={linkTo}>
-            <img src={assetThumbnailUrl} style={{ width: "auto", maxWidth: "12em", maxHeight: "6em" }} />
+            <Thumbnail id={act.toAssetId} style={{ width: "auto", maxWidth: "12em", maxHeight: "6em" }} expires={5} />
           </QLink>
         </Feed.Extra>
       </div>
     )
   }
-
+  
   return null
 }
 
@@ -75,14 +76,19 @@ const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
 const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
   const { byUserName, byUserId } = act
   const ago = moment(act.timestamp).fromNow()   // TODO: Make reactive
-  const iconClass = ActivityTypes.getIconClass(act.activityType)  
+  const iconClass = ActivityTypes.getIconClass(act.activityType)
 
   return (
     <Feed.Event style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
       
       <Feed.Label>
         <QLink to={"/u/" + byUserName}>
-          <img src={`/api/user/${byUserId}/avatar`}></img>
+          {currUser && currUser._id == byUserId &&
+            <img src={makeCDNLink(currUser.profile.avatar)}></img>
+          }
+          {!currUser || currUser._id != byUserId &&
+            <img src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
+          }
         </QLink>
       </Feed.Label>
 

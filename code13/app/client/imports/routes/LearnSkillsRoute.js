@@ -5,7 +5,7 @@ import getStartedStyle from './GetStarted.css'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
-
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 
@@ -53,7 +53,7 @@ const LearnSkillsRoute = ( { currUser }, context ) => (
                     style={cardStyle} 
                     to={`/learn/skills/${area.tag}`}>
                   <Card.Content>
-                    <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
+                    <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
                     <p style={descStyle}>{area.desc}.</p>
                     { currUser && 

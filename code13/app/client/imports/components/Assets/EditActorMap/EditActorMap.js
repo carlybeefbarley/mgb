@@ -1,5 +1,3 @@
-
-
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ActorMapArea from './ActorMapArea.js'
@@ -57,14 +55,20 @@ export default class EditActorMap extends EditMap {
 
       // stores tiles and images
       this.cache = new Cache(this.mgb_content2, () => {
-        this.setState({isLoading:  false})
+        // is cache still present?
+        this.cache && this.setState({isLoading:  false})
       })
     })
   }
+  createNewMap(){
 
+  }
   componentWillReceiveProps(newp){
-    // ignore older assets
-    if(_.isEqual(this.lastSave, newp.asset.content2)){
+    if(!newp.asset.content2){
+      return
+    }
+    // ignore older assets - and ignore empty content2 (debug - why sometimes we get empty c2)
+    if(_.isEqual(this.lastSave, newp.asset.content2) || !Object.keys(newp.asset.content2).length ){
       this.setState({isLoading: true})
       this.cache && this.cache.isReady() && this.cache.update(this.mgb_content2, () => {
         this.setState({isLoading: false})
@@ -90,8 +94,8 @@ export default class EditActorMap extends EditMap {
       }
       // or new Cache - if immutable is preferred - and need to force full cache update
       if(this.cache && this.cache.isReady()) {
-        this.cache && this.cache.isReady() && this.cache.update(d, () => {
-          this.setState({isLoading: false})
+        this.cache.update(d, () => {
+          this.cache && this.setState({isLoading: false})
         })
       }
       else{
@@ -155,7 +159,7 @@ export default class EditActorMap extends EditMap {
       <div className="ui modal" ref="jump" style={{position: "absolute"}}>
         <div className="header">Add Jump Event</div>
         <div className="content">
-          <PlayForm asset={this.state.jumpData} onchange={(v) => {this.setState({event: this.state.jumpData})}}/>
+          <PlayForm asset={this.state.jumpData} onChange={(v) => {this.setState({event: this.state.jumpData})}}/>
         </div>
         <div className="actions">
           <div className="ui approve button">Approve</div>
@@ -170,7 +174,7 @@ export default class EditActorMap extends EditMap {
       <div className="ui modal" ref="music" style={{position: "absolute"}}>
         <div className="header">Add Music Event</div>
         <div className="content">
-          <MusicForm asset={this.state.musicData} onchange={ () => {this.setState( { event: this.state.musicData } ) } }/>
+          <MusicForm asset={this.state.musicData} onChange={ () => {this.setState( { event: this.state.musicData } ) } }/>
         </div>
         <div className="actions">
           <div className="ui approve button">Confirm</div>

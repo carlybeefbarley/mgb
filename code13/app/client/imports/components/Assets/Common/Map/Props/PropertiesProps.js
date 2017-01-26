@@ -25,9 +25,13 @@ export default {
     this.quickSave(reason)
   },
   updateObject(data){
-
+    this.mgb_content2
   },
   changeTileSize(data){
-    this.saveForUndo()
+    const reason = "Changed Layer properties"
+    this.saveForUndo(reason)
+    this.mgb_content2.tilewidth = data.tilewidth
+    this.mgb_content2.tileheight = data.tileheight
+    this.quickSave(reason)
   }
 }

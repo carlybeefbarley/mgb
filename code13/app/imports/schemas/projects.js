@@ -6,6 +6,7 @@ import { Projects, Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { bestWorkStateName, defaultWorkStateName } from '/imports/Enums/workStates'
 
+
 // The 'projects' concept is a BIG DEAL in MGB, so get ready for a big-ass comment explaining it 
 // all. Got a coffee? You may need one :)  
  
@@ -345,9 +346,9 @@ export const getMsgForProjectAccess = (pte) => (
 )
 
 
-export const getProjectAvatarUrl = (p) => ( 
-  (p.avatarAssetId.length && p.avatarAssetId.length && p.avatarAssetId.length > 0) 
-  ? `/api/asset/thumbnail/png/${p.avatarAssetId}` 
+export const getProjectAvatarUrl = (p, expires = 3600) => (
+  (p.avatarAssetId.length && p.avatarAssetId.length && p.avatarAssetId.length > 0)
+  ? `/api/asset/cached-thumbnail/png/${expires}/${p.avatarAssetId}`
   : "/images/wireframe/image.png"
 ) 
 

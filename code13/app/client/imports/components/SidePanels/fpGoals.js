@@ -8,7 +8,7 @@ import { Progress, Icon } from 'semantic-ui-react'
 import { stopCurrentTutorial } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
 import { StartDefaultNextTutorial } from '/client/imports/routes/LearnGetStartedRoute'
-
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum, joyrideOriginatingAssetId } ) => (
@@ -68,7 +68,7 @@ export default fpGoals = React.createClass({
           <SkillCountsLabel skills={skills} />
         </h3>
         <p style={{fontSize: '1.25em'}}>
-          <img src="/images/mascots/bigguy.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
+          <img src={makeCDNLink("/images/mascots/bigguy.png")} style={{maxWidth: 70, float: 'left', marginRight: 15}} />
           <span style={{position: 'relative', top: 0}}>Your Learning quests</span>
         </p>
         { (!joyrideSteps || joyrideSteps.length === 0) && 

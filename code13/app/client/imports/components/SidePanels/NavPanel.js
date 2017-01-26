@@ -17,7 +17,7 @@ import urlMaker from '/client/imports/routes/urlMaker'
 
 import reactMixin from 'react-mixin'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
-
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const _npFeatureLevelHideWords = 4  // At this NavPanel featureLevel (or greater), don't show the words for the icons
 
@@ -247,7 +247,7 @@ export default NavPanel = React.createClass({
                 onMouseEnter={() => { this.npViewSelect(v.tag, false)}}
                 onClick={() => { this.npViewSelect(v.tag, true)}}>
                 { showAvatarInsteadOfIcon ? 
-                  <img className="ui centered avatar image" style={{ width: '3em', height: '3em'}} src={currUser.profile.avatar} />
+                  <img className="ui centered avatar image" style={{ width: '3em', height: '3em'}} src={makeCDNLink(currUser.profile.avatar)} />
                   :
                   <i className={v.icon + actv + " big icon"} />
                 }

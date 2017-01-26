@@ -28,6 +28,30 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
+      'timestamp': 'Wed Jan 25 2017 19:30:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2725'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'core.scalability',
+          'type': 'feature',
+          'changeName': 'Caching and CDN distribution',
+          'changeSummary': 'Assets are now cached and distributed via CDN, so the site should be much faster in use. There may be bugs...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Tue Jan 17 2017 10:20:00 GMT-0800 (PST)',
 
       'id': {

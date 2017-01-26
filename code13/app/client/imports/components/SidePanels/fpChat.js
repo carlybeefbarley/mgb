@@ -10,6 +10,8 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { logActivity } from '/imports/schemas/activity'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
+
 import moment from 'moment'
 
 const initialMessageLimit = 5
@@ -210,10 +212,17 @@ debugger   // DEAD CODE?
     const to = `/u/${c.byUserName}`
 
     const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
+    const currUser = Meteor.user()
+
     return (
       <div className="comment animated fadeInRight" key={c._id}>
         <QLink to={to} className="avatar">
-          <img src={`/api/user/${c.byUserId}/avatar`}></img>
+          {currUser && currUser._id == c.byUserId &&
+            <img src={makeCDNLink(currUser.profile.avatar)}></img>
+          }
+          {(!currUser || currUser._id != asset.ownerId) &&
+            <img src={makeCDNLink(`/api/user/${c.byUserId}/avatar/60`, makeExpireTimestamp(60))}></img>
+          }
         </QLink>
         <div className="content">
           <QLink to={to} className="author">{c.byUserName}</QLink>

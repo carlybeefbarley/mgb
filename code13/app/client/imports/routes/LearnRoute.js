@@ -4,7 +4,7 @@ import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
-
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const cardStyle = {
   color: "#2e2e2e"
@@ -83,7 +83,7 @@ const LearnRoute = ( { currUser, params }, context ) => (
             { learnTopLevelItems.map( (area, idx) => (
                 <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
                   <Card.Content>
-                    <Image floated='left' style={mascotStyle} src={`/images/mascots/${area.mascot}.png`} />
+                    <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
                     <p style={descStyle}>{area.desc}.</p>
                     { currUser && ('string' == (typeof area.skillnodeTopLevelTag)) && 

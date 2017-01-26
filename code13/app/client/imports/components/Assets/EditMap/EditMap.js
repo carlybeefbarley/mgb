@@ -148,6 +148,10 @@ export default class EditMap extends React.Component {
   createNewMap(){
     this.mgb_content2 = TileHelper.genNewMap(10, 10)
     this.cache = new Cache(this.mgb_content2, () => {
+      // unmounted during cache fetching
+      if(!this.cache){
+        return
+      }
       this.quickSave("New Map data")
       // this is called in the construct - and callback will be instant
       this.setState({isLoading: false})
@@ -199,18 +203,39 @@ export default class EditMap extends React.Component {
     this.doSnapshotActivity()
   }
 
+  shouldComponentUpdate() {
+    return !this.preventUpdates
+  }
+
   componentWillReceiveProps(newp){
-    if(newp.asset.content2) {
+    // new props will come in after we will save just edited data - throw away data this time
+    if(this.preventUpdates){
+      return
+    }
+    // sometimes we are getting empty c2 on new maps
+    if(newp.asset.content2 && Object.keys(newp.asset.content2).length ) {
       this.setState({isLoading: true})
       // or new Cache - if immutable is preferred - and need to force full cache update
       this.cache.update(newp.asset.content2, () => {
         this.setState({isLoading: false})
       })
+      if(!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave){
+        if(this.props.canEdit){
+          const oldMeta = this.mgb_content2.meta
+          this.mgb_content2 = newp.asset.content2
+          // don't update active tool / camera position etc - because it's annoying
+          this.mgb_content2.meta = oldMeta
+        }
+        else{
+          this.mgb_content2 = newp.asset.content2
+        }
+      }
     }
   }
 
   componentWillUnmount(){
     this.cache && this.cache.cleanUp()
+    this.cache = null
   }
 
   enableTrait(trait) {
@@ -226,6 +251,8 @@ export default class EditMap extends React.Component {
   }
 
   saveForUndo(reason = '' , skipRedo = false) {
+    // this will prevent update between editing step and next save
+    this.preventUpdates = true
     if (this.ignoreUndo)
       return
     const toSave = { data: this.copyData(this.mgb_content2), reason }
@@ -299,14 +326,15 @@ export default class EditMap extends React.Component {
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
+    this.preventUpdates = false
     if(!this.props.canEdit){
       this.props.editDeniedReminder()
       return
     }
     // isn't it too late to save for undo?
-    if(!skipUndo && !_.isEqual(this.lastSave, data)){
+    /*if(!skipUndo && !_.isEqual(this.lastSave, data)){
       this.saveForUndo(reason)
-    }
+    }*/
     // make sure we have thumbnail
     if(!thumbnail && this.refs.map){
       this.refs.map.generatePreviewAndSaveIt()

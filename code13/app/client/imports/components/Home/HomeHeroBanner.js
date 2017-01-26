@@ -7,6 +7,8 @@ import { Segment, Grid, Header, Image, Button } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
 
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
 const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
   const isSmall = respIsRuleActive('small')
   if (respIsRuleActive('impossible'))
@@ -16,7 +18,7 @@ const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
     <Segment basic className="slim" style={{ minWidth: '200px', margin: '0 auto', paddingTop: '2.5em', paddingBottom: '4em' }}>
       <Grid.Row>
         <Grid.Column>
-          <Image size='small' floated='right' src="/images/mascots/team.png" style={{width: "480px"}} />
+          <Image size='small' floated='right' src={makeCDNLink("/images/mascots/team.png")} style={{width: "480px"}} />
           <Header as='h1' size='huge' style={{fontSize: '3em', marginBottom: '0.5em'}}>
             <span style={isSmall ? {} : { whiteSpace: 'nowrap'}}>My Game Builder</span>
             <em className="sub header" style={{fontSize: '0.5em'}}>Make Games. Make Friends. Have Fun.</em>

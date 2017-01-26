@@ -10,8 +10,7 @@ import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
 import { AssetKinds } from './assets/assetKinds'
 export { AssetKinds }
-
-//import cache from '/imports/cache'   -- DEAD CODE? @stauzs ?
+// import cache from '/imports/cache' // used for NGINX caching - see /imports/helpers/generators for API caching
 
 var schema = {
   _id: String,

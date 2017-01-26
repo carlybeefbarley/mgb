@@ -6,6 +6,8 @@ import ActorHelper from '../Common/Map/Helpers/ActorHelper'
 import PositionInfo from '../Common/Map/Tools/PositionInfo'
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 
+import {fetchAssetByUri} from '/client/imports/helpers/assetFetchers'
+
 import './../Common/Map/EditMap.css'
 
 export default class ActorMapArea extends BaseMapArea {
@@ -35,28 +37,8 @@ export default class ActorMapArea extends BaseMapArea {
     }
   }
 
-  // TODO(stauzs): make global caching - where component could subscribe to desired assets - and has cache cleaning mechanism if asset in interest has changed
-  cache = {}
-  fetchAssetByUri = (uri, keepInCache = false) => {   // TODO - just import the one from '/client/imports/helpers/assetFetchers' ?
-    return new Promise( (resolve, reject) => {
-      if(this.cache[uri]){
-        resolve(this.cache[uri]);
-      }
-      var client = new XMLHttpRequest()
-      client.open('GET', uri)
-      client.send()
-      client.onload = function () {
-        if (this.status >= 200 && this.status < 300){
-          if(keepInCache){
-            this.cache[uri] = this.response
-          }
-          resolve(this.response)  // Performs the function "resolve" when this.status is equal to 2xx
-        }
-        else
-          reject(this.statusText) // Performs the function "reject" when this.status is different than 2xx
-      }
-      client.onerror = function () { reject(this.statusText) }
-    })
+  fetchAssetByUri = (uri) => {
+    return fetchAssetByUri(uri, false) // 2nd param is cache - but it tends to overcache - etag would be better
   }
 
   showInfo() {

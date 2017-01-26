@@ -68,7 +68,7 @@ export default UserProfileRoute = React.createClass({
       else 
       {
        // Go through all the keys, log completion tags for each
-        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))     
+        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))
       }
     })
   },
@@ -114,6 +114,7 @@ export default UserProfileRoute = React.createClass({
   renderUserInfo: function(user, ownsProfile) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile
+
 
     return (
       <Grid.Column width={8} id="mgbjr-profile-bioDiv">

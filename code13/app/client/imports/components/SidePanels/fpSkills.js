@@ -4,6 +4,7 @@ import { Message, Icon } from 'semantic-ui-react'
 import QLink from "/client/imports/routes/QLink"
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import SkillCountsLabel from '/client/imports/components/Skills/SkillCountsLabel'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -32,7 +33,7 @@ export default fpSkills = React.createClass({
           <SkillCountsLabel skills={skills} />
         </h3>
         <p>
-          <img src="/images/mascots/whale.png" style={{maxWidth: 70, float: 'left', marginRight: 15}} />
+          <img src={makeCDNLink("/images/mascots/whale.png")} style={{maxWidth: 70, float: 'left', marginRight: 15}} />
           <QLink to={`/u/${currUser.username}/skilltree`} style={{clear: 'both'}} style={{fontSize: '1.25em'}}>
             <span style={{position: 'relative', top: 0}}>My Skills</span>
           </QLink>

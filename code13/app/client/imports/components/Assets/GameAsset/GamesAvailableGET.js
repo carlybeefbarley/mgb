@@ -6,7 +6,9 @@ import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
 import GameItems from './GameItems'
 
 import { Azzets } from '/imports/schemas'
-import { projectMakeFrontPageListSelector, getProjectAvatarUrl } from '/imports/schemas/projects'
+import { projectMakeFrontPageListSelector } from '/imports/schemas/projects'
+
+import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
 
 export default GamesAvailableGet = React.createClass({
   mixins: [ReactMeteorData],

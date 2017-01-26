@@ -67,6 +67,8 @@ export default UserAssetListRoute = React.createClass({
 
     if (assetViewChoices.hasOwnProperty(q.view))
       newQ.view = q.view
+    else if(localStorage.getItem("asset-view"))
+      newQ.view = localStorage.getItem("asset-view")
 
     // query.project
     if (q.project)
@@ -217,6 +219,7 @@ export default UserAssetListRoute = React.createClass({
 
   handleChangeViewClick(newView)
   {
+    localStorage.setItem("asset-view", newView)
     this._updateLocationQuery( {view: newView})
   },
 
@@ -275,6 +278,7 @@ export default UserAssetListRoute = React.createClass({
     const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)
+    const view = qN.view
     const isAllKinds = isAssetKindsStringComplete(qN.kinds)
 
     // For some reason this isn't working as 'hidden divider' TODO - find out why
@@ -361,7 +365,7 @@ export default UserAssetListRoute = React.createClass({
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
             <AssetListChooseView 
                 sty={{ float: 'right', marginRight: '12px'}}
-                chosenView={qN.view} 
+                chosenView={view}
                 handleChangeViewClick={this.handleChangeViewClick} />
           </div>
           
@@ -376,7 +380,7 @@ export default UserAssetListRoute = React.createClass({
                 <AssetList 
                   allowDrag={true}
                   assets={assets} 
-                  renderView={qN.view}
+                  renderView={view}
                   currUser={currUser} 
                   ownersProjects={projects}  />
             }

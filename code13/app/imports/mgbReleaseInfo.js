@@ -33,7 +33,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '2716-scale'
+        'iteration': '2722'
       },
 
       'releaseManagement': {
@@ -45,7 +45,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'featureTag': 'core.scalability',
           'type': 'feature',
           'changeName': 'Caching and CDN distribution',
-          'changeSummary': '@stauzs is making it all go fast. Wheeee',
+          'changeSummary': 'Assets are now cached and distributed via CDN, so the site should be much faster in use. There may be bugs...',
           'otherUrls': [ ]
         }
       ]

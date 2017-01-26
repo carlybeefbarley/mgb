@@ -359,6 +359,8 @@ export const setUpCloudFront = function () {
       cloudfront.waitFor('distributionDeployed', {Id: cloudfrontDistribution.Id}, Meteor.bindEnvironment((err, data) => {
         if (err) {
           Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Distribution failed to become ready. Error: ${err}`, true)
+          // retry.. as it tends to time out - if Cloudfront Deploying takes more than 20 minutes
+          setCDNParams(cloudfrontDistribution)
         }
         else {
           CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName

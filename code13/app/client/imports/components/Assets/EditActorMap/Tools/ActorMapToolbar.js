@@ -171,17 +171,7 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Clear selected tiles and/or objects',
           level: 4,
           disabled
-        },
-        {
-          name: 'inspect',
-          active: this.props.options.mode == EditModes.inspect,
-          icon: 'search',
-          label: 'Inspect',
-          tooltip: 'Inspect tool - Get information of Actors on the hovered tile',
-          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
-          level: 7
         }
-
       ]
     }
 

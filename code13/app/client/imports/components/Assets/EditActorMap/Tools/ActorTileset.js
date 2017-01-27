@@ -112,7 +112,7 @@ export default class ActorTileset extends React.Component {
           borderRadius: '.28571429rem', 
           border: 'none',
           boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
-          opacity: 0.7
+          opacity: 0.6
         }}
         >
         <img
@@ -188,7 +188,8 @@ export default class ActorTileset extends React.Component {
           (
           this.props.getActiveLayerData().name === "Events"
           ?
-          <div >
+          <div className="actor-disabled-hint" style={{width: '100%', opacity: 1, backgroundColor: '#e8e8e8'}}>
+            <p className="title active" style={{color: 'black', borderTop: "none", paddingTop: 0}}>You cannot use Actors in the Events layer. Use the Events Tool instead.</p>
           </div>
           :
           <div
@@ -198,7 +199,7 @@ export default class ActorTileset extends React.Component {
             onDragOver={DragNDropHelper.preventDefault}
             style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
             >
-            {this.renderActors()}
+            {this.renderActors(1)}
           </div>
           )
         }

@@ -1,5 +1,4 @@
 import React from 'react'
-import { Segment } from 'semantic-ui-react'
 
 import BaseMapArea from '../Common/Map/BaseMapArea'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper'
@@ -41,10 +40,6 @@ export default class ActorMapArea extends BaseMapArea {
     return fetchAssetByUri(uri, false) // 2nd param is cache - but it tends to overcache - etag would be better
   }
 
-  showInfo() {
-
-  }
-
   renderMage() {
     const { asset, playDataIsReady } = this.props
 
@@ -84,9 +79,7 @@ export default class ActorMapArea extends BaseMapArea {
         >
         { this.getNotification() }
         { this.renderMap() }
-        <Segment className='inspect-info' style={{display: 'none'}} inverted secondary>
-          <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
-        </Segment>
+        <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
       </div>
     )
   }

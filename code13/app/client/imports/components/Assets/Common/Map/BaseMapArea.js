@@ -9,7 +9,6 @@ import TileCollection from './Tools/TileCollection'
 import EditModes      from './Tools/EditModes'
 import LayerTypes     from './Tools/LayerTypes'
 import GridLayer      from './Layers/GridLayer'
-import MaskLayer      from './Layers/MaskLayer'
 
 import Camera         from './Camera'
 
@@ -713,7 +712,6 @@ export default class MapArea extends React.Component {
   redraw () {
     this.redrawLayers()
     this.redrawGrid()
-    this.redrawMask()
   }
 
   redrawGrid () {
@@ -725,10 +723,6 @@ export default class MapArea extends React.Component {
       layer.adjustCanvas()
       layer.draw()
     })
-  }
-
-  redrawMask () {
-    this.refs.mask && this.refs.mask.draw()
   }
 
   // RAF calls this function
@@ -809,7 +803,7 @@ export default class MapArea extends React.Component {
   }
 
   // render related methods
- getInfo() {
+  getInfo() {
     const layer = this.getActiveLayer()
     let st = ''
     this.collection.forEach((t) => {
@@ -817,18 +811,7 @@ export default class MapArea extends React.Component {
     })
     st = st.substr(2)
     let info = layer ? layer.getInfo() : ''
-    info = 
-      info 
-      ? 
-      (
-        info.gid 
-        ?
-        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id + ', gid: ' + info.gid 
-        :
-        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id 
-      )
-      : 
-      ''
+    info = info ? ': ' + info : ''
     return (
       <div>
         <div>
@@ -916,10 +899,8 @@ export default class MapArea extends React.Component {
         onContextMenu={e => { e.preventDefault(); return false;}}
         onMouseDown={this.handleMouseDown}
         onTouchStart={this.handleMouseDown}
-        onKeyPressCapture={e => {if (e.keyCode === 27) {this.clearActiveSelection; this.clearSelection }}}
         style={{ height: 640 + 'px', position: 'relative', margin: '10px 0' }}>
         {layers}
-        <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref='mask' />
       </div>
     )
   }

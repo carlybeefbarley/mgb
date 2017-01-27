@@ -117,3 +117,15 @@
     opacity: 1 !important;
     box-shadow: 0px 0px 8px grey !important;
 }
+
+.inspectInfo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 3px;
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    z-index: 5
+}

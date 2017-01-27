@@ -11,7 +11,6 @@ const EditModes = {
   rectangle: 'rectangle',
   wand: 'wand',
   picker: 'picker',
-  inspect: 'inspect',
 
   // object tools
   drawRectangle: 'drawRectangle',

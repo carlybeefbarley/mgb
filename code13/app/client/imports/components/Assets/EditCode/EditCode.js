@@ -611,7 +611,6 @@ export default class EditCode extends React.Component {
     }
   }
 
-
   _getMgbAssetIdsInLine(lineText) {
     //  let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
     // TODO: split regexp for each case

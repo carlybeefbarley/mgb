@@ -197,7 +197,7 @@ export default class EditActorMap extends EditMap {
 
     const c2 = this.mgb_content2
     return (
-      <div className='ui grid' ref="container">
+      <div className='ui grid' ref="container" style={{flexWrap: 'nowrap'}}>
         { isLoading && this.renderLoading() }
         {this.renderPlayModal()}
         {this.renderMusicModal()}
@@ -231,7 +231,7 @@ export default class EditActorMap extends EditMap {
               </div>
             </div>
           </div>
-          <div style={{clear: 'both', overflow:'hidden'}}>
+          <div style={{ clear: 'both', overflow:'hidden'}}>
             <ActorMapArea
               {...this.mapProps}
               showModal={this.showModal}
@@ -245,9 +245,9 @@ export default class EditActorMap extends EditMap {
               data={c2}
               asset={this.props.asset}
               ref='map' />
-            </div>
+          </div>
         </div>
-        <div className={'three wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column'}}>
+        <div className={'three wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column', minWidth: '175px'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}

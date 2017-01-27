@@ -371,6 +371,7 @@ export default class TileSet extends React.Component {
         key={index}><span className='tileset-title-list-item'>{title}</span></a>
     )
   }
+  
   genTilesetImage(index, isActive, tileset){
     const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
     return (

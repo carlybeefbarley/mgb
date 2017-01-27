@@ -94,6 +94,8 @@ Meteor.startup(function () {
     }
   )
 
+  process.env.MAIL_URL = 'smtp://guntis%40mycodebuilder.com:meteormailpsw1@smtp.gmail.com:465';
+
 })
 
 // smoke test that these are present

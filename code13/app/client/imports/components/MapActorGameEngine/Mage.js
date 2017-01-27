@@ -55,6 +55,7 @@ const _resolveOwner = (implicitOwnerName, assetName) => {
 }
 const _mkMapUri = (ownerName, assetName) => { 
   const p = _resolveOwner(ownerName, assetName)
+  // make sure we have ALWAYS latest map
   return `/api/asset/actormap/${p.ownerName}/${p.assetName}?hash=${Date.now()}`
 }
 const _mkActorUri = (ownerName, assetName) =>  {

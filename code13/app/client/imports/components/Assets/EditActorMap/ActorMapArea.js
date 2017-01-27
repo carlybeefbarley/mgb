@@ -51,17 +51,8 @@ export default class ActorMapArea extends BaseMapArea {
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
 
     let info = layer ? layer.getInfo() : ''
-    let layers = layer ? this.sortLayersByActive(layer.data.name) : []
+    //let layers = layer ? this.sortLayersByActive(layer.data.name) : []
     let actor = info ? (info.gid ? this.props.data.tilesets[Math.floor(info.gid/100)] : null) : null
-
-    /*
-    if (info) {
-      var tilesets = this.props.data.tilesets
-      tilesets.map(actor => {
-        
-      })
-    }
-    */
 
     return (
       <div>
@@ -75,9 +66,9 @@ export default class ActorMapArea extends BaseMapArea {
               <p>
                 <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
                 <br />
-                <span><b>Actor: </b>{actor.actor.databag.all.defaultGraphicName}</span>
+                <span>&ensp;<b>Actor: </b>{actor.actor.databag.all.defaultGraphicName}</span>
                 <br />
-                <span><b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
+                <span>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
               </p>
               :
               <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>

@@ -8,7 +8,7 @@ import MageNpcDialog from './MageNpcDialog'
 import MageGameCanvas from './MageGameCanvas'
 import MageInventoryDialog from './MageInventoryDialog'
 
-import { Message, Button } from 'semantic-ui-react'
+import { Message, Button, Icon } from 'semantic-ui-react'
 
 import TouchController from './TouchController'
 
@@ -42,7 +42,7 @@ let _haveShownInstructionsOnceSinceStart = false      // We show this once per a
 
 
 const _compactMsgSty = { maxWidth: '500px' }  // Message icon cancels compact prop, so need a style
-const Preloader = ( { msg } ) => <Message style={_compactMsgSty} icon='circle notched loading' content={`Preloading ${msg}`} />
+const Preloader = ( { msg } ) => <Message style={_compactMsgSty} icon={<Icon name='circle notched' loading/>} content={`Preloading ${msg}`} />
 const MapLoadFailed = ( { err } ) => <Message style={_compactMsgSty} icon='warning sign' error content={err} />
 
 const _resolveOwner = (implicitOwnerName, assetName) => {

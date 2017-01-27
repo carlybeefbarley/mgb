@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
+import { Segment, Header } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Skills } from '/imports/schemas'
 
@@ -46,12 +47,15 @@ export default SkillTreeRoute = React.createClass({
     const userSkills = ownsProfile ? this.context.skills : this.data.skills
 
     return (
-      <div className="ui basic segment">
+      <Segment basic>
         <Helmet
             title="Skill Tree"
             meta={ [ {"name": "description", "content": "SkillTree"} ] } />
         { isTopLevelRoute && 
-          <div className='ui segment'>
+          <Header as='h2' content='Skills'/>
+        }
+        { isTopLevelRoute && 
+          <Segment>
             <p>
               The Skill Bars below represent your progress on learning certain Skills. 
               Skills will automatically advance as you complete tutorials, exercise certain skills, and as you code with CodeMentor. 
@@ -63,10 +67,10 @@ export default SkillTreeRoute = React.createClass({
             <p>
               <small><em>(Note: expanded-UI for this feature is incomplete - and kind of ugly... It will be completed in January)</em></small>
             </p>
-          </div>
+          </Segment>
         }
         <SkillsMap user={user} userSkills={userSkills} ownsProfile={ownsProfile} hideToolbars={!isTopLevelRoute}/>
-      </div>
+      </Segment>
     )
   }
 })

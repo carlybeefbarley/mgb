@@ -12,7 +12,7 @@ import { Message, Button } from 'semantic-ui-react'
 
 import TouchController from './TouchController'
 
-const _overlayStyle = { 
+const _overlayStyle = {
   position:   'absolute', 
   left:       '80px', 
   right:      '80px', 
@@ -55,7 +55,7 @@ const _resolveOwner = (implicitOwnerName, assetName) => {
 }
 const _mkMapUri = (ownerName, assetName) => { 
   const p = _resolveOwner(ownerName, assetName)
-  return `/api/asset/actormap/${p.ownerName}/${p.assetName}`
+  return `/api/asset/actormap/${p.ownerName}/${p.assetName}?hash=${Date.now()}`
 }
 const _mkActorUri = (ownerName, assetName) =>  {
   const p = _resolveOwner(ownerName, assetName)

@@ -9,6 +9,7 @@ import { expectedToolbars,  } from '/client/imports/components/Toolbar/Toolbar'
 
 import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'
+import fpMobileMore from './fpMobileMore'
 import fpActivity from './fpActivity'
 import fpKeyboard from './fpKeyboard'
 import fpProjects from './fpProjects'
@@ -25,28 +26,33 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const flexPanelViews = [
-  { tag: 'activity',  lev: 4,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
+  { tag: 'activity',  lev: 4,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false, mobileUI: true },
 
-  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false  },
-  { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false },
-  { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false },
+  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false, mobileUI: false },
+  { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false, mobileUI: true  },
+  { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false, mobileUI: true  },
 
-  { tag: 'skills',    lev: 2,  name: 'skills',   icon: 'plus circle', hdr: 'Skills',            el: fpSkills,        superAdminOnly: false  },
+  { tag: 'skills',    lev: 2,  name: 'skills',   icon: 'plus circle', hdr: 'Skills',           el: fpSkills,        superAdminOnly: false, mobileUI: false  },
 
-  { tag: 'features',  lev: 3,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
+  { tag: 'features',  lev: 3,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false, mobileUI: false  },
+
+  { tag: 'play',  lev: 3,  name: 'play',  icon: 'game', hdr: 'Play',            el: fpFeatureLevels, superAdminOnly: false, mobileUI: true  },
+
+// Experimental UI for mobile
+//  { tag: 'more',  lev: 8,  name: 'more',  icon: 'ellipsis horizontal', hdr: 'More',            el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
 
  // activity makes most sens at top if enabled?
   
-  { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
+  { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false, mobileUI: false },
   
-  { tag: 'network',   lev: 6,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
+  { tag: 'network',   lev: 6,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false, mobileUI: false },
 
-  { tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
+//  { tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
 
-  { tag: 'projects',  lev: 8,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
+  { tag: 'projects',  lev: 8,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false, mobileUI: false },
 
   // SuperAdmin-only:
-  { tag: 'super',     lev: 8,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true  } // ALWAYS SuperAdmin
+  { tag: 'super',     lev: 8,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true, mobileUI: false  } // ALWAYS SuperAdmin
 ]
 
 const defaultPanelViewIndex = 0
@@ -189,6 +195,7 @@ export default FlexPanel = React.createClass({
   render: function () {
     const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle, fpIsFooter } = this.props
 
+    const isMobileUI = fpIsFooter
     const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
     const panelStyle = fpIsFooter ? 
     {
@@ -319,8 +326,10 @@ export default FlexPanel = React.createClass({
           </div>
         }
         <div id='mgbjr-flexPanelIcons' className={miniNavClassNames} style={miniNavStyle} >
-          { flexPanelViews.map(v => {
+          { flexPanelViews.map(v => {  /* TODO: WORK OUT HOW TO HANDLE 5 equally space buttons */
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
+            if (isMobileUI && !v.mobileUI )
+              return null
             if (v.lev > fpFeatureLevel && this.getFpButtonAutoShowForTag(v.tag) !== true)
               return null
             if (v.superAdminOnly && !this.props.isSuperAdmin) 

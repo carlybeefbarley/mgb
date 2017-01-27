@@ -9,6 +9,7 @@ import TileCollection from './Tools/TileCollection'
 import EditModes      from './Tools/EditModes'
 import LayerTypes     from './Tools/LayerTypes'
 import GridLayer      from './Layers/GridLayer'
+import MaskLayer      from './Layers/MaskLayer'
 
 import Camera         from './Camera'
 
@@ -180,7 +181,7 @@ export default class MapArea extends React.Component {
 
   /* import and conversion */
   xmlToJson (xml) {
-    // window.xml = xml
+    window.xml = xml
   }
   handleFileByExt_tmx (name, buffer) {
     // https://github.com/inexorabletash/text-encoding
@@ -195,7 +196,11 @@ export default class MapArea extends React.Component {
   handleFileByExt_json (name, buffer) {
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
     const newData = JSON.parse(jsonString)
+
+
+
     this.props.updateMapData(newData)
+
     //this.updateImages()
   }
   // TODO: move api links to external resource?
@@ -415,14 +420,8 @@ export default class MapArea extends React.Component {
       }
       return
     }
-
     this.camera.x -= (this.lastEvent.pageX - px) / this.camera.zoom
     this.camera.y -= (this.lastEvent.pageY - py) / this.camera.zoom
-    /*
-    if(e.ctrlKey){
-      this.camera.x = Math.round(this.camera.x / this.data.tilewidth) * this.data.tilewidth
-      this.camera.y = Math.round(this.camera.y / this.data.tileheight) * this.data.tileheight
-    }*/
     this.lastEvent.pageX = px
     this.lastEvent.pageY = py
 
@@ -563,12 +562,7 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove (e) {
-    if(this.props.isPlaying || this.props.isLoading){
-      return
-    }
-
-    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
-    if (!this.isMouseDown)
+    if (this.props.isPlaying || this.props.isLoading || !this.isMouseDown)
       return
 
 
@@ -577,6 +571,7 @@ export default class MapArea extends React.Component {
     // https://msdn.microsoft.com/en-us/library/ms536947(v=vs.85).aspx
 
     // it seems that IE and chrome reports "buttons" correctly
+    // console.log(e.buttons)
     // 1 - left; 2 - right; 4 - middle + combinations
     // we will handle this => no buttons == touchmove event
     const editMode = this.props.getMode()
@@ -588,7 +583,7 @@ export default class MapArea extends React.Component {
     else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4 || (e.buttons == 1 && editMode === EditModes.view)){
       this.moveCamera(e)
     }
-
+    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
   }
 
   handleMouseUp (e) {
@@ -712,6 +707,7 @@ export default class MapArea extends React.Component {
   redraw () {
     this.redrawLayers()
     this.redrawGrid()
+    this.redrawMask()
   }
 
   redrawGrid () {
@@ -723,6 +719,10 @@ export default class MapArea extends React.Component {
       layer.adjustCanvas()
       layer.draw()
     })
+  }
+
+  redrawMask () {
+    this.refs.mask && this.refs.mask.draw()
   }
 
   // RAF calls this function
@@ -803,7 +803,7 @@ export default class MapArea extends React.Component {
   }
 
   // render related methods
-  getInfo() {
+ getInfo() {
     const layer = this.getActiveLayer()
     let st = ''
     this.collection.forEach((t) => {
@@ -811,7 +811,18 @@ export default class MapArea extends React.Component {
     })
     st = st.substr(2)
     let info = layer ? layer.getInfo() : ''
-    info = info ? ': ' + info : ''
+    info = 
+      info 
+      ? 
+      (
+        info.gid 
+        ?
+        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id + ', gid: ' + info.gid 
+        :
+        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id 
+      )
+      : 
+      ''
     return (
       <div>
         <div>
@@ -824,6 +835,7 @@ export default class MapArea extends React.Component {
       </div>
     )
   }
+
 
   getNotification(){
     return this.data.width * this.data.height > 100000 ? <div>
@@ -901,6 +913,7 @@ export default class MapArea extends React.Component {
         onTouchStart={this.handleMouseDown}
         style={{ height: 640 + 'px', position: 'relative', margin: '10px 0' }}>
         {layers}
+        <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref='mask' />
       </div>
     )
   }

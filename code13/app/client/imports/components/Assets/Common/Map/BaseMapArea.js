@@ -816,7 +816,7 @@ export default class MapArea extends React.Component {
       st += ', ' + t.gid
     })
     st = st.substr(2)
-    let info = layer ? layer.getInfo() : ''
+    let info = layer ? layer.getInfo() : null
     info = 
       info 
       ? 

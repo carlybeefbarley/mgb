@@ -211,6 +211,13 @@ export default NavPanel = React.createClass({
           },
           {
             subcomponent: 'Item',
+            to: `/u/${uname}`,
+            id: 'mgbjr-np-user-myProfile',
+            icon: 'user',
+            content: 'My Profile',
+          },
+          {
+            subcomponent: 'Item',
             to: `/u/${uname}/badges`,
             id: 'mgbjr-np-user-myBadges',
             icon: 'trophy',

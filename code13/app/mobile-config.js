@@ -3,3 +3,5 @@ App.info({
   "version": "0.0.5",
   "name": "MGB"
 });
+App.accessRule('http://*');
+App.accessRule('https://*');

@@ -115,7 +115,7 @@
 
 .selectedTileset {
     opacity: 1 !important;
-    box-shadow: 0px 0px 8px grey !important;
+    box-shadow: 0px 0px 10px grey !important;
 }
 
 .inspectInfo {

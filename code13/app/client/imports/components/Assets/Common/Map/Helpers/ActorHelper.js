@@ -272,7 +272,7 @@ export default ActorHelper = {
       firstgid: 1,
       image: '/api/asset/tileset/AymKGyM9grSAo3yjp',
       imageheight: 32,
-      imagewidth: 32,
+      imagewidth: 64,
       margin: 0,
       spacing: 0,
       tilecount: this.TILES_IN_ACTIONS,

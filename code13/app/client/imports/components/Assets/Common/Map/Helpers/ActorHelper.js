@@ -17,8 +17,8 @@ const ACTION_IMAGE = SpecialGlobals.actorMap.actionsImage
 const EVENT_LAYER = SpecialGlobals.actorMap.eventLayerId
 
 // in this context:
-// v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contains names
-// v2 - TMX format - layers contains tile global ids
+// v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contain names
+// v2 - TMX format - layers contain tile global ids
 
 export default ActorHelper = {
   TILES_IN_ACTIONS: SpecialGlobals.actorMap.actionsInImage,

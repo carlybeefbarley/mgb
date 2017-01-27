@@ -4,6 +4,8 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
+import { observe } from '/client/imports/helpers/assetFetchers'
+
 // TODO: use observe from assetFetchers instead of custom observer
 // import { observe } from "/client/imports/helpers/assetFetchers"
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -18,6 +20,7 @@ export default class DropArea extends React.Component {
     asset: PropTypes.object, // asset assigned to this dropArea
     onChange: PropTypes.function // callback
  }
+  static subscriptions = {} // key = owner:name / value subscription
   get data() {
     return this.props.value
   }
@@ -29,11 +32,6 @@ export default class DropArea extends React.Component {
       const parts = this.props.value.split(":")
       const name = parts.pop()
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
-      // no need for subscription here
-      if(owner == "[builtin]"){
-        return
-      }
-
       this.startSubscription(owner, name)
     }
   }
@@ -44,26 +42,54 @@ export default class DropArea extends React.Component {
   }
 
   startSubscription(owner, name, kind = this.props.kind){
+    // no need for subscription here
+    if(owner == "[builtin]"){
+      return
+    }
+
+    if(this.subscription && !this.subscription.isStopped){
+      return
+    }
+    const key = `${owner}:${name}`
+    // prevent inception
+    const oldSub = DropArea.subscriptions[key]
+    if(oldSub && !oldSub.isStopped){
+      this.subscription = oldSub
+      const oldReady = this.subscription.onReady
+      // keep stacking on ready
+      this.subscription.onReady = () => {
+        oldReady()
+        this.setState({asset: this.getAsset()})
+      }
+      return
+    }
+
     // stop old subscription
     this.subscription && this.subscription.stop()
+    // remove from stack just in case we are called from getMeteorData stack - which will auto stop sub
+    window.setTimeout(() => {
 
-    let hasReadyCalled = false
-    this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, kind, {
-      onStop: () => {
-        // repeat subscription if it has been stopped too early
-        if(!hasReadyCalled && !this.isUnmounted){
-          this.startSubscription(owner, name)
+      console.log("Subscription started",key)
+      this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, kind, {
+        onStop: () => {
+          delete DropArea.subscriptions[`${owner}:${name}`]
+          this.subscription.isStopped = true
+          console.log("Subscription stopped", key)
+        },
+        onReady: () => {
+          // we are stopping subscription on unmount - is this still gets triggered
+          if (this.isUnmounted)
+            return
+          this.subscription.onReady = () => {
+            this.setState({asset: this.getAsset()})
+          }
+        },
+        onError: (e) => {
+          console.log("DropArea - subscription did not become ready", e)
         }
-      },
-      onReady: () => {
-        hasReadyCalled = true
-        // we are stopping subscription on unmount - is this still gets triggered
-        if (this.isUnmounted)
-          return
-        this.setState( { asset: this.getAsset() } )
-      },
-      onError: (e) => { console.log("DropArea - subscription did not become ready", e) }
-    })
+      })
+
+    }, 0)
   }
 
   handleDrop(e) {
@@ -108,7 +134,6 @@ export default class DropArea extends React.Component {
       if(owner == "[builtin]"){
         return
       }
-      this.startSubscription(owner, name)
       const aa =  Azzets.find({dn_ownerName: owner, name: name}).fetch()
 
       if (aa && aa.length)

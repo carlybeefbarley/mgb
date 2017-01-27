@@ -80,14 +80,16 @@ export default class DropArea extends React.Component {
           // we are stopping subscription on unmount - is this still gets triggered
           if (this.isUnmounted)
             return
-          this.subscription.onReady = () => {
-            this.setState({asset: this.getAsset()})
-          }
+          this.subscription.onReady()
         },
         onError: (e) => {
           console.log("DropArea - subscription did not become ready", e)
         }
       })
+      
+      this.subscription.onReady = () => {
+        this.setState({asset: this.getAsset()})
+      }
 
     }, 0)
   }
@@ -106,9 +108,7 @@ export default class DropArea extends React.Component {
 
     this.setState( { asset: asset, badAsset: null }, () => {
       this.subscription && this.subscription.stop()
-      if(asset.dn_ownerName == "[builtin]"){
-        return
-      }
+      // subscribe to new asset
       this.startSubscription(asset.dn_ownerName, asset.name, asset.kind)
       this.saveChanges()
     })

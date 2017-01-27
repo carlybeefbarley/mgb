@@ -4,6 +4,7 @@ import React from 'react'
 import EditModes from '../../Common/Map/Tools/EditModes'
 import LayerTypes from '../../Common/Map/Tools/LayerTypes'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
+import Properties from './ActorMapProperties'
 
 export default class MapToolbar extends React.Component {
 
@@ -150,7 +151,7 @@ export default class MapToolbar extends React.Component {
           icon: 'wizard',
           active: this.props.options.mode == EditModes.wand,
           label: 'Magic Wand',
-          tooltip: 'Magic Wand selection - select adjacent tiles with same ID',
+          tooltip: 'Magic Wand selection - Select adjacent tiles with same ID',
           disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
           level: 12
         },
@@ -159,7 +160,7 @@ export default class MapToolbar extends React.Component {
           active: this.props.options.mode == EditModes.picker,
           icon: 'qrcode picker',
           label: 'Tile Picker',
-          tooltip: 'Tile Picker - Select All tiles with same ID',
+          tooltip: 'Tile Picker - Select all tiles with same ID',
           disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
           level: 13
         },

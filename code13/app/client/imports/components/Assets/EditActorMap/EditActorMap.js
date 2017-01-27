@@ -125,13 +125,17 @@ export default class EditActorMap extends EditMap {
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
     //return;
+    this.preventUpdates = false
     if(!this.props.canEdit){
       this.props.editDeniedReminder()
       return
     }
-    if(!skipUndo && !_.isEqual(this.lastSave, data)){
+
+    // isn't it too late to save for undo?
+    /*if(!skipUndo && !_.isEqual(this.lastSave, data)){
+      // save for undo will prevent map updates - this.preventUpdates = true
       this.saveForUndo(reason)
-    }
+    }*/
 
     const toSave = ActorHelper.v2_to_v1(data)
     this.lastSave = toSave
@@ -197,48 +201,62 @@ export default class EditActorMap extends EditMap {
 
     const c2 = this.mgb_content2
     return (
-      <div className='ui grid' ref="container">
+      <div className='ui grid' ref="container" style={{flexWrap: 'nowrap'}}>
         { isLoading && this.renderLoading() }
         {this.renderPlayModal()}
         {this.renderMusicModal()}
 
-        <div className={ (isPlaying ? 'sixteen' : 'ten') + ' wide column'}>
-          <MapToolbar
-            {...this.toolbarProps}
-            isPlaying={isPlaying}
-            options={this.options}
-            undoSteps={this.mgb_undo}
-            redoSteps={this.mgb_redo}
-          />
-          <ActorMapArea
-            {...this.mapProps}
-            showModal={this.showModal}
-            playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
-            isPlaying={isPlaying}
-            cache={this.cache}
-            activeLayer={activeLayer}
-            highlightActiveLayer={c2.meta.highlightActiveLayer}
-            canEdit={this.props.canEdit}
-            options={this.options}
-            data={c2}
-
-            asset={this.props.asset}
-            ref='map' />
+        <div className={ (isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
+          <div style={{display: 'flex', width: '100%', alignItems: 'center'}}>
+            <div style={{float: 'left'}}>
+              <MapToolbar
+                {...this.toolbarProps}
+                isPlaying={isPlaying}
+                options={this.options}
+                undoSteps={this.mgb_undo}
+                redoSteps={this.mgb_redo}
+              />
+            </div>
+            <div style={{float: 'right'}}>
+              <div style={{float: 'left', marginLeft: '5px'}}>
+                <Properties {...this.propertiesProps} data={{
+                  width: c2.width,
+                  height: c2.height
+                }}/>
+              </div>
+              <div style={{float: 'left', marginLeft: '5px'}}>
+                <EventTool
+                  {...this.tilesetProps}
+                  palette={this.cache.tiles}
+                  activeTileset={activeTileset}
+                  tilesets={c2.tilesets}
+                  options={this.options}
+                  />
+              </div>
+            </div>
+          </div>
+          <div style={{ clear: 'both', overflow:'hidden'}}>
+            <ActorMapArea
+              {...this.mapProps}
+              showModal={this.showModal}
+              playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
+              isPlaying={isPlaying}
+              cache={this.cache}
+              activeLayer={activeLayer}
+              highlightActiveLayer={c2.meta.highlightActiveLayer}
+              canEdit={this.props.canEdit}
+              options={this.options}
+              data={c2}
+              asset={this.props.asset}
+              ref='map' />
+          </div>
         </div>
-        <div className={'six wide '+ (isPlaying ? 'hidden' : '') + ' column'}>
+        <div className={'three wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column', minWidth: '175px'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
             options={c2.meta}
             activeLayer={activeLayer}
-            />
-          <br />
-          <EventTool
-            {...this.tilesetProps}
-            palette={this.cache.tiles}
-            activeTileset={activeTileset}
-            tilesets={c2.tilesets}
-            options={this.options}
             />
           <br />
           <TileSet
@@ -248,11 +266,6 @@ export default class EditActorMap extends EditMap {
             tilesets={c2.tilesets}
             options={this.options}
             />
-          <br />
-          <Properties {...this.propertiesProps} data={{
-            width: c2.width,
-            height: c2.height
-          }}/>
         </div>
       </div>
     )

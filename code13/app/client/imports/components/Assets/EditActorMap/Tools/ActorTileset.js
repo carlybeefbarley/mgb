@@ -1,38 +1,33 @@
-'use strict'
-import _ from 'lodash'
 import React from 'react'
+import { Label, Segment, Grid, Icon } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
-
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
-import EditModes from '../../Common/Map/Tools/EditModes.js'
-import TileHelper from '../../Common/Map/Helpers/TileHelper.js'
-import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
-
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
-import ActorValidator from '../../Common/ActorValidator.js'
-
-import ActorControls from './ActorControls.js'
-import Tileset from '../../Common/Map/Tools/TileSet.js'
-
+import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import _ from 'lodash'
 
-const _dragHelpMsg = 'Drop Actor Assets here to use them in this ActorMap'
 
-export default class ActorTool extends Tileset {
-  constructor(){
-    super()
-    this.tilesetIndex = 1
-  }
+export default class ActorTileset extends React.Component {
+  // getter - returns active tileset
   get tileset(){
-    return this.props.tilesets[this.tilesetIndex]
+    return this.props.tilesets[this.props.activeTileset]
   }
 
-  componentWillReceiveProps(p){
-    if(p.activeTileset > 0){
-      this.tilesetIndex = p.activeTileset
-    }
+  selectTileset(index, tileset) {
+    this.props.clearActiveSelection()
+    const selectedTile = new SelectedTile()
+    const gid = selectedTile.getGid(tileset)
+    this.props.selectTile(selectedTile)
+    this.props.selectTileset(index)
   }
+
+  removeTileset = () => {
+    if (!this.props.activeTileset || this.props.activeTileset.firstgid < 100) { return } // Don't remove Events
+    this.props.removeTileset(this.props.activeTileset)
+    this.props.clearActiveSelection() 
+  } 
 
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
@@ -74,114 +69,141 @@ export default class ActorTool extends Tileset {
     })
   }
 
-  renderEmpty () {
+  getTilePosInfo (e) {
+    const ts = this.tileset
+    // image has not been loaded
+    if (!ts) {
+      return
+    }
+    const pos = new SelectedTile()
+    pos.updateFromMouse(e, ts, this.spacing)
+    return pos
+  }
+
+ // Render functions for Actors
+  renderActors(from = 0, to = this.props.tilesets.length){
     return (
-      <div id="mgbjr-MapTools-actors" className='mgbAccordionScroller'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Actors</span>
+      <Grid columns='equal' style={{width: '100%', margin: 0}}>
+        {this.renderTileset(from, to, this.genTilesetImage)}
+      </Grid>
+    )
+  }
+
+  genTilesetImage(index, isActive, tileset){
+    const title = `${tileset.name.split(':')[1]} (${tileset.imagewidth}x${tileset.imageheight})`
+    const imgRatio = tileset.imageheight / tileset.imagewidth
+    const width = tileset.imagewidth <= 64 ? 64 : 80
+
+    return (
+      <Grid.Column
+        title={title}
+        className={"tilesetPreview" + ( isActive ? " selectedTileset" : '')}
+        key={index}
+        onClick={() => {
+          this.selectTileset(index, tileset)
+        }}
+
+        style={{
+          minWidth: '80px', 
+          width: 'calc(50% - 2em)', 
+          margin: '1em', 
+          padding: 0,
+          paddingTop: 'auto',
+          borderRadius: '.28571429rem', 
+          border: 'none',
+          boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
+          opacity: 0.75
+        }}
+        >
+        <img
+          className="mgb-pixelated"
+          src={tileset.image} 
+          width={width}
+          height={imgRatio * width}
+          style={{verticalAlign: 'middle'}}
+        />
+        <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.75)', color: 'white', textAlign: 'center', padding: 0, verticalAlign: 'middle', maxHeight: '1.5em'}}>
+          {
+            tileset.name.split(':')[1].length > 8
+            ?
+            (
+              tileset.name.split(':')[1].length > 12
+              ?
+              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1].slice(0, -2) + '..'}</p>
+              :
+              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1]}</p>
+            )
+            :
+            <p>{tileset.name.split(':')[1]}</p> 
+          }
+        </Label>
+      </Grid.Column >
+
+    )
+  }
+
+  renderTileset(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList){
+    const tss = this.props.tilesets
+    let ts = this.tileset
+    const tilesets = []
+    let count = 0
+
+    for (let i = from; i < to; i++) {
+      if (ActorHelper.checks[this.props.getActiveLayerData().name](tss[i])) {
+        tilesets.push( genTemplate.call(this, i, tss[i] === ts, tss[i]) )
+        count++
+      }
+    }
+
+    // Dummy div for left-justified two-column grid that resizes and centers when switched to single column for smaller widths
+    if (count % 2 !== 0) {
+      tilesets.push(<Grid.Column key={-1} style={{height: 0, minWidth: '80px', width: 'calc(50% - 2em)', margin: '0 1em 0 1em'}} />)
+    }
+
+    return tilesets
+  }
+
+  render(){
+    const label = this.props.getActiveLayerData().name === 'Events' ? 'Actors' : `Actors For ${this.props.getActiveLayerData().name} Layer`
+
+    return (
+      <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', height: '100%'}}>
+        <Label attached='top'>
+          {label}
+          {
+          this.props.getActiveLayerData().name !== "Events" && (this.props.tilesets && this.props.tilesets.length > 1) &&
+          <Icon 
+              size='large' 
+              name='trash' 
+              onClick={this.removeTileset}
+              style={{position: 'absolute', top: '5px', right: '-5px', cursor: 'pointer'}}
+          />
+          }
+        </Label>
+        {
+          !this.props.tilesets.length 
+          ?
+          <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
+          :
+          (
+          this.props.getActiveLayerData().name === "Events"
+          ?
+          <div className="actor-disabled-hint" style={{width: '100%', opacity: 1, backgroundColor: '#e8e8e8'}}>
+            <p className="title active" style={{color: 'black', borderTop: "none", paddingTop: 0}}>You cannot use Actors in the Events layer. Use the Events Tool instead.</p>
           </div>
-          { this.renderContent(false) }
-        </div>
-      </div>
-    )
-  }
-  renderContent (tileset) {
-    return (
-      <div
-        className='active tilesets accept-drop'
-        data-drop-text={_dragHelpMsg}
-        onDrop={this.onDropOnLayer.bind(this)}
-        onDragOver={DragNDropHelper.preventDefault}>
-
-        { !tileset
-          ? <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
-          : <ActorControls
-          activeTileset={this.tilesetIndex}
-          removeTileset={this.props.removeTileset}
-          ref='controls' />
-        }
-        <div className='tileset' ref='layer' style={{ maxHeight: '250px', overflow: 'auto', clear: 'both' }}>
-          <canvas
-            ref='canvas'
-            onMouseDown={this.onMouseDown.bind(this)}
-            onMouseUp={this.onMouseUp.bind(this)}
-            onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
-            onMouseLeave={this.onMouseLeave.bind(this)}
-            onContextMenu={e => { e.preventDefault(); return false; } } >
-          </canvas>
-        </div>
-      </div>
-    )
-  }
-
-  renderValidLayerInfo(checks, ts, active) {
-    // how this differs from native [].reverse?
-    return _.reverse(
-      _.map(checks, (c, i) => {
-          const isValid = c(ts);
-          return(
-            <div style={{ fontFamily: 'monospace', marginLeft: '2em', cursor: (isValid ? "pointer" : "auto") }}
-                 key={i}
-                 onClick={isValid ? () => {this.props.setActiveLayerByName(i)} : null}>
-              {active == i ?
-                <strong><i className='ui caret right icon' />{i}</strong> : <span><i className='ui icon' />{i}</span>}
-                : &emsp;{isValid ?
-                  <strong>Valid</strong>
-                  : <small>Not valid</small>}
-            </div>
+          :
+          <div
+            className='active content tilesets accept-drop'
+            data-drop-text='Drop asset here to create TileSet'
+            onDrop={this.onDropOnLayer.bind(this)}
+            onDragOver={DragNDropHelper.preventDefault}
+            style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
+            >
+            {this.renderActors(1)}
+          </div>
           )
         }
-      ))
-  }
-
-  render () {
-    if (!this.props.tilesets.length) {
-      return this.renderEmpty()
-    }
-    const tilesets = this.renderTileset(1)
-    const ts = this.tileset
-    if(!ts){
-      return this.renderEmpty()
-    }
-    // actions don't have actor..
-    if (!ts.actor)
-      ts.actor = {}
-
-    const layer = this.props.getActiveLayerData()
-
-    let isValidForLayer = layer ? ActorHelper.checks[layer.name](ts) : true  // There's some case when loading a map to play it when this isn't ready yet
-
-    return (
-      <div className='mgbAccordionScroller tilesets'>
-        {this.renderForModal(1)}
-        <div className='ui fluid styled accordion'>
-          <div
-            className='active title accept-drop'
-            >
-            <span className='explicittrigger'><i className='dropdown icon'></i> Actors</span>
-            <div className='ui simple dropdown top right basic grey below label item'
-                 style={{ float: 'right', paddingRight: '20px', 'whiteSpace': 'nowrap', 'maxWidth': '70%', "minWidth": "50%", top: "-5px" }}>
-              <i className='dropdown icon'></i>
-              <span className='tileset-title' title={ts.imagewidth + 'x' + ts.imageheight}>{ts.name} {ts.imagewidth + 'x' + ts.imageheight}</span>
-              <div className='floating ui tiny green label'>
-                {this.props.tilesets.length - 1}
-              </div>
-              <div className='menu' style={{"maxHeight": "295px", "overflow": "auto", "maxWidth": "50px"}}>
-                {tilesets}
-              </div>
-            </div>
-            {this.renderOpenListButton(1)}
-          </div>
-          <div className="content active actor-tileset-content">
-            {!isValidForLayer && <div className="actor-disabled-hint">
-              <em>{ts.name}</em> is not valid for selected layer <em>{layer.name}</em>
-              <small>{this.renderValidLayerInfo(ActorHelper.checks, ts, layer.name)}</small>
-            </div>}
-            {this.renderContent(ts)}
-          </div>
-        </div>
-      </div>
+      </Segment>
     )
   }
 }

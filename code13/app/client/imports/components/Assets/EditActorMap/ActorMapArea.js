@@ -49,13 +49,9 @@ export default class ActorMapArea extends BaseMapArea {
   getInfo() {
     const layer = this.getActiveLayer()
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
-    let st = ''
-    this.collection.forEach((t) => {
-      st += ', ' + t.gid
-    })
-    st = st.substr(2)
+
     let info = layer ? layer.getInfo() : ''
-    let layers = layer ? this.sortLayersByActive(layer.data.name) : []
+    //let layers = layer ? this.sortLayersByActive(layer.data.name) : []
     let actor = info ? (info.gid ? this.props.data.tilesets[Math.floor(info.gid/100)] : null) : null
 
     return (
@@ -70,9 +66,9 @@ export default class ActorMapArea extends BaseMapArea {
               <p>
                 <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
                 <br />
-                <span><b>Actor: </b>{actor.actor.databag.all.defaultGraphicName}</span>
+                <span>&ensp;<b>Actor: </b>{actor.actor.databag.all.defaultGraphicName}</span>
                 <br />
-                <span><b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
+                <span>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
               </p>
               :
               <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>
@@ -165,7 +161,7 @@ export default class ActorMapArea extends BaseMapArea {
           <Accordion.Title>
             <i className='icon search' style={{float: 'right', color: 'white'}} />
           </Accordion.Title>
-          <Accordion.Content style={{padding: '5px', minWidth: '15em'}}>
+          <Accordion.Content style={{padding: '5px', minWidth: '18em'}}>
             <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
           </Accordion.Content>
         </Accordion>

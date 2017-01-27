@@ -9,6 +9,7 @@ export const ROTATE = {
 }
 
 const ANIMATION_UPDATE_DEFAULT_INTERVAL = 10000
+
 const TileHelper = {
   FLIPPED_HORIZONTALLY_FLAG: 0x80000000,
   FLIPPED_VERTICALLY_FLAG: 0x40000000,
@@ -140,7 +141,7 @@ const TileHelper = {
   },
 
   /* generators */
-  genNewMap: (widthInTiles = 2 , heightInTiles = 2 , tilewidth = 32 , tileheight = 32 , numlayers = 1) => {
+  genNewMap: (widthInTiles = 20 , heightInTiles = 20 , tilewidth = 32 , tileheight = 32 , numlayers = 1) => {
     let layers = new Array(numlayers)
 
     for (let i = 0; i < numlayers; i++) {

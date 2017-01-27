@@ -83,9 +83,9 @@ export default class ActorTileset extends React.Component {
  // Render functions for Actors
   renderActors(from = 0, to = this.props.tilesets.length){
     return (
-        <Grid columns='equal' style={{width: '100%', margin: 0}}>
-          {this.renderTileset(from, to, this.genTilesetImage)}
-        </Grid>
+      <Grid columns='equal' style={{width: '100%', margin: 0}}>
+        {this.renderTileset(from, to, this.genTilesetImage)}
+      </Grid>
     )
   }
 
@@ -112,7 +112,7 @@ export default class ActorTileset extends React.Component {
           borderRadius: '.28571429rem', 
           border: 'none',
           boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
-          opacity: 0.6
+          opacity: 0.75
         }}
         >
         <img

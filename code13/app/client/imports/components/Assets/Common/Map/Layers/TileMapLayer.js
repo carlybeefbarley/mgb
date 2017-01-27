@@ -976,10 +976,9 @@ edit[EditModes.eraser] = function (e, up, saveUndo = true) {
     return
   }
 
-  /*if (e.type == 'mousedown' || e.type == 'touchstart') {
+  if (e.type == 'mousedown' || e.type == 'touchstart') {
     this.props.saveForUndo('Removing Tiles')
-    return
-  }*/
+  }
 
   const pos = this.getTilePosInfo(e)
   const sel = this.props.getSelection()

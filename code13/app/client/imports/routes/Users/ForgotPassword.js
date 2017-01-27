@@ -6,8 +6,8 @@ import validate from '/imports/schemas/validate'
 const ErrMsg = props => { return props.text ? <Message error color='red' content={props.text} /> : null }
 
 
-import { mjml2html } from 'mjml'
-import { Email } from 'meteor/email'
+// import { mjml2html } from 'mjml'
+// import { Email } from 'meteor/email'
 
 
 export default ForgotPasswordRoute = React.createClass({
@@ -20,23 +20,23 @@ export default ForgotPasswordRoute = React.createClass({
     }
   },
 
-  testTemplate: function(){
-    return mjml2html(`
-      <mjml>
-        <mj-body>
-          <mj-container>
-            <mj-section>
-              <mj-column>
-                <mj-text>
-                  This is a test template
-                </mj-text>
-              </mj-column>
-            </mj-section>
-          </mj-container>
-        </mj-body>
-      </mjml>
-    `)
-  },
+  // testTemplate: function(){
+  //   return mjml2html(`
+  //     <mjml>
+  //       <mj-body>
+  //         <mj-container>
+  //           <mj-section>
+  //             <mj-column>
+  //               <mj-text>
+  //                 This is a test template
+  //               </mj-text>
+  //             </mj-column>
+  //           </mj-section>
+  //         </mj-container>
+  //       </mj-body>
+  //     </mjml>
+  //   `)
+  // },
 
   render: function() {
 
@@ -72,7 +72,7 @@ export default ForgotPasswordRoute = React.createClass({
   },
 
   handleSubmit: function(event, formData) {
-    console.log(this.testTemplate())
+    // console.log(this.testTemplate())
 
     event.preventDefault()
     const { email } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951

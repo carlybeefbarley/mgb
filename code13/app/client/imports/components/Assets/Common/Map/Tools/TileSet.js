@@ -26,7 +26,6 @@ export default class TileSet extends React.Component {
     this.renderTileset = this.renderTileset.bind(this)
     this.showTileListPopup = this.showTileListPopup.bind(this)
   }
-  
   componentDidMount () {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
@@ -42,7 +41,6 @@ export default class TileSet extends React.Component {
       this.refs.canvas.addEventListener("touchstart", this.onMouseDown)
     }
   }
-
   componentWillUnmount () {
     window.removeEventListener('mousemove', this.onMouseMove)
     window.removeEventListener('touchmove', this.onMouseMove)
@@ -58,7 +56,6 @@ export default class TileSet extends React.Component {
       $(this.refs.modal).remove()
     }
   }
-  
   componentDidUpdate(){
     // re-render after update
     this.adjustCanvas()
@@ -96,7 +93,6 @@ export default class TileSet extends React.Component {
     }
     this.ctx = canvas.getContext('2d')
   }
-
   getTilePosInfo (e) {
     const ts = this.tileset
     // image has not been loaded
@@ -202,7 +198,6 @@ export default class TileSet extends React.Component {
       this.drawTile(pal, pos, tinfo)
     }
   }
-
   drawTile (pal, pos, info, clear = false) {
     if (clear) {
       this.ctx.clearRect(pos.x * (pal.ts.tilewidth + this.spacing), pos.y * (pal.ts.tileheight + this.spacing), pal.w, pal.h)
@@ -230,7 +225,6 @@ export default class TileSet extends React.Component {
       )
     }
   }
-
   highlightTile (e) {
     const ts = this.tileset
     if (!ts) {
@@ -296,13 +290,11 @@ export default class TileSet extends React.Component {
     this.selectTile(e)
     this.startingtilePos = new SelectedTile(this.prevTile)
   }
-
   onMouseUp = (e) => {
     this.mouseDown = false
     this.mouseRightDown = false
     this.drawTiles()
   }
-
   onMouseMove = (e) => {
     if(e.target != this.refs.canvas){
       return
@@ -319,7 +311,6 @@ export default class TileSet extends React.Component {
     }
     this.highlightTile(e)
   }
-
   onMouseLeave = (e) => {
     // remove highlighted tile
     this.drawTiles()
@@ -371,7 +362,6 @@ export default class TileSet extends React.Component {
         key={index}><span className='tileset-title-list-item'>{title}</span></a>
     )
   }
-  
   genTilesetImage(index, isActive, tileset){
     const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
     return (
@@ -389,7 +379,6 @@ export default class TileSet extends React.Component {
       </div>
     )
   }
-
   renderTileset(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList){
     const tss = this.props.tilesets
     let ts = this.tileset
@@ -399,13 +388,11 @@ export default class TileSet extends React.Component {
     }
     return tilesets
   }
-
   showTileListPopup(){
     $(this.refs.modal)
       .modal("show")
       .modal('setting', 'transition', 'vertical flip') // first time there is default animation
   }
-
   renderForModal(from = 0, to = this.props.tilesets.length){
     return (
       <div ref="modal" style={{display: "none"}} className="ui modal">
@@ -415,14 +402,12 @@ export default class TileSet extends React.Component {
       </div>
     )
   }
-
   renderOpenListButton(offset = 0){
     if(this.props.tilesets.length < offset){
       return null
     }
     return <div className="showList" onClick={this.showTileListPopup}><i className='ui external icon'></i> </div>
   }
-  
   renderEmpty () {
     return (
       <div className='mgbAccordionScroller'>

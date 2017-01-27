@@ -122,8 +122,7 @@
     position: absolute;
     top: 0;
     right: 0;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 0 2px 10px 5px;
     border-radius: 3px;
     background-color: rgba(0,0,0,0.7);
     color: white;

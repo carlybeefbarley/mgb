@@ -7,6 +7,7 @@ import PositionInfo from '../Common/Map/Tools/PositionInfo'
 import LayerTypes     from '../Common/Map//Tools/LayerTypes'
 import GridLayer      from '../Common/Map/Layers/GridLayer'
 import MaskLayer      from '../Common/Map/Layers/MaskLayer'
+import SelectedTile from '../Common/Map/Tools/SelectedTile.js'
 
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 
@@ -45,15 +46,25 @@ export default class ActorMapArea extends BaseMapArea {
     return fetchAssetByUri(uri, false) // 2nd param is cache - but it tends to overcache - etag would be better
   }
 
+  getTilePosInfo (e, ts) {
+    // image has not been loaded
+    if (!ts) {
+      return
+    }
+    const pos = new SelectedTile()
+    pos.updateFromMouse(e, ts, this.spacing)
+    return pos
+  }
+
    // render related methods
   getInfo() {
-    const layer = this.getActiveLayer()
+    const activeLayer = this.getActiveLayer()
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
 
-    let info = layer ? layer.getInfo() : ''
+    let info = activeLayer ? activeLayer.getInfo() : ''
+    let infoActors = {}
     //let layers = layer ? this.sortLayersByActive(layer.data.name) : []
-    let actor = info ? (info.gid ? this.props.data.tilesets[Math.floor(info.gid/100)] : null) : null
-
+    
     return (
       <div>
           { 
@@ -64,14 +75,14 @@ export default class ActorMapArea extends BaseMapArea {
               info.gid
               ?
               <p>
-                <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
+                <b style={{fontSize: '1.2em'}}>{activeLayer.data.name + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
                 <br />
                 <span>&ensp;<b>Actor: </b>{actor.actor.databag.all.defaultGraphicName}</span>
                 <br />
                 <span>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
               </p>
               :
-              <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>
+              <b style={{fontSize: '1.2em'}}>{activeLayer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>
               }
             </span>)
             : 

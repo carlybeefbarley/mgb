@@ -817,7 +817,18 @@ export default class MapArea extends React.Component {
     })
     st = st.substr(2)
     let info = layer ? layer.getInfo() : ''
-    info = info ? ': ' + info : ''
+    info = 
+      info 
+      ? 
+      (
+        info.gid 
+        ?
+        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id + ', gid: ' + info.gid 
+        :
+        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id 
+      )
+      : 
+      ''
     return (
       <div>
         <div>

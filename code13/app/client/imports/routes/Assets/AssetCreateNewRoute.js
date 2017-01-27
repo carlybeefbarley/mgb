@@ -27,7 +27,7 @@ export default AssetCreateNewRoute = React.createClass({
     return (
       <Segment basic>
         <Helmet
-          title="Create New Asset"
+          title="Create a new Asset"
           meta={[
               {"name": "description", "content": "Assets"}
           ]}

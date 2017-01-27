@@ -125,13 +125,17 @@ export default class EditActorMap extends EditMap {
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
     //return;
+    this.preventUpdates = false
     if(!this.props.canEdit){
       this.props.editDeniedReminder()
       return
     }
-    if(!skipUndo && !_.isEqual(this.lastSave, data)){
+
+    // isn't it too late to save for undo?
+    /*if(!skipUndo && !_.isEqual(this.lastSave, data)){
+      // save for undo will prevent map updates - this.preventUpdates = true
       this.saveForUndo(reason)
-    }
+    }*/
 
     const toSave = ActorHelper.v2_to_v1(data)
     this.lastSave = toSave

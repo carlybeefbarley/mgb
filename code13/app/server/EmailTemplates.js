@@ -10,7 +10,7 @@ Accounts.emailTemplates.resetPassword.subject = function (user) {
   return "Reset your email";
 };
 
-Accounts.emailTemplates.resetPassword.text = function (user, url) {
+Accounts.emailTemplates.resetPassword.html = function (user, url) {
   url = url.replace('#/', '')
   // console.log(url)
   // console.log( mjml2html('<mjml><mj-body><mj-container><mj-section><mj-column><mj-text>To reset your email, please click the link below:</mj-text></mj-column></mj-section></mj-container></mj-body></mjml>'))

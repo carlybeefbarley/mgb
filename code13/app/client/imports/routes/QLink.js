@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react'
 import { Link, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
 import { clearPriorPathsForJoyrideCompletionTags } from '/client/imports/routes/App'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
 
 function isLeftClickEvent(event) {
@@ -78,11 +79,17 @@ export default QLink = React.createClass({
    * 
    *  Any explicit original key/value pairs in props.query will override the app-scoped params so this can be 
    *  used to change NavPanels and FlexPanels for example
+   * 
+   * In orded to simplify tutorial development, we also file mgbjr-CT- 
+   * joyrideCompletionTags if the item had an id=mgbjr-.*
    */
   handleClick: function (event) {
     const p = this.props
 
     const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
+
+    if (event.target && event.target.id && event.target.id.startsWith('mgbjr-'))
+      joyrideCompleteTag(event.target.id.replace(/^mgbjr-/, 'mgbjr-CT-'))      
 
     if (p.onClick) 
       p.onClick(event)    // Call the click handler we were given. Note that it has the option to preventDefault()

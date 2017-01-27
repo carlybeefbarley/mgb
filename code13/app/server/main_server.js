@@ -94,7 +94,8 @@ Meteor.startup(function () {
     }
   )
 
-  process.env.MAIL_URL = 'smtp://shmikucis%40gmail.com:meteormailpsw1@smtp.gmail.com:465';
+  // process.env.MAIL_URL = 'smtp://shmikucis%40gmail.com:meteormailpsw1@smtp.gmail.com:465';
+  process.env.MAIL_URL = 'smtp://info%40mygamebuilder.com:AuEvIDBa2bzbDbibpeCmuSS1/3zCipRXMlIm3cSjYpr8@email-smtp.us-east-1.amazonaws.com:465';
 
 })
 

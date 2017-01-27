@@ -48,6 +48,7 @@ export default class AbstractLayer extends React.Component {
     this.adjustCanvas()
     const canvas = this.refs.canvas
     this.ctx = canvas.getContext('2d')
+    this.ctx.imageSmoothingEnabled = false
 
     window.addEventListener('mouseup', this._mup)
     window.addEventListener('touchend', this._mup)

@@ -13,6 +13,7 @@ export default class GridLayer extends React.Component {
   componentDidMount () {
     const canvas = this.refs.canvas
     this.ctx = canvas.getContext('2d')
+    this.ctx.imageSmoothingEnabled = false
     this.adjustCanvas()
     this.drawGrid()
     this.alignToLayer()

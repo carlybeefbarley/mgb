@@ -4,8 +4,6 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
-import { observe } from '/client/imports/helpers/assetFetchers'
-
 // TODO: use observe from assetFetchers instead of custom observer
 // import { observe } from "/client/imports/helpers/assetFetchers"
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -86,7 +84,7 @@ export default class DropArea extends React.Component {
           console.log("DropArea - subscription did not become ready", e)
         }
       })
-      
+
       this.subscription.onReady = () => {
         this.setState({asset: this.getAsset()})
       }

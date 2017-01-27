@@ -12,6 +12,9 @@ import WhatsNew from './WhatsNew'
 // The NavBarGadget is primarily used for the Level slider that adjusts UX complexity
 // of any page from Beginner to Guru - hiding advanced options etc
 
+
+// TODO: IF we go to new top-nav ui, this needs to be replaced by content in NavPanel
+console.log("TODO: Reminder that old NavBar is hidden but needs to be folded into new top NavPanelUI")
 const _projectScopeLockRowStyle = {
   clear:        'both',
 //background:   '#155f66',
@@ -47,7 +50,7 @@ const NavBar = ({ name, user, params, currUser, pathLocation, projectScopeLock, 
       right:      flexPanelWidth, 
       overflow:   'hidden',
       margin:     '0px',
-      maxHeight:  projectScopeLock ?  '80px' : '38px'
+      maxHeight:  0//projectScopeLock ?  '80px' : '38px'
     }}>
       <div className="ui borderless menu" style={_menuStyle}>
         <SystemAlerts sysvars={sysvars}/>

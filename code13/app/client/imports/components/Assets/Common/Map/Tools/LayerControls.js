@@ -1,32 +1,27 @@
-'use strict'
-import _ from 'lodash'
 import React from 'react'
-import TileHelper from '../Helpers/TileHelper.js'
-import LayerTypes from './LayerTypes.js'
+import { Button, Icon } from 'semantic-ui-react'
 
 export default class LayerControls extends React.Component {
-  get options () {
+  get options() {
     return this.props.options
   }
 
-  componentDidMount () {
-    $('.ui.dropdown').dropdown()
-  }
-
-  addLayer (type) {
+  addLayer(type) {
     this.props.addLayer(type)
   }
 
-  render () {
-    const highlightClassName = `ui floated icon blue button ${this.options.highlightActiveLayer ? 'inverted' : ''}`
-
+  render() {
     return (
-      <div className='ui mini' style={{ position: 'relative', top: '-10px' }}>
-        <div className='ui icon buttons mini'>
-          <button className={highlightClassName} onClick={this.props.highlightActiveLayerToggle} title='Highlight Active layer'>
-            <i className='idea icon' />&nbsp;Highlight active
-          </button>
-        </div>
+      <div style={{ position: 'relative', top: '-10px' }}>
+        <Button
+          size='mini'
+          icon
+          color='blue'
+          inverted={this.options.highlightActiveLayer}
+          onClick={this.props.highlightActiveLayerToggle}
+          title='Highlight Active layer'>
+          <Icon name='idea' /> Highlight active
+        </Button>
       </div>
     )
   }

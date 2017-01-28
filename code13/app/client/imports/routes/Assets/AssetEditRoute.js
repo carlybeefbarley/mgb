@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Grid } from 'semantic-ui-react'
 import { utilPushTo } from '../QLink'
 import reactMixin from 'react-mixin'
 
@@ -37,7 +38,7 @@ const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
 // This AssetEditRoute serves the following objectives
 // 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset
 // 2. Provide a UI header that shows the important metadata about the asset being shown/edited. These include
-//      Essential:  
+//      Essential:
 //                      Asset Owner (immutable)
 //                      Asset Projects (mutable)
 //                      Asset Kind (immutable)
@@ -52,20 +53,20 @@ const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
 
 
 
-// ALSO TODO: Add a 'editorLease' field.. This would contain a userid, sessionId and lease-until timestamp. 
-// This SHOULD prevent edits from other users: BLUE editor field, and details of edit actions.  Field is disregarded if not present or is expired. 
+// ALSO TODO: Add a 'editorLease' field.. This would contain a userid, sessionId and lease-until timestamp.
+// This SHOULD prevent edits from other users: BLUE editor field, and details of edit actions.  Field is disregarded if not present or is expired.
 // TBD who does cleanup.
 // Note that the Lease field should not be set on client.. it should be guarded by !isSimulation
 // BUT this will not work if clients' clocks are wrong :(  So instead, the leases should be managed on server:  ??????
 
 
 // The deferred saves are handled by the following data:
-  //     this.m_deferredSaveObj: null     
-  // null, or ONE object of form 
+  //     this.m_deferredSaveObj: null
+  // null, or ONE object of form
   // {
-  //   content2Object: object, 
-  //   thumbnail: string, 
-  //   changeText: string, 
+  //   content2Object: object,
+  //   thumbnail: string,
+  //   changeText: string,
   //   timeOfLastChange,
   //   timeOfLastWriteAttempt     // TODO
   // }
@@ -82,7 +83,7 @@ export default AssetEditRoute = React.createClass({
     user:             PropTypes.object,
     currUser:         PropTypes.object,
     currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
-    isSuperAdmin:     PropTypes.bool,       
+    isSuperAdmin:     PropTypes.bool,
     ownsProfile:      PropTypes.bool         // true IFF user is valid and asset owner is currently logged in user
   },
 
@@ -109,9 +110,9 @@ export default AssetEditRoute = React.createClass({
     this.m_deferredSaveObj = null
 
     //console.log("Preparing TICK Timer")
-    this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => { 
+    this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => {
       //console.log("TICK")
-      this._attemptToSendAnyDeferredChanges() 
+      this._attemptToSendAnyDeferredChanges()
     } , FLUSH_TIMER_INTERVAL_MS )
   },
 
@@ -149,7 +150,7 @@ export default AssetEditRoute = React.createClass({
     }, !!this.m_deferredSaveObj)
 
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
-    let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId) 
+    let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId)
 
     let selector = { toAssetId: assetId }
     let options = { sort: { timestamp: -1 } }
@@ -176,7 +177,7 @@ export default AssetEditRoute = React.createClass({
   canCurrUserEditThisAsset: function() {
     if (!this.data.asset || this.data.loading || !this.props.currUser)
       return false  // Need to at least be logged in and have the data to do any edits!
-    
+
     const { asset } = this.data
     const { currUser, currUserProjects } = this.props
     if (asset.ownerId === currUser._id)
@@ -225,7 +226,7 @@ export default AssetEditRoute = React.createClass({
 
 
   // This result object will come from Meteor.call("Azzets.fork")
-  forkResultCallback: function (error, result) {    
+  forkResultCallback: function (error, result) {
     if (error)
       showToast(`Unable to create a forked copy of this asset: '${error.toString()}'`, 'error')
     else {
@@ -239,7 +240,7 @@ export default AssetEditRoute = React.createClass({
   },
 
   render: function() {
-    if (this.data.loading) 
+    if (this.data.loading)
       return <Spinner />
 
     const { params, currUser, currUserProjects } = this.props
@@ -263,14 +264,14 @@ export default AssetEditRoute = React.createClass({
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
     const chosenProjectNamesArray = asset.projectNames || [];
-    const availableProjectNamesArray = 
-        currUserProjects ? 
+    const availableProjectNamesArray =
+        currUserProjects ?
           _.map(_.filter(currUserProjects, {"ownerId": asset.ownerId}), 'name')
         : []
 
 
     return (
-      <div className="ui padded grid">
+      <Grid padded>
 
         <Helmet
           title="Asset Editor"
@@ -279,8 +280,8 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <div className="ui eight wide column" id="mgbjr-asset-edit-header-left">
-          <AssetPathDetail 
+        <Grid.Column width='8' id="mgbjr-asset-edit-header-left">
+          <AssetPathDetail
             isServerOnlineNow={this.data.isServerOnlineNow}
             canEdit={canEd}
             isUnconfirmedSave={asset.isUnconfirmedSave}
@@ -292,59 +293,59 @@ export default AssetEditRoute = React.createClass({
             handleNameChange={this.handleAssetNameChange}
             handleDescriptionChange={this.handleAssetDescriptionChange}
             handleSaveNowRequest={this.handleSaveNowRequest} />
-        </div>
-        
-        <div className="ui eight wide right aligned column" id="mgbjr-asset-edit-header-right">
-          { /* We use this.props.params.assetId since it is available sooner than the asset 
+        </Grid.Column>
+
+        <Grid.Column width='8' aligned='right' id="mgbjr-asset-edit-header-right">
+          { /* We use this.props.params.assetId since it is available sooner than the asset
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }
-          <WorkState 
-            workState={asset.workState} 
+          <WorkState
+            workState={asset.workState}
             showMicro={true}
             canEdit={canEd}
             handleChange={this.handleWorkStateChange}/>
           &ensp;
           <AssetUrlGenerator showBordered={true} asset={asset} />
-          { currUserId && 
+          { currUserId &&
             <AssetForkGenerator showBordered={true} asset={asset} doForkAsset={this.doForkAsset} isForkPending={isForkPending}/>
           }
-          <StableState 
-            isStable={asset.isCompleted} 
+          <StableState
+            isStable={asset.isCompleted}
             showMicro={true}
             canEdit={canEd}
             handleChange={this.handleStableStateChange}/>
-          <DeletedState 
-            isDeleted={asset.isDeleted} 
+          <DeletedState
+            isDeleted={asset.isDeleted}
             showMicro={true}
             canEdit={canEd}
             handleChange={this.handleDeletedStateChange}/>
-          <AssetLicense 
-            license={asset.assetLicense} 
+          <AssetLicense
+            license={asset.assetLicense}
             canEdit={canEd}
             handleChange={this.handleLicenseChange}/>
           <AssetActivityDetail
-            assetId={params.assetId} 
+            assetId={params.assetId}
             currUser={currUser}
             activitySnapshots={this.activitySnapshots} />
           &nbsp;
-          <AssetHistoryDetail 
-            assetId={params.assetId} 
+          <AssetHistoryDetail
+            assetId={params.assetId}
             currUser={currUser}
             assetActivity={this.data.assetActivity} />
           &nbsp;
-          <ProjectMembershipEditorV2 
+          <ProjectMembershipEditorV2
             canEdit={canEd}
             asset={asset}
             currUserId={currUserId}
-            currUserProjects={currUserProjects}            
+            currUserProjects={currUserProjects}
             handleToggleProjectName={this.handleToggleProjectName}
             />
-        </div>
+        </Grid.Column>
 
-        <div className="sixteen wide column">
-          <AssetEdit 
-            asset={asset} 
-            canEdit={canEd} 
+        <Grid.Column width='16'>
+          <AssetEdit
+            asset={asset}
+            canEdit={canEd}
             currUser={currUser}
             handleContentChange={this.deferContentChange}
             handleMetadataChange={this.handleMetadataChange}
@@ -354,8 +355,8 @@ export default AssetEditRoute = React.createClass({
             hasUnsentSaves={hasUnsentSaves}
             handleSaveNowRequest={this.handleSaveNowRequest}
           />
-        </div>
-      </div>
+        </Grid.Column>
+      </Grid>
     )
   },
 
@@ -366,13 +367,13 @@ export default AssetEditRoute = React.createClass({
     $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
     if (this.props.currUser)
       showToast("You do not have permission to edit this Asset", 'error')
-    else  
+    else
       showToast("You must create an account if you wish to edit Assets", 'error')
   },
 
 
-  // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are slowest. 
-  // TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for now since we don't 
+  // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are slowest.
+  // TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for now since we don't
   //       touch asset.metadata in this method
   deferContentChange(content2Object, thumbnail, changeText="content change")
   {
@@ -394,7 +395,7 @@ export default AssetEditRoute = React.createClass({
       this.m_deferredSaveObj.content2Object = content2Object
     if (thumbnail)
       this.m_deferredSaveObj.thumbnail = thumbnail
-    
+
     if (old_deferredSaveObj && old_deferredSaveObj.assetId === asset._id)
     {
       // Look for nuked fields
@@ -418,7 +419,7 @@ export default AssetEditRoute = React.createClass({
   },
 
 
-  // Note that can be called directly by the Sub-components. 
+  // Note that can be called directly by the Sub-components.
   // Primary use case is user hits 'save now' button, or 'play now'
   handleSaveNowRequest: function()
   {
@@ -440,7 +441,7 @@ export default AssetEditRoute = React.createClass({
       }
       else
       {
-        // We're connected... 
+        // We're connected...
         // Do we think we are waiting for a pending write confirmation on this asset?
         if (asset && asset.isUnconfirmedSave && !options.forceResend)
         {
@@ -504,7 +505,7 @@ export default AssetEditRoute = React.createClass({
   handleAssetDescriptionChange: function(newText) {
     if (newText !== this.data.asset.text) {
       Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {text: newText}, (err, res) => {
-        if (err) 
+        if (err)
           showToast(err.reason, 'error')
       })
       logActivity("asset.description",  `Update description to "${newText}"`, null, this.data.asset)
@@ -526,16 +527,16 @@ export default AssetEditRoute = React.createClass({
       Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), {name: newName}, (err, res) => {
         if (err)
           showToast(err.reason, 'error')
-      })      
+      })
       logActivity("asset.rename",  `Rename to "${newName}"`, null, this.data.asset)
     }
     // TODO:  Call snapshotActivity after rename so it will fix up any stale names:
     // import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
     //            We would need the most recent passiveActivity which is asset-kind-specific
     //            so we need to pass down a handler for the asset-specific editors to let us
-    //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use 
-    //            the most recent passive activity 
-    
+    //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use
+    //            the most recent passive activity
+
   },
 
 // This should not conflict with the deferred changes since those don't change these fields :)
@@ -565,7 +566,7 @@ export default AssetEditRoute = React.createClass({
 // This should not conflict with the deferred changes since those don't change these fields :)
   handleDeletedStateChange: function(newIsDeleted) {
     const { asset } = this.data
-    
+
     if (asset && asset.isDeleted !== newIsDeleted) {
       Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isDeleted: newIsDeleted}, (err, res) => {
         if (err)
@@ -574,7 +575,7 @@ export default AssetEditRoute = React.createClass({
       if (newIsDeleted)
         logActivity("asset.delete",  "Delete asset", null, asset)
       else
-        logActivity("asset.undelete",  "Undelete asset", null, asset) 
+        logActivity("asset.undelete",  "Undelete asset", null, asset)
     }
   },
 
@@ -585,16 +586,16 @@ export default AssetEditRoute = React.createClass({
         showToast(err.reason, 'error')
       }
     });
-    
+
     if (newIsCompletedStatus)
       logActivity("asset.stable",  "Mark asset as stable", null, this.props.asset);
     else
-      logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset); 
+      logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset);
   },
 
   handleStableStateChange: function(newIsCompleted) {
     const { asset } = this.data
-    
+
     if (asset && asset.isCompleted !== newIsCompleted) {
       Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isCompleted: newIsCompleted}, (err, res) => {
         if (err)
@@ -620,7 +621,7 @@ export default AssetEditRoute = React.createClass({
       if (err)
         showToast(err.reason, 'error')
     })
-    
+
     if (inList)
       logActivity("asset.project",  `removed Asset from project '${pName}'`, null, asset)
     else

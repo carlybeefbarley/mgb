@@ -43,10 +43,6 @@ export default UserAssetListRoute = React.createClass({
     location: PropTypes.object      // We get this from react-router
   },
   
-  contextTypes: {
-    urlLocation: React.PropTypes.object
-  },
-  
   /** 
    * queryNormalized() takes a location query that comes in via the browser url.
    *   Any missing or invalid params are replaced by defaults 
@@ -272,11 +268,8 @@ export default UserAssetListRoute = React.createClass({
       <Segment.Group horizontal style={{border: 0}}>
 
         <Helmet
-          title="Assets"
-          meta={[
-              {"name": "description", "content": "Assets"}
-          ]}
-        />
+            title="Assets"
+            meta={[ { "name": "Asset List", "content": "Assets" } ]} />
         
         <Segment style={{ minHeight: "600px", minWidth:"220px", maxWidth:"220px" }}>
 

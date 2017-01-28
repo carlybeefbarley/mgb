@@ -4,6 +4,9 @@
   actor => tileset + additional info
   tile => image
   */
+// images are cached and observed in the TileCache
+// here are cached and observed only Actors
+
 import TileHelper from './TileHelper'
 import ActorValidator from '../../ActorValidator'
 import SpecialGlobals from '/imports/SpecialGlobals'

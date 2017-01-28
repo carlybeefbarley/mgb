@@ -45,11 +45,11 @@ const getPagepathFromProps = props => props.routes[1].path
 
 let _theAppInstance = null
 
-// This is for making the Completion Tag thing work so it edge triggers only when pages are actually navigated to (rather than every update). 
+// This is for making the Completion Tag thing work so it edge triggers only when pages are actually navigated to (rather than every update).
 // QLink.js calls this. There may be a better way to do this, but this isn't too terribly factored so is OKish
-// and it gets the job done. 
+// and it gets the job done.
 export const clearPriorPathsForJoyrideCompletionTags = () => {
-  if (_theAppInstance) 
+  if (_theAppInstance)
   {
     _theAppInstance._priorLocationPath = null
     _theAppInstance._priorRouterPath = null
@@ -57,30 +57,30 @@ export const clearPriorPathsForJoyrideCompletionTags = () => {
 }
 
 export const stopCurrentTutorial = () => {
-  if (_theAppInstance) 
-    _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true } ) 
-  
+  if (_theAppInstance)
+    _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true } )
+
 }
-export const addJoyrideSteps = (steps, opts) => { 
-  if (_theAppInstance) 
-    _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts) 
+export const addJoyrideSteps = (steps, opts) => {
+  if (_theAppInstance)
+    _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts)
 }
 
-export const startSkillPathTutorial = (skillPath) => { 
-  if (_theAppInstance) 
-    _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath) 
+export const startSkillPathTutorial = (skillPath) => {
+  if (_theAppInstance)
+    _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath)
 }
 
 export const startSignUpTutorial = () => {
-  if (_theAppInstance) 
-    _theAppInstance.startSignUpTutorial.call(_theAppInstance) 
-  
+  if (_theAppInstance)
+    _theAppInstance.startSignUpTutorial.call(_theAppInstance)
+
 }
 
 const px = someNumber => (`${someNumber}px`)
 
 // NavPanel numbers
-const npColumn1WidthInPixels = 60             // The Column of Icons
+const npColumn1WidthInPixels = 0             // The Column of Icons (was 60). Now 0 for testing top-nav ui
 
 // NavBar numbers
 const navBarReservedHeightInPixels = 40
@@ -96,13 +96,13 @@ const _toastTypes = {
   success:  { funcName: 'success', hdr: 'Success', delay: 4000 }
 }
 
-export const showToast = (content, type = 'success') => { 
+export const showToast = (content, type = 'success') => {
   const useType = _toastTypes[type] || _toastTypes['success']
   NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
 }
 
 export const joyrideDebugEnable = joyrideDebug => {
-  if (_theAppInstance) 
+  if (_theAppInstance)
     _theAppInstance.setState( { joyrideDebug } )
   // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
 }
@@ -204,8 +204,8 @@ const App = React.createClass({
 
     if (handleForSettings && handleForSettings.ready())
     {
-      // There is a very small race where local settings could get replaced 
-      // if the settings are changed while the debounced save is happening.. 
+      // There is a very small race where local settings could get replaced
+      // if the settings are changed while the debounced save is happening..
       // but it's pretty small, so worry about that another day
       G_localSettings.set(Settings.findOne(currUserId))
     }
@@ -220,7 +220,7 @@ const App = React.createClass({
       skills:   currUser ? Skills.findOne(currUserId) : null,
       sysvars:  Sysvars.findOne(),
       loading:  !handleForUser.ready()    ||
-                !handleForSysvars.ready() || 
+                !handleForSysvars.ready() ||
                 !handleActivity.ready()   ||
                 !projectsReady            ||
                 !settingsReady            ||
@@ -247,7 +247,7 @@ const App = React.createClass({
   },
 
   render() {
-    const { respData } = this.props
+    const { respData, respWidth } = this.props
     const { joyrideDebug } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
@@ -270,12 +270,13 @@ const App = React.createClass({
 
     // The Nav Panel is on the left and is primarily navigation-oriented
     const navPanelReservedWidth = px(npColumn1WidthInPixels)     // Reserved width to render perma-column of Nav icons
-
     // The Flex Panel is for communications and common quick searches in a right hand margin (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
     const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels) : px(fpFlexPanelContentWidthInPixels)
     const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
+
+    const navPanelAvailableWidth = respWidth-parseInt(flexPanelWidth)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
@@ -311,12 +312,12 @@ const App = React.createClass({
         navPanelWidth={navPanelReservedWidth}
         projectScopeLock={projectScopeLockValue}
         sysvars={sysvars}
-        />    
+        />
     )
 
     return (
       <div >
-      
+
         <Helmet
           title="MGB"
           titleTemplate="%s"
@@ -324,9 +325,9 @@ const App = React.createClass({
               {"name": "My Game Builder", "content": "MyGameBuilder"}
           ]}
         />
-        <Joyride 
-          ref="joyride" 
-          steps={this.state.joyrideSteps} 
+        <Joyride
+          ref="joyride"
+          steps={this.state.joyrideSteps}
           showOverlay={true}
           disableOverlay={false}
           showSkipButton={true}
@@ -339,18 +340,12 @@ const App = React.createClass({
           debug={joyrideDebug} />
 
         <div>
-            <NavPanel
-              currUser={currUser}
-              currUserProjects={currUserProjects}
-              fpReservedFooterHeight={respData.fpReservedFooterHeight}
-              navPanelWidth={navPanelReservedWidth}
-            />
 
             { fFixedTopNavBar && navbar }
 
             <FlexPanel
               fpIsFooter={!!respData.footerTabMajorNav}
-              joyrideSteps={this.state.joyrideSteps} 
+              joyrideSteps={this.state.joyrideSteps}
               joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
               joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
               joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
@@ -368,6 +363,13 @@ const App = React.createClass({
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
               <div style={mainPanelInnerDivSty}>
+                <NavPanel
+                  currUser={currUser}
+                  currUserProjects={currUserProjects}
+                  fpReservedRightSidebarWidth={flexPanelWidth}
+                  navPanelAvailableWidth={navPanelAvailableWidth}
+                />
+              
                 { !fFixedTopNavBar && navbar }
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {
@@ -382,7 +384,7 @@ const App = React.createClass({
                 }
               </div>
             </div>
-            
+
           </div>
           <NotificationContainer/>
       </div>
@@ -430,7 +432,7 @@ const App = React.createClass({
   // TOAST
   //
 
-  startSignUpTutorial() 
+  startSignUpTutorial()
   {
     if (this.currUser)
     {
@@ -456,13 +458,13 @@ const App = React.createClass({
   },
 
   //
-  // React-Joyride 
+  // React-Joyride
   //
 
 
   // This is the React-joyride (user tours) support
   // See https://github.com/gilbarbara/react-joyride for background
-  // See /DeveloperDocs/ReactJoyrideTours.md for our rules/conventions 
+  // See /DeveloperDocs/ReactJoyrideTours.md for our rules/conventions
   //     for using it in our codebase
 
   // addJoyrideSteps()
@@ -501,14 +503,14 @@ const App = React.createClass({
           })
         })
         .catch( err => {
-          showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error') 
+          showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error')
         } )
       return
     }
 
 
-    if (!Array.isArray(steps)) 
-      steps = [steps] 
+    if (!Array.isArray(steps))
+      steps = [steps]
 
     if (!joyride || (steps.length === 0 && !opts.replace))
       return false
@@ -522,7 +524,7 @@ const App = React.createClass({
         currentState.joyrideCurrentStepNum = 0
       if (opts.origAssetId)
         currentState.joyrideOriginatingAssetId = opts.origAssetId  // Just to enable a nice edit Tutorial button in fpGoals
-      
+
       return currentState
     })
   },
@@ -541,13 +543,13 @@ const App = React.createClass({
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
         this.handleCompletedSkillTutorial( this.state.joyrideSkillPathTutorial )
       this.setState(
-        { 
-          joyrideSteps: [], 
-          joyrideSkillPathTutorial: null, 
+        {
+          joyrideSteps: [],
+          joyrideSkillPathTutorial: null,
           joyrideCurrentStepNum: 0,
           joyrideOriginatingAssetId: null
         }
-      ) 
+      )
     } else if (func.type === 'step:after')
     {
       this.setState( { joyrideCurrentStepNum: func.newIndex } )
@@ -584,7 +586,7 @@ const App = React.createClass({
           }
         })
         break
-        
+
       default:
         errors.push(`Action '${act} not recognized`)
       }
@@ -592,13 +594,13 @@ const App = React.createClass({
 
     return errors.length === 0 ? null : errors.join('; ') + '.'
   }
- 
+
 })
 
 App.responsiveRules = {
   'portraitPhoneUI': {
     maxWidth: 420,
-    respData: { 
+    respData: {
       footerTabMajorNav: true,        // |__| flexPanel as footer
       fpReservedFooterHeight:      '60px',
       fpReservedRightSidebarWidth: '0px'
@@ -606,7 +608,7 @@ App.responsiveRules = {
   },
   'desktopUI': {
     minWidth: 421,
-    respData: { 
+    respData: {
       footerTabMajorNav: false,        //  flexPanel as right sidebar =|
       fpReservedFooterHeight:       '0px',
       fpReservedRightSidebarWidth:  px(fpIconColumnWidthInPixels)

@@ -33,7 +33,6 @@ const _defaultTbIconName = 'red help circle'
 
 
 export const expectedToolbars = {
-  NavPanel:      { friendlyName: 'Navigation Panel',     max:  4,   default: 1,  icon: 'pointing left'                    },  // Not really toolbars, but I wanted the same fpLevel stuff
   FlexPanel:     { friendlyName: 'Flex Panel',           max:  8,   default: 1,  icon: 'pointing right'                   },  // Not really toolbars, but I wanted the same fpLevel stuff
 
   EditGraphic:   { friendlyName: 'Graphic Editor',       max: 10,   default: 1,  icon: AssetKinds.getIconName('graphic') },

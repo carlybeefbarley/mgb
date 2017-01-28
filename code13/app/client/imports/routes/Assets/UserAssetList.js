@@ -1,10 +1,9 @@
 import _ from 'lodash'
-import React, { Component, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
-
+import { Segment } from 'semantic-ui-react'
 import { Azzets, Projects } from '/imports/schemas'
-import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters, isAssetKindsStringComplete } from '/imports/schemas/assets'
-import { logActivity } from '/imports/schemas/activity'
+import { AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters, isAssetKindsStringComplete } from '/imports/schemas/assets'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import AssetList from '/client/imports/components/Assets/AssetList'
@@ -17,11 +16,9 @@ import AssetListChooseView from '/client/imports/components/Assets/AssetListChoo
 import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 
-import { utilPushTo } from '../QLink'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
-import UserItem from '/client/imports/components/Users/UserItem'
 import { Message } from 'semantic-ui-react'
 
 // Default values for url?query - i.e. the this.props.location.query keys
@@ -44,10 +41,6 @@ export default UserAssetListRoute = React.createClass({
     currUser: PropTypes.object,     // Currently Logged in user. Can be null
     ownsProfile: PropTypes.bool,
     location: PropTypes.object      // We get this from react-router
-  },
-  
-  contextTypes: {
-    urlLocation: React.PropTypes.object
   },
   
   /** 
@@ -248,29 +241,16 @@ export default UserAssetListRoute = React.createClass({
 
   componentDidMount() {
     window.addEventListener('keydown', this.listenForEnter)
-    
-    if (this.props.user)
-    {
-      // Enable a user info popup
-      $('.hazUserPopup')
-      .popup({
-        inline   : true,
-        position : 'bottom left',
-        on       :  "click"
-      })
-    }
   },
   
   componentWillUnmount() {
     window.removeEventListener('keydown', this.listenForEnter)
-    $('.hazUserPopup').popup('destroy')
   },
   
   listenForEnter: function(e) {
     e = e || window.event;
-    if (e.keyCode === 13) {
-      this.handleSearchGo();
-    }
+    if (e.keyCode === 13)
+      this.handleSearchGo()
   },
 
   render() {
@@ -285,22 +265,16 @@ export default UserAssetListRoute = React.createClass({
     const hiddenDivider = <div className="ui divider" style={{borderStyle: "none"}}></div>
 
     return (
-      <div className="ui horizontal segments" style={{border: 0}}>
+      <Segment.Group horizontal style={{border: 0}}>
 
         <Helmet
-          title="Assets"
-          meta={[
-              {"name": "description", "content": "Assets"}
-          ]}
-        />
+            title="Assets"
+            meta={[ { "name": "Asset List", "content": "Assets" } ]} />
         
-        <div className="ui segment" style={{ minHeight: "600px", minWidth:"220px", maxWidth:"220px" }}>
+        <Segment style={{ minHeight: "600px", minWidth:"220px", maxWidth:"220px" }}>
 
           <div className="ui row">
-            <div className="ui hazUserPopup large header">{ user ? (<span><a>{name}</a>'s Assets</span>) : ("Public assets") }</div>     
-            <div className="ui popup" style={{minWidth: "300px"}}>
-              { user && <UserItem user={user} renderNarrow={true}/> } 
-            </div>
+            <div className="ui large header">{ user ? `${name}'s Assets` : "Public Assets" }</div>     
           </div>  
                     
           <div id="mgbjr-asset-search-projectSelector" className="ui row">
@@ -357,9 +331,9 @@ export default UserAssetListRoute = React.createClass({
               <AssetShowDeletedSelector showDeletedFlag={qN.showDeleted} handleChangeFlag={this.handleChangeShowDeletedFlag} />
             </div>
           </div>
-        </div>
+        </Segment>
 
-        <div className="ui segment" style={{ minHeight: "600px"}}>        
+        <Segment style={{ minHeight: "600px"}}>        
           <div className="ui row">
             <CreateAssetLinkButton />
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
@@ -385,9 +359,9 @@ export default UserAssetListRoute = React.createClass({
                   ownersProjects={projects}  />
             }
           </div>
-        </div>
+        </Segment>
         
-      </div>
+      </Segment.Group>
     )
   }
 })

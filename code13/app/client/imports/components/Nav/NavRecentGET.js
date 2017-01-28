@@ -19,7 +19,7 @@ export default NavRecentGET = React.createClass({
 
   propTypes: {
     currUser:            PropTypes.object,           // Currently Logged in user. Can be null/undefined
-    styledForNavPanel:   PropTypes.bool.isRequired,  // True if we want the NavPanel style (inverted etc)
+    styledForNavPanel:   PropTypes.bool.isRequired,  // True if we want the NavPanel style (inverted etc)   //TOD(@dgolds remove this old feature)
     showUserActivities:  PropTypes.bool.isRequired
   },
 

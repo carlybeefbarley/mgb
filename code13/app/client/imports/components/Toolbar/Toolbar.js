@@ -380,7 +380,9 @@ export default class Toolbar extends React.Component {
                 style={{borderStyle: "dashed", borderColor: "green",  borderWidth: "thin", opacity: "0.5"}}
                 data-position="top center"
                 onClick={this.advertizeSlider.bind(this)}
-                data-content={`More buttons available. Use the slider at the top of the page to show them.  [Level ${this.state.level} of ${this.maxLevel}]`}>
+                data-content={`More buttons available. Use the slider at the top of the page to show them.  [Level ${this.state.level} of ${this.maxLevel}]`}
+                id="mgbjr-toolbar-optionsButton">
+                
               <i className="ui options icon" />
             </div>
           }

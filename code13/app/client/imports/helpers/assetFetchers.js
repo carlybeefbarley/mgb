@@ -18,18 +18,22 @@ Meteor.startup(() => {
   Meteor.call("CDN.domain", (err, cdnDomain) => {
     if (!err)
       CDN_DOMAIN = cdnDomain
-    console.log(`Using CDN ${CDN_DOMAIN}`)
+    console.log(`Using CDN: '${CDN_DOMAIN}'`)
   })
 })
 
 // makeCDNLink() will convert a local link e.g. /api/asset to //xxx.cloufront.com/api/asset?hash
 // uri MUST have a leading slash in order to be converted (but not //)
 export const makeCDNLink = (uri, etagOrHash = null) => {
+  // don't cache at all
+  if(uri.startsWith("/api") && !etagOrHash)
+    return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri
+
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
   const hash = etagOrHash != null ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
 
   if (uri.startsWith("/") && !uri.startsWith("//"))
-    return CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
+      return CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
 
   return uri
 }

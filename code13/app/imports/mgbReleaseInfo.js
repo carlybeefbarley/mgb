@@ -26,6 +26,36 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
 
+    {
+      'timestamp': 'Fri Jan 27 2017 16:30:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2799'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'improvement',
+          'changeName': 'Major UI update for ActorMap Editor',
+          'changeSummary': '@Bouhm has made significant changes to the ActorMap Editor to make it easier to use. Also, at the same time we have made some changes to the format requirements for the ActorMap asset references so we will be reimporting some games from the old flash-based MGB editor to be more compliant with the new format.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.scalability',
+          'type': 'feature',
+          'changeName': 'Caching and CDN distribution',
+          'changeSummary': 'Assets are now cached and distributed via CDN, so the site should be much faster in use. This is a very large change and there may be a few bugs left',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Wed Jan 25 2017 19:30:00 GMT-0800 (PST)',

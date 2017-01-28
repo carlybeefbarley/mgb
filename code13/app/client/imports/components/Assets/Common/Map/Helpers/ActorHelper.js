@@ -4,6 +4,9 @@
   actor => tileset + additional info
   tile => image
   */
+// images are cached and observed in the TileCache
+// here are cached and observed only Actors
+
 import TileHelper from './TileHelper'
 import ActorValidator from '../../ActorValidator'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -17,8 +20,8 @@ const ACTION_IMAGE = SpecialGlobals.actorMap.actionsImage
 const EVENT_LAYER = SpecialGlobals.actorMap.eventLayerId
 
 // in this context:
-// v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contains names
-// v2 - TMX format - layers contains tile global ids
+// v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contain names
+// v2 - TMX format - layers contain tile global ids
 
 export default ActorHelper = {
   TILES_IN_ACTIONS: SpecialGlobals.actorMap.actionsInImage,
@@ -221,8 +224,8 @@ export default ActorHelper = {
         name: "Background",
         visible: true,
         data: [0,0,0,0],
-        height: 2,
-        width: 2,
+        height: 20,
+        width: 20,
         draworder: "topdown",
         mgb_tiledrawdirection: "rightdown",
         type: "mgb1-actor-layer",
@@ -233,8 +236,8 @@ export default ActorHelper = {
         name: "Active",
         visible: true,
         data: [0,0,0,0],
-        height: 2,
-        width: 2,
+        height: 20,
+        width: 20,
         draworder: "topdown",
         mgb_tiledrawdirection: "rightdown",
         type: "mgb1-actor-layer",
@@ -245,8 +248,8 @@ export default ActorHelper = {
         name: "Foreground",
         visible: true,
         data: [0,0,0,0],
-        height: 2,
-        width: 2,
+        height: 20,
+        width: 20,
         draworder: "topdown",
         mgb_tiledrawdirection: "rightdown",
         type: "mgb1-actor-layer",
@@ -258,8 +261,8 @@ export default ActorHelper = {
         visible: true,
         data: [0,0,0,0],
         mgb_events: ['','','',''],
-        height: 2,
-        width: 2,
+        height: 20,
+        width: 20,
         draworder: "topdown",
         mgb_tiledrawdirection: "rightdown",
         type: "mgb1-event-layer",

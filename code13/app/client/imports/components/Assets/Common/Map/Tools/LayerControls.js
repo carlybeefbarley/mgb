@@ -18,7 +18,7 @@ export default class LayerControls extends React.Component {
   }
 
   render () {
-    const highlightClassName = `ui floated icon button ${this.options.highlightActiveLayer ? 'primary' : ''}`
+    const highlightClassName = `ui floated icon blue button ${this.options.highlightActiveLayer ? 'inverted' : ''}`
 
     return (
       <div className='ui mini' style={{ position: 'relative', top: '-10px' }}>

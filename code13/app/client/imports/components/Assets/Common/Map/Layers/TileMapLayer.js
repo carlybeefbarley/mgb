@@ -224,7 +224,7 @@ export default class TileMapLayer extends AbstractLayer {
     return pos
   }
   getInfo () {
-    return JSON.stringify(this.tilePosInfo)
+    return this.tilePosInfo
   }
 
   selectRectangle (pos) {
@@ -316,13 +316,14 @@ export default class TileMapLayer extends AbstractLayer {
     endx += widthInTiles
     endy += heightInTiles
 
-
     // map starts with 0, 0 - pointless to check negative indices
     if (skipx < 0) {skipx = 0}
     if (skipy < 0) {skipy = 0}
-    if (endx > widthInTiles){ endx = widthInTiles}
-    if (endy > heightInTiles){ endy = heightInTiles}
 
+
+    // map ends at with this.options.width, height - pointless to check further
+    if (endx > this.options.width){ endx = this.options.width}
+    if (endy > this.options.height){ endy = this.options.height}
 
     let i = 0, tileId, pal
     const pos = {x: 0, y: 0}
@@ -977,7 +978,6 @@ edit[EditModes.eraser] = function (e, up, saveUndo = true) {
 
   if (e.type == 'mousedown' || e.type == 'touchstart') {
     this.props.saveForUndo('Removing Tiles')
-    return
   }
 
   const pos = this.getTilePosInfo(e)

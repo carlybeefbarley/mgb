@@ -10,10 +10,11 @@ const DEFAULT_MAX_AGE = 600 // This cache MAX_AGE config param is for dynamic re
 
 
 export const assetToCdn = (api, asset, uri) => {
+  const domain = getCDNDomain()
   return {
     statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
     headers: {
-      'Location': '//' + getCDNDomain() + uri + "/?etag=" + genetag(asset)
+      'Location': domain ? '//' + getCDNDomain() + uri + "/?etag=" + genetag(asset) : uri + "/?etag=" + genetag(asset)
       // 'cache-control': 'max-age=30'
       // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
     },

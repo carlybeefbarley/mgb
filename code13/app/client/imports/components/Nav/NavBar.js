@@ -4,8 +4,8 @@ import NavBarBreadcrumb from './NavBarBreadcrumb'
 import NavBarGadget from './NavBarGadget'
 import WhatsNew from './WhatsNew'
 
-// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column 
-// on the left and the FlexPanel on the right). 
+// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column
+// on the left and the FlexPanel on the right).
 
 // The NavBar contains a breadcrumb bar (left) and a NavBarGadget (right).
 
@@ -26,10 +26,10 @@ const _projectScopeLockRowStyle = {
 }
 
 const ProjectScopeBar = ({ projectScopeLock }) => (
-  !projectScopeLock ? null : 
+  !projectScopeLock ? null :
     <div style={_projectScopeLockRowStyle} >
       Project Scope Locked to: {projectScopeLock}
-    </div> 
+    </div>
 )
 
 const _menuStyle = {
@@ -46,11 +46,11 @@ const NavBar = ({ name, user, params, currUser, pathLocation, projectScopeLock, 
     <div style={{
       position:   fFixedTopNavBar ? 'fixed' : 'static',
       top:        fFixedTopNavBar ? '0px' : undefined,
-      left:       navPanelWidth, 
-      right:      flexPanelWidth, 
+      left:       navPanelWidth,
+      right:      flexPanelWidth,
       overflow:   'hidden',
       margin:     '0px',
-      maxHeight:  0//projectScopeLock ?  '80px' : '38px'
+      maxHeight:  projectScopeLock ?  '80px' : '38px'
     }}>
       <div className="ui borderless menu" style={_menuStyle}>
         <SystemAlerts sysvars={sysvars}/>

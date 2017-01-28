@@ -295,7 +295,7 @@ export default AssetEditRoute = React.createClass({
             handleSaveNowRequest={this.handleSaveNowRequest} />
         </Grid.Column>
 
-        <Grid.Column width='8' aligned='right' id="mgbjr-asset-edit-header-right">
+        <Grid.Column width='8' textAlign='right' id="mgbjr-asset-edit-header-right">
           { /* We use this.props.params.assetId since it is available sooner than the asset
              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
              * */ }

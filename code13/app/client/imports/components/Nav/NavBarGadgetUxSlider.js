@@ -13,7 +13,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 // ENHANCE? We could potentially use a fancier one like http://react-component.github.io/slider/examples/marks.html
 
-// ENHANCE: If this is made optional (e.g. if we re-use this space for other gadgets), then 
+// ENHANCE: If this is made optional (e.g. if we re-use this space for other gadgets), then
 // Toolbar.js would need to handle this element not being found
 
 
@@ -42,14 +42,14 @@ export default NavBarGadgetUxSlider = React.createClass({
 
   getMeteorData: function() {
     const allLevels = _.map(expectedToolbars.scopeNames, name => (this.getLevelVal(name) ) )
-    return { levels: allLevels }   // This data isn't used, but because we referenced it in getMeteorData, there will be a forceUpdate() when settings change 
+    return { levels: allLevels }   // This data isn't used, but because we referenced it in getMeteorData, there will be a forceUpdate() when settings change
   },
 
 
   sliderChanged: function (event) {
     const levelSliderEl = document.getElementById(sliderConstants.sliderElementId)
     const newSliderLevel = parseInt(event.target.value, 10)
-    
+
     if (levelSliderEl && levelSliderEl._levelKey)
       setFeatureLevel(this.context.settings, levelSliderEl._levelKey, newSliderLevel)
 
@@ -73,39 +73,40 @@ export default NavBarGadgetUxSlider = React.createClass({
 
   componentDidUpdate() {
     const levelSliderEl = document.getElementById(sliderConstants.sliderElementId)
-    if (levelSliderEl) { 
+    if (levelSliderEl) {
       var event = new Event('input')
       levelSliderEl.dispatchEvent(event)
     }
   },
 
   render: function() {
-    const sliderStyle =  { 
-      marginTop:   "10px", 
-      marginRight: "10px", 
+    const sliderStyle =  {
+      marginTop:   "10px",
+      marginRight: "10px",
       marginLeft:   "2px"
     }
 
     const iconSty = {
       position: "relative",
-      top:      "-3px" 
+      top:      "-3px"
     }
 
     const sliderLevel = this.getLevel()
 
     return (
-      <div style={{ opacity: sliderConstants.disabledOpacity }}>
+      // TODO: @dgolds remove this component in favor of flex panel settings
+      <div style={{ opacity: sliderConstants.disabledOpacity, visibility: 'hidden' }}>
         <QLink query={{_fp: 'features'}}>
           <i id="mgbjr-NavGadgetSliderIcon" className="ui options icon" style={iconSty}/>
         </QLink>
         <input
-          style={sliderStyle} 
+          style={sliderStyle}
           id={sliderConstants.sliderElementId}
           title={sliderConstants.inactiveTitleTxt}
           value={sliderLevel}
-          type="range" 
+          type="range"
           onChange={this.sliderChanged}
-          min={1} 
+          min={1}
           max={15} />
       </div>
     )
@@ -127,7 +128,7 @@ export function utilMuteLevelSlider(levelSliderEl) {
 export function utilActivateLevelSlider(maxLevel, levelKey, levelName, level) {
   const levelSliderEl = document.getElementById(sliderConstants.sliderElementId)
 
-  if (!levelSliderEl) 
+  if (!levelSliderEl)
     console.warn(`Could not find sliderElementId: ${sliderConstants.sliderElementId}`)
   else
   {
@@ -146,7 +147,7 @@ export function utilActivateLevelSlider(maxLevel, levelKey, levelName, level) {
 
 
 export function utilAdvertizeSlider(levelSliderEl) {
-  if (levelSliderEl) 
+  if (levelSliderEl)
   {
     var d = levelSliderEl.parentElement
     $(d).transition('jiggle', '2000ms')

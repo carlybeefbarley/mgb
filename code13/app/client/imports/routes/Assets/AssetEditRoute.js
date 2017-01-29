@@ -28,7 +28,7 @@ import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDe
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
-import { getAssetWithContent2 } from '/client/imports/helpers/assetFetchers'
+import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 
 
 const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
@@ -145,7 +145,7 @@ export default AssetEditRoute = React.createClass({
 
   getMeteorData: function() {
     let assetId = this.props.params.assetId
-    const assetHandler = this.assetHandler = getAssetWithContent2(assetId, () => {
+    const assetHandler = this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
       this.assetHandler && this.forceUpdate()
     }, !!this.m_deferredSaveObj)
 

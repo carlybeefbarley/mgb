@@ -17,7 +17,7 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 
-import { getAssetWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { getAssetHandlerWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const _incrementPlayCount = _.debounce(
     assetId => {
@@ -138,7 +138,7 @@ export default PlayGameRoute = React.createClass({
 
   getMeteorData: function () {
     let assetId = this.props.params.assetId
-    const assetHandler = this.assetHandler = getAssetWithContent2(assetId, () => {
+    const assetHandler = this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
       this.assetHandler && this.forceUpdate()
     })
     return {
@@ -159,7 +159,7 @@ export default PlayGameRoute = React.createClass({
 
   //
   checkForImplicitIncrementPlayCount() {
-    const game = this.data.asset      // One Asset provided via getMeteorData()    
+    const game = this.data.asset      // One Asset provided via getMeteorData()
     if (game && game._id && game.metadata.gameType === 'codeGame' && !this.autoUpdateHasBeenHandled) {
       this.incrementPlayCount()
       this.autoUpdateHasBeenHandled = true

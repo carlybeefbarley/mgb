@@ -46,9 +46,15 @@ export const makeExpireThumbnailLink = (assetId, expires) => {
 // use this to allow client NOT pull resources every time
 export const makeExpireTimestamp = (expires) => {
   // TODO(@stauzs): we need server time here - this will work only for short periods of time !!!!
-  // See https://github.com/mizzao/meteor-timesync 
+  // See https://github.com/mizzao/meteor-timesync
   const now = Date.now()
   // this will be timestamp rounded to seconds   // TODO(@stauzs) explain why this is  % (expires * 1000) rather than % 1000
+  // it will round timestamp to expires seconds - * 1000 because JS timestamps are in milliseconds
+  // it's easier to understand with tens and fives, but it will work with any number
+  // for example if expires will be 10s - then return will be rounded to 10 * 1000 (four zeroes)
+  // and makeExpireTimestamp will return same value for next 10 seconds
+  // actually it can return different earlier for the first and second call,
+  // but all next calls will get same value for next 10 seconds
   return now - (now % (expires * 1000))
 }
 
@@ -75,7 +81,7 @@ export const observe = (selector, onReady, onChange = onReady, cachedObservable 
     onStop: () => {
       observable.observer && observable.observer.stop()
       // Something internally in Meteor makes subscription stop even before it's ready
-      // ..this is caused by subscriptions called in ReactGetMeteorData() - as they 
+      // ..this is caused by subscriptions called in ReactGetMeteorData() - as they
       // automatically gets closed. Another fix is to remove from stack Meteor.subscribe..:(
       // TODO(@dgolds):See if there is another approach?
       !onReadyCalled && observe(selector, onReady, onChange, observable)
@@ -136,10 +142,12 @@ const removeFromCache = uri => {
   }
 }
 
-// this function will try to make the best of etag  (TODO: Clarify 'best of etag' comment)
-// asset param is optional - without it this function will work as normal ajax (TODO: Provide safe default like =null)
+// this function will try to make the best use of etag caching  (TODO: Clarify 'best of etag' comment)
+// "best of" because asset param is optional, but when it present - server and client etag will be the same
+// and this allows to cache api response locally
+// asset param is optional - without it this function will work as normal ajax
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
-export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
+export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
   if (etag) {
     const cached = getFromCache(uri, etag)
@@ -161,7 +169,7 @@ export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
 
   if (onRequestOpen)
     onRequestOpen(client)
-  
+
   client.send()
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified
@@ -175,7 +183,7 @@ export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
       // try link without CDN
       if (usingCDN) {
         console.log("CDN failed - trying local uri")
-        mgbAjax(window.location.origin + uri, callback, asset, pullFromCache) //TODO(@stauzs) BUGBUG pullFromCache not defined
+        mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
         return
       }
       callback(this.statusText)
@@ -184,7 +192,7 @@ export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
   client.onerror = function (e) {
     if (usingCDN) {
       console.log("CDN failed - trying local uri")
-      mgbAjax(window.location.origin + uri, callback, asset, pullFromCache) //TODO(@stauzs) BUGBUG pullFromCache not defined
+      mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
       return
     }
     callback(e, this.statusText)
@@ -217,12 +225,12 @@ class AssetHandler {
   }
 
   // TODO: Explain what this does and what's different to update(). It seems related to forceUpdate flag?
+  // this method only update Asset meta info, but will skip content2
   updateAsset(onChange = null) {
     this.onChange = onChange
     const asset = Azzets.findOne(this.id)
     // save previous content2
-    let oldC2 = this.asset ? this.asset.content2 : null
-    asset.content2 = oldC2
+    asset.content2 = this.asset ? this.asset.content2 : null
 
     const etag = genetag(asset)
     if (this.etag !== etag && !asset.content2)
@@ -232,8 +240,9 @@ class AssetHandler {
   }
 
   // TODO: Explain what this does and what's different to updateAsset(). It seems related to forceUpdate flag?
+  // this will update asset and content2
   update(onChange = null, updateObj = null) {
-    if (onChange) 
+    if (onChange)
       this.onChange = onChange
 
     const asset = Azzets.findOne(this.id)
@@ -248,7 +257,6 @@ class AssetHandler {
         if (this.etag == etag) {
           // here we can silently update content2 without requesting new c2 from DB
           if (updateObj) {
-            this.c2UpdatedAt = new Date()
             this.asset.content2 = updateObj.content2
             this.onChange && this.onChange()
           }
@@ -267,7 +275,6 @@ class AssetHandler {
 
     // user that has modified asset will have updateObj
     if (updateObj) {
-      this.c2UpdatedAt = new Date()
       this.asset.content2 = updateObj.content2
     }
     // viewer won't
@@ -300,13 +307,13 @@ class AssetHandler {
 
   }
 
+  // this will update only content2
   updateContent2(updateObj) {
     const asset = Azzets.findOne(this.id)
     if (!asset)
       return
 
     if (updateObj) {
-      this.c2UpdatedAt = new Date()
       this.asset.content2 = updateObj.content2
       this.onChange && this.onChange()
       return
@@ -340,7 +347,6 @@ class AssetHandler {
       else {
         console.log("updateContent2() Sources are equal.. preventing update!")
       }
-      this.c2UpdatedAt = new Date()
     }, asset)
   }
 
@@ -368,16 +374,14 @@ class AssetHandler {
 }
 
 const cachedAssetHandlers = []
-// this will return AssetHandler
+// this will return a (potentially cached or new) AssetHandler, not an Asset
 // This is used in the AssetEditRoute -> getMeteorData and in PlayGameRoute
-// it's (NOT?) possible to pass cached c2 - to skip xhr request  (TODO:(@stauzs) clarify confusing comment)
-// TODO: Rename this function since it is currently very misleading 
-//       (it returns a (potentially cached or new) AssetHandler, not an Asset)
-// TODO: (also, probably have default = false for forceUpdate param)
-export const getAssetWithContent2 = (id, onChange, forceUpdate) => {
-  let handler = cachedAssetHandlers.find(a => a.id === id)
+export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = false) => {
+  let handler = cachedAssetHandlers.find(h => h.id === id)
+  //
   if (handler) {
-    if (!forceUpdate)
+    handler.lastAccessed = Date.now()
+    if (!forceFullUpdate)
       handler.update(onChange)
     else
       handler.updateAsset(onChange)
@@ -385,10 +389,14 @@ export const getAssetWithContent2 = (id, onChange, forceUpdate) => {
   }
   // keep only MAX_CACHED_ASSETHANDLERS assets in memory (e.g. 10)
   if (cachedAssetHandlers.length > MAX_CACHED_ASSETHANDLERS) {
-    handler = cachedAssetHandlers.shift()   // TODO: Would be much better as an LRU instead of a queue?
+    // keep most recently accessed handlers at start
+    cachedAssetHandlers.sort((a, b) => b.lastAccessed - a.lastAccessed)
+    // pop is faster than shift
+    handler = cachedAssetHandlers.pop()   // TODO: Would be much better as an LRU instead of a queue?
     handler.stop()
   }
   handler = new AssetHandler(id, onChange)
+  handler.lastAccessed = Date.now()
   cachedAssetHandlers.push(handler)
   return handler
 }

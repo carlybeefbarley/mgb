@@ -258,8 +258,7 @@ export default ProjectOverview = React.createClass({
                 handleClickUser={this.handleClickUser}
                 initialLimit={20}
                 excludeUserIdsArray={relevantUserIds}
-                renderVertical={true} 
-                hideTitle={true}/>
+                renderVertical={true} />
          }              
       </Segment>
     )

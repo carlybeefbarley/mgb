@@ -16,8 +16,7 @@ export default UserListRoute = React.createClass({
     renderVertical:     PropTypes.bool.isRequired,    // Optional. Default is false. See below.
     initialLimit:       PropTypes.number.isRequired,  // Optional. Default is 21. See below.   
     excludeUserIdsArray: PropTypes.array,             // Optional. If provided, exclude these id's. Useful for situations like add friend/member (to exclude existing ones)
-    handleClickUser:    PropTypes.func,               // Optional. If provided, call this with the userId instead of going to the user Profile Page
-    hideTitle:          PropTypes.bool                // Optional. Default is false
+    handleClickUser:    PropTypes.func                // Optional. If provided, call this with the userId instead of going to the user Profile Page
   },
 
 
@@ -97,7 +96,7 @@ export default UserListRoute = React.createClass({
 
   render() {
     
-    const { excludeUserIdsArray, renderVertical, hideTitle, handleClickUser } = this.props
+    const { excludeUserIdsArray, renderVertical, handleClickUser } = this.props
     let filteredUsers = excludeUserIdsArray 
                           ? _.filter(this.data.users, u => { return !_.includes(excludeUserIdsArray, u._id) })
                           : this.data.users
@@ -110,7 +109,6 @@ export default UserListRoute = React.createClass({
     return (
       <div className={containerClassName} style={killBordersStyle}>
         <div className={segClass} style={searchSegmentStyle}>
-          { hideTitle ? null : <div className="ui large header">Search Users</div> }
           <div className="ui fluid action input">
             <input  type="text" 
                     placeholder="Search..." 

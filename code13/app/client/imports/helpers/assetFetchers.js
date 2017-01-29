@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import { genetag } from '/imports/helpers/generators'
@@ -6,6 +7,9 @@ import { getProjectAvatarUrl as getProjectAvatarUrlBasic } from '/imports/schema
 // This browser/client will store partially fetched Azzets.
 // PartialAssets because Meteor atm cannot merge assets recursively
 // https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
+
+
+// TODO: Add some cache hit/miss metrics and provide a way to get them easily (e.g. import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals' )
 
 const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
@@ -65,11 +69,11 @@ export const getProjectAvatarUrl = (p, expires = 60) => (
 )
 
 
-// used by maps - to get notifications about image changes
+// used by maps - to get notifications about image changes  // TODO(@stauzs).. it's not just maps right? the comments reference Tern etc
 export const observe = (selector, onReady, onChange = onReady, cachedObservable = null) => {
   // images in the map won't update
   const cursor = PartialAzzets.find(selector)
-  // from now on only observe asset and update tern on changes only
+  // from now on only observe asset and update tern on changes only  //TODO(@stauzs)? Why is a general component referring to tern which is very specialized?
   let onReadyCalled = false
   const observable = cachedObservable || {
     observer: null,
@@ -82,7 +86,7 @@ export const observe = (selector, onReady, onChange = onReady, cachedObservable 
       observable.observer && observable.observer.stop()
       // Something internally in Meteor makes subscription stop even before it's ready
       // ..this is caused by subscriptions called in ReactGetMeteorData() - as they
-      // automatically gets closed. Another fix is to remove from stack Meteor.subscribe..:(
+      // automatically gets closed. Another fix is to remove from stack Meteor.subscribe..:( (DG says NO NO NO!)
       // TODO(@dgolds):See if there is another approach?
       !onReadyCalled && observe(selector, onReady, onChange, observable)
     },
@@ -200,11 +204,12 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
 }
 
 // this class fetches and updates Asset and its content2
+//  TODO: Properly document class since it has complex and critical behaviour
 
 class AssetHandler {
   constructor(assetId, onChange) {
     this.id = assetId
-    this.onChange = onChange
+    this.onChange = onChange  // TODO: Needs default for undefined? otherwise we have undefined/null which can cause errors if truthy comparisons aren't precise
 
     this.asset = null
     this.isReady = false
@@ -225,9 +230,10 @@ class AssetHandler {
   }
 
   // TODO: Explain what this does and what's different to update(). It seems related to forceUpdate flag?
+  // TODO: Also explain param - callback behavior/interface
   // this method only update Asset meta info, but will skip content2
   updateAsset(onChange = null) {
-    this.onChange = onChange
+    this.onChange = onChange   // TODO: in contrast, update() guard this with 'if (onChange)... '. Why not here?
     const asset = Azzets.findOne(this.id)
     // save previous content2
     asset.content2 = this.asset ? this.asset.content2 : null
@@ -240,6 +246,7 @@ class AssetHandler {
   }
 
   // TODO: Explain what this does and what's different to updateAsset(). It seems related to forceUpdate flag?
+  // TODO: Also explain params - callback behavior/interface and format requirements of updateObj
   // this will update asset and content2
   update(onChange = null, updateObj = null) {
     if (onChange)
@@ -304,7 +311,6 @@ class AssetHandler {
         })
       }, 0)
     }
-
   }
 
   // this will update only content2
@@ -321,7 +327,7 @@ class AssetHandler {
 
     mgbAjax(asset.c2location || `/api/asset/content2/${this.id}`, (err, data) => {
       if (err) {
-        console.log("Failed to retrieve c2 for asset with id: ", this.id, err)
+        console.log("updateContent2: Failed to retrieve c2 for asset with id: ", this.id, err)
         return
       }
       const c2 = JSON.parse(data)

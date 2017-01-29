@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { Segment } from 'semantic-ui-react'
 import SystemAlerts from './SystemAlerts'
 import NavBarBreadcrumb from './NavBarBreadcrumb'
 import NavBarGadget from './NavBarGadget'
@@ -32,38 +33,30 @@ const ProjectScopeBar = ({ projectScopeLock }) => (
     </div>
 )
 
-const _menuStyle = {
-  border: "none",
-  boxShadow: "none"
-}
-
 const NavBar = ({ name, user, params, currUser, pathLocation, projectScopeLock, navPanelWidth, flexPanelWidth, fFixedTopNavBar, sysvars }) => {
 
   if (pathLocation === '/' && !fFixedTopNavBar && !projectScopeLock)
     return null
 
   return (
-    <div style={{
-      position:   fFixedTopNavBar ? 'fixed' : 'static',
-      top:        fFixedTopNavBar ? '0px' : undefined,
-      left:       navPanelWidth,
-      right:      flexPanelWidth,
-      overflow:   'hidden',
-      margin:     '0px',
-      maxHeight:  projectScopeLock ?  '80px' : '38px'
-    }}>
-      <div className="ui borderless menu" style={_menuStyle}>
-        <SystemAlerts sysvars={sysvars}/>
-        <WhatsNew currUser={currUser} asHidingLink={true}/>
-        <div className="item">
-          <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} />
-        </div>
-        <div className="right menu">
-          <NavBarGadget name={name} currUser={currUser}/>
-        </div>
-      </div>
+    <Segment
+      basic
+      size='mini'
+      style={{
+        position: fFixedTopNavBar ? 'fixed' : 'static',
+        top: fFixedTopNavBar ? '0px' : undefined,
+        left: navPanelWidth,
+        right: flexPanelWidth,
+        overflow: 'hidden',
+        margin: 0,
+        padding: '0.5em',
+      }}>
+      <SystemAlerts sysvars={sysvars} />
+      <WhatsNew currUser={currUser} asHidingLink={true} />
+      <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} />
+      <NavBarGadget name={name} currUser={currUser}/>
       <ProjectScopeBar projectScopeLock={projectScopeLock} />
-    </div>
+    </Segment>
   )
 }
 

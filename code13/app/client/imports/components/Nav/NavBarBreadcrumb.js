@@ -1,16 +1,17 @@
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
+import { Breadcrumb } from 'semantic-ui-react'
 
-// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column 
-// on the left and the FlexPanel on the right). 
+// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column
+// on the left and the FlexPanel on the right).
 
 // The NavBarBreadcrumb contains a breadcrumb bar that is generated based on name, user and
 // params (assetId, projectId etc)
 
-const _sep = <i className='mini right chevron icon' />
+const _sep = <i className='grey right angle icon' />
 
 const NavBarBreadcrumb = ( { name, user, params, pathLocation } ) => {
-  
+
   const homeWord = 'MyGameBuilder'
 
   const assetId = params && params.assetId
@@ -18,7 +19,7 @@ const NavBarBreadcrumb = ( { name, user, params, pathLocation } ) => {
   const usernameToShow = user ? user.profile.name : params.username
 
   return (
-    <div className="ui large breadcrumb">
+    <Breadcrumb>
       <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
 
       { usernameToShow && _sep }
@@ -29,7 +30,7 @@ const NavBarBreadcrumb = ( { name, user, params, pathLocation } ) => {
 
       { usernameToShow && projectId && _sep }
       { usernameToShow && projectId && <QLink className="section" to={`/u/${usernameToShow}/projects`}>Projects&nbsp;</QLink> }
-      
+
       { pathLocation && pathLocation.startsWith('/learn/') && _sep }
       { pathLocation && pathLocation.startsWith('/learn/') && <QLink className="section" to={`/learn`}>Learn&nbsp;</QLink> }
       { pathLocation && pathLocation.startsWith('/learn/skills/') && _sep }
@@ -37,7 +38,7 @@ const NavBarBreadcrumb = ( { name, user, params, pathLocation } ) => {
 
       { name && _sep }
       { name && <span>{name}&nbsp;</span> }
-    </div>
+    </Breadcrumb>
   )
 }
 

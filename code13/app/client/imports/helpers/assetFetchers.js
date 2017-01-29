@@ -11,6 +11,7 @@ const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers  // Big hammer to disable it if we hit a scalability crunch (or could make it user-specific or sysvar)
 const MAX_ASSET_CACHE_LENGTH = 500  // Max # of assets in cache; not a size-based metric yet
+const MAX_CACHED_ASSETHANDLERS = 10 // Max # of AssetHandlers that will be cached
 
 // CDN_DOMAIN will be set at startup. See createCloudFront.js for the magic
 let CDN_DOMAIN = ""
@@ -135,8 +136,8 @@ const removeFromCache = uri => {
   }
 }
 
-// this function will try to make the best of etag
-// asset param is optional - without it this function will work as normal ajax
+// this function will try to make the best of etag  (TODO: Clarify 'best of etag' comment)
+// asset param is optional - without it this function will work as normal ajax (TODO: Provide safe default like =null)
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
 export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
@@ -215,6 +216,7 @@ class AssetHandler {
     return !this.isReady
   }
 
+  // TODO: Explain what this does and what's different to update(). It seems related to forceUpdate flag?
   updateAsset(onChange = null) {
     this.onChange = onChange
     const asset = Azzets.findOne(this.id)
@@ -229,6 +231,7 @@ class AssetHandler {
     this.asset = asset
   }
 
+  // TODO: Explain what this does and what's different to updateAsset(). It seems related to forceUpdate flag?
   update(onChange = null, updateObj = null) {
     if (onChange) 
       this.onChange = onChange
@@ -366,8 +369,11 @@ class AssetHandler {
 
 const cachedAssetHandlers = []
 // this will return AssetHandler
-// This is used in the AssetEditRoute -> getMeteorData
-// it's (NOT?) possible to pass cached c2 - to skip xhr request
+// This is used in the AssetEditRoute -> getMeteorData and in PlayGameRoute
+// it's (NOT?) possible to pass cached c2 - to skip xhr request  (TODO:(@stauzs) clarify confusing comment)
+// TODO: Rename this function since it is currently very misleading 
+//       (it returns a (potentially cached or new) AssetHandler, not an Asset)
+// TODO: (also, probably have default = false for forceUpdate param)
 export const getAssetWithContent2 = (id, onChange, forceUpdate) => {
   let handler = cachedAssetHandlers.find(a => a.id === id)
   if (handler) {
@@ -377,9 +383,9 @@ export const getAssetWithContent2 = (id, onChange, forceUpdate) => {
       handler.updateAsset(onChange)
     return handler
   }
-  // keep only 10 assets in memory
-  if (cachedAssetHandlers.length > 10) {
-    handler = cachedAssetHandlers.shift()
+  // keep only MAX_CACHED_ASSETHANDLERS assets in memory (e.g. 10)
+  if (cachedAssetHandlers.length > MAX_CACHED_ASSETHANDLERS) {
+    handler = cachedAssetHandlers.shift()   // TODO: Would be much better as an LRU instead of a queue?
     handler.stop()
   }
   handler = new AssetHandler(id, onChange)

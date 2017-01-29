@@ -26,14 +26,14 @@ Meteor.startup(() => {
 // uri MUST have a leading slash in order to be converted (but not //)
 export const makeCDNLink = (uri, etagOrHash = null) => {
   // don't cache at all
-  if(uri.startsWith("/api") && !etagOrHash)
+  if (uri.startsWith("/api") && !etagOrHash)
     return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri
 
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
   const hash = etagOrHash != null ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
 
   if (uri.startsWith("/") && !uri.startsWith("//"))
-      return CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
+    return CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
 
   return uri
 }
@@ -47,7 +47,7 @@ export const makeExpireTimestamp = (expires) => {
   // TODO(@stauzs): we need server time here - this will work only for short periods of time !!!!
   // See https://github.com/mizzao/meteor-timesync 
   const now = Date.now()
-  // this will be timestamp rounded to seconds
+  // this will be timestamp rounded to seconds   // TODO(@stauzs) explain why this is  % (expires * 1000) rather than % 1000
   return now - (now % (expires * 1000))
 }
 
@@ -90,9 +90,7 @@ export const observe = (selector, onReady, onChange = onReady, cachedObservable 
       }
       onReady && onReady()
     },
-    onError: (...args) => {
-      console.log("Error:", name, ...args)
-    }
+    onError: (...args) => { console.log(" AssetFetcher:observe:observable:onError:", selector, ...args) }
   })
   return observable
 }
@@ -176,7 +174,7 @@ export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
       // try link without CDN
       if (usingCDN) {
         console.log("CDN failed - trying local uri")
-        mgbAjax(window.location.origin + uri, callback, asset, pullFromCache)
+        mgbAjax(window.location.origin + uri, callback, asset, pullFromCache) //TODO(@stauzs) BUGBUG pullFromCache not defined
         return
       }
       callback(this.statusText)
@@ -185,7 +183,7 @@ export const mgbAjax = (uri, callback, asset, onRequestOpen = null) => {
   client.onerror = function (e) {
     if (usingCDN) {
       console.log("CDN failed - trying local uri")
-      mgbAjax(window.location.origin + uri, callback, asset, pullFromCache)
+      mgbAjax(window.location.origin + uri, callback, asset, pullFromCache) //TODO(@stauzs) BUGBUG pullFromCache not defined
       return
     }
     callback(e, this.statusText)

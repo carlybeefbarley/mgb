@@ -79,11 +79,8 @@ export const startSignUpTutorial = () => {
 
 const px = someNumber => (`${someNumber}px`)
 
-// NavPanel numbers
-const npColumn1WidthInPixels = 0             // The Column of Icons (was 60). Now 0 for testing top-nav ui
-
 // NavBar numbers
-const navBarReservedHeightInPixels = 40
+const navBarReservedHeightInPixels = 32
 
 // FlexPanel numbers
 const fpIconColumnWidthInPixels = 60          // The Column of Icons
@@ -136,7 +133,6 @@ const App = React.createClass({
     registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
     _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
   },
-
 
   componentDidUpdate: function(prevProps, prevState) {
     const pagepath = getPagepathFromProps(this.props)
@@ -256,20 +252,11 @@ const App = React.createClass({
     if (!loading)
       this.configureTrackJs()
 
-    // The NavPanel (left), NavBar (top) and FlexPanel (right) are fixed/absolute positioned so we need to account for that
-
-    // ProjectScopeLock is an optional 2nd row of the NavBar.
-    const projectScopeLockValue = query[urlMaker.queryParams("app_projectScopeLock")]
-    const showProjectScopeLock = !!projectScopeLockValue
-
     // TODO: Expose this in settings somehow
     const fFixedTopNavBar = false
 
-    const projectScopeLockHeightInPixels = showProjectScopeLock ? 40 : 0
-    const navBarAreaHeightInPixels = navBarReservedHeightInPixels + projectScopeLockHeightInPixels
+    const navBarAreaHeightInPixels = navBarReservedHeightInPixels
 
-    // The Nav Panel is on the left and is primarily navigation-oriented
-    const navPanelReservedWidth = px(npColumn1WidthInPixels)     // Reserved width to render perma-column of Nav icons
     // The Flex Panel is for communications and common quick searches in a right hand margin (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
@@ -283,7 +270,7 @@ const App = React.createClass({
       position:     "fixed",
       top:          px(fFixedTopNavBar ? navBarAreaHeightInPixels : 0),
       bottom:       respData.fpReservedFooterHeight,
-      left:         navPanelReservedWidth,
+      left:         0,
       right:        flexPanelWidth,
       marginBottom: '0px',
       overflow:     "scroll"
@@ -309,8 +296,6 @@ const App = React.createClass({
         name={this.props.routes[1].name}
         params={this.props.params}
         flexPanelWidth={flexPanelWidth}
-        navPanelWidth={navPanelReservedWidth}
-        projectScopeLock={projectScopeLockValue}
         sysvars={sysvars}
         />
     )
@@ -386,7 +371,7 @@ const App = React.createClass({
             </div>
 
           </div>
-          <NotificationContainer/>
+          <NotificationContainer/> {/* This is for the top-right toast messages */}
       </div>
     )
   },
@@ -403,7 +388,7 @@ const App = React.createClass({
     if (loc.query[qp])
       newQ = _.omit(loc.query, qp)
     else
-      newQ = {...loc.query, [qp]:NavPanel.getDefaultPanelViewTag()}
+      newQ = {...loc.query, [qp]:NavPanel.getDefaultPanelViewTag()}   //TODO: Wrong tag!?
     browserHistory.push( {  ...loc,  query: newQ })
   },
 

@@ -17,11 +17,12 @@
 
 import _ from 'lodash'
 
-let _appRouter = undefined
+let _appRouter = undefined // Set in setKnownRoutes()
+
+
 var _queryParamMap = {
   // APP queryGroup queries are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
-  "_psl": { qGroup: "APP",  symbolName: "app_projectScopeLock" },  
-  "_fp":  { qGroup: "APP",  symbolName: "app_flexPanel"        }
+  "_fp":  { qGroup: "APP",  symbolName: "app_flexPanel" }
 }
 
 const urlMaker = {

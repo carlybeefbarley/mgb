@@ -2,40 +2,17 @@ import React, { PropTypes } from 'react'
 import { Segment } from 'semantic-ui-react'
 import SystemAlerts from './SystemAlerts'
 import NavBarBreadcrumb from './NavBarBreadcrumb'
-import NavBarGadget from './NavBarGadget'
 import WhatsNew from './WhatsNew'
 
-// The NavBar is the top row of the central column of the page (i.e. between the NavPanel column
-// on the left and the FlexPanel on the right).
+// The NavBar is the top row of the central column of the page
+// (i.e. between the left margin and the FlexPanel on the right).
 
-// The NavBar contains a breadcrumb bar (left) and a NavBarGadget (right).
+// The NavBar contains a breadcrumb bar and some system 
+// alerts (new version, system-upgrade-in-process etc)
 
-// The NavBarGadget is primarily used for the Level slider that adjusts UX complexity
-// of any page from Beginner to Guru - hiding advanced options etc
+const NavBar = ({ name, user, params, currUser, pathLocation, flexPanelWidth, fFixedTopNavBar, sysvars }) => {
 
-
-// TODO: IF we go to new top-nav ui, this needs to be replaced by content in NavPanel
-console.log("TODO: Reminder that old NavBar is hidden but needs to be folded into new top NavPanelUI")
-const _projectScopeLockRowStyle = {
-  clear:        'both',
-//background:   '#155f66',
-  background:   'radial-gradient(circle farthest-side at right bottom,#8cc4c4 8%, #155f66 70%, #232929)',
-  color:        'white',
-  paddingLeft:  '0.5em',
-  paddingRight: '0.5em',
-  padding:      '0.3em'
-}
-
-const ProjectScopeBar = ({ projectScopeLock }) => (
-  !projectScopeLock ? null :
-    <div style={_projectScopeLockRowStyle} >
-      Project Scope Locked to: {projectScopeLock}
-    </div>
-)
-
-const NavBar = ({ name, user, params, currUser, pathLocation, projectScopeLock, navPanelWidth, flexPanelWidth, fFixedTopNavBar, sysvars }) => {
-
-  if (pathLocation === '/' && !fFixedTopNavBar && !projectScopeLock)
+  if (pathLocation === '/' && !fFixedTopNavBar)
     return null
 
   return (
@@ -44,18 +21,16 @@ const NavBar = ({ name, user, params, currUser, pathLocation, projectScopeLock, 
       size='mini'
       style={{
         position: fFixedTopNavBar ? 'fixed' : 'static',
-        top: fFixedTopNavBar ? '0px' : undefined,
-        left: navPanelWidth,
-        right: flexPanelWidth,
+        top:      fFixedTopNavBar ? '0px' : undefined,
+        left:     0,
+        right:    flexPanelWidth,
         overflow: 'hidden',
-        margin: 0,
+        margin:   0,
         padding: '0.5em',
       }}>
       <SystemAlerts sysvars={sysvars} />
       <WhatsNew currUser={currUser} asHidingLink={true} />
       <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} />
-      <NavBarGadget name={name} currUser={currUser}/>
-      <ProjectScopeBar projectScopeLock={projectScopeLock} />
     </Segment>
   )
 }
@@ -65,10 +40,8 @@ NavBar.propTypes = {
   currUser:           PropTypes.object,                 // Currently logged in user.. or null if not logged in.
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
   pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
-  navPanelWidth:      PropTypes.string.isRequired,      // Typically something like "60px". NavPanel is always visible, but width varies
   flexPanelWidth:     PropTypes.string.isRequired,      // Typically something like "200px".
-  name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
-  projectScopeLock:   PropTypes.string                  // If present, shows the ProjectScopeLock being applied. It is of form username.projectName
+  name:               PropTypes.string                  // Page title to show in NavBar breadcrumb
 }
 
 export default NavBar

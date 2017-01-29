@@ -108,10 +108,7 @@ export default fpFeatureLevels = React.createClass({
     return (
       <div className='animated fadeIn'>
         <p>
-          Some tools have <em>Feature Level</em>&ensp;<Icon name='options'/> sliders.
-        </p>
-        <p>
-          Slide them to reveal advanced features
+          When you feel ready, use the sliders below to enable advanced features
         </p>
         <button onClick={this.showFeatureLevelsSlider} className='ui small active yellow button' style={{ marginBottom: '1em', marginLeft: '5em' }}>
           <i className='student icon' />

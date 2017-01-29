@@ -273,12 +273,12 @@ export default NavPanel = React.createClass({
       .map(v => <NavPanelItem key={v.name} hdr={useIcons ?  <Icon size='large' name={v.icon}/> : v.hdr} menu={v.menu} to={v.to}/>)
 
     return (
-      <Menu inverted style={menuStyle}>
+      <Menu inverted style={menuStyle} id='mgbjr-navPanelHeader'>
         { navPanelItems}
 
         {/* The user menu, pushed to the right */}
-        <Menu.Menu position='right'>
-          <NavPanelItem
+        <Menu.Menu position='right' id='mgbjr-navPanelIcons-user'>
+          <NavPanelItem            
             hdr={<Image centered avatar src={_.get(currUser, 'profile.avatar', 'http://placehold.it/50')} />}
             menu={_.get(_.find(allNavPanels, { name: 'user' }), 'menu')}
             to={_.get(_.find(allNavPanels, { name: 'user' }), 'to')}

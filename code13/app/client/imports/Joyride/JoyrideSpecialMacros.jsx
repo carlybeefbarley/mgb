@@ -26,15 +26,15 @@ const _mkNp = ( npname, icon ) => (
   {
     key: _wrapKey(`np-${npname}`),
     hint: `${_.upperFirst(npname)} NavPanel`,
-    desc: `Step for finding the ${_.upperFirst(npname)} NavPanel`,
+    desc: `Step for finding the ${_.upperFirst(npname)} Navigation menu`,
     newVal:
     {
       "title": `The '${_.upperFirst(npname)}' Navigation panel`,
-      "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(npname)} button here`,
+      "text": `Hover on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(npname)} button here`,
       "selector": `#mgbjr-navPanelIcons-${npname}`,
       "showStepOverlay": true,
       "awaitCompletionTag": `mgbjr-CT-navPanel-${npname}-show`,
-      "position": "right",
+      "position": "botttom",
       "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
     }
   }
@@ -150,17 +150,17 @@ const stepMacros = [
     desc: `Step for finding the NavPanel`,
     newVal:
     {
-      "title": `The NavPanel area`,
-      "text": `This stack of icons on the left-hand side is called the <em>NavPanel</em>. These Navigation Panels are useful for navigating the site`,
-      "selector": "#mgbjr-navPanelIcons",
+      "title": `The page header`,
+      "text": `This header has direct links and submenus to navigate this site`,
+      "selector": "#mgbjr-navPanelHeader",
       "showStepOverlay": true,
-      "position": "right",
+      "position": "bottom",
       "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
     }
   },
 
   {
-    key: _wrapKey('np-home-myProfile'),
+    key: _wrapKey('np-user-myProfile'),
     hint: `np-home>MyProfile`,
     desc: `Step for clicking the 'My Profile' Button from np-home`,
     newVal:
@@ -300,8 +300,7 @@ const stepMacros = [
   _mkNp( 'create',   'pencil'       ),
   _mkNp( 'play',     'game'         ),
   _mkNp( 'meet',     'street view'  ),
-  _mkNp( 'projects', 'sitemap'      ),
-  _mkNp( 'history',  'history'      ),
+  _mkNp( 'user',     'user'         ),
 
   _mkFp( 'activity', 'lightning'    ),
   _mkFp( 'goals',    'student'      ),

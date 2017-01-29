@@ -1,8 +1,6 @@
-"use strict"
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { utilMuteLevelSlider, utilActivateLevelSlider, utilAdvertizeSlider } from '/client/imports/components/Nav/NavBarGadgetUxSlider'
 import { getFeatureLevel, getToolbarData, setToolbarData } from '/imports/schemas/settings-client'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { AssetKinds } from '/imports/schemas/assets'
@@ -83,8 +81,6 @@ expectedToolbars.getFriendlyName = toolbarName =>
   return tb ? tb.friendlyName : `[${toolbarName}]`
 }
 
-
-
 // Make Toolbar Level Key using a well-known prefix on the Toolbar name
 export function makeLevelKey(name) {
   return 'toolbar-level-' + name
@@ -94,7 +90,6 @@ export function makeLevelKey(name) {
 export function makeTDataKey(name) {
   return 'toolbar-data-' + name
 }
-
 
 export default class Toolbar extends React.Component {
   constructor(...args) {
@@ -202,7 +197,6 @@ export default class Toolbar extends React.Component {
     this.setState( { level: this.getFeatureLevelNow()} )
     this.levelSlider = this._addLevelSlider()
 
-    this.levelSlider.addEventListener("input", this._onChange)
     window.addEventListener("keyup", this._onKeyUp)
     window.addEventListener("mousemove", this._onMouseMove)
     window.addEventListener("mouseup", this._onMouseUp)
@@ -221,15 +215,12 @@ export default class Toolbar extends React.Component {
   }
 
   componentWillUnmount() {
-    this.levelSlider.removeEventListener("input", this._onChange)
     window.removeEventListener("keyup", this._onKeyUp)
     window.removeEventListener("mousemove", this._onMouseMove)
     window.removeEventListener("mouseup", this._onMouseUp)
 
     let $a = $(ReactDOM.findDOMNode(this))
     $a.find('.hazPopup').popup( 'destroy' )
-
-    utilMuteLevelSlider(this.levelSlider)
   }
 
   setState(state) {
@@ -399,7 +390,8 @@ export default class Toolbar extends React.Component {
   }
 
   advertizeSlider() {
-    utilAdvertizeSlider(this.levelSlider)
+    debugger
+    alert("WOOP")
   }
 
   // Reset any moved buttons to their original locations
@@ -494,7 +486,6 @@ export default class Toolbar extends React.Component {
       // .. but for now, at least alert of discrepancies. a known one is ActorMap (which should be separated from Map)
       console.log(`_addLevelSlider() noticed that getMaxLevel(${this.lsActiveFeatureLevelName}) != ${this.maxLevel}. That should get looked at`)
     }
-    return utilActivateLevelSlider(this.maxLevel, this.lsLevelKey, this.lsActiveFeatureLevelName, this.state.level)
   }
 
   /* Button sorting */

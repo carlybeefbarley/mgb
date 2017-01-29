@@ -1,9 +1,12 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
+import QLink from '/client/imports/routes/QLink'
+
 import { getFeatureLevel, getToolbarData, setToolbarData } from '/imports/schemas/settings-client'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { AssetKinds } from '/imports/schemas/assets'
+import { Button, Icon } from 'semantic-ui-react'
 
 const keyModifiers = {
   CTRL:  1 <<  8,
@@ -114,8 +117,13 @@ export default class Toolbar extends React.Component {
     this.levelSlider = null
     this.maxLevel = 10      // _addLevelSlider will set this value to 1+ the highest level it sees. The 1+ is so there's a final level to hide the last text label and 'more buttons' button
 
-    this.state = {}
+    this._trackerComputationContext = Tracker.autorun( () => {
+      const newLevelVal = getFeatureLevel(this.context.settings, this.lsLevelKey)
+      if (this.state)
+        this.setState( { level: newLevelVal } )
+    }) 
 
+    this.state = {}
     this.order = _.range(this.props.config.buttons.length)    // Creates array [0, ... n]
 
     this._onChange = (e) => {
@@ -218,6 +226,8 @@ export default class Toolbar extends React.Component {
     window.removeEventListener("keyup", this._onKeyUp)
     window.removeEventListener("mousemove", this._onMouseMove)
     window.removeEventListener("mouseup", this._onMouseUp)
+    if (this._trackerComputationContext)
+      this._trackerComputationContext.stop()
 
     let $a = $(ReactDOM.findDOMNode(this))
     $a.find('.hazPopup').popup( 'destroy' )
@@ -367,15 +377,15 @@ export default class Toolbar extends React.Component {
 
         <div style={buttonGroupStyle} className={buttonGroupClassName}>
           { this.state.level < this.maxLevel-1 && 
-            <div className="ui button hazPopup" 
-                style={{borderStyle: "dashed", borderColor: "green",  borderWidth: "thin", opacity: "0.5"}}
-                data-position="top center"
-                onClick={this.advertizeSlider.bind(this)}
-                data-content={`More buttons available. Use the slider at the top of the page to show them.  [Level ${this.state.level} of ${this.maxLevel}]`}
-                id="mgbjr-toolbar-optionsButton">
-                
-              <i className="ui options icon" />
-            </div>
+            <QLink query={{ '_fp': 'features' }}>
+              <Button basic
+                className='hazPopup'
+                data-title='More Tools'
+                data-content='Click here to enable additional tools'
+                id="mgbjr-toolbar-optionsButton">                
+                  <Icon name='horizontal ellipsis' />
+              </Button>
+            </QLink>
           }
         </div>
         {!this.props.noReset &&
@@ -387,11 +397,6 @@ export default class Toolbar extends React.Component {
         }
       </div>
     )
-  }
-
-  advertizeSlider() {
-    debugger
-    alert("WOOP")
   }
 
   // Reset any moved buttons to their original locations

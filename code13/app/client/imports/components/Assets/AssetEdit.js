@@ -24,64 +24,22 @@ const editElementsForKind = {
   'game':      EditGame
 }
 
-const pathDelimiter = '.'
-function flatten(source, flattened = {}, keySoFar = '') {
-  function getNextKey(key) {
-    return `${keySoFar}${keySoFar ? pathDelimiter : ''}${key}`
-  }
-  if (typeof source === 'object' ) {
-    for (const key in source) {
-      flatten(source[key], flattened, getNextKey(key))
-    }
-  } else {
-    flattened[keySoFar] = source
-  }
-  return flattened
+const AssetEdit = ( props ) => {
+  const Element = editElementsForKind[props.asset.kind] || EditUnknown
+  return <Element {...props}/>   
 }
 
-function diff(a, b){
-  const fa = flatten(a)
-  const fb = flatten(b)
-  const ret = {}
-  for(let ai in fa){
-    if(fa[ai] != fb[ai]){
-      ret[ai] = [fa[ai], fb[ai]]
-    }
-  }
-  return ret
+AssetEdit.propTypes = {
+  asset:                    PropTypes.object.isRequired,    // The invoker of this component must ensure that there is a valid Asset object
+  canEdit:                  PropTypes.bool.isRequired,      // The invoker provides 
+  currUser:                 PropTypes.object,               // Can be null/undefined. This is the currently Logged-in user (or null if not logged in)
+  handleContentChange:      PropTypes.func.isRequired,      // Asset Editors call this to deferred-save content2 & thumbnail changes: deferContentChange(content2Object, thumbnail, changeText="content change")
+  handleMetadataChange:     PropTypes.func.isRequired,      // Asset Editors call this to perform IMMEDIATE save of newMetadata
+  handleDescriptionChange:  PropTypes.func.isRequired,      // Asset Editors call this to perform IMMEDIATE save of description change
+  editDeniedReminder:       PropTypes.func.isRequired,      // Asset Editors call this to give User a UI warning that they do not have write access to the current asset
+  getActivitySnapshots:     PropTypes.func.isRequired,      // Activity snapshots causes very heavy re-rendering
+  hasUnsentSaves:           PropTypes.bool.isRequired,      // True if there are deferred saves yet to be sent. HOWEVER, even if sent, then server accept + server ack/nack can be pending - see asset.isUnconfirmedSave for the flag to indicate that 'changes are in flight' status
+  handleSaveNowRequest:     PropTypes.func.isRequired       // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
 }
 
-
-export default AssetEdit = React.createClass({
-  propTypes: {
-    asset:                PropTypes.object,
-    canEdit:              PropTypes.bool.isRequired,
-    currUser:             PropTypes.object,
-    handleContentChange:  PropTypes.func,
-    editDeniedReminder:   PropTypes.func,
-    // activitySnapshots:    PropTypes.array,           // can be null whilst loading
-    getActivitySnapshots:    PropTypes.func,            // Activity snapshots causes very heavy re-rendering
-    hasUnsentSaves:       PropTypes.bool,               // True if saves are unsent. However, if sent, then return can be pending - see asset.isUnconfirmedSave
-    handleSaveNowRequest: PropTypes.func                // Asset editor can do this to request a flush now. For example to play a game in the editor
-  },
-
-  // sometimes in the AssetEditRoute getMeteorData is calling forceUpdate without any real reason - there were activity snapshots
-  /*shouldComponentUpdate: function(nextProps, nextState){
-    return true
-    const pd = diff(this.props, nextProps)
-    if(Object.keys(pd).length > 0){
-      console.log("props", pd)
-      return true
-    }
-    return false
-  },*/
-  getEditorForAsset: function(asset) {
-    const Element = editElementsForKind[asset.kind] || EditUnknown
-    return <Element {...this.props}/>   
-  },
-
-  render: function() {
-    const asset = this.props.asset
-    return asset ? this.getEditorForAsset(asset) : <div>loading...</div>
-  }
-})
+export default AssetEdit

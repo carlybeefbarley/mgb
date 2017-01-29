@@ -512,6 +512,7 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
+// TODO(@dgolds): This should probably also trigger a save of any pending content2
 // This should not conflict with the deferred changes since those don't change these fields :)
   handleMetadataChange: function(newMetadata) {
     Meteor.call('Azzets.update', this.data.asset._id, this.canCurrUserEditThisAsset(), { metadata: newMetadata }, (err, res) => {

@@ -250,7 +250,9 @@ class AssetHandler {
    * @param {function} onChange - Overwrite previous onChange callback
    */
   updateAsset(onChange = null) {
-    this.onChange = onChange   // TODO: in contrast, update() guard this with 'if (onChange)... '. Why not here?
+    if (onChange)
+      this.onChange = onChange
+
     const asset = Azzets.findOne(this.id)
     // save previous content2
     asset.content2 = this.asset ? this.asset.content2 : null

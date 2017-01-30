@@ -173,7 +173,7 @@ const App = React.createClass({
       // The AssetEditRoute component is currently the only component expected to set this value, since that
       // is the layer in the container hierarchy that actually loads assets for the AssetEditors
       currentlyEditingAssetKind: null,      // null or a string which is a key into assets:AssetKindKeys.
-
+      currentlyEditingAssetCanEdit: false,  // true or false. True iff editing anasset and user can edit
       // For react-joyride
       joyrideSteps: [],
       joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
@@ -247,16 +247,18 @@ const App = React.createClass({
       $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
   },
 
-  handleSetCurrentlyEditingAssetKind(currentAssetKind = null)
+  handleSetCurrentlyEditingAssetInfo(currentAssetKind = null, canEdit=false)
   {
     // See comments in getInitialState() for explanation
     if (this.state.currentlyEditingAssetKind !== currentAssetKind)
       this.setState( { currentlyEditingAssetKind: currentAssetKind } )
+    if (this.state.currentlyEditingAssetCanEdit !== canEdit)
+      this.setState( { currentlyEditingAssetCanEdit: canEdit } )
   },
 
   render() {
     const { respData, respWidth } = this.props
-    const { joyrideDebug, currentlyEditingAssetKind } = this.state
+    const { joyrideDebug, currentlyEditingAssetKind, currentlyEditingAssetCanEdit } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
@@ -311,6 +313,7 @@ const App = React.createClass({
         flexPanelWidth={flexPanelWidth}
         sysvars={sysvars}
         currentlyEditingAssetKind={currentlyEditingAssetKind}
+        currentlyEditingAssetCanEdit={currentlyEditingAssetCanEdit}
         />
     )
 
@@ -379,7 +382,7 @@ const App = React.createClass({
                     currUserProjects: currUserProjects,
                     ownsProfile: ownsProfile,
                     isSuperAdmin: isSuperAdmin,
-                    handleSetCurrentlyEditingAssetKind: this.handleSetCurrentlyEditingAssetKind,
+                    handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
                     isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
                   })
                 }

@@ -10,7 +10,19 @@ import WhatsNew from './WhatsNew'
 // The NavBar contains a breadcrumb bar and some system 
 // alerts (new version, system-upgrade-in-process etc)
 
-const NavBar = ({ name, user, params, currUser, pathLocation, flexPanelWidth, fFixedTopNavBar, sysvars, currentlyEditingAssetKind }) => {
+const NavBar = (
+  {
+    name,
+    user,
+    params,
+    currUser,
+    pathLocation,
+    flexPanelWidth,
+    fFixedTopNavBar,
+    sysvars,
+    currentlyEditingAssetKind,
+    currentlyEditingAssetCanEdit
+  } ) => {
 
   if (pathLocation === '/' && !fFixedTopNavBar)
     return null
@@ -30,7 +42,7 @@ const NavBar = ({ name, user, params, currUser, pathLocation, flexPanelWidth, fF
       }}>
       <SystemAlerts sysvars={sysvars} />
       <WhatsNew currUser={currUser} asHidingLink={true} />
-      <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} currentlyEditingAssetKind={currentlyEditingAssetKind} />
+      <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} currentlyEditingAssetKind={currentlyEditingAssetKind} currentlyEditingAssetCanEdit={currentlyEditingAssetCanEdit} />
     </Segment>
   )
 }
@@ -42,7 +54,8 @@ NavBar.propTypes = {
   pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
   flexPanelWidth:     PropTypes.string.isRequired,      // Typically something like "200px".
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
-  currentlyEditingAssetKind: PropTypes.string           // null or a string which is one of AssetKindKeys - based on currently edited asset
+  currentlyEditingAssetKind: PropTypes.string,          // null or a string which is one of AssetKindKeys - based on currently edited asset
+  currentlyEditingAssetCanEdit: PropTypes.bool          // true or false - true if CanEdit
 }
 
 export default NavBar

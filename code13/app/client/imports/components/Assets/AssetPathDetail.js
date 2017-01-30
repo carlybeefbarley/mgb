@@ -48,16 +48,16 @@ export default AssetPathDetail = React.createClass({
           {
             canEdit ? 
               (
-                <a  className={`ui small ${labelBgColor} icon label`}
+                <a  className={`ui  ${labelBgColor} icon label`}
                     title="You can edit this asset. Your changes will be saved automatically to the server"
                     onClick={this.props.handleSaveNowRequest}>
-                  <i className={`ui ${saveIconColor} save icon`} />Edit
+                  &nbsp;<i className={`ui ${saveIconColor} save icon`} />{/*Edit*/}
                 </a>
               ) 
               : 
               (
-                <a className={`ui mgbReadOnlyReminder small red icon label`} title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">
-                  <i className="ui unhide icon" />View
+                <a className={`ui mgbReadOnlyReminder  red icon label`} title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">
+                  &nbsp;<i className="ui unhide icon" />{/*View*/}
                 </a>
               )        
           }

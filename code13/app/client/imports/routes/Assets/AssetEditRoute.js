@@ -85,7 +85,7 @@ export default AssetEditRoute = React.createClass({
     currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
     isSuperAdmin:     PropTypes.bool,
     ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
-    handleSetCurrentlyEditingAssetKind: PropTypes.func     // We should call this to set/clear current asset kind
+    handleSetCurrentlyEditingAssetInfo: PropTypes.func     // We should call this to set/clear current asset kind
   },
 
   getInitialState: function () {
@@ -140,8 +140,8 @@ export default AssetEditRoute = React.createClass({
     this.assetHandler = null
 
     // Clear Asset kind status for parent App
-    if (this.props.handleSetCurrentlyEditingAssetKind)
-      this.props.handleSetCurrentlyEditingAssetKind(null)
+    if (this.props.handleSetCurrentlyEditingAssetInfo)
+      this.props.handleSetCurrentlyEditingAssetInfo(null, false)
   },
 
   componentDidUpdate() {
@@ -153,8 +153,9 @@ export default AssetEditRoute = React.createClass({
     const assetHandler = this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
       if (this.assetHandler)
       {
-        if (this.assetHandler.asset && this.props.handleSetCurrentlyEditingAssetKind)
-          this.props.handleSetCurrentlyEditingAssetKind(this.assetHandler.asset.kind)
+        const asset = this.assetHandler.asset
+        if (asset && this.props.handleSetCurrentlyEditingAssetInfo)
+          this.props.handleSetCurrentlyEditingAssetInfo( asset.kind, this.canCurrUserEditThisAsset(asset) )
         this.forceUpdate()
       }
     }, !!this.m_deferredSaveObj)
@@ -184,11 +185,12 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-  canCurrUserEditThisAsset: function() {
+  canCurrUserEditThisAsset: function(assetOverride = null) {
+    const asset = assetOverride || this.data.asset
+
     if (!this.data.asset || this.data.loading || !this.props.currUser)
       return false  // Need to at least be logged in and have the data to do any edits!
 
-    const { asset } = this.data
     const { currUser, currUserProjects } = this.props
     if (asset.ownerId === currUser._id)
       return true   // Owner can always edit

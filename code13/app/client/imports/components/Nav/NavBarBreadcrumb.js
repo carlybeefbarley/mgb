@@ -11,7 +11,14 @@ import { AssetKinds } from '/imports/schemas/assets'
 
 const _sep = <i className='grey right angle icon' />
 
-const NavBarBreadcrumb = ( { name, user, params, pathLocation, currentlyEditingAssetKind } ) => {
+const NavBarBreadcrumb = ( { 
+  name, 
+  user, 
+  params, 
+  pathLocation, 
+  currentlyEditingAssetKind,
+  currentlyEditingAssetCanEdit
+ } ) => {
 
   const homeWord = 'MyGameBuilder'
 
@@ -19,6 +26,8 @@ const NavBarBreadcrumb = ( { name, user, params, pathLocation, currentlyEditingA
   const projectId = params && params.projectId
   const usernameToShow = user ? user.profile.name : params.username
   const kindName = AssetKinds.getName(currentlyEditingAssetKind)
+  const EditOrView = currentlyEditingAssetCanEdit ? 'Edit' : 'View'
+
   return (
     <Breadcrumb>
       <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
@@ -47,7 +56,7 @@ const NavBarBreadcrumb = ( { name, user, params, pathLocation, currentlyEditingA
       { pathLocation && pathLocation.startsWith('/learn/skills/') && <QLink className="section" to={`/learn/skills`}>Skills&nbsp;</QLink> }
 
       { name && _sep }
-      { (usernameToShow && assetId && currentlyEditingAssetKind) ? `Edit ${kindName}` : ( name ? <span>{name}&nbsp;</span> : null ) }
+      { (usernameToShow && assetId && currentlyEditingAssetKind) ? `${EditOrView} ${kindName}` : ( name ? <span>{name}&nbsp;</span> : null ) }
     </Breadcrumb>
   )
 }
@@ -57,7 +66,8 @@ NavBarBreadcrumb.propTypes = {
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
   pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
-  currentlyEditingAssetKind: PropTypes.string           // null or a string which is one of AssetKindKeys - based on currently edited asset
+  currentlyEditingAssetKind: PropTypes.string,          // null or a string which is one of AssetKindKeys - based on currently edited asset
+  currentlyEditingAssetCanEdit: PropTypes.bool          // true or false - true if CanEdit
 }
 
 export default NavBarBreadcrumb

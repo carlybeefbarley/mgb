@@ -82,8 +82,8 @@ Meteor.startup(function () {
         <Route path="user/:id/assets" component={Azzets.UserAssetList} name="Assets" />
         <Route path="u/:username/assets" component={Azzets.UserAssetList} name="Assets" />
 
-        <Route path="user/:id/asset/:assetId" component={Azzets.AssetEdit} name="Asset Editor" />
-        <Route path="u/:username/asset/:assetId" component={Azzets.AssetEdit} name="Asset Editor" />
+        <Route path="user/:id/asset/:assetId" component={Azzets.AssetEditRoute} name="Asset Editor" />
+        <Route path="u/:username/asset/:assetId" component={Azzets.AssetEditRoute} name="Asset Editor" />
 
         <Route path="user/:id/projects" component={Projects.UserProjectList} name="User's Projects" />
         <Route path="u/:username/projects" component={Projects.UserProjectList} name="User's Projects" />
@@ -103,7 +103,7 @@ Meteor.startup(function () {
         <Route path="assets" component={Azzets.UserAssetList} name="Search All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 
-        <Route path="assetEdit/:assetId" component={Azzets.AssetEdit} name="Edit Asset (find owner)" />
+        <Route path="assetEdit/:assetId" component={Azzets.AssetEditRoute} name="Edit Asset (find owner)" />
 
         <Route path="user/:id/skilltree" component={Users.SkillTreeRoute} name="Skill Tree" />
         <Route path="u/:username/skilltree" component={Users.SkillTreeRoute} name="Skill Tree" />

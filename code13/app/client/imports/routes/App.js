@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Message, Icon } from 'semantic-ui-react'
 import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
 import reactMixin from 'react-mixin'
@@ -45,16 +46,8 @@ const getPagepathFromProps = props => props.routes[1].path
 
 let _theAppInstance = null
 
-// This is for making the Completion Tag thing work so it edge triggers only when pages are actually navigated to (rather than every update).
-// QLink.js calls this. There may be a better way to do this, but this isn't too terribly factored so is OKish
-// and it gets the job done.
-export const clearPriorPathsForJoyrideCompletionTags = () => {
-  if (_theAppInstance)
-  {
-    _theAppInstance._priorLocationPath = null
-    _theAppInstance._priorRouterPath = null
-  }
-}
+// Tutorial/Joyride infrastructure support
+
 
 export const stopCurrentTutorial = () => {
   if (_theAppInstance)
@@ -66,6 +59,12 @@ export const addJoyrideSteps = (steps, opts) => {
     _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts)
 }
 
+export const joyrideDebugEnable = joyrideDebug => {
+  if (_theAppInstance)
+    _theAppInstance.setState( { joyrideDebug } )
+  // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
+}
+
 export const startSkillPathTutorial = (skillPath) => {
   if (_theAppInstance)
     _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath)
@@ -74,9 +73,23 @@ export const startSkillPathTutorial = (skillPath) => {
 export const startSignUpTutorial = () => {
   if (_theAppInstance)
     _theAppInstance.startSignUpTutorial.call(_theAppInstance)
-
 }
 
+// clearPriorPathsForJoyrideCompletionTags() is for making the Completion Tag thing
+//  work so it edge triggers only when pages are actually navigated to (rather than 
+//  every update).
+// QLink.js calls this. There may be a better way to do this, but this isn't too 
+//  terribly factored so is OKish and it gets the job done for now. 
+// We will revisit this if any issues come up with this approach.
+export const clearPriorPathsForJoyrideCompletionTags = () => {
+  if (_theAppInstance)
+  {
+    _theAppInstance._priorLocationPath = null
+    _theAppInstance._priorRouterPath = null
+  }
+}
+
+// General utils
 const px = someNumber => (`${someNumber}px`)
 
 // NavBar numbers
@@ -86,6 +99,7 @@ const navBarReservedHeightInPixels = 32
 const fpIconColumnWidthInPixels = 60          // The Column of Icons
 const fpFlexPanelContentWidthInPixels = 285   // The cool stuff
 
+// Toast and other warnings
 const _toastTypes = {
   error:    { funcName: 'error',   hdr: 'Error',   delay: 5000 },
   warning:  { funcName: 'warning', hdr: 'Warning', delay: 4000 },
@@ -98,11 +112,7 @@ export const showToast = (content, type = 'success') => {
   NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
 }
 
-export const joyrideDebugEnable = joyrideDebug => {
-  if (_theAppInstance)
-    _theAppInstance.setState( { joyrideDebug } )
-  // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
-}
+
 
 const App = React.createClass({
   mixins: [ReactMeteorData],
@@ -215,17 +225,18 @@ const App = React.createClass({
       currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
 
       currUserProjects: Projects.find(projectSelector).fetch(),
-      user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
-      activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
-      settings: G_localSettings,
-      skills:   currUser ? Skills.findOne(currUserId) : null,
-      sysvars:  Sysvars.findOne(),
-      loading:  !handleForUser.ready()    ||
-                !handleForSysvars.ready() ||
-                !handleActivity.ready()   ||
-                !projectsReady            ||
-                !settingsReady            ||
-                !skillsReady
+      user:             pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
+      activity:         Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
+      settings:         G_localSettings,
+      meteorStatus:     Meteor.status(),
+      skills:           currUser ? Skills.findOne(currUserId) : null,
+      sysvars:          Sysvars.findOne(),
+      loading:          !handleForUser.ready()    ||
+                        !handleForSysvars.ready() ||
+                        !handleActivity.ready()   ||
+                        !projectsReady            ||
+                        !settingsReady            ||
+                        !skillsReady
     }
     return retval
   },
@@ -266,9 +277,6 @@ const App = React.createClass({
     if (!loading)
       this.configureTrackJs()
 
-    // TODO: Expose this in settings somehow
-    const fFixedTopNavBar = false
-
     const navBarAreaHeightInPixels = navBarReservedHeightInPixels
 
     // The Flex Panel is for communications and common quick searches in a right hand margin 
@@ -280,10 +288,12 @@ const App = React.createClass({
 
     const navPanelAvailableWidth = respWidth-parseInt(flexPanelWidth)
 
+    const isNetworkFailure = !_.includes(['connected','connecting'], this.data.meteorStatus.status)
+
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
       position:     "fixed",
-      top:          px(fFixedTopNavBar ? navBarAreaHeightInPixels : 0),
+      top:          0,
       bottom:       respData.fpReservedFooterHeight,
       left:         0,
       right:        flexPanelWidth,
@@ -301,21 +311,6 @@ const App = React.createClass({
     //or if user has roles on current team route
     const isSuperAdmin = isUserSuperAdmin(currUser)
     const ownsProfile = isSameUser(currUser, user)
-
-    const navbar = (
-      <NavBar
-        currUser={currUser}
-        user={user}
-        pathLocation={this.props.location.pathname}
-        fFixedTopNavBar={fFixedTopNavBar}
-        name={this.props.routes[1].name}
-        params={this.props.params}
-        flexPanelWidth={flexPanelWidth}
-        sysvars={sysvars}
-        currentlyEditingAssetKind={currentlyEditingAssetKind}
-        currentlyEditingAssetCanEdit={currentlyEditingAssetCanEdit}
-        />
-    )
 
     return (
       <div >
@@ -342,9 +337,6 @@ const App = React.createClass({
           debug={joyrideDebug} />
 
         <div>
-
-            { fFixedTopNavBar && navbar }
-
             <FlexPanel
               fpIsFooter={!!respData.footerTabMajorNav}
               joyrideSteps={this.state.joyrideSteps}
@@ -372,8 +364,20 @@ const App = React.createClass({
                   fpReservedRightSidebarWidth={flexPanelWidth}
                   navPanelAvailableWidth={navPanelAvailableWidth}
                 />
-              
-                { !fFixedTopNavBar && navbar }
+                { isNetworkFailure && 
+                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable'/>
+                }
+                <NavBar
+                    currUser={currUser}
+                    user={user}
+                    pathLocation={this.props.location.pathname}
+                    name={this.props.routes[1].name}
+                    params={this.props.params}
+                    flexPanelWidth={flexPanelWidth}
+                    sysvars={sysvars}
+                    currentlyEditingAssetKind={currentlyEditingAssetKind}
+                    currentlyEditingAssetCanEdit={currentlyEditingAssetCanEdit}
+                    />
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.

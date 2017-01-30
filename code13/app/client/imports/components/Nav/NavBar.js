@@ -18,13 +18,12 @@ const NavBar = (
     currUser,
     pathLocation,
     flexPanelWidth,
-    fFixedTopNavBar,
     sysvars,
     currentlyEditingAssetKind,
     currentlyEditingAssetCanEdit
   } ) => {
 
-  if (pathLocation === '/' && !fFixedTopNavBar)
+  if (pathLocation === '/')
     return null
 
   return (
@@ -32,8 +31,7 @@ const NavBar = (
       basic
       size='mini'
       style={{
-        position: fFixedTopNavBar ? 'fixed' : 'static',
-        top:      fFixedTopNavBar ? '0px' : undefined,
+        position: 'static',
         left:     0,
         right:    flexPanelWidth,
         overflow: 'hidden',

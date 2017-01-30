@@ -152,16 +152,13 @@ export default AssetEditRoute = React.createClass({
     let assetId = this.props.params.assetId
     const assetHandler = this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
       if (this.assetHandler)
-      {
-
-        const asset = this.assetHandler.asset
-if (asset)  // TODO: There's a caching bug in one of the 4 layers of caching! 
-  console.log('AER/getMeteorData() detected change in asset ', asset._id)
-        if (asset && this.props.handleSetCurrentlyEditingAssetInfo)
-          this.props.handleSetCurrentlyEditingAssetInfo( asset.kind, this.canCurrUserEditThisAsset(asset) )
         this.forceUpdate()
-      }
     }, !!this.m_deferredSaveObj)
+
+    // TODO: Discuss with @stauzs to see if there are other cases to cover?
+    const asset = this.assetHandler.asset
+    if (asset && this.props.handleSetCurrentlyEditingAssetInfo)
+      this.props.handleSetCurrentlyEditingAssetInfo( asset.kind, this.canCurrUserEditThisAsset(asset) )
 
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId)

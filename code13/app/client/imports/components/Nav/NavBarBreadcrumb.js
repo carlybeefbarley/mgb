@@ -56,7 +56,7 @@ const NavBarBreadcrumb = ( {
       { pathLocation && pathLocation.startsWith('/learn/skills/') && <QLink className="section" to={`/learn/skills`}>Skills&nbsp;</QLink> }
 
       { name && _sep }
-      { (usernameToShow && assetId && currentlyEditingAssetKind) ? `${EditOrView} ${kindName}` : ( name ? <span>{name}&nbsp;</span> : null ) }
+      { (usernameToShow && assetId && currentlyEditingAssetKind) ? EditOrView : ( name ? <span>{name}&nbsp;</span> : null ) }
     </Breadcrumb>
   )
 }

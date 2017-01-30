@@ -49,7 +49,7 @@ export default UserAssetListRoute = React.createClass({
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
-  queryNormalized: function(q) {
+  queryNormalized: function(q = {}) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
     // Validate and apply values from location query

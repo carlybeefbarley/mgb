@@ -354,6 +354,7 @@ export default AssetEditRoute = React.createClass({
 
         <Grid.Column width='16'>
           <AssetEdit
+            key={asset._id}
             asset={asset}
             canEdit={canEd}
             currUser={currUser}

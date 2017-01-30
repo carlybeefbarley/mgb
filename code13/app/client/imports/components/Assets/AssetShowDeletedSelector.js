@@ -22,7 +22,7 @@ const AssetShowDeletedSelector = ( { showDeletedFlag, handleChangeFlag } ) => {
 
 AssetShowDeletedSelector.propTypes = {
   showDeletedFlag:  PropTypes.string,          // "1" or "0". If "1", show only deleted assets
-  handleChangeFlag: PropTypes.func             // params = newShowDeletedFlag
+  handleChangeFlag: PropTypes.func             // params = newShowDeletedFlag.. should be "1" or "0"
 }
 
 export default AssetShowDeletedSelector

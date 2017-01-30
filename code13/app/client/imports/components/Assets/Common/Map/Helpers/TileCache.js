@@ -60,7 +60,7 @@ export default class TileCache {
     if (!images) {
       return
     }
-    for (let i = 0; i < images.length; i++) {
+    for (let i in images) {
       this._loadImage(images[i])
     }
 

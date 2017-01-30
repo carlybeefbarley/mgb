@@ -115,6 +115,13 @@ export default class EditMap extends React.Component {
     this.objectListProps = this.enableTrait(ObjectListProps)
   }
 
+  get preventUpdates(){
+    return this._preventUpdates
+  }
+  set preventUpdates(v){
+    this._preventUpdates = v
+    // console.log(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
+  }
   getImageData(){
     return this.props.asset.thumbnail
   }

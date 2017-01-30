@@ -70,15 +70,17 @@ export default class EditActorMap extends EditMap {
     if(!newp.asset.content2){
       return
     }
-    // ignore older assets - and ignore empty content2 (debug - why sometimes we get empty c2)
-    if(_.isEqual(this.lastSave, newp.asset.content2) || !Object.keys(newp.asset.content2).length ){
-      this.setState({isLoading: true})
+    // ignore older assets - and ignore empty content2 (content2 is empty for new maps)
+    if(!_.isEqual(this.lastSave, newp.asset.content2) || !Object.keys(newp.asset.content2).length ){
+      // we don't need to update cache on every React update - because of observers in the TileCache and ActorHelper
+      /*this.setState({isLoading: true})
       this.cache && this.cache.isReady() && this.cache.update(this.mgb_content2, () => {
         this.setState({isLoading: false})
-      })
+      })*/
+
       return
     }
-    if(newp.asset.content2) {
+    if(newp.asset.content2 && !_.isEqual(this.props.asset.content2, newp.asset.content2)) {
       this.updateMap(newp)
     }
   }
@@ -86,6 +88,8 @@ export default class EditActorMap extends EditMap {
   updateMap(props = this.props){
     this.setState({isLoading: true})
     this.v1_to_v2(props, (d) => {
+      this.preventUpdates = false
+
       // store old options - otherwise tools will auto switch and will piss off user
       if(this.mgb_content2 && this.mgb_content2.meta) {
         const oldOptions = this.mgb_content2.meta.options

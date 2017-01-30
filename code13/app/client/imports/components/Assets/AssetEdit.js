@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-
+/*
 import EditActorMap from './EditActorMap/EditActorMap'
 import EditActor from './EditActor/EditActor'
 import EditMap from './EditMap/EditMap'
@@ -10,9 +10,9 @@ import EditMusic from './EditAudio/EditMusic/EditMusic'
 import EditSound from './EditAudio/EditSound/EditSound'
 import EditGraphic from './EditGraphic/EditGraphic'
 import EditUnknown from './EditUnknown'
-
+*/
 const editElementsForKind = {
-  'graphic':   EditGraphic,
+  /*'graphic':   EditGraphic,
   'tutorial':  EditCode,
   'code':      EditCode,
   'map':       EditMap,
@@ -21,17 +21,17 @@ const editElementsForKind = {
   'doc':       EditDoc,
   'sound':     EditSound,
   'music':     EditMusic,
-  'game':      EditGame
+  'game':      EditGame*/
 }
 
 const AssetEdit = ( props ) => {
   const Element = editElementsForKind[props.asset.kind] || EditUnknown
-  return <Element {...props}/>   
+  return <Element {...props}/>
 }
 
 AssetEdit.propTypes = {
   asset:                    PropTypes.object.isRequired,    // The invoker of this component must ensure that there is a valid Asset object
-  canEdit:                  PropTypes.bool.isRequired,      // The invoker provides 
+  canEdit:                  PropTypes.bool.isRequired,      // The invoker provides
   currUser:                 PropTypes.object,               // Can be null/undefined. This is the currently Logged-in user (or null if not logged in)
   handleContentChange:      PropTypes.func.isRequired,      // Asset Editors call this to deferred-save content2 & thumbnail changes: deferContentChange(content2Object, thumbnail, changeText="content change")
   handleMetadataChange:     PropTypes.func.isRequired,      // Asset Editors call this to perform IMMEDIATE save of newMetadata

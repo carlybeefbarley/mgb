@@ -7,7 +7,7 @@ export default JsonDocsFinder = {
   _jsonDocCache: {},
 
   _makeDocUrl: function (req) {
- 
+
     switch (req.frameworkName) {
       case "phaser":
         let ver = req.frameworkVersion || "2.4.6"
@@ -25,18 +25,18 @@ export default JsonDocsFinder = {
   },
 
 
-  /** 
-   * @param request      {object} like { frameworkName:     "requiredString", 
-   *                                     ?frameworkVersion: "optionalString", 
-   *                                     symbolType:         "method|variable|class", 
+  /**
+   * @param request      {object} like { frameworkName:     "requiredString",
+   *                                     ?frameworkVersion: "optionalString",
+   *                                     symbolType:         "method|variable|class",
    *                                     symbol:             "stringOfTheSymbol"
    *                                   }
-   * @param callbackFn   {function} that will take params (originalRequest, result).. 
+   * @param callbackFn   {function} that will take params (originalRequest, result)..
    *                          originalRequest is the requestPassed in (but with the additional param _urlString which is the URL of the doc used)
    *                          result is { error: errorInfo, data: resultsFromJsonFile)
-   * 
+   *
    * @returns <nothing>   There will ALWAYS be a callback, sometimes sync (error or cached), sometimes async (needed network)
-   * 
+   *
    */
   getApiDocsAsync: function (request, callbackFn) {
     request._urlString = this._makeDocUrl(request)
@@ -63,31 +63,10 @@ export default JsonDocsFinder = {
       this._jsonDocCache[request._urlString] = JSON.parse(dataStr)
       this._processApiDocRequest(request, this._jsonDocCache[request._urlString], callbackFn)   // Callback is async in this case
     })
-
-    return
-    let jqXHR = $.ajax({
-      url: request._urlString,
-      type: 'get',
-      dataType: 'json',
-      cache: true,
-      async: true
-    });
-
-    jqXHR.done((data) => {
-      // Cache it
-      this._jsonDocCache[request._urlString] = data
-      this._processApiDocRequest(request, this._jsonDocCache[request._urlString], callbackFn)   // Callback is async in this case
-    })
-
-    jqXHR.fail((error) => {
-      this._processApiDocRequest(request, null, callbackFn)   // Callback is async in this case. Null data parameter means pass on fail
-    })
-
-    return // There will be an ASYNC callback. Note that we don't expose the promise (intentionally)
   },
 
 
-  /** 
+  /**
    * get the relevant info
    */
   _getDesiredDocInfo: function (originalRequest, docInfoFromJsonFile) {
@@ -95,7 +74,7 @@ export default JsonDocsFinder = {
       return null               // We're not psychics!
 
     // so now we care about the following parts of originalRequest:
-    //    symbolType: "method|variable|class", 
+    //    symbolType: "method|variable|class",
     //    symbol:     "stringOfTheSymbol" as a longname including the class
     // ..and we should have the correct JSON api doc to look at to get this
     let retval = null
@@ -106,7 +85,7 @@ export default JsonDocsFinder = {
     if (originalRequest.symbolType === 'method') {
       // We don't have a clear definition (yet) from tern that this is a NEW invocation on a constructor,
       // so there's some mild hackery here to make things mostly work before coming back and handling the
-      // constructor vs invocation issue more robustly.. For now we do this, which at least works for Phaser 
+      // constructor vs invocation issue more robustly.. For now we do this, which at least works for Phaser
       // since it mostly constructed of big-ass top-level classes
 
       let methodIsClassConstructorInvocation =

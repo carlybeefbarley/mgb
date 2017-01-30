@@ -254,12 +254,7 @@ export default class SourceTools {
 
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
-      // this only works when NOT in worker mode..
-      // TODO: find out how to fix that
-      // true override everything
-      this.tern.server.addDefs && this.tern.server.addDefs(lib.defs, true)
-      this.addedFilesAndDefs[filename] = true
-      this.tern.cachedArgHints = null
+      this.loadDefs(lib.defs())
     }
     else {
       // TODO: debug: sometimes code isn't defined at all
@@ -645,6 +640,28 @@ main = function(){
       this.cachedBundle = allInOneBundle
       this._hasSourceChanged = false
     })
+  }
+
+  loadDefs(defs){
+
+    for(let i=0; i<defs.length; i++){
+      if( this.addedFilesAndDefs[defs[i]]){
+        continue
+      }
+      mgbAjax(makeCDNLink(defs[i]), (err, data) => {
+        if(err){
+          console.error(`Failed to load def ${defs[i]}`, err)
+          return
+        }
+        this.tern.server.addDefs && this.tern.server.addDefs(JSON.parse(data), true)
+        this.addedFilesAndDefs[defs[i]] = true
+        this.tern.cachedArgHints = null
+      })
+    }
+  }
+
+  loadCommonDefs(){
+    this.loadDefs(knownLibs.common.defs())
   }
 
   // includes all files in the on big bundle file - not used atm

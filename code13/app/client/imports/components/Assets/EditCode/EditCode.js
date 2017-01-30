@@ -26,15 +26,15 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 // import tlint from 'tern-lint'
 
-// **GLOBAL*** Tern JS - See comment below...   
+// **GLOBAL*** Tern JS - See comment below...
 import scoped_tern from "tern"
 window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
 
 
 // Tern 'definition files'
 // import "tern/lib/def"     // Do I need? since I'm doing it differently in next 2 lines...
-import Defs_ecma5 from "./tern/Defs/ecma5.json"
-import Defs_browser from './tern/Defs/browser.json'
+// import Defs_ecma5 from "./tern/Defs/ecma5.json"
+// import Defs_browser from './tern/Defs/browser.json'
 
 import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js'
 
@@ -56,9 +56,9 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
 
-// NOTE, if we deliver phaser.min.js from another domain, then it will 
+// NOTE, if we deliver phaser.min.js from another domain, then it will
 // limit the error handler's knowledge of that code - see 'Notes' on
-// https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror    
+// https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror
 //   BAD:  return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
 
 
@@ -96,7 +96,7 @@ export default class EditCode extends React.Component {
     this.jshintWorker = null
 
     this.state = {
-      _preventRenders: false,        // We use this as a way to batch updates. 
+      _preventRenders: false,        // We use this as a way to batch updates.
       consoleMessages: [],
       gameRenderIterationKey: 0,
       isPlaying: false,
@@ -277,7 +277,7 @@ export default class EditCode extends React.Component {
     $(window).on("resize", this.edResizeHandler)
     this.edResizeHandler()
     this.updateDocName()
-    this.doHandleFontSizeDelta(0, { force: true } ) 
+    this.doHandleFontSizeDelta(0, { force: true } )
 
     this.isActive = true
   }
@@ -289,7 +289,8 @@ export default class EditCode extends React.Component {
       // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
       // TODO: find workaround and uncomment
       useWorker: true,
-      defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
+      // load defs at runtime
+      defs: [], //[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
       completionTip: function (curData) {
         // we get called for the CURRENTLY highlighted entry in the autocomplete list.
         // We are provided fields like
@@ -373,6 +374,7 @@ export default class EditCode extends React.Component {
       this.showError(errors)
     })
 
+    this.tools.loadCommonDefs()
     InstallMgbTernExtensions(tern)
   }
   // update file name - to correctly report 'part of'
@@ -451,10 +453,10 @@ export default class EditCode extends React.Component {
         return
       this.codeEditShowHint(cm)
     }, 1000)      // Pop up a helper after a second
-// this.ternServer.getHint(cm, function (hint) 
+// this.ternServer.getHint(cm, function (hint)
 // {
 // console.log("HINT",hint)
-// })    
+// })
     return CodeMirror.Pass       // Allow the typed character to be part of the document
   }
 
@@ -478,7 +480,7 @@ export default class EditCode extends React.Component {
     }
   }
 
-  // opts can be    force = true ... force a font change even if delta =0 
+  // opts can be    force = true ... force a font change even if delta =0
   doHandleFontSizeDelta(delta, opts = {} ) {   // delta should be -1 or +1
     const fontSizes = [
       {fontSize: '8.5px', lineHeight: '10px'},    //  0
@@ -498,7 +500,7 @@ export default class EditCode extends React.Component {
     if (this.fontSizeSettingIndex === undefined)
       this.fontSizeSettingIndex = 8
 
-    // Changing font size - http://codemirror.977696.n3.nabble.com/Changing-font-quot-on-the-go-quot-td4026016.html 
+    // Changing font size - http://codemirror.977696.n3.nabble.com/Changing-font-quot-on-the-go-quot-td4026016.html
     let editor = this.codeMirror
     let validDelta = 0
 
@@ -569,7 +571,7 @@ export default class EditCode extends React.Component {
         case 'code':
           if (this.props.asset.dn_ownerName === draggedAsset.dn_ownerName)
             url = `./${draggedAsset.name}`
-          else 
+          else
             url = `./${draggedAsset.dn_ownerName}:${draggedAsset.name}`
           code = `import '${url}'`
           break
@@ -675,7 +677,7 @@ export default class EditCode extends React.Component {
   runJSHintWorker(code, cb) {
     if (this.props.asset.kind === "tutorial")
       return
-    
+
     // terminate old busy worker - as jshint can take a lot time on huge scripts
     if (this.jshintWorker && this.jshintWorker.isBusy) {
       this.jshintWorker.terminate()
@@ -804,7 +806,7 @@ export default class EditCode extends React.Component {
     // get token at current pos
     let currentToken = editor.getTokenAt(currentCursorPos, true)
 
-    // I stole the following approach from 
+    // I stole the following approach from
     // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
     // which is otherwise not stored/exposed
     var argPos = -1
@@ -927,13 +929,13 @@ export default class EditCode extends React.Component {
   // {
   /// This doesn't seem super useful. It's just an array of completion strings, no extra data
   //   let ternServer=this.ternServer
-  //   let editor = this.codeMirror      
+  //   let editor = this.codeMirror
   //   let position = editor.getCursor()
   //   var self = this
 
   //   ternServer.request(editor, "properties", function(error, data) {
   //     if (error)
-  //       self.setState( { atCursorPropertiesRequestResponse: { "error": error } } ) 
+  //       self.setState( { atCursorPropertiesRequestResponse: { "error": error } } )
   //     else
   //     {
 
@@ -1001,13 +1003,13 @@ export default class EditCode extends React.Component {
       position: position
     }
     snapshotActivity(asset, passiveAction)
-    
+
 
     this.setState({_preventRenders: true})
 
     try {
       // TODO: update Read only???
-      // TODO: Batch the async setState() calls also. 
+      // TODO: Batch the async setState() calls also.
       this.srcUpdate_CleanSheetCase()
       this.srcUpdate_LookForMgbAssets()
       this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
@@ -1023,7 +1025,7 @@ export default class EditCode extends React.Component {
       {
         this.srcUpdate_AnalyzeTutorial()
       }
-      // TODO:  See atInterestingExpression() and findContext() which are 
+      // TODO:  See atInterestingExpression() and findContext() which are
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
     }
     finally {
@@ -1472,10 +1474,10 @@ export default class EditCode extends React.Component {
   toolCommentUnFade() {
     this.doHandleCommentFadeDelta(-1)
   }
-  
+
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
-    const newMode = (i+1) % _infoPaneModes.length 
+    const newMode = (i+1) % _infoPaneModes.length
     // if(!_infoPaneModes[newMode].col2) this.handleStop()
     this.setState( { infoPaneMode: newMode } )
   }
@@ -1605,7 +1607,7 @@ export default class EditCode extends React.Component {
         shortcut: 'Ctrl+Alt+Shift+B'
       })
 
-    }    
+    }
     return config
   }
 
@@ -1634,7 +1636,7 @@ export default class EditCode extends React.Component {
     if (!this.props.canEdit)
     {
       this.warnNoWriteAccess()
-      return      
+      return
     }
     const editor = this.codeMirror
     var doc = editor.getDoc()
@@ -1709,7 +1711,7 @@ export default class EditCode extends React.Component {
     let isPlaying = this.state.isPlaying
 
     // const RunCodeIFrameStyle = {
-    //   transform: "scale(0.5)",  
+    //   transform: "scale(0.5)",
     //   transformOrigin: "0 0",
     //   overflow: "hidden"
     // }
@@ -1729,13 +1731,13 @@ export default class EditCode extends React.Component {
                       placeholder="Start typing code here..."/>
         </div>
 
-        { 
+        {
         <div className={infoPaneOpts.col2 + ' wide column'} style={{display: infoPaneOpts.col2 ? "block" : "none"}}>
 
           <div className="mgbAccordionScroller">
             <div className="ui fluid styled accordion">
 
-              { !docEmpty && asset.kind === 'tutorial' && 
+              { !docEmpty && asset.kind === 'tutorial' &&
                 // Current Line/Selection helper (header)
                 <div className="active title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -1743,12 +1745,12 @@ export default class EditCode extends React.Component {
                   </span>
                 </div>
               }
-              { !docEmpty && asset.kind === 'tutorial' &&     // TUTORIAL Current Line/Selection helper (body)               
+              { !docEmpty && asset.kind === 'tutorial' &&     // TUTORIAL Current Line/Selection helper (body)
                 <div className="active content">
-                  <TutorialMentor 
-                      tryTutorial={() => this.tryTutorial()} 
-                      stopTutorial={() => this.stopTutorial()}  
-                      parsedTutorialData={this.state.parsedTutorialData} 
+                  <TutorialMentor
+                      tryTutorial={() => this.tryTutorial()}
+                      stopTutorial={() => this.stopTutorial()}
+                      parsedTutorialData={this.state.parsedTutorialData}
                       insertCodeCallback={ canEdit ? (newCodeStr => this.insertTextAtCursor(newCodeStr) ) : null }/>
                   { previewIdThings && previewIdThings.length > 0 &&
                     <div className="ui divided selection list">
@@ -1758,7 +1760,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
-              { !docEmpty && asset.kind === 'code' && 
+              { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (header)
                 <div id="mgbjr-EditCode-codeMentor" className="active title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -1766,7 +1768,7 @@ export default class EditCode extends React.Component {
                   </span>
                 </div>
               }
-              { !docEmpty && asset.kind === 'code' && 
+              { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (body)
                 <div className="active content">
                   <TokenDescription
@@ -1797,7 +1799,7 @@ export default class EditCode extends React.Component {
               }
 
               { docEmpty &&
-                // Clean sheet helper!          
+                // Clean sheet helper!
                 <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                       <i className='dropdown icon' />Code Starter
@@ -1815,7 +1817,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
-              { !docEmpty && asset.kind === 'code' && 
+              { !docEmpty && asset.kind === 'code' &&
                 // Code run/stop (header)
                 <div className="title" id="mgbjr-EditCode-codeRunner">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -1823,20 +1825,20 @@ export default class EditCode extends React.Component {
                   </span>
                 </div>
               }
-              { !docEmpty && asset.kind === 'code' && 
+              { !docEmpty && asset.kind === 'code' &&
                 // Code run/stop (body)
                 <div className="content">
-                  
+
                   <span style={{float: "right", marginTop: "-28px", position: "relative"}}>
 
-                    { isPlaying && this.props.canEdit && 
+                    { isPlaying && this.props.canEdit &&
                       <a className={"ui tiny icon button"} onClick={this.handleScreenshotIFrame.bind(this)}
                         title='This will set the Asset preview Thumbnail image to be a screenshot of the first <canvas> element in the page, *IF* your code has created one...'>
                         <i className='save icon' />
                       </a>
                     }
                     { !isPlaying &&
-                      <a  className='ui tiny icon button' 
+                      <a  className='ui tiny icon button'
                           title='Click here to start the program running'
                           id="mgb-EditCode-start-button"
                           onClick={this.handleRun.bind(this)}>
@@ -1844,14 +1846,14 @@ export default class EditCode extends React.Component {
                       </a>
                     }
                     { isPlaying &&
-                      <a  className='ui tiny icon button' 
+                      <a  className='ui tiny icon button'
                           title='Click here to stop the running program'
                           id="mgb-EditCode-stop-button"
                           onClick={this.handleStop.bind(this)}>
                         <i className={"stop icon"}></i>&emsp;Stop
                       </a>
                     }
-                    { 
+                    {
                       isPlaying &&
                       <a  className={`ui tiny ${this.state.isPopup ? 'active' : '' } icon button`}
                           title='Popout the code-run area so it can be moved around the screen'
@@ -1875,7 +1877,7 @@ export default class EditCode extends React.Component {
                       }*/}
                     </span>
                     }
-                  </span>                
+                  </span>
                   <GameScreen
                     ref="gameScreen"
                     isPopup = {this.state.isPopup}
@@ -1893,14 +1895,14 @@ export default class EditCode extends React.Component {
                     clearConsoleHandler={this._consoleClearAllMessages.bind(this) }/>
                 </div>
               }
-              { this.state.astReady && asset.kind === 'code' && 
+              { this.state.astReady && asset.kind === 'code' &&
                 <div id="mgbjr-EditCode-codeFlower" className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />CodeFlower
                   </span>
                 </div>
               }
-              { this.state.astReady && asset.kind === 'code' && 
+              { this.state.astReady && asset.kind === 'code' &&
                 <div className='content'>
                   {/* this.props.canEdit && this.state.astReady &&
                    <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
@@ -1932,7 +1934,7 @@ export default class EditCode extends React.Component {
           </div>
         </div>
         }
-        
+
       </div>
     )
   }

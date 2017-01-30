@@ -338,7 +338,7 @@ export default AssetEditRoute = React.createClass({
           <AssetActivityDetail
             assetId={params.assetId}
             currUser={currUser}
-            activitySnapshots={this.activitySnapshots} />
+            activitySnapshots={this.getActivitySnapshots()} />
           &nbsp;
           <AssetHistoryDetail
             assetId={params.assetId}

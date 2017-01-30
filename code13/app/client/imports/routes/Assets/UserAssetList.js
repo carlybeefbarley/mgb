@@ -308,7 +308,12 @@ export default UserAssetListRoute = React.createClass({
 
           <div className="ui row">
             <span>
-              Show asset kinds:&emsp;
+              <span
+                  data-position='bottom left'
+                  data-tooltip='Alt-click to multi-select'>
+                Show asset kinds:
+              </span>
+              &emsp;
               { isAllKinds || (
                 <small 
                     id='mgbjr-asset-search-kind-select-allKinds' 

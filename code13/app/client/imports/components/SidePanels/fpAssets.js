@@ -171,7 +171,11 @@ export default fpAssets = React.createClass({
 
           <div className="ui row" style={{marginTop: '6px'}}>
             <small>
-              Show asset kinds:
+              <span 
+                 data-position='bottom left'
+                  data-tooltip='Alt-click to multi-select'>
+                Show asset kinds:
+              </span>
               { isAllKinds || <span style={{float: 'right'}} onClick={() => this.handleToggleKind('__all')}>(show all)</span> }
             </small>
             <AssetKindsSelector 

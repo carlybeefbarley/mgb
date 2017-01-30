@@ -18,7 +18,7 @@ Meteor.users._ensureIndex({"createdAt": 1})
 
 // This is for Meteor.user()   See http://www.east5th.co/blog/2015/03/16/user-fields-and-universal-publications/
 Meteor.publish(null, function() {
-  if (this.userId) 
+  if (this.userId)
     return Meteor.users.find( { _id: this.userId }, { fields: fieldsUserPublic } )
   else
     return null
@@ -38,7 +38,7 @@ Meteor.publish('users.byName', function(nameSearch, limitCount, userSortType) {
     fields: fieldsUserPublic,
     sort:   userSorter
   }
-  if (limitCount) 
+  if (limitCount)
     findOpts.limit = limitCount
 
   return Meteor.users.find(selector, findOpts)
@@ -63,7 +63,7 @@ Meteor.publish('user.byName', function(username) {
 })
 
 //
-//   ASSETS  
+//   ASSETS
 //
 
 // I originally created this so we can support $text queries on name, but now we are using regex, it's not clear it is of value
@@ -80,28 +80,28 @@ Azzets._ensureIndex({"isDeleted": 1, "kind": 1, "updatedAt": -1})
 Azzets._ensureIndex({"isDeleted": 1, "ownerId": 1, "kind": 1, "updatedAt": -1})
 Azzets._ensureIndex({"isDeleted": 1, "dn_ownerName": 1, "name": 1, "kind": 1})
 
-/** 
- * Can see all assets, but does NOT include the big 'content2' field 
+/**
+ * Can see all assets, but does NOT include the big 'content2' field
  * @param userId can be undefined or -1 .. indicating don't filter by user if
  * @param selectedAssetKinds is an array of AssetKindsKeys strings
  * @param nameSearch is going to be stuffed inside a RegEx, so needs to be clean
  *    TODO: cleanse the nameSearch RegExp
  */
 Meteor.publish('assets.public', function(
-                                    userId, 
-                                    selectedAssetKinds, 
-                                    nameSearch, 
+                                    userId,
+                                    selectedAssetKinds,
+                                    nameSearch,
                                     projectName=null,   // BUGBUG: Need to also have projectOwner!!! OMG
-                                    showDeleted=false, 
-                                    showStable=false, 
+                                    showDeleted=false,
+                                    showStable=false,
                                     assetSortType,    // one of the keys of allSorters
-                                    limitCount=50) 
+                                    limitCount=50)
 {
-  let selector = assetMakeSelector(userId, 
-                      selectedAssetKinds, 
-                      nameSearch, 
+  let selector = assetMakeSelector(userId,
+                      selectedAssetKinds,
+                      nameSearch,
                       projectName,    // BUGBUG: Need to also have projectOwner!!! OMG
-                      showDeleted, 
+                      showDeleted,
                       showStable)
   let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
   const findOpts = {
@@ -112,7 +112,7 @@ Meteor.publish('assets.public', function(
   return Azzets.find(selector, findOpts )
 })
 
-// Observe assets only - 
+// Observe assets only -
 //   TODO: add limit count?
 //   TODO: Add to DDP Rate Limiter list?
 // https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
@@ -144,7 +144,7 @@ Meteor.publish('assets.public.byId.withContent2', function(assetId) {
 
 
 Meteor.publish('assets.public.owner.name', function(owner, name, kind) {
-  const sel = {dn_ownerName: owner, name: name, kind: kind}
+  const sel = {dn_ownerName: owner, name: name, kind: kind, isDeleted: false}
   return Azzets.find(sel)
 })
 
@@ -208,7 +208,7 @@ Meteor.publish('activity.public.recent.assetid', function(assetId, limitCount=50
 })
 
 
-// ACTIVITY Indexes. These were built based on the stats at https://mlab.com/clusters/rs-ds021730#slowqueries    
+// ACTIVITY Indexes. These were built based on the stats at https://mlab.com/clusters/rs-ds021730#slowqueries
 
 Activity._ensureIndex({"timestamp": -1})
 Activity._ensureIndex({"toAssetId": 1, "timestamp": -1})
@@ -238,9 +238,9 @@ Meteor.publish('activitysnapshots.userId', function(userId) {
 })
 
 // SPECIAL INDEX TO AUTO_DELETE ITEMS
-// NOTE THAT THE expireAfterSeconds value cannot be changed! 
+// NOTE THAT THE expireAfterSeconds value cannot be changed!
 // You have to drop the index to change it (or use the complicated collMod approach)
-// Here's how to drop it using the CLI: 
+// Here's how to drop it using the CLI:
 //     $ meteor mongo
 //     > use meteor
 //     > db.activity_snapshots.dropIndexes()
@@ -260,7 +260,7 @@ ActivitySnapshots._ensureIndex( {"toAssetId": 1, "timestamp": -1} )
 // TODO: Make sure userId can't be faked on server. Allow/deny rules required...
 Meteor.publish('chats.userId', function(userId, toChannelName, limit=20) {
   // Paginated chats.
-  if (limit > chatParams.maxClientChatHistory) 
+  if (limit > chatParams.maxClientChatHistory)
     limit = chatParams.maxClientChatHistory
 
   let selector = { toChannelName: toChannelName } //$or: [ { toOwnerId: null}, {toOwnerId: userId} ] }

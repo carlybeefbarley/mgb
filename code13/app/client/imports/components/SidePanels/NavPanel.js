@@ -1,14 +1,22 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Menu, Image, Header, Icon } from 'semantic-ui-react'
-
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
-
 import NavPanelItem from './NavPanelItem'
 import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 
-// TODO: handle closing the menu on Nav-away
+// imports to enable logout functionality
+import { utilPushTo } from '/client/imports/routes/QLink'
+import { logActivity } from '/imports/schemas/activity'
+
+
+const _doLogout = () => 
+{  
+  const userName = Meteor.user().profile.name
+  logActivity("user.logout",  `Logging out "${userName}"`, null, null)
+
+  Meteor.logout()
+  utilPushTo({}, "/")
+}
 
 export default NavPanel = React.createClass({
 
@@ -250,6 +258,14 @@ export default NavPanel = React.createClass({
             id: 'mgbjr-np-user-settings',
             icon: 'options',
             content: 'Settings',
+          },
+          {
+            subcomponent: 'Item',
+            id: 'mgbjr-np-user-logout',
+            icon: 'sign out',
+            style: { marginTop: '1em' },
+            content: 'Logout',
+            onClick: _doLogout
           }
         ])
       }

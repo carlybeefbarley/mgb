@@ -169,6 +169,11 @@ const App = React.createClass({
       initialLoad: true,
       activityHistoryLimit: 11,
 
+      // This is so that we can pass the Asset 'kind' info into some other components like the flexpanels and Nav controls.
+      // The AssetEditRoute component is currently the only component expected to set this value, since that
+      // is the layer in the container hierarchy that actually loads assets for the AssetEditors
+      currentlyEditingAssetKind: null,      // null or a string which is a key into assets:AssetKindKeys.
+
       // For react-joyride
       joyrideSteps: [],
       joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
@@ -242,9 +247,16 @@ const App = React.createClass({
       $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
   },
 
+  handleSetCurrentlyEditingAssetKind(currentAssetKind = null)
+  {
+    // See comments in getInitialState() for explanation
+    if (this.state.currentlyEditingAssetKind !== currentAssetKind)
+      this.setState( { currentlyEditingAssetKind: currentAssetKind } )
+  },
+
   render() {
     const { respData, respWidth } = this.props
-    const { joyrideDebug } = this.state
+    const { joyrideDebug, currentlyEditingAssetKind } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
@@ -257,7 +269,8 @@ const App = React.createClass({
 
     const navBarAreaHeightInPixels = navBarReservedHeightInPixels
 
-    // The Flex Panel is for communications and common quick searches in a right hand margin (or fixed footer for Phone-size PortraitUI)
+    // The Flex Panel is for communications and common quick searches in a right hand margin 
+    //   (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
     const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels) : px(fpFlexPanelContentWidthInPixels)
@@ -344,6 +357,7 @@ const App = React.createClass({
               flexPanelIsVisible={showFlexPanel}
               activity={this.data.activity}
               isSuperAdmin={isSuperAdmin}
+              currentlyEditingAssetKind={currentlyEditingAssetKind}
               />
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
@@ -364,6 +378,7 @@ const App = React.createClass({
                     currUserProjects: currUserProjects,
                     ownsProfile: ownsProfile,
                     isSuperAdmin: isSuperAdmin,
+                    handleSetCurrentlyEditingAssetKind: this.handleSetCurrentlyEditingAssetKind,
                     isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
                   })
                 }
@@ -375,7 +390,6 @@ const App = React.createClass({
       </div>
     )
   },
-
 
   /**
    * This will show/hide the Flex Panel

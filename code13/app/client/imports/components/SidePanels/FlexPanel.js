@@ -76,7 +76,8 @@ export default FlexPanel = React.createClass({
     handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for enabling/disabling FlexPanel view
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
     flexPanelWidth:         PropTypes.string.isRequired,  // Typically something like "200px".
-    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
+    isSuperAdmin:           PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
+    currentlyEditingAssetKind: PropTypes.string           // null or a string which is one of AssetKindKeys
   },
 
   contextTypes: {
@@ -316,6 +317,7 @@ export default FlexPanel = React.createClass({
                       activity={this.props.activity}
                       panelWidth={this.props.flexPanelWidth}
                       isSuperAdmin={this.props.isSuperAdmin}
+                      currentlyEditingAssetKind={this.props.currentlyEditingAssetKind}
                       subNavParam={this.getSubNavParam()}
                       handleChangeSubNavParam={this.handleChangeSubNavParam}
                       />

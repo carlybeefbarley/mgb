@@ -71,17 +71,13 @@ export default class EditActorMap extends EditMap {
       return
     }
     // ignore older assets - and ignore empty content2 (content2 is empty for new maps)
-    if(!_.isEqual(this.lastSave, newp.asset.content2) || !Object.keys(newp.asset.content2).length ){
+    if(!_.isEqual(this.props.asset.content2, newp.asset.content2)){
       // we don't need to update cache on every React update - because of observers in the TileCache and ActorHelper
-      /*this.setState({isLoading: true})
+      this.setState({isLoading: true})
       this.cache && this.cache.isReady() && this.cache.update(this.mgb_content2, () => {
         this.setState({isLoading: false})
-      })*/
-
-      return
-    }
-    if(newp.asset.content2 && !_.isEqual(this.props.asset.content2, newp.asset.content2)) {
-      this.updateMap(newp)
+        this.updateMap(newp)
+      })
     }
   }
 
@@ -152,6 +148,8 @@ export default class EditActorMap extends EditMap {
       this.refs.map.generatePreviewAndSaveIt()
     }
     this.props.handleContentChange(toSave, thumbnail, reason)
+    // remove loading - which is set after adding new Actor
+    this.setState({isLoading: false})
   }
 
   showModal = (action, cb) => {

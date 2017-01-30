@@ -153,7 +153,10 @@ export default AssetEditRoute = React.createClass({
     const assetHandler = this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
       if (this.assetHandler)
       {
+
         const asset = this.assetHandler.asset
+if (asset)  // TODO: There's a caching bug in one of the 4 layers of caching! 
+  console.log('AER/getMeteorData() detected change in asset ', asset._id)
         if (asset && this.props.handleSetCurrentlyEditingAssetInfo)
           this.props.handleSetCurrentlyEditingAssetInfo( asset.kind, this.canCurrUserEditThisAsset(asset) )
         this.forceUpdate()

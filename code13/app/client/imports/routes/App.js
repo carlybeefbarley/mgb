@@ -310,6 +310,7 @@ const App = React.createClass({
         params={this.props.params}
         flexPanelWidth={flexPanelWidth}
         sysvars={sysvars}
+        currentlyEditingAssetKind={currentlyEditingAssetKind}
         />
     )
 

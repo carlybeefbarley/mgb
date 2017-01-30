@@ -4,13 +4,13 @@ import SystemAlerts from './SystemAlerts'
 import NavBarBreadcrumb from './NavBarBreadcrumb'
 import WhatsNew from './WhatsNew'
 
-// The NavBar is the top row of the central column of the page
-// (i.e. between the left margin and the FlexPanel on the right).
+// The NavBar is the 2nd row of the central column of the page
+// (i.e. between the left margin and the FlexPanel (if) on the right; below the NavPanel).
 
 // The NavBar contains a breadcrumb bar and some system 
 // alerts (new version, system-upgrade-in-process etc)
 
-const NavBar = ({ name, user, params, currUser, pathLocation, flexPanelWidth, fFixedTopNavBar, sysvars }) => {
+const NavBar = ({ name, user, params, currUser, pathLocation, flexPanelWidth, fFixedTopNavBar, sysvars, currentlyEditingAssetKind }) => {
 
   if (pathLocation === '/' && !fFixedTopNavBar)
     return null
@@ -30,7 +30,7 @@ const NavBar = ({ name, user, params, currUser, pathLocation, flexPanelWidth, fF
       }}>
       <SystemAlerts sysvars={sysvars} />
       <WhatsNew currUser={currUser} asHidingLink={true} />
-      <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} />
+      <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} currentlyEditingAssetKind={currentlyEditingAssetKind} />
     </Segment>
   )
 }
@@ -41,7 +41,8 @@ NavBar.propTypes = {
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
   pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
   flexPanelWidth:     PropTypes.string.isRequired,      // Typically something like "200px".
-  name:               PropTypes.string                  // Page title to show in NavBar breadcrumb
+  name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
+  currentlyEditingAssetKind: PropTypes.string           // null or a string which is one of AssetKindKeys - based on currently edited asset
 }
 
 export default NavBar

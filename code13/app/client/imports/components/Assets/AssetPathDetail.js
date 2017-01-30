@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
 import validate from '/imports/schemas/validate'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
+import { Icon } from 'semantic-ui-react'
 
   /** This used by  to render something like...
    *      [ VIEW|EDIT] Kind > AssetName
@@ -62,10 +63,10 @@ export default AssetPathDetail = React.createClass({
           }
           &nbsp;&nbsp;
           <QLink style={{color: AssetKinds.getColor(kind)}} to={`/u/${ownerName}/assets`} query={{kinds: kind}}>
-            <i className={AssetKinds.getColor(kind) + ' ' + AssetKinds.getIconClass(kind)} />
-            { AssetKinds.getName(kind) }
+            <Icon color={AssetKinds.getColor(kind)} name={AssetKinds.getIconName(kind)} />
           </QLink>
-          &nbsp;>&nbsp;
+          &nbsp;
+          
           <InlineEdit
             validate={validate.assetName}
             activeClassName="editing"

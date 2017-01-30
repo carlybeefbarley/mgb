@@ -12,9 +12,10 @@ export default fpFeatureLevels = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:             PropTypes.string.isRequired   // Typically something like "200px".
+    currUser:                 PropTypes.object,             // Currently Logged in user. Can be null/undefined
+    user:                     PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
+    panelWidth:               PropTypes.string.isRequired,  // Typically something like "200px".
+    currentlyEditingAssetKind: PropTypes.string             // null or a string which is one of AssetKindKeys
   },
 
   contextTypes: {
@@ -65,16 +66,20 @@ export default fpFeatureLevels = React.createClass({
       marginLeft:       '2px'
     } 
 
-    const makeSlider = name => {
+    const makeSlider = (name) => {
       const maxVal = expectedToolbars.getMaxLevel(name)
       const defaultLevel = expectedToolbars.getDefaultLevel(name)
       const actualLevel = this.getLevelValFromSettings(name) || defaultLevel 
       const friendlyName = expectedToolbars.getFriendlyName(name)
+      const isHighlighted = expectedToolbars.getIsUsedForAssetKind(name, this.props.currentlyEditingAssetKind)
+      let outerSty={ marginLeft: '0.25em',marginRight: '1em',  marginBottom: '2em' }
+      if (isHighlighted)
+        outerSty.backgroundColor = 'rgba(255,255,0,0.1)'
       return (
-        <div key={name} style={{ marginLeft: '0.25em',marginRight: '1em',  marginBottom: '2em' }}>
+        <div key={name} style={outerSty}>
           <Icon style={{ float: 'right', marginTop: '0.15em' }} size='big' name={expectedToolbars.getIconName(name)} />
           <div style={{ marginLeft: '1em' }}>
-            {friendlyName}
+            { friendlyName }
             <br />
             <small> 
               <span style={{color: 'grey'}}>Level </span>

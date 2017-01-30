@@ -35,7 +35,7 @@ export default class SmallDD extends React.Component{
     return (
       <div className="ui fluid selection dropdown"
            onMouseOver={ this.state.hasTriggered ? null : (e) => {
-                 console.log("initialized dropdown!!", $(e.target).closest(".selection.dropdown"))
+//                 console.log("initialized dropdown!!", $(e.target).closest(".selection.dropdown"))
                  $(e.target).closest(".selection.dropdown").dropdown()
                  this.setState({hasTriggered: true});
                }

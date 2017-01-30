@@ -57,6 +57,9 @@ export default class EditActorMap extends EditMap {
       this.cache = new Cache(this.mgb_content2, () => {
         // is cache still present?
         this.cache && this.setState({isLoading:  false})
+        if(Object.keys(this.props.asset.content2).length === 0){
+          this.quickSave("Empty map")
+        }
       })
     })
   }
@@ -188,7 +191,7 @@ export default class EditActorMap extends EditMap {
     )
   }
 
-  togglePlayState() { 
+  togglePlayState() {
     this.setState( { isPlaying: !this.state.isPlaying } )
   }
 

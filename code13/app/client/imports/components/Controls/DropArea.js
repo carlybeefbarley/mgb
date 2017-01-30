@@ -4,14 +4,14 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
-// TODO: use observe from assetFetchers instead of custom observer
-// import { observe } from "/client/imports/helpers/assetFetchers"
+// TODO: use observeAsset from assetFetchers instead of custom observer
+// import { observeAsset } from "/client/imports/helpers/assetFetchers"
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
   state = { text: '' }
-  
+
   static PropTypes = {
     kind: PropTypes.string.required, // asset kind which will accept this drop area
     value: PropTypes.string, // previously saved value
@@ -25,7 +25,7 @@ export default class DropArea extends React.Component {
 
   componentDidMount() {
     this.isUnmounted = false
-    
+
     if (this.props.value) {
       const parts = this.props.value.split(":")
       const name = parts.pop()
@@ -124,7 +124,7 @@ export default class DropArea extends React.Component {
   getAsset() {
     if (this.state.asset)
       return this.state.asset
-    
+
     if (this.props.value) {
       const parts = this.props.value.split(":")
       const name = parts.pop()
@@ -144,7 +144,7 @@ export default class DropArea extends React.Component {
     const asset = this.state.asset || this.getAsset() || this.state.badAsset;
     if (!asset)
       return
-    
+
     const transform = this.getEffect(this.props.effect)
     // TODO: render effect
     return (
@@ -158,7 +158,7 @@ export default class DropArea extends React.Component {
   getEffect(effect) {
     if (!effect)
       return "none"
-    
+
     const map = {
       rotate90: "rotate(90deg)",
       rotate180: "rotate(180deg)",

@@ -1,6 +1,6 @@
 // cache stores all loaded images and creates tile map for further reference
 import TileHelper from './TileHelper'
-import { observe, makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { observeAsset, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
 export default class TileCache {
@@ -148,7 +148,7 @@ export default class TileCache {
       }
     }
 
-    this.observers[src] = observe(toObserve, null, (id, changes) => {
+    this.observers[src] = observeAsset(toObserve, null, (id, changes) => {
       // prevent cache - as browser will ignore etag in this case
       loadImage(changes.updatedAt.getTime())
     })

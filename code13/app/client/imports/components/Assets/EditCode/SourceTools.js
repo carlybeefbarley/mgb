@@ -1,6 +1,6 @@
 "use strict"
 import knownLibs from "./knownLibs.js"
-import {observe, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
+import {observeAsset, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
 import {AssetKindEnum} from '/imports/schemas/assets'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
@@ -496,7 +496,7 @@ export default class SourceTools {
     }
 
     // from now on only observe asset and update tern on changes only
-    this.subscriptions[ari] = observe({dn_ownerName: owner, name: name, kind: AssetKindEnum.code}, onReady, onChange)
+    this.subscriptions[ari] = observeAsset({dn_ownerName: owner, name: name, kind: AssetKindEnum.code}, onReady, onChange)
   }
   // expose private variable - EditCode uses this
   hasChanged(){

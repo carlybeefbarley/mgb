@@ -12,7 +12,7 @@ import ActorValidator from '../../ActorValidator'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import {AssetKindEnum} from '/imports/schemas/assets'
 
-import {observe, mgbAjax} from "/client/imports/helpers/assetFetchers"
+import {observeAsset, mgbAjax} from "/client/imports/helpers/assetFetchers"
 
 // 0 - jump
 // 1 - music
@@ -42,7 +42,7 @@ export default ActorHelper = {
     const getActorName = (tileId, pos) => {
       if (!tileId)
         return ''
-      
+
       // action tiles
       if (tileId <= this.TILES_IN_ACTIONS)
         return data.layers[EVENT_LAYER].mgb_events[pos]
@@ -354,7 +354,7 @@ export default ActorHelper = {
       //return
     }
 
-    const sub = ActorHelper.observer = observe({$or: ActorHelper.subSel}, () => {
+    const sub = ActorHelper.observer = observeAsset({$or: ActorHelper.subSel}, () => {
       const assets = sub.getAssets()
       let toLoad = assets.length
       assets.forEach(asset => {
@@ -450,7 +450,7 @@ export default ActorHelper = {
       return
     }
     ActorHelper.isLoading[key] = 1
-    ActorHelper.subscriptions[key] = observe({
+    ActorHelper.subscriptions[key] = observeAsset({
         dn_ownerName: user,
         name: actorName,
         isDeleted: false,
@@ -529,7 +529,7 @@ export default ActorHelper = {
   eventNameToTile: function(name) {
     if (name.indexOf("jump") === 0)
       return 1
-    
+
     if (name.indexOf("music") === 0 )
       return 2
 

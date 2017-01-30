@@ -48,6 +48,7 @@ export const makeExpireThumbnailLink = (assetId, expires) => {
 }
 
 // use this to allow client NOT pull resources every time
+// will return timestamp with next expire datetime
 export const makeExpireTimestamp = (expires) => {
   // TODO(@stauzs): we need server time here - this will work only for short periods of time !!!!
   // See https://github.com/mizzao/meteor-timesync
@@ -59,7 +60,8 @@ export const makeExpireTimestamp = (expires) => {
   // and makeExpireTimestamp will return same value for next 10 seconds
   // actually it can return different earlier for the first and second call,
   // but all next calls will get same value for next 10 seconds
-  return now - (now % (expires * 1000))
+  const expireMS = expires * 1000
+  return now - (now % (expireMS)) + expireMS
 }
 
 // project avatar url prefixed with CDN host
@@ -69,11 +71,13 @@ export const getProjectAvatarUrl = (p, expires = 60) => (
 )
 
 
-// used by maps - to get notifications about image changes  // TODO(@stauzs).. it's not just maps right? the comments reference Tern etc
-export const observe = (selector, onReady, onChange = onReady, cachedObservable = null) => {
+// used by maps - to get notifications about image changes
+// used by edit code - to get notification about imported source changes
+// Note: very similar solution is used in the DropArea ( DropArea is mostly used by EditActor - to observe attached to actor images and other actors)
+export const observeAsset = (selector, onReady, onChange = onReady, cachedObservable = null) => {
   // images in the map won't update
   const cursor = PartialAzzets.find(selector)
-  // from now on only observe asset and update tern on changes only  //TODO(@stauzs)? Why is a general component referring to tern which is very specialized?
+  // from now on only observe asset and call onChange only when asset has been changed
   let onReadyCalled = false
   const observable = cachedObservable || {
     observer: null,
@@ -88,7 +92,7 @@ export const observe = (selector, onReady, onChange = onReady, cachedObservable 
       // ..this is caused by subscriptions called in ReactGetMeteorData() - as they
       // automatically gets closed. Another fix is to remove from stack Meteor.subscribe..:( (DG says NO NO NO!)
       // TODO(@dgolds):See if there is another approach?
-      !onReadyCalled && observe(selector, onReady, onChange, observable)
+      !onReadyCalled && observeAsset(selector, onReady, onChange, observable)
     },
     onReady: () => {
       onReadyCalled = true
@@ -203,10 +207,13 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   }
 }
 
-// this class fetches and updates Asset and its content2
-//  TODO: Properly document class since it has complex and critical behaviour
-
+/** Class representing an AssetHandler. */
 class AssetHandler {
+  /**
+   * Create an AssetHandler.
+   * @param {string} assetId - Asset Id.
+   * @param {function} onChange - Callback when changes to asset or content2 occur - first time will be called on successful content2 acquisition.
+   */
   constructor(assetId, onChange) {
     this.id = assetId
     this.onChange = onChange  // TODO: Needs default for undefined? otherwise we have undefined/null which can cause errors if truthy comparisons aren't precise
@@ -215,16 +222,22 @@ class AssetHandler {
     this.isReady = false
     this.update()
   }
-
+  /**
+   * Stop subscription - call this on component unmount
+   */
   stop() {
     if (this.subscription)
       this.subscription.stop()
   }
-
+  /**
+   * Is assetHandler ready - similar to Meteor subscription ready()
+   */
   ready() {
     return this.isReady
   }
-
+  /**
+   * is assetHandler loading
+   */
   get loading() {
     return !this.isReady
   }
@@ -232,6 +245,10 @@ class AssetHandler {
   // TODO: Explain what this does and what's different to update(). It seems related to forceUpdate flag?
   // TODO: Also explain param - callback behavior/interface
   // this method only update Asset meta info, but will skip content2
+  /**
+   * tell assetHandler to update Asset info - except content2
+   * @param {function} onChange - Overwrite previous onChange callback
+   */
   updateAsset(onChange = null) {
     this.onChange = onChange   // TODO: in contrast, update() guard this with 'if (onChange)... '. Why not here?
     const asset = Azzets.findOne(this.id)
@@ -245,9 +262,13 @@ class AssetHandler {
     this.asset = asset
   }
 
-  // TODO: Explain what this does and what's different to updateAsset(). It seems related to forceUpdate flag?
-  // TODO: Also explain params - callback behavior/interface and format requirements of updateObj
-  // this will update asset and content2
+  /**
+   * tell assetHandler to do full update Asset info and content2 also - it's possible to pass latest content2 Object
+   * @param {function} onChange - Overwrite previous onChange callback
+   * @param {updateObj} updateObj - last known object with content2
+   * @see {@link https://github.com/devlapse/mgb/blob/10b8393ba61863a430af398392a726588a8c082a/code13/app/client/imports/routes/Assets/AssetEditRoute.js#L643} for more info.
+   * assetHandler will try to update content2 from this object if etags will match
+   */
   update(onChange = null, updateObj = null) {
     if (onChange)
       this.onChange = onChange
@@ -293,7 +314,7 @@ class AssetHandler {
     else {
       // without timeout subscription will end automatically right after it starts (ReactMeteorData.getMeteorData is responsible for that),
       // but we want to keep subscription active as long as user is checking out asset
-      // NOTE: we are calling onready only after ajax also has been loaded -
+      // NOTE: we are calling onReady only after ajax also has been loaded -
       // also without timeout getMeteorData will start infinite subscribe / unsubscribe loop - this is very very bad
       // getMeteorData is calling forceUpdate internally and it's called before render
       window.setTimeout(() => {
@@ -312,8 +333,11 @@ class AssetHandler {
       }, 0)
     }
   }
-
-  // this will update only content2
+  /**
+   * tell assetHandler to do update content2 Object
+   * @param {updateObj} updateObj - last known object with content2
+   * @see {@link https://github.com/devlapse/mgb/blob/10b8393ba61863a430af398392a726588a8c082a/code13/app/client/imports/routes/Assets/AssetEditRoute.js#L643} for more info.
+   */
   updateContent2(updateObj) {
     const asset = Azzets.findOne(this.id)
     if (!asset)
@@ -355,7 +379,13 @@ class AssetHandler {
       }
     }, asset)
   }
-
+  /**
+   * this function is called after Meteor subscription becomes ready - or if subscription is already present, then it will be called immediately
+   * this function will fetch new content2 if updateObj is not present
+   * @param {updateObj} updateObj - last known object with content2
+   * @see {@link https://github.com/devlapse/mgb/blob/10b8393ba61863a430af398392a726588a8c082a/code13/app/client/imports/routes/Assets/AssetEditRoute.js#L643} for more info.
+   * assetHandler will try to update content2 from this object if etags will match
+   */
   _onReady(updateObj) {
     // save previous content2
     let oldC2 = this.asset ? this.asset.content2 : null
@@ -380,8 +410,12 @@ class AssetHandler {
 }
 
 const cachedAssetHandlers = []
-// this will return a (potentially cached or new) AssetHandler, not an Asset
-// This is used in the AssetEditRoute -> getMeteorData and in PlayGameRoute
+
+// This is used in the AssetEditRoute -> getMeteorData and in the PlayGameRoute
+/** @function
+ * @name getAssetHandlerWithContent2 - factory function for AssetHandlers
+ * this will return a (potentially cached or new) AssetHandler, not an Asset
+ * */
 export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = false) => {
   let handler = cachedAssetHandlers.find(h => h.id === id)
   //
@@ -398,7 +432,7 @@ export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = fals
     // keep most recently accessed handlers at start
     cachedAssetHandlers.sort((a, b) => b.lastAccessed - a.lastAccessed)
     // pop is faster than shift
-    handler = cachedAssetHandlers.pop()   // TODO: Would be much better as an LRU instead of a queue?
+    handler = cachedAssetHandlers.pop()
     handler.stop()
   }
   handler = new AssetHandler(id, onChange)

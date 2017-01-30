@@ -82,8 +82,8 @@ Meteor.startup(function () {
         <Route path="user/:id/assets" component={Azzets.UserAssetList} name="Assets" />
         <Route path="u/:username/assets" component={Azzets.UserAssetList} name="Assets" />
 
-        <Route path="user/:id/asset/:assetId" component={Azzets.AssetEditRoute} name="Asset Editor" />
-        <Route path="u/:username/asset/:assetId" component={Azzets.AssetEditRoute} name="Asset Editor" />
+        <Route path="user/:id/asset/:assetId" component={Azzets.AssetEditRoute} name="Loading asset..." />
+        <Route path="u/:username/asset/:assetId" component={Azzets.AssetEditRoute} name="Loading asset..." />
 
         <Route path="user/:id/projects" component={Projects.UserProjectList} name="User's Projects" />
         <Route path="u/:username/projects" component={Projects.UserProjectList} name="User's Projects" />

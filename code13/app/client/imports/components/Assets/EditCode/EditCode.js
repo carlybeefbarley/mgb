@@ -230,9 +230,6 @@ export default class EditCode extends React.Component {
         "Ctrl-B": (cm) => {
           this.handleJsBeautify(cm)
         },
-        "Alt-,": (cm) => {
-          this.ternServer.jumpBack(cm)
-        },
         "Ctrl-Q": (cm) => {
           this.ternServer.rename(cm)
         },
@@ -244,7 +241,9 @@ export default class EditCode extends React.Component {
         },
         "Ctrl-/": (cm) => {
           cm.execCommand("toggleComment")
-        }
+        },
+        "Alt-.": cm => this.goToDef(),
+        "Alt-,": cm => this.goBack()
       },
       //lint: true,   // TODO - use eslint instead? Something like jssc?
       autofocus: true,
@@ -261,16 +260,8 @@ export default class EditCode extends React.Component {
     this.codeMirror.on('drop', this.handleDropAsset.bind(this))
 
     this.codeMirror.on('mousedown', this.handleDocumentClick.bind(this))
-    this.codeMirror.on('keydown', (cm, e) => {
-      if(e.ctrlKey && e.altKey){
-        e.preventDefault()
-      }
-    })
-    this.codeMirror.on('keyup', (cm, e) => {
-      if(e.ctrlKey && e.altKey){
-        e.preventDefault()
-      }
-    })
+    this.codeMirror.on('keyup', (cm, e) => e.ctrlKey && e.altKey && e.preventDefault())
+
     this._currentCodemirrorValue = this.props.asset.content2.src || ''
 
     this.codeMirrorUpdateHintsChanged()
@@ -669,9 +660,16 @@ export default class EditCode extends React.Component {
     }
   }
 
+  goToDef(){
+    const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
+    this.cursorHistory.undo.push(currentCursor)
+
+    this.ternServer.jumpToDef(this.codeMirror)
+  }
   goBack(){
     const pos = this.cursorHistory.undo.pop()
-    this.cursorHistory.redo.push(this.codeMirror.getCursor())
+    this.cursorHistory.redo.push(_.cloneDeep(this.codeMirror.getCursor()))
+
     this.codeMirror.setCursor(pos)
     //this.ternServer.jumpBack(this.codeMirror)
     this.codeMirror.focus()
@@ -679,9 +677,9 @@ export default class EditCode extends React.Component {
   goForward(){
     const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
     this.cursorHistory.undo.push(currentCursor)
-    
+
     const pos = this.cursorHistory.redo.pop()
-    this.codeMirror.setCursor(pos)
+    pos && this.codeMirror.setCursor(pos)
     //this.ternServer.jumpBack(this.codeMirror)
     this.codeMirror.focus()
   }

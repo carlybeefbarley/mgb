@@ -204,7 +204,7 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
     }
     else {
       // try link without CDN
-      if (usingCDN) {
+      if (usingCDN && uri.startsWith('/') && !uri.startsWith('//')) {
         console.log("CDN failed - trying local uri")
         mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
         return

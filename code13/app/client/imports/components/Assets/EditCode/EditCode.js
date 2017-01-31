@@ -314,17 +314,17 @@ export default class EditCode extends React.Component {
       },
       // TODO: is there a simple "meteor" way to get these files from node_modules???
       workerDeps: [
-        "/lib/acorn/acorn.js",
-        "/lib/acorn/acorn_loose.js",
-        "/lib/acorn/walk.js",
-        "/lib/tern/lib/signal.js",
-        "/lib/tern/lib/tern.js",
-        "/lib/tern/lib/def.js",
-        "/lib/tern/lib/infer.js",
-        "/lib/tern/lib/comment.js",
-        "/lib/tern/plugin/modules.js",
-        "/lib/tern/plugin/es_modules.js",
-        "/lib/tern/plugin/doc_comment.js"
+        makeCDNLink("/lib/acorn/acorn.js"),
+        makeCDNLink("/lib/acorn/acorn_loose.js"),
+        makeCDNLink("/lib/acorn/walk.js"),
+        makeCDNLink("/lib/tern/lib/signal.js"),
+        makeCDNLink("/lib/tern/lib/tern.js"),
+        makeCDNLink("/lib/tern/lib/def.js"),
+        makeCDNLink( "/lib/tern/lib/infer.js"),
+        makeCDNLink("/lib/tern/lib/comment.js"),
+        makeCDNLink("/lib/tern/plugin/modules.js"),
+        makeCDNLink("/lib/tern/plugin/es_modules.js"),
+        makeCDNLink("/lib/tern/plugin/doc_comment.js")
         //"/lib/tern/plugin/lint.js"
       ],
       plugins: {

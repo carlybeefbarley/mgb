@@ -10,7 +10,7 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
+import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
 
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 import { hasSkill, learnSkill } from '/imports/schemas/skills'

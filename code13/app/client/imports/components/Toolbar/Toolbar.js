@@ -6,7 +6,7 @@ import QLink from '/client/imports/routes/QLink'
 import { getFeatureLevel, getToolbarData, setToolbarData } from '/imports/schemas/settings-client'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { AssetKinds } from '/imports/schemas/assets'
-import { Button, Icon } from 'semantic-ui-react'
+import { Popup, Button, Icon } from 'semantic-ui-react'
 
 const keyModifiers = {
   CTRL:  1 <<  8,
@@ -385,13 +385,9 @@ export default class Toolbar extends React.Component {
         <div style={buttonGroupStyle} className={buttonGroupClassName}>
           { this.state.level < this.maxLevel-1 && 
             <QLink query={{ '_fp': 'features' }}>
-              <Button basic
-                className='hazPopup'
-                data-title='More Tools'
-                data-content='Click here to enable additional tools'
-                id="mgbjr-toolbar-optionsButton">                
-                  <Icon name='horizontal ellipsis' />
-              </Button>
+              <Popup trigger={<Button basic id="mgbjr-toolbar-optionsButton" icon='horizontal ellipsis'/>}
+                header='More Tools'
+                content='Click here to enable additional tools' />
             </QLink>
           }
         </div>
@@ -466,25 +462,27 @@ export default class Toolbar extends React.Component {
     if (b.shortcut)
       this.registerShortcut(b.shortcut, b.name)
     
-    let className = "ui button hazPopup animate " + hidden + active + disabled
+    let className = "ui button animate " + hidden + active + disabled
     // button is new
     if (this.visibleButtons && this.visibleButtons.indexOf(b.name) === -1)
       className += " new"
     return (
-      <div className={className}
+      <Popup trigger={<div className={className}
            id={joyrideId}
-           style={{position: "relative"}}
+           style={ { position: "relative" } }
            ref={(button) => {this._addButton(button, index)}}
            onClick={this._handleClick.bind(this, b.name)}
            onMouseDown={this._moveButtonStart.bind(this)}
-           data-title={title}
-           data-content={b.tooltip + (b.shortcut ? " [" + b.shortcut + "]" : '')}
-           data-position="top center"
-           key={index}
            data-index={index}
         ><i className={(b.icon ? b.icon : b.name) + " icon"}></i>{b.iconText ? b.iconText : ''}
         {label}
-      </div>
+      </div>}
+        key={index}
+        header={title}
+        positioning='top center'
+        content={b.tooltip + (b.shortcut ? " [" + b.shortcut + "]" : '')}
+      />
+      
     )
   }
 

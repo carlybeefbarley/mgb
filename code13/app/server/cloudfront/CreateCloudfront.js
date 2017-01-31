@@ -47,7 +47,6 @@ export const setUpCloudFront = function () {
 
   // CORS fixes, needs to have the domain names we will test/deploy against (defined at top of file in allowedOrigins)
   WebApp.rawConnectHandlers.use(function (req, res, next) {
-    console.log("req:", req._parsedUrl.pathname, req.headers.origin)
     const isFont = req._parsedUrl.pathname.endsWith(".woff2") || req._parsedUrl.pathname.endsWith(".woff") || req._parsedUrl.pathname.endsWith(".ttf")
     if (isFont) {
       res.setHeader('access-control-allow-origin', '*')

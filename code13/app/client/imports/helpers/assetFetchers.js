@@ -23,8 +23,6 @@ Meteor.startup(() => {
   Meteor.call("CDN.domain", (err, cdnDomain) => {
     if (!err)
       CDN_DOMAIN = cdnDomain
-    else
-      CDN_DOMAIN = 'test.loc:3000'
     console.log(`Using CDN: '${CDN_DOMAIN}'`)
   })
 })

@@ -144,7 +144,7 @@ export default class Toolbar extends React.Component {
       if (this.keyActions[keyval]) {
         e.preventDefault()
         // TODO(@Stauzs) Do we need this?
-        e.stopPropagation()
+        // e.stopPropagation()
       }
     }
 
@@ -159,7 +159,9 @@ export default class Toolbar extends React.Component {
         const b = this.getButtonFromAction(this.keyActions[keyval].action)
         if (!b || b.disabled)
           return
+
         e.preventDefault()
+        // e.stopPropagation()
 
         const action = this.keyActions[keyval].action
         joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-keypress`)
@@ -205,6 +207,7 @@ export default class Toolbar extends React.Component {
     this.levelSlider = this._addLevelSlider()
 
     window.addEventListener("keyup", this._onKeyUp)
+    window.addEventListener("keydown", this._onKeyDown)
     window.addEventListener("mousemove", this._onMouseMove)
     window.addEventListener("mouseup", this._onMouseUp)
   }
@@ -304,6 +307,12 @@ export default class Toolbar extends React.Component {
           continue
         case "DOWN":
           keyval |= 40
+          continue
+        case "PLUS":
+          keyval |= 187 // numpad has 107
+          continue
+        case "MINUS":
+          keyval |= 189 // numpad has 109
           continue
       }
 
@@ -419,7 +428,7 @@ export default class Toolbar extends React.Component {
       analytics.track(action, {page: this.props.name})
     }
     else
-      console.error(`Cannot find action for button '${action}'`)
+      console.error(`Cannot find action for button '${action}'`, this.props.actions)
   }
 
   _extractButton(el) {

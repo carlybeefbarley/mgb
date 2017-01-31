@@ -377,6 +377,7 @@ export default class EditMap extends React.Component {
             options={this.options}
             undoSteps={this.mgb_undo}
             redoSteps={this.mgb_redo}
+            ref='toolbar'
           />
           <MapArea
             {...this.mapProps}

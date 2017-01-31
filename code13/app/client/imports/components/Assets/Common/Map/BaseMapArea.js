@@ -32,6 +32,8 @@ import './EditMap.css'
 
 const MAX_ZOOM = 10 // scale
 const MIN_ZOOM = 0.2 // scale
+const ZOOM_STEP = 0.1 // @golds - create an Array with possible zoom options - like in editGraphics?
+
 
 const DEFAULT_PREVIEW_ANGLE_X = 5 // degrees on x axis in 3d preview
 const DEFAULT_PREVIEW_ANGLE_Y = 15 // degrees on y axis in 3d preview
@@ -459,16 +461,18 @@ export default class MapArea extends React.Component {
     this.doCameraZoom(newZoom, px, py)
   }
 
+  zoomIn(){
+    this.doCameraZoom(this.camera.zoom + ZOOM_STEP, this.camera.width * 0.5, this.camera.height * 0.5) // or 0,0 would be better?
+  }
+  zoomOut(){
+    this.doCameraZoom(this.camera.zoom - ZOOM_STEP, this.camera.width * 0.5, this.camera.height * 0.5) // or 0,0 would be better?
+  }
   doCameraZoom(newZoom, pivotX, pivotY){
-
 
     const zoom = Math.max(Math.min(newZoom, MAX_ZOOM), MIN_ZOOM)
 
-
     if(pivotX || pivotY){
-      // .getBoundingClientRect(); returns width with transformations - that is not what is needed in this case
-
-      const bounds = this.refs.mapElement
+      const bounds = this.refs.mapElement // .getBoundingClientRect(); returns width with transformations - that is not what is needed in this case
 
       const ox = pivotX / bounds.offsetWidth
       const oy = pivotY / bounds.offsetHeight
@@ -481,9 +485,7 @@ export default class MapArea extends React.Component {
 
       this.camera.x -= (width - newWidth) * ox
       this.camera.y -= (height - newHeight) * oy
-
     }
-
 
     this.camera.zoom = zoom
     this.redraw()
@@ -668,12 +670,11 @@ export default class MapArea extends React.Component {
       return
     }
 
-    const step = 0.1
     if (e.deltaY < 0)
-      this.zoomCamera(this.camera.zoom + step, e)
+      this.zoomCamera(this.camera.zoom + ZOOM_STEP, e)
     else if (e.deltaY > 0) {
-      if (this.camera.zoom > step * 2)
-        this.zoomCamera(this.camera.zoom - step, e)
+      if (this.camera.zoom > ZOOM_STEP * 2)
+        this.zoomCamera(this.camera.zoom - ZOOM_STEP, e)
     }
   }
 

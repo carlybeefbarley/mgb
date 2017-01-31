@@ -10,10 +10,10 @@ const TB = {
 
   play: function(){
     if (!this.state.isPlaying)
-      this.props.handleSaveNowRequest() 
+      this.props.handleSaveNowRequest()
     this.setState({isPlaying: !this.state.isPlaying})
   },
-  
+
   getActiveLayer: function(){
     const c2 = this.mgb_content2
     return c2.layers[this.state.activeLayer]
@@ -27,7 +27,7 @@ const TB = {
     // this is EditMap Scope
     this.enableMode(mode)
   },
-  
+
   toggleRandomMode: function(){
     this.options.randomMode = !this.options.randomMode
     this.setState({randomMode: this.options.randomMode})
@@ -145,6 +145,16 @@ const TB = {
   toggleCtrlModifier: function(){
     this.options.ctrlModifier = !this.options.ctrlModifier
     this.setState({ctrlModifier: this.options.ctrlModifier})
+  },
+
+  zoomIn: function(){
+    this.refs.map && this.refs.map.zoomIn()
+    this.refs.toolbar && this.refs.toolbar.setState({zoomLevel: this.options.camera.zoom})
+  },
+
+  zoomOut: function(){
+    this.refs.map && this.refs.map.zoomOut()
+    this.refs.toolbar && this.refs.toolbar.setState({zoomLevel: this.options.camera.zoom})
   }
 }
 

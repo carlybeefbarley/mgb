@@ -220,6 +220,8 @@ export default class EditActorMap extends EditMap {
                 options={this.options}
                 undoSteps={this.mgb_undo}
                 redoSteps={this.mgb_redo}
+
+                ref="toolbar"
               />
             </div>
             <div style={{float: 'right'}}>

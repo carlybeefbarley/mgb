@@ -14,8 +14,9 @@ export default class MapToolbar extends React.Component {
       this.props.options.mode = EditModes.stamp
     }
     const disabled = this.props.isPlaying
-    
+
     const layer = this.props.getActiveLayer()
+
     const config = {
       // vertical: true,
 //      level: 3,  -- This is now in expectedToolbars.getDefaultLevel
@@ -78,6 +79,23 @@ export default class MapToolbar extends React.Component {
           disabled,
           level: 6,
           shortcut: 'Ctrl+Alt+R'
+        },
+        {
+          name: 'zoomIn',
+          icon: 'zoom in',
+          label: 'Zoom in map',
+          iconText:  `x${this.props.options.camera.zoom.toFixed(1)}`,
+          tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
+          shortcut: 'Ctrl+PLUS',
+          level: 7
+        },
+        {
+          name: 'zoomOut',
+          icon: 'zoom out',
+          label: 'Zoom out map',
+          tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
+          shortcut: 'Ctrl+MINUS',
+          level: 7
         },
         {
           name: 'preview',

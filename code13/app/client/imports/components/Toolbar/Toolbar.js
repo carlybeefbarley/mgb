@@ -14,7 +14,7 @@ const keyModifiers = {
   ALT:   1 << 10,
   META:  1 << 11      // Mac CMD key / Windows 'windows' key. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey
 }
-
+//
 const sliderPcts = {
   iconSizeBreak1:  0.25,
   iconSizeBreak2:  0.66,

@@ -9,11 +9,9 @@ export default class MapToolbar extends React.Component {
 
   render() {
     // older maps don't have default mode
-    if (!this.props.options.mode) {
+    if (!this.props.options.mode)
       this.props.options.mode = EditModes.stamp
-    }
 
-    console.log(this.props.options)
     const layer = this.props.getActiveLayer()
     const config = {
       //  level: 3,     // default level -- This is now in expectedToolbars.getDefaultLevel
@@ -72,7 +70,6 @@ export default class MapToolbar extends React.Component {
           iconText:  `${(this.props.options.camera.zoom * 100).toFixed(1)}%`,
           label: 'Reset Camera',
           tooltip: 'Set Zoom to 100% and move map to 0,0 coordinates',
-          disabled,
           level: 6,
           shortcut: 'Ctrl+Alt+R'
         },

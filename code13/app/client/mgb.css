@@ -175,7 +175,7 @@ body.dragging .accept-drop:hover{
   display: none !important;
 }
 /* class that highlights element for short duration */
-.ui .button.isvisible.hazPopup.new {
+.ui.button.isvisible.new {
   animation-name: highlight !important;
   /*animation-iteration-count: infinite !important;*/
   animation-iteration-count: 1 !important;
@@ -237,11 +237,11 @@ body.dragging .accept-drop:hover{
   display: block;
 }
 
-.mgb-show-on-parent-div-hover { 
+.mgb-show-on-parent-div-hover {
   opacity: 0;
 }
 
-div:hover > .mgb-show-on-parent-div-hover { 
+div:hover > .mgb-show-on-parent-div-hover {
   opacity: 1;
 }
 

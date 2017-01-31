@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
+import { Popup, Label, Icon } from 'semantic-ui-react'
 import { calculateProjectAccessRightsForAsset, getColorNameForProjectAccess, getMsgForProjectAccess } from '/imports/schemas/projects'
 
 // This is a compact editor for membership
@@ -30,22 +31,15 @@ const ProjectMembershipSummary = (props) => {
     </span>
   )
 
-  const inProjectClassName = (
-    "ui small basic " + 
-    (asset.isDeleted ? 'red ' : ' ') + 
-    (hasProjects ? 'pointing below ' : ' ') + 
-    ' label item'
-  )
-
-  const inProjectTitle = "Projects to which this asset belongs. "
-
   return (
-    <div className={inProjectClassName} title={inProjectTitle} style={{borderRadius: '0px'}}>
-      <span>
-        <i className="ui icon sitemap" />
+    <Label 
+        size='small' 
+        basic 
+        color={asset.isDeleted ? 'red' : null} 
+        title='Projects to which this asset belongs' style={{borderRadius: '0px'}}>
+        <Icon name='sitemap' />
         { (!hasProjects ? "(none)" : projectsTableAsJsx ) }
-      </span>
-    </div>
+    </Label>
   )
 }
 
@@ -79,7 +73,7 @@ const ProjectMembershipPopup = (props) => {
               key={"MyProj"+idx} 
               onClick={ () => (canEdit && handleToggleProjectName && handleToggleProjectName(p.name)) }>
               <i className="ui sitemap icon" />
-              '{p.name}'
+              {p.name}
               <div className="detail">
                 <i className={`ui ${isAssetPartOfProject ? "black checkmark" : ""} icon`}></i>
               </div>
@@ -131,20 +125,8 @@ const ProjectMembershipPopup = (props) => {
       choices.unshift(makeHdrEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
   } 
 
-  return <div className="ui popup">{choices}</div>
+  return <div>{choices}</div>
 }
-
-///////
-
-const _initPopup = (c, popupPosition, isHoverable) => (
-  c && $(c).popup( {
-    on: "hover",
-    hoverable: isHoverable,    // So mouse-over popup keeps it visible for Edit for example
-    inline: true, 
-    closable: true,
-    position: popupPosition || "bottom right"
-  })
-)
 
 export default ProjectMembershipEditorV2 = React.createClass({
   propTypes: {
@@ -159,20 +141,25 @@ export default ProjectMembershipEditorV2 = React.createClass({
     const { currUserId, asset, currUserProjects, canEdit, handleToggleProjectName } = this.props
 
     return (
-      <span>
-        <span ref={ (c) => { _initPopup(c, "bottom right", canEdit); this._popupInitiator = c } }>
-          <ProjectMembershipSummary
+      <Popup
+          on='hover'
+          hoverable={canEdit}    // So mouse-over popup keeps it visible for Edit for example
+          positioning='bottom right'
+          trigger={(
+            <span>  { /* This span wrap is needed it seems for a popup trigger if the trigger is a stateless function with no this. context. @levi? */}
+              <ProjectMembershipSummary
+                  currUserId={currUserId}
+                  asset={asset}
+                  currUserProjects={currUserProjects} />
+              </span>
+          )}>
+        <ProjectMembershipPopup
             currUserId={currUserId}
             asset={asset}
-            currUserProjects={currUserProjects} />
-        </span>
-        <ProjectMembershipPopup
-          currUserId={currUserId}
-          asset={asset}
-          currUserProjects={currUserProjects}
-          handleToggleProjectName={handleToggleProjectName}
-          canEdit={canEdit} />          
-      </span>
+            currUserProjects={currUserProjects}
+            handleToggleProjectName={handleToggleProjectName}
+            canEdit={canEdit} />
+      </Popup>
     )
   }
 })

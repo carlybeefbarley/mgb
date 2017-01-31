@@ -1660,8 +1660,8 @@ export default class EditCode extends React.Component {
         icon:     'stop',
         tooltip:  'Stop Running',
         disabled: !this.state.isPlaying,
-        level:    1
-        // shortcut: 'Ctrl+T'
+        level:    1,
+        shortcut: this.state.isPlaying ? 'Ctrl+ENTER' : void(0)
       })
       config.buttons.unshift( {
         name:     'handleRun',
@@ -1669,8 +1669,8 @@ export default class EditCode extends React.Component {
         icon:     'play',
         tooltip:  'Run Code',
         disabled: this.state.isPlaying,
-        level:    1
-        // shortcut: 'Ctrl+T'
+        level:    1,
+        shortcut: !this.state.isPlaying ? 'Ctrl+ENTER' : void(0)
       })
       config.buttons.push( {
         name:  'toolCommentFade',
@@ -1817,7 +1817,7 @@ export default class EditCode extends React.Component {
         <div className={infoPaneOpts.col1 + ' wide column'}>
 
           <div className="row" style={{marginBottom: "6px"}}>
-            {<Toolbar actions={this} config={tbConfig} name="EditCode" />}
+            {<Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
           </div>
 
             <textarea ref="textarea"

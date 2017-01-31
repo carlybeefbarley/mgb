@@ -458,7 +458,7 @@ export default class Toolbar extends React.Component {
     const hidden = b.level > this.state.level ? " invisible" : ' isvisible' // isvisible because visible is reserved
     const active = b.active ? " primary" : ''
     const disabled = b.disabled ? " disabled" : ''
-    if (b.shortcut)
+    if (b.shortcut && !disabled)
       this.registerShortcut(b.shortcut, b.name)
 
     let className = "ui button animate " + hidden + active + disabled

@@ -17,7 +17,14 @@ import Plural         from '/client/imports/helpers/Plural'
 
 import { showToast } from '/client/imports/routes/App'
 
-
+const MOUSE_BUTTONS = {
+  none: 0, //  : No button or un-initialized
+  left: 1, //  : Left button
+  right: 2, //   : Right button
+  middle: 4, //  : Wheel button or middle button
+  back: 8, //  : 4th button (typically the "Browser Back" button)
+  forward: 16// : 5th button (typically the "Browser Forward" button)
+}
 
 import './EditMap.css'
 
@@ -73,7 +80,7 @@ export default class MapArea extends React.Component {
 
     // prevent IE scrolling thingy
     this.globalIEScroll = (e) => {
-      if (e.buttons == 4) {
+      if (e.buttons == MOUSE_BUTTONS.middle) {
         e.preventScrolling && e.preventScrolling()
         // e.stopPropagation() - this will eat up all events
         e.preventDefault()
@@ -391,6 +398,7 @@ export default class MapArea extends React.Component {
   }
 
   moveCamera (e) {
+
     // special zoom case
     if(e.touches && e.touches.length > 1){
       // TODO: probably better would be interpolate between moving points and set distance according moving finger???
@@ -405,7 +413,6 @@ export default class MapArea extends React.Component {
       this.doCameraZoom( this.initialZoom - (this.startDistance - dist) / this.startDistance, midx, midy)
       return
     }
-
     const px = e.pageX === void(0) ? e.touches[0].pageX : e.pageX
     const py = e.pageY === void(0) ? e.touches[0].pageY : e.pageY
 
@@ -493,7 +500,7 @@ export default class MapArea extends React.Component {
   adjustPreview () {
     if (this.props.isPlaying)
       return
-    
+
     if (!this.data.layers)
       this.data.layers = []
 
@@ -584,9 +591,14 @@ export default class MapArea extends React.Component {
     if(e.buttons === void(0) && editMode === EditModes.view || (e.touches && e.touches.length > 1) ){
       this.moveCamera(e)
     }
-    else if (this.options.preview && (e.buttons == 4))
+    else if (this.options.preview && (e.buttons == MOUSE_BUTTONS.middle))
       this.movePreview(e)
-    else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4 || (e.buttons == 1 && editMode === EditModes.view)){
+    else if (e.buttons == MOUSE_BUTTONS.right
+              || e.buttons == MOUSE_BUTTONS.middle
+              || e.buttons == MOUSE_BUTTONS.right + MOUSE_BUTTONS.middle
+              || ( e.buttons == MOUSE_BUTTONS.left && editMode === EditModes.view )
+    )
+    {
       this.moveCamera(e)
     }
 
@@ -626,6 +638,9 @@ export default class MapArea extends React.Component {
     if (this.props.isPlaying)
       return
 
+    if(!e.shiftKey){
+      return
+    }
     e.preventDefault()
     if (e.altKey) {
       this.preview.sep += e.deltaY < 0 ? 1 : -1
@@ -817,17 +832,17 @@ export default class MapArea extends React.Component {
     })
     st = st.substr(2)
     let info = layer ? layer.getInfo() : null
-    info = 
-      info 
-      ? 
+    info =
+      info
+      ?
       (
-        info.gid 
+        info.gid
         ?
-        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id + ', gid: ' + info.gid 
+        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id + ', gid: ' + info.gid
         :
-        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id 
+        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id
       )
-      : 
+      :
       ''
     return (
       <div>

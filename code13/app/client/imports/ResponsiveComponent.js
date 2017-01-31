@@ -2,13 +2,15 @@ import _ from 'lodash'
 import React  from 'react'
 import elementResizeDetectorMaker  from 'element-resize-detector'
 
-const _erd = elementResizeDetectorMaker({ strategy: "scroll" })
+let _erd
 const _ResponsiveRulesClassPrefix = 'rrc-'
 export default function (Component, wrapperStyles = {}, componentStyles = {}) {
   class ResponsiveComponent extends React.Component {
     constructor() {
       super()
-
+      if(!_erd){
+        _erd = elementResizeDetectorMaker({ strategy: "scroll" })
+      }
       this.state = {
         loaded:       false,
         width:        0,

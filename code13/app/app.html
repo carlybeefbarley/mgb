@@ -27,7 +27,10 @@
           isFinite(value) &&
           Math.floor(value) === value;
     };
-
+    // allow CDN connections from other locations
+    window.setTimeout(function(){
+      __meteor_runtime_config__.DDP_DEFAULT_CONNECTION_URL = __meteor_runtime_config__.ROOT_URL
+    }, 0)
   </script>
 </head>
 

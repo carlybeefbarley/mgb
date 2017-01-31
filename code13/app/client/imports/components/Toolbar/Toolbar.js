@@ -140,11 +140,14 @@ export default class Toolbar extends React.Component {
     }
 
     this._onKeyDown = (e) => {
+      // don't steal events from input fields
+      // Textarea is exception - because of Codemirror textarea
+      // make sure to have proper modifiers (ctrl, alt...) - otherwise Toolbar will steal event
+      if (["INPUT", "SELECT"].indexOf(e.target.tagName) > -1)
+        return
       const keyval = this.getKeyval(e)
       if (this.keyActions[keyval]) {
         e.preventDefault()
-        // TODO(@Stauzs) Do we need this?
-        // e.stopPropagation()
       }
     }
 
@@ -161,7 +164,6 @@ export default class Toolbar extends React.Component {
           return
 
         e.preventDefault()
-        // e.stopPropagation()
 
         const action = this.keyActions[keyval].action
         joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-keypress`)

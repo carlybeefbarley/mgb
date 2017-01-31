@@ -55,10 +55,10 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
         "cache-control": cacheHeader
       }, headers)
     : Object.assign({
-        "etag": etag,
-        // if we don't have hash param - still allow CloudFront to store asset,
-        // but force it to re-validate ( usually response will end up with 304 - not Modified )
-        // this will allow browser to cache images - and then it won't refresh these
+        // "etag": etag,
+        // if we don't have hash param -
+        // we may allow cloudfront to cache, but force it to re-validate ( usually response will end up with 304 - not Modified )
+        // this will allow browser to cache images - and then it won't refresh images - which is not what we want
         // "cache-control": `public, max-age=0, s-maxage=0, must-revalidate`
       }, headers)
 

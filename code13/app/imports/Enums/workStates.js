@@ -12,7 +12,7 @@ export const defaultWorkStateName = "unknown"
 export const bestWorkStateName = "showcase"
 
 export const workStateColors = {
-  "broken": "",
+  "broken": null,
   "experiment": "orange",
   "unknown": "yellow",
   "working": "green",

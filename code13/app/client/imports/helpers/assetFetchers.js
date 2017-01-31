@@ -14,8 +14,10 @@ import { getProjectAvatarUrl as getProjectAvatarUrlBasic } from '/imports/schema
 const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers  // Big hammer to disable it if we hit a scalability crunch (or could make it user-specific or sysvar)
-const MAX_ASSET_CACHE_LENGTH = 500  // Max # of assets in cache; not a size-based metric yet
 const MAX_CACHED_ASSETHANDLERS = 10 // Max # of AssetHandlers that will be cached
+
+// left resource caching for browser to manage
+// const MAX_ASSET_CACHE_LENGTH = 500  // Max # of assets in cache; not a size-based metric yet
 
 // CDN_DOMAIN will be set at startup. See createCloudFront.js for the magic
 let CDN_DOMAIN = ""
@@ -137,13 +139,16 @@ export const fetchAssetByUri = (uri) => {
 }
 
 // simple cache of ajax requests
+/*
+WE DON'T NEED TO CACHE AJAX REQUESTS SINCE WE ALLOW BROWSER TO CACHE LOCALLY RESOURCES
+
+atm leaving as comment as we need to re-check if browser cache works as expected
 const ajaxCache = []
 const getFromCache = (uri, etag = null) => {
   return ajaxCache.find(c => {
     return (c.uri == uri && (etag ? c.etag == etag : true))
   })
 }
-
 const addToCache = (uri, etag, response) => {
   const cached = getFromCache(uri, etag)
   if (cached) {
@@ -166,15 +171,16 @@ const removeFromCache = uri => {
     ajaxCache.splice(index, 1)
   }
 }
+*/
 
 // this function will try to make the best use of etag caching  (TODO: Clarify 'best of etag' comment)
 // "best of" because asset param is optional, but when it present - server and client etag will be the same
-// and this allows to cache api response locally
+// and this allows to cache api response locally - ALLOW BROWSER TO CACHE RESOURCES
 // asset param is optional - without it this function will work as normal ajax
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
 export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
-  if (etag) {
+  /*if (etag) {
     const cached = getFromCache(uri, etag)
     if (cached) {
       // remove from stack to maintain async behaviour
@@ -185,12 +191,14 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
     }
   }
   else
-    removeFromCache(uri)
+    removeFromCache(uri)*/
 
   const client = new XMLHttpRequest()
   const cdnLink = makeCDNLink(uri, etag)
 
-  if(__meteor_runtime_config__.ROOT_URL != document.location.origin && cdnLink.startsWith('/') && !cdnLink.startsWith('//')){
+  const isLocal = uri.startsWith('/') && !uri.startsWith('//')
+
+  if(__meteor_runtime_config__.ROOT_URL != document.location.origin && isLocal){
     return mgbAjax(__meteor_runtime_config__.ROOT_URL + uri, callback, asset, onRequestOpen)
   }
 
@@ -204,14 +212,14 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified
     if (this.status >= 200 && this.status < 300) {
-      if (etag && this.getResponseHeader("etag")) {
+      /*if (etag && this.getResponseHeader("etag")) {
         addToCache(uri, etag, this.response)
-      }
+      }*/
       callback(null, this.response, client)
     }
     else {
       // try link without CDN
-      if (usingCDN && uri.startsWith('/') && !uri.startsWith('//')) {
+      if (usingCDN && isLocal) {
         console.log("CDN failed - trying local uri")
         mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
         return
@@ -220,7 +228,7 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
     }
   }
   client.onerror = function (e) {
-    if (usingCDN) {
+    if (usingCDN && isLocal) {
       console.log("CDN failed - trying local uri")
       mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
       return

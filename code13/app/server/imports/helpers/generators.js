@@ -46,8 +46,8 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   const etag = genetag(asset)
   // pragma: no-store header will force cloudfront to skip cache totally
   // so remove it
-  //if (api.queryParams.hash)
-  api.response.removeHeader("pragma")
+  if (api.queryParams.hash)
+    api.response.removeHeader("pragma")
 
   const newHeaders = api.queryParams.hash
     ? Object.assign({
@@ -58,7 +58,8 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
         "etag": etag,
         // if we don't have hash param - still allow CloudFront to store asset,
         // but force it to re-validate ( usually response will end up with 304 - not Modified )
-        "cache-control": `public, max-age=0, s-maxage=0, must-revalidate`
+        // this will allow browser to cache images - and then it won't refresh these
+        // "cache-control": `public, max-age=0, s-maxage=0, must-revalidate`
       }, headers)
 
   // check if client already have cached resource

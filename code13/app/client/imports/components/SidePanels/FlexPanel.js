@@ -190,6 +190,9 @@ export default FlexPanel = React.createClass({
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return true
 
+    if (this.props.selectedViewTag == tag)
+      return true
+
     return false
   },
 

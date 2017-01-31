@@ -48,7 +48,6 @@ const WorkState = (props) => {
                     active={name == props.workState}
                     onClick={(e) => {
                       e.preventDefault()
-                      $(this._popupInitiator).popup('hide')
                       props.canEdit && props.handleChange && props.handleChange(name)
                     }}>
                     <Label circular color={workStateColors[name]} className='workstate' title={name}>

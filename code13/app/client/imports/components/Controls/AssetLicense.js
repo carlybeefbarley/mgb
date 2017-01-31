@@ -18,7 +18,7 @@ const AssetLicense = ( { license, popupPosition, handleChange, canEdit } ) => {
       <Popup
         hoverable    // So mouse-over popup keeps it visible for Edit for example
         on='hover'
-        position={popupPosition}
+        positioning={popupPosition}
         size='small'
         style={canEdit ? {fontSize: '16px'} : {} }
         trigger={(

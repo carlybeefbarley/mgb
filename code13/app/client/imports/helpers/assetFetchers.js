@@ -23,6 +23,11 @@ Meteor.startup(() => {
   Meteor.call("CDN.domain", (err, cdnDomain) => {
     if (!err)
       CDN_DOMAIN = cdnDomain
+    /*
+    // for CDN debugging only
+    else
+      CDN_DOMAIN = 'test.loc:3000' // any other domain that points to same machine (hosts hack)
+    */
     console.log(`Using CDN: '${CDN_DOMAIN}'`)
   })
 })
@@ -49,7 +54,7 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
         return `${__meteor_runtime_config__.ROOT_URL}${uri}?hash=${hash}`
       }
     }
-    const ret = CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
+    return CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
   }
 
   return uri
@@ -168,9 +173,6 @@ const removeFromCache = uri => {
 // asset param is optional - without it this function will work as normal ajax
 // cached resources should save 100-1000 ms per request (depends on headers roundtrip)
 export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
-  if(__meteor_runtime_config__.ROOT_URL != document.location.origin && uri.startsWith('/') && !uri.startsWith('//')){
-    return mgbAjax(__meteor_runtime_config__.ROOT_URL+uri, callback, asset, onRequestOpen)
-  }
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
   if (etag) {
     const cached = getFromCache(uri, etag)
@@ -187,6 +189,11 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
 
   const client = new XMLHttpRequest()
   const cdnLink = makeCDNLink(uri, etag)
+
+  if(__meteor_runtime_config__.ROOT_URL != document.location.origin && cdnLink.startsWith('/') && !cdnLink.startsWith('//')){
+    return mgbAjax(__meteor_runtime_config__.ROOT_URL + uri, callback, asset, onRequestOpen)
+  }
+
   const usingCDN = uri == cdnLink
   client.open('GET', cdnLink)
 

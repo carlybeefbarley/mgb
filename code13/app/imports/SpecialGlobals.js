@@ -21,6 +21,10 @@ export default SpecialGlobals = {
     "gravity":        0.1
   },
 
+  thumbnail: {
+    width: 200,
+    height: 150
+  },
   // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling
   allowObservers: true,
   editCode: {

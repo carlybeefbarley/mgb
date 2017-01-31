@@ -17,19 +17,30 @@ import Plural         from '/client/imports/helpers/Plural'
 
 import { showToast } from '/client/imports/routes/App'
 
+import SpecialGlobals from '/imports/SpecialGlobals.js'
+
 const MOUSE_BUTTONS = {
-  none: 0, //  : No button or un-initialized
-  left: 1, //  : Left button
-  right: 2, //   : Right button
-  middle: 4, //  : Wheel button or middle button
-  back: 8, //  : 4th button (typically the "Browser Back" button)
-  forward: 16// : 5th button (typically the "Browser Forward" button)
+  none: 0,     //  No button or un-initialized
+  left: 1,     //  Left button
+  right: 2,    //  Right button
+  middle: 4,   //  Wheel button or middle button
+  back: 8,     //  4th button (typically the "Browser Back" button)
+  forward: 16  //  5th button (typically the "Browser Forward" button)
 }
 
 import './EditMap.css'
 
-const MAX_ZOOM = 10
-const MIN_ZOOM = 0.2
+const MAX_ZOOM = 10 // scale
+const MIN_ZOOM = 0.2 // scale
+
+const DEFAULT_PREVIEW_ANGLE_X = 5 // degrees on x axis in 3d preview
+const DEFAULT_PREVIEW_ANGLE_Y = 15 // degrees on y axis in 3d preview
+const MAX_ANGLE_Y_IN_3D_VIEW = 60 // max degrees on y axis in 3d preview
+const DEFAULT_DISTANCE_BETWEEN_LAYERS = 20 // default distance between layers in 3d preview - can be adjusted with Alt + scroll at runtime
+const DEFAULT_DISTANCE_FROM_CAMERA = 300 // distance from camera on z axis in 3d review
+
+const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
+const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
 
 export default class MapArea extends React.Component {
 
@@ -37,9 +48,9 @@ export default class MapArea extends React.Component {
     super(props)
 
     this.preview = {
-      x: 5, // angle on x axis
-      y: 15, // angle on y axis
-      sep: 20 // layer separation pixels
+      x: DEFAULT_PREVIEW_ANGLE_X, // angle on x axis
+      y: DEFAULT_PREVIEW_ANGLE_Y, // angle on y axis
+      sep: DEFAULT_DISTANCE_BETWEEN_LAYERS // layer separation pixels
     }
     this.state = {
       isPlaying: false
@@ -391,8 +402,8 @@ export default class MapArea extends React.Component {
 
   resetPreview() {
 
-    this.preview.x = 5
-    this.preview.y = 15
+    this.preview.x = DEFAULT_PREVIEW_ANGLE_X
+    this.preview.y = DEFAULT_PREVIEW_ANGLE_Y
 
     this.adjustPreview()
   }
@@ -522,16 +533,22 @@ export default class MapArea extends React.Component {
         return
       }
 
+      // 360 - full circle
+      // 90 - right angle
+      // 180 - straight angle
+      // 270 - opposite right angle
+
       const tr = this.preview
       tr.x = tr.x % 360
       tr.y = tr.y % 360
 
       l.refs.layer.style.transform = 'perspective(2000px) rotateX(' + this.preview.x + 'deg) ' +
         'rotateY(' + this.preview.y + 'deg) rotateZ(0deg) ' +
-        'translateZ(-' + ((tot - z) * tr.sep + 300) + 'px)'
+        'translateZ(-' + ((tot - z) * tr.sep + DEFAULT_DISTANCE_FROM_CAMERA) + 'px)'
       const ay = Math.abs(tr.y)
       const ax = Math.abs(tr.x)
 
+      // adjust z index based on angles vs screen
       if (ay > 90 && ay < 270 && ax > 90 && ax < 270)
         l.refs.layer.style.zIndex = -i
       else if (ay > 90 && ay < 270 || ax > 90 && ax < 270)
@@ -544,11 +561,11 @@ export default class MapArea extends React.Component {
 
 
     const baseWidth = this.refs.mapElement.parentElement.offsetWidth
-    const maxAngle = 60 // 90 will make map 2x width
+    const maxAngle = MAX_ANGLE_Y_IN_3D_VIEW // 90 will make map 2x width
     // resize map to show content which is further - depending on angle
     if(this.preview.y > 0 && this.options.preview) {
       const inc = this.preview.y > maxAngle ? maxAngle : this.preview.y
-      const w = baseWidth / Math.cos(inc * Math.PI / 180)
+      const w = baseWidth / Math.cos(inc * Math.PI / 180) // TODO: fix this formula
       this.refs.mapElement.style.width = w + "px"
     }
     else{
@@ -798,8 +815,8 @@ export default class MapArea extends React.Component {
   // find out correct thumbnail size
   generatePreview() {
     const canvas = document.createElement('canvas')
-    canvas.width = 200
-    canvas.height = 150
+    canvas.width = THUMBNAIL_WIDTH
+    canvas.height = THUMBNAIL_HEIGHT
     const ctx = canvas.getContext('2d')
     let ratio
 

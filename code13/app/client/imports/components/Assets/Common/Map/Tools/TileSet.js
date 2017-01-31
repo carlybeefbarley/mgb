@@ -11,6 +11,8 @@ import LayerTypes from './LayerTypes.js'
 import EditModes from './EditModes.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import {AssetKindEnum} from '/imports/schemas/assets'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers.js'
+
 
 export default class TileSet extends React.Component {
   /* lifecycle functions */
@@ -26,7 +28,7 @@ export default class TileSet extends React.Component {
     this.renderTileset = this.renderTileset.bind(this)
     this.showTileListPopup = this.showTileListPopup.bind(this)
   }
-  
+
   componentDidMount () {
     $('.ui.accordion')
       .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
@@ -58,7 +60,7 @@ export default class TileSet extends React.Component {
       $(this.refs.modal).remove()
     }
   }
-  
+
   componentDidUpdate(){
     // re-render after update
     this.adjustCanvas()
@@ -371,7 +373,7 @@ export default class TileSet extends React.Component {
         key={index}><span className='tileset-title-list-item'>{title}</span></a>
     )
   }
-  
+
   genTilesetImage(index, isActive, tileset){
     const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
     return (
@@ -384,7 +386,7 @@ export default class TileSet extends React.Component {
           this.selectTileset(index)
         }}
         >
-        <img src={tileset.image}/>
+        <img src={makeCDNLink(tileset.image, makeExpireTimestamp(30))}/>
         <span className="tilesetPreviewTitle">{tileset.name}</span>
       </div>
     )
@@ -422,7 +424,7 @@ export default class TileSet extends React.Component {
     }
     return <div className="showList" onClick={this.showTileListPopup}><i className='ui external icon'></i> </div>
   }
-  
+
   renderEmpty () {
     return (
       <div className='mgbAccordionScroller'>

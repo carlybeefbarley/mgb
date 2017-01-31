@@ -6,6 +6,7 @@ import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers.js'
 import _ from 'lodash'
 
 
@@ -26,8 +27,8 @@ export default class ActorTileset extends React.Component {
   removeTileset = () => {
     if (!this.props.activeTileset || this.props.activeTileset.firstgid < 100) { return } // Don't remove Events
     this.props.removeTileset(this.props.activeTileset)
-    this.props.clearActiveSelection() 
-  } 
+    this.props.clearActiveSelection()
+  }
 
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
@@ -104,12 +105,12 @@ export default class ActorTileset extends React.Component {
         }}
 
         style={{
-          minWidth: '80px', 
-          width: 'calc(50% - 2em)', 
-          margin: '1em', 
+          minWidth: '80px',
+          width: 'calc(50% - 2em)',
+          margin: '1em',
           padding: 0,
           paddingTop: 'auto',
-          borderRadius: '.28571429rem', 
+          borderRadius: '.28571429rem',
           border: 'none',
           boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
           opacity: 0.75
@@ -117,7 +118,7 @@ export default class ActorTileset extends React.Component {
         >
         <img
           className="mgb-pixelated"
-          src={tileset.image} 
+          src={makeCDNLink(tileset.image)}
           width={width}
           height={imgRatio * width}
           style={{verticalAlign: 'middle'}}
@@ -134,7 +135,7 @@ export default class ActorTileset extends React.Component {
               <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1]}</p>
             )
             :
-            <p>{tileset.name.split(':')[1]}</p> 
+            <p>{tileset.name.split(':')[1]}</p>
           }
         </Label>
       </Grid.Column >
@@ -172,16 +173,16 @@ export default class ActorTileset extends React.Component {
           {label}
           {
           this.props.getActiveLayerData().name !== "Events" && (this.props.tilesets && this.props.tilesets.length > 1) &&
-          <Icon 
-              size='large' 
-              name='trash' 
+          <Icon
+              size='large'
+              name='trash'
               onClick={this.removeTileset}
               style={{position: 'absolute', top: '5px', right: '-5px', cursor: 'pointer'}}
           />
           }
         </Label>
         {
-          !this.props.tilesets.length 
+          !this.props.tilesets.length
           ?
           <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
           :

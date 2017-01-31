@@ -1,6 +1,6 @@
 
-// If you REALLY have to have some special global values/ids in this codebase, 
-// at least put it here and reference it from here so we understand the extent of 
+// If you REALLY have to have some special global values/ids in this codebase,
+// at least put it here and reference it from here so we understand the extent of
 // this code smell in our codebase :)
 
 
@@ -25,7 +25,8 @@ export default SpecialGlobals = {
   allowObservers: true,
   editCode: {
     maxFileSizeForAST: 100 * 1024, // 100 KB
-    typingSpeed: 750 //ms - this will prevent all updates for X time after keypress - improves fast typing UX (feels more responsive)
+    typingSpeed: 750, //ms - this will prevent all updates for X time after keypress - improves fast typing UX (feels more responsive)
+    maxLengthOfCursorHistory: 100
   },
 
   assets: {
@@ -36,7 +37,7 @@ export default SpecialGlobals = {
     "maxUndoSteps":       99,
     "objectRotationStep": 15
   },
-  
+
   //these are used in the ActorHelper
   actorMap: {
     actionsImage:   '/api/asset/tileset/AymKGyM9grSAo3yjp',
@@ -49,11 +50,11 @@ export default SpecialGlobals = {
   },
 
   settings: {
-    settingsSaveDebounceMs: 300           // Should be small - less than a second, because there is a race when page nav happens because of getMeteorData() in App.js 
+    settingsSaveDebounceMs: 300           // Should be small - less than a second, because there is a race when page nav happens because of getMeteorData() in App.js
   },
 
   skillsModelTrifecta: {  // See SkillNodes.js to understand these values related to the SKILLS_MODEL_TRIFECTA
-    tutorialAccount:         '!vault', 
+    tutorialAccount:         '!vault',
     tutorialAssetNamePrefix: 'tutorials.',
 
     signupTutorialName:       'tutorials._special.signup'

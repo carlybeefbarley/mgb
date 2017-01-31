@@ -24,12 +24,13 @@ import makeBundle from '/imports/helpers/codeBundle'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+
+import getCDNWorker from '/client/imports/helpers/CDNWorker'
 // import tlint from 'tern-lint'
 
 // **GLOBAL*** Tern JS - See comment below...
 import scoped_tern from "tern"
 window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
-
 
 // Tern 'definition files'
 // import "tern/lib/def"     // Do I need? since I'm doing it differently in next 2 lines...
@@ -129,6 +130,11 @@ export default class EditCode extends React.Component {
 
     // store last saved value to prevent unnecessary updates and fancy behavior
     this.lastSavedValue = ""
+
+    this.cursorHistory = {
+      undo: [],
+      redo: []
+    }
   }
 
 
@@ -254,6 +260,17 @@ export default class EditCode extends React.Component {
     this.codeMirror.on('dragover', this.handleDragOver.bind(this))
     this.codeMirror.on('drop', this.handleDropAsset.bind(this))
 
+    this.codeMirror.on('mousedown', this.handleDocumentClick.bind(this))
+    this.codeMirror.on('keydown', (cm, e) => {
+      if(e.ctrlKey && e.altKey){
+        e.preventDefault()
+      }
+    })
+    this.codeMirror.on('keyup', (cm, e) => {
+      if(e.ctrlKey && e.altKey){
+        e.preventDefault()
+      }
+    })
     this._currentCodemirrorValue = this.props.asset.content2.src || ''
 
     this.codeMirrorUpdateHintsChanged()
@@ -280,6 +297,11 @@ export default class EditCode extends React.Component {
     this.doHandleFontSizeDelta(0, { force: true } )
 
     this.isActive = true
+
+    this.cursorHistory = {
+      undo: [],
+      redo: []
+    }
   }
 
 
@@ -329,7 +351,7 @@ export default class EditCode extends React.Component {
           strong: true
         }
       },
-      workerScript: "/lib/TernWorker.js"
+      workerScript: "/lib/workers/TernWorker.js"
       /*,
        responseFilter: function (doc, query, request, error, data) {
        // Woah - capture all the responses from the TernServer
@@ -408,6 +430,7 @@ export default class EditCode extends React.Component {
       this.changeTimeoutFn()
     }
     this.isActive = false
+    this.cursorHistory = null
   }
 
   terminateWorkers() {
@@ -613,6 +636,56 @@ export default class EditCode extends React.Component {
     }
   }
 
+  // TODO(@stauzs): add deeper analysis - would be really nice to - allow to change asset on include ??
+  handleDocumentClick(cm, event) {
+    const pos = cm.coordsChar({left: event.clientX, top: event.clientY})
+    // click on the gutter
+    if(pos.xRel < 0){
+      return
+    }
+    const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
+    this.cursorHistory.undo.push(currentCursor)
+
+    // do we really need to reset redo steps??? - test it
+    this.cursorHistory.redo.length = 0
+    if(this.cursorHistory.undo.length > SpecialGlobals.editCode.maxLengthOfCursorHistory){
+      this.cursorHistory.undo.shift()
+    }
+
+    if (event.ctrlKey) {
+
+      // console.log("ctrl-click at", pos.line, ",", pos.ch);
+      // let currentToken = cm.getTokenAt(pos, true)
+      // console.log("TOKEN", currentToken)
+      // let currentCursor = _.cloneDeep(this.codeMirror.getCursor())
+      // currentCursor.line = pos.line
+      // currentCursor.ch = pos.ch
+      this.codeMirror.setCursor(pos)
+      this.cursorHistory.undo.push(pos)
+      this.ternServer.jumpToDef(cm)
+
+      // disable multi select ?
+      event.preventDefault() // if you don't want the cursor to move here.
+    }
+  }
+
+  goBack(){
+    const pos = this.cursorHistory.undo.pop()
+    this.cursorHistory.redo.push(this.codeMirror.getCursor())
+    this.codeMirror.setCursor(pos)
+    //this.ternServer.jumpBack(this.codeMirror)
+    this.codeMirror.focus()
+  }
+  goForward(){
+    const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
+    this.cursorHistory.undo.push(currentCursor)
+    
+    const pos = this.cursorHistory.redo.pop()
+    this.codeMirror.setCursor(pos)
+    //this.ternServer.jumpBack(this.codeMirror)
+    this.codeMirror.focus()
+  }
+
   _getMgbAssetIdsInLine(lineText) {
     //  let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
     // TODO: split regexp for each case
@@ -686,7 +759,7 @@ export default class EditCode extends React.Component {
 
     if (!this.jshintWorker) {
       // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
-      this.jshintWorker = new Worker("/lib/JSHintWorker.js")
+      this.jshintWorker = getCDNWorker("/lib/workers/JSHintWorker.js")
     }
 
     const conf = {
@@ -1498,6 +1571,26 @@ export default class EditCode extends React.Component {
           level:    1,
           shortcut: 'Ctrl+I'
         },
+        { name: 'separator' },
+        {
+          name: 'goBack',
+          icon: 'arrow left',
+          level:    2,
+          label: 'Go Back',
+          tooltip: 'This action will move cursor to the previous location',
+          disabled: !this.cursorHistory.undo.length,
+          shortcut: 'Ctrl+Alt+LEFT'
+        },
+        {
+          name: 'goForward',
+          icon: 'arrow right',
+          label: 'Go Forward',
+          level:    2,
+          tooltip: 'This action will move cursor to the next location',
+          disabled: !this.cursorHistory.redo.length,
+          shortcut: 'Ctrl+Alt+RIGHT'
+        },
+        { name: 'separator' },
         {
           name:  'toolZoomOut',
           label: 'Small Font',
@@ -1516,6 +1609,7 @@ export default class EditCode extends React.Component {
           level:    2,
           shortcut: 'Ctrl+L'
         },
+        { name: 'separator' },
         {
           name:  'handleJsBeautify',
           label: 'Beautify Code',
@@ -1525,6 +1619,7 @@ export default class EditCode extends React.Component {
           level:    3,
           shortcut: 'Ctrl+B'
         },
+        { name: 'separator' },
         {
           name:  'toggleFold',
           label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
@@ -1533,7 +1628,8 @@ export default class EditCode extends React.Component {
           disabled: false,
           level:    3,
           shortcut: 'Ctrl+Alt+f'
-        }
+        },
+        { name: 'separator' }
       ]
     }
 
@@ -1596,6 +1692,7 @@ export default class EditCode extends React.Component {
         level:    3,
         shortcut: 'Ctrl+Alt+Shift+F'
       })
+      config.buttons.push({ name: 'separator' })
       config.buttons.push( {
         name:  'toggleBundling',
         label: 'Auto Bundle code',

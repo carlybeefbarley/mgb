@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-/*
+
 import EditActorMap from './EditActorMap/EditActorMap'
 import EditActor from './EditActor/EditActor'
 import EditMap from './EditMap/EditMap'
@@ -10,9 +10,9 @@ import EditMusic from './EditAudio/EditMusic/EditMusic'
 import EditSound from './EditAudio/EditSound/EditSound'
 import EditGraphic from './EditGraphic/EditGraphic'
 import EditUnknown from './EditUnknown'
-*/
+
 const editElementsForKind = {
-  /*'graphic':   EditGraphic,
+  'graphic':   EditGraphic,
   'tutorial':  EditCode,
   'code':      EditCode,
   'map':       EditMap,
@@ -21,7 +21,7 @@ const editElementsForKind = {
   'doc':       EditDoc,
   'sound':     EditSound,
   'music':     EditMusic,
-  'game':      EditGame*/
+  'game':      EditGame
 }
 
 const AssetEdit = ( props ) => {

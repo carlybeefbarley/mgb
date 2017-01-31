@@ -5,7 +5,7 @@
  Check server_main.js - to enable this script for production
 
  For more information see:
-  AWS CloudFront docs: https://aws.amazon.com/cloudfront/ 
+  AWS CloudFront docs: https://aws.amazon.com/cloudfront/
   MGB DevDocs Notes:   app/DeveloperDocs/CloudfrontSummary.md
  */
 
@@ -36,19 +36,60 @@ const allowedOrigins = [
   'https://test.mygamebuilder.com',
   'http://test.mygamebuilder.com:3000',
   'http://v2.mygamebuilder.com',
-  'https://v2.mygamebuilder.com'
+  'https://v2.mygamebuilder.com',
+  'http://localhost:3000',
+  'http://test.loc:3000'
 ]
 
 export const getCDNDomain = () => (CLOUDFRONT_DOMAIN_NAME)
 
 export const setUpCloudFront = function () {
 
+  // CORS fixes, needs to have the domain names we will test/deploy against (defined at top of file in allowedOrigins)
+  WebApp.rawConnectHandlers.use(function (req, res, next) {
+    console.log("req:", req._parsedUrl.pathname, req.headers.origin)
+    const isFont = req._parsedUrl.pathname.endsWith(".woff2") || req._parsedUrl.pathname.endsWith(".woff") || req._parsedUrl.pathname.endsWith(".ttf")
+    if (isFont) {
+      res.setHeader('access-control-allow-origin', '*')
+      const maxAge = 5 * 60
+      res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
+    }
+    else {
+      const index = req.headers.origin ? allowedOrigins.indexOf(req.headers.origin) : allowedOrigins.indexOf(req.headers.host)
+      if (index > -1) {
+        console.log("Setting access-control-allow-origin:", allowedOrigins[index])
+        res.setHeader('access-control-allow-origin', allowedOrigins[index])
+        // If the server specifies an origin host other than "*",
+        // then it must also include Origin in the 'Vary' response header
+        // to indicate to clients that server responses will differ
+        // based on the value of the Origin request header.
+        res.setHeader('vary', 'origin')
+      }
+      // Also allow for all domains
+      // res.setHeader('access-control-allow-origin', '*')   // This is the wide-open option. Leaving it here since it can be helpful for debugging
+      res.setHeader('access-control-expose-headers', 'etag')
+
+      // Cache static files for STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES - after Meteor update they will be invalidated before cache expires
+      if (
+        req._parsedUrl.path.startsWith("/badges") ||
+        req._parsedUrl.path.startsWith("/audio") ||
+        req._parsedUrl.path.startsWith("/images") ||
+        req._parsedUrl.path.startsWith("/lib")
+      ) {
+        const maxAge = STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES * 60
+        res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`)
+      }
+    }
+    return next()
+  });
+  // End of CORS FIX
+
   // Are we currently on a test server but running with production flag? If so, return now to bypass CloudFront
   if (!Meteor.isProduction)
     return
 
   // TODO(@stauzs#252): make detection of changes to CloudFront Parameters automatic
-  //   Issue: AWS provides no way for us to easily/quickly check if the CloudFront config 
+  //   Issue: AWS provides no way for us to easily/quickly check if the CloudFront config
   //   has been really changed - so we need to do it manually for now.
   //   See #https://github.com/devlapse/mgb/issues/252 for the workitem to do thus
   const needToUpdateCloudFrontParameters = false    //   <--  // don't set this to true unless you REALLY know what you are doing (like @stauzs)
@@ -59,7 +100,7 @@ export const setUpCloudFront = function () {
   const HTTP_PORT = Meteor.isProduction ? 80 : 3000
   const HTTPS_PORT = 443
   // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html
-  const params = { // AWS CloudFront Params. Comments are from their docs 
+  const params = { // AWS CloudFront Params. Comments are from their docs
     DistributionConfig: {
       /* required */
       CallerReference: 'mgb-' + ORIGIN_ID, /* required - A unique value (for example, a date-time stamp) that ensures that the request can't be replayed */
@@ -248,43 +289,6 @@ export const setUpCloudFront = function () {
     "CDN.domain": getCDNDomain
   })
 
-  // CORS fixes, needs to have the domain names we will test/deploy against (defined at top of file in allowedOrigins)
-  WebApp.rawConnectHandlers.use(function (req, res, next) {
-    const isFont = req._parsedUrl.path.endsWith(".woff2") || req._parsedUrl.path.endsWith(".woff") || req._parsedUrl.path.endsWith(".ttf")
-    if (isFont) {
-      res.setHeader('access-control-allow-origin', '*')
-      const maxAge = 5 * 60
-      res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
-    }
-    else {
-      const index = req.headers.origin ? allowedOrigins.indexOf(req.headers.origin) : allowedOrigins.indexOf(req.headers.host)
-      if (index > -1) {
-        res.setHeader('access-control-allow-origin', allowedOrigins[index])
-        // If the server specifies an origin host other than "*",
-        // then it must also include Origin in the 'Vary' response header
-        // to indicate to clients that server responses will differ
-        // based on the value of the Origin request header.
-        res.setHeader('vary', 'origin')
-      }
-      // Also allow for all domains
-      // res.setHeader('access-control-allow-origin', '*')   // This is the wide-open option. Leaving it here since it can be helpful for debugging
-      res.setHeader('access-control-expose-headers', 'etag')
-
-      // Cache static files for STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES - after Meteor update they will be invalidated before cache expires
-      if (
-        req._parsedUrl.path.startsWith("/badges") ||
-        req._parsedUrl.path.startsWith("/audio") ||
-        req._parsedUrl.path.startsWith("/images") ||
-        req._parsedUrl.path.startsWith("/lib")
-      ) {
-        const maxAge = STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES * 60
-        res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`)
-      }
-    }
-    return next()
-  });
-// End of CORS FIX
-
   AWS.config.update(config)
   const cloudfront = new AWS.CloudFront( { apiVersion: '2016-11-25' } )
 
@@ -365,7 +369,7 @@ export const setUpCloudFront = function () {
         else {
           CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
           Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: Distribution deployed and ready to serve: ${CLOUDFRONT_DOMAIN_NAME}`)
-          // we need to set this a 2nd time - as Meteor has some sort of 
+          // we need to set this a 2nd time - as Meteor has some sort of
           // caching / delay system for WebAppInternals.setBundledJsCssUrlRewriteHook
           WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook)
         }
@@ -374,7 +378,7 @@ export const setUpCloudFront = function () {
     else {
       CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
       Meteor.call("Slack.Cloudfront.notification", `${ORIGIN_ID}: CloudFront distribution is Ready @ ${CLOUDFRONT_DOMAIN_NAME}`)
-      // we need to set this a 2nd time - as Meteor has some sort of 
+      // we need to set this a 2nd time - as Meteor has some sort of
       // caching / delay system for WebAppInternals.setBundledJsCssUrlRewriteHook
       WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook)
     }

@@ -23,10 +23,13 @@ Meteor.startup(() => {
   Meteor.call("CDN.domain", (err, cdnDomain) => {
     if (!err)
       CDN_DOMAIN = cdnDomain
+    else
+      CDN_DOMAIN = 'test.loc:3000'
     console.log(`Using CDN: '${CDN_DOMAIN}'`)
   })
 })
 
+export const getCDNDomain = () => CDN_DOMAIN
 // makeCDNLink() will convert a local link e.g. /api/asset to //xxx.cloufront.com/api/asset?hash
 // uri MUST have a leading slash in order to be converted (but not //)
 export const makeCDNLink = (uri, etagOrHash = null) => {

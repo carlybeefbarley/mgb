@@ -4,6 +4,8 @@ import {observeAsset, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetF
 import {AssetKindEnum} from '/imports/schemas/assets'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import getCDNWorker from '/client/imports/helpers/CDNWorker'
+
 // serving modules from...
 const getModuleServer = (lib, version = 'latest') => {
   const parts = lib.split("@")
@@ -46,7 +48,7 @@ export default class SourceTools {
     //
     this.asset_id = asset_id
     this.tern = ternServer
-    this.babelWorker = new Worker("/lib/BabelWorker.js")
+    this.babelWorker = getCDNWorker("/lib/workers/BabelWorker.js")
 
     // all collected sources in the order of inclusion
     this.collectedSources = []
@@ -643,12 +645,11 @@ main = function(){
   }
 
   loadDefs(defs){
-
     for(let i=0; i<defs.length; i++){
       if( this.addedFilesAndDefs[defs[i]]){
         continue
       }
-      mgbAjax(makeCDNLink(defs[i]), (err, data) => {
+      mgbAjax(defs[i], (err, data) => {
         if(err){
           console.error(`Failed to load def ${defs[i]}`, err)
           return
@@ -715,7 +716,7 @@ main = function(){
       allInOneBundle += "\n" + "})(); "
 
       // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
-      const worker = new Worker("/lib/BabelWorker.js")
+      const worker = getCDNWorker("/lib/workers/BabelWorker.js")
       worker.onmessage = (e) => {
         cb(e.data.code)
         worker.terminate()

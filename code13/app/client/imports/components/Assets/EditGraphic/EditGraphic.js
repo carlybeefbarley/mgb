@@ -32,8 +32,7 @@ const settings_ignoreMouseLeave = true
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
 //   1. Drawing on preview+Editor canvas
-//   2. Some popup handling (uses Semanticui .popup() jquery extension. Typically these have the 'hazPopup' class
-//   3. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
+//   2. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
 
 
 // Also, in order to optimize some draw and draw-while-save-is-pending scenarios, there is some special handling 

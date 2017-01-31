@@ -56,7 +56,6 @@ export const setUpCloudFront = function () {
     else {
       const index = req.headers.origin ? allowedOrigins.indexOf(req.headers.origin) : allowedOrigins.indexOf(req.headers.host)
       if (index > -1) {
-        console.log("Setting access-control-allow-origin:", allowedOrigins[index])
         res.setHeader('access-control-allow-origin', allowedOrigins[index])
         // If the server specifies an origin host other than "*",
         // then it must also include Origin in the 'Vary' response header

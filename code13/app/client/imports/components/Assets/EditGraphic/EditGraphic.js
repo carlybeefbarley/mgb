@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Grid, Label, Popup, Button, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
 import ColorPicker from 'react-color'        // http://casesandberg.github.io/react-color/
@@ -31,8 +32,7 @@ const settings_ignoreMouseLeave = true
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
 //   1. Drawing on preview+Editor canvas
-//   2. Some popup handling (uses Semanticui .popup() jquery extension. Typically these have the 'hazPopup' class
-//   3. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
+//   2. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
 
 
 // Also, in order to optimize some draw and draw-while-save-is-pending scenarios, there is some special handling 
@@ -166,9 +166,6 @@ export default class EditGraphic extends React.Component {
     this.editCanvas.addEventListener('mouseenter',    this.handleMouseEnter.bind(this))
     this.editCanvas.addEventListener('contextmenu',   this.handleContextMenu.bind(this))
 
-    // Tool button initializations
-    this.activateToolPopups()    
-    
     this.doSnapshotActivity()
 
     //TODO: add only to canvas?
@@ -216,16 +213,6 @@ export default class EditGraphic extends React.Component {
     // }
 
     if (autoFix) this.handleSave("Automatic fixing old assets")
-  }
-
-
-  activateToolPopups()
-  {
-    // See http://semantic-ui.com/modules/popup.html#/usage
-
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
-
   }
 
 // TODO: DGOLDS to clean this up -- combine with mgb1ImportTiles etc
@@ -996,7 +983,6 @@ export default class EditGraphic extends React.Component {
       this.redoSteps = []
   }
 
-
   doMakeUndoStackEntry(changeInfoString)
   {
     return {
@@ -1007,7 +993,6 @@ export default class EditGraphic extends React.Component {
       savedContent2: $.extend(true, {}, this.props.asset.content2)
     }
   }
-
 
   doTrimUndoStack()
   {
@@ -1021,8 +1006,6 @@ export default class EditGraphic extends React.Component {
     this.doTrimUndoStack()
     this.undoSteps.push(this.doMakeUndoStackEntry(changeInfoString))
   }
-
-
 
   doTrimRedoStack() {
     if (this.redoSteps.length > 20) this.redoSteps.shift()
@@ -1049,7 +1032,6 @@ export default class EditGraphic extends React.Component {
     }
     snapshotActivity(this.props.asset, passiveAction)
   }
-
 
   toolHandleUndo()
   {
@@ -1089,7 +1071,7 @@ export default class EditGraphic extends React.Component {
 
   handleSave(changeText="change graphic", dontSaveFrameData = false, allowBackwash = true)    // TODO(DGOLDS): Maybe _.throttle() this?
   {
-    console.log('save', changeText)
+    console.log('Graphic save', changeText)
     if (!this.props.canEdit)
     {
       this.props.editDeniedReminder()
@@ -1486,7 +1468,7 @@ export default class EditGraphic extends React.Component {
     return { actions, config }
   }
 
-  setGrid(img){
+  setGrid(img) {
     this.gridImg = img
   }
 
@@ -1502,13 +1484,10 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  setScrollMode(mode){
+  setScrollMode(mode) {
     this.setState({ scrollMode: mode})
   }
 
-
-  // React Callback: render()
-  // See http://semantic-ui.com to understand the classNames we are using.
   render() {
     this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
@@ -1526,17 +1505,14 @@ export default class EditGraphic extends React.Component {
 
     // Make element
     return (
-      <div className="ui grid">
-
+      <Grid>
         {/***  Central Column is for Edit and other wide stuff  ***/}
 
-        <div className={"mgbEditGraphicSty_tagPosition ui sixteen wide column"} >
+        <Grid.Column width='16' className='mgbEditGraphicSty_tagPosition'>
           <div className="row" style={{marginBottom: "6px"}}>
 
             <div className="ui small labeled input">
-              <div className="ui small label" title="Canvas width">
-                w:
-              </div>
+              <Label size='small' content='w:'/>
               <NumberInput
                 className="ui small input"
                 min={1}
@@ -1549,9 +1525,7 @@ export default class EditGraphic extends React.Component {
 
             <span>&nbsp;&nbsp;</span>
             <div className="ui small labeled input" id="mgbjr-editGraphic-changeHeightInput">
-              <div className="ui small label" title="Canvas height">
-                h:
-              </div>
+              <Label size='small' content='h:'/>
               <NumberInput
                 className="ui small input"
                 min={1}
@@ -1562,58 +1536,56 @@ export default class EditGraphic extends React.Component {
                 />
             </div>
 
+            <span>&nbsp;&nbsp;</span>
 
-            <span>&nbsp;&nbsp;</span> 
-            <div className="ui small button miniPadding hazPopup"
-              id="mgbjr-editGraphic-changeCanvasZoom"
-              data-content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
-              data-variation="tiny"
-              data-position="bottom center">
-              <span style={{"cursor": "pointer"}} onClick={this.zoomOut.bind(this)}>
-                <i className="icon zoom out"></i>
-              </span>
-              {zoom}x
-              <span>&nbsp;&nbsp;</span>
-              <span style={{"cursor": "pointer"}} onClick={this.zoomIn.bind(this)}>
-                <i className="icon zoom"></i>
-              </span>
-            </div>
-
+            <Popup trigger={ (
+              <Button size='small' className='miniPadding' id="mgbjr-editGraphic-changeCanvasZoom">
+                <span style={{"cursor": "pointer"}} onClick={this.zoomOut.bind(this)}>
+                  <Icon name='zoom out'/>
+                </span>
+                {zoom}x
+                <span>&nbsp;&nbsp;</span>
+                <span style={{"cursor": "pointer"}} onClick={this.zoomIn.bind(this)}>
+                  <Icon name='zoom out'/>
+                </span>
+              </Button>)}
+                on='hover'
+                content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
+                size='tiny'
+                positioning='bottom center'/>
 
             <span>&nbsp;&nbsp;</span>
-            <div className="ui small button hazPopup"
-               data-content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
-               data-variation="tiny"
-               data-position="bottom center">
-              <i className="spinner icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
+            <Popup 
+              trigger={<Button size='small' icon='spinner' content={`Frame #${1+this.state.selectedFrameIdx} of ${c2.frameNames.length}`}/>}
+               content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
+               size='small'
+               positioning='bottom center'/>
+            </div>
+          <Grid.Row style={{marginBottom: "6px"}}>
+            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
+          </Grid.Row>
+
+          <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "hidden")}>
+            <div className="inline fields">
+              <label>Scroll modes</label>
+              {
+                scrollModes.map( (mode) => (
+                  <div key={mode} className="field">
+                  <div className="ui radio checkbox" >
+                    <input type="radio" name={mode} 
+                    checked={mode == this.state.scrollMode ? "checked" : ""} 
+                    onChange={this.setScrollMode.bind(this, mode)} />
+                    <label>{mode}</label>
+                  </div>
+                  </div>
+                  
+                ))
+              }
             </div>
           </div>
 
-          <div className="row" style={{marginBottom: "6px"}}>
-            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
-          </div>
 
-          <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "hidden")}>
-          <div className="inline fields">
-            <label>Scroll modes</label>
-            {
-              scrollModes.map( (mode) => (
-                <div key={mode} className="field">
-                <div className="ui radio checkbox" >
-                  <input type="radio" name={mode} 
-                  checked={mode == this.state.scrollMode ? "checked" : ""} 
-                  onChange={this.setScrollMode.bind(this, mode)} />
-                  <label>{mode}</label>
-                </div>
-                </div>
-                
-              ))
-            }
-          </div>
-          </div>
-
-
-          <div className="row" style={{"minHeight": "92px"}}>
+          <Grid.Row style={{"minHeight": "92px"}}>
             <div   style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
               <canvas ref="editCanvas"
                         style={imgEditorSty}
@@ -1630,20 +1602,20 @@ export default class EditGraphic extends React.Component {
                 setGrid={this.setGrid.bind(this)}
               />
             </div>
-          </div>
+          </Grid.Row>
 
           {/*** Status Bar ***/}
 
           <div className="ui horizontal very relaxed list" ref="statusBarDiv">
             <div className="item">
-              <i className="pointing up icon"></i>
+              <Icon name='pointing up' />
               <div className="content" ref="statusBarMouseAtText">
                 Mouse at xy
               </div>
             </div>
 
             <div className="item">
-              <i className="square icon" ref="statusBarColorAtIcon"></i>
+              <i className="square icon" ref="statusBarColorAtIcon"/>
               <div className="content" ref="statusBarColorAtText">
                 Color at xy
               </div>
@@ -1661,7 +1633,7 @@ export default class EditGraphic extends React.Component {
                          color={this.state.selectedColors['fg'].rgb}/>
           </div>
 
-        </div>
+        </Grid.Column>
 
       {/*** GraphicImport ***/}
         <div className="ui modal" ref="graphicImportPopup">
@@ -1672,7 +1644,6 @@ export default class EditGraphic extends React.Component {
             maxTileHeight={MAX_BITMAP_WIDTH}
           />
         </div>
-
 
       {/*** SpriteLayers ***/}
         
@@ -1685,12 +1656,10 @@ export default class EditGraphic extends React.Component {
             forceDraw={this.forceDraw.bind(this)}
             forceUpdate={this.forceUpdate.bind(this)}
             getFrameData={ frameId => this.frameCanvasArray[frameId].toDataURL('image/png') }
-            getLayerData={ layerId => {
-              return this.previewCanvasArray[layerId].toDataURL('image/png')
-            } }
+            getLayerData={ layerId => (this.previewCanvasArray[layerId].toDataURL('image/png') ) }
           />
 
-      </div>
+      </Grid>
     )
   }
 }

@@ -66,7 +66,6 @@ const AssetLicense = ( { license, popupPosition, handleChange, canEdit } ) => {
                   style={{paddingRight: '2em'}}
                   onClick={e => {
                     e.preventDefault()
-                    // $(this._popupInitiator).popup('hide')
                     canEdit && handleChange && handleChange(key)
                   }}>
                 <Label basic={key !== actualLicense} color={(key === actualLicense) ? 'black' : null} style={{width: '9em'}}>

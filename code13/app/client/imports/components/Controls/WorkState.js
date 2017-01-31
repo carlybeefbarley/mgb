@@ -1,12 +1,72 @@
+import style from './WorkState.css'
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { workStateNames, workStateColors, workStateIcons } from '/imports/Enums/workStates'
-import style from './WorkState.css'
+import { Header, Icon, Label, List, Popup } from 'semantic-ui-react'
 
 // Note that this is a Stateless function:
 //   See https://facebook.github.io/react/docs/reusable-components.html
 
-const _propTypes = {
+const WorkStateIcon = (props) => (
+  <Icon name={workStateIcons[props.name]} color='black' style={{ margin: '0 0 0 -0.07em', fontSize: '1.25em'}} />
+)
+
+const labelSty = {
+  marginBottom: "4px",
+  textAlign: "left",
+  whiteSpace: "nowrap"
+}
+
+const WorkState = (props) => {
+  const { workState } = props
+
+  return (
+      <Popup
+        on="hover"
+        hoverable={props.canEdit}    // So mouse-over popup keeps it visible for Edit for example
+        positioning={props.popupPosition}
+        trigger={(
+          <Label circular={props.showMicro} size='small' color={workStateColors[props.workState]} className='workstate'>
+            <WorkStateIcon name={props.workState} />
+            { !props.showMicro && workState }
+          </Label>
+        )}
+      >
+        { props.canEdit ? (
+            <div>
+              { props.showMicro && (
+                <Header textAlign="left">
+                  <small>Quality level</small>
+                </Header>
+              )}
+              <List selection>
+                {_.map(workStateNames, (name, idx) => (
+                  <List.Item
+                    key={idx}
+                    style={labelSty}
+                    color={workStateColors[name]}
+                    active={name == props.workState}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      props.canEdit && props.handleChange && props.handleChange(name)
+                    }}>
+                    <Label circular color={workStateColors[name]} className='workstate' title={name}>
+                      <WorkStateIcon name={name} />
+                    </Label>
+                    &nbsp;&nbsp;
+                    {name}
+                  </List.Item>
+                ))}
+              </List>
+            </div>
+          ) : (
+            `Quality=${workState}`
+          ) }
+      </Popup>
+  )
+}
+
+WorkState.propTypes = {
   workState:      PropTypes.string.isRequired,      // E.g  "unknown"
   popupPosition:  PropTypes.string,
   showMicro:      PropTypes.bool,                   // If true then show really compactly (single char in circular label)
@@ -14,71 +74,8 @@ const _propTypes = {
   canEdit:        PropTypes.bool                    // If false, then don't allow popup/change
 }
 
-const _initPopup = (c, popupPosition, isHoverable) => (
-  c && $(c).popup( {
-    on: "hover",
-    hoverable: isHoverable,    // So mouse-over popup keeps it visible for Edit for example
-    inline: true,
-    closable: true,
-    position: popupPosition || "bottom right",
-    lastResort: "bottom right"
-  })
-)
-
-const WorkStateIcon = (props) => (
-  <i className={`black ${workStateIcons[props.name]} icon`} style={{ margin: '0 0 0 -0.07em', fontSize: '1.25em'}}></i>
-)
-
-const WorkState = (props) => {
-  const description = props.workState
-  const labelSty = {
-    marginBottom: "4px",
-    textAlign: "left",
-    whiteSpace: "nowrap"
-  }
-
-  return (
-    <span>
-      <div className={`workstate ui small ${workStateColors[props.workState]} ${props.showMicro ? 'circular ' : ''} label`}
-          title={ props.canEdit ? null : `Quality=${description}` }
-          ref={ (c) => { _initPopup(c, props.popupPosition, props.canEdit); this._popupInitiator = c } }>
-          <WorkStateIcon name={props.workState} />
-        { !props.showMicro && description }
-      </div>
-
-      { props.canEdit &&
-        <div className="ui popup" style={{fontSize: '16px'}}>
-          { props.showMicro &&
-            <div className="ui left aligned header"><small>Quality level</small></div>
-          }
-          <div className="ui left aligned selection list">
-          {
-            _.map(workStateNames, (name,idx) => (
-                <div
-                  key={idx}
-                  style={labelSty}
-                  className={`ui item left aligned fluid ${workStateColors[name]} ${(name == props.workState) ? 'active' : ''}`}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    $(this._popupInitiator).popup('hide')
-                    props.canEdit && props.handleChange && props.handleChange(name)
-                  }}>
-                  <div className={`workstate ui ${workStateColors[name]} circular label`}
-                      title={name}>
-                      <WorkStateIcon name={name} />
-                  </div>
-                  &nbsp;&nbsp;
-                  {name}
-                </div>
-              )
-            )
-          }
-          </div>
-        </div>
-      }
-    </span>
-  )
+WorkState.defaultProps = {
+  popupPosition: "bottom right",
 }
 
-WorkState.propTypes = _propTypes
 export default WorkState

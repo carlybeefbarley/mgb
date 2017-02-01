@@ -83,7 +83,7 @@ export default class MapToolbar extends React.Component {
         {
           name: 'resetCamera',
           icon: 'crosshairs',
-          iconText:  `${(this.props.options.camera.zoom * 100).toFixed(0)}%`,
+          iconText:  disabled ? '100%' : `${(this.props.options.camera.zoom * 100).toFixed(0)}%`,
           label: 'Reset Camera',
           tooltip: 'Set Zoom to 100% and move map to 0,0 coordinates',
           disabled,

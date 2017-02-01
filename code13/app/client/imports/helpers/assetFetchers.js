@@ -284,6 +284,10 @@ class AssetHandler {
       this.onChange = onChange
 
     const asset = Azzets.findOne(this.id)
+    // TODO: figure out what to do if we don't have asset in the DB - is it on it's way? or is it deleted?
+    if(!asset){
+      return
+    }
     // save previous content2
     asset.content2 = this.asset ? this.asset.content2 : null
 

@@ -341,8 +341,12 @@ export default class Toolbar extends React.Component {
       return
     }
     // nice warning for conflicting shortcuts
-    if(this.keyActions[keyval] && action != this.keyActions[keyval].action && !this.getButtonFromAction(action).disabled){
-      console.error(`Multiple Keybord shortcuts detected: '${this.keyActions[keyval].action}' and ${action}}.. overwriting`)
+    if(this.keyActions[keyval]
+      && action != this.keyActions[keyval].action
+      && !this.getButtonFromAction(action).disabled
+      && !this.getButtonFromAction(this.keyActions[keyval].action ).disabled
+    ){
+      console.error(`Multiple Keyboard shortcuts detected: '${this.keyActions[keyval].action}' and ${action}}.. overwriting`)
     }
     this.keyActions[keyval] = this.props.actions[action].bind(this.props.actions)
     this.keyActions[keyval].action = action

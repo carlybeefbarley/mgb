@@ -130,7 +130,7 @@ export default class ActorTileset extends React.Component {
           borderRadius: '.28571429rem', 
           border: 'none',
           boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
-          opacity: 0.75
+          opacity: 0.8
         }}
         >
         <img

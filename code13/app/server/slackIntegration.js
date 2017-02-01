@@ -73,11 +73,11 @@ Meteor.methods({
 
     const userUrl=`https://v2.mygamebuilder.com/u/${username}`
     const assetUrl=`https://v2.mygamebuilder.com/u/${username}/asset/${docId}`
-    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
-      username: `MGBv2 @${username}`,
-      icon_emoji: ':pencil:',
-      text: `New ${kind} Asset <${assetUrl}|${assetname}> created by user <${userUrl}|${username}>`
-    })
+    //slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+    //  username: `MGBv2 @${username}`,
+    //  icon_emoji: ':pencil:',
+    //  text: `New ${kind} Asset <${assetUrl}|${assetname}> created by user <${userUrl}|${username}>`
+    //})
   }
 })
 

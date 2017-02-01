@@ -47,24 +47,45 @@ export default class ActorMapArea extends BaseMapArea {
 
    // render related methods
   getInfo() {
-    const layer = this.getActiveLayer()
+    const activeLayer = this.getActiveLayer()
+    const layers = this.sortLayersByActive(activeLayer)
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
-
-    let info = layer ? layer.getInfo() : ''
-    //let layers = layer ? this.sortLayersByActive(layer.data.name) : []
-    let actor = info ? (info.gid ? this.props.data.tilesets[Math.floor(info.gid/100)] : null) : null
+    let inspectInfo = {'Background': [], 'Active': [], 'Foreground': [], 'Events': []}
+    let layerInfo = activeLayer ? activeLayer.getInfo() : null
+ 
+    if (layerInfo) {
+      var tilesets = this.props.data.tilesets
+      if (layerInfo.gid) {
+        var actor = tilesets[Math.floor(layerInfo.gid/100)]
+      }
+      tilesets.map( ts => {
+        if (ActorHelper.checks['Background'](ts)) {
+          inspectInfo['Background'].push(ts)
+        }
+        else if (ActorHelper.checks['Active'](ts)) {
+          inspectInfo['Active'].push(ts)
+        }
+        else if (ActorHelper.checks['Foreground'](ts)) {
+          inspectInfo['Foreground'].push(ts)
+        }
+        else {
+          inspectInfo['Events'].push(ts)
+        }
+      })
+      console.log(inspectInfo)
+    }
 
     return (
       <div>
           { 
-            info 
+            layerInfo 
             ? 
             (<span>
               {
-              info.gid
+              layerInfo.gid
               ?
               <p>
-                <b style={{fontSize: '1em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
+                <b style={{fontSize: '1em'}}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + '):'}</b>
                 <span style={{fontSize: '0.9em'}}>
                   <br />
                   <span>&ensp;<b>Actor: </b>{actor.name.split(':').pop()}</span>
@@ -73,7 +94,7 @@ export default class ActorMapArea extends BaseMapArea {
                 </span>
               </p>
               :
-              <b style={{fontSize: '1em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>
+              <b style={{fontSize: '1em'}}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>
               }
             </span>)
             : 
@@ -86,10 +107,13 @@ export default class ActorMapArea extends BaseMapArea {
   // Sort Layers to show in Inspect info so that Active Layer is at the top
   sortLayersByActive(activeLayer) {
     const layers = ['Event', 'Foreground', 'Active', 'Background']
+    if (!activeLayer) {
+      return layers
+    }
     const newLayers = []
-    const index = layers.indexOf(activeLayer)
+    const index = layers.indexOf(activeLayer.data.name)
     layers.splice(index, 1)
-    newLayers[0] = activeLayer
+    newLayers[0] = activeLayer.data.name
     layers.map((layer) => newLayers.push(layer))
     return newLayers
   }

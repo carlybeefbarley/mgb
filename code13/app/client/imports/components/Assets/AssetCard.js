@@ -171,7 +171,7 @@ export default AssetCard = React.createClass({
       <div 
           key={asset._id} 
           className={"ui " + assetKindColor + " card animated fadeIn"}
-          style={ { minWidth: '200px', marginTop: '0.25em', marginBottom: '0.25em' } }>
+          style={ { minWidth: '200px' } }>
       
         <div 
             className="ui centered image" 

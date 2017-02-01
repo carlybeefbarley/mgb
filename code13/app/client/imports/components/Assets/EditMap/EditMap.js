@@ -413,27 +413,27 @@ export default class EditMap extends React.Component {
             tilesets={c2.tilesets}
             options={this.options}
             />
-            <br />
-            <Properties
-              {...this.propertiesProps}
-              data={this.mgb_content2}
+          <br />
+          <Properties
+            {...this.propertiesProps}
+            data={this.mgb_content2}
 
-              map={{
-                width: c2.width,
-                height: c2.height,
-                tilewidth: c2.tilewidth,
-                tileheight: c2.tileheight
-              }}
-              tileset={c2.tilesets[this.state.activeTileset]}
-              layer={c2.layers[this.state.activeLayer]}
-              />
-            <br />
-            <ObjectList
-              {...this.objectListProps}
-              activeObject={this.state.activeObject}
-              data={this.mgb_content2}
-              layer={c2.layers[this.state.activeLayer]}
-              />
+            map={{
+              width: c2.width,
+              height: c2.height,
+              tilewidth: c2.tilewidth,
+              tileheight: c2.tileheight
+            }}
+            tileset={c2.tilesets[this.state.activeTileset]}
+            layer={c2.layers[this.state.activeLayer]}
+            />
+          <br />
+          <ObjectList
+            {...this.objectListProps}
+            activeObject={this.state.activeObject}
+            data={this.mgb_content2}
+            layer={c2.layers[this.state.activeLayer]}
+            />
         </div>
       </div>
     )

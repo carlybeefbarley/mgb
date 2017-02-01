@@ -230,6 +230,7 @@ export default class Toolbar extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener("keyup", this._onKeyUp)
+    window.removeEventListener("keydown", this._onKeyDown)
     window.removeEventListener("mousemove", this._onMouseMove)
     window.removeEventListener("mouseup", this._onMouseUp)
     if (this._trackerComputationContext)

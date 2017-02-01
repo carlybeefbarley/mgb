@@ -1,27 +1,25 @@
-'use strict'
 import _ from 'lodash'
 import React from 'react'
+import { Accordion, Icon, List, Button } from 'semantic-ui-react'
 import LayerTypes from './LayerTypes.js'
 
-export default class Layers extends React.Component {
-
-  componentDidMount () {
-    $('.ui.accordion')
-      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
-  }
-
+export default class ObjectList extends React.Component {
   raise () {
     this.props.lowerOrRaiseObject()
   }
-
   lower () {
     this.props.lowerOrRaiseObject(true)
   }
-
   showOrHideObject (index) {
     this.props.showOrHideObject(index)
+    // TODO: @stausz remove this in favor of setState locally for the active item
+    this.forceUpdate()
   }
-  handleClick (index) {
+  handleClick (event, index) {
+    // do not change selection when toggling visibility icon
+    if (_.includes(event.target.classList, 'icon'))
+      return
+
     this.props.setPickedObject(index)
   }
   renderBlock (content = [] , active = 0) {
@@ -31,67 +29,74 @@ export default class Layers extends React.Component {
       const d = activeLayer.data
       const l = d.objects ? d.objects.length - 1 : 0
       rise = (
-        <button className={active < l && active > -1 ? 'ui floated icon button' : 'ui floated icon button disabled'} onClick={this.raise.bind(this)} title='Raise Object'>
-          <i className='angle up icon'></i>
-        </button>
+        <Button
+          icon='angle up'
+          disabled={!(active < l && active > -1)}
+          onClick={this.raise.bind(this)} title='Raise Object'
+        />
       )
       lower = (
-        <button className={active > 0 && active > -1 ? 'ui floated icon button' : 'ui floated icon button disabled'} onClick={this.lower.bind(this)} title='Lower Object'>
-          <i className='angle down icon'></i>
-        </button>
+        <Button
+          icon='angle down'
+          disabled={!(active > 0 && active > -1)}
+          onClick={this.lower.bind(this)} title='Lower Object'
+        />
       )
       remove = (
-        <button className='ui floated icon button right' onClick={this.props.removeObject} title='Remove Selected Object(s)'>
-          <i className='delete icon'></i>
-        </button>
+        <Button
+          icon='delete'
+          size='mini'
+          floated='right'
+          onClick={this.props.removeObject} title='Remove Selected Object(s)'
+        />
       )
     }
 
-    return (
-      <div className='mgbAccordionScroller'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Objects </span>
+    const panels = [
+      {
+        title: 'Object',
+        content: (
+          <div>
+            <Button.Group size='mini'>
+              {rise}
+              {lower}
+            </Button.Group>
+            {remove}
+            <List selection>
+              {content}
+            </List>
           </div>
-          <div className='active content menu'>
-            <div className='ui mini' style={{ position: 'relative', top: '-10px' }}>
-              <div className='ui icon buttons mini'>
-                {rise}
-                {lower}
-              </div>
-              <div className='ui icon buttons mini' style={{ position: 'relative', float: "right"}}>
-                {remove}
-              </div>
-            </div>
-            {content}
-          </div>
-        </div>
-      </div>
-    )
+        )
+      }
+    ]
+    return <Accordion styled fluid defaultActiveIndex={0} panels={panels} />
   }
+
   render () {
     const activeLayer = this.props.getActiveLayer()
-    if (!activeLayer || activeLayer.type != LayerTypes.object) {
+    if (!activeLayer || activeLayer.type != LayerTypes.object)
       return null
-    }
 
     const active = this.props.activeObject
     const objects = activeLayer.data.objects
     const toRender = []
-
-    for (let i = objects.length - 1; i > -1; i--) {
-      let className = 'icon'
-      + (objects[i].visible ? ' unhide' : ' hide')
-
-      toRender.push(
-        <div key={i} className={(i == active ? 'bold active' : 'item')} onClick={this.handleClick.bind(this, i)}>
-          <i className={className} onClick={this.showOrHideObject.bind(this, i, objects[i].visible)}></i>
-          <a href='javascript:;'>
-            {objects[i].name || '(unnamed object)'}
-          </a>
-        </div>
+    _.times(objects.length, (i) => {
+      toRender.unshift(
+        <List.Item
+          key={i}
+          active={i == active}
+          onClick={(e) => this.handleClick(e, i)}
+          content={objects[i].name || '(unnamed object)'}
+          icon={{
+            name: objects[i].visible ? 'unhide' : 'hide',
+            onClick: (e) => {
+              e.preventDefault()
+              this.showOrHideObject(i, objects[i].visible)
+            }
+          }}
+        />
       )
-    }
+    })
     return this.renderBlock(toRender, active)
   }
 }

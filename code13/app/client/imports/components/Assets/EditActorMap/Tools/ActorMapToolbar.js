@@ -77,7 +77,8 @@ export default class MapToolbar extends React.Component {
           label: 'Zoom in map',
           tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
           shortcut: 'Shift+PLUS',
-          level: 7
+          level: 7,
+          disabled
         },
         {
           name: 'resetCamera',
@@ -95,7 +96,8 @@ export default class MapToolbar extends React.Component {
           label: 'Zoom out map',
           tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
           shortcut: 'Shift+MINUS',
-          level: 7
+          level: 7,
+          disabled
         },
         {
           name: 'preview',

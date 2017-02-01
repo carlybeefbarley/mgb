@@ -116,6 +116,17 @@ export default {
       }
     }
   },
+  fixImportNames: function() {
+    this.mgb_content2.tilesets.map( ts => {
+      if (ts.name !== 'Actions' && ts.name.indexOf(':') === -1) {
+        ts.name = this.props.asset.dn_ownerName + ':' + ts.name
+      }
+    })
+  },
+  fixImportGids: function() {
+    TileHelper.fixTilesetGids(this.mgb_content2)
+    this.quickSave("Loaded imported actors")
+  },
   startLoading: function(){
     this.setState({isLoading: true})
   }

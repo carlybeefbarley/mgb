@@ -11,6 +11,20 @@ import _ from 'lodash'
 
 
 export default class ActorTileset extends React.Component {
+
+  componentWillMount() {
+    // Properly update imported actor names and gids
+    if (this.props.tilesets && this.props.tilesets.length > 1) {
+      // Assumes if first actor does not have owner:asset convention and has improper gid, the rest are too
+      if (this.props.tilesets[1].name.indexOf(':') === -1) {
+        this.props.fixImportNames()
+      }
+      if (this.props.tilesets[1].firstgid < 100) {
+        this.props.fixImportGids()
+      }
+    }
+  }
+  
   // getter - returns active tileset
   get tileset(){
     return this.props.tilesets[this.props.activeTileset]
@@ -25,10 +39,11 @@ export default class ActorTileset extends React.Component {
   }
 
   removeTileset = () => {
+    debugger
     if (!this.props.activeTileset || this.props.activeTileset.firstgid < 100) { return } // Don't remove Events
     this.props.removeTileset(this.props.activeTileset)
-    this.props.clearActiveSelection()
-  }
+    this.props.clearActiveSelection() 
+  } 
 
   onDropOnLayer (e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
@@ -43,7 +58,7 @@ export default class ActorTileset extends React.Component {
     }
 
     const name = asset.dn_ownerName +":"+ asset.name
-    if (_.some(this.props.tilesets, { name: name } ) )
+    if (_.some(this.props.tilesets, { name: name } ))
     {
       showToast(`TD: This Map already contains Asset '${name}'`, 'warning')
       return
@@ -63,6 +78,7 @@ export default class ActorTileset extends React.Component {
       tileheight:   32,
       tilewidth:    32
     }
+
     const nextId = Infinity
     const map = { [name] : tileset }
     ActorHelper.loadActor(name, map, nextId, {}, null, () => {
@@ -91,7 +107,8 @@ export default class ActorTileset extends React.Component {
   }
 
   genTilesetImage(index, isActive, tileset){
-    const title = `${tileset.name.split(':')[1]} (${tileset.imagewidth}x${tileset.imageheight})`
+    const tsName = tileset.name.indexOf(':') === -1 ? tileset.name : tileset.name.split(':').pop()
+    const title = `${tsName} (${tileset.imagewidth}x${tileset.imageheight})`
     const imgRatio = tileset.imageheight / tileset.imagewidth
     const width = tileset.imagewidth <= 64 ? 64 : 80
 
@@ -105,12 +122,12 @@ export default class ActorTileset extends React.Component {
         }}
 
         style={{
-          minWidth: '80px',
-          width: 'calc(50% - 2em)',
-          margin: '1em',
+          minWidth: '80px', 
+          width: 'calc(50% - 2em)', 
+          margin: '1em', 
           padding: 0,
           paddingTop: 'auto',
-          borderRadius: '.28571429rem',
+          borderRadius: '.28571429rem', 
           border: 'none',
           boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
           opacity: 0.75
@@ -125,17 +142,17 @@ export default class ActorTileset extends React.Component {
         />
         <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.75)', color: 'white', textAlign: 'center', padding: 0, verticalAlign: 'middle', maxHeight: '1.5em'}}>
           {
-            tileset.name.split(':')[1].length > 8
+            tsName.length > 8
             ?
             (
-              tileset.name.split(':')[1].length > 12
+              tsName.length > 12
               ?
-              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1].slice(0, -2) + '..'}</p>
+              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tsName.slice(0, -2) + '..'}</p>
               :
-              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tileset.name.split(':')[1]}</p>
+              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tsName}</p>
             )
             :
-            <p>{tileset.name.split(':')[1]}</p>
+            <p>{tsName}</p> 
           }
         </Label>
       </Grid.Column >
@@ -163,26 +180,24 @@ export default class ActorTileset extends React.Component {
 
     return tilesets
   }
-
   render(){
-    const label = this.props.getActiveLayerData().name === 'Events' ? 'Actors' : `Actors For ${this.props.getActiveLayerData().name} Layer`
-
+    const label = this.props.getActiveLayerData().name === 'Events' ? 'Actors' : `${this.props.getActiveLayerData().name} Actors`
     return (
       <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', height: '100%'}}>
         <Label attached='top'>
           {label}
           {
           this.props.getActiveLayerData().name !== "Events" && (this.props.tilesets && this.props.tilesets.length > 1) &&
-          <Icon
-              size='large'
-              name='trash'
+          <Icon 
+              size='large' 
+              name='trash' 
               onClick={this.removeTileset}
               style={{position: 'absolute', top: '5px', right: '-5px', cursor: 'pointer'}}
           />
           }
         </Label>
         {
-          !this.props.tilesets.length
+          !this.props.tilesets.length 
           ?
           <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
           :

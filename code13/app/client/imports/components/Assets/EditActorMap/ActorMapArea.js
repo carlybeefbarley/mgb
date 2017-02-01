@@ -64,14 +64,16 @@ export default class ActorMapArea extends BaseMapArea {
               info.gid
               ?
               <p>
-                <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
-                <br />
-                <span>&ensp;<b>Actor: </b>{actor.actor.databag.all.defaultGraphicName}</span>
-                <br />
-                <span>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
+                <b style={{fontSize: '1em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
+                <span style={{fontSize: '0.9em'}}>
+                  <br />
+                  <span>&ensp;<b>Actor: </b>{actor.name.split(':').pop()}</span>
+                  <br />
+                  <span>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
+                </span>
               </p>
               :
-              <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>
+              <b style={{fontSize: '1em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>
               }
             </span>)
             : 
@@ -161,7 +163,7 @@ export default class ActorMapArea extends BaseMapArea {
           <Accordion.Title>
             <i className='icon search' style={{float: 'right', color: 'white'}} />
           </Accordion.Title>
-          <Accordion.Content style={{padding: '5px', minWidth: '18em'}}>
+          <Accordion.Content style={{padding: '5px', minWidth: '16em'}}>
             <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
           </Accordion.Content>
         </Accordion>

@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import React, {Component, PropTypes} from 'react'
+import React, { PropTypes} from 'react'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-
+import { Container, Segment } from 'semantic-ui-react'
 import { Users } from '/imports/schemas'
 import { userSorters } from '/imports/schemas/users'
 
@@ -16,9 +16,9 @@ export default UserListRoute = React.createClass({
     renderVertical:     PropTypes.bool.isRequired,    // Optional. Default is false. See below.
     initialLimit:       PropTypes.number.isRequired,  // Optional. Default is 21. See below.   
     excludeUserIdsArray: PropTypes.array,             // Optional. If provided, exclude these id's. Useful for situations like add friend/member (to exclude existing ones)
-    handleClickUser:    PropTypes.func                // Optional. If provided, call this with the userId instead of going to the user Profile Page
+    handleClickUser:    PropTypes.func,               // Optional. If provided, call this with the userId instead of going to the user Profile Page
+    isTopLevelRoute:    PropTypes.bool                // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
   },
-
 
   getDefaultProps: function() {
     return {
@@ -27,7 +27,6 @@ export default UserListRoute = React.createClass({
     }
   },
 
-
   getInitialState: function() {
     return {
       userLimit: this.props.initialLimit,
@@ -35,7 +34,6 @@ export default UserListRoute = React.createClass({
       userSort: "createdNewest"                 // Must be one of the keys of userSorters. TODO: Implement select UI for this
     }
   },
-  
 
   getMeteorData() {
     const { searchName, userLimit, userSort } = this.state
@@ -95,8 +93,7 @@ export default UserListRoute = React.createClass({
   // TODO: Pagination is simplistic. Needs work to append users instead of refreshing whole list
 
   render() {
-    
-    const { excludeUserIdsArray, renderVertical, handleClickUser } = this.props
+    const { excludeUserIdsArray, renderVertical, handleClickUser, isTopLevelRoute } = this.props
     let filteredUsers = excludeUserIdsArray 
                           ? _.filter(this.data.users, u => { return !_.includes(excludeUserIdsArray, u._id) })
                           : this.data.users
@@ -106,7 +103,7 @@ export default UserListRoute = React.createClass({
     const narrowItem = !!renderVertical
     const segClass = renderVertical ? "" : "ui basic segment"
     const killBordersStyle = { borderStyle: "none", boxShadow: "none", maxWidth: "700px" }                // TODO(@dgolds): Move magic number to special globals or pass down?
-    return (
+    const Body = (
       <div className={containerClassName} style={killBordersStyle}>
         <div className={segClass} style={searchSegmentStyle}>
           <div className="ui fluid action input">
@@ -133,6 +130,8 @@ export default UserListRoute = React.createClass({
         </div>   
       </div>
     )
+
+    return isTopLevelRoute ? <Container>{Body}</Container> : Body
   },
 
   handleLoadMore() {

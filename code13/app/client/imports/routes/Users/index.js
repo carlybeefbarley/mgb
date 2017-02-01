@@ -1,4 +1,4 @@
-import List from './List'
+import UserListRoute from './UserListRoute'
 import Profile from './Profile'
 import LoginRoute from './LoginRoute'
 import SignupRoute from './SignupRoute'
@@ -9,7 +9,7 @@ import ForgotPassword from './ForgotPassword'
 import SkillTreeRoute from './SkillTreeRoute'
 
 export default {
-  List,
+  UserListRoute,
   Profile,
   BadgeListRoute,
   LoginRoute,

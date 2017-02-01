@@ -10,7 +10,7 @@ import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/Games
 import Spinner from '/client/imports/components/Nav/Spinner'
 import Helmet from 'react-helmet'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import UserListRoute from '../Users/List'
+import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
 import { logActivity } from '/imports/schemas/activity'

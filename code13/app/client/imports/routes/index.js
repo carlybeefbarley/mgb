@@ -72,7 +72,7 @@ Meteor.startup(function () {
         <Route path="/forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
         <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
 
-        <Route path="users" component={Users.List} name="Search All Users" />
+        <Route path="users" component={Users.UserListRoute} name="Search All Users" />
 
         <Route path="u/:username/import" component={Import} />
 

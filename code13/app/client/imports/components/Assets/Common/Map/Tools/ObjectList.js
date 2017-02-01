@@ -89,10 +89,7 @@ export default class ObjectList extends React.Component {
           content={objects[i].name || '(unnamed object)'}
           icon={{
             name: objects[i].visible ? 'unhide' : 'hide',
-            onClick: (e) => {
-              e.preventDefault()
-              this.showOrHideObject(i, objects[i].visible)
-            }
+            onClick: (e) => this.showOrHideObject(i, objects[i].visible)
           }}
         />
       )

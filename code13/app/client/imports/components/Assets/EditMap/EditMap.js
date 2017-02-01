@@ -42,7 +42,6 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import MapArea from './MapArea.js'
 
-import InfoTool from '../Common/Map/Tools/InfoTool.js'
 import MapToolbar from './Tools/MapToolbar.js'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'

@@ -1,4 +1,3 @@
-import ToolColorPicker from './ToolColorPicker.js'
 import ToolPen from './ToolPen.js'
 import ToolEraser from './ToolEraser.js'
 import ToolFill from './ToolFill.js'
@@ -11,12 +10,12 @@ import ToolPaste from './ToolPaste.js'
 import ToolSeparator from './ToolSeparator.js'
 
 
-// We have attempted to put many of the drawing tools in a well-separated interface, 
+// We have attempted to put many of the drawing tools in a well-separated interface,
 // with the intent to one day let users write and plug-in their own drawing tools.
 
 // Some tools are not so easily separated and it's more sensible at this stage to keep them in the main Code editor.
 
-// Items of the form {label: STRING } represent the tools in the main edit codebase (CodeEdit.js). 
+// Items of the form {label: STRING } represent the tools in the main edit codebase (CodeEdit.js).
 
 const Tools = [
 
@@ -25,7 +24,6 @@ const Tools = [
 
   ToolSeparator,
 
-  ToolColorPicker,
   ToolEyedropper,
 
   ToolSeparator,
@@ -39,7 +37,7 @@ const Tools = [
 
   ToolSeparator,
 
-  ToolSelect,  
+  ToolSelect,
   { label: "Cut" },
   { label: "Copy" },
   ToolPaste,

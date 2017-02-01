@@ -327,7 +327,7 @@ class SoundController extends Component {
 
                     <button 
                        id="mgbjr-editMusic-generateMetal-import-button"
-                      className={"ui right floated button "+(!this.props.currentBuffer ? "disabled " : "")+(this.state.isConvertingWav ? "loading" : "")} title="Import" onClick={this.importWav.bind(this)}>
+                      className={"ui right floated labeled icon button "+(!this.props.currentBuffer ? "disabled " : "")+(this.state.isConvertingWav ? "loading" : "")} title="Import" onClick={this.importWav.bind(this)}>
                       <i className="save icon"></i> Save
                     </button>
 

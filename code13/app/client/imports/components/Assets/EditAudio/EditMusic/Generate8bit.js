@@ -243,7 +243,7 @@ export default class Generate8bit extends React.Component {
             <label>Loop</label>
           </div>
 
-          <button className={"ui right floated button "+(!this.state.isAudio ? "disabled " : "")} title="Save" onClick={this.importAudio.bind(this)}>
+          <button className={"ui right floated labeled icon button "+(!this.state.isAudio ? "disabled " : "")} title="Save" onClick={this.importAudio.bind(this)}>
 	          <i className="save icon"></i> Save
 	        </button>
 				</div>

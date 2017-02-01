@@ -165,10 +165,10 @@ export default class ImportMusic extends React.Component {
               <i className={"icon stop"}></i>
             </button>
             <span>&nbsp;&nbsp;&nbsp;</span>
-            <button onClick={this.finishImport.bind(this)} className="ui small icon button">
+            <button onClick={this.finishImport.bind(this)} className="ui small labeled icon button">
               <i className="icon small save"></i>Save
             </button>
-            <button onClick={this.clearAll.bind(this)} className="ui small icon button">
+            <button onClick={this.clearAll.bind(this)} className="ui small labeled icon button">
               <i className="icon small remove circle"></i>Clear All
             </button>
           </div>

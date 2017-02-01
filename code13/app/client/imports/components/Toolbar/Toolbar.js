@@ -208,6 +208,8 @@ export default class Toolbar extends React.Component {
     this.setState( { level: this.getFeatureLevelNow()} )
     this.levelSlider = this._addLevelSlider()
 
+    this.keyActions = {}
+
     window.addEventListener("keyup", this._onKeyUp)
     window.addEventListener("keydown", this._onKeyDown)
     window.addEventListener("mousemove", this._onMouseMove)
@@ -227,6 +229,8 @@ export default class Toolbar extends React.Component {
   }
 
   componentWillUnmount() {
+    // clean up cached keyActions
+    this.keyActions = null
     window.removeEventListener("keyup", this._onKeyUp)
     window.removeEventListener("mousemove", this._onMouseMove)
     window.removeEventListener("mouseup", this._onMouseUp)
@@ -316,6 +320,9 @@ export default class Toolbar extends React.Component {
         case "MINUS":
           keyval |= 189 // numpad has 109
           continue
+        case "\\": // backslash
+          keyval |= 220
+          continue
       }
 
       if (key.length > 1)
@@ -332,6 +339,10 @@ export default class Toolbar extends React.Component {
     if (!this.props.actions[action]) {
       console.trace(`Missing Toolbar action '${action}' for shortcut'${shortcut}'`)
       return
+    }
+    // nice warning for conflicting shortcuts
+    if(this.keyActions[keyval] && action != this.keyActions[keyval].action && !this.getButtonFromAction(action).disabled){
+      console.error(`Multiple Keybord shortcuts detected: '${this.keyActions[keyval].action}' and ${action}}.. overwriting`)
     }
     this.keyActions[keyval] = this.props.actions[action].bind(this.props.actions)
     this.keyActions[keyval].action = action

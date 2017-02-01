@@ -1625,7 +1625,7 @@ export default class EditCode extends React.Component {
           tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
           disabled: false,
           level:    3,
-          shortcut: 'Ctrl+Alt+f'
+          shortcut: 'Ctrl+Shift+\\'
         },
         { name: 'separator' }
       ]
@@ -1661,7 +1661,7 @@ export default class EditCode extends React.Component {
         tooltip:  'Stop Running',
         disabled: !this.state.isPlaying,
         level:    1,
-        shortcut: this.state.isPlaying ? 'Ctrl+ENTER' : void(0)
+        shortcut: 'Ctrl+ENTER'
       })
       config.buttons.unshift( {
         name:     'handleRun',
@@ -1670,7 +1670,7 @@ export default class EditCode extends React.Component {
         tooltip:  'Run Code',
         disabled: this.state.isPlaying,
         level:    1,
-        shortcut: !this.state.isPlaying ? 'Ctrl+ENTER' : void(0)
+        shortcut: 'Ctrl+ENTER'
       })
       config.buttons.push( {
         name:  'toolCommentFade',

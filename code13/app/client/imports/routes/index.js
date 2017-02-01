@@ -94,8 +94,8 @@ Meteor.startup(function () {
         <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
         <Route path="u/:username/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
 
-        <Route path="user/:id/history" component={Users.UserHistory} name="User's History" />
-        <Route path="u/:username/history" component={Users.UserHistory} name="User's History" />
+        <Route path="user/:id/history" component={Users.UserHistoryRoute} name="User's History" />
+        <Route path="u/:username/history" component={Users.UserHistoryRoute} name="User's History" />
 
         <Route path="user/:id/badges" component={Users.BadgeListRoute} name="User's Badges" />
         <Route path="u/:username/badges" component={Users.BadgeListRoute} name="User's Badges" />

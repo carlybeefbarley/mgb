@@ -10,6 +10,8 @@ import TileHelper from './../Helpers/TileHelper.js'
 
 import BaseMapArea from '../BaseMapArea.js'
 
+import Plural         from '/client/imports/helpers/Plural'
+
 export default class TileMapLayer extends AbstractLayer {
   static propTypes = Object.assign({
       clearSelection: React.PropTypes.func.isRequired, // cleans map selection
@@ -224,6 +226,37 @@ export default class TileMapLayer extends AbstractLayer {
     return pos
   }
   getInfo () {
+    let st = ''
+    const col = this.props.getCollection()
+    col && col.forEach((t) => {
+      st += ', ' + t.gid
+    })
+    st = st.substr(2)
+
+    const info =
+      this.tilePosInfo
+        ?
+        (
+          this.tilePosInfo.gid
+            ?
+          ' (' + this.tilePosInfo.x + ', ' + this.tilePosInfo.y + '): ' + 'id: ' + this.tilePosInfo.id + ', gid: ' + this.tilePosInfo.gid
+            :
+          ' (' + this.tilePosInfo.x + ', ' + this.tilePosInfo.y + '): ' + 'id: ' + this.tilePosInfo.id
+        )
+        :
+        ''
+    return (
+      <div>
+        <div>
+          { this.data.name + ' Layer'+ info }
+        </div>
+        <div>
+          {Plural.numStr2(col.length, 'Selected Tile')}
+          {st}
+        </div>
+      </div>
+    )
+
     return this.tilePosInfo
   }
 

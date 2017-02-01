@@ -59,11 +59,22 @@ export default class ObjectLayer extends AbstractLayer {
   }
 
   getInfo () {
+    let info
     if (this.info > -1) {
       const o = this.data.objects[this.info]
-      return o ? (o.name || `(unnamed ${this.getObjectType(o)})`) : ''
+      info = o ? (o.name || `(unnamed ${this.getObjectType(o)})`) : ''
     }
-    return ''
+    return (
+      <div>
+        <div>
+          { this.data.name + ' Layer' }
+        </div>
+        <div>
+          {info}
+        </div>
+      </div>
+    )
+
   }
 
   getObjectType (o) {

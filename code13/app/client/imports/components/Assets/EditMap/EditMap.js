@@ -119,7 +119,7 @@ export default class EditMap extends React.Component {
   }
   set preventUpdates(v){
     this._preventUpdates = v
-    console.log(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
+    // console.log(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
     // failsafe
     window.setTimeout(() => {
       this._preventUpdates && console.error("Preventing updates for too long period of time.. unlocking map. DEBUG THIS!")

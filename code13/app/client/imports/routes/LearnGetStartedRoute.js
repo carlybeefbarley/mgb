@@ -118,6 +118,7 @@ const LearnGetStartedRoute = ( { currUser }, context ) => {
               <ProgressLabel subSkillsComplete={numGsSkills} subSkillTotal={_maxGsSkillCount} />
               <em className="sub header">
                 Learn to use this site - set up your profile, play a game, find friends, etc
+                <br/><small><span style={{color: 'red'}}>NOTE: We are re-working the tutorials today, they will be buggy until Friday...</span></small><br/>
                 <StartDefaultNextTutorial currUser={currUser} userSkills={context.skills}/>                             
               </em>
             </Header>

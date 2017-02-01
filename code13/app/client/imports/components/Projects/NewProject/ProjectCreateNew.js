@@ -83,7 +83,7 @@ export default ProjectCreateNew = React.createClass({
                 </input>
               </div>
             </div>
-            { inUse && <p><Icon name="warning sign"/>&emsp;You already own a Project with that Name</p> }
+            { (inUse && !this.state.buttonActionPending) && <p><Icon name="warning sign"/>&emsp;You already own a Project with that Name</p> }
           </div>
         }
 

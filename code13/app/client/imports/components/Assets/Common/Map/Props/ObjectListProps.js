@@ -15,8 +15,10 @@ export default {
     return this.refs.map.getActiveLayer()
   },
   lowerOrRaiseObject(lower){
-    this.saveForUndo('Raise object')
+    const msg = lower ? 'Lower object' : 'Raise object'
+    this.saveForUndo(msg)
     this.refs.map.lowerOrRaiseObject(lower)
+    this.quickSave(msg)
   },
   showOrHideObject(index){
     const activeLayer = this.refs.map.getActiveLayer()

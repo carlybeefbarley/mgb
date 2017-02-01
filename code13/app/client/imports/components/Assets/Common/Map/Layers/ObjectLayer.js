@@ -221,8 +221,12 @@ export default class ObjectLayer extends AbstractLayer {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
     super.handleMouseMove(e)
 
+    if(e.target !== this.refs.canvas){
+      return
+    }
+
     this.info = this.queryObject(e)
-    if (!this.mouseDown && e.target == this.refs.canvas) {
+    if (!this.mouseDown) {
       this.handles.setActive(
         (this.mouseX / this.camera.zoom - this.camera.x),
         (this.mouseY / this.camera.zoom - this.camera.y)

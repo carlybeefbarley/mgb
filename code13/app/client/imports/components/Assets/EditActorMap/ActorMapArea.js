@@ -1,5 +1,5 @@
 import React from 'react'
-import { Accordion } from 'semantic-ui-react' 
+import { Accordion } from 'semantic-ui-react'
 
 import BaseMapArea from '../Common/Map/BaseMapArea'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper'
@@ -97,8 +97,8 @@ export default class ActorMapArea extends BaseMapArea {
               <b style={{fontSize: '1em'}}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>
               }
             </span>)
-            : 
-            'Hover over a tile on the map.' 
+            :
+            'Hover over a tile on the map.'
           }
       </div>
     )

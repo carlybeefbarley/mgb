@@ -288,7 +288,7 @@ export default class GraphicImport extends React.Component {
             &emsp;
             
             <div onClick={this.performImport.bind(this)} className="ui small labeled icon button" title={`Import ${framesYielded} (${tileWidth}px x ${tileHeight}px) frames`} style={buttonSty}>
-              <i className="icon small save"></i>Perform import
+              <i className="icon small save"></i>Save
             </div>
 
             <div onClick={this.setOneFrame.bind(this)} className="ui small labeled icon button" title={`Set to one frame (${tileWidth}px x ${tileHeight}px)`} style={buttonSty}>

@@ -16,6 +16,16 @@ export default class ImportSound extends React.Component {
 	    status: "empty" // empty, draggedOver, uploading, uploaded
 	    , playerStatus: "empty" // empty, play, pause
 	  }
+
+    const fileFormats = ['mp3', 'wav', 'ogg', 'mp4', 'mpeg']
+    this.supportedFormats = []
+    const audio = new Audio()
+    fileFormats.forEach( format => {
+      if(audio.canPlayType('audio/'+format)){
+        this.supportedFormats.push(format)
+      }
+    })
+    // console.log(this.supportedFormats)
 	}
 
 	componentDidMount(){
@@ -152,6 +162,7 @@ export default class ImportSound extends React.Component {
       		onDrop={this.onDrop.bind(this)}>
       			<br/><br/><br/><br/><br/>
       			<h2>Drop sound file here!</h2>
+            <p>Supported formats: {this.supportedFormats.join(", ")}</p>
       			<br/><br/><br/><br/><br/>
       	</div>
 
@@ -165,10 +176,10 @@ export default class ImportSound extends React.Component {
 						  <i className={"icon stop"}></i>
 						</button>
 						<span>&nbsp;&nbsp;&nbsp;</span>
-	        	<button onClick={this.finishImport.bind(this)} className="ui small icon button">
-							<i className="icon small save"></i>Finish import
+	        	<button onClick={this.finishImport.bind(this)} className="ui small labeled icon button">
+							<i className="icon small save"></i>Save
 						</button>
-						<button onClick={this.clearAll.bind(this)} className="ui small icon button">
+						<button onClick={this.clearAll.bind(this)} className="ui small labeled icon button">
 							<i className="icon small remove circle"></i>Clear All
 						</button>
 	        </div>

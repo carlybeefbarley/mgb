@@ -215,7 +215,7 @@ debugger   // DEAD CODE?
     const currUser = Meteor.user()
 
     return (
-      <div className="comment animated fadeInRight" key={c._id}>
+      <div className="comment animated fadeIn" key={c._id}>
         <QLink to={to} className="avatar">
           {currUser && currUser._id == c.byUserId &&
             <img src={makeCDNLink(currUser.profile.avatar)}></img>

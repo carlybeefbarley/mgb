@@ -17,6 +17,9 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+// import sty from  './editGraphic.css';
+
+
 
 // Some constants we will use
 const MAX_BITMAP_WIDTH = 1500
@@ -79,6 +82,7 @@ export default class EditGraphic extends React.Component {
       toolActive: false,
       toolChosen: this.findToolByLabelString("Pen"),
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
+      selectDimensions: { width: 0, height: 0 },
       pasteCanvas: null,     // if object cut or copied then {x, y, width, height, imgData}
       scrollMode: "Normal"
     }
@@ -548,6 +552,11 @@ export default class EditGraphic extends React.Component {
       unselect: function() {
         self.setState({ selectRect: null })
         self.updateEditCanvasFromSelectedPreviewCanvas()
+      },
+
+      showDimensions: function(width, height){
+        self.setState({ selectDimensions: { width: width, height: height} })
+        // console.log(width, height)
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
@@ -1640,6 +1649,10 @@ export default class EditGraphic extends React.Component {
               </div>
             </div>
 
+          </div>
+
+          <div className={this.state.selectRect ? "" : "hidden"}>
+            width: {this.state.selectDimensions.width} &nbsp;&nbsp;&nbsp; height: {this.state.selectDimensions.height}
           </div>
         </Grid.Column>
 

@@ -11,7 +11,6 @@ import ActorHelper from '../Common/Map/Helpers/ActorHelper.js'
 
 import TileSet from './Tools/ActorTileset.js'
 import EventTool from './Tools/EventTool.js'
-import ObjectList from '../Common/Map/Tools/ObjectList.js'
 
 import LayerTool from '../Common/Map/Tools/Layers.js'
 import Properties from './Tools/ActorMapProperties.js'

@@ -65,19 +65,19 @@ Meteor.startup(function () {
         <Route path="/learn/getstarted" component={LearnGetStartedRoute} />
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
-        <Route path="/u/:username/games" component={BrowseGamesRoute} name="Browse User's Games" />
+        <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />
 
         <Route path="/signup" component={Users.SignupRoute} name="Sign up" />
         <Route path="/login" component={Users.LoginRoute} name="Log In" />
         <Route path="/forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
         <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
 
-        <Route path="users" component={Users.List} name="Search All Users" />
+        <Route path="users" component={Users.UserListRoute} name="Search All Users" />
 
         <Route path="u/:username/import" component={Import} />
 
-        <Route path="user/:id" component={Users.Profile} name="User Profile"/>
-        <Route path="u/:username" component={Users.Profile} name="User Profile"/>
+        <Route path="user/:id" component={Users.Profile} name="Profile"/>
+        <Route path="u/:username" component={Users.Profile} name="Profile"/>
 
         <Route path="user/:id/assets" component={Azzets.UserAssetList} name="Assets" />
         <Route path="u/:username/assets" component={Azzets.UserAssetList} name="Assets" />
@@ -85,8 +85,8 @@ Meteor.startup(function () {
         <Route path="user/:id/asset/:assetId" component={Azzets.AssetEditRoute} name="Loading asset..." />
         <Route path="u/:username/asset/:assetId" component={Azzets.AssetEditRoute} name="Loading asset..." />
 
-        <Route path="user/:id/projects" component={Projects.UserProjectList} name="User's Projects" />
-        <Route path="u/:username/projects" component={Projects.UserProjectList} name="User's Projects" />
+        <Route path="user/:id/projects" component={Projects.UserProjectList} name="Projects" />
+        <Route path="u/:username/projects" component={Projects.UserProjectList} name="Projects" />
 
         <Route path="user/:id/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
         <Route path="u/:username/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
@@ -94,19 +94,19 @@ Meteor.startup(function () {
         <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
         <Route path="u/:username/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
 
-        <Route path="user/:id/history" component={Users.UserHistory} name="User's History" />
-        <Route path="u/:username/history" component={Users.UserHistory} name="User's History" />
+        <Route path="user/:id/history" component={Users.UserHistoryRoute} name="History" />
+        <Route path="u/:username/history" component={Users.UserHistoryRoute} name="History" />
 
-        <Route path="user/:id/badges" component={Users.BadgeListRoute} name="User's Badges" />
-        <Route path="u/:username/badges" component={Users.BadgeListRoute} name="User's Badges" />
+        <Route path="user/:id/badges" component={Users.BadgeListRoute} name="Badges" />
+        <Route path="u/:username/badges" component={Users.BadgeListRoute} name="Badges" />
 
         <Route path="assets" component={Azzets.UserAssetList} name="Search All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 
-        <Route path="assetEdit/:assetId" component={Azzets.AssetEditRoute} name="Edit Asset (find owner)" />
+        <Route path="assetEdit/:assetId" component={Azzets.AssetEditRoute} name="Edit Asset (finding owner...)" />
 
-        <Route path="user/:id/skilltree" component={Users.SkillTreeRoute} name="Skill Tree" />
-        <Route path="u/:username/skilltree" component={Users.SkillTreeRoute} name="Skill Tree" />
+        <Route path="user/:id/skilltree" component={Users.SkillTreeRoute} name="Skills" />
+        <Route path="u/:username/skilltree" component={Users.SkillTreeRoute} name="Skills" />
 
         <Route path='/legal/tosDRAFT' component={TermsOfService} name='Terms Of Service' />
         <Route path='/legal/privacyDRAFT' component={Privacy} name='Privacy Policy' />

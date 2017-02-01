@@ -844,35 +844,7 @@ export default class MapArea extends React.Component {
   // render related methods
   getInfo() {
     const layer = this.getActiveLayer()
-    let st = ''
-    this.collection.forEach((t) => {
-      st += ', ' + t.gid
-    })
-    st = st.substr(2)
-    let info = layer ? layer.getInfo() : null
-    info =
-      info
-      ?
-      (
-        info.gid
-        ?
-        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id + ', gid: ' + info.gid
-        :
-        ' (' + info.x + ', ' + info.y + '): ' + 'id: ' + info.id
-      )
-      :
-      ''
-    return (
-      <div>
-        <div>
-          { layer ? layer.data.name + ' Layer'+ info : '' }
-        </div>
-        <div>
-          {Plural.numStr2(this.collection.length, 'Selected Tile')}
-          {st}
-        </div>
-      </div>
-    )
+    return layer ? layer.getInfo() : null
   }
 
   getNotification(){

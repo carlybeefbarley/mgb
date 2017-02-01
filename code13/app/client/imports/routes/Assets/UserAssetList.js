@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
-import { Segment } from 'semantic-ui-react'
+import { Segment, Divider, Grid } from 'semantic-ui-react'
 import { Azzets, Projects } from '/imports/schemas'
 import { AssetKindKeys, safeAssetKindStringSepChar, assetMakeSelector, assetSorters, isAssetKindsStringComplete } from '/imports/schemas/assets'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -262,110 +262,115 @@ export default UserAssetListRoute = React.createClass({
     const isAllKinds = isAssetKindsStringComplete(qN.kinds)
 
     // For some reason this isn't working as 'hidden divider' TODO - find out why
-    const hiddenDivider = <div className="ui divider" style={{borderStyle: "none"}}></div>
+    const hiddenDivider = <Divider hidden section/>
 
     return (
-      <Segment.Group horizontal style={{border: 0}}>
+      <Segment.Group horizontal style={{border: 0, background: 'transparent'}}>
 
         <Helmet
             title="Assets"
             meta={[ { "name": "Asset List", "content": "Assets" } ]} />
         
         <Segment style={{ minHeight: "600px", minWidth:"220px", maxWidth:"220px" }}>
+          <Grid>
+            <Grid.Column width={16}>
+              <Grid.Row>
+                <div className="ui large header">{ user ? `${name}'s Assets` : "Public Assets" }</div>     
+              </Grid.Row>  
+                        
+              <Grid.Row id="mgbjr-asset-search-projectSelector">
+                { user ? <ProjectSelector 
+                          canEdit={ownsProfile}
+                          user={user}
+                          handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+                          availableProjects={projects}
+                          ProjectListLinkUrl={"/u/" + user.profile.name + "/projects"}
+                          chosenProjectName={qN.project} />
+                : null }
+              </Grid.Row>
+                
+              { hiddenDivider }
+              
+              <Grid.Row id='mgbjr-asset-search-searchStringInput'>
+                <div className="ui action input">
+                  <input  type="text" 
+                          placeholder="Search..." 
+                          defaultValue={qN.searchName} 
+                          onChange={this.handleSearchNameBoxChanges}
+                          ref="searchNameInput" 
+                          size="16"></input>
+                  <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
+                    <i className="search icon"></i>
+                  </button>
+                </div>            
+              </Grid.Row>
 
-          <div className="ui row">
-            <div className="ui large header">{ user ? `${name}'s Assets` : "Public Assets" }</div>     
-          </div>  
-                    
-          <div id="mgbjr-asset-search-projectSelector" className="ui row">
-            { user ? <ProjectSelector 
-                      canEdit={ownsProfile}
-                      user={user}
-                      handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
-                      availableProjects={projects}
-                      ProjectListLinkUrl={"/u/" + user.profile.name + "/projects"}
-                      chosenProjectName={qN.project} />
-            : null }
-          </div>
-             
-          { hiddenDivider }
-          
-          <div id='mgbjr-asset-search-searchStringInput' className="ui row">
-            <div className="ui action input">
-              <input  type="text" 
-                      placeholder="Search..." 
-                      defaultValue={qN.searchName} 
-                      onChange={this.handleSearchNameBoxChanges}
-                      ref="searchNameInput" 
-                      size="16"></input>
-              <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
-                <i className="search icon"></i>
-              </button>
-            </div>            
-          </div>
+              { hiddenDivider }
 
-          { hiddenDivider }
+              <Grid.Row>
+                <span>
+                  <span
+                      data-position='bottom left'
+                      data-tooltip='Alt-click to multi-select'>
+                    Show asset kinds:
+                  </span>
+                  &emsp;
+                  { isAllKinds || (
+                    <small 
+                        id='mgbjr-asset-search-kind-select-allKinds' 
+                        onClick={() => {
+                          joyrideCompleteTag('mgbjr-CT-asset-search-kind-select-allKinds')
+                          this.handleToggleKind('__all')
+                        }}>
+                      (show all)
+                    </small>
+                  )}
+                </span>
+                <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
+              </Grid.Row>
+              
+              { hiddenDivider }
 
-          <div className="ui row">
-            <span>
-              <span
-                  data-position='bottom left'
-                  data-tooltip='Alt-click to multi-select'>
-                Show asset kinds:
-              </span>
-              &emsp;
-              { isAllKinds || (
-                <small 
-                    id='mgbjr-asset-search-kind-select-allKinds' 
-                    onClick={() => {
-                      joyrideCompleteTag('mgbjr-CT-asset-search-kind-select-allKinds')
-                      this.handleToggleKind('__all')
-                    }}>
-                  (show all)
-                </small>
-              )}
-            </span>
-            <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
-          </div>
-          
-          { hiddenDivider }
-
-          <div className="ui row">
-            <div className="ui secondary compact borderless fitted menu">            
-              <AssetShowStableSelector showStableFlag={qN.showStable} handleChangeFlag={this.handleChangeShowStableFlag} />
-              <AssetShowDeletedSelector showDeletedFlag={qN.showDeleted} handleChangeFlag={this.handleChangeShowDeletedFlag} />
-            </div>
-          </div>
+              <Grid.Row>
+                <div className="ui secondary compact borderless fitted menu">            
+                  <AssetShowStableSelector showStableFlag={qN.showStable} handleChangeFlag={this.handleChangeShowStableFlag} />
+                  <AssetShowDeletedSelector showDeletedFlag={qN.showDeleted} handleChangeFlag={this.handleChangeShowDeletedFlag} />
+                </div>
+              </Grid.Row>
+            </Grid.Column>
+          </Grid>
         </Segment>
 
-        <Segment style={{ minHeight: "600px"}}>        
-          <div className="ui row">
-            <CreateAssetLinkButton />
-            <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
-            <AssetListChooseView 
-                sty={{ float: 'right', marginRight: '12px'}}
-                chosenView={view}
-                handleChangeViewClick={this.handleChangeViewClick} />
-          </div>
-          
-          { hiddenDivider }
-
-          <div className="ui row">          
-            { !loading && qN.kinds === '' && <Message style={{marginTop: '8em'}} warning icon='help circle' header='Select one or more Asset kinds to be shown here' content='This list is empty because you have not selected any of the available Asset kinds to view' /> }
-            { !loading && qN.kinds !== '' && assets.length === 0 && <Message style={{marginTop: '8em'}} warning icon='help circle' header='No assets match your search' content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above" /> }
-            { loading ?
-                <div><Spinner /></div>
-              :
-                <AssetList 
-                  allowDrag={true}
-                  assets={assets} 
-                  renderView={view}
-                  currUser={currUser} 
-                  ownersProjects={projects}  />
-            }
-          </div>
+        <Segment style={{ minHeight: "600px"}}>
+           <Grid>
+            <Grid.Column width={16}>
+              <Grid.Row>
+                <CreateAssetLinkButton />
+                <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
+                <AssetListChooseView 
+                    sty={{ float: 'right', marginRight: '12px'}}
+                    chosenView={view}
+                    handleChangeViewClick={this.handleChangeViewClick} />
+              </Grid.Row>
+              
+<br/>
+              <Grid.Row>          
+                { !loading && qN.kinds === '' && <Message style={{marginTop: '8em'}} warning icon='help circle' header='Select one or more Asset kinds to be shown here' content='This list is empty because you have not selected any of the available Asset kinds to view' /> }
+                { !loading && qN.kinds !== '' && assets.length === 0 && <Message style={{marginTop: '8em'}} warning icon='help circle' header='No assets match your search' content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above" /> }
+                { loading ?
+                    <div><Spinner /></div>
+                  :
+                    <AssetList 
+                      allowDrag={true}
+                      assets={assets} 
+                      renderView={view}
+                      currUser={currUser} 
+                      ownersProjects={projects}  />
+                }
+              </Grid.Row>
+            </Grid.Column>
+          </Grid>
         </Segment>
-        
       </Segment.Group>
     )
   }

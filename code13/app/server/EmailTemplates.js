@@ -5,7 +5,7 @@ import { mjml2html } from 'mjml';
 Accounts.emailTemplates.siteName = "MyGameBuilder.com";
 
 // Accounts.emailTemplates.from = "MyGameBuilder Accounts Admin <accounts@devlapse.com>";
-Accounts.emailTemplates.from = "MyGameBuilder Accounts Admin <guntis@mycodebuilder.com>";
+Accounts.emailTemplates.from = "MyGameBuilder Accounts Admin <no-reply@mycodebuilder.com>";
 
 Accounts.emailTemplates.resetPassword.subject = function (user) {
   return "Reset your email";
@@ -26,7 +26,7 @@ Accounts.emailTemplates.resetPassword.html = function (user, url) {
           <mj-container background-color="#f8f3ea">
             <mj-section background-color="#fff">
               <mj-column width="100%">
-                <mj-text>To reset your email, please click the link below:`+url+`</mj-text>
+                <mj-text>To reset your email, please click the link below: `+url+`</mj-text>
               </mj-column>
             </mj-section>
           </mj-container>

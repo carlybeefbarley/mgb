@@ -39,7 +39,6 @@ export default class ActorTileset extends React.Component {
   }
 
   removeTileset = () => {
-    debugger
     if (!this.props.activeTileset || this.props.activeTileset.firstgid < 100) { return } // Don't remove Events
     this.props.removeTileset(this.props.activeTileset)
     this.props.clearActiveSelection() 

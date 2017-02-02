@@ -147,10 +147,10 @@ export default NavPanel = React.createClass({
       ],
       right: [
         {
-          name: 'create',
+          name: 'assets',
           icon: 'pencil',
-          hdr: 'Create',
-          to: '/assets/create',
+          hdr: 'Assets',
+          to: uname ? `/u/${uname}/assets` : '/assets',
           menu: !currUser ? [
               // logged-out menu
               {
@@ -175,8 +175,23 @@ export default NavPanel = React.createClass({
                 title: 'Create New Asset',
                 icon: { name: 'pencil', color: 'green' },
                 content: 'Create New Asset',
+              }
+            ]
+        },
+        {
+          name: 'projects',
+          icon: 'sitemap',
+          hdr: 'Projects',
+          to: uname ? `/u/${uname}/projects` : null,
+          menu: !currUser ? [
+              // logged-out menu
+              {
+                subcomponent: 'Item',
+                to: '/signup',
+                content: 'Sign Up to Create',
               },
-
+            ] : [
+              // logged-in menu
               {
                 subcomponent: 'Item',
                 id: 'mgbjr-np-create-list-my-projects',
@@ -240,13 +255,6 @@ export default NavPanel = React.createClass({
               id: 'mgbjr-np-user-myGames',
               icon: 'game',
               content: 'My Games',
-            },
-            {
-              subcomponent: 'Item',
-              to: `/u/${uname}/projects`,
-              id: 'mgbjr-np-user-myProjects',
-              icon: 'sitemap',
-              content: 'My Projects',
             },
             {
               subcomponent: 'Item',

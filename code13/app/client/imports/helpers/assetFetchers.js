@@ -453,6 +453,8 @@ const cachedAssetHandlers = []
  * this will return a (potentially cached or new) AssetHandler, not an Asset
  * */
 export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = false) => {
+  // stop other handler subscriptions - e.g. AssetRoute changed asset without calling unmount
+  cachedAssetHandlers.forEach(h => h.id !== id && h.stop())
   let handler = cachedAssetHandlers.find(h => h.id === id)
   //
   if (handler) {

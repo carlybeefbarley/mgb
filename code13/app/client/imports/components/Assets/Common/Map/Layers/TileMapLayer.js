@@ -248,7 +248,7 @@ export default class TileMapLayer extends AbstractLayer {
     return (
       <div>
         <div>
-          { this.data.name + ' Layer'+ info }
+          <strong>{ this.data.name }</strong>: { info }
         </div>
         <div>
           {Plural.numStr2(col.length, 'Selected Tile')}

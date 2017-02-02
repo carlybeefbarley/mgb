@@ -47,6 +47,11 @@ export default class ActorMapArea extends BaseMapArea {
   }
 
   handleMouseInfo(e) {
+    // Conflicts with getting pos offsets
+    if (e.target.tagName !== 'CANVAS') {
+      return
+    }
+
     this.hoveredTiles = []
     this.layers.map(layer => {
       const tileInfo = layer.getTilePosInfo(e)
@@ -72,21 +77,21 @@ export default class ActorMapArea extends BaseMapArea {
       <div key={i}>
         {
           (<div>
-            <b style={{fontSize: '1em'}}>{(info.layer ? info.layer.data.name : layer.data.name) + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
+            <b style={{fontSize: '12px'}}>{(info.layer ? info.layer.data.name : layer.data.name) + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
             <br />
             {actor.actor.databag &&
               <span>
-                <span style={{fontSize: '0.9em'}}>&ensp;<b>Actor: </b>{actor.name.split(':').pop() + ' (' + actor.imagewidth + 'x' + actor.imageheight + ')'}</span>
+                <span style={{fontSize: '11px'}}>&ensp;<b>Actor: </b>{actor.name.split(':').pop() + ' (' + actor.imagewidth + 'x' + actor.imageheight + ')'}</span>
                 <br />
-                <span style={{fontSize: '0.9em'}}>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
+                <span style={{fontSize: '11px'}}>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
               </span>
             }
             {
               actor.name === 'Actions' &&
-              <span style={{fontSize: '0.9em'}}>&ensp;<b>Type: </b>Map Event</span>
+              <span style={{fontSize: '11px'}}>&ensp;<b>Type: </b>Map Event</span>
             }
             {(i + 1 < count) && 
-              <div style={{height: '1em'}}/>
+              <div style={{height: '11px'}}/>
             }
           </div>)
         }
@@ -103,29 +108,15 @@ export default class ActorMapArea extends BaseMapArea {
     let posY = 0
 
     this.hoveredTiles.map( (tile, i) => {
-      posX = tile.x 
-      posY = tile.y
-      if (layerInfo) {
-        // Special case for Events since layerInfo pos is undefined
-        if (activeLayer && activeLayer.data.name === 'Events') {
-          if (tile.gid > 0) {
-            count += i + 1
-          }
-          ret.push(this.getInfo(tile, count, i))  
-        }
-        // Prevent grabbing wrong tiles when hovering over inspect accordion
-        else if (layerInfo.x === tile.x && layerInfo.y === tile.y) {
-          if (tile.gid > 0) {
-            count += i + 1
-          }
-          ret.push(this.getInfo(tile, count, i))  
-        }
+      if (tile.gid > 0) {
+        count += i + 1
       }
+      ret.push(this.getInfo(tile, count, i))  
     })
 
     if (count === 0) {
       if (layerInfo) 
-        return [<b style={{fontSize: '1em'}} key={-1}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>]
+        return [<b style={{fontSize: '12px'}} key={-1}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>]
       else 
         return [<div key={-1}>Hover over a tile on the map.</div>]
     }
@@ -203,7 +194,7 @@ export default class ActorMapArea extends BaseMapArea {
           <Accordion.Title>
             <i className='icon search' style={{float: 'right', color: 'white'}} />
           </Accordion.Title>
-          <Accordion.Content style={{padding: '5px', minWidth: '16.6em'}}>
+          <Accordion.Content style={{padding: '5px', minWidth: '200px'}}>
             <PositionInfo getInfo={this.getAllInfo.bind(this)} ref='positionInfo' />
           </Accordion.Content>
         </Accordion>

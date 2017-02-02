@@ -99,11 +99,22 @@ export default class ActorMapArea extends BaseMapArea {
     let activeLayer = this.getActiveLayer()
     let layerInfo = activeLayer ? activeLayer.getInfo() : null
     let count = 0
+    let posX = 0
+    let posY = 0
 
     this.hoveredTiles.map( (tile, i) => {
+      posX = tile.x 
+      posY = tile.y
       if (layerInfo) {
+        // Special case for Events since layerInfo pos is undefined
+        if (activeLayer && activeLayer.data.name === 'Events') {
+          if (tile.gid > 0) {
+            count += i + 1
+          }
+          ret.push(this.getInfo(tile, count, i))  
+        }
         // Prevent grabbing wrong tiles when hovering over inspect accordion
-        if (layerInfo.x === tile.x && layerInfo.y === tile.y) {
+        else if (layerInfo.x === tile.x && layerInfo.y === tile.y) {
           if (tile.gid > 0) {
             count += i + 1
           }
@@ -113,7 +124,7 @@ export default class ActorMapArea extends BaseMapArea {
     })
 
     if (count === 0) {
-      if (layerInfo)
+      if (layerInfo) 
         return [<b style={{fontSize: '1em'}} key={-1}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>]
       else 
         return [<div key={-1}>Hover over a tile on the map.</div>]

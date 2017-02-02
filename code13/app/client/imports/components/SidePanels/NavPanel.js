@@ -290,7 +290,7 @@ export default NavPanel = React.createClass({
 
     const navPanelItems = (side) => allNavPanels[side]
       .filter(v => (v.name !== 'user'))
-      .map(v => <NavPanelItem openLeft={side==='right'}key={v.name} hdr={useIcons ?  <Icon size='large' name={v.icon}/> : v.hdr} menu={v.menu} to={v.to}/>)
+      .map(v => <NavPanelItem openLeft={side==='right'} key={v.name} hdr={useIcons ?  <Icon size='large' name={v.icon}/> : v.hdr} menu={v.menu} to={v.to}/>)
 
     return (
       <Menu inverted style={menuStyle} id='mgbjr-navPanelHeader'>

@@ -27,10 +27,18 @@
           isFinite(value) &&
           Math.floor(value) === value;
     };
-    // allow CDN connections from other locations
+
+    // allows CDN connections from other locations
     window.setTimeout(function(){
+      if(!__meteor_runtime_config__ || !__meteor_runtime_config__.ROOT_URL)
+        return
+
+      const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
+      if(root_host.startsWith(window.location.host))
+        return
       __meteor_runtime_config__.DDP_DEFAULT_CONNECTION_URL = __meteor_runtime_config__.ROOT_URL
     }, 0)
+
   </script>
 </head>
 

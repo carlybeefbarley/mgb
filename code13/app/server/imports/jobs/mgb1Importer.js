@@ -33,25 +33,25 @@ Meteor.methods({
     //  > Meteor.call('job.import.mgb1.project', 42)
     //
 
-///* for import of Two Cities project
+/* for import of Two Cities project
     if (importParams === 42)
     {
       console.log('The meaning of life!)')
       importParams = {
-        mgb1Username:           'wish_team',
-        mgb1Projectname:        'rampage',              //   'mechanics demos',
-        mgb2Username:           'bouhm',
-        mgb2ExistingProjectName:'ActorMap Games',              //'Game Mechanics demo',
-        mgb2assetNamePrefix:    'ram.',
+        mgb1Username:           'drblakeman',
+        mgb1Projectname:        'Two Cities Bother and Wise',              //   'mechanics demos',
+        mgb2Username:           'dgolds',
+        mgb2ExistingProjectName:'Two Cities Bother and Wise',              //'Game Mechanics demo',
+        mgb2assetNamePrefix:    'two.',
         excludeTiles:           false,
-        excludeActors:          false,
-        excludeMaps:            false,
+        excludeActors:          true,
+        excludeMaps:            true,
         isDryRun:               false
       }
     }
-    thisUser = { profile: { name: 'bouhm' } }
+    thisUser = { profile: { name: 'dgolds' } }
       
-//*/      
+*/      
       //   importParams = {
       //     mgb1Username:           'azurehaze',
       //     mgb1Projectname:        'Galactic Combat',    //   'mechanics demos',

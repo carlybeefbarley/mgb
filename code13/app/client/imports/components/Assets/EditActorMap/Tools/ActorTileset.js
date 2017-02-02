@@ -86,18 +86,7 @@ export default class ActorTileset extends React.Component {
     })
   }
 
-  getTilePosInfo (e) {
-    const ts = this.tileset
-    // image has not been loaded
-    if (!ts) {
-      return
-    }
-    const pos = new SelectedTile()
-    pos.updateFromMouse(e, ts, this.spacing)
-    return pos
-  }
-
- // Render functions for Actors
+  // Render functions for Actors
   renderActors(from = 0, to = this.props.tilesets.length){
     return (
       <Grid columns='equal' style={{width: '100%', margin: 0}}>

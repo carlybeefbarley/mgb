@@ -6,6 +6,7 @@ import _ from 'lodash'
 class NavPanelItem extends Component {
   static propTypes = {
     hdr: PropTypes.node,
+    openLeft: PropTypes.bool,
     menu: PropTypes.arrayOf(PropTypes.shape({
       subcomponent: PropTypes.oneOf(['Item', 'Header', 'Divider']),
       to: PropTypes.string,
@@ -24,7 +25,7 @@ class NavPanelItem extends Component {
   handleItemClick = () => this.setState({ open: false })
 
   render() {
-    const { hdr, menu, style, to } = this.props
+    const { hdr, menu, style, to, openLeft } = this.props
     const { open } = this.state
 
     return (
@@ -36,7 +37,7 @@ class NavPanelItem extends Component {
         icon={null}
         open={open}
         style={style}>
-        <Dropdown.Menu>
+        <Dropdown.Menu style={openLeft ? { left: 'auto', right: '0' } : null}>
           {_.map(menu, ({ subcomponent, ...subcomponentProps }) => {
             return React.createElement(Dropdown[subcomponent], {
               key: subcomponentProps.content,

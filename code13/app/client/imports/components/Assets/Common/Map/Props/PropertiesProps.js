@@ -24,8 +24,9 @@ export default {
     this.mgb_content2.layers[this.state.activeLayer] = data
     this.quickSave(reason)
   },
+  // data contains reference to object - only saving is needed
   updateObject(data){
-    this.mgb_content2
+    this.quickSave(`Changed ${data.name} Properties`)
   },
   changeTileSize(data){
     const reason = "Changed Layer properties"

@@ -34,7 +34,7 @@ export default NavPanel = React.createClass({
     return { 
       left: [
         {
-          name: 'home',
+          name: 'brand',
           icon: 'home',
           hdr: (
               <Menu.Item color='black' style={{ padding: '0px 8px' }}>
@@ -45,6 +45,7 @@ export default NavPanel = React.createClass({
           menu: [
             {
               subcomponent: 'Item',
+              jrkey: 'whatsNew',       // used for mgjr-np-brand-{name} id generation for joyride system
               to: '/whatsnew',
               content: (
                 <div>
@@ -55,6 +56,7 @@ export default NavPanel = React.createClass({
             },
             {
               subcomponent: 'Item',
+              jrkey: 'roadmap',
               to: '/roadmap',
               content: 'Roadmap',
             }
@@ -68,33 +70,31 @@ export default NavPanel = React.createClass({
           menu: _.compact([
             {
               subcomponent: 'Item',
+              jrkey: 'getStarted',
               to: '/learn/getStarted',
               icon: { color: 'yellow', name: 'rocket' },
               content: 'Get Started',
             },
             {
               subcomponent: 'Item',
+              jrkey: 'makeGames',
               to: '/learn/games',
               icon: { name: 'game' },
               content: 'Make/Mod games',
             },
             {
               subcomponent: 'Item',
+              jrkey: 'learnSkills',
               to: '/learn/skills',
               icon: { color: 'green', name: 'student' },
               content: 'Learn skills',
             },
             {
               subcomponent: 'Item',
+              jrkey: 'learningPaths',
               to: '/learn',
               icon: { color: 'orange', name: 'map signs' },
               content: 'All Learning paths',
-            },
-            currUser && {
-              subcomponent: 'Item',
-              to: `/u/${currUser.username}/skilltree`,
-              icon: { name: 'plus circle' },
-              content: 'My Skills',
             }
           ]),
         },
@@ -106,7 +106,7 @@ export default NavPanel = React.createClass({
           menu: [
             {
               subcomponent: 'Item',
-              id: 'mgbjr-np-play-popularGames',
+              jrkey: 'popularGames',
               icon: { name: 'game', color: 'blue' },
               to: '/games',
               query: { sort: 'plays' },
@@ -114,7 +114,7 @@ export default NavPanel = React.createClass({
             },
             {
               subcomponent: 'Item',
-              id: 'mgbjr-np-play-updatedGames',
+              jrkey: 'updatedGames',
               icon: { name: 'game', color: 'green' },
               to: '/games',
               query: { sort: 'edited' },
@@ -130,14 +130,14 @@ export default NavPanel = React.createClass({
           menu: [
             {
               subcomponent: 'Item',
-              id: 'mgbjr-np-meet-allUsers',
+              jrkey: 'allUsers',
               to: '/users',
               icon: 'street view',
               content: 'All Users',
             },
             {
               subcomponent: 'Item',
-              id: 'mgbjr-np-meet-allAssets',
+              jrkey: 'allAssets',
               to: '/assets',
               icon: 'pencil',
               content: 'All Assets',
@@ -152,31 +152,32 @@ export default NavPanel = React.createClass({
           hdr: 'Assets',
           to: uname ? `/u/${uname}/assets` : '/assets',
           menu: !currUser ? [
-              // logged-out menu
-              {
-                subcomponent: 'Item',
-                to: '/signup',
-                content: 'Sign Up to Create',
-              },
-            ] : [
-              // logged-in menu
-              {
-                subcomponent: 'Item',
-                id: 'mgbjr-np-create-myAssets',
-                to: `/u/${uname}/assets`,
-                title: 'List my Assets',
-                icon: 'pencil',
-                content: 'List My Assets',
-              },
-              {
-                subcomponent: 'Item',
-                id: 'mgbjr-np-create-createNewAsset',
-                to: `/assets/create`,
-                title: 'Create New Asset',
-                icon: { name: 'pencil', color: 'green' },
-                content: 'Create New Asset',
-              }
-            ]
+            // logged-out menu
+            {
+              subcomponent: 'Item',
+              jrkey: 'signup',
+              to: '/signup',
+              content: 'Sign Up to Create',
+            },
+          ] : [
+            // logged-in menu
+            {
+              subcomponent: 'Item',
+              jrkey: 'listMy',
+              to: `/u/${uname}/assets`,
+              title: 'List my Assets',
+              icon: 'pencil',
+              content: 'List My Assets',
+            },
+            {
+              subcomponent: 'Item',
+              jrkey: 'createNew',
+              to: `/assets/create`,
+              title: 'Create New Asset',
+              icon: { name: 'pencil', color: 'green' },
+              content: 'Create New Asset',
+            }
+          ]
         },
         {
           name: 'projects',
@@ -184,29 +185,30 @@ export default NavPanel = React.createClass({
           hdr: 'Projects',
           to: uname ? `/u/${uname}/projects` : null,
           menu: !currUser ? [
-              // logged-out menu
-              {
-                subcomponent: 'Item',
-                to: '/signup',
-                content: 'Sign Up to Create',
-              },
-            ] : [
-              // logged-in menu
-              {
-                subcomponent: 'Item',
-                id: 'mgbjr-np-create-list-my-projects',
-                to: `/u/${uname}/projects`,
-                icon: 'sitemap',
-                content: 'List My Projects',
-              },
-              {
-                subcomponent: 'Item',
-                id: 'mgbjr-np-create-project',
-                to: `/u/${uname}/projects/create`,
-                icon: { name: 'sitemap', color: 'green' },
-                content: 'Create New Project',
-              }
-            ]
+            // logged-out menu
+            {
+              subcomponent: 'Item',
+              jrkey: 'signup',
+              to: '/signup',
+              content: 'Sign Up to Create',
+            },
+          ] : [
+            // logged-in menu
+            {
+              subcomponent: 'Item',
+              jrkey: 'listMy',
+              to: `/u/${uname}/projects`,
+              icon: 'sitemap',
+              content: 'List My Projects',
+            },
+            {
+              subcomponent: 'Item',
+              jrkey: 'createNew',
+              to: `/u/${uname}/projects/create`,
+              icon: { name: 'sitemap', color: 'green' },
+              content: 'Create New Project',
+            }
+          ]
         },
         {
           name: 'user',
@@ -218,13 +220,13 @@ export default NavPanel = React.createClass({
             // logged out menu
             {
               to: '/login',
-              id: 'mgbjr-np-user-login',
+              jrkey: 'login',
               subcomponent: 'Item',
               content: 'Log In',
             },
             {
               to: '/signup',
-              id: 'mgbjr-np-user-signup',
+              jrkey: 'signup',
               subcomponent: 'Item',
               content: 'Sign Up',
             },
@@ -233,46 +235,47 @@ export default NavPanel = React.createClass({
             // logged in menu
             {
               subcomponent: 'Header',
+              jrkey: 'username',
               content: <Header style={{paddingLeft: '1.2em'}}>{uname}</Header>
             },
             {
               subcomponent: 'Item',
               to: `/u/${uname}`,
-              id: 'mgbjr-np-user-myProfile',
+              jrkey: 'myProfile',
               icon: 'user',
               content: 'My Profile',
             },
             {
               subcomponent: 'Item',
               to: `/u/${uname}/badges`,
-              id: 'mgbjr-np-user-myBadges',
+              jrkey: 'myBadges',
               icon: 'trophy',
               content: 'My Badges',
             },
             {
               subcomponent: 'Item',
               to: `/u/${uname}/games`,
-              id: 'mgbjr-np-user-myGames',
+              jrkey: 'myGames',
               icon: 'game',
               content: 'My Games',
             },
             {
               subcomponent: 'Item',
               to: `/u/${uname}/skilltree`,
-              id: 'mgbjr-np-user-mySkills',
+              jrkey: 'mySkills',
               icon: 'plus circle',
               content: 'My Skills',
             },
             {
               subcomponent: 'Item',
               query: { '_fp': 'features' },
-              id: 'mgbjr-np-user-settings',
+              jrkey: 'settings',
               icon: 'options',
               content: 'Settings',
             },
             {
               subcomponent: 'Item',
-              id: 'mgbjr-np-user-logout',
+              jrkey: 'logout',
               icon: 'sign out',
               style: { marginTop: '1em' },
               content: 'Logout',
@@ -288,28 +291,30 @@ export default NavPanel = React.createClass({
   render() {
     const { currUser, navPanelAvailableWidth } = this.props
     const menuStyle = { borderRadius: 0, marginBottom: 0 }
-    const useIcons = navPanelAvailableWidth < 500  // px
-
-    // TODO: wire joyride into new NavPanelItem experience
-    // if (selectedViewTag && ElementNP !== null)
-    //   joyrideCompleteTag(`mgbjr-CT-navPanel-${navPanelChoice.name}-show`)
-
+    const useIcons = navPanelAvailableWidth < 600  // px
     const allNavPanels = this.getNavPanels()
 
     const navPanelItems = (side) => allNavPanels[side]
       .filter(v => (v.name !== 'user'))
-      .map(v => <NavPanelItem openLeft={side==='right'} key={v.name} hdr={useIcons ?  <Icon size='large' name={v.icon}/> : v.hdr} menu={v.menu} to={v.to}/>)
+      .map(v => (
+        <NavPanelItem 
+          name={v.name}
+          openLeft={side==='right'} 
+          key={v.name} hdr={useIcons ? <Icon size='large' name={v.icon}/> : v.hdr} 
+          menu={v.menu} 
+          to={v.to}/>))
 
     return (
-      <Menu inverted style={menuStyle} id='mgbjr-navPanelHeader'>
+      <Menu inverted style={menuStyle} id='mgbjr-np'>
         { navPanelItems('left') }
 
         {/* The user menu, pushed to the right */}
-        <Menu.Menu position='right' id='mgbjr-navPanelIcons-user'>
+        <Menu.Menu position='right'>
           { navPanelItems('right') }
           <NavPanelItem
             key='user'
-            hdr={<Image id="mgbjr-np-user" centered avatar src={_.get(currUser, 'profile.avatar', 'http://placehold.it/50')} />}
+            name='user'
+            hdr={<Image id="mgbjr-np-user-avatar" centered avatar src={_.get(currUser, 'profile.avatar', 'http://placehold.it/50')} />}
             menu={_.get(_.find(allNavPanels.right, { name: 'user' }), 'menu')}
             to={_.get(_.find(allNavPanels.right, { name: 'user' }), 'to')}
             style={{ padding: '4px 8px'}}

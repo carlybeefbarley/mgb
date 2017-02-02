@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import QLink from '/client/imports/routes/QLink'
 import { Dropdown } from 'semantic-ui-react'
 import _ from 'lodash'
@@ -6,6 +7,7 @@ import _ from 'lodash'
 class NavPanelItem extends Component {
   static propTypes = {
     hdr: PropTypes.node,
+    name: PropTypes.string.isRequired,        // Used for generating mgbjr-id-${name}-.. parts of joyride tags
     openLeft: PropTypes.bool,
     menu: PropTypes.arrayOf(PropTypes.shape({
       subcomponent: PropTypes.oneOf(['Item', 'Header', 'Divider']),
@@ -22,15 +24,20 @@ class NavPanelItem extends Component {
 
   handleMouseEnter = () => this.setState({ open: true })
   handleMouseLeave = () => this.setState({ open: false })
-  handleItemClick = () => this.setState({ open: false })
+  handleItemClick = (e) => { 
+    if (e.target.dataset && e.target.dataset.joyridecompletiontag)
+      joyrideCompleteTag(e.target.dataset.joyridecompletiontag)
+    this.setState({ open: false })
+  }
 
   render() {
-    const { hdr, menu, style, to, openLeft } = this.props
+    const { hdr, name, menu, style, to, openLeft } = this.props
     const { open } = this.state
 
     return (
       <Dropdown
         item
+        id={`mgbjr-np-${name}`}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         trigger={<QLink to={to}>{hdr}</QLink>}
@@ -40,10 +47,12 @@ class NavPanelItem extends Component {
         <Dropdown.Menu style={openLeft ? { left: 'auto', right: '0' } : null}>
           {_.map(menu, ({ subcomponent, ...subcomponentProps }) => {
             return React.createElement(Dropdown[subcomponent], {
-              key: subcomponentProps.content,
+              key: subcomponentProps.jrkey,
+              "data-joyridecompletiontag": `mgbjr-CT-np-${name}-${subcomponentProps.jrkey}`,
+              id: `mgbjr-np-${name}-${subcomponentProps.jrkey}`,           
               as: QLink,
               onClick: this.handleItemClick,
-              ...subcomponentProps,
+              ...(_.omit(subcomponentProps, 'jrkey')),
             })
           })}
         </Dropdown.Menu>

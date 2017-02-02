@@ -13,7 +13,28 @@ RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {
       const regex = /^data:.+\/(.+);base64,(.*)$/;
       const matches = asset.content2.dataUri.substring(0, 100).match(regex)
       const extension = matches[1]
-      return genAPIreturn(this, asset, () => {dataUriToBuffer(asset.content2.dataUri)}, {
+      return genAPIreturn(this, asset, () => dataUriToBuffer(asset.content2.dataUri), {
+        'Content-Type': 'audio/'+extension
+      })
+    }
+    else
+      return { statusCode: 404 }
+  }
+})
+// get sound by user / name combo
+RestApi.addRoute('asset/actor/:user/:name/sound.mp3', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne({
+      kind: "sound",
+      name: this.urlParams.name,
+      dn_ownerName: this.urlParams.user,
+      isDeleted: false
+    })
+    if(asset) {
+      const regex = /^data:.+\/(.+);base64,(.*)$/;
+      const matches = asset.content2.dataUri.substring(0, 100).match(regex)
+      const extension = matches[1]
+      return genAPIreturn(this, asset, () => dataUriToBuffer(asset.content2.dataUri), {
         'Content-Type': 'audio/'+extension
       })
     }

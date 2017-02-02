@@ -34,6 +34,9 @@ import audioBufferToWav from 'audiobuffer-to-wav';
 
 import lamejs from '../../../lib/lame.all.js'
 
+// Note that 1 is max and definitely too loud for listener
+const AUDIO_VOLUME = 0.5
+
 const getSequences = (grooveTotalBeats, allowedLengths, hitChance) => {
     const mainBeat       = generateSequence({ totalBeats: grooveTotalBeats, allowedLengths, hitChance });
     const cymbalSequence = getSequenceForInstrument('cymbal');
@@ -66,7 +69,7 @@ const generateNewBuffer = ({ bpm, beats, allowedLengths, hitChance, instruments,
     return riff
 }
 
-const play             = (audioContext, buffer) => playSound(audioContext, buffer, audioContext.currentTime, buffer.duration, 1);
+const play             = (audioContext, buffer) => playSound(audioContext, buffer, audioContext.currentTime, buffer.duration, AUDIO_VOLUME)
 const stop             = (src) => { if (src) { src.onended = () => {}; src.stop(0); } };
 const loop             = (src, isLooping) => { if (src) { src.loop = isLooping } };
 
@@ -190,7 +193,7 @@ class SoundController extends Component {
 
         // Set up volume and fades
         currentSrc.connect(this.currentGainNode);
-        this.currentGainNode.gain.value = 1;
+        this.currentGainNode.gain.value = AUDIO_VOLUME
         this.currentGainNode.connect(this.audioContext.destination);
         // this.currentGainNode = fadeIn(this.currentGainNode, (this.props.fadeIn ? 5000 : 0));
 

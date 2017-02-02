@@ -94,13 +94,6 @@ Meteor.startup(function () {
     }
   )
 
-  // secure way for google smtp. Needs to set up 2 step verification and app password
-  process.env.MAIL_URL = 'smtp://no-reply%40mycodebuilder.com:kkfzqvqyrqwalyyk@smtp.gmail.com:465';
-  
-  // backup for mail processing
-  // process.env.MAIL_URL = 'smtp://test%40mightyfingers.com:rzdptqsmteqguaco@smtp.gmail.com:465';
-
-
 })
 
 // smoke test that these are present

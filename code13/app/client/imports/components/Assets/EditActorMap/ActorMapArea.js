@@ -47,7 +47,7 @@ export default class ActorMapArea extends BaseMapArea {
   }
 
   handleMouseInfo(e) {
-    this.hoveredTiles.length = 0
+    this.hoveredTiles = []
     this.layers.map(layer => {
       const tileInfo = layer.getTilePosInfo(e)
       // it's save here to modify getTilePosInfo return value as it return new object - and it won't be used in other place
@@ -66,42 +66,29 @@ export default class ActorMapArea extends BaseMapArea {
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
 
     info = info || (layer ? layer.getInfo() : null)
-    //let layers = layer ? this.sortLayersByActive(layer.data.name) : []
-    let actor = info ? (info.gid ? this.props.data.tilesets[Math.floor(info.gid/100)] : null) : null
+    let actor = info ? ActorHelper.getTilesetFromGid(info.gid, this.props.data.tilesets) : null 
 
     return (
       <div key={i}>
         {
-          info 
-          ?
           (<div>
+            <b style={{fontSize: '1em'}}>{(info.layer ? info.layer.data.name : layer.data.name) + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
+            <br />
+            {actor.actor.databag &&
+              <span>
+                <span style={{fontSize: '0.9em'}}>&ensp;<b>Actor: </b>{actor.name.split(':').pop() + ' (' + actor.imagewidth + 'x' + actor.imageheight + ')'}</span>
+                <br />
+                <span style={{fontSize: '0.9em'}}>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
+              </span>
+            }
             {
-            info.gid
-            ?
-            <div>
-              <b style={{fontSize: '1em'}}>{(info.layer ? info.layer.data.name : layer.data.name) + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
-              <br />
-              {actor.actor.databag &&
-                <span>
-                  <span style={{fontSize: '0.9em'}}>&ensp;<b>Actor: </b>{actor.name.split(':').pop()}</span>
-                  <br />
-                  <span style={{fontSize: '0.9em'}}>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
-                </span>
-              }
-              {
-                actor.name === 'Actions' &&
-                <span style={{fontSize: '0.9em'}}>&ensp;<b>Type: </b>Map Event</span>
-              }
-              {(i + 1 < count) && 
-                <div style={{height: '1em'}}/>
-              }
-            </div>
-            :
-            <b style={{fontSize: '1em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>
+              actor.name === 'Actions' &&
+              <span style={{fontSize: '0.9em'}}>&ensp;<b>Type: </b>Map Event</span>
+            }
+            {(i + 1 < count) && 
+              <div style={{height: '1em'}}/>
             }
           </div>)
-          :
-          'Hover over a tile on the map.'
         }
       </div>
     )
@@ -109,28 +96,29 @@ export default class ActorMapArea extends BaseMapArea {
 
   getAllInfo(){
     const ret = []
+    let activeLayer = this.getActiveLayer()
+    let layerInfo = activeLayer ? activeLayer.getInfo() : null
     let count = 0
+
     this.hoveredTiles.map( (tile, i) => {
-      if (tile.gid > 0) {
-        count += i + 1
+      if (layerInfo) {
+        // Prevent grabbing wrong tiles when hovering over inspect accordion
+        if (layerInfo.x === tile.x && layerInfo.y === tile.y) {
+          if (tile.gid > 0) {
+            count += i + 1
+          }
+          ret.push(this.getInfo(tile, count, i))  
+        }
       }
-      ret.push(this.getInfo(tile, count, i))  
     })
+
     if (count === 0) {
-      return [<div key={-1}>Hover over a tile on the map.</div>]
+      if (layerInfo)
+        return [<b style={{fontSize: '1em'}} key={-1}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>]
+      else 
+        return [<div key={-1}>Hover over a tile on the map.</div>]
     }
     return ret.reverse()
-  }
-
-  // Sort Layers to show in Inspect info so that Active Layer is at the top
-  sortLayersByActive(activeLayer) {
-    const layers = ['Event', 'Foreground', 'Active', 'Background']
-    const newLayers = []
-    const index = layers.indexOf(activeLayer)
-    layers.splice(index, 1)
-    newLayers[0] = activeLayer
-    layers.map((layer) => newLayers.push(layer))
-    return newLayers
   }
 
   renderMap() {

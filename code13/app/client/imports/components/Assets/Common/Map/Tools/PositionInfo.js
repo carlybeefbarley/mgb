@@ -1,5 +1,6 @@
 import React from 'react'
 export default class PositionInfo extends React.Component {
+
   render () {
     return (
       <div>

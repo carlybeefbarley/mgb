@@ -18,10 +18,11 @@ export default class ActorMapArea extends BaseMapArea {
 
   constructor (props) {
     super(props)
+    this.hoveredTiles = []
+    this.handleMouseInfo = this.handleMouseInfo.bind(this)
   }
 
   componentWillReceiveProps(p){
-
     const l = this.getActiveLayer(p.activeLayer)
     // Events only for events layer...
     if(this.collection.length && this.collection[0].gid < ActorHelper.TILES_IN_ACTIONS){
@@ -45,51 +46,81 @@ export default class ActorMapArea extends BaseMapArea {
     return fetchAssetByUri(uri, false) // 2nd param is cache - but it tends to overcache - etag would be better
   }
 
+  handleMouseInfo(e) {
+    // Conflicts with getting pos offsets
+    if (e.target.tagName !== 'CANVAS') {
+      return
+    }
+
+    this.hoveredTiles = []
+    this.layers.map(layer => {
+      const tileInfo = layer.getTilePosInfo(e)
+      // it's save here to modify getTilePosInfo return value as it return new object - and it won't be used in other place
+      tileInfo.layer = layer
+      this.hoveredTiles.push(tileInfo)
+    })
+    this.hoveredTiles
+  }
+
    // render related methods
-  getInfo() {
+  getInfo(info, count, i) {
+    if(!info.gid){
+      return null
+    }
     const layer = this.getActiveLayer()
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
 
-    let info = layer ? layer.getInfo() : ''
-    //let layers = layer ? this.sortLayersByActive(layer.data.name) : []
-    let actor = info ? (info.gid ? this.props.data.tilesets[Math.floor(info.gid/100)] : null) : null
+    info = info || (layer ? layer.getInfo() : null)
+    let actor = info ? ActorHelper.getTilesetFromGid(info.gid, this.props.data.tilesets) : null 
 
     return (
-      <div>
-          {
-            info
-            ?
-            (<span>
-              {
-              info.gid
-              ?
-              <p>
-                <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
+      <div key={i}>
+        {
+          (<div>
+            <b style={{fontSize: '12px'}}>{(info.layer ? info.layer.data.name : layer.data.name) + ' Layer (' + info.x + ', ' + info.y + '):'}</b>
+            <br />
+            {actor.actor.databag &&
+              <span>
+                <span style={{fontSize: '11px'}}>&ensp;<b>Actor: </b>{actor.name.split(':').pop() + ' (' + actor.imagewidth + 'x' + actor.imageheight + ')'}</span>
                 <br />
-                <span>&ensp;<b>Actor: </b>{actor.actor.databag.all.defaultGraphicName}</span>
-                <br />
-                <span>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
-              </p>
-              :
-              <b style={{fontSize: '1.2em'}}>{layer.data.name + ' Layer (' + info.x + ', ' + info.y + ')'}</b>
-              }
-            </span>)
-            :
-            'Hover over a tile on the map.'
-          }
+                <span style={{fontSize: '11px'}}>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
+              </span>
+            }
+            {
+              actor.name === 'Actions' &&
+              <span style={{fontSize: '11px'}}>&ensp;<b>Type: </b>Map Event</span>
+            }
+            {(i + 1 < count) && 
+              <div style={{height: '11px'}}/>
+            }
+          </div>)
+        }
       </div>
     )
   }
 
-  // Sort Layers to show in Inspect info so that Active Layer is at the top
-  sortLayersByActive(activeLayer) {
-    const layers = ['Event', 'Foreground', 'Active', 'Background']
-    const newLayers = []
-    const index = layers.indexOf(activeLayer)
-    layers.splice(index, 1)
-    newLayers[0] = activeLayer
-    layers.map((layer) => newLayers.push(layer))
-    return newLayers
+  getAllInfo(){
+    const ret = []
+    let activeLayer = this.getActiveLayer()
+    let layerInfo = activeLayer ? activeLayer.getInfo() : null
+    let count = 0
+    let posX = 0
+    let posY = 0
+
+    this.hoveredTiles.map( (tile, i) => {
+      if (tile.gid > 0) {
+        count += i + 1
+      }
+      ret.push(this.getInfo(tile, count, i))  
+    })
+
+    if (count === 0) {
+      if (layerInfo) 
+        return [<b style={{fontSize: '12px'}} key={-1}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>]
+      else 
+        return [<div key={-1}>Hover over a tile on the map.</div>]
+    }
+    return ret.reverse()
   }
 
   renderMap() {
@@ -146,6 +177,7 @@ export default class ActorMapArea extends BaseMapArea {
     layers.push(
       <GridLayer map={this} key={data.layers.length} layer={this.layers[this.props.activeLayer]} ref='grid' />
     )
+
     // TODO: adjust canvas height
     return (
       <div
@@ -153,6 +185,7 @@ export default class ActorMapArea extends BaseMapArea {
         id="mgb_map_area"
         onContextMenu={e => { e.preventDefault(); return false;}}
         onMouseDown={this.handleMouseDown}
+        onMouseMove={this.handleMouseInfo}
         onTouchStart={this.handleMouseDown}
         style={{ height: 640 + 'px', position: 'relative', margin: '10px 0' }}>
         {layers}
@@ -161,8 +194,8 @@ export default class ActorMapArea extends BaseMapArea {
           <Accordion.Title>
             <i className='icon search' style={{float: 'right', color: 'white'}} />
           </Accordion.Title>
-          <Accordion.Content style={{padding: '5px', minWidth: '18em'}}>
-            <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
+          <Accordion.Content style={{padding: '5px', minWidth: '200px'}}>
+            <PositionInfo getInfo={this.getAllInfo.bind(this)} ref='positionInfo' />
           </Accordion.Content>
         </Accordion>
       </div>

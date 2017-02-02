@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import TileHelper from '../Helpers/TileHelper.js'
 import EditModes from '../Tools/EditModes.js'
 
@@ -117,7 +118,7 @@ export default {
     }
   },
   fixImportNames: function() {
-    this.mgb_content2.tilesets.map( ts => {
+    _.map(this.mgb_content2.tilesets, ts => {
       if (ts.name !== 'Actions' && ts.name.indexOf(':') === -1) {
         ts.name = this.props.asset.dn_ownerName + ':' + ts.name
       }

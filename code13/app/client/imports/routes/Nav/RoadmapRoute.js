@@ -4,7 +4,7 @@ import QLink from '/client/imports/routes/QLink'
 
 const RenderRoadmap = () => (
   <div>
-    <h2>Features planned for Jan 2016</h2>
+    <h2>Features planned for Feb 2017</h2>
     <ul>
       <li>(<small>Nearly complete</small>) Tutorial and progression content to help learn how to make games</li>
       <li>(<small>Nearly complete</small>) Scalability config/work required for launch</li>
@@ -12,6 +12,7 @@ const RenderRoadmap = () => (
       <li>Chat improvements (notifications, DMs etc)</li>
       <li>Clone Project</li>
       <li>Email for password reset, notifications etc</li>
+      <li>Goal for Launch: During last week of Feb 2017</li>
     </ul>
     <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>
     <h2>Features coming in Q1 2017</h2>

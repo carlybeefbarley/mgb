@@ -70,6 +70,7 @@ export default fpGoals = React.createClass({
         <p style={{fontSize: '1.25em'}}>
           <img src={makeCDNLink("/images/mascots/bigguy.png")} style={{maxWidth: 70, float: 'left', marginRight: 15}} />
           <span style={{position: 'relative', top: 0}}>Your Learning quests</span>
+          <br/><small><span style={{color: 'red'}}>NOTE: We are re-working the tutorials today, they will be buggy until Friday...</span></small><br/>
         </p>
         { (!joyrideSteps || joyrideSteps.length === 0) && 
           <StartDefaultNextTutorial currUser={currUser} userSkills={skills}  />

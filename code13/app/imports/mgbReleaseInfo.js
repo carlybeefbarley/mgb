@@ -25,6 +25,51 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
 
+    {
+      'timestamp': 'Wed Feb 01 2017 12:00:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2950'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'TUTORIALS ARE BEING UPDATED',
+          'changeSummary': 'NOTE: We are re-working the tutorials today, they will be buggy until Friday...',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'UI Theme & Spacing update',
+          'changeSummary': '@levithomason has re-worked a lot of the jQuery-based ui and our unthemed original UI into a more consistent style. Lots more UI cleanup coming soon',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'mobile',
+          'type': 'feature',
+          'changeName': 'Mobile Apps!',
+          'changeSummary': 'We now have mobile app builds (phone & tablet). Contact us in Chat if you want to be a Beta tester for the mobile apps on iOS or Android devices. ',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.quality',
+          'type': 'bugfix',
+          'changeName': 'Many Bugfixes',
+          'changeSummary': 'We are fixing many many bugs at present, getting closer to launch...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
 
     {
       'timestamp': 'Fri Jan 27 2017 16:30:00 GMT-0800 (PST)',

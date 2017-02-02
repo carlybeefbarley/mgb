@@ -36,12 +36,8 @@ const flexPanelViews = [
 
   { tag: 'features',  lev: 3,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false, mobileUI: false  },
 
-  { tag: 'play',  lev: 3,  name: 'play',  icon: 'game', hdr: 'Play',            el: fpFeatureLevels, superAdminOnly: false, mobileUI: true  },
-
 // Experimental UI for mobile
 //  { tag: 'more',  lev: 8,  name: 'more',  icon: 'ellipsis horizontal', hdr: 'More',            el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
-
- // activity makes most sens at top if enabled?
   
   { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false, mobileUI: false },
   

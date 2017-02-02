@@ -82,17 +82,6 @@ export const AssetKinds = {
   //   description: "Physics configuration",
   //   explanation: 'Not yet implemented'    
   // },
-  "code": {
-    name: "Code",
-    selfPlural: true,
-    disable: false,
-    longName: "Code Script",
-    icon: "code",
-    color: "green",
-    requiresUserRole: null,
-    description: "Code is Source code script used to make your game",
-    explanation: "Code is written in the 'Javascript 2015' programming language. Your code can use Graphics, Sound, Music, and even other 'imported' code/modules to make your game.", 
-  },
   "doc": {
     name: "Doc",
     selfPlural: false,
@@ -144,6 +133,17 @@ export const AssetKinds = {
     color: "blue",
     description: "Background Music for use in games",
     explanation: 'You can create or import Music for your games. You can make your game play this music by attaching Music Events to an ActorMap, or by writing your own custom Code for your games'
+  },
+  "code": {
+    name: "Code",
+    selfPlural: true,
+    disable: false,
+    longName: "Code Script",
+    icon: "code",
+    color: "green",
+    requiresUserRole: null,
+    description: "Code is Source code script used to make your game",
+    explanation: "Code is written in the 'Javascript 2015' programming language. You can use Assets such as Graphics, Sound, Music, Map... and also other 'imported' code/modules/packages to make your game.", 
   },
   "game": {
     name: "Game",

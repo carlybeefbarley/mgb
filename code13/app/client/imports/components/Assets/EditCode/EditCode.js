@@ -1122,6 +1122,10 @@ export default class EditCode extends React.Component {
   componentDidUpdate() {
     this.cm_updateActivityMarkers()
     this.updateDocName()
+    // enable auto bundle by default
+    if(this.props.asset.content2.needsBundle === void(0)){
+      this.toggleBundling()
+    }
   }
 
   _consoleClearAllMessages() {

@@ -29,7 +29,7 @@ class NavPanelItem extends Component {
       joyrideCompleteTag(e.target.dataset.joyridecompletiontag)
     this.setState({ open: false })
   }
-
+  // TODO(@Levi): How to remove the bind in OnClick.. data-____ props
   render() {
     const { hdr, name, menu, style, to, openLeft } = this.props
     const { open } = this.state
@@ -40,6 +40,7 @@ class NavPanelItem extends Component {
         id={`mgbjr-np-${name}`}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
+        onClick={() => joyrideCompleteTag(`mgbjr-CT-np-${name}`) }
         trigger={<QLink to={to}>{hdr}</QLink>}
         icon={null}
         open={open}

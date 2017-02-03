@@ -25,6 +25,51 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 */
 
+
+    {
+      'timestamp': 'Thu Feb 02 2017 20:20:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2995'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'TUTORIALS ARE BEING UPDATED',
+          'changeSummary': 'NOTE: We are re-working the tutorials for the new Top-Nav UI, they will be ugly until Saturday...',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'New default size for Graphic Asset is 32x32',
+          'changeSummary': 'New default size for Graphic Asset is 32x32 which is simpler for working with non-code games (Actors and ActorMaps)',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'email',
+          'type': 'feature',
+          'changeName': 'Email notifications',
+          'changeSummary': 'We now have email wired up for Password reset and a few other critical functions',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.quality',
+          'type': 'bugfix',
+          'changeName': 'Many Bugfixes',
+          'changeSummary': 'We are fixing many many bugs at present, getting closer to launch...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
     {
       'timestamp': 'Wed Feb 01 2017 12:00:00 GMT-0800 (PST)',
 

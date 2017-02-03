@@ -28,7 +28,6 @@ export default class EditActor extends React.Component {
   constructor(...props) {
     super(...props)
     this.state = {}
-    this.isModalVisible = false
   }
 
   doSnapshotActivity() {
@@ -48,29 +47,29 @@ export default class EditActor extends React.Component {
 
   getTabs(databag) {
     const _makeContent = Element => (
-      <Element 
-          asset={this.props.asset} 
+      <Element
+          asset={this.props.asset}
           onChange={this.handleSave.bind(this)}
           saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }/>
     )
     const _mkDisabled = actorTypesArray => _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])
     return [
-      { 
-        tab: "All",         
-        content: _makeContent(FormsAll)   
+      {
+        tab: "All",
+        content: _makeContent(FormsAll)
       },
-      { 
-        tab: "Animations",  
+      {
+        tab: "Animations",
         content: _makeContent(Animations) },
-      { 
-        tab: "Character Behavior", 
+      {
+        tab: "Character Behavior",
         disabled: _mkDisabled( ['Item, Wall or Scenery', 'Shot'] ),
         content: _makeContent(CharacterBehavior)
       },
       {
         tab: "NPC Behavior",
         disabled: _mkDisabled( ['Player', 'Item, Wall or Scenery', 'Shot'] ),
-        content: _makeContent(NPCBehavior) 
+        content: _makeContent(NPCBehavior)
       },
       {
         tab: "Item Behavior",
@@ -413,7 +412,7 @@ export default class EditActor extends React.Component {
     if (e.target.dataset.template) {
       const templateName = e.target.dataset.template
       this.loadTemplate(templateName)
-      this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))      
+      this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))
       this.handleSave("Initial Template selected")
       joyrideCompleteTag(`mgbjr-CT-create-actor-any`)
     }
@@ -427,10 +426,10 @@ export default class EditActor extends React.Component {
     const d = this.props.asset.content2.databag
     const merge = (a, b) => {     // Is this different from things like _.merge or Object.Assign()
       for (let i in a) {
-        if (typeof b[i] == "object") 
+        if (typeof b[i] == "object")
           merge(a[i], b[i])
         else
-          b[i] = a[i]        
+          b[i] = a[i]
       }
     }
 
@@ -442,10 +441,10 @@ export default class EditActor extends React.Component {
     const { asset } = this.props
     if (!asset)
       return null
-    
+
     const databag = asset.content2.databag
     const showTemplate = !databag
-    
+
     const LayerValid = ( {layerName, isValid } ) => (isValid ? <strong>{layerName}: Yes&emsp;</strong> : <em style={{color: 'grey'}}>{layerName}: No&emsp;</em>)
 
     return (
@@ -457,7 +456,7 @@ export default class EditActor extends React.Component {
           <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
         </div>
 
-        { showTemplate && 
+        { showTemplate &&
           <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false}onClick={(e)=>{this.handleTemplateClick(e)}}>
             <Modal.Header>
               Choose the style of Actor you want to create, then modify the detailed choices in the Actor Editor

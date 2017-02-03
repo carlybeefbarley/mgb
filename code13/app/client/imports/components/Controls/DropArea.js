@@ -15,6 +15,7 @@ export default class DropArea extends React.Component {
   static PropTypes = {
     kind: PropTypes.string.required, // asset kind which will accept this drop area
     value: PropTypes.string, // previously saved value
+    ids: PropTypes.object, // map with [value] = asset._id - to track renamed assets
     asset: PropTypes.object, // asset assigned to this dropArea
     onChange: PropTypes.function // callback
  }
@@ -155,7 +156,7 @@ export default class DropArea extends React.Component {
     )
   }
 
-  getEffect(effect) {
+  getEffect (effect) {
     if (!effect)
       return "none"
 

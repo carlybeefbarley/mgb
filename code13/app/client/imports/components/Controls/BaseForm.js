@@ -5,7 +5,7 @@ import SmallDD from './SmallDD.js'
 // This partial class uses the following React props..
   // propTypes: {
   //   onchange: PropTypes.func,       // onchange handler for field. NOT same as onChange!! Beware!
-  //   asset:    PropTypes.object      // an Asset - this is needed for the 
+  //   asset:    PropTypes.object      // an Asset - this is needed for the
   // }
 
 // For best visuals also define an alignment for the form labels.. for example a css with
@@ -35,7 +35,7 @@ export default class BaseForm extends React.Component {
 
   // fieldOptions:
   //    .disabled:   disabled control
-  //    .boolIsTF:   if boolIsTF===true,  then these bools are represented as Boolean true and false;  
+  //    .boolIsTF:   if boolIsTF===true,  then these bools are represented as Boolean true and false;
   //                 if boolIsTF===false (or is undefined), then these bools are represented as '1' and '0'
   bool (name, key, fieldOptions = {} ) {
     const checked = fieldOptions.boolIsTF ? this.data[key] : !!parseInt(this.data[key], 10)
@@ -94,10 +94,14 @@ export default class BaseForm extends React.Component {
 
   dropArea (name, key, kind, fieldOptions, cb = null) {
     fieldOptions = fieldOptions || {}
+    if(!this.data._ids){
+      this.data._ids = {}
+    }
+
     return (
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
-        <DropArea kind={kind} {...fieldOptions} value={this.data[key]} asset={this.props.asset} onChange={(val, asset) => {
+        <DropArea kind={kind} {...fieldOptions} value={this.data[key]} ids={this.data._ids} asset={this.props.asset} onChange={(val, asset) => {
           this.data[key] = val
           this.props.onChange && this.props.onChange()
           cb && cb(asset)

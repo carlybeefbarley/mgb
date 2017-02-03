@@ -241,6 +241,30 @@ export const setUpCloudFront = function () {
       CustomErrorResponses: {
         Quantity: 0, /* required */
         Items: [
+          {
+            ErrorCode: 400, // bad request
+            ErrorCachingMinTTL: 0
+          },
+          {
+            ErrorCode: 404, // not found !!! this is most important
+            ErrorCachingMinTTL: 0
+          },
+          {
+            ErrorCode: 500, // internal server error - we got these sometimes - usually when api function throws exception
+            ErrorCachingMinTTL: 0
+          },
+          {
+            ErrorCode: 502, // bad gateway
+            ErrorCachingMinTTL: 0
+          },
+          {
+            ErrorCode: 502, // service unavailable
+            ErrorCachingMinTTL: 0
+          },
+          {
+            ErrorCode: 504, // gateway timed out - our server has crashed
+            ErrorCachingMinTTL: 0
+          }
           /*{
            ErrorCode: 0, // required
            ErrorCachingMinTTL: 0,

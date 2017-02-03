@@ -45,7 +45,7 @@ export default UserBashes = React.createClass({
             <b>Code to fork</b> - <QLink to={`/u/guntis/asset/9xXHRdGFjkMmzQFNh`}>Dwarf game template</QLink> <br/>
             <b>Graphics assets</b> - <QLink to={`/u/!vault/assets?_fp=assets&project=DwarfsGraphics`}>Characters, objects, animations</QLink> <br/>
             <br/>
-            Here are some basic concepts to work with:
+            Here are some basic concepts to take a sneak peek: 
             <br/><br/>
 
             <b>Basics</b> - PhaserJS Basics

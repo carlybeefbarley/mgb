@@ -1263,7 +1263,7 @@ if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def
               { help && help.advice2 && <p><i className="ui info circle icon"></i>
                 <small>{help.advice2}</small>
               </p> }
-              { advices.length && advices }
+              { advices.length > 0 && advices }
               { help && help.url && <p>
                 { urlLink(help.url) }
                 { help.url2 && <span>, {urlLink(help.url2)}</span> }

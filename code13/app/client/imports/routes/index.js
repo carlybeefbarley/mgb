@@ -30,6 +30,9 @@ import Privacy from '/client/imports/legal/Privacy'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import UserBashes from './UserBashes'
+
+
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
 // Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md
@@ -75,6 +78,7 @@ Meteor.startup(function () {
         <Route path="users" component={Users.UserListRoute} name="Search All Users" />
 
         <Route path="u/:username/import" component={Import} />
+        <Route path="/userBashes" component={UserBashes} />
 
         <Route path="user/:id" component={Users.Profile} name="Profile"/>
         <Route path="u/:username" component={Users.Profile} name="Profile"/>

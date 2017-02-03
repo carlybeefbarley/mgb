@@ -25,7 +25,7 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 const MAX_BITMAP_WIDTH = 1500
 const MAX_BITMAP_HEIGHT = 1024
 const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it generally
-const DEFAULT_GRAPHIC_WIDTH = 64
+const DEFAULT_GRAPHIC_WIDTH = 32
 const DEFAULT_GRAPHIC_HEIGHT = 32
 
 

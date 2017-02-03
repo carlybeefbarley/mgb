@@ -5,7 +5,7 @@ import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
-import { Card, Icon, Header } from 'semantic-ui-react'
+import { Card, Icon } from 'semantic-ui-react'
 
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
@@ -18,7 +18,7 @@ const ProjectCard = props => {
   return (
     <Card key={project._id} className='animated fadeIn'>
 
-      <QLink className="image" to={linkTo} elOverride='div'>
+      <QLink className="image" to={linkTo} elOverride='div' style={{maxHeight: '150px', minWidth: '220px'}}>
         <ImageShowOrChange
           className="image"
           imageSrc={getProjectAvatarUrl(project)}

@@ -28,8 +28,15 @@ const ImageShowOrChange = props => {
   
   if (canLinkToSrc) 
     propsImgContainer.to = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrcToUse
+  
+  const img = (
+    <img 
+      style={{backgroundColor: '#ffffff', minHeight:"150px", maxHeight:"150px", maxWidth:"220px", width:"auto"}} 
+      className="ui centered image mgb-pixelated" 
+      src={imageSrcToUse} />
+  )
 
-  return React.createElement((canLinkToSrc && avatarAssetId) ? QLink : 'div', propsImgContainer, <img className="ui fluid image mgb-pixelated" src={imageSrcToUse} /> )
+  return React.createElement((canLinkToSrc && avatarAssetId) ? QLink : 'div', propsImgContainer, img)
 }
 
 ImageShowOrChange.propTypes = {

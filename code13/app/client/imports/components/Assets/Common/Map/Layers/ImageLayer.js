@@ -15,6 +15,7 @@ export default class ImageLayer extends AbstractLayer {
       return
     }
     const img = this.props.getImage(this.options.image)
+
     if (!img) {
       return
     }

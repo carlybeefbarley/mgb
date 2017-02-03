@@ -356,6 +356,7 @@ export default ActorHelper = {
       map[name].actor = d
       map[name].image = src
       var img = new Image()
+      img.crossOrigin="anonymous"
       img.onload = function(){
         delete ActorHelper.isLoading[key]
         map[name].imagewidth = img.width
@@ -403,6 +404,7 @@ export default ActorHelper = {
         img.src = makeCDNLink("/images/error.png")
       }
       img.src = src
+
     }, asset)
 
 

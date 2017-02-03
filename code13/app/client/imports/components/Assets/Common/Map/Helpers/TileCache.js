@@ -106,6 +106,7 @@ export default class TileCache {
 
     const loadImage = (preventCache) => {
       const img = new Image()
+      img.crossOrigin="anonymous"
       this.toLoad++
       img.onload = () => {
         this.loaded++

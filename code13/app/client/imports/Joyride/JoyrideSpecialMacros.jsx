@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { getNavPanels } from '/client/imports/components/SidePanels/NavPanel'
 
 // This code is used by the Joyride/Tutorial systems to make it easier to write tutorials.
 //
@@ -21,24 +22,56 @@ const _fullStepField = null     // This is returned in notFoundMacros[].field re
 
 */
 
-// Helper which makes a NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
-const _mkNp = ( npname, icon ) => (
-  {
-    key: _wrapKey(`np-${npname}`),
-    hint: `${_.upperFirst(npname)} NavPanel`,
-    desc: `Step for finding the ${_.upperFirst(npname)} Navigation menu`,
-    newVal:
-    {
-      "title": `The '${_.upperFirst(npname)}' Navigation panel`,
-      "text": `Hover on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(npname)} button here`,
-      "selector": `#mgbjr-navPanelIcons-${npname}`,
-      "showStepOverlay": true,
-      "awaitCompletionTag": `mgbjr-CT-navPanel-${npname}-show`,
-      "position": "botttom",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
-    }
+// Helper which makes an array of NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
+const _mkNavPanelMacros = () => {
+
+  const np = getNavPanels(null, true) // this gets the complete set so we can extract what we want
+  const retval = []
+  const parseDropdown = (dd, position) => {
+    const ddUpName = _.upperFirst(dd.name)
+    // 1. The Top Menu to find (as a click action)
+    retval.push({
+      key: _wrapKey(`np-${dd.name}`),
+      hint: `${_.upperFirst(dd.name)} Menu`,
+      desc: `Step for clicking the ${ddUpName} Menu`,
+      newVal:
+      {
+        "title": `The '${ddUpName}' menu: one-click shortcut`,
+        "text": `Click (not just hover) on the ${ddUpName} menu here.<br></br>${dd.explainClickAction}`,
+        "selector": `#mgbjr-np-${dd.name}`,
+        "showStepOverlay": false,
+        "awaitCompletionTag": `mgbjr-CT-np-${dd.name}`,
+        "position": position
+      }
+    })
+    // 2. Each of the options in the Menu DropDown
+    _.each(dd.menu, item => {
+      const smText = _.isString(item.content) ? item.content : item.jrkey // hack
+      retval.push({
+        key: _wrapKey(`np-${dd.name}-${item.jrkey}`),
+        hint: `${_.upperFirst(dd.name)} Menu`,
+        desc: `Step for finding the ${ddUpName}->${smText} menu`,
+        newVal:
+        {
+          "title": `The '${ddUpName}->${smText}' menu`,
+          "text": `<br></br>Hover on the <div class='ui small black button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui label'>${smText}</div> option`,
+    //      "selector": `#mgbjr-np-${dd.name}`, // Note that the -jrkey suffix isn't visible yet...
+          "showStepOverlay": true,
+          "awaitCompletionTag": `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
+          "position": 'top ' + position
+        }
+      })
+
+    })
+
   }
-)
+ 
+  _.each(np.left,  dd => parseDropdown(dd, 'right'))
+  _.each(np.right, dd => parseDropdown(dd, 'left'))
+
+  return retval
+
+}
 
 // Helper which makes a FlexPanel stepMacro: e.g. _mkNp( 'learn', 'student' ) is %fp-learn%
 const _mkFp = ( fpname, icon ) => (
@@ -146,161 +179,20 @@ const stepMacros = [
 
   {
     key: _wrapKey('navPanel'),
-    hint: `Find NavPanel`,
-    desc: `Step for finding the NavPanel`,
+    hint: `Find Top Menu NavPanel`,
+    desc: `Step for finding the Top Menu NavPanel`,
     newVal:
     {
       "title": `The page header`,
       "text": `This header has direct links and submenus to navigate this site`,
-      "selector": "#mgbjr-navPanelHeader",
+      "selector": "#mgbjr-np",
       "showStepOverlay": true,
       "position": "bottom",
       "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
     }
   },
 
-  {
-    key: _wrapKey('np-user-myProfile'),
-    hint: `np-home>MyProfile`,
-    desc: `Step for clicking the 'My Profile' Button from np-home`,
-    newVal:
-    {
-      "title": "My Profile",
-      "text": "Click on the &ensp;<div class='ui label'>My Profile&emsp;<i class='grey user icon'></i></div>&ensp; option",
-      "selector": "#mgbjr-np-home-myProfile",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username",
-      "position": "right"
-    }
-  },
-
-  {
-    key: _wrapKey('np-play-popularGames'),
-    hint: `np-play>PopularGames`,
-    desc: `Step for clicking the 'Popular Games' Button from np-play`,
-    newVal:
-    {
-      "title": "Popular Games",
-      "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been played most frequently",
-      "selector": "#mgbjr-np-play-popularGames",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
-      "position": "right"
-    }
-  },
- 
-  {
-    key: _wrapKey('np-play-updatedGames'),
-    hint: `np-play>UpdatedGames`,
-    desc: `Step for clicking the 'Updated Games' Button from np-play`,
-    newVal:
-    {
-      "title": "Updated Games",
-      "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been updated recently",
-      "selector": "#mgbjr-np-play-updatedGames",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
-      "position": "right"
-    }
-  },
-
-  {
-    key: _wrapKey('np-play-gamesImade'),
-    hint: `np-play>gamesImade`,
-    desc: `Step for clicking the 'Games I made' Button from np-play`,
-    newVal:
-    {
-      "title": "Games I made",
-      "text": "Click on the &ensp;<div class='ui label'>Games I made</div>&ensp; option now to see Games that you made",
-      "selector": "#mgbjr-np-play-gamesImade",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-/u/:username/games",
-      "position": "right"
-    }
-  },
- 
-  {
-    key: _wrapKey('np-meet-allAssets'),
-    hint: `np-meet>allAssets`,
-    desc: `Step for clicking the 'All Assets' Button from np-meet`,
-    newVal:
-    {
-      "title": "Browse All Assets - across all users",
-      "text": "Click on the &ensp;<div class='ui label'>All Assets&emsp;<i class='pencil icon'></i></div>&ensp; option now to see Assets being made by you and other users",
-      "selector": "#mgbjr-np-meet-allAssets",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-location-path-/assets",
-      "position": "right"
-    }
-  },
- 
-  {
-    key: _wrapKey('create-new-asset'),
-    hint: `np-create>CreateNewAsset`,
-    desc: `Step for Create New Asset. Prior step should be %np-create%`,
-    newVal:
-    {
-      "title": "Great. Now choose 'Create New Asset'",
-      "text": "Click on the&ensp;<div class='ui label'>Create New Asset&emsp;<i class='green pencil icon'></i></div>&ensp;option",
-      "selector": "#mgbjr-np-create-createNewAsset",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-location-path-/assets/create",
-      "position": "right"
-    },
-  },
-
-  {
-    key: _wrapKey('np-create-myAssets'),
-    hint: `np-create>myAssets`,
-    desc: `Step for List My Assets. Prior step should be %np-create%`,
-    newVal:
-    {
-      "title": "Great. Now choose 'List My Assets'",
-      "text": "Click on the&ensp;<div class='ui label'>List My Assets&emsp;<i class='pencil icon'></i></div>&ensp;option",
-      "selector": "#mgbjr-np-create-myAssets",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/assets",
-      "position": "right"
-    },
-  },
-
-  {
-    key: _wrapKey('np-create-project'),
-    hint: `np-create>Project`,
-    desc: `Step for 'Create Project'. Prior step should be %np-create%`,
-    newVal:
-    {
-      "title": "Great. Now choose 'Create New Project'",
-      "text": "Click on the&ensp;<div class='ui label'>Create New Project&emsp;<i class='green sitemap icon'></i></div>&ensp;option",
-      "selector": "#mgbjr-np-create-project",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/projects/create",
-      "position": "right"
-    },
-  },
-
-  {
-    key: _wrapKey('np-create-list-my-projects'),
-    hint: `np-create>ListMyProjects`,
-    desc: `Step for 'List My Projects'. Prior step should be %np-create%`,
-    newVal:
-    {
-      "title": "Great. Now choose 'List My Projects'",
-      "text": "Click on the&ensp;<div class='ui label'>List My Projects&emsp;<i class='sitemap icon'></i></div>&ensp;option",
-      "selector": "#mgbjr-np-create-list-my-projects",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/projects",
-      "position": "right"
-    },
-  },
-
-
-  _mkNp( 'home',     'home'         ),
-  _mkNp( 'learn',    'student'      ),
-  _mkNp( 'create',   'pencil'       ),
-  _mkNp( 'play',     'game'         ),
-  _mkNp( 'meet',     'street view'  ),
-  _mkNp( 'user',     'user'         ),
+  ..._mkNavPanelMacros(),
 
   _mkFp( 'activity', 'lightning'    ),
   _mkFp( 'goals',    'student'      ),
@@ -311,7 +203,6 @@ const stepMacros = [
   _mkFp( 'users',    'street view'  ),
   _mkFp( 'network',  'signal'       ),
   _mkFp( 'keys',     'keyboard'     ),
-
   _mkFpDescribe( 'activity', 'lightning',   'This activity feed lets you see what people are working on'   ),
   _mkFpDescribe( 'goals',    'student',     'You can track, start/stop or resume your tutorials from here' ),
   _mkFpDescribe( 'assets',   'pencil',      'This lets you find assets, load them, or drag them into other assets - for example dragging a Graphic to a Map' ),
@@ -345,16 +236,26 @@ const stepMacros = [
       "style": '%inverted%',
       "position": "top-left"
     },
-  },
-
-
-
+  }
 ]
-
 
 const propertyMacros = [
 
   // field == someFieldName means this is a macros for fields (properties) WITHIN a step.. e.g ."style"
+  {
+    field: 'style',
+    key: _wrapKey('begin'),
+    desc: "A style good for starting a Tutorial",
+    newVal:
+    {
+      "backgroundColor": "rgba(0, 96, 0, 1)",
+      "color": "#fff",
+      "mainColor": "#fbbd08",
+      "skip": { "color": "#f04" },
+      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+    }
+  },
+
   {
     field: 'style',
     key: _wrapKey('inverted'),

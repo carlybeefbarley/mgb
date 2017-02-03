@@ -21,7 +21,6 @@ export default class GameScreen extends React.Component {
 
   componentDidMount() {
     this.getReference()
-    this.adjustIframe()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -30,8 +29,12 @@ export default class GameScreen extends React.Component {
       this.minimize()
   }
 
+  componentWillReceiveProps(props){
+    this.postMessage({mgbCommand: "requestSizeUpdate"})
+  }
+
   getReference() {
-    // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended. 
+    // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended.
     //        This will also help with the TODO in EditCode:_handle_iFrameMessageReceiver
     this.iFrameWindow = ReactDOM.findDOMNode(this.refs.iFrame1)
     this.wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
@@ -40,7 +43,7 @@ export default class GameScreen extends React.Component {
   handleMessage(event) {
 
     // Message receivers like this can receive a lot of crap from malicious windows
-    // debug tools etc, so we have to be careful to filter out what we actually care 
+    // debug tools etc, so we have to be careful to filter out what we actually care
     // about
     const source = event.source
     const data = event.data
@@ -58,8 +61,8 @@ export default class GameScreen extends React.Component {
         this.props.handleContentChange(null, asset.thumbnail, "update thumbnail")
       },
 
-      mgbAdjustIframe: function() {
-        this.adjustIframe()
+      mgbAdjustIframe: function(data) {
+        this.adjustIframe(data.size)
       }
     }
 
@@ -71,7 +74,7 @@ export default class GameScreen extends React.Component {
   }
 
   postMessage(messageObject) {
-    if (messageObject.mgbCommand == "startRun") 
+    if (messageObject.mgbCommand == "startRun")
       this.setState( { isHidden: false } )
     this.getReference()
     this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
@@ -85,49 +88,20 @@ export default class GameScreen extends React.Component {
     this.props.handleStop()
   }
 
-  adjustIframe() {
-    if (this.props.isPlaying) {
+  adjustIframe(size) {
 
-      window.setTimeout(() => {
-        if (!this.props.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body)
-          return
-
-        let gameDiv = this.iFrameWindow.contentWindow.document.querySelector("#game") // TODO - get rid of global selectors as much as possible, They are an antipattern for large SPAs
-        let newWidth = gameDiv ? gameDiv.offsetWidth : 0
-        let newHeight = gameDiv ? gameDiv.offsetHeight : 0
-
-        // adjust by body if cannot find gamediv - or it's not used
-        if (!gameDiv || gameDiv.offsetWidth === 0) {
-          if (gameDiv)
-            gameDiv.style.display = "none"
-          
-          gameDiv = this.iFrameWindow.contentWindow.document.body
-          newWidth = gameDiv ? gameDiv.scrollWidth : 0
-          newHeight = gameDiv ? gameDiv.scrollHeight : 0
-        }
-        else
-          this.iFrameWindow.contentWindow.document.body.style.overflow = "hidden"
-
-        if (parseInt(this.iFrameWindow.getAttribute("width")) == newWidth && parseInt(this.iFrameWindow.getAttribute("height")) == newHeight)
-          return
-        
-        if (newWidth && newHeight) {
-          this.iFrameWindow.setAttribute("width", newWidth + "")
-          this.iFrameWindow.setAttribute("height", newHeight + "")
-          this.wrapper.style.width = newWidth + "px"
-          // this.wrapper.style.height = newHeight + "px"   // Why not?
-        }
-        // keep adjusting
-        this.adjustIframe()
-      }, 1000)
-    }
+    this.iFrameWindow.setAttribute("width", size.width + "")
+    this.iFrameWindow.setAttribute("height", size.height + "")
+    this.wrapper.style.width = size.width + "px"
+    // height will break minimize
+    // this.wrapper.style.height = size.height + "px"
   }
 
   onDragStart (e) {
     // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
     // don't do this on mobile devices
     // e.preventDefault()
-    if (e.dataTransfer) { 
+    if (e.dataTransfer) {
       let ghost = e.target.cloneNode(true)
       ghost.style.display = "none"
       e.dataTransfer.setDragImage(ghost, 0, 0)
@@ -140,10 +114,10 @@ export default class GameScreen extends React.Component {
 
   onDrag (e) {
     e.preventDefault()
-    if (e.touches && e.touches[0]) 
+    if (e.touches && e.touches[0])
       e = e.touches[0]
 
-    if (e.clientX == 0 && e.clientY == 0) 
+    if (e.clientX == 0 && e.clientY == 0)
       return   // avoiding weird glitch when at the end of drag 0,0 coords returned
 
     this.screenX += this.dragStartX - e.clientX
@@ -156,8 +130,8 @@ export default class GameScreen extends React.Component {
 
   render() {
     return (
-      <div 
-          ref="wrapper" 
+      <div
+          ref="wrapper"
           id="gameWrapper"
           className={this.props.isPopup ? "popup" : "accordion"}
           style={{ display: (this.state.isHidden || !this.props.isPlaying) ? "none" : "block" }}>
@@ -169,22 +143,22 @@ export default class GameScreen extends React.Component {
             left:             "0",
             backgroundColor:  "inherit"
           }}>
-            <button 
-                title="Close" 
+            <button
+                title="Close"
                 className="ui mini right floated icon button"
                 onClick={this.close.bind(this)} >
               <i className="remove icon" />
             </button>
-            
-            <button 
+
+            <button
                 title={this.state.isMinimized ? "Maximize" : "Minimize"}
                 className="ui mini right floated icon button"
                 onClick={this.minimize.bind(this)} >
               <i className={"icon " +(this.state.isMinimized ? "maximize" : "minus")} />
             </button>
 
-            <button 
-                title="Drag Window" 
+            <button
+                title="Drag Window"
                 className="ui mini right floated icon button"
                 draggable={true}
                 onDragStart={this.onDragStart.bind(this)}

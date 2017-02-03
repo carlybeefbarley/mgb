@@ -200,6 +200,18 @@ window.onload = function() {
     appendScript(filename, srcText, callback);
   }
 
+  function sendSizeUpdate(){
+    window.setTimeout(function () {
+      window.parent.postMessage( {
+        mgbCmd: "mgbAdjustIframe",
+        size: {
+          width: document.body.scrollWidth,
+          height: document.body.scrollHeight
+        }
+      }, "*");
+    }, 500)
+  }
+
   var commands = {
     ping: function(e){
       mainWindow.postMessage(_isAlive, e.origin);
@@ -278,14 +290,13 @@ window.onload = function() {
         }
         else{
           console.log("(info) All files have loaded.")
-          window.setTimeout(function () {
-            window.parent.postMessage( {
-              mgbCmd: "mgbAdjustIframe",
-            }, "*");
-          }, 500)
+          sendSizeUpdate()
         }
       };
       run()
+    },
+    requestSizeUpdate: function(){
+      sendSizeUpdate()
     }
   }
 

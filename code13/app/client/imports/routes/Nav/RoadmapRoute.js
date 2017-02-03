@@ -8,11 +8,10 @@ const RenderRoadmap = () => (
     <ul>
       <li>(<small>Nearly complete</small>) Tutorial and progression content to help learn how to make games</li>
       <li>(<small>Nearly complete</small>) Scalability config/work required for launch</li>
-      <li>(<small>IN COMPAT TEST</small>) MGBv1 asset migration (tiles, actors, maps)</li>
-      <li>Chat improvements (notifications, DMs etc)</li>
+      <li>(<small>Nearly complete</small>) MGBv1 asset migration (tiles, actors, maps)</li>
       <li>Clone Project</li>
-      <li>Email for password reset, notifications etc</li>
-      <li>Goal for Launch: During last week of Feb 2017</li>
+      <li>Chat improvements (notifications, DMs etc)</li>
+      <li>Goal for Launch: <strong>During last week of Feb 2017</strong></li>
     </ul>
     <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>
     <h2>Features coming in Q1 2017</h2>
@@ -30,9 +29,8 @@ const RenderRoadmap = () => (
 
 export default RoadmapRoute = () => (
   <div>
-    <div className="ui basic segment">
-      <div className="ui container">
-        <h2 className="ui header"><i className="map icon" />Feature Roadmap</h2>
+    <div className="ui container">
+      <div className="ui basic segment">
         <RenderRoadmap />
       </div>
     </div>

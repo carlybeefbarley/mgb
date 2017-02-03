@@ -77,6 +77,13 @@ export default class EditMap extends React.Component {
     super(props)
     registerDebugGlobal( 'editMap', this, __filename, 'Active Instance of Map editor')
 
+    this.layerProps = this.enableTrait(LayerProps)
+    this.tilesetProps = this.enableTrait(TilesetProps)
+    this.mapProps = this.enableTrait(MapProps)
+    this.toolbarProps = this.enableTrait(ToolbarProps)
+    this.propertiesProps = this.enableTrait(PropertiesProps)
+    this.objectListProps = this.enableTrait(ObjectListProps)
+
     this.state = {
       isLoading: true,
       activeLayer: 0,
@@ -106,12 +113,6 @@ export default class EditMap extends React.Component {
 
     this.lastSave = this.mgb_content2
 
-    this.layerProps = this.enableTrait(LayerProps)
-    this.tilesetProps = this.enableTrait(TilesetProps)
-    this.mapProps = this.enableTrait(MapProps)
-    this.toolbarProps = this.enableTrait(ToolbarProps)
-    this.propertiesProps = this.enableTrait(PropertiesProps)
-    this.objectListProps = this.enableTrait(ObjectListProps)
   }
 
   get preventUpdates(){

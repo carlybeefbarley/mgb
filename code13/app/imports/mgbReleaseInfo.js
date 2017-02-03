@@ -27,12 +27,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Fri Feb 03 2017 10:00:00 GMT-0800 (PST)',
+      'timestamp': 'Fri Feb 03 2017 12:45:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3008'
+        'iteration': '3018'
       },
 
       'releaseManagement': {
@@ -52,6 +52,13 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'type': 'improvement',
           'changeName': 'TUTORIALS ARE BEING UPDATED',
           'changeSummary': 'NOTE: We are re-working the tutorials for the new Top-Nav UI, they will be ugly until Saturday...',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.cards',
+          'type': 'improvement',
+          'changeName': 'Narrower Cards',
+          'changeSummary': 'Cards view (Assets List, Projects List) have been narrowed from 290px to 220px. They are going to get some more significant UI improvements next week',
           'otherUrls': [ ]
         },
         {

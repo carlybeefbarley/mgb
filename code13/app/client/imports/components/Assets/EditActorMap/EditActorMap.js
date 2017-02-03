@@ -121,7 +121,7 @@ export default class EditActorMap extends EditMap {
       //console.log("changed:", changes)
       this.saveForUndo("External actor change")
       this.updateMap()
-    })
+    }, this.tilesetProps.removeTileset)
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {

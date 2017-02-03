@@ -67,7 +67,7 @@ export default ActorHelper = {
     return d
   },
 
-  v1_to_v2: function(data, names, cb, onChange) {
+  v1_to_v2: function(data, names, cb, onChange, onRemovedActor) {
     if (!data.metadata) {
       cb(this.createEmptyMap())
       return
@@ -108,6 +108,7 @@ export default ActorHelper = {
     for (let i=0; i<data.mapLayer.length - 1; i++) {
       for (let j=0; j<data.mapLayer[i].length; j++) {
         let name = data.mapLayer[i][j]
+        name =name || ''
         // make sure these is not conflicting with real actors - try to load anyway?
         if(name.indexOf("jump:") > -1 || name.indexOf("music:") > -1){
           console.error(`Action ${name} in the NON action layer`)
@@ -210,7 +211,7 @@ export default ActorHelper = {
         dd.meta.options = data.meta.options
       }
       cb(dd)
-    }, onChange)
+    }, onChange, onRemovedActor)
   },
 
   createEmptyMap() {
@@ -286,7 +287,7 @@ export default ActorHelper = {
     return dd;
   },
 
-  loadActors: function(actorMap, names, images, cb, onChange){
+  loadActors: function(actorMap, names, images, cb, onChange, onRemovedActor){
     const actors = Object.keys(actorMap)
     // nothing to do
     if(actors.length === 0){
@@ -294,13 +295,23 @@ export default ActorHelper = {
       return
     }
     let loaded = 0
+    const onload = () => {
+      loaded++;
+      // loaded can be larger - if some actors are removed
+      if(loaded === actors.length){
+        cb()
+      }
+    }
     for(let i=0; i<actors.length; i++){
-      this.loadActor(actors[i], actorMap, i + 1 + this.TILES_IN_ACTIONS, images, names, () => {
-        loaded++;
-        if(loaded === actors.length){
-          cb()
+      this.loadActor(actors[i], actorMap, i + 1 + this.TILES_IN_ACTIONS, images, names, onload, onChange,
+        // remove deleted or broken actor SILENTLY
+        () => {
+          console.log("removing deleted actor from map", actors[i])
+          delete actorMap[actors[i]]
+          //actors.splice(i, 1)
+          onload()
         }
-      }, onChange)
+      )
     }
   },
   isLoading: {},
@@ -319,7 +330,7 @@ export default ActorHelper = {
     ActorHelper.subscriptions = {}
     ActorHelper.clearCache()
   },
-  loadActor: function(name, map, nr, images, names, cb, onChange) {
+  loadActor: function(name, map, nr, images, names, cb, onChange, onRemovedActor) {
     const parts = name.split(":")
     const user = parts.length > 1 ? parts.shift() : names.user
     const actorName = parts.length ? parts.pop() : name
@@ -344,8 +355,24 @@ export default ActorHelper = {
 
     let asset = ActorHelper.subscriptions[key] ? ActorHelper.subscriptions[key].getAssets()[0] : null
 
+    const onLoadFailed = () => {
+      delete ActorHelper.isLoading[key]
+      onRemovedActor(nr)
+      cb()
+    }
     mgbAjax(`/api/asset/actor/${user}/${actorName}`, (err, dataStr) => {
-      const d = JSON.parse(dataStr)
+      if(err){
+        onLoadFailed()
+        return
+      }
+      let d
+      try {
+        d = JSON.parse(dataStr)
+      }
+      catch(e){
+        onLoadFailed()
+        return
+      }
       const iparts = d.databag.all.defaultGraphicName.split(":");
       const iuser = iparts.length > 1 ? iparts.shift() : user
       const iname = iparts.pop()
@@ -356,6 +383,7 @@ export default ActorHelper = {
       map[name].actor = d
       map[name].image = src
       var img = new Image()
+      img.crossOrigin="anonymous"
       img.onload = function(){
         delete ActorHelper.isLoading[key]
         map[name].imagewidth = img.width
@@ -403,6 +431,7 @@ export default ActorHelper = {
         img.src = makeCDNLink("/images/error.png")
       }
       img.src = src
+
     }, asset)
 
 

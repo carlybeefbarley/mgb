@@ -10,7 +10,7 @@ import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
 //    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators$toc#Equality_()
 //    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators?raw&macros&section=Equality_operators
 //    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators?raw&macros&section=Equality_()
-// Maybe do this in SkillNodes.js ? 
+// Maybe do this in SkillNodes.js ?
 
 
 // TODO: I could improve Object properties.. any property right now
@@ -45,7 +45,7 @@ const specialHelpTypes = {
   "def":        { renderFn: specialHandlerDef,            skillNodes: null,                 betterTypeName: "Definition" }
 }
 
-// TODO: TokenType='variable-2' is LOCAL and TokenType='variable' is global. 
+// TODO: TokenType='variable-2' is LOCAL and TokenType='variable' is global.
 
 const helpInfo = [
 
@@ -167,7 +167,7 @@ const helpInfo = [
 
   {
     tt: "atom", ts: "null", origin: "ecma5",
-    skillNodes: _skl+'math.statements.NaN',    
+    skillNodes: _skl+'math.statements.NaN',
     help: "null is often used as a value when an object is expected but none is found/relevant",
     advice: "null has some surprising behaviors/bugs. For example (null == undefined) evaluates to true and (typeof null) evaluates to object",
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/null"
@@ -367,7 +367,7 @@ const helpInfo = [
   {
     tt: "keyword", ts: "in", origin: "ecma5",
     skillNodes: _skl+'operators.in',   // TODO: can we contextually disambigaute cases?
-    
+
     syntax: `property in objectName
 ..or...
 for (x in obj)`,
@@ -731,20 +731,20 @@ for (x in obj)`,
     skillNodes: _skl+'control-flow.switch',
     syntax: `switch (expression) {
   case value1:
-    // Statements executed when the result of 
+    // Statements executed when the result of
     // expression matches value1
-    break;  // Optional - stops fall-through to next case 
+    break;  // Optional - stops fall-through to next case
   case value2:
-    // Statements executed when the result of 
+    // Statements executed when the result of
     // expression matches value2
-    break;  // Optional - stops fall-through to next case 
+    break;  // Optional - stops fall-through to next case
  ...
   case valueN:
-    // Statements executed when the result of 
+    // Statements executed when the result of
     // expression matches valueN
-    break;  // Optional - stops fall-through to next case 
+    break;  // Optional - stops fall-through to next case
   default:  // Optional - don't have to provid default
-    // Statements executed when none of the 
+    // Statements executed when none of the
     // values match the value of the expression
     break;  // Optional - doesn't do much for last case/default
 }`,
@@ -760,20 +760,20 @@ for (x in obj)`,
     skillNodes: _skl+'control-flow.case',
     syntax: `switch (expression) {
   case value1:
-    // Statements executed when the result of 
+    // Statements executed when the result of
     // expression matches value1
-    break;  // Optional - stops fall-through to next case 
+    break;  // Optional - stops fall-through to next case
   case value2:
-    // Statements executed when the result of 
+    // Statements executed when the result of
     // expression matches value2
-    break;  // Optional - stops fall-through to next case 
+    break;  // Optional - stops fall-through to next case
  ...
   case valueN:
-    // Statements executed when the result of 
+    // Statements executed when the result of
     // expression matches valueN
-    break;  // Optional - stops fall-through to next case 
+    break;  // Optional - stops fall-through to next case
   default:  // Optional - don't have to provid default
-    // Statements executed when none of the 
+    // Statements executed when none of the
     // values match the value of the expression
     break;  // Optional - doesn't do much for last case/default
 }`,
@@ -1000,7 +1000,21 @@ export { import1 as name1, import2 as name2, …, nameN } from …;`,
     url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/export"
   },
 
-// TODO: disambiguate case...default from export...default 
+  {
+    tt: "keyword", ts: "from", origin: "ecma6",
+    skillNodes: _skl+'modules.import.from',
+    help: <span>You can import <strong>from</strong>:</span>,
+    advices: [
+      <span className="cm-s-eclipse">your own assets: <code><span className="cm-keyword">import</span> <span className="cm-def">myModule</span> <span className="cm-keyword">from</span> <span className="cm-string">'/moduleName'</span></code></span>,
+      <span className="cm-s-eclipse">other user asset: <code><span className="cm-keyword">import</span> <span className="cm-def">otherModule</span> <span className="cm-keyword">from</span> <span className="cm-string">'/!vault:CSSLoader'</span></code></span>,
+      <span className="cm-s-eclipse">common libraries: <code><span className="cm-keyword">import</span> <span className="cm-def">$</span> <span className="cm-keyword">from</span> <span className="cm-string">'jquery'</span></code></span>,
+      <span className="cm-s-eclipse">external libraries: <code><span className="cm-keyword">import</span> <span className="cm-def">three</span> <span className="cm-keyword">from</span> <span className="cm-string">'https://cdn.jsdelivr.net/threejs/0.0.0-r74/three.min.js'</span></code></span>,
+      <span>More examples: <a href="/u/!vault/asset/ePJGm7q78tbvWB4Co">/!vault:importExamples</a></span>
+    ]
+
+  },
+
+// TODO: disambiguate case...default from export...default
   {
     tt: "keyword", ts: "default", origin: "ecma5",
     skillNodes: _skl+'modules.default',  // and also control-flow.case-default?
@@ -1060,7 +1074,7 @@ function specialHandlerString2(rString) {
 }
 
 
-// Explain multi-line and single-line comments. 
+// Explain multi-line and single-line comments.
 function specialHandlerComment(str) {
   let grn = { color: "green", fontWeight: "bold" }
   // explain single line
@@ -1079,9 +1093,9 @@ function specialHandlerComment(str) {
         <p>There may be line breaks and any other characters between the <code style={grn}>/*</code> and <code style={grn}>*/</code></p>
         <pre style={grn}>/* This is an<br></br> example multiline comment */</pre>
         <p>
-          You may also see/use a special variant of multiline javascript comments 
+          You may also see/use a special variant of multiline javascript comments
           with <code style={grn}>@something</code> strings like <code style={grn}>@param</code>.
-          Developers use these to document their code so that automatic help text 
+          Developers use these to document their code so that automatic help text
           and api documentation can be extracted from the source code. See <a
           href={xlinks.jsDoc} target="_blank">jsdoc.org</a> for details
         </p>
@@ -1128,14 +1142,14 @@ function specialHandlerLocalVariable(str) {
       <p>This is a use of the variable <strong><code>{str}</code></strong> which appears to be a <strong>LOCAL</strong> variable</p>
       <small>
         <p>
-          The original version of Javascript before <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a> only had a single kind 
-          of <strong>local</strong> variable scope system. This is known as <strong>Execution Scope</strong> and is the scope used for variables defined 
+          The original version of Javascript before <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a> only had a single kind
+          of <strong>local</strong> variable scope system. This is known as <strong>Execution Scope</strong> and is the scope used for variables defined
           using the <code style={statementSty}>var</code> keyword.
         </p>
         <p>
           As of 2015, the <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a> version of JavaScript
-          added an <strong>additional local</strong> variable scope system. This new local scope system is known 
-          as <strong>Block Scope</strong> and is the scope used for variables defined 
+          added an <strong>additional local</strong> variable scope system. This new local scope system is known
+          as <strong>Block Scope</strong> and is the scope used for variables defined
           using the <code style={statementSty}>let</code> and <code style={statementSty}>const</code> keywords.
         </p>
         <p>
@@ -1199,13 +1213,13 @@ export default TokenDescription = React.createClass({
     let help = _.find(helpInfo, h => (h.tt === token.type && (h.ts === null || h.ts === ts)))
     let tokenTypeToDisplay = specialHandler ? specialHandler.betterTypeName : token.type
 
-    const skillNodeKey = specialHandler ? specialHandler.skillNodes : 
+    const skillNodeKey = specialHandler ? specialHandler.skillNodes :
                           (help ? (help.skillNodes || null) : null)
     let showExpanded = !skillNodeKey || (isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey))
 
 // Special cases that won't involve a skillNode lookup
-if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def' && 
-  (!skillNodeKey || !isSkillKeyValid(skillNodeKey)) 
+if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def' &&
+  (!skillNodeKey || !isSkillKeyValid(skillNodeKey))
 )
 {
   console.log(`TokenDescription database has no SkillNode for TT:${token.type} TS:${tsTrunc}`)
@@ -1213,19 +1227,30 @@ if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def
 }
     // TODO.. something useful with token.state?
 
+    const advices = []
+    if(help && help.advices){
+      for(let i=0; i<help.advices.length; i++){
+        advices.push(
+          <p key={i} style={{margin: 0}}><i className="ui info circle icon"></i>
+            <small style={{fontSize: '85%'}}>{help.advices[i]}</small>
+          </p>
+        )
+      }
+    }
+
     return (
       <div className="ui purple segment" style={{backgroundColor: "rgba(160,32,240,0.03)"}}>
         <a className="ui purple left ribbon label">
           <small>{tokenTypeToDisplay}</small>
           <code><b>&nbsp;&nbsp;{tsTrunc}</b></code></a>
-        <a  className="ui purple right corner label" 
+        <a  className="ui purple right corner label"
             title={`Click to ${ showExpanded ? "hide" : "show" } the explanation of this javascript language feature`}
             onClick={() => this.handleHideShowClick(skillNodeKey)}>
           <i className={(!showExpanded ? "add circle " : "minus circle ")+ " icon"}></i>
         </a>
         <p></p>
 
-        { showExpanded &&  
+        { showExpanded &&
           ( specialHandler ? specialHandler.renderFn(ts) :
             <div>
               { help && warnForHelp(help) }
@@ -1238,7 +1263,7 @@ if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def
               { help && help.advice2 && <p><i className="ui info circle icon"></i>
                 <small>{help.advice2}</small>
               </p> }
-
+              { advices.length && advices }
               { help && help.url && <p>
                 { urlLink(help.url) }
                 { help.url2 && <span>, {urlLink(help.url2)}</span> }
@@ -1247,6 +1272,7 @@ if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def
               }
             </div>
           )
+
         }
       </div>
     )

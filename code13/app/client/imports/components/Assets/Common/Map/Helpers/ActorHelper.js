@@ -12,7 +12,7 @@ import ActorValidator from '../../ActorValidator'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import {AssetKindEnum} from '/imports/schemas/assets'
 
-import {observeAsset, mgbAjax} from "/client/imports/helpers/assetFetchers"
+import {observeAsset, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
 
 // 0 - jump
 // 1 - music
@@ -350,7 +350,7 @@ export default ActorHelper = {
       const iuser = iparts.length > 1 ? iparts.shift() : user
       const iname = iparts.pop()
 
-      const src = `/api/asset/png/${iuser}/${iname}`
+      const src = makeCDNLink(`/api/asset/png/${iuser}/${iname}`)
 
       map[name].firstgid = nr
       map[name].actor = d
@@ -397,6 +397,10 @@ export default ActorHelper = {
           }
         )
         cb()
+      }
+      // load empty image on error
+      img.onerror = function(){
+        img.src = makeCDNLink("/images/error.png")
       }
       img.src = src
     }, asset)

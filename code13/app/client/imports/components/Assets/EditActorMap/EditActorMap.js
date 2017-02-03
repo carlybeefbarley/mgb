@@ -127,12 +127,16 @@ export default class EditActorMap extends EditMap {
   handleSave (data, reason, thumbnail, skipUndo = false) {
     //return;
     this.preventUpdates = false
+    // remove loading - which is set after adding new Actor
+    this.setState({isLoading: false})
+
     if(!this.props.canEdit){
       this.props.editDeniedReminder()
       return
     }
 
     // isn't it too late to save for undo?
+    // idea: call save for Undo - and set Timeout 0 for real save ?
     /*if(!skipUndo && !_.isEqual(this.lastSave, data)){
       // save for undo will prevent map updates - this.preventUpdates = true
       this.saveForUndo(reason)
@@ -146,8 +150,6 @@ export default class EditActorMap extends EditMap {
       this.refs.map.generatePreviewAndSaveIt()
     }
     this.props.handleContentChange(toSave, thumbnail, reason)
-    // remove loading - which is set after adding new Actor
-    this.setState({isLoading: false})
   }
 
   showModal = (action, cb) => {

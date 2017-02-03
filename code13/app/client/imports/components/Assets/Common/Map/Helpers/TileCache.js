@@ -121,12 +121,13 @@ export default class TileCache {
           src = `/api/asset/png/${Meteor.user().username}/${name}`
           img.onerror = () => {
             delete this.images[src]
-            img.onload()
+            img.src = makeCDNLink("/images/error.png")
           }
           img.src = makeCDNLink(`/api/asset/png/${Meteor.user().username}/${name}`)
         }
         else {
-          img.onload()
+          // load missing image
+          img.src = makeCDNLink("/images/error.png")
         }
 
         // TODO(stauzs): push errors - or load nice fallback image

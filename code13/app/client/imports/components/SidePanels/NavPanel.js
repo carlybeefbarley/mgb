@@ -135,7 +135,7 @@ export const getNavPanels = (currUser, showAll) => {
       {
         name: 'userBash',
         explainClickAction: "This will take you directly to the UserBashes search page",
-        icon: { color: 'orange', name: 'plug' } ,
+        icon: 'plug',
         hdr: 'UserBash',
         to: '/userBashes',
         menu: [
@@ -313,7 +313,8 @@ export default NavPanel = React.createClass({
         <NavPanelItem 
           name={v.name}
           openLeft={side==='right'} 
-          key={v.name} hdr={useIcons ? <Icon size='large' name={v.icon}/> : v.hdr} 
+          key={v.name} 
+          hdr={useIcons ? <Icon size='large' name={v.icon}/> : v.hdr} 
           menu={v.menu} 
           to={v.to}/>))
 

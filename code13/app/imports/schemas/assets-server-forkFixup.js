@@ -1,7 +1,7 @@
 
 // replaces owner:name with newUserName
 // TODO: check if referenced asset is in a project - this can break things if refenced asset is not in the project
-const doFix = (str, oldOwner, newOwner) => {
+var doFix = (str, oldOwner, newOwner) => {
   // DropArea import: owner:assetName
   if(str.startsWith(`${oldOwner}:`))
     return newOwner + str.substring(oldOwner.length)
@@ -12,14 +12,19 @@ const doFix = (str, oldOwner, newOwner) => {
 }
 
 // iterates objToFix props and changes oldOwner:xxxx to newOwner:xxxx
-const quickAndDirtyC2Fix = (objToFix, oldOwner, newOwner) => {
+var quickAndDirtyFix = (objToFix, oldOwner, newOwner) => {
   // is it safe to iterate Arrays this way???
   for (let i in objToFix) {
     const type = typeof objToFix[i]
-    if (type === 'string')
-      objToFix[i] = doFix(objToFix[i])
+    if (type === 'string'){
+      const tmp = doFix(objToFix[i], oldOwner, newOwner)
+      if(objToFix[i] != tmp ){
+        console.log(`FIXED: ${i} ${objToFix[i]} => ${tmp}`)
+        objToFix[i] = tmp
+      }
+    }
     else if(type == 'object')
-      quickAndDirtyC2Fix(objToFix[i], oldOwner, newOwner)
+      quickAndDirtyFix(objToFix[i], oldOwner, newOwner)
   }
 }
 
@@ -42,7 +47,8 @@ export const doFixupAssetReferences = (asset, oldOwner, newOwner) =>
   case 'actormap':
   case 'game':
     //TODO: Change the asset in-place
-    quickAndDirtyC2Fix(asset.content2, oldOwner, newOwner)
+    console.log("FIXING:", asset, asset.content2)
+    quickAndDirtyFix(asset.content2, oldOwner, newOwner)
     break
   case 'code':
     //TODO: DISCUSS - is it good replace strings from '/oldOwner:moduleName' => from '/newOwner:moduleName' ????

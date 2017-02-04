@@ -108,9 +108,9 @@ Meteor.methods({
         dstAsset.metadata.playCount = 0
     }
 
-    if (opts.fixupReferences)
+    if (opts.fixupReferences) {
       doFixupAssetReferences(dstAsset, dstAsset.dn_ownerName, username)
-
+    }
 
     if (opts.ownerId && opts.dn_ownerName) {
       // We allow the caller to set this: Main scenario is 'Create As Member Of Project'

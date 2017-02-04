@@ -12,15 +12,15 @@ export default UserBashes = () => (
             <Header.Subheader>
               4th and 5th of February -  10am-11am PST
             </Header.Subheader>
-          </Header.Content> 
+          </Header.Content>
         </Header>
       </Grid.Column>
 
       <Grid.Column width={8}>
         <Header as='h2' content='For visual coders' />
         <b>Task</b> - fork an existing project and add more gameplay <br/>
-        <b>Project to fork</b> - <QLink to={`/u/!vault/assets?_fp=assets&project=DwarfActors`}>Dwarfs</QLink>   <br/>
-        <b>Graphics assets</b> - <QLink to={`/u/!vault/assets?project=DwarfsGraphics`}>Characters, objects, animations</QLink> <br/>
+        <b>Project to fork</b> - <a href={`/u/!vault/assets?_fp=assets&project=DwarfActors`}>Dwarfs</a>   <br/>
+        <b>Graphics assets</b> - <a href={`/u/!vault/assets?project=DwarfsGraphics`}>Characters, objects, animations</a> <br/>
         <br/>
         <b>Examples</b>
         <List bulleted>
@@ -35,7 +35,7 @@ export default UserBashes = () => (
         <Header as='h2' content='For JavaScript coders' />
         <b>Task</b> - fork an existing project and add more gameplay <br/>
         <b>Code to fork</b> - <QLink to={`/u/guntis/asset/9xXHRdGFjkMmzQFNh`}>Dwarf game template</QLink> <br/>
-        <b>Graphics assets</b> - <QLink to={`/u/!vault/assets?project=DwarfsGraphics`}>Characters, objects, animations</QLink> <br/>
+        <b>Graphics assets</b> - <a href={`/u/!vault/assets?project=DwarfsGraphics`}>Characters, objects, animations</a> <br/>
         <br/>
         Here are some basic concepts to work with:
         <br/><br/>
@@ -83,9 +83,9 @@ export default UserBashes = () => (
 
         <b>Simple Games</b>
         <List bulleted>
-          <List.Item><QLink to={`/u/!vault/assets?project=SimpleMole`}>Whack a Mole</QLink></List.Item>
+          <List.Item><a href={`/u/!vault/assets?project=SimpleMole`}>Whack a Mole</a></List.Item>
           <List.Item><QLink to={`/u/!vault/asset/EzrCZqNsq9xePyfHp`}>Angry Birds</QLink></List.Item>
-          <List.Item><QLink to={`/u/!vault/assets?project=RockySmasher`}>Rocky Smasher</QLink></List.Item>
+          <List.Item><a href={`/u/!vault/assets?project=RockySmasher`}>Rocky Smasher</a></List.Item>
         </List>
 
 

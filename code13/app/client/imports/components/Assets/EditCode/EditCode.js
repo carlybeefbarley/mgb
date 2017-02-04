@@ -455,11 +455,19 @@ export default class EditCode extends React.Component {
     if(this.props.asset.kind === "tutorial"){
       return TutorialMentor.showHint(cm, CodeMirror)
     }
-    else if (this.props.canEdit && this.state.currentToken && this.state.currentToken.type !== "comment")
+    else if (this.props.canEdit && this.state.currentToken){
+      if(this.state.currentToken.type == "comment")
+        return CodeMirror.Pass
+      if(this.state.currentToken.type == "string"){
+        return this.showUserAssetHint(this.state.currentToken)
+      }
       return this.ternServer.complete(cm)
+    }
     return CodeMirror.Pass
   }
-
+  showUserAssetHint(token){
+    return CodeMirror.Pass
+  }
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
       if (this.acTimeout) {

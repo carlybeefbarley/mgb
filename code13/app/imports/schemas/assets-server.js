@@ -27,7 +27,7 @@ Meteor.methods({
     // See if source project exists
 
     const sourceProject = Projects.findOne( { ownerId: opts.sourceProjectOwnerId, name: opts.sourceProjectName } )
-    if (!sourceProject) 
+    if (!sourceProject)
       throw new Meteor.Error(404, `Source Project #${opts.sourceProjectName} does not exist for user #${opts.sourceProjectOwnerId}`)
 
     if (!sourceProject.allowForks)
@@ -35,8 +35,8 @@ Meteor.methods({
 
 
     // Generate list of asset IDs in source project
-    const azzSel = { 
-      ownerId: sourceProject.ownerId, 
+    const azzSel = {
+      ownerId: sourceProject.ownerId,
       isDeleted: false,
       projectNames: sourceProject.name
     }
@@ -52,13 +52,13 @@ Meteor.methods({
 
     _.each(ids, (entry, index) => {
         Meteor.call(
-          "Azzets.fork", 
-          entry._id, 
-          { 
+          "Azzets.fork",
+          entry._id,
+          {
             fixupReferences: true,
-            projectNames: [newProj.name], 
-            newAssetName: opts.sourceProjectOwnerId == this.userId ? entry.name + ' (forked)' : entry.name 
-          } 
+            projectNames: [newProj.name],
+            newAssetName: opts.sourceProjectOwnerId == this.userId ? entry.name + ' (forked)' : entry.name
+          }
         )
     })
 
@@ -71,7 +71,7 @@ Meteor.methods({
   //   opts.dn_ownerName          // Optional (together) to create asset in other user's account
   //   opts.projectNames          // null or an array with one project name string
   //   opts.newAssetName          // if null it will just append ' (fork)' to the old name
-  //   opts.fixupReferences       // if true, then call the smart asset-handlers that fixup 
+  //   opts.fixupReferences       // if true, then call the smart asset-handlers that fixup
                                   // references. For NOW, they assume ONLY the owner has changed
   "Azzets.fork": function (srcId, opts = {}) {
     if (!this.userId)
@@ -109,12 +109,12 @@ Meteor.methods({
     }
 
     if (opts.fixupReferences)
-      doFixupAssetReferences(dstAsset)
+      doFixupAssetReferences(dstAsset, dstAsset.dn_ownerName, username)
 
 
     if (opts.ownerId && opts.dn_ownerName) {
       // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
-      // TODO: Validate these further. Provide 
+      // TODO: Validate these further. Provide
       dstAsset.ownerId = opts.ownerId
       dstAsset.dn_ownerName = opts.dn_ownerName
     } else if (opts.ownerId || opts.dn_ownerName)
@@ -125,7 +125,7 @@ Meteor.methods({
       dstAsset.dn_ownerName = username
     }
 
-    if (this.userId === dstAsset.ownerId) 
+    if (this.userId === dstAsset.ownerId)
     {
       if (opts.projectNames && opts.projectNames.length === 1)
       {
@@ -141,7 +141,7 @@ Meteor.methods({
         throw new Meteor.Error(401, "Must set exactly one ProjectName when forking an Asset into another User's context")
 
       console.log(`TODO #insecure# check that user '${username}' is really part of project '${dstAsset.projectNames[0]}' `)
-      // CHECK THEY REALLY CAN DO THIS.  
+      // CHECK THEY REALLY CAN DO THIS.
       // Is this.userId in Project.memberList for   project.ownerName === data.ownerName && project.name === data.projectNames[0]
       // ALSO CHECK that USERNAME AND USERID MATCH
     }

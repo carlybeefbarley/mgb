@@ -12,11 +12,11 @@
 .notification-container {
     box-sizing: border-box;
     position: fixed;
-    top: 0;
+    top: 70px;
     right: 0;
     z-index: 999999;
-    width: 380px;
-    padding: 0 55px;
+    width: 395px;
+    padding: 0 70px;
     max-height: calc(100% - 30px);
     overflow-x: hidden;
     overflow-y: auto

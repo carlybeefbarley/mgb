@@ -40,18 +40,25 @@ Meteor.methods({
       isDeleted: false,
       projectNames: sourceProject.name
     }
-    const ids=Azzets.find(azzSel, { fields: { name: 1, _id: 1 } } ).fetch()
+    const ids = Azzets.find(azzSel, { fields: { name: 1, _id: 1 } } ).fetch()
     if (ids.length === 0)
      return new Meteor.Error(404, `Source Project #${opts.sourceProjectName} contains no assets`)
 
-    console.log("List of content = ", ids)
+    console.log("List of content to Fork Project = ", ids)
 
     // Try to create new Project
     const newProj={ name: opts.newProjectName, description: `Project Created via Fork of ${sourceProject.ownerName}:${sourceProject.name}`}
     const newProjId = Meteor.call("Projects.create", newProj)
 
     _.each(ids, (entry, index) => {
-        Meteor.call("Azzets.fork", entry._id, { projectNames: [newProj.name] } )
+        Meteor.call(
+          "Azzets.fork", 
+          entry._id, 
+          { 
+            projectNames: [newProj.name], 
+            newAssetName: opts.sourceProjectOwnerId == this.userId ? entry.name + ' (forked)' : entry.name 
+          } 
+        )
     })
 
     return ids.length
@@ -62,6 +69,7 @@ Meteor.methods({
   //   opts.ownerId               // Optional (together) to create asset in other user's account
   //   opts.dn_ownerName          // Optional (together) to create asset in other user's account
   //   opts.projectNames          // null or an array with one project name string
+  //   opts.newAssetName          // if null it will just append ' (fork)' to the old name
   "Azzets.fork": function (srcId, opts = {}) {
     if (!this.userId)
       throw new Meteor.Error(401, "Login required") // TODO: Better access check
@@ -79,7 +87,7 @@ Meteor.methods({
     const dstAsset = _.omit(srcAsset, '_id')
     dstAsset.updatedAt = now
     dstAsset.projectNames = []
-    dstAsset.name = dstAsset.name + ' (fork)'
+    dstAsset.name = opts.newAssetName || (dstAsset.name + ' (fork)')
     if (!dstAsset.forkParentChain)
       dstAsset.forkParentChain = []
 

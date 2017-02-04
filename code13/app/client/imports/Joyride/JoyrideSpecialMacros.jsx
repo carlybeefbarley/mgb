@@ -162,8 +162,7 @@ const stepMacros = [
       "text": `Lorem ipsum hocus pocus testing 1 2 3 Ground Control To Major Tom. Kthxbye`,
       "selector": "body",
       "showStepOverlay": false,
-      "position": "top",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "top"
     }
   },
   
@@ -177,8 +176,7 @@ const stepMacros = [
       "text": `This stack of icons on the right-hand side is called the <em>FlexPanel</em>. These panels have useful context while you are working on other assets`,
       "selector": "#mgbjr-flexPanelIcons",
       "showStepOverlay": true,
-      "position": "left",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "left"
     }
   },
 
@@ -192,8 +190,7 @@ const stepMacros = [
       "text": `This header has direct links and submenus to navigate this site`,
       "selector": "#mgbjr-np",
       "showStepOverlay": true,
-      "position": "bottom",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "bottom"
     }
   },
 
@@ -238,7 +235,6 @@ const stepMacros = [
       "preparePage": 'refreshBadgeStatus',
       "title": "Waving magic wand...",
       "text": "See your new Badge?",
-      "style": '%inverted%',
       "position": "top-left"
     },
   }

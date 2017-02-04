@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { Projects, Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import validate from '/imports/schemas/validate'
-
+import { doFixupAssetReferences } from './assets-server-forkFixup'
 // ASSETS
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
@@ -55,6 +55,7 @@ Meteor.methods({
           "Azzets.fork", 
           entry._id, 
           { 
+            fixupReferences: true,
             projectNames: [newProj.name], 
             newAssetName: opts.sourceProjectOwnerId == this.userId ? entry.name + ' (forked)' : entry.name 
           } 
@@ -70,6 +71,8 @@ Meteor.methods({
   //   opts.dn_ownerName          // Optional (together) to create asset in other user's account
   //   opts.projectNames          // null or an array with one project name string
   //   opts.newAssetName          // if null it will just append ' (fork)' to the old name
+  //   opts.fixupReferences       // if true, then call the smart asset-handlers that fixup 
+                                  // references. For NOW, they assume ONLY the owner has changed
   "Azzets.fork": function (srcId, opts = {}) {
     if (!this.userId)
       throw new Meteor.Error(401, "Login required") // TODO: Better access check
@@ -100,10 +103,14 @@ Meteor.methods({
     })
 
     if (dstAsset.kind === 'game') {
-      // Special handling
+      // Special handling in all cases for this one:
       if (dstAsset.metadata)
         dstAsset.metadata.playCount = 0
     }
+
+    if (opts.fixupReferences)
+      doFixupAssetReferences(dstAsset)
+
 
     if (opts.ownerId && opts.dn_ownerName) {
       // We allow the caller to set this: Main scenario is 'Create As Member Of Project'

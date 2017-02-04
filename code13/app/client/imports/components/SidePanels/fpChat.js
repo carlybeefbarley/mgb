@@ -229,7 +229,7 @@ debugger   // DEAD CODE?
           <div className="metadata">
             <span className="date" title={absTime}>{ago}</span>
           </div>
-          <div className="text"><ChatMessage msg={c.message}/></div>
+          <div className="text"><ChatMessage msg={c.message}/>&nbsp;</div>
         </div>
       </div>
     )

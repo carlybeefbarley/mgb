@@ -15,9 +15,10 @@ const doFix = (str, oldOwner, newOwner) => {
 const quickAndDirtyC2Fix = (objToFix, oldOwner, newOwner) => {
   // is it safe to iterate Arrays this way???
   for (let i in objToFix) {
-    if (typeof objToFix[i] === 'string')
+    const type = typeof objToFix[i]
+    if (type === 'string')
       objToFix[i] = doFix(objToFix[i])
-    else
+    else if(type == 'object')
       quickAndDirtyC2Fix(objToFix[i], oldOwner, newOwner)
   }
 }

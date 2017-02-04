@@ -15,7 +15,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
 import { logActivity } from '/imports/schemas/activity'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { Grid, Segment, Checkbox, Message, Icon, Header, Button } from 'semantic-ui-react'
+import { Grid, Segment, Checkbox, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
@@ -28,6 +28,7 @@ export default ProjectOverview = React.createClass({
   
   getInitialState: () => ({ 
     showAddUserSearch: false,       // True if user search box is to be shown
+    isForkPending:     false,       // True if a fork operation is pending
     isDeletePending:   false,       // True if a delete project operation is pending
     isDeleteComplete:  false        // True if a delete project operation succeeded.
   }),   
@@ -99,7 +100,32 @@ export default ProjectOverview = React.createClass({
           <QLink to={"/u/" + project.ownerName + "/assets"} style={buttonSty} query={{project:project.name}} className="ui small button" >
             Project Assets
           </QLink>
-          <Button disabled={!this.data.project.allowForks} style={buttonSty} size='small' content='Fork Project'/>
+          <Popup 
+            inverted wide='very' on='click'
+            trigger={(
+              <Button 
+                disabled={!this.data.project.allowForks} 
+                style={buttonSty} 
+                size='small' 
+                content={this.state.isForkPending ? 'Forking project...' : 'Fork Project'}/>)}
+            >
+            { this.state.isForkPending ? ( <div>Forking...please wait..</div> ) : (
+              <div>
+                <Header as='h4' content="Name for new Forked project"/>
+                <div className="ui small fluid action input" style={{minWidth: '300px'}}>
+                  <input  type="text"
+                          id="mgbjr-fork-project-name-input"
+                          placeholder="New Project name" 
+                          defaultValue={this.data.project.name + ' (fork)'} 
+                          ref="forkNameInput"
+                          size="22"></input>
+                  <Button icon='fork' ref="forkGoButton" onClick={this.handleForkGo}/>
+                </div>
+              </div>
+              ) 
+            }
+          </Popup>
+                
           { this.renderRenameDeleteProject() } 
         </Grid.Column>
         
@@ -127,6 +153,29 @@ export default ProjectOverview = React.createClass({
     )
   },
   
+  handleForkGo()
+  {
+    const newProjName = this.refs.forkNameInput.value
+    showToast(`Forking project '${this.data.project.name}' to '${newProjName}..`, 'info')
+    this.setState( { isForkPending: true } )
+    const forkCallParams = {
+      sourceProjectName: this.data.project.name,
+      sourceProjectOwnerId: this.data.project.ownerId,
+      newProjectName: newProjName
+    }
+    Meteor.call("Project.Azzets.fork", forkCallParams, (err, result) => {
+      if (err)
+        showToast(`Could not fork project: ${err}`, 'error')
+      else
+      {
+        const msg = `Forked project '${this.data.project.name}' to '${newProjName}, creating ${result} new Assets`
+        logActivity("project.fork",  msg)
+        showToast(msg)
+      }
+      this.setState( { isForkPending: false } )
+    })
+  },
+
   // TODO - override 'Search Users" header level in UserListRoute
   // TODO - some better UI for Add People.
   handleClickUser: function(userId, userName)
@@ -140,11 +189,10 @@ export default ProjectOverview = React.createClass({
     var project = this.data.project
     var newData = { memberIds: _.union(project.memberIds, [userId])}   
     Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
-      if (error) {
+      if (error)
         showToast(`Could not add member ${userName} to project ${project.name}`, 'error')
-      } else {
-        logActivity("project.addMember",  `Add Member ${userName} to project ${project.name}`);
-      }
+      else
+        logActivity("project.addMember",  `Add Member ${userName} to project ${project.name}`)
     })
   },
   

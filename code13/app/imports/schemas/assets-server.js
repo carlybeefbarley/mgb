@@ -13,14 +13,13 @@ Meteor.methods({
   // Fork Project
   //   opts.sourceProjectName      // Required string
   //   opts.sourceProjectOwnerId   // Required string
-  //   opts.newProjectName        // Required string
+  //   opts.newProjectName         // Required string
 
-  "Project.Azzets.fork": function (srcId, opts = {}) {
+  "Project.Azzets.fork": function (opts = {}) {
     if (!this.userId)
       throw new Meteor.Error(401, "Login required") // TODO: Better base access check
 
     // Check params are good
-    check(srcId, String)
     check(opts.newProjectName, String)
     check(opts.sourceProjectName, String)
     check(opts.sourceProjectOwnerId, String)

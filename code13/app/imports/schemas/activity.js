@@ -69,6 +69,7 @@ export const ActivityTypes = {
   "game.play.start":   { icon: "green play",       pri: 17,  description: "Start game" },
 
   "project.create":    { icon: "green sitemap",    pri: 3,   description: "Create project" },
+  "project.fork":      { icon: "green fork",       pri: 3,   description: "Fork project" },
   "project.addMember": { icon: "sitemap",          pri: 4,   description: "Add Member to project" },
   "project.destroy":   { icon: "red sitemap",      pri: 4,   description: "Destroyed Empty project" },
   "project.removeMember": { icon: "sitemap",       pri: 4,   description: "Remove Member from project" },

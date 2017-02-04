@@ -124,8 +124,7 @@ const _mkCreateAsset = kind => (
     newVal:
     {
       "title": `Create a ${_.upperCase(kind)} Asset`,
-      "text": `First, type in a name for the asset above... 
-      for example '<span style='color: red'>my avatar</span>'.<br></br>Second.. Select the ${_.upperCase(kind)} asset kind above.<br></br>Third... Click on the 'Create Asset' button to the left here`,
+      "text": `First, type in a name for the asset above.<br></br>Second.. Select the ${_.upperCase(kind)} asset kind above.<br></br>Third... Click on the 'Create Asset' button to the left here`,
       "selector": "#mgbjr-create-asset-button",
       "showStepOverlay": false,
       "awaitCompletionTag": `mgbjr-CT-asset-create-new-${kind}`,

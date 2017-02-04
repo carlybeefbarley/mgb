@@ -519,6 +519,7 @@ export default class SourceTools {
       }
       if(canSkipBundling){
         cb('')
+        return
       }
 
 

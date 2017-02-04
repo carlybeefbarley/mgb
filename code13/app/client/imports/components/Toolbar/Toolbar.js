@@ -16,7 +16,7 @@ const keyModifiers = {
 }
 
 const _keyMaps = {
-  "SPACE": 32, 
+  "SPACE": 32,
   "ENTER": 13,
   "LEFT":  37,
   "TOP":   38,
@@ -60,7 +60,7 @@ export default class Toolbar extends React.Component {
       // don't steal events from input fields
       // Textarea is exception - because of Codemirror textarea
       // make sure to have proper modifiers (ctrl, alt...) - otherwise Toolbar will steal event
-      if (_.includes(["INPUT", "SELECT","TEXTAREA"], e.target.tagName))
+      if (_.includes(["INPUT", "SELECT","TEXTAREA"], e.target.tagName) && !e.target.classList.contains('allow-toolbar-shortcuts'))
         return
       const keyval = this.getKeyval(e)
       if (this.keyActions[keyval])
@@ -70,7 +70,7 @@ export default class Toolbar extends React.Component {
     this._onKeyUp = (e) => {
       // don't steal events from input fields
       // TODO(@stauzs): Maybe worth using something like https://github.com/madrobby/keymaster to handle the edge cases like meta (cmd), input etc.
-      if (_.includes(["INPUT", "SELECT","TEXTAREA"], e.target.tagName))
+      if (_.includes(["INPUT", "SELECT","TEXTAREA"], e.target.tagName) && !e.target.classList.contains('allow-toolbar-shortcuts'))
         return
 
       let keyval = this.getKeyval(e)
@@ -93,7 +93,7 @@ export default class Toolbar extends React.Component {
   getEffectiveFeatureLevel() {
     return getFeatureLevel(this.context.settings, this.lsLevelKey) || expectedToolbars.getDefaultLevel(this.lsActiveFeatureLevelName)
   }
-  
+
   /* Lifecycle functions */
   componentDidMount() {
     this.keyActions = {}
@@ -133,14 +133,14 @@ export default class Toolbar extends React.Component {
     const keys = shortcut.split("+")
     // create unique index where first 8 bits is keycode
     // 9th-12th bits are Ctrl/Shift/Alt/Meta - See keyModifiers.*
-    
+
     let keyval = 0
 
-    _.each(keys, rawkey => { 
+    _.each(keys, rawkey => {
       const key = rawkey.toUpperCase().trim()
 
       // some special cases
-      //switch (key) 
+      //switch (key)
       if (_.has(_keyMaps, key))
         keyval |= _keyMaps[key]
       else if (key.length > 1)
@@ -175,22 +175,22 @@ export default class Toolbar extends React.Component {
       <div className='mgb-toolbar'>
         { _.map(this.props.config.buttons, (b, i) => (
               b.name == 'separator' ? <span style={{width: '2px'}} key={i}>{' '}</span> : (
-                <Button.Group 
-                    key={i} 
+                <Button.Group
+                    key={i}
                     style={{ marginRight: "0px", marginBottom: "2px", marginTop: "2px" }}>
-                    
+
                   {this._renderButton(b, i)}
-                </Button.Group> 
+                </Button.Group>
         ) ) ) }
 
         { this.state.level < this.maxLevel-1 &&
           <QLink query={{ '_fp': 'features' }}>
             <Popup trigger={(
-                <Button 
+                <Button
                     icon
                     compact
-                    basic 
-                    id="mgbjr-toolbar-optionsButton" 
+                    basic
+                    id="mgbjr-toolbar-optionsButton"
                     size={_defaultToolbarButtonSize}
                     icon='horizontal ellipsis'/>
               )}
@@ -234,8 +234,8 @@ export default class Toolbar extends React.Component {
 
     return (
       <Popup trigger={(
-        <Button 
-            compact 
+        <Button
+            compact
             icon
             className={className}
             primary={!!b.active}

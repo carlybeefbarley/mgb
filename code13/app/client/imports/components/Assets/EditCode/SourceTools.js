@@ -508,6 +508,22 @@ export default class SourceTools {
       return
     }
     this.collectSources((sources) => {
+      // check sources and skip bundling if sources are empty
+      let canSkipBundling = true
+      for (let i in sources) {
+        const code = sources[i].code
+        if(code && code !== ";"){
+          canSkipBundling = false
+          break
+        }
+      }
+      if(canSkipBundling){
+        cb('')
+        return
+      }
+
+
+
       // only phaser is global atm
       const externalGlobal = []
       const externalLocal = []

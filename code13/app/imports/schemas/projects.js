@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { Projects, Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { bestWorkStateName, defaultWorkStateName } from '/imports/Enums/workStates'
-
+import validate from '/imports/schemas/validate'
 
 // The 'projects' concept is a BIG DEAL in MGB, so get ready for a big-ass comment explaining it 
 // all. Got a coffee? You may need one :)  
@@ -385,7 +385,7 @@ Meteor.methods({
 //   },
 
   /** Projects.create
-   *  @param data.name           Name of Project
+   *  @param data.name           Name of Project. Must be unique for 
    *  @param data.description    Description field
    */
   "Projects.create": function(data) {
@@ -401,11 +401,18 @@ Meteor.methods({
     data.workState = defaultWorkStateName
     data.allowForks = false
     data.memberIds = []
-    data.avatarAssetId = ""
+    data.avatarAssetId = ''
 
-    check(data, _.omit(schema, '_id'));
+    check(data, _.omit(schema, '_id'))
 
-    let docId = Projects.insert(data);
+    if (!validate.projectName(data.name))
+      throw new Meteor.Error(500, "Invalid Project Name")
+
+    const existingProject = Projects.findOne( { ownerId: data.ownerId, name: data.name } )
+    if (existingProject) 
+      throw new Meteor.Error(404, `Project #${data.name} already exists`)
+
+    let docId = Projects.insert(data)
 
     if (Meteor.isServer) {
       console.log(`  [Projects.create]  "${data.name}"  #${docId}  `)

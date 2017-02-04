@@ -25,7 +25,7 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const flexPanelViews = [
-  { tag: 'activity',  lev: 4,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false, mobileUI: true },
+  { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false, mobileUI: true },
 
   { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false, mobileUI: false },
   { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false, mobileUI: true  },

@@ -165,6 +165,7 @@ export default class Joyride extends React.Component {
         this.toggleTooltip(true, this.state.index+1, 'next')
       }
     }
+
     window.addEventListener('mgbCompletionTag', listeners.mgbCompletionTag)
 
     // appearing/disappearing listener

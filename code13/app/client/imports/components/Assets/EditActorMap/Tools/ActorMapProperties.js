@@ -13,7 +13,7 @@ export default class ActorMapProperties extends React.Component {
 
   render () {
     return (
-      <div id="mgbjr-mapTools-properties">
+      <div id="mgbjr-MapTools-properties">
         <div className="ui small labeled input">
           <div className="ui small label" title="Map width">
             w:

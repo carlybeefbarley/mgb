@@ -22,6 +22,8 @@ const _fullStepField = null     // This is returned in notFoundMacros[].field re
 
 */
 
+// Style: Use %inverted% for any step requiring user action (mostly with awaitCompletionTag)
+
 // Helper which makes an array of NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
 const _mkNavPanelMacros = () => {
 
@@ -41,7 +43,8 @@ const _mkNavPanelMacros = () => {
         "selector": `#mgbjr-np-${dd.name}`,
         "showStepOverlay": false,
         "awaitCompletionTag": `mgbjr-CT-np-${dd.name}`,
-        "position": position
+        "position": position,
+        "style": "%inverted%" 
       }
     })
     // 2. Each of the options in the Menu DropDown
@@ -54,11 +57,12 @@ const _mkNavPanelMacros = () => {
         newVal:
         {
           "title": `The '${ddUpName}->${smText}' menu`,
-          "text": `<br></br>Hover on the <div class='ui small black button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui label'>${smText}</div> option`,
+          "text": `<br></br>Hover on the <div style='border: 1.5px solid dimgrey' class='ui small black button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui label'>${smText}</div> option`,
     //      "selector": `#mgbjr-np-${dd.name}`, // Note that the -jrkey suffix isn't visible yet...
           "showStepOverlay": true,
           "awaitCompletionTag": `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
-          "position": 'top ' + position
+          "position": 'top ' + position,
+          "style": "%inverted%" 
         }
       })
 
@@ -120,12 +124,12 @@ const _mkCreateAsset = kind => (
     newVal:
     {
       "title": `Create a ${_.upperCase(kind)} Asset`,
-      "text": `First, type in a name for the asset above... 
-      for example '<span style='color: red'>my avatar</span>'.<br></br>Second.. Select the ${_.upperCase(kind)} asset kind above.<br></br>Third... Click on the 'Create Asset' button to the left here`,
+      "text": `First, type in a name for the asset above.<br></br>Second.. Select the ${_.upperCase(kind)} asset kind above.<br></br>Third... Click on the 'Create Asset' button to the left here`,
       "selector": "#mgbjr-create-asset-button",
       "showStepOverlay": false,
       "awaitCompletionTag": `mgbjr-CT-asset-create-new-${kind}`,
-      "position": "right"
+      "position": "right",
+      "style": "%inverted%" 
     }
   }
 )
@@ -157,8 +161,7 @@ const stepMacros = [
       "text": `Lorem ipsum hocus pocus testing 1 2 3 Ground Control To Major Tom. Kthxbye`,
       "selector": "body",
       "showStepOverlay": false,
-      "position": "top",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "top"
     }
   },
   
@@ -172,8 +175,7 @@ const stepMacros = [
       "text": `This stack of icons on the right-hand side is called the <em>FlexPanel</em>. These panels have useful context while you are working on other assets`,
       "selector": "#mgbjr-flexPanelIcons",
       "showStepOverlay": true,
-      "position": "left",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "left"
     }
   },
 
@@ -187,8 +189,7 @@ const stepMacros = [
       "text": `This header has direct links and submenus to navigate this site`,
       "selector": "#mgbjr-np",
       "showStepOverlay": true,
-      "position": "bottom",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "bottom"
     }
   },
 
@@ -233,7 +234,6 @@ const stepMacros = [
       "preparePage": 'refreshBadgeStatus',
       "title": "Waving magic wand...",
       "text": "See your new Badge?",
-      "style": '%inverted%',
       "position": "top-left"
     },
   }

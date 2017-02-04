@@ -42,8 +42,13 @@ const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
           <p style={{ fontSize: '1.5em', maxWidth: '450px' }}>
             Learn coding, design, team and biz skills - by making original games with friends
             <br />
+            {/*
             <QLink to={`/learn/getstarted`}>
               <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='Get started' />
+            </QLink>
+          */}
+            <QLink to={`/userBashes`}>
+              <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='User Bashes' />
             </QLink>
             <QLink to={`/signup`}>
               <Button color='yellow' size='huge' style={{ marginTop: '0.5em'}} content='Sign me up' />

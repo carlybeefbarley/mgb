@@ -22,6 +22,8 @@ const _fullStepField = null     // This is returned in notFoundMacros[].field re
 
 */
 
+// Style: Use %inverted% for any step requiring user action (mostly with awaitCompletionTag)
+
 // Helper which makes an array of NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
 const _mkNavPanelMacros = () => {
 
@@ -41,7 +43,8 @@ const _mkNavPanelMacros = () => {
         "selector": `#mgbjr-np-${dd.name}`,
         "showStepOverlay": false,
         "awaitCompletionTag": `mgbjr-CT-np-${dd.name}`,
-        "position": position
+        "position": position,
+        "style": "%inverted%" 
       }
     })
     // 2. Each of the options in the Menu DropDown
@@ -58,7 +61,8 @@ const _mkNavPanelMacros = () => {
     //      "selector": `#mgbjr-np-${dd.name}`, // Note that the -jrkey suffix isn't visible yet...
           "showStepOverlay": true,
           "awaitCompletionTag": `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
-          "position": 'top ' + position
+          "position": 'top ' + position,
+          "style": "%inverted%" 
         }
       })
 
@@ -125,7 +129,8 @@ const _mkCreateAsset = kind => (
       "selector": "#mgbjr-create-asset-button",
       "showStepOverlay": false,
       "awaitCompletionTag": `mgbjr-CT-asset-create-new-${kind}`,
-      "position": "right"
+      "position": "right",
+      "style": "%inverted%" 
     }
   }
 )

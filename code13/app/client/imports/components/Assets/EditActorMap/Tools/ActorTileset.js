@@ -95,8 +95,9 @@ export default class ActorTileset extends React.Component {
   }
 
   genTilesetImage(index, isActive, tileset){
+    const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
     const tsName = tileset.name.indexOf(':') === -1 ? tileset.name : tileset.name.split(':').pop()
-    const title = `${tsName} (${tileset.imagewidth}x${tileset.imageheight})`
+    const title = `${tsName} (${tileset.imagewidth}x${tileset.imageheight})\n${types[parseInt(tileset.actor.databag.all.actorType)]}`
     const imgRatio = tileset.imageheight / tileset.imagewidth
     const width = tileset.imagewidth <= 64 ? 64 : 80
 
@@ -130,17 +131,7 @@ export default class ActorTileset extends React.Component {
         />
         <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.75)', color: 'white', textAlign: 'center', padding: 0, verticalAlign: 'middle', maxHeight: '1.5em'}}>
           {
-            tsName.length > 8
-            ?
-            (
-              tsName.length > 12
-              ?
-              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tsName.slice(0, -2) + '..'}</p>
-              :
-              <p style={{marginLeft: '-100%', marginRight: '-100%', textAlign: 'center'}}>{tsName}</p>
-            )
-            :
-            <p>{tsName}</p>
+            <p style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>{tsName}</p>
           }
         </Label>
       </Grid.Column >

@@ -194,7 +194,7 @@ export default class ActorMapArea extends BaseMapArea {
           <Accordion.Title>
             <i className='icon search' style={{float: 'right', color: 'white'}} />
           </Accordion.Title>
-          <Accordion.Content style={{padding: '5px', minWidth: '200px'}}>
+          <Accordion.Content style={{padding: '5px', minWidth: '220px'}}>
             <PositionInfo getInfo={this.getAllInfo.bind(this)} ref='positionInfo' />
           </Accordion.Content>
         </Accordion>

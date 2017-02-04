@@ -10,5 +10,11 @@ export VELOCITY_DEBUG_MIRROR=1
 export METEOR_PROFILE=1000
 export ROOT_URL=http://localhost:3000
 echo Bundler cache size is now `du -s -h .meteor/local/bundler-cache/`
-meteor -p 0.0.0.0:3000 $@
+
+# For Windows
+if [[ "$OSTYPE" == "msys" ]]; then 
+  meteor.bat -p 0.0.0.0:3000 $@
+else
+  meteor -p 0.0.0.0:3000 $@
+fi
 )

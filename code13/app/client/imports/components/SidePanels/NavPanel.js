@@ -131,7 +131,23 @@ export const getNavPanels = (currUser, showAll) => {
             content: 'All Assets',
           },
         ],
-      }
+      },
+      {
+        name: 'userBash',
+        explainClickAction: "This will take you directly to the UserBashes search page",
+        icon: { color: 'orange', name: 'plug' } ,
+        hdr: 'UserBash',
+        to: '/userBashes',
+        menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'userbash',
+            to: '/userBashes',
+            icon: { color: 'orange', name: 'plug' },
+            content: 'UserBash Info',
+          }
+        ],
+      }      
     ],
     right: [
       {

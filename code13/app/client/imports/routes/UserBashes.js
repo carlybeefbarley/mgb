@@ -1,23 +1,33 @@
 import React from 'react'
-import { Container, Grid, Header, List } from 'semantic-ui-react'
+import { Container, Grid, Header, Icon, List } from 'semantic-ui-react'
 
 export default UserBashes = () => (
   <Container>
-    <Header as='h1' content='"User Bash" Testing:  4th and 5th of February 10am-11am PST'/>
-    <Grid>
+    <Grid padded>
+      <Grid.Column width={16}>
+        <Header as='h2'>
+          <Icon name='plug' color='orange'/>
+          <Header.Content>
+            "User Bash" Testing
+            <Header.Subheader>
+              4th and 5th of February -  10am-11am PST
+            </Header.Subheader>
+          </Header.Content> 
+        </Header>
+      </Grid.Column>
+
       <Grid.Column width={8}>
         <Header as='h2' content='For visual coders' />
         <b>Task</b> - fork an existing project and add more gameplay <br/>
-        <b>Project to fork</b> - // TODO needs link   <br/>
-        <b>Graphics assets</b> - <QLink to={`/u/!vault/assets?_fp=assets&project=DwarfsGraphics`}>Characters, objects, animations</QLink> <br/>
+        <b>Project to fork</b> - <QLink to={`/u/!vault/project/uG3dKMmRyQv78M9EZ`}>Dwarfs</QLink>   <br/>
+        <b>Graphics assets</b> - <QLink to={`/u/!vault/assets?project=DwarfsGraphics`}>Characters, objects, animations</QLink> <br/>
       </Grid.Column>
-
 
       <Grid.Column width={8}>
         <Header as='h2' content='For JavaScript coders' />
         <b>Task</b> - fork an existing project and add more gameplay <br/>
         <b>Code to fork</b> - <QLink to={`/u/guntis/asset/9xXHRdGFjkMmzQFNh`}>Dwarf game template</QLink> <br/>
-        <b>Graphics assets</b> - <QLink to={`/u/!vault/assets?_fp=assets&project=DwarfsGraphics`}>Characters, objects, animations</QLink> <br/>
+        <b>Graphics assets</b> - <QLink to={`/u/!vault/assets?project=DwarfsGraphics`}>Characters, objects, animations</QLink> <br/>
         <br/>
         Here are some basic concepts to work with:
         <br/><br/>

@@ -27,12 +27,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Fri Feb 03 2017 12:45:00 GMT-0800 (PST)',
+      'timestamp': 'Fri Feb 03 2017 23:45:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3018'
+        'iteration': '3040'
       },
 
       'releaseManagement': {
@@ -43,7 +43,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
         {
           'featureTag': 'nav.userBash page',
           'type': 'feature',
-          'changeName': 'Page explaining good activities for the User Bash',
+          'changeName': 'HeaderLink + Page explaining good activities for the User Bash',
           'changeSummary': 'This weekend we are running a couple of \'User Bash\' events - at 10am PST on Saturday and Sunday. Join us - find tasty bugs and make some games',
           'otherUrls': [ { txt: 'User Bash Page', href: '/userBashes' } ]
         },
@@ -55,6 +55,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'otherUrls': [ ]
         },
         {
+          'featureTag': 'nav.toolbars',
+          'type': 'bugfix',
+          'changeName': 'Toolbars have been re-worked',
+          'changeSummary': 'There were some issues with Toolbar buttons not activating tools, conflicting with edit boxes, and some drag/reset issues. These have been fixed',
+          'otherUrls': [ ]
+        },        {
           'featureTag': 'nav.cards',
           'type': 'improvement',
           'changeName': 'Narrower Cards',

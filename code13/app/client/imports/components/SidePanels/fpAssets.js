@@ -191,13 +191,12 @@ export default fpAssets = React.createClass({
         </div>
         <br></br>
         { loading ? <Spinner /> : 
-          <div style={{marginLeft: '25px'}}>
             <AssetList
               allowDrag={true}
+              fluid={true}
               renderView={view}
               assets={assets} 
               currUser={currUser} />
-          </div>
         }
       </div>
     )

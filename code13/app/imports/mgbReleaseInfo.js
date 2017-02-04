@@ -27,12 +27,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Sat Feb 04 2017 07:10:00 GMT-0800 (PST)',
+      'timestamp': 'Sat Feb 04 2017 09:45 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3057'
+        'iteration': '3060'
       },
 
       'releaseManagement': {
@@ -43,7 +43,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
         {
           'featureTag': 'nav.userBash page',
           'type': 'feature',
-          'changeName': 'HeaderLink + Page explaining good activities for the User Bash',
+          'changeName': 'Vivid HeaderLink + Page explaining good activities for the User Bash',
           'changeSummary': 'This weekend we are running a couple of \'User Bash\' events - at 10am PST on Saturday and Sunday. Join us - find tasty bugs and make some games',
           'otherUrls': [ { txt: 'User Bash Page', href: '/userBashes' } ]
         },

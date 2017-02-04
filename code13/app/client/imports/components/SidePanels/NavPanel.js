@@ -138,6 +138,7 @@ export const getNavPanels = (currUser, showAll) => {
         icon: 'plug',
         hdr: 'UserBash',
         to: '/userBashes',
+        highlight: true,
         menu: [
           {
             subcomponent: 'Item',
@@ -316,7 +317,9 @@ export default NavPanel = React.createClass({
           key={v.name} 
           hdr={useIcons ? <Icon size='large' name={v.icon}/> : v.hdr} 
           menu={v.menu} 
+          style={{ backgroundColor: (v.highlight ? "orange" : "") }}
           to={v.to}/>))
+
 
     return (
       <Menu inverted style={menuStyle} id='mgbjr-np'>

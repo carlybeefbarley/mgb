@@ -57,7 +57,7 @@ const _mkNavPanelMacros = () => {
         newVal:
         {
           "title": `The '${ddUpName}->${smText}' menu`,
-          "text": `<br></br>Hover on the <div class='ui small black button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui label'>${smText}</div> option`,
+          "text": `<br></br>Hover on the <div style='border: 1.5px solid dimgrey' class='ui small black button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui label'>${smText}</div> option`,
     //      "selector": `#mgbjr-np-${dd.name}`, // Note that the -jrkey suffix isn't visible yet...
           "showStepOverlay": true,
           "awaitCompletionTag": `mgbjr-CT-np-${dd.name}-${item.jrkey}`,

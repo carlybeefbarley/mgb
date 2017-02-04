@@ -354,7 +354,8 @@ export default class EditCode extends React.Component {
     this.ternServer = new CodeMirror.TernServer(myTernConfig)
     if (!this.ternServer.server.addDefs) {
       this.ternServer.server.addDefs = (defs) => {
-        this.ternServer.worker.postMessage({
+        // async - can be unmounted already
+        this.ternServer && this.ternServer.worker.postMessage({
           type: "addDefs",
           defs: defs
         })
@@ -483,7 +484,6 @@ export default class EditCode extends React.Component {
         // console.log("Preventing update! User in action")
         return
       }
-      console.log("Setting src to: ", newVal.substr(0, 3))
       let currentCursor = this.codeMirror.getCursor()
       this.codeMirror.setValue(newVal)
       this.setState({needsBundle: nextProps.asset.content2.needsBundle})

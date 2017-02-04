@@ -60,7 +60,7 @@ export default class Toolbar extends React.Component {
       // don't steal events from input fields
       // Textarea is exception - because of Codemirror textarea
       // make sure to have proper modifiers (ctrl, alt...) - otherwise Toolbar will steal event
-      if (["INPUT", "SELECT"].indexOf(e.target.tagName) > -1)
+      if (_.includes(["INPUT", "SELECT", "TEXTAREA"], e.target.tagName))
         return
       const keyval = this.getKeyval(e)
       if (this.keyActions[keyval])
@@ -70,7 +70,7 @@ export default class Toolbar extends React.Component {
     this._onKeyUp = (e) => {
       // don't steal events from input fields
       // TODO(@stauzs): Maybe worth using something like https://github.com/madrobby/keymaster to handle the edge cases like meta (cmd), input etc.
-      if (["INPUT", "SELECT"].indexOf(e.target.tagName) > -1)
+      if (_.includes(["INPUT", "SELECT", "TEXTAREA"], e.target.tagName))
         return
 
       let keyval = this.getKeyval(e)

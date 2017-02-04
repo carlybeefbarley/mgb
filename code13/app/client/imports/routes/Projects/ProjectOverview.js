@@ -80,6 +80,7 @@ export default ProjectOverview = React.createClass({
     if (!project)
       return <ThingNotFound type="Project" />
     
+    const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
     return (
       <Grid padded>
         <Helmet
@@ -95,10 +96,11 @@ export default ProjectOverview = React.createClass({
               owner={this.props.user}
               canEdit={canEdit}
               handleFieldChanged={this.handleFieldChanged} />
-            <QLink to={"/u/" + project.ownerName + "/assets"} query={{project:project.name}} className="ui button" >
-              Project Assets
-            </QLink>
-            { this.renderRenameDeleteProject() } 
+          <QLink to={"/u/" + project.ownerName + "/assets"} style={buttonSty} query={{project:project.name}} className="ui small button" >
+            Project Assets
+          </QLink>
+          <Button disabled={!this.data.project.allowForks} style={buttonSty} size='small' content='Fork Project'/>
+          { this.renderRenameDeleteProject() } 
         </Grid.Column>
         
         <Grid.Column width={8}>
@@ -210,18 +212,18 @@ export default ProjectOverview = React.createClass({
     const canEdit = this.canEdit()
     const canFork = (
       <Checkbox 
-          toggle 
+          style={{ marginTop: '6px' }}
           disabled={!canEdit}
           checked={!!this.data.project.allowForks} 
           onChange={ () => this.handleFieldChanged( { allowForks: !this.data.project.allowForks } ) }
-          label='Allow forks' 
+          label='Allow users to fork' 
           title="Allow other users to fork your project and it\'s assets"/>
     )
     if (!canEdit) 
       return <div>{canFork}</div>
     
     return (
-      <Segment secondary compact>
+      <Segment secondary compact style={{width: '220px'}}>
         <Header>Manage Project</Header>
         <div style={{padding: '2px'}}>
           <Button 

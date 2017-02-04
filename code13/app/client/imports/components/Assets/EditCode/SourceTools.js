@@ -518,6 +518,8 @@ export default class SourceTools {
         }
       }
       if(canSkipBundling){
+        this.cachedBundle = ''
+        this._hasSourceChanged = false
         cb('')
         return
       }

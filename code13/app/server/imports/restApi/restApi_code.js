@@ -17,8 +17,8 @@ function _doGet(apiInstance, kind, id){
     : Azzets.findOne(id)                                   // id (e.g cDutAafswYtN5tmRi)
 
   if (!asset)
-    return _retval404 
-  
+    return _retval404
+
   const content = asset.content2.src
   return genAPIreturn(apiInstance, asset, content, {
     'Content-Type': "text/plain",
@@ -44,6 +44,20 @@ RestApi.addRoute('asset/tutorial/:id', { authRequired: false }, {
 RestApi.addRoute('asset/code/:id', { authRequired: false }, {
   get: function () {
     return _doGet(this, 'code', this.urlParams.id)
+  }
+})
+
+RestApi.addRoute('assets/:kind/:owner/:query', {authRequired: false}, {
+  get: function () {
+    const assets = Azzets.find({
+      dn_ownerName: this.urlParams.owner,
+      kind: this.urlParams.kind,
+      name: new RegExp('^'+this.urlParams.query, 'i'),
+      isDeleted: false
+    }, {
+      fields: {name: 1}
+    })
+    return genAPIreturn(this, null, () => assets.map((a) => a.name))
   }
 })
 

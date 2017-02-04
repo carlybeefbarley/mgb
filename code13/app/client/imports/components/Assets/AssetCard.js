@@ -31,11 +31,11 @@ export default AssetCard = React.createClass({
 
   propTypes: {
     showFooter:     PropTypes.bool,              // If false, hide the 4-button footer
+    fluid:          PropTypes.bool,              // If true then this is a fluid (full width) card. 
     asset:          PropTypes.object,
     ownersProjects: PropTypes.array,             // Project array for Asset Owner. Can be null. Can include ones they are a member of, so watch out!
     currUser:       PropTypes.object,            // currently Logged In user (not always provided)
     canEdit:        PropTypes.bool,              // Whether changes (like stable, delete etc) are allowed. Can be false
-    showEditButton: PropTypes.bool,              // Shall we *show* the Edit button
     renderView:     PropTypes.string,            // One of null/undefined  OR  one of the keys of AssetCard.assetViewChoices
     allowDrag:      PropTypes.bool.isRequired    // True if drag is allowed
   },
@@ -47,8 +47,7 @@ export default AssetCard = React.createClass({
   getDefaultProps: function()  {
     return {
       canEdit: false,
-      renderView: defaultAssetViewChoice,
-      showEditButton: true
+      renderView: defaultAssetViewChoice
     }
   },
   
@@ -114,11 +113,11 @@ export default AssetCard = React.createClass({
     }))
 
     // allow to drop on graphics canvas
-    try{
+    try {
       e.dataTransfer.setData("mgb/image", asset.thumbnail)
     }
     // IE will throw an error here.. just ignore
-    catch(e){}
+    catch (e) { }
 
     // IE needs this!!!
     // e.dataTransfer.effectAllowed = "copy"
@@ -133,7 +132,7 @@ export default AssetCard = React.createClass({
     if (!this.props.asset)
       return null
       
-    const { renderView, asset, showEditButton, canEdit, allowDrag, ownersProjects } = this.props
+    const { renderView, asset, fluid, canEdit, allowDrag, ownersProjects } = this.props
     const actualLicense = (!asset.assetLicense || asset.assetLicense.length === 0) ? defaultAssetLicense : asset.assetLicense
     const assetKindIcon = AssetKinds.getIconClass(asset.kind)
     const assetKindDescription = AssetKinds.getDescription(asset.kind)
@@ -170,8 +169,8 @@ export default AssetCard = React.createClass({
     return (
       <div 
           key={asset._id} 
-          className={"ui " + assetKindColor + " card animated fadeIn"}
-          style={ { minWidth: '200px' } }>
+          className={'ui ' + assetKindColor + (fluid ? ' fluid ' : '') + ' card animated fadeIn'}
+          style={ { minWidth: '220px' } }>
       
         <div 
             className="ui centered image" 
@@ -281,7 +280,7 @@ export default AssetCard = React.createClass({
           </div>
         }
       </div>
-      )
+    )
   },
 
   handleChangeChosenProjectNames(newChosenProjectNamesArray)

@@ -15,7 +15,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
 import { logActivity } from '/imports/schemas/activity'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { Grid, Segment, Message, Icon, Header, Button } from 'semantic-ui-react'
+import { Grid, Segment, Checkbox, Popup, Message, Icon, Header, Button } from 'semantic-ui-react'
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
@@ -89,7 +89,7 @@ export default ProjectOverview = React.createClass({
           ]}
         />
 
-        <Grid.Column width={6} style={{minWidth: "250px"}}>
+        <Grid.Column width={6} style={{minWidth: "250px", maxWidth: "250px"}}>
           <ProjectCard 
               project={project} 
               owner={this.props.user}
@@ -139,7 +139,7 @@ export default ProjectOverview = React.createClass({
     var newData = { memberIds: _.union(project.memberIds, [userId])}   
     Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
       if (error) {
-        console.log(`Could not add member ${userName} to project ${project.name}`)
+        showToast(`Could not add member ${userName} to project ${project.name}`, 'error')
       } else {
         logActivity("project.addMember",  `Add Member ${userName} to project ${project.name}`);
       }
@@ -157,11 +157,10 @@ export default ProjectOverview = React.createClass({
     var newData = { memberIds: _.without(project.memberIds, userId)}   
 
     Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
-      if (error) {
-        console.log(`Could not remove member ${userName} from project ${project.name}`)
-      } else {
+      if (error) 
+        showToast(`Could not remove member ${userName} from project ${project.name}`, error)
+      else 
         logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
-      }
     })
   },
     
@@ -170,11 +169,11 @@ export default ProjectOverview = React.createClass({
    */
   handleFieldChanged: function(changeObj)
   {
-    var project = this.data.project
+    const { project } = this.data
 
     Meteor.call('Projects.update', project._id, this.canEdit(), changeObj, (error) => {
       if (error) 
-        console.log("Could not update project: ", error.reason)
+        showToast(`Could not update project: ${error.reason}`, error)
       else 
       {
        // Go through all the keys, log completion tags for each
@@ -207,22 +206,46 @@ export default ProjectOverview = React.createClass({
   
   renderRenameDeleteProject: function()
   {
-    if (!this.canEdit()) return null
     const { isDeleteComplete, isDeletePending } = this.state
-
+    const canEdit = this.canEdit()
+    const canFork = (
+      <Checkbox 
+          toggle 
+          disabled={!canEdit}
+          checked={!!this.data.project.allowForks} 
+          onChange={ () => this.handleFieldChanged( { allowForks: !this.data.project.allowForks } ) }
+          label='Allow forks' 
+          title="Allow other users to fork your project and it\'s assets"/>
+    )
+    if (!canEdit) 
+      return <div>{canFork}</div>
+    
     return (
       <Segment secondary compact>
         <Header>Manage Project</Header>
-        <Button 
+        <div style={{padding: '2px'}}>
+          <Button 
+            fluid
             icon="edit" 
+            size='small'
             content="Rename" 
             disabled={isDeleteComplete || isDeletePending} 
             onClick={ () => { showToast("Rename Project has not yet been implemented.. ", 'warning')}} />
-        <Button 
+        </div>
+        <div style={{padding: '2px'}}>
+          <Button 
+            fluid
             icon={<Icon color='red' name='trash'/>}
+            size='small'
             disabled={isDeleteComplete || isDeletePending} 
             content="Delete" 
             onClick={ () => { this.handleDeleteProject() } } />
+        </div>
+
+        <div style={{padding: '2px'}}>
+          {canFork}
+        </div>
+
         { isDeletePending && 
           <Message icon>
             <Icon name='circle notched' loading />
@@ -238,7 +261,8 @@ export default ProjectOverview = React.createClass({
 
   renderAddPeople: function()
   {
-    if (!this.canEdit()) return null
+    if (!this.canEdit()) 
+      return null
       
     const project = this.data.project
     const relevantUserIds = [ project.ownerId, ...project.memberIds]   
@@ -263,5 +287,4 @@ export default ProjectOverview = React.createClass({
       </Segment>
     )
   }
-  
 })

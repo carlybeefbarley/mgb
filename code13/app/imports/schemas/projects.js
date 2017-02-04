@@ -261,6 +261,9 @@ var schema = {
   ownerId:   String,          // owner user id
   ownerName: String,          // owner user name (DENORMALIZED)
 
+  // Various flags
+  allowForks: Boolean,
+
   // the actual project information
   name: String,               // Project Name (scoped to owner). Case sensitive
   description: String,        // A description field
@@ -396,6 +399,7 @@ Meteor.methods({
     data.ownerId = this.userId
     data.ownerName = username
     data.workState = defaultWorkStateName
+    data.allowForks = false
     data.memberIds = []
     data.avatarAssetId = ""
 
@@ -433,6 +437,7 @@ Meteor.methods({
       name: optional(schema.name),
       description: optional(schema.description),
       workState: optional(schema.workState),
+      allowForks: optional(schema.allowForks),
       memberIds: optional(schema.memberIds),   
       avatarAssetId: optional(schema.avatarAssetId)
     })

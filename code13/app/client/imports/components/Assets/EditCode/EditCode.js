@@ -251,6 +251,9 @@ export default class EditCode extends React.Component {
     }
 
     this.codeMirror = CodeMirror.fromTextArea(textareaNode, codemirrorOptions)
+    // allow toolbar keyboard shortcuts from codemirror text area
+    codemirrorOptions.inputStyle == 'textarea' && this.codeMirror.display.input.textarea.classList.add('allow-toolbar-shortcuts')
+
     this.updateDocName()
     this.doFullUpdateOnContentChange()
 
@@ -1140,6 +1143,7 @@ export default class EditCode extends React.Component {
   }
 
   _handle_iFrameMessageReceiver(event) {
+    // there is no ref for empty code
     if (this.refs.gameScreen)   // TODO: This maybe a code smell that we (a) are getting a bunch more mesage noise than we expect (e.g. Meteor.immediate) and (b) that we should maybe register/deregister this handler more carefully
       this.refs.gameScreen.handleMessage(event)
   }
@@ -1324,7 +1328,8 @@ export default class EditCode extends React.Component {
   }
 
   _postMessageToIFrame(messageObject) {
-    this.refs.gameScreen.postMessage(messageObject)
+    // there is no ref for empty code
+    this.refs.gameScreen && this.refs.gameScreen.postMessage(messageObject)
     // this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
 
@@ -1825,6 +1830,7 @@ export default class EditCode extends React.Component {
           </div>
 
             <textarea ref="textarea"
+                      className="allow-toolbar-shortcuts"
                       defaultValue={asset.content2.src}
                       autoComplete="off"
                       placeholder="Start typing code here..."/>

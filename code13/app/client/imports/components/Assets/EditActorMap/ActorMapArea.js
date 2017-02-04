@@ -104,8 +104,10 @@ export default class ActorMapArea extends BaseMapArea {
     let activeLayer = this.getActiveLayer()
     let layerInfo = activeLayer ? activeLayer.getInfo() : null
     let count = 0
-    let posX = 0
-    let posY = 0
+
+    if (layerInfo && this.props.data) 
+      if (layerInfo.x + 1 > this.props.data.width || layerInfo.y + 1 > this.props.data.height || layerInfo.x < 0 || layerInfo.y < 0) 
+        return [<b style={{fontSize: '12px'}} key={-1}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>]
 
     this.hoveredTiles.map( (tile, i) => {
       if (tile.gid > 0) {
@@ -194,7 +196,7 @@ export default class ActorMapArea extends BaseMapArea {
           <Accordion.Title>
             <i className='icon search' style={{float: 'right', color: 'white'}} />
           </Accordion.Title>
-          <Accordion.Content style={{padding: '5px', minWidth: '220px'}}>
+          <Accordion.Content style={{padding: '5px', minWidth: '200px'}}>
             <PositionInfo getInfo={this.getAllInfo.bind(this)} ref='positionInfo' />
           </Accordion.Content>
         </Accordion>

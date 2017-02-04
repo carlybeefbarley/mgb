@@ -147,7 +147,6 @@ export default class ActorTileset extends React.Component {
 
     for (let i = from; i < to; i++) {
       if(!tss[i].actor){
-        debugger
         this.props.removeTileset(this.props.activeTileset)
         return
       }

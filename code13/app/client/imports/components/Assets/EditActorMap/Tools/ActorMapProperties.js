@@ -21,7 +21,7 @@ export default class ActorMapProperties extends React.Component {
           <NumberInput
             className="ui small input"
             min={1}
-            max={500}
+            max={300}
             style={{width: "6em"}}
             value={this.props.data.width}
             onFinalChange={(num) => {this.props.resize({width: num, height: this.props.data.height})} }
@@ -36,7 +36,7 @@ export default class ActorMapProperties extends React.Component {
           <NumberInput
             className="ui small input"
             min={1}
-            max={500}
+            max={300}
             style={{width: "6em"}}
             value={this.props.data.height}
             onFinalChange={(num) => {this.props.resize({width: this.props.data.width, height: num})} }

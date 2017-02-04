@@ -65,11 +65,3 @@ export function setFeatureLevel(settingsObj, featureKey, level) {
 export function resetAllFeatureLevelsToDefaults(settingsObj) {
   _resetSettingsGroup(_GROUP_FEATURELEVELS, settingsObj)
 }
-
-export function getToolbarData(settingsObj, featureKey) {
-  return _getSettingType(_GROUP_TOOLBARS, settingsObj, featureKey)
-}
-
-export function setToolbarData(settingsObj, featureKey, tdata) {
-  _setSettingType(_GROUP_TOOLBARS, settingsObj, featureKey, tdata)
-}

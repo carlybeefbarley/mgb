@@ -4,8 +4,7 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
-import { expectedToolbars,  } from '/client/imports/components/Toolbar/Toolbar'
-
+import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 
 import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'

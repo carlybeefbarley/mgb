@@ -137,37 +137,16 @@ body.dragging .accept-drop:hover{
   transition: 0s !important;
 }
 
-/* Toolbar */
-.Toolbar .ui.button.reset{
-  position: absolute;
-  height: 19px;
-  padding: 0;
-  margin: 0;
-  right: 0;
-  line-height: 19px;
-}
-.Toolbar.vertical  .ui.button.reset{
-  right: auto;
-  bottom: 0;
-}
-.Toolbar .button.main{
+/* mgb-toolbar */
+.mgb-toolbar .button.main{
   z-index: 1;
 }
 
-.Toolbar .vertical{
+.mgb-toolbar .vertical{
   width: 100%;
 }
-.Toolbar .vertical *{
+.mgb-toolbar .vertical *{
   width: 100%;
-}
-/* adjust button text to match width*/
-.Toolbar .button div {
-  font-size: calc(0.7vw + 20%);
-  margin: 0 0 0 -10px;
-  text-align: center;
-  width: calc(100% + 20px);
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .invisible{

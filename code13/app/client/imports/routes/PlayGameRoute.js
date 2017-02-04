@@ -51,7 +51,6 @@ class PlayCodeGame extends React.Component {
       <div>
         <Toolbar
           actions={this}
-          noReset={true}
           name="PlayCodeGame"
           config={{
             buttons: [

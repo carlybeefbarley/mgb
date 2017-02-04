@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { expectedToolbars, makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
+import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
+import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import { getFeatureLevel, setFeatureLevel, resetAllFeatureLevelsToDefaults } from '/imports/schemas/settings-client'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'

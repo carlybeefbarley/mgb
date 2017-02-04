@@ -3,10 +3,10 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import QLink from '/client/imports/routes/QLink'
 
-import { getFeatureLevel, getToolbarData, setToolbarData } from '/imports/schemas/settings-client'
+import { getFeatureLevel } from '/imports/schemas/settings-client'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import { AssetKinds } from '/imports/schemas/assets'
-import { Popup, Button, Icon } from 'semantic-ui-react'
+import { Popup, Button } from 'semantic-ui-react'
+import { expectedToolbars } from './expectedToolbars.js'
 
 const keyModifiers = {
   CTRL:  1 <<  8,
@@ -14,92 +14,27 @@ const keyModifiers = {
   ALT:   1 << 10,
   META:  1 << 11      // Mac CMD key / Windows 'windows' key. https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey
 }
-//
-const sliderPcts = {
-  iconSizeBreak1:  0.25,
-  iconSizeBreak2:  0.66,
-  tooltipSlowdown: 0.95
+
+const _keyMaps = {
+  "SPACE": 32, 
+  "ENTER": 13,
+  "LEFT":  37,
+  "TOP":   38,
+  "RIGHT": 39,
+  "DOWN":  40,
+  "PLUS":  187,   // numpad has 107
+  "MINUS": 189,   // numpad has 109
+  "\\":    220    // backslash
 }
 
-// Here is a list of *known* toolbar scope names & Max Values, default values etc.
-// This is so that some Settings-style (e.g fpUxLevels.js) can enumerate them all
-// and offer a global modification choice
-
-// Values for unknown toolbars...
-const _defaultTbMaxLevel = 25
-const _defaultTbDefaultLevel = 1
-const _defaultTbIconName = 'red help circle'
-
-//TODO: replace props.config.level
-
-
-export const expectedToolbars = {
-  FlexPanel:     { friendlyName: 'Flex Panel',           max:  8,   default: 1,  assetKinds: null, icon: 'pointing right'                   },  // Not really toolbars, but I wanted the same fpLevel stuff
-
-  EditGraphic:   { friendlyName: 'Graphic Editor',       max: 10,   default: 1,  assetKinds: ['graphic'], icon: AssetKinds.getIconName('graphic') },
-  EditCode:      { friendlyName: 'Code/Tutorial Editor', max:  4,   default: 2,  assetKinds: ['code','tutorial'], icon: AssetKinds.getIconName('code')    },
-  MapTools:      { friendlyName: 'Map/ActorMap Editor',  max: 27,   default: 3,  assetKinds: ['map','actormap'], icon: AssetKinds.getIconName('map')     },
-  AudioTools:    { friendlyName: 'Sound/Music Editor',   max: 25,   default: 3,  assetKinds: ['sound','music'],  icon: AssetKinds.getIconName('sound')   },
-
-  SkillsMap:     { friendlyName: 'Skills Viewer',        max:  4,   default: 2,  icon: 'plus circle'                          },
-
-  PlayCodeGame:  { friendlyName: 'Play Code Game Controls', max:  1,default: 1,  icon: 'game' }
-}
-
-// We do this before adding functions so that the function names don't pollute the keys :)
-expectedToolbars.scopeNames = _.keys(expectedToolbars)
-
-// get Max Value for feature level
-expectedToolbars.getMaxLevel = toolbarName =>
-{
-  const tb = expectedToolbars[toolbarName]
-  if (!tb)
-    console.error(`Unexpected getMaxLevel call for toolbarName='${toolbarName}' requested. Returning default=${_defaultTbMaxLevel}. Forgot to add your toolbar to the expectedToolbars?`)
-  return tb ? tb.max : _defaultTbMaxLevel
-}
-
-// get default Value for feature level
-expectedToolbars.getDefaultLevel = toolbarName =>
-{
-  const tb = expectedToolbars[toolbarName]
-  if (!tb)
-    console.error(`Unexpected getDefaultLevel call for toolbarName='${toolbarName}' requested. Returning default=${_defaultTbDefaultLevel}. Forgot to add your toolbar to the expectedToolbars?`)
-  return tb ? tb.default : _defaultTbDefaultLevel
-}
-
-expectedToolbars.getIconName = toolbarName =>
-{
-  const tb = expectedToolbars[toolbarName]
-  if (!tb)
-    console.error(`Unexpected getIconName call for toolbarName='${toolbarName}' requested. Returning default='${_defaultTbIconName}'. Forgot to add your toolbar to the expectedToolbars?`)
-  return tb ? tb.icon : _defaultTbIconName
-}
-
-expectedToolbars.getFriendlyName = toolbarName =>
-{
-  const tb = expectedToolbars[toolbarName]
-  if (!tb)
-    console.error(`Unexpected getFriendlyName call for toolbarName='${toolbarName}' requested. Returning default='[${toolbarName}]'. Forgot to add your toolbar to the expectedToolbars?`)
-  return tb ? tb.friendlyName : `[${toolbarName}]`
-}
-
-expectedToolbars.getIsUsedForAssetKind = (toolbarName, assetKindKey) =>
-{
-  const tb = expectedToolbars[toolbarName]
-  if (!tb)
-    console.error(`Unexpected getIsUsedForAssetKind call for toolbarName='${toolbarName}' requested. Returning default=false. Forgot to add your toolbar to the expectedToolbars?`)
-  return (!tb || !assetKindKey) ? false : _.includes(tb.assetKinds, assetKindKey)
-}
+const _defaultToolbarButtonSize = 'small'
 
 // Make Toolbar Level Key using a well-known prefix on the Toolbar name
-export function makeLevelKey(name) {
-  return 'toolbar-level-' + name
-}
+export const makeLevelKey = name => `toolbar-level-${name}`
 
 // Make Toolbar Data Key using a well-known prefix on the Toolbar name
-export function makeTDataKey(name) {
-  return 'toolbar-data-' + name
-}
+export const makeTDataKey = name => `toolbar-data-${name}`
+
 
 export default class Toolbar extends React.Component {
   constructor(...args) {
@@ -108,35 +43,17 @@ export default class Toolbar extends React.Component {
     this.buttons = []
 
     // Level Slider values..
-    this.lsDataKey = makeTDataKey(this.props.name)
     this.lsActiveFeatureLevelName = this.props.levelName || this.props.name
     this.lsLevelKey = makeLevelKey(this.lsActiveFeatureLevelName)
 
     if (!_.includes(expectedToolbars.scopeNames, this.props.name))
       console.trace(`Unexpected Toolbar name "${this.props.name}" in Toolbar.js. Devs should add new ones to expectedToolbars.scopeNames"`)
 
-    this._activeButton = null
-    this.startPos = null
-    this.hasMoved = false
+    this.maxLevel = expectedToolbars.getMaxLevel(this.lsActiveFeatureLevelName) + 1
 
-    this.visibleButtons = null
-
-    this.levelSlider = null
-    this.maxLevel = 10      // _addLevelSlider will set this value to 1+ the highest level it sees. The 1+ is so there's a final level to hide the last text label and 'more buttons' button
-
-    this._trackerComputationContext = Tracker.autorun( () => {
-      const newLevelVal = getFeatureLevel(this.context.settings, this.lsLevelKey)
-      if (this.state)
-        this.setState( { level: newLevelVal } )
-    })
-
-    this.state = {}
-    this.order = _.range(this.props.config.buttons.length)    // Creates array [0, ... n]
-
-    this._onChange = (e) => {
-      const newLevelVal = parseInt(e.target.value, 10)
-      //console.log("TOOLBAR @", newLevelVal)
-      this.setState({level: newLevelVal})
+    this.state = {
+      activeButtonIndex:    null,      // null, or an index into the list of buttons provided in props.config
+      level:                this.getEffectiveFeatureLevel()          // current featureLevel slider value. This will be updated magically by _trackerComputationContext and Meteor
     }
 
     this._onKeyDown = (e) => {
@@ -146,9 +63,8 @@ export default class Toolbar extends React.Component {
       if (["INPUT", "SELECT"].indexOf(e.target.tagName) > -1)
         return
       const keyval = this.getKeyval(e)
-      if (this.keyActions[keyval]) {
+      if (this.keyActions[keyval])
         e.preventDefault()
-      }
     }
 
     this._onKeyUp = (e) => {
@@ -168,108 +84,36 @@ export default class Toolbar extends React.Component {
         const action = this.keyActions[keyval].action
         joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-keypress`)
         joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
-
+        // analytics?
         this.keyActions[keyval](e)
       }
     }
-
-    this._onMouseMove = this._moveButton.bind(this)
-    this._onMouseUp = this._moveButtonStop.bind(this)
-
-    this.loadState()
   }
 
-  set activeButton(v) {
-    if (v) {
-      v.classList.remove("animate")
-      v.classList.add("main")
-    }
-    else {
-      this._activeButton.classList.add("animate")
-      this._activeButton.classList.remove("main")
-    }
-    this._activeButton = v
+  getEffectiveFeatureLevel() {
+    return getFeatureLevel(this.context.settings, this.lsLevelKey) || expectedToolbars.getDefaultLevel(this.lsActiveFeatureLevelName)
   }
-
-  get activeButton() {
-    return this._activeButton
-  }
-
-  getFeatureLevelNow() {
-    const defaultLevel = expectedToolbars.getDefaultLevel(this.lsActiveFeatureLevelName)
-    if (this.props.config.level && defaultLevel)
-      console.error(` Dead prop detected -- props.config.level has been replaced by expectedToolbars.getDefaultLevel() for toolbarName='${this.lsActiveFeatureLevelName}'`)
-
-    return getFeatureLevel(this.context.settings, this.lsLevelKey) || defaultLevel
-  }
-
+  
   /* Lifecycle functions */
   componentDidMount() {
-    this.setState( { level: this.getFeatureLevelNow()} )
-    this.levelSlider = this._addLevelSlider()
-
     this.keyActions = {}
-
     window.addEventListener("keyup", this._onKeyUp)
     window.addEventListener("keydown", this._onKeyDown)
-    window.addEventListener("mousemove", this._onMouseMove)
-    window.addEventListener("mouseup", this._onMouseUp)
-  }
-
-  componentWillReceiveProps(props) {
-    const len = props.config.buttons.length
-
-    // add spaces for extra buttons
-    if (this.order.length < len) {
-      for (let i=this.order.length; i<len; i++)
-        this.order[i] = i
-    }
-
-    this.data = props.config
+    // Set up an observer so we know when the featureLevel setting changes for this user.
+    this._trackerComputationContext = Tracker.autorun( () => {
+      this.setState( { level: this.getEffectiveFeatureLevel() } )
+    })
   }
 
   componentWillUnmount() {
     window.removeEventListener("keyup", this._onKeyUp)
     window.removeEventListener("keydown", this._onKeyDown)
-    window.removeEventListener("mousemove", this._onMouseMove)
-    window.removeEventListener("mouseup", this._onMouseUp)
+    // Stop listening to changes in this toolbar level setting
     if (this._trackerComputationContext)
       this._trackerComputationContext.stop()
 
     // clean up cached keyActions
     this.keyActions = null
-  }
-
-  setState(state) {
-    super.setState(state)
-    Object.assign(this.state, state)
-  }
-
-  saveState() {
-    setToolbarData(this.context.settings, this.lsDataKey, JSON.stringify(this.order))
-  }
-
-  loadState() {
-    const savedData = getToolbarData(this.context.settings, this.lsDataKey)
-    this.data = this.props.config
-
-    if (savedData) {
-      const pData = JSON.parse(savedData)
-      // ignore old config
-      if (pData.length && typeof(pData[0]) == "number" )
-        this.order = pData
-    }
-  }
-  /* End of Lifecycle functions */
-
-  getRow(mb, b) {
-    const totRows = Math.round(mb.height / b.height)
-    if (totRows === 0)
-      return 0
-
-    const relY = (b.top - mb.top)
-    const row = Math.round( (relY / mb.height) * totRows )
-    return mb.width * row
   }
 
   getKeyval(e) {
@@ -282,159 +126,84 @@ export default class Toolbar extends React.Component {
   }
 
   getButtonFromAction(action) {
-    return _.find(this.data.buttons, (o) => { return o.name == action })
+    return _.find(this.props.config.buttons, o => (o.name == action ))
   }
 
   registerShortcut(shortcut, action) {
     const keys = shortcut.split("+")
-    // create unique index where
-    // first 8 bits is keycode
+    // create unique index where first 8 bits is keycode
     // 9th-12th bits are Ctrl/Shift/Alt/Meta - See keyModifiers.*
-
+    
     let keyval = 0
 
-    for (let i=0; i<keys.length; i++) {
-      const key = keys[i].toUpperCase().trim()
+    _.each(keys, rawkey => { 
+      const key = rawkey.toUpperCase().trim()
 
       // some special cases
-      switch (key) {
-        case "SPACE":
-          keyval |= 32
-          continue
-        case "ENTER":
-          keyval |= 13
-          continue
-        case "LEFT":
-          keyval |= 37
-          continue
-        case "TOP":
-          keyval |= 38
-          continue
-        case "RIGHT":
-          keyval |= 39
-          continue
-        case "DOWN":
-          keyval |= 40
-          continue
-        case "PLUS":
-          keyval |= 187 // numpad has 107
-          continue
-        case "MINUS":
-          keyval |= 189 // numpad has 109
-          continue
-        case "\\": // backslash
-          keyval |= 220
-          continue
-      }
-
-      if (key.length > 1)
+      //switch (key) 
+      if (_.has(_keyMaps, key))
+        keyval |= _keyMaps[key]
+      else if (key.length > 1)
       {
-        if (keyModifiers.hasOwnProperty(key))
+        if (_.has(keyModifiers, key))
           keyval |= keyModifiers[key]
         else
           console.error(`Unknown key modifier [${key}] in shortcut '${shortcut}'`)
       }
       else if (key.length === 1)
         keyval |= key.toUpperCase().charCodeAt(0)
-    }
-    // TODO: check duplicate shortcuts?
+    })
+
     if (!this.props.actions[action]) {
       console.trace(`Missing Toolbar action '${action}' for shortcut'${shortcut}'`)
       return
     }
+
     // nice warning for conflicting shortcuts
-    if(this.keyActions[keyval]
-      && action != this.keyActions[keyval].action
-      && !this.getButtonFromAction(action).disabled
-      && !this.getButtonFromAction(this.keyActions[keyval].action ).disabled
-    ){
+    if (this.keyActions[keyval]
+        && action != this.keyActions[keyval].action
+        && !this.getButtonFromAction(action).disabled
+        && !this.getButtonFromAction(this.keyActions[keyval].action ).disabled)
       console.error(`Multiple Keyboard shortcuts detected: '${this.keyActions[keyval].action}' and ${action}.. overwriting`)
-    }
+
     this.keyActions[keyval] = this.props.actions[action].bind(this.props.actions)
     this.keyActions[keyval].action = action
   }
 
-  // Return 'tiny', 'small' or 'medium' based on the slider config
-  determineButtonSize() {
-    if (this.state.level <= sliderPcts.iconSizeBreak1 * this.maxLevel)
-      return "medium"
-    else if (this.state.level <= sliderPcts.iconSizeBreak1 * this.maxLevel)
-      return "small"
-    return "tiny"
-  }
-
   render() {
-    const size = this.determineButtonSize()
-    const buttons = []
-    let parent = []
-    buttons.push(parent)
-    const newButtons = []
-    let b
-    for (let i=0; i<this.order.length; i++) {
-      b = this.data.buttons[this.order[i]]
-      if (!b)
-        continue
-      if (b.name === "separator")
-      {
-        if (!parent.length)
-          continue
-        parent = []
-        buttons.push(parent)
-        continue
-      }
-      // skip invisible buttons - to show nice rounded borders for side buttons
-      if (b.level > this.state.level)
-        continue
-
-      parent.push(this._renderButton(b, i))
-      newButtons.push(b.name)
-    }
-    this.visibleButtons = newButtons
-
-    const buttonGroupClassName = "ui icon buttons animate " + size + " " + "level" + this.state.level + (this.props.config.vertical ? " vertical" : '')
-    const buttonGroupStyle = { marginRight: "4px", marginBottom: "2px", marginTop: "2px" }
-    const content = buttons.map((b, i) => (<div style={buttonGroupStyle} className={buttonGroupClassName} key={i}>{b}</div>))
-
     return (
-      <div ref="mainElement" className={"Toolbar" + (this.props.config.vertical ? " vertical" : '')}>
-        {content}
+      <div className='mgb-toolbar'>
+        { _.map(this.props.config.buttons, (b, i) => (
+              b.name == 'separator' ? <span style={{width: '2px'}} key={i}>{' '}</span> : (
+                <Button.Group 
+                    key={i} 
+                    style={{ marginRight: "0px", marginBottom: "2px", marginTop: "2px" }}>
+                    
+                  {this._renderButton(b, i)}
+                </Button.Group> 
+        ) ) ) }
 
-        <div style={buttonGroupStyle} className={buttonGroupClassName}>
-          { this.state.level < this.maxLevel-1 &&
-            <QLink query={{ '_fp': 'features' }}>
-              <Popup trigger={<Button basic id="mgbjr-toolbar-optionsButton" icon='horizontal ellipsis'/>}
-                header='More Tools'
-                content='Click here to enable additional tools' />
-            </QLink>
-          }
-        </div>
-        {!this.props.noReset &&
-        <div className="ui button right floated mini reset" style={{marginRight: "4px", paddingLeft: "4px"}}
-             onClick={this.reset.bind(this)}
-             title="Reset Toolbar - Any Tool buttons you had drag-rearranged will be moved back to their original locations">
-          <i className="level down reset icon"></i>
-        </div>
+        { this.state.level < this.maxLevel-1 &&
+          <QLink query={{ '_fp': 'features' }}>
+            <Popup trigger={(
+                <Button 
+                    icon
+                    compact
+                    basic 
+                    id="mgbjr-toolbar-optionsButton" 
+                    size={_defaultToolbarButtonSize}
+                    icon='horizontal ellipsis'/>
+              )}
+              header='More Tools'
+              content='Click here to enable additional tools' />
+          </QLink>
         }
       </div>
     )
   }
 
-  // Reset any moved buttons to their original locations
-  reset() {
-    this.order.forEach((v, k, o) => { o[k] = k })
-    this.saveState()
-    this.forceUpdate()
-  }
-
-  /* private methods go here */
-  // adds react dom element that represents button
-  _addButton(b, index) {
-    if (!b) return        // TODO(@Stauzs)do I need to remove button here?
-    this.buttons[index] = b
-  }
-
-  _handleClick(action, e) {
-    if (this.hasMoved || this.activeButton === this._extractButton(e.target) )
+  _handleClick(action, index, e) {
+    if (this.state.activeButtonIndex === index)
       return
 
     if (this.props.actions[action])
@@ -442,250 +211,50 @@ export default class Toolbar extends React.Component {
       joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-click`)
       joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
       this.props.actions[action](e)
-
-      // console.log(action, this.props.name, this.props)
-      analytics.track(action, {page: this.props.name})
+      analytics.track( action, { page: this.props.name } )
     }
     else
       console.error(`Cannot find action for button '${action}'`, this.props.actions)
   }
 
-  _extractButton(el) {
-    let b = el
-    if (this.buttons.indexOf(b) == -1) {
-      if (this.buttons.indexOf(b.parentNode) > -1) {
-        b = b.parentNode
-        return b
-      }
-      return null
-    }
-    return b
-  }
 
   _renderButton(b, index) {
     const label = (b.label && (this.state.level <= 2 || this.state.level === b.level)) ? " " + b.label : ''
     const joyrideId = "mgbjr-" + this.props.name + "-" + b.name    // Auto-create an id for react-joyride purposes
+    if (b.shortcut && !b.disabled)
+      this.registerShortcut(b.shortcut, b.name)
 
     if (b.component) {
       const ElComponent = b.component
       return <ElComponent id={joyrideId} label={label} key={index} />
     }
 
-    const title = this.state.level > 3 ? b.label : ''
     const hidden = b.level > this.state.level ? " invisible" : ' isvisible' // isvisible because visible is reserved
-    const active = b.active ? " primary" : ''
-    const disabled = b.disabled ? " disabled" : ''
-    if (b.shortcut && !disabled)
-      this.registerShortcut(b.shortcut, b.name)
+    const className = "animate new " + hidden
 
-    let className = "ui button animate " + hidden + active + disabled
-    // button is new
-    if (this.visibleButtons && this.visibleButtons.indexOf(b.name) === -1)
-      className += " new"
     return (
-      <Popup trigger={<div className={className}
-           id={joyrideId}
-           style={ { position: "relative" } }
-           ref={(button) => {this._addButton(button, index)}}
-           onClick={this._handleClick.bind(this, b.name)}
-           onMouseDown={this._moveButtonStart.bind(this)}
-           data-index={index}
-        ><i className={(b.icon ? b.icon : b.name) + " icon"}></i>{b.iconText ? b.iconText : ''}
-        {label}
-      </div>}
+      <Popup trigger={(
+        <Button 
+            compact 
+            icon
+            className={className}
+            primary={!!b.active}
+            id={joyrideId}
+            disabled={b.disabled}
+            size={_defaultToolbarButtonSize}
+            style={ { position: "relative" } }
+            onClick={this._handleClick.bind(this, b.name, index)}
+            data-index={index}>
+          <i className={(b.icon ? b.icon : b.name) + " icon"} />
+          {b.iconText ? b.iconText : ''}
+        </Button>)}
         key={index}
-        header={title}
+        header={b.label}
         positioning='top center'
         content={b.tooltip + (b.shortcut ? " [" + b.shortcut + "]" : '')}
       />
-
     )
   }
-
-
-  // Note that this relies on the slider created by /client/imports/components/Nav/NavBarGadgetUxSlider.js
-  _addLevelSlider() {
-    // The 1+ is so the last tool will not have it's label shown
-    this.maxLevel = 1 + _.maxBy(this.props.config.buttons, 'level').level
-    if (expectedToolbars.getMaxLevel(this.lsActiveFeatureLevelName) !== this.maxLevel) {
-      // TODO: replace this calculated maxLevel with expectedToolbars.getMaxLevel()
-      // .. but for now, at least alert of discrepancies. a known one is ActorMap (which should be separated from Map)
-      console.log(`_addLevelSlider() noticed that getMaxLevel(${this.lsActiveFeatureLevelName}) != ${this.maxLevel}. That should get looked at`)
-    }
-  }
-
-  /* Button sorting */
-  _moveButtonStart(e) {
-    if(this.buttons.length > 1) {
-      const b = this._extractButton(e.target)
-      if (!b || e.buttons != 1)
-        return
-
-      this.startPos = {x: e.pageX, y: e.pageY}
-      this.activeButton = b
-    }
-  }
-
-  _moveButton(e) {
-    if (!this.activeButton)
-      return
-
-    const box = this.activeButton.getBoundingClientRect()
-    this.activeButton.style.left = (e.pageX - this.startPos.x)+ "px"
-    this.activeButton.style.top = (e.pageY - this.startPos.y)+ "px"
-
-    const index = this.buttons.indexOf(this.activeButton)
-    const mainBox = this.refs.mainElement.getBoundingClientRect()
-
-    const row = this.getRow(mainBox, box, true)
-
-    // check back
-    for (let i=0; i<index; i++)
-    {
-      const ab = this.buttons[i]
-      if (!ab || ab.classList.contains("invisible"))
-        continue
-
-      const rect = ab.getBoundingClientRect()
-      if (this.props.config.vertical)
-        ab.style.top = (rect.top > box.top) ? box.height + "px"  : 0
-      else
-        ab.style.left = (rect.left > box.left && this.getRow(mainBox, rect) == row) ? box.width + "px" : 0
-    }
-
-    for (let i=index+1; i<this.buttons.length; i++)
-    {
-      const ab = this.buttons[i]
-      if (!ab || ab.classList.contains("invisible"))
-        continue
-
-      const rect = ab.getBoundingClientRect()
-      if (this.props.config.vertical)
-        ab.style.top = (rect.top < box.top) ? -box.height + "px" : 0
-      else
-        ab.style.left = (rect.left < box.left && + this.getRow(mainBox, rect) == row) ? -box.width + "px" : 0
-    }
-  }
-
-  _moveButtonStop(e) {
-    if (!this.activeButton)
-      return
-
-    this.activeButton.classList.add("animate")
-    const box = this.activeButton.getBoundingClientRect()
-    const index = this.buttons.indexOf(this.activeButton)
-    const mainBox = this.refs.mainElement.getBoundingClientRect()
-    const row = this.getRow(mainBox, box)
-
-    let mostLeft, mostRight, mostTop, mostBottom
-    let left = 0, top = 0
-
-    for (let i=0; i<index; i++) {
-      const ab = this.buttons[i]
-      // why do we have buttons detached from the dom tree?
-      if (!ab || ab == this.activeButton || !ab.parentNode || !ab.parentNode.parentNode || ab.classList.contains("invisible"))
-        continue
-
-      const rect = ab.getBoundingClientRect()
-
-      if (this.props.config.vertical) {
-        if (rect.top > box.top){
-          top -= rect.height
-          if (!mostTop)
-            mostTop = ab
-        }
-      }
-      else {
-        if (rect.left + this.getRow(mainBox, rect) > box.left + row) {
-          left -= rect.width
-          // set first
-          if (!mostLeft)
-            mostLeft = ab
-        }
-      }
-    }
-
-    for (let i=index; i<this.buttons.length; i++) {
-      const ab = this.buttons[i]
-      if (!ab || ab == this.activeButton || !ab.parentNode || !ab.parentNode.parentNode || ab.classList.contains("invisible"))
-        continue
-
-      const rect = ab.getBoundingClientRect()
-      if (this.props.config.vertical) {
-        if (rect.top < box.top) {
-          top += rect.height
-          // set last
-          mostBottom = ab
-        }
-      }
-      else {
-        if (rect.left + this.getRow(mainBox, rect) < box.left + row) {
-          left += rect.width
-          // set last
-          mostRight = ab
-        }
-      }
-    }
-    // position has not changed
-    if (
-        (!mostLeft && !mostRight && !this.props.config.vertical) ||
-        (!mostTop && !mostBottom && this.props.config.vertical)
-      ) {
-      this.activeButton.style.top = 0
-      this.activeButton.style.left = 0
-      this.activeButton = null
-      return
-    }
-
-    // TODO: make browser compatible
-    const active = this.activeButton
-
-    this.activeButton.style.top = top + "px"
-    this.activeButton.style.left = left + "px"
-
-    const sort = (e) =>
-    {
-      e.target.removeEventListener("transitionend", sort)
-      this.refs.mainElement.classList.add("no-animate")
-
-      const data = this.order
-      const index = parseInt(active.dataset.index, 10)
-      const b = data.splice(index, 1)
-      if (mostLeft)
-        data.splice(parseInt(mostLeft.dataset.index, 10), 0, b[0])
-      else if (mostRight)
-        data.splice(parseInt(mostRight.dataset.index, 10), 0, b[0])
-      else if (mostBottom)
-        data.splice(parseInt(mostBottom.dataset.index, 10), 0, b[0])
-      else if (mostTop)
-        data.splice(parseInt(mostTop.dataset.index, 10), 0, b[0])
-
-      this.saveState()
-
-      this.forceUpdate()
-      for (let i=0; i<this.buttons.length; i++) {
-        const btn = this.buttons[i]
-        if (btn) {
-          btn.style.left = 0
-          btn.style.top = 0
-        }
-      }
-      window.setTimeout(() => {
-        this.refs.mainElement.classList.remove("no-animate")
-      }, 1)
-    }
-
-    this.activeButton.addEventListener("transitionend", sort)
-    this.activeButton = null
-
-    // prevent release / mouseDown conflict
-    this.hasMoved = true
-    // remove from current stack
-    window.setTimeout(() => {
-      this.hasMoved = false
-    }, 0)
-  }
-  /* End of Button sorting */
 }
 
 Toolbar.propTypes = {

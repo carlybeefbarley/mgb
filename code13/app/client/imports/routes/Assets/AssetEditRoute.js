@@ -255,8 +255,9 @@ export default AssetEditRoute = React.createClass({
     if (this.data.loading)
       return <Spinner />
 
-    const { params, currUser, currUserProjects } = this.props
+    const { params, currUser, currUserProjects, availableWidth } = this.props
     const { isForkPending } = this.state
+    const isTooSmall = availableWidth < 500
 
     let asset = Object.assign( {}, this.data.asset )        // One Asset provided via getMeteorData()
     if (!this.data.asset)
@@ -275,7 +276,7 @@ export default AssetEditRoute = React.createClass({
     const canEd = this.canCurrUserEditThisAsset()
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
-    const chosenProjectNamesArray = asset.projectNames || [];
+    const chosenProjectNamesArray = asset.projectNames || []
     const availableProjectNamesArray =
         currUserProjects ?
           _.map(_.filter(currUserProjects, {"ownerId": asset.ownerId}), 'name')
@@ -292,73 +293,78 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        <Grid.Column width='8' id="mgbjr-asset-edit-header-left">
-          <AssetPathDetail
-            isServerOnlineNow={this.data.isServerOnlineNow}
-            canEdit={canEd}
-            isUnconfirmedSave={asset.isUnconfirmedSave}
-            hasUnsentSaves={hasUnsentSaves}
-            ownerName={asset.dn_ownerName}
-            kind={asset.kind}
-            name={asset.name}
-            text={asset.text}
-            handleNameChange={this.handleAssetNameChange}
-            handleDescriptionChange={this.handleAssetDescriptionChange}
-            handleSaveNowRequest={this.handleSaveNowRequest} />
-        </Grid.Column>
+        { !isTooSmall && 
+          <Grid.Column width='8' id="mgbjr-asset-edit-header-left">
+            <AssetPathDetail
+              isServerOnlineNow={this.data.isServerOnlineNow}
+              canEdit={canEd}
+              isUnconfirmedSave={asset.isUnconfirmedSave}
+              hasUnsentSaves={hasUnsentSaves}
+              ownerName={asset.dn_ownerName}
+              kind={asset.kind}
+              name={asset.name}
+              text={asset.text}
+              handleNameChange={this.handleAssetNameChange}
+              handleDescriptionChange={this.handleAssetDescriptionChange}
+              handleSaveNowRequest={this.handleSaveNowRequest} />
+          </Grid.Column>
+        }
 
-        <Grid.Column width='8' textAlign='right' id="mgbjr-asset-edit-header-right">
-          { /* We use this.props.params.assetId since it is available sooner than the asset
-             * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
-             * */ }
-          <WorkState
-            workState={asset.workState}
-            showMicro={true}
-            canEdit={canEd}
-            handleChange={this.handleWorkStateChange}/>
-          &ensp;
-          <AssetUrlGenerator showBordered={true} asset={asset} />
-          { currUserId &&
-            <AssetForkGenerator showBordered={true} asset={asset} doForkAsset={this.doForkAsset} isForkPending={isForkPending}/>
-          }
-          <StableState
-            isStable={asset.isCompleted}
-            showMicro={true}
-            canEdit={canEd}
-            handleChange={this.handleStableStateChange}/>
-          <DeletedState
-            isDeleted={asset.isDeleted}
-            showMicro={true}
-            canEdit={canEd}
-            handleChange={this.handleDeletedStateChange}/>
-          <AssetLicense
-            license={asset.assetLicense}
-            canEdit={canEd}
-            handleChange={this.handleLicenseChange}/>
-          <AssetActivityDetail
-            assetId={params.assetId}
-            currUser={currUser}
-            activitySnapshots={this.getActivitySnapshots()} />
-          &nbsp;
-          <AssetHistoryDetail
-            assetId={params.assetId}
-            currUser={currUser}
-            assetActivity={this.data.assetActivity} />
-          &nbsp;
-          <ProjectMembershipEditorV2
-            canEdit={canEd}
-            asset={asset}
-            currUserId={currUserId}
-            currUserProjects={currUserProjects}
-            handleToggleProjectName={this.handleToggleProjectName}
-            />
-        </Grid.Column>
+        { !isTooSmall && 
+          <Grid.Column width='8' textAlign='right' id="mgbjr-asset-edit-header-right">
+            { /* We use this.props.params.assetId since it is available sooner than the asset
+              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
+              * */ }
+            <WorkState
+              workState={asset.workState}
+              showMicro={true}
+              canEdit={canEd}
+              handleChange={this.handleWorkStateChange}/>
+            &ensp;
+            <AssetUrlGenerator showBordered={true} asset={asset} />
+            { currUserId &&
+              <AssetForkGenerator showBordered={true} asset={asset} doForkAsset={this.doForkAsset} isForkPending={isForkPending}/>
+            }
+            <StableState
+              isStable={asset.isCompleted}
+              showMicro={true}
+              canEdit={canEd}
+              handleChange={this.handleStableStateChange}/>
+            <DeletedState
+              isDeleted={asset.isDeleted}
+              showMicro={true}
+              canEdit={canEd}
+              handleChange={this.handleDeletedStateChange}/>
+            <AssetLicense
+              license={asset.assetLicense}
+              canEdit={canEd}
+              handleChange={this.handleLicenseChange}/>
+            <AssetActivityDetail
+              assetId={params.assetId}
+              currUser={currUser}
+              activitySnapshots={this.getActivitySnapshots()} />
+            &nbsp;
+            <AssetHistoryDetail
+              assetId={params.assetId}
+              currUser={currUser}
+              assetActivity={this.data.assetActivity} />
+            &nbsp;
+            <ProjectMembershipEditorV2
+              canEdit={canEd}
+              asset={asset}
+              currUserId={currUserId}
+              currUserProjects={currUserProjects}
+              handleToggleProjectName={this.handleToggleProjectName}
+              />
+          </Grid.Column>
+        }
 
         <Grid.Column width='16'>
           <AssetEdit
             key={asset._id}
             asset={asset}
             canEdit={canEd}
+            availableWidth={availableWidth}
             currUser={currUser}
             handleContentChange={this.deferContentChange}
             handleMetadataChange={this.handleMetadataChange}

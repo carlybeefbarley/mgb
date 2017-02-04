@@ -277,8 +277,6 @@ const App = React.createClass({
     if (!loading)
       this.configureTrackJs()
 
-    const navBarAreaHeightInPixels = navBarReservedHeightInPixels
-
     // The Flex Panel is for communications and common quick searches in a right hand margin 
     //   (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
@@ -286,7 +284,7 @@ const App = React.createClass({
     const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels) : px(fpFlexPanelContentWidthInPixels)
     const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
 
-    const navPanelAvailableWidth = respWidth-parseInt(flexPanelWidth)
+    const mainAreaAvailableWidth = respWidth-parseInt(flexPanelWidth)
 
     const isNetworkFailure = !_.includes(['connected','connecting'], this.data.meteorStatus.status)
 
@@ -362,7 +360,7 @@ const App = React.createClass({
                   currUser={currUser}
                   currUserProjects={currUserProjects}
                   fpReservedRightSidebarWidth={flexPanelWidth}
-                  navPanelAvailableWidth={navPanelAvailableWidth}
+                  navPanelAvailableWidth={mainAreaAvailableWidth}
                 />
                 { isNetworkFailure && 
                   <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable'/>
@@ -386,6 +384,7 @@ const App = React.createClass({
                     currUserProjects: currUserProjects,
                     ownsProfile: ownsProfile,
                     isSuperAdmin: isSuperAdmin,
+                    availableWidth: mainAreaAvailableWidth,
                     handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
                     isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
                   })

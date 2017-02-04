@@ -19,8 +19,16 @@ export default UserBashes = () => (
       <Grid.Column width={8}>
         <Header as='h2' content='For visual coders' />
         <b>Task</b> - fork an existing project and add more gameplay <br/>
-        <b>Project to fork</b> - <QLink to={`/u/!vault/project/uG3dKMmRyQv78M9EZ`}>Dwarfs</QLink>   <br/>
+        <b>Project to fork</b> - <QLink to={`/u/!vault/assets?_fp=assets&project=DwarfActors`}>Dwarfs</QLink>   <br/>
         <b>Graphics assets</b> - <QLink to={`/u/!vault/assets?project=DwarfsGraphics`}>Characters, objects, animations</QLink> <br/>
+        <br/>
+        <b>Examples</b>
+        <List bulleted>
+          <List.Item><QLink to={`/u/!vault/asset/X8P7sLMovtS9uLafE`}>Ice Game</QLink></List.Item>
+          <List.Item><QLink to={`/u/!vault/asset/anjK2GisLZzjHbZoM`}>Burger Man</QLink></List.Item>
+          <List.Item><QLink to={`/u/!vault/asset/2hLCWWC7W43Dor9En`}>Chronicles of Mr. Gum</QLink></List.Item>
+        </List>
+
       </Grid.Column>
 
       <Grid.Column width={8}>

@@ -127,7 +127,12 @@ export default class EditActorMap extends EditMap {
   handleSave (data, reason, thumbnail, skipUndo = false) {
     //return;
     this.preventUpdates = false
+
+    // can be already unmounted - as called by async function
+    if(!this.cache)
+      return
     // remove loading - which is set after adding new Actor
+
     this.setState({isLoading: false})
 
     if(!this.props.canEdit){

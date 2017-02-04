@@ -27,12 +27,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Fri Feb 03 2017 23:45:00 GMT-0800 (PST)',
+      'timestamp': 'Sat Feb 04 2017 07:00:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3040'
+        'iteration': '3055'
       },
 
       'releaseManagement': {
@@ -52,6 +52,13 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'type': 'improvement',
           'changeName': 'TUTORIALS ARE BEING UPDATED',
           'changeSummary': 'NOTE: We are re-working the tutorials for the new Top-Nav UI, they will be ugly until Saturday...',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'project.fork',
+          'type': 'feature',
+          'changeName': 'Project Fork',
+          'changeSummary': 'Users can allow their projects to be forked by other users. This is managed and triggered on the Project overview page. There are still some cases where complex assets (code, maps, actors) need fixup for the new assets, but we will do those soon.',
           'otherUrls': [ ]
         },
         {

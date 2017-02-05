@@ -7,11 +7,11 @@ export const templateTutorial = [
     {
       "heading": "Your Profile Page",
       "title": "Profile Page",
-      "text": "Let's find your profile page"
+      "text": "Let's find your profile page",
+      "style": "%begin%"
     },
 
-    "%np-home%",
-    "%np-home-myProfile%",
+    "%np-user%",
 
     {
       "title": "Well done!",

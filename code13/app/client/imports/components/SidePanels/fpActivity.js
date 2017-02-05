@@ -22,7 +22,7 @@ const ActivityExtraDetail = ( { act} ) => {
 
   if (_.isString(act.toChatChannelKey) && act.toChatChannelKey.length > 0) {
     const chName = ChatChannels[act.toChatChannelKey].name
-    return (      
+    return (
       <Feed.Extra text>
         <Icon name='chat' />
         <QLink  query={{_fp: `chat.${chName}`}}>
@@ -36,7 +36,7 @@ const ActivityExtraDetail = ( { act} ) => {
     const assetKindIconName = AssetKinds.getIconName(act.toAssetKind)
     const assetKindColor = AssetKinds.getColor(act.toAssetKind)
     const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
-    const linkTo = act.toOwnerId ? 
+    const linkTo = act.toOwnerId ?
               `/u/${act.toOwnerName}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
               `/assetEdit/${act.toAssetId}`                       // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
 
@@ -57,7 +57,7 @@ const ActivityExtraDetail = ( { act} ) => {
       </div>
     )
   }
-  
+
   return null
 }
 
@@ -65,7 +65,7 @@ const _doDeleteActivity = activityId => deleteActivityRecord( activityId )
 
 
 const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
-  ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) && 
+  ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) &&
     <span className='mgb-show-on-parent-div-hover' onClick={() => _doDeleteActivity(act._id)}>
       &nbsp;
       <Icon color='red' circular link name='delete'/>
@@ -80,7 +80,7 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
 
   return (
     <Feed.Event style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
-      
+
       <Feed.Label>
         <QLink to={"/u/" + byUserName}>
           {currUser && currUser._id == byUserId &&
@@ -107,8 +107,8 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
         </Feed.Meta>
 
         <ActivityExtraDetail act={act} />
-      
-      </Feed.Content>       
+
+      </Feed.Content>
     </Feed.Event>
   )
 }
@@ -118,6 +118,6 @@ const fpActivity = ( { activity, currUser, isSuperAdmin } ) => (
     { activity.map((act) => ( <RenderOneActivity act={act} key={act._id} currUser={currUser} isSuperAdmin={isSuperAdmin} /> ) ) }
   </Feed>
 )
- 
+
 fpActivity.propTypes = _propTypes
 export default fpActivity

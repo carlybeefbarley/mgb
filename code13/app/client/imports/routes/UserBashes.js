@@ -19,7 +19,7 @@ export default UserBashes = () => (
       <Grid.Column width={8}>
         <Header as='h2' content='For visual coders' />
         <b>Task</b> - fork an existing project and add more gameplay <br/>
-        <b>Project to fork</b> - <QLink to='/u/!vault/assets' query={{project:'DwarfsGraphics'}}>Dwarfs</QLink>   <br/>
+        <b>Project to fork</b> - <QLink to='/u/!vault/assets' query={{project:'DwarfActors'}}>Dwarfs</QLink>   <br/>
         <b>Graphics assets</b> - <QLink to='/u/!vault/assets' query={{project:'DwarfsGraphics'}}>Characters, objects, animations</QLink> <br/>
         <br/>
         <b>Examples</b>

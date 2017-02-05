@@ -17,7 +17,7 @@ import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetF
 
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
-export const assetViewChoices =  { 
+export const assetViewChoices =  {
   "xs": { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: false },
   "s":  { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: true  },
   "m":  { icon: '', showFooter: false, header: 'header', showWorkstate: true,  showMeta: false, showExtra: true,  showHdr: true,  showImg: true  },
@@ -31,7 +31,7 @@ export default AssetCard = React.createClass({
 
   propTypes: {
     showFooter:     PropTypes.bool,              // If false, hide the 4-button footer
-    fluid:          PropTypes.bool,              // If true then this is a fluid (full width) card. 
+    fluid:          PropTypes.bool,              // If true then this is a fluid (full width) card.
     asset:          PropTypes.object,
     ownersProjects: PropTypes.array,             // Project array for Asset Owner. Can be null. Can include ones they are a member of, so watch out!
     currUser:       PropTypes.object,            // currently Logged In user (not always provided)
@@ -50,7 +50,7 @@ export default AssetCard = React.createClass({
       renderView: defaultAssetViewChoice
     }
   },
-  
+
   componentDidMount()
   {
     this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
@@ -68,16 +68,16 @@ export default AssetCard = React.createClass({
   {
     this.loadThumbnail()
   },
-  
+
   loadThumbnail()
   {
     const { renderView, asset } = this.props
     const viewOpts = assetViewChoices[renderView]
 
     if (viewOpts.showImg && asset.hasOwnProperty("thumbnail"))
-      this.loadPreviewFromDataURI(asset.thumbnail)      
+      this.loadPreviewFromDataURI(asset.thumbnail)
   },
-  
+
   loadPreviewFromDataURI(dataURI)
   {
     if (dataURI === undefined || dataURI.length == 0)
@@ -89,7 +89,7 @@ export default AssetCard = React.createClass({
       _img.src = dataURI   // data uri, e.g.   'data:image/png;base64,FFFFFFFFFFF' etc
       _img.onload = () => {
         if (this.previewCanvas.width !== _img.width || this.previewCanvas.height !== _img.height)
-        {          
+        {
           this.previewCanvas.width = _img.width
           this.previewCanvas.height = _img.height
         }
@@ -131,7 +131,7 @@ export default AssetCard = React.createClass({
   render() {
     if (!this.props.asset)
       return null
-      
+
     const { renderView, asset, fluid, canEdit, allowDrag, ownersProjects } = this.props
     const actualLicense = (!asset.assetLicense || asset.assetLicense.length === 0) ? defaultAssetLicense : asset.assetLicense
     const assetKindIcon = AssetKinds.getIconClass(asset.kind)
@@ -145,18 +145,18 @@ export default AssetCard = React.createClass({
     const ih = c2.hasOwnProperty("height") ? c2.height : 64
     const ago = moment(asset.updatedAt).fromNow()      // TODO: Make reactive
     const ownerName = asset.dn_ownerName
-    
+
     const veryCompactButtonStyle = { paddingLeft: '0.25em', paddingRight: '0.25em' }
     // Project Membership editor
-    
+
     const chosenProjectNamesArray = asset.projectNames || []
 
-    const availableProjectNamesArray = 
-        ownersProjects ? 
+    const availableProjectNamesArray =
+        ownersProjects ?
           _.map(_.filter(ownersProjects, {"ownerId": asset.ownerId}), 'name')
         : []
     const editProjects = (
-      <ProjectMembershipEditor 
+      <ProjectMembershipEditor
           canEdit={canEdit}
           availableProjectNamesArray={availableProjectNamesArray}
           chosenProjectNames={chosenProjectNamesArray}
@@ -167,24 +167,24 @@ export default AssetCard = React.createClass({
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
-      <div 
-          key={asset._id} 
+      <div
+          key={asset._id}
           className={'ui ' + assetKindColor + (fluid ? ' fluid ' : '') + ' card animated fadeIn'}
           style={ { minWidth: '220px' } }>
-      
-        <div 
-            className="ui centered image" 
+
+        <div
+            className="ui centered image"
             onMouseUp={this.handleEditClick}
             onTouchEnd={this.handleEditClick}
             style={{
               display: viewOpts.showImg ? 'initial' : 'none',
               overflow: "hidden"
               }}>
-          <canvas 
+          <canvas
             className="mgb-pixelated"
-            ref="thumbnailCanvas" 
-            width={iw} 
-            height={ih} 
+            ref="thumbnailCanvas"
+            width={iw}
+            height={ih}
             style={{backgroundColor: '#ffffff', minHeight:"150px", maxHeight:"150px", maxWidth:"220px", width:"auto"}}
             draggable={allowDrag ? "true" : "false"}
             onDragStart={this.startDrag.bind(this, asset)}
@@ -192,7 +192,7 @@ export default AssetCard = React.createClass({
             />
         </div>
 
-        { viewOpts.showHdr && 
+        { viewOpts.showHdr &&
           <div className="content">
             <i className={'right floated ' + assetKindColor + ' ' + assetKindIcon + ' icon'} />
             <a  className={ viewOpts.header }
@@ -200,51 +200,51 @@ export default AssetCard = React.createClass({
                   overflow: "hidden",
                   textOverflow: "ellipsis"
                 }}
-                onClick={this.handleEditClick} 
+                onClick={this.handleEditClick}
                 title={ `Asset Name: '${shownAssetName}'` }>
               <small>
                 {shownAssetName}
                 &nbsp;
                 { viewOpts.showWorkstate &&
-                  <WorkState 
-                    workState={asset.workState} 
+                  <WorkState
+                    workState={asset.workState}
                     popupPosition="bottom center"
                     showMicro={true}
                     canEdit={false}/>
                 }
               </small>
             </a>
-            { viewOpts.showMeta && (asset.text && asset.text !== "") && 
+            { viewOpts.showMeta && (asset.text && asset.text !== "") &&
               <div className="meta" style={{ "color": 'black'}}  onClick={this.handleEditClick} title="Asset Description">
                 <small>{asset.text}</small>
               </div>
             }
-          
-            { asset.isDeleted &&            
+
+            { asset.isDeleted &&
               <div className="ui massive red corner label"><span style={{fontSize: "10px", paddingLeft: "10px"}}>DELETED</span></div>
             }
 
-            { viewOpts.showMeta && 
+            { viewOpts.showMeta &&
               <div className="meta">
-                <small>          
+                <small>
                   { editProjects }
-                  Updated {ago} 
+                  Updated {ago}
                 </small>
               </div>
             }
           </div>
         }
-        
-        { viewOpts.showExtra && 
+
+        { viewOpts.showExtra &&
           <div className="extra content">
             <span style={{color: assetKindColor}} className={"left floated " + assetKindColor + " icon label"} title={assetKindDescription}>
               <i className={"large " + assetKindColor + ' ' + assetKindIcon}></i>
               { assetKindName }
-            </span>                           
+            </span>
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
                 {currUser && currUser._id == asset.ownerId &&
-                  <img className="ui avatar image" src={makeCDNLink(currUser.profile.avatar)}></img>
+                  <img className="ui avatar image" src={makeCDNLink(currUser.profile.avatar, makeExpireTimestamp(60))}></img>
                 }
                 {(!currUser || currUser._id != asset.ownerId) &&
                   <img className="ui avatar image" src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/60`, makeExpireTimestamp(60))}></img>
@@ -254,8 +254,8 @@ export default AssetCard = React.createClass({
             </QLink>
           </div>
         }
-        
-        { viewOpts.showFooter && 
+
+        { viewOpts.showFooter &&
           <div className="ui three small bottom attached icon buttons">
             <a to={assetLicenses[actualLicense].url} target='_blank'
                 className='ui compact button'
@@ -265,7 +265,7 @@ export default AssetCard = React.createClass({
               <i className='ui law icon'/>
               <small>&nbsp;{actualLicense}</small>
             </a>
-            <div className={(canEdit ? "" : "disabled ") + "ui " + (asset.isCompleted ? 'blue' : 'grey') + " compact button"} 
+            <div className={(canEdit ? "" : "disabled ") + "ui " + (asset.isCompleted ? 'blue' : 'grey') + " compact button"}
                   style={veryCompactButtonStyle}
                   onClick={this.handleCompletedClick} >
               <i className={ asset.isCompleted ? "ui lock icon" : "ui unlock icon"}></i>
@@ -290,7 +290,7 @@ export default AssetCard = React.createClass({
       if (err)
         showToast(err.reason, 'error')
     })
-      
+
     let projectsString = newChosenProjectNamesArray.join(", ")
     logActivity("asset.project",  `now in projects ${projectsString}`, null, this.props.asset);
   },
@@ -301,11 +301,11 @@ export default AssetCard = React.createClass({
       if (err)
         showToast(err.reason, 'error')
     })
-    
+
     if (newIsDeletedState)
       logActivity("asset.delete",  "Delete asset", null, this.props.asset);
     else
-      logActivity("asset.undelete",  "Undelete asset", null, this.props.asset); 
+      logActivity("asset.undelete",  "Undelete asset", null, this.props.asset);
   },
 
   handleCompletedClick() {
@@ -314,11 +314,11 @@ export default AssetCard = React.createClass({
       if (err)
         showToast(err.reason, 'error')
     })
-    
+
     if (newIsCompletedStatus)
       logActivity("asset.stable",  "Mark asset as stable", null, this.props.asset);
     else
-      logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset); 
+      logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset);
   },
 
   handleEditClick(e) {

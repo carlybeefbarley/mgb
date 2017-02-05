@@ -1,4 +1,4 @@
-import _ from 'lodash' 
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
 import Helmet from 'react-helmet'
@@ -21,6 +21,8 @@ import { projectMakeSelector } from '/imports/schemas/projects'
 
 import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
+
 
 import { Container, Segment, Header, Button, Grid, Item, Icon } from 'semantic-ui-react'
 
@@ -35,18 +37,18 @@ export default UserProfileRoute = React.createClass({
     currUser: PropTypes.object,
     ownsProfile: PropTypes.bool
   },
-  
+
   getMeteorData: function() {
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     const handleForProjects = Meteor.subscribe("projects.byUserId", userId)
     const projectSelector = projectMakeSelector(userId)
 
     return {
-      projects: Projects.find(projectSelector).fetch(),      
+      projects: Projects.find(projectSelector).fetch(),
       loading: userId && !handleForProjects.ready()
     }
   },
-  
+
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
@@ -63,9 +65,9 @@ export default UserProfileRoute = React.createClass({
         logActivity("user.clearFocus", `Prior focus '${this.props.user.profile.focusMsg}' has been cleared` )
     }
     Meteor.call('User.updateProfile', this.props.user._id, changeObj, (error) => {
-      if (error) 
+      if (error)
         console.log("Could not update profile: ", error.reason)
-      else 
+      else
       {
        // Go through all the keys, log completion tags for each
         _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))
@@ -86,11 +88,11 @@ export default UserProfileRoute = React.createClass({
                 {"name": "description", "content": user.profile.name + "\'s profile"}
             ]}
           />
-          
+
           { this.renderUserInfo(user, ownsProfile) }
           <BadgeGrid user={user} className="eight wide column" />
           <UserShowcase user={user} />
-          { false && 
+          { false &&
             <ActivityHeatmap user={user} className="eight wide column" />
           }
           <Grid.Column width={8} id="mgbjr-profile-skills">
@@ -98,8 +100,8 @@ export default UserProfileRoute = React.createClass({
               <Header as='h2'>
                 <QLink to={`/u/${user.profile.name}/skilltree`}>
                   Skills
-                </QLink> 
-              </Header>        
+                </QLink>
+              </Header>
               <SkillTreeRoute user={user} ownsProfile={ownsProfile} />
             </Segment>
           </Grid.Column>
@@ -121,11 +123,11 @@ export default UserProfileRoute = React.createClass({
         <Segment>
           <Item.Group>
             <Item>
-              
+
               <ImageShowOrChange
                 id='mgbjr-profile-avatar'
                 className="image"
-                imageSrc={avatar}
+                imageSrc={makeCDNLink(avatar, makeExpireTimestamp(60))}
                 canEdit={ownsProfile}
                 canLinkToSrc={true}
                 handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
@@ -178,7 +180,7 @@ export default UserProfileRoute = React.createClass({
                       isDisabled={editsDisabled}
                       />
                   </p>
-                </Item.Description>  
+                </Item.Description>
                 { /*
                   mgb1name && false &&  // Currently not shown - doesn't have good place in layout
                   <a className="right floated mini image"  href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">

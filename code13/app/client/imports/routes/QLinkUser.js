@@ -11,11 +11,11 @@ const QLinkUser = props => {
   const userName = _.isString(u) ? u : u.profile.name
   const userShownName = _.isString(u) ? '@'+u : u.profile.name
   const avatarImg = _.isString(u) ? null : u.profile.avatar
-  
+
   return (
     <QLink to={`/u/${userName}`} altTo={`/u/${userName}/projects`}>
       <div className="right floated author">
-        { avatarImg && <img className="ui avatar image" src={makeCDNLink(u.profile.avatar)}></img> }
+        { avatarImg && <img className="ui avatar image" src={makeCDNLink(u.profile.avatar, makeExpireTimestamp(60))}></img> }
         { userShownName }
       </div>
     </QLink>

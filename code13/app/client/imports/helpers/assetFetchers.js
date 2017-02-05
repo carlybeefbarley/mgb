@@ -40,7 +40,7 @@ export const getCDNDomain = () => CDN_DOMAIN
 export const makeCDNLink = (uri, etagOrHash = null) => {
   if (uri === undefined){
     //throw new Error("UriIsNotDefined!")
-    console.log("makeCDNLink - missing uri")
+    console.error("makeCDNLink - missing uri") // error for stack trace
     return
   }
   // don't cache at all
@@ -93,7 +93,7 @@ export const makeExpireTimestamp = (expires) => {
 // project avatar url prefixed with CDN host
 export const getProjectAvatarUrl = (p, expires = 60) => (
   // etag here is hardcoded - because we will receive asset which will stay very short period of time (1-60) minutes
-  makeCDNLink(getProjectAvatarUrlBasic(p, expires), 'mgb')
+  makeCDNLink(getProjectAvatarUrlBasic(p, expires), makeExpireTimestamp(60))
 )
 
 

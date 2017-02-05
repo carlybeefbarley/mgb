@@ -4,14 +4,14 @@ import QLinkUser from '/client/imports/routes/QLinkUser'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import WorkState from '/client/imports/components/Controls/WorkState'
-import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
+import { getProjectAvatarUrl, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import { Card, Icon } from 'semantic-ui-react'
 
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
 
 const ProjectCard = props => {
-  const { project, owner, canEdit, handleFieldChanged } = props        
+  const { project, owner, canEdit, handleFieldChanged } = props
   const linkTo = "/u/" + project.ownerName + "/project/" + project._id
   const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
 
@@ -31,8 +31,8 @@ const ProjectCard = props => {
         <Icon name='star' className="right floated" />
         <div className="header">
           {project.name}&nbsp;
-          <WorkState 
-              workState={project.workState} 
+          <WorkState
+              workState={project.workState}
               popupPosition="bottom center"
               showMicro={true}
               handleChange={(newWorkState) => handleFieldChanged( { "workState": newWorkState } )}
@@ -43,7 +43,7 @@ const ProjectCard = props => {
         </Card.Meta>
 
         <Card.Description>
-          <b>Description:&nbsp;</b> 
+          <b>Description:&nbsp;</b>
           <InlineEdit
             validate={text => (text.length >= 0 && text.length < 64)}
             activeClassName="editing"

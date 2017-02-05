@@ -51,7 +51,7 @@ export default ProjectsBeingMadeGET = React.createClass({
         !projects.length ? "(none)" :
           projects.map( (p,idx) => (
             <QLink key={idx} className="link item" style={{ whiteSpace: 'nowrap' }} to={`/u/${p.ownerName}/project/${p._id}`}>
-              <img className="ui small middle aligned image" style={{ maxHeight: 60, maxWidth: 60 }} src={getProjectAvatarUrl(p)} />
+              <img className="ui small middle aligned image" style={{ maxHeight: 60, maxWidth: 60 }} src={getProjectAvatarUrl(p, makeExpireTimestamp(60))} />
               <div className="content middle aligned" style={titleWrapperStyle}>
                 <h3 className="ui header" style={titleStyle}>{p.name}</h3>
               </div>

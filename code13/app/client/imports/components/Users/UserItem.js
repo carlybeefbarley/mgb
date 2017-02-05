@@ -49,7 +49,7 @@ export default UserItem = React.createClass({
     return (
       <div className={segClass} onClick={this.handleClickUser} >
         <div className="ui header large">{name}</div>
-        <img src={makeCDNLink(avatar) || SpecialGlobals.defaultUserProfileImage} className={`ui floated image ${imageSize}`} />
+        <img src={makeCDNLink(avatar, makeExpireTimestamp(60)) || SpecialGlobals.defaultUserProfileImage} className={`ui floated image ${imageSize}`} />
         { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
         <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
         {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}

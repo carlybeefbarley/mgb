@@ -26,6 +26,32 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 */
 
 
+
+    {
+      'timestamp': 'Sat Feb 04 2017 21:20 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3068'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.signup',
+          'type': 'improvement',
+          'changeName': 'Improved signup and login',
+          'changeSummary': 'Direct links on Nav Bar; ui aligned with Home page look and feel',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
     {
       'timestamp': 'Sat Feb 04 2017 09:45 GMT-0800 (PST)',
 
@@ -41,7 +67,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
       'changes': [
         {
-          'featureTag': 'nav.userBash page',
+          'featureTag': 'nav.userBash',
           'type': 'feature',
           'changeName': 'Vivid HeaderLink + Page explaining good activities for the User Bash',
           'changeSummary': 'This weekend we are running a couple of \'User Bash\' events - at 10am PST on Saturday and Sunday. Join us - find tasty bugs and make some games',

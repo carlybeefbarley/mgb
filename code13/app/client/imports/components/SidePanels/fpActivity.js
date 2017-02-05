@@ -86,7 +86,7 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
           {currUser && currUser._id == byUserId &&
             <img src={makeCDNLink(currUser.profile.avatar)}></img>
           }
-          {!currUser || currUser._id != byUserId &&
+          {(!currUser || currUser._id != byUserId) &&
             <img src={makeCDNLink(`/api/user/${byUserId}/avatar/60`)}></img>
           }
         </QLink>

@@ -39,7 +39,8 @@ export const getCDNDomain = () => CDN_DOMAIN
 // uri MUST have a leading slash in order to be converted (but not //)
 export const makeCDNLink = (uri, etagOrHash = null) => {
   if (uri === undefined)
-    throw new Error("UriIsNotDefined!")
+    return
+    //throw new Error("UriIsNotDefined!")
   // don't cache at all
   if (uri.startsWith("/api") && !etagOrHash)
     return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri

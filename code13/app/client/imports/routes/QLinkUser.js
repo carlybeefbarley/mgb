@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from './QLink'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 // This is designed primarily for the 'extra content' section of Cards
 
 const QLinkUser = props => {

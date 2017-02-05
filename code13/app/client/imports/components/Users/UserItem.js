@@ -3,7 +3,7 @@ import moment from 'moment'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import Badge from '/client/imports/components/Controls/Badge/Badge'
 import { getAllBadgesForUser } from '/imports/schemas/badges'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it

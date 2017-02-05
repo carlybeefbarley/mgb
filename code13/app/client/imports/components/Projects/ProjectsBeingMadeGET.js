@@ -5,7 +5,7 @@ import QLink from '/client/imports/routes/QLink'
 
 import { Projects } from '/imports/schemas'
 import { projectMakeFrontPageListSelector } from '/imports/schemas/projects'
-import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
+import { getProjectAvatarUrl, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 export default ProjectsBeingMadeGET = React.createClass({
   mixins: [ReactMeteorData],

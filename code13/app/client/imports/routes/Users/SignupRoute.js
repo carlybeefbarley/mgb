@@ -1,16 +1,19 @@
 import _ from 'lodash'
 import React from 'react'
+import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
 
 import { stopCurrentTutorial } from '/client/imports/routes/App'
 import LoginLinks from './LoginLinks'
-import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
 import { utilPushTo } from '../QLink'
 import validate from '/imports/schemas/validate'
 import md5 from 'blueimp-md5'
 import { logActivity } from '/imports/schemas/activity'
+import { showToast } from '/client/imports/routes/App'
+import Footer from '/client/imports/components/Footer/Footer'
 
-
-const ErrMsg = props => { return props.text ? <Message color='red' content={props.text} /> : null }
+const ErrMsg = props => (
+  props.text ? <div style={{paddingTop: 0, marginTop: '-12px', marginBottom: '10px', color:'red'}}>{props.text}</div> : null 
+)
 
 export default SignupRoute = React.createClass({
 
@@ -40,11 +43,8 @@ export default SignupRoute = React.createClass({
     const { isLoading, errors } = this.state
     const { currUser } = this.props
 
-    const innerRender = () => {
-      if (currUser)
-        return <Message error content='You are logged in already!' />
-
-      return (
+    const innerRender = () => (
+      currUser ? <Message info content='You are logged in already!' /> : (
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
           <Form.Input type="email" label='Email Address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
           <ErrMsg text={errors.email} />
@@ -53,20 +53,24 @@ export default SignupRoute = React.createClass({
           <Form.Input label='Choose a Password for your new account' name='password' placeholder='Password' type='password'  error={!!errors.password} />
           <ErrMsg text={errors.password} />
           <ErrMsg text={errors.result} />
-          <Form.Button>Submit</Form.Button>
+          <Form.Button color='teal'>Create Account</Form.Button>
         </Form>
       )
-    }
+    )
 
     return (
-      <Container text>
-      <br></br>
-        <Segment padded>
-          <Header as='h2'>Create your account</Header>
-          { innerRender() }
-          { !currUser && <LoginLinks showLogin={true} showForgot={true} /> }
-        </Segment>
-      </Container>
+      <div>
+        <div className='hero' style={{paddingTop: '3em', paddingBottom: '3em'}}>
+          <Container text>
+            <Segment padded>
+              <Header style={{color:'black'}} as='h2'>Sign Up</Header>
+              { innerRender() }
+              { !currUser && <LoginLinks showLogin={true} showForgot={true} /> }
+            </Segment>
+          </Container>
+        </div>
+        <Footer />
+      </div>
     )
   },
 
@@ -103,7 +107,7 @@ export default SignupRoute = React.createClass({
       {
         logActivity("user.join",  `New user "${username}"`, null, null)
         stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial        
-        utilPushTo(this.context.urlLocation.query, `/learn/getstarted`, { _fp: 'goals'})
+        utilPushTo(this.context.urlLocation.query, '/learn/getstarted')
         
         analytics.identify(Meteor.user()._id, {
           name: Meteor.user().profile.name,
@@ -111,6 +115,7 @@ export default SignupRoute = React.createClass({
         })
         analytics.track('Signed up')
         analytics.page('/signup')
+        showToast("Sign up ok!  Welcome aboard")
       }
     })
   }

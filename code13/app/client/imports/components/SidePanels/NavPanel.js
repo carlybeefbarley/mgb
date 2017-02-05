@@ -150,21 +150,16 @@ export const getNavPanels = (currUser, showAll) => {
         ],
       }      
     ],
-    right: [
-      {
+    // Right side
+    right: _.compact([
+      showUserOptions && {
         name: 'assets',
         explainClickAction: "This will take you directly to the list of your Assets",
         icon: 'pencil',
         hdr: 'Assets',
         to: uname ? `/u/${uname}/assets` : '/assets',
-        menu: _.compact([
-          showGuestOptions && {
-            subcomponent: 'Item',
-            jrkey: 'signup',
-            to: '/signup',
-            content: 'Sign Up to Create',
-          },
-          showUserOptions && {
+        menu: [
+          {
             subcomponent: 'Item',
             jrkey: 'listMy',
             to: `/u/${uname}/assets`,
@@ -172,7 +167,7 @@ export const getNavPanels = (currUser, showAll) => {
             icon: 'pencil',
             content: 'List My Assets',
           },
-          showUserOptions && {
+          {
             subcomponent: 'Item',
             jrkey: 'createNew',
             to: `/assets/create`,
@@ -180,21 +175,15 @@ export const getNavPanels = (currUser, showAll) => {
             icon: { name: 'pencil', color: 'green' },
             content: 'Create New Asset',
           }
-        ])
+        ]
       },
-      {
+      showUserOptions && {
         name: 'projects',
         explainClickAction: "This will take you directly to the list of your Projects",
         icon: 'sitemap',
         hdr: 'Projects',
         to: uname ? `/u/${uname}/projects` : null,
-        menu: _.compact([
-          showGuestOptions && {
-            subcomponent: 'Item',
-            jrkey: 'signup',
-            to: '/signup',
-            content: 'Sign Up to Create',
-          },
+        menu: [
           showUserOptions && {
             subcomponent: 'Item',
             jrkey: 'listMy',
@@ -209,27 +198,29 @@ export const getNavPanels = (currUser, showAll) => {
             icon: { name: 'sitemap', color: 'green' },
             content: 'Create New Project',
           }
-        ])
+        ]
+      },
+      showGuestOptions && {
+        name: 'login',
+        hdr: 'Log in',
+        style: { padding: '4px 16px'},
+        menu: null,
+        to: '/login'
+      },
+      showGuestOptions && {
+        name: 'signup',
+        hdr: 'Sign up',
+        style: { padding: '4px 16px'},
+        menu: null,
+        to: '/signup'
       },
       {
         name: 'user',
         explainClickAction: "This will take you directly to your Profile Page", // if logged in, and this is used by tutorials, so that's ok
         icon: 'user',
         hdr: 'Login',
-        to: uname ? `/u/${uname}` : '/login',
+        to: uname ? `/u/${uname}` : '/signup',
         menu: _.compact([
-          showGuestOptions && {
-            to: '/login',
-            jrkey: 'login',
-            subcomponent: 'Item',
-            content: 'Log In',
-          },
-          showGuestOptions && {
-            to: '/signup',
-            jrkey: 'signup',
-            subcomponent: 'Item',
-            content: 'Sign Up',
-          },
           showUserOptions && {
             subcomponent: 'Header',
             jrkey: 'username',
@@ -280,7 +271,7 @@ export const getNavPanels = (currUser, showAll) => {
           }
         ])
       }
-    ]
+    ])
   }
 }
 
@@ -308,8 +299,12 @@ export default NavPanel = React.createClass({
     const useIcons = navPanelAvailableWidth < 600  // px
     const allNavPanels = getNavPanels(currUser)
 
+    const userMenuKey = 'user'  // We render this specially, even though it's part of allNavPanels
+    const userMenu = _.find(allNavPanels.right, { name: userMenuKey })
+    const userAvatarSrc = _.get(currUser, 'profile.avatar', 'http://placehold.it/50')
+
     const navPanelItems = (side) => allNavPanels[side]
-      .filter(v => (v.name !== 'user'))
+      .filter(v => (v.name !== userMenuKey))
       .map(v => (
         <NavPanelItem 
           name={v.name}
@@ -317,9 +312,8 @@ export default NavPanel = React.createClass({
           key={v.name} 
           hdr={useIcons ? <Icon size='large' name={v.icon}/> : v.hdr} 
           menu={v.menu} 
-          style={{ backgroundColor: (v.highlight ? "orange" : "") }}
+          style={{ backgroundColor: (v.highlight ? 'orange' : '') }}
           to={v.to}/>))
-
 
     return (
       <Menu inverted style={menuStyle} id='mgbjr-np'>
@@ -328,14 +322,15 @@ export default NavPanel = React.createClass({
         {/* The user menu, pushed to the right */}
         <Menu.Menu position='right'>
           { navPanelItems('right') }
+          { currUser && 
           <NavPanelItem
             key='user'
             name='user'
-            hdr={<Image id="mgbjr-np-user-avatar" centered avatar src={_.get(currUser, 'profile.avatar', 'http://placehold.it/50')} />}
-            menu={_.get(_.find(allNavPanels.right, { name: 'user' }), 'menu')}
-            to={_.get(_.find(allNavPanels.right, { name: 'user' }), 'to')}
-            style={{ padding: '4px 8px'}}
-          />
+            style={{ padding: currUser ? '4px 8px' : '4px 16px'}}
+            hdr={!currUser ? 'Sign Up' :  <Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
+            menu={userMenu.menu}
+            to={userMenu.to} />
+          }
         </Menu.Menu>
       </Menu>
     )

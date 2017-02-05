@@ -7,7 +7,7 @@ import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus, countCurrentUserSkills } from '/imports/schemas/skills'
-import { startSkillPathTutorial, startSignUpTutorial } from '/client/imports/routes/App'
+import { startSkillPathTutorial } from '/client/imports/routes/App'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
@@ -32,13 +32,14 @@ const _loginDesc = {
   auth: 'You are logged in so your progress will be recorded in your Skills' 
 }
 const OfferLoginTutorial = () => (
-  <button 
-      className="ui active yellow right floated button" 
-      style={cardStyles.button}
-      onClick={() => { startSignUpTutorial() } }>
-    <Icon name='student' />
-    Log In or Sign Up
-  </button>
+  <QLink to='/signup'>
+    <button 
+        className="ui active yellow right floated button" 
+        style={cardStyles.button}>
+      <Icon name='sign in' />
+      Log In or Sign Up
+    </button>
+    </QLink>
 )
 
 const _gsSkillNodeName = 'getStarted'

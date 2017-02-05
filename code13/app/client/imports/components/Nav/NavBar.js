@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Segment } from 'semantic-ui-react'
 import SystemAlerts from './SystemAlerts'
@@ -23,7 +24,7 @@ const NavBar = (
     currentlyEditingAssetCanEdit
   } ) => {
 
-  if (pathLocation === '/')
+  if (_.includes(['/', '/signup', '/login','/forgot-password'], pathLocation))
     return null
 
   return (

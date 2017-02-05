@@ -2,41 +2,19 @@ import _ from 'lodash'
 import React from 'react'
 import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
 import validate from '/imports/schemas/validate'
+import Footer from '/client/imports/components/Footer/Footer'
 
 const ErrMsg = props => { return props.text ? <Message error color='red' content={props.text} /> : null }
 
-
-// import { mjml2html } from 'mjml'
-// import { Email } from 'meteor/email'
-
-
 export default ForgotPasswordRoute = React.createClass({
 
-  getInitialState: function() {    
+  getInitialState: function() {
     return {
       errors:     {},
       isLoading:  false,
       isComplete: false
     }
   },
-
-  // testTemplate: function(){
-  //   return mjml2html(`
-  //     <mjml>
-  //       <mj-body>
-  //         <mj-container>
-  //           <mj-section>
-  //             <mj-column>
-  //               <mj-text>
-  //                 This is a test template
-  //               </mj-text>
-  //             </mj-column>
-  //           </mj-section>
-  //         </mj-container>
-  //       </mj-body>
-  //     </mjml>
-  //   `)
-  // },
 
   render: function() {
 
@@ -45,7 +23,7 @@ export default ForgotPasswordRoute = React.createClass({
 
     const innerRender = () => {
       if (currUser)
-        return <Message error content='You are logged in already. Once you log out, you may request a password reset' />
+        return <Message info content='You are logged in already. Once you log out, you may request a password reset' />
 
       if (isComplete)
         return <Message success header='Password reset request successful' content='Please check your email inbox (and also junk folders) for the link to finish resetting your password' />
@@ -55,19 +33,23 @@ export default ForgotPasswordRoute = React.createClass({
           <Form.Input label='Enter your email to reset your password' name='email' placeholder='Email address' error={!!errors.email} type="email" />
           <ErrMsg text={errors.email} />
           <ErrMsg text={errors.result} />
-          <Form.Button>Submit</Form.Button>
+          <Form.Button color='teal'>Request reset</Form.Button>
         </Form>
       )
     }
 
     return (
-      <Container text>
-      <br></br>
-        <Segment padded>
-          <Header as='h2'>Request a password reset</Header>
-          { innerRender() }
-        </Segment>
-      </Container>
+      <div>
+        <div className='hero' style={{paddingTop: '3em', paddingBottom: '3em'}}>
+          <Container text>
+            <Segment padded>
+              <Header style={{color: 'black'}} as='h2' content='Request a password reset'/>
+              { innerRender() }
+            </Segment>
+          </Container>
+        </div>
+        <Footer />
+      </div>
     )
   },
 

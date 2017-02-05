@@ -70,10 +70,6 @@ export const startSkillPathTutorial = (skillPath) => {
     _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath)
 }
 
-export const startSignUpTutorial = () => {
-  if (_theAppInstance)
-    _theAppInstance.startSignUpTutorial.call(_theAppInstance)
-}
 
 // clearPriorPathsForJoyrideCompletionTags() is for making the Completion Tag thing
 //  work so it edge triggers only when pages are actually navigated to (rather than 
@@ -437,18 +433,6 @@ const App = React.createClass({
   //
   // TOAST
   //
-
-  startSignUpTutorial()
-  {
-    if (this.currUser)
-    {
-      console.error('startSignUpTutorial() but user is already logged-in')
-      return
-    }
-    const tutPath = ':' + SpecialGlobals.skillsModelTrifecta.signupTutorialName
-    this.addJoyrideSteps(tutPath, { replace: true } )
-  },
-
   startSkillPathTutorial(skillPath)
   {
     const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)

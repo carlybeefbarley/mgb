@@ -28,12 +28,12 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
 
 
     {
-      'timestamp': 'Sat Feb 04 2017 21:20 GMT-0800 (PST)',
+      'timestamp': 'Sat Feb 05 2017 09:55 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3068'
+        'iteration': '3078'
       },
 
       'releaseManagement': {
@@ -41,6 +41,13 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
       },
 
       'changes': [
+        {
+          'featureTag': 'nav.signup',
+          'type': 'improvement',
+          'changeName': 'Detect and Warn if using Internet Explorer',
+          'changeSummary': 'We do not support IE10 and IE11. For best results use another browser. We recommend Chrome.',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'nav.signup',
           'type': 'improvement',

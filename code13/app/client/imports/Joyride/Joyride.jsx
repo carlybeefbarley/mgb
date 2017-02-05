@@ -569,7 +569,7 @@ export default class Joyride extends React.Component {
           && ['close', 'skip'].indexOf(dataType) === -1
           && Boolean(steps[newIndex])
 
-        this.toggleTooltip(shouldDisplay, newIndex, dataType)
+        this.toggleTooltip(shouldDisplay, dataType == 'close' ? state.index : newIndex, dataType)
       }
 
       if (e.target.className === 'joyride-overlay') {

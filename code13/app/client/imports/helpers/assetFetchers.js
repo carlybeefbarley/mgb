@@ -38,6 +38,8 @@ export const getCDNDomain = () => CDN_DOMAIN
 // makeCDNLink() will convert a local link e.g. /api/asset to //xxx.cloufront.com/api/asset?hash
 // uri MUST have a leading slash in order to be converted (but not //)
 export const makeCDNLink = (uri, etagOrHash = null) => {
+  if (uri === undefined)
+    return undefined
   // don't cache at all
   if (uri.startsWith("/api") && !etagOrHash)
     return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri

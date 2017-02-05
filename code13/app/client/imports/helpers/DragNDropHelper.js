@@ -28,7 +28,12 @@ const DragNDropHelper = {
     e.preventDefault()
     e.dataTransfer.effectAllowed = 'copy'
     // without this drop on FF won't work
-    // e.dataTransfer.dropEffect = 'copy'
+    try{
+      e.dataTransfer.dropEffect = 'copy'
+    }
+    catch(e){
+      console.log("Caught error:", e)
+    }
     return false
   },
   startSyntheticDrag: (e) => {

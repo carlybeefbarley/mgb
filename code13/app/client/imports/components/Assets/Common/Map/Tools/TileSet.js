@@ -337,8 +337,9 @@ export default class TileSet extends React.Component {
       <div
         className='active content tilesets accept-drop'
         data-drop-text='Drop asset here to create TileSet'
-        onDrop={this.onDropOnLayer.bind(this)}
         onDragOver={DragNDropHelper.preventDefault}
+        onDragEnter={DragNDropHelper.preventDefault}
+        onDrop={this.onDropOnLayer.bind(this)}
         id="mgb_map_tileset_drop_area"
         >
         <TilesetControls

@@ -39,7 +39,7 @@ export const getCDNDomain = () => CDN_DOMAIN
 // uri MUST have a leading slash in order to be converted (but not //)
 export const makeCDNLink = (uri, etagOrHash = null) => {
   if (uri === undefined)
-    return undefined
+    throw new Error("UriIsNotDefined!")
   // don't cache at all
   if (uri.startsWith("/api") && !etagOrHash)
     return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri
@@ -47,15 +47,17 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
   const hash = etagOrHash != null ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
 
-  const base = __meteor_runtime_config__.ROOT_URL
-
   if (uri.startsWith("/") && !uri.startsWith("//")){
     if(CDN_DOMAIN){
       return `//${CDN_DOMAIN}${uri}?hash=${hash}`
     }
     else{
-      if(__meteor_runtime_config__.ROOT_URL != document.location.origin){
-        return `${__meteor_runtime_config__.ROOT_URL}${uri}?hash=${hash}`
+      if(__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL){
+        // make sure we don't break http / https
+        const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
+        if(!root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")){
+          return `${__meteor_runtime_config__.ROOT_URL}${uri}?hash=${hash}`
+        }
       }
     }
     return CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
@@ -203,7 +205,7 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   if(__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL){
     // make sure we don't break http / https
     const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
-    if(!root_host.startsWith(window.location.host) && isLocal){
+    if(isLocal && !root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")){
       return mgbAjax(__meteor_runtime_config__.ROOT_URL + uri, callback, asset, onRequestOpen)
     }
   }

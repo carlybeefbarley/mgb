@@ -47,21 +47,6 @@ RestApi.addRoute('asset/code/:id', { authRequired: false }, {
   }
 })
 
-RestApi.addRoute('assets/:kind/:owner/:query', {authRequired: false}, {
-  get: function () {
-    const assets = Azzets.find({
-      dn_ownerName: this.urlParams.owner,
-      kind: this.urlParams.kind,
-      name: new RegExp('^'+this.urlParams.query, 'i'),
-      isDeleted: false
-    }, {
-      fields: {name: 1}
-    })
-    return genAPIreturn(this, null, () => assets.map((a) => a.name))
-  }
-})
-
-
 /* was used in the editCode to locate scripts with deep nesting - not used anymore - but might be one day */
 /* RestApi.addRoute('asset/code/:owner/:name/:referrer', {authRequired: false}, {
   get: function() {

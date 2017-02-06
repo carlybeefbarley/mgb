@@ -1,5 +1,5 @@
 // This is based on the node_modules/tern_phaser/phaser.js but everything after Phaser:  was deleted because it was all in the
-// wrong hierarchy. 
+// wrong hierarchy.
 
 // TODO: Generate this instead from https://github.com/photonstorm/phaser/tree/db641ca82e608470bd7902de3447d048d9715ab5/resources/docgen/output
 
@@ -7,8 +7,9 @@
 
 export default DefsPhaser = {
  "!name": "phaser",
- 
+
  "Phaser": {
+   "!doc": "A fast, free and fun open source framework for Canves and WebGL powered browser games",
   "Animation": {
    "!type": "fn(game: +Phaser.Game, parent: +Phaser.Sprite, name: string, frameData: +Phaser.FrameData, frames: [?]|[?], frameRate: number, loop: bool, loop: bool)",
    "!doc": "An Animation instance contains a single animation and the controls to play it.\n\nIt is created by the AnimationManager, consists of Animation.Frame objects and belongs to a single Game Object such as a Sprite.",
@@ -17277,7 +17278,7 @@ export default DefsPhaser = {
     }
    }
   }
- 
+
 
 }
 }

@@ -30,7 +30,9 @@
   });
 
   function postParse(ast, text) {
-    function attachComments(node) { comment.ensureCommentsBefore(text, node); }
+    function attachComments(node) {
+      comment.ensureCommentsBefore(text, node);
+    }
 
     walk.simple(ast, {
       VariableDeclaration: attachComments,

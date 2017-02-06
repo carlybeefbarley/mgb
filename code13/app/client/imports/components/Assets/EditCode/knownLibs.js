@@ -13,8 +13,9 @@ export default {
   phaser: {
     useGlobal: true,
     src: function (version) {
+      console.log("loading phaser...")
       version = version || "latest";
-      return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.min.js';
+      return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.js';
       //return 'http://localhost:3000/phaser/2.4.6/phaser.js'
       //return '/phaser/' + version + '/phaser.min.js'
     },

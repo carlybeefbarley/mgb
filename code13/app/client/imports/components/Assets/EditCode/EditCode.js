@@ -21,7 +21,7 @@ import SourceTools from './SourceTools.js'
 import CodeFlower from './CodeFlowerModded.js'
 import GameScreen from './GameScreen.js'
 import makeBundle from '/imports/helpers/codeBundle'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
@@ -315,7 +315,6 @@ export default class EditCode extends React.Component {
         const doc = curData.doc ? curData.doc : ''
         return doc + (doc ? "\n\n" + curData.type : "")
       },
-      // TODO: is there a simple "meteor" way to get these files from node_modules???
       workerDeps: [
         makeCDNLink("/lib/acorn/acorn.js"),
         makeCDNLink("/lib/acorn/acorn_loose.js"),
@@ -323,7 +322,7 @@ export default class EditCode extends React.Component {
         makeCDNLink("/lib/tern/lib/signal.js"),
         makeCDNLink("/lib/tern/lib/tern.js"),
         makeCDNLink("/lib/tern/lib/def.js"),
-        makeCDNLink( "/lib/tern/lib/infer.js"),
+        makeCDNLink("/lib/tern/lib/infer.js"),
         makeCDNLink("/lib/tern/lib/comment.js"),
         makeCDNLink("/lib/tern/plugin/modules.js"),
         makeCDNLink("/lib/tern/plugin/es_modules.js"),
@@ -342,7 +341,8 @@ export default class EditCode extends React.Component {
            }
          },*/
         doc_comment: {
-          strong: true
+          strong: true,
+          fullDocs: true
         }
       },
       workerScript: "/lib/workers/TernWorker.js"
@@ -459,15 +459,114 @@ export default class EditCode extends React.Component {
       if(this.state.currentToken.type == "comment")
         return CodeMirror.Pass
       if(this.state.currentToken.type == "string"){
-        return this.showUserAssetHint(this.state.currentToken)
+        return this.showUserAssetHint(cm, CodeMirror, this.state.currentToken)
       }
       return this.ternServer.complete(cm)
     }
     return CodeMirror.Pass
   }
-  showUserAssetHint(token){
+
+  // autocomplete options type: [{text: '', desc: ''}, ...]
+  showCustomCMHint(cm, autocompleteOptions, keywordSubstring = 0){
+    let tooltip = null
+    // TODO: optimize - reuse tooltip
+    const createTooltip = () => {
+      const node = document.createElement("div")
+      // same class as for JS tooltips
+      node.className = "CodeMirror-Tern-tooltip CodeMirror-Tern-hint-doc"
+      return node
+    }
+    const removeTooltip = () => {
+      if(tooltip && tooltip.parentNode){
+        tooltip.parentNode.removeChild(tooltip)
+      }
+    }
+
+    const hintObj = {
+      // hint will be called on every change
+      hint: () => {
+
+        const cursor = cm.getCursor()
+        const token = cm.getTokenAt(cursor, true)
+        const keyword = token.string.substring(1 + keywordSubstring, token.string.length - 1)
+
+        // filter our list
+        const list = autocompleteOptions.filter(a => {
+          return !keyword || a.text.toLowerCase().startsWith(keyword.toLowerCase())
+        })
+        const from = Object.assign({}, cursor)
+        from.ch = token.start + 1 + keywordSubstring  // keep quote
+
+        const to = Object.assign({}, from)
+        to.ch = token.end - 1 // keep quote
+
+        list.sort((a, b) => {
+          return a.text < b.text ? -1 : 1
+        })
+        const hints = {
+          list, from, to,
+          // completeSingle seems that is not working ?
+          completeSingle: false
+        }
+
+        CodeMirror.on(hints, "select", (completion, element) => {
+          // remove old tooltip
+          removeTooltip()
+          if(completion.desc){
+            tooltip = createTooltip()
+            tooltip.innerHTML = completion.desc
+            // li < ul < body - by default
+            element.parentNode.parentNode.appendChild(tooltip)
+            const box = element.getBoundingClientRect()
+            const ulbox = element.parentNode.getBoundingClientRect()
+
+            tooltip.style.left = ulbox.left + ulbox.width + "px"
+            tooltip.style.top = box.top + "px"
+          }
+        })
+        CodeMirror.on(hints, "close", () => {
+          // cleanup
+          // console.log("cleanup called!")
+          removeTooltip()
+          CodeMirror.off(hints, "close")
+          CodeMirror.off(hints, "select")
+          CodeMirror.on(hints, "shown")
+        })
+        return hints
+      }
+    }
+
+    return cm.showHint(hintObj)
+  }
+
+  showUserAssetHint(cm, CodeMirror, token){
+    // strip quotes
+    const keyword = token.string.substring(1, token.string.length - 1)
+    // this combo starts to repeat too often
+    if(keyword && keyword.startsWith('/') && !keyword.startsWith('//')){
+      const parts = keyword.split(':')
+      // get hints for own assets
+      if(parts.length == 1){
+        mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=${keyword.substring(1)}`, (err, listStr) => {
+          if(err)
+            return
+          this.showCustomCMHint(cm, JSON.parse(listStr), 1)
+        })
+      }
+      // check if user exists at all? parts[0] - is username
+      else if(parts.length == 2){
+        const user = parts.shift()
+        mgbAjax(`/api/assets/code/${user}/?query=${parts.shift().substring(1)}`, (err, listStr) => {
+          if(err)
+            return
+          this.showCustomCMHint(cm, JSON.parse(listStr), user.length + 1)
+        })
+      }
+    }
     return CodeMirror.Pass
   }
+
+
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
       if (this.acTimeout) {
@@ -655,13 +754,9 @@ export default class EditCode extends React.Component {
     }
 
     if (event.ctrlKey) {
+      const token = cm.getTokenAt(pos, true)
+      console.log(token)
 
-      // console.log("ctrl-click at", pos.line, ",", pos.ch);
-      // let currentToken = cm.getTokenAt(pos, true)
-      // console.log("TOKEN", currentToken)
-      // let currentCursor = _.cloneDeep(this.codeMirror.getCursor())
-      // currentCursor.line = pos.line
-      // currentCursor.ch = pos.ch
       this.codeMirror.setCursor(pos)
       this.cursorHistory.undo.push(pos)
       this.ternServer.jumpToDef(cm)
@@ -961,14 +1056,28 @@ export default class EditCode extends React.Component {
     var self = this
     let query = {
       type: "type",
-      depth: 0
+      depth: 0,
+      guess: true
+      //preferFunction: true
     }
 
     ternServer.request(editor, query, function (error, data) {
       if (error)
         self.setState({atCursorTypeRequestResponse: {"error": error}})
-      else
-        self.setState({atCursorTypeRequestResponse: {data}})
+      else {
+        if (data.type == data.name) {
+          query.depth = 1
+          ternServer.request(editor, query, function (error, data) {
+            if (error)
+              self.setState({atCursorTypeRequestResponse: {"error": error}})
+            else {
+              self.setState({atCursorTypeRequestResponse: {data}})
+            }
+          }, position)
+        }
+        else
+          self.setState({atCursorTypeRequestResponse: {data}})
+      }
     }, position)
   }
 

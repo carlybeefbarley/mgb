@@ -19,16 +19,14 @@ export default ExpressionDescription = React.createClass({
   render: function() {
     if (!this.props.expressionTypeInfo || !this.props.expressionTypeInfo.exprName)
       return null
-    
+
     let {name, type, exprName, doc, url, origin} = this.props.expressionTypeInfo
-    let colorGrey = {color: "#777"}          
+    let colorGrey = {color: "#777"}
     let isFn = type.startsWith("fn(") ? "(...)" : "";
-    if (type === '?')
-      return null
-            
-    
-    let nameFriendly = makeFriendlyName(name, exprName);        
-    
+
+
+    let nameFriendly = makeFriendlyName(name, exprName);
+
     return (
       <div className="ui yellow segment" style={{backgroundColor: "rgba(255,255,0,0.03)"}}>
         <a className="ui orange left ribbon label"><code>{nameFriendly}{isFn}</code></a>
@@ -37,14 +35,14 @@ export default ExpressionDescription = React.createClass({
         </a>
         <div className="ui header">
           <span style={colorGrey}>Reference <i>Expression</i>:</span> <code>{exprName}<span style={colorGrey}>{isFn}</span></code>
-        </div>    
-        <span style={colorGrey}>Type:</span>  <code>{type}</code><br></br>
+        </div>
         <span style={colorGrey}>Name:</span>  <code>{name}</code><br></br>
+        { type !== '?' && <span><span style={colorGrey}>Type:</span>  <code>{type}</code><br></br></span>}
         { origin && <p><small>Part of '{origin}'</small></p> }
         { doc && <p style={{whiteSpace: 'pre-line'}}>{doc}</p> }
         { url && <p><a href={url}><small>{url}</small></a></p> }
       </div>
     )
   }
-  
+
 })

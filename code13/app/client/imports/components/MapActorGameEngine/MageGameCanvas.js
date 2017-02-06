@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
 import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
-import MapArea from '../Assets/Common/Map/BaseMapArea'
 
 // MapActorGameEngine GameCanvas
 // This handles just rendering the current game frame based on data available to it...
@@ -140,10 +139,12 @@ export default class MageGameCanvas extends React.Component {
 
   render() {
     const { cellsWide, cellsHigh } = this.props
+    let height = Math.min((cellsHigh * 32), 640)
+    let width = Math.min((cellsWide * 32), window.innerWidth)
 
     // maxHeight and maxWidth for #mgb-game-container determine the size of the game canvas - 640px to match map editor size
     return ( 
-      <div id="mgb-game-container" style = {{maxHeight: '640px', overflow: 'hidden', border: 'grey 1px solid'}}>
+      <div id="mgb-game-container" style = {{maxHeight: height + 'px', maxWidth: width + 'px', overflow: 'hidden', border: 'grey 1px solid'}}>
         <canvas 
             ref = { c => { this.prepCanvas(c) } }
             width = { cellsWide * 32 }

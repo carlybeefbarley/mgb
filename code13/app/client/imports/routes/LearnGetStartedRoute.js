@@ -158,6 +158,11 @@ const LearnGetStartedRoute = ( { currUser }, context ) => {
                 const { name, description, key } = area.node.$meta
                 const skillStatus = getSkillNodeStatus(currUser, context.skills, key)
                 const isCompleted = (skillStatus.todoSkills.length == 0)
+                const mascotStyle = _.cloneDeep( cardStyles.mascot )
+                if(!currUser && idx != 0){
+                  mascotStyle.filter = "grayscale(100%)"
+                }
+                console.log(skillStatus.todoSkills.length, idx)
                 return (
                   <Card 
                       key={idx} 
@@ -172,7 +177,7 @@ const LearnGetStartedRoute = ( { currUser }, context ) => {
                       </Card.Header>
 
                       <p style={cardStyles.para}>
-                        <img src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} style={cardStyles.mascot} />
+                        <img src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} style={mascotStyle} />
                         <span style={cardStyles.desc}>{description}.</span>
                       </p>
                       { isCompleted ? <BigCheckMark /> : 

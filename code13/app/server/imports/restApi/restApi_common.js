@@ -8,7 +8,14 @@ RestApi.addRoute('error', { authRequired: false }, {
     return this.request.headers
   }
 })
-
+RestApi.addRoute('make-error', { authRequired: false }, {
+  get: function () {
+    return {
+      statusCode: 503,
+      body: {}
+    }
+  }
+})
 RestApi.addRoute('asset/:id', { authRequired: false }, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)

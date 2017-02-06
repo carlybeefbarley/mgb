@@ -162,7 +162,6 @@ const LearnGetStartedRoute = ( { currUser }, context ) => {
                 if(!currUser && idx != 0){
                   mascotStyle.filter = "grayscale(100%)"
                 }
-                console.log(skillStatus.todoSkills.length, idx)
                 return (
                   <Card 
                       key={idx} 

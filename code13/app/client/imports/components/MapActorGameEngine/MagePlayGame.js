@@ -50,6 +50,7 @@ export default class MagePlayGame
     _.assign(this, MagePlayGameTransition)
     _.assign(this, MagePlayGameActiveLayers)
     _.assign(this, MagePlayGameBackgroundLayers)
+    this.container = document.getElementById("mgb-game-container")
   }
 
   resetGameState() {
@@ -134,8 +135,36 @@ export default class MagePlayGame
     console.error(msg) 
   }
 
-  scrollMapToSeePlayer() {
-    // TODO
+  scrollMapToSeePlayer(overrideX = -1, overrideY = -1) {
+    const marginX = Math.floor((this.container.offsetWidth / 32) / 3)
+    const marginY = Math.floor((this.container.offsetHeight / 32) / 3)
+  
+    var sx = overrideX == -1 ? this.activeActors[this.AA_player_idx].x : overrideX
+    var sy = overrideY == -1 ? this.activeActors[this.AA_player_idx].y : overrideY
+
+    G_HSPdelta = 0
+    G_VSPdelta = 0
+
+    var horizontalScrollPosition = this.container.scrollLeft
+    var verticalScrollPosition = this.container.scrollTop
+    var maxHorizontalScrollPosition = this.container.scrollWidth - this.container.offsetWidth
+    var maxVerticalScrollPosition = this.container.scrollHeight - this.container.offsetHeight
+    var w = (this.map.metadata.width * MgbSystem.tileMinWidth) - maxHorizontalScrollPosition
+    var h = (this.map.metadata.height * MgbSystem.tileMinWidth) - maxVerticalScrollPosition
+    var maxHSP_toSeePlayer = (sx-marginX) * MgbSystem.tileMinWidth					// Maximum Horizontal Scroll Position to see player
+    var maxVSP_toSeePlayer = (sy-marginY) * MgbSystem.tileMinHeight			// Maximum Vertical Scroll Position to see player
+
+    if (horizontalScrollPosition > maxHSP_toSeePlayer)
+      G_HSPdelta = ((maxHSP_toSeePlayer) - horizontalScrollPosition)/this.G_tweensPerTurn;	// Scroll left if needed
+    if (verticalScrollPosition > maxVSP_toSeePlayer)
+      G_VSPdelta = ((maxVSP_toSeePlayer) - verticalScrollPosition)/this.G_tweensPerTurn;	// Scroll up if needed
+
+    var minHSP_toSeePlayer = ((sx+1+marginX) * MgbSystem.tileMinWidth) - w 				// Minimum Horizontal Scroll Position to see player
+    var minVSP_toSeePlayer = ((sy+1+marginY) * MgbSystem.tileMinHeight) - h 			// Minimum Vertical Scroll Position to see player
+    if (minHSP_toSeePlayer > 0 && horizontalScrollPosition < minHSP_toSeePlayer)				
+      G_HSPdelta = ((minHSP_toSeePlayer) - horizontalScrollPosition) / this.G_tweensPerTurn;	// Scroll right if needed
+    if (minVSP_toSeePlayer > 0 && verticalScrollPosition < minVSP_toSeePlayer)				
+      G_VSPdelta = ((minVSP_toSeePlayer) - verticalScrollPosition) / this.G_tweensPerTurn;		// Scroll down if needed
   }
 
   doPauseGame() {
@@ -403,11 +432,13 @@ export default class MagePlayGame
 
 
   // TODO - something like this
-    // // Update scroll position (by tweened amount) if this is the player
-    // if (G_VSPdelta)
-    //   Container(parent).verticalScrollPosition += G_VSPdelta;
-    // if (G_HSPdelta)
-    //   Container(parent).horizontalScrollPosition += G_HSPdelta;
+    // Update scroll position (by tweened amount) if this is the player
+
+    
+    if (G_VSPdelta)
+      this.container.scrollTop += G_VSPdelta;
+    if (G_HSPdelta)
+      this.container.scrollLeft += G_HSPdelta;
 
     // Housekeeping for end-of-turn
     // TODO: Kill & recycle dead enemies
@@ -527,7 +558,7 @@ export default class MagePlayGame
       }
       else {
         debugger // alert sucks 
-        alert("G A M E   O V E R\n", "They got you...")
+        alert("G A M E   O V E R")
         // gee.completedVictory = false		// Change just one parameter...
       }
       debugger // needs thinking about state management with parent obects
@@ -548,10 +579,4 @@ export default class MagePlayGame
     timeStr += (secondsPlayed % 60 < 10 ? "0" : "") + Math.floor(secondsPlayed % 60)
     return timeStr
   }
-
-  scrollMapToSeePlayer()
-  {
-    // TODO
-  }
-
 }

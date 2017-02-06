@@ -471,7 +471,7 @@ export default class SourceTools {
       }
     }
     // asset resource identifier
-    const ari = url + '/' + urlFinalPart
+    const ari = url ; //+ '/' + urlFinalPart
     // already subscribed and observing
     // TODO: this can be skipped - but requires to check all edge cases - e.g. first time load / file removed and then added again etc
     // atm this seems pretty quick

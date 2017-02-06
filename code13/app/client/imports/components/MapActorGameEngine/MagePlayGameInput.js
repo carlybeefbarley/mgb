@@ -37,12 +37,17 @@ export default MagePlayGameInput = {
   
   playHandleKeyEvents(k)    // k is a keyboard event
   {
+    // don't steal events from input fields
+    if (_.includes(["INPUT", "SELECT","TEXTAREA"], k.target.tagName))
+      return
+
     k.preventDefault()
     const { actors, activeActors, AA_player_idx, isPaused, G_gameOver, isTransitionInProgress } = this
     if (!G_gameOver && !isTransitionInProgress)
     {
       var newstate = (k.type === 'keydown')
       var pp = actors[activeActors[AA_player_idx].ACidx]
+
       switch (k.key)
       {
       case 'Backspace':

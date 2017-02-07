@@ -61,6 +61,14 @@ const learnTopLevelItems = [
     link: '/learn',
     query: { _fp: 'chat.mgb-help' },
     desc: 'Ask and we shall answer'
+  },
+  {
+    mascot: 'bigguy',
+    icon: 'code',
+    content: 'Programming',
+    link: '/learn/code',
+    query: null,
+    desc: 'Game programming with JavaScript and Phaser'
   }
 ]
 

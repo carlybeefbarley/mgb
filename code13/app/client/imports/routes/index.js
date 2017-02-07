@@ -16,6 +16,8 @@ import LearnSkillsRoute from './LearnSkillsRoute'
 import LearnSkillsAreaRoute from './LearnSkillsAreaRoute'
 import LearnGetStartedRoute from './LearnGetStartedRoute'
 
+import LearnCodeRoute from './LearnCodeRoute'
+
 import Users from './Users'
 import Azzets from './Assets'
 import Projects from './Projects'
@@ -66,6 +68,8 @@ Meteor.startup(function () {
         <Route path="/learn/skills/:skillarea" component={LearnSkillsAreaRoute} />
         <Route path="/learn/games" component={LearnGamesRoute} />
         <Route path="/learn/getstarted" component={LearnGetStartedRoute} />
+        
+        <Route path="/learn/code" component={LearnCodeRoute} />
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
         <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />

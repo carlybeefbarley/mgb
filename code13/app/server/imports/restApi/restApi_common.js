@@ -12,6 +12,9 @@ RestApi.addRoute('make-error', { authRequired: false }, {
   get: function () {
     return {
       statusCode: 503,
+      headers:{
+        location:`${process.env.ROOT_URL}${this.request.url.startsWith('/') ? this.request.url : '/'+this.request.url}`
+      },
       body: {}
     }
   }
@@ -76,7 +79,8 @@ RestApi.addRoute('asset/cached-thumbnail/png/:expires/:id', {authRequired: false
     const expires = this.urlParams.expires || 30
     return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
       'Content-Type': 'image/png',
-      'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`
+      'Cache-Control': `
+      }public, max-age=${expires}, s-maxage=${expires}`
 
     })
   }

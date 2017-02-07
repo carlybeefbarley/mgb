@@ -26,6 +26,12 @@ const jsItems = [
     desc: `Cick on image, click on game`
   },
   {
+    icon: 'tasks',
+    link: '',
+    content: 'Task',
+    desc: `Clicking on image make it rotate 45°`
+  },
+  {
     icon: 'code',
     link: '',
     content: 'Input keyboard',
@@ -35,7 +41,13 @@ const jsItems = [
     icon: 'code',
     link: '',
     content: 'update() function',
-    desc: ``
+    desc: `example with increasing/descreasing size with arrow up/down`
+  },
+  {
+    icon: 'tasks',
+    link: '',
+    content: 'Task',
+    desc: `Move character around screen using arrow keys`
   },
   {
     icon: 'code',

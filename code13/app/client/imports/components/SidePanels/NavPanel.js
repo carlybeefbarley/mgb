@@ -203,6 +203,7 @@ export const getNavPanels = (currUser, showAll) => {
       showGuestOptions && {
         name: 'login',
         hdr: 'Log in',
+        icon: 'sign in',
         style: { padding: '4px 16px'},
         menu: null,
         to: '/login'
@@ -210,6 +211,7 @@ export const getNavPanels = (currUser, showAll) => {
       showGuestOptions && {
         name: 'signup',
         hdr: 'Sign up',
+        icon: 'signup',
         style: { padding: '4px 16px'},
         menu: null,
         to: '/signup'

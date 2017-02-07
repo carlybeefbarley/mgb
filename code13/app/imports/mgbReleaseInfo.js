@@ -14,26 +14,13 @@ const mgbReleaseInfo = {
 
   'releases': [
 
-/* Pending changes -- accumulate here in comment until time to deploy
-
-      'changes': [
-        {
-        },
-        
-      ]
-Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
-
-*/
-
-
-
     {
-      'timestamp': 'Sat Feb 05 2017 09:55 GMT-0800 (PST)',
+      'timestamp': 'Mon Feb 06 2017 17:45 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3078'
+        'iteration': '3097'
       },
 
       'releaseManagement': {

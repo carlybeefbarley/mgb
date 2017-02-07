@@ -51,7 +51,7 @@ Meteor.methods({
     }
     thisUser = { profile: { name: 'dgolds' } }
       
-*/      
+*/  
       //   importParams = {
       //     mgb1Username:           'azurehaze',
       //     mgb1Projectname:        'Galactic Combat',    //   'mechanics demos',

@@ -281,7 +281,8 @@ export default class MapArea extends React.Component {
   resize (newSize = this.data) {
     this.data.width = newSize.width
     this.data.height = newSize.height
-    this.props.saveForUndo("Resize map")
+    // Disabled until fixed
+    // this.props.saveForUndo("Resize map")
     this.data.layers.forEach((l) => {
       if(!LayerTypes.isTilemapLayer(l.type)){
         return;

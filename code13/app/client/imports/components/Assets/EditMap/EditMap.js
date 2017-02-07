@@ -302,7 +302,7 @@ export default class EditMap extends React.Component {
     // we need to set state here because handle save callback will match with last save and nothing will get updated
 
     this.mgb_content2 = data
-    this.refs.map && this.refs.map.clearSelection()
+    // this.refs.map && this.refs.map.clearSelection() // Keep selected tile after undo (productivity improvement for undoing tile place action)
 
     this.setState({content2: data})
   }

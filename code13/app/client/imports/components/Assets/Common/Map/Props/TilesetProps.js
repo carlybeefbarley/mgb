@@ -56,7 +56,7 @@ export default {
   updateTilesetFromData: function(data, ref = null, fixGids = false){
     const c2 = this.mgb_content2
     let ts
-    if (data.imagewidth == data.tilewidth) {
+    if (data && data.imagewidth == data.tilewidth) {
       ts = TileHelper.genTileset(c2, data.image, data.imagewidth, data.imageheight)
       ts.name = data.name
     }

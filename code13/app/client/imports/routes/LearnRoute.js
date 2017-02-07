@@ -36,7 +36,16 @@ const learnTopLevelItems = [
     query: null,
     skillnodeTopLevelTag: 'getStarted',
     desc: 'Learn to use this site - set up your profile, play a game, find friends, etc'
+  },
+  {
+    mascot: 'bigguy',
+    icon: 'code',
+    content: 'Programming',
+    link: '/learn/code',
+    query: null,
+    desc: 'Game programming with JavaScript and Phaser'
   }, 
+  /*
   {
     mascot: 'game_shop',
     icon: 'game',
@@ -44,7 +53,8 @@ const learnTopLevelItems = [
     link: '/learn/games',
     query: null,
     desc: 'Learn to make and modify some classic game types'
-  }, 
+  },
+  */ 
   {
     mascot: 'whale',
     icon: 'student',
@@ -62,14 +72,6 @@ const learnTopLevelItems = [
     query: { _fp: 'chat.mgb-help' },
     desc: 'Ask and we shall answer'
   },
-  {
-    mascot: 'bigguy',
-    icon: 'code',
-    content: 'Programming',
-    link: '/learn/code',
-    query: null,
-    desc: 'Game programming with JavaScript and Phaser'
-  }
 ]
 
 const LearnRoute = ( { currUser, params }, context ) => (

@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import styles from './home.css'
 import QLink from './QLink'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
-
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 
 const jsItems = [
@@ -11,25 +11,29 @@ const jsItems = [
     icon: 'game',
     link: '/u/!vault/project/MNuSHoYkTeT6WHrzE',
     content: 'Rocky Smasher',
-    desc: `Tap left/right to cut down the tree`
+    desc: `Tap left/right to cut down the tree`,
+    mascot: 'game_rocky',
   },
   {
     icon: 'game',
     link: '/u/!vault/project/7dDxP35DeHTYdMZjt',
     content: 'Digger',
-    desc: `Mine precious minerals and sell them in a shop`
+    desc: `Mine precious minerals and sell them in a shop`,
+    mascot: 'game_shop',
   },
   {
     icon: 'game',
     link: '/u/!vault/project/cpTvrRFnZzWLhxWgN',
     content: 'Runner',
-    desc: `Never ending runner game`
+    desc: `Never ending runner game`,
+    mascot: 'game_runner',
   },
   {
     icon: 'game',
     link: '/u/!vault/project/yHxhXxrRLqxsgnBCf',
     content: 'Snake',
-    desc: `Classic`
+    desc: `Classic`,
+    mascot: 'game_snake',
   },
   /*
   {
@@ -56,20 +60,17 @@ const LearnCodeModifyRoute = ( { currUser }, context ) => {
           </Header>
         </Grid.Row>
         <Grid.Row>
-          <Card.Group itemsPerRow={1} stackable className="skills">
+          <Card.Group itemsPerRow={2} stackable className="skills">
             
             { jsItems.map( (area, idx) => (
 
 
               <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
                 <Card.Content>
-                  <p style={descStyle}>
-                    <i className={area.icon+" large icon"}></i>
-                    <b>{area.content}</b>
-                    &nbsp;- {area.desc}
-                  </p>
-                  
-                </Card.Content>
+                    <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
+                    <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+                    <p style={descStyle}>{area.desc}.</p>
+                  </Card.Content>
               </QLink>
 
 

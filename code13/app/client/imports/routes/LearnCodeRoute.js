@@ -20,7 +20,7 @@ const learnCodeItems = [
     If you already know it you can proceed to game development basics.`
   },
   {
-    mascot: 'bigguy',
+    mascot: 'phaserLogo',
     icon: 'code',
     content: 'Game development concepts',
     link: '/learn/code/phaser',
@@ -30,7 +30,7 @@ const learnCodeItems = [
     because it is super fast to learn and easy to use.`
   },
   {
-    mascot: 'bigguy',
+    mascot: 'mole',
     icon: 'code',
     content: 'Create game A-Z',
     link: '/learn/code/mole',
@@ -42,7 +42,7 @@ const learnCodeItems = [
     creating user interface, states and other important things.`
   },
   {
-    mascot: 'bigguy',
+    mascot: 'arcade_player',
     icon: 'code',
     content: 'Modify games',
     link: '/learn/code/modify',

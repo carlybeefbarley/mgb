@@ -9,60 +9,47 @@ import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 const jsItems = [
   {
     icon: 'code',
-    link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
-    content: 'Variables',
+    link: '',
+    content: 'Basic gameplay',
     desc: ``
   },
   {
     icon: 'code',
     link: '',
-    content: 'Arithmetic operators',
-    desc: `addition, subtraction, division, multiplication`
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Arrays',
+    content: 'Tweens',
     desc: ``
   },
   {
     icon: 'code',
     link: '',
-    content: 'Objects',
+    content: 'Timing',
     desc: ``
   },
   {
     icon: 'code',
     link: '',
-    content: 'For loops',
+    content: 'User interface',
     desc: ``
   },
   {
     icon: 'code',
     link: '',
-    content: 'If statements',
-    desc: ``
-  },
-  
-  {
-    icon: 'code',
-    link: '',
-    content: 'Functions',
-    desc: ``
+    content: 'OOP',
+    desc: `Refactor existing game OOP style.`
   },
 
 ]
 
 
 
-const LearnCodeJsRoute = ( { currUser }, context ) => { 
+const LearnCodeMoleRoute = ( { currUser }, context ) => { 
   return (
     <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
       <Grid stackable>
         <Grid.Row >
           <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            JavaScript programming basics
-            <em className="sub header">Click on item and explore it</em>
+            Develop a game from A-Z
+            <em className="sub header">Everyone knows "Whack a Mole" game. For coders it is easy to start with this game and add more concepts to it.</em>
           </Header>
         </Grid.Row>
         <Grid.Row>
@@ -93,7 +80,7 @@ const LearnCodeJsRoute = ( { currUser }, context ) => {
   )
 }
 
-export default LearnCodeJsRoute
+export default LearnCodeMoleRoute
 
 
 

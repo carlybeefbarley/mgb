@@ -3,9 +3,7 @@ import React, { PropTypes } from 'react'
 import styles from './home.css'
 import QLink from './QLink'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
-import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
-import { startSkillPathTutorial } from '/client/imports/routes/App'
+
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 

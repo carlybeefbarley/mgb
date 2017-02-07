@@ -8,54 +8,44 @@ import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
 const jsItems = [
   {
-    icon: 'code',
-    link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
-    content: 'Variables',
-    desc: ``
+    icon: 'game',
+    link: '/u/!vault/project/MNuSHoYkTeT6WHrzE',
+    content: 'Rocky Smasher',
+    desc: `Tap left/right to cut down the tree`
   },
   {
-    icon: 'code',
-    link: '',
-    content: 'Arithmetic operators',
-    desc: `addition, subtraction, division, multiplication`
+    icon: 'game',
+    link: '/u/!vault/project/7dDxP35DeHTYdMZjt',
+    content: 'Digger',
+    desc: `Mine precious minerals and sell them in a shop`
   },
   {
-    icon: 'code',
-    link: '',
-    content: 'Arrays',
-    desc: ``
+    icon: 'game',
+    link: '/u/!vault/project/cpTvrRFnZzWLhxWgN',
+    content: 'Runner',
+    desc: `Never ending runner game`
   },
   {
-    icon: 'code',
-    link: '',
-    content: 'Objects',
-    desc: ``
+    icon: 'game',
+    link: '/u/!vault/project/yHxhXxrRLqxsgnBCf',
+    content: 'Snake',
+    desc: `Classic`
   },
+  /*
   {
-    icon: 'code',
+    icon: 'game',
     link: '',
-    content: 'For loops',
+    content: 'Flappy bird',
     desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'If statements',
-    desc: ``
-  },
+  }, 
+  */
   
-  {
-    icon: 'code',
-    link: '',
-    content: 'Functions',
-    desc: ``
-  },
 
 ]
 
 
 
-const LearnCodeJsRoute = ( { currUser }, context ) => { 
+const LearnCodeModifyRoute = ( { currUser }, context ) => { 
   return (
     <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
       <Grid stackable>
@@ -93,7 +83,7 @@ const LearnCodeJsRoute = ( { currUser }, context ) => {
   )
 }
 
-export default LearnCodeJsRoute
+export default LearnCodeModifyRoute
 
 
 

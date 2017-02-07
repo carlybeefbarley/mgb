@@ -10,44 +10,79 @@ const jsItems = [
   {
     icon: 'code',
     link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
-    content: 'Variables',
+    content: 'Draw image',
     desc: ``
   },
   {
     icon: 'code',
     link: '',
-    content: 'Arithmetic operators',
-    desc: `addition, subtraction, division, multiplication`
+    content: 'Manipulate image',
+    desc: `x, y, scale, rotate, tint`
   },
   {
     icon: 'code',
     link: '',
-    content: 'Arrays',
+    content: 'Input click',
+    desc: `Cick on image, click on game`
+  },
+  {
+    icon: 'code',
+    link: '',
+    content: 'Input keyboard',
+    desc: `arrow keys, num keys`
+  },
+  {
+    icon: 'code',
+    link: '',
+    content: 'update() function',
     desc: ``
   },
   {
     icon: 'code',
     link: '',
-    content: 'Objects',
+    content: 'Spritesheet',
     desc: ``
   },
   {
     icon: 'code',
     link: '',
-    content: 'For loops',
+    content: 'Spritesheet events',
     desc: ``
   },
   {
     icon: 'code',
     link: '',
-    content: 'If statements',
-    desc: ``
+    content: 'Physics basics',
+    desc: `velocity, gravity, world bounds...`
   },
-  
   {
     icon: 'code',
     link: '',
-    content: 'Functions',
+    content: 'Physics collide',
+    desc: ``
+  },
+  {
+    icon: 'code',
+    link: '',
+    content: 'Tweens',
+    desc: ``
+  },
+  {
+    icon: 'code',
+    link: '',
+    content: 'Groups',
+    desc: ``
+  },
+  {
+    icon: 'code',
+    link: '',
+    content: 'OOP',
+    desc: `Object oriented programming`
+  },
+  {
+    icon: 'code',
+    link: '',
+    content: 'Game states',
     desc: ``
   },
 
@@ -55,14 +90,14 @@ const jsItems = [
 
 
 
-const LearnCodeJsRoute = ( { currUser }, context ) => { 
+const LearnCodePhaserRoute = ( { currUser }, context ) => { 
   return (
     <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
       <Grid stackable>
         <Grid.Row >
           <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            JavaScript programming basics
-            <em className="sub header">Click on item and explore it</em>
+            Game development concepts
+            <em className="sub header">We use Phaser framework, but these concepts can be applied for every other game engine.</em>
           </Header>
         </Grid.Row>
         <Grid.Row>
@@ -93,7 +128,7 @@ const LearnCodeJsRoute = ( { currUser }, context ) => {
   )
 }
 
-export default LearnCodeJsRoute
+export default LearnCodePhaserRoute
 
 
 

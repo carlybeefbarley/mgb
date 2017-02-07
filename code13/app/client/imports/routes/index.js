@@ -18,6 +18,9 @@ import LearnGetStartedRoute from './LearnGetStartedRoute'
 
 import LearnCodeRoute from './LearnCodeRoute'
 import LearnCodeJsRoute from './LearnCodeJsRoute'
+import LearnCodePhaserRoute from './LearnCodePhaserRoute'
+import LearnCodeMoleRoute from './LearnCodeMoleRoute'
+import LearnCodeModifyRoute from './LearnCodeModifyRoute'
 
 import Users from './Users'
 import Azzets from './Assets'
@@ -72,6 +75,9 @@ Meteor.startup(function () {
         
         <Route path="/learn/code" component={LearnCodeRoute} />
         <Route path="/learn/code/javascript" component={LearnCodeJsRoute} />
+        <Route path="/learn/code/phaser" component={LearnCodePhaserRoute} />
+        <Route path="/learn/code/mole" component={LearnCodeMoleRoute} />
+        <Route path="/learn/code/modify" component={LearnCodeModifyRoute} />
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
         <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />

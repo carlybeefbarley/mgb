@@ -9,31 +9,31 @@ import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 const jsItems = [
   {
     icon: 'code',
-    link: '',
+    link: '/u/!vault/project/2suHPANwpaN5Pjumc',
     content: 'Basic gameplay',
     desc: ``
   },
   {
     icon: 'code',
-    link: '',
+    link: '/u/!vault/project/aCdy9zz5cJjNog2en',
     content: 'Tweens',
     desc: ``
   },
   {
     icon: 'code',
-    link: '',
+    link: '/u/!vault/project/NwobuqkQqrcuzzAeo',
     content: 'Timing',
     desc: ``
   },
   {
     icon: 'code',
-    link: '',
+    link: '/u/!vault/project/PHjAGkS9L4mTTPepE',
     content: 'User interface',
     desc: ``
   },
   {
     icon: 'code',
-    link: '',
+    link: '/u/!vault/project/JqN5CbdnNFZZqBXnE',
     content: 'OOP',
     desc: `Refactor existing game OOP style.`
   },

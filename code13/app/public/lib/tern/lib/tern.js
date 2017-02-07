@@ -20,7 +20,10 @@
   var defaultOptions = exports.defaultOptions = {
     debug: false,
     async: false,
-    getFile: function(_f, c) { if (this.async) c(null, null); },
+    getFile: function(_f, c) {
+      console.log("GET FILE!")
+      if (this.async) c(null, null);
+    },
     normalizeFilename: function(name) { return name },
     defs: [],
     plugins: {},
@@ -29,7 +32,7 @@
     reuseInstances: true,
     stripCRs: false,
     ecmaVersion: 6,
-    projectDir: "/",
+    projectDir: "../",
     parent: null
   };
 

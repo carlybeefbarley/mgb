@@ -4,7 +4,7 @@
   "description": "My Game Builder",
   "main": "app.js",
   "dependencies": {
-    "acorn": "~4.0.0",
+    "acorn": "^4.0.0",
     "audiobuffer-to-wav": "^1.0.0",
     "aws-sdk": "^2.4.10",
     "babel-plugin-transform-class-properties": "^6.11.5",

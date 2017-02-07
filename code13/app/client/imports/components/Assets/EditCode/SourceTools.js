@@ -264,10 +264,11 @@ export default class SourceTools {
         return
       }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
-        if(!replace){
+        if(!replace && this.addedFilesAndDefs[filename]){
           this.addedFilesAndDefs[filename] = true
         }
         const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
+        console.log("Adding file:", cleanFileName)
         this.tern.server.addFile(cleanFileName, code, replace)
         this.tern.cachedArgHints = null
       }
@@ -823,7 +824,7 @@ main = function(){
       return;
     }
 
-    mgbAjax(url, (err, src) => {
+    mgbAjax(url, (err, src, httpRequest) => {
       if(err){
         SourceTools.cached404[url] = httpRequest.status
         cb({code: "", url}, {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})

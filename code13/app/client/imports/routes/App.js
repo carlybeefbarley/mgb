@@ -60,8 +60,9 @@ export const addJoyrideSteps = (steps, opts) => {
 }
 
 export const joyrideDebugEnable = joyrideDebug => {
-  if (_theAppInstance)
-    _theAppInstance.setState( { joyrideDebug } )
+// Disabled for now; it's pretty noisy and mostly useful for debugging joyride itself.
+  // if (_theAppInstance)
+  //   _theAppInstance.setState( { joyrideDebug } )
   // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
 }
 
@@ -323,7 +324,6 @@ const App = React.createClass({
           disableOverlay={false}
           showSkipButton={true}
           tooltipOffset={0}
-          keyboardNavigation={false}
           showStepsProgress={true}
           type="continuous"
           callback={this.handleJoyrideCallback}
@@ -517,10 +517,6 @@ const App = React.createClass({
 
       return currentState
     })
-  },
-
-  addJoyrideTooltip(data) {
-    this.refs.joyride.addTooltip(data)
   },
 
   handleJoyrideCallback( func ) {

@@ -20,7 +20,7 @@ export const getNavPanels = (currUser, showAll) => {
       {
         name: 'mgb',                  // used for mgjr-np-{name}- id generation
         icon: 'home',
-        explainClickAction: "This will take you directly to the Home Page",
+        explainClickAction: "Shortcut: Clicking here jumps to the Home Page",
         hdr: (
             <Menu.Item color='black' style={{ padding: '0px 8px' }}>
               <img src='/images/logo-inverted-puzzle-joystick.png' style={{ width: 130 }} />
@@ -31,6 +31,7 @@ export const getNavPanels = (currUser, showAll) => {
           {
             subcomponent: 'Item',
             jrkey: 'whatsNew',       // used for mgjr-np-mgb-{jrkey} id generation for joyride system
+            explainClickAction: "What's New",
             to: '/whatsnew',
             content: (
               <div>
@@ -49,7 +50,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       {
         name: "learn",
-        explainClickAction: "This will take you directly to the Learning Paths page",
+        explainClickAction: "Shortcut: Clicking here jumps to the Learning Paths page",
         icon: "student",
         hdr: "Learn",
         to: '/learn',
@@ -86,7 +87,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       {
         name: 'play',
-        explainClickAction: "This will take you directly to the list of playable games",
+        explainClickAction: "Shortcut: Clicking here jumps to the list of playable games",
         icon: 'game',
         hdr: 'Play',
         to: '/games',
@@ -111,7 +112,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       {
         name: 'meet',
-        explainClickAction: "This will take you directly to the User search page",
+        explainClickAction: "Shortcut: Clicking here jumps to the User search page",
         icon: 'street view',
         hdr: 'Meet',
         to: '/users',
@@ -134,7 +135,7 @@ export const getNavPanels = (currUser, showAll) => {
       }
       // , {
       //   name: 'userBash',
-      //   explainClickAction: "This will take you directly to the UserBashes search page",
+      //   explainClickAction: "Shortcut: Clicking here jumps to the UserBashes search page",
       //   icon: 'plug',
       //   hdr: 'UserBash',
       //   to: '/userBashes',
@@ -154,7 +155,7 @@ export const getNavPanels = (currUser, showAll) => {
     right: _.compact([
       showUserOptions && {
         name: 'assets',
-        explainClickAction: "This will take you directly to the list of your Assets",
+        explainClickAction: "Shortcut: Clicking here jumps to the list of your Assets",
         icon: 'pencil',
         hdr: 'Assets',
         to: uname ? `/u/${uname}/assets` : '/assets',
@@ -179,7 +180,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       showUserOptions && {
         name: 'projects',
-        explainClickAction: "This will take you directly to the list of your Projects",
+        explainClickAction: "Shortcut: Clicking here jumps to the list of your Projects",
         icon: 'sitemap',
         hdr: 'Projects',
         to: uname ? `/u/${uname}/projects` : null,
@@ -218,7 +219,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       {
         name: 'user',
-        explainClickAction: "This will take you directly to your Profile Page", // if logged in, and this is used by tutorials, so that's ok
+        explainClickAction: "Shortcut: Clicking here jumps to your Profile Page", // if logged in, and this is used by tutorials, so that's ok
         icon: 'user',
         hdr: 'Login',
         to: uname ? `/u/${uname}` : '/signup',

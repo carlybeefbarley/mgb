@@ -2,19 +2,34 @@ import React, { PropTypes } from 'react'
 import { browser } from './utils'
 import _ from 'lodash'
 
+// This is to support the format where step.selectors = sel1,sel2, .... selN
+// This implementation looks for *visible* elements selected by  sel1 frst, then sel2 etc...
+export const _queryVisibleSelectorsInSequence = selectors => {
+  if (!selectors || selectors === '')
+    return null
+  const selArr = _.split(selectors, ',')
+  for (let sel of selArr) {
+    const el = document.querySelector(sel)
+    if (el && (sel === 'body' || el.offsetParent !== null || el.style.position === 'fixed'))   // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
+      return el
+  }
+  return null
+}
+
+
+
 export default class JoyrideTooltip extends React.Component {
   static propTypes = {
-    animate:      PropTypes.bool.isRequired,
+    animate:      PropTypes.bool.isRequired,        // if true, adds class 'joyride-tooltip--animate'
     buttons:      PropTypes.object.isRequired,
-    cssPosition:  PropTypes.string.isRequired,
+    cssPosition:  PropTypes.string.isRequired,      // if 'fixed' then position will be fixed, otherwise absolute
     onClick:      PropTypes.func.isRequired,
     onRender:     PropTypes.func.isRequired,
     disableArrow: PropTypes.bool,
     disableOverlay: PropTypes.bool,                 // ?? If true, the overlay has no effect..  pointer-events=none  etc
     showOverlay:  PropTypes.bool.isRequired,        // If true, show the overlay (i.e. the non-hole and the hole)
-    standalone:   PropTypes.bool,
-    step:         PropTypes.object.isRequired,
-    type:         PropTypes.string.isRequired,
+    step:         PropTypes.object.isRequired,      // .selector ; .position ; .style ; .title ; .event ('hover' or 'click') ; .imageSrc ; .imgRightSrc
+    type:         PropTypes.string.isRequired,      // 'single' or 'casual' or ????
     xPos:         PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]).isRequired,
     yPos:         PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]).isRequired
   }
@@ -40,18 +55,9 @@ export default class JoyrideTooltip extends React.Component {
       this.forceUpdate(onRender)
   }
 
-  // TODO: This doesn't seem to make much sense atm
-  getArrowPosition(position) {
-    let arrowPosition = position
-
-    if (window.innerWidth < 480)
-      arrowPosition = _.clamp(arrowPosition, 8, 92)
-    else if (window.innerWidth < 1024)
-      arrowPosition = _.clamp(arrowPosition, 6, 94)
-    else 
-      arrowPosition = _.clamp(arrowPosition, 5, 95)
-
-    return arrowPosition
+  // This is going to return a percentage as a number.. ie. 0...100
+  getArrowPosition(arrowPosition) {
+    return _.clamp(arrowPosition, 8, 92)
   }
 
   generateArrow(opts = {}) {
@@ -63,7 +69,7 @@ export default class JoyrideTooltip extends React.Component {
     opts.color = opts.color || '#f04'
     opts.color = opts.color.replace('#', '%23')
 
-    opts.width = opts.width || 36
+    opts.width = opts.width || 36                 // I think 36 is the width of the beacon
     opts.height = opts.width / 2
     opts.scale = opts.width / 16
     opts.rotate = '0'
@@ -86,6 +92,11 @@ export default class JoyrideTooltip extends React.Component {
       rotate = '90 4 4'
     }
 
+    // By default, this SVG represents an upward pointing triangle. 
+    //  It's internal size is 16 wide x 8 high. 
+    //  It gets scaled to the dialog box size via the opts.scale math
+    //  It will be positioned along the tooltip box via the % returned
+    //    later by getArrowPosition().. which is used by setStyles()
     return `data:image/svg+xml,%3Csvg%20width%3D%22${width}%22%20height%3D%22${height}%22%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpolygon%20points%3D%220%2C%200%208%2C%208%2016%2C0%22%20fill%3D%22${opts.color}%22%20transform%3D%22scale%28${opts.scale}%29%20rotate%28${rotate}%29%22%3E%3C%2Fpolygon%3E%3C%2Fsvg%3E`
   }
 
@@ -104,7 +115,7 @@ export default class JoyrideTooltip extends React.Component {
       }
     }
 
-    if (opts.positonBaseClass === 'left' || opts.positonBaseClass === 'right')
+    if (opts.positionBaseClass === 'left' || opts.positionBaseClass === 'right')
       styles.tooltip.top += _.clamp((opts.rect.height/2 - 32), 0, Math.min(64, opts.rect.height*0.8) )
 
     if (styles.tooltip.top < 16)
@@ -129,7 +140,7 @@ export default class JoyrideTooltip extends React.Component {
     if (stepStyles) {
       if (stepStyles.backgroundColor) {
         styles.arrow.backgroundImage = `url("${this.generateArrow({
-          location: opts.positonBaseClass,
+          location: opts.positionBaseClass,
           color: stepStyles.backgroundColor
         })}")`
         styles.tooltip.backgroundColor = stepStyles.backgroundColor
@@ -181,20 +192,20 @@ export default class JoyrideTooltip extends React.Component {
   }
 
   setOpts() {
-    const { animate, standalone, step, xPos } = this.props
+    const { animate, step, xPos } = this.props
 
-    const target = document.querySelector(step.selector)
+    const target = _queryVisibleSelectorsInSequence(step.selector)
     const tooltip = document.querySelector('.joyride-tooltip')
 
     const opts = {
-      classes: ['joyride-tooltip'],
-      rect: target.getBoundingClientRect(),
+      classes: ['joyride-tooltip'],               // classes for the tooltip. It can also get joyride-tooltip--animate
+      rect: target.getBoundingClientRect(),       // rect for the thing we are pointing to (note, it could be 'body')
       positionClass: step.position
     }
 
-    opts.positonBaseClass = opts.positionClass.match(/-/) ? opts.positionClass.split('-')[0] : opts.positionClass
+    opts.positionBaseClass = opts.positionClass.match(/-/) ? opts.positionClass.split('-')[0] : opts.positionClass
 
-    if ((/^bottom$/.test(opts.positionClass) || /^top$/.test(opts.positionClass)) && xPos > -1) {
+    if ((/^bottom/.test(opts.positionClass) || /^top/.test(opts.positionClass)) && xPos > -1) {
       opts.tooltip = { width: 450 }
 
       if (tooltip)
@@ -205,11 +216,8 @@ export default class JoyrideTooltip extends React.Component {
       opts.arrowPosition = `${this.getArrowPosition(opts.arrowPosition)}%`
     }
 
-    if (standalone) 
-      opts.classes.push('joyride-tooltip--standalone')
-
-    if (opts.positonBaseClass !== opts.positionClass)
-      opts.classes.push(opts.positonBaseClass)
+    if (opts.positionBaseClass !== opts.positionClass)
+      opts.classes.push(opts.positionBaseClass)
 
     opts.classes.push(opts.positionClass)
 
@@ -221,7 +229,7 @@ export default class JoyrideTooltip extends React.Component {
 
   render() {
     const { buttons, disableOverlay, onClick, showOverlay, disableArrow, step, type } = this.props
-    const target = document.querySelector(step.selector)
+    const target = _queryVisibleSelectorsInSequence(step.selector)
 
     if (!target)
       return undefined

@@ -53,7 +53,7 @@ class NavPanelItem extends Component {
               id: `mgbjr-np-${name}-${subcomponentProps.jrkey}`,           
               as: QLink,
               onClick: this.handleItemClick,
-              ...(_.omit(subcomponentProps, 'jrkey')),
+              ...(_.omit(subcomponentProps, ['jrkey','explainClickAction'])),
             })
           })}
         </Dropdown.Menu>

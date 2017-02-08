@@ -45,6 +45,15 @@ const learnTopLevelItems = [
     query: null,
     desc: 'Game programming with JavaScript and Phaser'
   }, 
+  {
+    mascot: 'whale',
+    icon: 'student',
+    content: 'Learn new Skills',
+    link: '/learn/skills',
+    query: null,
+    skillnodeTopLevelTag: '',    
+    desc: 'Learn using skills-focused tutorials for coding, art, level design, etc'
+  },
   /*
   {
     mascot: 'game_shop',
@@ -55,15 +64,7 @@ const learnTopLevelItems = [
     desc: 'Learn to make and modify some classic game types'
   },
   */ 
-  {
-    mascot: 'whale',
-    icon: 'student',
-    content: 'Learn new Skills',
-    link: '/learn/skills',
-    query: null,
-    skillnodeTopLevelTag: '',    
-    desc: 'Learn using skills-focused tutorials for coding, art, level design, etc'
-  },
+  /*
   {
     mascot: 'team',
     icon: 'help',
@@ -72,6 +73,7 @@ const learnTopLevelItems = [
     query: { _fp: 'chat.mgb-help' },
     desc: 'Ask and we shall answer'
   },
+  */
 ]
 
 const LearnRoute = ( { currUser, params }, context ) => (
@@ -89,7 +91,7 @@ const LearnRoute = ( { currUser, params }, context ) => (
 
       <Grid.Row>
         <Grid.Column>
-          <Card.Group itemsPerRow={2} stackable className="skills">
+          <Card.Group itemsPerRow={1} stackable className="skills">
             { learnTopLevelItems.map( (area, idx) => (
                 <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
                   <Card.Content>
@@ -112,6 +114,13 @@ const LearnRoute = ( { currUser, params }, context ) => (
               ))
             }
          </Card.Group>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column>
+          <QLink style={{color:"#333"}} to='/learn' query={ {_fp: 'chat.mgb-help'} }>
+            <i className="help icon"></i> Ask for help - Ask and we shall answer
+          </QLink>
         </Grid.Column>
       </Grid.Row>
     </Grid>

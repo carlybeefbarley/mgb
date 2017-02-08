@@ -2,11 +2,45 @@ import React, { PropTypes } from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
 import validate from '/imports/schemas/validate'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
-import { Icon } from 'semantic-ui-react'
+import { Icon, Popup, Grid } from 'semantic-ui-react'
 
   /** This used by  to render something like...
    *      [ VIEW|EDIT] Kind > AssetName
    */
+
+const SaveStatus = ( { isUnconfirmedSave, hasUnsentSaves } ) => {
+  let msg = [ 'all changes saved', 'AutoSave is enabled', 'Changes you make are automatically saved to the cloud']
+  if (hasUnsentSaves)
+    msg = ['Saving...', 'Your changes will AutoSave soon', 'Your changes will be sent to the server every few seconds']
+  if (isUnconfirmedSave)
+    msg = ['Saving...', 'AutoSaving your changes', 'Your changes have been sent to the server']
+
+  return (
+    <Popup 
+      size='small' 
+      inverted 
+      positioning='bottom center'
+      trigger={<small style={{ color: 'grey' }}>{msg[0]}</small>} 
+      header={msg[1]} content={msg[2]} />
+  )
+}
+
+const AssetKindExplainer = ( { kind, ownerName } ) => {
+  const ak = AssetKinds[kind]
+  return (
+    <Popup
+      trigger={(
+       <QLink style={{color: ak.color }} to={`/u/${ownerName}/assets`} query={{kinds: kind}}>
+        <Icon color={ak.color} name={ak.icon} />
+      </QLink>
+    )}
+    size='small'
+    inverted
+    positioning='bottom left'
+    header={`This is a '${ak.name}' Asset`}
+    content={ak.description} />
+  )
+}
 
 export default AssetPathDetail = React.createClass({
 
@@ -21,11 +55,10 @@ export default AssetPathDetail = React.createClass({
     handleNameChange:  PropTypes.func.isRequired,
     handleDescriptionChange: PropTypes.func.isRequired,
     handleSaveNowRequest:    PropTypes.func.isRequired, // Callback indicating User has said 'save now'
-    isServerOnlineNow:       PropTypes.bool.isRequired  // Boolean - is the server online now
+    isServerOnlineNow:       PropTypes.bool.isRequired  // Boolean - is the server online now. TODO: Remove if we don't use this
   },
   
-
-  fieldChanged: function(data) {
+  handleFieldChanged: function(data) {
     // data = { description: "New validated text comes here" }
     // Update your model from here    
     if (data.name)
@@ -34,61 +67,46 @@ export default AssetPathDetail = React.createClass({
       this.props.handleDescriptionChange(data.text)
   },
 
-
   render() {
-    const { name, kind, text, ownerName, canEdit, isUnconfirmedSave, hasUnsentSaves, isServerOnlineNow } = this.props
-    const emptyAssetDescriptionText = "(no description)"
+    const { name, kind, text, ownerName, canEdit, isUnconfirmedSave, hasUnsentSaves } = this.props
+    const emptyAssetDescriptionText = canEdit ? '(no description)' : ''
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
-    const labelBgColor = isServerOnlineNow ? (hasUnsentSaves ? "orange" : "green") : "purple"
-    const saveIconColor = isUnconfirmedSave ? "orange" : ""
 
     return (
       <div>
-        <div className="ui row">
-          {
-            canEdit ? 
-              (
-                <a  className={`ui  ${labelBgColor} icon label`}
-                    title="You can edit this asset. Your changes will be saved automatically to the server"
-                    onClick={this.props.handleSaveNowRequest}>
-                  &nbsp;<i className={`ui ${saveIconColor} save icon`} />{/*Edit*/}
-                </a>
-              ) 
-              : 
-              (
-                <a className={`ui mgbReadOnlyReminder  red icon label`} title="You only have read-access to this asset. You cannot make changes to it. (Project-member-write-access & clone-edit are not yet implemented. Sorry!  Soon...)">
-                  &nbsp;<i className="ui unhide icon" />{/*View*/}
-                </a>
-              )        
-          }
-          &nbsp;&nbsp;
-          <QLink style={{color: AssetKinds.getColor(kind)}} to={`/u/${ownerName}/assets`} query={{kinds: kind}}>
-            <Icon color={AssetKinds.getColor(kind)} name={AssetKinds.getIconName(kind)} />
-          </QLink>
-          &nbsp;
-          
+        <Grid.Row>
+
+          <AssetKindExplainer kind={kind} ownerName={ownerName}/>
+
+          &emsp;
+
           <InlineEdit
             validate={validate.assetName}
             activeClassName="editing"
             text={name || untitledAssetString}
             paramName="name"
-            change={this.fieldChanged}
-            isDisabled={!canEdit} />            
-        </div>
+            change={this.handleFieldChanged}
+            isDisabled={!canEdit} />
+            
+            &emsp;
+
+          { canEdit && <SaveStatus isUnconfirmedSave={isUnconfirmedSave} hasUnsentSaves={hasUnsentSaves} /> }       
+        </Grid.Row>
         
-        <div className="ui row">
+        <Grid.Row>
           <small>
             <div className="ui fluid input">
               <InlineEdit
                 validate={validate.assetDescription}
                 text={(text && text.length > 0) ? text : emptyAssetDescriptionText}
+                style={{color: 'grey'}}
                 paramName="text"
-                change={this.fieldChanged}
+                change={this.handleFieldChanged}
                 isDisabled={!canEdit}
                 />
             </div>
           </small>
-        </div>
+        </Grid.Row>
       </div>
     )
   }

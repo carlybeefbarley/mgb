@@ -30,6 +30,15 @@ export default class ActorTileset extends React.Component {
     return this.props.tilesets[this.props.activeTileset]
   }
 
+  getTilesetLayer(tileset) {
+    if (ActorHelper.checks["Background"](tileset))
+      return "Background"
+    if (ActorHelper.checks["Active"](tileset))
+      return "Active"
+    if (ActorHelper.checks["Foreground"](tileset))
+      return "Foreground"
+  }
+  
   selectTileset(index, tileset) {
     this.props.clearActiveSelection()
     const selectedTile = new SelectedTile()
@@ -39,7 +48,7 @@ export default class ActorTileset extends React.Component {
   }
 
   removeTileset = () => {
-    if (!this.props.activeTileset || this.props.activeTileset.firstgid < 100) { return } // Don't remove Events
+    if (!this.props.activeTileset || this.props.activeTileset.firstgid === 1) { return } // Don't remove Events
     this.props.removeTileset(this.props.activeTileset)
     this.props.clearActiveSelection()
   }
@@ -83,6 +92,30 @@ export default class ActorTileset extends React.Component {
     ActorHelper.loadActor(name, map, nextId, {}, null, () => {
       this.props.addActor(map[name])
     })
+
+    /*
+    $.when(this.props.updateTilesetFromData(this.props.mgb_content2)).then(() => {
+      this.selectTileset(this.props.tilesets[this.props.tilesets.length - 1])
+    })
+    */
+  }
+
+  renderEmpty() {
+    return (
+      <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', height: '100%'}}>
+        <Label attached='top'>
+          Actors
+        </Label>
+        <div
+          className='active content tilesets accept-drop'
+          onDrop={this.onDropOnLayer.bind(this)}
+          onDragOver={DragNDropHelper.preventDefault}
+          style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
+        >
+          <div style={{fontSize: '140%', textAlign: 'center', zIndex: 1, textwidth: '100%', height: '100%'}}>Drop asset here to create TileSet</div>
+        </div>
+      </Segment>
+    )
   }
 
   // Render functions for Actors
@@ -164,13 +197,17 @@ export default class ActorTileset extends React.Component {
     return tilesets
   }
   render(){
+    if (!this.props.tilesets || (this.props.tilesets && !(this.props.tilesets.length > 1)))
+      return this.renderEmpty()
+
     const label = this.props.getActiveLayerData().name === 'Events' ? 'Actors' : `${this.props.getActiveLayerData().name} Actors`
+
     return (
       <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', height: '100%'}}>
         <Label attached='top'>
           {label}
           {
-          this.props.getActiveLayerData().name !== "Events" && (this.props.tilesets && this.props.tilesets.length > 1) &&
+          this.props.getActiveLayerData().name !== "Events" &&
           <Icon
               size='large'
               name='trash'
@@ -180,11 +217,6 @@ export default class ActorTileset extends React.Component {
           }
         </Label>
         {
-          !this.props.tilesets.length
-          ?
-          <p className="title active" style={{"borderTop": "none", "paddingTop": 0}}>{_dragHelpMsg}</p>
-          :
-          (
           this.props.getActiveLayerData().name === "Events"
           ?
           <div className="actor-disabled-hint" style={{width: '100%', opacity: 1, backgroundColor: '#e8e8e8'}}>
@@ -200,7 +232,6 @@ export default class ActorTileset extends React.Component {
             >
             {this.renderActors(1)}
           </div>
-          )
         }
       </Segment>
     )

@@ -341,8 +341,7 @@ export default class EditCode extends React.Component {
            }
          },*/
         doc_comment: {
-          strong: true,
-          fullDocs: true
+          strong: true
         }
       },
       workerScript: "/lib/workers/TernWorker.js"
@@ -396,8 +395,9 @@ export default class EditCode extends React.Component {
   }
   // update file name - to correctly report 'part of'
   updateDocName() {
-
-    if (this.codeMirror && this.lastName !== this.props.asset.name) {
+    // don't update doc name until all required assets are loaded.
+    // tern won't update itself after loading new import - without changes to active document
+    if (this.state.astReady && this.lastName !== this.props.asset.name) {
       const doc = this.codeMirror.getDoc()
       if (this.ternServer && doc) {
         this.ternServer.delDoc(doc)
@@ -556,7 +556,7 @@ export default class EditCode extends React.Component {
       // check if user exists at all? parts[0] - is username
       else if(parts.length == 2){
         const user = parts.shift()
-        mgbAjax(`/api/assets/code/${user}/?query=${parts.shift().substring(1)}`, (err, listStr) => {
+        mgbAjax(`/api/assets/code/${user}/?query=${parts.shift()}`, (err, listStr) => {
           if(err)
             return
           this.showCustomCMHint(cm, JSON.parse(listStr), user.length + 1)
@@ -1056,8 +1056,7 @@ export default class EditCode extends React.Component {
     var self = this
     let query = {
       type: "type",
-      depth: 0,
-      guess: true
+      depth: 0
       //preferFunction: true
     }
 
@@ -1065,6 +1064,7 @@ export default class EditCode extends React.Component {
       if (error)
         self.setState({atCursorTypeRequestResponse: {"error": error}})
       else {
+
         if (data.type == data.name) {
           query.depth = 1
           ternServer.request(editor, query, function (error, data) {

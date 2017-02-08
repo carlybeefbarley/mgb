@@ -79,7 +79,18 @@
       }
 
       this.signal("addType", type);
-      this.types.push(type);
+      var index = -1;
+      // allow only one type from origin - doesn't make sense to keep more (at least for ES6)
+      if(type.origin && this.types.length > 0){
+        index = this.types.findIndex(function(t){return t.origin == type.origin});
+      }
+      if(index > -1){
+        this.types[index] = type
+      }
+      else{
+        this.types.push(type)
+      }
+
       var forward = this.forward;
       if (forward) withWorklist(function(add) {
         for (var i = 0; i < forward.length; ++i) add(type, forward[i], weight);
@@ -2037,7 +2048,7 @@
       }
     },
     ReturnStatement: function(_parent, node, get) {
-      // tweaking search position to avoid endless recursion 
+      // tweaking search position to avoid endless recursion
       // when looking for definition of key in fn ( return fn ( return object ) )
       // see ternjs/tern#777
       var fnNode = walk.findNodeAround(node.sourceFile.ast, node.start - 1, "Function");

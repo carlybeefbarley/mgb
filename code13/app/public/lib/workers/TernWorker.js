@@ -16,21 +16,24 @@ this.onmessage = function(e) {
   }
 
   switch (data.type) {
-    case "init": return startServer(data.defs, data.plugins, data.scripts);
+    case "init": return startServer(data.defs, data.plugins, data.scripts)
     case "add": {
       if(server.fileMap[data.name]){
+        if(server.fileMap[data.name].text == data.text){
+          return
+        }
         // update file only if we have replace flag
         if(data.replace){
-          server.delFile(data.name);
-          return server.addFile(data.name, data.text);
+          return server.addFile(data.name, data.text)
         }
         else{
           console.log("Skipping file:", data.name)
         }
       }
       else{
-        return server.addFile(data.name, data.text);
+        return server.addFile(data.name, data.text)
       }
+      break
     }
     case "del": return server.delFile(data.name);
     case "req": return server.request(data.body, function(err, reqData) {
@@ -62,7 +65,8 @@ function startServer(defs, plugins, scripts) {
     getFile: getFile,
     async: true,
     defs: defs,
-    plugins: plugins
+    plugins: plugins,
+    projectDir: ''
   });
 }
 

@@ -12,6 +12,9 @@ RestApi.addRoute('make-error', { authRequired: false }, {
   get: function () {
     return {
       statusCode: 503,
+      headers:{
+        location:`${process.env.ROOT_URL}${this.request.url.startsWith('/') ? this.request.url : '/'+this.request.url}`
+      },
       body: {}
     }
   }

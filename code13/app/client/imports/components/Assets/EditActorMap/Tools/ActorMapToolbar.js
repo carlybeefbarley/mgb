@@ -19,7 +19,7 @@ export default class MapToolbar extends React.Component {
 
     const config = {
       // vertical: true,
-//      level: 3,  -- This is now in expectedToolbars.getDefaultLevel
+      // level: 3,  -- This is now in expectedToolbars.getDefaultLevel
       buttons: [
         {
           name: 'save',

@@ -20,12 +20,20 @@ export default ExpressionDescription = React.createClass({
     if (!this.props.expressionTypeInfo || !this.props.expressionTypeInfo.exprName)
       return null
 
-    let {name, type, exprName, doc, url, origin} = this.props.expressionTypeInfo
-    let colorGrey = {color: "#777"}
-    let isFn = type.startsWith("fn(") ? "(...)" : "";
+    const {name, type, exprName, doc, url, origin} = this.props.expressionTypeInfo
+    const colorGrey = {color: "#777"}
+    const isFn = type.startsWith("fn(") ? "(...)" : "";
 
+    const nameFriendly = makeFriendlyName(name, exprName);
+    const typeFriendly = type.length > 30 ? type
+      .replace(/\{/gi,"{\n")
+      .replace(/\}/gi,"\n}")
+      //.replace(/\(/gi,"(\n")
+      //.replace(/\)/gi,"\n)")
+      .replace(/ /gi,"")
+      .replace(/\,/gi,",\n")
+      .replace(/:/gi,": ") : type
 
-    let nameFriendly = makeFriendlyName(name, exprName);
 
     return (
       <div className="ui yellow segment" style={{backgroundColor: "rgba(255,255,0,0.03)"}}>
@@ -37,7 +45,7 @@ export default ExpressionDescription = React.createClass({
           <span style={colorGrey}>Reference <i>Expression</i>:</span> <code>{exprName}<span style={colorGrey}>{isFn}</span></code>
         </div>
         <span style={colorGrey}>Name:</span>  <code>{name || exprName}</code><br></br>
-        { type !== '?' && <span><span style={colorGrey}>Type:</span>  <code>{type}</code><br></br></span>}
+        { type !== '?' && <span><span style={colorGrey}>Type:</span>  <code style={{ whiteSpace: 'pre-wrap' }}>{typeFriendly}</code><br></br></span>}
         { origin && <p><small>Part of '{origin}'</small></p> }
         { doc && <p style={{whiteSpace: 'pre-line'}}>{doc}</p> }
         { url && <p><a href={url}><small>{url}</small></a></p> }

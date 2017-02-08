@@ -38,31 +38,31 @@ const _mkNavPanelMacros = () => {
       desc: `Step for clicking the ${ddUpName} Menu`,
       newVal:
       {
-        "title": `The '${ddUpName}' menu: one-click shortcut`,
-        "text": `Click (not just hover) on the ${ddUpName} menu here.<br></br>${dd.explainClickAction}`,
+        "title": `Click the '${ddUpName}' menu header`,
+        "text": dd.explainClickAction,
         "selector": `#mgbjr-np-${dd.name}`,
-        "showStepOverlay": false,
+        "showStepOverlay": true,
         "awaitCompletionTag": `mgbjr-CT-np-${dd.name}`,
         "position": position,
-        "style": "%inverted%" 
+        "style": "%navpanelmenu%" 
       }
     })
     // 2. Each of the options in the Menu DropDown
     _.each(dd.menu, item => {
-      const smText = _.isString(item.content) ? item.content : item.jrkey // hack
+      const smText = _.isString(item.content) ? item.content : (item.explainClickAction || item.jrkey) // hacky
       retval.push({
         key: _wrapKey(`np-${dd.name}-${item.jrkey}`),
-        hint: `${_.upperFirst(dd.name)} Menu`,
-        desc: `Step for finding the ${ddUpName}->${smText} menu`,
+        hint: `${_.upperFirst(smText)} Menu`,
+        desc: `Step for finding the '${smText}' menu`,
         newVal:
         {
-          "title": `The '${ddUpName}->${smText}' menu`,
-          "text": `<br></br>Hover on the <div style='border: 1.5px solid dimgrey' class='ui small black button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui label'>${smText}</div> option`,
-    //      "selector": `#mgbjr-np-${dd.name}`, // Note that the -jrkey suffix isn't visible yet...
+          "title": `Go to the '${smText}' page:`,
+          "text": `Hover on the <div style='border: 1px solid dimgrey' class='ui small black compact button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui small label'>${smText}</div> option`,
+          "selector": `#mgbjr-np-${dd.name}-${item.jrkey},#mgbjr-np-${dd.name}`,  // Note the  comma  which allows multiple selectors, in descending preference
           "showStepOverlay": true,
           "awaitCompletionTag": `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
-          "position": 'top ' + position,
-          "style": "%inverted%" 
+          "position": position,
+          "style": "%navpanelmenu%" 
         }
       })
 
@@ -239,9 +239,28 @@ const stepMacros = [
   }
 ]
 
+const usefulColors = {
+  yellowish: 'rgba(148, 191, 22, 0.32)',
+  pinkish:   'rgba(201, 23, 33, 0.2)',
+  orangeish: 'rgba(251, 189, 8, 0.3)'
+}
+
 const propertyMacros = [
 
   // field == someFieldName means this is a macros for fields (properties) WITHIN a step.. e.g ."style"
+  {
+    field: 'style',
+    key: _wrapKey('navpanelmenu'),
+    desc: "A style good for NavPanel steps",
+    newVal:
+    {
+      "backgroundColor": "rgba(0, 96, 0, 1)",
+      "color": "#fff",
+      "mainColor": "#fbbd08",
+      "skip": { "color": "#f04" },
+      "hole": { "backgroundColor": usefulColors.orangeish }
+    }
+  },
   {
     field: 'style',
     key: _wrapKey('begin'),
@@ -252,7 +271,7 @@ const propertyMacros = [
       "color": "#fff",
       "mainColor": "#fbbd08",
       "skip": { "color": "#f04" },
-      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+      "hole": { "backgroundColor": usefulColors.orangeish }
     }
   },
 
@@ -266,7 +285,7 @@ const propertyMacros = [
       "color": "#fff",
       "mainColor": "#ff4456",
       "skip": { "color": "#ff4456" },
-      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+      "hole": { "backgroundColor": usefulColors.orangeish }
     }
   },
 
@@ -280,7 +299,7 @@ const propertyMacros = [
       "color": "#fff",
       "mainColor": "#fbbd08",
       "skip": { "color": "#f04" },
-      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+      "hole": { "backgroundColor": usefulColors.yellowish }
     }
   },
 

@@ -69,7 +69,7 @@ export default AssetCreateNew = React.createClass({
         </Segment>
 
         <Segment basic>
-          <Header as='h4' content='3. Optionally - place the new Asset into a Project' />
+          <Header as='h4' content='3. (Optional) place the new Asset into a Project' />
           <ProjectSelector
               canEdit={false}
               isUseCaseCreate={true}

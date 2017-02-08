@@ -106,7 +106,7 @@
       options[o] = defaultOptions[o];
 
     this.projectDir = options.projectDir.replace(/\\/g, "/")
-    if (!/\/$/.test(this.projectDir)) this.projectDir += "/"
+    // if (!/\/$/.test(this.projectDir)) this.projectDir += "/"
 
     this.parent = options.parent;
     this.handlers = Object.create(null);
@@ -155,6 +155,10 @@
         file.scope = null;
       }
       this.signal("postReset");
+    },
+    update: function() {
+      this.reset()
+      analyzeAll(this, null, function(){})
     },
 
     request: function(doc, c) {

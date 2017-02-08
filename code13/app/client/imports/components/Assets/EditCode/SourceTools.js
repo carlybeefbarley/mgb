@@ -254,6 +254,7 @@ export default class SourceTools {
       return
     }
 
+    console.log("Adding Defs", filename)
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       this.loadDefs(lib.defs())
@@ -267,8 +268,9 @@ export default class SourceTools {
         if(!replace){
           this.addedFilesAndDefs[filename] = true
         }
-        const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
-        this.tern.server.addFile(cleanFileName, code, replace)
+        /*const cleanFileName = filename.startsWith("./") ? filename.substr(2) : (
+          filename.startsWith("/") && !filename.startsWith('//') ? filename.substr(1) : filename)*/
+        this.tern.server.addFile(filename, code, replace)
         this.tern.cachedArgHints = null
       }
       else {
@@ -823,7 +825,7 @@ main = function(){
       return;
     }
 
-    mgbAjax(url, (err, src) => {
+    mgbAjax(url, (err, src, httpRequest) => {
       if(err){
         SourceTools.cached404[url] = httpRequest.status
         cb({code: "", url}, {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})

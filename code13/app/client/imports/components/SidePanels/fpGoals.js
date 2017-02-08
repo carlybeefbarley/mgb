@@ -9,11 +9,12 @@ import { stopCurrentTutorial } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
 import { StartDefaultNextTutorial } from '/client/imports/routes/LearnGetStartedRoute'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum, joyrideOriginatingAssetId } ) => (
   (!joyrideSteps || !joyrideSteps.length) ? null : (
-    <div className="ui card course">
+    <div className="ui fluid card course">
       <div className="content">
         { /* <i className="right floated code icon" /> */ }
         <div className="header">{joyrideSteps[0].heading || joyrideSkillPathTutorial || "Current Tutorial..."}</div>
@@ -70,7 +71,6 @@ export default fpGoals = React.createClass({
         <p style={{fontSize: '1.25em'}}>
           <img src={makeCDNLink("/images/mascots/bigguy.png")} style={{maxWidth: 70, float: 'left', marginRight: 15}} />
           <span style={{position: 'relative', top: 0}}>Your Learning quests</span>
-          <br/><small><span style={{color: 'red'}}>NOTE: We are re-working the tutorials today, they will be ugly until Saturday...</span></small><br/>
         </p>
         { (!joyrideSteps || joyrideSteps.length === 0) && 
           <StartDefaultNextTutorial currUser={currUser} userSkills={skills}  />

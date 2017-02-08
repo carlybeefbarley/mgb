@@ -15,7 +15,7 @@ const learnCodeItems = [
     skillnodeTopLevelTag: 'getStarted',
     desc: `Learn the basics of the Javascript programming language. 
     This covers the core programming language concepts necessary to write a game: variables, arrays, loops, functions, etc.
-    If you already know these, you can proceed to the next section instead: Game development concepts...`
+    If you already know these, you can proceed to the next section instead...`
   },
   {
     mascot: 'phaserLogo',

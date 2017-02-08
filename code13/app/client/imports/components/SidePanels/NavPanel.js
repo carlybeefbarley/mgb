@@ -57,10 +57,24 @@ export const getNavPanels = (currUser, showAll) => {
         menu: [
           {
             subcomponent: 'Item',
+            jrkey: 'learningPaths',
+            to: '/learn',
+            icon: { color: 'orange', name: 'map signs' },
+            content: 'All Learning paths',
+          },
+          {
+            subcomponent: 'Item',
             jrkey: 'getStarted',
             to: '/learn/getStarted',
             icon: { color: 'yellow', name: 'rocket' },
             content: 'Get Started',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'learnCode',
+            to: '/learn/code',
+            icon: { name: 'code' },
+            content: 'Learn to code',
           },
           {
             subcomponent: 'Item',
@@ -74,15 +88,8 @@ export const getNavPanels = (currUser, showAll) => {
             jrkey: 'learnSkills',
             to: '/learn/skills',
             icon: { color: 'green', name: 'student' },
-            content: 'Learn skills',
+            content: 'All skills',
           },
-          {
-            subcomponent: 'Item',
-            jrkey: 'learningPaths',
-            to: '/learn',
-            icon: { color: 'orange', name: 'map signs' },
-            content: 'All Learning paths',
-          }
         ],
       },
       {

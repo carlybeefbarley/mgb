@@ -87,7 +87,7 @@ export default class SpriteLayers extends React.Component {
     if (!c2.frameData[this.state.copyFrameID]) return
 
     // TODO? Is this copying references or values?
-    c2.frameData[frameID] = c2.frameData[this.state.copyFrameID].splice(0)
+    c2.frameData[frameID] = c2.frameData[this.state.copyFrameID].slice(0)
     this.handleSave("Paste frame #"+(this.state.copyFrameID)+" to #"+frameID, true)
   }
 

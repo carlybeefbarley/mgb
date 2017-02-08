@@ -8,100 +8,6 @@ import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/Skill
 
 
 
-const jsItems = [
-  {
-    icon: 'code',
-    link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
-    content: 'Draw image',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Manipulate image',
-    desc: `x, y, scale, rotate, tint`
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Input click',
-    desc: `Cick on image, click on game`
-  },
-  {
-    icon: 'tasks',
-    link: '',
-    content: 'Task',
-    desc: `Clicking on image make it rotate 45°`
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Input keyboard',
-    desc: `arrow keys, num keys`
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'update() function',
-    desc: `example with increasing/descreasing size with arrow up/down`
-  },
-  {
-    icon: 'tasks',
-    link: '',
-    content: 'Task',
-    desc: `Move character around screen using arrow keys`
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Spritesheet',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Spritesheet events',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Physics basics',
-    desc: `velocity, gravity, world bounds...`
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Physics collide',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Tweens',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Groups',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'OOP',
-    desc: `Object oriented programming`
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Game states',
-    desc: ``
-  },
-
-]
-
 const phaserSkills = SkillNodes.code.js.phaser
 const skillItems = []
 for (var key in phaserSkills) {
@@ -113,7 +19,7 @@ for (var key in phaserSkills) {
 
 const LearnCodePhaserRoute = ( { currUser }, context ) => { 
 
-  console.log(skillItems)
+  // console.log(skillItems)
 
   return (
     <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>

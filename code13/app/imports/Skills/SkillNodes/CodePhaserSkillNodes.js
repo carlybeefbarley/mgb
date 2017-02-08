@@ -24,21 +24,37 @@ export default {
       name: 'Draw image',
       icon: 'code',
       link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
-      description: ``,
+      description: `The most basic concept starting game devolopment`,
+    },
+  },
+  positionImage: {
+    $meta: {
+      name: 'Position image',
+      icon: 'code',
+      link: '/u/!vault/asset/eoTTDhibmKGrhuvHn',
+      description: `x, y and anchor point`,
+    },
+  },
+  taskSetPosition: {
+    $meta: {
+      name: 'Task set position',
+      icon: 'tasks',
+      link: '/u/!vault/asset/Pn9mhjR7yAW3iTsRt',
+      description: `Set image positions`,
     },
   },
   manipulateImage: {
     $meta: {
       name: 'Manipulate image',
       icon: 'code',
-      link: '',
-      description: `x, y, scale, rotate, tint`,
+      link: '/u/!vault/asset/nzZK4r5a4WPAszBjj',
+      description: `scale, alpha, rotate, tint`,
     },
   },
   inputClick: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/ENnr8RSrrSRB3ybTg',
       name: 'Input click',
       description: `Cick on image, click on game`
     },
@@ -46,23 +62,23 @@ export default {
   taskInput: {
     $meta: {
       icon: 'tasks',
-      link: '',
+      link: '/u/!vault/asset/79YpYHXg9DbQG6tXp',
       name: 'Task',
-      description: `Clicking on image make it rotate 45°`
+      description: `On each click make the sprite rotate counter clockwise by 10°`
     },
   },
   inputKeyboard: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/8j9CBTzfBuT5GKLtF',
       name: 'Input keyboard',
-      description: `arrow keys, num keys`
+      description: `keyboard keys`
     },
   },
   updateFunction: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/4fQsLapzr4uWGLbnp',
       name: 'update() function',
       description: `example with increasing/descreasing size with arrow up/down`
     },
@@ -70,7 +86,7 @@ export default {
   taskMoveChar: {
     $meta: {
       icon: 'tasks',
-      link: '',
+      link: '/u/!vault/asset/kMhY34EAEsETMiGmF',
       name: 'Task',
       description: `Move character around screen using arrow keys`
     },

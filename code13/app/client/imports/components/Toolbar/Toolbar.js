@@ -184,7 +184,7 @@ export default class Toolbar extends React.Component {
         ) ) ) }
 
         { this.state.level < this.maxLevel-1 &&
-          <QLink query={{ '_fp': 'features' }}>
+          <QLink query={{ '_fp': 'settings' }}>
             <Popup trigger={(
                 <Button
                     icon
@@ -192,11 +192,11 @@ export default class Toolbar extends React.Component {
                     basic
                     style={{marginLeft: '4px'}}
                     id="mgbjr-toolbar-optionsButton"
-                    // Basic coes out a little smaller than normal, so don't need: size={_defaultToolbarButtonSize}
-                    icon='horizontal ellipsis'/>
+                    // Basic comes out a little smaller than normal, so don't need: size={_defaultToolbarButtonSize}
+                    icon='settings'/>
               )}
               header='More Tools'
-              content='Click here to enable additional tools' />
+              content='Click here to enable additional tools in Settings' />
           </QLink>
         }
       </div>

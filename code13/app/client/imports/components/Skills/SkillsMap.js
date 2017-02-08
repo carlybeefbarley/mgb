@@ -287,7 +287,7 @@ export default class SkillTree extends React.Component {
     this.countSkillTotals(SkillNodes, '', this.totals)
 
     const config = {
-      // level: 2,      // default level -- This is now in expectedToolbars.getDefaultLevel
+      // level: 1,      // default level -- This is now in expectedToolbars.getDefaultLevel
       buttons: [
         {
           name:  'zoomout',

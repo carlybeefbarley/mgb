@@ -6,9 +6,9 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
 import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 
-import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'
 import fpMobileMore from './fpMobileMore'
+import fpSettings from './fpSettings'
 import fpActivity from './fpActivity'
 import fpKeyboard from './fpKeyboard'
 import fpProjects from './fpProjects'
@@ -33,7 +33,7 @@ const flexPanelViews = [
 
   { tag: 'skills',    lev: 2,  name: 'skills',   icon: 'plus circle', hdr: 'Skills',           el: fpSkills,        superAdminOnly: false, mobileUI: false  },
 
-  { tag: 'features',  lev: 3,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false, mobileUI: false  },
+  { tag: 'settings',  lev: 3,  name: 'settings',  icon: 'settings',    hdr: 'Settings',        el: fpSettings,      superAdminOnly: false, mobileUI: false  },
 
 // Experimental UI for mobile
 //  { tag: 'more',  lev: 8,  name: 'more',  icon: 'ellipsis horizontal', hdr: 'More',            el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
@@ -281,7 +281,6 @@ export default FlexPanel = React.createClass({
     const flexPanelHdr = flexPanelChoice.hdr
     const flexPanelIcon = flexPanelChoice.icon
     const ElementFP = (!this.props.isSuperAdmin && flexPanelChoice.superAdminOnly) ? null : flexPanelChoice.el
-
 
     if (flexPanelIsVisible && ElementFP !== null)
       joyrideCompleteTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)

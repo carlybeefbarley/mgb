@@ -9,7 +9,9 @@ import NumberInput from '/client/imports/components/Controls/NumberInput'
 import { addJoyrideSteps } from '/client/imports/routes/App'
 import { Icon } from 'semantic-ui-react'
 
-export default fpFeatureLevels = React.createClass({
+const _highlightRelevantAreasColor = 'rgba(255,255,0,0.15)'
+
+export default fpSettings = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -73,9 +75,9 @@ export default fpFeatureLevels = React.createClass({
       const actualLevel = this.getLevelValFromSettings(name) || defaultLevel 
       const friendlyName = expectedToolbars.getFriendlyName(name)
       const isHighlighted = expectedToolbars.getIsUsedForAssetKind(name, this.props.currentlyEditingAssetKind)
-      let outerSty={ marginLeft: '0.25em',marginRight: '1em',  marginBottom: '2em' }
+      const outerSty = { padding: '0.35em 0.15em', marginLeft: '0.1em', marginRight: '0.85em',  marginBottom: '1.35em' }
       if (isHighlighted)
-        outerSty.backgroundColor = 'rgba(255,255,0,0.1)'
+        outerSty.backgroundColor = _highlightRelevantAreasColor
       return (
         <div key={name} style={outerSty}>
           <Icon style={{ float: 'right', marginTop: '0.15em' }} size='big' name={expectedToolbars.getIconName(name)} />
@@ -112,7 +114,7 @@ export default fpFeatureLevels = React.createClass({
     }
 
     return (
-      <div className='animated fadeIn'>
+      <div>
         <p>
           When you feel ready, use the sliders below to enable advanced features
         </p>
@@ -121,8 +123,8 @@ export default fpFeatureLevels = React.createClass({
           Show me
         </button>
         <div className='ui segment'>
-          <h4 id='mgbjr-CurrentFeatureLevelsInFp'>Current Feature Levels:</h4>
-          { _.map(expectedToolbars.scopeNames, name => makeSlider(name)) }
+          <h4 id='mgbjr-CurrentFeatureLevelsInFp'>Current Feature Levels</h4>
+          { _.map(expectedToolbars.scopeNamesTunable, name => makeSlider(name)) }
           <button onClick={this.resetToDefaults} className='ui right floated mini active yellow button'>Reset to defaults</button>
         </div>
       </div>

@@ -18,13 +18,18 @@ export const expectedToolbars = {
   MapTools:      { friendlyName: 'Map/ActorMap Editor',  max: 27,   default: 3,  assetKinds: ['map','actormap'], icon: AssetKinds.getIconName('map')     },
   AudioTools:    { friendlyName: 'Sound/Music Editor',   max: 25,   default: 3,  assetKinds: ['sound','music'],  icon: AssetKinds.getIconName('sound')   },
 
-  SkillsMap:     { friendlyName: 'Skills Viewer',        max:  4,   default: 2,  icon: 'plus circle'                          },
+  SkillsMap:     { friendlyName: 'Skills Viewer',        max:  1,   default: 1,  icon: 'plus circle'                          },
 
   PlayCodeGame:  { friendlyName: 'Play Code Game Controls', max:  1,default: 1,  icon: 'game' }
 }
 
 // We do this before adding functions so that the function names don't pollute the keys :)
 expectedToolbars.scopeNames = _.keys(expectedToolbars)
+
+// This is useful for UIs that don't want to show the non-tunable toolbars (i.e. those for maxLevel = 1)
+expectedToolbars.scopeNamesTunable = _.keys(_.pickBy(expectedToolbars, t => t.max > 1))
+
+
 
 // get Max Value for feature level
 expectedToolbars.getMaxLevel = toolbarName =>

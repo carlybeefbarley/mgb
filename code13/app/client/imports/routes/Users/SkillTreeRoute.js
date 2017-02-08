@@ -65,7 +65,7 @@ export default SkillTreeRoute = React.createClass({
               This system allows MGB to present appropriate help and tutorials to you based on your level, and for you to track your progress in these Skill areas. 
             </p>
             <p>
-              <small><em>(Note: expanded-UI for this feature is incomplete - and kind of ugly... It will be completed in January)</em></small>
+              <small><em>(Note: expanded-UI for this feature is incomplete - and kind of ugly... It will be completed in February)</em></small>
             </p>
           </Segment>
         }

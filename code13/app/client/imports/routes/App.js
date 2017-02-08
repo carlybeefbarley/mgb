@@ -359,7 +359,7 @@ const App = React.createClass({
                   navPanelAvailableWidth={mainAreaAvailableWidth}
                 />
                 { isNetworkFailure && 
-                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable'/>
+                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable' style={{marginLeft: '8px'}}/>
                 }
                 <NavBar
                     currUser={currUser}

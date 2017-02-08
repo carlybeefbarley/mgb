@@ -272,7 +272,7 @@ export const getNavPanels = (currUser, showAll) => {
             subcomponent: 'Item',
             query: { '_fp': 'features' },
             jrkey: 'settings',
-            icon: 'options',
+            icon: 'settings',
             content: 'Settings',
           },
           showUserOptions && {

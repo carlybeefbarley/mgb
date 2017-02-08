@@ -190,8 +190,9 @@ export default class Toolbar extends React.Component {
                     icon
                     compact
                     basic
+                    style={{marginLeft: '4px'}}
                     id="mgbjr-toolbar-optionsButton"
-                    size={_defaultToolbarButtonSize}
+                    // Basic coes out a little smaller than normal, so don't need: size={_defaultToolbarButtonSize}
                     icon='horizontal ellipsis'/>
               )}
               header='More Tools'

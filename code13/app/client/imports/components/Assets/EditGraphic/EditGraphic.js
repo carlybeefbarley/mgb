@@ -1574,7 +1574,7 @@ export default class EditGraphic extends React.Component {
                 {zoom}x
                 <span>&nbsp;&nbsp;</span>
                 <span style={{"cursor": "pointer"}} onClick={this.zoomIn.bind(this)}>
-                  <Icon name='zoom out'/>
+                  <Icon name='zoom in'/>
                 </span>
               </Button>)}
                 on='hover'

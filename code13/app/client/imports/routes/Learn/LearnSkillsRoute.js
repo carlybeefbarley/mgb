@@ -30,6 +30,15 @@ const descStyle = {
 }
 
 
+// hides code skill area. because it is at top level
+const saItems = []
+skillAreaItems.map((item, idx) => {
+  if(item.tag != 'code'){
+    saItems.push(item)
+  }
+})
+
+
 const LearnSkillsRoute = ( { currUser }, context ) => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
     <Grid stackable>
@@ -46,7 +55,8 @@ const LearnSkillsRoute = ( { currUser }, context ) => (
       <Grid.Row>
         <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
-            { skillAreaItems.map( (area, idx) => (
+            { 
+              saItems.map( (area, idx) => (
                 <QLink 
                     key={idx} 
                     className="card animated fadeIn" 

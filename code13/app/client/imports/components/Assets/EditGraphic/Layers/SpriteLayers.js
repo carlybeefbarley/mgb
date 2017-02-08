@@ -12,7 +12,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
 
 const emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
-    
+
 
 export default class SpriteLayers extends React.Component {
 
@@ -30,7 +30,7 @@ export default class SpriteLayers extends React.Component {
     }
   }
 
-  componentWillUnmount() 
+  componentWillUnmount()
   {
     // Stop any playAnimation() cycles. However, we CANNOT use this.setState() in this callback!
     this.cancelNextAnimationTimeout()
@@ -53,13 +53,13 @@ export default class SpriteLayers extends React.Component {
     this.props.content2.frameData.push([])
     this.handleSave('Append frame to graphic')
     this.forceUpdate()    // Force react to update.. needed since we need render() to create new canvasses
-  }    
+  }
 
   toggleCanvasFramesVisibility() {
     this.setState({ isCanvasFramesVisible: !this.state.isCanvasFramesVisible })
-  }    
+  }
 
-  insertFrameAfter(frameID, doCopy) { 
+  insertFrameAfter(frameID, doCopy) {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -87,7 +87,7 @@ export default class SpriteLayers extends React.Component {
     if (!c2.frameData[this.state.copyFrameID]) return
 
     // TODO? Is this copying references or values?
-    c2.frameData[frameID] = c2.frameData[this.state.copyFrameID]
+    c2.frameData[frameID] = c2.frameData[this.state.copyFrameID].slice(0)
     this.handleSave("Paste frame #"+(this.state.copyFrameID)+" to #"+frameID, true)
   }
 
@@ -132,7 +132,7 @@ export default class SpriteLayers extends React.Component {
 
 
   deleteFrame(frameID) {
-    if (!this.hasPermission()) 
+    if (!this.hasPermission())
       return
 
     let c2 = this.props.content2
@@ -149,7 +149,7 @@ export default class SpriteLayers extends React.Component {
       this.props.EditGraphic.setState({ selectedFrameIdx: c2.frameNames.length-1 })
     this.props.forceDraw()
     this.handleSave('Delete frame', true)
-  }    
+  }
 
 
     /************************** ANIMATIONS ******************************/
@@ -169,7 +169,7 @@ export default class SpriteLayers extends React.Component {
 
     if (isPlaying)
       this.playAnimation(this.props.EditGraphic.state.selectedFrameIdx)
-    else 
+    else
       this.cancelNextAnimationTimeout()
   }
 
@@ -178,7 +178,7 @@ export default class SpriteLayers extends React.Component {
     let nextFrameID = (frameID+1) % this.props.content2.frameNames.length
     let self = this
     this._playAnimationTimeoutId = setTimeout(function() {
-      if (self.state.isPlaying) 
+      if (self.state.isPlaying)
         self.playAnimation(nextFrameID)
     }, Math.round(1000/this.props.content2.fps))
   }
@@ -221,14 +221,14 @@ export default class SpriteLayers extends React.Component {
   addAnimation(frameID) {
     if (!this.hasPermission()) return
 
-    let c2 = this.props.content2    
+    let c2 = this.props.content2
     let animID = this.getAnimIdByFrame(frameID)
 
     if (animID === false) {
-      c2.animations.push({ 
+      c2.animations.push({
         name: "Anim "+c2.animations.length,
         frames: [frameID],
-        fps: 10 
+        fps: 10
       });
     }
     this.handleSave('Add animation')
@@ -245,7 +245,7 @@ export default class SpriteLayers extends React.Component {
 
       if (animID === false) {
         animTH.push({ name:"", colspan:1, color:""})
-      } 
+      }
       else {
         let animation = c2.animations[animID]
         animTH.push({
@@ -259,7 +259,7 @@ export default class SpriteLayers extends React.Component {
         })
         colorID++
         frameID += animation.frames.length-1
-      }    
+      }
     }
     return animTH
   }
@@ -294,7 +294,7 @@ export default class SpriteLayers extends React.Component {
     let endFrame = e.target.value-1     // value is -1, because user sees frames from 1 instead of 0
     if (endFrame < startFrame) return
 
-    animation.frames = []             // clear frames and add then in for loop        
+    animation.frames = []             // clear frames and add then in for loop
     for (let i=startFrame; i<=endFrame && i<c2.frameNames.length; i++) {
       let tmpID = this.getAnimIdByFrame(i)
       if (tmpID === false || tmpID === animID) {    // everything ok, this frame can be added to animation
@@ -325,7 +325,7 @@ export default class SpriteLayers extends React.Component {
   }
 
   deleteAnimation(animID) {
-    if (!this.hasPermission()) return   
+    if (!this.hasPermission()) return
 
     this.props.content2.animations.splice(animID, 1)
     this.handleSave("Delete animation")
@@ -338,7 +338,7 @@ export default class SpriteLayers extends React.Component {
     let isVisible = !this.state.allLayersHidden
     this.setState({ allLayersHidden: isVisible })
     let layerParams = this.props.content2.layerParams
-    for (let i=0; i<layerParams.length; i++) 
+    for (let i=0; i<layerParams.length; i++)
       layerParams[i].isHidden = isVisible
     this.handleSave("All layers visibility")
   }
@@ -372,9 +372,9 @@ export default class SpriteLayers extends React.Component {
     let lN = this.props.content2.layerParams
     for (let i; i<fD.length; i++)
       fD[i][lN.length-1] = emptypixel     // BUGBUG? What is lN?    let lN = this.props.content2.layerParams
-  
+
     this.props.forceUpdate()    // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
-    this.handleSave('Add layer to graphic')    
+    this.handleSave('Add layer to graphic')
   }
 
   copyLayer(layerID) {
@@ -410,11 +410,11 @@ export default class SpriteLayers extends React.Component {
     // change selectedLayer if it is last and beeing removed
     if (this.props.EditGraphic.state.selectedLayerIdx > c2.layerParams.length-1)
       this.props.EditGraphic.setState({ selectedLayerIdx: c2.layerParams.length-1 })
-    
+
     for (let frameID=0; frameID<c2.frameNames.length; frameID++)
       c2.frameData[frameID].splice(layerID, 1)
 
-    this.handleSave('Delete layer', true) 
+    this.handleSave('Delete layer', true)
   }
 
   moveLayerUp(layerID) {
@@ -437,7 +437,7 @@ export default class SpriteLayers extends React.Component {
 
   moveLayerDown(layerID) {
     if (!this.hasPermission()) return
-        
+
     let c2 = this.props.content2
 
     let tmpParam = c2.layerParams[layerID]
@@ -451,7 +451,7 @@ export default class SpriteLayers extends React.Component {
       frame[layerID+1] = tmpData
     }
     this.handleSave('Layer moved down', true)
-  }    
+  }
 
   handleSave(changeText="change graphic", dontSaveFrameData) {
     this.props.handleSave(changeText, dontSaveFrameData)
@@ -525,7 +525,7 @@ export default class SpriteLayers extends React.Component {
     ))
   }
 
-  render() { 
+  render() {
     const c2 = this.props.content2
     const buttonDivClass = "ui mini icon button"
 
@@ -538,9 +538,9 @@ export default class SpriteLayers extends React.Component {
           <div onClick={this.stepFrame.bind(this, false)} className={buttonDivClass}>
             <i className="icon backward"></i>
           </div>
-          <div 
+          <div
             id="mgbjr-editGraphic-playButton"
-            onClick={this.togglePlayAnimation.bind(this)} 
+            onClick={this.togglePlayAnimation.bind(this)}
             className={buttonDivClass + (this.state.isPlaying ? " black" : "")}>
             <i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
           </div>
@@ -585,33 +585,33 @@ export default class SpriteLayers extends React.Component {
 
                               <div className="ui item input">
                                 <span className="text">Name</span>
-                                <input type="text" value={item.name} onChange={this.renameAnimation.bind(this, item.animID)} />        
+                                <input type="text" value={item.name} onChange={this.renameAnimation.bind(this, item.animID)} />
                               </div>
 
                               <div className="ui item input">
                                 <span className="text">From:</span>
-                                <input 
-                                      onChange={this.changeAnimStart.bind(this, item.animID)} 
-                                      type="number" 
-                                      value={item.startFrame} 
-                                      min="1" 
+                                <input
+                                      onChange={this.changeAnimStart.bind(this, item.animID)}
+                                      type="number"
+                                      value={item.startFrame}
+                                      min="1"
                                       max={c2.frameNames.length} />
                                 <span className="text">To:</span>
-                                <input 
-                                      onChange={this.changeAnimEnd.bind(this, item.animID)} 
-                                      type="number" 
-                                      value={item.endFrame} 
-                                      min="1" 
+                                <input
+                                      onChange={this.changeAnimEnd.bind(this, item.animID)}
+                                      type="number"
+                                      value={item.endFrame}
+                                      min="1"
                                       max={c2.frameNames.length} />
                               </div>
 
                               <div className="ui item input">
                                 <span className="text">FPS</span>
-                                <input type="number" value={item.fps} min="1" max="60" onChange={this.changeAnimFPS.bind(this, item.animID)} />        
+                                <input type="number" value={item.fps} min="1" max="60" onChange={this.changeAnimFPS.bind(this, item.animID)} />
                               </div>
-                              
+
                               <div className="divide"></div>
-                              
+
                               <div className="item" onClick={this.deleteAnimation.bind(this, item.animID)}>
                                 <i className="remove icon"></i>Delete
                               </div>
@@ -629,13 +629,13 @@ export default class SpriteLayers extends React.Component {
 
             <tr>
               <th width="32px">
-                  <i 
-                      className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )} 
+                  <i
+                      className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )}
                       onClick={this.toggleAllVisibility.bind(this)} />
               </th>
               <th width="32px">
-                  <i 
-                  className={"icon " + (this.state.allLayersLocked ? "lock" : "unlock" )} 
+                  <i
+                  className={"icon " + (this.state.allLayersLocked ? "lock" : "unlock" )}
                   onClick={this.toggleAllLocking.bind(this)} />
               </th>
               <th width="180px">
@@ -647,7 +647,7 @@ export default class SpriteLayers extends React.Component {
               { /* Tools drop down */
                 _.map(c2.frameNames, (frameName, idx) => { return (
                   <th key={"th_"+idx} width="32px" className="frameTH">
-                    <div className="ui dropdown" 
+                    <div className="ui dropdown"
                         ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
                         id={"mgb_edit_graphics_frame_options_" + idx}
                       >
@@ -680,9 +680,9 @@ export default class SpriteLayers extends React.Component {
                           <i className="paste icon"></i>
                           Paste
                         </div>
-                        
+
                         <div className="divider"></div>
-                        
+
                         <div  onClick={this.frameMoveLeft.bind(this, idx)}
                               className={"item " + (idx === 0 ? "disabled" : "")}>
                           <i className="arrow left icon"></i>
@@ -693,9 +693,9 @@ export default class SpriteLayers extends React.Component {
                           <i className="arrow right icon"></i>
                           Move Right
                         </div>
-                        
+
                         <div className="divider"></div>
-                        
+
                         <div  className={"item " + (this.props.content2.frameData.length === 1 ? "disabled" : "")}
                               onClick={this.deleteFrame.bind(this, idx)}>
                           <i className="remove icon"></i>
@@ -722,7 +722,7 @@ export default class SpriteLayers extends React.Component {
               <th></th>
               <th></th>
               <th></th>
-              { // TODO: change from frameNames[] to frameData[] ? 
+              { // TODO: change from frameNames[] to frameData[] ?
                 _.map(c2.frameNames, (frameName, idx) => { return (
                   <th key={"thCanvas_"+idx}>
                     <div  className="ui image "
@@ -757,7 +757,7 @@ export default class SpriteLayers extends React.Component {
     )
   }
 }
- 
+
 SpriteLayers.propTypes = {
   content2: PropTypes.object.isRequired,
   hasPermission: PropTypes.func.isRequired,

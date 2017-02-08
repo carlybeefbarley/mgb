@@ -15,6 +15,51 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Wed Feb 08 2017 10:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3128'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial UI is improving',
+          'changeSummary': 'They are less ugly than they were, but still not pretty :)  There are some issues with touch devices and also the colors are pretty nasty!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Mentor and autocomplete',
+          'changeSummary': 'Updated the ctrl-enter autocomplete for more cases including \'import from\', and updated the PhaserJS definitions and auto-help',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'edit.asset',
+          'type': 'improvement',
+          'changeName': 'UI improvements for Asset Edit header',
+          'changeSummary': 'Simpler presentation of saved/unsved/autosave state of edited assets.. Grey text, similar to how google-docs shows it',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.learn',
+          'type': 'improvement',
+          'changeName': 'Learning routes',
+          'changeSummary': 'We have added more content on the Programming skills and learning routes. This is still very incomplete, but the content and structure is progressing',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Mon Feb 06 2017 17:45 GMT-0800 (PST)',
 
       'id': {

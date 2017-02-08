@@ -1718,7 +1718,7 @@ export default class EditCode extends React.Component {
         {
           name:  'toolZoomOut',
           label: 'Small Font',
-          icon:  'font',
+          icon:  'zoom out',
           tooltip: 'Smaller Text',
           disabled: false,
           level:    2,
@@ -1727,7 +1727,7 @@ export default class EditCode extends React.Component {
         {
           name:  'toolZoomIn',
           label: 'Large font',
-          icon:  'large font',
+          icon:  'zoom in',
           tooltip: 'Larger text',
           disabled: false,
           level:    2,

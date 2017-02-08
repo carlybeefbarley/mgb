@@ -254,6 +254,7 @@ export default class SourceTools {
       return
     }
 
+    console.log("Adding Defs", filename)
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       this.loadDefs(lib.defs())
@@ -264,12 +265,12 @@ export default class SourceTools {
         return
       }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
-        if(!replace && this.addedFilesAndDefs[filename]){
+        if(!replace){
           this.addedFilesAndDefs[filename] = true
         }
-        const cleanFileName = filename.indexOf("./") === 0 ? filename.substr(2) : filename
-        console.log("Adding file:", cleanFileName)
-        this.tern.server.addFile(cleanFileName, code, replace)
+        /*const cleanFileName = filename.startsWith("./") ? filename.substr(2) : (
+          filename.startsWith("/") && !filename.startsWith('//') ? filename.substr(1) : filename)*/
+        this.tern.server.addFile(filename, code, replace)
         this.tern.cachedArgHints = null
       }
       else {

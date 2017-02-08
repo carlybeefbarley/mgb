@@ -1,4 +1,8 @@
-( 
+# this file needs to be reviewed
+
+exit 0
+
+(
 	mkdir tmp
 	cd tmp
 	git clone git@github.com:photonstorm/phaser.git
@@ -13,6 +17,7 @@
 )
 
 (
+  node ./gatherPhaserDefs.js
 	cd app/public/phaser/2.4.6/docgen/output
 	ls | awk ' BEGIN { ORS = ""; print "["; } { print "\/\@"$0"\/\@"; } END { print "]"; }' | sed "s^\"^\\\\\"^g;s^\/\@\/\@^\", \"^g;s^\/\@^\"^g" > _manifest.json
 )

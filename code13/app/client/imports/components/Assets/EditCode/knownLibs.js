@@ -7,17 +7,16 @@ export default {
   common: {
     defs: () => [
       '/lib/tern/defs/browser.json',
-      '/lib/tern/defs/ecma5.json'
+      '/lib/tern/defs/ecmascript.json',
+      // '/lib/tern/defs/test.json' // for testing purposes only :)
+      //,'/lib/tern/defs/phaser.new.json'
     ]
   },
   phaser: {
     useGlobal: true,
     src: function (version) {
-      console.log("loading phaser...")
       version = version || "latest";
       return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.js';
-      //return 'http://localhost:3000/phaser/2.4.6/phaser.js'
-      //return '/phaser/' + version + '/phaser.min.js'
     },
     defs: () => ['/lib/tern/defs/phaser.json']
   },

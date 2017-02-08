@@ -20,10 +20,7 @@
   var defaultOptions = exports.defaultOptions = {
     debug: false,
     async: false,
-    getFile: function(_f, c) {
-      console.log("GET FILE!")
-      if (this.async) c(null, null);
-    },
+    getFile: function(_f, c) { if (this.async) c(null, null); },
     normalizeFilename: function(name) { return name },
     defs: [],
     plugins: {},
@@ -32,7 +29,7 @@
     reuseInstances: true,
     stripCRs: false,
     ecmaVersion: 6,
-    projectDir: "../",
+    projectDir: "/",
     parent: null
   };
 
@@ -109,7 +106,7 @@
       options[o] = defaultOptions[o];
 
     this.projectDir = options.projectDir.replace(/\\/g, "/")
-    if (!/\/$/.test(this.projectDir)) this.projectDir += "/"
+    // if (!/\/$/.test(this.projectDir)) this.projectDir += "/"
 
     this.parent = options.parent;
     this.handlers = Object.create(null);
@@ -158,6 +155,10 @@
         file.scope = null;
       }
       this.signal("postReset");
+    },
+    update: function() {
+      this.reset()
+      analyzeAll(this, null, function(){})
     },
 
     request: function(doc, c) {

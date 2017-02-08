@@ -100,6 +100,7 @@ export default {
   getActiveLayerData: function(){
     return this.mgb_content2.layers[this.state.activeLayer]
   },
+
   addActor: function(ts){
     // make sure we don't collide gids
     ts.firstgid = Infinity // nothing is infinite
@@ -108,6 +109,7 @@ export default {
     TileHelper.fixTilesetGids(this.mgb_content2)
     this.quickSave("Added actor")
   },
+
   setActiveLayerByName: function(name){
     const layers = this.mgb_content2.layers
     for(let i=0; i<layers.length; i++){

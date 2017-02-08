@@ -1,11 +1,9 @@
-import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import React from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
-
 
 const learnCodeItems = [
   {
@@ -15,9 +13,9 @@ const learnCodeItems = [
     link: '/learn/code/javascript',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `Learn basics of Javascript programming language. 
-    You will be introduced to termins like variable, array, loop, function.
-    If you already know it you can proceed to game development basics.`
+    desc: `Learn the basics of the Javascript programming language. 
+    This covers the core programming language concepts necessary to write a game: variables, arrays, loops, functions, etc.
+    If you already know these, you can proceed to the next section instead: Game development concepts...`
   },
   {
     mascot: 'phaserLogo',
@@ -26,8 +24,7 @@ const learnCodeItems = [
     link: '/learn/code/phaser',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `We are using Phaser framework for creating games 
-    because it is super fast to learn and easy to use.`
+    desc: `'Phaser' is a very popular game programming library written in JavaScript. These tutorials explain what Phaser is, and how to use it to handle graphics, sound, maps, physics etc in games.`
   },
   {
     mascot: 'mole',
@@ -36,10 +33,8 @@ const learnCodeItems = [
     link: '/learn/code/mole',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `You will be joining your knowledges game concepts and creating an existing game. 
-    We choose easy one to start - Whack a Mole. After first version you will create four more 
-    and get to know about how to start and finish game, 
-    creating user interface, states and other important things.`
+    desc: `Use your new game programming knowledge to create a 'Whack-a-Mole' game. 
+    The first tutorial shows how to code the minimal 'base' of this game. The next four tutorials show how to add features to the game.`
   },
   {
     mascot: 'arcade_player',
@@ -48,59 +43,41 @@ const learnCodeItems = [
     link: '/learn/code/modify',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `There are couple of games to play around with. Please fork then and try 
-    to upgrade in your own way!`
+    desc: `There are couple of games to play around with. You can fork (copy) them and then 
+    add your own ideas to each game.`
   },
 ]
 
+const LearnCodeRoute = () => (
+  <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
+    <Grid stackable>
+      <Grid.Row >
+        <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
+          Learn to code
+          <em className="sub header">With JavaScript and Phaser</em>
+        </Header>
+      </Grid.Row>
+      <Grid.Row>
+        <Card.Group itemsPerRow={1} stackable className="skills">
+          
+          { learnCodeItems.map( (area, idx) => (
+            <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
+              <Card.Content>
+                <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
+                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+                <p style={descStyle}>{area.desc}.</p>
+              </Card.Content>
+            </QLink>
+            ))
+          }
 
-
-const LearnCodeRoute = ( { currUser }, context ) => { 
-  return (
-    <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
-      <Grid stackable>
-        <Grid.Row >
-          <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            Learn to code
-            <em className="sub header">With JavaScript and Phaser</em>
-          </Header>
-        </Grid.Row>
-        <Grid.Row>
-          <Card.Group itemsPerRow={1} stackable className="skills">
-            
-            { learnCodeItems.map( (area, idx) => (
-
-
-              <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
-                <Card.Content>
-                  <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
-                  <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-                  <p style={descStyle}>{area.desc}.</p>
-                  
-                  
-                </Card.Content>
-              </QLink>
-
-
-              ))
-            }
-
-          </Card.Group>
-        </Grid.Row>
-      </Grid>
-    </Segment>
-  )
-}
+        </Card.Group>
+      </Grid.Row>
+    </Grid>
+  </Segment>
+)
 
 export default LearnCodeRoute
-
-
-
-
-
-
-
-
 
 
 // styles

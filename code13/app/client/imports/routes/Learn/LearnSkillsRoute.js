@@ -31,7 +31,7 @@ const descStyle = {
 
 // Override for pages that have special learn routes. Everything else goes to /learn/skills/${area.tag}
 const _linkOverrides = {
-  code: '/learn/code'
+  code: '/learn/code'       // This has a special toplevel (for now) instead of data-generated /learn/skills/code page
 }
 
 const LearnSkillsRoute = ( { currUser }, context ) => (

@@ -30,7 +30,7 @@ const descStyle = {
 const learnTopLevelItems = [
   {
     mascot: 'MgbLogo',
-    icon: 'home',
+    icon: 'rocket',
     content: 'Get Started',
     link: '/learn/getstarted',
     query: null,

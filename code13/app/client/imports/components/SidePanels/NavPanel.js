@@ -55,6 +55,7 @@ export const getNavPanels = (currUser, showAll) => {
         hdr: "Learn",
         to: '/learn',
         menu: [
+        /*
           {
             subcomponent: 'Item',
             jrkey: 'learningPaths',
@@ -62,6 +63,7 @@ export const getNavPanels = (currUser, showAll) => {
             icon: { color: 'orange', name: 'map signs' },
             content: 'All Learning paths',
           },
+          */
           {
             subcomponent: 'Item',
             jrkey: 'getStarted',
@@ -76,6 +78,7 @@ export const getNavPanels = (currUser, showAll) => {
             icon: { name: 'code' },
             content: 'Learn to code',
           },
+          /*
           {
             subcomponent: 'Item',
             jrkey: 'makeGames',
@@ -83,6 +86,7 @@ export const getNavPanels = (currUser, showAll) => {
             icon: { name: 'game' },
             content: 'Make/Mod games',
           },
+          */
           {
             subcomponent: 'Item',
             jrkey: 'learnSkills',

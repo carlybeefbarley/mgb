@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Wed Feb 08 2017 10:30 GMT-0800 (PST)',
+      'timestamp': 'Wed Feb 08 2017 13:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3128'
+        'iteration': '3143'
       },
 
       'releaseManagement': {
@@ -33,6 +33,20 @@ const mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Tutorial UI is improving',
           'changeSummary': 'They are less ugly than they were, but still not pretty :)  There are some issues with touch devices and also the colors are pretty nasty!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.favicon',
+          'type': 'feature',
+          'changeName': 'We finally have a favicon!',
+          'changeSummary': 'We finally have a favicon so your bookmarks and browser tabs look prettier',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.settings',
+          'type': 'improvement',
+          'changeName': 'Setttings. Just Settings',
+          'changeSummary': 'We now consistently use the word \'settings\ (and the actual settings icon) instead of other words like Feature Levels, options etc.',
           'otherUrls': [ ]
         },
         {

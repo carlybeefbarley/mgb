@@ -4,6 +4,8 @@ import styles from '../home.css'
 import QLink from '../QLink'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
+import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
+
 
 
 const jsItems = [
@@ -100,9 +102,19 @@ const jsItems = [
 
 ]
 
+const phaserSkills = SkillNodes.code.js.phaser
+const skillItems = []
+for (var key in phaserSkills) {
+  if (phaserSkills.hasOwnProperty(key) && key != '$meta') {
+    skillItems.push( phaserSkills[key]['$meta'] )
+  }
+}
 
 
 const LearnCodePhaserRoute = ( { currUser }, context ) => { 
+
+  console.log(skillItems)
+
   return (
     <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
       <Grid stackable>
@@ -115,15 +127,15 @@ const LearnCodePhaserRoute = ( { currUser }, context ) => {
         <Grid.Row>
           <Card.Group itemsPerRow={1} stackable className="skills">
             
-            { jsItems.map( (area, idx) => (
+            { skillItems.map( (area, idx) => (
 
 
               <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
                 <Card.Content>
                   <p style={descStyle}>
                     <i className={area.icon+" large icon"}></i>
-                    <b>{area.content}</b>
-                    &nbsp;- {area.desc}
+                    <b>{area.name}</b>
+                    &nbsp;- {area.description}
                   </p>
                   
                 </Card.Content>

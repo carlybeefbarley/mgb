@@ -19,92 +19,221 @@ export default {
   },
   // Game:       C.En(1),
   // Loader:     C.En(1),
-  basics: {
+  drawImage: {
     $meta: {
-      name:         'PhaserJS Basics',
-      description:  'Basics to start learn Phaser'
+      name: 'Draw image',
+      icon: 'code',
+      link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
+      description: ``,
     },
-    loadImage:       C.En(1),
-    moveImage:       C.En(1),
-    clickImage:      C.En(1),
-    text:            C.En(1),
-    animation:       C.En(1),
-    tween:           C.En(1),
   },
-  sprites: {
+  manipulateImage: {
     $meta: {
-      name:         'Sprites',
-      description:  'Drawing and manipulating images (sprites)'
+      name: 'Manipulate image',
+      icon: 'code',
+      link: '',
+      description: `x, y, scale, rotate, tint`,
     },
-    add:             C.En(1),
-    scale:           C.En(1),
-    spritesheet:     C.En(1),
-    tint:            C.En(1),
-    pivot:           C.En(1),
-    rotate:          C.En(1),
-    destroy:         C.En(1),
   },
-  groups: {
+  inputClick: {
     $meta: {
-      name:         'Groups',
-      description:  'Grouping objects and manipulating them'
+      icon: 'code',
+      link: '',
+      name: 'Input click',
+      description: `Cick on image, click on game`
     },
-    addSprite:          C.En(1),
-    foreach:            C.En(1),
-    callAllAnimations:  C.En(1),
-    bringToTop:         C.En(1),
-    swapChildren:       C.En(1),
   },
-  input: {
+  taskInput: {
     $meta: {
-      name:         'Input',
-      description:  'Mouse, touch and keyboard'
+      icon: 'tasks',
+      link: '',
+      name: 'Task',
+      description: `Clicking on image make it rotate 45°`
     },
-    clickGame:        C.En(1),
-    clickOnSprite:    C.En(1),
-    keyboard:         C.En(1),
-    drag:             C.En(1),
-    downDuration:     C.En(1),
   },
-  animation: {
+  inputKeyboard: {
     $meta: {
-      name:         'Animations',
-      description:  'Frame based animations'
+      icon: 'code',
+      link: '',
+      name: 'Input keyboard',
+      description: `arrow keys, num keys`
     },
-    changeFrame:         C.En(1),
-    events:              C.En(1),
-    multipleAnimations:  C.En(1),
+  },
+  updateFunction: {
+    $meta: {
+      icon: 'code',
+      link: '',
+      name: 'update() function',
+      description: `example with increasing/descreasing size with arrow up/down`
+    },
+  },
+  taskMoveChar: {
+    $meta: {
+      icon: 'tasks',
+      link: '',
+      name: 'Task',
+      description: `Move character around screen using arrow keys`
+    },
+  },
+  spriteSheet: {
+    $meta: {
+      icon: 'code',
+      link: '',
+      name: 'Spritesheet',
+      description: ``
+    },
+  },
+  spriteSheetEvents: {
+    $meta: {
+      icon: 'code',
+      link: '',
+      name: 'Spritesheet events',
+      description: ``
+    },
+  },
+  physicsBasics: {
+    $meta: {
+      icon: 'code',
+      link: '',
+      name: 'Physics basics',
+      description: `velocity, gravity, world bounds...`
+    },
+  },
+  physicsCollide: {
+    $meta: {
+      icon: 'code',
+      link: '',
+      name: 'Physics collide',
+      description: ``
+    },
   },
   tweens: {
     $meta: {
-      name:         'Tweens',
-      description:  'Tween based animation. Interpolating between one state to another'
+      icon: 'code',
+      link: '',
+      name: 'Tweens',
+      description: ``
     },
-    tweensTo:         C.En(1),
-    alphaText:        C.En(1),
-    events:           C.En(1),
-    chainedTweens:    C.En(1),
-    easing:           C.En(1),
-    bubbles:          C.En(1),
   },
-  audio: {
+  groups: {
     $meta: {
-      name:         'Audio',
-      description:  'Loading audio and playing it'
+      icon: 'code',
+      link: '',
+      name: 'Groups',
+      description: ``
     },
-    playSound:       C.En(1),
-    pauseResume:     C.En(1),
   },
-  physics: {
+  oop: {
     $meta: {
-      name:         'Physics',
-      description:  'Simple physics: collision detection, bounding boxes'
+      icon: 'code',
+      link: '',
+      name: 'OOP',
+      description: `Object oriented programming`
     },
-    collide:        C.En(1),
-    gravity:        C.En(1),
-    boundingBox:    C.En(1),
-    bodySize:       C.En(1),
-    angryBirds:     C.En(1),
-  }
+  },
+  gameState: {
+    $meta: {
+      icon: 'code',
+      link: '',
+      name: 'Game states',
+      description: ``
+    },
+  },
 
 }
+
+
+
+
+
+
+
+
+
+//   basics: {
+//     $meta: {
+//       name:         'PhaserJS Basics',
+//       description:  'Basics to start learn Phaser'
+//     },
+//     loadImage:       C.En(1),
+//     moveImage:       C.En(1),
+//     clickImage:      C.En(1),
+//     text:            C.En(1),
+//     animation:       C.En(1),
+//     tween:           C.En(1),
+//   },
+//   sprites: {
+//     $meta: {
+//       name:         'Sprites',
+//       description:  'Drawing and manipulating images (sprites)'
+//     },
+//     add:             C.En(1),
+//     scale:           C.En(1),
+//     spritesheet:     C.En(1),
+//     tint:            C.En(1),
+//     pivot:           C.En(1),
+//     rotate:          C.En(1),
+//     destroy:         C.En(1),
+//   },
+//   groups: {
+//     $meta: {
+//       name:         'Groups',
+//       description:  'Grouping objects and manipulating them'
+//     },
+//     addSprite:          C.En(1),
+//     foreach:            C.En(1),
+//     callAllAnimations:  C.En(1),
+//     bringToTop:         C.En(1),
+//     swapChildren:       C.En(1),
+//   },
+//   input: {
+//     $meta: {
+//       name:         'Input',
+//       description:  'Mouse, touch and keyboard'
+//     },
+//     clickGame:        C.En(1),
+//     clickOnSprite:    C.En(1),
+//     keyboard:         C.En(1),
+//     drag:             C.En(1),
+//     downDuration:     C.En(1),
+//   },
+//   animation: {
+//     $meta: {
+//       name:         'Animations',
+//       description:  'Frame based animations'
+//     },
+//     changeFrame:         C.En(1),
+//     events:              C.En(1),
+//     multipleAnimations:  C.En(1),
+//   },
+//   tweens: {
+//     $meta: {
+//       name:         'Tweens',
+//       description:  'Tween based animation. Interpolating between one state to another'
+//     },
+//     tweensTo:         C.En(1),
+//     alphaText:        C.En(1),
+//     events:           C.En(1),
+//     chainedTweens:    C.En(1),
+//     easing:           C.En(1),
+//     bubbles:          C.En(1),
+//   },
+//   audio: {
+//     $meta: {
+//       name:         'Audio',
+//       description:  'Loading audio and playing it'
+//     },
+//     playSound:       C.En(1),
+//     pauseResume:     C.En(1),
+//   },
+//   physics: {
+//     $meta: {
+//       name:         'Physics',
+//       description:  'Simple physics: collision detection, bounding boxes'
+//     },
+//     collide:        C.En(1),
+//     gravity:        C.En(1),
+//     boundingBox:    C.En(1),
+//     bodySize:       C.En(1),
+//     angryBirds:     C.En(1),
+//   },

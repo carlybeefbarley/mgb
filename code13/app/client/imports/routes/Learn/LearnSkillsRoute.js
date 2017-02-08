@@ -29,15 +29,10 @@ const descStyle = {
   lineHeight: "1.5em"
 }
 
-
-// hides code skill area. because it is at top level
-const saItems = []
-skillAreaItems.map((item, idx) => {
-  if(item.tag != 'code'){
-    saItems.push(item)
-  }
-})
-
+// Override for pages that have special learn routes. Everything else goes to /learn/skills/${area.tag}
+const _linkOverrides = {
+  code: '/learn/code'
+}
 
 const LearnSkillsRoute = ( { currUser }, context ) => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
@@ -56,12 +51,12 @@ const LearnSkillsRoute = ( { currUser }, context ) => (
         <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
             { 
-              saItems.map( (area, idx) => (
+              skillAreaItems.map( (area, idx) => (
                 <QLink 
                     key={idx} 
                     className="card animated fadeIn" 
                     style={cardStyle} 
-                    to={`/learn/skills/${area.tag}`}>
+                    to={ _linkOverrides[area.tag] ? _linkOverrides[area.tag] : `/learn/skills/${area.tag}`}>
                   <Card.Content>
                     <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
                     <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>

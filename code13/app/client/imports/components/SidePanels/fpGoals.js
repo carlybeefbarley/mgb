@@ -7,7 +7,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Progress, Icon } from 'semantic-ui-react'
 import { stopCurrentTutorial } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
-import { StartDefaultNextTutorial } from '/client/imports/routes/LearnGetStartedRoute'
+import { StartDefaultNextTutorial } from '/client/imports/routes/Learn/LearnGetStartedRoute'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]

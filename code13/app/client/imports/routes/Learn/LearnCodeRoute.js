@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import styles from './home.css'
-import QLink from './QLink'
+import styles from '../home.css'
+import QLink from '../QLink'
 import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'

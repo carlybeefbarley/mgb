@@ -110,33 +110,41 @@ export default {
   taskCharAnimations: {
     $meta: {
       icon: 'tasks',
-      link: '/u/!vault/asset/kMhY34EAEsETMiGmF',
+      link: '/u/!vault/asset/qNcrwh2emqdBEpPH5',
       name: 'Task',
-      description: `Move character around screen using arrow keys`
+      description: `Animate character - spawn, idle, run`
     },
   },
   physicsBasics: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/6gDjnQ6wAFQp2LZXB',
       name: 'Physics basics',
-      description: `velocity, gravity, world bounds...`
+      description: `velocity, gravity, bounce, world bounds`
     },
   },
   physicsCollide: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/9dhJ2jzY7iER84GeM',
       name: 'Physics collide',
-      description: ``
+      description: `two object collision`
+    },
+  },
+  taskJump: {
+    $meta: {
+      icon: 'code',
+      link: '/u/!vault/asset/qoQgYNPev3xqNXhXD',
+      name: 'Task',
+      description: `jump character on the floor`
     },
   },
   tweens: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/XnsehSEruvMKMBKLx',
       name: 'Tweens',
-      description: ``
+      description: `Animating with interpolation instead of frames`
     },
   },
   groups: {

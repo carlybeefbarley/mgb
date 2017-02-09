@@ -203,7 +203,7 @@ export default class ActorTileset extends React.Component {
     const label = this.props.getActiveLayerData().name === 'Events' ? 'Actors' : `${this.props.getActiveLayerData().name} Actors`
 
     return (
-      <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', height: '100%'}}>
+      <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
         <Label attached='top'>
           {label}
           {
@@ -228,7 +228,7 @@ export default class ActorTileset extends React.Component {
             data-drop-text='Drop asset here to create TileSet'
             onDrop={this.onDropOnLayer.bind(this)}
             onDragOver={DragNDropHelper.preventDefault}
-            style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
+            style={{flex: '1 1 auto', height: '0px', maxHeight: '100%', overflowY: 'auto'}}
             >
             {this.renderActors(1)}
           </div>

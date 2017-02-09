@@ -2024,7 +2024,6 @@ export default class EditCode extends React.Component {
                     currentToken={this.state.currentToken}
                     />
                   { asset.kind !== 'tutorial' && <ImportHelperPanel
-                    currentToken={this.state.currentToken}
                     scripts={this.state.userScripts}
                     includeImport={this.includeImport}
                     assetName={this.props.asset.name}

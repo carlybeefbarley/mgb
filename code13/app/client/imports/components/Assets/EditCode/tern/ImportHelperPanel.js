@@ -24,8 +24,13 @@ export default class StringExtendedInfo extends React.Component {
     localStorage.setItem("EditCodeImportHelperPanelExtended", next)
     this.setState({"showExpanded": next})
   }
-
+  shouldComponentUpdate(newP, newS){
+    return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
+  }
   componentWillReceiveProps(props){
+    if(_.isEqual(this.props, props)){
+      return
+    }
     const map = []
     props.scripts.forEach( s => {
       const index = props.knownImports.findIndex( a => {

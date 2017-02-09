@@ -3,6 +3,8 @@ import React, { PropTypes } from 'react'
 import { hasSkill } from '/imports/schemas/skills'
 import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
 
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 // TODO - embed/link to MDN docs using https://developer.mozilla.org/en-US/docs/MDN/Contribute/Tools/Document_parameters
@@ -1217,20 +1219,22 @@ export default TokenDescription = React.createClass({
                           (help ? (help.skillNodes || null) : null)
     let showExpanded = !skillNodeKey || (isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey))
 
-// Special cases that won't involve a skillNode lookup
-if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def' &&
-  (!skillNodeKey || !isSkillKeyValid(skillNodeKey))
-)
-{
-  console.log(`TokenDescription database has no SkillNode for TT:${token.type} TS:${tsTrunc}`)
-  showExpanded = true
-}
-    // TODO.. something useful with token.state?
+    // Special cases that won't involve a skillNode lookup
+    if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def' &&
+      (!skillNodeKey || !isSkillKeyValid(skillNodeKey))
+    )
+    {
+      console.log(`TokenDescription database has no SkillNode for TT:${token.type} TS:${tsTrunc}`)
+      showExpanded = true
+    }
+
+
+
     const advices = []
     if(help && help.advices){
       for(let i=0; i<help.advices.length; i++){
         advices.push(
-          <p key={i} style={{margin: 0}}><i className="ui info circle icon"></i>
+          <p key={advices.length} style={{margin: 0}}><i className="ui info circle icon"></i>
             <small style={{fontSize: '85%'}}>{help.advices[i]}</small>
           </p>
         )

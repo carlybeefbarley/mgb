@@ -715,10 +715,10 @@ export default class EditCode extends React.Component {
           break
         case 'code':
           if (this.props.asset.dn_ownerName === draggedAsset.dn_ownerName)
-            url = `./${draggedAsset.name}`
+            code = this.createImportString(draggedAsset.name)
           else
-            url = `./${draggedAsset.dn_ownerName}:${draggedAsset.name}`
-          code = `import '${url}'`
+            code = `import ${validJSName(draggedAsset.name)} from './${draggedAsset.dn_ownerName}:${draggedAsset.name}'`
+
           break
         default:
           code = draggedAsset._id
@@ -1917,8 +1917,12 @@ export default class EditCode extends React.Component {
     addJoyrideSteps( [], { replace: true } )
   }
 
+  createImportString(val){
+    return `import ${validJSName(val)} from '/${val}'\n`
+  }
+
   includeLocalImport(val){
-    const imp = `import ${validJSName(val)} from '/${val}'\n` + this.codeMirror.getValue()
+    const imp = this.createImportString(val) + this.codeMirror.getValue()
 
     this.codeMirror.setValue(imp)
     this.handleContentChange({src: imp})
@@ -1929,6 +1933,43 @@ export default class EditCode extends React.Component {
 
     this.codeMirror.setValue(imp)
     this.handleContentChange({src: imp})
+  }
+
+  getStringReferences(){
+    const token = this.state.currentToken
+    const advices = []
+    // TODO.. something useful with token.state?
+    if(token && token.type == 'string' && this.state.userScripts && this.state.userScripts.length > 0){
+      let string = token.string.substring(1, token.string.length -1)
+      if(string.startsWith('/') && !string.startsWith('//')){
+        string = string.substring(1)
+        const parts = string.split(":")
+        if(parts.length === 1){
+          const script = this.state.userScripts.find(a => a.text == string)
+          if(script){
+            advices.push(
+                <a className="ui fluid label" key={script.id} style={{marginBottom: "2px"}} href={`/assetEdit/${script.id}`} target='_blank'>
+                  <small style={{fontSize: '85%'}}>this string references <strong>your</strong> code asset:
+                    <code>{string}</code></small>
+                  <Thumbnail className="ui right spaced medium image" id={script.id} expires={60} />
+                  <small>{script.desc}</small>
+                </a>
+            )
+          }
+        }
+        // TODO: get link to asset
+        else if(parts.length === 2){
+          advices.push(
+            <div key={advices.length} style={{margin: 0}}><i className="ui fluid label"></i>
+              <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
+                <code>{parts[1]}</code></small>
+              <Thumbnail className="ui right spaced medium image" id={parts.join('/')} expires={60} />
+            </div>
+          )
+        }
+      }
+    }
+    return advices
   }
 
   render() {
@@ -1950,6 +1991,7 @@ export default class EditCode extends React.Component {
 
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
+    // preview ID and String references soing very similar things
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
       return (
         <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
@@ -1958,6 +2000,9 @@ export default class EditCode extends React.Component {
         </a>
       )
     })
+    const stringReferences = this.getStringReferences()
+
+
 
     const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
 
@@ -2009,10 +2054,17 @@ export default class EditCode extends React.Component {
                       stopTutorial={() => this.stopTutorial()}
                       parsedTutorialData={this.state.parsedTutorialData}
                       insertCodeCallback={ canEdit ? (newCodeStr => this.insertTextAtCursor(newCodeStr) ) : null }/>
+
                   { previewIdThings && previewIdThings.length > 0 &&
                     <div className="ui divided selection list">
                       {previewIdThings}
                     </div>
+                  }
+
+                  { stringReferences && stringReferences.length > 0 &&
+                  <div className="ui divided selection list">
+                    {stringReferences}
+                  </div>
                   }
                 </div>
               }
@@ -2030,6 +2082,7 @@ export default class EditCode extends React.Component {
                 <div className="active content">
                   <TokenDescription
                     currentToken={this.state.currentToken}
+                    scripts={this.state.userScripts}
                     />
                   { this.state.astReady &&
                   <ImportHelperPanel
@@ -2058,6 +2111,12 @@ export default class EditCode extends React.Component {
                     <div className="ui divided selection list">
                       {previewIdThings}
                     </div>
+                  }
+
+                  { stringReferences && stringReferences.length > 0 &&
+                  <div className="ui divided selection list">
+                    {stringReferences}
+                  </div>
                   }
                 </div>
               }

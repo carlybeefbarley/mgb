@@ -133,10 +133,10 @@ export default {
   },
   taskJump: {
     $meta: {
-      icon: 'code',
+      icon: 'tasks',
       link: '/u/!vault/asset/qoQgYNPev3xqNXhXD',
       name: 'Task',
-      description: `jump character on the floor`
+      description: `jump character with simple physics`
     },
   },
   tweens: {
@@ -150,9 +150,17 @@ export default {
   groups: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/jYQwe8cv2rtDDCM89',
       name: 'Groups',
-      description: ``
+      description: `add sprites to a group`
+    },
+  },
+  taskTweenGroup: {
+    $meta: {
+      icon: 'code',
+      link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
+      name: 'Tasks',
+      description: `add sprites to a group`
     },
   },
   oop: {
@@ -160,15 +168,7 @@ export default {
       icon: 'code',
       link: '',
       name: 'OOP',
-      description: `Object oriented programming`
-    },
-  },
-  gameState: {
-    $meta: {
-      icon: 'code',
-      link: '',
-      name: 'Game states',
-      description: ``
+      description: `Object oriented programming and game states`
     },
   },
 

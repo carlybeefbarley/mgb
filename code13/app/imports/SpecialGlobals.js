@@ -31,7 +31,24 @@ export default SpecialGlobals = {
   editCode: {
     maxFileSizeForAST: 10000 * 1024, // 100 KB
     typingSpeed: 750, //ms - this will prevent all updates for X time after keypress - improves fast typing UX (feels more responsive)
-    maxLengthOfCursorHistory: 100
+    maxLengthOfCursorHistory: 100,
+    popularLibs: [
+      {
+        name: 'Phaser',
+        import: 'phaser',
+        desc: 'A fast, free and fun open source framework for Canves and WebGL powered browser games.'
+      },
+      {
+        name: 'React',
+        import: 'react',
+        desc: 'A JavaScript library for building user interfaces'
+      },
+      {
+        name: '_',
+        import: 'lodash',
+        desc: 'A modern JavaScript utility library delivering modularity, performance & extras.'
+      }
+    ]
   },
 
   assets: {

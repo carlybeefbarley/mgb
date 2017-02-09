@@ -234,7 +234,15 @@ export default class SourceTools {
     source.localName = localName
     source.isExternalFile = SourceTools.isExternalFile(source.url)
     if(origin){
-      source.origin = origin
+      if(!source.origin){
+        source.origin = [origin]
+      }
+      else{
+        source.origin.push(origin)
+      }
+    }
+    else{
+      console.log("unknown origin for:", name)
     }
     this.collectSource(source)
     // MGB assets will have cache.. remote won't
@@ -329,7 +337,7 @@ export default class SourceTools {
   }
 
   // real source collection and transformation method
-  _collectAndTranspile(srcText, filename, callback, force, origin = this.mainJS) {
+  _collectAndTranspile(srcText, filename, callback, force, origin) {
     if (this.isDestroyed) return
     this.pendingChanges[filename] = true
     const compiled = !force && this.isAlreadyTranspiled(filename);
@@ -464,7 +472,7 @@ export default class SourceTools {
               this.setError({reason: "Unable to load: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.SOURCE_NOT_FOUND})
               return
             }
-            this._collectAndTranspile(content, urlFinalPart, cb, true)
+            this._collectAndTranspile(content, urlFinalPart, cb, true, origin)
           }, asset
         )
       }
@@ -686,6 +694,13 @@ main = function(){
   loadCommonDefs(){
     this.loadDefs(knownLibs.common.defs())
   }
+
+  collectImportsForFile(name){
+    return this.collectedSources.filter(script => {
+      return script.name != name && script.origin.indexOf(name) > -1
+    })
+  }
+
 
   // includes all files in the on big bundle file - not used atm
   createBundle_commonJS(cb) {

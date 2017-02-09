@@ -138,7 +138,8 @@ export default class EditCode extends React.Component {
       redo: []
     }
 
-    this.includeImport = this.includeImport.bind(this)
+    this.includeLocalImport = this.includeLocalImport.bind(this)
+    this.includeExternalImport = this.includeExternalImport.bind(this)
   }
 
 
@@ -1916,8 +1917,15 @@ export default class EditCode extends React.Component {
     addJoyrideSteps( [], { replace: true } )
   }
 
-  includeImport(val){
+  includeLocalImport(val){
     const imp = `import ${validJSName(val)} from '/${val}'\n` + this.codeMirror.getValue()
+
+    this.codeMirror.setValue(imp)
+    this.handleContentChange({src: imp})
+  }
+
+  includeExternalImport(val){
+    const imp = `import ${val.name} from '${val.import}'\n` + this.codeMirror.getValue()
 
     this.codeMirror.setValue(imp)
     this.handleContentChange({src: imp})
@@ -2023,11 +2031,12 @@ export default class EditCode extends React.Component {
                   <TokenDescription
                     currentToken={this.state.currentToken}
                     />
-                  { asset.kind !== 'tutorial' && <ImportHelperPanel
+                  { this.state.astReady &&
+                  <ImportHelperPanel
                     scripts={this.state.userScripts}
-                    includeImport={this.includeImport}
-                    assetName={this.props.asset.name}
-                    knownImports={this.tools.collectedSources}
+                    includeLocalImport={this.includeLocalImport}
+                    includeExternalImport={this.includeExternalImport}
+                    knownImports={this.tools.collectImportsForFile(this.props.asset.name)}
                     /> }
                   <FunctionDescription
                     functionHelp={this.state.functionHelp}

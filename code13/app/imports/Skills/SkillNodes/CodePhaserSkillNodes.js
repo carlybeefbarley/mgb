@@ -157,21 +157,28 @@ export default {
   },
   taskTweenGroup: {
     $meta: {
-      icon: 'code',
+      icon: 'tasks',
       link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
       name: 'Tasks',
-      description: `add sprites to a group`
+      description: `animate group of dwarfs`
     },
   },
   oop: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/project/aEzfbLcQ9uZKYaCu8',
       name: 'OOP',
       description: `Object oriented programming and game states`
     },
   },
-
+  next: {
+    $meta: {
+      icon: 'info',
+      link: '/u/!vault/asset/jWGJmWKcGe83r5pEY',
+      name: 'What to do next?',
+      description: `Learn Phaser docs and examples`
+    },
+  },
 }
 
 

@@ -21,17 +21,18 @@ class InputSearchBox extends React.Component {
 
   state = { activeValue: '' }
 
-  _onKeyUp(event) {
+  _onKeyUp = (event) => {
     if (event.key === "Enter")
     {
-      this.props.onFinalChange(this.state.activeValue)
+      this._onActionClick()
       event.preventDefault()
     }
   }
 
-  _onInternalChange (event) {
-    this.setState( { activeValue: event.target.value } )
-  }
+  _onInternalChange = (event) => { this.setState( { activeValue: event.target.value } ) }
+
+  _onActionClick = () => { this.props.onFinalChange(this.state.activeValue) }
+
 
   render() {
     const { defaultValue } = this.props
@@ -42,9 +43,9 @@ class InputSearchBox extends React.Component {
         placeholder='Search...'
         { ..._.omit(this.props, ['onFinalChange','value']) }
         defaultValue={defaultValue}
-        onChange={ (e) => this._onInternalChange(e) }
-        onKeyUp={ (e) => this._onKeyUp(e) }
-        action={{ icon: 'search', color: actionColor, onClick: () => this.props.onFinalChange(activeValue)}}
+        onChange={ this._onInternalChange }
+        onKeyUp={ this._onKeyUp }
+        action={{ icon: 'search', color: actionColor, onClick: this._onActionClick}}
         />
     )
   }

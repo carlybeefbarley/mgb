@@ -12,13 +12,17 @@ export default class StringExtendedInfo extends React.Component {
   }
   constructor(...a){
     super(...a)
+    const savedState = localStorage.getItem("EditCodeImportHelperPanelExtended") === null ? 1 : 0
+
     this.state = {
-      showExpanded: true
+      showExpanded: savedState
     }
     this.options = []
   }
   handleHideShowClick(){
-    this.setState({"showExpanded": !this.state.showExpanded})
+    const next = this.state.showExpanded ? 0 : 1
+    localStorage.setItem("EditCodeImportHelperPanelExtended", next)
+    this.setState({"showExpanded": next})
   }
 
   componentWillReceiveProps(props){
@@ -40,17 +44,18 @@ export default class StringExtendedInfo extends React.Component {
     if(!this.props.scripts || !this.props.scripts.length)
       return null
 
-
     const {showExpanded} = this.state
-
     return <div className="ui blue segment" style={{backgroundColor: "rgba(160,32,240,0.03)", color: "#2A00FF"}}>
       <a className="ui left ribbon label">
         <small>My Scripts</small>
       </a>
-      <a className="ui blue right corner label" title="Click to hide import helper">
-        <i className="minus circle icon"></i>
+      <a className="ui blue right corner label" title={`Click to ${ showExpanded ? "hide" : "show" } import helper`}
+         onClick={() => this.handleHideShowClick()}
+        >
+        <i className={(!showExpanded ? "add circle " : "minus circle ")+ " icon"}></i>
       </a>
-      <div style={{marginTop: '5px'}}>
+
+      {!!showExpanded && <div style={{marginTop: '5px'}}>
         <Dropdown
           fluid search selection
           options={ this.options }
@@ -61,7 +66,7 @@ export default class StringExtendedInfo extends React.Component {
             this.props.includeImport(b.value)
           }}
           />
-        </div>
+        </div> }
     </div>
   }
 }

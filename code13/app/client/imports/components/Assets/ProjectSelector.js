@@ -1,115 +1,103 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Dropdown, Icon } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
 // TODO: Handle name collisiions with OTHERs' projects
 
-export default ProjectSelector = React.createClass({
-  propTypes: {
-    canEdit:              PropTypes.bool,
-    isUseCaseCreate:      PropTypes.bool,               // If yes, then say 'no project' instead of 'any project'
-    user:                 PropTypes.object,             // User who we are selecting on behalf of. CAN BE NULL
-    availableProjects:    PropTypes.array,              // Array of Projects for that user (owned & memberOf). See projects.js for schema. Can include owned or memberOf
-    chosenProjectName:    PropTypes.string,             // null means 'all'    // TODO: Also ADD projectOWNER !!!!!!!!!!!!!
-    showProjectsUserIsMemberOf:  PropTypes.bool,        // if True then also show MemberOf projects
-    handleChangeSelectedProjectName: PropTypes.func.isRequired   // Callback params will be (projectName, projectOwnerId, projectOwnerName)
-  },
-  
-  renderSelectionIcon: (isActive) => (<i className={`ui ${isActive ? "green" : "grey disabled"} sitemap icon`} />),
-  makeCompoundProjectName: (ownerName, projectName) => (`${ownerName} ➟ ${projectName}`),
+const _makeCompoundProjectName = (ownerName, projectName) => (`${ownerName}:${projectName}`)
+const _renderSelectionIcon = isActive => <Icon name='sitemap' disabled={!isActive} color={isActive ? 'green' : 'grey'} />
 
-  render: function() {
-    const pName = this.props.chosenProjectName
-    const { user, canEdit, availableProjects, showProjectsUserIsMemberOf, ProjectListLinkUrl, isUseCaseCreate } = this.props
-    let ownedProjects = []
-    let memberOfProjects = []
-    const userName = user ? user.profile.name : "guest"
-    const anyOrAll = isUseCaseCreate ? 'No Project' : 'All Projects'
-    let activeProjectObject = null
+const ProjectSelector = props => {
+  const pName = props.chosenProjectName
+  const { user, canEdit, availableProjects, showProjectsUserIsMemberOf, ProjectListLinkUrl, isUseCaseCreate, handleChangeSelectedProjectName } = props
+  let ownedProjects = []
+  let memberOfProjects = []
+  const userName = user ? user.profile.name : "guest"
+  const anyOrAll = isUseCaseCreate ? 'No Project' : 'All Projects'
+  let activeProjectObject = null
 
-    // Build the list of 'View Project' Menu choices of OWNED and MEMBER projects
-    _.each(availableProjects, (project) => { 
-      const isActive = (project.name === pName) 
-      if (isActive) {
-        if (activeProjectObject) {
-          console.error('BUG: ProjectSelector() DOES NOT YET HANDLE ProjectName collisions. Doh ')    // TODO!!! Update interface to handle userId
-        }
-        activeProjectObject = project
+  // Build the list of 'View Project' Menu choices of OWNED and MEMBER projects
+  _.each(availableProjects, (project) => { 
+    const isActive = (project.name === pName) 
+    if (isActive) {
+      if (activeProjectObject) {
+        console.error('BUG: ProjectSelector() DOES NOT YET HANDLE ProjectName collisions. Doh ')    // TODO!!! Update interface to handle userId
       }
-      const isOwner = user && (project.ownerId === user._id)
-      const entry = (
-        <a  className={"ui item"+ (isActive ? " active" : "")} 
-            data-value={project} 
-            key={project._id} 
-            onClick={this.handleChangeSelectedProjectName.bind(this, project)}>
-          { this.renderSelectionIcon(isActive ) }
-          { isOwner ? (project.name) : this.makeCompoundProjectName(project.ownerName, project.name) }
-        </a>
-        )
-      if (isOwner)
-        ownedProjects.push( entry )
-      else if (showProjectsUserIsMemberOf)
-        memberOfProjects.push( entry )
-    })
-    
-    // Add '(Any Project) if there are 1 or more projects Owned by this user
-    if (ownedProjects.length > 0)
-    {
-      const isActive = (pName === null)
-      ownedProjects.unshift(
-        <a  className={"ui item"+ (isActive ? " active" : "")} 
-            title='Assets can optionally be placed in one or more projects, as long as the projects all have the same Owner'
-            data-value="__all" 
-            key="__all" 
-            onClick={this.handleChangeSelectedProjectName.bind(this, null)}>
-            { this.renderSelectionIcon(isActive ) }
-            ({anyOrAll})
-        </a>)
-      ownedProjects.unshift(
-        <a  className="ui header"
-            data-value="__ownedHdr"
-            key="__ownedHdr">
-            Projects owned by {userName}
-        </a>)
+      activeProjectObject = project
     }
-    else
-      ownedProjects = <div className="ui disabled item">(No projects owned by {userName}</div>
+    const isOwner = user && (project.ownerId === user._id)
+    const entry = (
+      <Dropdown.Item 
+        active={isActive} 
+        value={project._id} 
+        icon={ _renderSelectionIcon(isActive ) }
+        key={project._id}
+        text={ isOwner ? (project.name) : _makeCompoundProjectName(project.ownerName, project.name) }
+        onClick={() => { handleChangeSelectedProjectName( project.name, project, _makeCompoundProjectName(project.ownerName, project.name) ) } }
+        /> 
+    ) // TODO: Get rid of bind in onClick() above
+    if (isOwner)
+      ownedProjects.push( entry )
+    else if (showProjectsUserIsMemberOf)
+      memberOfProjects.push( entry )
+  })
 
-    if (memberOfProjects.length > 0)
-      memberOfProjects.unshift(
-        <a  className="ui header"
-            data-value="__memberHdr"
-            key="__memberHdr">
-            Projects {userName} is a Member of
-        </a>
-      )
+  // Add '(Any Project) if there are 1 or more projects Owned by this user
+  if (ownedProjects.length > 0)
+  {
+    const isActive = (pName === null)
+    ownedProjects.unshift(
+      <Dropdown.Item 
+        active={isActive}
+        title='Assets can optionally be placed in one or more Projects, as long as the Projects all have the same Owner'
+        value="__all" 
+        key="__all" 
+        icon={ _renderSelectionIcon( isActive ) }
+        text={`(${anyOrAll})`}
+        onClick={ () => handleChangeSelectedProjectName( null, null, '')}/> 
+    )
+    ownedProjects.unshift( <Dropdown.Header value="__ownedHdr" key="__ownedHdr" content={`Projects owned by ${userName}`}/> )
+  }
+  else
+    ownedProjects = <Dropdown.Item content={<small>({userName} owns no Projects yet)</small>} />
 
-    // Create the   |  In Project:  (ProjectSelect v)    |    UI        
+  if (memberOfProjects.length > 0)
+    memberOfProjects.unshift( <Dropdown.Header value="__memberHdr" key="__memberHdr" content={`Projects ${userName} is a Member of`} /> )
 
-    const pNameToShow = activeProjectObject ? this.makeCompoundProjectName(activeProjectObject.ownerName, activeProjectObject.name) : pName
-    return (
-      <div className="ui simple dropdown item">
-        <small>In Project: {pNameToShow || `(${anyOrAll})`}</small>
-        <i className="dropdown icon"></i>
-        <div className="ui right menu simple">
-          { ownedProjects }
-          { showProjectsUserIsMemberOf && memberOfProjects }
-          <div className="divider"></div>
-          { user &&
+  // Create the   |  In Project:  (ProjectSelect v)    |    UI        
+
+// TODO(@levithomason): Can you make <Dropdown.Menu scrolling> work without too much 
+//                      disruption? When I tried it, I could not see a scrollbar when 
+//                      used in the Assets FlexPanel
+
+  const pNameToShow = activeProjectObject ? _makeCompoundProjectName(activeProjectObject.ownerName, activeProjectObject.name) : pName
+  return (
+    <Dropdown trigger={<small>In Project: {pNameToShow || `(${anyOrAll})`}</small>} >
+      <Dropdown.Menu>
+        { ownedProjects }
+        { showProjectsUserIsMemberOf && memberOfProjects }
+        <Dropdown.Divider />
+        { user &&
+          <Dropdown.Item>
             <QLink className="ui item" to={ProjectListLinkUrl}>
               { canEdit ? "Manage Projects" : "View Project List" }
             </QLink>
-          }
-        </div>
-      </div>
-    )
-  },
+          </Dropdown.Item>
+        }
+      </Dropdown.Menu>
+    </Dropdown>
+  )
+}
 
-  handleChangeSelectedProjectName: function(proj)
-  {
-    if (proj)
-      this.props.handleChangeSelectedProjectName( proj.name, proj, this.makeCompoundProjectName(proj.ownerName, proj.name) )
-    else
-      this.props.handleChangeSelectedProjectName( null, null, '' )
-  }
-})
+ProjectSelector.propTypes = {
+  canEdit:              PropTypes.bool,
+  isUseCaseCreate:      PropTypes.bool,               // If yes, then say 'no project' instead of 'any project'
+  user:                 PropTypes.object,             // User who we are selecting on behalf of. CAN BE NULL
+  availableProjects:    PropTypes.array,              // Array of Projects for that user (owned & memberOf). See projects.js for schema. Can include owned or memberOf
+  chosenProjectName:    PropTypes.string,             // null means 'all'    // TODO: Also ADD projectOWNER !!!!!!!!!!!!!
+  showProjectsUserIsMemberOf:  PropTypes.bool,        // if True then also show MemberOf projects
+  handleChangeSelectedProjectName: PropTypes.func.isRequired   // Callback params will be (projectName, projectOwnerId, projectOwnerName)
+}
+
+export default ProjectSelector

@@ -12,22 +12,21 @@
 // thus be used in place abstract values that only ever contain a
 // single type.
 
-!Array.prototype.findIndex && Object.defineProperty(Array.prototype, 'findIndex', {
-  value: function(predicate) {
-    var o = Object(this)
-    var len = o.length >>> 0
-    var thisArg = arguments[1]
-    var k = 0
-    while (k < len) {
-      var kValue = o[k]
-      if (predicate.call(thisArg, kValue, k, o)) {
-        return k
+if(Array.prototype.findIndex === void(0)) {
+  Object.defineProperty(Array.prototype, 'findIndex', {
+    value: function (predicate) {
+      var o = Object(this), len = o.length >>> 0, thisArg = arguments[1], k = 0
+      while (k < len) {
+        var kValue = o[k]
+        if (predicate.call(thisArg, kValue, k, o)) {
+          return k
+        }
+        k++
       }
-      k++
+      return -1
     }
-    return -1
-  }
-})
+  })
+}
 
 (function(root, mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS

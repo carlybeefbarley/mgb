@@ -6,7 +6,7 @@ import { Input } from 'semantic-ui-react'
 // the icon action area in orange if changes are pending (user needs to push enter or click search)
 
 const _propTypes = {    // These are applied to the class at the bottom of this file
-  defaultValue:       PropTypes.string.isRequired,  // The value.
+  value:       PropTypes.string.isRequired,  // The value.
   className:          PropTypes.string,             // Additional classNames
   style:              PropTypes.object,             // Optional style for <input> element
   onFinalChange:      PropTypes.func.isRequired     // Callback param will be a string of length guaranteed to be in range 0...maxLen.
@@ -15,8 +15,8 @@ const _propTypes = {    // These are applied to the class at the bottom of this 
 class InputSearchBox extends React.Component {
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.defaultValue !== nextProps.defaultValue)
-      this.setState( { activeValue: nextProps.defaultValue } )
+    if (this.props.value !== nextProps.value)
+      this.setState( { activeValue: nextProps.value } )
   }
 
   state = { activeValue: '' }
@@ -35,14 +35,14 @@ class InputSearchBox extends React.Component {
 
 
   render() {
-    const { defaultValue } = this.props
+    const { value } = this.props
     const { activeValue } = this.state
-    const actionColor = activeValue != defaultValue ? 'orange' : null
+    const actionColor = activeValue != value ? 'orange' : null
     return (
       <Input 
         placeholder='Search...'
         { ..._.omit(this.props, ['onFinalChange','value']) }
-        defaultValue={defaultValue}
+        value={activeValue}
         onChange={ this._onInternalChange }
         onKeyUp={ this._onKeyUp }
         action={{ icon: 'search', color: actionColor, onClick: this._onActionClick}}

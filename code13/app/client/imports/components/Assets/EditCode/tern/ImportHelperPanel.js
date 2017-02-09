@@ -32,6 +32,9 @@ export default class StringExtendedInfo extends React.Component {
     this.updateProps(props)
   }
   updateProps(props){
+    if(!_.isEqual(this.props, props)){
+      return
+    }
     const checkIfImported = (s, global = false) => {
       if(props.knownImports){
         const index = props.knownImports.findIndex( known => {
@@ -64,7 +67,7 @@ export default class StringExtendedInfo extends React.Component {
       if(checkIfImported(s, true)){
         return
       }
-      this.popuplar.push({ text: s.name, description: s.desc, value: i, option: s})
+      this.popuplar.push({ text: s.name, description: s.desc, value: i})
     })
   }
 

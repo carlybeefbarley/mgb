@@ -1,5 +1,5 @@
 export const templateCode = [
-  
+
   { label: "PhaserJS outline",
     description: "Empty functions for preload(), create() and render()",
     code: `// Start to make a Phaser game.
@@ -18,8 +18,8 @@ function preload() {
 
   game.load.crossOrigin = 'anonymous'
 
-  // Example of how to load and name an asset to use in code. 
-  // You can drag assets from the right hand Assets panel towards 
+  // Example of how to load and name an asset to use in code.
+  // You can drag assets from the right hand Assets panel towards
   // this code area to generate these kinds of api/url links:
   game.load.image('playerThing', '/api/asset/png/2ojWGXPXC99A7eDP7')
 
@@ -39,21 +39,21 @@ function render() {
 
 }`
   },
-  
+
   { label: "Moving player",
     description: "Player character that can move and jump",
     code: `// Start to make a Phaser game.
 
 import 'phaser'
-// Create the Phaser Game. 
-// 
+// Create the Phaser Game.
+//
 const game = new Phaser.Game(
    "100", // Phaser.Game uses this number in quotes to mean % of screen width
-   window.innerHeight - 40, // another way to automatically calculate size (height) 
+   window.innerHeight - 40, // another way to automatically calculate size (height)
    Phaser.AUTO, // Automatically choose the fastest renderer type for this browser
    'mygame', // The name of this game
-   { 
-     // now we need to tell phaser what we decided to call various functions it will need 
+   {
+     // now we need to tell phaser what we decided to call various functions it will need
      // so the game can work.
      preload: preload, // The preload function is called preload (it is defined below)
      create: create,   // The create function is called create (it is defined below)
@@ -74,7 +74,7 @@ function preload() {
     game.load.crossOrigin = 'anonymous'
 
     // example of how to load and name an MGB asset to use in code
-    // You can drag assets from the right hand Assets panel towards 
+    // You can drag assets from the right hand Assets panel towards
     // this code area to generate these kinds of api/url links:
     game.load.image('playerThing','/api/asset/png/2ojWGXPXC99A7eDP7')
 }
@@ -105,13 +105,13 @@ function update () {
 
     if (jumpButton.isDown && (player.body.onFloor() || player.body.touching.down))
       player.body.velocity.y = -400
-  
+
     // Allow the player to jump if they are touching the ground.
     if (cursors.up.isDown && (player.body.onFloor() || player.body.touching.down))
         player.body.velocity.y = -350
 }
 
-function render() 
+function render()
 {
   // We don't need to do anything special here for this demo yet since
   // the object we created includes the needed logic to draw it
@@ -272,8 +272,8 @@ export default class extends React.Component {
     description: "",
     code:
 `
-import 'phaser'
-import '/stauzs/mgb-map-loader'
+import Phaser from 'phaser'
+import '/!vault/mgb-map-loader'
 
 const game = new Phaser.Game(27*16, 15*16, Phaser.AUTO, document.body, {
   preload: function(){

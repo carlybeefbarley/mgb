@@ -82,7 +82,7 @@ window.onload = function() {
         console[stableName] = function(msg) {
           consoleOrigFns[stableName].origFn.apply(this, arguments);
           var args = []
-          for(let i=0; i<arguments.length; i++){
+          for(var i=0; i<arguments.length; i++){
             if(typeof arguments[i] == "object"){
               var cache = [];
               args[i] = JSON.stringify(arguments[i], function (key, value) {

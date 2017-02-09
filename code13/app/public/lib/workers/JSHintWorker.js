@@ -1,10 +1,10 @@
 // this is required for babel - as it uses window as global
 this.window = this
-importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.js")
-importScripts("https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.4/jshint.min.js")
-
-//importScripts('/lib/babel-standalone.js', '/lib/jshint.min.js')
-
+importScripts(
+  "https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.4/jshint.min.js"
+)
+importScripts()
 
 onmessage = function (e) {
   var str = e.data[0]
@@ -22,13 +22,9 @@ onmessage = function (e) {
   }
     // TODO: what to do if babel fails to transform code?
   catch (e) {
-    var f = new Array(e.loc.line - 1);
-    f.fill("\n");
-    code = f.join("") + str.substring(e.pos);
-
-    const lines = str.split("\n");
-    lines.splice(e.loc.line - 1, 1);
-    code = '';//lines.join("\n");
+    const lines = str.split("\n")
+    lines.splice(e.loc.line - 1, 1)
+    code = '';
     babelError = {
       line: e.loc.line,
       code: "EXXX",

@@ -24,17 +24,23 @@ export default ExpressionDescription = React.createClass({
     const colorGrey = {color: "#777"}
     const isFn = type.startsWith("fn(") ? "(...)" : "";
 
-    const nameFriendly = makeFriendlyName(name, exprName);
-    const typeFriendly = type.length > 30 ? type
-      .replace(/\{/gi,"{\n")
-      .replace(/\}/gi,"\n}")
-      //.replace(/\(/gi,"(\n")
-      //.replace(/\)/gi,"\n)")
-      .replace(/ /gi,"")
-      .replace(/\,/gi,",\n")
-      .replace(/:/gi,": ") : type
+    const nameFriendly = makeFriendlyName(name, exprName)
 
-
+    let typeFriendly = ''
+    console.log("type.length:", type.length)
+    if(type.length > 300){
+      typeFriendly = name
+    }
+    else{
+      typeFriendly = type.length > 30 ? type
+        .replace(/\{/gi,"{\n")
+        .replace(/}/gi,"\n}")
+        //.replace(/\(/gi,"(\n")
+        //.replace(/\)/gi,"\n)")
+        .replace(/ /gi,"")
+        .replace(/,/gi,",\n")
+        .replace(/:/gi,": ") : type
+    }
     return (
       <div className="ui yellow segment" style={{backgroundColor: "rgba(255,255,0,0.03)"}}>
         <a className="ui orange left ribbon label"><code>{nameFriendly}{isFn}</code></a>

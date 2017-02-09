@@ -256,8 +256,6 @@ export default class TileMapLayer extends AbstractLayer {
         </div>
       </div>
     )
-
-    return this.tilePosInfo
   }
 
   selectRectangle (pos) {

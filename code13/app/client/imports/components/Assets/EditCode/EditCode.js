@@ -27,6 +27,7 @@ import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
 // import tlint from 'tern-lint'
+import validJSName from '/client/imports/helpers/validJSName'
 
 // **GLOBAL*** Tern JS - See comment below...
 import scoped_tern from "tern"
@@ -47,6 +48,7 @@ import FunctionDescription from './tern/FunctionDescription.js'
 import ExpressionDescription from './tern/ExpressionDescription.js'
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
 import TokenDescription from './tern/TokenDescription.js'
+import StringExtendedInfo from './tern/StringExtendedInfo.js'
 
 import DebugASTview from './tern/DebugASTview.js'
 
@@ -135,6 +137,8 @@ export default class EditCode extends React.Component {
       undo: [],
       redo: []
     }
+
+    this.includeImport = this.includeImport.bind(this)
   }
 
 
@@ -155,6 +159,7 @@ export default class EditCode extends React.Component {
     // Debounce the codeMirrorUpdateHints() function
     this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
 
+    this.updateUserScripts()
     // previous debounce eats up changes
     this.codeMirrorUpdateHintsChanged = _.debounce(() => {
       codeMirrorUpdateHints.call(this, true)
@@ -547,8 +552,12 @@ export default class EditCode extends React.Component {
       const parts = keyword.split(':')
       // get hints for own assets
       if(parts.length == 1){
+        if(keyword.length < 2){
+          this.showCustomCMHint(cm, this.state.userScripts, 1)
+          return
+        }
         mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=${keyword.substring(1)}`, (err, listStr) => {
-          if(err)
+          if (err)
             return
           this.showCustomCMHint(cm, JSON.parse(listStr), 1)
         })
@@ -566,6 +575,17 @@ export default class EditCode extends React.Component {
     return CodeMirror.Pass
   }
 
+  updateUserScripts(cb){
+    mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=`, (err, listStr) => {
+      if(err)
+        return
+      try{
+        this.setState({"userScripts": JSON.parse(listStr)})
+      }
+      catch(e){}
+      cb && cb()
+    })
+  }
 
   codeEditPassAndHint(cm) {
     if (this.props.canEdit)
@@ -1896,6 +1916,13 @@ export default class EditCode extends React.Component {
     addJoyrideSteps( [], { replace: true } )
   }
 
+  includeImport(val){
+    const imp = `import ${validJSName(val)} from '/${val}'\n` + this.codeMirror.getValue()
+
+    this.codeMirror.setValue(imp)
+    this.handleContentChange({src: imp})
+  }
+
   render() {
     const { asset, canEdit } = this.props
 
@@ -1956,7 +1983,7 @@ export default class EditCode extends React.Component {
         {
         <div className={infoPaneOpts.col2 + ' wide column'} style={{display: infoPaneOpts.col2 ? "block" : "none"}}>
 
-          <div className="mgbAccordionScroller">
+          <div className="mgbAccordionScroller" style={{minHeight: '385px'}}>
             <div className="ui fluid styled accordion">
 
               { !docEmpty && asset.kind === 'tutorial' &&
@@ -1994,8 +2021,15 @@ export default class EditCode extends React.Component {
                 // Current Line/Selection helper (body)
                 <div className="active content">
                   <TokenDescription
-                    currentToken={this.state.currentToken}/>
-
+                    currentToken={this.state.currentToken}
+                    />
+                  <StringExtendedInfo
+                    currentToken={this.state.currentToken}
+                    scripts={this.state.userScripts}
+                    includeImport={this.includeImport}
+                    assetName={this.props.asset.name}
+                    knownImports={this.tools.collectedSources}
+                    />
                   <FunctionDescription
                     functionHelp={this.state.functionHelp}
                     functionArgPos={this.state.functionArgPos}

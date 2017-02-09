@@ -1226,7 +1226,6 @@ if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def
   showExpanded = true
 }
     // TODO.. something useful with token.state?
-
     const advices = []
     if(help && help.advices){
       for(let i=0; i<help.advices.length; i++){

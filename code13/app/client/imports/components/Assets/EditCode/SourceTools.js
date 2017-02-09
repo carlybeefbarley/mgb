@@ -163,7 +163,7 @@ export default class SourceTools {
       // force tern to update arg hint cache as we may have loaded new files / defs / docs
       callback && callback(this.collectedSources)
       this.inProgress = false
-    })
+    }, this.mainJS)
   }
   // calls callback with collected sources
   collectSources(cb) {
@@ -220,7 +220,7 @@ export default class SourceTools {
   }
 
   // collects info about script
-  collectScript(name, source, cb, localName = name, force = false) {
+  collectScript(name, source, cb, localName = name, force = false, origin = null) {
     if (this.isDestroyed) return
     // skip transpiled and compiled and empty scripts
     if (!name || !source.code || (!force && this.isAlreadyTranspiled(name)) ) {
@@ -233,7 +233,9 @@ export default class SourceTools {
     source.name = name
     source.localName = localName
     source.isExternalFile = SourceTools.isExternalFile(source.url)
-
+    if(origin){
+      source.origin = origin
+    }
     this.collectSource(source)
     // MGB assets will have cache.. remote won't
     if (!source.isExternalFile) {
@@ -327,7 +329,7 @@ export default class SourceTools {
   }
 
   // real source collection and transformation method
-  _collectAndTranspile(srcText, filename, callback, force) {
+  _collectAndTranspile(srcText, filename, callback, force, origin = this.mainJS) {
     if (this.isDestroyed) return
     this.pendingChanges[filename] = true
     const compiled = !force && this.isAlreadyTranspiled(filename);
@@ -357,10 +359,10 @@ export default class SourceTools {
             load()
             return
           }
-          this.loadFromCache(imp.src, load, imp.name)
+          this.loadFromCache(imp.src, load, imp.name, filename)
         }
         else {
-          this.collectScript(filename, {code: output.code, url: filename}, cb, null, force)
+          this.collectScript(filename, {code: output.code, url: filename}, cb, null, force, origin)
           delete this.pendingChanges[filename]
         }
       }
@@ -409,12 +411,12 @@ export default class SourceTools {
 
   // cb usually will be this@load
   // wrapper around loadImport - to avoid extra ajax calls to CDN
-  loadFromCache(urlFinalPart, cb, localName) {
+  loadFromCache(urlFinalPart, cb, localName, origin) {
     if (this.isDestroyed) return
 
     // don't load at all
     if (this.cache[urlFinalPart] || !urlFinalPart) {
-      this.collectScript(urlFinalPart, this.cache[urlFinalPart], null, localName)
+      this.collectScript(urlFinalPart, this.cache[urlFinalPart], null, localName, false, origin)
       cb && cb('', '')
       return
     }
@@ -425,7 +427,7 @@ export default class SourceTools {
     }
 
     if (!SourceTools.isExternalFile(url)) {
-      this.loadAndObserveLocalFile(url, urlFinalPart, cb)
+      this.loadAndObserveLocalFile(url, urlFinalPart, cb, origin)
       // ajax
       /*SourceTools.loadImport(url, (src) => {
         this._collectAndTranspile(src, urlFinalPart, cb)
@@ -438,12 +440,12 @@ export default class SourceTools {
         this.setError(error)
       }
       this.cache[urlFinalPart] = source
-      this.collectScript(urlFinalPart, source, cb, localName)
+      this.collectScript(urlFinalPart, source, cb, localName, false, origin)
     }, urlFinalPart)
   }
 
   // loads and observes imported MGB code asset for changes
-  loadAndObserveLocalFile(url, urlFinalPart, cb){
+  loadAndObserveLocalFile(url, urlFinalPart, cb, origin){
     //console.log("Local file:", url)
     // import './stauzs:asset_name'
     const parts = urlFinalPart.split("/").pop().split(":")

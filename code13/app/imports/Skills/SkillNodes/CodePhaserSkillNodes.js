@@ -94,17 +94,25 @@ export default {
   spriteSheet: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/QN7cKdBnoZ2dKjj3m',
       name: 'Spritesheet',
-      description: ``
+      description: `Frame animation for character`
     },
   },
   spriteSheetEvents: {
     $meta: {
       icon: 'code',
-      link: '',
+      link: '/u/!vault/asset/cSm7LivYTvCTa2dqf',
       name: 'Spritesheet events',
-      description: ``
+      description: `Animation started, stopped, looped`
+    },
+  },
+  taskCharAnimations: {
+    $meta: {
+      icon: 'tasks',
+      link: '/u/!vault/asset/kMhY34EAEsETMiGmF',
+      name: 'Task',
+      description: `Move character around screen using arrow keys`
     },
   },
   physicsBasics: {

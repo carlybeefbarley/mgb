@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Input } from 'semantic-ui-react'
+
 import reactMixin from 'react-mixin'
 import { Link } from 'react-router'
 import { Azzets, Projects } from '/imports/schemas'
@@ -13,6 +15,8 @@ import AssetListChooseView from '/client/imports/components/Assets/AssetListChoo
 import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
+import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
+
 
 export default fpAssets = React.createClass({
   mixins: [ReactMeteorData],
@@ -84,26 +88,9 @@ export default fpAssets = React.createClass({
     }
   },
 
-  handleSearchGo()
+  handleSearchGo(newSearchText)
   {
-    // TODO - disallow/escape search string
-    const $button = $(this.refs.searchGoButton)
-    $button.removeClass("orange")
-    this.setState( { searchName: this.refs.searchNameInput.value } )
-  },
-
-  /** 
-   * Make it clear that the search icon needs to be pushed while editing the search box
-   * I could do this with React, but didn't want to since search triggers a few changes already
-   */
-  handleSearchNameBoxChanges() {
-    const $button = $(this.refs.searchGoButton)
-    $button.addClass("orange")
-  },
-
-  // small hack - so I don't need to reach mouse
-  handleSearchNameBoxKeyUp(e) {
-    if (e.which === 13) $(this.refs.searchGoButton).click()
+    this.setState( { searchName: newSearchText } )
   },
 
   handleChangeSelectedProjectName(pName, projObj, compoundProjName){
@@ -155,19 +142,11 @@ export default fpAssets = React.createClass({
               : null )
           }   
 
-          <div className="ui small fluid action input">
-            <input  type="text"
-                    id="mgb_search_asset"
-                    placeholder="Search..." 
-                    defaultValue={searchName} 
-                    onChange={this.handleSearchNameBoxChanges}
-                    onKeyUp={this.handleSearchNameBoxKeyUp}
-                    ref="searchNameInput"
-                    size="16"></input>
-            <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
-              <i className="search icon"></i>
-            </button>
-          </div>
+          <InputSearchBox 
+              size='small' 
+              fluid 
+              defaultValue={searchName} 
+              onFinalChange={this.handleSearchGo} />
 
           <div className="ui row" style={{marginTop: '6px'}}>
             <small>

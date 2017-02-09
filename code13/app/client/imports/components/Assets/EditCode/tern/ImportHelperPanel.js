@@ -29,12 +29,11 @@ export default class StringExtendedInfo extends React.Component {
     return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
   }
   componentWillReceiveProps(props){
-    this.updateProps(props)
+    if(!_.isEqual(this.props, props)){
+      this.updateProps(props)
+    }
   }
   updateProps(props){
-    if(!_.isEqual(this.props, props)){
-      return
-    }
     const checkIfImported = (s, global = false) => {
       if(props.knownImports){
         const index = props.knownImports.findIndex( known => {
@@ -89,7 +88,7 @@ export default class StringExtendedInfo extends React.Component {
         <a className="ui left ribbon label">
           <small>My Scripts</small>
         </a>
-        <div style={{marginTop: '5px'}}>
+        <div style={{margin: '5px 0'}}>
           <Dropdown
             fluid search selection
             options={ this.options }
@@ -104,7 +103,7 @@ export default class StringExtendedInfo extends React.Component {
         <a className="ui left ribbon label">
           <small>Popular libraries</small>
         </a>
-        <div style={{marginTop: '5px'}}>
+        <div style={{margin: '5px 0'}}>
           <Dropdown
             fluid search selection
             options={ this.popuplar }
@@ -117,8 +116,10 @@ export default class StringExtendedInfo extends React.Component {
             />
         </div>
       </div>
-
         }
+      {!showExpanded && <a className="ui blue left ribbon label">
+        <small>Quick import</small>
+        </a>}
     </div>
   }
 }

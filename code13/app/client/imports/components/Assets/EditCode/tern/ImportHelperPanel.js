@@ -115,6 +115,18 @@ export default class StringExtendedInfo extends React.Component {
             }}
             />
         </div>
+        <div>
+          <small><i className="ui info circle icon black"></i><span className="cm-s-eclipse">You can import other user assets: <br />
+            <code><span className="cm-keyword">import</span> <span className="cm-def">otherModule</span> <span className="cm-keyword">from</span> <span className="cm-string">'/!vault:CSSLoader'</span>
+            </code>
+          </span></small>
+        </div>
+        <div>
+          <small><i className="ui info circle icon black"></i><span className="cm-s-eclipse">Hit Ctrl + Space to get list of user assets after typing '/name:' <br />
+            <code><span className="cm-keyword">import</span> <span className="cm-def">otherModule</span> <span className="cm-keyword">from</span> <span className="cm-string">'/!vault:<span className="blink">|</span>'</span>
+            </code>
+          </span></small>
+        </div>
       </div>
         }
       {!showExpanded && <a className="ui blue left ribbon label">

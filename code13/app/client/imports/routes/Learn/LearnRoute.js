@@ -116,13 +116,15 @@ const LearnRoute = ( { currUser, params }, context ) => (
          </Card.Group>
         </Grid.Column>
       </Grid.Row>
-      <Grid.Row style={ currUser ? {} : {display:"none"} }>
-        <Grid.Column>
-          <QLink style={{color:"#333"}} to='/learn' query={ {_fp: 'chat.mgb-help'} }>
-            <i className="help icon"></i> Ask for help - Ask and we shall answer
-          </QLink>
-        </Grid.Column>
-      </Grid.Row>
+      { currUser && 
+        <Grid.Row>
+          <Grid.Column>
+            <QLink style={{color:"#333"}} to='/learn' query={ {_fp: 'chat.mgb-help'} }>
+              <i className="help icon"></i> Ask for help - Ask and we shall answer
+            </QLink>
+          </Grid.Column>
+        </Grid.Row>
+      }
     </Grid>
   </Segment>
 )

@@ -48,7 +48,7 @@ import FunctionDescription from './tern/FunctionDescription.js'
 import ExpressionDescription from './tern/ExpressionDescription.js'
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
 import TokenDescription from './tern/TokenDescription.js'
-import StringExtendedInfo from './tern/StringExtendedInfo.js'
+import ImportHelperPanel from './tern/ImportHelperPanel.js'
 
 import DebugASTview from './tern/DebugASTview.js'
 
@@ -2023,13 +2023,13 @@ export default class EditCode extends React.Component {
                   <TokenDescription
                     currentToken={this.state.currentToken}
                     />
-                  <StringExtendedInfo
+                  { asset.kind !== 'tutorial' && <ImportHelperPanel
                     currentToken={this.state.currentToken}
                     scripts={this.state.userScripts}
                     includeImport={this.includeImport}
                     assetName={this.props.asset.name}
                     knownImports={this.tools.collectedSources}
-                    />
+                    /> }
                   <FunctionDescription
                     functionHelp={this.state.functionHelp}
                     functionArgPos={this.state.functionArgPos}

@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Input } from 'semantic-ui-react'
-
+import { Popup } from 'semantic-ui-react'
 import reactMixin from 'react-mixin'
 import { Link } from 'react-router'
 import { Azzets, Projects } from '/imports/schemas'
@@ -145,16 +144,16 @@ export default fpAssets = React.createClass({
           <InputSearchBox 
               size='small' 
               fluid 
-              defaultValue={searchName} 
+              value={searchName} 
               onFinalChange={this.handleSearchGo} />
 
-          <div className="ui row" style={{marginTop: '6px'}}>
+          <div style={{marginTop: '6px'}}>
+            <Popup 
+                trigger={(<small>Show asset kinds:</small>)}
+                positioning='right center'
+                size='mini'
+                content='Alt-click to multi-select'/>
             <small>
-              <span 
-                 data-position='bottom left'
-                  data-tooltip='Alt-click to multi-select'>
-                Show asset kinds:
-              </span>
               { isAllKinds || <span style={{float: 'right'}} onClick={() => this.handleToggleKind('__all')}>(show all)</span> }
             </small>
             <AssetKindsSelector 
@@ -164,7 +163,7 @@ export default fpAssets = React.createClass({
             <AssetListChooseView 
                 sty={{marginTop: '8px', marginLeft: '0.5em'}}
                 chosenView={view} 
-                handleChangeViewClick={(newView) => this.setState( { view: newView} ) } />                
+                handleChangeViewClick={ newView => this.setState( { view: newView } ) } />                
           </div>
 
         </div>

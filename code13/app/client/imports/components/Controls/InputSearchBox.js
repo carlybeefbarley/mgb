@@ -14,6 +14,10 @@ const _propTypes = {    // These are applied to the class at the bottom of this 
 
 class InputSearchBox extends React.Component {
 
+  componentWillMount() {
+    this.setState( { activeValue: this.props.value } )
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.value !== nextProps.value)
       this.setState( { activeValue: nextProps.value } )
@@ -30,9 +34,7 @@ class InputSearchBox extends React.Component {
   }
 
   _onInternalChange = (event) => { this.setState( { activeValue: event.target.value } ) }
-
   _onActionClick = () => { this.props.onFinalChange(this.state.activeValue) }
-
 
   render() {
     const { value } = this.props

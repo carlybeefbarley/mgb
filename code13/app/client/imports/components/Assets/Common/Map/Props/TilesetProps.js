@@ -107,6 +107,7 @@ export default {
     this.mgb_content2.tilesets.push(ts)
     // this function will change infinity to real GID
     TileHelper.fixTilesetGids(this.mgb_content2)
+    this.updateMap()
     this.quickSave("Added actor")
   },
 

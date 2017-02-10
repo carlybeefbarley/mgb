@@ -38,7 +38,7 @@ export default class ActorTileset extends React.Component {
     if (ActorHelper.checks["Foreground"](tileset))
       return "Foreground"
   }
-  
+
   selectTileset(index, tileset) {
     this.props.clearActiveSelection()
     const selectedTile = new SelectedTile()
@@ -157,7 +157,7 @@ export default class ActorTileset extends React.Component {
         >
         <img
           className="mgb-pixelated"
-          src={makeCDNLink(tileset.image)}
+          src={makeCDNLink(tileset.image, makeExpireTimestamp(30) /*Allow super small cache ?*/)}
           width={width}
           height={imgRatio * width}
           style={{verticalAlign: 'middle'}}

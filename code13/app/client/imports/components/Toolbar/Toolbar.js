@@ -187,7 +187,7 @@ export default class Toolbar extends React.Component {
           <QLink query={{ '_fp': 'settings' }}>
             <Popup trigger={(
                 <Button
-                    icon
+                    active={false}
                     compact
                     basic
                     style={{marginLeft: '4px'}}

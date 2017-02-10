@@ -1077,7 +1077,7 @@ function specialHandlerString2(rString) {
 
 
 // Explain multi-line and single-line comments.
-function specialHandlerComment(str) {
+function specialHandlerComment(str, component) {
   let grn = { color: "green", fontWeight: "bold" }
   // explain single line
   if (str.startsWith("//"))
@@ -1087,7 +1087,39 @@ function specialHandlerComment(str) {
       </div>
     )
 
-  // else explain multiline
+  let title
+  // JSdocs - TODO: look for lines above
+  // somewhere in the middle of the comment
+  let tmpToken = ''
+  component.props.getPrevToken((tmp) => {
+    if(tmp && tmp.type === 'comment'){
+      tmpToken = tmp
+      return true
+    }
+    return false
+  })
+
+  if(str.startsWith('/**') || (tmpToken && tmpToken.string.startsWith('/**')))
+    return (
+      <div>
+        <p>Comments starting with <code style={grn}>/**</code> and ending with <code style={grn}>*/</code> are special JavaScript comments - called JSDoc.
+          <br />
+          JSDoc is a markup language used to annotate JavaScript source code files.
+          Using comments containing JSDoc, programmers can add documentation describing the application programming interface of the code they're creating.
+        </p>
+        <p>There may be line breaks and any other characters between the <code style={grn}>/**</code> and <code style={grn}>*/</code>. This is example of JSDoc comment:</p>
+        <pre style={grn}>{
+        `/**
+ * Create a point.
+ * @param {number} x - The x value
+ * @param {number} y - The y value
+ * */
+        `}</pre>
+        <p>
+          See <a href={xlinks.jsDoc} target="_blank">jsdoc.org</a> for more details
+        </p>
+      </div>)
+
   return (
     <div>
       <p>Javascript <em>multi line comments</em> start with <code style={grn}>/*</code> and end with <code style={grn}>*/</code></p>
@@ -1254,7 +1286,7 @@ export default TokenDescription = React.createClass({
         <p></p>
 
         { showExpanded &&
-          ( specialHandler ? specialHandler.renderFn(ts) :
+          ( specialHandler ? specialHandler.renderFn(ts, this) :
             <div>
               { help && warnForHelp(help) }
               { help && help.help && <p>{help.help}</p> }

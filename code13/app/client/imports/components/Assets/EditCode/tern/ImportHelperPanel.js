@@ -26,8 +26,9 @@ export default class StringExtendedInfo extends React.Component {
     this.setState({"showExpanded": next})
   }
   shouldComponentUpdate(newP, newS){
-    if(!this.state.showExpanded && !newS.showExpanded){
-      return false
+    if(this.state.showExpanded || newS.showExpanded){
+      this.lastUpdate = Date.now()
+      return true
     }
     if(!this.lastUpdate){
       this.lastUpdate = Date.now()

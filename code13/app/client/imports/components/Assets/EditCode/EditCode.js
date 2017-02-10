@@ -1972,6 +1972,17 @@ export default class EditCode extends React.Component {
     return advices
   }
 
+  getPrevToken(callback, cursor = null){
+    const cur = cursor || Object.assign({}, this.codeMirror.getCursor())
+    // TODO: maybe get correct last char of line instead for forcing random number?
+    cur.ch = 100
+    if(cur.line){
+      cur.line--
+      if(callback(this.codeMirror.getTokenAt(cur)))
+        this.getPrevToken(callback, cur)
+    }
+  }
+
   render() {
     const { asset, canEdit } = this.props
 
@@ -2082,7 +2093,7 @@ export default class EditCode extends React.Component {
                 <div className="active content">
                   <TokenDescription
                     currentToken={this.state.currentToken}
-                    scripts={this.state.userScripts}
+                    getPrevToken={cb => this.getPrevToken(cb)}
                     />
                   { this.state.astReady &&
                   <ImportHelperPanel

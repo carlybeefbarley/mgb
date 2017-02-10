@@ -149,6 +149,7 @@ export default class MageGameCanvas extends React.Component {
             ref = { c => { this.prepCanvas(c) } }
             width = { cellsWide * 32 }
             height = { cellsHigh * 32 }
+            style = {{display: 'block'}}
         />
       </div>
     )

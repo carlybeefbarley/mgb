@@ -770,88 +770,177 @@ const edit = {
     //pos.gid = this.options.data[pos.id]
   }
 }
-// ???
+// Using fill algorithm from http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
+// TODO: Smarter fill/magic wand tools that place assets by size instead of filling every tile
 edit[EditModes.fill] = function (e, up) {
-  const temp = this.props.getTmpSelection()
-  const sel = this.props.getSelection()
-  const col = this.props.getCollection()
+  // For now only use this algorithm for ActorMap functionality
+  if (!this.props.options.randomMode && this.props.getCollection.length === 1) {
+    const col = this.props.getCollection()
+    const temp = this.props.getSelection()
+    const tileGid = this.options.data
+    const width = this.options.width
+    const height = this.options.height
+    const pos = this.getTilePosInfo(e)
+    var tileStack = [[pos.x, pos.y]]
 
-  if (up) {
-    this.props.saveForUndo('Fill tilemap')
-    for (let i = 0; i < temp.length; i++) {
-      this.insertTile(temp[i].id, temp[i].gid)
+    if (!col.length) {
+      return
     }
-    for (let i = 0; i < sel.length; i++) {
-      sel[i].gid = this.options.data[sel[i].id]
+
+    // For highlighting tiles (can only fill where empty)
+    if (!pos.gid || pos.gid === 0) {
+      this.props.getSelection.clear()
+      edit[EditModes.wand].call(this, e)
+      edit[EditModes.wand].call(this, e, this.props.getTmpSelection())
+    } else {
+      this.props.clearTmpSelection()
     }
+
+    if (up) {
+      this.props.saveForUndo('Fill tilemap')
+
+      while(tileStack.length) {
+        var newPos, x, y, tilePos, reachLeft, reachRight;
+        newPos = tileStack.pop();
+        x = newPos[0];
+        y = newPos[1];
+        tilePos = y * width + x
+
+        // Go up until reach top
+        while(y-- >= 0  && (!tileGid[tilePos] || tileGid[tilePos] === 0)) {
+          tilePos -= width;
+        }
+        tilePos += width;
+        ++y;
+        reachLeft = false;
+        reachRight = false;
+
+        // Go down until reach bottom
+        while(y++ < height  && (!tileGid[tilePos] || tileGid[tilePos] === 0)) {  
+          // Insert tile where empty
+          if (!tileGid[tilePos] || tileGid[tilePos] === 0) {
+            this.insertTile(tilePos, col[0].gid) 
+          }
+
+          if(x >= 0) {
+            if (!tileGid[tilePos-1] || tileGid[tilePos-1] === 0) {
+              if(!reachLeft) {
+                tileStack.push([x - 1, y]);
+                reachLeft = true;
+              }
+            }
+            else if(reachLeft) {
+              reachLeft = false;
+            }
+          }
+        
+          if(x < width) {
+            if (!tileGid[tilePos+1] || tileGid[tilePos+1] === 0) {
+              if(!reachRight) {
+                tileStack.push([x + 1, y]);
+                reachRight = true;
+              }
+            }
+            else if(reachRight) {
+              reachRight = false;
+            }
+          }
+            
+          tilePos += width;
+        }
+      }
+      this.props.handleSave('Filling up')
+      return
+    }
+
+    if (e.type == 'mouseup' || e.type == 'touchend') {
+      //this.props.handleSave('Filling up')
+      return
+    }
+  // Original fill
+  } else {
+    const temp = this.props.getTmpSelection()
+    const sel = this.props.getSelection()
+    const col = this.props.getCollection()
+
+    if (up) {
+      this.props.saveForUndo('Fill tilemap')
+      for (let i = 0; i < temp.length; i++) {
+        this.insertTile(temp[i].id, temp[i].gid)
+      }
+      for (let i = 0; i < sel.length; i++) {
+        sel[i].gid = this.options.data[sel[i].id]
+      }
+      temp.clear()
+      return
+    }
+
+    if (e.type == 'mouseup' || e.type == 'touchend') {
+      //this.props.handleSave('Filling up')
+      return
+    }
+
+    const pos = this.getTilePosInfo(e)
+
+    if (this.lastTilePos && this.lastTilePos.isEqual(pos)) {
+      return
+    }
+
+    if (!col.length) {
+      return
+    }
+
+    if (!sel.length || this.isDirtySelection) {
+      sel.clear()
+      // fill with magic wand
+      // 1st time fill up tmp selection
+      edit[EditModes.wand].call(this, e)
+      // 2nd time draws filled selection
+      edit[EditModes.wand].call(this, e, this.props.getTmpSelection())
+      this.isDirtySelection = true
+    }
+
     temp.clear()
-    return
-  }
 
-  if (e.type == 'mouseup' || e.type == 'touchend') {
-    //this.props.handleSave('Filling up')
-    return
-  }
+    this.lastTilePos = pos
 
-  const pos = this.getTilePosInfo(e)
+    const arr = this.props.getCollection().to2DimArray()
 
-  if (this.lastTilePos && this.lastTilePos.isEqual(pos)) {
-    return
-  }
-
-  if (!col.length) {
-    return
-  }
-
-  if (!sel.length || this.isDirtySelection) {
-    sel.clear()
-    // fill with magic wand
-    // 1st time fill up tmp selection
-    edit[EditModes.wand].call(this, e)
-    // 2nd time draws filled selection
-    edit[EditModes.wand].call(this, e, this.props.getTmpSelection())
-    this.isDirtySelection = true
-  }
-
-  temp.clear()
-
-  this.lastTilePos = pos
-
-  const arr = this.props.getCollection().to2DimArray()
-
-  let minx = this.options.width
-  let miny = this.options.height
-  for (let i = 0; i < sel.length; i++) {
-    if (sel[i].x < minx) {
-      minx = sel[i].x
-    }
-    if (sel[i].y < miny) {
-      miny = sel[i].y
-    }
-  }
-
-  let datay
-  for (let i = 0; i < sel.length; i++) {
-    let ins = new TileSelection(sel[i])
-
-    datay = arr[(temp[i].y + miny) % arr.length]
-    if (this.props.options.randomMode) {
-      ins.gid = col.random().gid
-    }else {
-      // non rect selection
-      const tmpTile = datay[(temp[i].x + minx) % datay.length]
-      if(tmpTile){
-        ins.gid = tmpTile.gid
+    let minx = this.options.width
+    let miny = this.options.height
+    for (let i = 0; i < sel.length; i++) {
+      if (sel[i].x < minx) {
+        minx = sel[i].x
+      }
+      if (sel[i].y < miny) {
+        miny = sel[i].y
       }
     }
-    if (ins.gid) {
-      ins.getRawId(this.options.width)
-      if (sel.indexOfId(ins.id) > -1) {
-        temp.push(ins)
+
+    let datay
+    for (let i = 0; i < sel.length; i++) {
+      let ins = new TileSelection(sel[i])
+
+      datay = arr[(temp[i].y + miny) % arr.length]
+      if (this.props.options.randomMode) {
+        ins.gid = col.random().gid
+      }else {
+        // non rect selection
+        const tmpTile = datay[(temp[i].x + minx) % datay.length]
+        if(tmpTile){
+          ins.gid = tmpTile.gid
+        }
+      }
+      if (ins.gid) {
+        ins.getRawId(this.options.width)
+        if (sel.indexOfId(ins.id) > -1) {
+          temp.push(ins)
+        }
       }
     }
   }
 }
+
 edit[EditModes.stamp] = function (e, up, saveUndo = true) {
   if (e.type != 'mousedown') {
     saveUndo = false
@@ -1070,6 +1159,7 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
 
 let previousType = ""
 edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection()) {
+
   // avoid virtual mouse events
   if(previousType == "touchend" && (e.type == "mousemove" || e.type == "mousedown" || e.type == "mouseup")){
     return
@@ -1118,7 +1208,7 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
   }
   const addToFrontier = (p) => {
     if (p.x >= 0 && p.x < this.options.width && p.y >= 0 && p.y < this.options.height) {
-      if (pos.gid == p.gid && isUnique(p)) {
+      if ((pos.gid == p.gid || (!pos.gid && p.gid == 0) || (!p.gid && pos.gid == 0)) && isUnique(p)) {
         frontier.push(p)
         return true
       }
@@ -1138,7 +1228,7 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
     }
     const p = frontier.shift()
 
-    if (p.gid == pos.gid) {
+    if (p.gid == pos.gid || ((!pos.gid && p.gid == 0) || (!p.gid && pos.gid == 0))) {
       buff.push(p)
       np.update(p)
 

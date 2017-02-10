@@ -4,6 +4,8 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+
 // TODO: use observeAsset from assetFetchers instead of custom observer
 // import { observeAsset } from "/client/imports/helpers/assetFetchers"
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -150,7 +152,7 @@ export default class DropArea extends React.Component {
     // TODO: render effect
     return (
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
-        {asset.thumbnail && <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={asset.thumbnail}/> }
+        {<img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={Thumbnail.getLink(asset)}/> }
         <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div>
       </QLink>
     )

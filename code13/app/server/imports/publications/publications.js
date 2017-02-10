@@ -145,7 +145,7 @@ Meteor.publish('assets.public.byId.withContent2', function(assetId) {
 
 Meteor.publish('assets.public.owner.name', function(owner, name, kind) {
   const sel = {dn_ownerName: owner, name: name, kind: kind, isDeleted: false}
-  return Azzets.find(sel)
+  return Azzets.find(sel,  {fields: {content2: 0, thumbnail: 0}})
 })
 
 

@@ -4,6 +4,8 @@ import BaseForm from '../../../Controls/BaseForm.js'
 import actorOptions from '../../Common/ActorOptions.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+
 
 export default class All extends BaseForm {
 
@@ -17,7 +19,7 @@ export default class All extends BaseForm {
     // Handle limiting InitialHealth < initialMaxHealthNum
     let initHealthConfig = { min: 1 }
     if (this.data.initialMaxHealthNum)
-    {  
+    {
       const max = parseInt(this.data.initialMaxHealthNum, 10)
       if (max > 0)
         initHealthConfig.max = max
@@ -39,8 +41,21 @@ export default class All extends BaseForm {
           {this.dropArea("Sound When Killed", 'soundWhenKilled', "sound", soundOptions)}
 
           {this.dropArea("Graphic", "defaultGraphicName", "graphic", null, (asset) => {
-            if (asset && asset.thumbnail)
-              this.props.saveThumbnail(asset.thumbnail)
+            if(asset) {
+              const canvas = document.createElement("canvas")
+              const ctx = canvas.getContext("2d")
+              const img = new Image
+              img.onload = () => {
+                canvas.width = img.width
+                canvas.height = img.height
+                ctx.drawImage(img, 0, 0)
+                this.props.saveThumbnail(canvas.toDataURL())
+              }
+              img.onerror = (e) => {
+                console.error("Failed to update Actor image", e)
+              }
+              img.src = Thumbnail.getLink(asset)
+            }
           })}
         </div>
     )

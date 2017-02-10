@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import BaseForm from '/client/imports/components/Controls/BaseForm.js'
 import { GameItem } from '/client/imports/components/Assets/GameAsset/GameItems'
 import { Header, Divider, Message } from 'semantic-ui-react'
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 import './editGame.css'
 
@@ -14,18 +15,18 @@ const _isActorGame = assetMetadata => ( assetMetadata.gameType === 'actorGame' )
 const _isCodeGame  = assetMetadata => ( assetMetadata.gameType === 'codeGame' )
 const _hasGameType = assetMetadata => ( _isActorGame(assetMetadata) || _isCodeGame(assetMetadata) )
 
-const _actorGameSupportedControls = { 
-  supportsTouchControl:         false, 
-  supportsMultiTouchControl:    false, 
-  supportsKeyControl:           true, 
-  supportsKeyPlusMouseControl:  true 
-} 
+const _actorGameSupportedControls = {
+  supportsTouchControl:         false,
+  supportsMultiTouchControl:    false,
+  supportsKeyControl:           true,
+  supportsKeyPlusMouseControl:  true
+}
 
-const _defaultGameAssetMetadata = { 
-  gameType:       'codeGame', 
-  startCode:      '', 
-  startActorMap:  '', 
-  playCount:      0 
+const _defaultGameAssetMetadata = {
+  gameType:       'codeGame',
+  startCode:      '',
+  startActorMap:  '',
+  playCount:      0
 }
 
 
@@ -44,8 +45,21 @@ class EditGameForm extends BaseForm {
     return (
       <div className='ui form'>
         {this.dropArea('Cover Graphic', 'coverGraphic', 'graphic', null, asset => {
-          if (asset && asset.thumbnail)
-            this.props.saveThumbnail(asset.thumbnail)
+          if(asset) {
+            const canvas = document.createElement("canvas")
+            const ctx = canvas.getContext("2d")
+            const img = new Image
+            img.onload = () => {
+              canvas.width = img.width
+              canvas.height = img.height
+              ctx.drawImage(img, 0, 0)
+              this.props.saveThumbnail(canvas.toDataURL())
+            }
+            img.onerror = (e) => {
+              console.error("Failed to update Actor image", e)
+            }
+            img.src = Thumbnail.getLink(asset)
+          }
         })}
 
         <Divider />
@@ -54,8 +68,8 @@ class EditGameForm extends BaseForm {
 
         { isCodeGame  && this.dropArea('Starting Code', 'startCode', 'code' )}
         { isActorGame && this.dropArea('Starting ActorMap', 'startActorMap', 'actormap' )}
-        
-        { hasGameType && 
+
+        { hasGameType &&
           <div>
             <Divider />
             <Header as='h4' content='Supported control schemes' />
@@ -95,7 +109,7 @@ export default class EditGame extends React.Component {
 
   render() {
     const { asset, canEdit, handleContentChange } = this.props
-    if (!asset) 
+    if (!asset)
       return null
 
     if (!asset.metadata)
@@ -106,8 +120,8 @@ export default class EditGame extends React.Component {
         <div className='ui items'>
           <GameItem game={asset} />
         </div>
-        <EditGameForm 
-            asset={asset} 
+        <EditGameForm
+            asset={asset}
             canEdit={canEdit}
             onChange={this.handleSave.bind(this)}
             saveThumbnail={(d) => { handleContentChange(null, d, "Updating thumbnail") }} />

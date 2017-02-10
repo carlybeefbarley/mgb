@@ -127,7 +127,7 @@ export default UserProfileRoute = React.createClass({
               <ImageShowOrChange
                 id='mgbjr-profile-avatar'
                 className="image"
-                imageSrc={makeCDNLink(avatar, makeExpireTimestamp(60))}
+                imageSrc={avatar}
                 canEdit={ownsProfile}
                 canLinkToSrc={true}
                 handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />

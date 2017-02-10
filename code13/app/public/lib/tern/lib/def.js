@@ -182,7 +182,7 @@
           return this.base
         }
         return new infer.Arr(types || inner)
-      } else if (this.eat("{")) {
+      /*} else if (this.eat("{")) {
         var types = [], names = [], computed = false
         if (!this.eat("}")) {
           for (var i = 0; ; ++i) {
@@ -209,7 +209,7 @@
         names.forEach(function (prop, i) {
           obj.defProp(prop).addType(types[i]);
         });
-        return obj;
+        return obj;*/
       } else if (this.eat("+")) {
         var path = this.word(/[\w$<>\.:!]/)
         var base = infer.cx().localDefs[path + ".prototype"]

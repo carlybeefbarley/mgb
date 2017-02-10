@@ -26,7 +26,21 @@ export default class StringExtendedInfo extends React.Component {
     this.setState({"showExpanded": next})
   }
   shouldComponentUpdate(newP, newS){
-    return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
+    if(!this.state.showExpanded && !newS.showExpanded){
+      return false
+    }
+    if(!this.lastUpdate){
+      this.lastUpdate = Date.now()
+      return true
+    }
+    else {
+      // don't update often than 1 sec
+      if(Date.now() - this.lastUpdate > 1000) {
+        this.lastUpdate = Date.now()
+        return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
+      }
+      return false
+    }
   }
   componentWillReceiveProps(props){
     if(!_.isEqual(this.props, props)){

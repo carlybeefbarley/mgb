@@ -15,9 +15,7 @@ export default class Thumbnail extends React.Component {
   render() {
     const expires = typeof this.props.expires === "undefined" ? 3600 : this.props.expires
     const {asset, style, className, onDragStart, onDragEnd} = this.props
-    const src = asset
-      ? makeCDNLink(`/api/asset/thumbnail/png/${asset._id}`, genetag(asset))
-      : Thumbnail.getLink(this.props.id, expires)
+    const src = Thumbnail.getLink((asset || this.props.id), expires)
 
     return <img crossOrigin="anonymous" className={className} style={style} src={src} onDragStart={onDragStart} onDragEnd={onDragEnd}></img>
   }

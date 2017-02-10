@@ -69,13 +69,17 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
   return uri
 }
 
-export const makeExpireThumbnailLink = (assetId, expires) => {
-  return makeCDNLink(`/api/asset/cached-thumbnail/png/${expires}/${assetId}`, makeExpireTimestamp(expires))
+export const makeExpireThumbnailLink = (assetOrId, maxAge = 60) => {
+  return typeof assetOrId === 'string'
+    ? makeCDNLink(`/api/asset/cached-thumbnail/png/${maxAge}/${assetOrId}`, makeExpireTimestamp(maxAge))
+    // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
+    : makeCDNLink(`/api/asset/thumbnail/png/${assetOrId._id}`, genetag(assetOrId))
+
 }
 
 // use this to allow client NOT pull resources every time
 // will return timestamp with next expire datetime
-export const makeExpireTimestamp = (expires) => {
+export const makeExpireTimestamp = (maxAge) => {
   // TODO(@stauzs): we need server time here - this will work only for short periods of time !!!!
   // See https://github.com/mizzao/meteor-timesync
   const now = Date.now()
@@ -86,8 +90,8 @@ export const makeExpireTimestamp = (expires) => {
   // and makeExpireTimestamp will return same value for next 10 seconds
   // actually it can return different earlier for the first and second call,
   // but all next calls will get same value for next 10 seconds
-  const expireMS = expires * 1000
-  return now - (now % (expireMS)) + expireMS
+  const maxAgeMS = maxAge * 1000
+  return now - (now % (maxAgeMS)) + maxAgeMS
 }
 
 // project avatar url prefixed with CDN host

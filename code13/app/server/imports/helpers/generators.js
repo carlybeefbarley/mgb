@@ -42,12 +42,16 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // some fallback mechanism
   const maxAge = !api.queryParams.expires ? DEFAULT_MAX_AGE : api.queryParams.expires
 
-  const cacheHeader = `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`
   const etag = genetag(asset)
+  let cacheHeader = `public, max-age=${maxAge}, s-maxage=${maxAge}`
   // pragma: no-store header will force cloudfront to skip cache totally
   // so remove it
-  if (api.queryParams.hash)
+  if (api.queryParams.hash){
     api.response.removeHeader("pragma")
+  }
+  else{
+    cacheHeader += ' ,must-revalidate'
+  }
 
   const newHeaders = api.queryParams.hash
     ? Object.assign({

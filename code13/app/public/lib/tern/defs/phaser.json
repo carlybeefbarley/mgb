@@ -1,5 +1,8 @@
 {
   "!name": "phaser",
+  "!define": {
+    "Phaser.Game": "Phaser.Game"
+  },
   "Phaser": {
     "!name": "Phaser",
     "Animation": {
@@ -3895,7 +3898,7 @@
     },
     "Game": {
       "!name": "Game",
-      "!type": "fn(width?: number|string, height?: number|string, renderer?: number, parent?: string|HTMLElement, state?: object, transparent?: boolean, antialias?: boolean, physicsConfig?: object)",
+      "!type": "fn(width?: number|string, height?: number|string, renderer?: number, parent?: string|Element, state?: Object, transparent?: bool, antialias?: boolean, physicsConfig?: object)",
       "!url": "http://phaser.io/docs/2.6.2/Phaser.Game.html",
       "!doc": "This is where the magic happens. The Game object is the heart of your game,\nproviding quick access to common functions and handling the boot process.\n\"Hell, there are no rules here - we're trying to accomplish something.\"\nThomas A. Edison",
       "prototype": {
@@ -14693,7 +14696,7 @@
     },
     "Sprite": {
       "!name": "Sprite",
-      "!type": "fn(game: Phaser.Game, x: number, y: number, key: string|Phaser.RenderTexture|Phaser.BitmapData|PIXI.Texture, frame: string|number)",
+      "!type": "fn(game: Phaser.Game, x: number, y: number, key: string|+Phaser.RenderTexture|+Phaser.BitmapData|+PIXI.Texture, frame: string|number)",
       "!url": "http://phaser.io/docs/2.6.2/Phaser.Sprite.html",
       "!doc": "Sprites are the lifeblood of your game, used for nearly everything visual.\n\nAt its most basic a Sprite consists of a set of coordinates and a texture that is rendered to the canvas.\nThey also contain additional properties allowing for physics motion (via Sprite.body), input handling (via Sprite.input),\nevents (via Sprite.events), animation (via Sprite.animations), camera culling and more. Please see the Examples for use cases.",
       "prototype": {

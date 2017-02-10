@@ -97,9 +97,6 @@ export default class SourceTools {
   // TODO(stauzs): this is like typical Promise use case - refactor to promises
   // getter for destroyed state - used to track/debug state and notify on destruction
   get isDestroyed() {
-    if (this._isDestroyed) {
-      console.log("destroyed!!!")
-    }
     return this._isDestroyed
   }
 
@@ -241,9 +238,6 @@ export default class SourceTools {
         source.origin.push(origin)
       }
     }
-    else{
-      console.log("unknown origin for:", name)
-    }
     this.collectSource(source)
     // MGB assets will have cache.. remote won't
     if (!source.isExternalFile) {
@@ -264,7 +258,6 @@ export default class SourceTools {
       return
     }
 
-    console.log("Adding Defs", filename)
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       this.loadDefs(lib.defs())
@@ -454,7 +447,6 @@ export default class SourceTools {
 
   // loads and observes imported MGB code asset for changes
   loadAndObserveLocalFile(url, urlFinalPart, cb, origin){
-    //console.log("Local file:", url)
     // import './stauzs:asset_name'
     const parts = urlFinalPart.split("/").pop().split(":")
     const name = parts.pop()

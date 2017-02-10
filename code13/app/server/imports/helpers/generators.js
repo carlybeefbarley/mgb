@@ -48,6 +48,9 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // so remove it
   if (api.queryParams.hash){
     api.response.removeHeader("pragma")
+    if(api.queryParams.hash !== etag){
+      cacheHeader += ' ,must-revalidate'
+    }
   }
   else{
     cacheHeader += ' ,must-revalidate'

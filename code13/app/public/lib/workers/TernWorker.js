@@ -26,9 +26,6 @@ this.onmessage = function(e) {
         if(data.replace){
           return server.addFile(data.name, data.text)
         }
-        else{
-          console.log("Skipping file:", data.name)
-        }
       }
       else{
         return server.addFile(data.name, data.text)

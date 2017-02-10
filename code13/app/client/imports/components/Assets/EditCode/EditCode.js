@@ -531,8 +531,6 @@ export default class EditCode extends React.Component {
           }
         })
         CodeMirror.on(hints, "close", () => {
-          // cleanup
-          // console.log("cleanup called!")
           removeTooltip()
           CodeMirror.off(hints, "close")
           CodeMirror.off(hints, "select")
@@ -612,7 +610,6 @@ export default class EditCode extends React.Component {
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal && this.lastSavedValue != newVal) {
       // user is typing - intensively working with document - don't update until it finishes ( update will trigger automatically on finish )
       if (this.changeTimeout) {
-        // console.log("Preventing update! User in action")
         return
       }
       let currentCursor = this.codeMirror.getCursor()
@@ -776,8 +773,6 @@ export default class EditCode extends React.Component {
 
     if (event.ctrlKey) {
       const token = cm.getTokenAt(pos, true)
-      console.log(token)
-
       this.codeMirror.setCursor(pos)
       this.cursorHistory.undo.push(pos)
       this.ternServer.jumpToDef(cm)
@@ -1085,7 +1080,6 @@ export default class EditCode extends React.Component {
       if (error)
         self.setState({atCursorTypeRequestResponse: {"error": error}})
       else {
-
         if (data.type == data.name) {
           query.depth = 1
           ternServer.request(editor, query, function (error, data) {
@@ -1540,7 +1534,6 @@ export default class EditCode extends React.Component {
       return
     }
     if (this.state.creatingBundle) {
-      console.log("creating bundle - in progress")
       cb && cb()
       return
     }

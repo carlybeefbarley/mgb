@@ -27,7 +27,6 @@ export default ExpressionDescription = React.createClass({
     const nameFriendly = makeFriendlyName(name, exprName)
 
     let typeFriendly = ''
-    console.log("type.length:", type.length)
     if(type.length > 300){
       typeFriendly = name
     }

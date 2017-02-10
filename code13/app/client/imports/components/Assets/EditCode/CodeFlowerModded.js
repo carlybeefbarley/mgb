@@ -251,7 +251,6 @@ CodeFlower.prototype.flatten = function (root) {
 };
 
 CodeFlower.prototype.click = function (d) {
-  //console.log(d)
   if (this.mousemoved) {
     d.fixed = 1
     return
@@ -260,7 +259,6 @@ CodeFlower.prototype.click = function (d) {
     this.options.onclick(d)
     return;
   }
-  console.log(d)
   // Toggle children on click.
   if (d.children) {
     d._children = d.children;

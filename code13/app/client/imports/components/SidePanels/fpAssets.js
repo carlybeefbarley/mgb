@@ -225,9 +225,7 @@ export default fpAssets = React.createClass({
                 positioning='right center'
                 size='mini'
                 content='Alt-click to multi-select'/>
-            <small>
-              { isAllKinds || <span style={{float: 'right'}} onClick={() => this.handleToggleKind('__all')}>(show all)</span> }
-            </small>
+            { isAllKinds || <small style={{float: 'right'}} onClick={() => this.handleToggleKind('__all')}>(show all)</small> }
             <AssetKindsSelector
                 showCompact={true}
                 kindsActive={kindsActive}

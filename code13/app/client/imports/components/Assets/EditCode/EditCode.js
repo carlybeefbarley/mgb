@@ -551,15 +551,18 @@ export default class EditCode extends React.Component {
       const parts = keyword.split(':')
       // get hints for own assets
       if(parts.length == 1){
-        if(keyword.length < 2){
+        //if(keyword.length < 2){
           this.showCustomCMHint(cm, this.state.userScripts, 1)
-          return
-        }
-        mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=${keyword.substring(1)}`, (err, listStr) => {
+        //  return
+        //}
+
+        // we already know all user scripts - update only
+        this.updateUserScripts()
+        /*mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=${keyword.substring(1)}`, (err, listStr) => {
           if (err)
             return
           this.showCustomCMHint(cm, JSON.parse(listStr), 1)
-        })
+        })*/
       }
       // check if user exists at all? parts[0] - is username
       else if(parts.length == 2){
@@ -575,15 +578,18 @@ export default class EditCode extends React.Component {
   }
 
   updateUserScripts(cb){
-    mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=`, (err, listStr) => {
-      if(err)
-        return
-      try{
-        this.setState({"userScripts": JSON.parse(listStr)})
-      }
-      catch(e){}
-      cb && cb()
-    })
+    if(Meteor.user()) {
+      mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=`, (err, listStr) => {
+        if (err)
+          return
+        try {
+          this.setState({"userScripts": JSON.parse(listStr)})
+        }
+        catch (e) {
+        }
+        cb && cb()
+      })
+    }
   }
 
   codeEditPassAndHint(cm) {

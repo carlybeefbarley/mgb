@@ -80,7 +80,6 @@ RestApi.addRoute('asset/cached-thumbnail/png/:expires/:id', {authRequired: false
     return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
       'Content-Type': 'image/png',
       'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`
-
     })
   }
 })
@@ -91,7 +90,6 @@ RestApi.addRoute('asset/cached-thumbnail/png/:expires/:user/:name', {authRequire
     return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
       'Content-Type': 'image/png',
       'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`
-
     })
   }
 })

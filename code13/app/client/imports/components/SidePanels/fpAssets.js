@@ -26,7 +26,7 @@ const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
   const options = _.compact([
     currUser  && { key: currUser._id, text: currUser.username,  value: currUser._id,  image: { avatar: true, src: _makeAvatarSrc(currUser._id) } },
     // This is mostly working, but needs to handle the transition to a page where the user is no longer part of the page scope
-    (otherUser && otherUser._id !== currUser._id) && { key: otherUser._id, text: otherUser.username, value: otherUser._id, image: { avatar: true, src: _makeAvatarSrc(otherUser._id) } },
+    (otherUser && currUser && otherUser._id !== currUser._id) && { key: otherUser._id, text: otherUser.username, value: otherUser._id, image: { avatar: true, src: _makeAvatarSrc(otherUser._id) } },
     { text: 'All users', value: _showFromAllValue, icon: { size: 'large', name: 'users' } }
   ])
   return (
@@ -50,15 +50,15 @@ export default fpAssets = React.createClass({
     user:             PropTypes.object,             // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
     currUserProjects: PropTypes.array,              // Projects list for currently logged in user
     activity:         PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
-    panelWidth:       PropTypes.string.isRequired   // Typically something like "200px". 
+    panelWidth:       PropTypes.string.isRequired   // Typically something like "200px".
   },
 
-  getInitialState: () => ( { 
-    searchName:       '', 
+  getInitialState: () => ( {
+    searchName:       '',
     showFromUserId:   _showFromAllValue,
-    view:             defaultAssetViewChoice, // Large. See assetViewChoices for explanation.  
+    view:             defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
     kindsActive:      AssetKindKeys.join(safeAssetKindStringSepChar),
-    project:          null    // This will be a project OBJECT,not just a string. See projects.js 
+    project:          null    // This will be a project OBJECT,not just a string. See projects.js
   } ),
 
   componentWillMount() {
@@ -69,7 +69,7 @@ export default fpAssets = React.createClass({
       if ( ! ( _persistedState.showFromUserId === _showFromAllValue || (this.props.currUser && this.props.currUser._id === _persistedState.showFromUserId)) )
       {
         // ok. so not just the simple show-all or show-me cases... think more...
-        if ( (!this.props.user || this.props.user._id !== _persistedState.showFromUserId) ) 
+        if ( (!this.props.user || this.props.user._id !== _persistedState.showFromUserId) )
         {
           this.setState( { showFromUserId: _showFromAllValue } ) // debatable if the deafult would be me or all, but all is simpler
         }
@@ -81,11 +81,11 @@ export default fpAssets = React.createClass({
     if (
       this.props.user &&                                      // there was a /u/user/ on the url
       this.state.showFromUserId === this.props.user._id &&    // it was the one we were showing
-      this.props.user !== this.props.currUser)                // and it isn't the current user        
+      this.props.user !== this.props.currUser)                // and it isn't the current user
     {
       if (!nextProps.user)
         this.setState( { showFromUserId: nextProps.currUser ? nextProps.currUser._id : _showFromAllValue } )
-      else 
+      else
         this.setState( { showFromUserId: nextProps.user._id } )
     }
   },
@@ -94,7 +94,7 @@ export default fpAssets = React.createClass({
     _persistedState = _.clone(this.state) // TODO: check if we must be careful with state.project
   },
 
-  /** 
+  /**
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
@@ -112,7 +112,7 @@ export default fpAssets = React.createClass({
     const qProjectName = project ? project.name : null
 
     const handleForAssets = Meteor.subscribe(
-      "assets.public", 
+      "assets.public",
       qOwnerId,           // userId (null = all)
       kindsArray,
       searchName,
@@ -124,14 +124,14 @@ export default fpAssets = React.createClass({
     )
     const assetSorter = { updatedAt: -1 }
     let assetSelector = assetMakeSelector(
-      qOwnerId, 
-      kindsArray, 
+      qOwnerId,
+      kindsArray,
       searchName,
       qProjectName
     )  // TODO: Bit of a gap here... username.projectname
 
     // Load projects if it's not the current user
-    const handleForProjects = (userId && !isPageShowingCurrUser) ? Meteor.subscribe("projects.byUserId", userId) : null 
+    const handleForProjects = (userId && !isPageShowingCurrUser) ? Meteor.subscribe("projects.byUserId", userId) : null
     const selectorForProjects = {
       "$or": [
         { ownerId: userId },
@@ -183,24 +183,24 @@ export default fpAssets = React.createClass({
     const { view, kindsActive, searchName, project, showFromUserId } = this.state
     const isAllKinds = isAssetKindsStringComplete(kindsActive)
     const effectiveUser = user || currUser
-    
+
     return (
       <div>
         <div id="mgbjr-flexPanel-assets-search">
           <div>
-            <ShowFromWho 
+            <ShowFromWho
                 value={showFromUserId}
-                currUser={currUser} 
-                otherUser={user === currUser ? null : user} 
+                currUser={currUser}
+                otherUser={user === currUser ? null : user}
                 style={{float: 'left' }}
                 onChange={(selectedUserId) => { this.setState( { showFromUserId: selectedUserId} ) } }/>
-            <AssetListChooseView 
+            <AssetListChooseView
                 sty={{float: 'right'}}
-                chosenView={view} 
-                handleChangeViewClick={ newView => this.setState( { view: newView } ) } />                
+                chosenView={view}
+                handleChangeViewClick={ newView => this.setState( { view: newView } ) } />
             <div style={{clear: 'both'}}/>
           </div>
-          { ((effectiveUser && userProjects) ? 
+          { ((effectiveUser && userProjects) ?
               <ProjectSelector
                   key="fpProjectSelector" // don't conflict with asset project selector
                   canEdit={false}
@@ -213,14 +213,14 @@ export default fpAssets = React.createClass({
               : null )
           }
 
-          <InputSearchBox 
-              size='small' 
-              fluid 
-              value={searchName} 
+          <InputSearchBox
+              size='small'
+              fluid
+              value={searchName}
               onFinalChange={this.handleSearchGo} />
 
           <div style={{marginTop: '6px'}}>
-            <Popup 
+            <Popup
                 trigger={(<small>Show asset kinds:</small>)}
                 positioning='right center'
                 size='mini'
@@ -228,20 +228,20 @@ export default fpAssets = React.createClass({
             <small>
               { isAllKinds || <span style={{float: 'right'}} onClick={() => this.handleToggleKind('__all')}>(show all)</span> }
             </small>
-            <AssetKindsSelector 
-                showCompact={true} 
-                kindsActive={kindsActive} 
+            <AssetKindsSelector
+                showCompact={true}
+                kindsActive={kindsActive}
                 handleToggleKindCallback={this.handleToggleKind} />
           </div>
 
         </div>
         <br></br>
-        { loading ? <Spinner /> : 
+        { loading ? <Spinner /> :
             <AssetList
               allowDrag={true}
               fluid={true}
               renderView={view}
-              assets={assets} 
+              assets={assets}
               currUser={currUser} />
         }
       </div>

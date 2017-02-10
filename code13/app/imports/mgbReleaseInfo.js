@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Wed Feb 08 2017 13:00 GMT-0800 (PST)',
+      'timestamp': 'Thu Feb 09 2017 23:45 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3143'
+        'iteration': '3179'
       },
 
       'releaseManagement': {
@@ -28,6 +28,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'nav.flexpanel.assets',
+          'type': 'feature',
+          'changeName': 'Improved Assets flexPanel',
+          'changeSummary': 'Nicer layout and ability to choose user scope; remembers recent settings',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'nav.tutorials',
           'type': 'improvement',

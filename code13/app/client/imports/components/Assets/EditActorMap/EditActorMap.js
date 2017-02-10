@@ -211,12 +211,12 @@ export default class EditActorMap extends EditMap {
 
     const c2 = this.mgb_content2
     return (
-      <div className='ui grid' ref="container" style={{flexWrap: 'nowrap', display: 'flex'}}>
+      <div className='ui grid' ref="container" style={{flexWrap: 'nowrap'}}>
         { isLoading && this.renderLoading() }
         {this.renderPlayModal()}
         {this.renderMusicModal()}
 
-        <div className={ (isPlaying ? 'sixteen' : 'thirteen') + ' wide column'} style={{}}>
+        <div className={ (isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             <div style={{float: 'left'}}>
               <MapToolbar
@@ -229,7 +229,7 @@ export default class EditActorMap extends EditMap {
                 ref="toolbar"
               />
             </div>
-            <div style={{float: 'left'}}>
+            <div style={{float: 'right'}}>
               <div style={{float: 'left', marginLeft: '5px'}}>
                 <Properties {...this.propertiesProps} data={{
                   width: c2.width,

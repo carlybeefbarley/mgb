@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { Breadcrumb } from 'semantic-ui-react'
 import { AssetKinds } from '/imports/schemas/assets'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 // The NavBar is the top row of the central column of the page (i.e. between the NavPanel column
 // on the left and the FlexPanel on the right).
@@ -33,7 +34,20 @@ const NavBarBreadcrumb = ( {
       <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
 
       { usernameToShow && _sep }
-      { usernameToShow && <QLink className="section" to={`/u/${usernameToShow}`}>{usernameToShow}&nbsp;</QLink> }
+
+      { usernameToShow && (
+        <QLink className="section" to={`/u/${usernameToShow}`}>
+          { user && (
+            <img 
+                className="ui avatar image"
+                style={{ width: '1.3em', height: '1.3em' }} 
+                src={makeCDNLink(`/api/user/${user._id}/avatar/60`, makeExpireTimestamp(60))}></img>
+            )
+          }
+          {usernameToShow}&nbsp;
+        </QLink> 
+        )
+      }
 
       { usernameToShow && assetId && _sep }
       { usernameToShow && assetId && <QLink className="section" to={`/u/${usernameToShow}/assets`}>Assets&nbsp;</QLink> }

@@ -17,6 +17,8 @@ import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
+// This lets this flexPanel remember it's state!
+let _persistedState = null
 
 const _makeAvatarSrc = userId => makeCDNLink(`/api/user/${userId}/avatar/60`, makeExpireTimestamp(60))
 const _showFromAllValue = ':showFromAll:' // since colon is not allowed in Meteor _ids. Null wasnt working well as a value for 'all'
@@ -59,17 +61,37 @@ export default fpAssets = React.createClass({
     project:          null    // This will be a project OBJECT,not just a string. See projects.js 
   } ),
 
+  componentWillMount() {
+    if (_persistedState)
+    {
+      this.setState( _persistedState )
+      // There's a corner case where the secondary user's stuff was being shown, but now isn't in the url
+      if ( ! ( _persistedState.showFromUserId === _showFromAllValue || (this.props.currUser && this.props.currUser._id === _persistedState.showFromUserId)) )
+      {
+        // ok. so not just the simple show-all or show-me cases... think more...
+        if ( (!this.props.user || this.props.user._id !== _persistedState.showFromUserId) ) 
+        {
+          this.setState( { showFromUserId: _showFromAllValue } ) // debatable if the deafult would be me or all, but all is simpler
+        }
+      }
+    }
+  },
+
   componentWillReceiveProps( nextProps ) {
     if (
-      this.props.user &&                                  // there was a /u/user/ on the url
+      this.props.user &&                                      // there was a /u/user/ on the url
       this.state.showFromUserId === this.props.user._id &&    // it was the one we were showing
-      this.props.user !== this.props.currUser)            // and it isn't the current user        
+      this.props.user !== this.props.currUser)                // and it isn't the current user        
     {
       if (!nextProps.user)
         this.setState( { showFromUserId: nextProps.currUser ? nextProps.currUser._id : _showFromAllValue } )
       else 
         this.setState( { showFromUserId: nextProps.user._id } )
     }
+  },
+
+  componentWillUnmount() {
+    _persistedState = _.clone(this.state) // TODO: check if we must be careful with state.project
   },
 
   /** 

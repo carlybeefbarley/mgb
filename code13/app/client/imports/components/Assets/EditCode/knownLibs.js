@@ -18,7 +18,7 @@ export default {
       version = version || "latest";
       return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.js';
     },
-    defs: () => ['/lib/tern/defs/phaser.json']
+    defs: () => ['/lib/tern/defs/phaser.old.json']
   },
   react: {
     src: function (version) {

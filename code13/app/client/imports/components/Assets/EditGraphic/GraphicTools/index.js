@@ -30,6 +30,7 @@ const Tools = [
 
   ToolPen,
   ToolEraser,
+  { label: "EraseFrame" },
   ToolFill,
   ToolMove,
   ToolCircle,

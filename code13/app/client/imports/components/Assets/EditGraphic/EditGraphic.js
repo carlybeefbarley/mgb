@@ -1077,6 +1077,17 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  toolEraseFrame(){
+    let w = this.props.asset.content2.width
+    let h = this.props.asset.content2.height
+    // console.log('erase frame', w, h)
+    
+    this.previewCtxArray.map( (ctx) => {
+      ctx.clearRect(0, 0, w, h)
+    })
+    this.handleSave("Erase frame")
+  }
+
 
   handleSave(changeText="change graphic", dontSaveFrameData = false, allowBackwash = true)    // TODO(DGOLDS): Maybe _.throttle() this?
   {
@@ -1422,6 +1433,16 @@ export default class EditGraphic extends React.Component {
         disabled: !this.redoSteps.length,
         icon: "undo flip icon",
         shortcut: 'Ctrl+Shift+Z',
+        level: 2,
+        simpleTool: true
+      },
+      EraseFrame: {
+        label: "Erase Frame",
+        name: "toolEraseFrame",
+        tooltip: "Erase Frame",
+        disabled: false,
+        icon: "square outline icon",
+        shortcut: 'Ctrl+Shift+E',
         level: 2,
         simpleTool: true
       },

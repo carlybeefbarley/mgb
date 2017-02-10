@@ -55,6 +55,9 @@ export default class MagePlayGame
 
   resetGameState() {
     this.G_gameStartedAtMS = (new Date()).getTime()
+    this.G_pausedTime = 0
+    this.G_gamePausedAtMS = 0
+    this.G_gameUnpausedAtMS = 0
     this.isPaused = false
     this.G_gameOver = false
 
@@ -136,8 +139,8 @@ export default class MagePlayGame
   }
 
   scrollMapToSeePlayer(overrideX = -1, overrideY = -1) {
-    const marginX = Math.floor((this.container.offsetWidth / 32) / 3)
-    const marginY = Math.floor((this.container.offsetHeight / 32) / 3)
+    const marginX = Math.floor((this.container.clientWidth / 32) / 3)
+    const marginY = Math.floor((this.container.clientHeight / 32) / 3)
   
     var sx = overrideX == -1 ? this.activeActors[this.AA_player_idx].x : overrideX
     var sy = overrideY == -1 ? this.activeActors[this.AA_player_idx].y : overrideY
@@ -147,8 +150,8 @@ export default class MagePlayGame
 
     var horizontalScrollPosition = this.container.scrollLeft
     var verticalScrollPosition = this.container.scrollTop
-    var maxHorizontalScrollPosition = this.container.scrollWidth - this.container.offsetWidth
-    var maxVerticalScrollPosition = this.container.scrollHeight - this.container.offsetHeight
+    var maxHorizontalScrollPosition = this.container.scrollWidth - this.container.clientWidth
+    var maxVerticalScrollPosition = this.container.scrollHeight - this.container.clientHeight
     var w = (this.map.metadata.width * MgbSystem.tileMinWidth) - maxHorizontalScrollPosition
     var h = (this.map.metadata.height * MgbSystem.tileMinWidth) - maxVerticalScrollPosition
     var maxHSP_toSeePlayer = (sx-marginX) * MgbSystem.tileMinWidth					// Maximum Horizontal Scroll Position to see player
@@ -168,6 +171,8 @@ export default class MagePlayGame
   }
 
   doPauseGame() {
+    if (!this.isPaused)
+      this.G_gamePausedAtMS = (new Date()).getTime()
     this.isPaused = true
   }
 
@@ -185,6 +190,14 @@ export default class MagePlayGame
     this.showingInventoryDialog = newViz
     this.toggleNpcDialogFn(newViz)
     this.isPaused = newViz
+  }
+
+  hideNpcMessage()
+  {
+    if (this.isPaused) 
+      this.G_gameUnpausedAtMS = (new Date()).getTime()
+      this.G_pausedTime += Math.floor(this.G_gameUnpausedAtMS - this.G_gamePausedAtMS) / 1000 // Don't move time when paused
+      this._hideNpcMessage()
   }
 
   // This is a bit weird. It returns the NAME not the actor. TODO - rename for clarity
@@ -568,9 +581,11 @@ export default class MagePlayGame
   }
 
   timeStrSinceGameStarted() {
-    const nowMS = (new Date()).getTime()    
-    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000
-    const minutesPlayed = Math.floor(secondsPlayed / 60)
+    const nowMS = (new Date()).getTime()  
+    const secondsPaused = this.G_pausedTime % 60
+    const minutesPaused = Math.floor(this.G_pausedTime / 60) 
+    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000 - secondsPaused
+    const minutesPlayed = Math.floor(secondsPlayed / 60) - minutesPaused
     const hoursPlayed = Math.floor(minutesPlayed / 60)
     let timeStr = ''
     if (hoursPlayed)

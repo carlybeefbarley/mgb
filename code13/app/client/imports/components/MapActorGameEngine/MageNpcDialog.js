@@ -39,6 +39,10 @@ class MageNpcDialogText extends React.Component {
     if (shownChars <  msg.length)
     {
       shownChars++
+      // Double text speed; In the future, can make text speed an option the user can change
+      if (shownChars + 1 <= msg.length)
+        shownChars++
+
       this.setState( { shownChars } )
       this._rafId = requestAnimationFrame(this.showNextChar_loopWithRAF)
     }

@@ -40,7 +40,7 @@ const AssetKindsSelector = ( { showCompact, kindsActive, handleToggleKindCallbac
   })
 
   return (
-    <Menu className={showCompact ? 'small compact' : 'small secondary vertical'}>
+    <Menu compact className={showCompact ? 'small' : 'small fluid secondary vertical'}>
       {choices}
     </Menu>
   )

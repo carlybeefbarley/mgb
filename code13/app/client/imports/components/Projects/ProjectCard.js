@@ -28,15 +28,16 @@ const ProjectCard = props => {
       </QLink>
 
       <QLink className="content" to={linkTo}>
-        <Icon name='star' className="right floated" />
-        <div className="header">
-          {project.name}&nbsp;
+        <span style={{float: 'right'}}>
           <WorkState
               workState={project.workState}
               popupPosition="bottom center"
               showMicro={true}
               handleChange={(newWorkState) => handleFieldChanged( { "workState": newWorkState } )}
               canEdit={canEdit}/>
+        </span>
+        <div className="header">
+          {project.name}
         </div>
         <Card.Meta>
           <Icon name='users' />&nbsp;{MemberStr}
@@ -57,7 +58,7 @@ const ProjectCard = props => {
 
       <Card.Content extra>
         <span>
-          <Icon size='large' name='sitemap' />
+          <Icon name='sitemap' />
           Project
         </span>
         <QLinkUser targetUser={owner} />

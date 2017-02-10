@@ -12,6 +12,8 @@ import { showToast } from '/client/imports/routes/App'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 // TODO: Toast/error is a mess
 
@@ -53,20 +55,20 @@ export default AssetCard = React.createClass({
 
   componentDidMount()
   {
-    this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
-    this.previewCtx = this.previewCanvas.getContext('2d')
+    //this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
+    //this.previewCtx = this.previewCanvas.getContext('2d')
 
     // this is here because React makes passive event listeners and it's not possible to prevent default from passive event listener
-    this.previewCanvas.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+    // this.previewCanvas.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
 
-    this.loadThumbnail()
+    // this.loadThumbnail()
   },
   componentWillUnmount(){
-    this.previewCanvas.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+    // this.previewCanvas.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
   },
   componentDidUpdate()
   {
-    this.loadThumbnail()
+    // this.loadThumbnail()
   },
 
   loadThumbnail()
@@ -103,6 +105,7 @@ export default AssetCard = React.createClass({
   },
 
   startDrag(asset, e) {
+    console.log("Dragging")
     const url  = `/api/asset/png/${asset._id}`
     console.log("Start dragging Asset  url=", url)
 
@@ -113,11 +116,11 @@ export default AssetCard = React.createClass({
     }))
 
     // allow to drop on graphics canvas
-    try {
-      e.dataTransfer.setData("mgb/image", asset.thumbnail)
+    /*try {
+      e.dataTransfer.setData("mgb/image", thumbnail)
     }
     // IE will throw an error here.. just ignore
-    catch (e) { }
+    catch (e) { }*/
 
     // IE needs this!!!
     // e.dataTransfer.effectAllowed = "copy"
@@ -141,8 +144,8 @@ export default AssetCard = React.createClass({
     const c2 = asset.content2 || { width:64, height:64 }
     const viewOpts = assetViewChoices[renderView]
 
-    const iw = c2.hasOwnProperty("width") ? c2.width : 64
-    const ih = c2.hasOwnProperty("height") ? c2.height : 64
+    //const iw = c2.hasOwnProperty("width") ? c2.width : 64
+    //const ih = c2.hasOwnProperty("height") ? c2.height : 64
     const ago = moment(asset.updatedAt).fromNow()      // TODO: Make reactive
     const ownerName = asset.dn_ownerName
 
@@ -178,9 +181,22 @@ export default AssetCard = React.createClass({
             onTouchEnd={this.handleEditClick}
             style={{
               display: viewOpts.showImg ? 'initial' : 'none',
-              overflow: "hidden"
+              overflow: "hidden",
+              width: "100%",
+              backgroundColor: "white"
               }}>
-          <canvas
+          <Thumbnail asset={asset} ref='previewCanvas' style={{
+            minHeight: "155px",
+            margin: "0 auto",
+            imageRendering: "pixelated",
+            width: "initial",
+            borderBottom: "solid 5px rgba(0, 0, 0, 0.05)"
+
+            }}
+                     onDragStart={this.startDrag.bind(this, asset)}
+                     onDragEnd={this.endDrag.bind(this, asset)}
+            />
+          { /*<canvas
             className="mgb-pixelated"
             ref="thumbnailCanvas"
             width={iw}
@@ -189,7 +205,7 @@ export default AssetCard = React.createClass({
             draggable={allowDrag ? "true" : "false"}
             onDragStart={this.startDrag.bind(this, asset)}
             onDragEnd={this.endDrag.bind(this, asset)}
-            />
+            /> */ }
         </div>
 
         { viewOpts.showHdr &&

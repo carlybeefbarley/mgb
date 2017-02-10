@@ -1267,6 +1267,13 @@ export default class EditGraphic extends React.Component {
       return
     }
 
+
+    var imageUrl = event.dataTransfer.getData('URL')
+    if(imageUrl){
+      this.pasteImage(imageUrl, idx)
+      return
+    }
+
     let files = event.dataTransfer.files     // FileList object.
     if (files.length > 0)
     {
@@ -1296,16 +1303,28 @@ export default class EditGraphic extends React.Component {
 
   pasteImage(url, idx = this.state.selectedLayerIdx)
   {
-    var img = new Image
+    const img = new Image
+    img.crossOrigin = "anonymous"
     img.onload = (e) => {
       // The DataURI seems to have loaded ok now as an Image, so process what to do with it
       this.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
 
-      let w = this.props.asset.content2.width
-      let h = this.props.asset.content2.height
+      const w = this.props.asset.content2.width
+      const h = this.props.asset.content2.height
+      this.previewCtxArray[idx].clearRect(0, 0, w, h)
 
-      this.previewCtxArray[idx].clearRect(0,0,w,h)
-      this.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.
+      if(img.width > w || img.height > h){
+        const aspect = img.width/img.height
+        if(aspect > 1){
+          this.previewCtxArray[idx].drawImage(e.target, 0, 0, w, h / aspect)  // add w, h to scale it.
+        }
+        else{
+          this.previewCtxArray[idx].drawImage(e.target, 0, 0, w * aspect, h)  // add w, h to scale it.
+        }
+      }
+      else{
+        this.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.
+      }
       if (idx === this.state.selectedLayerIdx) {
         this.updateEditCanvasFromSelectedPreviewCanvas()
       }

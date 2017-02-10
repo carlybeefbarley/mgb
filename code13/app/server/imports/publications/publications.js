@@ -105,7 +105,7 @@ Meteor.publish('assets.public', function(
                       showStable)
   let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
   const findOpts = {
-    fields: {content2: 0},
+    fields: {content2: 0, thumbnail: 0},
     sort:  assetSorter,
     limit: limitCount
   }

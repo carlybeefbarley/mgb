@@ -3,9 +3,9 @@ import React, { PropTypes } from 'react'
 import { Dropdown, Icon } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
-// TODO: Handle name collisiions with OTHERs' projects
+// TODO: Handle name collisions with OTHERs' projects
 
-const _makeCompoundProjectName = (ownerName, projectName) => (`${ownerName}:${projectName}`)
+const _makeCompoundProjectName = (ownerName, projectName) => (`${ownerName} : ${projectName}`)
 const _renderSelectionIcon = isActive => <Icon name='sitemap' disabled={!isActive} color={isActive ? 'green' : 'grey'} />
 
 const ProjectSelector = props => {
@@ -73,7 +73,10 @@ const ProjectSelector = props => {
 
   const pNameToShow = activeProjectObject ? _makeCompoundProjectName(activeProjectObject.ownerName, activeProjectObject.name) : pName
   return (
-    <Dropdown trigger={<small>In Project: {pNameToShow || `(${anyOrAll})`}</small>} >
+    <Dropdown 
+        style={{ marginTop: '1px', marginBottom: '3px'}} // inline is compact but has no top/bottom margins
+        inline
+        trigger={<small>In Project: {pNameToShow || `(${anyOrAll})`}</small>} >
       <Dropdown.Menu>
         { ownedProjects }
         { showProjectsUserIsMemberOf && memberOfProjects }

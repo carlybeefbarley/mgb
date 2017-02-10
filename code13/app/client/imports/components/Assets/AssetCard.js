@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Card, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import QLink, { utilPushTo } from "/client/imports/routes/QLink"
 import { AssetKinds } from '/imports/schemas/assets'
@@ -20,8 +21,7 @@ import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetF
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices =  {
-  "xs": { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: false },
-  "s":  { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: true  },
+  "s": { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: false },
   "m":  { icon: '', showFooter: false, header: 'header', showWorkstate: true,  showMeta: false, showExtra: true,  showHdr: true,  showImg: true  },
   "l":  { icon: '', showFooter: false, header: 'header', showWorkstate: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  },
   "xl": { icon: '', showFooter: true,  header: 'header', showWorkstate: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  }
@@ -170,10 +170,11 @@ export default AssetCard = React.createClass({
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui card' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     return (
-      <div
+      <Card
+          color={assetKindColor}
+          fluid={fluid}
           key={asset._id}
-          className={'ui ' + assetKindColor + (fluid ? ' fluid ' : '') + ' card animated fadeIn'}
-          style={ { minWidth: '220px' } }>
+          className='animated fadeIn'>
 
         <div
             className="ui centered image"
@@ -184,17 +185,18 @@ export default AssetCard = React.createClass({
               overflow: "hidden",
               width: "100%",
               backgroundColor: "white"
-              }}>
-          <Thumbnail asset={asset} ref='previewCanvas' style={{
-            minHeight: "155px",
-            margin: "0 auto",
-            imageRendering: "pixelated",
-            width: "initial",
-            borderBottom: "solid 5px rgba(0, 0, 0, 0.05)"
-
-            }}
-                     onDragStart={this.startDrag.bind(this, asset)}
-                     onDragEnd={this.endDrag.bind(this, asset)}
+            }}>
+          <Thumbnail 
+              asset={asset} 
+              ref='previewCanvas' 
+              style={{
+                minHeight: "155px",
+                margin: "0 auto",
+                imageRendering: "pixelated",
+                width: "initial"
+              }}
+              onDragStart={this.startDrag.bind(this, asset)}
+              onDragEnd={this.endDrag.bind(this, asset)}
             />
           { /*<canvas
             className="mgb-pixelated"
@@ -210,29 +212,33 @@ export default AssetCard = React.createClass({
 
         { viewOpts.showHdr &&
           <div className="content">
-            <i className={'right floated ' + assetKindColor + ' ' + assetKindIcon + ' icon'} />
-            <a  className={ viewOpts.header }
+            { viewOpts.showExtra || 
+              <i className={assetKindColor + ' ' + assetKindIcon + ' icon'} />
+            }
+            { viewOpts.showWorkstate &&
+              <span style={{float: 'right'}}>
+                <WorkState
+                  workState={asset.workState}
+                  popupPosition="bottom center"
+                  showMicro={true}
+                  canEdit={false}/>
+              </span>
+            }
+            <a 
+                className={ viewOpts.header }
                 style={{ "color": asset.name ? 'black' : '#888',
-                  overflow: "hidden",
+                  overflow: "hidden", 
+                  whiteSpace: 'nowrap',
+                  display: 'block',
                   textOverflow: "ellipsis"
                 }}
                 onClick={this.handleEditClick}
-                title={ `Asset Name: '${shownAssetName}'` }>
-              <small>
-                {shownAssetName}
-                &nbsp;
-                { viewOpts.showWorkstate &&
-                  <WorkState
-                    workState={asset.workState}
-                    popupPosition="bottom center"
-                    showMicro={true}
-                    canEdit={false}/>
-                }
-              </small>
+                >
+              <small>{shownAssetName}</small>
             </a>
             { viewOpts.showMeta && (asset.text && asset.text !== "") &&
               <div className="meta" style={{ "color": 'black'}}  onClick={this.handleEditClick} title="Asset Description">
-                <small>{asset.text}</small>
+                <small><em>{asset.text}</em></small>
               </div>
             }
 
@@ -243,8 +249,8 @@ export default AssetCard = React.createClass({
             { viewOpts.showMeta &&
               <div className="meta">
                 <small>
+                  <Icon name='history'/> Updated {ago}
                   { editProjects }
-                  Updated {ago}
                 </small>
               </div>
             }
@@ -254,7 +260,7 @@ export default AssetCard = React.createClass({
         { viewOpts.showExtra &&
           <div className="extra content">
             <span style={{color: assetKindColor}} className={"left floated " + assetKindColor + " icon label"} title={assetKindDescription}>
-              <i className={"large " + assetKindColor + ' ' + assetKindIcon}></i>
+              <i className={assetKindColor + ' ' + assetKindIcon}></i>
               { assetKindName }
             </span>
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
@@ -295,7 +301,7 @@ export default AssetCard = React.createClass({
             </div>
           </div>
         }
-      </div>
+      </Card>
     )
   },
 

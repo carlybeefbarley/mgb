@@ -580,13 +580,17 @@ export default class EditCode extends React.Component {
   updateUserScripts(cb){
     if(Meteor.user()) {
       mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=`, (err, listStr) => {
+        // async call
+        if(!this.isActive){
+          return
+        }
         if (err)
           return
+
         try {
           this.setState({"userScripts": JSON.parse(listStr)})
         }
-        catch (e) {
-        }
+        catch (e) {}
         cb && cb()
       })
     }

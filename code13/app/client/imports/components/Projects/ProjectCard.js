@@ -44,15 +44,16 @@ const ProjectCard = props => {
         </Card.Meta>
 
         <Card.Description>
-          <b>Description:&nbsp;</b>
-          <InlineEdit
-            validate={text => (text.length >= 0 && text.length < 64)}
-            activeClassName="editing"
-            text={project.description || "(no description)"}
-            paramName="description"
-            change={data => handleFieldChanged({...data})}
-            isDisabled={!canEdit}
-            />
+          <small><em>
+            <InlineEdit
+              validate={text => (text.length >= 0 && text.length < 64)}
+              activeClassName="editing"
+              text={project.description || "(no description)"}
+              paramName="description"
+              change={data => handleFieldChanged({...data})}
+              isDisabled={!canEdit}
+              />
+          </em></small>
         </Card.Description>
       </QLink>
 

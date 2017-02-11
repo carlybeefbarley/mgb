@@ -3,12 +3,13 @@ import { AssetKinds } from '/imports/schemas/assets'
 import validate from '/imports/schemas/validate'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import { Icon, Popup, Grid } from 'semantic-ui-react'
+import moment from 'moment'
 
   /** This used by  to render something like...
    *      [ VIEW|EDIT] Kind > AssetName
    */
 
-const SaveStatus = ( { isUnconfirmedSave, hasUnsentSaves } ) => {
+const SaveStatus = ( { lastUpdated, isUnconfirmedSave, hasUnsentSaves } ) => {
   let msg = [ 'all changes saved', 'AutoSave is enabled', 'Changes you make are automatically saved to the cloud']
   if (hasUnsentSaves)
     msg = ['Saving...', 'Your changes will AutoSave soon', 'Your changes will be sent to the server every few seconds']
@@ -17,11 +18,18 @@ const SaveStatus = ( { isUnconfirmedSave, hasUnsentSaves } ) => {
 
   return (
     <Popup 
-      size='small' 
-      inverted 
-      positioning='bottom center'
-      trigger={<small style={{ color: 'grey' }}>{msg[0]}</small>} 
-      header={msg[1]} content={msg[2]} />
+        size='tiny' 
+        inverted 
+        positioning='bottom left'
+        trigger={<small style={{ color: 'grey' }}>{msg[0]}</small>} >
+      <Popup.Header>
+        {msg[1]}
+      </Popup.Header>
+      <Popup.Content>
+        <div>{msg[2]}</div>
+        <small style={{color: 'grey', float: 'right'}}>Last updated {moment(lastUpdated).fromNow()}</small>
+      </Popup.Content>
+    </Popup>
   )
 }
 
@@ -34,7 +42,7 @@ const AssetKindExplainer = ( { kind, ownerName } ) => {
         <Icon color={ak.color} name={ak.icon} />
       </QLink>
     )}
-    size='small'
+    size='tiny'
     inverted
     positioning='bottom left'
     header={`This is a '${ak.name}' Asset`}
@@ -53,9 +61,9 @@ export default AssetPathDetail = React.createClass({
     isUnconfirmedSave: PropTypes.bool,                  // not present === saved.. for legacy data
     hasUnsentSaves:    PropTypes.bool.isRequired,       // if true, then some saves have not yet been sent for this asset, so reflect that in UI (orange label)
     handleNameChange:  PropTypes.func.isRequired,
+    lastUpdated:       PropTypes.instanceOf(Date),
     handleDescriptionChange: PropTypes.func.isRequired,
-    handleSaveNowRequest:    PropTypes.func.isRequired, // Callback indicating User has said 'save now'
-    isServerOnlineNow:       PropTypes.bool.isRequired  // Boolean - is the server online now. TODO: Remove if we don't use this
+    handleSaveNowRequest:    PropTypes.func.isRequired  // Callback indicating User has said 'save now'
   },
   
   handleFieldChanged: function(data) {
@@ -68,7 +76,7 @@ export default AssetPathDetail = React.createClass({
   },
 
   render() {
-    const { name, kind, text, ownerName, canEdit, isUnconfirmedSave, hasUnsentSaves } = this.props
+    const { name, kind, text, ownerName, canEdit, isUnconfirmedSave, hasUnsentSaves, lastUpdated } = this.props
     const emptyAssetDescriptionText = canEdit ? '(no description)' : ''
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
 
@@ -78,7 +86,7 @@ export default AssetPathDetail = React.createClass({
 
           <AssetKindExplainer kind={kind} ownerName={ownerName}/>
 
-          &emsp;
+          &ensp;
 
           <InlineEdit
             validate={validate.assetName}
@@ -88,9 +96,14 @@ export default AssetPathDetail = React.createClass({
             change={this.handleFieldChanged}
             isDisabled={!canEdit} />
             
-            &emsp;
+          &emsp;
 
-          { canEdit && <SaveStatus isUnconfirmedSave={isUnconfirmedSave} hasUnsentSaves={hasUnsentSaves} /> }       
+          { canEdit && (
+            <SaveStatus 
+                lastUpdated={lastUpdated}
+                isUnconfirmedSave={isUnconfirmedSave} 
+                hasUnsentSaves={hasUnsentSaves} /> 
+          )}       
         </Grid.Row>
         
         <Grid.Row>

@@ -9,7 +9,7 @@ const _getCurrUserIdentifier = (currUser) => (currUser ? currUser._id : SESSION_
 
 const ACTIVE_OTHER_PERSON_EDITING_HIGHLIGHT_MS = 1000 * 60    // Highlight if another person changed this in last N seconds. Make this reactive/timed?
 
-const AssetHistoryDetail = ( { assetActivity, currUser } ) => {
+const AssetHistoryDetail = ( { asset, assetActivity, currUser } ) => {
   if (!assetActivity)
     return null
 
@@ -32,10 +32,10 @@ const AssetHistoryDetail = ( { assetActivity, currUser } ) => {
   })
   
   const changesCount = changes.length
-  const highlightClass = numRecentOtherEdits > 0 ? 'blue' : 'grey'
+  const highlightClass = numRecentOtherEdits > 0 ? 'green' : null
   
   const TriggerElement = (
-    <Label size='small' basic pointing='below' style={{ borderRadius: '0px' }}>
+    <Label size='small' basic>
       <Icon name='lightning' color={highlightClass} />
       <span style={{color: highlightClass}}>
         { changesCount }
@@ -44,19 +44,33 @@ const AssetHistoryDetail = ( { assetActivity, currUser } ) => {
   )
 
   return (
-    <Popup wide='very' hoverable trigger={TriggerElement} size='tiny'>
+    <Popup 
+        wide='very' 
+        hoverable 
+        positioning='bottom right'
+        trigger={TriggerElement} 
+        size='tiny'>
       <Popup.Header>
         { changesCount } changes
       </Popup.Header>
-      <Popup.Content style={{maxHeight: '400px', overflow: 'scroll'}}>
-        { changes }
+      <Popup.Content>
+        <div>
+          Asset created: { moment(asset.createdAt).fromNow() }
+        </div>
+        <div>
+          Last update: { moment(asset.updatedAt).fromNow() }
+        </div>
+        <div style={{maxHeight: '400px', overflow: 'scroll'}}>
+          { changes }
+        </div>
+          
       </Popup.Content>
     </Popup>
   )
 }
 
 AssetHistoryDetail.propTypes = {
-  assetId:       PropTypes.string.isRequired,        
+  asset:         PropTypes.object.isRequired,
   assetActivity: PropTypes.array,             // A list of Activity records for an Asset provided via getMeteorData(). Can be empty while being loaded          
   currUser:      PropTypes.object             // currently Logged In user (not always provided)
 }

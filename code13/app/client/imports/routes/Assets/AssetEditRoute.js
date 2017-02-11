@@ -70,7 +70,7 @@ const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
   //   timeOfLastChange,
   //   timeOfLastWriteAttempt     // TODO
   // }
-  // And this is structure is set in deferContentChange()
+  // And this structure is set in deferContentChange()
   // ... Note that this isn't being stored in React's this.state.___ because we need access to it after the component has been unmounted
   /// (Hmm.. maybe I should create a global state container for this outside this component?)
 
@@ -91,7 +91,8 @@ export default AssetEditRoute = React.createClass({
   getInitialState: function () {
     this.getActivitySnapshots = () => this.data.activitySnapshots
     return {
-      isForkPending:  false
+      isForkPending:   false,
+      isDeletePending: false
     }
   },
 
@@ -175,7 +176,6 @@ export default AssetEditRoute = React.createClass({
         assetHandler.update(null, updateObj)
       },
 
-      isServerOnlineNow: Meteor.status().connected,
       activitySnapshots: ActivitySnapshots.find(selector, options).fetch(),
       assetActivity: Activity.find(selector, options).fetch(),
 
@@ -242,10 +242,11 @@ export default AssetEditRoute = React.createClass({
     if (error)
       showToast(`Unable to create a forked copy of this asset: '${error.toString()}'`, 'error')
     else {
-      showToast(`Created a forked copy of this asset`, 'success')
+      showToast(`Loading your new Asset`, 'success')
       // TODO: Could open window etc for New AssetId='${result.newAssetNoC2.name} (#${result.newId})
       logActivity("asset.fork.from", "Forked new asset from this asset", null, this.data.asset )
       logActivity("asset.fork.to", "Forked this new asset from another asset", null, result.newAssetNoC2 )
+      utilPushTo(this.context.urlLocation.query, "/u/" + this.props.currUser.username + "/asset/" + result.newId)
     }
 
     this.setState( { isForkPending: false } )
@@ -256,7 +257,7 @@ export default AssetEditRoute = React.createClass({
       return <Spinner />
 
     const { params, currUser, currUserProjects, availableWidth } = this.props
-    const { isForkPending } = this.state
+    const { isForkPending, isDeletePending } = this.state
     const isTooSmall = availableWidth < 500
 
     let asset = Object.assign( {}, this.data.asset )        // One Asset provided via getMeteorData()
@@ -296,7 +297,6 @@ export default AssetEditRoute = React.createClass({
         { !isTooSmall && 
           <Grid.Column width='8' id="mgbjr-asset-edit-header-left">
             <AssetPathDetail
-              isServerOnlineNow={this.data.isServerOnlineNow}
               canEdit={canEd}
               isUnconfirmedSave={asset.isUnconfirmedSave}
               hasUnsentSaves={hasUnsentSaves}
@@ -304,6 +304,7 @@ export default AssetEditRoute = React.createClass({
               kind={asset.kind}
               name={asset.name}
               text={asset.text}
+              lastUpdated={asset.updatedAt}
               handleNameChange={this.handleAssetNameChange}
               handleDescriptionChange={this.handleAssetDescriptionChange}
               handleSaveNowRequest={this.handleSaveNowRequest} />
@@ -319,43 +320,42 @@ export default AssetEditRoute = React.createClass({
               workState={asset.workState}
               showMicro={true}
               canEdit={canEd}
-              handleChange={this.handleWorkStateChange}/>
+              handleChange={this.handleWorkStateChange} />
             &ensp;
             <AssetUrlGenerator showBordered={true} asset={asset} />
-            { currUserId &&
-              <AssetForkGenerator showBordered={true} asset={asset} doForkAsset={this.doForkAsset} isForkPending={isForkPending}/>
-            }
             <StableState
               isStable={asset.isCompleted}
               showMicro={true}
               canEdit={canEd}
-              handleChange={this.handleStableStateChange}/>
+              handleChange={this.handleStableStateChange} />
             <DeletedState
               isDeleted={asset.isDeleted}
-              showMicro={true}
+              operationPending={isDeletePending}
               canEdit={canEd}
-              handleChange={this.handleDeletedStateChange}/>
+              handleChange={this.handleDeletedStateChange} />
             <AssetLicense
               license={asset.assetLicense}
               canEdit={canEd}
-              handleChange={this.handleLicenseChange}/>
+              handleChange={this.handleLicenseChange} />
             <AssetActivityDetail
               assetId={params.assetId}
               currUser={currUser}
               activitySnapshots={this.getActivitySnapshots()} />
-            &nbsp;
             <AssetHistoryDetail
-              assetId={params.assetId}
+              asset={asset}
               currUser={currUser}
               assetActivity={this.data.assetActivity} />
-            &nbsp;
+            <AssetForkGenerator 
+              asset={asset} 
+              canFork={currUser !== null}
+              doForkAsset={this.doForkAsset}
+              isForkPending={isForkPending} />
             <ProjectMembershipEditorV2
               canEdit={canEd}
               asset={asset}
               currUserId={currUserId}
               currUserProjects={currUserProjects}
-              handleToggleProjectName={this.handleToggleProjectName}
-              />
+              handleToggleProjectName={this.handleToggleProjectName} />
           </Grid.Column>
         }
 
@@ -588,7 +588,8 @@ export default AssetEditRoute = React.createClass({
     const { asset } = this.data
 
     if (asset && asset.isDeleted !== newIsDeleted) {
-      Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isDeleted: newIsDeleted}, (err, res) => {
+      this.setState( { isDeletePending: true } )
+      Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isDeleted: newIsDeleted }, (err, res) => {
         if (err)
           showToast(err.reason, 'error')
       })
@@ -596,6 +597,7 @@ export default AssetEditRoute = React.createClass({
         logActivity("asset.delete",  "Delete asset", null, asset)
       else
         logActivity("asset.undelete",  "Undelete asset", null, asset)
+      this.setState( { isDeletePending: false} )
     }
   },
 

@@ -90,7 +90,7 @@ Meteor.methods({
     const dstAsset = _.omit(srcAsset, '_id')
     dstAsset.updatedAt = now
     dstAsset.projectNames = []
-    dstAsset.name = opts.newAssetName || (dstAsset.name + ' (fork)')
+    dstAsset.name = opts.newAssetName || (dstAsset.name + ` (fork:${now.toTimeString().slice(0,5)})`)
     if (!dstAsset.forkParentChain)
       dstAsset.forkParentChain = []
 

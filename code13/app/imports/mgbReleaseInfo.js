@@ -14,6 +14,52 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Fri Feb 10 2017 17:20 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3218'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.flexpanel.assets',
+          'type': 'improvement',
+          'changeName': 'Improved Assets & Projects UI',
+          'changeSummary': 'Changed Card UI for readability & fewer lines',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.play',
+          'type': 'improvement',
+          'changeName': 'Improved Game Play UI for non-code games',
+          'changeSummary': 'Nicer layout and no annoying keyboard-controls message anymore',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': 'Code Mentor now has ways to help with import statements',
+          'changeSummary': ' Start typing import in the Code Editor and the Import Helper will appear in Code Mentor',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.quality',
+          'type': 'bugfix',
+          'changeName': 'Many Bugfixes',
+          'changeSummary': 'We are fixing many many bugs at present, getting closer to launch...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Thu Feb 09 2017 23:45 GMT-0800 (PST)',
 

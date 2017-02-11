@@ -5,7 +5,7 @@ import { Popup, Label, Button } from 'semantic-ui-react'
 
 const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) => {
   const numChildren = _.isArray(asset.forkChildren) ? asset.forkChildren.length : 0
-  const fp = (_.isArray(asset.forkParentChain) && asset.forkParentChain.length > 0) ? asset.forkParentChain[0] : null
+  const fpLen = _.isArray(asset.forkParentChain) ? asset.forkParentChain.length : 0
   const children = _.map(asset.forkChildren, f => { 
     const ago = moment(f.forkDate).fromNow()        // It's just a popup, so no need to make it reactive
     return (
@@ -32,7 +32,7 @@ const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) =>
               basic
               color={isForkPending ? 'orange' : null}
               size='small'
-              icon={{ name: 'fork', color: (fp ? 'blue' : null) }}
+              icon={{ name: 'fork', color: (fpLen > 0 ? 'blue' : null) }}
               content={numChildren}
               />
         )}
@@ -60,27 +60,30 @@ const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) =>
               content={ isForkPending ? 'Forking...' : 'Create Fork' } />
             </p>
           <p>
-            { !fp ? (
+            { fpLen === 0 ? (
                 <div>
                   <b>Originally Created Content</b>
                   <div>&nbsp;Not forked from another Asset within this system</div>
                 </div>
-            ) : (
+              ) : (
                 <div>
                   <b>Forked from:</b>
-                  <div>
-                    &nbsp;
-                    <QLink to={`/u/${fp.parentOwnerName}`}>
-                      {fp.parentOwnerName}
-                    </QLink>
-                    {' : '}
-                    <QLink to={`/u/${fp.parentOwnerName}/asset/${fp.parentId}`}>
-                      <span style={{color: 'blue'}}>{fp.parentAssetName}</span>
-                    </QLink>
-                    <small style={{color: '#c8c8c8'}}>&ensp;{moment(fp.forkDate).fromNow() }</small>
-                  </div>
+                  { _.reverse(_.map(asset.forkParentChain, (fp, idx) => (
+                    <div key={fp.forkDate} style={{paddingLeft: `${(fpLen-idx)*4}px`}}>
+                      { idx === (fpLen-1) ? '' : '...' }
+                      <QLink to={`/u/${fp.parentOwnerName}`}>
+                        {fp.parentOwnerName}
+                      </QLink>
+                      {' : '}
+                      <QLink to={`/u/${fp.parentOwnerName}/asset/${fp.parentId}`}>
+                        <span style={{color: 'blue'}}>{fp.parentAssetName}</span>
+                      </QLink>
+                      <small style={{color: '#c8c8c8'}}>&ensp;{moment(fp.forkDate).fromNow() }</small>
+                    </div>
+                  )))}
                 </div>
-            )}
+              )
+            }
           </p>
           <p style={{maxHeight: '200px', overflow: 'scroll'}}>
             <b>{ numChildren } Forks:</b>

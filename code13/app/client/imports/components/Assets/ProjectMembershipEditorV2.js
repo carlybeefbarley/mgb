@@ -125,7 +125,7 @@ const ProjectMembershipPopup = (props) => {
       choices.unshift(makeHdrEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
   } 
 
-  return <div>{choices}</div>
+  return <div style={{maxHeight: '400px', overflow: 'scroll'}}>{choices}</div>
 }
 
 export default ProjectMembershipEditorV2 = React.createClass({

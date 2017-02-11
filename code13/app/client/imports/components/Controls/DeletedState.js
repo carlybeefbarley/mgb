@@ -1,40 +1,30 @@
 import React, { PropTypes } from 'react'
+import { Popup, Icon } from 'semantic-ui-react'
 
-// Note that this is a Stateless function:
-//   See https://facebook.github.io/react/docs/reusable-components.html
-
-const _propTypes = {
-  isDeleted:      PropTypes.bool.isRequired,  // Current deleted state of the asset
-  handleChange:   PropTypes.func,             // Callback function - single param is new workState string. Only called if CanEdit is true
-  canEdit:        PropTypes.bool              // If false, then don't allow popup/change
-}
-
-
-const _makeTitle = (isDeleted, canEdit) =>
-{
-  if (isDeleted && canEdit)
-    return 'This asset has been deleted (moved to the \'Trash\'). Click to Undelete it. Deleted Assets are automatically purged from the system after a while' 
-  if (isDeleted)
-    return 'This Asset has been marked \'Complete\' (moved to the \'Trash\') by it\'s owner'
-  if (canEdit)
-    return 'Click to delete this asset. It\'s ok, you can undelete it again if you need to'
-  return null
-}
-
-
-const DeletedState = (props) => {
-  const { isDeleted, canEdit, handleChange } = props
-
-  if (!isDeleted && !canEdit)
-    return null
-
-  return (
-    <i
-        title={isDeleted ? 'This asset has been deleted. Click to Undelete it' : 'Click to delete this asset. It\'s ok, you can undelete it again if you need to'}
-        onClick={() => { canEdit && handleChange && handleChange(!isDeleted) }} 
-        className={isDeleted ? 'inverted bordered red trash icon' : 'bordered trash outline icon'} />
+const DeletedState = ( { isDeleted, canEdit, handleChange, operationPending } ) => (
+  (!isDeleted && !canEdit) ? null : (
+    <Popup
+      size='small'
+      positioning='bottom right'
+      trigger={(
+        <Icon
+          bordered
+          color={operationPending ? 'orange' : (isDeleted ? 'red': null) }
+          inverted={isDeleted}
+          name={isDeleted ? 'trash' : 'trash outline'}
+          onClick={() => { canEdit && handleChange && !operationPending && handleChange(!isDeleted) }} 
+          />
+      )}
+      header={isDeleted ? 'Undelete Asset' : 'Delete Asset'}
+      content={isDeleted ? 'This asset has been deleted, but hasn\'t yet been purged. Click to Undelete it now' : 'Click to delete this asset. It\'s ok, you have a few days to undelete it again if you need it again.'}
+      />
   )
-}
+)
 
-DeletedState.propTypes = _propTypes
+DeletedState.propTypes = {
+  isDeleted:        PropTypes.bool.isRequired,  // Current deleted state of the asset
+  operationPending: PropTypes.bool.isRequired,  // Disabled delete temporarily
+  handleChange:     PropTypes.func,             // Callback function - single param is new workState string. Only called if CanEdit is true
+  canEdit:          PropTypes.bool              // If false, then don't allow popup/change
+}
 export default DeletedState

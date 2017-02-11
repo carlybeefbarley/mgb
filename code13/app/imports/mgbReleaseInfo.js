@@ -16,12 +16,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Fri Feb 10 2017 17:20 GMT-0800 (PST)',
+      'timestamp': 'Fri Feb 10 2017 23:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3218'
+        'iteration': '3225'
       },
 
       'releaseManagement': {
@@ -29,6 +29,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'asset.fork',
+          'type': 'feature',
+          'changeName': 'Asset Forking UI',
+          'changeSummary': 'The Asset Forking UI provides clear info on children and on ancestors',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'nav.flexpanel.assets',
           'type': 'improvement',

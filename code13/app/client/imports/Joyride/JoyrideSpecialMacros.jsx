@@ -44,7 +44,7 @@ const _mkNavPanelMacros = () => {
         "showStepOverlay": true,
         "awaitCompletionTag": `mgbjr-CT-np-${dd.name}`,
         "position": position,
-        "style": "%navpanelmenu%" 
+        "style": "%inverted%"
       }
     })
     // 2. Each of the options in the Menu DropDown
@@ -62,7 +62,7 @@ const _mkNavPanelMacros = () => {
           "showStepOverlay": true,
           "awaitCompletionTag": `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
           "position": position,
-          "style": "%navpanelmenu%" 
+          "style": "%inverted%"
         }
       })
 
@@ -281,11 +281,12 @@ const propertyMacros = [
     desc: "An inverted style for emphasis",
     newVal:
     {
-      "backgroundColor": "rgba(0, 0, 0, 0.8)",
+      "backgroundColor": "rgba(15, 15, 15, 0.8)",
       "color": "#fff",
       "mainColor": "#ff4456",
       "skip": { "color": "#ff4456" },
-      "hole": { "backgroundColor": usefulColors.orangeish }
+      "hole": { "backgroundColor": usefulColors.orangeish },
+      "boxShadow": "0px 0px 20px #fff"
     }
   },
 
@@ -309,7 +310,7 @@ const propertyMacros = [
     desc: "An alert style for stuff that does not yet actually exist",
     newVal:
     {
-      "backgroundColor": "rgba(255, 128, 128, 0.95)",
+      "backgroundColor": "rgba(234, 174, 0, 0.95)",
       "color": "#fff",
       "mainColor": "#ff4456",
       "skip": { "color": "#ff4456" },

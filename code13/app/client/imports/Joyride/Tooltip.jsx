@@ -166,6 +166,10 @@ export default class JoyrideTooltip extends React.Component {
         styles.header.borderColor = stepStyles.mainColor
       }
 
+      if (stepStyles.boxShadow) {
+        styles.tooltip.boxShadow = stepStyles.boxShadow
+      }
+
       if (stepStyles.textAlign)
         styles.tooltip.textAlign = stepStyles.textAlign
 

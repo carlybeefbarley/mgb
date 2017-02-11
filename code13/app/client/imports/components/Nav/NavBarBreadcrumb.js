@@ -31,6 +31,7 @@ const NavBarBreadcrumb = ( {
 
   return (
     <Breadcrumb>
+      &emsp;
       <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
 
       { usernameToShow && _sep }

@@ -37,7 +37,7 @@ const NavBar = (
         right:    flexPanelWidth,
         overflow: 'hidden',
         margin:   0,
-        padding: '0.5em',
+        padding: '0.5em 0.5em 0 0.5em',
       }}>
       <SystemAlerts sysvars={sysvars} />
       <WhatsNew currUser={currUser} asHidingLink={true} />

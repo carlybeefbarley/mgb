@@ -21,10 +21,13 @@ const AssetHistoryDetail = ( { assetActivity, currUser } ) => {
     const ago = moment(a.timestamp).fromNow()        // It's just a popup, so no need to make it reactive
     
     return (
-      <p key={a._id}>
-        <QLink to={`/u/${a.byUserName}`}>{a.byUserName}</QLink>
-        : <small>{a.description}</small> <small style={{color: '#c8c8c8'}}>&ensp;{ago}</small>
-      </p>
+      <div key={a._id} >
+        <QLink to={`/u/${a.byUserName}`}>
+          {a.byUserName}
+        </QLink>
+        {' : '}{a.description}
+        <small style={{color: '#c8c8c8'}}>&ensp;{ago}</small>
+      </div>
     )
   })
   
@@ -41,11 +44,11 @@ const AssetHistoryDetail = ( { assetActivity, currUser } ) => {
   )
 
   return (
-    <Popup wide='very' hoverable trigger={TriggerElement} size='tiny' className='animated fadeIn'>
+    <Popup wide='very' hoverable trigger={TriggerElement} size='tiny'>
       <Popup.Header>
         { changesCount } changes
       </Popup.Header>
-      <Popup.Content>
+      <Popup.Content style={{maxHeight: '400px', overflow: 'scroll'}}>
         { changes }
       </Popup.Content>
     </Popup>

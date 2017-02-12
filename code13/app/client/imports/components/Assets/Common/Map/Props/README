@@ -1,2 +1,2 @@
-Here are object who works in the EditMap scope - this provides isolation of these objects and clener code in general..
-Remember - in these methods THIS is reference to EditMap instance!!!
+Here are objects who work in the EditMap scope - this provides isolation of these objects and clener code in general..
+Remember - in these methods THIS is reference to the EditMap instance!!!

@@ -1,4 +1,4 @@
-// Data model for MGB Chats. 
+// Data model for MGB Chats.
 // See https://github.com/devlapse/mgb/issues/40 for discussion of requirements
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
@@ -19,13 +19,13 @@ var schema = {
   // Identifiers for who sent the chat
   byUserName: String,       // UserName (not ID)
   byUserId: String,         // OK, _this_ one is the ID
- 
+
   // Identifers for scope of the action
-  toChannelName: optional(String),    // undefined if global 
+  toChannelName: optional(String),    // undefined if global
   toProjectName: optional(String),    // undefined if not a project-scoped action... oops. what about owner of project
   toAssetId: optional(String),        // If it is an asset-scoped chat - or undefined if not asset-scoped
   toAssetName: optional(String),      // Asset's name If it is an asset-scoped chat (duplicated here for speed)
-  toOwnerId: optional(String),        // Owner's user ID if @person. Only one @person... 
+  toOwnerId: optional(String),        // Owner's user ID if @person. Only one @person...
   toOwnerName: optional(String),      // Owner's user NAME if @person
 
   // the actual chat information
@@ -39,41 +39,41 @@ export const ChatPosters = {
 }
 
 export const ChatChannels = {
-  SYSTEM: { 
-    name:         "mgb-announce",
-    icon:         "announcement",
-    poster:       ChatPosters.SUPERADMIN,
-    description:  "Global announcements/alerts from core MGB engineering team",
-    subscopes:    {}
-  },
-  GENERAL: { 
+  // SYSTEM: {
+  //   name:         "mgb-announce",
+  //   icon:         "announcement",
+  //   poster:       ChatPosters.SUPERADMIN,
+  //   description:  "Global announcements/alerts from core MGB engineering team",
+  //   subscopes:    {}
+  // },
+  GENERAL: {
     name:         "general",
     icon:         "world",
     poster:       ChatPosters.ACTIVEUSER,
     description:  "General suggestions, discussions and questions related to MGB",
     subscopes:    {}
   },
-  MGBBUGS: { 
+  MGBBUGS: {
     name:         "mgb-bugs",
     icon:         "bug",
     poster:       ChatPosters.ACTIVEUSER,
     description:  "Discussions about potential bugs and fixes in MGB",
     subscopes:    {}
   },
-  MGBHELP: { 
+  MGBHELP: {
     name:         "mgb-help",
     icon:         "help circle",
     poster:       ChatPosters.ACTIVEUSER,
     description:  "Ask for help in how to use the MGB site",
     subscopes:    {}
   },
-  LOOKINGFORGROUP: { 
-    name:         "lfg",
-    icon:         "users",
-    poster:       ChatPosters.ACTIVEUSER,
-    description:  "Looking for group - message here to find people to work with on MGB projects",
-    subscopes:    {}
-  },
+  // LOOKINGFORGROUP: {
+  //   name:         "lfg",
+  //   icon:         "users",
+  //   poster:       ChatPosters.ACTIVEUSER,
+  //   description:  "Looking for group - message here to find people to work with on MGB projects",
+  //   subscopes:    {}
+  // },
   RANDOM: {
     name:         "random",
     icon:         "random",
@@ -82,28 +82,28 @@ export const ChatChannels = {
     subscopes:    {}
   },
 
-  // This one is for testing... 
+  // This one is for testing...
   //
-  // CHATTESTCHANNEL: { 
+  // CHATTESTCHANNEL: {
   //   name:         "mgb-chat-testing",
   //   icon:         "users",
   //   poster:       ChatPosters.SUPERADMIN,
   //   description:  "Hidden channel for chat devs. Mwahaha",
   //   subscopes:    {}
   // },
- 
+
   // This one is a future AWESOME plan :)
-  // ASSET: { 
+  // ASSET: {
   //   name:         "asset",
   //   icon:         "write",
   //   description:  "Discussion about the currently viewed/edited asset",
   //   poster:       ChatPosters.ACTIVEUSER,
   //   subscopes:    { assetId: true }
   // },
- 
- 
+
+
   // TODO: Project chat is a bit complex.. will do that later: Limited membership, viewership etc
-  // PROJECTMEMBERS: { 
+  // PROJECTMEMBERS: {
   //   name:         "project-members",
   //   icon:         "",
   //   poster:       "@@projectMember",
@@ -111,7 +111,7 @@ export const ChatChannels = {
   //   subscopes:    { projectId: true }
   // },
 
-  // PROJECTPUBLIC: { 
+  // PROJECTPUBLIC: {
   //   name:         "project-public",
   //   icon:         "",
   //   poster:       ChatPosters.ACTIVEUSER,
@@ -119,12 +119,12 @@ export const ChatChannels = {
   //   subscopes:    { projectId: true }
   // },
   getIconClass: function (key) { return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : "warning sign") + " icon"},
-  sortedKeys: [ 
-    "SYSTEM", 
-    "GENERAL", 
-    "MGBBUGS", 
-    "MGBHELP", 
-    "LOOKINGFORGROUP", 
+  sortedKeys: [
+    // "SYSTEM",
+    "GENERAL",
+    "MGBBUGS",
+    "MGBHELP",
+    // "LOOKINGFORGROUP",
     "RANDOM"
     // "CHATTESTCHANNEL"
   ],
@@ -169,7 +169,7 @@ function __findKey(obj, predicate) {
   let keys = _.keys(obj), key
   for (let i = 0, length = keys.length; i < length; i++) {
     key = keys[i]
-    if (predicate(obj[key], key, obj)) 
+    if (predicate(obj[key], key, obj))
       return key
   }
   return null
@@ -177,7 +177,7 @@ function __findKey(obj, predicate) {
 
 export function getChannelKeyFromName(cName) {
   return __findKey(ChatChannels, c => (c.name === cName) )
-} 
+}
 
 
 Meteor.methods({
@@ -186,7 +186,7 @@ Meteor.methods({
    *  @param data.message        Message to send
    */
   "Chats.send": function(data) {
-    if (!this.userId) 
+    if (!this.userId)
       throw new Meteor.Error(401, "Login required")
 
     if (!data.message || data.message.length < 1)
@@ -213,13 +213,13 @@ Meteor.methods({
     check(data, _.omit(schema, '_id'))
 
     let docId = Chats.insert(data)
-    if (Meteor.isServer) 
+    if (Meteor.isServer)
     {
       console.log(`  [Chats.send]  "${data.message}"  #${docId}  `)
       Meteor.call('Slack.Chats.send', currUser.profile.name, data.message, data.toChannelName)
     }
     return docId
-  }  
+  }
 })
 
 

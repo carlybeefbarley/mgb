@@ -689,7 +689,7 @@ main = function(){
 
   collectImportsForFile(name){
     return this.collectedSources.filter(script => {
-      return script.name != name && script.origin.indexOf(name) > -1
+      return script.name != name && script.origin && script.origin.indexOf(name) > -1
     })
   }
 

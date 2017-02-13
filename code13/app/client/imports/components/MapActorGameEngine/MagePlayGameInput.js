@@ -82,9 +82,9 @@ export default MagePlayGameInput = {
         break
       case 'm':		// Melee
       case 'End':	
-        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.meleeYN))
+        if (_.some(pp.content2.animationTable, anim => { return (anim.action.startsWith('melee') && anim.tileName !== "") }))
           this.G_player_action.melee = newstate
-        break
+          break
       case 'Control':
         if (isPaused && newstate)
           this.hideNpcMessage()				// unpause

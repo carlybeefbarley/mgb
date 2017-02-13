@@ -5,7 +5,7 @@ const validator = {
     return databag.itemOrNPC.appearIf && databag.itemOrNPC.appearIf != options.appearIf['No condition'];
   },
   hasKey: (databag) => {
-    return !!databag.item.keyForThisDoor && (
+    return databag.item.keyForThisDoor && (
         databag.item.itemActivationType == options.itemActivationType["Blocks Player"]
         || databag.item.itemActivationType == options.itemActivationType["Blocks Player + NPC"]
       ) && databag.item.pushToSlideNum == 0

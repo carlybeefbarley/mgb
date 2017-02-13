@@ -4,6 +4,7 @@ export default () => {
         "all": {
           "actorType": "0",
           "description": "",
+          "name": "",
           "initialHealthNum": "1",
           "initialMaxHealthNum": "0",
           "gravityYN": "0",
@@ -33,10 +34,11 @@ export default () => {
           "touchDamageToNPCorItemNum": "0",
           "touchDamageAttackChance": "100",
           "touchDamageCases": "0",
+          //"meleeYN": "1",
           "meleeDamageToPlayerNum": "0",
           "meleeDamageToNPCorItemNum": "0",
           "soundWhenMelee": '[builtin]:none',
-          "meleeRepeatDelay": "0"
+          "meleeRepeatDelay": "0",
         },
         "playercharacter": "",
         "npc": {

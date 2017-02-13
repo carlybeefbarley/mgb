@@ -6,6 +6,7 @@ const AssetList = props => (
     {
       props.assets.map((asset) => (
         <AssetCard
+          className="mgb-pixelated"
           canEdit={props.currUser && asset.ownerId === props.currUser._id}
           currUser={props.currUser}
           asset={asset}

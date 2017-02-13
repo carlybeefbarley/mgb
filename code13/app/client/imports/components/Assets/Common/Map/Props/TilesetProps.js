@@ -45,6 +45,7 @@ export default {
 
     this.state.activeTileset = this.state.activeTileset > 0 ? this.state.activeTileset -1 : 0
     TileHelper.zeroOutUnreachableTiles(c2, this.cache.tiles)
+    this.cache.update(c2)
 
     this.quickSave(reason)
     this.setState({activeTileset: this.state.activeTileset})

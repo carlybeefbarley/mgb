@@ -362,7 +362,7 @@ export default class MagePlayGame
                         if (keyItem) {
                           var keyDestroyed = (1 == MgbActor.intFromActorParam(hitThing_ap.content2.databag.item.keyForThisDoorConsumedYN))
                           // Yup.. so let's do it!
-                          this.setGameStatusString(1, keyDestroyed ?
+                          this.setGameStatusFn(1, keyDestroyed ?
                             ("You use your " + key + " to pass") :
                             ("Since you are carrying the " + key + " you are able to pass through"))
                           if (keyDestroyed)

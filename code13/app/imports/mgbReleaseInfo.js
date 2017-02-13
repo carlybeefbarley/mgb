@@ -16,12 +16,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Sun Feb 12 2017 12:00 GMT-0800 (PST)',
+      'timestamp': 'Sun Feb 12 2017 21:45 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3227'
+        'iteration': '3231'
       },
 
       'releaseManagement': {
@@ -29,6 +29,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'improvement',
+          'changeName': 'Chat simplification',
+          'changeSummary': 'Removed a couple of not-very-useful chat channels. Internal changes to simplify code in readiness for DMs and project-based chat',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'asset.fork',
           'type': 'feature',

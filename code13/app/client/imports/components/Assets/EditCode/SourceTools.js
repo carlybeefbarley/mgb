@@ -689,7 +689,11 @@ main = function(){
 
   collectImportsForFile(name){
     return this.collectedSources.filter(script => {
-      return script.name != name && script.origin && script.origin.indexOf(name) > -1
+      if(script.name != name && !script.origin){
+        console.error("import without origin??? how this did happen?")
+        return false
+      }
+      return script.name != name && script.origin.indexOf(name) > -1
     })
   }
 

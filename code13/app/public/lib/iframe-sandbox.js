@@ -297,6 +297,11 @@ window.onload = function() {
     },
     requestSizeUpdate: function(){
       sendSizeUpdate()
+    },
+    approveIsReady: function(){
+      window.parent.postMessage({
+        mgbCmd: "mgbSetIframeReady"
+      }, "*")
     }
   }
 

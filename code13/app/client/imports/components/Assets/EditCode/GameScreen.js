@@ -17,6 +17,7 @@ export default class GameScreen extends React.Component {
 
     this.screenX = 0
     this.screenY = 0 // px from bottom
+    this._isIframeReady = false
   }
 
   componentDidMount() {
@@ -63,6 +64,9 @@ export default class GameScreen extends React.Component {
 
       mgbAdjustIframe: function(data) {
         this.adjustIframe(data.size)
+      },
+      mgbSetIframeReady: function(){
+        this._isIframeReady = true
       }
     }
 
@@ -73,6 +77,12 @@ export default class GameScreen extends React.Component {
       commands[data.mgbCmd].call(this, data)
   }
 
+  isIframeReady(){
+    const lastVal = this._isIframeReady
+    // reset ready status for next stop
+    this._isIframeReady = false
+    return lastVal
+  }
   postMessage(messageObject) {
     if (messageObject.mgbCommand == "startRun")
       this.setState( { isHidden: false } )

@@ -186,15 +186,15 @@ export default AssetCard = React.createClass({
               width: "100%",
               backgroundColor: "white"
             }}>
-          <Thumbnail 
-              asset={asset} 
-              ref='previewCanvas' 
+          <Thumbnail
+              asset={asset}
+              ref='previewCanvas'
               style={{
                 minHeight: "155px",
                 margin: "0 auto",
-                imageRendering: "pixelated",
                 width: "initial"
               }}
+              className='mgb-pixelated'
               onDragStart={this.startDrag.bind(this, asset)}
               onDragEnd={this.endDrag.bind(this, asset)}
             />
@@ -212,7 +212,7 @@ export default AssetCard = React.createClass({
 
         { viewOpts.showHdr &&
           <div className="content">
-            { viewOpts.showExtra || 
+            { viewOpts.showExtra ||
               <i className={assetKindColor + ' ' + assetKindIcon + ' icon'} />
             }
             { viewOpts.showWorkstate &&
@@ -224,10 +224,10 @@ export default AssetCard = React.createClass({
                   canEdit={false}/>
               </span>
             }
-            <a 
+            <a
                 className={ viewOpts.header }
                 style={{ "color": asset.name ? 'black' : '#888',
-                  overflow: "hidden", 
+                  overflow: "hidden",
                   whiteSpace: 'nowrap',
                   display: 'block',
                   textOverflow: "ellipsis"

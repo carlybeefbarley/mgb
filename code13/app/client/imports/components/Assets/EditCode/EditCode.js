@@ -1487,12 +1487,25 @@ export default class EditCode extends React.Component {
     this.setState({isPlaying: true})
 
     this.tools.collectSources((collectedSources) => {
-      this._postMessageToIFrame({
-        mgbCommand: 'startRun',
-        sourcesToRun: collectedSources,
-        asset_id: asset._id,
-        filename: asset.name || ""
-      })
+      const startRun = () => {
+        if (this.refs.gameScreen.isIframeReady()) {
+          this._postMessageToIFrame({
+            mgbCommand: 'startRun',
+            sourcesToRun: collectedSources,
+            asset_id: asset._id,
+            filename: asset.name || ""
+          })
+        }
+        else{
+          // ask iframe to tell parent that it is ready.. fix for very slow connections
+          this._postMessageToIFrame({
+            mgbCommand: 'approveIsReady'
+          })
+          window.setTimeout(startRun, 100)
+        }
+      }
+      startRun()
+
     })
 
 

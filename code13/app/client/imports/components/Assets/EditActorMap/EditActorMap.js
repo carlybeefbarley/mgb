@@ -140,7 +140,6 @@ export default class EditActorMap extends EditMap {
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
-    return
     this.preventUpdates = false
 
     // can be already unmounted - as called by async function

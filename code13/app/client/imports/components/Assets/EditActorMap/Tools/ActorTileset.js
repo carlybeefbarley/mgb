@@ -110,7 +110,7 @@ export default class ActorTileset extends React.Component {
           className='active content tilesets accept-drop'
           onDrop={this.onDropOnLayer.bind(this)}
           onDragOver={DragNDropHelper.preventDefault}
-          style={{maxHeight: '100%', width: '100%', overflowY: 'scroll'}}
+          style={{maxHeight: '100%', width: '100%'}}
         >
           <div style={{fontSize: '140%', textAlign: 'center', zIndex: 1, textwidth: '100%', height: '100%'}}>Drop asset here to create TileSet</div>
         </div>
@@ -145,8 +145,7 @@ export default class ActorTileset extends React.Component {
 
         style={{
           minWidth: '80px',
-          width: 'calc(50% - 2em)',
-          margin: '1em',
+          margin: '0.5em',
           padding: 0,
           paddingTop: 'auto',
           borderRadius: '.28571429rem',

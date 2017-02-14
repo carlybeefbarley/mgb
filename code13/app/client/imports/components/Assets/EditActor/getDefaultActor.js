@@ -38,7 +38,7 @@ export default () => {
           "meleeDamageToPlayerNum": "0",
           "meleeDamageToNPCorItemNum": "0",
           "soundWhenMelee": '[builtin]:none',
-          "meleeRepeatDelay": "0",
+          "meleeRepeatDelay": "0"
         },
         "playercharacter": "",
         "npc": {

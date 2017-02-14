@@ -411,25 +411,27 @@ export default class Mage extends React.Component {
     this._mounted = false       //  This will implicitly stop the callDoBlit() game+render loop
   }
 
-  /*// This is for the shown-once help info
+  // This is for the shown-once help info
   componentDidUpdate (prevProps, prevState) {
-    if (prevState.isPlaying === false && this.state.isPlaying === true && !!this._game)
-    {
-      if (_haveShownInstructionsOnceSinceStart !== true)
+    console.log('1')
+    if (!this.props.playCountIncFn) // Not Game asset
+      console.log('2')
+      if (prevState.isPlaying === false && this.state.isPlaying === true && !!this._game)
       {
-        _haveShownInstructionsOnceSinceStart = true
-        this._game.doPauseGame()
-        this.handleShowNpcDialog( 
-          { 
-            message: "Keyboard instructions:  Use WASD or arrow keys to move your player.   'Enter' is shoot.   'M' is for Melee attack.   I is for Inventory.    Ctrl is Pause.   GLHF.\n", 
-            leftActor: null, // TODO - find the playerActor for this message
-            responseCallbackFn: () => { this.handleShowNpcDialog(null) ; this._game.isPaused = false }
-          }
-        )
+        if (_haveShownInstructionsOnceSinceStart !== true)
+        {
+          _haveShownInstructionsOnceSinceStart = true
+          this._game.doPauseGame()
+          this.handleShowNpcDialog( 
+            { 
+              message: "Keyboard instructions:  Use WASD or arrow keys to move your player.   'Enter' is shoot.   'M' is for Melee attack.   I is for Inventory.    Ctrl is Pause.  ", 
+              leftActor: null, // TODO - find the playerActor for this message
+              responseCallbackFn: () => { this.handleShowNpcDialog(null) ; this._game.isPaused = false }
+            }
+          )
+        }
       }
-    }
   }
-  */
 
   handleTouchControls(){
     this.setState({showTouchControls: !this.state.showTouchControls})

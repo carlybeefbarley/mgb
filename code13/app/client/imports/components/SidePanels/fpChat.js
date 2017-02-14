@@ -1,6 +1,12 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Button, Comment, Divider, Input, Form, Header, Icon, Image, List} from 'semantic-ui-react'
+import {
+  Button,
+  Comment,
+  Divider,
+  Dropdown,
+  Form,
+  Header,
+} from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/routes/App'
 
@@ -36,8 +42,6 @@ const ChatMessage = ( { msg } ) => {
   return <span dangerouslySetInnerHTML={{ __html: msg2}} />
 }
 
-// This is a simple way to remember the channel key for the flexPanel since there is exactly one of these. 
-// TODO: Push this up to flexPanel.js?
 let _previousChannelKey = null
 
 export default fpChat = React.createClass({
@@ -67,7 +71,6 @@ export default fpChat = React.createClass({
 
   getInitialState: function() {
     return {
-      view: 'comments',                       // Exactly one of ['comments', 'channels']
       pastMessageLimit: initialMessageLimit
     }
   },
@@ -95,7 +98,7 @@ export default fpChat = React.createClass({
   },
 
   componentDidUpdate: function(prevProps) {
-    if (this.state.pastMessageLimit <= initialMessageLimit && this.state.view === 'comments')
+    if (this.state.pastMessageLimit <= initialMessageLimit)
       this.refs.bottomOfMessageDiv.scrollIntoView(false)
   },
 
@@ -208,119 +211,47 @@ export default fpChat = React.createClass({
     } )
   },
 
-  handleChatChannelChange: function (newChan) {
-    this.changeChannel(newChan.name)
-    this.setState( { view: 'comments' } )
+  handleChatChannelChange: function (e, { value }) {
+    this.changeChannel(value)
   },
 
   handleMessageChange: function(e) {
     this.setState({ messageValue: e.target.value })
   },
 
-  handleShowChannelSelector: function() {
-    this.setState( { view: 'channels' } )
-  },
-
-  handleHideChannelSelector: function() {
-    this.setState( { view: 'comments' } )
-  },
-
-  renderChannelSelector: function() {
-    const { currUser, currUserProjects } = this.props
-
-    const publicChannels = (
-      <List selection>
-        <List.Item>
-          <List.Header disabled style={{ textAlign: 'center' }}>Public Channels</List.Header>
-        </List.Item>
-        {ChatChannels.sortedKeys.map( k => {
-          const chan = ChatChannels[k]
-          return (
-            <List.Item
-              key={k}
-              onClick={() => this.handleChatChannelChange(chan)}
-              title={chan.description}
-              content={chan.name}
-              icon={chan.icon}
-            />
-          )
-        } )}
-      </List>
-    )
-
-    const dmChannels = (
-      <List selection>
-        <List.Item>
-          <List.Header disabled style={{ textAlign: 'center' }}>Direct Messages</List.Header>
-        </List.Item>
-        {/* TODO stub func for dgolds to get DM channels*/}
-        {/* TODO onClick this.handleChatChannelChange */}
-        {[
-          <List.Item key='@dgolds'>
-            <Image avatar src='/api/user/iCyqxrbq8K9oLGx7h/avatar/60' />
-            <List.Content>
-              @dgolds
-              <Icon name='pin' color='grey' style={{ position: 'absolute', right: '1em' }} />
-            </List.Content>
-          </List.Item>,
-          <List.Item key='@levithomason'>
-            <Image avatar src='http://www.gravatar.com/avatar/833ca628e2a682683f916adb954b8db3?s=50&d=mm' />
-            <List.Content>
-              @levithomason
-              <Icon name='pin' color='grey' style={{ position: 'absolute', right: '1em' }} />
-            </List.Content>
-          </List.Item>,
-        ]}
-      </List>
-    )
-
-    const projectChannels = (
-      <List selection>
-        <List.Item>
-          <List.Header disabled style={{ textAlign: 'center' }}>Project Channels</List.Header>
-        </List.Item>
-        {_.sortBy(currUserProjects, p => (p.ownerId === currUser._id ? '' : p.ownerName)).map( project => {
-          const isOwner = (project.ownerId === currUser._id)
-
-          return (
-            <List.Item
-              key={project._id}
-              // TODO this.handleChatChannelChange, set channel project._id, need project channels for this to work
-            >
-              <Icon name='sitemap' color={isOwner ? 'green' : 'grey' } />
-              <List.Content>
-                <Icon name='pin' color='grey' style={{ position: 'absolute', right: '1em' }} />
-                {!isOwner && project.ownerName + ' : '}
-                {project.name}
-              </List.Content>
-            </List.Item>
-          )
-        } )}
-      </List>
-    )
-
-    return (
-      <div >
-        {publicChannels}
-        {dmChannels}
-        {projectChannels}
-      </div>
-    )
-  },
-
-  renderComments: function() {
-    const { messageValue } = this.state
-
-    const { currUser } = this.props
+  render: function () {
     const channelKey = this._calculateActiveChannelKey()
-    const canSend = currUserCanSend(currUser, channelKey)
+    const channelName = this._calculateActiveChannelName()
+    const { messageValue } = this.state
+    const canSend = currUserCanSend(this.props.currUser, channelKey)
 
-    return (
+    return  (
       <div>
-        <Comment.Group className="small">
-          { this.renderGetMoreMessages() }
-          { this.data.chats && this.data.chats.map( this.renderMessage ) }
-          <span id='mgbjr-fp-chat-channel-messages' />
+        <Dropdown
+          id='mgbjr-fp-chat-channelDropdown'
+          fluid
+          search
+          selection
+          onChange={this.handleChatChannelChange}
+          value={channelName}
+          options={ChatChannels.sortedKeys.map( k => {
+            const chan = ChatChannels[k]
+            return !chan ? null : {
+                key: k,
+                // TODO this should be a popup, need options shorthand so we can return a Dropdown.Item
+                // https://github.com/Semantic-Org/Semantic-UI-React/pull/1038
+                title: chan.description,
+                text: chan.name,
+                value: chan.name,
+                icon: chan.icon,
+              }
+          })}
+        />
+
+        <Comment.Group className="small" >
+        { this.renderGetMoreMessages() }
+        { this.data.chats && this.data.chats.map(this.renderMessage) }
+        <span id='mgbjr-fp-chat-channel-messages' />
         </Comment.Group>
 
         <Form size='small' onSubmit={e => e.preventDefault()}>
@@ -343,32 +274,8 @@ export default fpChat = React.createClass({
             labelPosition='left'
             disabled={!canSend}
             content='Send Message'
-            onClick={this.doSendMessage} />
+            onClick={this.doSendMessage}/>
         </Form>
-      </div>
-    )
-  },
-
-  render: function () {
-    const { view } = this.state
-    const channelName = this._calculateActiveChannelName()
-
-    return  (
-      <div>
-        <label style={{ fontWeight: 'bold' }}>Channel:</label>
-
-        <Input
-          value={channelName}
-          icon='hashtag'
-          iconPosition='left'
-          label={{ icon: { name: 'dropdown', fitted: true }, basic: true }}
-          labelPosition='right'
-          onFocus={this.handleShowChannelSelector}
-          //onBlur={this.handleHideChannelSelector}
-          fluid/>
-
-        {view === 'channels' && this.renderChannelSelector()}
-        {view === 'comments' && this.renderComments()}
 
         <p ref="bottomOfMessageDiv">&nbsp;</p>
       </div>

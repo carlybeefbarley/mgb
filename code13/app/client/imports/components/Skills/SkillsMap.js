@@ -276,15 +276,40 @@ export default class SkillTree extends React.Component {
     }
   }
 
+  getSubSkillNodes(skillNodes, onlySkillArea){
+    const onlyAreas = onlySkillArea.split('.')
+    let tmpNodes = _.cloneDeep(skillNodes)
+    while(onlyAreas.length > 1){
+      const nodeName = onlyAreas.shift()
+      if(tmpNodes[nodeName]){
+        tmpNodes = tmpNodes[nodeName]
+      } 
+    }
+    return {
+      skillNodes: tmpNodes,
+      onlySkillArea: onlyAreas[onlyAreas.length-1]
+    }
+  }
+
   render () {
     const { zoomLevel, skillAreaOverride } = this.state
-    const { user, userSkills, onlySkillArea, hideToolbars } = this.props
+    let { user, userSkills, subSkill, onlySkillArea, hideToolbars } = this.props
     if (!user)
       return <ThingNotFound type="User" />
     if (!userSkills)
       return <div className='ui warning message'>This user does not yet have any Skills stored in our database. But I'm sure they are awesome anyway</div>
 
-    this.countSkillTotals(SkillNodes, '', this.totals)
+    let skillNodes = SkillNodes
+    
+    if(subSkill){
+      const subSkillNodes = this.getSubSkillNodes(SkillNodes, onlySkillArea)
+      // console.log(subSkillNodes)
+      skillNodes = subSkillNodes.skillNodes
+      onlySkillArea = subSkillNodes.onlySkillArea
+    }
+
+
+    this.countSkillTotals(skillNodes, '', this.totals)
 
     const config = {
       // level: 1,      // default level -- This is now in expectedToolbars.getDefaultLevel
@@ -314,7 +339,7 @@ export default class SkillTree extends React.Component {
       <div>
         { ( onlySkillArea === null && !hideToolbars) && <Toolbar name='SkillsMap' config={config} actions={this} /> }
         <div style={{position: 'relative'}}>
-          {this.renderSkillNodes(SkillNodes, skillAreaOverride || onlySkillArea)}
+          {this.renderSkillNodes(skillNodes, skillAreaOverride || onlySkillArea)}
         </div>
       </div>
     )

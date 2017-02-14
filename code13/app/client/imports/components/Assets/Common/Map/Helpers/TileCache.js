@@ -11,10 +11,17 @@ export default class TileCache {
     this.tiles = {}
     this.observers = {}
 
+    this.errors = []
+
     this.toLoad = 0;
     this.loaded = 0;
 
     this.update(data, onReady)
+  }
+
+  getErrors(){
+    // TODO: make user friendly error message.. probably not here but on higher level..
+    return this.errors
   }
 
   cleanUp() {
@@ -122,12 +129,14 @@ export default class TileCache {
           src = `/api/asset/png/${Meteor.user().username}/${name}`
           img.onerror = () => {
             delete this.images[src]
+            this.errors.push(src)
             img.src = makeCDNLink("/images/error.png")
           }
           img.src = makeCDNLink(`/api/asset/png/${Meteor.user().username}/${name}`)
         }
         else {
           // load missing image
+          this.errors.push(src)
           img.src = makeCDNLink("/images/error.png")
         }
 

@@ -38,6 +38,30 @@ window.onload = function() {
   var errorCount = 0;
   var mainWindow = window.parent; // reference to the last poster
 
+  // hook ajax requests - so we can show them to user
+  var origSend = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, "send")
+  var origOpen = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, "open")
+  Object.defineProperties(XMLHttpRequest.prototype, {
+    send: {
+      value: function(){
+        var origOnError = this.onerror
+        this.onerror = function(e){
+          // TODO: HOW TO GET error details ??? 
+          console.error("Error in the XMLHttpRequest request while loading source:", this.url, e.stack)
+          origOnError && origOnError.call(this, e)
+        }
+        origSend.value.call(this)
+      }
+    },
+    open: {
+      value: function(method, url, async, user, password){
+        this.url = url
+        origOpen.value.call(this, method, url, async, user, password) // no arguments here
+      }
+    }
+  })
+
+
   // here will be stored all imported objects
   var imports = {};
   // SuperSimple implementation for CommonJS like module loading
@@ -144,6 +168,12 @@ window.onload = function() {
     else
       return false;
   }
+
+
+  window.addEventListener("error", function (e) {
+    alert("Error occured: " + e.error.message);
+    return false;
+  })
 
   // is it safe to remove?
   function loadScript(url, callback) {

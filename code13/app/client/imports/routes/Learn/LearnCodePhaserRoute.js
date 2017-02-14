@@ -1,24 +1,38 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
 import { Segment, Grid, Card, Header } from 'semantic-ui-react'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+
 
 const phaserSkills = SkillNodes.code.js.phaser
 const skillItems = []
 for (var key in phaserSkills) {
   if (phaserSkills.hasOwnProperty(key) && key != '$meta') {
-    skillItems.push( phaserSkills[key]['$meta'] )
+    let skill = _.cloneDeep(phaserSkills[key]['$meta'])
+    skill.idx = key
+    skillItems.push( skill )
   }
 }
 
 // const LearnCodePhaserRoute = ( { currUser, params }, context ) => { 
-const LearnCodePhaserRoute = ( props, context ) => { 
+const LearnCodePhaserRoute = ( { currUser, params }, context ) => { 
  
-  const userSkills = context.skills
-  // console.log(userSkills)
+  console.log(context.skills)
   return ( <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
+      
+
+       {/*TODO check if currUser logged in*/}
+      {/*<SkillsMap user={currUser} 
+        userSkills={context.skills} 
+        ownsProfile={true} 
+        onlySkillArea={'code'}
+        />*/}
+      
+      
       <Grid stackable>
         <Grid.Row >
           <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
@@ -28,12 +42,17 @@ const LearnCodePhaserRoute = ( props, context ) => {
         </Grid.Row>
         <Grid.Row>
           <Card.Group itemsPerRow={1} stackable className="skills">
-            
             { skillItems.map( (area, idx) => {
-              // console.log(area)
+              const key = 'code/js/phaser/'+area.idx+'/'+area.idx
+              const cStyle = _.cloneDeep(cardStyle)
+
+              if(currUser && context.skills[key]){
+                cStyle.backgroundColor = "#e2fcd6"
+                // console.log(area.idx)
+              }
 
               return (
-              <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
+              <QLink key={idx} to={area.link} className='card animated fadeIn' style={cStyle} to={area.link}>
                 <Card.Content>
                   <p style={descStyle}>
                     <i className={area.icon+" large icon"}></i>

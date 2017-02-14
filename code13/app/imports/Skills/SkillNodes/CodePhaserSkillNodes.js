@@ -26,6 +26,7 @@ export default {
       link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
       description: `The most basic concept starting game devolopment`,
     },
+    'drawImage': C.En(0),
   },
   positionImage: {
     $meta: {
@@ -34,6 +35,7 @@ export default {
       link: '/u/!vault/asset/eoTTDhibmKGrhuvHn',
       description: `x, y and anchor point`,
     },
+    'positionImage': C.En(0),
   },
   taskSetPosition: {
     $meta: {
@@ -42,6 +44,7 @@ export default {
       link: '/u/!vault/asset/Pn9mhjR7yAW3iTsRt',
       description: `Set image positions`,
     },
+    'taskSetPosition': C.En(0),
   },
   manipulateImage: {
     $meta: {
@@ -50,6 +53,7 @@ export default {
       link: '/u/!vault/asset/nzZK4r5a4WPAszBjj',
       description: `scale, alpha, rotate, tint`,
     },
+    'manipulateImage': C.En(0),
   },
   inputClick: {
     $meta: {
@@ -58,6 +62,7 @@ export default {
       name: 'Input click',
       description: `Cick on image, click on game`
     },
+    'inputClick': C.En(0),
   },
   taskInput: {
     $meta: {
@@ -66,6 +71,7 @@ export default {
       name: 'Task',
       description: `On each click make the sprite rotate counter clockwise by 10°`
     },
+    'taskInput': C.En(0),
   },
   inputKeyboard: {
     $meta: {
@@ -74,6 +80,7 @@ export default {
       name: 'Input keyboard',
       description: `keyboard keys`
     },
+    'inputKeyboard': C.En(0),
   },
   updateFunction: {
     $meta: {
@@ -82,6 +89,7 @@ export default {
       name: 'update() function',
       description: `example with increasing/descreasing size with arrow up/down`
     },
+    'updateFunction': C.En(0),
   },
   taskMoveChar: {
     $meta: {
@@ -90,6 +98,7 @@ export default {
       name: 'Task',
       description: `Move character around screen using arrow keys`
     },
+    'taskMoveChar': C.En(0),
   },
   spriteSheet: {
     $meta: {
@@ -98,6 +107,7 @@ export default {
       name: 'Spritesheet',
       description: `Frame animation for character`
     },
+    'spriteSheet': C.En(0),
   },
   spriteSheetEvents: {
     $meta: {
@@ -106,6 +116,7 @@ export default {
       name: 'Spritesheet events',
       description: `Animation started, stopped, looped`
     },
+    'spriteSheetEvents': C.En(0),
   },
   taskCharAnimations: {
     $meta: {
@@ -114,6 +125,7 @@ export default {
       name: 'Task',
       description: `Animate character - spawn, idle, run`
     },
+    'taskCharAnimations': C.En(0),
   },
   physicsBasics: {
     $meta: {
@@ -122,6 +134,7 @@ export default {
       name: 'Physics basics',
       description: `velocity, gravity, bounce, world bounds`
     },
+    'physicsBasics': C.En(0),
   },
   physicsCollide: {
     $meta: {
@@ -130,6 +143,7 @@ export default {
       name: 'Physics collide',
       description: `two object collision`
     },
+    'physicsCollide': C.En(0),
   },
   taskJump: {
     $meta: {
@@ -138,6 +152,7 @@ export default {
       name: 'Task',
       description: `jump character with simple physics`
     },
+    'taskJump': C.En(0),
   },
   tweens: {
     $meta: {
@@ -146,6 +161,7 @@ export default {
       name: 'Tweens',
       description: `Animating with interpolation instead of frames`
     },
+    'tweens': C.En(0),
   },
   groups: {
     $meta: {
@@ -154,6 +170,7 @@ export default {
       name: 'Groups',
       description: `add sprites to a group`
     },
+    'groups': C.En(0),
   },
   taskTweenGroup: {
     $meta: {
@@ -162,6 +179,7 @@ export default {
       name: 'Tasks',
       description: `animate group of dwarfs`
     },
+    'taskTweenGroup': C.En(0),
   },
   oop: {
     $meta: {
@@ -170,6 +188,7 @@ export default {
       name: 'OOP',
       description: `Object oriented programming and game states`
     },
+    'oop': C.En(0),
   },
   next: {
     $meta: {
@@ -178,6 +197,7 @@ export default {
       name: 'What to do next?',
       description: `Learn Phaser docs and examples`
     },
+    'next': C.En(0),
   },
 }
 

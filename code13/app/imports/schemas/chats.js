@@ -20,51 +20,68 @@
 Chats are single-threaded conversations - effectively a linear, time-sorted list of messages. 
 The Chats table essentially holds many of these 'chat threads' in the same table.
 
-Channels are a hierarchy of Chats. So each of the messages in a Chat 'thread' has a channelKey
+Channels are a hierarchy of Chats. So each of the messages in a Chat 'thread' has a channelName
 
 Chat messages are placed in a channel via their channelName:
-channelName: (Indexed field, non-unique in Chats table, used to group the 'Chat threads')
-  Global       G:{publicChannelKey}: // publicChannelKey is one of ChatChannel.sortedKeys[]. These are all public. There are some user-specific 'karmas' to allow writing to each (pro users, beta vanguard etc)
-  Project      P:{projectId}:        // This one is for members. There may be extra topics in future including public ones. Projects are more construction-oriented.
-  Asset        A:{AssetId}:          // Publicly writable. Owner might choose a 'approve comments' policy in future (TODO - needs a comments-policy in asset.js)
-  User         U:{UserId}:           // Publicly writable subject to (TODO) policy on User Profile.Owner might choose a 'approve comments' policy in future (TODO - needs a comments-policy in user.js)
+Chat.channelName: (Indexed field, non-unique in Chats table, used to group the 'Chat threads')
+  Global       G:{publicChannelKey}: // publicChannelKey is one of ChatChannel.sortedKeys[]. 
+                                     // These are all public. There will be some user-'karma'
+                                     // based policies to allow writing to each (pro users, beta vanguard etc)
+  Project      P:{projectId}:        // This one is for Project onwers and project Members. There may be 
+                                     // extra topics in future including public ones. Projects are more 
+                                     // construction-oriented so this is probably fine.
+  Asset        A:{AssetId}:          // Publicly writable. Owner might choose a 'approve comments' policy 
+                                     // in future (TODO - needs a comments-policy in asset.js)
+  User         U:{UserId}:           // Publicly writable subject to (TODO) policy on User Profile. 
+                                     // Owner-user might select an 'approve comments' policy in future
+                                     // (TODO - needs a comments-policy in user.js)
   DirectMsg    D:{uid1+uid2}:        // such that uid1 is lexically less than uid2 and + is a separator that will not be in the IDs
 The trailing : is to reserve namespacing for a future 'topics' part of a channelKey
 which would enable a forum-type level of messages for projects/public chats, and also
 could be used as a message-thread within DMs
 
 There are some additional indexed columns used to help find some items from other contexts:
-  _id                 // Normal Meteor/Mongo UUID for this message in the Chat Table. Always exists and unique and indexed
-  toAssetId           // always set for scopeAsset. MAY also be set for other messages. Allows a way to look for other messages related to an asset
-  toProjectId         // always set for scopeProject. MAY also be set for other messages.  Allows a way to look for other messages related to a project
-  toOwnerId           // Always set for scopeAsset and scopeProject and scopeUser: Set to the ownerId of that Asset/project/User. 
-                      // Allows a way for owners to see activity on stuff they own, and supports a wall
-  isDeleted           // true if the message has been deleted
-  FlagId              // non-null / non-empty if there is a Flag record for this message (See Flags.js)
- 
-From this it can be seen that the messages in a 'Chat' can be found via just constructing 
-the channelKey for some context.
+  Chat._id            // Normal Meteor/Mongo UUID for this message in the Chat Table. 
+                      // Always exists and unique and indexed
+  Chat.createdAt      // Timestamp, set authoritatively on server
+  Chat.toAssetId      // always set for scopeAsset. MAY also be set for other messages. 
+                      // Allows a way to look for other messages related to an asset
+  Chat.toProjectId    // always set for scopeProject. MAY also be set for other messages.  
+                      // Allows a way to look for other messages related to a project
+  Chat.toOwnerId      // Always set for scopeAsset and scopeProject and scopeUser and 
+                      // scopeDirectMsg: Set to the ownerId of that Asset/project/User. 
+                      // Allows a way for owners to see activity on stuff they own, and 
+                      // supports a wall, and also a way to rebuild other tables for DMs
+                      // in case of errors or db conflicts.
+  Chat.isDeleted      // true if the message has been deleted. For simplicity this will show
+                      // in the UI as '(deleted)' so we don't make counts overly complex
+  Chat.FlagId         // non-null / non-empty if there is a Flag record for this message (See Flags.js)
+
+From this it can be seen that the messages in a 'Chat thread' can be found via just constructing 
+the channelName for some context and then sorting by Chat.createdAt
 
 Next, for user enumeration of channels related to them, the process is as follows:
   Global        HardCoded in ChatChannels.sortedKeys[]
   Project       Via user's Project ownerships/memberships
-  Asset         Via user's Asset ownerships - usually view per asset.. 
-                but typically we will hide this under Asset navigation/search
-                unless pinned
+  User          Via user's User navigation (profile etc)
+  Asset         Via user's Asset ownerships - usually view per asset.. but typically
+                we will hide this under Asset navigation/search unless pinned
   DirectMsg     Using the user.DMpartners mentioned below...This requires special code in Chat.Send()
 
-To check read/unread situations, each User has an Object
-  user.ChatChannels{}
+To check read/unread situations, each User has some objects to support this chat model
+  User.ChatChannels{}
      key=channelName         // A channel that this user has read a message from, or has received an @mention or DM from
      value={ 
-       latestMsgRead: timestamp
+       latestMsgRead: timestamp        // from Chat.createdAt
        isPinned:      Boolean          // true if the user has pinned this channel
        isWatched:     Boolean          // true if the user wants notifications of changes (generated on some timed job. TODO)
       }
      key=...
      value=...
-  user.DMpartners[] is an array of the userIds of users who have ever DMed this user. This is set on Chat.Send() using a Mongo add-to-set operation
-  user.MentionsPending[] is an array of Chat message ids that mention the user. This is set on Chat.Send() via an append-to-array operation
+
+ /////// TODO: Item below needs some more thought.. Maybe just create a Notifications table instead ?
+  User.DMpartners[] is an array of the userIds of users who have ever DMed this user. This is set on Chat.Send() using a Mongo add-to-set operation
+  User.MentionsPending[] is an array of Chat message ids that mention the user. This is set on Chat.Send() via an append-to-array operation
 
 ******/
 

@@ -21,15 +21,23 @@ for (var key in phaserSkills) {
 // const LearnCodePhaserRoute = ( { currUser, params }, context ) => { 
 const LearnCodePhaserRoute = ( { currUser, params }, context ) => { 
  
-  console.log(context.skills)
+  // console.log(context.skills)
   return ( <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
       
 
        {/*TODO check if currUser logged in*/}
+      {/*TODO need to implement count and onclick for subskills*/}
       {/*<SkillsMap user={currUser} 
         userSkills={context.skills} 
         ownsProfile={true} 
         onlySkillArea={'code'}
+        />
+
+        <SkillsMap user={currUser} 
+        userSkills={context.skills} 
+        ownsProfile={true} 
+        subSkill={true}
+        onlySkillArea={'code.js.phaser'}
         />*/}
       
       

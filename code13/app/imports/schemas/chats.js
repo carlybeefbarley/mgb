@@ -22,6 +22,15 @@ The Chats table essentially holds many of these 'chat threads' in the same table
 
 Channels are a hierarchy of Chats. So each of the messages in a Chat 'thread' has a channelName
 
+TODO:Finalize these channelName formats and make sure they are ok with other constraints
+ C1) Avoid use of characters which will be problematic in a URL (since we like to use this key in the 
+     URLs such as ?_fp=chat.mgb-bugs)  So for sure,
+        avoid  &  since it is a url separator
+        use    .  carefully since it is used as a separator by flexPanel.js
+        check if + and : are usable at all
+        check if the uuids can possibly have anything other than [A-Za-z0-9]
+ C2) For the proposed separators in the channelName scheme, 
+
 Chat messages are placed in a channel via their channelName:
 Chat.channelName: (Indexed field, non-unique in Chats table, used to group the 'Chat threads')
   Global       G:{publicChannelKey}: // publicChannelKey is one of ChatChannel.sortedKeys[]. 

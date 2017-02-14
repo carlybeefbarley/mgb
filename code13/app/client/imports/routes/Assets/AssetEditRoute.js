@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Grid } from 'semantic-ui-react'
-import { utilPushTo } from '../QLink'
+import { utilPushTo, utilReplaceTo } from '../QLink'
 import reactMixin from 'react-mixin'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -103,8 +103,10 @@ export default AssetEditRoute = React.createClass({
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId
   // TODO: Make this QLink-smart so it preserves queries
   checkForRedirect() {
-    if (!this.props.user && !!this.data.asset)
-      utilPushTo(this.context.urlLocation.query, "/u/" + this.data.asset.dn_ownerName + "/asset/" + this.data.asset._id)
+    if (!this.props.user && !!this.data.asset) {
+      // don't push - just replace #225 - back button not always work
+      utilReplaceTo(this.context.urlLocation.query, "/u/" + this.data.asset.dn_ownerName + "/asset/" + this.data.asset._id)
+    }
   },
 
   componentDidMount() {
@@ -294,7 +296,7 @@ export default AssetEditRoute = React.createClass({
           ]}
         />
 
-        { !isTooSmall && 
+        { !isTooSmall &&
           <Grid.Column width='8' id="mgbjr-asset-edit-header-left">
             <AssetPathDetail
               canEdit={canEd}
@@ -311,7 +313,7 @@ export default AssetEditRoute = React.createClass({
           </Grid.Column>
         }
 
-        { !isTooSmall && 
+        { !isTooSmall &&
           <Grid.Column width='8' textAlign='right' id="mgbjr-asset-edit-header-right">
             { /* We use this.props.params.assetId since it is available sooner than the asset
               * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
@@ -345,8 +347,8 @@ export default AssetEditRoute = React.createClass({
               asset={asset}
               currUser={currUser}
               assetActivity={this.data.assetActivity} />
-            <AssetForkGenerator 
-              asset={asset} 
+            <AssetForkGenerator
+              asset={asset}
               canFork={currUser !== null}
               doForkAsset={this.doForkAsset}
               isForkPending={isForkPending} />

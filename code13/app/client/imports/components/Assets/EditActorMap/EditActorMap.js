@@ -28,11 +28,19 @@ import PlayForm from "./Modals/PlayForm.js"
 import MusicForm from "./Modals/MusicForm.js"
 
 import EditMap from '../EditMap/EditMap.js'
+import ActorMapErrorResolver from './ActorMapErrorResolver.js'
+
+import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 export default class EditActorMap extends EditMap {
   static propTypes = {
     asset: PropTypes.object,    // asset to be changed
     currUser: PropTypes.object  // current user
+  }
+
+  constructor(...a){
+    super(...a)
+    registerDebugGlobal( 'ActorHelper', ActorHelper, __filename, 'ActorHelper of ActorMap editor')
   }
 
   setInitialStateFromContent(){
@@ -112,12 +120,19 @@ export default class EditActorMap extends EditMap {
   }
 
 
-  v1_to_v2(props, cb){
+  v1_to_v2(props, cb, c2 = props.asset.content2){
     const names = {
       map: props.asset.name,
       user: props.asset.dn_ownerName
     }
-    ActorHelper.v1_to_v2(props.asset.content2, names, cb, (id, changes) => {
+    ActorHelper.v1_to_v2(c2, names, (mapData) => {
+      const errors = ActorHelper.getErrors()
+      if(errors.length){
+        this.setState({errors, isLoading: false})
+        return
+      }
+      cb(mapData)
+    }, (id, changes) => {
       //console.log("changed:", changes)
       this.saveForUndo("External actor change")
       this.updateMap()
@@ -125,14 +140,14 @@ export default class EditActorMap extends EditMap {
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
-    //return;
+    return
     this.preventUpdates = false
 
     // can be already unmounted - as called by async function
     if(!this.cache)
       return
-    // remove loading - which is set after adding new Actor
 
+    // remove loading - which is set after adding new Actor
     this.setState({isLoading: false})
 
     if(!this.props.canEdit){
@@ -148,8 +163,6 @@ export default class EditActorMap extends EditMap {
     }*/
 
     const toSave = ActorHelper.v2_to_v1(data)
-    this.lastSave = toSave
-
     // make sure we always have nice looking thumbnail
     if(!thumbnail && this.refs.map){
       this.refs.map.generatePreviewAndSaveIt()
@@ -203,6 +216,12 @@ export default class EditActorMap extends EditMap {
   }
 
   render () {
+    if(this.state.errors)
+      return <ActorMapErrorResolver errors={this.state.errors} content2={this.props.asset.content2} callback={(c2) => {
+        ActorHelper.cleanUp()
+        this.v1_to_v2(this.props, null, c2)
+       }}/>
+
     // this stuff is required for proper functionality
     if (!this.mgb_content2 || !this.cache)
       return this.renderLoading()

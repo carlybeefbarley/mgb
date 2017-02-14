@@ -46,7 +46,7 @@ window.onload = function() {
       value: function(){
         var origOnError = this.onerror
         this.onerror = function(e){
-          // TODO: HOW TO GET error details ??? 
+          // TODO: HOW TO GET error details ???
           console.error("Error in the XMLHttpRequest request while loading source:", this.url, e.stack)
           origOnError && origOnError.call(this, e)
         }

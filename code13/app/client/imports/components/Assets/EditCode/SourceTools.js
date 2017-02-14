@@ -440,6 +440,10 @@ export default class SourceTools {
       if(error){
         this.setError(error)
       }
+      // we got destroyed while loading import... nothing to do here anymore
+      if(!this.cache){
+        return
+      }
       this.cache[urlFinalPart] = source
       this.collectScript(urlFinalPart, source, cb, localName, false, origin)
     }, urlFinalPart)
@@ -689,8 +693,9 @@ main = function(){
 
   collectImportsForFile(name){
     return this.collectedSources.filter(script => {
+      // after renaming asset script name won't match asset name
+      // only main script don't have origin
       if(script.name != name && !script.origin){
-        console.error("import without origin??? how this did happen?")
         return false
       }
       return script.name != name && script.origin.indexOf(name) > -1

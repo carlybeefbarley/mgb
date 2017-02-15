@@ -22,7 +22,7 @@ const AssetLicense = ( { license, popupPosition, handleChange, canEdit } ) => {
         size='small'
         style={canEdit ? {fontSize: '16px'} : {} }
         trigger={(
-          <Label basic style={{ borderRadius: '0px' }}>
+          <Label basic size='small' style={{ borderRadius: '0px' }}>
             <Icon name='law' />
             <small>{ actualLicense }</small>
           </Label>

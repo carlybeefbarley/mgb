@@ -20,8 +20,8 @@ export const badgeList = {
   tenHours:         [ 'v2/beginner/tenhours.png',    'Ten Hours+ of Building' ],
 
   guruCode:         [ 'v2/guru/code.png',           'Official MGB Code Guru'],
-  guruArt:          [ 'v2/guru/art.png',            'Official MGB Art Guru'],
   guruMusic:        [ 'v2/guru/music.png',          'Official MGB Music Guru'],
+//  guruArt:          [ 'v2/guru/art.png',            'Official MGB Art Guru'],  // Don't currently have art for this. Ironic!
 
   // This is a special case just to make it easier to generate some UI consistently
   _blankBadge:      [ "Empty Badge slot.png",       "Space for another badge" ]
@@ -36,7 +36,7 @@ const _getImplicitBadgesForUser = user => {
   if (_.includes('dgolds,stauzs,guntis'.split(','), user.profile.name))
     retval.push('guruCode')
 
-  if (_.includes('dgolds,stauzs,guntis,Supergirl,Micah'.split(','), user.profile.name))
+  if (_.includes('dgolds,stauzs,guntis,Supergirl'.split(','), user.profile.name))
   {
     retval.push('hourOfDrawing')
     retval.push('tenHours')
@@ -44,9 +44,6 @@ const _getImplicitBadgesForUser = user => {
 
   if (_.includes('dgolds,guntis'.split(','), user.profile.name))
     retval.push('guruMusic')
-
-  if (_.includes('Micah,Supergirl'.split(','), user.profile.name))
-    retval.push('guruArt')
 
   isUserSuperAdmin(user) && retval.push('mgbAdmin')
 //  user.profile.mgb1name && user.profile.mgb1name.length > 0 && retval.push("mgb1veteran")

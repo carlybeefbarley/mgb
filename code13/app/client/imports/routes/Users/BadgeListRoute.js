@@ -23,7 +23,8 @@ const BadgeListRoute = ( { user } ) => {
             <Item key={val}>
               <Item.Image as={Badge} name={val} key={val} />
               <Item.Content>
-                <Item.Header content={(badgeList[val] ? badgeList[val][1] : val) + ' Badge' } />
+              <br></br>
+                <Item.Header content={(badgeList[val] ? badgeList[val][1] : val) } />
               </Item.Content>
             </Item>
           ))}

@@ -131,7 +131,7 @@ export default class EditActorMap extends EditMap {
         this.setState({errors, isLoading: false})
         return
       }
-      cb(mapData)
+      cb && cb(mapData)
     }, (id, changes) => {
       //console.log("changed:", changes)
       this.saveForUndo("External actor change")
@@ -215,10 +215,10 @@ export default class EditActorMap extends EditMap {
   }
 
   render () {
-    if(this.state.errors)
+    if(this.state.errors && this.state.errors.length > 0)
       return <ActorMapErrorResolver errors={this.state.errors} content2={this.props.asset.content2} callback={(c2) => {
         ActorHelper.cleanUp()
-        this.v1_to_v2(this.props, null, c2)
+        this.setInitialStateFromContent()
        }}/>
 
     // this stuff is required for proper functionality

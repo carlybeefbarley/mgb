@@ -550,7 +550,9 @@ const App = React.createClass({
     if (!actionsString || actionsString === '')
       return
 
+    // The preparePage string can have multiple actions, each are separated by a comma character
     actionsString.split(',').forEach( act => {
+      // Some preparePage actions have a parameter - this is usually colon separated
       const [actText,actParam] = _.split(act, ':')
       if (actText === 'openVaultAssetById')
       {
@@ -558,7 +560,13 @@ const App = React.createClass({
         const newUrl = `/u/!vault/asset/${actParam}`
         utilPushTo(window.location, newUrl)
       }
-      else
+      else if (actText === 'openVaultAssetByName')
+      {
+        debugger// TODO @@@@@ need to actually get id fromname
+        // we want to open asset !vault:actParam
+        const newUrl = `/u/!vault/asset/${actParam}`
+        utilPushTo(window.location, newUrl)
+      }
       switch (act) {
       
       case 'closeFlexPanel':

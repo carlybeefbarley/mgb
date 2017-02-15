@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import { offerRevertAssetToForkedParentIfParentIdIs } from '/client/imports/routes/Assets/AssetEditRoute'
 import { transformStep } from './JoyrideSpecialMacros'
 import scroll from 'scroll'
 import autobind from 'react-autobind'
@@ -414,6 +415,14 @@ export default class Joyride extends React.Component {
     const dataType = el.dataset.type
 
     if (el.className.indexOf('joyride-') === 0) {
+      if (dataType === 'back' && steps[state.index].offerRevertToFork) {
+        // TODO: Update tooltip.jsx to not assume secondary is always data-type='back'
+        // AssetEditRoute owns the state of assets, so we need to talk to that
+        offerRevertAssetToForkedParentIfParentIdIs(steps[state.index].offerRevertToFork)
+        e.preventDefault()
+        e.stopPropagation()
+        return // no other action
+      } else
       if (dataType === 'next' && steps[state.index] && steps[state.index].awaitCompletionTag)
       {
         // a step.awaitCompletionTag property such as 
@@ -704,9 +713,21 @@ export default class Joyride extends React.Component {
               buttons.primary = locale.next
           }
 
+          // TODO - move this out one level so we have it in case of InsertCode or CompletionTag cases
           if (showBackButton && state.index > 0)
             buttons.secondary = locale.back
         }
+
+        if (currentStep.offerRevertToFork)
+        {
+          // Check if current asset is forked?
+          // TODO
+
+          // TODO - put in locale
+          buttons.secondary = 'Revert'
+        }
+
+
       }
 
       if (showSkipButton)

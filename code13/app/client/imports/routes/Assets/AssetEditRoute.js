@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Grid } from 'semantic-ui-react'
+import { Grid, Icon } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo } from '../QLink'
 import reactMixin from 'react-mixin'
 
@@ -75,6 +75,11 @@ const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
   /// (Hmm.. maybe I should create a global state container for this outside this component?)
 
 
+export const offerRevertAssetToForkedParentIfParentIdIs = forkParentId => {
+  const event = new CustomEvent('mgbOfferRevertToFork', { 'detail': forkParentId } )
+  setTimeout(() => { window.dispatchEvent(event) }, 0) // Prevent setState during render if this was called due to render
+}
+
 export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
@@ -91,8 +96,9 @@ export default AssetEditRoute = React.createClass({
   getInitialState: function () {
     this.getActivitySnapshots = () => this.data.activitySnapshots
     return {
-      isForkPending:   false,
-      isDeletePending: false
+      isForkPending:       false,
+      isDeletePending:     false,
+      isForkRevertPending: false
     }
   },
 
@@ -109,9 +115,48 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
+  revertDataFromForkParent_ResultCallBack: function (error, result) {
+    if (error)
+      showToast(`Unable to revert content to ForkParent for this asset: '${error.toString()}'`, 'error')
+    else {
+      showToast(`Reverted to Fork Parent's data`, 'success')
+      logActivity("asset.fork.revertTo", "Reverted to Fork Parent's data", null, this.data.asset )
+    }
+
+    this.setState( { isForkRevertPending: false } )
+  },
+
+
+  addListenersOnMount() {
+    this.listeners = {}
+    // mgbOfferRevertToFork handler
+    this.listeners.mgbOfferRevertToFork = e => { 
+      const { asset } = this.data
+      if (!asset || !this.canCurrUserEditThisAsset())
+        return
+      const forkParentId = e.detail
+      const fpc = asset.forkParentChain
+      if (!fpc || !_.isArray(fpc) || fpc.length === 0)
+        return
+      if (fpc[0].parentId !== forkParentId)
+        return
+
+      // ok, so this is the right asset being targetted by the mgbOfferRevertToFork() message..
+      // TODO: How to offer undo?
+      this.setState( { isForkRevertPending: true } )
+      Meteor.call('Azzets.revertDataFromForkParent', asset._id, forkParentId, this.revertDataFromForkParent_ResultCallBack)
+    }
+    window.addEventListener('mgbOfferRevertToFork', this.listeners.mgbOfferRevertToFork)
+  },
+
+  removeListenersOnUnmount() {
+    window.removeEventListener('mgbOfferRevertToFork', this.listeners.mgbOfferRevertToFork)
+  },
+
   componentDidMount() {
     this.checkForRedirect()
     this.m_deferredSaveObj = null
+    this.addListenersOnMount()
 
     //console.log("Preparing TICK Timer")
     this.m_tickIntervalFunctionHandle = Meteor.setInterval( () => {
@@ -141,6 +186,8 @@ export default AssetEditRoute = React.createClass({
     // stop subscription handler
     this.assetHandler.stop()
     this.assetHandler = null
+
+    this.removeListenersOnUnmount()
 
     // Clear Asset kind status for parent App
     if (this.props.handleSetCurrentlyEditingAssetInfo)
@@ -229,7 +276,6 @@ export default AssetEditRoute = React.createClass({
     return false    // Nope, can't edit it bro
   },
 
-
   doForkAsset: function() {
     if (!this.state.isForkPending) {
       const { asset } = this.data
@@ -237,7 +283,6 @@ export default AssetEditRoute = React.createClass({
       this.setState( { isForkPending: true } )
     }
   },
-
 
   // This result object will come from Meteor.call("Azzets.fork")
   forkResultCallback: function (error, result) {
@@ -317,7 +362,10 @@ export default AssetEditRoute = React.createClass({
           <Grid.Column width='8' textAlign='right' id="mgbjr-asset-edit-header-right">
             { /* We use this.props.params.assetId since it is available sooner than the asset
               * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
-              * */ }
+            * */ }
+            { this.state.isForkRevertPending && 
+              <Icon name='fork' loading />
+            }
             <WorkState
               workState={asset.workState}
               showMicro={true}

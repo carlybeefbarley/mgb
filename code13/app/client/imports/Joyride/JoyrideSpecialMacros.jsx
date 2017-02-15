@@ -85,7 +85,7 @@ const _mkFp = ( fpname, icon ) => (
     desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
     newVal:
     {
-      "title": `The '${_.upperFirst(fpname)}' Flex panel`,
+      "title": `The '${_.upperFirst(fpname)}' FlexPanel`,
       "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here`,
       "selector": `#mgbjr-flexPanelIcons-${fpname}`,
       "showStepOverlay": true,
@@ -104,7 +104,7 @@ const _mkFpDescribe = ( fpname, icon, describeText ) => (
     desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
     newVal:
     {
-      "title": `The '${_.upperFirst(fpname)}' Flex panel`,
+      "title": `The '${_.upperFirst(fpname)}' FlexPanel`,
       "text": `${describeText}. <br></br>Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here to show this Panel`,
       "selector": `#mgbjr-flexPanelIcons-${fpname}`,
       "showStepOverlay": true,
@@ -207,7 +207,7 @@ const stepMacros = [
   _mkFpDescribe( 'activity', 'lightning',   'This activity feed lets you see what people are working on'   ),
   _mkFpDescribe( 'goals',    'student',     'You can track, start/stop or resume your tutorials from here' ),
   _mkFpDescribe( 'assets',   'pencil',      'This lets you find assets, load them, or drag them into other assets - for example dragging a Graphic to a Map' ),
-  _mkFpDescribe( 'chat',     'chat',        'This lets you chat with other users of the site' ),
+  _mkFpDescribe( 'chat',     'chat',        'The Chat FlexPanel allows you to chat with other users of the site, while still doing other work' ),
   _mkFpDescribe( 'options',  'options',     'This lets you enable advanced fetures that are initially hidden for new users' ),
   _mkFpDescribe( 'skills',   'plus circle', 'This lets you track your learning skills'),
   _mkFpDescribe( 'users',    'street view', 'This is a quick way to search for other users. It doesn\'t do much yet...' ),

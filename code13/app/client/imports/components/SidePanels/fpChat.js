@@ -88,12 +88,11 @@ export default fpChat = React.createClass({
 
   changeChannel: function(selectedChannelName)
   {
-    // Magic and important squishing of idempotent changes below. See comment at start of file for some context on this.
+    joyrideCompleteTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
     if (selectedChannelName && selectedChannelName.length > 0 && selectedChannelName !== this._calculateActiveChannelName())
     {
       this.setState( { pastMessageLimit: initialMessageLimit })
       this.props.handleChangeSubNavParam(selectedChannelName)
-      joyrideCompleteTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
     }
   },
 
@@ -250,8 +249,11 @@ export default fpChat = React.createClass({
 
         <Comment.Group className="small" >
         { this.renderGetMoreMessages() }
-        { this.data.chats && this.data.chats.map(this.renderMessage) }
-        <span id='mgbjr-fp-chat-channel-messages' />
+          <div id='mgbjr-fp-chat-channel-messages'>
+            { // Always have at least one div so we will be robust with a '#mgbjr-fp-chat-channel-messages div:first' css selector for tutorials 
+              this.data.chats ? this.data.chats.map( this.renderMessage ) : <div></div>
+            }
+          </div>
         </Comment.Group>
 
         <Form size='small' onSubmit={e => e.preventDefault()}>

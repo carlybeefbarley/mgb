@@ -9,6 +9,8 @@ import { ReactMeteorData } from 'meteor/react-meteor-data'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import { utilPushTo } from "/client/imports/routes/QLink"
+
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
 
@@ -549,7 +551,16 @@ const App = React.createClass({
       return
 
     actionsString.split(',').forEach( act => {
+      const [actText,actParam] = _.split(act, ':')
+      if (actText === 'openVaultAssetById')
+      {
+        // we want to open asset !vault:actParam
+        const newUrl = `/u/!vault/asset/${actParam}`
+        utilPushTo(window.location, newUrl)
+      }
+      else
       switch (act) {
+      
       case 'closeFlexPanel':
         this.closeFlexPanel()
         break

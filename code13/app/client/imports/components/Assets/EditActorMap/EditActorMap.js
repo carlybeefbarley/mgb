@@ -134,6 +134,12 @@ export default class EditActorMap extends EditMap {
       cb && cb(mapData)
     }, (id, changes) => {
       //console.log("changed:", changes)
+      // TODO: probably we should do something here if map contains errors
+      if(this.state.errors && this.state.errors.length){
+        ActorHelper.cleanUp()
+        this.setInitialStateFromContent()
+        return
+      }
       this.saveForUndo("External actor change")
       this.updateMap()
     }, this.tilesetProps.removeTileset)

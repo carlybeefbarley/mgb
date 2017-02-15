@@ -1063,7 +1063,10 @@ export default class EditCode extends React.Component {
     }
 
     if (argPos !== -1) {
-      ternServer.request(editor, "type", function (error, data) {
+      ternServer.request(editor, "type",  (error, data) => {
+        // async call - component may be unmounted already
+        if(!this.isActive)
+          return
         functionTypeInfo = error ? { error } : data
         _setState(functionTypeInfo)
       }, currentCursorPos)     // TODO - We need CodeMirror 5.13.5 so this will work
@@ -1079,29 +1082,34 @@ export default class EditCode extends React.Component {
       return
     }
     let position = editor.getCursor()
-    var self = this
     let query = {
       type: "type",
       depth: 0
       //preferFunction: true
     }
 
-    ternServer.request(editor, query, function (error, data) {
+    ternServer.request(editor, query, (error, data) => {
+      // async call - component may be unmounted already
+      if(!this.isActive)
+        return
       if (error)
-        self.setState({atCursorTypeRequestResponse: {"error": error}})
+        this.setState({atCursorTypeRequestResponse: {"error": error}})
       else {
         if (data.type == data.name) {
           query.depth = 1
-          ternServer.request(editor, query, function (error, data) {
+          ternServer.request(editor, query, (error, data) => {
+            // async call - component may be unmounted already
+            if(!this.isActive)
+              return
             if (error)
-              self.setState({atCursorTypeRequestResponse: {"error": error}})
+              this.setState({atCursorTypeRequestResponse: {"error": error}})
             else {
-              self.setState({atCursorTypeRequestResponse: {data}})
+              this.setState({atCursorTypeRequestResponse: {data}})
             }
           }, position)
         }
         else
-          self.setState({atCursorTypeRequestResponse: {data}})
+          this.setState({atCursorTypeRequestResponse: {data}})
       }
     }, position)
   }
@@ -1113,13 +1121,15 @@ export default class EditCode extends React.Component {
       return
     }
     let position = editor.getCursor()
-    var self = this
 
-    ternServer.request(editor, "refs", function (error, data) {
+    ternServer.request(editor, "refs", (error, data) => {
+      // async call - component may be unmounted already
+      if(!this.isActive)
+        return
       if (error)
-        self.setState({atCursorRefRequestResponse: {"error": error}})
+        this.setState({atCursorRefRequestResponse: {"error": error}})
       else
-        self.setState({atCursorRefRequestResponse: {data}})
+        this.setState({atCursorRefRequestResponse: {data}})
     }, position)
   }
 
@@ -1132,6 +1142,9 @@ export default class EditCode extends React.Component {
     let position = editor.getCursor()
 
     ternServer.request(editor, "definition", (error, data) => {
+      // async call - component may be unmounted already
+      if(!this.isActive)
+        return
       if (error)
         this.setState({atCursorDefRequestResponse: {"error": error}})
       else {
@@ -1170,15 +1183,17 @@ export default class EditCode extends React.Component {
         return
       }
       let position = editor.getCursor()
-      var self = this
 
       var query = {type: "mgbGetMemberParent"}
 
-      ternServer.request(editor, query, function (error, data) {
+      ternServer.request(editor, query, (error, data) => {
+        // async call - component may be unmounted already
+        if(!this.isActive)
+          return
         if (error)
-          self.setState({atCursorMemberParentRequestResponse: {"error": error}})
+          this.setState({atCursorMemberParentRequestResponse: {"error": error}})
         else {
-          self.setState({atCursorMemberParentRequestResponse: {data}})
+          this.setState({atCursorMemberParentRequestResponse: {data}})
         }
       }, position)
     }

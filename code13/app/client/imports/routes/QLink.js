@@ -33,11 +33,11 @@ function createLocationDescriptor(to, _ref) {
 
 
 
-// This is a Query-aware Link that adds some MGB-related smarts to the standard 
+// This is a Query-aware Link that adds some MGB-related smarts to the standard
 // React Router <Link> as documented at https://github.com/reactjs/react-router/blob/master/docs/API.md#link
 
 // This QLink has the following additional capabilities
-// 
+//
 // 1. Any app-wide query params that should be preserved (see urlMaker.getCrossAppQueryParams() )
 
 export default QLink = React.createClass({
@@ -59,28 +59,28 @@ export default QLink = React.createClass({
     target:               PropTypes.string,
     elOverride:           PropTypes.string  // eg "div"
   },
-  
+
   getDefaultProps: function () {
     return {
 //  onlyActiveOnIndex: false,
       style: {}
     };
   },
-  
-    
+
+
   contextTypes: {
     urlLocation: React.PropTypes.object,
     router:  React.PropTypes.object
   },
-  
-  /** This click handler will be called by the <Link> we create. 
+
+  /** This click handler will be called by the <Link> we create.
    *  This click handler effectively overrides from the handleClick() in node_modules/react-router/es6/Link.js
    *  since that calls us and we then disable it with event.preventDefault()
-   * 
-   *  Any explicit original key/value pairs in props.query will override the app-scoped params so this can be 
+   *
+   *  Any explicit original key/value pairs in props.query will override the app-scoped params so this can be
    *  used to change NavPanels and FlexPanels for example
-   * 
-   * In orded to simplify tutorial development, we also file mgbjr-CT- 
+   *
+   * In orded to simplify tutorial development, we also file mgbjr-CT-
    * joyrideCompletionTags if the item had an id=mgbjr-.*
    */
   handleClick: function (event) {
@@ -89,11 +89,11 @@ export default QLink = React.createClass({
     const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
 
     if (event.target && event.target.id && event.target.id.startsWith('mgbjr-'))
-      joyrideCompleteTag(event.target.id.replace(/^mgbjr-/, 'mgbjr-CT-'))      
+      joyrideCompleteTag(event.target.id.replace(/^mgbjr-/, 'mgbjr-CT-'))
 
-    if (p.onClick) 
+    if (p.onClick)
       p.onClick(event)    // Call the click handler we were given. Note that it has the option to preventDefault()
-      
+
     if (
          event.defaultPrevented === true  // p.OnClick() handler preventedDefault processing, that includes us.
       || isModifiedEvent(event)           // Dont handle clicks with Shift, Meta, Ctrl etc  -- leave to Browser
@@ -137,22 +137,22 @@ export default QLink = React.createClass({
       newText = "_Users"
       break
     default:
-      console.error(`Unknown case for QLink nav="${p.nav}"`)      
+      console.error(`Unknown case for QLink nav="${p.nav}"`)
       break
     }
 
     return React.createElement(
-                      chosenEl, 
+                      chosenEl,
                       Object.assign({}, pClean, { to: newTo, onClick: this.handleClick }),
                       <span>{newText}</span>)
   }
-  
+
 })
 
 /** utilPushTo()
- * 
- * This is a replacement for browserHistory.push() 
- * 
+ *
+ * This is a replacement for browserHistory.push()
+ *
  * @export
  * @param {any} existingQuery
  * @param {string} newTo
@@ -167,4 +167,15 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
   clearPriorPathsForJoyrideCompletionTags()
 
   browserHistory.push(location)
+}
+
+export function utilReplaceTo(existingQuery, newTo, extraQueryParams = {})
+{
+  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)
+  const location = createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
+
+  // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
+  clearPriorPathsForJoyrideCompletionTags()
+
+  browserHistory.replace(location)
 }

@@ -75,12 +75,12 @@ Next, for user enumeration of channels related to them, the process is as follow
   User          Via user's User navigation (profile etc)
   Asset         Via user's Asset ownerships - usually view per asset.. but typically
                 we will hide this under Asset navigation/search unless pinned
-  DirectMsg     Using the user.DMpartners mentioned below...This requires special code in Chat.Send()
+  DirectMsg     Using the user.ChatChannels mentioned below...This requires special code in Chat.Send()
 
 To check read/unread situations, each User has some objects to support this chat model
   User.ChatChannels{}
      key=channelName         // A channel that this user has read a message from, or has received an @mention or DM from
-     value={ 
+     value={
        latestMsgRead: timestamp        // from Chat.createdAt
        isPinned:      Boolean          // true if the user has pinned this channel
        isWatched:     Boolean          // true if the user wants notifications of changes (generated on some timed job. TODO)
@@ -88,9 +88,15 @@ To check read/unread situations, each User has some objects to support this chat
      key=...
      value=...
 
- /////// TODO: Item below needs some more thought.. Maybe just create a Notifications table instead ?
-  User.DMpartners[] is an array of the userIds of users who have ever DMed this user. This is set on Chat.Send() using a Mongo add-to-set operation
-  User.MentionsPending[] is an array of Chat message ids that mention the user. This is set on Chat.Send() via an append-to-array operation
+  There is special handling in Chat.Send() on the server to drive notifications and enumerations
+  (TODO) @mentions: adds to a (TODO) Notifications table. This is set on Chat.Send() using a Mongo add-to-set operation
+  (TODO) DMs: adds a ToUser.ChatChannels['D:id1+id2']={ latestMsgReadDate: 0 } record if one does not already exist. 
+  (TODO) This is set on Chat.Send() using a Mongo add-to-set operation
+
+  There will also be a notifications table. This is separate from User so that
+  we can support more specialized Notification systems in future.
+  (TODO)
+  Notifications.MentionsPending[] is an array of Chat message ids that mention the user. This is set on Chat.Send() via an append-to-array operation
 
 ******/
 
@@ -162,13 +168,6 @@ export const ChatChannels = {
     description:  "Ask for help in how to use the MGB site",
     subscopes:    {}
   },
-  // LOOKINGFORGROUP: {
-  //   name:         "lfg",
-  //   icon:         "users",
-  //   poster:       ChatPosters.ACTIVEUSER,
-  //   description:  "Looking for group - message here to find people to work with on MGB projects",
-  //   subscopes:    {}
-  // },
   RANDOM: {
     name:         "random",
     icon:         "hashtag",
@@ -176,52 +175,12 @@ export const ChatChannels = {
     description:  "Off-topic discussions not related to MGB",
     subscopes:    {}
   },
-
-  // This one is for testing...
-  //
-  // CHATTESTCHANNEL: {
-  //   name:         "mgb-chat-testing",
-  //   icon:         "users",
-  //   poster:       ChatPosters.SUPERADMIN,
-  //   description:  "Hidden channel for chat devs. Mwahaha",
-  //   subscopes:    {}
-  // },
-
-  // This one is a future AWESOME plan :)
-  // ASSET: {
-  //   name:         "asset",
-  //   icon:         "write",
-  //   description:  "Discussion about the currently viewed/edited asset",
-  //   poster:       ChatPosters.ACTIVEUSER,
-  //   subscopes:    { assetId: true }
-  // },
-
-
-  // TODO: Project chat is a bit complex.. will do that later: Limited membership, viewership etc
-  // PROJECTMEMBERS: {
-  //   name:         "project-members",
-  //   icon:         "",
-  //   poster:       "@@projectMember",
-  //   description:  "Comments/Discussion by project members about a specific project",
-  //   subscopes:    { projectId: true }
-  // },
-
-  // PROJECTPUBLIC: {
-  //   name:         "project-public",
-  //   icon:         "",
-  //   poster:       ChatPosters.ACTIVEUSER,
-  //   description:  "Comments/Discussion by anyone about a specific project",
-  //   subscopes:    { projectId: true }
-  // },
   getIconClass: function (key) { return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : "warning sign") + " icon"},
   sortedKeys: [
-    // "SYSTEM",
     "GENERAL",
     "MGBBUGS",
     "MGBHELP",
-    // "LOOKINGFORGROUP",
     "RANDOM"
-    // "CHATTESTCHANNEL"
   ],
   defaultChannelKey: "GENERAL"
 }
@@ -333,7 +292,7 @@ export function ChatSendMessage(channelKey, msg, completionCallback) {
 
   const chatMsg = {
     toChannelName: chatChannel.name,
-    // toProjectName: null,
+    // toProjectId: null,
     // toAssetId: null,
     // toOwnerName: null,
     // toOwnerId: null,

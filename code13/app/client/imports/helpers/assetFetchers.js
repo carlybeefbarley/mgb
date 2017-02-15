@@ -140,6 +140,22 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
   return observable
 }
 
+export const getAssetBySelector = (selector, onReady) => {
+  // get meteor data issue
+  setTimeout(() => {
+    const sub = Meteor.subscribe("assets.public.partial.bySelector", selector, {
+      onReady: () => {
+        const assets = PartialAzzets.find(selector).fetch()
+        sub.stop()
+        if (assets && assets.length)
+          return onReady(assets[0])
+
+        onReady(null)
+      }
+    })
+  }, 0)
+}
+
 // fetchAssetByUri() will fetch Asset by uri via ajax - returns Promise
 export const fetchAssetByUri = (uri) => {
   return new Promise(function (resolve, reject) {

@@ -62,7 +62,7 @@ Meteor.startup(function () {
       <Route component={App}>
 
         <Route path='/u/:username/play/:assetId' component={PlayGameRoute} name='Play Game' />
-      
+
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
@@ -72,7 +72,7 @@ Meteor.startup(function () {
         <Route path="/learn/skills/:skillarea" component={LearnSkillsAreaRoute} />
         <Route path="/learn/games" component={LearnGamesRoute} />
         <Route path="/learn/getstarted" component={LearnGetStartedRoute} />
-        
+
         <Route path="/learn/code" component={LearnCodeRoute} />
         <Route path="/learn/code/javascript" component={LearnCodeJsRoute} />
         <Route path="/learn/code/phaser" component={LearnCodePhaserRoute} />
@@ -120,6 +120,7 @@ Meteor.startup(function () {
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 
         <Route path="assetEdit/:assetId" component={Azzets.AssetEditRoute} name="Edit Asset (finding owner...)" />
+        <Route path="assetEdit/:kind/:user/:name" component={Azzets.AssetEditRedirect} name="Edit Asset (finding owner...)" />
 
         <Route path="user/:id/skilltree" component={Users.SkillTreeRoute} name="Skills" />
         <Route path="u/:username/skilltree" component={Users.SkillTreeRoute} name="Skills" />

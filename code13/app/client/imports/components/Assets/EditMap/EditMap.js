@@ -110,9 +110,6 @@ export default class EditMap extends React.Component {
     else{
       this.createNewMap()
     }
-
-    this.lastSave = this.mgb_content2
-
   }
 
   get preventUpdates(){

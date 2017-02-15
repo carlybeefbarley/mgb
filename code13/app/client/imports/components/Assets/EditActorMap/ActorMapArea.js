@@ -71,7 +71,7 @@ export default class ActorMapArea extends BaseMapArea {
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
 
     info = info || (layer ? layer.getInfo() : null)
-    let actor = info ? ActorHelper.getTilesetFromGid(info.gid, this.props.data.tilesets) : null 
+    let actor = info ? ActorHelper.getTilesetFromGid(info.gid, this.props.data.tilesets) : null
 
     return (
       <div key={i}>
@@ -90,7 +90,7 @@ export default class ActorMapArea extends BaseMapArea {
               actor.name === 'Actions' &&
               <span style={{fontSize: '11px'}}>&ensp;<b>Type: </b>Map Event</span>
             }
-            {(i + 1 < count) && 
+            {(i + 1 < count) &&
               <div style={{height: '11px'}}/>
             }
           </div>)
@@ -105,21 +105,21 @@ export default class ActorMapArea extends BaseMapArea {
     let layerInfo = activeLayer ? activeLayer.getInfo() : null
     let count = 0
 
-    if (layerInfo && this.props.data) 
-      if (layerInfo.x + 1 > this.props.data.width || layerInfo.y + 1 > this.props.data.height || layerInfo.x < 0 || layerInfo.y < 0) 
+    if (layerInfo && this.props.data)
+      if (layerInfo.x + 1 > this.props.data.width || layerInfo.y + 1 > this.props.data.height || layerInfo.x < 0 || layerInfo.y < 0)
         return [<b style={{fontSize: '12px'}} key={-1}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>]
 
     this.hoveredTiles.map( (tile, i) => {
       if (tile.gid > 0) {
         count += i + 1
       }
-      ret.push(this.getInfo(tile, count, i))  
+      ret.push(this.getInfo(tile, count, i))
     })
 
     if (count === 0) {
-      if (layerInfo) 
+      if (layerInfo)
         return [<b style={{fontSize: '12px'}} key={-1}>{activeLayer.data.name + ' Layer (' + layerInfo.x + ', ' + layerInfo.y + ')'}</b>]
-      else 
+      else
         return [<div key={-1}>Hover over a tile on the map.</div>]
     }
     return ret.reverse()

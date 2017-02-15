@@ -19,7 +19,8 @@ export default class DropArea extends React.Component {
     value: PropTypes.string, // previously saved value
     ids: PropTypes.object, // map with [value] = asset._id - to track renamed assets
     asset: PropTypes.object, // asset assigned to this dropArea
-    onChange: PropTypes.function // callback
+    onChange: PropTypes.function, // callback
+    text: PropTypes.string // alternative text to display
  }
   static subscriptions = {} // key = owner:name / value subscription
   get data() {
@@ -116,9 +117,12 @@ export default class DropArea extends React.Component {
   }
 
   saveChanges() {
+    if(this.state.badAsset){
+      return
+    }
     let name = this.state.asset ? this.state.asset.dn_ownerName + ":" + this.state.asset.name : ''
 
-    if (name && this.props.asset.dn_ownerName === this.state.asset.dn_ownerName)
+    if (name && this.props.asset && this.props.asset.dn_ownerName === this.state.asset.dn_ownerName)
       name = this.state.asset.name
 
     this.props.onChange && this.props.onChange(name, this.state.asset)
@@ -191,6 +195,7 @@ export default class DropArea extends React.Component {
     const asset = this.getAsset()
     return (
       <div
+        /*TODO: this is bad id - e.g. actor has 3 sound options */
         id={`mgbjr-dropArea-${this.props.kind}`}
         style={{width: "100%"}}
         className={'ui message accept-drop message' + (asset ? " positive" : "") + (this.state.badAsset ? " negative" : "")}
@@ -201,7 +206,7 @@ export default class DropArea extends React.Component {
         }}
         >
 
-        {!asset && !this.state.badAsset ? (this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :
+        {!asset && !this.state.badAsset ? (this.props.text || this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :
           <i className="floated right ui icon remove" onClick={()=>{
               this.props.value = ""
               this.setState(

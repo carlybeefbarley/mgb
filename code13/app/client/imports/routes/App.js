@@ -276,7 +276,7 @@ const App = React.createClass({
   },
 
   render() {
-    const { respData, respWidth } = this.props
+    const { respData, respWidth, params } = this.props
     const { joyrideDebug, currentlyEditingAssetKind, currentlyEditingAssetCanEdit } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
@@ -339,6 +339,7 @@ const App = React.createClass({
           type="continuous"
           callback={this.handleJoyrideCallback}
           preparePageHandler={this.joyridePreparePageHandler}
+          assetId={params.assetId}
           debug={joyrideDebug} />
 
         <div>

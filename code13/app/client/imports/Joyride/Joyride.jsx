@@ -97,6 +97,10 @@ export default class Joyride extends React.Component {
   }
 
   static propTypes = {
+    assetId:              PropTypes.string,  // Can be undefined/null. But otherwise is a string 
+                                             // that is the :assetId in a route that that is being
+                                             // focussed on. The main case currently is the 
+                                             // AssetEditRoute path  '/u/username/asset/:assetId'
     callback:             PropTypes.func,
     completeCallback:     PropTypes.func,
     debug:                PropTypes.bool,

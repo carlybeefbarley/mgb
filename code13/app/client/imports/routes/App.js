@@ -9,7 +9,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-import { utilPushTo } from "/client/imports/routes/QLink"
+import { utilPushTo, utilReplaceTo } from "/client/imports/routes/QLink"
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
@@ -75,10 +75,10 @@ export const startSkillPathTutorial = (skillPath) => {
 
 
 // clearPriorPathsForJoyrideCompletionTags() is for making the Completion Tag thing
-//  work so it edge triggers only when pages are actually navigated to (rather than 
+//  work so it edge triggers only when pages are actually navigated to (rather than
 //  every update).
-// QLink.js calls this. There may be a better way to do this, but this isn't too 
-//  terribly factored so is OKish and it gets the job done for now. 
+// QLink.js calls this. There may be a better way to do this, but this isn't too
+//  terribly factored so is OKish and it gets the job done for now.
 // We will revisit this if any issues come up with this approach.
 export const clearPriorPathsForJoyrideCompletionTags = () => {
   if (_theAppInstance)
@@ -106,9 +106,18 @@ const _toastTypes = {
   success:  { funcName: 'success', hdr: 'Success', delay: 4000 }
 }
 
+/**
+ * 
+ * 
+ * @param {string} content . . If non-null, then display the Notification 
+ * @param {string} [type='success']
+ * @returns {Number} number of Milliseconds the alert will remain for. Can be used for revising _throttle etc. Even returned when content=null
+ */
 export const showToast = (content, type = 'success') => {
   const useType = _toastTypes[type] || _toastTypes['success']
-  NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+  if (content)
+    NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+  return useType.delay
 }
 
 
@@ -267,7 +276,7 @@ const App = React.createClass({
   },
 
   render() {
-    const { respData, respWidth } = this.props
+    const { respData, respWidth, params } = this.props
     const { joyrideDebug, currentlyEditingAssetKind, currentlyEditingAssetCanEdit } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
@@ -276,7 +285,7 @@ const App = React.createClass({
     if (!loading)
       this.configureTrackJs()
 
-    // The Flex Panel is for communications and common quick searches in a right hand margin 
+    // The Flex Panel is for communications and common quick searches in a right hand margin
     //   (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
@@ -330,6 +339,7 @@ const App = React.createClass({
           type="continuous"
           callback={this.handleJoyrideCallback}
           preparePageHandler={this.joyridePreparePageHandler}
+          assetId={params.assetId}
           debug={joyrideDebug} />
 
         <div>
@@ -360,7 +370,7 @@ const App = React.createClass({
                   fpReservedRightSidebarWidth={flexPanelWidth}
                   navPanelAvailableWidth={mainAreaAvailableWidth}
                 />
-                { isNetworkFailure && 
+                { isNetworkFailure &&
                   <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable' style={{marginLeft: '8px'}}/>
                 }
                 <NavBar
@@ -543,14 +553,35 @@ const App = React.createClass({
       this.setState( { joyrideCurrentStepNum: func.newIndex } )
     }
   },
-
+  joyrideHandlers: {
+    // !!! these functions must not refer to this or do other funny stuff !!!
+    openAsset: (type, user, name) => {
+      // TODO: get location query ???? - or location query should be handled by QLink?
+      utilPushTo(null, `/assetEdit/${type}/${user}/${name}`)
+    },
+    highlightCode: (from, to) => {
+      const evt = new Event("mgbjr-highlight-code")
+      evt.data = {from, to}
+      window.dispatchEvent(evt)
+    }
+  },
   // return null for no error, or a string with errors
   joyridePreparePageHandler( actionsString ) {
     const errors = []
     if (!actionsString || actionsString === '')
       return
 
+    // The preparePage string can have multiple actions, each are separated by a comma character
     actionsString.split(',').forEach( act => {
+      // defined above in
+      const params = act.split(":")
+      const action = params.shift()
+      if(this.joyrideHandlers[action]){
+        this.joyrideHandlers[action].apply(null, params)
+        return
+      }
+
+      // Some preparePage actions have a parameter - this is usually colon separated
       const [actText,actParam] = _.split(act, ':')
       if (actText === 'openVaultAssetById')
       {
@@ -558,9 +589,23 @@ const App = React.createClass({
         const newUrl = `/u/!vault/asset/${actParam}`
         utilPushTo(window.location, newUrl)
       }
-      else
+      else if (actText === 'openVaultAssetByName')
+      {
+        debugger// TODO @@@@@ need to actually get id fromname
+        // we want to open asset !vault:actParam
+        // assetEdit/{type}/{user}/{asset} -> assetEdit/{type}/!vault/${actParam}
+        const newUrl = `/u/!vault/asset/${actParam}`
+        utilPushTo(window.location, newUrl)
+      }
+      else if(actText === 'openVaultProjectById')
+      {
+        debugger
+        const newUrl = `/u/!vault/project/${actParam}`
+        utilPushTo(window.location, newUrl)
+      }
+
       switch (act) {
-      
+
       case 'closeFlexPanel':
         this.closeFlexPanel()
         break
@@ -569,6 +614,10 @@ const App = React.createClass({
         console.error("closeNavPanel preparePage action is no longer needed/supported. Tutorial should be simplified")
         break
 
+      case 'highlightCode':
+        console.log("Highlight code", actParam)
+
+        break
 
       case 'refreshBadgeStatus':
         Meteor.call('User.refreshBadgeStatus', (err, result) => {

@@ -170,5 +170,50 @@ Meteor.methods({
       newId: newDocId,
       newAssetNoC2: _.omit(dstAsset, 'content2')
     }
+  },
+
+  "Azzets.revertDataFromForkParent": function (assetId, forkParentId) {
+    if (!this.userId)
+      throw new Meteor.Error(401, "Login required") // TODO: Better access check
+
+    check(assetId, String)
+
+    // TODO: Access check
+
+    // Load Asset
+    const asset = Azzets.findOne(assetId)
+    if (!asset)
+      throw new Meteor.Error(404, "Asset Not Found")
+
+    // Check the ForkParent exists and is valid
+    const fpc = asset.forkParentChain
+    if (!fpc || !_.isArray(fpc) || fpc.length === 0)
+      throw new Meteor.Error(404, "Asset has no ForkParent")
+    if (fpc[0].parentId !== forkParentId)
+      throw new Meteor.Error(404, "Asset does not have expected ForkParent")
+
+    const forkParentAsset = Azzets.findOne(forkParentId)
+    if (!forkParentAsset)
+      throw new Meteor.Error(404, "ForkParent Asset Not Found")
+    
+    // copy the data
+    const data = {
+      content2:          _.clone(forkParentAsset.content2),
+      metadata:          _.clone(forkParentAsset.metadata),
+      assetLicense:      _.clone(forkParentAsset.assetLicense),
+      thumbnail:         _.clone(forkParentAsset.thumbnail),
+      updatedAt:         new Date(),
+      isUnconfirmedSave: this.isSimulation  // should be false, but let's make sure to do it right
+      // what about isCompleted ? probably not
+    }
+
+    // Note: if caller doesn't own doc, update should fail because fields like ownerId won't match
+    const selector = { _id: asset._id }
+    const count = Azzets.update(selector, { $set: data } )
+
+    if (Meteor.isServer)
+      console.log(`  [Azzets.revertDataFromForkParent]  (${count}) #${asset._id}  Kind=${asset.kind}  Owner=${asset.dn_ownerName}`) // These fields might not be provided for updates
+    
+    return count  
   }
 })

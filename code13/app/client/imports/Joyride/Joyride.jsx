@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import { offerRevertAssetToForkedParentIfParentIdIs } from '/client/imports/routes/Assets/AssetEditRoute'
 import { transformStep } from './JoyrideSpecialMacros'
 import scroll from 'scroll'
 import autobind from 'react-autobind'
@@ -10,6 +11,9 @@ import { getRootEl } from './utils'
 
 import Beacon from './Beacon'
 import Tooltip, { _queryVisibleSelectorsInSequence } from './Tooltip'
+
+import { ChatSendMessage } from '/imports/schemas/chats'
+import { utilPushTo } from "/client/imports/routes/QLink"
 
 // Note: CSS styles come from App.js: import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
 
@@ -93,6 +97,10 @@ export default class Joyride extends React.Component {
   }
 
   static propTypes = {
+    assetId:              PropTypes.string,  // Can be undefined/null. But otherwise is a string 
+                                             // that is the :assetId in a route that that is being
+                                             // focussed on. The main case currently is the 
+                                             // AssetEditRoute path  '/u/username/asset/:assetId'
     callback:             PropTypes.func,
     completeCallback:     PropTypes.func,
     debug:                PropTypes.bool,
@@ -134,7 +142,10 @@ export default class Joyride extends React.Component {
       close:  'Close',
       last:   'Done',
       next:   'Next',
-      skip:   'Exit'
+      skip:   'Exit',
+      submit: 'Submit Code',
+      reset:  'Reset',
+      help:   'Help',
     }
   }
 
@@ -414,6 +425,26 @@ export default class Joyride extends React.Component {
     const dataType = el.dataset.type
 
     if (el.className.indexOf('joyride-') === 0) {
+      if(dataType === 'next' && steps[state.index].submitCode){
+        console.log('submit code', 11)
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.random'})
+        // TODO uncoment this. Currently don't want to spam chat
+        ChatSendMessage('RANDOM', 'TEST - Check my Phaser task [link here]')
+      }
+      else 
+      if(dataType === 'back' && steps[state.index].submitCode){
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.mgb-help'})
+        ChatSendMessage('MGB-HELP', 'TEST - Check my Phaser task [link here]')
+        return // no other action
+      }
+      if (dataType === 'back' && steps[state.index].offerRevertToFork) {
+        // TODO: Update tooltip.jsx to not assume secondary is always data-type='back'
+        // AssetEditRoute owns the state of assets, so we need to talk to that
+        offerRevertAssetToForkedParentIfParentIdIs(steps[state.index].offerRevertToFork)
+        e.preventDefault()
+        e.stopPropagation()
+        return // no other action
+      } else
       if (dataType === 'next' && steps[state.index] && steps[state.index].awaitCompletionTag)
       {
         // a step.awaitCompletionTag property such as 
@@ -686,7 +717,12 @@ export default class Joyride extends React.Component {
       if (['continuous', 'guided'].indexOf(type) > -1) {
 
         if (currentStep.code)
-          buttons.primary = (<span>Insert Code</span>)          
+          buttons.primary = (<span>Insert Code</span>) 
+        else if(currentStep.submitCode){
+          buttons.primary = locale.submit
+          buttons.secondary = locale.help
+          // buttons.tertiary = locale.reset
+        }         
         else if (currentStep.awaitCompletionTag)
           buttons.primary = null // (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)
         else
@@ -704,9 +740,21 @@ export default class Joyride extends React.Component {
               buttons.primary = locale.next
           }
 
+          // TODO - move this out one level so we have it in case of InsertCode or CompletionTag cases
           if (showBackButton && state.index > 0)
             buttons.secondary = locale.back
         }
+
+        if (currentStep.offerRevertToFork)
+        {
+          // Check if current asset is forked?
+          // TODO
+
+          // TODO - put in locale
+          buttons.secondary = 'Revert'
+        }
+
+
       }
 
       if (showSkipButton)

@@ -12,6 +12,9 @@ import { getRootEl } from './utils'
 import Beacon from './Beacon'
 import Tooltip, { _queryVisibleSelectorsInSequence } from './Tooltip'
 
+import { ChatSendMessage } from '/imports/schemas/chats'
+import { utilPushTo } from "/client/imports/routes/QLink"
+
 // Note: CSS styles come from App.js: import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
 
 const _yPosForBody = 55
@@ -20,7 +23,7 @@ const _transienceIntervalMs = 400
 export const joyrideCompleteTag = tagString => {
   if (!tagString.startsWith('mgbjr-CT-'))
     console.error(`Dev error: By convention, joyrideCompleteTag() params should start with "mgbjr-CT-".. Was called with an incorrect tag "${tagString}" instead..`)
-
+  
    // enable using console if you want this noise:   m.jr._ctDebugSpew = true
   const event = new CustomEvent('mgbCompletionTag', { 'detail': tagString } )
   setTimeout(() => { window.dispatchEvent(event) }, 0) // Prevent setState during render if this was called due to render
@@ -135,7 +138,10 @@ export default class Joyride extends React.Component {
       close:  'Close',
       last:   'Done',
       next:   'Next',
-      skip:   'Exit'
+      skip:   'Exit',
+      submit: 'Submit Code',
+      reset:  'Reset',
+      help:   'Help',
     }
   }
 
@@ -160,12 +166,12 @@ export default class Joyride extends React.Component {
     window.addEventListener('resize', listeners.resize)
 
     // mgbCompletionTag listener
-    listeners.mgbCompletionTag = (e) => {
+    listeners.mgbCompletionTag = (e) => { 
       const step = this.props.steps[this.state.index]
-
+      
       if (this._ctDebugSpew || this.props.debug)  // enable using console if you want this noise:   m.jr._ctDebugSpew = true
         this.logger('joyride:listeners.mgbCompletionTag  received: ', ['e.detail', e.detail ], false, true)
-
+      
       if (step && step.awaitCompletionTag && step.awaitCompletionTag === e.detail)
       {
         this.logger('joyride:listeners.mgbCompletionTag - match and advance', ['awaitCompletionTag', step.awaitCompletionTag ])
@@ -183,7 +189,7 @@ export default class Joyride extends React.Component {
         // Did it appear?
         this.toggleTooltip(true, this.state.index, 'appear' )
       }
-      else
+      else 
       {
         // Did it disappear?
         const step = this.props.steps[this.state.index]
@@ -252,9 +258,9 @@ export default class Joyride extends React.Component {
    */
   stop() {
     this.logger('joyride:stop')
-    this.setState( {
-      showTooltip: false,
-      play: false
+    this.setState( { 
+      showTooltip: false, 
+      play: false 
     })
   }
 
@@ -265,7 +271,7 @@ export default class Joyride extends React.Component {
    */
   reset(_shouldRestart) {
     const shouldRestart = Boolean(_shouldRestart)
-    const newState = {
+    const newState = { 
       ...defaultState,
       play: shouldRestart
     }
@@ -415,6 +421,18 @@ export default class Joyride extends React.Component {
     const dataType = el.dataset.type
 
     if (el.className.indexOf('joyride-') === 0) {
+      if(dataType === 'next' && steps[state.index].submitCode){
+        console.log('submit code', 11)
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.random'})
+        // TODO uncoment this. Currently don't want to spam chat
+        ChatSendMessage('RANDOM', 'TEST - Check my Phaser task [link here]')
+      }
+      else 
+      if(dataType === 'back' && steps[state.index].submitCode){
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.mgb-help'})
+        ChatSendMessage('MGB-HELP', 'TEST - Check my Phaser task [link here]')
+        return // no other action
+      }
       if (dataType === 'back' && steps[state.index].offerRevertToFork) {
         // TODO: Update tooltip.jsx to not assume secondary is always data-type='back'
         // AssetEditRoute owns the state of assets, so we need to talk to that
@@ -425,11 +443,11 @@ export default class Joyride extends React.Component {
       } else
       if (dataType === 'next' && steps[state.index] && steps[state.index].awaitCompletionTag)
       {
-        // a step.awaitCompletionTag property such as
+        // a step.awaitCompletionTag property such as 
         //      awaitCompletionTag: 'mgbjr-CT-flexPanelIcons-assets-show'
-        // will disable Next, and instead wait for the real action to ocurr.
+        // will disable Next, and instead wait for the real action to ocurr. 
         this.logger(`joyride:onClickTooltip: next-awaitCompletionTag`, ['step.awaitCompletionTag:', steps[state.index].awaitCompletionTag ] )
-        return
+        return 
         // Note that we don't call   e.preventDefault() ;  e.stopPropagation() since we want to pass the clicks on to what might do the task requested
         // However.. this is all a bit odd.. React SyntheticEvents don't propagate in the same way as browser's native events...
       }
@@ -483,7 +501,7 @@ export default class Joyride extends React.Component {
     let newIndex = (index !== undefined ? index : this.state.index)
     const step = steps[newIndex]
 
-    // Note that the listeners.handleTransience() timer will call this
+    // Note that the listeners.handleTransience() timer will call this 
     // function frequently when  (this.state.stepIsWaiting === true)
     // so this function should be idempotent, quiet and inexpensive if there are
     // no changes to be applied when in that state
@@ -497,8 +515,8 @@ export default class Joyride extends React.Component {
         if (prepResult)
           console.warn(`Step #${newIndex} has step.preparePage='${step.preparePage}' but the result from preparePageHandler() was '${prepResult}'`)
         else
-          this.logger(`joyride:toggleTooltip: preparePageHandler`, ['step.preparePage:', step.preparePage, 'prepResult:', prepResult])
-      }
+          this.logger(`joyride:toggleTooltip: preparePageHandler`, ['step.preparePage:', step.preparePage, 'prepResult:', prepResult]) 
+      }  
     }
 
     // Element not on screen yet; wait for now. A timer will fire to see if it appears later
@@ -541,7 +559,7 @@ export default class Joyride extends React.Component {
   /**
    * Position absolute elements next to its target.
    * If there is no $(step.selector) element, this will return with no action.
-   *
+   * 
    *
    * @private
    */
@@ -579,7 +597,7 @@ export default class Joyride extends React.Component {
         placement.y = (rect.top - body.top) - (showTooltip ? component.height + tooltipOffset : (component.height / 2) + offsetY)
       else if (/^bottom/.test(position))
         placement.y = (rect.top - body.top) + (rect.height - (showTooltip ? -tooltipOffset : (component.height / 2) - offsetY))
-      else
+      else 
         placement.y = (rect.top - body.top)
 
       if (/^bottom|^top/.test(position)) {
@@ -591,7 +609,7 @@ export default class Joyride extends React.Component {
 
       if (step.selector === 'body')
         placement.y = _yPosForBody
-
+    
       this.setState({
         xPos: this.preventWindowOverflow(Math.ceil(placement.x), 'x', component.width, component.height),
         yPos: this.preventWindowOverflow(Math.ceil(placement.y), 'y', component.width, component.height),
@@ -623,7 +641,7 @@ export default class Joyride extends React.Component {
 
       if (/^left/.test(position) && rect.left - (component.width + tooltipOffset) < 0)
         position = 'top'
-      else if (/^right/.test(position) && (rect.left + rect.width + (component.width + tooltipOffset)) > body.width)
+      else if (/^right/.test(position) && (rect.left + rect.width + (component.width + tooltipOffset)) > body.width) 
         position = 'bottom'
     }
 
@@ -655,7 +673,7 @@ export default class Joyride extends React.Component {
     const docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight)
     let newValue = value
 
-    if (axis === 'x')
+    if (axis === 'x') 
       newValue = _.clamp(value, 15, winWidth - (elWidth + 15) )
     else if (axis === 'y')
       newValue = _.clamp(value, 15, docHeight - (elHeight + 15) )
@@ -675,7 +693,7 @@ export default class Joyride extends React.Component {
     const currentStep = Object.assign({}, steps[state.index])
     const target = currentStep && currentStep.selector ? _queryVisibleSelectorsInSequence(currentStep.selector) : null
     const cssPosition = target ? target.style.position : null
-    const shouldShowOverlay = ( (currentStep && (currentStep.showStepOverlay === true || currentStep.showStepOverlay === false) )
+    const shouldShowOverlay = ( (currentStep && (currentStep.showStepOverlay === true || currentStep.showStepOverlay === false) ) 
         ? currentStep.showStepOverlay : showOverlay)
     const buttons = { primary: locale.close }
     let component
@@ -695,7 +713,12 @@ export default class Joyride extends React.Component {
       if (['continuous', 'guided'].indexOf(type) > -1) {
 
         if (currentStep.code)
-          buttons.primary = (<span>Insert Code</span>)
+          buttons.primary = (<span>Insert Code</span>) 
+        else if(currentStep.submitCode){
+          buttons.primary = locale.submit
+          buttons.secondary = locale.help
+          // buttons.tertiary = locale.reset
+        }         
         else if (currentStep.awaitCompletionTag)
           buttons.primary = null // (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)
         else
@@ -773,6 +796,6 @@ export default class Joyride extends React.Component {
       component = this.createComponent()
     }
 
-    return <div className="joyride">{component}</div>
+    return <div className="joyride">{component}</div> 
   }
 }

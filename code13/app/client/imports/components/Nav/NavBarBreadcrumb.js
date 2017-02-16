@@ -65,10 +65,12 @@ const NavBarBreadcrumb = ( {
       { usernameToShow && projectId && _sep }
       { usernameToShow && projectId && <QLink className="section" to={`/u/${usernameToShow}/projects`}>Projects&nbsp;</QLink> }
 
-      { pathLocation && pathLocation.startsWith('/learn/') && _sep }
-      { pathLocation && pathLocation.startsWith('/learn/') && <QLink className="section" to={`/learn`}>Learn&nbsp;</QLink> }
-      { pathLocation && pathLocation.startsWith('/learn/skills/') && _sep }
-      { pathLocation && pathLocation.startsWith('/learn/skills/') && <QLink className="section" to={`/learn/skills`}>Skills&nbsp;</QLink> }
+      { pathLocation && pathLocation.startsWith('/learn') && _sep }
+      { pathLocation && pathLocation.startsWith('/learn') && <QLink className="section" to={`/learn`}>Learn&nbsp;</QLink> }
+      { pathLocation && pathLocation.startsWith('/learn/skills') && _sep }
+      { pathLocation && pathLocation.startsWith('/learn/skills') && <QLink className="section" to={`/learn/skills`}>Skills&nbsp;</QLink> }
+      { pathLocation && pathLocation.startsWith('/learn/code') && _sep }
+      { pathLocation && pathLocation.startsWith('/learn/code') && <QLink className="section" to={`/learn/code`}>Programming&nbsp;</QLink> }
 
       { name && _sep }
       { (usernameToShow && assetId && currentlyEditingAssetKind) ? EditOrView : ( name ? <span>{name}&nbsp;</span> : null ) }

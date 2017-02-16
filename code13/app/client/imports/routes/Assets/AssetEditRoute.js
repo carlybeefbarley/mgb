@@ -429,17 +429,15 @@ export default AssetEditRoute = React.createClass({
     )
   },
 
-
-  handleEditDeniedReminder: function()
+  handleEditDeniedReminder: _.throttle(function()
   {
     // This is a style on the Edit/view tag in render()
     $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
     if (this.props.currUser)
-      showToast("You do not have permission to edit this Asset", 'error')
+      showToast("You do not have permission to edit this Asset. Ask owner for permission or make a fork..", 'error')
     else
       showToast("You must create an account if you wish to edit Assets", 'error')
-  },
-
+  }, 5000),  // 5000ms is the duration of an error Notification
 
   // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are slowest.
   // TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for now since we don't

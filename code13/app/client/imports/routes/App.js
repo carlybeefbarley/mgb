@@ -106,9 +106,18 @@ const _toastTypes = {
   success:  { funcName: 'success', hdr: 'Success', delay: 4000 }
 }
 
+/**
+ * 
+ * 
+ * @param {string} content . . If non-null, then display the Notification 
+ * @param {string} [type='success']
+ * @returns {Number} number of Milliseconds the alert will remain for. Can be used for revising _throttle etc. Even returned when content=null
+ */
 export const showToast = (content, type = 'success') => {
   const useType = _toastTypes[type] || _toastTypes['success']
-  NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+  if (content)
+    NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+  return useType.delay
 }
 
 
@@ -587,6 +596,13 @@ const App = React.createClass({
         const newUrl = `/u/!vault/asset/${actParam}`
         utilPushTo(window.location, newUrl)
       }
+      else if(actText === 'openVaultProjectById')
+      {
+        debugger
+        const newUrl = `/u/!vault/project/${actParam}`
+        utilPushTo(window.location, newUrl)
+      }
+
       switch (act) {
 
       case 'closeFlexPanel':

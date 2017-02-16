@@ -576,6 +576,13 @@ const App = React.createClass({
         const newUrl = `/u/!vault/asset/${actParam}`
         utilPushTo(window.location, newUrl)
       }
+      else if(actText === 'openVaultProjectById')
+      {
+        debugger
+        const newUrl = `/u/!vault/project/${actParam}`
+        utilPushTo(window.location, newUrl)
+      }
+
       switch (act) {
       
       case 'closeFlexPanel':

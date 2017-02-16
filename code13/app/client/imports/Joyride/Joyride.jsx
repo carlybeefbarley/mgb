@@ -12,6 +12,9 @@ import { getRootEl } from './utils'
 import Beacon from './Beacon'
 import Tooltip, { _queryVisibleSelectorsInSequence } from './Tooltip'
 
+import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '/imports/schemas/chats'
+
+
 // Note: CSS styles come from App.js: import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
 
 const _yPosForBody = 55
@@ -135,7 +138,10 @@ export default class Joyride extends React.Component {
       close:  'Close',
       last:   'Done',
       next:   'Next',
-      skip:   'Exit'
+      skip:   'Exit',
+      submit: 'Submit Code',
+      reset:  'Reset',
+      help:   'Help',
     }
   }
 
@@ -415,6 +421,11 @@ export default class Joyride extends React.Component {
     const dataType = el.dataset.type
 
     if (el.className.indexOf('joyride-') === 0) {
+      if(steps[state.index].submitCode){
+        // console.log('submit code', 11)
+        ChatSendMessage('RANDOM', 'TEST - Check my Phaser task [link here]')
+      }
+      else 
       if (dataType === 'back' && steps[state.index].offerRevertToFork) {
         // TODO: Update tooltip.jsx to not assume secondary is always data-type='back'
         // AssetEditRoute owns the state of assets, so we need to talk to that
@@ -695,7 +706,12 @@ export default class Joyride extends React.Component {
       if (['continuous', 'guided'].indexOf(type) > -1) {
 
         if (currentStep.code)
-          buttons.primary = (<span>Insert Code</span>)          
+          buttons.primary = (<span>Insert Code</span>) 
+        else if(currentStep.submitCode){
+          buttons.primary = locale.submit
+          buttons.secondary = locale.help
+          // buttons.tertiary = locale.reset
+        }         
         else if (currentStep.awaitCompletionTag)
           buttons.primary = null // (<span onClick={(e) => { $(e.target).text('Not this.. that!') } }>Do It</span>)
         else

@@ -32,12 +32,20 @@ const ChatMessage = ( { msg } ) => {
   let msg2 = ''
   msg2 = msg.replace(/❮[^❯]*❯/g, function (e) {
     const e2 = e.split(':')
-    if (e2.length !== 3)
+    if (e2.length === 3){
+      const userName=e2[0].slice(1)
+      const assetId=e2[1]
+      const assetName=e2[2].slice(0,-1)
+      return `<a href='/u/${userName}/asset/${assetId}'>${userName}:${assetName}</a>`
+    }
+    else if (e2.length === 2){
+      const userName=e2[0].slice(1)
+      const assetId=e2[1].slice(0,-1)
+      return `<a href='/u/${userName}/asset/${assetId}'>${userName}:${assetId}</a>`
+    }
+    else {
       return e
-    const userName=e2[0].slice(1)
-    const assetId=e2[1]
-    const assetName=e2[2].slice(0,-1)
-    return `<a href='/u/${userName}/asset/${assetId}'>${userName}:${assetName}</a>`
+    }
   })
   return <span dangerouslySetInnerHTML={{ __html: msg2}} />
 }

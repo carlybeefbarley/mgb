@@ -12,8 +12,8 @@ import { getRootEl } from './utils'
 import Beacon from './Beacon'
 import Tooltip, { _queryVisibleSelectorsInSequence } from './Tooltip'
 
-import { ChatChannels, currUserCanSend, ChatSendMessage, chatParams, getChannelKeyFromName } from '/imports/schemas/chats'
-
+import { ChatSendMessage } from '/imports/schemas/chats'
+import { utilPushTo } from "/client/imports/routes/QLink"
 
 // Note: CSS styles come from App.js: import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
 
@@ -422,7 +422,8 @@ export default class Joyride extends React.Component {
 
     if (el.className.indexOf('joyride-') === 0) {
       if(steps[state.index].submitCode){
-        // console.log('submit code', 11)
+        console.log('submit code', 11)
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.random'})
         ChatSendMessage('RANDOM', 'TEST - Check my Phaser task [link here]')
       }
       else 

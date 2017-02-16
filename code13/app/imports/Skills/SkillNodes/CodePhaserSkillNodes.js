@@ -118,14 +118,14 @@ export default {
     },
     'spriteSheetEvents': C.En(0),
   },
-  taskCharAnimations: {
+  taskCharAnim: {
     $meta: {
       icon: 'tasks',
       link: '/u/!vault/asset/qNcrwh2emqdBEpPH5',
       name: 'Task',
       description: `Animate character - spawn, idle, run`
     },
-    'taskCharAnimations': C.En(0),
+    'taskCharAnim': C.En(0),
   },
   physicsBasics: {
     $meta: {

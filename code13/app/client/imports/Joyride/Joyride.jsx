@@ -421,12 +421,18 @@ export default class Joyride extends React.Component {
     const dataType = el.dataset.type
 
     if (el.className.indexOf('joyride-') === 0) {
-      if(steps[state.index].submitCode){
+      if(dataType === 'next' && steps[state.index].submitCode){
         console.log('submit code', 11)
         utilPushTo(window.location, window.location.pathname, {'_fp':'chat.random'})
+        // TODO uncoment this. Currently don't want to spam chat
         ChatSendMessage('RANDOM', 'TEST - Check my Phaser task [link here]')
       }
       else 
+      if(dataType === 'back' && steps[state.index].submitCode){
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.mgb-help'})
+        ChatSendMessage('MGB-HELP', 'TEST - Check my Phaser task [link here]')
+        return // no other action
+      }
       if (dataType === 'back' && steps[state.index].offerRevertToFork) {
         // TODO: Update tooltip.jsx to not assume secondary is always data-type='back'
         // AssetEditRoute owns the state of assets, so we need to talk to that

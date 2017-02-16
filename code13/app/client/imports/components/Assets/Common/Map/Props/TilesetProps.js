@@ -39,15 +39,29 @@ export default {
     const reason = "Removed Tileset: " + c2.tilesets[id].name
 
     this.saveForUndo(reason)
+    this.setState({activeTileset: this.state.activeTileset > 0 ? this.state.activeTileset -1 : 0})
 
     c2.tilesets.splice(id, 1)
-    this.cache.update(c2)
+    // update cache - so we can zero out tiles
+    this.cache.update(c2, () => {
+      // async call - map can be unloaded already
+      if(!this.cache)
+        return
 
-    this.state.activeTileset = this.state.activeTileset > 0 ? this.state.activeTileset -1 : 0
-    TileHelper.zeroOutUnreachableTiles(c2, this.cache.tiles)
+      TileHelper.zeroOutUnreachableTiles(c2, this.cache.tiles)
 
-    this.quickSave(reason)
-    this.setState({activeTileset: this.state.activeTileset})
+      this.cache.update(c2, () => {
+        // async call map can be removed already
+        if(!this.cache)
+          return
+        this.quickSave(reason)
+        this.setState({activeTileset: this.state.activeTileset})
+      })
+    })
+
+
+
+
   },
   selectTileset: function(id){
     this.setState({activeTileset: id})

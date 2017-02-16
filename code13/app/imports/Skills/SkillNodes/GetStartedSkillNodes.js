@@ -6,6 +6,11 @@ import C from './CommonSkillNodes.js'
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
+// [MAINTAIN] When making changes:
+// a) Some of these are used in badges-server.js for the _skillBasedBadges[]   
+//    Check you didn't break a skill-based badge when removing/renaming skills
+// b) For paranoia, each section has a 'sequence'.. check that always matches any
+//    changes in the names of child nodes for skills
 export default {
   $meta: {
     name:           'Get Started',

@@ -1999,12 +1999,15 @@ export default class EditCode extends React.Component {
       this.highlightedLines.push(lh)
     }
     // scroll to first highlighted line
-    if(from > -1){
-      this.codeMirror.setCursor(from, 0)
-      var t = this.codeMirror.charCoords({line: from, ch: 0}, "local").top
-      var middleHeight = this.codeMirror.getScrollerElement().offsetHeight / 2
-      this.codeMirror.scrollTo(null, t - middleHeight - 5)
-    }
+    if(from > -1)
+      this.scrollToLine(from)
+  }
+
+  scrollToLine(line){
+    this.codeMirror.setCursor(line, 0)
+    var t = this.codeMirror.charCoords({line, ch: 0}, "local").top
+    var middleHeight = this.codeMirror.getScrollerElement().offsetHeight / 2
+    this.codeMirror.scrollTo(null, t - middleHeight - 5)
   }
 
   getStringReferences(){

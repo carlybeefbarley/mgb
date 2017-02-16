@@ -25,7 +25,7 @@ import { Skills } from '/imports/schemas'
 const _skillBasedBadges = [
   { 
     newBadgeName:   'hasAvatar',
-    requiredSkills: ['getStarted.profile.profilePage', 'getStarted.profile.avatar']
+    requiredSkills: ['getStarted.profile.avatar']
     // This case should ideally also test.. but it's ok, sinc ethat avatar does have an awaitCompletionTag...  user.profile.avatar && user.profile.avatar.length > 0 && retval.push("hasAvatar")   // TODO: Fix this - it's wrong since we always do the gravatar hash
 
   }
@@ -43,10 +43,10 @@ const doRefreshBadgeStatus = (userId, user) => {
   _.each(_skillBasedBadges, sbb => {
     if ( hasMultipleSkills(skills, sbb.requiredSkills) )
     {
-      console.log(`User '{user.username}' meets Skill requirements for BADGE '${sbb.newBadgeName}'`)
+      console.log(`User '${user.username}' meets Skill requirements for BADGE '${sbb.newBadgeName}'`)
       if (!_.includes(user.badges, sbb.newBadgeName))
       {
-        console.log("User '{user.username}' does not have '${sbb.newBadgeName}' badge, so awarding it!")
+        console.log(`User '${user.username}' does not have '${sbb.newBadgeName}' badge, so awarding it!`)
         const count = Meteor.users.update(
           userId, 
           {

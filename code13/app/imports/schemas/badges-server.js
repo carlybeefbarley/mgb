@@ -43,10 +43,10 @@ const doRefreshBadgeStatus = (userId, user) => {
   _.each(_skillBasedBadges, sbb => {
     if ( hasMultipleSkills(skills, sbb.requiredSkills) )
     {
-      console.log(`User '{user.username}' meets Skill requirements for BADGE '${sbb.newBadgeName}'`)
+      console.log(`User '${user.username}' meets Skill requirements for BADGE '${sbb.newBadgeName}'`)
       if (!_.includes(user.badges, sbb.newBadgeName))
       {
-        console.log("User '{user.username}' does not have '${sbb.newBadgeName}' badge, so awarding it!")
+        console.log(`User '${user.username}' does not have '${sbb.newBadgeName}' badge, so awarding it!`)
         const count = Meteor.users.update(
           userId, 
           {

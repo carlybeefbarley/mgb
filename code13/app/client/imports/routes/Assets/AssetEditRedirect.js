@@ -9,7 +9,8 @@ export default class extends React.Component{
     getAssetBySelector({
       dn_ownerName: params.user,
       name: params.name,
-      kind: params.kind
+      kind: params.kind,
+      isDeleted: false
     }, (asset) => {
       if(asset)
         utilReplaceTo(this.props.location.query, "/u/" + asset.dn_ownerName + "/asset/" + asset._id)

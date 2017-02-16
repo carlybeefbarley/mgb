@@ -181,7 +181,13 @@ export default class EditCode extends React.Component {
         this.warnNoWriteAccess()
     }
 
+
     window.addEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
+
+    this.listeners.joyrideHighlightCode = event => {
+      this.highlightLines(parseInt(event.data.from, 10), parseInt(event.data.to))
+    }
+    window.addEventListener('mgbjr-highlight-code', this.listeners.joyrideHighlightCode)
 
     // Semantic-UI item setup (Accordion etc)
     $('.ui.accordion').accordion({exclusive: false, selector: {trigger: '.title .explicittrigger'}})
@@ -302,6 +308,8 @@ export default class EditCode extends React.Component {
       undo: [],
       redo: []
     }
+
+    this.highlightedLines = []
   }
 
 
@@ -421,6 +429,7 @@ export default class EditCode extends React.Component {
   componentWillUnmount() {
     $(window).off("resize", this.edResizeHandler)
     window.removeEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
+    window.removeEventListener('mgbjr-highlight-code', this.listeners.joyrideHighlightCode)
 
     // TODO: Destroy CodeMirror editor instance?
 
@@ -432,6 +441,7 @@ export default class EditCode extends React.Component {
     }
     this.isActive = false
     this.cursorHistory = null
+    this.highlightedLines = null
   }
 
   terminateWorkers() {
@@ -1966,6 +1976,25 @@ export default class EditCode extends React.Component {
     this.handleContentChange({src: imp})
   }
 
+  // TODO: add some sort of message to highlighted lines????
+  highlightLines(from, to){
+    if(to == void(0))
+      to = from
+
+    this.highlightedLines.forEach((lh) => {
+      this.codeMirror.removeLineClass(lh, 'background', 'highlight')
+    })
+
+    for(let i=from; i<to; i++){
+      const lh = this.codeMirror.getLineHandle(i)
+      // reached end of the file
+      if(!lh)
+        return
+      this.codeMirror.addLineClass(lh, 'background', 'highlight')
+      this.highlightedLines.push(lh)
+    }
+  }
+
   getStringReferences(){
     const token = this.state.currentToken
     const advices = []
@@ -2013,6 +2042,33 @@ export default class EditCode extends React.Component {
         this.getPrevToken(callback, cur)
     }
   }
+  getNextToken(callback, tokenIn, cursor = null){
+    const cur = cursor || Object.assign({}, this.codeMirror.getCursor())
+    const token = tokenIn || this.codeMirror.getTokenAt(cur)
+
+    // TODO: maybe get correct last char of line instead for forcing random number?
+    const line = this.codeMirror.getLine(cur.line)
+    if(line === void(0))
+      return
+
+    if(cur.ch > line.length){
+      cur.ch = 0
+      cur.line++
+    }
+    else
+      cur.ch = (tokenIn ? tokenIn.end : cur.ch) + 1
+    const nextToken = this.codeMirror.getTokenAt(cur)
+    // is this same token?
+    if(nextToken.start == token.start && nextToken.end == token.end){
+      this.getNextToken(callback, nextToken, cur)
+    }
+    else{
+      if(callback(nextToken)){
+        this.getNextToken(callback, nextToken, cur)
+      }
+    }
+  }
+
 
   render() {
     const { asset, canEdit } = this.props
@@ -2125,6 +2181,7 @@ export default class EditCode extends React.Component {
                   <TokenDescription
                     currentToken={this.state.currentToken}
                     getPrevToken={cb => this.getPrevToken(cb)}
+                    getNextToken={cb => this.getNextToken(cb)}
                     />
                   { this.state.astReady &&
                   <ImportHelperPanel

@@ -1,13 +1,13 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
-
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 function makeFriendlyName(name, eName)
 {
   if (name === '<top>')
     return `[GLOBAL] ${eName}`
   else
-    return name
+    return name ? name : "Unknown"
 }
 
 export default ExpressionDescription = React.createClass({
@@ -25,6 +25,14 @@ export default ExpressionDescription = React.createClass({
     const isFn = type.startsWith("fn(") ? "(...)" : "";
 
     const nameFriendly = makeFriendlyName(name, exprName)
+
+    let docToDisplay = doc
+    const sl = SpecialGlobals.editCode.mgbMentorPrefix.singleLine.substring(2).trim()
+    const ml = SpecialGlobals.editCode.mgbMentorPrefix.multiLine.substring(2).trim()
+
+    if(doc && (doc.startsWith(sl) || doc.startsWith(ml)) ){
+      docToDisplay = ''
+    }
 
     let typeFriendly = ''
     if(type.length > 300){
@@ -52,7 +60,7 @@ export default ExpressionDescription = React.createClass({
         <span style={colorGrey}>Name:</span>  <code>{name || exprName}</code><br></br>
         { type !== '?' && <span><span style={colorGrey}>Type:</span>  <code style={{ whiteSpace: 'pre-wrap' }}>{typeFriendly}</code><br></br></span>}
         { origin && <p><small>Part of '{origin}'</small></p> }
-        { doc && <p style={{whiteSpace: 'pre-line'}}>{doc}</p> }
+        { docToDisplay && <p style={{whiteSpace: 'pre-line'}}>{docToDisplay}</p> }
         { url && <p><a href={url}><small>{url}</small></a></p> }
       </div>
     )

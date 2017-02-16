@@ -4,6 +4,7 @@ import { hasSkill } from '/imports/schemas/skills'
 import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -43,7 +44,12 @@ const specialHelpTypes = {
     // Note that there is TODO for scope.local-execution (i.e. var) and scope.local-block (i.e. let/const)
 
   "string-2":   { renderFn: specialHandlerString2,        skillNodes: _skl+'types.regex',   betterTypeName: "Regular Expression" },
-  "comment":    { renderFn: specialHandlerComment,        skillNodes: _skl+'comments',      betterTypeName: "comment" },
+  "comment":    {
+    renderFn: specialHandlerComment,
+    skillNodes: _skl+'comments',
+    betterTypeName: specialHandlerCommentTitle,
+    showTokenStringInTitle: false
+  },
   "def":        { renderFn: specialHandlerDef,            skillNodes: null,                 betterTypeName: "Definition" }
 }
 
@@ -1075,41 +1081,103 @@ function specialHandlerString2(rString) {
   </div>
 }
 
+function specialHandlerCommentTitle(str, tokenDescriptionComponent){
+  if(str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.singleLine))
+    return (
+      'MGB Code Mentor\'s comment'
+    )
 
+  if(str.startsWith('//')){
+    return null
+  }
+  let tmpToken = ''
+  let fullComment = str
+  if(!str.trim().startsWith("/*")) {
+    tokenDescriptionComponent.props.getPrevToken((tmp) => {
+      if (tmp && tmp.type === 'comment') {
+        fullComment = tmp.string + "\n" + fullComment
+        tmpToken = tmp
+        return !tmp.string.trim().startsWith("/*")
+      }
+      return tmp && tmp.type === null
+    })
+  }
+  if(str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.multiLine) || (tmpToken && tmpToken.string.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.multiLine)))
+    return (
+      'MGB Code Mentor\'s comment'
+    )
+  return null
+}
 // Explain multi-line and single-line comments.
-function specialHandlerComment(str, component) {
-  let grn = { color: "green", fontWeight: "bold" }
+// Explain JSDoc comments and Special MGB comments
+function specialHandlerComment(str, tokenDescriptionComponent) {
+  let grn = {color: "green", fontWeight: "bold"}
+  if (str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.singleLine))
+    return (
+      <div>
+        <p>{str.substring(SpecialGlobals.editCode.mgbMentorPrefix.singleLine.length).trim()}</p>
+      </div>
+    )
+
   // explain single line
   if (str.startsWith("//"))
     return (
       <div>
-        <p>Javascript <em>single line comments</em> start with <code style={grn}>//</code> and continue until the end of the current line</p>
+        <p>Javascript <em>single line comments</em> start with <code style={grn}>//</code> and continue until the end of
+          the current line</p>
       </div>
     )
 
-  let title
+
   // JSdocs - TODO: look for lines above
   // somewhere in the middle of the comment
   let tmpToken = ''
-  component.props.getPrevToken((tmp) => {
-    if(tmp && tmp.type === 'comment'){
-      tmpToken = tmp
-      return true
-    }
-    return false
-  })
-
-  if(str.startsWith('/**') || (tmpToken && tmpToken.string.startsWith('/**')))
+  let fullComment = str
+  if (!str.trim().startsWith("/*")) {
+    tokenDescriptionComponent.props.getPrevToken((tmp) => {
+      if (tmp && tmp.type === 'comment') {
+        fullComment = tmp.string + "\n" + fullComment
+        tmpToken = tmp
+        return !tmp.string.trim().startsWith("/*")
+      }
+      return tmp && tmp.type === null
+    })
+  }
+  if (!str.trim().endsWith("*/")) {
+    tokenDescriptionComponent.props.getNextToken((tmp) => {
+      if (tmp && tmp.type === 'comment') {
+        //
+        if(str !== tmp.string) {
+          fullComment += "\n" + tmp.string
+          tmpToken = tmp
+        }
+        return !tmp.string.trim().endsWith("*/")
+      }
+      return tmp && tmp.type === null
+    }, tokenDescriptionComponent.props.currentToken)
+  }
+  if (fullComment.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.multiLine))
     return (
       <div>
-        <p>Comments starting with <code style={grn}>/**</code> and ending with <code style={grn}>*/</code> are special JavaScript comments - called JSDoc.
+        <p>{fullComment.trim().substring(SpecialGlobals.editCode.mgbMentorPrefix.multiLine.length, fullComment.length - 2)}</p>
+      </div>
+    )
+
+  if (str.startsWith('/**') || (tmpToken && tmpToken.string.startsWith('/**')))
+    return (
+      <div>
+        <p>Comments starting with <code style={grn}>/**</code> and ending with <code style={grn}>*/</code> are special
+          JavaScript comments - called JSDoc.
           <br />
           JSDoc is a markup language used to annotate JavaScript source code files.
-          Using comments containing JSDoc, programmers can add documentation describing the application programming interface of the code they're creating.
+          Using comments containing JSDoc, programmers can add documentation describing the application programming
+          interface of the code they're creating.
         </p>
-        <p>There may be line breaks and any other characters between the <code style={grn}>/**</code> and <code style={grn}>*/</code>. This is example of JSDoc comment:</p>
+
+        <p>There may be line breaks and any other characters between the <code
+          style={grn}>/**</code> and <code style={grn}>*/</code>. This is example of JSDoc comment:</p>
         <pre style={grn}>{
-        `/**
+          `/**
  * Create a point.
  * @param {number} x - The x value
  * @param {number} y - The y value
@@ -1122,9 +1190,11 @@ function specialHandlerComment(str, component) {
 
   return (
     <div>
-      <p>Javascript <em>multi line comments</em> start with <code style={grn}>/*</code> and end with <code style={grn}>*/</code></p>
+      <p>Javascript <em>multi line comments</em> start with <code
+        style={grn}>/*</code> and end with <code style={grn}>*/</code></p>
       <small>
-        <p>There may be line breaks and any other characters between the <code style={grn}>/*</code> and <code style={grn}>*/</code></p>
+        <p>There may be line breaks and any other characters between the <code
+          style={grn}>/*</code> and <code style={grn}>*/</code></p>
         <pre style={grn}>/* This is an<br></br> example multiline comment */</pre>
         <p>
           You may also see/use a special variant of multiline javascript comments
@@ -1211,7 +1281,9 @@ function urlLink(urlString) {
 
 export default TokenDescription = React.createClass({
   propTypes: {
-    currentToken: PropTypes.object
+    currentToken: PropTypes.object,
+    getPrevToken: PropTypes.func.isRequired,
+    getNextToken: PropTypes.func.isRequired
   },
 
   contextTypes: {
@@ -1229,11 +1301,22 @@ export default TokenDescription = React.createClass({
   },
 
   render: function () {
-
-    if (!this.props.currentToken || !this.props.currentToken.type)
-      return null
-
     let token = this.props.currentToken
+
+    // search for next token - just in case..
+    // this is especially important for the 0:0 pos and block comments
+    if (!token || !token.type){
+      this.props.getNextToken((tok) => {
+        if(tok && tok.type){
+          token = tok
+        }
+      })
+      if(!token || !token.type){
+        return null
+      }
+    }
+
+
     let ts = token.string.trim()
 
     if (_.includes(noHelpTypes, token.type))
@@ -1245,12 +1328,18 @@ export default TokenDescription = React.createClass({
     let tsTrunc = ts.length > maxTokenLenToShow ? ts.substr(0, maxTokenLenToShow) + "..." : ts
 
     let help = _.find(helpInfo, h => (h.tt === token.type && (h.ts === null || h.ts === ts)))
-    let tokenTypeToDisplay = specialHandler ? specialHandler.betterTypeName : token.type
+    let tokenTypeToDisplay = specialHandler
+      ? (typeof specialHandler.betterTypeName == 'function'
+          ? (specialHandler.betterTypeName(ts, this) || token.type)
+          : specialHandler.betterTypeName
+        )
+      : token.type
 
     const skillNodeKey = specialHandler ? specialHandler.skillNodes :
                           (help ? (help.skillNodes || null) : null)
     let showExpanded = !skillNodeKey || (isSkillKeyValid(skillNodeKey) && !hasSkill(this.context.skills, skillNodeKey))
 
+    let showStringInTitle = !specialHandler || specialHandler.showTokenStringInTitle
     // Special cases that won't involve a skillNode lookup
     if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def' &&
       (!skillNodeKey || !isSkillKeyValid(skillNodeKey))
@@ -1277,7 +1366,8 @@ export default TokenDescription = React.createClass({
       <div className="ui purple segment" style={{backgroundColor: "rgba(160,32,240,0.03)"}}>
         <a className="ui purple left ribbon label">
           <small>{tokenTypeToDisplay}</small>
-          <code><b>&nbsp;&nbsp;{tsTrunc}</b></code></a>
+          {showStringInTitle && <code><b>&nbsp;&nbsp;{tsTrunc}</b></code>}
+        </a>
         <a  className="ui purple right corner label"
             title={`Click to ${ showExpanded ? "hide" : "show" } the explanation of this javascript language feature`}
             onClick={() => this.handleHideShowClick(skillNodeKey)}>

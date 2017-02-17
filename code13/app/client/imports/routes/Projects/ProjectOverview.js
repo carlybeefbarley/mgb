@@ -97,13 +97,14 @@ export default ProjectOverview = React.createClass({
               owner={this.props.user}
               canEdit={canEdit}
               handleFieldChanged={this.handleFieldChanged} />
-          <QLink to={"/u/" + project.ownerName + "/assets"} style={buttonSty} query={{project:project.name}} className="ui small button" >
+          <QLink id="mgbjr-project-overview-assets" to={"/u/" + project.ownerName + "/assets"} style={buttonSty} query={{project:project.name}} className="ui small button" >
             Project Assets
           </QLink>
           <Popup 
             inverted wide='very' on='click'
             trigger={(
               <Button 
+                id="mgbjr-project-overview-fork"
                 disabled={!this.data.project.allowForks} 
                 style={buttonSty} 
                 size='small' 

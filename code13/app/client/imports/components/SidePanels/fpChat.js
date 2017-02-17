@@ -111,8 +111,8 @@ const MessageTopDivider = ( { elementId, content, title } ) => (
 const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asset.name}❯`      // See https://en.wikipedia.org/wiki/Dingbat#Unicode ❮  U276E , U276F  ❯
 
 const ChatMessage = ( { msg } ) => {
-  let msg2 = ''
-  msg2 = msg.replace(/❮[^❯]*❯/g, function (e) {
+  const msg2 = msg.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const msg3 = msg2.replace(/❮[^❯]*❯/g, function (e) {
     const e2 = e.split(':')
     if (e2.length === 3){
       const userName=e2[0].slice(1)
@@ -129,8 +129,9 @@ const ChatMessage = ( { msg } ) => {
       return e
     }
   })
-  return <span dangerouslySetInnerHTML={{ __html: msg2}} />
+  return <span dangerouslySetInnerHTML={{ __html: msg3}} />
 }
+
 
 // This is a simple way to remember the channel key for the flexPanel since there is exactly one of these. 
 // Users got annoyed when they always went back to the default channel
@@ -301,7 +302,7 @@ export default fpChat = React.createClass({
       return
     }
     this.setState( {
-      messageValue: this.state.messageValue + _encodeAssetInMsg( asset )
+      messageValue: (this.state.messageValue || '') + _encodeAssetInMsg( asset )
     } )
   },
 

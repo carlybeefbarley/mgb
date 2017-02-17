@@ -42,10 +42,11 @@ import moment from 'moment'
  √ [More testing] and fix any bad stuff
 
 TODO (Phase 2: Tighten up project chat)
- ◊ [secure] Make sure it can't be navigated to by people who don't have access
- ◊ [secure] Make sure it can't be messaged to by people who don't have access
- ◊ [feature] Pinning project chat
- ◊ [Merge] Merge into master and test
+ √ [secure] Make sure it can't be navigated/read by people who don't have access
+ √ [secure] Make sure API can't be sent to without access
+ √ [secure] Make sure it can't be messaged to by people who don't have access
+ √ [secure] Make sure DB records can't be navigated to by people who don't have access
+ √ [Merge] Merge into master and test
  ◊ [Deploy] More deploy ftw.
  ◊ [More testing] and fix any bad stuff
 
@@ -59,8 +60,9 @@ TODO (Phase 3: Delete message)
  ◊ [Deploy] ya.
  ◊ [More testing] and fix any bad stuff
 
-TODO (Phase 4: Notifications)
+TODO (Phase 4: Notifications and Pinning)
  ◊ ...make this list of detailed work
+ ◊ [feature] Pinning project chat
 
 TODO (Phase 5: DMs)
  ◊ [Enable] Enable Send-to-DM in currUserCanSend()
@@ -161,8 +163,7 @@ export default fpChat = React.createClass({
 
   getMeteorData: function() {
     const chatChannelName = this._calculateActiveChannelName()
-    const uid = this.props.currUser ? this.props.currUser._id : null
-    const handleForChats = Meteor.subscribe("chats.userId", uid, chatChannelName, this.state.pastMessageLimit)
+    const handleForChats = Meteor.subscribe("chats.channelName", chatChannelName, this.state.pastMessageLimit)
     const retval = {
       chats: Chats.find({ toChannelName: chatChannelName }, { sort: { createdAt: 1 } }).fetch(),
       loading: !handleForChats.ready()

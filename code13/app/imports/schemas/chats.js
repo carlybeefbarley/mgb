@@ -1,13 +1,12 @@
 import _ from 'lodash'
 import { Chats } from '/imports/schemas'
-import { check, Match } from 'meteor/check'
+import { Match } from 'meteor/check'
 
 // Data model for MGB Chats.
 
 // See https://github.com/devlapse/mgb/issues/40 for discussion of requirements
 
 // This file must be imported by main_server.js so that the Meteor method can be registered
-
 
 /***** Description of updated DB Schema for Chats as of 2/13/1017. 
  * THIS IS NOT FULLY CODED YET... 
@@ -61,7 +60,7 @@ const _validDmIdSeparatorChar = '+'  // TODO: Check + is ok
  * 
  * @param {String} channelName
  */
-const _isChannelNameWellFormed = channelName => (
+export const isChannelNameWellFormed = channelName => (
   _.isString(channelName) &&
   channelName.length > 4 &&     // X:?: is absolute minimum possible channelName format
   _.includes(_validChannelNamePrefixes, channelName.slice(0,2)) &&
@@ -70,7 +69,7 @@ const _isChannelNameWellFormed = channelName => (
 
 export function isChannelNameValid(channelName) {
   // TODO - some more checks on validity of scopeIds etc
-  return _isChannelNameWellFormed(channelName)
+  return isChannelNameWellFormed(channelName)
 }
 const _isValidScopeGroupName = scopeGroupName => _.includes(_validChannelNameScopeFriendlyNames, scopeGroupName)
 
@@ -123,7 +122,7 @@ could be used as a message-thread within DMs
  * @returns { channelName, scopeChar, scopeGroupName, scopeId, dmUid1, dmUid2, _topic }
  */
 export const parseChannelName = channelName => {
-  if (!_isChannelNameWellFormed(channelName))
+  if (!isChannelNameWellFormed(channelName))
     return null
   const [_scopeChar, scopeId, _topic] = channelName.split(_validChannelPartSeparatorChar)
   const scopeGroupName = _scopeGroupCharToFriendlyNames[_scopeChar]
@@ -218,7 +217,7 @@ To check read/unread situations, each User has some objects to support this chat
 
 const optional = Match.Optional       // Note that Optional does NOT permit null!
 
-var schema = {
+export const chatsSchema = {
   _id:           String,              // ID of this chat message
 
   createdAt:     Date,                // When created
@@ -326,6 +325,16 @@ function _userIsSuperAdmin(currUser) {
   return isSuperAdmin
 }
 
+/**
+ * 
+ * This is intended to be used by client UI to help them know if 
+ * they can offer a send message box in the UI. It is implemented 
+ * differently (and more robustly) on the server-side.
+ * @export
+ * @param {any} currUser
+ * @param {any} channelName
+ * @returns
+ */
 export function currUserCanSend(currUser, channelName) {
   const channelObj = parseChannelName(channelName)
   if (!channelObj)
@@ -349,10 +358,8 @@ export function currUserCanSend(currUser, channelName) {
     }
   }
   if (channelObj.scopeGroupName === 'Project')
-  {
-    console.log("TODO: Project-chat currUserCanSend()")
-    return true
-  }
+    return true // This is because the client isn't meant to see inaccessible Project chat anyway, so keep this simple
+    
   console.log("TODO: [Asset/User/DM]-chat currUserCanSend()")
   return false
 }
@@ -414,52 +421,6 @@ export function makePresentedChannelName(channelName, objectName) {
   }
 }
 
-Meteor.methods({
-
-  /** Chats.create
-   *  @param {string} channelName
-   * 
-   */
-  "Chats.send": function(channelName, message, chatMetadata) {
-    if (!this.userId)
-      throw new Meteor.Error(401, "Login required")
-
-    if (!message || message.length < 1)
-      throw new Meteor.Error(400, "Message empty")
-
-    if (message.length > chatParams.maxChatMessageTextLen)
-      throw new Meteor.Error(400, "Message too long")
-
-    if (!_isChannelNameWellFormed(channelName))
-      throw new Meteor.Error(400, `Channel name '${channelName}' is not in the expected format`)
-
-    const data = { 
-      toChannelName: channelName,
-      message:       _.trim(message)
-    }
-
-    const currUser = Meteor.user()
-    const canSend = currUserCanSend(currUser, channelName)
-    if (!canSend)
-      throw new Meteor.Error(401, "No access to write to that channel")
-
-    const now = new Date()
-    data.createdAt = now
-    data.updatedAt = now
-    data.byUserId = this.userId
-    data.byUserName = currUser.profile.name
-    check(data, _.omit(schema, '_id'))
-
-    let docId = Chats.insert(data)
-    if (Meteor.isServer)
-    {
-      console.log(`  [Chats.send]  "${data.message}"  #${docId}  `)
-      Meteor.call('Slack.Chats.send', currUser.profile.name, data.message, data.toChannelName)
-    }
-    return docId
-  }
-})
-
 
 export function ChatSendMessageOnChannelName( channelName, msg, completionCallback)
 {
@@ -484,31 +445,3 @@ export function ChatSendMessageOnChannelName( channelName, msg, completionCallba
   Meteor.call('Chats.send', channelName, msg, chatMetadata, completionCallback)
   return true
 }
-
-// if (Meteor.isServer)
-// {
-//   Meteor.methods({
-//     'dgolds.migrateChatDB': function(isForRealz) {
-//       if (!this.userId)
-//         throw new Meteor.Error(401, "Login required")
-//       if (Meteor.user().username !== 'dgolds')
-//         throw new Meteor.Error(401, "You do not have the power")
-//       console.log("ONLY you have The Power")
-
-//       const GenKEY = 'GENERAL'
-//       const theOldChannelName=ChatChannels[GenKEY].name
-//       const sel= { toChannelName: theOldChannelName}
-//       const count = Chats.find(sel).count()
-//       const newChanName = ChatChannels[GenKEY].channelName
-//       console.log(`${count} rows of '${sel.toChannelName}' to change to '${newChanName}'`)
-
-//       if (isForRealz === true)
-//         Chats.update( 
-//           sel, 
-//           { $set: { toChannelName: newChanName} }, 
-//           { multi: true }
-//         )
-//       console.log('KTHXBYE')
-//     }
-//   })
-// }

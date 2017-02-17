@@ -14,6 +14,30 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Fri Feb 17 2017 10:45 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3302'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'feature',
+          'changeName': 'Prevent scripting in messages',
+          'changeSummary': 'Thanks @stanchion, we have now escaped the naughty < and > and & characters :)',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
       'timestamp': 'Thu Feb 16 2017 20:00 GMT-0800 (PST)',
 
       'id': {

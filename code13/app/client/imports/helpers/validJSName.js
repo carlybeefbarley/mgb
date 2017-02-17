@@ -1,6 +1,6 @@
-const isChar = /[a-zA-Z]/
+const isLetter = /[a-zA-Z]/
 const isNum = /\d/
-const isNotAlphanumeric = /([^a-zA-Z\d])/gi // !!!notice NOT(^) in second regex
+const isNotAlphanumeric = /([^a-zA-Z\d])/gi // !!!notice NOT(^)
 
 export default (str) => {
   // strip first number or other fancy char - and replace non alphanumeric
@@ -8,21 +8,19 @@ export default (str) => {
   // pick some fancy charcode \x0001 instead of $ ?
   const stripped = str.replace(isNum, '').replace(isNotAlphanumeric, '$')
   let ret = ''
-  for(let i=0; i<stripped.length; i++){
-    if(stripped[i] == '$'){
-      if(stripped[i + 1] == '$'){
-        i++
-        continue
-      }
-      if(stripped[i + 1] && isChar.test(stripped[i + 1])){
-        ret += stripped[i + 1].toUpperCase()
-      }
-
+  for (let i = 0; i < stripped.length; i++) {
+    if (stripped[i] == '$') {
       i++
+      if (stripped[i] == '$')
+        continue
+
+      if (stripped[i] && isLetter.test(stripped[i]))
+        ret += stripped[i].toUpperCase()
+      else
+        ret += stripped[i] // number
     }
-    else{
+    else
       ret += stripped[i]
-    }
   }
   return ret
 }

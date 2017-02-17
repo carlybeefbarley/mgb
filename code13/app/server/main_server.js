@@ -25,7 +25,7 @@ import '/imports/schemas/badges-server'
 
 // Import rules and publications
 import '/imports/schemas/denyRules'
-import '/server/imports/publications/publications'
+import '/server/imports/publications'
 
 import './EmailTemplates'
 import './CreateUser'

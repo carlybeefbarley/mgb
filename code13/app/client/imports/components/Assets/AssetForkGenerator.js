@@ -3,6 +3,7 @@ import moment from 'moment'
 import React, { PropTypes } from 'react'
 import { Popup, Label, Button } from 'semantic-ui-react'
 
+
 const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) => {
   const numChildren = _.isArray(asset.forkChildren) ? asset.forkChildren.length : 0
   const fpLen = _.isArray(asset.forkParentChain) ? asset.forkParentChain.length : 0
@@ -30,6 +31,7 @@ const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) =>
         trigger={(
           <Label
               basic
+              id="mgbjr-asset-edit-header-right-fork"
               color={isForkPending ? 'orange' : null}
               size='small'
               icon={{ name: 'fork', color: (fpLen > 0 ? 'blue' : null) }}

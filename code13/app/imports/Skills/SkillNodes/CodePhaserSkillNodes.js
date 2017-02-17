@@ -181,15 +181,16 @@ export default {
     },
     'taskTweenGroup': C.En(0),
   },
-  oop: {
-    $meta: {
-      icon: 'code',
-      link: '/u/!vault/project/aEzfbLcQ9uZKYaCu8',
-      name: 'OOP',
-      description: `Object-oriented-programming and game states`
-    },
-    'oop': C.En(0),
-  },
+  // TODO needs joyride selectors, completation tags
+  // oop: {
+  //   $meta: {
+  //     icon: 'code',
+  //     link: '/u/!vault/project/aEzfbLcQ9uZKYaCu8',
+  //     name: 'OOP',
+  //     description: `Object-oriented-programming and game states`
+  //   },
+  //   'oop': C.En(0),
+  // },
   next: {
     $meta: {
       icon: 'info',

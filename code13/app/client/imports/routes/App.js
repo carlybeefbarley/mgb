@@ -599,7 +599,7 @@ const App = React.createClass({
       }
       else if(actText === 'openVaultProjectById')
       {
-        debugger
+        // debugger
         const newUrl = `/u/!vault/project/${actParam}`
         utilPushTo(window.location, newUrl)
       }

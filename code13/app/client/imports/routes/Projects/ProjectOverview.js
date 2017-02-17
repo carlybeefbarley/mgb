@@ -188,7 +188,7 @@ export default ProjectOverview = React.createClass({
 
     var project = this.data.project
     var newData = { memberIds: _.union(project.memberIds, [userId])}   
-    Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
+    Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error)
         showToast(`Could not add member ${userName} to project ${project.name}`, 'error')
       else
@@ -206,7 +206,7 @@ export default ProjectOverview = React.createClass({
     var project = this.data.project
     var newData = { memberIds: _.without(project.memberIds, userId)}   
 
-    Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
+    Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error) 
         showToast(`Could not remove member ${userName} from project ${project.name}`, error)
       else 
@@ -221,7 +221,7 @@ export default ProjectOverview = React.createClass({
   {
     const { project } = this.data
 
-    Meteor.call('Projects.update', project._id, this.canEdit(), changeObj, (error) => {
+    Meteor.call('Projects.update', project._id, changeObj, (error) => {
       if (error) 
         showToast(`Could not update project: ${error.reason}`, error)
       else 

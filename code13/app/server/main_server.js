@@ -7,10 +7,12 @@ import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
 // Import all server-side schema stubs in order to register their Meteor.call() methods
 import '/imports/schemas/users'
 import '/imports/schemas/chats'
+import '/imports/schemas/chats-server'
 import '/imports/schemas/assets'
 import '/imports/schemas/assets-server'
 import '/imports/schemas/sysvars'
 import '/imports/schemas/projects'
+import '/imports/schemas/projects-server'
 import '/imports/schemas/activity'
 import '/imports/schemas/activitySnapshots'
 
@@ -25,7 +27,7 @@ import '/imports/schemas/badges-server'
 
 // Import rules and publications
 import '/imports/schemas/denyRules'
-import '/server/imports/publications/publications'
+import '/server/imports/publications'
 
 import './EmailTemplates'
 import './CreateUser'

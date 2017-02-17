@@ -2,7 +2,7 @@
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 import _ from 'lodash'
-import { Projects, Azzets } from '/imports/schemas'
+import { Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { bestWorkStateName, defaultWorkStateName } from '/imports/Enums/workStates'
 import validate from '/imports/schemas/validate'
@@ -279,6 +279,8 @@ var schema = {
  *  Selector will return projects relevant to this userId.. This includes owner, member, etc
 
  */
+
+
 export function projectMakeSelector(userId) 
 {
   return {
@@ -422,79 +424,41 @@ Meteor.methods({
   },
   
 
-  "Projects.update": function(docId, canEdit, data) {
-    var count, selector
+  "Projects.update": function(docId, data) {
     var optional = Match.Optional
 
     check(docId, String)
     if (!this.userId)
       throw new Meteor.Error(401, "Login required")
 
-    // TODO: Move this access check to be server side..
-    //   Or check publications have correct deny rules.
-    //   See comment below for selector = ...
-    if (!canEdit)
-      throw new Meteor.Error(401, "You don't have permission to edit this.")   //TODO - make this secure,
+    const selector = { _id: docId }
+
+    // Load ownerId and name of existing record to make sure current user is the owner
+    const existingProjectRecord = Projects.findOne( selector, { fields: { ownerId: 1, name: 1 } } )
+    if (!existingProjectRecord)
+      throw new Meteor.Error(404, 'Project Id does not exist')
+    if (existingProjectRecord.ownerId !== this.userId)
+      throw new Meteor.Error(401, "You don't have permission to edit this")
+
+    if (data.name && data.name !== existingProjectRecord.name)
+      throw new Meteor.Error(403, 'Project rename is not yet supported')
 
     data.updatedAt = new Date()
     
     // whitelist what can be updated
     check(data, {
-      updatedAt: schema.updatedAt,
-      name: optional(schema.name),
-      description: optional(schema.description),
-      workState: optional(schema.workState),
-      allowForks: optional(schema.allowForks),
-      memberIds: optional(schema.memberIds),   
+      updatedAt:     schema.updatedAt,
+      name:          optional(schema.name),
+      description:   optional(schema.description),
+      workState:     optional(schema.workState),
+      allowForks:    optional(schema.allowForks),
+      memberIds:     optional(schema.memberIds),
       avatarAssetId: optional(schema.avatarAssetId)
     })
 
-    // if caller doesn't own doc, update will fail because fields like ownerId won't match
-    selector = {_id: docId}
-
-    count = Projects.update(selector, {$set: data})
-    console.log(`  [Projects.update]  (${count}) #${docId}`)
+    const count = Projects.update(selector, {$set: data})
+    console.log(`  [Projects.update]  (${count}) #${docId} '${existingProjectRecord.name}'`)
 
     return count
   }
 })
-
-// SERVER-ONLY METHODS
-
-// deleteProject.. this requires the members and assets to be removed first, so it's not a big
-// deal.. but still, for simplicity we define it server side only and the client UI is careful to 
-// disable other project operations while this is happening'
-
-if (Meteor.isServer) {
-  Meteor.methods({
-    "Projects.deleteProjectId": function(projectId) {
-      check(projectId, String)
-      if (!this.userId) 
-        throw new Meteor.Error(401, "Login required")
-
-      console.log("Delete Project #", projectId)
-
-      // Check project still exists, is owned by this person, and has no members
-      const project = Projects.findOne(projectId)
-      if (!project) 
-        throw new Meteor.Error(404, `Project #${projectId} not found `)
-
-      console.log("  Found project:", project.name, project._id)
-      if (project.ownerId !== this.userId) 
-        throw new Meteor.Error(401, "Not Project owner")
-
-      if (project.memberIds && project.memberIds.length > 0)
-        throw new Meteor.Error(401, `Project still has members`)
-
-      // Check the project has no assets (including deleted assets)
-
-      const numAssets = Azzets.find( { ownerId: this.userId, projectNames: project.name } ).count()
-      if (numAssets > 0)
-        throw new Meteor.Error(401, `Project still contains ${numAssets} Assets. You must Remove all Assets from the project before deleting the project. Have you checked deleted assets also?`)
-
-      // Ok, let's do it'
-      const result = Projects.remove(projectId)
-      return result
-    }
-  })
-}

@@ -11,16 +11,15 @@
 
 const mgbReleaseInfo = {
 
-
   'releases': [
 
     {
-      'timestamp': 'Thu Feb 16 2017 15:45 GMT-0800 (PST)',
+      'timestamp': 'Thu Feb 16 2017 20:00 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3284'
+        'iteration': '3293'
       },
 
       'releaseManagement': {
@@ -32,7 +31,7 @@ const mgbReleaseInfo = {
           'featureTag': 'chat',
           'type': 'feature',
           'changeName': 'Project Team Chat',
-          'changeSummary': 'The Chat FlexPanel now enables Team Chat channels for members of Projects',
+          'changeSummary': 'The Chat FlexPanel now enables private Team Chat channels for members of Projects. Project chat messages do NOT get announced as part of the public activity feed. Even if they use the _fp=chat.P_xxx_ path, unauthorized users cannot read or send to project chat (either through the UI or API)',
           'otherUrls': [ ]
         },
         {

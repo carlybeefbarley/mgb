@@ -35,21 +35,35 @@ import moment from 'moment'
  √ [Merge] Merge into master and test
  √ [Deploy] Deploy it ya
 
-TODO (Phase 1a: Fix activity logs and renderer for the new chatChannels format)
+√ DONE (Phase 1a: Fix activity logs and renderer for the new chatChannels format)
  √ [DB] Support old activity.js: activity.toChatChannelKey
  √ [UI] update activity renderer in fpActivity.js
  √ [Test] look for any _fp=chat.____ stuff and correct it
- ◊ [More testing] and fix any bad stuff
+ √ [More testing] and fix any bad stuff
 
-TODO (Phase 2: Tighten up project chat)
- ◊ [secure] Make sure it can't be navigated to by people who don't have access
- ◊ [secure] Make sure it can't be messaged to by people who don't have access
+√ DONE (Phase 2: Tighten up project chat)
+ √ [secure] Make sure it can't be navigated/read by people who don't have access
+ √ [secure] Make sure API can't be sent to without access
+ √ [secure] Make sure it can't be messaged to by people who don't have access
+ √ [secure] Make sure DB records can't be navigated to by people who don't have access
+ √ [Merge] Merge into master and test
+ √ [Deploy] More deploy ftw.
+ √ [More testing] and fix any bad stuff
+
+∆ TODO (Phase 3: Notifications and Pinning)
+ ◊ ...make this list of detailed work
  ◊ [feature] Pinning project chat
- ◊ [Merge] Merge into master and test
- ◊ [Deploy] More deploy ftw.
- ◊ [More testing] and fix any bad stuff
 
-TODO (Phase 3: Delete message)
+TODO (Phase 4: DMs)
+ ◊ [Enable] Enable Send-to-DM in currUserCanSend()
+ ◊ [Feature] Implement UI to initiate a DM send
+ ◊ [Feature] Implement DB stuff to update Notifications/ other records to make a DMs list
+ ◊ [Feature] Implement UI to make DM chats findable for a User
+ ◊ [Feature] Enable DM list in fpChat
+ ◊ [Feature] Implement findObjectNameForChannelName() for DMs
+ ◊ ...make this list of detailed work
+
+TODO (Phase 5: Delete message)
  ◊ [feature] Implement core delete Message code for server
  ◊ [feature] Implement core delete Message code for fpChat
  ◊ [feature] Make sure message OWNERS (only) can delete their messages
@@ -59,17 +73,6 @@ TODO (Phase 3: Delete message)
  ◊ [Deploy] ya.
  ◊ [More testing] and fix any bad stuff
 
-TODO (Phase 4: Notifications)
- ◊ ...make this list of detailed work
-
-TODO (Phase 5: DMs)
- ◊ [Enable] Enable Send-to-DM in currUserCanSend()
- ◊ [Feature] Implement UI to initiate a DM send
- ◊ [Feature] Implement DB stuff to update Notifications/ other records to make a DMs list
- ◊ [Feature] Implement UI to make DM chats findable for a User
- ◊ [Feature] Enable DM list in fpChat
- ◊ [Feature] Implement findObjectNameForChannelName() for DMs
- ◊ ...make this list of detailed work
 
 TODO (Phase 6: Refactor)
  ◊ [Refactor] break into <fpChats> + <ChatChannelSelector> + <ChatChannelMessages>
@@ -161,8 +164,7 @@ export default fpChat = React.createClass({
 
   getMeteorData: function() {
     const chatChannelName = this._calculateActiveChannelName()
-    const uid = this.props.currUser ? this.props.currUser._id : null
-    const handleForChats = Meteor.subscribe("chats.userId", uid, chatChannelName, this.state.pastMessageLimit)
+    const handleForChats = Meteor.subscribe("chats.channelName", chatChannelName, this.state.pastMessageLimit)
     const retval = {
       chats: Chats.find({ toChannelName: chatChannelName }, { sort: { createdAt: 1 } }).fetch(),
       loading: !handleForChats.ready()

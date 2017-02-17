@@ -38,14 +38,15 @@ import moment from 'moment'
 TODO (Phase 1a: Fix activity logs and renderer for the new chatChannels format)
  √ [DB] Support old activity.js: activity.toChatChannelKey
  √ [UI] update activity renderer in fpActivity.js
- ◊ [Test] look for any _fp=chat.____ stuff and correct it
+ √ [Test] look for any _fp=chat.____ stuff and correct it
  ◊ [More testing] and fix any bad stuff
 
 TODO (Phase 2: Tighten up project chat)
  ◊ [secure] Make sure it can't be navigated to by people who don't have access
  ◊ [secure] Make sure it can't be messaged to by people who don't have access
+ ◊ [feature] Pinning project chat
  ◊ [Merge] Merge into master and test
- ◊ [Deploy] ya.
+ ◊ [Deploy] More deploy ftw.
  ◊ [More testing] and fix any bad stuff
 
 TODO (Phase 3: Delete message)
@@ -172,6 +173,7 @@ export default fpChat = React.createClass({
   changeChannel: function(selectedChannelName)
   {
     joyrideCompleteTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
+    _previousChannelName = selectedChannelName
     if (selectedChannelName && selectedChannelName.length > 0 && selectedChannelName !== this._calculateActiveChannelName())
     {
       this.setState( { pastMessageLimit: initialMessageLimit })

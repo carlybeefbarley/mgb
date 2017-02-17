@@ -168,8 +168,6 @@ There are some additional indexed columns used to help find some items from othe
   Chat.createdAt      // Timestamp, set authoritatively on server
   Chat.toAssetId      // always set for scopeAsset. MAY also be set for other messages. 
                       // Allows a way to look for other messages related to an asset
-  Chat.toProjectId    // always set for scopeProject. MAY also be set for other messages.  
-                      // Allows a way to look for other messages related to a project
   Chat.toOwnerId      // Always set for scopeAsset and scopeProject and scopeUser and 
                       // scopeDirectMsg: Set to the ownerId of that Asset/project/User. 
                       // Allows a way for owners to see activity on stuff they own, and 
@@ -234,9 +232,6 @@ export const chatsSchema = {
 
   toAssetId:     optional(String),    // If it is an asset-scoped chat - or undefined if not asset-scoped
   toAssetName:   optional(String),    // Asset's name If it is an asset-scoped chat (duplicated here for speed, but can be stale. Handy to track if the asset got renamed)
-
-  toProjectId:   optional(String),    // undefined if not a project-scoped action..
-
   toOwnerId:     optional(String),    // Owner's user ID if @person. Only one @person...
   toOwnerName:   optional(String),    // Owner's user NAME if @person (duplicated here for speed, but can be stale if we ever support user rename)
 
@@ -436,7 +431,6 @@ export function ChatSendMessageOnChannelName( channelName, msg, completionCallba
   }
 
   const chatMetadata = {
-    // toProjectId: null,
     // toAssetId: null,
     // toOwnerName: null,
     // toOwnerId: null

@@ -488,26 +488,27 @@ export function ChatSendMessageOnChannelName( channelName, msg, completionCallba
 // if (Meteor.isServer)
 // {
 //   Meteor.methods({
-//     'dgolds.migrateChatDB': function() {
+//     'dgolds.migrateChatDB': function(isForRealz) {
 //       if (!this.userId)
 //         throw new Meteor.Error(401, "Login required")
 //       if (Meteor.user().username !== 'dgolds')
 //         throw new Meteor.Error(401, "You do not have the power")
 //       console.log("ONLY you have The Power")
 
-
-//       const GenKEY = 'RANDOM'
+//       const GenKEY = 'GENERAL'
 //       const theOldChannelName=ChatChannels[GenKEY].name
 //       const sel= { toChannelName: theOldChannelName}
 //       const count = Chats.find(sel).count()
 //       const newChanName = ChatChannels[GenKEY].channelName
 //       console.log(`${count} rows of '${sel.toChannelName}' to change to '${newChanName}'`)
 
-//       // Chats.update( 
-//       //   sel, 
-//       //   { $set: { toChannelName: newChanName} }, 
-//       //   { multi: true }
-//       // )
+//       if (isForRealz === true)
+//         Chats.update( 
+//           sel, 
+//           { $set: { toChannelName: newChanName} }, 
+//           { multi: true }
+//         )
+//       console.log('KTHXBYE')
 //     }
 //   })
 // }

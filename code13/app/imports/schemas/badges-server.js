@@ -25,7 +25,7 @@ import { Skills } from '/imports/schemas'
 const _skillBasedBadges = [
   { 
     newBadgeName:   'hasAvatar',
-    requiredSkills: ['getStarted.profile.profilePage', 'getStarted.profile.avatar']
+    requiredSkills: ['getStarted.profile.avatar']
     // This case should ideally also test.. but it's ok, sinc ethat avatar does have an awaitCompletionTag...  user.profile.avatar && user.profile.avatar.length > 0 && retval.push("hasAvatar")   // TODO: Fix this - it's wrong since we always do the gravatar hash
 
   }

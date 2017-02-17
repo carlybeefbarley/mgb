@@ -119,7 +119,6 @@ const LearnGetStartedRoute = ( { currUser }, context ) => {
               <ProgressLabel subSkillsComplete={numGsSkills} subSkillTotal={_maxGsSkillCount} />
               <em className="sub header">
                 Learn to use this site - set up your profile, play a game, find friends, etc
-                <br/><small><span style={{color: 'red'}}>NOTE: We are re-working the tutorials still, sorry the colors are so bad currently :)</span></small><br/>
                 <StartDefaultNextTutorial currUser={currUser} userSkills={context.skills}/>                             
               </em>
             </Header>
@@ -131,9 +130,9 @@ const LearnGetStartedRoute = ( { currUser }, context ) => {
           </Grid.Column>
         </Grid.Row>
 
-        <Grid.Row>
-          <Grid.Column>
-            <Card.Group itemsPerRow={2} stackable className="skills">
+        <Grid.Row centered>
+          <Grid.Column width={12}>
+            <Card.Group itemsPerRow={1} className="skills">
               { /* Add a pseudo-card for login/signup */ }
                   <Card 
                       color={currUser ? 'green' : null}

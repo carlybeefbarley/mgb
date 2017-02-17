@@ -1,4 +1,5 @@
-// MAGE ver 2.0.0
+// MAGE ver. 1.0.0
+// Must be backwards-compatible with MGB1 Games
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 

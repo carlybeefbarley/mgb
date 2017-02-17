@@ -1,12 +1,15 @@
 #gameWrapper {
-  
+
 }
 
 #gameWrapper.popup {
   position: absolute;
-  z-index: 10; 
+  z-index: 10;
   bottom: 0;
   right: 0;
-  background-color: white; 
+  background-color: white;
   padding: 0;
+}
+.CodeMirror .highlight {
+  background-color: #feff99;
 }

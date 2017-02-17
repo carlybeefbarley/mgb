@@ -18,8 +18,6 @@ export default class ActorTileset extends React.Component {
       // Assumes if first actor does not have owner:asset convention and has improper gid, the rest are too
       if (this.props.tilesets[1].name.indexOf(':') === -1) {
         this.props.fixImportNames()
-      }
-      if (this.props.tilesets[1].firstgid < 100) {
         this.props.fixImportGids()
       }
     }
@@ -132,7 +130,7 @@ export default class ActorTileset extends React.Component {
     const tsName = tileset.name.indexOf(':') === -1 ? tileset.name : tileset.name.split(':').pop()
     const title = `${tsName} (${tileset.imagewidth}x${tileset.imageheight})\n${types[parseInt(tileset.actor.databag.all.actorType)]}`
     const imgRatio = tileset.imageheight / tileset.imagewidth
-    const width = tileset.imagewidth <= 64 ? 64 : 80
+    const width = 64
 
     return (
       <Grid.Column
@@ -144,10 +142,11 @@ export default class ActorTileset extends React.Component {
         }}
 
         style={{
-          minWidth: '80px',
+          minWidth: '70px',            
+          width: 'calc(50% - 1em)',	
+          maxHeight: 'calc(50% - 1em)',
           margin: '0.5em',
           padding: 0,
-          paddingTop: 'auto',
           borderRadius: '.28571429rem',
           border: 'none',
           boxShadow: '0 1px 3px 0 grey, 0 0 0 1px grey',
@@ -159,7 +158,6 @@ export default class ActorTileset extends React.Component {
           src={makeCDNLink(tileset.image, makeExpireTimestamp(30) /*Allow super small cache ?*/)}
           width={width}
           height={imgRatio * width}
-          style={{verticalAlign: 'middle'}}
         />
         <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.75)', color: 'white', textAlign: 'center', padding: 0, verticalAlign: 'middle', maxHeight: '1.5em'}}>
           {
@@ -190,7 +188,7 @@ export default class ActorTileset extends React.Component {
 
     // Dummy div for left-justified two-column grid that resizes and centers when switched to single column for smaller widths
     if (count % 2 !== 0) {
-      tilesets.push(<Grid.Column key={-1} style={{height: 0, minWidth: '80px', width: 'calc(50% - 2em)', margin: '0 1em 0 1em'}} />)
+      tilesets.push(<Grid.Column key={-1} style={{height: 0, minWidth: '70px', width: 'calc(50% - 1em)', margin: '0.5em'}} />)
     }
 
     return tilesets

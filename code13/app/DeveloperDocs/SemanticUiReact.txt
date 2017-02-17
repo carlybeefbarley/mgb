@@ -1,0 +1,13 @@
+Notes on use of Semantic UI React
+
+
+
+<Popup>: 
+For now, the element passed to trigger={} must meet some extra requirements:
+  1. It must pass on unused props to children (e.g. using the spread
+     props
+  2. It can't be a pure-functional component. It has to be either
+     a built-in component like "div", or a React component with backing 
+     state (i.e. created by extending React.Component or using the 
+     React.createClass() method
+

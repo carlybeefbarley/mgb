@@ -14,6 +14,43 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Thu Feb 16 2017 15:45 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3284'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'feature',
+          'changeName': 'Project Team Chat',
+          'changeSummary': 'The Chat FlexPanel now enables Team Chat channels for members of Projects',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'tutorials',
+          'type': 'feature',
+          'changeName': 'Code tutorials',
+          'changeSummary': 'The Code tutorials have more content, specific PhaserJS skills, and also additional code-specific tutorial Asset capabilities, such as highlighting code regions',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.quality',
+          'type': 'bugfix',
+          'changeName': 'Many Bugfixes',
+          'changeSummary': 'We are fixing many many bugs at present, getting ever-closer to launch...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Sun Feb 12 2017 21:45 GMT-0800 (PST)',
@@ -1075,7 +1112,7 @@ const mgbReleaseInfo = {
           'featureTag': 'asset.fork',
           'type': 'improvement',
           'changeName': 'Asset forking progress indicator',
-          'changeSummary': 'The UI now indicates when an asset fork is pending (icon shown orange, action clarified as pending)',
+          'changeSummary': 'The UI now indicates when an Asset fork is pending (icon shown orange, action clarified as pending)',
           'otherUrls': [ ]
         },
         {

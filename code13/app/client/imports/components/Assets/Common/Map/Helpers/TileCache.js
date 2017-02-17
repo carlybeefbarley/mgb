@@ -16,6 +16,8 @@ export default class TileCache {
     this.toLoad = 0;
     this.loaded = 0;
 
+    this.updateStack = []
+
     this.update(data, onReady)
   }
 
@@ -29,14 +31,29 @@ export default class TileCache {
       this.observers[i].subscription.stop()
     }
     this.observers = null
+    this.updateStack = []
   }
 
   _onReady() {
-    this.onReady && window.setTimeout(() => { this.onReady() }, 0)
+
+    this.onReady && window.setTimeout(() => {
+      this.onReady()
+      this.inProgress = false
+      this._doNextUpdate()
+    }, 0)
   }
 
+  update(data, onReady){
+    this.updateStack.push([data, onReady])
+    this._doNextUpdate()
+  }
+  _doNextUpdate(){
+    if(!this.inProgress && this.updateStack.length)
+      this._update.apply(this, this.updateStack.shift())
+  }
   // TODO(stauzs): implement lazy cache - return old cache and in background update to new version - when ready - callback
-  update(data = this.data, onReady = null) {
+  _update(data = this.data, onReady = null) {
+    this.inProgress = true
     this.data = data
     // always overwrite onReady with latest function - to avoid race conditions
     this.onReady = onReady

@@ -420,21 +420,23 @@ export default class Joyride extends React.Component {
    */
   onClickTooltip(e) {
     const state = this.state
-    const { callback, steps, type } = this.props
+    const { callback, steps, type, assetId } = this.props
     const el = e.currentTarget.className.indexOf('joyride-') === 0 && e.currentTarget.tagName === 'A' ? e.currentTarget : e.target
     const dataType = el.dataset.type
 
     if (el.className.indexOf('joyride-') === 0) {
       if(dataType === 'next' && steps[state.index].submitCode){
-        console.log('submit code', 11)
-        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.random'})
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.mgb-help'})
+        const url = `❮!vault:${assetId}❯`
         // TODO uncoment this. Currently don't want to spam chat
-        ChatSendMessage('RANDOM', 'TEST - Check my Phaser task [link here]')
+        ChatSendMessage('MGBHELP', 'Check my Phaser task ' + url)
       }
       else 
       if(dataType === 'back' && steps[state.index].submitCode){
+        // TODO check why this calls twice
         utilPushTo(window.location, window.location.pathname, {'_fp':'chat.mgb-help'})
-        ChatSendMessage('MGB-HELP', 'TEST - Check my Phaser task [link here]')
+        const url = `❮!vault:${assetId}❯`
+        ChatSendMessage('MGBHELP', 'Help me with code asset ' + url)
         return // no other action
       }
       if (dataType === 'back' && steps[state.index].offerRevertToFork) {

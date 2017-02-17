@@ -1978,14 +1978,19 @@ export default class EditCode extends React.Component {
 
   // TODO: add some sort of message to highlighted lines????
   highlightLines(from, to){
-    if(to == void(0))
+    // make from 1 -> 0 so it's not confusing
+    from--
+    if(to == void(0) || isNaN(to))
       to = from
+    else
+      to--
+
 
     this.highlightedLines.forEach((lh) => {
       this.codeMirror.removeLineClass(lh, 'background', 'highlight')
     })
 
-    for(let i=from; i<to; i++){
+    for(let i=from; i<=to; i++){
       const lh = this.codeMirror.getLineHandle(i)
       // reached end of the file
       if(!lh)
@@ -1993,6 +1998,16 @@ export default class EditCode extends React.Component {
       this.codeMirror.addLineClass(lh, 'background', 'highlight')
       this.highlightedLines.push(lh)
     }
+    // scroll to first highlighted line
+    if(from > -1)
+      this.scrollToLine(from)
+  }
+
+  scrollToLine(line){
+    this.codeMirror.setCursor(line, 0)
+    var t = this.codeMirror.charCoords({line, ch: 0}, "local").top
+    var middleHeight = this.codeMirror.getScrollerElement().offsetHeight / 2
+    this.codeMirror.scrollTo(null, t - middleHeight - 5)
   }
 
   getStringReferences(){

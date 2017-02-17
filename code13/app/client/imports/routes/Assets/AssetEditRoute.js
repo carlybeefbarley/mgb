@@ -30,6 +30,9 @@ import ProjectMembershipEditorV2 from '/client/imports/components/Assets/Project
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+
+
 
 const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
@@ -281,6 +284,7 @@ export default AssetEditRoute = React.createClass({
       const { asset } = this.data
       Meteor.call("Azzets.fork", asset._id, this.forkResultCallback)
       this.setState( { isForkPending: true } )
+      joyrideCompleteTag('mgbjr-CT-asset-fork')
     }
   },
 

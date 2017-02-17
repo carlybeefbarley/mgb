@@ -35,11 +35,11 @@ import moment from 'moment'
  √ [Merge] Merge into master and test
  √ [Deploy] Deploy it ya
 
-TODO (Phase 1a: Fix activity logs and renderer for the new chatChannels format)
+√ DONE (Phase 1a: Fix activity logs and renderer for the new chatChannels format)
  √ [DB] Support old activity.js: activity.toChatChannelKey
  √ [UI] update activity renderer in fpActivity.js
  √ [Test] look for any _fp=chat.____ stuff and correct it
- ◊ [More testing] and fix any bad stuff
+ √ [More testing] and fix any bad stuff
 
 TODO (Phase 2: Tighten up project chat)
  ◊ [secure] Make sure it can't be navigated to by people who don't have access

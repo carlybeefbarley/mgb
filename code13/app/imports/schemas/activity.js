@@ -37,7 +37,12 @@ var schema = {
   toAssetKind: String,    // Asset's kind (image, map, etc)
 
   // Others - may not be on all records:
+
+  // DEAD AS OF 2/16/2017:
   toChatChannelKey: Match.Optional(String),  // Chat Channel KEY (no # prefix, using a KEY from ChatChannels - e.g. GENERAL). Added 12/10/2016
+  // The above is still here so that we can update records which has that info.
+
+  toChatChannelName: Match.Optional(String),  // Chat Channel Name as defined in makeChannelName() in chats.js. Added  2/16/2017
 }
 
 // Info on each type of activity, as the UI cares about it
@@ -48,7 +53,7 @@ export const ActivityTypes = {
   "user.logout":       { icon: "grey user",        pri:  9,  description: "User Logged Out" },
   "user.changeFocus":  { icon: "green alarm",      pri:  9,  description: "User changed their focus" },
   "user.clearFocus":   { icon: "grey alarm",       pri:  9,  description: "User cleared their focus" },
-  "user.message":      { icon: "green chat",       pri:  9,  description: "User sent a public message" }, // Should also include toChatChannelKey
+  "user.message":      { icon: "green chat",       pri:  9,  description: "User sent a public message" }, // Should also include toChatChannelName
 
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.fork.from":   { icon: "blue fork",        pri: 10,  description: "Forked new asset from this asset" },
@@ -141,7 +146,7 @@ var priorLog   // The prior activity that was logged - for simplistic de-dupe pu
 
 // Helper function to invoke a logActivity function. If called from client it has a VERY 
 // limited co-allesce capability for duplicate activities.
-// Support otherData fields are { toChatChannelKey }
+// Support otherData fields such as { toChatChannelName }
 export function logActivity(activityType, description, thumbnail, asset, otherData = {}) {
  
   const user = Meteor.user()
@@ -174,8 +179,8 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
     toAssetName:            (asset && asset.name ? asset.name : ""),
     toAssetKind:            (asset && asset.kind ? asset.kind : "")    
   }
-  if (otherData.toChatChannelKey)
-    logData.toChatChannelKey = otherData.toChatChannelKey
+  if (otherData.toChatChannelName)
+    logData.toChatChannelName = otherData.toChatChannelName
 
   let fSkipLog = false
 

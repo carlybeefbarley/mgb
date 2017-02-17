@@ -4,7 +4,7 @@ import QLink from '/client/imports/routes/QLink'
 import { ActivityTypes, deleteActivityRecord } from '/imports/schemas/activity.js'
 
 import { AssetKinds } from '/imports/schemas/assets'
-import { ChatChannels } from '/imports/schemas/chats'
+import { ChatChannels, makePresentedChannelName } from '/imports/schemas/chats'
 import { isSameUserId } from '/imports/schemas/users'
 
 import moment from 'moment'
@@ -20,18 +20,35 @@ const _propTypes = {
 
 const ActivityExtraDetail = ( { act} ) => {
 
+  // CHAT
+  // CHAT (handle old toChatChannelKey that was prior to 2/16/2016)
   if (_.isString(act.toChatChannelKey) && act.toChatChannelKey.length > 0) {
-    const chName = ChatChannels[act.toChatChannelKey].name
+    const chan = ChatChannels[act.toChatChannelKey]
+    return (
+      <Feed.Extra text>
+        <Icon name='chat' />
+        <QLink  query={{_fp: `chat.${chan.channelName}`}}>
+          #{chan.name}
+        </QLink>
+      </Feed.Extra>
+    )
+  }
+  // CHAT (handle new toChatChannelName that was after 2/16/2016)
+  if (_.isString(act.toChatChannelName) && act.toChatChannelName.length > 0) {
+    const chName = act.toChatChannelName
+    // Currently, only global messsages are sent on the public channels and they are super-easy to get a friendly name for:
+    const friendlyName = makePresentedChannelName(chName)
     return (
       <Feed.Extra text>
         <Icon name='chat' />
         <QLink  query={{_fp: `chat.${chName}`}}>
-          #{chName}
+          #{friendlyName}
         </QLink>
       </Feed.Extra>
     )
   }
 
+  // ASSET or GAME
   if (act.activityType.startsWith("asset.") || act.activityType.startsWith("game.")) {
     const assetKindIconName = AssetKinds.getIconName(act.toAssetKind)
     const assetKindColor = AssetKinds.getColor(act.toAssetKind)

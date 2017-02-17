@@ -70,7 +70,7 @@ const learnTopLevelItems = [
     icon: 'help',
     content: 'Ask for help',
     link: '/learn',
-    query: { _fp: 'chat.mgb-help' },
+    query: { _fp: 'chat.G_MGBHELP_' },
     desc: 'Ask and we shall answer'
   },
   */
@@ -119,7 +119,7 @@ const LearnRoute = ( { currUser, params }, context ) => (
       { currUser && 
         <Grid.Row>
           <Grid.Column>
-            <QLink style={{color:"#333"}} to='/learn' query={ {_fp: 'chat.mgb-help'} }>
+            <QLink style={{color:"#333"}} to='/learn' query={ {_fp: 'chat.G_MGBHELP_'} }>
               <i className="help icon"></i> Ask for help - Ask and we shall answer
             </QLink>
           </Grid.Column>

@@ -36,8 +36,8 @@ import moment from 'moment'
  √ [Deploy] Deploy it ya
 
 TODO (Phase 1a: Fix activity logs and renderer for the new chatChannels format)
- ◊ [DB] Migrate or support old activity.js: activity.toChatChannelKey
- ◊ [UI] update activity renderer in fpActivity.js
+ √ [DB] Support old activity.js: activity.toChatChannelKey
+ √ [UI] update activity renderer in fpActivity.js
  ◊ [Test] look for any _fp=chat.____ stuff and correct it
  ◊ [More testing] and fix any bad stuff
 
@@ -197,6 +197,7 @@ export default fpChat = React.createClass({
       return
 
     const channelName = this._calculateActiveChannelName()
+    const channelObj = parseChannelName(channelName)
     const presentedChannelName = makePresentedChannelName(channelName)
     
     joyrideCompleteTag(`mgbjr-CT-fp-chat-send-message`)
@@ -209,7 +210,8 @@ export default fpChat = React.createClass({
       else
       {
         this.setState( { messageValue: '' } )
-        logActivity('user.message',  `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName:  channelName})
+        if (channelObj.scopeGroupName === 'Global')
+          logActivity('user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName:  channelName})
       }
     })
   },

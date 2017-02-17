@@ -426,7 +426,7 @@ export default class Joyride extends React.Component {
 
     if (el.className.indexOf('joyride-') === 0) {
       if(dataType === 'next' && steps[state.index].submitCode){
-        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.mgb-help'})
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
         const url = `❮!vault:${assetId}❯`
         // TODO uncoment this. Currently don't want to spam chat
         ChatSendMessage('MGBHELP', 'Check my Phaser task ' + url)
@@ -434,7 +434,7 @@ export default class Joyride extends React.Component {
       else 
       if(dataType === 'back' && steps[state.index].submitCode){
         // TODO check why this calls twice
-        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.mgb-help'})
+        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
         const url = `❮!vault:${assetId}❯`
         ChatSendMessage('MGBHELP', 'Help me with code asset ' + url)
         return // no other action

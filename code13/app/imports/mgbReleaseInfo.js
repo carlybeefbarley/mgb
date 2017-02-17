@@ -3260,7 +3260,7 @@ const mgbReleaseInfo = {
           'featureTag': 'nav.flexpanel.chat',
           'type': 'improvement',
           'changeName': 'Chat channels are on the url',
-          'changeSummary': 'Chat channels are now part of the url (e.g ?_fp=chat.random) so back/fwd navigation and deep links work correctly',
+          'changeSummary': 'Chat channels are now part of the url (e.g ?_fp=chat.G_RANDOM_) so back/fwd navigation and deep links work correctly',
           'otherUrls': []
         },
         {

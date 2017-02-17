@@ -12,7 +12,7 @@ import { getRootEl } from './utils'
 import Beacon from './Beacon'
 import Tooltip, { _queryVisibleSelectorsInSequence } from './Tooltip'
 
-import { ChatSendMessage } from '/imports/schemas/chats'
+import { ChatSendMessageOnChannelName } from '/imports/schemas/chats'
 import { utilPushTo } from "/client/imports/routes/QLink"
 
 // Note: CSS styles come from App.js: import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
@@ -429,14 +429,14 @@ export default class Joyride extends React.Component {
         utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
         const url = `❮!vault:${assetId}❯`
         // TODO uncoment this. Currently don't want to spam chat
-        ChatSendMessage('MGBHELP', 'Check my Phaser task ' + url)
+        ChatSendMessageOnChannelName('G_MGBHELP_', 'Check my Phaser task ' + url)
       }
       else 
       if(dataType === 'back' && steps[state.index].submitCode){
         // TODO check why this calls twice
         utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
         const url = `❮!vault:${assetId}❯`
-        ChatSendMessage('MGBHELP', 'Help me with code asset ' + url)
+        ChatSendMessageOnChannelName('G_MGBHELP_', 'Help me with code asset ' + url)
         return // no other action
       }
       if (dataType === 'back' && steps[state.index].offerRevertToFork) {

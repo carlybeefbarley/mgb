@@ -42,7 +42,7 @@ export default class ActiveActor
     this.appearIf = 0
 
     // Auto-move info
-    this.stepStyle = 0                  // Movement style. 0..3 = N, S, E, W
+    this.stepStyle = 2                  // Movement style. 0..3 = N, S, E, W; Default: Face South
     this.stepCount = 0                  // Counter - # of steps taken using this movement style. 0 means no steps taken; need to choose
     this.isSliding = false              // Used for items that are sliding - this includes sliding blocks and shots
     this.wasStopped = false            // Used for handling ice

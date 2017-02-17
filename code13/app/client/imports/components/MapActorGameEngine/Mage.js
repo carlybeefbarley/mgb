@@ -1,4 +1,3 @@
-// MAGE ver 2.0.0
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 
@@ -26,6 +25,7 @@ const _overlayStyle = {
 
 
 // MapActorGameEngine (MAGE)
+// For now, make everything backwards-compatible. Any changes that would break MGB1 games should be in separate files w/ versioning 2.x.x+
 
 // This is the top-level React wrapper for the MapActorGameEngine
 

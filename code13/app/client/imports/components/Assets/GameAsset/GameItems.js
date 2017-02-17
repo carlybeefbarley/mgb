@@ -4,20 +4,17 @@ import { Card, Image } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 export const GameItem = ( { game } ) => (
-	<Card 
-    style={{backgroundColor: 'white'}}
-  >
-  {console.log(this)}
+	<Card fluid>
     <QLink to={`/u/${game.dn_ownerName}/play/${game._id}`}>
     {
       Thumbnail.getLink(game)
       ?
       <Image centered 
         src={Thumbnail.getLink(game)}
-        style={{ height: '155px', margin: '0px auto', imageRendering: 'pixelated', width: 'initial', overflow: 'hidden' }} 
+        style={{ height: '180px', margin: '0px auto', imageRendering: 'pixelated', width: 'initial', overflow: 'hidden' }} 
       />
       :
-      <div style={{ display: 'block', height: '155px' }}/>
+      <div style={{ display: 'block', height: '180px' }}/>
     }
     </QLink>
     <Card.Content extra>
@@ -28,7 +25,7 @@ export const GameItem = ( { game } ) => (
 )
 
 const GameItems = ( { games } ) => (
-  <Card.Group style={{clear: 'both'}}>
+  <Card.Group stackable itemsPerRow={5} style={{clear: 'both'}}>
     { (!games || games.length === 0) &&
       <p>No matching games</p>}
     { games.map( g => { 
@@ -39,21 +36,6 @@ const GameItems = ( { games } ) => (
     })}
   </Card.Group>
 )
-
-const _resolveOwner = (implicitOwnerName, assetName) => {
-  const parts = assetName.split(':')
-  const isImplicit = (parts.length === 1 || parts[0].includes('/'))
-  return {
-    ownerName: isImplicit ? implicitOwnerName : parts[0],
-    assetName: isImplicit ? assetName : assetName.slice(parts[0].length + 1)
-  }
-}
-
-const _mkMapUri = (ownerName, assetName, gameType) => { 
-  const p = _resolveOwner(ownerName, assetName)
-  // make sure we have ALWAYS latest map
-  return `/api/asset/${gameType}/${p.ownerName}/${p.assetName}?hash=${Date.now()}`
-}
 
 GameItems.propTypes = {
   games:    PropTypes.array      // an array of game assets

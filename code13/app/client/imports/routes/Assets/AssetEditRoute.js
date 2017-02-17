@@ -284,7 +284,6 @@ export default AssetEditRoute = React.createClass({
       const { asset } = this.data
       Meteor.call("Azzets.fork", asset._id, this.forkResultCallback)
       this.setState( { isForkPending: true } )
-      joyrideCompleteTag('mgbjr-CT-asset-fork')
     }
   },
 
@@ -298,6 +297,7 @@ export default AssetEditRoute = React.createClass({
       logActivity("asset.fork.from", "Forked new asset from this asset", null, this.data.asset )
       logActivity("asset.fork.to", "Forked this new asset from another asset", null, result.newAssetNoC2 )
       utilPushTo(this.context.urlLocation.query, "/u/" + this.props.currUser.username + "/asset/" + result.newId)
+      joyrideCompleteTag('mgbjr-CT-asset-fork')
     }
 
     this.setState( { isForkPending: false } )

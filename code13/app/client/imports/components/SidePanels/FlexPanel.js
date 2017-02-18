@@ -53,6 +53,7 @@ export default FlexPanel = React.createClass({
     fpIsFooter:             PropTypes.bool.isRequired,    // If true, then flexPanel is fixed page footer
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
+    chatChannelTimestamps:  PropTypes.array,              // as defined by Chats.getLastMessageTimestamps RPC
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
     joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
@@ -300,6 +301,7 @@ export default FlexPanel = React.createClass({
                       currUserProjects={this.props.currUserProjects}
                       user={this.props.user}
                       meteorStatus={this.data.meteorStatus}
+                      chatChannelTimestamps={this.props.chatChannelTimestamps}
                       joyrideSteps={this.props.joyrideSteps}
                       joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
                       joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}

@@ -32,6 +32,8 @@ import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { makeChannelName, ChatChannels } from '/imports/schemas/chats'
+import { getLastReadTimestampForChannel } from '/imports/schemas/settings-client'
 
 // https://www.npmjs.com/package/react-notifications
 import { NotificationContainer, NotificationManager } from 'react-notifications'
@@ -47,6 +49,10 @@ const getPagenameFromProps = props => props.routes[1].name
 const getPagepathFromProps = props => props.routes[1].path
 
 let _theAppInstance = null
+
+
+// for now, until we have push notifications for chat
+const CHAT_POLL_INTERVAL_MS = (6*1000) 
 
 // Tutorial/Joyride infrastructure support
 
@@ -148,6 +154,7 @@ const App = React.createClass({
   },
 
   componentDidMount: function() {
+    this._schedule_requestChatChannelTimestampsNow()
     registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
     _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
   },
@@ -184,14 +191,15 @@ const App = React.createClass({
 
   getInitialState: function() {
     return {
-      initialLoad: true,
       activityHistoryLimit: 11,
 
+      chatChannelTimestamps:    null,          // as defined by Chats.getLastMessageTimestamps RPC
+      hazUnreadChats:           [],            // will contain Array of channel names with unread chats
       // This is so that we can pass the Asset 'kind' info into some other components like the flexpanels and Nav controls.
       // The AssetEditRoute component is currently the only component expected to set this value, since that
       // is the layer in the container hierarchy that actually loads assets for the AssetEditors
-      currentlyEditingAssetKind: null,      // null or a string which is a key into assets:AssetKindKeys.
-      currentlyEditingAssetCanEdit: false,  // true or false. True iff editing anasset and user can edit
+      currentlyEditingAssetKind: null,     // null or a string which is a key into assets:AssetKindKeys.
+      currentlyEditingAssetCanEdit: false, // true or false. True iff editing anasset and user can edit
       // For react-joyride
       joyrideSteps: [],
       joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
@@ -249,6 +257,38 @@ const App = React.createClass({
     return retval
   },
 
+  _schedule_requestChatChannelTimestampsNow() {
+    window.setInterval(this.requestChatChannelTimestampsNow, CHAT_POLL_INTERVAL_MS)
+  },
+
+  // TODO: Make this throttled, called when relevant
+  requestChatChannelTimestampsNow: function () {
+    if (!this.data.currUser)
+      return
+
+    const chanArray = _.concat(
+      _.map(ChatChannels.sortedKeys, k => makeChannelName( { scopeGroupName: 'Global', scopeId: k } ) ),
+      _.map(this.data.currUserProjects, p => makeChannelName( { scopeGroupName: 'Project', scopeId: p._id } ) )
+    )
+    Meteor.call( 'Chats.getLastMessageTimestamps', chanArray, ( error, chatChannelTimestamps ) =>
+    {
+      if (error)
+        console.log('unable to invoke Chats.getLastMessageTimestamps()', error )
+      else
+      {
+        let hazUnreadChats = []
+        _.each(chatChannelTimestamps, cct => {
+          const channelName = cct._id
+          const lastReadByUser = getLastReadTimestampForChannel(this.data.settings, channelName)
+          cct._hazUnreads = Boolean(cct.lastCreatedAt.getTime() > lastReadByUser.getTime())
+          if (cct._hazUnreads)
+            hazUnreadChats.push(channelName)
+        })
+        this.setState( { chatChannelTimestamps, hazUnreadChats } )
+      }
+    })
+  },
+
   configureTrackJs() {
     // TODO: Make reactive for login/logout
     // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
@@ -277,7 +317,7 @@ const App = React.createClass({
 
   render() {
     const { respData, respWidth, params } = this.props
-    const { joyrideDebug, currentlyEditingAssetKind, currentlyEditingAssetCanEdit } = this.state
+    const { joyrideDebug, currentlyEditingAssetKind, currentlyEditingAssetCanEdit, chatChannelTimestamps } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
@@ -350,6 +390,7 @@ const App = React.createClass({
               joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
               joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
               currUser={currUser}
+              chatChannelTimestamps={chatChannelTimestamps}
               currUserProjects={currUserProjects}
               user={user}
               selectedViewTag={flexPanelQueryValue}
@@ -366,6 +407,7 @@ const App = React.createClass({
               <div style={mainPanelInnerDivSty}>
                 <NavPanel
                   currUser={currUser}
+                  hazUnreadChats={this.state.hazUnreadChats}
                   currUserProjects={currUserProjects}
                   fpReservedRightSidebarWidth={flexPanelWidth}
                   navPanelAvailableWidth={mainAreaAvailableWidth}

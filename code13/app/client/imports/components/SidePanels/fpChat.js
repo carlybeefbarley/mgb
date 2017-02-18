@@ -61,23 +61,24 @@ import moment from 'moment'
  √ [Deploy] More deploy ftw.
  √ [More testing] and fix any bad stuff
 
-√ TODO (Phase 3a: Read/Unread)
+√ DONE (Phase 3a: Read/Unread)
  √ RPC to support getting aggregates on channels (This is not a fun thing to do as a subscription)
  √ Call the Chats.getLastMessageTimestamps RPC from fpChats when channel selector shown
  √ Implement user settings for most recent message read
  √ Implement color-coding channels by read/unread, and refreshing on channel search ()
  √ Implement updating current channel's read/unread for user if on channel (or if posts to channel)
  √ [Merge] Merge into master and test
- ◊ [Deploy] ya.
- ◊ [More testing] and fix any bad stuff
+ √ [Deploy] ya.
+ √ [More testing] and fix any bad stuff
 
-◊ TODO (Phase 3b: Simple Notifications)
- ◊ Move fpChats._requestChannelTimestampsNow up to App level
- ◊ Add simple way to click a notification icon and go to the channel selector
- ◊ [Merge] Merge into master and test
- ◊ [Deploy] ya.
+√ TODO (Phase 3b: Simple Notifications)
+ √ Move fpChats._requestChannelTimestampsNow up to App level
+ √ Add simple way to click a notification icon and go to the channel selector
+ √ [Merge] Merge into master and test
+ √ [Deploy] ya.
  ◊ [More testing] and fix any bad stuff
- 
+ ◊ Make the update of the orange chat icon quicker
+
 TODO (Phase 4: DMs)
  ◊ [Enable] Enable Send-to-DM in currUserCanSend()
  ◊ [Feature] Implement UI to initiate a DM send
@@ -198,28 +199,8 @@ export default fpChat = React.createClass({
                                                                   // transitions etc). If null, there is nothing pending.
                                                                   // If '*' then render on whatever the next channelName is.
                                                                   // if any-other-string, then we are waiting for that specific channelName
-      pastMessageLimit:                     initialMessageLimit,
-      channelTimestamps:                    null                  // as defined by Chats.getLastMessageTimestamps RPC
+      pastMessageLimit:                     initialMessageLimit
     }
-  },
-
-  componentWillMount() {
-    this._requestChannelTimestampsNow()
-  },
-
-  // TODO: Move this up somewhere else so it is easy to get to, throttled etc
-  _requestChannelTimestampsNow: function () {
-    const chanArray = _.concat(
-      _.map(ChatChannels.sortedKeys, k => makeChannelName( { scopeGroupName: 'Global', scopeId: k } ) ),
-      _.map(this.props.currUserProjects, p => makeChannelName( { scopeGroupName: 'Project', scopeId: p._id } ) )
-    )
-    Meteor.call( 'Chats.getLastMessageTimestamps', chanArray, ( error, result ) =>
-    {
-      if (error)
-        console.log('unable to invoke Chats.getLastMessageTimestamps()', error )
-      else
-        this.setState( { channelTimestamps: result } )
-    })
   },
 
   getMeteorData: function() {
@@ -406,7 +387,6 @@ export default fpChat = React.createClass({
 
   handleShowChannelSelector: function() {
     this.setState( { view: 'channels' } )
-    this._requestChannelTimestampsNow()
   },
 
   /**
@@ -459,7 +439,7 @@ export default fpChat = React.createClass({
               onClick={() => this.handleChatChannelChange(chan.channelName)}
               title={chan.description}
               content={makePresentedChannelName(chan.channelName)}
-              style={{ color: this.colorForChannelNameHasUnreads(chan.channelName, this.state.channelTimestamps)}}
+              style={{ color: this.colorForChannelNameHasUnreads(chan.channelName, this.props.chatChannelTimestamps)}}
               icon={chan.icon}
             />
           )
@@ -512,7 +492,7 @@ export default fpChat = React.createClass({
                 <Icon name='sitemap' color={isOwner ? 'green' : 'blue' } />
                 <List.Content>
                   <Icon name='pin' color='grey' style={{ position: 'absolute', right: '1em' }} />
-                  <span style={{ color: this.colorForChannelNameHasUnreads(channelName, this.state.channelTimestamps)}}>
+                  <span style={{ color: this.colorForChannelNameHasUnreads(channelName, this.props.chatChannelTimestamps)}}>
                     { !isOwner && project.ownerName + ' : ' }
                     { project.name }
                   </span>

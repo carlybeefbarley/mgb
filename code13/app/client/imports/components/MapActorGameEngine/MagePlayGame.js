@@ -332,7 +332,7 @@ export default class MagePlayGame
             actor.x = actor.fromx
             actor.y = actor.fromy
             actor.wasStopped = true
-            //					        	actor.stepStyle = -1		// These need to be free to move again. -1 means if they are on ice, they have stopped sliding and are free to choose their movement direction again
+            //actor.stepStyle = -1		// These need to be free to move again. -1 means if they are on ice, they have stopped sliding and are free to choose their movement direction again
             actor.stepCount = 0				// Reset the step count; used to trigger a new movement choice.
 
             if (AA == this.AA_player_idx) {

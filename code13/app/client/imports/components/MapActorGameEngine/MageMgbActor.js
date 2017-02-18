@@ -343,7 +343,7 @@ const MgbActor = {
     tweenCount, 
     meleeStep = -1)     				// If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
   {
-    const frame = tweenCount % 4									  // Normal move animations have 4 steps
+    const frame = tweenCount % 5									  // Normal move animations have 5 steps
     const frame_Stationary = (tweenCount >> 1) % 16	// # Stationary animations have 16 steps
     let animationTableIndex = -1			      				// This will be used to work out which animation tile to use, and will become teh return value from this method
     const effectiveStepStyle = (currentStepStyle == -1) ? priorStepStyle : currentStepStyle;		// This will be the most valid (i.e. not -1) of current/prior stepstyle
@@ -368,19 +368,8 @@ const MgbActor = {
       case -1: // stationary
         switch (priorStepStyle)
         {
-        case -1: // by default use the face direction for stationary
-          if (priorStepStyle === 0) {
-            animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH
-          }
-          else if (priorStepStyle === 1) {
-            animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST
-          }
-          else if (priorStepStyle === 2) {
-            animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH
-          }
-          else if (priorStepStyle === 3) {
-            animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST
-          }
+        case -1: 
+          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary
           break
         case 0:	// North
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_NORTH + frame_Stationary
@@ -395,27 +384,31 @@ const MgbActor = {
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_WEST + frame_Stationary
           break 
         }
-
+        
         if (!MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) {
-          if (MgbActor.animationNames[MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION]) 
-            animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary // Try non-directional stationary animation
+          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary // Try non-directional stationary animation
+          if (MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) 
+            break
           else 
-            if (priorStepStyle === 0) {
+            switch (priorStepStyle)
+            {
+            case -1: 
+              animationTableIndex = -1
+              break
+            case 0:	// North
               animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH
-            }
-            else if (priorStepStyle === 1) {
+              break
+            case 1: // East 
               animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST
-            }
-            else if (priorStepStyle === 2) {
-              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH
-            }
-            else if (priorStepStyle === 3) {
+              break
+            case 2:	// South
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH 
+              break
+            case 3:	// West
               animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST
+              break 
             }
-            else {
-              animationTableIndex = -1	
-            }
-        }     
+        }    
         break
       }
     }

@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Fri Feb 17 2017 10:45 GMT-0800 (PST)',
+      'timestamp': 'Fri Feb 17 2017 17:30 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3302'
+        'iteration': '3307'
       },
 
       'releaseManagement': {
@@ -30,8 +30,8 @@ const mgbReleaseInfo = {
         {
           'featureTag': 'chat',
           'type': 'feature',
-          'changeName': 'Prevent scripting in messages',
-          'changeSummary': 'Thanks @stanchion, we have now escaped the naughty < and > and & characters :)',
+          'changeName': 'Chat channels now have read/unread indication',
+          'changeSummary': 'The Chat channels list in the Chat Flex Panel now shows channels with unread messages in orange, channels with no messages at all in light grey, and read channels in normal-grey color. Notifications coming VERY soon.  Also prevented script tag insertion in messages.',
           'otherUrls': [ ]
         },
       ]

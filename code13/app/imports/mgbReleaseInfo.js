@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Fri Feb 17 2017 17:30 GMT-0800 (PST)',
+      'timestamp': 'Sat Feb 18 2017 08:10 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3307'
+        'iteration': '3309'
       },
 
       'releaseManagement': {
@@ -30,8 +30,8 @@ const mgbReleaseInfo = {
         {
           'featureTag': 'chat',
           'type': 'feature',
-          'changeName': 'Chat channels now have read/unread indication',
-          'changeSummary': 'The Chat channels list in the Chat Flex Panel now shows channels with unread messages in orange, channels with no messages at all in light grey, and read channels in normal-grey color. Notifications coming VERY soon.  Also prevented script tag insertion in messages.',
+          'changeName': 'Chat Notfifications and Read/Unread',
+          'changeSummary': 'Chat icon in top header Nav Menus shows orange if there are unread mesages on any channel. The Chat channels list in the Chat Flex Panel also shows channels with unread messages in orange, channels with no messages at all in light grey, and read channels in normal-grey color. Also prevented script tag insertion in messages.',
           'otherUrls': [ ]
         },
       ]

@@ -228,7 +228,6 @@ export default class ActorMapArea extends BaseMapArea {
   }
 
   render () {
-    console.log(this)
     if (this.props.isPlaying)
       return this.renderMage()
 

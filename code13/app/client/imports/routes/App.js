@@ -280,7 +280,7 @@ const App = React.createClass({
         _.each(chatChannelTimestamps, cct => {
           const channelName = cct._id
           const lastReadByUser = getLastReadTimestampForChannel(this.data.settings, channelName)
-          cct._hazUnreads = Boolean(cct.lastCreatedAt.getTime() > lastReadByUser.getTime())
+          cct._hazUnreads = Boolean(!lastReadByUser || cct.lastCreatedAt.getTime() > lastReadByUser.getTime())
           if (cct._hazUnreads)
             hazUnreadChats.push(channelName)
         })
@@ -618,47 +618,38 @@ const App = React.createClass({
       // defined above in
       const params = act.split(":")
       const action = params.shift()
-      if(this.joyrideHandlers[action]){
+      if (this.joyrideHandlers[action]) {
         this.joyrideHandlers[action].apply(null, params)
         return
       }
 
       // Some preparePage actions have a parameter - this is usually colon separated
-      const [actText,actParam] = _.split(act, ':')
-      if (actText === 'openVaultAssetById')
-      {
+      const [ actText , actParam ] = _.split(act, ':')
+      switch (actText) {
+      case 'openVaultAssetById':
         // we want to open asset !vault:actParam
-        const newUrl = `/u/!vault/asset/${actParam}`
-        utilPushTo(window.location, newUrl)
-      }
-      else if (actText === 'openVaultAssetByName')
-      {
-        debugger// TODO @@@@@ need to actually get id fromname
-        // we want to open asset !vault:actParam
-        // assetEdit/{type}/{user}/{asset} -> assetEdit/{type}/!vault/${actParam}
-        const newUrl = `/u/!vault/asset/${actParam}`
-        utilPushTo(window.location, newUrl)
-      }
-      else if(actText === 'openVaultProjectById')
-      {
-        // debugger
-        const newUrl = `/u/!vault/project/${actParam}`
-        utilPushTo(window.location, newUrl)
-      }
+        utilPushTo(window.location, `/u/!vault/asset/${actParam}`)
+        break
 
-      switch (act) {
+      case 'openVaultAssetByName':
+        debugger// TODO @@@@@ need to actually get id fromname
+        utilPushTo(window.location, `/u/!vault/asset/${actParam}`)
+        break
+
+      case 'openVaultProjectById':
+        utilPushTo(window.location, `/u/!vault/project/${actParam}`)
+        break
 
       case 'closeFlexPanel':
         this.closeFlexPanel()
         break
 
       case 'closeNavPanel':
-        console.error("closeNavPanel preparePage action is no longer needed/supported. Tutorial should be simplified")
+        console.error("joyridePreparePageHandler(closeNavPanel) has been deprecated. Tutorial should be simplified")
         break
 
       case 'highlightCode':
         console.log("Highlight code", actParam)
-
         break
 
       case 'refreshBadgeStatus':

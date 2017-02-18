@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Sat Feb 18 2017 08:10 GMT-0800 (PST)',
+      'timestamp': 'Sat Feb 18 2017 14:40 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3309'
+        'iteration': '3314'
       },
 
       'releaseManagement': {
@@ -30,8 +30,15 @@ const mgbReleaseInfo = {
         {
           'featureTag': 'chat',
           'type': 'feature',
-          'changeName': 'Chat Notfifications and Read/Unread',
-          'changeSummary': 'Chat icon in top header Nav Menus shows orange if there are unread mesages on any channel. The Chat channels list in the Chat Flex Panel also shows channels with unread messages in orange, channels with no messages at all in light grey, and read channels in normal-grey color. Also prevented script tag insertion in messages.',
+          'changeName': 'Chat Notifications and Read/Unread',
+          'changeSummary': 'Chat icon in top header Nav Menus shows orange if there are unread mesages on any channel. The Chat channels list in the Chat Flex Panel also shows channels with unread messages in orange, channels with no messages at all in light grey, and read channels in normal-grey color. Also prevented script tag insertion in messages. Now with added bugfixes.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial dialogs',
+          'changeSummary': 'Fixed the ugly X icon and added a tooltip to explain what it does. \'Exit\' button renamed to \'QUIT\' for clarity.',
           'otherUrls': [ ]
         },
       ]

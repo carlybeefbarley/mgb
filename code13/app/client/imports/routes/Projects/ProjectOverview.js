@@ -16,6 +16,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { logActivity } from '/imports/schemas/activity'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import { Grid, Segment, Checkbox, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
+import ProjectForkGenerator from './ProjectForkGenerator'
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
@@ -100,33 +101,53 @@ export default ProjectOverview = React.createClass({
           <QLink id="mgbjr-project-overview-assets" to={"/u/" + project.ownerName + "/assets"} style={buttonSty} query={{project:project.name}} className="ui small button" >
             Project Assets
           </QLink>
-          <Popup 
-            inverted wide='very' on='click'
-            trigger={(
-              <Button 
-                id="mgbjr-project-overview-fork"
-                disabled={!this.data.project.allowForks} 
-                style={buttonSty} 
-                size='small' 
-                content={this.state.isForkPending ? 'Forking project...' : 'Fork Project'}/>)}
-            >
-            { this.state.isForkPending ? ( <div>Forking...please wait..</div> ) : (
-              <div>
-                <Header as='h4' content="Name for new Forked project"/>
-                <div className="ui small fluid action input" style={{minWidth: '300px'}}>
-                  <input  type="text"
-                          id="mgbjr-fork-project-name-input"
-                          placeholder="New Project name" 
-                          defaultValue={this.data.project.name + ' (fork)'} 
-                          ref="forkNameInput"
-                          size="22"></input>
-                  <Button icon='fork' ref="forkGoButton" onClick={this.handleForkGo}/>
+
+          { /* FORK PROJECT STUFF */}
+          <Segment secondary compact style={{width: '220px'}}>
+            <Header>Project Forking</Header>
+            <span style={{float: 'right'}}>
+              <ProjectForkGenerator 
+                  project={project}
+                  isForkPending={this.state.isForkPending}
+                  />
+            </span>
+            <div style={{padding: '2px 2px 8px 2px'}}>
+              <Checkbox 
+                  disabled={!canEdit}
+                  checked={!!this.data.project.allowForks} 
+                  onChange={ () => this.handleFieldChanged( { allowForks: !this.data.project.allowForks } ) }
+                  label='Allow forks' 
+                  title="Project Owner may allow other users to fork this Project and it's Assets"/>
+
+            </div>
+            <Popup 
+              inverted wide='very' on='click'
+              trigger={(
+                <Button 
+                  fluid
+                  id="mgbjr-project-overview-fork"
+                  disabled={!this.data.project.allowForks || !currUser} 
+                  size='small' 
+                  content={this.state.isForkPending ? 'Forking project...' : 'Fork Project'}/>)}
+              >
+              { this.state.isForkPending ? ( <div>Forking...please wait..</div> ) : (
+                <div>
+                  <Header as='h4' content="Name for new Forked project"/>
+                  <div className="ui small fluid action input" style={{minWidth: '300px'}}>
+                    <input  type="text"
+                            id="mgbjr-fork-project-name-input"
+                            placeholder="New Project name" 
+                            defaultValue={this.data.project.name + ' (fork)'} 
+                            ref="forkNameInput"
+                            size="22"></input>
+                    <Button icon='fork' ref="forkGoButton" onClick={this.handleForkGo}/>
+                  </div>
                 </div>
-              </div>
-              ) 
-            }
-          </Popup>
-                
+                ) 
+              }
+            </Popup>
+          </Segment>
+                  
           { this.renderRenameDeleteProject() } 
         </Grid.Column>
         
@@ -169,9 +190,10 @@ export default ProjectOverview = React.createClass({
         showToast(`Could not fork project: ${err}`, 'error')
       else
       {
-        const msg = `Forked project '${this.data.project.name}' to '${newProjName}, creating ${result} new Assets`
+        const msg = `Forked project '${this.data.project.name}' to '${newProjName}, creating ${result.numNewAssets} new Assets`
         logActivity("project.fork",  msg)
         showToast(msg)
+        // TODO: navigate to /u/${currUser.username}/projects/${result.newProjectId}
       }
       this.setState( { isForkPending: false } )
     })
@@ -259,17 +281,9 @@ export default ProjectOverview = React.createClass({
   {
     const { isDeleteComplete, isDeletePending } = this.state
     const canEdit = this.canEdit()
-    const canFork = (
-      <Checkbox 
-          style={{ marginTop: '6px' }}
-          disabled={!canEdit}
-          checked={!!this.data.project.allowForks} 
-          onChange={ () => this.handleFieldChanged( { allowForks: !this.data.project.allowForks } ) }
-          label='Allow users to fork' 
-          title="Allow other users to fork your project and it\'s assets"/>
-    )
-    if (!canEdit) 
-      return <div>{canFork}</div>
+
+    if (!canEdit)
+      return null
     
     return (
       <Segment secondary compact style={{width: '220px'}}>
@@ -291,10 +305,6 @@ export default ProjectOverview = React.createClass({
             disabled={isDeleteComplete || isDeletePending} 
             content="Delete" 
             onClick={ () => { this.handleDeleteProject() } } />
-        </div>
-
-        <div style={{padding: '2px'}}>
-          {canFork}
         </div>
 
         { isDeletePending && 

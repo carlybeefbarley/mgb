@@ -1,11 +1,13 @@
-
-// This file must be imported by main_server.js so that the Meteor method can be registered
-
 import _ from 'lodash'
 import { Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
+import { checkIsLoggedIn, checkMgb } from './checkMgb'
 import { bestWorkStateName, defaultWorkStateName } from '/imports/Enums/workStates'
-import validate from '/imports/schemas/validate'
+
+//
+// MGB PROJECTS SCHEMA
+// This file must be imported by main_server.js so that the Meteor methods can be registered
+//
 
 // The 'projects' concept is a BIG DEAL in MGB, so get ready for a big-ass comment explaining it 
 // all. Got a coffee? You may need one :)  
@@ -20,10 +22,10 @@ import validate from '/imports/schemas/validate'
 
 // PROBLEM STATEMENT
 //
-// The fundamental problem in collaboration is that you want to allow some people to do some
-// things to your stuff, but not be able to mess your stuff up. You need a way to express your 
-// access intent in a way that you can understand, they can understand, the system can implement
-// in a usable/performant way, and 
+// The fundamental problem in collaboration is that you (as a user) want to allow some people to do 
+// some things to your stuff, but not be able to mess your stuff up. You need a way to express your 
+// access intent in a way that you can understand, they can understand, and that the system can 
+// implement in a usable/performant way.
 
 // CONCEPTUAL BACKGROUND 
 //
@@ -252,7 +254,8 @@ import validate from '/imports/schemas/validate'
 // TODO: Math proofs that the stated (and other) self-enforcing invariants are really intrinsinc and 
 // that no additional validation/grooming is required to detect/repair data model corruption (DGolds/Bartosz?)
 
-var schema = {
+const optional = Match.Optional
+const schema = {
   _id: String,
 
   createdAt: Date,
@@ -263,6 +266,12 @@ var schema = {
 
   // Various flags
   allowForks: Boolean,
+
+  // Fork information (similar to approach used on assets)
+  // These fields are not present on a project unless created as part
+  // of a project-fork operation
+  forkChildren:    optional(Array),   // Array of peer direct children
+  forkParentChain: optional(Array),   // Array of parent forks
 
   // the actual project information
   name: String,               // Project Name (scoped to owner). Case sensitive
@@ -275,12 +284,13 @@ var schema = {
 
 // Helper functions
 
-/** This is intended for use by publications.js and any Meteor.subscribe calls
- *  Selector will return projects relevant to this userId.. This includes owner, member, etc
-
+/* This is intended for use by publications.js and any Meteor.subscribe calls when finding 
+ * projects relevant to a user
+ * 
+ * @export
+ * @param {String} userId 
+ * @returns {Object} A MongoDB selector to find projects that userId is owner OR member of
  */
-
-
 export function projectMakeSelector(userId) 
 {
   return {
@@ -291,22 +301,25 @@ export function projectMakeSelector(userId)
   }
 }
 
+/**
+ * This is used by the Front Page hero list. It's kind of lame
+ * 
+ * @export
+ * @returns  {Object} A MongoDB selector to find projects to put on the front page
+ */
 export function projectMakeFrontPageListSelector() 
 {
-  return {
-    workState: bestWorkStateName
-  }
+  return { workState: bestWorkStateName }
 }
 
 /***
- * Check if the user has write access to a list of projects via Project Membership
+ * Check if the user has write access to a list of provided project Objects via Project Membership
  * @param currUserId - the User._id string key for the currently logged in User. 
  * @param asset - the asset object from assets.js  If null, then return value is NULL (we have no data to use). We will care specifically about asset.ownerId and asset.projectNames[]
  * @param currUsersProjects - the array of projects (from projects.js) that the currently Logged in user is owner/member of. null/undefined is treated as an empty array []
- *
+ * @returns {Array} of projectName,isCurrUserProjectOwner,isCurrUserProjectMember
  */
 export function calculateProjectAccessRightsForAsset(currUserId, asset, currUsersProjects = []) {
-  
   if (!asset) 
     return null
 
@@ -322,7 +335,6 @@ export function calculateProjectAccessRightsForAsset(currUserId, asset, currUser
   ))
 }
 
-
 const OWNED_COLOR = "green"
 const MEMBER_COLOR = "blue"
 const NOACCESS_COLOR = "grey"
@@ -331,11 +343,10 @@ const NOACCESS_COLOR = "grey"
  * This is a helper for visuals. It uses the ProjectTableEntries returned from calculateProjectAccessRightsForAsset() above
  * It returns a css color string, e.g. "red"
  */
-export const getColorNameForProjectAccess = (pte) => ( 
+export const getColorNameForProjectAccess = pte => ( 
   pte.isCurrUserProjectOwner ? OWNED_COLOR :
     (pte.isCurrUserProjectMember ? MEMBER_COLOR : NOACCESS_COLOR)
 )
-
 
 const OWNED_MSG = "owner"
 const MEMBER_MSG = "member"
@@ -345,56 +356,55 @@ const NOACCESS_MSG = "no access"
  * This is a helper for visuals. It uses the ProjectTableEntries returned from calculateProjectAccessRightsForAsset() above
  * It returns a css color string, e.g. "red"
  */
-export const getMsgForProjectAccess = (pte) => ( 
+export const getMsgForProjectAccess = pte => ( 
   pte.isCurrUserProjectOwner ? OWNED_MSG :
     (pte.isCurrUserProjectMember ? MEMBER_MSG : NOACCESS_MSG)
 )
-
 
 export const getProjectAvatarUrl = (p, expires = 3600) => (
   (p.avatarAssetId.length && p.avatarAssetId.length && p.avatarAssetId.length > 0)
   ? `/api/asset/cached-thumbnail/png/${expires}/${p.avatarAssetId}`
   : "/images/wireframe/image.png"
-) 
+)
+
 
 Meteor.methods({
 
-//   "Projects.fixup": function() {
-    
-// console.log("Starting fixup (dry run)")
-// console.log(` Invoked by `)
-// console.log(Meteor.user())
-
-//     let allProjects = Projects.find().fetch()
-//     _.each(allProjects, p => {
-//       console.log("Project ", p._id, p.name, p.ownerId)
-//       var u = Meteor.users.findOne( { _id: p.ownerId} )
-//       if (u)
-//       {
-//         var uname = u.profile.name
-//         console.log(`  UserId ${p.ownerId} is username ${uname}`)
-//         var selector = {_id: p._id};
-//         var data = { ownerName: uname}
-//         console.log("Selector: ", selector)
-//         console.log("Data: ", data)
-//         var count = Projects.update(selector, {$set: data})
-//         console.log(`  [Projects.fixup - update]  (${count}) `); 
-//       }
-//       else
-//         console.log(`  UserId ${p.ownerId} not found`)
-//     })
-
-//   },
+  // 
+  // PROJECT CREATE 
+  // 
 
   /** Projects.create
    *  @param data.name           Name of Project. Must be unique for 
    *  @param data.description    Description field
    */
   "Projects.create": function(data) {
-    if (!this.userId) 
-      throw new Meteor.Error(401, "Login required")      // TODO: Better access check
-      
+
+    // 0. Perform Input/User Validations
+    checkIsLoggedIn()
+    checkMgb.projectName(data.name)
+    checkMgb.projectDescription(data.description)
     const username = Meteor.user().profile.name
+
+    // Note that this check will also run on the client, but could potentially fail to
+    // find a conflict (since the client's subscription might not include all the user's
+    // projects.. but that's ok since the check will run again on the server and that
+    // will definitely have access to all records
+    const existingProject = Projects.findOne( { ownerId: this.userId, name: data.name } )
+    if (existingProject)
+      throw new Meteor.Error(403, `Project ${username}:${data.name} already exists. Try again with a different name`)
+
+    // Note: forkParentChain and forkChildren were added on 2/19/2017 so earlier 
+    // projects do not have them. For consistency, I have chose to NOT add
+    // them at create-time even to new Projects created after this date. 
+    // These two array fields (forkParentChain and forkChildren) will instead
+    // be created when needed by the ProjectFork Meteor call RPC
+      
+      // TODO: disallow forkChildren[] and forkParent[] if this comes from the client.
+      //       Note that the server-side ForkAsset RPC *will* need to set forkParent[] 
+
+
+    // 1. Create new Project record and store in Collection
     const now = new Date()
     data.createdAt = now
     data.updatedAt = now
@@ -406,16 +416,9 @@ Meteor.methods({
     data.avatarAssetId = ''
 
     check(data, _.omit(schema, '_id'))
-
-    if (!validate.projectName(data.name))
-      throw new Meteor.Error(500, "Invalid Project Name")
-
-    const existingProject = Projects.findOne( { ownerId: data.ownerId, name: data.name } )
-    if (existingProject) 
-      throw new Meteor.Error(404, `Project #${data.name} already exists`)
-
     let docId = Projects.insert(data)
 
+    // 2. Handle post-create actions and return docId of new record
     if (Meteor.isServer) {
       console.log(`  [Projects.create]  "${data.name}"  #${docId}  `)
       Meteor.call('Slack.Projects.create', username, data.name, docId)
@@ -423,29 +426,31 @@ Meteor.methods({
     return docId
   },
   
+  // 
+  // PROJECT UPDATE 
+  // 
 
   "Projects.update": function(docId, data) {
-    var optional = Match.Optional
-
+    // 0. Perform Input/User Validations
+    checkIsLoggedIn()
     check(docId, String)
-    if (!this.userId)
-      throw new Meteor.Error(401, "Login required")
-
-    const selector = { _id: docId }
-
+    if (data.description)
+      checkMgb.projectDescription(data.description)
     // Load ownerId and name of existing record to make sure current user is the owner
+    const selector = { _id: docId }
     const existingProjectRecord = Projects.findOne( selector, { fields: { ownerId: 1, name: 1 } } )
     if (!existingProjectRecord)
       throw new Meteor.Error(404, 'Project Id does not exist')
     if (existingProjectRecord.ownerId !== this.userId)
       throw new Meteor.Error(401, "You don't have permission to edit this")
 
-    if (data.name && data.name !== existingProjectRecord.name)
-      throw new Meteor.Error(403, 'Project rename is not yet supported')
-
-    data.updatedAt = new Date()
+    // 1. Create new Project record and store in Collection
+    const now = new Date()
+    data.updatedAt = now
     
-    // whitelist what can be updated
+    // Whitelist which data fields can be updated in this call. Note that we do not
+    // allow forkChildren[] and forkParent[] to be updated via this method since it can be 
+    // invoked from the client
     check(data, {
       updatedAt:     schema.updatedAt,
       name:          optional(schema.name),
@@ -456,9 +461,19 @@ Meteor.methods({
       avatarAssetId: optional(schema.avatarAssetId)
     })
 
-    const count = Projects.update(selector, {$set: data})
-    console.log(`  [Projects.update]  (${count}) #${docId} '${existingProjectRecord.name}'`)
+    const count = Projects.update(selector, { $set: data } )
+    if (Meteor.isServer)
+      console.log(`  [Projects.update]  (${count}) #${docId} '${existingProjectRecord.name}'`)
 
     return count
   }
+
+  // 
+  // PROJECT FORK
+  //
+  // ..Note that the  PROJECT FORK  implementation is in assets-server within the Meteor
+  // Method "Project.Azzets.fork". It is there since it must perform many asset-related 
+  // operations during the fork operations.
+  //
+
 })

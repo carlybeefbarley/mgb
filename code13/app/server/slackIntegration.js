@@ -6,8 +6,16 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 // The following was defined by dgolds who has config rights for the devlapse.slack.com account:
 const mgb_slack_eng__webhookUrl_mgb_community = "https://hooks.slack.com/services/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"
 
+const DISABLE_SLACK_NOTIFICATIONS = false
 
 function slackGenericNotify(slackWebhookUrl, data) {
+
+  if (DISABLE_SLACK_NOTIFICATIONS) 
+  {
+    console.log("DISABLE_SLACK_NOTIFICATIONS set, preventing Slack Notifications")
+    return
+  }
+
   const options = {
     url: slackWebhookUrl,
     method: 'POST',

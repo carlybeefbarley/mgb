@@ -262,7 +262,7 @@ Meteor.methods({
 
     if (Meteor.isServer) {
       // can we omit this??? instead of update use findAndModify ?
-      const assetData = Azzets.findOne( docId, {fields: { name: 1, dn_ownerName: 1, kind: 1 }} )
+      // const assetData = Azzets.findOne( docId, {fields: { name: 1, dn_ownerName: 1, kind: 1 }} )
       // technically we could run this on client..
       // disable cache invalidation atm
       // cache.invalidateAsset(assetData)

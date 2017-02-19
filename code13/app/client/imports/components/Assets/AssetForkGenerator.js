@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import React, { PropTypes } from 'react'
-import { Popup, Label, Button, Segment } from 'semantic-ui-react'
+import { Popup, Label, Button, Icon, Segment } from 'semantic-ui-react'
 
 
 const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) => {
@@ -59,7 +59,7 @@ const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) =>
 
             { fpLen === 0 ? (
                 <div>
-                  <b>Originally Created Content</b>
+                  <b>Originally created Content</b>
                   <div>
                     &emsp;Not forked from another Asset within this system
                   </div>
@@ -86,7 +86,7 @@ const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) =>
               )
             }
           <div style={{marginTop: '1em', maxHeight: '200px', overflow: 'scroll'}}>
-            <b>{ numChildren } Forks:</b>
+            <b><Icon name='fork'/>{ numChildren } Forks:</b>
             { numChildren ? children : <div>&nbsp;(None yet)</div> }
           </div>
         </Popup.Content>

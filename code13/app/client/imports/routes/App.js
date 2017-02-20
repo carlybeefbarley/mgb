@@ -412,7 +412,6 @@ const App = React.createClass({
               <div style={mainPanelInnerDivSty}>
                 <NavPanel
                   currUser={currUser}
-                  hazUnreadChats={hazUnreadChats}
                   currUserProjects={currUserProjects}
                   fpReservedRightSidebarWidth={flexPanelWidth}
                   navPanelAvailableWidth={mainAreaAvailableWidth}

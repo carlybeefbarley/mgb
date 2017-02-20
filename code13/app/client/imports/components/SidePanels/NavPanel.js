@@ -10,11 +10,10 @@ import { logActivity } from '/imports/schemas/activity'
 
 // exported since the Tutorial Editor uses this to generate some
 // macros in JoyrideSpecialMacros.jsx
-export const getNavPanels = (currUser, showAll, hazUnreadChats=[]) => {
+export const getNavPanels = (currUser, showAll) => {
   const uname = currUser ? currUser.username : null
   const showGuestOptions = !currUser || showAll
   const showUserOptions = !!currUser || showAll
-  const chatIconColor = currUser && hazUnreadChats.length > 0 ? 'orange' : 'grey'
 
   return { 
     left: [
@@ -213,14 +212,6 @@ export const getNavPanels = (currUser, showAll, hazUnreadChats=[]) => {
           }
         ]
       },
-      showUserOptions && {
-        name: 'messages',
-        explainClickAction: "Shortcut: Clicking here jumps to the messages list",
-        icon: { name: 'chat', fitted: true, color: chatIconColor },
-        //hdr: 'Messages',
-        to: null,
-        query: { _fp: `chat.${hazUnreadChats[0]||''}` }   //    `/u/messages`
-      },
       showGuestOptions && {
         name: 'login',
         hdr: 'Log in',
@@ -317,10 +308,10 @@ export default NavPanel = React.createClass({
   },
 
   render() {
-    const { currUser, navPanelAvailableWidth, hazUnreadChats } = this.props
+    const { currUser, navPanelAvailableWidth } = this.props
     const menuStyle = { borderRadius: 0, marginBottom: 0 }
     const useIcons = navPanelAvailableWidth < 600  // px
-    const allNavPanels = getNavPanels(currUser, false, hazUnreadChats)
+    const allNavPanels = getNavPanels(currUser, false)
 
     const userMenuKey = 'user'  // We render this specially, even though it's part of allNavPanels
     const userMenu = _.find(allNavPanels.right, { name: userMenuKey })

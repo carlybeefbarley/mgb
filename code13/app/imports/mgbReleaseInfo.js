@@ -13,6 +13,31 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Mon Feb 20 2017 09:10 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3338'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset fork',
+          'type': 'bugfix',
+          'changeName': 'Asset fork bugfix',
+          'changeSummary': 'Fixed the assetName error on fork.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Sun Feb 19 2017 21:30 GMT-0800 (PST)',
 

@@ -153,10 +153,10 @@ export default class Layer extends React.Component {
             _.map(this.props.frameNames, (frameName, frameID) => {
               const isActiveCell = this.props.isSelected && this.props.selectedFrame === frameID
               return (
-              <td className="selectable" onClick={this.selectFrame.bind(this, frameID)}
+              <td onClick={this.selectFrame.bind(this, frameID)}
                 key={this.props.idx+"_"+frameID}
                 title={isActiveCell ? `This is the current edit focus: Layer "${this.props.layer.name}" of Frame #${this.props.selectedFrame+1}`: "click here to edit this frame/layer"}
-                className={isActiveCell ? "highlight" : ""}
+                className={isActiveCell ? "selectable highlight" : "selectable"}
                 id={"mgb_edit_graphics_frame_cell_" + frameID}
                 >
                 {isActiveCell ? <div style={{textAlign: "center"}}><i className="ui check icon" /></div> : null}

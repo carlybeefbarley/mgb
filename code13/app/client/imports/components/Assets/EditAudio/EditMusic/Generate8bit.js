@@ -249,7 +249,7 @@ export default class Generate8bit extends React.Component {
 				</div>
 				<div className="ui divider"></div>
 				<div>
-					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"} className={this.state.isHidden ? "hidden" : ""}></canvas>
+					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"} className={this.state.isHidden ? "mgb-hidden" : ""}></canvas>
 				</div>
 				<div style={{width:"150px", float:"left", marginRight:"20px"}}>
 					<div>

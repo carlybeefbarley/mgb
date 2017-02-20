@@ -104,8 +104,8 @@ export default class Layer extends React.Component {
           	></i>
           </td>
           <td onDoubleClick={this.editName.bind(this)} onSubmit={this.changeName.bind(this)}>
-          	<div ref="nameText" className={this.state.editName ? "hidden" : "visible"}>{this.props.layer.name}</div>
-          	<form className={"ui input " + (this.state.editName ? "visible" : "hidden")} ><input ref="nameInput" type="text" /></form>          
+          	<div ref="nameText" className={this.state.editName ? "mgb-hidden" : "visible"}>{this.props.layer.name}</div>
+          	<form className={"ui input " + (this.state.editName ? "visible" : "mgb-hidden")} ><input ref="nameInput" type="text" /></form>
           </td>
           <td>
             <div className="ui dropdown"

@@ -160,7 +160,7 @@ export default class SkillTree extends React.Component {
           <div
             key={i}
             style={boxSty}
-            className={disabled ? 'animate disabled' : 'animate'}
+            className={disabled ? 'animate mgb-disabled' : 'animate'}
             data-requires={requires}>
             <div className='mgb-skillsmap-progress'>
               <div className='mgb-skillsmap-value animate' style={valueSty}></div>

@@ -156,7 +156,7 @@ export default class ImportMusic extends React.Component {
       <div className="content">
 
         {/*** upload form ***/}
-        <div className={"uploadForm " + (this.state.status === "uploaded" ? "hidden " : " ") + (this.state.status === "draggedOver" ? "draggedOver" : "")}
+        <div className={"uploadForm " + (this.state.status === "uploaded" ? "mgb-hidden " : " ") + (this.state.status === "draggedOver" ? "draggedOver" : "")}
           onDragOver={this.onDragOver.bind(this)}
           onDragLeave={this.onDragLeave.bind(this)}
           onDrop={this.onDrop.bind(this)}>
@@ -167,7 +167,7 @@ export default class ImportMusic extends React.Component {
         </div>
 
       {/*** uploaded music ***/}
-        <div className={this.state.status === "uploaded" ? "" : "hidden"}>
+        <div className={this.state.status === "uploaded" ? "" : "mgb-hidden"}>
           <div className="row">
             <button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
               <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>

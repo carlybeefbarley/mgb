@@ -47,7 +47,7 @@ export default class BaseForm extends React.Component {
           this.data[key] = val
           this.props.onChange && this.props.onChange()
         }}>
-          <input type="checkbox" name={key} tabIndex="0" className="hidden" ref="checkbox" checked={checked} onChange={(val) => {
+          <input type="checkbox" name={key} tabIndex="0" className="mgb-hidden" ref="checkbox" checked={checked} onChange={(val) => {
             this.data[key] = val
             this.props.onChange && this.props.onChange()
           }} />

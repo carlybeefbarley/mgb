@@ -287,7 +287,7 @@ export default class EditActorMap extends EditMap {
               ref='map' />
           </div>
         </div>
-        <div className={'three wide '+ (isPlaying ? 'hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column', minWidth: '175px'}}>
+        <div className={'three wide '+ (isPlaying ? 'mgb-hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column', minWidth: '175px'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}

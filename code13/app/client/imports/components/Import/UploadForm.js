@@ -67,7 +67,7 @@ export default class UploadForm extends React.Component {
     // console.log('isWebkit', isWebkit)
 
     return (
-      <div className={this.props.isHidden ? "hidden" : ""}> 
+      <div className={this.props.isHidden ? "mgb-hidden" : ""}>
 
         <div className={"ui big negative message " + (isWebkit ? "hidden" : "")}>
           <i className="close icon"></i>
@@ -77,7 +77,7 @@ export default class UploadForm extends React.Component {
           <p>Please use webkit browsers like Chrome, Safari or Opera</p>
         </div>
 
-        <div className={isWebkit ? "" : "hidden"}>
+        <div className={isWebkit ? "" : "mgb-hidden"}>
           <div className="row" style={{padding:"10px 30px"}}>
 
             <div className="ui input mini focus">

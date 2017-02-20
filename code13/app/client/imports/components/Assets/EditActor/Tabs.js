@@ -35,7 +35,7 @@ export default class Tabs extends React.Component{
                           {tabs[i].tab}
                     </div>)
         // this makes selecting tab quicker - but also will make all content sluggish on changes
-        // content.push(<div className="ui content hidden" key={i}>{tabs[i].content}</div>)
+        // content.push(<div className="ui content mgb-hidden" key={i}>{tabs[i].content}</div>)
       }
     }
 

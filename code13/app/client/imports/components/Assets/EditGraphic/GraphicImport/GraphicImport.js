@@ -247,7 +247,7 @@ export default class GraphicImport extends React.Component {
   render() {
     const { status, tileWidth, tileHeight, imgHeight, imgWidth, importName } = this.state
 		const { maxTileWidth, maxTileHeight } = this.props
-    const divClass = "uploadForm " + (status === STATUS_UPLOADED ? "hidden " : " ") + (status === STATUS_DRAGGED_OVER ? "draggedOver" : "")
+    const divClass = "uploadForm " + (status === STATUS_UPLOADED ? "mgb-hidden " : " ") + (status === STATUS_DRAGGED_OVER ? "draggedOver" : "")
     const framesYielded = this.calcNumFramesThisWouldImport()
     const tooManyFramesWarning = framesYielded > MAX_IMPORTED_FRAMES ? ` which exceeds the limit of ${MAX_IMPORTED_FRAMES} frames per import` : null
     const buttonSty = { marginRight: "4px", marginBottom: "4px" }  // So they wrap nicely on narrow screen
@@ -266,7 +266,7 @@ export default class GraphicImport extends React.Component {
         </div>
 
         {/*** uploaded image ***/}
-        <div className={status === STATUS_UPLOADED ? "" : "hidden"}>
+        <div className={status === STATUS_UPLOADED ? "" : "mgb-hidden"}>
           <div className="row">
 
             <div className="ui small labeled input" style={buttonSty}>

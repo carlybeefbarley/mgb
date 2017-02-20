@@ -13,14 +13,13 @@ const mgbReleaseInfo = {
 
   'releases': [
 
-
     {
-      'timestamp': 'Mon Feb 20 2017 09:10 GMT-0800 (PST)',
+      'timestamp': 'Mon Feb 20 2017 14:40 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3338'
+        'iteration': '3343'
       },
 
       'releaseManagement': {
@@ -29,7 +28,14 @@ const mgbReleaseInfo = {
 
       'changes': [
         {
-          'featureTag': 'asset fork',
+          'featureTag': 'nav.search',
+          'type': 'feature',
+          'changeName': 'Search for Assets with no Project',
+          'changeSummary': 'It is now possible to also search for Assets that are not in a project',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.fork',
           'type': 'bugfix',
           'changeName': 'Asset fork bugfix',
           'changeSummary': 'Fixed the assetName error on fork.',

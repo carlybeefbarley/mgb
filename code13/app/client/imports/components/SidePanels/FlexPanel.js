@@ -53,7 +53,12 @@ export default FlexPanel = React.createClass({
     fpIsFooter:             PropTypes.bool.isRequired,    // If true, then flexPanel is fixed page footer
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
+
     chatChannelTimestamps:  PropTypes.array,              // as defined by Chats.getLastMessageTimestamps RPC
+    hazUnreadChats:         PropTypes.array,              // This is just a subset of the data in chatChannelTimestamps, 
+                                                          // but simplified - just an Array of chat channelNames with at 
+                                                          // least one unread message. Handy for notification UIs, and quicker to parse
+    
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
     joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
@@ -153,9 +158,13 @@ export default FlexPanel = React.createClass({
 
   getFpButtonSpecialStyleForTag: function(tag) {
     const { meteorStatus } = this.data
+    const { hazUnreadChats } = this.props
     
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return { backgroundColor: 'rgba(255,0,0,0.2)' }
+    
+    if ((tag === 'chat') && (hazUnreadChats.length >= 0 ))
+      return { backgroundColor: 'orange' }
 
     return {}       // wiggleActivity is done as a class, so it's not in this function. See render()
   },

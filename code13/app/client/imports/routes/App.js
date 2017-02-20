@@ -193,8 +193,12 @@ const App = React.createClass({
     return {
       activityHistoryLimit: 11,
 
+      // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
       chatChannelTimestamps:    null,          // as defined by Chats.getLastMessageTimestamps RPC
       hazUnreadChats:           [],            // will contain Array of channel names with unread chats
+      // hazUnreadChats is just a subset of the data in chatChannelTimestamps, but simplified - just an 
+      // Array of chat channelNames with at least one unread message. Handy for notification UIs, and quicker to parse
+
       // This is so that we can pass the Asset 'kind' info into some other components like the flexpanels and Nav controls.
       // The AssetEditRoute component is currently the only component expected to set this value, since that
       // is the layer in the container hierarchy that actually loads assets for the AssetEditors
@@ -317,7 +321,7 @@ const App = React.createClass({
 
   render() {
     const { respData, respWidth, params } = this.props
-    const { joyrideDebug, currentlyEditingAssetKind, currentlyEditingAssetCanEdit, chatChannelTimestamps } = this.state
+    const { joyrideDebug, currentlyEditingAssetKind, currentlyEditingAssetCanEdit, chatChannelTimestamps, hazUnreadChats } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
@@ -391,6 +395,7 @@ const App = React.createClass({
               joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
               currUser={currUser}
               chatChannelTimestamps={chatChannelTimestamps}
+              hazUnreadChats={hazUnreadChats}
               currUserProjects={currUserProjects}
               user={user}
               selectedViewTag={flexPanelQueryValue}
@@ -407,7 +412,7 @@ const App = React.createClass({
               <div style={mainPanelInnerDivSty}>
                 <NavPanel
                   currUser={currUser}
-                  hazUnreadChats={this.state.hazUnreadChats}
+                  hazUnreadChats={hazUnreadChats}
                   currUserProjects={currUserProjects}
                   fpReservedRightSidebarWidth={flexPanelWidth}
                   navPanelAvailableWidth={mainAreaAvailableWidth}

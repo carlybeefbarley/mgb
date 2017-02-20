@@ -39,7 +39,7 @@ const jsItems = [
 
 const LearnCodeMoleRoute = ( { currUser }, context ) => {
   return (
-    <Grid stackable>
+    <Grid stackable container>
       <Grid.Row >
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           Develop a game from A-Z

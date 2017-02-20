@@ -16,7 +16,7 @@ import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = { 
-  project: null,                // Null string means match all
+  project:    ProjectSelector.ANY_PROJECT_PROJNAME,
   searchName: '',               // Empty string means match all (more convenient than null for input box)
   sort: 'plays',                // Should be one of the keys of gameSorters{}
   showStable: '0'               // Should be '0' or '1'  -- as a string
@@ -176,6 +176,7 @@ export default BrowseGamesRoute = React.createClass({
             <ProjectSelector 
                 canEdit={ownsProfile}
                 user={user}
+                isUseCaseCreate={false}
                 handleChangeSelectedProjectName={v => this._updateLocationQuery( { project: v } ) }
                 availableProjects={projects}
                 ProjectListLinkUrl={"/u/" + user.profile.name + "/projects"}

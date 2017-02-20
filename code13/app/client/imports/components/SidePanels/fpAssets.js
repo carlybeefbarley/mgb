@@ -58,7 +58,9 @@ export default fpAssets = React.createClass({
     showFromUserId:   _showFromAllValue,
     view:             defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
     kindsActive:      AssetKindKeys.join(safeAssetKindStringSepChar),
-    project:          null    // This will be a project OBJECT,not just a string. See projects.js
+
+    project:          null,                                 // This will be a project OBJECT,not just a string. See projects.js
+    projectName:      ProjectSelector.ANY_PROJECT_PROJNAME  // projectName has some special values to disambiguate the cases of 'all' and 'none'
   } ),
 
   componentWillMount() {
@@ -102,21 +104,20 @@ export default fpAssets = React.createClass({
     // Much of this is copied from UserAssetList - repeats.. needs cleanup
 
     const { user, currUser, currUserProjects } = this.props
-    const { searchName, kindsActive, project, showFromUserId } = this.state
+    const { searchName, kindsActive, project, showFromUserId, projectName } = this.state
     const currUserId = currUser ? currUser._id : null
     const userId = (user && user._id) ? user._id : null
     const isPageShowingCurrUser = (currUserId === userId) && userId !== null
     const kindsArray = kindsActive === "" ? null : kindsActive.split(safeAssetKindStringSepChar)
 
-    const qOwnerId = project ? project.ownerId : (showFromUserId === _showFromAllValue ? null : showFromUserId)
-    const qProjectName = project ? project.name : null
-
+    const qOwnerId =  project ? project.ownerId : (showFromUserId === _showFromAllValue ? null : showFromUserId)
+    const qProjectName = project ? project.name : projectName
     const handleForAssets = Meteor.subscribe(
       "assets.public",
       qOwnerId,           // userId (null = all)
       kindsArray,
       searchName,
-      qProjectName,         // Project Name
+      qProjectName,         // Project Name.
       false,                // Show Only Deleted
       false,                // Show only Stable
       undefined,            // Use default sort order
@@ -146,18 +147,16 @@ export default fpAssets = React.createClass({
     }
   },
 
-  handleSearchGo(newSearchText)
-  {
+  handleSearchGo(newSearchText) {
     this.setState( { searchName: newSearchText } )
   },
 
-  handleChangeSelectedProjectName(pName, projObj, compoundProjName){
-    this.setState( { project: projObj } )
+  handleChangeSelectedProjectName(pName, projObj) {
+    this.setState( { projectName: pName, project: projObj } )
   },
 
   // This is the callback from AssetsKindSelector
-  handleToggleKind(k, altKey) // k is the string for the AssetKindsKey to toggle existence of in the array
-  {
+  handleToggleKind(k, altKey)  { // k is the string for the AssetKindsKey to toggle existence of in the array
     let newKindsString
     if (k === "__all")
       newKindsString = AssetKindKeys.join(safeAssetKindStringSepChar)
@@ -180,7 +179,7 @@ export default fpAssets = React.createClass({
   render: function () {
     const { assets, userProjects, loading } = this.data       // list of assets provided via getMeteorData()
     const { user, currUser } = this.props
-    const { view, kindsActive, searchName, project, showFromUserId } = this.state
+    const { view, kindsActive, searchName, project, projectName, showFromUserId } = this.state
     const isAllKinds = isAssetKindsStringComplete(kindsActive)
     const effectiveUser = user || currUser
 
@@ -205,11 +204,14 @@ export default fpAssets = React.createClass({
                   key="fpProjectSelector" // don't conflict with asset project selector
                   canEdit={false}
                   user={effectiveUser}
+                  isUseCaseCreate={false}
                   handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
                   availableProjects={userProjects}
                   ProjectListLinkUrl={"/u/" + effectiveUser.profile.name + "/projects"}
                   showProjectsUserIsMemberOf={true}
-                  chosenProjectName={project && project.name} />
+                  chosenProjectObj={project}
+                  chosenProjectName={projectName} 
+                  />
               : null )
           }
 

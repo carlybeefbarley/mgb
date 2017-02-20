@@ -20,7 +20,7 @@ Meteor.publish('assets.public', function(
                                     userId,
                                     selectedAssetKinds,
                                     nameSearch,
-                                    projectName=null,   // BUGBUG: Need to also have projectOwner!!! OMG
+                                    projectName=null,
                                     showDeleted=false,
                                     showStable=false,
                                     assetSortType,    // one of the keys of allSorters
@@ -29,7 +29,7 @@ Meteor.publish('assets.public', function(
   let selector = assetMakeSelector(userId,
                       selectedAssetKinds,
                       nameSearch,
-                      projectName,    // BUGBUG: Need to also have projectOwner!!! OMG
+                      projectName,
                       showDeleted,
                       showStable)
   let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]

@@ -23,7 +23,7 @@ import Helmet from 'react-helmet'
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = { 
-  project: null,                // Null string means match all
+  project: ProjectSelector.ANY_PROJECT_PROJNAME,
   view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
   searchName: "",               // Empty string means match all (more convenient than null for input box)
   sort: "edited",               // Should be one of the keys of assetSorters{}
@@ -224,6 +224,7 @@ export default UserAssetListRoute = React.createClass({
                       id='mgbjr-asset-search-projectSelector'
                       canEdit={ownsProfile}
                       user={user}
+                      isUseCaseCreate={false}
                       handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
                       availableProjects={projects}
                       ProjectListLinkUrl={"/u/" + user.profile.name + "/projects"}

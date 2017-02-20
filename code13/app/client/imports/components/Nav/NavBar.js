@@ -8,7 +8,7 @@ import WhatsNew from './WhatsNew'
 // The NavBar is the 2nd row of the central column of the page
 // (i.e. between the left margin and the FlexPanel (if) on the right; below the NavPanel).
 
-// The NavBar contains a breadcrumb bar and some system 
+// The NavBar contains a breadcrumb bar and some system
 // alerts (new version, system-upgrade-in-process etc)
 
 const NavBar = (

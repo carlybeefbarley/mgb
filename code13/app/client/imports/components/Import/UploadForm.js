@@ -27,12 +27,12 @@ export default class UploadForm extends React.Component {
       prefix: "",
       isCompleted: false,
     }
-  } 
+  }
 
   onDragOver(e){ this.props.onDragOver(e) }
   onDragLeave(e){ this.props.onDragLeave(e) }
-  onDrop(e){ 
-    this.props.onDrop(e, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState, this.state.isCompleted) 
+  onDrop(e){
+    this.props.onDrop(e, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState, this.state.isCompleted)
   }
 
   handleChangeSelectedProjectName (selectedProjName, selectedProj, selectedCompoundName) {
@@ -68,7 +68,7 @@ export default class UploadForm extends React.Component {
 
     return (
       <div className={this.props.isHidden ? "hidden" : ""}> 
-        
+
         <div className={"ui big negative message " + (isWebkit ? "hidden" : "")}>
           <i className="close icon"></i>
           <div className="header">
@@ -82,16 +82,16 @@ export default class UploadForm extends React.Component {
 
             <div className="ui input mini focus">
               Prefix &nbsp;
-              <input 
+              <input
                 style={{padding:"2px 5px"}}
                 type="text"
-                value={this.state.prefix} 
-                onChange={this.handlePrefixChange.bind(this)} 
+                value={this.state.prefix}
+                onChange={this.handlePrefixChange.bind(this)}
               />
             </div>
 
             &nbsp;&nbsp;
-            
+
             <ProjectSelector
               canEdit={false}
               user={this.props.currUser}
@@ -99,30 +99,30 @@ export default class UploadForm extends React.Component {
               availableProjects={this.props.currUserProjects}
               ProjectListLinkUrl={this.props.currUser && `/u/${this.props.currUser.profile.name}/projects`}
               showProjectsUserIsMemberOf={true}
-              chosenProjectName={this.state.projectCompoundName} 
+              chosenProjectName={this.state.projectCompoundName}
             />
 
             &nbsp;&nbsp;
 
-            <StableState 
-              isStable={this.state.isCompleted} 
+            <StableState
+              isStable={this.state.isCompleted}
               showMicro={true}
               canEdit={true}
               handleChange={this.handleStableStateChange.bind(this)}
             />
-            
+
             &nbsp;&nbsp;
 
-            <AssetLicense 
-              license={this.state.assetLicense} 
+            <AssetLicense
+              license={this.state.assetLicense}
               canEdit={true}
               handleChange={this.handleLicenseChange.bind(this)}
             />
 
             &nbsp;&nbsp;
 
-            <WorkState 
-              workState={this.state.workState} 
+            <WorkState
+              workState={this.state.workState}
               popupPosition="bottom center"
               showMicro={true}
               canEdit={true}

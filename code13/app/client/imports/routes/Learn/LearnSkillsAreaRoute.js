@@ -44,7 +44,7 @@ const LearnSkillsAreaRoute = ( { currUser, params }, context ) => {    //props.p
       <ul>
         { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.name) ? v.$meta.name : k}</li>) ) }
       </ul>
-      { currUser && 
+      { currUser &&
         <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag}/>
       }
     </Segment>

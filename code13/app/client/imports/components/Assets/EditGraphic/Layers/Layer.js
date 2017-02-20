@@ -9,7 +9,7 @@ export default class Layer extends React.Component {
 
 	constructor(props) {
 	    super(props);
-	 
+
 	    this.state = {
 	    	editName: false,
 	    };
@@ -43,9 +43,9 @@ export default class Layer extends React.Component {
 	}
 
 	editName(){
-		ReactDOM.findDOMNode(this.refs.nameInput).value = ReactDOM.findDOMNode(this.refs.nameText).textContent;	
+		ReactDOM.findDOMNode(this.refs.nameInput).value = ReactDOM.findDOMNode(this.refs.nameText).textContent;
 		ReactDOM.findDOMNode(this.refs.nameInput).select();
-		ReactDOM.findDOMNode(this.refs.nameInput).focus();	
+		ReactDOM.findDOMNode(this.refs.nameInput).focus();
 		this.setState({ editName: true });
 	}
 
@@ -86,19 +86,19 @@ export default class Layer extends React.Component {
 
   render() {
     return (
-      <tr 
+      <tr
         className={this.props.isSelected ? "active" : ""}
-        onClick={this.selectLayer.bind(this)} 
+        onClick={this.selectLayer.bind(this)}
         key={this.props.idx}
         >
           <td>
-          	<i 
+          	<i
           		className={"icon " + (this.props.layer.isHidden ? "hide" : "unhide" )}
           		onClick={this.toggleVisibility.bind(this)}
           	></i>
           </td>
           <td>
-          	<i 
+          	<i
           		className={"icon " + (this.props.layer.isLocked ? "lock" : "unlock" )}
           		onClick={this.toggleLocking.bind(this)}
           	></i>
@@ -150,7 +150,7 @@ export default class Layer extends React.Component {
             </div>
           </td>
           {
-            _.map(this.props.frameNames, (frameName, frameID) => { 
+            _.map(this.props.frameNames, (frameName, frameID) => {
               const isActiveCell = this.props.isSelected && this.props.selectedFrame === frameID
               return (
               <td className="selectable" onClick={this.selectFrame.bind(this, frameID)}
@@ -160,7 +160,7 @@ export default class Layer extends React.Component {
                 id={"mgb_edit_graphics_frame_cell_" + frameID}
                 >
                 {isActiveCell ? <div style={{textAlign: "center"}}><i className="ui check icon" /></div> : null}
-              </td>)  
+              </td>)
             })
           }
           <td className="layerCanvas">
@@ -187,7 +187,7 @@ export default class Layer extends React.Component {
     );
   }
 }
- 
+
 Layer.propTypes = {
   idx: PropTypes.number.isRequired,
   layer: PropTypes.object.isRequired,

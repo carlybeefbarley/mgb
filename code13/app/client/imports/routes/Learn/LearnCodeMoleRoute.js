@@ -42,40 +42,40 @@ const jsItems = [
 
 
 
-const LearnCodeMoleRoute = ( { currUser }, context ) => { 
+const LearnCodeMoleRoute = ( { currUser }, context ) => {
   return (
     <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
-      <Grid stackable>
-        <Grid.Row >
-          <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            Develop a game from A-Z
+    <Grid stackable>
+      <Grid.Row >
+        <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+          Develop a game from A-Z
             <em className="sub header">Everyone knows "Whack a Mole" game. For coders it is easy to start with this game and add more concepts to it.</em>
-          </Header>
-        </Grid.Row>
-        <Grid.Row>
-          <Card.Group itemsPerRow={1} stackable className="skills">
+        </Header>
+      </Grid.Row>
+      <Grid.Row>
+        <Card.Group itemsPerRow={1} stackable className="skills">
             
-            { jsItems.map( (area, idx) => (
+          { jsItems.map( (area, idx) => (
 
 
               <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
-                <Card.Content>
-                  <p style={descStyle}>
-                    <i className={area.icon+" large icon"}></i>
-                    <b>{area.content}</b>
-                    &nbsp;- {area.desc}
-                  </p>
-                  
-                </Card.Content>
-              </QLink>
+              <Card.Content>
+                <p style={descStyle}>
+                  <i className={area.icon + " large icon"}></i>
+                  <b>{area.content}</b>
+                  &nbsp;- {area.desc}
+                </p>
+
+              </Card.Content>
+            </QLink>
 
 
               ))
             }
 
-          </Card.Group>
-        </Grid.Row>
-      </Grid>
+        </Card.Group>
+      </Grid.Row>
+    </Grid>
     </Segment>
   )
 }

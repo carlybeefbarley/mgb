@@ -12,11 +12,11 @@ import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetF
 
 const _sep = <i className='grey right angle icon' />
 
-const NavBarBreadcrumb = ( { 
-  name, 
-  user, 
-  params, 
-  pathLocation, 
+const NavBarBreadcrumb = ( {
+  name,
+  user,
+  params,
+  pathLocation,
   currentlyEditingAssetKind,
   currentlyEditingAssetCanEdit
  } ) => {
@@ -39,14 +39,14 @@ const NavBarBreadcrumb = ( {
       { usernameToShow && (
         <QLink className="section" to={`/u/${usernameToShow}`}>
           { user && (
-            <img 
+            <img
                 className="ui avatar image"
-                style={{ width: '1.3em', height: '1.3em' }} 
+                style={{ width: '1.3em', height: '1.3em' }}
                 src={makeCDNLink(`/api/user/${user._id}/avatar/60`, makeExpireTimestamp(60))}></img>
             )
           }
           {usernameToShow}&nbsp;
-        </QLink> 
+        </QLink>
         )
       }
 

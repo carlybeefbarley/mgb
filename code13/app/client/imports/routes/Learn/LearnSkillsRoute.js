@@ -38,43 +38,43 @@ const LearnSkillsRoute = ( { currUser }, context ) => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
     <Grid stackable>
 
-      <Grid.Row >
-        <Grid.Column>
-          <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            What kind of skill do you want to learn next?
-            <em className="sub header">Game Builders have many kinds of skills</em>
-          </Header>
-        </Grid.Column>
-      </Grid.Row>
+    <Grid.Row >
+      <Grid.Column>
+        <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
+          What kind of skill do you want to learn next?
+          <em className="sub header">Game Builders have many kinds of skills</em>
+        </Header>
+      </Grid.Column>
+    </Grid.Row>
 
-      <Grid.Row>
-        <Grid.Column>
+    <Grid.Row>
+      <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
             { 
               skillAreaItems.map( (area, idx) => (
                 <QLink 
-                    key={idx} 
+              key={idx}
                     className="card animated fadeIn" 
                     style={cardStyle} 
-                    to={ _linkOverrides[area.tag] ? _linkOverrides[area.tag] : `/learn/skills/${area.tag}`}>
-                  <Card.Content>
-                    <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
-                    <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
-                    <p style={descStyle}>{area.desc}.</p>
-                    { currUser && 
-                      <div style={{clear: 'both'}}>
-                        <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag} />
-                      </div>
-                    }
+              to={ _linkOverrides[area.tag] ? _linkOverrides[area.tag] : `/learn/skills/${area.tag}`}>
+              <Card.Content>
+                <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
+                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
+                <p style={descStyle}>{area.desc}.</p>
+                { currUser &&
+                <div style={{ clear: 'both' }}>
+                  <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag} />
+                </div>
+                }
 
-                  </Card.Content>
+              </Card.Content>
                 </QLink>
               ))
             }
-         </Card.Group>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
+       </Card.Group>
+      </Grid.Column>
+    </Grid.Row>
+  </Grid>
   </Segment>
 )
 

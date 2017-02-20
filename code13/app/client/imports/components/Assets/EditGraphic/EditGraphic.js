@@ -1081,7 +1081,7 @@ export default class EditGraphic extends React.Component {
     let w = this.props.asset.content2.width
     let h = this.props.asset.content2.height
     // console.log('erase frame', w, h)
-    
+
     this.previewCtxArray.map( (ctx) => {
       ctx.clearRect(0, 0, w, h)
     })

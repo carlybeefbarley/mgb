@@ -23,9 +23,9 @@ export default class Tabs extends React.Component{
       }
       else {
         const id=`mgbjr-edit-actor-tab-${tabs[i].tab.replace(/[^A-Z0-9]/ig, "")}` // #mgbjr-edit-actor-tab-(tab name with whitespace & special chars removed, capitalization preserved)
-        tabsJsx.push(<div 
-                        id={id} 
-                        className='ui item' 
+        tabsJsx.push(<div
+                        id={id}
+                        className='ui item'
                         key={i}
                         style={{color: disabled ? "gray" : "black", cursor: disabled ? "auto": "pointer"}}
                         onClick={ () => {

@@ -51,29 +51,29 @@ const learnCodeItems = [
 const LearnCodeRoute = () => (
   <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
     <Grid stackable>
-      <Grid.Row >
-        <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-          Learn to code
-          <em className="sub header">With JavaScript and Phaser</em>
-        </Header>
-      </Grid.Row>
-      <Grid.Row>
-        <Card.Group itemsPerRow={1} stackable className="skills">
+    <Grid.Row >
+      <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+        Learn to code
+        <em className="sub header">With JavaScript and Phaser</em>
+      </Header>
+    </Grid.Row>
+    <Grid.Row>
+      <Card.Group itemsPerRow={1} stackable className="skills">
           
-          { learnCodeItems.map( (area, idx) => (
-            <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
-              <Card.Content>
-                <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
-                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-                <p style={descStyle}>{area.desc}.</p>
-              </Card.Content>
-            </QLink>
+        { learnCodeItems.map( (area, idx) => (
+          <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
+            <Card.Content>
+              <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
+              <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+              <p style={descStyle}>{area.desc}.</p>
+            </Card.Content>
+          </QLink>
             ))
           }
 
-        </Card.Group>
-      </Grid.Row>
-    </Grid>
+      </Card.Group>
+    </Grid.Row>
+  </Grid>
   </Segment>
 )
 

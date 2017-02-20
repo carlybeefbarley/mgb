@@ -24,7 +24,7 @@ export default class GraphicImport extends React.Component {
     super(props)
 
     this.state = {
-      status: STATUS_EMPTY,     // STATUS_EMPTY or STATUS_DRAGGED_OVER or STATUS_UPLOADING or STATUS_UPLOADED 
+      status: STATUS_EMPTY,     // STATUS_EMPTY or STATUS_DRAGGED_OVER or STATUS_UPLOADING or STATUS_UPLOADED
       tileWidth: SUGGESTED_FRAME_WIDTH,
       tileHeight: SUGGESTED_FRAME_HEIGHT,
       imgWidth: null,
@@ -80,13 +80,13 @@ export default class GraphicImport extends React.Component {
           self.setState({ status: STATUS_UPLOADED, importName: file.name})
           if (tmpImg.src.startsWith("data:image/gif;base64,"))
             self.gifLoaded(tmpImg)
-          else 
+          else
            self.spriteSheetLoaded(tmpImg)    // TODO: Make sure we don't get confused by non-image stuff like .ogg etc
         }
         tmpImg.src = theUrl
       }
       reader.readAsDataURL(file)
-			
+
     }
   }
 
@@ -117,7 +117,7 @@ export default class GraphicImport extends React.Component {
       newImage.onload = function(e) {
         self.loadedImg = newImage
         self.drawImage()
-        self.drawGrid()  
+        self.drawGrid()
       }
       newImage.src = self.canvas.toDataURL('image/png')
     })
@@ -130,9 +130,9 @@ export default class GraphicImport extends React.Component {
     this.canvas.width = img.width
     this.canvas.height = img.height
 
-    if (this.state.tileWidth > img.width) 
+    if (this.state.tileWidth > img.width)
       this.setState({ tileWidth: img.width })
-    if (this.state.tileHeight > img.height) 
+    if (this.state.tileHeight > img.height)
       this.setState({ tileHeight: img.height })
 
     this.drawImage()
@@ -231,9 +231,9 @@ export default class GraphicImport extends React.Component {
 
 
   clearAll() {
-    this.setState( { 
-      status: STATUS_EMPTY, 
-      tileWidth: SUGGESTED_FRAME_WIDTH, 
+    this.setState( {
+      status: STATUS_EMPTY,
+      tileWidth: SUGGESTED_FRAME_WIDTH,
       tileHeight: SUGGESTED_FRAME_HEIGHT,
       imgWidth: null,
       imgHeight: null,
@@ -242,7 +242,7 @@ export default class GraphicImport extends React.Component {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.loadedImg = null
   }
-  
+
 
   render() {
     const { status, tileWidth, tileHeight, imgHeight, imgWidth, importName } = this.state
@@ -277,16 +277,16 @@ export default class GraphicImport extends React.Component {
             </div>
 
             &nbsp;
-            
+
             <div className="ui small labeled input" style={buttonSty}>
               <div className="ui small label" title={`Choose the height of each frame to import. Maximum permitted height is ${maxTileHeight} pixels`}>
                 Frame height
               </div>
               <input className="ui small input" type="number" min={MIN_FRAME_HEIGHT} max={imgHeight} value={tileHeight} onChange={this.changeTileHeight.bind(this)} />
             </div>
-            
+
             &emsp;
-            
+
             <div onClick={this.performImport.bind(this)} className="ui small labeled icon button" title={`Import ${framesYielded} (${tileWidth}px x ${tileHeight}px) frames`} style={buttonSty}>
               <i className="icon small save"></i>Save
             </div>
@@ -307,7 +307,7 @@ export default class GraphicImport extends React.Component {
             <i className="ui info circle icon" />&nbsp;This import operation would create {framesYielded} frames
             <span style={{color:"red"}}>{ tooManyFramesWarning  }</span>
             <br />
-          </small>    
+          </small>
 
           <div className="ui divider" />
 

@@ -68,11 +68,11 @@ HomeHeroBanner.propTypes = {
 
 
 HomeHeroBanner.responsiveRules = {  // Note that this could also be a function that returns this kind of object
-  'impossible': {  
+  'impossible': {
     minWidth: 0,
     maxWidth: 40
   },
-  'small': {  
+  'small': {
     minWidth: 0,
     maxWidth: 400
   }

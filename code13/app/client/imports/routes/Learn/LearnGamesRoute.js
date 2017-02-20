@@ -28,46 +28,46 @@ const descStyle = {
 }
 
 const gameItems = [
-  { mascot: 'game_runner',    icon: 'game',    content: 'Runner',   desc: 'Simple infinite runner game' },
-  { mascot: 'game_shop',  icon: 'game',    content: 'Digger',   desc: 'Simple mining and crafting game...' }
+  { mascot: 'game_runner', icon: 'game', content: 'Runner', desc: 'Simple infinite runner game' },
+  { mascot: 'game_shop', icon: 'game', content: 'Digger', desc: 'Simple mining and crafting game...' }
 ]
 
 const LearnGamesRoute = () => (
   <Segment basic padded className="slim" style={{margin: '0 auto'}}>
     <Grid stackable>
 
-      <Grid.Row >
-        <Grid.Column>
-          <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            What kind of game shall we build?
-            <em className="sub header">Learn the basics of these game types, and how to add features</em>
-          </Header>
-        </Grid.Column>
-      </Grid.Row>
+    <Grid.Row >
+      <Grid.Column>
+        <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+          What kind of game shall we build?
+          <em className="sub header">Learn the basics of these game types, and how to add features</em>
+        </Header>
+      </Grid.Column>
+    </Grid.Row>
 
-      <Grid.Row>
-        <Grid.Column>
+    <Grid.Row>
+      <Grid.Column>
           <Card.Group itemsPerRow={2} stackable className="skills">
-            { gameItems.map( (area, idx) => (
-                <QLink 
-                    key={idx} 
-                    className="card animated fadeIn" 
-                    style={cardStyle} 
+          { gameItems.map( (area, idx) => (
+            <QLink
+              key={idx}
+              className="card animated fadeIn"
+              style={cardStyle}
                     onClick={(e) => { showToast("Not Yet Implemented.. But it will be ready very SOON!", 'warning'); e.preventDefault() }}
-                    to={`/learn/skills/NOT_YET_IMPLEMENTED`}>
+              to={`/learn/skills/NOT_YET_IMPLEMENTED`}>
 
-                  <Card.Content>
-                    <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
-                    <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-                    <p style={descStyle}>{area.desc}.</p>
-                  </Card.Content>
-                </QLink>
-              ))
-            }
-         </Card.Group>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
+              <Card.Content>
+                <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
+                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+                <p style={descStyle}>{area.desc}.</p>
+              </Card.Content>
+            </QLink>
+          ) )
+          }
+        </Card.Group>
+      </Grid.Column>
+    </Grid.Row>
+  </Grid>
   </Segment>
 )
 

@@ -41,45 +41,45 @@ const jsItems = [
     link: '',
     content: 'Flappy bird',
     desc: ``
-  }, 
+  },
   */
-  
+
 
 ]
 
 
 
-const LearnCodeModifyRoute = ( { currUser }, context ) => { 
+const LearnCodeModifyRoute = ( { currUser }, context ) => {
   return (
     <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
       <Grid stackable>
-        <Grid.Row >
-          <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            JavaScript programming basics
-            <em className="sub header">Click on item and explore it</em>
-          </Header>
-        </Grid.Row>
-        <Grid.Row>
+      <Grid.Row >
+        <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+          JavaScript programming basics
+          <em className="sub header">Click on item and explore it</em>
+        </Header>
+      </Grid.Row>
+      <Grid.Row>
           <Card.Group itemsPerRow={2} stackable className="skills">
             
-            { jsItems.map( (area, idx) => (
+          { jsItems.map( (area, idx) => (
 
 
               <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
-                <Card.Content>
-                    <Image floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
-                    <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-                    <p style={descStyle}>{area.desc}.</p>
-                  </Card.Content>
-              </QLink>
+              <Card.Content>
+                <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
+                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+                <p style={descStyle}>{area.desc}.</p>
+              </Card.Content>
+            </QLink>
 
 
               ))
             }
 
-          </Card.Group>
-        </Grid.Row>
-      </Grid>
+        </Card.Group>
+      </Grid.Row>
+    </Grid>
     </Segment>
   )
 }

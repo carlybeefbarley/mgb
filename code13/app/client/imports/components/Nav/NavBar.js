@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Segment } from 'semantic-ui-react'
+import { Divider, Segment } from 'semantic-ui-react'
 import SystemAlerts from './SystemAlerts'
 import NavBarBreadcrumb from './NavBarBreadcrumb'
 import WhatsNew from './WhatsNew'
@@ -42,6 +42,7 @@ const NavBar = (
       <SystemAlerts sysvars={sysvars} />
       <WhatsNew currUser={currUser} asHidingLink={true} />
       <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} currentlyEditingAssetKind={currentlyEditingAssetKind} currentlyEditingAssetCanEdit={currentlyEditingAssetCanEdit} />
+      <Divider hidden />
     </Segment>
   )
 }

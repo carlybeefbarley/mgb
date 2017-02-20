@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
-import { Breadcrumb } from 'semantic-ui-react'
+import { Breadcrumb, Icon } from 'semantic-ui-react'
 import { AssetKinds } from '/imports/schemas/assets'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
@@ -10,7 +10,7 @@ import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetF
 // The NavBarBreadcrumb contains a breadcrumb bar that is generated based on name, user and
 // params (assetId, projectId etc)
 
-const _sep = <i className='grey right angle icon' />
+const _sep = <Icon color='grey' name='right angle' />
 
 const NavBarBreadcrumb = ( {
   name,

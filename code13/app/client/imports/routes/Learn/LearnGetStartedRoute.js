@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   Dimmer,
+  Divider,
   Grid,
   Header,
   Icon,
@@ -119,16 +120,18 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
   const isLogInSignUpCompleted = !!currUser
 
   return (
-    <Grid stackable container columns='equal'>
+    <Grid container columns='1'>
+      <Divider hidden />
       <Grid.Column>
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           Get Started
-          <em className="sub header">
+          <Header.Subheader>
             Learn to use this site - set up your profile, play a game, find friends, etc
             <StartDefaultNextTutorial currUser={currUser} userSkills={context.skills} />
-          </em>
+          </Header.Subheader>
         </Header>
         <ProgressLabel subSkillsComplete={numGsSkills} subSkillTotal={_maxGsSkillCount} />
+        <Divider hidden />
         { currUser && (
           <div style={{ clear: 'both' }}>
             <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={'getStarted'} />

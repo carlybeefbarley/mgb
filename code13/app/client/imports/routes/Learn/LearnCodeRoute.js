@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
@@ -49,14 +49,15 @@ const learnCodeItems = [
 ]
 
 const LearnCodeRoute = () => (
-  <Grid stackable container>
-    <Grid.Row >
+  <Grid container columns='1'>
+    <Divider hidden />
+    <Grid.Column>
       <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
         Learn to code
         <em className="sub header">With JavaScript and Phaser</em>
       </Header>
-    </Grid.Row>
-    <Grid.Row>
+    </Grid.Column>
+    <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
         { learnCodeItems.map( (area, idx) => (
           <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
@@ -68,7 +69,7 @@ const LearnCodeRoute = () => (
           </QLink>
         ) ) }
       </Card.Group>
-    </Grid.Row>
+    </Grid.Column>
   </Grid>
 )
 

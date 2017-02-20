@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 
@@ -51,14 +51,15 @@ const jsItems = [
 
 const LearnCodeModifyRoute = ( { currUser }, context ) => {
   return (
-    <Grid stackable container>
-      <Grid.Row >
+    <Grid container columns='1'>
+      <Divider hidden />
+      <Grid.Column>
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           JavaScript programming basics
           <em className="sub header">Click on item and explore it</em>
         </Header>
-      </Grid.Row>
-      <Grid.Row>
+      </Grid.Column>
+      <Grid.Column>
         <Card.Group itemsPerRow={1} stackable className="skills">
           { jsItems.map( (area, idx) => (
             <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
@@ -70,7 +71,7 @@ const LearnCodeModifyRoute = ( { currUser }, context ) => {
             </QLink>
           ) ) }
         </Card.Group>
-      </Grid.Row>
+      </Grid.Column>
     </Grid>
   )
 }

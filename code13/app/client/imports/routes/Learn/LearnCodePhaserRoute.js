@@ -4,6 +4,7 @@ import styles from '../home.css'
 import QLink from '../QLink'
 import {
   Card,
+  Divider,
   Grid,
   Header,
   Icon,
@@ -26,7 +27,8 @@ for (var key in phaserSkills) {
 
 const LearnCodePhaserRoute = ({ currUser, params }, context) => {
   return (
-    <Grid stackable container>
+    <Grid container columns='1'>
+      <Divider hidden />
       { /*TODO check if currUser logged in*/ }
       {/*TODO need to implement count and onclick for subskills*/
       }
@@ -43,7 +45,7 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
        onlySkillArea={'code.js.phaser'}
        />*/
       }
-      <Grid.Row>
+      <Grid.Column>
         {/*<div onClick={() => startSkillPathTutorial('getStarted.nonCodeGame.createGraphic') }>Start code tutorial</div>*/}
         <Header as='h1' size='huge'>
           Game development concepts
@@ -52,8 +54,8 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
             However, the concepts you learn here are very important and will apply to any game engine you use in future.
           </Header.Subheader>
         </Header>
-      </Grid.Row>
-      <Grid.Row>
+      </Grid.Column>
+      <Grid.Column>
         <Card.Group itemsPerRow={1} stackable className="skills">
           { skillItems.map( (area, idx) => {
             let skillPath = 'code/js/phaser/' + area.idx + '/' + area.idx
@@ -78,7 +80,7 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
             )
           } ) }
         </Card.Group>
-      </Grid.Row>
+      </Grid.Column>
     </Grid>
   )
 }

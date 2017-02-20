@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Grid, Card, Header } from 'semantic-ui-react'
+import { Divider, Grid, Card, Header } from 'semantic-ui-react'
 
 const jsItems = [
   {
@@ -37,17 +37,18 @@ const jsItems = [
   },
 ]
 
-const LearnCodeMoleRoute = ( { currUser }, context ) => {
+const LearnCodeMoleRoute = ({ currUser }, context) => {
   return (
-    <Grid stackable container>
-      <Grid.Row >
+    <Grid container columns='1'>
+      <Divider hidden />
+      <Grid.Column>
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           Develop a game from A-Z
           <em className="sub header">Everyone knows "Whack a Mole" game. For coders it is easy to start with this game
             and add more concepts to it.</em>
         </Header>
-      </Grid.Row>
-      <Grid.Row>
+      </Grid.Column>
+      <Grid.Column>
         <Card.Group itemsPerRow={1} stackable className="skills">
           { jsItems.map( (area, idx) => (
             <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
@@ -62,7 +63,7 @@ const LearnCodeMoleRoute = ( { currUser }, context ) => {
             </QLink>
           ) ) }
         </Card.Group>
-      </Grid.Row>
+      </Grid.Column>
     </Grid>
   )
 }

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
 const jsItems = [
   {
@@ -52,12 +52,12 @@ const jsItems = [
 const LearnCodeJsRoute = ({ currUser }, context) => {
   return (
     <Grid container columns='1'>
-      <Grid.Column>
-        <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
-          JavaScript programming basics
-          <em className="sub header">Click on item and explore it</em>
-        </Header>
-      </Grid.Column>
+      <Divider hidden /> <Grid.Column>
+      <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+        JavaScript programming basics
+        <em className="sub header">Click on item and explore it</em>
+      </Header>
+    </Grid.Column>
       <Grid.Column>
         <Card.Group itemsPerRow={1} stackable className="skills">
           { jsItems.map( (area, idx) => (

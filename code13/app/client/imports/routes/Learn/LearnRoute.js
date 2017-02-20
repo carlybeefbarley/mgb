@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
 import getStartedStyle from '../GetStarted.css'
-import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
@@ -77,9 +77,7 @@ const learnTopLevelItems = [
 ]
 
 const LearnRoute = ( { currUser, params }, context ) => (
-  <Segment basic padded className='slim' style={{margin: '0 auto'}}>
-    <Grid stackable>
-
+  <Grid stackable container>
     <Grid.Row >
       <Grid.Column>
         <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
@@ -126,7 +124,6 @@ const LearnRoute = ( { currUser, params }, context ) => (
       </Grid.Row>
     }
   </Grid>
-  </Segment>
 )
 
 LearnRoute.contextTypes = {

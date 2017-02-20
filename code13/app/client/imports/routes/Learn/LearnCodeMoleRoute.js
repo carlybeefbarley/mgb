@@ -2,9 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
-
-
+import { Grid, Card, Header } from 'semantic-ui-react'
 
 const jsItems = [
   {
@@ -37,28 +35,22 @@ const jsItems = [
     content: 'OOP',
     desc: `Refactor existing game OOP style.`
   },
-
 ]
-
-
 
 const LearnCodeMoleRoute = ( { currUser }, context ) => {
   return (
-    <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
     <Grid stackable>
       <Grid.Row >
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           Develop a game from A-Z
-            <em className="sub header">Everyone knows "Whack a Mole" game. For coders it is easy to start with this game and add more concepts to it.</em>
+          <em className="sub header">Everyone knows "Whack a Mole" game. For coders it is easy to start with this game
+            and add more concepts to it.</em>
         </Header>
       </Grid.Row>
       <Grid.Row>
         <Card.Group itemsPerRow={1} stackable className="skills">
-            
           { jsItems.map( (area, idx) => (
-
-
-              <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
+            <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
               <Card.Content>
                 <p style={descStyle}>
                   <i className={area.icon + " large icon"}></i>
@@ -68,30 +60,14 @@ const LearnCodeMoleRoute = ( { currUser }, context ) => {
 
               </Card.Content>
             </QLink>
-
-
-              ))
-            }
-
+          ) ) }
         </Card.Group>
       </Grid.Row>
     </Grid>
-    </Segment>
   )
 }
 
 export default LearnCodeMoleRoute
-
-
-
-
-
-
-
-
-
-
-// styles
 
 const cardStyle = {
   color: "#2e2e2e"

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 
@@ -51,8 +51,7 @@ const jsItems = [
 
 const LearnCodeModifyRoute = ( { currUser }, context ) => {
   return (
-    <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
-      <Grid stackable>
+    <Grid stackable container>
       <Grid.Row >
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           JavaScript programming basics
@@ -60,42 +59,23 @@ const LearnCodeModifyRoute = ( { currUser }, context ) => {
         </Header>
       </Grid.Row>
       <Grid.Row>
-          <Card.Group itemsPerRow={2} stackable className="skills">
-            
+        <Card.Group itemsPerRow={1} stackable className="skills">
           { jsItems.map( (area, idx) => (
-
-
-              <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
+            <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
               <Card.Content>
                 <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
                 <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
                 <p style={descStyle}>{area.desc}.</p>
               </Card.Content>
             </QLink>
-
-
-              ))
-            }
-
+          ) ) }
         </Card.Group>
       </Grid.Row>
     </Grid>
-    </Segment>
   )
 }
 
 export default LearnCodeModifyRoute
-
-
-
-
-
-
-
-
-
-
-// styles
 
 const cardStyle = {
   color: "#2e2e2e"

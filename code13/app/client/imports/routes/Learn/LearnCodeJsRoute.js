@@ -2,9 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
-
-
+import { Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
 const jsItems = [
   {
@@ -43,22 +41,17 @@ const jsItems = [
     content: 'If statements',
     desc: ``
   },
-  
   {
     icon: 'code',
     link: '',
     content: 'Functions',
     desc: ``
   },
-
 ]
-
-
 
 const LearnCodeJsRoute = ({ currUser }, context) => {
   return (
-    <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
-      <Grid stackable>
+    <Grid stackable container>
       <Grid.Row >
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           JavaScript programming basics
@@ -67,11 +60,8 @@ const LearnCodeJsRoute = ({ currUser }, context) => {
       </Grid.Row>
       <Grid.Row>
         <Card.Group itemsPerRow={1} stackable className="skills">
-            
           { jsItems.map( (area, idx) => (
-
-
-              <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
+            <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
               <Card.Content>
                 <p style={descStyle}>
                   <i className={area.icon + " large icon"}></i>
@@ -81,30 +71,14 @@ const LearnCodeJsRoute = ({ currUser }, context) => {
 
               </Card.Content>
             </QLink>
-
-
-              ))
-            }
-
+          ) ) }
         </Card.Group>
       </Grid.Row>
     </Grid>
-    </Segment>
   )
 }
 
 export default LearnCodeJsRoute
-
-
-
-
-
-
-
-
-
-
-// styles
 
 const cardStyle = {
   color: "#2e2e2e"

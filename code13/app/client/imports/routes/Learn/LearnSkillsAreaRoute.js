@@ -35,7 +35,7 @@ const LearnSkillsAreaRoute = ( { currUser, params }, context ) => {    //props.p
     return <ThingNotFound type='Skill area' id={params.skillarea} />
 
   return (
-    <Segment basic padded className="slim" style={{margin: '0 auto'}}>
+    <Segment basic padded style={{margin: '0 auto'}}>
       <Image className='animated bounceInLeft' floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
       <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.mascotName}'s {area.title} Quests</Header>
       <p style={descStyle}>{area.desc}.</p>

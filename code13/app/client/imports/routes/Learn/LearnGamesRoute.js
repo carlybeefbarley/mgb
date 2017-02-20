@@ -4,7 +4,7 @@ import { showToast } from '/client/imports/routes/App'
 import styles from '../home.css'
 import QLink from '../QLink'
 import getStartedStyle from '../GetStarted.css'
-import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const cardStyle = {
@@ -33,9 +33,7 @@ const gameItems = [
 ]
 
 const LearnGamesRoute = () => (
-  <Segment basic padded className="slim" style={{margin: '0 auto'}}>
-    <Grid stackable>
-
+  <Grid stackable container>
     <Grid.Row >
       <Grid.Column>
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
@@ -47,13 +45,16 @@ const LearnGamesRoute = () => (
 
     <Grid.Row>
       <Grid.Column>
-          <Card.Group itemsPerRow={2} stackable className="skills">
+        <Card.Group itemsPerRow={1} stackable className="skills">
           { gameItems.map( (area, idx) => (
             <QLink
               key={idx}
               className="card animated fadeIn"
               style={cardStyle}
-                    onClick={(e) => { showToast("Not Yet Implemented.. But it will be ready very SOON!", 'warning'); e.preventDefault() }}
+              onClick={(e) => {
+                showToast( "Not Yet Implemented.. But it will be ready very SOON!", 'warning' );
+                e.preventDefault()
+              }}
               to={`/learn/skills/NOT_YET_IMPLEMENTED`}>
 
               <Card.Content>
@@ -68,7 +69,6 @@ const LearnGamesRoute = () => (
       </Grid.Column>
     </Grid.Row>
   </Grid>
-  </Segment>
 )
 
 export default LearnGamesRoute

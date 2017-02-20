@@ -3,7 +3,17 @@ import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
 import getStartedStyle from '../GetStarted.css'
-import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import {
+  Button,
+  Card,
+  Dimmer,
+  Grid,
+  Header,
+  Icon,
+  Image,
+  Label,
+  Progress,
+} from 'semantic-ui-react'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus, countCurrentUserSkills } from '/imports/schemas/skills'
@@ -12,17 +22,7 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-const BigCheckMark = () => ( <i style={{ float: 'right'}} className='ui big green checkmark box icon' />)
-
-const cardStyles = {
-  card:    { color: '#2e2e2e' },
-  content: { borderTop: 'none' },
-  para:    { fontSize: '1.25em' },
-  mascot:  { maxWidth: '70px', float: 'left', marginRight: '15px' },
-  desc:    { position: 'relative', top: 0 },
-  button:  { margin: '0.5em 0px 0.5em 0.5em' }
-}
-
+const BigCheckMark = () => ( <i style={{ float: 'right' }} className='ui green circular checkmark icon' />)
 
 // login/signup is a pseudo-tutorial that exists outside the normal skills databases
 // so it is sort-of hard0coded here.
@@ -33,17 +33,16 @@ const _loginDesc = {
 }
 const OfferLoginTutorial = () => (
   <QLink to='/signup'>
-    <button 
-        className="ui active yellow right floated button" 
-        style={cardStyles.button}>
+    <Button floated='right'>
       <Icon name='sign in' />
       Log In or Sign Up
-    </button>
+    </Button>
   </QLink>
 )
 
 const _gsSkillNodeName = 'getStarted'
-const _maxGsSkillCount = 1 + countMaxUserSkills(_gsSkillNodeName + '.')     // The 1+ is because of the special pseudo-skill of login/signup
+const _maxGsSkillCount = 1 + countMaxUserSkills( _gsSkillNodeName + '.' )     // The 1+ is because of the special
+                                                                              // pseudo-skill of login/signup
 const gsSkills = SkillNodes[_gsSkillNodeName]    // shorthand
 const gsItems = [
   { node: gsSkills.profile, mascot: 'arcade_player' },
@@ -59,10 +58,9 @@ const gsItems = [
 
 // This is the   1 / n    box at the top-right of each skill box
 const ProgressLabel = ({ subSkillsComplete, subSkillTotal }) => (
-  <span className="ui label large right floated" style={{float: 'right', opacity: '0.75', backgroundColor: subSkillsComplete >= subSkillTotal ? 'lightgreen' : null}}>
-    {subSkillsComplete} / {subSkillTotal}&nbsp;&nbsp;
-    <Icon name='check circle' color={subSkillsComplete >= subSkillTotal ? 'green' : null} style={{marginRight: 0}} />
-  </span>
+  <Label attached='top right'>
+    {subSkillsComplete} / {subSkillTotal}
+  </Label>
 )
 
 ProgressLabel.propTypes = {
@@ -75,8 +73,7 @@ const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
   _.each( gsItems, (area) => {
     const { key } = area.node.$meta
     const skillStatus = getSkillNodeStatus( currUser, userSkills, key )
-    if (skillStatus.todoSkills.length !== 0)
-    {
+    if (skillStatus.todoSkills.length !== 0) {
       skillPath = key + '.' + skillStatus.todoSkills[0]
       return false
     }
@@ -85,12 +82,22 @@ const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
     startSkillPathTutorial( skillPath )
 }
 
+const continueIconStyle = {
+  position: 'absolute',
+  margin: 'auto',
+  height: '1em',
+  top: 0,
+  right: '1rem',
+  bottom: 0,
+}
+
 export const StartDefaultNextTutorial = ({ currUser, userSkills }) => (
   !currUser ? <OfferLoginTutorial /> : (
       <button
         className="ui active yellow right floated button"
-        style={cardStyles.button}
-        onClick={() => {_handleStartDefaultNextTutorial(currUser, userSkills)} }>
+        onClick={() => {
+          _handleStartDefaultNextTutorial( currUser, userSkills )
+        } }>
         <Icon name='student' />
         Start next...
       </button>
@@ -109,88 +116,124 @@ const OfferNextTutorial = ({ skillPath }) => (
 
 const LearnGetStartedRoute = ({ currUser }, context) => {
   const numGsSkills = (countCurrentUserSkills( context.skills, _gsSkillNodeName + '.' ) || 0) + (currUser ? 1 : 0)
+  const isLogInSignUpCompleted = !!currUser
+
   return (
-    <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
-      <Grid stackable>
-        <Grid.Row >
+    <Grid stackable container columns='equal'>
       <Grid.Column>
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           Get Started
-              <ProgressLabel subSkillsComplete={numGsSkills} subSkillTotal={_maxGsSkillCount} />
           <em className="sub header">
             Learn to use this site - set up your profile, play a game, find friends, etc
             <StartDefaultNextTutorial currUser={currUser} userSkills={context.skills} />
           </em>
         </Header>
-            { currUser && 
+        <ProgressLabel subSkillsComplete={numGsSkills} subSkillTotal={_maxGsSkillCount} />
+        { currUser && (
           <div style={{ clear: 'both' }}>
             <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={'getStarted'} />
           </div>
-            } 
-          </Grid.Column>
-        </Grid.Row>
+        )}
 
-        <Grid.Row centered>
-          <Grid.Column width={12}>
-            <Card.Group itemsPerRow={1} className="skills">
         { /* Add a pseudo-card for login/signup */ }
         <Card
-                      color={currUser ? 'green' : null}
-                      className={ (currUser ? 'disabled ' : '') + 'link animated fadeIn' }
-                      style={cardStyles.card} >
-
-                    <Card.Content style={cardStyles.content}>
-                      <Card.Header as='h2'>
+          as='div'
+          fluid
+          onClick={isLogInSignUpCompleted ? null : startSkillPathTutorial }
+          className={isLogInSignUpCompleted ? '' : 'link'}>
+          <Card.Content>
+            <Header as='h2' color={isLogInSignUpCompleted ? 'grey' : null}>
+              <Dimmer.Dimmable
+                dimmed={isLogInSignUpCompleted}
+                dimmer={{ active: isLogInSignUpCompleted, inverted: true, content: <BigCheckMark /> }}
+                as={Image}
+                src={makeCDNLink( `/images/mascots/${_loginMascot}.png` )}
+              />
+              <Header.Content>
                 Log In / Sign Up
-                        <ProgressLabel subSkillsComplete={currUser ? 1 : 0} subSkillTotal={1} />
-                      </Card.Header>
+                {!isLogInSignUpCompleted && (
+                  <Header.Subheader>
+                    {_loginDesc[currUser ? 'auth' : 'anon']}.
+                  </Header.Subheader>
+                )}
+              </Header.Content>
+            </Header>
 
-                      <p style={cardStyles.para}>
-                        <img src={makeCDNLink(`/images/mascots/${_loginMascot}.png`)} style={cardStyles.mascot} />
-                        <span style={cardStyles.desc}>{_loginDesc[currUser ? 'auth' : 'anon']}.</span>
-                      </p>
-                      { !currUser ?  <OfferLoginTutorial /> : <BigCheckMark /> }
+            { !isLogInSignUpCompleted && (
+              <Icon name='chevron right' color='grey' size='large' style={continueIconStyle} />
+            )}
           </Card.Content>
         </Card>
 
         { gsItems.map( (area, idx) => {
           const { name, description, key } = area.node.$meta
           const skillStatus = getSkillNodeStatus( currUser, context.skills, key )
-                const isCompleted = (skillStatus.todoSkills.length == 0)
-                const mascotStyle = _.cloneDeep( cardStyles.mascot )
-                if(!currUser && idx != 0){
-                  mascotStyle.filter = "grayscale(100%)"
+          const skillPath = key + '.' + skillStatus.todoSkills[0]
+          const isSkillCompleted = (skillStatus.todoSkills.length == 0)
+          const mascotStyle = {
+            filter: !currUser && idx != 0 ? "grayscale(100%)" : ''
           }
+
           return (
             <Card
+              as='div'
+              fluid
               key={idx}
-                      color={isCompleted ? 'green' : null}
-                      className={ (currUser ? '' : 'disabled ') + 'link animated fadeIn' }
-                      style={cardStyles.card} >
-
-                    <Card.Content style={cardStyles.content}>
-                      <Card.Header as='h2'>
+              className={isSkillCompleted ? '' : 'link'}
+              onClick={isSkillCompleted ? null : () => startSkillPathTutorial( skillPath ) }
+            >
+              <Card.Content>
+                <Grid columns='equal' padded>
+                  <Grid.Column>
+                    <Header as='h2' color={isSkillCompleted ? 'grey' : null}>
+                      <Dimmer.Dimmable
+                        dimmed={isSkillCompleted}
+                        dimmer={{ active: isSkillCompleted, inverted: true, content: <BigCheckMark /> }}
+                        as={Image}
+                        src={makeCDNLink( `/images/mascots/${area.mascot}.png` )}
+                        style={mascotStyle}
+                      />
+                      <Header.Content>
                         {name}
-                        <ProgressLabel subSkillsComplete={skillStatus.learnedSkills.length} subSkillTotal={skillStatus.childSkills.length} />
-                      </Card.Header>
-
-                      <p style={cardStyles.para}>
-                        <img src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} style={mascotStyle} />
-                        <span style={cardStyles.desc}>{description}.</span>
-                      </p>
-                      { isCompleted ? <BigCheckMark /> : 
-                          <OfferNextTutorial skillPath={key + '.' + skillStatus.todoSkills[0]} /> 
-                      }
+                        {!isSkillCompleted && <Header.Subheader>{description}.</Header.Subheader>}
+                      </Header.Content>
+                    </Header>
+                  </Grid.Column>
+                  {!isSkillCompleted && (
+                    <Grid.Column width={4} verticalAlign='middle' textAlign='right'>
+                      <div style={{ fontSize: '2em', color: '#999' }}>
+                        {skillStatus.learnedSkills.length} / {skillStatus.childSkills.length}
+                        {!isSkillCompleted && (
+                          <Icon
+                            name='angle right'
+                            color='grey'
+                            size='large'
+                            disabled
+                            // align to text
+                            style={{ marginBottom: '0.18em' }}
+                          />
+                        )}
+                      </div>
+                    </Grid.Column>
+                  )}
+                </Grid>
               </Card.Content>
+
+              {skillStatus.learnedSkills.length > 0 && (
+                <Progress
+                  size='tiny'
+                  autoSuccess
+                  label='ratio'
+                  value={skillStatus.learnedSkills.length}
+                  total={skillStatus.childSkills.length}
+                  active={skillStatus.learnedSkills.length > 0}
+                />
+              )}
             </Card>
           )
-              })
-            }
-          </Card.Group>
+        } ) }
       </Grid.Column>
-        </Grid.Row>
     </Grid>
-    </Segment>
   )
 }
 

@@ -80,7 +80,7 @@ export default UserProfileRoute = React.createClass({
     if (!user) return <ThingNotFound type="User" />
 
     return (
-      <Container className='slim' style={{minWidth: '400px'}}>
+      <Container>
         <Grid padded stackable stretched>
           <Helmet
             title={user.profile.name}

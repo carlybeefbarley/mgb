@@ -31,7 +31,7 @@ class NavPanelItem extends Component {
   }
   // TODO(@Levi): How to remove the bind in OnClick.. data-____ props
   render() {
-    const { hdr, name, menu, style, to, openLeft } = this.props
+    const { hdr, name, menu, style, to, query, openLeft } = this.props
     const { open } = this.state
 
     return (
@@ -41,7 +41,7 @@ class NavPanelItem extends Component {
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         onClick={() => joyrideCompleteTag(`mgbjr-CT-np-${name}`) }
-        trigger={<QLink to={to}>{hdr}</QLink>}
+        trigger={<QLink to={to} query={query} >{hdr}</QLink>}
         icon={null}
         open={open}
         style={style}>

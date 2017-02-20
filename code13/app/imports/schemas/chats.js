@@ -163,12 +163,12 @@ export const makeChannelName = ( params ) => {
 /*
 
 There are some additional indexed columns used to help find some items from other contexts:
-  Chat._id            // Normal Meteor/Mongo UUID for this message in the Chat Table. 
+√ Chat._id            // Normal Meteor/Mongo UUID for this message in the Chat Table. 
                       // Always exists and unique and indexed
-  Chat.createdAt      // Timestamp, set authoritatively on server
+√ Chat.createdAt      // Timestamp, set authoritatively on server
   Chat.toAssetId      // always set for scopeAsset. MAY also be set for other messages. 
                       // Allows a way to look for other messages related to an asset
-  Chat.toOwnerId      // Always set for scopeAsset and scopeProject and scopeUser and 
+  Chat.toOwnerId      // Always set for scopeAsset and scopeUser and 
                       // scopeDirectMsg: Set to the ownerId of that Asset/project/User. 
                       // Allows a way for owners to see activity on stuff they own, and 
                       // supports a wall, and also a way to rebuild other tables for DMs

@@ -35,7 +35,7 @@ const LearnSkillsAreaRoute = ( { currUser, params }, context ) => {    //props.p
     return <ThingNotFound type='Skill area' id={params.skillarea} />
 
   return (
-    <Segment basic padded className="slim" style={{margin: '0 auto'}}>
+    <Segment basic padded style={{margin: '0 auto'}}>
       <Image className='animated bounceInLeft' floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
       <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.mascotName}'s {area.title} Quests</Header>
       <p style={descStyle}>{area.desc}.</p>
@@ -44,7 +44,7 @@ const LearnSkillsAreaRoute = ( { currUser, params }, context ) => {    //props.p
       <ul>
         { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.name) ? v.$meta.name : k}</li>) ) }
       </ul>
-      { currUser && 
+      { currUser &&
         <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag}/>
       }
     </Segment>

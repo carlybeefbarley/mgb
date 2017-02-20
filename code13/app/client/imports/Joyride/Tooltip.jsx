@@ -16,8 +16,6 @@ export const _queryVisibleSelectorsInSequence = selectors => {
   return null
 }
 
-
-
 export default class JoyrideTooltip extends React.Component {
   static propTypes = {
     animate:      PropTypes.bool.isRequired,        // if true, adds class 'joyride-tooltip--animate'
@@ -287,11 +285,16 @@ export default class JoyrideTooltip extends React.Component {
             style={styles.arrow} />
         }
         <a
-          href="#"
-          className={`joyride-tooltip__close${(output.header ? ' joyride-tooltip__close--header' : '')}`}
-          style={styles.buttons.close}
-          data-type="close"
-          onClick={onClick}>×</a>
+            href="#"
+            data-tooltip='Minimize tutorial step to Beacon'    // Semantic-UI CSS magic: http://semantic-ui.com/modules/popup.html#tooltip
+            data-position='bottom right'                 // Semantic-UI CSS magic
+            data-variation='mini'                        // Semantic-UI CSS magic
+            className={`joyride-tooltip__close${(output.header ? ' joyride-tooltip__close--header' : '')}`}
+            style={styles.buttons.close}
+            data-type="close"
+            onClick={onClick}>
+          &nbsp;
+        </a>
         {output.header}
         <div style={{display: 'flex', flexDirection: 'row'}}>
           {step.imageSrc && <img src={step.imageSrc} style={{height: '100%'}}/> }

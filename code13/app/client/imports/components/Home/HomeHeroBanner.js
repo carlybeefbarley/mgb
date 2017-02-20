@@ -15,10 +15,10 @@ const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
     return <Header as='h1' size='large' style={{fontSize: '1em', margin: '0.75em 0em 0.75em 0em'}} content='MGB'/>
 
   return (
-    <Segment basic className="slim" style={{ minWidth: '200px', margin: '0 auto', paddingTop: '2.5em', paddingBottom: '4em' }}>
+    <Segment padded='very' basic vertical>
       <Grid.Row>
         <Grid.Column>
-          <Image size='small' floated='right' src={makeCDNLink("/images/mascots/team.png")} style={{width: "480px"}} />
+          <Image size='large' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
           <Header as='h1' size='huge' style={{fontSize: '3em', marginBottom: '0.5em'}}>
             <span style={isSmall ? {} : { whiteSpace: 'nowrap'}}>My Game Builder</span>
             <em className="sub header" style={{fontSize: '0.5em'}}>Make Games. Make Friends. Have Fun.</em>
@@ -68,11 +68,11 @@ HomeHeroBanner.propTypes = {
 
 
 HomeHeroBanner.responsiveRules = {  // Note that this could also be a function that returns this kind of object
-  'impossible': {  
+  'impossible': {
     minWidth: 0,
     maxWidth: 40
   },
-  'small': {  
+  'small': {
     minWidth: 0,
     maxWidth: 400
   }

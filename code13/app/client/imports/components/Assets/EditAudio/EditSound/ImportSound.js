@@ -67,7 +67,7 @@ export default class ImportSound extends React.Component {
         this.setState({ status: "empty" })
         return
       }
-      
+
   		if(file.type === "audio/wav"){
   			this.loadWav(file)	// read as arraybuffer and encode to mp3
   		} else {
@@ -94,7 +94,7 @@ export default class ImportSound extends React.Component {
 
         lamejs.encodeMono(1, audioBuffer.sampleRate, samples, (audioObject) => {
 	      	this.setState({ status: "uploaded" })
-	    		this.audioLoaded(audioObject)  
+	    		this.audioLoaded(audioObject)
 	      })
       })
     }
@@ -104,8 +104,8 @@ export default class ImportSound extends React.Component {
   loadEncoded(file){
   	let reader = new FileReader()
     reader.onload = (ev) => {
-      let audioData = ev.target.result        
-      
+      let audioData = ev.target.result
+
       let tmpMusic = new Audio()
       tmpMusic.oncanplaythrough = (e) => { // music is uploaded to browser
       	this.setState({ status: "uploaded" })
@@ -113,9 +113,9 @@ export default class ImportSound extends React.Component {
 					this.audioLoaded(tmpMusic)
 				} else {
 					console.warn("Data type is not audio!")
-				} 	
+				}
       }
-      tmpMusic.src = audioData	        
+      tmpMusic.src = audioData
     }
     reader.readAsDataURL(file)
   }
@@ -156,7 +156,7 @@ export default class ImportSound extends React.Component {
 			<div className="content">
 
 				{/*** upload form ***/}
-      	<div className={"uploadForm " + (this.state.status === "uploaded" ? "hidden " : " ") + (this.state.status === "draggedOver" ? "draggedOver" : "")}
+      	<div className={"uploadForm " + (this.state.status === "uploaded" ? "mgb-hidden " : " ") + (this.state.status === "draggedOver" ? "draggedOver" : "")}
       		onDragOver={this.onDragOver.bind(this)}
       		onDragLeave={this.onDragLeave.bind(this)}
       		onDrop={this.onDrop.bind(this)}>
@@ -167,7 +167,7 @@ export default class ImportSound extends React.Component {
       	</div>
 
       {/*** uploaded sound ***/}
-      	<div className={this.state.status === "uploaded" ? "" : "hidden"}>
+      	<div className={this.state.status === "uploaded" ? "" : "mgb-hidden"}>
 	        <div className="row">
 		        <button className="ui icon button small" onClick={this.togglePlaySound.bind(this)}>
 						  <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>
@@ -184,11 +184,11 @@ export default class ImportSound extends React.Component {
 						</button>
 	        </div>
 	        <div className="ui divider"></div>
-	        
+
 	        <div id="importSoundPlayer"></div>
 	      </div>
 
 	    </div>
 		);
-	}	
+	}
 }

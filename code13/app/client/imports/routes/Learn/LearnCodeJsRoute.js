@@ -2,9 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Segment, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
-
-
+import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
 const jsItems = [
   {
@@ -43,68 +41,44 @@ const jsItems = [
     content: 'If statements',
     desc: ``
   },
-  
   {
     icon: 'code',
     link: '',
     content: 'Functions',
     desc: ``
   },
-
 ]
 
-
-
-const LearnCodeJsRoute = ( { currUser }, context ) => { 
+const LearnCodeJsRoute = ({ currUser }, context) => {
   return (
-    <Segment basic padded className="slim" style={ { margin: '0 auto', minWidth: '680px' } }>
-      <Grid stackable>
-        <Grid.Row >
-          <Header as='h1' size='huge' style={{fontSize: '2.5em'}}>
-            JavaScript programming basics
-            <em className="sub header">Click on item and explore it</em>
-          </Header>
-        </Grid.Row>
-        <Grid.Row>
-          <Card.Group itemsPerRow={1} stackable className="skills">
-            
-            { jsItems.map( (area, idx) => (
+    <Grid container columns='1'>
+      <Divider hidden /> <Grid.Column>
+      <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+        JavaScript programming basics
+        <em className="sub header">Click on item and explore it</em>
+      </Header>
+    </Grid.Column>
+      <Grid.Column>
+        <Card.Group itemsPerRow={1} stackable className="skills">
+          { jsItems.map( (area, idx) => (
+            <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
+              <Card.Content>
+                <p style={descStyle}>
+                  <i className={area.icon + " large icon"}></i>
+                  <b>{area.content}</b>
+                  &nbsp;- {area.desc}
+                </p>
 
-
-              <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle} to={area.link}>
-                <Card.Content>
-                  <p style={descStyle}>
-                    <i className={area.icon+" large icon"}></i>
-                    <b>{area.content}</b>
-                    &nbsp;- {area.desc}
-                  </p>
-                  
-                </Card.Content>
-              </QLink>
-
-
-              ))
-            }
-
-          </Card.Group>
-        </Grid.Row>
-      </Grid>
-    </Segment>
+              </Card.Content>
+            </QLink>
+          ) ) }
+        </Card.Group>
+      </Grid.Column>
+    </Grid>
   )
 }
 
 export default LearnCodeJsRoute
-
-
-
-
-
-
-
-
-
-
-// styles
 
 const cardStyle = {
   color: "#2e2e2e"

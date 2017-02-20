@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Label } from 'semantic-ui-react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -33,7 +34,7 @@ const flexPanelViews = [
   { tag: 'settings',  lev: 3,  name: 'settings', icon: 'settings',   hdr: 'Settings',      el: fpSettings,      superAdminOnly: false, mobileUI: false  },
 
 // Experimental UI for mobile
-//{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },  
+//{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
   { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
   { tag: 'network',   lev: 6,  name: 'network',  icon: 'signal',     hdr: 'Network',       el: fpNetwork,       superAdminOnly: false, mobileUI: false },
 //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
@@ -53,6 +54,12 @@ export default FlexPanel = React.createClass({
     fpIsFooter:             PropTypes.bool.isRequired,    // If true, then flexPanel is fixed page footer
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
+
+    chatChannelTimestamps:  PropTypes.array,              // as defined by Chats.getLastMessageTimestamps RPC
+    hazUnreadChats:         PropTypes.array,              // This is just a subset of the data in chatChannelTimestamps,
+                                                          // but simplified - just an Array of chat channelNames with at
+                                                          // least one unread message. Handy for notification UIs, and quicker to parse
+
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
     joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
@@ -83,9 +90,9 @@ export default FlexPanel = React.createClass({
   },
 
   getMeteorData: function() {
-    return { 
+    return {
       fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel')),
-      meteorStatus:   Meteor.status() 
+      meteorStatus:   Meteor.status()
     }
   },
 
@@ -152,7 +159,7 @@ export default FlexPanel = React.createClass({
 
   getFpButtonSpecialStyleForTag: function(tag) {
     const { meteorStatus } = this.data
-    
+
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return { backgroundColor: 'rgba(255,0,0,0.2)' }
 
@@ -174,7 +181,7 @@ export default FlexPanel = React.createClass({
 
   getFpButtonAutoShowForTag: function(tag) {
     const { meteorStatus } = this.data
-    
+
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return true
 
@@ -185,11 +192,11 @@ export default FlexPanel = React.createClass({
   },
 
   render: function () {
-    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle, fpIsFooter } = this.props
+    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle, fpIsFooter, hazUnreadChats } = this.props
 
     const isMobileUI = fpIsFooter
     const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
-    const panelStyle = fpIsFooter ? 
+    const panelStyle = fpIsFooter ?
     {
       position:     'fixed',
       top:          flexPanelIsVisible ? '0px' : undefined,
@@ -215,8 +222,10 @@ export default FlexPanel = React.createClass({
       backgroundColor: 'rgba(242, 242, 242, 1)'   //making this non-opaque solves the overlap issues on very narrow screens
     }
 
-    const miniNavClassNames = fpIsFooter ? 'ui horizontal six item icon fluid menu' : 'ui attached vertical icon menu' 
-    const miniNavStyle = fpIsFooter ? 
+    const miniNavClassNames = fpIsFooter
+      ? 'ui horizontal six item icon fluid menu'
+      : 'ui attached vertical horizontally fitted labeled icon menu'
+    const miniNavStyle = fpIsFooter ?
     {
       position:     'fixed',
       bottom:       '0px',
@@ -229,8 +238,8 @@ export default FlexPanel = React.createClass({
       marginBottom: 0,
       backgroundColor: 'none',
       zIndex:       300     // Temp Hack
-      
-    } 
+
+    }
     :
     {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
       position:     'fixed',
@@ -270,6 +279,13 @@ export default FlexPanel = React.createClass({
       zIndex:       301     // Temp Hack
     }
 
+    const menuItemIndicatorStyle = {
+      position: 'absolute',
+      top: '0.5em',
+      right: '0.5em',
+      margin: '0',
+    }
+
     const flexPanelChoice = this._getSelectedFlexPanelChoice()
     const flexPanelHdr = flexPanelChoice.hdr
     const flexPanelIcon = flexPanelChoice.icon
@@ -300,6 +316,7 @@ export default FlexPanel = React.createClass({
                       currUserProjects={this.props.currUserProjects}
                       user={this.props.user}
                       meteorStatus={this.data.meteorStatus}
+                      chatChannelTimestamps={this.props.chatChannelTimestamps}
                       joyrideSteps={this.props.joyrideSteps}
                       joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
                       joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}
@@ -324,16 +341,16 @@ export default FlexPanel = React.createClass({
               return null
             if (v.lev > fpFeatureLevel && this.getFpButtonAutoShowForTag(v.tag) !== true)
               return null
-            if (v.superAdminOnly && !this.props.isSuperAdmin) 
+            if (v.superAdminOnly && !this.props.isSuperAdmin)
               return null
             if (fpIsFooter && v.lev > 4)
               return null
 
             const specialSty = this.getFpButtonSpecialStyleForTag(v.tag)
             const specialClass = this.getFpButtonSpecialClassForTag(v.tag)
-            
+
             return (
-              <div
+              <a
                 id={`mgbjr-flexPanelIcons-${v.tag}`}
                 key={v.tag}
                 style={specialSty}
@@ -341,8 +358,11 @@ export default FlexPanel = React.createClass({
                 title={v.name}
                 onClick={this.fpViewSelect.bind(this, v.tag)}>
                 <i className={v.icon + specialClass + " large icon"}></i>
-                { fpIsFooter ? null : <span>{v.name}</span> }
-              </div>
+                { fpIsFooter ? null : v.name }
+                {v.tag === 'chat' && hazUnreadChats.length > 0 && (
+                  <Label color='red' empty circular style={menuItemIndicatorStyle} />
+                )}
+              </a>
             )
           })}
         </div>

@@ -31,7 +31,7 @@ export default class Generate8bit extends React.Component {
   		bpm: 140,
   		isBass: true,
   		bassVolume: 4,
-  		isLoop: true, 
+  		isLoop: true,
 
   		pianoParams: {
 				v: Math.floor(Math.random()*4)-2, 		// -2 1
@@ -82,8 +82,8 @@ export default class Generate8bit extends React.Component {
 				this.play()
 				this.setState({ isGenerating: false, isAudio: true })
 			})
-			
-		}, 50)		
+
+		}, 50)
 	}
 
 	randomize(){
@@ -102,7 +102,7 @@ export default class Generate8bit extends React.Component {
 		var downsample=2; //increasing this will speed up generation but yield lower-res sound
 		var bpm = this.state.bpm;
 		bpm=1/(bpm/120);
-		var duration=song.bars*song.secperbar*bpm;//duration of the song in seconds		
+		var duration=song.bars*song.secperbar*bpm;//duration of the song in seconds
 		var data=[];
 		for (var t=0;t<Math.round(this.sampleRate*duration);t++) {data[t]=0;}
 
@@ -111,7 +111,7 @@ export default class Generate8bit extends React.Component {
 			channel=song.Channels[i];
 			instrument=channel.instrument;
 			for (var n in channel.notes)
-			{				
+			{
 				note=channel.notes[n];
 				// console.log(note.vol)
 				var ns=Math.floor(note.start*this.sampleRate*bpm);
@@ -123,7 +123,7 @@ export default class Generate8bit extends React.Component {
 					{data[Math.floor(t)+d]+=thisdata;}
 					//data[Math.floor(t)]+=instrument.generator(Math.floor(t),note.key/88,ns,ne)*note.vol;
 				}
-				
+
 			}
 		}
 
@@ -136,10 +136,10 @@ export default class Generate8bit extends React.Component {
 		// return audio;
 	}
 
-	drawNotes(song, bpm, duration){	
+	drawNotes(song, bpm, duration){
 		this.ctx.fillStyle='#ffffff';
 		this.ctx.fillRect(0, 0, this.state.canvasWidth, this.state.canvasHeight);
-		
+
 		for (let i in song.Channels)
 		{
 			let channel=song.Channels[i];
@@ -149,7 +149,7 @@ export default class Generate8bit extends React.Component {
 				let note=channel.notes[n];
 				let ns=((note.start*bpm)/duration) * this.state.canvasWidth
 				let ne=((note.end*bpm)/duration) * this.state.canvasWidth
-				
+
 				if (i==0) this.ctx.fillStyle='rgba(128,128,255,0.5)';
 				else if (i==1) this.ctx.fillStyle='rgba(128,255,128,0.5)';
 				else if (i==2) this.ctx.fillStyle='rgba(255,128,128,0.5)';
@@ -224,12 +224,12 @@ export default class Generate8bit extends React.Component {
 		return (
 			<div className="content">
 				<div className="row">
-					<button className={"ui button "} 
+					<button className={"ui button "}
               onClick={this.randomize.bind(this)}>
               Randomize
           </button>
 
-          <button className={"ui blue button " + (this.state.isGenerating ? "loading" : "")} 
+          <button className={"ui blue button " + (this.state.isGenerating ? "loading" : "")}
               onClick={this.generate.bind(this)}>
               Generate
           </button>
@@ -249,13 +249,13 @@ export default class Generate8bit extends React.Component {
 				</div>
 				<div className="ui divider"></div>
 				<div>
-					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"} className={this.state.isHidden ? "hidden" : ""}></canvas>
+					<canvas ref="canvas" width={this.state.canvasWidth+"px"} height={this.state.canvasHeight+"px"} className={this.state.isHidden ? "mgb-hidden" : ""}></canvas>
 				</div>
 				<div style={{width:"150px", float:"left", marginRight:"20px"}}>
 					<div>
 						<div title="Beats per minute"><b>BPM</b></div>
-	    			<input type="range" value={this.state.bpm} min={this.isFirefox ? "60" : "30"} max="240" 
-		    			onChange={this.changeBPM.bind(this)} 
+	    			<input type="range" value={this.state.bpm} min={this.isFirefox ? "60" : "30"} max="240"
+		    			onChange={this.changeBPM.bind(this)}
 		    			/>
 	    		</div>
 	    		<div title="Enabling, disabling bass"><b>Bass</b></div>
@@ -265,8 +265,8 @@ export default class Generate8bit extends React.Component {
 	        </div>
 	        <div>
 						<div title="Bass volume"><b>Bass volume</b></div>
-	    			<input type="range" value={this.state.bassVolume*10} min="0" max="60" 
-		    			onChange={this.changeBassVolume.bind(this)} 
+	    			<input type="range" value={this.state.bassVolume*10} min="0" max="60"
+		    			onChange={this.changeBassVolume.bind(this)}
 		    			/>
 	    		</div>
 	    		<div title="Enchance piano on second part of song"><b>Enchance piano</b></div>
@@ -289,5 +289,5 @@ export default class Generate8bit extends React.Component {
     		<div style={{clear:"both"}}></div>
 	    </div>
 		)
-	}	
+	}
 }

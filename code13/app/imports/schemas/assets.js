@@ -259,6 +259,9 @@ Meteor.methods({
     selector = { _id: docId }
     count = Azzets.update(selector, { $set: data } )
 
+    if (Meteor.isServer) {
+      console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`) // These fields might not be provided for updates
+    }
     return count
   }
 

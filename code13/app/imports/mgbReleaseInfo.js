@@ -13,6 +13,93 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Mon Feb 20 2017 09:10 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3338'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset fork',
+          'type': 'bugfix',
+          'changeName': 'Asset fork bugfix',
+          'changeSummary': 'Fixed the assetName error on fork.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Sun Feb 19 2017 21:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3338'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'improvement',
+          'changeName': 'Chat Notifications and Read/Unread',
+          'changeSummary': 'Moved chat indicator back to Right-hand column. It was weird on the top.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'project.fork',
+          'type': 'feature',
+          'changeName': 'Project Fork tracking',
+          'changeSummary': 'The Project overview page now has an improved fork UI, and a way to track parents and children - very similar to the Asset fork tracker UI',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Sat Feb 18 2017 14:40 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3314'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'feature',
+          'changeName': 'Chat Notifications and Read/Unread',
+          'changeSummary': 'Chat icon in top header Nav Menus shows orange if there are unread mesages on any channel. The Chat channels list in the Chat Flex Panel also shows channels with unread messages in orange, channels with no messages at all in light grey, and read channels in normal-grey color. Also prevented script tag insertion in messages. Now with added bugfixes.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial dialogs',
+          'changeSummary': 'Fixed the ugly X icon and added a tooltip to explain what it does. \'Exit\' button renamed to \'QUIT\' for clarity.',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
     {
       'timestamp': 'Thu Feb 16 2017 20:00 GMT-0800 (PST)',
 

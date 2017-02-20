@@ -569,7 +569,7 @@ export default class SpriteLayers extends React.Component {
 
       {/** Animation tabs **/}
 
-            <tr className={"animTR " + ((!c2.animations || c2.animations.length === 0) ? "hidden" : "")}>
+            <tr className={"animTR " + ((!c2.animations || c2.animations.length === 0) ? "mgb-hidden" : "")}>
               <th></th>
               <th></th>
               <th></th>
@@ -717,7 +717,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
 
         {/** Previews for frames **/}
-            <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "hidden")}>
+            <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "mgb-hidden")}>
               <th></th>
               <th></th>
               <th></th>

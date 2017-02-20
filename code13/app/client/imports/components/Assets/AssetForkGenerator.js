@@ -1,13 +1,13 @@
 import _ from 'lodash'
 import moment from 'moment'
 import React, { PropTypes } from 'react'
-import { Popup, Label, Button } from 'semantic-ui-react'
+import { Popup, Label, Button, Icon, Segment } from 'semantic-ui-react'
 
 
 const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) => {
   const numChildren = _.isArray(asset.forkChildren) ? asset.forkChildren.length : 0
   const fpLen = _.isArray(asset.forkParentChain) ? asset.forkParentChain.length : 0
-  const children = _.map(asset.forkChildren, f => { 
+  const children = _.reverse(_.map(asset.forkChildren, f => { 
     const ago = moment(f.forkDate).fromNow()        // It's just a popup, so no need to make it reactive
     return (
       <div key={f.assetId} >
@@ -21,7 +21,7 @@ const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) =>
         <small style={{color: '#c8c8c8'}}>&ensp;{ago}</small>
       </div>
     )
-  })
+  }))
 
   return (
     <Popup
@@ -43,54 +43,52 @@ const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) =>
           { numChildren ? `${numChildren} Forks` : 'Fork Asset' }
         </Popup.Header>
         <Popup.Content>
-          <p>
+          <Segment basic>
             Forks are copies of an existing Asset where the 'parent-to-child' chain is tracked.
-          </p>
-          <p>
             <Button 
               as='div'
               onClick={doForkAsset}
               disabled={isForkPending || !canFork}
               size='tiny'
+              style={{ margin: '1em 1em 0em 2em' }}
               compact 
               color={ isForkPending ? 'orange' : 'green' }
               icon='fork'
-              data-tooltip={canFork ? `Fork your own copy of ${asset.dn_ownerName}:${asset.name} to your account` : 'You are not logged in so cannot fork'}
-              data-position='left center'
-              data-inverted=''
-              data-variation='tiny'
-              content={ isForkPending ? 'Forking...' : 'Create Fork' } />
-            </p>
-          <p>
+              content={ isForkPending ? 'Forking...' : 'Fork this Asset to my Account' } />
+          </Segment>
+
             { fpLen === 0 ? (
                 <div>
-                  <b>Originally Created Content</b>
-                  <div>&nbsp;Not forked from another Asset within this system</div>
+                  <b>Originally created Content</b>
+                  <div>
+                    &emsp;Not forked from another Asset within this system
+                  </div>
                 </div>
               ) : (
                 <div>
                   <b>Forked from:</b>
-                  { _.reverse(_.map(asset.forkParentChain, (fp, idx) => (
-                    <div key={fp.forkDate} style={{paddingLeft: `${(fpLen-idx)*4}px`}}>
-                      { idx === (fpLen-1) ? '' : '...' }
-                      <QLink to={`/u/${fp.parentOwnerName}`}>
-                        {fp.parentOwnerName}
-                      </QLink>
-                      {' : '}
-                      <QLink to={`/u/${fp.parentOwnerName}/asset/${fp.parentId}`}>
-                        <span style={{color: 'blue'}}>{fp.parentAssetName}</span>
-                      </QLink>
-                      <small style={{color: '#c8c8c8'}}>&ensp;{moment(fp.forkDate).fromNow() }</small>
-                    </div>
-                  )))}
+                  <div>
+                    { _.reverse(_.map(asset.forkParentChain, (fp, idx) => (
+                      <div key={fp.forkDate} style={{paddingLeft: `${((fpLen-idx)*4)+4}px`}}>
+                        { idx === (fpLen-1) ? '' : '...' }
+                        <QLink to={`/u/${fp.parentOwnerName}`}>
+                          {fp.parentOwnerName}
+                        </QLink>
+                        {' : '}
+                        <QLink to={`/u/${fp.parentOwnerName}/asset/${fp.parentId}`}>
+                          <span style={{color: 'blue'}}>{fp.parentAssetName}</span>
+                        </QLink>
+                        <small style={{color: '#c8c8c8'}}>&ensp;{moment(fp.forkDate).fromNow() }</small>
+                      </div>
+                    )))}
+                  </div>
                 </div>
               )
             }
-          </p>
-          <p style={{maxHeight: '200px', overflow: 'scroll'}}>
-            <b>{ numChildren } Forks:</b>
+          <div style={{marginTop: '1em', maxHeight: '200px', overflow: 'scroll'}}>
+            <b><Icon name='fork'/>{ numChildren } Forks:</b>
             { numChildren ? children : <div>&nbsp;(None yet)</div> }
-          </p>
+          </div>
         </Popup.Content>
       </Popup>
   )

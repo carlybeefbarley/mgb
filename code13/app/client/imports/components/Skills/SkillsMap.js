@@ -137,30 +137,30 @@ export default class SkillTree extends React.Component {
         const areaName = (key === '') ? i : key
         const area = _.find(skillAreaItems, ['tag', areaName] )
         const color = area ? area.color : 'green'
-        const valueSty = { 
+        const valueSty = {
           backgroundColor: color,
           opacity:  0.3,
           width: (this.totals[newKey].has / this.totals[newKey].total) * 100 + '%',
           pointerEvents: 'none'
         }
 
-        const boxSty = { 
-          position:         'relative', 
-          backgroundColor:  'rgba(0,0,0,0.1)', 
-          margin:           (key === '') ? 'none' : '8px', 
-          padding:          '0px', 
-          border:           'none', // was solid 1px', 
-          boxShadow:        'inset 1px 1px 2px rgba(0,0,0,0.5)' 
-          // padding:          '3px 5px', 
-          // border:           'solid 1px', 
-          // boxShadow:        'inset 1px 1px 2px rgba(0,0,0,0.5)' 
+        const boxSty = {
+          position:         'relative',
+          backgroundColor:  'rgba(0,0,0,0.1)',
+          margin:           (key === '') ? 'none' : '8px',
+          padding:          '0px',
+          border:           'none', // was solid 1px',
+          boxShadow:        'inset 1px 1px 2px rgba(0,0,0,0.5)'
+          // padding:          '3px 5px',
+          // border:           'solid 1px',
+          // boxShadow:        'inset 1px 1px 2px rgba(0,0,0,0.5)'
         }
-        
+
         nodes.push(
           <div
             key={i}
             style={boxSty}
-            className={disabled ? 'animate disabled' : 'animate'}
+            className={disabled ? 'animate mgb-disabled' : 'animate'}
             data-requires={requires}>
             <div className='mgb-skillsmap-progress'>
               <div className='mgb-skillsmap-value animate' style={valueSty}></div>
@@ -173,7 +173,7 @@ export default class SkillTree extends React.Component {
             {this.renderSkillNodesMid(skillNodes[i], onlySkillArea, newKey, skillNodes[i].$meta.requires)}
           </div>
         )
-      } 
+      }
       else
         nodes.push(this.renderSingleNode(skillNodes[i], i, newKey, disabled))
     }
@@ -199,7 +199,7 @@ export default class SkillTree extends React.Component {
 
       const area = _.find(skillAreaItems, ['tag', i] )
       const color = area ? area.color : 'green'
-      const valueSty = { 
+      const valueSty = {
         backgroundColor: color,
         opacity:  0.3,
         width: (this.totals[i].has / this.totals[i].total) * 100 + '%'
@@ -207,8 +207,8 @@ export default class SkillTree extends React.Component {
 
       if (!onlySkillArea || onlySkillArea === i)
         nodes.push(
-          <div 
-              key={ 'hdr'+i } 
+          <div
+              key={ 'hdr'+i }
               className='animate'
               onClick={() => { this.setState( { zoomLevel: 2, skillAreaOverride: i } ) } }
               >
@@ -235,7 +235,7 @@ export default class SkillTree extends React.Component {
         continue
       const area = _.find(skillAreaItems, ['tag', i] )
       const color = area ? area.color : 'green'
-      const valueSty = { 
+      const valueSty = {
         backgroundColor: color,
         opacity:  0.3,
         width: (this.totals[i].has / this.totals[i].total) * 100 + '%'
@@ -267,11 +267,11 @@ export default class SkillTree extends React.Component {
   renderSkillNodes (skillNodes, onlySkillArea) {
     switch (this.state.zoomLevel)
     {
-    case 0: 
+    case 0:
       return this.renderSkillNodesOneLine(skillNodes, onlySkillArea)
-    case 1: 
+    case 1:
       return this.renderSkillNodesSmall(skillNodes, onlySkillArea)
-    case 2: 
+    case 2:
       return this.renderSkillNodesMid(skillNodes, onlySkillArea)
     }
   }
@@ -283,7 +283,7 @@ export default class SkillTree extends React.Component {
       const nodeName = onlyAreas.shift()
       if(tmpNodes[nodeName]){
         tmpNodes = tmpNodes[nodeName]
-      } 
+      }
     }
     return {
       skillNodes: tmpNodes,
@@ -300,7 +300,7 @@ export default class SkillTree extends React.Component {
       return <div className='ui warning message'>This user does not yet have any Skills stored in our database. But I'm sure they are awesome anyway</div>
 
     let skillNodes = SkillNodes
-    
+
     if(subSkill){
       const subSkillNodes = this.getSubSkillNodes(SkillNodes, onlySkillArea)
       // console.log(subSkillNodes)
@@ -353,7 +353,7 @@ export default class SkillTree extends React.Component {
 
   zoomout () {
     const { zoomLevel } = this.state
-    if (this.props.ownsProfile && zoomLevel > 0) 
+    if (this.props.ownsProfile && zoomLevel > 0)
       this.setState( { zoomLevel: zoomLevel-1, skillAreaOverride: null } )
   }
 }

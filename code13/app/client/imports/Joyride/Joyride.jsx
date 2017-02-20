@@ -117,7 +117,7 @@ export default class Joyride extends React.Component {
     showStepsProgress:    PropTypes.bool,
     steps:                PropTypes.array,
     tooltipOffset:        PropTypes.number,
-    type:                 PropTypes.string,
+    type:                 PropTypes.string,       // Joyride type: 'continuous', 'guided'.   ?? Still needed ??
     locale:               PropTypes.object,
     preparePageHandler:   PropTypes.func          // App Provides these to handle step.preparePage strings
   };
@@ -142,7 +142,7 @@ export default class Joyride extends React.Component {
       close:  'Close',
       last:   'Done',
       next:   'Next',
-      skip:   'Exit',
+      skip:   'QUIT',
       submit: 'Submit Code',
       reset:  'Reset',
       help:   'Help',
@@ -421,45 +421,63 @@ export default class Joyride extends React.Component {
   onClickTooltip(e) {
     const state = this.state
     const { callback, steps, type, assetId } = this.props
-    const el = e.currentTarget.className.indexOf('joyride-') === 0 && e.currentTarget.tagName === 'A' ? e.currentTarget : e.target
-    const dataType = el.dataset.type
+    const isTagNameALINK = (_.startsWith(e.currentTarget.className, 'joyride-') && e.currentTarget.tagName === 'A' ) 
+    const el = isTagNameALINK ? e.currentTarget : e.target
 
+    const dataType = el.dataset.type
     if (el.className.indexOf('joyride-') === 0) {
-      if(dataType === 'next' && steps[state.index].submitCode){
-        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
-        const url = `❮!vault:${assetId}❯`
-        // TODO uncoment this. Currently don't want to spam chat
-        ChatSendMessageOnChannelName('G_MGBHELP_', 'Check my Phaser task ' + url)
+
+      // We have some special MGB-integration cases that are only on
+      // buttons, never on the overlay. So handle these first...
+      if (e.target.className !== 'joyride-overlay') {
+        // Special MGB-integration case: 'submitCode' on Next button (!?)
+        if (dataType === 'next' && steps[state.index].submitCode) {
+          const url = `❮!vault:${assetId}❯`
+          ChatSendMessageOnChannelName('G_MGBHELP_', 'Check my Phaser task ' + url)
+          utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+          e.preventDefault()
+          e.stopPropagation()
+          return // no other action
+        }
+        // Special MGB-integration case: 'submitCode' on Back button (!?)
+        if (dataType === 'back' && steps[state.index].submitCode) {
+          const url = `❮!vault:${assetId}❯`
+          ChatSendMessageOnChannelName('G_MGBHELP_', 'Help me with code asset ' + url)
+          utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+          e.preventDefault()
+          e.stopPropagation()
+          return // no other action
+        }
+        // Special MGB-integration case: 'offerRevertToFork' on Back button
+        if (dataType === 'back' && steps[state.index].offerRevertToFork) {
+          // TODO: Update tooltip.jsx to not assume secondary is always data-type='back'
+          // AssetEditRoute owns the state of assets, so we need to talk to that
+          offerRevertAssetToForkedParentIfParentIdIs(steps[state.index].offerRevertToFork)
+          e.preventDefault()
+          e.stopPropagation()
+          return // no other action
+        }
       }
-      else 
-      if(dataType === 'back' && steps[state.index].submitCode){
-        // TODO check why this calls twice
-        utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
-        const url = `❮!vault:${assetId}❯`
-        ChatSendMessageOnChannelName('G_MGBHELP_', 'Help me with code asset ' + url)
-        return // no other action
-      }
-      if (dataType === 'back' && steps[state.index].offerRevertToFork) {
-        // TODO: Update tooltip.jsx to not assume secondary is always data-type='back'
-        // AssetEditRoute owns the state of assets, so we need to talk to that
-        offerRevertAssetToForkedParentIfParentIdIs(steps[state.index].offerRevertToFork)
-        e.preventDefault()
-        e.stopPropagation()
-        return // no other action
-      } else
+
+      // Special MGB-integration case: 'offerRevertToFork' on Back button
       if (dataType === 'next' && steps[state.index] && steps[state.index].awaitCompletionTag)
       {
         // a step.awaitCompletionTag property such as 
         //      awaitCompletionTag: 'mgbjr-CT-flexPanelIcons-assets-show'
         // will disable Next, and instead wait for the real action to ocurr. 
-        this.logger(`joyride:onClickTooltip: next-awaitCompletionTag`, ['step.awaitCompletionTag:', steps[state.index].awaitCompletionTag ] )
-        return 
-        // Note that we don't call   e.preventDefault() ;  e.stopPropagation() since we want to pass the clicks on to what might do the task requested
-        // However.. this is all a bit odd.. React SyntheticEvents don't propagate in the same way as browser's native events...
+        this.logger(
+          `joyride:onClickTooltip: next-awaitCompletionTag`, 
+          ['step.awaitCompletionTag:', steps[state.index].awaitCompletionTag ] 
+        )
+        return // no other action
+        // Note that we DO NOT call  { e.preventDefault() ; e.stopPropagation() } since we 
+        // want to pass the clicks on to whatever UI might let the user do the task requested
+        //   However.. this is all a bit odd.. React SyntheticEvents don't propagate in the same
+        //   way as browser's native events...
       }
       e.preventDefault()
       e.stopPropagation()
-      const tooltip = document.querySelector('.joyride-tooltip')
+
       if (dataType === 'next' && steps[state.index] && steps[state.index].code)
       {
         const code = steps[state.index].code
@@ -467,30 +485,30 @@ export default class Joyride extends React.Component {
         const event = new CustomEvent('mgbjr-stepAction-appendCode', { 'detail': code } )
         window.dispatchEvent(event)
       }
-      let newIndex = state.index + (dataType === 'back' ? -1 : 1)
 
+      // Calculate newIndex.. previous, same, or next step
+      let newIndex = state.index + (dataType === 'back' ? -1 : 1)
       if (dataType === 'skip') {
-        this.setState({  skipped: true })
+        this.setState( { skipped: true } )
         newIndex = steps.length + 1
       }
 
       if (dataType) {
-        const shouldDisplay = ['continuous', 'guided'].indexOf(type) > -1
-          && ['close', 'skip'].indexOf(dataType) === -1
-          && Boolean(steps[newIndex])
-
+        const shouldDisplay = (
+          ( _.includes(['continuous', 'guided'], type ) ) && 
+          ( !_.includes(['close', 'skip'], dataType) )  && 
+          ( Boolean(steps[newIndex]) )
+        )
         this.toggleTooltip(shouldDisplay, dataType == 'close' ? state.index : newIndex, dataType)
       }
 
-      if (e.target.className === 'joyride-overlay') {
-        if (typeof callback === 'function') {
-          callback({
-            action: 'click',
-            type: 'overlay',
-            step: steps[state.index]
-          })
+      if ( e.target.className === 'joyride-overlay' && _.isFunction(callback) )
+        callback( { 
+          action: 'click', 
+          type: 'overlay', 
+          step: steps[state.index] 
         }
-      }
+      )
     }
   }
 

@@ -29,7 +29,11 @@ const validate = {
   },
 
   projectName: function (text) {
-    return validate.lengthCap(text, 64) && -1 === text.search(/[\#\:\?]/)
+    return validate.lengthCap(text, 64) && text.length > 0 && -1 === text.search(/[\#\:\?]/)
+  },
+
+  projectDescription: function(text) {
+    return validate.lengthCap(text, 120)
   },
 
   assetName: function(text) {

@@ -1081,7 +1081,7 @@ export default class EditGraphic extends React.Component {
     let w = this.props.asset.content2.width
     let h = this.props.asset.content2.height
     // console.log('erase frame', w, h)
-    
+
     this.previewCtxArray.map( (ctx) => {
       ctx.clearRect(0, 0, w, h)
     })
@@ -1633,7 +1633,7 @@ export default class EditGraphic extends React.Component {
             {<Toolbar actions={actions} config={config} name="EditGraphic" />}
           </Grid.Row>
 
-          <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "hidden")}>
+          <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "mgb-hidden")}>
             <div className="inline fields">
               <label>Scroll modes</label>
               {
@@ -1691,7 +1691,7 @@ export default class EditGraphic extends React.Component {
 
           </div>
 
-          <div className={this.state.selectRect ? "" : "hidden"}>
+          <div className={this.state.selectRect ? "" : "mgb-hidden"}>
             width: {this.state.selectDimensions.width} &nbsp;&nbsp;&nbsp; height: {this.state.selectDimensions.height}
           </div>
         </Grid.Column>

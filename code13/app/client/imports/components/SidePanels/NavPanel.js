@@ -19,7 +19,7 @@ export const getNavPanels = (currUser, showAll) => {
     left: [
       {
         name: 'mgb',                  // used for mgjr-np-{name}- id generation
-        icon: 'home',
+        icon: { name: 'home'},
         explainClickAction: "Shortcut: Clicking here jumps to the Home Page",
         hdr: (
             <Menu.Item color='black' style={{ padding: '0px 8px' }}>
@@ -51,7 +51,7 @@ export const getNavPanels = (currUser, showAll) => {
       {
         name: "learn",
         explainClickAction: "Shortcut: Clicking here jumps to the Learning Paths page",
-        icon: "student",
+        icon: { name: "student" },
         hdr: "Learn",
         to: '/learn',
         menu: [
@@ -99,7 +99,7 @@ export const getNavPanels = (currUser, showAll) => {
       {
         name: 'play',
         explainClickAction: "Shortcut: Clicking here jumps to the list of playable games",
-        icon: 'game',
+        icon: { name: 'game' },
         hdr: 'Play',
         to: '/games',
         menu: [
@@ -124,7 +124,7 @@ export const getNavPanels = (currUser, showAll) => {
       {
         name: 'meet',
         explainClickAction: "Shortcut: Clicking here jumps to the User search page",
-        icon: 'street view',
+        icon: { name: 'street view' },
         hdr: 'Meet',
         to: '/users',
         menu: [
@@ -167,7 +167,7 @@ export const getNavPanels = (currUser, showAll) => {
       showUserOptions && {
         name: 'assets',
         explainClickAction: "Shortcut: Clicking here jumps to the list of your Assets",
-        icon: 'pencil',
+        icon: { name: 'pencil' },
         hdr: 'Assets',
         to: uname ? `/u/${uname}/assets` : '/assets',
         menu: [
@@ -192,9 +192,9 @@ export const getNavPanels = (currUser, showAll) => {
       showUserOptions && {
         name: 'projects',
         explainClickAction: "Shortcut: Clicking here jumps to the list of your Projects",
-        icon: 'sitemap',
+        icon: { name: 'sitemap' },
         hdr: 'Projects',
-        to: uname ? `/u/${uname}/projects` : null,
+        to: `/u/${uname}/projects`,
         menu: [
           showUserOptions && {
             subcomponent: 'Item',
@@ -215,7 +215,7 @@ export const getNavPanels = (currUser, showAll) => {
       showGuestOptions && {
         name: 'login',
         hdr: 'Log in',
-        icon: 'sign in',
+        icon: { name : 'sign in' },
         style: { padding: '4px 16px'},
         menu: null,
         to: '/login'
@@ -223,7 +223,7 @@ export const getNavPanels = (currUser, showAll) => {
       showGuestOptions && {
         name: 'signup',
         hdr: 'Sign up',
-        icon: 'signup',
+        icon: { name: 'signup' },
         style: { padding: '4px 16px'},
         menu: null,
         to: '/signup'
@@ -231,7 +231,7 @@ export const getNavPanels = (currUser, showAll) => {
       {
         name: 'user',
         explainClickAction: "Shortcut: Clicking here jumps to your Profile Page", // if logged in, and this is used by tutorials, so that's ok
-        icon: 'user',
+        icon: { name: 'user' },
         hdr: 'Login',
         to: uname ? `/u/${uname}` : '/signup',
         menu: _.compact([
@@ -311,7 +311,7 @@ export default NavPanel = React.createClass({
     const { currUser, navPanelAvailableWidth } = this.props
     const menuStyle = { borderRadius: 0, marginBottom: 0 }
     const useIcons = navPanelAvailableWidth < 600  // px
-    const allNavPanels = getNavPanels(currUser)
+    const allNavPanels = getNavPanels(currUser, false)
 
     const userMenuKey = 'user'  // We render this specially, even though it's part of allNavPanels
     const userMenu = _.find(allNavPanels.right, { name: userMenuKey })
@@ -324,10 +324,12 @@ export default NavPanel = React.createClass({
           name={v.name}
           openLeft={side==='right'} 
           key={v.name} 
-          hdr={useIcons ? <Icon size='large' name={v.icon}/> : v.hdr} 
+          hdr={(useIcons || !v.hdr )? <Icon size='large' {...v.icon}/> : v.hdr} 
           menu={v.menu} 
           style={{ backgroundColor: (v.highlight ? 'orange' : '') }}
-          to={v.to}/>))
+          to={v.to}
+          query={v.query}
+          />))
 
     return (
       <Menu inverted style={menuStyle} id='mgbjr-np'>

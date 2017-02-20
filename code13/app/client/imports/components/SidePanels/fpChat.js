@@ -7,6 +7,7 @@ import { showToast } from '/client/imports/routes/App'
 import reactMixin from 'react-mixin'
 import { Chats } from '/imports/schemas'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+import { getLastReadTimestampForChannel, setLastReadTimestampForChannel } from '/imports/schemas/settings-client'
 
 import { logActivity } from '/imports/schemas/activity'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -20,6 +21,16 @@ import {
   chatParams, 
   makePresentedChannelName 
 } from '/imports/schemas/chats'
+
+
+const _colors = {
+  emptyChannel:      '#aaa',
+  unreadChannel:     'orange',
+  upToDateChannel:   '#333',
+
+  ownedProjectIcon:  'green',
+  memberProjectIcon: 'blue',
+}
 
 import moment from 'moment'
 
@@ -50,9 +61,23 @@ import moment from 'moment'
  √ [Deploy] More deploy ftw.
  √ [More testing] and fix any bad stuff
 
-∆ TODO (Phase 3: Notifications and Pinning)
- ◊ ...make this list of detailed work
- ◊ [feature] Pinning project chat
+√ DONE (Phase 3a: Read/Unread)
+ √ RPC to support getting aggregates on channels (This is not a fun thing to do as a subscription)
+ √ Call the Chats.getLastMessageTimestamps RPC from fpChats when channel selector shown
+ √ Implement user settings for most recent message read
+ √ Implement color-coding channels by read/unread, and refreshing on channel search ()
+ √ Implement updating current channel's read/unread for user if on channel (or if posts to channel)
+ √ [Merge] Merge into master and test
+ √ [Deploy] ya.
+ √ [More testing] and fix any bad stuff
+
+√ TODO (Phase 3b: Simple Notifications)
+ √ Move fpChats._requestChannelTimestampsNow up to App level
+ √ Add simple way to click a notification icon and go to the channel selector
+ √ [Merge] Merge into master and test
+ √ [Deploy] ya.
+ ◊ [More testing] and fix any bad stuff
+ ◊ Make the update of the orange chat icon quicker
 
 TODO (Phase 4: DMs)
  ◊ [Enable] Enable Send-to-DM in currUserCanSend()
@@ -73,11 +98,14 @@ TODO (Phase 5: Delete message)
  ◊ [Deploy] ya.
  ◊ [More testing] and fix any bad stuff
 
+TODO (Phase 6: Pinning chats)
+ ◊ [feature] Pinning project chat
 
-TODO (Phase 6: Refactor)
+
+TODO (Phase 7: Refactor)
  ◊ [Refactor] break into <fpChats> + <ChatChannelSelector> + <ChatChannelMessages>
 
-TODO (Phase 7: Embedded scope-related chat)
+TODO (Phase 8: Embedded scope-related chat)
  ◊ [feature] Allow <ChatChannelMessages> to be embedded in Project Overview (for owners/members)
  ◊ [Enable] Enable Send-to-Asset in currUserCanSend()
  ◊ [feature] Allow <ChatChannelMessages> to be embedded in Asset Overview (for owners/members)
@@ -86,7 +114,7 @@ TODO (Phase 7: Embedded scope-related chat)
  ◊ [Feature] Implement findObjectNameForChannelName() for Users
  ◊ [feature] Allow <ChatChannelMessages> to be embedded in User Profile - for a Wall-style experience
 
-TODO (Phase 8: Forums/Threads)
+TODO (Phase 9: Forums/Threads)
  ◊ ...make this list of detailed work
 
 */
@@ -111,8 +139,8 @@ const MessageTopDivider = ( { elementId, content, title } ) => (
 const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asset.name}❯`      // See https://en.wikipedia.org/wiki/Dingbat#Unicode ❮  U276E , U276F  ❯
 
 const ChatMessage = ( { msg } ) => {
-  let msg2 = ''
-  msg2 = msg.replace(/❮[^❯]*❯/g, function (e) {
+  const msg2 = msg.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const msg3 = msg2.replace(/❮[^❯]*❯/g, function (e) {
     const e2 = e.split(':')
     if (e2.length === 3){
       const userName=e2[0].slice(1)
@@ -129,8 +157,9 @@ const ChatMessage = ( { msg } ) => {
       return e
     }
   })
-  return <span dangerouslySetInnerHTML={{ __html: msg2}} />
+  return <span dangerouslySetInnerHTML={{ __html: msg3}} />
 }
+
 
 // This is a simple way to remember the channel key for the flexPanel since there is exactly one of these. 
 // Users got annoyed when they always went back to the default channel
@@ -142,12 +171,19 @@ export default fpChat = React.createClass({
 
   propTypes: {
     currUser:                 PropTypes.object,             // Currently Logged in user. Can be null/undefined
+    currUserProjects:         PropTypes.array,              // Projects list for currently logged in user
     user:                     PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     panelWidth:               PropTypes.string.isRequired,  // Typically something like "200px".
     isSuperAdmin:             PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
     subNavParam:              PropTypes.string.isRequired,  // "" or a string that defines the sub-nav within this FlexPanel
     handleChangeSubNavParam:  PropTypes.func.isRequired     // Call this back with the SubNav string (queryParam ?fp=___.subnavStr) to change it
   },
+
+  // Settings context needed for get/setLastReadTimestampForChannel
+  contextTypes: {
+    settings:    PropTypes.object
+  },
+
 
   _calculateActiveChannelName: function() {
     const { subNavParam } = this.props  // empty string means "default"
@@ -157,8 +193,13 @@ export default fpChat = React.createClass({
 
   getInitialState: function() {
     return {
-      view: 'comments',                       // Exactly one of ['comments', 'channels']
-      pastMessageLimit: initialMessageLimit
+      view:                                 'comments',           // Exactly one of ['comments', 'channels']
+      pendingCommentsRenderForChannelName:  '*',                  // Very explicit way to edge-detect to trigger code on first 
+                                                                  // render of a specific chat channel (for handling read/unread 
+                                                                  // transitions etc). If null, there is nothing pending.
+                                                                  // If '*' then render on whatever the next channelName is.
+                                                                  // if any-other-string, then we are waiting for that specific channelName
+      pastMessageLimit:                     initialMessageLimit
     }
   },
 
@@ -175,24 +216,52 @@ export default fpChat = React.createClass({
   changeChannel: function(selectedChannelName)
   {
     joyrideCompleteTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
-    _previousChannelName = selectedChannelName
     if (selectedChannelName && selectedChannelName.length > 0 && selectedChannelName !== this._calculateActiveChannelName())
     {
-      this.setState( { pastMessageLimit: initialMessageLimit })
+      _previousChannelName = selectedChannelName
+      this.setState( { 
+        pastMessageLimit: initialMessageLimit,
+        pendingCommentsRenderForChannelName: selectedChannelName
+      })
       this.props.handleChangeSubNavParam(selectedChannelName)
     }
   },
-
 
   handleChatChannelChange: function (newChannelName) {
     this.changeChannel(newChannelName)
     this.setState( { view: 'comments' } )
   },
 
+  componentDidUpdate: function() {
+    const { pendingCommentsRenderForChannelName } = this.state
+    // There are some tasks to do the first time a comments/chat list has been rendered for a particular channel
+    if (this.state.view === 'comments' && !this.data.loading)
+    {
+      const channelName = this._calculateActiveChannelName()
+      // Maybe mark channel as read. This uses setLastReadTimestampForChannel() 
+      // which will do no work if the value has not changed
+      if (this.data.chats && this.data.chats.length > 0)
+      {
+        const timestamp = _.last(this.data.chats).createdAt
+        setLastReadTimestampForChannel(this.context.settings, channelName, timestamp)
+      }
+      
+      if (pendingCommentsRenderForChannelName)
+      {
+        if (pendingCommentsRenderForChannelName === channelName || '*' === pendingCommentsRenderForChannelName)
+        {
+          // OK, let's do stuff!
 
-  componentDidUpdate: function(prevProps) {
-    if (this.state.pastMessageLimit <= initialMessageLimit && this.state.view === 'comments')
-      this.refs.bottomOfMessageDiv.scrollIntoView(false)
+          // 0. First, note that we have done this stuff (so we don't redo it)
+          this.setState( { pendingCommentsRenderForChannelName: null } )
+      
+          // Maybe scroll last message into view
+          if (this.state.pastMessageLimit <= initialMessageLimit && this.state.view === 'comments')
+            this.refs.bottomOfMessageDiv.scrollIntoView(false)
+
+        }
+      }
+    }
   },
 
   doSendMessage: function() {
@@ -301,7 +370,7 @@ export default fpChat = React.createClass({
       return
     }
     this.setState( {
-      messageValue: this.state.messageValue + _encodeAssetInMsg( asset )
+      messageValue: (this.state.messageValue || '') + _encodeAssetInMsg( asset )
     } )
   },
 
@@ -310,11 +379,10 @@ export default fpChat = React.createClass({
   },
 
   handleToggleChannelSelector: function () {
-    const viewFlipper = { 
-      channels: 'comments',
-      comments: 'channels'
-    }
-    this.setState( { view: viewFlipper[this.state.view] } )
+    if (this.state.view === 'channels')
+      this._immediateHandleHideChannelSelector()
+    else
+      this.handleShowChannelSelector()
   },
 
   handleShowChannelSelector: function() {
@@ -344,6 +412,17 @@ export default fpChat = React.createClass({
     window.setTimeout(this._immediateHandleHideChannelSelector, 120)
   },
 
+  colorForChannelNameHasUnreads(channelName, channelTimestamps) {
+    const latestForChannel = _.find(channelTimestamps, { _id: channelName} )
+    if (!latestForChannel)
+      return _colors.emptyChannel
+    const lastReadByUser = getLastReadTimestampForChannel(this.context.settings, channelName)
+    return (
+        !lastReadByUser || 
+        latestForChannel.lastCreatedAt.getTime() > lastReadByUser.getTime()
+      ) ? _colors.unreadChannel : _colors.upToDateChannel
+  },
+
   renderChannelSelector: function() {
     const { currUser, currUserProjects } = this.props
 
@@ -360,6 +439,7 @@ export default fpChat = React.createClass({
               onClick={() => this.handleChatChannelChange(chan.channelName)}
               title={chan.description}
               content={makePresentedChannelName(chan.channelName)}
+              style={{ color: this.colorForChannelNameHasUnreads(chan.channelName, this.props.chatChannelTimestamps)}}
               icon={chan.icon}
             />
           )
@@ -409,11 +489,13 @@ export default fpChat = React.createClass({
               <List.Item
                   key={project._id}
                   onClick={() => this.handleChatChannelChange(channelName)} >
-                <Icon name='sitemap' color={isOwner ? 'green' : 'grey' } />
+                <Icon name='sitemap' color={isOwner ? 'green' : 'blue' } />
                 <List.Content>
                   <Icon name='pin' color='grey' style={{ position: 'absolute', right: '1em' }} />
-                  {!isOwner && project.ownerName + ' : '}
-                  {project.name}
+                  <span style={{ color: this.colorForChannelNameHasUnreads(channelName, this.props.chatChannelTimestamps)}}>
+                    { !isOwner && project.ownerName + ' : ' }
+                    { project.name }
+                  </span>
                 </List.Content>
               </List.Item>
             )
@@ -490,17 +572,15 @@ export default fpChat = React.createClass({
       return null // these are handled directly in makePresentedChannelName() which is what this is for
     if (channelObj.scopeGroupName === 'Project')
     {
-      const { currUser, currUserProjects } = this.props
+      const { currUserProjects } = this.props
       const proj = _.find(currUserProjects, { _id: channelObj.scopeId})
-      if (!proj && currUser && currUserProjects && currUserProjects.length > 0)
-        console.error('findObjectNameForChannelName() has a Project scopeId that is not in user context. #investigate#')
       return proj ? proj.name : `Project Chat #${channelObj.scopeId}`
     }
 
     console.error(`findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#`)
     return 'TODO'
   },
-
+ 
   render: function () {
     const { view } = this.state
     const channelName = this._calculateActiveChannelName()

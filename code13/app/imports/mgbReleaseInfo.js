@@ -14,6 +14,40 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Sun Feb 18 2017 16:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3324'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'improvement',
+          'changeName': 'Chat Notifications and Read/Unread',
+          'changeSummary': 'Moved chat indicator back to Right-hand column. It was weird on the top.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'project.fork',
+          'type': 'feature',
+          'changeName': 'Project Fork tracking',
+          'changeSummary': 'The Project overview page now has an improved fork UI, and a way to track parents and children - very similar to the Asset fork tracker UI',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+  'releases': [
+
+    {
       'timestamp': 'Sat Feb 18 2017 14:40 GMT-0800 (PST)',
 
       'id': {

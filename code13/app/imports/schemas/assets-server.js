@@ -136,7 +136,8 @@ Meteor.methods({
     // 0. Perform Input/User Validations
     checkIsLoggedIn()
     check(srcId, String)
-    checkMgb.assetName(opts.newAssetName)
+    if (opts.newAssetName)
+      checkMgb.assetName(opts.newAssetName)
     // Handled below... Check opts.ownerId + opts.dn_ownerName are a valid pair, 
     // and the project can be placed there
 

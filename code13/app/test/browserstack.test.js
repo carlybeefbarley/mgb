@@ -3,7 +3,7 @@ if (typeof Meteor !== 'undefined') {
   if (Meteor.isTest) {
     shouldRun = true
     npm = Npm
-    // 
+    //
     parallel = function (...args) {
       return describe(...args)
     }

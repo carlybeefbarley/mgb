@@ -163,7 +163,7 @@ export default FlexPanel = React.createClass({
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return { backgroundColor: 'rgba(255,0,0,0.2)' }
     
-    if ((tag === 'chat') && (hazUnreadChats.length >= 0 ))
+    if ((tag === 'chat') && (hazUnreadChats.length > 0 ))
       return { backgroundColor: 'orange' }
 
     return {}       // wiggleActivity is done as a class, so it's not in this function. See render()

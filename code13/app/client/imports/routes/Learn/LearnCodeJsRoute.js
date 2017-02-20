@@ -51,14 +51,14 @@ const jsItems = [
 
 const LearnCodeJsRoute = ({ currUser }, context) => {
   return (
-    <Grid stackable container>
-      <Grid.Row >
+    <Grid container columns='1'>
+      <Grid.Column>
         <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
           JavaScript programming basics
           <em className="sub header">Click on item and explore it</em>
         </Header>
-      </Grid.Row>
-      <Grid.Row>
+      </Grid.Column>
+      <Grid.Column>
         <Card.Group itemsPerRow={1} stackable className="skills">
           { jsItems.map( (area, idx) => (
             <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
@@ -73,7 +73,7 @@ const LearnCodeJsRoute = ({ currUser }, context) => {
             </QLink>
           ) ) }
         </Card.Group>
-      </Grid.Row>
+      </Grid.Column>
     </Grid>
   )
 }

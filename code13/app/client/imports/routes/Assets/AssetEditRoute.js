@@ -293,10 +293,12 @@ export default AssetEditRoute = React.createClass({
       showToast(`Unable to create a forked copy of this asset: '${error.toString()}'`, 'error')
     else {
       showToast(`Loading your new Asset`, 'success')
-      // TODO: Could open window etc for New AssetId='${result.newAssetNoC2.name} (#${result.newId})
       logActivity("asset.fork.from", "Forked new asset from this asset", null, this.data.asset )
       logActivity("asset.fork.to", "Forked this new asset from another asset", null, result.newAssetNoC2 )
+
+console.log("utilPushTo in forkResultCallback()", this.props.currUser.username, result.newId)
       utilPushTo(this.context.urlLocation.query, "/u/" + this.props.currUser.username + "/asset/" + result.newId)
+
       joyrideCompleteTag('mgbjr-CT-asset-fork')
     }
 

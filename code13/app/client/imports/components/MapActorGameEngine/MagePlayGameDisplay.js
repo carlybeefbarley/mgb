@@ -26,7 +26,6 @@ export default MagePlayGameDisplay = {
       ap = actors[activeActors[AA].ACidx]
 
     // 3. Find out which tile to use
-    
     var animationTableIndex = MgbActor.getAnimationIndex(
       ap.content2, 
       (activeActors[AA].xMovePerTween == 0 && activeActors[AA].yMovePerTween == 0) ? -1 : activeActors[AA].stepStyle,

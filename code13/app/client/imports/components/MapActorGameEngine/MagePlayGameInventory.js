@@ -342,7 +342,7 @@ export default class Inventory {
   
   _signNumber(i)
   {
-    debugger
+    //debugger
     return (i>0 ? "+" : "") + i.toString()
   }
   

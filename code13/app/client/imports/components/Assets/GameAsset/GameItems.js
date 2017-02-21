@@ -1,37 +1,40 @@
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
-import { Item, Button } from 'semantic-ui-react'
+import { Card, Image } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
-
 export const GameItem = ( { game } ) => (
-	<Item>
-    <Item.Image className='mgb-pixelated' style={{ maxHeight: 90, maxWidth: 90 }} src={Thumbnail.getLink(game)} />
-    <Item.Content>
-      <Item.Header content={game.name} />
-      <Item.Description content={((game.metadata && game.metadata.playCount) || 0) + ' Plays'} />
-      <Item.Extra>
-      { game.metadata &&
-        (
-          (game.metadata.gameType === 'codeGame' && game.metadata.startCode && game.metadata.startCode !== '') ||
-          (game.metadata.gameType === 'actorGame' && game.metadata.startActorMap && game.metadata.startActorMap !== '' )
-        ) &&
-        <QLink to={`/u/${game.dn_ownerName}/play/${game._id}`}><Button size='small' compact icon='play' content='Play' /></QLink>
-      }
-      <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
-        <Button size='small' compact icon='edit' active={false} content='Edit' />
-      </QLink>
-      </Item.Extra>
-    </Item.Content>
-  </Item>
+	<Card fluid>
+    <QLink to={`/u/${game.dn_ownerName}/play/${game._id}`}>
+    {
+      Thumbnail.getLink(game)
+      ?
+      <Image centered 
+        src={Thumbnail.getLink(game)}
+        style={{ height: '180px', margin: '0px auto', imageRendering: 'pixelated', width: 'initial', overflow: 'hidden' }} 
+      />
+      :
+      <div style={{ display: 'block', height: '180px' }}/>
+    }
+    </QLink>
+    <Card.Content extra>
+      <p style={{color: 'black', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>{game.name}</p>
+      <p>{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</p>
+    </Card.Content>
+  </Card>
 )
 
 const GameItems = ( { games } ) => (
-  <Item.Group divided>
+  <Card.Group stackable itemsPerRow={5} style={{clear: 'both'}}>
     { (!games || games.length === 0) &&
       <p>No matching games</p>}
-    { games.map( g => <GameItem game={g} key={g._id} /> ) }
-  </Item.Group>
+    { games.map( g => { 
+      if ( g.metadata && 
+        (g.metadata.gameType === 'codeGame' && g.metadata.startCode && g.metadata.startCode !== '') ||
+        (g.metadata.gameType === 'actorGame' && g.metadata.startActorMap && g.metadata.startActorMap !== '' )) 
+        return <GameItem game={g} key={g._id} /> 
+    })}
+  </Card.Group>
 )
 
 GameItems.propTypes = {

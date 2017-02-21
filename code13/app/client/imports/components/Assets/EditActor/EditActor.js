@@ -438,6 +438,7 @@ export default class EditActor extends React.Component {
   }
 
   render() {
+
     const { asset } = this.props
     if (!asset)
       return null

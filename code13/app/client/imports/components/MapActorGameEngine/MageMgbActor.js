@@ -123,7 +123,7 @@ const MgbActor = {
   ANIMATION_INDEX_BASE_FACE_EAST:               5,
   ANIMATION_INDEX_BASE_FACE_SOUTH:              10,
   ANIMATION_INDEX_BASE_FACE_WEST:               15,
-  ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION: 20,   // This was called 'ANIMATION_INDEX_BASE_STATIONARY' before we had directional staionary animations
+  ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION: 20,   // Deprecated; only exists for backward-compat with old MGB1 games. Hidden for new Actors
   ANIMATION_INDEX_BASE_MELEE_NORTH:             36,
   ANIMATION_INDEX_BASE_MELEE_EAST:              44,
   ANIMATION_INDEX_BASE_MELEE_SOUTH:             52,
@@ -143,30 +143,35 @@ const MgbActor = {
   ],
 
   animationNames: [
+    // 0 - 4
     "face north",
     "step north 1",
     "step north 2",
     "step north 3",
     "step north 4",
     
+    // 5 - 9
     "face east",
     "step east 1",
     "step east 2",
     "step east 3",
     "step east 4",
 
+    // 10 - 14
     "face south",
     "step south 1",
     "step south 2",
     "step south 3",
     "step south 4",
 
+    // 15 - 19
     "face west",
     "step west 1",
     "step west 2",
     "step west 3",
     "step west 4",
     
+    // 20 - 35
     "stationary 1",
     "stationary 2",
     "stationary 3",
@@ -182,7 +187,9 @@ const MgbActor = {
     "stationary 13",
     "stationary 14",
     "stationary 15",
-    
+    "stationary 16",
+
+    // 36 - 43
     "melee north 1",
     "melee north 2",
     "melee north 3",
@@ -192,6 +199,7 @@ const MgbActor = {
     "melee north 7",
     "melee north 8",
 
+    // 44 - 51
     "melee east 1",
     "melee east 2",
     "melee east 3",
@@ -201,6 +209,7 @@ const MgbActor = {
     "melee east 7",
     "melee east 8",
 
+    // 52 - 59
     "melee south 1",
     "melee south 2",
     "melee south 3",
@@ -210,6 +219,7 @@ const MgbActor = {
     "melee south 7",
     "melee south 8",
 
+    // 60 - 67
     "melee west 1",
     "melee west 2",
     "melee west 3",
@@ -219,6 +229,7 @@ const MgbActor = {
     "melee west 7",
     "melee west 8",
 
+    // 68 - 83
     "stationary north 1",
     "stationary north 2",
     "stationary north 3",
@@ -236,6 +247,7 @@ const MgbActor = {
     "stationary north 15",
     "stationary north 16",
 
+    // 84 - 99
     "stationary east 1",
     "stationary east 2",
     "stationary east 3",
@@ -253,6 +265,7 @@ const MgbActor = {
     "stationary east 15",
     "stationary east 16",
 
+    // 100 - 115
     "stationary south 1",
     "stationary south 2",
     "stationary south 3",
@@ -270,6 +283,7 @@ const MgbActor = {
     "stationary south 15",
     "stationary south 16",
 
+    // 116 - 131
     "stationary west 1",
     "stationary west 2",
     "stationary west 3",
@@ -354,8 +368,8 @@ const MgbActor = {
       case -1: // stationary
         switch (priorStepStyle)
         {
-        case -1: // stationary
-          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_SOUTH + frame_Stationary
+        case -1: 
+          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary
           break
         case 0:	// North
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_NORTH + frame_Stationary
@@ -370,13 +384,31 @@ const MgbActor = {
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_WEST + frame_Stationary
           break 
         }
-
-        if (!MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex))
-          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary				// Hmm, nothing there. Let's try the default (non-directional) stationary animations
         
-        if (!MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex))
-          animationTableIndex = -1			// We give up. Just use the default, nothing better has been specified.
-        
+        if (!MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) {
+          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary // Try non-directional stationary animation
+          if (MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) 
+            break
+          else 
+            switch (priorStepStyle)
+            {
+            case -1: 
+              animationTableIndex = -1
+              break
+            case 0:	// North
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH
+              break
+            case 1: // East 
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST
+              break
+            case 2:	// South
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH 
+              break
+            case 3:	// West
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST
+              break 
+            }
+        }    
         break
       }
     }

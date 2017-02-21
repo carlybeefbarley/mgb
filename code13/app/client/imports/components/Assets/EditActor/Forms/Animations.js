@@ -32,7 +32,7 @@ export default class Animations extends React.Component {
     this.forceUpdate()
     this.props.onChange && this.props.onChange()
   }
-
+  
   render() {
     const rows = []
     for (let i=0; i<MgbActor.animationNames.length; i++) {
@@ -40,21 +40,25 @@ export default class Animations extends React.Component {
         this.data[i] = {
           "action": MgbActor.animationNames[i],
           "tileName": null,
-          "effect": "no effect" }
+          "effect": "no effect" 
+        }
       }
-      rows.push(
-        <Table.Row key={i}>
-          <Table.Cell>{MgbActor.animationNames[i]}</Table.Cell>
-          <Table.Cell>
-            <DropArea kind="graphic" value={this.data[i].tileName} effect={this.data[i].effect} asset={this.props.asset} onChange={this.changeGraphic.bind(this, i)}/>
-          </Table.Cell>
-          <Table.Cell>
-            <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
-          </Table.Cell>
-        </Table.Row>
-      )
+      {
+        if (!(MgbActor.animationNames[i].startsWith("stationary") && MgbActor.animationNames[i].split(' ').length === 2)) // Hide deprecated stationary animation
+          rows.push(
+            <Table.Row key={i}>
+              <Table.Cell>{MgbActor.animationNames[i]}</Table.Cell>
+              <Table.Cell>
+                <DropArea kind="graphic" value={this.data[i].tileName} effect={this.data[i].effect} asset={this.props.asset} onChange={this.changeGraphic.bind(this, i)}/>
+              </Table.Cell>
+              <Table.Cell>
+                <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
+              </Table.Cell>
+            </Table.Row>
+          )
+      }
     }
-
+  
     return (
       <Table celled compact definition>
         <Table.Header fullWidth>

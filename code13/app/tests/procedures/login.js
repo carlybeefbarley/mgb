@@ -7,9 +7,9 @@ const SeleniumHelper = require("../helpers/selenium.js")
 
 
 const buttons = {
-  sidePanelLogin: '#mgbjr-navPanelIcons-home',
-  avatar: '.mgbNavPanel .ui.centered.avatar.image',
-  login: 'a[href="/login"]',
+  // if avatar is visible login will be threated as successful
+  avatar: '#mgbjr-np-user',
+  login: '#mgbjr-np-login',
   submitLoginForm: 'form button.ui.button'
 }
 
@@ -25,37 +25,29 @@ module.exports = (browser) => {
   return (done) => {
     // wait for React root element
     sel.css("#root")
-    sel.css(buttons.sidePanelLogin).click()
 
+    // already logged in ?
     sel.exists(buttons.avatar, (e, found) => {
-      if(found){
+      if (found) {
         sel.done(done)
         return
       }
-      // and then login button
+
       sel.css(buttons.login).click()
 
-      // fill the form
-      // TODO: move login info to the env
-      sel.css(inputs.email).sendKeys('tester@example.com');
-      sel.css(inputs.password).sendKeys('tester1');
+      sel.css(inputs.email).sendKeys('tester@example.com')
+      // sel.css(inputs.password).sendKeys('tester1')
 
       // login with ENTER key
-      //sel.css(inputs.password).sendKeys('tester1', Key.ENTER);
+      sel.css(inputs.password).sendKeys('tester1', Key.ENTER);
       // login with click on the submit button
-      sel.css(buttons.submitLoginForm).click()
+      // sel.css(buttons.submitLoginForm).click()
 
-      // wait for logged in element
-      // TODO: get a better way to check if user has successfully logged in
 
-      // open side panel
-      sel.css(buttons.sidePanelLogin).click()
       sel.exists(buttons.avatar, e => {
-        if(e){
+        if (e) {
           throw(e)
         }
-        // close side panel
-        sel.css(buttons.sidePanelLogin).click()
         sel.done(done)
       })
     })

@@ -5,7 +5,8 @@ const SeleniumHelper = require("../helpers/selenium.js")
 const el = {
   phaserInfo: '.ui.orange.left.ribbon.label',
   codeTextArea: '.CodeMirror textarea',
-  fullScreenButton: '.button.full-screen'
+  toggleCodeRuner: '#mgbjr-EditCode-codeRunner > div.explicittrigger',
+  fullScreenButton: '#mgb-EditCode-full-screen-button'
 }
 module.exports = (browser) => {
   // return function so procedure can be used directly as callback
@@ -24,7 +25,9 @@ const div = appendToBody("div")
 div.setAttribute("id", "test-element")
 
 `
-        );
+        )
+        sel.css(el.toggleCodeRuner).click()
+
         sel.css(el.fullScreenButton).click()
         // wait for new window
         browser.sleep(1000)

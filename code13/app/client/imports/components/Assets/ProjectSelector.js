@@ -112,15 +112,23 @@ const ProjectSelector = props => {
     memberOfProjects.unshift( <Dropdown.Header key="__memberHdr" content={`Projects ${userName} is a Member of`} /> )
 
   // Create the   |  In Project:  (ProjectSelect v)    |    UI
+  const actualProjectObj = chosenProjectObj || NameMatchedProjectObject
   const projectLabelNameToShow = _makeProjectNameLabelToShow(
-    chosenProjectObj || NameMatchedProjectObject, 
+    actualProjectObj, 
     isUseCaseCreate ? _NO_PROJECT_PROJNAME : chosenProjectName
     )
   return (
     <Dropdown 
         style={{ marginTop: '1px', marginBottom: '3px'}} // inline is compact but has no top/bottom margins
         inline
-        trigger={<small><Icon name='sitemap'/> { projectLabelNameToShow }&ensp;</small>} >
+        trigger={
+          <small>
+            <QLink to={actualProjectObj ? `/u/${actualProjectObj.ownerName}/project/${actualProjectObj._id}` : `/u/${userName}/projects`}>
+              <Icon name='sitemap'/> 
+            </QLink>
+            { projectLabelNameToShow }&ensp;
+          </small>} 
+        >
       <Dropdown.Menu>
         { ownedProjects }
         { showProjectsUserIsMemberOf && memberOfProjects }

@@ -1743,7 +1743,7 @@ export default class EditCode extends React.Component {
     const curMode = _infoPaneModes[newMode]
     // if(!_infoPaneModes[newMode].col2) this.handleStop()
     //
-    if(this.state.isPlaying && oldMode.col2 != curMode.col2){
+    if(this.state.isPlaying && (!oldMode.col2 || !curMode.col2) ){
       this.handleStop()
       this.handleRun()
     }

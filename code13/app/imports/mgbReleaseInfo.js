@@ -13,6 +13,31 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Tue Feb 21 2017 13:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3388'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes',
+          'changeSummary': 'Bugfixes for some of the tutorial flows, handling of missing assets.',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
     {
       'timestamp': 'Mon Feb 20 2017 18:40 GMT-0800 (PST)',
 

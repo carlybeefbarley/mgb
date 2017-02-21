@@ -268,7 +268,7 @@ export default UserAssetListRoute = React.createClass({
 
         <Segment style={ { ...segmentPlainStyle, minHeight: "600px" } }>
           <div style={ { marginBottom: '1em' } }>
-            <QLink className='ui compact green button' to='/assets/create'>Create New Asset</QLink>
+            <QLink className='ui compact green button' to='/assets/create' id="mgbjr-create-new-asset">Create New Asset</QLink>
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
             <AssetListChooseView
                 sty={{ float: 'right', marginRight: '1em'}}

@@ -5,7 +5,7 @@ const SeleniumHelper = require("../helpers/selenium.js")
 const el = {
   phaserInfo: '.ui.orange.left.ribbon.label',
   codeTextArea: '.CodeMirror textarea',
-  toggleCodeRuner: '#mgbjr-EditCode-codeRunner > div.explicittrigger',
+  toggleCodeRuner: '#mgbjr-EditCode-codeRunner > .explicittrigger',
   fullScreenButton: '#mgb-EditCode-full-screen-button'
 }
 module.exports = (browser) => {

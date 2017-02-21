@@ -210,7 +210,7 @@ export default fpAssets = React.createClass({
                   ProjectListLinkUrl={"/u/" + effectiveUser.profile.name + "/projects"}
                   showProjectsUserIsMemberOf={true}
                   chosenProjectObj={project}
-                  chosenProjectName={projectName} 
+                  chosenProjectName={projectName}
                   />
               : null )
           }
@@ -219,6 +219,7 @@ export default fpAssets = React.createClass({
               size='small'
               fluid
               value={searchName}
+              id='mgbjr_fp_search_asset'
               onFinalChange={this.handleSearchGo} />
 
           <div style={{marginTop: '6px'}}>

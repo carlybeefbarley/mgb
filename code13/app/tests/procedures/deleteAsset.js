@@ -4,7 +4,7 @@ const Key = webdriver.Key
 const SeleniumHelper = require("../helpers/selenium.js")
 const el = {
   // TODO: add ids in the code - so we can use better selectors
-  deleteButton: '.ui.eight.wide.right.aligned.column .bordered.trash.outline.icon'
+  deleteButton: '.trash.outline.bordered.icon'
 }
 module.exports = (browser) => {
   const sel = SeleniumHelper(browser)

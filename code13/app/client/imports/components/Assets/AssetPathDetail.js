@@ -17,11 +17,11 @@ const SaveStatus = ( { lastUpdated, isUnconfirmedSave, hasUnsentSaves } ) => {
     msg = ['Saving...', 'AutoSaving your changes', 'Your changes have been sent to the server']
 
   return (
-    <Popup 
-        size='tiny' 
-        inverted 
+    <Popup
+        size='tiny'
+        inverted
         positioning='bottom left'
-        trigger={<small style={{ color: 'grey' }}>{msg[0]}</small>} >
+        trigger={<small style={{ color: 'grey' }} id={!hasUnsentSaves && !isUnconfirmedSave ? 'mgbjr-changes-saved' : 'mgbjr-saving-changes'}>{msg[0]}</small>} >
       <Popup.Header>
         {msg[1]}
       </Popup.Header>
@@ -65,10 +65,10 @@ export default AssetPathDetail = React.createClass({
     handleDescriptionChange: PropTypes.func.isRequired,
     handleSaveNowRequest:    PropTypes.func.isRequired  // Callback indicating User has said 'save now'
   },
-  
+
   handleFieldChanged: function(data) {
     // data = { description: "New validated text comes here" }
-    // Update your model from here    
+    // Update your model from here
     if (data.name)
       this.props.handleNameChange(data.name)
     if (data.text)
@@ -95,17 +95,17 @@ export default AssetPathDetail = React.createClass({
             paramName="name"
             change={this.handleFieldChanged}
             isDisabled={!canEdit} />
-            
+
           &emsp;
 
           { canEdit && (
-            <SaveStatus 
+            <SaveStatus
                 lastUpdated={lastUpdated}
-                isUnconfirmedSave={isUnconfirmedSave} 
-                hasUnsentSaves={hasUnsentSaves} /> 
-          )}       
+                isUnconfirmedSave={isUnconfirmedSave}
+                hasUnsentSaves={hasUnsentSaves} />
+          )}
         </Grid.Row>
-        
+
         <Grid.Row>
           <small>
             <div className="ui fluid input">

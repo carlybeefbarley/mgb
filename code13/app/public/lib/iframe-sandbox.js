@@ -168,10 +168,9 @@ window.onload = function() {
     else
       return false;
   }
-
-
+  
   window.addEventListener("error", function (e) {
-    alert("Error occured: " + e.error.message);
+    console.error("Error occurred: " + e.error.message);
     return false;
   })
 

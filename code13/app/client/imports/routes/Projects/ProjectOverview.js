@@ -31,7 +31,8 @@ export default ProjectOverview = React.createClass({
     showAddUserSearch: false,       // True if user search box is to be shown
     isForkPending:     false,       // True if a fork operation is pending
     isDeletePending:   false,       // True if a delete project operation is pending
-    isDeleteComplete:  false        // True if a delete project operation succeeded.
+    isDeleteComplete:  false,       // True if a delete project operation succeeded.
+    confirmDeleteNum:  -1           // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
   }),   
   
   getMeteorData: function() {
@@ -255,13 +256,22 @@ export default ProjectOverview = React.createClass({
     })
   },
 
-  handleDeleteProject: function()
+  handleDeleteProject: function() {
+    var { name } = this.data.project
+    Meteor.call( 'Projects.countNonDeletedAssets', name, (error, result ) => {
+      if (error)
+        showToast(`Could not count Number of Assets in Project '${name}: ${error.reason}`, 'error')
+      else
+        this.setState( { confirmDeleteNum: result } ) 
+    })
+  },
+
+  handleConfirmedDeleteProject: function()
   {
     var { name, _id } = this.data.project
     this.setState( { isDeletePending: true } )
 
-    Meteor.call('Projects.deleteProjectId', _id, this.canEdit(), (error, result ) => {
-
+    Meteor.call('Projects.deleteProjectId', _id, true, (error, result ) => {
       if (error)
       {
         showToast(`Could not delete Project '${name}: ${error.reason}`, 'error')
@@ -279,7 +289,7 @@ export default ProjectOverview = React.createClass({
   
   renderRenameDeleteProject: function()
   {
-    const { isDeleteComplete, isDeletePending } = this.state
+    const { isDeleteComplete, isDeletePending, confirmDeleteNum } = this.state
     const canEdit = this.canEdit()
 
     if (!canEdit)
@@ -300,18 +310,19 @@ export default ProjectOverview = React.createClass({
         <div style={{padding: '2px'}}>
           <Button 
             fluid
-            icon={<Icon color='red' name='trash'/>}
+            icon={confirmDeleteNum < 0 ? <Icon color='red' name='trash'/> : null}
             size='small'
             disabled={isDeleteComplete || isDeletePending} 
-            content="Delete" 
-            onClick={ () => { this.handleDeleteProject() } } />
+            content={confirmDeleteNum < 0 ? 'Delete' : `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`} 
+            color={confirmDeleteNum < 0 ? null : 'red' }
+            onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject } />
         </div>
 
         { isDeletePending && 
-          <Message icon>
+          <Message icon size='mini'>
             <Icon name='circle notched' loading />
             <Message.Content>
-              <Message.Header>Deleting this project</Message.Header>
+              <Message.Header>Deleting Project</Message.Header>
               Please wait while we make sure it's really deleted...
             </Message.Content>
           </Message>        

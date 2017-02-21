@@ -118,13 +118,15 @@ export function assetMakeSelector(
                       userId,
                       selectedAssetKinds,
                       nameSearch,
-                      projectName=null,
+                      projectName=null,   // '_' means 'not in a project'.   null means In any/all projects
                       showDeleted=false,
                       showStable=false)
 {
   let selector = { isDeleted: showDeleted }
 
-  if (projectName && projectName.length > 0)
+  if (projectName === '_')
+    selector["projectNames"] = []
+  else if (projectName && projectName.length > 0)
     selector["projectNames"] = projectName
 
   if (showStable === true)  // This means ONLY show stable assets
@@ -134,7 +136,7 @@ export function assetMakeSelector(
     selector["ownerId"] = userId
 
   if (selectedAssetKinds && selectedAssetKinds.length > 0)
-    selector["$or"] = _.map(selectedAssetKinds, (x) => { return { kind: x} } )  // TODO: Could use $in ?
+    selector["$or"] = _.map(selectedAssetKinds, x => ( { kind: x } ) )  // TODO: Could use $in ?
 
   if (nameSearch && nameSearch.length > 0)
   {

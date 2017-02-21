@@ -20,51 +20,46 @@ export default class UploadForm extends React.Component {
     super(props)
 
     this.state = {
-      projectCompoundName: null,
-      selectedProject: null,
-      assetLicense: defaultAssetLicense,
-      workState: defaultWorkStateName,
-      prefix: "",
-      isCompleted: false,
+      selectedProject:  null,
+      assetLicense:     defaultAssetLicense,
+      workState:        defaultWorkStateName,
+      prefix:           '',
+      isCompleted:      false,
     }
   }
 
-  onDragOver(e){ this.props.onDragOver(e) }
-  onDragLeave(e){ this.props.onDragLeave(e) }
-  onDrop(e){
+  onDragOver(e) { this.props.onDragOver(e) }
+  onDragLeave(e) { this.props.onDragLeave(e) }
+  onDrop(e) {
     this.props.onDrop(e, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState, this.state.isCompleted)
   }
 
-  handleChangeSelectedProjectName (selectedProjName, selectedProj, selectedCompoundName) {
-    this.setState( { projectCompoundName: selectedCompoundName, selectedProject: selectedProj } )
-    // console.log(selectedProjName, selectedProj, selectedCompoundName)
+  handleChangeSelectedProjectName (selectedProjName, selectedProj) {
+    this.setState( { selectedProject: selectedProj } )
   }
 
   handleLicenseChange(newLicense) {
-    if(newLicense != this.state.assetLicense){
+    if (newLicense != this.state.assetLicense)
       this.setState({ assetLicense: newLicense})
-    }
   }
 
-  handleWorkStateChange(newWorkState){
-    if(newWorkState != this.state.workState){
+  handleWorkStateChange(newWorkState) {
+    if (newWorkState != this.state.workState)
       this.setState({ workState: newWorkState })
-    }
   }
 
-  handlePrefixChange(e){
-    if(e.target.value != this.state.prefix){
+  handlePrefixChange(e) {
+    if (e.target.value != this.state.prefix){
       this.setState({ prefix: e.target.value })
     }
   }
 
-  handleStableStateChange(e){
+  handleStableStateChange(e) {
     this.setState({ isCompleted: !this.state.isCompleted})
   }
 
   render (){
     const isWebkit = 'WebkitAppearance' in document.documentElement.style
-    // console.log('isWebkit', isWebkit)
 
     return (
       <div className={this.props.isHidden ? "mgb-hidden" : ""}>
@@ -95,11 +90,12 @@ export default class UploadForm extends React.Component {
             <ProjectSelector
               canEdit={false}
               user={this.props.currUser}
+              isUseCaseCreate={true}
               handleChangeSelectedProjectName={this.handleChangeSelectedProjectName.bind(this)}
               availableProjects={this.props.currUserProjects}
               ProjectListLinkUrl={this.props.currUser && `/u/${this.props.currUser.profile.name}/projects`}
               showProjectsUserIsMemberOf={true}
-              chosenProjectName={this.state.projectCompoundName}
+              chosenProjectObj={this.state.selectedProject}
             />
 
             &nbsp;&nbsp;

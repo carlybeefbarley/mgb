@@ -28,8 +28,8 @@ const validate = {
     return validate.lengthCap(text, 64)
   },
 
-  projectName: function (text) {
-    return validate.lengthCap(text, 64) && text.length > 0 && -1 === text.search(/[\#\:\?]/)
+  projectName: function (text) {  // Note that we have a reserved projectName '_' for "No project"
+    return validate.lengthCap(text, 64) && text.length > 1 && -1 === text.search(/[\#\:\?]/)
   },
 
   projectDescription: function(text) {

@@ -332,7 +332,7 @@ export default class MagePlayGame
             actor.x = actor.fromx
             actor.y = actor.fromy
             actor.wasStopped = true
-            //					        	actor.stepStyle = -1		// These need to be free to move again. -1 means if they are on ice, they have stopped sliding and are free to choose their movement direction again
+            //actor.stepStyle = -1		// These need to be free to move again. -1 means if they are on ice, they have stopped sliding and are free to choose their movement direction again
             actor.stepCount = 0				// Reset the step count; used to trigger a new movement choice.
 
             if (AA == this.AA_player_idx) {
@@ -362,7 +362,7 @@ export default class MagePlayGame
                         if (keyItem) {
                           var keyDestroyed = (1 == MgbActor.intFromActorParam(hitThing_ap.content2.databag.item.keyForThisDoorConsumedYN))
                           // Yup.. so let's do it!
-                          this.setGameStatusString(1, keyDestroyed ?
+                          this.setGameStatusFn(1, keyDestroyed ?
                             ("You use your " + key + " to pass") :
                             ("Since you are carrying the " + key + " you are able to pass through"))
                           if (keyDestroyed)
@@ -443,11 +443,7 @@ export default class MagePlayGame
     // Now, for this tween, check for post-move collisions between *alive* actors- item/enemy/player touch events
     this.playProcessAACollisions()
 
-
-  // TODO - something like this
     // Update scroll position (by tweened amount) if this is the player
-
-    
     if (G_VSPdelta)
       this.container.scrollTop += G_VSPdelta;
     if (G_HSPdelta)

@@ -24,21 +24,20 @@ export default AssetCreateNew = React.createClass({
 
   getInitialState: function () {
     return {
-      projectCompoundName: "",
-      selectedProject: null,          // 
+      selectedProject: null,          // Project Object or Null
       buttonActionPending: false,     // True after the button has been pushed. so it doesn't get pushed twice
       selectedKind: "",               // "" or one of AssetKindKeys[]
       newAssetName: ""                // "" or a valid assetName string
     }
   },
 
-  handleChangeSelectedProjectName: function (selectedProjName, selectedProj, selectedCompoundName) {
-    this.setState( { projectCompoundName: selectedCompoundName, selectedProject: selectedProj } )
+  handleChangeSelectedProjectName: function (selectedProjName, selectedProj) {
+    this.setState( { selectedProject: selectedProj } )
   },
 
   render: function() {
     const { newAssetName, selectedKind } = this.state
-    const { currUser, currUserProjects } = this.props
+    const { currUser, currUserProjects, placeholderName } = this.props
     const isAssetNameValid = validate.assetName(newAssetName) && newAssetName && newAssetName !== ''
     const isKindChosen = selectedKind !== ''
     const isAssetReadyToCreate = isKindChosen && isAssetNameValid
@@ -53,7 +52,7 @@ export default AssetCreateNew = React.createClass({
           <Header as='h4' content='1. Enter Asset Name' />
           <div className="ui items">
             <div className={"ui fluid input" + (isAssetNameValid ? "" : " error")}>
-              <input className="fluid" type="text" value={newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={this.props.placeholderName} 
+              <input className="fluid" type="text" value={newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={placeholderName} 
                 ref="inputAssetName"
               ></input>
             </div>
@@ -78,7 +77,7 @@ export default AssetCreateNew = React.createClass({
               availableProjects={currUserProjects}
               ProjectListLinkUrl={currUser && `/u/${currUser.profile.name}/projects`}
               showProjectsUserIsMemberOf={true}
-              chosenProjectName={this.state.projectCompoundName} />
+              chosenProjectObj={this.state.selectedProject} />
         </Segment>
 
         <Button 

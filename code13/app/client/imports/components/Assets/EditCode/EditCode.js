@@ -1513,7 +1513,7 @@ export default class EditCode extends React.Component {
 
     this.tools.collectSources((collectedSources) => {
       const startRun = () => {
-        if (this.refs.gameScreen.isIframeReady()) {
+        if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
           this._postMessageToIFrame({
             mgbCommand: 'startRun',
             sourcesToRun: collectedSources,
@@ -1737,7 +1737,16 @@ export default class EditCode extends React.Component {
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
     const newMode = (i+1) % _infoPaneModes.length
+
+    const oldMode = _infoPaneModes[this.state.infoPaneMode]
+    const curMode = _infoPaneModes[newMode]
     // if(!_infoPaneModes[newMode].col2) this.handleStop()
+    //
+    if(this.state.isPlaying && (!oldMode.col2 || !curMode.col2) ){
+      this.handleStop()
+      this.handleRun()
+    }
+
     this.setState( { infoPaneMode: newMode } )
   }
 
@@ -2130,6 +2139,19 @@ export default class EditCode extends React.Component {
     //   overflow: "hidden"
     // }
 
+
+    const gameScreen = <GameScreen
+        key="gameScreen"
+        ref="gameScreen"
+        isPopup = {this.state.isPopup || !infoPaneOpts.col2}
+        isPlaying = {this.state.isPlaying}
+        asset = {this.props.asset}
+        consoleAdd = {this._consoleAdd.bind(this)}
+        gameRenderIterationKey = {this.state.gameRenderIterationKey}
+        handleContentChange = {this.handleContentChange.bind(this)}
+        handleStop = {this.handleStop.bind(this)}
+      />
+
     return (
       <div className="ui grid">
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
@@ -2316,16 +2338,7 @@ export default class EditCode extends React.Component {
                     </span>
                     }
                   </span>
-                  <GameScreen
-                    ref="gameScreen"
-                    isPopup = {this.state.isPopup}
-                    isPlaying = {this.state.isPlaying}
-                    asset = {this.props.asset}
-                    consoleAdd = {this._consoleAdd.bind(this)}
-                    gameRenderIterationKey = {this.state.gameRenderIterationKey}
-                    handleContentChange = {this.handleContentChange.bind(this)}
-                    handleStop = {this.handleStop.bind(this)}
-                  />
+                  {infoPaneOpts.col2 && gameScreen}
 
                   <ConsoleMessageViewer
                     messages={this.state.consoleMessages}
@@ -2372,6 +2385,7 @@ export default class EditCode extends React.Component {
           </div>
         </div>
         }
+        {!infoPaneOpts.col2 && gameScreen}
 
       </div>
     )

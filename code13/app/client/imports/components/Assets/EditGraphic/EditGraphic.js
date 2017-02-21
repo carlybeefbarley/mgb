@@ -17,6 +17,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 // import sty from  './editGraphic.css';
 
 
@@ -120,7 +121,9 @@ export default class EditGraphic extends React.Component {
   }
 
   getImageData(){
-    return this.props.asset.thumbnail
+    const a = {}
+    this.setThumbnail(a)
+    return a.thumbnail
   }
 
   // Graphic asset - Data format:
@@ -1278,10 +1281,15 @@ export default class EditGraphic extends React.Component {
       return
     }
 
-
     var imageUrl = event.dataTransfer.getData('URL')
     if(imageUrl){
       this.pasteImage(imageUrl, idx)
+      return
+    }
+
+    var imgData = DragNDropHelper.getDataFromEvent(event)
+    if(imgData && imgData.link){
+      this.pasteImage(imgData.link, idx)
       return
     }
 
@@ -1568,6 +1576,7 @@ export default class EditGraphic extends React.Component {
               trigger={(
                 <Button
                   size='small'
+                  id='mgbjr-EditGraphic-colorPicker'
                   icon={{ name: 'block layout', style: { color: this.state.selectedColors['fg'].hex }}}
                 />
               )}

@@ -133,7 +133,7 @@ export default AssetEditRoute = React.createClass({
   addListenersOnMount() {
     this.listeners = {}
     // mgbOfferRevertToFork handler
-    this.listeners.mgbOfferRevertToFork = e => { 
+    this.listeners.mgbOfferRevertToFork = e => {
       const { asset } = this.data
       if (!asset || !this.canCurrUserEditThisAsset())
         return
@@ -222,6 +222,11 @@ export default AssetEditRoute = React.createClass({
     return {
       get asset() {
         return assetHandler.asset
+      },
+
+      // special case when assetHandler will fail to load asset
+      get isDeleted(){
+        return assetHandler.isDeleted
       },
       // this will allow asset c2 update without extra ajax call
       update(updateObj) {
@@ -369,7 +374,7 @@ console.log("utilPushTo in forkResultCallback()", this.props.currUser.username, 
             { /* We use this.props.params.assetId since it is available sooner than the asset
               * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             * */ }
-            { this.state.isForkRevertPending && 
+            { this.state.isForkRevertPending &&
               <Icon name='fork' loading />
             }
             <WorkState

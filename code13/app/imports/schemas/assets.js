@@ -10,7 +10,6 @@ import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
 import { AssetKinds } from './assets/assetKinds'
 export { AssetKinds }
-// import cache from '/imports/cache' // used for NGINX caching - see /imports/helpers/generators for API caching
 
 var schema = {
   _id: String,
@@ -24,7 +23,7 @@ var schema = {
 
   // Some denormalized information that saves us from joins with big tables
   // for commonly used but very stable data - best example is user name
-  dn_ownerName: String, // User.profile.name from userId at last asset create/update. 
+  dn_ownerName: String, // User.profile.name from userId at last asset create/update.
                         // See /app/DeveloperDocs/AvoidingServerSideJoins.md for reasoning
                         // ::MAINTAIN:: any user-profile-name rename function will need to update these
                         // ::MIGRATE::  assets created prior to 222016 do not have this so any render code
@@ -61,9 +60,9 @@ var schema = {
   // The fields are asset-kind-specific. Examples of metadata would be
   //   graphic: framecounts, image sizes
   //   game:    playCounts,  etc.
-  //   actor:   actorTypeIndex, 
+  //   actor:   actorTypeIndex,
 
-  metadata: Object,   
+  metadata: Object,
 
   // The isUnconfirmedSave field is used to disambiguate pending vs saved data on the client.
   // See https://www.discovermeteor.com/blog/advanced-latency-compensation/
@@ -77,12 +76,12 @@ var schema = {
 
 
 
-// safeAssetKindStringSepChar is the separator to be used in the URL for encoding query.kinds    
-//     Note that "," and "+" and others can get messy due to url encoding schemes. 
+// safeAssetKindStringSepChar is the separator to be used in the URL for encoding query.kinds
+//     Note that "," and "+" and others can get messy due to url encoding schemes.
 //     The safest ones are - _ . and ~ and so we picked _ at random-ish
 //   TODO: Add an Assert to ensure that this character is NOT in ANY of the AssetKinds keys
-//   NOTE - this is used in our URLs, so changing this character would break existing 
-//          query strings with a set of kinds (e.g as used in the assetList ui) 
+//   NOTE - this is used in our URLs, so changing this character would break existing
+//          query strings with a set of kinds (e.g as used in the assetList ui)
 export const safeAssetKindStringSepChar = "-"
 export const AssetKindKeysALL = Object.keys(AssetKinds)  // For convenience. This gets ALL keys (including functions and disabled)
 
@@ -100,12 +99,12 @@ export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepC
 
 // All valid Asset kinds including disabled ones
 export const AssetKindKeysIncludingDisabled = _.filter(AssetKindKeysALL, (k) => {
-  return (typeof(AssetKinds[k]) !== 'function') 
+  return (typeof(AssetKinds[k]) !== 'function')
 })
 
 /** This is intended for use by publications.js and any Meteor.subscribe calls
  *  assetMakeSelector
- * 
+ *
  * @export
  * @param {string} userId
  * @param {Array} selectedAssetKinds
@@ -116,14 +115,14 @@ export const AssetKindKeysIncludingDisabled = _.filter(AssetKindKeysALL, (k) => 
  * @returns
  */
 export function assetMakeSelector(
-                      userId, 
-                      selectedAssetKinds, 
-                      nameSearch, 
+                      userId,
+                      selectedAssetKinds,
+                      nameSearch,
                       projectName=null,   // '_' means 'not in a project'.   null means In any/all projects
-                      showDeleted=false, 
-                      showStable=false) 
+                      showDeleted=false,
+                      showStable=false)
 {
-  let selector = { isDeleted: showDeleted }  
+  let selector = { isDeleted: showDeleted }
 
   if (projectName === '_')
     selector["projectNames"] = []
@@ -135,7 +134,7 @@ export function assetMakeSelector(
 
   if (userId && userId !== -1)
     selector["ownerId"] = userId
-    
+
   if (selectedAssetKinds && selectedAssetKinds.length > 0)
     selector["$or"] = _.map(selectedAssetKinds, x => ( { kind: x } ) )  // TODO: Could use $in ?
 
@@ -148,24 +147,24 @@ export function assetMakeSelector(
   return selector
 }
 
-export const assetSorters = { 
-  "edited": { updatedAt: -1}, 
-  "name":   { name: 1 }, 
-  "kind":   { kind: 1 } 
+export const assetSorters = {
+  "edited": { updatedAt: -1},
+  "name":   { name: 1 },
+  "kind":   { kind: 1 }
 }
 
-export const gameSorters = { 
-  "edited": { updatedAt: -1}, 
-  "name":   { name: 1 }, 
-  "plays":  { 'metadata.playCount': -1 } 
+export const gameSorters = {
+  "edited": { updatedAt: -1},
+  "name":   { name: 1 },
+  "plays":  { 'metadata.playCount': -1 }
 }
 
 // This is used by the publication. It's the merge of assetSorters, gameSorters, ...
-export const allSorters = { 
-  "edited": { updatedAt: -1}, 
-  "name":   { name: 1 }, 
+export const allSorters = {
+  "edited": { updatedAt: -1},
+  "name":   { name: 1 },
   "kind":   { kind: 1 },
-  "plays":  { 'metadata.playCount': -1 }  
+  "plays":  { 'metadata.playCount': -1 }
 }
 
 
@@ -187,10 +186,10 @@ Meteor.methods({
       if (Meteor.isServer)
       {
         console.log(`TODO #insecure# check that user '${username}' is really part of project '${data.projectNames[0]}' `)
-        // CHECK THEY REALLY CAN DO THIS.  
+        // CHECK THEY REALLY CAN DO THIS.
         // Is this.userId in Project.memberList for   project.ownerName === data.ownerName && project.name === data.projectNames[0]
         // ALSO CHECK that USERNAME AND USERID MATCH
-      } 
+      }
     }
 
     const now = new Date()
@@ -236,7 +235,7 @@ Meteor.methods({
 
     data.updatedAt = new Date()
     data.isUnconfirmedSave = this.isSimulation
-    
+
     // whitelist what can be updated
     check(data, {
       updatedAt: schema.updatedAt,
@@ -263,11 +262,6 @@ Meteor.methods({
     count = Azzets.update(selector, { $set: data } )
 
     if (Meteor.isServer) {
-      // can we omit this??? instead of update use findAndModify ?
-      // const assetData = Azzets.findOne( docId, {fields: { name: 1, dn_ownerName: 1, kind: 1 }} )
-      // technically we could run this on client..
-      // disable cache invalidation atm
-      // cache.invalidateAsset(assetData)
       console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`) // These fields might not be provided for updates
     }
     return count

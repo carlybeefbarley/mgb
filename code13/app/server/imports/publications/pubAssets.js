@@ -23,7 +23,7 @@ Meteor.publish('assets.public', function(
                                     projectName=null,
                                     showDeleted=false,
                                     showStable=false,
-                                    assetSortType,    // one of the keys of allSorters
+                                    assetSortType=undefined,    // one of the keys of allSorters
                                     limitCount=50)
 {
   let selector = assetMakeSelector(userId,
@@ -83,7 +83,7 @@ Meteor.publish('assets.public.owner.name', function(owner, name, kind) {
 //
 
 
-// I originally created this so we can support $text queries on name, 
+// I originally created this so we can support $text queries on name,
 // but now we are using regex, it's not clear it is of value
 // TODO: Consider cost/benefit of this index.. VERY PROBABLY DELETE THIS INDEX
 Azzets._ensureIndex({

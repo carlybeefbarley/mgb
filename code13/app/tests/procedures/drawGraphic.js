@@ -14,6 +14,7 @@ const el = {
 
 module.exports = (browser) => {
   const sel = SeleniumHelper(browser)
+
   const pickColor = (offset) => {
     // open color picker
     const colorPicker = sel.css(el.colorPicker)
@@ -58,7 +59,8 @@ module.exports = (browser) => {
 
   // return function so procedure can be used directly as callback
   return (done) => {
-    sel.adjustLevelSlider()
+    // adjustLevelSlider - works only partially
+    sel.adjustLevelSlider('EditGraphic')
 
     // green
     pickColor(35)
@@ -117,8 +119,7 @@ module.exports = (browser) => {
       return window.m.editGraphic.getImageData()`)
       .then(pngData => {
         sel.compareImages('graphics.thumbnail.pngdata.txt', pngData)
+        sel.done(done)
       })
-
-    sel.done(done)
   }
 }

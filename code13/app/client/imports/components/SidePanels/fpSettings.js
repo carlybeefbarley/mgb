@@ -27,7 +27,7 @@ export default fpSettings = React.createClass({
 
   getMeteorData: function() {
     const foo = _.map(expectedToolbars.scopeNames, name => (this.getLevelValFromSettings(name) ) )
-    return { levels: foo }  // This data isn't used, but because we referenced it in getMeteorData, there will be a forceUpdate() when settings change 
+    return { levels: foo }  // This data isn't used, but because we referenced it in getMeteorData, there will be a forceUpdate() when settings change
   },
 
   setLevelFromNum(name, newLevelVal) {
@@ -48,13 +48,13 @@ export default fpSettings = React.createClass({
     return getFeatureLevel(this.context.settings, makeLevelKey(name))
   },
 
-  resetToDefaults() { 
+  resetToDefaults() {
     resetAllFeatureLevelsToDefaults(this.context.settings)
   },
 
   render: function () {
- 
-    const numInputStyle = { 
+
+    const numInputStyle = {
       marginTop:        '0.5em',
       marginRight:      '0.4em',
       marginLeft:       '3px',
@@ -67,12 +67,12 @@ export default fpSettings = React.createClass({
       marginTop:        '0.3em',
       marginRight:      '2px',
       marginLeft:       '2px'
-    } 
+    }
 
     const makeSlider = (name) => {
       const maxVal = expectedToolbars.getMaxLevel(name)
       const defaultLevel = expectedToolbars.getDefaultLevel(name)
-      const actualLevel = this.getLevelValFromSettings(name) || defaultLevel 
+      const actualLevel = this.getLevelValFromSettings(name) || defaultLevel
       const friendlyName = expectedToolbars.getFriendlyName(name)
       const isHighlighted = expectedToolbars.getIsUsedForAssetKind(name, this.props.currentlyEditingAssetKind)
       const outerSty = { padding: '0.35em 0.15em', marginLeft: '0.1em', marginRight: '0.85em',  marginBottom: '1.35em' }
@@ -84,7 +84,7 @@ export default fpSettings = React.createClass({
           <div style={{ marginLeft: '1em' }}>
             { friendlyName }
             <br />
-            <small> 
+            <small>
               <span style={{color: 'grey'}}>Level </span>
               <NumberInput
                   style={numInputStyle}
@@ -105,7 +105,9 @@ export default fpSettings = React.createClass({
                   value={ actualLevel }
                   onChange={(e) => this.setLevelFromEvent(name, e)}
                   min={1}
-                  max={maxVal} />
+                  max={maxVal}
+                  id={'mgbjr-input-level-slider-'+name}
+                />
               <small>&emsp;{maxVal}</small>
             </span>
           </div>

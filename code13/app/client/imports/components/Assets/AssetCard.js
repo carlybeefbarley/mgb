@@ -184,6 +184,7 @@ export default AssetCard = React.createClass({
               display: viewOpts.showImg ? 'initial' : 'none',
               overflow: "hidden",
               width: "100%",
+              cursor: "pointer",
               backgroundColor: "white"
             }}>
           <Thumbnail

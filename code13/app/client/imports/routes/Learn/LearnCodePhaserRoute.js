@@ -25,6 +25,16 @@ for (var key in phaserSkills) {
   }
 }
 
+const handleClick = (e, skillPath) => {
+  // console.log('handleClick', e.button)
+  // if(e.buttons == 4 || e.button == 1)
+  //     // start tutorial in a new tab
+  //   else
+  //     // start tutorial in the same tab
+
+  startSkillPathTutorial( skillPath )
+}
+
 const LearnCodePhaserRoute = ({ currUser, params }, context) => {
   return (
     <Grid container columns='1'>
@@ -69,7 +79,8 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
 
             return (
               <div key={idx} style={cStyle} className='card animated fadeIn'>
-                <Card.Content onClick={ () => startSkillPathTutorial( skillPath ) }>
+                <Card.Content 
+                  onMouseUp={ (e) => { handleClick(e, skillPath) } }>
                   <p style={descStyle}>
                     <Icon name={area.icon} size='large' />
                     <b>{area.name}</b>

@@ -437,7 +437,7 @@ export default class Joyride extends React.Component {
           utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
           e.preventDefault()
           e.stopPropagation()
-          return // no other action
+          // return // no other action
         }
         // Special MGB-integration case: 'submitCode' on Back button (!?)
         if (dataType === 'back' && steps[state.index].submitCode) {

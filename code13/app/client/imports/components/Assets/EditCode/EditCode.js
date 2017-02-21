@@ -20,6 +20,7 @@ import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
 import CodeFlower from './CodeFlowerModded.js'
 import GameScreen from './GameScreen.js'
+import CodeChallenges from './CodeChallenges.js'
 import makeBundle from '/imports/helpers/codeBundle'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 
@@ -1513,7 +1514,7 @@ export default class EditCode extends React.Component {
 
     this.tools.collectSources((collectedSources) => {
       const startRun = () => {
-        if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
+        if (this.refs.gameScreen.isIframeReady()) {
           this._postMessageToIFrame({
             mgbCommand: 'startRun',
             sourcesToRun: collectedSources,
@@ -1737,16 +1738,7 @@ export default class EditCode extends React.Component {
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
     const newMode = (i+1) % _infoPaneModes.length
-
-    const oldMode = _infoPaneModes[this.state.infoPaneMode]
-    const curMode = _infoPaneModes[newMode]
     // if(!_infoPaneModes[newMode].col2) this.handleStop()
-    //
-    if(this.state.isPlaying && (!oldMode.col2 || !curMode.col2) ){
-      this.handleStop()
-      this.handleRun()
-    }
-
     this.setState( { infoPaneMode: newMode } )
   }
 
@@ -2202,6 +2194,21 @@ export default class EditCode extends React.Component {
                   </div>
                   }
                 </div>
+              }
+
+              {/* TODO need to implement asset.skillPath to reference tutorial with this asset */}
+              { !docEmpty && asset.kind === 'code' && asset.skillPath &&
+                <div className="title" id="mgbjr-EditCode-codeChallenges">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />Code Challenges
+                  </span>
+                </div>
+              }
+
+              { !docEmpty && asset.kind === 'code' && asset.skillPath &&
+                <CodeChallenges
+
+                  />
               }
 
               { !docEmpty && asset.kind === 'code' &&

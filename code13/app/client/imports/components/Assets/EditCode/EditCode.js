@@ -1514,7 +1514,7 @@ export default class EditCode extends React.Component {
 
     this.tools.collectSources((collectedSources) => {
       const startRun = () => {
-        if (this.refs.gameScreen.isIframeReady()) {
+        if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
           this._postMessageToIFrame({
             mgbCommand: 'startRun',
             sourcesToRun: collectedSources,
@@ -1738,7 +1738,16 @@ export default class EditCode extends React.Component {
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
     const newMode = (i+1) % _infoPaneModes.length
+
+    const oldMode = _infoPaneModes[this.state.infoPaneMode]
+    const curMode = _infoPaneModes[newMode]
     // if(!_infoPaneModes[newMode].col2) this.handleStop()
+    //
+    if(this.state.isPlaying && oldMode.col2 != curMode.col2){
+      this.handleStop()
+      this.handleRun()
+    }
+
     this.setState( { infoPaneMode: newMode } )
   }
 

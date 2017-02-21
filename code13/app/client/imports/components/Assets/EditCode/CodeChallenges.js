@@ -18,17 +18,22 @@ export default class CodeChallenges extends React.Component {
   constructor(props) {
     super(props)
 
+    // console.log(this.props.code)
+
     this.state = {
-      isMinimized: false,
-      isHidden:    true
+      
     }
 
+  }
+
+  runTests(){
+    console.log(this.props.code)
   }
 
   render() {
     return (
       <div className="content">
-        <Button size='small' color='green'>
+        <Button size='small' color='green' onClick={this.runTests.bind(this)}>
           <Icon name='play' /> Run tests
         </Button>
         <Button size='small' color='green'>

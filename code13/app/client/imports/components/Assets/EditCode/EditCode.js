@@ -2194,8 +2194,8 @@ export default class EditCode extends React.Component {
 
               { !docEmpty && asset.kind === 'code' && asset.skillPath && 
                 <CodeChallenges
-
-                  />
+                  code={ asset.content2.src}
+                />
               }              
 
               { !docEmpty && asset.kind === 'code' &&

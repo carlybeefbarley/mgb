@@ -28,7 +28,40 @@ export default {
         description:'The JavaScript programming language',
         sequence:   'comments,statements,functions,types,control-flow,booleans,operators,math,modules,classes,generators,exceptions,this'
       },
-      'comments':     C.En(0),
+
+
+      'comments' : {
+        $meta: {
+          name: 'Comment your JavaScript Code',
+          description: [
+            "Comments are lines of code that JavaScript will intentionally ignore. Comments are a great way to leave notes to yourself and to other people who will later need to figure out what that code does.",
+            "There are two ways to write comments in JavaScript:",
+            "Using <code>//</code> will tell JavaScript to ignore the remainder of the text on the current line:",
+            "<blockquote>// This is an in-line comment.</blockquote>",
+            "You can make a multi-line comment beginning with <code>/*</code> and ending with <code>*/</code>:",
+            "<blockquote>/* This is a <br>   multi-line comment */</blockquote>",
+            "<strong>Best Practice</strong><br>As you write code, you should regularly add comments to clarify the function of parts of your code. Good commenting can help communicate the intent of your code&mdash;both for others <em>and</em> for your future self.",
+            "<hr>",
+            "Try creating one of each type of comment."
+          ],
+          "code": [
+            " // comments code "
+          ],
+          "solutions": [
+            "// Fake Comment\n/* Another Comment */"
+          ],
+          "tests": [
+            "assert(code.match(/(\\/\\/)...../g), 'message: Create a <code>//</code> style comment that contains at least five letters.');",
+            "assert(code.match(/(\\/\\*)([^\\*\\/]{5,})(?=\\*\\/)/gm), 'message: Create a <code>/* */</code> style comment that contains at least five letters.');"
+          ]
+        },
+        skill: C.En(0)
+        
+      },
+
+
+
+      // 'comments':     C.En(0),
 
       'statements': {
         'var':        C.En(0),

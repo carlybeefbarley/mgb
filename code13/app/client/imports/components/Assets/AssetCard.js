@@ -233,12 +233,16 @@ export default AssetCard = React.createClass({
                   display: 'block',
                   textOverflow: "ellipsis"
                 }}
-                onClick={this.handleEditClick}
+                onMouseUp={this.handleEditClick}
+                onTouchEnd={this.handleEditClick}
                 >
               <small>{shownAssetName}</small>
             </a>
             { viewOpts.showMeta && (asset.text && asset.text !== "") &&
-              <div className="meta" style={{ "color": 'black'}}  onClick={this.handleEditClick} title="Asset Description">
+              <div className="meta" style={{ "color": 'black', 'cursor': 'pointer'}}  
+                onMouseUp={this.handleEditClick}
+                onTouchEnd={this.handleEditClick}
+                title="Asset Description">
                 <small><em>{asset.text}</em></small>
               </div>
             }

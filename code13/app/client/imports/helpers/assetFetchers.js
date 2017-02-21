@@ -8,16 +8,10 @@ import { getProjectAvatarUrl as getProjectAvatarUrlBasic } from '/imports/schema
 // PartialAssets because Meteor atm cannot merge assets recursively
 // https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
 
-
-// TODO: Add some cache hit/miss metrics and provide a way to get them easily (e.g. import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals' )
-
 const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
 const ALLOW_OBSERVERS = SpecialGlobals.allowObservers  // Big hammer to disable it if we hit a scalability crunch (or could make it user-specific or sysvar)
 const MAX_CACHED_ASSETHANDLERS = 10 // Max # of AssetHandlers that will be cached
-
-// left resource caching for browser to manage
-// const MAX_ASSET_CACHE_LENGTH = 500  // Max # of assets in cache; not a size-based metric yet
 
 // CDN_DOMAIN will be set at startup. See createCloudFront.js for the magic
 let CDN_DOMAIN = ""
@@ -77,12 +71,22 @@ export const makeExpireThumbnailLink = (assetOrId, maxAge = 60) => {
 
 }
 
+let lastDiff = 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+const syncTime = () => {
+  const emitted = Date.now()
+  Meteor.call('syncTime', {now: emitted}, (err, date) => {
+    lastDiff = Date.now() - date.now
+    console.log("Last Diff:", lastDiff, "serverDiff", date.diff)
+  })
+}
+syncTime()
+
 // use this to allow client NOT pull resources every time
 // will return timestamp with next expire datetime
 export const makeExpireTimestamp = (maxAge) => {
   // TODO(@stauzs): we need server time here - this will work only for short periods of time !!!!
   // See https://github.com/mizzao/meteor-timesync
-  const now = Date.now()
+  const now = Date.now() - lastDiff
   // this will be timestamp rounded to seconds   // TODO(@stauzs) explain why this is  % (expires * 1000) rather than % 1000
   // it will round timestamp to expires seconds - * 1000 because JS timestamps are in milliseconds
   // it's easier to understand with tens and fives, but it will work with any number
@@ -165,61 +169,8 @@ export const fetchAssetByUri = (uri) => {
   })
 }
 
-// simple cache of ajax requests
-/*
-WE DON'T NEED TO CACHE AJAX REQUESTS SINCE WE ALLOW BROWSER TO CACHE LOCALLY RESOURCES
-
-atm leaving as comment as we need to re-check if browser cache works as expected
-const ajaxCache = []
-const getFromCache = (uri, etag = null) => {
-  return ajaxCache.find(c => {
-    return (c.uri == uri && (etag ? c.etag == etag : true))
-  })
-}
-const addToCache = (uri, etag, response) => {
-  const cached = getFromCache(uri, etag)
-  if (cached) {
-    cached.response = response
-    cached.lastAccessed = Date.now()
-  }
-  else {
-    // check
-    ajaxCache.push({
-      uri, etag, response, lastAccessed: Date.now()
-    })
-    ajaxCache.sort((a, b) => a.lastAccessed < b.lastAccessed)
-    if (ajaxCache.length > MAX_ASSET_CACHE_LENGTH)
-      ajaxCache.shift()
-  }
-}
-const removeFromCache = uri => {
-  const index = ajaxCache.findIndex(c => c.uri === uri)
-  if (index > -1) {
-    ajaxCache.splice(index, 1)
-  }
-}
-*/
-
-// this function will try to make the best use of etag caching  (TODO: Clarify 'best of etag' comment)
-// "best of" because asset param is optional, but when it present - server and client etag will be the same
-// and this allows to cache api response locally - ALLOW BROWSER TO CACHE RESOURCES
-// asset param is optional - without it this function will work as normal ajax
-// cached resources should save 100-1000 ms per request (depends on headers roundtrip)
 export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
-  /*if (etag) {
-    const cached = getFromCache(uri, etag)
-    if (cached) {
-      // remove from stack to maintain async behaviour
-      setTimeout(() => {
-        callback(null, cached.response)
-      }, 0)
-      return
-    }
-  }
-  else
-    removeFromCache(uri)*/
-
   const client = new XMLHttpRequest()
   const cdnLink = makeCDNLink(uri, etag)
 
@@ -233,8 +184,6 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
     }
   }
 
-
-
   const usingCDN = uri == cdnLink
   client.open('GET', cdnLink)
 
@@ -244,16 +193,12 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   client.send()
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified
-    if (this.status >= 200 && this.status < 300) {
-      /*if (etag && this.getResponseHeader("etag")) {
-        addToCache(uri, etag, this.response)
-      }*/
+    if (this.status >= 200 && this.status < 300)
       callback(null, this.response, client)
-    }
     else {
       // try link without CDN
       if (usingCDN && isLocal) {
-        console.log("CDN failed - trying local uri")
+        console.log("CDN failed - trying local uri:", uri)
         mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
         return
       }
@@ -304,10 +249,14 @@ class AssetHandler {
   get loading() {
     return !this.isReady
   }
+  /**
+   * is assetDeleted?
+   */
+  get isDeleted(){
+    return this.isReady && this.asset
+  }
 
-  // TODO: Explain what this does and what's different to update(). It seems related to forceUpdate flag?
-  // TODO: Also explain param - callback behavior/interface
-  // this method only update Asset meta info, but will skip content2
+  // this method only updatea Asset meta info, but will skip content2
   /**
    * tell assetHandler to update Asset info - except content2
    * @param {function} onChange - Overwrite previous onChange callback
@@ -319,6 +268,9 @@ class AssetHandler {
     const asset = Azzets.findOne(this.id)
     // TODO: figure out what to do if we don't have asset in the DB - is it on it's way? or is it deleted?
     if(!asset){
+      if(this.isReady){
+        console.log("Asset is deleted!!!!")
+      }
       return
     }
     // save previous content2
@@ -332,7 +284,7 @@ class AssetHandler {
   }
 
   /**
-   * tell assetHandler to do full update Asset info and content2 also - it's possible to pass latest content2 Object
+   * tell assetHandler to do full update - Asset info AND content2
    * @param {function} onChange - Overwrite previous onChange callback
    * @param {updateObj} updateObj - last known object with content2
    * @see {@link https://github.com/devlapse/mgb/blob/10b8393ba61863a430af398392a726588a8c082a/code13/app/client/imports/routes/Assets/AssetEditRoute.js#L643} for more info.
@@ -391,7 +343,15 @@ class AssetHandler {
         this.subscription = Meteor.subscribe("assets.public.byId", this.id, {
           // onReady is called multiple times
           onReady: () => {
+            // TODO: figure out what to do if we don't have asset in the DB - is it on it's way? or is it deleted?
             this._onReady(updateObj)
+
+            const asset = Azzets.findOne(this.id)
+            if(!asset){
+              console.log("Asset has been deleted")
+              this.isReady = true
+              this.onChange && this.onChange()
+            }
           },
           // onStop is called multiple times and then immediately is fired onReady again
           onStop: () => {
@@ -459,6 +419,7 @@ class AssetHandler {
     // save previous content2
     let oldC2 = this.asset ? this.asset.content2 : null
     const asset = Azzets.findOne(this.id)
+    // asset has been deleted???
     if (!asset)
       return
 
@@ -470,8 +431,8 @@ class AssetHandler {
 
     this.asset = asset
     this.asset.content2 = updateObj ? updateObj.content2 : oldC2
-    // actually etag is not correct here
-    // as there is small difference in timestamps
+    // actually etag is not correct here (probably will be automatically fixed some day)
+    // as there is small difference in the asset timestamp in server and client
     // saved minimongo data and fetched new differs approx ~ 10ms
     this.etag = genetag(this.asset)
     this.updateContent2(updateObj)

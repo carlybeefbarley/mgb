@@ -1,3 +1,4 @@
 
 import './mgb1Importer'
-import './gamePlayStats' 
+import './gamePlayStats'
+import './timeSync'

@@ -20,6 +20,7 @@ import ConsoleMessageViewer from './ConsoleMessageViewer.js'
 import SourceTools from './SourceTools.js'
 import CodeFlower from './CodeFlowerModded.js'
 import GameScreen from './GameScreen.js'
+import CodeChallenges from './CodeChallenges.js'
 import makeBundle from '/imports/helpers/codeBundle'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 
@@ -2182,6 +2183,21 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
+              {/* TODO need to implement asset.skillPath to reference tutorial with this asset */}
+              { !docEmpty && asset.kind === 'code' && asset.skillPath && 
+                <div className="title" id="mgbjr-EditCode-codeChallenges">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />Code Challenges
+                  </span>
+                </div>
+              }
+
+              { !docEmpty && asset.kind === 'code' && asset.skillPath && 
+                <CodeChallenges
+
+                  />
+              }              
+
               { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (header)
                 <div id="mgbjr-EditCode-codeMentor" className="active title">
@@ -2233,7 +2249,7 @@ export default class EditCode extends React.Component {
                   </div>
                   }
                 </div>
-              }
+              }              
 
               { docEmpty &&
                 // Clean sheet helper!
@@ -2252,7 +2268,7 @@ export default class EditCode extends React.Component {
                   </div>
                   ...or, if you think you know what you are doing, just start hacking away!
                 </div>
-              }
+              }              
 
               { !docEmpty && asset.kind === 'code' &&
                 // Code run/stop (header)
@@ -2314,7 +2330,8 @@ export default class EditCode extends React.Component {
                       }*/}
                     </span>
                     }
-                  </span>
+                  </span>                  
+
                   <GameScreen
                     ref="gameScreen"
                     isPopup = {this.state.isPopup}

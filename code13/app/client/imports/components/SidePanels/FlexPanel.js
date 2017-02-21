@@ -44,6 +44,13 @@ const flexPanelViews = [
   { tag: 'super',     lev: 8,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',    el: fpSuperAdmin,    superAdminOnly: true, mobileUI: false  } // ALWAYS SuperAdmin
 ]
 
+const menuItemIndicatorStyle = {
+  position: 'absolute',
+  top:      '0.4em',
+  right:    '0.4em',
+  margin:   '0',
+}
+
 const defaultPanelViewIndex = 0
 const DEFAULT_FLEXPANEL_FEATURELEVEL = expectedToolbars.getDefaultLevel('FlexPanel')
 
@@ -167,17 +174,34 @@ export default FlexPanel = React.createClass({
   },
 
   getFpButtonSpecialClassForTag: function(tag) {
-    const { joyrideSteps } = this.props
+    const { joyrideSteps, hazUnreadChats } = this.props
     const { wiggleActivity } = this.state
+
+    if (tag === 'chat' && hazUnreadChats.length > 0)
+      return ' animated swing '
 
     if (tag === 'activity' && wiggleActivity)
       return ' green animated swing '
 
     if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
-      return ' green animated swing '
+      return ' animated swing '
 
     return ''
   },
+
+
+  getFpButtonExtraLabelForTag: function(tag) {
+    const { joyrideSteps, hazUnreadChats } = this.props
+
+    if (tag === 'chat' && hazUnreadChats.length > 0)
+      return <Label color='red' size='mini' circular style={menuItemIndicatorStyle} content={hazUnreadChats.length} />
+
+    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
+      return <Label color='orange' empty circular style={menuItemIndicatorStyle} />
+
+    return null
+  },
+
 
   getFpButtonAutoShowForTag: function(tag) {
     const { meteorStatus } = this.data
@@ -279,13 +303,6 @@ export default FlexPanel = React.createClass({
       zIndex:       301     // Temp Hack
     }
 
-    const menuItemIndicatorStyle = {
-      position: 'absolute',
-      top: '0.5em',
-      right: '0.5em',
-      margin: '0',
-    }
-
     const flexPanelChoice = this._getSelectedFlexPanelChoice()
     const flexPanelHdr = flexPanelChoice.hdr
     const flexPanelIcon = flexPanelChoice.icon
@@ -357,11 +374,9 @@ export default FlexPanel = React.createClass({
                 className={active +  " item"}
                 title={v.name}
                 onClick={this.fpViewSelect.bind(this, v.tag)}>
-                <i className={v.icon + specialClass + " large icon"}></i>
+                <i className={v.icon + ' ' + specialClass + ' large icon'}></i>
                 { fpIsFooter ? null : v.name }
-                {v.tag === 'chat' && hazUnreadChats.length > 0 && (
-                  <Label color='red' empty circular style={menuItemIndicatorStyle} />
-                )}
+                { this.getFpButtonExtraLabelForTag(v.tag) }
               </a>
             )
           })}

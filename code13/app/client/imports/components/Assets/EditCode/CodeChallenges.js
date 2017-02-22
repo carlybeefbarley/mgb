@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import {
@@ -10,6 +11,7 @@ import {
 } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 
 import './editcode.css'
 
@@ -19,6 +21,8 @@ export default class CodeChallenges extends React.Component {
     super(props)
 
     // console.log(this.props.code)
+    
+    this.skillNode = this.getSkillNode(props.skillPath)
 
     this.state = {
       
@@ -26,8 +30,24 @@ export default class CodeChallenges extends React.Component {
 
   }
 
+  getSkillNode(){
+    let skillNodes = _.cloneDeep(SkillNodes)
+    const path = this.props.skillPath.split('.')
+    while(path.length > 0){
+      skillNodes = skillNodes[path.shift()]
+    }
+    return skillNodes
+  }
+
   runTests(){
-    console.log(this.props.code)
+    // console.log(this.props.code, this.skillNode.$meta.tests)
+
+    const tests = this.skillNode.$meta.tests
+    tests.map((test) => {
+      console.log(test)
+      // const result = eval(test)
+    })
+
   }
 
   render() {
@@ -47,4 +67,9 @@ export default class CodeChallenges extends React.Component {
     )
   }
 
+}
+
+
+const assert = (param1, param2) => {
+  console.log(param1, param2)
 }

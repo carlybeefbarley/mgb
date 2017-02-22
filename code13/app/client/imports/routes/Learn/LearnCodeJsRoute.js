@@ -12,7 +12,7 @@ import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 
 import { startSkillPathTutorial } from '/client/imports/routes/App'
 
-const jsSkills = SkillNodes.code.js.lang
+const jsSkills = SkillNodes.code.js.basics
 const skillItems = []
 for (var key in jsSkills) {
   if (jsSkills.hasOwnProperty( key ) && key != '$meta') {

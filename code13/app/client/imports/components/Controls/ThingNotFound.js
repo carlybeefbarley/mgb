@@ -1,20 +1,24 @@
 import React, { PropTypes } from 'react'
+import { Segment, Message } from 'semantic-ui-react'
 
-// Note that this is a Stateless function: https://facebook.github.io/react/docs/reusable-components.html 
-
-const ThingNotFound = (props) => 
-  <div className="ui segment">
-    <div className="ui error message">
-      <div className="header">
-        {props.type} not found
-      </div>
-      <p>{props.type} {props.id ? `'${props.id}' `: ''} does not exist. Weird. </p>
-    </div>
-  </div>
-
+const ThingNotFound = ( { type, id } ) => (
+  <Segment padded>
+    <Message 
+      error 
+      icon='broken chain'
+      header={`${type} not found`}
+      list={[
+        `${type} ${id ? `'${id}' `: ''} does not exist. Weird...`,
+        `Maybe it was deleted?`,
+        `Also, names and Ids in URLs are case-sensitive, maybe that's the issue?`
+      ]}
+      />
+  </Segment>
+)
 
 ThingNotFound.propTypes = {
-  type: PropTypes.string.isRequired,     // E.g  "User"
-  id:   PropTypes.string                 // e.g a98uqeihuca
+  type: PropTypes.string.isRequired,     // E.g  "User". Should be UpperFirstChar.
+  id:   PropTypes.string                 // e.g a98uqeihuca. Optional.
 }
+
 export default ThingNotFound

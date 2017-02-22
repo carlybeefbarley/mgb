@@ -69,8 +69,11 @@ module.exports = (browser) => {
       }), timeout, message)
     },
 
+
+    // REST is site specific stuff...
     // TODO (stauzs): move site specific actions to external file?
     adjustLevelSlider(name, level){
+      level = level === void(0) ? 1 : level
       const sliders = [
         '#mgbjr-input-level-slider-FlexPanel',
         '#mgbjr-input-level-slider-EditGraphic',

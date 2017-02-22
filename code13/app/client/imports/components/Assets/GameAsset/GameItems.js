@@ -4,7 +4,7 @@ import { Card, Image } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 export const GameItem = ( { game } ) => (
-	<Card fluid>
+	<Card>
     <QLink to={`/u/${game.dn_ownerName}/play/${game._id}`}>
     {
       Thumbnail.getLink(game)
@@ -25,7 +25,7 @@ export const GameItem = ( { game } ) => (
 )
 
 const GameItems = ( { games } ) => (
-  <Card.Group stackable itemsPerRow={5} style={{clear: 'both'}}>
+  <Card.Group stackable doubling itemsPerRow={5} style={{clear: 'both', flexWrap: 'wrap'}}>
     { (!games || games.length === 0) &&
       <p>No matching games</p>}
     { games.map( g => { 

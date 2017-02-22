@@ -23,8 +23,7 @@ const _incrementPlayCount = _.debounce(
     assetId => {
     Meteor.call('job.gamePlayStats.playGame', assetId)
   },
-  SpecialGlobals.gamePlay.playCountDebounceMs,
-  {leading: true}
+  SpecialGlobals.gamePlay.playCountDebounceMs
 )
 
 class PlayCodeGame extends React.Component {

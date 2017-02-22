@@ -217,7 +217,47 @@ export default class MagePlayGame
       return
 
     if (this.isTransitionInProgress) {      // transition to new map
-      this.transitionTick()
+        // Transition tick function would not run unless specified here
+        if (this.transitionStateWaitingForActorLoadRequests)
+        {
+          //trace("transitionTick: "+actorLoadsPending+" actor loads still Pending")
+          // TODO: Fadeout... if (view.alpha > 0.1)     view.alpha -= 0.1
+        }
+        else
+        {
+          // TODO: Fadein
+          // if (view.alpha < 1.0)
+          // {
+          //   // Fade it in - looks nice
+          //   view.alpha += 0.1
+          //   if (view.alpha > 1.0)
+          //     view.alpha = 1.0
+          //   return
+          // }
+          // Fade-in done.. We're ready to play!
+          this.playPrepareActiveLayer(this.map, true)   // Was set by transitionResourcesHaveLoaded()
+          this.playPrepareBackgroundLayer()
+
+          this.transitionPlayerAA.x = this.transitionNewX
+          this.transitionPlayerAA.fromx = this.transitionNewX
+          this.transitionPlayerAA.y = this.transitionNewY
+          this.transitionPlayerAA.fromy = this.transitionNewY
+          this.transitionPlayerAA.renderX = this.transitionPlayerAA.fromx * MgbSystem.tileMinWidth
+          this.transitionPlayerAA.renderY = this.transitionPlayerAA.fromy * MgbSystem.tileMinHeight
+
+          this.transitionPlayerAA.currentActiveShots = 0
+
+          this.AA_player_idx = this.activeActors.length
+          this.activeActors[this.AA_player_idx] = this.transitionPlayerAA
+          
+          this.container = document.getElementById("mgb-game-container") 
+          this.scrollMapToSeePlayer()
+
+          this.clearTicTable()
+          // G_tweenCount = 0
+          this.isTransitionInProgress = false
+          this.clearPlayerKeys()
+        }
       return
     }
 
@@ -551,26 +591,26 @@ export default class MagePlayGame
     let mhs = this.activeActors[this.AA_player_idx].maxHealth == 0 ? "" : ("/" + this.activeActors[this.AA_player_idx].maxHealth)
     this.setGameStatusFn(0, //"Lives: "+activeActors[this.AA_player_idx].extraLives   +
       "Health " + this.activeActors[this.AA_player_idx].health + mhs +
-      "     Score " + this.activeActors[this.AA_player_idx].score + ps +
-      "     Time " + timeStr)
+      "  |  Score " + this.activeActors[this.AA_player_idx].score + ps +
+      "  |  Time " + timeStr)
 
     if (this.G_gameOver) {
-      debugger//  this needs work
+      //debugger//  this needs work
       // var gee = new GameEngineEvent(GameEngineEvent.COMPLETED,
       //   this.initialMap.userName, this.initialMap.projectName, this.initialMap.name,
       //   true, secondsPlayed, this.activeActors[this.AA_player_idx].score)
 
       if (this.activeActors[this.AA_player_idx].winLevel) {
-        debugger// alert sucks
+        //debugger// alert sucks
         alert("Final Score: " + this.activeActors[this.AA_player_idx].score +
           ", Time: " + timeStr, "You Win!")
       }
       else {
-        debugger // alert sucks 
+        //debugger // alert sucks 
         alert("G A M E   O V E R")
         // gee.completedVictory = false		// Change just one parameter...
       }
-      debugger // needs thinking about state management with parent obects
+      //debugger // needs thinking about state management with parent obects
   //    dispatchEvent(gee)
       this.endGame()
     }
@@ -586,7 +626,7 @@ export default class MagePlayGame
     let timeStr = ''
     if (hoursPlayed)
       timeStr += hoursPlayed + ":"
-    timeStr += (minutesPlayed % 60 < 10 ? "0" : "") + Math.floor(minutesPlayed % 60) + "."
+    timeStr += (minutesPlayed % 60 < 10 ? "0" : "") + Math.floor(minutesPlayed % 60) + ":"
     timeStr += (secondsPlayed % 60 < 10 ? "0" : "") + Math.floor(secondsPlayed % 60)
     return timeStr
   }

@@ -47,6 +47,7 @@ const handleClick = (e, idx, code, currUser) => {
     name: 'tutorials.js.'+idx,
     kind: 'code',
     text: '',
+    skillPath: 'code.js.lang.'+idx,
     assetLicense: 'MIT',
     workState: 'unknown',
     thumbnail: '',

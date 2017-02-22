@@ -32,7 +32,6 @@ export default ImportRoute = React.createClass({
     let newAsset = {
       name: assetName,
       kind: assetKindKey,
-      skillPath: "",
       assetLicense: assetLicense,
       workState: workState,
       thumbnail: thumbnail,

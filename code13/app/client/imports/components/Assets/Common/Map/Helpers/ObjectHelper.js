@@ -217,7 +217,6 @@ const ObjectHelper = {
             {name: 'Layer 1', isHidden: false, isLocked: false}
           ]
         },
-        skillPath: "",
         isCompleted: false,
         isDeleted: false,
         isPrivate: true

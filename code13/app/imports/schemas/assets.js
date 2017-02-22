@@ -36,7 +36,10 @@ var schema = {
   kind: String,       // Asset's kind (image, map, etc)
   text: String,       // A description field
 
-  // optional. Some assets needs to be linked to SkilNodes
+  // skillPath is a dotted path to SkillNodes
+  // currently skillPath is used only for code tutorials which has automated tests
+  // if skillPath is present then codeEditor shows code challenge section and offers to run tests
+  // added 2/22/2017
   skillPath: String,  // linked to SkillNodes. For example code.js.lang
 
   // License information. See TermsOfService.js for description of what a missing license means
@@ -208,6 +211,7 @@ Meteor.methods({
 
     data.createdAt = data.createdAt || now    // -- useful for asset import from MGB1
     data.updatedAt = now
+    data.skillPath = data.skillPath || ''
     data.workState = data.workState || defaultWorkStateName
     data.content = ''                                // This is stale. Can be removed one day
     data.text = _.trim(data.text) || ''                      // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
@@ -270,6 +274,7 @@ Meteor.methods({
       name: optional(schema.name),
       kind: optional(schema.kind),
       text: optional(schema.text),
+      skillPath: optional(schema.skillPath),
       workState: optional(schema.workState),
       assetLicense: optional(schema.assetLicense),
       content: optional(schema.content),

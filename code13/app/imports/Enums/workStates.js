@@ -14,7 +14,7 @@ export const bestWorkStateName = "showcase"
 export const workStateIcons = {
   "broken":     "bug",
   "experiment": "lab",
-  "unknown":    "question",
+  "unknown":    "asterisk",
   "working":    "meh",
   "polished":   "smile",
   "showcase":   "thumbs up"

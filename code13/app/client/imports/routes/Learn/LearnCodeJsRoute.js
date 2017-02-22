@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
-import QLink from '../QLink'
+import QLink, { utilPushTo } from "/client/imports/routes/QLink"
 import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/routes/App'
@@ -23,24 +23,10 @@ for (var key in jsSkills) {
   }
 }
 
-
-// console.log(
-//   "graphic",
-//   fileName,
-//   projectName,
-//   projectOwnerId,
-//   projectOwnerName,
-//   content2,
-//   thumbnail,
-//   this.assetLicense,
-//   this.workState,
-//   this.isCompleted,
-// )
-// // graphic fern_2.png null null null  content2 thumbnail MIT unknown false
-
 const handleClick = (e, idx, code, currUser) => {
   // console.log(e, idx, code, currUser)
 
+  const newTab = (e.buttons == 4 || e.button == 1)
   const content2 = {}
 
   let newAsset = {
@@ -58,15 +44,20 @@ const handleClick = (e, idx, code, currUser) => {
     isPrivate:   false
   }
 
-  console.log(newAsset)
-
   Meteor.call('Azzets.create', newAsset, (error, result) => {
     if (error) {
       showToast("cannot create Asset because: " + error.reason, 'error')
     } else {
       newAsset._id = result             // So activity log will work
       logActivity("asset.create",  `Created code tutorial`, null, newAsset)
-      console.log(result)
+
+      const url = `/u/${currUser.username}/asset/${result}`
+      
+      if(newTab){
+        window.open(window.location.origin + url)
+      } else {
+        utilPushTo(window.location, url)
+      }
     }
   })
 }
@@ -76,8 +67,6 @@ const handleClick = (e, idx, code, currUser) => {
 
 const LearnCodeJsRoute = (props, context) => {
   const currUser = props.currUser
-
-  // console.log(props)
 
   return (
     <Grid container columns='1'>
@@ -91,7 +80,9 @@ const LearnCodeJsRoute = (props, context) => {
         <Card.Group itemsPerRow={1} stackable className="skills">
           { skillItems.map( (area, idx) => (
             <div key={idx} className='card animated fadeIn' style={cardStyle}
-            onClick={ (e)=>{ handleClick(e, area.idx, area.code, currUser) } }>
+            onMouseUp={ (e)=>{ handleClick(e, area.idx, area.code, currUser) } }
+            onTouchEnd={ (e)=>{ handleClick(e, area.idx, area.code, currUser) } }
+                >
               <Card.Content>
                 <p style={descStyle}>
                   <i className={area.icon + " large icon"}></i>

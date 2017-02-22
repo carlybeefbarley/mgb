@@ -36,6 +36,9 @@ var schema = {
   kind: String,       // Asset's kind (image, map, etc)
   text: String,       // A description field
 
+  // optional. Some assets needs to be linked to SkilNodes
+  skillPath: String,  // linked to SkillNodes. For example code.js.lang
+
   // License information. See TermsOfService.js for description of what a missing license means
   assetLicense: String,    // A license that covers this asset. Ideally this will be one of the well-know license tags we define in assetLicenses.js.
 

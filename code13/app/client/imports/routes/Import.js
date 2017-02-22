@@ -33,12 +33,12 @@ export default ImportRoute = React.createClass({
       name: assetName,
       kind: assetKindKey,
       text: "",
+      skillPath: "",
       assetLicense: assetLicense,
-      // TODO check why workstate isn't saved. Data is passed right @guntis
       workState: workState,
       thumbnail: thumbnail || "",
       content2: content2,
-      dn_ownerName: this.props.currUser.name,         // Will be replaced below if in another project
+      dn_ownerName: this.props.currUser.username,         // Will be replaced below if in another project
 
       isCompleted: isCompleted,
       isDeleted:   false,

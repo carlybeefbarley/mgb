@@ -64,6 +64,7 @@ export default AssetCreateNewRoute = React.createClass({
       text:         "",
       thumbnail:    "",
       content2:     {},
+      skillPath:    "",
       dn_ownerName: this.props.currUser.name,         // Will be replaced below if in another project
 
       isCompleted:  false,

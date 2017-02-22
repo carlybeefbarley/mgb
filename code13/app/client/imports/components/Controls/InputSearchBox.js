@@ -47,8 +47,11 @@ class InputSearchBox extends React.Component {
         value={activeValue}
         onChange={ this._onInternalChange }
         onKeyUp={ this._onKeyUp }
-        action={{ icon: 'search', color: actionColor, onClick: this._onActionClick}}
-        />
+        action={ { 
+          icon: { name: 'search', fitted: true }, 
+          color: actionColor, 
+          onClick: this._onActionClick
+        }} />
     )
   }
 }

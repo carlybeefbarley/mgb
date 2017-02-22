@@ -5,6 +5,8 @@
 import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
+import { checkIsLoggedIn, checkMgb } from './checkMgb'
+
 import { defaultWorkStateName } from '/imports/Enums/workStates'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
@@ -171,12 +173,13 @@ export const allSorters = {
 Meteor.methods({
   "Azzets.create": function(data) {
     const username = Meteor.user().profile.name
+    const now = new Date()
+    checkIsLoggedIn()
 
-    if (!data.ownerId) data.ownerId = this.userId                   // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
-    if (!data.dn_ownerName) data.dn_ownerName = username
-
-    if (!this.userId)
-      throw new Meteor.Error(401, "Login required")                 // TODO: Better access check
+    if (!data.ownerId) 
+      data.ownerId = this.userId                   // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
+    if (!data.dn_ownerName) 
+      data.dn_ownerName = username
 
     if (this.userId !== data.ownerId)
     {
@@ -191,16 +194,23 @@ Meteor.methods({
         // ALSO CHECK that USERNAME AND USERID MATCH
       }
     }
+    data.name = _.trim(data.name)
+    checkMgb.assetName(data.name)
 
-    const now = new Date()
+    if (data.text)
+    {
+      data.text = _.trim(data.text)
+      checkMgb.assetDescription(data.text)
+    }
+
     data.createdAt = data.createdAt || now    // -- useful for asset import from MGB1
     data.updatedAt = now
     data.workState = data.workState || defaultWorkStateName
     data.content = ''                                // This is stale. Can be removed one day
-    data.text = data.text || ''                      // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
+    data.text = _.trim(data.text) || ''                      // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
     if (!data.projectNames)
       data.projectNames = []
-    data.thumbnail = data.thumbnail || ""
+    data.thumbnail = data.thumbnail || ''
     data.metadata = data.metadata || {}
     data.assetLicense = data.assetLicense || defaultAssetLicense
     data.isUnconfirmedSave = this.isSimulation
@@ -222,6 +232,7 @@ Meteor.methods({
   "Azzets.update": function(docId, canEdit, data) {
     var count, selector
     var optional = Match.Optional
+    checkIsLoggedIn()
 
     check(docId, String)
     if (!this.userId)
@@ -235,6 +246,18 @@ Meteor.methods({
 
     data.updatedAt = new Date()
     data.isUnconfirmedSave = this.isSimulation
+
+    if (data.name)
+    {
+      data.name = _.trim(data.name)
+      checkMgb.assetName(data.name)
+    }
+
+    if (data.text)
+    {
+      data.text = _.trim(data.text)
+      checkMgb.assetDescription(data.text)
+    }
 
     // whitelist what can be updated
     check(data, {
@@ -266,5 +289,4 @@ Meteor.methods({
     }
     return count
   }
-
 })

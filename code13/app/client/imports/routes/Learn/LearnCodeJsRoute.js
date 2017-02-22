@@ -21,7 +21,32 @@ for (var key in jsSkills) {
 }
 
 
-const LearnCodeJsRoute = ({ currUser }, context) => {
+// console.log(
+//   "graphic",
+//   fileName,
+//   projectName,
+//   projectOwnerId,
+//   projectOwnerName,
+//   content2,
+//   thumbnail,
+//   this.assetLicense,
+//   this.workState,
+//   this.isCompleted,
+// )
+// // graphic fern_2.png null null null  content2 thumbnail MIT unknown false
+
+const handleClick = (e, idx) => {
+  console.log(e, idx)
+}
+
+
+// TODO pass as param createAsset function
+
+const LearnCodeJsRoute = (props, context) => {
+  const currUser = props.currUser
+
+  // console.log(props)
+
   return (
     <Grid container columns='1'>
       <Divider hidden /> <Grid.Column>
@@ -33,7 +58,8 @@ const LearnCodeJsRoute = ({ currUser }, context) => {
       <Grid.Column>
         <Card.Group itemsPerRow={1} stackable className="skills">
           { skillItems.map( (area, idx) => (
-            <div key={idx} className='card animated fadeIn' style={cardStyle}>
+            <div key={idx} className='card animated fadeIn' style={cardStyle}
+            onClick={ (e)=>{ handleClick(e, area.idx) } }>
               <Card.Content>
                 <p style={descStyle}>
                   <i className={area.icon + " large icon"}></i>

@@ -222,13 +222,13 @@ export default fpAssets = React.createClass({
               id='mgbjr_fp_search_asset'
               onFinalChange={this.handleSearchGo} />
 
-          <div style={{marginTop: '6px'}}>
+          <div style={{marginTop: '0.6em'}}>
             <Popup
                 trigger={(<small>Show asset kinds:</small>)}
                 positioning='right center'
                 size='mini'
                 content='Alt-click to multi-select'/>
-            { isAllKinds || <small style={{float: 'right'}} onClick={() => this.handleToggleKind('__all')}>(show all)</small> }
+            { isAllKinds || <small style={{float: 'right', fontWeight: 'bold', cursor: 'pointer'}} onClick={() => this.handleToggleKind('__all')}>(show all)</small> }
             <AssetKindsSelector
                 showCompact={true}
                 kindsActive={kindsActive}

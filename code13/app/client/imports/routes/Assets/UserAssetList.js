@@ -16,7 +16,7 @@ import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
 import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
 import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
-
+import WorkState, { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
@@ -239,7 +239,7 @@ export default UserAssetListRoute = React.createClass({
               onFinalChange={this.handleSearchGo} />
           </div>
 
-          <div style={{marginTop: '6px'}}>
+          <div style={{marginTop: '0.8em'}}>
             <Popup
                 trigger={(<small>Show asset kinds:</small>)}
                 positioning='right center'
@@ -248,19 +248,25 @@ export default UserAssetListRoute = React.createClass({
             { isAllKinds || (
               <small
                   id='mgbjr-asset-search-kind-select-allKinds'
+                  style={{float: 'right', fontWeight: 'bold', cursor: 'pointer'}}
                   onClick={() => {
                     joyrideCompleteTag('mgbjr-CT-asset-search-kind-select-allKinds')
                     this.handleToggleKind('__all')
                   }}>
-                &emsp;(show all)
+                (show all)
               </small>
             )}
             <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
           </div>
 
-          <div style={ { marginTop: '0.5em'} }>
+          <WorkStateMultiSelect
+              selectedMask={3}
+              style={ { marginTop: '0.5em', textAlign: 'center' } }/>
+
+          <div style={ { marginTop: '1em', textAlign: 'center' } }>
             <div className="ui secondary compact borderless fitted menu">
               <AssetShowStableSelector showStableFlag={qN.showStable} handleChangeFlag={this.handleChangeShowStableFlag} />
+              &ensp;
               <AssetShowDeletedSelector showDeletedFlag={qN.showDeleted} handleChangeFlag={this.handleChangeShowDeletedFlag} />
             </div>
           </div>

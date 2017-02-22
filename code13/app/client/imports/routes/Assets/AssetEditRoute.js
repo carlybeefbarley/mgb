@@ -379,7 +379,6 @@ console.log("utilPushTo in forkResultCallback()", this.props.currUser.username, 
             }
             <WorkState
               workState={asset.workState}
-              showMicro={true}
               canEdit={canEd}
               handleChange={this.handleWorkStateChange} />
             &ensp;

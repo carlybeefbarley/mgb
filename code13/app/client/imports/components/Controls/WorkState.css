@@ -1,8 +1,29 @@
-.workstate.ui.circular.label
+.mgb-workstate-broken
 {
-  padding: 0.375em !important;
-  width: 1.75em;
-  height: 1.75em;
-  min-width: 1.75em;
-  min-height: 1.75em;
+    background-color: #282 !important;
+}
+
+.mgb-workstate-experiment
+{
+    background-color: #6a6 !important;
+}
+
+.mgb-workstate-unknown
+{
+    background-color: #cdc !important;
+}
+
+.mgb-workstate-working
+{
+    background-color: #cfc !important;
+}
+
+.mgb-workstate-polished
+{
+    background-color: #6f6 !important;
+}
+
+.mgb-workstate-showcase
+{
+    background-color: #0f0 !important;
 }

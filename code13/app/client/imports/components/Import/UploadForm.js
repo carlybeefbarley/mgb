@@ -120,7 +120,6 @@ export default class UploadForm extends React.Component {
             <WorkState
               workState={this.state.workState}
               popupPosition="bottom center"
-              showMicro={true}
               canEdit={true}
               handleChange={this.handleWorkStateChange.bind(this)}
             />

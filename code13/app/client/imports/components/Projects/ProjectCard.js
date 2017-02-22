@@ -31,9 +31,7 @@ const ProjectCard = props => {
         <span style={{float: 'right'}}>
           <WorkState
               workState={project.workState}
-              popupPosition="bottom center"
-              showMicro={true}
-              handleChange={(newWorkState) => handleFieldChanged( { "workState": newWorkState } )}
+              handleChange={newWorkState => handleFieldChanged( { "workState": newWorkState } )}
               canEdit={canEdit}/>
         </span>
         <div className="header">

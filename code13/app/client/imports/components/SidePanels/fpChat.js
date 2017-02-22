@@ -22,7 +22,6 @@ import {
   makePresentedChannelName 
 } from '/imports/schemas/chats'
 
-
 const _colors = {
   emptyChannel:      '#aaa',
   unreadChannel:     'orange',

@@ -220,8 +220,6 @@ export default AssetCard = React.createClass({
               <span style={{float: 'right'}}>
                 <WorkState
                   workState={asset.workState}
-                  popupPosition="bottom center"
-                  showMicro={true}
                   canEdit={false}/>
               </span>
             }

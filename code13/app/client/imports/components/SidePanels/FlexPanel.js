@@ -334,6 +334,7 @@ export default FlexPanel = React.createClass({
                       user={this.props.user}
                       meteorStatus={this.data.meteorStatus}
                       chatChannelTimestamps={this.props.chatChannelTimestamps}
+                      hazUnreadChats={hazUnreadChats}
                       joyrideSteps={this.props.joyrideSteps}
                       joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
                       joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}

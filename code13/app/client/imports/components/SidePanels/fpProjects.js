@@ -2,39 +2,50 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
-import { Menu, Header, Icon, Message } from 'semantic-ui-react'
+import { Menu, Icon, Message } from 'semantic-ui-react'
+import { makeChannelName } from '/imports/schemas/chats'
 
-const ProjectMenu = (props) => 
+const Empty = <Menu.Item content='(none)' />
+
+const ChatIcon = ( { hazUnreadChats, projId }) => {
+  const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: projId } )
+  return !_.includes(hazUnreadChats, channelName) ? null : (
+    <QLink 
+        style={{ float: 'right' }}
+        query={{ _fp: `chat.${channelName}` }} >
+      <Icon name='chat' />
+    </QLink>
+  )
+}
+
+const ProjectMenu = ( { projects, ownedFlag, currUserId, hazUnreadChats } ) => 
 {
-  const { projects, ownedFlag, currUserId } = props
-  const Empty = <Menu.Item content="(none)" />
-  if (!projects || projects.length === 0) return Empty
+  if (!projects || projects.length === 0) 
+    return Empty
 
   const wantedProjects = _.filter(projects, p => ( (p.ownerId === currUserId) === ownedFlag ))
   const retval = wantedProjects.length === 0 ? Empty : wantedProjects.map( p => (
     <Menu.Item key={p._id}>
+      <WorkState workState={p.workState} canEdit={false}/>
+      { !ownedFlag && 
+          <span>
+            <QLink 
+              to={`/u/${p.ownerName}`}
+              altTo={`/u/${p.ownerName}/projects`} >
+              {p.ownerName}
+            </QLink>
+            { ' : ' }
+          </span> 
+      }
+      &ensp;
       <QLink 
           to={`/u/${p.ownerName}/project/${p._id}`} 
           altTo={`/u/${p.ownerName}/assets`} 
           altQuery={{project:p.name}}
-          title="click for project page; alt-click for project Assets"
-          >
-        <WorkState 
-            workState={p.workState} 
-            popupPosition="bottom center"
-            showMicro={true}
-            canEdit={false}/>                  
-        &emsp;{ p.name } 
+          title="click for project page; alt-click for project Assets" >
+        { p.name } 
       </QLink>
-      { !ownedFlag && 
-          <small>&emsp;
-            <QLink 
-              to={`/u/${p.ownerName}`}
-              altTo={`/u/${p.ownerName}/projects`} >
-              @{p.ownerName}
-            </QLink>
-          </small> 
-      }
+      <ChatIcon hazUnreadChats={hazUnreadChats} projId={p._id} />
     </Menu.Item>
   ))
   return <Menu vertical fluid>{retval}</Menu>
@@ -47,21 +58,12 @@ const _propTypes = {
   panelWidth:         PropTypes.string.isRequired   // Typically something like "200px".
 }
 
-const fpProjects = ( { currUser, currUserProjects } ) => {
+const fpProjects = ( { currUser, currUserProjects, hazUnreadChats } ) => {
   if (!currUser) 
     return <Message content="Not Logged in - no projects to show" />
 
   return (
     <div className='animated fadeIn '>
-      <div className='ui fluid vertical menu'>
-        <QLink 
-            to={`/u/${currUser.profile.name}/projects/create`} 
-            className="item" 
-            title="Create New Project">
-          <Icon color='green' name='sitemap' /> Create New Project
-        </QLink>
-      </div>
-  
       <div className='ui fluid vertical menu'>
         <QLink
             to={`/u/${currUser.profile.name}/projects`} 
@@ -73,8 +75,8 @@ const fpProjects = ( { currUser, currUserProjects } ) => {
         <ProjectMenu 
             projects={currUserProjects} 
             ownedFlag={true}
+            hazUnreadChats={hazUnreadChats}
             currUserId={currUser._id}/>
-
       </div>
   
       <div className='ui fluid vertical menu'>
@@ -87,6 +89,7 @@ const fpProjects = ( { currUser, currUserProjects } ) => {
         <ProjectMenu 
             projects={currUserProjects} 
             ownedFlag={false}
+            hazUnreadChats={hazUnreadChats}
             currUserId={currUser._id} />
       </div>
     </div>

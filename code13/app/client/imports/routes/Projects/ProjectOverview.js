@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import Helmet from 'react-helmet'
+import { Grid, Segment, Checkbox, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
 import { showToast } from '/client/imports/routes/App'
 import reactMixin from 'react-mixin'
 import QLink from '../QLink'
@@ -8,31 +10,30 @@ import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET'
 import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import Helmet from 'react-helmet'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 
 import { logActivity } from '/imports/schemas/activity'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { Grid, Segment, Checkbox, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
 import ProjectForkGenerator from './ProjectForkGenerator'
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,       // Contains params.projectId
-    user:   PropTypes.object,       // App.js gave us this from params.id OR params.username
+    params:   PropTypes.object,       // Contains params.projectId
+    user:     PropTypes.object,       // App.js gave us this from params.id OR params.username
     currUser: PropTypes.object
   },
   
   getInitialState: () => ({ 
-    showAddUserSearch: false,       // True if user search box is to be shown
-    isForkPending:     false,       // True if a fork operation is pending
-    isDeletePending:   false,       // True if a delete project operation is pending
-    isDeleteComplete:  false,       // True if a delete project operation succeeded.
-    confirmDeleteNum:  -1           // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
+    showAddUserSearch:            false,       // True if user search box is to be shown
+    isForkPending:                false,       // True if a fork operation is pending
+    isDeletePending:              false,       // True if a delete project operation is pending
+    isDeleteComplete:             false,       // True if a delete project operation succeeded.
+    compoundNameOfDeletedProject: null,        // Used for User feedback after deleting project. using Compound name for full clarity
+    confirmDeleteNum:             -1           // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
   }),   
   
   getMeteorData: function() {
@@ -46,73 +47,84 @@ export default ProjectOverview = React.createClass({
   },
 
   canEdit: function() {
-    return !this.data.loading &&
+    return Boolean(!this.data.loading &&
            this.data.project &&
            this.props.currUser && 
-           this.data.project.ownerId === this.props.currUser._id
+           this.data.project.ownerId === this.props.currUser._id)
   },
 
   render: function() {
-    if (this.data.loading)
+    const { project, loading } = this.data               // One Project provided via getMeteorData()
+    if (loading)
       return <Spinner />
-          
-    const { currUser } = this.props
-    const project = this.data.project     // One Project provided via getMeteorData()
-    const canEdit = this.canEdit()
 
-    if (!project && this.state.isDeleteComplete)
+    const { currUser, params } = this.props
+    const { isDeleteComplete, compoundNameOfDeletedProject } = this.state
+    const canEdit = this.canEdit()
+    const isMyProject = (currUser && project && project.ownerId === currUser._id)
+    const relativeProjectName = project ? `${isMyProject ? '' : `${project.ownerName}:`}${project.name}` : ''
+
+    if (!project && isDeleteComplete)
       return (
         <Segment basic padded>
-          <Message warning>
-            <Icon name='warning' />
-            You successfully deleted this empty project. You monster.
-            { currUser && 
-              <p>
-                <QLink to={"/u/" + currUser.profile.name + "/projects"}>
-                  Go to your Projects List..
-                </QLink>
-              </p>
-            }
-          </Message>
+          <Helmet
+              title={ `Deleted Project: ${compoundNameOfDeletedProject}` }
+              meta={[ { name: `Deleted Project: ${compoundNameOfDeletedProject}`, content: 'Project'} ]} />
+          <Message
+              warning
+              icon='trash'
+              header={`You successfully deleted Project '${compoundNameOfDeletedProject}'`}
+              content={
+                <div>
+                  <br></br>
+                  <QLink to={`/u/${currUser.profile.name}/projects`}>
+                    View your Projects List.
+                  </QLink>
+                  &emsp;The ones that still survive, at least...
+                </div>
+              } />
         </Segment>
       )
 
     if (project && this.state.isDeleteComplete)
-      return <p>What the heck? It's still here? Err, refresh page maybe!?</p>
+      return <p>What the heck? Project '{compoundNameOfDeletedProject}' is still here? Err, refresh page maybe!?</p>
 
     if (!project)
-      return <ThingNotFound type="Project" />
+      return <ThingNotFound type='Project' id={params.projectId} defaultHead={true}/>
     
     const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
     return (
       <Grid padded>
         <Helmet
-          title={`Project Overview: ${project.name}`}
-          meta={[
-              {"name": `Project Overview: ${project.name}`, "content": "Projects"}
-          ]}
+          title={`Project: ${relativeProjectName}`}
+          meta={[ { name: `Project: ${relativeProjectName}`, content: 'Project' } ]}
         />
 
-        <Grid.Column width={6} style={{minWidth: "250px", maxWidth: "250px"}}>
+        <Grid.Column width={6} style={{ minWidth: '250px', maxWidth: '250px' }}>
           <ProjectCard 
               project={project} 
               owner={this.props.user}
               canEdit={canEdit}
               handleFieldChanged={this.handleFieldChanged} />
-          <QLink id="mgbjr-project-overview-assets" to={"/u/" + project.ownerName + "/assets"} style={buttonSty} query={{project:project.name}} className="ui small button" >
+          <QLink 
+              id='mgbjr-project-overview-assets'
+              to={`/u/${project.ownerName}/assets`} 
+              style={buttonSty} 
+              query={{project:project.name}} 
+              className='ui small button' >
             Project Assets
           </QLink>
 
           { /* FORK PROJECT STUFF */}
-          <Segment secondary compact style={{width: '220px'}}>
-            <Header>Project Forking</Header>
+          <Segment secondary compact style={{ width: '220px' }}>
+            <Header content='Project Forking'/>
             <span style={{float: 'right'}}>
               <ProjectForkGenerator 
                   project={project}
                   isForkPending={this.state.isForkPending}
                   />
             </span>
-            <div style={{padding: '2px 2px 8px 2px'}}>
+            <div style={{ padding: '2px 2px 8px 2px' }}>
               <Checkbox 
                   disabled={!canEdit}
                   checked={!!this.data.project.allowForks} 
@@ -122,19 +134,21 @@ export default ProjectOverview = React.createClass({
 
             </div>
             <Popup 
-              inverted wide='very' on='click'
-              trigger={(
-                <Button 
-                  fluid
-                  id="mgbjr-project-overview-fork"
-                  disabled={!this.data.project.allowForks || !currUser} 
-                  size='small' 
-                  content={this.state.isForkPending ? 'Forking project...' : 'Fork Project'}/>)}
-              >
-              { this.state.isForkPending ? ( <div>Forking...please wait..</div> ) : (
+                inverted
+                wide='very'
+                on='click'
+                trigger={(
+                  <Button
+                    fluid
+                    id='mgbjr-project-overview-fork'
+                    disabled={!this.data.project.allowForks || !currUser}
+                    size='small' 
+                    content={this.state.isForkPending ? 'Forking project...' : 'Fork Project'}/>
+                )} >
+              { this.state.isForkPending ? ( <div>Forking... please wait..</div> ) : (
                 <div>
-                  <Header as='h4' content="Name for new Forked project"/>
-                  <div className="ui small fluid action input" style={{minWidth: '300px'}}>
+                  <Header as='h4' content='Name for new Forked project'/>
+                  <div className="ui small fluid action input" style={{ minWidth: '300px' }}>
                     <input  type="text"
                             id="mgbjr-fork-project-name-input"
                             placeholder="New Project name" 
@@ -163,7 +177,7 @@ export default ProjectOverview = React.createClass({
           
           <Header as="h3" >Project Members</Header>
           <Segment basic>
-            Project Members may create, edit or delete assets in this project &nbsp;        
+            Project Members may create, edit or delete Assets in this Project &nbsp;        
             <ProjectMembersGET 
                 project={this.data.project} 
                 enableRemoveButton={canEdit} 
@@ -268,8 +282,9 @@ export default ProjectOverview = React.createClass({
 
   handleConfirmedDeleteProject: function()
   {
-    var { name, _id } = this.data.project
-    this.setState( { isDeletePending: true } )
+    var { name, _id, ownerName } = this.data.project
+    var compoundNameOfDeletedProject = `${ownerName}:${name}`
+    this.setState( { isDeletePending: true } )  // Button disable/enable also guards against re-entrancy
 
     Meteor.call('Projects.deleteProjectId', _id, true, (error, result ) => {
       if (error)
@@ -279,8 +294,12 @@ export default ProjectOverview = React.createClass({
       }
       else
       {
-        logActivity("project.destroy",  `Destroyed empty project ${name}`)
-        this.setState( { isDeletePending: false, isDeleteComplete: true } )
+        logActivity("project.destroy",  `Deleted ${result} Project ${name}`)
+        this.setState( {
+          isDeletePending:  false,
+          isDeleteComplete: true,
+          compoundNameOfDeletedProject: compoundNameOfDeletedProject
+        } )
       }
     })
   },
@@ -301,14 +320,14 @@ export default ProjectOverview = React.createClass({
         <div style={{padding: '2px'}}>
           <Button 
             fluid
-            icon="edit" 
+            icon='edit'
             size='small'
-            content="Rename" 
+            content='Rename'
             disabled={isDeleteComplete || isDeletePending} 
-            onClick={ () => { showToast("Rename Project has not yet been implemented.. ", 'warning')}} />
+            onClick={ () => { showToast('Rename Project has not yet been implemented..', 'warning')}} />
         </div>
-        <div style={{padding: '2px'}}>
-          <Button 
+        <div style={{ padding: '2px' }}>
+          <Button
             fluid
             icon={confirmDeleteNum < 0 ? <Icon color='red' name='trash'/> : null}
             size='small'

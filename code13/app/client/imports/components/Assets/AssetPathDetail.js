@@ -86,17 +86,14 @@ export default AssetPathDetail = React.createClass({
 
           <AssetKindExplainer kind={kind} ownerName={ownerName}/>
 
-          &ensp;
-
           <InlineEdit
+            style={{ marginLeft: '0.7em', marginRight: '1em' }}
             validate={validate.assetName}
             activeClassName="editing"
             text={name || untitledAssetString}
             paramName="name"
             change={this.handleFieldChanged}
             isDisabled={!canEdit} />
-
-          &emsp;
 
           { canEdit && (
             <SaveStatus

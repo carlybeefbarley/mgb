@@ -85,7 +85,7 @@ Meteor.methods({
         }
         else
         {
-          Azzets.update( sel, { $set: { updatedAt: now, projectNames: _.omit(a.projectNames) } } )
+          Azzets.update( sel, { $set: { updatedAt: now, projectNames: _.without(a.projectNames) } } )
           logActivity("asset.project", `Removed Asset from project '${project.name}' while deleting project`, null, a)
         }
       }) 

@@ -33,11 +33,7 @@ const handleClick = (e, idx, code, currUser) => {
   let newAsset = {
     name: 'tutorials.js.'+idx,
     kind: 'code',
-    text: '',
     skillPath: 'code.js.basics.'+idx,
-    assetLicense: defaultAssetLicense,
-    workState: defaultWorkStateName,
-    thumbnail: '',
     content2: { src: code.join('\n')},
     dn_ownerName: currUser.username,      
     isCompleted: false,

@@ -1616,7 +1616,7 @@ export default class EditGraphic extends React.Component {
             <span>&nbsp;&nbsp;</span>
 
             <Popup trigger={ (
-              <Button size='small' className='miniPadding' id="mgbjr-editGraphic-changeCanvasZoom">
+              <div size='small' className='miniPadding ui button' id="mgbjr-editGraphic-changeCanvasZoom">
                 <span style={{"cursor": "pointer"}} onClick={this.zoomOut.bind(this)}>
                   <Icon name='zoom out'/>
                 </span>
@@ -1625,7 +1625,7 @@ export default class EditGraphic extends React.Component {
                 <span style={{"cursor": "pointer"}} onClick={this.zoomIn.bind(this)}>
                   <Icon name='zoom in'/>
                 </span>
-              </Button>)}
+              </div>)}
                 on='hover'
                 content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
                 size='tiny'

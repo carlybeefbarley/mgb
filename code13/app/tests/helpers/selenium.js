@@ -63,64 +63,62 @@ module.exports = (browser) => {
       }, 10000)
     },
 
+    wait(timeout, message){
+      browser.wait(new Promise((y, n) => {
+        setTimeout(y, timeout)
+      }), timeout, message)
+    },
+
+
+    // REST is site specific stuff...
     // TODO (stauzs): move site specific actions to external file?
-    // JUST make sure test user has max levels at all options
-    adjustLevelSlider(name){
-      // this makes tests to fail - need super deep debug of SUIR tooltips and MGB redirects
-      return
-      // history.pushState is not working also :(
-
-      // this SOMETIMES opens 'activity' instead of settings and test fails
-      browser.executeScript(`window.location.href = '?_fp=settings'`)
-
-      // slider cannot be located sometimes
-      const slider = sel.css("#mgbjr-input-level-slider-" + name)
-      browser.actions()
-        .mouseMove(slider, {x: 129, y: 1}) // get 100% somehow
-        .click()
-        .perform()
-        // need to wait for confirmation here !!! this also fails sometimes
-        .then( () => {
-          sel.css('#mgbjr-flexPanelIcons-settings').click()
-        })
-      // close side panel
-
-
-      // TODO: FIX THIS
-      /*
-      const avatar = sel.css('#mgbjr-np-user')
+    adjustLevelSlider(name, level){
+      level = level === void(0) ? 1 : level
+      const sliders = [
+        '#mgbjr-input-level-slider-FlexPanel',
+        '#mgbjr-input-level-slider-EditGraphic',
+        '#mgbjr-input-level-slider-EditCode',
+        '#mgbjr-input-level-slider-MapTools',
+        '#mgbjr-input-level-slider-AudioTools'
+      ]
 
       browser.actions()
-        .mouseMove(avatar) // move to avatar - hover doesn't get triggered here and test fails
-        .mouseDown(avatar) // this is not working - probably there is some strange delay in the JS
+        .mouseMove(sel.css('#mgbjr-np-mgb')) // move to logo
+        .mouseMove(sel.css('#mgbjr-np-user')) // move to avatar
+        .mouseMove(sel.css('#mgbjr-np-user-avatar')) // move to avatar
         .perform()
 
-      // settings should be visible now ( but they ain't )
+      // settings should be visible now
       const settings = sel.untilVisible('#mgbjr-np-user-settings')
-
       settings.click() // side panel with settings should appear
 
-      /*
-
-      const settings = sel.css('#mgbjr-np-user-settings')
-      browser.actions()
-        .mouseMove(settings)
-        .click()
-        //.mouseMove(avatar, {x: 10, y:10})
-        //.mouseMove(avatar)
-        .perform()
-        .then(() => {
-          const slider = sel.css("#mgbjr-input-level-slider-"+name)
-          browser.actions()
-            .mouseMove(slider, {x: 120, y: 1})
-            .click()
-            .perform()
-
-          // close side panel
-          sel.css('#mgbjr-flexPanelIcons-settings').click()
+      if(name){
+        const slider = sel.untilVisible('#mgbjr-input-level-slider-' + name)
+        slider.getSize()
+          .then((size) => {
+            browser.actions()
+              .mouseMove(slider, {x: size.width * level, y: size.height * 0.5})
+              .click()
+              .perform()
+          })
+      }
+      else{
+        sliders.forEach( s => {
+          const slider = sel.untilVisible(s)
+          slider.getSize()
+          .then((size) => {
+              browser.actions()
+                .mouseMove(slider, {x: size.width * level * 0.99, y: size.height * 0.5})
+                .click()
+                .perform()
+            })
         })
-      */
+      }
+      // wait and check if everything is fine
+      //sel.wait(10 * 1000)
 
+      // close side panel
+      sel.css('#mgbjr-flexPanelIcons-settings').click()
     },
     openAssetsPanel(){
       return browser.getCurrentUrl()

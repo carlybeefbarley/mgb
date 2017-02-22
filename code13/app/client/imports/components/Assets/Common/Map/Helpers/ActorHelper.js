@@ -444,7 +444,7 @@ export default ActorHelper = {
           },
           (...a) => {
             ActorHelper.clearCache(key)
-            onChange(...a)
+            onChange && onChange(...a)
           }
         )
         cb()

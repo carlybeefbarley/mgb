@@ -4,52 +4,49 @@ import styles from '../home.css'
 import QLink from '../QLink'
 import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
-const jsItems = [
-  {
-    icon: 'code',
-    link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
-    content: 'Variables',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Arithmetic operators',
-    desc: `addition, subtraction, division, multiplication`
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Arrays',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Objects',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'For loops',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'If statements',
-    desc: ``
-  },
-  {
-    icon: 'code',
-    link: '',
-    content: 'Functions',
-    desc: ``
-  },
-]
+import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 
-const LearnCodeJsRoute = ({ currUser }, context) => {
+import { startSkillPathTutorial } from '/client/imports/routes/App'
+
+const jsSkills = SkillNodes.code.js.lang
+const skillItems = []
+for (var key in jsSkills) {
+  if (jsSkills.hasOwnProperty( key ) && key != '$meta') {
+    let skill = _.cloneDeep( jsSkills[key]['$meta'] )
+    skill.idx = key
+    skill.skill = jsSkills[key].skill
+    skillItems.push( skill )
+  }
+}
+
+
+// console.log(
+//   "graphic",
+//   fileName,
+//   projectName,
+//   projectOwnerId,
+//   projectOwnerName,
+//   content2,
+//   thumbnail,
+//   this.assetLicense,
+//   this.workState,
+//   this.isCompleted,
+// )
+// // graphic fern_2.png null null null  content2 thumbnail MIT unknown false
+
+const handleClick = (e, idx) => {
+  console.log(e, idx)
+}
+
+
+// TODO pass as param createAsset function
+
+const LearnCodeJsRoute = (props, context) => {
+  const currUser = props.currUser
+
+  // console.log(props)
+
   return (
     <Grid container columns='1'>
       <Divider hidden /> <Grid.Column>
@@ -60,17 +57,17 @@ const LearnCodeJsRoute = ({ currUser }, context) => {
     </Grid.Column>
       <Grid.Column>
         <Card.Group itemsPerRow={1} stackable className="skills">
-          { jsItems.map( (area, idx) => (
-            <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
+          { skillItems.map( (area, idx) => (
+            <div key={idx} className='card animated fadeIn' style={cardStyle}
+            onClick={ (e)=>{ handleClick(e, area.idx) } }>
               <Card.Content>
                 <p style={descStyle}>
                   <i className={area.icon + " large icon"}></i>
-                  <b>{area.content}</b>
-                  &nbsp;- {area.desc}
+                  { area.name}
                 </p>
 
               </Card.Content>
-            </QLink>
+            </div>
           ) ) }
         </Card.Group>
       </Grid.Column>

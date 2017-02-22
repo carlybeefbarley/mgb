@@ -33,6 +33,7 @@ export default {
       'comments' : {
         $meta: {
           name: 'Comment your JavaScript Code',
+          icon: 'code',
           description: [
             "Comments are lines of code that JavaScript will intentionally ignore. Comments are a great way to leave notes to yourself and to other people who will later need to figure out what that code does.",
             "There are two ways to write comments in JavaScript:",
@@ -56,186 +57,220 @@ export default {
           ]
         },
         skill: C.En(0)
-        
+      },
+
+      'variables' : {
+        $meta: {
+          name: 'Declare JavaScript Variables',
+          icon: 'code',
+          description: [
+            "In computer science, <dfn>data</dfn> is anything that is meaningful to the computer. JavaScript provides seven different <dfn>data types</dfn> which are <code>undefined</code>, <code>null</code>, <code>boolean</code>, <code>string</code>, <code>symbol</code>, <code>number</code>, and <code>object</code>.",
+            "For example, computers distinguish between numbers, such as the number <code>12</code>, and <code>strings</code>, such as <code>\"12\"</code>, <code>\"dog\"</code>, or <code>\"123 cats\"</code>, which are collections of characters. Computers can perform mathematical operations on a number, but not on a string.",
+            "<dfn>Variables</dfn> allow computers to store and manipulate data in a dynamic fashion. They do this by using a \"label\" to point to the data rather than using the data itself. Any of the seven data types may be stored in a variable.",
+            "<code>Variables</code> are similar to the x and y variables you use in mathematics, which means they're a simple name to represent the data we want to refer to. Computer <code>variables</code> differ from mathematical variables in that they can store different values at different times.",
+            "We tell JavaScript to create or <dfn>declare</dfn> a variable by putting the keyword <code>var</code> in front of it, like so:",
+            "<blockquote>var ourName;</blockquote>",
+            "creates a <code>variable</code> called <code>ourName</code>. In JavaScript we end statements with semicolons.",
+            "<code>Variable</code> names can be made up of numbers, letters, and <code>$</code> or <code>_</code>, but may not contain spaces or start with a number.",
+            "<hr>",
+            "Use the <code>var</code> keyword to create a variable called <code>myName</code>.",
+            "<strong>Hint</strong><br>Look at the <code>ourName</code> example if you get stuck."
+          ],
+          "code": [
+            "// Example",
+            "var ourName;",
+            "",
+            "// Define myName below this line",
+            ""
+          ],
+          "solutions": [
+            "var myName;"
+          ],
+          "tests": [
+            "assert(/var\\s+myName\\s*;/.test(code), 'message: You should declare <code>myName</code> with the <code>var</code> keyword, ending with a semicolon');"
+          ],
+        },
+        skill: C.En(0)
       },
 
 
 
       // 'comments':     C.En(0),
 
-      'statements': {
-        'var':        C.En(0),
-        'let':        C.En(2),
-        'const':      C.meta( {requires: ".let" }, C.En(2)),
-        'undefined':  C.En(0),
-        'null':       C.En(0)
-      },
+      // 'statements': {
+      //   'var':        C.En(0),
+      //   'let':        C.En(2),
+      //   'const':      C.meta( {requires: ".let" }, C.En(2)),
+      //   'undefined':  C.En(0),
+      //   'null':       C.En(0)
+      // },
 
-      'scope': {
-        'global':          C.En(0),    // acorn/tern have TokenType='variable'
-        'local':           C.En(0),    // acorn/tern have TokenType='variable-2' but it doesn't seem to distinguish block scope from execution scope
-          // Per MDN..https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/var
-          // for  var   " The scope of a variable declared with var is its current execution context, which is either the enclosing function or, for variables declared outside any function, global."
-          // for  whereas const or let have block scope
-        'local-execution': C.En(2),      // for  var   " The scope of a variable declared with var is its current execution context, which is either the enclosing function or, for variables declared outside any function, global."
-        'local-block':     C.En(2),      // for  const/let        
-      },
+      // 'scope': {
+      //   'global':          C.En(0),    // acorn/tern have TokenType='variable'
+      //   'local':           C.En(0),    // acorn/tern have TokenType='variable-2' but it doesn't seem to distinguish block scope from execution scope
+      //     // Per MDN..https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/var
+      //     // for  var   " The scope of a variable declared with var is its current execution context, which is either the enclosing function or, for variables declared outside any function, global."
+      //     // for  whereas const or let have block scope
+      //   'local-execution': C.En(2),      // for  var   " The scope of a variable declared with var is its current execution context, which is either the enclosing function or, for variables declared outside any function, global."
+      //   'local-block':     C.En(2),      // for  const/let        
+      // },
 
-      "functions": {
-        "function":          C.En(0),
-        "return":            C.En(0),
-        "arrow-functions":   C.En(2),
-        "arguments-object":  C.En(2),     // i.e. the array-like object... https://developer.mozilla.org/docs/Web/JavaScript/Reference/Functions/arguments
-      },
+      // "functions": {
+      //   "function":          C.En(0),
+      //   "return":            C.En(0),
+      //   "arrow-functions":   C.En(2),
+      //   "arguments-object":  C.En(2),     // i.e. the array-like object... https://developer.mozilla.org/docs/Web/JavaScript/Reference/Functions/arguments
+      // },
 
-      types: {
-        'number':   C.En(0),
-        'boolean':  C.En(0),
-        'string':   C.En(0),
-        'array':    C.En(0),
-        'object':   C.En(0),
-        'regex':    C.En(2)
-      },
+      // types: {
+      //   'number':   C.En(0),
+      //   'boolean':  C.En(0),
+      //   'string':   C.En(0),
+      //   'array':    C.En(0),
+      //   'object':   C.En(0),
+      //   'regex':    C.En(2)
+      // },
 
-      "control-flow": {  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling
-        'if':       C.En(0),
-        "else":     C.En(0),
-        "switch":   C.En(0),
-        "case":     C.En(0),
-        "case-default:": C.En(0),
-        "label":    C.En(0),  // the weird thing where you can break <label> or continue <label>  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/label
-        "break":    C.En(0),
-        "continue": C.En(0),
-        "for":      C.En(0),
-        "of":       C.En(0),    // in the context of  'for': https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/for...of
-        "while":    C.En(0),
-        "do":       C.En(0),
-        "do-while": C.En(0)
-      },
+      // "control-flow": {  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling
+      //   'if':       C.En(0),
+      //   "else":     C.En(0),
+      //   "switch":   C.En(0),
+      //   "case":     C.En(0),
+      //   "case-default:": C.En(0),
+      //   "label":    C.En(0),  // the weird thing where you can break <label> or continue <label>  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/label
+      //   "break":    C.En(0),
+      //   "continue": C.En(0),
+      //   "for":      C.En(0),
+      //   "of":       C.En(0),    // in the context of  'for': https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/for...of
+      //   "while":    C.En(0),
+      //   "do":       C.En(0),
+      //   "do-while": C.En(0)
+      // },
 
-      booleans: {
-        'true':     C.En(0),
-        'false':    C.En(0)
-      },
+      // booleans: {
+      //   'true':     C.En(0),
+      //   'false':    C.En(0)
+      // },
 
-      operators: {    // These can have weird contexts sometimes (heavy symbol overuse in js) so I decifed to just word-the-symbols for keys. Note that - is a separator maybe, so watch out for that (test any cases with - in keys). Doubl-ewatch-out for . and ,
-        'equals-assignment':                        C.En(0),  //  =
-        'plusequals-addition-assignment':           C.En(1),  //  +=
-        'minusequals-subtraction-assignment':       C.En(1),  //  -=
-        'asteriskequals-multiplication-assignment': C.En(2),  //  *=
-        'slashequals-division-assignment':          C.En(2),  //  /=
-        'percentequals-remainder-assignment':       C.En(3),  //  %=
+      // operators: {    // These can have weird contexts sometimes (heavy symbol overuse in js) so I decifed to just word-the-symbols for keys. Note that - is a separator maybe, so watch out for that (test any cases with - in keys). Doubl-ewatch-out for . and ,
+      //   'equals-assignment':                        C.En(0),  //  =
+      //   'plusequals-addition-assignment':           C.En(1),  //  +=
+      //   'minusequals-subtraction-assignment':       C.En(1),  //  -=
+      //   'asteriskequals-multiplication-assignment': C.En(2),  //  *=
+      //   'slashequals-division-assignment':          C.En(2),  //  /=
+      //   'percentequals-remainder-assignment':       C.En(3),  //  %=
 
-        'plus':                    C.En(1),      //  +
-        'minus':                   C.En(1),      //  -   Note that there is a-b and the unary -x
-        'asterisk':                C.En(1),      //  *
-        'slash':                   C.En(1),      //  /
-        'percent':                 C.En(2),      //  %   (remainder)
+      //   'plus':                    C.En(1),      //  +
+      //   'minus':                   C.En(1),      //  -   Note that there is a-b and the unary -x
+      //   'asterisk':                C.En(1),      //  *
+      //   'slash':                   C.En(1),      //  /
+      //   'percent':                 C.En(2),      //  %   (remainder)
 
-        'plusplus':                C.En(2),      //  ++  Note that there are both pre- and post- versions
-        'minusminus':              C.En(2),      //  --  Note that there are both pre- and post- versions
+      //   'plusplus':                C.En(2),      //  ++  Note that there are both pre- and post- versions
+      //   'minusminus':              C.En(2),      //  --  Note that there are both pre- and post- versions
         
-        'delete':                  C.En(2),      //  delete       https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/delete
-        'typeof':                  C.En(2),      //  typeof
-        'instanceof':              C.En(2),      //  instanceof
-        'void':                    C.En(3),      //  void         https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/void
+      //   'delete':                  C.En(2),      //  delete       https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/delete
+      //   'typeof':                  C.En(2),      //  typeof
+      //   'instanceof':              C.En(2),      //  instanceof
+      //   'void':                    C.En(3),      //  void         https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/void
 
-        'in':                      C.En(3),      //  in           TODO - handle the variants.. for..in     and     x in y    see..  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/in, https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty , url3: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/for...in
-        "spread":                  C.En(3),      //  ...          ES6  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_operator
+      //   'in':                      C.En(3),      //  in           TODO - handle the variants.. for..in     and     x in y    see..  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/in, https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty , url3: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/for...in
+      //   "spread":                  C.En(3),      //  ...          ES6  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Spread_operator
 
-        'questionmark':            C.En(2),      //  ?            Ternary ? operator
-        'colon':                   C.En(2),      //  :            Ternary : operand separator
+      //   'questionmark':            C.En(2),      //  ?            Ternary ? operator
+      //   'colon':                   C.En(2),      //  :            Ternary : operand separator
         
-        'comma':                   C.En(1),      //  ,            Various uses - array/object separator, expression sequence, declaration sequence etc
+      //   'comma':                   C.En(1),      //  ,            Various uses - array/object separator, expression sequence, declaration sequence etc
         
-        'tilde-bitwise-not':       C.En(3),      //  ~
-        'ampersand-bitwise-and':   C.En(3),      //  &
-        'pipe-bitwise-or':         C.En(3),      //  |
-        'caret-bitwise-xor':       C.En(3),      //  ^
-        'lessless-bitwise-shift-left':        C.En(4),    //  <<
-        'greatergreater-bitwise-shift-right': C.En(4),    //  >>
-        'greatergreatergreater-bitwise-zero-fill-shift-right': C.En(4),  // >>>
+      //   'tilde-bitwise-not':       C.En(3),      //  ~
+      //   'ampersand-bitwise-and':   C.En(3),      //  &
+      //   'pipe-bitwise-or':         C.En(3),      //  |
+      //   'caret-bitwise-xor':       C.En(3),      //  ^
+      //   'lessless-bitwise-shift-left':        C.En(4),    //  <<
+      //   'greatergreater-bitwise-shift-right': C.En(4),    //  >>
+      //   'greatergreatergreater-bitwise-zero-fill-shift-right': C.En(4),  // >>>
         
-        'bang-logical-not':        C.En(2),      //  !
-        'ampersandampersand-logical-and': C.En(2),// &&
-        'pipepipe-logical-or':     C.En(2),      //  ||
+      //   'bang-logical-not':        C.En(2),      //  !
+      //   'ampersandampersand-logical-and': C.En(2),// &&
+      //   'pipepipe-logical-or':     C.En(2),      //  ||
 
-        'equality':                C.En(1),      //  ==
-        'inequality':              C.En(1),      //  !=
-        'identity-equality':       C.En(1),      //  ===
-        'identity-inequality':     C.En(1),      //  !==
+      //   'equality':                C.En(1),      //  ==
+      //   'inequality':              C.En(1),      //  !=
+      //   'identity-equality':       C.En(1),      //  ===
+      //   'identity-inequality':     C.En(1),      //  !==
         
-        'less-than':               C.En(1),      //  <
-        'less-than-or-equal':      C.En(1),      //  <=
-        'greater-than':            C.En(1),      //  >
-        'greater-than-or-equal':   C.En(1)       //  >=
-      },
+      //   'less-than':               C.En(1),      //  <
+      //   'less-than-or-equal':      C.En(1),      //  <=
+      //   'greater-than':            C.En(1),      //  >
+      //   'greater-than-or-equal':   C.En(1)       //  >=
+      // },
 
-      math: {
-        $meta: {
-          requires: '.statements',
-        },
-        constants: {
-          'PI':         C.En(1),
-          'NaN':        C.En(2),
-          'Infinity':   C.En(2),
-          'E':          C.En(3),
-          'LN2':        C.En(3),
-          'LN10':       C.En(3),
-          'LOG2E':      C.En(3),
-          'LOG10E':     C.En(3),
-          'SQRT2':      C.En(3),
-          'SQRT1_2':    C.En(3)
-        },
-        functions: {
-          pow:          C.En(1),
-          abs:          C.meta( {unlocks: ".round" }, C.En(1)),
-          round:        C.En(1),
-          max:          C.En(1),
-          min:          C.En(1),
-          random:       C.meta( C.En(1) ),
-          sqrt:         C.En(1), // test case was C.meta( {requires: ".min,.max", requireOneOf: 1 }, C.En(0)),
-        },
-      },
+      // math: {
+      //   $meta: {
+      //     requires: '.statements',
+      //   },
+      //   constants: {
+      //     'PI':         C.En(1),
+      //     'NaN':        C.En(2),
+      //     'Infinity':   C.En(2),
+      //     'E':          C.En(3),
+      //     'LN2':        C.En(3),
+      //     'LN10':       C.En(3),
+      //     'LOG2E':      C.En(3),
+      //     'LOG10E':     C.En(3),
+      //     'SQRT2':      C.En(3),
+      //     'SQRT1_2':    C.En(3)
+      //   },
+      //   functions: {
+      //     pow:          C.En(1),
+      //     abs:          C.meta( {unlocks: ".round" }, C.En(1)),
+      //     round:        C.En(1),
+      //     max:          C.En(1),
+      //     min:          C.En(1),
+      //     random:       C.meta( C.En(1) ),
+      //     sqrt:         C.En(1), // test case was C.meta( {requires: ".min,.max", requireOneOf: 1 }, C.En(0)),
+      //   },
+      // },
       
-      "classes": {  // ES6
-        "new":         C.En(2),     // ES5 and ES6
-        "class":       C.En(2),
-        "constructor": C.En(2),     // ES5 and ES6
-        "extends":     C.En(3),
-        "super":       C.En(2)
-      },
+      // "classes": {  // ES6
+      //   "new":         C.En(2),     // ES5 and ES6
+      //   "class":       C.En(2),
+      //   "constructor": C.En(2),     // ES5 and ES6
+      //   "extends":     C.En(3),
+      //   "super":       C.En(2)
+      // },
 
-      modules: { 
-        'import':      C.En(1),
-        'from':        C.En(1),     // note it can be used in import and export
-        'as':          C.En(1),
-        'asterisk':    C.En(2),     // e.g import defaultMember, * as name from "module-name";
-        "export":      C.En(1),
-        "default":     C.En(1)      // TODO: export default.. test disambigaution with case
-      },
+      // modules: { 
+      //   'import':      C.En(1),
+      //   'from':        C.En(1),     // note it can be used in import and export
+      //   'as':          C.En(1),
+      //   'asterisk':    C.En(2),     // e.g import defaultMember, * as name from "module-name";
+      //   "export":      C.En(1),
+      //   "default":     C.En(1)      // TODO: export default.. test disambigaution with case
+      // },
 
-      "generators": {
-        "yield":       C.En(4),
-        "function*":   C.En(4),
-      },
+      // "generators": {
+      //   "yield":       C.En(4),
+      //   "function*":   C.En(4),
+      // },
 
-      exceptions: {
-        "debugger":    C.En(1),
-        "throw":       C.En(2),
-        "Error":       C.En(2),
-        "try":         C.En(2),
-        "catch":       C.En(2),
-        "finally":     C.En(2)
-      },
+      // exceptions: {
+      //   "debugger":    C.En(1),
+      //   "throw":       C.En(2),
+      //   "Error":       C.En(2),
+      //   "try":         C.En(2),
+      //   "catch":       C.En(2),
+      //   "finally":     C.En(2)
+      // },
 
-      this: {
-        'closures':       C.En(2),
-        'methods':        C.En(2),
-        'binding':        C.En(2),
-        'call-function':  C.En(2),
-        'apply-function': C.En(2)
-      }
+      // this: {
+      //   'closures':       C.En(2),
+      //   'methods':        C.En(2),
+      //   'binding':        C.En(2),
+      //   'call-function':  C.En(2),
+      //   'apply-function': C.En(2)
+      // }
+
     },
 
     'lodash': {

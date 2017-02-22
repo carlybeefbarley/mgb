@@ -44,7 +44,7 @@ export default class CodeChallenges extends React.Component {
 
     const tests = this.skillNode.$meta.tests
     tests.map((test) => {
-      console.log(test)
+      // console.log(test)
       // const result = eval(test)
     })
 
@@ -70,6 +70,6 @@ export default class CodeChallenges extends React.Component {
 }
 
 
-const assert = (param1, param2) => {
-  console.log(param1, param2)
-}
+// const assert = (param1, param2) => {
+//   console.log(param1, param2)
+// }

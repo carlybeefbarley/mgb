@@ -2206,7 +2206,7 @@ export default class EditCode extends React.Component {
               }
 
               {/* TODO need to implement asset.skillPath to reference tutorial with this asset */}
-              { !docEmpty && asset.kind === 'code' && asset.skillPath &&
+              {/*{ !docEmpty && asset.kind === 'code' && asset.skillPath &&
                 <div className="title" id="mgbjr-EditCode-codeChallenges">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Challenges
@@ -2219,7 +2219,7 @@ export default class EditCode extends React.Component {
                   code={ asset.content2.src}
                   skillPath={ asset.skillPath }
                 />
-              }              
+              }              */}
 
               { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (header)

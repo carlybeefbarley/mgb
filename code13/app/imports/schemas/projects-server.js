@@ -62,11 +62,11 @@ Meteor.methods({
         { ownerId: this.userId, projectNames: project.name },
         { 
           fields: { 
-            // Needed for basic processing of this flow
+            // Fields needed for basic processing of this flow
             _id: 1, 
-            isDeleted: 1, 
+            isDeleted: 1,
             projectNames: 1,
-            // Needed for nice logging using logActivity()
+            // Fields Needed for nice logging using logActivity()
             name: 1, 
             kind: 1,
             ownerId: 1,
@@ -76,17 +76,39 @@ Meteor.methods({
       ).fetch()
       _.forEach(assets, a => {
         const sel = { _id: a._id }
-        // We will mark-as-deleted any items that ONLY have this projectName and have not been deleted.
-        if (!a.isDeleted && a.projectNames.length === 1 && a.projectNames[0] === project.name)
+        const inExactlyThisProject = (a.projectNames.length === 1 && a.projectNames[0] === project.name)
+        if (a.isDeleted)
         {
-          Azzets.update( sel, { $set: { updatedAt: now, isDeleted: 1, projectNames: [] } } )
-          logActivity("asset.project", `Removed + Deleted Asset from project '${project.name}' while deleting project`, null, a)
-          logActivity("asset.delete",  `Delete asset (during delete of project '${project.name}')`, null, a)        
+          if (inExactlyThisProject)
+          {
+            // WAS marked-as-deleted, and is ONLY in this project, so only REMOVE-FROM-PROJECT
+            Azzets.update( sel, { $set: { updatedAt: now, projectNames: [] } } )
+            logActivity("asset.project", `Removed deleted-Asset from sole project '${project.name}' while deleting project`, null, a)
+          }
+          else
+          {
+            // WAS marked-as-deleted, and is in MULTIPLE projects, so only REMOVE-FROM-PROJECT. 
+            // Behavior is same is prior case, but logActivity() message is slightly different 
+            // in order to help when debugging potential delete-project bugs in future.
+            Azzets.update( sel, { $set: { updatedAt: now, projectNames: _.without(a.projectNames, project.name) } } )
+            logActivity("asset.project", `Removed deleted-Asset from project '${project.name}' while deleting project`, null, a)
+          }
         }
         else
-        {
-          Azzets.update( sel, { $set: { updatedAt: now, projectNames: _.without(a.projectNames) } } )
-          logActivity("asset.project", `Removed Asset from project '${project.name}' while deleting project`, null, a)
+        {  // !a.isDeleted cases...
+          if (inExactlyThisProject)
+          {
+            // Was NOT marked-as-deleted, and is ONLY in this project, so MARK-AS-DELETED _AND_ REMOVE-FROM-PROJECT
+            Azzets.update( sel, { $set: { updatedAt: now, isDeleted: 1, projectNames: [] } } )
+            logActivity("asset.project", `Removed + Deleted Asset from project '${project.name}' while deleting project`, null, a)
+            logActivity("asset.delete",  `Delete asset (during delete of project '${project.name}')`, null, a)        
+          }
+          else
+          {
+            // Was NOT marked-as-deleted, and is in MULTIPLE projects, so only REMOVE-FROM-PROJECT
+            Azzets.update( sel, { $set: { updatedAt: now, projectNames: _.without(a.projectNames, project.name) } } )
+            logActivity("asset.project", `Removed Asset from project '${project.name}' while deleting project`, null, a)
+          }
         }
       }) 
     }

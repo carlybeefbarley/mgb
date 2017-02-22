@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Tue Feb 21 2017 13:00 GMT-0800 (PST)',
+      'timestamp': 'Tue Feb 21 2017 16:30 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3388'
+        'iteration': '3392'
       },
 
       'releaseManagement': {
@@ -32,7 +32,14 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes',
-          'changeSummary': 'Bugfixes for some of the tutorial flows, handling of missing assets.',
+          'changeSummary': 'Bugfixes for some of the tutorial flows, handling of missing assets, project delete causing some object-vs-array warnings later.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.ui',
+          'type': 'improvement',
+          'changeName': 'A bunch of UI tweaks',
+          'changeSummary': 'Chat indicator shows how many chat channels have unread messages. Improved visuals for workState icons (shades of green instead of many colors), simplified icons. Advanced Projects FlexPanel (which is not shown by default) now also shows projects with unread chat Messages. ',
           'otherUrls': [ ]
         },
       ]

@@ -7,9 +7,11 @@ import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import { showToast } from '/client/imports/routes/App'
 import { logActivity } from '/imports/schemas/activity'
 
+import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
+import { defaultWorkStateName } from '/imports/Enums/workStates'
+
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
-
 import { startSkillPathTutorial } from '/client/imports/routes/App'
 
 const jsSkills = SkillNodes.code.js.basics
@@ -27,15 +29,14 @@ const handleClick = (e, idx, code, currUser) => {
   // console.log(e, idx, code, currUser)
 
   const newTab = (e.buttons == 4 || e.button == 1)
-  const content2 = {}
 
   let newAsset = {
     name: 'tutorials.js.'+idx,
     kind: 'code',
     text: '',
-    skillPath: 'code.js.lang.'+idx,
-    assetLicense: 'MIT',
-    workState: 'unknown',
+    skillPath: 'code.js.basics.'+idx,
+    assetLicense: defaultAssetLicense,
+    workState: defaultWorkStateName,
     thumbnail: '',
     content2: { src: code.join('\n')},
     dn_ownerName: currUser.username,      

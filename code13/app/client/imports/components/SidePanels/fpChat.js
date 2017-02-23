@@ -133,30 +133,37 @@ const MessageTopDivider = ( { elementId, content, title } ) => (
   </Divider>  
 )
 
-
 // Some magic for encoding and expanding asset links that are dragged in.
 const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asset.name}❯`      // See https://en.wikipedia.org/wiki/Dingbat#Unicode ❮  U276E , U276F  ❯
 
 const ChatMessage = ( { msg } ) => {
-  const msg2 = msg.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  const msg3 = msg2.replace(/❮[^❯]*❯/g, function (e) {
+  let begin = 0
+  let chunks = []
+  msg.replace(/❮[^❯]*❯/g, function (e, offset, str) {
+    chunks.push(<span key={chunks.length} >{str.slice(begin, offset)}</span>)
+    begin = offset+e.length
     const e2 = e.split(':')
     if (e2.length === 3){
       const userName=e2[0].slice(1)
       const assetId=e2[1]
       const assetName=e2[2].slice(0,-1)
-      return `<a href='/u/${userName}/asset/${assetId}'>${userName}:${assetName}</a>`
+      const link=<QLink key={chunks.length} to={`/u/${userName}/asset/${assetId}`}>{userName}:{assetName}</QLink>
+      chunks.push(link)
+      return e
     }
     else if (e2.length === 2){
       const userName=e2[0].slice(1)
       const assetId=e2[1].slice(0,-1)
-      return `<a href='/u/${userName}/asset/${assetId}'>${userName}:${assetId}</a>`
+      const link=<QLink key={chunks.length} to={`/u/${userName}/asset/${assetId}`}>{userName}:{assetId}</QLink>
+      chunks.push(link)
+      return e
     }
     else {
       return e
     }
   })
-  return <span dangerouslySetInnerHTML={{ __html: msg3}} />
+  chunks.push(<span key={chunks.length} >{msg.slice(begin)}</span>)
+  return <span>{chunks}</span>
 }
 
 

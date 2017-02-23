@@ -18,12 +18,11 @@ page.onError = function(msg, trace) {
 
 };
 
-page.open('http://localhost:3000', function() {
-  debugger;
+page.open('http://test.mygamebuilder.com', function() {
   waitFor({
     debug: true,  // optional
-    interval: 0,  // optional
-    timeout: 1000,  // optional
+    interval: 3,  // optional
+    timeout: 5000,  // optional
     check: function () {
       return page.evaluate(function() {
         return $('.ui.teal.huge.button').is(':visible');
@@ -32,9 +31,10 @@ page.open('http://localhost:3000', function() {
     success: function () {
       console.log("Success....")
       page.render('phantomScreen.png');
-      // we have what we want
+      phantom.exit();
     },
     error: function () {
+      page.render('scr/phantomScreen.png');
       console.log("ERROR while waiting for button....")
     } // optional
   });

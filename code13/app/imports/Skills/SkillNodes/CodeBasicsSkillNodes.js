@@ -30,7 +30,7 @@ export default {
       ],
       "tests": [
       "assert(code.match(/(\\/\\/)...../g), 'message: Create a <code>//</code> style comment that contains at least five letters.');",
-      "assert(code.match(/(\\/\\*)([^\\*\\/]{5,})(?=\\*\\/)/gm), 'message: Create a <code>/* */</code> style comment that contains at least five letters.');"
+        "assert(code.match(/(\\/\\*)([^\\*\\/]{5,})(?=\\*\\/)/gm), 'message: Create a <code>/* */</code> style comment that contains at least five letters.');"
       ]
     },
     skill: C.En(0)

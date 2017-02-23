@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>MyGameBuilder Code Tests Frame</title>
+
+  <style type="text/css">
+    body {
+      margin: 0; height: 100%; width: 100%;
+      background-color: #333;
+    }
+  </style>
+</head>
+
+<body>
+
+
+
+<script>
+
+
+window.addEventListener("message", receiveMessage, false)
+let code, data, results
+
+  function receiveMessage(event)
+  {
+    results = []
+    data = event.data
+    code = data.code
+    data.tests.forEach((test) => {
+      eval(test)
+    })
+  }
+
+
+  function assert(result, message){
+    results.push({
+      success: result ? true : false,
+      message: message
+    })
+    if(results.length == data.tests.length){
+      callback(results)
+    }
+  }
+
+  function callback(results){
+    const message = {
+      prefix: 'codeTests',
+      results: results
+    }
+    window.parent.postMessage(message, "*")
+    
+  }
+
+
+</script>
+
+
+
+
+</body>
+
+</html>

@@ -25,9 +25,27 @@ export default class CodeChallenges extends React.Component {
     this.skillNode = this.getSkillNode(props.skillPath)
 
     this.state = {
-      
+      results: []
     }
 
+  }
+
+  componentDidMount() {
+    this.getReference()
+
+    window.addEventListener("message", this.receiveMessage.bind(this), false)
+
+  }
+
+  getReference() {
+    this.iFrame = ReactDOM.findDOMNode(this.refs.iFrameTests)
+  }
+
+  receiveMessage(e){
+    if(e.data.prefix && e.data.prefix == 'codeTests'){
+      // console.log(e.data.results)
+      this.setState({ results: e.data.results })
+    }
   }
 
   getSkillNode(){
@@ -40,14 +58,15 @@ export default class CodeChallenges extends React.Component {
   }
 
   runTests(){
-    // console.log(this.props.code, this.skillNode.$meta.tests)
-
     const tests = this.skillNode.$meta.tests
-    tests.map((test) => {
-      // console.log(test)
-      // const result = eval(test)
-    })
 
+    // TODO pass current code not saved one. check codemirror.getValue() 
+    const message = {
+      code: this.props.code,
+      tests: tests
+    }
+
+    this.iFrame.contentWindow.postMessage(message, "*")
   }
 
   render() {
@@ -63,13 +82,28 @@ export default class CodeChallenges extends React.Component {
           <Icon name='help' /> Help
         </Button>
 
+        {
+          this.state.results.map((result, idx) => (
+            <div key={idx}>
+              <i className={"icon circle " + (result.success ? "check big green" : "minus big red")}></i>
+              {result.message}
+            </div>
+          ))
+        }
+
+
+        <iframe
+          style={{ display: "none", width: "10px", height: "10px" }}
+          ref="iFrameTests"
+          sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
+          src={makeCDNLink('/codeTests.html')}
+          frameBorder="0"
+          id="mgbjr-EditCode-codeTests-iframe"
+          >
+        </iframe>
+
       </div>
     )
   }
 
 }
-
-
-// const assert = (param1, param2) => {
-//   console.log(param1, param2)
-// }

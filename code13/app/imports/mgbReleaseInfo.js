@@ -13,6 +13,37 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Wed Feb 22 2017 18:10 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3422'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.assets',
+          'type': 'feature',
+          'changeName': 'Filter asset search by Workstate',
+          'changeSummary': 'You can now show/hide Assets by workstate',
+          'otherUrls': [ { txt: 'example', href: '/assets?hidews=15' }, ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes',
+          'changeSummary': 'Bugfixes for firefox, game play, tutorials, project delete.',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
 
     {
       'timestamp': 'Tue Feb 21 2017 16:30 GMT-0800 (PST)',

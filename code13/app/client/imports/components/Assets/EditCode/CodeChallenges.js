@@ -43,6 +43,7 @@ export default class CodeChallenges extends React.Component {
 
   getReference() {
     this.iFrame = ReactDOM.findDOMNode(this.refs.iFrameTests)
+    this.testsSuccessModal = ReactDOM.findDOMNode(this.refs.testsSuccessModal)
   }
 
   getSkillNode(){
@@ -72,8 +73,10 @@ export default class CodeChallenges extends React.Component {
 
   successPopup(){
     const skillPath = this.props.skillPath + '.' + this.skillName
-    console.log('skill learned', skillPath)
+    // console.log('skill learned', skillPath)
     learnSkill( skillPath )
+
+    $(this.testsSuccessModal).modal('show')
   }
 
   runTests(){
@@ -95,6 +98,10 @@ export default class CodeChallenges extends React.Component {
 
   onpenHelpChat(){
     utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+  }
+
+  nextChallenge(){
+    // console.log('next challenge')
   }
 
   render() {
@@ -137,6 +144,16 @@ export default class CodeChallenges extends React.Component {
           id="mgbjr-EditCode-codeTests-iframe"
           >
         </iframe>
+
+        <div className="ui small modal" ref="testsSuccessModal">
+          <div className="content">
+            <h2 style={{textAlign:"center"}}><i className="check big green circle icon"></i>Success</h2>
+            <br/><br/>
+            <button style={{display:"block", margin:"0 auto"}} onClick={this.nextChallenge.bind(this)} className="positive ui button">
+              Next challenge
+            </button>
+          </div>
+        </div>
 
       </div>
     )

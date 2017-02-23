@@ -7,7 +7,7 @@ import { Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { checkIsLoggedIn, checkMgb } from './checkMgb'
 
-import { defaultWorkStateName } from '/imports/Enums/workStates'
+import { defaultWorkStateName, makeWorkstateNamesArray} from '/imports/Enums/workStates'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
 import { AssetKinds } from './assets/assetKinds'
@@ -123,10 +123,10 @@ export function assetMakeSelector(
                       nameSearch,
                       projectName=null,   // '_' means 'not in a project'.   null means In any/all projects
                       showDeleted=false,
-                      showStable=false)
+                      showStable=false,
+                      hideWorkstateMask=0)
 {
   let selector = { isDeleted: showDeleted }
-
   if (projectName === '_')
     selector["projectNames"] = []
   else if (projectName && projectName.length > 0)
@@ -139,7 +139,13 @@ export function assetMakeSelector(
     selector["ownerId"] = userId
 
   if (selectedAssetKinds && selectedAssetKinds.length > 0)
-    selector["$or"] = _.map(selectedAssetKinds, x => ( { kind: x } ) )  // TODO: Could use $in ?
+    selector["kind"] = { "$in": selectedAssetKinds }
+
+  if (hideWorkstateMask > 0)
+  {
+    const wsNamesToLookFor = makeWorkstateNamesArray(hideWorkstateMask)
+    selector["workState"] = { "$in": wsNamesToLookFor}
+  }
 
   if (nameSearch && nameSearch.length > 0)
   {

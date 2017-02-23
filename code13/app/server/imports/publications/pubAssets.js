@@ -24,14 +24,17 @@ Meteor.publish('assets.public', function(
                                     showDeleted=false,
                                     showStable=false,
                                     assetSortType=undefined,    // one of the keys of allSorters
-                                    limitCount=50)
+                                    limitCount=50,
+                                    hideWorkstateMask=0         // As defined for use by assetMakeSelector()
+)
 {
   let selector = assetMakeSelector(userId,
                       selectedAssetKinds,
                       nameSearch,
                       projectName,
                       showDeleted,
-                      showStable)
+                      showStable,
+                      hideWorkstateMask)
   let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
   const findOpts = {
     fields: {content2: 0, thumbnail: 0},

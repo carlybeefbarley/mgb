@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Segment, Popup, Button, Message, Header } from 'semantic-ui-react'
+import { Segment, Popup, Message, Header } from 'semantic-ui-react'
 import reactMixin from 'react-mixin'
 
 import { Azzets, Projects } from '/imports/schemas'
@@ -16,10 +16,12 @@ import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
 import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
 import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
-import WorkState, { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
+import { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
+
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
@@ -29,10 +31,13 @@ const queryDefaults = {
   sort: "edited",               // Should be one of the keys of assetSorters{}
   showDeleted: "0",             // Should be "0" or "1"  -- as a string
   showStable: "0",              // Should be "0" or "1"  -- as a string
+  hidews: '0',                  // hide WorkStates using a bitmask. Bit on = workstate[bitIndex] should be hidden
   kinds: ""                     // Asset kinds. Empty means 'match all valid, non-disabled assets'
 }
 
-const segmentPlainStyle = { border: 0, background: 'transparent' }
+const _segmentPlainStyle = { border: 0, background: 'transparent' }
+const _assetsSegmentStyle = { ..._segmentPlainStyle, minHeight: '600px' }
+const _filterSegmentStyle = { ..._assetsSegmentStyle, minWidth: '220px', maxWidth: '220px' }
 
 export default UserAssetListRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -68,6 +73,10 @@ export default UserAssetListRoute = React.createClass({
     // query.project
     if (q.project)
       newQ.project = q.project
+
+    // query.project
+    if (q.hidews)
+      newQ.hidews = q.hidews
 
     // query.showDeleted
     if (q.showDeleted === "1")
@@ -136,7 +145,9 @@ export default UserAssetListRoute = React.createClass({
                                   qN.project,
                                   qN.showDeleted === "1",
                                   qN.showStable === "1",
-                                  qN.sort)
+                                  qN.sort,
+                                  SpecialGlobals.assets.mainAssetsListDefaultLimit,
+                                  qN.hidews)
     let assetSorter = assetSorters[qN.sort]
     let assetSelector = assetMakeSelector(
                                   userId,
@@ -144,7 +155,8 @@ export default UserAssetListRoute = React.createClass({
                                   qN.searchName,
                                   qN.project,
                                   qN.showDeleted === "1",
-                                  qN.showStable === "1")
+                                  qN.showStable === "1",
+                                  qN.hidews)
 
     let handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null
     let selectorForProjects = {
@@ -194,6 +206,7 @@ export default UserAssetListRoute = React.createClass({
   handleChangeSortByClick(newSort) { this._updateLocationQuery( { sort: newSort } ) },
   handleChangeShowStableFlag(newValue) { this._updateLocationQuery( { showStable: newValue } ) },
   handleChangeShowDeletedFlag(newValue) { this._updateLocationQuery( { showDeleted: newValue } ) },
+  handleChangeWorkstateHideMask(newValue) { this._updateLocationQuery( { hidews: String(newValue) } ) },
   handleChangeSelectedProjectName(newValue) { this._updateLocationQuery( { project: newValue } ) },
 
   handleChangeViewClick(newView)
@@ -212,13 +225,13 @@ export default UserAssetListRoute = React.createClass({
     const pageTitle = user ? `${name}'s Assets` : "Public Assets"
 
     return (
-      <Segment.Group horizontal style={segmentPlainStyle}>
+      <Segment.Group horizontal style={_segmentPlainStyle}>
 
         <Helmet
             title={pageTitle}
             meta={[ { "name": "Asset List", "content": "Assets" } ]} />
 
-        <Segment style={{ ...segmentPlainStyle, minHeight: "600px", minWidth:"220px", maxWidth:"220px" }}>
+        <Segment style={_filterSegmentStyle}>
           <Header as='h2' content={pageTitle} />
             { user ? <ProjectSelector
                       id='mgbjr-asset-search-projectSelector'
@@ -260,7 +273,8 @@ export default UserAssetListRoute = React.createClass({
           </div>
 
           <WorkStateMultiSelect
-              selectedMask={3}
+              hideMask={parseInt(qN.hidews)}
+              handleChangeMask={this.handleChangeWorkstateHideMask}
               style={ { marginTop: '0.5em', textAlign: 'center' } }/>
 
           <div style={ { marginTop: '1em', textAlign: 'center' } }>
@@ -272,7 +286,7 @@ export default UserAssetListRoute = React.createClass({
           </div>
         </Segment>
 
-        <Segment style={ { ...segmentPlainStyle, minHeight: "600px" } }>
+        <Segment style={ _assetsSegmentStyle }>
           <div style={ { marginBottom: '1em' } }>
             <QLink className='ui compact green button' to='/assets/create' id="mgbjr-create-new-asset">Create New Asset</QLink>
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>

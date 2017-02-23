@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Wed Feb 22 2017 18:10 GMT-0800 (PST)',
+      'timestamp': 'Thu Feb 23 2017 00:50 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3422'
+        'iteration': '3425'
       },
 
       'releaseManagement': {
@@ -38,7 +38,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes',
-          'changeSummary': 'Bugfixes for firefox, game play, tutorials, project delete.',
+          'changeSummary': 'Bugfixes for firefox, game play, tutorials, project delete, assetLinks in chat.',
           'otherUrls': [ ]
         },
       ]

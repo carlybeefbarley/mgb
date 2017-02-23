@@ -74,9 +74,9 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
 
               return (
                 <List.Item
-                  as={isComplete ? 'div' : 'a'}
                   key={idx}
-                  disabled={isComplete}
+                  as={'a'} // isComplete ? 'div' : 'a'}
+                  //disabled={isComplete}
                   onClick={ (e) => handleClick( e, skillPath ) }
                   icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
                   header={isComplete ? null : area.name}

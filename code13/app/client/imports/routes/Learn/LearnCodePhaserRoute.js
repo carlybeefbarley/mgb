@@ -57,7 +57,7 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
       }
       <Grid.Column>
         {/*<div onClick={() => startSkillPathTutorial('getStarted.nonCodeGame.createGraphic') }>Start code tutorial</div>*/}
-        <Header as='h1' size='huge'>
+        <Header as='h1'>
           Game development concepts
           <Header.Subheader>
             These concept examples use the 'Phaser' game engine for JavaScript.

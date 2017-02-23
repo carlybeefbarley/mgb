@@ -42,10 +42,12 @@ const LearnCodeMoleRoute = ({ currUser }, context) => {
     <Grid container columns='1'>
       <Divider hidden />
       <Grid.Column>
-        <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+        <Header as='h1'>
           Develop a game from A-Z
-          <em className="sub header">Everyone knows "Whack a Mole" game. For coders it is easy to start with this game
-            and add more concepts to it.</em>
+          <Header.Subheader>
+            Everyone knows "Whack a Mole" game.
+            For coders it is easy to start with this game and add more concepts to it.
+          </Header.Subheader>
         </Header>
       </Grid.Column>
       <Grid.Column>

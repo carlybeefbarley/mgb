@@ -52,9 +52,9 @@ const LearnCodeRoute = () => (
   <Grid container columns='1'>
     <Divider hidden />
     <Grid.Column>
-      <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+      <Header as='h1'>
         Learn to code
-        <em className="sub header">With JavaScript and Phaser</em>
+        <Header.Subheader>With JavaScript and Phaser</Header.Subheader>
       </Header>
     </Grid.Column>
     <Grid.Column>

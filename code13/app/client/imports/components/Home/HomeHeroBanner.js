@@ -19,9 +19,11 @@ const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
       <Grid.Row>
         <Grid.Column>
           <Image size='large' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
-          <Header as='h1' size='huge' style={{fontSize: '3em', marginBottom: '0.5em'}}>
-            <span style={isSmall ? {} : { whiteSpace: 'nowrap'}}>My Game Builder</span>
-            <em className="sub header" style={{fontSize: '0.5em'}}>Make Games. Make Friends. Have Fun.</em>
+          <Header as='h1'>
+            My Game Builder
+            <Header.Subheader>
+              Make Games. Make Friends. Have Fun.
+            </Header.Subheader>
           </Header>
         { userId ?
           <p style={{fontSize: '1.5em', maxWidth: '450px'}}>

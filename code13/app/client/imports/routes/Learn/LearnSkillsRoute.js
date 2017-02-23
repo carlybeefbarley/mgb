@@ -37,9 +37,9 @@ const LearnSkillsRoute = ({ currUser }, context) => (
   <Grid container columns='1'>
     <Divider hidden />
     <Grid.Column>
-      <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+      <Header as='h1'>
         What kind of skill do you want to learn next?
-        <em className="sub header">Game Builders have many kinds of skills</em>
+        <Header.Subheader>Game Builders have many kinds of skills</Header.Subheader>
       </Header>
     </Grid.Column>
     <Grid.Column>

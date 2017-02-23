@@ -36,9 +36,11 @@ const LearnGamesRoute = () => (
   <Grid container columns='1'>
     <Divider hidden />
     <Grid.Column>
-      <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+      <Header as='h1'>
         What kind of game shall we build?
-        <em className="sub header">Learn the basics of these game types, and how to add features</em>
+        <Header.Subheader>
+          Learn the basics of these game types, and how to add features
+        </Header.Subheader>
       </Header>
     </Grid.Column>
     <Grid.Column>

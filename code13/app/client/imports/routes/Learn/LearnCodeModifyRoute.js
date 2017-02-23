@@ -54,9 +54,9 @@ const LearnCodeModifyRoute = ( { currUser }, context ) => {
     <Grid container columns='1'>
       <Divider hidden />
       <Grid.Column>
-        <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+        <Header as='h1'>
           JavaScript programming basics
-          <em className="sub header">Click on item and explore it</em>
+          <Header.Subheader>Click on item and explore it</Header.Subheader>
         </Header>
       </Grid.Column>
       <Grid.Column>

@@ -79,9 +79,9 @@ const LearnRoute = ({ currUser, params }, context) => (
   <Grid container columns='1'>
     <Divider hidden />
     <Grid.Column>
-      <Header as='h1' size='huge' style={{ fontSize: '2.5em' }}>
+      <Header as='h1'>
         How do you want to learn?
-        <em className="sub header">Let's do it your way</em>
+        <Header.Subheader>Let's do it your way</Header.Subheader>
       </Header>
     </Grid.Column>
     <Grid.Column>

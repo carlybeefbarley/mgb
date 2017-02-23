@@ -10,7 +10,7 @@ const until = webdriver.until
 module.exports = (browser) => {
   const sel = {
     css: (rule, timeout ) => {
-      timeout = timeout == void(0) ? 10000 : timeout
+      timeout = timeout == void(0) ? 30000 : timeout
       return browser.wait(until.elementLocated(By.css(rule)), timeout)
     },
     exists: (rule, callback) => {
@@ -50,8 +50,13 @@ module.exports = (browser) => {
 
     },
     untilVisible(rule, timeout){
+      console.log("Waiting for:", rule)
       timeout = timeout == void(0) ? 10000 : timeout
-      return browser.wait(until.elementIsVisible(sel.css(rule)), timeout)
+      const retval = browser.wait(until.elementIsVisible(sel.css(rule)), timeout)
+      retval.then(() => {
+        console.log("Is visible", rule)
+      })
+      return retval
     },
 
     untilEnabled(rule, timeout){
@@ -84,6 +89,7 @@ module.exports = (browser) => {
     // REST is site specific stuff...
     // TODO (stauzs): move site specific actions to external file?
     adjustLevelSlider(name, level){
+
       level = level === void(0) ? 1 : level
       const sliders = [
         '#mgbjr-input-level-slider-FlexPanel',
@@ -95,13 +101,15 @@ module.exports = (browser) => {
 
       browser.actions()
         .mouseMove(sel.css('#mgbjr-np-mgb')) // move to logo
-        .mouseMove(sel.css('#mgbjr-np-user')) // move to avatar
+        .mouseMove(sel.css('#mgbjr-np-user > a')) // move to avatar
         .mouseMove(sel.css('#mgbjr-np-user-avatar')) // move to avatar
         .perform()
 
       // settings should be visible now
       const settings = sel.untilVisible('#mgbjr-np-user-settings')
       settings.click() // side panel with settings should appear
+      sel.wait(1000)
+      sel.takeScreenShot("scr/settingsOpen.png")
 
       if(name){
         const slider = sel.untilVisible('#mgbjr-input-level-slider-' + name)
@@ -127,6 +135,8 @@ module.exports = (browser) => {
       }
       // wait and check if everything is fine
       //sel.wait(10 * 1000)
+      // for some reason we get it back to 0
+      sel.wait(1000)
 
       // close side panel
       sel.css('#mgbjr-flexPanelIcons-settings').click()

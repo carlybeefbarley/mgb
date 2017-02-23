@@ -52,7 +52,7 @@ let _theAppInstance = null
 
 
 // for now, until we have push notifications for chat
-const CHAT_POLL_INTERVAL_MS = (6*1000) 
+const CHAT_POLL_INTERVAL_MS = (6*1000)
 
 // Tutorial/Joyride infrastructure support
 
@@ -113,9 +113,9 @@ const _toastTypes = {
 }
 
 /**
- * 
- * 
- * @param {string} content . . If non-null, then display the Notification 
+ *
+ *
+ * @param {string} content . . If non-null, then display the Notification
  * @param {string} [type='success']
  * @returns {Number} number of Milliseconds the alert will remain for. Can be used for revising _throttle etc. Even returned when content=null
  */
@@ -196,7 +196,7 @@ const App = React.createClass({
       // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
       chatChannelTimestamps:    null,          // as defined by Chats.getLastMessageTimestamps RPC
       hazUnreadChats:           [],            // will contain Array of channel names with unread chats
-      // hazUnreadChats is just a subset of the data in chatChannelTimestamps, but simplified - just an 
+      // hazUnreadChats is just a subset of the data in chatChannelTimestamps, but simplified - just an
       // Array of chat channelNames with at least one unread message. Handy for notification UIs, and quicker to parse
 
       // This is so that we can pass the Asset 'kind' info into some other components like the flexpanels and Nav controls.
@@ -235,6 +235,7 @@ const App = React.createClass({
 
     if (handleForSettings && handleForSettings.ready())
     {
+      console.log("Save!")
       // There is a very small race where local settings could get replaced
       // if the settings are changed while the debounced save is happening..
       // but it's pretty small, so worry about that another day

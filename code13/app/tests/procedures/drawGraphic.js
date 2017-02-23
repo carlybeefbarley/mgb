@@ -60,11 +60,13 @@ module.exports = (browser) => {
   // return function so procedure can be used directly as callback
   return (done) => {
     // adjustLevelSlider - works only partially
-    sel.adjustLevelSlider('EditGraphic')
+    sel.adjustLevelSlider('EditGraphic', 1)
 
     // green
     pickColor(35)
+
     const canvas = sel.css(el.mainCanvas)
+
     // draw green rect
     browser.actions()
       .mouseMove(canvas, {x: 10, y: 10})
@@ -78,19 +80,27 @@ module.exports = (browser) => {
 
     // red
     pickColor(99)
+
     sel.css(el.fillTool).click()
+
+
     // fill green rect
     browser.actions()
       .mouseMove(canvas, {x: 50, y: 50})
       .click()
       .perform()
 
-
+    console.log("trying to add frame: done!")
     sel.css(el.addFrame).click()
+
+    console.log("add frame: done!")
     sel.css(el.getFrameSelector(1)).click()
+
+    console.log("get frame selector: done!")
 
     // yellow
     pickColor(18.5)
+    console.log("pick color: done!")
     sel.css(el.fillTool).click()
     // fill all canvas with yellow color
     browser.actions()
@@ -102,7 +112,7 @@ module.exports = (browser) => {
     sel.css(el.getFrameSelector(2)).click()
 
     const asset = sel.findAsset("test.image.for.drop")
-
+    console.log("pick color: done!")
     // is there selenium native way for react/HTML5 drag and drop???
     sel.dragAndDrop(asset, canvas)
 

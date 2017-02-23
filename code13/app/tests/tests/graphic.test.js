@@ -1,7 +1,7 @@
 /* this is sample test which only tries to log in user */
 module.exports = (getBrowser, path) => {
   let browser;
-  describe("Running code bundler tests", function(){
+  describe("Running Graphics tests", function(){
     before(function(){
       browser = getBrowser();
     })

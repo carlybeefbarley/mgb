@@ -85,6 +85,7 @@ const LearnCodeJsRoute = (props, context) => {
           </List>
         </Segment>
       </Grid.Column>
+      (Note: Just two here for current testing. Many more coming soon...)
     </Grid>
   )
 }

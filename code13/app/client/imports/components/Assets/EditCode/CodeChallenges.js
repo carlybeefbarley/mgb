@@ -70,6 +70,8 @@ export default class CodeChallenges extends React.Component {
   }
 
   render() {
+    const description = this.skillNode.$meta.description
+
     return (
       <div className={"content " +(this.props.active ? "active" : "")}>
         <Button size='small' color='green' onClick={this.runTests.bind(this)}>
@@ -88,6 +90,12 @@ export default class CodeChallenges extends React.Component {
               <i className={"icon circle " + (result.success ? "check big green" : "minus big red")}></i>
               {result.message}
             </div>
+          ))
+        }
+
+        {
+          description.map((text, i) => (
+            <div key={i}>{text}</div>
           ))
         }
 

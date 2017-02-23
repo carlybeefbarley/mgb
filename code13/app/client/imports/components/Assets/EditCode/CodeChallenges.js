@@ -76,6 +76,8 @@ export default class CodeChallenges extends React.Component {
   successPopup(){
     const skillPath = this.props.skillPath + '.' + this.skillName
     // console.log('skill learned', skillPath)
+
+    // TODO show notification for user
     learnSkill( skillPath )
 
     $(this.testsSuccessModal).modal('show')
@@ -95,7 +97,6 @@ export default class CodeChallenges extends React.Component {
   resetCode(){
     const newCode = this.skillNode.$meta.code.join( '\n' )
     this.props.codeMirror.setValue(newCode)
-    
   }
 
   onpenHelpChat(){
@@ -103,8 +104,30 @@ export default class CodeChallenges extends React.Component {
   }
 
   nextChallenge(){
-    $(this.testsSuccessModal).modal('hide')
-    StartCodeJsRoute(this.skillName, 'test code...', this.props.currUser)
+    const jsSkills = SkillNodes.code.js.basics
+    const skillsArr = []
+    for (let key in jsSkills) {
+      if (jsSkills.hasOwnProperty( key ) && key != '$meta') {
+        skillsArr.push(key)
+      }
+    }
+
+    const idx = skillsArr.indexOf(this.skillName)
+
+    if(idx < skillsArr.length-1){
+      const nextSkillName = skillsArr[idx+1]
+      const code = SkillNodes.code.js.basics[nextSkillName].$meta.code.join( '\n' )
+      // console.log(nextSkillName, code)
+
+      $(this.testsSuccessModal).modal('hide')
+      StartCodeJsRoute(nextSkillName, code, this.props.currUser)
+    } else {
+      // TODO replace with proper modal
+      alert('Congratulations! You have finished JavaScript basics challenges.')
+    }
+
+
+    
   }
 
   render() {

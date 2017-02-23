@@ -1,4 +1,5 @@
-java -jar ~/bin/selenium-* > /dev/null & 
+export QT_QPA_PLATFORM=''
+java -jar ~/bin/selenium-* > /dev/null &
 
 for i in `seq 1 $1`
 do

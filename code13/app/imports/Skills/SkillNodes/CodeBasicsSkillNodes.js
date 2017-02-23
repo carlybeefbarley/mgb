@@ -33,7 +33,7 @@ export default {
         "assert(code.match(/(\\/\\*)([^\\*\\/]{5,})(?=\\*\\/)/gm), 'message: Create a <code>/* */</code> style comment that contains at least five letters.');"
       ]
     },
-    skill: C.En(0)
+    comments: C.En(0)
     },
 
     'variables' : {
@@ -67,6 +67,6 @@ export default {
       "assert(/var\\s+myName\\s*;/.test(code), 'message: You should declare <code>myName</code> with the <code>var</code> keyword, ending with a semicolon');"
       ],
     },
-    skill: C.En(0)
+    variables: C.En(0)
   },
 }

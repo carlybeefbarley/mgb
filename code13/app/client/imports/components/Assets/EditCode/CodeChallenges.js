@@ -13,6 +13,7 @@ import {
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
+import { learnSkill } from '/imports/schemas/skills'
 
 import './editcode.css'
 
@@ -21,9 +22,11 @@ export default class CodeChallenges extends React.Component {
   constructor(props) {
     super(props)
 
-    // console.log(this.props.code)
+    // console.log(this.props.skillPath)
     
     this.skillNode = this.getSkillNode(props.skillPath)
+    const skillArr = props.skillPath.split('.')
+    this.skillName = skillArr[skillArr.length-1]
 
     this.state = {
       results: []
@@ -42,13 +45,6 @@ export default class CodeChallenges extends React.Component {
     this.iFrame = ReactDOM.findDOMNode(this.refs.iFrameTests)
   }
 
-  receiveMessage(e){
-    if(e.data.prefix && e.data.prefix == 'codeTests'){
-      // console.log(e.data.results)
-      this.setState({ results: e.data.results })
-    }
-  }
-
   getSkillNode(){
     let skillNodes = _.cloneDeep(SkillNodes)
     const path = this.props.skillPath.split('.')
@@ -56,6 +52,28 @@ export default class CodeChallenges extends React.Component {
       skillNodes = skillNodes[path.shift()]
     }
     return skillNodes
+  }
+
+  receiveMessage(e){
+    if(e.data.prefix && e.data.prefix == 'codeTests'){
+      // console.log(e.data.results)
+      this.setState({ results: e.data.results })
+      
+      let totalSuccess = true
+      e.data.results.map((result) => {
+        if(!result.success){
+          totalSuccess = false
+        }
+      })
+      if(totalSuccess)
+        this.successPopup()
+    }
+  }
+
+  successPopup(){
+    const skillPath = this.props.skillPath + '.' + this.skillName
+    console.log('skill learned', skillPath)
+    learnSkill( skillPath )
   }
 
   runTests(){

@@ -11,7 +11,7 @@ import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 
 const jsSkills = SkillNodes.code.js.basics
 const skillItems = []
-for (var key in jsSkills) {
+for (let key in jsSkills) {
   if (jsSkills.hasOwnProperty( key ) && key != '$meta') {
     let skill = _.cloneDeep( jsSkills[key]['$meta'] )
     skill.idx = key

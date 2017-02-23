@@ -314,7 +314,7 @@ export default FlexPanel = React.createClass({
     return  (
       <div className="basic segment mgbFlexPanel" style={panelStyle} id='mgbjr-flexPanelArea'>
         { flexPanelIsVisible &&
-          <div className='' style={{animationFillMode: "none"} /*animation fill mode breaks flex panel on ff and mobile chrome (samsung) */ }>
+          <div className='animated fadeInRight' style={{animationFillMode: "none"} /*animation fill mode breaks flex panel on ff and mobile chrome (samsung) */ }>
 
             <div className="flex header" style={flexHeaderStyle}>
               <span className="title">

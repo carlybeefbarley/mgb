@@ -89,57 +89,64 @@ module.exports = (browser) => {
     // REST is site specific stuff...
     // TODO (stauzs): move site specific actions to external file?
     adjustLevelSlider(name, level){
+      // fix strange bug with animations in phantomjs
+      browser.executeScript(`
+        m.addStyle('.fadeInRight {-webkit-animation-name: none; animation-name: none;}')
+      `).then(() => {
 
-      level = level === void(0) ? 1 : level
-      const sliders = [
-        '#mgbjr-input-level-slider-FlexPanel',
-        '#mgbjr-input-level-slider-EditGraphic',
-        '#mgbjr-input-level-slider-EditCode',
-        '#mgbjr-input-level-slider-MapTools',
-        '#mgbjr-input-level-slider-AudioTools'
-      ]
 
-      browser.actions()
-        .mouseMove(sel.css('#mgbjr-np-mgb')) // move to logo
-        .mouseMove(sel.css('#mgbjr-np-user > a')) // move to avatar
-        .mouseMove(sel.css('#mgbjr-np-user-avatar')) // move to avatar
-        .perform()
+        level = level === void(0) ? 1 : level
+        const sliders = [
+          '#mgbjr-input-level-slider-FlexPanel',
+          '#mgbjr-input-level-slider-EditGraphic',
+          '#mgbjr-input-level-slider-EditCode',
+          '#mgbjr-input-level-slider-MapTools',
+          '#mgbjr-input-level-slider-AudioTools'
+        ]
 
-      // settings should be visible now
-      const settings = sel.untilVisible('#mgbjr-np-user-settings')
-      settings.click() // side panel with settings should appear
-      sel.wait(1000)
-      sel.takeScreenShot("scr/settingsOpen.png")
+        browser.actions()
+          .mouseMove(sel.css('#mgbjr-np-mgb')) // move to logo
+          .mouseMove(sel.css('#mgbjr-np-user > a')) // move to avatar
+          .mouseMove(sel.css('#mgbjr-np-user-avatar')) // move to avatar
+          .perform()
 
-      if(name){
-        const slider = sel.untilVisible('#mgbjr-input-level-slider-' + name)
-        slider.getSize()
-          .then((size) => {
-            browser.actions()
-              .mouseMove(slider, {x: size.width * level, y: size.height * 0.5})
-              .click()
-              .perform()
-          })
-      }
-      else{
-        sliders.forEach( s => {
-          const slider = sel.untilVisible(s)
+        // settings should be visible now
+        const settings = sel.untilVisible('#mgbjr-np-user-settings')
+        settings.click() // side panel with settings should appear
+        sel.wait(1000)
+        sel.takeScreenShot("scr/settingsOpen.png")
+
+        if(name){
+          const slider = sel.untilVisible('#mgbjr-input-level-slider-' + name)
           slider.getSize()
-          .then((size) => {
+            .then((size) => {
               browser.actions()
-                .mouseMove(slider, {x: size.width * level * 0.99, y: size.height * 0.5})
+                .mouseMove(slider, {x: size.width * level, y: size.height * 0.5})
                 .click()
                 .perform()
             })
-        })
-      }
-      // wait and check if everything is fine
-      //sel.wait(10 * 1000)
-      // for some reason we get it back to 0
-      sel.wait(1000)
+        }
+        else{
+          sliders.forEach( s => {
+            const slider = sel.untilVisible(s)
+            slider.getSize()
+              .then((size) => {
+                browser.actions()
+                  .mouseMove(slider, {x: size.width * level * 0.99, y: size.height * 0.5})
+                  .click()
+                  .perform()
+              })
+          })
+        }
+        // wait and check if everything is fine
+        //sel.wait(10 * 1000)
+        // for some reason we get it back to 0
+        sel.wait(1000)
 
-      // close side panel
-      sel.css('#mgbjr-flexPanelIcons-settings').click()
+        // close side panel
+        sel.css('#mgbjr-flexPanelIcons-settings').click()
+      })
+
     },
     openAssetsPanel(){
       return browser.getCurrentUrl()

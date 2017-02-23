@@ -105,11 +105,6 @@ export const AssetKindKeys = _.filter(AssetKindKeysALL, (k) => {
 
 export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepChar).length === AssetKindKeys.length
 
-// All valid Asset kinds including disabled ones
-export const AssetKindKeysIncludingDisabled = _.filter(AssetKindKeysALL, (k) => {
-  return (typeof(AssetKinds[k]) !== 'function')
-})
-
 /** This is intended for use by publications.js and any Meteor.subscribe calls
  *  assetMakeSelector
  *

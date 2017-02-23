@@ -2207,7 +2207,8 @@ export default class EditCode extends React.Component {
 
               {/* TODO need to implement asset.skillPath to reference tutorial with this asset */}
               { !docEmpty && asset.kind === 'code' && asset.skillPath &&
-                <div className="title" id="mgbjr-EditCode-codeChallenges">
+                <div className={"title " + (asset.skillPath ? "active" : "")}  
+                id="mgbjr-EditCode-codeChallenges">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Challenges
                   </span>
@@ -2216,6 +2217,7 @@ export default class EditCode extends React.Component {
 
               { !docEmpty && asset.kind === 'code' && asset.skillPath &&
                 <CodeChallenges
+                  active={ asset.skillPath ? true : false}
                   code={ asset.content2.src}
                   skillPath={ asset.skillPath }
                 />
@@ -2223,7 +2225,7 @@ export default class EditCode extends React.Component {
 
               { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (header)
-                <div id="mgbjr-EditCode-codeMentor" className="active title">
+                <div id="mgbjr-EditCode-codeMentor" className={"title " + (asset.skillPath ? "" : "active") }>
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Mentor
                   </span>
@@ -2231,7 +2233,7 @@ export default class EditCode extends React.Component {
               }
               { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (body)
-                <div className="active content">
+                <div className={"content " + (asset.skillPath ? "" : "active")} >
                   <TokenDescription
                     currentToken={this.state.currentToken}
                     getPrevToken={cb => this.getPrevToken(cb)}

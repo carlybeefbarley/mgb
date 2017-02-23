@@ -71,7 +71,7 @@ export default class CodeChallenges extends React.Component {
 
   render() {
     return (
-      <div className="content">
+      <div className={"content " +(this.props.active ? "active" : "")}>
         <Button size='small' color='green' onClick={this.runTests.bind(this)}>
           <Icon name='play' /> Run tests
         </Button>

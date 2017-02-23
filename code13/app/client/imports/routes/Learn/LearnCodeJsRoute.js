@@ -23,11 +23,16 @@ for (let key in jsSkills) {
 const handleClick = (e, idx, code, currUser) => {
   const newTab = (e.buttons == 4 || e.button == 1)
 
+  StartCodeJsRoute(idx, code.join( '\n' ), currUser, newTab)
+  
+}
+
+export const StartCodeJsRoute = (name, code, currUser, newTab) => {
   let newAsset = {
-    name: 'tutorials.js.' + idx,
+    name: 'tutorials.js.' + name,
     kind: 'code',
-    skillPath: 'code.js.basics.' + idx,
-    content2: { src: code.join( '\n' ) },
+    skillPath: 'code.js.basics.' + name,
+    content2: { src: code },
     dn_ownerName: currUser.username,
     isCompleted: false,
     isDeleted: false,
@@ -51,8 +56,6 @@ const handleClick = (e, idx, code, currUser) => {
     }
   } )
 }
-
-// TODO pass as param createAsset function
 
 const LearnCodeJsRoute = (props, context) => {
   const currUser = props.currUser

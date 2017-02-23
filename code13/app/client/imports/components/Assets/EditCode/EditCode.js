@@ -2220,6 +2220,7 @@ export default class EditCode extends React.Component {
                   active={ asset.skillPath ? true : false}
                   skillPath={ asset.skillPath }
                   codeMirror={ this.codeMirror }
+                  currUser={ this.props.currUser }
                 />
               }              
 

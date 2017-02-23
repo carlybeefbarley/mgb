@@ -14,6 +14,7 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
 import { learnSkill } from '/imports/schemas/skills'
+import { StartCodeJsRoute } from '/client/imports/routes/Learn/LearnCodeJsRoute'
 
 import './editcode.css'
 
@@ -35,6 +36,7 @@ export default class CodeChallenges extends React.Component {
   }
 
   componentDidMount() {
+    // console.log('component did mount')
     this.getReference()
 
     window.addEventListener("message", this.receiveMessage.bind(this), false)
@@ -101,7 +103,8 @@ export default class CodeChallenges extends React.Component {
   }
 
   nextChallenge(){
-    // console.log('next challenge')
+    $(this.testsSuccessModal).modal('hide')
+    StartCodeJsRoute(this.skillName, 'test code...', this.props.currUser)
   }
 
   render() {

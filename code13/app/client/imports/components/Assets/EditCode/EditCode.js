@@ -2218,8 +2218,8 @@ export default class EditCode extends React.Component {
               { !docEmpty && asset.kind === 'code' && asset.skillPath &&
                 <CodeChallenges
                   active={ asset.skillPath ? true : false}
-                  code={ asset.content2.src}
                   skillPath={ asset.skillPath }
+                  codeMirror={ this.codeMirror }
                 />
               }              
 

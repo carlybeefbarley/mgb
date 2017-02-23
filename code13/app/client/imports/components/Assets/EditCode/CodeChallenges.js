@@ -60,13 +60,18 @@ export default class CodeChallenges extends React.Component {
   runTests(){
     const tests = this.skillNode.$meta.tests
 
-    // TODO pass current code not saved one. check codemirror.getValue() 
     const message = {
-      code: this.props.code,
+      code: this.props.codeMirror.getValue(),
       tests: tests
     }
 
     this.iFrame.contentWindow.postMessage(message, "*")
+  }
+
+  resetCode(){
+    const newCode = this.skillNode.$meta.code.join( '\n' )
+    this.props.codeMirror.setValue(newCode)
+    
   }
 
   render() {
@@ -77,7 +82,7 @@ export default class CodeChallenges extends React.Component {
         <Button size='small' color='green' onClick={this.runTests.bind(this)}>
           <Icon name='play' /> Run tests
         </Button>
-        <Button size='small' color='green'>
+        <Button size='small' color='green' onClick={this.resetCode.bind(this)}>
           <Icon name='refresh' /> Reset code
         </Button>
         <Button size='small' color='green'>

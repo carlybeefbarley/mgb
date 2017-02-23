@@ -3,11 +3,11 @@ import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
 import {
-  Card,
   Divider,
   Grid,
+  List,
   Header,
-  Icon,
+  Segment,
 } from 'semantic-ui-react'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
@@ -66,31 +66,26 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
         </Header>
       </Grid.Column>
       <Grid.Column>
-        <Card.Group itemsPerRow={1} stackable className="skills">
-          { skillItems.map( (area, idx) => {
-            let skillPath = 'code/js/phaser/' + area.idx + '/' + area.idx
-            const cStyle = _.cloneDeep( cardStyle )
-            const isComplete = currUser && context.skills[skillPath]
+        <Segment padded piled>
+          <List size='large' relaxed='very' link className="skills">
+            { skillItems.map( (area, idx) => {
+              let skillPath = 'code/js/phaser/' + area.idx + '/' + area.idx
+              const isComplete = currUser && !_.isEmpty( context.skills[skillPath] )
 
-            if (isComplete) {
-              cStyle.backgroundColor = "#e2fcd6"
-              // console.log(area.idx)
-            }
-
-            return (
-              <div key={idx} style={cStyle} className='card animated fadeIn'>
-                <Card.Content 
-                  onMouseUp={ (e) => { handleClick(e, skillPath) } }>
-                  <p style={descStyle}>
-                    <Icon name={area.icon} size='large' />
-                    <b>{area.name}</b>
-                    &nbsp;- {area.description}
-                  </p>
-                </Card.Content>
-              </div>
-            )
-          } ) }
-        </Card.Group>
+              return (
+                <List.Item
+                  as={isComplete ? 'div' : 'a'}
+                  key={idx}
+                  disabled={isComplete}
+                  onClick={ (e) => handleClick( e, skillPath ) }
+                  icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
+                  header={isComplete ? null : area.name}
+                  content={isComplete ? area.name : area.description}
+                />
+              )
+            } ) }
+          </List>
+        </Segment>
       </Grid.Column>
     </Grid>
   )
@@ -101,13 +96,3 @@ LearnCodePhaserRoute.contextTypes = {
 }
 
 export default LearnCodePhaserRoute
-
-const cardStyle = {
-  color: "#2e2e2e",
-  cursor: "pointer"
-}
-
-const descStyle = {
-  fontSize: "1.25em",
-  lineHeight: "1.5em"
-}

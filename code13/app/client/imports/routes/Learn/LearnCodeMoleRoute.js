@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Divider, Grid, Card, Header } from 'semantic-ui-react'
+import { Divider, Grid, Header, List, Segment } from 'semantic-ui-react'
 
 const jsItems = [
   {
@@ -51,43 +51,23 @@ const LearnCodeMoleRoute = ({ currUser }, context) => {
         </Header>
       </Grid.Column>
       <Grid.Column>
-        <Card.Group itemsPerRow={1} stackable className="skills">
-          { jsItems.map( (area, idx) => (
-            <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
-              <Card.Content>
-                <p style={descStyle}>
-                  <i className={area.icon + " large icon"}></i>
-                  <b>{area.content}</b>
-                  &nbsp;- {area.desc}
-                </p>
-
-              </Card.Content>
-            </QLink>
-          ) ) }
-        </Card.Group>
+        <Segment padded piled>
+          <List size='large' relaxed='very' link className="skills">
+            { jsItems.map( (area, idx) => (
+              <List.Item
+                key={idx}
+                as={QLink}
+                to={area.link}
+                header={area.content}
+                content={area.desc}
+                icon={area.icon}
+              />
+            ) ) }
+          </List>
+        </Segment>
       </Grid.Column>
     </Grid>
   )
 }
 
 export default LearnCodeMoleRoute
-
-const cardStyle = {
-  color: "#2e2e2e"
-}
-
-const mascotStyle = {
-  maxWidth: "8em",
-  paddingRight: "0.5em",
-  marginBottom: "0"
-}
-
-const headerStyle = {
-  marginTop: "0.15em",
-  marginBottom: "0.4em"
-}
-
-const descStyle = {
-  fontSize: "1.25em",
-  lineHeight: "1.5em"
-}

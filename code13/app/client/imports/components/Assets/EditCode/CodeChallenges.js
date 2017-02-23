@@ -12,6 +12,7 @@ import {
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
+import { utilPushTo } from "/client/imports/routes/QLink"
 
 import './editcode.css'
 
@@ -74,6 +75,10 @@ export default class CodeChallenges extends React.Component {
     
   }
 
+  onpenHelpChat(){
+    utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+  }
+
   render() {
     const description = this.skillNode.$meta.description
 
@@ -85,7 +90,7 @@ export default class CodeChallenges extends React.Component {
         <Button size='small' color='green' onClick={this.resetCode.bind(this)}>
           <Icon name='refresh' /> Reset code
         </Button>
-        <Button size='small' color='green'>
+        <Button size='small' color='green' onClick={this.onpenHelpChat.bind(this)}>
           <Icon name='help' /> Help
         </Button>
 

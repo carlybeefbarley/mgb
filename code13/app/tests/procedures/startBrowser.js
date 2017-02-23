@@ -7,8 +7,13 @@ const createBrowser = function(browserName, options){
     usingServer(caps.server).
     withCapabilities(capabilities).
     build()
-  browser.get(caps.url)
-  browser.manage().window().maximize()
+
+  browser.get(caps.url).then(() => {
+    // clear localStorage - log out user in Meteor
+    browser.executeScript('window.localStorage.clear();')
+    browser.manage().window().maximize()
+  })
+
 
   const flow = browser.controlFlow()
   const scheduleClose = () => {

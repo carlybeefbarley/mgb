@@ -5,11 +5,13 @@ const Key = webdriver.Key
 //const until = webdriver.until
 const SeleniumHelper = require("../helpers/selenium.js")
 
+const EMAIL = 'tester@example.com'
+const PASSWORD = 'tester1'
 
 const buttons = {
   // if avatar is visible login will be threated as successful
-  avatar: '#mgbjr-np-user',
-  login: '#mgbjr-np-login',
+  avatar: '#mgbjr-np-user-avatar',
+  login: '#mgbjr-np-login > a',
   submitLoginForm: 'form button.ui.button'
 }
 
@@ -29,27 +31,40 @@ module.exports = (browser) => {
     // already logged in ?
     sel.exists(buttons.avatar, (e, found) => {
       if (found) {
+        sel.takeScreenShot('scr/alreadyLoggedIn.png')
+        console.log("Already logged in!")
         sel.done(done)
         return
       }
+      // and check again - just in case we are logged in already
 
+      sel.takeScreenShot('scr/beforeLogin.png')
       sel.css(buttons.login).click()
 
-      sel.css(inputs.email).sendKeys('tester@example.com')
-      // sel.css(inputs.password).sendKeys('tester1')
+      sel.takeScreenShot('scr/beforeEmail.png')
+      // clear input - because chrome tends to save forms
+      const email = sel.css(inputs.email)
+      email.sendKeys(EMAIL)
 
       // login with ENTER key
-      sel.css(inputs.password).sendKeys('tester1', Key.ENTER);
-      // login with click on the submit button
+      const password = sel.css(inputs.password)
+      password.sendKeys(PASSWORD, Key.ENTER)
+
+      // OR login with click on the submit button
+      // password.sendKeys(PASSWORD)
       // sel.css(buttons.submitLoginForm).click()
 
-
+      sel.takeScreenShot('scr/isLogged.png')
       sel.exists(buttons.avatar, e => {
         if (e) {
+          sel.takeScreenShot('scr/NOTLoggedIn.png')
           throw(e)
         }
+        sel.takeScreenShot('scr/LoggedIn.png')
+        sel.wait(1000)
         sel.done(done)
       })
+
     })
   }
 }

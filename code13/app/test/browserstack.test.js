@@ -118,9 +118,11 @@ function runTests(browserName, tests) {
       }
       waitForPreviousBrowserToClose()
     })
+
     tests.forEach((name) => {
       npm.require(testsLocation + name)(getBrowser, testWorkingDirectory)
     })
+
   })
 
   // we need to separate this because otherwise it will be called earlier than tests - in a case if tests will be wrapped into describe

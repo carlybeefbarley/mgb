@@ -10,7 +10,7 @@ const until = webdriver.until
 module.exports = (browser) => {
   const sel = {
     css: (rule, timeout ) => {
-      timeout = timeout == void(0) ? 30000 : timeout
+      timeout = timeout == void(0) ? 10000 : timeout
       return browser.wait(until.elementLocated(By.css(rule)), timeout)
     },
     exists: (rule, callback) => {
@@ -54,6 +54,11 @@ module.exports = (browser) => {
       return browser.wait(until.elementIsVisible(sel.css(rule)), timeout)
     },
 
+    untilEnabled(rule, timeout){
+      timeout = timeout == void(0) ? 10000 : timeout
+      return browser.wait(until.elementIsEnabled(sel.css(rule)), timeout)
+    },
+
     untilInvisible(rule, timeout){
       timeout = timeout == void(0) ? 10000 : timeout
       browser.wait(() => {
@@ -69,6 +74,12 @@ module.exports = (browser) => {
       }), timeout, message)
     },
 
+    takeScreenShot(name, cb){
+      browser.takeScreenshot().then(data => {
+        const fs = require("fs")
+        fs.writeFile(name, Buffer.from(data, 'base64'), () => {cb && cb()})
+      })
+    },
 
     // REST is site specific stuff...
     // TODO (stauzs): move site specific actions to external file?

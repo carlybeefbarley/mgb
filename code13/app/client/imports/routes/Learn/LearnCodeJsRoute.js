@@ -52,7 +52,7 @@ export const StartCodeJsRoute = (name, code, currUser, newTab) => {
   })
 }
 
-const LearnCodeJsRoute = ( { currUser } ) => (
+const LearnCodeJsRoute = ( { currUser }, context ) => (
   <Grid container columns='1'>
     <Divider hidden />
     <Grid.Column>
@@ -65,15 +65,21 @@ const LearnCodeJsRoute = ( { currUser } ) => (
     <Grid.Column>
       <Segment padded piled>
         <List size='large' relaxed='very' link className="skills">
-          { skillItems.map( (area, idx) => (
+          { skillItems.map( (area, idx) => {
+
+            let skillPath = 'code/js/basics/' + area.idx + '/' + area.idx
+            const isComplete = currUser && !_.isEmpty( context.skills[skillPath] )
+
+            return (
             <List.Item
               as='a'
               key={idx}
-              header={area.name}
-              icon={area.icon}
+              header={isComplete ? null : area.name}
+              content={isComplete ? area.name : null}
+              icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
               onClick={ (e) => handleClick( e, area.idx, area.code, currUser ) }
             />
-          ) ) }
+          ) } ) }
         </List>
       </Segment>
     </Grid.Column>
@@ -87,5 +93,9 @@ const LearnCodeJsRoute = ( { currUser } ) => (
     </a>
   </Grid>
 )
+
+LearnCodeJsRoute.contextTypes = {
+  skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
+}
 
 export default LearnCodeJsRoute

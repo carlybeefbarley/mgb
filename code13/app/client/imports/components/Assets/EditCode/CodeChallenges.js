@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Button, Modal, Icon, List, Segment } from 'semantic-ui-react'
+import { Button, Modal, Icon, List, Segment, Container, Divider } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
@@ -162,6 +162,18 @@ export default class CodeChallenges extends React.Component {
             <div key={i} dangerouslySetInnerHTML={{ __html: text}} />
           ))
         }
+
+        <Divider />
+
+        <Container textAlign='right'>
+          <a
+            href="https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md"
+            target="_blank"
+            data-tooltip={`FreeCodeCamp content copyrighted under "BSD 3-Clause License"`}
+            style={ { color: "#999" } } >
+              FreeCodeCamp license
+          </a>
+        </Container>
 
         <iframe
           style={{ display: "none", width: "10px", height: "10px" }}

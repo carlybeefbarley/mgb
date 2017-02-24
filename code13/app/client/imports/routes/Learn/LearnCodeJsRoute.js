@@ -77,6 +77,13 @@ const LearnCodeJsRoute = ( { currUser } ) => (
         </List>
       </Segment>
     </Grid.Column>
+    <a
+      href="https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md"
+      target="_blank"
+      data-tooltip={`FreeCodeCamp content copyrighted under "BSD 3-Clause License"`}
+      style={ { color: "#999" } } >
+        FreeCodeCamp license
+    </a>
   </Grid>
 )
 

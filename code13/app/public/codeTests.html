@@ -21,34 +21,43 @@
 
 
 window.addEventListener("message", receiveMessage, false)
-let code, data, results
+let code, mgbData, mgbResults, mgbError
 
-  function receiveMessage(event)
+  function receiveMessage(mgbEvent)
   {
-    results = []
-    data = event.data
-    code = data.code
-    eval(code)
-    data.tests.forEach((test) => {
-      eval(test)
+    mgbResults = []
+    mgbError = null
+    mgbData = mgbEvent.data
+    code = mgbData.code
+
+    try {
+      eval(code)
+    }
+    catch(err) {
+      mgbError = err.message
+    }
+
+    mgbData.tests.forEach((mgbTest) => {
+      eval(mgbTest)
     })
   }
 
 
-  function assert(result, message){
-    results.push({
-      success: result ? true : false,
-      message: message
+  function assert(mgbResult, mgbMessage){
+    mgbResults.push({
+      success: mgbResult ? true : false,
+      message: mgbMessage
     })
-    if(results.length == data.tests.length){
-      callback(results)
+    if(mgbResults.length == mgbData.tests.length){
+      callback(mgbResults)
     }
   }
 
-  function callback(results){
+  function callback(mgbResults){
     const message = {
       prefix: 'codeTests',
-      results: results
+      results: mgbResults,
+      error: mgbError
     }
     window.parent.postMessage(message, "*")
     

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Button, Modal, Icon, List } from 'semantic-ui-react'
+import { Button, Modal, Icon, List, Segment } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
@@ -27,6 +27,7 @@ export default class CodeChallenges extends React.Component {
     this.skillName = skillArr[skillArr.length-1]
     this.state = {
       results:                    [],       // Array of results we get back from the iFrame that runs the tests
+      error:                      null,     // get back from iFrame if it has some syntax error
       showAllTestsCompletedModal: false     // true if we want to show the All Tests Completed Modal
     }
   }
@@ -51,8 +52,8 @@ export default class CodeChallenges extends React.Component {
 
   receiveMessage(e) {
     if (e.data.prefix && e.data.prefix == 'codeTests') {
-      console.log(e.data.results)
       this.setState({ results: e.data.results })
+      this.setState({ error: e.data.error })
       
       let totalSuccess = true
       e.data.results.map((result) => {
@@ -132,6 +133,13 @@ export default class CodeChallenges extends React.Component {
         <Button size='small' color='green' onClick={this.onpenHelpChat.bind(this)}>
           <Icon name='help' /> Help
         </Button>
+
+        { this.state.error &&
+          <Segment inverted color='red' size='mini' secondary>
+            <Icon name='warning sign' />
+            {this.state.error}
+          </Segment>
+        }
 
         <List relaxed>
         {

@@ -77,7 +77,6 @@ const LearnCodeJsRoute = ( { currUser } ) => (
         </List>
       </Segment>
     </Grid.Column>
-    (Note: Just three here for current testing. Many more coming soon...)
   </Grid>
 )
 

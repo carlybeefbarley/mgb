@@ -28,6 +28,7 @@ let code, data, results
     results = []
     data = event.data
     code = data.code
+    eval(code)
     data.tests.forEach((test) => {
       eval(test)
     })

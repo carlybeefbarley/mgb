@@ -30,13 +30,13 @@ export default {
       ],
       "tests": [
       "assert(code.match(/(\\/\\/)...../g), 'message: Create a <code>//</code> style comment that contains at least five letters.');",
-        "assert(code.match(/(\\/\\*)([^\\*\\/]{5,})(?=\\*\\/)/gm), 'message: Create a <code>/* */</code> style comment that contains at least five letters.');"
+      "assert(code.match(/(\\/\\*)([^\\*\\/]{5,})(?=\\*\\/)/gm), 'message: Create a <code>/* */</code> style comment that contains at least five letters.');"
       ]
     },
     comments: C.En(0)
-    },
+  },
 
-    'variables' : {
+  'variables' : {
     $meta: {
       name: 'Declare JavaScript Variables',
       icon: 'code',
@@ -69,4 +69,41 @@ export default {
     },
     variables: C.En(0)
   },
+
+  'assignmentOperator' : {
+    $meta: {
+      name: 'Storing Values with the Assignment Operator',
+      icon: 'code',
+      description: [
+        "In JavaScript, you can store a value in a variable with the <dfn>assignment</dfn> operator.",
+        "<code>myVariable = 5;</code>",
+        "Assigns the <code>Number</code> value <code>5</code> to <code>myVariable</code>.",
+        "Assignment always goes from right to left. Everything to the right of the <code>=</code> operator is resolved before the value is assigned to the variable to the left of the operator.",
+        "<blockquote>myVar = 5;<br>myNum = myVar;</blockquote>",
+        "Assigns <code>5</code> to <code>myVar</code> and then resolves <code>myVar</code> to <code>5</code>  again and assigns it to <code>myNum</code>.",
+        "<hr>",
+        "Assign the value <code>7</code> to variable <code>a</code>.",
+        "Assign the contents of <code>a</code> to variable <code>b</code>."
+      ],
+      "code": [
+        "// Setup",
+        "var a;",
+        "var b = 2;",
+        "",
+        "// Only change code below this line",
+        ""
+      ],
+      "solutions": [
+        "var a;\nvar b = 2;\na = 7;\nb = a;"
+      ],
+      "tests": [
+        "assert(/var a;/.test(code) && /var b = 2;/.test(code), 'message: Do not change code above the line');",
+        "assert(typeof a === 'number' && a === 7, 'message: <code>a</code> should have a value of 7');",
+        "assert(typeof b === 'number' && b === 7, 'message: <code>b</code> should have a value of 7');",
+        "assert(/b\\s*=\\s*a\\s*;/g.test(code), 'message: <code>a</code> should be assigned to <code>b</code> with <code>=</code>');"      ],
+    },
+    assignmentOperator: C.En(0)
+  },
+
+  
 }

@@ -51,6 +51,7 @@ export default class CodeChallenges extends React.Component {
 
   receiveMessage(e) {
     if (e.data.prefix && e.data.prefix == 'codeTests') {
+      console.log(e.data.results)
       this.setState({ results: e.data.results })
       
       let totalSuccess = true

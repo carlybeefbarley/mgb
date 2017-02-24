@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Fri Feb 24 2017 10:00 GMT-0800 (PST)',
+      'timestamp': 'Fri Feb 24 2017 10:40 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3464'
+        'iteration': '3466'
       },
 
       'releaseManagement': {
@@ -32,7 +32,7 @@ const mgbReleaseInfo = {
           'featureTag': 'learn',
           'type': 'feature',
           'changeName': 'Coding Challenges in Tutorials',
-          'changeSummary': 'We have embedded around 100 JavaScript programming tutorials from FreeCodeCamp (thanks to their BSD licensed content) in order to provde a comprehensive learning path into JavaScript.',
+          'changeSummary': 'We have embedded around 100 JavaScript programming tutorials from FreeCodeCamp (thanks to their BSD licensed content) in order to provide a great way to learn JavaScript.',
           'otherUrls': [ { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' }, ]
         },
         {

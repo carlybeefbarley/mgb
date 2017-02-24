@@ -46,7 +46,7 @@ export const AssetKinds = {
     icon: "child",
     color: "teal",
     requiresUserRole: null,
-    description: "Actors define Game behaviors without you having to write any code.",
+    description: "Actors define Game behaviors without you having to write any code. Put them on ActorMaps",
     explanation: 'Actors provide sets of rules you can modify in order to make the behaviors you want - player, NPC, item, bullet, trap, healthpack, etc. You define them using the Actor Editor, then place them on a special kind of map called an ActorMap (using the ActorMap Editor) in order to create complete games'
   },
   "actormap": {
@@ -57,7 +57,7 @@ export const AssetKinds = {
     icon: "map",
     color: "blue",
     requiresUserRole: null,
-    description: 'ActorMaps are games / game-levels that use Actors instead of code.',
+    description: 'ActorMaps are games / game-levels that use Actors instead of code. Put Actors on ActorMaps',
     explanation: 'You can place Actors on background, middle and foreground layers of an ActorMap, and instantly play the game you are designing without needing to write any code. You can also link maps using the Effects layer of the ActorMap in order to make large multi-level games'
 
   },

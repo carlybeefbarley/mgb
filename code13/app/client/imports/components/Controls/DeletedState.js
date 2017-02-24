@@ -16,7 +16,7 @@ const DeletedState = ( { isDeleted, canEdit, handleChange, operationPending } ) 
           />
       )}
       header={isDeleted ? 'Undelete Asset' : 'Delete Asset'}
-      content={isDeleted ? 'This asset has been deleted, but hasn\'t yet been purged. Click to Undelete it now' : 'Click to delete this asset. It\'s ok, you have a few days to undelete it again if you need it again.'}
+      content={isDeleted ? 'This asset has been deleted, but hasn\'t yet been purged. Click to Undelete it now' : 'Click to delete this asset. It\'s ok, you will have a few days to undelete it if you need it again.'}
       />
   )
 )

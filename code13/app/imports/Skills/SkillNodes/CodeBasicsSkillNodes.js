@@ -1,5 +1,10 @@
 import C from './CommonSkillNodes'
 
+// The content in this file is derived from the BSD-licensed content at 
+// https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json
+// See https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md for the license of that content
+
+
 export default {
 	"$meta": {
 		"name": "JavaScript Basics",

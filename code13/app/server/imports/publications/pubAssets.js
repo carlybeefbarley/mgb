@@ -95,6 +95,7 @@ Azzets._ensureIndex({
 
 Azzets._ensureIndex( {"isDeleted": 1, "updatedAt": -1})
 Azzets._ensureIndex( {"isDeleted": 1, "kind": 1})
+Azzets._ensureIndex( {"isDeleted": 1, "skillPath": 1})
 Azzets._ensureIndex( {"isDeleted": 1, "name": 1, "kind": 1})
 Azzets._ensureIndex( {"isDeleted": 1, "name": 1, "updatedAt": -1})
 Azzets._ensureIndex( {"isDeleted": 1, "kind": 1, "updatedAt": -1})

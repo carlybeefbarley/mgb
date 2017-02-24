@@ -139,9 +139,17 @@ export const getNavPanels = (currUser, showAll) => {
             subcomponent: 'Item',
             jrkey: 'allAssets',
             to: '/assets',
+            query: { hidews: 3 },
             icon: 'pencil',
             content: 'All Assets',
           },
+          {
+            subcomponent: 'Item',
+            jrkey: 'publicChat',
+            query: { _fp: 'G_GENERAL_' },
+            icon: 'chat',
+            content: 'Public Chat',
+          }
         ],
       }
       // , {

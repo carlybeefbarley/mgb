@@ -13,6 +13,39 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Thu Feb 23 2017 17:50 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3455'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'learn',
+          'type': 'feature',
+          'changeName': 'Coding Challenges in Tutorials',
+          'changeSummary': 'We are embedding the tutorials from FreeCodeCamp (thanks to their BSD licensed content) in order to provde a comprehensive learning path into JavaScript. There are just a couple in today\'s build, but many more coming soon',
+          'otherUrls': [ { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' }, ]
+        },
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'More UI tweaks',
+          'changeSummary': 'Ui Tweaks for the learning/skills pages',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+
     {
       'timestamp': 'Thu Feb 23 2017 00:50 GMT-0800 (PST)',
 

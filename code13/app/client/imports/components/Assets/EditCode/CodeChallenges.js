@@ -34,6 +34,7 @@ export default class CodeChallenges extends React.Component {
   componentDidMount() {
     this.getReference()
     window.addEventListener("message", this.receiveMessage.bind(this), false)
+    setTimeout( () => this.runTests(), 200)   // for some reason tests (iframe, codeMirror) are not ready when component did mount
   }
 
   getReference() {

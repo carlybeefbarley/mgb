@@ -53,7 +53,7 @@ const LearnCodeRoute = () => (
     <Divider hidden />
     <Grid.Column>
       <Header as='h1'>
-        Learn to code
+        Learn Programming
         <Header.Subheader>With JavaScript and Phaser</Header.Subheader>
       </Header>
     </Grid.Column>

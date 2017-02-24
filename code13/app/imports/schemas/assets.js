@@ -179,9 +179,9 @@ export const allSorters = {
 
 Meteor.methods({
   "Azzets.create": function(data) {
+    checkIsLoggedIn()
     const username = Meteor.user().profile.name
     const now = new Date()
-    checkIsLoggedIn()
 
     if (!data.ownerId) 
       data.ownerId = this.userId                   // We allow the caller to set this: Main scenario is 'Create As Member Of Project'

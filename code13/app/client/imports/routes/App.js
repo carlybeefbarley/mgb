@@ -235,7 +235,7 @@ const App = React.createClass({
 
     if (handleForSettings && handleForSettings.ready())
     {
-      console.log("Save!")
+      //console.log("Update Settings Reactive.Dict object from Meteor")
       // There is a very small race where local settings could get replaced
       // if the settings are changed while the debounced save is happening..
       // but it's pretty small, so worry about that another day

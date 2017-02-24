@@ -14,18 +14,19 @@ import { assetMakeSelector, allSorters } from '/imports/schemas/assets'
  * @param userId can be undefined or -1 .. indicating don't filter by user if
  * @param selectedAssetKinds is an array of AssetKindsKeys strings
  * @param nameSearch is going to be stuffed inside a RegEx, so needs to be clean
- *    TODO: cleanse the nameSearch RegExp
+ *
  */
 Meteor.publish('assets.public', function(
-                                    userId,
-                                    selectedAssetKinds,
-                                    nameSearch,
-                                    projectName=null,
-                                    showDeleted=false,
-                                    showStable=false,
-                                    assetSortType=undefined,    // one of the keys of allSorters
-                                    limitCount=50,
-                                    hideWorkstateMask=0         // As defined for use by assetMakeSelector()
+  userId,
+  selectedAssetKinds,
+  nameSearch,                   // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
+  projectName=null,
+  showDeleted=false,
+  showStable=false,
+  assetSortType=undefined,      // null/undefined or one of the keys of allSorters{}
+  limitCount=50,
+  hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
+  showChallengeAssets=false
 )
 {
   let selector = assetMakeSelector(userId,
@@ -34,10 +35,11 @@ Meteor.publish('assets.public', function(
                       projectName,
                       showDeleted,
                       showStable,
-                      hideWorkstateMask)
+                      hideWorkstateMask,
+                      showChallengeAssets)
   let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
   const findOpts = {
-    fields: {content2: 0, thumbnail: 0},
+    fields: { content2: 0, thumbnail: 0 },
     sort:  assetSorter,
     limit: limitCount
   }

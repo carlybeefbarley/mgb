@@ -11,6 +11,7 @@ import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import AssetList from '/client/imports/components/Assets/AssetList'
 import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSelector'
 import AssetShowDeletedSelector from '/client/imports/components/Assets/AssetShowDeletedSelector'
+import AssetShowChallengeAssetsSelector from '/client/imports/components/Assets/AssetShowChallengeAssetsSelector'
 import AssetShowStableSelector from '/client/imports/components/Assets/AssetShowStableSelector'
 import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
 import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
@@ -29,8 +30,9 @@ const queryDefaults = {
   view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
   searchName: "",               // Empty string means match all (more convenient than null for input box)
   sort: "edited",               // Should be one of the keys of assetSorters{}
-  showDeleted: "0",             // Should be "0" or "1"  -- as a string
-  showStable: "0",              // Should be "0" or "1"  -- as a string
+  showDeleted: "0",             // Should be "0" or "1"  -- as a string. 0 means False, 1 means True
+  showStable: "0",              // Should be "0" or "1"  -- as a string. 0 means False, 1 means True
+  showChallengeAssets: "0",         // Should be "0" or "1"  -- as a string. 0 means False, 1 means True
   hidews: '0',                  // hide WorkStates using a bitmask. Bit on = workstate[bitIndex] should be hidden
   kinds: ""                     // Asset kinds. Empty means 'match all valid, non-disabled assets'
 }
@@ -74,9 +76,13 @@ export default UserAssetListRoute = React.createClass({
     if (q.project)
       newQ.project = q.project
 
-    // query.project
+    // query.hidews - This is a hideWorkState bitmask as defined in makeWorkstateNamesArray()
     if (q.hidews)
       newQ.hidews = q.hidews
+
+    // query.showChallengeAssets
+    if (q.showChallengeAssets === "1")
+      newQ.showChallengeAssets = q.showChallengeAssets
 
     // query.showDeleted
     if (q.showDeleted === "1")
@@ -147,7 +153,8 @@ export default UserAssetListRoute = React.createClass({
                                   qN.showStable === "1",
                                   qN.sort,
                                   SpecialGlobals.assets.mainAssetsListDefaultLimit,
-                                  qN.hidews)
+                                  qN.hidews,
+                                  qN.showChallengeAssets === "1")
     let assetSorter = assetSorters[qN.sort]
     let assetSelector = assetMakeSelector(
                                   userId,
@@ -156,7 +163,8 @@ export default UserAssetListRoute = React.createClass({
                                   qN.project,
                                   qN.showDeleted === "1",
                                   qN.showStable === "1",
-                                  qN.hidews)
+                                  qN.hidews,
+                                  qN.showChallengeAssets === "1")
 
     let handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null
     let selectorForProjects = {
@@ -207,6 +215,7 @@ export default UserAssetListRoute = React.createClass({
   handleChangeShowStableFlag(newValue) { this._updateLocationQuery( { showStable: newValue } ) },
   handleChangeShowDeletedFlag(newValue) { this._updateLocationQuery( { showDeleted: newValue } ) },
   handleChangeWorkstateHideMask(newValue) { this._updateLocationQuery( { hidews: String(newValue) } ) },
+  handleChangeShowChallengeAssetsFlag(newValue) { this._updateLocationQuery( { showChallengeAssets: newValue } ) },
   handleChangeSelectedProjectName(newValue) { this._updateLocationQuery( { project: newValue } ) },
 
   handleChangeViewClick(newView)
@@ -282,6 +291,8 @@ export default UserAssetListRoute = React.createClass({
               <AssetShowStableSelector showStableFlag={qN.showStable} handleChangeFlag={this.handleChangeShowStableFlag} />
               &ensp;
               <AssetShowDeletedSelector showDeletedFlag={qN.showDeleted} handleChangeFlag={this.handleChangeShowDeletedFlag} />
+              &ensp;
+              <AssetShowChallengeAssetsSelector showChallengeAssetsFlag={qN.showChallengeAssets} handleChangeFlag={this.handleChangeShowChallengeAssetsFlag} />
             </div>
           </div>
         </Segment>

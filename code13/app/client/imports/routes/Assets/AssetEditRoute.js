@@ -8,7 +8,6 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import Helmet from 'react-helmet'
 
-import { Azzets } from '/imports/schemas'
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
 
 import { logActivity } from '/imports/schemas/activity'
@@ -21,6 +20,7 @@ import WorkState from '/client/imports/components/Controls/WorkState'
 import StableState from '/client/imports/components/Controls/StableState'
 import AssetLicense from '/client/imports/components/Controls/AssetLicense'
 import DeletedState from '/client/imports/components/Controls/DeletedState'
+import ChallengeState from '/client/imports/components/Controls/ChallengeState'
 import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
 import AssetForkGenerator from '/client/imports/components/Assets/AssetForkGenerator'
@@ -29,10 +29,7 @@ import AssetActivityDetail from '/client/imports/components/Assets/AssetActivity
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
-
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-
-
 
 const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
@@ -405,6 +402,9 @@ console.log("utilPushTo in forkResultCallback()", this.props.currUser.username, 
               asset={asset}
               currUser={currUser}
               assetActivity={this.data.assetActivity} />
+            { asset.skillPath && asset.skillPath.length > 0 && 
+              <ChallengeState ownername={asset.dn_ownerName}/>
+            }
             <AssetForkGenerator
               asset={asset}
               canFork={currUser !== null}

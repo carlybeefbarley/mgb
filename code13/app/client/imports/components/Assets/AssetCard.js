@@ -265,6 +265,7 @@ export default AssetCard = React.createClass({
             <span style={{color: assetKindColor}} className={"left floated " + assetKindColor + " icon label"} title={assetKindDescription}>
               <i className={assetKindColor + ' ' + assetKindIcon}></i>
               { assetKindName }
+              { asset.skillPath && asset.skillPath.length > 0 && <i style={{marginLeft: '4px'}} className='ui orange checked calendar icon' title='This is a Skill Challenge Asset'/> }
             </span>
             <QLink to={`/u/${asset.dn_ownerName}`} title="Asset Owner. Click to go to their profile page.">
               <div className="right floated author">
@@ -290,16 +291,16 @@ export default AssetCard = React.createClass({
               <i className='ui law icon'/>
               <small>&nbsp;{actualLicense}</small>
             </a>
-            <div className={(canEdit ? "" : "disabled ") + "ui " + (asset.isCompleted ? 'blue' : 'grey') + " compact button"}
+            <div className={(canEdit ? "" : "disabled ") + "ui " + (asset.isCompleted ? 'blue' : '') + " compact button"}
                   style={veryCompactButtonStyle}
                   onClick={this.handleCompletedClick} >
               <i className={ asset.isCompleted ? "ui lock icon" : "ui unlock icon"}></i>
-              <small>&nbsp;{asset.isCompleted ? 'Complete' : 'Incomplete'}</small>
+              <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small>
             </div>
-            <div className={(canEdit? "" : "disabled ") + "ui red compact button"}
+            <div className={(canEdit? "" : "disabled ") + "ui compact button"}
                   style={veryCompactButtonStyle}
                   onClick={this.handleDeleteClick}>
-              {asset.isDeleted ? null : <i className="ui trash icon"></i>}
+              {asset.isDeleted ? null : <i className="ui red trash icon"></i>}
               <small>&nbsp;{asset.isDeleted ? "Undelete" : "Delete" }</small>
             </div>
           </div>

@@ -13,6 +13,8 @@ import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import { AssetKinds } from './assets/assetKinds'
 export { AssetKinds }
 
+const optional = Match.Optional
+
 var schema = {
   _id: String,
 
@@ -40,11 +42,11 @@ var schema = {
   // currently skillPath is used only for code tutorials which has automated tests
   // if skillPath is present then codeEditor shows code challenge section and offers to run tests
   // added 2/22/2017
-  skillPath: String,  // linked to SkillNodes. For example code.js.lang
+  skillPath: String,  // linked to SkillNodes. For example code.js.lang. This is OPTIONAL
 
   // License information. See TermsOfService.js for description of what a missing license means
-  assetLicense: String,    // A license that covers this asset. Ideally this will be one of the well-know license tags we define in assetLicenses.js.
-
+  // Ideally this will be one of the well-known license tags we define in assetLicenses.js.
+  assetLicense: String,    // A license that covers this asset. 
 
 // Intended future Data for cloning. These may all be missing/null:
   // clonedFromAssetId: String,        // An MGB Asset ID that we cloned this from
@@ -103,6 +105,7 @@ export const AssetKindKeys = _.filter(AssetKindKeysALL, (k) => {
   return shouldFilter
 })
 
+
 export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepChar).length === AssetKindKeys.length
 
 /** This is intended for use by publications.js and any Meteor.subscribe calls
@@ -115,6 +118,7 @@ export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepC
  * @param {string} [projectName=null]
  * @param {boolean} [showDeleted=false]
  * @param {boolean} [showStable=false]
+ * @param {boolean} [showChallengeAssets=false]
  * @returns
  */
 export function assetMakeSelector(
@@ -124,9 +128,21 @@ export function assetMakeSelector(
                       projectName=null,   // '_' means 'not in a project'.   null means In any/all projects
                       showDeleted=false,
                       showStable=false,
-                      hideWorkstateMask=0)
+                      hideWorkstateMask=0,
+                      showChallengeAssets=false)
 {
-  let selector = { isDeleted: showDeleted }
+  const selector = { 
+    isDeleted: Boolean(showDeleted),
+//    skillPath: { '$exists': Boolean(showChallengeAssets) }
+  }
+
+// TEMP HACK UNTIL DB CLEANED UP
+
+if (showChallengeAssets)
+  selector.skillPath = { $nin: ['', null] }
+else 
+  selector.skillPath = { $in: ['', null] }
+
   if (projectName === '_')
     selector["projectNames"] = []
   else if (projectName && projectName.length > 0)
@@ -212,10 +228,10 @@ Meteor.methods({
 
     data.createdAt = data.createdAt || now    // -- useful for asset import from MGB1
     data.updatedAt = now
-    data.skillPath = data.skillPath || ''
+    // Note data.skillPath is optional. not-exists means not part of a SkillPath
     data.workState = data.workState || defaultWorkStateName
     data.content = ''                                // This is stale. Can be removed one day
-    data.text = _.trim(data.text) || ''                      // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
+    data.text = _.trim(data.text) || ''              // Added to schema 6/18/2016. Earlier assets do not have this field if not edited
     if (!data.projectNames)
       data.projectNames = []
     data.thumbnail = data.thumbnail || ''
@@ -225,7 +241,10 @@ Meteor.methods({
     // TODO: this will get moved
     data.content2 = data.content2 || {}
 
-    check(data, _.omit(schema, ['_id', 'forkChildren', 'forkParentChain']))
+    check(data, { 
+      ...{ skillPath: optional(schema.skillPath) }, 
+      ..._.omit(schema, ['_id', 'forkChildren', 'forkParentChain', 'skillPath'])
+    })
 
     let docId = Azzets.insert(data)
 
@@ -239,7 +258,6 @@ Meteor.methods({
 
   "Azzets.update": function(docId, canEdit, data) {
     var count, selector
-    var optional = Match.Optional
     checkIsLoggedIn()
 
     check(docId, String)
@@ -293,9 +311,9 @@ Meteor.methods({
     selector = { _id: docId }
     count = Azzets.update(selector, { $set: data } )
 
-    if (Meteor.isServer) {
+    if (Meteor.isServer)
       console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`) // These fields might not be provided for updates
-    }
+    
     return count
   }
 })

@@ -180,7 +180,7 @@ export default class CodeChallenges extends React.Component {
               <small>(FreeCodeCamp content)</small>
             </a>
           )}
-          positioning='center left'
+          positioning='left center'
           inverted
           size='mini'
           content='This Code Challenge uses FreeCodeCamp content. Click for details'/>

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Button, Modal, Icon, List, Segment, Container, Divider } from 'semantic-ui-react'
+import { Button, Modal, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
@@ -141,39 +141,49 @@ export default class CodeChallenges extends React.Component {
           </Segment>
         }
 
-        <List relaxed>
+        { 
+          this.state.results && this.state.results.length > 0 && 
+            <Divider as={Header} color='grey' size='small' horizontal content='Test Results'/>
+        }
+        <List verticalAlign='middle'>
         {
           this.state.results.map((result, i) => (
             <List.Item key={i}>
               <List.Icon 
-                  size='big'
+                  size='large'
                   name={`circle ${result.success ? 'check' : 'minus'}`}
                   color={result.success ? 'green' : 'red'} />
               <List.Content>
-                <span dangerouslySetInnerHTML={{ __html: result.message}} />
+                <span dangerouslySetInnerHTML={{ __html: _.replace(result.message, /^message: /, '')}} />
               </List.Content>
             </List.Item>
           ))
         }
         </List>
 
+        <Divider as={Header} color='grey' size='small' horizontal content='Challenge Instructions'/>
+
         {
           description.map((text, i) => (
-            <div key={i} dangerouslySetInnerHTML={{ __html: text}} />
+            <div key={i} style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: text}} />
           ))
         }
 
         <Divider />
 
-        <Container textAlign='right'>
-          <a
-            href="https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md"
-            target="_blank"
-            data-tooltip={`FreeCodeCamp content copyrighted under "BSD 3-Clause License"`}
-            style={ { color: "#999" } } >
-              FreeCodeCamp license
-          </a>
-        </Container>
+        <Popup
+          trigger={(
+            <a
+                href='https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md'
+                target="_blank" 
+                style={ { color: '#aaa', float: 'right' } } >
+              <small>(FreeCodeCamp content)</small>
+            </a>
+          )}
+          positioning='center left'
+          inverted
+          size='mini'
+          content='This Code Challenge uses FreeCodeCamp content. Click for details'/>
 
         <iframe
           style={{ display: "none", width: "10px", height: "10px" }}

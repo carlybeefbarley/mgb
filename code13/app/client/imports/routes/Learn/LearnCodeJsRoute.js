@@ -22,18 +22,21 @@ for (let key in jsSkills) {
 
 const handleClick = (e, idx, code, currUser) => {
   const newTab = (e.buttons == 4 || e.button == 1)
-
   StartCodeJsRoute(idx, code.join( '\n' ), currUser, newTab)
-  
 }
 
 export const StartCodeJsRoute = (name, code, currUser, newTab) => {
+  if (!currUser)
+  {
+    showToast( 'You must be logged in to use these tutorials', 'info')
+    return
+  }
+
   let newAsset = {
     name: 'tutorials.js.' + name,
     kind: 'code',
     skillPath: 'code.js.basics.' + name,
     content2: { src: code },
-    dn_ownerName: currUser.username,
     isCompleted: false,
     isDeleted: false,
     isPrivate: false

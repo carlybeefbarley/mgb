@@ -133,8 +133,8 @@ export default class CodeChallenges extends React.Component {
 
         <List relaxed>
         {
-          this.state.results.map(result => (
-            <List.Item key={result}>
+          this.state.results.map((result, i) => (
+            <List.Item key={i}>
               <List.Icon 
                   size='big'
                   name={`circle ${result.success ? 'check' : 'minus'}`}

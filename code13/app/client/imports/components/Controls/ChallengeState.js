@@ -28,6 +28,11 @@ const ChallengeState = ( { ownername } ) => (
           List {ownername}'s Skill Challenge Assets
         </QLink>
       </div>
+      <div style={{marginTop: '1em'}}>
+        <QLink to='learn/code/javascript' >
+          View the Programming Challenges
+        </QLink>
+      </div>
     </Popup.Content>
   </Popup>
 )

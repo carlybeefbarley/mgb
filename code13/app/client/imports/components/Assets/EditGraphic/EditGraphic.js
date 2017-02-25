@@ -6,21 +6,18 @@ import sty from  './editGraphic.css'
 import ReactColor from 'react-color'        // http://casesandberg.github.io/react-color/
 import Tools from './GraphicTools'
 
-import SpriteLayers from './Layers/SpriteLayers.js'
-import GraphicImport from './GraphicImport/GraphicImport.js'
-import CanvasGrid from './CanvasGrid.js'
+import SpriteLayers from './Layers/SpriteLayers'
+import GraphicImport from './GraphicImport/GraphicImport'
+import CanvasGrid from './CanvasGrid'
 
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import { snapshotActivity } from '/imports/schemas/activitySnapshots'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
-// import sty from  './editGraphic.css';
-
-
 
 // Some constants we will use
 const MAX_BITMAP_WIDTH = 1500
@@ -64,8 +61,6 @@ export default class EditGraphic extends React.Component {
     super(props)
     registerDebugGlobal( 'editGraphic', this, __filename, 'Active Instance of Graphic editor')
 
-    // console.log(this.props.asset)
-
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
     this.zoomLevels = [1, 2, 4, 6, 8, 10, 12, 14, 16]
@@ -92,8 +87,7 @@ export default class EditGraphic extends React.Component {
     // this.fixingOldAssets()
 
     this.onpaste = (e) => {
-      "use strict";
-      var items = e.clipboardData.items;
+      var items = e.clipboardData.items
       if (items) {
         let isImagePasted = false
         //access data directly
@@ -101,26 +95,26 @@ export default class EditGraphic extends React.Component {
           if (items[i].type.indexOf("image") !== -1) {
             //image
             isImagePasted = true
-            var blob = items[i].getAsFile();
+            var blob = items[i].getAsFile()
             var source = URL.createObjectURL(blob)
-            this.pasteImage(source);
+            this.pasteImage(source)
           }
         }
-        if(isImagePasted)
+        if (isImagePasted)
           e.preventDefault()
       }
     }
 
     // animframe for updating selecting rectangle animation
     this._raf = () => {
-      if(this.state.selectRect) this.drawSelectRect(this.state.selectRect);
-      window.requestAnimationFrame(this._raf);
+      if(this.state.selectRect) this.drawSelectRect(this.state.selectRect)
+      window.requestAnimationFrame(this._raf)
     }
     this._raf()
 
   }
 
-  getImageData(){
+  getImageData() {
     const a = {}
     this.setThumbnail(a)
     return a.thumbnail
@@ -154,11 +148,10 @@ export default class EditGraphic extends React.Component {
       mouseAtText: $(ReactDOM.findDOMNode(this.refs.statusBarMouseAtText)),
       colorAtText: $(ReactDOM.findDOMNode(this.refs.statusBarColorAtText)),
       colorAtIcon: $(ReactDOM.findDOMNode(this.refs.statusBarColorAtIcon))
-
     }
     this.setStatusBarInfo()
 
-    this.handleColorChangeComplete('fg', { rgb: {r: 0, g: 0, b:128, a: 1} } )
+    this.handleColorChangeComplete('fg', { rgb: { r: 0, g: 0, b:128, a: 1 } } )
 
     // Touch and Mouse events for Edit Canvas
     this.editCanvas.addEventListener('touchmove',     this.handleTouchMove.bind(this))
@@ -185,11 +178,6 @@ export default class EditGraphic extends React.Component {
   componentWillUnmount() {
     window.removeEventListener("paste", this.onpaste)
   }
-
-
-  /*componentWillReceiveProps(p){
-    console.log("New Props:", p)
-  }*/
 
   // there are some missing params for old assets being added here
   fixingOldAssets() {
@@ -219,7 +207,8 @@ export default class EditGraphic extends React.Component {
       // autoFix = true;
     // }
 
-    if (autoFix) this.handleSave("Automatic fixing old assets")
+    if (autoFix) 
+      this.handleSave("Automatic fixing old assets")
   }
 
 // TODO: DGOLDS to clean this up -- combine with mgb1ImportTiles etc
@@ -247,9 +236,12 @@ export default class EditGraphic extends React.Component {
     const wRatio = (screen.width *0.9) / width
     const hRatio = (screen.height * 0.5) / height
     let scale = wRatio < hRatio ? Math.floor(wRatio) : Math.floor(hRatio)
-    if(scale > 4) scale = 4
-    else if(scale < 1) scale = 1
-    else if(scale == 3) scale = 2
+    if ( scale > 4) 
+      scale = 4
+    else if (scale < 1) 
+      scale = 1
+    else if (scale == 3) 
+      scale = 2
 
     return scale
   }
@@ -313,11 +305,10 @@ export default class EditGraphic extends React.Component {
     let frameCount = c2.frameNames.length
     let layerCount = c2.layerParams.length
 
-    for(let frameID=0; frameID<frameCount; frameID++) {
+    for (let frameID=0; frameID<frameCount; frameID++) {
       this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height)
-      for(let layerID=layerCount-1; layerID>=0; layerID--) {
+      for (let layerID=layerCount-1; layerID>=0; layerID--)
         this.loadAssetAsync(frameID, layerID)
-      }
     }
     setTimeout(() => this.updateEditCanvasFromSelectedPreviewCanvas(), 0)
   }
@@ -326,15 +317,14 @@ export default class EditGraphic extends React.Component {
     let c2 = this.props.asset.content2
     if (!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) { // manage empty frameData cases
       // console.log('empty framedata', frameID, layerID)
-      if (frameID === this.state.selectedFrameIdx) {
+      if (frameID === this.state.selectedFrameIdx)
         this.previewCtxArray[layerID].clearRect(0,0, c2.width, c2.height)
-      }
       return
     }
-    let dataURI = c2.frameData[frameID][layerID];
+    let dataURI = c2.frameData[frameID][layerID]
     // if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
     if (dataURI !== undefined && dataURI.startsWith("data:image/")) {
-      var _img = new Image;
+      var _img = new Image
       _img.frameID = frameID   // hack so in onload() we know which frame is loaded
       _img.layerID = layerID   // hack so in onload() we know which layer is loaded
       let self = this
@@ -359,7 +349,6 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-
   updateFrameLayers() {
     let c2 = this.props.asset.content2
     let frameData = c2.frameData[this.state.selectedFrameIdx]
@@ -367,7 +356,6 @@ export default class EditGraphic extends React.Component {
       this.loadAssetAsync(this.state.selectedFrameIdx, i)
     setTimeout(() => this.updateEditCanvasFromSelectedPreviewCanvas(), 0)
   }
-
 
   updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): Do we still need the vendor-prefix smoothing flags?
   {
@@ -396,10 +384,11 @@ export default class EditGraphic extends React.Component {
   forceDraw ()
   {
     let c2 = this.props.asset.content2
-    if(!c2.frameData || !c2.frameData[0]) return
+    if (!c2.frameData || !c2.frameData[0]) 
+      return
 
     this.frameCtxArray[0].clearRect(0, 0, c2.width, c2.height)
-    for(let i=c2.frameData[0].length-1; i>=0; i--){
+    for (let i=c2.frameData[0].length-1; i>=0; i--) {
       let lData = c2.frameData[0][i]
       let img = new Image()
       img.width = c2.width
@@ -410,7 +399,6 @@ export default class EditGraphic extends React.Component {
       this.frameCtxArray[0].drawImage(img, 0, 0)
     }
     this.editCtx.drawImage(this.frameCanvasArray[0], 0, 0)
-    console.log('---force draw')
   }
 
   drawSelectRect(selectRect) {
@@ -425,39 +413,43 @@ export default class EditGraphic extends React.Component {
       , y2: (selectRect.startY > selectRect.endY ? selectRect.startY : selectRect.endY) * self.state.editScale +0.5
     };
 
-    this.editCtx.lineWidth = 1;
-    this.editCtx.strokeStyle = '#000000';
-    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x2, scaleRect.y1);
-    drawLine(scaleRect.x2, scaleRect.y1, scaleRect.x2, scaleRect.y2);
-    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x1, scaleRect.y2);
-    drawLine(scaleRect.x1, scaleRect.y2, scaleRect.x2, scaleRect.y2);
+    this.editCtx.lineWidth = 1
+    this.editCtx.strokeStyle = '#000000'
+    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x2, scaleRect.y1)
+    drawLine(scaleRect.x2, scaleRect.y1, scaleRect.x2, scaleRect.y2)
+    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x1, scaleRect.y2)
+    drawLine(scaleRect.x1, scaleRect.y2, scaleRect.x2, scaleRect.y2)
 
-    let time = new Date().getMilliseconds();
-    time = Math.round(time/100);
-    let timeOffset = (time % 10) * 2;
+    let time = new Date().getMilliseconds()
+    time = Math.round(time/100)
+    let timeOffset = (time % 10) * 2
 
-    this.editCtx.strokeStyle = '#ffffff';
-    let width = Math.abs(scaleRect.x1 - scaleRect.x2);
-    let height = Math.abs(scaleRect.y1 - scaleRect.y2);
-    let dashSize = 10;
-    let dashCount = Math.ceil((width+dashSize-timeOffset)/(dashSize*2));
+    this.editCtx.strokeStyle = '#ffffff'
+    let width = Math.abs(scaleRect.x1 - scaleRect.x2)
+    let height = Math.abs(scaleRect.y1 - scaleRect.y2)
+    let dashSize = 10
+    let dashCount = Math.ceil((width+dashSize-timeOffset)/(dashSize*2))
     // draw horizontal dashes
-    for(let i=0; i<dashCount; i++){
-      let x = scaleRect.x1 - dashSize + timeOffset + i*dashSize*2;
-      let x2 = x+dashSize;
-      if(x < scaleRect.x1) x = scaleRect.x1;
-      if(x2 > scaleRect.x2) x2 = scaleRect.x2;
-      drawLine(x, scaleRect.y1, x2, scaleRect.y1);
-      drawLine(x, scaleRect.y2, x2, scaleRect.y2);
+    for(let i=0; i<dashCount; i++) {
+      let x = scaleRect.x1 - dashSize + timeOffset + i*dashSize*2
+      let x2 = x+dashSize
+      if (x < scaleRect.x1) 
+        x = scaleRect.x1;
+      if (x2 > scaleRect.x2) 
+        x2 = scaleRect.x2
+      drawLine(x, scaleRect.y1, x2, scaleRect.y1)
+      drawLine(x, scaleRect.y2, x2, scaleRect.y2)
     }
 
-    dashCount = Math.ceil((height+dashSize-timeOffset)/(dashSize*2));
+    dashCount = Math.ceil((height+dashSize-timeOffset)/(dashSize*2))
     // draw vertical dashes
     for (let i=0; i<dashCount; i++) {
       let y = scaleRect.y1 - dashSize + timeOffset + i*dashSize*2
       let y2 = y+dashSize
-      if (y < scaleRect.y1) y = scaleRect.y1
-      if (y2 > scaleRect.y2) y2 = scaleRect.y2
+      if (y < scaleRect.y1) 
+        y = scaleRect.y1
+      if (y2 > scaleRect.y2) 
+        y2 = scaleRect.y2
       drawLine(scaleRect.x1, y, scaleRect.x1, y2)
       drawLine(scaleRect.x2, y, scaleRect.x2, y2)
     }
@@ -470,14 +462,12 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-
   // A plugin-api for the graphic editing Tools in Tools.js
 
   _setImageData4BytesFromRGBA(d, c)
   {
     d[0] = c.r ; d[1] = c.g ; d[2] = c.b ; d[3] = c.a * 255
   }
-
 
   collateDrawingToolEnv(event)  // used to gather current useful state for the Tools and passed to them in most callbacks
   {
@@ -504,7 +494,6 @@ export default class EditGraphic extends React.Component {
       editCtx:                this.editCtx,
       editCtxImageData1x1:    this.editCtxImageData1x1,
 
-
       // setPreviewPixelsAt() Like CanvasRenderingContext2D.fillRect, but
       //   It SETS rather than draws-with-alpha-blending
       setPreviewPixelsAt: function (x, y, w=1, h=1)
@@ -512,9 +501,8 @@ export default class EditGraphic extends React.Component {
         // Set Pixels on the Preview context ONLY
         self._setImageData4BytesFromRGBA(retval.previewCtxImageData1x1.data, retval.chosenColor.rgb)
         for (let i = 0; i < w; i++) {
-          for (let j = 0; j < h; j++) {
+          for (let j = 0; j < h; j++) 
             retval.previewCtx.putImageData(retval.previewCtxImageData1x1, Math.round(x + i), Math.round(y + j))
-          }
         }
       },
 
@@ -536,8 +524,10 @@ export default class EditGraphic extends React.Component {
       },
 
       saveSelectRect: function(startX, startY, endX, endY) {
-        if (startX > endX) [startX, endX] = [endX, startX]
-        if (startY > endY) [startY, endY] = [endY, startY]
+        if (startX > endX) 
+          [startX, endX] = [endX, startX]
+        if (startY > endY) 
+          [startY, endY] = [endY, startY]
         self.setState({
           selectRect: {
             startX: startX,
@@ -553,13 +543,12 @@ export default class EditGraphic extends React.Component {
       },
 
       unselect: function() {
-        self.setState({ selectRect: null })
+        self.setState( { selectRect: null } )
         self.updateEditCanvasFromSelectedPreviewCanvas()
       },
 
-      showDimensions: function(width, height){
+      showDimensions: function(width, height) {
         self.setState({ selectDimensions: { width: width, height: height} })
-        // console.log(width, height)
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
@@ -588,7 +577,8 @@ export default class EditGraphic extends React.Component {
 
   toolCutSelected()
   {
-    if (!this.state.selectRect) return
+    if (!this.state.selectRect) 
+      return
 
     this.toolCopySelected()
     let ctx = this.previewCtxArray[this.state.selectedLayerIdx]
@@ -601,7 +591,8 @@ export default class EditGraphic extends React.Component {
 
   toolCopySelected()
   {
-    if (!this.state.selectRect) return
+    if (!this.state.selectRect) 
+      return
 
     let x = this.state.selectRect.startX
     let y = this.state.selectRect.startY
@@ -733,7 +724,7 @@ export default class EditGraphic extends React.Component {
     }
 
     // console.log(event.which)
-    if(event.which && event.which == 3){
+    if (event.which && event.which == 3) {
       const moveTool = this.findToolByLabelString('Move')
       this.state.toolChosen = moveTool
       event.preventDefault()
@@ -763,8 +754,7 @@ export default class EditGraphic extends React.Component {
       this.handleSave(`Drawing`, false, false)   // This is a one-shot tool, so save its results now
   }
 
-  handleContextMenu(event){
-    // console.log('handle context menu')
+  handleContextMenu(event) {
     event.preventDefault()
   }
 
@@ -871,9 +861,8 @@ export default class EditGraphic extends React.Component {
   {
     const sb = this._statusBar
 
-    if (mouseAtText === "") {
+    if (mouseAtText === '')
       sb.outer.css( {visibility: "hidden"} )
-    }
     else {
       const layerIdx = this.state.selectedLayerIdx
       const layerParam = this.props.asset.content2.layerParams[layerIdx]
@@ -1083,7 +1072,6 @@ export default class EditGraphic extends React.Component {
   toolEraseFrame(){
     let w = this.props.asset.content2.width
     let h = this.props.asset.content2.height
-    // console.log('erase frame', w, h)
 
     this.previewCtxArray.map( (ctx) => {
       ctx.clearRect(0, 0, w, h)
@@ -1094,7 +1082,6 @@ export default class EditGraphic extends React.Component {
 
   handleSave(changeText="change graphic", dontSaveFrameData = false, allowBackwash = true)    // TODO(DGOLDS): Maybe _.throttle() this?
   {
-    console.log('Graphic save', changeText)
     if (!this.props.canEdit)
     {
       this.props.editDeniedReminder()
@@ -1124,7 +1111,7 @@ export default class EditGraphic extends React.Component {
 
     // tileset saving
     let tilesetInfo = this.createTileset()
-    if(tilesetInfo){
+    if (tilesetInfo) {
       c2.tileset = tilesetInfo.image
       c2.cols = tilesetInfo.cols
       c2.rows = tilesetInfo.rows
@@ -1138,7 +1125,9 @@ export default class EditGraphic extends React.Component {
   }
 
   createTileset() {
-    if(!this.frameCanvasArray || this.frameCanvasArray.length == 0) return null
+    if (!this.frameCanvasArray || this.frameCanvasArray.length == 0) 
+      return null
+    
     let c2   = this.props.asset.content2
     let cols = Math.ceil(Math.sqrt(c2.frameNames.length))
     let rows = Math.ceil(c2.frameNames.length/cols)
@@ -1178,17 +1167,17 @@ export default class EditGraphic extends React.Component {
 
   setThumbnail (asset) {
     let origCanvas
-    if(this.thumbCanvas) {
+    if (this.thumbCanvas) {
       // origCanvas = this.thumbCanvas.toDataURL('image/png')
       origCanvas = this.thumbCanvas
       this.thumbCanvas = null
     }
-    else if(this.frameCanvasArray && this.frameCanvasArray[0]){
+    else if (this.frameCanvasArray && this.frameCanvasArray[0]) {
       // origCanvas = this.frameCanvasArray[0].toDataURL('image/png')
       origCanvas = this.frameCanvasArray[0]
     }
 
-    if(origCanvas){
+    if (origCanvas) {
       const tmpCanvas = document.createElement("canvas")
       const tmpCtx = tmpCanvas.getContext('2d')
       tmpCanvas.width = _.clamp(origCanvas.width, 32, 290)
@@ -1196,7 +1185,8 @@ export default class EditGraphic extends React.Component {
       const wRatio = tmpCanvas.width / origCanvas.width
       const hRatio = tmpCanvas.height / origCanvas.height
       let ratio = wRatio < hRatio ? wRatio : hRatio
-      if(wRatio >= 1 && hRatio >= 1) ratio = 1
+      if (wRatio >= 1 && hRatio >= 1) 
+        ratio = 1
       const width = origCanvas.width * ratio
       const height = origCanvas.height * ratio
       const x = (tmpCanvas.width - width) / 2
@@ -1219,8 +1209,7 @@ export default class EditGraphic extends React.Component {
       idx = this.state.selectedLayerIdx
 
     e.dataTransfer.effectAllowed = 'copy'   // This must match what is in handleDragOverPreview()
-    e.dataTransfer.setData('mgb/image', this.previewCanvasArray[idx].toDataURL('image/png')
-    )
+    e.dataTransfer.setData('mgb/image', this.previewCanvasArray[idx].toDataURL('image/png'))
   }
 
 
@@ -1282,13 +1271,13 @@ export default class EditGraphic extends React.Component {
     }
 
     var imageUrl = event.dataTransfer.getData('URL')
-    if(imageUrl){
+    if (imageUrl) {
       this.pasteImage(imageUrl, idx)
       return
     }
 
     var imgData = DragNDropHelper.getDataFromEvent(event)
-    if(imgData && imgData.link){
+    if (imgData && imgData.link) {
       this.pasteImage(imgData.link, idx)
       return
     }
@@ -1302,7 +1291,7 @@ export default class EditGraphic extends React.Component {
         if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
         {
           var img = new Image
-          img.onload = (e) => {
+          img.onload = () => {
             let c2 = self.props.asset.content2
             c2.width = Math.min(img.width, MAX_BITMAP_WIDTH)
             c2.height = Math.min(img.height, MAX_BITMAP_HEIGHT)
@@ -1310,9 +1299,8 @@ export default class EditGraphic extends React.Component {
           }
           img.src = theUrl
         }
-        else{
+        else
           this.pasteImage(theUrl, idx)
-        }
       }
       reader.readAsDataURL(files[0])
     }
@@ -1324,7 +1312,7 @@ export default class EditGraphic extends React.Component {
   {
     const img = new Image
     img.crossOrigin = "anonymous"
-    img.onload = (e) => {
+    img.onload = e => {
       // The DataURI seems to have loaded ok now as an Image, so process what to do with it
       this.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
 
@@ -1332,29 +1320,26 @@ export default class EditGraphic extends React.Component {
       const h = this.props.asset.content2.height
       this.previewCtxArray[idx].clearRect(0, 0, w, h)
 
-      if(img.width > w || img.height > h){
+      if (img.width > w || img.height > h) {
         const aspect = img.width/img.height
-        if(aspect > 1){
+        if (aspect > 1)
           this.previewCtxArray[idx].drawImage(e.target, 0, 0, w, h / aspect)  // add w, h to scale it.
-        }
-        else{
+        else
           this.previewCtxArray[idx].drawImage(e.target, 0, 0, w * aspect, h)  // add w, h to scale it.
-        }
       }
-      else{
+      else
         this.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.
-      }
-      if (idx === this.state.selectedLayerIdx) {
+
+      if (idx === this.state.selectedLayerIdx)
         this.updateEditCanvasFromSelectedPreviewCanvas()
-      }
       this.handleSave(`Drag external file to frame #${idx+1}`)
-    };
+    }
     img.src = url  // is the data URL because called
   }
 
 
   toolOpenImportPopup() {
-    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
+    const importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
     $(importPopup).modal('show')
   }
 
@@ -1379,12 +1364,10 @@ export default class EditGraphic extends React.Component {
     c2.layerParams = [ {name: "Layer 1", isHidden: false, isLocked: false} ]
     c2.animations = []
 
-
     this.handleSave("Import tileset", true)
     let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
     $(importPopup).modal('hide')
     this.setState({ editScale: this.getDefaultScale() })
-    // $('.ui.modal').modal('hide');
   }
 
 

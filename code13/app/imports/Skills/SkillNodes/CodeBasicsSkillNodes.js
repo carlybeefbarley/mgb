@@ -195,9 +195,9 @@ export default {
         "assert(typeof studlyCapVar !== 'undefined' && studlyCapVar === 10, 'message: <code>studlyCapVar</code> is defined and has a value of <code>10</code>');",
         "assert(typeof properCamelCase !== 'undefined' && properCamelCase === \"A String\", 'message: <code>properCamelCase</code> is defined and has a value of <code>\"A String\"</code>');",
         "assert(typeof titleCaseOver !== 'undefined' && titleCaseOver === 9000, 'message: <code>titleCaseOver</code> is defined and has a value of <code>9000</code>');",
-        "assert(code.match(/studlyCapVar/g).length === 2, 'message: <code>studlyCapVar</code> should use camelCase in both declaration and assignment sections.');",
-        "assert(code.match(/properCamelCase/g).length === 2, 'message: <code>properCamelCase</code> should use camelCase in both declaration and assignment sections.');",
-        "assert(code.match(/titleCaseOver/g).length === 2, 'message: <code>titleCaseOver</code> should use camelCase in both declaration and assignment sections.');"
+        "assert(code.match(/studlyCapVar/g) && code.match(/studlyCapVar/g).length === 2, 'message: <code>studlyCapVar</code> should use camelCase in both declaration and assignment sections.');",
+        "assert(code.match(/properCamelCase/g) && code.match(/properCamelCase/g).length === 2, 'message: <code>properCamelCase</code> should use camelCase in both declaration and assignment sections.');",
+        "assert(code.match(/titleCaseOver/g) && code.match(/titleCaseOver/g).length === 2, 'message: <code>titleCaseOver</code> should use camelCase in both declaration and assignment sections.');"
       ]
     },
     caseSensitiveVariables: C.En(0)
@@ -421,7 +421,7 @@ export default {
       tests: [
         "assert(quotient === 2.2, 'message: The variable <code>quotient</code> should equal <code>2.2</code>');",
         "assert(/4\\.40*\\s*\\/\\s*2\\.*0*/.test(code), 'message: You should use the <code>/</code> operator to divide 4.4 by 2');",
-        "assert(code.match(/quotient/g).length === 3, 'message: The quotient variable should only be assigned once');"
+        "assert(code.match(/quotient/g) && code.match(/quotient/g).length === 3, 'message: The quotient variable should only be assigned once');"
       ]
     },
     divideDecimal: C.En(0)
@@ -484,7 +484,7 @@ export default {
         "assert(a === 15, 'message: <code>a</code> should equal <code>15</code>');",
         "assert(b === 26, 'message: <code>b</code> should equal <code>26</code>');",
         "assert(c === 19, 'message: <code>c</code> should equal <code>19</code>');",
-        "assert(code.match(/\\+=/g).length === 3, 'message: You should use the <code>+=</code> operator for each variable');",
+        "assert(code.match(/\\+=/g) && code.match(/\\+=/g).length === 3, 'message: You should use the <code>+=</code> operator for each variable');",
         "assert(/var a = 3;/.test(code) && /var b = 17;/.test(code) && /var c = 12;/.test(code), 'message: Do not modify the code above the line');"
       ]
     },
@@ -523,7 +523,7 @@ export default {
         "assert(a === 5, 'message: <code>a</code> should equal <code>5</code>');",
         "assert(b === -6, 'message: <code>b</code> should equal <code>-6</code>');",
         "assert(c === 2, 'message: <code>c</code> should equal <code>2</code>');",
-        "assert(code.match(/-=/g).length === 3, 'message: You should use the <code>-=</code> operator for each variable');",
+        "assert(code.match(/-=/g) && code.match(/-=/g).length === 3, 'message: You should use the <code>-=</code> operator for each variable');",
         "assert(/var a = 11;/.test(code) && /var b = 9;/.test(code) && /var c = 3;/.test(code), 'message: Do not modify the code above the line');"
       ]
     },
@@ -562,7 +562,7 @@ export default {
         "assert(a === 25, 'message: <code>a</code> should equal <code>25</code>');",
         "assert(b === 36, 'message: <code>b</code> should equal <code>36</code>');",
         "assert(c === 46, 'message: <code>c</code> should equal <code>46</code>');",
-        "assert(code.match(/\\*=/g).length === 3, 'message: You should use the <code>*=</code> operator for each variable');",
+        "assert(code.match(/\\*=/g) && code.match(/\\*=/g).length === 3, 'message: You should use the <code>*=</code> operator for each variable');",
         "assert(/var a = 5;/.test(code) && /var b = 12;/.test(code) && /var c = 4\\.6;/.test(code), 'message: Do not modify the code above the line');"
       ]
     },
@@ -600,7 +600,7 @@ export default {
         "assert(a === 4, 'message: <code>a</code> should equal <code>4</code>');",
         "assert(b === 27, 'message: <code>b</code> should equal <code>27</code>');",
         "assert(c === 3, 'message: <code>c</code> should equal <code>3</code>');",
-        "assert(code.match(/\\/=/g).length === 3, 'message: You should use the <code>/=</code> operator for each variable');",
+        "assert(code.match(/\\/=/g) && code.match(/\\/=/g).length === 3, 'message: You should use the <code>/=</code> operator for each variable');",
         "assert(/var a = 48;/.test(code) && /var b = 108;/.test(code) && /var c = 33;/.test(code), 'message: Do not modify the code above the line');"
       ]
     },
@@ -745,7 +745,7 @@ export default {
       ],
       tests: [
         "assert(myStr === \"This is the start. This is the end.\", 'message: <code>myStr</code> should have a value of <code>This is the start. This is the end.</code>');",
-        "assert(code.match(/([\"']).*([\"'])\\s*\\+\\s*([\"']).*([\"'])/g).length > 1, 'message: Use the <code>+</code> operator to build <code>myStr</code>');",
+        "assert(code.match(/([\"']).*([\"'])\\s*\\+\\s*([\"']).*([\"'])/g) && code.match(/([\"']).*([\"'])\\s*\\+\\s*([\"']).*([\"'])/g).length > 1, 'message: Use the <code>+</code> operator to build <code>myStr</code>');",
         "assert(/var\\s+myStr/.test(code), 'message: <code>myStr</code> should be created using the <code>var</code> keyword.');",
         "assert(/myStr\\s*=/.test(code), 'message: Make sure to assign the result to the <code>myStr</code> variable.');"
       ]
@@ -1022,7 +1022,7 @@ export default {
       ],
       tests: [
         'assert(lastLetterOfLastName === "e", \'message: <code>lastLetterOfLastName</code> should be "e".\');',
-        "assert(code.match(/\\.length/g).length === 2, 'message: You have to use <code>.length</code> to get the last letter.');"
+        "assert(code.match(/\\.length/g) && code.match(/\\.length/g).length === 2, 'message: You have to use <code>.length</code> to get the last letter.');"
       ]
     },
     stringLastCharacter: C.En(0)
@@ -1057,7 +1057,7 @@ export default {
       ],
       tests: [
         "assert(secondToLastLetterOfLastName === 'c', 'message: <code>secondToLastLetterOfLastName</code> should be \"c\".');",
-        "assert(code.match(/\\.length/g).length === 2, 'message: You have to use <code>.length</code> to get the second last letter.');"
+        "assert(code.match(/\\.length/g) && code.match(/\\.length/g).length === 2, 'message: You have to use <code>.length</code> to get the second last letter.');"
       ]
     },
     stringFindNthToLast: C.En(0)
@@ -2507,7 +2507,7 @@ export default {
         'assert(caseInSwitch(3) === "gamma", \'message: <code>caseInSwitch(3)</code> should have a value of "gamma"\');',
         'assert(caseInSwitch(4) === "delta", \'message: <code>caseInSwitch(4)</code> should have a value of "delta"\');',
         "assert(!/else/g.test(code) || !/if/g.test(code), 'message: You should not use any <code>if</code> or <code>else</code> statements');",
-        "assert(code.match(/break/g).length > 2, 'message: You should have at least 3 <code>break</code> statements');"
+        "assert(code.match(/break/g) && code.match(/break/g).length > 2, 'message: You should have at least 3 <code>break</code> statements');"
       ]
     },
     switchStatement: C.En(0)
@@ -2550,7 +2550,7 @@ export default {
         'assert(switchOfStuff(4) === "stuff", \'message: <code>switchOfStuff(4)</code> should have a value of "stuff"\');',
         "assert(!/else/g.test(code) || !/if/g.test(code), 'message: You should not use any <code>if</code> or <code>else</code> statements');",
         'assert(switchOfStuff("string-to-trigger-default-case") === "stuff", \'message: You should use a <code>default</code> statement\');',
-        "assert(code.match(/break/g).length > 2, 'message: You should have at least 3 <code>break</code> statements');"
+        "assert(code.match(/break/g) && code.match(/break/g).length > 2, 'message: You should have at least 3 <code>break</code> statements');"
       ]
     },
     switchDefault: C.En(0)
@@ -2597,7 +2597,7 @@ export default {
         'assert(sequentialSizes(8) === "High", \'message: <code>sequentialSizes(8)</code> should return "High"\');',
         'assert(sequentialSizes(9) === "High", \'message: <code>sequentialSizes(9)</code> should return "High"\');',
         "assert(!/else/g.test(code) || !/if/g.test(code), 'message: You should not use any <code>if</code> or <code>else</code> statements');",
-        "assert(code.match(/case/g).length === 9, 'message: You should have nine <code>case</code> statements');"
+        "assert(code.match(/case/g) && code.match(/case/g).length === 9, 'message: You should have nine <code>case</code> statements');"
       ]
     },
     identicalStatements: C.En(0)
@@ -2646,7 +2646,7 @@ export default {
       tests: [
         "assert(!/else/g.test(code), 'message: You should not use any <code>else</code> statements anywhere in the editor');",
         "assert(!/if/g.test(code), 'message: You should not use any <code>if</code> statements anywhere in the editor');",
-        "assert(code.match(/break/g).length >= 4, 'message: You should have at least four <code>break</code> statements');",
+        "assert(code.match(/break/g) && code.match(/break/g).length >= 4, 'message: You should have at least four <code>break</code> statements');",
         'assert(chainToSwitch("bob") === "Marley", \'message: <code>chainToSwitch("bob")</code> should be "Marley"\');',
         'assert(chainToSwitch(42) === "The Answer", \'message: <code>chainToSwitch(42)</code> should be "The Answer"\');',
         'assert(chainToSwitch(1) === "There is no #1", \'message: <code>chainToSwitch(1)</code> should be "There is no #1"\');',
@@ -2860,7 +2860,7 @@ export default {
         "assert(hatValue === 'ballcap' , 'message: The value of <code>hatValue</code> should be <code>\"ballcap\"</code>');",
         "assert(typeof shirtValue === 'string' , 'message: <code>shirtValue</code> should be a string');",
         "assert(shirtValue === 'jersey' , 'message: The value of <code>shirtValue</code> should be <code>\"jersey\"</code>');",
-        "assert(code.match(/testObj\\.\\w+/g).length > 1, 'message: You should use dot notation twice');"
+        "assert(code.match(/testObj\\.\\w+/g) && code.match(/testObj\\.\\w+/g).length > 1, 'message: You should use dot notation twice');"
       ]
     },
     objectsPropertiesDot: C.En(0)
@@ -2899,7 +2899,7 @@ export default {
         "assert(entreeValue === 'hamburger' , 'message: The value of <code>entreeValue</code> should be <code>\"hamburger\"</code>');",
         "assert(typeof drinkValue === 'string' , 'message: <code>drinkValue</code> should be a string');",
         "assert(drinkValue === 'water' , 'message: The value of <code>drinkValue</code> should be <code>\"water\"</code>');",
-        "assert(code.match(/testObj\\s*?\\[('|\")[^'\"]+\\1\\]/g).length > 1, 'message: You should use bracket notation twice');"
+        "assert(code.match(/testObj\\s*?\\[('|\")[^'\"]+\\1\\]/g) && code.match(/testObj\\s*?\\[('|\")[^'\"]+\\1\\]/g).length > 1, 'message: You should use bracket notation twice');"
       ]
     },
     objectsPropertiesBrackets: C.En(0)
@@ -3082,7 +3082,7 @@ export default {
       ],
       tests: [
         'assert(typeof myDog === "object" && myDog.tails === undefined, \'message: Delete the property <code>"tails"</code> from <code>myDog</code>.\');',
-        "assert(code.match(/\"tails\": 1/g).length > 1, 'message: Do not modify the <code>myDog</code> setup');"
+        "assert(code.match(/\"tails\": 1/g) && code.match(/\"tails\": 1/g).length > 1, 'message: Do not modify the <code>myDog</code> setup');"
       ]
     },
     deleteProperties: C.En(0)
@@ -3472,7 +3472,7 @@ export default {
         "var ourArray = [];\nfor (var i = 0; i < 5; i++) {\n  ourArray.push(i);\n}\nvar myArray = [];\nfor (var i = 1; i < 6; i++) {\n  myArray.push(i);\n}"
       ],
       tests: [
-        "assert(code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
+        "assert(code.match(/for\\s*\\(/g) && code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
         "assert.deepEqual(myArray, [1,2,3,4,5], 'message: <code>myArray</code> should equal <code>[1,2,3,4,5]</code>.');"
       ]
     },
@@ -3511,7 +3511,7 @@ export default {
         "var ourArray = [];\nfor (var i = 0; i < 10; i += 2) {\n  ourArray.push(i);\n}\nvar myArray = [];\nfor (var i = 1; i < 10; i += 2) {\n  myArray.push(i);\n}"
       ],
       tests: [
-        "assert(code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
+        "assert(code.match(/for\\s*\\(/g) && code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
         "assert.deepEqual(myArray, [1,3,5,7,9], 'message: <code>myArray</code> should equal <code>[1,3,5,7,9]</code>.');"
       ]
     },
@@ -3551,7 +3551,7 @@ export default {
         "var ourArray = [];\nfor (var i = 10; i > 0; i -= 2) {\n  ourArray.push(i);\n}\nvar myArray = [];\nfor (var i = 9; i > 0; i -= 2) {\n  myArray.push(i);\n}"
       ],
       tests: [
-        "assert(code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
+        "assert(code.match(/for\\s*\\(/g) && code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
         "assert(code.match(/myArray.push/), 'message: You should be using the array method <code>push</code>.');",
         "assert.deepEqual(myArray, [9,7,5,3,1], 'message: <code>myArray</code> should equal <code>[9,7,5,3,1]</code>.');"
       ]
@@ -3592,7 +3592,7 @@ export default {
       tests: [
         "assert(code.match(/var.*?total\\s*=\\s*0.*?;/), 'message: <code>total</code> should be declared and initialized to 0');",
         "assert(total === 20, 'message: <code>total</code> should equal 20');",
-        "assert(code.match(/for\\s*\\(/g).length > 1 && code.match(/myArr\\s*\\[/), 'message: You should use a <code>for</code> loop to iterate through <code>myArr</code>');",
+        "assert(code.match(/for\\s*\\(/g) && code.match(/for\\s*\\(/g).length > 1 && code.match(/myArr\\s*\\[/), 'message: You should use a <code>for</code> loop to iterate through <code>myArr</code>');",
         "assert(!code.match(/total[\\s\\+\\-]*=\\s*(\\d(?!\\s*[;,])|[1-9])/g), 'message: Do not set <code>total</code> to 20 directly');"
       ]
     },
@@ -3726,7 +3726,7 @@ export default {
       tests: [
         "assert(typeof randomFraction() === \"number\", 'message: <code>randomFraction</code> should return a random number.');",
         "assert((randomFraction()+''). match(/\\./g), 'message: The number returned by <code>randomFraction</code> should be a decimal.');",
-        "assert(code.match(/Math\\.random/g).length >= 0, 'message: You should be using <code>Math.random</code> to generate the random decimal number.');"
+        "assert(code.match(/Math\\.random/g) && code.match(/Math\\.random/g).length >= 0, 'message: You should be using <code>Math.random</code> to generate the random decimal number.');"
       ]
     },
     randomFractions: C.En(0)
@@ -3761,9 +3761,9 @@ export default {
       ],
       tests: [
         "assert(typeof randomWholeNum() === \"number\" && (function(){var r = randomWholeNum();return Math.floor(r) === r;})(), 'message: The result of <code>randomWholeNum</code> should be a whole number.');",
-        "assert(code.match(/Math.random/g).length > 1, 'message: You should be using <code>Math.random</code> to generate a random number.');",
+        "assert(code.match(/Math.random/g) && code.match(/Math.random/g).length > 1, 'message: You should be using <code>Math.random</code> to generate a random number.');",
         "assert(code.match(/\\s*?Math.random\\s*?\\(\\s*?\\)\\s*?\\*\\s*?10[\\D]\\s*?/g) || code.match(/\\s*?10\\s*?\\*\\s*?Math.random\\s*?\\(\\s*?\\)\\s*?/g), 'message: You should have multiplied the result of <code>Math.random</code> by 10 to make it a number that is between zero and nine.');",
-        "assert(code.match(/Math.floor/g).length > 1, 'message: You should use <code>Math.floor</code> to remove the decimal part of the number.');"
+        "assert(code.match(/Math.floor/g) && code.match(/Math.floor/g).length > 1, 'message: You should use <code>Math.floor</code> to remove the decimal part of the number.');"
       ]
     },
     randomIntegers: C.En(0)

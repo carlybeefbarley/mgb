@@ -2411,9 +2411,9 @@ export default {
         'function testSize(num) {\n  if (num < 5) {\n    return "Tiny";\n  } else if (num < 10) {\n    return "Small";\n  } else if (num < 15) {\n    return "Medium";\n  } else if (num < 20) {\n    return "Large";\n  } else {\n    return "Huge";\n  }\n}'
       ],
       tests: [
-        "assert(code.match(/else/g).length > 3, 'message: You should have at least four <code>else</code> statements');",
-        "assert(code.match(/if/g).length > 3, 'message: You should have at least four <code>if</code> statements');",
-        "assert(code.match(/return/g).length >= 1, 'message: You should have at least one <code>return</code> statement');",
+        "assert(code.match(/else/g) && code.match(/else/g).length > 3, 'message: You should have at least four <code>else</code> statements');",
+        "assert(code.match(/if/g) && code.match(/if/g).length > 3, 'message: You should have at least four <code>if</code> statements');",
+        "assert(code.match(/return/g) && code.match(/return/g).length >= 1, 'message: You should have at least one <code>return</code> statement');",
         'assert(testSize(0) === "Tiny", \'message: <code>testSize(0)</code> should return "Tiny"\');',
         'assert(testSize(4) === "Tiny", \'message: <code>testSize(4)</code> should return "Tiny"\');',
         'assert(testSize(5) === "Small", \'message: <code>testSize(5)</code> should return "Small"\');',

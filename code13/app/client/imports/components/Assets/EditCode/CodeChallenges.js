@@ -184,7 +184,7 @@ export default class CodeChallenges extends React.Component {
 
         { showAllTestsCompletedModal && (
             <Modal 
-                closeOnDocumentClick={false} 
+                closeOnDocumentClick={true} 
                 closeOnRootNodeClick={false}
                 defaultOpen >
               <Modal.Header>

@@ -6,7 +6,7 @@ import { Button, Modal, Icon, List, Segment, Popup, Divider, Header } from 'sema
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
-import { learnSkill } from '/imports/schemas/skills'
+import { learnSkill, hasSkill } from '/imports/schemas/skills'
 import { StartCodeJsRoute } from '/client/imports/routes/Learn/LearnCodeJsRoute'
 
 import './editcode.css'
@@ -36,6 +36,7 @@ export default class CodeChallenges extends React.Component {
   static propTypes = {
     currUser:    PropTypes.object,
     skillPath:   PropTypes.string,
+    userSkills:  PropTypes.object,
     codeMirror:  PropTypes.object,
     active:      PropTypes.bool
   }
@@ -54,8 +55,11 @@ export default class CodeChallenges extends React.Component {
   componentDidMount() {
     this.getReference()
     window.addEventListener(_runFrameConfig.eventName, this.receiveMessage, false)
+    // don't run automatic tests if user already has this skill. Useful for cases when user just checks his previous code
+    if(!hasSkill(this.props.userSkills, this.props.skillPath + '.' + this.skillName)){
     // for some reason tests (iframe, codeMirror) are not ready when component did mount //!!!
-    setTimeout( () => this.runTests(), _hackDeferForFirstTestRunMs)   
+      setTimeout( () => this.runTests(), _hackDeferForFirstTestRunMs)   
+    }
   }
 
   componentWillUnmount() {

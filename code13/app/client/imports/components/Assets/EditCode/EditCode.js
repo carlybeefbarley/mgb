@@ -91,13 +91,15 @@ export default class EditCode extends React.Component {
   //   activitySnapshots: PropTypes.array               // can be null whilst loading
   // }
 
-  constructor(props) {
+  constructor(props, context) {
     super(props)
     registerDebugGlobal( 'editCode', this, __filename, 'Active Instance of Code editor')
 
     this.fontSizeSettingIndex = undefined
     // save jshint reference - so we can kill it later
     this.jshintWorker = null
+
+    this.userSkills = context.skills
 
     this.state = {
       _preventRenders: false,        // We use this as a way to batch updates.
@@ -2221,6 +2223,7 @@ export default class EditCode extends React.Component {
                   skillPath={ asset.skillPath }
                   codeMirror={ this.codeMirror }
                   currUser={ this.props.currUser }
+                  userSkills={ this.userSkills }
                 />
               }              
 
@@ -2410,4 +2413,12 @@ export default class EditCode extends React.Component {
       </div>
     )
   }
+}
+
+
+
+
+
+EditCode.contextTypes = {
+  skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
 }

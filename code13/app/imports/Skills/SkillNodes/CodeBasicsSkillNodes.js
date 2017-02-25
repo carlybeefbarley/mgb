@@ -13,6 +13,7 @@ export default {
     $meta: {
       name: "Comment your JavaScript Code",
       icon: "code",
+      subsection: "Comments",
       description: [
         "Comments are lines of code that JavaScript will intentionally ignore. Comments are a great way to leave notes to yourself and to other people who will later need to figure out what that code does.",
         "There are two ways to write comments in JavaScript:",
@@ -37,6 +38,7 @@ export default {
     $meta: {
       name: "Declare JavaScript Variables",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "In computer science, <dfn>data</dfn> is anything that is meaningful to the computer. JavaScript provides seven different <dfn>data types</dfn> which are <code>undefined</code>, <code>null</code>, <code>boolean</code>, <code>string</code>, <code>symbol</code>, <code>number</code>, and <code>object</code>.",
         'For example, computers distinguish between numbers, such as the number <code>12</code>, and <code>strings</code>, such as <code>"12"</code>, <code>"dog"</code>, or <code>"123 cats"</code>, which are collections of characters. Computers can perform mathematical operations on a number, but not on a string.',
@@ -68,6 +70,8 @@ export default {
     $meta: {
       name: "Storing Values with the Assignment Operator",
       icon: "code",
+      subsection: "Numbers",
+
       description: [
         "In JavaScript, you can store a value in a variable with the <dfn>assignment</dfn> operator.",
         "<code>myVariable = 5;</code>",
@@ -101,6 +105,7 @@ export default {
     $meta: {
       name: "Initializing Variables with the Assignment Operator",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "It is common to <dfn>initialize</dfn> a variable to an initial value in the same line as it is declared.",
         "<code>var myVar = 0;</code>",
@@ -126,6 +131,7 @@ export default {
     $meta: {
       name: "Understanding Uninitialized Variables",
       icon: "code",
+      subsection: "Numbers",
       description: [
         'When JavaScript variables are declared, they have an initial value of <code>undefined</code>. If you do a mathematical operation on an <code>undefined</code> variable your result will be <code>NaN</code> which means <dfn>"Not a Number"</dfn>. If you concatenate a string with an <code>undefined</code> variable, you will get a literal <dfn>string</dfn> of <code>"undefined"</code>.',
         "<hr>",
@@ -160,6 +166,7 @@ export default {
     $meta: {
       name: "Understanding Case Sensitivity in Variables",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "In JavaScript all variables and function names are case sensitive. This means that capitalization matters.",
         "<code>MYVAR</code> is not the same as <code>MyVar</code> nor <code>myvar</code>. It is possible to have multiple distinct variables with the same name but different casing. It is strongly recommended that for the sake of clarity, you <em>do not</em> use this language feature.",
@@ -199,6 +206,7 @@ export default {
     $meta: {
       name: "Add Two Numbers with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "<code>Number</code> is a data type in JavaScript which represents numeric data.",
         "Now let's try to add two numbers using JavaScript.",
@@ -221,6 +229,7 @@ export default {
     $meta: {
       name: "Subtract One Number from Another with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "We can also subtract one number from another.",
         "JavaScript uses the <code>-</code> symbol for subtraction.",
@@ -245,6 +254,7 @@ export default {
     $meta: {
       name: "Multiply Two Numbers with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "We can also multiply one number by another.",
         "JavaScript uses the <code>*</code> symbol for multiplication of two numbers.",
@@ -268,6 +278,7 @@ export default {
     $meta: {
       name: "Divide One Number by Another with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "We can also divide one number by another.",
         "JavaScript uses the <code>/</code> symbol for division.",
@@ -291,6 +302,7 @@ export default {
     $meta: {
       name: "Increment a Number with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "You can easily <dfn>increment</dfn> or add one to a variable with the <code>++</code> operator.",
         "<code>i++;</code>",
@@ -322,6 +334,7 @@ export default {
     $meta: {
       name: "Decrement a Number with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "You can easily <dfn>decrement</dfn> or decrease a variable by one with the <code>--</code> operator.",
         "<code>i--;</code>",
@@ -351,6 +364,7 @@ export default {
     $meta: {
       name: "Create Decimal Numbers with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "We can store decimal numbers in variables too. Decimal numbers are sometimes referred to as <dfn>floating point</dfn> numbers or <dfn>floats</dfn>.",
         '<strong>Note</strong><br>Not all real numbers can accurately be represented in <dfn>floating point</dfn>. This can lead to rounding errors. <a href="https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems" target="_blank">Details Here</a>.',
@@ -376,6 +390,7 @@ export default {
     $meta: {
       name: "Multiply Two Decimals with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "In JavaScript, you can also perform calculations with decimal numbers, just like whole numbers.",
         "Let's multiply two decimals together to get their product.",
@@ -395,6 +410,7 @@ export default {
     $meta: {
       name: "Divide one Decimal by Another with JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "Now let's divide one decimal by another.",
         "<hr>",
@@ -414,6 +430,7 @@ export default {
     $meta: {
       name: "Finding a Remainder in JavaScript",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "The <dfn>remainder</dfn> operator <code>%</code> gives the remainder of the division of two numbers.",
         "<strong>Example</strong>",
@@ -438,6 +455,7 @@ export default {
     $meta: {
       name: "Compound Assignment With Augmented Addition",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "In programming, it is common to use assignments to modify the contents of a variable. Remember that everything to the right of the equals sign is evaluated first, so we can say:",
         "<code>myVar = myVar + 5;</code>",
@@ -476,6 +494,7 @@ export default {
     $meta: {
       name: "Compound Assignment With Augmented Subtraction",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "Like the <code>+=</code> operator, <code>-=</code> subtracts a number from a variable.",
         "<code>myVar = myVar - 5;</code>",
@@ -514,6 +533,7 @@ export default {
     $meta: {
       name: "Compound Assignment With Augmented Multiplication",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "The <code>*=</code> operator multiplies a variable by a number.",
         "<code>myVar = myVar * 5;</code>",
@@ -552,6 +572,7 @@ export default {
     $meta: {
       name: "Compound Assignment With Augmented Division",
       icon: "code",
+      subsection: "Numbers",
       description: [
         "The <code>/=</code> operator divides a variable by another number.",
         "<code>myVar = myVar / 5;</code>",
@@ -589,6 +610,7 @@ export default {
     $meta: {
       name: "Declare String Variables",
       icon: "code",
+      subsection: "Strings",
       description: [
         "Previously we have used the code",
         '<code>var myName = "your name";</code>',
@@ -617,6 +639,7 @@ export default {
     $meta: {
       name: "Escaping Literal Quotes in Strings",
       icon: "code",
+      subsection: "Strings",
       description: [
         "When you are defining a string you must start and end with a single or double quote. What happens when you need a literal quote: <code>\"</code> or <code>'</code> inside of your string?",
         "In JavaScript, you can <dfn>escape</dfn> a quote from considering it as an end of string quote by placing a <dfn>backslash</dfn> (<code>\\</code>) in front of the quote.",
@@ -640,6 +663,7 @@ export default {
     $meta: {
       name: "Quoting Strings with Single Quotes",
       icon: "code",
+      subsection: "Strings",
       description: [
         "<dfn>String</dfn> values in JavaScript may be written with single or double quotes, so long as you start and end with the same type of quote. Unlike some languages, single and double quotes are functionally identical in JavaScript.",
         '<blockquote>"This string has \\"double quotes\\" in it"</blockquote>',
@@ -668,6 +692,7 @@ export default {
     $meta: {
       name: "Escape Sequences in Strings",
       icon: "code",
+      subsection: "Strings",
       description: [
         "Quotes are not the only characters that can be <dfn>escaped</dfn> inside a string. There are two reasons to use escaping characters: First is to allow you to use characters you might not otherwise be able to type out, such as a backspace. Second is to allow you to represent multiple quotes in a string without JavaScript misinterpreting what you mean. We learned this in the previous challenge.",
         '<table class="table table-striped"><thead><tr><th>Code</th><th>Output</th></tr></thead><tbody><tr><td><code>\\\'</code></td><td>single quote</td></tr><tr><td><code>\\"</code></td><td>double quote</td></tr><tr><td><code>\\\\</code></td><td>backslash</td></tr><tr><td><code>\\n</code></td><td>newline</td></tr><tr><td><code>\\r</code></td><td>carriage return</td></tr><tr><td><code>\\t</code></td><td>tab</td></tr><tr><td><code>\\b</code></td><td>backspace</td></tr><tr><td><code>\\f</code></td><td>form feed</td></tr></tbody></table>',
@@ -696,6 +721,7 @@ export default {
     $meta: {
       name: "Concatenating Strings with Plus Operator",
       icon: "code",
+      subsection: "Strings",
       description: [
         "In JavaScript, when the <code>+</code> operator is used with a <code>String</code> value, it is called the <dfn>concatenation</dfn> operator. You can build a new string out of other strings by <dfn>concatenating</dfn> them together.",
         "<strong>Example</strong>",
@@ -730,6 +756,7 @@ export default {
     $meta: {
       name: "Concatenating Strings with the Plus Equals Operator",
       icon: "code",
+      subsection: "Strings",
       description: [
         "We can also use the <code>+=</code> operator to <dfn>concatenate</dfn> a string onto the end of an existing string variable. This can be very helpful to break a long string over several lines.",
         "<strong>Note</strong><br>Watch out for spaces. Concatenation does not add spaces between concatenated strings, so you'll need to add them yourself.",
@@ -761,6 +788,7 @@ export default {
     $meta: {
       name: "Constructing Strings with Variables",
       icon: "code",
+      subsection: "Strings",
       description: [
         'Sometimes you will need to build a string, <a href="https://en.wikipedia.org/wiki/Mad_Libs" target="_blank">Mad Libs</a> style. By using the concatenation operator (<code>+</code>), you can insert one or more variables into a string you\'re building.',
         "<hr>",
@@ -791,6 +819,7 @@ export default {
     $meta: {
       name: "Appending Variables to Strings",
       icon: "code",
+      subsection: "Strings",
       description: [
         "Just as we can build a string over multiple lines out of string <dfn>literals</dfn>, we can also append variables to a string using the plus equals (<code>+=</code>) operator.",
         "<hr>",
@@ -822,6 +851,7 @@ export default {
     $meta: {
       name: "Find the Length of a String",
       icon: "code",
+      subsection: "Strings",
       description: [
         "You can find the length of a <code>String</code> value by writing <code>.length</code> after the string variable or string literal.",
         '<code>"Alan Peter".length; // 10</code>',
@@ -860,6 +890,7 @@ export default {
     $meta: {
       name: "Use Bracket Notation to Find the First Character in a String",
       icon: "code",
+      subsection: "Strings",
       description: [
         "<code>Bracket notation</code> is a way to get a character at a specific <code>index</code> within a string.",
         "Most modern programming languages, like JavaScript, don't start counting at 1 like humans do. They start at 0. This is referred to as <dfn>Zero-based</dfn> indexing.",
@@ -898,6 +929,7 @@ export default {
     $meta: {
       name: "Understand String Immutability",
       icon: "code",
+      subsection: "Strings",
       description: [
         "In JavaScript, <code>String</code> values are <dfn>immutable</dfn>, which means that they cannot be altered once created.",
         "For example, the following code:",
@@ -929,6 +961,7 @@ export default {
     $meta: {
       name: "Use Bracket Notation to Find the Nth Character in a String",
       icon: "code",
+      subsection: "Strings",
       description: [
         "You can also use <dfn>bracket notation</dfn> to get the character at other positions within a string.",
         "Remember that computers start counting at <code>0</code>, so the first character is actually the zeroth character.",
@@ -963,6 +996,7 @@ export default {
     $meta: {
       name: "Use Bracket Notation to Find the Last Character in a String",
       icon: "code",
+      subsection: "Strings",
       description: [
         "In order to get the last letter of a string, you can subtract one from the string's length.",
         'For example, if <code>var firstName = "Charles"</code>, you can get the value of the last letter of the string by using <code>firstName[firstName.length - 1]</code>.',
@@ -997,6 +1031,7 @@ export default {
     $meta: {
       name: "Use Bracket Notation to Find the Nth-to-Last Character in a String",
       icon: "code",
+      subsection: "Strings",
       description: [
         "You can use the same principle we just used to retrieve the last character in a string to retrieve the Nth-to-last character.",
         'For example, you can get the value of the third-to-last letter of the <code>var firstName = "Charles"</code> string by using <code>firstName[firstName.length - 3]</code>',
@@ -1031,6 +1066,7 @@ export default {
     $meta: {
       name: "Word Blanks",
       icon: "code",
+      subsection: "Strings",
       description: [
         "We will now use our knowledge of strings to build a \"<a href='https://en.wikipedia.org/wiki/Mad_Libs' target='_blank'>Mad Libs</a>\" style word game we're calling \"Word Blanks\". You will create an (optionally humorous) \"Fill in the Blanks\" style sentence. Here's an example of an incomplete sentence.",
         '<code>"The ______ ______ looked around ______ then ______ into the house"</code>',
@@ -1066,6 +1102,7 @@ export default {
     $meta: {
       name: "Store Multiple Values in one Variable using JavaScript Arrays",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "With JavaScript <code>array</code> variables, we can store several pieces of data in one place.",
         "You start an array declaration with an opening square bracket, end it with a closing square bracket, and put a comma between each entry, like this: ",
@@ -1095,6 +1132,7 @@ export default {
     $meta: {
       name: "Nest one Array within Another Array",
       icon: "code",
+      subsection: "Arrays",
       description: [
         'You can also nest arrays within other arrays, like this: <code>[["Bulls", 23], ["White Sox", 45]]</code>. This is also called a <dfn>Multi-dimensional Array<dfn>.',
         "<hr>",
@@ -1119,6 +1157,7 @@ export default {
     $meta: {
       name: "Access Array Data with Indexes",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "We can access the data inside arrays using <code>indexes</code>.",
         "Array indexes are written in the same bracket notation that strings use, except that instead of specifying a character, they are specifying an entry in the array. Like strings, arrays use <dfn>zero-based</dfn> indexing, so the first element in an array is element <code>0</code>.",
@@ -1151,6 +1190,7 @@ export default {
     $meta: {
       name: "Modify Array Data With Indexes",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "Unlike strings, the entries of arrays are <dfn>mutable</dfn> and can be changed freely.",
         "<strong>Example</strong>",
@@ -1183,6 +1223,7 @@ export default {
     $meta: {
       name: "Access Multi-Dimensional Arrays With Indexes",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "One way to think of a <dfn>multi-dimensional</dfn> array, is as an <em>array of arrays</em>. When you use brackets to access your array, the first set of brackets refers to the entries in the outer-most (the first level) array, and each additional pair of brackets refers to the next level of entries inside.",
         "<strong>Example</strong>",
@@ -1213,6 +1254,7 @@ export default {
     $meta: {
       name: "Manipulate Arrays With push()",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "An easy way to append data to the end of an array is via the <code>push()</code> function.",
         '<code>.push()</code> takes one or more <dfn>parameters</dfn> and "pushes" them onto the end of the array.',
@@ -1246,6 +1288,7 @@ export default {
     $meta: {
       name: "Manipulate Arrays With pop()",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "Another way to change the data in an array is with the <code>.pop()</code> function.",
         '<code>.pop()</code> is used to "pop" a value off of the end of an array. We can store this "popped off" value by assigning it to a variable. In other words, <code>.pop()</code> removes the last element from an array and returns that element.',
@@ -1283,6 +1326,7 @@ export default {
     $meta: {
       name: "Manipulate Arrays With shift()",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "<code>pop()</code> always removes the last element of an array. What if you want to remove the first?",
         "That's where <code>.shift()</code> comes in. It works just like <code>.pop()</code>, except it removes the first element instead of the last.",
@@ -1317,6 +1361,7 @@ export default {
     $meta: {
       name: "Manipulate Arrays With unshift()",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "Not only can you <code>shift</code> elements off of the beginning of an array, you can also <code>unshift</code> elements to the beginning of an array i.e. add elements in front of the array.",
         "<code>.unshift()</code> works exactly like <code>.push()</code>, but instead of adding the element at the end of the array, <code>unshift()</code> adds the element at the beginning of the array.",
@@ -1351,6 +1396,7 @@ export default {
     $meta: {
       name: "Shopping List",
       icon: "code",
+      subsection: "Arrays",
       description: [
         "Create a shopping list in the variable <code>myList</code>. The list should be a multi-dimensional array containing several sub-arrays.",
         "The first element in each sub-array should contain a string with the name of the item. The second element should be a number representing the quantity i.e.",
@@ -1374,6 +1420,7 @@ export default {
     $meta: {
       name: "Write Reusable JavaScript with Functions",
       icon: "code",
+      subsection: "Functions",
       description: [
         "In JavaScript, we can divide up our code into reusable parts called <dfn>functions</dfn>.",
         "Here's an example of a function:",
@@ -1410,6 +1457,7 @@ export default {
     $meta: {
       name: "Passing Values to Functions with Arguments",
       icon: "code",
+      subsection: "Functions",
       description: [
         '<dfn>Parameters</dfn> are variables that act as placeholders for the values that are to be input to a function when it is called. When a function is defined, it is typically defined along with one or more parameters. The actual values that are input (or <dfn>"passed"</dfn>) into a function when it is called are known as <dfn>arguments</dfn>.',
         "Here is a function with two parameters, <code>param1</code> and <code>param2</code>:",
@@ -1447,6 +1495,7 @@ export default {
     $meta: {
       name: "Global Scope and Functions",
       icon: "code",
+      subsection: "Functions",
       description: [
         "In JavaScript, <dfn>scope</dfn> refers to the visibility of variables. Variables which are defined outside of a function block have <dfn>Global</dfn> scope. This means, they can be seen everywhere in your JavaScript code.",
         "Variables which are used without the <code>var</code> keyword are automatically created in the <code>global</code> scope. This can create unintended consequences elsewhere in your code or when running a function again. You should always declare your variables with <code>var</code>.",
@@ -1492,6 +1541,7 @@ export default {
     $meta: {
       name: "Local Scope and Functions",
       icon: "code",
+      subsection: "Functions",
       description: [
         "Variables which are declared within a function, as well as the function parameters have <dfn>local</dfn> scope. That means, they are only visible within that function.",
         "Here is a function <code>myTest</code> with a local variable called <code>loc</code>.",
@@ -1530,6 +1580,7 @@ export default {
     $meta: {
       name: "Global vs. Local Scope in Functions",
       icon: "code",
+      subsection: "Functions",
       description: [
         "It is possible to have both <dfn>local</dfn> and <dfn>global</dfn> variables with the same name. When you do this, the <code>local</code> variable takes precedence over the <code>global</code> variable.",
         "In this example:",
@@ -1568,6 +1619,7 @@ export default {
     $meta: {
       name: "Return a Value from a Function with Return",
       icon: "code",
+      subsection: "Functions",
       description: [
         "We can pass values into a function with <dfn>arguments</dfn>. You can use a <code>return</code> statement to send a value back out of a function.",
         "<strong>Example</strong>",
@@ -1602,6 +1654,7 @@ export default {
     $meta: {
       name: "Assignment with a Returned Value",
       icon: "code",
+      subsection: "Functions",
       description: [
         'If you\'ll recall from our discussion of <a href="storing-values-with-the-assignment-operator" target="_blank">Storing Values with the Assignment Operator</a>, everything to the right of the equal sign is resolved before the value is assigned. This means we can take the return value of a function and assign it to a variable.',
         "Assume we have pre-defined a function <code>sum</code> which adds two numbers together, then: ",
@@ -1645,6 +1698,7 @@ export default {
     $meta: {
       name: "Stand in Line",
       icon: "code",
+      subsection: "Functions",
       description: [
         "In Computer Science a <dfn>queue</dfn> is an abstract <dfn>Data Structure</dfn> where items are kept in order. New items can be added at the back of the <code>queue</code> and old items are taken off from the front of the <code>queue</code>.",
         "Write a function <code>nextInLine</code> which takes an array (<code>arr</code>) and a number (<code>item</code>) as arguments.",
@@ -1683,6 +1737,7 @@ export default {
     $meta: {
       name: "Understanding Boolean Values",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         'Another data type is the <dfn>Boolean</dfn>. <code>Booleans</code> may only be one of two values: <code>true</code> or <code>false</code>. They are basically little on-off switches, where <code>true</code> is "on" and <code>false</code> is "off."  These two states are mutually exclusive.',
         '<strong>Note</strong><br><code>Boolean</code> values are never written with quotes. The <code>strings</code> <code>"true"</code> and <code>"false"</code> are not <code>Boolean</code> and have no special meaning in JavaScript.',
@@ -1713,6 +1768,7 @@ export default {
     $meta: {
       name: "Use Conditional Logic with If Statements",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "<code>If</code> statements are used to make decisions in code. The keyword <code>if</code> tells JavaScript to execute the code in the curly braces under certain conditions, defined in the parentheses. These conditions are known as <code>Boolean</code> conditions and they may only be <code>true</code> or <code>false</code>.",
         "When the condition evaluates to <code>true</code>, the program executes the statement inside the curly braces. When the Boolean condition evaluates to <code>false</code>, the statement inside the curly braces will not execute.",
@@ -1764,6 +1820,7 @@ export default {
     $meta: {
       name: "Comparison with the Equality Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "There are many <dfn>Comparison Operators</dfn> in JavaScript. All of these operators return a boolean <code>true</code> or <code>false</code> value.",
         "The most basic operator is the equality operator <code>==</code>. The equality operator compares two values and returns <code>true</code> if they're equivalent or <code>false</code> if they are not. Note that equality is different from assignment (<code>=</code>), which assigns the value at the right of the operator to a variable in the left.",
@@ -1802,6 +1859,7 @@ export default {
     $meta: {
       name: "Comparison with the Strict Equality Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "Strict equality (<code>===</code>) is the counterpart to the equality operator (<code>==</code>). Unlike the equality operator, strict equality tests both the <code>data type</code> and value of the compared elements.",
         "<strong>Examples</strong>",
@@ -1838,6 +1896,7 @@ export default {
     $meta: {
       name: "Comparison with the Inequality Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         'The inequality operator (<code>!=</code>) is the opposite of the equality operator. It means "Not Equal" and returns <code>false</code> where equality would return <code>true</code> and <em>vice versa</em>. Like the equality operator, the inequality operator will convert data types of values while comparing.',
         "<strong>Examples</strong>",
@@ -1875,6 +1934,7 @@ export default {
     $meta: {
       name: "Comparison with the Strict Inequality Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         'The strict inequality operator (<code>!==</code>) is the logical opposite of the strict equality operator. It means "Strictly Not Equal" and returns <code>false</code> where strict equality would return <code>true</code> and <em>vice versa</em>. Strict inequality will not convert data types.',
         "<strong>Examples</strong>",
@@ -1916,6 +1976,7 @@ export default {
     $meta: {
       name: "Comparison with the Greater Than Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "The greater than operator (<code>&gt;</code>) compares the values of two numbers. If the number to the left is greater than the number to the right, it returns <code>true</code>. Otherwise, it returns <code>false</code>.",
         "Like the equality operator, greater than operator will convert data types of values while comparing.",
@@ -1960,6 +2021,7 @@ export default {
     $meta: {
       name: "Comparison with the Greater Than Or Equal To Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "The <code>greater than or equal to</code> operator (<code>&gt;=</code>) compares the values of two numbers. If the number to the left is greater than or equal to the number to the right, it returns <code>true</code>. Otherwise, it returns <code>false</code>.",
         "Like the equality operator, <code>greater than or equal to</code> operator will convert data types while comparing.",
@@ -2004,6 +2066,7 @@ export default {
     $meta: {
       name: "Comparison with the Less Than Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "The <dfn>less than</dfn> operator (<code>&lt;</code>) compares the values of two numbers. If the number to the left is less than the number to the right, it returns <code>true</code>. Otherwise, it returns <code>false</code>. Like the equality operator, <dfn>less than</dfn> operator converts data types while comparing.",
         "<strong>Examples</strong>",
@@ -2046,6 +2109,7 @@ export default {
     $meta: {
       name: "Comparison with the Less Than Or Equal To Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "The <code>less than or equal to</code> operator (<code>&lt;=</code>) compares the values of two numbers. If the number to the left is less than or equal the number to the right, it returns <code>true</code>. If the number on the left is greater than the number on the right, it returns <code>false</code>. Like the equality operator, <code>less than or equal to</code> converts data types.",
         "<strong>Examples</strong>",
@@ -2090,6 +2154,7 @@ export default {
     $meta: {
       name: "Comparisons with the Logical And Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "Sometimes you will need to test more than one thing at a time. The <dfn>logical and</dfn> operator (<code>&&</code>) returns <code>true</code> if and only if the <dfn>operands</dfn> to the left and right of it are true.",
         "The same effect could be achieved by nesting an if statement inside another if:",
@@ -2138,6 +2203,7 @@ export default {
     $meta: {
       name: "Comparisons with the Logical Or Operator",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "The <dfn>logical or</dfn> operator (<code>||</code>) returns <code>true</code> if either of the <dfn>operands</dfn> is <code>true</code>. Otherwise, it returns <code>false</code>.",
         "The pattern below should look familiar from prior waypoints:",
@@ -2188,6 +2254,7 @@ export default {
     $meta: {
       name: "Introducing Else Statements",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "When a condition for an <code>if</code> statement is true, the block of code following it is executed. What about when that condition is false?  Normally nothing would happen. With an <code>else</code> statement, an alternate block of code can be executed.",
         '<blockquote>if (num > 10) {<br>  return "Bigger than 10";<br>} else {<br>  return "10 or Less";<br>}</blockquote>',
@@ -2234,6 +2301,7 @@ export default {
     $meta: {
       name: "Introducing Else If Statements",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "If you have multiple conditions that need to be addressed, you can chain <code>if</code> statements together with <code>else if</code> statements.",
         '<blockquote>if (num > 15) {<br>  return "Bigger than 15";<br>} else if (num < 5) {<br>  return "Smaller than 5";<br>} else {<br>  return "Between 5 and 15";<br>}</blockquote>',
@@ -2276,6 +2344,7 @@ export default {
     $meta: {
       name: "Logical Order in If Else Statements",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "Order is important in <code>if</code>, <code>else if</code> statements.",
         "The loop is executed from top to bottom so you will want to be careful of what statement comes first.",
@@ -2318,6 +2387,7 @@ export default {
     $meta: {
       name: "Chaining If Else Statements",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "<code>if/else</code> statements can be chained together for complex logic. Here is <dfn>pseudocode</dfn> of multiple chained <code>if</code> / <code>else if</code> statements:",
         "<blockquote>if (<em>condition1</em>) {<br>  <em>statement1</em><br>} else if (<em>condition2</em>) {<br>  <em>statement2</em><br>} else if (<em>condition3</em>) {<br>  <em>statement3</em><br>. . .<br>} else {<br>  <em>statementN</em><br>}</blockquote>",
@@ -2362,6 +2432,7 @@ export default {
     $meta: {
       name: "Golf Code",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         'In the game of <a href="https://en.wikipedia.org/wiki/Golf" target="_blank">golf</a> each hole has a <code>par</code> meaning the average number of <code>strokes</code> a golfer is expected to make in order to sink the ball in a hole to complete the play. Depending on how far above or below <code>par</code> your <code>strokes</code> are, there is a different nickname.',
         "Your function will be passed <code>par</code> and <code>strokes</code> arguments. Return the correct string according to this table which lists the strokes in order of priority; top (highest) to bottom (lowest):",
@@ -2403,6 +2474,7 @@ export default {
     $meta: {
       name: "Selecting from many options with Switch Statements",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "If you have many options to choose from, use a <code>switch</code> statement. A <code>switch</code> statement tests a value and can have many <code>case</code> statements which define various possible values. Statements are executed from the first matched <code>case</code> value until a <code>break</code> is encountered.",
         "Here is a <dfn>pseudocode</dfn> example:",
@@ -2444,6 +2516,7 @@ export default {
     $meta: {
       name: "Adding a default option in Switch statements",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "In a <code>switch</code> statement you may not be able to specify all possible values as <code>case</code> statements. Instead, you can add the <code>default</code> statement which will be executed if no matching <code>case</code> statements are found. Think of it like the final <code>else</code> statement in an <code>if/else</code> chain.",
         "A <code>default</code> statement should be the last case.",
@@ -2486,6 +2559,7 @@ export default {
     $meta: {
       name: "Multiple Identical Options in Switch Statements",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "If the <code>break</code> statement is omitted from a <code>switch</code> statement's <code>case</code>, the following <code>case</code> statement(s) are executed until a <code>break</code> is encountered. If you have multiple inputs with the same output, you can represent them in a <code>switch</code> statement like this:",
         '<blockquote>switch(val) {<br>  case 1:<br>  case 2:<br>  case 3:<br>    result = "1, 2, or 3";<br>    break;<br>  case 4:<br>    result = "4 alone";<br>}</blockquote>',
@@ -2532,6 +2606,7 @@ export default {
     $meta: {
       name: "Replacing If Else Chains with Switch",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "If you have many options to choose from, a <code>switch</code> statement can be easier to write than many chained <code>if</code>/<code>else if</code> statements. The following:",
         '<blockquote>if (val === 1) {<br>  answer = "a";<br>} else if (val === 2) {<br>  answer = "b";<br>} else {<br>  answer = "c";<br>}</blockquote>',
@@ -2587,6 +2662,7 @@ export default {
     $meta: {
       name: "Returning Boolean Values from Functions",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         'You may recall from <a href="waypoint-comparison-with-the-equality-operator" target="_blank">Comparison with the Equality Operator</a> that all comparison operators return a boolean <code>true</code> or <code>false</code> value.',
         "Sometimes people use an if/else statement to do a comparison, like this:",
@@ -2622,6 +2698,7 @@ export default {
     $meta: {
       name: "Return Early Pattern for Functions",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "When a <code>return</code> statement is reached, the execution of the current function stops and control returns to the calling location.",
         "<strong>Example</strong>",
@@ -2664,6 +2741,7 @@ export default {
     $meta: {
       name: "Counting Cards",
       icon: "code",
+      subsection: "Decision Making",
       description: [
         "In the casino game Blackjack, a player can gain an advantage over the house by keeping track of the relative number of high and low cards remaining in the deck. This is called <a href='https://en.wikipedia.org/wiki/Card_counting' target='_blank'>Card Counting</a>.",
         "Having more high cards remaining in the deck favors the player. Each card is assigned a value according to the table below. When the count is positive, the player should bet high. When the count is zero or negative, the player should bet low.",
@@ -2706,6 +2784,7 @@ export default {
     $meta: {
       name: "Build JavaScript Objects",
       icon: "code",
+      subsection: "Objects",
       description: [
         "You may have heard the term <code>object</code> before.",
         "Objects are similar to <code>arrays</code>, except that instead of using indexes to access and modify their data, you access the data in objects through what are called <code>properties</code>.",
@@ -2751,6 +2830,7 @@ export default {
     $meta: {
       name: "Accessing Objects Properties with the Dot Operator",
       icon: "code",
+      subsection: "Objects",
       description: [
         "There are two ways to access the properties of an object: the dot operator (<code>.</code>) and bracket notation (<code>[]</code>), similar to an array.",
         "The dot operator is what you use when you know the name of the property you're trying to access ahead of time.",
@@ -2789,6 +2869,7 @@ export default {
     $meta: {
       name: "Accessing Objects Properties with Bracket Notation",
       icon: "code",
+      subsection: "Objects",
       description: [
         "The second way to access the properties of an object is bracket notation (<code>[]</code>). If the property of the object you are trying to access has a space in it's name, you will need to use bracket notation.",
         "Here is a sample of using bracket notation to read an object property:",
@@ -2827,6 +2908,7 @@ export default {
     $meta: {
       name: "Accessing Objects Properties with Variables",
       icon: "code",
+      subsection: "Objects",
       description: [
         "Another use of bracket notation on objects is to use a variable to access a property. This can be very useful for iterating through lists of the object properties or for doing the lookup.",
         "Here is an example of using a variable to access a property:",
@@ -2867,6 +2949,7 @@ export default {
     $meta: {
       name: "Updating Object Properties",
       icon: "code",
+      subsection: "Objects",
       description: [
         "After you've created a JavaScript object, you can update its properties at any time just like you would update any other variable. You can use either dot or bracket notation to update.",
         "For example, let's look at <code>ourDog</code>:",
@@ -2915,6 +2998,7 @@ export default {
     $meta: {
       name: "Add New Properties to a JavaScript Object",
       icon: "code",
+      subsection: "Objects",
       description: [
         "You can add new properties to existing JavaScript objects the same way you would modify them.",
         'Here\'s how we would add a <code>"bark"</code> property to <code>ourDog</code>:',
@@ -2961,6 +3045,7 @@ export default {
     $meta: {
       name: "Delete Properties from a JavaScript Object",
       icon: "code",
+      subsection: "Objects",
       description: [
         "We can also delete properties from objects like this:",
         "<code>delete ourDog.bark;</code>",
@@ -3006,6 +3091,7 @@ export default {
     $meta: {
       name: "Using Objects for Lookups",
       icon: "code",
+      subsection: "Objects",
       description: [
         'Objects can be thought of as a key/value storage, like a dictionary. If you have tabular data, you can use an object to "lookup" values rather than a <code>switch</code> statement or an <code>if/else</code> chain. This is most useful when you know that your input data is limited to a certain range.',
         "Here is an example of a simple reverse alphabet lookup:",
@@ -3067,6 +3153,7 @@ export default {
     $meta: {
       name: "Testing Objects for Properties",
       icon: "code",
+      subsection: "Objects",
       description: [
         "Sometimes it is useful to check if the property of a given object exists or not. We can use the <code>.hasOwnProperty(propname)</code> method of objects to determine if that object has the given property name. <code>.hasOwnProperty()</code> returns <code>true</code> or <code>false</code> if the property is found or not.",
         "<strong>Example</strong>",
@@ -3106,6 +3193,7 @@ export default {
     $meta: {
       name: "Manipulating Complex Objects",
       icon: "code",
+      subsection: "Objects",
       description: [
         "Sometimes you may want to store data in a flexible <dfn>Data Structure</dfn>. A JavaScript object is one way to handle flexible data. They allow for arbitrary combinations of <dfn>strings</dfn>, <dfn>numbers</dfn>, <dfn>booleans</dfn>, <dfn>arrays</dfn>, <dfn>functions</dfn>, and <dfn>objects</dfn>.",
         "Here's an example of a complex data structure:",
@@ -3156,6 +3244,7 @@ export default {
     $meta: {
       name: "Accessing Nested Objects",
       icon: "code",
+      subsection: "Nesting",
       description: [
         "The sub-properties of objects can be accessed by chaining together the dot or bracket notation.",
         "Here is a nested object:",
@@ -3196,6 +3285,7 @@ export default {
     $meta: {
       name: "Accessing Nested Arrays",
       icon: "code",
+      subsection: "Nesting",
       description: [
         "As we have seen in earlier examples, objects can contain both nested objects and nested arrays. Similar to accessing nested objects, Array bracket notation can be chained to access nested arrays.",
         "Here is an example of how to access a nested array:",
@@ -3243,6 +3333,7 @@ export default {
     $meta: {
       name: "Record Collection",
       icon: "code",
+      subsection: "Nesting",
       description: [
         "You are given a JSON object representing a part of your musical album collection. Each album has several properties and a unique id number as its key. Not all albums have complete information.",
         'Write a function which takes an album\'s <code>id</code> (like <code>2548</code>), a property <code>prop</code> (like <code>"artist"</code> or <code>"tracks"</code>), and a <code>value</code> (like <code>"Addicted to Love"</code>) to modify the data in this collection.',
@@ -3316,6 +3407,7 @@ export default {
     $meta: {
       name: "Iterate with JavaScript While Loops",
       icon: "code",
+      subsection: "Loops",
       description: [
         "You can run the same code multiple times by using a loop.",
         'Another type of JavaScript loop is called a "<code>while loop</code>", because it runs "while" a specified condition is true and stops once that condition is no longer true.',
@@ -3346,6 +3438,7 @@ export default {
     $meta: {
       name: "Iterate with JavaScript For Loops",
       icon: "code",
+      subsection: "Loops",
       description: [
         "You can run the same code multiple times by using a loop.",
         'The most common type of JavaScript loop is called a "<code>for loop</code>" because it runs "for" a specific number of times.',
@@ -3389,6 +3482,7 @@ export default {
     $meta: {
       name: "Iterate Odd Numbers With a For Loop",
       icon: "code",
+      subsection: "Loops",
       description: [
         "For loops don't have to iterate one at a time. By changing our <code>final-expression</code>, we can count by even numbers.",
         "We'll start at <code>i = 0</code> and loop while <code>i &#60; 10</code>. We'll increment <code>i</code> by 2 each loop with <code>i += 2</code>.",
@@ -3427,6 +3521,7 @@ export default {
     $meta: {
       name: "Count Backwards With a For Loop",
       icon: "code",
+      subsection: "Loops",
       description: [
         "A for loop can also count backwards, so long as we can define the right conditions.",
         "In order to count backwards by twos, we'll need to change our <code>initialization</code>, <code>condition</code>, and <code>final-expression</code>.",
@@ -3467,6 +3562,7 @@ export default {
     $meta: {
       name: "Iterate Through an Array with a For Loop",
       icon: "code",
+      subsection: "Loops",
       description: [
         "A common task in JavaScript is to iterate through the contents of an array. One way to do that is with a <code>for</code> loop. This code will output each element of the array <code>arr</code> to the console:",
         "<blockquote>var arr = [10,9,8,7,6];<br>for (var i = 0; i < arr.length; i++) {<br>   console.log(arr[i]);<br>}</blockquote>",
@@ -3506,6 +3602,7 @@ export default {
     $meta: {
       name: "Nesting For Loops",
       icon: "code",
+      subsection: "Loops",
       description: [
         "If you have a multi-dimensional array, you can use the same logic as the prior waypoint to loop through both the array and any sub-arrays. Here is an example:",
         "<blockquote>var arr = [<br>  [1,2], [3,4], [5,6]<br>];<br>for (var i=0; i &lt; arr.length; i++) {<br>  for (var j=0; j &lt; arr[i].length; j++) {<br>    console.log(arr[i][j]);<br>  }<br>}</blockquote>",
@@ -3541,6 +3638,7 @@ export default {
     $meta: {
       name: "Profile Lookup",
       icon: "code",
+      subsection: "Loops",
       description: [
         "We have an array of objects representing different people in our contacts lists.",
         "A <code>lookUpProfile</code> function that takes <code>name</code> and a property (<code>prop</code>) as arguments has been pre-written for you.",
@@ -3606,6 +3704,7 @@ export default {
     $meta: {
       name: "Generate Random Fractions with JavaScript",
       icon: "code",
+      subsection: "Useful stuff",
       description: [
         "Random numbers are useful for creating random behavior.",
         "JavaScript has a <code>Math.random()</code> function that generates a random decimal number between <code>0</code> (inclusive) and not quite up to <code>1</code> (exclusive). Thus <code>Math.random()</code> can return a <code>0</code> but never quite return a <code>1</code>",
@@ -3636,6 +3735,7 @@ export default {
     $meta: {
       name: "Generate Random Whole Numbers with JavaScript",
       icon: "code",
+      subsection: "Useful stuff",
       description: [
         "It's great that we can generate random decimal numbers, but it's even more useful if we use it to generate random whole numbers.",
         "<ol><li>Use <code>Math.random()</code> to generate a random decimal.</li><li>Multiply that random decimal by <code>20</code>.</li><li>Use another function, <code>Math.floor()</code> to round the number down to its nearest whole number.</li></ol>",
@@ -3672,6 +3772,7 @@ export default {
     $meta: {
       name: "Generate Random Whole Numbers within a Range",
       icon: "code",
+      subsection: "Useful stuff",
       description: [
         "Instead of generating a random number between zero and a given number like we did before, we can generate a random number that falls within a range of two specific numbers.",
         "To do this, we'll define a minimum number <code>min</code> and a maximum number <code>max</code>.",
@@ -3716,6 +3817,7 @@ export default {
     $meta: {
       name: "Use the parseInt Function",
       icon: "code",
+      subsection: "Useful stuff",
       description: [
         "The <code>parseInt()</code> function parses a string and returns an integer. Here's an example:",
         '<code>var a = parseInt("007");</code>',
@@ -3745,6 +3847,7 @@ export default {
     $meta: {
       name: "Use the parseInt Function with a Radix",
       icon: "code",
+      subsection: "Useful stuff",
       description: [
         "The <code>parseInt()</code> function parses a string and returns an integer. It takes a second argument for the radix, which specifies the base of the number in the string. The radix can be an integer between 2 and 36.",
         "The function call looks like:",
@@ -3777,6 +3880,7 @@ export default {
     $meta: {
       name: "Use the Conditional (Ternary) Operator",
       icon: "code",
+      subsection: "Useful stuff",
       description: [
         "The <dfn>conditional operator</dfn>, also called the <dfn>ternary operator</dfn>, can be used as a one line if-else expression.",
         "The syntax is:",
@@ -3803,6 +3907,7 @@ export default {
     $meta: {
       name: "Use Multiple Conditional (Ternary) Operators",
       icon: "code",
+      subsection: "Useful stuff",
       description: [
         "In the previous challenge, you used a single <code>conditional operator</code>. You can also chain them together to check for multiple conditions.",
         "The following function uses if, else if, and else statements to check multiple conditions:",

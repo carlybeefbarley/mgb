@@ -14,6 +14,9 @@ const skillItems = _.compact(_.map(SkillNodes.code.js.basics, (val, key) => (
   key === '$meta' ? null : { ...val['$meta'], idx: key, skill: val.skill, key: key }
 )))
 
+// Now partition it by 'subsection' key
+const bySubsection = _.groupBy(skillItems, 'subsection')
+
 const handleClick = (e, idx, code, currUser) => {
   const newTab = (e.buttons == 4 || e.button == 1)
   StartCodeJsRoute(idx, code.join( '\n' ), currUser, newTab)
@@ -63,25 +66,30 @@ const LearnCodeJsRoute = ( { currUser }, context ) => (
       />
     </Grid.Column>
     <Grid.Column>
-      <Segment padded piled>
-        <List size='large' relaxed='very' link className="skills">
-          { skillItems.map( (area, idx) => {
+      { _.map(_.keys(bySubsection), subkey => 
+        <Segment padded piled key={subkey}>
+          <Header as='h3' content={subkey}/>
+          <List size='large' relaxed='very' link className="skills">
+            { _.map(bySubsection[subkey],  (area, idx) => {
 
-            let skillPath = 'code/js/basics/' + area.idx + '/' + area.idx
-            const isComplete = currUser && !_.isEmpty( context.skills[skillPath] )
+              let skillPath = 'code/js/basics/' + area.idx + '/' + area.idx
+              const isComplete = currUser && !_.isEmpty( context.skills[skillPath] )
 
-            return (
-            <List.Item
-              as='a'
-              key={idx}
-              header={isComplete ? null : area.name}
-              content={isComplete ? area.name : null}
-              icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
-              onClick={ (e) => handleClick( e, area.idx, area.code, currUser ) }
-            />
-          ) } ) }
-        </List>
-      </Segment>
+              return (
+                <List.Item
+                  as='a'
+                  key={idx}
+                  header={isComplete ? null : area.name}
+                  content={isComplete ? area.name : null}
+                  icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
+                  onClick={ (e) => handleClick( e, area.idx, area.code, currUser ) }
+                />
+              ) 
+            } ) }
+          </List>
+        </Segment>
+        )
+      }
     </Grid.Column>
     <a
       href="https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md"
